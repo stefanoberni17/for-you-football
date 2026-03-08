@@ -396,62 +396,69 @@ Stai rispondendo nella chat web dell'app. Tieni presente:
 export async function buildUserContext(userId: string): Promise<string> {
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('name, age, goals, passions, dream, current_situation, current_week, maestro_notes')
+    .select('name, age, goals, current_situation, current_week, role, level, biggest_fear, difficult_situation, coach_notes')
     .eq('user_id', userId)
     .single();
 
-  const { data: completedEpisodes } = await supabaseAdmin
-    .from('user_episode_progress')
-    .select('episode_number, week_number')
+  // Progresso giorni completati
+  const { data: completedDays } = await supabaseAdmin
+    .from('user_day_progress')
+    .select('week_number, day_number, compressed')
     .eq('user_id', userId)
     .eq('completed', true)
-    .order('episode_number', { ascending: true });
+    .order('week_number', { ascending: true })
+    .order('day_number', { ascending: true });
 
+  // Riflessioni post-giorno
   const { data: reflections } = await supabaseAdmin
-    .from('episode_reflections')
-    .select('episode_number, reflection_question, reflection_text, created_at')
+    .from('day_reflections')
+    .select('week_number, day_number, reflection_question, reflection_text, created_at')
     .eq('user_id', userId)
-    .order('episode_number', { ascending: true });
+    .order('week_number', { ascending: true })
+    .order('day_number', { ascending: true });
 
   const currentWeek = profile?.current_week || 1;
+  const totalCompleted = completedDays?.length || 0;
 
   return `
-⚡ SETTIMANA CORRENTE: Week ${currentWeek}. Tutte le risposte devono rispettare esclusivamente le regole di questa settimana. Consulta la sezione SETTIMANE DEL PERCORSO per le istruzioni specifiche.
+⚡ SETTIMANA CORRENTE: Settimana ${currentWeek}. Tutte le risposte devono rispettare le regole di questa settimana del percorso.
 
-# CONTESTO UTENTE
+# CONTESTO CALCIATORE
 
-**Nome:** ${profile?.name || 'Utente'}
+**Nome:** ${profile?.name || 'Calciatore'}
 **Età:** ${profile?.age || 'Non specificata'}
+**Ruolo:** ${profile?.role || 'Non specificato'}
+**Livello:** ${profile?.level || 'Non specificato'}
 **Settimana corrente:** ${currentWeek}
 
-## Situazione e obiettivi
+## Sfide e situazione
+${profile?.biggest_fear ? `**Paura principale:** ${profile.biggest_fear}` : ''}
+${profile?.difficult_situation ? `**Situazione difficile:** ${profile.difficult_situation}` : ''}
 ${profile?.current_situation ? `**Situazione attuale:** ${profile.current_situation}` : ''}
 ${profile?.goals ? `**Obiettivi:** ${profile.goals}` : ''}
-${profile?.passions ? `**Passioni:** ${profile.passions}` : ''}
-${profile?.dream ? `**Sogno:** ${profile.dream}` : ''}
 
 ## Progresso nel percorso
-**Episodi completati:** ${completedEpisodes?.length || 0}
-${completedEpisodes && completedEpisodes.length > 0
-  ? `**Ultimi episodi:** ${completedEpisodes.slice(-3).map((e: any) => `Ep.${e.episode_number}`).join(', ')}`
-  : 'Nessun episodio ancora completato'}
+**Giorni completati:** ${totalCompleted}
+${completedDays && completedDays.length > 0
+  ? `**Ultimi giorni:** ${completedDays.slice(-3).map((d: any) => `S${d.week_number}G${d.day_number}`).join(', ')}`
+  : 'Nessun giorno ancora completato'}
 
-## Riflessioni dell'utente
+## Riflessioni dal campo
 ${reflections && reflections.length > 0
-  ? reflections.map((r: any) => `
-**Episodio ${r.episode_number}**
-Domanda: "${r.reflection_question}"
+  ? reflections.slice(-5).map((r: any) => `
+**Sett.${r.week_number} Giorno ${r.day_number}**
+Domanda: "${r.reflection_question || ''}"
 Risposta: "${r.reflection_text}"
 `).join('\n')
   : 'Nessuna riflessione ancora scritta'}
-${profile?.maestro_notes ? `
-## Appunti del Maestro (memoria distillata)
+${profile?.coach_notes ? `
+## Appunti del Coach (memoria distillata)
 *Pattern ricorrenti e temi emersi nelle conversazioni precedenti*
-${profile.maestro_notes}
+${profile.coach_notes}
 ` : ''}
 ---
 
-**IMPORTANTE:** Usa queste informazioni per dare risposte personalizzate e profonde. Le riflessioni dell'utente sono la chiave per capire il suo viaggio interiore.`;
+**IMPORTANTE:** Usa queste informazioni per dare risposte personalizzate. Le riflessioni dal campo sono la chiave per capire il percorso del calciatore.`;
 }
 
 const RECAP_SYSTEM_PROMPT = `Sei un assistente che distilla conversazioni tra un utente e il Maestro AI di Naruto Inner Path.
@@ -473,16 +480,16 @@ export async function generateMaestroRecap(
   try {
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('maestro_notes')
+      .select('coach_notes')
       .eq('user_id', userId)
       .single();
 
-    const systemPrompt = profile?.maestro_notes
-      ? `${RECAP_SYSTEM_PROMPT}\n\nNote precedenti da aggiornare e integrare:\n${profile.maestro_notes}`
+    const systemPrompt = profile?.coach_notes
+      ? `${RECAP_SYSTEM_PROMPT}\n\nNote precedenti da aggiornare e integrare:\n${profile.coach_notes}`
       : RECAP_SYSTEM_PROMPT;
 
     const conversationText = recentMessages
-      .map(m => `${m.role === 'user' ? 'Utente' : 'Maestro'}: ${m.content}`)
+      .map(m => `${m.role === 'user' ? 'Calciatore' : 'Coach'}: ${m.content}`)
       .join('\n\n');
 
     const { text } = await callClaude(
@@ -493,7 +500,7 @@ export async function generateMaestroRecap(
 
     await supabaseAdmin
       .from('profiles')
-      .update({ maestro_notes: text })
+      .update({ coach_notes: text })
       .eq('user_id', userId);
   } catch (error) {
     console.error('Errore generateMaestroRecap:', error);

@@ -3,37 +3,35 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { getUnlockedWeeks, isWeekUnlockedInBeta, getWeekLockMessage } from '@/lib/weekUnlockLogic';
+import { isWeekUnlocked, isWeekCompleted, getWeekProgress, DayProgress } from '@/lib/dayUnlockLogic';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK } from '@/lib/constants';
 
 interface Settimana {
   id: string;
-  numero: number;
-  settimana: string;
+  weekNumber: number;
   titolo: string;
-  tema: string;
-  episodi: string;
+  principio: string;
+  strumento: string;
+  blocco: string;
   stato: string;
 }
 
-export default function SettimanaPage() {
+export default function SettimanePage() {
   const router = useRouter();
   const [settimane, setSettimane] = useState<Settimana[]>([]);
-  const [unlockedWeeks, setUnlockedWeeks] = useState<number[]>([]);
+  const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [profile, setProfile] = useState<any>(null);
-  const [userId, setUserId] = useState<string>('');
 
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         router.push('/login');
         return;
       }
-
-      setUserId(session.user.id);
 
       const { data: profileData } = await supabase
         .from('profiles')
@@ -48,14 +46,21 @@ export default function SettimanaPage() {
 
       setProfile(profileData);
 
-      const { data: completedEpisodes } = await supabase
-        .from('user_episode_progress')
-        .select('episode_number, completed')
+      // Carica progresso giorni
+      const { data: progress } = await supabase
+        .from('user_day_progress')
+        .select('week_number, day_number, completed, compressed')
         .eq('user_id', session.user.id)
         .eq('completed', true);
 
-      const unlocked = getUnlockedWeeks(completedEpisodes || []);
-      setUnlockedWeeks(unlocked);
+      setCompletedDays(
+        (progress || []).map((p: any) => ({
+          weekNumber: p.week_number,
+          dayNumber: p.day_number,
+          completed: p.completed,
+          compressed: p.compressed || false,
+        }))
+      );
 
       setCheckingAuth(false);
     };
@@ -65,154 +70,139 @@ export default function SettimanaPage() {
 
   useEffect(() => {
     if (checkingAuth) return;
-    
+
     fetch('/api/settimane')
       .then(res => res.json())
       .then(data => {
-        const settimaneFiltered = (data.settimane || []).filter((s: Settimana) => s.numero <= 6).sort((a: Settimana, b: Settimana) => a.numero - b.numero);
-        setSettimane(settimaneFiltered);
+        const list = (data.settimane || [])
+          .filter((s: Settimana) => s.weekNumber <= BETA_MAX_WEEK)
+          .sort((a: Settimana, b: Settimana) => a.weekNumber - b.weekNumber);
+        setSettimane(list);
         setLoading(false);
       })
       .catch(err => {
-        console.error('Errore nel caricamento:', err);
+        console.error('Errore caricamento settimane:', err);
         setLoading(false);
       });
   }, [checkingAuth]);
 
-  if (checkingAuth) {
+  if (checkingAuth || loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-orange-50 to-orange-100 flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🍥</div>
-          <p className="text-xl text-gray-600">Verifica accesso...</p>
-        </div>
-      </main>
-    );
-  }
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-gradient-to-b from-orange-50 to-orange-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-spin">🍥</div>
-          <p className="text-xl text-gray-600">Caricamento settimane...</p>
+          <div className="text-6xl mb-4">⚽</div>
+          <p className="text-xl text-gray-600">Caricamento percorso...</p>
         </div>
       </main>
     );
   }
 
   const currentWeek = profile?.current_week || 1;
+  const unlockedCount = Array.from({ length: BETA_MAX_WEEK }, (_, i) => i + 1)
+    .filter(w => isWeekUnlocked(w, completedDays)).length;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-orange-50 to-orange-100 py-8 px-4 pb-24">
-      <div className="max-w-7xl mx-auto mb-6">
+    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-8 px-4 pb-24">
+      <div className="max-w-4xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-1">
-          Le Tue Settimane 🍥
+          Il Tuo Percorso ⚽
         </h1>
         <p className="text-gray-600">
-          {(() => {
-            const count = unlockedWeeks.filter(w => w <= 4).length;
-            return count === 1
-              ? '1 settimana sbloccata · Beta: 4 disponibili, 4 in arrivo'
-              : `${count} settimane sbloccate · Beta: 4 disponibili, 4 in arrivo`;
-          })()}
+          {unlockedCount === 1
+            ? '1 settimana sbloccata'
+            : `${unlockedCount} settimane sbloccate`}
+          {' · Beta: '}
+          {BETA_MAX_WEEK} disponibili su 12
         </p>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         {settimane.map((settimana) => {
-          const isUnlocked = unlockedWeeks.includes(settimana.numero);
-          const isCurrentWeek = settimana.numero === currentWeek;
-          const isBetaLocked = !isWeekUnlockedInBeta(settimana.numero);
-          const lockMessage = getWeekLockMessage(settimana.numero);
-          
-          if (isBetaLocked) {
-            return (
-              <div
-                key={settimana.id}
-                className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-gray-300 opacity-60"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full text-gray-600 bg-gray-100">
-                    {settimana.settimana}
-                  </span>
-                  <span className="text-2xl">🔒</span>
-                </div>
-                
-                <h3 className="text-xl font-bold mb-2 text-gray-400">
-                  {settimana.titolo}
-                </h3>
-                
-                <p className="text-sm mb-3 text-gray-400">
-                  {settimana.tema}
-                </p>
-                
-                <div className="text-xs border-t pt-3 text-gray-400">
-                  📺 Episodi: {settimana.episodi}
-                </div>
-
-                <div className="mt-3 bg-amber-50 border-l-4 border-amber-400 p-3 rounded">
-                  <p className="text-xs text-amber-800 font-medium">
-                    {lockMessage}
-                  </p>
-                </div>
-              </div>
-            );
-          }
+          const unlocked = isWeekUnlocked(settimana.weekNumber, completedDays);
+          const completed = isWeekCompleted(settimana.weekNumber, completedDays);
+          const progress = getWeekProgress(settimana.weekNumber, completedDays);
+          const isCurrent = settimana.weekNumber === currentWeek;
 
           return (
             <div
               key={settimana.id}
-              onClick={() => isUnlocked && router.push(`/settimana/${settimana.id}?week=${settimana.numero}`)}
-              className={`bg-white rounded-lg shadow-lg p-6 transition-all border-l-4 ${
-                isUnlocked 
-                  ? 'cursor-pointer hover:shadow-xl transform hover:scale-102' 
+              onClick={() => unlocked && router.push(`/settimana/${settimana.weekNumber}`)}
+              className={`bg-white rounded-2xl shadow-lg p-6 transition-all border-l-4 ${
+                unlocked
+                  ? 'cursor-pointer hover:shadow-xl'
                   : 'opacity-60 cursor-not-allowed'
               } ${
-                isCurrentWeek 
-                  ? 'border-orange-500 ring-2 ring-orange-300' 
-                  : isUnlocked 
-                    ? 'border-green-500' 
-                    : 'border-gray-300'
+                completed
+                  ? 'border-green-500'
+                  : isCurrent
+                  ? 'border-emerald-500 ring-2 ring-emerald-200'
+                  : unlocked
+                  ? 'border-blue-400'
+                  : 'border-gray-300'
               }`}
             >
               <div className="flex items-start justify-between mb-3">
-                <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                  isCurrentWeek 
-                    ? 'text-orange-600 bg-orange-100' 
-                    : isUnlocked
-                      ? 'text-green-600 bg-green-100'
+                <div className="flex gap-2 flex-wrap">
+                  <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                    completed
+                      ? 'text-green-700 bg-green-100'
+                      : isCurrent
+                      ? 'text-emerald-700 bg-emerald-100'
+                      : unlocked
+                      ? 'text-blue-700 bg-blue-100'
                       : 'text-gray-600 bg-gray-100'
-                }`}>
-                  {settimana.settimana}
-                  {isCurrentWeek && ' 📍'}
-                </span>
+                  }`}>
+                    Settimana {settimana.weekNumber}
+                    {isCurrent && !completed && ' 📍'}
+                  </span>
+                  {settimana.blocco && (
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                      {settimana.blocco}
+                    </span>
+                  )}
+                </div>
                 <span className="text-2xl">
-                  {isUnlocked ? (isCurrentWeek ? '🎯' : '✅') : '🔒'}
+                  {completed ? '✅' : unlocked ? (isCurrent ? '🎯' : '🔓') : '🔒'}
                 </span>
-              </div>
-              
-              <h3 className={`text-xl font-bold mb-2 ${
-                isUnlocked ? 'text-gray-800' : 'text-gray-400'
-              }`}>
-                {settimana.titolo}
-              </h3>
-              
-              <p className={`text-sm mb-3 ${
-                isUnlocked ? 'text-gray-600' : 'text-gray-400'
-              }`}>
-                {settimana.tema}
-              </p>
-              
-              <div className={`text-xs border-t pt-3 ${
-                isUnlocked ? 'text-gray-500' : 'text-gray-400'
-              }`}>
-                📺 Episodi: {settimana.episodi}
               </div>
 
-              {!isUnlocked && (
-                <div className="mt-3 text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                  🔒 Completa la settimana precedente per sbloccare
+              <h3 className={`text-xl font-bold mb-1 ${unlocked ? 'text-gray-800' : 'text-gray-400'}`}>
+                {settimana.titolo}
+              </h3>
+
+              {settimana.principio && (
+                <p className={`text-sm font-medium mb-1 ${unlocked ? 'text-emerald-600' : 'text-gray-400'}`}>
+                  🧭 {settimana.principio}
+                </p>
+              )}
+
+              {settimana.strumento && (
+                <p className={`text-sm mb-3 ${unlocked ? 'text-gray-600' : 'text-gray-400'}`}>
+                  🔧 {settimana.strumento}
+                </p>
+              )}
+
+              {/* Progress bar giorni */}
+              {unlocked && (
+                <div className="mt-3">
+                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                    <span>{completed ? 'Completata! ✓' : `${progress}/${DAYS_PER_WEEK} giorni`}</span>
+                    <span>{Math.round((progress / DAYS_PER_WEEK) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all duration-500 ${
+                        completed ? 'bg-green-500' : 'bg-emerald-500'
+                      }`}
+                      style={{ width: `${Math.round((progress / DAYS_PER_WEEK) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {!unlocked && (
+                <div className="mt-3 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
+                  🔒 Completa il Gate della settimana precedente per sbloccare
                 </div>
               )}
             </div>
@@ -220,16 +210,17 @@ export default function SettimanaPage() {
         })}
 
         {/* Teaser versione completa */}
-        <div className="md:col-span-2 lg:col-span-3 mt-2">
-          <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-dashed border-orange-200 rounded-lg p-4 flex items-center gap-3 opacity-80">
+        <div className="md:col-span-2 mt-2">
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-dashed border-green-300 rounded-xl p-4 flex items-center gap-3 opacity-80">
             <span className="text-2xl">🔜</span>
             <div>
-              <p className="text-sm font-semibold text-orange-800">Altre settimane in arrivo</p>
-              <p className="text-xs text-orange-600 mt-0.5">Week 7–8 e oltre saranno disponibili nella versione completa del percorso.</p>
+              <p className="text-sm font-semibold text-green-800">Altre settimane in arrivo</p>
+              <p className="text-xs text-green-600 mt-0.5">
+                Week 5–12 saranno disponibili nella versione completa del percorso.
+              </p>
             </div>
           </div>
         </div>
-
       </div>
     </main>
   );
