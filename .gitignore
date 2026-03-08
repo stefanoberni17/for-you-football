@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Audio files (troppo grandi per git — usa CDN o Supabase Storage)
+public/audio/*.mp3
+public/audio/*.wav
+public/audio/*.ogg
