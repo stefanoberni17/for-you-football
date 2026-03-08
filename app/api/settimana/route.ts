@@ -1,63 +1,50 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { queryDatabase, mapSettimana, mapGiorno } from '@/lib/notion';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+/**
+ * GET /api/settimana?week=N
+ * Restituisce i dettagli di una settimana + la lista dei 7 giorni.
+ *
+ * Response: { settimana: Settimana, giorni: Giorno[] }
+ */
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const pageId = searchParams.get('id');
+    const weekNumber = parseInt(searchParams.get('week') || '0');
 
-    if (!pageId) {
-      return NextResponse.json({ error: 'Page ID mancante' }, { status: 400 });
+    if (!weekNumber) {
+      return NextResponse.json({ error: 'Parametro week mancante' }, { status: 400 });
     }
 
-    console.log('🔍 Recupero pagina:', pageId);
-
-    // Fetch contenuto pagina
-    const pageResponse = await fetch('https://api.notion.com/v1/pages/' + pageId, {
-      headers: {
-        'Authorization': 'Bearer ' + process.env.NOTION_TOKEN,
-        'Notion-Version': '2022-06-28',
-      },
-    });
-
-    const pageData = await pageResponse.json();
-
-    // Fetch TUTTI i blocchi della pagina (con pagination)
-    const allBlocks: any[] = [];
-    let hasMore = true;
-    let startCursor: string | null = null;
-
-    while (hasMore) {
-      let url = 'https://api.notion.com/v1/blocks/' + pageId + '/children';
-      if (startCursor) {
-        url = url + '?start_cursor=' + startCursor;
-      }
-
-      const blocksResponse = await fetch(url, {
-        headers: {
-          'Authorization': 'Bearer ' + process.env.NOTION_TOKEN,
-          'Notion-Version': '2022-06-28',
+    // Fetch settimana e giorni in parallelo
+    const [weekPages, dayPages] = await Promise.all([
+      queryDatabase(process.env.NOTION_DATABASE_SETTIMANE!, {
+        filter: {
+          property: 'Numero Settimana',
+          number: { equals: weekNumber },
         },
-      });
+      }),
+      queryDatabase(process.env.NOTION_DATABASE_GIORNI!, {
+        filter: {
+          property: 'Numero Settimana',
+          number: { equals: weekNumber },
+        },
+        sorts: [{ property: 'Numero Giorno', direction: 'ascending' }],
+      }),
+    ]);
 
-      const blocksData = await blocksResponse.json();
-      
-      allBlocks.push(...blocksData.results);
-      hasMore = blocksData.has_more || false;
-      startCursor = blocksData.next_cursor || null;
-
-      console.log('✅ Caricati', allBlocks.length, 'blocchi...');
+    if (!weekPages.length) {
+      return NextResponse.json({ error: `Settimana ${weekNumber} non trovata` }, { status: 404 });
     }
 
-    console.log('✅ Totale blocchi caricati:', allBlocks.length);
+    const settimana = mapSettimana(weekPages[0]);
+    const giorni = dayPages.map(mapGiorno);
 
-    return NextResponse.json({
-      page: pageData,
-      blocks: allBlocks,
-    });
+    return NextResponse.json({ settimana, giorni });
   } catch (error: any) {
-    console.error('❌ Errore:', error);
+    console.error('❌ GET /api/settimana:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

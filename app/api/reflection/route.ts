@@ -6,87 +6,79 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// GET - Recupera riflessione esistente
+// ─── GET /api/reflection?userId=U&week=W&day=D ────────────────────────────────
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    const episodeNumber = parseInt(searchParams.get('episodeNumber') || '0');
+    const weekNumber = parseInt(searchParams.get('week') || '0');
+    const dayNumber = parseInt(searchParams.get('day') || '0');
 
-    if (!userId || !episodeNumber) {
+    if (!userId || !weekNumber || !dayNumber) {
       return NextResponse.json(
-        { error: 'userId e episodeNumber richiesti' },
+        { error: 'userId, week e day richiesti' },
         { status: 400 }
       );
     }
 
     const { data, error } = await supabaseAdmin
-      .from('episode_reflections')
+      .from('day_reflections')
       .select('*')
       .eq('user_id', userId)
-      .eq('episode_number', episodeNumber)
-      .single();
+      .eq('week_number', weekNumber)
+      .eq('day_number', dayNumber)
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = not found
-      throw error;
-    }
+    if (error) throw error;
 
     return NextResponse.json({ reflection: data });
   } catch (error: any) {
-    console.error('Errore GET reflection:', error);
-    return NextResponse.json(
-      { error: 'Errore nel caricamento', details: error.message },
-      { status: 500 }
-    );
+    console.error('❌ GET /api/reflection:', error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-// POST - Salva o aggiorna riflessione
+// ─── POST /api/reflection ────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
-    const { userId, episodeNumber, reflectionText, reflectionQuestion } = await request.json();
+    const { userId, weekNumber, dayNumber, reflectionText, reflectionQuestion } =
+      await request.json();
 
-    if (!userId || !episodeNumber || !reflectionText) {
+    if (!userId || !weekNumber || !dayNumber || !reflectionText) {
       return NextResponse.json(
-        { error: 'userId, episodeNumber e reflectionText richiesti' },
+        { error: 'userId, weekNumber, dayNumber e reflectionText richiesti' },
         { status: 400 }
       );
     }
 
-    // Max 500 caratteri
     if (reflectionText.length > 500) {
       return NextResponse.json(
-        { error: 'Riflessione troppo lunga (max 500 caratteri)' },
+        { error: 'Risposta troppo lunga (max 500 caratteri)' },
         { status: 400 }
       );
     }
 
     const { data, error } = await supabaseAdmin
-  .from('episode_reflections')
-  .upsert(
-    {
-      user_id: userId,
-      episode_number: episodeNumber,
-      reflection_text: reflectionText,
-      reflection_question: reflectionQuestion || null,
-      updated_at: new Date().toISOString(),
-    },
-        { onConflict: 'user_id,episode_number' }
+      .from('day_reflections')
+      .upsert(
+        {
+          user_id: userId,
+          week_number: weekNumber,
+          day_number: dayNumber,
+          reflection_text: reflectionText,
+          reflection_question: reflectionQuestion || null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id,week_number,day_number' }
       )
       .select()
       .single();
 
     if (error) throw error;
 
-    return NextResponse.json({
-      success: true,
-      reflection: data,
-    });
+    return NextResponse.json({ success: true, reflection: data });
   } catch (error: any) {
-    console.error('Errore POST reflection:', error);
-    return NextResponse.json(
-      { error: 'Errore nel salvataggio', details: error.message },
-      { status: 500 }
-    );
+    console.error('❌ POST /api/reflection:', error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
