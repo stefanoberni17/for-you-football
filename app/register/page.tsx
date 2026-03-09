@@ -90,6 +90,10 @@ export default function RegisterPage() {
       const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
       if (authError) throw authError;
 
+      if (!authData.user?.id) {
+        throw new Error('Email già registrata. Prova ad accedere o usa un\'altra email.');
+      }
+
       // Salvataggio profilo via API server-side (service role bypassa RLS —
       // il client non ha sessione valida prima della conferma email)
       const res = await fetch('/api/register-profile', {
