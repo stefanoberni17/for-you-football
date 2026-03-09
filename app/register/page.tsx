@@ -73,7 +73,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     if (password !== confirmPassword) { setError('Le password non coincidono'); return; }
-    if (password.length < 6) { setError('La password deve essere di almeno 6 caratteri'); return; }
+    if (password.length < 8) { setError('La password deve essere di almeno 8 caratteri'); return; }
     if (!nome.trim()) { setError('Il nome è obbligatorio'); return; }
     setStep(2);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -201,7 +201,7 @@ export default function RegisterPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Password *</label>
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
-                  placeholder="Minimo 6 caratteri" required />
+                  placeholder="Minimo 8 caratteri" required />
               </div>
 
               <div>
