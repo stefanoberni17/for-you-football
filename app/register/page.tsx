@@ -90,7 +90,7 @@ export default function RegisterPage() {
       const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
       if (authError) throw authError;
 
-      const { error: profileError } = await supabase.from('profiles').insert({
+      const { error: profileError } = await supabase.from('profiles').upsert({
         user_id: authData.user?.id,
         name: nome.trim(),
         age: eta ? parseInt(eta) : null,
@@ -101,7 +101,7 @@ export default function RegisterPage() {
         dream: dream.trim() || null,
         current_situation: currentSituation.trim() || null,
         onboarding_completed: false,
-      });
+      }, { onConflict: 'user_id' });
 
       if (profileError) throw new Error(profileError.message || 'Errore nella creazione del profilo');
 
