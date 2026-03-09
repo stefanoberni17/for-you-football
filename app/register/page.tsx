@@ -90,20 +90,25 @@ export default function RegisterPage() {
       const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
       if (authError) throw authError;
 
-      const { error: profileError } = await supabase.from('profiles').upsert({
-        user_id: authData.user?.id,
-        name: nome.trim(),
-        age: eta ? parseInt(eta) : null,
-        role: selectedRoles.length ? selectedRoles.join(',') : null,
-        level: level || null,
-        biggest_fear: selectedFears.length ? selectedFears.join(',') : null,
-        goals: goals.trim() || null,
-        dream: dream.trim() || null,
-        current_situation: currentSituation.trim() || null,
-        onboarding_completed: false,
-      }, { onConflict: 'user_id' });
-
-      if (profileError) throw new Error(profileError.message || 'Errore nella creazione del profilo');
+      // Salvataggio profilo via API server-side (service role bypassa RLS —
+      // il client non ha sessione valida prima della conferma email)
+      const res = await fetch('/api/register-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: authData.user?.id,
+          name: nome.trim(),
+          age: eta || null,
+          role: selectedRoles.length ? selectedRoles.join(',') : null,
+          level: level || null,
+          biggest_fear: selectedFears.length ? selectedFears.join(',') : null,
+          goals: goals.trim() || null,
+          dream: dream.trim() || null,
+          current_situation: currentSituation.trim() || null,
+        }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Errore nella creazione del profilo');
 
       setSuccess(true);
     } catch (err: any) {
