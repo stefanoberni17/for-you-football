@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import { PLAYER_ROLES, PLAYER_LEVELS, PLAYER_FEARS } from '@/lib/constants';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
@@ -87,20 +86,14 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
-      if (authError) throw authError;
-
-      if (!authData.user?.id) {
-        throw new Error('Email già registrata. Prova ad accedere o usa un\'altra email.');
-      }
-
-      // Salvataggio profilo via API server-side (service role bypassa RLS —
-      // il client non ha sessione valida prima della conferma email)
-      const res = await fetch('/api/register-profile', {
+      // Tutto server-side: signUp + profilo in un'unica chiamata admin
+      // Evita problemi di RLS (no sessione) e FK timing (utente non ancora visibile)
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: authData.user?.id,
+          email,
+          password,
           name: nome.trim(),
           age: eta || null,
           role: selectedRoles.length ? selectedRoles.join(',') : null,
@@ -112,7 +105,7 @@ export default function RegisterPage() {
         }),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Errore nella creazione del profilo');
+      if (!res.ok) throw new Error(result.error || 'Errore nella registrazione');
 
       setSuccess(true);
     } catch (err: any) {
