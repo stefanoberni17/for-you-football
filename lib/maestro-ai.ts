@@ -397,7 +397,7 @@ Stai rispondendo nella chat web dell'app. Tieni presente:
 export async function buildUserContext(userId: string): Promise<string> {
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('name, age, goals, current_situation, current_week, role, level, biggest_fear, difficult_situation, coach_notes')
+    .select('name, age, goals, dream, current_situation, current_week, role, level, biggest_fear, coach_notes')
     .eq('user_id', userId)
     .single();
 
@@ -428,15 +428,15 @@ export async function buildUserContext(userId: string): Promise<string> {
 
 **Nome:** ${profile?.name || 'Calciatore'}
 **Età:** ${profile?.age || 'Non specificata'}
-**Ruolo:** ${profile?.role || 'Non specificato'}
+**Ruolo/i:** ${profile?.role ? profile.role.split(',').join(' + ') : 'Non specificato'}
 **Livello:** ${profile?.level || 'Non specificato'}
 **Settimana corrente:** ${currentWeek}
 
 ## Sfide e situazione
-${profile?.biggest_fear ? `**Paura principale:** ${profile.biggest_fear}` : ''}
-${profile?.difficult_situation ? `**Situazione difficile:** ${profile.difficult_situation}` : ''}
+${profile?.biggest_fear ? `**Paure in campo:** ${profile.biggest_fear.split(',').map((f: string) => f.trim()).join(', ')}` : ''}
 ${profile?.current_situation ? `**Situazione attuale:** ${profile.current_situation}` : ''}
-${profile?.goals ? `**Obiettivi:** ${profile.goals}` : ''}
+${profile?.goals ? `**Obiettivi con il percorso:** ${profile.goals}` : ''}
+${profile?.dream ? `**Sogno da calciatore:** ${profile.dream}` : ''}
 
 ## Progresso nel percorso
 **Giorni completati:** ${totalCompleted}

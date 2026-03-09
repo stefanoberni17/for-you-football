@@ -29,10 +29,13 @@ CREATE TABLE profiles (
   age                       INT,
 
   -- Football-specific (onboarding)
-  role                      TEXT,    -- portiere | difensore | centrocampista | attaccante
+  role                      TEXT,    -- multi-select comma-separated: portiere,difensore,centrocampista,attaccante
   level                     TEXT,    -- amatoriale | dilettante | giovanile | semi-pro
-  biggest_fear              TEXT,    -- risposta libera (situazione mentale difficile)
-  difficult_situation       TEXT,    -- errore | panchina | giudizio | pressione
+  biggest_fear              TEXT,    -- multi-select comma-separated: errore,deludere,panchina,giudizio,non_abbastanza,momento_chiave,infortunio
+  difficult_situation       TEXT,    -- legacy — non più usato, mantenuto per compatibilità
+  goals                     TEXT,    -- obiettivi con il percorso (testo libero)
+  dream                     TEXT,    -- sogno da calciatore (testo libero)
+  current_situation         TEXT,    -- come sta vivendo il periodo nel calcio (testo libero)
 
   -- Percorso
   current_week              INT DEFAULT 1,

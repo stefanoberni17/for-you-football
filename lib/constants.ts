@@ -78,3 +78,15 @@ export const DIFFICULT_SITUATIONS = [
   { value: 'giudizio', label: 'Sotto giudizio (mister, compagni, tifosi)' },
   { value: 'pressione', label: 'Pressione della partita' },
 ] as const;
+
+// ─── Le 7 paure principali del calciatore ─────────────────────────────────────
+
+export const PLAYER_FEARS = [
+  { value: 'errore', label: 'Sbagliare e non perdonarmi' },
+  { value: 'deludere', label: 'Deludere il mister o i compagni' },
+  { value: 'panchina', label: 'Perdere il posto da titolare' },
+  { value: 'giudizio', label: 'Il giudizio del pubblico o dei compagni' },
+  { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
+  { value: 'momento_chiave', label: 'Fallire nei momenti chiave (rigori, finali...)' },
+  { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
+] as const;
