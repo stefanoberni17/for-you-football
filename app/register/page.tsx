@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { PLAYER_ROLES, PLAYER_LEVELS, DIFFICULT_SITUATIONS } from '@/lib/constants';
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  // Step: 1 = account + dati base | 2 = percorso personale
+  // Step: 1 = account + dati base | 2 = profilo calciatore
   const [step, setStep] = useState(1);
 
   // Step 1 — account
@@ -17,11 +18,11 @@ export default function RegisterPage() {
   const [nome, setNome] = useState('');
   const [eta, setEta] = useState('');
 
-  // Step 2 — percorso (tutti opzionali)
-  const [obiettivi, setObiettivi] = useState('');
-  const [passioni, setPassioni] = useState('');
-  const [sogno, setSogno] = useState('');
-  const [situazioneAttuale, setSituazioneAttuale] = useState('');
+  // Step 2 — profilo calciatore (tutti opzionali)
+  const [role, setRole] = useState('');
+  const [level, setLevel] = useState('');
+  const [biggestFear, setBiggestFear] = useState('');
+  const [difficultSituation, setDifficultSituation] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -71,10 +72,10 @@ export default function RegisterPage() {
           user_id: authData.user?.id,
           name: nome.trim(),
           age: eta ? parseInt(eta) : null,
-          goals: obiettivi.trim() || null,
-          passions: passioni.trim() || null,
-          dream: sogno.trim() || null,
-          current_situation: situazioneAttuale.trim() || null,
+          role: role || null,
+          level: level || null,
+          biggest_fear: biggestFear.trim() || null,
+          difficult_situation: difficultSituation || null,
           onboarding_completed: false,
         });
 
@@ -97,7 +98,7 @@ export default function RegisterPage() {
   // ── Schermata successo ──
   if (success) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-orange-50 to-orange-100 flex flex-col items-center justify-center p-5">
+      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex flex-col items-center justify-center p-5">
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm text-center">
           <div className="text-5xl mb-4">📬</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -113,7 +114,7 @@ export default function RegisterPage() {
           {/* Avviso spam */}
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 text-left">
             <p className="text-amber-800 text-xs font-semibold mb-0.5">
-              📁 Non trovi l'email?
+              📁 Non trovi l&apos;email?
             </p>
             <p className="text-amber-700 text-xs leading-relaxed">
               Controlla la cartella <strong>Spam</strong> o{' '}
@@ -124,9 +125,9 @@ export default function RegisterPage() {
 
           <button
             onClick={() => router.push('/login')}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-sm"
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-sm"
           >
-            Vai al Login
+            Vai al Login ⚽
           </button>
         </div>
       </main>
@@ -134,15 +135,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-orange-50 to-orange-100 py-10 px-5">
+    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-10 px-5">
       <div className="w-full max-w-sm mx-auto">
 
         {/* ── Header brand ── */}
         <div className="text-center mb-6">
-          <div className="text-4xl mb-2">🍥</div>
-          <h1 className="text-xl font-bold text-gray-800">Naruto Inner Path</h1>
-          <p className="text-orange-500 font-semibold text-xs mt-0.5 uppercase tracking-widest">
-            La via del Guerriero Gentile
+          <div className="text-4xl mb-2">⚽</div>
+          <h1 className="text-xl font-bold text-gray-800">For You Football</h1>
+          <p className="text-emerald-600 font-semibold text-xs mt-0.5 uppercase tracking-widest">
+            Allenamento mentale per calciatori
           </p>
         </div>
 
@@ -153,7 +154,7 @@ export default function RegisterPage() {
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${
                 step >= 1
-                  ? 'bg-orange-500 text-white'
+                  ? 'bg-emerald-500 text-white'
                   : 'bg-gray-200 text-gray-400'
               }`}
             >
@@ -171,7 +172,7 @@ export default function RegisterPage() {
           {/* Linea */}
           <div
             className={`h-0.5 w-8 shrink-0 rounded-full transition-all ${
-              step > 1 ? 'bg-orange-400' : 'bg-gray-200'
+              step > 1 ? 'bg-emerald-400' : 'bg-gray-200'
             }`}
           />
 
@@ -180,7 +181,7 @@ export default function RegisterPage() {
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${
                 step >= 2
-                  ? 'bg-orange-500 text-white'
+                  ? 'bg-emerald-500 text-white'
                   : 'bg-gray-200 text-gray-400'
               }`}
             >
@@ -191,7 +192,7 @@ export default function RegisterPage() {
                 step === 2 ? 'text-gray-800' : 'text-gray-400'
               }`}
             >
-              Il tuo percorso
+              Il tuo profilo
             </span>
           </div>
         </div>
@@ -221,7 +222,7 @@ export default function RegisterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
                   placeholder="tua@email.com"
                   required
                 />
@@ -235,7 +236,7 @@ export default function RegisterPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
                   placeholder="Minimo 6 caratteri"
                   required
                 />
@@ -249,7 +250,7 @@ export default function RegisterPage() {
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
                   placeholder="Ripeti la password"
                   required
                 />
@@ -263,7 +264,7 @@ export default function RegisterPage() {
                   type="text"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
                   placeholder="Il tuo nome"
                   required
                 />
@@ -278,10 +279,10 @@ export default function RegisterPage() {
                   type="number"
                   value={eta}
                   onChange={(e) => setEta(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm"
-                  placeholder="Es. 25"
-                  min="13"
-                  max="120"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  placeholder="Es. 18"
+                  min="10"
+                  max="60"
                 />
               </div>
 
@@ -291,7 +292,7 @@ export default function RegisterPage() {
                   type="checkbox"
                   id="privacy-consent"
                   required
-                  className="mt-0.5 w-4 h-4 accent-orange-500 shrink-0 cursor-pointer"
+                  className="mt-0.5 w-4 h-4 accent-emerald-500 shrink-0 cursor-pointer"
                 />
                 <label htmlFor="privacy-consent" className="text-xs text-gray-500 leading-relaxed cursor-pointer">
                   Ho letto e accetto la{' '}
@@ -299,7 +300,7 @@ export default function RegisterPage() {
                     href="/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-orange-500 hover:text-orange-600 underline"
+                    className="text-emerald-600 hover:text-emerald-700 underline"
                   >
                     Privacy Policy
                   </a>
@@ -309,7 +310,7 @@ export default function RegisterPage() {
 
               <button
                 type="submit"
-                className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm"
+                className="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm"
               >
                 Continua →
               </button>
@@ -320,66 +321,80 @@ export default function RegisterPage() {
           {step === 2 && (
             <form onSubmit={handleRegister} className="space-y-5">
               <div>
-                <h2 className="text-lg font-bold text-gray-800">Il tuo percorso</h2>
+                <h2 className="text-lg font-bold text-gray-800">Il tuo profilo da calciatore</h2>
                 <p className="text-gray-500 text-sm mt-0.5 leading-relaxed">
-                  Queste info aiutano il Maestro AI a personalizzare la tua esperienza.
-                  Puoi saltarle e aggiungerle dopo dal profilo.
+                  Aiuta il Coach AI a personalizzare il percorso mentale.
+                  Puoi saltare e completare dal profilo.
                 </p>
               </div>
 
+              {/* Ruolo */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Quali sono i tuoi obiettivi?{' '}
+                  Qual è il tuo ruolo?{' '}
                   <span className="text-gray-400 font-normal">(opzionale)</span>
                 </label>
-                <textarea
-                  value={obiettivi}
-                  onChange={(e) => setObiettivi(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm resize-none"
-                  placeholder="Es. Lavorare sull'autostima, gestire meglio le emozioni…"
-                  rows={3}
-                />
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm bg-white"
+                >
+                  <option value="">Seleziona il ruolo…</option>
+                  {PLAYER_ROLES.map(r => (
+                    <option key={r.value} value={r.value}>{r.label}</option>
+                  ))}
+                </select>
               </div>
 
+              {/* Livello */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Passioni e interessi{' '}
+                  A che livello giochi?{' '}
+                  <span className="text-gray-400 font-normal">(opzionale)</span>
+                </label>
+                <select
+                  value={level}
+                  onChange={(e) => setLevel(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm bg-white"
+                >
+                  <option value="">Seleziona il livello…</option>
+                  {PLAYER_LEVELS.map(l => (
+                    <option key={l.value} value={l.value}>{l.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Momento difficile */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  In quale momento fatichi di più?{' '}
+                  <span className="text-gray-400 font-normal">(opzionale)</span>
+                </label>
+                <select
+                  value={difficultSituation}
+                  onChange={(e) => setDifficultSituation(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm bg-white"
+                >
+                  <option value="">Seleziona la situazione…</option>
+                  {DIFFICULT_SITUATIONS.map(s => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Paura più grande */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Qual è la tua paura più grande in campo?{' '}
                   <span className="text-gray-400 font-normal">(opzionale)</span>
                 </label>
                 <input
                   type="text"
-                  value={passioni}
-                  onChange={(e) => setPassioni(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm"
-                  placeholder="Es. Anime, crescita personale, sport…"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Il tuo sogno più grande{' '}
-                  <span className="text-gray-400 font-normal">(opzionale)</span>
-                </label>
-                <input
-                  type="text"
-                  value={sogno}
-                  onChange={(e) => setSogno(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm"
-                  placeholder="Es. Diventare la versione migliore di me…"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Dove ti trovi ora nella vita?{' '}
-                  <span className="text-gray-400 font-normal">(opzionale)</span>
-                </label>
-                <textarea
-                  value={situazioneAttuale}
-                  onChange={(e) => setSituazioneAttuale(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none text-sm resize-none"
-                  placeholder="Es. Periodo difficile, cerco direzione…"
-                  rows={2}
+                  value={biggestFear}
+                  onChange={(e) => setBiggestFear(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  placeholder="Es. Sbagliare un rigore, deludere il mister…"
+                  maxLength={200}
                 />
               </div>
 
@@ -394,9 +409,9 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 >
-                  {loading ? 'Creazione…' : 'Inizia 🍥'}
+                  {loading ? 'Creazione…' : 'Inizia ⚽'}
                 </button>
               </div>
             </form>
@@ -408,7 +423,7 @@ export default function RegisterPage() {
           Hai già un account?{' '}
           <button
             onClick={() => router.push('/login')}
-            className="text-orange-500 hover:text-orange-600 font-semibold"
+            className="text-emerald-600 hover:text-emerald-700 font-semibold"
           >
             Accedi
           </button>
