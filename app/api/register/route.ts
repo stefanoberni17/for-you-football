@@ -83,27 +83,33 @@ export async function POST(req: NextRequest) {
 
     const userId = userData.user.id;
 
-    // 2. Upsert profilo — stessa connessione admin, utente già in auth.users
-    //    nessun problema di FK o timing
-    const { error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .upsert({
-        user_id: userId,
-        name: name || null,
-        age: age ? parseInt(age) : null,
-        role: role || null,
-        level: level || null,
-        biggest_fear: biggest_fear || null,
-        goals: goals || null,
-        dream: dream || null,
-        current_situation: current_situation || null,
-        onboarding_completed: false,
-      }, { onConflict: 'user_id' });
+    // 2. Upsert profilo — isolato in try-catch separato
+    //    Anche se fallisce (tabella mancante, colonne errate, ecc.)
+    //    NON deve bloccare la registrazione — l'utente è già creato
+    try {
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .upsert({
+          user_id: userId,
+          name: name || null,
+          age: age ? parseInt(age) : null,
+          role: role || null,
+          level: level || null,
+          biggest_fear: biggest_fear || null,
+          goals: goals || null,
+          dream: dream || null,
+          current_situation: current_situation || null,
+          onboarding_completed: false,
+        }, { onConflict: 'user_id' });
 
-    if (profileError) {
-      console.error('❌ Errore salvataggio profilo:', profileError);
-      // L'utente è stato creato — non blocchiamo la registrazione per il profilo
-      // L'utente potrà completarlo dal profilo dopo il login
+      if (profileError) {
+        console.error('❌ Errore salvataggio profilo (non bloccante):', profileError);
+      } else {
+        console.log('✅ Profilo salvato per userId:', userId);
+      }
+    } catch (profileErr: any) {
+      // Eccezione dal client Supabase (es. tabella non esistente, rete) — ignoriamo
+      console.error('❌ Eccezione salvataggio profilo (non bloccante):', profileErr?.message);
     }
 
     return NextResponse.json({ success: true });
