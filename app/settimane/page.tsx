@@ -49,7 +49,7 @@ export default function SettimanePage() {
       // Carica progresso giorni
       const { data: progress } = await supabase
         .from('user_day_progress')
-        .select('week_number, day_number, completed, compressed')
+        .select('week_number, day_number, completed, completed_at, compressed')
         .eq('user_id', session.user.id)
         .eq('completed', true);
 
@@ -58,6 +58,7 @@ export default function SettimanePage() {
           weekNumber: p.week_number,
           dayNumber: p.day_number,
           completed: p.completed,
+          completedAt: p.completed_at || null,
           compressed: p.compressed || false,
         }))
       );

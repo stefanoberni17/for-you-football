@@ -7,6 +7,8 @@ import {
   getNextDay,
   getWeekProgress,
   isWeekCompleted,
+  isDayUnlocked,
+  isTimeLocked,
   DayProgress,
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY } from '@/lib/constants';
@@ -43,7 +45,7 @@ export default function HomePage() {
       // Carica progresso giorni
       const { data: progress } = await supabase
         .from('user_day_progress')
-        .select('week_number, day_number, completed, compressed')
+        .select('week_number, day_number, completed, completed_at, compressed')
         .eq('user_id', session.user.id)
         .eq('completed', true);
 
@@ -51,6 +53,7 @@ export default function HomePage() {
         weekNumber: p.week_number,
         dayNumber: p.day_number,
         completed: p.completed,
+        completedAt: p.completed_at || null,
         compressed: p.compressed || false,
       }));
 
@@ -84,6 +87,7 @@ export default function HomePage() {
   const weekProgress = getWeekProgress(currentWeek, completedDays);
   const weekDone = isWeekCompleted(currentWeek, completedDays);
   const nextDay = getNextDay(completedDays);
+  const nextDayLocked = !isDayUnlocked(nextDay.week, nextDay.day, completedDays);
   const totalCompleted = completedDays.length;
   const totalDays = BETA_MAX_WEEK * DAYS_PER_WEEK;
   const progressPercentage = Math.round((totalCompleted / totalDays) * 100);
@@ -121,6 +125,10 @@ export default function HomePage() {
           {allDone ? (
             <div className="bg-white/20 rounded-xl px-4 py-3 text-sm font-medium text-white text-center">
               🏆 Hai completato tutte le settimane della Beta! Ottimo lavoro!
+            </div>
+          ) : nextDayLocked ? (
+            <div className="bg-white/20 rounded-xl px-4 py-3 text-sm font-medium text-white text-center">
+              ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sara disponibile domani
             </div>
           ) : (
             <button

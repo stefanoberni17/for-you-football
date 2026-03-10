@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       userId
         ? supabaseAdmin
             .from('user_day_progress')
-            .select('completed, response, compressed, gate_answers')
+            .select('completed, completed_at, response, compressed, gate_answers')
             .eq('user_id', userId)
             .eq('week_number', weekNumber)
             .eq('day_number', dayNumber)
@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       giorno,
       completed: progress?.completed ?? false,
+      completedAt: progress?.completed_at ?? null,
       response: progress?.response ?? null,
       compressed: progress?.compressed ?? false,
       gateAnswers: progress?.gate_answers ?? null,

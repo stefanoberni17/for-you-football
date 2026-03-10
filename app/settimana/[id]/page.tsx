@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { isDayUnlocked, isWeekCompleted, getWeekProgress, DayProgress } from '@/lib/dayUnlockLogic';
+import { isDayUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { DAYS_PER_WEEK, GATE_DAY, BETA_MAX_WEEK } from '@/lib/constants';
 
 export default function SettimanaPage() {
@@ -22,7 +22,7 @@ export default function SettimanaPage() {
   const loadProgress = async (uid: string): Promise<DayProgress[]> => {
     const { data: progress } = await supabase
       .from('user_day_progress')
-      .select('week_number, day_number, completed, compressed')
+      .select('week_number, day_number, completed, completed_at, compressed')
       .eq('user_id', uid)
       .eq('completed', true);
 
@@ -30,6 +30,7 @@ export default function SettimanaPage() {
       weekNumber: p.week_number,
       dayNumber: p.day_number,
       completed: p.completed,
+      completedAt: p.completed_at || null,
       compressed: p.compressed || false,
     }));
     setCompletedDays(days);
@@ -224,6 +225,8 @@ export default function SettimanaPage() {
               d => d.weekNumber === weekNumber && d.dayNumber === dayNum && d.completed
             );
             const isGate = dayNum === GATE_DAY;
+            // Il giorno precedente è stato completato oggi → questo giorno è time-locked fino a domani
+            const timeLocked = !unlocked && dayNum > 1 && isTimeLocked(weekNumber, dayNum - 1, completedDays);
 
             return (
               <div
@@ -265,12 +268,15 @@ export default function SettimanaPage() {
                     {isGate && !dayDone && (
                       <span className="text-xs text-amber-600 font-medium">Review settimanale</span>
                     )}
+                    {timeLocked && (
+                      <span className="text-xs text-blue-500 font-medium">Disponibile domani</span>
+                    )}
                   </div>
                 </div>
 
                 {/* Freccia */}
                 <span className={`text-xl flex-shrink-0 ${unlocked ? 'text-gray-300' : 'text-gray-200'}`}>
-                  {!unlocked ? '🔒' : '›'}
+                  {timeLocked ? '⏳' : !unlocked ? '🔒' : '›'}
                 </span>
               </div>
             );
