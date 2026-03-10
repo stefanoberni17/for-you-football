@@ -26,7 +26,7 @@
 | Language | TypeScript 5 |
 | Frontend | React 19.2.3 |
 | Styling | Tailwind CSS 4 |
-| Auth + DB | Supabase (PostgreSQL) |
+| Auth + DB | Supabase (PostgreSQL) + `@supabase/ssr` + `@supabase/auth-helpers-nextjs` |
 | CMS | Notion API (`@notionhq/client`) |
 | AI | Anthropic Claude Sonnet (`@anthropic-ai/sdk`) |
 | Bot | Telegram (`node-telegram-bot-api`) |
@@ -42,23 +42,24 @@ for-you-football/
 │   ├── layout.tsx                         # Root layout: GlobalMeditationWrapper + BottomTabBar
 │   ├── page.tsx                           # Dashboard (home) — richiede auth
 │   ├── login/page.tsx
-│   ├── register/page.tsx
-│   ├── onboarding/page.tsx                # 8 domande football-specific
+│   ├── register/page.tsx                  # Registrazione 2-step (account + profilo calciatore)
+│   ├── onboarding/page.tsx                # Carousel 5 slide introduttive
 │   ├── chat/page.tsx                      # Chat con Coach AI
 │   ├── settimane/page.tsx                 # Lista 12 settimane con lock/unlock
 │   ├── settimana/[id]/page.tsx            # Dettaglio settimana (id = Notion record ID)
 │   ├── giorno/[week]/[day]/page.tsx       # ★ Contenuto giornaliero (Apertura + Pratica + Domanda)
 │   ├── gate/[week]/page.tsx               # ★ Gate giorno 7 (3 domande obbligatorie)
-│   ├── calendar/page.tsx                  # ★ Setup calendario settimanale
+│   ├── calendar/page.tsx                  # ★ Setup calendario settimanale (⚠️ stub — non implementato)
 │   ├── week-complete/[week]/page.tsx      # ★ Schermata completamento settimana
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
 │   └── api/
+│       ├── register/route.ts              # POST → signup Supabase + upsert profilo
 │       ├── settimane/route.ts             # GET → lista settimane da Notion DB
-│       ├── settimana/route.ts             # GET ?id= → dettaglio settimana
+│       ├── settimana/route.ts             # GET ?id= → dettaglio settimana + 7 giorni
 │       ├── giorno/route.ts                # ★ GET ?week=&day=&userId= / POST completamento
 │       ├── gate/route.ts                  # ★ GET ?week=&userId= / POST risposte gate
-│       ├── calendar/route.ts              # ★ GET/POST configurazione calendario
+│       ├── calendar/route.ts              # ★ (⚠️ stub 501 — non implementato)
 │       ├── reflection/route.ts            # GET/POST riflessioni post-giorno
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI)
 │       ├── telegram/route.ts              # POST → webhook bot Telegram
@@ -71,17 +72,17 @@ for-you-football/
 │   ├── GlobalMeditationWrapper.tsx        # Context provider pratica giornaliera
 │   ├── MeditationContext.tsx              # Context: { openMeditation, mantra, weekName }
 │   ├── MeditationPopup.tsx                # Popup Il Reset (pratica giornaliera)
-│   └── EpisodeCard.tsx                    # (deprecato — sostituire con DayCard)
+│   └── EpisodeCard.tsx                    # (deprecato — non usato, da rimuovere)
 ├── lib/
 │   ├── supabase.ts                        # Client Supabase pubblico (browser)
 │   ├── constants.ts                       # ★ IDs Notion, costanti percorso — UNICA fonte di verità
+│   ├── notion.ts                          # ★ Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
 │   ├── dayUnlockLogic.ts                  # ★ Logica sblocco giorni/settimane
-│   └── coach-ai.ts                        # ★ System prompt Coach + buildUserContext + callClaude
-├── public/
-│   └── audio/
-│       └── nature-meditation.mp3          # TODO: aggiungere audio football
+│   └── maestro-ai.ts                      # System prompt + buildUserContext + callClaude (⚠️ prompt ancora Naruto, da riscrivere per Coach football)
+├── public/                                # SVG di default Next.js (nessun audio custom)
 ├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00)
 └── docs/
+    └── supabase-schema.sql                # Schema completo: 5 tabelle + RLS + indexes + trigger
 ```
 
 > ★ = nuovo rispetto a Naruto Inner Path
@@ -89,8 +90,6 @@ for-you-football/
 ---
 
 ## Variabili Ambiente (`.env.local`)
-
-Vedi `.env.local.example` per il template completo.
 
 ```
 # Notion
@@ -117,19 +116,27 @@ CRON_SECRET=
 
 ### `profiles` (esteso da Naruto)
 ```sql
-user_id                  UUID PRIMARY KEY
+user_id                  UUID PRIMARY KEY REFERENCES auth.users(id)
 name                     TEXT
 age                      INT
--- Football-specific
-role                     TEXT    -- portiere/difensore/centrocampista/attaccante
+-- Football-specific (compilati in registrazione step 2)
+role                     TEXT    -- multi-select comma-separated: portiere,difensore,centrocampista,attaccante
 level                    TEXT    -- amatoriale/dilettante/giovanile/semi-pro
-biggest_fear             TEXT    -- risposta libera onboarding
-difficult_situation      TEXT    -- errore/panchina/giudizio/pressione
--- Shared
+biggest_fear             TEXT    -- multi-select comma-separated (7 paure: errore,deludere,panchina,giudizio,non_abbastanza,momento_chiave,infortunio)
+difficult_situation      TEXT    -- (legacy — non più usato, mantenuto per compatibilità)
+goals                    TEXT    -- obiettivi con il percorso (testo libero)
+dream                    TEXT    -- sogno da calciatore (testo libero)
+current_situation        TEXT    -- come sta vivendo il periodo nel calcio (testo libero)
+-- Percorso
 current_week             INT DEFAULT 1
+-- Telegram
 telegram_id              TEXT
+-- Stato
 onboarding_completed     BOOLEAN DEFAULT false
 last_meditation_completed DATE
+-- Coach AI
+coach_notes              TEXT    -- memoria Coach (recap conversazioni Telegram)
+created_at               TIMESTAMPTZ DEFAULT NOW()
 ```
 
 ### `user_day_progress` (nuovo — sostituisce user_episode_progress)
@@ -156,12 +163,25 @@ match_day        INTEGER            -- giorno partita (null se nessuna)
 created_at       TIMESTAMP DEFAULT NOW()
 ```
 
+### `day_reflections` (nuovo)
+```sql
+user_id              UUID NOT NULL REFERENCES auth.users(id)
+week_number          INTEGER NOT NULL
+day_number           INTEGER NOT NULL
+reflection_text      TEXT
+reflection_question  TEXT
+created_at           TIMESTAMPTZ DEFAULT NOW()
+updated_at           TIMESTAMPTZ DEFAULT NOW()
+PRIMARY KEY (user_id, week_number, day_number)
+```
+
 ### `telegram_conversations` (invariata)
 ```sql
-user_id     UUID
-role        TEXT
-content     TEXT
-created_at  TIMESTAMPTZ
+id         UUID DEFAULT gen_random_uuid() PRIMARY KEY
+user_id    UUID NOT NULL REFERENCES auth.users(id)
+role       TEXT NOT NULL    -- 'user' | 'assistant'
+content    TEXT NOT NULL
+created_at TIMESTAMPTZ DEFAULT NOW()
 ```
 
 ---
@@ -253,19 +273,28 @@ Totale: 15-20 sec. In campo, sempre.
 
 ---
 
-## Coach AI (`lib/coach-ai.ts`)
+## Coach AI (`lib/maestro-ai.ts`)
 
-**Architettura 3-layer:**
+> **⚠️ STATO ATTUALE:** Il file si chiama ancora `maestro-ai.ts` e contiene il system prompt di Naruto Inner Path (non ancora riscritto per football). La funzione `buildUserContext()` è già football-ready (legge role, level, biggest_fear dal profilo). Da rinominare in `coach-ai.ts` e riscrivere il prompt.
+
+**Funzioni esportate:**
+- `SYSTEM_PROMPT` / `SYSTEM_PROMPT_NOT_REGISTERED` — ⚠️ ancora Naruto-focused
+- `buildUserContext(userId)` — costruisce contesto utente per Claude (football-ready)
+- `callClaude(messages, systemPrompt)` — chiama `claude-sonnet-4-20250514`
+- `generateMaestroRecap(history)` — genera recap conversazione Telegram
+- `SAFETY_KEYWORDS` — parole chiave per rilevamento sicurezza
+
+**Architettura 3-layer (pianificata — da implementare):**
 - Layer 1 — WEEK_CONTEXT (dinamico): principio attivo, strumento settimana, esempi risposta
 - Layer 2 — CORE_IDENTITY (fisso): chi è il Coach, flusso risposta, 3 modalità, regole
 - Layer 3 — SAFETY (fisso): cosa non fa mai
 
-**3 Modalità:**
+**3 Modalità (pianificate):**
 | Modalità | Quando | Stile |
 |----------|--------|-------|
-| 🧠 PARTITA | Prima/dopo gara, ansia, errore, panchina | Diretto, max 3-4 frasi |
-| 🧘 ALLENAMENTO | Riflessioni, dinamiche squadra | Curioso, 4-5 frasi |
-| 🌱 PROFONDA | Identità, senso, crisi | Lento, 3-4 frasi, non risolvere |
+| PARTITA | Prima/dopo gara, ansia, errore, panchina | Diretto, max 3-4 frasi |
+| ALLENAMENTO | Riflessioni, dinamiche squadra | Curioso, 4-5 frasi |
+| PROFONDA | Identità, senso, crisi | Lento, 3-4 frasi, non risolvere |
 
 **Flusso risposta:** Riconosci → Osserva → Offri strumento → Riporta al presente
 **Regole:** max 400 token, max 1-2 domande, usa sempre lo strumento della settimana corrente
@@ -285,7 +314,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 ```
 
 ### BottomTabBar — route senza nav
-`/login` `/register` `/onboarding` `/privacy` `/gate/*` `/week-complete/*`
+`/login` `/register` `/onboarding` `/privacy`
 
 ---
 
@@ -296,28 +325,33 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 | Unità | Episodi (1-19) | Giorni (W×D, 1-7 per settimana) |
 | Progresso | `user_episode_progress` | `user_day_progress` |
 | Sblocco | Ep → Ep | Giorno → Giorno + Gate G7 |
-| Profilo extra | — | role, level, biggest_fear, difficult_situation |
-| Calendario | — | `user_weekly_calendar` |
+| Profilo extra | — | role, level, biggest_fear, goals, dream, current_situation, coach_notes |
+| Calendario | — | `user_weekly_calendar` (tabella pronta, API da implementare) |
+| Riflessioni | — | `day_reflections` + `/api/reflection` |
 | Notion | DB Episodi | DB Giorni |
-| AI persona | Maestro | Coach |
+| AI persona | Maestro | Coach (⚠️ prompt da riscrivere) |
 | Compressione | — | Giorno saltato → compressed |
 
 ---
 
 ## Cose da Fare (Prossimi Step)
 
-- [ ] **Step 2:** Supabase — `user_day_progress`, `user_weekly_calendar`, colonne profilo
-- [ ] **Step 3:** Notion API — `fetchWeek()`, `fetchDay()` con nuovi DB IDs
-- [ ] **Step 4:** Onboarding — 8 domande football
-- [ ] **Step 5:** Logica giornaliera — render + salvataggio + completamento
-- [ ] **Step 6:** Logica sblocco — sequenziale + compressione + gate G7
-- [ ] **Step 7:** Calendario — setup + nota campo + pausa partita
-- [ ] **Step 8:** Coach AI — system prompt 3-layer
-- [ ] **Step 9:** Telegram — reminder giornaliero + partita
-- [ ] Rinominare `EpisodeCard` → `DayCard` (stub `components/DayCard.tsx` da creare)
-- [ ] Aggiornare `app/api/settimane/route.ts` con nuovi DB IDs Football
-- [ ] Aggiornare `lib/maestro-ai.ts` → `lib/coach-ai.ts`
-- [ ] Aggiungere `.env.local` con valori reali (da `.env.local.example`)
+### Completati
+- [x] **Step 2:** Supabase — tabelle create (`docs/supabase-schema.sql`)
+- [x] **Step 3:** Notion API — `lib/notion.ts` con queryDatabase, fetchPage, mapSettimana, mapGiorno
+- [x] **Step 4:** Registrazione 2-step + Onboarding carousel 5 slide
+- [x] **Step 5:** Logica giornaliera — `giorno/[week]/[day]/page.tsx` completo
+- [x] **Step 6:** Logica sblocco — `lib/dayUnlockLogic.ts` completo
+- [x] **Step 9:** Telegram — webhook + cron cleanup implementati
+- [x] `DayCard.tsx` implementato
+- [x] API settimane usa env vars per DB IDs
+
+### Da fare
+- [ ] **Step 7:** Calendario — implementare `/api/calendar` e `calendar/page.tsx` (attualmente stub 501)
+- [ ] **Step 8:** Coach AI — riscrivere system prompt 3-layer football in `maestro-ai.ts`
+- [ ] Rinominare `lib/maestro-ai.ts` → `lib/coach-ai.ts` e aggiornare tutti gli import
+- [ ] Rimuovere `components/EpisodeCard.tsx` (deprecato, non usato)
+- [ ] Aggiornare `ChatBot.tsx` — rimuovere riferimenti Naruto (titolo "Maestro AI", suggerimenti)
 
 ---
 
