@@ -8,9 +8,9 @@
 const NOTION_VERSION = '2022-06-28';
 const NOTION_BASE = 'https://api.notion.com/v1';
 
-function notionHeaders() {
+function notionHeaders(): HeadersInit {
   return {
-    Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
+    Authorization: `Bearer ${process.env.NOTION_TOKEN ?? ''}`,
     'Notion-Version': NOTION_VERSION,
     'Content-Type': 'application/json',
   };
