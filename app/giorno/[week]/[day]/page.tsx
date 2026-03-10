@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
-import { GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
+import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 
 export default function GiornoPage() {
@@ -25,6 +25,7 @@ export default function GiornoPage() {
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
   const [showPracticePopup, setShowPracticePopup] = useState(false);
+  const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDay: number | null } | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -60,15 +61,27 @@ export default function GiornoPage() {
         return;
       }
 
-      // Fetch contenuto giorno
-      const res = await fetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`);
-      const data = await res.json();
+      // Fetch contenuto giorno + calendario in parallelo
+      const [giornoRes, calendarRes] = await Promise.all([
+        fetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`),
+        fetch(`/api/calendar?userId=${uid}&week=${weekNumber}`),
+      ]);
+
+      const data = await giornoRes.json();
 
       if (data.error) {
         console.error('Errore caricamento giorno:', data.error);
         router.push(`/settimana/${weekNumber}`);
         return;
       }
+
+      // Carica calendario settimanale
+      try {
+        const calData = await calendarRes.json();
+        if (calData.trainingDays && calData.trainingDays.length > 0) {
+          setCalendarData({ trainingDays: calData.trainingDays, matchDay: calData.matchDay });
+        }
+      } catch { /* calendario non configurato — ignora */ }
 
       setGiorno(data.giorno);
       setCompleted(data.completed);
@@ -99,6 +112,21 @@ export default function GiornoPage() {
   const isLastSlide = currentSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
   const weekTool = WEEK_TOOLS[weekNumber] || undefined;
+
+  // Calcola il prossimo allenamento basato sul giorno della settimana corrente
+  const getNextTrainingMessage = (): string | null => {
+    if (!calendarData || calendarData.trainingDays.length === 0) return null;
+    // JS: 0=Dom, 1=Lun, ..., 6=Sab → converti a 1=Lun, 7=Dom
+    const jsDay = new Date().getDay();
+    const today = jsDay === 0 ? 7 : jsDay;
+    const sorted = [...calendarData.trainingDays].sort((a, b) => a - b);
+    // Trova il prossimo giorno di allenamento (oggi incluso o successivo)
+    const next = sorted.find(d => d >= today) || sorted[0];
+    if (next === today) {
+      return '📅 Oggi è giorno di allenamento. Prova questo in campo!';
+    }
+    return `📅 Il tuo prossimo allenamento è ${DAY_NAMES[next]}. Prova questo in campo!`;
+  };
 
   const handleComplete = async () => {
     if (saving) return;
@@ -275,6 +303,13 @@ export default function GiornoPage() {
             <p className="text-amber-800 text-sm leading-relaxed whitespace-pre-line">
               {giorno.notaCampo}
             </p>
+            {getNextTrainingMessage() && (
+              <div className="mt-3 pt-3 border-t border-amber-200">
+                <p className="text-amber-700 text-xs font-medium">
+                  {getNextTrainingMessage()}
+                </p>
+              </div>
+            )}
           </div>
         )}
 

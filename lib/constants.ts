@@ -90,3 +90,25 @@ export const PLAYER_FEARS = [
   { value: 'momento_chiave', label: 'Fallire nei momenti chiave (rigori, finali...)' },
   { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
 ] as const;
+
+// ─── Nomi giorni della settimana (1=Lunedì ... 7=Domenica) ──────────────────
+
+export const DAY_NAMES: Record<number, string> = {
+  1: 'Lunedì',
+  2: 'Martedì',
+  3: 'Mercoledì',
+  4: 'Giovedì',
+  5: 'Venerdì',
+  6: 'Sabato',
+  7: 'Domenica',
+};
+
+export const DAY_SHORT_NAMES: Record<number, string> = {
+  1: 'Lun',
+  2: 'Mar',
+  3: 'Mer',
+  4: 'Gio',
+  5: 'Ven',
+  6: 'Sab',
+  7: 'Dom',
+};

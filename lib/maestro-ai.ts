@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
+import { DAY_NAMES } from '@/lib/constants';
 
 export const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -421,6 +422,14 @@ export async function buildUserContext(userId: string): Promise<string> {
   const currentWeek = profile?.current_week || 1;
   const totalCompleted = completedDays?.length || 0;
 
+  // Calendario settimanale
+  const { data: calendar } = await supabaseAdmin
+    .from('user_weekly_calendar')
+    .select('training_days, match_day')
+    .eq('user_id', userId)
+    .eq('week_number', currentWeek)
+    .maybeSingle();
+
   return `
 ⚡ SETTIMANA CORRENTE: Settimana ${currentWeek}. Tutte le risposte devono rispettare le regole di questa settimana del percorso.
 
@@ -443,6 +452,12 @@ ${profile?.dream ? `**Sogno da calciatore:** ${profile.dream}` : ''}
 ${completedDays && completedDays.length > 0
   ? `**Ultimi giorni:** ${completedDays.slice(-3).map((d: any) => `S${d.week_number}G${d.day_number}`).join(', ')}`
   : 'Nessun giorno ancora completato'}
+
+## Calendario settimana
+${calendar && calendar.training_days && calendar.training_days.length > 0
+  ? `**Allenamenti:** ${calendar.training_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}
+${calendar.match_day ? `**Partita:** ${DAY_NAMES[calendar.match_day]}` : '**Partita:** Nessuna partita questa settimana'}`
+  : 'Calendario non ancora impostato'}
 
 ## Riflessioni dal campo
 ${reflections && reflections.length > 0

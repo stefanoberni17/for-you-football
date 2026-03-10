@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { DAYS_PER_WEEK, GATE_DAY, BETA_MAX_WEEK } from '@/lib/constants';
+import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 
 export default function SettimanaPage() {
   const params = useParams();
@@ -18,6 +19,8 @@ export default function SettimanaPage() {
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showCompletePopup, setShowCompletePopup] = useState(false);
+  const [showCalendarPopup, setShowCalendarPopup] = useState(false);
+  const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDay: number | null } | null>(null);
 
   const loadProgress = async (uid: string): Promise<DayProgress[]> => {
     const { data: progress } = await supabase
@@ -48,9 +51,10 @@ export default function SettimanaPage() {
         return;
       }
 
-      const [settimanaRes, progress] = await Promise.all([
+      const [settimanaRes, progress, calendarRes] = await Promise.all([
         fetch(`/api/settimana?week=${weekNumber}`),
         loadProgress(session.user.id),
+        fetch(`/api/calendar?userId=${session.user.id}&week=${weekNumber}`),
       ]);
 
       const data = await settimanaRes.json();
@@ -58,6 +62,15 @@ export default function SettimanaPage() {
         console.error('Errore settimana:', data.error);
         router.push('/settimane');
         return;
+      }
+
+      // Carica calendario settimanale
+      const calData = await calendarRes.json();
+      if (calData.trainingDays && calData.trainingDays.length > 0) {
+        setCalendarData({ trainingDays: calData.trainingDays, matchDay: calData.matchDay });
+      } else {
+        // Nessun calendario configurato → mostra popup
+        setShowCalendarPopup(true);
       }
 
       setSettimana(data.settimana);
@@ -78,6 +91,27 @@ export default function SettimanaPage() {
     } else {
       setIsCompleted(done);
     }
+  };
+
+  const handleCalendarSave = async (trainingDays: number[], matchDay: number | null) => {
+    try {
+      const res = await fetch('/api/calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, weekNumber, trainingDays, matchDay }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        setCalendarData({ trainingDays, matchDay });
+        setShowCalendarPopup(false);
+      }
+    } catch (err) {
+      console.error('Errore salvataggio calendario:', err);
+    }
+  };
+
+  const handleCalendarSkip = () => {
+    setShowCalendarPopup(false);
   };
 
   if (loading) {
@@ -153,6 +187,17 @@ export default function SettimanaPage() {
         </div>
       )}
 
+      {/* Popup calendario settimanale */}
+      {showCalendarPopup && (
+        <WeeklyCalendarPopup
+          weekNumber={weekNumber}
+          existingTrainingDays={calendarData?.trainingDays}
+          existingMatchDay={calendarData?.matchDay}
+          onSave={handleCalendarSave}
+          onSkip={handleCalendarSkip}
+        />
+      )}
+
       {/* Header */}
       <div className="max-w-3xl mx-auto mb-6">
         <button
@@ -176,6 +221,14 @@ export default function SettimanaPage() {
               <span className="text-sm font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
                 ✅ Completata
               </span>
+            )}
+            {calendarData && (
+              <button
+                onClick={() => setShowCalendarPopup(true)}
+                className="text-sm text-gray-400 hover:text-emerald-600 bg-gray-50 hover:bg-emerald-50 px-3 py-1 rounded-full transition-colors"
+              >
+                📅 Calendario
+              </button>
             )}
           </div>
           <h1 className="text-2xl font-bold text-gray-800 mb-1">{settimana.titolo}</h1>
