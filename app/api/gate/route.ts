@@ -1,24 +1,112 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { queryDatabase, mapGiorno } from '@/lib/notion';
+import { GATE_DAY } from '@/lib/constants';
 
-// TODO: Implementare API route gate (Step 6 handoff doc)
-//
-// GET /api/gate?week=W&userId=U
-//   → Fetch domande gate dal DB Notion (campo "Domande Gate" del giorno 7)
-//   → Fetch risposte esistenti da user_day_progress.gate_answers
-//   → Restituisce: { questions: string[], answers: Record<string, string> | null }
-//
-// POST /api/gate
-//   Body: { userId, weekNumber, answers: Record<string, string> }
-//   → Salva gate_answers in user_day_progress per giorno 7
-//   → Marca giorno 7 come completed
-//   → Sblocca settimana successiva (aggiorna current_week se necessario)
+export const dynamic = 'force-dynamic';
 
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
+);
+
+// ─── GET /api/gate?week=W&userId=U ────────────────────────────────────────────
 export async function GET(request: NextRequest) {
-  // TODO
-  return NextResponse.json({ error: 'Not implemented' }, { status: 501 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const weekNumber = parseInt(searchParams.get('week') || '0');
+    const userId = searchParams.get('userId');
+
+    if (!weekNumber) {
+      return NextResponse.json({ error: 'Parametro week richiesto' }, { status: 400 });
+    }
+
+    // Fetch giorno 7 da Notion + progresso esistente in parallelo
+    const [dayPages, progressResult] = await Promise.all([
+      queryDatabase(process.env.NOTION_DATABASE_GIORNI!, {
+        filter: {
+          and: [
+            { property: 'Numero Settimana', number: { equals: weekNumber } },
+            { property: 'Numero Giorno', number: { equals: GATE_DAY } },
+          ],
+        },
+      }),
+      userId
+        ? supabaseAdmin
+            .from('user_day_progress')
+            .select('completed, gate_answers')
+            .eq('user_id', userId)
+            .eq('week_number', weekNumber)
+            .eq('day_number', GATE_DAY)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+
+    if (!dayPages.length) {
+      return NextResponse.json({ error: `Gate settimana ${weekNumber} non trovato` }, { status: 404 });
+    }
+
+    const giorno = mapGiorno(dayPages[0]);
+    const progress = progressResult.data;
+
+    return NextResponse.json({
+      giorno,
+      questions: giorno.domandeGate,
+      completed: progress?.completed ?? false,
+      answers: progress?.gate_answers ?? null,
+    });
+  } catch (error: any) {
+    console.error('❌ GET /api/gate:', error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
 
+// ─── POST /api/gate ────────────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
-  // TODO
-  return NextResponse.json({ error: 'Not implemented' }, { status: 501 });
+  try {
+    const { userId, weekNumber, answers } = await request.json();
+
+    if (!userId || !weekNumber || !answers) {
+      return NextResponse.json(
+        { error: 'userId, weekNumber e answers richiesti' },
+        { status: 400 }
+      );
+    }
+
+    // Salva gate_answers + marca giorno 7 come completato
+    const { error: upsertError } = await supabaseAdmin
+      .from('user_day_progress')
+      .upsert(
+        {
+          user_id: userId,
+          week_number: weekNumber,
+          day_number: GATE_DAY,
+          completed: true,
+          completed_at: new Date().toISOString(),
+          gate_answers: answers,
+        },
+        { onConflict: 'user_id,week_number,day_number' }
+      );
+
+    if (upsertError) throw upsertError;
+
+    // Aggiorna current_week nel profilo
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('current_week')
+      .eq('user_id', userId)
+      .single();
+
+    if (profile && profile.current_week <= weekNumber) {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ current_week: weekNumber + 1 })
+        .eq('user_id', userId);
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('❌ POST /api/gate:', error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
