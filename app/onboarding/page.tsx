@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -8,6 +8,32 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(1);
   const [completing, setCompleting] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  // Guard: verifica auth e se onboarding gia completato
+  useEffect(() => {
+    const check = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push('/login');
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('onboarding_completed')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (profile?.onboarding_completed) {
+        router.push('/');
+        return;
+      }
+
+      setReady(true);
+    };
+    check();
+  }, [router]);
 
   const handleComplete = async () => {
     setCompleting(true);
@@ -25,17 +51,16 @@ export default function OnboardingPage() {
         .eq('user_id', session.user.id);
 
       if (error) {
-        console.error('❌ Errore update onboarding:', error);
+        console.error('Errore update onboarding:', error);
         alert('Errore nel salvataggio. Riprova.');
         setCompleting(false);
         return;
       }
 
-      console.log('✅ Onboarding completato!');
       router.push('/');
 
     } catch (error) {
-      console.error('❌ Errore imprevisto:', error);
+      console.error('Errore imprevisto:', error);
       alert('Errore imprevisto. Riprova.');
       setCompleting(false);
     }
@@ -278,6 +303,14 @@ export default function OnboardingPage() {
 
   const currentContent = slides[currentSlide - 1];
   const isLastSlide = currentSlide === slides.length;
+
+  if (!ready) {
+    return (
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+        <div className="text-6xl animate-pulse">⚽</div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-forest-50 flex items-center justify-center p-4">
