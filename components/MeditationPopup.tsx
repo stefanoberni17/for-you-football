@@ -31,7 +31,7 @@ export default function MeditationPopup({
   const [selectedDuration, setSelectedDuration] = useState(60);
   const [timeLeft, setTimeLeft] = useState(60);
   const [isTimerComplete, setIsTimerComplete] = useState(false);
-  const [audioMode, setAudioMode] = useState<'nature' | 'naruto' | 'mute'>('nature');
+  const [audioMode, setAudioMode] = useState<'nature' | 'focus' | 'mute'>('nature');
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -112,7 +112,7 @@ export default function MeditationPopup({
     const audioSrc =
       audioMode === 'nature'
         ? '/audio/nature-meditation.mp3'
-        : '/audio/naruto-meditation.mp3';
+        : '/audio/focus-meditation.mp3';
 
     if (audioRef.current) {
       audioRef.current.src = audioSrc;
@@ -298,14 +298,14 @@ export default function MeditationPopup({
                   🌊 Natura
                 </button>
                 <button
-                  onClick={() => setAudioMode('naruto')}
+                  onClick={() => setAudioMode('focus')}
                   className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
-                    audioMode === 'naruto'
+                    audioMode === 'focus'
                       ? 'bg-forest-500 text-white shadow-lg'
                       : 'bg-white text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  🍥 Naruto
+                  ⚽ Focus
                 </button>
                 <button
                   onClick={() => setAudioMode('mute')}

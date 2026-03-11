@@ -18,7 +18,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Ciao! Sono qui per guidarti nel tuo percorso attraverso Naruto Inner Path. Come posso aiutarti oggi?',
+      content: 'Ciao! Sono qui per accompagnarti nel tuo percorso di allenamento mentale con For You Football. Come posso aiutarti oggi?',
       timestamp: new Date(),
     },
   ]);
