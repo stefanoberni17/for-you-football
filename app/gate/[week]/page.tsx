@@ -81,7 +81,7 @@ export default function GatePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-pulse">🔑</div>
           <p className="text-gray-500">Caricamento Gate...</p>
@@ -92,16 +92,16 @@ export default function GatePage() {
 
   if (showCelebration) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-amber-500 to-orange-600 flex flex-col items-center justify-center p-6 text-white">
+      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center p-6 text-white">
         <div className="text-7xl mb-6">🏆</div>
         <h1 className="text-3xl font-bold mb-2 text-center">Settimana {weekNumber} completata!</h1>
-        <p className="text-orange-100 text-center mb-2 text-sm">Hai superato il Gate</p>
-        <p className="text-orange-100 text-sm text-center mb-10 max-w-xs leading-relaxed">
+        <p className="text-white text-center mb-2 text-sm">Hai superato il Gate</p>
+        <p className="text-white text-sm text-center mb-10 max-w-xs leading-relaxed">
           Ogni settimana è un mattone. La prossima si sblocca adesso.
         </p>
         <button
           onClick={() => router.push(`/week-complete/${weekNumber}`)}
-          className="bg-white text-orange-600 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-orange-50 transition-all"
+          className="bg-white text-forest-500 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
         >
           Vedi il riepilogo →
         </button>
@@ -110,20 +110,20 @@ export default function GatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 py-8 px-4 pb-28">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-28">
       <div className="max-w-xl mx-auto space-y-5">
 
         <button
           onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-amber-600 transition-colors"
+          className="flex items-center gap-1 text-sm text-gray-500 hover:text-forest-500 transition-colors"
         >
           ← Settimana {weekNumber}
         </button>
 
         {/* Header Gate */}
-        <div className="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-amber-500">
+        <div className="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-forest-500">
           <div className="flex items-center gap-3 mb-1">
-            <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">
+            <span className="text-xs font-semibold text-forest-700 bg-forest-100 px-2.5 py-1 rounded-full">
               🔑 Gate · Settimana {weekNumber}
             </span>
             {completed && (
@@ -147,9 +147,9 @@ export default function GatePage() {
 
         {/* Prima di rispondere */}
         {giorno?.pratica && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-            <h3 className="text-xs font-bold text-amber-800 mb-2">🎯 Prima di rispondere</h3>
-            <p className="text-amber-800 text-sm leading-relaxed whitespace-pre-line">
+          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4">
+            <h3 className="text-xs font-bold text-forest-700 mb-2">🎯 Prima di rispondere</h3>
+            <p className="text-forest-700 text-sm leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
           </div>
@@ -175,7 +175,7 @@ export default function GatePage() {
                 value={answers[`q${i + 1}`] || ''}
                 onChange={(e) => setAnswers(prev => ({ ...prev, [`q${i + 1}`]: e.target.value }))}
                 disabled={completed}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
                 rows={3}
                 maxLength={800}
                 placeholder="Scrivi qui..."
@@ -190,7 +190,7 @@ export default function GatePage() {
             <button
               onClick={handleSubmit}
               disabled={!allAnswered || saving}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-4 rounded-2xl text-base shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-2xl text-base shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {saving ? 'Salvataggio...' : '🔑 Completa il Gate'}
             </button>
@@ -202,12 +202,12 @@ export default function GatePage() {
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
-              <p className="text-green-700 font-semibold text-sm">✅ Gate già completato</p>
+            <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4 text-center">
+              <p className="text-forest-700 font-semibold text-sm">✅ Gate già completato</p>
             </div>
             <button
               onClick={() => router.push(`/week-complete/${weekNumber}`)}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all"
+              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all"
             >
               Vedi riepilogo settimana →
             </button>

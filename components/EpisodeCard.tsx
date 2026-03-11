@@ -82,7 +82,7 @@ export default function EpisodeCard({
       )}
 
       {isCompleted && (
-        <div className="mt-2 text-xs text-green-600 bg-green-50 p-2 rounded text-center">
+        <div className="mt-2 text-xs text-forest-500 bg-forest-50 p-2 rounded text-center">
           ✅ Completato
         </div>
       )}

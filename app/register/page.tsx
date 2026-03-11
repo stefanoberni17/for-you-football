@@ -25,8 +25,8 @@ function ChipGroup({
             onClick={() => onToggle(opt.value)}
             className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
               active
-                ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-300 hover:text-emerald-700'
+                ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-forest-300 hover:text-forest-700'
             }`}
           >
             {active ? '✓ ' : ''}{opt.label}
@@ -118,7 +118,7 @@ export default function RegisterPage() {
   // ── Schermata successo ────────────────────────────────────────────────────
   if (success) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex flex-col items-center justify-center p-5">
+      <main className="min-h-screen bg-forest-50 flex flex-col items-center justify-center p-5">
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm text-center">
           <div className="text-5xl mb-4">📬</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Controlla la tua email!</h2>
@@ -128,16 +128,16 @@ export default function RegisterPage() {
             <br />
             Clicca il link per attivare il tuo account, poi torna qui ad accedere.
           </p>
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 text-left">
-            <p className="text-amber-800 text-xs font-semibold mb-0.5">📁 Non trovi l&apos;email?</p>
-            <p className="text-amber-700 text-xs leading-relaxed">
+          <div className="bg-forest-50 border border-forest-200 rounded-xl px-4 py-3 mb-6 text-left">
+            <p className="text-forest-700 text-xs font-semibold mb-0.5">📁 Non trovi l&apos;email?</p>
+            <p className="text-forest-600 text-xs leading-relaxed">
               Controlla <strong>Spam</strong> o <strong>Posta indesiderata</strong>.
               Se non arriva, riprova con un&apos;altra email.
             </p>
           </div>
           <button
             onClick={() => router.push('/login')}
-            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-sm"
+            className="w-full bg-forest-500 hover:bg-forest-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-sm"
           >
             Vai al Login ⚽
           </button>
@@ -147,14 +147,14 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-10 px-5">
+    <main className="min-h-screen bg-forest-50 py-10 px-5">
       <div className="w-full max-w-sm mx-auto">
 
         {/* Brand */}
         <div className="text-center mb-6">
           <div className="text-4xl mb-2">⚽</div>
           <h1 className="text-xl font-bold text-gray-800">For You Football</h1>
-          <p className="text-emerald-600 font-semibold text-xs mt-0.5 uppercase tracking-widest">
+          <p className="text-forest-500 font-semibold text-xs mt-0.5 uppercase tracking-widest">
             Allenamento mentale per calciatori
           </p>
         </div>
@@ -162,14 +162,14 @@ export default function RegisterPage() {
         {/* Step indicator */}
         <div className="flex items-center gap-2 mb-6 px-1">
           <div className="flex items-center gap-2 flex-1">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${step >= 1 ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-400'}`}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${step >= 1 ? 'bg-forest-500 text-white' : 'bg-gray-200 text-gray-400'}`}>
               {step > 1 ? '✓' : '1'}
             </div>
             <span className={`text-xs font-medium truncate ${step === 1 ? 'text-gray-800' : 'text-gray-400'}`}>Il tuo account</span>
           </div>
-          <div className={`h-0.5 w-8 shrink-0 rounded-full transition-all ${step > 1 ? 'bg-emerald-400' : 'bg-gray-200'}`} />
+          <div className={`h-0.5 w-8 shrink-0 rounded-full transition-all ${step > 1 ? 'bg-forest-400' : 'bg-gray-200'}`} />
           <div className="flex items-center gap-2 flex-1">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${step >= 2 ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-400'}`}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${step >= 2 ? 'bg-forest-500 text-white' : 'bg-gray-200 text-gray-400'}`}>
               2
             </div>
             <span className={`text-xs font-medium truncate ${step === 2 ? 'text-gray-800' : 'text-gray-400'}`}>Il tuo profilo</span>
@@ -193,28 +193,28 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Email *</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
                   placeholder="tua@email.com" required />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Password *</label>
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
                   placeholder="Minimo 8 caratteri" required />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Conferma password *</label>
                 <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
                   placeholder="Ripeti la password" required />
               </div>
 
               <div className="border-t border-gray-100 pt-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Come ti chiami? *</label>
                 <input type="text" value={nome} onChange={(e) => setNome(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
                   placeholder="Il tuo nome" required />
               </div>
 
@@ -223,16 +223,16 @@ export default function RegisterPage() {
                   Età <span className="text-gray-400 font-normal">(opzionale)</span>
                 </label>
                 <input type="number" value={eta} onChange={(e) => setEta(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
                   placeholder="Es. 18" min="10" max="60" />
               </div>
 
               <div className="flex items-start gap-3 pt-1">
                 <input type="checkbox" id="privacy-consent" required
-                  className="mt-0.5 w-4 h-4 accent-emerald-500 shrink-0 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0 cursor-pointer" />
                 <label htmlFor="privacy-consent" className="text-xs text-gray-500 leading-relaxed cursor-pointer">
                   Ho letto e accetto la{' '}
-                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-700 underline">
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-forest-500 hover:text-forest-600 underline">
                     Privacy Policy
                   </a>
                   . Acconsento al salvataggio dei miei dati per personalizzare il percorso.
@@ -240,7 +240,7 @@ export default function RegisterPage() {
               </div>
 
               <button type="submit"
-                className="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm">
+                className="w-full bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm">
                 Continua →
               </button>
             </form>
@@ -271,7 +271,7 @@ export default function RegisterPage() {
                   A che livello giochi?
                 </label>
                 <select value={level} onChange={(e) => setLevel(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm bg-white">
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm bg-white">
                   <option value="">Seleziona…</option>
                   {PLAYER_LEVELS.map((l) => (
                     <option key={l.value} value={l.value}>{l.label}</option>
@@ -295,7 +295,7 @@ export default function RegisterPage() {
                   Cosa vuoi migliorare con questo percorso?
                 </label>
                 <textarea value={goals} onChange={(e) => setGoals(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm resize-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"
                   placeholder="Es. Gestire meglio la pressione, smettere di pensare agli errori durante la partita…"
                   rows={3} maxLength={500} />
               </div>
@@ -306,7 +306,7 @@ export default function RegisterPage() {
                   Dove vuoi arrivare col calcio?
                 </label>
                 <input type="text" value={dream} onChange={(e) => setDream(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
                   placeholder="Es. Giocare in prima squadra, fare il salto di categoria…"
                   maxLength={300} />
               </div>
@@ -318,7 +318,7 @@ export default function RegisterPage() {
                   <span className="text-gray-400 font-normal">(opzionale)</span>
                 </label>
                 <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm resize-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"
                   placeholder="Es. Ho perso il posto da titolare e faccio fatica a ritrovare fiducia…"
                   rows={2} maxLength={500} />
               </div>
@@ -329,7 +329,7 @@ export default function RegisterPage() {
                   ← Indietro
                 </button>
                 <button type="submit" disabled={loading}
-                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+                  className="flex-1 bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
                   {loading ? 'Creazione…' : 'Inizia ⚽'}
                 </button>
               </div>
@@ -339,7 +339,7 @@ export default function RegisterPage() {
 
         <p className="mt-5 text-center text-sm text-gray-500">
           Hai già un account?{' '}
-          <button onClick={() => router.push('/login')} className="text-emerald-600 hover:text-emerald-700 font-semibold">
+          <button onClick={() => router.push('/login')} className="text-forest-500 hover:text-forest-600 font-semibold">
             Accedi
           </button>
         </p>

@@ -68,7 +68,7 @@ export default function PracticePopup({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+      <div className="bg-gradient-to-br from-forest-50 to-forest-100 rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
 
         {phase === 'setup' && (
           <>
@@ -78,7 +78,7 @@ export default function PracticePopup({
                 Pratica Guidata
               </h2>
               {weekTool && (
-                <p className="text-sm text-emerald-600 font-semibold mb-1">
+                <p className="text-sm text-forest-500 font-semibold mb-1">
                   🔧 {weekTool}
                 </p>
               )}
@@ -86,11 +86,11 @@ export default function PracticePopup({
             </div>
 
             {/* Step della pratica */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-5 mb-5 border border-emerald-200">
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-5 mb-5 border border-forest-200">
               <div className="space-y-2.5">
                 {practiceSteps.map((step, i) => (
                   <div key={i} className="flex gap-3 items-start">
-                    <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="w-6 h-6 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                       {i + 1}
                     </span>
                     <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
@@ -102,13 +102,13 @@ export default function PracticePopup({
             {/* Durata */}
             <div className="text-center mb-5">
               <p className="text-sm text-gray-600">
-                ⏱️ Durata: <span className="font-bold text-emerald-700">{durataMinuti} minuti</span>
+                ⏱️ Durata: <span className="font-bold text-forest-600">{durataMinuti} minuti</span>
               </p>
             </div>
 
             <button
               onClick={startPractice}
-              className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
+              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
             >
               ▶ Inizia la pratica
             </button>
@@ -142,11 +142,11 @@ export default function PracticePopup({
             </div>
 
             {/* Step pratica visibili durante timer */}
-            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 mb-5 border border-emerald-100 max-h-24 overflow-y-auto">
+            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 mb-5 border border-forest-100 max-h-24 overflow-y-auto">
               <div className="space-y-1">
                 {practiceSteps.map((step, i) => (
                   <p key={i} className="text-xs text-gray-600 leading-relaxed">
-                    <span className="font-bold text-emerald-600">{i + 1}.</span> {step}
+                    <span className="font-bold text-forest-500">{i + 1}.</span> {step}
                   </p>
                 ))}
               </div>
@@ -156,7 +156,7 @@ export default function PracticePopup({
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
                 <div
-                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-green-400 transition-transform duration-[4000ms] ease-in-out ${
+                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform duration-[4000ms] ease-in-out ${
                     breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
                   }`}
                   style={{ opacity: 0.6 }}
@@ -194,7 +194,7 @@ export default function PracticePopup({
 
             <button
               onClick={onComplete}
-              className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base"
+              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base"
             >
               Continua →
             </button>

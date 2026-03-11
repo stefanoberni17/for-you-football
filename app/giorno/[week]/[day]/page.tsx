@@ -169,7 +169,7 @@ export default function GiornoPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-pulse">⚽</div>
           <p className="text-gray-500">Caricamento giorno...</p>
@@ -183,19 +183,19 @@ export default function GiornoPage() {
   // Schermata successo dopo completamento
   if (showSuccess) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-emerald-500 to-green-700 flex flex-col items-center justify-center p-6 text-white">
+      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center p-6 text-white">
         <div className="text-7xl mb-6">🎯</div>
         <h1 className="text-3xl font-bold mb-2 text-center">Giorno {dayNumber} completato!</h1>
-        <p className="text-emerald-100 text-center mb-2">Settimana {weekNumber}</p>
-        <p className="text-emerald-100 text-sm text-center mb-4 max-w-xs">
+        <p className="text-white text-center mb-2">Settimana {weekNumber}</p>
+        <p className="text-white text-sm text-center mb-4 max-w-xs">
           Ogni giorno conta. Stai costruendo qualcosa di reale.
         </p>
-        <p className="text-emerald-200 text-xs text-center mb-10 max-w-xs">
+        <p className="text-forest-50 text-xs text-center mb-10 max-w-xs">
           Il prossimo giorno sara disponibile domani ⏳
         </p>
         <button
           onClick={handleContinue}
-          className="bg-white text-emerald-700 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-emerald-50 transition-all"
+          className="bg-white text-forest-600 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
         >
           {dayNumber + 1 === GATE_DAY
             ? 'Vai al Gate →'
@@ -205,7 +205,7 @@ export default function GiornoPage() {
         </button>
         <button
           onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="mt-4 text-emerald-200 text-sm hover:text-white transition-colors"
+          className="mt-4 text-forest-50 text-sm hover:text-white transition-colors"
         >
           Torna alla settimana
         </button>
@@ -214,28 +214,28 @@ export default function GiornoPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-8 px-4 pb-28">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-28">
       <div className="max-w-xl mx-auto space-y-5">
 
         {/* Nav */}
         <button
           onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-emerald-600 transition-colors"
+          className="flex items-center gap-1 text-sm text-gray-500 hover:text-forest-500 transition-colors"
         >
           ← Settimana {weekNumber}
         </button>
 
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-emerald-500">
+        <div className="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-forest-500">
           <div className="flex items-center gap-3 mb-1">
-            <span className="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+            <span className="text-xs font-semibold text-forest-700 bg-forest-100 px-2.5 py-1 rounded-full">
               Settimana {weekNumber} · Giorno {dayNumber}
             </span>
             {giorno.durataMinuti > 0 && (
               <span className="text-xs text-gray-400">⏱ {giorno.durataMinuti} min</span>
             )}
             {completed && (
-              <span className="text-xs font-semibold text-green-600 bg-green-100 px-2.5 py-1 rounded-full">
+              <span className="text-xs font-semibold text-forest-600 bg-forest-100 px-2.5 py-1 rounded-full">
                 ✅ Completato
               </span>
             )}
@@ -253,10 +253,10 @@ export default function GiornoPage() {
                 key={i}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   i + 1 === currentSlide
-                    ? 'w-8 bg-emerald-500'
+                    ? 'w-8 bg-forest-500'
                     : i + 1 < currentSlide
-                    ? 'w-2 bg-emerald-300'
-                    : 'w-2 bg-emerald-200'
+                    ? 'w-2 bg-forest-300'
+                    : 'w-2 bg-forest-200'
                 }`}
               />
             ))}
@@ -274,11 +274,11 @@ export default function GiornoPage() {
         )}
 
         {currentSlideData?.type === 'pratica' && (
-          <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl shadow-sm p-5 border border-emerald-100">
-            <h2 className="text-sm font-bold text-emerald-800 mb-3 flex items-center gap-2">
+          <div className="bg-forest-50 rounded-2xl shadow-sm p-5 border border-forest-100">
+            <h2 className="text-sm font-bold text-forest-700 mb-3 flex items-center gap-2">
               🎯 La Pratica
               {giorno.durataMinuti > 0 && (
-                <span className="font-normal text-emerald-600">({giorno.durataMinuti} min)</span>
+                <span className="font-normal text-forest-500">({giorno.durataMinuti} min)</span>
               )}
             </h2>
             <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
@@ -289,7 +289,7 @@ export default function GiornoPage() {
             {hasPracticeTimer && !completed && (
               <button
                 onClick={() => setShowPracticePopup(true)}
-                className="mt-4 w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2"
+                className="mt-4 w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2"
               >
                 ▶ Inizia pratica guidata ({giorno.durataMinuti} min)
               </button>
@@ -298,9 +298,9 @@ export default function GiornoPage() {
         )}
 
         {currentSlideData?.type === 'nota' && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-            <h3 className="text-xs font-bold text-amber-800 mb-1.5">⚽ Nota in campo</h3>
-            <p className="text-amber-800 text-sm leading-relaxed whitespace-pre-line">
+          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4">
+            <h3 className="text-xs font-bold text-forest-700 mb-1.5">⚽ Nota in campo</h3>
+            <p className="text-forest-700 text-sm leading-relaxed whitespace-pre-line">
               {giorno.notaCampo}
             </p>
             {getNextTrainingMessage() && (
@@ -323,7 +323,7 @@ export default function GiornoPage() {
               value={response}
               onChange={(e) => setResponse(e.target.value)}
               disabled={completed}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
               rows={4}
               maxLength={1000}
               placeholder="Scrivi qui la tua risposta (opzionale)..."
@@ -358,7 +358,7 @@ export default function GiornoPage() {
           {!isLastSlide && (
             <button
               onClick={() => setCurrentSlide(s => s + 1)}
-              className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-3 rounded-xl transition-all text-sm"
+              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl transition-all text-sm"
             >
               Continua →
             </button>
@@ -368,7 +368,7 @@ export default function GiornoPage() {
             <button
               onClick={handleComplete}
               disabled={saving}
-              className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all text-sm disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {saving ? 'Salvataggio...' : '✅ Segna come completato'}
             </button>
@@ -377,7 +377,7 @@ export default function GiornoPage() {
           {isLastSlide && completed && (
             <button
               onClick={handleContinue}
-              className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-3 rounded-xl shadow-lg hover:from-emerald-600 hover:to-green-700 transition-all text-sm"
+              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl shadow-lg hover:from-forest-600 hover:to-forest-700 transition-all text-sm"
             >
               {dayNumber + 1 === GATE_DAY
                 ? 'Vai al Gate →'
@@ -388,8 +388,8 @@ export default function GiornoPage() {
 
         {/* Stato gia completato */}
         {completed && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
-            <p className="text-green-700 font-semibold text-xs">✅ Giorno gia completato — puoi rileggere le slide</p>
+          <div className="bg-forest-50 border border-forest-200 rounded-xl p-3 text-center">
+            <p className="text-forest-700 font-semibold text-xs">✅ Giorno gia completato — puoi rileggere le slide</p>
           </div>
         )}
 

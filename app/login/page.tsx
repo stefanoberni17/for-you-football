@@ -65,7 +65,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex flex-col items-center justify-center p-5">
+    <main className="min-h-screen bg-forest-50 flex flex-col items-center justify-center p-5">
 
       {/* ── Hero brand ── */}
       <div className="text-center mb-7 w-full max-w-sm">
@@ -73,12 +73,12 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
           For You Football
         </h1>
-        <p className="text-emerald-600 font-semibold text-xs mt-1 uppercase tracking-widest">
+        <p className="text-forest-500 font-semibold text-xs mt-1 uppercase tracking-widest">
           Allenamento mentale per calciatori
         </p>
 
         {/* Quote */}
-        <div className="mt-4 bg-white/70 backdrop-blur-sm rounded-2xl px-5 py-3 border border-emerald-100 shadow-sm">
+        <div className="mt-4 bg-white/70 backdrop-blur-sm rounded-2xl px-5 py-3 border border-forest-100 shadow-sm">
           <p className="text-gray-600 text-sm leading-relaxed italic">
             "La mente è il muscolo più importante in campo.
             <br />
@@ -107,7 +107,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none transition-all text-sm"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm"
               placeholder="tua@email.com"
               required
             />
@@ -121,7 +121,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none transition-all text-sm"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm"
               placeholder="••••••••"
               required
             />
@@ -130,7 +130,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="w-full bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             {loading ? 'Accesso in corso…' : 'Accedi ⚽'}
           </button>
@@ -141,7 +141,7 @@ export default function LoginPage() {
           Non hai un account?{' '}
           <button
             onClick={() => router.push('/register')}
-            className="text-emerald-600 hover:text-emerald-700 font-semibold"
+            className="text-forest-500 hover:text-forest-600 font-semibold"
           >
             Registrati
           </button>

@@ -1,6 +1,6 @@
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-orange-50 to-orange-100 py-10 px-5">
+    <main className="min-h-screen bg-forest-50 py-10 px-5">
       <div className="w-full max-w-2xl mx-auto">
 
         {/* Header */}
@@ -24,19 +24,19 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-base font-bold text-gray-800 mb-3">1. Dati che raccogliamo</h2>
             <div className="space-y-3">
-              <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+              <div className="bg-forest-50 border border-forest-100 rounded-xl p-4">
                 <p className="font-semibold text-gray-800 mb-1">👤 Profilo personale</p>
                 <p className="text-gray-600">Nome, età, email, obiettivi, passioni, sogno e situazione attuale. Forniti volontariamente durante la registrazione o dal profilo.</p>
               </div>
-              <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+              <div className="bg-forest-50 border border-forest-100 rounded-xl p-4">
                 <p className="font-semibold text-gray-800 mb-1">📺 Progressi nel percorso</p>
                 <p className="text-gray-600">Episodi completati, settimana corrente e tracker delle pratiche settimanali.</p>
               </div>
-              <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+              <div className="bg-forest-50 border border-forest-100 rounded-xl p-4">
                 <p className="font-semibold text-gray-800 mb-1">✍️ Riflessioni</p>
                 <p className="text-gray-600">Le risposte alle domande riflessive degli episodi (max 500 caratteri ciascuna).</p>
               </div>
-              <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+              <div className="bg-forest-50 border border-forest-100 rounded-xl p-4">
                 <p className="font-semibold text-gray-800 mb-1">💬 Conversazioni Telegram</p>
                 <p className="text-gray-600">I messaggi scambiati con il Maestro AI tramite il bot Telegram, necessari per mantenere il contesto della conversazione.</p>
               </div>
@@ -48,21 +48,21 @@ export default function PrivacyPage() {
             <h2 className="text-base font-bold text-gray-800 mb-3">2. Come utilizziamo i tuoi dati</h2>
             <ul className="space-y-2">
               <li className="flex items-start gap-2">
-                <span className="text-orange-500 mt-0.5">•</span>
+                <span className="text-forest-500 mt-0.5">•</span>
                 <span>Personalizzare le risposte del Maestro AI in base al tuo percorso e alla tua storia</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-orange-500 mt-0.5">•</span>
+                <span className="text-forest-500 mt-0.5">•</span>
                 <span>Tenere traccia dei tuoi progressi e sbloccare i contenuti in sequenza</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-orange-500 mt-0.5">•</span>
+                <span className="text-forest-500 mt-0.5">•</span>
                 <span>Migliorare l'esperienza nel tempo tramite pattern anonimi (mai dati personali identificabili)</span>
               </li>
             </ul>
-            <div className="mt-4 bg-green-50 border border-green-100 rounded-xl p-4">
-              <p className="font-semibold text-green-800 mb-1">✅ Non vendiamo i tuoi dati</p>
-              <p className="text-green-700">I tuoi dati non vengono mai venduti, ceduti o condivisi con terze parti a scopo commerciale.</p>
+            <div className="mt-4 bg-forest-50 border border-forest-100 rounded-xl p-4">
+              <p className="font-semibold text-forest-700 mb-1">✅ Non vendiamo i tuoi dati</p>
+              <p className="text-forest-600">I tuoi dati non vengono mai venduti, ceduti o condivisi con terze parti a scopo commerciale.</p>
             </div>
           </section>
 
@@ -121,15 +121,15 @@ export default function PrivacyPage() {
             <p className="mb-3">Hai il diritto di:</p>
             <ul className="space-y-2 mb-4">
               <li className="flex items-start gap-2">
-                <span className="text-orange-500 mt-0.5">•</span>
+                <span className="text-forest-500 mt-0.5">•</span>
                 <span>Accedere ai dati che conserviamo su di te</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-orange-500 mt-0.5">•</span>
+                <span className="text-forest-500 mt-0.5">•</span>
                 <span>Richiedere la correzione di dati errati</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-orange-500 mt-0.5">•</span>
+                <span className="text-forest-500 mt-0.5">•</span>
                 <span>Richiedere la cancellazione del tuo account e di tutti i dati associati</span>
               </li>
             </ul>
@@ -153,7 +153,7 @@ export default function PrivacyPage() {
 
         {/* Back link */}
         <div className="text-center mt-6">
-          <a href="/login" className="text-sm text-orange-500 hover:text-orange-600 font-medium">
+          <a href="/login" className="text-sm text-forest-500 hover:text-forest-600 font-medium">
             ← Torna al login
           </a>
         </div>

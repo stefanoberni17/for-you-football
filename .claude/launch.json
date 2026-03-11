@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "for-you-football",
-      "runtimeExecutable": "cmd.exe",
-      "runtimeArgs": ["/c", "npm run dev -- --port 3001"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "-p", "3001"],
       "port": 3001
     }
   ]

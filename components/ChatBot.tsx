@@ -113,12 +113,12 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-white rounded-lg shadow-lg border border-gray-200">
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-t-lg flex-shrink-0">
+      <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white p-4 rounded-t-lg flex-shrink-0">
         <div className="flex items-center gap-2">
           <Bot className="w-6 h-6" />
           <div>
             <h3 className="font-semibold">Maestro AI</h3>
-            <p className="text-xs text-orange-100">Il tuo compagno di viaggio</p>
+            <p className="text-xs text-forest-50">Il tuo compagno di viaggio</p>
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
                 <button
                   key={i}
                   onClick={() => sendMessageText(s)}
-                  className="text-left text-xs bg-orange-50 text-orange-700 border border-orange-200 rounded-full px-3 py-1.5 hover:bg-orange-100 hover:border-orange-300 transition-colors active:scale-95"
+                  className="text-left text-xs bg-forest-50 text-forest-700 border border-forest-200 rounded-full px-3 py-1.5 hover:bg-forest-100 hover:border-forest-300 transition-colors active:scale-95"
                 >
                   {s}
                 </button>
@@ -153,7 +153,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
               className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                 message.role === 'user'
                   ? 'bg-blue-500 text-white'
-                  : 'bg-orange-500 text-white'
+                  : 'bg-forest-500 text-white'
               }`}
             >
               {message.role === 'user' ? (
@@ -185,11 +185,11 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
         ))}
         {isLoading && (
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-forest-500 text-white flex items-center justify-center">
               <Bot className="w-5 h-5" />
             </div>
             <div className="bg-gray-100 rounded-lg p-3">
-              <Loader2 className="w-5 h-5 animate-spin text-orange-500" />
+              <Loader2 className="w-5 h-5 animate-spin text-forest-500" />
             </div>
           </div>
         )}
@@ -205,12 +205,12 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
             onChange={(e) => setInput(e.target.value)}
             placeholder="Scrivi un messaggio..."
             disabled={isLoading}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-forest-500 disabled:bg-gray-100"
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-forest-500 text-white rounded-lg hover:bg-forest-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? (
               <Loader2 className="w-5 h-5 animate-spin" />

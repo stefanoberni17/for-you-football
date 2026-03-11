@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { DM_Sans } from "next/font/google";
+import { Outfit } from "next/font/google";
 import BottomTabBar from "@/components/BottomTabBar";
 import GlobalMeditationWrapper from "@/components/GlobalMeditationWrapper";
 
-const dmSans = DM_Sans({
+const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" className={dmSans.className}>
+    <html lang="it" className={outfit.className}>
       <body className="pb-20">
         <GlobalMeditationWrapper>
           {children}

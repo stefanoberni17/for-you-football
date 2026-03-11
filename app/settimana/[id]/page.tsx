@@ -116,7 +116,7 @@ export default function SettimanaPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚽</div>
           <p className="text-xl text-gray-600">Caricamento settimana...</p>
@@ -127,10 +127,10 @@ export default function SettimanaPage() {
 
   if (!settimana) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-red-600">Settimana non trovata</p>
-          <button onClick={() => router.push('/settimane')} className="mt-4 bg-emerald-500 text-white px-6 py-2 rounded-full">
+          <button onClick={() => router.push('/settimane')} className="mt-4 bg-forest-500 text-white px-6 py-2 rounded-full">
             Torna al percorso
           </button>
         </div>
@@ -143,15 +143,15 @@ export default function SettimanaPage() {
   const progress = getWeekProgress(weekNumber, completedDays);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-8 px-4 pb-24">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
 
       {/* Popup settimana completata */}
       {showCompletePopup && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+          <div className="bg-forest-50 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
             <div className="text-7xl mb-4">🏆</div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Settimana completata!</h2>
-            <p className="text-emerald-700 font-semibold text-sm mb-1">Settimana {weekNumber}</p>
+            <p className="text-forest-600 font-semibold text-sm mb-1">Settimana {weekNumber}</p>
             <p className="text-gray-600 text-sm mb-6 leading-relaxed">
               Hai superato il Gate e completato tutti i giorni. Il tuo strumento mentale cresce! ⚽
             </p>
@@ -159,7 +159,7 @@ export default function SettimanaPage() {
               <>
                 <button
                   onClick={() => { setShowCompletePopup(false); router.push(`/settimana/${nextWeekNumber}`); }}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-3 rounded-2xl mb-3 transition-all shadow-md"
+                  className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-2xl mb-3 transition-all shadow-md"
                 >
                   Vai alla Settimana {nextWeekNumber} →
                 </button>
@@ -172,12 +172,12 @@ export default function SettimanaPage() {
               </>
             ) : (
               <>
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-800">
+                <div className="bg-forest-50 border border-forest-200 rounded-xl p-3 mb-4 text-xs text-forest-700">
                   🔒 Le prossime settimane arriveranno presto. Stai facendo un ottimo lavoro!
                 </div>
                 <button
                   onClick={() => { setShowCompletePopup(false); router.push('/'); }}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-3 rounded-2xl transition-all"
+                  className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-2xl transition-all"
                 >
                   Torna alla Home 🏠
                 </button>
@@ -202,14 +202,14 @@ export default function SettimanaPage() {
       <div className="max-w-3xl mx-auto mb-6">
         <button
           onClick={() => router.push('/settimane')}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-emerald-600 mb-4 transition-colors"
+          className="flex items-center gap-1 text-sm text-gray-500 hover:text-forest-500 mb-4 transition-colors"
         >
           ← Tutte le settimane
         </button>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-emerald-500">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-forest-500">
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="text-sm font-semibold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
+            <span className="text-sm font-semibold text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
               Settimana {weekNumber}
             </span>
             {settimana.principio && (
@@ -218,7 +218,7 @@ export default function SettimanaPage() {
               </span>
             )}
             {isCompleted && (
-              <span className="text-sm font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
+              <span className="text-sm font-semibold text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
                 ✅ Completata
               </span>
             )}
@@ -249,7 +249,7 @@ export default function SettimanaPage() {
             </div>
             <div className="w-full bg-gray-100 rounded-full h-2">
               <div
-                className={`h-2 rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-emerald-500'}`}
+                className={`h-2 rounded-full transition-all duration-500 ${isCompleted ? 'bg-forest-500' : 'bg-forest-500'}`}
                 style={{ width: `${Math.round((progress / DAYS_PER_WEEK) * 100)}%` }}
               />
             </div>
@@ -260,9 +260,9 @@ export default function SettimanaPage() {
       {/* Obiettivo settimana */}
       {settimana.obiettivoSettimana && (
         <div className="max-w-3xl mx-auto mb-5">
-          <div className="bg-emerald-50 border-l-4 border-emerald-400 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-emerald-800 mb-1">🎯 Obiettivo della settimana</h3>
-            <p className="text-emerald-700 text-sm leading-relaxed">{settimana.obiettivoSettimana}</p>
+          <div className="bg-forest-50 border-l-4 border-forest-400 rounded-xl p-4">
+            <h3 className="text-sm font-bold text-forest-700 mb-1">🎯 Obiettivo della settimana</h3>
+            <p className="text-forest-600 text-sm leading-relaxed">{settimana.obiettivoSettimana}</p>
           </div>
         </div>
       )}
@@ -287,18 +287,18 @@ export default function SettimanaPage() {
                 onClick={() => unlocked && router.push(`/giorno/${weekNumber}/${dayNum}`)}
                 className={`bg-white rounded-xl shadow-sm p-4 flex items-center gap-4 transition-all border ${
                   unlocked
-                    ? 'cursor-pointer hover:shadow-md hover:border-emerald-300'
+                    ? 'cursor-pointer hover:shadow-md hover:border-forest-300'
                     : 'opacity-50 cursor-not-allowed border-gray-100'
-                } ${dayDone ? 'border-green-200 bg-green-50/50' : 'border-gray-100'}`}
+                } ${dayDone ? 'border-forest-200 bg-forest-50/50' : 'border-gray-100'}`}
               >
                 {/* Numero giorno */}
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
                   dayDone
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-forest-500 text-white'
                     : isGate
-                    ? 'bg-amber-500 text-white'
+                    ? 'bg-forest-500 text-white'
                     : unlocked
-                    ? 'bg-emerald-500 text-white'
+                    ? 'bg-forest-500 text-white'
                     : 'bg-gray-200 text-gray-400'
                 }`}>
                   {dayDone ? '✓' : isGate ? '🔑' : dayNum}
@@ -319,7 +319,7 @@ export default function SettimanaPage() {
                       <p className="text-xs text-gray-400">{giorno.tipoGiorno}</p>
                     )}
                     {isGate && !dayDone && (
-                      <span className="text-xs text-amber-600 font-medium">Review settimanale</span>
+                      <span className="text-xs text-forest-500 font-medium">Review settimanale</span>
                     )}
                     {timeLocked && (
                       <span className="text-xs text-blue-500 font-medium">Disponibile domani</span>
@@ -342,7 +342,7 @@ export default function SettimanaPage() {
         <div className="max-w-3xl mx-auto mb-6">
           <button
             onClick={() => router.push(`/settimana/${nextWeekNumber}`)}
-            className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-lg"
+            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-lg"
           >
             Vai alla Settimana {nextWeekNumber} →
           </button>
@@ -351,8 +351,8 @@ export default function SettimanaPage() {
 
       {isCompleted && !nextWeekAvailable && (
         <div className="max-w-3xl mx-auto mb-6">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-            <p className="text-amber-800 font-semibold text-sm">
+          <div className="bg-forest-50 border border-forest-200 rounded-xl p-4 text-center">
+            <p className="text-forest-700 font-semibold text-sm">
               🏆 Hai completato tutte le settimane disponibili in Beta! Le prossime arrivano presto.
             </p>
           </div>

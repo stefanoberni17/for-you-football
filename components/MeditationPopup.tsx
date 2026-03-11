@@ -291,7 +291,7 @@ export default function MeditationPopup({
                   onClick={() => setAudioMode('nature')}
                   className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
                     audioMode === 'nature'
-                      ? 'bg-green-500 text-white shadow-lg'
+                      ? 'bg-forest-500 text-white shadow-lg'
                       : 'bg-white text-gray-600 hover:bg-gray-100'
                   }`}
                 >
@@ -301,7 +301,7 @@ export default function MeditationPopup({
                   onClick={() => setAudioMode('naruto')}
                   className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
                     audioMode === 'naruto'
-                      ? 'bg-orange-500 text-white shadow-lg'
+                      ? 'bg-forest-500 text-white shadow-lg'
                       : 'bg-white text-gray-600 hover:bg-gray-100'
                   }`}
                 >
@@ -326,7 +326,7 @@ export default function MeditationPopup({
               disabled={!isTimerComplete}
               className={`w-full font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base ${
                 isTimerComplete
-                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white cursor-pointer'
+                  ? 'bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white cursor-pointer'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >

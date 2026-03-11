@@ -26,8 +26,8 @@ function ChipGroup({
             onClick={() => onToggle(opt.value)}
             className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
               active
-                ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-300 hover:text-emerald-700'
+                ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-forest-300 hover:text-forest-700'
             }`}
           >
             {active ? '✓ ' : ''}{opt.label}
@@ -143,7 +143,7 @@ export default function ProfiloPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-bounce">⚽</div>
           <p className="text-xl text-gray-600">Caricamento...</p>
@@ -153,12 +153,12 @@ export default function ProfiloPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-8 px-4 pb-28">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-28">
 
       {/* Header */}
       <div className="max-w-xl mx-auto mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-md">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-forest-500 to-forest-600 flex items-center justify-center shadow-md">
             <span className="text-white font-bold text-xl">
               {nome ? nome.charAt(0).toUpperCase() : '⚽'}
             </span>
@@ -177,7 +177,7 @@ export default function ProfiloPage() {
         )}
 
         {/* ── Settimana corrente ───────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 border border-emerald-100">
+        <div className="bg-white rounded-2xl shadow-sm p-5 border border-forest-100">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🎯</span>
             <div>
@@ -194,14 +194,14 @@ export default function ProfiloPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Nome *</label>
             <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
               placeholder="Il tuo nome" />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Età</label>
             <input type="number" value={eta} onChange={(e) => setEta(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
               placeholder="Es. 18" min="10" max="60" />
           </div>
         </div>
@@ -222,7 +222,7 @@ export default function ProfiloPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">A che livello giochi?</label>
             <select value={level} onChange={(e) => setLevel(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm bg-white">
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm bg-white">
               <option value="">Seleziona…</option>
               {PLAYER_LEVELS.map((l) => (
                 <option key={l.value} value={l.value}>{l.label}</option>
@@ -249,14 +249,14 @@ export default function ProfiloPage() {
               Cosa vuoi migliorare con questo percorso?
             </label>
             <textarea value={goals} onChange={(e) => setGoals(e.target.value)} rows={3}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm resize-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"
               placeholder="Es. Gestire meglio la pressione, smettere di pensare agli errori…" maxLength={500} />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Dove vuoi arrivare col calcio?</label>
             <input type="text" value={dream} onChange={(e) => setDream(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
               placeholder="Es. Giocare in prima squadra, fare il salto di categoria…" maxLength={300} />
           </div>
 
@@ -265,7 +265,7 @@ export default function ProfiloPage() {
               Come stai vivendo questo periodo nel calcio?
             </label>
             <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)} rows={2}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm resize-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"
               placeholder="Es. Ho perso il posto da titolare e faccio fatica a ritrovare fiducia…" maxLength={500} />
           </div>
         </div>
@@ -286,7 +286,7 @@ export default function ProfiloPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Il tuo ID Telegram</label>
             <input type="text" value={telegramId} onChange={(e) => setTelegramId(e.target.value)} autoComplete="off"
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
               placeholder="Es. 766672351" />
           </div>
         </div>
@@ -294,7 +294,7 @@ export default function ProfiloPage() {
         {/* ── Salva ───────────────────────────────────────────────────────── */}
         <button type="submit" disabled={saving}
           className={`w-full font-bold py-3.5 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed text-white shadow-sm ${
-            success ? 'bg-green-500' : 'bg-emerald-500 hover:bg-emerald-600'
+            success ? 'bg-forest-500' : 'bg-forest-500 hover:bg-forest-600'
           }`}>
           {saving ? 'Salvataggio…' : success ? '✅ Salvato!' : '💾 Salva modifiche'}
         </button>

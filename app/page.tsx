@@ -73,7 +73,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚽</div>
           <p className="text-xl text-gray-600">Caricamento...</p>
@@ -94,7 +94,7 @@ export default function HomePage() {
   const allDone = totalCompleted >= totalDays;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-8 px-4 pb-24">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
       {/* Header */}
       <div className="max-w-2xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-gray-800">
@@ -107,16 +107,16 @@ export default function HomePage() {
 
       <div className="max-w-2xl mx-auto space-y-5">
         {/* CTA principale */}
-        <div className="bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
+        <div className="bg-gradient-to-r from-forest-500 to-forest-600 rounded-2xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-emerald-100 text-sm mb-1">📍 Sei qui</p>
+              <p className="text-white text-sm mb-1">📍 Sei qui</p>
               <h2 className="text-xl font-bold">
                 Settimana {currentWeek}
                 {settimana?.titolo ? ` — ${settimana.titolo}` : ''}
               </h2>
               {settimana?.principio && (
-                <p className="text-emerald-100 text-sm mt-1">🧭 {settimana.principio}</p>
+                <p className="text-white text-sm mt-1">🧭 {settimana.principio}</p>
               )}
             </div>
             <div className="text-5xl">⚽</div>
@@ -133,7 +133,7 @@ export default function HomePage() {
           ) : (
             <button
               onClick={() => router.push(`/giorno/${nextDay.week}/${nextDay.day}`)}
-              className="w-full sm:w-auto bg-white text-emerald-700 font-bold py-2.5 px-5 rounded-xl hover:bg-emerald-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto bg-white text-forest-700 font-bold py-2.5 px-5 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
             >
               <span>▶</span>
               <span>
@@ -149,7 +149,7 @@ export default function HomePage() {
         <div className="bg-white rounded-2xl shadow-lg p-5">
           <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
             📊 Settimana {currentWeek} in corso
-            {weekDone && <span className="text-green-500 text-sm font-medium">✅ Completata</span>}
+            {weekDone && <span className="text-forest-500 text-sm font-medium">✅ Completata</span>}
           </h2>
 
           {/* Day dots */}
@@ -164,9 +164,9 @@ export default function HomePage() {
                   key={day}
                   className={`flex-1 h-9 rounded-lg flex items-center justify-center text-xs font-bold ${
                     done
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-forest-500 text-white'
                       : isGate
-                      ? 'bg-amber-100 text-amber-600 border border-amber-300'
+                      ? 'bg-forest-100 text-forest-500 border border-forest-300'
                       : 'bg-gray-100 text-gray-400'
                   }`}
                 >
@@ -182,7 +182,7 @@ export default function HomePage() {
             </p>
             <button
               onClick={() => router.push(`/settimana/${currentWeek}`)}
-              className="text-xs text-emerald-600 font-semibold hover:underline"
+              className="text-xs text-forest-500 font-semibold hover:underline"
             >
               Vedi settimana →
             </button>
@@ -194,16 +194,16 @@ export default function HomePage() {
           <h2 className="text-base font-bold text-gray-800 mb-4">🎯 Il Tuo Percorso</h2>
 
           <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-emerald-600">{totalCompleted}</div>
+            <div className="bg-forest-50 border-l-4 border-forest-500 p-3 rounded-xl">
+              <div className="text-2xl font-bold text-forest-500">{totalCompleted}</div>
               <div className="text-xs text-gray-600">Giorni completati</div>
             </div>
             <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-xl">
               <div className="text-2xl font-bold text-blue-600">{totalDays}</div>
               <div className="text-xs text-gray-600">Totali Beta</div>
             </div>
-            <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-green-600">{progressPercentage}%</div>
+            <div className="bg-forest-50 border-l-4 border-forest-500 p-3 rounded-xl">
+              <div className="text-2xl font-bold text-forest-500">{progressPercentage}%</div>
               <div className="text-xs text-gray-600">Progresso</div>
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function HomePage() {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className="bg-gradient-to-r from-emerald-500 to-green-600 h-3 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-forest-500 to-forest-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -223,7 +223,7 @@ export default function HomePage() {
 
           <button
             onClick={() => router.push('/settimane')}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl transition-all w-full sm:w-auto"
+            className="bg-forest-500 hover:bg-forest-600 text-white font-bold py-3 px-6 rounded-xl transition-all w-full sm:w-auto"
           >
             🗺️ Vedi tutto il percorso
           </button>

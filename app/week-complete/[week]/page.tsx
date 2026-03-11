@@ -29,7 +29,7 @@ export default function WeekCompletePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-emerald-500 to-green-700 flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex items-center justify-center">
         <div className="text-6xl animate-pulse">🏆</div>
       </main>
     );
@@ -41,7 +41,7 @@ export default function WeekCompletePage() {
   const strumento = WEEK_TOOLS[weekNumber];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-emerald-500 to-green-700 py-10 px-5 flex flex-col items-center">
+    <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 py-10 px-5 flex flex-col items-center">
       <div className="w-full max-w-md">
 
         {/* Celebration */}
@@ -50,7 +50,7 @@ export default function WeekCompletePage() {
           <h1 className="text-3xl font-bold text-white mb-2">
             Settimana {weekNumber} completata!
           </h1>
-          <p className="text-emerald-100 text-base">
+          <p className="text-white text-base">
             Hai fatto tutto. Ogni giorno, anche i più duri.
           </p>
         </div>
@@ -68,13 +68,13 @@ export default function WeekCompletePage() {
           )}
 
           {principio && (
-            <p className="text-emerald-100 text-sm text-center">
+            <p className="text-white text-sm text-center">
               Principio: <span className="font-semibold text-white">{principio}</span>
             </p>
           )}
 
           {settimana?.messaggioChiusura && (
-            <p className="text-emerald-100 text-sm leading-relaxed mt-4 italic text-center">
+            <p className="text-white text-sm leading-relaxed mt-4 italic text-center">
               "{settimana.messaggioChiusura}"
             </p>
           )}
@@ -86,14 +86,14 @@ export default function WeekCompletePage() {
             <>
               <button
                 onClick={() => router.push(`/settimana/${nextWeek}`)}
-                className="w-full bg-white text-emerald-700 font-bold py-4 px-6 rounded-2xl text-base shadow-lg hover:bg-emerald-50 transition-all flex items-center justify-center gap-2"
+                className="w-full bg-white text-forest-600 font-bold py-4 px-6 rounded-2xl text-base shadow-lg hover:bg-forest-50 transition-all flex items-center justify-center gap-2"
               >
                 <span>Inizia la Settimana {nextWeek}</span>
                 <span>→</span>
               </button>
               <button
                 onClick={() => router.push('/')}
-                className="w-full text-emerald-200 hover:text-white text-sm py-2 transition-colors text-center"
+                className="w-full text-forest-50 hover:text-white text-sm py-2 transition-colors text-center"
               >
                 Torna alla Home
               </button>
@@ -103,13 +103,13 @@ export default function WeekCompletePage() {
               <div className="bg-white/10 border border-white/20 rounded-2xl p-5 text-center">
                 <p className="text-2xl mb-2">⏳</p>
                 <p className="text-white font-bold mb-1">Hai completato la Beta!</p>
-                <p className="text-emerald-100 text-sm leading-relaxed">
+                <p className="text-white text-sm leading-relaxed">
                   Le prossime settimane arriveranno presto. Stai facendo un lavoro straordinario.
                 </p>
               </div>
               <button
                 onClick={() => router.push('/')}
-                className="w-full bg-white text-emerald-700 font-bold py-4 rounded-2xl shadow-lg hover:bg-emerald-50 transition-all"
+                className="w-full bg-white text-forest-600 font-bold py-4 rounded-2xl shadow-lg hover:bg-forest-50 transition-all"
               >
                 Torna alla Home 🏠
               </button>

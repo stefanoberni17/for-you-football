@@ -53,21 +53,21 @@ export default function OnboardingPage() {
             La mente è il tuo strumento più potente in campo.<br />
             Questo percorso ti insegna ad usarla.
           </p>
-          <div className="bg-emerald-50 rounded-xl p-6 text-left space-y-3 text-gray-700">
+          <div className="bg-forest-50 rounded-xl p-6 text-left space-y-3 text-gray-700">
             <p className="flex items-start gap-3">
-              <span className="text-emerald-500 mt-1">•</span>
+              <span className="text-forest-500 mt-1">•</span>
               <span>Gestire la pressione e i momenti difficili</span>
             </p>
             <p className="flex items-start gap-3">
-              <span className="text-emerald-500 mt-1">•</span>
+              <span className="text-forest-500 mt-1">•</span>
               <span>Restare presente e concentrato durante la partita</span>
             </p>
             <p className="flex items-start gap-3">
-              <span className="text-emerald-500 mt-1">•</span>
+              <span className="text-forest-500 mt-1">•</span>
               <span>Costruire strumenti mentali concreti e allenabili</span>
             </p>
             <p className="flex items-start gap-3">
-              <span className="text-emerald-500 mt-1">•</span>
+              <span className="text-forest-500 mt-1">•</span>
               <span>Diventare il calciatore che puoi essere</span>
             </p>
           </div>
@@ -85,7 +85,7 @@ export default function OnboardingPage() {
       subtitle: '',
       content: (
         <div className="max-w-2xl mx-auto space-y-4">
-          <div className="bg-emerald-50 rounded-xl p-5 border-l-4 border-emerald-400">
+          <div className="bg-forest-50 rounded-xl p-5 border-l-4 border-forest-400">
             <div className="flex items-start gap-4">
               <span className="text-3xl">📅</span>
               <div>
@@ -98,7 +98,7 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="bg-amber-50 rounded-xl p-5 border-l-4 border-amber-400">
+          <div className="bg-forest-50 rounded-xl p-5 border-l-4 border-forest-400">
             <div className="flex items-start gap-4">
               <span className="text-3xl">🔑</span>
               <div>
@@ -153,7 +153,7 @@ export default function OnboardingPage() {
               tool: 'Il Reset',
               principle: 'Presenza',
               desc: 'Impara a tornare al momento presente in 3 respiri. Il fondamentale mentale.',
-              color: 'bg-emerald-500',
+              color: 'bg-forest-500',
             },
             {
               week: 2,
@@ -206,27 +206,27 @@ export default function OnboardingPage() {
             tuo percorso e può guidarti in qualsiasi momento.
           </p>
 
-          <div className="bg-emerald-50 rounded-xl p-6 text-left mb-4 space-y-3">
+          <div className="bg-forest-50 rounded-xl p-6 text-left mb-4 space-y-3">
             <p className="font-semibold text-gray-800 mb-2">Il Coach AI può aiutarti a:</p>
             <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-forest-500">✓</span>
               Applicare gli strumenti mentali alle tue situazioni reali
             </p>
             <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-forest-500">✓</span>
               Elaborare un errore o una partita difficile
             </p>
             <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-forest-500">✓</span>
               Prepararsi mentalmente alla partita
             </p>
             <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-emerald-500">✓</span>
+              <span className="text-forest-500">✓</span>
               Rispondere alle tue domande sul percorso
             </p>
           </div>
 
-          <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
+          <div className="bg-forest-50 border border-forest-100 rounded-xl p-4">
             <p className="text-sm text-gray-500 italic">
               Puoi anche collegarlo su <strong>Telegram</strong> per parlare con il
               Coach direttamente dal tuo telefono. Trovi l&apos;opzione nel profilo.
@@ -242,10 +242,10 @@ export default function OnboardingPage() {
       subtitle: '',
       content: (
         <div className="max-w-xl mx-auto">
-          <div className="bg-gradient-to-br from-emerald-500 to-green-600 text-white rounded-2xl p-8 mb-6 shadow-xl">
-            <p className="text-sm text-emerald-100 mb-2 uppercase tracking-wide font-semibold">Settimana 1</p>
+          <div className="bg-gradient-to-br from-forest-500 to-forest-600 text-white rounded-2xl p-8 mb-6 shadow-xl">
+            <p className="text-sm text-white mb-2 uppercase tracking-wide font-semibold">Settimana 1</p>
             <h3 className="text-3xl font-bold mb-4">Il Reset</h3>
-            <p className="text-emerald-50 mb-6 leading-relaxed">
+            <p className="text-forest-50 mb-6 leading-relaxed">
               Inizia dal fondamentale: tornare al presente in qualsiasi momento.
               Tre respiri. Una mente libera.
             </p>
@@ -262,7 +262,7 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="bg-emerald-50 rounded-xl p-5 border-l-4 border-emerald-400">
+          <div className="bg-forest-50 rounded-xl p-5 border-l-4 border-forest-400">
             <p className="text-gray-700 leading-relaxed text-sm">
               Non è un corso teorico. È un allenamento quotidiano che porta
               risultati concreti <strong>nelle partite, negli allenamenti, nella testa</strong>.
@@ -280,7 +280,7 @@ export default function OnboardingPage() {
   const isLastSlide = currentSlide === slides.length;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-green-100 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-forest-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
 
         {/* Progress dots */}
@@ -290,8 +290,8 @@ export default function OnboardingPage() {
               key={i}
               className={`h-2 rounded-full transition-all duration-300 ${
                 i + 1 === currentSlide
-                  ? 'w-8 bg-emerald-500'
-                  : 'w-2 bg-emerald-200'
+                  ? 'w-8 bg-forest-500'
+                  : 'w-2 bg-forest-200'
               }`}
             />
           ))}
@@ -303,7 +303,7 @@ export default function OnboardingPage() {
             {currentContent.title}
           </h1>
           {currentContent.subtitle && (
-            <p className="text-center text-emerald-600 font-semibold mb-6 text-sm uppercase tracking-widest">
+            <p className="text-center text-forest-500 font-semibold mb-6 text-sm uppercase tracking-widest">
               {currentContent.subtitle}
             </p>
           )}
@@ -326,7 +326,7 @@ export default function OnboardingPage() {
           {!isLastSlide ? (
             <button
               onClick={() => setCurrentSlide(s => s + 1)}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-xl"
+              className="flex-1 bg-forest-500 hover:bg-forest-600 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-xl"
             >
               Continua →
             </button>
@@ -334,7 +334,7 @@ export default function OnboardingPage() {
             <button
               onClick={handleComplete}
               disabled={completing}
-              className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {completing ? (
                 <>

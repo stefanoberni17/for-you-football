@@ -89,7 +89,7 @@ export default function SettimanePage() {
 
   if (checkingAuth || loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚽</div>
           <p className="text-xl text-gray-600">Caricamento percorso...</p>
@@ -103,7 +103,7 @@ export default function SettimanePage() {
     .filter(w => isWeekUnlocked(w, completedDays)).length;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 py-8 px-4 pb-24">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
       <div className="max-w-4xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-1">
           Il Tuo Percorso ⚽
@@ -134,9 +134,9 @@ export default function SettimanePage() {
                   : 'opacity-60 cursor-not-allowed'
               } ${
                 completed
-                  ? 'border-green-500'
+                  ? 'border-forest-500'
                   : isCurrent
-                  ? 'border-emerald-500 ring-2 ring-emerald-200'
+                  ? 'border-forest-500 ring-2 ring-forest-200'
                   : unlocked
                   ? 'border-blue-400'
                   : 'border-gray-300'
@@ -146,9 +146,9 @@ export default function SettimanePage() {
                 <div className="flex gap-2 flex-wrap">
                   <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
                     completed
-                      ? 'text-green-700 bg-green-100'
+                      ? 'text-forest-700 bg-forest-100'
                       : isCurrent
-                      ? 'text-emerald-700 bg-emerald-100'
+                      ? 'text-forest-700 bg-forest-100'
                       : unlocked
                       ? 'text-blue-700 bg-blue-100'
                       : 'text-gray-600 bg-gray-100'
@@ -172,7 +172,7 @@ export default function SettimanePage() {
               </h3>
 
               {settimana.principio && (
-                <p className={`text-sm font-medium mb-1 ${unlocked ? 'text-emerald-600' : 'text-gray-400'}`}>
+                <p className={`text-sm font-medium mb-1 ${unlocked ? 'text-forest-500' : 'text-gray-400'}`}>
                   🧭 {settimana.principio}
                 </p>
               )}
@@ -193,7 +193,7 @@ export default function SettimanePage() {
                   <div className="w-full bg-gray-100 rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all duration-500 ${
-                        completed ? 'bg-green-500' : 'bg-emerald-500'
+                        completed ? 'bg-forest-500' : 'bg-forest-500'
                       }`}
                       style={{ width: `${Math.round((progress / DAYS_PER_WEEK) * 100)}%` }}
                     />
@@ -212,11 +212,11 @@ export default function SettimanePage() {
 
         {/* Teaser versione completa */}
         <div className="md:col-span-2 mt-2">
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-dashed border-green-300 rounded-xl p-4 flex items-center gap-3 opacity-80">
+          <div className="bg-gradient-to-r from-forest-50 to-forest-100 border border-dashed border-forest-200 rounded-xl p-4 flex items-center gap-3 opacity-80">
             <span className="text-2xl">🔜</span>
             <div>
-              <p className="text-sm font-semibold text-green-800">Altre settimane in arrivo</p>
-              <p className="text-xs text-green-600 mt-0.5">
+              <p className="text-sm font-semibold text-forest-700">Altre settimane in arrivo</p>
+              <p className="text-xs text-forest-500 mt-0.5">
                 Week 5–12 saranno disponibili nella versione completa del percorso.
               </p>
             </div>
