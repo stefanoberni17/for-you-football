@@ -25,7 +25,7 @@ export default function GiornoPage() {
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
   const [showPracticePopup, setShowPracticePopup] = useState(false);
-  const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDay: number | null } | null>(null);
+  const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -79,7 +79,7 @@ export default function GiornoPage() {
       try {
         const calData = await calendarRes.json();
         if (calData.trainingDays && calData.trainingDays.length > 0) {
-          setCalendarData({ trainingDays: calData.trainingDays, matchDay: calData.matchDay });
+          setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
         }
       } catch { /* calendario non configurato — ignora */ }
 
@@ -267,7 +267,7 @@ export default function GiornoPage() {
         {currentSlideData?.type === 'apertura' && (
           <div className="bg-white rounded-2xl shadow-sm p-5">
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Apertura</h2>
-            <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line italic">
+            <p className="text-gray-700 text-base leading-relaxed whitespace-pre-line italic">
               {giorno.apertura}
             </p>
           </div>
@@ -281,17 +281,23 @@ export default function GiornoPage() {
                 <span className="font-normal text-forest-500">({giorno.durataMinuti} min)</span>
               )}
             </h2>
-            <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-gray-700 text-base leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
 
             {/* Bottone pratica guidata */}
-            {hasPracticeTimer && !completed && (
+            {hasPracticeTimer && (
               <button
                 onClick={() => setShowPracticePopup(true)}
-                className="mt-4 w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2"
+                className={`mt-4 w-full font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 ${
+                  completed
+                    ? 'bg-forest-100 text-forest-700 border border-forest-300 hover:bg-forest-200'
+                    : 'bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white'
+                }`}
               >
-                ▶ Inizia pratica guidata ({giorno.durataMinuti} min)
+                {completed
+                  ? `🔄 Rifai la pratica (${giorno.durataMinuti} min)`
+                  : `▶ Inizia pratica guidata (${giorno.durataMinuti} min)`}
               </button>
             )}
           </div>
@@ -300,7 +306,7 @@ export default function GiornoPage() {
         {currentSlideData?.type === 'nota' && (
           <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4">
             <h3 className="text-xs font-bold text-forest-700 mb-1.5">⚽ Nota in campo</h3>
-            <p className="text-forest-700 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-forest-700 text-base leading-relaxed whitespace-pre-line">
               {giorno.notaCampo}
             </p>
             {getNextTrainingMessage() && (
@@ -318,7 +324,7 @@ export default function GiornoPage() {
             <h2 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
               ✍️ Riflessione
             </h2>
-            <p className="text-gray-600 text-sm mb-3 leading-relaxed">{giorno.domanda}</p>
+            <p className="text-gray-600 text-base mb-3 leading-relaxed">{giorno.domanda}</p>
             <textarea
               value={response}
               onChange={(e) => setResponse(e.target.value)}

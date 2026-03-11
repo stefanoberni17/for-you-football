@@ -81,7 +81,7 @@ CREATE TABLE user_weekly_calendar (
   user_id          UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   week_number      INTEGER NOT NULL,
   training_days    INTEGER[],           -- es. [1,3,5] dove 1=Lun, 7=Dom
-  match_day        INTEGER,             -- NULL se nessuna partita questa settimana
+  match_days       INTEGER[],           -- es. [6,7] più partite a settimana, può sovrapporsi a training_days
   created_at       TIMESTAMPTZ DEFAULT NOW(),
 
   UNIQUE (user_id, week_number)

@@ -425,7 +425,7 @@ export async function buildUserContext(userId: string): Promise<string> {
   // Calendario settimanale
   const { data: calendar } = await supabaseAdmin
     .from('user_weekly_calendar')
-    .select('training_days, match_day')
+    .select('training_days, match_days')
     .eq('user_id', userId)
     .eq('week_number', currentWeek)
     .maybeSingle();
@@ -456,7 +456,7 @@ ${completedDays && completedDays.length > 0
 ## Calendario settimana
 ${calendar && calendar.training_days && calendar.training_days.length > 0
   ? `**Allenamenti:** ${calendar.training_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}
-${calendar.match_day ? `**Partita:** ${DAY_NAMES[calendar.match_day]}` : '**Partita:** Nessuna partita questa settimana'}`
+${calendar.match_days && calendar.match_days.length > 0 ? `**Partite:** ${calendar.match_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}` : '**Partite:** Nessuna partita questa settimana'}`
   : 'Calendario non ancora impostato'}
 
 ## Riflessioni dal campo

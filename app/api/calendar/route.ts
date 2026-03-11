@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     const { data, error } = await supabaseAdmin
       .from('user_weekly_calendar')
-      .select('training_days, match_day')
+      .select('training_days, match_days')
       .eq('user_id', userId)
       .eq('week_number', weekNumber)
       .maybeSingle();
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       trainingDays: data?.training_days || [],
-      matchDay: data?.match_day ?? null,
+      matchDays: data?.match_days || [],
     });
   } catch (error: any) {
     console.error('❌ GET /api/calendar:', error.message);
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 // ─── POST /api/calendar ──────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
-    const { userId, weekNumber, trainingDays, matchDay } = await request.json();
+    const { userId, weekNumber, trainingDays, matchDays } = await request.json();
 
     if (!userId || !weekNumber) {
       return NextResponse.json(
@@ -61,17 +61,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validazione matchDay
-    if (matchDay !== null && matchDay !== undefined && (matchDay < 1 || matchDay > 7)) {
-      return NextResponse.json(
-        { error: 'matchDay deve essere null o un intero 1-7' },
-        { status: 400 }
-      );
-    }
-
-    // matchDay non può essere anche un giorno di allenamento
-    const cleanMatchDay = matchDay || null;
-    const cleanTrainingDays = trainingDays.filter((d: number) => d !== cleanMatchDay);
+    // Validazione matchDays
+    const cleanMatchDays = Array.isArray(matchDays)
+      ? matchDays.filter((d: number) => d >= 1 && d <= 7)
+      : [];
 
     const { error } = await supabaseAdmin
       .from('user_weekly_calendar')
@@ -79,8 +72,8 @@ export async function POST(request: NextRequest) {
         {
           user_id: userId,
           week_number: weekNumber,
-          training_days: cleanTrainingDays,
-          match_day: cleanMatchDay,
+          training_days: trainingDays,
+          match_days: cleanMatchDays,
         },
         { onConflict: 'user_id,week_number' }
       );

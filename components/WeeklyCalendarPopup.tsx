@@ -6,48 +6,44 @@ import { DAY_SHORT_NAMES } from '@/lib/constants';
 interface WeeklyCalendarPopupProps {
   weekNumber: number;
   existingTrainingDays?: number[];
-  existingMatchDay?: number | null;
-  onSave: (trainingDays: number[], matchDay: number | null) => void;
+  existingMatchDays?: number[];
+  onSave: (trainingDays: number[], matchDays: number[]) => void;
   onSkip: () => void;
 }
 
 export default function WeeklyCalendarPopup({
   weekNumber,
   existingTrainingDays,
-  existingMatchDay,
+  existingMatchDays,
   onSave,
   onSkip,
 }: WeeklyCalendarPopupProps) {
   const [selectedTraining, setSelectedTraining] = useState<number[]>(
     existingTrainingDays || []
   );
-  const [matchDay, setMatchDay] = useState<number | null>(
-    existingMatchDay ?? null
+  const [selectedMatch, setSelectedMatch] = useState<number[]>(
+    existingMatchDays || []
   );
   const [saving, setSaving] = useState(false);
 
   const days = [1, 2, 3, 4, 5, 6, 7];
 
   const toggleTraining = (day: number) => {
-    // Non permettere di selezionare come allenamento il giorno partita
-    if (matchDay === day) return;
     setSelectedTraining((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
 
-  const selectMatch = (day: number | null) => {
-    setMatchDay(day);
-    // Rimuovi da training se era selezionato
-    if (day !== null) {
-      setSelectedTraining((prev) => prev.filter((d) => d !== day));
-    }
+  const toggleMatch = (day: number) => {
+    setSelectedMatch((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
   };
 
   const handleSave = async () => {
     if (selectedTraining.length === 0 || saving) return;
     setSaving(true);
-    onSave(selectedTraining, matchDay);
+    onSave(selectedTraining, selectedMatch);
   };
 
   const canSave = selectedTraining.length > 0;
@@ -74,17 +70,13 @@ export default function WeeklyCalendarPopup({
           <div className="grid grid-cols-7 gap-1.5">
             {days.map((day) => {
               const isTraining = selectedTraining.includes(day);
-              const isMatch = matchDay === day;
               return (
                 <button
                   key={`t-${day}`}
                   onClick={() => toggleTraining(day)}
-                  disabled={isMatch}
                   className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isTraining
                       ? 'bg-emerald-500 text-white shadow-md scale-105'
-                      : isMatch
-                      ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
                       : 'bg-white text-gray-600 border border-gray-200 hover:border-emerald-300'
                   }`}
                 >
@@ -100,24 +92,21 @@ export default function WeeklyCalendarPopup({
           </p>
         </div>
 
-        {/* Giorno partita */}
+        {/* Giorni partita */}
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">
-            🏟️ Giorno partita <span className="font-normal text-gray-400">(opzionale)</span>
+            🏟️ Giorni partita <span className="font-normal text-gray-400">(opzionale)</span>
           </h3>
           <div className="grid grid-cols-7 gap-1.5 mb-2">
             {days.map((day) => {
-              const isMatch = matchDay === day;
-              const isTraining = selectedTraining.includes(day);
+              const isMatch = selectedMatch.includes(day);
               return (
                 <button
                   key={`m-${day}`}
-                  onClick={() => selectMatch(isMatch ? null : day)}
+                  onClick={() => toggleMatch(day)}
                   className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isMatch
                       ? 'bg-amber-500 text-white shadow-md scale-105'
-                      : isTraining
-                      ? 'bg-emerald-100 text-emerald-400 border border-emerald-200'
                       : 'bg-white text-gray-600 border border-gray-200 hover:border-amber-300'
                   }`}
                 >
@@ -126,30 +115,35 @@ export default function WeeklyCalendarPopup({
               );
             })}
           </div>
-          {matchDay !== null ? (
-            <button
-              onClick={() => selectMatch(null)}
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              ✕ Nessuna partita questa settimana
-            </button>
+          {selectedMatch.length > 0 ? (
+            <p className="text-xs text-gray-400">
+              {selectedMatch.length} {selectedMatch.length === 1 ? 'partita' : 'partite'}
+              {' · '}
+              <button
+                onClick={() => setSelectedMatch([])}
+                className="text-gray-400 hover:text-gray-600 transition-colors underline"
+              >
+                Rimuovi tutte
+              </button>
+            </p>
           ) : (
             <p className="text-xs text-gray-400">Nessuna partita selezionata</p>
           )}
         </div>
 
         {/* Riepilogo visuale */}
-        {(selectedTraining.length > 0 || matchDay !== null) && (
+        {(selectedTraining.length > 0 || selectedMatch.length > 0) && (
           <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 mb-6 border border-gray-100">
             <div className="grid grid-cols-7 gap-1">
               {days.map((day) => {
                 const isTraining = selectedTraining.includes(day);
-                const isMatch = matchDay === day;
+                const isMatch = selectedMatch.includes(day);
+                const isBoth = isTraining && isMatch;
                 return (
                   <div key={`r-${day}`} className="text-center">
                     <div className="text-[10px] text-gray-400 mb-0.5">{DAY_SHORT_NAMES[day]}</div>
-                    <div className={`text-sm ${isMatch ? 'text-amber-500' : isTraining ? 'text-emerald-500' : 'text-gray-200'}`}>
-                      {isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
+                    <div className={`text-sm ${isBoth ? 'text-orange-500' : isMatch ? 'text-amber-500' : isTraining ? 'text-emerald-500' : 'text-gray-200'}`}>
+                      {isBoth ? '⚽🏟️' : isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
                     </div>
                   </div>
                 );

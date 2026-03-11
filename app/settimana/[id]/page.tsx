@@ -20,7 +20,7 @@ export default function SettimanaPage() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showCompletePopup, setShowCompletePopup] = useState(false);
   const [showCalendarPopup, setShowCalendarPopup] = useState(false);
-  const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDay: number | null } | null>(null);
+  const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
 
   const loadProgress = async (uid: string): Promise<DayProgress[]> => {
     const { data: progress } = await supabase
@@ -67,7 +67,7 @@ export default function SettimanaPage() {
       // Carica calendario settimanale
       const calData = await calendarRes.json();
       if (calData.trainingDays && calData.trainingDays.length > 0) {
-        setCalendarData({ trainingDays: calData.trainingDays, matchDay: calData.matchDay });
+        setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
       } else {
         // Nessun calendario configurato → mostra popup
         setShowCalendarPopup(true);
@@ -93,16 +93,16 @@ export default function SettimanaPage() {
     }
   };
 
-  const handleCalendarSave = async (trainingDays: number[], matchDay: number | null) => {
+  const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
     try {
       const res = await fetch('/api/calendar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weekNumber, trainingDays, matchDay }),
+        body: JSON.stringify({ userId, weekNumber, trainingDays, matchDays }),
       });
       const result = await res.json();
       if (result.success) {
-        setCalendarData({ trainingDays, matchDay });
+        setCalendarData({ trainingDays, matchDays });
         setShowCalendarPopup(false);
       }
     } catch (err) {
@@ -192,7 +192,7 @@ export default function SettimanaPage() {
         <WeeklyCalendarPopup
           weekNumber={weekNumber}
           existingTrainingDays={calendarData?.trainingDays}
-          existingMatchDay={calendarData?.matchDay}
+          existingMatchDays={calendarData?.matchDays}
           onSave={handleCalendarSave}
           onSkip={handleCalendarSkip}
         />
