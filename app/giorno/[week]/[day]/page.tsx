@@ -21,6 +21,8 @@ export default function GiornoPage() {
   const [response, setResponse] = useState('');
   const [saving, setSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showCheck, setShowCheck] = useState(false);
+  const [savingCheck, setSavingCheck] = useState(false);
 
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
@@ -90,6 +92,15 @@ export default function GiornoPage() {
         setResponse(data.response);
       }
 
+      // Mostra check del giorno precedente se non ancora risposto
+      if (
+        data.giorno?.haCheckPrecedente &&
+        data.previousDayCheck === null &&
+        !(weekNumber === 1 && dayNumber === 1)
+      ) {
+        setShowCheck(true);
+      }
+
       setLoading(false);
     };
 
@@ -154,6 +165,19 @@ export default function GiornoPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const saveCheck = async (value: 1 | 2 | 3) => {
+    setSavingCheck(true);
+    try {
+      await fetch('/api/giorno', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, weekNumber, dayNumber, previousDayCheck: value }),
+      });
+    } catch { /* non bloccante */ }
+    setShowCheck(false);
+    setSavingCheck(false);
   };
 
   const handleContinue = () => {
@@ -260,6 +284,30 @@ export default function GiornoPage() {
                 }`}
               />
             ))}
+          </div>
+        )}
+
+        {/* Check giorno precedente */}
+        {showCheck && giorno && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+            <p className="text-sm font-semibold text-amber-800 mb-1">⚡ Check di ieri</p>
+            <p className="text-gray-700 text-sm leading-relaxed mb-4">{giorno.testoCheck}</p>
+            <div className="flex flex-col gap-2">
+              {([
+                { value: 1, label: 'Sì, in campo o in allenamento' },
+                { value: 2, label: 'Sì, nella vita di tutti i giorni' },
+                { value: 3, label: 'Non me ne sono ancora ricordato' },
+              ] as { value: 1 | 2 | 3; label: string }[]).map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => saveCheck(value)}
+                  disabled={savingCheck}
+                  className="text-left bg-white border border-amber-200 text-amber-900 text-sm font-medium py-3 px-4 rounded-xl hover:bg-amber-100 transition-all disabled:opacity-50"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

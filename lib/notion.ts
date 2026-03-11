@@ -134,5 +134,7 @@ export function mapGiorno(page: any) {
     isEsercizioPrincipale: checkbox(p['È Esercizio Principale']),
     domandeGate: richTextLines(p['Domande Gate']), // array di 3 stringhe
     tipoGiorno: select(p['Tipo Giorno']),
+    haCheckPrecedente: checkbox(p['Ha Check Precedente']),
+    testoCheck: richText(p['Testo Check']),
   };
 }
