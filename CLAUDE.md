@@ -73,14 +73,13 @@ for-you-football/
 │   ├── WeeklyCalendarPopup.tsx            # Picker giorni allenamento/partita (7-day grid)
 │   ├── GlobalMeditationWrapper.tsx        # Context provider pratica giornaliera (Il Reset)
 │   ├── MeditationContext.tsx              # Context: { openMeditation, mantra, weekName }
-│   ├── MeditationPopup.tsx               # Popup meditazione con timer, respirazione, audio
-│   └── EpisodeCard.tsx                    # ❌ DEPRECATO — non usato, da rimuovere
+│   └── MeditationPopup.tsx               # Popup meditazione con timer, respirazione, audio
 ├── lib/
 │   ├── supabase.ts                        # Client Supabase pubblico (browser)
 │   ├── constants.ts                       # IDs Notion, costanti percorso — UNICA fonte di verità
 │   ├── notion.ts                          # Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
 │   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
-│   └── maestro-ai.ts                      # ⚠️ Nome file legacy — Coach AI: prompt, contesto, Claude API
+│   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)
 └── docs/
@@ -273,9 +272,7 @@ Totale: 15-20 sec. In campo, sempre.
 
 ---
 
-## Coach AI — Architettura Conversazioni (`lib/maestro-ai.ts`)
-
-> **Nota:** Il file si chiama ancora `maestro-ai.ts` (naming legacy da Naruto). Il contenuto è 100% football-ready: system prompt, contesto, formattazione sono tutti scritti per il Coach calcistico.
+## Coach AI — Architettura Conversazioni (`lib/coach-ai.ts`)
 
 ### Funzioni esportate
 - `SYSTEM_PROMPT` — Prompt Coach AI completo (~380 righe): identità, progressione settimanale, linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio
@@ -461,6 +458,8 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Context provider al livello root (wrappa tutta l'app)
 - Gestisce prima meditazione vs meditazione quotidiana ricorrente
 - Carica mantra settimana corrente da Notion
+- Usa `WEEK_RECORD_IDS`, `WEEK_TOOLS`, `WEEK_PRINCIPLES` da `lib/constants.ts`
+- WeekName formato: "Il Reset — Presenza" (strumento + principio)
 
 ### `BottomTabBar.tsx`
 - 4 tab: Home, Percorso, Coach, Profilo
@@ -563,12 +562,12 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] ChatBot.tsx — header "Coach AI", suggerimenti football, filtro messaggio benvenuto
 - [x] `generateCoachRecap()` — rinominato da `generateMaestroRecap`
 - [x] Primo contatto Telegram — "Coach AI" (non più "Maestro AI")
+- [x] Rinominato `lib/maestro-ai.ts` → `lib/coach-ai.ts` + aggiornati import in chat e telegram
+- [x] Rimosso `components/EpisodeCard.tsx` (deprecato, non usato)
+- [x] GlobalMeditationWrapper — sincronizzato con `WEEK_RECORD_IDS`, `WEEK_TOOLS`, `WEEK_PRINCIPLES` da constants.ts
 
 ### Da fare
-- [ ] Rinominare `lib/maestro-ai.ts` → `lib/coach-ai.ts` e aggiornare tutti gli import
-- [ ] Rimuovere `components/EpisodeCard.tsx` (deprecato, non usato)
 - [ ] Attivare safety check (`checkSafetyKeywords`) in `/api/chat` e `/api/telegram`
-- [ ] GlobalMeditationWrapper — sincronizzare WEEK_IDS con `WEEK_RECORD_IDS` di constants.ts
 
 ---
 

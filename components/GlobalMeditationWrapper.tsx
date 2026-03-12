@@ -3,23 +3,9 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { WEEK_RECORD_IDS, WEEK_TOOLS, WEEK_PRINCIPLES } from '@/lib/constants';
 import MeditationPopup from './MeditationPopup';
 import { MeditationContext } from './MeditationContext';
-
-const WEEK_NAMES: Record<number, string> = {
-  1: 'Week 1-2 - La ferita del rifiuto',
-  3: 'Week 3-4 - Presenza e ascolto',
-  5: 'Week 5-6 - Valore e appartenenza',
-};
-
-const WEEK_IDS: Record<number, string> = {
-  1: '2b1655f7-26c7-8025-8afe-df0ed131d708',
-  2: '2b1655f7-26c7-8025-8afe-df0ed131d708',
-  3: '2b1655f7-26c7-8054-a0d4-c4a48c509852',
-  4: '2b1655f7-26c7-8054-a0d4-c4a48c509852',
-  5: '2b1655f7-26c7-8038-bd91-c3fa9e5b31cb',
-  6: '2b1655f7-26c7-8038-bd91-c3fa9e5b31cb',
-};
 
 export default function GlobalMeditationWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -46,7 +32,7 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
         .single();
 
       const currentWeek = profileData?.current_week || 1;
-      const weekId = WEEK_IDS[currentWeek];
+      const weekId = WEEK_RECORD_IDS[currentWeek];
 
       if (weekId) {
         const response = await fetch(`/api/settimana?id=${weekId}`);
@@ -57,7 +43,9 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
           .replace(/<br>/g, '\n');
 
         setMantra(mantraText);
-        setWeekName(WEEK_NAMES[currentWeek] || `Week ${currentWeek}`);
+        const tool = WEEK_TOOLS[currentWeek] || '';
+        const principle = WEEK_PRINCIPLES[currentWeek] || '';
+        setWeekName(tool ? `${tool} — ${principle}` : `Settimana ${currentWeek}`);
       }
     };
 

@@ -8,7 +8,7 @@ import {
   SYSTEM_PROMPT,
   SYSTEM_PROMPT_NOT_REGISTERED,
   TELEGRAM_FORMAT
-} from '@/lib/maestro-ai';
+} from '@/lib/coach-ai';
 
 async function sendTelegramMessage(chatId: number, text: string) {
   const token = process.env.TELEGRAM_BOT_TOKEN!;

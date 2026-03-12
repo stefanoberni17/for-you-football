@@ -5,7 +5,7 @@ import {
   checkSafetyKeywords,
   SYSTEM_PROMPT,
   WEB_FORMAT
-} from '@/lib/maestro-ai';
+} from '@/lib/coach-ai';
 
 export async function POST(request: NextRequest) {
   try {
