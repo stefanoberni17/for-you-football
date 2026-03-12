@@ -6,10 +6,10 @@ import { supabase } from '@/lib/supabase';
 import ChatBot, { ChatBotRef } from '@/components/ChatBot';
 
 const suggestions = [
-  "Come posso lavorare sulla ferita del rifiuto?",
+  "Come gestisco l'ansia prima di una partita?",
   "Aiutami a riflettere sulla settimana corrente",
-  "Quali pratiche mi consigli per oggi?",
-  "Cosa posso imparare dall'episodio di questa settimana?",
+  "Ho sbagliato un gol importante, come faccio a resettarmi?",
+  "Sto perdendo fiducia in me stesso, cosa faccio?",
 ];
 
 export default function ChatPage() {
@@ -37,7 +37,7 @@ export default function ChatPage() {
     return (
       <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🍥</div>
+          <div className="text-6xl mb-4">⚽</div>
           <p className="text-xl text-gray-600">Caricamento...</p>
         </div>
       </main>

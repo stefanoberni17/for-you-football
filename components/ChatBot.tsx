@@ -117,8 +117,8 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
         <div className="flex items-center gap-2">
           <Bot className="w-6 h-6" />
           <div>
-            <h3 className="font-semibold">Maestro AI</h3>
-            <p className="text-xs text-forest-50">Il tuo compagno di viaggio</p>
+            <h3 className="font-semibold">Coach AI</h3>
+            <p className="text-xs text-forest-50">Il tuo allenatore mentale</p>
           </div>
         </div>
       </div>
