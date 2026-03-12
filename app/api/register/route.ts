@@ -1,10 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Admin client — bypassa RLS e gestisce auth direttamente
+// Admin client — per upsert profilo (bypassa RLS)
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
+);
+
+// Client standard — per signUp (invia email di conferma automaticamente)
+const supabaseAuth = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
 );
 
 export async function POST(req: NextRequest) {
@@ -16,7 +22,6 @@ export async function POST(req: NextRequest) {
     console.log('📥 /api/register ricevuto:', {
       email,
       passwordLength: password?.length,
-      passwordCharCodes: password ? Array.from(password as string).map((c: string) => c.charCodeAt(0)) : [],
       name,
       age,
       role,
@@ -26,12 +31,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email e password sono obbligatori' }, { status: 400 });
     }
 
-    // 1. Crea utente con admin API — invia email di conferma automaticamente
-    //    (email_confirm: false = richiede conferma, email inviata)
-    const { data: userData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    // 1. Crea utente con signUp — Supabase invia email di conferma automaticamente
+    const { data: userData, error: authError } = await supabaseAuth.auth.signUp({
       email,
       password,
-      email_confirm: false,
     });
 
     if (authError) {
@@ -79,6 +82,11 @@ export async function POST(req: NextRequest) {
       }
 
       return NextResponse.json({ error: authError.message }, { status: 400 });
+    }
+
+    // signUp può restituire un utente esistente non confermato senza errore
+    if (!userData.user) {
+      return NextResponse.json({ error: 'Errore nella creazione dell\'account. Riprova.' }, { status: 400 });
     }
 
     const userId = userData.user.id;

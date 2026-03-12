@@ -60,16 +60,22 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
     try {
       console.log('📤 Invio messaggio con userId:', userId);
 
+      // Escludi il messaggio di benvenuto hardcoded (primo messaggio assistant)
+      // per non confondere Claude con un messaggio che non ha generato lui
+      const chatHistory = [...messages, userMessage]
+        .filter((m, i) => !(i === 0 && m.role === 'assistant'))
+        .map(m => ({
+          role: m.role,
+          content: m.content,
+        }));
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(m => ({
-            role: m.role,
-            content: m.content,
-          })),
+          messages: chatHistory,
           userId,
         }),
       });

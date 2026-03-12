@@ -28,7 +28,7 @@
 | Styling | Tailwind CSS 4 |
 | Auth + DB | Supabase (PostgreSQL) + `@supabase/ssr` + `@supabase/auth-helpers-nextjs` |
 | CMS | Notion API (`@notionhq/client`) |
-| AI | Anthropic Claude Sonnet (`@anthropic-ai/sdk`) |
+| AI | Anthropic Claude Sonnet (`@anthropic-ai/sdk`) — modello: `claude-sonnet-4-20250514` |
 | Bot | Telegram (`node-telegram-bot-api`) |
 | Icons | Lucide React |
 
@@ -44,48 +44,48 @@ for-you-football/
 │   ├── login/page.tsx
 │   ├── register/page.tsx                  # Registrazione 2-step (account + profilo calciatore)
 │   ├── onboarding/page.tsx                # Carousel 5 slide introduttive
-│   ├── chat/page.tsx                      # Chat con Coach AI
+│   ├── chat/page.tsx                      # Chat con Coach AI (4 suggerimenti pre-impostati)
 │   ├── settimane/page.tsx                 # Lista 12 settimane con lock/unlock
-│   ├── settimana/[id]/page.tsx            # Dettaglio settimana (id = Notion record ID)
-│   ├── giorno/[week]/[day]/page.tsx       # ★ Contenuto giornaliero (Apertura + Pratica + Domanda)
-│   ├── gate/[week]/page.tsx               # ★ Gate giorno 7 (3 domande obbligatorie)
-│   ├── calendar/page.tsx                  # ★ Setup calendario settimanale (⚠️ stub — non implementato)
-│   ├── week-complete/[week]/page.tsx      # ★ Schermata completamento settimana
+│   ├── settimana/[id]/page.tsx            # Dettaglio settimana + 7 DayCard + WeeklyCalendarPopup
+│   ├── giorno/[week]/[day]/page.tsx       # Contenuto giornaliero (Apertura + Pratica + Domanda)
+│   ├── gate/[week]/page.tsx               # Gate giorno 7 (3 domande obbligatorie)
+│   ├── calendar/page.tsx                  # Setup calendario settimanale
+│   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
 │   └── api/
 │       ├── register/route.ts              # POST → signup Supabase + upsert profilo
 │       ├── settimane/route.ts             # GET → lista settimane da Notion DB
-│       ├── settimana/route.ts             # GET ?id= → dettaglio settimana + 7 giorni
-│       ├── giorno/route.ts                # ★ GET ?week=&day=&userId= / POST completamento
-│       ├── gate/route.ts                  # ★ GET ?week=&userId= / POST risposte gate
-│       ├── calendar/route.ts              # ★ (⚠️ stub 501 — non implementato)
+│       ├── settimana/route.ts             # GET ?week=N → dettaglio settimana + 7 giorni
+│       ├── giorno/route.ts                # GET ?week=&day=&userId= / POST completamento / PATCH check
+│       ├── gate/route.ts                  # GET ?week=&userId= / POST risposte gate
+│       ├── calendar/route.ts              # GET ?userId=&week= / POST training_days + match_days
 │       ├── reflection/route.ts            # GET/POST riflessioni post-giorno
-│       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI)
+│       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
 │       ├── telegram/route.ts              # POST → webhook bot Telegram
 │       └── cron/
 │           └── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg
 ├── components/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Coach / Profilo
-│   ├── ChatBot.tsx                        # UI chat Coach
-│   ├── DayCard.tsx                        # ★ Card giorno per /settimana/[id]
-│   ├── GlobalMeditationWrapper.tsx        # Context provider pratica giornaliera
+│   ├── ChatBot.tsx                        # UI chat Coach (filtra messaggio benvenuto hardcoded)
+│   ├── DayCard.tsx                        # Card giorno per /settimana/[id]
+│   ├── PracticePopup.tsx                  # Popup pratica giornaliera con timer e step
+│   ├── WeeklyCalendarPopup.tsx            # Picker giorni allenamento/partita (7-day grid)
+│   ├── GlobalMeditationWrapper.tsx        # Context provider pratica giornaliera (Il Reset)
 │   ├── MeditationContext.tsx              # Context: { openMeditation, mantra, weekName }
-│   ├── MeditationPopup.tsx                # Popup Il Reset (pratica giornaliera)
-│   └── EpisodeCard.tsx                    # (deprecato — non usato, da rimuovere)
+│   ├── MeditationPopup.tsx               # Popup meditazione con timer, respirazione, audio
+│   └── EpisodeCard.tsx                    # ❌ DEPRECATO — non usato, da rimuovere
 ├── lib/
 │   ├── supabase.ts                        # Client Supabase pubblico (browser)
-│   ├── constants.ts                       # ★ IDs Notion, costanti percorso — UNICA fonte di verità
-│   ├── notion.ts                          # ★ Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
-│   ├── dayUnlockLogic.ts                  # ★ Logica sblocco giorni/settimane
-│   └── maestro-ai.ts                      # System prompt + buildUserContext + callClaude (⚠️ prompt ancora Naruto, da riscrivere per Coach football)
-├── public/                                # SVG di default Next.js (nessun audio custom)
-├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00)
+│   ├── constants.ts                       # IDs Notion, costanti percorso — UNICA fonte di verità
+│   ├── notion.ts                          # Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
+│   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
+│   └── maestro-ai.ts                      # ⚠️ Nome file legacy — Coach AI: prompt, contesto, Claude API
+├── public/                                # SVG di default Next.js
+├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)
 └── docs/
     └── supabase-schema.sql                # Schema completo: 5 tabelle + RLS + indexes + trigger
 ```
-
-> ★ = nuovo rispetto a Naruto Inner Path
 
 ---
 
@@ -114,7 +114,7 @@ CRON_SECRET=
 
 ## Schema Database Supabase
 
-### `profiles` (esteso da Naruto)
+### `profiles`
 ```sql
 user_id                  UUID PRIMARY KEY REFERENCES auth.users(id)
 name                     TEXT
@@ -135,11 +135,11 @@ telegram_id              TEXT
 onboarding_completed     BOOLEAN DEFAULT false
 last_meditation_completed DATE
 -- Coach AI
-coach_notes              TEXT    -- memoria Coach (recap conversazioni Telegram)
+coach_notes              TEXT    -- memoria Coach (recap distillati da conversazioni Telegram)
 created_at               TIMESTAMPTZ DEFAULT NOW()
 ```
 
-### `user_day_progress` (nuovo — sostituisce user_episode_progress)
+### `user_day_progress`
 ```sql
 id               UUID DEFAULT gen_random_uuid() PRIMARY KEY
 user_id          UUID REFERENCES auth.users(id)
@@ -153,17 +153,17 @@ compressed       BOOLEAN DEFAULT FALSE  -- giorno compresso per salto
 created_at       TIMESTAMP DEFAULT NOW()
 ```
 
-### `user_weekly_calendar` (nuovo)
+### `user_weekly_calendar`
 ```sql
 id               UUID DEFAULT gen_random_uuid() PRIMARY KEY
 user_id          UUID REFERENCES auth.users(id)
 week_number      INTEGER NOT NULL
 training_days    INTEGER[]          -- [1,2,4,5] (1=Lun, 7=Dom)
-match_day        INTEGER            -- giorno partita (null se nessuna)
+match_days       INTEGER[]          -- [6] (giorni partita)
 created_at       TIMESTAMP DEFAULT NOW()
 ```
 
-### `day_reflections` (nuovo)
+### `day_reflections`
 ```sql
 user_id              UUID NOT NULL REFERENCES auth.users(id)
 week_number          INTEGER NOT NULL
@@ -175,7 +175,7 @@ updated_at           TIMESTAMPTZ DEFAULT NOW()
 PRIMARY KEY (user_id, week_number, day_number)
 ```
 
-### `telegram_conversations` (invariata)
+### `telegram_conversations`
 ```sql
 id         UUID DEFAULT gen_random_uuid() PRIMARY KEY
 user_id    UUID NOT NULL REFERENCES auth.users(id)
@@ -273,31 +273,244 @@ Totale: 15-20 sec. In campo, sempre.
 
 ---
 
-## Coach AI (`lib/maestro-ai.ts`)
+## Coach AI — Architettura Conversazioni (`lib/maestro-ai.ts`)
 
-> **⚠️ STATO ATTUALE:** Il file si chiama ancora `maestro-ai.ts` e contiene il system prompt di Naruto Inner Path (non ancora riscritto per football). La funzione `buildUserContext()` è già football-ready (legge role, level, biggest_fear dal profilo). Da rinominare in `coach-ai.ts` e riscrivere il prompt.
+> **Nota:** Il file si chiama ancora `maestro-ai.ts` (naming legacy da Naruto). Il contenuto è 100% football-ready: system prompt, contesto, formattazione sono tutti scritti per il Coach calcistico.
 
-**Funzioni esportate:**
-- `SYSTEM_PROMPT` / `SYSTEM_PROMPT_NOT_REGISTERED` — ⚠️ ancora Naruto-focused
-- `buildUserContext(userId)` — costruisce contesto utente per Claude (football-ready)
-- `callClaude(messages, systemPrompt)` — chiama `claude-sonnet-4-20250514`
-- `generateMaestroRecap(history)` — genera recap conversazione Telegram
-- `SAFETY_KEYWORDS` — parole chiave per rilevamento sicurezza
+### Funzioni esportate
+- `SYSTEM_PROMPT` — Prompt Coach AI completo (~380 righe): identità, progressione settimanale, linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio
+- `SYSTEM_PROMPT_NOT_REGISTERED` — Risposta per utenti Telegram non registrati
+- `WEB_FORMAT` — Regole formattazione per web chat (markdown leggero, max 4-6 righe)
+- `TELEGRAM_FORMAT` — Regole formattazione per Telegram (niente markdown, max 4-5 righe, colloquiale)
+- `buildUserContext(userId)` — Costruisce contesto personalizzato leggendo da Supabase
+- `callClaude(systemPrompt, messages, maxTokens)` — Chiama `claude-sonnet-4-20250514`
+- `generateCoachRecap(userId, messages)` — Distilla conversazione in coach_notes (pattern, temi, thread aperti)
+- `checkSafetyKeywords(text)` — Rileva parole chiave a rischio (suicidio, autolesionismo, violenza)
+- `SAFETY_KEYWORDS` — Lista keyword per detection
+- `supabaseAdmin` — Client Supabase admin (server-side)
+- `anthropic` — Istanza SDK Anthropic
 
-**Architettura 3-layer (pianificata — da implementare):**
-- Layer 1 — WEEK_CONTEXT (dinamico): principio attivo, strumento settimana, esempi risposta
-- Layer 2 — CORE_IDENTITY (fisso): chi è il Coach, flusso risposta, 3 modalità, regole
-- Layer 3 — SAFETY (fisso): cosa non fa mai
+### Flusso Web Chat (`/api/chat` → `ChatBot.tsx`)
 
-**3 Modalità (pianificate):**
-| Modalità | Quando | Stile |
-|----------|--------|-------|
-| PARTITA | Prima/dopo gara, ansia, errore, panchina | Diretto, max 3-4 frasi |
-| ALLENAMENTO | Riflessioni, dinamiche squadra | Curioso, 4-5 frasi |
-| PROFONDA | Identità, senso, crisi | Lento, 3-4 frasi, non risolvere |
+```
+Utente scrive → ChatBot.tsx (React state)
+  ↓
+Invia intera cronologia in-memory a POST /api/chat
+  (escluso il messaggio di benvenuto hardcoded)
+  ↓
+Server: buildUserContext(userId) + SYSTEM_PROMPT + WEB_FORMAT
+  ↓
+callClaude() → risposta
+  ↓
+Risposta mostrata in UI
+```
 
-**Flusso risposta:** Riconosci → Osserva → Offri strumento → Riporta al presente
-**Regole:** max 400 token, max 1-2 domande, usa sempre lo strumento della settimana corrente
+**Caratteristiche:**
+- Conversazioni **NON salvate in DB** — vivono solo nello state React
+- Ad ogni messaggio il client invia l'intera cronologia in-memory
+- Refresh pagina = conversazione persa
+- Il messaggio di benvenuto iniziale (hardcoded in ChatBot.tsx) viene **filtrato** prima dell'invio a Claude per non confondere il modello
+- Max tokens: 1500
+
+### Flusso Telegram (`/api/telegram`)
+
+```
+Webhook Telegram → POST /api/telegram
+  ↓
+Lookup profilo: profiles.telegram_id → user_id
+  ↓
+Se non registrato → SYSTEM_PROMPT_NOT_REGISTERED → risposta breve
+  ↓
+Se registrato:
+  1. Carica ultimi 20 messaggi da telegram_conversations (sliding window)
+  2. buildUserContext(userId)
+  3. Se primo messaggio: aggiunge nota "PRIMO CONTATTO TELEGRAM"
+  4. callClaude(SYSTEM_PROMPT + TELEGRAM_FORMAT + userContext, messages)
+  5. Se primo messaggio: invia avviso privacy prima della risposta
+  6. Invia risposta via Telegram API
+  7. Salva user msg + assistant msg in telegram_conversations
+  8. Ogni 20 messaggi totali → generateCoachRecap() (fire-and-forget)
+```
+
+**Caratteristiche:**
+- Conversazioni **salvate in DB** (`telegram_conversations`)
+- Sliding window: ultimi 20 messaggi come contesto per Claude
+- Ogni 20 messaggi: genera recap → salva in `profiles.coach_notes`
+- Recap usa ultimi 40 messaggi per avere più contesto
+- Conversazioni cancellate dopo 90 giorni (cron job nightly)
+- Primo messaggio: avviso privacy + presentazione Coach
+
+### Contesto condiviso (`buildUserContext`)
+
+Entrambi i canali (web + Telegram) usano `buildUserContext(userId)` che legge:
+- **Profilo atleta:** nome, età, ruolo/i, livello, paure, situazione, obiettivi, sogno
+- **Progresso:** tutti i giorni completati + ultimi 3 mostrati
+- **Riflessioni dal campo:** ultime 5 riflessioni (domanda + risposta)
+- **Calendario settimanale:** giorni allenamento + giorni partita
+- **Coach notes:** recap distillati dalle conversazioni Telegram
+
+### Memoria cross-sessione
+
+La memoria persistente del Coach si basa su:
+1. **`profiles.coach_notes`** — recap distillati da Telegram (temi ricorrenti, pattern, thread aperti, metafore)
+2. **`day_reflections`** — riflessioni scritte dopo ogni giorno del percorso
+3. **`user_day_progress`** — giorni completati (progressione oggettiva)
+4. **`user_weekly_calendar`** — calendario allenamenti/partite
+
+La web chat **non contribuisce** alla memoria persistente. Solo Telegram alimenta `coach_notes`.
+
+### Safety
+
+- `SAFETY_KEYWORDS`: ~30 keyword (italiano) per rilevare contenuti a rischio
+- `checkSafetyKeywords()`: controlla se il testo contiene keyword → boolean
+- **Attualmente disabilitato** sia in web chat che Telegram (commentato nel codice)
+- Safety alert via email (Resend) predisposto ma commentato
+- Il system prompt include istruzioni per situazioni a rischio (rimando a professionisti, Telefono Amico)
+
+---
+
+## Dettaglio Pagine App
+
+### Dashboard (`app/page.tsx`)
+- Card settimana corrente con CTA "prossimo giorno"
+- Barra progresso settimanale (7 indicatori giorno)
+- Progresso globale (% completamento, giorni fatti)
+- Link a settimane e profilo
+- Redirect a `/login` se non autenticato
+
+### Registrazione (`app/register/page.tsx`)
+- **Step 1:** Email, password, nome, età → `supabase.auth.signUp()`
+- **Step 2:** Profilo calciatore — ruoli (multi-select), livello, paure (multi-select), obiettivi, sogno, situazione attuale → `POST /api/register`
+- Gestione errori auth (utente già registrato, password debole)
+
+### Onboarding (`app/onboarding/page.tsx`)
+- Carousel 5 slide introduttive al percorso
+- Mostrato dopo prima registrazione
+
+### Lista Settimane (`app/settimane/page.tsx`)
+- Mostra 12 settimane (filtrate a `BETA_MAX_WEEK=4`)
+- Ogni card: titolo, principio, stato lock/unlock, progresso
+- Click → `/settimana/[id]`
+
+### Dettaglio Settimana (`app/settimana/[id]/page.tsx`)
+- Descrizione settimana, principio, strumento
+- 7 DayCard (clickabili se sbloccati)
+- WeeklyCalendarPopup per impostare giorni allenamento/partita
+- Link a `/giorno/[week]/[day]`
+
+### Contenuto Giornaliero (`app/giorno/[week]/[day]/page.tsx`)
+- **Apertura:** testo introduttivo (2-3 righe da Notion)
+- **Pratica:** PracticePopup con timer, animazione respirazione, step numerati
+- **Domanda:** campo testo per riflessione (opzionale, salvata in `day_reflections`)
+- Check giorno precedente (se flag `haCheckPrecedente`)
+- Flusso completamento → navigazione giorno successivo
+- Integrazione calendario per consapevolezza giorno partita
+
+### Gate (`app/gate/[week]/page.tsx`)
+- 3 domande da Notion (`domandeGate`)
+- Tutti i campi obbligatori per procedere
+- Completamento → `current_week` incrementato → schermata celebrazione
+- POST salva `gate_answers` JSONB + marca giorno 7 completato
+
+### Completamento Settimana (`app/week-complete/[week]/page.tsx`)
+- Trofeo, messaggio congratulazioni
+- Riepilogo settimana (principio, strumento, durata)
+- CTA settimana successiva (se disponibile)
+
+### Chat Coach (`app/chat/page.tsx`)
+- ChatBot component full-screen
+- 4 suggerimenti pre-impostati (ansia partita, riflessione settimana, errore gol, perdita fiducia)
+- Auth check → redirect se non loggato
+
+### Profilo (`app/profilo/page.tsx`)
+- Visualizzazione/modifica profilo calciatore
+- Collegamento account Telegram
+
+---
+
+## Dettaglio Componenti
+
+### `ChatBot.tsx`
+- Header: "Coach AI — Il tuo allenatore mentale"
+- Messaggio benvenuto hardcoded (filtrato prima dell'invio a Claude)
+- Suggestion pills visibili solo prima del primo messaggio utente
+- Loader animato durante attesa risposta
+- Scroll automatico ai nuovi messaggi
+
+### `PracticePopup.tsx`
+- UI pratica giornaliera con timer countdown
+- Animazione cerchio respirazione (inhale/exhale 4s)
+- Step numerati della pratica
+- Nome strumento settimana corrente
+- Callback completamento
+
+### `WeeklyCalendarPopup.tsx`
+- Griglia 7 giorni (Lun-Dom)
+- Multi-select giorni allenamento (minimo 1)
+- Multi-select giorni partita (opzionale)
+- Anteprima visuale
+- Callback onSave
+
+### `MeditationPopup.tsx`
+- Setup: scelta durata (1/2/3/5 min)
+- Meditazione: cerchio animato, countdown, toggle audio (nature/focus/mute)
+- Audio paths: `/audio/nature-meditation.mp3`, `/audio/focus-meditation.mp3`
+- Aggiornamento `last_meditation_completed` su profilo
+
+### `GlobalMeditationWrapper.tsx`
+- Context provider al livello root (wrappa tutta l'app)
+- Gestisce prima meditazione vs meditazione quotidiana ricorrente
+- Carica mantra settimana corrente da Notion
+
+### `BottomTabBar.tsx`
+- 4 tab: Home, Percorso, Coach, Profilo
+- Nascosto su: `/login`, `/register`, `/onboarding`, `/privacy`
+
+---
+
+## Dettaglio API Routes
+
+### `POST /api/register`
+Signup Supabase + upsert profilo calciatore. Errori profilo non bloccano la registrazione.
+
+### `GET /api/settimane`
+Lista settimane da Notion DB, ordinate per numero settimana.
+
+### `GET /api/settimana?week=N`
+Dettaglio settimana + 7 giorni associati da Notion.
+
+### `GET /api/giorno?week=W&day=D&userId=U`
+Fetch giorno da Notion + stato completamento/risposta utente da Supabase.
+
+### `POST /api/giorno`
+Marca giorno completato, salva risposta opzionale. Se giorno=6 aggiorna `current_week`.
+
+### `PATCH /api/giorno`
+Salva score check giorno precedente (1/2/3) sulla riga del giorno precedente.
+
+### `GET /api/gate?week=W&userId=U`
+Fetch giorno 7 (gate) da Notion: 3 domande + risposte esistenti.
+
+### `POST /api/gate`
+Salva risposte gate JSONB, marca giorno 7 completato, incrementa `current_week` a W+1.
+
+### `GET /api/calendar?userId=U&week=W`
+Fetch `training_days` + `match_days` per la settimana.
+
+### `POST /api/calendar`
+Salva calendario settimanale (training_days obbligatori, match_days opzionali).
+
+### `GET/POST /api/reflection`
+Fetch/salva riflessione post-giorno (max 500 caratteri + domanda).
+
+### `POST /api/chat`
+Web chat Coach AI. Riceve cronologia messaggi + userId, costruisce contesto, chiama Claude.
+
+### `POST /api/telegram`
+Webhook Telegram. Lookup utente, sliding window 20 msg, Claude, salva, recap ogni 20 msg.
+
+### `GET /api/cron/cleanup-telegram`
+Cron job Vercel (03:00 UTC). Auth via `CRON_SECRET`. Elimina `telegram_conversations` > 90 giorni.
 
 ---
 
@@ -324,12 +537,13 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 |---------|--------|----------|
 | Unità | Episodi (1-19) | Giorni (W×D, 1-7 per settimana) |
 | Progresso | `user_episode_progress` | `user_day_progress` |
-| Sblocco | Ep → Ep | Giorno → Giorno + Gate G7 |
+| Sblocco | Ep → Ep | Giorno → Giorno + Gate G7 (time-gated) |
 | Profilo extra | — | role, level, biggest_fear, goals, dream, current_situation, coach_notes |
-| Calendario | — | `user_weekly_calendar` (tabella pronta, API da implementare) |
+| Calendario | — | `user_weekly_calendar` + WeeklyCalendarPopup |
 | Riflessioni | — | `day_reflections` + `/api/reflection` |
-| Notion | DB Episodi | DB Giorni |
-| AI persona | Maestro | Coach (⚠️ prompt da riscrivere) |
+| Notion | DB Episodi | DB Settimane + DB Giorni |
+| AI persona | Maestro | Coach (prompt 100% football-ready) |
+| Pratica | — | PracticePopup con timer e step |
 | Compressione | — | Giorno saltato → compressed |
 
 ---
@@ -337,21 +551,24 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 ## Cose da Fare (Prossimi Step)
 
 ### Completati
-- [x] **Step 2:** Supabase — tabelle create (`docs/supabase-schema.sql`)
-- [x] **Step 3:** Notion API — `lib/notion.ts` con queryDatabase, fetchPage, mapSettimana, mapGiorno
-- [x] **Step 4:** Registrazione 2-step + Onboarding carousel 5 slide
-- [x] **Step 5:** Logica giornaliera — `giorno/[week]/[day]/page.tsx` completo
-- [x] **Step 6:** Logica sblocco — `lib/dayUnlockLogic.ts` completo
-- [x] **Step 9:** Telegram — webhook + cron cleanup implementati
-- [x] `DayCard.tsx` implementato
-- [x] API settimane usa env vars per DB IDs
+- [x] Supabase — tabelle create (`docs/supabase-schema.sql`)
+- [x] Notion API — `lib/notion.ts` con queryDatabase, fetchPage, mapSettimana, mapGiorno
+- [x] Registrazione 2-step + Onboarding carousel 5 slide
+- [x] Logica giornaliera — `giorno/[week]/[day]/page.tsx` completo
+- [x] Logica sblocco — `lib/dayUnlockLogic.ts` completo (time-gated)
+- [x] Telegram — webhook + cron cleanup implementati
+- [x] DayCard.tsx + PracticePopup.tsx + WeeklyCalendarPopup.tsx implementati
+- [x] API settimane/giorno/gate/reflection/calendar funzionanti
+- [x] Coach AI — system prompt 100% football-ready (~380 righe)
+- [x] ChatBot.tsx — header "Coach AI", suggerimenti football, filtro messaggio benvenuto
+- [x] `generateCoachRecap()` — rinominato da `generateMaestroRecap`
+- [x] Primo contatto Telegram — "Coach AI" (non più "Maestro AI")
 
 ### Da fare
-- [ ] **Step 7:** Calendario — implementare `/api/calendar` e `calendar/page.tsx` (attualmente stub 501)
-- [ ] **Step 8:** Coach AI — riscrivere system prompt 3-layer football in `maestro-ai.ts`
 - [ ] Rinominare `lib/maestro-ai.ts` → `lib/coach-ai.ts` e aggiornare tutti gli import
 - [ ] Rimuovere `components/EpisodeCard.tsx` (deprecato, non usato)
-- [ ] Aggiornare `ChatBot.tsx` — rimuovere riferimenti Naruto (titolo "Maestro AI", suggerimenti)
+- [ ] Attivare safety check (`checkSafetyKeywords`) in `/api/chat` e `/api/telegram`
+- [ ] GlobalMeditationWrapper — sincronizzare WEEK_IDS con `WEEK_RECORD_IDS` di constants.ts
 
 ---
 

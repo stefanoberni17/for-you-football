@@ -497,7 +497,7 @@ Produci un testo conciso (max 300 parole) con questo formato:
 
 Sii neutro e descrittivo. Nessuna diagnosi psicologica. Nessun giudizio di valore.`;
 
-export async function generateMaestroRecap(
+export async function generateCoachRecap(
   userId: string,
   recentMessages: { role: string; content: string }[]
 ): Promise<void> {
@@ -527,7 +527,7 @@ export async function generateMaestroRecap(
       .update({ coach_notes: text })
       .eq('user_id', userId);
   } catch (error) {
-    console.error('Errore generateMaestroRecap:', error);
+    console.error('Errore generateCoachRecap:', error);
   }
 }
 

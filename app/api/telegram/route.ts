@@ -4,7 +4,7 @@ import {
   buildUserContext,
   callClaude,
   checkSafetyKeywords,
-  generateMaestroRecap,
+  generateCoachRecap,
   SYSTEM_PROMPT,
   SYSTEM_PROMPT_NOT_REGISTERED,
   TELEGRAM_FORMAT
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     const userContext = await buildUserContext(userId);
     const firstMessageNote = isFirstMessage
-      ? '\n\n# PRIMO CONTATTO TELEGRAM\nÈ la prima volta che questo utente ti scrive su Telegram. Accoglilo calorosamente, presentati brevemente come il Maestro AI del suo percorso. Fai UNA sola domanda semplice e aperta per capire come sta in questo momento — niente di profondo o terapeutico. Massimo 3-4 frasi in totale.'
+      ? '\n\n# PRIMO CONTATTO TELEGRAM\nÈ la prima volta che questo utente ti scrive su Telegram. Accoglilo calorosamente, presentati brevemente come il Coach AI del suo percorso di allenamento mentale. Fai UNA sola domanda semplice e aperta per capire come sta in questo momento — niente di profondo o terapeutico. Massimo 3-4 frasi in totale.'
       : '';
     const systemPrompt = SYSTEM_PROMPT + TELEGRAM_FORMAT + firstMessageNote + '\n\n' + userContext;
 
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
         .limit(40);
 
       const recapHistory = (recapMessages || []).reverse();
-      generateMaestroRecap(userId, recapHistory).catch(err =>
+      generateCoachRecap(userId, recapHistory).catch(err =>
         console.error('Recap generation error:', err)
       );
     }
