@@ -11,7 +11,7 @@ import {
   isTimeLocked,
   DayProgress,
 } from '@/lib/dayUnlockLogic';
-import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY } from '@/lib/constants';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
 
 export default function HomePage() {
   const router = useRouter();
@@ -110,13 +110,12 @@ export default function HomePage() {
         <div className="bg-gradient-to-r from-forest-500 to-forest-600 rounded-2xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-white text-sm mb-1">📍 Sei qui</p>
-              <h2 className="text-xl font-bold">
-                Settimana {currentWeek}
-                {settimana?.titolo ? ` — ${settimana.titolo}` : ''}
+              <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Settimana {currentWeek}</p>
+              <h2 className="text-2xl font-bold leading-tight">
+                {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
               </h2>
               {settimana?.principio && (
-                <p className="text-white text-sm mt-1">🧭 {settimana.principio}</p>
+                <p className="text-forest-100 text-sm mt-1">🧭 {settimana.principio}</p>
               )}
             </div>
             <div className="text-5xl">⚽</div>

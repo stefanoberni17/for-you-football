@@ -12,7 +12,7 @@
 **Obiettivo dichiarato (utente):** giocare meglio, gestire pressione ed errori
 **Obiettivo reale (profondo):** il campo come specchio — percorso di crescita personale
 
-**Stato attuale:** MVP in sviluppo. Fork di Naruto Inner Path (~85% infrastruttura condivisa).
+**Stato attuale:** MVP deployato su Vercel. Fork di Naruto Inner Path (~85% infrastruttura condivisa).
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
@@ -275,7 +275,7 @@ Totale: 15-20 sec. In campo, sempre.
 ## Coach AI — Architettura Conversazioni (`lib/coach-ai.ts`)
 
 ### Funzioni esportate
-- `SYSTEM_PROMPT` — Prompt Coach AI completo (~380 righe): identità, progressione settimanale, linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio
+- `SYSTEM_PROMPT` — Prompt Coach AI completo (~380 righe): identità, progressione settimanale, linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio. Include sezione `# ESEMPI DA CALCIATORI REALI`: catalogo fisso di 7 esempi verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo il Fenomeno) — il Coach usa SOLO questi, non inventa statistiche
 - `SYSTEM_PROMPT_NOT_REGISTERED` — Risposta per utenti Telegram non registrati
 - `WEB_FORMAT` — Regole formattazione per web chat (markdown leggero, max 4-6 righe)
 - `TELEGRAM_FORMAT` — Regole formattazione per Telegram (niente markdown, max 4-5 righe, colloquiale)
@@ -336,10 +336,13 @@ Se registrato:
 - Recap usa ultimi 40 messaggi per avere più contesto
 - Conversazioni cancellate dopo 90 giorni (cron job nightly)
 - Primo messaggio: avviso privacy + presentazione Coach
+- **Bot username:** @foryoufootballcoach_bot
+- **Webhook registrato:** `https://for-you-football.vercel.app/api/telegram`
 
 ### Contesto condiviso (`buildUserContext`)
 
 Entrambi i canali (web + Telegram) usano `buildUserContext(userId)` che legge:
+- **Data odierna:** data reale passata come prima riga del contesto (evita hallucination del giorno della settimana)
 - **Profilo atleta:** nome, età, ruolo/i, livello, paure, situazione, obiettivi, sogno
 - **Progresso:** tutti i giorni completati + ultimi 3 mostrati
 - **Riflessioni dal campo:** ultime 5 riflessioni (domanda + risposta)
@@ -565,9 +568,15 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Rinominato `lib/maestro-ai.ts` → `lib/coach-ai.ts` + aggiornati import in chat e telegram
 - [x] Rimosso `components/EpisodeCard.tsx` (deprecato, non usato)
 - [x] GlobalMeditationWrapper — sincronizzato con `WEEK_RECORD_IDS`, `WEEK_TOOLS`, `WEEK_PRINCIPLES` da constants.ts
+- [x] `app/chat/page.tsx` — suggerimenti pre-impostati aggiornati (football-specific, rimossi riferimenti Naruto)
+- [x] `components/ChatBot.tsx` — header corretto: "Coach AI" + "Il tuo allenatore mentale", loading emoji ⚽
+- [x] `lib/coach-ai.ts` — `buildUserContext()` passa data reale di oggi (fix hallucination giorno della settimana)
+- [x] `lib/coach-ai.ts` — `SYSTEM_PROMPT` include catalogo esempi calciatori reali verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo)
+- [x] Bot Telegram `@foryoufootballcoach_bot` creato e webhook registrato su `for-you-football.vercel.app`
 
 ### Da fare
 - [ ] Attivare safety check (`checkSafetyKeywords`) in `/api/chat` e `/api/telegram`
+- [ ] Implementare `app/calendar/page.tsx` (UI per impostare giorni allenamento/partita — API già funzionante)
 
 ---
 

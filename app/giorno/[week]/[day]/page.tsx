@@ -238,54 +238,51 @@ export default function GiornoPage() {
   }
 
   return (
-    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-28">
-      <div className="max-w-xl mx-auto space-y-5">
+    <main className="min-h-screen bg-gray-50 pb-28">
 
-        {/* Nav */}
-        <button
-          onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-forest-500 transition-colors"
-        >
-          ← Settimana {weekNumber}
-        </button>
-
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-forest-500">
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-xs font-semibold text-forest-700 bg-forest-100 px-2.5 py-1 rounded-full">
-              Settimana {weekNumber} · Giorno {dayNumber}
-            </span>
-            {giorno.durataMinuti > 0 && (
-              <span className="text-xs text-gray-400">⏱ {giorno.durataMinuti} min</span>
-            )}
-            {completed && (
-              <span className="text-xs font-semibold text-forest-600 bg-forest-100 px-2.5 py-1 rounded-full">
-                ✅ Completato
-              </span>
-            )}
-          </div>
-          <h1 className="text-xl font-bold text-gray-800">
-            {giorno.titolo?.replace(/^W\d-G\d — /, '') || `Giorno ${dayNumber}`}
+      {/* Immersive header */}
+      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-6 pb-16">
+        <div className="max-w-xl mx-auto">
+          <button
+            onClick={() => router.push(`/settimana/${weekNumber}`)}
+            className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
+          >
+            ← Settimana {weekNumber}
+          </button>
+          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
+            Settimana {weekNumber} · Giorno {dayNumber}
+            {giorno.durataMinuti > 0 ? ` · ${giorno.durataMinuti} min` : ''}
+          </p>
+          <h1 className="text-2xl font-bold text-white leading-tight">
+            {giorno.titolo?.replace(/^W\d+-G\d+ — /, '') || `Giorno ${dayNumber}`}
           </h1>
+          {completed && (
+            <span className="inline-block mt-2 text-xs font-semibold text-forest-100 bg-white/15 px-3 py-1 rounded-full">
+              ✅ Già completato
+            </span>
+          )}
+          {/* Progress dots inside header */}
+          {totalSlides > 1 && (
+            <div className="flex gap-2 mt-5">
+              {slides.map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i + 1 === currentSlide
+                      ? 'w-8 bg-white'
+                      : i + 1 < currentSlide
+                      ? 'w-2 bg-white/60'
+                      : 'w-2 bg-white/25'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* Progress dots */}
-        {totalSlides > 1 && (
-          <div className="flex justify-center gap-2">
-            {slides.map((_, i) => (
-              <div
-                key={i}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  i + 1 === currentSlide
-                    ? 'w-8 bg-forest-500'
-                    : i + 1 < currentSlide
-                    ? 'w-2 bg-forest-300'
-                    : 'w-2 bg-forest-200'
-                }`}
-              />
-            ))}
-          </div>
-        )}
+      {/* Content area — pulled up over header */}
+      <div className="max-w-xl mx-auto px-4 -mt-10 space-y-4">
 
         {/* Check giorno precedente */}
         {showCheck && giorno && (

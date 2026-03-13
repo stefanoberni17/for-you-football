@@ -168,7 +168,7 @@ export default function SettimanePage() {
               </div>
 
               <h3 className={`text-xl font-bold mb-1 ${unlocked ? 'text-gray-800' : 'text-gray-400'}`}>
-                {settimana.titolo}
+                {settimana.titolo?.replace(/^Week \d+ — /, '') || settimana.titolo}
               </h3>
 
               {settimana.principio && (

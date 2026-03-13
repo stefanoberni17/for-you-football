@@ -231,7 +231,7 @@ export default function SettimanaPage() {
               </button>
             )}
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">{settimana.titolo}</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-1">{settimana.titolo?.replace(/^Week \d+ — /, '') || settimana.titolo}</h1>
           {settimana.strumento && (
             <p className="text-gray-600 text-sm mb-3">
               🔧 <span className="font-medium">Strumento:</span> {settimana.strumento}
@@ -309,7 +309,7 @@ export default function SettimanaPage() {
                   <p className={`text-sm font-semibold ${unlocked ? 'text-gray-800' : 'text-gray-400'}`}>
                     {isGate
                       ? `Gate — Giorno ${dayNum}`
-                      : `Giorno ${dayNum}${giorno?.titolo ? ` — ${giorno.titolo}` : ''}`}
+                      : `Giorno ${dayNum}${giorno?.titolo ? ` — ${giorno.titolo.replace(/^W\d+-G\d+ — /, '')}` : ''}`}
                   </p>
                   <div className="flex items-center gap-3 mt-0.5">
                     {giorno?.durataMinuti ? (
