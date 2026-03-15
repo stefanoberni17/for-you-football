@@ -147,7 +147,7 @@ export default function HomePage() {
             </div>
           ) : nextDayLocked ? (
             <div className="bg-white/20 rounded-xl px-4 py-3 text-sm font-medium text-white text-center">
-              ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sara disponibile domani
+              ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani
             </div>
           ) : (
             <button

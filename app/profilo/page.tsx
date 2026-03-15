@@ -38,6 +38,47 @@ function ChipGroup({
   );
 }
 
+// ── Passi guida Telegram ──────────────────────────────────────────────────────
+const TELEGRAM_STEPS = [
+  {
+    emoji: '📱',
+    title: 'Apri Telegram',
+    description: 'Cerca il bot che ti dà il tuo ID:',
+    bot: '@userinfobot',
+    detail: 'Aprilo e premi Start (o scrivi qualcosa).',
+    link: 'https://t.me/userinfobot',
+    linkLabel: 'Apri @userinfobot →',
+  },
+  {
+    emoji: '⌨️',
+    title: 'Scrivi /start',
+    description: 'Manda questo comando al bot:',
+    bot: '/start',
+    detail: 'Il bot risponderà con il tuo ID numerico.',
+    link: null,
+    linkLabel: null,
+  },
+  {
+    emoji: '📋',
+    title: 'Incolla il tuo ID',
+    description: 'Copia il numero che ti ha risposto il bot e incollalo qui:',
+    bot: null,
+    detail: 'È un numero tipo: 766672351',
+    link: null,
+    linkLabel: null,
+    hasInput: true,
+  },
+  {
+    emoji: '🤖',
+    title: 'Ora sei pronto!',
+    description: 'Cerca il tuo Coach su Telegram:',
+    bot: '@foryoufootballcoach_bot',
+    detail: 'Scrivili qualcosa per iniziare il tuo allenamento mentale.',
+    link: 'https://t.me/foryoufootballcoach_bot',
+    linkLabel: 'Apri il Coach →',
+  },
+];
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function ProfiloPage() {
@@ -53,6 +94,11 @@ export default function ProfiloPage() {
   const [eta, setEta] = useState('');
   const [currentWeek, setCurrentWeek] = useState('1');
   const [telegramId, setTelegramId] = useState('');
+
+  // Telegram modal
+  const [showTelegramModal, setShowTelegramModal] = useState(false);
+  const [telegramStep, setTelegramStep] = useState(0);
+  const [savingTelegram, setSavingTelegram] = useState(false);
 
   // Profilo calciatore
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
@@ -91,7 +137,6 @@ export default function ProfiloPage() {
         setGoals(p.goals || '');
         setDream(p.dream || '');
         setCurrentSituation(p.current_situation || '');
-        // Multi-select: stored as comma-separated string
         setSelectedRoles(p.role ? p.role.split(',').filter(Boolean) : []);
         setSelectedFears(p.biggest_fear ? p.biggest_fear.split(',').filter(Boolean) : []);
       }
@@ -141,6 +186,22 @@ export default function ProfiloPage() {
     else setError('Errore durante il logout');
   };
 
+  const handleSaveTelegram = async () => {
+    if (!telegramId.trim()) return;
+    setSavingTelegram(true);
+    await supabase
+      .from('profiles')
+      .update({ telegram_id: telegramId.trim() })
+      .eq('user_id', userId);
+    setSavingTelegram(false);
+    setTelegramStep(3);
+  };
+
+  const openTelegramModal = () => {
+    setTelegramStep(0);
+    setShowTelegramModal(true);
+  };
+
   if (loading) {
     return (
       <main className="min-h-screen bg-forest-50 flex items-center justify-center">
@@ -152,8 +213,113 @@ export default function ProfiloPage() {
     );
   }
 
+  const currentStep = TELEGRAM_STEPS[telegramStep];
+  const isLastStep = telegramStep === TELEGRAM_STEPS.length - 1;
+  const isInputStep = telegramStep === 2;
+
   return (
     <main className="min-h-screen bg-forest-50 py-8 px-4 pb-28">
+
+      {/* ── Telegram Modal ─────────────────────────────────────────────────── */}
+      {showTelegramModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowTelegramModal(false); }}
+        >
+          <div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
+
+            {/* Step dots */}
+            <div className="flex justify-center items-center gap-1.5 pt-5 pb-1">
+              {TELEGRAM_STEPS.map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === telegramStep ? 'bg-forest-500 w-6' : i < telegramStep ? 'bg-forest-300 w-1.5' : 'bg-gray-200 w-1.5'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Slide content */}
+            <div className="px-7 py-5 text-center min-h-[240px] flex flex-col items-center justify-center gap-3">
+              <div className="text-5xl">{currentStep.emoji}</div>
+              <h3 className="text-xl font-bold text-gray-800">{currentStep.title}</h3>
+              <p className="text-sm text-gray-500">{currentStep.description}</p>
+
+              {currentStep.bot && (
+                <div className="bg-gray-100 rounded-xl px-5 py-3 w-full">
+                  <p className="text-lg font-bold text-gray-800 font-mono tracking-wide">{currentStep.bot}</p>
+                </div>
+              )}
+
+              {isInputStep && (
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={telegramId}
+                  onChange={(e) => setTelegramId(e.target.value)}
+                  placeholder="Es. 766672351"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-center text-lg font-mono"
+                  autoFocus
+                />
+              )}
+
+              <p className="text-xs text-gray-400">{currentStep.detail}</p>
+
+              {currentStep.link && (
+                <a
+                  href={currentStep.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-forest-600 text-sm font-semibold hover:underline"
+                >
+                  {currentStep.linkLabel}
+                </a>
+              )}
+            </div>
+
+            {/* Navigation */}
+            <div className="px-6 pb-6 flex gap-3">
+              {telegramStep > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setTelegramStep((s) => s - 1)}
+                  className="flex-none py-3 px-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+                >
+                  ←
+                </button>
+              )}
+
+              {isLastStep ? (
+                <button
+                  type="button"
+                  onClick={() => setShowTelegramModal(false)}
+                  className="flex-1 py-3 rounded-xl bg-forest-500 hover:bg-forest-600 text-white text-sm font-bold transition-all"
+                >
+                  ✓ Fatto!
+                </button>
+              ) : isInputStep ? (
+                <button
+                  type="button"
+                  onClick={handleSaveTelegram}
+                  disabled={!telegramId.trim() || savingTelegram}
+                  className="flex-1 py-3 rounded-xl bg-forest-500 hover:bg-forest-600 text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {savingTelegram ? 'Salvataggio…' : 'Salva e continua →'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setTelegramStep((s) => s + 1)}
+                  className="flex-1 py-3 rounded-xl bg-forest-500 hover:bg-forest-600 text-white text-sm font-bold transition-all"
+                >
+                  Avanti →
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div className="max-w-xl mx-auto mb-6">
@@ -175,6 +341,39 @@ export default function ProfiloPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>
         )}
+
+        {/* ── Coach Telegram (IN ALTO) ──────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${telegramId ? 'bg-forest-100' : 'bg-blue-50'}`}>
+                🤖
+              </div>
+              <div>
+                <p className="font-bold text-gray-800 text-sm">Coach su Telegram</p>
+                <p className="text-xs text-gray-500">
+                  {telegramId ? `Collegato · ID ${telegramId}` : 'Non ancora collegato'}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={openTelegramModal}
+              className={`text-xs font-bold px-4 py-2 rounded-xl transition-all ${
+                telegramId
+                  ? 'text-gray-500 bg-gray-100 hover:bg-gray-200'
+                  : 'text-white bg-forest-500 hover:bg-forest-600 shadow-sm'
+              }`}
+            >
+              {telegramId ? 'Modifica' : 'Collega'}
+            </button>
+          </div>
+          {!telegramId && (
+            <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+              Chatta con il tuo Coach AI direttamente su Telegram — ovunque, in qualsiasi momento.
+            </p>
+          )}
+        </div>
 
         {/* ── Settimana corrente ───────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl shadow-sm p-5 border border-forest-100">
@@ -267,27 +466,6 @@ export default function ProfiloPage() {
             <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)} rows={2}
               className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"
               placeholder="Es. Ho perso il posto da titolare e faccio fatica a ritrovare fiducia…" maxLength={500} />
-          </div>
-        </div>
-
-        {/* ── Telegram ────────────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-          <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">🤖 Collega Telegram</h3>
-
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800">
-            <p className="font-medium mb-2">Come trovare il tuo ID Telegram:</p>
-            <ol className="list-decimal list-inside space-y-1 text-blue-700 text-xs">
-              <li>Apri Telegram e cerca <strong>@getidsbot</strong></li>
-              <li>Scrivili qualsiasi messaggio</li>
-              <li>Copia il numero che ti risponde e incollalo qui sotto</li>
-            </ol>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Il tuo ID Telegram</label>
-            <input type="text" value={telegramId} onChange={(e) => setTelegramId(e.target.value)} autoComplete="off"
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
-              placeholder="Es. 766672351" />
           </div>
         </div>
 
