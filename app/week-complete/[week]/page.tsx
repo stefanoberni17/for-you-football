@@ -44,6 +44,15 @@ export default function WeekCompletePage() {
     <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 py-10 px-5 flex flex-col items-center">
       <div className="w-full max-w-md">
 
+        {/* Frase settimana — momento "wow" */}
+        {settimana?.fraseSettimana && (
+          <div className="text-center mb-8">
+            <p className="text-2xl font-bold text-white leading-snug">
+              &ldquo;{settimana.fraseSettimana}&rdquo;
+            </p>
+          </div>
+        )}
+
         {/* Celebration */}
         <div className="text-center mb-8">
           <div className="text-8xl mb-4">🏆</div>

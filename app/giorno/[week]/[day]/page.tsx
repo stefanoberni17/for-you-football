@@ -23,6 +23,8 @@ export default function GiornoPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const [savingCheck, setSavingCheck] = useState(false);
+  const [showContesto, setShowContesto] = useState(false);
+  const [settimanaData, setSettimanaData] = useState<any>(null);
 
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
@@ -63,10 +65,11 @@ export default function GiornoPage() {
         return;
       }
 
-      // Fetch contenuto giorno + calendario in parallelo
-      const [giornoRes, calendarRes] = await Promise.all([
+      // Fetch contenuto giorno + calendario + settimana in parallelo
+      const [giornoRes, calendarRes, settimanaRes] = await Promise.all([
         fetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`),
         fetch(`/api/calendar?userId=${uid}&week=${weekNumber}`),
+        fetch(`/api/settimana?week=${weekNumber}`),
       ]);
 
       const data = await giornoRes.json();
@@ -84,6 +87,12 @@ export default function GiornoPage() {
           setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
         }
       } catch { /* calendario non configurato — ignora */ }
+
+      // Carica dati settimana (per pratica pre-partita)
+      try {
+        const settimanaJson = await settimanaRes.json();
+        setSettimanaData(settimanaJson.settimana);
+      } catch { /* ignora */ }
 
       setGiorno(data.giorno);
       setCompleted(data.completed);
@@ -123,6 +132,9 @@ export default function GiornoPage() {
   const isLastSlide = currentSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
   const weekTool = WEEK_TOOLS[weekNumber] || undefined;
+  const isPreMatchDay = calendarData?.matchDays?.some(
+    (matchDay: number) => (matchDay === 1 ? 7 : matchDay - 1) === dayNumber
+  ) ?? false;
 
   // Calcola il prossimo allenamento basato sul giorno della settimana corrente
   const getNextTrainingMessage = (): string | null => {
@@ -330,6 +342,24 @@ export default function GiornoPage() {
               {giorno.pratica}
             </p>
 
+            {/* Perché funziona — accordion */}
+            {giorno.contesto && (
+              <div className="mt-4 border-t border-forest-100 pt-4">
+                <button
+                  onClick={() => setShowContesto(s => !s)}
+                  className="flex items-center gap-2 text-xs font-semibold text-forest-600 hover:text-forest-800 transition-colors"
+                >
+                  💡 Perché funziona
+                  <span className="text-forest-400">{showContesto ? '▲' : '▼'}</span>
+                </button>
+                {showContesto && (
+                  <p className="mt-2 text-gray-600 text-sm leading-relaxed">
+                    {giorno.contesto}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Bottone pratica guidata */}
             {hasPracticeTimer && (
               <button
@@ -391,6 +421,16 @@ export default function GiornoPage() {
             <h2 className="text-lg font-bold text-gray-800 mb-2">Pronto a completare?</h2>
             <p className="text-sm text-gray-500">
               Hai letto l'apertura e praticato. Segna il giorno come completato.
+            </p>
+          </div>
+        )}
+
+        {/* Pratica pre-partita */}
+        {isLastSlide && isPreMatchDay && settimanaData?.praticaPrePartita && (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
+            <p className="text-xs font-bold text-green-700 mb-2">🟢 Domani giochi — pratica pre-partita</p>
+            <p className="text-green-800 text-sm leading-relaxed whitespace-pre-line">
+              {settimanaData.praticaPrePartita}
             </p>
           </div>
         )}

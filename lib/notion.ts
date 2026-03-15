@@ -113,6 +113,9 @@ export function mapSettimana(page: any) {
     messaggioChiusura: richText(p['Messaggio Chiusura']),
     coachContesto: richText(p['Coach Contesto']),
     stato: select(p['Stato']),
+    mantraDashboard: richText(p['Mantra Dashboard']),
+    praticaPrePartita: richText(p['Pratica Pre Partita']),
+    fraseSettimana: richText(p['Frase Settimana']),
   };
 }
 
@@ -136,5 +139,6 @@ export function mapGiorno(page: any) {
     tipoGiorno: select(p['Tipo Giorno']),
     haCheckPrecedente: checkbox(p['Ha Check Precedente']),
     testoCheck: richText(p['Testo Check']),
+    contesto: richText(p['Contesto']),
   };
 }

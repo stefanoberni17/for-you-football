@@ -103,6 +103,11 @@ export default function HomePage() {
         <p className="text-gray-600 mt-1">
           Bentornato nel tuo allenamento mentale ⚽
         </p>
+        {settimana?.mantraDashboard && (
+          <p className="text-center italic text-gray-400 text-sm mt-3">
+            &ldquo;{settimana.mantraDashboard}&rdquo;
+          </p>
+        )}
       </div>
 
       <div className="max-w-2xl mx-auto space-y-5">
