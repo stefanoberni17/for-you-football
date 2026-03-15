@@ -23,7 +23,6 @@ export default function GiornoPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const [savingCheck, setSavingCheck] = useState(false);
-  const [showContesto, setShowContesto] = useState(false);
   const [settimanaData, setSettimanaData] = useState<any>(null);
 
   // Slide state
@@ -342,21 +341,15 @@ export default function GiornoPage() {
               {giorno.pratica}
             </p>
 
-            {/* Perché funziona — accordion */}
-            {giorno.contesto && (
-              <div className="mt-4 border-t border-forest-100 pt-4">
-                <button
-                  onClick={() => setShowContesto(s => !s)}
-                  className="flex items-center gap-2 text-xs font-semibold text-forest-600 hover:text-forest-800 transition-colors"
-                >
+            {/* Perché funziona */}
+            {giorno.contesto && giorno.contesto.trim() !== '' && (
+              <div className="bg-green-50 border-l-4 border-green-600 rounded-r-lg px-4 py-4 mt-4">
+                <h3 className="text-base font-semibold text-green-700 mb-2">
                   💡 Perché funziona
-                  <span className="text-forest-400">{showContesto ? '▲' : '▼'}</span>
-                </button>
-                {showContesto && (
-                  <p className="mt-2 text-gray-600 text-sm leading-relaxed">
-                    {giorno.contesto}
-                  </p>
-                )}
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {giorno.contesto}
+                </p>
               </div>
             )}
 
