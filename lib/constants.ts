@@ -59,10 +59,11 @@ export const WEEK_TOOLS: Record<number, string> = {
 // ─── Livelli di gioco ─────────────────────────────────────────────────────────
 
 export const PLAYER_LEVELS = [
+  { value: 'giovanile', label: 'Giovanile' },
   { value: 'amatoriale', label: 'Amatoriale' },
   { value: 'dilettante', label: 'Dilettante' },
-  { value: 'giovanile', label: 'Giovanile' },
   { value: 'semi-pro', label: 'Semi-professionistico' },
+  { value: 'professionista', label: 'Professionista' },
 ] as const;
 
 export const PLAYER_ROLES = [

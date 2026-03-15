@@ -223,7 +223,7 @@ export default function ProfiloPage() {
       {/* ── Telegram Modal ─────────────────────────────────────────────────── */}
       {showTelegramModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-6"
           onClick={(e) => { if (e.target === e.currentTarget) setShowTelegramModal(false); }}
         >
           <div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
