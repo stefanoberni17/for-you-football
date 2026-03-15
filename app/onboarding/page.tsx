@@ -9,6 +9,9 @@ export default function OnboardingPage() {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [completing, setCompleting] = useState(false);
   const [ready, setReady] = useState(false);
+  const [showRitual, setShowRitual] = useState(false);
+  const [ritualUserId, setRitualUserId] = useState('');
+  const [completingRitual, setCompletingRitual] = useState(false);
 
   // Guard: verifica auth e se onboarding gia completato
   useEffect(() => {
@@ -57,7 +60,8 @@ export default function OnboardingPage() {
         return;
       }
 
-      router.push('/');
+      setRitualUserId(session.user.id);
+      setShowRitual(true);
 
     } catch (error) {
       console.error('Errore imprevisto:', error);
@@ -66,39 +70,34 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleRitualComplete = async () => {
+    setCompletingRitual(true);
+    await supabase
+      .from('profiles')
+      .update({ ritual_completed: true })
+      .eq('user_id', ritualUserId);
+    router.push('/');
+  };
+
   const slides = [
     // ── SLIDE 1 ──────────────────────────────────────────────────────────────
     {
       title: 'Benvenuto in For You Football',
       subtitle: 'Allenamento mentale per calciatori',
       content: (
-        <div className="text-center max-w-2xl mx-auto">
+        <div className="text-center max-w-xl mx-auto">
           <div className="text-8xl mb-8">⚽</div>
-          <p className="text-xl text-gray-700 leading-relaxed mb-6 font-medium">
-            La mente è il tuo strumento più potente in campo.<br />
-            Questo percorso ti insegna ad usarla.
+          <p className="text-2xl font-bold text-gray-800 leading-snug mb-2">
+            Quante volte in campo la testa parte…
           </p>
-          <div className="bg-forest-50 rounded-xl p-6 text-left space-y-3 text-gray-700">
-            <p className="flex items-start gap-3">
-              <span className="text-forest-500 mt-1">•</span>
-              <span>Gestire la pressione e i momenti difficili</span>
-            </p>
-            <p className="flex items-start gap-3">
-              <span className="text-forest-500 mt-1">•</span>
-              <span>Restare presente e concentrato durante la partita</span>
-            </p>
-            <p className="flex items-start gap-3">
-              <span className="text-forest-500 mt-1">•</span>
-              <span>Costruire strumenti mentali concreti e allenabili</span>
-            </p>
-            <p className="flex items-start gap-3">
-              <span className="text-forest-500 mt-1">•</span>
-              <span>Diventare il calciatore che puoi essere</span>
-            </p>
-          </div>
-          <p className="text-gray-600 mt-6 italic text-sm">
-            Un percorso di 4 settimane, 7 giorni a settimana.<br />
-            Bastano 5–15 minuti al giorno.
+          <p className="text-2xl font-bold text-gray-800 leading-snug mb-8">
+            e non riesci più a tornare nella partita?
+          </p>
+          <p className="text-gray-500 text-sm">
+            12 settimane · 5 minuti al giorno
+          </p>
+          <p className="text-gray-500 text-sm">
+            Strumenti mentali reali — da usare in campo.
           </p>
         </div>
       ),
@@ -303,6 +302,29 @@ export default function OnboardingPage() {
 
   const currentContent = slides[currentSlide - 1];
   const isLastSlide = currentSlide === slides.length;
+
+  if (showRitual) {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-forest-700 to-forest-900 flex flex-col items-center justify-center p-8 text-white">
+        <div className="max-w-sm w-full text-center space-y-6">
+          <p className="text-3xl font-light">Prima di iniziare.</p>
+          <div className="space-y-3 text-lg leading-relaxed">
+            <p>Fai una promessa a te stesso.</p>
+            <p>Non devi fare tutto perfetto.</p>
+            <p>Devi solo <strong>tornare quando te ne ricordi.</strong></p>
+            <p>Questo è il gioco.</p>
+          </div>
+          <button
+            onClick={handleRitualComplete}
+            disabled={completingRitual}
+            className="mt-8 w-full bg-white text-forest-700 font-bold py-4 rounded-2xl text-base shadow-lg hover:bg-forest-50 transition-all disabled:opacity-50"
+          >
+            HO CAPITO
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   if (!ready) {
     return (

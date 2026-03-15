@@ -111,6 +111,21 @@ export default function HomePage() {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-5">
+        {/* Banner prima visita */}
+        {profile?.current_week === 1 && totalCompleted === 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
+            <p className="font-bold text-gray-800 mb-1">Ciao, {profile?.name}.</p>
+            <p className="font-bold text-gray-800 mb-3">Week 1 — Il Reset.</p>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Molti giocatori scoprono che non è la tecnica il problema.
+              È restare nella partita.
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Oggi impari il primo strumento. 3 minuti.
+            </p>
+          </div>
+        )}
+
         {/* CTA principale */}
         <div className="bg-gradient-to-r from-forest-500 to-forest-600 rounded-2xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">

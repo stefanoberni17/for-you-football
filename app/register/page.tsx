@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PLAYER_ROLES, PLAYER_LEVELS, PLAYER_FEARS } from '@/lib/constants';
+import { PLAYER_ROLES, PLAYER_LEVELS } from '@/lib/constants';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -53,10 +53,24 @@ export default function RegisterPage() {
   // Step 2 — profilo calciatore
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [level, setLevel] = useState('');
-  const [selectedFears, setSelectedFears] = useState<string[]>([]);
+  const [selectedSituazione, setSelectedSituazione] = useState('');
+  const [showSituazioneRisposta, setShowSituazioneRisposta] = useState(false);
   const [goals, setGoals] = useState('');
   const [dream, setDream] = useState('');
   const [currentSituation, setCurrentSituation] = useState('');
+
+  const SITUAZIONE_RISPOSTE: Record<string, string> = {
+    errore:            "Perfetto. Inizieremo proprio da lì — da quel momento dopo l'errore.",
+    panchina:          'Capito. Quella sensazione ha un nome. E uno strumento.',
+    giudizio:          'Lo conosco bene. Sarà il filo conduttore di tutto il percorso.',
+    pressione_partita: 'Esatto. La settimana 1 è costruita attorno a quello.',
+  };
+  const SITUAZIONI = [
+    { value: 'errore',            label: 'Dopo un errore' },
+    { value: 'panchina',          label: 'Quando finisco in panchina' },
+    { value: 'giudizio',          label: 'Sotto il giudizio del mister o dei compagni' },
+    { value: 'pressione_partita', label: 'Nei momenti decisivi della partita' },
+  ];
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -64,9 +78,6 @@ export default function RegisterPage() {
 
   const toggleRole = (v: string) =>
     setSelectedRoles((prev) => prev.includes(v) ? prev.filter((r) => r !== v) : [...prev, v]);
-
-  const toggleFear = (v: string) =>
-    setSelectedFears((prev) => prev.includes(v) ? prev.filter((f) => f !== v) : [...prev, v]);
 
   // ── Step 1 validation ─────────────────────────────────────────────────────
   const handleNextStep = (e: React.FormEvent) => {
@@ -98,7 +109,7 @@ export default function RegisterPage() {
           age: eta || null,
           role: selectedRoles.length ? selectedRoles.join(',') : null,
           level: level || null,
-          biggest_fear: selectedFears.length ? selectedFears.join(',') : null,
+          biggest_fear: selectedSituazione || null,
           goals: goals.trim() || null,
           dream: dream.trim() || null,
           current_situation: currentSituation.trim() || null,
@@ -213,6 +224,7 @@ export default function RegisterPage() {
 
               <div className="border-t border-gray-100 pt-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Come ti chiami? *</label>
+                <p className="text-xs text-gray-500 mb-1.5">Il Coach ti chiamerà per nome.</p>
                 <input type="text" value={nome} onChange={(e) => setNome(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
                   placeholder="Il tuo nome" required />
@@ -258,18 +270,20 @@ export default function RegisterPage() {
 
               {/* Ruoli — multi-select */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Dove giochi?{' '}
                   <span className="text-gray-400 font-normal">(anche più di uno)</span>
                 </label>
+                <p className="text-xs text-gray-500 mb-2">Il Coach userà esempi dal tuo ruolo.</p>
                 <ChipGroup options={PLAYER_ROLES} selected={selectedRoles} onToggle={toggleRole} />
               </div>
 
               {/* Livello — single select */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   A che livello giochi?
                 </label>
+                <p className="text-xs text-gray-500 mb-1.5">Calibra il contesto delle pratiche.</p>
                 <select value={level} onChange={(e) => setLevel(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm bg-white">
                   <option value="">Seleziona…</option>
@@ -279,14 +293,37 @@ export default function RegisterPage() {
                 </select>
               </div>
 
-              {/* Paure — multi-select */}
+              {/* Situazione — single select con risposta inline */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Cosa ti blocca mentalmente in campo?{' '}
-                  <span className="text-gray-400 font-normal">(scegli le tue)</span>
+                  Qual è la situazione mentale più difficile per te in campo?
                 </label>
-                <p className="text-xs text-gray-400 mb-2">Puoi selezionarne più di una</p>
-                <ChipGroup options={PLAYER_FEARS} selected={selectedFears} onToggle={toggleFear} />
+                <p className="text-xs text-gray-500 mb-2">Inizieremo proprio da lì.</p>
+                <div className="space-y-2">
+                  {SITUAZIONI.map((s) => (
+                    <button
+                      key={s.value}
+                      type="button"
+                      onClick={() => {
+                        setSelectedSituazione(s.value);
+                        setShowSituazioneRisposta(false);
+                        setTimeout(() => setShowSituazioneRisposta(true), 300);
+                      }}
+                      className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
+                        selectedSituazione === s.value
+                          ? 'bg-forest-500 text-white border-forest-500'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-forest-300'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+                {selectedSituazione && showSituazioneRisposta && (
+                  <p className="text-sm italic text-forest-700 mt-3">
+                    {SITUAZIONE_RISPOSTE[selectedSituazione]}
+                  </p>
+                )}
               </div>
 
               {/* Obiettivi */}
