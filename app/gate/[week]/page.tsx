@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
+import { GATE_DAY } from '@/lib/constants';
 
 export default function GatePage() {
   const params = useParams();
@@ -25,6 +27,26 @@ export default function GatePage() {
 
       const uid = session.user.id;
       setUserId(uid);
+
+      // Controlla se il gate (giorno 7) è sbloccato (time-gate)
+      const { data: progressData } = await supabase
+        .from('user_day_progress')
+        .select('week_number, day_number, completed, completed_at, compressed')
+        .eq('user_id', uid)
+        .eq('completed', true);
+
+      const completedDays: DayProgress[] = (progressData || []).map((p: any) => ({
+        weekNumber: p.week_number,
+        dayNumber: p.day_number,
+        completed: p.completed,
+        completedAt: p.completed_at || null,
+        compressed: p.compressed || false,
+      }));
+
+      if (!isDayUnlocked(weekNumber, GATE_DAY, completedDays)) {
+        router.push(`/settimana/${weekNumber}`);
+        return;
+      }
 
       const res = await fetch(`/api/gate?week=${weekNumber}&userId=${uid}`);
       const data = await res.json();
