@@ -45,6 +45,7 @@ CREATE TABLE profiles (
 
   -- Stato onboarding
   onboarding_completed      BOOLEAN DEFAULT false,
+  ritual_completed          BOOLEAN DEFAULT false,
 
   -- Pratica giornaliera (Il Reset)
   last_meditation_completed DATE,
@@ -68,6 +69,7 @@ CREATE TABLE user_day_progress (
   response         TEXT,                -- risposta domanda giornaliera (opzionale)
   gate_answers     JSONB,               -- { q1: "...", q2: "...", q3: "..." } solo giorno 7
   compressed       BOOLEAN DEFAULT FALSE, -- true se il giorno era saltato e viene compresso
+  previous_day_check INTEGER,             -- 1=in campo, 2=vita quotidiana, 3=non ricordato
   created_at       TIMESTAMPTZ DEFAULT NOW(),
 
   UNIQUE (user_id, week_number, day_number)
