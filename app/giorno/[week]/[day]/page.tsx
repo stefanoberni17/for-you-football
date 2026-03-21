@@ -364,6 +364,13 @@ export default function GiornoPage() {
                 <span className="font-normal text-forest-500">({giorno.durataMinuti} min)</span>
               )}
             </h2>
+            {prePraticaResponse && (
+              <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 mb-4 text-sm text-gray-700 italic leading-relaxed">
+                <p className="text-xs font-semibold text-gray-400 not-italic mb-1">Quello che hai scritto:</p>
+                {prePraticaResponse}
+              </div>
+            )}
+
             <p className="text-gray-700 text-base leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
