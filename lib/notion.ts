@@ -140,5 +140,6 @@ export function mapGiorno(page: any) {
     haCheckPrecedente: checkbox(p['Ha Check Precedente']),
     testoCheck: richText(p['Testo Check']),
     contesto: richText(p['Contesto']),
+    domandaPrePratica: richText(p['Domanda Pre Pratica']),
   };
 }

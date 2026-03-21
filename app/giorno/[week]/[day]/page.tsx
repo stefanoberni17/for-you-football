@@ -19,6 +19,7 @@ export default function GiornoPage() {
   const [completed, setCompleted] = useState(false);
   const [savedResponse, setSavedResponse] = useState<string | null>(null);
   const [response, setResponse] = useState('');
+  const [prePraticaResponse, setPrePraticaResponse] = useState('');
   const [saving, setSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
@@ -99,6 +100,9 @@ export default function GiornoPage() {
         setSavedResponse(data.response);
         setResponse(data.response);
       }
+      if (data.prePraticaResponse) {
+        setPrePraticaResponse(data.prePraticaResponse);
+      }
 
       // Mostra check del giorno precedente se non ancora risposto
       if (
@@ -119,6 +123,7 @@ export default function GiornoPage() {
   const slides: { type: string; label: string }[] = [];
   if (giorno) {
     if (giorno.apertura) slides.push({ type: 'apertura', label: 'Apertura' });
+    if (giorno.domandaPrePratica) slides.push({ type: 'domanda_pre_pratica', label: 'Riflessione' });
     if (giorno.pratica) slides.push({ type: 'pratica', label: 'Pratica' });
     if (giorno.haNotaCampo && giorno.notaCampo) slides.push({ type: 'nota', label: 'Nota Campo' });
     if (giorno.domanda) slides.push({ type: 'domanda', label: 'Riflessione' });
@@ -163,6 +168,7 @@ export default function GiornoPage() {
           weekNumber,
           dayNumber,
           response: response.trim() || null,
+          prePraticaResponse: prePraticaResponse.trim() || null,
         }),
       });
 
@@ -326,6 +332,27 @@ export default function GiornoPage() {
             <p className="text-gray-700 text-base leading-relaxed whitespace-pre-line italic">
               {giorno.apertura}
             </p>
+          </div>
+        )}
+
+        {currentSlideData?.type === 'domanda_pre_pratica' && (
+          <div className="bg-white rounded-2xl shadow-sm p-5">
+            <h2 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+              ✏️ Prima di iniziare
+            </h2>
+            <p className="text-gray-600 text-base mb-3 leading-relaxed">{giorno.domandaPrePratica}</p>
+            <textarea
+              value={prePraticaResponse}
+              onChange={(e) => setPrePraticaResponse(e.target.value)}
+              disabled={completed}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
+              rows={4}
+              maxLength={1000}
+              placeholder="Scrivi qui la tua risposta (opzionale)..."
+            />
+            {!completed && prePraticaResponse.length > 0 && (
+              <p className="text-xs text-gray-400 mt-1 text-right">{prePraticaResponse.length}/1000</p>
+            )}
           </div>
         )}
 

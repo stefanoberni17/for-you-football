@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       userId
         ? supabaseAdmin
             .from('user_day_progress')
-            .select('completed, completed_at, response, compressed, gate_answers')
+            .select('completed, completed_at, response, pre_pratica_response, compressed, gate_answers')
             .eq('user_id', userId)
             .eq('week_number', weekNumber)
             .eq('day_number', dayNumber)
@@ -81,6 +81,7 @@ export async function GET(request: NextRequest) {
       completed: progress?.completed ?? false,
       completedAt: progress?.completed_at ?? null,
       response: progress?.response ?? null,
+      prePraticaResponse: progress?.pre_pratica_response ?? null,
       compressed: progress?.compressed ?? false,
       gateAnswers: progress?.gate_answers ?? null,
       previousDayCheck: (prevProgressResult as any).data?.previous_day_check ?? null,
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId, weekNumber, dayNumber, response } = await request.json();
+    const { userId, weekNumber, dayNumber, response, prePraticaResponse } = await request.json();
 
     if (!userId || !weekNumber || !dayNumber) {
       return NextResponse.json(
@@ -129,6 +130,7 @@ export async function POST(request: NextRequest) {
           completed: true,
           completed_at: new Date().toISOString(),
           response: response || null,
+          pre_pratica_response: prePraticaResponse || null,
         },
         { onConflict: 'user_id,week_number,day_number' }
       );
