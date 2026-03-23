@@ -169,6 +169,7 @@ export default function GiornoPage() {
           dayNumber,
           response: response.trim() || null,
           prePraticaResponse: prePraticaResponse.trim() || null,
+          reflectionQuestion: giorno.domanda || null,
         }),
       });
 
@@ -521,6 +522,8 @@ export default function GiornoPage() {
           pratica={giorno.pratica}
           durataMinuti={giorno.durataMinuti}
           weekTool={weekTool}
+          durataInspira={giorno.durataInspira || undefined}
+          durataEspira={giorno.durataEspira || undefined}
           onComplete={() => setShowPracticePopup(false)}
           onSkip={() => setShowPracticePopup(false)}
         />

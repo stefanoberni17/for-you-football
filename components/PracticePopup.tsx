@@ -7,6 +7,8 @@ interface PracticePopupProps {
   pratica: string;
   durataMinuti: number;
   weekTool?: string;
+  durataInspira?: number;
+  durataEspira?: number;
   onComplete: () => void;
   onSkip: () => void;
 }
@@ -16,6 +18,8 @@ export default function PracticePopup({
   pratica,
   durataMinuti,
   weekTool,
+  durataInspira = 4,
+  durataEspira = 6,
   onComplete,
   onSkip,
 }: PracticePopupProps) {
@@ -41,16 +45,23 @@ export default function PracticePopup({
     return () => clearInterval(timer);
   }, [phase, timeLeft]);
 
-  // Animazione respiro (ciclo 4s)
+  // Animazione respiro (ciclo asimmetrico: inspira/espira con durate diverse)
   useEffect(() => {
     if (phase !== 'practicing') return;
 
-    const breathTimer = setInterval(() => {
-      setBreathPhase(prev => (prev === 'inhale' ? 'exhale' : 'inhale'));
-    }, 4000);
+    let timeout: NodeJS.Timeout;
+    const cycle = (current: 'inhale' | 'exhale') => {
+      const duration = current === 'inhale' ? durataInspira * 1000 : durataEspira * 1000;
+      timeout = setTimeout(() => {
+        const next = current === 'inhale' ? 'exhale' : 'inhale';
+        setBreathPhase(next);
+        cycle(next);
+      }, duration);
+    };
 
-    return () => clearInterval(breathTimer);
-  }, [phase]);
+    cycle(breathPhase);
+    return () => clearTimeout(timeout);
+  }, [phase, durataInspira, durataEspira]);
 
   const startPractice = () => {
     setTimeLeft(totalSeconds);
@@ -156,10 +167,13 @@ export default function PracticePopup({
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
                 <div
-                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform duration-[4000ms] ease-in-out ${
+                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform ease-in-out ${
                     breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
                   }`}
-                  style={{ opacity: 0.6 }}
+                  style={{
+                    opacity: 0.6,
+                    transitionDuration: `${breathPhase === 'inhale' ? durataInspira : durataEspira}s`,
+                  }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">

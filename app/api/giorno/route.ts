@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId, weekNumber, dayNumber, response, prePraticaResponse } = await request.json();
+    const { userId, weekNumber, dayNumber, response, prePraticaResponse, reflectionQuestion } = await request.json();
 
     if (!userId || !weekNumber || !dayNumber) {
       return NextResponse.json(
@@ -136,6 +136,23 @@ export async function POST(request: NextRequest) {
       );
 
     if (upsertError) throw upsertError;
+
+    // Salva riflessione in day_reflections (se c'è una risposta alla domanda)
+    if (response) {
+      await supabaseAdmin
+        .from('day_reflections')
+        .upsert(
+          {
+            user_id: userId,
+            week_number: weekNumber,
+            day_number: dayNumber,
+            reflection_text: response,
+            reflection_question: reflectionQuestion || null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id,week_number,day_number' }
+        );
+    }
 
     // Aggiorna current_week nel profilo se necessario
     // (solo se siamo all'ultimo giorno pre-gate della settimana = giorno 6)
