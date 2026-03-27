@@ -474,6 +474,38 @@ export async function buildUserContext(userId: string): Promise<string> {
     .eq('week_number', currentWeek)
     .maybeSingle();
 
+  // Check-in fisico e mentale — oggi + ultimi 7 giorni
+  const todayStr = new Date().toISOString().split('T')[0];
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  const { data: todayCheckin } = await supabaseAdmin
+    .from('daily_checkin')
+    .select('physical_state, sleep_hours, recovery_quality, mental_state')
+    .eq('user_id', userId)
+    .eq('date', todayStr)
+    .maybeSingle();
+
+  const { data: weekCheckins } = await supabaseAdmin
+    .from('daily_checkin')
+    .select('physical_state, sleep_hours, recovery_quality, mental_state')
+    .eq('user_id', userId)
+    .gte('date', sevenDaysAgo)
+    .order('date', { ascending: false });
+
+  // Calcola medie check-in ultimi 7 giorni (pre-calcolate fuori dal template)
+  let weekCheckinSummary = '';
+  if (weekCheckins && weekCheckins.length > 1) {
+    const physArr = weekCheckins.filter((c: any) => c.physical_state !== null).map((c: any) => c.physical_state as number);
+    const sleepArr = weekCheckins.filter((c: any) => c.sleep_hours !== null).map((c: any) => c.sleep_hours as number);
+    const avgP = physArr.length ? Math.round((physArr.reduce((a: number, b: number) => a + b, 0) / physArr.length) * 10) / 10 : null;
+    const avgS = sleepArr.length ? Math.round((sleepArr.reduce((a: number, b: number) => a + b, 0) / sleepArr.length) * 10) / 10 : null;
+    const mentalArr = weekCheckins.filter((c: any) => c.mental_state).map((c: any) => c.mental_state as string);
+    const mentalFreq: Record<string, number> = {};
+    mentalArr.forEach((v: string) => { mentalFreq[v] = (mentalFreq[v] || 0) + 1; });
+    const dominantMental = Object.entries(mentalFreq).sort((a, b) => b[1] - a[1])[0]?.[0];
+    weekCheckinSummary = `\n**ULTIMI 7 GIORNI (media su ${weekCheckins.length} check-in):**\n- Stato fisico medio: ${avgP !== null ? `${avgP}/5` : '—'}\n- Sonno medio: ${avgS !== null ? `${avgS}h` : '—'}\n- Stato mentale prevalente: ${dominantMental ? dominantMental.replace('un_po_giu', "un po' giù").replace('testa_altrove', 'testa altrove') : '—'}`;
+  }
+
   const todayDate = new Date().toLocaleDateString('it-IT', {
     weekday: 'long',
     day: 'numeric',
@@ -510,6 +542,14 @@ ${calendar && calendar.training_days && calendar.training_days.length > 0
   ? `**Allenamenti:** ${calendar.training_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}
 ${calendar.match_days && calendar.match_days.length > 0 ? `**Partite:** ${calendar.match_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}` : '**Partite:** Nessuna partita questa settimana'}`
   : 'Calendario non ancora impostato'}
+
+## Stato fisico e mentale
+${todayCheckin ? `**OGGI:**
+- Stato fisico: ${todayCheckin.physical_state !== null ? `${todayCheckin.physical_state}/5` : 'non registrato'}
+- Sonno: ${todayCheckin.sleep_hours !== null ? `${todayCheckin.sleep_hours}h` : 'non registrato'}
+- Recupero muscolare: ${todayCheckin.recovery_quality || 'non registrato'}
+- Stato mentale: ${todayCheckin.mental_state ? todayCheckin.mental_state.replace('un_po_giu', "un po' giù").replace('testa_altrove', 'testa altrove') : 'non registrato'}` : 'Nessun check-in registrato oggi.'}
+${weekCheckinSummary}
 
 ## Riflessioni dal campo
 ${reflections && reflections.length > 0

@@ -12,6 +12,7 @@ import {
   DayProgress,
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
+import DailyCheckinModal from '@/components/DailyCheckinModal';
 
 export default function HomePage() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [weekData, setWeekData] = useState<any>(null);
+  const [userId, setUserId] = useState('');
+  const [showCheckin, setShowCheckin] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -41,6 +44,14 @@ export default function HomePage() {
       }
 
       setProfile(profileData);
+      setUserId(session.user.id);
+
+      // Check-in giornaliero — mostra modale se non ancora fatto oggi
+      try {
+        const checkinRes = await fetch(`/api/checkin?userId=${session.user.id}`);
+        const checkinData = await checkinRes.json();
+        if (!checkinData.checkin) setShowCheckin(true);
+      } catch { /* non bloccante */ }
 
       // Carica progresso giorni
       const { data: progress } = await supabase
@@ -95,6 +106,14 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
+      {/* Check-in giornaliero */}
+      {showCheckin && userId && (
+        <DailyCheckinModal
+          userId={userId}
+          onComplete={() => setShowCheckin(false)}
+          onSkip={() => setShowCheckin(false)}
+        />
+      )}
       {/* Header */}
       <div className="max-w-2xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-gray-800">
@@ -240,12 +259,20 @@ export default function HomePage() {
             </div>
           </div>
 
-          <button
-            onClick={() => router.push('/settimane')}
-            className="bg-forest-500 hover:bg-forest-600 text-white font-bold py-3 px-6 rounded-xl transition-all w-full sm:w-auto"
-          >
-            🗺️ Vedi tutto il percorso
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => router.push('/settimane')}
+              className="bg-forest-500 hover:bg-forest-600 text-white font-bold py-3 px-6 rounded-xl transition-all flex-1 sm:flex-none"
+            >
+              🗺️ Vedi tutto il percorso
+            </button>
+            <button
+              onClick={() => router.push('/statistiche')}
+              className="bg-white border border-forest-300 text-forest-700 font-bold py-3 px-6 rounded-xl hover:bg-forest-50 transition-all flex-1 sm:flex-none"
+            >
+              📊 Le tue statistiche
+            </button>
+          </div>
         </div>
       </div>
     </main>

@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS user_episode_progress CASCADE;
 DROP TABLE IF EXISTS user_day_progress CASCADE;
 DROP TABLE IF EXISTS user_weekly_calendar CASCADE;
 DROP TABLE IF EXISTS telegram_conversations CASCADE;
+DROP TABLE IF EXISTS daily_checkin CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
 
 -- Drop trigger e funzione se esistono
@@ -206,6 +207,34 @@ CREATE TRIGGER on_auth_user_created
   EXECUTE FUNCTION handle_new_user();
 
 
+-- ─── 6. DAILY CHECK-IN ────────────────────────────────────────────────────────
+
+DROP TABLE IF EXISTS daily_checkin CASCADE;
+
+CREATE TABLE daily_checkin (
+  id               UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id          UUID NOT NULL REFERENCES auth.users(id),
+  date             DATE NOT NULL DEFAULT CURRENT_DATE,
+  physical_state   INTEGER CHECK (physical_state BETWEEN 1 AND 5),
+  sleep_hours      NUMERIC(3,1) CHECK (sleep_hours BETWEEN 0 AND 12),
+  recovery_quality TEXT CHECK (recovery_quality IN ('fresco','normale','stanco','esausto')),
+  mental_state     TEXT CHECK (mental_state IN ('lucido','normale','un_po_giu','testa_altrove')),
+  created_at       TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, date)
+);
+
+CREATE INDEX idx_daily_checkin_user_date ON daily_checkin(user_id, date DESC);
+
+ALTER TABLE daily_checkin ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "checkin_select_own" ON daily_checkin
+  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "checkin_insert_own" ON daily_checkin
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "checkin_update_own" ON daily_checkin
+  FOR UPDATE USING (auth.uid() = user_id);
+
+
 -- ─── FINE ─────────────────────────────────────────────────────────────────────
--- Verifica: dovresti vedere 5 tabelle in Table Editor:
---   profiles | user_day_progress | user_weekly_calendar | day_reflections | telegram_conversations
+-- Verifica: dovresti vedere 6 tabelle in Table Editor:
+--   profiles | user_day_progress | user_weekly_calendar | day_reflections | telegram_conversations | daily_checkin
