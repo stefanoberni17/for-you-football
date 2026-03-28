@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
-import { DAY_NAMES } from '@/lib/constants';
+import { DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
+import { queryDatabase, fetchPage, mapSettimana, mapGiorno } from '@/lib/notion';
 
 export const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -615,22 +616,178 @@ export async function generateCoachRecap(
   }
 }
 
+// ─── Tool: leggi_percorso ─────────────────────────────────────────────────────
+// Permette al Coach di leggere il contenuto reale da Notion quando l'utente
+// fa domande su pratiche, esercizi o contenuti del percorso.
+
+const LEGGI_PERCORSO_TOOL: Anthropic.Messages.Tool = {
+  name: 'leggi_percorso',
+  description:
+    'Recupera il contenuto ufficiale del percorso For You Football da Notion. ' +
+    "Usalo quando l'utente chiede informazioni su una pratica, un esercizio, " +
+    'la struttura di una settimana o di un giorno specifico del percorso.',
+  input_schema: {
+    type: 'object' as const,
+    properties: {
+      week: {
+        type: 'number',
+        description: 'Numero della settimana (1-4 disponibili in Beta)',
+      },
+      day: {
+        type: 'number',
+        description:
+          'Numero del giorno nella settimana (1-7). Ometti per ottenere solo il contesto della settimana.',
+      },
+    },
+    required: ['week'],
+  },
+};
+
+async function executeLeggiPercorso(input: { week: number; day?: number }): Promise<string> {
+  const { week, day } = input;
+
+  const weekPageId = WEEK_RECORD_IDS[week];
+  if (!weekPageId) {
+    return `Settimana ${week} non disponibile nel percorso Beta.`;
+  }
+
+  const weekPage = await fetchPage(weekPageId);
+  const settimana = mapSettimana(weekPage);
+
+  let result =
+    `=== SETTIMANA ${settimana.weekNumber}: ${settimana.titolo} ===\n` +
+    `Principio: ${settimana.principio}\n` +
+    `Strumento: ${settimana.strumento}\n` +
+    `Obiettivo: ${settimana.obiettivoSettimana}\n` +
+    `Contesto Coach: ${settimana.coachContesto}\n` +
+    `Intro: ${settimana.descrizionIntro}`;
+
+  if (day !== undefined) {
+    const pages = await queryDatabase(NOTION_DB_GIORNI, {
+      filter: {
+        and: [
+          { property: 'Numero Settimana', number: { equals: week } },
+          { property: 'Numero Giorno', number: { equals: day } },
+        ],
+      },
+    });
+
+    if (pages.length === 0) {
+      result += `\n\n[Giorno ${day} non trovato per la settimana ${week}]`;
+    } else {
+      const giorno = mapGiorno(pages[0]);
+      result +=
+        `\n\n=== GIORNO ${giorno.dayNumber}: ${giorno.titolo} ===\n` +
+        `Tipo: ${giorno.tipoGiorno}\n` +
+        `Apertura: ${giorno.apertura}\n` +
+        `Pratica: ${giorno.pratica}\n` +
+        `Durata: ${giorno.durataMinuti} minuti\n` +
+        `Domanda riflessione: ${giorno.domanda}`;
+
+      if (giorno.haNotaCampo && giorno.notaCampo) {
+        result += `\nNota Campo: ${giorno.notaCampo}`;
+      }
+      if (giorno.contesto) {
+        result += `\nContesto: ${giorno.contesto}`;
+      }
+      if (giorno.domandaPrePratica) {
+        result += `\nDomanda Pre-Pratica: ${giorno.domandaPrePratica}`;
+      }
+      if (giorno.isGate && giorno.domandeGate.length > 0) {
+        result += `\nDomande Gate:\n${giorno.domandeGate.map((q: string, i: number) => `${i + 1}. ${q}`).join('\n')}`;
+      }
+    }
+  }
+
+  return result;
+}
+
+// ─── callClaude ───────────────────────────────────────────────────────────────
+
 export async function callClaude(
   systemPrompt: string,
   messages: { role: 'user' | 'assistant'; content: string }[],
-  maxTokens: number = 1500
+  maxTokens: number = 1500,
+  useTools: boolean = false   // true solo per la web chat e Telegram — NON per generateCoachRecap
 ): Promise<{ text: string; usage: any }> {
-  const completion = await anthropic.messages.create({
+  const internalMessages: any[] = messages.map(m => ({ role: m.role, content: m.content }));
+
+  const createParams: any = {
     model: 'claude-sonnet-4-20250514',
     max_tokens: maxTokens,
     system: systemPrompt,
-    messages,
+    messages: internalMessages,
+    ...(useTools ? { tools: [LEGGI_PERCORSO_TOOL] } : {}),
+  };
+
+  const completion = await anthropic.messages.create(createParams);
+
+  // Nessun tool use — percorso normale
+  if (completion.stop_reason !== 'tool_use') {
+    const text = completion.content
+      .filter((block: any) => block.type === 'text')
+      .map((block: any) => block.text)
+      .join('\n');
+    return { text, usage: completion.usage };
+  }
+
+  // Il Coach ha chiamato leggi_percorso → esegui il tool
+  const toolUseBlock = completion.content.find((block: any) => block.type === 'tool_use') as any;
+
+  if (!toolUseBlock || toolUseBlock.name !== 'leggi_percorso') {
+    // Fallback: restituisci testo già presente (non dovrebbe succedere)
+    const text = completion.content
+      .filter((block: any) => block.type === 'text')
+      .map((block: any) => block.text)
+      .join('\n');
+    return { text: text || '', usage: completion.usage };
+  }
+
+  let toolResultContent: string;
+  let isError = false;
+  try {
+    toolResultContent = await executeLeggiPercorso(toolUseBlock.input as any);
+  } catch (err: any) {
+    toolResultContent = `Errore nel recupero del contenuto da Notion: ${err.message}`;
+    isError = true;
+  }
+
+  // Seconda chiamata con il risultato del tool
+  // Nota: max 1 tool call per turno — se Claude chiama di nuovo il tool nella seconda risposta
+  // il testo verrà comunque estratto (il loop non si ripete per semplicità).
+  const messagesWithResult: any[] = [
+    ...internalMessages,
+    { role: 'assistant', content: completion.content },
+    {
+      role: 'user',
+      content: [
+        {
+          type: 'tool_result',
+          tool_use_id: toolUseBlock.id,
+          content: toolResultContent,
+          ...(isError ? { is_error: true } : {}),
+        },
+      ],
+    },
+  ];
+
+  const completion2 = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: maxTokens,
+    system: systemPrompt,
+    messages: messagesWithResult,
+    tools: [LEGGI_PERCORSO_TOOL],
   });
 
-  const text = completion.content
+  const text = completion2.content
     .filter((block: any) => block.type === 'text')
     .map((block: any) => block.text)
     .join('\n');
 
-  return { text, usage: completion.usage };
+  const usage = {
+    input_tokens: (completion.usage.input_tokens ?? 0) + (completion2.usage.input_tokens ?? 0),
+    output_tokens: (completion.usage.output_tokens ?? 0) + (completion2.usage.output_tokens ?? 0),
+  };
+
+  return { text, usage };
 }

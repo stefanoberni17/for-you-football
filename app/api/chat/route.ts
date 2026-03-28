@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const userContext = await buildUserContext(userId);
     const systemPrompt = SYSTEM_PROMPT + WEB_FORMAT + '\n\n' + userContext;
 
-    const { text, usage } = await callClaude(systemPrompt, messages, 1500);
+    const { text, usage } = await callClaude(systemPrompt, messages, 1500, true);
 
     return NextResponse.json({
       response: text,

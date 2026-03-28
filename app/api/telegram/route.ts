@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       { role: 'user' as const, content: userText },
     ];
 
-    const { text } = await callClaude(systemPrompt, messages, 1500);
+    const { text } = await callClaude(systemPrompt, messages, 1500, true);
 
     // Al primo messaggio: invia avviso privacy prima della risposta del Maestro
     if (isFirstMessage) {
