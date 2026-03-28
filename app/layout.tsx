@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Outfit } from "next/font/google";
 import BottomTabBar from "@/components/BottomTabBar";
+import GlobalCheckinWrapper from "@/components/GlobalCheckinWrapper";
 import GlobalMeditationWrapper from "@/components/GlobalMeditationWrapper";
 
 const outfit = Outfit({
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="it" className={outfit.className}>
       <body className="pb-20">
-        <GlobalMeditationWrapper>
-          {children}
-          <BottomTabBar />
-        </GlobalMeditationWrapper>
+        <GlobalCheckinWrapper>
+          <GlobalMeditationWrapper>
+            {children}
+            <BottomTabBar />
+          </GlobalMeditationWrapper>
+        </GlobalCheckinWrapper>
       </body>
     </html>
   );

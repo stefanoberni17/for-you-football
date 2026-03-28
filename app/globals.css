@@ -42,3 +42,19 @@ textarea::placeholder {
   color: rgb(107 114 128); /* gray-500 */
   opacity: 1;
 }
+
+/* Animazioni globali per popup/modal */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.4s ease-out;
+}

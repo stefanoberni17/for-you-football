@@ -6,9 +6,11 @@ import { supabase } from '@/lib/supabase';
 import { WEEK_RECORD_IDS, WEEK_TOOLS, WEEK_PRINCIPLES } from '@/lib/constants';
 import MeditationPopup from './MeditationPopup';
 import { MeditationContext } from './MeditationContext';
+import { useCheckin } from './CheckinContext';
 
 export default function GlobalMeditationWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { checkinDone } = useCheckin();
   const [userId, setUserId] = useState<string>('');
   const [mantra, setMantra] = useState<string>('');
   const [weekName, setWeekName] = useState<string>('');
@@ -57,7 +59,7 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
 
   return (
     <MeditationContext.Provider value={{ openMeditation, mantra, weekName }}>
-      {shouldShowPopup && userId && mantra && (
+      {shouldShowPopup && userId && mantra && checkinDone && (
         <MeditationPopup
           mantra={mantra}
           weekName={weekName}

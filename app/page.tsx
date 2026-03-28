@@ -12,7 +12,6 @@ import {
   DayProgress,
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
-import DailyCheckinModal from '@/components/DailyCheckinModal';
 
 export default function HomePage() {
   const router = useRouter();
@@ -21,8 +20,6 @@ export default function HomePage() {
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [weekData, setWeekData] = useState<any>(null);
   const [userId, setUserId] = useState('');
-  const [showCheckin, setShowCheckin] = useState(false);
-
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -45,13 +42,6 @@ export default function HomePage() {
 
       setProfile(profileData);
       setUserId(session.user.id);
-
-      // Check-in giornaliero — mostra modale se non ancora fatto oggi
-      try {
-        const checkinRes = await fetch(`/api/checkin?userId=${session.user.id}`);
-        const checkinData = await checkinRes.json();
-        if (!checkinData.checkin) setShowCheckin(true);
-      } catch { /* non bloccante */ }
 
       // Carica progresso giorni
       const { data: progress } = await supabase
@@ -106,14 +96,6 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
-      {/* Check-in giornaliero */}
-      {showCheckin && userId && (
-        <DailyCheckinModal
-          userId={userId}
-          onComplete={() => setShowCheckin(false)}
-          onSkip={() => setShowCheckin(false)}
-        />
-      )}
       {/* Header */}
       <div className="max-w-2xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-gray-800">
