@@ -136,8 +136,12 @@ export default function GiornoPage() {
   const isLastSlide = currentSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
   const weekTool = WEEK_TOOLS[weekNumber] || undefined;
+  // Usa il giorno REALE della settimana (1=Lun, 7=Dom), non il dayNumber del percorso
+  const jsDay = new Date().getDay();
+  const todayWeekday = jsDay === 0 ? 7 : jsDay;
+  const isMatchDay = calendarData?.matchDays?.includes(todayWeekday) ?? false;
   const isPreMatchDay = calendarData?.matchDays?.some(
-    (matchDay: number) => (matchDay === 1 ? 7 : matchDay - 1) === dayNumber
+    (matchDay: number) => (matchDay === 1 ? 7 : matchDay - 1) === todayWeekday
   ) ?? false;
 
   // Calcola il prossimo allenamento basato sul giorno della settimana corrente
@@ -453,8 +457,16 @@ export default function GiornoPage() {
           </div>
         )}
 
-        {/* Pratica pre-partita */}
-        {isLastSlide && isPreMatchDay && settimanaData?.praticaPrePartita && (
+        {/* Pratica pre-partita: oggi è giorno partita OPPURE domani è giorno partita */}
+        {isLastSlide && isMatchDay && settimanaData?.praticaPrePartita && (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
+            <p className="text-xs font-bold text-green-700 mb-2">🟢 Oggi giochi — pratica pre-partita</p>
+            <p className="text-green-800 text-sm leading-relaxed whitespace-pre-line">
+              {settimanaData.praticaPrePartita}
+            </p>
+          </div>
+        )}
+        {isLastSlide && !isMatchDay && isPreMatchDay && settimanaData?.praticaPrePartita && (
           <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
             <p className="text-xs font-bold text-green-700 mb-2">🟢 Domani giochi — pratica pre-partita</p>
             <p className="text-green-800 text-sm leading-relaxed whitespace-pre-line">
