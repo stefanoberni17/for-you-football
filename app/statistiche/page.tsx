@@ -51,6 +51,12 @@ const MENTAL_COLORS: Record<string, string> = {
 
 const PHYSICAL_EMOJI: Record<number, string> = { 1: '😴', 2: '😓', 3: '😐', 4: '😊', 5: '🔥' };
 
+const RECOVERY_SCORE: Record<string, number> = { esausto: 1, stanco: 2, normale: 3, fresco: 4 };
+const RECOVERY_FROM_SCORE: Record<number, string> = { 1: 'Esausto', 2: 'Stanco', 3: 'Normale', 4: 'Fresco' };
+
+const MENTAL_SCORE: Record<string, number> = { testa_altrove: 1, un_po_giu: 2, normale: 3, lucido: 4 };
+const MENTAL_FROM_SCORE: Record<number, string> = { 1: 'Testa altrove', 2: "Un po' giù", 3: 'Normale', 4: 'Lucido' };
+
 function avg(arr: number[]): number {
   if (!arr.length) return 0;
   return Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10;
@@ -106,6 +112,28 @@ function ChartTooltip({ active, payload, label }: any) {
   );
 }
 
+function RecoveryTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  const score = payload[0].value as number;
+  return (
+    <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
+      <p className="font-semibold mb-1">{formatDate(label)}</p>
+      <p>Recupero: <span className="font-bold">{RECOVERY_FROM_SCORE[score] || score}</span></p>
+    </div>
+  );
+}
+
+function MentalTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  const score = payload[0].value as number;
+  return (
+    <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
+      <p className="font-semibold mb-1">{formatDate(label)}</p>
+      <p>Stato mentale: <span className="font-bold">{MENTAL_FROM_SCORE[score] || score}</span></p>
+    </div>
+  );
+}
+
 export default function StatistichePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -155,6 +183,19 @@ export default function StatistichePage() {
   const sleepChartData = filtered
     .filter(c => c.sleep_hours !== null)
     .map(c => ({ date: c.date, value: c.sleep_hours }));
+
+  const recoveryChartData = filtered
+    .filter(c => c.recovery_quality !== null)
+    .map(c => ({ date: c.date, value: RECOVERY_SCORE[c.recovery_quality!] || 0 }));
+
+  const mentalChartData = filtered
+    .filter(c => c.mental_state !== null)
+    .map(c => ({ date: c.date, value: MENTAL_SCORE[c.mental_state!] || 0 }));
+
+  const recoveryScoreValues = recoveryChartData.map(c => c.value);
+  const mentalScoreValues = mentalChartData.map(c => c.value);
+  const recoveryTrend = trend(recoveryScoreValues);
+  const mentalTrend = trend(mentalScoreValues);
 
   // Conteggio distribuzione
   const recoveryCounts: Record<string, number> = {};
@@ -443,26 +484,68 @@ export default function StatistichePage() {
               </div>
             )}
 
-            {/* Distribuzione recupero */}
-            {recoveryValues.length > 0 && (
+            {/* Grafico recupero — Area chart */}
+            {recoveryChartData.length > 1 && (
               <div className="bg-white rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">🦵 Distribuzione recupero</h2>
-                <div className="space-y-2.5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🦵 Recupero nel tempo</h2>
+                  {recoveryScoreValues.length >= 4 && (
+                    <span className={`text-sm font-bold ${TREND_COLOR[recoveryTrend]}`}>
+                      {TREND_ICON[recoveryTrend]}
+                    </span>
+                  )}
+                </div>
+                <div className="h-44 -ml-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={recoveryChartData}>
+                      <defs>
+                        <linearGradient id="gradRecovery" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={formatShortDate}
+                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        axisLine={false}
+                        tickLine={false}
+                        interval="preserveStartEnd"
+                      />
+                      <YAxis
+                        domain={[1, 4]}
+                        ticks={[1, 2, 3, 4]}
+                        tickFormatter={(v: number) => RECOVERY_FROM_SCORE[v]?.slice(0, 3) || ''}
+                        tick={{ fontSize: 9, fill: '#9ca3af' }}
+                        axisLine={false}
+                        tickLine={false}
+                        width={35}
+                      />
+                      <Tooltip content={<RecoveryTooltip />} />
+                      <Area
+                        type="monotone"
+                        dataKey="value"
+                        name="Recupero"
+                        stroke="#f59e0b"
+                        strokeWidth={2.5}
+                        fill="url(#gradRecovery)"
+                        dot={{ r: 3, fill: '#f59e0b', strokeWidth: 0 }}
+                        activeDot={{ r: 5, fill: '#f59e0b', stroke: '#fff', strokeWidth: 2 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+                {/* Distribuzione compatta */}
+                <div className="flex gap-2 mt-4">
                   {Object.entries(RECOVERY_LABELS).map(([key, label]) => {
                     const count = recoveryCounts[key] || 0;
                     const pct = recoveryValues.length > 0 ? Math.round((count / recoveryValues.length) * 100) : 0;
                     return (
-                      <div key={key}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-gray-600">{label}</span>
-                          <span className="text-gray-400 text-xs">{count}x · {pct}%</span>
-                        </div>
-                        <div className="w-full bg-gray-100 rounded-full h-2.5">
-                          <div
-                            className={`h-2.5 rounded-full transition-all ${RECOVERY_COLORS[key]}`}
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
+                      <div key={key} className="flex-1 text-center">
+                        <div className={`h-1.5 rounded-full mb-1.5 ${RECOVERY_COLORS[key]}`} style={{ opacity: pct > 0 ? 1 : 0.2 }} />
+                        <p className="text-[10px] text-gray-500 leading-tight">{label}</p>
+                        <p className="text-xs font-bold text-gray-700">{pct}%</p>
                       </div>
                     );
                   })}
@@ -470,26 +553,68 @@ export default function StatistichePage() {
               </div>
             )}
 
-            {/* Distribuzione stato mentale */}
-            {mentalValues.length > 0 && (
+            {/* Grafico stato mentale — Area chart */}
+            {mentalChartData.length > 1 && (
               <div className="bg-white rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">🧠 Distribuzione stato mentale</h2>
-                <div className="space-y-2.5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🧠 Stato mentale nel tempo</h2>
+                  {mentalScoreValues.length >= 4 && (
+                    <span className={`text-sm font-bold ${TREND_COLOR[mentalTrend]}`}>
+                      {TREND_ICON[mentalTrend]}
+                    </span>
+                  )}
+                </div>
+                <div className="h-44 -ml-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={mentalChartData}>
+                      <defs>
+                        <linearGradient id="gradMental" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={formatShortDate}
+                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        axisLine={false}
+                        tickLine={false}
+                        interval="preserveStartEnd"
+                      />
+                      <YAxis
+                        domain={[1, 4]}
+                        ticks={[1, 2, 3, 4]}
+                        tickFormatter={(v: number) => MENTAL_FROM_SCORE[v]?.slice(0, 3) || ''}
+                        tick={{ fontSize: 9, fill: '#9ca3af' }}
+                        axisLine={false}
+                        tickLine={false}
+                        width={35}
+                      />
+                      <Tooltip content={<MentalTooltip />} />
+                      <Area
+                        type="monotone"
+                        dataKey="value"
+                        name="Stato mentale"
+                        stroke="#8b5cf6"
+                        strokeWidth={2.5}
+                        fill="url(#gradMental)"
+                        dot={{ r: 3, fill: '#8b5cf6', strokeWidth: 0 }}
+                        activeDot={{ r: 5, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+                {/* Distribuzione compatta */}
+                <div className="flex gap-2 mt-4">
                   {Object.entries(MENTAL_LABELS).map(([key, label]) => {
                     const count = mentalCounts[key] || 0;
                     const pct = mentalValues.length > 0 ? Math.round((count / mentalValues.length) * 100) : 0;
                     return (
-                      <div key={key}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-gray-600">{label}</span>
-                          <span className="text-gray-400 text-xs">{count}x · {pct}%</span>
-                        </div>
-                        <div className="w-full bg-gray-100 rounded-full h-2.5">
-                          <div
-                            className={`h-2.5 rounded-full transition-all ${MENTAL_COLORS[key]}`}
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
+                      <div key={key} className="flex-1 text-center">
+                        <div className={`h-1.5 rounded-full mb-1.5 ${MENTAL_COLORS[key]}`} style={{ opacity: pct > 0 ? 1 : 0.2 }} />
+                        <p className="text-[10px] text-gray-500 leading-tight">{label}</p>
+                        <p className="text-xs font-bold text-gray-700">{pct}%</p>
                       </div>
                     );
                   })}
