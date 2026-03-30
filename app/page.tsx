@@ -14,6 +14,49 @@ import {
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 
+interface CheckinData {
+  date: string;
+  physical_state: number | null;
+  sleep_hours: number | null;
+  recovery_quality: string | null;
+  mental_state: string | null;
+}
+
+const RECOVERY_SCORE: Record<string, number> = { esausto: 1, stanco: 2, normale: 3, fresco: 4 };
+const MENTAL_SCORE: Record<string, number> = { testa_altrove: 1, un_po_giu: 2, normale: 3, lucido: 4 };
+
+function miniAvg(arr: number[]): number {
+  if (!arr.length) return 0;
+  return Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10;
+}
+
+function miniTrend(values: number[]): 'up' | 'down' | 'stable' {
+  if (values.length < 3) return 'stable';
+  const half = Math.floor(values.length / 2);
+  const diff = miniAvg(values.slice(half)) - miniAvg(values.slice(0, half));
+  if (diff > 0.3) return 'up';
+  if (diff < -0.3) return 'down';
+  return 'stable';
+}
+
+function MiniSparkline({ values, color, min, max }: { values: number[]; color: string; min: number; max: number }) {
+  if (values.length < 2) return null;
+  const w = 80, h = 24, px = 2, py = 3;
+  const range = max - min || 1;
+  const points = values.map((v, i) => {
+    const x = px + (i / (values.length - 1)) * (w - 2 * px);
+    const y = h - py - ((v - min) / range) * (h - 2 * py);
+    return `${x},${y}`;
+  });
+  const areaPoints = `${px},${h - py} ${points.join(' ')} ${w - px},${h - py}`;
+  return (
+    <svg width={w} height={h} className="flex-shrink-0">
+      <polygon points={areaPoints} fill={color} opacity={0.15} />
+      <polyline points={points.join(' ')} fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
@@ -23,6 +66,7 @@ export default function HomePage() {
   const [userId, setUserId] = useState('');
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [checkins, setCheckins] = useState<CheckinData[]>([]);
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -68,6 +112,15 @@ export default function HomePage() {
       const weekRes = await fetch(`/api/settimana?week=${currentWeek}`);
       const weekJson = await weekRes.json();
       setWeekData(weekJson);
+
+      // Carica check-in ultimi 7 giorni
+      try {
+        const checkinRes = await fetch(`/api/checkin/history?userId=${session.user.id}&days=7`);
+        if (checkinRes.ok) {
+          const checkinJson = await checkinRes.json();
+          setCheckins(checkinJson.checkins || []);
+        }
+      } catch {}
 
       // Carica calendario settimanale
       try {
@@ -234,6 +287,60 @@ export default function HomePage() {
             </button>
           </div>
         </div>
+
+        {/* Preview statistiche */}
+        {checkins.length >= 2 && (() => {
+          const phys = checkins.filter(c => c.physical_state !== null).map(c => c.physical_state as number);
+          const sleep = checkins.filter(c => c.sleep_hours !== null).map(c => c.sleep_hours as number);
+          const rec = checkins.filter(c => c.recovery_quality !== null).map(c => RECOVERY_SCORE[c.recovery_quality!] || 0);
+          const ment = checkins.filter(c => c.mental_state !== null).map(c => MENTAL_SCORE[c.mental_state!] || 0);
+
+          const TREND_ARROW: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
+          const TREND_CLS: Record<string, string> = { up: 'text-emerald-500', down: 'text-red-500', stable: 'text-gray-400' };
+
+          const rows = [
+            { emoji: '💪', label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/5', color: '#10b981', min: 1, max: 5 },
+            { emoji: '😴', label: 'Sonno', values: sleep, avg: miniAvg(sleep), unit: 'h', color: '#3b82f6', min: 4, max: 10 },
+            { emoji: '🦵', label: 'Recupero', values: rec, avg: miniAvg(rec), unit: '/4', color: '#f59e0b', min: 1, max: 4 },
+            { emoji: '🧠', label: 'Mentale', values: ment, avg: miniAvg(ment), unit: '/4', color: '#8b5cf6', min: 1, max: 4 },
+          ].filter(r => r.values.length >= 2);
+
+          if (rows.length === 0) return null;
+
+          return (
+            <div className="bg-white rounded-2xl shadow-lg p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                  📈 Il tuo stato
+                </h2>
+                <button
+                  onClick={() => router.push('/statistiche')}
+                  className="text-xs text-forest-500 font-semibold hover:underline"
+                >
+                  Vedi tutto →
+                </button>
+              </div>
+              <div className="space-y-2.5">
+                {rows.map(r => {
+                  const t = miniTrend(r.values);
+                  return (
+                    <div key={r.label} className="flex items-center gap-3">
+                      <span className="text-sm w-20 flex items-center gap-1.5">
+                        <span>{r.emoji}</span>
+                        <span className="text-gray-600 text-xs font-medium">{r.label}</span>
+                      </span>
+                      <MiniSparkline values={r.values} color={r.color} min={r.min} max={r.max} />
+                      <div className="flex items-baseline gap-1 ml-auto">
+                        <span className="text-sm font-bold text-gray-700">{r.avg}{r.unit}</span>
+                        <span className={`text-xs font-bold ${TREND_CLS[t]}`}>{TREND_ARROW[t]}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Calendario settimanale */}
         <div className="bg-white rounded-2xl shadow-lg p-5">
