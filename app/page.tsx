@@ -11,7 +11,8 @@ import {
   isTimeLocked,
   DayProgress,
 } from '@/lib/dayUnlockLogic';
-import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
+import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 
 export default function HomePage() {
   const router = useRouter();
@@ -20,6 +21,8 @@ export default function HomePage() {
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [weekData, setWeekData] = useState<any>(null);
   const [userId, setUserId] = useState('');
+  const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -66,6 +69,17 @@ export default function HomePage() {
       const weekJson = await weekRes.json();
       setWeekData(weekJson);
 
+      // Carica calendario settimanale
+      try {
+        const calRes = await fetch(`/api/calendar?userId=${session.user.id}&week=${currentWeek}`);
+        if (calRes.ok) {
+          const calJson = await calRes.json();
+          if (calJson.trainingDays?.length > 0) {
+            setCalendarData(calJson);
+          }
+        }
+      } catch {}
+
       setLoading(false);
     };
 
@@ -93,6 +107,18 @@ export default function HomePage() {
   const totalDays = BETA_MAX_WEEK * DAYS_PER_WEEK;
   const progressPercentage = Math.round((totalCompleted / totalDays) * 100);
   const allDone = totalCompleted >= totalDays;
+
+  const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
+    try {
+      await fetch('/api/calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, weekNumber: currentWeek, trainingDays, matchDays }),
+      });
+      setCalendarData({ trainingDays, matchDays });
+    } catch {}
+    setShowCalendar(false);
+  };
 
   return (
     <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
@@ -208,6 +234,61 @@ export default function HomePage() {
             </button>
           </div>
         </div>
+
+        {/* Calendario settimanale */}
+        <div className="bg-white rounded-2xl shadow-lg p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+              📅 La tua settimana
+            </h2>
+            <button
+              onClick={() => setShowCalendar(true)}
+              className="text-xs text-forest-500 font-semibold hover:underline"
+            >
+              {calendarData ? 'Modifica' : 'Imposta'}
+            </button>
+          </div>
+
+          {calendarData ? (
+            <div className="grid grid-cols-7 gap-1.5">
+              {[1, 2, 3, 4, 5, 6, 7].map((day) => {
+                const isTraining = calendarData.trainingDays.includes(day);
+                const isMatch = calendarData.matchDays.includes(day);
+                return (
+                  <div key={day} className="text-center">
+                    <div className="text-[10px] text-gray-400 mb-1">{DAY_SHORT_NAMES[day]}</div>
+                    <div className={`h-9 rounded-lg flex items-center justify-center text-sm ${
+                      isTraining && isMatch
+                        ? 'bg-orange-100 text-orange-500'
+                        : isMatch
+                        ? 'bg-amber-100 text-amber-500'
+                        : isTraining
+                        ? 'bg-emerald-100 text-emerald-500'
+                        : 'bg-gray-50 text-gray-300'
+                    }`}>
+                      {isTraining && isMatch ? '⚽🏟️' : isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">
+              Imposta i giorni di allenamento e partita per personalizzare il percorso.
+            </p>
+          )}
+        </div>
+
+        {/* Popup calendario */}
+        {showCalendar && (
+          <WeeklyCalendarPopup
+            weekNumber={currentWeek}
+            existingTrainingDays={calendarData?.trainingDays}
+            existingMatchDays={calendarData?.matchDays}
+            onSave={handleCalendarSave}
+            onSkip={() => setShowCalendar(false)}
+          />
+        )}
 
         {/* Stats globali */}
         <div className="bg-white rounded-2xl shadow-lg p-5">
