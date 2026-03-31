@@ -48,6 +48,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
     }
 
+    // Validazione 0-10 per i campi numerici
+    const numFields = { physicalState, recoveryQuality, mentalState };
+    for (const [key, val] of Object.entries(numFields)) {
+      if (val !== null && val !== undefined && (typeof val !== 'number' || val < 0 || val > 10)) {
+        return NextResponse.json({ error: `${key} deve essere un numero tra 0 e 10` }, { status: 400 });
+      }
+    }
+
     const { data, error } = await supabaseAdmin
       .from('daily_checkin')
       .upsert(

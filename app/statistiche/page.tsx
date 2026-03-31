@@ -17,56 +17,13 @@ interface Checkin {
   date: string;
   physical_state: number | null;
   sleep_hours: number | null;
-  recovery_quality: string | null;
-  mental_state: string | null;
+  recovery_quality: number | null;
+  mental_state: number | null;
 }
-
-const RECOVERY_LABELS: Record<string, string> = {
-  fresco: 'Fresco',
-  normale: 'Normale',
-  stanco: 'Stanco',
-  esausto: 'Esausto',
-};
-
-const MENTAL_LABELS: Record<string, string> = {
-  lucido: 'Lucido e motivato',
-  normale: 'Normale',
-  un_po_giu: "Un po' giù",
-  testa_altrove: 'Testa altrove',
-};
-
-const RECOVERY_COLORS: Record<string, string> = {
-  fresco: 'bg-emerald-500',
-  normale: 'bg-blue-500',
-  stanco: 'bg-amber-500',
-  esausto: 'bg-red-500',
-};
-
-const MENTAL_COLORS: Record<string, string> = {
-  lucido: 'bg-emerald-500',
-  normale: 'bg-blue-500',
-  un_po_giu: 'bg-amber-500',
-  testa_altrove: 'bg-red-500',
-};
-
-const PHYSICAL_EMOJI: Record<number, string> = { 1: '😴', 2: '😓', 3: '😐', 4: '😊', 5: '🔥' };
-
-const RECOVERY_SCORE: Record<string, number> = { esausto: 1, stanco: 2, normale: 3, fresco: 4 };
-const RECOVERY_FROM_SCORE: Record<number, string> = { 1: 'Esausto', 2: 'Stanco', 3: 'Normale', 4: 'Fresco' };
-
-const MENTAL_SCORE: Record<string, number> = { testa_altrove: 1, un_po_giu: 2, normale: 3, lucido: 4 };
-const MENTAL_FROM_SCORE: Record<number, string> = { 1: 'Testa altrove', 2: "Un po' giù", 3: 'Normale', 4: 'Lucido' };
 
 function avg(arr: number[]): number {
   if (!arr.length) return 0;
   return Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10;
-}
-
-function modeOf(arr: string[]): string | null {
-  if (!arr.length) return null;
-  const freq: Record<string, number> = {};
-  arr.forEach(v => { freq[v] = (freq[v] || 0) + 1; });
-  return Object.entries(freq).sort((a, b) => b[1] - a[1])[0][0];
 }
 
 function formatDate(dateStr: string): string {
@@ -97,39 +54,61 @@ const TREND_COLOR: Record<string, string> = {
   stable: 'text-gray-400',
 };
 
-// Custom tooltip per recharts
-function ChartTooltip({ active, payload, label }: any) {
+// Label descrittive per i valori 0-10
+function scoreLabel(value: number): string {
+  if (value <= 2) return 'Basso';
+  if (value <= 4) return 'Sotto la media';
+  if (value <= 6) return 'Nella media';
+  if (value <= 8) return 'Buono';
+  return 'Ottimo';
+}
+
+// Custom tooltip per tutti i grafici 0-10
+function ScoreTooltip({ active, payload, label, metricName }: any) {
+  if (!active || !payload?.length) return null;
+  const val = payload[0].value as number;
+  return (
+    <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
+      <p className="font-semibold mb-1">{formatDate(label)}</p>
+      <p>{metricName}: <span className="font-bold">{val}/10</span> — {scoreLabel(val)}</p>
+    </div>
+  );
+}
+
+function SleepTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
       <p className="font-semibold mb-1">{formatDate(label)}</p>
-      {payload.map((p: any) => (
-        <p key={p.dataKey}>
-          {p.name}: <span className="font-bold">{p.value}</span>
-        </p>
+      <p>Sonno: <span className="font-bold">{payload[0].value}h</span></p>
+    </div>
+  );
+}
+
+// Distribuzione per fasce 0-10
+function DistributionBars({ values, colors }: { values: number[]; colors: { low: string; mid: string; high: string } }) {
+  if (values.length === 0) return null;
+  const low = values.filter(v => v <= 3).length;
+  const mid = values.filter(v => v >= 4 && v <= 6).length;
+  const high = values.filter(v => v >= 7).length;
+  const total = values.length;
+  const pctLow = Math.round((low / total) * 100);
+  const pctMid = Math.round((mid / total) * 100);
+  const pctHigh = Math.round((high / total) * 100);
+
+  return (
+    <div className="flex gap-2 mt-4">
+      {[
+        { label: 'Basso (0-3)', pct: pctLow, color: colors.low },
+        { label: 'Medio (4-6)', pct: pctMid, color: colors.mid },
+        { label: 'Alto (7-10)', pct: pctHigh, color: colors.high },
+      ].map(b => (
+        <div key={b.label} className="flex-1 text-center">
+          <div className={`h-1.5 rounded-full mb-1.5 ${b.color}`} style={{ opacity: b.pct > 0 ? 1 : 0.2 }} />
+          <p className="text-[10px] text-gray-500 leading-tight">{b.label}</p>
+          <p className="text-xs font-bold text-gray-700">{b.pct}%</p>
+        </div>
       ))}
-    </div>
-  );
-}
-
-function RecoveryTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
-  const score = payload[0].value as number;
-  return (
-    <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
-      <p className="font-semibold mb-1">{formatDate(label)}</p>
-      <p>Recupero: <span className="font-bold">{RECOVERY_FROM_SCORE[score] || score}</span></p>
-    </div>
-  );
-}
-
-function MentalTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
-  const score = payload[0].value as number;
-  return (
-    <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
-      <p className="font-semibold mb-1">{formatDate(label)}</p>
-      <p>Stato mentale: <span className="font-bold">{MENTAL_FROM_SCORE[score] || score}</span></p>
     </div>
   );
 }
@@ -165,15 +144,18 @@ export default function StatistichePage() {
 
   const physicalValues = filtered.filter(c => c.physical_state !== null).map(c => c.physical_state as number);
   const sleepValues = filtered.filter(c => c.sleep_hours !== null).map(c => c.sleep_hours as number);
-  const recoveryValues = filtered.filter(c => c.recovery_quality !== null).map(c => c.recovery_quality as string);
-  const mentalValues = filtered.filter(c => c.mental_state !== null).map(c => c.mental_state as string);
+  const recoveryValues = filtered.filter(c => c.recovery_quality !== null).map(c => c.recovery_quality as number);
+  const mentalValues = filtered.filter(c => c.mental_state !== null).map(c => c.mental_state as number);
 
   const avgPhysical = avg(physicalValues);
   const avgSleep = avg(sleepValues);
-  const dominantRecovery = modeOf(recoveryValues);
-  const dominantMental = modeOf(mentalValues);
+  const avgRecovery = avg(recoveryValues);
+  const avgMental = avg(mentalValues);
+
   const physicalTrend = trend(physicalValues);
   const sleepTrend = trend(sleepValues);
+  const recoveryTrend = trend(recoveryValues);
+  const mentalTrend = trend(mentalValues);
 
   // Dati per recharts
   const physicalChartData = filtered
@@ -186,26 +168,14 @@ export default function StatistichePage() {
 
   const recoveryChartData = filtered
     .filter(c => c.recovery_quality !== null)
-    .map(c => ({ date: c.date, value: RECOVERY_SCORE[c.recovery_quality!] || 0 }));
+    .map(c => ({ date: c.date, value: c.recovery_quality }));
 
   const mentalChartData = filtered
     .filter(c => c.mental_state !== null)
-    .map(c => ({ date: c.date, value: MENTAL_SCORE[c.mental_state!] || 0 }));
-
-  const recoveryScoreValues = recoveryChartData.map(c => c.value);
-  const mentalScoreValues = mentalChartData.map(c => c.value);
-  const recoveryTrend = trend(recoveryScoreValues);
-  const mentalTrend = trend(mentalScoreValues);
-
-  // Conteggio distribuzione
-  const recoveryCounts: Record<string, number> = {};
-  recoveryValues.forEach(v => { recoveryCounts[v] = (recoveryCounts[v] || 0) + 1; });
-  const mentalCounts: Record<string, number> = {};
-  mentalValues.forEach(v => { mentalCounts[v] = (mentalCounts[v] || 0) + 1; });
+    .map(c => ({ date: c.date, value: c.mental_state }));
 
   // Streak check-in consecutivi
   let streak = 0;
-  const todayStr = new Date().toISOString().split('T')[0];
   for (let i = checkins.length - 1; i >= 0; i--) {
     const expected = new Date();
     expected.setDate(expected.getDate() - (checkins.length - 1 - i));
@@ -278,9 +248,7 @@ export default function StatistichePage() {
               <div className="bg-white/15 rounded-xl p-3">
                 <p className="text-forest-200 text-xs mb-1">Stato fisico</p>
                 <p className="text-xl font-bold">
-                  {todayCheckin.physical_state !== null
-                    ? `${PHYSICAL_EMOJI[todayCheckin.physical_state]} ${todayCheckin.physical_state}/5`
-                    : '—'}
+                  {todayCheckin.physical_state !== null ? `${todayCheckin.physical_state}/10` : '—'}
                 </p>
               </div>
               <div className="bg-white/15 rounded-xl p-3">
@@ -291,14 +259,14 @@ export default function StatistichePage() {
               </div>
               <div className="bg-white/15 rounded-xl p-3">
                 <p className="text-forest-200 text-xs mb-1">Recupero</p>
-                <p className="text-sm font-semibold">
-                  {todayCheckin.recovery_quality ? RECOVERY_LABELS[todayCheckin.recovery_quality] : '—'}
+                <p className="text-xl font-bold">
+                  {todayCheckin.recovery_quality !== null ? `${todayCheckin.recovery_quality}/10` : '—'}
                 </p>
               </div>
               <div className="bg-white/15 rounded-xl p-3">
                 <p className="text-forest-200 text-xs mb-1">Stato mentale</p>
-                <p className="text-sm font-semibold">
-                  {todayCheckin.mental_state ? MENTAL_LABELS[todayCheckin.mental_state] : '—'}
+                <p className="text-xl font-bold">
+                  {todayCheckin.mental_state !== null ? `${todayCheckin.mental_state}/10` : '—'}
                 </p>
               </div>
             </div>
@@ -331,7 +299,7 @@ export default function StatistichePage() {
                   <p className="text-xs text-gray-400 mb-1">Stato fisico medio</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-2xl font-bold text-forest-600">
-                      {avgPhysical > 0 ? `${avgPhysical}/5` : '—'}
+                      {avgPhysical > 0 ? `${avgPhysical}/10` : '—'}
                     </p>
                     {avgPhysical > 0 && (
                       <span className={`text-sm font-bold ${TREND_COLOR[physicalTrend]}`}>
@@ -343,7 +311,7 @@ export default function StatistichePage() {
                     <div className="w-full bg-gray-100 rounded-full h-2 mt-1.5">
                       <div
                         className="bg-forest-500 h-2 rounded-full transition-all"
-                        style={{ width: `${(avgPhysical / 5) * 100}%` }}
+                        style={{ width: `${(avgPhysical / 10) * 100}%` }}
                       />
                     </div>
                   )}
@@ -370,16 +338,46 @@ export default function StatistichePage() {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Recupero prevalente</p>
-                  <p className="text-base font-bold text-gray-700">
-                    {dominantRecovery ? RECOVERY_LABELS[dominantRecovery] : '—'}
-                  </p>
+                  <p className="text-xs text-gray-400 mb-1">Recupero medio</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold text-amber-600">
+                      {avgRecovery > 0 ? `${avgRecovery}/10` : '—'}
+                    </p>
+                    {avgRecovery > 0 && (
+                      <span className={`text-sm font-bold ${TREND_COLOR[recoveryTrend]}`}>
+                        {TREND_ICON[recoveryTrend]}
+                      </span>
+                    )}
+                  </div>
+                  {avgRecovery > 0 && (
+                    <div className="w-full bg-gray-100 rounded-full h-2 mt-1.5">
+                      <div
+                        className="bg-amber-500 h-2 rounded-full transition-all"
+                        style={{ width: `${(avgRecovery / 10) * 100}%` }}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Stato mentale prevalente</p>
-                  <p className="text-base font-bold text-gray-700">
-                    {dominantMental ? MENTAL_LABELS[dominantMental] : '—'}
-                  </p>
+                  <p className="text-xs text-gray-400 mb-1">Stato mentale medio</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold text-purple-600">
+                      {avgMental > 0 ? `${avgMental}/10` : '—'}
+                    </p>
+                    {avgMental > 0 && (
+                      <span className={`text-sm font-bold ${TREND_COLOR[mentalTrend]}`}>
+                        {TREND_ICON[mentalTrend]}
+                      </span>
+                    )}
+                  </div>
+                  {avgMental > 0 && (
+                    <div className="w-full bg-gray-100 rounded-full h-2 mt-1.5">
+                      <div
+                        className="bg-purple-500 h-2 rounded-full transition-all"
+                        style={{ width: `${(avgMental / 10) * 100}%` }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -407,14 +405,14 @@ export default function StatistichePage() {
                         interval="preserveStartEnd"
                       />
                       <YAxis
-                        domain={[1, 5]}
-                        ticks={[1, 2, 3, 4, 5]}
+                        domain={[0, 10]}
+                        ticks={[0, 2, 4, 6, 8, 10]}
                         tick={{ fontSize: 10, fill: '#9ca3af' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
                       />
-                      <Tooltip content={<ChartTooltip />} />
+                      <Tooltip content={<ScoreTooltip metricName="Stato fisico" />} />
                       <Area
                         type="monotone"
                         dataKey="value"
@@ -462,7 +460,7 @@ export default function StatistichePage() {
                         width={25}
                         tickFormatter={(v: number) => `${v}h`}
                       />
-                      <Tooltip content={<ChartTooltip />} />
+                      <Tooltip content={<SleepTooltip />} />
                       <Area
                         type="monotone"
                         dataKey="value"
@@ -489,7 +487,7 @@ export default function StatistichePage() {
               <div className="bg-white rounded-2xl shadow-sm p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🦵 Recupero nel tempo</h2>
-                  {recoveryScoreValues.length >= 4 && (
+                  {recoveryValues.length >= 4 && (
                     <span className={`text-sm font-bold ${TREND_COLOR[recoveryTrend]}`}>
                       {TREND_ICON[recoveryTrend]}
                     </span>
@@ -514,15 +512,14 @@ export default function StatistichePage() {
                         interval="preserveStartEnd"
                       />
                       <YAxis
-                        domain={[1, 4]}
-                        ticks={[1, 2, 3, 4]}
-                        tickFormatter={(v: number) => RECOVERY_FROM_SCORE[v]?.slice(0, 3) || ''}
-                        tick={{ fontSize: 9, fill: '#9ca3af' }}
+                        domain={[0, 10]}
+                        ticks={[0, 2, 4, 6, 8, 10]}
+                        tick={{ fontSize: 10, fill: '#9ca3af' }}
                         axisLine={false}
                         tickLine={false}
-                        width={35}
+                        width={25}
                       />
-                      <Tooltip content={<RecoveryTooltip />} />
+                      <Tooltip content={<ScoreTooltip metricName="Recupero" />} />
                       <Area
                         type="monotone"
                         dataKey="value"
@@ -536,20 +533,10 @@ export default function StatistichePage() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                {/* Distribuzione compatta */}
-                <div className="flex gap-2 mt-4">
-                  {Object.entries(RECOVERY_LABELS).map(([key, label]) => {
-                    const count = recoveryCounts[key] || 0;
-                    const pct = recoveryValues.length > 0 ? Math.round((count / recoveryValues.length) * 100) : 0;
-                    return (
-                      <div key={key} className="flex-1 text-center">
-                        <div className={`h-1.5 rounded-full mb-1.5 ${RECOVERY_COLORS[key]}`} style={{ opacity: pct > 0 ? 1 : 0.2 }} />
-                        <p className="text-[10px] text-gray-500 leading-tight">{label}</p>
-                        <p className="text-xs font-bold text-gray-700">{pct}%</p>
-                      </div>
-                    );
-                  })}
-                </div>
+                <DistributionBars
+                  values={recoveryValues}
+                  colors={{ low: 'bg-red-500', mid: 'bg-amber-500', high: 'bg-emerald-500' }}
+                />
               </div>
             )}
 
@@ -558,7 +545,7 @@ export default function StatistichePage() {
               <div className="bg-white rounded-2xl shadow-sm p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🧠 Stato mentale nel tempo</h2>
-                  {mentalScoreValues.length >= 4 && (
+                  {mentalValues.length >= 4 && (
                     <span className={`text-sm font-bold ${TREND_COLOR[mentalTrend]}`}>
                       {TREND_ICON[mentalTrend]}
                     </span>
@@ -583,15 +570,14 @@ export default function StatistichePage() {
                         interval="preserveStartEnd"
                       />
                       <YAxis
-                        domain={[1, 4]}
-                        ticks={[1, 2, 3, 4]}
-                        tickFormatter={(v: number) => MENTAL_FROM_SCORE[v]?.slice(0, 3) || ''}
-                        tick={{ fontSize: 9, fill: '#9ca3af' }}
+                        domain={[0, 10]}
+                        ticks={[0, 2, 4, 6, 8, 10]}
+                        tick={{ fontSize: 10, fill: '#9ca3af' }}
                         axisLine={false}
                         tickLine={false}
-                        width={35}
+                        width={25}
                       />
-                      <Tooltip content={<MentalTooltip />} />
+                      <Tooltip content={<ScoreTooltip metricName="Stato mentale" />} />
                       <Area
                         type="monotone"
                         dataKey="value"
@@ -605,20 +591,10 @@ export default function StatistichePage() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                {/* Distribuzione compatta */}
-                <div className="flex gap-2 mt-4">
-                  {Object.entries(MENTAL_LABELS).map(([key, label]) => {
-                    const count = mentalCounts[key] || 0;
-                    const pct = mentalValues.length > 0 ? Math.round((count / mentalValues.length) * 100) : 0;
-                    return (
-                      <div key={key} className="flex-1 text-center">
-                        <div className={`h-1.5 rounded-full mb-1.5 ${MENTAL_COLORS[key]}`} style={{ opacity: pct > 0 ? 1 : 0.2 }} />
-                        <p className="text-[10px] text-gray-500 leading-tight">{label}</p>
-                        <p className="text-xs font-bold text-gray-700">{pct}%</p>
-                      </div>
-                    );
-                  })}
-                </div>
+                <DistributionBars
+                  values={mentalValues}
+                  colors={{ low: 'bg-red-500', mid: 'bg-amber-500', high: 'bg-emerald-500' }}
+                />
               </div>
             )}
           </>

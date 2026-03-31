@@ -30,6 +30,7 @@
 | CMS | Notion API (`@notionhq/client`) |
 | AI | Anthropic Claude Sonnet (`@anthropic-ai/sdk`) — modello: `claude-sonnet-4-20250514` |
 | Bot | Telegram (`node-telegram-bot-api`) |
+| Charts | Recharts 3.8.1 |
 | Icons | Lucide React |
 
 ---
@@ -39,8 +40,8 @@
 ```
 for-you-football/
 ├── app/
-│   ├── layout.tsx                         # Root layout: GlobalMeditationWrapper + BottomTabBar
-│   ├── page.tsx                           # Dashboard (home) — richiede auth
+│   ├── layout.tsx                         # Root layout: GlobalCheckinWrapper + GlobalMeditationWrapper + BottomTabBar
+│   ├── page.tsx                           # Dashboard (home) + mini sparkline statistiche — richiede auth
 │   ├── login/page.tsx
 │   ├── register/page.tsx                  # Registrazione 2-step (account + profilo calciatore)
 │   ├── onboarding/page.tsx                # Carousel 5 slide introduttive
@@ -53,7 +54,7 @@ for-you-football/
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
-│   ├── statistiche/page.tsx               # Storico check-in fisico con grafici andamento
+│   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
 │   └── api/
 │       ├── register/route.ts              # POST → signup Supabase + upsert profilo
 │       ├── settimane/route.ts             # GET → lista settimane da Notion DB
@@ -72,7 +73,9 @@ for-you-football/
 ├── components/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Coach / Profilo
 │   ├── ChatBot.tsx                        # UI chat Coach (filtra messaggio benvenuto hardcoded)
-│   ├── DailyCheckinModal.tsx              # Modale check-in fisico 4 step (full-screen overlay)
+│   ├── CheckinContext.tsx                  # Context provider: { checkinDone } boolean
+│   ├── GlobalCheckinWrapper.tsx            # Wrapper globale: verifica check-in oggi, mostra modale se mancante
+│   ├── DailyCheckinModal.tsx              # Modale check-in fisico 4 step (full-screen overlay, gradient amber)
 │   ├── DayCard.tsx                        # Card giorno per /settimana/[id]
 │   ├── PracticePopup.tsx                  # Popup pratica giornaliera con timer e step
 │   ├── WeeklyCalendarPopup.tsx            # Picker giorni allenamento/partita (7-day grid)
@@ -193,16 +196,16 @@ created_at TIMESTAMPTZ DEFAULT NOW()
 id               UUID DEFAULT gen_random_uuid() PRIMARY KEY
 user_id          UUID NOT NULL REFERENCES auth.users(id)
 date             DATE NOT NULL DEFAULT CURRENT_DATE
-physical_state   INTEGER CHECK (physical_state BETWEEN 1 AND 5)   -- 1=esausto … 5=perfetto
+physical_state   INTEGER CHECK (physical_state BETWEEN 0 AND 10)   -- 0=esausto … 10=perfetto
 sleep_hours      NUMERIC(3,1) CHECK (sleep_hours BETWEEN 0 AND 12)
-recovery_quality TEXT CHECK (recovery_quality IN ('fresco','normale','stanco','esausto'))
-mental_state     TEXT CHECK (mental_state IN ('lucido','normale','un_po_giu','testa_altrove'))
+recovery_quality INTEGER CHECK (recovery_quality BETWEEN 0 AND 10) -- 0=esausto … 10=fresco
+mental_state     INTEGER CHECK (mental_state BETWEEN 0 AND 10)     -- 0=testa altrove … 10=lucido
 created_at       TIMESTAMPTZ DEFAULT NOW()
 UNIQUE(user_id, date)
 ```
 - RLS abilitata (SELECT/INSERT/UPDATE per l'utente proprietario)
 - Indice: `idx_daily_checkin_user_date ON (user_id, date DESC)`
-- Il check-in viene mostrato una volta al giorno in dashboard; "Salta per oggi" usa solo stato locale (se l'utente fa refresh lo rivede)
+- Il check-in viene gestito da `GlobalCheckinWrapper` (mostrato una volta al giorno su tutte le pagine); "Salta per oggi" usa solo stato locale (se l'utente fa refresh lo rivede)
 
 ---
 
@@ -235,6 +238,9 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `È Esercizio Principale` (checkbox) — true per giorno 4
 - `Domande Gate` (text — newline separated) — solo per giorno 7
 - `Tipo Giorno` (select)
+- `Contesto` (text) — contesto aggiuntivo del giorno (passato al Coach via tool)
+- `Domanda Pre Pratica` (text) — domanda riflessione mostrata prima della pratica
+- `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)
 - `Durata Espira` (number) — secondi espirazione (default 6 se vuoto)
 
@@ -298,12 +304,14 @@ Totale: 15-20 sec. In campo, sempre.
 ## Coach AI — Architettura Conversazioni (`lib/coach-ai.ts`)
 
 ### Funzioni esportate
-- `SYSTEM_PROMPT` — Prompt Coach AI completo (~380 righe): identità, progressione settimanale, linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio. Include sezione `# ESEMPI DA CALCIATORI REALI`: catalogo fisso di 7 esempi verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo il Fenomeno) — il Coach usa SOLO questi, non inventa statistiche
+- `SYSTEM_PROMPT` — Prompt Coach AI completo (~380 righe): identità, progressione settimanale, linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio. Include `REGOLA ANTICIPAZIONI` (anticipazioni generiche OK, dettagli pratiche/strumenti futuri NO) e sezione `# ESEMPI DA CALCIATORI REALI`: catalogo fisso di 7 esempi verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo il Fenomeno) — il Coach usa SOLO questi, non inventa statistiche
 - `SYSTEM_PROMPT_NOT_REGISTERED` — Risposta per utenti Telegram non registrati
 - `WEB_FORMAT` — Regole formattazione per web chat (markdown leggero, max 4-6 righe)
 - `TELEGRAM_FORMAT` — Regole formattazione per Telegram (niente markdown, max 4-5 righe, colloquiale)
 - `buildUserContext(userId)` — Costruisce contesto personalizzato leggendo da Supabase (include check-in fisico di oggi + media ultimi 7 giorni)
-- `callClaude(systemPrompt, messages, maxTokens)` — Chiama `claude-sonnet-4-20250514`
+- `LEGGI_PERCORSO_TOOL` — Tool Anthropic per leggere contenuto settimane/giorni da Notion in tempo reale
+- `executeLeggiPercorso(input)` — Esegue fetch settimana/giorno da Notion, ritorna testo strutturato
+- `callClaude(systemPrompt, messages, maxTokens, useTools)` — Chiama `claude-sonnet-4-20250514` (se `useTools=true`: gestisce tool_use con doppia chiamata)
 - `generateCoachRecap(userId, messages)` — Distilla conversazione in coach_notes (pattern, temi, thread aperti)
 - `checkSafetyKeywords(text)` — Rileva parole chiave a rischio (suicidio, autolesionismo, violenza)
 - `SAFETY_KEYWORDS` — Lista keyword per detection
@@ -320,12 +328,13 @@ Invia intera cronologia in-memory a POST /api/chat
   ↓
 Server: buildUserContext(userId) + SYSTEM_PROMPT + WEB_FORMAT
   ↓
-callClaude() → risposta
+callClaude(useTools=true) → se Coach chiede pratica → leggi_percorso → Notion → risposta
   ↓
 Risposta mostrata in UI
 ```
 
 **Caratteristiche:**
+- **Tool use abilitato** — il Coach può leggere pratiche/giorni da Notion via `leggi_percorso`
 - Conversazioni **NON salvate in DB** — vivono solo nello state React
 - Ad ogni messaggio il client invia l'intera cronologia in-memory
 - Refresh pagina = conversazione persa
@@ -345,7 +354,7 @@ Se registrato:
   1. Carica ultimi 20 messaggi da telegram_conversations (sliding window)
   2. buildUserContext(userId)
   3. Se primo messaggio: aggiunge nota "PRIMO CONTATTO TELEGRAM"
-  4. callClaude(SYSTEM_PROMPT + TELEGRAM_FORMAT + userContext, messages)
+  4. callClaude(SYSTEM_PROMPT + TELEGRAM_FORMAT + userContext, messages, useTools=true)
   5. Se primo messaggio: invia avviso privacy prima della risposta
   6. Invia risposta via Telegram API
   7. Salva user msg + assistant msg in telegram_conversations
@@ -396,10 +405,11 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 ## Dettaglio Pagine App
 
 ### Dashboard (`app/page.tsx`)
-- **DailyCheckinModal:** mostrato al primo accesso giornaliero (GET `/api/checkin` → se null → mostra modale)
+- **DailyCheckinModal:** gestito da `GlobalCheckinWrapper` (non più inline nella dashboard)
 - Card settimana corrente con CTA "prossimo giorno"
 - Barra progresso settimanale (7 indicatori giorno)
 - Progresso globale (% completamento, giorni fatti)
+- **"Il tuo stato":** mini sparkline SVG 7 giorni (fisico 💪, sonno 😴, recupero 🦵, mentale 🧠) con trend indicator (↑↓→) + link "Vedi tutto →" a `/statistiche`
 - Link a settimane, statistiche e profilo
 - Redirect a `/login` se non autenticato
 
@@ -425,11 +435,12 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 
 ### Contenuto Giornaliero (`app/giorno/[week]/[day]/page.tsx`)
 - **Apertura:** testo introduttivo (2-3 righe da Notion)
+- **Domanda Pre-Pratica:** slide opzionale prima della pratica (campo testo, max 1000 char, da Notion `Domanda Pre Pratica`)
 - **Pratica:** PracticePopup con timer, animazione respirazione, step numerati
 - **Domanda:** campo testo per riflessione (opzionale, salvata in `day_reflections`)
 - Check giorno precedente (se flag `haCheckPrecedente`)
 - Flusso completamento → navigazione giorno successivo
-- Integrazione calendario per consapevolezza giorno partita
+- **Calendario giorno reale:** logica partita usa `new Date().getDay()` (giorno reale della settimana) — non `dayNumber` del percorso. Calcola `isMatchDay` e `isPreMatchDay` correttamente
 
 ### Gate (`app/gate/[week]/page.tsx`)
 - 3 domande da Notion (`domandeGate`)
@@ -455,12 +466,11 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 ### Statistiche (`app/statistiche/page.tsx`)
 - Selettore periodo: 7 / 30 / 90 giorni (dati caricati in blocco, filtrati client-side)
 - Card "Oggi": stato fisico, sonno, recupero, stato mentale
-- Grafico a barre stato fisico (ultime 14 rilevazioni)
-- Grafico a barre ore di sonno (color-coded: verde ≥8h, ambra 6-8h, rosso <6h)
-- Barre distribuzione recupero muscolare (fresco/normale/stanco/esausto)
-- Barre distribuzione stato mentale (lucido/normale/un po' giù/testa altrove)
+- **Grafici Recharts AreaChart** per: stato fisico, sonno, recupero, stato mentale (con tooltip custom)
+- Barre distribuzione percentuale (recupero + stato mentale)
+- **Streak counter:** giorni consecutivi di check-in
+- Trend analysis (↑↓→) color-coded per ogni metrica
 - Medie periodo (fisico, sonno, recupero, mentale)
-- Grafici CSS-only (nessuna libreria esterna)
 - Dati da `GET /api/checkin/history?userId=X&days=90`
 
 ---
@@ -503,9 +513,21 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Usa `WEEK_RECORD_IDS`, `WEEK_TOOLS`, `WEEK_PRINCIPLES` da `lib/constants.ts`
 - WeekName formato: "Il Reset — Presenza" (strumento + principio)
 
+### `CheckinContext.tsx`
+- Context semplice: `{ checkinDone: boolean }`
+- Usato da `GlobalCheckinWrapper` per comunicare stato check-in all'app
+
+### `GlobalCheckinWrapper.tsx`
+- Wrapper root (wrappa `GlobalMeditationWrapper` + children)
+- Verifica check-in oggi via `GET /api/checkin?userId=...`
+- Se non fatto → mostra `DailyCheckinModal`
+- Salta su `/login`, `/register`, `/onboarding`
+- On complete/skip → setta `checkinDone = true`
+
 ### `DailyCheckinModal.tsx`
-- Overlay full-screen (`fixed inset-0`) con gradient `from-forest-800 to-forest-900`
-- 4 step: stato fisico (5 cerchi emoji) → sonno (slider 4-12h, step 0.5) → recupero muscolare (4 pill) → stato mentale (4 pill)
+- Overlay full-screen (`fixed inset-0`) con gradient animato amber/orange/yellow
+- 4 step: stato fisico (slider 0-10) → sonno (slider 4-12h, step 0.5) → recupero muscolare (slider 0-10) → stato mentale (slider 0-10)
+- Ogni slider mostra valore numerico + label descrittiva contestuale (es. "7/10 — Bene")
 - Progress bar in cima: `(step / TOTAL_STEPS) * 100` — parte da 25% al primo step
 - "Avanti →" / "Inizia →" all'ultimo step → POST `/api/checkin`
 - "Salta per oggi" — chiude con solo stato locale, nessun salvataggio
@@ -643,6 +665,15 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
   - `app/statistiche/page.tsx` — pagina storico con grafici CSS-only
   - `lib/coach-ai.ts` — `buildUserContext()` include check-in oggi + media 7 giorni
   - `docs/supabase-schema.sql` — aggiunta tabella `daily_checkin` con RLS
+- [x] **Refactor — Check-in globale:** `CheckinContext` + `GlobalCheckinWrapper` — modale check-in spostata da dashboard a wrapper root (mostrata su tutte le pagine)
+- [x] **Feature — Coach AI tool use `leggi_percorso`:** il Coach legge pratiche/giorni da Notion in tempo reale via Anthropic tool_use API (abilitato su web chat e Telegram, non su recap)
+- [x] **Feature — Pre-pratica:** slide `domanda_pre_pratica` prima della pratica (campo testo opzionale, max 1000 char, da Notion)
+- [x] **Feature — Dashboard mini statistiche:** sezione "Il tuo stato" con sparkline SVG 7 giorni + trend indicator per ogni metrica
+- [x] **Refactor — Statistiche con Recharts:** sostituiti grafici CSS-only con AreaChart Recharts + streak counter + tooltip custom
+- [x] **Bug fix — Calendario giorno reale:** logica partita usa `new Date().getDay()` invece di `dayNumber` del percorso
+- [x] **Feature — REGOLA ANTICIPAZIONI:** nel system prompt Coach — anticipazioni generiche OK, dettagli pratiche/strumenti futuri NO
+- [x] Notion DB Giorni — aggiunte colonne `Contesto`, `Domanda Pre Pratica`, `Ha Check Precedente`, `Testo Check`
+- [x] **Refactor — Check-in scala 0-10:** tutte le metriche (fisico, recupero, mentale) ora usano slider 0-10 invece di emoji/pill categoriche. Sonno invariato (ore). Migration SQL per storico: fisico ×2, recupero/mentale mappati da categorie a numeri. Rimossi tutti i mapping enum→numero dal frontend e dal Coach AI.
 
 ### Da fare
 - [ ] Attivare safety check (`checkSafetyKeywords`) in `/api/chat` e `/api/telegram`
