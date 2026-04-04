@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useWakeLock } from '@/lib/useWakeLock';
 
 interface PracticePopupProps {
   titolo: string;
@@ -24,6 +25,7 @@ export default function PracticePopup({
   onSkip,
 }: PracticePopupProps) {
   const [phase, setPhase] = useState<'setup' | 'practicing' | 'done'>('setup');
+  useWakeLock(phase === 'practicing');
   const totalSeconds = durataMinuti * 60;
   const [timeLeft, setTimeLeft] = useState(totalSeconds);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');

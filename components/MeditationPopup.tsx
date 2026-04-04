@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useWakeLock } from '@/lib/useWakeLock';
 
 const DURATION_OPTIONS = [
   { label: '1 min', seconds: 60 },
@@ -33,6 +34,7 @@ export default function MeditationPopup({
   const [isTimerComplete, setIsTimerComplete] = useState(false);
   const [audioMode, setAudioMode] = useState<'nature' | 'focus' | 'mute'>('nature');
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
+  useWakeLock(phase === 'meditating');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Controllo giornaliero (solo se non aperto manualmente)

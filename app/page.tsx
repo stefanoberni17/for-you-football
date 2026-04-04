@@ -13,6 +13,7 @@ import {
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import PushPermission from '@/components/PushPermission';
 
 interface CheckinData {
   date: string;
@@ -445,6 +446,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      <PushPermission userId={userId} />
     </main>
   );
 }

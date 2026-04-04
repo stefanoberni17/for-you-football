@@ -577,6 +577,8 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 ### Da fare
 - [ ] Attivare safety check (`checkSafetyKeywords`) in `/api/chat` e `/api/telegram`
 - [ ] Implementare `app/calendar/page.tsx` (UI per impostare giorni allenamento/partita — API già funzionante)
+- [ ] PWA light — manifest + icone + meta tag (rende l'app installabile, no service worker per ora)
+- [ ] WhatsApp Business API — Coach AI su WhatsApp (`/api/whatsapp/route.ts`). Riusa 90% infrastruttura Telegram. Prerequisiti utente: account Meta for Developers + verifica business + numero dedicato + approvazione template reminder. Costo: ~€0 in beta (1000 conversazioni service gratis/mese), ~€0.03/conversazione per reminder proattivi
 
 ---
 

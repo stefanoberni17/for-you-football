@@ -3,6 +3,14 @@
     {
       "path": "/api/cron/cleanup-telegram",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/daily-morning",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/daily-evening",
+      "schedule": "0 19 * * *"
     }
   ]
 }
