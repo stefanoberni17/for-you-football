@@ -19,12 +19,9 @@ interface CheckinData {
   date: string;
   physical_state: number | null;
   sleep_hours: number | null;
-  recovery_quality: string | null;
-  mental_state: string | null;
+  recovery_quality: number | null;
+  mental_state: number | null;
 }
-
-const RECOVERY_SCORE: Record<string, number> = { esausto: 1, stanco: 2, normale: 3, fresco: 4 };
-const MENTAL_SCORE: Record<string, number> = { testa_altrove: 1, un_po_giu: 2, normale: 3, lucido: 4 };
 
 function miniAvg(arr: number[]): number {
   if (!arr.length) return 0;
@@ -293,17 +290,17 @@ export default function HomePage() {
         {checkins.length >= 2 && (() => {
           const phys = checkins.filter(c => c.physical_state !== null).map(c => c.physical_state as number);
           const sleep = checkins.filter(c => c.sleep_hours !== null).map(c => c.sleep_hours as number);
-          const rec = checkins.filter(c => c.recovery_quality !== null).map(c => RECOVERY_SCORE[c.recovery_quality!] || 0);
-          const ment = checkins.filter(c => c.mental_state !== null).map(c => MENTAL_SCORE[c.mental_state!] || 0);
+          const rec = checkins.filter(c => c.recovery_quality !== null).map(c => c.recovery_quality as number);
+          const ment = checkins.filter(c => c.mental_state !== null).map(c => c.mental_state as number);
 
           const TREND_ARROW: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
           const TREND_CLS: Record<string, string> = { up: 'text-emerald-500', down: 'text-red-500', stable: 'text-gray-400' };
 
           const rows = [
-            { emoji: '💪', label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/5', color: '#10b981', min: 1, max: 5 },
+            { emoji: '💪', label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/10', color: '#10b981', min: 0, max: 10 },
             { emoji: '😴', label: 'Sonno', values: sleep, avg: miniAvg(sleep), unit: 'h', color: '#3b82f6', min: 4, max: 10 },
-            { emoji: '🦵', label: 'Recupero', values: rec, avg: miniAvg(rec), unit: '/4', color: '#f59e0b', min: 1, max: 4 },
-            { emoji: '🧠', label: 'Mentale', values: ment, avg: miniAvg(ment), unit: '/4', color: '#8b5cf6', min: 1, max: 4 },
+            { emoji: '🦵', label: 'Recupero', values: rec, avg: miniAvg(rec), unit: '/10', color: '#f59e0b', min: 0, max: 10 },
+            { emoji: '🧠', label: 'Mentale', values: ment, avg: miniAvg(ment), unit: '/10', color: '#8b5cf6', min: 0, max: 10 },
           ].filter(r => r.values.length >= 2);
 
           if (rows.length === 0) return null;

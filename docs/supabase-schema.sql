@@ -215,13 +215,39 @@ CREATE TABLE daily_checkin (
   id               UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id          UUID NOT NULL REFERENCES auth.users(id),
   date             DATE NOT NULL DEFAULT CURRENT_DATE,
-  physical_state   INTEGER CHECK (physical_state BETWEEN 1 AND 5),
+  physical_state   INTEGER CHECK (physical_state BETWEEN 0 AND 10),
   sleep_hours      NUMERIC(3,1) CHECK (sleep_hours BETWEEN 0 AND 12),
-  recovery_quality TEXT CHECK (recovery_quality IN ('fresco','normale','stanco','esausto')),
-  mental_state     TEXT CHECK (mental_state IN ('lucido','normale','un_po_giu','testa_altrove')),
+  recovery_quality INTEGER CHECK (recovery_quality BETWEEN 0 AND 10),
+  mental_state     INTEGER CHECK (mental_state BETWEEN 0 AND 10),
   created_at       TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(user_id, date)
 );
+
+-- ─── MIGRATION da schema vecchio (eseguire PRIMA del deploy) ─────────────────
+-- Se la tabella daily_checkin esiste già con il vecchio schema:
+--
+-- -- 1. Converti recovery_quality da TEXT a INTEGER
+-- ALTER TABLE daily_checkin ADD COLUMN recovery_score INTEGER;
+-- UPDATE daily_checkin SET recovery_score = CASE recovery_quality
+--   WHEN 'esausto' THEN 2 WHEN 'stanco' THEN 4
+--   WHEN 'normale' THEN 7 WHEN 'fresco' THEN 9 ELSE NULL END;
+-- ALTER TABLE daily_checkin DROP COLUMN recovery_quality;
+-- ALTER TABLE daily_checkin RENAME COLUMN recovery_score TO recovery_quality;
+-- ALTER TABLE daily_checkin ADD CHECK (recovery_quality BETWEEN 0 AND 10);
+--
+-- -- 2. Converti mental_state da TEXT a INTEGER
+-- ALTER TABLE daily_checkin ADD COLUMN mental_score INTEGER;
+-- UPDATE daily_checkin SET mental_score = CASE mental_state
+--   WHEN 'testa_altrove' THEN 2 WHEN 'un_po_giu' THEN 4
+--   WHEN 'normale' THEN 7 WHEN 'lucido' THEN 9 ELSE NULL END;
+-- ALTER TABLE daily_checkin DROP COLUMN mental_state;
+-- ALTER TABLE daily_checkin RENAME COLUMN mental_score TO mental_state;
+-- ALTER TABLE daily_checkin ADD CHECK (mental_state BETWEEN 0 AND 10);
+--
+-- -- 3. Converti physical_state da 1-5 a 0-10
+-- UPDATE daily_checkin SET physical_state = physical_state * 2 WHERE physical_state IS NOT NULL;
+-- ALTER TABLE daily_checkin DROP CONSTRAINT IF EXISTS daily_checkin_physical_state_check;
+-- ALTER TABLE daily_checkin ADD CHECK (physical_state BETWEEN 0 AND 10);
 
 CREATE INDEX idx_daily_checkin_user_date ON daily_checkin(user_id, date DESC);
 

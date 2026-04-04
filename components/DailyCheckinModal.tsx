@@ -10,34 +10,40 @@ interface DailyCheckinModalProps {
 
 const TOTAL_STEPS = 4;
 
-const PHYSICAL_LABELS: Record<number, { emoji: string; label: string }> = {
-  1: { emoji: '😴', label: 'Esausto' },
-  2: { emoji: '😓', label: 'Stanco' },
-  3: { emoji: '😐', label: 'Normale' },
-  4: { emoji: '😊', label: 'Bene' },
-  5: { emoji: '🔥', label: 'Perfetto' },
+// Label per i punti chiave degli slider 0-10
+const PHYSICAL_LABELS: Record<number, string> = {
+  0: 'Esausto', 3: 'Stanco', 5: 'Nella media', 7: 'Bene', 10: 'Perfetto',
+};
+const RECOVERY_LABELS: Record<number, string> = {
+  0: 'Esausto', 3: 'Stanco', 5: 'Normale', 7: 'In forma', 10: 'Fresco al 100%',
+};
+const MENTAL_LABELS: Record<number, string> = {
+  0: 'Testa altrove', 3: 'Un po\' giù', 5: 'Normale', 7: 'Concentrato', 10: 'Lucido e carico',
 };
 
-const RECOVERY_OPTIONS = [
-  { value: 'fresco', label: 'Fresco' },
-  { value: 'normale', label: 'Normale' },
-  { value: 'stanco', label: 'Stanco' },
-  { value: 'esausto', label: 'Esausto' },
-];
+function getSliderLabel(value: number, labels: Record<number, string>): string {
+  // Trova la label più vicina
+  const keys = Object.keys(labels).map(Number).sort((a, b) => a - b);
+  let closest = keys[0];
+  for (const k of keys) {
+    if (Math.abs(k - value) < Math.abs(closest - value)) closest = k;
+  }
+  return labels[closest];
+}
 
-const MENTAL_OPTIONS = [
-  { value: 'lucido', label: 'Lucido e motivato' },
-  { value: 'normale', label: 'Normale' },
-  { value: 'un_po_giu', label: "Un po' giù" },
-  { value: 'testa_altrove', label: 'Testa altrove' },
-];
+function getSliderColor(value: number): string {
+  if (value <= 3) return 'text-red-500';
+  if (value <= 5) return 'text-amber-500';
+  if (value <= 7) return 'text-forest-500';
+  return 'text-emerald-500';
+}
 
 export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyCheckinModalProps) {
   const [step, setStep] = useState(1);
   const [physicalState, setPhysicalState] = useState<number | null>(null);
   const [sleepHours, setSleepHours] = useState<number>(7);
-  const [recoveryQuality, setRecoveryQuality] = useState<string | null>(null);
-  const [mentalState, setMentalState] = useState<string | null>(null);
+  const [recoveryQuality, setRecoveryQuality] = useState<number | null>(null);
+  const [mentalState, setMentalState] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
 
   const canAdvance = () => {
@@ -100,36 +106,37 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
         {/* Content */}
         <div className="flex flex-col items-center">
 
-          {/* ── Step 1: Stato fisico ── */}
+          {/* ── Step 1: Stato fisico (slider 0-10) ── */}
           {step === 1 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">💪</div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Come stai fisicamente oggi?</h2>
               <p className="text-gray-600 text-sm mb-8">Sii onesto — il Coach userà questa info per supportarti meglio</p>
-              <div className="flex justify-center gap-3 mb-6">
-                {[1, 2, 3, 4, 5].map(val => (
-                  <button
-                    key={val}
-                    onClick={() => setPhysicalState(val)}
-                    className={`flex flex-col items-center gap-1.5 transition-all duration-200 ${
-                      physicalState === val ? 'scale-110' : 'opacity-60 hover:opacity-90'
-                    }`}
-                  >
-                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl border-2 transition-all ${
-                      physicalState === val
-                        ? 'border-amber-400 bg-amber-100 shadow-md'
-                        : 'border-gray-200 bg-white'
-                    }`}>
-                      {PHYSICAL_LABELS[val].emoji}
-                    </div>
-                    <span className="text-xs text-gray-600">{PHYSICAL_LABELS[val].label}</span>
-                  </button>
-                ))}
+              <div className="text-5xl font-bold text-gray-800 mb-1">
+                {physicalState !== null ? physicalState : '—'}
+                <span className="text-2xl text-gray-400 font-normal">/10</span>
+              </div>
+              <p className={`text-sm font-medium mb-6 h-5 ${physicalState !== null ? getSliderColor(physicalState) : 'text-gray-400'}`}>
+                {physicalState !== null ? getSliderLabel(physicalState, PHYSICAL_LABELS) : 'Trascina per selezionare'}
+              </p>
+              <input
+                type="range"
+                min={0}
+                max={10}
+                step={1}
+                value={physicalState ?? 5}
+                onChange={e => setPhysicalState(parseInt(e.target.value))}
+                className="w-full accent-forest-500 cursor-pointer h-2"
+              />
+              <div className="flex justify-between text-[10px] text-gray-400 mt-2">
+                <span>Esausto</span>
+                <span>Nella media</span>
+                <span>Perfetto</span>
               </div>
             </div>
           )}
 
-          {/* ── Step 2: Sonno ── */}
+          {/* ── Step 2: Sonno (invariato) ── */}
           {step === 2 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">😴</div>
@@ -158,50 +165,62 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
             </div>
           )}
 
-          {/* ── Step 3: Recupero muscolare ── */}
+          {/* ── Step 3: Recupero muscolare (slider 0-10) ── */}
           {step === 3 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">🦵</div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Come senti il recupero muscolare?</h2>
               <p className="text-gray-600 text-sm mb-8">Gambe, schiena, tensioni generali</p>
-              <div className="flex flex-col gap-3">
-                {RECOVERY_OPTIONS.map(opt => (
-                  <button
-                    key={opt.value}
-                    onClick={() => setRecoveryQuality(opt.value)}
-                    className={`py-3.5 px-6 rounded-xl font-semibold text-base transition-all duration-200 ${
-                      recoveryQuality === opt.value
-                        ? 'bg-forest-500 text-white shadow-lg scale-[1.02]'
-                        : 'bg-white text-gray-600 border border-gray-200 hover:border-forest-300 hover:text-forest-600'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+              <div className="text-5xl font-bold text-gray-800 mb-1">
+                {recoveryQuality !== null ? recoveryQuality : '—'}
+                <span className="text-2xl text-gray-400 font-normal">/10</span>
+              </div>
+              <p className={`text-sm font-medium mb-6 h-5 ${recoveryQuality !== null ? getSliderColor(recoveryQuality) : 'text-gray-400'}`}>
+                {recoveryQuality !== null ? getSliderLabel(recoveryQuality, RECOVERY_LABELS) : 'Trascina per selezionare'}
+              </p>
+              <input
+                type="range"
+                min={0}
+                max={10}
+                step={1}
+                value={recoveryQuality ?? 5}
+                onChange={e => setRecoveryQuality(parseInt(e.target.value))}
+                className="w-full accent-forest-500 cursor-pointer h-2"
+              />
+              <div className="flex justify-between text-[10px] text-gray-400 mt-2">
+                <span>Esausto</span>
+                <span>Normale</span>
+                <span>Fresco</span>
               </div>
             </div>
           )}
 
-          {/* ── Step 4: Stato mentale ── */}
+          {/* ── Step 4: Stato mentale (slider 0-10) ── */}
           {step === 4 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">🧠</div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Come stai mentalmente oggi?</h2>
               <p className="text-gray-600 text-sm mb-8">Nessuna risposta giusta — solo onestà</p>
-              <div className="flex flex-col gap-3">
-                {MENTAL_OPTIONS.map(opt => (
-                  <button
-                    key={opt.value}
-                    onClick={() => setMentalState(opt.value)}
-                    className={`py-3.5 px-6 rounded-xl font-semibold text-base transition-all duration-200 ${
-                      mentalState === opt.value
-                        ? 'bg-forest-500 text-white shadow-lg scale-[1.02]'
-                        : 'bg-white text-gray-600 border border-gray-200 hover:border-forest-300 hover:text-forest-600'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+              <div className="text-5xl font-bold text-gray-800 mb-1">
+                {mentalState !== null ? mentalState : '—'}
+                <span className="text-2xl text-gray-400 font-normal">/10</span>
+              </div>
+              <p className={`text-sm font-medium mb-6 h-5 ${mentalState !== null ? getSliderColor(mentalState) : 'text-gray-400'}`}>
+                {mentalState !== null ? getSliderLabel(mentalState, MENTAL_LABELS) : 'Trascina per selezionare'}
+              </p>
+              <input
+                type="range"
+                min={0}
+                max={10}
+                step={1}
+                value={mentalState ?? 5}
+                onChange={e => setMentalState(parseInt(e.target.value))}
+                className="w-full accent-forest-500 cursor-pointer h-2"
+              />
+              <div className="flex justify-between text-[10px] text-gray-400 mt-2">
+                <span>Testa altrove</span>
+                <span>Normale</span>
+                <span>Lucido</span>
               </div>
             </div>
           )}

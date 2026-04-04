@@ -408,6 +408,8 @@ Week 12 | La Via                     | 🌕 LA VIA              | "Questo sono i
 
 Mantieni rigorosa coerenza con la settimana che stanno vivendo. Non anticipare strumenti delle settimane successive.
 
+**REGOLA ANTICIPAZIONI:** Se il calciatore chiede cosa farà nelle prossime settimane o giorni, puoi dare anticipazioni generiche e leggere (es. "lavorerai sull'osservazione dei pensieri", "esploreremo come il corpo comunica in campo"). NON spiegare mai nel dettaglio pratiche, tecniche o concetti futuri — niente nomi specifici degli strumenti, niente passaggi, niente istruzioni operative. Il percorso va vissuto passo dopo passo. Riporta il focus su quello che sta facendo ora.
+
 # OBIETTIVO FINALE
 
 Accompagnare il calciatore a diventare autonomo nel vedersi, nel sentirsi, nel scegliere la propria risposta — in campo e fuori.
@@ -498,13 +500,13 @@ export async function buildUserContext(userId: string): Promise<string> {
   if (weekCheckins && weekCheckins.length > 1) {
     const physArr = weekCheckins.filter((c: any) => c.physical_state !== null).map((c: any) => c.physical_state as number);
     const sleepArr = weekCheckins.filter((c: any) => c.sleep_hours !== null).map((c: any) => c.sleep_hours as number);
+    const recArr = weekCheckins.filter((c: any) => c.recovery_quality !== null).map((c: any) => c.recovery_quality as number);
+    const mentArr = weekCheckins.filter((c: any) => c.mental_state !== null).map((c: any) => c.mental_state as number);
     const avgP = physArr.length ? Math.round((physArr.reduce((a: number, b: number) => a + b, 0) / physArr.length) * 10) / 10 : null;
     const avgS = sleepArr.length ? Math.round((sleepArr.reduce((a: number, b: number) => a + b, 0) / sleepArr.length) * 10) / 10 : null;
-    const mentalArr = weekCheckins.filter((c: any) => c.mental_state).map((c: any) => c.mental_state as string);
-    const mentalFreq: Record<string, number> = {};
-    mentalArr.forEach((v: string) => { mentalFreq[v] = (mentalFreq[v] || 0) + 1; });
-    const dominantMental = Object.entries(mentalFreq).sort((a, b) => b[1] - a[1])[0]?.[0];
-    weekCheckinSummary = `\n**ULTIMI 7 GIORNI (media su ${weekCheckins.length} check-in):**\n- Stato fisico medio: ${avgP !== null ? `${avgP}/5` : '—'}\n- Sonno medio: ${avgS !== null ? `${avgS}h` : '—'}\n- Stato mentale prevalente: ${dominantMental ? dominantMental.replace('un_po_giu', "un po' giù").replace('testa_altrove', 'testa altrove') : '—'}`;
+    const avgR = recArr.length ? Math.round((recArr.reduce((a: number, b: number) => a + b, 0) / recArr.length) * 10) / 10 : null;
+    const avgM = mentArr.length ? Math.round((mentArr.reduce((a: number, b: number) => a + b, 0) / mentArr.length) * 10) / 10 : null;
+    weekCheckinSummary = `\n**ULTIMI 7 GIORNI (media su ${weekCheckins.length} check-in):**\n- Stato fisico medio: ${avgP !== null ? `${avgP}/10` : '—'}\n- Sonno medio: ${avgS !== null ? `${avgS}h` : '—'}\n- Recupero muscolare medio: ${avgR !== null ? `${avgR}/10` : '—'}\n- Stato mentale medio: ${avgM !== null ? `${avgM}/10` : '—'}`;
   }
 
   const todayDate = new Date().toLocaleDateString('it-IT', {
@@ -546,10 +548,10 @@ ${calendar.match_days && calendar.match_days.length > 0 ? `**Partite:** ${calend
 
 ## Stato fisico e mentale
 ${todayCheckin ? `**OGGI:**
-- Stato fisico: ${todayCheckin.physical_state !== null ? `${todayCheckin.physical_state}/5` : 'non registrato'}
+- Stato fisico: ${todayCheckin.physical_state !== null ? `${todayCheckin.physical_state}/10` : 'non registrato'}
 - Sonno: ${todayCheckin.sleep_hours !== null ? `${todayCheckin.sleep_hours}h` : 'non registrato'}
-- Recupero muscolare: ${todayCheckin.recovery_quality || 'non registrato'}
-- Stato mentale: ${todayCheckin.mental_state ? todayCheckin.mental_state.replace('un_po_giu', "un po' giù").replace('testa_altrove', 'testa altrove') : 'non registrato'}` : 'Nessun check-in registrato oggi.'}
+- Recupero muscolare: ${todayCheckin.recovery_quality !== null ? `${todayCheckin.recovery_quality}/10` : 'non registrato'}
+- Stato mentale: ${todayCheckin.mental_state !== null ? `${todayCheckin.mental_state}/10` : 'non registrato'}` : 'Nessun check-in registrato oggi.'}
 ${weekCheckinSummary}
 
 ## Riflessioni dal campo
