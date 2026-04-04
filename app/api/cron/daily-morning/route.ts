@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
+import { queryDatabase } from '@/lib/notion';
 import { BETA_MAX_WEEK, WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
 import { sendPushToUser } from '@/lib/pushNotification';
 
@@ -13,6 +14,9 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+// Database ID per le frasi mattutine Coach
+const MORNING_MESSAGES_DB = '00c71e8e2263435f9f396b499b3e01e6';
+
 async function sendTelegramMessage(chatId: string, text: string) {
   const token = process.env.TELEGRAM_BOT_TOKEN!;
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -22,10 +26,72 @@ async function sendTelegramMessage(chatId: string, text: string) {
   });
 }
 
+interface CoachMessage {
+  frase: string;
+  categoria: string;
+  soloPartita: boolean;
+  soloAllenamento: boolean;
+  fonte: string;
+  note: string; // "Tipo: X | Principio: Y | Profondità: Z | Blocco: B1"
+  settimane: number[];
+}
+
+async function fetchMessagesFromNotion(): Promise<CoachMessage[]> {
+  const results = await queryDatabase(MORNING_MESSAGES_DB, {
+    filter: {
+      property: 'Attiva',
+      checkbox: { equals: true },
+    },
+  });
+
+  return results.map((page: any) => {
+    const props = page.properties;
+    const settimaneRaw = props['Settimane']?.rich_text?.[0]?.plain_text || '';
+    const settimane = settimaneRaw
+      ? settimaneRaw.split(',').map((s: string) => parseInt(s.trim())).filter((n: number) => !isNaN(n))
+      : [];
+
+    return {
+      frase: props['Frase']?.title?.[0]?.plain_text || '',
+      categoria: props['Categoria']?.select?.name || '',
+      soloPartita: props['Solo Partita']?.checkbox || false,
+      soloAllenamento: props['Solo Allenamento']?.checkbox || false,
+      fonte: props['Fonte']?.rich_text?.[0]?.plain_text || '',
+      note: props['Note']?.rich_text?.[0]?.plain_text || '',
+      settimane,
+    };
+  });
+}
+
+function filterMessages(
+  messages: CoachMessage[],
+  week: number,
+  isMatchDay: boolean,
+  isTrainingDay: boolean
+): CoachMessage[] {
+  return messages.filter((msg) => {
+    if (msg.soloPartita && !isMatchDay) return false;
+    if (msg.soloAllenamento && !isTrainingDay) return false;
+    if (isMatchDay && msg.soloAllenamento) return false;
+    if (isTrainingDay && msg.soloPartita) return false;
+    if (msg.settimane.length > 0 && !msg.settimane.includes(week)) return false;
+    return true;
+  });
+}
+
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // Fetch all active messages from Notion
+  let allMessages: CoachMessage[];
+  try {
+    allMessages = await fetchMessagesFromNotion();
+  } catch (err) {
+    console.error('Failed to fetch messages from Notion:', err);
+    return NextResponse.json({ success: false, error: 'Notion fetch failed' }, { status: 500 });
   }
 
   // TEST PHASE: filter to specific user if env var set
@@ -75,29 +141,51 @@ export async function GET(request: NextRequest) {
       if (isMatchDay) dayContext = 'Oggi ha una partita.';
       else if (isTrainingDay) dayContext = 'Oggi ha un allenamento.';
 
-      const systemPrompt = `Sei il Coach AI di For You Football. Genera un messaggio motivazionale mattutino per un calciatore.
+      // Filter eligible messages for this user's context
+      const eligible = filterMessages(allMessages, week, isMatchDay, isTrainingDay);
 
-REGOLE RIGIDE:
-- Massimo 2-3 righe, breve e diretto
-- Tono: caldo, diretto, da coach che crede nel giocatore
-- Non usare markdown, emoji esagerati, o formattazione — testo puro per Telegram
-- Puoi usare un singolo emoji all'inizio se appropriato
-- Riferisciti al principio della settimana o allo strumento SOLO se naturale
-- NON salutare con "Buongiorno" ogni volta — varia
-- NON dare istruzioni specifiche sulla pratica del giorno
-- Il messaggio deve far sentire il giocatore visto e accompagnato`;
+      if (eligible.length === 0) continue;
 
-      const userPrompt = `Giocatore: ${user.name || 'Atleta'}
+      // Format messages list for Claude (include note metadata for better selection)
+      const messagesList = eligible
+        .map((m, i) => `${i + 1}. [${m.categoria}]${m.note ? ` {${m.note}}` : ''} ${m.frase}${m.fonte ? ` (${m.fonte})` : ''}`)
+        .join('\n');
+
+      const systemPrompt = `Sei il Coach AI di For You Football. Invii una pillola ispirazionale mattutina ai giocatori.
+
+STRUTTURA DEL MESSAGGIO (2 parti):
+1. LA FRASE — Scegli dalla lista la frase più in linea con il Principio della settimana. Riportala fedelmente, puoi adattarla leggermente ma mantieni lo spirito. Deve essere universale, valida per chiunque.
+2. LA RIFLESSIONE — Dopo la frase, aggiungi UNA riga di riflessione leggera e personale. Usa il nome del giocatore. Deve essere un ponte tra la frase e la sua giornata — un invito gentile, non un'istruzione.
+
+ESEMPIO DI FORMATO:
+[emoji] [frase ispirazionale]
+
+[nome], [riflessione leggera di 1 riga]
+
+REGOLE:
+- Usa i metadati {Tipo, Principio, Profondità, Blocco} per scegliere la frase giusta
+- La frase deve restare universale — NON personalizzarla con dettagli del giocatore
+- La riflessione deve essere LEGGERA — 1 riga, nessun riferimento a paure o problemi specifici
+- Testo puro per Telegram, niente markdown
+- NON aggiungere saluti come "Buongiorno" o "Ciao"
+- Varia l'emoji iniziale
+- Output SOLO il messaggio finale`;
+
+      const userPrompt = `FRASI DISPONIBILI:
+${messagesList}
+
+CONTESTO:
+Nome: ${user.name || 'Atleta'}
 Settimana: ${week} — Principio: ${principle}${tool ? ` — Strumento: ${tool}` : ''}
 Giorno: ${dayName}
 ${dayContext}
-${user.coach_notes ? `Note Coach (contesto): ${user.coach_notes.substring(0, 300)}` : ''}
+${user.coach_notes ? `Contesto leggero: ${user.coach_notes.substring(0, 150)}` : ''}
 
-Genera il messaggio mattutino.`;
+Seleziona la frase e aggiungi la riflessione.`;
 
       const response = await anthropic.messages.create({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 200,
+        max_tokens: 250,
         messages: [{ role: 'user', content: userPrompt }],
         system: systemPrompt,
       });
