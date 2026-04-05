@@ -100,6 +100,10 @@ export default function ProfiloPage() {
   const [telegramStep, setTelegramStep] = useState(0);
   const [savingTelegram, setSavingTelegram] = useState(false);
 
+  // Push notifications
+  const [pushStatus, setPushStatus] = useState<'loading' | 'unsupported' | 'denied' | 'active' | 'inactive'>('loading');
+  const [pushLoading, setPushLoading] = useState(false);
+
   // Profilo calciatore
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [level, setLevel] = useState('');
@@ -141,6 +145,25 @@ export default function ProfiloPage() {
         setSelectedFears(p.biggest_fear ? p.biggest_fear.split(',').filter(Boolean) : []);
       }
 
+      // Check push notification status
+      if ('serviceWorker' in navigator && 'PushManager' in window) {
+        if (Notification.permission === 'denied') {
+          setPushStatus('denied');
+        } else if (Notification.permission === 'granted') {
+          try {
+            const reg = await navigator.serviceWorker.ready;
+            const sub = await reg.pushManager.getSubscription();
+            setPushStatus(sub ? 'active' : 'inactive');
+          } catch {
+            setPushStatus('inactive');
+          }
+        } else {
+          setPushStatus('inactive');
+        }
+      } else {
+        setPushStatus('unsupported');
+      }
+
       setLoading(false);
     };
 
@@ -177,6 +200,50 @@ export default function ProfiloPage() {
       setError(err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePushToggle = async () => {
+    if (pushStatus === 'active') {
+      // Unsubscribe
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        if (sub) await sub.unsubscribe();
+        setPushStatus('inactive');
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
+    // Subscribe
+    setPushLoading(true);
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        setPushStatus(permission === 'denied' ? 'denied' : 'inactive');
+        setPushLoading(false);
+        return;
+      }
+
+      const reg = await navigator.serviceWorker.ready;
+      const subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+      });
+
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, subscription: subscription.toJSON() }),
+      });
+
+      setPushStatus('active');
+    } catch (err) {
+      console.error('Push subscription failed:', err);
+    } finally {
+      setPushLoading(false);
     }
   };
 
@@ -374,6 +441,46 @@ export default function ProfiloPage() {
             </p>
           )}
         </div>
+
+        {/* ── Notifiche Push ─────────────────────────────────────────────── */}
+        {pushStatus !== 'unsupported' && pushStatus !== 'loading' && (
+          <div className="bg-white rounded-2xl shadow-sm p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${pushStatus === 'active' ? 'bg-forest-100' : 'bg-gray-100'}`}>
+                  🔔
+                </div>
+                <div>
+                  <p className="font-bold text-gray-800 text-sm">Notifiche push</p>
+                  <p className="text-xs text-gray-500">
+                    {pushStatus === 'active' && 'Attive — ricevi messaggi dal Coach'}
+                    {pushStatus === 'inactive' && 'Non attive'}
+                    {pushStatus === 'denied' && 'Bloccate dal browser'}
+                  </p>
+                </div>
+              </div>
+              {pushStatus !== 'denied' && (
+                <button
+                  type="button"
+                  onClick={handlePushToggle}
+                  disabled={pushLoading}
+                  className={`text-xs font-bold px-4 py-2 rounded-xl transition-all disabled:opacity-40 ${
+                    pushStatus === 'active'
+                      ? 'text-gray-500 bg-gray-100 hover:bg-gray-200'
+                      : 'text-white bg-forest-500 hover:bg-forest-600 shadow-sm'
+                  }`}
+                >
+                  {pushLoading ? '...' : pushStatus === 'active' ? 'Disattiva' : 'Attiva'}
+                </button>
+              )}
+            </div>
+            {pushStatus === 'denied' && (
+              <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+                Hai bloccato le notifiche nelle impostazioni del browser. Per riattivarle, vai nelle impostazioni del sito.
+              </p>
+            )}
+          </div>
+        )}
 
         {/* ── Settimana corrente ───────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl shadow-sm p-5 border border-forest-100">
