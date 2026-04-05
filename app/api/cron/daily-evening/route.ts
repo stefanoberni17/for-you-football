@@ -80,7 +80,8 @@ REGOLE RIGIDE:
   ? 'Il giocatore HA fatto la pratica oggi. Riconosci il lavoro fatto senza essere esagerato. Breve rinforzo positivo.'
   : 'Il giocatore NON ha fatto la pratica oggi. Reminder gentile, NON colpevolizzante. "5 minuti bastano", "non è mai troppo tardi", ecc. Mai far sentire in colpa.'}
 - NON dare istruzioni specifiche sulla pratica
-- NON usare "Buonasera" ogni volta — varia`;
+- NON usare "Buonasera" ogni volta — varia
+- Chiudi SEMPRE con una frase breve che inviti a tornare nell'app, tipo "Ti aspetto nell'app", "Ci vediamo nell'app", "L'app ti aspetta" — varia ogni volta, tono leggero`;
 
       const userPrompt = `Giocatore: ${user.name || 'Atleta'}
 Settimana: ${week} — Principio: ${principle}${tool ? ` — Strumento: ${tool}` : ''}
