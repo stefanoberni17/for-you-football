@@ -69,6 +69,9 @@ export async function GET(request: NextRequest) {
 
       const didPracticeToday = (todayProgress?.length ?? 0) > 0;
 
+      // Skip evening message if user already practiced today
+      if (didPracticeToday) continue;
+
       const systemPrompt = `Sei il Coach AI di For You Football. Genera un messaggio serale per un calciatore.
 
 REGOLE RIGIDE:
@@ -76,16 +79,14 @@ REGOLE RIGIDE:
 - Tono: caldo, presente, da coach che si ricorda di te
 - Non usare markdown, emoji esagerati, o formattazione — testo puro per Telegram
 - Puoi usare un singolo emoji all'inizio se appropriato
-- ${didPracticeToday
-  ? 'Il giocatore HA fatto la pratica oggi. Riconosci il lavoro fatto senza essere esagerato. Breve rinforzo positivo.'
-  : 'Il giocatore NON ha fatto la pratica oggi. Reminder gentile, NON colpevolizzante. "5 minuti bastano", "non è mai troppo tardi", ecc. Mai far sentire in colpa.'}
+- Il giocatore NON ha ancora fatto la pratica oggi. Reminder gentile, NON colpevolizzante. "5 minuti bastano", "non è mai troppo tardi", ecc. Mai far sentire in colpa.
 - NON dare istruzioni specifiche sulla pratica
 - NON usare "Buonasera" ogni volta — varia
 - Chiudi SEMPRE con una frase breve che inviti a tornare nell'app, tipo "Ti aspetto nell'app", "Ci vediamo nell'app", "L'app ti aspetta" — varia ogni volta, tono leggero`;
 
       const userPrompt = `Giocatore: ${user.name || 'Atleta'}
 Settimana: ${week} — Principio: ${principle}${tool ? ` — Strumento: ${tool}` : ''}
-Pratica fatta oggi: ${didPracticeToday ? 'Sì' : 'No'}
+Pratica fatta oggi: No
 ${user.coach_notes ? `Note Coach: ${user.coach_notes.substring(0, 200)}` : ''}
 
 Genera il messaggio serale.`;
