@@ -72,6 +72,19 @@ export async function GET(request: NextRequest) {
       // Skip evening message if user already practiced today
       if (didPracticeToday) continue;
 
+      // Check if user has a "giornata" day in progress (started but not completed)
+      const { data: startedDays } = await supabaseAdmin
+        .from('user_day_progress')
+        .select('week_number, day_number')
+        .eq('user_id', user.user_id)
+        .eq('completed', false)
+        .limit(1);
+
+      const hasGiornataInProgress = (startedDays?.length ?? 0) > 0;
+      const giornataContext = hasGiornataInProgress
+        ? '\nIl giocatore ha iniziato una pratica "durante la giornata" stamattina ma non ha ancora completato la riflessione. Invitalo a tornare nell\'app per completarla.'
+        : '';
+
       const systemPrompt = `Sei il Coach AI di For You Football. Genera un messaggio serale per un calciatore.
 
 REGOLE RIGIDE:
@@ -86,7 +99,7 @@ REGOLE RIGIDE:
 
       const userPrompt = `Giocatore: ${user.name || 'Atleta'}
 Settimana: ${week} — Principio: ${principle}${tool ? ` — Strumento: ${tool}` : ''}
-Pratica fatta oggi: No
+Pratica fatta oggi: No${giornataContext}
 ${user.coach_notes ? `Note Coach: ${user.coach_notes.substring(0, 200)}` : ''}
 
 Genera il messaggio serale.`;

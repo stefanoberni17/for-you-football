@@ -17,6 +17,7 @@ export default function GiornoPage() {
   const [userId, setUserId] = useState('');
   const [giorno, setGiorno] = useState<any>(null);
   const [completed, setCompleted] = useState(false);
+  const [started, setStarted] = useState(false); // giornata: giorno iniziato ma non completato
   const [savedResponse, setSavedResponse] = useState<string | null>(null);
   const [response, setResponse] = useState('');
   const [prePraticaResponse, setPrePraticaResponse] = useState('');
@@ -96,6 +97,7 @@ export default function GiornoPage() {
 
       setGiorno(data.giorno);
       setCompleted(data.completed);
+      setStarted(data.started && !data.completed); // "in corso" solo se started ma non completed
       if (data.response) {
         setSavedResponse(data.response);
         setResponse(data.response);
@@ -131,9 +133,13 @@ export default function GiornoPage() {
     if (!giorno.domanda) slides.push({ type: 'completa', label: 'Completa' });
   }
 
+  // Per giornata "in corso": salta alla slide della domanda (ultima)
+  const isGiornataReturning = started && !completed && giorno?.tipoPratica === 'giornata';
+
   const totalSlides = slides.length;
-  const currentSlideData = slides[currentSlide - 1];
-  const isLastSlide = currentSlide === totalSlides;
+  const effectiveSlide = isGiornataReturning ? totalSlides : currentSlide;
+  const currentSlideData = slides[effectiveSlide - 1];
+  const isLastSlide = effectiveSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
   const weekTool = WEEK_TOOLS[weekNumber] || undefined;
   // Usa il giorno REALE della settimana (1=Lun, 7=Dom), non il dayNumber del percorso
@@ -290,9 +296,9 @@ export default function GiornoPage() {
                 <div
                   key={i}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i + 1 === currentSlide
+                    i + 1 === effectiveSlide
                       ? 'w-8 bg-white'
-                      : i + 1 < currentSlide
+                      : i + 1 < effectiveSlide
                       ? 'w-2 bg-white/60'
                       : 'w-2 bg-white/25'
                   }`}
@@ -428,6 +434,13 @@ export default function GiornoPage() {
 
         {currentSlideData?.type === 'domanda' && (
           <div className="bg-white rounded-2xl shadow-sm p-5">
+            {isGiornataReturning && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-center">
+                <p className="text-sm text-amber-700">
+                  ☀️ Bentornato! Com'è andata la pratica durante la giornata?
+                </p>
+              </div>
+            )}
             <h2 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
               ✍️ Riflessione
             </h2>
@@ -477,7 +490,7 @@ export default function GiornoPage() {
 
         {/* Navigazione slide */}
         <div className="flex gap-3">
-          {currentSlide > 1 && (
+          {effectiveSlide > 1 && !isGiornataReturning && (
             <button
               onClick={() => setCurrentSlide(s => s - 1)}
               className="flex-1 bg-white border border-gray-200 text-gray-600 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all text-sm"
@@ -537,7 +550,25 @@ export default function GiornoPage() {
           durataInspira={giorno.durataInspira || undefined}
           durataEspira={giorno.durataEspira || undefined}
           tipoPratica={giorno.tipoPratica || 'respirazione'}
-          onComplete={() => setShowPracticePopup(false)}
+          onComplete={async () => {
+            setShowPracticePopup(false);
+            // Per tipo "giornata": segna come "started" e mostra messaggio uscita
+            if (giorno.tipoPratica === 'giornata' && !started && !completed) {
+              try {
+                await fetch('/api/giorno', {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    userId,
+                    weekNumber,
+                    dayNumber,
+                    prePraticaResponse: prePraticaResponse.trim() || null,
+                  }),
+                });
+                setStarted(true);
+              } catch { /* non bloccante */ }
+            }
+          }}
           onSkip={() => setShowPracticePopup(false)}
         />
       )}

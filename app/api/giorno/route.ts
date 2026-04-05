@@ -79,6 +79,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       giorno,
       completed: progress?.completed ?? false,
+      started: progress !== null, // riga esiste = giorno iniziato (anche se non completato)
       completedAt: progress?.completed_at ?? null,
       response: progress?.response ?? null,
       prePraticaResponse: progress?.pre_pratica_response ?? null,
@@ -179,6 +180,49 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, nextDay });
   } catch (error: any) {
     console.error('❌ POST /api/giorno:', error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// ─── PUT /api/giorno ─────────────────────────────────────────────────────────
+/**
+ * Segna un giorno come "iniziato" senza completarlo.
+ * Usato per i giorni di tipo "giornata" — l'utente legge le istruzioni,
+ * fa il Reset breve, poi esce per praticare durante la giornata.
+ * Torna più tardi per la riflessione e il completamento (POST).
+ *
+ * Body: { userId, weekNumber, dayNumber, prePraticaResponse? }
+ * Response: { success: true }
+ */
+export async function PUT(request: NextRequest) {
+  try {
+    const { userId, weekNumber, dayNumber, prePraticaResponse } = await request.json();
+
+    if (!userId || !weekNumber || !dayNumber) {
+      return NextResponse.json(
+        { error: 'userId, weekNumber e dayNumber richiesti' },
+        { status: 400 }
+      );
+    }
+
+    // Crea riga con completed: false (se non esiste già)
+    const { error } = await supabaseAdmin
+      .from('user_day_progress')
+      .upsert(
+        {
+          user_id: userId,
+          week_number: weekNumber,
+          day_number: dayNumber,
+          completed: false,
+          pre_pratica_response: prePraticaResponse || null,
+        },
+        { onConflict: 'user_id,week_number,day_number' }
+      );
+
+    if (error) throw error;
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('❌ PUT /api/giorno:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
