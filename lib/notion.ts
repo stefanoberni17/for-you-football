@@ -143,5 +143,6 @@ export function mapGiorno(page: any) {
     domandaPrePratica: richText(p['Domanda Pre Pratica']),
     durataInspira: num(p['Durata Inspira']),
     durataEspira: num(p['Durata Espira']),
+    tipoPratica: select(p['Tipo Pratica']), // respirazione | visualizzazione | riflessione | giornata
   };
 }

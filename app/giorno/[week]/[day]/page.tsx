@@ -536,6 +536,7 @@ export default function GiornoPage() {
           weekTool={weekTool}
           durataInspira={giorno.durataInspira || undefined}
           durataEspira={giorno.durataEspira || undefined}
+          tipoPratica={giorno.tipoPratica || 'respirazione'}
           onComplete={() => setShowPracticePopup(false)}
           onSkip={() => setShowPracticePopup(false)}
         />

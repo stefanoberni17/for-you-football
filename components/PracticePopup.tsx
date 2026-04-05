@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
 
+type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
+
 interface PracticePopupProps {
   titolo: string;
   pratica: string;
@@ -10,6 +12,7 @@ interface PracticePopupProps {
   weekTool?: string;
   durataInspira?: number;
   durataEspira?: number;
+  tipoPratica?: TipoPratica;
   onComplete: () => void;
   onSkip: () => void;
 }
@@ -21,6 +24,7 @@ export default function PracticePopup({
   weekTool,
   durataInspira = 4,
   durataEspira = 6,
+  tipoPratica = 'respirazione',
   onComplete,
   onSkip,
 }: PracticePopupProps) {
@@ -47,9 +51,11 @@ export default function PracticePopup({
     return () => clearInterval(timer);
   }, [phase, timeLeft]);
 
-  // Animazione respiro (ciclo asimmetrico: inspira/espira con durate diverse)
+  // Animazione respiro — solo per tipo "respirazione"
+  const showBreathCircle = tipoPratica === 'respirazione';
+
   useEffect(() => {
-    if (phase !== 'practicing') return;
+    if (phase !== 'practicing' || !showBreathCircle) return;
 
     let timeout: NodeJS.Timeout;
     const cycle = (current: 'inhale' | 'exhale') => {
@@ -63,7 +69,7 @@ export default function PracticePopup({
 
     cycle(breathPhase);
     return () => clearTimeout(timeout);
-  }, [phase, durataInspira, durataEspira]);
+  }, [phase, durataInspira, durataEspira, showBreathCircle]);
 
   const startPractice = () => {
     setTimeLeft(totalSeconds);
@@ -86,9 +92,11 @@ export default function PracticePopup({
         {phase === 'setup' && (
           <>
             <div className="text-center mb-5">
-              <div className="text-5xl md:text-6xl mb-3">🎯</div>
+              <div className="text-5xl md:text-6xl mb-3">
+                {tipoPratica === 'giornata' ? '🌤️' : '🎯'}
+              </div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                Pratica Guidata
+                {tipoPratica === 'giornata' ? 'Pratica del giorno' : 'Pratica Guidata'}
               </h2>
               {weekTool && (
                 <p className="text-sm text-forest-500 font-semibold mb-1">
@@ -112,19 +120,38 @@ export default function PracticePopup({
               </div>
             </div>
 
-            {/* Durata */}
-            <div className="text-center mb-5">
-              <p className="text-sm text-gray-600">
-                ⏱️ Durata: <span className="font-bold text-forest-600">{durataMinuti} minuti</span>
-              </p>
-            </div>
-
-            <button
-              onClick={startPractice}
-              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
-            >
-              ▶ Inizia la pratica
-            </button>
+            {tipoPratica === 'giornata' ? (
+              /* GIORNATA: niente timer, bottone "Ho capito" */
+              <>
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-5 text-center">
+                  <p className="text-sm text-amber-700">
+                    ☀️ Questa pratica si fa <span className="font-bold">durante la giornata</span> — non adesso.
+                    Torna stasera per la riflessione.
+                  </p>
+                </div>
+                <button
+                  onClick={startPractice}
+                  className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
+                >
+                  🧘 Fai il Reset breve e inizia
+                </button>
+              </>
+            ) : (
+              /* TUTTI GLI ALTRI TIPI: timer normale */
+              <>
+                <div className="text-center mb-5">
+                  <p className="text-sm text-gray-600">
+                    ⏱️ Durata: <span className="font-bold text-forest-600">{durataMinuti} minuti</span>
+                  </p>
+                </div>
+                <button
+                  onClick={startPractice}
+                  className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
+                >
+                  ▶ Inizia la pratica
+                </button>
+              </>
+            )}
             <button
               onClick={onSkip}
               className="w-full text-gray-400 hover:text-gray-600 text-sm py-2 transition-colors"
@@ -165,33 +192,53 @@ export default function PracticePopup({
               </div>
             </div>
 
-            {/* Cerchio animato + timer */}
+            {/* Timer area — condizionale in base al tipo pratica */}
             <div className="flex flex-col items-center mb-6">
-              <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
-                <div
-                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform ease-in-out ${
-                    breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
-                  }`}
-                  style={{
-                    opacity: 0.6,
-                    transitionDuration: `${breathPhase === 'inhale' ? durataInspira : durataEspira}s`,
-                  }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-4xl md:text-5xl font-bold text-white mb-1">
-                      {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs md:text-sm text-white/90 font-medium">
-                      {breathPhase === 'inhale' ? '🌬️ Inspira...' : '💨 Espira...'}
+              {showBreathCircle ? (
+                /* RESPIRAZIONE: cerchio animato + timer */
+                <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
+                  <div
+                    className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform ease-in-out ${
+                      breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
+                    }`}
+                    style={{
+                      opacity: 0.6,
+                      transitionDuration: `${breathPhase === 'inhale' ? durataInspira : durataEspira}s`,
+                    }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-4xl md:text-5xl font-bold text-white mb-1">
+                        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                      </div>
+                      <div className="text-xs md:text-sm text-white/90 font-medium">
+                        {breathPhase === 'inhale' ? '🌬️ Inspira...' : '💨 Espira...'}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* VISUALIZZAZIONE / RIFLESSIONE: solo timer countdown */
+                <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-forest-400/20 to-forest-500/20 border-2 border-forest-400/30" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-4xl md:text-5xl font-bold text-forest-600 mb-1">
+                        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                      </div>
+                      <div className="text-xs md:text-sm text-forest-500/70 font-medium">
+                        {tipoPratica === 'riflessione' ? '🧘 Rifletti...' : '👁️ Osserva...'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <p className="text-xs text-center text-gray-500">
-              Segui la pratica al tuo ritmo. Il timer ti guida ⚽
+              {showBreathCircle
+                ? 'Segui la pratica al tuo ritmo. Il timer ti guida ⚽'
+                : 'Segui gli step al tuo ritmo. Prenditi il tempo che ti serve 🧘'}
             </p>
           </>
         )}
@@ -199,20 +246,34 @@ export default function PracticePopup({
         {phase === 'done' && (
           <>
             <div className="text-center mb-6">
-              <div className="text-6xl md:text-7xl mb-4">🏆</div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                Pratica completata!
-              </h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Ottimo lavoro. Ogni sessione ti rende piu forte mentalmente.
-              </p>
+              {tipoPratica === 'giornata' ? (
+                <>
+                  <div className="text-6xl md:text-7xl mb-4">☀️</div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                    Ora tocca a te!
+                  </h2>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Porta la pratica nella tua giornata. Torna quando hai finito per completare la riflessione.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="text-6xl md:text-7xl mb-4">🏆</div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                    Pratica completata!
+                  </h2>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Ottimo lavoro. Ogni sessione ti rende piu forte mentalmente.
+                  </p>
+                </>
+              )}
             </div>
 
             <button
               onClick={onComplete}
               className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base"
             >
-              Continua →
+              {tipoPratica === 'giornata' ? 'Ho capito, ci provo oggi →' : 'Continua →'}
             </button>
           </>
         )}
