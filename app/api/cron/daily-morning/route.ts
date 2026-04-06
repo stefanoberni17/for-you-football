@@ -197,8 +197,13 @@ Seleziona la frase e aggiungi la riflessione.`;
         sent++;
       }
 
-      // Also send push notification
+      // Save last coach message + send push notification
       if (text) {
+        await supabaseAdmin
+          .from('profiles')
+          .update({ last_coach_message: text })
+          .eq('user_id', user.user_id)
+          .then(() => {});
         await sendPushToUser(user.user_id, 'Coach AI', text, '/').catch(() => {});
       }
     } catch (err) {

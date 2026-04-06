@@ -62,6 +62,7 @@ export default function HomePage() {
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [weekData, setWeekData] = useState<any>(null);
   const [userId, setUserId] = useState('');
+  const [coachMessageDismissed, setCoachMessageDismissed] = useState(false);
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [checkins, setCheckins] = useState<CheckinData[]>([]);
@@ -189,6 +190,28 @@ export default function HomePage() {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-5">
+        {/* Banner ultimo messaggio Coach */}
+        {profile?.last_coach_message && !coachMessageDismissed && (
+          <div className="bg-gradient-to-r from-forest-50 to-forest-100 rounded-2xl shadow-sm p-4 border border-forest-200 relative">
+            <button
+              onClick={() => setCoachMessageDismissed(true)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Chiudi"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <div className="flex items-start gap-3 pr-6">
+              <div className="text-xl flex-shrink-0">🤖</div>
+              <div>
+                <p className="text-xs font-bold text-forest-600 mb-1">Coach AI</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{profile.last_coach_message}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Banner prima visita */}
         {profile?.current_week === 1 && totalCompleted === 0 && (
           <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">

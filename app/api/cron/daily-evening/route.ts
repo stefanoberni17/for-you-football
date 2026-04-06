@@ -119,6 +119,11 @@ Genera il messaggio serale.`;
       }
 
       if (text) {
+        await supabaseAdmin
+          .from('profiles')
+          .update({ last_coach_message: text })
+          .eq('user_id', user.user_id)
+          .then(() => {});
         await sendPushToUser(user.user_id, 'Coach AI', text, '/').catch(() => {});
       }
     } catch (err) {
