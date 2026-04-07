@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getAuthUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,8 +13,9 @@ const supabaseAdmin = createClient(
 // Ritorna tutti i check-in degli ultimi N giorni (default: 30)
 export async function GET(request: NextRequest) {
   try {
+    const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const userId = authUserId || searchParams.get('userId');
     const days = parseInt(searchParams.get('days') || '30');
 
     if (!userId) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getAuthUser } from '@/lib/auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -9,8 +10,9 @@ const supabaseAdmin = createClient(
 // ─── GET /api/reflection?userId=U&week=W&day=D ────────────────────────────────
 export async function GET(request: NextRequest) {
   try {
+    const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const userId = authUserId || searchParams.get('userId');
     const weekNumber = parseInt(searchParams.get('week') || '0');
     const dayNumber = parseInt(searchParams.get('day') || '0');
 
@@ -41,8 +43,10 @@ export async function GET(request: NextRequest) {
 // ─── POST /api/reflection ────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
-    const { userId, weekNumber, dayNumber, reflectionText, reflectionQuestion } =
-      await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { weekNumber, dayNumber, reflectionText, reflectionQuestion } = body;
 
     if (!userId || !weekNumber || !dayNumber || !reflectionText) {
       return NextResponse.json(

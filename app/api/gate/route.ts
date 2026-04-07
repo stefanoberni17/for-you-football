@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno } from '@/lib/notion';
 import { GATE_DAY } from '@/lib/constants';
+import { getAuthUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,9 +14,10 @@ const supabaseAdmin = createClient(
 // ─── GET /api/gate?week=W&userId=U ────────────────────────────────────────────
 export async function GET(request: NextRequest) {
   try {
+    const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
     const weekNumber = parseInt(searchParams.get('week') || '0');
-    const userId = searchParams.get('userId');
+    const userId = authUserId || searchParams.get('userId');
 
     if (!weekNumber) {
       return NextResponse.json({ error: 'Parametro week richiesto' }, { status: 400 });
@@ -64,7 +66,10 @@ export async function GET(request: NextRequest) {
 // ─── POST /api/gate ────────────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
-    const { userId, weekNumber, answers } = await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { weekNumber, answers } = body;
 
     if (!userId || !weekNumber || !answers) {
       return NextResponse.json(

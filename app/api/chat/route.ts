@@ -6,10 +6,14 @@ import {
   SYSTEM_PROMPT,
   WEB_FORMAT
 } from '@/lib/coach-ai';
+import { getAuthUser } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, userId } = await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { messages } = body;
 
     if (!messages || messages.length === 0) {
       return NextResponse.json({ error: 'Messages required' }, { status: 400 });

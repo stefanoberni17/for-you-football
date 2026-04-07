@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getAuthUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,8 +15,9 @@ const todayDate = () => new Date().toISOString().split('T')[0];
 // Ritorna il check-in di oggi per l'utente (null se non esiste)
 export async function GET(request: NextRequest) {
   try {
+    const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const userId = authUserId || searchParams.get('userId');
 
     if (!userId) {
       return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
@@ -41,8 +43,10 @@ export async function GET(request: NextRequest) {
 // Salva (upsert) il check-in del giorno corrente
 export async function POST(request: NextRequest) {
   try {
-    const { userId, physicalState, sleepHours, recoveryQuality, mentalState } =
-      await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { physicalState, sleepHours, recoveryQuality, mentalState } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });

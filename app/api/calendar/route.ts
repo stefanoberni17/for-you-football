@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getAuthUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,8 +12,9 @@ const supabaseAdmin = createClient(
 // ─── GET /api/calendar?userId=U&week=W ────────────────────────────────────────
 export async function GET(request: NextRequest) {
   try {
+    const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const userId = authUserId || searchParams.get('userId');
     const weekNumber = parseInt(searchParams.get('week') || '0');
 
     if (!userId || !weekNumber) {
@@ -45,7 +47,10 @@ export async function GET(request: NextRequest) {
 // ─── POST /api/calendar ──────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
-    const { userId, weekNumber, trainingDays, matchDays } = await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { weekNumber, trainingDays, matchDays } = body;
 
     if (!userId || !weekNumber) {
       return NextResponse.json(

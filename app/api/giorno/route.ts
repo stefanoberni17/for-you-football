@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno } from '@/lib/notion';
+import { getAuthUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,10 +23,12 @@ const supabaseAdmin = createClient(
  */
 export async function GET(request: NextRequest) {
   try {
+    const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
     const weekNumber = parseInt(searchParams.get('week') || '0');
     const dayNumber = parseInt(searchParams.get('day') || '0');
-    const userId = searchParams.get('userId');
+    // Usa sessione autenticata, fallback a query param per backward compat
+    const userId = authUserId || searchParams.get('userId');
 
     if (!weekNumber || !dayNumber) {
       return NextResponse.json({ error: 'Parametri week e day richiesti' }, { status: 400 });
@@ -103,7 +106,10 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId, weekNumber, dayNumber, response, prePraticaResponse, reflectionQuestion } = await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { weekNumber, dayNumber, response, prePraticaResponse, reflectionQuestion } = body;
 
     if (!userId || !weekNumber || !dayNumber) {
       return NextResponse.json(
@@ -196,7 +202,10 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const { userId, weekNumber, dayNumber, prePraticaResponse } = await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { weekNumber, dayNumber, prePraticaResponse } = body;
 
     if (!userId || !weekNumber || !dayNumber) {
       return NextResponse.json(
@@ -236,7 +245,10 @@ export async function PUT(request: NextRequest) {
  */
 export async function PATCH(request: NextRequest) {
   try {
-    const { userId, weekNumber, dayNumber, previousDayCheck } = await request.json();
+    const authUserId = await getAuthUser(request);
+    const body = await request.json();
+    const userId = authUserId || body.userId;
+    const { weekNumber, dayNumber, previousDayCheck } = body;
 
     if (!userId || !weekNumber || !dayNumber || previousDayCheck == null) {
       return NextResponse.json(
