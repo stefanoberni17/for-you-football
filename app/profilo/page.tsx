@@ -594,7 +594,7 @@ export default function ProfiloPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Come stai vivendo questo periodo nel calcio?
+              Come stai vivendo questo periodo in campo e nel tuo sport?
             </label>
             <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)} rows={2}
               className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"

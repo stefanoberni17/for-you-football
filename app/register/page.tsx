@@ -379,7 +379,7 @@ export default function RegisterPage() {
               {/* Situazione attuale */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Come stai vivendo questo periodo nel tuo sport?{' '}
+                  Come stai vivendo questo periodo in campo e nel tuo sport?{' '}
                   <span className="text-gray-400 font-normal">(opzionale)</span>
                 </label>
                 <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)}
