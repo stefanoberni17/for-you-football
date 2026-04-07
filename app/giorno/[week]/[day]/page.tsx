@@ -315,23 +315,29 @@ export default function GiornoPage() {
         {/* Check giorno precedente */}
         {showCheck && giorno && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-            <p className="text-sm font-semibold text-amber-800 mb-1">⚡ Check di ieri</p>
+            <p className="text-sm font-semibold text-amber-800 mb-2">🔄 Come è andata l'ultima pratica?</p>
             <p className="text-gray-700 text-sm leading-relaxed mb-4">{giorno.testoCheck}</p>
             <div className="flex flex-col gap-2">
-              {([
-                { value: 1, label: 'Sì, in campo o in allenamento' },
-                { value: 2, label: 'Sì, nella vita di tutti i giorni' },
-                { value: 3, label: 'Non me ne sono ancora ricordato' },
-              ] as { value: 1 | 2 | 3; label: string }[]).map(({ value, label }) => (
-                <button
-                  key={value}
-                  onClick={() => saveCheck(value)}
-                  disabled={savingCheck}
-                  className="text-left bg-white border border-amber-200 text-amber-900 text-sm font-medium py-3 px-4 rounded-xl hover:bg-amber-100 transition-all disabled:opacity-50"
-                >
-                  {label}
-                </button>
-              ))}
+              <button
+                onClick={() => saveCheck(1)}
+                disabled={savingCheck}
+                className="text-left bg-white border border-forest-200 text-forest-800 text-sm font-medium py-3 px-4 rounded-xl hover:bg-forest-50 transition-all disabled:opacity-50"
+              >
+                ✅ Bene! Andiamo avanti
+              </button>
+              <button
+                onClick={() => {
+                  saveCheck(0 as any);
+                  const prompt = encodeURIComponent(
+                    `Non ho capito bene la pratica di ieri: "${giorno.testoCheck}" — puoi aiutarmi a capirla meglio?`
+                  );
+                  router.push(`/chat?prompt=${prompt}`);
+                }}
+                disabled={savingCheck}
+                className="text-left bg-white border border-amber-200 text-amber-800 text-sm font-medium py-3 px-4 rounded-xl hover:bg-amber-50 transition-all disabled:opacity-50"
+              >
+                🤖 Preferisco parlarne col Coach AI
+              </button>
             </div>
           </div>
         )}

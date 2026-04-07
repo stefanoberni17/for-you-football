@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ChatBot, { ChatBotRef } from '@/components/ChatBot';
 
@@ -12,9 +12,11 @@ const suggestions = [
   "Sto perdendo fiducia in me stesso, cosa faccio?",
 ];
 
-export default function ChatPage() {
+function ChatContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const [promptSent, setPromptSent] = useState(false);
   const chatBotRef = useRef<ChatBotRef>(null);
 
   useEffect(() => {
@@ -29,9 +31,17 @@ export default function ChatPage() {
     checkAuth();
   }, [router]);
 
-  const handleSuggestionClick = (text: string) => {
-    chatBotRef.current?.sendSuggestion(text);
-  };
+  // Auto-send prompt from query param (e.g. /chat?prompt=...)
+  useEffect(() => {
+    if (loading || promptSent) return;
+    const prompt = searchParams.get('prompt');
+    if (prompt && chatBotRef.current) {
+      setTimeout(() => {
+        chatBotRef.current?.sendSuggestion(prompt);
+        setPromptSent(true);
+      }, 500);
+    }
+  }, [loading, promptSent, searchParams]);
 
   if (loading) {
     return (
@@ -50,5 +60,20 @@ export default function ChatPage() {
         <ChatBot ref={chatBotRef} suggestions={suggestions} />
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚽</div>
+          <p className="text-xl text-gray-600">Caricamento...</p>
+        </div>
+      </main>
+    }>
+      <ChatContent />
+    </Suspense>
   );
 }
