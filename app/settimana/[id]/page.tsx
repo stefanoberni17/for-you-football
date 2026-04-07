@@ -64,29 +64,13 @@ export default function SettimanaPage() {
         return;
       }
 
-      // Carica calendario settimanale — richiedi ogni settimana reale
+      // Carica calendario settimanale
+      // Il cron notturno svuota training_days ogni lunedì → se vuoto, mostra popup
       const calData = await calendarRes.json();
-      const hasCalendar = calData.trainingDays && calData.trainingDays.length > 0;
-
-      if (hasCalendar) {
-        // Controlla se il calendario è di questa settimana reale (dopo lunedì)
-        const now = new Date();
-        const monday = new Date(now);
-        monday.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // Lunedì di questa settimana
-        monday.setHours(0, 0, 0, 0);
-
-        const calendarDate = calData.createdAt ? new Date(calData.createdAt) : new Date(0);
-        const isFromThisWeek = calendarDate >= monday;
-
-        if (isFromThisWeek) {
-          setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
-        } else {
-          // Calendario vecchio (settimana reale precedente) → pre-popola ma mostra popup
-          setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
-          setShowCalendarPopup(true);
-        }
+      if (calData.trainingDays && calData.trainingDays.length > 0) {
+        setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
       } else {
-        // Nessun calendario configurato → mostra popup
+        // Nessun calendario o resettato dal cron → mostra popup
         setShowCalendarPopup(true);
       }
 

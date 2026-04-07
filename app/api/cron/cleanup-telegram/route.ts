@@ -28,9 +28,29 @@ export async function GET(request: NextRequest) {
   }
 
   console.log(`✅ Cleanup telegram_conversations: ${count} righe eliminate (>${RETENTION_DAYS} giorni)`);
+
+  // Reset calendari settimanali ogni notte tra domenica e lunedì (lunedì 3:00 UTC)
+  // getDay(): 0=Dom, 1=Lun. Alle 3:00 UTC di lunedì = notte tra domenica e lunedì
+  const today = new Date();
+  let calendarReset = 0;
+  if (today.getDay() === 1) { // Lunedì
+    const { error: resetError, count: resetCount } = await supabaseAdmin
+      .from('user_weekly_calendar')
+      .update({ training_days: [] as number[], match_days: [] as number[] })
+      .gt('id', '00000000-0000-0000-0000-000000000000'); // match all rows
+
+    if (resetError) {
+      console.error('❌ Calendar reset error:', resetError);
+    } else {
+      calendarReset = resetCount || 0;
+      console.log(`✅ Calendar reset: calendari svuotati (lunedì)`);
+    }
+  }
+
   return NextResponse.json({
     success: true,
     deleted: count,
     cutoffDate,
+    calendarReset,
   });
 }
