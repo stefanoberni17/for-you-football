@@ -197,8 +197,12 @@ Seleziona la frase e aggiungi la riflessione.`;
         sent++;
       }
 
-      // Save last coach message + send push notification
+      // Save to conversation history + last coach message + push notification
       if (text) {
+        await supabaseAdmin
+          .from('telegram_conversations')
+          .insert({ user_id: user.user_id, role: 'assistant', content: text })
+          .then(() => {});
         await supabaseAdmin
           .from('profiles')
           .update({ last_coach_message: text })

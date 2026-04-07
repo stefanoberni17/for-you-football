@@ -120,6 +120,10 @@ Genera il messaggio serale.`;
 
       if (text) {
         await supabaseAdmin
+          .from('telegram_conversations')
+          .insert({ user_id: user.user_id, role: 'assistant', content: text })
+          .then(() => {});
+        await supabaseAdmin
           .from('profiles')
           .update({ last_coach_message: text })
           .eq('user_id', user.user_id)
