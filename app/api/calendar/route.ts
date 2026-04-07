@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     const { data, error } = await supabaseAdmin
       .from('user_weekly_calendar')
-      .select('training_days, match_days')
+      .select('training_days, match_days, created_at')
       .eq('user_id', userId)
       .eq('week_number', weekNumber)
       .maybeSingle();
@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       trainingDays: data?.training_days || [],
       matchDays: data?.match_days || [],
+      createdAt: data?.created_at || null,
     });
   } catch (error: any) {
     console.error('❌ GET /api/calendar:', error.message);
@@ -74,6 +75,7 @@ export async function POST(request: NextRequest) {
           week_number: weekNumber,
           training_days: trainingDays,
           match_days: cleanMatchDays,
+          created_at: new Date().toISOString(), // Aggiorna timestamp per tracking settimana reale
         },
         { onConflict: 'user_id,week_number' }
       );
