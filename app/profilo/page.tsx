@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { PLAYER_ROLES, PLAYER_LEVELS, PLAYER_FEARS } from '@/lib/constants';
+import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -104,7 +104,8 @@ export default function ProfiloPage() {
   const [pushStatus, setPushStatus] = useState<'loading' | 'unsupported' | 'denied' | 'active' | 'inactive'>('loading');
   const [pushLoading, setPushLoading] = useState(false);
 
-  // Profilo calciatore
+  // Profilo atleta
+  const [sport, setSport] = useState('calcio');
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [level, setLevel] = useState('');
   const [selectedFears, setSelectedFears] = useState<string[]>([]);
@@ -137,6 +138,7 @@ export default function ProfiloPage() {
         setEta(p.age?.toString() || '');
         setCurrentWeek(p.current_week?.toString() || '1');
         setTelegramId(p.telegram_id || '');
+        setSport(p.sport || 'calcio');
         setLevel(p.level || '');
         setGoals(p.goals || '');
         setDream(p.dream || '');
@@ -182,6 +184,7 @@ export default function ProfiloPage() {
         .update({
           name: nome.trim(),
           age: eta ? parseInt(eta) : null,
+          sport: sport || 'calcio',
           role: selectedRoles.length ? selectedRoles.join(',') : null,
           level: level || null,
           biggest_fear: selectedFears.length ? selectedFears.join(',') : null,
@@ -514,15 +517,38 @@ export default function ProfiloPage() {
 
         {/* ── Profilo calciatore ───────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl shadow-sm p-5 space-y-5">
-          <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Il tuo profilo da calciatore</h3>
+          <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Il tuo profilo da atleta</h3>
 
-          {/* Ruoli */}
+          {/* Sport */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Che sport pratichi?</label>
+            <div className="flex flex-wrap gap-2">
+              {SPORTS.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => { setSport(s.value); setSelectedRoles([]); }}
+                  className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
+                    sport === s.value
+                      ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-forest-300 hover:text-forest-700'
+                  }`}
+                >
+                  {s.icon} {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ruoli (dinamici per sport) */}
+          {(SPORT_ROLES[sport]?.length ?? 0) > 0 && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Dove giochi? <span className="text-gray-400 font-normal">(anche più di uno)</span>
+              Che ruolo hai? <span className="text-gray-400 font-normal">(anche più di uno)</span>
             </label>
-            <ChipGroup options={PLAYER_ROLES} selected={selectedRoles} onToggle={toggleRole} />
+            <ChipGroup options={SPORT_ROLES[sport] || []} selected={selectedRoles} onToggle={toggleRole} />
           </div>
+          )}
 
           {/* Livello */}
           <div>
@@ -542,7 +568,7 @@ export default function ProfiloPage() {
               Cosa ti blocca mentalmente in campo?
             </label>
             <p className="text-xs text-gray-400 mb-2">Puoi selezionarne più di una</p>
-            <ChipGroup options={PLAYER_FEARS} selected={selectedFears} onToggle={toggleFear} />
+            <ChipGroup options={SPORT_FEARS[sport] || SPORT_FEARS['altro']} selected={selectedFears} onToggle={toggleFear} />
           </div>
         </div>
 
@@ -560,7 +586,7 @@ export default function ProfiloPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Dove vuoi arrivare col calcio?</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Dove vuoi arrivare nel tuo sport?</label>
             <input type="text" value={dream} onChange={(e) => setDream(e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
               placeholder="Es. Giocare in prima squadra, fare il salto di categoria…" maxLength={300} />

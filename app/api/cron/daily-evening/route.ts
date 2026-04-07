@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabaseAdmin
     .from('profiles')
-    .select('user_id, name, telegram_id, current_week, coach_notes')
+    .select('user_id, name, telegram_id, current_week, coach_notes, sport')
     .lte('current_week', BETA_MAX_WEEK)
     .not('telegram_id', 'is', null);
 
@@ -85,7 +85,8 @@ export async function GET(request: NextRequest) {
         ? '\nIl giocatore ha iniziato una pratica "durante la giornata" stamattina ma non ha ancora completato la riflessione. Invitalo a tornare nell\'app per completarla.'
         : '';
 
-      const systemPrompt = `Sei il Coach AI di For You Football. Genera un messaggio serale per un calciatore.
+      const userSport = (user as any).sport || 'calcio';
+      const systemPrompt = `Sei il Coach AI di For You Football. Genera un messaggio serale per un atleta (sport: ${userSport}).
 
 REGOLE RIGIDE:
 - Massimo 2-3 righe, breve e diretto

@@ -429,6 +429,14 @@ Temi tipici da mettere in cassetto durante il Blocco 1:
 **CHECK CASSETTO — Inizio sessione:** Se nelle note coach (coach_notes) trovi voci con [CASSETTO] e la settimana corrente è quella giusta per riaprirle, introducile TU per primo: "Ricordi quando avevi parlato di X? Adesso siamo nel momento giusto per tornarci. Come lo senti oggi?"
 Quando riaprire i cassetti: W5-W6 (Accettazione) → identità, significato sensazioni. W7-W8 (Perdono) → perdono di sé, trauma, pattern emotivi. Season 2+ → tutto il resto.
 
+**ADATTAMENTO SPORT:** Lo sport dell'atleta è indicato nel contesto. Adatta il tuo linguaggio in base allo sport:
+- Calcio: "campo", "mister", "compagni", "partita", "allenamento", "rigore", "panchina"
+- Tennis: "court", "coach", "avversario", "match", "allenamento", "match point", "tiebreak"
+- Padel: "campo", "coach", "compagno di coppia", "partita", "allenamento", "match point"
+- Basket: "campo", "coach", "compagni", "partita", "allenamento", "tiro libero", "ultimi secondi"
+- Altro: usa termini generici ("il tuo sport", "la competizione", "l'allenamento", "il coach")
+Gli strumenti (Reset, Observer, Body Check, Protocollo Pressione) sono IDENTICI per tutti gli sport — cambia solo il contesto delle situazioni di pressione. Se lo sport non è calcio, evita metafore calcistiche specifiche (rigore, portiere, mister) e usa equivalenti dello sport dell'atleta.
+
 # OBIETTIVO FINALE
 
 Accompagnare il calciatore a diventare autonomo nel vedersi, nel sentirsi, nel scegliere la propria risposta — in campo e fuori.
@@ -464,7 +472,7 @@ Stai rispondendo nella chat web dell'app. Tieni presente:
 export async function buildUserContext(userId: string): Promise<string> {
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('name, age, goals, dream, current_situation, current_week, role, level, biggest_fear, coach_notes')
+    .select('name, age, sport, goals, dream, current_situation, current_week, role, level, biggest_fear, coach_notes')
     .eq('user_id', userId)
     .single();
 
@@ -539,19 +547,20 @@ export async function buildUserContext(userId: string): Promise<string> {
 📅 OGGI È: ${todayDate}
 ⚡ SETTIMANA CORRENTE: Settimana ${currentWeek}. Tutte le risposte devono rispettare le regole di questa settimana del percorso.
 
-# CONTESTO CALCIATORE
+# CONTESTO ATLETA
 
-**Nome:** ${profile?.name || 'Calciatore'}
+**Nome:** ${profile?.name || 'Atleta'}
+**Sport:** ${profile?.sport || 'calcio'}
 **Età:** ${profile?.age || 'Non specificata'}
 **Ruolo/i:** ${profile?.role ? profile.role.split(',').join(' + ') : 'Non specificato'}
 **Livello:** ${profile?.level || 'Non specificato'}
 **Settimana corrente:** ${currentWeek}
 
 ## Sfide e situazione
-${profile?.biggest_fear ? `**Paure in campo:** ${profile.biggest_fear.split(',').map((f: string) => f.trim()).join(', ')}` : ''}
+${profile?.biggest_fear ? `**Paure:** ${profile.biggest_fear.split(',').map((f: string) => f.trim()).join(', ')}` : ''}
 ${profile?.current_situation ? `**Situazione attuale:** ${profile.current_situation}` : ''}
 ${profile?.goals ? `**Obiettivi con il percorso:** ${profile.goals}` : ''}
-${profile?.dream ? `**Sogno da calciatore:** ${profile.dream}` : ''}
+${profile?.dream ? `**Sogno:** ${profile.dream}` : ''}
 
 ## Progresso nel percorso
 **Giorni completati:** ${totalCompleted}

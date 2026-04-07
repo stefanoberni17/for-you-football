@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PLAYER_ROLES, PLAYER_LEVELS } from '@/lib/constants';
+import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -50,7 +50,8 @@ export default function RegisterPage() {
   const [nome, setNome] = useState('');
   const [eta, setEta] = useState('');
 
-  // Step 2 — profilo calciatore
+  // Step 2 — profilo atleta
+  const [sport, setSport] = useState('calcio');
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [level, setLevel] = useState('');
   const [selectedSituazione, setSelectedSituazione] = useState('');
@@ -107,6 +108,7 @@ export default function RegisterPage() {
           password,
           name: nome.trim(),
           age: eta || null,
+          sport: sport || 'calcio',
           role: selectedRoles.length ? selectedRoles.join(',') : null,
           level: level || null,
           biggest_fear: selectedSituazione || null,
@@ -268,15 +270,41 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              {/* Ruoli — multi-select */}
+              {/* Sport — single select chips */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Dove giochi?{' '}
+                  Che sport pratichi?
+                </label>
+                <p className="text-xs text-gray-500 mb-2">Il Coach adatta il linguaggio al tuo sport.</p>
+                <div className="flex flex-wrap gap-2">
+                  {SPORTS.map((s) => (
+                    <button
+                      key={s.value}
+                      type="button"
+                      onClick={() => { setSport(s.value); setSelectedRoles([]); }}
+                      className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
+                        sport === s.value
+                          ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-forest-300 hover:text-forest-700'
+                      }`}
+                    >
+                      {s.icon} {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Ruoli — multi-select (dinamici per sport) */}
+              {(SPORT_ROLES[sport]?.length ?? 0) > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Che ruolo hai?{' '}
                   <span className="text-gray-400 font-normal">(anche più di uno)</span>
                 </label>
                 <p className="text-xs text-gray-500 mb-2">Il Coach userà esempi dal tuo ruolo.</p>
-                <ChipGroup options={PLAYER_ROLES} selected={selectedRoles} onToggle={toggleRole} />
+                <ChipGroup options={SPORT_ROLES[sport] || []} selected={selectedRoles} onToggle={toggleRole} />
               </div>
+              )}
 
               {/* Livello — single select */}
               <div>
@@ -340,7 +368,7 @@ export default function RegisterPage() {
               {/* Sogno */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Dove vuoi arrivare col calcio?
+                  Dove vuoi arrivare nel tuo sport?
                 </label>
                 <input type="text" value={dream} onChange={(e) => setDream(e.target.value)}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
@@ -351,7 +379,7 @@ export default function RegisterPage() {
               {/* Situazione attuale */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Come stai vivendo questo periodo nel calcio?{' '}
+                  Come stai vivendo questo periodo nel tuo sport?{' '}
                   <span className="text-gray-400 font-normal">(opzionale)</span>
                 </label>
                 <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)}
@@ -367,7 +395,7 @@ export default function RegisterPage() {
                 </button>
                 <button type="submit" disabled={loading}
                   className="flex-1 bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
-                  {loading ? 'Creazione…' : 'Inizia ⚽'}
+                  {loading ? 'Creazione…' : `Inizia ${SPORTS.find(s => s.value === sport)?.icon || '⚽'}`}
                 </button>
               </div>
             </form>

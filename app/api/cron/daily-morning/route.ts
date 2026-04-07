@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabaseAdmin
     .from('profiles')
-    .select('user_id, name, telegram_id, current_week, coach_notes, role, biggest_fear')
+    .select('user_id, name, telegram_id, current_week, coach_notes, role, biggest_fear, sport')
     .lte('current_week', BETA_MAX_WEEK)
     .not('telegram_id', 'is', null);
 
@@ -176,6 +176,7 @@ ${messagesList}
 
 CONTESTO:
 Nome: ${user.name || 'Atleta'}
+Sport: ${(user as any).sport || 'calcio'}
 Settimana: ${week} — Principio: ${principle}${tool ? ` — Strumento: ${tool}` : ''}
 Giorno: ${dayName}
 ${dayContext}

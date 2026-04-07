@@ -56,6 +56,88 @@ export const WEEK_TOOLS: Record<number, string> = {
   4: 'Il Protocollo Pressione',
 };
 
+// ─── Sport supportati ────────────────────────────────────────────────────────
+
+export const SPORTS = [
+  { value: 'calcio', label: 'Calcio', icon: '⚽' },
+  { value: 'tennis', label: 'Tennis', icon: '🎾' },
+  { value: 'padel', label: 'Padel', icon: '🏓' },
+  { value: 'basket', label: 'Basket', icon: '🏀' },
+  { value: 'altro', label: 'Altro sport', icon: '🏅' },
+] as const;
+
+type RoleOption = { value: string; label: string };
+type FearOption = { value: string; label: string };
+
+export const SPORT_ROLES: Record<string, readonly RoleOption[]> = {
+  calcio: [
+    { value: 'portiere', label: 'Portiere' },
+    { value: 'difensore', label: 'Difensore' },
+    { value: 'centrocampista', label: 'Centrocampista' },
+    { value: 'attaccante', label: 'Attaccante' },
+  ],
+  tennis: [
+    { value: 'singolarista', label: 'Singolarista' },
+    { value: 'doppista', label: 'Doppista' },
+  ],
+  padel: [
+    { value: 'destro', label: 'Lato destro' },
+    { value: 'sinistro', label: 'Lato sinistro' },
+  ],
+  basket: [
+    { value: 'playmaker', label: 'Playmaker' },
+    { value: 'guardia', label: 'Guardia' },
+    { value: 'ala', label: 'Ala' },
+    { value: 'centro', label: 'Centro' },
+  ],
+  altro: [],
+};
+
+export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
+  calcio: [
+    { value: 'errore', label: 'Sbagliare e non perdonarmi' },
+    { value: 'deludere', label: 'Deludere il mister o i compagni' },
+    { value: 'panchina', label: 'Perdere il posto da titolare' },
+    { value: 'giudizio', label: 'Il giudizio del pubblico o dei compagni' },
+    { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
+    { value: 'momento_chiave', label: 'Fallire nei momenti chiave (rigori, finali...)' },
+    { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
+  ],
+  tennis: [
+    { value: 'errore', label: 'Sbagliare e non perdonarmi' },
+    { value: 'deludere', label: 'Deludere il mio coach o partner' },
+    { value: 'giudizio', label: 'Il giudizio del pubblico' },
+    { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
+    { value: 'momento_chiave', label: 'Fallire nei momenti chiave (tiebreak, match point...)' },
+    { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
+  ],
+  padel: [
+    { value: 'errore', label: 'Sbagliare e non perdonarmi' },
+    { value: 'deludere', label: 'Deludere il mio compagno di coppia' },
+    { value: 'giudizio', label: 'Il giudizio degli altri' },
+    { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
+    { value: 'momento_chiave', label: 'Fallire nei momenti chiave (match point, tiebreak...)' },
+    { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
+  ],
+  basket: [
+    { value: 'errore', label: 'Sbagliare e non perdonarmi' },
+    { value: 'deludere', label: 'Deludere il coach o i compagni' },
+    { value: 'panchina', label: 'Perdere il posto da titolare' },
+    { value: 'giudizio', label: 'Il giudizio del pubblico o dei compagni' },
+    { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
+    { value: 'momento_chiave', label: 'Fallire nei momenti chiave (tiri liberi, ultimi secondi...)' },
+    { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
+  ],
+  altro: [
+    { value: 'errore', label: 'Sbagliare e non perdonarmi' },
+    { value: 'deludere', label: 'Deludere il mio coach o i compagni' },
+    { value: 'giudizio', label: 'Il giudizio degli altri' },
+    { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
+    { value: 'momento_chiave', label: 'Fallire nei momenti decisivi' },
+    { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
+  ],
+};
+
 // ─── Livelli di gioco ─────────────────────────────────────────────────────────
 
 export const PLAYER_LEVELS = [

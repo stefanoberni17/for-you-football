@@ -16,7 +16,7 @@ const supabaseAuth = createClient(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password, name, age, role, level, biggest_fear, goals, dream, current_situation } = body;
+    const { email, password, name, age, sport, role, level, biggest_fear, goals, dream, current_situation } = body;
 
     // Log richiesta (senza password) per debug
     console.log('📥 /api/register ricevuto:', {
@@ -101,6 +101,7 @@ export async function POST(req: NextRequest) {
           user_id: userId,
           name: name || null,
           age: age ? parseInt(age) : null,
+          sport: sport || 'calcio',
           role: role || null,
           level: level || null,
           biggest_fear: biggest_fear || null,
