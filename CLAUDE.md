@@ -126,7 +126,8 @@ CRON_SECRET=
 user_id                  UUID PRIMARY KEY REFERENCES auth.users(id)
 name                     TEXT
 age                      INT
--- Football-specific (compilati in registrazione step 2)
+sport                    TEXT DEFAULT 'calcio'  -- calcio/tennis/padel/basket/altro
+-- Sport-specific (compilati in registrazione step 2)
 role                     TEXT    -- multi-select comma-separated: portiere,difensore,centrocampista,attaccante
 level                    TEXT    -- amatoriale/dilettante/giovanile/semi-pro
 biggest_fear             TEXT    -- multi-select comma-separated (7 paure: errore,deludere,panchina,giudizio,non_abbastanza,momento_chiave,infortunio)
@@ -674,6 +675,16 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Feature — REGOLA ANTICIPAZIONI:** nel system prompt Coach — anticipazioni generiche OK, dettagli pratiche/strumenti futuri NO
 - [x] Notion DB Giorni — aggiunte colonne `Contesto`, `Domanda Pre Pratica`, `Ha Check Precedente`, `Testo Check`
 - [x] **Refactor — Check-in scala 0-10:** tutte le metriche (fisico, recupero, mentale) ora usano slider 0-10 invece di emoji/pill categoriche. Sonno invariato (ore). Migration SQL per storico: fisico ×2, recupero/mentale mappati da categorie a numeri. Rimossi tutti i mapping enum→numero dal frontend e dal Coach AI.
+- [x] **Feature — Multi-sport support:** campo `sport` nel profilo + registrazione (calcio/tennis/padel/basket/altro). `SPORT_ROLES`, `SPORT_FEARS` per sport. Coach AI adatta linguaggio (campo→court, rigore→match point). Cron mattina/sera con sport nel contesto.
+- [x] **Feature — Messaggi Coach mattina/sera:** DB Messaggi Coach su Notion (100 frasi, 8 categorie). Cron mattina 8:00 IT (pillola ispirazionale + riflessione) + sera 19:00 IT (reminder se pratica non fatta + CTA app). Claude Haiku seleziona frase. Salvati in `telegram_conversations`.
+- [x] **Feature — Push notifications + PWA:** `manifest.json`, `sw.js`, VAPID keys, `PushPermission` banner dopo giorno 1, toggle nel profilo. `sendPushToUser()` integrato nei cron.
+- [x] **Feature — 4 tipi pratica:** campo `Tipo Pratica` su Notion DB Giorni (respirazione/visualizzazione/riflessione/giornata). PracticePopup adatta UI. Flusso giornata: started → torna per riflessione.
+- [x] **Feature — Logica Cassetto Coach AI:** temi prematuri → `[CASSETTO]` in coach_notes → riaperti dal Coach alla settimana giusta (W5-6 identità, W7-8 perdono).
+- [x] **Feature — Banner Coach dashboard:** ultimo messaggio salvato in `profiles.last_coach_message`, mostrato in home con X per chiudere.
+- [x] **Fix — Check giorno precedente:** da 3 opzioni a 2 bottoni ("Bene! Andiamo avanti" + "Preferisco parlarne col Coach AI" con redirect `/chat?prompt=...`).
+- [x] **Fix — Reset calendario settimanale:** cron notte lunedì 3:00 UTC svuota `training_days`/`match_days`. Popup riappare al primo accesso della settimana.
+- [x] **Fix — WakeLock:** hook `useWakeLock` in PracticePopup e MeditationPopup. Schermo attivo durante le pratiche.
+- [x] **Fix — Audit linguaggio disidentificazione:** "percepisco X" vs "sono X" su 28 giorni + 100 frasi + system prompt. Fix W3 Descrizione Intro + frase Lieberman.
 
 ### Da fare
 - [ ] Attivare safety check (`checkSafetyKeywords`) in `/api/chat` e `/api/telegram`
