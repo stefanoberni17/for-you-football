@@ -194,7 +194,13 @@ export default function HomePage() {
         {profile?.last_coach_message && !coachMessageDismissed && (
           <div className="bg-gradient-to-r from-forest-50 to-forest-100 rounded-2xl shadow-sm p-4 border border-forest-200 relative">
             <button
-              onClick={() => setCoachMessageDismissed(true)}
+              onClick={async () => {
+                setCoachMessageDismissed(true);
+                await supabase
+                  .from('profiles')
+                  .update({ last_coach_message: null })
+                  .eq('user_id', userId);
+              }}
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
               aria-label="Chiudi"
             >
