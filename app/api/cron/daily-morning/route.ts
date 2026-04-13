@@ -27,6 +27,7 @@ async function sendTelegramMessage(chatId: string, text: string) {
 }
 
 interface CoachMessage {
+  notionId: string; // ID pagina Notion — per tracciare messaggi già inviati
   frase: string;
   categoria: string;
   soloPartita: boolean;
@@ -34,6 +35,12 @@ interface CoachMessage {
   fonte: string;
   note: string; // "Tipo: X | Principio: Y | Profondità: Z | Blocco: B1"
   settimane: number[];
+}
+
+function getBlocco(week: number): string {
+  if (week <= 4) return 'B1';
+  if (week <= 8) return 'B2';
+  return 'B3';
 }
 
 async function fetchMessagesFromNotion(): Promise<CoachMessage[]> {
@@ -52,6 +59,7 @@ async function fetchMessagesFromNotion(): Promise<CoachMessage[]> {
       : [];
 
     return {
+      notionId: page.id,
       frase: props['Frase']?.title?.[0]?.plain_text || '',
       categoria: props['Categoria']?.select?.name || '',
       soloPartita: props['Solo Partita']?.checkbox || false,
@@ -143,11 +151,23 @@ export async function GET(request: NextRequest) {
 
       // Filter eligible messages for this user's context
       const eligible = filterMessages(allMessages, week, isMatchDay, isTrainingDay);
-
       if (eligible.length === 0) continue;
 
+      // Escludi messaggi già inviati a questo utente in questo blocco
+      const blocco = getBlocco(week);
+      const { data: sentMessages } = await supabaseAdmin
+        .from('messaggi_inviati')
+        .select('notion_message_id')
+        .eq('user_id', user.user_id)
+        .eq('blocco', blocco);
+
+      const sentIds = new Set((sentMessages || []).map((r: any) => r.notion_message_id));
+      const fresh = eligible.filter((m) => !sentIds.has(m.notionId));
+      // Se tutte inviate, riusa il pool completo (meglio ripetere che non mandare)
+      const pool = fresh.length > 0 ? fresh : eligible;
+
       // Format messages list for Claude (include note metadata for better selection)
-      const messagesList = eligible
+      const messagesList = pool
         .map((m, i) => `${i + 1}. [${m.categoria}]${m.note ? ` {${m.note}}` : ''} ${m.frase}${m.fonte ? ` (${m.fonte})` : ''}`)
         .join('\n');
 
@@ -157,7 +177,9 @@ STRUTTURA DEL MESSAGGIO (2 parti):
 1. LA FRASE — Scegli dalla lista la frase più in linea con il Principio della settimana. Riportala fedelmente, puoi adattarla leggermente ma mantieni lo spirito. Deve essere universale, valida per chiunque.
 2. LA RIFLESSIONE — Dopo la frase, aggiungi UNA riga di riflessione leggera e personale. Usa il nome del giocatore. Deve essere un ponte tra la frase e la sua giornata — un invito gentile, non un'istruzione.
 
-ESEMPIO DI FORMATO:
+FORMATO OUTPUT:
+SCELTA:[numero della frase scelta dalla lista]
+[a capo]
 [emoji] [frase ispirazionale]
 
 [nome], [riflessione leggera di 1 riga]
@@ -169,7 +191,7 @@ REGOLE:
 - Testo puro per Telegram, niente markdown
 - NON aggiungere saluti come "Buongiorno" o "Ciao"
 - Varia l'emoji iniziale
-- Output SOLO il messaggio finale`;
+- La prima riga DEVE essere SCELTA:[numero] — il resto è il messaggio`;
 
       const userPrompt = `FRASI DISPONIBILI:
 ${messagesList}
@@ -186,12 +208,31 @@ Seleziona la frase e aggiungi la riflessione.`;
 
       const response = await anthropic.messages.create({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 250,
+        max_tokens: 300,
         messages: [{ role: 'user', content: userPrompt }],
         system: systemPrompt,
       });
 
-      const text = response.content[0].type === 'text' ? response.content[0].text : '';
+      const rawText = response.content[0].type === 'text' ? response.content[0].text : '';
+
+      // Parse SCELTA e testo del messaggio
+      const lines = rawText.split('\n');
+      const sceltaLine = lines.find((l: string) => l.startsWith('SCELTA:'));
+      const sceltaIndex = parseInt(sceltaLine?.replace('SCELTA:', '') || '1') - 1;
+      const chosenMessage = pool[sceltaIndex] || pool[0];
+      const text = lines.filter((l: string) => !l.startsWith('SCELTA:')).join('\n').trim();
+
+      // Salva quale frase è stata scelta per questo utente
+      if (chosenMessage) {
+        await supabaseAdmin
+          .from('messaggi_inviati')
+          .insert({
+            user_id: user.user_id,
+            notion_message_id: chosenMessage.notionId,
+            blocco,
+          })
+          .then(() => {});
+      }
 
       if (text && user.telegram_id) {
         await sendTelegramMessage(user.telegram_id, text);
