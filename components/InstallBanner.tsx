@@ -26,7 +26,7 @@ function isStandalone(): boolean {
 
 const DISMISS_KEY = 'install_banner_dismissed_at';
 const REMIND_DAYS = 3;
-const MIN_DAYS_COMPLETED = 3;
+const MIN_DAYS_COMPLETED = 0;
 
 export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
   const [show, setShow] = useState(false);
@@ -74,9 +74,9 @@ export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
       <div className="flex items-start gap-3 mb-3">
         <div className="text-2xl flex-shrink-0">📲</div>
         <div className="flex-1">
-          <p className="font-bold text-gray-800 text-sm">Installa For You Football</p>
+          <p className="font-bold text-gray-800 text-sm">Installa l'app sul telefono</p>
           <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-            Aggiungila alla home del telefono per un accesso rapido e un'esperienza migliore.
+            Per un'esperienza migliore e per sfruttare al massimo l'app, aggiungila alla schermata Home del tuo telefono.
           </p>
         </div>
       </div>
