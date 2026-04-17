@@ -276,7 +276,7 @@ export default function ProfiloPage() {
     return (
       <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-bounce">⚽</div>
+          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-xl text-gray-600">Caricamento...</p>
         </div>
       </main>

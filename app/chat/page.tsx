@@ -47,7 +47,7 @@ function ChatContent() {
     return (
       <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⚽</div>
+          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-xl text-gray-600">Caricamento...</p>
         </div>
       </main>
@@ -68,7 +68,7 @@ export default function ChatPage() {
     <Suspense fallback={
       <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⚽</div>
+          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-xl text-gray-600">Caricamento...</p>
         </div>
       </main>

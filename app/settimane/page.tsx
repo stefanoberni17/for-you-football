@@ -91,7 +91,7 @@ export default function SettimanePage() {
     return (
       <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⚽</div>
+          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-xl text-gray-600">Caricamento percorso...</p>
         </div>
       </main>

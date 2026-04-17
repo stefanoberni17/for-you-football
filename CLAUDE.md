@@ -397,8 +397,8 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 
 - `SAFETY_KEYWORDS`: ~30 keyword (italiano) per rilevare contenuti a rischio
 - `checkSafetyKeywords()`: controlla se il testo contiene keyword → boolean
-- **Attualmente disabilitato** sia in web chat che Telegram (commentato nel codice)
-- Safety alert via email (Resend) predisposto ma commentato
+- `sendSafetyAlert(userId, channel, messageContent)`: sempre `console.error`; email via Resend solo se `RESEND_API_KEY` è configurata — non blocca la risposta
+- **Attivo** in `/api/chat` (ultimo messaggio utente) e `/api/telegram` (dopo lookup userId) — fire-and-forget
 - Il system prompt include istruzioni per situazioni a rischio (rimando a professionisti, Telefono Amico)
 
 ---
@@ -410,9 +410,15 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Card settimana corrente con CTA "prossimo giorno"
 - Barra progresso settimanale (7 indicatori giorno)
 - Progresso globale (% completamento, giorni fatti)
-- **"Il tuo stato":** mini sparkline SVG 7 giorni (fisico 💪, sonno 😴, recupero 🦵, mentale 🧠) con trend indicator (↑↓→) + link "Vedi tutto →" a `/statistiche`
+- **"Il tuo stato":** mini sparkline SVG 7 giorni con icone Lucide monocromatiche (Activity, Moon, Zap, Brain) + trend indicator (↑↓→) + link "Vedi tutto →" a `/statistiche`
 - Link a settimane, statistiche e profilo
 - Redirect a `/login` se non autenticato
+- Redirect a `/beta-complete` se `current_week > BETA_MAX_WEEK`
+
+### Beta Complete (`app/beta-complete/page.tsx`)
+- Schermata celebrativa per chi completa W4 (fine beta)
+- Guard: se `current_week ≤ BETA_MAX_WEEK` → redirect a `/`
+- CTA: feedback via mailto, link a `/chat`, `/statistiche`, `/settimane`
 
 ### Registrazione (`app/register/page.tsx`)
 - **Step 1:** Email, password, nome, età → `supabase.auth.signUp()`
@@ -685,9 +691,27 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Fix — Reset calendario settimanale:** cron notte lunedì 3:00 UTC svuota `training_days`/`match_days`. Popup riappare al primo accesso della settimana.
 - [x] **Fix — WakeLock:** hook `useWakeLock` in PracticePopup e MeditationPopup. Schermo attivo durante le pratiche.
 - [x] **Fix — Audit linguaggio disidentificazione:** "percepisco X" vs "sono X" su 28 giorni + 100 frasi + system prompt. Fix W3 Descrizione Intro + frase Lieberman.
+- [x] **Security — Safety keywords riattivate:** `checkSafetyKeywords` + `sendSafetyAlert` decommentati e reintegrati in `lib/coach-ai.ts`; attivati in `/api/chat` e `/api/telegram` (fire-and-forget). Email via Resend se `RESEND_API_KEY` presente, altrimenti solo log.
+- [x] **Security — Prompt injection `coach_notes`:** `sanitizeUntrustedText()` in `lib/coach-ai.ts`; `coach_notes` delimitato con `<coach_notes>…</coach_notes>` + nota al modello nel system prompt.
+- [x] **Security — Telegram webhook secret:** verifica `x-telegram-bot-api-secret-token` all'inizio di `POST /api/telegram`; skip se env var non configurata (backward-compatible).
+- [x] **Feature — Pagina `/beta-complete`:** schermata celebrativa per chi completa W4; redirect da `app/page.tsx` quando `current_week > BETA_MAX_WEEK`.
+- [x] **UI — Lucide icons in sezioni dati:** dashboard "Il tuo stato" e `/statistiche` usano icone Lucide monocromatiche (Activity, Moon, Zap, Brain, Flame) invece di emoji nelle intestazioni grafici e streak.
+- [x] **UI — ChatBot restyling:** container `rounded-3xl shadow-2xl`; avatar monogramma "C" (header bianco, messaggi forest-500); bolle asimmetriche; area messaggi `bg-gray-50`; input `rounded-2xl`; send button 48×48.
+- [x] **UI — DailyCheckinModal sfondo bianco:** rimosso gradiente amber/orange/yellow, sfondo `bg-white` uniforme.
+- [x] **UI — Touch targets e bottoni:** CTA dashboard `py-3.5 px-6`; input login `py-3`; bottone Accedi `py-3.5`.
+- [x] **UI — Day completion celebration:** schermata success con SVG checkmark cerchio bianco + `animate-fadeIn`/`animate-scaleIn`; `navigator.vibrate([40, 60, 40])` su Android al completamento.
+- [x] **A11y — BottomTabBar:** `aria-label="Navigazione principale"` su `<nav>`, `aria-label={tab.label}` su ogni `<Link>`, `aria-current`, `aria-hidden` sulle icone.
+- [x] **PWA — Safe-area iPhone:** `pb-[env(safe-area-inset-bottom)]` su BottomTabBar; `pb-[calc(5rem+env(safe-area-inset-bottom))]` su body in `app/layout.tsx`.
+- [x] **Fix — iOS Safari auto-zoom:** `globals.css` forza `font-size: 16px` su `input/textarea/select` in `@media (max-width: 768px)`.
+- [x] **UI — Favicon:** `app/layout.tsx` punta a `/icons/icon-192x192.png` e `icon-512x512.png` tramite `metadata.icons`.
+- [x] **UI — Animazione ⚽ caricamento:** `@keyframes ballBounce` + `.animate-ball-bounce` in `globals.css`; sostituito `animate-pulse` con `animate-ball-bounce` su tutti i loading screen con la palla (`page.tsx`, `giorno/[week]/[day]/page.tsx`, `onboarding/page.tsx`).
 
 ### Da fare
-- [ ] Attivare safety check (`checkSafetyKeywords`) in `/api/chat` e `/api/telegram`
+- [ ] **Fase 2 — Auth chain (staging):** rimuovere fallback `userId || body.userId` in tutte le API route; aggiungere `middleware.ts` che verifica sessione Supabase e redirige a `/login`.
+- [ ] **Fase 2 — Env vars da attivare:** `TELEGRAM_WEBHOOK_SECRET` (+ ri-registrare webhook con `secret_token`), `RESEND_API_KEY`, `SAFETY_ALERT_EMAIL`.
+- [ ] **Fase 3 — RPC atomica gate:** `app/api/gate/route.ts` linee 82-110 — wrap in transazione Supabase RPC per evitare race condition su doppio POST.
+- [ ] **Fase 3 — Cache Notion:** `lib/notion.ts` + `app/api/settimana/route.ts` + `app/api/giorno/route.ts` — wrap con `unstable_cache` Next.js o Vercel KV (TTL 1-2h).
+- [ ] **Fase 3 — Rate limiting `/api/chat` e `/api/telegram`:** Upstash/Vercel KV counter per userId, es. 60 msg/ora.
 - [ ] Implementare `app/calendar/page.tsx` (UI per impostare giorni allenamento/partita — API già funzionante)
 - [ ] MeditationPopup — rendere configurabili durate respirazione (in sospeso)
 - [ ] WhatsApp Business API — Coach AI su WhatsApp (`/api/whatsapp/route.ts`). Riusa 90% infrastruttura Telegram. Prerequisiti utente: account Meta for Developers + verifica business + numero dedicato + approvazione template reminder. Costo: ~€0 in beta (1000 conversazioni service gratis/mese), ~€0.03/conversazione per reminder proattivi
