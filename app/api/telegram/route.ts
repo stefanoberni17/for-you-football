@@ -4,6 +4,7 @@ import {
   buildUserContext,
   callClaude,
   checkSafetyKeywords,
+  sendSafetyAlert,
   generateCoachRecap,
   SYSTEM_PROMPT,
   SYSTEM_PROMPT_NOT_REGISTERED,
@@ -21,6 +22,16 @@ async function sendTelegramMessage(chatId: number, text: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Verifica che la richiesta provenga davvero da Telegram.
+    // Il secret_token va registrato con setWebhook e confrontato qui.
+    const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+    if (expectedSecret) {
+      const receivedSecret = request.headers.get('x-telegram-bot-api-secret-token');
+      if (receivedSecret !== expectedSecret) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    }
+
     const body = await request.json();
     const message = body?.message;
 
@@ -49,6 +60,12 @@ export async function POST(request: NextRequest) {
     }
 
     const userId = profile.user_id;
+
+    if (checkSafetyKeywords(userText)) {
+      sendSafetyAlert(userId, 'telegram', userText).catch(err =>
+        console.error('sendSafetyAlert failed:', err)
+      );
+    }
 
     // Carica ultimi 20 messaggi (sliding window)
     const { data: history } = await supabaseAdmin

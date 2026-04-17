@@ -87,6 +87,11 @@ export default function HomePage() {
         return;
       }
 
+      if (profileData?.current_week && profileData.current_week > BETA_MAX_WEEK) {
+        router.push('/beta-complete');
+        return;
+      }
+
       setProfile(profileData);
       setUserId(session.user.id);
 

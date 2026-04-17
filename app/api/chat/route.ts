@@ -3,6 +3,7 @@ import {
   buildUserContext,
   callClaude,
   checkSafetyKeywords,
+  sendSafetyAlert,
   SYSTEM_PROMPT,
   WEB_FORMAT
 } from '@/lib/coach-ai';
@@ -19,12 +20,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Messages required' }, { status: 400 });
     }
 
-    /* disabilitato per ora
     const lastUserMessage = messages[messages.length - 1];
-    if (lastUserMessage.role === 'user' && checkSafetyKeywords(lastUserMessage.content)) {
-      await sendSafetyAlert(userId, profile?.name || 'Unknown', lastUserMessage.content);
+    if (userId && lastUserMessage?.role === 'user' && typeof lastUserMessage.content === 'string' && checkSafetyKeywords(lastUserMessage.content)) {
+      sendSafetyAlert(userId, 'web', lastUserMessage.content).catch(err =>
+        console.error('sendSafetyAlert failed:', err)
+      );
     }
-    */
 
     const userContext = await buildUserContext(userId);
     const systemPrompt = SYSTEM_PROMPT + WEB_FORMAT + '\n\n' + userContext;

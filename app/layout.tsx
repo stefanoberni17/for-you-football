@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   description: "Il mental training che ti aiuta a giocare con più lucidità, fiducia e libertà",
   manifest: "/manifest.json",
   themeColor: "#1A9660",
+  icons: {
+    icon: [
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/icon-192x192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -34,10 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it" className={outfit.className}>
-      <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-      </head>
-      <body className="pb-20">
+      <body className="pb-[calc(5rem+env(safe-area-inset-bottom))]">
         <ServiceWorkerRegistration />
         <GlobalCheckinWrapper>
           <GlobalMeditationWrapper>
