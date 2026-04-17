@@ -36,6 +36,15 @@ select {
   color: rgb(31 41 55) !important; /* gray-800 - molto scuro */
 }
 
+/* iOS Safari zooma automaticamente sugli input < 16px — forziamo 16px solo su mobile */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 /* Placeholder più scuri */
 input::placeholder,
 textarea::placeholder {
