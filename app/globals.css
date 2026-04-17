@@ -67,3 +67,13 @@ textarea::placeholder {
 .animate-scaleIn {
   animation: scaleIn 0.4s ease-out;
 }
+
+@keyframes ballBounce {
+  0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
+  40%       { transform: translateY(-18px) scaleX(0.95) scaleY(1.05); }
+  60%       { transform: translateY(-14px) scaleX(0.95) scaleY(1.05); }
+}
+.animate-ball-bounce {
+  animation: ballBounce 0.75s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  display: inline-block;
+}

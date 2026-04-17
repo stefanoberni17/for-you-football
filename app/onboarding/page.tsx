@@ -329,7 +329,7 @@ export default function OnboardingPage() {
   if (!ready) {
     return (
       <main className="min-h-screen bg-forest-50 flex items-center justify-center">
-        <div className="text-6xl animate-pulse">⚽</div>
+        <div className="text-6xl animate-ball-bounce">⚽</div>
       </main>
     );
   }
