@@ -107,7 +107,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm"
               placeholder="tua@email.com"
               required
             />
@@ -121,7 +121,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm"
               placeholder="••••••••"
               required
             />
@@ -130,9 +130,9 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="w-full bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
-            {loading ? 'Accesso in corso…' : 'Accedi ⚽'}
+            {loading ? 'Accesso in corso…' : 'Accedi'}
           </button>
         </form>
 

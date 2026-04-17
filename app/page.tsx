@@ -15,6 +15,7 @@ import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } f
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
+import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, Target, BarChart3, Map, Compass } from 'lucide-react';
 
 interface CheckinData {
   date: string;
@@ -251,7 +252,7 @@ export default function HomePage() {
                 {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
               </h2>
               {settimana?.principio && (
-                <p className="text-forest-100 text-sm mt-1">🧭 {settimana.principio}</p>
+                <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
               )}
             </div>
             <div className="text-5xl">⚽</div>
@@ -268,7 +269,7 @@ export default function HomePage() {
           ) : (
             <button
               onClick={() => router.push(`/giorno/${nextDay.week}/${nextDay.day}`)}
-              className="w-full sm:w-auto bg-white text-forest-700 font-bold py-2.5 px-5 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
             >
               <span>▶</span>
               <span>
@@ -283,8 +284,9 @@ export default function HomePage() {
         {/* Progress settimana corrente */}
         <div className="bg-white rounded-2xl shadow-lg p-5">
           <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-            📊 Settimana {currentWeek} in corso
-            {weekDone && <span className="text-forest-500 text-sm font-medium">✅ Completata</span>}
+            <BarChart3 className="w-4 h-4 text-forest-500" aria-hidden="true" />
+            Settimana {currentWeek} in corso
+            {weekDone && <span className="text-forest-500 text-sm font-medium">✓ Completata</span>}
           </h2>
 
           {/* Day dots */}
@@ -335,10 +337,10 @@ export default function HomePage() {
           const TREND_CLS: Record<string, string> = { up: 'text-emerald-500', down: 'text-red-500', stable: 'text-gray-400' };
 
           const rows = [
-            { emoji: '💪', label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/10', color: '#10b981', min: 0, max: 10 },
-            { emoji: '😴', label: 'Sonno', values: sleep, avg: miniAvg(sleep), unit: 'h', color: '#3b82f6', min: 4, max: 10 },
-            { emoji: '🦵', label: 'Recupero', values: rec, avg: miniAvg(rec), unit: '/10', color: '#f59e0b', min: 0, max: 10 },
-            { emoji: '🧠', label: 'Mentale', values: ment, avg: miniAvg(ment), unit: '/10', color: '#8b5cf6', min: 0, max: 10 },
+            { Icon: Activity, label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/10', color: '#10b981', min: 0, max: 10 },
+            { Icon: Moon, label: 'Sonno', values: sleep, avg: miniAvg(sleep), unit: 'h', color: '#3b82f6', min: 4, max: 10 },
+            { Icon: Zap, label: 'Recupero', values: rec, avg: miniAvg(rec), unit: '/10', color: '#f59e0b', min: 0, max: 10 },
+            { Icon: Brain, label: 'Mentale', values: ment, avg: miniAvg(ment), unit: '/10', color: '#8b5cf6', min: 0, max: 10 },
           ].filter(r => r.values.length >= 2);
 
           if (rows.length === 0) return null;
@@ -347,7 +349,8 @@ export default function HomePage() {
             <div className="bg-white rounded-2xl shadow-lg p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
-                  📈 Il tuo stato
+                  <TrendingUp className="w-4 h-4 text-forest-500" aria-hidden="true" />
+                  Il tuo stato
                 </h2>
                 <button
                   onClick={() => router.push('/statistiche')}
@@ -359,10 +362,11 @@ export default function HomePage() {
               <div className="space-y-2.5">
                 {rows.map(r => {
                   const t = miniTrend(r.values);
+                  const Icon = r.Icon;
                   return (
                     <div key={r.label} className="flex items-center gap-3">
-                      <span className="text-sm w-20 flex items-center gap-1.5">
-                        <span>{r.emoji}</span>
+                      <span className="text-sm w-24 flex items-center gap-2">
+                        <Icon className="w-4 h-4 text-gray-500" aria-hidden="true" style={{ color: r.color }} />
                         <span className="text-gray-600 text-xs font-medium">{r.label}</span>
                       </span>
                       <MiniSparkline values={r.values} color={r.color} min={r.min} max={r.max} />
@@ -382,7 +386,8 @@ export default function HomePage() {
         <div className="bg-white rounded-2xl shadow-lg p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
-              📅 La tua settimana
+              <Calendar className="w-4 h-4 text-forest-500" aria-hidden="true" />
+              La tua settimana
             </h2>
             <button
               onClick={() => setShowCalendar(true)}
@@ -435,7 +440,10 @@ export default function HomePage() {
 
         {/* Stats globali */}
         <div className="bg-white rounded-2xl shadow-lg p-5">
-          <h2 className="text-base font-bold text-gray-800 mb-4">🎯 Il Tuo Percorso</h2>
+          <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
+            Il Tuo Percorso
+          </h2>
 
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="bg-forest-50 border-l-4 border-forest-500 p-3 rounded-xl">
@@ -468,15 +476,17 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => router.push('/settimane')}
-              className="bg-forest-500 hover:bg-forest-600 text-white font-bold py-3 px-6 rounded-xl transition-all flex-1 sm:flex-none"
+              className="bg-forest-500 hover:bg-forest-600 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex-1 sm:flex-none flex items-center justify-center gap-2"
             >
-              🗺️ Vedi tutto il percorso
+              <Map className="w-4 h-4" aria-hidden="true" />
+              Vedi tutto il percorso
             </button>
             <button
               onClick={() => router.push('/statistiche')}
-              className="bg-white border border-forest-300 text-forest-700 font-bold py-3 px-6 rounded-xl hover:bg-forest-50 transition-all flex-1 sm:flex-none"
+              className="bg-white border border-forest-300 text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all flex-1 sm:flex-none flex items-center justify-center gap-2"
             >
-              📊 Le tue statistiche
+              <BarChart3 className="w-4 h-4" aria-hidden="true" />
+              Le tue statistiche
             </button>
           </div>
         </div>

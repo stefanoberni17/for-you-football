@@ -188,6 +188,9 @@ export default function GiornoPage() {
 
       setCompleted(true);
       setShowSuccess(true);
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate([40, 60, 40]);
+      }
     } catch (err: any) {
       console.error('Errore completamento:', err.message);
     } finally {
@@ -235,16 +238,22 @@ export default function GiornoPage() {
   // Schermata successo dopo completamento
   if (showSuccess) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-7xl mb-6">🎯</div>
-        <h1 className="text-3xl font-bold mb-2 text-center">Giorno {dayNumber} completato!</h1>
-        <p className="text-white text-center mb-2">Settimana {weekNumber}</p>
-        <p className="text-white text-sm text-center mb-4 max-w-xs">
-          Ogni giorno conta. Stai costruendo qualcosa di reale.
-        </p>
-        <p className="text-forest-50 text-xs text-center mb-10 max-w-xs">
-          Il prossimo giorno sara disponibile domani ⏳
-        </p>
+      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center p-6 text-white animate-fadeIn">
+        <div className="flex flex-col items-center animate-scaleIn">
+          <div className="w-24 h-24 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 shadow-2xl">
+            <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold mb-2 text-center">Giorno {dayNumber} completato</h1>
+          <p className="text-forest-100 text-sm text-center mb-1">Settimana {weekNumber}</p>
+          <p className="text-white text-sm text-center mb-8 max-w-xs">
+            Ogni giorno conta. Stai costruendo qualcosa di reale.
+          </p>
+          <p className="text-forest-50 text-xs text-center mb-10 max-w-xs opacity-80">
+            Il prossimo giorno sarà disponibile domani
+          </p>
+        </div>
         <button
           onClick={handleContinue}
           className="bg-white text-forest-600 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"

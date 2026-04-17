@@ -12,6 +12,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
+import { Activity, Moon, Zap, Brain, Flame } from 'lucide-react';
 
 interface Checkin {
   date: string;
@@ -217,8 +218,9 @@ export default function StatistichePage() {
             <p className="text-gray-500 text-sm mt-1">Andamento fisico e mentale</p>
           </div>
           {streak > 1 && (
-            <div className="bg-forest-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
-              🔥 {streak} giorni di fila
+            <div className="bg-forest-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+              <Flame className="w-3.5 h-3.5" aria-hidden="true" />
+              {streak} giorni di fila
             </div>
           )}
         </div>
@@ -385,7 +387,10 @@ export default function StatistichePage() {
             {/* Grafico stato fisico — Area chart */}
             {physicalChartData.length > 1 && (
               <div className="bg-white rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">💪 Stato fisico nel tempo</h2>
+                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4 flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-emerald-500" aria-hidden="true" />
+                  Stato fisico nel tempo
+                </h2>
                 <div className="h-44 -ml-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={physicalChartData}>
@@ -432,7 +437,10 @@ export default function StatistichePage() {
             {/* Grafico sonno — Area chart */}
             {sleepChartData.length > 1 && (
               <div className="bg-white rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">😴 Ore di sonno nel tempo</h2>
+                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4 flex items-center gap-2">
+                  <Moon className="w-4 h-4 text-blue-500" aria-hidden="true" />
+                  Ore di sonno nel tempo
+                </h2>
                 <div className="h-44 -ml-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={sleepChartData}>
@@ -486,7 +494,10 @@ export default function StatistichePage() {
             {recoveryChartData.length > 1 && (
               <div className="bg-white rounded-2xl shadow-sm p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🦵 Recupero nel tempo</h2>
+                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-amber-500" aria-hidden="true" />
+                    Recupero nel tempo
+                  </h2>
                   {recoveryValues.length >= 4 && (
                     <span className={`text-sm font-bold ${TREND_COLOR[recoveryTrend]}`}>
                       {TREND_ICON[recoveryTrend]}
@@ -544,7 +555,10 @@ export default function StatistichePage() {
             {mentalChartData.length > 1 && (
               <div className="bg-white rounded-2xl shadow-sm p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">🧠 Stato mentale nel tempo</h2>
+                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+                    <Brain className="w-4 h-4 text-purple-500" aria-hidden="true" />
+                    Stato mentale nel tempo
+                  </h2>
                   {mentalValues.length >= 4 && (
                     <span className={`text-sm font-bold ${TREND_COLOR[mentalTrend]}`}>
                       {TREND_ICON[mentalTrend]}

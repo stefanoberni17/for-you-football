@@ -86,7 +86,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
 
         {/* Progress bar */}
         <div className="w-full bg-gray-200 rounded-full h-1.5 mb-1">

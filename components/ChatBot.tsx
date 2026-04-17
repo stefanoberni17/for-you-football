@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Send, Loader2, Bot, User } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -117,20 +117,22 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
   }));
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-white rounded-lg shadow-lg border border-gray-200">
+    <div className="flex flex-col flex-1 min-h-0 bg-white rounded-3xl shadow-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white p-4 rounded-t-lg flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <Bot className="w-6 h-6" />
+      <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white p-4 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center font-bold text-lg" aria-hidden="true">
+            C
+          </div>
           <div>
-            <h3 className="font-semibold">Coach AI</h3>
-            <p className="text-xs text-forest-50">Il tuo allenatore mentale</p>
+            <h3 className="font-semibold text-base">Coach AI</h3>
+            <p className="text-xs text-forest-50 opacity-90">Il tuo allenatore mentale</p>
           </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-gray-50">
         {/* Suggestion pills — visible only before user sends first message */}
         {suggestions && suggestions.length > 0 && messages.length <= 1 && (
           <div className="pb-2">
@@ -151,34 +153,29 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex gap-3 ${
+            className={`flex gap-2.5 ${
               message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
             }`}
           >
+            {message.role === 'assistant' && (
+              <div
+                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-forest-500 text-white text-xs font-bold"
+                aria-hidden="true"
+              >
+                C
+              </div>
+            )}
             <div
-              className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+              className={`max-w-[78%] rounded-2xl px-4 py-2.5 ${
                 message.role === 'user'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-forest-500 text-white'
+                  ? 'bg-forest-500 text-white rounded-br-md'
+                  : 'bg-white text-gray-800 rounded-bl-md shadow-sm border border-gray-100'
               }`}
             >
-              {message.role === 'user' ? (
-                <User className="w-5 h-5" />
-              ) : (
-                <Bot className="w-5 h-5" />
-              )}
-            </div>
-            <div
-              className={`max-w-[75%] rounded-lg p-3 ${
-                message.role === 'user'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
-            >
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
               <p
-                className={`text-xs mt-1 ${
-                  message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                className={`text-[10px] mt-1 ${
+                  message.role === 'user' ? 'text-forest-50 opacity-80' : 'text-gray-400'
                 }`}
               >
                 {message.timestamp.toLocaleTimeString('it-IT', {
@@ -190,12 +187,12 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
           </div>
         ))}
         {isLoading && (
-          <div className="flex gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-forest-500 text-white flex items-center justify-center">
-              <Bot className="w-5 h-5" />
+          <div className="flex gap-2.5">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-forest-500 text-white flex items-center justify-center text-xs font-bold" aria-hidden="true">
+              C
             </div>
-            <div className="bg-gray-100 rounded-lg p-3">
-              <Loader2 className="w-5 h-5 animate-spin text-forest-500" />
+            <div className="bg-white rounded-2xl rounded-bl-md shadow-sm border border-gray-100 px-4 py-3">
+              <Loader2 className="w-5 h-5 animate-spin text-forest-500" aria-label="Il Coach sta scrivendo" />
             </div>
           </div>
         )}
@@ -203,25 +200,27 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
-        <div className="flex gap-2">
+      <form onSubmit={handleSubmit} className="p-3 border-t border-gray-100 bg-white">
+        <div className="flex gap-2 items-end">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Scrivi un messaggio..."
+            placeholder="Scrivi al Coach…"
             disabled={isLoading}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-forest-500 disabled:bg-gray-100"
+            aria-label="Messaggio per il Coach"
+            className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent disabled:bg-gray-100 text-sm"
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="px-4 py-2 bg-forest-500 text-white rounded-lg hover:bg-forest-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            aria-label="Invia messaggio"
+            className="w-12 h-12 flex items-center justify-center bg-forest-500 text-white rounded-2xl hover:bg-forest-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm"
           >
             {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
             ) : (
-              <Send className="w-5 h-5" />
+              <Send className="w-5 h-5" aria-hidden="true" />
             )}
           </button>
         </div>
