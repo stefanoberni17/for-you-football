@@ -308,6 +308,20 @@ export default function OnboardingPage() {
       <main className="min-h-screen bg-gradient-to-b from-forest-700 to-forest-900 flex flex-col items-center justify-center p-8 text-white">
         <div className="max-w-sm w-full text-center space-y-6">
           <p className="text-3xl font-light">Prima di iniziare.</p>
+
+          <div className="bg-white/10 rounded-2xl px-5 py-4 text-left space-y-3 text-sm leading-relaxed text-white/80">
+            <p className="font-semibold text-white/90 text-base">Una cosa prima di iniziare.</p>
+            <p>
+              Il tuo cervello forma nuove connessioni neurali — quelle che rendono un'abitudine automatica — attraverso la ripetizione costante nel tempo. Gli studi sulla neuroplasticità mostrano che servono in media 3-4 settimane di pratica quotidiana perché un nuovo comportamento inizi a diventare automatico.
+            </p>
+            <p>
+              Questo significa che nei primi giorni potresti non sentire grandi differenze in campo. È normale — non è un segnale che non funziona. Stai costruendo lo strumento, non lo stai ancora usando a pieno regime.
+            </p>
+            <p className="font-medium text-white/90">
+              L'unica cosa che conta in questa fase è un giorno alla volta, anche quando non senti ancora niente.
+            </p>
+          </div>
+
           <div className="space-y-3 text-lg leading-relaxed">
             <p>Fai una promessa a te stesso.</p>
             <p>Non devi fare tutto perfetto.</p>
