@@ -41,7 +41,7 @@ export default function WeekCompletePage() {
   const strumento = WEEK_TOOLS[weekNumber];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 py-10 px-5 flex flex-col items-center">
+    <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 py-10 px-5 pb-tabbar flex flex-col items-center">
       <div className="w-full max-w-md">
 
         {/* Frase settimana — momento "wow" */}

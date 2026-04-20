@@ -70,7 +70,7 @@ export default function PushPermission({ userId }: PushPermissionProps) {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-24 left-4 right-4 bg-gradient-to-r from-forest-600 to-forest-700 text-white rounded-2xl p-4 shadow-xl z-40 animate-fadeIn">
+    <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 right-4 bg-gradient-to-r from-forest-600 to-forest-700 text-white rounded-2xl p-4 shadow-xl z-40 animate-fadeIn">
       <div className="flex items-start gap-3">
         <div className="text-2xl flex-shrink-0">🔔</div>
         <div className="flex-1">

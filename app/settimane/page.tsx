@@ -103,7 +103,7 @@ export default function SettimanePage() {
     .filter(w => isWeekUnlocked(w, completedDays)).length;
 
   return (
-    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-tabbar">
       <div className="max-w-4xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-1">
           Il Tuo Percorso ⚽

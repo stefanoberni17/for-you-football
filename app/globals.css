@@ -52,6 +52,14 @@ textarea::placeholder {
   opacity: 1;
 }
 
+/* Padding-bottom per contenuto sopra la BottomTabBar (h-16 = 64px + safe-area) */
+.pb-tabbar {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+.pb-tabbar-lg {
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+}
+
 /* Animazioni globali per popup/modal */
 @keyframes fadeIn {
   from { opacity: 0; }

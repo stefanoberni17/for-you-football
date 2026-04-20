@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Outfit } from "next/font/google";
 import BottomTabBar from "@/components/BottomTabBar";
@@ -16,7 +16,6 @@ export const metadata: Metadata = {
   title: "For You Football",
   description: "Il mental training che ti aiuta a giocare con più lucidità, fiducia e libertà",
   manifest: "/manifest.json",
-  themeColor: "#1A9660",
   icons: {
     icon: [
       { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
@@ -34,6 +33,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#1A9660",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it" className={outfit.className}>
-      <body className="pb-[calc(5rem+env(safe-area-inset-bottom))]">
+      <body className="pb-tabbar">
         <ServiceWorkerRegistration />
         <GlobalCheckinWrapper>
           <GlobalMeditationWrapper>

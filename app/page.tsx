@@ -180,7 +180,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-tabbar">
       {/* Header */}
       <div className="max-w-2xl mx-auto mb-6">
         <h1 className="text-3xl font-bold text-gray-800">
