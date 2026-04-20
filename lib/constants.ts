@@ -195,3 +195,14 @@ export const DAY_SHORT_NAMES: Record<number, string> = {
   6: 'Sab',
   7: 'Dom',
 };
+
+// ─── Artefatti personali (user_artifacts) ─────────────────────────────────────
+
+export const CURRENT_SEASON = 1;
+
+export const ARTIFACT_PROTOCOL_PRESSURE = 'protocol_pressure';
+
+export const PROTOCOL_WEEK = 4;
+export const PROTOCOL_DAY = 6;
+
+export const PROTOCOL_MAX_CHARS = 200;

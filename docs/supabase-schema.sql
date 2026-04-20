@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS user_day_progress CASCADE;
 DROP TABLE IF EXISTS user_weekly_calendar CASCADE;
 DROP TABLE IF EXISTS telegram_conversations CASCADE;
 DROP TABLE IF EXISTS daily_checkin CASCADE;
+DROP TABLE IF EXISTS user_artifacts CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
 
 -- Drop trigger e funzione se esistono
@@ -261,6 +262,35 @@ CREATE POLICY "checkin_update_own" ON daily_checkin
   FOR UPDATE USING (auth.uid() = user_id);
 
 
+-- ─── 7. USER_ARTIFACTS ───────────────────────────────────────────────────────
+-- Tabella generica per artefatti personali del percorso (Protocollo Pressione,
+-- routine mentale W11, artefatti Season 2-4, ecc.). 1 record per user/type/season.
+
+CREATE TABLE user_artifacts (
+  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id     UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  type        TEXT NOT NULL,              -- 'protocol_pressure', 'mental_routine', ...
+  season      INT  NOT NULL DEFAULT 1,
+  week        INT,                        -- settimana in cui è stato creato (opzionale)
+  payload     JSONB NOT NULL,             -- struttura specifica per tipo
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, type, season)
+);
+
+CREATE INDEX idx_user_artifacts_user_type ON user_artifacts (user_id, type);
+
+ALTER TABLE user_artifacts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "artifacts_select_own" ON user_artifacts
+  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "artifacts_insert_own" ON user_artifacts
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "artifacts_update_own" ON user_artifacts
+  FOR UPDATE USING (auth.uid() = user_id);
+
+
 -- ─── FINE ─────────────────────────────────────────────────────────────────────
--- Verifica: dovresti vedere 6 tabelle in Table Editor:
---   profiles | user_day_progress | user_weekly_calendar | day_reflections | telegram_conversations | daily_checkin
+-- Verifica: dovresti vedere 7 tabelle in Table Editor:
+--   profiles | user_day_progress | user_weekly_calendar | day_reflections
+--   telegram_conversations | daily_checkin | user_artifacts

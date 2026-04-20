@@ -3,7 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
+import {
+  PLAYER_LEVELS,
+  SPORTS,
+  SPORT_ROLES,
+  SPORT_FEARS,
+  ARTIFACT_PROTOCOL_PRESSURE,
+  PROTOCOL_WEEK,
+  PROTOCOL_DAY,
+} from '@/lib/constants';
+import ProtocolEditor, { ProtocolValue, isProtocolComplete } from '@/components/ProtocolEditor';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -113,6 +122,18 @@ export default function ProfiloPage() {
   const [dream, setDream] = useState('');
   const [currentSituation, setCurrentSituation] = useState('');
 
+  // Protocollo Pressione
+  const [protocol, setProtocol] = useState<ProtocolValue | null>(null);
+  const [protocolUpdatedAt, setProtocolUpdatedAt] = useState<string | null>(null);
+  const [showProtocolModal, setShowProtocolModal] = useState(false);
+  const [protocolDraft, setProtocolDraft] = useState<ProtocolValue>({
+    physical_signal: '',
+    recurring_thought: '',
+    mantra: '',
+  });
+  const [savingProtocol, setSavingProtocol] = useState(false);
+  const [protocolError, setProtocolError] = useState<string | null>(null);
+
   const toggleRole = (v: string) =>
     setSelectedRoles((prev) => prev.includes(v) ? prev.filter((r) => r !== v) : [...prev, v]);
 
@@ -146,6 +167,19 @@ export default function ProfiloPage() {
         setSelectedRoles(p.role ? p.role.split(',').filter(Boolean) : []);
         setSelectedFears(p.biggest_fear ? p.biggest_fear.split(',').filter(Boolean) : []);
       }
+
+      // Fetch Protocollo Pressione (se esiste)
+      try {
+        const artRes = await fetch(
+          `/api/artifacts?userId=${session.user.id}&type=${ARTIFACT_PROTOCOL_PRESSURE}`
+        );
+        const artJson = await artRes.json();
+        if (artJson?.artifact?.payload) {
+          const payload = artJson.artifact.payload as ProtocolValue;
+          setProtocol(payload);
+          setProtocolUpdatedAt(artJson.artifact.updated_at || null);
+        }
+      } catch { /* ignora — sezione mostra il fallback */ }
 
       // Check push notification status
       if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -250,6 +284,46 @@ export default function ProfiloPage() {
     }
   };
 
+  const openProtocolModal = () => {
+    setProtocolDraft(protocol ?? { physical_signal: '', recurring_thought: '', mantra: '' });
+    setProtocolError(null);
+    setShowProtocolModal(true);
+  };
+
+  const saveProtocol = async () => {
+    if (!isProtocolComplete(protocolDraft)) {
+      setProtocolError('Compila tutti e 3 i campi.');
+      return;
+    }
+    setSavingProtocol(true);
+    setProtocolError(null);
+    try {
+      const res = await fetch('/api/artifacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          type: ARTIFACT_PROTOCOL_PRESSURE,
+          week: PROTOCOL_WEEK,
+          payload: {
+            physical_signal: protocolDraft.physical_signal.trim(),
+            recurring_thought: protocolDraft.recurring_thought.trim(),
+            mantra: protocolDraft.mantra.trim(),
+          },
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Errore nel salvataggio');
+      setProtocol(json.artifact.payload);
+      setProtocolUpdatedAt(json.artifact.updated_at || new Date().toISOString());
+      setShowProtocolModal(false);
+    } catch (err: any) {
+      setProtocolError(err.message || 'Errore. Riprova.');
+    } finally {
+      setSavingProtocol(false);
+    }
+  };
+
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) router.push('/login');
@@ -289,6 +363,52 @@ export default function ProfiloPage() {
 
   return (
     <main className="min-h-screen bg-forest-50 py-8 px-4 pb-tabbar-lg">
+
+      {/* ── Protocollo Modal ───────────────────────────────────────────────── */}
+      {showProtocolModal && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget && !savingProtocol) setShowProtocolModal(false); }}
+        >
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+            <div className="px-6 pt-5 pb-3 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800">Il tuo Protocollo</h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Modifica le 3 righe. Salvando aggiorni la tua sintesi personale.
+              </p>
+            </div>
+            <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
+              <ProtocolEditor
+                value={protocolDraft}
+                onChange={setProtocolDraft}
+                disabled={savingProtocol}
+                compact
+              />
+              {protocolError && (
+                <p className="text-xs text-red-600 mt-3">{protocolError}</p>
+              )}
+            </div>
+            <div className="px-6 pb-5 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowProtocolModal(false)}
+                disabled={savingProtocol}
+                className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all disabled:opacity-50"
+              >
+                Annulla
+              </button>
+              <button
+                type="button"
+                onClick={saveProtocol}
+                disabled={savingProtocol || !isProtocolComplete(protocolDraft)}
+                className="flex-1 py-3 rounded-xl bg-forest-500 hover:bg-forest-600 text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {savingProtocol ? 'Salvataggio…' : 'Salva'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Telegram Modal ─────────────────────────────────────────────────── */}
       {showTelegramModal && (
@@ -494,6 +614,52 @@ export default function ProfiloPage() {
               <p className="text-xs text-gray-500">Si aggiorna automaticamente completando i giorni</p>
             </div>
           </div>
+        </div>
+
+        {/* ── Il mio Protocollo For You ──────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h3 className="font-bold text-gray-800 text-sm">Il mio Protocollo For You</h3>
+              <p className="text-xs text-gray-500">
+                {protocol ? 'La sintesi del tuo Blocco 1' : `Arriverà alla Settimana ${PROTOCOL_WEEK} · Giorno ${PROTOCOL_DAY}`}
+              </p>
+            </div>
+            {protocol && (
+              <button
+                type="button"
+                onClick={openProtocolModal}
+                className="text-xs font-bold px-4 py-2 rounded-xl text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all"
+              >
+                Modifica
+              </button>
+            )}
+          </div>
+          {protocol ? (
+            <div className="space-y-3">
+              <div className="border-l-2 border-forest-300 pl-3">
+                <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold">Segnale fisico</p>
+                <p className="text-sm text-gray-800 mt-0.5">{protocol.physical_signal}</p>
+              </div>
+              <div className="border-l-2 border-forest-300 pl-3">
+                <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold">Pensiero ricorrente</p>
+                <p className="text-sm text-gray-800 mt-0.5">{protocol.recurring_thought}</p>
+              </div>
+              <div className="border-l-2 border-forest-300 pl-3">
+                <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold">Mantra</p>
+                <p className="text-sm text-gray-800 mt-0.5">{protocol.mantra}</p>
+              </div>
+              {protocolUpdatedAt && (
+                <p className="text-xs text-gray-400 pt-1">
+                  Ultima modifica: {new Date(protocolUpdatedAt).toLocaleDateString('it-IT')}
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Lo scriverai alla fine del Blocco 1: segnale fisico, pensiero ricorrente e mantra — la tua sintesi personale.
+            </p>
+          )}
         </div>
 
         {/* ── Dati personali ───────────────────────────────────────────────── */}

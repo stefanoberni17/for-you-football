@@ -208,6 +208,24 @@ UNIQUE(user_id, date)
 - Indice: `idx_daily_checkin_user_date ON (user_id, date DESC)`
 - Il check-in viene gestito da `GlobalCheckinWrapper` (mostrato una volta al giorno su tutte le pagine); "Salta per oggi" usa solo stato locale (se l'utente fa refresh lo rivede)
 
+### `user_artifacts`
+```sql
+id          UUID PRIMARY KEY
+user_id     UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
+type        TEXT NOT NULL         -- 'protocol_pressure', 'mental_routine', ...
+season      INT  NOT NULL DEFAULT 1
+week        INT                    -- settimana in cui è stato creato
+payload     JSONB NOT NULL         -- struttura specifica per tipo
+created_at  TIMESTAMPTZ DEFAULT NOW()
+updated_at  TIMESTAMPTZ DEFAULT NOW()
+UNIQUE (user_id, type, season)
+```
+- RLS abilitata (SELECT/INSERT/UPDATE per owner)
+- Indice: `idx_user_artifacts_user_type ON (user_id, type)`
+- Tabella **generica** per artefatti personali del percorso. Primo uso: `type='protocol_pressure'` in W4-G6 con `payload={physical_signal, recurring_thought, mantra}`. Scala a W11 (routine mentale) e Season 2-4 senza nuove migration.
+- API: `GET/POST /api/artifacts` (endpoint generico, validation specifica per `protocol_pressure`)
+- Migration prod: `docs/migrations/2026-04-20-user-artifacts.sql` (idempotente — eseguire PRIMA del deploy del codice che legge la tabella)
+
 ---
 
 ## Struttura Contenuto (Notion)
@@ -705,6 +723,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Fix — iOS Safari auto-zoom:** `globals.css` forza `font-size: 16px` su `input/textarea/select` in `@media (max-width: 768px)`.
 - [x] **UI — Favicon:** `app/layout.tsx` punta a `/icons/icon-192x192.png` e `icon-512x512.png` tramite `metadata.icons`.
 - [x] **UI — Animazione ⚽ caricamento:** `@keyframes ballBounce` + `.animate-ball-bounce` in `globals.css`; sostituito `animate-pulse` con `animate-ball-bounce` su tutti i loading screen con la palla (`page.tsx`, `giorno/[week]/[day]/page.tsx`, `onboarding/page.tsx`).
+- [x] **Feature — Protocollo Pressione strutturato (fix W4-G6):** nuova tabella `user_artifacts` generica (scala a W11 e Season 2-4); endpoint `/api/artifacts` GET/POST; slide condizionale "Il tuo Protocollo" in W4-G6 con 3 textarea strutturate (segnale fisico, pensiero ricorrente, mantra); card "Il mio Protocollo For You" nel profilo con modifica; `buildUserContext` legge il Protocollo e lo passa al Coach AI (con fallback resiliente se la tabella non esiste). Componente riusabile `ProtocolEditor`. Migration idempotente in `docs/migrations/2026-04-20-user-artifacts.sql`.
 
 ### Da fare
 - [ ] **Fase 2 — Auth chain (staging):** rimuovere fallback `userId || body.userId` in tutte le API route; aggiungere `middleware.ts` che verifica sessione Supabase e redirige a `/login`.

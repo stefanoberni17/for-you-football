@@ -4,8 +4,16 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
-import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
+import {
+  GATE_DAY,
+  WEEK_TOOLS,
+  DAY_NAMES,
+  ARTIFACT_PROTOCOL_PRESSURE,
+  PROTOCOL_WEEK,
+  PROTOCOL_DAY,
+} from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
+import ProtocolEditor, { ProtocolValue, isProtocolComplete } from '@/components/ProtocolEditor';
 
 export default function GiornoPage() {
   const params = useParams();
@@ -31,6 +39,15 @@ export default function GiornoPage() {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [showPracticePopup, setShowPracticePopup] = useState(false);
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
+
+  // Protocollo Pressione (solo W4-G6)
+  const isProtocolDay = weekNumber === PROTOCOL_WEEK && dayNumber === PROTOCOL_DAY;
+  const [protocol, setProtocol] = useState<ProtocolValue>({
+    physical_signal: '',
+    recurring_thought: '',
+    mantra: '',
+  });
+  const [protocolError, setProtocolError] = useState<string | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -115,6 +132,24 @@ export default function GiornoPage() {
         setShowCheck(true);
       }
 
+      // Se è il giorno del Protocollo, pre-popola da artefatto esistente
+      if (weekNumber === PROTOCOL_WEEK && dayNumber === PROTOCOL_DAY) {
+        try {
+          const artRes = await fetch(
+            `/api/artifacts?userId=${uid}&type=${ARTIFACT_PROTOCOL_PRESSURE}`
+          );
+          const artJson = await artRes.json();
+          if (artJson?.artifact?.payload) {
+            const p = artJson.artifact.payload;
+            setProtocol({
+              physical_signal: p.physical_signal || '',
+              recurring_thought: p.recurring_thought || '',
+              mantra: p.mantra || '',
+            });
+          }
+        } catch { /* ignora — campo resta vuoto */ }
+      }
+
       setLoading(false);
     };
 
@@ -128,6 +163,7 @@ export default function GiornoPage() {
     if (giorno.domandaPrePratica) slides.push({ type: 'domanda_pre_pratica', label: 'Riflessione' });
     if (giorno.pratica) slides.push({ type: 'pratica', label: 'Pratica' });
     if (giorno.haNotaCampo && giorno.notaCampo) slides.push({ type: 'nota', label: 'Nota Campo' });
+    if (isProtocolDay) slides.push({ type: 'protocollo', label: 'Il tuo Protocollo' });
     if (giorno.domanda) slides.push({ type: 'domanda', label: 'Riflessione' });
     // Se non c'e domanda, aggiungi slide completamento
     if (!giorno.domanda) slides.push({ type: 'completa', label: 'Completa' });
@@ -167,9 +203,38 @@ export default function GiornoPage() {
 
   const handleComplete = async () => {
     if (saving) return;
+
+    // W4-G6: il Protocollo va compilato prima di completare
+    if (isProtocolDay && !isProtocolComplete(protocol)) {
+      setProtocolError('Compila tutti e 3 i campi del Protocollo prima di completare.');
+      return;
+    }
+
     setSaving(true);
+    setProtocolError(null);
 
     try {
+      if (isProtocolDay) {
+        const artRes = await fetch('/api/artifacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            type: ARTIFACT_PROTOCOL_PRESSURE,
+            week: weekNumber,
+            payload: {
+              physical_signal: protocol.physical_signal.trim(),
+              recurring_thought: protocol.recurring_thought.trim(),
+              mantra: protocol.mantra.trim(),
+            },
+          }),
+        });
+        if (!artRes.ok) {
+          const err = await artRes.json().catch(() => ({}));
+          throw new Error(err.error || 'Errore nel salvataggio del Protocollo');
+        }
+      }
+
       const res = await fetch('/api/giorno', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -193,6 +258,7 @@ export default function GiornoPage() {
       }
     } catch (err: any) {
       console.error('Errore completamento:', err.message);
+      setProtocolError(err.message || 'Errore nel salvataggio. Riprova.');
     } finally {
       setSaving(false);
     }
@@ -443,6 +509,26 @@ export default function GiornoPage() {
                   {getNextTrainingMessage()}
                 </p>
               </div>
+            )}
+          </div>
+        )}
+
+        {currentSlideData?.type === 'protocollo' && (
+          <div className="bg-white rounded-2xl shadow-sm p-5">
+            <h2 className="text-sm font-bold text-gray-800 mb-1 flex items-center gap-2">
+              🎯 Il tuo Protocollo Pressione
+            </h2>
+            <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+              Scrivi il tuo Protocollo in 3 righe. Non devi inventarle — le hai già trovate nelle settimane scorse.
+              Lo rileggerai nei momenti difficili.
+            </p>
+            <ProtocolEditor
+              value={protocol}
+              onChange={setProtocol}
+              disabled={completed}
+            />
+            {protocolError && (
+              <p className="text-xs text-red-600 mt-3">{protocolError}</p>
             )}
           </div>
         )}
