@@ -275,7 +275,7 @@ export default function GiornoPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-28">
+    <main className="min-h-screen bg-gray-50 pb-tabbar-lg">
 
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-6 pb-16">

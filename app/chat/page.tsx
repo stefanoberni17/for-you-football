@@ -55,7 +55,7 @@ function ChatContent() {
   }
 
   return (
-    <div className="h-[calc(100dvh-4rem)] flex flex-col bg-forest-50">
+    <div className="h-[calc(100dvh-4rem-env(safe-area-inset-bottom))] flex flex-col bg-forest-50">
       <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto px-3 sm:px-4 pt-3 pb-2">
         <ChatBot ref={chatBotRef} suggestions={suggestions} />
       </div>

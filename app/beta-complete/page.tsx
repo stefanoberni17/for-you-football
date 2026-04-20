@@ -50,7 +50,7 @@ export default function BetaCompletePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-forest-50 via-amber-50 to-forest-100 py-10 px-4 pb-24">
+    <main className="min-h-screen bg-gradient-to-br from-forest-50 via-amber-50 to-forest-100 py-10 px-4 pb-tabbar">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
           <div className="text-6xl mb-4">🏆</div>

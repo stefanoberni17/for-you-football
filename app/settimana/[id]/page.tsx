@@ -144,7 +144,7 @@ export default function SettimanaPage() {
   const progress = getWeekProgress(weekNumber, completedDays);
 
   return (
-    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-24">
+    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-tabbar">
 
       {/* Popup settimana completata */}
       {showCompletePopup && (
