@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 // Client Stripe server-side. `apiVersion` pinned per stabilità.
 // Fallback su placeholder per evitare crash durante `next build` (env runtime-only).
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-02-24.acacia',
   typescript: true,
 });
 
