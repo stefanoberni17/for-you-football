@@ -95,17 +95,21 @@ export async function POST(request: NextRequest) {
 
     if (upsertError) throw upsertError;
 
-    // Aggiorna current_week nel profilo
+    // Incrementa current_week nel profilo (se non già oltre).
+    // Modello subscription-based: l'accesso ai contenuti è gestito da /login e / (dashboard).
+    // Se l'utente arriva qui, la sub è attiva o è beta — quindi può avanzare.
     const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('current_week')
       .eq('user_id', userId)
       .single();
 
+    const nextWeek = weekNumber + 1;
+
     if (profile && profile.current_week <= weekNumber) {
       await supabaseAdmin
         .from('profiles')
-        .update({ current_week: weekNumber + 1 })
+        .update({ current_week: nextWeek })
         .eq('user_id', userId);
     }
 

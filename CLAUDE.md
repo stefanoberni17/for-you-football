@@ -115,6 +115,13 @@ ANTHROPIC_API_KEY=
 # Telegram (opzionale)
 TELEGRAM_BOT_TOKEN=
 CRON_SECRET=
+
+# Stripe (billing)
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_ID_EARLY_BIRD=price_...
+STRIPE_PRICE_ID_FULL=price_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 ---
@@ -144,6 +151,11 @@ onboarding_completed     BOOLEAN DEFAULT false
 last_meditation_completed DATE
 -- Coach AI
 coach_notes              TEXT    -- memoria Coach (recap distillati da conversazioni Telegram)
+-- Stripe billing (modello subscription-based: active=accesso pieno)
+subscription_status      TEXT DEFAULT 'none'  -- none|active|past_due|canceled
+stripe_customer_id       TEXT
+stripe_subscription_id   TEXT
+is_beta_free             BOOLEAN DEFAULT false  -- beta tester + comp access (bypass paywall)
 created_at               TIMESTAMPTZ DEFAULT NOW()
 ```
 
@@ -207,6 +219,90 @@ UNIQUE(user_id, date)
 - RLS abilitata (SELECT/INSERT/UPDATE per l'utente proprietario)
 - Indice: `idx_daily_checkin_user_date ON (user_id, date DESC)`
 - Il check-in viene gestito da `GlobalCheckinWrapper` (mostrato una volta al giorno su tutte le pagine); "Salta per oggi" usa solo stato locale (se l'utente fa refresh lo rivede)
+
+### `stripe_events` (idempotenza webhook)
+```sql
+event_id    TEXT PRIMARY KEY    -- Stripe event.id (es. evt_1Abc...)
+type        TEXT NOT NULL       -- tipo evento (checkout.session.completed, ecc.)
+received_at TIMESTAMPTZ DEFAULT NOW()
+```
+- Usata dal webhook `/api/stripe/webhook` per garantire idempotenza: ogni evento viene INSERT-ato prima del processing; PK conflict (`23505`) = evento già processato, skip.
+- RLS: nessun accesso client (`FOR ALL USING (false)`), scrittura solo service role.
+
+---
+
+## Stripe — Integrazione pagamenti
+
+### Modello
+
+**Subscription-based** (come Netflix/Spotify): `subscription_status='active'` → accesso completo al percorso. Nessun "block counting" o sblocco per settimana. Il time-gate nei contenuti (`lib/dayUnlockLogic.ts`) forza comunque il ritmo 1 giorno/giorno, quindi Season 1 richiede minimo ~12 settimane = 3 mensilità per essere completata.
+
+**Pricing** (2 Prices Stripe, entrambi `recurring monthly`):
+- Early Bird: €29/mese (`STRIPE_PRICE_ID_EARLY_BIRD`)
+- Full: €39/mese (`STRIPE_PRICE_ID_FULL`)
+
+### Flusso registrazione
+
+```
+register (step 1: account) → register (step 2: profilo atleta)
+  → conferma email → login
+  → profile check: is_beta_free || status='active' ? sì: dashboard, no: /pricing
+  → Stripe Checkout → webhook checkout.session.completed → status='active'
+  → redirect / → onboarding (se !onboarding_completed) → dashboard
+```
+
+### Access gating
+
+L'unica funzione da riusare è `hasActiveAccess(profile)` in `lib/checkAccess.ts`:
+- `is_beta_free=true` → sempre accesso (beta tester + comp manuale)
+- `subscription_status='active'` → accesso
+- altrimenti → no access → redirect `/pricing`
+
+Check fatto in `app/login/page.tsx` e `app/page.tsx` (dashboard). Nessun altro check sparso: se l'utente arriva alle pagine interne, ha già passato il gate.
+
+### Webhook events
+
+| Evento | Azione DB |
+|--------|-----------|
+| `checkout.session.completed` | set `stripe_customer_id`, `stripe_subscription_id`, `status='active'` |
+| `customer.subscription.updated` | sync status (active / past_due / canceled) |
+| `customer.subscription.deleted` | `status='canceled'` |
+| `invoice.payment_failed` | `status='past_due'` (accesso bloccato immediato) |
+
+Idempotenza via `stripe_events` table. Runtime: `nodejs` (serve `crypto` per signature verify).
+
+### Accesso gratuito (comp / beta / partner)
+
+Due strumenti complementari:
+- **`is_beta_free=true`**: bypass totale paywall. Set manuale via SQL (`UPDATE profiles SET is_beta_free=true WHERE user_id='...'`). Riservato a beta tester, partner, amici.
+- **Stripe Promotion Codes**: sconti dal Dashboard Stripe (es. 100% off primo mese, -20% lifetime). Inseriti dall'utente al checkout (`allow_promotion_codes: true`).
+
+### File Stripe
+
+| File | Scopo |
+|------|-------|
+| `lib/stripe.ts` | Client Stripe server + `getOrCreateStripeCustomer` + `isStripeEnabled()` |
+| `lib/checkAccess.ts` | `hasActiveAccess(profile)` — check paywall |
+| `app/api/stripe/create-checkout/route.ts` | POST → Checkout Session (bypassa se is_beta_free) |
+| `app/api/stripe/webhook/route.ts` | Signature verify + 4 handler idempotenti |
+| `app/api/stripe/portal/route.ts` | POST → Billing Portal URL |
+| `app/api/stripe/subscription/route.ts` | GET → stato sub + next billing date (per UI) |
+| `app/pricing/page.tsx` | Landing 2 piani + FAQ |
+| `components/SubscriptionSection.tsx` | Card "Abbonamento" nella pagina `/profilo` |
+| `docs/migrations/002_stripe.sql` | Migration schema (ALTER profiles + stripe_events + RLS) |
+
+### Feature flag
+
+`isStripeEnabled()` in `lib/stripe.ts` ritorna `true` solo se `STRIPE_SECRET_KEY` presente. Utile per disabilitare temporaneamente (staging senza env vars).
+
+### Sviluppo locale
+
+```bash
+npm run dev
+stripe listen --forward-to localhost:3000/api/stripe/webhook  # in un altro terminale
+```
+
+Carta test: `4242 4242 4242 4242`.
 
 ---
 
@@ -599,6 +695,18 @@ Ritorna tutti i check-in degli ultimi N giorni (default 30) ordinati per data cr
 
 ### `GET /api/cron/cleanup-telegram`
 Cron job Vercel (03:00 UTC). Auth via `CRON_SECRET`. Elimina `telegram_conversations` > 90 giorni.
+
+### `POST /api/stripe/create-checkout`
+Body: `{ plan: 'early_bird' | 'full' }`. Crea Stripe Checkout Session (subscription mode, `allow_promotion_codes`), salva `supabase_user_id` in metadata sub, ritorna `{ url }`. Bypassa se `is_beta_free`.
+
+### `POST /api/stripe/webhook`
+Runtime: `nodejs`. Verifica signature (`STRIPE_WEBHOOK_SECRET`), idempotenza via `stripe_events`. Handler: `checkout.session.completed`, `customer.subscription.updated/deleted`, `invoice.payment_failed`. Aggiorna `subscription_status` su `profiles`.
+
+### `POST /api/stripe/portal`
+Crea Stripe Billing Portal Session per `stripe_customer_id` utente corrente, ritorna `{ url }`. Usato da `SubscriptionSection.tsx` per "Gestisci abbonamento".
+
+### `GET /api/stripe/subscription`
+Ritorna `{ subscription_status, is_beta_free, next_billing_date, cancel_at_period_end }` per l'utente autenticato. Se sub attiva, fa `stripe.subscriptions.retrieve` per `current_period_end` e `cancel_at_period_end`.
 
 ---
 

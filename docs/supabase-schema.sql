@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS user_day_progress CASCADE;
 DROP TABLE IF EXISTS user_weekly_calendar CASCADE;
 DROP TABLE IF EXISTS telegram_conversations CASCADE;
 DROP TABLE IF EXISTS daily_checkin CASCADE;
+DROP TABLE IF EXISTS stripe_events CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
 
 -- Drop trigger e funzione se esistono
@@ -53,6 +54,14 @@ CREATE TABLE profiles (
 
   -- Memoria Coach AI (recap conversazioni)
   coach_notes               TEXT,
+
+  -- Stripe billing (vedi docs/migrations/002_stripe.sql)
+  -- Modello subscription-based: status='active' → accesso pieno (no block counting).
+  subscription_status       TEXT DEFAULT 'none'
+    CHECK (subscription_status IN ('none','active','past_due','canceled')),
+  stripe_customer_id        TEXT,
+  stripe_subscription_id    TEXT,
+  is_beta_free              BOOLEAN DEFAULT false,
 
   created_at                TIMESTAMPTZ DEFAULT NOW()
 );
@@ -118,6 +127,15 @@ CREATE TABLE telegram_conversations (
 );
 
 
+-- ─── 6b. STRIPE_EVENTS (idempotenza webhook) ──────────────────────────────────
+
+CREATE TABLE stripe_events (
+  event_id    TEXT PRIMARY KEY,
+  type        TEXT NOT NULL,
+  received_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+
 -- ─── 7. INDEXES ───────────────────────────────────────────────────────────────
 
 -- Progresso giornaliero: query per utente + settimana
@@ -136,6 +154,12 @@ CREATE INDEX idx_telegram_user_created
 CREATE INDEX idx_reflections_user
   ON day_reflections (user_id, week_number, day_number);
 
+-- Stripe customer/subscription lookup (webhook)
+CREATE INDEX idx_profiles_stripe_customer
+  ON profiles (stripe_customer_id) WHERE stripe_customer_id IS NOT NULL;
+CREATE INDEX idx_profiles_stripe_subscription
+  ON profiles (stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL;
+
 
 -- ─── 8. ROW LEVEL SECURITY ────────────────────────────────────────────────────
 
@@ -144,14 +168,25 @@ ALTER TABLE user_day_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_weekly_calendar ENABLE ROW LEVEL SECURITY;
 ALTER TABLE day_reflections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE telegram_conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE stripe_events ENABLE ROW LEVEL SECURITY;
 
 -- profiles
 CREATE POLICY "profiles: select own" ON profiles
   FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "profiles: insert own" ON profiles
   FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "profiles: update own" ON profiles
-  FOR UPDATE USING (auth.uid() = user_id);
+-- UPDATE ristretta: l'utente non può auto-modificare colonne billing.
+-- Il service role (webhook Stripe) bypassa RLS.
+CREATE POLICY "profiles: update own non-billing" ON profiles
+  FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (
+    auth.uid() = user_id
+    AND subscription_status   IS NOT DISTINCT FROM (SELECT subscription_status   FROM profiles WHERE user_id = auth.uid())
+    AND stripe_customer_id    IS NOT DISTINCT FROM (SELECT stripe_customer_id    FROM profiles WHERE user_id = auth.uid())
+    AND stripe_subscription_id IS NOT DISTINCT FROM (SELECT stripe_subscription_id FROM profiles WHERE user_id = auth.uid())
+    AND is_beta_free          IS NOT DISTINCT FROM (SELECT is_beta_free          FROM profiles WHERE user_id = auth.uid())
+  );
 
 -- user_day_progress
 CREATE POLICY "day_progress: select own" ON user_day_progress
@@ -181,6 +216,10 @@ CREATE POLICY "reflections: update own" ON day_reflections
 -- Il service role bypassa RLS automaticamente — nessuna policy necessaria per il server
 -- Blocchiamo l'accesso diretto dal client browser
 CREATE POLICY "telegram: no direct client access" ON telegram_conversations
+  FOR ALL USING (false);
+
+-- stripe_events: scrittura solo da webhook server (service role)
+CREATE POLICY "stripe_events: no direct client access" ON stripe_events
   FOR ALL USING (false);
 
 

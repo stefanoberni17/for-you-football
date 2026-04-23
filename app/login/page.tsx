@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { shouldRedirectToPaywall } from '@/lib/checkAccess';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,13 +48,20 @@ export default function LoginPage() {
         return;
       }
 
-      // 3. Controlla onboarding
+      // 3. Paywall gate: se paywall attivo E utente non ha accesso → /pricing
+      //    Se Stripe non è configurato in env (deploy graduale), salta il gate.
+      if (shouldRedirectToPaywall(profile)) {
+        router.push('/pricing');
+        return;
+      }
+
+      // 4. Controlla onboarding
       if (!profile.onboarding_completed) {
         router.push('/onboarding');
         return;
       }
 
-      // 4. Tutto ok, vai alla dashboard
+      // 5. Tutto ok, vai alla dashboard
       router.push('/');
 
     } catch (error: any) {

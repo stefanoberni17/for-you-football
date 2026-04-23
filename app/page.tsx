@@ -12,6 +12,7 @@ import {
   DayProgress,
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
+import { shouldRedirectToPaywall } from '@/lib/checkAccess';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
@@ -83,11 +84,20 @@ export default function HomePage() {
         .eq('user_id', session.user.id)
         .single();
 
+      // Paywall gate: se Stripe è configurato E utente non ha accesso → /pricing.
+      // Se Stripe non è ancora in env (deploy graduale), il gate è disattivato.
+      if (shouldRedirectToPaywall(profileData)) {
+        router.push('/pricing');
+        return;
+      }
+
       if (!profileData?.onboarding_completed) {
         router.push('/onboarding');
         return;
       }
 
+      // Fine contenuti disponibili: se current_week supera il max disponibile, schermata celebrativa.
+      // NOTA: questo scatta sia per beta (che hanno accesso free) sia per paganti che completano Season 1.
       if (profileData?.current_week && profileData.current_week > BETA_MAX_WEEK) {
         router.push('/beta-complete');
         return;

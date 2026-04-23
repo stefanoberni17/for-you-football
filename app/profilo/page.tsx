@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
+import SubscriptionSection from '@/components/SubscriptionSection';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -495,6 +496,9 @@ export default function ProfiloPage() {
             </div>
           </div>
         </div>
+
+        {/* ── Abbonamento ──────────────────────────────────────────────────── */}
+        <SubscriptionSection />
 
         {/* ── Dati personali ───────────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
