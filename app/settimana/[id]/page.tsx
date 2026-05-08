@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { DAYS_PER_WEEK, GATE_DAY, BETA_MAX_WEEK } from '@/lib/constants';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import { Lock, Check, Key, Clock, ChevronRight, Calendar, Compass, Wrench, Target } from 'lucide-react';
 
 export default function SettimanaPage() {
   const params = useParams();
@@ -117,10 +118,10 @@ export default function SettimanaPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-gray-600">Caricamento settimana...</p>
+          <p className="text-gray-500">Caricamento settimana...</p>
         </div>
       </main>
     );
@@ -128,7 +129,7 @@ export default function SettimanaPage() {
 
   if (!settimana) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-red-600">Settimana non trovata</p>
           <button onClick={() => router.push('/settimane')} className="mt-4 bg-forest-500 text-white px-6 py-2 rounded-full">
@@ -142,14 +143,15 @@ export default function SettimanaPage() {
   const nextWeekNumber = weekNumber + 1;
   const nextWeekAvailable = nextWeekNumber <= BETA_MAX_WEEK;
   const progress = getWeekProgress(weekNumber, completedDays);
+  const percent = Math.round((progress / DAYS_PER_WEEK) * 100);
 
   return (
-    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-tabbar">
+    <main className="min-h-screen bg-gray-50 pb-tabbar-lg">
 
       {/* Popup settimana completata */}
       {showCompletePopup && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-forest-50 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
             <div className="text-7xl mb-4">🏆</div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Settimana completata!</h2>
             <p className="text-forest-600 font-semibold text-sm mb-1">Settimana {weekNumber}</p>
@@ -199,167 +201,211 @@ export default function SettimanaPage() {
         />
       )}
 
-      {/* Header */}
-      <div className="max-w-3xl mx-auto mb-6">
-        <button
-          onClick={() => router.push('/settimane')}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-forest-500 mb-4 transition-colors"
-        >
-          ← Tutte le settimane
-        </button>
+      {/* Immersive header */}
+      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-6 pb-16">
+        <div className="max-w-3xl mx-auto">
+          <button
+            onClick={() => router.push('/settimane')}
+            className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
+          >
+            ← Tutte le settimane
+          </button>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-forest-500">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="text-sm font-semibold text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest">
               Settimana {weekNumber}
-            </span>
-            {settimana.principio && (
-              <span className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full font-medium">
-                🧭 {settimana.principio}
-              </span>
-            )}
+            </p>
             {isCompleted && (
-              <span className="text-sm font-semibold text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
-                ✅ Completata
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-white bg-white/15 px-2 py-0.5 rounded-full">
+                <Check className="w-3 h-3" strokeWidth={3} /> Completata
               </span>
-            )}
-            {calendarData && (
-              <button
-                onClick={() => setShowCalendarPopup(true)}
-                className="text-sm text-gray-400 hover:text-emerald-600 bg-gray-50 hover:bg-emerald-50 px-3 py-1 rounded-full transition-colors"
-              >
-                📅 Calendario
-              </button>
             )}
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">{settimana.titolo?.replace(/^Week \d+ — /, '') || settimana.titolo}</h1>
-          {settimana.strumento && (
-            <p className="text-gray-600 text-sm mb-3">
-              🔧 <span className="font-medium">Strumento:</span> {settimana.strumento}
-            </p>
-          )}
-          {settimana.descrizionIntro && (
-            <p className="text-gray-600 text-sm leading-relaxed">{settimana.descrizionIntro}</p>
-          )}
 
-          {/* Progress giorni */}
-          <div className="mt-4">
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
-              <span>{progress}/{DAYS_PER_WEEK} giorni completati</span>
-              <span>{Math.round((progress / DAYS_PER_WEEK) * 100)}%</span>
+          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
+            {settimana.titolo?.replace(/^Week \d+ — /, '') || settimana.titolo}
+          </h1>
+
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-5">
+            {settimana.principio && (
+              <p className="text-forest-100 text-sm flex items-center gap-1.5">
+                <Compass className="w-3.5 h-3.5" aria-hidden="true" />
+                {settimana.principio}
+              </p>
+            )}
+            {settimana.strumento && (
+              <p className="text-forest-100 text-sm flex items-center gap-1.5">
+                <Wrench className="w-3.5 h-3.5" aria-hidden="true" />
+                {settimana.strumento}
+              </p>
+            )}
+          </div>
+
+          {/* Progress bar */}
+          <div>
+            <div className="flex justify-between text-[11px] text-forest-100 mb-1.5">
+              <span className="font-medium">{progress}/{DAYS_PER_WEEK} giorni</span>
+              <span className="font-semibold">{percent}%</span>
             </div>
-            <div className="w-full bg-gray-100 rounded-full h-2">
+            <div className="w-full bg-white/15 rounded-full h-1.5 overflow-hidden">
               <div
-                className={`h-2 rounded-full transition-all duration-500 ${isCompleted ? 'bg-forest-500' : 'bg-forest-500'}`}
-                style={{ width: `${Math.round((progress / DAYS_PER_WEEK) * 100)}%` }}
+                className="h-full rounded-full bg-white transition-all duration-500"
+                style={{ width: `${percent}%` }}
               />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Obiettivo settimana */}
-      {settimana.obiettivoSettimana && (
-        <div className="max-w-3xl mx-auto mb-5">
-          <div className="bg-forest-50 border-l-4 border-forest-400 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-forest-700 mb-1">🎯 Obiettivo della settimana</h3>
-            <p className="text-forest-600 text-sm leading-relaxed">{settimana.obiettivoSettimana}</p>
+      {/* Content area — pulled up over header */}
+      <div className="max-w-3xl mx-auto px-4 -mt-10 space-y-4">
+
+        {/* Intro card */}
+        {(settimana.descrizionIntro || calendarData) && (
+          <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+            {settimana.descrizionIntro && (
+              <p className="text-gray-700 text-sm leading-relaxed">{settimana.descrizionIntro}</p>
+            )}
+            {calendarData && (
+              <button
+                onClick={() => setShowCalendarPopup(true)}
+                className={`${settimana.descrizionIntro ? 'mt-4' : ''} text-xs text-gray-500 hover:text-forest-600 bg-gray-50 hover:bg-forest-50 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5 w-fit`}
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                Modifica calendario
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Obiettivo settimana */}
+        {settimana.obiettivoSettimana && (
+          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-forest-700 mb-1.5 flex items-center gap-1.5">
+              <Target className="w-3.5 h-3.5" />
+              Obiettivo della settimana
+            </h3>
+            <p className="text-gray-700 text-sm leading-relaxed">{settimana.obiettivoSettimana}</p>
+          </div>
+        )}
+
+        {/* Timeline 7 giorni */}
+        <div className="pt-2">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-1">
+            Il percorso settimanale
+          </h2>
+
+          <div className="relative">
+            {/* Vertical timeline line */}
+            <div className="absolute left-[19px] top-5 bottom-5 w-0.5 bg-gray-200" aria-hidden="true" />
+
+            <div className="space-y-2">
+              {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map((dayNum) => {
+                const giorno = giorni.find(g => g.dayNumber === dayNum);
+                const unlocked = isDayUnlocked(weekNumber, dayNum, completedDays);
+                const dayDone = completedDays.some(
+                  d => d.weekNumber === weekNumber && d.dayNumber === dayNum && d.completed
+                );
+                const isGate = dayNum === GATE_DAY;
+                const timeLocked = !unlocked && dayNum > 1 && isTimeLocked(weekNumber, dayNum - 1, completedDays);
+                const isCurrent = unlocked && !dayDone && dayNum === completedDays.filter(d => d.weekNumber === weekNumber && d.completed).length + 1;
+
+                return (
+                  <div key={dayNum} className="relative pl-12">
+                    {/* Timeline node */}
+                    <div className={`absolute left-0 top-3 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ring-4 ring-gray-50 z-10 transition-all ${
+                      dayDone
+                        ? 'bg-forest-500 text-white shadow-sm'
+                        : isGate && unlocked
+                        ? 'bg-forest-500 text-white shadow-sm'
+                        : isCurrent
+                        ? 'bg-white text-forest-600 ring-forest-200 shadow-sm'
+                        : unlocked
+                        ? 'bg-white text-forest-600 border border-forest-300'
+                        : 'bg-gray-100 text-gray-400'
+                    }`}>
+                      {dayDone ? <Check className="w-5 h-5" strokeWidth={3} /> :
+                       !unlocked ? (timeLocked ? <Clock className="w-4 h-4" /> : <Lock className="w-4 h-4" />) :
+                       isGate ? <Key className="w-4 h-4" /> :
+                       dayNum}
+                    </div>
+
+                    {/* Day card */}
+                    <button
+                      onClick={() => unlocked && router.push(`/giorno/${weekNumber}/${dayNum}`)}
+                      disabled={!unlocked}
+                      className={`w-full text-left bg-white rounded-xl p-4 transition-all border flex items-center gap-3 ${
+                        unlocked
+                          ? 'shadow-sm hover:shadow-md hover:border-forest-200 active:scale-[0.99] cursor-pointer'
+                          : 'opacity-60 cursor-not-allowed border-gray-100'
+                      } ${
+                        isCurrent ? 'border-forest-300 ring-1 ring-forest-200' : dayDone ? 'border-forest-100 bg-forest-50/30' : 'border-gray-100'
+                      }`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className={`text-sm font-semibold ${unlocked ? 'text-gray-800' : 'text-gray-400'}`}>
+                            {isGate
+                              ? `Gate · Giorno ${dayNum}`
+                              : `Giorno ${dayNum}`}
+                          </p>
+                          {isCurrent && (
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-forest-700 bg-forest-100 px-1.5 py-0.5 rounded-full">
+                              Oggi
+                            </span>
+                          )}
+                        </div>
+                        {giorno?.titolo && !isGate && (
+                          <p className={`text-xs leading-snug ${unlocked ? 'text-gray-600' : 'text-gray-400'}`}>
+                            {giorno.titolo.replace(/^W\d+-G\d+ — /, '')}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-3 mt-1">
+                          {giorno?.durataMinuti ? (
+                            <p className="text-[11px] text-gray-400 flex items-center gap-1">
+                              <Clock className="w-3 h-3" /> {giorno.durataMinuti} min
+                            </p>
+                          ) : null}
+                          {isGate && !dayDone && (
+                            <span className="text-[11px] text-forest-600 font-medium">Review settimanale</span>
+                          )}
+                          {timeLocked && (
+                            <span className="text-[11px] text-blue-500 font-medium">Disponibile domani</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {unlocked && (
+                        <ChevronRight className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      )}
 
-      {/* Elenco giorni */}
-      <div className="max-w-3xl mx-auto mb-6">
-        <h2 className="text-base font-bold text-gray-700 mb-3 px-1">📅 I 7 Giorni</h2>
-        <div className="space-y-3">
-          {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map((dayNum) => {
-            const giorno = giorni.find(g => g.dayNumber === dayNum);
-            const unlocked = isDayUnlocked(weekNumber, dayNum, completedDays);
-            const dayDone = completedDays.some(
-              d => d.weekNumber === weekNumber && d.dayNumber === dayNum && d.completed
-            );
-            const isGate = dayNum === GATE_DAY;
-            // Il giorno precedente è stato completato oggi → questo giorno è time-locked fino a domani
-            const timeLocked = !unlocked && dayNum > 1 && isTimeLocked(weekNumber, dayNum - 1, completedDays);
-
-            return (
-              <div
-                key={dayNum}
-                onClick={() => unlocked && router.push(`/giorno/${weekNumber}/${dayNum}`)}
-                className={`bg-white rounded-xl shadow-sm p-4 flex items-center gap-4 transition-all border ${
-                  unlocked
-                    ? 'cursor-pointer hover:shadow-md hover:border-forest-300'
-                    : 'opacity-50 cursor-not-allowed border-gray-100'
-                } ${dayDone ? 'border-forest-200 bg-forest-50/50' : 'border-gray-100'}`}
-              >
-                {/* Numero giorno */}
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                  dayDone
-                    ? 'bg-forest-500 text-white'
-                    : isGate
-                    ? 'bg-forest-500 text-white'
-                    : unlocked
-                    ? 'bg-forest-500 text-white'
-                    : 'bg-gray-200 text-gray-400'
-                }`}>
-                  {dayDone ? '✓' : isGate ? '🔑' : dayNum}
-                </div>
-
-                {/* Contenuto */}
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-semibold ${unlocked ? 'text-gray-800' : 'text-gray-400'}`}>
-                    {isGate
-                      ? `Gate — Giorno ${dayNum}`
-                      : `Giorno ${dayNum}${giorno?.titolo ? ` — ${giorno.titolo.replace(/^W\d+-G\d+ — /, '')}` : ''}`}
-                  </p>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    {giorno?.durataMinuti ? (
-                      <p className="text-xs text-gray-400">⏱ {giorno.durataMinuti} min</p>
-                    ) : null}
-                    {giorno?.tipoGiorno && (
-                      <p className="text-xs text-gray-400">{giorno.tipoGiorno}</p>
-                    )}
-                    {isGate && !dayDone && (
-                      <span className="text-xs text-forest-500 font-medium">Review settimanale</span>
-                    )}
-                    {timeLocked && (
-                      <span className="text-xs text-blue-500 font-medium">Disponibile domani</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Freccia */}
-                <span className={`text-xl flex-shrink-0 ${unlocked ? 'text-gray-300' : 'text-gray-200'}`}>
-                  {timeLocked ? '⏳' : !unlocked ? '🔒' : '›'}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Bottone prossima settimana */}
-      {isCompleted && nextWeekAvailable && (
-        <div className="max-w-3xl mx-auto mb-6">
+        {/* Bottone prossima settimana */}
+        {isCompleted && nextWeekAvailable && (
           <button
             onClick={() => router.push(`/settimana/${nextWeekNumber}`)}
-            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-lg"
+            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-base mt-4"
           >
             Vai alla Settimana {nextWeekNumber} →
           </button>
-        </div>
-      )}
+        )}
 
-      {isCompleted && !nextWeekAvailable && (
-        <div className="max-w-3xl mx-auto mb-6">
-          <div className="bg-forest-50 border border-forest-200 rounded-xl p-4 text-center">
+        {isCompleted && !nextWeekAvailable && (
+          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4 text-center mt-4">
             <p className="text-forest-700 font-semibold text-sm">
               🏆 Hai completato tutte le settimane disponibili in Beta! Le prossime arrivano presto.
             </p>
           </div>
-        </div>
-      )}
+        )}
 
+        <div className="h-2" />
+      </div>
     </main>
   );
 }

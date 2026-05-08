@@ -35,15 +35,18 @@ export default function PracticePopup({
   const totalSeconds = durataMinuti * 60;
   const [timeLeft, setTimeLeft] = useState(totalSeconds);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
+  const [timerEnded, setTimerEnded] = useState(false);
+  const [audioInProgress, setAudioInProgress] = useState(false);
 
-  // Timer countdown
+  // Timer countdown — setta timerEnded; il passaggio a `done` avviene
+  // nel useEffect sotto, che aspetta anche la fine dell'audio se in corso.
   useEffect(() => {
     if (phase !== 'practicing' || timeLeft === 0) return;
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
-          setPhase('done');
+          setTimerEnded(true);
           return 0;
         }
         return prev - 1;
@@ -52,6 +55,15 @@ export default function PracticePopup({
 
     return () => clearInterval(timer);
   }, [phase, timeLeft]);
+
+  // Done quando il più lungo tra timer e audio è terminato.
+  // Se l'utente non ha avviato l'audio (audioInProgress=false), `done` parte sul timer.
+  useEffect(() => {
+    if (phase !== 'practicing') return;
+    if (timerEnded && !audioInProgress) {
+      setPhase('done');
+    }
+  }, [phase, timerEnded, audioInProgress]);
 
   // Animazione respiro — solo per tipo "respirazione"
   const showBreathCircle = tipoPratica === 'respirazione';
@@ -90,6 +102,7 @@ export default function PracticePopup({
     const onEnded = () => {
       setIsAudioPlaying(false);
       setAudioCurrentTime(0);
+      setAudioInProgress(false);
     };
 
     audio.addEventListener('loadedmetadata', onLoaded);
@@ -116,15 +129,19 @@ export default function PracticePopup({
     if (isAudioPlaying) {
       audio.pause();
       setIsAudioPlaying(false);
+      // Pausa = utente ha scelto di interrompere → non blocca il completamento
+      setAudioInProgress(false);
     } else {
       audio.play().catch(e => console.log('Audio play failed:', e));
       setIsAudioPlaying(true);
+      setAudioInProgress(true);
     }
   };
 
   const stopAudio = () => {
     audioRef.current?.pause();
     setIsAudioPlaying(false);
+    setAudioInProgress(false);
   };
 
   const handleComplete = () => {
@@ -185,7 +202,14 @@ export default function PracticePopup({
 
   const startPractice = () => {
     setTimeLeft(totalSeconds);
+    setTimerEnded(false);
     setPhase('practicing');
+  };
+
+  const exitToSetup = () => {
+    stopAudio();
+    setTimerEnded(false);
+    setPhase('setup');
   };
 
   const minutes = Math.floor(timeLeft / 60);
@@ -278,10 +302,11 @@ export default function PracticePopup({
 
         {phase === 'practicing' && (
           <>
-            {/* Chiudi */}
+            {/* Chiudi — fixed nel viewport con safe-area iPhone, sempre visibile */}
             <button
-              onClick={() => setPhase('setup')}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+              onClick={exitToSetup}
+              className="fixed right-4 z-50 text-white bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors p-2 rounded-full"
+              style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
               aria-label="Torna al setup"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -329,7 +354,9 @@ export default function PracticePopup({
                         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                       </div>
                       <div className="text-xs md:text-sm text-white/90 font-medium">
-                        {breathPhase === 'inhale' ? '🌬️ Inspira...' : '💨 Espira...'}
+                        {timerEnded && audioInProgress
+                          ? '🎧 Continua ad ascoltare...'
+                          : breathPhase === 'inhale' ? '🌬️ Inspira...' : '💨 Espira...'}
                       </div>
                     </div>
                   </div>
@@ -344,7 +371,9 @@ export default function PracticePopup({
                         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                       </div>
                       <div className="text-xs md:text-sm text-forest-500/70 font-medium">
-                        {tipoPratica === 'riflessione' ? '🧘 Rifletti...' : '👁️ Osserva...'}
+                        {timerEnded && audioInProgress
+                          ? '🎧 Continua ad ascoltare...'
+                          : tipoPratica === 'riflessione' ? '🧘 Rifletti...' : '👁️ Osserva...'}
                       </div>
                     </div>
                   </div>

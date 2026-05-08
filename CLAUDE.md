@@ -527,15 +527,22 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Mostrato dopo prima registrazione
 
 ### Lista Settimane (`app/settimane/page.tsx`)
-- Mostra 12 settimane (filtrate a `BETA_MAX_WEEK=4`)
-- Ogni card: titolo, principio, stato lock/unlock, progresso
+- **Immersive header gradient** forest-600→forest-800 con titolo, sottotitolo e 3 quick stats (sbloccate/completate/giorni totali)
+- **Timeline verticale**: linea gradient sulla sinistra che connette i nodi-settimana; ogni settimana ha un nodo circolare 14×14 (con numero, lock, o check) + card a destra con principio, strumento e progress bar
+- Filtra a `BETA_MAX_WEEK=4`
+- Card "Prossimamente" finale (settimane 5–12)
+- Icone Lucide (Lock, Check, Compass, Wrench, ChevronRight, MapPin)
 - Click → `/settimana/[id]`
 
 ### Dettaglio Settimana (`app/settimana/[id]/page.tsx`)
-- Descrizione settimana, principio, strumento
-- 7 DayCard (clickabili se sbloccati)
-- WeeklyCalendarPopup per impostare giorni allenamento/partita
-- Link a `/giorno/[week]/[day]`
+- **Immersive header gradient** forest-600→forest-800 con back-button, settimana #, titolo, principio + strumento, progress bar bianca su sfondo trasparente
+- **Card intro** (descrizione + bottone "Modifica calendario")
+- **Card obiettivo settimana** verde forest-50 con icona Target Lucide
+- **Timeline verticale "Il percorso settimanale"**: linea grigia connette i 7 nodi-giorno (10×10 px); ogni nodo mostra Check (fatto), Key (gate), Lock (bloccato), Clock (time-locked) o numero
+- Card giorno include badge "Oggi" sul prossimo da fare; "Disponibile domani" per time-locked
+- WeeklyCalendarPopup gestito da prop showCalendarPopup
+- Icone Lucide (Lock, Check, Key, Clock, ChevronRight, Calendar, Compass, Wrench, Target)
+- Link → `/giorno/[week]/[day]`
 
 ### Contenuto Giornaliero (`app/giorno/[week]/[day]/page.tsx`)
 - **Apertura:** testo introduttivo (2-3 righe da Notion)
@@ -596,6 +603,9 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Step numerati della pratica
 - Nome strumento settimana corrente
 - Callback completamento
+- **Audio guida (opt-in):** prop `audioUrl?` letta da Notion (campo `Audio Pratica`); bottone toggle "🎧 Ascolta versione audio" → mini-player con play/pausa + progress bar (mostrato sia in setup che in practicing); cleanup audio su unmount/complete/skip
+- **Completamento "il più lungo":** la fase `done` parte solo quando `timerEnded && !audioInProgress` — se l'utente ha avviato l'audio (audioInProgress=true) e il timer scade prima dell'audio, aspetta la fine dell'audio prima di mostrare "Pratica completata!"; sottotitolo cambia in "🎧 Continua ad ascoltare..." mentre si aspetta. Pause manuale → audioInProgress=false → completamento immediato (l'utente ha scelto di stoppare)
+- **Pulsante chiusura iPhone-safe:** X durante `practicing` è `position: fixed` con `top: max(1rem, env(safe-area-inset-top))` + `z-50` + sfondo `bg-black/40 backdrop-blur` — sempre cliccabile sopra notch/Dynamic Island anche se la card scrolla. Click → `exitToSetup()` ferma audio + reset timer
 
 ### `WeeklyCalendarPopup.tsx`
 - Griglia 7 giorni (Lun-Dom)
@@ -815,6 +825,10 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **UI — Favicon:** `app/layout.tsx` punta a `/icons/icon-192x192.png` e `icon-512x512.png` tramite `metadata.icons`.
 - [x] **UI — Animazione ⚽ caricamento:** `@keyframes ballBounce` + `.animate-ball-bounce` in `globals.css`; sostituito `animate-pulse` con `animate-ball-bounce` su tutti i loading screen con la palla (`page.tsx`, `giorno/[week]/[day]/page.tsx`, `onboarding/page.tsx`).
 - [x] **Feature — Audio guida pratiche (opzionale):** campo `Audio Pratica` (URL) su Notion DB Giorni; `urlField()` helper in `lib/notion.ts`; mini-player in `PracticePopup.tsx` (toggle "🎧 Ascolta versione audio" → play/pausa + progress bar). File MP3 ospitati su Supabase Storage bucket pubblico `practice-audio`. Audio convive con timer/respiro (non li sostituisce). Cleanup audio su unmount/complete/skip.
+- [x] **Feature — Completamento pratica "il più lungo" timer/audio:** `PracticePopup` non triggera più `phase='done'` direttamente al timer end; usa stati separati `timerEnded` e `audioInProgress`; passa a `done` solo quando `timerEnded && !audioInProgress`. Se l'utente ha avviato l'audio e il timer scade prima della fine, aspetta la fine dell'audio (sottotitolo cambia in "🎧 Continua ad ascoltare..."). Pause manuale = consenso a stoppare → completamento immediato.
+- [x] **Fix — Pulsante chiusura PracticePopup iPhone-safe:** la X durante `practicing` è ora `position: fixed` con `top: max(1rem, env(safe-area-inset-top))` + `z-50` + sfondo `bg-black/40 backdrop-blur` — sempre cliccabile sopra notch/Dynamic Island anche se la card è più alta del viewport. Click → `exitToSetup()` ferma audio + reset timer.
+- [x] **UI — Restyling /settimane (percorso):** immersive header gradient forest-600→forest-800 con 3 quick stats (sbloccate/completate/giorni); timeline verticale con linea gradient e nodi circolari 14×14 (numero/lock/check); card a destra con principio, strumento, progress bar; icone Lucide (Lock, Check, Compass, Wrench, ChevronRight, MapPin); card teaser "Prossimamente W5–12".
+- [x] **UI — Restyling /settimana/[id] (passi della settimana):** immersive header con back-button, principio + strumento, progress bar bianca; card intro + card "Obiettivo settimana" verde con icona Target; timeline verticale "Il percorso settimanale" con linea grigia che connette i 7 nodi-giorno; nodi mostrano Check/Key/Lock/Clock/numero a seconda dello stato; badge "Oggi" sul prossimo giorno da fare; icone Lucide.
 
 ### Da fare
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
