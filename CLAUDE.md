@@ -651,6 +651,10 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 ### `BottomTabBar.tsx`
 - 4 tab: Home, Percorso, Coach, Profilo
 - Nascosto su: `/login`, `/register`, `/onboarding`, `/privacy`
+- **Floating iOS-style:** barra bianca semitrasparente con `backdrop-blur-md`, bordo arrotondato `rounded-2xl`, ombra morbida `0_4px_24px_rgba(20,26,22,0.10)` e margini laterali (`mx-3` via `px-3` outer + `max-w-md`). Il container outer è `pointer-events-none` per non bloccare i click sotto, l'inner è `pointer-events-auto`
+- Padding-bottom outer = `max(0.75rem, env(safe-area-inset-bottom))` per safe-area iPhone
+- Indicator: linea forest-500 sopra l'icona attiva (top center, w-8 h-0.5) + scale-105 sull'icona + colore forest-600 + label semibold; tab inattivi a opacità 60% (90% on hover)
+- `pb-tabbar` / `pb-tabbar-lg` aggiornati a `5.5rem` / `7.5rem` per accomodare il margin del floating
 
 ---
 
@@ -829,6 +833,8 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Fix — Pulsante chiusura PracticePopup iPhone-safe:** la X durante `practicing` è ora `position: fixed` con `top: max(1rem, env(safe-area-inset-top))` + `z-50` + sfondo `bg-black/40 backdrop-blur` — sempre cliccabile sopra notch/Dynamic Island anche se la card è più alta del viewport. Click → `exitToSetup()` ferma audio + reset timer.
 - [x] **UI — Restyling /settimane (percorso):** immersive header gradient forest-600→forest-800 con 3 quick stats (sbloccate/completate/giorni); timeline verticale con linea gradient e nodi circolari 14×14 (numero/lock/check); card a destra con principio, strumento, progress bar; icone Lucide (Lock, Check, Compass, Wrench, ChevronRight, MapPin); card teaser "Prossimamente W5–12".
 - [x] **UI — Restyling /settimana/[id] (passi della settimana):** immersive header con back-button, principio + strumento, progress bar bianca; card intro + card "Obiettivo settimana" verde con icona Target; timeline verticale "Il percorso settimanale" con linea grigia che connette i 7 nodi-giorno; nodi mostrano Check/Key/Lock/Clock/numero a seconda dello stato; badge "Oggi" sul prossimo giorno da fare; icone Lucide.
+- [x] **PWA — Safe-area iPhone top:** utility `.pt-safe` (`max(2rem, env(safe-area-inset-top))`) e `.pt-safe-immersive` (`calc(1.5rem + env(safe-area-inset-top))`) in `globals.css`. Applicate a tutte le pagine raggiungibili dalla tab bar: flat (`/`, `/profilo`, `/statistiche`, `/gate/[w]`, `/beta-complete`, `/pricing`) usano `.pt-safe`; immersive header (`/settimane`, `/settimana/[id]`, `/giorno/[w]/[d]`, `/week-complete/[w]`) usano `.pt-safe-immersive` (gradient si estende sotto la status bar ma il contenuto resta sotto la safe-area). `/chat` usa `fixed inset-0` con padding-top safe-area inline.
+- [x] **UI — BottomTabBar floating iOS-style:** barra bianca semitrasparente `bg-white/85 backdrop-blur-md`, bordo `rounded-2xl`, ombra `shadow-[0_4px_24px_rgba(20,26,22,0.10)]`, margini laterali via `px-3 max-w-md`. Outer `pointer-events-none` per non bloccare il contenuto sottostante; inner `pointer-events-auto`. Indicator: linea forest-500 sopra icona attiva + scale-105 + label semibold; inattivi a opacity-60. `pb-tabbar` aggiornato a `5.5rem` / `pb-tabbar-lg` a `7.5rem` per accomodare il margin.
 
 ### Da fare
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.

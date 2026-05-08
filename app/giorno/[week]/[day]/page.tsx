@@ -238,7 +238,7 @@ export default function GiornoPage() {
   // Schermata successo dopo completamento
   if (showSuccess) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center p-6 text-white animate-fadeIn">
+      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center pt-safe pb-6 px-6 text-white animate-fadeIn">
         <div className="flex flex-col items-center animate-scaleIn">
           <div className="w-24 h-24 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 shadow-2xl">
             <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -278,7 +278,7 @@ export default function GiornoPage() {
     <main className="min-h-screen bg-gray-50 pb-tabbar-lg">
 
       {/* Immersive header */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-6 pb-16">
+      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
         <div className="max-w-xl mx-auto">
           <button
             onClick={() => router.push(`/settimana/${weekNumber}`)}

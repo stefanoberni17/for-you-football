@@ -132,7 +132,7 @@ export default function GatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-tabbar-lg">
+    <main className="min-h-screen bg-forest-50 pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
 
         <button

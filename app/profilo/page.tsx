@@ -289,7 +289,7 @@ export default function ProfiloPage() {
   const isInputStep = telegramStep === 2;
 
   return (
-    <main className="min-h-screen bg-forest-50 py-8 px-4 pb-tabbar-lg">
+    <main className="min-h-screen bg-forest-50 pt-safe px-4 pb-tabbar-lg">
 
       {/* ── Telegram Modal ─────────────────────────────────────────────────── */}
       {showTelegramModal && (

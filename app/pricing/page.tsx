@@ -78,7 +78,7 @@ function PricingContent() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-forest-50 via-amber-50 to-forest-100 py-10 px-4 pb-tabbar">
+    <main className="min-h-screen bg-gradient-to-br from-forest-50 via-amber-50 to-forest-100 pt-safe px-4 pb-tabbar">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Scegli il tuo piano</h1>

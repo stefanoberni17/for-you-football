@@ -202,7 +202,7 @@ export default function SettimanaPage() {
       )}
 
       {/* Immersive header */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-6 pb-16">
+      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
         <div className="max-w-3xl mx-auto">
           <button
             onClick={() => router.push('/settimane')}
