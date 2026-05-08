@@ -340,6 +340,7 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)
 - `Durata Espira` (number) — secondi espirazione (default 6 se vuoto)
+- `Audio Pratica` (url) — URL pubblico Supabase Storage del file MP3 registrato (opzionale, fallback al testo se vuoto)
 
 ### IDs Record Settimane (centralizzati in `lib/constants.ts`)
 ```typescript
@@ -813,8 +814,10 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Fix — iOS Safari auto-zoom:** `globals.css` forza `font-size: 16px` su `input/textarea/select` in `@media (max-width: 768px)`.
 - [x] **UI — Favicon:** `app/layout.tsx` punta a `/icons/icon-192x192.png` e `icon-512x512.png` tramite `metadata.icons`.
 - [x] **UI — Animazione ⚽ caricamento:** `@keyframes ballBounce` + `.animate-ball-bounce` in `globals.css`; sostituito `animate-pulse` con `animate-ball-bounce` su tutti i loading screen con la palla (`page.tsx`, `giorno/[week]/[day]/page.tsx`, `onboarding/page.tsx`).
+- [x] **Feature — Audio guida pratiche (opzionale):** campo `Audio Pratica` (URL) su Notion DB Giorni; `urlField()` helper in `lib/notion.ts`; mini-player in `PracticePopup.tsx` (toggle "🎧 Ascolta versione audio" → play/pausa + progress bar). File MP3 ospitati su Supabase Storage bucket pubblico `practice-audio`. Audio convive con timer/respiro (non li sostituisce). Cleanup audio su unmount/complete/skip.
 
 ### Da fare
+- [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
 - [ ] **Fase 2 — Auth chain (staging):** rimuovere fallback `userId || body.userId` in tutte le API route; aggiungere `middleware.ts` che verifica sessione Supabase e redirige a `/login`.
 - [ ] **Fase 2 — Env vars da attivare:** `TELEGRAM_WEBHOOK_SECRET` (+ ri-registrare webhook con `secret_token`), `RESEND_API_KEY`, `SAFETY_ALERT_EMAIL`.
 - [ ] **Fase 3 — RPC atomica gate:** `app/api/gate/route.ts` linee 82-110 — wrap in transazione Supabase RPC per evitare race condition su doppio POST.

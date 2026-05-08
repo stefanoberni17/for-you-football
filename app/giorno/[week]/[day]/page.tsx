@@ -565,6 +565,7 @@ export default function GiornoPage() {
           durataInspira={giorno.durataInspira || undefined}
           durataEspira={giorno.durataEspira || undefined}
           tipoPratica={giorno.tipoPratica || 'respirazione'}
+          audioUrl={giorno.audioUrl || undefined}
           onComplete={async () => {
             setShowPracticePopup(false);
             // Per tipo "giornata": segna come "started" e mostra messaggio uscita

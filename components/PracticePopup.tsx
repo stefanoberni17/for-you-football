@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
 
 type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
@@ -13,6 +13,7 @@ interface PracticePopupProps {
   durataInspira?: number;
   durataEspira?: number;
   tipoPratica?: TipoPratica;
+  audioUrl?: string | null;
   onComplete: () => void;
   onSkip: () => void;
 }
@@ -25,6 +26,7 @@ export default function PracticePopup({
   durataInspira = 4,
   durataEspira = 6,
   tipoPratica = 'respirazione',
+  audioUrl,
   onComplete,
   onSkip,
 }: PracticePopupProps) {
@@ -71,6 +73,116 @@ export default function PracticePopup({
     return () => clearTimeout(timeout);
   }, [phase, durataInspira, durataEspira, showBreathCircle]);
 
+  // Audio guida (opzionale)
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioVisible, setAudioVisible] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+
+  useEffect(() => {
+    if (!audioUrl) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onLoaded = () => setAudioDuration(audio.duration || 0);
+    const onTime = () => setAudioCurrentTime(audio.currentTime);
+    const onEnded = () => {
+      setIsAudioPlaying(false);
+      setAudioCurrentTime(0);
+    };
+
+    audio.addEventListener('loadedmetadata', onLoaded);
+    audio.addEventListener('timeupdate', onTime);
+    audio.addEventListener('ended', onEnded);
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', onLoaded);
+      audio.removeEventListener('timeupdate', onTime);
+      audio.removeEventListener('ended', onEnded);
+    };
+  }, [audioUrl]);
+
+  // Pause audio on unmount
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+    };
+  }, []);
+
+  const toggleAudio = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isAudioPlaying) {
+      audio.pause();
+      setIsAudioPlaying(false);
+    } else {
+      audio.play().catch(e => console.log('Audio play failed:', e));
+      setIsAudioPlaying(true);
+    }
+  };
+
+  const stopAudio = () => {
+    audioRef.current?.pause();
+    setIsAudioPlaying(false);
+  };
+
+  const handleComplete = () => {
+    stopAudio();
+    onComplete();
+  };
+
+  const handleSkip = () => {
+    stopAudio();
+    onSkip();
+  };
+
+  const formatAudioTime = (s: number) => {
+    if (!isFinite(s) || s < 0) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${String(sec).padStart(2, '0')}`;
+  };
+
+  const audioPlayer = audioUrl ? (
+    !audioVisible ? (
+      <button
+        onClick={() => setAudioVisible(true)}
+        className="w-full bg-white/70 hover:bg-white border border-forest-200 text-forest-600 font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 mb-4"
+      >
+        🎧 Ascolta versione audio
+      </button>
+    ) : (
+      <div className="bg-white/90 backdrop-blur-sm border border-forest-200 rounded-xl p-3 mb-4 flex items-center gap-3">
+        <button
+          onClick={toggleAudio}
+          aria-label={isAudioPlaying ? 'Pausa audio' : 'Riproduci audio'}
+          className="w-10 h-10 rounded-full bg-forest-500 hover:bg-forest-600 text-white flex items-center justify-center flex-shrink-0 transition-colors"
+        >
+          {isAudioPlaying ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+          )}
+        </button>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+            <span className="font-medium">🎧 Guida audio</span>
+            <span className="tabular-nums">
+              {formatAudioTime(audioCurrentTime)} / {formatAudioTime(audioDuration)}
+            </span>
+          </div>
+          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-forest-500 transition-all"
+              style={{ width: audioDuration > 0 ? `${(audioCurrentTime / audioDuration) * 100}%` : '0%' }}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  ) : null;
+
   const startPractice = () => {
     setTimeLeft(totalSeconds);
     setPhase('practicing');
@@ -88,6 +200,7 @@ export default function PracticePopup({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
       <div className="bg-gradient-to-br from-forest-50 to-forest-100 rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+        {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
 
         {phase === 'setup' && (
           <>
@@ -105,6 +218,8 @@ export default function PracticePopup({
               )}
               <p className="text-xs text-gray-500">{titolo}</p>
             </div>
+
+            {audioPlayer}
 
             {/* Step della pratica */}
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-5 mb-5 border border-forest-200">
@@ -153,7 +268,7 @@ export default function PracticePopup({
               </>
             )}
             <button
-              onClick={onSkip}
+              onClick={handleSkip}
               className="w-full text-gray-400 hover:text-gray-600 text-sm py-2 transition-colors"
             >
               Ho gia praticato da solo →
@@ -180,6 +295,8 @@ export default function PracticePopup({
               </h2>
               <p className="text-xs text-gray-500">{titolo}</p>
             </div>
+
+            {audioPlayer}
 
             {/* Step pratica visibili durante timer */}
             <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 mb-5 border border-forest-100 max-h-24 overflow-y-auto">
@@ -270,7 +387,7 @@ export default function PracticePopup({
             </div>
 
             <button
-              onClick={onComplete}
+              onClick={handleComplete}
               className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base"
             >
               {tipoPratica === 'giornata' ? 'Ho capito, ci provo oggi →' : 'Continua →'}

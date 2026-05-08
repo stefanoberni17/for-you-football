@@ -96,6 +96,11 @@ export function richTextLines(prop: any): string[] {
   return text ? text.split('\n').map((s) => s.trim()).filter(Boolean) : [];
 }
 
+/** URL da url property (null se vuoto) */
+export function urlField(prop: any): string | null {
+  return prop?.url ?? null;
+}
+
 // ─── Mapping strutturati ──────────────────────────────────────────────────────
 
 /** Mappa una pagina Notion DB Settimane → oggetto Football */
@@ -144,5 +149,6 @@ export function mapGiorno(page: any) {
     durataInspira: num(p['Durata Inspira']),
     durataEspira: num(p['Durata Espira']),
     tipoPratica: select(p['Tipo Pratica']), // respirazione | visualizzazione | riflessione | giornata
+    audioUrl: urlField(p['Audio Pratica']), // URL pubblico Supabase Storage MP3 (opzionale)
   };
 }
