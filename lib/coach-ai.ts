@@ -565,6 +565,70 @@ export async function buildUserContext(userId: string): Promise<string> {
     weekCheckinSummary = `\n**ULTIMI 7 GIORNI (media su ${weekCheckins.length} check-in):**\n- Stato fisico medio: ${avgP !== null ? `${avgP}/10` : '—'}\n- Sonno medio: ${avgS !== null ? `${avgS}h` : '—'}\n- Recupero muscolare medio: ${avgR !== null ? `${avgR}/10` : '—'}\n- Stato mentale medio: ${avgM !== null ? `${avgM}/10` : '—'}`;
   }
 
+  // Le 5 azioni settimanali ("Le mie azioni") + completion rate ultimi 7gg
+  const { data: weeklyActions } = await supabaseAdmin
+    .from('user_actions')
+    .select('id, action_text, position')
+    .eq('user_id', userId)
+    .is('archived_at', null)
+    .order('position', { ascending: true });
+
+  let weeklyActionsSummary = '';
+  if (weeklyActions && weeklyActions.length > 0) {
+    const actionIds = weeklyActions.map((a: any) => a.id);
+    const { data: completions7d } = await supabaseAdmin
+      .from('user_action_completions')
+      .select('action_id, date')
+      .eq('user_id', userId)
+      .in('action_id', actionIds)
+      .gte('date', sevenDaysAgo);
+
+    const completedToday = new Set(
+      (completions7d || []).filter((c: any) => c.date === todayStr).map((c: any) => c.action_id)
+    );
+
+    // Conta per azione (ultimi 7 giorni — denominatore = 7)
+    const countByAction: Record<string, number> = {};
+    for (const c of completions7d || []) {
+      const aid = (c as any).action_id;
+      countByAction[aid] = (countByAction[aid] || 0) + 1;
+    }
+
+    // Streak ≥3/5 negli ultimi 7 giorni
+    const completedByDate: Record<string, number> = {};
+    for (const c of completions7d || []) {
+      const d = (c as any).date;
+      completedByDate[d] = (completedByDate[d] || 0) + 1;
+    }
+    let streak = 0;
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      if ((completedByDate[d] || 0) >= 3) streak++;
+      else break;
+    }
+
+    const totalToday = completedToday.size;
+    const totalActions = weeklyActions.length;
+
+    const actionLines = weeklyActions
+      .map((a: any) => {
+        const done7 = countByAction[a.id] || 0;
+        const today = completedToday.has(a.id) ? '✓' : '○';
+        return `- ${today} "${a.action_text}" (${done7}/7 ultimi 7gg)`;
+      })
+      .join('\n');
+
+    weeklyActionsSummary = `
+## Le mie 5 azioni della settimana
+**Le ${totalActions} azioni che il calciatore si impegna a fare ogni giorno** (impegno scelto da lui — non sono pratiche del percorso).
+
+${actionLines}
+
+**Oggi: ${totalToday}/${totalActions} fatte.** Streak attuale: ${streak} ${streak === 1 ? 'giorno' : 'giorni'} con almeno 3 azioni.
+
+⚠️ NON usare queste azioni come "compiti" o pratiche da assegnare. Sono già un suo impegno. Puoi commentarle solo se l'utente le menziona o se chiede esplicitamente come sta andando con loro.`;
+  }
+
   const todayDate = new Date().toLocaleDateString('it-IT', {
     weekday: 'long',
     day: 'numeric',
@@ -610,6 +674,7 @@ ${todayCheckin ? `**OGGI:**
 - Recupero muscolare: ${todayCheckin.recovery_quality !== null ? `${todayCheckin.recovery_quality}/10` : 'non registrato'}
 - Stato mentale: ${todayCheckin.mental_state !== null ? `${todayCheckin.mental_state}/10` : 'non registrato'}` : 'Nessun check-in registrato oggi.'}
 ${weekCheckinSummary}
+${weeklyActionsSummary}
 
 ## Riflessioni dal campo
 ${reflections && reflections.length > 0

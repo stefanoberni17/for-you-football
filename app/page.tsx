@@ -16,6 +16,8 @@ import { shouldRedirectToPaywall } from '@/lib/checkAccess';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
+import ActionsCard from '@/components/ActionsCard';
+import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
 import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, Target, BarChart3, Map, Compass } from 'lucide-react';
 
 interface CheckinData {
@@ -69,6 +71,9 @@ export default function HomePage() {
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [checkins, setCheckins] = useState<CheckinData[]>([]);
+  const [actionsTotal, setActionsTotal] = useState(0);
+  const [actionsTodayCount, setActionsTodayCount] = useState(0);
+  const [actionsStreak, setActionsStreak] = useState(0);
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -146,6 +151,23 @@ export default function HomePage() {
           if (calJson.trainingDays?.length > 0) {
             setCalendarData(calJson);
           }
+        }
+      } catch {}
+
+      // Carica azioni settimanali (per ActionsCard + Banner)
+      try {
+        const [aRes, hRes] = await Promise.all([
+          fetch(`/api/actions?userId=${session.user.id}`),
+          fetch(`/api/actions/history?userId=${session.user.id}&days=14`),
+        ]);
+        if (aRes.ok) {
+          const a = await aRes.json();
+          setActionsTotal(a.total || 0);
+          setActionsTodayCount(a.today_count || 0);
+        }
+        if (hRes.ok) {
+          const h = await hRes.json();
+          setActionsStreak(h.current_streak || 0);
         }
       } catch {}
 
@@ -238,6 +260,15 @@ export default function HomePage() {
         {/* Banner installazione PWA */}
         <InstallBanner totalCompleted={totalCompleted} />
 
+        {/* Banner settimanale "Le mie 5 azioni" */}
+        {userId && (
+          <WeeklyActionsBanner
+            userId={userId}
+            needsSetup={actionsTotal === 0}
+            lastDismiss={profile?.last_weekly_actions_dismiss || null}
+          />
+        )}
+
         {/* Banner prima visita */}
         {profile?.current_week === 1 && totalCompleted === 0 && (
           <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
@@ -290,6 +321,13 @@ export default function HomePage() {
             </button>
           )}
         </div>
+
+        {/* Card "Le mie 5 azioni" — entry point compatto */}
+        <ActionsCard
+          total={actionsTotal}
+          todayCount={actionsTodayCount}
+          streak={actionsStreak}
+        />
 
         {/* Progress settimana corrente */}
         <div className="bg-white rounded-2xl shadow-lg p-5">

@@ -12,7 +12,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
-import { Activity, Moon, Zap, Brain, Flame } from 'lucide-react';
+import { Activity, Moon, Zap, Brain, Flame, Target, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface Checkin {
   date: string;
@@ -120,6 +120,14 @@ export default function StatistichePage() {
   const [userId, setUserId] = useState('');
   const [checkins, setCheckins] = useState<Checkin[]>([]);
   const [period, setPeriod] = useState<7 | 30 | 90>(30);
+  const [actionsHistory, setActionsHistory] = useState<{
+    by_date: { date: string; completed: number }[];
+    current_streak: number;
+    longest_streak: number;
+    by_action: { action_id: string; action_text: string; completion_rate: number; completed_days: number; total_days: number }[];
+    active_count: number;
+    threshold: number;
+  } | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -133,9 +141,16 @@ export default function StatistichePage() {
   }, [router]);
 
   const loadData = async (uid: string, days: number) => {
-    const res = await fetch(`/api/checkin/history?userId=${uid}&days=${days}`);
-    const data = await res.json();
+    const [checkinsRes, actionsRes] = await Promise.all([
+      fetch(`/api/checkin/history?userId=${uid}&days=${days}`),
+      fetch(`/api/actions/history?userId=${uid}&days=30`),
+    ]);
+    const data = await checkinsRes.json();
     setCheckins(data.checkins || []);
+    if (actionsRes.ok) {
+      const a = await actionsRes.json();
+      setActionsHistory(a);
+    }
   };
 
   const filtered = checkins.slice(-period);
@@ -276,6 +291,150 @@ export default function StatistichePage() {
         ) : (
           <div className="bg-white rounded-2xl shadow-sm p-5 text-center border border-dashed border-gray-200">
             <p className="text-gray-400 text-sm">Nessun check-in oggi — torna alla dashboard per registrarlo</p>
+          </div>
+        )}
+
+        {/* ─── Le tue azioni — storico ─────────────────────────────────── */}
+        {actionsHistory && actionsHistory.by_action.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-5 space-y-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
+                Le tue azioni
+              </h2>
+              <button
+                onClick={() => router.push('/oggi')}
+                className="text-xs text-forest-500 font-semibold hover:underline"
+              >
+                Vai a Oggi →
+              </button>
+            </div>
+
+            {/* Streak counters */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-3">
+                <p className="text-[10px] uppercase tracking-wider text-orange-700 font-semibold mb-0.5 flex items-center gap-1">
+                  <Flame className="w-3 h-3" aria-hidden="true" /> Streak attuale
+                </p>
+                <p className="text-2xl font-bold text-orange-600 leading-tight">
+                  {actionsHistory.current_streak}
+                  <span className="text-sm font-normal text-orange-700 ml-1">
+                    {actionsHistory.current_streak === 1 ? 'giorno' : 'giorni'}
+                  </span>
+                </p>
+              </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+                <p className="text-[10px] uppercase tracking-wider text-gray-600 font-semibold mb-0.5">
+                  Streak record
+                </p>
+                <p className="text-2xl font-bold text-gray-700 leading-tight">
+                  {actionsHistory.longest_streak}
+                  <span className="text-sm font-normal text-gray-500 ml-1">
+                    {actionsHistory.longest_streak === 1 ? 'giorno' : 'giorni'}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <p className="text-[11px] text-gray-400 -mt-2">
+              Conta giorni con almeno {actionsHistory.threshold} azioni completate.
+            </p>
+
+            {/* Heatmap ultimi 30 giorni */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">Ultimi 30 giorni</p>
+              <div className="grid grid-cols-[repeat(30,minmax(0,1fr))] gap-1">
+                {actionsHistory.by_date.map(d => {
+                  const c = d.completed;
+                  const cls =
+                    c >= 5 ? 'bg-forest-600' :
+                    c >= 3 ? 'bg-forest-400' :
+                    c >= 1 ? 'bg-amber-300' :
+                    'bg-gray-100';
+                  const isoToday = new Date().toISOString().split('T')[0];
+                  return (
+                    <div
+                      key={d.date}
+                      className={`aspect-square rounded-sm ${cls} ${d.date === isoToday ? 'ring-1 ring-forest-700' : ''}`}
+                      title={`${d.date}: ${c} azioni`}
+                    />
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-end gap-2 mt-2 text-[10px] text-gray-500">
+                <span className="inline-block w-2 h-2 bg-gray-100 rounded-sm" /> 0
+                <span className="inline-block w-2 h-2 bg-amber-300 rounded-sm" /> 1-2
+                <span className="inline-block w-2 h-2 bg-forest-400 rounded-sm" /> 3-4
+                <span className="inline-block w-2 h-2 bg-forest-600 rounded-sm" /> 5
+              </div>
+            </div>
+
+            {/* Top / bottom azioni */}
+            {actionsHistory.by_action.length > 1 && (() => {
+              const sorted = [...actionsHistory.by_action].sort((a, b) => b.completion_rate - a.completion_rate);
+              const top = sorted.slice(0, Math.min(3, sorted.length));
+              const bottom = sorted.length > 3 ? sorted.slice(-Math.min(3, sorted.length - 3)).reverse() : [];
+              return (
+                <div className="space-y-3 pt-1">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3 text-emerald-500" aria-hidden="true" />
+                      Le più costanti
+                    </p>
+                    <div className="space-y-1.5">
+                      {top.map(a => (
+                        <div key={a.action_id} className="flex items-center gap-2 text-xs">
+                          <div className="flex-1 min-w-0 truncate text-gray-700">{a.action_text}</div>
+                          <div className="text-emerald-600 font-bold tabular-nums flex-shrink-0">
+                            {Math.round(a.completion_rate * 100)}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {bottom.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
+                        <TrendingDown className="w-3 h-3 text-red-400" aria-hidden="true" />
+                        Su cui lavorare
+                      </p>
+                      <div className="space-y-1.5">
+                        {bottom.map(a => (
+                          <div key={a.action_id} className="flex items-center gap-2 text-xs">
+                            <div className="flex-1 min-w-0 truncate text-gray-700">{a.action_text}</div>
+                            <div className="text-red-400 font-bold tabular-nums flex-shrink-0">
+                              {Math.round(a.completion_rate * 100)}%
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* CTA pianifica le azioni se l'utente non ne ha ancora */}
+        {actionsHistory && actionsHistory.active_count === 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+            <div className="flex items-start gap-3 mb-3">
+              <Target className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="flex-1">
+                <p className="text-sm font-bold text-amber-900">
+                  Non hai ancora pianificato le tue azioni
+                </p>
+                <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+                  Scegli 5 azioni concrete da pro che fai ogni giorno. Lo streak parte appena cominci.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => router.push('/oggi?setup=1')}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+            >
+              Pianifica ora →
+            </button>
           </div>
         )}
 

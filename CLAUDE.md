@@ -52,6 +52,7 @@ for-you-football/
 │   ├── gate/[week]/page.tsx               # Gate giorno 7 (3 domande obbligatorie)
 │   ├── calendar/page.tsx                  # Setup calendario settimanale
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
+│   ├── oggi/page.tsx                      # "Le mie 5 azioni" — checklist giornaliera + setup
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
@@ -68,10 +69,18 @@ for-you-football/
 │       ├── checkin/
 │       │   ├── route.ts                   # GET ?userId= (oggi) / POST upsert check-in
 │       │   └── history/route.ts           # GET ?userId=&days=N → storico ultimi N giorni
+│       ├── actions/
+│       │   ├── route.ts                   # GET attive + completion oggi / POST replace 5 azioni
+│       │   ├── toggle/route.ts            # POST tick/untick azione di oggi
+│       │   ├── history/route.ts           # GET storico + streak per /statistiche
+│       │   └── dismiss-weekly-prompt/route.ts  # POST chiude banner settimanale
 │       └── cron/
 │           └── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg
 ├── components/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Coach / Profilo
+│   ├── ActionsCard.tsx                    # Card compatta dashboard "5 azioni" (3 varianti)
+│   ├── ActionsSetupSheet.tsx              # Bottom-sheet selezione catalogo + custom (max 5)
+│   ├── WeeklyActionsBanner.tsx            # Banner soft sulla home (lunedì o se vuoto)
 │   ├── ChatBot.tsx                        # UI chat Coach (filtra messaggio benvenuto hardcoded)
 │   ├── CheckinContext.tsx                  # Context provider: { checkinDone } boolean
 │   ├── GlobalCheckinWrapper.tsx            # Wrapper globale: verifica check-in oggi, mostra modale se mancante
@@ -87,6 +96,7 @@ for-you-football/
 │   ├── constants.ts                       # IDs Notion, costanti percorso — UNICA fonte di verità
 │   ├── notion.ts                          # Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
 │   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
+│   ├── actionsCatalog.ts                  # Catalogo ~30 azioni "act as if" + helper filtro per settimana
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)
@@ -219,6 +229,38 @@ UNIQUE(user_id, date)
 - RLS abilitata (SELECT/INSERT/UPDATE per l'utente proprietario)
 - Indice: `idx_daily_checkin_user_date ON (user_id, date DESC)`
 - Il check-in viene gestito da `GlobalCheckinWrapper` (mostrato una volta al giorno su tutte le pagine); "Salta per oggi" usa solo stato locale (se l'utente fa refresh lo rivede)
+
+### `user_actions` — Le 5 azioni settimanali
+```sql
+id            UUID PRIMARY KEY
+user_id       UUID REFERENCES auth.users(id) ON DELETE CASCADE
+action_text   TEXT NOT NULL
+source        TEXT CHECK (source IN ('catalog','custom'))
+catalog_id    TEXT                                -- es. 'cat_pre_001' se da catalogo
+category      TEXT CHECK (category IN ('pre-allenamento','in-campo','post-errore','recupero','mentale','vita'))
+principle     TEXT CHECK (principle IN ('presenza','osservazione','ascolto','ascolto-applicato')) -- nullable
+position      SMALLINT CHECK (BETWEEN 1 AND 5)
+archived_at   TIMESTAMPTZ                         -- soft-delete (preserva storico)
+created_at, updated_at
+```
+- Indice partial: `idx_user_actions_active ON (user_id) WHERE archived_at IS NULL`
+- RLS owner-only; sostituzione atomica via RPC `replace_user_actions(p_user_id, p_actions jsonb)` (`SECURITY DEFINER`, verifica caller=owner, archivia attive + insert nuove). Fallback API a 2 query separate se RPC fallisce.
+
+### `user_action_completions` — Tick giornalieri
+```sql
+id          UUID PRIMARY KEY
+user_id     UUID REFERENCES auth.users(id) ON DELETE CASCADE
+action_id   UUID REFERENCES user_actions(id) ON DELETE CASCADE
+date        DATE NOT NULL DEFAULT CURRENT_DATE
+created_at
+UNIQUE(action_id, date)
+```
+- 1 riga = 1 tick. Untick = DELETE. Reset giornaliero = filtro `WHERE date = CURRENT_DATE`, no cron.
+- Indice: `idx_user_action_completions_user_date ON (user_id, date DESC)`
+- Streak morbido: ≥3 azioni completate → giorno valido per streak.
+
+### `profiles.last_weekly_actions_dismiss DATE`
+- Data dell'ultimo "Tieni le stesse" sul `WeeklyActionsBanner`. Banner riappare se `dismiss < lunedì-corrente` o se utente non ha azioni attive.
 
 ### `stripe_events` (idempotenza webhook)
 ```sql
@@ -574,6 +616,14 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Visualizzazione/modifica profilo calciatore
 - Collegamento account Telegram
 
+### Le mie azioni (`app/oggi/page.tsx`)
+- **Immersive header** con data corrente + counter "X/Y fatte" + progress bar bianca
+- **Empty state** con CTA "Pianifica le mie azioni" + frase "act as if"
+- **Lista checkbox grandi** (≥44px tap target). Tick → POST `/api/actions/toggle` (optimistic update + vibrate 30ms)
+- **Bottone "Modifica le 5 della settimana"** apre `ActionsSetupSheet` (anche tramite `?setup=1` query param)
+- **Streak card** in fondo se streak > 0 (Flame icon + "N giorni di fila ≥3 azioni")
+- Carica `/api/actions` + `/api/actions/history?days=30`
+
 ### Statistiche (`app/statistiche/page.tsx`)
 - Selettore periodo: 7 / 30 / 90 giorni (dati caricati in blocco, filtrati client-side)
 - Card "Oggi": stato fisico, sonno, recupero, stato mentale
@@ -583,6 +633,7 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Trend analysis (↑↓→) color-coded per ogni metrica
 - Medie periodo (fisico, sonno, recupero, mentale)
 - Dati da `GET /api/checkin/history?userId=X&days=90`
+- **Sezione "Le tue azioni"** (sotto la card Oggi): streak attuale + record, heatmap 30 giorni (4 colori: 0/1-2/3-4/5), top 3 azioni più costanti + bottom 3 "su cui lavorare". Dati da `GET /api/actions/history?days=30`. CTA "Pianifica ora →" se l'utente non ha ancora azioni attive.
 
 ---
 
@@ -594,6 +645,28 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Suggestion pills visibili solo prima del primo messaggio utente
 - Loader animato durante attesa risposta
 - Scroll automatico ai nuovi messaggi
+
+### `ActionsCard.tsx`
+- Card compatta sulla dashboard, 3 varianti automatiche:
+  - **Empty** (total=0): bg amber con CTA "Pianifica le tue 5 azioni"
+  - **Normal**: bg bianca con counter `X/Y` + progress bar gradient
+  - **All-done**: bg gradient verde con streak counter + Flame
+- Tap → `/oggi`. Icone Lucide (Target, ChevronRight, Flame).
+
+### `WeeklyActionsBanner.tsx`
+- Banner amber/orange sulla dashboard. Visibile solo se:
+  - Lunedì E `last_weekly_actions_dismiss < lunedì-corrente`, OPPURE
+  - L'utente non ha azioni attive (forza visibilità)
+- Bottoni: "Aggiorna le 5" → `/oggi?setup=1`; "Tieni le stesse" → POST dismiss + chiusura locale.
+- Calcola `mondayOfThisWeek()` da `Date.getDay()` locale; non bloccante.
+
+### `ActionsSetupSheet.tsx`
+- Bottom-sheet full-screen aperto da `/oggi?setup=1` o dal bottone "Modifica".
+- Pill toggle filtro: `[Per la tua settimana]` (default, rispetta REGOLA ANTICIPAZIONI tramite `allowedPrinciplesForWeek`) / `[Tutte]`.
+- Catalogo ~30 azioni raggruppate per categoria collassabile (ChevronDown).
+- Item: checkbox custom + testo + badge principio (W1/W2/W3/W4).
+- Sezione "+ Aggiungi azione personalizzata" con input + select categoria + counter 120 char.
+- Sticky bottom: chip selezionate + counter "X/5" + bottone Salva (disabled fuori da 1-5).
 
 ### `PracticePopup.tsx`
 - UI pratica giornaliera con timer countdown
@@ -835,6 +908,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **UI — Restyling /settimana/[id] (passi della settimana):** immersive header con back-button, principio + strumento, progress bar bianca; card intro + card "Obiettivo settimana" verde con icona Target; timeline verticale "Il percorso settimanale" con linea grigia che connette i 7 nodi-giorno; nodi mostrano Check/Key/Lock/Clock/numero a seconda dello stato; badge "Oggi" sul prossimo giorno da fare; icone Lucide.
 - [x] **PWA — Safe-area iPhone top:** utility `.pt-safe` (`max(2rem, env(safe-area-inset-top))`) e `.pt-safe-immersive` (`calc(1.5rem + env(safe-area-inset-top))`) in `globals.css`. Applicate a tutte le pagine raggiungibili dalla tab bar: flat (`/`, `/profilo`, `/statistiche`, `/gate/[w]`, `/beta-complete`, `/pricing`) usano `.pt-safe`; immersive header (`/settimane`, `/settimana/[id]`, `/giorno/[w]/[d]`, `/week-complete/[w]`) usano `.pt-safe-immersive` (gradient si estende sotto la status bar ma il contenuto resta sotto la safe-area). `/chat` usa `fixed inset-0` con padding-top safe-area inline.
 - [x] **UI — BottomTabBar floating iOS-style:** barra bianca semitrasparente `bg-white/85 backdrop-blur-md`, bordo `rounded-2xl`, ombra `shadow-[0_4px_24px_rgba(20,26,22,0.10)]`, margini laterali via `px-3 max-w-md`. Outer `pointer-events-none` per non bloccare il contenuto sottostante; inner `pointer-events-auto`. Indicator: linea forest-500 sopra icona attiva + scale-105 + label semibold; inattivi a opacity-60. `pb-tabbar` aggiornato a `5.5rem` / `pb-tabbar-lg` a `7.5rem` per accomodare il margin.
+- [x] **Feature — "Le mie 5 azioni" (commitment giornaliero "act as if"):** funzione di pianificazione settimanale ispirata ad Atomic Habits (James Clear). L'utente sceglie max 5 azioni concrete da pro-calciatore che si impegna a fare ogni giorno; le 5 sono fisse per la settimana (modificabili sempre), si tickano quotidianamente, si resettano a mezzanotte tramite filtro `WHERE date = CURRENT_DATE` (no cron). Schema: tabelle `user_actions` (soft-delete via `archived_at`) + `user_action_completions` (1 riga per tick, untick = DELETE) + colonna `profiles.last_weekly_actions_dismiss` + RPC atomica `replace_user_actions`. RLS owner-only su entrambe. Catalogo ~30 azioni in `lib/actionsCatalog.ts` organizzate per categoria (pre-allenamento/in-campo/post-errore/recupero/mentale/vita) e per principio (presenza/osservazione/ascolto/ascolto-applicato), allineate al system prompt del Coach (rispetta REGOLA ANTICIPAZIONI: utente W1 vede solo azioni con principle ∈ `[presenza, null]`). API route: `GET/POST /api/actions`, `POST /api/actions/toggle`, `GET /api/actions/history`, `POST /api/actions/dismiss-weekly-prompt`. UI: pagina `/oggi` con immersive header + checkbox grandi + streak; bottom-sheet `ActionsSetupSheet` con filtro "Per la tua settimana"/"Tutte" + custom; banner soft `WeeklyActionsBanner` su dashboard (lunedì o se vuoto); card compatta `ActionsCard` su dashboard (3 varianti: empty/normal/all-done con streak); sezione storico in `/statistiche` con streak attuale+record, heatmap 30gg colorata (gray/amber/forest-400/forest-600), top/bottom azioni per completion rate. Streak morbido: ≥3/5 azioni → giorno valido. Coach AI: `buildUserContext()` include sezione "Le mie 5 azioni" con stato di oggi, completion rate ultimi 7gg per ogni azione, e streak attuale, con istruzione "non usare come compiti — solo se l'utente le menziona o chiede esplicitamente". Migration `docs/migrations/003_weekly_actions.sql`.
 
 ### Da fare
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
