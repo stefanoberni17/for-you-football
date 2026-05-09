@@ -52,7 +52,7 @@ for-you-football/
 │   ├── gate/[week]/page.tsx               # Gate giorno 7 (3 domande obbligatorie)
 │   ├── calendar/page.tsx                  # Setup calendario settimanale
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
-│   ├── oggi/page.tsx                      # "Le mie 5 azioni" — checklist giornaliera + setup
+│   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
@@ -78,7 +78,7 @@ for-you-football/
 │           └── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg
 ├── components/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Coach / Profilo
-│   ├── ActionsCard.tsx                    # Card compatta dashboard "5 azioni" (3 varianti)
+│   ├── ActionsCard.tsx                    # Card compatta dashboard "Le tue azioni durante il giorno" (3 varianti)
 │   ├── ActionsSetupSheet.tsx              # Bottom-sheet selezione catalogo + custom (max 5)
 │   ├── WeeklyActionsBanner.tsx            # Banner soft sulla home (lunedì o se vuoto)
 │   ├── ChatBot.tsx                        # UI chat Coach (filtra messaggio benvenuto hardcoded)
@@ -230,7 +230,7 @@ UNIQUE(user_id, date)
 - Indice: `idx_daily_checkin_user_date ON (user_id, date DESC)`
 - Il check-in viene gestito da `GlobalCheckinWrapper` (mostrato una volta al giorno su tutte le pagine); "Salta per oggi" usa solo stato locale (se l'utente fa refresh lo rivede)
 
-### `user_actions` — Le 5 azioni settimanali
+### `user_actions` — "Le tue azioni durante il giorno" (max 5 attive)
 ```sql
 id            UUID PRIMARY KEY
 user_id       UUID REFERENCES auth.users(id) ON DELETE CASCADE
@@ -648,7 +648,7 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 
 ### `ActionsCard.tsx`
 - Card compatta sulla dashboard, 3 varianti automatiche:
-  - **Empty** (total=0): bg amber con CTA "Pianifica le tue 5 azioni"
+  - **Empty** (total=0): bg amber con CTA "Pianifica le tue azioni della settimana"
   - **Normal**: bg bianca con counter `X/Y` + progress bar gradient
   - **All-done**: bg gradient verde con streak counter + Flame
 - Tap → `/oggi`. Icone Lucide (Target, ChevronRight, Flame).
@@ -908,7 +908,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **UI — Restyling /settimana/[id] (passi della settimana):** immersive header con back-button, principio + strumento, progress bar bianca; card intro + card "Obiettivo settimana" verde con icona Target; timeline verticale "Il percorso settimanale" con linea grigia che connette i 7 nodi-giorno; nodi mostrano Check/Key/Lock/Clock/numero a seconda dello stato; badge "Oggi" sul prossimo giorno da fare; icone Lucide.
 - [x] **PWA — Safe-area iPhone top:** utility `.pt-safe` (`max(2rem, env(safe-area-inset-top))`) e `.pt-safe-immersive` (`calc(1.5rem + env(safe-area-inset-top))`) in `globals.css`. Applicate a tutte le pagine raggiungibili dalla tab bar: flat (`/`, `/profilo`, `/statistiche`, `/gate/[w]`, `/beta-complete`, `/pricing`) usano `.pt-safe`; immersive header (`/settimane`, `/settimana/[id]`, `/giorno/[w]/[d]`, `/week-complete/[w]`) usano `.pt-safe-immersive` (gradient si estende sotto la status bar ma il contenuto resta sotto la safe-area). `/chat` usa `fixed inset-0` con padding-top safe-area inline.
 - [x] **UI — BottomTabBar floating iOS-style:** barra bianca semitrasparente `bg-white/85 backdrop-blur-md`, bordo `rounded-2xl`, ombra `shadow-[0_4px_24px_rgba(20,26,22,0.10)]`, margini laterali via `px-3 max-w-md`. Outer `pointer-events-none` per non bloccare il contenuto sottostante; inner `pointer-events-auto`. Indicator: linea forest-500 sopra icona attiva + scale-105 + label semibold; inattivi a opacity-60. `pb-tabbar` aggiornato a `5.5rem` / `pb-tabbar-lg` a `7.5rem` per accomodare il margin.
-- [x] **Feature — "Le mie 5 azioni" (commitment giornaliero "act as if"):** funzione di pianificazione settimanale ispirata ad Atomic Habits (James Clear). L'utente sceglie max 5 azioni concrete da pro-calciatore che si impegna a fare ogni giorno; le 5 sono fisse per la settimana (modificabili sempre), si tickano quotidianamente, si resettano a mezzanotte tramite filtro `WHERE date = CURRENT_DATE` (no cron). Schema: tabelle `user_actions` (soft-delete via `archived_at`) + `user_action_completions` (1 riga per tick, untick = DELETE) + colonna `profiles.last_weekly_actions_dismiss` + RPC atomica `replace_user_actions`. RLS owner-only su entrambe. Catalogo ~30 azioni in `lib/actionsCatalog.ts` organizzate per categoria (pre-allenamento/in-campo/post-errore/recupero/mentale/vita) e per principio (presenza/osservazione/ascolto/ascolto-applicato), allineate al system prompt del Coach (rispetta REGOLA ANTICIPAZIONI: utente W1 vede solo azioni con principle ∈ `[presenza, null]`). API route: `GET/POST /api/actions`, `POST /api/actions/toggle`, `GET /api/actions/history`, `POST /api/actions/dismiss-weekly-prompt`. UI: pagina `/oggi` con immersive header + checkbox grandi + streak; bottom-sheet `ActionsSetupSheet` con filtro "Per la tua settimana"/"Tutte" + custom; banner soft `WeeklyActionsBanner` su dashboard (lunedì o se vuoto); card compatta `ActionsCard` su dashboard (3 varianti: empty/normal/all-done con streak); sezione storico in `/statistiche` con streak attuale+record, heatmap 30gg colorata (gray/amber/forest-400/forest-600), top/bottom azioni per completion rate. Streak morbido: ≥3/5 azioni → giorno valido. Coach AI: `buildUserContext()` include sezione "Le mie 5 azioni" con stato di oggi, completion rate ultimi 7gg per ogni azione, e streak attuale, con istruzione "non usare come compiti — solo se l'utente le menziona o chiede esplicitamente". Migration `docs/migrations/003_weekly_actions.sql`.
+- [x] **Feature — "Le tue azioni durante il giorno" (commitment giornaliero "act as if"):** funzione di pianificazione settimanale ispirata ad Atomic Habits (James Clear). L'utente sceglie max 5 azioni concrete che si impegna a fare ogni giorno; sono fisse per la settimana (modificabili sempre), si tickano quotidianamente, si resettano a mezzanotte tramite filtro `WHERE date = CURRENT_DATE` (no cron). Schema: tabelle `user_actions` (soft-delete via `archived_at`) + `user_action_completions` (1 riga per tick, untick = DELETE) + colonna `profiles.last_weekly_actions_dismiss` + RPC atomica `replace_user_actions`. RLS owner-only su entrambe. Catalogo 20 azioni in `lib/actionsCatalog.ts` organizzate per categoria (pre-allenamento/in-campo/post-errore/recupero/mentale/vita) e per principio (presenza/osservazione/ascolto/ascolto-applicato), allineate al system prompt del Coach (rispetta REGOLA ANTICIPAZIONI: utente W1 vede solo azioni con principle ∈ `[presenza, null]`); stile "for you football" — concrete, situazionali, senza self-help generico, suffissi che agganciano al campo (es. "il sonno è parte dell'allenamento"). API route: `GET/POST /api/actions`, `POST /api/actions/toggle`, `GET /api/actions/history`, `POST /api/actions/dismiss-weekly-prompt`. UI: pagina `/oggi` con immersive header + checkbox grandi + streak; bottom-sheet `ActionsSetupSheet` (z-[60] sopra la tab bar) con filtro "Settimana N"/"Tutte" + custom + count azioni nascoste; banner soft `WeeklyActionsBanner` su dashboard (lunedì o se vuoto); card compatta `ActionsCard` su dashboard (3 varianti: empty/normal/all-done con streak); sezione storico in `/statistiche` con streak attuale+record, heatmap 30gg colorata (gray/amber/forest-400/forest-600), top/bottom azioni per completion rate. Streak morbido: ≥3/5 azioni → giorno valido. Coach AI: `buildUserContext()` include sezione "Le tue azioni durante il giorno" con stato di oggi, completion rate ultimi 7gg per ogni azione, e streak attuale, con istruzione "non usare come compiti — solo se l'utente le menziona o chiede esplicitamente". Migration `docs/migrations/003_weekly_actions.sql`.
 
 ### Da fare
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.

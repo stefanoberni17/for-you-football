@@ -78,8 +78,8 @@ export default function WeeklyActionsBanner({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-amber-900">
             {needsSetup
-              ? 'Pianifica le tue 5 azioni della settimana'
-              : 'È lunedì — aggiorna le 5 della settimana?'}
+              ? 'Pianifica le tue azioni della settimana'
+              : 'È lunedì — aggiorna le tue azioni della settimana?'}
           </p>
           <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
             {needsSetup
@@ -94,7 +94,7 @@ export default function WeeklyActionsBanner({
           className="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-2.5 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5"
         >
           <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
-          {needsSetup ? 'Pianifica ora' : 'Aggiorna le 5'}
+          {needsSetup ? 'Pianifica ora' : 'Aggiorna'}
         </button>
         {!needsSetup && (
           <button

@@ -12,7 +12,7 @@ interface ActionsCardProps {
 /**
  * Card compatta sulla dashboard che mostra lo stato delle "5 azioni di oggi".
  * Tre varianti:
- *   - empty (total === 0): CTA "Pianifica le tue 5 azioni"
+ *   - empty (total === 0): CTA "Pianifica le tue azioni della settimana"
  *   - normal (todayCount < total): "Azioni di oggi · X/Y"
  *   - all-done (todayCount === total): celebrativa con streak
  */
@@ -31,9 +31,9 @@ export default function ActionsCard({ total, todayCount, streak }: ActionsCardPr
             <Target className="w-5 h-5 text-amber-600" aria-hidden="true" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-amber-800">Pianifica le tue 5 azioni</p>
+            <p className="text-sm font-bold text-amber-800">Pianifica le tue azioni della settimana</p>
             <p className="text-xs text-amber-700 mt-0.5">
-              Cose da pro che fai ogni giorno della settimana
+              Cose concrete che fai ogni giorno
             </p>
           </div>
           <ChevronRight className="w-5 h-5 text-amber-600 flex-shrink-0" aria-hidden="true" />
@@ -83,7 +83,7 @@ export default function ActionsCard({ total, todayCount, streak }: ActionsCardPr
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline justify-between gap-2">
-            <p className="text-sm font-bold text-gray-800">Azioni di oggi</p>
+            <p className="text-sm font-bold text-gray-800">Le tue azioni durante il giorno</p>
             <p className="text-xs font-semibold text-forest-600 tabular-nums">
               {todayCount}/{total}
             </p>

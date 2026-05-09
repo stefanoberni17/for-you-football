@@ -260,7 +260,7 @@ export default function HomePage() {
         {/* Banner installazione PWA */}
         <InstallBanner totalCompleted={totalCompleted} />
 
-        {/* Banner settimanale "Le mie 5 azioni" */}
+        {/* Banner settimanale "Le tue azioni durante il giorno" */}
         {userId && (
           <WeeklyActionsBanner
             userId={userId}
@@ -322,7 +322,7 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Card "Le mie 5 azioni" — entry point compatto */}
+        {/* Card "Le tue azioni durante il giorno" — entry point compatto */}
         <ActionsCard
           total={actionsTotal}
           todayCount={actionsTodayCount}

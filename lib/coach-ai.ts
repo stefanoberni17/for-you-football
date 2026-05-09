@@ -565,7 +565,7 @@ export async function buildUserContext(userId: string): Promise<string> {
     weekCheckinSummary = `\n**ULTIMI 7 GIORNI (media su ${weekCheckins.length} check-in):**\n- Stato fisico medio: ${avgP !== null ? `${avgP}/10` : '—'}\n- Sonno medio: ${avgS !== null ? `${avgS}h` : '—'}\n- Recupero muscolare medio: ${avgR !== null ? `${avgR}/10` : '—'}\n- Stato mentale medio: ${avgM !== null ? `${avgM}/10` : '—'}`;
   }
 
-  // Le 5 azioni settimanali ("Le mie azioni") + completion rate ultimi 7gg
+  // "Le tue azioni durante il giorno" + completion rate ultimi 7gg
   const { data: weeklyActions } = await supabaseAdmin
     .from('user_actions')
     .select('id, action_text, position')
@@ -619,8 +619,8 @@ export async function buildUserContext(userId: string): Promise<string> {
       .join('\n');
 
     weeklyActionsSummary = `
-## Le mie 5 azioni della settimana
-**Le ${totalActions} azioni che il calciatore si impegna a fare ogni giorno** (impegno scelto da lui — non sono pratiche del percorso).
+## Le tue azioni durante il giorno
+**${totalActions} azioni che il calciatore si impegna a fare ogni giorno della settimana** (impegno scelto da lui — non sono pratiche del percorso).
 
 ${actionLines}
 

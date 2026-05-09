@@ -177,7 +177,7 @@ function OggiPageInner() {
             Oggi · {todayLongIt()}
           </p>
           <h1 className="text-2xl font-bold text-white leading-tight mb-3">
-            Le mie azioni
+            Le tue azioni durante il giorno
           </h1>
 
           {total > 0 ? (
@@ -213,13 +213,13 @@ function OggiPageInner() {
               Comportati già oggi come il giocatore che vuoi diventare
             </h2>
             <p className="text-sm text-gray-600 leading-relaxed mb-5">
-              Scegli fino a 5 azioni concrete da pro. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione.
+              Scegli fino a 5 azioni concrete. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione.
             </p>
             <button
               onClick={() => setShowSetup(true)}
               className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl transition-all"
             >
-              Pianifica le mie azioni →
+              Pianifica le tue azioni →
             </button>
           </div>
         ) : (
