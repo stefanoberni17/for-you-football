@@ -96,7 +96,7 @@ for-you-football/
 │   ├── constants.ts                       # IDs Notion, costanti percorso — UNICA fonte di verità
 │   ├── notion.ts                          # Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
 │   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
-│   ├── actionsCatalog.ts                  # Catalogo ~30 azioni "act as if" + helper filtro per settimana
+│   ├── actionsCatalog.ts                  # Catalogo 20 azioni "act as if" + helper filtro per settimana
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)
@@ -663,7 +663,7 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 ### `ActionsSetupSheet.tsx`
 - Bottom-sheet full-screen aperto da `/oggi?setup=1` o dal bottone "Modifica".
 - Pill toggle filtro: `[Per la tua settimana]` (default, rispetta REGOLA ANTICIPAZIONI tramite `allowedPrinciplesForWeek`) / `[Tutte]`.
-- Catalogo ~30 azioni raggruppate per categoria collassabile (ChevronDown).
+- Catalogo 20 azioni raggruppate per categoria collassabile (ChevronDown). Toggle "Settimana N" è z-[60] (sopra la BottomTabBar) e mostra count azioni nascoste.
 - Item: checkbox custom + testo + badge principio (W1/W2/W3/W4).
 - Sezione "+ Aggiungi azione personalizzata" con input + select categoria + counter 120 char.
 - Sticky bottom: chip selezionate + counter "X/5" + bottone Salva (disabled fuori da 1-5).
