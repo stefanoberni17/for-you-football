@@ -34,6 +34,15 @@
   --color-accent-glow:   #2dd17a;
 }
 
+html,
+body {
+  /* min-h 100vh: forza iOS PWA standalone a estendere il viewport
+     sotto la safe-area-bottom. Senza questo, le pagine con contenuto
+     "fixed" (es. /chat) facevano collassare il viewport iOS e la
+     BottomTabBar finiva sopra la home indicator (gap visibile sotto). */
+  min-height: 100vh;
+}
+
 body {
   background: #0d1310;
   color: #ecefec;

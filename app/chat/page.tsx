@@ -54,23 +54,20 @@ function ChatContent() {
     );
   }
 
-  // fixed inset-0 standard (no h-dvh-screen): il 100dvh su PWA iOS
-  // standalone aveva un side-effect che faceva sembrare la BottomTabBar
-  // "rialzata" rispetto alle altre pagine. Inset-0 e' identico al viewport
-  // del browser e mantiene la tab bar in posizione assoluta corretta.
+  // Flow normale del body (no piu fixed inset-0): le pagine fixed full-screen
+  // su PWA iOS standalone facevano collassare il viewport sotto la safe-area-bottom,
+  // creando un gap visibile (~1cm) tra BottomTabBar e bordo schermo.
+  // Ora la chat usa h-screen + flex-col come "<main>" normale, identica
+  // struttura alle altre pagine -> la tab bar resta attaccata al bordo.
   return (
-    <div
-      className="fixed inset-0 flex flex-col bg-app"
-      style={{
-        paddingTop: 'env(safe-area-inset-top)',
-        // Tab bar full-width h-16 (4rem) + safe-area-inset-bottom interno
-        paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))',
-      }}
+    <main
+      className="flex flex-col bg-app pt-safe px-0 sm:px-4 pb-tabbar"
+      style={{ height: '100vh' }}
     >
-      <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto px-0 sm:px-4 pt-0 pb-0">
+      <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto">
         <ChatBot ref={chatBotRef} suggestions={suggestions} />
       </div>
-    </div>
+    </main>
   );
 }
 
