@@ -64,6 +64,13 @@ textarea::placeholder {
   .text-app { color: #ecefec; }
   .text-muted { color: #9ca7a0; }
   .text-faint { color: #6b7470; }
+
+  /* Dynamic viewport height — su iOS si aggiorna con tastiera/url bar
+     (fix per chat "che si rialza" quando appare la keyboard). Fallback vh. */
+  .h-dvh-screen {
+    height: 100vh;
+    height: 100dvh;
+  }
 }
 
 /* iOS Safari zooma automaticamente sugli input < 16px — forziamo 16px solo su mobile */

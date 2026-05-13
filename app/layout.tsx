@@ -37,7 +37,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#1A9660",
+  // Tema dark: status bar/chrome iOS coerente con bg-app (#0d1310)
+  themeColor: "#0d1310",
+  // CRITICO per iOS PWA: quando appare la tastiera, ridimensiona il viewport
+  // invece di lasciare il fixed inset-0 statico (che causa il "rialzo" della chat)
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({
