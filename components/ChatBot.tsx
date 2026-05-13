@@ -117,7 +117,10 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
   }));
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-white rounded-3xl shadow-2xl overflow-hidden">
+    {/* rounded-t-3xl: bordi arrotondati solo in alto. In basso la card si attacca
+        visivamente alla BottomTabBar full-width. Shadow solo verso l'alto (no effetto
+        "sollevata"). Su sm+ aggiungiamo border-radius completo per estetica desktop. */}
+    <div className="flex flex-col flex-1 min-h-0 bg-white rounded-t-3xl sm:rounded-3xl shadow-[0_-4px_20px_rgba(20,26,22,0.06)] sm:shadow-2xl overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white p-4 flex-shrink-0">
         <div className="flex items-center gap-3">

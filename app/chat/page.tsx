@@ -63,7 +63,9 @@ function ChatContent() {
         paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))',
       }}
     >
-      <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto px-3 sm:px-4 pt-3 pb-2">
+      {/* px laterali solo da sm+ (su mobile la card si attacca ai bordi); pb-0 per
+          attaccarsi alla tab bar senza gap visibile */}
+      <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto px-0 sm:px-4 pt-3 pb-0">
         <ChatBot ref={chatBotRef} suggestions={suggestions} />
       </div>
     </div>
