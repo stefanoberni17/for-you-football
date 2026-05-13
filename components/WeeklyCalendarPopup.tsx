@@ -50,21 +50,21 @@ export default function WeeklyCalendarPopup({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative animate-scaleIn my-auto">
+      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative animate-scaleIn my-auto">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="text-4xl mb-2">📅</div>
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-xl font-bold text-app">
             Imposta la tua settimana
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted mt-1">
             Settimana {weekNumber}
           </p>
         </div>
 
         {/* Giorni di allenamento */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+          <h3 className="text-sm font-semibold text-app mb-3">
             ⚽ Giorni di allenamento
           </h3>
           <div className="grid grid-cols-7 gap-1.5">
@@ -77,7 +77,7 @@ export default function WeeklyCalendarPopup({
                   className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isTraining
                       ? 'bg-emerald-500 text-white shadow-md scale-105'
-                      : 'bg-white text-gray-600 border border-gray-200 hover:border-emerald-300'
+                      : 'bg-surface-2 text-muted border border-divider hover:border-emerald-500/40'
                   }`}
                 >
                   {DAY_SHORT_NAMES[day]}
@@ -85,7 +85,7 @@ export default function WeeklyCalendarPopup({
               );
             })}
           </div>
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-faint mt-2">
             {selectedTraining.length === 0
               ? 'Seleziona almeno un giorno'
               : `${selectedTraining.length} ${selectedTraining.length === 1 ? 'allenamento' : 'allenamenti'}`}
@@ -94,8 +94,8 @@ export default function WeeklyCalendarPopup({
 
         {/* Giorni partita */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">
-            🏟️ Giorni partita <span className="font-normal text-gray-400">(opzionale)</span>
+          <h3 className="text-sm font-semibold text-app mb-3">
+            🏟️ Giorni partita <span className="font-normal text-faint">(opzionale)</span>
           </h3>
           <div className="grid grid-cols-7 gap-1.5 mb-2">
             {days.map((day) => {
@@ -107,7 +107,7 @@ export default function WeeklyCalendarPopup({
                   className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isMatch
                       ? 'bg-amber-500 text-white shadow-md scale-105'
-                      : 'bg-white text-gray-600 border border-gray-200 hover:border-amber-300'
+                      : 'bg-surface-2 text-muted border border-divider hover:border-amber-500/40'
                   }`}
                 >
                   {DAY_SHORT_NAMES[day]}
@@ -116,24 +116,24 @@ export default function WeeklyCalendarPopup({
             })}
           </div>
           {selectedMatch.length > 0 ? (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-faint">
               {selectedMatch.length} {selectedMatch.length === 1 ? 'partita' : 'partite'}
               {' · '}
               <button
                 onClick={() => setSelectedMatch([])}
-                className="text-gray-400 hover:text-gray-600 transition-colors underline"
+                className="text-faint hover:text-muted transition-colors underline"
               >
                 Rimuovi tutte
               </button>
             </p>
           ) : (
-            <p className="text-xs text-gray-400">Nessuna partita selezionata</p>
+            <p className="text-xs text-faint">Nessuna partita selezionata</p>
           )}
         </div>
 
         {/* Riepilogo visuale */}
         {(selectedTraining.length > 0 || selectedMatch.length > 0) && (
-          <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 mb-6 border border-gray-100">
+          <div className="bg-surface-2 backdrop-blur-sm rounded-xl p-3 mb-6 border border-divider">
             <div className="grid grid-cols-7 gap-1">
               {days.map((day) => {
                 const isTraining = selectedTraining.includes(day);
@@ -141,8 +141,8 @@ export default function WeeklyCalendarPopup({
                 const isBoth = isTraining && isMatch;
                 return (
                   <div key={`r-${day}`} className="text-center">
-                    <div className="text-[10px] text-gray-400 mb-0.5">{DAY_SHORT_NAMES[day]}</div>
-                    <div className={`text-sm ${isBoth ? 'text-orange-500' : isMatch ? 'text-amber-500' : isTraining ? 'text-emerald-500' : 'text-gray-200'}`}>
+                    <div className="text-[10px] text-faint mb-0.5">{DAY_SHORT_NAMES[day]}</div>
+                    <div className={`text-sm ${isBoth ? 'text-orange-400' : isMatch ? 'text-amber-400' : isTraining ? 'text-emerald-400' : 'text-faint'}`}>
                       {isBoth ? '⚽🏟️' : isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
                     </div>
                   </div>
@@ -160,14 +160,14 @@ export default function WeeklyCalendarPopup({
             className={`w-full py-3.5 rounded-xl font-bold text-white transition-all ${
               canSave && !saving
                 ? 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg'
-                : 'bg-gray-300 cursor-not-allowed'
+                : 'bg-surface-2 text-faint cursor-not-allowed'
             }`}
           >
             {saving ? 'Salvataggio...' : 'Salva calendario'}
           </button>
           <button
             onClick={onSkip}
-            className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-full py-2 text-sm text-faint hover:text-muted transition-colors"
           >
             Lo farò dopo
           </button>

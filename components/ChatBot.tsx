@@ -120,7 +120,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
   // visivamente alla BottomTabBar full-width. Shadow solo verso l'alto (no effetto
   // "sollevata"). Su sm+ aggiungiamo border-radius completo per estetica desktop.
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-white rounded-t-3xl sm:rounded-3xl shadow-[0_-4px_20px_rgba(20,26,22,0.06)] sm:shadow-2xl overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 bg-surface rounded-t-3xl sm:rounded-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.4)] sm:shadow-2xl overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white p-4 flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -135,17 +135,17 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-app">
         {/* Suggestion pills — visible only before user sends first message */}
         {suggestions && suggestions.length > 0 && messages.length <= 1 && (
           <div className="pb-2">
-            <p className="text-xs text-gray-400 mb-2 font-medium">💡 Suggerimenti per iniziare:</p>
+            <p className="text-xs text-faint mb-2 font-medium">💡 Suggerimenti per iniziare:</p>
             <div className="flex flex-wrap gap-2">
               {suggestions.map((s, i) => (
                 <button
                   key={i}
                   onClick={() => sendMessageText(s)}
-                  className="text-left text-xs bg-forest-50 text-forest-700 border border-forest-200 rounded-full px-3 py-1.5 hover:bg-forest-100 hover:border-forest-300 transition-colors active:scale-95"
+                  className="text-left text-xs bg-forest-500/15 text-forest-300 border border-forest-500/30 rounded-full px-3 py-1.5 hover:bg-forest-500/25 hover:border-forest-500/40 transition-colors active:scale-95"
                 >
                   {s}
                 </button>
@@ -172,13 +172,13 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
               className={`max-w-[78%] rounded-2xl px-4 py-2.5 ${
                 message.role === 'user'
                   ? 'bg-forest-500 text-white rounded-br-md'
-                  : 'bg-white text-gray-800 rounded-bl-md shadow-sm border border-gray-100'
+                  : 'bg-surface-2 text-app rounded-bl-md shadow-sm border border-divider'
               }`}
             >
               <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
               <p
                 className={`text-[10px] mt-1 ${
-                  message.role === 'user' ? 'text-forest-50 opacity-80' : 'text-gray-400'
+                  message.role === 'user' ? 'text-forest-50 opacity-80' : 'text-faint'
                 }`}
               >
                 {message.timestamp.toLocaleTimeString('it-IT', {
@@ -194,7 +194,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-forest-500 text-white flex items-center justify-center text-xs font-bold" aria-hidden="true">
               C
             </div>
-            <div className="bg-white rounded-2xl rounded-bl-md shadow-sm border border-gray-100 px-4 py-3">
+            <div className="bg-surface-2 rounded-2xl rounded-bl-md shadow-sm border border-divider px-4 py-3">
               <Loader2 className="w-5 h-5 animate-spin text-forest-500" aria-label="Il Coach sta scrivendo" />
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-3 border-t border-gray-100 bg-white">
+      <form onSubmit={handleSubmit} className="p-3 border-t border-divider bg-surface">
         <div className="flex gap-2 items-end">
           <input
             type="text"
@@ -212,7 +212,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
             placeholder="Scrivi al Coach…"
             disabled={isLoading}
             aria-label="Messaggio per il Coach"
-            className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent disabled:bg-gray-100 text-sm"
+            className="flex-1 px-4 py-3 bg-surface-2 border border-divider rounded-2xl focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent disabled:opacity-60 text-sm text-app"
           />
           <button
             type="submit"

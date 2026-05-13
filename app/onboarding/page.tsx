@@ -87,16 +87,16 @@ export default function OnboardingPage() {
       content: (
         <div className="text-center max-w-xl mx-auto">
           <div className="text-8xl mb-8">⚽</div>
-          <p className="text-2xl font-bold text-gray-800 leading-snug mb-2">
+          <p className="text-2xl font-bold text-app leading-snug mb-2">
             Quante volte in campo la testa parte…
           </p>
-          <p className="text-2xl font-bold text-gray-800 leading-snug mb-8">
+          <p className="text-2xl font-bold text-app leading-snug mb-8">
             e non riesci più a tornare nella partita?
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted text-sm">
             12 settimane · 5 minuti al giorno
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted text-sm">
             Strumenti mentali reali — da usare in campo.
           </p>
         </div>
@@ -109,12 +109,12 @@ export default function OnboardingPage() {
       subtitle: '',
       content: (
         <div className="max-w-2xl mx-auto space-y-4">
-          <div className="bg-forest-50 rounded-xl p-5 border-l-4 border-forest-400">
+          <div className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
             <div className="flex items-start gap-4">
               <span className="text-3xl">📅</span>
               <div>
-                <h3 className="font-bold text-gray-800 mb-1">7 giorni a settimana</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <h3 className="font-bold text-app mb-1">7 giorni a settimana</h3>
+                <p className="text-sm text-muted leading-relaxed">
                   Ogni settimana ha 7 giorni di allenamento mentale. I giorni si
                   sbloccano progressivamente: completa uno per passare al successivo.
                 </p>
@@ -122,12 +122,12 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="bg-forest-50 rounded-xl p-5 border-l-4 border-forest-400">
+          <div className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
             <div className="flex items-start gap-4">
               <span className="text-3xl">🔑</span>
               <div>
-                <h3 className="font-bold text-gray-800 mb-1">Il Giorno Gate (Giorno 7)</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <h3 className="font-bold text-app mb-1">Il Giorno Gate (Giorno 7)</h3>
+                <p className="text-sm text-muted leading-relaxed">
                   L&apos;ultimo giorno di ogni settimana è il <strong>Gate</strong>: una review
                   settimanale per consolidare ciò che hai imparato. È obbligatorio per
                   sbloccare la settimana successiva.
@@ -136,12 +136,12 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="bg-blue-50 rounded-xl p-5 border-l-4 border-blue-400">
+          <div className="bg-surface rounded-xl p-5 border-l-4 border-blue-400">
             <div className="flex items-start gap-4">
               <span className="text-3xl">🔧</span>
               <div>
-                <h3 className="font-bold text-gray-800 mb-1">Uno strumento mentale per settimana</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <h3 className="font-bold text-app mb-1">Uno strumento mentale per settimana</h3>
+                <p className="text-sm text-muted leading-relaxed">
                   Ogni settimana costruisci uno strumento specifico: Il Reset, L&apos;Observer,
                   Il Body Check, Il Protocollo Pressione. Strumenti da usare subito in campo.
                 </p>
@@ -149,12 +149,12 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="bg-green-50 rounded-xl p-5 border-l-4 border-green-400">
+          <div className="bg-surface rounded-xl p-5 border-l-4 border-emerald-400">
             <div className="flex items-start gap-4">
               <span className="text-3xl">⏱</span>
               <div>
-                <h3 className="font-bold text-gray-800 mb-1">Breve e concreto</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <h3 className="font-bold text-app mb-1">Breve e concreto</h3>
+                <p className="text-sm text-muted leading-relaxed">
                   Ogni giorno dura 5–15 minuti. Lettura, pratica guidata, riflessione.
                   Pensato per calciatori con poco tempo.
                 </p>
@@ -201,16 +201,16 @@ export default function OnboardingPage() {
               color: 'bg-orange-500',
             },
           ].map((w) => (
-            <div key={w.week} className="bg-white border border-gray-100 rounded-xl p-4 flex items-start gap-4 shadow-sm">
+            <div key={w.week} className="bg-surface border border-divider rounded-xl p-4 flex items-start gap-4 shadow-sm">
               <div className={`${w.color} text-white w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0`}>
                 {w.week}
               </div>
               <div>
-                <p className="font-bold text-gray-800 text-sm">
+                <p className="font-bold text-app text-sm">
                   Settimana {w.week} — {w.tool}
                 </p>
-                <p className="text-xs text-gray-500 mb-1">🧭 {w.principle}</p>
-                <p className="text-sm text-gray-600 leading-relaxed">{w.desc}</p>
+                <p className="text-xs text-muted mb-1">🧭 {w.principle}</p>
+                <p className="text-sm text-muted leading-relaxed">{w.desc}</p>
               </div>
             </div>
           ))}
@@ -225,33 +225,33 @@ export default function OnboardingPage() {
       content: (
         <div className="max-w-xl mx-auto text-center">
           <div className="text-7xl mb-6">🧠</div>
-          <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+          <p className="text-lg text-app mb-6 leading-relaxed">
             Hai accesso a un <strong>Coach AI</strong> dedicato che conosce il
             tuo percorso e può guidarti in qualsiasi momento.
           </p>
 
-          <div className="bg-forest-50 rounded-xl p-6 text-left mb-4 space-y-3">
-            <p className="font-semibold text-gray-800 mb-2">Il Coach AI può aiutarti a:</p>
-            <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-forest-500">✓</span>
+          <div className="bg-surface-2 rounded-xl p-6 text-left mb-4 space-y-3">
+            <p className="font-semibold text-app mb-2">Il Coach AI può aiutarti a:</p>
+            <p className="flex items-center gap-3 text-sm text-app">
+              <span className="text-forest-400">✓</span>
               Applicare gli strumenti mentali alle tue situazioni reali
             </p>
-            <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-forest-500">✓</span>
+            <p className="flex items-center gap-3 text-sm text-app">
+              <span className="text-forest-400">✓</span>
               Elaborare un errore o una partita difficile
             </p>
-            <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-forest-500">✓</span>
+            <p className="flex items-center gap-3 text-sm text-app">
+              <span className="text-forest-400">✓</span>
               Prepararsi mentalmente alla partita
             </p>
-            <p className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-forest-500">✓</span>
+            <p className="flex items-center gap-3 text-sm text-app">
+              <span className="text-forest-400">✓</span>
               Rispondere alle tue domande sul percorso
             </p>
           </div>
 
-          <div className="bg-forest-50 border border-forest-100 rounded-xl p-4">
-            <p className="text-sm text-gray-500 italic">
+          <div className="bg-surface-2 border border-divider rounded-xl p-4">
+            <p className="text-sm text-muted italic">
               Puoi anche collegarlo su <strong>Telegram</strong> per parlare con il
               Coach direttamente dal tuo telefono. Trovi l&apos;opzione nel profilo.
             </p>
@@ -286,12 +286,12 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="bg-forest-50 rounded-xl p-5 border-l-4 border-forest-400">
-            <p className="text-gray-700 leading-relaxed text-sm">
+          <div className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
+            <p className="text-app leading-relaxed text-sm">
               Non è un corso teorico. È un allenamento quotidiano che porta
               risultati concreti <strong>nelle partite, negli allenamenti, nella testa</strong>.
             </p>
-            <p className="text-gray-600 mt-3 text-sm italic">
+            <p className="text-muted mt-3 text-sm italic">
               Il primo passo: 5 minuti al giorno, per 7 giorni. Inizia oggi.
             </p>
           </div>
@@ -342,14 +342,14 @@ export default function OnboardingPage() {
 
   if (!ready) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-6xl animate-ball-bounce">⚽</div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-forest-50 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-app flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
 
         {/* Progress dots */}
@@ -360,19 +360,19 @@ export default function OnboardingPage() {
               className={`h-2 rounded-full transition-all duration-300 ${
                 i + 1 === currentSlide
                   ? 'w-8 bg-forest-500'
-                  : 'w-2 bg-forest-200'
+                  : 'w-2 bg-surface-2'
               }`}
             />
           ))}
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-6 min-h-[32rem]">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-2">
+        <div className="bg-surface rounded-3xl shadow-2xl p-8 md:p-12 mb-6 min-h-[32rem]">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-app text-center mb-2">
             {currentContent.title}
           </h1>
           {currentContent.subtitle && (
-            <p className="text-center text-forest-500 font-semibold mb-6 text-sm uppercase tracking-widest">
+            <p className="text-center text-forest-400 font-semibold mb-6 text-sm uppercase tracking-widest">
               {currentContent.subtitle}
             </p>
           )}
@@ -386,7 +386,7 @@ export default function OnboardingPage() {
           {currentSlide > 1 && (
             <button
               onClick={() => setCurrentSlide(s => s - 1)}
-              className="flex-1 bg-white border-2 border-gray-200 text-gray-600 font-semibold py-4 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all"
+              className="flex-1 bg-surface border-2 border-divider text-app font-semibold py-4 rounded-xl hover:border-forest-500/40 hover:bg-surface-2 transition-all"
             >
               ← Indietro
             </button>
@@ -420,7 +420,7 @@ export default function OnboardingPage() {
         {!isLastSlide && (
           <button
             onClick={handleComplete}
-            className="w-full text-center text-sm text-gray-400 hover:text-gray-600 mt-4 transition-colors"
+            className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors"
           >
             Salta introduzione →
           </button>

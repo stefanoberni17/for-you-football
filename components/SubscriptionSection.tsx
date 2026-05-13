@@ -70,9 +70,9 @@ export default function SubscriptionSection() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
-        <p className="text-sm text-gray-400">Caricamento…</p>
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
+        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
+        <p className="text-sm text-faint">Caricamento…</p>
       </div>
     );
   }
@@ -86,14 +86,14 @@ export default function SubscriptionSection() {
   // Accesso beta / comp
   if (is_beta_free) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
-        <div className="bg-forest-50 border border-forest-200 rounded-xl p-4">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
+        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
+        <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xl">⭐</span>
-            <p className="font-semibold text-forest-700 text-sm">Accesso gratuito</p>
+            <p className="font-semibold text-forest-300 text-sm">Accesso gratuito</p>
           </div>
-          <p className="text-xs text-forest-600 leading-relaxed">
+          <p className="text-xs text-forest-200 leading-relaxed">
             Hai accesso completo al percorso senza costi. Grazie per essere parte della community.
           </p>
         </div>
@@ -108,17 +108,17 @@ export default function SubscriptionSection() {
       : null;
 
     return (
-      <div className="bg-white rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
+        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-green-500" />
-                <p className="text-sm font-semibold text-gray-800">Attivo</p>
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                <p className="text-sm font-semibold text-app">Attivo</p>
               </div>
               {billingDate && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted mt-1">
                   {cancel_at_period_end
                     ? `Scade il ${billingDate}`
                     : `Prossimo addebito: ${billingDate}`}
@@ -128,7 +128,7 @@ export default function SubscriptionSection() {
           </div>
 
           {cancel_at_period_end && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-800">
+            <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl px-3 py-2 text-xs text-amber-300">
               Cancellazione programmata. Mantieni l&apos;accesso fino alla scadenza.
             </div>
           )}
@@ -136,12 +136,12 @@ export default function SubscriptionSection() {
           <button
             onClick={openPortal}
             disabled={portalLoading}
-            className="w-full bg-forest-50 hover:bg-forest-100 text-forest-700 font-semibold py-2.5 rounded-xl text-sm transition disabled:opacity-50"
+            className="w-full bg-surface-2 hover:bg-[#293429] text-forest-300 font-semibold py-2.5 rounded-xl text-sm transition disabled:opacity-50"
           >
             {portalLoading ? 'Attendi…' : 'Gestisci abbonamento →'}
           </button>
 
-          {error && <p className="text-xs text-red-600">{error}</p>}
+          {error && <p className="text-xs text-red-400">{error}</p>}
         </div>
       </div>
     );
@@ -150,11 +150,11 @@ export default function SubscriptionSection() {
   // past_due
   if (subscription_status === 'past_due') {
     return (
-      <div className="bg-white rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-3">
-          <p className="font-semibold text-red-700 text-sm mb-1">⚠ Pagamento fallito</p>
-          <p className="text-xs text-red-600 leading-relaxed">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
+        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
+        <div className="bg-red-500/15 border border-red-500/30 rounded-xl p-4 mb-3">
+          <p className="font-semibold text-red-300 text-sm mb-1">⚠ Pagamento fallito</p>
+          <p className="text-xs text-red-400 leading-relaxed">
             L&apos;ultimo addebito non è andato a buon fine. Aggiorna il metodo di pagamento per riattivare l&apos;accesso.
           </p>
         </div>
@@ -165,20 +165,20 @@ export default function SubscriptionSection() {
         >
           {portalLoading ? 'Attendi…' : 'Aggiorna pagamento'}
         </button>
-        {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
+        {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
       </div>
     );
   }
 
   // canceled / none
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-5">
-      <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-3">
-        <p className="font-semibold text-gray-700 text-sm mb-1">
+    <div className="bg-surface rounded-2xl shadow-sm p-5">
+      <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
+      <div className="bg-surface-2 border border-divider rounded-xl p-4 mb-3">
+        <p className="font-semibold text-app text-sm mb-1">
           {subscription_status === 'canceled' ? 'Abbonamento cancellato' : 'Nessun abbonamento attivo'}
         </p>
-        <p className="text-xs text-gray-500 leading-relaxed">
+        <p className="text-xs text-muted leading-relaxed">
           Attiva un abbonamento per accedere al percorso.
         </p>
       </div>

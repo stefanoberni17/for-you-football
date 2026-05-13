@@ -165,12 +165,12 @@ export default function PracticePopup({
     !audioVisible ? (
       <button
         onClick={() => setAudioVisible(true)}
-        className="w-full bg-white/70 hover:bg-white border border-forest-200 text-forest-600 font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 mb-4"
+        className="w-full bg-surface-2 hover:bg-[#293429] border border-forest-500/30 text-forest-300 font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 mb-4"
       >
         🎧 Ascolta versione audio
       </button>
     ) : (
-      <div className="bg-white/90 backdrop-blur-sm border border-forest-200 rounded-xl p-3 mb-4 flex items-center gap-3">
+      <div className="bg-surface-2 backdrop-blur-sm border border-forest-500/30 rounded-xl p-3 mb-4 flex items-center gap-3">
         <button
           onClick={toggleAudio}
           aria-label={isAudioPlaying ? 'Pausa audio' : 'Riproduci audio'}
@@ -183,13 +183,13 @@ export default function PracticePopup({
           )}
         </button>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+          <div className="flex items-center justify-between text-xs text-muted mb-1">
             <span className="font-medium">🎧 Guida audio</span>
             <span className="tabular-nums">
               {formatAudioTime(audioCurrentTime)} / {formatAudioTime(audioDuration)}
             </span>
           </div>
-          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-surface rounded-full overflow-hidden">
             <div
               className="h-full bg-forest-500 transition-all"
               style={{ width: audioDuration > 0 ? `${(audioCurrentTime / audioDuration) * 100}%` : '0%' }}
@@ -223,7 +223,7 @@ export default function PracticePopup({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-gradient-to-br from-forest-50 to-forest-100 rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
         {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
 
         {phase === 'setup' && (
@@ -232,7 +232,7 @@ export default function PracticePopup({
               <div className="text-5xl md:text-6xl mb-3">
                 {tipoPratica === 'giornata' ? '🌤️' : '🎯'}
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
                 {tipoPratica === 'giornata' ? 'Pratica del giorno' : 'Pratica Guidata'}
               </h2>
               {weekTool && (
@@ -240,20 +240,20 @@ export default function PracticePopup({
                   🔧 {weekTool}
                 </p>
               )}
-              <p className="text-xs text-gray-500">{titolo}</p>
+              <p className="text-xs text-muted">{titolo}</p>
             </div>
 
             {audioPlayer}
 
             {/* Step della pratica */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-5 mb-5 border border-forest-200">
+            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-5 mb-5 border border-forest-500/25">
               <div className="space-y-2.5">
                 {practiceSteps.map((step, i) => (
                   <div key={i} className="flex gap-3 items-start">
                     <span className="w-6 h-6 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                       {i + 1}
                     </span>
-                    <p className="text-base text-gray-700 leading-relaxed">{step}</p>
+                    <p className="text-base text-app leading-relaxed">{step}</p>
                   </div>
                 ))}
               </div>
@@ -262,8 +262,8 @@ export default function PracticePopup({
             {tipoPratica === 'giornata' ? (
               /* GIORNATA: niente timer, bottone "Ho capito" */
               <>
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-5 text-center">
-                  <p className="text-sm text-amber-700">
+                <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-5 text-center">
+                  <p className="text-sm text-amber-300">
                     ☀️ Questa pratica si fa <span className="font-bold">durante la giornata</span> — non adesso.
                     Torna stasera per la riflessione.
                   </p>
@@ -279,8 +279,8 @@ export default function PracticePopup({
               /* TUTTI GLI ALTRI TIPI: timer normale */
               <>
                 <div className="text-center mb-5">
-                  <p className="text-sm text-gray-600">
-                    ⏱️ Durata: <span className="font-bold text-forest-600">{durataMinuti} minuti</span>
+                  <p className="text-sm text-muted">
+                    ⏱️ Durata: <span className="font-bold text-forest-300">{durataMinuti} minuti</span>
                   </p>
                 </div>
                 <button
@@ -293,7 +293,7 @@ export default function PracticePopup({
             )}
             <button
               onClick={handleSkip}
-              className="w-full text-gray-400 hover:text-gray-600 text-sm py-2 transition-colors"
+              className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
             >
               Ho gia praticato da solo →
             </button>
@@ -315,20 +315,20 @@ export default function PracticePopup({
             </button>
 
             <div className="text-center mb-4">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-1">
+              <h2 className="text-xl md:text-2xl font-bold text-app mb-1">
                 {weekTool || 'Pratica in corso'}
               </h2>
-              <p className="text-xs text-gray-500">{titolo}</p>
+              <p className="text-xs text-muted">{titolo}</p>
             </div>
 
             {audioPlayer}
 
             {/* Step pratica visibili durante timer */}
-            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 mb-5 border border-forest-100 max-h-24 overflow-y-auto">
+            <div className="bg-surface-2 backdrop-blur-sm rounded-xl p-3 mb-5 border border-divider max-h-24 overflow-y-auto">
               <div className="space-y-1">
                 {practiceSteps.map((step, i) => (
-                  <p key={i} className="text-xs text-gray-600 leading-relaxed">
-                    <span className="font-bold text-forest-500">{i + 1}.</span> {step}
+                  <p key={i} className="text-xs text-muted leading-relaxed">
+                    <span className="font-bold text-forest-400">{i + 1}.</span> {step}
                   </p>
                 ))}
               </div>
@@ -367,10 +367,10 @@ export default function PracticePopup({
                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-forest-400/20 to-forest-500/20 border-2 border-forest-400/30" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="text-4xl md:text-5xl font-bold text-forest-600 mb-1">
+                      <div className="text-4xl md:text-5xl font-bold text-forest-300 mb-1">
                         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                       </div>
-                      <div className="text-xs md:text-sm text-forest-500/70 font-medium">
+                      <div className="text-xs md:text-sm text-forest-400/70 font-medium">
                         {timerEnded && audioInProgress
                           ? '🎧 Continua ad ascoltare...'
                           : tipoPratica === 'riflessione' ? '🧘 Rifletti...' : '👁️ Osserva...'}
@@ -381,7 +381,7 @@ export default function PracticePopup({
               )}
             </div>
 
-            <p className="text-xs text-center text-gray-500">
+            <p className="text-xs text-center text-muted">
               {showBreathCircle
                 ? 'Segui la pratica al tuo ritmo. Il timer ti guida ⚽'
                 : 'Segui gli step al tuo ritmo. Prenditi il tempo che ti serve 🧘'}
@@ -395,20 +395,20 @@ export default function PracticePopup({
               {tipoPratica === 'giornata' ? (
                 <>
                   <div className="text-6xl md:text-7xl mb-4">☀️</div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
                     Ora tocca a te!
                   </h2>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-sm text-muted leading-relaxed">
                     Porta la pratica nella tua giornata. Torna quando hai finito per completare la riflessione.
                   </p>
                 </>
               ) : (
                 <>
                   <div className="text-6xl md:text-7xl mb-4">🏆</div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
                     Pratica completata!
                   </h2>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-sm text-muted leading-relaxed">
                     Ottimo lavoro. Ogni sessione ti rende piu forte mentalmente.
                   </p>
                 </>

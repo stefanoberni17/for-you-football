@@ -28,7 +28,7 @@ function ChipGroup({
             className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
               active
                 ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-forest-300 hover:text-forest-700'
+                : 'bg-surface text-muted border-divider hover:border-forest-500/40 hover:text-forest-300'
             }`}
           >
             {active ? '✓ ' : ''}{opt.label}
@@ -275,10 +275,10 @@ export default function ProfiloPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-gray-600">Caricamento...</p>
+          <p className="text-xl text-muted">Caricamento...</p>
         </div>
       </main>
     );
@@ -289,7 +289,7 @@ export default function ProfiloPage() {
   const isInputStep = telegramStep === 2;
 
   return (
-    <main className="min-h-screen bg-forest-50 pt-safe px-4 pb-tabbar-lg">
+    <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
 
       {/* ── Telegram Modal ─────────────────────────────────────────────────── */}
       {showTelegramModal && (
@@ -297,7 +297,7 @@ export default function ProfiloPage() {
           className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-6"
           onClick={(e) => { if (e.target === e.currentTarget) setShowTelegramModal(false); }}
         >
-          <div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
+          <div className="bg-surface w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
 
             {/* Step dots */}
             <div className="flex justify-center items-center gap-1.5 pt-5 pb-1">
@@ -305,7 +305,7 @@ export default function ProfiloPage() {
                 <div
                   key={i}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i === telegramStep ? 'bg-forest-500 w-6' : i < telegramStep ? 'bg-forest-300 w-1.5' : 'bg-gray-200 w-1.5'
+                    i === telegramStep ? 'bg-forest-500 w-6' : i < telegramStep ? 'bg-forest-400 w-1.5' : 'bg-surface-2 w-1.5'
                   }`}
                 />
               ))}
@@ -314,12 +314,12 @@ export default function ProfiloPage() {
             {/* Slide content */}
             <div className="px-7 py-5 text-center min-h-[240px] flex flex-col items-center justify-center gap-3">
               <div className="text-5xl">{currentStep.emoji}</div>
-              <h3 className="text-xl font-bold text-gray-800">{currentStep.title}</h3>
-              <p className="text-sm text-gray-500">{currentStep.description}</p>
+              <h3 className="text-xl font-bold text-app">{currentStep.title}</h3>
+              <p className="text-sm text-muted">{currentStep.description}</p>
 
               {currentStep.bot && (
-                <div className="bg-gray-100 rounded-xl px-5 py-3 w-full">
-                  <p className="text-lg font-bold text-gray-800 font-mono tracking-wide">{currentStep.bot}</p>
+                <div className="bg-surface-2 rounded-xl px-5 py-3 w-full">
+                  <p className="text-lg font-bold text-app font-mono tracking-wide">{currentStep.bot}</p>
                 </div>
               )}
 
@@ -330,19 +330,19 @@ export default function ProfiloPage() {
                   value={telegramId}
                   onChange={(e) => setTelegramId(e.target.value)}
                   placeholder="Es. 766672351"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-center text-lg font-mono"
+                  className="w-full px-4 py-3 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-center text-lg font-mono"
                   autoFocus
                 />
               )}
 
-              <p className="text-xs text-gray-400">{currentStep.detail}</p>
+              <p className="text-xs text-faint">{currentStep.detail}</p>
 
               {currentStep.link && (
                 <a
                   href={currentStep.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-forest-600 text-sm font-semibold hover:underline"
+                  className="text-forest-400 text-sm font-semibold hover:underline"
                 >
                   {currentStep.linkLabel}
                 </a>
@@ -355,7 +355,7 @@ export default function ProfiloPage() {
                 <button
                   type="button"
                   onClick={() => setTelegramStep((s) => s - 1)}
-                  className="flex-none py-3 px-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+                  className="flex-none py-3 px-4 rounded-xl border border-divider text-sm font-medium text-muted hover:bg-surface-2 transition-all"
                 >
                   ←
                 </button>
@@ -401,8 +401,8 @@ export default function ProfiloPage() {
             </span>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Il tuo Profilo</h1>
-            <p className="text-sm text-gray-500">{email}</p>
+            <h1 className="text-2xl font-bold text-app">Il tuo Profilo</h1>
+            <p className="text-sm text-muted">{email}</p>
           </div>
         </div>
       </div>
@@ -410,19 +410,19 @@ export default function ProfiloPage() {
       <form onSubmit={handleSave} className="max-w-xl mx-auto space-y-5">
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>
+          <div className="bg-red-500/15 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm">{error}</div>
         )}
 
         {/* ── Coach Telegram (IN ALTO) ──────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-5">
+        <div className="bg-surface rounded-2xl shadow-sm p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${telegramId ? 'bg-forest-100' : 'bg-blue-50'}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${telegramId ? 'bg-forest-500/20' : 'bg-blue-500/15'}`}>
                 🤖
               </div>
               <div>
-                <p className="font-bold text-gray-800 text-sm">Coach su Telegram</p>
-                <p className="text-xs text-gray-500">
+                <p className="font-bold text-app text-sm">Coach su Telegram</p>
+                <p className="text-xs text-muted">
                   {telegramId ? `Collegato · ID ${telegramId}` : 'Non ancora collegato'}
                 </p>
               </div>
@@ -432,7 +432,7 @@ export default function ProfiloPage() {
               onClick={openTelegramModal}
               className={`text-xs font-bold px-4 py-2 rounded-xl transition-all ${
                 telegramId
-                  ? 'text-gray-500 bg-gray-100 hover:bg-gray-200'
+                  ? 'text-muted bg-surface-2 hover:bg-[#293429]'
                   : 'text-white bg-forest-500 hover:bg-forest-600 shadow-sm'
               }`}
             >
@@ -440,7 +440,7 @@ export default function ProfiloPage() {
             </button>
           </div>
           {!telegramId && (
-            <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+            <p className="text-xs text-faint mt-3 leading-relaxed">
               Chatta con il tuo Coach AI direttamente su Telegram — ovunque, in qualsiasi momento.
             </p>
           )}
@@ -448,15 +448,15 @@ export default function ProfiloPage() {
 
         {/* ── Notifiche Push ─────────────────────────────────────────────── */}
         {pushStatus !== 'unsupported' && pushStatus !== 'loading' && (
-          <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="bg-surface rounded-2xl shadow-sm p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${pushStatus === 'active' ? 'bg-forest-100' : 'bg-gray-100'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${pushStatus === 'active' ? 'bg-forest-500/20' : 'bg-surface-2'}`}>
                   🔔
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800 text-sm">Notifiche push</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-bold text-app text-sm">Notifiche push</p>
+                  <p className="text-xs text-muted">
                     {pushStatus === 'active' && 'Attive — ricevi messaggi dal Coach'}
                     {pushStatus === 'inactive' && 'Non attive'}
                     {pushStatus === 'denied' && 'Bloccate dal browser'}
@@ -470,7 +470,7 @@ export default function ProfiloPage() {
                   disabled={pushLoading}
                   className={`text-xs font-bold px-4 py-2 rounded-xl transition-all disabled:opacity-40 ${
                     pushStatus === 'active'
-                      ? 'text-gray-500 bg-gray-100 hover:bg-gray-200'
+                      ? 'text-muted bg-surface-2 hover:bg-[#293429]'
                       : 'text-white bg-forest-500 hover:bg-forest-600 shadow-sm'
                   }`}
                 >
@@ -479,7 +479,7 @@ export default function ProfiloPage() {
               )}
             </div>
             {pushStatus === 'denied' && (
-              <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+              <p className="text-xs text-faint mt-3 leading-relaxed">
                 Hai bloccato le notifiche nelle impostazioni del browser. Per riattivarle, vai nelle impostazioni del sito.
               </p>
             )}
@@ -487,12 +487,12 @@ export default function ProfiloPage() {
         )}
 
         {/* ── Settimana corrente ───────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 border border-forest-100">
+        <div className="bg-surface rounded-2xl shadow-sm p-5 border border-forest-500/25">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🎯</span>
             <div>
-              <p className="font-bold text-gray-800">Settimana {currentWeek}</p>
-              <p className="text-xs text-gray-500">Si aggiorna automaticamente completando i giorni</p>
+              <p className="font-bold text-app">Settimana {currentWeek}</p>
+              <p className="text-xs text-muted">Si aggiorna automaticamente completando i giorni</p>
             </div>
           </div>
         </div>
@@ -501,31 +501,31 @@ export default function ProfiloPage() {
         <SubscriptionSection />
 
         {/* ── Dati personali ───────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-          <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Dati personali</h3>
+        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
+          <h3 className="font-semibold text-app text-sm uppercase tracking-wide">Dati personali</h3>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Nome *</label>
+            <label className="block text-sm font-medium text-app mb-1.5">Nome *</label>
             <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
               placeholder="Il tuo nome" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Età</label>
+            <label className="block text-sm font-medium text-app mb-1.5">Età</label>
             <input type="number" value={eta} onChange={(e) => setEta(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
               placeholder="Es. 18" min="10" max="60" />
           </div>
         </div>
 
         {/* ── Profilo calciatore ───────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 space-y-5">
-          <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Il tuo profilo da atleta</h3>
+        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-5">
+          <h3 className="font-semibold text-app text-sm uppercase tracking-wide">Il tuo profilo da atleta</h3>
 
           {/* Sport */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Che sport pratichi?</label>
+            <label className="block text-sm font-medium text-app mb-2">Che sport pratichi?</label>
             <div className="flex flex-wrap gap-2">
               {SPORTS.map((s) => (
                 <button
@@ -535,7 +535,7 @@ export default function ProfiloPage() {
                   className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
                     sport === s.value
                       ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-forest-300 hover:text-forest-700'
+                      : 'bg-surface text-muted border-divider hover:border-forest-500/40 hover:text-forest-300'
                   }`}
                 >
                   {s.icon} {s.label}
@@ -547,8 +547,8 @@ export default function ProfiloPage() {
           {/* Ruoli (dinamici per sport) */}
           {(SPORT_ROLES[sport]?.length ?? 0) > 0 && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Che ruolo hai? <span className="text-gray-400 font-normal">(anche più di uno)</span>
+            <label className="block text-sm font-medium text-app mb-2">
+              Che ruolo hai? <span className="text-faint font-normal">(anche più di uno)</span>
             </label>
             <ChipGroup options={SPORT_ROLES[sport] || []} selected={selectedRoles} onToggle={toggleRole} />
           </div>
@@ -556,9 +556,9 @@ export default function ProfiloPage() {
 
           {/* Livello */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">A che livello giochi?</label>
+            <label className="block text-sm font-medium text-app mb-1.5">A che livello giochi?</label>
             <select value={level} onChange={(e) => setLevel(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm bg-white">
+              className="w-full px-4 py-2.5 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm bg-surface-2 text-app">
               <option value="">Seleziona…</option>
               {PLAYER_LEVELS.map((l) => (
                 <option key={l.value} value={l.value}>{l.label}</option>
@@ -568,40 +568,40 @@ export default function ProfiloPage() {
 
           {/* Paure */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-app mb-1">
               Cosa ti blocca mentalmente in campo?
             </label>
-            <p className="text-xs text-gray-400 mb-2">Puoi selezionarne più di una</p>
+            <p className="text-xs text-faint mb-2">Puoi selezionarne più di una</p>
             <ChipGroup options={SPORT_FEARS[sport] || SPORT_FEARS['altro']} selected={selectedFears} onToggle={toggleFear} />
           </div>
         </div>
 
         {/* ── Percorso ────────────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-          <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Il tuo percorso</h3>
+        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
+          <h3 className="font-semibold text-app text-sm uppercase tracking-wide">Il tuo percorso</h3>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-app mb-1.5">
               Cosa vuoi migliorare con questo percorso?
             </label>
             <textarea value={goals} onChange={(e) => setGoals(e.target.value)} rows={3}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"
+              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none text-app"
               placeholder="Es. Gestire meglio la pressione, smettere di pensare agli errori…" maxLength={500} />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Dove vuoi arrivare nel tuo sport?</label>
+            <label className="block text-sm font-medium text-app mb-1.5">Dove vuoi arrivare nel tuo sport?</label>
             <input type="text" value={dream} onChange={(e) => setDream(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
               placeholder="Es. Giocare in prima squadra, fare il salto di categoria…" maxLength={300} />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-app mb-1.5">
               Come stai vivendo questo periodo in campo e nel tuo sport?
             </label>
             <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)} rows={2}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none"
+              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none text-app"
               placeholder="Es. Ho perso il posto da titolare e faccio fatica a ritrovare fiducia…" maxLength={500} />
           </div>
         </div>
@@ -616,13 +616,13 @@ export default function ProfiloPage() {
 
         {/* Logout + Privacy */}
         <button type="button" onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 py-3 px-6 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-red-100">
+          className="w-full flex items-center justify-center gap-2 py-3 px-6 text-sm text-red-300 hover:text-red-200 hover:bg-red-500/10 rounded-xl transition-all border border-red-500/30">
           <span>🚪</span><span>Esci dall&apos;account</span>
         </button>
 
         <div className="text-center pb-4">
           <a href="/privacy" target="_blank" rel="noopener noreferrer"
-            className="text-xs text-gray-400 hover:text-gray-500 underline">
+            className="text-xs text-faint hover:text-muted underline">
             🔒 Privacy Policy
           </a>
         </div>

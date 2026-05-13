@@ -166,7 +166,7 @@ export default function MeditationPopup({
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
       <audio ref={audioRef} />
 
-      <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
 
         {phase === 'setup' ? (
           /* ── FASE SETUP ── */
@@ -175,11 +175,11 @@ export default function MeditationPopup({
               <div className="text-5xl md:text-6xl mb-3">
                 {isFirstTime ? '🌱' : '🧘‍♂️'}
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
                 {isFirstTime ? 'Il tuo primo respiro' : 'Respiro Consapevole'}
               </h2>
-              <p className="text-xs md:text-sm text-gray-600 mb-2">{weekName}</p>
-              <p className="text-sm md:text-base text-gray-700 font-medium leading-relaxed">
+              <p className="text-xs md:text-sm text-muted mb-2">{weekName}</p>
+              <p className="text-sm md:text-base text-app font-medium leading-relaxed">
                 {isFirstTime
                   ? 'Ogni grande percorso inizia con un respiro.\nPrenditi questo momento — è solo tuo.'
                   : 'Prenditi un momento solo per te'}
@@ -187,20 +187,20 @@ export default function MeditationPopup({
             </div>
 
             {/* Mantra */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-purple-200">
+            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-purple-500/30">
               {isFirstTime && (
-                <p className="text-xs text-purple-600 font-semibold text-center mb-2 uppercase tracking-wide">
+                <p className="text-xs text-purple-300 font-semibold text-center mb-2 uppercase tracking-wide">
                   Il mantra della tua settimana
                 </p>
               )}
-              <p className="text-base md:text-lg text-purple-900 italic font-medium text-center leading-relaxed">
+              <p className="text-base md:text-lg text-purple-200 italic font-medium text-center leading-relaxed">
                 "{mantra}"
               </p>
             </div>
 
             {/* Selezione durata */}
             <div className="mb-6">
-              <p className="text-sm text-gray-600 text-center mb-3 font-medium">
+              <p className="text-sm text-muted text-center mb-3 font-medium">
                 {isFirstTime ? '⏱️ Quanto tempo hai adesso?' : '⏱️ Quanto vuoi meditare?'}
               </p>
               <div className="grid grid-cols-4 gap-2">
@@ -211,7 +211,7 @@ export default function MeditationPopup({
                     className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       selectedDuration === s
                         ? 'bg-purple-600 text-white shadow-lg scale-105'
-                        : 'bg-white text-gray-600 border border-gray-200 hover:border-purple-300 hover:text-purple-600'
+                        : 'bg-surface-2 text-muted border border-divider hover:border-purple-500/40 hover:text-purple-300'
                     }`}
                   >
                     {label}
@@ -229,7 +229,7 @@ export default function MeditationPopup({
             </button>
             <button
               onClick={handleSkip}
-              className="w-full text-gray-400 hover:text-gray-600 text-sm py-2 transition-colors"
+              className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
             >
               {isFirstTime ? 'Lo farò più tardi →' : 'Salta per oggi →'}
             </button>
@@ -240,7 +240,7 @@ export default function MeditationPopup({
             {/* Pulsante per tornare al setup */}
             <button
               onClick={() => { audioRef.current?.pause(); setPhase('setup'); }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+              className="absolute top-4 right-4 text-faint hover:text-muted transition-colors p-1 rounded-full hover:bg-surface-2"
               aria-label="Interrompi meditazione"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -250,18 +250,18 @@ export default function MeditationPopup({
 
             <div className="text-center mb-6">
               <div className="text-5xl md:text-6xl mb-3">🧘‍♂️</div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
                 Respiro Consapevole
               </h2>
-              <p className="text-xs md:text-sm text-gray-600 mb-2">{weekName}</p>
-              <p className="text-sm md:text-base text-gray-700 font-medium">
+              <p className="text-xs md:text-sm text-muted mb-2">{weekName}</p>
+              <p className="text-sm md:text-base text-app font-medium">
                 Questo momento è solo tuo
               </p>
             </div>
 
             {/* Mantra */}
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-purple-200">
-              <p className="text-base md:text-lg text-purple-900 italic font-medium text-center leading-relaxed">
+            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-purple-500/30">
+              <p className="text-base md:text-lg text-purple-200 italic font-medium text-center leading-relaxed">
                 "{mantra}"
               </p>
             </div>
@@ -288,13 +288,13 @@ export default function MeditationPopup({
               </div>
 
               {/* Toggle Audio */}
-              <div className="flex gap-1 md:gap-2 bg-white/60 backdrop-blur-sm rounded-full p-1.5 md:p-2">
+              <div className="flex gap-1 md:gap-2 bg-surface-2 backdrop-blur-sm rounded-full p-1.5 md:p-2">
                 <button
                   onClick={() => setAudioMode('nature')}
                   className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
                     audioMode === 'nature'
                       ? 'bg-forest-500 text-white shadow-lg'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                      : 'bg-surface text-muted hover:bg-[#293429]'
                   }`}
                 >
                   🌊 Natura
@@ -304,7 +304,7 @@ export default function MeditationPopup({
                   className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
                     audioMode === 'focus'
                       ? 'bg-forest-500 text-white shadow-lg'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                      : 'bg-surface text-muted hover:bg-[#293429]'
                   }`}
                 >
                   ⚽ Focus
@@ -313,8 +313,8 @@ export default function MeditationPopup({
                   onClick={() => setAudioMode('mute')}
                   className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
                     audioMode === 'mute'
-                      ? 'bg-gray-500 text-white shadow-lg'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                      ? 'bg-surface-2 text-app shadow-lg ring-1 ring-divider'
+                      : 'bg-surface text-muted hover:bg-[#293429]'
                   }`}
                 >
                   🔇
@@ -329,14 +329,14 @@ export default function MeditationPopup({
               className={`w-full font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base ${
                 isTimerComplete
                   ? 'bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white cursor-pointer'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-surface-2 text-faint cursor-not-allowed'
               }`}
             >
               {isTimerComplete ? 'Continua 🌅' : 'Respira consapevolmente...'}
             </button>
 
             {!isTimerComplete && (
-              <p className="text-xs text-center text-gray-500 mt-3">
+              <p className="text-xs text-center text-muted mt-3">
                 Questo minuto è solo tuo 💙
               </p>
             )}

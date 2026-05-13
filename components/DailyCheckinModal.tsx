@@ -32,10 +32,10 @@ function getSliderLabel(value: number, labels: Record<number, string>): string {
 }
 
 function getSliderColor(value: number): string {
-  if (value <= 3) return 'text-red-500';
-  if (value <= 5) return 'text-amber-500';
-  if (value <= 7) return 'text-forest-500';
-  return 'text-emerald-500';
+  if (value <= 3) return 'text-red-400';
+  if (value <= 5) return 'text-amber-400';
+  if (value <= 7) return 'text-forest-400';
+  return 'text-emerald-400';
 }
 
 export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyCheckinModalProps) {
@@ -86,10 +86,10 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
 
         {/* Progress bar */}
-        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+        <div className="w-full bg-surface-2 rounded-full h-1.5 mb-1">
           <div
             className="h-1.5 bg-gradient-to-r from-forest-500 to-forest-600 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progressPercent}%` }}
@@ -98,7 +98,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
 
         {/* Step indicator */}
         <div className="flex justify-center mb-6">
-          <span className="text-gray-500 text-xs font-semibold tracking-widest uppercase">
+          <span className="text-muted text-xs font-semibold tracking-widest uppercase">
             {step} / {TOTAL_STEPS}
           </span>
         </div>
@@ -110,13 +110,13 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           {step === 1 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">💪</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Come stai fisicamente oggi?</h2>
-              <p className="text-gray-600 text-sm mb-8">Sii onesto — il Coach userà questa info per supportarti meglio</p>
-              <div className="text-5xl font-bold text-gray-800 mb-1">
+              <h2 className="text-2xl font-bold text-app mb-2">Come stai fisicamente oggi?</h2>
+              <p className="text-muted text-sm mb-8">Sii onesto — il Coach userà questa info per supportarti meglio</p>
+              <div className="text-5xl font-bold text-app mb-1">
                 {physicalState !== null ? physicalState : '—'}
-                <span className="text-2xl text-gray-400 font-normal">/10</span>
+                <span className="text-2xl text-faint font-normal">/10</span>
               </div>
-              <p className={`text-sm font-medium mb-6 h-5 ${physicalState !== null ? getSliderColor(physicalState) : 'text-gray-400'}`}>
+              <p className={`text-sm font-medium mb-6 h-5 ${physicalState !== null ? getSliderColor(physicalState) : 'text-faint'}`}>
                 {physicalState !== null ? getSliderLabel(physicalState, PHYSICAL_LABELS) : 'Trascina per selezionare'}
               </p>
               <input
@@ -128,7 +128,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
                 onChange={e => setPhysicalState(parseInt(e.target.value))}
                 className="w-full accent-forest-500 cursor-pointer h-2"
               />
-              <div className="flex justify-between text-[10px] text-gray-400 mt-2">
+              <div className="flex justify-between text-[10px] text-faint mt-2">
                 <span>Esausto</span>
                 <span>Nella media</span>
                 <span>Perfetto</span>
@@ -140,12 +140,12 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           {step === 2 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">😴</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Quante ore hai dormito?</h2>
-              <p className="text-gray-600 text-sm mb-8">Il sonno è il primo strumento di recupero</p>
-              <div className="text-6xl font-bold text-gray-800 mb-2">
+              <h2 className="text-2xl font-bold text-app mb-2">Quante ore hai dormito?</h2>
+              <p className="text-muted text-sm mb-8">Il sonno è il primo strumento di recupero</p>
+              <div className="text-6xl font-bold text-app mb-2">
                 {sleepHours}h
               </div>
-              <div className="text-gray-500 text-sm mb-8">
+              <div className="text-muted text-sm mb-8">
                 {sleepHours < 6 ? 'Poco — cerca di recuperare' : sleepHours >= 8 ? 'Ottimo recupero' : 'Nella norma'}
               </div>
               <input
@@ -157,7 +157,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
                 onChange={e => setSleepHours(parseFloat(e.target.value))}
                 className="w-full accent-forest-400 cursor-pointer"
               />
-              <div className="flex justify-between text-xs text-gray-400 mt-2">
+              <div className="flex justify-between text-xs text-faint mt-2">
                 <span>4h</span>
                 <span>8h</span>
                 <span>12h</span>
@@ -169,13 +169,13 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           {step === 3 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">🦵</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Come senti il recupero muscolare?</h2>
-              <p className="text-gray-600 text-sm mb-8">Gambe, schiena, tensioni generali</p>
-              <div className="text-5xl font-bold text-gray-800 mb-1">
+              <h2 className="text-2xl font-bold text-app mb-2">Come senti il recupero muscolare?</h2>
+              <p className="text-muted text-sm mb-8">Gambe, schiena, tensioni generali</p>
+              <div className="text-5xl font-bold text-app mb-1">
                 {recoveryQuality !== null ? recoveryQuality : '—'}
-                <span className="text-2xl text-gray-400 font-normal">/10</span>
+                <span className="text-2xl text-faint font-normal">/10</span>
               </div>
-              <p className={`text-sm font-medium mb-6 h-5 ${recoveryQuality !== null ? getSliderColor(recoveryQuality) : 'text-gray-400'}`}>
+              <p className={`text-sm font-medium mb-6 h-5 ${recoveryQuality !== null ? getSliderColor(recoveryQuality) : 'text-faint'}`}>
                 {recoveryQuality !== null ? getSliderLabel(recoveryQuality, RECOVERY_LABELS) : 'Trascina per selezionare'}
               </p>
               <input
@@ -187,7 +187,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
                 onChange={e => setRecoveryQuality(parseInt(e.target.value))}
                 className="w-full accent-forest-500 cursor-pointer h-2"
               />
-              <div className="flex justify-between text-[10px] text-gray-400 mt-2">
+              <div className="flex justify-between text-[10px] text-faint mt-2">
                 <span>Esausto</span>
                 <span>Normale</span>
                 <span>Fresco</span>
@@ -199,13 +199,13 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           {step === 4 && (
             <div className="w-full text-center">
               <div className="text-5xl mb-4">🧠</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Come stai mentalmente oggi?</h2>
-              <p className="text-gray-600 text-sm mb-8">Nessuna risposta giusta — solo onestà</p>
-              <div className="text-5xl font-bold text-gray-800 mb-1">
+              <h2 className="text-2xl font-bold text-app mb-2">Come stai mentalmente oggi?</h2>
+              <p className="text-muted text-sm mb-8">Nessuna risposta giusta — solo onestà</p>
+              <div className="text-5xl font-bold text-app mb-1">
                 {mentalState !== null ? mentalState : '—'}
-                <span className="text-2xl text-gray-400 font-normal">/10</span>
+                <span className="text-2xl text-faint font-normal">/10</span>
               </div>
-              <p className={`text-sm font-medium mb-6 h-5 ${mentalState !== null ? getSliderColor(mentalState) : 'text-gray-400'}`}>
+              <p className={`text-sm font-medium mb-6 h-5 ${mentalState !== null ? getSliderColor(mentalState) : 'text-faint'}`}>
                 {mentalState !== null ? getSliderLabel(mentalState, MENTAL_LABELS) : 'Trascina per selezionare'}
               </p>
               <input
@@ -217,7 +217,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
                 onChange={e => setMentalState(parseInt(e.target.value))}
                 className="w-full accent-forest-500 cursor-pointer h-2"
               />
-              <div className="flex justify-between text-[10px] text-gray-400 mt-2">
+              <div className="flex justify-between text-[10px] text-faint mt-2">
                 <span>Testa altrove</span>
                 <span>Normale</span>
                 <span>Lucido</span>
@@ -242,7 +242,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           </button>
           <button
             onClick={onSkip}
-            className="w-full text-gray-400 hover:text-gray-600 text-sm py-2 transition-colors"
+            className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
           >
             Salta per oggi
           </button>

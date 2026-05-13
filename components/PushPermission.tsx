@@ -83,7 +83,7 @@ export default function PushPermission({ userId }: PushPermissionProps) {
       <div className="flex gap-2 mt-3">
         <button
           onClick={handleAccept}
-          className="flex-1 bg-white text-forest-700 font-bold py-2 rounded-xl text-sm hover:bg-gray-100 transition-colors"
+          className="flex-1 bg-white text-forest-700 font-bold py-2 rounded-xl text-sm hover:bg-forest-50 transition-colors"
         >
           Attiva
         </button>

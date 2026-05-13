@@ -89,10 +89,10 @@ export default function SettimanePage() {
 
   if (checkingAuth || loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-gray-500">Caricamento percorso...</p>
+          <p className="text-muted">Caricamento percorso...</p>
         </div>
       </main>
     );
@@ -105,7 +105,7 @@ export default function SettimanePage() {
     .filter(w => isWeekCompleted(w, completedDays)).length;
 
   return (
-    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-app pb-tabbar-lg">
 
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
@@ -142,7 +142,7 @@ export default function SettimanePage() {
       <div className="max-w-3xl mx-auto px-4 -mt-10">
         <div className="relative">
           {/* Vertical timeline line */}
-          <div className="absolute left-[27px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-forest-300 via-forest-200 to-gray-200" aria-hidden="true" />
+          <div className="absolute left-[27px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-forest-500 via-forest-700 to-divider" aria-hidden="true" />
 
           <div className="space-y-4">
             {settimane.map((settimana) => {
@@ -155,14 +155,14 @@ export default function SettimanePage() {
               return (
                 <div key={settimana.id} className="relative pl-16">
                   {/* Timeline node */}
-                  <div className={`absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg shadow-md ring-4 ring-forest-50 z-10 ${
+                  <div className={`absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg shadow-md ring-4 ring-app z-10 ${
                     completed
                       ? 'bg-forest-500 text-white'
                       : isCurrent
-                      ? 'bg-white text-forest-600 ring-forest-200'
+                      ? 'bg-surface text-forest-300 ring-forest-500/40'
                       : unlocked
-                      ? 'bg-white text-forest-600'
-                      : 'bg-gray-100 text-gray-400'
+                      ? 'bg-surface text-forest-300'
+                      : 'bg-surface-2 text-faint'
                   }`}>
                     {completed ? <Check className="w-6 h-6" strokeWidth={3} /> : !unlocked ? <Lock className="w-5 h-5" /> : settimana.weekNumber}
                   </div>
@@ -171,50 +171,50 @@ export default function SettimanePage() {
                   <button
                     onClick={() => unlocked && router.push(`/settimana/${settimana.weekNumber}`)}
                     disabled={!unlocked}
-                    className={`w-full text-left bg-white rounded-2xl shadow-sm p-5 transition-all border ${
+                    className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 transition-all border ${
                       unlocked
-                        ? 'hover:shadow-md hover:border-forest-200 active:scale-[0.99] cursor-pointer'
-                        : 'opacity-70 cursor-not-allowed border-gray-100'
+                        ? 'hover:shadow-md hover:border-forest-500/40 active:scale-[0.99] cursor-pointer'
+                        : 'opacity-70 cursor-not-allowed border-divider'
                     } ${
-                      isCurrent ? 'border-forest-300 ring-1 ring-forest-200' : 'border-gray-100'
+                      isCurrent ? 'border-forest-500/50 ring-1 ring-forest-500/30' : 'border-divider'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                          unlocked ? 'text-forest-600' : 'text-gray-400'
+                          unlocked ? 'text-forest-400' : 'text-faint'
                         }`}>
                           Settimana {settimana.weekNumber}
                         </span>
                         {isCurrent && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-forest-700 bg-forest-100 px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-forest-300 bg-forest-500/20 px-2 py-0.5 rounded-full">
                             <MapPin className="w-3 h-3" /> In corso
                           </span>
                         )}
                         {completed && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-forest-700 bg-forest-100 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-forest-300 bg-forest-500/20 px-2 py-0.5 rounded-full">
                             ✓ Fatto
                           </span>
                         )}
                       </div>
                       {unlocked && (
-                        <ChevronRight className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5" />
+                        <ChevronRight className="w-5 h-5 text-faint flex-shrink-0 mt-0.5" />
                       )}
                     </div>
 
-                    <h3 className={`text-lg font-bold leading-tight mb-1.5 ${unlocked ? 'text-gray-800' : 'text-gray-400'}`}>
+                    <h3 className={`text-lg font-bold leading-tight mb-1.5 ${unlocked ? 'text-app' : 'text-faint'}`}>
                       {settimana.titolo?.replace(/^Week \d+ — /, '') || settimana.titolo}
                     </h3>
 
                     <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
                       {settimana.principio && (
-                        <p className={`text-xs font-medium flex items-center gap-1 ${unlocked ? 'text-forest-600' : 'text-gray-400'}`}>
+                        <p className={`text-xs font-medium flex items-center gap-1 ${unlocked ? 'text-forest-400' : 'text-faint'}`}>
                           <Compass className="w-3 h-3" aria-hidden="true" />
                           {settimana.principio}
                         </p>
                       )}
                       {settimana.strumento && (
-                        <p className={`text-xs flex items-center gap-1 ${unlocked ? 'text-gray-500' : 'text-gray-400'}`}>
+                        <p className={`text-xs flex items-center gap-1 ${unlocked ? 'text-muted' : 'text-faint'}`}>
                           <Wrench className="w-3 h-3" aria-hidden="true" />
                           {settimana.strumento}
                         </p>
@@ -224,11 +224,11 @@ export default function SettimanePage() {
                     {/* Progress bar */}
                     {unlocked ? (
                       <div>
-                        <div className="flex justify-between text-[11px] text-gray-500 mb-1.5">
+                        <div className="flex justify-between text-[11px] text-muted mb-1.5">
                           <span className="font-medium">{completed ? 'Completata' : `${progress}/${DAYS_PER_WEEK} giorni`}</span>
                           <span className="font-semibold">{percent}%</span>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                        <div className="w-full bg-surface-2 rounded-full h-1.5 overflow-hidden">
                           <div
                             className="h-full rounded-full bg-gradient-to-r from-forest-400 to-forest-500 transition-all duration-500"
                             style={{ width: `${percent}%` }}
@@ -236,7 +236,7 @@ export default function SettimanePage() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-[11px] text-gray-400 italic flex items-center gap-1.5">
+                      <p className="text-[11px] text-faint italic flex items-center gap-1.5">
                         <Lock className="w-3 h-3" />
                         Completa il Gate della settimana precedente
                       </p>
@@ -248,13 +248,13 @@ export default function SettimanePage() {
 
             {/* Coming soon teaser */}
             <div className="relative pl-16">
-              <div className="absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 ring-4 ring-forest-50 z-10">
+              <div className="absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center bg-surface-2 ring-4 ring-app z-10">
                 <span className="text-2xl">✨</span>
               </div>
-              <div className="bg-gradient-to-r from-forest-50 to-gray-50 border border-dashed border-forest-200 rounded-2xl p-5">
-                <p className="text-xs font-bold uppercase tracking-wider text-forest-600 mb-1">Prossimamente</p>
-                <p className="text-sm font-semibold text-gray-700 mb-1">Settimane 5–12</p>
-                <p className="text-xs text-gray-500 leading-relaxed">
+              <div className="bg-surface-2 border border-dashed border-forest-500/30 rounded-2xl p-5">
+                <p className="text-xs font-bold uppercase tracking-wider text-forest-400 mb-1">Prossimamente</p>
+                <p className="text-sm font-semibold text-app mb-1">Settimane 5–12</p>
+                <p className="text-xs text-muted leading-relaxed">
                   Dal Blocco 2 (Giocare nelle difficoltà) al Blocco 3 (Giocare libero).
                   In arrivo nella versione completa.
                 </p>

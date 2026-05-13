@@ -51,9 +51,9 @@ function trend(values: number[]): 'up' | 'down' | 'stable' {
 
 const TREND_ICON: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
 const TREND_COLOR: Record<string, string> = {
-  up: 'text-emerald-500',
-  down: 'text-red-500',
-  stable: 'text-gray-400',
+  up: 'text-emerald-400',
+  down: 'text-red-400',
+  stable: 'text-faint',
 };
 
 // Label descrittive per i valori 0-10
@@ -70,7 +70,7 @@ function ScoreTooltip({ active, payload, label, metricName }: any) {
   if (!active || !payload?.length) return null;
   const val = payload[0].value as number;
   return (
-    <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
+    <div className="bg-surface-2 border border-divider text-app text-xs rounded-lg px-3 py-2 shadow-lg">
       <p className="font-semibold mb-1">{formatDate(label)}</p>
       <p>{metricName}: <span className="font-bold">{val}/10</span> — {scoreLabel(val)}</p>
     </div>
@@ -80,7 +80,7 @@ function ScoreTooltip({ active, payload, label, metricName }: any) {
 function SleepTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-gray-800 text-white text-xs rounded-lg px-3 py-2 shadow-lg">
+    <div className="bg-surface-2 border border-divider text-app text-xs rounded-lg px-3 py-2 shadow-lg">
       <p className="font-semibold mb-1">{formatDate(label)}</p>
       <p>Sonno: <span className="font-bold">{payload[0].value}h</span></p>
     </div>
@@ -107,8 +107,8 @@ function DistributionBars({ values, colors }: { values: number[]; colors: { low:
       ].map(b => (
         <div key={b.label} className="flex-1 text-center">
           <div className={`h-1.5 rounded-full mb-1.5 ${b.color}`} style={{ opacity: b.pct > 0 ? 1 : 0.2 }} />
-          <p className="text-[10px] text-gray-500 leading-tight">{b.label}</p>
-          <p className="text-xs font-bold text-gray-700">{b.pct}%</p>
+          <p className="text-[10px] text-muted leading-tight">{b.label}</p>
+          <p className="text-xs font-bold text-app">{b.pct}%</p>
         </div>
       ))}
     </div>
@@ -206,23 +206,23 @@ export default function StatistichePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-5xl mb-4 animate-pulse">📊</div>
-          <p className="text-gray-500">Caricamento statistiche...</p>
+          <p className="text-muted">Caricamento statistiche...</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-forest-50 pt-safe px-4 pb-tabbar-lg">
+    <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
 
         {/* Nav */}
         <button
           onClick={() => router.push('/')}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-forest-500 transition-colors"
+          className="flex items-center gap-1 text-sm text-muted hover:text-forest-400 transition-colors"
         >
           ← Dashboard
         </button>
@@ -230,8 +230,8 @@ export default function StatistichePage() {
         {/* Header */}
         <div className="flex items-end justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Le tue statistiche</h1>
-            <p className="text-gray-500 text-sm mt-1">Andamento fisico e mentale</p>
+            <h1 className="text-2xl font-bold text-app">Le tue statistiche</h1>
+            <p className="text-muted text-sm mt-1">Andamento fisico e mentale</p>
           </div>
           {streak > 1 && (
             <div className="bg-forest-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
@@ -250,7 +250,7 @@ export default function StatistichePage() {
               className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${
                 period === d
                   ? 'bg-forest-500 text-white shadow-md'
-                  : 'bg-white text-gray-500 border border-gray-200 hover:border-forest-300'
+                  : 'bg-surface text-muted border border-divider hover:border-forest-500/40'
               }`}
             >
               {d === 7 ? '7 giorni' : d === 30 ? '30 giorni' : '3 mesi'}
@@ -290,22 +290,22 @@ export default function StatistichePage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm p-5 text-center border border-dashed border-gray-200">
-            <p className="text-gray-400 text-sm">Nessun check-in oggi — torna alla dashboard per registrarlo</p>
+          <div className="bg-surface rounded-2xl shadow-sm p-5 text-center border border-dashed border-divider">
+            <p className="text-faint text-sm">Nessun check-in oggi — torna alla dashboard per registrarlo</p>
           </div>
         )}
 
         {/* ─── Le tue azioni — storico ─────────────────────────────────── */}
         {actionsHistory && actionsHistory.by_action.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-5 space-y-5">
+          <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+              <h2 className="text-base font-bold text-app flex items-center gap-2">
                 <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
                 Le tue azioni
               </h2>
               <button
                 onClick={() => router.push('/oggi')}
-                className="text-xs text-forest-500 font-semibold hover:underline"
+                className="text-xs text-forest-400 font-semibold hover:underline"
               >
                 Vai a Oggi →
               </button>
@@ -313,57 +313,57 @@ export default function StatistichePage() {
 
             {/* Streak counters */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-3">
-                <p className="text-[10px] uppercase tracking-wider text-orange-700 font-semibold mb-0.5 flex items-center gap-1">
+              <div className="bg-surface-2 border border-orange-500/30 rounded-xl p-3">
+                <p className="text-[10px] uppercase tracking-wider text-orange-300 font-semibold mb-0.5 flex items-center gap-1">
                   <Flame className="w-3 h-3" aria-hidden="true" /> Streak attuale
                 </p>
-                <p className="text-2xl font-bold text-orange-600 leading-tight">
+                <p className="text-2xl font-bold text-orange-400 leading-tight">
                   {actionsHistory.current_streak}
-                  <span className="text-sm font-normal text-orange-700 ml-1">
+                  <span className="text-sm font-normal text-orange-300 ml-1">
                     {actionsHistory.current_streak === 1 ? 'giorno' : 'giorni'}
                   </span>
                 </p>
               </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-                <p className="text-[10px] uppercase tracking-wider text-gray-600 font-semibold mb-0.5">
+              <div className="bg-surface-2 border border-divider rounded-xl p-3">
+                <p className="text-[10px] uppercase tracking-wider text-muted font-semibold mb-0.5">
                   Streak record
                 </p>
-                <p className="text-2xl font-bold text-gray-700 leading-tight">
+                <p className="text-2xl font-bold text-app leading-tight">
                   {actionsHistory.longest_streak}
-                  <span className="text-sm font-normal text-gray-500 ml-1">
+                  <span className="text-sm font-normal text-muted ml-1">
                     {actionsHistory.longest_streak === 1 ? 'giorno' : 'giorni'}
                   </span>
                 </p>
               </div>
             </div>
-            <p className="text-[11px] text-gray-400 -mt-2">
+            <p className="text-[11px] text-faint -mt-2">
               Conta giorni con almeno {actionsHistory.threshold} azioni completate.
             </p>
 
             {/* Heatmap ultimi 30 giorni */}
             <div>
-              <p className="text-xs font-semibold text-gray-600 mb-2">Ultimi 30 giorni</p>
+              <p className="text-xs font-semibold text-app mb-2">Ultimi 30 giorni</p>
               <div className="grid grid-cols-[repeat(30,minmax(0,1fr))] gap-1">
                 {actionsHistory.by_date.map(d => {
                   const c = d.completed;
                   const cls =
                     c >= 5 ? 'bg-forest-600' :
                     c >= 3 ? 'bg-forest-400' :
-                    c >= 1 ? 'bg-amber-300' :
-                    'bg-gray-100';
+                    c >= 1 ? 'bg-amber-500/60' :
+                    'bg-surface-2';
                   const isoToday = new Date().toISOString().split('T')[0];
                   return (
                     <div
                       key={d.date}
-                      className={`aspect-square rounded-sm ${cls} ${d.date === isoToday ? 'ring-1 ring-forest-700' : ''}`}
+                      className={`aspect-square rounded-sm ${cls} ${d.date === isoToday ? 'ring-1 ring-forest-300' : ''}`}
                       title={`${d.date}: ${c} azioni`}
                     />
                   );
                 })}
               </div>
-              <div className="flex items-center justify-end gap-2 mt-2 text-[10px] text-gray-500">
-                <span className="inline-block w-2 h-2 bg-gray-100 rounded-sm" /> 0
-                <span className="inline-block w-2 h-2 bg-amber-300 rounded-sm" /> 1-2
+              <div className="flex items-center justify-end gap-2 mt-2 text-[10px] text-muted">
+                <span className="inline-block w-2 h-2 bg-surface-2 rounded-sm" /> 0
+                <span className="inline-block w-2 h-2 bg-amber-500/60 rounded-sm" /> 1-2
                 <span className="inline-block w-2 h-2 bg-forest-400 rounded-sm" /> 3-4
                 <span className="inline-block w-2 h-2 bg-forest-600 rounded-sm" /> 5
               </div>
@@ -377,15 +377,15 @@ export default function StatistichePage() {
               return (
                 <div className="space-y-3 pt-1">
                   <div>
-                    <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3 text-emerald-500" aria-hidden="true" />
+                    <p className="text-xs font-semibold text-app mb-2 flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3 text-emerald-400" aria-hidden="true" />
                       Le più costanti
                     </p>
                     <div className="space-y-1.5">
                       {top.map(a => (
                         <div key={a.action_id} className="flex items-center gap-2 text-xs">
-                          <div className="flex-1 min-w-0 truncate text-gray-700">{a.action_text}</div>
-                          <div className="text-emerald-600 font-bold tabular-nums flex-shrink-0">
+                          <div className="flex-1 min-w-0 truncate text-app">{a.action_text}</div>
+                          <div className="text-emerald-400 font-bold tabular-nums flex-shrink-0">
                             {Math.round(a.completion_rate * 100)}%
                           </div>
                         </div>
@@ -394,14 +394,14 @@ export default function StatistichePage() {
                   </div>
                   {bottom.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
+                      <p className="text-xs font-semibold text-app mb-2 flex items-center gap-1">
                         <TrendingDown className="w-3 h-3 text-red-400" aria-hidden="true" />
                         Su cui lavorare
                       </p>
                       <div className="space-y-1.5">
                         {bottom.map(a => (
                           <div key={a.action_id} className="flex items-center gap-2 text-xs">
-                            <div className="flex-1 min-w-0 truncate text-gray-700">{a.action_text}</div>
+                            <div className="flex-1 min-w-0 truncate text-app">{a.action_text}</div>
                             <div className="text-red-400 font-bold tabular-nums flex-shrink-0">
                               {Math.round(a.completion_rate * 100)}%
                             </div>
@@ -418,14 +418,14 @@ export default function StatistichePage() {
 
         {/* CTA pianifica le azioni se l'utente non ne ha ancora */}
         {actionsHistory && actionsHistory.active_count === 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4">
             <div className="flex items-start gap-3 mb-3">
-              <Target className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <Target className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" aria-hidden="true" />
               <div className="flex-1">
-                <p className="text-sm font-bold text-amber-900">
+                <p className="text-sm font-bold text-amber-200">
                   Non hai ancora pianificato le tue azioni
                 </p>
-                <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+                <p className="text-xs text-amber-300 mt-0.5 leading-relaxed">
                   Scegli 5 azioni concrete da pro che fai ogni giorno. Lo streak parte appena cominci.
                 </p>
               </div>
@@ -451,16 +451,16 @@ export default function StatistichePage() {
         {filtered.length > 0 && (
           <>
             {/* Medie periodo */}
-            <div className="bg-white rounded-2xl shadow-sm p-5">
-              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">
+            <div className="bg-surface rounded-2xl shadow-sm p-5">
+              <h2 className="text-sm font-bold text-app uppercase tracking-wide mb-4">
                 Medie periodo
-                <span className="text-gray-400 font-normal ml-2 normal-case">({filtered.length} check-in)</span>
+                <span className="text-faint font-normal ml-2 normal-case">({filtered.length} check-in)</span>
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Stato fisico medio</p>
+                  <p className="text-xs text-faint mb-1">Stato fisico medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-forest-600">
+                    <p className="text-2xl font-bold text-forest-400">
                       {avgPhysical > 0 ? `${avgPhysical}/10` : '—'}
                     </p>
                     {avgPhysical > 0 && (
@@ -470,7 +470,7 @@ export default function StatistichePage() {
                     )}
                   </div>
                   {avgPhysical > 0 && (
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-1.5">
+                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
                       <div
                         className="bg-forest-500 h-2 rounded-full transition-all"
                         style={{ width: `${(avgPhysical / 10) * 100}%` }}
@@ -479,9 +479,9 @@ export default function StatistichePage() {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Sonno medio</p>
+                  <p className="text-xs text-faint mb-1">Sonno medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-blue-600">
+                    <p className="text-2xl font-bold text-blue-400">
                       {avgSleep > 0 ? `${avgSleep}h` : '—'}
                     </p>
                     {avgSleep > 0 && (
@@ -491,7 +491,7 @@ export default function StatistichePage() {
                     )}
                   </div>
                   {avgSleep > 0 && (
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-1.5">
+                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
                       <div
                         className="bg-blue-500 h-2 rounded-full transition-all"
                         style={{ width: `${Math.min((avgSleep / 10) * 100, 100)}%` }}
@@ -500,9 +500,9 @@ export default function StatistichePage() {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Recupero medio</p>
+                  <p className="text-xs text-faint mb-1">Recupero medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-amber-600">
+                    <p className="text-2xl font-bold text-amber-400">
                       {avgRecovery > 0 ? `${avgRecovery}/10` : '—'}
                     </p>
                     {avgRecovery > 0 && (
@@ -512,7 +512,7 @@ export default function StatistichePage() {
                     )}
                   </div>
                   {avgRecovery > 0 && (
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-1.5">
+                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
                       <div
                         className="bg-amber-500 h-2 rounded-full transition-all"
                         style={{ width: `${(avgRecovery / 10) * 100}%` }}
@@ -521,9 +521,9 @@ export default function StatistichePage() {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Stato mentale medio</p>
+                  <p className="text-xs text-faint mb-1">Stato mentale medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-purple-600">
+                    <p className="text-2xl font-bold text-purple-400">
                       {avgMental > 0 ? `${avgMental}/10` : '—'}
                     </p>
                     {avgMental > 0 && (
@@ -533,7 +533,7 @@ export default function StatistichePage() {
                     )}
                   </div>
                   {avgMental > 0 && (
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-1.5">
+                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
                       <div
                         className="bg-purple-500 h-2 rounded-full transition-all"
                         style={{ width: `${(avgMental / 10) * 100}%` }}
@@ -546,8 +546,8 @@ export default function StatistichePage() {
 
             {/* Grafico stato fisico — Area chart */}
             {physicalChartData.length > 1 && (
-              <div className="bg-white rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <div className="bg-surface rounded-2xl shadow-sm p-5">
+                <h2 className="text-sm font-bold text-app uppercase tracking-wide mb-4 flex items-center gap-2">
                   <Activity className="w-4 h-4 text-emerald-500" aria-hidden="true" />
                   Stato fisico nel tempo
                 </h2>
@@ -560,11 +560,11 @@ export default function StatistichePage() {
                           <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
@@ -572,7 +572,7 @@ export default function StatistichePage() {
                       <YAxis
                         domain={[0, 10]}
                         ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -586,7 +586,7 @@ export default function StatistichePage() {
                         strokeWidth={2.5}
                         fill="url(#gradPhysical)"
                         dot={{ r: 3, fill: '#10b981', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#10b981', stroke: '#fff', strokeWidth: 2 }}
+                        activeDot={{ r: 5, fill: '#10b981', stroke: '#0d1310', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -596,8 +596,8 @@ export default function StatistichePage() {
 
             {/* Grafico sonno — Area chart */}
             {sleepChartData.length > 1 && (
-              <div className="bg-white rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <div className="bg-surface rounded-2xl shadow-sm p-5">
+                <h2 className="text-sm font-bold text-app uppercase tracking-wide mb-4 flex items-center gap-2">
                   <Moon className="w-4 h-4 text-blue-500" aria-hidden="true" />
                   Ore di sonno nel tempo
                 </h2>
@@ -610,11 +610,11 @@ export default function StatistichePage() {
                           <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
@@ -622,7 +622,7 @@ export default function StatistichePage() {
                       <YAxis
                         domain={[4, 10]}
                         ticks={[4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -637,12 +637,12 @@ export default function StatistichePage() {
                         strokeWidth={2.5}
                         fill="url(#gradSleep)"
                         dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
+                        activeDot={{ r: 5, fill: '#3b82f6', stroke: '#0d1310', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="flex gap-3 mt-3 text-xs text-gray-400 justify-center">
+                <div className="flex gap-3 mt-3 text-xs text-faint justify-center">
                   <span>🟢 ≥8h ideale</span>
                   <span>🟡 6-8h sufficiente</span>
                   <span>🔴 &lt;6h scarso</span>
@@ -652,9 +652,9 @@ export default function StatistichePage() {
 
             {/* Grafico recupero — Area chart */}
             {recoveryChartData.length > 1 && (
-              <div className="bg-white rounded-2xl shadow-sm p-5">
+              <div className="bg-surface rounded-2xl shadow-sm p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-app uppercase tracking-wide flex items-center gap-2">
                     <Zap className="w-4 h-4 text-amber-500" aria-hidden="true" />
                     Recupero nel tempo
                   </h2>
@@ -673,11 +673,11 @@ export default function StatistichePage() {
                           <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
@@ -685,7 +685,7 @@ export default function StatistichePage() {
                       <YAxis
                         domain={[0, 10]}
                         ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -699,7 +699,7 @@ export default function StatistichePage() {
                         strokeWidth={2.5}
                         fill="url(#gradRecovery)"
                         dot={{ r: 3, fill: '#f59e0b', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#f59e0b', stroke: '#fff', strokeWidth: 2 }}
+                        activeDot={{ r: 5, fill: '#f59e0b', stroke: '#0d1310', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -713,9 +713,9 @@ export default function StatistichePage() {
 
             {/* Grafico stato mentale — Area chart */}
             {mentalChartData.length > 1 && (
-              <div className="bg-white rounded-2xl shadow-sm p-5">
+              <div className="bg-surface rounded-2xl shadow-sm p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-app uppercase tracking-wide flex items-center gap-2">
                     <Brain className="w-4 h-4 text-purple-500" aria-hidden="true" />
                     Stato mentale nel tempo
                   </h2>
@@ -734,11 +734,11 @@ export default function StatistichePage() {
                           <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
@@ -746,7 +746,7 @@ export default function StatistichePage() {
                       <YAxis
                         domain={[0, 10]}
                         ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca3af' }}
+                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -760,7 +760,7 @@ export default function StatistichePage() {
                         strokeWidth={2.5}
                         fill="url(#gradMental)"
                         dot={{ r: 3, fill: '#8b5cf6', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }}
+                        activeDot={{ r: 5, fill: '#8b5cf6', stroke: '#0d1310', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>

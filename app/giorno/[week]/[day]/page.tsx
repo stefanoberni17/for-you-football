@@ -224,10 +224,10 @@ export default function GiornoPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-gray-500">Caricamento giorno...</p>
+          <p className="text-muted">Caricamento giorno...</p>
         </div>
       </main>
     );
@@ -275,7 +275,7 @@ export default function GiornoPage() {
   }
 
   return (
-    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-app pb-tabbar-lg">
 
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
@@ -323,14 +323,14 @@ export default function GiornoPage() {
 
         {/* Check giorno precedente */}
         {showCheck && giorno && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-            <p className="text-sm font-semibold text-amber-800 mb-2">🔄 Come è andata l'ultima pratica?</p>
-            <p className="text-gray-700 text-sm leading-relaxed mb-4">{giorno.testoCheck}</p>
+          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-5">
+            <p className="text-sm font-semibold text-amber-300 mb-2">🔄 Come è andata l'ultima pratica?</p>
+            <p className="text-app text-sm leading-relaxed mb-4">{giorno.testoCheck}</p>
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => saveCheck(1)}
                 disabled={savingCheck}
-                className="text-left bg-white border border-forest-200 text-forest-800 text-sm font-medium py-3 px-4 rounded-xl hover:bg-forest-50 transition-all disabled:opacity-50"
+                className="text-left bg-surface border border-forest-500/40 text-forest-300 text-sm font-medium py-3 px-4 rounded-xl hover:bg-surface-2 transition-all disabled:opacity-50"
               >
                 ✅ Bene! Andiamo avanti
               </button>
@@ -343,7 +343,7 @@ export default function GiornoPage() {
                   router.push(`/chat?prompt=${prompt}`);
                 }}
                 disabled={savingCheck}
-                className="text-left bg-white border border-amber-200 text-amber-800 text-sm font-medium py-3 px-4 rounded-xl hover:bg-amber-50 transition-all disabled:opacity-50"
+                className="text-left bg-surface border border-amber-500/30 text-amber-300 text-sm font-medium py-3 px-4 rounded-xl hover:bg-amber-500/10 transition-all disabled:opacity-50"
               >
                 🤖 Preferisco parlarne col Coach AI
               </button>
@@ -353,61 +353,61 @@ export default function GiornoPage() {
 
         {/* Slide content */}
         {currentSlideData?.type === 'apertura' && (
-          <div className="bg-white rounded-2xl shadow-sm p-5">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Apertura</h2>
-            <p className="text-gray-700 text-base leading-relaxed whitespace-pre-line italic">
+          <div className="bg-surface rounded-2xl shadow-sm p-5">
+            <h2 className="text-xs font-bold text-faint uppercase tracking-wide mb-3">Apertura</h2>
+            <p className="text-app text-base leading-relaxed whitespace-pre-line italic">
               {giorno.apertura}
             </p>
           </div>
         )}
 
         {currentSlideData?.type === 'domanda_pre_pratica' && (
-          <div className="bg-white rounded-2xl shadow-sm p-5">
-            <h2 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-sm p-5">
+            <h2 className="text-sm font-bold text-app mb-3 flex items-center gap-2">
               ✏️ Prima di iniziare
             </h2>
-            <p className="text-gray-600 text-base mb-3 leading-relaxed">{giorno.domandaPrePratica}</p>
+            <p className="text-muted text-base mb-3 leading-relaxed">{giorno.domandaPrePratica}</p>
             <textarea
               value={prePraticaResponse}
               onChange={(e) => setPrePraticaResponse(e.target.value)}
               disabled={completed}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
+              className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
               rows={4}
               maxLength={1000}
               placeholder="Scrivi qui la tua risposta (opzionale)..."
             />
             {!completed && prePraticaResponse.length > 0 && (
-              <p className="text-xs text-gray-400 mt-1 text-right">{prePraticaResponse.length}/1000</p>
+              <p className="text-xs text-faint mt-1 text-right">{prePraticaResponse.length}/1000</p>
             )}
           </div>
         )}
 
         {currentSlideData?.type === 'pratica' && (
-          <div className="bg-forest-50 rounded-2xl shadow-sm p-5 border border-forest-100">
-            <h2 className="text-sm font-bold text-forest-700 mb-3 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-forest-500/25">
+            <h2 className="text-sm font-bold text-forest-300 mb-3 flex items-center gap-2">
               🎯 La Pratica
               {giorno.durataMinuti > 0 && (
-                <span className="font-normal text-forest-500">({giorno.durataMinuti} min)</span>
+                <span className="font-normal text-forest-400">({giorno.durataMinuti} min)</span>
               )}
             </h2>
             {prePraticaResponse && (
-              <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 mb-4 text-sm text-gray-700 italic leading-relaxed">
-                <p className="text-xs font-semibold text-gray-400 not-italic mb-1">Quello che hai scritto:</p>
+              <div className="bg-surface-2 border border-divider rounded-xl px-4 py-3 mb-4 text-sm text-app italic leading-relaxed">
+                <p className="text-xs font-semibold text-faint not-italic mb-1">Quello che hai scritto:</p>
                 {prePraticaResponse}
               </div>
             )}
 
-            <p className="text-gray-700 text-base leading-relaxed whitespace-pre-line">
+            <p className="text-app text-base leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
 
             {/* Perché funziona */}
             {giorno.contesto && giorno.contesto.trim() !== '' && (
-              <div className="bg-green-50 border-l-4 border-green-600 rounded-r-lg px-4 py-4 mt-4">
-                <h3 className="text-base font-semibold text-green-700 mb-2">
+              <div className="bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg px-4 py-4 mt-4">
+                <h3 className="text-base font-semibold text-emerald-300 mb-2">
                   💡 Perché funziona
                 </h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <p className="text-sm text-app leading-relaxed">
                   {giorno.contesto}
                 </p>
               </div>
@@ -419,7 +419,7 @@ export default function GiornoPage() {
                 onClick={() => setShowPracticePopup(true)}
                 className={`mt-4 w-full font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 ${
                   completed
-                    ? 'bg-forest-100 text-forest-700 border border-forest-300 hover:bg-forest-200'
+                    ? 'bg-forest-500/20 text-forest-300 border border-forest-500/40 hover:bg-forest-500/30'
                     : 'bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white'
                 }`}
               >
@@ -432,14 +432,14 @@ export default function GiornoPage() {
         )}
 
         {currentSlideData?.type === 'nota' && (
-          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4">
-            <h3 className="text-xs font-bold text-forest-700 mb-1.5">⚽ Nota in campo</h3>
-            <p className="text-forest-700 text-base leading-relaxed whitespace-pre-line">
+          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4">
+            <h3 className="text-xs font-bold text-amber-300 mb-1.5">⚽ Nota in campo</h3>
+            <p className="text-app text-base leading-relaxed whitespace-pre-line">
               {giorno.notaCampo}
             </p>
             {getNextTrainingMessage() && (
-              <div className="mt-3 pt-3 border-t border-amber-200">
-                <p className="text-amber-700 text-xs font-medium">
+              <div className="mt-3 pt-3 border-t border-amber-500/30">
+                <p className="text-amber-300 text-xs font-medium">
                   {getNextTrainingMessage()}
                 </p>
               </div>
@@ -448,38 +448,38 @@ export default function GiornoPage() {
         )}
 
         {currentSlideData?.type === 'domanda' && (
-          <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="bg-surface rounded-2xl shadow-sm p-5">
             {isGiornataReturning && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-center">
-                <p className="text-sm text-amber-700">
+              <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-4 text-center">
+                <p className="text-sm text-amber-300">
                   ☀️ Bentornato! Com'è andata la pratica durante la giornata?
                 </p>
               </div>
             )}
-            <h2 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+            <h2 className="text-sm font-bold text-app mb-3 flex items-center gap-2">
               ✍️ Riflessione
             </h2>
-            <p className="text-gray-600 text-base mb-3 leading-relaxed">{giorno.domanda}</p>
+            <p className="text-muted text-base mb-3 leading-relaxed">{giorno.domanda}</p>
             <textarea
               value={response}
               onChange={(e) => setResponse(e.target.value)}
               disabled={completed}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
+              className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
               rows={4}
               maxLength={1000}
               placeholder="Scrivi qui la tua risposta (opzionale)..."
             />
             {!completed && response.length > 0 && (
-              <p className="text-xs text-gray-400 mt-1 text-right">{response.length}/1000</p>
+              <p className="text-xs text-faint mt-1 text-right">{response.length}/1000</p>
             )}
           </div>
         )}
 
         {currentSlideData?.type === 'completa' && (
-          <div className="bg-white rounded-2xl shadow-sm p-5 text-center">
+          <div className="bg-surface rounded-2xl shadow-sm p-5 text-center">
             <div className="text-4xl mb-3">✅</div>
-            <h2 className="text-lg font-bold text-gray-800 mb-2">Pronto a completare?</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="text-lg font-bold text-app mb-2">Pronto a completare?</h2>
+            <p className="text-sm text-muted">
               Hai letto l'apertura e praticato. Segna il giorno come completato.
             </p>
           </div>
@@ -487,17 +487,17 @@ export default function GiornoPage() {
 
         {/* Pratica pre-partita: oggi è giorno partita OPPURE domani è giorno partita */}
         {isLastSlide && isMatchDay && settimanaData?.praticaPrePartita && (
-          <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
-            <p className="text-xs font-bold text-green-700 mb-2">🟢 Oggi giochi — pratica pre-partita</p>
-            <p className="text-green-800 text-sm leading-relaxed whitespace-pre-line">
+          <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-2xl p-5">
+            <p className="text-xs font-bold text-emerald-300 mb-2">🟢 Oggi giochi — pratica pre-partita</p>
+            <p className="text-app text-sm leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>
           </div>
         )}
         {isLastSlide && !isMatchDay && isPreMatchDay && settimanaData?.praticaPrePartita && (
-          <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
-            <p className="text-xs font-bold text-green-700 mb-2">🟢 Domani giochi — pratica pre-partita</p>
-            <p className="text-green-800 text-sm leading-relaxed whitespace-pre-line">
+          <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-2xl p-5">
+            <p className="text-xs font-bold text-emerald-300 mb-2">🟢 Domani giochi — pratica pre-partita</p>
+            <p className="text-app text-sm leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>
           </div>
@@ -508,7 +508,7 @@ export default function GiornoPage() {
           {effectiveSlide > 1 && !isGiornataReturning && (
             <button
               onClick={() => setCurrentSlide(s => s - 1)}
-              className="flex-1 bg-white border border-gray-200 text-gray-600 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all text-sm"
+              className="flex-1 bg-surface border border-divider text-app font-semibold py-3 rounded-xl hover:bg-surface-2 transition-all text-sm"
             >
               ← Indietro
             </button>
@@ -547,8 +547,8 @@ export default function GiornoPage() {
 
         {/* Stato gia completato */}
         {completed && (
-          <div className="bg-forest-50 border border-forest-200 rounded-xl p-3 text-center">
-            <p className="text-forest-700 font-semibold text-xs">✅ Giorno gia completato — puoi rileggere le slide</p>
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-3 text-center">
+            <p className="text-forest-300 font-semibold text-xs">✅ Giorno gia completato — puoi rileggere le slide</p>
           </div>
         )}
 

@@ -50,26 +50,26 @@ export default function BetaCompletePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-forest-50 via-amber-50 to-forest-100 pt-safe px-4 pb-tabbar">
+    <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+        <div className="bg-surface rounded-3xl shadow-xl p-8 text-center">
           <div className="text-6xl mb-4">🏆</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className="text-3xl font-bold text-app mb-2">
             Ce l&apos;hai fatta, {name}.
           </h1>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-muted leading-relaxed">
             Hai completato tutte le {BETA_MAX_WEEK} settimane della Beta.
             Hai costruito il primo blocco: Presenza, Osservazione, Ascolto, Protocollo Pressione.
           </p>
-          <p className="text-gray-600 leading-relaxed mt-3">
+          <p className="text-muted leading-relaxed mt-3">
             Le prossime settimane — Accettazione, Lasciare Andare, Perdono — stanno arrivando.
             Ti scriveremo non appena saranno disponibili.
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-lg p-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-2">Com&apos;è andata?</h2>
-          <p className="text-sm text-gray-500 mb-3">
+        <div className="bg-surface rounded-3xl shadow-lg p-6">
+          <h2 className="text-lg font-bold text-app mb-2">Com&apos;è andata?</h2>
+          <p className="text-sm text-muted mb-3">
             Il tuo feedback ci aiuta a costruire il resto del percorso. Due righe vanno benissimo.
           </p>
           <textarea
@@ -77,33 +77,33 @@ export default function BetaCompletePage() {
             onChange={(e) => setFeedback(e.target.value)}
             placeholder="Cosa ha funzionato? Cosa cambieresti?"
             rows={5}
-            className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:outline-none focus:border-forest-400"
+            className="w-full rounded-xl bg-surface-2 border border-divider p-3 text-sm text-app focus:outline-none focus:border-forest-400"
           />
           <button
             onClick={sendFeedback}
             disabled={sending || !feedback.trim() || sent}
-            className="mt-3 w-full bg-forest-500 hover:bg-forest-600 disabled:bg-gray-300 text-white font-bold py-3 rounded-xl transition-all"
+            className="mt-3 w-full bg-forest-500 hover:bg-forest-600 disabled:bg-surface-2 disabled:text-faint text-white font-bold py-3 rounded-xl transition-all"
           >
             {sent ? '✓ Grazie' : sending ? 'Invio…' : 'Invia feedback'}
           </button>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-lg p-6 space-y-3">
+        <div className="bg-surface rounded-3xl shadow-lg p-6 space-y-3">
           <button
             onClick={() => router.push('/chat')}
-            className="w-full bg-forest-50 hover:bg-forest-100 text-forest-700 font-bold py-3 rounded-xl transition-all"
+            className="w-full bg-surface-2 hover:bg-[#293429] text-forest-300 font-bold py-3 rounded-xl transition-all"
           >
             💬 Parla con il Coach
           </button>
           <button
             onClick={() => router.push('/statistiche')}
-            className="w-full bg-white border border-forest-300 text-forest-700 font-bold py-3 rounded-xl hover:bg-forest-50 transition-all"
+            className="w-full bg-surface border border-forest-500/40 text-forest-300 font-bold py-3 rounded-xl hover:bg-surface-2 transition-all"
           >
             📊 Rivedi le tue statistiche
           </button>
           <button
             onClick={() => router.push('/settimane')}
-            className="w-full bg-white border border-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-50 transition-all"
+            className="w-full bg-surface border border-divider text-app font-bold py-3 rounded-xl hover:bg-surface-2 transition-all"
           >
             🗺️ Torna al percorso
           </button>

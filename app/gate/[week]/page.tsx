@@ -103,10 +103,10 @@ export default function GatePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-pulse">🔑</div>
-          <p className="text-gray-500">Caricamento Gate...</p>
+          <p className="text-muted">Caricamento Gate...</p>
         </div>
       </main>
     );
@@ -132,36 +132,36 @@ export default function GatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-forest-50 pt-safe px-4 pb-tabbar-lg">
+    <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
 
         <button
           onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-forest-500 transition-colors"
+          className="flex items-center gap-1 text-sm text-muted hover:text-forest-400 transition-colors"
         >
           ← Settimana {weekNumber}
         </button>
 
         {/* Header Gate */}
-        <div className="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-forest-500">
+        <div className="bg-surface rounded-2xl shadow-lg p-5 border-l-4 border-forest-500">
           <div className="flex items-center gap-3 mb-1">
-            <span className="text-xs font-semibold text-forest-700 bg-forest-100 px-2.5 py-1 rounded-full">
+            <span className="text-xs font-semibold text-forest-300 bg-forest-500/20 px-2.5 py-1 rounded-full">
               🔑 Gate · Settimana {weekNumber}
             </span>
             {completed && (
-              <span className="text-xs font-semibold text-green-600 bg-green-100 px-2.5 py-1 rounded-full">
+              <span className="text-xs font-semibold text-emerald-300 bg-emerald-500/15 px-2.5 py-1 rounded-full">
                 ✅ Completato
               </span>
             )}
           </div>
-          <h1 className="text-xl font-bold text-gray-800">Chiusura settimana</h1>
-          <p className="text-gray-500 text-sm mt-1">Giorno 7 — Review settimanale</p>
+          <h1 className="text-xl font-bold text-app">Chiusura settimana</h1>
+          <p className="text-muted text-sm mt-1">Giorno 7 — Review settimanale</p>
         </div>
 
         {/* Apertura */}
         {giorno?.apertura && (
-          <div className="bg-white rounded-2xl shadow-sm p-5">
-            <p className="text-gray-700 text-sm leading-relaxed italic whitespace-pre-line">
+          <div className="bg-surface rounded-2xl shadow-sm p-5">
+            <p className="text-app text-sm leading-relaxed italic whitespace-pre-line">
               {giorno.apertura}
             </p>
           </div>
@@ -169,35 +169,35 @@ export default function GatePage() {
 
         {/* Prima di rispondere */}
         {giorno?.pratica && (
-          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4">
-            <h3 className="text-xs font-bold text-forest-700 mb-2">🎯 Prima di rispondere</h3>
-            <p className="text-forest-700 text-sm leading-relaxed whitespace-pre-line">
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
+            <h3 className="text-xs font-bold text-forest-300 mb-2">🎯 Prima di rispondere</h3>
+            <p className="text-app text-sm leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
           </div>
         )}
 
         {/* Le 3 domande */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 space-y-5">
+        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-5">
           <div>
-            <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+            <h2 className="text-sm font-bold text-app flex items-center gap-2">
               ✍️ Le tre domande del Gate
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-faint mt-0.5">
               Rispondi a tutte e 3 per sbloccare la settimana successiva
             </p>
           </div>
 
           {questions.map((q, i) => (
             <div key={i}>
-              <label className="block text-sm font-medium text-gray-700 mb-2 leading-relaxed">
+              <label className="block text-sm font-medium text-app mb-2 leading-relaxed">
                 {q}
               </label>
               <textarea
                 value={answers[`q${i + 1}`] || ''}
                 onChange={(e) => setAnswers(prev => ({ ...prev, [`q${i + 1}`]: e.target.value }))}
                 disabled={completed}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all"
+                className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
                 rows={3}
                 maxLength={800}
                 placeholder="Scrivi qui..."
@@ -217,15 +217,15 @@ export default function GatePage() {
               {saving ? 'Salvataggio...' : '🔑 Completa il Gate'}
             </button>
             {!allAnswered && (
-              <p className="text-xs text-gray-400 text-center">
+              <p className="text-xs text-faint text-center">
                 Rispondi a tutte e 3 le domande per continuare
               </p>
             )}
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4 text-center">
-              <p className="text-forest-700 font-semibold text-sm">✅ Gate già completato</p>
+            <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4 text-center">
+              <p className="text-forest-300 font-semibold text-sm">✅ Gate già completato</p>
             </div>
             <button
               onClick={() => router.push(`/week-complete/${weekNumber}`)}

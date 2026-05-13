@@ -86,22 +86,22 @@ export default function ActionsCard({
     return (
       <Link
         href="/oggi?setup=1"
-        className="block bg-amber-50 border border-amber-200 rounded-2xl shadow-sm p-4 transition-all hover:shadow-md active:scale-[0.99]"
+        className="block bg-amber-500/15 border border-amber-500/30 rounded-2xl shadow-sm p-4 transition-all hover:shadow-md active:scale-[0.99]"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-            <Target className="w-5 h-5 text-amber-600" aria-hidden="true" />
+          <div className="w-10 h-10 rounded-full bg-amber-500/25 flex items-center justify-center flex-shrink-0">
+            <Target className="w-5 h-5 text-amber-300" aria-hidden="true" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-amber-800">
+            <p className="text-sm font-bold text-amber-200">
               Pianifica le tue azioni della settimana
             </p>
-            <p className="text-xs text-amber-700 mt-0.5">
+            <p className="text-xs text-amber-300 mt-0.5">
               Cose concrete che fai ogni giorno
             </p>
           </div>
           <ChevronRight
-            className="w-5 h-5 text-amber-600 flex-shrink-0"
+            className="w-5 h-5 text-amber-300 flex-shrink-0"
             aria-hidden="true"
           />
         </div>
@@ -113,10 +113,10 @@ export default function ActionsCard({
   const percent = Math.round((todayCount / total) * 100);
   const hasInteractiveList = actions.length > 0 && typeof onToggle === 'function';
 
-  // Container: gradient verde su all-done, bianco altrimenti
+  // Container: gradient verde su all-done, surface altrimenti
   const containerCls = allDone
     ? 'bg-gradient-to-r from-forest-500 to-forest-600 text-white border-transparent shadow-lg'
-    : 'bg-white border-gray-100 shadow-sm';
+    : 'bg-surface border-divider shadow-sm';
 
   return (
     <section
@@ -136,11 +136,11 @@ export default function ActionsCard({
       >
         <div
           className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-            allDone ? 'bg-white/20' : 'bg-forest-50'
+            allDone ? 'bg-white/20' : 'bg-forest-500/15'
           }`}
         >
           <Target
-            className={`w-5 h-5 ${allDone ? 'text-white' : 'text-forest-600'}`}
+            className={`w-5 h-5 ${allDone ? 'text-white' : 'text-forest-300'}`}
             aria-hidden="true"
           />
         </div>
@@ -148,14 +148,14 @@ export default function ActionsCard({
           <div className="flex items-baseline justify-between gap-2">
             <p
               className={`text-sm font-bold ${
-                allDone ? 'text-white' : 'text-gray-800'
+                allDone ? 'text-white' : 'text-app'
               }`}
             >
               {allDone ? `Tutte e ${total} fatte oggi` : 'Le tue azioni'}
             </p>
             <p
               className={`text-xs font-semibold tabular-nums ${
-                allDone ? 'text-white' : 'text-forest-600'
+                allDone ? 'text-white' : 'text-forest-300'
               }`}
             >
               {todayCount}/{total}
@@ -164,7 +164,7 @@ export default function ActionsCard({
 
           {/* Riga 2: progress bar (non all-done) o streak (all-done) */}
           {!allDone ? (
-            <div className="w-full bg-gray-100 rounded-full h-1 mt-1.5 overflow-hidden">
+            <div className="w-full bg-surface-2 rounded-full h-1 mt-1.5 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-forest-400 to-forest-500 transition-all duration-500"
                 style={{ width: `${percent}%` }}
@@ -189,13 +189,13 @@ export default function ActionsCard({
           <ChevronDown
             className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${
               expanded ? 'rotate-180' : ''
-            } ${allDone ? 'text-white' : 'text-gray-400'}`}
+            } ${allDone ? 'text-white' : 'text-faint'}`}
             aria-hidden="true"
           />
         ) : (
           <ChevronRight
             className={`w-5 h-5 flex-shrink-0 ${
-              allDone ? 'text-white' : 'text-gray-300'
+              allDone ? 'text-white' : 'text-faint'
             }`}
             aria-hidden="true"
           />
@@ -215,7 +215,7 @@ export default function ActionsCard({
             className={`divide-y ${
               allDone
                 ? 'divide-white/15 border-t border-white/15'
-                : 'divide-gray-100 border-t border-gray-100'
+                : 'divide-divider border-t border-divider'
             }`}
           >
             {actions.map((a) => {
@@ -238,7 +238,7 @@ export default function ActionsCard({
                     aria-checked={checked}
                     aria-label={a.action_text}
                     className={`w-full text-left flex items-start gap-3 px-4 py-3 min-h-[52px] transition-colors ${
-                      allDone ? 'hover:bg-white/5' : 'hover:bg-gray-50'
+                      allDone ? 'hover:bg-white/5' : 'hover:bg-surface-2'
                     }`}
                   >
                     <span
@@ -249,7 +249,7 @@ export default function ActionsCard({
                             : 'bg-forest-500 border-forest-500'
                           : allDone
                           ? 'border-white/50 bg-transparent'
-                          : 'border-gray-300 bg-white'
+                          : 'border-divider bg-surface-2'
                       }`}
                       aria-hidden="true"
                     >
@@ -274,10 +274,10 @@ export default function ActionsCard({
                         checked
                           ? allDone
                             ? 'text-white/70 line-through decoration-1'
-                            : 'text-gray-400 line-through decoration-1'
+                            : 'text-muted line-through decoration-1'
                           : allDone
                           ? 'text-white'
-                          : 'text-gray-800'
+                          : 'text-app'
                       }`}
                     >
                       {a.action_text}
@@ -294,7 +294,7 @@ export default function ActionsCard({
             className={`flex items-center justify-center gap-2 px-4 py-3 text-xs font-semibold transition-colors ${
               allDone
                 ? 'text-white/85 hover:text-white border-t border-white/15'
-                : 'text-forest-700 hover:text-forest-800 border-t border-gray-100 bg-gray-50/50'
+                : 'text-forest-300 hover:text-forest-200 border-t border-divider bg-surface-2'
             }`}
           >
             <Pencil className="w-3.5 h-3.5" aria-hidden="true" />

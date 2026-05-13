@@ -11,8 +11,8 @@
 
 export default function CalendarPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <p className="text-gray-500">🚧 Setup calendario — da implementare</p>
+    <div className="min-h-screen bg-app flex items-center justify-center p-4">
+      <p className="text-muted">🚧 Setup calendario — da implementare</p>
     </div>
   );
 }

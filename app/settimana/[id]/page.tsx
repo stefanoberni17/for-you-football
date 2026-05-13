@@ -118,10 +118,10 @@ export default function SettimanaPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-gray-500">Caricamento settimana...</p>
+          <p className="text-muted">Caricamento settimana...</p>
         </div>
       </main>
     );
@@ -129,9 +129,9 @@ export default function SettimanaPage() {
 
   if (!settimana) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-red-600">Settimana non trovata</p>
+          <p className="text-xl text-red-300">Settimana non trovata</p>
           <button onClick={() => router.push('/settimane')} className="mt-4 bg-forest-500 text-white px-6 py-2 rounded-full">
             Torna al percorso
           </button>
@@ -146,16 +146,16 @@ export default function SettimanaPage() {
   const percent = Math.round((progress / DAYS_PER_WEEK) * 100);
 
   return (
-    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-app pb-tabbar-lg">
 
       {/* Popup settimana completata */}
       {showCompletePopup && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+          <div className="bg-surface rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
             <div className="text-7xl mb-4">🏆</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Settimana completata!</h2>
-            <p className="text-forest-600 font-semibold text-sm mb-1">Settimana {weekNumber}</p>
-            <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+            <h2 className="text-2xl font-bold text-app mb-2">Settimana completata!</h2>
+            <p className="text-forest-300 font-semibold text-sm mb-1">Settimana {weekNumber}</p>
+            <p className="text-muted text-sm mb-6 leading-relaxed">
               Hai superato il Gate e completato tutti i giorni. Il tuo strumento mentale cresce! ⚽
             </p>
             {nextWeekAvailable ? (
@@ -168,14 +168,14 @@ export default function SettimanaPage() {
                 </button>
                 <button
                   onClick={() => setShowCompletePopup(false)}
-                  className="w-full text-gray-400 hover:text-gray-600 text-sm py-2 transition-colors"
+                  className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
                 >
                   Rimani qui
                 </button>
               </>
             ) : (
               <>
-                <div className="bg-forest-50 border border-forest-200 rounded-xl p-3 mb-4 text-xs text-forest-700">
+                <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-3 mb-4 text-xs text-forest-300">
                   🔒 Le prossime settimane arriveranno presto. Stai facendo un ottimo lavoro!
                 </div>
                 <button
@@ -262,14 +262,14 @@ export default function SettimanaPage() {
 
         {/* Intro card */}
         {(settimana.descrizionIntro || calendarData) && (
-          <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
             {settimana.descrizionIntro && (
-              <p className="text-gray-700 text-sm leading-relaxed">{settimana.descrizionIntro}</p>
+              <p className="text-app text-sm leading-relaxed">{settimana.descrizionIntro}</p>
             )}
             {calendarData && (
               <button
                 onClick={() => setShowCalendarPopup(true)}
-                className={`${settimana.descrizionIntro ? 'mt-4' : ''} text-xs text-gray-500 hover:text-forest-600 bg-gray-50 hover:bg-forest-50 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5 w-fit`}
+                className={`${settimana.descrizionIntro ? 'mt-4' : ''} text-xs text-muted hover:text-forest-300 bg-surface-2 hover:bg-[#293429] px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5 w-fit`}
               >
                 <Calendar className="w-3.5 h-3.5" />
                 Modifica calendario
@@ -280,24 +280,24 @@ export default function SettimanaPage() {
 
         {/* Obiettivo settimana */}
         {settimana.obiettivoSettimana && (
-          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-forest-700 mb-1.5 flex items-center gap-1.5">
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-forest-300 mb-1.5 flex items-center gap-1.5">
               <Target className="w-3.5 h-3.5" />
               Obiettivo della settimana
             </h3>
-            <p className="text-gray-700 text-sm leading-relaxed">{settimana.obiettivoSettimana}</p>
+            <p className="text-app text-sm leading-relaxed">{settimana.obiettivoSettimana}</p>
           </div>
         )}
 
         {/* Timeline 7 giorni */}
         <div className="pt-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 px-1">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-muted mb-4 px-1">
             Il percorso settimanale
           </h2>
 
           <div className="relative">
             {/* Vertical timeline line */}
-            <div className="absolute left-[19px] top-5 bottom-5 w-0.5 bg-gray-200" aria-hidden="true" />
+            <div className="absolute left-[19px] top-5 bottom-5 w-0.5 bg-divider" aria-hidden="true" />
 
             <div className="space-y-2">
               {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map((dayNum) => {
@@ -313,16 +313,16 @@ export default function SettimanaPage() {
                 return (
                   <div key={dayNum} className="relative pl-12">
                     {/* Timeline node */}
-                    <div className={`absolute left-0 top-3 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ring-4 ring-forest-50 z-10 transition-all ${
+                    <div className={`absolute left-0 top-3 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ring-4 ring-app z-10 transition-all ${
                       dayDone
                         ? 'bg-forest-500 text-white shadow-sm'
                         : isGate && unlocked
                         ? 'bg-forest-500 text-white shadow-sm'
                         : isCurrent
-                        ? 'bg-white text-forest-600 ring-forest-200 shadow-sm'
+                        ? 'bg-surface text-forest-300 ring-forest-500/40 shadow-sm'
                         : unlocked
-                        ? 'bg-white text-forest-600 border border-forest-300'
-                        : 'bg-gray-100 text-gray-400'
+                        ? 'bg-surface text-forest-300 border border-forest-500/40'
+                        : 'bg-surface-2 text-faint'
                     }`}>
                       {dayDone ? <Check className="w-5 h-5" strokeWidth={3} /> :
                        !unlocked ? (timeLocked ? <Clock className="w-4 h-4" /> : <Lock className="w-4 h-4" />) :
@@ -334,49 +334,49 @@ export default function SettimanaPage() {
                     <button
                       onClick={() => unlocked && router.push(`/giorno/${weekNumber}/${dayNum}`)}
                       disabled={!unlocked}
-                      className={`w-full text-left bg-white rounded-xl p-4 transition-all border flex items-center gap-3 ${
+                      className={`w-full text-left bg-surface rounded-xl p-4 transition-all border flex items-center gap-3 ${
                         unlocked
-                          ? 'shadow-sm hover:shadow-md hover:border-forest-200 active:scale-[0.99] cursor-pointer'
-                          : 'opacity-60 cursor-not-allowed border-gray-100'
+                          ? 'shadow-sm hover:shadow-md hover:border-forest-500/40 active:scale-[0.99] cursor-pointer'
+                          : 'opacity-60 cursor-not-allowed border-divider'
                       } ${
-                        isCurrent ? 'border-forest-300 ring-1 ring-forest-200' : dayDone ? 'border-forest-100 bg-forest-50/30' : 'border-gray-100'
+                        isCurrent ? 'border-forest-500/50 ring-1 ring-forest-500/30' : dayDone ? 'border-forest-500/25 bg-surface-2' : 'border-divider'
                       }`}
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <p className={`text-sm font-semibold ${unlocked ? 'text-gray-800' : 'text-gray-400'}`}>
+                          <p className={`text-sm font-semibold ${unlocked ? 'text-app' : 'text-faint'}`}>
                             {isGate
                               ? `Gate · Giorno ${dayNum}`
                               : `Giorno ${dayNum}`}
                           </p>
                           {isCurrent && (
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-forest-700 bg-forest-100 px-1.5 py-0.5 rounded-full">
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-forest-300 bg-forest-500/20 px-1.5 py-0.5 rounded-full">
                               Oggi
                             </span>
                           )}
                         </div>
                         {giorno?.titolo && !isGate && (
-                          <p className={`text-xs leading-snug ${unlocked ? 'text-gray-600' : 'text-gray-400'}`}>
+                          <p className={`text-xs leading-snug ${unlocked ? 'text-muted' : 'text-faint'}`}>
                             {giorno.titolo.replace(/^W\d+-G\d+ — /, '')}
                           </p>
                         )}
                         <div className="flex items-center gap-3 mt-1">
                           {giorno?.durataMinuti ? (
-                            <p className="text-[11px] text-gray-400 flex items-center gap-1">
+                            <p className="text-[11px] text-faint flex items-center gap-1">
                               <Clock className="w-3 h-3" /> {giorno.durataMinuti} min
                             </p>
                           ) : null}
                           {isGate && !dayDone && (
-                            <span className="text-[11px] text-forest-600 font-medium">Review settimanale</span>
+                            <span className="text-[11px] text-forest-400 font-medium">Review settimanale</span>
                           )}
                           {timeLocked && (
-                            <span className="text-[11px] text-blue-500 font-medium">Disponibile domani</span>
+                            <span className="text-[11px] text-blue-400 font-medium">Disponibile domani</span>
                           )}
                         </div>
                       </div>
 
                       {unlocked && (
-                        <ChevronRight className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                        <ChevronRight className="w-5 h-5 text-faint flex-shrink-0" />
                       )}
                     </button>
                   </div>
@@ -397,8 +397,8 @@ export default function SettimanaPage() {
         )}
 
         {isCompleted && !nextWeekAvailable && (
-          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-4 text-center mt-4">
-            <p className="text-forest-700 font-semibold text-sm">
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4 text-center mt-4">
+            <p className="text-forest-300 font-semibold text-sm">
               🏆 Hai completato tutte le settimane disponibili in Beta! Le prossime arrivano presto.
             </p>
           </div>

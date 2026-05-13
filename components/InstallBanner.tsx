@@ -70,12 +70,12 @@ export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
   if (!show) return null;
 
   return (
-    <div className="bg-gradient-to-r from-forest-50 to-forest-100 rounded-2xl shadow-sm p-5 border border-forest-200">
+    <div className="bg-surface rounded-2xl shadow-sm p-5 border border-forest-500/25">
       <div className="flex items-start gap-3 mb-3">
         <div className="text-2xl flex-shrink-0">📲</div>
         <div className="flex-1">
-          <p className="font-bold text-gray-800 text-sm">Installa l'app sul telefono</p>
-          <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+          <p className="font-bold text-app text-sm">Installa l'app sul telefono</p>
+          <p className="text-xs text-muted mt-0.5 leading-relaxed">
             Per un'esperienza migliore e per sfruttare al massimo l'app, aggiungila alla schermata Home del tuo telefono.
           </p>
         </div>
@@ -89,48 +89,48 @@ export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
           Come si fa? →
         </button>
       ) : (
-        <div className="bg-white rounded-xl p-4 mb-3 border border-forest-100">
+        <div className="bg-surface-2 rounded-xl p-4 mb-3 border border-divider">
           {platform === 'ios' ? (
             <div className="space-y-3">
-              <p className="text-xs font-bold text-forest-700 uppercase tracking-wide">iPhone / iPad</p>
+              <p className="text-xs font-bold text-forest-300 uppercase tracking-wide">iPhone / iPad</p>
               <div className="space-y-2">
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                  <p className="text-sm text-gray-700">Apri questa pagina in <strong>Safari</strong> (non Chrome)</p>
+                  <p className="text-sm text-app">Apri questa pagina in <strong>Safari</strong> (non Chrome)</p>
                 </div>
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                  <p className="text-sm text-gray-700">Tocca il pulsante <strong>Condividi</strong> <span className="inline-block text-base align-middle">⬆️</span> in basso</p>
+                  <p className="text-sm text-app">Tocca il pulsante <strong>Condividi</strong> <span className="inline-block text-base align-middle">⬆️</span> in basso</p>
                 </div>
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                  <p className="text-sm text-gray-700">Scorri e tocca <strong>"Aggiungi alla schermata Home"</strong></p>
+                  <p className="text-sm text-app">Scorri e tocca <strong>"Aggiungi alla schermata Home"</strong></p>
                 </div>
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
-                  <p className="text-sm text-gray-700">Conferma toccando <strong>"Aggiungi"</strong></p>
+                  <p className="text-sm text-app">Conferma toccando <strong>"Aggiungi"</strong></p>
                 </div>
               </div>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-xs font-bold text-forest-700 uppercase tracking-wide">Android</p>
+              <p className="text-xs font-bold text-forest-300 uppercase tracking-wide">Android</p>
               <div className="space-y-2">
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                  <p className="text-sm text-gray-700">Apri questa pagina in <strong>Chrome</strong></p>
+                  <p className="text-sm text-app">Apri questa pagina in <strong>Chrome</strong></p>
                 </div>
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                  <p className="text-sm text-gray-700">Tocca i <strong>3 puntini</strong> ⋮ in alto a destra</p>
+                  <p className="text-sm text-app">Tocca i <strong>3 puntini</strong> ⋮ in alto a destra</p>
                 </div>
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                  <p className="text-sm text-gray-700">Tocca <strong>"Installa app"</strong> o <strong>"Aggiungi a schermata Home"</strong></p>
+                  <p className="text-sm text-app">Tocca <strong>"Installa app"</strong> o <strong>"Aggiungi a schermata Home"</strong></p>
                 </div>
                 <div className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
-                  <p className="text-sm text-gray-700">Conferma e <strong>l'app appare sulla home</strong></p>
+                  <p className="text-sm text-app">Conferma e <strong>l'app appare sulla home</strong></p>
                 </div>
               </div>
             </div>
@@ -141,13 +141,13 @@ export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
       <div className="flex gap-2">
         <button
           onClick={handleRemindLater}
-          className="flex-1 text-gray-500 text-xs py-2 hover:text-gray-700 transition-colors"
+          className="flex-1 text-muted text-xs py-2 hover:text-app transition-colors"
         >
           Ricordamelo tra qualche giorno
         </button>
         <button
           onClick={handleNeverShow}
-          className="text-gray-400 text-xs py-2 px-3 hover:text-gray-600 transition-colors"
+          className="text-faint text-xs py-2 px-3 hover:text-muted transition-colors"
         >
           Non mostrare
         </button>

@@ -140,10 +140,10 @@ function OggiPageInner() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-gray-500">Caricamento azioni…</p>
+          <p className="text-muted">Caricamento azioni…</p>
         </div>
       </main>
     );
@@ -163,7 +163,7 @@ function OggiPageInner() {
   }));
 
   return (
-    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-app pb-tabbar-lg">
 
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
@@ -208,15 +208,15 @@ function OggiPageInner() {
         {total === 0 ? (
           <EmptyState
             icon={<Target className="w-6 h-6" aria-hidden="true" />}
-            iconBg="bg-amber-100"
-            iconColor="text-amber-600"
+            iconBg="bg-amber-500/20"
+            iconColor="text-amber-300"
             title="Comportati già oggi come il giocatore che vuoi diventare"
             subtitle="Scegli fino a 5 azioni concrete. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione."
             cta={{ label: 'Pianifica le tue azioni', onClick: () => setShowSetup(true) }}
           />
         ) : (
           <>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-2xl shadow-sm border border-divider overflow-hidden">
               {actions.map((a, i) => {
                 const checked = a.completed_today;
                 return (
@@ -228,14 +228,14 @@ function OggiPageInner() {
                     aria-checked={checked}
                     aria-label={a.action_text}
                     className={`w-full text-left flex items-start gap-3 px-4 py-4 transition-colors min-h-[60px] ${
-                      i !== actions.length - 1 ? 'border-b border-gray-100' : ''
-                    } ${checked ? 'bg-forest-50/40' : 'hover:bg-gray-50'}`}
+                      i !== actions.length - 1 ? 'border-b border-divider' : ''
+                    } ${checked ? 'bg-forest-500/10' : 'hover:bg-surface-2'}`}
                   >
                     <span
                       className={`mt-0.5 w-7 h-7 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                         checked
                           ? 'bg-forest-500 border-forest-500'
-                          : 'border-gray-300 bg-white'
+                          : 'border-divider bg-surface-2'
                       }`}
                       aria-hidden="true"
                     >
@@ -245,7 +245,7 @@ function OggiPageInner() {
                         </svg>
                       )}
                     </span>
-                    <p className={`flex-1 text-sm leading-relaxed ${checked ? 'text-gray-500 line-through decoration-1' : 'text-gray-800'}`}>
+                    <p className={`flex-1 text-sm leading-relaxed ${checked ? 'text-muted line-through decoration-1' : 'text-app'}`}>
                       {a.action_text}
                     </p>
                   </button>
@@ -255,22 +255,22 @@ function OggiPageInner() {
 
             <button
               onClick={() => setShowSetup(true)}
-              className="w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm"
+              className="w-full bg-surface border border-divider text-app font-semibold py-3 rounded-xl hover:bg-surface-2 transition-colors flex items-center justify-center gap-2 text-sm"
             >
               <Pencil className="w-4 h-4" aria-hidden="true" />
               Modifica le 5 della settimana
             </button>
 
             {streak > 0 && (
-              <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                  <Flame className="w-6 h-6 text-orange-500" aria-hidden="true" />
+              <div className="bg-surface border border-orange-500/30 rounded-2xl p-4 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                  <Flame className="w-6 h-6 text-orange-400" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-bold text-gray-800">
+                  <p className="text-base font-bold text-app">
                     {streak} {streak === 1 ? 'giorno' : 'giorni'} di fila
                   </p>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-muted">
                     Hai fatto almeno 3 azioni al giorno. Continua così.
                   </p>
                 </div>
@@ -300,10 +300,10 @@ function OggiPageInner() {
 export default function OggiPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-gray-500">Caricamento…</p>
+          <p className="text-muted">Caricamento…</p>
         </div>
       </main>
     }>

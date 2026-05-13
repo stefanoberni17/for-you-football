@@ -45,10 +45,10 @@ function ChatContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-gray-600">Caricamento...</p>
+          <p className="text-xl text-muted">Caricamento...</p>
         </div>
       </main>
     );
@@ -56,7 +56,7 @@ function ChatContent() {
 
   return (
     <div
-      className="fixed inset-0 flex flex-col bg-forest-50"
+      className="fixed inset-0 flex flex-col bg-app"
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         // Tab bar full-width h-16 (4rem) + safe-area-inset-bottom (padding interno della bar)
@@ -75,10 +75,10 @@ function ChatContent() {
 export default function ChatPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-gray-600">Caricamento...</p>
+          <p className="text-xl text-muted">Caricamento...</p>
         </div>
       </main>
     }>

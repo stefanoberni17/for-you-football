@@ -78,17 +78,17 @@ function PricingContent() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-forest-50 via-amber-50 to-forest-100 pt-safe px-4 pb-tabbar">
+    <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Scegli il tuo piano</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-app mb-2">Scegli il tuo piano</h1>
+          <p className="text-muted">
             Mental training per calciatori. Cancellazione in ogni momento.
           </p>
         </div>
 
         {canceled && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-800">
+          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 text-sm text-amber-300">
             Checkout annullato. Puoi riprovare quando vuoi.
           </div>
         )}
@@ -97,23 +97,23 @@ function PricingContent() {
           {/* Early Bird */}
           <button
             onClick={() => setSelectedPlan('early_bird')}
-            className={`w-full text-left bg-white rounded-2xl shadow-sm p-5 border-2 transition ${
-              selectedPlan === 'early_bird' ? 'border-forest-500 shadow-md' : 'border-transparent'
+            className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
+              selectedPlan === 'early_bird' ? 'border-forest-500 shadow-md' : 'border-divider'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-gray-800">Early Bird</h2>
-                <span className="bg-forest-100 text-forest-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                <h2 className="text-lg font-bold text-app">Early Bird</h2>
+                <span className="bg-forest-500/20 text-forest-300 text-xs font-semibold px-2 py-0.5 rounded-full">
                   -25%
                 </span>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-800">€29</div>
-                <div className="text-xs text-gray-500">/ mese</div>
+                <div className="text-2xl font-bold text-app">€29</div>
+                <div className="text-xs text-muted">/ mese</div>
               </div>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted">
               Prezzo di lancio fissato per sempre. Accesso completo al percorso finché l&apos;abbonamento è attivo.
             </p>
           </button>
@@ -121,25 +121,25 @@ function PricingContent() {
           {/* Full */}
           <button
             onClick={() => setSelectedPlan('full')}
-            className={`w-full text-left bg-white rounded-2xl shadow-sm p-5 border-2 transition ${
-              selectedPlan === 'full' ? 'border-forest-500 shadow-md' : 'border-transparent'
+            className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
+              selectedPlan === 'full' ? 'border-forest-500 shadow-md' : 'border-divider'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-bold text-gray-800">Full</h2>
+              <h2 className="text-lg font-bold text-app">Full</h2>
               <div className="text-right">
-                <div className="text-2xl font-bold text-gray-800">€39</div>
-                <div className="text-xs text-gray-500">/ mese</div>
+                <div className="text-2xl font-bold text-app">€39</div>
+                <div className="text-xs text-muted">/ mese</div>
               </div>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted">
               Prezzo pieno. Accesso completo al percorso finché l&apos;abbonamento è attivo.
             </p>
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700">
+          <div className="bg-red-500/15 border border-red-500/30 rounded-2xl p-4 text-sm text-red-300">
             {error}
           </div>
         )}
@@ -152,33 +152,33 @@ function PricingContent() {
           {loading ? 'Attendi…' : 'Procedi al pagamento →'}
         </button>
 
-        <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-          <h3 className="font-bold text-gray-800">Domande frequenti</h3>
+        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
+          <h3 className="font-bold text-app">Domande frequenti</h3>
 
           <div>
-            <div className="text-sm font-semibold text-gray-800">Come funziona l&apos;abbonamento?</div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="text-sm font-semibold text-app">Come funziona l&apos;abbonamento?</div>
+            <div className="text-sm text-muted mt-1">
               Finché l&apos;abbonamento è attivo, hai accesso completo al percorso. I contenuti si sbloccano un giorno alla volta per tenere il ritmo. Season 1 dura ~12 settimane.
             </div>
           </div>
 
           <div>
-            <div className="text-sm font-semibold text-gray-800">Posso disdire?</div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="text-sm font-semibold text-app">Posso disdire?</div>
+            <div className="text-sm text-muted mt-1">
               Sì, in qualsiasi momento dal tuo profilo. Mantieni l&apos;accesso fino alla fine del periodo pagato.
             </div>
           </div>
 
           <div>
-            <div className="text-sm font-semibold text-gray-800">Ho un codice promozionale.</div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="text-sm font-semibold text-app">Ho un codice promozionale.</div>
+            <div className="text-sm text-muted mt-1">
               Lo inserisci al passo successivo, nella pagina di pagamento Stripe.
             </div>
           </div>
 
           <div>
-            <div className="text-sm font-semibold text-gray-800">Pagamento sicuro?</div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="text-sm font-semibold text-app">Pagamento sicuro?</div>
+            <div className="text-sm text-muted mt-1">
               Elaboriamo i pagamenti tramite Stripe. Apple Pay e Google Pay disponibili.
             </div>
           </div>
@@ -190,7 +190,7 @@ function PricingContent() {
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Caricamento…</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-app flex items-center justify-center text-muted">Caricamento…</div>}>
       <PricingContent />
     </Suspense>
   );
