@@ -22,7 +22,7 @@ export default function BottomTabBar() {
   return (
     <nav
       aria-label="Navigazione principale"
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-2px_8px_rgba(20,26,22,0.05)]"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-md border-t border-divider shadow-[0_-2px_12px_rgba(0,0,0,0.4)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="max-w-md mx-auto">
@@ -47,13 +47,13 @@ export default function BottomTabBar() {
                   <Icon
                     aria-hidden="true"
                     className={`w-6 h-6 transition-colors ${
-                      isActive ? 'text-forest-600' : 'text-gray-500'
+                      isActive ? 'text-[#2dd17a]' : 'text-muted'
                     }`}
                     strokeWidth={isActive ? 2.5 : 2}
                   />
                   <span
                     className={`text-[11px] mt-0.5 transition-colors ${
-                      isActive ? 'text-forest-700 font-semibold' : 'text-gray-500 font-medium'
+                      isActive ? 'text-[#2dd17a] font-semibold' : 'text-muted font-medium'
                     }`}
                   >
                     {tab.label}
@@ -62,7 +62,7 @@ export default function BottomTabBar() {
                 {isActive && (
                   <span
                     aria-hidden="true"
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-forest-500"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[#2dd17a] shadow-[0_0_8px_rgba(45,209,122,0.5)]"
                   />
                 )}
               </Link>

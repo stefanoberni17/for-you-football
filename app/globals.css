@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0f1f0;
-  --foreground: #141a16;
+  --background: #0d1310;
+  --foreground: #ecefec;
 }
 
 @theme inline {
@@ -11,6 +11,7 @@
 }
 
 @theme {
+  /* Palette forest brand — accent (invariate, restano i verdi del logo) */
   --color-forest-50:  #f0f1f0;
   --color-forest-100: #e8eae8;
   --color-forest-200: #e0e4e0;
@@ -21,19 +22,48 @@
   --color-forest-700: #0e5c3a;
   --color-forest-800: #111c14;
   --color-forest-900: #0a1410;
+
+  /* Palette DARK "For You Dark" — ispirata Spotify ma con tinta forest brand */
+  --color-app-bg:        #0d1310;
+  --color-surface:       #161e19;
+  --color-surface-2:     #1f2a23;
+  --color-divider:       #1f2924;
+  --color-text-app:      #ecefec;
+  --color-text-muted:    #9ca7a0;
+  --color-text-faint:    #6b7470;
+  --color-accent-glow:   #2dd17a;
 }
 
 body {
-  background: #f0f1f0;
-  color: #141a16;
+  background: #0d1310;
+  color: #ecefec;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Testo input più scuro */
+/* Testo input — chiaro su dark, placeholder leggibile */
 input,
 textarea,
 select {
-  color: rgb(31 41 55) !important; /* gray-800 - molto scuro */
+  color: #ecefec !important;
+  background-color: #0a0f0c;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7470;
+  opacity: 1;
+}
+
+/* Tailwind utility shortcuts per dark theme */
+@layer utilities {
+  .bg-app { background-color: #0d1310; }
+  .bg-surface { background-color: #161e19; }
+  .bg-surface-2 { background-color: #1f2a23; }
+  .border-divider { border-color: #1f2924; }
+  .divide-divider > * + * { border-color: #1f2924; }
+  .text-app { color: #ecefec; }
+  .text-muted { color: #9ca7a0; }
+  .text-faint { color: #6b7470; }
 }
 
 /* iOS Safari zooma automaticamente sugli input < 16px — forziamo 16px solo su mobile */
@@ -43,13 +73,6 @@ select {
   select {
     font-size: 16px !important;
   }
-}
-
-/* Placeholder più scuri */
-input::placeholder,
-textarea::placeholder {
-  color: rgb(107 114 128); /* gray-500 */
-  opacity: 1;
 }
 
 /* Padding-bottom per contenuto sopra la BottomTabBar full-width attaccata al bordo
@@ -99,13 +122,13 @@ textarea::placeholder {
   display: inline-block;
 }
 
-/* Focus-visible globale per accessibilità keyboard.
+/* Focus-visible globale per accessibilità keyboard (calibrato sul dark).
    Si attiva solo da tastiera (Tab), non da click — mantiene la UX touch pulita. */
 button:focus-visible,
 a:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px #ffffff,
-    0 0 0 4px var(--color-forest-400);
+    0 0 0 2px #0d1310,
+    0 0 0 4px #2dd17a;
   border-radius: inherit;
 }

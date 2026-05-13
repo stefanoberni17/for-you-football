@@ -185,10 +185,10 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
+      <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-gray-600">Caricamento...</p>
+          <p className="text-xl text-muted">Caricamento...</p>
         </div>
       </main>
     );
@@ -261,14 +261,14 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-forest-50 pt-safe px-4 pb-tabbar">
+    <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       {/* Header — compatto: solo greeting + mantra opzionale */}
       <div className="max-w-2xl mx-auto mb-5">
-        <h1 className="text-3xl font-bold text-gray-800">
+        <h1 className="text-3xl font-bold text-app">
           Ciao, {profile?.name || 'Campione'}! 👋
         </h1>
         {settimana?.mantraDashboard && (
-          <p className="italic text-gray-500 text-sm mt-2">
+          <p className="italic text-muted text-sm mt-2">
             &ldquo;{settimana.mantraDashboard}&rdquo;
           </p>
         )}
@@ -278,14 +278,14 @@ export default function HomePage() {
         {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
             (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
         {profile?.current_week === 1 && totalCompleted === 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
-            <p className="font-bold text-gray-800 mb-1">Ciao, {profile?.name}.</p>
-            <p className="font-bold text-gray-800 mb-3">Week 1 — Il Reset.</p>
-            <p className="text-sm text-gray-500 leading-relaxed">
+          <div className="bg-surface rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
+            <p className="font-bold text-app mb-1">Ciao, {profile?.name}.</p>
+            <p className="font-bold text-app mb-3">Week 1 — Il Reset.</p>
+            <p className="text-sm text-muted leading-relaxed">
               Molti giocatori scoprono che non è la tecnica il problema.
               È restare nella partita.
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-muted mt-1">
               Oggi impari il primo strumento. 3 minuti.
             </p>
           </div>
@@ -355,8 +355,8 @@ export default function HomePage() {
         />
 
         {/* Progress settimana corrente */}
-        <div className="bg-white rounded-2xl shadow-lg p-5">
-          <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+        <div className="bg-surface rounded-2xl shadow-lg p-5">
+          <h2 className="text-base font-bold text-app mb-3 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-forest-500" aria-hidden="true" />
             Settimana {currentWeek} in corso
             {weekDone && <span className="text-forest-500 text-sm font-medium">✓ Completata</span>}
@@ -376,8 +376,8 @@ export default function HomePage() {
                     done
                       ? 'bg-forest-500 text-white'
                       : isGate
-                      ? 'bg-forest-100 text-forest-500 border border-forest-300'
-                      : 'bg-gray-100 text-gray-400'
+                      ? 'bg-forest-500/20 text-forest-300 border border-forest-500/40'
+                      : 'bg-surface-2 text-faint'
                   }`}
                 >
                   {done ? '✓' : isGate ? '🔑' : day}
@@ -387,7 +387,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-faint">
               {weekProgress}/{DAYS_PER_WEEK} giorni · 🔑 Giorno 7 = Gate
             </p>
             <button
@@ -407,7 +407,7 @@ export default function HomePage() {
           const ment = checkins.filter(c => c.mental_state !== null).map(c => c.mental_state as number);
 
           const TREND_ARROW: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
-          const TREND_CLS: Record<string, string> = { up: 'text-emerald-500', down: 'text-red-500', stable: 'text-gray-400' };
+          const TREND_CLS: Record<string, string> = { up: 'text-emerald-400', down: 'text-red-400', stable: 'text-faint' };
 
           const rows = [
             { Icon: Activity, label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/10', color: '#10b981', min: 0, max: 10 },
@@ -419,9 +419,9 @@ export default function HomePage() {
           if (rows.length === 0) return null;
 
           return (
-            <div className="bg-white rounded-2xl shadow-lg p-5">
+            <div className="bg-surface rounded-2xl shadow-lg p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                <h2 className="text-base font-bold text-app flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-forest-500" aria-hidden="true" />
                   Il tuo stato
                 </h2>
@@ -439,12 +439,12 @@ export default function HomePage() {
                   return (
                     <div key={r.label} className="flex items-center gap-3">
                       <span className="text-sm w-24 flex items-center gap-2">
-                        <Icon className="w-4 h-4 text-gray-500" aria-hidden="true" style={{ color: r.color }} />
-                        <span className="text-gray-600 text-xs font-medium">{r.label}</span>
+                        <Icon className="w-4 h-4 text-muted" aria-hidden="true" style={{ color: r.color }} />
+                        <span className="text-muted text-xs font-medium">{r.label}</span>
                       </span>
                       <MiniSparkline values={r.values} color={r.color} min={r.min} max={r.max} />
                       <div className="flex items-baseline gap-1 ml-auto">
-                        <span className="text-sm font-bold text-gray-700">{r.avg}{r.unit}</span>
+                        <span className="text-sm font-bold text-app">{r.avg}{r.unit}</span>
                         <span className={`text-xs font-bold ${TREND_CLS[t]}`}>{TREND_ARROW[t]}</span>
                       </div>
                     </div>
@@ -456,9 +456,9 @@ export default function HomePage() {
         })()}
 
         {/* Calendario settimanale */}
-        <div className="bg-white rounded-2xl shadow-lg p-5">
+        <div className="bg-surface rounded-2xl shadow-lg p-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+            <h2 className="text-base font-bold text-app flex items-center gap-2">
               <Calendar className="w-4 h-4 text-forest-500" aria-hidden="true" />
               La tua settimana
             </h2>
@@ -477,15 +477,15 @@ export default function HomePage() {
                 const isMatch = calendarData.matchDays.includes(day);
                 return (
                   <div key={day} className="text-center">
-                    <div className="text-[10px] text-gray-400 mb-1">{DAY_SHORT_NAMES[day]}</div>
+                    <div className="text-[10px] text-faint mb-1">{DAY_SHORT_NAMES[day]}</div>
                     <div className={`h-9 rounded-lg flex items-center justify-center text-sm ${
                       isTraining && isMatch
-                        ? 'bg-orange-100 text-orange-500'
+                        ? 'bg-orange-500/20 text-orange-300'
                         : isMatch
-                        ? 'bg-amber-100 text-amber-500'
+                        ? 'bg-amber-500/20 text-amber-300'
                         : isTraining
-                        ? 'bg-emerald-100 text-emerald-500'
-                        : 'bg-gray-50 text-gray-300'
+                        ? 'bg-emerald-500/20 text-emerald-300'
+                        : 'bg-surface-2 text-faint'
                     }`}>
                       {isTraining && isMatch ? '⚽🏟️' : isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
                     </div>
@@ -494,7 +494,7 @@ export default function HomePage() {
               })}
             </div>
           ) : (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-faint">
               Imposta i giorni di allenamento e partita per personalizzare il percorso.
             </p>
           )}
@@ -512,33 +512,33 @@ export default function HomePage() {
         )}
 
         {/* Stats globali */}
-        <div className="bg-white rounded-2xl shadow-lg p-5">
-          <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <div className="bg-surface rounded-2xl shadow-lg p-5">
+          <h2 className="text-base font-bold text-app mb-4 flex items-center gap-2">
             <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
             Il Tuo Percorso
           </h2>
 
           <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="bg-forest-50 border-l-4 border-forest-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-forest-500">{totalCompleted}</div>
-              <div className="text-xs text-gray-600">Giorni completati</div>
+            <div className="bg-surface-2 border-l-4 border-forest-500 p-3 rounded-xl">
+              <div className="text-2xl font-bold text-forest-400">{totalCompleted}</div>
+              <div className="text-xs text-muted">Giorni completati</div>
             </div>
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-blue-600">{totalDays}</div>
-              <div className="text-xs text-gray-600">Totali Beta</div>
+            <div className="bg-surface-2 border-l-4 border-blue-500 p-3 rounded-xl">
+              <div className="text-2xl font-bold text-blue-400">{totalDays}</div>
+              <div className="text-xs text-muted">Totali Beta</div>
             </div>
-            <div className="bg-forest-50 border-l-4 border-forest-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-forest-500">{progressPercentage}%</div>
-              <div className="text-xs text-gray-600">Progresso</div>
+            <div className="bg-surface-2 border-l-4 border-forest-500 p-3 rounded-xl">
+              <div className="text-2xl font-bold text-forest-400">{progressPercentage}%</div>
+              <div className="text-xs text-muted">Progresso</div>
             </div>
           </div>
 
           <div className="mb-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="flex justify-between text-sm text-muted mb-2">
               <span>Progresso Beta</span>
               <span>{totalCompleted}/{totalDays} giorni</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
+            <div className="w-full bg-surface-2 rounded-full h-3">
               <div
                 className="bg-gradient-to-r from-forest-500 to-forest-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercentage}%` }}
@@ -556,7 +556,7 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => router.push('/statistiche')}
-              className="bg-white border border-forest-300 text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all flex-1 sm:flex-none flex items-center justify-center gap-2"
+              className="bg-surface border border-divider text-app font-bold py-3.5 px-6 rounded-xl hover:bg-surface-2 transition-all flex-1 sm:flex-none flex items-center justify-center gap-2"
             >
               <BarChart3 className="w-4 h-4" aria-hidden="true" />
               Le tue statistiche
@@ -568,7 +568,7 @@ export default function HomePage() {
 
         {/* Ultimo messaggio Coach */}
         {profile?.last_coach_message && !coachMessageDismissed && (
-          <div className="bg-gradient-to-r from-forest-50 to-forest-100 rounded-2xl shadow-sm p-4 border border-forest-200 relative">
+          <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
             <button
               onClick={async () => {
                 setCoachMessageDismissed(true);
@@ -577,7 +577,7 @@ export default function HomePage() {
                   .update({ last_coach_message: null })
                   .eq('user_id', userId);
               }}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute top-3 right-3 text-faint hover:text-muted transition-colors"
               aria-label="Chiudi"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -587,8 +587,8 @@ export default function HomePage() {
             <div className="flex items-start gap-3 pr-6">
               <div className="text-xl flex-shrink-0">🤖</div>
               <div>
-                <p className="text-xs font-bold text-forest-600 mb-1">Coach AI</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{profile.last_coach_message}</p>
+                <p className="text-xs font-bold text-forest-400 mb-1">Coach AI</p>
+                <p className="text-sm text-app leading-relaxed">{profile.last_coach_message}</p>
               </div>
             </div>
           </div>
