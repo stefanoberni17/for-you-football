@@ -51,7 +51,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it" className={outfit.className}>
-      <body className="pb-tabbar">
+      {/* Body senza pb-tabbar: ogni page lo applica gia sul <main>. Body con
+          pb-tabbar + main height:100vh (es. /chat) avrebbe body > 100vh ->
+          la pagina poteva scrollare e iOS PWA auto-scrollava al mount. */}
+      <body>
         <ServiceWorkerRegistration />
         <GlobalCheckinWrapper>
           <GlobalMeditationWrapper>
