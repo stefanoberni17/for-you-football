@@ -61,7 +61,7 @@ function ChatContent() {
   // struttura alle altre pagine -> la tab bar resta attaccata al bordo.
   return (
     <main
-      className="flex flex-col bg-app pt-safe px-0 sm:px-4 pb-tabbar"
+      className="flex flex-col bg-app pt-safe px-0 sm:px-4 pb-tabbar overflow-hidden"
       style={{ height: '100vh' }}
     >
       <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto">

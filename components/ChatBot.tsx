@@ -40,8 +40,20 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
     getUser();
   }, []);
 
+  // Scroll automatico solo del container messaggi interno (non della pagina intera).
+  // scrollIntoView() in passato scrollava anche la <main> -> al mount la pagina chat
+  // sembrava gia scrollata verso il basso. Ora scrolliamo solo il parent diretto
+  // dell'anchor, e solo dal secondo render in poi (skip mount iniziale).
+  const hasMountedRef = useRef(false);
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    const scroller = messagesEndRef.current?.parentElement;
+    if (scroller) {
+      scroller.scrollTop = scroller.scrollHeight;
+    }
   }, [messages]);
 
   const sendMessageText = async (text: string) => {
