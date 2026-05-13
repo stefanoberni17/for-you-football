@@ -98,3 +98,14 @@ textarea::placeholder {
   animation: ballBounce 0.75s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
   display: inline-block;
 }
+
+/* Focus-visible globale per accessibilità keyboard.
+   Si attiva solo da tastiera (Tab), non da click — mantiene la UX touch pulita. */
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 4px var(--color-forest-400);
+  border-radius: inherit;
+}

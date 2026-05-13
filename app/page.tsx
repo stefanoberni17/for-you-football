@@ -16,7 +16,7 @@ import { shouldRedirectToPaywall } from '@/lib/checkAccess';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
-import ActionsCard from '@/components/ActionsCard';
+import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
 import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, Target, BarChart3, Map, Compass } from 'lucide-react';
 
@@ -74,6 +74,8 @@ export default function HomePage() {
   const [actionsTotal, setActionsTotal] = useState(0);
   const [actionsTodayCount, setActionsTodayCount] = useState(0);
   const [actionsStreak, setActionsStreak] = useState(0);
+  const [actions, setActions] = useState<DashboardAction[]>([]);
+  const [actionPending, setActionPending] = useState<string | null>(null);
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -164,6 +166,13 @@ export default function HomePage() {
           const a = await aRes.json();
           setActionsTotal(a.total || 0);
           setActionsTodayCount(a.today_count || 0);
+          setActions(
+            (a.actions || []).map((x: any) => ({
+              id: x.id,
+              action_text: x.action_text,
+              completed_today: !!x.completed_today,
+            }))
+          );
         }
         if (hRes.ok) {
           const h = await hRes.json();
@@ -211,65 +220,64 @@ export default function HomePage() {
     setShowCalendar(false);
   };
 
+  /**
+   * Tick/untick di un'azione direttamente dalla dashboard.
+   * Optimistic update + POST /api/actions/toggle + rollback su errore.
+   * Non rifetcha la lista — la dashboard non deve fare reload completo per un tick.
+   * Lo streak può rimanere leggermente "stale" fino al prossimo refresh della pagina.
+   */
+  const handleActionToggle = async (actionId: string) => {
+    if (actionPending) return;
+    setActionPending(actionId);
+
+    const target = actions.find(a => a.id === actionId);
+    if (!target) {
+      setActionPending(null);
+      return;
+    }
+    const wasChecked = target.completed_today;
+
+    // Optimistic
+    setActions(prev =>
+      prev.map(a => (a.id === actionId ? { ...a, completed_today: !wasChecked } : a))
+    );
+    setActionsTodayCount(prev => prev + (wasChecked ? -1 : 1));
+
+    try {
+      const res = await fetch('/api/actions/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, actionId }),
+      });
+      if (!res.ok) throw new Error('toggle failed');
+    } catch {
+      // Rollback su errore
+      setActions(prev =>
+        prev.map(a => (a.id === actionId ? { ...a, completed_today: wasChecked } : a))
+      );
+      setActionsTodayCount(prev => prev + (wasChecked ? 1 : -1));
+    } finally {
+      setActionPending(null);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-forest-50 pt-safe px-4 pb-tabbar">
-      {/* Header */}
-      <div className="max-w-2xl mx-auto mb-6">
+      {/* Header — compatto: solo greeting + mantra opzionale */}
+      <div className="max-w-2xl mx-auto mb-5">
         <h1 className="text-3xl font-bold text-gray-800">
           Ciao, {profile?.name || 'Campione'}! 👋
         </h1>
-        <p className="text-gray-600 mt-1">
-          Bentornato nel tuo allenamento mentale ⚽
-        </p>
         {settimana?.mantraDashboard && (
-          <p className="text-center italic text-gray-400 text-sm mt-3">
+          <p className="italic text-gray-500 text-sm mt-2">
             &ldquo;{settimana.mantraDashboard}&rdquo;
           </p>
         )}
       </div>
 
       <div className="max-w-2xl mx-auto space-y-5">
-        {/* Banner ultimo messaggio Coach */}
-        {profile?.last_coach_message && !coachMessageDismissed && (
-          <div className="bg-gradient-to-r from-forest-50 to-forest-100 rounded-2xl shadow-sm p-4 border border-forest-200 relative">
-            <button
-              onClick={async () => {
-                setCoachMessageDismissed(true);
-                await supabase
-                  .from('profiles')
-                  .update({ last_coach_message: null })
-                  .eq('user_id', userId);
-              }}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Chiudi"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-            <div className="flex items-start gap-3 pr-6">
-              <div className="text-xl flex-shrink-0">🤖</div>
-              <div>
-                <p className="text-xs font-bold text-forest-600 mb-1">Coach AI</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{profile.last_coach_message}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Banner installazione PWA */}
-        <InstallBanner totalCompleted={totalCompleted} />
-
-        {/* Banner settimanale "Le tue azioni durante il giorno" */}
-        {userId && (
-          <WeeklyActionsBanner
-            userId={userId}
-            needsSetup={actionsTotal === 0}
-            lastDismiss={profile?.last_weekly_actions_dismiss || null}
-          />
-        )}
-
-        {/* Banner prima visita */}
+        {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
+            (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
         {profile?.current_week === 1 && totalCompleted === 0 && (
           <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
             <p className="font-bold text-gray-800 mb-1">Ciao, {profile?.name}.</p>
@@ -322,11 +330,13 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Card "Le tue azioni durante il giorno" — entry point compatto */}
+        {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline */}
         <ActionsCard
           total={actionsTotal}
           todayCount={actionsTodayCount}
           streak={actionsStreak}
+          actions={actions}
+          onToggle={handleActionToggle}
         />
 
         {/* Progress settimana corrente */}
@@ -538,6 +548,48 @@ export default function HomePage() {
             </button>
           </div>
         </div>
+
+        {/* ─── Banner promozionali / messaggi soft — in fondo per non rubare il first-fold ─── */}
+
+        {/* Ultimo messaggio Coach */}
+        {profile?.last_coach_message && !coachMessageDismissed && (
+          <div className="bg-gradient-to-r from-forest-50 to-forest-100 rounded-2xl shadow-sm p-4 border border-forest-200 relative">
+            <button
+              onClick={async () => {
+                setCoachMessageDismissed(true);
+                await supabase
+                  .from('profiles')
+                  .update({ last_coach_message: null })
+                  .eq('user_id', userId);
+              }}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Chiudi"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <div className="flex items-start gap-3 pr-6">
+              <div className="text-xl flex-shrink-0">🤖</div>
+              <div>
+                <p className="text-xs font-bold text-forest-600 mb-1">Coach AI</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{profile.last_coach_message}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Banner settimanale "Aggiorna le 5 della settimana" — lunedì o se vuoto */}
+        {userId && (
+          <WeeklyActionsBanner
+            userId={userId}
+            needsSetup={actionsTotal === 0}
+            lastDismiss={profile?.last_weekly_actions_dismiss || null}
+          />
+        )}
+
+        {/* Banner installazione PWA */}
+        <InstallBanner totalCompleted={totalCompleted} />
       </div>
       <PushPermission userId={userId} />
     </main>

@@ -54,10 +54,17 @@ export default function ActionsSetupSheet({
 
   const allowed = useMemo(() => allowedPrinciplesForWeek(currentWeek), [currentWeek]);
 
+  const weekFilteredCatalog = useMemo(
+    () => ACTIONS_CATALOG.filter(a => allowed.includes(a.principle)),
+    [allowed]
+  );
+  const hiddenCount = ACTIONS_CATALOG.length - weekFilteredCatalog.length;
+  const hasFilter = hiddenCount > 0;
+
   const visibleCatalog = useMemo(() => {
-    if (filterMode === 'all') return ACTIONS_CATALOG;
-    return ACTIONS_CATALOG.filter(a => allowed.includes(a.principle));
-  }, [filterMode, allowed]);
+    if (!hasFilter || filterMode === 'all') return ACTIONS_CATALOG;
+    return weekFilteredCatalog;
+  }, [filterMode, hasFilter, weekFilteredCatalog]);
 
   const groupedCatalog = useMemo(() => {
     const map: Record<ActionCategory, CatalogAction[]> = {
@@ -138,7 +145,7 @@ export default function ActionsSetupSheet({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/60 flex items-end md:items-center justify-center animate-fadeIn">
+    <div className="fixed inset-0 z-[9999] bg-black/60 flex items-end md:items-center justify-center animate-fadeIn">
       <div className="bg-white w-full md:max-w-2xl md:rounded-3xl shadow-2xl flex flex-col h-[92vh] md:h-[88vh] overflow-hidden animate-scaleIn">
 
         {/* Header */}
@@ -158,36 +165,45 @@ export default function ActionsSetupSheet({
           </button>
         </div>
 
-        {/* Filter toggle */}
-        <div className="px-5 pt-3 pb-3 border-b border-gray-100">
-          <div className="inline-flex bg-gray-100 rounded-full p-0.5 text-xs">
-            <button
-              onClick={() => setFilterMode('week')}
-              aria-pressed={filterMode === 'week'}
-              className={`px-3 py-1.5 rounded-full font-semibold transition-colors flex items-center gap-1.5 ${
-                filterMode === 'week' ? 'bg-white text-forest-700 shadow-sm' : 'text-gray-500'
-              }`}
-            >
-              <Sparkles className="w-3 h-3" aria-hidden="true" />
-              Settimana {currentWeek}
-            </button>
-            <button
-              onClick={() => setFilterMode('all')}
-              aria-pressed={filterMode === 'all'}
-              className={`px-3 py-1.5 rounded-full font-semibold transition-colors flex items-center gap-1.5 ${
-                filterMode === 'all' ? 'bg-white text-forest-700 shadow-sm' : 'text-gray-500'
-              }`}
-            >
-              <ListFilter className="w-3 h-3" aria-hidden="true" />
-              Tutte ({ACTIONS_CATALOG.length})
-            </button>
+        {/* Filter toggle — visibile solo se ci sono azioni nascoste per la settimana corrente */}
+        {hasFilter ? (
+          <div className="px-5 pt-3 pb-3 border-b border-gray-100">
+            <div className="inline-flex bg-gray-100 rounded-full p-0.5 text-xs">
+              <button
+                onClick={() => setFilterMode('week')}
+                aria-pressed={filterMode === 'week'}
+                className={`px-3 py-1.5 rounded-full font-semibold transition-colors flex items-center gap-1.5 ${
+                  filterMode === 'week' ? 'bg-white text-forest-700 shadow-sm' : 'text-gray-500'
+                }`}
+              >
+                <Sparkles className="w-3 h-3" aria-hidden="true" />
+                Settimana {currentWeek} ({weekFilteredCatalog.length})
+              </button>
+              <button
+                onClick={() => setFilterMode('all')}
+                aria-pressed={filterMode === 'all'}
+                className={`px-3 py-1.5 rounded-full font-semibold transition-colors flex items-center gap-1.5 ${
+                  filterMode === 'all' ? 'bg-white text-forest-700 shadow-sm' : 'text-gray-500'
+                }`}
+              >
+                <ListFilter className="w-3 h-3" aria-hidden="true" />
+                Tutte ({ACTIONS_CATALOG.length})
+              </button>
+            </div>
+            {filterMode === 'week' && (
+              <p className="text-[11px] text-gray-400 mt-2 leading-relaxed">
+                {hiddenCount} {hiddenCount === 1 ? 'azione nascosta' : 'azioni nascoste'} — disponibili dalle prossime settimane.
+              </p>
+            )}
           </div>
-          {filterMode === 'week' && ACTIONS_CATALOG.length - visibleCatalog.length > 0 && (
-            <p className="text-[11px] text-gray-400 mt-2 leading-relaxed">
-              {ACTIONS_CATALOG.length - visibleCatalog.length} azioni nascoste — saranno disponibili nelle prossime settimane.
+        ) : (
+          <div className="px-5 pt-2.5 pb-2.5 border-b border-gray-100">
+            <p className="text-[11px] text-forest-600 font-medium flex items-center gap-1">
+              <Sparkles className="w-3 h-3" aria-hidden="true" />
+              Tutte le {ACTIONS_CATALOG.length} azioni sono disponibili dalla settimana {currentWeek}
             </p>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Body — scroll */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
@@ -316,7 +332,7 @@ export default function ActionsSetupSheet({
         </div>
 
         {/* Selected summary + Save */}
-        <div className="border-t border-gray-100 bg-white px-5 py-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+        <div className="border-t border-gray-100 bg-white px-5 pt-3 pb-3" style={{ paddingBottom: 'max(5.5rem, calc(4.5rem + env(safe-area-inset-bottom)))' }}>
           {selected.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3 max-h-20 overflow-y-auto">
               {selected.map(s => (

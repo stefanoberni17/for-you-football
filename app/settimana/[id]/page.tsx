@@ -118,7 +118,7 @@ export default function SettimanaPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-gray-500">Caricamento settimana...</p>
@@ -129,7 +129,7 @@ export default function SettimanaPage() {
 
   if (!settimana) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-red-600">Settimana non trovata</p>
           <button onClick={() => router.push('/settimane')} className="mt-4 bg-forest-500 text-white px-6 py-2 rounded-full">
@@ -146,7 +146,7 @@ export default function SettimanaPage() {
   const percent = Math.round((progress / DAYS_PER_WEEK) * 100);
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
 
       {/* Popup settimana completata */}
       {showCompletePopup && (
@@ -313,7 +313,7 @@ export default function SettimanaPage() {
                 return (
                   <div key={dayNum} className="relative pl-12">
                     {/* Timeline node */}
-                    <div className={`absolute left-0 top-3 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ring-4 ring-gray-50 z-10 transition-all ${
+                    <div className={`absolute left-0 top-3 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ring-4 ring-forest-50 z-10 transition-all ${
                       dayDone
                         ? 'bg-forest-500 text-white shadow-sm'
                         : isGate && unlocked

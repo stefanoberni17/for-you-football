@@ -13,6 +13,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { Activity, Moon, Zap, Brain, Flame, Target, TrendingUp, TrendingDown } from 'lucide-react';
+import EmptyState from '@/components/EmptyState';
 
 interface Checkin {
   date: string;
@@ -440,11 +441,11 @@ export default function StatistichePage() {
 
         {/* Nessun dato */}
         {filtered.length === 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
-            <div className="text-4xl mb-3">📭</div>
-            <p className="text-gray-600 font-semibold">Nessun dato nel periodo selezionato</p>
-            <p className="text-gray-400 text-sm mt-1">Completa i check-in giornalieri per vedere le statistiche</p>
-          </div>
+          <EmptyState
+            emoji="📭"
+            title="Nessun dato nel periodo selezionato"
+            subtitle="Completa i check-in giornalieri per vedere le statistiche"
+          />
         )}
 
         {filtered.length > 0 && (

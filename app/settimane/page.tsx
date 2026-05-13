@@ -89,7 +89,7 @@ export default function SettimanePage() {
 
   if (checkingAuth || loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-gray-500">Caricamento percorso...</p>
@@ -105,7 +105,7 @@ export default function SettimanePage() {
     .filter(w => isWeekCompleted(w, completedDays)).length;
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
 
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
@@ -155,7 +155,7 @@ export default function SettimanePage() {
               return (
                 <div key={settimana.id} className="relative pl-16">
                   {/* Timeline node */}
-                  <div className={`absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg shadow-md ring-4 ring-gray-50 z-10 ${
+                  <div className={`absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg shadow-md ring-4 ring-forest-50 z-10 ${
                     completed
                       ? 'bg-forest-500 text-white'
                       : isCurrent
@@ -248,7 +248,7 @@ export default function SettimanePage() {
 
             {/* Coming soon teaser */}
             <div className="relative pl-16">
-              <div className="absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 ring-4 ring-gray-50 z-10">
+              <div className="absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 ring-4 ring-forest-50 z-10">
                 <span className="text-2xl">✨</span>
               </div>
               <div className="bg-gradient-to-r from-forest-50 to-gray-50 border border-dashed border-forest-200 rounded-2xl p-5">

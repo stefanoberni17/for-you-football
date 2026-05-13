@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ActionsSetupSheet, { type SelectedAction } from '@/components/ActionsSetupSheet';
+import EmptyState from '@/components/EmptyState';
 import { Flame, Pencil, Target } from 'lucide-react';
 
 type ApiAction = {
@@ -139,7 +140,7 @@ function OggiPageInner() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-gray-500">Caricamento azioni…</p>
@@ -162,7 +163,7 @@ function OggiPageInner() {
   }));
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
 
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
@@ -205,23 +206,14 @@ function OggiPageInner() {
       <div className="max-w-xl mx-auto px-4 -mt-10 space-y-4">
 
         {total === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm p-6 text-center border border-gray-100">
-            <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-3">
-              <Target className="w-6 h-6 text-amber-600" aria-hidden="true" />
-            </div>
-            <h2 className="text-lg font-bold text-gray-800 mb-2">
-              Comportati già oggi come il giocatore che vuoi diventare
-            </h2>
-            <p className="text-sm text-gray-600 leading-relaxed mb-5">
-              Scegli fino a 5 azioni concrete. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione.
-            </p>
-            <button
-              onClick={() => setShowSetup(true)}
-              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl transition-all"
-            >
-              Pianifica le tue azioni →
-            </button>
-          </div>
+          <EmptyState
+            icon={<Target className="w-6 h-6" aria-hidden="true" />}
+            iconBg="bg-amber-100"
+            iconColor="text-amber-600"
+            title="Comportati già oggi come il giocatore che vuoi diventare"
+            subtitle="Scegli fino a 5 azioni concrete. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione."
+            cta={{ label: 'Pianifica le tue azioni', onClick: () => setShowSetup(true) }}
+          />
         ) : (
           <>
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -308,7 +300,7 @@ function OggiPageInner() {
 export default function OggiPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen bg-forest-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
           <p className="text-gray-500">Caricamento…</p>

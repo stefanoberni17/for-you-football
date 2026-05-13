@@ -275,7 +275,7 @@ export default function GiornoPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-tabbar-lg">
+    <main className="min-h-screen bg-forest-50 pb-tabbar-lg">
 
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
@@ -503,8 +503,8 @@ export default function GiornoPage() {
           </div>
         )}
 
-        {/* Navigazione slide */}
-        <div className="flex gap-3">
+        {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile */}
+        <div className="flex gap-4">
           {effectiveSlide > 1 && !isGiornataReturning && (
             <button
               onClick={() => setCurrentSlide(s => s - 1)}
