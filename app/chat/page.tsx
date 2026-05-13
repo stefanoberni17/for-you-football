@@ -54,21 +54,19 @@ function ChatContent() {
     );
   }
 
-  // 100dvh (dynamic viewport height) invece di fixed inset-0: su iOS,
-  // quando appare la tastiera, il viewport si ridimensiona e il container
-  // si comprime in modo naturale. Niente piu "rialzo" rispetto alla tab bar.
+  // fixed inset-0 standard (no h-dvh-screen): il 100dvh su PWA iOS
+  // standalone aveva un side-effect che faceva sembrare la BottomTabBar
+  // "rialzata" rispetto alle altre pagine. Inset-0 e' identico al viewport
+  // del browser e mantiene la tab bar in posizione assoluta corretta.
   return (
     <div
-      className="fixed top-0 left-0 right-0 h-dvh-screen flex flex-col bg-app"
+      className="fixed inset-0 flex flex-col bg-app"
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         // Tab bar full-width h-16 (4rem) + safe-area-inset-bottom interno
         paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))',
       }}
     >
-      {/* px laterali solo da sm+ (su mobile la card si attacca ai bordi);
-          pt-0 pb-0 per zero gap top/bottom — la card chat tocca safe-area
-          sopra e BottomTabBar sotto */}
       <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto px-0 sm:px-4 pt-0 pb-0">
         <ChatBot ref={chatBotRef} suggestions={suggestions} />
       </div>
