@@ -22,10 +22,10 @@ export default function BottomTabBar() {
   return (
     <nav
       aria-label="Navigazione principale"
-      className="fixed bottom-0 left-0 right-0 z-50 px-3 pointer-events-none"
-      style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-2px_8px_rgba(20,26,22,0.05)]"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="max-w-md mx-auto pointer-events-auto bg-white backdrop-blur-md rounded-2xl shadow-[0_-2px_12px_rgba(20,26,22,0.06),0_8px_24px_rgba(20,26,22,0.12)] border border-gray-200/90">
+      <div className="max-w-md mx-auto">
         <div className="flex justify-around items-center h-16 gap-1 px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
