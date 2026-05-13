@@ -59,7 +59,8 @@ function ChatContent() {
       className="fixed inset-0 flex flex-col bg-forest-50"
       style={{
         paddingTop: 'env(safe-area-inset-top)',
-        paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))',
+        // Tab bar full-width h-16 (4rem) + safe-area-inset-bottom (padding interno della bar)
+        paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))',
       }}
     >
       <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto px-3 sm:px-4 pt-3 pb-2">
