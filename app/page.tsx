@@ -103,12 +103,9 @@ export default function HomePage() {
         return;
       }
 
-      // Fine contenuti disponibili: se current_week supera il max disponibile, schermata celebrativa.
-      // NOTA: questo scatta sia per beta (che hanno accesso free) sia per paganti che completano Season 1.
-      if (profileData?.current_week && profileData.current_week > BETA_MAX_WEEK) {
-        router.push('/beta-complete');
-        return;
-      }
+      // Fine contenuti disponibili: la dashboard mostra già il messaggio "🏆 Hai completato tutte
+      // le settimane della Beta!" nel CTA hero quando allDone = true. La pagina /beta-complete
+      // resta raggiungibile via link discreto (non blocca più la home).
 
       setProfile(profileData);
       setUserId(session.user.id);
@@ -206,7 +203,9 @@ export default function HomePage() {
   const totalCompleted = completedDays.length;
   const totalDays = BETA_MAX_WEEK * DAYS_PER_WEEK;
   const progressPercentage = Math.round((totalCompleted / totalDays) * 100);
-  const allDone = totalCompleted >= totalDays;
+  // "Beta finita" = ha completato tutti i giorni OPPURE current_week è oltre il max disponibile
+  // (succede quando il gate G7 incrementa current_week ma magari qualche giorno è compressed).
+  const allDone = totalCompleted >= totalDays || currentWeek > BETA_MAX_WEEK;
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
     try {
@@ -296,21 +295,37 @@ export default function HomePage() {
         <div className="bg-gradient-to-r from-forest-500 to-forest-600 rounded-2xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Settimana {currentWeek}</p>
-              <h2 className="text-2xl font-bold leading-tight">
-                {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
-              </h2>
-              {settimana?.principio && (
-                <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
+              {allDone ? (
+                <>
+                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Beta completata</p>
+                  <h2 className="text-2xl font-bold leading-tight">Ce l&apos;hai fatta!</h2>
+                  <p className="text-forest-100 text-sm mt-1">
+                    Hai costruito il primo blocco: Presenza, Osservazione, Ascolto, Pressione.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Settimana {currentWeek}</p>
+                  <h2 className="text-2xl font-bold leading-tight">
+                    {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
+                  </h2>
+                  {settimana?.principio && (
+                    <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
+                  )}
+                </>
               )}
             </div>
-            <div className="text-5xl">⚽</div>
+            <div className="text-5xl">{allDone ? '🏆' : '⚽'}</div>
           </div>
 
           {allDone ? (
-            <div className="bg-white/20 rounded-xl px-4 py-3 text-sm font-medium text-white text-center">
-              🏆 Hai completato tutte le settimane della Beta! Ottimo lavoro!
-            </div>
+            <button
+              onClick={() => router.push('/beta-complete')}
+              className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
+            >
+              <span>🏆</span>
+              <span>Rivedi schermata di completamento</span>
+            </button>
           ) : nextDayLocked ? (
             <div className="bg-white/20 rounded-xl px-4 py-3 text-sm font-medium text-white text-center">
               ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani

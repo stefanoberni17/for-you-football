@@ -25,7 +25,7 @@ export default function BottomTabBar() {
       className="fixed bottom-0 left-0 right-0 z-50 px-3 pointer-events-none"
       style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
     >
-      <div className="max-w-md mx-auto pointer-events-auto bg-white/85 backdrop-blur-md rounded-2xl shadow-[0_4px_24px_rgba(20,26,22,0.10)] border border-gray-100/80">
+      <div className="max-w-md mx-auto pointer-events-auto bg-white backdrop-blur-md rounded-2xl shadow-[0_-2px_12px_rgba(20,26,22,0.06),0_8px_24px_rgba(20,26,22,0.12)] border border-gray-200/90">
         <div className="flex justify-around items-center h-16 gap-1 px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
