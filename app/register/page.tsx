@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
@@ -39,8 +39,11 @@ function ChipGroup({
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const betaCode = (searchParams.get('beta') || '').trim();
+  const hasBetaCode = betaCode.length > 0;
   const [step, setStep] = useState(1);
 
   // Step 1 — account
@@ -115,6 +118,7 @@ export default function RegisterPage() {
           goals: goals.trim() || null,
           dream: dream.trim() || null,
           current_situation: currentSituation.trim() || null,
+          beta_code: betaCode || null,
         }),
       });
       const result = await res.json();
@@ -170,6 +174,12 @@ export default function RegisterPage() {
           <p className="text-forest-400 font-semibold text-xs mt-0.5 uppercase tracking-widest">
             Allenamento mentale per calciatori
           </p>
+          {hasBetaCode && (
+            <div className="mt-3 inline-flex items-center gap-1.5 bg-forest-500/15 border border-forest-500/30 text-forest-300 text-xs font-semibold px-3 py-1.5 rounded-full">
+              <span>🎟️</span>
+              <span>Accesso beta attivo</span>
+            </div>
+          )}
         </div>
 
         {/* Step indicator */}
@@ -410,5 +420,19 @@ export default function RegisterPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-app flex items-center justify-center">
+          <div className="text-muted text-sm">Caricamento…</div>
+        </main>
+      }
+    >
+      <RegisterContent />
+    </Suspense>
   );
 }

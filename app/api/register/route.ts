@@ -13,10 +13,32 @@ const supabaseAuth = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
 );
 
+/**
+ * Verifica un codice invito beta contro la env var BETA_INVITE_CODES.
+ * - CSV: più codici separati da virgola
+ * - Case-insensitive
+ * - Whitespace trimmato
+ *
+ * Esempio env: BETA_INVITE_CODES=BETA2_2026,PARTNER_FYF
+ * Esempi validi: "BETA2_2026", "beta2_2026", "  Beta2_2026  " → tutti true
+ */
+function isValidBetaCode(input: string | null | undefined): boolean {
+  if (!input || typeof input !== 'string') return false;
+  const allowed = (process.env.BETA_INVITE_CODES || '')
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
+    .filter(Boolean);
+  if (allowed.length === 0) return false;
+  return allowed.includes(input.trim().toUpperCase());
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password, name, age, sport, role, level, biggest_fear, goals, dream, current_situation } = body;
+    const { email, password, name, age, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code } = body;
+
+    // Valida codice invito beta (se presente)
+    const isBeta = isValidBetaCode(beta_code);
 
     // Log richiesta (senza password) per debug
     console.log('📥 /api/register ricevuto:', {
@@ -25,6 +47,8 @@ export async function POST(req: NextRequest) {
       name,
       age,
       role,
+      betaCodeProvided: Boolean(beta_code),
+      betaAccepted: isBeta,
     });
 
     if (!email || !password) {
@@ -109,6 +133,7 @@ export async function POST(req: NextRequest) {
           dream: dream || null,
           current_situation: current_situation || null,
           onboarding_completed: false,
+          is_beta_free: isBeta,
         }, { onConflict: 'user_id' });
 
       if (profileError) {
@@ -121,7 +146,7 @@ export async function POST(req: NextRequest) {
       console.error('❌ Eccezione salvataggio profilo (non bloccante):', profileErr?.message);
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, beta_accepted: isBeta });
 
   } catch (err: any) {
     console.error('❌ Errore /api/register:', err);

@@ -346,6 +346,21 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook  # in un altro term
 
 Carta test: `4242 4242 4242 4242`.
 
+### Beta invite codes (wave 2+)
+
+Codici invito gratuiti gestiti via env var **`BETA_INVITE_CODES`** (CSV, case-insensitive). Chi si registra con `?beta=<codice>` nell'URL viene marcato `is_beta_free=true` direttamente in fase di upsert profilo — zero intervento SQL manuale.
+
+- Validazione: helper `isValidBetaCode()` in `app/api/register/route.ts`
+- Frontend: `app/register/page.tsx` legge `searchParams.get('beta')`, lo invia a `/api/register` come `beta_code`
+- UX: badge "🎟️ Accesso beta attivo" sotto il brand se `?beta=` presente nell'URL
+- Sicurezza: codici vivono solo server-side (env), client li echeggia ma non sa se sono validi
+- Rotation: cambia env var → vecchi link smettono di funzionare al prossimo cold start (~5 min)
+- Link da condividere: `https://for-you-football.vercel.app/register?beta=<CODICE>`
+
+Esempio env: `BETA_INVITE_CODES=BETA2_2026,PARTNER_FYF`
+
+Lista beta wave 2: `SELECT * FROM profiles WHERE is_beta_free=true AND created_at > '<data inizio wave>'`.
+
 ---
 
 ## Struttura Contenuto (Notion)
