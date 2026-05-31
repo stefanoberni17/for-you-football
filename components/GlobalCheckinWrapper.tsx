@@ -40,7 +40,11 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
     };
 
     init();
-  }, [pathname, shouldShow]);
+    // Volutamente NON includiamo `pathname`: il check va fatto una volta per
+    // sessione (e quando si transita da skip-page → app). Se l'utente ha tappato
+    // "Salta per oggi" lo skip è solo locale, rifare la fetch a ogni cambio rotta
+    // farebbe riapparire la modale.
+  }, [shouldShow]);
 
   const handleComplete = () => {
     setShowCheckin(false);

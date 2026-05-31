@@ -9,7 +9,11 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-const todayDate = () => new Date().toISOString().split('T')[0];
+// Data di oggi in fuso orario italiano (sv-SE → YYYY-MM-DD). Evita il bug
+// per cui un check-in fatto in tarda serata IT veniva salvato con la data UTC
+// del giorno successivo, facendo riapparire la modale al refresh.
+const todayDate = () =>
+  new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Rome' }).format(new Date());
 
 // ─── GET /api/checkin?userId=X ────────────────────────────────────────────────
 // Ritorna il check-in di oggi per l'utente (null se non esiste)

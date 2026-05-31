@@ -9,17 +9,47 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-// ─── GET /api/calendar?userId=U&week=W ────────────────────────────────────────
+// Lunedì 00:00 ora Roma della settimana di calendario reale corrente.
+// Il calendario allenamenti/partite vale per la settimana reale, non per la
+// settimana del percorso: se l'utente ha già configurato in questa finestra,
+// vogliamo riusarlo anche aprendo una settimana diversa del percorso.
+function startOfCurrentWeekRome(): Date {
+  const fmt = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Rome',
+    weekday: 'short',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const parts = fmt.formatToParts(new Date());
+  const weekday = parts.find(p => p.type === 'weekday')?.value || 'Mon';
+  const year = parts.find(p => p.type === 'year')?.value ?? '1970';
+  const month = parts.find(p => p.type === 'month')?.value ?? '01';
+  const day = parts.find(p => p.type === 'day')?.value ?? '01';
+  const dowMap: Record<string, number> = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 };
+  const offset = dowMap[weekday] ?? 0;
+  // Costruiamo "oggi 00:00 UTC" e sottraiamo l'offset in giorni. Per la finestra
+  // di freshness (granularità giornaliera) basta confrontare ISO date.
+  const todayUtc = new Date(`${year}-${month}-${day}T00:00:00Z`);
+  todayUtc.setUTCDate(todayUtc.getUTCDate() - offset);
+  return todayUtc;
+}
+
+// ─── GET /api/calendar?userId=U[&week=W] ──────────────────────────────────────
+// Ritorna l'ULTIMO calendario configurato dall'utente se created_at è nella
+// settimana reale corrente (lun-dom IT). Altrimenti torna array vuoti → popup.
+// Il parametro `week` è ignorato a runtime: lo schema lega un calendario al
+// week_number del percorso, ma l'intento di prodotto è "un calendario per
+// settimana reale".
 export async function GET(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
     const userId = authUserId || searchParams.get('userId');
-    const weekNumber = parseInt(searchParams.get('week') || '0');
 
-    if (!userId || !weekNumber) {
+    if (!userId) {
       return NextResponse.json(
-        { error: 'userId e week richiesti' },
+        { error: 'userId richiesto' },
         { status: 400 }
       );
     }
@@ -28,15 +58,23 @@ export async function GET(request: NextRequest) {
       .from('user_weekly_calendar')
       .select('training_days, match_days, created_at')
       .eq('user_id', userId)
-      .eq('week_number', weekNumber)
+      .order('created_at', { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     if (error) throw error;
 
+    const weekStart = startOfCurrentWeekRome();
+    const isFresh =
+      !!data?.created_at &&
+      !!data?.training_days &&
+      data.training_days.length > 0 &&
+      new Date(data.created_at) >= weekStart;
+
     return NextResponse.json({
-      trainingDays: data?.training_days || [],
-      matchDays: data?.match_days || [],
-      createdAt: data?.created_at || null,
+      trainingDays: isFresh ? data!.training_days : [],
+      matchDays: isFresh ? (data!.match_days || []) : [],
+      createdAt: isFresh ? data!.created_at : null,
     });
   } catch (error: any) {
     console.error('❌ GET /api/calendar:', error.message);
