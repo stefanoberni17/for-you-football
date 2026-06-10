@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import {
@@ -143,8 +144,8 @@ export default function StatistichePage() {
 
   const loadData = async (uid: string, days: number) => {
     const [checkinsRes, actionsRes] = await Promise.all([
-      fetch(`/api/checkin/history?userId=${uid}&days=${days}`),
-      fetch(`/api/actions/history?userId=${uid}&days=30`),
+      authFetch(`/api/checkin/history?userId=${uid}&days=${days}`),
+      authFetch(`/api/actions/history?userId=${uid}&days=30`),
     ]);
     const data = await checkinsRes.json();
     setCheckins(data.checkins || []);

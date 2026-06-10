@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { BETA_MAX_WEEK, WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
@@ -18,7 +19,7 @@ export default function WeekCompletePage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.push('/login'); return; }
 
-      const res = await fetch(`/api/settimana?week=${weekNumber}`);
+      const res = await authFetch(`/api/settimana?week=${weekNumber}`);
       const data = await res.json();
       setSettimana(data.settimana);
       setLoading(false);

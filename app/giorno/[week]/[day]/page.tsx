@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
@@ -68,9 +69,9 @@ export default function GiornoPage() {
 
       // Fetch contenuto giorno + calendario + settimana in parallelo
       const [giornoRes, calendarRes, settimanaRes] = await Promise.all([
-        fetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`),
-        fetch(`/api/calendar?userId=${uid}&week=${weekNumber}`),
-        fetch(`/api/settimana?week=${weekNumber}`),
+        authFetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`),
+        authFetch(`/api/calendar?userId=${uid}&week=${weekNumber}`),
+        authFetch(`/api/settimana?week=${weekNumber}`),
       ]);
 
       const data = await giornoRes.json();
@@ -170,7 +171,7 @@ export default function GiornoPage() {
     setSaving(true);
 
     try {
-      const res = await fetch('/api/giorno', {
+      const res = await authFetch('/api/giorno', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -201,7 +202,7 @@ export default function GiornoPage() {
   const saveCheck = async (value: 1 | 2 | 3) => {
     setSavingCheck(true);
     try {
-      await fetch('/api/giorno', {
+      await authFetch('/api/giorno', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, weekNumber, dayNumber, previousDayCheck: value }),
@@ -571,7 +572,7 @@ export default function GiornoPage() {
             // Per tipo "giornata": segna come "started" e mostra messaggio uscita
             if (giorno.tipoPratica === 'giornata' && !started && !completed) {
               try {
-                await fetch('/api/giorno', {
+                await authFetch('/api/giorno', {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import {
@@ -129,13 +130,13 @@ export default function HomePage() {
 
       // Carica dati settimana corrente
       const currentWeek = profileData?.current_week || 1;
-      const weekRes = await fetch(`/api/settimana?week=${currentWeek}`);
+      const weekRes = await authFetch(`/api/settimana?week=${currentWeek}`);
       const weekJson = await weekRes.json();
       setWeekData(weekJson);
 
       // Carica check-in ultimi 7 giorni
       try {
-        const checkinRes = await fetch(`/api/checkin/history?userId=${session.user.id}&days=7`);
+        const checkinRes = await authFetch(`/api/checkin/history?userId=${session.user.id}&days=7`);
         if (checkinRes.ok) {
           const checkinJson = await checkinRes.json();
           setCheckins(checkinJson.checkins || []);
@@ -144,7 +145,7 @@ export default function HomePage() {
 
       // Carica calendario settimanale
       try {
-        const calRes = await fetch(`/api/calendar?userId=${session.user.id}&week=${currentWeek}`);
+        const calRes = await authFetch(`/api/calendar?userId=${session.user.id}&week=${currentWeek}`);
         if (calRes.ok) {
           const calJson = await calRes.json();
           if (calJson.trainingDays?.length > 0) {
@@ -156,8 +157,8 @@ export default function HomePage() {
       // Carica azioni settimanali (per ActionsCard + Banner)
       try {
         const [aRes, hRes] = await Promise.all([
-          fetch(`/api/actions?userId=${session.user.id}`),
-          fetch(`/api/actions/history?userId=${session.user.id}&days=14`),
+          authFetch(`/api/actions?userId=${session.user.id}`),
+          authFetch(`/api/actions/history?userId=${session.user.id}&days=14`),
         ]);
         if (aRes.ok) {
           const a = await aRes.json();
@@ -209,7 +210,7 @@ export default function HomePage() {
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
     try {
-      await fetch('/api/calendar', {
+      await authFetch('/api/calendar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, weekNumber: currentWeek, trainingDays, matchDays }),
@@ -243,7 +244,7 @@ export default function HomePage() {
     setActionsTodayCount(prev => prev + (wasChecked ? -1 : 1));
 
     try {
-      const res = await fetch('/api/actions/toggle', {
+      const res = await authFetch('/api/actions/toggle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, actionId }),

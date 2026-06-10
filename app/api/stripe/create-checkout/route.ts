@@ -12,7 +12,10 @@ const supabaseAdmin = createClient(
 
 /**
  * POST /api/stripe/create-checkout
- * Body: { plan: 'early_bird' | 'full' }
+ * Body: { plan: 'onetime' | 'installments' }
+ *  - onetime:      Season 1 a prezzo pieno una tantum (mode: payment)
+ *  - installments: Season 1 in 3 rate mensili (mode: subscription; il webhook
+ *                  aggancia una Subscription Schedule con 3 iterazioni poi cancel)
  * Ritorna: { url } — URL Stripe Checkout da cui far ridirigere il client.
  */
 export async function POST(request: NextRequest) {
@@ -24,21 +27,24 @@ export async function POST(request: NextRequest) {
   if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 
   const body = await request.json();
-  const plan = body.plan as 'early_bird' | 'full' | undefined;
+  const plan = body.plan as 'onetime' | 'installments' | undefined;
 
-  if (plan !== 'early_bird' && plan !== 'full') {
+  if (plan !== 'onetime' && plan !== 'installments') {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }
 
-  // Se utente è is_beta_free, non deve passare per il checkout.
+  // Beta/comp e chi ha già acquistato Season 1 non devono passare per il checkout.
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, stripe_customer_id')
+    .select('is_beta_free, subscription_status, stripe_customer_id, season1_access')
     .eq('user_id', userId)
     .single();
 
   if (profile?.is_beta_free) {
     return NextResponse.json({ error: 'User has comp access, no checkout needed' }, { status: 400 });
+  }
+  if (profile?.season1_access) {
+    return NextResponse.json({ error: 'Season 1 already purchased' }, { status: 400 });
   }
 
   // Email dall'utente auth
@@ -47,31 +53,39 @@ export async function POST(request: NextRequest) {
 
   const customerId = await getOrCreateStripeCustomer(userId, user.email);
 
-  const priceId = plan === 'early_bird'
-    ? process.env.STRIPE_PRICE_ID_EARLY_BIRD!
-    : process.env.STRIPE_PRICE_ID_FULL!;
-
   const origin = request.headers.get('origin') || request.nextUrl.origin;
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
+  const common = {
     customer: customerId,
-    line_items: [{ price: priceId, quantity: 1 }],
-    // Apple Pay / Google Pay abilitati automaticamente su device compatibili.
-    automatic_tax: { enabled: false },
-    allow_promotion_codes: true,
+    automatic_tax: { enabled: false as const },
     success_url: `${origin}/?checkout=success`,
     cancel_url: `${origin}/pricing?checkout=canceled`,
     metadata: {
       supabase_user_id: userId,
       plan,
     },
-    subscription_data: {
-      metadata: {
-        supabase_user_id: userId,
-      },
-    },
-  });
+  };
+
+  const session = plan === 'onetime'
+    ? await stripe.checkout.sessions.create({
+        ...common,
+        mode: 'payment',
+        // Solo card (Apple/Google Pay inclusi): evita metodi async (es. SEPA)
+        // che completerebbero la session con payment_status='unpaid'.
+        payment_method_types: ['card'],
+        line_items: [{ price: process.env.STRIPE_PRICE_ID_SEASON_ONETIME!, quantity: 1 }],
+      })
+    : await stripe.checkout.sessions.create({
+        ...common,
+        mode: 'subscription',
+        line_items: [{ price: process.env.STRIPE_PRICE_ID_SEASON_INSTALLMENTS!, quantity: 1 }],
+        subscription_data: {
+          metadata: {
+            supabase_user_id: userId,
+            plan: 'installments',
+          },
+        },
+      });
 
   return NextResponse.json({ url: session.url });
 }

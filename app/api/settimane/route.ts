@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase, mapSettimana } from '@/lib/notion';
+import { getAuthUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,11 +8,18 @@ export const dynamic = 'force-dynamic';
  * GET /api/settimane
  * Restituisce la lista di tutte le settimane Football dal DB Notion Settimane,
  * ordinate per numero settimana crescente.
+ * Solo metadata (titoli/principi): richiede login ma NON il paywall — serve
+ * come preview del percorso anche a chi non ha ancora pagato.
  *
  * Response: { settimane: Settimana[] }
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const userId = await getAuthUser(request);
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
     const pages = await queryDatabase(process.env.NOTION_DATABASE_SETTIMANE!, {
       sorts: [{ property: 'Numero Settimana', direction: 'ascending' }],
     });

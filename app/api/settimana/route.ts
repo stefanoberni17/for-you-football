@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryDatabase, mapSettimana, mapGiorno } from '@/lib/notion';
+import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/settimana?week=N
  * Restituisce i dettagli di una settimana + la lista dei 7 giorni.
+ * Contenuto premium: richiede login + accesso pagato (o beta).
  *
  * Response: { settimana: Settimana, giorni: Giorno[] }
  */
 export async function GET(request: NextRequest) {
   try {
+    const userId = await getAuthUser(request);
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const weekNumber = parseInt(searchParams.get('week') || '0');
 

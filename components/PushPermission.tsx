@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 
 interface PushPermissionProps {
   userId: string;
@@ -22,7 +23,7 @@ export default function PushPermission({ userId }: PushPermissionProps) {
     // Show banner only after the user has completed at least 1 day
     const checkProgress = async () => {
       try {
-        const res = await fetch(`/api/giorno?week=1&day=1&userId=${userId}`);
+        const res = await authFetch(`/api/giorno?week=1&day=1&userId=${userId}`);
         const data = await res.json();
         if (data?.completed) {
           setShowBanner(true);
@@ -49,7 +50,7 @@ export default function PushPermission({ userId }: PushPermissionProps) {
         applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
       });
 
-      await fetch('/api/push/subscribe', {
+      await authFetch('/api/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, subscription: subscription.toJSON() }),

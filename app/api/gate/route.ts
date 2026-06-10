@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno } from '@/lib/notion';
 import { GATE_DAY } from '@/lib/constants';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,13 @@ export async function GET(request: NextRequest) {
     const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
     const weekNumber = parseInt(searchParams.get('week') || '0');
-    const userId = authUserId || searchParams.get('userId');
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
 
     if (!weekNumber) {
       return NextResponse.json({ error: 'Parametro week richiesto' }, { status: 400 });
@@ -68,7 +75,13 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
     const { weekNumber, answers } = body;
 
     if (!userId || !weekNumber || !answers) {

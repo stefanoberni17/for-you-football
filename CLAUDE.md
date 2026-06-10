@@ -126,12 +126,12 @@ ANTHROPIC_API_KEY=
 TELEGRAM_BOT_TOKEN=
 CRON_SECRET=
 
-# Stripe (billing)
-STRIPE_SECRET_KEY=sk_test_...
+# Stripe (billing — LIVE in produzione)
+STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_ID_EARLY_BIRD=price_...
-STRIPE_PRICE_ID_FULL=price_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_PRICE_ID_SEASON_ONETIME=price_...       # one-time: €69 founder (dal 01/09: €99)
+STRIPE_PRICE_ID_SEASON_INSTALLMENTS=price_...  # rata mensile: €29 (dal 01/09: €39)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 ```
 
 ---
@@ -275,13 +275,17 @@ received_at TIMESTAMPTZ DEFAULT NOW()
 
 ## Stripe — Integrazione pagamenti
 
-### Modello
+### Modello (founder, deciso 9 giugno 2026)
 
-**Subscription-based** (come Netflix/Spotify): `subscription_status='active'` → accesso completo al percorso. Nessun "block counting" o sblocco per settimana. Il time-gate nei contenuti (`lib/dayUnlockLogic.ts`) forza comunque il ritmo 1 giorno/giorno, quindi Season 1 richiede minimo ~12 settimane = 3 mensilità per essere completata.
+**Acquisto Season 1** (non abbonamento aperto): l'utente compra Season 1 e resta sua per sempre.
+- **One-time:** €69 founder / €99 dal 01/09 (`STRIPE_PRICE_ID_SEASON_ONETIME`, checkout `mode: 'payment'`, solo card) → webhook setta `season1_access=true`
+- **3 rate mensili:** €29×3 founder / €39×3 dal 01/09 (`STRIPE_PRICE_ID_SEASON_INSTALLMENTS`, price recurring + **Subscription Schedule** `iterations: 3, end_behavior: 'cancel'` agganciata dal webhook via `ensureInstallmentSchedule()` in `lib/stripe.ts`) → `subscription_status='active'` durante le rate; alla 3ª rata pagata (`invoice.paid`, conteggio assoluto da Stripe, replay-safe) → `season1_access=true`; la sub si cancella da sola dopo la 3ª senza togliere l'accesso
+- Rate interrotte prima della 3ª (fallimento o cancel volontario) → NIENTE `season1_access`
+- Switch prezzi a settembre: si cambiano solo le 2 env `STRIPE_PRICE_ID_SEASON_*`, zero codice
+- Promo codes DISABILITATI al checkout (accessi gratis solo via `is_beta_free`)
+- Colonne DB: `profiles.season1_access BOOLEAN` + `profiles.installments_paid INT` (migration `004_season1.sql`, con policy RLS aggiornata che blocca auto-grant client)
 
-**Pricing** (2 Prices Stripe, entrambi `recurring monthly`):
-- Early Bird: €29/mese (`STRIPE_PRICE_ID_EARLY_BIRD`)
-- Full: €39/mese (`STRIPE_PRICE_ID_FULL`)
+Il time-gate nei contenuti (`lib/dayUnlockLogic.ts`) forza comunque il ritmo 1 giorno/giorno.
 
 ### Flusso registrazione
 
@@ -295,43 +299,56 @@ register (step 1: account) → register (step 2: profilo atleta)
 
 ### Access gating
 
-L'unica funzione da riusare è `hasActiveAccess(profile)` in `lib/checkAccess.ts`:
+L'unica funzione di verità è `hasActiveAccess(profile)` in `lib/checkAccess.ts`:
 - `is_beta_free=true` → sempre accesso (beta tester + comp manuale)
-- `subscription_status='active'` → accesso
+- `season1_access=true` → Season 1 acquistata (one-time o 3 rate completate)
+- `subscription_status='active'` → rate in corso
 - altrimenti → no access → redirect `/pricing`
 
-Check fatto in `app/login/page.tsx` e `app/page.tsx` (dashboard). Nessun altro check sparso: se l'utente arriva alle pagine interne, ha già passato il gate.
+**Client-side:** check in `app/login/page.tsx` e `app/page.tsx` (dashboard) via `shouldRedirectToPaywall`.
+**Server-side:** `requirePaidAccess(userId)` in `lib/serverAccess.ts` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/giorno`, `/api/gate`, `/api/chat`, `/api/settimana`. `/api/settimane` richiede solo login (preview percorso). Soft se `STRIPE_SECRET_KEY` assente.
+
+### Auth API (hardening giugno 2026)
+
+- NESSUNA route accetta più `userId` dal client (query/body): l'identità viene SOLO da `getAuthUser(request)` (Bearer token o cookie) → `401 Not authenticated` se assente.
+- Tutte le chiamate frontend alle API interne usano `authFetch()` (`lib/authFetch.ts`) che allega `Authorization: Bearer <token>` dalla sessione Supabase. Eccezioni: `/api/register` (pre-auth) e le route Stripe client che già mandavano il Bearer manualmente.
+- I param `userId` ancora inviati da client vecchi vengono ignorati dal server.
 
 ### Webhook events
 
 | Evento | Azione DB |
 |--------|-----------|
-| `checkout.session.completed` | set `stripe_customer_id`, `stripe_subscription_id`, `status='active'` |
+| `checkout.session.completed` (mode payment) | `season1_access=true` + `stripe_customer_id` (se `payment_status='paid'`) |
+| `checkout.session.completed` (mode subscription) | `status='active'` + ids + aggancia Subscription Schedule 3 rate |
+| `invoice.paid` | `installments_paid` = count assoluto invoice paid; se ≥3 → `season1_access=true` |
 | `customer.subscription.updated` | sync status (active / past_due / canceled) |
-| `customer.subscription.deleted` | `status='canceled'` |
+| `customer.subscription.deleted` | `status='canceled'` (accesso resta se `season1_access`) |
 | `invoice.payment_failed` | `status='past_due'` (accesso bloccato immediato) |
 
 Idempotenza via `stripe_events` table. Runtime: `nodejs` (serve `crypto` per signature verify).
+⚠️ L'endpoint webhook sul dashboard Stripe deve includere anche **`invoice.paid`** (aggiunto a giugno 2026).
 
 ### Accesso gratuito (comp / beta / partner)
 
-Due strumenti complementari:
-- **`is_beta_free=true`**: bypass totale paywall. Set manuale via SQL (`UPDATE profiles SET is_beta_free=true WHERE user_id='...'`). Riservato a beta tester, partner, amici.
-- **Stripe Promotion Codes**: sconti dal Dashboard Stripe (es. 100% off primo mese, -20% lifetime). Inseriti dall'utente al checkout (`allow_promotion_codes: true`).
+- **`is_beta_free=true`**: bypass totale paywall. Set manuale via SQL (`UPDATE profiles SET is_beta_free=true WHERE user_id='...'`) o codici `?beta=` in registrazione. Riservato a beta tester, partner, amici.
+- Promotion Codes Stripe NON attivi al checkout (scelta deliberata: il prezzo founder è già lo sconto). Riattivabili con `allow_promotion_codes: true` in `create-checkout`.
 
 ### File Stripe
 
 | File | Scopo |
 |------|-------|
-| `lib/stripe.ts` | Client Stripe server + `getOrCreateStripeCustomer` + `isStripeEnabled()` |
-| `lib/checkAccess.ts` | `hasActiveAccess(profile)` — check paywall |
-| `app/api/stripe/create-checkout/route.ts` | POST → Checkout Session (bypassa se is_beta_free) |
-| `app/api/stripe/webhook/route.ts` | Signature verify + 4 handler idempotenti |
+| `lib/stripe.ts` | Client Stripe server + `getOrCreateStripeCustomer` + `ensureInstallmentSchedule` + `isStripeEnabled()` |
+| `lib/checkAccess.ts` | `hasActiveAccess(profile)` — check paywall (pure, client-safe) |
+| `lib/serverAccess.ts` | `requirePaidAccess(userId)` — check paywall server-side (service role) |
+| `lib/authFetch.ts` | fetch client con Bearer token Supabase (tutte le API interne) |
+| `app/api/stripe/create-checkout/route.ts` | POST {plan: onetime\|installments} → Checkout Session |
+| `app/api/stripe/webhook/route.ts` | Signature verify + 5 handler idempotenti |
 | `app/api/stripe/portal/route.ts` | POST → Billing Portal URL |
-| `app/api/stripe/subscription/route.ts` | GET → stato sub + next billing date (per UI) |
-| `app/pricing/page.tsx` | Landing 2 piani + FAQ |
-| `components/SubscriptionSection.tsx` | Card "Abbonamento" nella pagina `/profilo` |
+| `app/api/stripe/subscription/route.ts` | GET → stato accesso + rate pagate + next billing (per UI) |
+| `app/pricing/page.tsx` | Landing founder: €69 one-time / €29×3 + FAQ |
+| `components/SubscriptionSection.tsx` | Card "Il tuo accesso" nella pagina `/profilo` |
 | `docs/migrations/002_stripe.sql` | Migration schema (ALTER profiles + stripe_events + RLS) |
+| `docs/migrations/004_season1.sql` | Migration season1_access + installments_paid + RLS aggiornata |
 
 ### Feature flag
 
@@ -934,7 +951,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 
 ### Da fare
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
-- [ ] **Fase 2 — Auth chain (staging):** rimuovere fallback `userId || body.userId` in tutte le API route; aggiungere `middleware.ts` che verifica sessione Supabase e redirige a `/login`.
+- [x] **Auth chain (giugno 2026):** rimosso fallback `userId || body.userId` da TUTTE le API route (identità solo da `getAuthUser` → 401); frontend convertito a `authFetch()` con Bearer token. Resta opzionale: `middleware.ts` per redirect `/login` a livello routing.
 - [ ] **Fase 2 — Env vars da attivare:** `TELEGRAM_WEBHOOK_SECRET` (+ ri-registrare webhook con `secret_token`), `RESEND_API_KEY`, `SAFETY_ALERT_EMAIL`.
 - [ ] **Fase 3 — RPC atomica gate:** `app/api/gate/route.ts` linee 82-110 — wrap in transazione Supabase RPC per evitare race condition su doppio POST.
 - [ ] **Fase 3 — Cache Notion:** `lib/notion.ts` + `app/api/settimana/route.ts` + `app/api/giorno/route.ts` — wrap con `unstable_cache` Next.js o Vercel KV (TTL 1-2h).

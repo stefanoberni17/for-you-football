@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
@@ -48,7 +49,7 @@ export default function GatePage() {
         return;
       }
 
-      const res = await fetch(`/api/gate?week=${weekNumber}&userId=${uid}`);
+      const res = await authFetch(`/api/gate?week=${weekNumber}&userId=${uid}`);
       const data = await res.json();
 
       if (data.error) {
@@ -83,7 +84,7 @@ export default function GatePage() {
     setSaving(true);
 
     try {
-      const res = await fetch('/api/gate', {
+      const res = await authFetch('/api/gate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, weekNumber, answers }),

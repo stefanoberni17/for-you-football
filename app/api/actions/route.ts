@@ -17,10 +17,9 @@ export async function GET(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = authUserId || searchParams.get('userId');
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
     const today = todayDate();
@@ -68,12 +67,11 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
-    const actions: any[] = body.actions || [];
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    const actions: any[] = body.actions || [];
     if (!Array.isArray(actions) || actions.length < 1 || actions.length > 5) {
       return NextResponse.json(
         { error: 'Devi fornire da 1 a 5 azioni' },

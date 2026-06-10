@@ -19,10 +19,9 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json().catch(() => ({}));
-    const userId = authUserId || body.userId;
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
     const { error } = await supabaseAdmin

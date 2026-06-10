@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ActionsSetupSheet, { type SelectedAction } from '@/components/ActionsSetupSheet';
@@ -41,8 +42,8 @@ function OggiPageInner() {
 
   const reload = async (uid: string) => {
     const [aRes, hRes] = await Promise.all([
-      fetch(`/api/actions?userId=${uid}`),
-      fetch(`/api/actions/history?userId=${uid}&days=30`),
+      authFetch(`/api/actions?userId=${uid}`),
+      authFetch(`/api/actions/history?userId=${uid}&days=30`),
     ]);
     const aData = await aRes.json();
     const hData = await hRes.json();
@@ -98,7 +99,7 @@ function OggiPageInner() {
     }
 
     try {
-      const res = await fetch('/api/actions/toggle', {
+      const res = await authFetch('/api/actions/toggle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, actionId }),
@@ -125,7 +126,7 @@ function OggiPageInner() {
       principle: s.principle,
       position: idx + 1,
     }));
-    const res = await fetch('/api/actions', {
+    const res = await authFetch('/api/actions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, actions: payload }),

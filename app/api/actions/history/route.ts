@@ -32,12 +32,11 @@ export async function GET(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = authUserId || searchParams.get('userId');
-    const days = Math.min(Math.max(parseInt(searchParams.get('days') || '30'), 1), 180);
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    const days = Math.min(Math.max(parseInt(searchParams.get('days') || '30'), 1), 180);
 
     const fromDate = daysAgo(days - 1);
     const today = todayDate();

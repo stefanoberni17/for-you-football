@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 
 interface DailyCheckinModalProps {
   userId: string;
@@ -63,7 +64,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
     // Step 4 → salva e chiudi
     setSaving(true);
     try {
-      await fetch('/api/checkin', {
+      await authFetch('/api/checkin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

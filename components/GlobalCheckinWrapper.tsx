@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import DailyCheckinModal from './DailyCheckinModal';
@@ -26,7 +27,7 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
       setUserId(session.user.id);
 
       try {
-        const res = await fetch(`/api/checkin?userId=${session.user.id}`);
+        const res = await authFetch(`/api/checkin?userId=${session.user.id}`);
         const data = await res.json();
         if (!data.checkin) {
           setShowCheckin(true);

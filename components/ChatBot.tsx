@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useImperativeHandle } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { supabase } from '@/lib/supabase';
 import { Send, Loader2 } from 'lucide-react';
 
@@ -81,7 +82,7 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
           content: m.content,
         }));
 
-      const response = await fetch('/api/chat', {
+      const response = await authFetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
