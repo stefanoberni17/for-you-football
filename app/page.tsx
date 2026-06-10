@@ -20,7 +20,7 @@ import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
 import { useMeditation } from '@/components/MeditationContext';
-import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Wind } from 'lucide-react';
+import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Wind, Target } from 'lucide-react';
 
 interface CheckinData {
   date: string;
@@ -99,6 +99,7 @@ export default function HomePage() {
   const [actionsStreak, setActionsStreak] = useState(0);
   const [actions, setActions] = useState<DashboardAction[]>([]);
   const [actionPending, setActionPending] = useState<string | null>(null);
+  const [weeklyMission, setWeeklyMission] = useState<string>('');
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -164,6 +165,20 @@ export default function HomePage() {
           setCheckins(checkinJson.checkins || []);
         }
       } catch {}
+
+      // Missione della settimana: vive sul G7 della settimana precedente,
+      // mostrata solo se quel gate è stato superato
+      if (currentWeek >= 2) {
+        try {
+          const gateRes = await authFetch(`/api/gate?week=${currentWeek - 1}`);
+          if (gateRes.ok) {
+            const gateJson = await gateRes.json();
+            if (gateJson.completed && gateJson.giorno?.missioneSettimana) {
+              setWeeklyMission(gateJson.giorno.missioneSettimana);
+            }
+          }
+        } catch {}
+      }
 
       // Carica calendario settimanale
       try {
@@ -374,22 +389,40 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Reset rapido — uso autonomo dello strumento, quando serve */}
-        <button
-          onClick={openMeditation}
-          className="w-full bg-surface rounded-2xl shadow-sm p-4 flex items-center justify-between border border-forest-500/20 hover:border-forest-500/40 transition-all active:scale-[0.99]"
-        >
-          <span className="flex items-center gap-3">
-            <span className="w-9 h-9 rounded-full bg-forest-500/15 flex items-center justify-center">
+        {/* Missione della settimana — dal gate appena superato */}
+        {weeklyMission && !allDone && (
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
+            <p className="text-xs font-bold text-forest-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <Target className="w-3.5 h-3.5" aria-hidden="true" />
+              Missione della settimana
+            </p>
+            <p className="text-sm text-app leading-relaxed">{weeklyMission}</p>
+          </div>
+        )}
+
+        {/* Reset rapido + SOS — uso autonomo, quando serve */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={openMeditation}
+            className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/20 hover:border-forest-500/40 transition-all active:scale-[0.99] text-left"
+          >
+            <span className="w-9 h-9 rounded-full bg-forest-500/15 flex items-center justify-center mb-2">
               <Wind className="w-4 h-4 text-forest-400" aria-hidden="true" />
             </span>
-            <span className="text-left">
-              <span className="block text-sm font-bold text-app">Reset rapido</span>
-              <span className="block text-xs text-muted">1 minuto di respiro, quando ti serve</span>
+            <span className="block text-sm font-bold text-app">Reset rapido</span>
+            <span className="block text-xs text-muted mt-0.5">1 minuto di respiro</span>
+          </button>
+          <button
+            onClick={() => router.push('/sos')}
+            className="bg-surface rounded-2xl shadow-sm p-4 border border-amber-500/20 hover:border-amber-500/40 transition-all active:scale-[0.99] text-left"
+          >
+            <span className="w-9 h-9 rounded-full bg-amber-500/15 flex items-center justify-center mb-2 text-base" aria-hidden="true">
+              ⚡
             </span>
-          </span>
-          <span className="text-forest-500 text-lg">→</span>
-        </button>
+            <span className="block text-sm font-bold text-app">Momento difficile?</span>
+            <span className="block text-xs text-muted mt-0.5">Panchina, errore, ansia</span>
+          </button>
+        </div>
 
         {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline */}
         <ActionsCard

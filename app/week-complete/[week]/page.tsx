@@ -13,6 +13,7 @@ export default function WeekCompletePage() {
 
   const [loading, setLoading] = useState(true);
   const [settimana, setSettimana] = useState<any>(null);
+  const [missione, setMissione] = useState<string>('');
 
   useEffect(() => {
     const init = async () => {
@@ -22,6 +23,9 @@ export default function WeekCompletePage() {
       const res = await authFetch(`/api/settimana?week=${weekNumber}`);
       const data = await res.json();
       setSettimana(data.settimana);
+      // Missione per la settimana successiva: vive sul G7 della settimana appena chiusa
+      const gateDay = (data.giorni || []).find((g: any) => g.dayNumber === 7);
+      if (gateDay?.missioneSettimana) setMissione(gateDay.missioneSettimana);
       setLoading(false);
     };
 
@@ -89,6 +93,16 @@ export default function WeekCompletePage() {
             </p>
           )}
         </div>
+
+        {/* Missione per la settimana successiva */}
+        {missione && (
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 mb-5 border border-white/20">
+            <h2 className="text-white font-bold text-sm mb-2 text-center">
+              🎯 La tua missione per la {nextAvailable ? `Settimana ${nextWeek}` : 'prossima fase'}
+            </h2>
+            <p className="text-white text-sm leading-relaxed text-center">{missione}</p>
+          </div>
+        )}
 
         {/* Prossimi passi */}
         <div className="space-y-3">

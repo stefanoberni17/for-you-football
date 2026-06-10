@@ -146,9 +146,17 @@ export default function GatePage() {
         <div className="text-7xl mb-6">🏆</div>
         <h1 className="text-3xl font-bold mb-2 text-center">Settimana {weekNumber} completata!</h1>
         <p className="text-white text-center mb-2 text-sm">Hai superato il Gate</p>
-        <p className="text-white text-sm text-center mb-10 max-w-xs leading-relaxed">
+        <p className="text-white text-sm text-center mb-8 max-w-xs leading-relaxed">
           Ogni settimana è un mattone. La prossima si sblocca adesso.
         </p>
+        {giorno?.missioneSettimana && (
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-4 mb-8 max-w-sm text-center">
+            <p className="text-forest-100 text-xs font-bold uppercase tracking-wider mb-1.5">
+              🎯 La tua missione per la prossima settimana
+            </p>
+            <p className="text-white text-sm leading-relaxed">{giorno.missioneSettimana}</p>
+          </div>
+        )}
         <button
           onClick={() => router.push(`/week-complete/${weekNumber}`)}
           className="bg-white text-forest-500 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
