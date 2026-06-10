@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
@@ -53,9 +54,9 @@ export default function SettimanaPage() {
       }
 
       const [settimanaRes, progress, calendarRes] = await Promise.all([
-        fetch(`/api/settimana?week=${weekNumber}`),
+        authFetch(`/api/settimana?week=${weekNumber}`),
         loadProgress(session.user.id),
-        fetch(`/api/calendar?userId=${session.user.id}&week=${weekNumber}`),
+        authFetch(`/api/calendar?userId=${session.user.id}&week=${weekNumber}`),
       ]);
 
       const data = await settimanaRes.json();
@@ -97,7 +98,7 @@ export default function SettimanaPage() {
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
     try {
-      const res = await fetch('/api/calendar', {
+      const res = await authFetch('/api/calendar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, weekNumber, trainingDays, matchDays }),

@@ -50,14 +50,47 @@ export async function getOrCreateStripeCustomer(userId: string, email: string): 
 }
 
 /**
+ * Aggancia alla subscription una Subscription Schedule che la ferma dopo 3 addebiti
+ * (modello Season 1 a rate: 3 × mensile, poi cancel automatico).
+ * Idempotente: se la sub ha già una schedule (retry webhook), non fa nulla.
+ * Vive qui (non nel route webhook) così è riusabile nei test con Test Clock,
+ * dove la subscription si crea via API e non via Checkout.
+ */
+export async function ensureInstallmentSchedule(subscriptionId: string): Promise<void> {
+  const sub = await stripe.subscriptions.retrieve(subscriptionId);
+  if (sub.schedule) return; // già agganciata (retry webhook)
+
+  const schedule = await stripe.subscriptionSchedules.create({
+    from_subscription: subscriptionId,
+  });
+
+  await stripe.subscriptionSchedules.update(schedule.id, {
+    end_behavior: 'cancel',
+    phases: [
+      {
+        items: [{ price: process.env.STRIPE_PRICE_ID_SEASON_INSTALLMENTS!, quantity: 1 }],
+        // La phase corrente non può cambiare start: ripassiamo quello originale.
+        start_date: schedule.phases[0].start_date,
+        iterations: 3,
+      },
+    ],
+  });
+
+  console.log(`[stripe] ✓ schedule 3 rate agganciata a ${subscriptionId}`);
+}
+
+/**
  * Feature flag: Stripe è configurato? Se no, il redirect paywall è soft (no-op).
  * Usato per deploy graduale: codice in prod ma paywall inattivo finché env non presenti.
+ *
+ * Price env generiche per Season: in fase founder puntano a €69 one-time / €29 mensile;
+ * dal 01/09 si swappano i valori (€99 one-time / €39 mensile) senza toccare il codice.
  */
 export function isStripeEnabled(): boolean {
   return Boolean(
     process.env.STRIPE_SECRET_KEY &&
     process.env.STRIPE_WEBHOOK_SECRET &&
-    process.env.STRIPE_PRICE_ID_EARLY_BIRD &&
-    process.env.STRIPE_PRICE_ID_FULL
+    process.env.STRIPE_PRICE_ID_SEASON_ONETIME &&
+    process.env.STRIPE_PRICE_ID_SEASON_INSTALLMENTS
   );
 }

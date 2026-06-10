@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
-import { stripe } from '@/lib/stripe';
+import { stripe, ensureInstallmentSchedule } from '@/lib/stripe';
 
 // Node runtime richiesto: Stripe.webhooks.constructEvent usa `crypto` node-only.
 export const runtime = 'nodejs';
@@ -13,17 +13,24 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Webhook Stripe. Modello subscription-based: `subscription_status='active'` = accesso pieno.
- * Nessun "block counting" — il time-gate nei contenuti (lib/dayUnlockLogic.ts) forza il ritmo.
+ * Webhook Stripe. Modello Season 1 founder:
+ *  - one-time (mode payment)      → season1_access=true (accesso permanente)
+ *  - 3 rate (mode subscription)   → status='active' durante le rate; alla 3ª rata
+ *                                   pagata season1_access=true; la Subscription
+ *                                   Schedule (iterations 3, end_behavior cancel)
+ *                                   ferma gli addebiti dopo la terza.
  *
  * Eventi gestiti:
- *  - checkout.session.completed       → utente completa primo checkout (status='active')
+ *  - checkout.session.completed       → branch su session.mode (payment | subscription)
+ *  - invoice.paid                     → conta rate pagate; alla 3ª → season1_access
  *  - customer.subscription.updated    → sync status (active, past_due, canceled, incomplete)
- *  - customer.subscription.deleted    → sub terminata
+ *  - customer.subscription.deleted    → sub terminata (accesso resta se season1_access)
  *  - invoice.payment_failed           → accesso bloccato (past_due)
  *
  * Idempotenza: ogni event.id viene inserito in `stripe_events`.
  * Se INSERT fallisce (PK conflict) → evento già processato, skip.
+ * installments_paid è sempre un SET assoluto (count da Stripe), mai un incremento
+ * → replay-safe anche su retry parziali.
  */
 export async function POST(request: NextRequest) {
   const signature = request.headers.get('stripe-signature');
@@ -62,6 +69,11 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         await handleCheckoutCompleted(session);
+        break;
+      }
+      case 'invoice.paid': {
+        const invoice = event.data.object as Stripe.Invoice;
+        await handleInvoicePaid(invoice);
         break;
       }
       case 'customer.subscription.updated': {
@@ -105,6 +117,28 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  // ─── One-time (Season 1 €69/€99): accesso permanente immediato ─────────────
+  if (session.mode === 'payment') {
+    if (session.payment_status !== 'paid') {
+      // Difesa: con metodi async la session completa prima dell'incasso.
+      // payment_method_types è limitato a card, quindi non dovrebbe accadere.
+      console.warn(`[stripe-webhook] checkout one-time non paid (${session.payment_status}) — skip`, session.id);
+      return;
+    }
+
+    await supabaseAdmin
+      .from('profiles')
+      .update({
+        stripe_customer_id: customerId ?? null,
+        season1_access: true,
+      })
+      .eq('user_id', userId);
+
+    console.log(`[stripe-webhook] ✓ checkout one-time completed — user ${userId} → season1_access`);
+    return;
+  }
+
+  // ─── 3 rate (subscription): attiva accesso + aggancia schedule 3 iterazioni ─
   await supabaseAdmin
     .from('profiles')
     .update({
@@ -114,7 +148,51 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     })
     .eq('user_id', userId);
 
-  console.log(`[stripe-webhook] ✓ checkout completed — user ${userId} → active`);
+  if (subscriptionId) {
+    await ensureInstallmentSchedule(subscriptionId);
+  }
+
+  console.log(`[stripe-webhook] ✓ checkout installments completed — user ${userId} → active (1/3)`);
+}
+
+/**
+ * Conta le rate pagate della subscription installments e aggiorna il profilo.
+ * SET assoluto da Stripe (mai incremento) → idempotente su replay/retry.
+ * Alla 3ª rata pagata → season1_access=true (accesso permanente, sopravvive
+ * alla cancellazione automatica della sub a fine schedule).
+ */
+async function handleInvoicePaid(invoice: Stripe.Invoice) {
+  // La posizione del subscription id dipende dalla versione API dell'endpoint
+  // webhook (>= 2025-03-31.basil usa invoice.parent.subscription_details).
+  const inv = invoice as any;
+  const subId: string | null =
+    (typeof inv.subscription === 'string' ? inv.subscription : inv.subscription?.id) ??
+    inv.parent?.subscription_details?.subscription ??
+    null;
+
+  if (!subId) return; // invoice non legata a subscription (es. one-time): niente da fare
+
+  const sub = await stripe.subscriptions.retrieve(subId);
+  if (sub.metadata?.plan !== 'installments') return; // non è il piano a rate
+
+  const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+
+  const paidInvoices = await stripe.invoices.list({
+    subscription: subId,
+    status: 'paid',
+    limit: 10,
+  });
+  const count = paidInvoices.data.length;
+
+  const update: Record<string, unknown> = { installments_paid: count };
+  if (count >= 3) update.season1_access = true;
+
+  await supabaseAdmin
+    .from('profiles')
+    .update(update)
+    .eq('stripe_customer_id', customerId);
+
+  console.log(`[stripe-webhook] ✓ invoice.paid — customer ${customerId} rate ${count}/3${count >= 3 ? ' → season1_access' : ''}`);
 }
 
 async function handleSubscriptionUpdated(sub: Stripe.Subscription) {

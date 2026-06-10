@@ -15,12 +15,11 @@ export async function GET(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = authUserId || searchParams.get('userId');
-    const days = parseInt(searchParams.get('days') || '30');
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    const days = parseInt(searchParams.get('days') || '30');
 
     const fromDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
       .toISOString()

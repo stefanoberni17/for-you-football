@@ -12,7 +12,10 @@ export async function GET(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = authUserId || searchParams.get('userId');
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
     const weekNumber = parseInt(searchParams.get('week') || '0');
     const dayNumber = parseInt(searchParams.get('day') || '0');
 
@@ -45,7 +48,10 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
     const { weekNumber, dayNumber, reflectionText, reflectionQuestion } = body;
 
     if (!userId || !weekNumber || !dayNumber || !reflectionText) {

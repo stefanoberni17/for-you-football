@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { WEEK_RECORD_IDS, WEEK_TOOLS, WEEK_PRINCIPLES } from '@/lib/constants';
@@ -37,7 +38,7 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
       const weekId = WEEK_RECORD_IDS[currentWeek];
 
       if (weekId) {
-        const response = await fetch(`/api/settimana?id=${weekId}`);
+        const response = await authFetch(`/api/settimana?id=${weekId}`);
         const data = await response.json();
 
         const properties = data?.page?.properties || {};

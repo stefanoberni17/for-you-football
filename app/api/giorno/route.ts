@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +29,13 @@ export async function GET(request: NextRequest) {
     const weekNumber = parseInt(searchParams.get('week') || '0');
     const dayNumber = parseInt(searchParams.get('day') || '0');
     // Usa sessione autenticata, fallback a query param per backward compat
-    const userId = authUserId || searchParams.get('userId');
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
 
     if (!weekNumber || !dayNumber) {
       return NextResponse.json({ error: 'Parametri week e day richiesti' }, { status: 400 });
@@ -108,7 +115,13 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
     const { weekNumber, dayNumber, response, prePraticaResponse, reflectionQuestion } = body;
 
     if (!userId || !weekNumber || !dayNumber) {
@@ -204,7 +217,13 @@ export async function PUT(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
     const { weekNumber, dayNumber, prePraticaResponse } = body;
 
     if (!userId || !weekNumber || !dayNumber) {
@@ -247,7 +266,13 @@ export async function PATCH(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
     const { weekNumber, dayNumber, previousDayCheck } = body;
 
     if (!userId || !weekNumber || !dayNumber || previousDayCheck == null) {

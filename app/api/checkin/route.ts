@@ -21,10 +21,9 @@ export async function GET(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const { searchParams } = new URL(request.url);
-    const userId = authUserId || searchParams.get('userId');
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
     const { data, error } = await supabaseAdmin
@@ -49,12 +48,11 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
-    const { physicalState, sleepHours, recoveryQuality, mentalState } = body;
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    const { physicalState, sleepHours, recoveryQuality, mentalState } = body;
 
     // Validazione 0-10 per i campi numerici
     const numFields = { physicalState, recoveryQuality, mentalState };

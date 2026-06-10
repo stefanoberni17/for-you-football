@@ -10,6 +10,7 @@
 export type BillingProfile = {
   is_beta_free?: boolean | null;
   subscription_status?: string | null;
+  season1_access?: boolean | null;
 };
 
 /**
@@ -18,12 +19,14 @@ export type BillingProfile = {
  * Priorità:
  *  1. Nessun profilo → no access
  *  2. is_beta_free=true → accesso totale (beta tester, comp, partner)
- *  3. subscription_status='active' → accesso (include trialing via webhook mapping)
- *  4. altrimenti → no access
+ *  3. season1_access=true → Season 1 acquistata (one-time o 3 rate completate)
+ *  4. subscription_status='active' → rate in corso (include trialing via webhook mapping)
+ *  5. altrimenti → no access
  */
 export function hasActiveAccess(profile: BillingProfile | null | undefined): boolean {
   if (!profile) return false;
   if (profile.is_beta_free) return true;
+  if (profile.season1_access) return true;
   return profile.subscription_status === 'active';
 }
 

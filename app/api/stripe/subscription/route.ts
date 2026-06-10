@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   const { data: profile, error } = await supabaseAdmin
     .from('profiles')
-    .select('subscription_status, is_beta_free, stripe_subscription_id')
+    .select('subscription_status, is_beta_free, stripe_subscription_id, season1_access, installments_paid')
     .eq('user_id', userId)
     .single();
 
@@ -31,11 +31,15 @@ export async function GET(request: NextRequest) {
   const response: {
     subscription_status: string;
     is_beta_free: boolean;
+    season1_access: boolean;
+    installments_paid: number;
     next_billing_date: string | null;
     cancel_at_period_end: boolean;
   } = {
     subscription_status: profile.subscription_status ?? 'none',
     is_beta_free: Boolean(profile.is_beta_free),
+    season1_access: Boolean(profile.season1_access),
+    installments_paid: profile.installments_paid ?? 0,
     next_billing_date: null,
     cancel_at_period_end: false,
   };

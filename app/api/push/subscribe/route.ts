@@ -11,7 +11,10 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
     const { subscription } = body;
 
     if (!userId || !subscription?.endpoint || !subscription?.keys) {

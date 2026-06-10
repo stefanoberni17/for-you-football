@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { Calendar, RefreshCw, Check } from 'lucide-react';
 
@@ -54,7 +55,7 @@ export default function WeeklyActionsBanner({
   const handleKeep = async () => {
     setDismissing(true);
     try {
-      await fetch('/api/actions/dismiss-weekly-prompt', {
+      await authFetch('/api/actions/dismiss-weekly-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId }),

@@ -19,12 +19,11 @@ export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
-    const actionId: string | undefined = body.actionId;
-
+    const userId = authUserId;
     if (!userId) {
-      return NextResponse.json({ error: 'userId richiesto' }, { status: 400 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    const actionId: string | undefined = body.actionId;
     if (!actionId) {
       return NextResponse.json({ error: 'actionId richiesto' }, { status: 400 });
     }

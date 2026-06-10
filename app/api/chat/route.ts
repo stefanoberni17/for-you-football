@@ -8,12 +8,19 @@ import {
   WEB_FORMAT
 } from '@/lib/coach-ai';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
 
 export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
     const body = await request.json();
-    const userId = authUserId || body.userId;
+    const userId = authUserId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
     const { messages } = body;
 
     if (!messages || messages.length === 0) {

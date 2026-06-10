@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isWeekUnlocked, isWeekCompleted, getWeekProgress, DayProgress } from '@/lib/dayUnlockLogic';
@@ -72,7 +73,7 @@ export default function SettimanePage() {
   useEffect(() => {
     if (checkingAuth) return;
 
-    fetch('/api/settimane')
+    authFetch('/api/settimane')
       .then(res => res.json())
       .then(data => {
         const list = (data.settimane || [])

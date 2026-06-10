@@ -7,13 +7,13 @@ import { hasActiveAccess, isPaywallActive } from '@/lib/checkAccess';
 
 export const dynamic = 'force-dynamic';
 
-type Plan = 'early_bird' | 'full';
+type Plan = 'onetime' | 'installments';
 
 function PricingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<Plan>('early_bird');
+  const [selectedPlan, setSelectedPlan] = useState<Plan>('onetime');
   const [error, setError] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -37,7 +37,7 @@ function PricingContent() {
       // Se utente ha già accesso, non stare qui.
       const { data: profile } = await supabase
         .from('profiles')
-        .select('is_beta_free, subscription_status')
+        .select('is_beta_free, subscription_status, season1_access')
         .eq('user_id', session.user.id)
         .single();
 
@@ -81,9 +81,12 @@ function PricingContent() {
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-app mb-2">Scegli il tuo piano</h1>
+          <div className="inline-block bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+            🔓 Offerta Founder — fino al 30 agosto 2026
+          </div>
+          <h1 className="text-3xl font-bold text-app mb-2">Season 1 — Play Free</h1>
           <p className="text-muted">
-            Mental training per calciatori. Cancellazione in ogni momento.
+            Il percorso completo di 12 settimane. Prezzo founder bloccato per sempre.
           </p>
         </div>
 
@@ -94,48 +97,67 @@ function PricingContent() {
         )}
 
         <div className="space-y-3">
-          {/* Early Bird */}
+          {/* One-time €69 */}
           <button
-            onClick={() => setSelectedPlan('early_bird')}
+            onClick={() => setSelectedPlan('onetime')}
             className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
-              selectedPlan === 'early_bird' ? 'border-forest-500 shadow-md' : 'border-divider'
+              selectedPlan === 'onetime' ? 'border-forest-500 shadow-md' : 'border-divider'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-app">Early Bird</h2>
+                <h2 className="text-lg font-bold text-app">Pagamento unico</h2>
                 <span className="bg-forest-500/20 text-forest-300 text-xs font-semibold px-2 py-0.5 rounded-full">
-                  -25%
+                  Consigliato
                 </span>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-app">€29</div>
-                <div className="text-xs text-muted">/ mese</div>
+                <div className="text-2xl font-bold text-app">€69</div>
+                <div className="text-xs text-muted">una tantum</div>
               </div>
             </div>
             <p className="text-sm text-muted">
-              Prezzo di lancio fissato per sempre. Accesso completo al percorso finché l&apos;abbonamento è attivo.
+              Season 1 completa, tua per sempre. Un solo pagamento, nessun rinnovo, nessun abbonamento.
             </p>
           </button>
 
-          {/* Full */}
+          {/* 3 rate €29 */}
           <button
-            onClick={() => setSelectedPlan('full')}
+            onClick={() => setSelectedPlan('installments')}
             className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
-              selectedPlan === 'full' ? 'border-forest-500 shadow-md' : 'border-divider'
+              selectedPlan === 'installments' ? 'border-forest-500 shadow-md' : 'border-divider'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-bold text-app">Full</h2>
+              <h2 className="text-lg font-bold text-app">3 rate mensili</h2>
               <div className="text-right">
-                <div className="text-2xl font-bold text-app">€39</div>
-                <div className="text-xs text-muted">/ mese</div>
+                <div className="text-2xl font-bold text-app">€29 × 3</div>
+                <div className="text-xs text-muted">poi stop automatico</div>
               </div>
             </div>
             <p className="text-sm text-muted">
-              Prezzo pieno. Accesso completo al percorso finché l&apos;abbonamento è attivo.
+              Stesso percorso, pagamento diviso in 3. Dopo la terza rata gli addebiti si fermano
+              da soli e Season 1 resta tua per sempre.
             </p>
           </button>
+        </div>
+
+        {/* Cosa include */}
+        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-2">
+          <h3 className="font-bold text-app mb-3">Cosa include</h3>
+          {[
+            '12 settimane di percorso (3 blocchi: lo strumento, le difficoltà, giocare libero)',
+            'Coach AI personale — in app e su Telegram, 7 giorni su 7',
+            'Pratiche guidate giornaliere con audio',
+            'Check-in fisico e mentale + statistiche dei tuoi progressi',
+            '1 Cerchio For You dal vivo (riservato ai founder)',
+            'Gruppo founder — co-sviluppi il percorso con noi',
+          ].map((item) => (
+            <div key={item} className="flex items-start gap-2 text-sm text-muted">
+              <span className="text-forest-400 mt-0.5">✓</span>
+              <span>{item}</span>
+            </div>
+          ))}
         </div>
 
         {error && (
@@ -149,30 +171,45 @@ function PricingContent() {
           disabled={loading}
           className="w-full bg-forest-600 hover:bg-forest-700 disabled:opacity-50 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md transition"
         >
-          {loading ? 'Attendi…' : 'Procedi al pagamento →'}
+          {loading ? 'Attendi…' : selectedPlan === 'onetime' ? 'Sblocca Season 1 — €69 →' : 'Inizia con €29 →'}
         </button>
+
+        <p className="text-center text-xs text-faint">
+          Garanzia 4 settimane: provi l&apos;intero Blocco 1 — se non fa per te, rimborso completo.
+        </p>
 
         <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
           <h3 className="font-bold text-app">Domande frequenti</h3>
 
           <div>
-            <div className="text-sm font-semibold text-app">Come funziona l&apos;abbonamento?</div>
+            <div className="text-sm font-semibold text-app">È un abbonamento?</div>
             <div className="text-sm text-muted mt-1">
-              Finché l&apos;abbonamento è attivo, hai accesso completo al percorso. I contenuti si sbloccano un giorno alla volta per tenere il ritmo. Season 1 dura ~12 settimane.
+              No. Paghi Season 1 una volta (o in 3 rate) e resta tua. Nessun rinnovo automatico,
+              niente da disdire.
             </div>
           </div>
 
           <div>
-            <div className="text-sm font-semibold text-app">Posso disdire?</div>
+            <div className="text-sm font-semibold text-app">Come funzionano le 3 rate?</div>
             <div className="text-sm text-muted mt-1">
-              Sì, in qualsiasi momento dal tuo profilo. Mantieni l&apos;accesso fino alla fine del periodo pagato.
+              €29 oggi, poi €29 al mese per altri 2 mesi. Dopo la terza rata gli addebiti si
+              fermano automaticamente. L&apos;accesso permanente si attiva al completamento delle 3 rate.
             </div>
           </div>
 
           <div>
-            <div className="text-sm font-semibold text-app">Ho un codice promozionale.</div>
+            <div className="text-sm font-semibold text-app">Perché &quot;prezzo founder&quot;?</div>
             <div className="text-sm text-muted mt-1">
-              Lo inserisci al passo successivo, nella pagina di pagamento Stripe.
+              Sei tra i primi: €69 invece di €99 (prezzo pieno dal 1 settembre). In cambio ci aiuti
+              a rifinire il percorso con il tuo feedback — e partecipi al Cerchio For You dal vivo.
+            </div>
+          </div>
+
+          <div>
+            <div className="text-sm font-semibold text-app">Come funziona la garanzia?</div>
+            <div className="text-sm text-muted mt-1">
+              Hai 4 settimane per provare tutto il Blocco 1. Se non fa per te, scrivici e ti
+              rimborsiamo per intero.
             </div>
           </div>
 
