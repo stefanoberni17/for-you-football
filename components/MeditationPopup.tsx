@@ -11,6 +11,16 @@ const DURATION_OPTIONS = [
   { label: '5 min', seconds: 300 },
 ];
 
+// Respiro del Reset: 4s naso (inspira) / 6s bocca (espira)
+const INHALE_MS = 4000;
+const EXHALE_MS = 6000;
+
+const RITUAL_SKIP_KEY = 'ritualSkipped';
+
+function todayStr(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
 interface MeditationPopupProps {
   mantra: string;
   weekName: string;
@@ -42,7 +52,12 @@ export default function MeditationPopup({
     if (!userId || manualOpen) return;
 
     const checkMeditation = async () => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = todayStr();
+
+      // Skip già scelto oggi → il rituale torna domani
+      if (typeof window !== 'undefined' && localStorage.getItem(RITUAL_SKIP_KEY) === today) {
+        return;
+      }
 
       const { data: profileData } = await supabase
         .from('profiles')
@@ -51,14 +66,26 @@ export default function MeditationPopup({
         .single();
 
       const lastMeditation = profileData?.last_meditation_completed;
+      if (lastMeditation === today) return;
 
-      if (!lastMeditation || lastMeditation !== today) {
-        setIsFirstTime(!lastMeditation); // null = prima volta in assoluto
-        setPhase('setup');
-        setSelectedDuration(60);
-        setIsTimerComplete(false);
-        setShowPopup(true);
-      }
+      // Pratica del giorno già completata oggi → ha già respirato, niente Reset imposto
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const { data: practiceToday } = await supabase
+        .from('user_day_progress')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('completed', true)
+        .gte('completed_at', todayStart.toISOString())
+        .limit(1);
+
+      if (practiceToday && practiceToday.length > 0) return;
+
+      setIsFirstTime(!lastMeditation); // null = prima volta in assoluto
+      setPhase('setup');
+      setSelectedDuration(60);
+      setIsTimerComplete(false);
+      setShowPopup(true);
     };
 
     checkMeditation();
@@ -74,7 +101,7 @@ export default function MeditationPopup({
     }
   }, [manualOpen]);
 
-  // Timer countdown — solo durante la meditazione
+  // Timer countdown — solo durante il Reset
   useEffect(() => {
     if (!showPopup || phase !== 'meditating' || timeLeft === 0) return;
 
@@ -91,18 +118,31 @@ export default function MeditationPopup({
     return () => clearInterval(timer);
   }, [showPopup, phase, timeLeft]);
 
-  // Animazione respiro — solo durante la meditazione
+  // Animazione respiro asimmetrica 4s/6s — setTimeout ricorsivo
   useEffect(() => {
     if (!showPopup || phase !== 'meditating') return;
 
-    const breathTimer = setInterval(() => {
-      setBreathPhase(prev => (prev === 'inhale' ? 'exhale' : 'inhale'));
-    }, 4000);
+    let cancelled = false;
+    let timeout: ReturnType<typeof setTimeout>;
 
-    return () => clearInterval(breathTimer);
+    const cycle = (p: 'inhale' | 'exhale') => {
+      if (cancelled) return;
+      setBreathPhase(p);
+      timeout = setTimeout(
+        () => cycle(p === 'inhale' ? 'exhale' : 'inhale'),
+        p === 'inhale' ? INHALE_MS : EXHALE_MS
+      );
+    };
+
+    cycle('inhale');
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    };
   }, [showPopup, phase]);
 
-  // Audio — solo durante la meditazione
+  // Audio — solo durante il Reset
   useEffect(() => {
     if (!showPopup || phase !== 'meditating') return;
 
@@ -120,7 +160,7 @@ export default function MeditationPopup({
       audioRef.current.src = audioSrc;
       audioRef.current.volume = 0.3;
       audioRef.current.loop = true;
-      audioRef.current.play().catch(e => console.log('Audio autoplay blocked:', e));
+      audioRef.current.play().catch(() => {});
     }
 
     return () => {
@@ -136,6 +176,11 @@ export default function MeditationPopup({
 
   const handleSkip = () => {
     audioRef.current?.pause();
+    // Skip persistito per oggi (solo se proposto in automatico — chi apre
+    // manualmente e chiude non sta "saltando il rituale")
+    if (!manualOpen && typeof window !== 'undefined') {
+      localStorage.setItem(RITUAL_SKIP_KEY, todayStr());
+    }
     setShowPopup(false);
     setPhase('setup');
     onClose?.();
@@ -144,11 +189,9 @@ export default function MeditationPopup({
   const completeMeditation = async () => {
     if (!isTimerComplete) return;
 
-    const today = new Date().toISOString().split('T')[0];
-
     await supabase
       .from('profiles')
-      .update({ last_meditation_completed: today })
+      .update({ last_meditation_completed: todayStr() })
       .eq('user_id', userId);
 
     audioRef.current?.pause();
@@ -173,27 +216,27 @@ export default function MeditationPopup({
           <>
             <div className="text-center mb-6">
               <div className="text-5xl md:text-6xl mb-3">
-                {isFirstTime ? '🌱' : '🧘‍♂️'}
+                {isFirstTime ? '🌱' : '⚽'}
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
-                {isFirstTime ? 'Il tuo primo respiro' : 'Respiro Consapevole'}
+                {isFirstTime ? 'Il tuo primo Reset' : 'Il Reset'}
               </h2>
               <p className="text-xs md:text-sm text-muted mb-2">{weekName}</p>
               <p className="text-sm md:text-base text-app font-medium leading-relaxed">
                 {isFirstTime
-                  ? 'Ogni grande percorso inizia con un respiro.\nPrenditi questo momento — è solo tuo.'
-                  : 'Prenditi un momento solo per te'}
+                  ? 'Tre respiri prima di iniziare.\nÈ lo strumento che porterai in campo.'
+                  : '1 minuto. Naso, poi bocca — come in campo.'}
               </p>
             </div>
 
             {/* Mantra */}
-            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-purple-500/30">
+            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-forest-500/30">
               {isFirstTime && (
-                <p className="text-xs text-purple-300 font-semibold text-center mb-2 uppercase tracking-wide">
+                <p className="text-xs text-forest-300 font-semibold text-center mb-2 uppercase tracking-wide">
                   Il mantra della tua settimana
                 </p>
               )}
-              <p className="text-base md:text-lg text-purple-200 italic font-medium text-center leading-relaxed">
+              <p className="text-base md:text-lg text-forest-200 italic font-medium text-center leading-relaxed">
                 "{mantra}"
               </p>
             </div>
@@ -201,7 +244,7 @@ export default function MeditationPopup({
             {/* Selezione durata */}
             <div className="mb-6">
               <p className="text-sm text-muted text-center mb-3 font-medium">
-                {isFirstTime ? '⏱️ Quanto tempo hai adesso?' : '⏱️ Quanto vuoi meditare?'}
+                ⏱️ Quanto tempo hai adesso?
               </p>
               <div className="grid grid-cols-4 gap-2">
                 {DURATION_OPTIONS.map(({ label, seconds: s }) => (
@@ -210,8 +253,8 @@ export default function MeditationPopup({
                     onClick={() => setSelectedDuration(s)}
                     className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       selectedDuration === s
-                        ? 'bg-purple-600 text-white shadow-lg scale-105'
-                        : 'bg-surface-2 text-muted border border-divider hover:border-purple-500/40 hover:text-purple-300'
+                        ? 'bg-forest-600 text-white shadow-lg scale-105'
+                        : 'bg-surface-2 text-muted border border-divider hover:border-forest-500/40 hover:text-forest-300'
                     }`}
                   >
                     {label}
@@ -223,9 +266,9 @@ export default function MeditationPopup({
             {/* Azioni */}
             <button
               onClick={startMeditation}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
+              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
             >
-              🧘 Inizia la meditazione
+              Inizia il Reset →
             </button>
             <button
               onClick={handleSkip}
@@ -235,13 +278,13 @@ export default function MeditationPopup({
             </button>
           </>
         ) : (
-          /* ── FASE MEDITAZIONE ── */
+          /* ── FASE RESET ── */
           <>
             {/* Pulsante per tornare al setup */}
             <button
               onClick={() => { audioRef.current?.pause(); setPhase('setup'); }}
               className="absolute top-4 right-4 text-faint hover:text-muted transition-colors p-1 rounded-full hover:bg-surface-2"
-              aria-label="Interrompi meditazione"
+              aria-label="Interrompi il Reset"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -249,19 +292,19 @@ export default function MeditationPopup({
             </button>
 
             <div className="text-center mb-6">
-              <div className="text-5xl md:text-6xl mb-3">🧘‍♂️</div>
+              <div className="text-5xl md:text-6xl mb-3">⚽</div>
               <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
-                Respiro Consapevole
+                Il Reset
               </h2>
               <p className="text-xs md:text-sm text-muted mb-2">{weekName}</p>
               <p className="text-sm md:text-base text-app font-medium">
-                Questo momento è solo tuo
+                Resta qui. Solo questo minuto.
               </p>
             </div>
 
             {/* Mantra */}
-            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-purple-500/30">
-              <p className="text-base md:text-lg text-purple-200 italic font-medium text-center leading-relaxed">
+            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-forest-500/30">
+              <p className="text-base md:text-lg text-forest-200 italic font-medium text-center leading-relaxed">
                 "{mantra}"
               </p>
             </div>
@@ -270,10 +313,13 @@ export default function MeditationPopup({
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4 md:mb-6">
                 <div
-                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 transition-transform duration-[4000ms] ease-in-out ${
+                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-600 transition-transform ease-in-out ${
                     breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
                   }`}
-                  style={{ opacity: 0.6 }}
+                  style={{
+                    opacity: 0.6,
+                    transitionDuration: breathPhase === 'inhale' ? `${INHALE_MS}ms` : `${EXHALE_MS}ms`,
+                  }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
@@ -281,7 +327,7 @@ export default function MeditationPopup({
                       {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                     </div>
                     <div className="text-xs md:text-sm text-white/90 font-medium">
-                      {breathPhase === 'inhale' ? '🌬️ Inspira...' : '💨 Espira...'}
+                      {breathPhase === 'inhale' ? '🌬️ Inspira dal naso...' : '💨 Espira dalla bocca...'}
                     </div>
                   </div>
                 </div>
@@ -332,12 +378,12 @@ export default function MeditationPopup({
                   : 'bg-surface-2 text-faint cursor-not-allowed'
               }`}
             >
-              {isTimerComplete ? 'Continua 🌅' : 'Respira consapevolmente...'}
+              {isTimerComplete ? 'Fatto ✓' : 'Segui il respiro...'}
             </button>
 
             {!isTimerComplete && (
               <p className="text-xs text-center text-muted mt-3">
-                Questo minuto è solo tuo 💙
+                Naso che gonfia la pancia, bocca come su un vetro.
               </p>
             )}
           </>

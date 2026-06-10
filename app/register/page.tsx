@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
@@ -79,6 +80,8 @@ function RegisterContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const toggleRole = (v: string) =>
     setSelectedRoles((prev) => prev.includes(v) ? prev.filter((r) => r !== v) : [...prev, v]);
@@ -134,6 +137,25 @@ function RegisterContent() {
 
   // ── Schermata successo ────────────────────────────────────────────────────
   if (success) {
+    const handleResend = async () => {
+      if (resendCooldown > 0 || resending) return;
+      setResending(true);
+      try {
+        await supabase.auth.resend({ type: 'signup', email: email.trim() });
+        setResendCooldown(60);
+        const interval = setInterval(() => {
+          setResendCooldown(prev => {
+            if (prev <= 1) {
+              clearInterval(interval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      } catch { /* non bloccante */ }
+      setResending(false);
+    };
+
     return (
       <main className="min-h-screen bg-app flex flex-col items-center justify-center p-5">
         <div className="bg-surface rounded-2xl shadow-xl p-8 w-full max-w-sm text-center">
@@ -145,13 +167,23 @@ function RegisterContent() {
             <br />
             Clicca il link per attivare il tuo account, poi torna qui ad accedere.
           </p>
-          <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl px-4 py-3 mb-6 text-left">
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl px-4 py-3 mb-4 text-left">
             <p className="text-forest-300 text-xs font-semibold mb-0.5">📁 Non trovi l&apos;email?</p>
             <p className="text-forest-200 text-xs leading-relaxed">
               Controlla <strong>Spam</strong> o <strong>Posta indesiderata</strong>.
-              Se non arriva, riprova con un&apos;altra email.
             </p>
           </div>
+          <button
+            onClick={handleResend}
+            disabled={resendCooldown > 0 || resending}
+            className="w-full text-forest-400 hover:text-forest-300 text-sm font-semibold py-2 mb-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {resending
+              ? 'Invio...'
+              : resendCooldown > 0
+              ? `Email inviata ✓ — riprova tra ${resendCooldown}s`
+              : 'Reinvia email di conferma'}
+          </button>
           <button
             onClick={() => router.push('/login')}
             className="w-full bg-forest-500 hover:bg-forest-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-sm"

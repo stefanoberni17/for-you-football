@@ -45,10 +45,13 @@ export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
     if (p === 'other') return;
     setPlatform(p);
 
-    // Controlla se è stato rimandato di recente
+    // Controlla se è stato rimandato di recente o nascosto per sempre
     const dismissedAt = localStorage.getItem(DISMISS_KEY);
+    if (dismissedAt === 'never') return;
     if (dismissedAt) {
       const dismissDate = new Date(dismissedAt);
+      // Valore corrotto/non parsabile → tratta come dismiss permanente
+      if (isNaN(dismissDate.getTime())) return;
       const now = new Date();
       const daysSinceDismiss = (now.getTime() - dismissDate.getTime()) / (1000 * 60 * 60 * 24);
       if (daysSinceDismiss < REMIND_DAYS) return;

@@ -9,8 +9,6 @@ interface DailyCheckinModalProps {
   onSkip: () => void;
 }
 
-const TOTAL_STEPS = 4;
-
 // Label per i punti chiave degli slider 0-10
 const PHYSICAL_LABELS: Record<number, string> = {
   0: 'Esausto', 3: 'Stanco', 5: 'Nella media', 7: 'Bene', 10: 'Perfetto',
@@ -40,28 +38,13 @@ function getSliderColor(value: number): string {
 }
 
 export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyCheckinModalProps) {
-  const [step, setStep] = useState(1);
-  const [physicalState, setPhysicalState] = useState<number | null>(null);
+  const [physicalState, setPhysicalState] = useState<number>(5);
   const [sleepHours, setSleepHours] = useState<number>(7);
-  const [recoveryQuality, setRecoveryQuality] = useState<number | null>(null);
-  const [mentalState, setMentalState] = useState<number | null>(null);
+  const [recoveryQuality, setRecoveryQuality] = useState<number>(5);
+  const [mentalState, setMentalState] = useState<number>(5);
   const [saving, setSaving] = useState(false);
 
-  const canAdvance = () => {
-    if (step === 1) return physicalState !== null;
-    if (step === 2) return true; // slider ha sempre un valore
-    if (step === 3) return recoveryQuality !== null;
-    if (step === 4) return mentalState !== null;
-    return false;
-  };
-
-  const handleNext = async () => {
-    if (!canAdvance()) return;
-    if (step < TOTAL_STEPS) {
-      setStep(s => s + 1);
-      return;
-    }
-    // Step 4 → salva e chiudi
+  const handleSave = async () => {
     setSaving(true);
     try {
       await authFetch('/api/checkin', {
@@ -83,163 +66,96 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
     }
   };
 
-  const progressPercent = (step / TOTAL_STEPS) * 100;
+  const sliderRow = (
+    emoji: string,
+    title: string,
+    value: number,
+    setValue: (v: number) => void,
+    labels: Record<number, string>,
+    edges: [string, string, string]
+  ) => (
+    <div className="w-full">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-sm font-semibold text-app">
+          <span className="mr-1.5">{emoji}</span>
+          {title}
+        </span>
+        <span className={`text-sm font-bold ${getSliderColor(value)}`}>
+          {value}/10 — {getSliderLabel(value, labels)}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={10}
+        step={1}
+        value={value}
+        onChange={e => setValue(parseInt(e.target.value))}
+        className="w-full accent-forest-500 cursor-pointer h-2"
+      />
+      <div className="flex justify-between text-[10px] text-faint mt-1">
+        <span>{edges[0]}</span>
+        <span>{edges[1]}</span>
+        <span>{edges[2]}</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative animate-scaleIn my-auto">
 
-        {/* Progress bar */}
-        <div className="w-full bg-surface-2 rounded-full h-1.5 mb-1">
-          <div
-            className="h-1.5 bg-gradient-to-r from-forest-500 to-forest-600 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${progressPercent}%` }}
-          />
+        <div className="text-center mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-app mb-1">Come stai oggi?</h2>
+          <p className="text-muted text-sm">30 secondi di onestà — il Coach li userà per supportarti</p>
         </div>
 
-        {/* Step indicator */}
-        <div className="flex justify-center mb-6">
-          <span className="text-muted text-xs font-semibold tracking-widest uppercase">
-            {step} / {TOTAL_STEPS}
-          </span>
-        </div>
+        <div className="space-y-5">
+          {sliderRow('💪', 'Fisico', physicalState, setPhysicalState, PHYSICAL_LABELS, ['Esausto', 'Nella media', 'Perfetto'])}
 
-        {/* Content */}
-        <div className="flex flex-col items-center">
-
-          {/* ── Step 1: Stato fisico (slider 0-10) ── */}
-          {step === 1 && (
-            <div className="w-full text-center">
-              <div className="text-5xl mb-4">💪</div>
-              <h2 className="text-2xl font-bold text-app mb-2">Come stai fisicamente oggi?</h2>
-              <p className="text-muted text-sm mb-8">Sii onesto — il Coach userà questa info per supportarti meglio</p>
-              <div className="text-5xl font-bold text-app mb-1">
-                {physicalState !== null ? physicalState : '—'}
-                <span className="text-2xl text-faint font-normal">/10</span>
-              </div>
-              <p className={`text-sm font-medium mb-6 h-5 ${physicalState !== null ? getSliderColor(physicalState) : 'text-faint'}`}>
-                {physicalState !== null ? getSliderLabel(physicalState, PHYSICAL_LABELS) : 'Trascina per selezionare'}
-              </p>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                step={1}
-                value={physicalState ?? 5}
-                onChange={e => setPhysicalState(parseInt(e.target.value))}
-                className="w-full accent-forest-500 cursor-pointer h-2"
-              />
-              <div className="flex justify-between text-[10px] text-faint mt-2">
-                <span>Esausto</span>
-                <span>Nella media</span>
-                <span>Perfetto</span>
-              </div>
-            </div>
-          )}
-
-          {/* ── Step 2: Sonno (invariato) ── */}
-          {step === 2 && (
-            <div className="w-full text-center">
-              <div className="text-5xl mb-4">😴</div>
-              <h2 className="text-2xl font-bold text-app mb-2">Quante ore hai dormito?</h2>
-              <p className="text-muted text-sm mb-8">Il sonno è il primo strumento di recupero</p>
-              <div className="text-6xl font-bold text-app mb-2">
+          {/* Sonno (scala diversa: ore) */}
+          <div className="w-full">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-sm font-semibold text-app">
+                <span className="mr-1.5">😴</span>
+                Sonno
+              </span>
+              <span className="text-sm font-bold text-app">
                 {sleepHours}h
-              </div>
-              <div className="text-muted text-sm mb-8">
-                {sleepHours < 6 ? 'Poco — cerca di recuperare' : sleepHours >= 8 ? 'Ottimo recupero' : 'Nella norma'}
-              </div>
-              <input
-                type="range"
-                min={4}
-                max={12}
-                step={0.5}
-                value={sleepHours}
-                onChange={e => setSleepHours(parseFloat(e.target.value))}
-                className="w-full accent-forest-400 cursor-pointer"
-              />
-              <div className="flex justify-between text-xs text-faint mt-2">
-                <span>4h</span>
-                <span>8h</span>
-                <span>12h</span>
-              </div>
+                <span className="text-muted font-normal">
+                  {' — '}
+                  {sleepHours < 6 ? 'poco' : sleepHours >= 8 ? 'ottimo' : 'nella norma'}
+                </span>
+              </span>
             </div>
-          )}
-
-          {/* ── Step 3: Recupero muscolare (slider 0-10) ── */}
-          {step === 3 && (
-            <div className="w-full text-center">
-              <div className="text-5xl mb-4">🦵</div>
-              <h2 className="text-2xl font-bold text-app mb-2">Come senti il recupero muscolare?</h2>
-              <p className="text-muted text-sm mb-8">Gambe, schiena, tensioni generali</p>
-              <div className="text-5xl font-bold text-app mb-1">
-                {recoveryQuality !== null ? recoveryQuality : '—'}
-                <span className="text-2xl text-faint font-normal">/10</span>
-              </div>
-              <p className={`text-sm font-medium mb-6 h-5 ${recoveryQuality !== null ? getSliderColor(recoveryQuality) : 'text-faint'}`}>
-                {recoveryQuality !== null ? getSliderLabel(recoveryQuality, RECOVERY_LABELS) : 'Trascina per selezionare'}
-              </p>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                step={1}
-                value={recoveryQuality ?? 5}
-                onChange={e => setRecoveryQuality(parseInt(e.target.value))}
-                className="w-full accent-forest-500 cursor-pointer h-2"
-              />
-              <div className="flex justify-between text-[10px] text-faint mt-2">
-                <span>Esausto</span>
-                <span>Normale</span>
-                <span>Fresco</span>
-              </div>
+            <input
+              type="range"
+              min={4}
+              max={12}
+              step={0.5}
+              value={sleepHours}
+              onChange={e => setSleepHours(parseFloat(e.target.value))}
+              className="w-full accent-forest-400 cursor-pointer h-2"
+            />
+            <div className="flex justify-between text-[10px] text-faint mt-1">
+              <span>4h</span>
+              <span>8h</span>
+              <span>12h</span>
             </div>
-          )}
+          </div>
 
-          {/* ── Step 4: Stato mentale (slider 0-10) ── */}
-          {step === 4 && (
-            <div className="w-full text-center">
-              <div className="text-5xl mb-4">🧠</div>
-              <h2 className="text-2xl font-bold text-app mb-2">Come stai mentalmente oggi?</h2>
-              <p className="text-muted text-sm mb-8">Nessuna risposta giusta — solo onestà</p>
-              <div className="text-5xl font-bold text-app mb-1">
-                {mentalState !== null ? mentalState : '—'}
-                <span className="text-2xl text-faint font-normal">/10</span>
-              </div>
-              <p className={`text-sm font-medium mb-6 h-5 ${mentalState !== null ? getSliderColor(mentalState) : 'text-faint'}`}>
-                {mentalState !== null ? getSliderLabel(mentalState, MENTAL_LABELS) : 'Trascina per selezionare'}
-              </p>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                step={1}
-                value={mentalState ?? 5}
-                onChange={e => setMentalState(parseInt(e.target.value))}
-                className="w-full accent-forest-500 cursor-pointer h-2"
-              />
-              <div className="flex justify-between text-[10px] text-faint mt-2">
-                <span>Testa altrove</span>
-                <span>Normale</span>
-                <span>Lucido</span>
-              </div>
-            </div>
-          )}
-
+          {sliderRow('🦵', 'Recupero muscolare', recoveryQuality, setRecoveryQuality, RECOVERY_LABELS, ['Esausto', 'Normale', 'Fresco'])}
+          {sliderRow('🧠', 'Mentale', mentalState, setMentalState, MENTAL_LABELS, ['Testa altrove', 'Normale', 'Lucido'])}
         </div>
 
         {/* Footer */}
-        <div className="mt-8 space-y-3">
+        <div className="mt-7 space-y-3">
           <button
-            onClick={handleNext}
-            disabled={!canAdvance() || saving}
+            onClick={handleSave}
+            disabled={saving}
             className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 md:py-4 rounded-2xl text-sm md:text-base transition-all shadow-lg"
           >
-            {saving
-              ? 'Salvataggio...'
-              : step < TOTAL_STEPS
-              ? 'Avanti →'
-              : 'Inizia →'}
+            {saving ? 'Salvataggio...' : 'Salva e continua →'}
           </button>
           <button
             onClick={onSkip}

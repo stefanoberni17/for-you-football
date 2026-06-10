@@ -17,6 +17,7 @@ function ChatContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [promptSent, setPromptSent] = useState(false);
+  const [userName, setUserName] = useState<string | undefined>(undefined);
   const chatBotRef = useRef<ChatBotRef>(null);
 
   useEffect(() => {
@@ -26,6 +27,12 @@ function ChatContent() {
         router.push('/login');
         return;
       }
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('user_id', session.user.id)
+        .single();
+      if (profileData?.name) setUserName(profileData.name);
       setLoading(false);
     };
     checkAuth();
@@ -65,7 +72,7 @@ function ChatContent() {
       style={{ height: '100vh' }}
     >
       <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto">
-        <ChatBot ref={chatBotRef} suggestions={suggestions} />
+        <ChatBot ref={chatBotRef} suggestions={suggestions} userName={userName} />
       </div>
     </main>
   );

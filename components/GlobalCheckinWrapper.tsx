@@ -26,6 +26,13 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
 
       setUserId(session.user.id);
 
+      // "Salta per oggi" persistito: il rituale non riappare fino a domani
+      const today = new Date().toISOString().split('T')[0];
+      if (localStorage.getItem('ritualSkipped') === today) {
+        setCheckinDone(true);
+        return;
+      }
+
       try {
         const res = await authFetch(`/api/checkin?userId=${session.user.id}`);
         const data = await res.json();
@@ -42,9 +49,7 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
 
     init();
     // Volutamente NON includiamo `pathname`: il check va fatto una volta per
-    // sessione (e quando si transita da skip-page → app). Se l'utente ha tappato
-    // "Salta per oggi" lo skip è solo locale, rifare la fetch a ogni cambio rotta
-    // farebbe riapparire la modale.
+    // sessione (e quando si transita da skip-page → app).
   }, [shouldShow]);
 
   const handleComplete = () => {
@@ -53,6 +58,9 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
   };
 
   const handleSkip = () => {
+    // Saltare il check-in = saltare il rituale del mattino per oggi
+    // (anche MeditationPopup legge questa chiave e non si propone)
+    localStorage.setItem('ritualSkipped', new Date().toISOString().split('T')[0]);
     setShowCheckin(false);
     setCheckinDone(true);
   };

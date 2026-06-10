@@ -64,11 +64,22 @@ export default function GatePage() {
       if (data.answers) {
         setAnswers(data.answers);
       } else {
-        const empty: Record<string, string> = {};
-        (data.questions || []).forEach((_: string, i: number) => {
-          empty[`q${i + 1}`] = '';
-        });
-        setAnswers(empty);
+        // Bozza autosalvata: se aveva iniziato a scrivere e ha chiuso, riprende da lì
+        let draft: Record<string, string> | null = null;
+        try {
+          const saved = localStorage.getItem(`gateDraft-w${weekNumber}`);
+          if (saved) draft = JSON.parse(saved);
+        } catch { /* ignora */ }
+
+        if (draft) {
+          setAnswers(draft);
+        } else {
+          const empty: Record<string, string> = {};
+          (data.questions || []).forEach((_: string, i: number) => {
+            empty[`q${i + 1}`] = '';
+          });
+          setAnswers(empty);
+        }
       }
 
       setLoading(false);
@@ -76,6 +87,19 @@ export default function GatePage() {
 
     init();
   }, [weekNumber, router]);
+
+  // Autosave bozza risposte (debounce 600ms) — persa solo al submit riuscito
+  useEffect(() => {
+    if (loading || completed) return;
+    const hasText = Object.values(answers).some(v => (v || '').trim().length > 0);
+    if (!hasText) return;
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(`gateDraft-w${weekNumber}`, JSON.stringify(answers));
+      } catch { /* ignora */ }
+    }, 600);
+    return () => clearTimeout(t);
+  }, [answers, loading, completed, weekNumber]);
 
   const allAnswered = questions.every((_, i) => (answers[`q${i + 1}`] || '').trim().length > 0);
 
@@ -93,6 +117,9 @@ export default function GatePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Errore nel salvataggio');
 
+      try {
+        localStorage.removeItem(`gateDraft-w${weekNumber}`);
+      } catch { /* ignora */ }
       setCompleted(true);
       setShowCelebration(true);
     } catch (err: any) {
