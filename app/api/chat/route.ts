@@ -4,6 +4,7 @@ import {
   callClaude,
   checkSafetyKeywords,
   sendSafetyAlert,
+  generateCoachRecap,
   SYSTEM_PROMPT,
   WEB_FORMAT
 } from '@/lib/coach-ai';
@@ -38,6 +39,17 @@ export async function POST(request: NextRequest) {
     const systemPrompt = SYSTEM_PROMPT + WEB_FORMAT + '\n\n' + userContext;
 
     const { text, usage } = await callClaude(systemPrompt, messages, 1500, true);
+
+    // Memoria unificata: come su Telegram, la conversazione web viene distillata
+    // in coach_notes (fire-and-forget). I messaggi grezzi NON vengono salvati —
+    // contribuiscono solo alla memoria distillata del Coach. Soglia più bassa di
+    // Telegram (10 vs 20) perché la sessione web si azzera alla chiusura browser.
+    const fullConversation = [...messages, { role: 'assistant', content: text }];
+    if (fullConversation.length % 10 === 0) {
+      generateCoachRecap(userId, fullConversation.slice(-40)).catch(err =>
+        console.error('Recap generation error (web):', err)
+      );
+    }
 
     return NextResponse.json({
       response: text,
