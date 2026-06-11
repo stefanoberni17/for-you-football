@@ -55,12 +55,35 @@ export default function SosPage() {
         </div>
 
         <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
+          {/* Apertura — scena, come l'apertura di un giorno del percorso */}
           <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            {selected.corpo.split('\n\n').map((par, i) => (
-              <p key={i} className="text-app text-sm leading-relaxed whitespace-pre-line mb-4 last:mb-0">
-                {par}
-              </p>
-            ))}
+            <p className="text-app text-sm leading-relaxed italic whitespace-pre-line">
+              {selected.apertura}
+            </p>
+          </div>
+
+          {/* Pratica — step numerati, come la pratica giornaliera */}
+          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
+            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-4">
+              🎯 La pratica — adesso
+            </h2>
+            <ol className="space-y-4">
+              {selected.pratica.map((step, i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-forest-500/20 text-forest-300 text-xs font-bold flex items-center justify-center mt-0.5">
+                    {i + 1}
+                  </span>
+                  <p className="text-app text-sm leading-relaxed">{step}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* Chiusura — la frase che resta */}
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
+            <p className="text-forest-200 text-sm leading-relaxed italic">
+              {selected.chiusura}
+            </p>
           </div>
 
           <button
