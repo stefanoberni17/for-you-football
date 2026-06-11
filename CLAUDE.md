@@ -53,6 +53,7 @@ for-you-football/
 │   ├── calendar/page.tsx                  # Setup calendario settimanale
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
+│   ├── sos/page.tsx                       # Schede SOS on-demand (4 situazioni difficili, stile mini-giorno)
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
@@ -83,20 +84,21 @@ for-you-football/
 │   ├── WeeklyActionsBanner.tsx            # Banner soft sulla home (lunedì o se vuoto)
 │   ├── ChatBot.tsx                        # UI chat Coach (filtra messaggio benvenuto hardcoded)
 │   ├── CheckinContext.tsx                  # Context provider: { checkinDone } boolean
-│   ├── GlobalCheckinWrapper.tsx            # Wrapper globale: verifica check-in oggi, mostra modale se mancante
-│   ├── DailyCheckinModal.tsx              # Modale check-in fisico 4 step (full-screen overlay, gradient amber)
+│   ├── GlobalCheckinWrapper.tsx            # Rituale del mattino step 1: check-in (skip persistito per data in localStorage)
+│   ├── DailyCheckinModal.tsx              # Modale check-in 1 schermata: 4 slider prefillati + Salva
 │   ├── DayCard.tsx                        # Card giorno per /settimana/[id]
 │   ├── PracticePopup.tsx                  # Popup pratica giornaliera con timer e step
 │   ├── WeeklyCalendarPopup.tsx            # Picker giorni allenamento/partita (7-day grid)
-│   ├── GlobalMeditationWrapper.tsx        # Context provider pratica giornaliera (Il Reset)
+│   ├── GlobalMeditationWrapper.tsx        # Rituale del mattino step 2: Il Reset (auto post check-in + on-demand)
 │   ├── MeditationContext.tsx              # Context: { openMeditation, mantra, weekName }
-│   └── MeditationPopup.tsx               # Popup meditazione con timer, respirazione, audio
+│   └── MeditationPopup.tsx               # Popup "Il Reset" verde brand: timer, respiro 4s/6s, audio, skip per data
 ├── lib/
 │   ├── supabase.ts                        # Client Supabase pubblico (browser)
 │   ├── constants.ts                       # IDs Notion, costanti percorso — UNICA fonte di verità
 │   ├── notion.ts                          # Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
 │   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
 │   ├── actionsCatalog.ts                  # Catalogo 20 azioni "act as if" + helper filtro per settimana
+│   ├── sosCards.ts                        # 4 schede SOS statiche (apertura/pratica/chiusura + coachPrompt)
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)
@@ -228,7 +230,7 @@ UNIQUE(user_id, date)
 ```
 - RLS abilitata (SELECT/INSERT/UPDATE per l'utente proprietario)
 - Indice: `idx_daily_checkin_user_date ON (user_id, date DESC)`
-- Il check-in viene gestito da `GlobalCheckinWrapper` (mostrato una volta al giorno su tutte le pagine); "Salta per oggi" usa solo stato locale (se l'utente fa refresh lo rivede)
+- Il check-in viene gestito da `GlobalCheckinWrapper` come step 1 del "rituale del mattino" (una volta al giorno su tutte le pagine); "Salta per oggi" è persistito in `localStorage.ritualSkipped = YYYY-MM-DD` → non riappare fino a domani e sopprime anche il Reset
 
 ### `user_actions` — "Le tue azioni durante il giorno" (max 5 attive)
 ```sql
@@ -415,6 +417,7 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)
 - `Durata Espira` (number) — secondi espirazione (default 6 se vuoto)
 - `Audio Pratica` (url) — URL pubblico Supabase Storage del file MP3 registrato (opzionale, fallback al testo se vuoto)
+- `Missione Settimana` (text) — solo giorno 7: missione per la settimana successiva (mostrata post-gate, in week-complete e come banner dashboard)
 
 ### IDs Record Settimane (centralizzati in `lib/constants.ts`)
 ```typescript
@@ -568,7 +571,7 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 
 - `SAFETY_KEYWORDS`: ~30 keyword (italiano) per rilevare contenuti a rischio
 - `checkSafetyKeywords()`: controlla se il testo contiene keyword → boolean
-- `sendSafetyAlert(userId, channel, messageContent)`: sempre `console.error`; email via Resend solo se `RESEND_API_KEY` è configurata — non blocca la risposta
+- `sendSafetyAlert(userId, channel, messageContent)`: sempre `console.error`; email via Resend (ATTIVA in prod da giugno 2026: `RESEND_API_KEY` + `SAFETY_ALERT_EMAIL` su Vercel, mittente `alerts@foryoufootball.it` — dominio verificato Resend) — non blocca la risposta
 - **Attivo** in `/api/chat` (ultimo messaggio utente) e `/api/telegram` (dopo lookup userId) — fire-and-forget
 - Il system prompt include istruzioni per situazioni a rischio (rimando a professionisti, Telefono Amico)
 
@@ -577,14 +580,14 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 ## Dettaglio Pagine App
 
 ### Dashboard (`app/page.tsx`)
-- **DailyCheckinModal:** gestito da `GlobalCheckinWrapper` (non più inline nella dashboard)
-- Card settimana corrente con CTA "prossimo giorno"
+- **Rituale del mattino:** gestito dai wrapper root (check-in → Reset, non inline nella dashboard)
+- Card settimana corrente con CTA "prossimo giorno" + **streak percorso** "🔥 N giorni di fila" (visibile se ≥2; `pathStreak()` calcolato dai `completed_at` — se oggi non è completato il conteggio parte da ieri)
+- **Bottone "Reset rapido"** (apre MeditationPopup on-demand via `useMeditation().openMeditation`)
 - Barra progresso settimanale (7 indicatori giorno)
-- Progresso globale (% completamento, giorni fatti)
 - **"Il tuo stato":** mini sparkline SVG 7 giorni con icone Lucide monocromatiche (Activity, Moon, Zap, Brain) + trend indicator (↑↓→) + link "Vedi tutto →" a `/statistiche`
-- Link a settimane, statistiche e profilo
-- Redirect a `/login` se non autenticato
-- Redirect a `/beta-complete` se `current_week > BETA_MAX_WEEK`
+- Card calendario settimanale; banner soft in fondo (Coach msg, WeeklyActions, InstallBanner)
+- ~~Card "Il Tuo Percorso" (stats globali)~~ rimossa (duplicava la progress settimanale)
+- Redirect a `/login` se non autenticato; CTA "Ce l'hai fatta!" se beta completata (no redirect forzato)
 
 ### Beta Complete (`app/beta-complete/page.tsx`)
 - Schermata celebrativa per chi completa W4 (fine beta)
@@ -595,6 +598,7 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - **Step 1:** Email, password, nome, età → `supabase.auth.signUp()`
 - **Step 2:** Profilo calciatore — ruoli (multi-select), livello, paure (multi-select), obiettivi, sogno, situazione attuale → `POST /api/register`
 - Gestione errori auth (utente già registrato, password debole)
+- Schermata "Controlla la tua email" con bottone **"Reinvia email"** (`supabase.auth.resend`, cooldown 60s)
 
 ### Onboarding (`app/onboarding/page.tsx`)
 - Carousel 5 slide introduttive al percorso
@@ -630,14 +634,22 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 ### Gate (`app/gate/[week]/page.tsx`)
 - 3 domande da Notion (`domandeGate`)
 - Tutti i campi obbligatori per procedere
-- Completamento → `current_week` incrementato → schermata celebrazione
+- **Bozza autosalvata** in `localStorage.gateDraft-w{N}` (debounce 600ms, ripristino al mount, clear al submit)
+- Completamento → `current_week` incrementato → schermata celebrazione (con missione settimana se presente)
 - POST salva `gate_answers` JSONB + marca giorno 7 completato
 - **Guard unlock:** verifica `isDayUnlocked(week, GATE_DAY, completedDays)` all'init → redirect `/settimana/[week]` se bloccato
 
 ### Completamento Settimana (`app/week-complete/[week]/page.tsx`)
 - Trofeo, messaggio congratulazioni
 - Riepilogo settimana (principio, strumento, durata)
+- Card "🎯 La tua missione" (da Notion `Missione Settimana` del G7)
 - CTA settimana successiva (se disponibile)
+
+### Schede SOS (`app/sos/page.tsx`)
+- 4 schede on-demand da `lib/sosCards.ts`: ansia pre-partita 🌙, panchina 🪑, errore grave 💥, mister duro 📢
+- Dettaglio in stile mini-giorno: Apertura (corsivo) → "La pratica — adesso" (step numerati) → Chiusura (card verde)
+- CTA: "Fai il Reset ora" (openMeditation) + "Parlane col Coach" (`/chat?prompt=` precompilato)
+- Entry point: card dashboard "⚡ Momento difficile?"
 
 ### Chat Coach (`app/chat/page.tsx`)
 - ChatBot component full-screen
@@ -673,7 +685,8 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 
 ### `ChatBot.tsx`
 - Header: "Coach AI — Il tuo allenatore mentale"
-- Messaggio benvenuto hardcoded (filtrato prima dell'invio a Claude)
+- Messaggio benvenuto personalizzato col nome (prop `userName` da `app/chat/page.tsx`; filtrato prima dell'invio a Claude)
+- **Conversazione persistita in `sessionStorage`** (`coachChatMessages`): sopravvive a refresh/cambio tab, si azzera alla chiusura browser. La memoria del Coach resta solo Telegram.
 - Suggestion pills visibili solo prima del primo messaggio utente
 - Loader animato durante attesa risposta
 - Scroll automatico ai nuovi messaggi
@@ -719,17 +732,19 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Anteprima visuale
 - Callback onSave
 
-### `MeditationPopup.tsx`
-- Setup: scelta durata (1/2/3/5 min)
-- Meditazione: cerchio animato, countdown, toggle audio (nature/focus/mute)
-- Audio paths: `/audio/nature-meditation.mp3`, `/audio/focus-meditation.mp3`
-- Aggiornamento `last_meditation_completed` su profilo
+### `MeditationPopup.tsx` — "Il Reset"
+- Rebrand verde brand (no più viola/🧘): titolo "Il Reset", copy campo ("Naso, poi bocca — come in campo")
+- Setup: scelta durata (1/2/3/5 min) + mantra settimana
+- Fase Reset: cerchio animato con **respiro asimmetrico 4s inspira / 6s espira** (setTimeout ricorsivo, `INHALE_MS`/`EXHALE_MS`), countdown, toggle audio (nature/focus/mute)
+- Auto-show giornaliero soppresso se: `localStorage.ritualSkipped === oggi`, oppure `last_meditation_completed === oggi`, oppure **pratica del giorno già completata oggi** (query `user_day_progress` con `completed_at >= today`)
+- "Salta per oggi" (solo auto-mode) → persiste `ritualSkipped = oggi`
+- Aggiornamento `last_meditation_completed` su profilo al completamento
 
 ### `GlobalMeditationWrapper.tsx`
-- Context provider al livello root (wrappa tutta l'app)
-- Gestisce prima meditazione vs meditazione quotidiana ricorrente
-- Carica mantra settimana corrente da Notion
-- Usa `WEEK_RECORD_IDS`, `WEEK_TOOLS`, `WEEK_PRINCIPLES` da `lib/constants.ts`
+- Context provider al livello root — step 2 del rituale del mattino (renderizza il popup quando `checkinDone`)
+- Carica mantra settimana corrente via `GET /api/settimana?week=N` → `settimana.mantraDashboard` (fallback `"Qui e ora."` se vuoto; fetch una sola volta, non a ogni cambio rotta)
+- Skip pages: `/login`, `/register`, `/onboarding`, `/pricing`, `/beta-complete`
+- Espone `openMeditation()` per l'uso on-demand (bottone "Reset rapido" in home, CTA schede SOS)
 - WeekName formato: "Il Reset — Presenza" (strumento + principio)
 
 ### `CheckinContext.tsx`
@@ -737,19 +752,19 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 - Usato da `GlobalCheckinWrapper` per comunicare stato check-in all'app
 
 ### `GlobalCheckinWrapper.tsx`
-- Wrapper root (wrappa `GlobalMeditationWrapper` + children)
-- Verifica check-in oggi via `GET /api/checkin?userId=...`
-- Se non fatto → mostra `DailyCheckinModal`
-- Salta su `/login`, `/register`, `/onboarding`
-- On complete/skip → setta `checkinDone = true`
+- Wrapper root (wrappa `GlobalMeditationWrapper` + children) — step 1 del rituale del mattino
+- Se `localStorage.ritualSkipped === oggi` → non mostra nulla (skip persistito)
+- Verifica check-in oggi via `GET /api/checkin` → se non fatto mostra `DailyCheckinModal`
+- Salta su `/login`, `/register`, `/onboarding`, `/pricing`, `/beta-complete`
+- On complete → `checkinDone = true` → il wrapper meditazione propone il Reset (rituale continuo)
+- On skip → persiste `ritualSkipped = oggi` (sopprime anche il Reset) + `checkinDone = true`
 
 ### `DailyCheckinModal.tsx`
-- Overlay full-screen (`fixed inset-0`) con gradient animato amber/orange/yellow
-- 4 step: stato fisico (slider 0-10) → sonno (slider 4-12h, step 0.5) → recupero muscolare (slider 0-10) → stato mentale (slider 0-10)
-- Ogni slider mostra valore numerico + label descrittiva contestuale (es. "7/10 — Bene")
-- Progress bar in cima: `(step / TOTAL_STEPS) * 100` — parte da 25% al primo step
-- "Avanti →" / "Inizia →" all'ultimo step → POST `/api/checkin`
-- "Salta per oggi" — chiude con solo stato locale, nessun salvataggio
+- **1 sola schermata** (non più 4 step): 4 slider in colonna — fisico (0-10), sonno (4-12h, step 0.5), recupero (0-10), mentale (0-10)
+- **Prefill**: fisico 5, sonno 7h, recupero 5, mentale 5 — valore sempre visibile (mai "—")
+- Ogni slider: emoji + label + "N/10 — descrizione" color-coded
+- "Salva e continua →" → POST `/api/checkin` → onComplete (→ fase Reset)
+- "Salta per oggi" → onSkip (persistito dal wrapper)
 - Nessuna X per chiudere (incentivo a completare)
 - Props: `{ userId, onComplete, onSkip }`
 
@@ -779,16 +794,16 @@ Dettaglio settimana + 7 giorni associati da Notion.
 Fetch giorno da Notion + stato completamento/risposta utente da Supabase.
 
 ### `POST /api/giorno`
-Marca giorno completato, salva risposta opzionale. Se giorno=6 aggiorna `current_week`.
+Marca giorno completato, salva risposta opzionale. Se giorno=6 aggiorna `current_week` con UPDATE condizionale atomico (`.lt('current_week', weekNumber)` nel WHERE — niente SELECT→UPDATE).
 
 ### `PATCH /api/giorno`
 Salva score check giorno precedente (1/2/3) sulla riga del giorno precedente.
 
 ### `GET /api/gate?week=W&userId=U`
-Fetch giorno 7 (gate) da Notion: 3 domande + risposte esistenti.
+Fetch giorno 7 (gate) da Notion: 3 domande + risposte esistenti + `missioneSettimana`.
 
 ### `POST /api/gate`
-Salva risposte gate JSONB, marca giorno 7 completato, incrementa `current_week` a W+1.
+Salva risposte gate JSONB, marca giorno 7 completato, avanza `current_week` a W+1 con UPDATE condizionale atomico (`.lte('current_week', weekNumber)` nel WHERE).
 
 ### `GET /api/calendar?userId=U&week=W`
 Fetch `training_days` + `match_days` per la settimana.
@@ -948,12 +963,19 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Fix — BottomTabBar: da floating a full-width attaccata al bordo:** il design floating originale (`mx-3` laterali + 12px gap sopra + 12px gap sotto + `bg-white/85`) creava 3 fasce dove si vedeva lo sfondo della pagina dietro la tab bar + effetto "rialzato" su `/chat`. Cambiato a full-width attaccata: `bg-surface/95 backdrop-blur-md border-t border-divider` con `paddingBottom: env(safe-area-inset-bottom)` puro. `pb-tabbar`/`pb-tabbar-lg` ridotti a `4.5rem`/`5.5rem` (era 5.5/7.5). Indicator tab attiva: glow verde `#2dd17a` + shadow blurred (stile Spotify ma con accent forest brand). Su `/chat` la `ChatBot` card usa `rounded-t-3xl sm:rounded-3xl` (corners arrotondati solo in alto su mobile per attaccarsi alla tab bar) + shadow solo verso l'alto.
 - [x] **Fix — Beta-complete non più bloccante:** rimosso `router.push('/beta-complete')` da `app/page.tsx` che bloccava l'accesso alla home quando `current_week > BETA_MAX_WEEK`. Ora il CTA hero mostra "Ce l'hai fatta!" + bottone "🏆 Rivedi schermata di completamento" che linka a `/beta-complete` (raggiungibile, non imposto). `allDone` include `currentWeek > BETA_MAX_WEEK` per gestire post-gate W4 con eventuali giorni `compressed`.
 - [x] **Fix — Chat /chat su PWA iOS (3 bug risolti):** (1) il body aveva `pb-tabbar` (4.5rem + safe-area) che combinato con `<main height: 100vh>` rendeva il body più alto del viewport → la pagina era scrollable e iOS PWA auto-scrollava al mount, facendo sembrare la chat "già scrollata in fondo". Rimosso `pb-tabbar` dal body (tutte le 12 pages tabbed lo hanno già nel `<main>`, ridondante). (2) Su PWA iOS standalone con `viewportFit: 'cover'`, se il body era "vuoto" (chat era `fixed inset-0`, fuori dal flow), iOS NON estendeva il viewport sotto safe-area-bottom → la tab bar finiva ~1cm sopra il bordo schermo. Ristrutturato `/chat` per usare struttura normale (`<main height: 100vh + flex flex-col + pt-safe + pb-tabbar + overflow-hidden>`) come le altre pagine. (3) ChatBot.useEffect usava `scrollIntoView()` che scrollava anche la `<main>` al mount con messaggio di benvenuto presente — sostituito con `scroller.scrollTop = scrollHeight` (agisce solo sul container interno) + `hasMountedRef` per skip primo render. Aggiunto `html, body { min-height: 100vh }` in globals.css come safety net.
+- [x] **Feature — Rituale del mattino (giugno 2026):** check-in e Reset fusi in un flusso unico alla prima apertura del giorno. `DailyCheckinModal` da 4 step → 1 schermata (4 slider prefillati 5/7h/5/5, valore sempre visibile); al salvataggio → `checkinDone` → `MeditationPopup` propone il Reset. Skip persistito per data (`localStorage.ritualSkipped`) — vale per l'intero rituale, torna domani. Il Reset NON viene proposto se la pratica del giorno è già completata oggi (query `user_day_progress`). `MeditationPopup` rebrand verde "Il Reset" (no viola/🧘) con respiro asimmetrico 4s/6s. Fix bug fork: `GlobalMeditationWrapper` chiamava `/api/settimana?id=` (param inesistente) e leggeva `properties.Mantra` → ora `?week=N` + `mantraDashboard` con fallback "Qui e ora.". Bottone "Reset rapido" in home (`useMeditation().openMeditation`).
+- [x] **UX — Quick wins (giugno 2026):** (1) CTA post-completamento giorno: via il bottone-rimbalzo "Vai al Giorno N+1" quando time-locked → teaser "Domani ti aspetta: {titolo}" + "Torna alla settimana"; su giorni completati riaperti il CTA avanti appare solo se `nextUnlocked`. (2) Streak percorso "🔥 N giorni di fila" nell'hero dashboard (`pathStreak()` sui `completed_at`; oggi mancante non interrompe). (3) Chat persistita in `sessionStorage` + welcome col nome + rimossi console.log debug. (4) Gate: bozza autosalvata in `localStorage` (debounce 600ms, clear al submit). (5) Fix streak check-in /statistiche (partiva da oggi → 0 se check-in non ancora fatto; ora parte da ieri). (6) Fix InstallBanner: `new Date('never')` = Invalid Date → banner riappariva dopo "Non mostrare". (7) Bottone "Reinvia email" post-registrazione (`supabase.auth.resend`, cooldown 60s). (8) Dashboard decluttering: rimossa card stats globali "Il Tuo Percorso".
+- [x] **Feature — Missioni settimanali in app (giugno 2026):** nuova property Notion `Missione Settimana` (text, sui G7) — fix del "bug di contenuto silenzioso": le missioni esistevano solo nel body delle pagine Notion che l'app non legge. `mapGiorno()` espone `missioneSettimana`, `GET /api/gate` la include; mostrata nella celebrazione post-gate, in `/week-complete/[week]` (card 🎯) e come banner dashboard nella settimana successiva.
+- [x] **Feature — Schede SOS on-demand (giugno 2026):** `lib/sosCards.ts` (4 schede statiche: ansia pre-partita, panchina, errore grave, mister duro) + pagina `/sos` (lista → dettaglio). Struttura "stile percorso" come mini-giorno: Apertura (scena 2-4 righe) → Pratica (step numerati eseguibili ora, sempre col Reset) → Chiusura (frase che resta). CTA: "Fai il Reset ora" (apre MeditationPopup) + "Parlane col Coach" (`/chat?prompt=` precompilato). Entry point: card dashboard. Rispetta REGOLA ANTICIPAZIONI (cita solo il Reset W1).
+- [x] **Hardening — current_week atomico (giugno 2026):** verifica checklist esterna "pre-incasso": 3 interventi su 4 risultavano già fatti (auth IDOR, safety check, colonne DB). Unico fix applicato: avanzamento `current_week` in `/api/gate` e `/api/giorno` (day 6) da SELECT→UPDATE a UPDATE condizionale singolo atomico (condizione nel WHERE via `.lte`/`.lt`).
+- [x] **Security — Safety email ATTIVA (giugno 2026):** `RESEND_API_KEY` + `SAFETY_ALERT_EMAIL` configurate su Vercel Production; mittente fixato a `alerts@foryoufootball.it` (dominio verificato su Resend — il precedente `alerts@for-you-football.vercel.app` non era verificabile e l'invio sarebbe stato rifiutato).
+- [x] **Contenuto — Riscritture Notion W1-W4 (giugno 2026):** de-gergo e tono campo sui contenuti live: via storia del maestro (W3-G1 → "il crampo non arriva mai di sorpresa"), "Chin Mudra" → "il tuo interruttore", "plesso solare" → "punto sotto lo sterno" (8 occorrenze W1), Yerkes-Dodson e "circuiti neurali" via dalle Aperture (restano nei Contesto per il Coach), W3-G5 differenziato da W2-G5 (borsa/tragitto/spogliatoio), gate Q1 situazionali (W1, W4), storie calciatori veri dal catalogo verificato (CR7 → W1-G3, Buffon → W3-G2; Baggio riservato a W5), trim aperture-muro (W1-G5, W4-G5).
 
 ### Da fare
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
 - [x] **Auth chain (giugno 2026):** rimosso fallback `userId || body.userId` da TUTTE le API route (identità solo da `getAuthUser` → 401); frontend convertito a `authFetch()` con Bearer token. Resta opzionale: `middleware.ts` per redirect `/login` a livello routing.
-- [ ] **Fase 2 — Env vars da attivare:** `TELEGRAM_WEBHOOK_SECRET` (+ ri-registrare webhook con `secret_token`), `RESEND_API_KEY`, `SAFETY_ALERT_EMAIL`.
-- [ ] **Fase 3 — RPC atomica gate:** `app/api/gate/route.ts` linee 82-110 — wrap in transazione Supabase RPC per evitare race condition su doppio POST.
+- [ ] **Fase 2 — Env vars da attivare:** resta solo `TELEGRAM_WEBHOOK_SECRET` (+ ri-registrare webhook con `secret_token`). ~~`RESEND_API_KEY`, `SAFETY_ALERT_EMAIL`~~ → configurate (giugno 2026).
+- [x] **Fase 3 — Atomicità gate:** risolta con UPDATE condizionale singolo (condizione nel WHERE) in `/api/gate` e `/api/giorno` — niente RPC necessaria (l'upsert risposte è già idempotente via onConflict).
 - [ ] **Fase 3 — Cache Notion:** `lib/notion.ts` + `app/api/settimana/route.ts` + `app/api/giorno/route.ts` — wrap con `unstable_cache` Next.js o Vercel KV (TTL 1-2h).
 - [ ] **Fase 3 — Rate limiting `/api/chat` e `/api/telegram`:** Upstash/Vercel KV counter per userId, es. 60 msg/ora.
 - [ ] Implementare `app/calendar/page.tsx` (UI per impostare giorni allenamento/partita — API già funzionante)
