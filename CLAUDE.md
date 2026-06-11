@@ -54,6 +54,8 @@ for-you-football/
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
 │   ├── sos/page.tsx                       # Schede SOS on-demand (4 situazioni difficili, stile mini-giorno)
+│   ├── strumenti/page.tsx                 # Cassetta degli Attrezzi: 4 strumenti sempre rifacibili (lock per settimana)
+│   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
@@ -100,6 +102,7 @@ for-you-football/
 │   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
 │   ├── actionsCatalog.ts                  # Catalogo 20 azioni "act as if" + helper filtro per settimana
 │   ├── sosCards.ts                        # 4 schede SOS statiche (apertura/pratica/chiusura + coachPrompt)
+│   ├── toolsCatalog.ts                    # Cassetta degli Attrezzi: 4 strumenti Blocco 1 (pratica + unlockedTools)
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)
@@ -511,10 +514,10 @@ Risposta mostrata in UI
 
 **Caratteristiche:**
 - **Tool use abilitato** — il Coach può leggere pratiche/giorni da Notion via `leggi_percorso`
-- Conversazioni **NON salvate in DB** — vivono solo nello state React
+- Conversazioni **NON salvate in DB** — vivono nello state React + `sessionStorage` (sopravvivono a refresh, si azzerano alla chiusura browser)
 - Ad ogni messaggio il client invia l'intera cronologia in-memory
-- Refresh pagina = conversazione persa
-- Il messaggio di benvenuto iniziale (hardcoded in ChatBot.tsx) viene **filtrato** prima dell'invio a Claude per non confondere il modello
+- **Memoria unificata (giugno 2026):** ogni 10 messaggi di sessione web, `generateCoachRecap` distilla la conversazione in `coach_notes` (fire-and-forget) — i messaggi grezzi restano non salvati, ma il Coach ricorda i temi su entrambi i canali
+- Il messaggio di benvenuto iniziale (hardcoded in ChatBot.tsx, personalizzato col nome) viene **filtrato** prima dell'invio a Claude per non confondere il modello
 - Max tokens: 1500
 
 ### Flusso Telegram (`/api/telegram`)
@@ -561,12 +564,12 @@ Entrambi i canali (web + Telegram) usano `buildUserContext(userId)` che legge:
 ### Memoria cross-sessione
 
 La memoria persistente del Coach si basa su:
-1. **`profiles.coach_notes`** — recap distillati da Telegram (temi ricorrenti, pattern, thread aperti, metafore)
+1. **`profiles.coach_notes`** — recap distillati da Telegram (ogni 20 msg cumulativi) E dalla web chat (ogni 10 msg di sessione, giugno 2026) — temi ricorrenti, pattern, thread aperti, metafore
 2. **`day_reflections`** — riflessioni scritte dopo ogni giorno del percorso
 3. **`user_day_progress`** — giorni completati (progressione oggettiva)
 4. **`user_weekly_calendar`** — calendario allenamenti/partite
 
-La web chat **non contribuisce** alla memoria persistente. Solo Telegram alimenta `coach_notes`.
+**Memoria unificata:** entrambi i canali alimentano `coach_notes` ed entrambi la leggono via `buildUserContext` — il Coach ricorda i temi ovunque gli si parli. I messaggi grezzi della web chat restano comunque non salvati in DB (solo Telegram salva le conversazioni).
 
 ### Safety
 
