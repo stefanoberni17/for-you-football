@@ -19,7 +19,8 @@ import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
-import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, Target, BarChart3, Map, Compass } from 'lucide-react';
+import { useMeditation } from '@/components/MeditationContext';
+import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Wind, Target } from 'lucide-react';
 
 interface CheckinData {
   date: string;
@@ -27,6 +28,26 @@ interface CheckinData {
   sleep_hours: number | null;
   recovery_quality: number | null;
   mental_state: number | null;
+}
+
+/**
+ * Streak percorso: giorni di calendario consecutivi con almeno un giorno
+ * completato. Se oggi non è (ancora) completato, il conteggio parte da ieri —
+ * oggi non interrompe, semplicemente non conta ancora.
+ */
+function pathStreak(days: DayProgress[]): number {
+  const dates = new Set(
+    days.filter(d => d.completedAt).map(d => new Date(d.completedAt as string).toDateString())
+  );
+  if (dates.size === 0) return 0;
+  let streak = 0;
+  const cursor = new Date();
+  if (!dates.has(cursor.toDateString())) cursor.setDate(cursor.getDate() - 1);
+  while (dates.has(cursor.toDateString())) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
 }
 
 function miniAvg(arr: number[]): number {
@@ -63,6 +84,7 @@ function MiniSparkline({ values, color, min, max }: { values: number[]; color: s
 
 export default function HomePage() {
   const router = useRouter();
+  const { openMeditation } = useMeditation();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
@@ -77,6 +99,7 @@ export default function HomePage() {
   const [actionsStreak, setActionsStreak] = useState(0);
   const [actions, setActions] = useState<DashboardAction[]>([]);
   const [actionPending, setActionPending] = useState<string | null>(null);
+  const [weeklyMission, setWeeklyMission] = useState<string>('');
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -143,6 +166,20 @@ export default function HomePage() {
         }
       } catch {}
 
+      // Missione della settimana: vive sul G7 della settimana precedente,
+      // mostrata solo se quel gate è stato superato
+      if (currentWeek >= 2) {
+        try {
+          const gateRes = await authFetch(`/api/gate?week=${currentWeek - 1}`);
+          if (gateRes.ok) {
+            const gateJson = await gateRes.json();
+            if (gateJson.completed && gateJson.giorno?.missioneSettimana) {
+              setWeeklyMission(gateJson.giorno.missioneSettimana);
+            }
+          }
+        } catch {}
+      }
+
       // Carica calendario settimanale
       try {
         const calRes = await authFetch(`/api/calendar?userId=${session.user.id}&week=${currentWeek}`);
@@ -203,7 +240,7 @@ export default function HomePage() {
   const nextDayLocked = !isDayUnlocked(nextDay.week, nextDay.day, completedDays);
   const totalCompleted = completedDays.length;
   const totalDays = BETA_MAX_WEEK * DAYS_PER_WEEK;
-  const progressPercentage = Math.round((totalCompleted / totalDays) * 100);
+  const streak = pathStreak(completedDays);
   // "Beta finita" = ha completato tutti i giorni OPPURE current_week è oltre il max disponibile
   // (succede quando il gate G7 incrementa current_week ma magari qualche giorno è compressed).
   const allDone = totalCompleted >= totalDays || currentWeek > BETA_MAX_WEEK;
@@ -313,6 +350,12 @@ export default function HomePage() {
                   {settimana?.principio && (
                     <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
                   )}
+                  {streak >= 2 && (
+                    <p className="text-amber-200 text-sm font-bold mt-2 flex items-center gap-1.5">
+                      <Flame className="w-4 h-4" aria-hidden="true" />
+                      {streak} giorni di fila
+                    </p>
+                  )}
                 </>
               )}
             </div>
@@ -344,6 +387,41 @@ export default function HomePage() {
               </span>
             </button>
           )}
+        </div>
+
+        {/* Missione della settimana — dal gate appena superato */}
+        {weeklyMission && !allDone && (
+          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
+            <p className="text-xs font-bold text-forest-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <Target className="w-3.5 h-3.5" aria-hidden="true" />
+              Missione della settimana
+            </p>
+            <p className="text-sm text-app leading-relaxed">{weeklyMission}</p>
+          </div>
+        )}
+
+        {/* Reset rapido + SOS — uso autonomo, quando serve */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={openMeditation}
+            className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/20 hover:border-forest-500/40 transition-all active:scale-[0.99] text-left"
+          >
+            <span className="w-9 h-9 rounded-full bg-forest-500/15 flex items-center justify-center mb-2">
+              <Wind className="w-4 h-4 text-forest-400" aria-hidden="true" />
+            </span>
+            <span className="block text-sm font-bold text-app">Reset rapido</span>
+            <span className="block text-xs text-muted mt-0.5">1 minuto di respiro</span>
+          </button>
+          <button
+            onClick={() => router.push('/sos')}
+            className="bg-surface rounded-2xl shadow-sm p-4 border border-amber-500/20 hover:border-amber-500/40 transition-all active:scale-[0.99] text-left"
+          >
+            <span className="w-9 h-9 rounded-full bg-amber-500/15 flex items-center justify-center mb-2 text-base" aria-hidden="true">
+              ⚡
+            </span>
+            <span className="block text-sm font-bold text-app">Momento difficile?</span>
+            <span className="block text-xs text-muted mt-0.5">Panchina, errore, ansia</span>
+          </button>
         </div>
 
         {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline */}
@@ -511,59 +589,6 @@ export default function HomePage() {
             onSkip={() => setShowCalendar(false)}
           />
         )}
-
-        {/* Stats globali */}
-        <div className="bg-surface rounded-2xl shadow-lg p-5">
-          <h2 className="text-base font-bold text-app mb-4 flex items-center gap-2">
-            <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
-            Il Tuo Percorso
-          </h2>
-
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="bg-surface-2 border-l-4 border-forest-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-forest-400">{totalCompleted}</div>
-              <div className="text-xs text-muted">Giorni completati</div>
-            </div>
-            <div className="bg-surface-2 border-l-4 border-blue-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-blue-400">{totalDays}</div>
-              <div className="text-xs text-muted">Totali Beta</div>
-            </div>
-            <div className="bg-surface-2 border-l-4 border-forest-500 p-3 rounded-xl">
-              <div className="text-2xl font-bold text-forest-400">{progressPercentage}%</div>
-              <div className="text-xs text-muted">Progresso</div>
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between text-sm text-muted mb-2">
-              <span>Progresso Beta</span>
-              <span>{totalCompleted}/{totalDays} giorni</span>
-            </div>
-            <div className="w-full bg-surface-2 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-forest-500 to-forest-600 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={() => router.push('/settimane')}
-              className="bg-forest-500 hover:bg-forest-600 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex-1 sm:flex-none flex items-center justify-center gap-2"
-            >
-              <Map className="w-4 h-4" aria-hidden="true" />
-              Vedi tutto il percorso
-            </button>
-            <button
-              onClick={() => router.push('/statistiche')}
-              className="bg-surface border border-divider text-app font-bold py-3.5 px-6 rounded-xl hover:bg-surface-2 transition-all flex-1 sm:flex-none flex items-center justify-center gap-2"
-            >
-              <BarChart3 className="w-4 h-4" aria-hidden="true" />
-              Le tue statistiche
-            </button>
-          </div>
-        </div>
 
         {/* ─── Banner promozionali / messaggi soft — in fondo per non rubare il first-fold ─── */}
 

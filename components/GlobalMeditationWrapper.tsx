@@ -17,12 +17,13 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
   const [weekName, setWeekName] = useState<string>('');
   const [manualOpen, setManualOpen] = useState(false);
 
-  // Skip popup su login/register/onboarding
-  const skipPages = ['/login', '/register', '/onboarding'];
+  // Skip popup su pagine pre-app e paywall
+  const skipPages = ['/login', '/register', '/onboarding', '/pricing', '/beta-complete'];
   const shouldShowPopup = !skipPages.includes(pathname);
 
   useEffect(() => {
     const init = async () => {
+      if (mantra) return; // già caricato — niente fetch Notion a ogni cambio rotta
       const { data: { session } } = await supabase.auth.getSession();
       if (!session || !shouldShowPopup) return;
 
@@ -35,17 +36,17 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
         .single();
 
       const currentWeek = profileData?.current_week || 1;
-      const weekId = WEEK_RECORD_IDS[currentWeek];
 
-      if (weekId) {
-        const response = await authFetch(`/api/settimana?id=${weekId}`);
+      if (WEEK_RECORD_IDS[currentWeek]) {
+        const response = await authFetch(`/api/settimana?week=${currentWeek}`);
+        if (!response.ok) return;
         const data = await response.json();
 
-        const properties = data?.page?.properties || {};
-        const mantraText = (properties.Mantra?.rich_text?.[0]?.plain_text || '')
+        const mantraText = (data?.settimana?.mantraDashboard || '')
           .replace(/<br>/g, '\n');
 
-        setMantra(mantraText);
+        // Fallback: senza mantra da Notion il popup non renderizzava mai
+        setMantra(mantraText || 'Qui e ora.');
         const tool = WEEK_TOOLS[currentWeek] || '';
         const principle = WEEK_PRINCIPLES[currentWeek] || '';
         setWeekName(tool ? `${tool} — ${principle}` : `Settimana ${currentWeek}`);

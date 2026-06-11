@@ -67,13 +67,12 @@ export default function SettimanaPage() {
       }
 
       // Carica calendario settimanale
-      // Il cron notturno svuota training_days ogni lunedì → se vuoto, mostra popup
+      // Il cron notturno svuota training_days ogni lunedì → se vuoto, card
+      // inline non bloccante (niente più popup automatico che si accavalla
+      // a check-in/Reset il lunedì mattina)
       const calData = await calendarRes.json();
       if (calData.trainingDays && calData.trainingDays.length > 0) {
         setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
-      } else {
-        // Nessun calendario o resettato dal cron → mostra popup
-        setShowCalendarPopup(true);
       }
 
       setSettimana(data.settimana);
@@ -260,6 +259,23 @@ export default function SettimanaPage() {
 
       {/* Content area — pulled up over header */}
       <div className="max-w-3xl mx-auto px-4 -mt-10 space-y-4">
+
+        {/* Card calendario mancante — inline, non bloccante */}
+        {!calendarData && (
+          <button
+            onClick={() => setShowCalendarPopup(true)}
+            className="w-full bg-surface rounded-2xl shadow-sm p-4 border border-amber-500/30 flex items-center justify-between text-left hover:border-amber-500/50 transition-all active:scale-[0.99]"
+          >
+            <span className="flex items-center gap-3">
+              <span className="text-xl" aria-hidden="true">📅</span>
+              <span>
+                <span className="block text-sm font-bold text-app">Quando ti alleni questa settimana?</span>
+                <span className="block text-xs text-muted">Imposta allenamenti e partita — il percorso si adatta</span>
+              </span>
+            </span>
+            <span className="text-amber-400 text-lg" aria-hidden="true">→</span>
+          </button>
+        )}
 
         {/* Intro card */}
         {(settimana.descrizionIntro || calendarData) && (

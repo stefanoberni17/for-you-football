@@ -15,14 +15,20 @@ export interface ChatBotRef {
   sendSuggestion: (text: string) => void;
 }
 
-export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotRef>; suggestions?: string[] }) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: 'Ciao! Sono qui per accompagnarti nel tuo percorso di allenamento mentale con For You Football. Come posso aiutarti oggi?',
-      timestamp: new Date(),
-    },
-  ]);
+const CHAT_STORAGE_KEY = 'coachChatMessages';
+
+function makeWelcome(userName?: string): Message {
+  return {
+    role: 'assistant',
+    content: userName
+      ? `Ciao ${userName}. Sono il tuo Coach — sono qui per aiutarti a giocare con più lucidità. Di cosa vuoi parlare oggi?`
+      : 'Ciao! Sono il tuo Coach — sono qui per aiutarti a giocare con più lucidità. Di cosa vuoi parlare oggi?',
+    timestamp: new Date(),
+  };
+}
+
+export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Ref<ChatBotRef>; suggestions?: string[]; userName?: string }) {
+  const [messages, setMessages] = useState<Message[]>([makeWelcome(userName)]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -31,15 +37,44 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-        console.log('✅ ChatBot - userId impostato:', user.id);
-      } else {
-        console.warn('⚠️ ChatBot - Nessun userId trovato');
-      }
+      if (user) setUserId(user.id);
     };
     getUser();
   }, []);
+
+  // Ripristina la conversazione dalla sessione (sopravvive a refresh/cambio tab,
+  // si azzera alla chiusura del browser). La memoria persistente del Coach resta
+  // solo su Telegram — questa è continuità di sessione, non storage permanente.
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(CHAT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Array<{ role: 'user' | 'assistant'; content: string; timestamp: string }>;
+        if (Array.isArray(parsed) && parsed.length > 1) {
+          setMessages(parsed.map(m => ({ ...m, timestamp: new Date(m.timestamp) })));
+        }
+      }
+    } catch { /* storage non disponibile — ignora */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Aggiorna il welcome col nome quando arriva (solo se conversazione non iniziata)
+  useEffect(() => {
+    if (userName) {
+      setMessages(prev => (prev.length <= 1 ? [makeWelcome(userName)] : prev));
+    }
+  }, [userName]);
+
+  // Salva la conversazione in sessione a ogni messaggio (oltre il solo welcome)
+  useEffect(() => {
+    if (messages.length <= 1) return;
+    try {
+      sessionStorage.setItem(
+        CHAT_STORAGE_KEY,
+        JSON.stringify(messages.map(m => ({ ...m, timestamp: m.timestamp.toISOString() })))
+      );
+    } catch { /* storage pieno/non disponibile — ignora */ }
+  }, [messages]);
 
   // Scroll automatico solo del container messaggi interno (non della pagina intera).
   // scrollIntoView() in passato scrollava anche la <main> -> al mount la pagina chat
@@ -71,8 +106,6 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
     setIsLoading(true);
 
     try {
-      console.log('📤 Invio messaggio con userId:', userId);
-
       // Escludi il messaggio di benvenuto hardcoded (primo messaggio assistant)
       // per non confondere Claude con un messaggio che non ha generato lui
       const chatHistory = [...messages, userMessage]
@@ -98,7 +131,6 @@ export default function ChatBot({ ref, suggestions }: { ref?: React.Ref<ChatBotR
       }
 
       const data = await response.json();
-      console.log('📥 Risposta API:', data);
 
       const assistantMessage: Message = {
         role: 'assistant',

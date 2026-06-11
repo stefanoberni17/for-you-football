@@ -27,6 +27,8 @@ export default function GiornoPage() {
   const [showCheck, setShowCheck] = useState(false);
   const [savingCheck, setSavingCheck] = useState(false);
   const [settimanaData, setSettimanaData] = useState<any>(null);
+  const [giorniData, setGiorniData] = useState<any[]>([]);
+  const [nextUnlocked, setNextUnlocked] = useState(false);
 
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
@@ -61,6 +63,10 @@ export default function GiornoPage() {
         return;
       }
 
+      // Per il CTA "Vai al Giorno N+1" su giorni già completati: evita il
+      // bottone-rimbalzo se il successivo è ancora time-locked
+      setNextUnlocked(isDayUnlocked(weekNumber, dayNumber + 1, completedDays));
+
       // Se e il gate (giorno 7) → redirect alla pagina gate
       if (dayNumber === GATE_DAY) {
         router.push(`/gate/${weekNumber}`);
@@ -90,10 +96,11 @@ export default function GiornoPage() {
         }
       } catch { /* calendario non configurato — ignora */ }
 
-      // Carica dati settimana (per pratica pre-partita)
+      // Carica dati settimana (per pratica pre-partita + teaser giorno successivo)
       try {
         const settimanaJson = await settimanaRes.json();
         setSettimanaData(settimanaJson.settimana);
+        setGiorniData(settimanaJson.giorni || []);
       } catch { /* ignora */ }
 
       setGiorno(data.giorno);
@@ -236,8 +243,16 @@ export default function GiornoPage() {
 
   if (!giorno) return null;
 
-  // Schermata successo dopo completamento
+  // Schermata successo dopo completamento.
+  // Il giorno successivo è sempre time-locked fino a domani: niente CTA "Vai al
+  // Giorno N+1" (rimbalzava via redirect) — teaser di cosa arriva + ritorno settimana.
   if (showSuccess) {
+    const nextIsGate = dayNumber + 1 === GATE_DAY;
+    const nextTitolo = nextIsGate
+      ? 'Il Gate — le 3 domande della settimana'
+      : (giorniData.find((g: any) => g.dayNumber === dayNumber + 1)?.titolo || '')
+          .replace(/^W\d+-G\d+ — /, '');
+
     return (
       <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center pt-safe pb-6 px-6 text-white animate-fadeIn">
         <div className="flex flex-col items-center animate-scaleIn">
@@ -251,25 +266,20 @@ export default function GiornoPage() {
           <p className="text-white text-sm text-center mb-8 max-w-xs">
             Ogni giorno conta. Stai costruendo qualcosa di reale.
           </p>
-          <p className="text-forest-50 text-xs text-center mb-10 max-w-xs opacity-80">
-            Il prossimo giorno sarà disponibile domani
-          </p>
+          {nextTitolo && (
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-4 mb-10 max-w-xs text-center">
+              <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">
+                Domani ti aspetta
+              </p>
+              <p className="text-white text-sm font-medium">{nextTitolo}</p>
+            </div>
+          )}
         </div>
         <button
-          onClick={handleContinue}
+          onClick={() => router.push(`/settimana/${weekNumber}`)}
           className="bg-white text-forest-600 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
         >
-          {dayNumber + 1 === GATE_DAY
-            ? 'Vai al Gate →'
-            : dayNumber + 1 > GATE_DAY
-            ? 'Avanti →'
-            : `Vai al Giorno ${dayNumber + 1} →`}
-        </button>
-        <button
-          onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="mt-4 text-forest-50 text-sm hover:text-white transition-colors"
-        >
-          Torna alla settimana
+          Torna alla settimana →
         </button>
       </main>
     );
@@ -535,14 +545,23 @@ export default function GiornoPage() {
           )}
 
           {isLastSlide && completed && (
-            <button
-              onClick={handleContinue}
-              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl shadow-lg hover:from-forest-600 hover:to-forest-700 transition-all text-sm"
-            >
-              {dayNumber + 1 === GATE_DAY
-                ? 'Vai al Gate →'
-                : `Vai al Giorno ${dayNumber + 1} →`}
-            </button>
+            nextUnlocked ? (
+              <button
+                onClick={handleContinue}
+                className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl shadow-lg hover:from-forest-600 hover:to-forest-700 transition-all text-sm"
+              >
+                {dayNumber + 1 === GATE_DAY
+                  ? 'Vai al Gate →'
+                  : `Vai al Giorno ${dayNumber + 1} →`}
+              </button>
+            ) : (
+              <button
+                onClick={() => router.push(`/settimana/${weekNumber}`)}
+                className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl shadow-lg hover:from-forest-600 hover:to-forest-700 transition-all text-sm"
+              >
+                Torna alla settimana →
+              </button>
+            )
           )}
         </div>
 

@@ -192,16 +192,18 @@ export default function StatistichePage() {
     .filter(c => c.mental_state !== null)
     .map(c => ({ date: c.date, value: c.mental_state }));
 
-  // Streak check-in consecutivi
+  // Streak check-in consecutivi. Se il check-in di OGGI non è ancora stato
+  // fatto, il conteggio parte da ieri: oggi non interrompe lo streak,
+  // semplicemente non conta ancora.
   let streak = 0;
-  for (let i = checkins.length - 1; i >= 0; i--) {
-    const expected = new Date();
-    expected.setDate(expected.getDate() - (checkins.length - 1 - i));
-    const expectedStr = expected.toISOString().split('T')[0];
-    if (checkins[i].date === expectedStr) {
+  {
+    const dates = new Set(checkins.map(c => c.date));
+    const dateStr = (d: Date) => d.toISOString().split('T')[0];
+    const cursor = new Date();
+    if (!dates.has(dateStr(cursor))) cursor.setDate(cursor.getDate() - 1);
+    while (dates.has(dateStr(cursor))) {
       streak++;
-    } else {
-      break;
+      cursor.setDate(cursor.getDate() - 1);
     }
   }
 

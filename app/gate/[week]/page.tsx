@@ -64,11 +64,22 @@ export default function GatePage() {
       if (data.answers) {
         setAnswers(data.answers);
       } else {
-        const empty: Record<string, string> = {};
-        (data.questions || []).forEach((_: string, i: number) => {
-          empty[`q${i + 1}`] = '';
-        });
-        setAnswers(empty);
+        // Bozza autosalvata: se aveva iniziato a scrivere e ha chiuso, riprende da lì
+        let draft: Record<string, string> | null = null;
+        try {
+          const saved = localStorage.getItem(`gateDraft-w${weekNumber}`);
+          if (saved) draft = JSON.parse(saved);
+        } catch { /* ignora */ }
+
+        if (draft) {
+          setAnswers(draft);
+        } else {
+          const empty: Record<string, string> = {};
+          (data.questions || []).forEach((_: string, i: number) => {
+            empty[`q${i + 1}`] = '';
+          });
+          setAnswers(empty);
+        }
       }
 
       setLoading(false);
@@ -76,6 +87,19 @@ export default function GatePage() {
 
     init();
   }, [weekNumber, router]);
+
+  // Autosave bozza risposte (debounce 600ms) — persa solo al submit riuscito
+  useEffect(() => {
+    if (loading || completed) return;
+    const hasText = Object.values(answers).some(v => (v || '').trim().length > 0);
+    if (!hasText) return;
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(`gateDraft-w${weekNumber}`, JSON.stringify(answers));
+      } catch { /* ignora */ }
+    }, 600);
+    return () => clearTimeout(t);
+  }, [answers, loading, completed, weekNumber]);
 
   const allAnswered = questions.every((_, i) => (answers[`q${i + 1}`] || '').trim().length > 0);
 
@@ -93,6 +117,9 @@ export default function GatePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Errore nel salvataggio');
 
+      try {
+        localStorage.removeItem(`gateDraft-w${weekNumber}`);
+      } catch { /* ignora */ }
       setCompleted(true);
       setShowCelebration(true);
     } catch (err: any) {
@@ -119,9 +146,17 @@ export default function GatePage() {
         <div className="text-7xl mb-6">🏆</div>
         <h1 className="text-3xl font-bold mb-2 text-center">Settimana {weekNumber} completata!</h1>
         <p className="text-white text-center mb-2 text-sm">Hai superato il Gate</p>
-        <p className="text-white text-sm text-center mb-10 max-w-xs leading-relaxed">
+        <p className="text-white text-sm text-center mb-8 max-w-xs leading-relaxed">
           Ogni settimana è un mattone. La prossima si sblocca adesso.
         </p>
+        {giorno?.missioneSettimana && (
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-4 mb-8 max-w-sm text-center">
+            <p className="text-forest-100 text-xs font-bold uppercase tracking-wider mb-1.5">
+              🎯 La tua missione per la prossima settimana
+            </p>
+            <p className="text-white text-sm leading-relaxed">{giorno.missioneSettimana}</p>
+          </div>
+        )}
         <button
           onClick={() => router.push(`/week-complete/${weekNumber}`)}
           className="bg-white text-forest-500 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
