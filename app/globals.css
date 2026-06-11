@@ -148,3 +148,16 @@ a:focus-visible {
     0 0 0 4px #2dd17a;
   border-radius: inherit;
 }
+
+/* ─── Stampa (Carta del Giocatore) ────────────────────────────────────────────
+   window.print() su /carta: nasconde nav e controlli, forza sfondo bianco.   */
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body,
+  html {
+    background: #ffffff !important;
+  }
+}
