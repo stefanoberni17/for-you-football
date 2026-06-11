@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { TOOLS, type Tool } from '@/lib/toolsCatalog';
+import { SOS_CARDS } from '@/lib/sosCards';
+import { useMeditation } from '@/components/MeditationContext';
 import PracticePopup from '@/components/PracticePopup';
-import { Lock, ChevronRight, Play } from 'lucide-react';
+import { Lock, ChevronRight, Play, Wind } from 'lucide-react';
 
 /**
  * La Cassetta degli Attrezzi — gli strumenti del percorso, per sempre.
@@ -14,6 +16,7 @@ import { Lock, ChevronRight, Play } from 'lucide-react';
  */
 export default function StrumentiPage() {
   const router = useRouter();
+  const { openMeditation } = useMeditation();
   const [loading, setLoading] = useState(true);
   const [currentWeek, setCurrentWeek] = useState(1);
   const [selected, setSelected] = useState<Tool | null>(null);
@@ -114,28 +117,45 @@ export default function StrumentiPage() {
     );
   }
 
-  // ── Lista strumenti ───────────────────────────────────────────────────────
+  // ── Hub: Reset rapido + cassetta + SOS ────────────────────────────────────
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-xl mx-auto">
-          <button
-            onClick={() => router.push('/')}
-            className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-          >
-            ← Home
-          </button>
           <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
-            🧰 La tua cassetta
+            🧰 Il tuo campo
           </p>
-          <h1 className="text-2xl font-bold text-white leading-tight">Gli strumenti</h1>
+          <h1 className="text-2xl font-bold text-white leading-tight">Strumenti</h1>
           <p className="text-forest-100 text-sm mt-1">
-            Il percorso finisce. Gli attrezzi restano tuoi — {unlockedCount} su {TOOLS.length} sbloccati.
+            Quello che hai sempre con te — {unlockedCount} su {TOOLS.length} sbloccati.
           </p>
         </div>
       </div>
 
       <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
+        {/* Reset rapido — l'attrezzo che serve più spesso, sempre in cima */}
+        <button
+          onClick={openMeditation}
+          className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 rounded-2xl shadow-lg p-5 flex items-center justify-between text-left transition-all active:scale-[0.99]"
+        >
+          <span className="flex items-center gap-4">
+            <span className="w-11 h-11 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+              <Wind className="w-5 h-5 text-white" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block text-base font-bold text-white">Reset rapido</span>
+              <span className="block text-xs text-forest-100 mt-0.5">
+                1 minuto di respiro — adesso
+              </span>
+            </span>
+          </span>
+          <span className="text-white text-lg">→</span>
+        </button>
+
+        {/* La cassetta */}
+        <p className="text-xs font-bold text-faint uppercase tracking-wide pt-2 px-1">
+          La cassetta
+        </p>
         {TOOLS.map(tool => {
           const unlocked = currentWeek >= tool.week;
           if (!unlocked) {
@@ -175,6 +195,34 @@ export default function StrumentiPage() {
             </button>
           );
         })}
+
+        {/* Momento difficile? — le schede SOS */}
+        <p className="text-xs font-bold text-faint uppercase tracking-wide pt-3 px-1">
+          ⚡ Momento difficile?
+        </p>
+        {SOS_CARDS.map(card => (
+          <button
+            key={card.id}
+            onClick={() => router.push(`/sos?card=${card.id}`)}
+            className="w-full bg-surface rounded-2xl shadow-sm p-4 border border-amber-500/15 flex items-center justify-between text-left hover:border-amber-500/40 transition-all active:scale-[0.99]"
+          >
+            <span className="flex items-center gap-3">
+              <span className="text-2xl" aria-hidden="true">{card.emoji}</span>
+              <span>
+                <span className="block text-sm font-bold text-app">{card.titolo}</span>
+                <span className="block text-xs text-muted mt-0.5">{card.sottotitolo}</span>
+              </span>
+            </span>
+            <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
+          </button>
+        ))}
+
+        <p className="text-xs text-faint text-center pt-2 leading-relaxed">
+          Non trovi la tua situazione? Il Coach c&apos;è sempre —{' '}
+          <button onClick={() => router.push('/chat')} className="text-forest-400 font-semibold hover:underline">
+            scrivigli
+          </button>
+        </p>
 
         <div className="h-4" />
       </div>

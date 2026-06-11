@@ -53,8 +53,8 @@ for-you-football/
 │   ├── calendar/page.tsx                  # Setup calendario settimanale
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
-│   ├── sos/page.tsx                       # Schede SOS on-demand (4 situazioni difficili, stile mini-giorno)
-│   ├── strumenti/page.tsx                 # Cassetta degli Attrezzi: 4 strumenti sempre rifacibili (lock per settimana)
+│   ├── sos/page.tsx                       # Schede SOS on-demand (4 situazioni, stile mini-giorno; ?card=<id> deep-link)
+│   ├── strumenti/page.tsx                 # Hub "il tuo campo" (tab): Reset rapido + cassetta 4 strumenti + schede SOS
 │   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
@@ -773,7 +773,8 @@ La memoria persistente del Coach si basa su:
 - Props: `{ userId, onComplete, onSkip }`
 
 ### `BottomTabBar.tsx`
-- 4 tab: Home, Percorso, Coach, Profilo
+- 5 tab: Home, Percorso, **Strumenti** (al centro, icona Wrench), Coach, Profilo
+- La tab Strumenti resta attiva anche su `/sos` (stesso hub)
 - Nascosto su: `/login`, `/register`, `/onboarding`, `/privacy`
 - **Full-width attaccata al bordo (dark theme):** `bg-surface/95` con `backdrop-blur-md`, `border-t border-divider`, shadow sottile solo verso l'alto. NO più floating/rounded/margini laterali (il design floating creava 3 fasce dove si vedeva lo sfondo dietro + effetto "rialzato" su /chat)
 - Padding-bottom interno = `env(safe-area-inset-bottom)` (puro, no gap extra)
