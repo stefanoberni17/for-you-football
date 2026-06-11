@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, LayoutDashboard, MessageCircle, User } from 'lucide-react';
+import { Home, LayoutDashboard, Wrench, MessageCircle, User } from 'lucide-react';
 
 export default function BottomTabBar() {
   const pathname = usePathname();
@@ -15,6 +15,7 @@ export default function BottomTabBar() {
   const tabs = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/settimane', label: 'Percorso', icon: LayoutDashboard },
+    { href: '/strumenti', label: 'Strumenti', icon: Wrench },
     { href: '/chat', label: 'Coach', icon: MessageCircle },
     { href: '/profilo', label: 'Profilo', icon: User },
   ];
@@ -29,7 +30,10 @@ export default function BottomTabBar() {
         <div className="flex justify-around items-center h-16 gap-1 px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-            const isActive = pathname === tab.href;
+            // /sos fa parte dell'hub Strumenti: la tab resta accesa anche lì
+            const isActive =
+              pathname === tab.href ||
+              (tab.href === '/strumenti' && pathname === '/sos');
 
             return (
               <Link

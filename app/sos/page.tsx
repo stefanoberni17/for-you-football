@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { SOS_CARDS, type SosCard } from '@/lib/sosCards';
 import { useMeditation } from '@/components/MeditationContext';
 import { ChevronRight, Wind, MessageCircle } from 'lucide-react';
 
-export default function SosPage() {
+function SosContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { openMeditation } = useMeditation();
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<SosCard | null>(null);
@@ -20,9 +21,16 @@ export default function SosPage() {
         router.push('/login');
         return;
       }
+      // Deep-link dall'hub strumenti: /sos?card=<id> apre direttamente la scheda
+      const cardId = searchParams.get('card');
+      if (cardId) {
+        const card = SOS_CARDS.find(c => c.id === cardId);
+        if (card) setSelected(card);
+      }
       setLoading(false);
     };
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   if (loading) {
@@ -114,10 +122,10 @@ export default function SosPage() {
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-xl mx-auto">
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/strumenti')}
             className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
           >
-            ← Home
+            ← Strumenti
           </button>
           <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
             ⚡ Schede SOS
@@ -157,5 +165,22 @@ export default function SosPage() {
         <div className="h-4" />
       </div>
     </main>
+  );
+}
+
+export default function SosPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-app flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
+            <p className="text-muted">Caricamento...</p>
+          </div>
+        </main>
+      }
+    >
+      <SosContent />
+    </Suspense>
   );
 }

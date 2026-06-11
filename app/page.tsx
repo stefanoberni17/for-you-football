@@ -19,8 +19,7 @@ import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
-import { useMeditation } from '@/components/MeditationContext';
-import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Wind, Target } from 'lucide-react';
+import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target } from 'lucide-react';
 
 interface CheckinData {
   date: string;
@@ -84,7 +83,6 @@ function MiniSparkline({ values, color, min, max }: { values: number[]; color: s
 
 export default function HomePage() {
   const router = useRouter();
-  const { openMeditation } = useMeditation();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
@@ -400,41 +398,7 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Reset rapido + SOS — uso autonomo, quando serve */}
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={openMeditation}
-            className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/20 hover:border-forest-500/40 transition-all active:scale-[0.99] text-left"
-          >
-            <span className="w-9 h-9 rounded-full bg-forest-500/15 flex items-center justify-center mb-2">
-              <Wind className="w-4 h-4 text-forest-400" aria-hidden="true" />
-            </span>
-            <span className="block text-sm font-bold text-app">Reset rapido</span>
-            <span className="block text-xs text-muted mt-0.5">1 minuto di respiro</span>
-          </button>
-          <button
-            onClick={() => router.push('/sos')}
-            className="bg-surface rounded-2xl shadow-sm p-4 border border-amber-500/20 hover:border-amber-500/40 transition-all active:scale-[0.99] text-left"
-          >
-            <span className="w-9 h-9 rounded-full bg-amber-500/15 flex items-center justify-center mb-2 text-base" aria-hidden="true">
-              ⚡
-            </span>
-            <span className="block text-sm font-bold text-app">Momento difficile?</span>
-            <span className="block text-xs text-muted mt-0.5">Panchina, errore, ansia</span>
-          </button>
-        </div>
-
-        {/* Cassetta degli attrezzi — gli strumenti restano, anche a percorso finito */}
-        <button
-          onClick={() => router.push('/strumenti')}
-          className="w-full bg-surface rounded-2xl shadow-sm px-4 py-3 border border-divider hover:border-forest-500/40 transition-all active:scale-[0.99] flex items-center justify-between"
-        >
-          <span className="flex items-center gap-3">
-            <span className="text-lg" aria-hidden="true">🧰</span>
-            <span className="text-sm font-semibold text-app">I tuoi strumenti</span>
-          </span>
-          <span className="text-forest-500 text-sm">→</span>
-        </button>
+        {/* Reset rapido, SOS e cassetta vivono nella tab Strumenti (hub del campo) */}
 
         {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline */}
         <ActionsCard
