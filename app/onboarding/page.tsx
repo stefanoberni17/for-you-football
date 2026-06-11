@@ -252,8 +252,9 @@ export default function OnboardingPage() {
 
           <div className="bg-surface-2 border border-divider rounded-xl p-4">
             <p className="text-sm text-muted italic">
-              Puoi anche collegarlo su <strong>Telegram</strong> per parlare con il
-              Coach direttamente dal tuo telefono. Trovi l&apos;opzione nel profilo.
+              Puoi anche parlarci su <strong>Telegram</strong>: vai nel profilo,
+              tocca &quot;Collega&quot; e il collegamento è automatico — un tap e il Coach
+              è nel tuo telefono.
             </p>
           </div>
         </div>

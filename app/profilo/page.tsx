@@ -40,47 +40,6 @@ function ChipGroup({
   );
 }
 
-// ── Passi guida Telegram ──────────────────────────────────────────────────────
-const TELEGRAM_STEPS = [
-  {
-    emoji: '📱',
-    title: 'Apri Telegram',
-    description: 'Cerca il bot che ti dà il tuo ID:',
-    bot: '@userinfobot',
-    detail: 'Aprilo e premi Start (o scrivi qualcosa).',
-    link: 'https://t.me/userinfobot',
-    linkLabel: 'Apri @userinfobot →',
-  },
-  {
-    emoji: '⌨️',
-    title: 'Scrivi /start',
-    description: 'Manda questo comando al bot:',
-    bot: '/start',
-    detail: 'Il bot risponderà con il tuo ID numerico.',
-    link: null,
-    linkLabel: null,
-  },
-  {
-    emoji: '📋',
-    title: 'Incolla il tuo ID',
-    description: 'Copia il numero che ti ha risposto il bot e incollalo qui:',
-    bot: null,
-    detail: 'È un numero tipo: 766672351',
-    link: null,
-    linkLabel: null,
-    hasInput: true,
-  },
-  {
-    emoji: '🤖',
-    title: 'Ora sei pronto!',
-    description: 'Cerca il tuo Coach su Telegram:',
-    bot: '@foryoufootballcoach_bot',
-    detail: 'Scrivili qualcosa per iniziare il tuo allenamento mentale.',
-    link: 'https://t.me/foryoufootballcoach_bot',
-    linkLabel: 'Apri il Coach →',
-  },
-];
-
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function ProfiloPage() {
@@ -97,10 +56,8 @@ export default function ProfiloPage() {
   const [currentWeek, setCurrentWeek] = useState('1');
   const [telegramId, setTelegramId] = useState('');
 
-  // Telegram modal
-  const [showTelegramModal, setShowTelegramModal] = useState(false);
-  const [telegramStep, setTelegramStep] = useState(0);
-  const [savingTelegram, setSavingTelegram] = useState(false);
+  // Telegram deep-link
+  const [telegramLinkLoading, setTelegramLinkLoading] = useState(false);
 
   // Push notifications
   const [pushStatus, setPushStatus] = useState<'loading' | 'unsupported' | 'denied' | 'active' | 'inactive'>('loading');
@@ -174,6 +131,23 @@ export default function ProfiloPage() {
     loadProfile();
   }, [router]);
 
+  // Quando l'utente torna dall'app Telegram dopo il deep-link, ricarica lo
+  // stato del collegamento (il bot ha scritto telegram_id mentre era via)
+  useEffect(() => {
+    if (!userId) return;
+    const refresh = async () => {
+      if (document.visibilityState !== 'visible') return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('telegram_id')
+        .eq('user_id', userId)
+        .single();
+      setTelegramId(data?.telegram_id || '');
+    };
+    document.addEventListener('visibilitychange', refresh);
+    return () => document.removeEventListener('visibilitychange', refresh);
+  }, [userId]);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -193,7 +167,9 @@ export default function ProfiloPage() {
           goals: goals.trim() || null,
           dream: dream.trim() || null,
           current_situation: currentSituation.trim() || null,
-          telegram_id: telegramId.trim() || null,
+          // telegram_id NON è incluso: lo scrive solo il bot via deep-link.
+          // Includerlo qui sovrascriverebbe un collegamento appena fatto su
+          // Telegram con il valore stantio caricato al mount della pagina.
         })
         .eq('user_id', userId);
 
@@ -258,20 +234,23 @@ export default function ProfiloPage() {
     else setError('Errore durante il logout');
   };
 
-  const handleSaveTelegram = async () => {
-    if (!telegramId.trim()) return;
-    setSavingTelegram(true);
-    await supabase
-      .from('profiles')
-      .update({ telegram_id: telegramId.trim() })
-      .eq('user_id', userId);
-    setSavingTelegram(false);
-    setTelegramStep(3);
-  };
-
-  const openTelegramModal = () => {
-    setTelegramStep(0);
-    setShowTelegramModal(true);
+  /**
+   * Deep-link Telegram: genera un codice usa-e-getta e apre la chat col bot.
+   * Il bot riceve /start <codice> e salva da solo il telegram_id reale.
+   */
+  const handleTelegramLink = async () => {
+    setTelegramLinkLoading(true);
+    setError('');
+    try {
+      const res = await authFetch('/api/telegram/link', { method: 'POST' });
+      if (!res.ok) throw new Error('Impossibile generare il link — riprova');
+      const { url } = await res.json();
+      window.location.href = url;
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setTelegramLinkLoading(false);
+    }
   };
 
   if (loading) {
@@ -285,113 +264,8 @@ export default function ProfiloPage() {
     );
   }
 
-  const currentStep = TELEGRAM_STEPS[telegramStep];
-  const isLastStep = telegramStep === TELEGRAM_STEPS.length - 1;
-  const isInputStep = telegramStep === 2;
-
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
-
-      {/* ── Telegram Modal ─────────────────────────────────────────────────── */}
-      {showTelegramModal && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-6"
-          onClick={(e) => { if (e.target === e.currentTarget) setShowTelegramModal(false); }}
-        >
-          <div className="bg-surface w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
-
-            {/* Step dots */}
-            <div className="flex justify-center items-center gap-1.5 pt-5 pb-1">
-              {TELEGRAM_STEPS.map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i === telegramStep ? 'bg-forest-500 w-6' : i < telegramStep ? 'bg-forest-400 w-1.5' : 'bg-surface-2 w-1.5'
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Slide content */}
-            <div className="px-7 py-5 text-center min-h-[240px] flex flex-col items-center justify-center gap-3">
-              <div className="text-5xl">{currentStep.emoji}</div>
-              <h3 className="text-xl font-bold text-app">{currentStep.title}</h3>
-              <p className="text-sm text-muted">{currentStep.description}</p>
-
-              {currentStep.bot && (
-                <div className="bg-surface-2 rounded-xl px-5 py-3 w-full">
-                  <p className="text-lg font-bold text-app font-mono tracking-wide">{currentStep.bot}</p>
-                </div>
-              )}
-
-              {isInputStep && (
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={telegramId}
-                  onChange={(e) => setTelegramId(e.target.value)}
-                  placeholder="Es. 766672351"
-                  className="w-full px-4 py-3 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-center text-lg font-mono"
-                  autoFocus
-                />
-              )}
-
-              <p className="text-xs text-faint">{currentStep.detail}</p>
-
-              {currentStep.link && (
-                <a
-                  href={currentStep.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-forest-400 text-sm font-semibold hover:underline"
-                >
-                  {currentStep.linkLabel}
-                </a>
-              )}
-            </div>
-
-            {/* Navigation */}
-            <div className="px-6 pb-6 flex gap-3">
-              {telegramStep > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setTelegramStep((s) => s - 1)}
-                  className="flex-none py-3 px-4 rounded-xl border border-divider text-sm font-medium text-muted hover:bg-surface-2 transition-all"
-                >
-                  ←
-                </button>
-              )}
-
-              {isLastStep ? (
-                <button
-                  type="button"
-                  onClick={() => setShowTelegramModal(false)}
-                  className="flex-1 py-3 rounded-xl bg-forest-500 hover:bg-forest-600 text-white text-sm font-bold transition-all"
-                >
-                  ✓ Fatto!
-                </button>
-              ) : isInputStep ? (
-                <button
-                  type="button"
-                  onClick={handleSaveTelegram}
-                  disabled={!telegramId.trim() || savingTelegram}
-                  className="flex-1 py-3 rounded-xl bg-forest-500 hover:bg-forest-600 text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  {savingTelegram ? 'Salvataggio…' : 'Salva e continua →'}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setTelegramStep((s) => s + 1)}
-                  className="flex-1 py-3 rounded-xl bg-forest-500 hover:bg-forest-600 text-white text-sm font-bold transition-all"
-                >
-                  Avanti →
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Header */}
       <div className="max-w-xl mx-auto mb-6">
@@ -424,25 +298,26 @@ export default function ProfiloPage() {
               <div>
                 <p className="font-bold text-app text-sm">Coach su Telegram</p>
                 <p className="text-xs text-muted">
-                  {telegramId ? `Collegato · ID ${telegramId}` : 'Non ancora collegato'}
+                  {telegramId ? '✅ Collegato' : 'Non ancora collegato'}
                 </p>
               </div>
             </div>
             <button
               type="button"
-              onClick={openTelegramModal}
-              className={`text-xs font-bold px-4 py-2 rounded-xl transition-all ${
+              onClick={handleTelegramLink}
+              disabled={telegramLinkLoading}
+              className={`text-xs font-bold px-4 py-2 rounded-xl transition-all disabled:opacity-50 ${
                 telegramId
                   ? 'text-muted bg-surface-2 hover:bg-[#293429]'
                   : 'text-white bg-forest-500 hover:bg-forest-600 shadow-sm'
               }`}
             >
-              {telegramId ? 'Modifica' : 'Collega'}
+              {telegramLinkLoading ? 'Attendi…' : telegramId ? 'Ricollega' : 'Collega'}
             </button>
           </div>
           {!telegramId && (
             <p className="text-xs text-faint mt-3 leading-relaxed">
-              Chatta con il tuo Coach AI direttamente su Telegram — ovunque, in qualsiasi momento.
+              Un tap: si apre Telegram e il collegamento è automatico. Poi puoi scrivere al Coach ovunque, in qualsiasi momento.
             </p>
           )}
         </div>

@@ -43,6 +43,77 @@ export async function POST(request: NextRequest) {
     const telegramUserId = message.from.id.toString();
     const userText = message.text;
 
+    // ── /start: deep-link di collegamento (t.me/<bot>?start=<codice>) ──────
+    // Gestito PRIMA del lookup normale e mai salvato in conversazione.
+    if (userText.startsWith('/start')) {
+      const code = userText.split(' ')[1]?.trim();
+
+      if (code) {
+        const { data: linkProfile } = await supabaseAdmin
+          .from('profiles')
+          .select('user_id, name, telegram_link_code_expires')
+          .eq('telegram_link_code', code)
+          .single();
+
+        const isValid =
+          linkProfile?.user_id &&
+          linkProfile.telegram_link_code_expires &&
+          new Date(linkProfile.telegram_link_code_expires) > new Date();
+
+        if (isValid) {
+          // Un account Telegram = un profilo: scollega eventuali altri profili
+          // che avevano lo stesso telegram_id (es. account di test)
+          await supabaseAdmin
+            .from('profiles')
+            .update({ telegram_id: null })
+            .eq('telegram_id', telegramUserId)
+            .neq('user_id', linkProfile.user_id);
+
+          await supabaseAdmin
+            .from('profiles')
+            .update({
+              telegram_id: telegramUserId,
+              telegram_link_code: null,
+              telegram_link_code_expires: null,
+            })
+            .eq('user_id', linkProfile.user_id);
+
+          const firstName = linkProfile.name?.split(' ')[0] || '';
+          await sendTelegramMessage(
+            chatId,
+            `✅ Collegato!${firstName ? ` Ciao ${firstName} —` : ''} sono il tuo Coach.\n\nDa qui puoi scrivermi quando vuoi: prima di una partita, dopo un errore, o solo per fare il punto. Come stai oggi?`
+          );
+        } else {
+          await sendTelegramMessage(
+            chatId,
+            'Questo link di collegamento è scaduto o non valido.\n\nApri l\'app → Profilo → "Collega Telegram" e riprova (il link vale 15 minuti).'
+          );
+        }
+        return NextResponse.json({ ok: true });
+      }
+
+      // /start senza codice: se già collegato saluta, altrimenti spiega come collegarsi
+      const { data: existing } = await supabaseAdmin
+        .from('profiles')
+        .select('user_id, name')
+        .eq('telegram_id', telegramUserId)
+        .single();
+
+      if (existing?.user_id) {
+        const firstName = existing.name?.split(' ')[0] || '';
+        await sendTelegramMessage(
+          chatId,
+          `Ciao${firstName ? ` ${firstName}` : ''}! Siamo già collegati — scrivimi pure quando vuoi.`
+        );
+      } else {
+        await sendTelegramMessage(
+          chatId,
+          'Ciao! Sono il Coach di For You Football. ⚽\n\nPer collegarci apri l\'app → Profilo → "Collega Telegram": si apre questa chat e il collegamento è automatico.'
+        );
+      }
+      return NextResponse.json({ ok: true });
+    }
+
     const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('user_id')
