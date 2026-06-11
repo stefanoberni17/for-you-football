@@ -424,6 +424,18 @@ export default function HomePage() {
           </button>
         </div>
 
+        {/* Cassetta degli attrezzi — gli strumenti restano, anche a percorso finito */}
+        <button
+          onClick={() => router.push('/strumenti')}
+          className="w-full bg-surface rounded-2xl shadow-sm px-4 py-3 border border-divider hover:border-forest-500/40 transition-all active:scale-[0.99] flex items-center justify-between"
+        >
+          <span className="flex items-center gap-3">
+            <span className="text-lg" aria-hidden="true">🧰</span>
+            <span className="text-sm font-semibold text-app">I tuoi strumenti</span>
+          </span>
+          <span className="text-forest-500 text-sm">→</span>
+        </button>
+
         {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline */}
         <ActionsCard
           total={actionsTotal}
