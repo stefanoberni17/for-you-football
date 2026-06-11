@@ -63,7 +63,7 @@ export async function sendSafetyAlert(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'alerts@for-you-football.vercel.app',
+        from: 'For You Football Alerts <alerts@foryoufootball.it>',
         to: process.env.SAFETY_ALERT_EMAIL || 'foryou.innerpath@gmail.com',
         subject: `🚨 Safety Alert (${channel}) — For You Football`,
         html: `
