@@ -66,7 +66,8 @@ for-you-football/
 │       ├── calendar/route.ts              # GET ?userId=&week= / POST training_days + match_days
 │       ├── reflection/route.ts            # GET/POST riflessioni post-giorno
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
-│       ├── telegram/route.ts              # POST → webhook bot Telegram
+│       ├── telegram/route.ts              # POST → webhook bot Telegram (+ handler /start deep-link)
+│       ├── telegram/link/route.ts         # POST → genera codice deep-link collegamento (auth)
 │       ├── checkin/
 │       │   ├── route.ts                   # GET ?userId= (oggi) / POST upsert check-in
 │       │   └── history/route.ts           # GET ?userId=&days=N → storico ultimi N giorni
@@ -658,7 +659,7 @@ La web chat **non contribuisce** alla memoria persistente. Solo Telegram aliment
 
 ### Profilo (`app/profilo/page.tsx`)
 - Visualizzazione/modifica profilo calciatore
-- Collegamento account Telegram
+- **Collegamento Telegram via deep-link (giugno 2026):** bottone "Collega" → `POST /api/telegram/link` genera codice usa-e-getta (32 hex, TTL 15 min, colonne `profiles.telegram_link_code` + `telegram_link_code_expires`, migration `005_telegram_link.sql`) → apre `t.me/foryoufootballcoach_bot?start=<code>` → il webhook gestisce `/start <code>`: valida codice+scadenza, scollega altri profili con lo stesso telegram_id, salva `telegram_id` reale, welcome per nome. `/start` nudo: saluto se già collegato, istruzioni altrimenti. Codice scaduto → messaggio con istruzioni. Lo stato "✅ Collegato" si auto-aggiorna al ritorno dall'app Telegram (refetch su `visibilitychange`). `telegram_id` NON è più nel payload di salvataggio del form profilo (lo scrive solo il bot — evita overwrite stantio). Rimosso il vecchio wizard a 4 step con @userinfobot/ID manuale.
 
 ### Le mie azioni (`app/oggi/page.tsx`)
 - **Immersive header** con data corrente + counter "X/Y fatte" + progress bar bianca
