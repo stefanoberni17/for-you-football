@@ -108,23 +108,16 @@ export async function POST(request: NextRequest) {
 
     if (upsertError) throw upsertError;
 
-    // Incrementa current_week nel profilo (se non già oltre).
+    // Avanza current_week nel profilo (se non già oltre).
     // Modello subscription-based: l'accesso ai contenuti è gestito da /login e / (dashboard).
     // Se l'utente arriva qui, la sub è attiva o è beta — quindi può avanzare.
-    const { data: profile } = await supabaseAdmin
+    // UPDATE condizionale singolo (atomico): la condizione "non già oltre" vive
+    // nel WHERE, niente finestra tra lettura e scrittura su richieste concorrenti.
+    await supabaseAdmin
       .from('profiles')
-      .select('current_week')
+      .update({ current_week: weekNumber + 1 })
       .eq('user_id', userId)
-      .single();
-
-    const nextWeek = weekNumber + 1;
-
-    if (profile && profile.current_week <= weekNumber) {
-      await supabaseAdmin
-        .from('profiles')
-        .update({ current_week: nextWeek })
-        .eq('user_id', userId);
-    }
+      .lte('current_week', weekNumber);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

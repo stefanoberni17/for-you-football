@@ -175,20 +175,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Aggiorna current_week nel profilo se necessario
-    // (solo se siamo all'ultimo giorno pre-gate della settimana = giorno 6)
+    // (solo se siamo all'ultimo giorno pre-gate della settimana = giorno 6).
+    // UPDATE condizionale singolo (atomico): la condizione vive nel WHERE,
+    // niente finestra tra lettura e scrittura su richieste concorrenti.
     if (dayNumber === 6) {
-      const { data: profile } = await supabaseAdmin
+      await supabaseAdmin
         .from('profiles')
-        .select('current_week')
+        .update({ current_week: weekNumber })
         .eq('user_id', userId)
-        .single();
-
-      if (profile && profile.current_week < weekNumber) {
-        await supabaseAdmin
-          .from('profiles')
-          .update({ current_week: weekNumber })
-          .eq('user_id', userId);
-      }
+        .lt('current_week', weekNumber);
     }
 
     // Calcola il prossimo giorno
