@@ -53,7 +53,7 @@ for-you-football/
 │   ├── calendar/page.tsx                  # Setup calendario settimanale
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
-│   ├── sos/page.tsx                       # Schede SOS on-demand (4 situazioni, stile mini-giorno; ?card=<id> deep-link)
+│   ├── sos/page.tsx                       # "Come affrontare le difficoltà" — schede VIVE a layer da Notion (?card=<id>)
 │   ├── strumenti/page.tsx                 # Hub "il tuo campo" (tab): Reset rapido + cassetta 4 strumenti + schede SOS
 │   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
@@ -101,7 +101,7 @@ for-you-football/
 │   ├── notion.ts                          # Notion API: queryDatabase, fetchPage, mapSettimana, mapGiorno
 │   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
 │   ├── actionsCatalog.ts                  # Catalogo 20 azioni "act as if" + helper filtro per settimana
-│   ├── sosCards.ts                        # 4 schede SOS statiche (apertura/pratica/chiusura + coachPrompt)
+│   ├── sosCards.ts                        # 4 schede SOS statiche — ora FALLBACK di /api/difficolta se Notion non risponde
 │   ├── toolsCatalog.ts                    # Cassetta degli Attrezzi: 4 strumenti Blocco 1 (pratica + unlockedTools)
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
@@ -119,6 +119,7 @@ for-you-football/
 NOTION_TOKEN=
 NOTION_DATABASE_SETTIMANE=      # 941ff642-d437-4ab0-bc87-c6bbb601475b
 NOTION_DATABASE_GIORNI=         # 03a29261-ad11-4758-a657-c34b4aab56f2
+NOTION_DATABASE_DIFFICOLTA=     # 67d682df-873f-4df7-ad3a-ad09bf5280c0 (DB Difficoltà — schede a layer)
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=
@@ -649,11 +650,12 @@ La memoria persistente del Coach si basa su:
 - Card "🎯 La tua missione" (da Notion `Missione Settimana` del G7)
 - CTA settimana successiva (se disponibile)
 
-### Schede SOS (`app/sos/page.tsx`)
-- 4 schede on-demand da `lib/sosCards.ts`: ansia pre-partita 🌙, panchina 🪑, errore grave 💥, mister duro 📢
-- Dettaglio in stile mini-giorno: Apertura (corsivo) → "La pratica — adesso" (step numerati) → Chiusura (card verde)
-- CTA: "Fai il Reset ora" (openMeditation) + "Parlane col Coach" (`/chat?prompt=` precompilato)
-- Entry point: card dashboard "⚡ Momento difficile?"
+### Come affrontare le difficoltà — schede "vive" a layer (`app/sos/page.tsx`)
+- Modello: una difficoltà (es. "Ansia da prestazione") è una scheda che **cresce con l'utente**. Ogni scheda è fatta di **layer**, uno per strumento: il layer "Adesso" (Reset) è aperto dal giorno 1 (rete di sicurezza per chi è in settimana 1); gli altri si sbloccano quando l'utente raggiunge la settimana dello strumento rilevante (Observer W2, Body Check W3, Protocollo W4, Fatto vs Storia W6, Il Rilascio W8…). I layer bloccati appaiono come **teaser** 🔒 (calamita + danno un "perché" al percorso).
+- **Contenuto su Notion:** DB **🆘 Difficoltà — Season 1** (`67d682df-...`, sotto 📝 CONTENUTI CMS). Una RIGA = un layer. Properties: `Difficoltà` (chiave di raggruppamento), `Emoji`, `Sottotitolo`, `Ordine Scheda`, `Sblocco Settimana` (1=sempre), `Strumento`, `Titolo Layer`, `Apertura`, `Pratica` (step separati da `<br>`), `Chiusura`, `Coach Prompt`. Stesse regole testo dei DB Giorni (a-capo come `<br>`).
+- **Lib/API:** `fetchDifficoltaCards()` in `lib/notion.ts` (raggruppa righe→schede); `GET /api/difficolta` legge `current_week` server-side, applica il lock e fa lo **strip dei layer bloccati** (manda solo titolo/strumento/sblocco). **Fallback**: se Notion non risponde o `NOTION_DATABASE_DIFFICOLTA` manca → `lib/sosCards.ts` (le 4 schede statiche come singolo layer "Adesso").
+- **V1 popolato:** 4 schede (Ansia, Errore, Panchina, Mister); solo "Ansia da prestazione" ha i 6 layer completi (showcase), le altre solo "Adesso" — gli altri layer si aggiungono da Notion senza deploy.
+- **UI:** dettaglio = header + ogni layer sbloccato (Titolo Layer + badge strumento + Apertura corsivo + step numerati + Chiusura verde) + teaser bloccati; CTA "Fai il Reset ora" (openMeditation) + "Parlane col Coach" (`/chat?prompt=`). Entry point: hub `/strumenti`, sezione **"Come affrontare le difficoltà"** in evidenza (aperta di default) col contatore "N/M modi · cresce avanzando".
 
 ### Chat Coach (`app/chat/page.tsx`)
 - ChatBot component full-screen
