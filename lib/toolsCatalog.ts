@@ -93,6 +93,74 @@ Non modificare niente. Solo notare com'è adesso. Riparti dai piedi e rifai il g
 4. Ripeti la sequenza completa 3-4 volte, come fosse un momento vero di partita.`,
     durataMinuti: 3,
   },
+  {
+    id: 'stacco',
+    week: 5,
+    emoji: '⚡',
+    nome: 'Lo Stacco',
+    principio: 'Accettazione',
+    inUnaRiga: "Stacchi dall'errore appena fatto, prima che ne arrivi un secondo.",
+    quando:
+      "Subito dopo un errore in campo, quando la mente vuole tornare indietro e rischi di sbagliarne un altro.",
+    pratica: `Occhi aperti, attenzione al punto sotto lo sterno.
+
+1. L'errore è successo. Niente replay: il fatto è già nel passato.
+2. Trova il punto d'ingresso — l'istante subito dopo l'errore, prima di reagire.
+3. Lì, un Reset: naso, bocca, gesto, mantra. La presa si allenta.
+4. Prossima azione. La palla riprende a girare e tu sei già al punto dopo.`,
+    durataMinuti: 3,
+  },
+  {
+    id: 'fatto-vs-storia',
+    week: 6,
+    emoji: '👁',
+    nome: 'Fatto vs Storia',
+    principio: 'Accettazione',
+    inUnaRiga: 'Separi quello che è successo dal veleno che ci aggiungi.',
+    quando:
+      'Quando un giudizio o uno sguardo ti schiaccia — il mister, la tribuna, i compagni, i social.',
+    pratica: `Occhi aperti, un Reset per arrivare qui.
+
+1. Prendi il giudizio che brucia. Spaccalo in due.
+2. Il FATTO: cosa è successo davvero, quello che hai visto o sentito? («Mi ha sostituito.»)
+3. La STORIA: cosa hai aggiunto tu per spiegarlo? («Ha smesso di credere in me.»)
+4. Tieni il fatto. La storia è tua — e una storia tua, un giorno, si racconta diversa.`,
+    durataMinuti: 3,
+  },
+  {
+    id: 'anticipo',
+    week: 7,
+    emoji: '🔥',
+    nome: "L'Anticipo",
+    principio: 'Perdono',
+    inUnaRiga: 'Senti la rabbia salire un secondo prima, e scegli invece di subirla.',
+    quando:
+      'Quando la frustrazione monta — un fallo non dato, una provocazione, una sostituzione — e rischi il rosso.',
+    pratica: `Occhi aperti, attenzione al punto sotto lo sterno.
+
+1. SENTI il gradino: dove sei sulla scala? Mascella, mani, calore. Il fuoco può restare.
+2. NOMINA: «rabbia». La chiami, non la segui. Già questo la rallenta.
+3. Un respiro per TORNARE presente — non per mandarla via: lei resta, torni tu.
+4. SCEGLI la prossima azione, lucido. Comandi tu, non il fuoco.`,
+    durataMinuti: 3,
+  },
+  {
+    id: 'rilascio',
+    week: 8,
+    emoji: '🎒',
+    nome: 'Il Rilascio',
+    principio: 'Lasciare Andare',
+    inUnaRiga: 'Lasci il peso della partita di ieri sul campo, ed entri pulito.',
+    quando:
+      "Dopo una partita che ti porti addosso, o prima della prossima per non entrare contratto.",
+    pratica: `Occhi aperti, attenzione al punto sotto lo sterno.
+
+1. Immagina lo zaino sulle spalle, pieno di quello che ti porti dietro: l'errore, il risultato, il giudizio.
+2. Un respiro lungo, lunghissimo. Mentre espiri, posa lo zaino oltre la linea. Non lo butti: lo posi, fuori dal campo.
+3. Il corpo si apre: spalle aperte, petto libero, respiro che scende. È la firma del gioco libero.
+4. Entra (o resta) da lì. Qualunque cosa succeda, il tuo valore non si tocca.`,
+    durataMinuti: 3,
+  },
 ];
 
 /** Strumenti sbloccati per la settimana corrente dell'utente */
