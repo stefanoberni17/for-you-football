@@ -15,12 +15,16 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
   2: '31d655f7-26c7-81ce-bab8-ef58b994c8c0', // Week 2 — Osservare la mente (Osservazione)
   3: '31d655f7-26c7-81c7-bb0e-da6a3a248ed3', // Week 3 — Il corpo in campo (Ascolto)
   4: '31d655f7-26c7-81ef-b4e4-ccf8066fa956', // Week 4 — Presenza sotto pressione (Ascolto applicato)
+  5: '37a655f7-26c7-81e2-bb47-e01f23107c2f', // Week 5 — L'Errore (Accettazione)
+  6: '380655f7-26c7-814e-a175-cb47a8ec49cc', // Week 6 — La Pressione e il Giudizio (Accettazione pt.2)
+  7: '380655f7-26c7-8146-bae0-e7012b43e5b2', // Week 7 — La Frustrazione e la Rabbia (Perdono)
+  8: '380655f7-26c7-8124-adb5-fa3941de0da5', // Week 8 — Più della maglia (Lasciare Andare)
 };
 
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
 
 export const TOTAL_WEEKS = 12;
-export const BETA_MAX_WEEK = 4; // settimane disponibili in Beta MVP
+export const BETA_MAX_WEEK = 8; // settimane disponibili (Blocco 1 + Blocco 2)
 
 export const DAYS_PER_WEEK = 7;
 export const GATE_DAY = 7; // giorno gate — obbligatorio, non comprimibile
@@ -39,21 +43,25 @@ export const WEEK_PRINCIPLES: Record<number, string> = {
   3: 'Ascolto',
   4: 'Ascolto applicato',
   5: 'Accettazione',
-  6: 'Lasciare Andare',
+  6: 'Accettazione',
   7: 'Perdono',
-  8: 'Perdono applicato',
+  8: 'Lasciare Andare',
   9: 'Ritornare al Centro',
   10: 'Ritornare al Centro applicato',
   11: 'Libertà',
   12: 'La Via',
 };
 
-// Strumenti per settimana (Blocco 1)
+// Strumenti per settimana (Blocco 1 + Blocco 2)
 export const WEEK_TOOLS: Record<number, string> = {
   1: 'Il Reset',
   2: "L'Observer",
   3: 'Il Body Check',
   4: 'Il Protocollo Pressione',
+  5: 'Lo Stacco',
+  6: 'Fatto vs Storia',
+  7: "L'Anticipo",
+  8: 'Il Rilascio',
 };
 
 // ─── Sport supportati ────────────────────────────────────────────────────────

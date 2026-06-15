@@ -69,6 +69,15 @@ export default function WeekCompletePage() {
           </p>
         </div>
 
+        {/* Filo rosso — il verbo del cammino di questa settimana */}
+        {settimana?.filoRosso && (
+          <div className="text-center mb-8">
+            <div className="inline-block bg-white/15 backdrop-blur-sm border border-white/25 rounded-full px-6 py-3">
+              <p className="text-white text-lg font-semibold">{settimana.filoRosso}</p>
+            </div>
+          </div>
+        )}
+
         {/* Riepilogo strumento */}
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-5 border border-white/20">
           <h2 className="text-white font-bold text-base mb-4 text-center">

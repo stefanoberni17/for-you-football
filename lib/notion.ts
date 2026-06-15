@@ -121,6 +121,7 @@ export function mapSettimana(page: any) {
     mantraDashboard: richText(p['Mantra Dashboard']),
     praticaPrePartita: richText(p['Pratica Pre Partita']),
     fraseSettimana: richText(p['Frase Settimana']),
+    filoRosso: richText(p['Filo Rosso']), // "Hai imparato a …" — mostrato a fine settimana
   };
 }
 

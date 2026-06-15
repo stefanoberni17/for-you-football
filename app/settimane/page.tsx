@@ -254,10 +254,9 @@ export default function SettimanePage() {
               </div>
               <div className="bg-surface-2 border border-dashed border-forest-500/30 rounded-2xl p-5">
                 <p className="text-xs font-bold uppercase tracking-wider text-forest-400 mb-1">Prossimamente</p>
-                <p className="text-sm font-semibold text-app mb-1">Settimane 5–12</p>
+                <p className="text-sm font-semibold text-app mb-1">Settimane 9–12</p>
                 <p className="text-xs text-muted leading-relaxed">
-                  Dal Blocco 2 (Giocare nelle difficoltà) al Blocco 3 (Giocare libero).
-                  In arrivo nella versione completa.
+                  Il Blocco 3 — Giocare libero. La destinazione del percorso. In arrivo.
                 </p>
               </div>
             </div>
