@@ -12,7 +12,7 @@
 **Obiettivo dichiarato (utente):** giocare meglio, gestire pressione ed errori
 **Obiettivo reale (profondo):** il campo come specchio — percorso di crescita personale
 
-**Stato attuale:** MVP deployato su Vercel. Fork di Naruto Inner Path (~85% infrastruttura condivisa). **Tema dark "For You Dark"** (palette forest brand + Spotify-style) attivo su tutte le pagine.
+**Stato attuale:** Deployato su Vercel. Fork di Naruto Inner Path (~85% infrastruttura condivisa). **Tema dark "For You Dark"** (palette forest brand + Spotify-style) attivo su tutte le pagine. **Blocco 1 + Blocco 2 LIVE (settimane 1-8, giugno 2026).**
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
@@ -444,7 +444,7 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 | 🟡 2 | 5–8 | Giocare nelle difficoltà | Accettazione, Lasciare Andare, Perdono |
 | 🟢 3 | 9–12 | Giocare libero | Ritornare al Centro |
 
-**Beta disponibile:** settimane 1-4 (`BETA_MAX_WEEK = 4` in `lib/constants.ts`)
+**Disponibili:** settimane 1-8 — Blocco 1 + Blocco 2 (`BETA_MAX_WEEK = 8` in `lib/constants.ts`). Blocco 3 (W9-12) in arrivo. W5-W8 hanno tutte le pagine su Notion (DB Settimane + DB Giorni) e gli id in `WEEK_RECORD_IDS`. Strumenti per settimana (`WEEK_TOOLS`): Reset/Observer/Body Check/Protocollo (W1-4) + Lo Stacco/Fatto vs Storia/L'Anticipo/Il Rilascio (W5-8). **Filo Rosso:** property su DB Settimane ("Hai imparato a tornare/vedere/…/posare") esposta da `mapSettimana.filoRosso` e mostrata in risalto su `/week-complete`. Drafts contenuti in `docs/content-w5-w8/`; export integrale CMS in `docs/cms-export/`.
 
 ### Struttura giornaliera
 | Giorno | Ruolo |
