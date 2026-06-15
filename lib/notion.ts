@@ -153,3 +153,84 @@ export function mapGiorno(page: any) {
     audioUrl: urlField(p['Audio Pratica']), // URL pubblico Supabase Storage MP3 (opzionale)
   };
 }
+
+// ─── DB Difficoltà ("Come affrontare le difficoltà") — schede a layer ──────────
+// Una riga Notion = un layer di una scheda. Le righe si raggruppano per "Difficoltà";
+// i layer si ordinano per "Sblocco Settimana" e si sbloccano quando l'utente raggiunge
+// quella settimana. Il lock (e lo strip dei layer bloccati) è applicato nella route.
+
+export interface DifficoltaLayer {
+  sbloccoSettimana: number;
+  strumento: string;
+  titoloLayer: string;
+  apertura: string;
+  pratica: string[];
+  chiusura: string;
+  coachPrompt: string;
+}
+
+export interface DifficoltaCard {
+  id: string; // slug da "Difficoltà"
+  difficolta: string;
+  emoji: string;
+  sottotitolo: string;
+  ordine: number;
+  layers: DifficoltaLayer[]; // ordinati per sbloccoSettimana
+}
+
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+/** Legge il DB Difficoltà da Notion e raggruppa le righe in schede. [] se non configurato. */
+export async function fetchDifficoltaCards(): Promise<DifficoltaCard[]> {
+  const dbId = process.env.NOTION_DATABASE_DIFFICOLTA;
+  if (!dbId) return [];
+
+  const rows = await queryDatabase(dbId, {
+    sorts: [{ property: 'Ordine Scheda', direction: 'ascending' }],
+  });
+
+  const byCard = new Map<string, DifficoltaCard>();
+  for (const page of rows) {
+    const p = page.properties;
+    const difficolta = richText(p['Difficoltà']);
+    if (!difficolta) continue;
+    const id = slugify(difficolta);
+
+    if (!byCard.has(id)) {
+      byCard.set(id, {
+        id,
+        difficolta,
+        emoji: '',
+        sottotitolo: '',
+        ordine: num(p['Ordine Scheda']) || 999,
+        layers: [],
+      });
+    }
+    const card = byCard.get(id)!;
+    // emoji + sottotitolo: presi dalla riga che li ha (tipicamente il layer "Adesso")
+    if (!card.emoji && richText(p['Emoji'])) card.emoji = richText(p['Emoji']);
+    if (!card.sottotitolo && richText(p['Sottotitolo'])) card.sottotitolo = richText(p['Sottotitolo']);
+
+    card.layers.push({
+      sbloccoSettimana: num(p['Sblocco Settimana']) || 1,
+      strumento: richText(p['Strumento']),
+      titoloLayer: richText(p['Titolo Layer']),
+      apertura: richText(p['Apertura']),
+      pratica: richTextLines(p['Pratica']),
+      chiusura: richText(p['Chiusura']),
+      coachPrompt: richText(p['Coach Prompt']),
+    });
+  }
+
+  const cards = Array.from(byCard.values());
+  cards.forEach((c) => c.layers.sort((a, b) => a.sbloccoSettimana - b.sbloccoSettimana));
+  cards.sort((a, b) => a.ordine - b.ordine);
+  return cards;
+}
