@@ -4,8 +4,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { TOOLS, type Tool } from '@/lib/toolsCatalog';
-import { SOS_CARDS } from '@/lib/sosCards';
+import { authFetch } from '@/lib/authFetch';
 import { useMeditation } from '@/components/MeditationContext';
+
+interface DiffCard {
+  id: string;
+  difficolta: string;
+  emoji: string;
+  sottotitolo: string;
+  unlockedCount: number;
+  totalCount: number;
+}
 import PracticePopup from '@/components/PracticePopup';
 import { Lock, ChevronRight, ChevronDown, Play, Wind } from 'lucide-react';
 
@@ -24,7 +33,8 @@ export default function StrumentiPage() {
   // Sezioni espandibili: cassetta aperta di default (identità della pagina),
   // SOS chiusa (situazionale). Stato persistito — l'app ricorda la preferenza.
   const [cassettaOpen, setCassettaOpen] = useState(true);
-  const [sosOpen, setSosOpen] = useState(false);
+  const [sosOpen, setSosOpen] = useState(true); // difficoltà in evidenza: aperta di default
+  const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
 
   useEffect(() => {
     try {
@@ -58,6 +68,13 @@ export default function StrumentiPage() {
         .eq('user_id', session.user.id)
         .single();
       setCurrentWeek(profile?.current_week || 1);
+      try {
+        const res = await authFetch('/api/difficolta');
+        if (res.ok) {
+          const data = await res.json();
+          setDiffCards(data.cards || []);
+        }
+      } catch { /* non bloccante */ }
       setLoading(false);
     };
     load();
@@ -245,8 +262,8 @@ export default function StrumentiPage() {
           )}
         </div>
 
-        {/* ── Momento difficile? (espandibile, chiusa di default) ──────────── */}
-        <div className="bg-surface rounded-2xl shadow-sm border border-amber-500/20 overflow-hidden">
+        {/* ── Come affrontare le difficoltà (in evidenza, aperta di default) ── */}
+        <div className="bg-surface rounded-2xl shadow-md border border-amber-500/30 overflow-hidden">
           <button
             onClick={() => toggleSection('sos')}
             aria-expanded={sosOpen}
@@ -255,9 +272,11 @@ export default function StrumentiPage() {
             <span className="flex items-center gap-3">
               <span className="text-2xl" aria-hidden="true">⚡</span>
               <span>
-                <span className="block text-sm font-bold text-app">Momento difficile?</span>
+                <span className="block text-sm font-bold text-app">Come affrontare le difficoltà</span>
                 <span className="block text-xs text-muted mt-0.5">
-                  {SOS_CARDS.length} situazioni, una guida per ciascuna
+                  {diffCards.length > 0
+                    ? `${diffCards.length} situazioni — ogni guida cresce mentre avanzi`
+                    : 'Le situazioni toste, una guida per ciascuna'}
                 </span>
               </span>
             </span>
@@ -269,7 +288,7 @@ export default function StrumentiPage() {
 
           {sosOpen && (
             <div className="px-3 pb-3 pt-1 space-y-2">
-              {SOS_CARDS.map(card => (
+              {diffCards.map(card => (
                 <button
                   key={card.id}
                   onClick={() => router.push(`/sos?card=${card.id}`)}
@@ -278,8 +297,13 @@ export default function StrumentiPage() {
                   <span className="flex items-center gap-3">
                     <span className="text-2xl flex-shrink-0" aria-hidden="true">{card.emoji}</span>
                     <span>
-                      <span className="block text-sm font-bold text-app">{card.titolo}</span>
-                      <span className="block text-xs text-muted mt-0.5">{card.sottotitolo}</span>
+                      <span className="block text-sm font-bold text-app">{card.difficolta}</span>
+                      {card.sottotitolo && <span className="block text-xs text-muted mt-0.5">{card.sottotitolo}</span>}
+                      {card.totalCount > 1 && (
+                        <span className="block text-[11px] text-forest-400 font-semibold mt-1">
+                          {card.unlockedCount}/{card.totalCount} modi · cresce avanzando
+                        </span>
+                      )}
                     </span>
                   </span>
                   <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
