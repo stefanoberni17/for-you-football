@@ -36,9 +36,16 @@ export async function POST(request: NextRequest) {
     }
 
     const userContext = await buildUserContext(userId);
-    const systemPrompt = SYSTEM_PROMPT + WEB_FORMAT + '\n\n' + userContext;
+    // Prompt caching: il prefisso stabile (SYSTEM_PROMPT + WEB_FORMAT, ~stesso a ogni
+    // messaggio) è cachato con cache_control; il contesto utente volatile resta in coda,
+    // non cachato. In una sessione web (botta e risposta entro 5 min) → ~70% di risparmio
+    // sulla parte cachata + latenza più bassa.
+    const systemBlocks = [
+      { type: 'text', text: SYSTEM_PROMPT + WEB_FORMAT, cache_control: { type: 'ephemeral' as const } },
+      { type: 'text', text: '\n\n' + userContext },
+    ];
 
-    const { text, usage } = await callClaude(systemPrompt, messages, 1500, true);
+    const { text, usage } = await callClaude(systemBlocks, messages, 1500, true);
 
     // Memoria unificata: come su Telegram, la conversazione web viene distillata
     // in coach_notes (fire-and-forget). I messaggi grezzi NON vengono salvati —
