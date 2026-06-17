@@ -839,7 +839,7 @@ export async function callClaude(
   const internalMessages: any[] = messages.map(m => ({ role: m.role, content: m.content }));
 
   const createParams: any = {
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: maxTokens,
     system: systemPrompt,
     messages: internalMessages,
@@ -898,7 +898,7 @@ export async function callClaude(
   ];
 
   const completion2 = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: maxTokens,
     system: systemPrompt,
     messages: messagesWithResult,

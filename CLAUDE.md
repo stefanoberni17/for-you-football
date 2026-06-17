@@ -28,7 +28,7 @@
 | Styling | Tailwind CSS 4 |
 | Auth + DB | Supabase (PostgreSQL) + `@supabase/ssr` + `@supabase/auth-helpers-nextjs` |
 | CMS | Notion API (`@notionhq/client`) |
-| AI | Anthropic Claude Sonnet (`@anthropic-ai/sdk`) — modello: `claude-sonnet-4-20250514` |
+| AI | Anthropic Claude Sonnet (`@anthropic-ai/sdk`) — modello: `claude-sonnet-4-6` |
 | Bot | Telegram (`node-telegram-bot-api`) |
 | Charts | Recharts 3.8.1 |
 | Icons | Lucide React |
@@ -491,7 +491,7 @@ Totale: 15-20 sec. In campo, sempre.
 - `buildUserContext(userId)` — Costruisce contesto personalizzato leggendo da Supabase (include check-in fisico di oggi + media ultimi 7 giorni)
 - `LEGGI_PERCORSO_TOOL` — Tool Anthropic per leggere contenuto settimane/giorni da Notion in tempo reale
 - `executeLeggiPercorso(input)` — Esegue fetch settimana/giorno da Notion, ritorna testo strutturato
-- `callClaude(systemPrompt, messages, maxTokens, useTools)` — Chiama `claude-sonnet-4-20250514` (se `useTools=true`: gestisce tool_use con doppia chiamata)
+- `callClaude(systemPrompt, messages, maxTokens, useTools)` — Chiama `claude-sonnet-4-6` (se `useTools=true`: gestisce tool_use con doppia chiamata)
 - `generateCoachRecap(userId, messages)` — Distilla conversazione in coach_notes (pattern, temi, thread aperti)
 - `checkSafetyKeywords(text)` — Rileva parole chiave a rischio (suicidio, autolesionismo, violenza)
 - `SAFETY_KEYWORDS` — Lista keyword per detection
