@@ -54,7 +54,7 @@ for-you-football/
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
 │   ├── sos/page.tsx                       # "Come affrontare le difficoltà" — schede VIVE a layer da Notion (?card=<id>)
-│   ├── strumenti/page.tsx                 # Hub "Palestra" (tab Strumenti): Reset rapido + cassetta 8 capacità da allenare (dettaglio = menu esercizi: àncora + base rifacibili) + schede SOS
+│   ├── strumenti/page.tsx                 # Hub "Palestra": Reset rapido + Palestra per principio (7 capacità, dettaglio = menu esercizi con "Cosa allena") + strumenti (riferimento) + schede SOS
 │   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
@@ -102,7 +102,8 @@ for-you-football/
 │   ├── dayUnlockLogic.ts                  # Logica sblocco giorni/settimane (time-gated)
 │   ├── actionsCatalog.ts                  # Catalogo 20 azioni "act as if" + helper filtro per settimana
 │   ├── sosCards.ts                        # 4 schede SOS statiche — ora FALLBACK di /api/difficolta se Notion non risponde
-│   ├── toolsCatalog.ts                    # Palestra: 8 strumenti W1-8 come capacità (Exercise/àncora + eserciziBase generici rifacibili) + unlockedTools
+│   ├── toolsCatalog.ts                    # Cassetta: 8 strumenti W1-8 (riferimento cos'è/quando/pratica) — riusati come àncora dalla Palestra
+│   ├── palestraCatalog.ts                 # Palestra per principio: 7 capacità × esercizi base ("Cosa allena" + step), àncora dai tool, unlock per principio/esercizio
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)

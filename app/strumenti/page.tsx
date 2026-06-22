@@ -3,9 +3,18 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { TOOLS, type Tool, type Exercise } from '@/lib/toolsCatalog';
+import { TOOLS, type Tool } from '@/lib/toolsCatalog';
+import {
+  CAPACITA,
+  unlockedCapacita,
+  visibleEsercizi,
+  type Capacita,
+  type PalestraExercise,
+} from '@/lib/palestraCatalog';
 import { authFetch } from '@/lib/authFetch';
 import { useMeditation } from '@/components/MeditationContext';
+import PracticePopup from '@/components/PracticePopup';
+import { Lock, ChevronRight, ChevronDown, Play, Wind } from 'lucide-react';
 
 interface DiffCard {
   id: string;
@@ -15,38 +24,43 @@ interface DiffCard {
   unlockedCount: number;
   totalCount: number;
 }
-import PracticePopup from '@/components/PracticePopup';
-import { Lock, ChevronRight, ChevronDown, Play, Wind } from 'lucide-react';
 
 /**
- * La Cassetta degli Attrezzi — gli strumenti del percorso, per sempre.
- * Il percorso finisce, gli attrezzi restano: ogni strumento sbloccato è
- * rileggibile e rifacibile (pratica guidata con timer) quando serve.
+ * La Palestra — il livello "allenamento", organizzato per CAPACITÀ (principio).
+ * Protagonista della pagina: ogni capacità ha un menu di esercizi base, concreti
+ * e rifacibili ogni giorno (palestraCatalog). Gli Strumenti restano come sezione
+ * di RIFERIMENTO (cos'è / quando / la pratica). Difficoltà + Carta invariate.
  */
 export default function StrumentiPage() {
   const router = useRouter();
   const { openMeditation, mantra } = useMeditation();
   const [loading, setLoading] = useState(true);
   const [currentWeek, setCurrentWeek] = useState(1);
-  const [selected, setSelected] = useState<Tool | null>(null);
-  const [activeExercise, setActiveExercise] = useState<Exercise | null>(null);
-  // Sezioni espandibili: cassetta aperta di default (identità della pagina),
-  // SOS chiusa (situazionale). Stato persistito — l'app ricorda la preferenza.
-  const [cassettaOpen, setCassettaOpen] = useState(true);
-  const [sosOpen, setSosOpen] = useState(true); // difficoltà in evidenza: aperta di default
+  const [selectedCapacita, setSelectedCapacita] = useState<Capacita | null>(null);
+  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
+  const [activeExercise, setActiveExercise] = useState<PalestraExercise | null>(null);
+  const [showToolPractice, setShowToolPractice] = useState(false);
+  // Sezioni espandibili: Palestra protagonista (aperta), Strumenti riferimento
+  // (chiusa), difficoltà in evidenza (aperta). Stato persistito.
+  const [palestraOpen, setPalestraOpen] = useState(true);
+  const [cassettaOpen, setCassettaOpen] = useState(false);
+  const [sosOpen, setSosOpen] = useState(true);
   const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
 
   useEffect(() => {
     try {
+      const p = localStorage.getItem('strumentiHub.palestra');
       const c = localStorage.getItem('strumentiHub.cassetta');
       const s = localStorage.getItem('strumentiHub.sos');
+      if (p !== null) setPalestraOpen(p === '1');
       if (c !== null) setCassettaOpen(c === '1');
       if (s !== null) setSosOpen(s === '1');
     } catch { /* storage non disponibile — default */ }
   }, []);
 
-  const toggleSection = (key: 'cassetta' | 'sos') => {
-    const setter = key === 'cassetta' ? setCassettaOpen : setSosOpen;
+  const toggleSection = (key: 'palestra' | 'cassetta' | 'sos') => {
+    const setter =
+      key === 'palestra' ? setPalestraOpen : key === 'cassetta' ? setCassettaOpen : setSosOpen;
     setter(prev => {
       try {
         localStorage.setItem(`strumentiHub.${key}`, prev ? '0' : '1');
@@ -91,77 +105,55 @@ export default function StrumentiPage() {
     );
   }
 
-  const unlockedCount = TOOLS.filter(t => currentWeek >= t.week).length;
+  const capUnlocked = unlockedCapacita(currentWeek).length;
+  const toolUnlocked = TOOLS.filter(t => currentWeek >= t.week).length;
 
-  // ── Dettaglio capacità: menu di esercizi base allenabili ──────────────────
-  if (selected) {
-    // L'esercizio-àncora (la pratica imparata) + gli esercizi base generici.
-    const esercizi: Exercise[] = [
-      {
-        nome: selected.nome,
-        pratica: selected.pratica,
-        durataMinuti: selected.durataMinuti,
-        tipoPratica: selected.tipoPratica,
-      },
-      ...(selected.eserciziBase ?? []),
-    ];
+  // ── Dettaglio capacità: menu di esercizi base (con "Cosa allena") ─────────
+  if (selectedCapacita) {
+    const esercizi = visibleEsercizi(selectedCapacita, currentWeek);
     return (
       <main className="min-h-screen bg-app pb-tabbar-lg">
         <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
           <div className="max-w-xl mx-auto">
             <button
-              onClick={() => setSelected(null)}
+              onClick={() => setSelectedCapacita(null)}
               className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
             >
-              ← Tutti gli strumenti
+              ← La Palestra
             </button>
-            <div className="text-4xl mb-2">{selected.emoji}</div>
-            <h1 className="text-2xl font-bold text-white leading-tight">{selected.nome}</h1>
-            <p className="text-forest-100 text-sm mt-1">
-              Settimana {selected.week} · {selected.principio}
-            </p>
+            <div className="text-4xl mb-2">{selectedCapacita.emoji}</div>
+            <h1 className="text-2xl font-bold text-white leading-tight">{selectedCapacita.principio}</h1>
+            <p className="text-forest-100 text-sm mt-1">{selectedCapacita.sottotitolo}</p>
           </div>
         </div>
 
-        <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            <p className="text-app text-sm leading-relaxed italic">{selected.inUnaRiga}</p>
-          </div>
-
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
-              ⚽ Quando usarlo
-            </h2>
-            <p className="text-app text-sm leading-relaxed">{selected.quando}</p>
-          </div>
-
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-1">
-              🏋️ Allenamento
-            </h2>
-            <p className="text-xs text-muted mb-3">
-              Esercizi base, da rifare quando vuoi — è allenandoli che diventano tuoi.
-            </p>
-            <div className="space-y-2">
-              {esercizi.map((ex, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveExercise(ex)}
-                  className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between text-left hover:bg-[#293429] transition-all active:scale-[0.99]"
-                >
-                  <span className="min-w-0">
-                    <span className="block text-sm font-semibold text-app">{ex.nome}</span>
-                    <span className="block text-[11px] text-faint mt-0.5">{ex.durataMinuti} min</span>
-                  </span>
-                  <span className="flex items-center gap-1.5 text-forest-300 text-xs font-bold flex-shrink-0">
-                    <Play className="w-3.5 h-3.5" aria-hidden="true" />
-                    Allena
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
+        <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
+          <p className="text-xs text-muted px-1 leading-relaxed">
+            Esercizi base, da rifare quando vuoi — è allenandoli che diventano tuoi.
+          </p>
+          {esercizi.map(ex => (
+            <button
+              key={ex.id}
+              onClick={() => setActiveExercise(ex)}
+              className="w-full bg-surface rounded-2xl shadow-sm p-5 border border-divider text-left hover:border-forest-500/40 transition-all active:scale-[0.99]"
+            >
+              <div className="flex items-center justify-between gap-3 mb-1.5">
+                <span className="text-sm font-bold text-app">
+                  {ex.nome}
+                  {ex.ancora && (
+                    <span className="ml-2 text-[10px] font-semibold text-forest-400 align-middle uppercase tracking-wide">
+                      strumento
+                    </span>
+                  )}
+                </span>
+                <span className="flex items-center gap-1.5 text-forest-300 text-xs font-bold flex-shrink-0">
+                  <Play className="w-3.5 h-3.5" aria-hidden="true" />
+                  Allena · {ex.durataMinuti}&apos;
+                </span>
+              </div>
+              <p className="text-xs text-muted leading-relaxed">{ex.cosaAllena}</p>
+            </button>
+          ))}
           <div className="h-4" />
         </div>
 
@@ -171,7 +163,7 @@ export default function StrumentiPage() {
             pratica={activeExercise.pratica}
             durataMinuti={activeExercise.durataMinuti}
             tipoPratica={activeExercise.tipoPratica}
-            weekTool={selected.nome}
+            weekTool={selectedCapacita.principio}
             onComplete={() => setActiveExercise(null)}
             onSkip={() => setActiveExercise(null)}
           />
@@ -180,7 +172,71 @@ export default function StrumentiPage() {
     );
   }
 
-  // ── Hub: Reset rapido + cassetta espandibile + SOS espandibile + carta ────
+  // ── Dettaglio strumento (riferimento): cos'è / quando / la pratica ────────
+  if (selectedTool) {
+    return (
+      <main className="min-h-screen bg-app pb-tabbar-lg">
+        <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
+          <div className="max-w-xl mx-auto">
+            <button
+              onClick={() => setSelectedTool(null)}
+              className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
+            >
+              ← I tuoi strumenti
+            </button>
+            <div className="text-4xl mb-2">{selectedTool.emoji}</div>
+            <h1 className="text-2xl font-bold text-white leading-tight">{selectedTool.nome}</h1>
+            <p className="text-forest-100 text-sm mt-1">
+              Settimana {selectedTool.week} · {selectedTool.principio}
+            </p>
+          </div>
+        </div>
+
+        <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
+          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
+            <p className="text-app text-sm leading-relaxed italic">{selectedTool.inUnaRiga}</p>
+          </div>
+
+          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
+            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
+              ⚽ Quando usarlo
+            </h2>
+            <p className="text-app text-sm leading-relaxed">{selectedTool.quando}</p>
+          </div>
+
+          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
+            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
+              🎯 La pratica
+            </h2>
+            <p className="text-app text-sm leading-relaxed whitespace-pre-line">{selectedTool.pratica}</p>
+          </div>
+
+          <button
+            onClick={() => setShowToolPractice(true)}
+            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2"
+          >
+            <Play className="w-4 h-4" aria-hidden="true" />
+            Fai la pratica ora — {selectedTool.durataMinuti} min
+          </button>
+
+          <div className="h-4" />
+        </div>
+
+        {showToolPractice && (
+          <PracticePopup
+            titolo={selectedTool.nome}
+            pratica={selectedTool.pratica}
+            durataMinuti={selectedTool.durataMinuti}
+            weekTool={selectedTool.nome}
+            onComplete={() => setShowToolPractice(false)}
+            onSkip={() => setShowToolPractice(false)}
+          />
+        )}
+      </main>
+    );
+  }
+
+  // ── Hub: Reset rapido + Palestra + Strumenti (riferimento) + difficoltà ───
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
@@ -190,7 +246,7 @@ export default function StrumentiPage() {
           </p>
           <h1 className="text-2xl font-bold text-white leading-tight">Palestra</h1>
           <p className="text-forest-100 text-sm mt-1">
-            Allena quello che hai imparato — {unlockedCount} su {TOOLS.length} sbloccati.
+            Allena le tue capacità — {capUnlocked} su {CAPACITA.length} sbloccate.
           </p>
         </div>
       </div>
@@ -215,7 +271,74 @@ export default function StrumentiPage() {
           <span className="text-white text-lg flex-shrink-0">→</span>
         </button>
 
-        {/* ── La cassetta (espandibile, aperta di default) ─────────────────── */}
+        {/* ── La Palestra (per principio) — protagonista, aperta di default ──── */}
+        <div className="bg-surface rounded-2xl shadow-md border border-forest-500/30 overflow-hidden">
+          <button
+            onClick={() => toggleSection('palestra')}
+            aria-expanded={palestraOpen}
+            className="w-full p-4 flex items-center justify-between text-left"
+          >
+            <span className="flex items-center gap-3">
+              <span className="text-2xl" aria-hidden="true">🏋️</span>
+              <span>
+                <span className="block text-sm font-bold text-app">La Palestra</span>
+                <span className="block text-xs text-muted mt-0.5">
+                  {capUnlocked} di {CAPACITA.length} capacità — allena un principio
+                </span>
+              </span>
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 text-faint flex-shrink-0 transition-transform duration-200 ${palestraOpen ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            />
+          </button>
+
+          {palestraOpen && (
+            <div className="px-3 pb-3 pt-1 space-y-2">
+              {CAPACITA.map(c => {
+                const unlocked = currentWeek >= c.week;
+                if (!unlocked) {
+                  return (
+                    <div
+                      key={c.id}
+                      className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between opacity-50"
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="w-9 h-9 rounded-full bg-app flex items-center justify-center flex-shrink-0">
+                          <Lock className="w-4 h-4 text-faint" aria-hidden="true" />
+                        </span>
+                        <span>
+                          <span className="block text-sm font-bold text-muted">{c.principio}</span>
+                          <span className="block text-[11px] text-faint mt-0.5">
+                            Si sblocca dalla Settimana {c.week}
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  );
+                }
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedCapacita(c)}
+                    className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between text-left hover:bg-[#293429] transition-all active:scale-[0.99]"
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className="text-2xl flex-shrink-0" aria-hidden="true">{c.emoji}</span>
+                      <span>
+                        <span className="block text-sm font-bold text-app">{c.principio}</span>
+                        <span className="block text-xs text-muted mt-0.5">{c.sottotitolo}</span>
+                      </span>
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* ── I tuoi strumenti (riferimento) — chiusa di default ────────────── */}
         <div className="bg-surface rounded-2xl shadow-sm border border-divider overflow-hidden">
           <button
             onClick={() => toggleSection('cassetta')}
@@ -225,9 +348,9 @@ export default function StrumentiPage() {
             <span className="flex items-center gap-3">
               <span className="text-2xl" aria-hidden="true">🧰</span>
               <span>
-                <span className="block text-sm font-bold text-app">La cassetta</span>
+                <span className="block text-sm font-bold text-app">I tuoi strumenti</span>
                 <span className="block text-xs text-muted mt-0.5">
-                  {unlockedCount} di {TOOLS.length} sbloccati — tocca per allenarli
+                  {toolUnlocked} di {TOOLS.length} — cos&apos;è e quando usarlo
                 </span>
               </span>
             </span>
@@ -254,7 +377,7 @@ export default function StrumentiPage() {
                         <span>
                           <span className="block text-sm font-bold text-muted">{tool.nome}</span>
                           <span className="block text-[11px] text-faint mt-0.5">
-                            Si allena dalla Settimana {tool.week}
+                            Si sblocca alla Settimana {tool.week}
                           </span>
                         </span>
                       </span>
@@ -264,7 +387,7 @@ export default function StrumentiPage() {
                 return (
                   <button
                     key={tool.id}
-                    onClick={() => setSelected(tool)}
+                    onClick={() => setSelectedTool(tool)}
                     className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between text-left hover:bg-[#293429] transition-all active:scale-[0.99]"
                   >
                     <span className="flex items-center gap-3">
