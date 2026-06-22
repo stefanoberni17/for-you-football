@@ -416,7 +416,8 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `È Esercizio Principale` (checkbox) — true per giorno 4
 - `Domande Gate` (text — newline separated) — solo per giorno 7
 - `Tipo Giorno` (select)
-- `Contesto` (text) — contesto aggiuntivo del giorno (passato al Coach via tool)
+- `Contesto` (text) — **COACH-ONLY**: note di regia del giorno (passate al Coach via tool `leggi_percorso`). NON mostrato all'utente. Da W5 contiene istruzioni dietro le quinte (Regole, "non anticipare", sourcing storie) → mai esporlo in UI.
+- `Perché Funziona` (text) — **USER-FACING**: alimenta il box "💡 Perché funziona" sulla pagina pratica (giorni 1-6). Conferma scientifica leggibile di ciò che il ragazzo sta facendo (concetti reali, zero anticipazioni). Popolato W5-W8 (G1-G6); W1-W4 usano il loro `Contesto` come fallback finché non migrati. Draft: `docs/content-w5-w8/perche-funziona.md`.
 - `Domanda Pre Pratica` (text) — domanda riflessione mostrata prima della pratica
 - `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)

@@ -412,17 +412,25 @@ export default function GiornoPage() {
               {giorno.pratica}
             </p>
 
-            {/* Perché funziona */}
-            {giorno.contesto && giorno.contesto.trim() !== '' && (
-              <div className="bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg px-4 py-4 mt-4">
-                <h3 className="text-base font-semibold text-emerald-300 mb-2">
-                  💡 Perché funziona
-                </h3>
-                <p className="text-sm text-app leading-relaxed">
-                  {giorno.contesto}
-                </p>
-              </div>
-            )}
+            {/* Perché funziona — campo USER-FACING dedicato (`percheFunziona`).
+                Il campo `contesto` è COACH-ONLY (note di regia) e NON va MAI mostrato qui.
+                Fallback transitorio: per W1-W4 il vecchio `contesto` era già scritto come
+                testo user-facing (scientifico ma leggibile) → lo riusiamo finché non
+                migriamo quei giorni nel campo dedicato. Da W5 in poi `contesto` è regia: mai mostrarlo. */}
+            {(() => {
+              const perche =
+                (giorno.percheFunziona && giorno.percheFunziona.trim()) ||
+                (weekNumber <= 4 && giorno.contesto ? giorno.contesto.trim() : '');
+              if (!perche) return null;
+              return (
+                <div className="bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg px-4 py-4 mt-4">
+                  <h3 className="text-base font-semibold text-emerald-300 mb-2">
+                    💡 Perché funziona
+                  </h3>
+                  <p className="text-sm text-app leading-relaxed">{perche}</p>
+                </div>
+              );
+            })()}
 
             {/* Bottone pratica guidata */}
             {hasPracticeTimer && (

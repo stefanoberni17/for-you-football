@@ -146,7 +146,8 @@ export function mapGiorno(page: any) {
     tipoGiorno: select(p['Tipo Giorno']),
     haCheckPrecedente: checkbox(p['Ha Check Precedente']),
     testoCheck: richText(p['Testo Check']),
-    contesto: richText(p['Contesto']),
+    contesto: richText(p['Contesto']), // COACH-ONLY: note di regia, lette solo dal Coach via tool — MAI mostrate all'utente
+    percheFunziona: richText(p['Perché Funziona']), // USER-FACING: alimenta il box "💡 Perché funziona" sulla pagina pratica
     domandaPrePratica: richText(p['Domanda Pre Pratica']),
     durataInspira: num(p['Durata Inspira']),
     durataEspira: num(p['Durata Espira']),
