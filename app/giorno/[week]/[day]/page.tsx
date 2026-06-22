@@ -281,6 +281,13 @@ export default function GiornoPage() {
         >
           Torna alla settimana →
         </button>
+        {/* Invito soft (non obbligo): hai voglia di allenarti ancora? → Palestra */}
+        <button
+          onClick={() => router.push('/strumenti')}
+          className="mt-5 text-forest-100 hover:text-white text-sm font-medium underline underline-offset-4 transition-colors"
+        >
+          🏋️ Oppure allena ciò che vuoi in Palestra
+        </button>
       </main>
     );
   }

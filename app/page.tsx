@@ -387,6 +387,27 @@ export default function HomePage() {
           )}
         </div>
 
+        {/* Hai fatto il giorno di oggi (o finito la beta) → invito soft, non
+            obbligo, alla Palestra. Fisso in questo stato: appare solo quando non
+            c'è una nuova pratica da fare oggi, così non distrae dal percorso. */}
+        {(allDone || nextDayLocked) && (
+          <button
+            onClick={() => router.push('/strumenti')}
+            className="w-full bg-surface border border-forest-500/30 rounded-2xl p-4 flex items-center justify-between text-left hover:bg-surface-2 transition-all active:scale-[0.99]"
+          >
+            <span className="flex items-center gap-3">
+              <span className="text-2xl flex-shrink-0" aria-hidden="true">🏋️</span>
+              <span>
+                <span className="block text-sm font-bold text-app">Hai voglia di allenarti ancora?</span>
+                <span className="block text-xs text-muted mt-0.5">
+                  In Palestra alleni ciò che vuoi — presenza, osservazione, corpo.
+                </span>
+              </span>
+            </span>
+            <span className="text-forest-300 text-lg flex-shrink-0">→</span>
+          </button>
+        )}
+
         {/* Missione della settimana — dal gate appena superato */}
         {weeklyMission && !allDone && (
           <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
