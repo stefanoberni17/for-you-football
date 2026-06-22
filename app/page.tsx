@@ -361,16 +361,33 @@ export default function HomePage() {
           </div>
 
           {allDone ? (
-            <button
-              onClick={() => router.push('/beta-complete')}
-              className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
-            >
-              <span>🏆</span>
-              <span>Rivedi schermata di completamento</span>
-            </button>
+            <div className="space-y-2.5">
+              <button
+                onClick={() => router.push('/strumenti')}
+                className="w-full bg-white text-forest-700 font-bold py-4 px-6 rounded-xl hover:bg-forest-50 transition-all text-base flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span>🏋️</span>
+                <span>Allenati in Palestra</span>
+              </button>
+              <button
+                onClick={() => router.push('/beta-complete')}
+                className="w-full text-forest-100 hover:text-white text-xs font-medium underline underline-offset-4 transition-colors"
+              >
+                🏆 Rivedi schermata di completamento
+              </button>
+            </div>
           ) : nextDayLocked ? (
-            <div className="bg-white/20 rounded-xl px-4 py-3 text-sm font-medium text-white text-center">
-              ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani
+            <div className="space-y-2.5">
+              <button
+                onClick={() => router.push('/strumenti')}
+                className="w-full bg-white text-forest-700 font-bold py-4 px-6 rounded-xl hover:bg-forest-50 transition-all text-base flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span>🏋️</span>
+                <span>Allenati in Palestra</span>
+              </button>
+              <p className="text-forest-100 text-xs text-center">
+                ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani
+              </p>
             </div>
           ) : (
             <button
@@ -386,27 +403,6 @@ export default function HomePage() {
             </button>
           )}
         </div>
-
-        {/* Hai fatto il giorno di oggi (o finito la beta) → invito soft, non
-            obbligo, alla Palestra. Fisso in questo stato: appare solo quando non
-            c'è una nuova pratica da fare oggi, così non distrae dal percorso. */}
-        {(allDone || nextDayLocked) && (
-          <button
-            onClick={() => router.push('/strumenti')}
-            className="w-full bg-surface border border-forest-500/30 rounded-2xl p-4 flex items-center justify-between text-left hover:bg-surface-2 transition-all active:scale-[0.99]"
-          >
-            <span className="flex items-center gap-3">
-              <span className="text-2xl flex-shrink-0" aria-hidden="true">🏋️</span>
-              <span>
-                <span className="block text-sm font-bold text-app">Hai voglia di allenarti ancora?</span>
-                <span className="block text-xs text-muted mt-0.5">
-                  In Palestra alleni ciò che vuoi — presenza, osservazione, corpo.
-                </span>
-              </span>
-            </span>
-            <span className="text-forest-300 text-lg flex-shrink-0">→</span>
-          </button>
-        )}
 
         {/* Missione della settimana — dal gate appena superato */}
         {weeklyMission && !allDone && (

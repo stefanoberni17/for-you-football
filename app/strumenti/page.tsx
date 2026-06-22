@@ -246,7 +246,7 @@ export default function StrumentiPage() {
           </p>
           <h1 className="text-2xl font-bold text-white leading-tight">Palestra</h1>
           <p className="text-forest-100 text-sm mt-1">
-            Allena le tue capacità — {capUnlocked} su {CAPACITA.length} sbloccate.
+            Lo spazio dove ti alleni davvero — {capUnlocked} su {CAPACITA.length} capacità.
           </p>
         </div>
       </div>
