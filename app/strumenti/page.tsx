@@ -43,24 +43,20 @@ export default function StrumentiPage() {
   // Sezioni espandibili: Palestra protagonista (aperta), Strumenti riferimento
   // (chiusa), difficoltà in evidenza (aperta). Stato persistito.
   const [palestraOpen, setPalestraOpen] = useState(true);
-  const [cassettaOpen, setCassettaOpen] = useState(false);
   const [sosOpen, setSosOpen] = useState(true);
   const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
 
   useEffect(() => {
     try {
       const p = localStorage.getItem('strumentiHub.palestra');
-      const c = localStorage.getItem('strumentiHub.cassetta');
       const s = localStorage.getItem('strumentiHub.sos');
       if (p !== null) setPalestraOpen(p === '1');
-      if (c !== null) setCassettaOpen(c === '1');
       if (s !== null) setSosOpen(s === '1');
     } catch { /* storage non disponibile — default */ }
   }, []);
 
-  const toggleSection = (key: 'palestra' | 'cassetta' | 'sos') => {
-    const setter =
-      key === 'palestra' ? setPalestraOpen : key === 'cassetta' ? setCassettaOpen : setSosOpen;
+  const toggleSection = (key: 'palestra' | 'sos') => {
+    const setter = key === 'palestra' ? setPalestraOpen : setSosOpen;
     setter(prev => {
       try {
         localStorage.setItem(`strumentiHub.${key}`, prev ? '0' : '1');
@@ -106,10 +102,9 @@ export default function StrumentiPage() {
   }
 
   const capUnlocked = unlockedCapacita(currentWeek).length;
-  const toolUnlocked = TOOLS.filter(t => currentWeek >= t.week).length;
 
   // ── Dettaglio capacità: menu di esercizi base (con "Cosa allena") ─────────
-  if (selectedCapacita) {
+  if (selectedCapacita && !selectedTool) {
     const esercizi = visibleEsercizi(selectedCapacita, currentWeek);
     return (
       <main className="min-h-screen bg-app pb-tabbar-lg">
@@ -134,7 +129,14 @@ export default function StrumentiPage() {
           {esercizi.map(ex => (
             <button
               key={ex.id}
-              onClick={() => setActiveExercise(ex)}
+              onClick={() => {
+                if (ex.ancora) {
+                  const tool = TOOLS.find(t => t.id === ex.id);
+                  if (tool) setSelectedTool(tool);
+                } else {
+                  setActiveExercise(ex);
+                }
+              }}
               className="w-full bg-surface rounded-2xl shadow-sm p-5 border border-divider text-left hover:border-forest-500/40 transition-all active:scale-[0.99]"
             >
               <div className="flex items-center justify-between gap-3 mb-1.5">
@@ -182,7 +184,7 @@ export default function StrumentiPage() {
               onClick={() => setSelectedTool(null)}
               className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
             >
-              ← I tuoi strumenti
+              ← Indietro
             </button>
             <div className="text-4xl mb-2">{selectedTool.emoji}</div>
             <h1 className="text-2xl font-bold text-white leading-tight">{selectedTool.nome}</h1>
@@ -328,76 +330,6 @@ export default function StrumentiPage() {
                       <span>
                         <span className="block text-sm font-bold text-app">{c.principio}</span>
                         <span className="block text-xs text-muted mt-0.5">{c.sottotitolo}</span>
-                      </span>
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* ── I tuoi strumenti (riferimento) — chiusa di default ────────────── */}
-        <div className="bg-surface rounded-2xl shadow-sm border border-divider overflow-hidden">
-          <button
-            onClick={() => toggleSection('cassetta')}
-            aria-expanded={cassettaOpen}
-            className="w-full p-4 flex items-center justify-between text-left"
-          >
-            <span className="flex items-center gap-3">
-              <span className="text-2xl" aria-hidden="true">🧰</span>
-              <span>
-                <span className="block text-sm font-bold text-app">I tuoi strumenti</span>
-                <span className="block text-xs text-muted mt-0.5">
-                  {toolUnlocked} di {TOOLS.length} — cos&apos;è e quando usarlo
-                </span>
-              </span>
-            </span>
-            <ChevronDown
-              className={`w-4 h-4 text-faint flex-shrink-0 transition-transform duration-200 ${cassettaOpen ? 'rotate-180' : ''}`}
-              aria-hidden="true"
-            />
-          </button>
-
-          {cassettaOpen && (
-            <div className="px-3 pb-3 pt-1 space-y-2">
-              {TOOLS.map(tool => {
-                const unlocked = currentWeek >= tool.week;
-                if (!unlocked) {
-                  return (
-                    <div
-                      key={tool.id}
-                      className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between opacity-50"
-                    >
-                      <span className="flex items-center gap-3">
-                        <span className="w-9 h-9 rounded-full bg-app flex items-center justify-center flex-shrink-0">
-                          <Lock className="w-4 h-4 text-faint" aria-hidden="true" />
-                        </span>
-                        <span>
-                          <span className="block text-sm font-bold text-muted">{tool.nome}</span>
-                          <span className="block text-[11px] text-faint mt-0.5">
-                            Si sblocca alla Settimana {tool.week}
-                          </span>
-                        </span>
-                      </span>
-                    </div>
-                  );
-                }
-                return (
-                  <button
-                    key={tool.id}
-                    onClick={() => setSelectedTool(tool)}
-                    className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between text-left hover:bg-[#293429] transition-all active:scale-[0.99]"
-                  >
-                    <span className="flex items-center gap-3">
-                      <span className="text-2xl flex-shrink-0" aria-hidden="true">{tool.emoji}</span>
-                      <span>
-                        <span className="block text-sm font-bold text-app">{tool.nome}</span>
-                        <span className="block text-xs text-muted mt-0.5">{tool.inUnaRiga}</span>
-                        <span className="block text-[10px] font-semibold text-forest-400 mt-1">
-                          W{tool.week} · {tool.principio}
-                        </span>
                       </span>
                     </span>
                     <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />

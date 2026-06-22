@@ -54,7 +54,7 @@ for-you-football/
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
 │   ├── sos/page.tsx                       # "Come affrontare le difficoltà" — schede VIVE a layer da Notion (?card=<id>)
-│   ├── strumenti/page.tsx                 # Hub "Palestra": Reset rapido + Palestra per principio (7 capacità, dettaglio = menu esercizi con "Cosa allena") + strumenti (riferimento) + schede SOS
+│   ├── strumenti/page.tsx                 # Hub "Palestra": Reset rapido + Palestra per principio (7 capacità; dettaglio = menu esercizi con "Cosa allena"; l'àncora apre la scheda strumento cos'è/quando/pratica) + schede SOS
 │   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
