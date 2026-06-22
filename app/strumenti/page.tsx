@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { TOOLS, type Tool } from '@/lib/toolsCatalog';
+import { TOOLS, type Tool, type Exercise } from '@/lib/toolsCatalog';
 import { authFetch } from '@/lib/authFetch';
 import { useMeditation } from '@/components/MeditationContext';
 
@@ -29,7 +29,7 @@ export default function StrumentiPage() {
   const [loading, setLoading] = useState(true);
   const [currentWeek, setCurrentWeek] = useState(1);
   const [selected, setSelected] = useState<Tool | null>(null);
-  const [showPractice, setShowPractice] = useState(false);
+  const [activeExercise, setActiveExercise] = useState<Exercise | null>(null);
   // Sezioni espandibili: cassetta aperta di default (identità della pagina),
   // SOS chiusa (situazionale). Stato persistito — l'app ricorda la preferenza.
   const [cassettaOpen, setCassettaOpen] = useState(true);
@@ -93,8 +93,18 @@ export default function StrumentiPage() {
 
   const unlockedCount = TOOLS.filter(t => currentWeek >= t.week).length;
 
-  // ── Dettaglio strumento ───────────────────────────────────────────────────
+  // ── Dettaglio capacità: menu di esercizi base allenabili ──────────────────
   if (selected) {
+    // L'esercizio-àncora (la pratica imparata) + gli esercizi base generici.
+    const esercizi: Exercise[] = [
+      {
+        nome: selected.nome,
+        pratica: selected.pratica,
+        durataMinuti: selected.durataMinuti,
+        tipoPratica: selected.tipoPratica,
+      },
+      ...(selected.eserciziBase ?? []),
+    ];
     return (
       <main className="min-h-screen bg-app pb-tabbar-lg">
         <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
@@ -126,31 +136,44 @@ export default function StrumentiPage() {
           </div>
 
           <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
-              🎯 La pratica
+            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-1">
+              🏋️ Allenamento
             </h2>
-            <p className="text-app text-sm leading-relaxed whitespace-pre-line">{selected.pratica}</p>
+            <p className="text-xs text-muted mb-3">
+              Esercizi base, da rifare quando vuoi — è allenandoli che diventano tuoi.
+            </p>
+            <div className="space-y-2">
+              {esercizi.map((ex, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveExercise(ex)}
+                  className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between text-left hover:bg-[#293429] transition-all active:scale-[0.99]"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold text-app">{ex.nome}</span>
+                    <span className="block text-[11px] text-faint mt-0.5">{ex.durataMinuti} min</span>
+                  </span>
+                  <span className="flex items-center gap-1.5 text-forest-300 text-xs font-bold flex-shrink-0">
+                    <Play className="w-3.5 h-3.5" aria-hidden="true" />
+                    Allena
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
-
-          <button
-            onClick={() => setShowPractice(true)}
-            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2"
-          >
-            <Play className="w-4 h-4" aria-hidden="true" />
-            Fai la pratica ora — {selected.durataMinuti} min
-          </button>
 
           <div className="h-4" />
         </div>
 
-        {showPractice && (
+        {activeExercise && (
           <PracticePopup
-            titolo={selected.nome}
-            pratica={selected.pratica}
-            durataMinuti={selected.durataMinuti}
+            titolo={activeExercise.nome}
+            pratica={activeExercise.pratica}
+            durataMinuti={activeExercise.durataMinuti}
+            tipoPratica={activeExercise.tipoPratica}
             weekTool={selected.nome}
-            onComplete={() => setShowPractice(false)}
-            onSkip={() => setShowPractice(false)}
+            onComplete={() => setActiveExercise(null)}
+            onSkip={() => setActiveExercise(null)}
           />
         )}
       </main>
@@ -163,11 +186,11 @@ export default function StrumentiPage() {
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-xl mx-auto">
           <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
-            🧰 Il tuo campo
+            🏋️ Il tuo campo
           </p>
-          <h1 className="text-2xl font-bold text-white leading-tight">Strumenti</h1>
+          <h1 className="text-2xl font-bold text-white leading-tight">Palestra</h1>
           <p className="text-forest-100 text-sm mt-1">
-            Quello che hai sempre con te — {unlockedCount} su {TOOLS.length} sbloccati.
+            Allena quello che hai imparato — {unlockedCount} su {TOOLS.length} sbloccati.
           </p>
         </div>
       </div>
@@ -204,7 +227,7 @@ export default function StrumentiPage() {
               <span>
                 <span className="block text-sm font-bold text-app">La cassetta</span>
                 <span className="block text-xs text-muted mt-0.5">
-                  {unlockedCount} di {TOOLS.length} strumenti sbloccati
+                  {unlockedCount} di {TOOLS.length} sbloccati — tocca per allenarli
                 </span>
               </span>
             </span>
@@ -231,7 +254,7 @@ export default function StrumentiPage() {
                         <span>
                           <span className="block text-sm font-bold text-muted">{tool.nome}</span>
                           <span className="block text-[11px] text-faint mt-0.5">
-                            Si sblocca alla Settimana {tool.week}
+                            Si allena dalla Settimana {tool.week}
                           </span>
                         </span>
                       </span>
