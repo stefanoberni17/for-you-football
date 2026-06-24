@@ -222,8 +222,9 @@ export default function PracticePopup({
     .filter(Boolean);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
+      <div className="flex min-h-full items-center justify-center p-4 pb-24">
+      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn">
         {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
 
         {phase === 'setup' && (
@@ -423,6 +424,7 @@ export default function PracticePopup({
             </button>
           </>
         )}
+      </div>
       </div>
 
       <style jsx global>{`
