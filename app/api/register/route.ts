@@ -146,6 +146,32 @@ export async function POST(req: NextRequest) {
       console.error('❌ Eccezione salvataggio profilo (non bloccante):', profileErr?.message);
     }
 
+    // 3. Snapshot baseline T0 — immutabile, per il confronto W12.
+    //    Fire-and-forget, non blocca la registrazione. ON CONFLICT DO NOTHING
+    //    garantisce che un re-tentativo non sovrascriva i valori originali.
+    try {
+      const { error: snapshotError } = await supabaseAdmin
+        .from('profile_snapshots')
+        .insert({
+          user_id: userId,
+          name: name || null,
+          age: age ? parseInt(age) : null,
+          sport: sport || 'calcio',
+          role: role || null,
+          level: level || null,
+          biggest_fear: biggest_fear || null,
+          goals: goals || null,
+          dream: dream || null,
+          current_situation: current_situation || null,
+        });
+      if (snapshotError && snapshotError.code !== '23505') {
+        // 23505 = unique violation (snapshot già esistente per questo user_id) — atteso, no log
+        console.error('❌ Errore snapshot baseline (non bloccante):', snapshotError);
+      }
+    } catch (snapshotErr: any) {
+      console.error('❌ Eccezione snapshot baseline (non bloccante):', snapshotErr?.message);
+    }
+
     return NextResponse.json({ success: true, beta_accepted: isBeta });
 
   } catch (err: any) {

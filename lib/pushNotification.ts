@@ -15,18 +15,23 @@ if (process.env.VAPID_PRIVATE_KEY && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
   );
 }
 
+/**
+ * Invia una push a tutte le subscriptions dell'utente.
+ * Ritorna true se almeno una push è stata recapitata, false se l'utente non
+ * ha subscription o tutte sono fallite/scadute.
+ */
 export async function sendPushToUser(
   userId: string,
   title: string,
   body: string,
   url: string = '/'
-) {
+): Promise<boolean> {
   const { data: subscriptions } = await supabaseAdmin
     .from('push_subscriptions')
     .select('id, endpoint, p256dh, auth')
     .eq('user_id', userId);
 
-  if (!subscriptions?.length) return;
+  if (!subscriptions?.length) return false;
 
   const payload = JSON.stringify({ title, body, url });
 
@@ -59,4 +64,6 @@ export async function sendPushToUser(
       .delete()
       .in('id', expiredIds);
   }
+
+  return results.some((r) => r.status === 'fulfilled');
 }

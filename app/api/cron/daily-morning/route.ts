@@ -108,8 +108,7 @@ export async function GET(request: NextRequest) {
   let query = supabaseAdmin
     .from('profiles')
     .select('user_id, name, telegram_id, current_week, coach_notes, role, biggest_fear, sport')
-    .lte('current_week', BETA_MAX_WEEK)
-    .not('telegram_id', 'is', null);
+    .lte('current_week', BETA_MAX_WEEK);
 
   if (testUserId) {
     query = query.eq('user_id', testUserId);
@@ -234,23 +233,26 @@ Seleziona la frase e aggiungi la riflessione.`;
           .then(() => {});
       }
 
-      if (text && user.telegram_id) {
-        await sendTelegramMessage(user.telegram_id, text);
-        sent++;
-      }
-
-      // Save to conversation history + last coach message + push notification
+      // Routing esclusivo: Telegram per chi l'ha collegato, push web per gli altri.
+      // last_coach_message aggiornato per tutti (alimenta il widget dashboard come fallback).
       if (text) {
-        await supabaseAdmin
-          .from('telegram_conversations')
-          .insert({ user_id: user.user_id, role: 'assistant', content: text })
-          .then(() => {});
         await supabaseAdmin
           .from('profiles')
           .update({ last_coach_message: text })
           .eq('user_id', user.user_id)
           .then(() => {});
-        await sendPushToUser(user.user_id, 'Coach AI', text, '/').catch(() => {});
+
+        if (user.telegram_id) {
+          await sendTelegramMessage(user.telegram_id, text);
+          await supabaseAdmin
+            .from('telegram_conversations')
+            .insert({ user_id: user.user_id, role: 'assistant', content: text })
+            .then(() => {});
+          sent++;
+        } else {
+          const pushed = await sendPushToUser(user.user_id, 'Coach AI', text, '/').catch(() => false);
+          if (pushed) sent++;
+        }
       }
     } catch (err) {
       console.error(`Morning message failed for ${user.user_id}:`, err);

@@ -5,6 +5,7 @@ import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
+import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import SubscriptionSection from '@/components/SubscriptionSection';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
@@ -242,13 +243,10 @@ export default function ProfiloPage() {
     setTelegramLinkLoading(true);
     setError('');
     try {
-      const res = await authFetch('/api/telegram/link', { method: 'POST' });
-      if (!res.ok) throw new Error('Impossibile generare il link — riprova');
-      const { url } = await res.json();
+      const url = await requestTelegramLinkUrl();
       window.location.href = url;
     } catch (err: any) {
       setError(err.message);
-    } finally {
       setTelegramLinkLoading(false);
     }
   };
