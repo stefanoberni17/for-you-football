@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { authFetch } from '@/lib/authFetch';
+import { requestTelegramLinkUrl } from '@/lib/telegramLink';
+import { trackOnboarding } from '@/lib/onboardingTrack';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -12,6 +15,20 @@ export default function OnboardingPage() {
   const [showRitual, setShowRitual] = useState(false);
   const [ritualUserId, setRitualUserId] = useState('');
   const [completingRitual, setCompletingRitual] = useState(false);
+  const [telegramLinkLoading, setTelegramLinkLoading] = useState(false);
+
+  // Deep-link Telegram dalla slide 4 (riusa il flusso del profilo).
+  // NON setta onboarding_completed: il binding viene confermato dal webhook.
+  const handleTelegramLink = async () => {
+    setTelegramLinkLoading(true);
+    trackOnboarding('telegram_collega_click');
+    try {
+      const url = await requestTelegramLinkUrl();
+      window.location.href = url;
+    } catch {
+      setTelegramLinkLoading(false);
+    }
+  };
 
   // Guard: verifica auth e se onboarding gia completato
   useEffect(() => {
@@ -38,6 +55,12 @@ export default function OnboardingPage() {
     check();
   }, [router]);
 
+  // Traccia la visualizzazione di ogni slide del carousel (funnel onboarding)
+  useEffect(() => {
+    if (!ready || showRitual) return;
+    trackOnboarding('slide_view', { slide: currentSlide });
+  }, [ready, currentSlide, showRitual]);
+
   const handleComplete = async () => {
     setCompleting(true);
     try {
@@ -60,6 +83,7 @@ export default function OnboardingPage() {
         return;
       }
 
+      trackOnboarding('onboarding_started_percorso');
       setRitualUserId(session.user.id);
       setShowRitual(true);
 
@@ -72,10 +96,20 @@ export default function OnboardingPage() {
 
   const handleRitualComplete = async () => {
     setCompletingRitual(true);
+    trackOnboarding('ritual_completed');
     await supabase
       .from('profiles')
       .update({ ritual_completed: true })
       .eq('user_id', ritualUserId);
+
+    // Primo messaggio Coach proattivo — await esplicito così il widget
+    // dashboard è già pieno all'atterraggio. Errore non bloccante.
+    try {
+      await authFetch('/api/onboarding/coach-welcome', { method: 'POST' });
+    } catch {
+      /* il widget resterà vuoto fino al prossimo cron — non blocca */
+    }
+
     router.push('/');
   };
 
@@ -250,11 +284,22 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-          <div className="bg-surface-2 border border-divider rounded-xl p-4">
-            <p className="text-sm text-muted italic">
-              Puoi anche parlarci su <strong>Telegram</strong>: vai nel profilo,
-              tocca &quot;Collega&quot; e il collegamento è automatico — un tap e il Coach
-              è nel tuo telefono.
+          <div className="bg-forest-500/10 border border-forest-500/30 rounded-xl p-5 text-left">
+            <p className="text-app font-semibold mb-1">Il Coach ti accompagna ogni giorno.</p>
+            <p className="text-sm text-muted leading-relaxed mb-4">
+              Ti scrive lui ogni mattina, ti ricorda la pratica, ed è lì quando ti serve —
+              prima della partita, dopo un errore, o solo per fare il punto.
+            </p>
+            <button
+              type="button"
+              onClick={handleTelegramLink}
+              disabled={telegramLinkLoading}
+              className="w-full bg-forest-500 hover:bg-forest-600 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md disabled:opacity-50"
+            >
+              {telegramLinkLoading ? 'Apriamo Telegram…' : '📲 Collega il Coach — un tap'}
+            </button>
+            <p className="text-xs text-faint mt-3">
+              Senza collegamento non riceverai i promemoria del Coach. Puoi farlo anche dopo dal profilo.
             </p>
           </div>
         </div>
@@ -332,9 +377,9 @@ export default function OnboardingPage() {
           <button
             onClick={handleRitualComplete}
             disabled={completingRitual}
-            className="mt-8 w-full bg-white text-forest-700 font-bold py-4 rounded-2xl text-base shadow-lg hover:bg-forest-50 transition-all disabled:opacity-50"
+            className="mt-8 w-full bg-white text-forest-700 font-bold py-4 rounded-2xl text-base shadow-lg hover:bg-forest-50 transition-all disabled:opacity-70"
           >
-            HO CAPITO
+            {completingRitual ? 'Il Coach ti sta accogliendo…' : 'HO CAPITO'}
           </button>
         </div>
       </main>

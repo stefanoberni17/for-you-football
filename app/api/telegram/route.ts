@@ -75,8 +75,17 @@ export async function POST(request: NextRequest) {
               telegram_id: telegramUserId,
               telegram_link_code: null,
               telegram_link_code_expires: null,
+              // Chi collega da onboarding senza tornare sull'app non deve essere
+              // reimmerso nel carousel: il binding completato implica onboarding oltrepassato.
+              onboarding_completed: true,
             })
             .eq('user_id', linkProfile.user_id);
+
+          // Tracking funnel (service role, bypassa RLS) — fire-and-forget
+          await supabaseAdmin
+            .from('onboarding_events')
+            .insert({ user_id: linkProfile.user_id, event: 'telegram_binding_completed' })
+            .then(() => {}, () => {});
 
           const firstName = linkProfile.name?.split(' ')[0] || '';
           await sendTelegramMessage(

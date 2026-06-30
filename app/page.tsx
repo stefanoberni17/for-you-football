@@ -19,7 +19,8 @@ import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
-import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target } from 'lucide-react';
+import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
+import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target, MessageCircle } from 'lucide-react';
 
 interface CheckinData {
   date: string;
@@ -131,6 +132,15 @@ export default function HomePage() {
 
       setProfile(profileData);
       setUserId(session.user.id);
+
+      // Il widget Coach resta nascosto solo se l'utente ha chiuso QUESTO messaggio.
+      // Se il messaggio è cambiato (nuovo cron), riappare.
+      try {
+        const dismissedMsg = localStorage.getItem('coachMessageDismissed');
+        if (dismissedMsg && dismissedMsg === profileData?.last_coach_message) {
+          setCoachMessageDismissed(true);
+        }
+      } catch { /* no-op */ }
 
       // Carica progresso giorni
       const { data: progress } = await supabase
@@ -586,15 +596,14 @@ export default function HomePage() {
         {/* ─── Banner promozionali / messaggi soft — in fondo per non rubare il first-fold ─── */}
 
         {/* Ultimo messaggio Coach */}
-        {profile?.last_coach_message && !coachMessageDismissed && (
+        {profile?.last_coach_message && profile.last_coach_message !== '__coach_welcome_pending__' && !coachMessageDismissed && (
           <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
             <button
-              onClick={async () => {
+              onClick={() => {
                 setCoachMessageDismissed(true);
-                await supabase
-                  .from('profiles')
-                  .update({ last_coach_message: null })
-                  .eq('user_id', userId);
+                try {
+                  localStorage.setItem('coachMessageDismissed', profile.last_coach_message);
+                } catch { /* no-op */ }
               }}
               className="absolute top-3 right-3 text-faint hover:text-muted transition-colors"
               aria-label="Chiudi"
@@ -605,13 +614,23 @@ export default function HomePage() {
             </button>
             <div className="flex items-start gap-3 pr-6">
               <div className="text-xl flex-shrink-0">🤖</div>
-              <div>
+              <div className="flex-1">
                 <p className="text-xs font-bold text-forest-400 mb-1">Coach AI</p>
                 <p className="text-sm text-app leading-relaxed">{profile.last_coach_message}</p>
+                <button
+                  onClick={() => router.push('/chat')}
+                  className="mt-3 inline-flex items-center gap-1.5 bg-forest-500 hover:bg-forest-600 text-white text-xs font-semibold py-2 px-3.5 rounded-xl transition-colors"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                  Rispondi al Coach
+                </button>
               </div>
             </div>
           </div>
         )}
+
+        {/* Recupero collegamento Telegram (chi non ha Telegram) */}
+        {profile && <TelegramRecoveryBanner hasTelegram={!!profile.telegram_id} />}
 
         {/* Banner settimanale "Aggiorna le 5 della settimana" — lunedì o se vuoto */}
         {userId && (
