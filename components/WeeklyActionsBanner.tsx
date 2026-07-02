@@ -82,8 +82,8 @@ export default function WeeklyActionsBanner({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-amber-200">
             {needsSetup
-              ? 'Pianifica le tue azioni della settimana'
-              : 'È lunedì — aggiorna le tue azioni della settimana?'}
+              ? 'Pianifica le tue 5 azioni'
+              : 'È lunedì — confermi le tue 5 azioni?'}
           </p>
           <p className="text-xs text-amber-300 mt-0.5 leading-relaxed">
             {needsSetup

@@ -303,7 +303,7 @@ export default function StatistichePage() {
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-app flex items-center gap-2">
                 <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
-                Le tue azioni
+                Le tue 5 azioni
               </h2>
               <button
                 onClick={() => router.push('/oggi')}
@@ -428,7 +428,7 @@ export default function StatistichePage() {
                   Non hai ancora pianificato le tue azioni
                 </p>
                 <p className="text-xs text-amber-300 mt-0.5 leading-relaxed">
-                  Scegli 5 azioni concrete da pro che fai ogni giorno. Lo streak parte appena cominci.
+                  Scegli 5 azioni concrete che fai ogni giorno. Lo streak parte appena cominci.
                 </p>
               </div>
             </div>

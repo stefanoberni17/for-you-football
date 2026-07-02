@@ -151,7 +151,7 @@ export default function ActionsSetupSheet({
         {/* Header */}
         <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3 border-b border-divider">
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-bold text-app">Le tue azioni durante il giorno</h2>
+            <h2 className="text-lg font-bold text-app">Le tue 5 azioni</h2>
             <p className="text-xs text-muted mt-0.5 leading-relaxed">
               Scegli max 5 azioni. Stesse per la settimana — le ticki ogni giorno, si resettano la notte.
             </p>

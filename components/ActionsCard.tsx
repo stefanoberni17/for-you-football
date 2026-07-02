@@ -94,7 +94,7 @@ export default function ActionsCard({
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-amber-200">
-              Pianifica le tue azioni della settimana
+              Pianifica le tue 5 azioni
             </p>
             <p className="text-xs text-amber-300 mt-0.5">
               Cose concrete che fai ogni giorno
@@ -120,7 +120,7 @@ export default function ActionsCard({
 
   return (
     <section
-      aria-label="Le tue azioni durante il giorno"
+      aria-label="Le tue 5 azioni"
       className={`rounded-2xl border overflow-hidden transition-all ${containerCls}`}
     >
       {/* HEADER — tap toggla expand */}
@@ -151,7 +151,7 @@ export default function ActionsCard({
                 allDone ? 'text-white' : 'text-app'
               }`}
             >
-              {allDone ? `Tutte e ${total} fatte oggi` : 'Le tue azioni'}
+              {allDone ? `Tutte e ${total} fatte oggi` : 'Le tue 5 azioni'}
             </p>
             <p
               className={`text-xs font-semibold tabular-nums ${
@@ -298,7 +298,7 @@ export default function ActionsCard({
             }`}
           >
             <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
-            Modifica le 5 della settimana
+            Modifica le tue 5 azioni
           </Link>
         </div>
       )}

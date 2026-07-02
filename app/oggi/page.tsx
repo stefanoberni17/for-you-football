@@ -179,7 +179,7 @@ function OggiPageInner() {
             Oggi · {todayLongIt()}
           </p>
           <h1 className="text-2xl font-bold text-white leading-tight mb-3">
-            Le tue azioni durante il giorno
+            Le tue 5 azioni
           </h1>
 
           {total > 0 ? (
@@ -197,7 +197,7 @@ function OggiPageInner() {
             </>
           ) : (
             <p className="text-forest-100 text-sm">
-              Pianifica le 5 azioni che farai ogni giorno della settimana.
+              Pianifica le tue 5 azioni: le stesse ogni giorno, per tutta la settimana.
             </p>
           )}
         </div>
@@ -213,7 +213,7 @@ function OggiPageInner() {
             iconColor="text-amber-300"
             title="Comportati già oggi come il giocatore che vuoi diventare"
             subtitle="Scegli fino a 5 azioni concrete. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione."
-            cta={{ label: 'Pianifica le tue azioni', onClick: () => setShowSetup(true) }}
+            cta={{ label: 'Pianifica le tue 5 azioni', onClick: () => setShowSetup(true) }}
           />
         ) : (
           <>
@@ -259,7 +259,7 @@ function OggiPageInner() {
               className="w-full bg-surface border border-divider text-app font-semibold py-3 rounded-xl hover:bg-surface-2 transition-colors flex items-center justify-center gap-2 text-sm"
             >
               <Pencil className="w-4 h-4" aria-hidden="true" />
-              Modifica le 5 della settimana
+              Modifica le tue 5 azioni
             </button>
 
             {streak > 0 && (
