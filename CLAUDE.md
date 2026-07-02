@@ -44,7 +44,7 @@ for-you-football/
 │   ├── page.tsx                           # Dashboard (home) + mini sparkline statistiche — richiede auth
 │   ├── login/page.tsx
 │   ├── register/page.tsx                  # Registrazione 2-step (account + profilo calciatore)
-│   ├── onboarding/page.tsx                # Carousel 5 slide introduttive
+│   ├── onboarding/page.tsx                # Carousel 6 slide + step calendario + rituale
 │   ├── chat/page.tsx                      # Chat con Coach AI (4 suggerimenti pre-impostati)
 │   ├── settimane/page.tsx                 # Lista 12 settimane con lock/unlock
 │   ├── settimana/[id]/page.tsx            # Dettaglio settimana + 7 DayCard + WeeklyCalendarPopup
@@ -609,7 +609,8 @@ La memoria persistente del Coach si basa su:
 - Schermata "Controlla la tua email" con bottone **"Reinvia email"** (`supabase.auth.resend`, cooldown 60s)
 
 ### Onboarding (`app/onboarding/page.tsx`)
-- Carousel 5 slide introduttive al percorso
+- Carousel 6 slide introduttive (benvenuto, come funziona, 3 blocchi/12 settimane, "la tua giornata con l'app": check-in→Reset→giorno→5 azioni, Coach AI, pronto a iniziare)
+- Dopo "Inizia il percorso" (o "Salta introduzione"): step calendario (riuso `WeeklyCalendarPopup`, saltabile, POST `/api/calendar` week=1) → schermata rituale → `/`
 - Mostrato dopo prima registrazione
 
 ### Lista Settimane (`app/settimane/page.tsx`)
@@ -778,8 +779,10 @@ La memoria persistente del Coach si basa su:
 - Props: `{ userId, onComplete, onSkip }`
 
 ### `BottomTabBar.tsx`
-- 5 tab: Home, Percorso, **Strumenti** (al centro, icona Wrench), Coach, Profilo
-- La tab Strumenti resta attiva anche su `/sos` (stesso hub)
+- 5 tab: Home, Percorso, **Palestra** (al centro, icona Dumbbell, route `/strumenti`), Coach, Profilo
+- La tab Palestra resta attiva anche su `/sos` (stesso hub)
+- Nome canonico del sistema azioni in UI: **"Le tue 5 azioni"** (ovunque)
+- Banner dashboard: UNO alla volta (priorità Coach > lunedì-azioni > install; push prompt soppresso se un banner inline è visibile)
 - Nascosto su: `/login`, `/register`, `/onboarding`, `/privacy`
 - **Full-width attaccata al bordo (dark theme):** `bg-surface/95` con `backdrop-blur-md`, `border-t border-divider`, shadow sottile solo verso l'alto. NO più floating/rounded/margini laterali (il design floating creava 3 fasce dove si vedeva lo sfondo dietro + effetto "rialzato" su /chat)
 - Padding-bottom interno = `env(safe-area-inset-bottom)` (puro, no gap extra)

@@ -3,12 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { authFetch } from '@/lib/authFetch';
+import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(1);
   const [completing, setCompleting] = useState(false);
   const [ready, setReady] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [showRitual, setShowRitual] = useState(false);
   const [ritualUserId, setRitualUserId] = useState('');
   const [completingRitual, setCompletingRitual] = useState(false);
@@ -61,13 +64,34 @@ export default function OnboardingPage() {
       }
 
       setRitualUserId(session.user.id);
-      setShowRitual(true);
+      // Step calendario: il momento giusto per sapere quando si allena/gioca.
+      // Sempre saltabile; poi si passa alla schermata rituale.
+      setShowCalendar(true);
 
     } catch (error) {
       console.error('Errore imprevisto:', error);
       alert('Errore imprevisto. Riprova.');
       setCompleting(false);
     }
+  };
+
+  const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
+    try {
+      await authFetch('/api/calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weekNumber: 1, trainingDays, matchDays }),
+      });
+    } catch {
+      /* non bloccante: il calendario si può reimpostare dalla dashboard */
+    }
+    setShowCalendar(false);
+    setShowRitual(true);
+  };
+
+  const handleCalendarSkip = () => {
+    setShowCalendar(false);
+    setShowRitual(true);
   };
 
   const handleRitualComplete = async () => {
@@ -219,7 +243,49 @@ export default function OnboardingPage() {
       ),
     },
 
-    // ── SLIDE 4 ──────────────────────────────────────────────────────────────
+    // ── SLIDE 4 — La giornata tipo ───────────────────────────────────────────
+    {
+      title: 'La tua giornata con l’app',
+      subtitle: 'Pochi minuti, sempre gli stessi gesti',
+      content: (
+        <div className="max-w-2xl mx-auto space-y-4">
+          {[
+            {
+              emoji: '☀️',
+              title: 'Check-in del mattino',
+              desc: '30 secondi appena apri l’app: 4 cursori per dire come stai. Il Coach li legge e ti conosce meglio.',
+            },
+            {
+              emoji: '🌬️',
+              title: 'Il Reset',
+              desc: 'Un minuto di respiro subito dopo. È il rituale del mattino: lo stesso strumento che poi userai in campo.',
+            },
+            {
+              emoji: '📖',
+              title: 'Il giorno del percorso',
+              desc: '5-15 minuti: apertura, pratica guidata, una domanda. Un giorno alla volta.',
+            },
+            {
+              emoji: '✅',
+              title: 'Le tue 5 azioni',
+              desc: 'Cinque azioni concrete che scegli tu, le stesse per tutta la settimana. Le spunti durante la giornata.',
+            },
+          ].map((s) => (
+            <div key={s.title} className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
+              <div className="flex items-start gap-4">
+                <span className="text-3xl">{s.emoji}</span>
+                <div>
+                  <h3 className="font-bold text-app mb-1">{s.title}</h3>
+                  <p className="text-sm text-muted leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+
+    // ── SLIDE 5 — Coach AI ───────────────────────────────────────────────────
     {
       title: 'Il tuo Coach AI',
       subtitle: 'Sempre con te, in campo e fuori',
@@ -294,7 +360,7 @@ export default function OnboardingPage() {
               risultati concreti <strong>nelle partite, negli allenamenti, nella testa</strong>.
             </p>
             <p className="text-muted mt-3 text-sm italic">
-              Il primo passo: 5 minuti al giorno, per 7 giorni. Inizia oggi.
+              Il primo passo: 5-15 minuti al giorno, per 7 giorni. Inizia oggi.
             </p>
           </div>
         </div>
@@ -304,6 +370,18 @@ export default function OnboardingPage() {
 
   const currentContent = slides[currentSlide - 1];
   const isLastSlide = currentSlide === slides.length;
+
+  if (showCalendar) {
+    return (
+      <main className="min-h-screen bg-app">
+        <WeeklyCalendarPopup
+          weekNumber={1}
+          onSave={handleCalendarSave}
+          onSkip={handleCalendarSkip}
+        />
+      </main>
+    );
+  }
 
   if (showRitual) {
     return (
