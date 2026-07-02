@@ -81,7 +81,7 @@ for-you-football/
 │       └── cron/
 │           └── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg
 ├── components/
-│   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Coach / Profilo
+│   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Strumenti / Coach / Profilo
 │   ├── ActionsCard.tsx                    # Card compatta dashboard "Le tue azioni durante il giorno" (3 varianti)
 │   ├── ActionsSetupSheet.tsx              # Bottom-sheet selezione catalogo + custom (max 5)
 │   ├── WeeklyActionsBanner.tsx            # Banner soft sulla home (lunedì o se vuoto)
@@ -597,8 +597,9 @@ La memoria persistente del Coach si basa su:
 - Redirect a `/login` se non autenticato; CTA "Ce l'hai fatta!" se beta completata (no redirect forzato)
 
 ### Beta Complete (`app/beta-complete/page.tsx`)
-- Schermata celebrativa per chi completa W4 (fine beta)
+- Schermata celebrativa per chi completa tutte le settimane disponibili (`BETA_MAX_WEEK`, oggi 8)
 - Guard: se `current_week ≤ BETA_MAX_WEEK` → redirect a `/`
+- Include "Il tuo prima e dopo": situazione iniziale + gate W1 + gate finale (settimana `BETA_MAX_WEEK`)
 - CTA: feedback via mailto, link a `/chat`, `/statistiche`, `/settimane`
 
 ### Registrazione (`app/register/page.tsx`)
@@ -614,8 +615,8 @@ La memoria persistente del Coach si basa su:
 ### Lista Settimane (`app/settimane/page.tsx`)
 - **Immersive header gradient** forest-600→forest-800 con titolo, sottotitolo e 3 quick stats (sbloccate/completate/giorni totali)
 - **Timeline verticale**: linea gradient sulla sinistra che connette i nodi-settimana; ogni settimana ha un nodo circolare 14×14 (con numero, lock, o check) + card a destra con principio, strumento e progress bar
-- Filtra a `BETA_MAX_WEEK=4`
-- Card "Prossimamente" finale (settimane 5–12)
+- Filtra a `BETA_MAX_WEEK` (oggi 8)
+- Card "Prossimamente" finale (settimane 9–12)
 - Icone Lucide (Lock, Check, Compass, Wrench, ChevronRight, MapPin)
 - Click → `/settimana/[id]`
 
@@ -947,7 +948,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Security — Safety keywords riattivate:** `checkSafetyKeywords` + `sendSafetyAlert` decommentati e reintegrati in `lib/coach-ai.ts`; attivati in `/api/chat` e `/api/telegram` (fire-and-forget). Email via Resend se `RESEND_API_KEY` presente, altrimenti solo log.
 - [x] **Security — Prompt injection `coach_notes`:** `sanitizeUntrustedText()` in `lib/coach-ai.ts`; `coach_notes` delimitato con `<coach_notes>…</coach_notes>` + nota al modello nel system prompt.
 - [x] **Security — Telegram webhook secret:** verifica `x-telegram-bot-api-secret-token` all'inizio di `POST /api/telegram`; skip se env var non configurata (backward-compatible).
-- [x] **Feature — Pagina `/beta-complete`:** schermata celebrativa per chi completa W4; redirect da `app/page.tsx` quando `current_week > BETA_MAX_WEEK`.
+- [x] **Feature — Pagina `/beta-complete`:** schermata celebrativa per chi completa tutte le settimane disponibili (`current_week > BETA_MAX_WEEK`); testi aggiornati a 8 settimane (luglio 2026).
 - [x] **UI — Lucide icons in sezioni dati:** dashboard "Il tuo stato" e `/statistiche` usano icone Lucide monocromatiche (Activity, Moon, Zap, Brain, Flame) invece di emoji nelle intestazioni grafici e streak.
 - [x] **UI — ChatBot restyling:** container `rounded-3xl shadow-2xl`; avatar monogramma "C" (header bianco, messaggi forest-500); bolle asimmetriche; area messaggi `bg-gray-50`; input `rounded-2xl`; send button 48×48.
 - [x] **UI — DailyCheckinModal sfondo bianco:** rimosso gradiente amber/orange/yellow, sfondo `bg-white` uniforme.

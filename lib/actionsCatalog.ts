@@ -98,15 +98,6 @@ export function allowedPrinciplesForWeek(week: number): ActionPrinciple[] {
   return ['presenza', null]; // W1
 }
 
-export function filterCatalogForWeek(week: number): CatalogAction[] {
-  const allowed = allowedPrinciplesForWeek(week);
-  return ACTIONS_CATALOG.filter(a => allowed.includes(a.principle));
-}
-
-export function findCatalogAction(id: string): CatalogAction | null {
-  return ACTIONS_CATALOG.find(a => a.id === id) ?? null;
-}
-
 export const CATEGORY_ORDER: ActionCategory[] = [
   'pre-allenamento',
   'in-campo',

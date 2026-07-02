@@ -28,8 +28,6 @@ export default function LoginPage() {
 
       if (error) throw error;
 
-      console.log('✅ Login riuscito!', data);
-
       // 2. Controlla se esiste il profilo
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
