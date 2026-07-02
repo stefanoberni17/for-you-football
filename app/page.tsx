@@ -259,7 +259,6 @@ export default function HomePage() {
    * Tick/untick di un'azione direttamente dalla dashboard.
    * Optimistic update + POST /api/actions/toggle + rollback su errore.
    * Non rifetcha la lista — la dashboard non deve fare reload completo per un tick.
-   * Lo streak può rimanere leggermente "stale" fino al prossimo refresh della pagina.
    */
   const handleActionToggle = async (actionId: string) => {
     if (actionPending) return;
@@ -285,6 +284,13 @@ export default function HomePage() {
         body: JSON.stringify({ userId, actionId }),
       });
       if (!res.ok) throw new Error('toggle failed');
+      // Il tick può far scattare (o perdere) la soglia ≥3 dello streak: riallinea.
+      authFetch('/api/actions/history?days=14')
+        .then(r => (r.ok ? r.json() : null))
+        .then(h => {
+          if (h) setActionsStreak(h.current_streak || 0);
+        })
+        .catch(() => {});
     } catch {
       // Rollback su errore
       setActions(prev =>
@@ -351,7 +357,7 @@ export default function HomePage() {
                   {streak >= 2 && (
                     <p className="text-amber-200 text-sm font-bold mt-2 flex items-center gap-1.5">
                       <Flame className="w-4 h-4" aria-hidden="true" />
-                      {streak} giorni di fila
+                      {streak} giorni di fila nel percorso
                     </p>
                   )}
                 </>

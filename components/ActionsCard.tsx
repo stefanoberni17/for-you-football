@@ -175,7 +175,7 @@ export default function ActionsCard({
               {streak > 0 ? (
                 <>
                   <Flame className="w-3 h-3" aria-hidden="true" /> {streak}{' '}
-                  giorni di fila
+                  giorni di fila di azioni
                 </>
               ) : (
                 'Identità in costruzione'
