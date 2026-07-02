@@ -218,6 +218,9 @@ export default function MeditationPopup({
               <div className="text-5xl md:text-6xl mb-3">
                 {isFirstTime ? '🌱' : '⚽'}
               </div>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-forest-300 mb-1">
+                {manualOpen ? 'Reset rapido' : 'Il rituale del mattino'}
+              </p>
               <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
                 {isFirstTime ? 'Il tuo primo Reset' : 'Il Reset'}
               </h2>

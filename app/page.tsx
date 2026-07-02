@@ -243,6 +243,22 @@ export default function HomePage() {
   // (succede quando il gate G7 incrementa current_week ma magari qualche giorno è compressed).
   const allDone = totalCompleted >= totalDays || currentWeek > BETA_MAX_WEEK;
 
+  // Rientro dopo assenza: streak a zero e ultimo giorno completato ≥3 giorni fa
+  // → l'hero accoglie invece di mostrare solo lo streak perso.
+  const lastCompletionTs = completedDays.reduce((max, d) => {
+    const t = d.completedAt ? new Date(d.completedAt).getTime() : 0;
+    return t > max ? t : max;
+  }, 0);
+  const daysSinceLastCompletion = lastCompletionTs
+    ? Math.floor((Date.now() - lastCompletionTs) / 86_400_000)
+    : 0;
+  const comebackMode =
+    streak === 0 &&
+    totalCompleted > 0 &&
+    daysSinceLastCompletion >= 3 &&
+    !allDone &&
+    !nextDayLocked;
+
   // Un banner alla volta: Coach > lunedì-azioni > install; il prompt push
   // aspetta se un banner inline è già in vista.
   const coachBannerVisible = !!(profile?.last_coach_message && !coachMessageDismissed);
@@ -355,12 +371,19 @@ export default function HomePage() {
                 </>
               ) : (
                 <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Settimana {currentWeek}</p>
+                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">
+                    {comebackMode ? 'Bentornato' : `Settimana ${currentWeek}`}
+                  </p>
                   <h2 className="text-2xl font-bold leading-tight">
                     {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
                   </h2>
                   {settimana?.principio && (
                     <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
+                  )}
+                  {comebackMode && (
+                    <p className="text-forest-100 text-sm mt-2">
+                      Riprendi da dove eri: il Giorno {nextDay.day} ti aspetta. Bastano pochi minuti.
+                    </p>
                   )}
                   {streak >= 2 && (
                     <p className="text-amber-200 text-sm font-bold mt-2 flex items-center gap-1.5">
