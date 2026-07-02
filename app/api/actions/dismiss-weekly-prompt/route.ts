@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { todayItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,7 +10,7 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-const todayDate = () => new Date().toISOString().split('T')[0];
+const todayDate = todayItaly;
 
 // ─── POST /api/actions/dismiss-weekly-prompt ─────────────────────────────
 // L'utente clicca "Tieni le stesse" sul banner settimanale.

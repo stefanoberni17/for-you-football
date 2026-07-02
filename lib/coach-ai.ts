@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
 import { queryDatabase, fetchPage, mapSettimana, mapGiorno } from '@/lib/notion';
+import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 export const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -534,9 +535,9 @@ export async function buildUserContext(userId: string): Promise<string> {
     .eq('week_number', currentWeek)
     .maybeSingle();
 
-  // Check-in fisico e mentale — oggi + ultimi 7 giorni
-  const todayStr = new Date().toISOString().split('T')[0];
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  // Check-in fisico e mentale — oggi + ultimi 7 giorni (giorno italiano)
+  const todayStr = todayItaly();
+  const sevenDaysAgo = daysAgoItaly(7);
 
   const { data: todayCheckin } = await supabaseAdmin
     .from('daily_checkin')
@@ -603,7 +604,7 @@ export async function buildUserContext(userId: string): Promise<string> {
     }
     let streak = 0;
     for (let i = 0; i < 7; i++) {
-      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const d = daysAgoItaly(i);
       if ((completedByDate[d] || 0) >= 3) streak++;
       else break;
     }

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useWakeLock } from '@/lib/useWakeLock';
+import { todayItaly } from '@/lib/dateItaly';
 
 const DURATION_OPTIONS = [
   { label: '1 min', seconds: 60 },
@@ -17,9 +18,8 @@ const EXHALE_MS = 6000;
 
 const RITUAL_SKIP_KEY = 'ritualSkipped';
 
-function todayStr(): string {
-  return new Date().toISOString().split('T')[0];
-}
+// Il "giorno" del rituale segue il fuso italiano, come il check-in.
+const todayStr = todayItaly;
 
 interface MeditationPopupProps {
   mantra: string;

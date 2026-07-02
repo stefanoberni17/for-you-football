@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,14 +12,8 @@ const supabaseAdmin = createClient(
 
 const STREAK_THRESHOLD = 3; // ≥3/5 → giorno valido per streak (morbida)
 
-const isoDate = (d: Date) => d.toISOString().split('T')[0];
-const todayDate = () => isoDate(new Date());
-
-function daysAgo(n: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return isoDate(d);
-}
+const todayDate = todayItaly;
+const daysAgo = daysAgoItaly;
 
 // ─── GET /api/actions/history?userId=X&days=N ────────────────────────────
 // Ritorna:

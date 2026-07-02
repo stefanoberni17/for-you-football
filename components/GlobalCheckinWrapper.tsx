@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import DailyCheckinModal from './DailyCheckinModal';
 import { CheckinContext } from './CheckinContext';
+import { todayItaly } from '@/lib/dateItaly';
 
 export default function GlobalCheckinWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -27,7 +28,7 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
       setUserId(session.user.id);
 
       // "Salta per oggi" persistito: il rituale non riappare fino a domani
-      const today = new Date().toISOString().split('T')[0];
+      const today = todayItaly();
       if (localStorage.getItem('ritualSkipped') === today) {
         setCheckinDone(true);
         return;
@@ -60,7 +61,7 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
   const handleSkip = () => {
     // Saltare il check-in = saltare il rituale del mattino per oggi
     // (anche MeditationPopup legge questa chiave e non si propone)
-    localStorage.setItem('ritualSkipped', new Date().toISOString().split('T')[0]);
+    localStorage.setItem('ritualSkipped', todayItaly());
     setShowCheckin(false);
     setCheckinDone(true);
   };

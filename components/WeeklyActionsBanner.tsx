@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { Calendar, RefreshCw, Check } from 'lucide-react';
+import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 interface WeeklyActionsBannerProps {
   userId: string;
@@ -15,15 +16,17 @@ interface WeeklyActionsBannerProps {
   onDismissed?: () => void;
 }
 
-/** Lunedì della settimana corrente (locale) come ISO yyyy-mm-dd. */
+/** Giorno della settimana secondo il fuso italiano (0=Dom .. 6=Sab). */
+function italyWeekday(): number {
+  // Mezzogiorno per evitare edge di fuso nel parse della data.
+  return new Date(`${todayItaly()}T12:00:00`).getDay();
+}
+
+/** Lunedì della settimana corrente (fuso italiano) come ISO yyyy-mm-dd. */
 function mondayOfThisWeek(): string {
-  const now = new Date();
-  const day = now.getDay(); // 0=Dom .. 6=Sab
-  const diff = day === 0 ? -6 : 1 - day; // sposta a lunedì
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  monday.setHours(0, 0, 0, 0);
-  return monday.toISOString().split('T')[0];
+  const day = italyWeekday();
+  const back = day === 0 ? 6 : day - 1; // giorni da sottrarre per arrivare a lunedì
+  return daysAgoItaly(back);
 }
 
 /**
@@ -42,8 +45,8 @@ export default function WeeklyActionsBanner({
   const [hidden, setHidden] = useState(false);
   const [dismissing, setDismissing] = useState(false);
 
-  // Logica visibilità
-  const isMonday = new Date().getDay() === 1;
+  // Logica visibilità (giorno italiano, coerente col boundary delle azioni)
+  const isMonday = italyWeekday() === 1;
   const monday = mondayOfThisWeek();
   const dismissedThisWeek = lastDismiss !== null && lastDismiss >= monday;
 

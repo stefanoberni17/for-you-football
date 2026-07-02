@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { daysAgoItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,9 +22,7 @@ export async function GET(request: NextRequest) {
     }
     const days = parseInt(searchParams.get('days') || '30');
 
-    const fromDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0];
+    const fromDate = daysAgoItaly(days);
 
     const { data, error } = await supabaseAdmin
       .from('daily_checkin')
