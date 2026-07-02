@@ -333,10 +333,10 @@ export default function HomePage() {
             <div>
               {allDone ? (
                 <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Beta completata</p>
+                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Percorso completato</p>
                   <h2 className="text-2xl font-bold leading-tight">Ce l&apos;hai fatta!</h2>
                   <p className="text-forest-100 text-sm mt-1">
-                    Hai costruito il primo blocco: Presenza, Osservazione, Ascolto, Pressione.
+                    Hai completato i primi due blocchi: lo strumento e il gioco nelle difficoltà.
                   </p>
                 </>
               ) : (

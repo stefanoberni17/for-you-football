@@ -94,7 +94,7 @@ export default function OnboardingPage() {
             e non riesci più a tornare nella partita?
           </p>
           <p className="text-muted text-sm">
-            12 settimane · 5 minuti al giorno
+            12 settimane · 5-15 minuti al giorno
           </p>
           <p className="text-muted text-sm">
             Strumenti mentali reali — da usare in campo.
@@ -142,8 +142,8 @@ export default function OnboardingPage() {
               <div>
                 <h3 className="font-bold text-app mb-1">Uno strumento mentale per settimana</h3>
                 <p className="text-sm text-muted leading-relaxed">
-                  Ogni settimana costruisci uno strumento specifico: Il Reset, L&apos;Observer,
-                  Il Body Check, Il Protocollo Pressione. Strumenti da usare subito in campo.
+                  Ogni settimana costruisci uno strumento specifico — si parte dal Reset e
+                  si sale, settimana dopo settimana. Strumenti da usare subito in campo.
                 </p>
               </div>
             </div>
@@ -167,50 +167,51 @@ export default function OnboardingPage() {
 
     // ── SLIDE 3 ──────────────────────────────────────────────────────────────
     {
-      title: 'Le 4 settimane del percorso',
-      subtitle: 'Blocco 1 — Costruire lo strumento',
+      title: 'Le 12 settimane del percorso',
+      subtitle: '3 blocchi, un passo alla volta',
       content: (
         <div className="max-w-2xl mx-auto space-y-4">
           {[
             {
-              week: 1,
-              tool: 'Il Reset',
-              principle: 'Presenza',
-              desc: 'Impara a tornare al momento presente in 3 respiri. Il fondamentale mentale.',
+              weeks: '1–4',
+              block: 'Blocco 1 — Costruire lo strumento',
+              principle: 'Presenza · Osservazione · Ascolto',
+              desc: 'Il Reset, l’Observer, il Body Check, il Protocollo Pressione. I fondamentali mentali, da usare subito in campo.',
               color: 'bg-forest-500',
+              badge: null,
             },
             {
-              week: 2,
-              tool: "L'Observer",
-              principle: 'Osservazione',
-              desc: "Diventa lo spettatore dei tuoi pensieri. Osserva senza farti trascinare.",
+              weeks: '5–8',
+              block: 'Blocco 2 — Giocare nelle difficoltà',
+              principle: 'Accettazione · Lasciare Andare · Perdono',
+              desc: 'Errori, pressione, giudizio, rabbia: impari a giocarci dentro, non a fingerli via.',
               color: 'bg-blue-500',
+              badge: null,
             },
             {
-              week: 3,
-              tool: 'Il Body Check',
-              principle: 'Ascolto',
-              desc: 'Leggi i segnali del corpo prima che diventino blocchi. Ascolto corporeo in campo.',
+              weeks: '9–12',
+              block: 'Blocco 3 — Giocare libero',
+              principle: 'Ritornare al Centro',
+              desc: 'L’ultimo passo: mettere tutto insieme e giocare libero.',
               color: 'bg-violet-500',
+              badge: 'In arrivo',
             },
-            {
-              week: 4,
-              tool: 'Il Protocollo Pressione',
-              principle: 'Ascolto applicato',
-              desc: 'Combina i 3 strumenti precedenti per reggere i momenti di massima pressione.',
-              color: 'bg-orange-500',
-            },
-          ].map((w) => (
-            <div key={w.week} className="bg-surface border border-divider rounded-xl p-4 flex items-start gap-4 shadow-sm">
-              <div className={`${w.color} text-white w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0`}>
-                {w.week}
+          ].map((b) => (
+            <div key={b.weeks} className="bg-surface border border-divider rounded-xl p-4 flex items-start gap-4 shadow-sm">
+              <div className={`${b.color} text-white w-12 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0`}>
+                {b.weeks}
               </div>
               <div>
                 <p className="font-bold text-app text-sm">
-                  Settimana {w.week} — {w.tool}
+                  {b.block}
+                  {b.badge && (
+                    <span className="ml-2 text-[10px] font-semibold text-faint bg-surface-2 border border-divider rounded-full px-2 py-0.5 align-middle">
+                      {b.badge}
+                    </span>
+                  )}
                 </p>
-                <p className="text-xs text-muted mb-1">🧭 {w.principle}</p>
-                <p className="text-sm text-muted leading-relaxed">{w.desc}</p>
+                <p className="text-xs text-muted mb-1">🧭 {b.principle}</p>
+                <p className="text-sm text-muted leading-relaxed">{b.desc}</p>
               </div>
             </div>
           ))}
