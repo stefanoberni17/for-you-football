@@ -91,7 +91,9 @@ export async function POST(request: NextRequest) {
       'pre-allenamento', 'in-campo', 'post-errore', 'recupero', 'mentale', 'vita',
     ]);
     const validPrinciples = new Set([
-      'presenza', 'osservazione', 'ascolto', 'ascolto-applicato', null, undefined, '',
+      'presenza', 'osservazione', 'ascolto', 'ascolto-applicato',
+      'accettazione', 'accettazione-applicata', 'perdono', 'lasciare-andare',
+      null, undefined, '',
     ]);
 
     for (const a of actions) {

@@ -246,7 +246,7 @@ action_text   TEXT NOT NULL
 source        TEXT CHECK (source IN ('catalog','custom'))
 catalog_id    TEXT                                -- es. 'cat_pre_001' se da catalogo
 category      TEXT CHECK (category IN ('pre-allenamento','in-campo','post-errore','recupero','mentale','vita'))
-principle     TEXT CHECK (principle IN ('presenza','osservazione','ascolto','ascolto-applicato')) -- nullable
+principle     TEXT CHECK (principle IN ('presenza','osservazione','ascolto','ascolto-applicato','accettazione','accettazione-applicata','perdono','lasciare-andare')) -- nullable (migration 006)
 position      SMALLINT CHECK (BETWEEN 1 AND 5)
 archived_at   TIMESTAMPTZ                         -- soft-delete (preserva storico)
 created_at, updated_at

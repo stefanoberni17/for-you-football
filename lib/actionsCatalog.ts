@@ -11,7 +11,9 @@
  *    che citano Observer, Body Check, Protocollo Pressione
  *
  * Categorie: pre-allenamento | in-campo | post-errore | recupero | mentale | vita
- * Principi: presenza (W1) | osservazione (W2) | ascolto (W3) | ascolto-applicato (W4) | null
+ * Principi: presenza (W1) | osservazione (W2) | ascolto (W3) | ascolto-applicato (W4)
+ *         | accettazione (W5) | accettazione-applicata (W6) | perdono (W7)
+ *         | lasciare-andare (W8) | null
  */
 
 export type ActionCategory =
@@ -27,6 +29,10 @@ export type ActionPrinciple =
   | 'osservazione'
   | 'ascolto'
   | 'ascolto-applicato'
+  | 'accettazione'
+  | 'accettazione-applicata'
+  | 'perdono'
+  | 'lasciare-andare'
   | null;
 
 export type CatalogAction = {
@@ -50,26 +56,35 @@ export const PRINCIPLE_LABELS: Record<NonNullable<ActionPrinciple>, string> = {
   'osservazione': 'Osservazione · W2',
   'ascolto': 'Ascolto · W3',
   'ascolto-applicato': 'Pressione · W4',
+  'accettazione': 'Accettazione · W5',
+  'accettazione-applicata': 'Giudizio · W6',
+  'perdono': 'Perdono · W7',
+  'lasciare-andare': 'Lasciare Andare · W8',
 };
 
 export const ACTIONS_CATALOG: CatalogAction[] = [
-  // ─── Pre-allenamento e pre-partita (3) ───────────────────────────────────
+  // ─── Pre-allenamento e pre-partita (4) ───────────────────────────────────
   { id: 'cat_pre_reset', text: 'Faccio Il Reset 3 minuti prima di entrare in campo', category: 'pre-allenamento', principle: 'presenza' },
   { id: 'cat_pre_meal', text: 'Mangio bene almeno 2 ore prima di giocare', category: 'pre-allenamento', principle: null },
   { id: 'cat_pre_early', text: 'Arrivo agli allenamenti con 15 minuti di anticipo: entro nel ritmo prima del fischio', category: 'pre-allenamento', principle: 'presenza' },
+  { id: 'cat_pre_rilascio', text: 'Prima di giocare entro pulito: spalle aperte, respiro giù, la partita di ieri resta fuori', category: 'pre-allenamento', principle: 'lasciare-andare' },
 
-  // ─── In campo (5) ────────────────────────────────────────────────────────
+  // ─── In campo (7) ────────────────────────────────────────────────────────
   { id: 'cat_camp_ritmo', text: 'Quando perdo il ritmo faccio Il Reset', category: 'in-campo', principle: 'presenza' },
   { id: 'cat_camp_apply', text: 'Applico Il Reset in una situazione concreta della giornata, dentro o fuori dal campo', category: 'in-campo', principle: 'presenza' },
   { id: 'cat_camp_thoughts', text: 'Noto i pensieri che mi prendono in campo: passato, futuro o giudizio', category: 'in-campo', principle: 'osservazione' },
   { id: 'cat_camp_body', text: 'Prima di una giocata importante faccio un body check breve: piedi, respiro, spalle', category: 'in-campo', principle: 'ascolto' },
   { id: 'cat_camp_pressure', text: 'Sotto pressione: sento → nomino → torno. Quindici secondi e sono nella prossima azione', category: 'in-campo', principle: 'ascolto-applicato' },
+  { id: 'cat_camp_giudizio', text: 'Se il mister o la tribuna mi pesano addosso, tengo il fatto e lascio cadere la storia', category: 'in-campo', principle: 'accettazione-applicata' },
+  { id: 'cat_camp_anticipo', text: 'Quando la rabbia sale, la sento un gradino prima: la nomino e scelgo io la prossima azione', category: 'in-campo', principle: 'perdono' },
 
-  // ─── Dopo un errore (2) ──────────────────────────────────────────────────
+  // ─── Dopo un errore (3) ──────────────────────────────────────────────────
   { id: 'cat_err_reset', text: 'Dopo un errore faccio un Reset breve prima dell’azione successiva', category: 'post-errore', principle: 'presenza' },
   { id: 'cat_err_eyes', text: 'Quando sbaglio non guardo a terra: respiro e cerco il prossimo pallone', category: 'post-errore', principle: null },
+  { id: 'cat_err_stacco', text: 'Dopo un errore faccio Lo Stacco: niente replay, Reset e prossima azione', category: 'post-errore', principle: 'accettazione' },
 
-  // ─── Recupero (5) ────────────────────────────────────────────────────────
+  // ─── Recupero (6) ────────────────────────────────────────────────────────
+  { id: 'cat_rec_rilascio', text: 'Dopo la partita faccio Il Rilascio: poso lo zaino fuori dal campo, il risultato non entra in casa', category: 'recupero', principle: 'lasciare-andare' },
   { id: 'cat_rec_sleep_hours', text: 'Dormo almeno 8 ore — il sonno è parte dell’allenamento', category: 'recupero', principle: null },
   { id: 'cat_rec_bedtime', text: 'Vado a letto entro le 23, anche quando la tentazione di restare alzato è forte', category: 'recupero', principle: null },
   { id: 'cat_rec_phone_night', text: 'Spengo lo schermo 30 minuti prima di dormire', category: 'recupero', principle: null },
@@ -81,9 +96,12 @@ export const ACTIONS_CATALOG: CatalogAction[] = [
   { id: 'cat_vit_food', text: 'Mangio sano: quello che mangio finisce in campo', category: 'vita', principle: null },
   { id: 'cat_vit_alcohol', text: 'Niente alcol nei giorni di allenamento o partita', category: 'vita', principle: null },
 
-  // ─── Mentale (2) ─────────────────────────────────────────────────────────
+  // ─── Mentale (5) ─────────────────────────────────────────────────────────
   { id: 'cat_men_gratitude', text: 'Mi prendo 15 minuti al giorno per ringraziare ciò che ho — anche le difficoltà', category: 'mentale', principle: null },
   { id: 'cat_men_reading', text: 'Leggo 10 pagine o studio qualcosa che mi fa crescere come persona', category: 'mentale', principle: null },
+  { id: 'cat_men_si_interno', text: 'Quando qualcosa non va come volevo, dico un «sì» interno a ciò che è già successo — poi scelgo', category: 'mentale', principle: 'accettazione' },
+  { id: 'cat_men_fatto_storia', text: 'Quando un giudizio mi brucia, lo spacco in due: il fatto e la storia che ci ho aggiunto', category: 'mentale', principle: 'accettazione-applicata' },
+  { id: 'cat_men_anticipo_vita', text: 'Anche fuori dal campo, quando la frustrazione monta: sento, nomino, torno — poi rispondo', category: 'mentale', principle: 'perdono' },
 ];
 
 /**
@@ -92,10 +110,19 @@ export const ACTIONS_CATALOG: CatalogAction[] = [
  * che usano strumenti delle settimane successive (Observer, Body Check, ecc.).
  */
 export function allowedPrinciplesForWeek(week: number): ActionPrinciple[] {
-  if (week >= 4) return ['presenza', 'osservazione', 'ascolto', 'ascolto-applicato', null];
-  if (week === 3) return ['presenza', 'osservazione', 'ascolto', null];
-  if (week === 2) return ['presenza', 'osservazione', null];
-  return ['presenza', null]; // W1
+  // Il principio i-esimo si sblocca alla settimana i+1 (presenza=W1 … lasciare-andare=W8).
+  const order: NonNullable<ActionPrinciple>[] = [
+    'presenza',
+    'osservazione',
+    'ascolto',
+    'ascolto-applicato',
+    'accettazione',
+    'accettazione-applicata',
+    'perdono',
+    'lasciare-andare',
+  ];
+  const unlocked = Math.min(Math.max(week, 1), order.length);
+  return [...order.slice(0, unlocked), null];
 }
 
 export const CATEGORY_ORDER: ActionCategory[] = [

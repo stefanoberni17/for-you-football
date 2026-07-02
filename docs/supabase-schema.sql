@@ -315,7 +315,8 @@ CREATE TABLE IF NOT EXISTS user_actions (
               ('pre-allenamento','in-campo','post-errore',
                'recupero','mentale','vita')),
   principle   TEXT CHECK (principle IS NULL OR principle IN
-              ('presenza','osservazione','ascolto','ascolto-applicato')),
+              ('presenza','osservazione','ascolto','ascolto-applicato',
+               'accettazione','accettazione-applicata','perdono','lasciare-andare')),
   position    SMALLINT NOT NULL CHECK (position BETWEEN 1 AND 5),
   archived_at TIMESTAMPTZ,
   created_at  TIMESTAMPTZ DEFAULT NOW(),
