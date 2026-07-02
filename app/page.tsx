@@ -18,7 +18,7 @@ import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
-import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
+import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target } from 'lucide-react';
 
 interface CheckinData {
@@ -242,6 +242,14 @@ export default function HomePage() {
   // "Beta finita" = ha completato tutti i giorni OPPURE current_week è oltre il max disponibile
   // (succede quando il gate G7 incrementa current_week ma magari qualche giorno è compressed).
   const allDone = totalCompleted >= totalDays || currentWeek > BETA_MAX_WEEK;
+
+  // Un banner alla volta: Coach > lunedì-azioni > install; il prompt push
+  // aspetta se un banner inline è già in vista.
+  const coachBannerVisible = !!(profile?.last_coach_message && !coachMessageDismissed);
+  const weeklyBannerVisible =
+    !coachBannerVisible &&
+    !!userId &&
+    weeklyBannerWantsToShow(actionsTotal === 0, profile?.last_weekly_actions_dismiss || null);
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
     try {
@@ -589,10 +597,10 @@ export default function HomePage() {
           />
         )}
 
-        {/* ─── Banner promozionali / messaggi soft — in fondo per non rubare il first-fold ─── */}
+        {/* ─── Banner promozionali / messaggi soft — UNO alla volta, in fondo ─── */}
 
         {/* Ultimo messaggio Coach */}
-        {profile?.last_coach_message && !coachMessageDismissed && (
+        {coachBannerVisible && (
           <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
             <button
               onClick={async () => {
@@ -619,19 +627,21 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Banner settimanale "Aggiorna le 5 della settimana" — lunedì o se vuoto */}
-        {userId && (
+        {/* Banner settimanale lunedì (con 0 azioni ci pensa l'empty-state di ActionsCard) */}
+        {weeklyBannerVisible && (
           <WeeklyActionsBanner
             userId={userId}
-            needsSetup={actionsTotal === 0}
+            needsSetup={false}
             lastDismiss={profile?.last_weekly_actions_dismiss || null}
           />
         )}
 
-        {/* Banner installazione PWA */}
-        <InstallBanner totalCompleted={totalCompleted} />
+        {/* Banner installazione PWA — solo se nessun altro banner è in vista */}
+        {!coachBannerVisible && !weeklyBannerVisible && (
+          <InstallBanner totalCompleted={totalCompleted} />
+        )}
       </div>
-      <PushPermission userId={userId} />
+      <PushPermission userId={userId} suppressed={coachBannerVisible || weeklyBannerVisible} />
     </main>
   );
 }

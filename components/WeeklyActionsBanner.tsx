@@ -30,6 +30,20 @@ function mondayOfThisWeek(): string {
 }
 
 /**
+ * Il banner ha qualcosa da dire oggi? Usato dalla dashboard per lo slot
+ * "un banner alla volta". Con 0 azioni attive risponde false: l'empty-state
+ * di ActionsCard invita già a pianificare (niente doppione).
+ */
+export function weeklyBannerWantsToShow(
+  needsSetup: boolean,
+  lastDismiss: string | null
+): boolean {
+  if (needsSetup) return false;
+  if (italyWeekday() !== 1) return false;
+  return lastDismiss === null || lastDismiss < mondayOfThisWeek();
+}
+
+/**
  * Banner soft sulla dashboard che invita ad aggiornare le 5 azioni della
  * settimana. Visibile se:
  *   - l'utente non ha ancora azioni (needsSetup), OPPURE
