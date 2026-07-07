@@ -114,7 +114,7 @@ export default function StrumentiPage() {
               onClick={() => setSelectedCapacita(null)}
               className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
             >
-              ← La Palestra
+              ← Palestra
             </button>
             <div className="text-4xl mb-2">{selectedCapacita.emoji}</div>
             <h1 className="text-2xl font-bold text-white leading-tight">{selectedCapacita.principio}</h1>
@@ -283,9 +283,9 @@ export default function StrumentiPage() {
             <span className="flex items-center gap-3">
               <span className="text-2xl" aria-hidden="true">🏋️</span>
               <span>
-                <span className="block text-sm font-bold text-app">La Palestra</span>
+                <span className="block text-sm font-bold text-app">Allena una capacità</span>
                 <span className="block text-xs text-muted mt-0.5">
-                  {capUnlocked} di {CAPACITA.length} capacità — allena un principio
+                  {capUnlocked} di {CAPACITA.length} capacità — un principio alla volta
                 </span>
               </span>
             </span>

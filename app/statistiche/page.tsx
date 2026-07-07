@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import { Activity, Moon, Zap, Brain, Flame, Target, TrendingUp, TrendingDown } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
+import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 interface Checkin {
   date: string;
@@ -157,7 +158,7 @@ export default function StatistichePage() {
 
   const filtered = checkins.slice(-period);
   const today = checkins[checkins.length - 1];
-  const isToday = today?.date === new Date().toISOString().split('T')[0];
+  const isToday = today?.date === todayItaly();
   const todayCheckin = isToday ? today : null;
 
   const physicalValues = filtered.filter(c => c.physical_state !== null).map(c => c.physical_state as number);
@@ -198,12 +199,10 @@ export default function StatistichePage() {
   let streak = 0;
   {
     const dates = new Set(checkins.map(c => c.date));
-    const dateStr = (d: Date) => d.toISOString().split('T')[0];
-    const cursor = new Date();
-    if (!dates.has(dateStr(cursor))) cursor.setDate(cursor.getDate() - 1);
-    while (dates.has(dateStr(cursor))) {
+    let offset = dates.has(todayItaly()) ? 0 : 1;
+    while (dates.has(daysAgoItaly(offset))) {
       streak++;
-      cursor.setDate(cursor.getDate() - 1);
+      offset++;
     }
   }
 
@@ -304,7 +303,7 @@ export default function StatistichePage() {
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-app flex items-center gap-2">
                 <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
-                Le tue azioni
+                Le tue 5 azioni
               </h2>
               <button
                 onClick={() => router.push('/oggi')}
@@ -354,7 +353,7 @@ export default function StatistichePage() {
                     c >= 3 ? 'bg-forest-400' :
                     c >= 1 ? 'bg-amber-500/60' :
                     'bg-surface-2';
-                  const isoToday = new Date().toISOString().split('T')[0];
+                  const isoToday = todayItaly();
                   return (
                     <div
                       key={d.date}
@@ -429,7 +428,7 @@ export default function StatistichePage() {
                   Non hai ancora pianificato le tue azioni
                 </p>
                 <p className="text-xs text-amber-300 mt-0.5 leading-relaxed">
-                  Scegli 5 azioni concrete da pro che fai ogni giorno. Lo streak parte appena cominci.
+                  Scegli 5 azioni concrete che fai ogni giorno. Lo streak parte appena cominci.
                 </p>
               </div>
             </div>

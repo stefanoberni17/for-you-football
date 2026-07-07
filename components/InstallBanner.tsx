@@ -26,7 +26,9 @@ function isStandalone(): boolean {
 
 const DISMISS_KEY = 'install_banner_dismissed_at';
 const REMIND_DAYS = 3;
-const MIN_DAYS_COMPLETED = 0;
+// L'invito a installare arriva dopo il primo giorno completato: al primissimo
+// accesso l'utente ha già check-in + Reset + Giorno 1 davanti, non serve altro.
+const MIN_DAYS_COMPLETED = 1;
 
 export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
   const [show, setShow] = useState(false);

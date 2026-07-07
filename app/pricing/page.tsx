@@ -175,7 +175,7 @@ function PricingContent() {
         </button>
 
         <p className="text-center text-xs text-faint">
-          Garanzia 4 settimane: provi l&apos;intero Blocco 1 — se non fa per te, rimborso completo.
+          Garanzia 4 settimane: provi le prime 4 settimane della tua Season — se non fa per te, rimborso completo.
         </p>
 
         <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
@@ -208,8 +208,8 @@ function PricingContent() {
           <div>
             <div className="text-sm font-semibold text-app">Come funziona la garanzia?</div>
             <div className="text-sm text-muted mt-1">
-              Hai 4 settimane per provare tutto il Blocco 1. Se non fa per te, scrivici e ti
-              rimborsiamo per intero.
+              Hai 4 settimane per provare la tua Season dall&apos;inizio. Se non fa per te,
+              scrivici e ti rimborsiamo per intero.
             </div>
           </div>
 

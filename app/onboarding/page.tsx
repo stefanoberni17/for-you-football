@@ -6,12 +6,14 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
+import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(1);
   const [completing, setCompleting] = useState(false);
   const [ready, setReady] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [showRitual, setShowRitual] = useState(false);
   const [ritualUserId, setRitualUserId] = useState('');
   const [completingRitual, setCompletingRitual] = useState(false);
@@ -85,13 +87,34 @@ export default function OnboardingPage() {
 
       trackOnboarding('onboarding_started_percorso');
       setRitualUserId(session.user.id);
-      setShowRitual(true);
+      // Step calendario: il momento giusto per sapere quando si allena/gioca.
+      // Sempre saltabile; poi si passa alla schermata rituale.
+      setShowCalendar(true);
 
     } catch (error) {
       console.error('Errore imprevisto:', error);
       alert('Errore imprevisto. Riprova.');
       setCompleting(false);
     }
+  };
+
+  const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
+    try {
+      await authFetch('/api/calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weekNumber: 1, trainingDays, matchDays }),
+      });
+    } catch {
+      /* non bloccante: il calendario si può reimpostare dalla dashboard */
+    }
+    setShowCalendar(false);
+    setShowRitual(true);
+  };
+
+  const handleCalendarSkip = () => {
+    setShowCalendar(false);
+    setShowRitual(true);
   };
 
   const handleRitualComplete = async () => {
@@ -128,7 +151,7 @@ export default function OnboardingPage() {
             e non riesci più a tornare nella partita?
           </p>
           <p className="text-muted text-sm">
-            12 settimane · 5 minuti al giorno
+            12 settimane · 5-15 minuti al giorno
           </p>
           <p className="text-muted text-sm">
             Strumenti mentali reali — da usare in campo.
@@ -176,8 +199,8 @@ export default function OnboardingPage() {
               <div>
                 <h3 className="font-bold text-app mb-1">Uno strumento mentale per settimana</h3>
                 <p className="text-sm text-muted leading-relaxed">
-                  Ogni settimana costruisci uno strumento specifico: Il Reset, L&apos;Observer,
-                  Il Body Check, Il Protocollo Pressione. Strumenti da usare subito in campo.
+                  Ogni settimana costruisci uno strumento specifico — si parte dal Reset e
+                  si sale, settimana dopo settimana. Strumenti da usare subito in campo.
                 </p>
               </div>
             </div>
@@ -201,50 +224,51 @@ export default function OnboardingPage() {
 
     // ── SLIDE 3 ──────────────────────────────────────────────────────────────
     {
-      title: 'Le 4 settimane del percorso',
-      subtitle: 'Blocco 1 — Costruire lo strumento',
+      title: 'Le 12 settimane del percorso',
+      subtitle: '3 blocchi, un passo alla volta',
       content: (
         <div className="max-w-2xl mx-auto space-y-4">
           {[
             {
-              week: 1,
-              tool: 'Il Reset',
-              principle: 'Presenza',
-              desc: 'Impara a tornare al momento presente in 3 respiri. Il fondamentale mentale.',
+              weeks: '1–4',
+              block: 'Blocco 1 — Costruire lo strumento',
+              principle: 'Presenza · Osservazione · Ascolto',
+              desc: 'Il Reset, l’Observer, il Body Check, il Protocollo Pressione. I fondamentali mentali, da usare subito in campo.',
               color: 'bg-forest-500',
+              badge: null,
             },
             {
-              week: 2,
-              tool: "L'Observer",
-              principle: 'Osservazione',
-              desc: "Diventa lo spettatore dei tuoi pensieri. Osserva senza farti trascinare.",
+              weeks: '5–8',
+              block: 'Blocco 2 — Giocare nelle difficoltà',
+              principle: 'Accettazione · Lasciare Andare · Perdono',
+              desc: 'Errori, pressione, giudizio, rabbia: impari a giocarci dentro, non a fingerli via.',
               color: 'bg-blue-500',
+              badge: null,
             },
             {
-              week: 3,
-              tool: 'Il Body Check',
-              principle: 'Ascolto',
-              desc: 'Leggi i segnali del corpo prima che diventino blocchi. Ascolto corporeo in campo.',
+              weeks: '9–12',
+              block: 'Blocco 3 — Giocare libero',
+              principle: 'Ritornare al Centro',
+              desc: 'L’ultimo passo: mettere tutto insieme e giocare libero.',
               color: 'bg-violet-500',
+              badge: 'In arrivo',
             },
-            {
-              week: 4,
-              tool: 'Il Protocollo Pressione',
-              principle: 'Ascolto applicato',
-              desc: 'Combina i 3 strumenti precedenti per reggere i momenti di massima pressione.',
-              color: 'bg-orange-500',
-            },
-          ].map((w) => (
-            <div key={w.week} className="bg-surface border border-divider rounded-xl p-4 flex items-start gap-4 shadow-sm">
-              <div className={`${w.color} text-white w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0`}>
-                {w.week}
+          ].map((b) => (
+            <div key={b.weeks} className="bg-surface border border-divider rounded-xl p-4 flex items-start gap-4 shadow-sm">
+              <div className={`${b.color} text-white w-12 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0`}>
+                {b.weeks}
               </div>
               <div>
                 <p className="font-bold text-app text-sm">
-                  Settimana {w.week} — {w.tool}
+                  {b.block}
+                  {b.badge && (
+                    <span className="ml-2 text-[10px] font-semibold text-faint bg-surface-2 border border-divider rounded-full px-2 py-0.5 align-middle">
+                      {b.badge}
+                    </span>
+                  )}
                 </p>
-                <p className="text-xs text-muted mb-1">🧭 {w.principle}</p>
-                <p className="text-sm text-muted leading-relaxed">{w.desc}</p>
+                <p className="text-xs text-muted mb-1">🧭 {b.principle}</p>
+                <p className="text-sm text-muted leading-relaxed">{b.desc}</p>
               </div>
             </div>
           ))}
@@ -252,7 +276,49 @@ export default function OnboardingPage() {
       ),
     },
 
-    // ── SLIDE 4 ──────────────────────────────────────────────────────────────
+    // ── SLIDE 4 — La giornata tipo ───────────────────────────────────────────
+    {
+      title: 'La tua giornata con l’app',
+      subtitle: 'Pochi minuti, sempre gli stessi gesti',
+      content: (
+        <div className="max-w-2xl mx-auto space-y-4">
+          {[
+            {
+              emoji: '☀️',
+              title: 'Check-in del mattino',
+              desc: '30 secondi appena apri l’app: 4 cursori per dire come stai. Il Coach li legge e ti conosce meglio.',
+            },
+            {
+              emoji: '🌬️',
+              title: 'Il Reset',
+              desc: 'Un minuto di respiro subito dopo. È il rituale del mattino: lo stesso strumento che poi userai in campo.',
+            },
+            {
+              emoji: '📖',
+              title: 'Il giorno del percorso',
+              desc: '5-15 minuti: apertura, pratica guidata, una domanda. Un giorno alla volta.',
+            },
+            {
+              emoji: '✅',
+              title: 'Le tue 5 azioni',
+              desc: 'Cinque azioni concrete che scegli tu, le stesse per tutta la settimana. Le spunti durante la giornata.',
+            },
+          ].map((s) => (
+            <div key={s.title} className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
+              <div className="flex items-start gap-4">
+                <span className="text-3xl">{s.emoji}</span>
+                <div>
+                  <h3 className="font-bold text-app mb-1">{s.title}</h3>
+                  <p className="text-sm text-muted leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+
+    // ── SLIDE 5 — Coach AI ───────────────────────────────────────────────────
     {
       title: 'Il tuo Coach AI',
       subtitle: 'Sempre con te, in campo e fuori',
@@ -338,7 +404,7 @@ export default function OnboardingPage() {
               risultati concreti <strong>nelle partite, negli allenamenti, nella testa</strong>.
             </p>
             <p className="text-muted mt-3 text-sm italic">
-              Il primo passo: 5 minuti al giorno, per 7 giorni. Inizia oggi.
+              Il primo passo: 5-15 minuti al giorno, per 7 giorni. Inizia oggi.
             </p>
           </div>
         </div>
@@ -348,6 +414,18 @@ export default function OnboardingPage() {
 
   const currentContent = slides[currentSlide - 1];
   const isLastSlide = currentSlide === slides.length;
+
+  if (showCalendar) {
+    return (
+      <main className="min-h-screen bg-app">
+        <WeeklyCalendarPopup
+          weekNumber={1}
+          onSave={handleCalendarSave}
+          onSkip={handleCalendarSkip}
+        />
+      </main>
+    );
+  }
 
   if (showRitual) {
     return (
