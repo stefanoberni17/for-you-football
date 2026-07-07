@@ -19,6 +19,18 @@ const supabaseAdmin = createClient(
  * Ritorna: { url } — URL Stripe Checkout da cui far ridirigere il client.
  */
 export async function POST(request: NextRequest) {
+  try {
+    return await createCheckout(request);
+  } catch (err) {
+    // Senza questo catch un errore Stripe (price id sbagliato, mode mismatch, ecc.)
+    // diventava un 500 HTML → il client mostrava solo "Errore inatteso".
+    const msg = err instanceof Error ? err.message : 'unknown error';
+    console.error('[stripe] create-checkout failed:', msg);
+    return NextResponse.json({ error: `Checkout non riuscito: ${msg}` }, { status: 500 });
+  }
+}
+
+async function createCheckout(request: NextRequest) {
   if (!isStripeEnabled()) {
     return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
   }
