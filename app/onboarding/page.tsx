@@ -18,6 +18,7 @@ export default function OnboardingPage() {
   const [ritualUserId, setRitualUserId] = useState('');
   const [completingRitual, setCompletingRitual] = useState(false);
   const [telegramLinkLoading, setTelegramLinkLoading] = useState(false);
+  const [telegramLinked, setTelegramLinked] = useState(false);
 
   // Deep-link Telegram dalla slide 4 (riusa il flusso del profilo).
   // NON setta onboarding_completed: il binding viene confermato dal webhook.
@@ -43,7 +44,7 @@ export default function OnboardingPage() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('onboarding_completed')
+        .select('onboarding_completed, telegram_id')
         .eq('user_id', session.user.id)
         .single();
 
@@ -52,10 +53,33 @@ export default function OnboardingPage() {
         return;
       }
 
+      setTelegramLinked(!!profile?.telegram_id);
       setReady(true);
     };
     check();
   }, [router]);
+
+  // Al ritorno dall'app Telegram (visibilitychange) rileggi telegram_id:
+  // se il bot ha completato il collegamento, la slide Coach mostra "✅ collegato"
+  // e la navigazione torna il normale "Continua". Stesso pattern di /profilo.
+  useEffect(() => {
+    const onVisible = async () => {
+      if (document.visibilityState !== 'visible') return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data: p } = await supabase
+        .from('profiles')
+        .select('telegram_id')
+        .eq('user_id', session.user.id)
+        .single();
+      if (p?.telegram_id) {
+        setTelegramLinked(true);
+        setTelegramLinkLoading(false);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
 
   // Traccia la visualizzazione di ogni slide del carousel (funnel onboarding)
   useEffect(() => {
@@ -160,10 +184,10 @@ export default function OnboardingPage() {
       ),
     },
 
-    // ── SLIDE 2 ──────────────────────────────────────────────────────────────
+    // ── SLIDE 2 — Come funziona (giorni + strumenti + blocchi) ───────────────
     {
       title: 'Come funziona il percorso',
-      subtitle: '',
+      subtitle: '12 settimane, un passo alla volta',
       content: (
         <div className="max-w-2xl mx-auto space-y-4">
           <div className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
@@ -172,22 +196,8 @@ export default function OnboardingPage() {
               <div>
                 <h3 className="font-bold text-app mb-1">7 giorni a settimana</h3>
                 <p className="text-sm text-muted leading-relaxed">
-                  Ogni settimana ha 7 giorni di allenamento mentale. I giorni si
-                  sbloccano progressivamente: completa uno per passare al successivo.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
-            <div className="flex items-start gap-4">
-              <span className="text-3xl">🔑</span>
-              <div>
-                <h3 className="font-bold text-app mb-1">Il Giorno Gate (Giorno 7)</h3>
-                <p className="text-sm text-muted leading-relaxed">
-                  L&apos;ultimo giorno di ogni settimana è il <strong>Gate</strong>: una review
-                  settimanale per consolidare ciò che hai imparato. È obbligatorio per
-                  sbloccare la settimana successiva.
+                  I giorni si sbloccano uno alla volta. Il Giorno 7 è il <strong>Gate</strong>:
+                  una review che consolida quello che hai imparato e apre la settimana successiva.
                 </p>
               </div>
             </div>
@@ -206,59 +216,34 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="bg-surface rounded-xl p-5 border-l-4 border-emerald-400">
-            <div className="flex items-start gap-4">
-              <span className="text-3xl">⏱</span>
-              <div>
-                <h3 className="font-bold text-app mb-1">Breve e concreto</h3>
-                <p className="text-sm text-muted leading-relaxed">
-                  Ogni giorno dura 5–15 minuti. Lettura, pratica guidata, riflessione.
-                  Pensato per calciatori con poco tempo.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-
-    // ── SLIDE 3 ──────────────────────────────────────────────────────────────
-    {
-      title: 'Le 12 settimane del percorso',
-      subtitle: '3 blocchi, un passo alla volta',
-      content: (
-        <div className="max-w-2xl mx-auto space-y-4">
           {[
             {
               weeks: '1–4',
               block: 'Blocco 1 — Costruire lo strumento',
-              principle: 'Presenza · Osservazione · Ascolto',
-              desc: 'Il Reset, l’Observer, il Body Check, il Protocollo Pressione. I fondamentali mentali, da usare subito in campo.',
+              desc: 'I fondamentali mentali: Presenza, Osservazione, Ascolto.',
               color: 'bg-forest-500',
               badge: null,
             },
             {
               weeks: '5–8',
               block: 'Blocco 2 — Giocare nelle difficoltà',
-              principle: 'Accettazione · Lasciare Andare · Perdono',
-              desc: 'Errori, pressione, giudizio, rabbia: impari a giocarci dentro, non a fingerli via.',
+              desc: 'Errori, pressione, giudizio, rabbia: impari a giocarci dentro.',
               color: 'bg-blue-500',
               badge: null,
             },
             {
               weeks: '9–12',
               block: 'Blocco 3 — Giocare libero',
-              principle: 'Ritornare al Centro',
               desc: 'L’ultimo passo: mettere tutto insieme e giocare libero.',
               color: 'bg-violet-500',
               badge: 'In arrivo',
             },
           ].map((b) => (
-            <div key={b.weeks} className="bg-surface border border-divider rounded-xl p-4 flex items-start gap-4 shadow-sm">
-              <div className={`${b.color} text-white w-12 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0`}>
+            <div key={b.weeks} className="bg-surface border border-divider rounded-xl p-3 flex items-center gap-3 shadow-sm">
+              <div className={`${b.color} text-white w-12 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0`}>
                 {b.weeks}
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="font-bold text-app text-sm">
                   {b.block}
                   {b.badge && (
@@ -267,8 +252,7 @@ export default function OnboardingPage() {
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-muted mb-1">🧭 {b.principle}</p>
-                <p className="text-sm text-muted leading-relaxed">{b.desc}</p>
+                <p className="text-xs text-muted leading-relaxed">{b.desc}</p>
               </div>
             </div>
           ))}
@@ -276,7 +260,7 @@ export default function OnboardingPage() {
       ),
     },
 
-    // ── SLIDE 4 — La giornata tipo ───────────────────────────────────────────
+    // ── SLIDE 3 — La giornata tipo ───────────────────────────────────────────
     {
       title: 'La tua giornata con l’app',
       subtitle: 'Pochi minuti, sempre gli stessi gesti',
@@ -318,7 +302,7 @@ export default function OnboardingPage() {
       ),
     },
 
-    // ── SLIDE 5 — Coach AI ───────────────────────────────────────────────────
+    // ── SLIDE 4 — Coach AI (nav dedicata: collega Telegram / skip esplicito) ──
     {
       title: 'Il tuo Coach AI',
       subtitle: 'Sempre con te, in campo e fuori',
@@ -350,29 +334,29 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-          <div className="bg-forest-500/10 border border-forest-500/30 rounded-xl p-5 text-left">
-            <p className="text-app font-semibold mb-1">Il Coach ti accompagna ogni giorno.</p>
-            <p className="text-sm text-muted leading-relaxed mb-4">
-              Ti scrive lui ogni mattina, ti ricorda la pratica, ed è lì quando ti serve —
-              prima della partita, dopo un errore, o solo per fare il punto.
-            </p>
-            <button
-              type="button"
-              onClick={handleTelegramLink}
-              disabled={telegramLinkLoading}
-              className="w-full bg-forest-500 hover:bg-forest-600 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md disabled:opacity-50"
-            >
-              {telegramLinkLoading ? 'Apriamo Telegram…' : '📲 Collega il Coach — un tap'}
-            </button>
-            <p className="text-xs text-faint mt-3">
-              Senza collegamento non riceverai i promemoria del Coach. Puoi farlo anche dopo dal profilo.
-            </p>
-          </div>
+          {telegramLinked ? (
+            <div className="bg-forest-500/15 border border-forest-500/40 rounded-xl p-5 text-left">
+              <p className="text-app font-semibold mb-1">✅ Coach collegato</p>
+              <p className="text-sm text-muted leading-relaxed">
+                Riceverai i suoi messaggi ogni mattina, e puoi scrivergli quando vuoi —
+                prima della partita, dopo un errore, o solo per fare il punto.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-forest-500/10 border border-forest-500/30 rounded-xl p-5 text-left">
+              <p className="text-app font-semibold mb-1">Il Coach ti accompagna ogni giorno.</p>
+              <p className="text-sm text-muted leading-relaxed">
+                Ti scrive lui ogni mattina, ti ricorda la pratica, ed è lì quando ti serve —
+                prima della partita, dopo un errore, o solo per fare il punto.
+                Collegalo qui sotto: un tap e il Coach è nel tuo Telegram.
+              </p>
+            </div>
+          )}
         </div>
       ),
     },
 
-    // ── SLIDE 5 ──────────────────────────────────────────────────────────────
+    // ── SLIDE 5 — Pronto a iniziare ──────────────────────────────────────────
     {
       title: 'Sei pronto a scendere in campo?',
       subtitle: '',
@@ -414,6 +398,10 @@ export default function OnboardingPage() {
 
   const currentContent = slides[currentSlide - 1];
   const isLastSlide = currentSlide === slides.length;
+  // La slide Coach ha una navigazione dedicata: il collegamento Telegram è
+  // l'azione primaria, lo skip è un link esplicito (niente "Continua" distratto).
+  const coachSlideNumber = slides.findIndex(s => s.title === 'Il tuo Coach AI') + 1;
+  const isCoachGate = currentSlide === coachSlideNumber && !telegramLinked;
 
   if (showCalendar) {
     return (
@@ -517,12 +505,22 @@ export default function OnboardingPage() {
           )}
 
           {!isLastSlide ? (
-            <button
-              onClick={() => setCurrentSlide(s => s + 1)}
-              className="flex-1 bg-forest-500 hover:bg-forest-600 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-xl"
-            >
-              Continua →
-            </button>
+            isCoachGate ? (
+              <button
+                onClick={handleTelegramLink}
+                disabled={telegramLinkLoading}
+                className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
+              >
+                {telegramLinkLoading ? 'Apriamo Telegram…' : '📲 Collega il Coach — un tap'}
+              </button>
+            ) : (
+              <button
+                onClick={() => setCurrentSlide(s => s + 1)}
+                className="flex-1 bg-forest-500 hover:bg-forest-600 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-xl"
+              >
+                Continua →
+              </button>
+            )
           ) : (
             <button
               onClick={handleComplete}
@@ -540,14 +538,23 @@ export default function OnboardingPage() {
           )}
         </div>
 
-        {/* Skip link */}
-        {!isLastSlide && (
+        {/* Skip link — sulla slide Coach lo skip è esplicito e dice cosa perdi */}
+        {isCoachGate ? (
           <button
-            onClick={handleComplete}
+            onClick={() => setCurrentSlide(s => s + 1)}
             className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors"
           >
-            Salta introduzione →
+            Continua senza promemoria →
           </button>
+        ) : (
+          !isLastSlide && (
+            <button
+              onClick={handleComplete}
+              className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors"
+            >
+              Salta introduzione →
+            </button>
+          )
         )}
 
       </div>

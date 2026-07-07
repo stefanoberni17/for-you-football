@@ -44,7 +44,7 @@ for-you-football/
 │   ├── page.tsx                           # Dashboard (home) + mini sparkline statistiche — richiede auth
 │   ├── login/page.tsx
 │   ├── register/page.tsx                  # Registrazione 2-step (account + profilo calciatore)
-│   ├── onboarding/page.tsx                # Carousel 6 slide + step calendario + rituale
+│   ├── onboarding/page.tsx                # Carousel 5 slide (Coach = gate Telegram) + calendario + rituale
 │   ├── chat/page.tsx                      # Chat con Coach AI (4 suggerimenti pre-impostati)
 │   ├── settimane/page.tsx                 # Lista 12 settimane con lock/unlock
 │   ├── settimana/[id]/page.tsx            # Dettaglio settimana + 7 DayCard + WeeklyCalendarPopup
@@ -609,7 +609,8 @@ La memoria persistente del Coach si basa su:
 - Schermata "Controlla la tua email" con bottone **"Reinvia email"** (`supabase.auth.resend`, cooldown 60s)
 
 ### Onboarding (`app/onboarding/page.tsx`)
-- Carousel 6 slide introduttive (benvenuto, come funziona, 3 blocchi/12 settimane, "la tua giornata con l'app": check-in→Reset→giorno→5 azioni, Coach AI, pronto a iniziare)
+- Carousel 5 slide (benvenuto, come funziona [giorni+gate+strumenti+3 blocchi], "la tua giornata con l'app", Coach AI, pronto a iniziare)
+- **Slide Coach = gate morbido Telegram:** il CTA primario in basso è "📲 Collega il Coach" (deep-link), lo skip è il link esplicito "Continua senza promemoria →"; al ritorno da Telegram (`visibilitychange` → refetch `telegram_id`) la slide mostra "✅ Coach collegato" e torna il normale Continua
 - Dopo "Inizia il percorso" (o "Salta introduzione"): step calendario (riuso `WeeklyCalendarPopup`, saltabile, POST `/api/calendar` week=1) → schermata rituale → `/`
 - Mostrato dopo prima registrazione
 
