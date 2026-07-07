@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useWakeLock } from '@/lib/useWakeLock';
+import { todayItaly } from '@/lib/dateItaly';
 
 const DURATION_OPTIONS = [
   { label: '1 min', seconds: 60 },
@@ -17,9 +18,8 @@ const EXHALE_MS = 6000;
 
 const RITUAL_SKIP_KEY = 'ritualSkipped';
 
-function todayStr(): string {
-  return new Date().toISOString().split('T')[0];
-}
+// Il "giorno" del rituale segue il fuso italiano, come il check-in.
+const todayStr = todayItaly;
 
 interface MeditationPopupProps {
   mantra: string;
@@ -218,6 +218,9 @@ export default function MeditationPopup({
               <div className="text-5xl md:text-6xl mb-3">
                 {isFirstTime ? '🌱' : '⚽'}
               </div>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-forest-300 mb-1">
+                {manualOpen ? 'Reset rapido' : 'Il rituale del mattino'}
+              </p>
               <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
                 {isFirstTime ? 'Il tuo primo Reset' : 'Il Reset'}
               </h2>

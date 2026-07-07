@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
+import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,14 +13,8 @@ const supabaseAdmin = createClient(
 
 const STREAK_THRESHOLD = 3; // ≥3/5 → giorno valido per streak (morbida)
 
-const isoDate = (d: Date) => d.toISOString().split('T')[0];
-const todayDate = () => isoDate(new Date());
-
-function daysAgo(n: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return isoDate(d);
-}
+const todayDate = todayItaly;
+const daysAgo = daysAgoItaly;
 
 // ─── GET /api/actions/history?userId=X&days=N ────────────────────────────
 // Ritorna:
@@ -35,6 +31,9 @@ export async function GET(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
     const days = Math.min(Math.max(parseInt(searchParams.get('days') || '30'), 1), 180);
 

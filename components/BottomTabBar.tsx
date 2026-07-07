@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, LayoutDashboard, Wrench, MessageCircle, User } from 'lucide-react';
+import { Home, LayoutDashboard, Dumbbell, MessageCircle, User } from 'lucide-react';
 
 export default function BottomTabBar() {
   const pathname = usePathname();
@@ -15,7 +15,7 @@ export default function BottomTabBar() {
   const tabs = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/settimane', label: 'Percorso', icon: LayoutDashboard },
-    { href: '/strumenti', label: 'Strumenti', icon: Wrench },
+    { href: '/strumenti', label: 'Palestra', icon: Dumbbell },
     { href: '/chat', label: 'Coach', icon: MessageCircle },
     { href: '/profilo', label: 'Profilo', icon: User },
   ];

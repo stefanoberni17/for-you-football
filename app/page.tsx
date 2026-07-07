@@ -18,7 +18,7 @@ import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
-import WeeklyActionsBanner from '@/components/WeeklyActionsBanner';
+import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
 import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target, MessageCircle } from 'lucide-react';
 
@@ -253,6 +253,35 @@ export default function HomePage() {
   // (succede quando il gate G7 incrementa current_week ma magari qualche giorno è compressed).
   const allDone = totalCompleted >= totalDays || currentWeek > BETA_MAX_WEEK;
 
+  // Rientro dopo assenza: streak a zero e ultimo giorno completato ≥3 giorni fa
+  // → l'hero accoglie invece di mostrare solo lo streak perso.
+  const lastCompletionTs = completedDays.reduce((max, d) => {
+    const t = d.completedAt ? new Date(d.completedAt).getTime() : 0;
+    return t > max ? t : max;
+  }, 0);
+  const daysSinceLastCompletion = lastCompletionTs
+    ? Math.floor((Date.now() - lastCompletionTs) / 86_400_000)
+    : 0;
+  const comebackMode =
+    streak === 0 &&
+    totalCompleted > 0 &&
+    daysSinceLastCompletion >= 3 &&
+    !allDone &&
+    !nextDayLocked;
+
+  // Un banner alla volta: Coach > lunedì-azioni > Telegram > install; il prompt
+  // push aspetta se un banner inline è già in vista.
+  const coachBannerVisible = !!(
+    profile?.last_coach_message &&
+    profile.last_coach_message !== '__coach_welcome_pending__' &&
+    !coachMessageDismissed
+  );
+  const weeklyBannerVisible =
+    !coachBannerVisible &&
+    !!userId &&
+    weeklyBannerWantsToShow(actionsTotal === 0, profile?.last_weekly_actions_dismiss || null);
+  const telegramRecoveryCandidate = !!profile && !profile.telegram_id;
+
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
     try {
       await authFetch('/api/calendar', {
@@ -269,7 +298,6 @@ export default function HomePage() {
    * Tick/untick di un'azione direttamente dalla dashboard.
    * Optimistic update + POST /api/actions/toggle + rollback su errore.
    * Non rifetcha la lista — la dashboard non deve fare reload completo per un tick.
-   * Lo streak può rimanere leggermente "stale" fino al prossimo refresh della pagina.
    */
   const handleActionToggle = async (actionId: string) => {
     if (actionPending) return;
@@ -295,6 +323,13 @@ export default function HomePage() {
         body: JSON.stringify({ userId, actionId }),
       });
       if (!res.ok) throw new Error('toggle failed');
+      // Il tick può far scattare (o perdere) la soglia ≥3 dello streak: riallinea.
+      authFetch('/api/actions/history?days=14')
+        .then(r => (r.ok ? r.json() : null))
+        .then(h => {
+          if (h) setActionsStreak(h.current_streak || 0);
+        })
+        .catch(() => {});
     } catch {
       // Rollback su errore
       setActions(prev =>
@@ -343,25 +378,32 @@ export default function HomePage() {
             <div>
               {allDone ? (
                 <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Beta completata</p>
+                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Percorso completato</p>
                   <h2 className="text-2xl font-bold leading-tight">Ce l&apos;hai fatta!</h2>
                   <p className="text-forest-100 text-sm mt-1">
-                    Hai costruito il primo blocco: Presenza, Osservazione, Ascolto, Pressione.
+                    Hai completato i primi due blocchi: lo strumento e il gioco nelle difficoltà.
                   </p>
                 </>
               ) : (
                 <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Settimana {currentWeek}</p>
+                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">
+                    {comebackMode ? 'Bentornato' : `Settimana ${currentWeek}`}
+                  </p>
                   <h2 className="text-2xl font-bold leading-tight">
                     {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
                   </h2>
                   {settimana?.principio && (
                     <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
                   )}
+                  {comebackMode && (
+                    <p className="text-forest-100 text-sm mt-2">
+                      Riprendi da dove eri: il Giorno {nextDay.day} ti aspetta. Bastano pochi minuti.
+                    </p>
+                  )}
                   {streak >= 2 && (
                     <p className="text-amber-200 text-sm font-bold mt-2 flex items-center gap-1.5">
                       <Flame className="w-4 h-4" aria-hidden="true" />
-                      {streak} giorni di fila
+                      {streak} giorni di fila nel percorso
                     </p>
                   )}
                 </>
@@ -593,10 +635,10 @@ export default function HomePage() {
           />
         )}
 
-        {/* ─── Banner promozionali / messaggi soft — in fondo per non rubare il first-fold ─── */}
+        {/* ─── Banner promozionali / messaggi soft — UNO alla volta, in fondo ─── */}
 
         {/* Ultimo messaggio Coach */}
-        {profile?.last_coach_message && profile.last_coach_message !== '__coach_welcome_pending__' && !coachMessageDismissed && (
+        {coachBannerVisible && (
           <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
             <button
               onClick={() => {
@@ -629,22 +671,26 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Recupero collegamento Telegram (chi non ha Telegram) */}
-        {profile && <TelegramRecoveryBanner hasTelegram={!!profile.telegram_id} />}
-
-        {/* Banner settimanale "Aggiorna le 5 della settimana" — lunedì o se vuoto */}
-        {userId && (
+        {/* Banner settimanale lunedì (con 0 azioni ci pensa l'empty-state di ActionsCard) */}
+        {weeklyBannerVisible && (
           <WeeklyActionsBanner
             userId={userId}
-            needsSetup={actionsTotal === 0}
+            needsSetup={false}
             lastDismiss={profile?.last_weekly_actions_dismiss || null}
           />
         )}
 
-        {/* Banner installazione PWA */}
-        <InstallBanner totalCompleted={totalCompleted} />
+        {/* Recupero collegamento Telegram — terzo in priorità */}
+        {!coachBannerVisible && !weeklyBannerVisible && telegramRecoveryCandidate && (
+          <TelegramRecoveryBanner hasTelegram={!!profile?.telegram_id} />
+        )}
+
+        {/* Banner installazione PWA — ultimo in priorità */}
+        {!coachBannerVisible && !weeklyBannerVisible && !telegramRecoveryCandidate && (
+          <InstallBanner totalCompleted={totalCompleted} />
+        )}
       </div>
-      <PushPermission userId={userId} />
+      <PushPermission userId={userId} suppressed={coachBannerVisible || weeklyBannerVisible || telegramRecoveryCandidate} />
     </main>
   );
 }

@@ -9,7 +9,7 @@ interface MirrorData {
   situazioneIniziale: string | null;
   paure: string[]; // label leggibili
   gateW1: string | null; // risposta q3 gate W1 ("Hai percepito qualcosa di diverso?")
-  gateW4: string | null; // risposta q2 gate W4 ("Cosa hai scoperto di te sotto pressione?")
+  gateFinal: string | null; // risposta al gate dell'ultima settimana disponibile
   giorniCompletati: number;
   mentalePrima: number | null; // media stato mentale prima settimana di check-in
   mentaleDopo: number | null; // media ultima settimana
@@ -46,7 +46,7 @@ export default function BetaCompletePage() {
         return;
       }
 
-      // ── Il tuo prima e dopo: le sue parole di 4 settimane fa ──────────────
+      // ── Il tuo prima e dopo: le sue parole dell'inizio percorso ───────────
       const fearOptions = SPORT_FEARS[profile.sport || 'calcio'] || PLAYER_FEARS;
       const paure = (profile.biggest_fear || '')
         .split(',')
@@ -73,7 +73,7 @@ export default function BetaCompletePage() {
       ]);
 
       const gateW1Answers = gates?.find(g => g.week_number === 1)?.gate_answers;
-      const gateW4Answers = gates?.find(g => g.week_number === BETA_MAX_WEEK)?.gate_answers;
+      const gateFinalAnswers = gates?.find(g => g.week_number === BETA_MAX_WEEK)?.gate_answers;
 
       const mentals = (checkins || [])
         .filter(c => c.mental_state !== null)
@@ -85,7 +85,7 @@ export default function BetaCompletePage() {
         situazioneIniziale: profile.current_situation || null,
         paure,
         gateW1: gateW1Answers?.q3 || gateW1Answers?.q2 || null,
-        gateW4: gateW4Answers?.q2 || gateW4Answers?.q3 || null,
+        gateFinal: gateFinalAnswers?.q2 || gateFinalAnswers?.q3 || gateFinalAnswers?.q1 || null,
         giorniCompletati: completedCount || 0,
         mentalePrima: mentals.length >= 6 ? avg(mentals.slice(0, 7)) : null,
         mentaleDopo: mentals.length >= 6 ? avg(mentals.slice(-7)) : null,
@@ -108,10 +108,10 @@ export default function BetaCompletePage() {
   };
 
   const mirrorPrompt =
-    'Ho appena riletto quello che avevo scritto all\'inizio del percorso e le risposte dei miei gate. Vorrei riflettere con te su cosa è cambiato in queste 4 settimane.';
+    'Ho appena riletto quello che avevo scritto all\'inizio del percorso e le risposte dei miei gate. Vorrei riflettere con te su cosa è cambiato in queste settimane.';
 
   const hasMirrorContent =
-    mirror && (mirror.situazioneIniziale || mirror.gateW1 || mirror.gateW4);
+    mirror && (mirror.situazioneIniziale || mirror.gateW1 || mirror.gateFinal);
 
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
@@ -122,12 +122,13 @@ export default function BetaCompletePage() {
             Ce l&apos;hai fatta, {name}.
           </h1>
           <p className="text-muted leading-relaxed">
-            Hai completato tutte le {BETA_MAX_WEEK} settimane della Beta.
-            Hai costruito il primo blocco: Presenza, Osservazione, Ascolto, Protocollo Pressione.
+            Hai completato tutte le {BETA_MAX_WEEK} settimane disponibili.
+            Hai costruito lo strumento — Presenza, Osservazione, Ascolto, Protocollo Pressione —
+            e hai imparato a giocare nelle difficoltà: Accettazione, Lasciare Andare, Perdono.
           </p>
           <p className="text-muted leading-relaxed mt-3">
-            Le prossime settimane — Accettazione, Lasciare Andare, Perdono — stanno arrivando.
-            Ti scriveremo non appena saranno disponibili.
+            L&apos;ultimo blocco — Giocare libero, il ritorno al centro — sta arrivando.
+            Ti scriveremo non appena sarà disponibile.
           </p>
         </div>
 
@@ -144,7 +145,7 @@ export default function BetaCompletePage() {
             {(mirror.situazioneIniziale || mirror.paure.length > 0) && (
               <div className="bg-surface-2 border border-divider rounded-2xl p-4">
                 <p className="text-xs font-bold text-faint uppercase tracking-wide mb-2">
-                  Da dove sei partito — 4 settimane fa
+                  Da dove sei partito — all&apos;inizio del percorso
                 </p>
                 {mirror.situazioneIniziale && (
                   <p className="text-sm text-app italic leading-relaxed">
@@ -170,13 +171,13 @@ export default function BetaCompletePage() {
               </div>
             )}
 
-            {mirror.gateW4 && (
+            {mirror.gateFinal && (
               <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
                 <p className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
-                  Fine Settimana 4 — hai scritto:
+                  Fine Settimana {BETA_MAX_WEEK} — hai scritto:
                 </p>
                 <p className="text-sm text-forest-100 italic leading-relaxed">
-                  &ldquo;{mirror.gateW4}&rdquo;
+                  &ldquo;{mirror.gateFinal}&rdquo;
                 </p>
               </div>
             )}

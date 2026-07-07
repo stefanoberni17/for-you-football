@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
+import { daysAgoItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,11 +21,12 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
     const days = parseInt(searchParams.get('days') || '30');
 
-    const fromDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0];
+    const fromDate = daysAgoItaly(days);
 
     const { data, error } = await supabaseAdmin
       .from('daily_checkin')

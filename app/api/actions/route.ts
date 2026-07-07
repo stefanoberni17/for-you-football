@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
+import { todayItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,7 +11,7 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-const todayDate = () => new Date().toISOString().split('T')[0];
+const todayDate = todayItaly;
 
 // ─── GET /api/actions?userId=X ───────────────────────────────────────────
 // Ritorna le azioni attive dell'utente + lo stato di completamento di oggi.
@@ -20,6 +22,9 @@ export async function GET(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
     const today = todayDate();
@@ -71,6 +76,9 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
     const actions: any[] = body.actions || [];
     if (!Array.isArray(actions) || actions.length < 1 || actions.length > 5) {
       return NextResponse.json(
@@ -83,7 +91,9 @@ export async function POST(request: NextRequest) {
       'pre-allenamento', 'in-campo', 'post-errore', 'recupero', 'mentale', 'vita',
     ]);
     const validPrinciples = new Set([
-      'presenza', 'osservazione', 'ascolto', 'ascolto-applicato', null, undefined, '',
+      'presenza', 'osservazione', 'ascolto', 'ascolto-applicato',
+      'accettazione', 'accettazione-applicata', 'perdono', 'lasciare-andare',
+      null, undefined, '',
     ]);
 
     for (const a of actions) {

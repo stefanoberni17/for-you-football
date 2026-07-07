@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -15,6 +16,9 @@ export async function GET(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
     const weekNumber = parseInt(searchParams.get('week') || '0');
     const dayNumber = parseInt(searchParams.get('day') || '0');
@@ -51,6 +55,9 @@ export async function POST(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
     const { weekNumber, dayNumber, reflectionText, reflectionQuestion } = body;
 

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
+import { todayItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,11 +11,7 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-// Data di oggi in fuso orario italiano (sv-SE → YYYY-MM-DD). Evita il bug
-// per cui un check-in fatto in tarda serata IT veniva salvato con la data UTC
-// del giorno successivo, facendo riapparire la modale al refresh.
-const todayDate = () =>
-  new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Rome' }).format(new Date());
+const todayDate = todayItaly;
 
 // ─── GET /api/checkin?userId=X ────────────────────────────────────────────────
 // Ritorna il check-in di oggi per l'utente (null se non esiste)
@@ -24,6 +22,9 @@ export async function GET(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
     const { data, error } = await supabaseAdmin
@@ -51,6 +52,9 @@ export async function POST(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!(await requirePaidAccess(userId))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
     const { physicalState, sleepHours, recoveryQuality, mentalState } = body;
 
