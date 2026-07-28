@@ -50,6 +50,12 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
         const tool = WEEK_TOOLS[currentWeek] || '';
         const principle = WEEK_PRINCIPLES[currentWeek] || '';
         setWeekName(tool ? `${tool} — ${principle}` : `Settimana ${currentWeek}`);
+      } else {
+        // Oltre l'ultima settimana pubblicata: il Reset resta vivo (rituale +
+        // "Reset rapido" in Palestra/SOS) con il mantra base — prima il popup
+        // non montava mai e i bottoni erano morti.
+        setMantra('Qui e ora.');
+        setWeekName('Il Reset — Presenza');
       }
     };
 
