@@ -121,9 +121,12 @@ export default function WeekCompletePage() {
                 onClick={() => router.push(`/settimana/${nextWeek}`)}
                 className="w-full bg-white text-forest-600 font-bold py-4 px-6 rounded-2xl text-base shadow-lg hover:bg-forest-50 transition-all flex items-center justify-center gap-2"
               >
-                <span>Inizia la Settimana {nextWeek}</span>
+                <span>Vai alla Settimana {nextWeek}</span>
                 <span>→</span>
               </button>
+              <p className="text-forest-50 text-xs text-center leading-relaxed">
+                Un giorno al giorno: se hai chiuso il Gate oggi, il Giorno 1 si apre domattina.
+              </p>
               <button
                 onClick={() => router.push('/')}
                 className="w-full text-forest-50 hover:text-white text-sm py-2 transition-colors text-center"
