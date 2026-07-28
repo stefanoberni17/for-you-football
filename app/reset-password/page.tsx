@@ -51,8 +51,8 @@ export default function ResetPasswordPage() {
       if (error) throw error;
       setDone(true);
       setTimeout(() => router.push('/'), 1500);
-    } catch (err: any) {
-      setError(err?.message || 'Non siamo riusciti a salvare la password. Riprova.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Non siamo riusciti a salvare la password. Riprova.');
     } finally {
       setSaving(false);
     }

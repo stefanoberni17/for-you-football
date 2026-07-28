@@ -43,11 +43,11 @@ function ChatContent() {
     if (loading || promptSent) return;
     const prompt = searchParams.get('prompt');
     if (prompt && chatBotRef.current) {
-      setPromptSent(true);
       // Pulisci subito l'URL: refresh o back non devono rispedire il prompt
       router.replace('/chat');
       setTimeout(() => {
         chatBotRef.current?.sendSuggestion(prompt);
+        setPromptSent(true);
       }, 500);
     }
   }, [loading, promptSent, searchParams, router]);

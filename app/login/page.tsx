@@ -85,8 +85,8 @@ export default function LoginPage() {
       // 5. Tutto ok, vai alla dashboard
       router.push('/');
 
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Errore di accesso. Riprova.');
       console.error('❌ Errore login:', error);
     } finally {
       setLoading(false);
