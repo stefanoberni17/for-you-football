@@ -209,7 +209,11 @@ function PricingContent() {
             <div className="text-sm font-semibold text-app">Come funziona la garanzia?</div>
             <div className="text-sm text-muted mt-1">
               Hai 4 settimane per provare la tua Season dall&apos;inizio. Se non fa per te,
-              scrivici e ti rimborsiamo per intero.
+              scrivici a{' '}
+              <a href="mailto:foryou.innerpath@gmail.com" className="text-forest-300 underline underline-offset-2">
+                foryou.innerpath@gmail.com
+              </a>{' '}
+              e ti rimborsiamo per intero.
             </div>
           </div>
 

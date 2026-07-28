@@ -12,6 +12,7 @@ import {
   type CatalogAction,
 } from '@/lib/actionsCatalog';
 import { ChevronDown, X, Plus, Sparkles, ListFilter } from 'lucide-react';
+import SaveErrorBanner from './SaveErrorBanner';
 
 const MAX_ACTIONS = 5;
 const CUSTOM_MAX_LEN = 120;
@@ -51,6 +52,7 @@ export default function ActionsSetupSheet({
     new Set(CATEGORY_ORDER)
   );
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const allowed = useMemo(() => allowedPrinciplesForWeek(currentWeek), [currentWeek]);
 
@@ -137,8 +139,12 @@ export default function ActionsSetupSheet({
   const handleSave = async () => {
     if (!canSave || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave(selected);
+    } catch {
+      // Il salvataggio è fallito: il foglio resta aperto e lo dice
+      setSaveError(true);
     } finally {
       setSaving(false);
     }
@@ -153,7 +159,7 @@ export default function ActionsSetupSheet({
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-app">Le tue 5 azioni</h2>
             <p className="text-xs text-muted mt-0.5 leading-relaxed">
-              Scegli max 5 azioni. Stesse per la settimana — le ticki ogni giorno, si resettano la notte.
+              Scegli max 5 azioni. Restano le stesse per la settimana — le spunti ogni giorno, ripartono la notte.
             </p>
           </div>
           <button
@@ -350,6 +356,14 @@ export default function ActionsSetupSheet({
                   </button>
                 </span>
               ))}
+            </div>
+          )}
+          {saveError && (
+            <div className="mb-2">
+              <SaveErrorBanner
+                message="Le azioni non sono state salvate. Riprova."
+                onRetry={handleSave}
+              />
             </div>
           )}
           <div className="flex items-center gap-3">

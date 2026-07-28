@@ -19,6 +19,7 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
   6: '380655f7-26c7-814e-a175-cb47a8ec49cc', // Week 6 — La Pressione e il Giudizio (Accettazione pt.2)
   7: '380655f7-26c7-8146-bae0-e7012b43e5b2', // Week 7 — La Frustrazione e la Rabbia (Perdono)
   8: '380655f7-26c7-8124-adb5-fa3941de0da5', // Week 8 — Più della maglia (Lasciare Andare)
+  9: '3ab655f7-26c7-81ff-9a49-f9a2f0ab9ecb', // Week 9 — Il Centro (Ritornare al Centro)
 };
 
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
@@ -52,7 +53,7 @@ export const WEEK_PRINCIPLES: Record<number, string> = {
   12: 'La Via',
 };
 
-// Strumenti per settimana (Blocco 1 + Blocco 2)
+// Strumenti per settimana (Blocco 1 + Blocco 2 + Blocco 3)
 export const WEEK_TOOLS: Record<number, string> = {
   1: 'Il Reset',
   2: "L'Observer",
@@ -62,6 +63,7 @@ export const WEEK_TOOLS: Record<number, string> = {
   6: 'Fatto vs Storia',
   7: "L'Anticipo",
   8: 'Il Rilascio',
+  9: 'La strada verso il centro',
 };
 
 // ─── Sport supportati ────────────────────────────────────────────────────────
@@ -109,6 +111,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio del pubblico o dei compagni' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (rigori, finali...)' },
+    { value: 'pressione_partita', label: 'La pressione dei momenti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   tennis: [
@@ -117,6 +120,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio del pubblico' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (tiebreak, match point...)' },
+    { value: 'pressione_partita', label: 'La pressione dei punti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   padel: [
@@ -125,6 +129,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio degli altri' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (match point, tiebreak...)' },
+    { value: 'pressione_partita', label: 'La pressione dei punti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   basket: [
@@ -134,6 +139,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio del pubblico o dei compagni' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (tiri liberi, ultimi secondi...)' },
+    { value: 'pressione_partita', label: 'La pressione dei momenti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   altro: [
@@ -142,6 +148,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio degli altri' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti decisivi' },
+    { value: 'pressione_partita', label: 'La pressione dei momenti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
 };

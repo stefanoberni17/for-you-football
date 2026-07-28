@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
-import { BETA_MAX_WEEK, WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
+import { WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
 import { sendPushToUser } from '@/lib/pushNotification';
 
 const supabaseAdmin = createClient(
@@ -30,10 +30,11 @@ export async function GET(request: NextRequest) {
 
   const testUserId = process.env.TEST_ONLY_USER_ID;
 
+  // NB: nessun filtro su current_week — i richiami seguono l'utente anche oltre
+  // l'ultima settimana pubblicata (vedi daily-morning).
   let query = supabaseAdmin
     .from('profiles')
-    .select('user_id, name, telegram_id, current_week, coach_notes, sport')
-    .lte('current_week', BETA_MAX_WEEK);
+    .select('user_id, name, telegram_id, current_week, coach_notes, sport');
 
   if (testUserId) {
     query = query.eq('user_id', testUserId);

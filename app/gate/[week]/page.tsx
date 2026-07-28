@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY } from '@/lib/constants';
+import SaveErrorBanner from '@/components/SaveErrorBanner';
 
 export default function GatePage() {
   const params = useParams();
@@ -19,6 +20,7 @@ export default function GatePage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
@@ -101,11 +103,16 @@ export default function GatePage() {
     return () => clearTimeout(t);
   }, [answers, loading, completed, weekNumber]);
 
-  const allAnswered = questions.every((_, i) => (answers[`q${i + 1}`] || '').trim().length > 0);
+  // Guard: con 0 domande (Notion vuoto/errore) .every() sarebbe true e il gate
+  // si passerebbe a vuoto — senza domande il submit resta disabilitato.
+  const allAnswered =
+    questions.length > 0 &&
+    questions.every((_, i) => (answers[`q${i + 1}`] || '').trim().length > 0);
 
   const handleSubmit = async () => {
     if (!allAnswered || saving) return;
     setSaving(true);
+    setSaveError(false);
 
     try {
       const res = await authFetch('/api/gate', {
@@ -124,6 +131,7 @@ export default function GatePage() {
       setShowCelebration(true);
     } catch (err: any) {
       console.error('Errore gate:', err.message);
+      setSaveError(true);
     } finally {
       setSaving(false);
     }
@@ -147,7 +155,8 @@ export default function GatePage() {
         <h1 className="text-3xl font-bold mb-2 text-center">Settimana {weekNumber} completata!</h1>
         <p className="text-white text-center mb-2 text-sm">Hai superato il Gate</p>
         <p className="text-white text-sm text-center mb-8 max-w-xs leading-relaxed">
-          Ogni settimana è un mattone. La prossima si sblocca adesso.
+          Ogni settimana è un mattone. La prossima si sblocca domattina —
+          oggi hai chiuso il cerchio.
         </p>
         {giorno?.missioneSettimana && (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-4 mb-8 max-w-sm text-center">
@@ -191,7 +200,7 @@ export default function GatePage() {
             )}
           </div>
           <h1 className="text-xl font-bold text-app">Chiusura settimana</h1>
-          <p className="text-muted text-sm mt-1">Giorno 7 — Review settimanale</p>
+          <p className="text-muted text-sm mt-1">Giorno 7 — Il punto sulla settimana</p>
         </div>
 
         {/* Apertura */}
@@ -213,16 +222,20 @@ export default function GatePage() {
           </div>
         )}
 
-        {/* Le 3 domande */}
+        {/* Le domande del Gate */}
         <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-5">
           <div>
             <h2 className="text-sm font-bold text-app flex items-center gap-2">
-              ✍️ Le tre domande del Gate
+              ✍️ Le domande del Gate
             </h2>
             <p className="text-xs text-faint mt-0.5">
-              Rispondi a tutte e 3 per sbloccare la settimana successiva
+              Rispondi a {questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'} per sbloccare la settimana successiva
             </p>
           </div>
+
+          {questions.length === 0 && (
+            <SaveErrorBanner message="Non siamo riusciti a caricare le domande. Ricarica la pagina — se il problema resta, scrivici." />
+          )}
 
           {questions.map((q, i) => (
             <div key={i}>
@@ -245,6 +258,12 @@ export default function GatePage() {
         {/* Bottone */}
         {!completed ? (
           <div className="space-y-2">
+            {saveError && (
+              <SaveErrorBanner
+                message="Il Gate non è stato salvato. Le tue risposte sono al sicuro qui — riprova."
+                onRetry={handleSubmit}
+              />
+            )}
             <button
               onClick={handleSubmit}
               disabled={!allAnswered || saving}
@@ -252,9 +271,9 @@ export default function GatePage() {
             >
               {saving ? 'Salvataggio...' : '🔑 Completa il Gate'}
             </button>
-            {!allAnswered && (
+            {!allAnswered && questions.length > 0 && (
               <p className="text-xs text-faint text-center">
-                Rispondi a tutte e 3 le domande per continuare
+                Rispondi a {questions.length > 1 ? `tutte e ${questions.length} le domande` : 'la domanda'} per continuare
               </p>
             )}
           </div>

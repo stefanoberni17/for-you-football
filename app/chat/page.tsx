@@ -43,12 +43,14 @@ function ChatContent() {
     if (loading || promptSent) return;
     const prompt = searchParams.get('prompt');
     if (prompt && chatBotRef.current) {
+      // Pulisci subito l'URL: refresh o back non devono rispedire il prompt
+      router.replace('/chat');
       setTimeout(() => {
         chatBotRef.current?.sendSuggestion(prompt);
         setPromptSent(true);
       }, 500);
     }
-  }, [loading, promptSent, searchParams]);
+  }, [loading, promptSent, searchParams, router]);
 
   if (loading) {
     return (
@@ -67,10 +69,7 @@ function ChatContent() {
   // Ora la chat usa h-screen + flex-col come "<main>" normale, identica
   // struttura alle altre pagine -> la tab bar resta attaccata al bordo.
   return (
-    <main
-      className="flex flex-col bg-app pt-safe px-0 sm:px-4 pb-tabbar overflow-hidden"
-      style={{ height: '100vh' }}
-    >
+    <main className="h-dvh-screen flex flex-col bg-app pt-safe px-0 sm:px-4 pb-tabbar overflow-hidden">
       <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto">
         <ChatBot ref={chatBotRef} suggestions={suggestions} userName={userName} />
       </div>

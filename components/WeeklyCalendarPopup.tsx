@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { DAY_SHORT_NAMES } from '@/lib/constants';
+import SaveErrorBanner from './SaveErrorBanner';
 
 interface WeeklyCalendarPopupProps {
   weekNumber: number;
   existingTrainingDays?: number[];
   existingMatchDays?: number[];
-  onSave: (trainingDays: number[], matchDays: number[]) => void;
+  /** Deve lanciare (o rigettare) se il salvataggio fallisce: il popup mostra l'errore. */
+  onSave: (trainingDays: number[], matchDays: number[]) => Promise<void> | void;
   onSkip: () => void;
 }
 
@@ -43,10 +45,19 @@ export default function WeeklyCalendarPopup({
   const handleSave = async () => {
     if (selectedTraining.length === 0 || saving) return;
     setSaving(true);
-    onSave(selectedTraining, selectedMatch);
+    setSaveFailed(false);
+    try {
+      await onSave(selectedTraining, selectedMatch);
+    } catch {
+      // Prima il bottone restava su "Salvataggio..." per sempre
+      setSaveFailed(true);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const canSave = selectedTraining.length > 0;
+  const [saveFailed, setSaveFailed] = useState(false);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
@@ -165,6 +176,12 @@ export default function WeeklyCalendarPopup({
           >
             {saving ? 'Salvataggio...' : 'Salva calendario'}
           </button>
+          {saveFailed && (
+            <SaveErrorBanner
+              message="Calendario non salvato. Riprova, oppure salta e impostalo dopo."
+              onRetry={handleSave}
+            />
+          )}
           <button
             onClick={onSkip}
             className="w-full py-2 text-sm text-faint hover:text-muted transition-colors"

@@ -296,7 +296,7 @@ export default function PracticePopup({
               onClick={handleSkip}
               className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
             >
-              Ho gia praticato da solo →
+              Ho già praticato da solo →
             </button>
           </>
         )}
@@ -410,7 +410,7 @@ export default function PracticePopup({
                     Pratica completata!
                   </h2>
                   <p className="text-sm text-muted leading-relaxed">
-                    Ottimo lavoro. Ogni sessione ti rende piu forte mentalmente.
+                    Ottimo lavoro. Un allenamento alla volta, come in campo.
                   </p>
                 </>
               )}

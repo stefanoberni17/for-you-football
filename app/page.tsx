@@ -99,6 +99,7 @@ export default function HomePage() {
   const [actions, setActions] = useState<DashboardAction[]>([]);
   const [actionPending, setActionPending] = useState<string | null>(null);
   const [weeklyMission, setWeeklyMission] = useState<string>('');
+  const [installBannerVisible, setInstallBannerVisible] = useState(false);
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -283,14 +284,13 @@ export default function HomePage() {
   const telegramRecoveryCandidate = !!profile && !profile.telegram_id;
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
-    try {
-      await authFetch('/api/calendar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weekNumber: currentWeek, trainingDays, matchDays }),
-      });
-      setCalendarData({ trainingDays, matchDays });
-    } catch {}
+    const res = await authFetch('/api/calendar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, weekNumber: currentWeek, trainingDays, matchDays }),
+    });
+    if (!res.ok) throw new Error('calendar save failed'); // il popup mostra l'errore
+    setCalendarData({ trainingDays, matchDays });
     setShowCalendar(false);
   };
 
@@ -361,7 +361,7 @@ export default function HomePage() {
         {profile?.current_week === 1 && totalCompleted === 0 && (
           <div className="bg-surface rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
             <p className="font-bold text-app mb-1">Ciao, {profile?.name}.</p>
-            <p className="font-bold text-app mb-3">Week 1 — Il Reset.</p>
+            <p className="font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
             <p className="text-sm text-muted leading-relaxed">
               Molti giocatori scoprono che non è la tecnica il problema.
               È restare nella partita.
@@ -687,10 +687,19 @@ export default function HomePage() {
 
         {/* Banner installazione PWA — ultimo in priorità */}
         {!coachBannerVisible && !weeklyBannerVisible && !telegramRecoveryCandidate && (
-          <InstallBanner totalCompleted={totalCompleted} />
+          <InstallBanner totalCompleted={totalCompleted} onVisibilityChange={setInstallBannerVisible} />
         )}
       </div>
-      <PushPermission userId={userId} suppressed={coachBannerVisible || weeklyBannerVisible || telegramRecoveryCandidate} />
+      {/* Il push prompt aspetta se QUALSIASI banner inline è in vista, install incluso */}
+      <PushPermission
+        userId={userId}
+        suppressed={
+          coachBannerVisible ||
+          weeklyBannerVisible ||
+          telegramRecoveryCandidate ||
+          installBannerVisible
+        }
+      />
     </main>
   );
 }

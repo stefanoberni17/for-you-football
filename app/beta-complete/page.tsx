@@ -224,7 +224,7 @@ export default function BetaCompletePage() {
               onClick={() => router.push('/strumenti')}
               className="w-full bg-surface-2 hover:bg-[#293429] text-app font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2"
             >
-              🧰 La tua cassetta degli attrezzi
+              🏋️ Vai in Palestra — gli strumenti sono tuoi
             </button>
             <button
               onClick={() => router.push('/carta')}

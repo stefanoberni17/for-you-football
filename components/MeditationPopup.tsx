@@ -42,7 +42,9 @@ export default function MeditationPopup({
   const [selectedDuration, setSelectedDuration] = useState(60);
   const [timeLeft, setTimeLeft] = useState(60);
   const [isTimerComplete, setIsTimerComplete] = useState(false);
-  const [audioMode, setAudioMode] = useState<'nature' | 'focus' | 'mute'>('nature');
+  // Default mute: i file ambient non sono ancora in produzione. Se l'utente
+  // sceglie un audio e il play fallisce (404), si torna a mute visibilmente.
+  const [audioMode, setAudioMode] = useState<'nature' | 'focus' | 'mute'>('mute');
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
   useWakeLock(phase === 'meditating');
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -160,7 +162,9 @@ export default function MeditationPopup({
       audioRef.current.src = audioSrc;
       audioRef.current.volume = 0.3;
       audioRef.current.loop = true;
-      audioRef.current.play().catch(() => {});
+      // File mancante o autoplay bloccato → il toggle non deve mentire:
+      // torna su mute così l'utente vede lo stato reale.
+      audioRef.current.play().catch(() => setAudioMode('mute'));
     }
 
     return () => {

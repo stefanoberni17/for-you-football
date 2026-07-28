@@ -14,7 +14,7 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinDone, setCheckinDone] = useState(true);
 
-  const skipPages = ['/login', '/register', '/onboarding', '/pricing', '/beta-complete'];
+  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete'];
   const shouldShow = !skipPages.includes(pathname);
 
   useEffect(() => {

@@ -108,10 +108,15 @@ function OggiPageInner() {
       // Ricarica per coerenza con server (anche per streak)
       await reload(userId);
     } catch (err) {
-      // Rollback su errore
+      // Rollback su errore — anche il contatore header, non solo la lista
       setActions(prev =>
         prev.map(a => (a.id === actionId ? { ...a, completed_today: !a.completed_today } : a))
       );
+      setTodayCount(prev => {
+        const a = actions.find(x => x.id === actionId);
+        if (!a) return prev;
+        return a.completed_today ? prev + 1 : prev - 1;
+      });
     } finally {
       setPendingToggleId(null);
     }
@@ -131,12 +136,14 @@ function OggiPageInner() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, actions: payload }),
     });
-    if (res.ok) {
-      await reload(userId);
-      setShowSetup(false);
-      // Pulisci eventuale ?setup=1 dall'URL
-      router.replace('/oggi');
+    if (!res.ok) {
+      // Propaga: ActionsSetupSheet mostra l'errore e lascia il foglio aperto
+      throw new Error('save actions failed');
     }
+    await reload(userId);
+    setShowSetup(false);
+    // Pulisci eventuale ?setup=1 dall'URL
+    router.replace('/oggi');
   };
 
   if (loading) {
@@ -212,7 +219,7 @@ function OggiPageInner() {
             iconBg="bg-amber-500/20"
             iconColor="text-amber-300"
             title="Comportati già oggi come il giocatore che vuoi diventare"
-            subtitle="Scegli fino a 5 azioni concrete. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione."
+            subtitle="Scegli fino a 5 azioni concrete. Restano le stesse per tutta la settimana, le spunti ogni giorno. La consistenza vince sulla perfezione."
             cta={{ label: 'Pianifica le tue 5 azioni', onClick: () => setShowSetup(true) }}
           />
         ) : (

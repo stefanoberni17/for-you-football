@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
+import SaveErrorBanner from '@/components/SaveErrorBanner';
 
 export default function GiornoPage() {
   const params = useParams();
@@ -23,6 +24,7 @@ export default function GiornoPage() {
   const [response, setResponse] = useState('');
   const [prePraticaResponse, setPrePraticaResponse] = useState('');
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const [savingCheck, setSavingCheck] = useState(false);
@@ -176,6 +178,7 @@ export default function GiornoPage() {
   const handleComplete = async () => {
     if (saving) return;
     setSaving(true);
+    setSaveError(false);
 
     try {
       const res = await authFetch('/api/giorno', {
@@ -201,6 +204,7 @@ export default function GiornoPage() {
       }
     } catch (err: any) {
       console.error('Errore completamento:', err.message);
+      setSaveError(true);
     } finally {
       setSaving(false);
     }
@@ -529,6 +533,15 @@ export default function GiornoPage() {
           </div>
         )}
 
+        {saveError && (
+          <div className="mb-3">
+            <SaveErrorBanner
+              message="Il giorno non è stato salvato. Controlla la connessione e riprova."
+              onRetry={handleComplete}
+            />
+          </div>
+        )}
+
         {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile */}
         <div className="flex gap-4">
           {effectiveSlide > 1 && !isGiornataReturning && (
@@ -583,7 +596,7 @@ export default function GiornoPage() {
         {/* Stato gia completato */}
         {completed && (
           <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-3 text-center">
-            <p className="text-forest-300 font-semibold text-xs">✅ Giorno gia completato — puoi rileggere le slide</p>
+            <p className="text-forest-300 font-semibold text-xs">✅ Giorno già completato — puoi rileggere le slide</p>
           </div>
         )}
 
@@ -593,7 +606,7 @@ export default function GiornoPage() {
       {/* Practice Popup */}
       {showPracticePopup && (
         <PracticePopup
-          titolo={giorno.titolo || `Giorno ${dayNumber}`}
+          titolo={giorno.titolo?.replace(/^W\d+-G\d+ — /, '') || `Giorno ${dayNumber}`}
           pratica={giorno.pratica}
           durataMinuti={giorno.durataMinuti}
           weekTool={weekTool}

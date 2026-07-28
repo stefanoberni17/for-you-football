@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 
 interface InstallBannerProps {
   totalCompleted: number;
+  /** Notifica il parent quando il banner è effettivamente visibile (per la
+   *  policy "un banner alla volta": il push prompt aspetta). */
+  onVisibilityChange?: (visible: boolean) => void;
 }
 
 type Platform = 'ios' | 'android' | 'other';
@@ -30,10 +33,15 @@ const REMIND_DAYS = 3;
 // accesso l'utente ha già check-in + Reset + Giorno 1 davanti, non serve altro.
 const MIN_DAYS_COMPLETED = 1;
 
-export default function InstallBanner({ totalCompleted }: InstallBannerProps) {
+export default function InstallBanner({ totalCompleted, onVisibilityChange }: InstallBannerProps) {
   const [show, setShow] = useState(false);
   const [platform, setPlatform] = useState<Platform>('other');
   const [showSteps, setShowSteps] = useState(false);
+
+  useEffect(() => {
+    onVisibilityChange?.(show);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show]);
 
   useEffect(() => {
     // Non mostrare se già installata come PWA

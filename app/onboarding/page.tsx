@@ -7,6 +7,7 @@ import { authFetch } from '@/lib/authFetch';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import SaveErrorBanner from '@/components/SaveErrorBanner';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -18,17 +19,21 @@ export default function OnboardingPage() {
   const [ritualUserId, setRitualUserId] = useState('');
   const [completingRitual, setCompletingRitual] = useState(false);
   const [telegramLinkLoading, setTelegramLinkLoading] = useState(false);
+  const [telegramLinkError, setTelegramLinkError] = useState(false);
   const [telegramLinked, setTelegramLinked] = useState(false);
 
   // Deep-link Telegram dalla slide 4 (riusa il flusso del profilo).
   // NON setta onboarding_completed: il binding viene confermato dal webhook.
   const handleTelegramLink = async () => {
     setTelegramLinkLoading(true);
+    setTelegramLinkError(false);
     trackOnboarding('telegram_collega_click');
     try {
       const url = await requestTelegramLinkUrl();
       window.location.href = url;
     } catch {
+      // Il gate deve dire cosa è successo, non lampeggiare e basta
+      setTelegramLinkError(true);
       setTelegramLinkLoading(false);
     }
   };
@@ -97,23 +102,15 @@ export default function OnboardingPage() {
         return;
       }
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({ onboarding_completed: true })
-        .eq('user_id', session.user.id);
-
-      if (error) {
-        console.error('Errore update onboarding:', error);
-        alert('Errore nel salvataggio. Riprova.');
-        setCompleting(false);
-        return;
-      }
-
+      // NB: onboarding_completed viene scritto SOLO a fine rituale
+      // (handleRitualComplete): chi chiude durante calendario/rituale li
+      // rivede al prossimo accesso invece di saltarli per sempre.
       trackOnboarding('onboarding_started_percorso');
       setRitualUserId(session.user.id);
       // Step calendario: il momento giusto per sapere quando si allena/gioca.
       // Sempre saltabile; poi si passa alla schermata rituale.
       setShowCalendar(true);
+      setCompleting(false);
 
     } catch (error) {
       console.error('Errore imprevisto:', error);
@@ -123,14 +120,14 @@ export default function OnboardingPage() {
   };
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
-    try {
-      await authFetch('/api/calendar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ weekNumber: 1, trainingDays, matchDays }),
-      });
-    } catch {
-      /* non bloccante: il calendario si può reimpostare dalla dashboard */
+    const res = await authFetch('/api/calendar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ weekNumber: 1, trainingDays, matchDays }),
+    }).catch(() => null);
+    if (!res || !res.ok) {
+      // Il popup mostra l'errore; l'utente può riprovare o saltare
+      throw new Error('calendar save failed');
     }
     setShowCalendar(false);
     setShowRitual(true);
@@ -144,10 +141,17 @@ export default function OnboardingPage() {
   const handleRitualComplete = async () => {
     setCompletingRitual(true);
     trackOnboarding('ritual_completed');
-    await supabase
+    const { error } = await supabase
       .from('profiles')
-      .update({ ritual_completed: true })
+      .update({ ritual_completed: true, onboarding_completed: true })
       .eq('user_id', ritualUserId);
+
+    if (error) {
+      console.error('Errore update onboarding:', error);
+      alert('Errore nel salvataggio. Riprova.');
+      setCompletingRitual(false);
+      return;
+    }
 
     // Primo messaggio Coach proattivo — await esplicito così il widget
     // dashboard è già pieno all'atterraggio. Errore non bloccante.
@@ -424,7 +428,7 @@ export default function OnboardingPage() {
           <div className="bg-white/10 rounded-2xl px-5 py-4 text-left space-y-3 text-sm leading-relaxed text-white/80">
             <p className="font-semibold text-white/90 text-base">Una cosa prima di iniziare.</p>
             <p>
-              Il tuo cervello forma nuove connessioni neurali — quelle che rendono un'abitudine automatica — attraverso la ripetizione costante nel tempo. Gli studi sulla neuroplasticità mostrano che servono in media 3-4 settimane di pratica quotidiana perché un nuovo comportamento inizi a diventare automatico.
+              Il tuo cervello forma nuove connessioni neurali — quelle che rendono un&apos;abitudine automatica — attraverso la ripetizione costante nel tempo. Gli studi sulla neuroplasticità mostrano che servono in media 3-4 settimane di pratica quotidiana perché un nuovo comportamento inizi a diventare automatico.
             </p>
             <p>
               Questo significa che nei primi giorni potresti non sentire grandi differenze in campo. È normale — non è un segnale che non funziona. Stai costruendo lo strumento, non lo stai ancora usando a pieno regime.
@@ -493,6 +497,16 @@ export default function OnboardingPage() {
           </div>
         </div>
 
+        {/* Errore apertura Telegram sul gate Coach */}
+        {isCoachGate && telegramLinkError && (
+          <div className="mb-3">
+            <SaveErrorBanner
+              message="Non siamo riusciti ad aprire Telegram. Riprova — o collega il Coach più tardi dal profilo."
+              onRetry={handleTelegramLink}
+            />
+          </div>
+        )}
+
         {/* Navigation */}
         <div className="flex gap-4">
           {currentSlide > 1 && (
@@ -550,7 +564,8 @@ export default function OnboardingPage() {
           !isLastSlide && (
             <button
               onClick={handleComplete}
-              className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors"
+              disabled={completing}
+              className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors disabled:opacity-50"
             >
               Salta introduzione →
             </button>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase } from '@/lib/notion';
-import { BETA_MAX_WEEK, WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
+import { WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
 import { sendPushToUser } from '@/lib/pushNotification';
 
 const supabaseAdmin = createClient(
@@ -105,10 +105,12 @@ export async function GET(request: NextRequest) {
   // TEST PHASE: filter to specific user if env var set
   const testUserId = process.env.TEST_ONLY_USER_ID;
 
+  // NB: nessun filtro su current_week — i richiami del Coach seguono l'utente
+  // anche oltre l'ultima settimana pubblicata (prima chi superava BETA_MAX_WEEK
+  // smetteva di ricevere i messaggi proprio nel momento di massimo carico).
   let query = supabaseAdmin
     .from('profiles')
-    .select('user_id, name, telegram_id, current_week, coach_notes, role, biggest_fear, sport')
-    .lte('current_week', BETA_MAX_WEEK);
+    .select('user_id, name, telegram_id, current_week, coach_notes, role, biggest_fear, sport');
 
   if (testUserId) {
     query = query.eq('user_id', testUserId);

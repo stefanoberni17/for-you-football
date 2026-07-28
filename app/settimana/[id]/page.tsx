@@ -96,20 +96,18 @@ export default function SettimanaPage() {
   };
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
-    try {
-      const res = await authFetch('/api/calendar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weekNumber, trainingDays, matchDays }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        setCalendarData({ trainingDays, matchDays });
-        setShowCalendarPopup(false);
-      }
-    } catch (err) {
-      console.error('Errore salvataggio calendario:', err);
+    const res = await authFetch('/api/calendar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, weekNumber, trainingDays, matchDays }),
+    });
+    const result = await res.json().catch(() => null);
+    if (!res.ok || !result?.success) {
+      // Il popup mostra l'errore e resta aperto
+      throw new Error('calendar save failed');
     }
+    setCalendarData({ trainingDays, matchDays });
+    setShowCalendarPopup(false);
   };
 
   const handleCalendarSkip = () => {
@@ -416,7 +414,7 @@ export default function SettimanaPage() {
         {isCompleted && !nextWeekAvailable && (
           <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4 text-center mt-4">
             <p className="text-forest-300 font-semibold text-sm">
-              🏆 Hai completato tutte le settimane disponibili in Beta! Le prossime arrivano presto.
+              🏆 Hai completato tutte le settimane disponibili! Le prossime arrivano presto.
             </p>
           </div>
         )}

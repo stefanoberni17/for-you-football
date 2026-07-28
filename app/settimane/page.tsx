@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { isWeekUnlocked, isWeekCompleted, getWeekProgress, DayProgress } from '@/lib/dayUnlockLogic';
-import { BETA_MAX_WEEK, DAYS_PER_WEEK } from '@/lib/constants';
-import { Lock, Check, Compass, Wrench, ChevronRight, MapPin } from 'lucide-react';
+import { isWeekUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY } from '@/lib/constants';
+import { Lock, Check, Compass, Wrench, ChevronRight, MapPin, Clock } from 'lucide-react';
 
 interface Settimana {
   id: string;
@@ -112,7 +112,7 @@ export default function SettimanePage() {
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
         <div className="max-w-3xl mx-auto">
           <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-2">
-            Beta · {BETA_MAX_WEEK} settimane disponibili
+            Season 1 · {BETA_MAX_WEEK} settimane disponibili
           </p>
           <h1 className="text-3xl font-bold text-white leading-tight mb-3">
             Il Tuo Percorso
@@ -152,6 +152,11 @@ export default function SettimanePage() {
               const progress = getWeekProgress(settimana.weekNumber, completedDays);
               const isCurrent = settimana.weekNumber === currentWeek && !completed;
               const percent = Math.round((progress / DAYS_PER_WEEK) * 100);
+              // Gate della settimana precedente superato OGGI → sblocco domattina
+              const opensTomorrow =
+                !unlocked &&
+                settimana.weekNumber > 1 &&
+                isTimeLocked(settimana.weekNumber - 1, GATE_DAY, completedDays);
 
               return (
                 <div key={settimana.id} className="relative pl-16">
@@ -236,6 +241,11 @@ export default function SettimanePage() {
                           />
                         </div>
                       </div>
+                    ) : opensTomorrow ? (
+                      <p className="text-[11px] text-forest-400 italic flex items-center gap-1.5">
+                        <Clock className="w-3 h-3" />
+                        Gate superato — si sblocca domattina
+                      </p>
                     ) : (
                       <p className="text-[11px] text-faint italic flex items-center gap-1.5">
                         <Lock className="w-3 h-3" />
