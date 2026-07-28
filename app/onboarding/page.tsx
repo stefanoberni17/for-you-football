@@ -102,23 +102,15 @@ export default function OnboardingPage() {
         return;
       }
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({ onboarding_completed: true })
-        .eq('user_id', session.user.id);
-
-      if (error) {
-        console.error('Errore update onboarding:', error);
-        alert('Errore nel salvataggio. Riprova.');
-        setCompleting(false);
-        return;
-      }
-
+      // NB: onboarding_completed viene scritto SOLO a fine rituale
+      // (handleRitualComplete): chi chiude durante calendario/rituale li
+      // rivede al prossimo accesso invece di saltarli per sempre.
       trackOnboarding('onboarding_started_percorso');
       setRitualUserId(session.user.id);
       // Step calendario: il momento giusto per sapere quando si allena/gioca.
       // Sempre saltabile; poi si passa alla schermata rituale.
       setShowCalendar(true);
+      setCompleting(false);
 
     } catch (error) {
       console.error('Errore imprevisto:', error);
@@ -149,10 +141,17 @@ export default function OnboardingPage() {
   const handleRitualComplete = async () => {
     setCompletingRitual(true);
     trackOnboarding('ritual_completed');
-    await supabase
+    const { error } = await supabase
       .from('profiles')
-      .update({ ritual_completed: true })
+      .update({ ritual_completed: true, onboarding_completed: true })
       .eq('user_id', ritualUserId);
+
+    if (error) {
+      console.error('Errore update onboarding:', error);
+      alert('Errore nel salvataggio. Riprova.');
+      setCompletingRitual(false);
+      return;
+    }
 
     // Primo messaggio Coach proattivo — await esplicito così il widget
     // dashboard è già pieno all'atterraggio. Errore non bloccante.
@@ -565,7 +564,8 @@ export default function OnboardingPage() {
           !isLastSlide && (
             <button
               onClick={handleComplete}
-              className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors"
+              disabled={completing}
+              className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors disabled:opacity-50"
             >
               Salta introduzione →
             </button>

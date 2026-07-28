@@ -99,6 +99,7 @@ export default function HomePage() {
   const [actions, setActions] = useState<DashboardAction[]>([]);
   const [actionPending, setActionPending] = useState<string | null>(null);
   const [weeklyMission, setWeeklyMission] = useState<string>('');
+  const [installBannerVisible, setInstallBannerVisible] = useState(false);
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -686,10 +687,19 @@ export default function HomePage() {
 
         {/* Banner installazione PWA — ultimo in priorità */}
         {!coachBannerVisible && !weeklyBannerVisible && !telegramRecoveryCandidate && (
-          <InstallBanner totalCompleted={totalCompleted} />
+          <InstallBanner totalCompleted={totalCompleted} onVisibilityChange={setInstallBannerVisible} />
         )}
       </div>
-      <PushPermission userId={userId} suppressed={coachBannerVisible || weeklyBannerVisible || telegramRecoveryCandidate} />
+      {/* Il push prompt aspetta se QUALSIASI banner inline è in vista, install incluso */}
+      <PushPermission
+        userId={userId}
+        suppressed={
+          coachBannerVisible ||
+          weeklyBannerVisible ||
+          telegramRecoveryCandidate ||
+          installBannerVisible
+        }
+      />
     </main>
   );
 }

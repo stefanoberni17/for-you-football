@@ -109,6 +109,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio del pubblico o dei compagni' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (rigori, finali...)' },
+    { value: 'pressione_partita', label: 'La pressione dei momenti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   tennis: [
@@ -117,6 +118,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio del pubblico' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (tiebreak, match point...)' },
+    { value: 'pressione_partita', label: 'La pressione dei punti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   padel: [
@@ -125,6 +127,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio degli altri' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (match point, tiebreak...)' },
+    { value: 'pressione_partita', label: 'La pressione dei punti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   basket: [
@@ -134,6 +137,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio del pubblico o dei compagni' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti chiave (tiri liberi, ultimi secondi...)' },
+    { value: 'pressione_partita', label: 'La pressione dei momenti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
   altro: [
@@ -142,6 +146,7 @@ export const SPORT_FEARS: Record<string, readonly FearOption[]> = {
     { value: 'giudizio', label: 'Il giudizio degli altri' },
     { value: 'non_abbastanza', label: 'Non essere abbastanza bravo' },
     { value: 'momento_chiave', label: 'Fallire nei momenti decisivi' },
+    { value: 'pressione_partita', label: 'La pressione dei momenti decisivi' },
     { value: 'infortunio', label: 'Infortunarmi o non recuperare bene' },
   ],
 };
