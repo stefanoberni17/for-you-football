@@ -96,20 +96,18 @@ export default function SettimanaPage() {
   };
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
-    try {
-      const res = await authFetch('/api/calendar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weekNumber, trainingDays, matchDays }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        setCalendarData({ trainingDays, matchDays });
-        setShowCalendarPopup(false);
-      }
-    } catch (err) {
-      console.error('Errore salvataggio calendario:', err);
+    const res = await authFetch('/api/calendar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, weekNumber, trainingDays, matchDays }),
+    });
+    const result = await res.json().catch(() => null);
+    if (!res.ok || !result?.success) {
+      // Il popup mostra l'errore e resta aperto
+      throw new Error('calendar save failed');
     }
+    setCalendarData({ trainingDays, matchDays });
+    setShowCalendarPopup(false);
   };
 
   const handleCalendarSkip = () => {

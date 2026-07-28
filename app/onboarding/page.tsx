@@ -7,6 +7,7 @@ import { authFetch } from '@/lib/authFetch';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import SaveErrorBanner from '@/components/SaveErrorBanner';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -18,17 +19,21 @@ export default function OnboardingPage() {
   const [ritualUserId, setRitualUserId] = useState('');
   const [completingRitual, setCompletingRitual] = useState(false);
   const [telegramLinkLoading, setTelegramLinkLoading] = useState(false);
+  const [telegramLinkError, setTelegramLinkError] = useState(false);
   const [telegramLinked, setTelegramLinked] = useState(false);
 
   // Deep-link Telegram dalla slide 4 (riusa il flusso del profilo).
   // NON setta onboarding_completed: il binding viene confermato dal webhook.
   const handleTelegramLink = async () => {
     setTelegramLinkLoading(true);
+    setTelegramLinkError(false);
     trackOnboarding('telegram_collega_click');
     try {
       const url = await requestTelegramLinkUrl();
       window.location.href = url;
     } catch {
+      // Il gate deve dire cosa è successo, non lampeggiare e basta
+      setTelegramLinkError(true);
       setTelegramLinkLoading(false);
     }
   };
@@ -123,14 +128,14 @@ export default function OnboardingPage() {
   };
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
-    try {
-      await authFetch('/api/calendar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ weekNumber: 1, trainingDays, matchDays }),
-      });
-    } catch {
-      /* non bloccante: il calendario si può reimpostare dalla dashboard */
+    const res = await authFetch('/api/calendar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ weekNumber: 1, trainingDays, matchDays }),
+    }).catch(() => null);
+    if (!res || !res.ok) {
+      // Il popup mostra l'errore; l'utente può riprovare o saltare
+      throw new Error('calendar save failed');
     }
     setShowCalendar(false);
     setShowRitual(true);
@@ -492,6 +497,16 @@ export default function OnboardingPage() {
             {currentContent.content}
           </div>
         </div>
+
+        {/* Errore apertura Telegram sul gate Coach */}
+        {isCoachGate && telegramLinkError && (
+          <div className="mb-3">
+            <SaveErrorBanner
+              message="Non siamo riusciti ad aprire Telegram. Riprova — o collega il Coach più tardi dal profilo."
+              onRetry={handleTelegramLink}
+            />
+          </div>
+        )}
 
         {/* Navigation */}
         <div className="flex gap-4">

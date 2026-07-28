@@ -21,6 +21,7 @@ function today(): string {
  */
 export default function TelegramRecoveryBanner({ hasTelegram }: { hasTelegram: boolean }) {
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [dismissed, setDismissed] = useState(true); // default nascosto per evitare flash/hydration mismatch
 
   // Leggi il dismiss da localStorage solo dopo il mount (no SSR mismatch)
@@ -36,10 +37,12 @@ export default function TelegramRecoveryBanner({ hasTelegram }: { hasTelegram: b
 
   const handleLink = async () => {
     setLoading(true);
+    setFailed(false);
     try {
       const url = await requestTelegramLinkUrl();
       window.location.href = url;
     } catch {
+      setFailed(true);
       setLoading(false);
     }
   };
@@ -78,6 +81,11 @@ export default function TelegramRecoveryBanner({ hasTelegram }: { hasTelegram: b
       >
         {loading ? 'Apriamo Telegram…' : '📲 Attiva il Coach — un tap'}
       </button>
+      {failed && (
+        <p className="text-xs text-red-300 mt-2 text-center">
+          Non siamo riusciti ad aprire Telegram — riprova tra poco.
+        </p>
+      )}
     </div>
   );
 }

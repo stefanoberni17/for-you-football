@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
+import SaveErrorBanner from '@/components/SaveErrorBanner';
 
 export default function GiornoPage() {
   const params = useParams();
@@ -23,6 +24,7 @@ export default function GiornoPage() {
   const [response, setResponse] = useState('');
   const [prePraticaResponse, setPrePraticaResponse] = useState('');
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const [savingCheck, setSavingCheck] = useState(false);
@@ -176,6 +178,7 @@ export default function GiornoPage() {
   const handleComplete = async () => {
     if (saving) return;
     setSaving(true);
+    setSaveError(false);
 
     try {
       const res = await authFetch('/api/giorno', {
@@ -201,6 +204,7 @@ export default function GiornoPage() {
       }
     } catch (err: any) {
       console.error('Errore completamento:', err.message);
+      setSaveError(true);
     } finally {
       setSaving(false);
     }
@@ -526,6 +530,15 @@ export default function GiornoPage() {
             <p className="text-app text-sm leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>
+          </div>
+        )}
+
+        {saveError && (
+          <div className="mb-3">
+            <SaveErrorBanner
+              message="Il giorno non è stato salvato. Controlla la connessione e riprova."
+              onRetry={handleComplete}
+            />
           </div>
         )}
 

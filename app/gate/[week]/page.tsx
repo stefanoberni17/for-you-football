@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY } from '@/lib/constants';
+import SaveErrorBanner from '@/components/SaveErrorBanner';
 
 export default function GatePage() {
   const params = useParams();
@@ -19,6 +20,7 @@ export default function GatePage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
@@ -106,6 +108,7 @@ export default function GatePage() {
   const handleSubmit = async () => {
     if (!allAnswered || saving) return;
     setSaving(true);
+    setSaveError(false);
 
     try {
       const res = await authFetch('/api/gate', {
@@ -124,6 +127,7 @@ export default function GatePage() {
       setShowCelebration(true);
     } catch (err: any) {
       console.error('Errore gate:', err.message);
+      setSaveError(true);
     } finally {
       setSaving(false);
     }
@@ -245,6 +249,12 @@ export default function GatePage() {
         {/* Bottone */}
         {!completed ? (
           <div className="space-y-2">
+            {saveError && (
+              <SaveErrorBanner
+                message="Il Gate non è stato salvato. Le tue risposte sono al sicuro qui — riprova."
+                onRetry={handleSubmit}
+              />
+            )}
             <button
               onClick={handleSubmit}
               disabled={!allAnswered || saving}

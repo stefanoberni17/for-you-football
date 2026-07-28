@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
+import SaveErrorBanner from './SaveErrorBanner';
 
 interface DailyCheckinModalProps {
   userId: string;
@@ -43,11 +44,13 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
   const [recoveryQuality, setRecoveryQuality] = useState<number>(5);
   const [mentalState, setMentalState] = useState<number>(5);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveError(false);
     try {
-      await authFetch('/api/checkin', {
+      const res = await authFetch('/api/checkin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -58,11 +61,13 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           mentalState,
         }),
       });
+      if (!res.ok) throw new Error('checkin failed');
+      onComplete();
     } catch {
-      // non bloccante — chiudiamo comunque
+      // Il check-in NON è stato salvato: dirlo, non chiudere come se lo fosse.
+      setSaveError(true);
     } finally {
       setSaving(false);
-      onComplete();
     }
   };
 
@@ -150,6 +155,12 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
 
         {/* Footer */}
         <div className="mt-7 space-y-3">
+          {saveError && (
+            <SaveErrorBanner
+              message="Check-in non salvato. Riprova o salta per oggi."
+              onRetry={handleSave}
+            />
+          )}
           <button
             onClick={handleSave}
             disabled={saving}

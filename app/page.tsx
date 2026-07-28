@@ -283,14 +283,13 @@ export default function HomePage() {
   const telegramRecoveryCandidate = !!profile && !profile.telegram_id;
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
-    try {
-      await authFetch('/api/calendar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weekNumber: currentWeek, trainingDays, matchDays }),
-      });
-      setCalendarData({ trainingDays, matchDays });
-    } catch {}
+    const res = await authFetch('/api/calendar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, weekNumber: currentWeek, trainingDays, matchDays }),
+    });
+    if (!res.ok) throw new Error('calendar save failed'); // il popup mostra l'errore
+    setCalendarData({ trainingDays, matchDays });
     setShowCalendar(false);
   };
 
