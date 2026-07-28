@@ -138,7 +138,7 @@ export default function WeekCompletePage() {
             <>
               <div className="bg-white/10 border border-white/20 rounded-2xl p-5 text-center">
                 <p className="text-2xl mb-2">⏳</p>
-                <p className="text-white font-bold mb-1">Hai completato la Beta!</p>
+                <p className="text-white font-bold mb-1">Hai completato tutte le settimane disponibili!</p>
                 <p className="text-white text-sm leading-relaxed">
                   Le prossime settimane arriveranno presto. Stai facendo un lavoro straordinario.
                 </p>

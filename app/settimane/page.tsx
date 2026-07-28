@@ -112,7 +112,7 @@ export default function SettimanePage() {
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
         <div className="max-w-3xl mx-auto">
           <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-2">
-            Beta · {BETA_MAX_WEEK} settimane disponibili
+            Season 1 · {BETA_MAX_WEEK} settimane disponibili
           </p>
           <h1 className="text-3xl font-bold text-white leading-tight mb-3">
             Il Tuo Percorso

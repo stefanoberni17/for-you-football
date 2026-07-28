@@ -183,9 +183,9 @@ function SosContent() {
             onClick={() => router.push('/strumenti')}
             className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
           >
-            ← Strumenti
+            ← Palestra
           </button>
-          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">⚡ Quando si mette dura</p>
+          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">⚡ Quando si fa dura</p>
           <h1 className="text-2xl font-bold text-white leading-tight">Come affrontare le difficoltà</h1>
           <p className="text-forest-100 text-sm mt-1">
             Una guida per ogni momento tosto — e cresce con te, man mano che sblocchi strumenti.

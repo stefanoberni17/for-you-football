@@ -414,7 +414,7 @@ export default function SettimanaPage() {
         {isCompleted && !nextWeekAvailable && (
           <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4 text-center mt-4">
             <p className="text-forest-300 font-semibold text-sm">
-              🏆 Hai completato tutte le settimane disponibili in Beta! Le prossime arrivano presto.
+              🏆 Hai completato tutte le settimane disponibili! Le prossime arrivano presto.
             </p>
           </div>
         )}

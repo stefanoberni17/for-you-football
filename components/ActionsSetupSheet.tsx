@@ -159,7 +159,7 @@ export default function ActionsSetupSheet({
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-app">Le tue 5 azioni</h2>
             <p className="text-xs text-muted mt-0.5 leading-relaxed">
-              Scegli max 5 azioni. Stesse per la settimana — le ticki ogni giorno, si resettano la notte.
+              Scegli max 5 azioni. Restano le stesse per la settimana — le spunti ogni giorno, ripartono la notte.
             </p>
           </div>
           <button

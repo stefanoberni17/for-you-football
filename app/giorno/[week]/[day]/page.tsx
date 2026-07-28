@@ -596,7 +596,7 @@ export default function GiornoPage() {
         {/* Stato gia completato */}
         {completed && (
           <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-3 text-center">
-            <p className="text-forest-300 font-semibold text-xs">✅ Giorno gia completato — puoi rileggere le slide</p>
+            <p className="text-forest-300 font-semibold text-xs">✅ Giorno già completato — puoi rileggere le slide</p>
           </div>
         )}
 
@@ -606,7 +606,7 @@ export default function GiornoPage() {
       {/* Practice Popup */}
       {showPracticePopup && (
         <PracticePopup
-          titolo={giorno.titolo || `Giorno ${dayNumber}`}
+          titolo={giorno.titolo?.replace(/^W\d+-G\d+ — /, '') || `Giorno ${dayNumber}`}
           pratica={giorno.pratica}
           durataMinuti={giorno.durataMinuti}
           weekTool={weekTool}

@@ -219,7 +219,7 @@ function OggiPageInner() {
             iconBg="bg-amber-500/20"
             iconColor="text-amber-300"
             title="Comportati già oggi come il giocatore che vuoi diventare"
-            subtitle="Scegli fino a 5 azioni concrete. Le tieni stesse per la settimana, le ticki ogni giorno. La consistenza vince sulla perfezione."
+            subtitle="Scegli fino a 5 azioni concrete. Restano le stesse per tutta la settimana, le spunti ogni giorno. La consistenza vince sulla perfezione."
             cta={{ label: 'Pianifica le tue 5 azioni', onClick: () => setShowSetup(true) }}
           />
         ) : (

@@ -361,7 +361,7 @@ export default function HomePage() {
         {profile?.current_week === 1 && totalCompleted === 0 && (
           <div className="bg-surface rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
             <p className="font-bold text-app mb-1">Ciao, {profile?.name}.</p>
-            <p className="font-bold text-app mb-3">Week 1 — Il Reset.</p>
+            <p className="font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
             <p className="text-sm text-muted leading-relaxed">
               Molti giocatori scoprono che non è la tecnica il problema.
               È restare nella partita.
