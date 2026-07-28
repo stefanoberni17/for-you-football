@@ -18,7 +18,7 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
   const [manualOpen, setManualOpen] = useState(false);
 
   // Skip popup su pagine pre-app e paywall
-  const skipPages = ['/login', '/register', '/onboarding', '/pricing', '/beta-complete'];
+  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete'];
   const shouldShowPopup = !skipPages.includes(pathname);
 
   useEffect(() => {

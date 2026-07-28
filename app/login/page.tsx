@@ -13,6 +13,29 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      setError('Scrivi la tua email qui sopra, poi tocca di nuovo "Password dimenticata?"');
+      return;
+    }
+    setResetLoading(true);
+    setError('');
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      setResetSent(true);
+    } catch {
+      // Non riveliamo se l'email esiste: stesso messaggio in ogni caso
+      setResetSent(true);
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,6 +164,23 @@ export default function LoginPage() {
             {loading ? 'Accesso in corso…' : 'Accedi'}
           </button>
         </form>
+
+        {/* Password dimenticata */}
+        <div className="mt-3 text-center">
+          {resetSent ? (
+            <p className="text-sm text-forest-300">
+              ✉️ Se l&apos;email esiste, ti abbiamo inviato il link per reimpostare la password.
+            </p>
+          ) : (
+            <button
+              onClick={handleForgotPassword}
+              disabled={resetLoading}
+              className="text-sm text-muted hover:text-app transition-colors disabled:opacity-50"
+            >
+              {resetLoading ? 'Invio in corso…' : 'Password dimenticata?'}
+            </button>
+          )}
+        </div>
 
         {/* Link registrazione */}
         <p className="mt-5 text-center text-sm text-muted">
