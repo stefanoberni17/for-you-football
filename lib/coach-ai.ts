@@ -768,6 +768,10 @@ export async function generateCoachRecap(
 // Permette al Coach di leggere il contenuto reale da Notion quando l'utente
 // fa domande su pratiche, esercizi o contenuti del percorso.
 
+// Ultima settimana leggibile dal tool: derivata da WEEK_RECORD_IDS così la
+// description resta vera quando si aggiunge una settimana in constants.
+const MAX_COACH_WEEK = Math.max(...Object.keys(WEEK_RECORD_IDS).map(Number));
+
 const LEGGI_PERCORSO_TOOL: Anthropic.Messages.Tool = {
   name: 'leggi_percorso',
   description:
@@ -779,7 +783,7 @@ const LEGGI_PERCORSO_TOOL: Anthropic.Messages.Tool = {
     properties: {
       week: {
         type: 'number',
-        description: 'Numero della settimana (1-4 disponibili in Beta)',
+        description: `Numero della settimana (1-${MAX_COACH_WEEK} disponibili)`,
       },
       day: {
         type: 'number',
@@ -796,7 +800,7 @@ async function executeLeggiPercorso(input: { week: number; day?: number }): Prom
 
   const weekPageId = WEEK_RECORD_IDS[week];
   if (!weekPageId) {
-    return `Settimana ${week} non disponibile nel percorso Beta.`;
+    return `Settimana ${week} non ancora disponibile nel percorso.`;
   }
 
   const weekPage = await fetchPage(weekPageId);

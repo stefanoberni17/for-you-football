@@ -55,13 +55,24 @@ CREATE TABLE profiles (
   -- Memoria Coach AI (recap conversazioni)
   coach_notes               TEXT,
 
-  -- Stripe billing (vedi docs/migrations/002_stripe.sql)
-  -- Modello subscription-based: status='active' → accesso pieno (no block counting).
+  -- Stripe billing (vedi docs/migrations/002_stripe.sql + 004_season1.sql)
   subscription_status       TEXT DEFAULT 'none'
     CHECK (subscription_status IN ('none','active','past_due','canceled')),
   stripe_customer_id        TEXT,
   stripe_subscription_id    TEXT,
   is_beta_free              BOOLEAN DEFAULT false,
+  season1_access            BOOLEAN DEFAULT false,  -- Season 1 acquistata (one-time o 3 rate)
+  installments_paid         INT DEFAULT 0,          -- conteggio assoluto invoice paid (webhook)
+
+  -- Collegamento Telegram via deep-link (005_telegram_link.sql)
+  telegram_link_code         TEXT,        -- codice usa-e-getta 32 hex
+  telegram_link_code_expires TIMESTAMPTZ, -- TTL 15 min
+
+  -- Le tue 5 azioni (003_weekly_actions.sql)
+  last_weekly_actions_dismiss DATE,       -- ultimo "Tieni le stesse" sul banner lunedì
+
+  -- Coach proattivo (009_regularize.sql)
+  last_coach_message        TEXT,         -- ultimo messaggio Coach (widget dashboard)
 
   created_at                TIMESTAMPTZ DEFAULT NOW()
 );
@@ -410,7 +421,61 @@ REVOKE ALL ON FUNCTION replace_user_actions(UUID, JSONB) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION replace_user_actions(UUID, JSONB) TO authenticated;
 
 
+-- ─── 10. TABELLE AGGIUNTE DALLE MIGRATIONS (mirror prod) ─────────────────────
+-- DDL completo e canonico nelle rispettive migration; qui il mirror per
+-- ricostruzione da zero. Eseguire questo file + le migration NON serve:
+-- i CREATE IF NOT EXISTS sono idempotenti.
+
+-- 006_push_subscriptions.sql — push web (VAPID)
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  endpoint   TEXT NOT NULL,
+  p256dh     TEXT NOT NULL,
+  auth       TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, endpoint)
+);
+
+-- 007_profile_snapshots.sql — baseline T0 immutabile (letta da /beta-complete)
+CREATE TABLE IF NOT EXISTS profile_snapshots (
+  user_id           UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  snapshot_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  name              TEXT,
+  age               INT,
+  sport             TEXT,
+  role              TEXT,
+  level             TEXT,
+  biggest_fear      TEXT,
+  goals             TEXT,
+  dream             TEXT,
+  current_situation TEXT
+);
+
+-- 008_onboarding_events.sql — funnel attivazione
+CREATE TABLE IF NOT EXISTS onboarding_events (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  event       TEXT NOT NULL,
+  meta        JSONB,
+  occurred_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 009_regularize.sql — dedup frasi mattutine del Coach (cron daily-morning)
+CREATE TABLE IF NOT EXISTS messaggi_inviati (
+  id                UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id           UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  notion_message_id TEXT NOT NULL,
+  blocco            TEXT NOT NULL,
+  created_at        TIMESTAMPTZ DEFAULT NOW()
+);
+
+
 -- ─── FINE ─────────────────────────────────────────────────────────────────────
--- Verifica: dovresti vedere 8 tabelle in Table Editor:
+-- Verifica: dovresti vedere 13 tabelle in Table Editor:
 --   profiles | user_day_progress | user_weekly_calendar | day_reflections
 --   telegram_conversations | daily_checkin | user_actions | user_action_completions
+--   stripe_events | push_subscriptions | profile_snapshots | onboarding_events
+--   messaggi_inviati
+-- NB: RLS e indici delle tabelle di questa sezione vivono nelle migration
+-- corrispondenti (006, 007, 008, 009) — eseguirle dopo questo file.

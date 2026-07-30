@@ -79,7 +79,9 @@ for-you-football/
 │       │   ├── history/route.ts           # GET storico + streak per /statistiche
 │       │   └── dismiss-weekly-prompt/route.ts  # POST chiude banner settimanale
 │       └── cron/
-│           └── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg
+│           ├── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg + lunedì svuota calendari settimanali
+│           ├── daily-morning/route.ts     # GET → pillola mattutina Coach (frasi da Notion DB, scelta Haiku, dedup messaggi_inviati)
+│           └── daily-evening/route.ts     # GET → reminder serale Coach se pratica non fatta (testo generato Haiku)
 ├── components/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Strumenti / Coach / Profilo
 │   ├── ActionsCard.tsx                    # Card compatta dashboard "Le tue azioni durante il giorno" (3 varianti)
@@ -106,7 +108,7 @@ for-you-football/
 │   ├── palestraCatalog.ts                 # Palestra per principio: 7 capacità × esercizi base ("Cosa allena" + step), àncora dai tool, unlock per principio/esercizio
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
 ├── public/                                # SVG di default Next.js
-├── vercel.json                            # Cron job Vercel (cleanup-telegram ogni notte alle 03:00 UTC)
+├── vercel.json                            # 3 cron Vercel: cleanup-telegram 03:00 UTC · daily-morning 06:00 UTC · daily-evening 16:00 UTC
 └── docs/
     └── supabase-schema.sql                # Schema completo: 6 tabelle + RLS + indexes + trigger
 ```
@@ -486,7 +488,7 @@ Totale: 15-20 sec. In campo, sempre.
 ## Coach AI — Architettura Conversazioni (`lib/coach-ai.ts`)
 
 ### Funzioni esportate
-- `SYSTEM_PROMPT` — Prompt Coach AI completo (~380 righe): identità, progressione settimanale, linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio. Include `REGOLA ANTICIPAZIONI` (anticipazioni generiche OK, dettagli pratiche/strumenti futuri NO) e sezione `# ESEMPI DA CALCIATORI REALI`: catalogo fisso di 7 esempi verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo il Fenomeno) — il Coach usa SOLO questi, non inventa statistiche
+- `SYSTEM_PROMPT` — Prompt Coach AI completo (~395 righe, hardcoded in questo file — UNICA fonte di verità, nessun doc Notion viene letto a runtime): identità, progressione settimanale W1-W9 + Blocco 3, mappa strumenti "quando uso cosa", linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio. Include `REGOLA ANTICIPAZIONI` (anticipazioni generiche OK, dettagli pratiche/strumenti futuri NO) e sezione `# ESEMPI DA CALCIATORI REALI`: catalogo fisso di 7 esempi verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo il Fenomeno) — il Coach usa SOLO questi, non inventa statistiche
 - `SYSTEM_PROMPT_NOT_REGISTERED` — Risposta per utenti Telegram non registrati
 - `WEB_FORMAT` — Regole formattazione per web chat (markdown leggero, max 4-6 righe)
 - `TELEGRAM_FORMAT` — Regole formattazione per Telegram (niente markdown, max 4-5 righe, colloquiale)

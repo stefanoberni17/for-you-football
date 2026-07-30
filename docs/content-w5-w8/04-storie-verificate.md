@@ -1,4 +1,4 @@
-# 04 — Storie calciatori VERIFICATE (fact-check giugno 2026)
+# 04 — Storie calciatori VERIFICATE (fact-check giugno 2026 · agg. luglio 2026)
 
 > Regola assoluta: usare SOLO queste formulazioni (o più sobrie). Mai cifre secche dove indicato "circa". Fonti verificate via web.
 
@@ -27,6 +27,21 @@
 ## Messi — 13 anni (→ W6, confermato con precisazione)
 - Diagnosi deficit ormone della crescita a ~10-11 anni (NON a 13); cura ~900$/mese insostenibile; A 13 ANNI il Barcellona lo prese e si fece carico della cura
 - **Formulazione blindata:** "Da bambino a Messi diagnosticarono un deficit dell'ormone della crescita: la cura costava circa 900 dollari al mese e la sua famiglia non poteva permettersela. A 13 anni il Barcellona lo prese e si fece carico della cura. Quello che a tutti sembrava il suo limite non era un fatto sul suo futuro."
+
+## Pirlo — la PlayStation prima della finale (→ W9-G3, "la strada è tua")
+- Fonte: autobiografia "Penso quindi gioco" (Mondadori, 2013) — Pirlo racconta di
+  aver passato il pomeriggio della finale del Mondiale 2006 giocando alla PlayStation
+  con i compagni. Approvato dal founder (luglio 2026).
+- Usare SEMPRE in coppia con CR7 (preparazione maniacale) come contrasto: due strade
+  opposte, stessa destinazione. Niente dettagli aggiuntivi (a quale gioco, con chi,
+  chi vinse) — solo il fatto, con "lo racconta lui stesso".
+- **Formulazione pronta (usata in W9-G3):** "Cristiano Ronaldo prepara ogni dettaglio
+  con precisione maniacale. Pirlo, il pomeriggio della finale del Mondiale, giocava
+  alla PlayStation — lo racconta lui stesso. Due strade opposte, stessa destinazione:
+  arrivare al proprio centro. La tua strada non somiglierà né all'una né all'altra.
+  E deve essere così — è la tua, o non funziona."
+- ⚠️ Nota riciclo: CR7 è già usato in W1-G3 e W5 — con W9 siamo a tre usi. Per
+  W10-W12 evitare CR7 e attingere al resto del catalogo.
 
 ## Già in catalogo verificato (invariati)
 - Ibrahimović: il fuoco disciplinato, cintura nera di taekwondo (solo questi 2 fatti, zero aneddoti)

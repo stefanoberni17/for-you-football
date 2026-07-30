@@ -46,9 +46,23 @@ export default function BetaCompletePage() {
         return;
       }
 
-      // ── Il tuo prima e dopo: le sue parole dell'inizio percorso ───────────
+      // ── Il tuo prima e dopo: le sue parole dell'INIZIO percorso ───────────
+      // Fonte primaria: profile_snapshots (baseline T0 immutabile, migration 007).
+      // profiles è il fallback per chi si è registrato prima dello snapshot:
+      // lì i campi sono editabili, quindi il "prima" può essere già il "dopo".
+      const { data: snapshot } = await supabase
+        .from('profile_snapshots')
+        .select('current_situation, biggest_fear')
+        .eq('user_id', uid)
+        .order('snapshot_at', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      const situazioneT0 = snapshot?.current_situation ?? profile.current_situation;
+      const paureT0 = snapshot?.biggest_fear ?? profile.biggest_fear;
+
       const fearOptions = SPORT_FEARS[profile.sport || 'calcio'] || PLAYER_FEARS;
-      const paure = (profile.biggest_fear || '')
+      const paure = (paureT0 || '')
         .split(',')
         .filter(Boolean)
         .map((v: string) => fearOptions.find(f => f.value === v)?.label || v);
@@ -82,7 +96,7 @@ export default function BetaCompletePage() {
         arr.length ? Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10 : null;
 
       setMirror({
-        situazioneIniziale: profile.current_situation || null,
+        situazioneIniziale: situazioneT0 || null,
         paure,
         gateW1: gateW1Answers?.q3 || gateW1Answers?.q2 || null,
         gateFinal: gateFinalAnswers?.q2 || gateFinalAnswers?.q3 || gateFinalAnswers?.q1 || null,
