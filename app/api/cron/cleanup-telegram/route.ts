@@ -29,6 +29,19 @@ export async function GET(request: NextRequest) {
 
   console.log(`✅ Cleanup telegram_conversations: ${count} righe eliminate (>${RETENTION_DAYS} giorni)`);
 
+  // Cleanup rate_limit_events: servono solo per la finestra mobile di 1h,
+  // teniamo 24h di margine per debug. Fail-soft se la tabella non esiste ancora.
+  const rateLimitCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { error: rateLimitError, count: rateLimitDeleted } = await supabaseAdmin
+    .from('rate_limit_events')
+    .delete({ count: 'exact' })
+    .lt('created_at', rateLimitCutoff);
+  if (rateLimitError) {
+    console.error('❌ Cleanup rate_limit_events error:', rateLimitError.message);
+  } else {
+    console.log(`✅ Cleanup rate_limit_events: ${rateLimitDeleted} righe eliminate (>24h)`);
+  }
+
   // Reset calendari settimanali ogni notte tra domenica e lunedì (lunedì 3:00 UTC)
   // getDay(): 0=Dom, 1=Lun. Alle 3:00 UTC di lunedì = notte tra domenica e lunedì
   const today = new Date();
@@ -52,5 +65,6 @@ export async function GET(request: NextRequest) {
     deleted: count,
     cutoffDate,
     calendarReset,
+    rateLimitDeleted: rateLimitError ? null : rateLimitDeleted,
   });
 }

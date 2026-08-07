@@ -10,6 +10,7 @@ import {
   SYSTEM_PROMPT_NOT_REGISTERED,
   TELEGRAM_FORMAT
 } from '@/lib/coach-ai';
+import { checkRateLimit, COACH_HOURLY_LIMIT, ANON_HOURLY_LIMIT } from '@/lib/rateLimit';
 
 async function sendTelegramMessage(chatId: number, text: string) {
   const token = process.env.TELEGRAM_BOT_TOKEN!;
@@ -130,6 +131,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!profile?.user_id) {
+      // Mittente sconosciuto: limite basso — ogni messaggio è comunque una call Claude.
+      // Oltre il limite: silenzio (nessuna risposta = niente loop con altri bot).
+      if (!(await checkRateLimit(`tg-anon:${telegramUserId}`, 'telegram', ANON_HOURLY_LIMIT))) {
+        return NextResponse.json({ ok: true });
+      }
       const { text } = await callClaude(
         SYSTEM_PROMPT_NOT_REGISTERED,
         [{ role: 'user', content: userText }],
@@ -140,6 +146,14 @@ export async function POST(request: NextRequest) {
     }
 
     const userId = profile.user_id;
+
+    if (!(await checkRateLimit(`tg-user:${userId}`, 'telegram', COACH_HOURLY_LIMIT))) {
+      await sendTelegramMessage(
+        chatId,
+        'Abbiamo parlato tanto in quest\'ultima ora ⚽ Prenditi una pausa — le cose importanti restano, ne riparliamo tra poco.'
+      );
+      return NextResponse.json({ ok: true });
+    }
 
     if (checkSafetyKeywords(userText)) {
       sendSafetyAlert(userId, 'telegram', userText).catch(err =>

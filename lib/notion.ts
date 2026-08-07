@@ -16,9 +16,47 @@ function notionHeaders(): HeadersInit {
   };
 }
 
+// ─── Cache in-memory (TTL) ───────────────────────────────────────────────────
+// Il contenuto CMS cambia raramente: cache a livello di modulo, condivisa tra
+// le invocazioni "warm" della stessa lambda Vercel. Cold start → refetch.
+// Copre TUTTE le letture Notion (route API + tool leggi_percorso del Coach).
+// Se Notion è giù e abbiamo un valore scaduto → serviamo lo stale (meglio
+// contenuto vecchio di 1h+ che una pagina rotta).
+
+const NOTION_CACHE_TTL_MS = 60 * 60 * 1000; // 1h
+
+const notionCache = new Map<string, { data: any; fetchedAt: number }>();
+
+async function cachedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+  const hit = notionCache.get(key);
+  const now = Date.now();
+  if (hit && now - hit.fetchedAt < NOTION_CACHE_TTL_MS) return hit.data as T;
+
+  try {
+    const data = await fetcher();
+    notionCache.set(key, { data, fetchedAt: now });
+    return data;
+  } catch (err) {
+    if (hit) {
+      console.error(`Notion fetch failed per "${key}" — servo la copia stale:`, err);
+      return hit.data as T;
+    }
+    throw err;
+  }
+}
+
 // ─── Query database ───────────────────────────────────────────────────────────
 
 export async function queryDatabase(
+  databaseId: string,
+  body: Record<string, unknown> = {}
+): Promise<any[]> {
+  return cachedFetch(`db:${databaseId}:${JSON.stringify(body)}`, () =>
+    queryDatabaseUncached(databaseId, body)
+  );
+}
+
+async function queryDatabaseUncached(
   databaseId: string,
   body: Record<string, unknown> = {}
 ): Promise<any[]> {
@@ -51,16 +89,18 @@ export async function queryDatabase(
 // ─── Fetch singola pagina ─────────────────────────────────────────────────────
 
 export async function fetchPage(pageId: string): Promise<any> {
-  const res = await fetch(`${NOTION_BASE}/pages/${pageId}`, {
-    headers: notionHeaders(),
+  return cachedFetch(`page:${pageId}`, async () => {
+    const res = await fetch(`${NOTION_BASE}/pages/${pageId}`, {
+      headers: notionHeaders(),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(`Notion fetchPage error: ${JSON.stringify(err)}`);
+    }
+
+    return res.json();
   });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(`Notion fetchPage error: ${JSON.stringify(err)}`);
-  }
-
-  return res.json();
 }
 
 // ─── Helpers proprietà ───────────────────────────────────────────────────────

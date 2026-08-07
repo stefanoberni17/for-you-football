@@ -10,6 +10,7 @@ import {
 } from '@/lib/coach-ai';
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
+import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,6 +22,9 @@ export async function POST(request: NextRequest) {
     }
     if (!(await requirePaidAccess(userId))) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+    }
+    if (!(await checkRateLimit(`web:${userId}`, 'chat', COACH_HOURLY_LIMIT))) {
+      return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
     }
     const { messages } = body;
 
