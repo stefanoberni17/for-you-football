@@ -37,6 +37,7 @@ export default function PracticePopup({
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
   const [timerEnded, setTimerEnded] = useState(false);
   const [audioInProgress, setAudioInProgress] = useState(false);
+  const [audioFailed, setAudioFailed] = useState(false);
 
   // Timer countdown — setta timerEnded; il passaggio a `done` avviene
   // nel useEffect sotto, che aspetta anche la fine dell'audio se in corso.
@@ -104,15 +105,24 @@ export default function PracticePopup({
       setAudioCurrentTime(0);
       setAudioInProgress(false);
     };
+    // URL rotto/404: senza questo, `ended` non arrivava mai e la pratica
+    // restava bloccata su "Continua ad ascoltare..." senza raggiungere done.
+    const onError = () => {
+      setIsAudioPlaying(false);
+      setAudioInProgress(false);
+      setAudioFailed(true);
+    };
 
     audio.addEventListener('loadedmetadata', onLoaded);
     audio.addEventListener('timeupdate', onTime);
     audio.addEventListener('ended', onEnded);
+    audio.addEventListener('error', onError);
 
     return () => {
       audio.removeEventListener('loadedmetadata', onLoaded);
       audio.removeEventListener('timeupdate', onTime);
       audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('error', onError);
     };
   }, [audioUrl]);
 
@@ -132,7 +142,14 @@ export default function PracticePopup({
       // Pausa = utente ha scelto di interrompere → non blocca il completamento
       setAudioInProgress(false);
     } else {
-      audio.play().catch(e => console.log('Audio play failed:', e));
+      setAudioFailed(false);
+      audio.play().catch(() => {
+        // Play fallito (file mancante, autoplay bloccato): non deve
+        // tenere in ostaggio il completamento della pratica
+        setIsAudioPlaying(false);
+        setAudioInProgress(false);
+        setAudioFailed(true);
+      });
       setIsAudioPlaying(true);
       setAudioInProgress(true);
     }
@@ -195,6 +212,11 @@ export default function PracticePopup({
               style={{ width: audioDuration > 0 ? `${(audioCurrentTime / audioDuration) * 100}%` : '0%' }}
             />
           </div>
+          {audioFailed && (
+            <p className="text-[11px] text-amber-300 mt-1">
+              Audio non disponibile — continua col timer, va bene lo stesso.
+            </p>
+          )}
         </div>
       </div>
     )
@@ -215,10 +237,12 @@ export default function PracticePopup({
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 
-  // Parse pratica in step numerati
+  // Parse pratica in step numerati. La numerazione è generata dal codice:
+  // se il CMS contiene già "1." / "2)" a inizio riga la togliamo, altrimenti
+  // l'utente vedrebbe "1. 1." (succede nelle pratiche W1 e in alcune W6-W9).
   const practiceSteps = pratica
     .split('\n')
-    .map(s => s.trim())
+    .map(s => s.trim().replace(/^\d+[.)]\s*/, ''))
     .filter(Boolean);
 
   return (
