@@ -73,11 +73,14 @@ export async function GET(request: NextRequest) {
       if (didPracticeToday) continue;
 
       // Check if user has a "giornata" day in progress (started but not completed)
+      // — solo se avviata OGGI: una giornata abbandonata settimane fa non deve
+      // marchiare l'utente come "in sospeso" per sempre.
       const { data: startedDays } = await supabaseAdmin
         .from('user_day_progress')
         .select('week_number, day_number')
         .eq('user_id', user.user_id)
         .eq('completed', false)
+        .gte('created_at', todayStart.toISOString())
         .limit(1);
 
       const hasGiornataInProgress = (startedDays?.length ?? 0) > 0;
