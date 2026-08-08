@@ -65,14 +65,22 @@ export async function fetchPage(pageId: string): Promise<any> {
 
 // ─── Helpers proprietà ───────────────────────────────────────────────────────
 
-/** Testo da rich_text property. Sostituisce <br> con \n */
+/** Testo da rich_text property. Sostituisce <br> con \n.
+ *  Concatena TUTTI i segmenti: Notion spezza l'array a ogni cambio di
+ *  formattazione (grassetto, corsivo, link...) — leggere solo [0] troncava
+ *  silenziosamente il campo alla prima parola formattata. */
 export function richText(prop: any): string {
-  return (prop?.rich_text?.[0]?.plain_text || '').replace(/<br>/g, '\n');
+  const segments = prop?.rich_text || [];
+  return segments
+    .map((s: { plain_text?: string }) => s?.plain_text || '')
+    .join('')
+    .replace(/<br>/g, '\n');
 }
 
-/** Testo da title property */
+/** Testo da title property (concatena tutti i segmenti, come richText) */
 export function titleText(prop: any): string {
-  return prop?.title?.[0]?.plain_text || '';
+  const segments = prop?.title || [];
+  return segments.map((s: { plain_text?: string }) => s?.plain_text || '').join('');
 }
 
 /** Numero da number property */
