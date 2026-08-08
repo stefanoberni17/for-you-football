@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
-import { queryDatabase } from '@/lib/notion';
+import { queryDatabase, richText, titleText } from '@/lib/notion';
 import { WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
 import { sendPushToUser } from '@/lib/pushNotification';
 
@@ -53,19 +53,21 @@ async function fetchMessagesFromNotion(): Promise<CoachMessage[]> {
 
   return results.map((page: any) => {
     const props = page.properties;
-    const settimaneRaw = props['Settimane']?.rich_text?.[0]?.plain_text || '';
+    // richText/titleText concatenano tutti i segmenti (una parola formattata
+    // su Notion spezza l'array — leggere solo [0] troncava il campo)
+    const settimaneRaw = richText(props['Settimane']);
     const settimane = settimaneRaw
       ? settimaneRaw.split(',').map((s: string) => parseInt(s.trim())).filter((n: number) => !isNaN(n))
       : [];
 
     return {
       notionId: page.id,
-      frase: props['Frase']?.title?.[0]?.plain_text || '',
+      frase: titleText(props['Frase']),
       categoria: props['Categoria']?.select?.name || '',
       soloPartita: props['Solo Partita']?.checkbox || false,
       soloAllenamento: props['Solo Allenamento']?.checkbox || false,
-      fonte: props['Fonte']?.rich_text?.[0]?.plain_text || '',
-      note: props['Note']?.rich_text?.[0]?.plain_text || '',
+      fonte: richText(props['Fonte']),
+      note: richText(props['Note']),
       settimane,
     };
   });
