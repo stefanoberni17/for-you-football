@@ -126,6 +126,14 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         }),
       });
 
+      if (response.status === 429) {
+        setMessages(prev => [...prev, {
+          role: 'assistant' as const,
+          content: 'Abbiamo parlato tanto in quest\'ultima ora ⚽ Prenditi una pausa — ne riparliamo tra poco.',
+          timestamp: new Date(),
+        }]);
+        return;
+      }
       if (!response.ok) {
         throw new Error('Failed to get response');
       }
