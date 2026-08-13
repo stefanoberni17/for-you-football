@@ -159,7 +159,7 @@ Non modificare niente. Solo notare com'è adesso. Riparti dai piedi e rifai il g
     pratica: `Occhi aperti, attenzione al punto sotto lo sterno.
 
 1. Immagina lo zaino sulle spalle, pieno di quello che ti porti dietro: l'errore, il risultato, il giudizio.
-2. Un respiro lungo, lunghissimo. Mentre espiri, posa lo zaino oltre la linea. Non lo butti: lo posi, fuori dal campo.
+2. Un respiro lungo, lunghissimo. Mentre espiri, posa lo zaino oltre la linea. Non lo butti: lo posi, fuori dal campo. Quello che ti ha insegnato lo tieni — posi il peso, non la lezione.
 3. Il corpo si apre: spalle aperte, petto libero, respiro che scende. È la firma del gioco libero.
 4. Entra (o resta) da lì. Qualunque cosa succeda, il tuo valore non si tocca.`,
     durataMinuti: 3,
