@@ -35,6 +35,10 @@ export default function GiornoPage() {
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
   const [showPracticePopup, setShowPracticePopup] = useState(false);
+  // Giornata: avviata in QUESTA sessione (mostra la schermata di uscita, non il salto alla riflessione)
+  const [justStarted, setJustStarted] = useState(false);
+  // Giornata al rientro: l'utente vuole rileggere le istruzioni invece della sola riflessione
+  const [reviewMode, setReviewMode] = useState(false);
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
 
   useEffect(() => {
@@ -143,11 +147,14 @@ export default function GiornoPage() {
     if (!giorno.domanda) slides.push({ type: 'completa', label: 'Completa' });
   }
 
-  // Per giornata "in corso": salta alla slide della domanda (ultima)
-  const isGiornataReturning = started && !completed && giorno?.tipoPratica === 'giornata';
+  // Giornata "in corso": al RIENTRO (started arrivato dal server) salta alla slide
+  // della domanda. NON scatta se l'avvio è appena avvenuto in questa sessione
+  // (justStarted → schermata "giornata avviata") né in modalità rilettura.
+  const isGiornataInCorso = started && !completed && giorno?.tipoPratica === 'giornata';
+  const jumpToReflection = isGiornataInCorso && !justStarted && !reviewMode;
 
   const totalSlides = slides.length;
-  const effectiveSlide = isGiornataReturning ? totalSlides : currentSlide;
+  const effectiveSlide = jumpToReflection ? totalSlides : currentSlide;
   const currentSlideData = slides[effectiveSlide - 1];
   const isLastSlide = effectiveSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
@@ -291,6 +298,39 @@ export default function GiornoPage() {
           className="mt-5 text-forest-100 hover:text-white text-sm font-medium underline underline-offset-4 transition-colors"
         >
           🏋️ Oppure allena ciò che vuoi in Palestra
+        </button>
+      </main>
+    );
+  }
+
+  // Giornata appena avviata: schermata di uscita. Il giorno resta "in corso";
+  // si chiude stasera con la riflessione (al rientro: salto diretto alla domanda).
+  if (justStarted && !completed && giorno?.tipoPratica === 'giornata') {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center pt-safe pb-6 px-6 text-white animate-fadeIn">
+        <div className="flex flex-col items-center animate-scaleIn text-center max-w-xs">
+          <div className="w-24 h-24 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 shadow-2xl text-5xl">
+            ☀️
+          </div>
+          <h1 className="text-3xl font-bold mb-3">Giornata avviata</h1>
+          <p className="text-white text-sm leading-relaxed mb-2">
+            Il Reset è fatto, le istruzioni le hai. Adesso chiudi l&apos;app e vivi la tua giornata.
+          </p>
+          <p className="text-forest-100 text-sm leading-relaxed mb-10">
+            Stasera torni qui: una riga e chiudi il giorno.
+          </p>
+        </div>
+        <button
+          onClick={() => router.push('/')}
+          className="bg-white text-forest-600 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
+        >
+          Torna alla home →
+        </button>
+        <button
+          onClick={() => setJustStarted(false)}
+          className="mt-5 text-forest-100 hover:text-white text-sm font-medium underline underline-offset-4 transition-colors"
+        >
+          Ho già vissuto la mia giornata → vai alla riflessione
         </button>
       </main>
     );
@@ -479,11 +519,17 @@ export default function GiornoPage() {
 
         {currentSlideData?.type === 'domanda' && (
           <div className="bg-surface rounded-2xl shadow-sm p-5">
-            {isGiornataReturning && (
+            {jumpToReflection && (
               <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-4 text-center">
                 <p className="text-sm text-amber-300">
-                  ☀️ Bentornato! Com'è andata la pratica durante la giornata?
+                  ☀️ Com'è andata la pratica durante la giornata?
                 </p>
+                <button
+                  onClick={() => { setReviewMode(true); setCurrentSlide(1); }}
+                  className="mt-1.5 text-xs text-faint hover:text-muted underline underline-offset-2 transition-colors"
+                >
+                  ↑ Rileggi prima le istruzioni del giorno
+                </button>
               </div>
             )}
             <h2 className="text-sm font-bold text-app mb-3 flex items-center gap-2">
@@ -544,7 +590,7 @@ export default function GiornoPage() {
 
         {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile */}
         <div className="flex gap-4">
-          {effectiveSlide > 1 && !isGiornataReturning && (
+          {effectiveSlide > 1 && !jumpToReflection && (
             <button
               onClick={() => setCurrentSlide(s => s - 1)}
               className="flex-1 bg-surface border border-divider text-app font-semibold py-3 rounded-xl hover:bg-surface-2 transition-all text-sm"
@@ -630,6 +676,7 @@ export default function GiornoPage() {
                   }),
                 });
                 setStarted(true);
+                setJustStarted(true); // → schermata "giornata avviata"
               } catch { /* non bloccante */ }
             }
           }}

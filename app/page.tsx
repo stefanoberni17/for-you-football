@@ -87,6 +87,7 @@ export default function HomePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
+  const [startedDays, setStartedDays] = useState<{ week: number; day: number }[]>([]);
   const [weekData, setWeekData] = useState<any>(null);
   const [userId, setUserId] = useState('');
   const [coachMessageDismissed, setCoachMessageDismissed] = useState(false);
@@ -159,6 +160,17 @@ export default function HomePage() {
       }));
 
       setCompletedDays(days);
+
+      // Giornate avviate ma non chiuse (righe "started" — solo i giorni tipo "giornata"
+      // le creano, via PUT /api/giorno): servono per il CTA "chiudi il giorno"
+      try {
+        const { data: startedRows } = await supabase
+          .from('user_day_progress')
+          .select('week_number, day_number')
+          .eq('user_id', session.user.id)
+          .eq('completed', false);
+        setStartedDays((startedRows || []).map((r: any) => ({ week: r.week_number, day: r.day_number })));
+      } catch { /* non bloccante */ }
 
       // Carica dati settimana corrente
       const currentWeek = profileData?.current_week || 1;
@@ -247,6 +259,8 @@ export default function HomePage() {
   const weekDone = isWeekCompleted(currentWeek, completedDays);
   const nextDay = getNextDay(completedDays);
   const nextDayLocked = !isDayUnlocked(nextDay.week, nextDay.day, completedDays);
+  // Giornata avviata ma non chiusa: il CTA diventa "chiudi il giorno"
+  const nextDayInCorso = !nextDayLocked && startedDays.some(d => d.week === nextDay.week && d.day === nextDay.day);
   const totalCompleted = completedDays.length;
   const totalDays = BETA_MAX_WEEK * DAYS_PER_WEEK;
   const streak = pathStreak(completedDays);
@@ -439,6 +453,19 @@ export default function HomePage() {
               </button>
               <p className="text-forest-100 text-xs text-center">
                 ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani
+              </p>
+            </div>
+          ) : nextDayInCorso ? (
+            <div className="space-y-2">
+              <button
+                onClick={() => router.push(`/giorno/${nextDay.week}/${nextDay.day}`)}
+                className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span>🌤️</span>
+                <span>Chiudi il Giorno {nextDay.day} — com&apos;è andata?</span>
+              </button>
+              <p className="text-forest-100 text-xs">
+                Giornata avviata stamattina: manca solo la riflessione (1 riga).
               </p>
             </div>
           ) : (

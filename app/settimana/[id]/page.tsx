@@ -19,6 +19,7 @@ export default function SettimanaPage() {
   const [giorni, setGiorni] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
+  const [startedDays, setStartedDays] = useState<{ week: number; day: number }[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showCompletePopup, setShowCompletePopup] = useState(false);
   const [showCalendarPopup, setShowCalendarPopup] = useState(false);
@@ -39,6 +40,18 @@ export default function SettimanaPage() {
       compressed: p.compressed || false,
     }));
     setCompletedDays(days);
+
+    // Giornate avviate ma non chiuse (righe "started" — le creano solo i giorni
+    // tipo "giornata"): la timeline le mostra come "☀️ In corso"
+    try {
+      const { data: startedRows } = await supabase
+        .from('user_day_progress')
+        .select('week_number, day_number')
+        .eq('user_id', uid)
+        .eq('completed', false);
+      setStartedDays((startedRows || []).map((r: any) => ({ week: r.week_number, day: r.day_number })));
+    } catch { /* non bloccante */ }
+
     return days;
   };
 
@@ -324,6 +337,8 @@ export default function SettimanaPage() {
                 const isGate = dayNum === GATE_DAY;
                 const timeLocked = !unlocked && dayNum > 1 && isTimeLocked(weekNumber, dayNum - 1, completedDays);
                 const isCurrent = unlocked && !dayDone && dayNum === completedDays.filter(d => d.weekNumber === weekNumber && d.completed).length + 1;
+                // Giornata avviata ma non chiusa (solo i giorni "giornata" creano righe started)
+                const inCorso = unlocked && !dayDone && startedDays.some(s => s.week === weekNumber && s.day === dayNum);
 
                 return (
                   <div key={dayNum} className="relative pl-12">
@@ -364,11 +379,15 @@ export default function SettimanaPage() {
                               ? `Gate · Giorno ${dayNum}`
                               : `Giorno ${dayNum}`}
                           </p>
-                          {isCurrent && (
+                          {inCorso ? (
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/20 px-1.5 py-0.5 rounded-full">
+                              ☀️ In corso
+                            </span>
+                          ) : isCurrent ? (
                             <span className="text-[9px] font-bold uppercase tracking-wider text-forest-300 bg-forest-500/20 px-1.5 py-0.5 rounded-full">
                               Oggi
                             </span>
-                          )}
+                          ) : null}
                         </div>
                         {giorno?.titolo && !isGate && (
                           <p className={`text-xs leading-snug ${unlocked ? 'text-muted' : 'text-faint'}`}>
@@ -386,6 +405,9 @@ export default function SettimanaPage() {
                           )}
                           {timeLocked && (
                             <span className="text-[11px] text-blue-400 font-medium">Disponibile domani</span>
+                          )}
+                          {inCorso && (
+                            <span className="text-[11px] text-amber-400 font-medium">Stasera la riflessione</span>
                           )}
                         </div>
                       </div>
