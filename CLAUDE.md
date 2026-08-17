@@ -445,7 +445,7 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 | Blocco | Settimane | Tema | Principi |
 |--------|-----------|------|----------|
 | 🔵 1 | 1–4 | Costruire lo strumento | Presenza, Osservazione, Ascolto |
-| 🟡 2 | 5–8 | Giocare nelle difficoltà | Accettazione, Lasciare Andare, Perdono |
+| 🟡 2 | 5–8 | Giocare nelle difficoltà | Accettazione (W5-6), Perdono (W7), Lasciare Andare (W8) |
 | 🟢 3 | 9–12 | Giocare libero | Ritornare al Centro |
 
 **Disponibili:** settimane 1-8 — Blocco 1 + Blocco 2 (`BETA_MAX_WEEK = 8` in `lib/constants.ts`). Blocco 3 (W9-12) in arrivo. W5-W8 hanno tutte le pagine su Notion (DB Settimane + DB Giorni) e gli id in `WEEK_RECORD_IDS`. Strumenti per settimana (`WEEK_TOOLS`): Reset/Observer/Body Check/Protocollo (W1-4) + Lo Stacco/Fatto vs Storia/L'Anticipo/Il Rilascio (W5-8). **Filo Rosso:** property su DB Settimane ("Hai imparato a tornare/vedere/…/posare") esposta da `mapSettimana.filoRosso` e mostrata in risalto su `/week-complete`. Drafts contenuti in `docs/content-w5-w8/`; export integrale CMS in `docs/cms-export/`.

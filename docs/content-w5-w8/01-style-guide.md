@@ -20,7 +20,9 @@ Frasi corte. Un'idea sola. Se l'apertura spiega due concetti, è troppo lunga. L
 
 ### Regola 2 — Zero gergo accademico o spirituale user-facing.
 Vietati nei testi che l'utente legge: nomi di leggi/ricerche/ricercatori, termini sanscriti, "circuiti neurali", "sistema nervoso parasimpatico", "cognitive reappraisal", "plesso solare" (si dice **"il punto sotto lo sterno"**). La scienza vive nella property **Contesto** — la legge solo il Coach AI, e lì può essere precisa (vedi il Contesto di W1-G1 o W4-G3).
-⚠️ Fix noto da applicare: la Pratica di W5-G1 contiene ancora "plesso solare" — va portata a "punto sotto lo sterno".
+✅ Fix applicato (2026): la Pratica di W5-G1 ora dice "punto sotto lo sterno".
+
+**Registro dei «Perché Funziona» (property USER-FACING, agosto 2026):** vale la Regola 2 anche qui. I meccanismi scientifici sono benvenuti — è il senso del box — ma spiegati in italiano piano: NIENTE etichette inglesi (cognitive reappraisal, implementation intentions, self-distancing, defusione/ACT), niente nomi di ricercatori o di leggi. Ammessi i termini anatomici semplici in italiano ("nervo vago"). Il pattern giusto: descrivere il meccanismo senza battezzarlo ("la ricerca mostra che vedere un pensiero come pensiero riduce la presa emotiva"). Bonifica applicata ad agosto 2026 su W5-G3, W6-G2, W6-G3, W7-G4.
 
 ### Regola 3 — Frame: "Non è meditazione. È fisiologia / allenamento."
 Seconda persona singolare, sempre. Frasi corte, ritmo da spogliatoio, non da libro. **Occhi aperti** in tutte le pratiche ("Occhi aperti, punto fisso" è la formula standard). Il vocabolario è quello dell'allenamento: costruire, allenare, strumento, gesto, ripetizione, robustezza. Mai: energia, viaggio interiore, guarigione, abbondanza, gratitudine cosmica.
@@ -48,6 +50,8 @@ Il G5 (applicazione in contesto diverso) usa momenti *specifici* della giornata 
 ### Regola 8 — Storie di calciatori: SOLO dal catalogo verificato.
 Catalogo chiuso: **CR7** (palloni persi/dimenticati), **Iniesta** (presenza dopo errori), **Ibrahimović**, **Messi**, **Buffon** (ansia pre-partita non combattuta), **Baggio** (rigore del '94 — continuò a tirare i rigori), **Ronaldo il Fenomeno** (identità dopo gli infortuni). Mai inventare statistiche, citazioni testuali o aneddoti.
 **Assegnazioni Blocco 2: Baggio è RISERVATO alla W5 (errore).** Ronaldo il Fenomeno è il candidato naturale per il tema identità (W6–W7 a seconda della mappa). CR7 e Buffon sono già usati in W1-G3 e W3-G2 — non riciclarli a distanza ravvicinata. Formato: 2–3 righe, fattuale, niente romanzo (vedi Buffon in W3-G2).
+
+⚠️ **Aggiornamento (luglio-agosto 2026):** il catalogo è esteso e governato da **`04-storie-verificate.md`** (CR7-rigori/Euro2024, Sergio Ramos, Vardy, Baggio capitolo Bologna, Messi 13 anni, Pirlo-PlayStation, Kobe con regole dedicate). Usare SOLO le formulazioni pronte di quel file; le assegnazioni indicate lì prevalgono su questa regola. Il catalogo nel prompt del Coach (`lib/coach-ai.ts`) è sincronizzato con lo stesso file (agosto 2026) — tenerli allineati a ogni nuova storia.
 
 ### Regola 9 — Durate oneste.
 Pratiche 3–15 minuti reali, dichiarati nella property Durata Minuti e rispettati dal testo. Il G4 è il più lungo (8–15 min, "Esercizio Principale"). Gli altri giorni: 5–6 min tipici. Se la pratica include "durante la giornata" (Tipo Pratica = giornata), il tempo in-app resta corto e onesto.
