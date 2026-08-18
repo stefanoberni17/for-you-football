@@ -20,6 +20,7 @@ interface CartaData {
   mappa: string | null; // gate W3 q1 (dove porta la tensione il corpo)
   firma: string | null; // risposta W3-G3 (firma del gioco libero)
   protocollo: string | null; // risposta W4-G6 (il protocollo personale in 3 righe)
+  cinqueCose: string | null; // risposta W8-G6 (le cinque cose oltre al calciatore)
   giorniCompletati: number;
 }
 
@@ -86,6 +87,7 @@ export default function CartaPage() {
         mappa: day(3, 7)?.gate_answers?.q1 || null,
         firma: day(3, 3)?.response || null,
         protocollo: day(4, 6)?.response || null,
+        cinqueCose: day(8, 6)?.response || null,
         giorniCompletati: (progress || []).filter(p => p.completed).length,
       });
       setLoading(false);
@@ -168,6 +170,12 @@ export default function CartaPage() {
             label="🛡️ Il mio Protocollo"
             value={carta.protocollo}
             placeholder="SENTI → NOMINA → TORNA, nelle mie parole (lo scrivi alla Settimana 4):"
+          />
+
+          <FieldBlock
+            label="🧍 Chi sono, oltre la maglia"
+            value={carta.cinqueCose}
+            placeholder="Le cinque cose che sono anche senza il pallone (le scrivi alla Settimana 8):"
           />
 
           {/* Footer carta */}
