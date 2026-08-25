@@ -2,7 +2,8 @@
 
 > **Tipo:** analisi e progettazione. Nessun codice, nessuna migration.
 > **Gate:** il modulo si costruisce dopo Stripe live + primi clienti paganti.
-> **Data:** 24 agosto 2026 · **Basato su:** brief di Ste + ricognizione del codebase attuale.
+> **Data:** 24 agosto 2026 · **Rev. 2 — 25 agosto:** motore rivisto da "deterministico puro" a **LLM-planner con guardrail** su decisione di Stefano (riferimento: preparazioneatletica.com / Performance A.I.). Cambiano §1.3, parte di §1.2, §3-P1, §4, §5, §6.
+> **Basato su:** brief di Ste + ricognizione del codebase attuale.
 
 ---
 
@@ -12,9 +13,9 @@
 |---|---|
 | Lo schema proposto regge? | Nell'impianto sì, ma va corretto in 4 punti strutturali (catene come entità, items come tabella, sessioni di test come evento, punteggi congelati alla scrittura). Schema finale in §1. |
 | Supabase o Notion? | **Supabase, senza ibridi.** Sono dati relazionali di un motore, non contenuto editoriale. Il flusso di inserimento per Ste è: xlsx → seed versionato in repo. Dettaglio trade-off in §1.4. |
-| Motore deterministico vs LLM? | Confermo in pieno la tua conclusione: **rules engine su dati, l'LLM solo come voce.** Su minorenni un generatore di volumi è inaccettabile, e qui non serve nemmeno: la metodologia di Ste È già un insieme di regole. |
+| Motore deterministico vs LLM? | **LLM-planner con guardrail** (Rev. 2): l'LLM costruisce programma e sedute su richieste, feedback, calendario e card dell'utente — ma sceglie **solo dal catalogo di Ste** (ogni esercizio ha il suo video: vincolo naturale), dentro **bounds hard su serie/reps/recuperi** definiti nei dati, con **validatore deterministico** prima del salvataggio e fallback a template. Generazione a cadenza lenta (creazione programma + adattamento settimanale), **mai live durante la seduta**. È il modello Performance A.I.: l'esperienza è "l'AI costruisce il tuo programma", la sicurezza sta nella struttura. §1.3. |
 | Navigazione | **Nessun sesto tab.** Il training entra nella tab Palestra (che diventa hub a due binari: Mente / Campo) + card compatta in dashboard. §2. |
-| Fasi | P0 Test+Card (~8–12 gg dev) → P1 Programmi (~12–18 gg) → P2 Integrazione mentale (~4–6 gg) → P3 Gamification à la carte (~5–10 gg). **Il critical path non è il codice: è la formalizzazione della metodologia e i video.** §3. |
+| Fasi | P0 Test+Card (~8–12 gg dev) → P1 Planner+Programmi (~14–20 gg) → P2 Integrazione mentale (~4–6 gg) → P3 Gamification à la carte (~5–10 gg). **Il critical path non è il codice: è la formalizzazione della metodologia e i video.** §3. |
 | Il rischio più grosso | "Il contenuto esiste già" è vero a metà: esiste **su carta**, non come dati. Catene esplicite, mapping test→ingresso, logica A/B/1/3, regola di alternanza volume/skill — tutto questo oggi vive nella testa di Ste. È lavoro vero, va nel piano come tale. §4.1. |
 
 ---
@@ -41,8 +42,8 @@ Cose che mancavano e che il brief stesso segnala:
 
 - **Varianti**: campo `variante_di` (FK) sull'esercizio, separato dalla progressione. Una variante (es. palleggi solo piede debole) non è "il gradino dopo", è una declinazione dello stesso gradino.
 - **Sessioni miste multi-categoria**: con la tabella items è gratis — la `categoria` della sessione diventa etichetta primaria per filtri/UI, non un vincolo sugli items.
-- **Deload**: non serve un meccanismo — è un **tipo di seduta** (`tipo_seduta = 'deload'`) piazzato dal programma alla settimana giusta. Il PDF fascia lo fa già così: la periodizzazione è contenuto, non codice.
-- **Programmi**: il brief non li nomina come entità ma li usa ovunque ("PROGRAMMA_FASCIA_12_SETTIMANE", "5 settimane di tecnica"). Serve `training_programs` + `training_program_slots` (settimana × slot → sessione): è la struttura che trasforma una libreria di sessioni in un percorso assegnabile.
+- **Deload**: non serve un meccanismo — è un **tipo di seduta** (`tipo_seduta = 'deload'`). *(Rev. 2: lo piazza il planner secondo i principi di periodizzazione encodati nel prompt — es. "ogni 4ª settimana scarico" — e il validatore ne verifica la presenza.)*
+- **Programmi**: *(rivisto in Rev. 2)* — con il planner LLM i programmi pre-autorati non servono più come entità: il "programma" è la sequenza dei piani settimanali generati (`user_plans`). Il PDF fascia e gli export Everfit diventano **sessioni modello**: few-shot per il planner + fallback del validatore.
 - **Stato utente per catena**: dove sei su ogni catena. Derivabile dai test, ma il motore lo legge a ogni assegnazione → va materializzato (`user_chain_state`).
 
 ### 1.2 Schema proposto (finale)
@@ -60,11 +61,19 @@ training_tests         id (slug) · nome · categoria_card · unita · protocoll
                        · chain_id · entry_map (livello → esercizio d'ingresso in catena)
 training_sessions      id (slug) · nome · tipo_seduta (volume|skill|test|deload)
                        · categoria_primaria · livello · durata_stimata_min · note
+                       -- Rev.2: SESSIONI MODELLO — few-shot per il planner + fallback
 training_session_items session_id · ordine · exercise_id · serie · reps · durata_sec
                        · recupero_sec · schema (fisso|amrap|tabata|emom|max_reps)
                        · nota · consegna_mentale · consegna_mentale_min_week
-training_programs      id (slug) · nome · categoria · livello · settimane · sedute_per_settimana
-training_program_slots program_id · settimana · slot · session_id
+```
+
+**Rev. 2 — bounds e piani generati.** Con il planner LLM spariscono `training_programs`/`training_program_slots` pre-autorati (il programma lo compone l'LLM); entrano al loro posto i **limiti hard** sul catalogo e i **piani generati per-utente**:
+
+```
+training_exercises     + serie_min · serie_max · reps_min · reps_max
+                       + durata_min_sec · durata_max_sec · recupero_min_sec
+                       + volume_max_settimana (per esercizio o per categoria)
+                       -- i bounds che il validatore impone al planner, per livello
 ```
 
 **Dati utente** — RLS owner-only, stesso pattern di `user_actions`:
@@ -75,9 +84,16 @@ user_test_results        id · user_id · test_session_id · test_id
                          · valore · livello_calcolato · punteggio_calcolato · created_at
                          -- append-only; baseline = prima sessione completata
 user_chain_state         user_id · chain_id · current_exercise_id · updated_at
-user_program_enrollments id · user_id · program_id · started_at · current_week · stato
-user_session_completions id · user_id · session_id · enrollment_id · completed_at
+user_plans               id · user_id · obiettivi_dichiarati · richieste_libere
+                         · generato_da (llm|template_fallback) · model_id · prompt_version
+                         · settimana_di · created_at
+                         -- Rev.2: un piano settimanale generato = una riga, append-only
+                         -- (lo storico dei piani è ispezionabile: audit + debug + review)
+user_plan_sessions       id · plan_id · slot · tipo_seduta · items JSONB VALIDATO
+                         · stato (proposta|accettata|completata|saltata)
+user_session_completions id · user_id · plan_session_id · completed_at
                          · feedback (facile|ok|duro) · note
+                         -- il feedback è INPUT del planner alla generazione successiva
 ```
 
 Note trasversali:
@@ -86,16 +102,28 @@ Note trasversali:
 - Il **punteggio 0-100** del foglio RECAP: la formula va estratta dall'xlsx e replicata in una funzione pura (`lib/trainingEngine.ts`), documentata. Se è un'interpolazione lineare tra soglie bastano le 4 colonne; se è una lookup arbitraria, colonna `score_map JSONB` sul test.
 - **`feedback` a 3 valori** su `user_session_completions` (facile/ok/duro): un tap, zero attrito, e in futuro alimenta la taratura delle soglie con dati reali. Non guida l'avanzamento in v1 (quello resta sanzionato dal ri-test), ma raccoglierlo da subito costa nulla.
 
-### 1.3 Il motore (`lib/trainingEngine.ts`)
+### 1.3 Il motore — LLM-planner con guardrail (Rev. 2)
 
-Funzioni pure, deterministiche, testabili in isolamento — zero LLM:
+**La decisione di Stefano:** il programma lo costruisce l'LLM su richieste, feedback e progressi dell'utente, modello Performance A.I. (preparazioneatletica.com). **Si può fare, e cambia il progetto in meglio su un punto decisivo** (vedi sotto) — ma va capito cosa fa davvero il riferimento: Performance A.I. genera la scheda **una volta al mese**, da questionario, dentro una metodologia evidence-based codificata, con un coach umano dietro. Non è un chatbot che improvvisa serie in tempo reale. L'esperienza è "l'AI costruisce il tuo programma"; la sicurezza sta nella struttura e nella cadenza lenta. La versione FYF di questo principio:
 
-- `scoreTest(test, valore)` → livello + punteggio 0-100
-- `placementFromTests(results)` → per ogni catena, esercizio d'ingresso (via `entry_map`)
-- `sessionsForWeek(enrollment, chainState)` → le sedute della settimana dal programma
-- `advanceChain(chainState, ritestResults)` → nuovo esercizio corrente
+**"L'LLM propone, i dati dispongono."** Un planner dedicato (chiamata Claude separata dal Coach chat) riceve:
+- obiettivi dichiarati e **richieste libere** dell'utente («questa settimana ho due partite», «il muro non ce l'ho», «solo 20 minuti oggi»)
+- card e risultati test (placement sulle catene), calendario (`training_days`/`match_days`), check-in fisico
+- **feedback delle sedute precedenti** (facile/ok/duro + note) — è il loop di adattamento
+- i **vincoli hard**: catalogo con posizione dell'utente su ogni catena e finestra ammessa (esercizio corrente ±1 gradino), bounds per esercizio (serie/reps/recuperi min-max), volume massimo settimanale per categoria, tipi di seduta ammessi, durata target
 
-**Regola di avanzamento — proposta di default** (in attesa della risposta di Ste alla domanda aperta): l'avanzamento di catena è **sanzionato solo dal ri-test**, mai dal completamento sedute. Le sedute skill *preparano* l'esercizio successivo della catena (EMOM a basse reps sull'esercizio difficile), le sedute volume consolidano l'attuale — ma il "sei passato al gradino dopo" lo certifica il test, perché è misurabile, anti-inflazione e coerente col rituale del ri-test ogni 4 settimane. Se Ste vuole avanzamenti intermedi (es. "3 sedute skill complete → avanzi"), è una `advancement_rule` diversa sulla catena: il modello lo regge, ma il default misurabile è più difendibile su minorenni.
+e produce un **piano settimanale come JSON strutturato** (sedute → items con slug esercizio, serie, reps/durata, recupero, consegna mentale). Prima del salvataggio, un **validatore deterministico** verifica ogni item: lo slug esiste nel catalogo? la posizione in catena è ammessa? i bounds sono rispettati? il volume settimanale è sotto il cap? Se fallisce → un retry con gli errori nel prompt → altrimenti **fallback alla sessione modello** del livello. Il piano non validato non tocca mai il DB.
+
+I tre guardrail che non si negoziano, anche nella visione LLM:
+1. **Solo esercizi dal catalogo.** Vincolo che si impone da solo: ogni esercizio deve avere il video di Ste — un esercizio inventato dall'LLM non avrebbe video, quindi il planner *seleziona*, non inventa. Il catalogo è il perimetro fisico del sistema.
+2. **Bounds hard nel validatore, non nel prompt.** I limiti di volume su minorenni vivono nel codice, dove l'utente non può negoziarli («dai, fammene fare di più») e il modello non può sbagliarli.
+3. **Cadenza lenta, mai live.** Generazione alla creazione del programma + adattamento settimanale (o su richiesta esplicita «adatta il piano»). Durante la seduta il piano è congelato: il player esegue, non genera.
+
+Cosa resta deterministico in `lib/trainingEngine.ts`: `scoreTest` (livelli + 0-100), `placementFromTests` (ingresso in catena via `entry_map`), `validatePlan` (il guardiano), `advanceChain` (l'avanzamento di gradino resta **sanzionato dal ri-test** — misurabile, anti-inflazione; il planner lavora *dentro* la finestra corrente, non la sposta).
+
+**Il punto in cui questa scelta migliora il progetto:** sparisce il pezzo più pesante del data entry — Ste non deve più pre-autorare decine di sessioni e programmi. Definisce catalogo, catene, test, bounds e i *principi* di programmazione (encodati nel prompt del planner), più una manciata di **sessioni modello** che fanno da few-shot e da fallback — e gli export Everfit esistenti diventano esattamente quello: esempi, non righe da inserire una a una. Il critical path di contenuto (§4.1) si accorcia, ma non sparisce: si sposta dalla compilazione alla **formalizzazione** (catene, bounds, principi) + un **eval set** di casi tipo per verificare che il planner programmi come programmerebbe Ste.
+
+Dettagli operativi: modello `claude-sonnet-4-6` (già in stack); costo per generazione nell'ordine dei centesimi, trascurabile sui volumi attuali; latenza 10–20s gestita con generazione asincrona o loading esplicito («sto preparando la tua settimana»); ogni piano salvato con `model_id` + `prompt_version` (audit e regressioni); in beta, **review umana dei primi piani generati** — il ruolo che in Performance A.I. ha il coach — con una vista per Ste sui piani recenti. Nota sul JSONB: per i piani generati va bene (a differenza degli items delle sessioni modello, §1.1-②) perché sono *artefatti per-utente immutabili già validati contro il catalogo*, non un catalogo da mantenere.
 
 ### 1.4 Supabase vs Notion — la scelta
 
@@ -171,16 +199,18 @@ Batteria test, inserimento risultati, card radar con livelli per area, baseline 
 **P0-lite — versione lead magnet pubblico (+4–6 giorni sopra P0):** pagina `/test` senza login, risultati in `localStorage`, la card si vede subito; "salva la tua card" = registrazione light solo-email (magic link Supabase) che crea un utente vero con flag `lead` e migra i risultati — così la baseline sopravvive e la conversione a cliente pagante eredita tutto, zero riconciliazione. Extra: rate limiting sull'endpoint pubblico (pattern `rateLimit.ts` esistente), OG image della card per la condivisione (è il motore virale del lead magnet — vale i suoi ~1–2 giorni).
 ⚠️ Attrito da non sottovalutare: la batteria completa richiede 30-45 minuti di esercizi fisici veri. Come lead magnet valuterei una **batteria ridotta** (3 test × 5 minuti → mini-card) con la batteria completa dietro la registrazione. Vedi §5.
 
-### P1 — Programmi (~12–18 giorni) — il grosso
+### P1 — Programmi generati dal planner (~14–20 giorni) — il grosso *(rivisto Rev. 2)*
 
-- Schema restante: chains, exercises, sessions, items, programs, slots + tabelle utente (2 gg)
-- Pipeline seed CSV→Supabase + prima importazione completa dei contenuti (2–3 gg, **assumendo contenuto già formalizzato** — vedi §4.1)
-- Motore: placement dai test, assegnazione sedute della settimana, avanzamento — con test unitari seri, è il cuore (2–3 gg)
-- Player seduta: riuso concettuale di `PracticePopup` (timer, wake lock già pronto in `useWakeLock`, step) + serie/recuperi con countdown + video player inline (3–4 gg)
-- Libreria/navigazione: catene come timeline verticale (riuso pattern `/settimane`), scelta area, programma corrente (2–3 gg)
-- Tracking completamenti + feedback 3-tap + storico in `/statistiche` (1–2 gg)
+- Schema: chains, exercises (con bounds), sessioni modello, `user_plans`/`user_plan_sessions` + tabelle utente (2 gg)
+- Pipeline seed CSV→Supabase: catalogo + catene + bounds + sessioni modello (2 gg, **assumendo contenuto formalizzato** — §4.1)
+- **Planner LLM**: prompt con la metodologia di Ste + few-shot dalle sessioni modello, tool/JSON output strutturato, gestione richieste libere e feedback (2–3 gg)
+- **Validatore + fallback**: `validatePlan` deterministico (catalogo, finestra di catena, bounds, cap volume), retry con errori nel prompt, fallback a sessione modello — con test unitari seri, è il guardiano (2 gg)
+- **Eval set**: 15–20 casi tipo (utente base con 2 partite, avanzato senza muro, feedback "duro" ripetuto, richiesta fuori range…) con assertion sul piano prodotto; gira a ogni modifica del prompt (2 gg)
+- Player seduta: riuso concettuale di `PracticePopup` (timer, wake lock già pronto in `useWakeLock`, step) + serie/recuperi con countdown + video inline (3–4 gg)
+- UI: intake obiettivi/richieste, piano della settimana, catene come timeline verticale (riuso pattern `/settimane`) (2–3 gg)
+- Tracking completamenti + feedback 3-tap + storico in `/statistiche` + vista review piani per Ste in beta (1–2 gg)
 
-**In parallelo, sul critical path:** documentazione logica A/B/1/3 (Ste), catene esplicite per ogni categoria (Ste), risposta alla domanda volume/skill (Ste), 30–40 video (Ste). **P1 non parte finché §4.1 non è risolto.**
+**In parallelo, sul critical path:** catene esplicite per categoria (Ste), bounds per esercizio/livello (Ste), principi di programmazione scritti — alternanza volume/skill, deload, gestione settimana con partite (Ste), logica A/B/1/3 (Ste), 30–40 video (Ste). Il data entry delle sessioni si riduce a una manciata di sessioni modello (il guadagno della Rev. 2), ma **P1 non parte finché la formalizzazione di §4.1 non è chiusa** — nel planner LLM il prompt *è* la metodologia: se non è scritta, non c'è niente da encodare.
 
 ### P2 — Integrazione mentale (~4–6 giorni)
 
@@ -205,7 +235,7 @@ Per ogni meccanica: costo e cosa riusa. Ordinate per rapporto valore/costo:
 
 **Streak — raccomandazione:** niente terza streak, e nemmeno due streak concorrenti percorso/training. Estendere la definizione di "giorno valido" a: pratica mentale **oppure** seduta training **oppure** ≥3 azioni → un solo contatore "giorni For You". Attenzione però: cambiare la semantica di una streak esistente su utenti attivi va comunicato (la streak può solo *crescere* con la nuova regola, quindi il cambio è indolore — ma va detto).
 
-**Riepilogo:** P0+P1+P2 ≈ 25–35 giorni dev; con P3 completa ≈ 30–45. Sviluppo con l'assistenza attuale: realisticamente 5–8 settimane calendario part-time. Il contenuto (formalizzazione + data entry + video) è una moltiplicazione, non un'addizione: parte prima e finisce dopo.
+**Riepilogo (Rev. 2):** P0+P1+P2 ≈ 26–38 giorni dev; con P3 completa ≈ 31–48. Realisticamente 6–8 settimane calendario part-time. Il contenuto (formalizzazione + video) è una moltiplicazione, non un'addizione: parte prima e finisce dopo — ma con il planner il data entry delle sessioni quasi sparisce, quindi la moltiplicazione si accorcia.
 
 ---
 
@@ -213,7 +243,7 @@ Per ogni meccanica: costo e cosa riusa. Ordinate per rapporto valore/costo:
 
 ### 4.1 🔴 Il rischio n.1 — la metodologia non è ancora dati (prodotto/contenuto)
 
-Il brief dice "manca l'assemblaggio, non il materiale". Vero per test e soglie (l'xlsx è già strutturato). **Non vero** per: le catene esplicite di ogni categoria (l'esempio spinta è dettato a voce nel brief — le altre?), la logica dei livelli A/B/1/3 di Everfit ("la documenta Ste a parte" — non esiste ancora), la regola di alternanza volume/skill (dichiarata "da chiarire"). Queste tre cose sono **lo schema stesso**: senza di esse `entry_map`, `chain_position` e `training_program_slots` non si possono popolare, e P1 è bloccato.
+Il brief dice "manca l'assemblaggio, non il materiale". Vero per test e soglie (l'xlsx è già strutturato). **Non vero** per: le catene esplicite di ogni categoria (l'esempio spinta è dettato a voce nel brief — le altre?), la logica dei livelli A/B/1/3 di Everfit ("la documenta Ste a parte" — non esiste ancora), la regola di alternanza volume/skill (dichiarata "da chiarire"). Queste tre cose sono **lo schema stesso** — e nella Rev. 2 anche **il prompt del planner**: senza di esse `entry_map`, `chain_position`, i bounds e i principi di programmazione non si possono scrivere, e P1 è bloccato.
 **Mitigazione:** prima azione all'apertura del gate non è codice — è una sessione di formalizzazione con Ste con output scritto: (1) catene complete per categoria, (2) mapping test→ingresso per ogni catena, (3) settimana tipo (quante sedute, che tipo, su quale esercizio della catena lavora ciascuna), (4) decodifica A/B/1/3. Un giorno di lavoro a tavolino che de-rischia tre settimane di sviluppo.
 
 ### 4.2 Video — hosting, peso, banda (tecnico)
@@ -237,8 +267,17 @@ I campi hanno rete pessima. La PWA esiste ma non c'è alcuna strategia dati offl
 
 - **Auto-misurazione**: i ragazzi possono barare o misurarsi male. Accettabile *perché* il confronto è solo con sé stessi — ma il messaging deve dirlo ("bara e stai barando col tuo baseline"), e il protocollo di ogni test va scritto in modo che due esecuzioni siano confrontabili (campo `protocollo` sul test).
 - **Cannibalizzazione del focus**: il core a pagamento è il percorso mentale; il training non deve mangiarsi la home né le notifiche. Mitigato dall'architettura (§2): un entry point in dashboard, il resto dentro Palestra, nudge Telegram solo nei `training_days` dichiarati dall'utente.
-- **Sicurezza minorenni**: già ben gestita a monte (corpo libero, no arti inferiori, no carichi). L'architettura la blinda: i volumi sono **dati fissi delle sessioni**, il motore non compone mai volumi nuovi, l'LLM non tocca la programmazione. Resta da aggiungere: disclaimer una tantum pre-primo-test ("fermati se senti dolore") e nessun meccanismo che spinga a fare più sedute di quelle programmate.
+- **Sicurezza minorenni** *(rivisto Rev. 2)*: già ben gestita a monte (corpo libero, no arti inferiori, no carichi — e questo, va detto, è ciò che rende il planner LLM difendibile: il rischio intrinseco degli esercizi è basso per scelta di dominio). Con l'LLM in mezzo la blindatura passa dal "non genera" al **validatore**: bounds hard nel codice, cap di volume settimanale, finestra di catena, catalogo chiuso. Resta da aggiungere: disclaimer una tantum pre-primo-test ("fermati se senti dolore") e nessun meccanismo che spinga a fare più sedute di quelle pianificate — nemmeno su richiesta insistente dell'utente al planner: i cap vincono sempre.
 - **Soglie sbagliate al lancio**: inevitabile che qualche soglia sia mal tarata. Mitigato da: punteggi congelati (§1.1-④), seed versionato (ogni ritocco ha un diff), e il feedback 3-tap che accumula dati per la taratura.
+
+### 4.6 · Rischi specifici del planner LLM (nuovo in Rev. 2)
+
+- **Qualità e deriva dei piani**: un piano può essere valido per il validatore ma metodologicamente mediocre (troppa monotonia, alternanza volume/skill ignorata). Mitigazione: l'**eval set** di P1 con assertion metodologiche (non solo di validità), che gira a ogni modifica del prompt; `prompt_version` su ogni piano per attribuire le regressioni; review umana di Ste in beta.
+- **Consistenza tra rigenerazioni**: settimana su settimana il piano non deve "ballare" (esercizi che cambiano senza motivo disorientano un ragazzo). Mitigazione: il piano precedente e il feedback entrano nel prompt come àncora («continua da qui, cambia solo ciò che il feedback giustifica»).
+- **Utenti che negoziano col planner**: «fammene fare di più», «saltiamo il deload». Il planner può accogliere le richieste *dentro* i bounds; oltre, il validatore taglia comunque — e il planner spiega il no con la voce del Coach (che è un momento di metodo, non un limite: coerente con W8).
+- **Latenza e affidabilità**: generazione 10–20s → UX asincrona con stato esplicito; se Claude non risponde → fallback immediato a sessione modello (l'utente non resta mai senza seduta). Stesso principio del serve-stale di Notion.
+- **Costo**: centesimi per piano settimanale con `claude-sonnet-4-6` — irrilevante sui volumi attuali; da rivedere solo a migliaia di utenti (dove comunque il pricing dell'app lo copre).
+- **Prompt injection dal contenuto utente**: richieste libere e note feedback entrano nel prompt del planner → vanno delimitate come già fatto per `coach_notes` (`sanitizeUntrustedText`, delimitatori espliciti). Il validatore resta comunque l'ultima linea: anche un prompt "bucato" non può salvare un piano fuori bounds.
 
 ---
 
@@ -246,7 +285,7 @@ I campi hanno rete pessima. La PWA esiste ma non c'è alcuna strategia dati offl
 
 **Conferme delle vostre decisioni (tutte giuste):**
 - ❌ Non adottare wger/Liftosaur: il costo d'innesto (stack Django/AGPL, o un tracker pesi-centrico) supera il costo del modulo thin, e il differenziante — test→card, tecnica calcistica, integrazione mentale — non esiste in nessuno dei due. Rubare il pattern "progressione-come-dato" di Liftosaur: sì, ed è esattamente §1.2.
-- ❌ Non LLM che genera allenamenti. Non solo per il rischio minorenni: **non serve**. La metodologia è già deterministica; l'LLM come generatore aggiungerebbe solo varianza dove serve affidabilità.
+- ⚠️ LLM che genera allenamenti — *posizione rivista in Rev. 2 su decisione di Stefano*: sì al **planner LLM con guardrail** (§1.3) — personalizzazione vera su richieste e feedback, meno data entry, esperienza "Performance A.I.". Quello a cui continuo a dire no è la **generazione libera**: esercizi fuori catalogo (non avrebbero video), volumi decisi dal modello senza validatore, generazione live durante la seduta. La differenza tra le due cose è l'intero §1.3, e non è negoziabile al ribasso.
 - ❌ Non punteggio overall, non classifiche, non confronto tra utenti.
 - ❌ Non due streak concorrenti.
 
@@ -268,10 +307,12 @@ I campi hanno rete pessima. La PWA esiste ma non c'è alcuna strategia dati offl
 
 ## 6. Decisioni da prendere prima dell'apertura del gate (checklist per Ste)
 
-1. **Settimana tipo**: la seduta volume lavora sull'esercizio attuale e la skill sul successivo? Alternanza (2+1)? → sblocca `training_program_slots` e la regola del motore.
+1. **Principi di programmazione scritti** *(Rev. 2 — era "settimana tipo", ora è di più)*: alternanza volume/skill, quando il deload, come si gestisce la settimana con 1-2 partite, cosa cambia col feedback "duro" ripetuto. Nel planner LLM il prompt *è* la metodologia: questo documento la detta.
 2. **Logica A/B/1/3** degli export Everfit, documentata per iscritto.
 3. **Catene complete** per ogni categoria (l'esempio spinta come modello).
-4. **Avanzamento**: solo via ri-test (default proposto, §1.3) o anche intermedio?
-5. **Lead magnet**: batteria completa o mini-batteria (raccomandata, §5.2)?
-6. **Paywall**: training incluso in Season 1 per tutti i paganti (raccomandato: è il moltiplicatore di valore, non un upsell) o SKU separato?
-7. **Streak unificata** "giorni For You": sì/no (raccomandato sì, §3-P3).
+4. **Bounds per esercizio/livello** *(nuovo Rev. 2)*: serie/reps/recuperi min-max e cap di volume settimanale per categoria — i numeri che il validatore impone al planner.
+5. **Avanzamento**: solo via ri-test (default proposto, §1.3) o anche intermedio?
+6. **Casi per l'eval set** *(nuovo Rev. 2)*: 15-20 situazioni tipo con il piano che Ste si aspetterebbe — è il metro con cui si giudica il planner prima di darlo ai ragazzi.
+7. **Lead magnet**: batteria completa o mini-batteria (raccomandata, §5)?
+8. **Paywall**: training incluso in Season 1 per tutti i paganti (raccomandato: è il moltiplicatore di valore, non un upsell) o SKU separato?
+9. **Streak unificata** "giorni For You": sì/no (raccomandato sì, §3-P3).
