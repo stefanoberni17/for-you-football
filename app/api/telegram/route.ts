@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
           const firstName = linkProfile.name?.split(' ')[0] || '';
           await sendTelegramMessage(
             chatId,
-            `✅ Collegato!${firstName ? ` Ciao ${firstName} —` : ''} sono il tuo Coach.\n\nDa qui puoi scrivermi quando vuoi: prima di una partita, dopo un errore, o solo per fare il punto. Come stai oggi?`
+            `✅ Collegato!${firstName ? ` Ciao ${firstName} —` : ''} sono il tuo Coach.\n\nℹ️ Sono un assistente automatico, non una persona.\n\nDa qui puoi scrivermi quando vuoi: prima di una partita, dopo un errore, o solo per fare il punto. Come stai oggi?`
           );
         } else {
           await sendTelegramMessage(
@@ -155,7 +155,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    if (checkSafetyKeywords(userText)) {
+    const safetyTriggered = checkSafetyKeywords(userText);
+    if (safetyTriggered) {
       sendSafetyAlert(userId, 'telegram', userText).catch(err =>
         console.error('sendSafetyAlert failed:', err)
       );
@@ -192,18 +193,29 @@ export async function POST(request: NextRequest) {
     if (isFirstMessage) {
       await sendTelegramMessage(
         chatId,
-        '🔒 Privacy: le nostre conversazioni vengono salvate per personalizzare il tuo percorso e cancellate automaticamente dopo 90 giorni.\n\nPer info o cancellazione: foryou.innerpath@gmail.com\nPolicy completa: for-you-football.vercel.app/privacy'
+        'ℹ️ Sono un assistente automatico, non una persona.\n\n🔒 Privacy: le nostre conversazioni vengono salvate per personalizzare il tuo percorso e cancellate automaticamente dopo 90 giorni.\n\nPer info o cancellazione: foryou.innerpath@gmail.com\nPolicy completa: for-you-football.vercel.app/privacy'
       );
     }
 
     await sendTelegramMessage(chatId, text);
 
-    // Salva user message + risposta del Maestro
+    // Salva user message + risposta del Coach. Se il messaggio ha fatto
+    // scattare l'alert, entrambe le righe vengono flaggate: il cleanup a 90
+    // giorni le salta (migration 013).
     const { error: insertError } = await supabaseAdmin.from('telegram_conversations').insert([
-      { user_id: userId, role: 'user', content: userText },
-      { user_id: userId, role: 'assistant', content: text },
+      { user_id: userId, role: 'user', content: userText, safety_flagged: safetyTriggered },
+      { user_id: userId, role: 'assistant', content: text, safety_flagged: safetyTriggered },
     ]);
-    if (insertError) console.error('❌ Errore salvataggio conversazione:', insertError);
+    if (insertError) {
+      // Fallback se la colonna safety_flagged non esiste ancora (migration 013
+      // non applicata): non perdere la conversazione, perdi solo il flag.
+      console.error('❌ Errore salvataggio conversazione (ritento senza flag):', insertError);
+      const { error: retryError } = await supabaseAdmin.from('telegram_conversations').insert([
+        { user_id: userId, role: 'user', content: userText },
+        { user_id: userId, role: 'assistant', content: text },
+      ]);
+      if (retryError) console.error('❌ Errore salvataggio conversazione (retry):', retryError);
+    }
 
     // Ogni 20 messaggi totali → aggiorna il recap (fire-and-forget)
     const { count } = await supabaseAdmin

@@ -187,6 +187,13 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         </div>
       </div>
 
+      {/* Trasparenza AI (art. 50 AI Act): sempre visibile, non dismissibile */}
+      <div className="bg-surface-2 border-b border-divider px-4 py-1.5 flex-shrink-0">
+        <p className="text-[11px] text-muted text-center leading-snug">
+          Stai parlando con un assistente automatico, non con una persona.
+        </p>
+      </div>
+
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-app">
         {/* Suggestion pills — visible only before user sends first message */}

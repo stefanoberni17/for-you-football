@@ -20,6 +20,7 @@ import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
+import BirthdateBanner from '@/components/BirthdateBanner';
 import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target, MessageCircle } from 'lucide-react';
 
 interface CheckinData {
@@ -663,6 +664,12 @@ export default function HomePage() {
         )}
 
         {/* ─── Banner promozionali / messaggi soft — UNO alla volta, in fondo ─── */}
+
+        {/* Data di nascita mancante (utenti pre-age-gate) — non bloccante,
+            fuori dalla catena di priorità promozionale: è raccolta dati compliance */}
+        {userId && profile && !profile.birth_date && (
+          <BirthdateBanner userId={userId} hasBirthDate={!!profile.birth_date} />
+        )}
 
         {/* Ultimo messaggio Coach */}
         {coachBannerVisible && (
