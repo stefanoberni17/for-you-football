@@ -5,6 +5,8 @@ import {
   checkSafetyKeywords,
   sendSafetyAlert,
   generateCoachRecap,
+  supabaseAdmin,
+  SAFETY_REVIEW_MODE,
   SYSTEM_PROMPT,
   WEB_FORMAT
 } from '@/lib/coach-ai';
@@ -39,13 +41,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Modalità contenimento: se il profilo è in safety_review (un messaggio ha
+    // fatto scattare l'alert e Ste non ha ancora verificato), il Coach resta
+    // nel protocollo — niente coaching finché non c'è lo sblocco manuale.
+    const { data: safetyProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('safety_review')
+      .eq('user_id', userId)
+      .maybeSingle();
+    const inSafetyReview = safetyProfile?.safety_review === true;
+
     const userContext = await buildUserContext(userId);
     // Prompt caching: il prefisso stabile (SYSTEM_PROMPT + WEB_FORMAT, ~stesso a ogni
     // messaggio) è cachato con cache_control; il contesto utente volatile resta in coda,
     // non cachato. In una sessione web (botta e risposta entro 5 min) → ~70% di risparmio
-    // sulla parte cachata + latenza più bassa.
+    // sulla parte cachata + latenza più bassa. Il prefisso contenimento sta DAVANTI
+    // al blocco cachato: cambia solo quando il flag cambia, quindi non rompe la cache.
     const systemBlocks = [
-      { type: 'text', text: SYSTEM_PROMPT + WEB_FORMAT, cache_control: { type: 'ephemeral' as const } },
+      { type: 'text', text: (inSafetyReview ? SAFETY_REVIEW_MODE : '') + SYSTEM_PROMPT + WEB_FORMAT, cache_control: { type: 'ephemeral' as const } },
       { type: 'text', text: '\n\n' + userContext },
     ];
 

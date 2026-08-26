@@ -56,6 +56,22 @@ export async function sendSafetyAlert(
     if (data?.name) userName = data.name;
   } catch {}
 
+  // Flag di revisione: da questo momento il Coach resta in MODALITÀ
+  // CONTENIMENTO per questo utente (web + Telegram) finché Ste non verifica
+  // la conversazione e sblocca manualmente (migration 014). Il resto
+  // dell'app non viene toccato.
+  try {
+    const { error: flagError } = await supabaseAdmin
+      .from('profiles')
+      .update({ safety_review: true, safety_review_at: new Date().toISOString() })
+      .eq('user_id', userId);
+    if (flagError) console.error('❌ safety_review flag error:', flagError.message);
+  } catch (flagErr) {
+    console.error('❌ safety_review flag exception:', (flagErr as Error)?.message);
+  }
+
+  const unlockHint = `Dopo aver verificato la conversazione, sblocca con:\nUPDATE profiles SET safety_review = FALSE WHERE user_id = '${userId}';`;
+
   // Canale 1 — Telegram a Ste (arriva sul telefono anche fuori orario).
   // SAFETY_ALERT_TELEGRAM_CHAT_ID = chat_id Telegram personale di Ste
   // (si ottiene scrivendo al bot e leggendo message.chat.id, o via @userinfobot).
@@ -68,7 +84,7 @@ export async function sendSafetyAlert(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: alertChatId,
-          text: `🚨 SAFETY ALERT (${channel})\nUtente: ${userName}\nUser ID: ${userId}\n\nMessaggio (primi 200 caratteri):\n"${preview}"\n\nDettagli completi su Supabase.`,
+          text: `🚨 SAFETY ALERT (${channel})\nUtente: ${userName}\nUser ID: ${userId}\n\nMessaggio (primi 200 caratteri):\n"${preview}"\n\n⛔ Coach in modalità contenimento per questo utente.\n${unlockHint}\n\nDettagli completi su Supabase.`,
         }),
       });
     } catch (error) {
@@ -98,6 +114,8 @@ export async function sendSafetyAlert(
           <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
           <p><strong>Messaggio (primi 200 caratteri):</strong></p>
           <blockquote>${preview.replace(/</g, '&lt;')}</blockquote>
+          <p>⛔ <strong>Coach in modalità contenimento per questo utente</strong> (solo protocollo, niente coaching) finché non sblocchi.</p>
+          <pre>${unlockHint.replace(/</g, '&lt;')}</pre>
           <p>Accedi a Supabase per vedere i dettagli completi.</p>
         `,
       }),
@@ -562,6 +580,20 @@ Accompagnare il calciatore a diventare autonomo nel vedersi, nel sentirsi, nel s
 **Evita di creare attaccamento o dipendenza emotiva. Non sostituirti alle relazioni reali. Il tuo ruolo è aiutare il calciatore a tornare in campo con più chiarezza — non a restare nella conversazione.**`;
 
 export const SYSTEM_PROMPT_NOT_REGISTERED = `Sei il Coach AI di For You Football, un assistente automatico basato su AI (se te lo chiedono, dillo con chiarezza: non sei una persona). Questo utente non è ancora registrato sulla piattaforma. Rispondi in modo caldo e breve (max 2-3 frasi), invitalo gentilmente a registrarsi su for-you-football.vercel.app e poi a collegare il suo account Telegram dal profilo per iniziare il percorso.`;
+
+// Prefisso system prompt quando profiles.safety_review = TRUE: il Coach resta
+// nel protocollo finché una persona non verifica la conversazione e sblocca
+// (migration 014). ⚠️ Testo in revisione con psicologo — non modificare senza review.
+export const SAFETY_REVIEW_MODE = `# ⚠️ MODALITÀ CONTENIMENTO ATTIVA (priorità assoluta su tutto il resto)
+
+In una conversazione recente questo utente ha toccato un tema grave. Finché una persona del team non completa una verifica, in OGNI tua risposta — qualunque cosa scriva l'utente:
+
+* Resta nel protocollo SITUAZIONI A RISCHIO: presenza, calore, ascolto. NIENTE coaching, niente pratiche, niente strumenti del percorso, niente agganci al campo.
+* Se l'utente sta bene o chiede di riprendere il percorso, digli con gentilezza che il percorso riprende tra poco: una persona del team sta dando un'occhiata, è una attenzione in più, non un problema. Nel frattempo ci sei, per ascoltare.
+* Ripeti i contatti reali quando è pertinente: un adulto di fiducia, Telefono Amico 02 2327 2327 (tutti i giorni 9-24, anche WhatsApp 324 011 7252), 112 in caso di pericolo immediato.
+* Non usare mai le parole "bloccato", "sospeso" o "segnalato". Non farlo sentire in colpa per ciò che ha scritto.
+
+`;
 
 export const TELEGRAM_FORMAT = `
 # FORMATO RISPOSTA (Telegram)

@@ -190,7 +190,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
       {/* Trasparenza AI (art. 50 AI Act): sempre visibile, non dismissibile */}
       <div className="bg-surface-2 border-b border-divider px-4 py-1.5 flex-shrink-0">
         <p className="text-[11px] text-muted text-center leading-snug">
-          Stai parlando con un assistente automatico, non con una persona.
+          Stai parlando con un Coach AI, non con una persona. Ricordati che l&apos;AI può fare errori.
         </p>
       </div>
 

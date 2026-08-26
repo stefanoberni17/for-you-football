@@ -71,7 +71,8 @@ export default function BirthdateBanner({
     <div className="bg-surface border border-divider rounded-2xl p-4 shadow-sm">
       <p className="text-sm font-semibold text-app mb-1">Una cosa veloce 📅</p>
       <p className="text-xs text-muted leading-relaxed mb-3">
-        Ci manca la tua data di nascita. Ci serve per adattare il percorso alla tua età.
+        Ci manca la tua data di nascita: è obbligatoria, sia per adattare il percorso
+        alla tua età sia per requisiti di legge.
       </p>
       {error && <p className="text-xs text-red-300 mb-2">{error}</p>}
       <div className="flex items-center gap-2">

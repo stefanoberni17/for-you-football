@@ -302,7 +302,7 @@ function RegisterContent() {
 
               <div>
                 <label className="block text-sm font-medium text-app mb-1.5">Data di nascita *</label>
-                <p className="text-xs text-muted mb-1.5">Per usare l&apos;app devi avere almeno {MIN_AGE} anni.</p>
+                <p className="text-xs text-muted mb-1.5">Obbligatoria: serve per adattare il percorso alla tua età e per requisiti di legge (età minima {MIN_AGE} anni).</p>
                 <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}
                   max={new Date().toISOString().slice(0, 10)}
                   className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
@@ -320,7 +320,7 @@ function RegisterContent() {
                     <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-forest-400 hover:text-forest-300 underline">
                       Privacy Policy
                     </a>
-                    . Acconsento al salvataggio dei miei dati per personalizzare il percorso. *
+                    . Il salvataggio dei dati è necessario per consentire la personalizzazione del percorso. *
                   </label>
                 </div>
                 <div className="flex items-start gap-3">
