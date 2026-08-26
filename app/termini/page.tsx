@@ -55,7 +55,7 @@ export default function TerminiPage() {
 
           <section>
             <p className="text-muted">
-              Per qualsiasi domanda: <span className="text-app">foryou.innerpath@gmail.com</span>
+              Per qualsiasi domanda: <span className="text-app">info@foryoufootball.it</span>
             </p>
           </section>
 
