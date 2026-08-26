@@ -136,8 +136,8 @@ export default function PrivacyPage() {
             <div className="bg-blue-500/15 border border-blue-500/30 rounded-xl p-4">
               <p className="font-semibold text-blue-300 mb-1">📧 Contatto</p>
               <p className="text-blue-200">Per qualsiasi richiesta relativa ai tuoi dati, scrivi a:{' '}
-                <a href="mailto:foryou.innerpath@gmail.com" className="underline font-semibold">
-                  foryou.innerpath@gmail.com
+                <a href="mailto:info@foryoufootball.it" className="underline font-semibold">
+                  info@foryoufootball.it
                 </a>
               </p>
             </div>

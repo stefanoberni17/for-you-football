@@ -9,7 +9,7 @@ const supabaseAdmin = createClient(
 // Configure VAPID keys (set these in .env)
 if (process.env.VAPID_PRIVATE_KEY && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
   webpush.setVapidDetails(
-    'mailto:foryou.innerpath@gmail.com',
+    'mailto:info@foryoufootball.it',
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
   );

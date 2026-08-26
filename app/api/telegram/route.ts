@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
     if (isFirstMessage) {
       await sendTelegramMessage(
         chatId,
-        'ℹ️ Sono un Coach AI, non una persona. Ricordati che l\'AI può fare errori.\n\n🔒 Privacy: le nostre conversazioni vengono salvate per personalizzare il tuo percorso e cancellate automaticamente dopo 90 giorni.\n\nPer info o cancellazione: foryou.innerpath@gmail.com\nPolicy completa: for-you-football.vercel.app/privacy'
+        'ℹ️ Sono un Coach AI, non una persona. Ricordati che l\'AI può fare errori.\n\n🔒 Privacy: le nostre conversazioni vengono salvate per personalizzare il tuo percorso e cancellate automaticamente dopo 90 giorni.\n\nPer info o cancellazione: info@foryoufootball.it\nPolicy completa: for-you-football.vercel.app/privacy'
       );
     }
 

@@ -114,7 +114,7 @@ export default function BetaCompletePage() {
     try {
       const subject = encodeURIComponent('Feedback Beta For You Football');
       const body = encodeURIComponent(feedback);
-      window.location.href = `mailto:foryou.innerpath@gmail.com?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:info@foryoufootball.it?subject=${subject}&body=${body}`;
       setSent(true);
     } finally {
       setSending(false);
