@@ -210,8 +210,8 @@ function PricingContent() {
             <div className="text-sm text-muted mt-1">
               Hai 4 settimane per provare la tua Season dall&apos;inizio. Se non fa per te,
               scrivici a{' '}
-              <a href="mailto:foryou.innerpath@gmail.com" className="text-forest-300 underline underline-offset-2">
-                foryou.innerpath@gmail.com
+              <a href="mailto:info@foryoufootball.it" className="text-forest-300 underline underline-offset-2">
+                info@foryoufootball.it
               </a>{' '}
               e ti rimborsiamo per intero.
             </div>
