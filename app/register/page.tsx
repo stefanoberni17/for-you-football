@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
+import { MIN_AGE, PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -52,7 +52,9 @@ function RegisterContent() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nome, setNome] = useState('');
-  const [eta, setEta] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   // Step 2 — profilo atleta
   const [sport, setSport] = useState('calcio');
@@ -86,6 +88,16 @@ function RegisterContent() {
   const toggleRole = (v: string) =>
     setSelectedRoles((prev) => prev.includes(v) ? prev.filter((r) => r !== v) : [...prev, v]);
 
+  // Età compiuta da 'YYYY-MM-DD' — solo UX: la validazione che conta è server-side
+  const clientAge = (bd: string): number | null => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(bd)) return null;
+    const [y, m, d] = bd.split('-').map(Number);
+    const now = new Date();
+    let age = now.getFullYear() - y;
+    if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) age -= 1;
+    return age;
+  };
+
   // ── Step 1 validation ─────────────────────────────────────────────────────
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +105,18 @@ function RegisterContent() {
     if (password !== confirmPassword) { setError('Le password non coincidono'); return; }
     if (password.length < 8) { setError('La password deve essere di almeno 8 caratteri'); return; }
     if (!nome.trim()) { setError('Il nome è obbligatorio'); return; }
+    if (!birthDate) { setError('La data di nascita è obbligatoria'); return; }
+    const age = clientAge(birthDate);
+    if (age === null || age < 0 || age > 100) { setError('Data di nascita non valida'); return; }
+    if (age < MIN_AGE) {
+      // ⚠️ TESTO DA RIVEDERE INSIEME PRIMA DEL DEPLOY — stesso messaggio del server
+      setError(`Per usare For You Football devi avere almeno ${MIN_AGE} anni. Ti aspettiamo!`);
+      return;
+    }
+    if (!privacyAccepted || !termsAccepted) {
+      setError('Per continuare accetta la Privacy Policy e i Termini di servizio');
+      return;
+    }
     setStep(2);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -113,7 +137,9 @@ function RegisterContent() {
           email,
           password,
           name: nome.trim(),
-          age: eta || null,
+          birth_date: birthDate,
+          privacy_accepted: privacyAccepted,
+          terms_accepted: termsAccepted,
           sport: sport || 'calcio',
           role: selectedRoles.length ? selectedRoles.join(',') : null,
           level: level || null,
@@ -275,24 +301,40 @@ function RegisterContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-app mb-1.5">
-                  Età <span className="text-faint font-normal">(opzionale)</span>
-                </label>
-                <input type="number" value={eta} onChange={(e) => setEta(e.target.value)}
+                <label className="block text-sm font-medium text-app mb-1.5">Data di nascita *</label>
+                <p className="text-xs text-muted mb-1.5">Obbligatoria: serve per adattare il percorso alla tua età e per requisiti di legge (età minima {MIN_AGE} anni).</p>
+                <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}
+                  max={new Date().toISOString().slice(0, 10)}
                   className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
-                  placeholder="Es. 18" min="10" max="60" />
+                  required />
               </div>
 
-              <div className="flex items-start gap-3 pt-1">
-                <input type="checkbox" id="privacy-consent" required
-                  className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0 cursor-pointer" />
-                <label htmlFor="privacy-consent" className="text-xs text-muted leading-relaxed cursor-pointer">
-                  Ho letto e accetto la{' '}
-                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-forest-400 hover:text-forest-300 underline">
-                    Privacy Policy
-                  </a>
-                  . Acconsento al salvataggio dei miei dati per personalizzare il percorso.
-                </label>
+              {/* Consensi: due checkbox separate, MAI pre-selezionate */}
+              <div className="space-y-3 pt-1">
+                <div className="flex items-start gap-3">
+                  <input type="checkbox" id="privacy-consent" checked={privacyAccepted}
+                    onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0 cursor-pointer" />
+                  <label htmlFor="privacy-consent" className="text-xs text-muted leading-relaxed cursor-pointer">
+                    Ho letto e accetto la{' '}
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-forest-400 hover:text-forest-300 underline">
+                      Privacy Policy
+                    </a>
+                    . Il salvataggio dei dati è necessario per consentire la personalizzazione del percorso. *
+                  </label>
+                </div>
+                <div className="flex items-start gap-3">
+                  <input type="checkbox" id="terms-consent" checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0 cursor-pointer" />
+                  <label htmlFor="terms-consent" className="text-xs text-muted leading-relaxed cursor-pointer">
+                    Ho letto e accetto i{' '}
+                    <a href="/termini" target="_blank" rel="noopener noreferrer" className="text-forest-400 hover:text-forest-300 underline">
+                      Termini di servizio
+                    </a>
+                    . *
+                  </label>
+                </div>
               </div>
 
               <button type="submit"

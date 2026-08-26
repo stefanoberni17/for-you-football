@@ -17,10 +17,13 @@ export async function GET(request: NextRequest) {
 
   const cutoffDate = new Date(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
+  // Le conversazioni flaggate dal safety alert NON si cancellano mai
+  // automaticamente (migration 013): sono l'evidenza dell'episodio.
   const { error, count } = await supabaseAdmin
     .from('telegram_conversations')
     .delete({ count: 'exact' })
-    .lt('created_at', cutoffDate);
+    .lt('created_at', cutoffDate)
+    .eq('safety_flagged', false);
 
   if (error) {
     console.error('❌ Errore cleanup telegram_conversations:', error);

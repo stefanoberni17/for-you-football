@@ -6,6 +6,7 @@ import {
   checkSafetyKeywords,
   sendSafetyAlert,
   generateCoachRecap,
+  SAFETY_REVIEW_MODE,
   SYSTEM_PROMPT,
   SYSTEM_PROMPT_NOT_REGISTERED,
   TELEGRAM_FORMAT
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
           const firstName = linkProfile.name?.split(' ')[0] || '';
           await sendTelegramMessage(
             chatId,
-            `✅ Collegato!${firstName ? ` Ciao ${firstName} —` : ''} sono il tuo Coach.\n\nDa qui puoi scrivermi quando vuoi: prima di una partita, dopo un errore, o solo per fare il punto. Come stai oggi?`
+            `✅ Collegato!${firstName ? ` Ciao ${firstName} —` : ''} sono il tuo Coach.\n\nℹ️ Sono un Coach AI, non una persona. Ricordati che l'AI può fare errori.\n\nDa qui puoi scrivermi quando vuoi: prima di una partita, dopo un errore, o solo per fare il punto. Come stai oggi?`
           );
         } else {
           await sendTelegramMessage(
@@ -126,7 +127,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('user_id')
+      .select('user_id, safety_review')
       .eq('telegram_id', telegramUserId)
       .single();
 
@@ -155,7 +156,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    if (checkSafetyKeywords(userText)) {
+    const safetyTriggered = checkSafetyKeywords(userText);
+    if (safetyTriggered) {
       sendSafetyAlert(userId, 'telegram', userText).catch(err =>
         console.error('sendSafetyAlert failed:', err)
       );
@@ -176,7 +178,10 @@ export async function POST(request: NextRequest) {
     const firstMessageNote = isFirstMessage
       ? '\n\n# PRIMO CONTATTO TELEGRAM\nÈ la prima volta che questo utente ti scrive su Telegram. Accoglilo calorosamente, presentati brevemente come il Coach AI del suo percorso di allenamento mentale. Fai UNA sola domanda semplice e aperta per capire come sta in questo momento — niente di profondo o terapeutico. Massimo 3-4 frasi in totale.'
       : '';
-    const systemPrompt = SYSTEM_PROMPT + TELEGRAM_FORMAT + firstMessageNote + '\n\n' + userContext;
+    // Modalità contenimento (safety_review): il Coach resta nel protocollo
+    // finché Ste non verifica la conversazione e sblocca manualmente.
+    const inSafetyReview = profile.safety_review === true;
+    const systemPrompt = (inSafetyReview ? SAFETY_REVIEW_MODE : '') + SYSTEM_PROMPT + TELEGRAM_FORMAT + firstMessageNote + '\n\n' + userContext;
 
     const messages = [
       ...conversationHistory.map((m: any) => ({
@@ -192,18 +197,29 @@ export async function POST(request: NextRequest) {
     if (isFirstMessage) {
       await sendTelegramMessage(
         chatId,
-        '🔒 Privacy: le nostre conversazioni vengono salvate per personalizzare il tuo percorso e cancellate automaticamente dopo 90 giorni.\n\nPer info o cancellazione: foryou.innerpath@gmail.com\nPolicy completa: for-you-football.vercel.app/privacy'
+        'ℹ️ Sono un Coach AI, non una persona. Ricordati che l\'AI può fare errori.\n\n🔒 Privacy: le nostre conversazioni vengono salvate per personalizzare il tuo percorso e cancellate automaticamente dopo 90 giorni.\n\nPer info o cancellazione: foryou.innerpath@gmail.com\nPolicy completa: for-you-football.vercel.app/privacy'
       );
     }
 
     await sendTelegramMessage(chatId, text);
 
-    // Salva user message + risposta del Maestro
+    // Salva user message + risposta del Coach. Se il messaggio ha fatto
+    // scattare l'alert, entrambe le righe vengono flaggate: il cleanup a 90
+    // giorni le salta (migration 013).
     const { error: insertError } = await supabaseAdmin.from('telegram_conversations').insert([
-      { user_id: userId, role: 'user', content: userText },
-      { user_id: userId, role: 'assistant', content: text },
+      { user_id: userId, role: 'user', content: userText, safety_flagged: safetyTriggered },
+      { user_id: userId, role: 'assistant', content: text, safety_flagged: safetyTriggered },
     ]);
-    if (insertError) console.error('❌ Errore salvataggio conversazione:', insertError);
+    if (insertError) {
+      // Fallback se la colonna safety_flagged non esiste ancora (migration 013
+      // non applicata): non perdere la conversazione, perdi solo il flag.
+      console.error('❌ Errore salvataggio conversazione (ritento senza flag):', insertError);
+      const { error: retryError } = await supabaseAdmin.from('telegram_conversations').insert([
+        { user_id: userId, role: 'user', content: userText },
+        { user_id: userId, role: 'assistant', content: text },
+      ]);
+      if (retryError) console.error('❌ Errore salvataggio conversazione (retry):', retryError);
+    }
 
     // Ogni 20 messaggi totali → aggiorna il recap (fire-and-forget)
     const { count } = await supabaseAdmin

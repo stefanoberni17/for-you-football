@@ -22,6 +22,18 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
   9: '3ab655f7-26c7-81ff-9a49-f9a2f0ab9ecb', // Week 9 — Il Centro (Ritornare al Centro)
 };
 
+// ─── Age gate ────────────────────────────────────────────────────────────────
+// UNICA fonte di verità per la soglia di età. Il parere legale può alzarla a 16:
+// cambiare SOLO questo valore (commit da una riga).
+export const MIN_AGE = 14; // soglia in attesa di conferma legale — può diventare 16
+
+// ─── Consenso documenti legali ───────────────────────────────────────────────
+// Versioni correnti di privacy policy e termini (es. '2026-09-01').
+// Restano vuote finché i documenti definitivi non esistono; al primo
+// aggiornamento reale, cambiare qui fa scattare il flusso di ri-accettazione.
+export const PRIVACY_VERSION = '';
+export const TERMS_VERSION = '';
+
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
 
 export const TOTAL_WEEKS = 12;

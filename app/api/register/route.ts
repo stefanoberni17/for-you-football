@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { MIN_AGE, PRIVACY_VERSION, TERMS_VERSION } from '@/lib/constants';
 
 // Admin client — per upsert profilo (bypassa RLS)
 const supabaseAdmin = createClient(
@@ -32,20 +33,40 @@ function isValidBetaCode(input: string | null | undefined): boolean {
   return allowed.includes(input.trim().toUpperCase());
 }
 
+/**
+ * Età compiuta oggi a partire da una data di nascita 'YYYY-MM-DD'.
+ * Ritorna null se la stringa è malformata o non è una data reale.
+ */
+function ageFromBirthDate(birthDate: string): number | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) return null;
+  const [y, m, d] = birthDate.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  // Rifiuta date "normalizzate" da JS (es. 2010-02-31 → 3 marzo)
+  if (date.getUTCFullYear() !== y || date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d) {
+    return null;
+  }
+  const now = new Date();
+  let age = now.getUTCFullYear() - y;
+  const birthdayPassed =
+    now.getUTCMonth() > m - 1 ||
+    (now.getUTCMonth() === m - 1 && now.getUTCDate() >= d);
+  if (!birthdayPassed) age -= 1;
+  return age;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password, name, age, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code } = body;
+    const { email, password, name, birth_date, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code, privacy_accepted, terms_accepted } = body;
 
     // Valida codice invito beta (se presente)
     const isBeta = isValidBetaCode(beta_code);
 
-    // Log richiesta (senza password) per debug
+    // Log richiesta (senza password, senza data di nascita) per debug
     console.log('📥 /api/register ricevuto:', {
       email,
       passwordLength: password?.length,
       name,
-      age,
       role,
       betaCodeProvided: Boolean(beta_code),
       betaAccepted: isBeta,
@@ -53,6 +74,36 @@ export async function POST(req: NextRequest) {
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Email e password sono obbligatori' }, { status: 400 });
+    }
+
+    // ── AGE GATE — la validazione che conta è QUESTA (il client è solo UX) ──
+    if (!birth_date || typeof birth_date !== 'string') {
+      return NextResponse.json({ error: 'La data di nascita è obbligatoria' }, { status: 400 });
+    }
+    const computedAge = ageFromBirthDate(birth_date);
+    if (computedAge === null || computedAge < 0 || computedAge > 100) {
+      // Malformata, data futura o implausibile (>100 anni)
+      return NextResponse.json({ error: 'Data di nascita non valida' }, { status: 400 });
+    }
+    if (computedAge < MIN_AGE) {
+      // Misura i respinti: evento senza dati personali (user_id NULL, solo età)
+      supabaseAdmin
+        .from('onboarding_events')
+        .insert({ user_id: null, event: 'age_gate_blocked', meta: { age: computedAge } })
+        .then(() => {}, (err) => console.error('age_gate_blocked event error:', err));
+      // ⚠️ TESTO DA RIVEDERE INSIEME PRIMA DEL DEPLOY (spec intervento 1.4)
+      return NextResponse.json(
+        { error: `Per usare For You Football devi avere almeno ${MIN_AGE} anni. Ti aspettiamo!`, age_gate: true },
+        { status: 403 }
+      );
+    }
+
+    // ── CONSENSO — entrambe le accettazioni obbligatorie (prova in DB dopo il signUp) ──
+    if (privacy_accepted !== true || terms_accepted !== true) {
+      return NextResponse.json(
+        { error: 'Per registrarti devi accettare la Privacy Policy e i Termini di servizio' },
+        { status: 400 }
+      );
     }
 
     // 1. Crea utente con signUp — Supabase invia email di conferma automaticamente
@@ -124,7 +175,8 @@ export async function POST(req: NextRequest) {
         .upsert({
           user_id: userId,
           name: name || null,
-          age: age ? parseInt(age) : null,
+          birth_date,
+          age: computedAge, // derivata da birth_date — mantenuta per compatibilità (Coach, snapshot)
           sport: sport || 'calcio',
           role: role || null,
           level: level || null,
@@ -155,7 +207,7 @@ export async function POST(req: NextRequest) {
         .insert({
           user_id: userId,
           name: name || null,
-          age: age ? parseInt(age) : null,
+          age: computedAge,
           sport: sport || 'calcio',
           role: role || null,
           level: level || null,
@@ -170,6 +222,21 @@ export async function POST(req: NextRequest) {
       }
     } catch (snapshotErr: any) {
       console.error('❌ Eccezione snapshot baseline (non bloccante):', snapshotErr?.message);
+    }
+
+    // 4. Prova del consenso — una riga per documento (channel: registration).
+    //    Se l'insert fallisce NON blocchiamo (l'utente auth esiste già), ma il
+    //    log è volutamente rumoroso: senza queste righe non c'è prova in DB.
+    try {
+      const { error: consentError } = await supabaseAdmin.from('consent_events').insert([
+        { user_id: userId, document_type: 'privacy', document_version: PRIVACY_VERSION, channel: 'registration' },
+        { user_id: userId, document_type: 'terms', document_version: TERMS_VERSION, channel: 'registration' },
+      ]);
+      if (consentError) {
+        console.error('🚨 CONSENT NON REGISTRATO per userId', userId, ':', consentError);
+      }
+    } catch (consentErr) {
+      console.error('🚨 CONSENT NON REGISTRATO (eccezione) per userId', userId, ':', (consentErr as Error)?.message);
     }
 
     return NextResponse.json({ success: true, beta_accepted: isBeta });
