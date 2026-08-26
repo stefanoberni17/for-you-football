@@ -58,6 +58,7 @@ for-you-football/
 │   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
 │   ├── privacy/page.tsx
+│   ├── termini/page.tsx                   # Termini di servizio — PLACEHOLDER da sostituire col testo legale (poi compilare TERMS_VERSION)
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
 │   └── api/
 │       ├── register/route.ts              # POST → signup Supabase + upsert profilo
@@ -79,11 +80,12 @@ for-you-football/
 │       │   ├── history/route.ts           # GET storico + streak per /statistiche
 │       │   └── dismiss-weekly-prompt/route.ts  # POST chiude banner settimanale
 │       └── cron/
-│           ├── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg + lunedì svuota calendari settimanali
+│           ├── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg (ESCLUSE safety_flagged) + lunedì svuota calendari settimanali
 │           ├── daily-morning/route.ts     # GET → pillola mattutina Coach (frasi da Notion DB, scelta Haiku, dedup messaggi_inviati)
 │           └── daily-evening/route.ts     # GET → reminder serale Coach se pratica non fatta (testo generato Haiku)
 ├── components/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Strumenti / Coach / Profilo
+│   ├── BirthdateBanner.tsx                # Banner non bloccante dashboard: raccoglie birth_date dagli utenti pre-age-gate
 │   ├── ActionsCard.tsx                    # Card compatta dashboard "Le tue azioni durante il giorno" (3 varianti)
 │   ├── ActionsSetupSheet.tsx              # Bottom-sheet selezione catalogo + custom (max 5)
 │   ├── WeeklyActionsBanner.tsx            # Banner soft sulla home (lunedì o se vuoto)
@@ -106,7 +108,8 @@ for-you-football/
 │   ├── sosCards.ts                        # 4 schede SOS statiche — ora FALLBACK di /api/difficolta se Notion non risponde
 │   ├── toolsCatalog.ts                    # Cassetta: 8 strumenti W1-8 (riferimento cos'è/quando/pratica) — riusati come àncora dalla Palestra
 │   ├── palestraCatalog.ts                 # Palestra per principio: 7 capacità × esercizi base ("Cosa allena" + step), àncora dai tool, unlock per principio/esercizio
-│   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API
+│   ├── consent.ts                         # Consenso legale: getLatestAcceptedVersion + needsReacceptance (server-only)
+│   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API, safety (keywords, alert, SAFETY_REVIEW_MODE)
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # 3 cron Vercel: cleanup-telegram 03:00 UTC · daily-morning 06:00 UTC · daily-evening 16:00 UTC
 └── docs/
@@ -155,7 +158,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 ```sql
 user_id                  UUID PRIMARY KEY REFERENCES auth.users(id)
 name                     TEXT
-age                      INT
+age                      INT     -- derivata da birth_date per i nuovi utenti (compatibilità Coach/snapshot)
+birth_date               DATE    -- age gate (migration 011): obbligatoria in registrazione, validata server-side vs MIN_AGE
 sport                    TEXT DEFAULT 'calcio'  -- calcio/tennis/padel/basket/altro
 -- Sport-specific (compilati in registrazione step 2)
 role                     TEXT    -- multi-select comma-separated: portiere,difensore,centrocampista,attaccante
@@ -179,6 +183,9 @@ subscription_status      TEXT DEFAULT 'none'  -- none|active|past_due|canceled
 stripe_customer_id       TEXT
 stripe_subscription_id   TEXT
 is_beta_free             BOOLEAN DEFAULT false  -- beta tester + comp access (bypass paywall)
+-- Safety (migration 014)
+safety_review            BOOLEAN DEFAULT false  -- TRUE dopo un safety alert → Coach in modalità contenimento; sblocco SOLO manuale via SQL (trigger protect_safety_review blocca il client)
+safety_review_at         TIMESTAMPTZ
 created_at               TIMESTAMPTZ DEFAULT NOW()
 ```
 
@@ -220,11 +227,12 @@ PRIMARY KEY (user_id, week_number, day_number)
 
 ### `telegram_conversations`
 ```sql
-id         UUID DEFAULT gen_random_uuid() PRIMARY KEY
-user_id    UUID NOT NULL REFERENCES auth.users(id)
-role       TEXT NOT NULL    -- 'user' | 'assistant'
-content    TEXT NOT NULL
-created_at TIMESTAMPTZ DEFAULT NOW()
+id             UUID DEFAULT gen_random_uuid() PRIMARY KEY
+user_id        UUID NOT NULL REFERENCES auth.users(id)
+role           TEXT NOT NULL    -- 'user' | 'assistant'
+content        TEXT NOT NULL
+safety_flagged BOOLEAN NOT NULL DEFAULT FALSE  -- migration 013: righe di scambi che hanno fatto scattare il safety alert — ESCLUSE dal cleanup 90gg
+created_at     TIMESTAMPTZ DEFAULT NOW()
 ```
 
 ### `daily_checkin`
@@ -283,6 +291,20 @@ received_at TIMESTAMPTZ DEFAULT NOW()
 ```
 - Usata dal webhook `/api/stripe/webhook` per garantire idempotenza: ogni evento viene INSERT-ato prima del processing; PK conflict (`23505`) = evento già processato, skip.
 - RLS: nessun accesso client (`FOR ALL USING (false)`), scrittura solo service role.
+
+### `consent_events` (prova del consenso — migration 012)
+```sql
+id               UUID PRIMARY KEY DEFAULT gen_random_uuid()
+user_id          UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
+document_type    TEXT NOT NULL   -- 'privacy' | 'terms'
+document_version TEXT NOT NULL DEFAULT ''  -- da PRIVACY_VERSION/TERMS_VERSION (vuote finché i documenti legali non esistono)
+accepted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+channel          TEXT NOT NULL   -- 'registration' | 'reaccept'
+```
+- Append-only: mai UPDATE/DELETE — è la prova. NO IP (finché l'avvocato non conferma che serve).
+- RLS owner-read, scrittura solo service role. 2 righe scritte da `/api/register` al submit.
+- Ri-accettazione: `lib/consent.ts` (`needsReacceptance`) — si attiva da sola quando le versioni in `lib/constants.ts` vengono compilate; il banner UI è da costruire a quel punto.
+- Nessun backfill per gli utenti esistenti: alla pubblicazione dei documenti definitivi tutti passano dal flusso di ri-accettazione.
 
 ---
 
@@ -608,7 +630,7 @@ La memoria persistente del Coach si basa su:
 - CTA: feedback via mailto, link a `/chat`, `/statistiche`, `/settimane`
 
 ### Registrazione (`app/register/page.tsx`)
-- **Step 1:** Email, password, nome, età → `supabase.auth.signUp()`
+- **Step 1:** Email, password, nome, **data di nascita obbligatoria** (age gate: `MIN_AGE` in constants, validazione vera server-side in `/api/register` — sotto soglia → 403 + evento `age_gate_blocked`) + **2 checkbox consenso separate non pre-selezionate** (privacy → `/privacy`, termini → `/termini`; al submit 2 righe in `consent_events`)
 - **Step 2:** Profilo calciatore — ruoli (multi-select), livello, paure (multi-select), obiettivi, sogno, situazione attuale → `POST /api/register`
 - Gestione errori auth (utente già registrato, password debole)
 - Schermata "Controlla la tua email" con bottone **"Reinvia email"** (`supabase.auth.resend`, cooldown 60s)
@@ -789,7 +811,7 @@ La memoria persistente del Coach si basa su:
 - La tab Palestra resta attiva anche su `/sos` (stesso hub)
 - Nome canonico del sistema azioni in UI: **"Le tue 5 azioni"** (ovunque)
 - Banner dashboard: UNO alla volta (priorità Coach > lunedì-azioni > install; push prompt soppresso se un banner inline è visibile)
-- Nascosto su: `/login`, `/register`, `/onboarding`, `/privacy`
+- Nascosto su: `/login`, `/register`, `/onboarding`, `/privacy`, `/termini`
 - **Full-width attaccata al bordo (dark theme):** `bg-surface/95` con `backdrop-blur-md`, `border-t border-divider`, shadow sottile solo verso l'alto. NO più floating/rounded/margini laterali (il design floating creava 3 fasce dove si vedeva lo sfondo dietro + effetto "rialzato" su /chat)
 - Padding-bottom interno = `env(safe-area-inset-bottom)` (puro, no gap extra)
 - `max-w-md mx-auto` sull'inner per centrare le 4 icone su tablet/desktop
@@ -801,7 +823,7 @@ La memoria persistente del Coach si basa su:
 ## Dettaglio API Routes
 
 ### `POST /api/register`
-Signup Supabase + upsert profilo calciatore. Errori profilo non bloccano la registrazione.
+Age gate (birth_date obbligatoria, `MIN_AGE`) + consensi obbligatori → signup Supabase + upsert profilo calciatore (con `birth_date` + `age` derivata) + snapshot T0 + 2 righe `consent_events`. Errori profilo/consent non bloccano la registrazione (log rumoroso).
 
 ### `GET /api/settimane`
 Lista settimane da Notion DB, ordinate per numero settimana.
@@ -849,7 +871,7 @@ Upsert check-in giornaliero: `{ userId, physicalState, sleepHours, recoveryQuali
 Ritorna tutti i check-in degli ultimi N giorni (default 30) ordinati per data crescente. Usato dalla pagina statistiche.
 
 ### `GET /api/cron/cleanup-telegram`
-Cron job Vercel (03:00 UTC). Auth via `CRON_SECRET`. Elimina `telegram_conversations` > 90 giorni.
+Cron job Vercel (03:00 UTC). Auth via `CRON_SECRET`. Elimina `telegram_conversations` > 90 giorni — **escluse le righe `safety_flagged`** (mai cancellate automaticamente).
 
 ### `POST /api/stripe/create-checkout`
 Body: `{ plan: 'early_bird' | 'full' }`. Crea Stripe Checkout Session (subscription mode, `allow_promotion_codes`), salva `supabase_user_id` in metadata sub, ritorna `{ url }`. Bypassa se `is_beta_free`.
@@ -990,7 +1012,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Security — Safety email ATTIVA (giugno 2026):** `RESEND_API_KEY` + `SAFETY_ALERT_EMAIL` configurate su Vercel Production; mittente fixato a `alerts@foryoufootball.it` (dominio verificato su Resend — il precedente `alerts@for-you-football.vercel.app` non era verificabile e l'invio sarebbe stato rifiutato).
 - [x] **Contenuto — Riscritture Notion W1-W4 (giugno 2026):** de-gergo e tono campo sui contenuti live: via storia del maestro (W3-G1 → "il crampo non arriva mai di sorpresa"), "Chin Mudra" → "il tuo interruttore", "plesso solare" → "punto sotto lo sterno" (8 occorrenze W1), Yerkes-Dodson e "circuiti neurali" via dalle Aperture (restano nei Contesto per il Coach), W3-G5 differenziato da W2-G5 (borsa/tragitto/spogliatoio), gate Q1 situazionali (W1, W4), storie calciatori veri dal catalogo verificato (CR7 → W1-G3, Buffon → W3-G2; Baggio riservato a W5), trim aperture-muro (W1-G5, W4-G5).
 
-- [x] **Compliance pre-incasso (agosto 2026) — 4 interventi:** (1) **Trasparenza AI** (art. 50 AI Act): riga fissa non dismissibile in ChatBot ("Stai parlando con un Coach AI, non con una persona. Ricordati che l'AI può fare errori."), stessa dichiarazione nel welcome Telegram post-collegamento e nell'avviso privacy del primo contatto, sezione `# IDENTITÀ AI` nel system prompt (mai fingere di essere umano). (2) **Age gate**: `MIN_AGE = 14` in `lib/constants.ts` (UNICA fonte — il parere legale può alzarla a 16 con un commit da una riga); registrazione con data di nascita obbligatoria (`profiles.birth_date`, migration 011) e validazione server-side in `/api/register` (mancante/malformata/implausibile → 400, sotto soglia → 403 + evento `age_gate_blocked` senza dati personali su `onboarding_events` con user_id ora nullable); utenti esistenti NON bloccati — `BirthdateBanner` non bloccante in dashboard raccoglie la data (serve a misurare quanti sarebbero 14-15enni prima di decidere su 16). (3) **Prova del consenso**: tabella `consent_events` (migration 012 — era "010" nella spec ma collideva con rate_limit; append-only, RLS owner-read, NO IP finché l'avvocato non conferma); due checkbox separate non pre-selezionate (privacy + termini, con pagina `/termini` placeholder DA SOSTITUIRE col testo legale); al submit 2 righe con versione da `PRIVACY_VERSION`/`TERMS_VERSION` (vuote finché i documenti non esistono); `lib/consent.ts` predispone la ri-accettazione (`needsReacceptance`, si attiva da sola quando le versioni vengono compilate); nessun backfill fittizio. (4) **Protocollo safety**: sezione `SITUAZIONI A RISCHIO` riscritta come protocollo (si ferma, non improvvisa, non minimizza, non promette segretezza; copre anche abusi e disturbi alimentari; contatti verificati: Telefono Amico 02 2327 2327 tutti i giorni 9-24 + WhatsApp 324 011 7252 + 112 — ⚠️ testi DA RIVEDERE con psicologo prima del deploy); `sendSafetyAlert` ora anche via Telegram a Ste (`SAFETY_ALERT_TELEGRAM_CHAT_ID`); `telegram_conversations.safety_flagged` (migration 013) — le conversazioni flaggate sono ESCLUSE dal cleanup a 90 giorni. **Modalità contenimento con sblocco manuale** (migration 014): quando scatta l'alert, `profiles.safety_review=true` (settato da `sendSafetyAlert`) → il Coach su web+Telegram riceve il prefisso `SAFETY_REVIEW_MODE` (solo protocollo, niente coaching; il resto dell'app NON è bloccato) finché Ste non verifica la conversazione e sblocca con `UPDATE profiles SET safety_review=false WHERE user_id='...'` (il comando arriva nell'alert). Trigger DB `protect_safety_review` impedisce l'auto-sblocco da client (JWT anon/authenticated non può toccare il flag).
+- [x] **Compliance pre-incasso (agosto 2026) — 4 interventi:** (1) **Trasparenza AI** (art. 50 AI Act): riga fissa non dismissibile in ChatBot ("Stai parlando con un Coach AI, non con una persona. Ricordati che l'AI può fare errori."), stessa dichiarazione nel welcome Telegram post-collegamento e nell'avviso privacy del primo contatto, sezione `# IDENTITÀ AI` nel system prompt (mai fingere di essere umano). (2) **Age gate**: `MIN_AGE = 14` in `lib/constants.ts` (UNICA fonte — il parere legale può alzarla a 16 con un commit da una riga); registrazione con data di nascita obbligatoria (`profiles.birth_date`, migration 011) e validazione server-side in `/api/register` (mancante/malformata/implausibile → 400, sotto soglia → 403 + evento `age_gate_blocked` senza dati personali su `onboarding_events` con user_id ora nullable); utenti esistenti NON bloccati — `BirthdateBanner` non bloccante in dashboard raccoglie la data (serve a misurare quanti sarebbero 14-15enni prima di decidere su 16). (3) **Prova del consenso**: tabella `consent_events` (migration 012 — era "010" nella spec ma collideva con rate_limit; append-only, RLS owner-read, NO IP finché l'avvocato non conferma); due checkbox separate non pre-selezionate (privacy + termini, con pagina `/termini` placeholder DA SOSTITUIRE col testo legale); al submit 2 righe con versione da `PRIVACY_VERSION`/`TERMS_VERSION` (vuote finché i documenti non esistono); `lib/consent.ts` predispone la ri-accettazione (`needsReacceptance`, si attiva da sola quando le versioni vengono compilate); nessun backfill fittizio. (4) **Protocollo safety**: sezione `SITUAZIONI A RISCHIO` riscritta come protocollo (si ferma, non improvvisa, non minimizza, non promette segretezza; copre anche abusi e disturbi alimentari; contatti verificati: Telefono Amico 02 2327 2327 tutti i giorni 9-24 + WhatsApp 324 011 7252 + 112 — ⚠️ testi DA RIVEDERE con psicologo prima del deploy); `sendSafetyAlert` ora anche via Telegram a Ste (`SAFETY_ALERT_TELEGRAM_CHAT_ID`); `telegram_conversations.safety_flagged` (migration 013) — le conversazioni flaggate sono ESCLUSE dal cleanup a 90 giorni. **Modalità contenimento con sblocco manuale** (migration 014): quando scatta l'alert, `profiles.safety_review=true` (settato da `sendSafetyAlert`) → il Coach su web+Telegram riceve il prefisso `SAFETY_REVIEW_MODE` (solo protocollo, niente coaching; il resto dell'app NON è bloccato) finché Ste non verifica la conversazione e sblocca con `UPDATE profiles SET safety_review=false WHERE user_id='...'` (il comando arriva nell'alert). Trigger DB `protect_safety_review` impedisce l'auto-sblocco da client (JWT anon/authenticated non può toccare il flag). **Contatto pubblico uniformato a `info@foryoufootball.it`** (termini, privacy, pricing, Telegram, beta-complete, VAPID); resta su gmail solo il fallback interno di `SAFETY_ALERT_EMAIL`. Deploy in produzione: PR #12/#13/#14, migrations 011-014 applicate su Supabase, `SAFETY_ALERT_TELEGRAM_CHAT_ID` su Vercel. **In coda:** review psicologo dei testi safety, documenti legali definitivi (sostituire `/termini`, compilare versioni), decisione gap keyword abusi/disturbi alimentari (oggi il Coach li gestisce ma l'alert non scatta).
 
 ### Da fare
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
