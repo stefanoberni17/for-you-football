@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, richText, titleText } from '@/lib/notion';
 import { WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
 import { sendPushToUser } from '@/lib/pushNotification';
+import { filterActiveProfiles } from '@/lib/activity';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -118,11 +119,17 @@ export async function GET(request: NextRequest) {
     query = query.eq('user_id', testUserId);
   }
 
-  const { data: users, error } = await query;
+  const { data: allUsers, error } = await query;
 
-  if (error || !users?.length) {
+  if (error || !allUsers?.length) {
     return NextResponse.json({ success: true, sent: 0, error: error?.message });
   }
+
+  // Niente pillole a chi è fermo da >30 giorni (bypass in modalità test:
+  // TEST_ONLY_USER_ID serve a verificare l'invio, non il filtro).
+  const { active: users, skippedInactive } = testUserId
+    ? { active: allUsers, skippedInactive: 0 }
+    : await filterActiveProfiles(supabaseAdmin, allUsers);
 
   let sent = 0;
 
@@ -263,6 +270,6 @@ Seleziona la frase e aggiungi la riflessione.`;
     }
   }
 
-  console.log(`✅ Daily morning: ${sent}/${users.length} messages sent`);
-  return NextResponse.json({ success: true, sent, total: users.length });
+  console.log(`✅ Daily morning: ${sent}/${users.length} messages sent (${skippedInactive} inattivi >30gg esclusi)`);
+  return NextResponse.json({ success: true, sent, total: users.length, skippedInactive });
 }
