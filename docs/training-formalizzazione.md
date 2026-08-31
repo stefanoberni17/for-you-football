@@ -5,10 +5,9 @@
 > decise e bloccate. Le sezioni ✍️ sono proposte **da correggere direttamente qui
 > dentro**. Le righe ❓ si rispondono con una riga.
 >
-> **Stato: v0.6 — 27 agosto 2026.** v0.5 + raffinamento AMRAP (reps calcolate in
-> percentuale del max test, non fisse) e principio del DOPPIO GRADINO per catena
-> (esecuzione ≠ lavoro), entrambi dall'osservazione di Ste sul carico non gestibile
-> in circuito. Versioni precedenti in history git.
+> **Stato: v0.7 — 27 agosto 2026.** Percentuali circuito FINALI (50% push · 40% pull ·
+> 70% tenute cap 30"), doppio gradino ✅ bloccato, sbarra = requisito dell'AMRAP
+> (senza sbarra non si fa). Versioni precedenti in history git.
 
 ---
 
@@ -25,7 +24,7 @@
 | Deload | 4ª settimana, volume 50-60%, **le sedute skill continuano**. Ri-test a fine settimana deload. |
 | Partita | **Nessuna fisica nei 2 giorni prima** (2 giorni prima consentita solo se necessario, meglio evitare) né il giorno partita. **Il giorno dopo ok.** |
 | Feedback "duro" **×3 consecutive** | Settimana dopo: **volume −10%** (dentro i bounds). Gradino invariato. |
-| AMRAP generale | Circuito 4 stazioni (push / core / pull / lombari) × 20 minuti, **reps CALCOLATE dal test, non fisse** (v0.6 — vedi §2: percentuale del max, con discesa di gradino se il carico non è gestibile). Soglie giri: **Base ≤ 6 · Intermedio ≤ 8 · Avanzato ≤ 10 · PRO > 10**. Ordine batteria: prima i test di catena, poi l'AMRAP. Ri-tara solo la fascia. Lead magnet: versione corta 8'. |
+| AMRAP generale | Circuito 4 stazioni (push / core / pull / lombari) × 20 minuti, reps calcolate dal test: **50% push · 40% pull · 70% tenute (cap 30")**, con discesa di gradino se il carico non è gestibile. Soglie giri: **Base ≤ 6 · Intermedio ≤ 8 · Avanzato ≤ 10 · PRO > 10**. Prima i test di catena, poi l'AMRAP. Ri-tara solo la fascia. Lead magnet: versione corta 8'. **Sbarra = requisito: senza sbarra l'AMRAP non si fa.** |
 | Doppio gradino per catena | **Gradino ESECUZIONE** (quello che sai fare — certificato dal test; la skill può lavorare anche 1-2 avanti) ≠ **gradino LAVORO** (quello che reggi ripetuto in circuito/volume — può stare 1 sotto). Il planner li tiene separati. |
 | Tirata senza sbarra | **Area NON attivabile** (niente varianti di ripiego). |
 | Conduzione | **Nessun test dedicato** — si programma per periodizzazione. |
@@ -77,16 +76,18 @@ contano i giri completati. Core e lombari nel circuito **a ripetizioni, non a te
 ✅ Confermato da Ste (v0.5) e raffinato in v0.6:
 
 1. **Ordine batteria**: prima i test di catena (fissano i gradini), poi l'AMRAP.
-2. **Formato del giro — reps CALCOLATE dal test, non fisse** (v0.6, osservazione di Ste:
-   con 15 fissi, chi ha un max di 15 piegamenti non regge il ciclo; chi fa 10 one-arm
-   non può farne 15). Regola proposta (❓ **2h** — conferma le percentuali):
-   - **Push**: ~**40% del max test**, arrotondato — min 3, max 15. Se il 40% scende
+2. **Formato del giro — reps CALCOLATE dal test, non fisse** (✅ percentuali FINALI
+   di Ste, v0.7):
+   - **Push**: **50% del max test**, arrotondato — min 3, max 15. Se il 50% scende
      sotto 3 → nel circuito si usa il **gradino precedente** della catena.
-   - **Pull**: ~**40% del max test** — min 1, max 5. Stessa regola di discesa.
-   - **Core e lombari**: ~**50% della tenuta max test**, cap 30" (min 15").
-   Con le reps in percentuale, tutti girano al ~40-50% del proprio max → i giri
+   - **Pull**: **40% del max test** — min 1, max 5. Stessa regola di discesa.
+   - **Core e lombari**: **70% della tenuta max test**, cap 30" (min 15").
+   Con le reps in percentuale tutti girano allo stesso sforzo relativo → i giri
    restano confrontabili tra livelli e le soglie universali reggono.
-   (Senza sbarra: giro a 3 stazioni; soglie uguali o +1 → ❓ **2g**.)
+   ✅ **2g risolta:** **senza sbarra l'AMRAP non si fa** — la sbarra è requisito
+   della batteria completa. (Default proposto per chi non ce l'ha: parte e resta in
+   fascia B finché non completa un AMRAP vero — così può comunque allenare
+   push/core/lombari/tecnica. ❓ **2g-bis**: ok questo default?)
 3. **Soglie giri in 20': Base ≤ 6 · Intermedio ≤ 8 · Avanzato ≤ 10 · PRO > 10.**
 4. **Ruoli**: l'AMRAP ri-tara la fascia (B/A/PRO di oggi); il progresso lo raccontano
    i test di catena e i gradini avanzati.
@@ -106,7 +107,7 @@ Ogni catena ha DUE posizioni, e il planner le tiene separate:
   delle reps (sopra) dice che il carico non è gestibile.
 
 Il ri-test aggiorna il gradino esecuzione; il gradino lavoro si riallinea da solo
-tramite il calcolo percentuale. ❓ **2i.** Confermi il principio così formulato?
+tramite il calcolo percentuale. ✅ **2i confermato da Ste (v0.7).**
 
 ---
 
@@ -361,9 +362,7 @@ TU: ___
 
 | # | Domanda |
 |---|---|
-| 2h | Percentuali del circuito: push/pull ~40% del max, tenute ~50% (cap 30"): ok o altri numeri? |
-| 2i | Principio doppio gradino (esecuzione per skill/test, lavoro per volume/circuito): ok così? |
-| 2g | AMRAP senza tirata attiva (niente sbarra): giro a 3 stazioni con stesse soglie, o soglie +1? |
+| 2g-bis | Chi non ha la sbarra: parte e resta in fascia B finché non completa un AMRAP vero (default proposto): ok? |
 | 3g-i | Punta "Tecnica Controllo": punteggio dal test muro o qualitativa? |
 | 3g-ii | Lombari: dentro la punta "Forza Core" o "Prevenzione Fascia"? |
 | — | Soglie test MURO (passaggi di prima in 2'): 4 numeri |
