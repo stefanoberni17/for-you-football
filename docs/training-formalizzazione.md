@@ -5,9 +5,10 @@
 > decise e bloccate. Le sezioni ✍️ sono proposte **da correggere direttamente qui
 > dentro**. Le righe ❓ si rispondono con una riga.
 >
-> **Stato: v0.2 — 27 agosto 2026.** Integrate le risposte di Ste al primo giro
-> (fasce B/A/PRO, placement a due livelli, fascia in parallelo, regole partita/deload/
-> feedback/durata, catene tirata e core estese, tetti bounds). v0.1 in history git.
+> **Stato: v0.3 — 27 agosto 2026.** v0.2 + definizione AMRAP di Ste (circuito
+> personalizzato sui gradini raggiunti, 20', core/lombari a reps o tenute max 30")
+> e stato della parte tecnica (materiale esistente, manca la traduzione in catene).
+> Versioni precedenti in history git.
 
 ---
 
@@ -58,13 +59,35 @@ volume, che formati, che densità di seduta ti si può dare. È il "quanto caric
 
 Quindi: la catena decide *cosa* fai, il livello generale decide *quanto/come* lo fai.
 
-❓ **2a.** Lettura corretta?
-❓ **2b.** Definisci l'AMRAP del livello generale (ricorda il vincolo v1: niente arti
-inferiori, niente balzi). Proposta da correggere: **AMRAP 6 minuti** di circuito
-4 piegamenti + 8 crunch + 4 australian pull-up (senza sbarra: 4 piegamenti + 8 crunch +
-20" plank). Soglie giri totali: B < ___ · A ___–___ · PRO > ___
-❓ **2c.** Nella mini-batteria lead magnet (3 test) metterei: AMRAP generale + test
-piegamenti + test core. Ok?
+✅ **2a — confermato** (v0.3): la catena decide *cosa*, il livello generale decide *quanto/come*.
+
+### ✅ L'AMRAP generale (definizione di Ste, v0.3)
+
+**Circuito personalizzato**: un giro = un passaggio su TUTTE le progressioni, ciascuna
+con **l'esercizio del gradino raggiunto al test di catena**. Durata **20 minuti**, si
+contano i giri completati. Core e lombari nel circuito **a ripetizioni, non a tenuta**
+(oppure tenuta limitata a max 30").
+
+Conseguenze operative (da confermare):
+
+1. **Ordine della batteria**: prima i test di catena (che fissano i gradini), POI
+   l'AMRAP (che usa quei gradini). ❓ **2b.** Ok?
+2. **Variante-circuito per i gradini a tenuta**: ogni gradino core/lombari ha bisogno
+   di una versione a reps per il circuito. Proposta: si usa la variante dinamica del
+   gradino (hollow → hollow rocks, superman hold → superman alternato, arch hold →
+   arch rocks); dove non esiste, tenuta secca da 30". Le reps/giro le fissiamo nel
+   seed per gradino. ❓ **2c.** Ok?
+3. **Cosa misura**: essendo il circuito relativo al TUO gradino, i giri misurano la
+   capacità di lavoro *al tuo livello* — perfetto per fissare la fascia (B/A/PRO) di
+   OGGI. Non è però confrontabile nel tempo (al ri-test i gradini cambiano → circuito
+   diverso): il progresso lo raccontano i test di catena e l'avanzamento dei gradini,
+   l'AMRAP ri-tara solo la fascia. ❓ **2d.** Ti torna questa divisione dei ruoli?
+4. **Soglie giri in 20'**: B < ___ · A ___–___ · PRO > ___ (numeri tuoi, anche dopo
+   i primi dati reali).
+5. **Mini-batteria lead magnet**: 20 minuti di AMRAP non ci stanno in un magnete da
+   10-15'. Proposta: nel lead magnet la versione corta (**8 minuti**, stesso circuito
+   ma coi gradini d'ingresso stimati da 2 test rapidi: piegamenti + core) e l'AMRAP
+   completo da 20' come primo rituale in-app post-registrazione. ❓ **2e.** Ok?
 
 ---
 
@@ -132,10 +155,24 @@ piegamenti + test core. Ok?
 **Test proposto:** superman hold massimo (secondi).
 **Soglie:** ___
 
-### 3.5 Tecnica (palleggi / muro / conduzione)
+### 3.5 Tecnica (palleggi / muro / conduzione) — cosa c'è e cosa manca
 
-Le catene escono dai tuoi Allenamenti_tecnica + export Everfit riletti con la logica
-B1→PRO3. Da fare in una sessione dedicata con i file sotto mano — qui segnaposto.
+**Il materiale ESISTE** (dagli asset verificati nel brief): Allenamenti_tecnica_Sito.xlsx
+(5 settimane a progressione dichiarata: base → movimento leggero → dinamico → applicata),
+export Everfit (sessioni pronte: Tecnica Palleggi A1/A3/B2, Passaggi al Muro, Freestyle A1
+— e ora la logica lettera+numero è decodificata: B/A/PRO × 1-2-3), test palleggi con
+soglie in File_DB_Allenamenti.xlsx.
+
+**Quello che manca è la traduzione**, non il contenuto:
+- rileggere sessioni e settimane come **catene a gradini** (quali esercizi, in che ordine,
+  quale test colloca dove) nello stesso formato delle catene fisiche qui sopra
+- assegnare a ogni gradino il codice B1→PRO3
+- definire i **bounds tecnica** (durate/serie/recuperi min-max per fascia)
+- i **video** (li gira Ste, ~30-40 clip — gli export non portano i link)
+
+**Come la chiudiamo:** Ste carica in chat i 3 file (Allenamenti_tecnica_Sito.xlsx,
+export Everfit PDF, File_DB_Allenamenti.xlsx) → la prima stesura delle catene tecnica
+in questo formato la fa Code, Ste corregge. Stessa meccanica delle catene fisiche.
 
 ---
 
@@ -247,12 +284,15 @@ TU: ___
 
 | # | Domanda |
 |---|---|
-| 2a | Placement a due livelli (catena = cosa, AMRAP = quanto/come): lettura corretta? |
-| 2b | Definisci l'AMRAP generale (circuito + soglie B/A/PRO) — la mia proposta è nel §2 |
-| 2c | Mini-batteria = AMRAP + piegamenti + core: ok? |
+| 2b | Ordine batteria: prima test di catena, poi AMRAP: ok? |
+| 2c | Variante dinamica dei gradini a tenuta per il circuito (rocks/alternato, altrimenti 30"): ok? |
+| 2d | Ruoli: AMRAP ri-tara solo la fascia, il progresso lo raccontano i test di catena: ok? |
+| 2e | Lead magnet: AMRAP corto 8' con gradini stimati da 2 test rapidi; il 20' completo in-app: ok? |
+| 2f | Soglie giri AMRAP 20' (B/A/PRO) — anche dopo i primi dati reali |
 | 3a | Tirata senza sbarra: variante australian o area non attivabile? |
 | 3b | Test core: plank o hollow hold? |
 | 3c | Catena lombari: correzioni alla mia bozza |
 | 4 | Numeri della tabella bounds: correggi quelli che stonano |
 | 6 | Compila le 20 schede (anche a voce, trascrivo io) |
 | — | Soglie dei test (4 numeri per catena) — puoi incollarle da File_DB_Allenamenti.xlsx |
+| — | Tecnica: carica i 3 file (Allenamenti_tecnica, export Everfit, File_DB) → prima stesura catene la fa Code |
