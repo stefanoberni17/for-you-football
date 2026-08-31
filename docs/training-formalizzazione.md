@@ -21,7 +21,7 @@
 | Paywall | **Training incluso in Season 1.** Nessuno SKU separato. |
 | Streak | **Unificata "giorni For You"**: pratica mentale O seduta training O ≥3 azioni. |
 | Fasce di livello | **B (Base) → A (Avanzato) → PRO**, ognuna con gradini 1-2-3. |
-| Fascia / core | **Binario PARALLELO**: non allena la forza, non conta come "area attiva" — si programma sempre accanto al resto. |
+| Fascia | **= piede/caviglia** (towel curls, toe bounces, iso runner… — dal DB ESERCIZI, difficoltà 1-2-3): prevenzione/propriocezione. **Binario PARALLELO**: non allena la forza, non conta come "area attiva". ⚠️ Corretto in v0.4 — prima l'avevo confusa col core: il core è una normale catena di forza. |
 | Deload | 4ª settimana, volume 50-60%, **le sedute skill continuano**. Ri-test a fine settimana deload. |
 | Partita | **Nessuna fisica nei 2 giorni prima** (2 giorni prima consentita solo se necessario, meglio evitare) né il giorno partita. **Il giorno dopo ok.** |
 | Feedback "duro" ×2 | Settimana dopo: **volume −10%** (dentro i bounds). Gradino invariato. |
@@ -105,8 +105,8 @@ Conseguenze operative (da confermare):
 7. 1-arm orizzontali
 8. 1-arm declinati
 ```
-**Test:** max piegamenti (forma pulita) in una serie a cedimento.
-**Soglie:** Base ≤ ___ · Intermedio ___ · Avanzato ___ · Pro ≥ ___
+**Test:** max piegamenti completi (petto a terra, braccia distese) in una serie a cedimento.
+**Soglie (✅ da File_DB):** Base < 15 · Intermedio > 20 · Avanzato > 30 · Pro > 40
 
 ### 3.2 Tirata — pull-ups (✅ estesa con le tue aggiunte)
 
@@ -123,7 +123,7 @@ Conseguenze operative (da confermare):
 10. One-arm pull-up
 ```
 **Test:** max pull-up; se 0 → durata massima negativa (secondi).
-**Soglie:** ___
+**Soglie (✅ da File_DB):** Base < 2 · Intermedio > 4 · Avanzato > 8 · Pro > 12
 ❓ **3a (ancora aperta).** Chi non ha la sbarra: resta fuori dalla tirata, o variante
 "solo australian" (gradini 1-2 con un tavolo robusto)?
 
@@ -139,8 +139,8 @@ Conseguenze operative (da confermare):
 7. Hollow rocks
 8. Dragon flag negativo
 ```
-**Test:** tenuta massima — ❓ **3b.** plank o hollow hold? (uno dei due, per confrontabilità)
-**Soglie:** ___ (tenute fino a 90-120" al vertice, come da tua indicazione)
+**Test (✅ risolto dal File_DB): plank frontale** — è già nella tua batteria con le soglie.
+**Soglie (✅ da File_DB):** Base < 30" · Intermedio > 40" · Avanzato > 60" · Pro > 120"
 
 ### 3.4 Lombari / catena posteriore (✍️ ancora bozza mia — ❓ **3c** correggila)
 
@@ -155,24 +155,72 @@ Conseguenze operative (da confermare):
 **Test proposto:** superman hold massimo (secondi).
 **Soglie:** ___
 
-### 3.5 Tecnica (palleggi / muro / conduzione) — cosa c'è e cosa manca
+### 3.5 Fascia = piede/caviglia (✅ dal DB ESERCIZI — binario parallelo)
 
-**Il materiale ESISTE** (dagli asset verificati nel brief): Allenamenti_tecnica_Sito.xlsx
-(5 settimane a progressione dichiarata: base → movimento leggero → dinamico → applicata),
-export Everfit (sessioni pronte: Tecnica Palleggi A1/A3/B2, Passaggi al Muro, Freestyle A1
-— e ora la logica lettera+numero è decodificata: B/A/PRO × 1-2-3), test palleggi con
-soglie in File_DB_Allenamenti.xlsx.
+La catena è già nel DB con le difficoltà 1-2-3 e i video YouTube:
 
-**Quello che manca è la traduzione**, non il contenuto:
-- rileggere sessioni e settimane come **catene a gradini** (quali esercizi, in che ordine,
-  quale test colloca dove) nello stesso formato delle catene fisiche qui sopra
-- assegnare a ogni gradino il codice B1→PRO3
-- definire i **bounds tecnica** (durate/serie/recuperi min-max per fascia)
-- i **video** (li gira Ste, ~30-40 clip — gli export non portano i link)
+```
+D1: Towel curls · Toes up/down · Toes up/down 2
+D2: Toe bounces · FY Towel SLRDL · FY Towel 8
+D3: SL toe bounces · Iso runner · SL runner (towel)
+```
+**Test (✅ dal File_DB, a sensazione → in app diventa scelta multipla "dove senti la
+fatica?"):** 120" pogo jumps + 180" toe curls per lato. Base = fatica caviglia/piede ·
+Intermedio = quadricipiti/polpacci · Avanzato = flessori/coscia · Pro = glutei/addome.
+❓ **3d.** I toe bounces/pogo sono saltelli leggeri: confermi che rientrano nel perimetro
+v1 (prevenzione, non plyo) nonostante il "niente balzi programmati"?
 
-**Come la chiudiamo:** Ste carica in chat i 3 file (Allenamenti_tecnica_Sito.xlsx,
-export Everfit PDF, File_DB_Allenamenti.xlsx) → la prima stesura delle catene tecnica
-in questo formato la fa Code, Ste corregge. Stessa meccanica delle catene fisiche.
+### 3.6 ✍️ Catene TECNICA v0.1 (estratte da Allenamenti_tecnica + Everfit — correggi)
+
+**Palleggi:**
+```
+1. Collo alternato (cumulativi)          6. Solo un piede / gamba sospesa
+2. Collo solo sx / solo dx               7. Solo testa
+3. Interno (+ solo sx / solo dx)         8. Con occhio chiuso (sx/dx)
+4. Piramide/combo (collo-coscia-testa)   9. Palla + pallina da tennis
+5. Sotto il ginocchio / sopra il bacino  10. Avanzati (cinesino) · Freestyle 3 conetti
+```
+**Test (✅ soglie da File_DB):** piede forte (Base <50 · Int >50 · Av >100 · Pro >150),
+piede debole (<30 · >30 · >80 · >120), testa (<25 · >25 · >50 · >100),
+piramide (<2 · >3 · >5 · >10). Consecutivi, max 3 tentativi.
+
+**Muro (controlli e passaggi):**
+```
+1. Due tocchi (sx/dx/liberi)             6. Due tocchi / un tocco AL VOLO
+2. Un tocco (interno sx/dx, libero)      7. Alti/bassi + distanze variabili 5-10mt
+3. Due tocchi, primo tocco di collo      8. Con occhio chiuso · visione di gioco (colori)
+4. Stop ad aprire/di suola + passaggio   9. Passaggi in difficoltà
+5. Passaggi di prima (conteggio in 2')
+```
+**Test proposto:** passaggi di prima in 2' a 5 metri (già misurato nelle tue schede) —
+soglie da definire: ___ (In alternativa/aggiunta: tiri traversa/palo, ma serve la porta.)
+
+**Conduzione / Ball mastery (servono cinesini):**
+```
+1. Slalom solo interno                   5. Conduzione 10m + cambio (suola→esterno→Cruyff)
+2. Slalom solo esterno                   6. Box dribbling bassa intensità
+3. Slalom solo dx / solo sx              7. Box dribbling a intensità alternata
+4. Slalom interno + suola                8. Box dribbling + visione (colori telefono)
+```
+**Test proposto:** slalom cronometrato sui cinesini? ❓ **3e.** O la conduzione resta
+senza test (si entra dal livello palleggi)?
+
+**Periodizzazione tecnica (✅ dichiarata nel tuo xlsx):** base → base+movimento leggero →
+dinamico → applicata/intensità — è la regola con cui il planner alza l'intensità dentro
+il gradino, settimana su settimana.
+
+**Video:** il DB ESERCIZI ha già i link YouTube (shorts) per gran parte della fisica e
+della fascia → le ~30-40 clip nuove servono soprattutto per la TECNICA. ❓ **3f.** I
+link del DB sono tuoi (riusabili nel prodotto) o di terzi?
+
+### 3.7 Il "rombo" (card) — proposta v1
+
+Nel File_DB il rombo ha 8 voci di dettaglio + 5 generali, ma metà (resistenza, velocità,
+esplosiva, forza PB) è fuori dal perimetro v1. **Proposta rombo v1 a 5 punte** —
+Tecnica · Spinta · Tirata · Core · Fascia/Prevenzione — + il badge di fascia generale
+(B/A/PRO dall'AMRAP). Punteggi 0-100 per punta calcolati dalle soglie come nel tuo RECAP.
+❓ **3g.** Ok, o vuoi comunque misurare (senza allenare) anche resistenza/velocità/
+esplosiva per il rombo completo a 8?
 
 ---
 
@@ -290,9 +338,20 @@ TU: ___
 | 2e | Lead magnet: AMRAP corto 8' con gradini stimati da 2 test rapidi; il 20' completo in-app: ok? |
 | 2f | Soglie giri AMRAP 20' (B/A/PRO) — anche dopo i primi dati reali |
 | 3a | Tirata senza sbarra: variante australian o area non attivabile? |
-| 3b | Test core: plank o hollow hold? |
-| 3c | Catena lombari: correzioni alla mia bozza |
+| 3c | Catena lombari: correzioni alla mia bozza (unico test/soglie ancora senza fonte) |
+| 3d | Fascia: toe bounces/pogo dentro il perimetro v1 (prevenzione, non plyo)? |
+| 3e | Conduzione: test cronometrato sui cinesini o nessun test dedicato? |
+| 3f | I video YouTube del DB ESERCIZI sono tuoi (riusabili) o di terzi? |
+| 3g | Rombo v1 a 5 punte (Tecnica/Spinta/Tirata/Core/Fascia) o completo a 8 con aree solo misurate? |
+| — | Soglie test MURO (passaggi di prima in 2'): 4 numeri |
 | 4 | Numeri della tabella bounds: correggi quelli che stonano |
-| 6 | Compila le 20 schede (anche a voce, trascrivo io) |
-| — | Soglie dei test (4 numeri per catena) — puoi incollarle da File_DB_Allenamenti.xlsx |
-| — | Tecnica: carica i 3 file (Allenamenti_tecnica, export Everfit, File_DB) → prima stesura catene la fa Code |
+| 6 | Compila le 20 schede eval (anche a voce, trascrivo io) |
+
+**✅ Risolte dai file:** soglie push/pull/plank e palleggi (piede forte/debole/testa/
+piramide) · test core = plank · catena fascia con difficoltà e video · periodizzazione
+tecnica dichiarata · logica del rombo (0-100 da soglie, dettaglio + generale).
+
+**💡 Idea segnata (Notion + qui):** card/rombo con DIMENSIONE MENTALE — livello dal
+percorso (settimana/blocco raggiunto, costanza) + valutazione qualitativa del Coach AI.
+Vincolo di metodo: mai un "voto alla persona" (W8) — la parte mentale come progressione
+e costanza, non punteggio comparativo. Da progettare in P2/P3.
