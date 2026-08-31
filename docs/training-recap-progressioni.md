@@ -34,6 +34,24 @@
 | Core | Plank frontale (sec) | < 30" | > 40" | > 60" | > 120" |
 | Lombari | Superman hold (sec) | ⚠️ da definire | | | |
 
+### Laterale / obliqui (v1.2 — da inserire NEI CIRCUITI, senza esagerare)
+
+Non è una catena a sé con test dedicato: sono esercizi che **entrano ogni tanto nei
+circuiti quando si allena la forza**, per coprire il piano frontale e gli obliqui.
+
+| # | Esercizio |
+|:--:|---|
+| 1 | Plank laterale sulle ginocchia |
+| 2 | Plank laterale |
+| 3 | Plank laterale con abduzione gamba |
+| 4 | Copenhagen plank ginocchio piegato |
+| 5 | Copenhagen plank gamba tesa |
+| 6 | Russian twist / rotazioni controllate |
+
+⚠️ Il **Copenhagen** è impegnativo sugli adduttori (nel DB è classificato "Parte Bassa"):
+entra solo dal gradino core ≥3, mai come primo approccio, e mai il giorno prima della
+partita. Frequenza: **1-2 esercizi laterali per circuito, non in tutte le sedute**.
+
 ## 2. Fascia — piede/caviglia (binario parallelo, prevenzione)
 
 | Difficoltà | Esercizi |
@@ -171,6 +189,6 @@ gradini avanzati; l'AMRAP ri-tara solo la fascia.
 |---|---|
 | Soglie test **muro** e **lombari** | 4 numeri ciascuno |
 | Check numeri **bounds** | tabella in `training-formalizzazione.md` §4 |
-| Esercizi **stretching/mobilità** post-partita | contenuto nuovo, ~6-8 esercizi con durate |
+| Esercizi **stretching/mobilità** post-partita | ✅ **risolto per la v1**: si usa il video di sessione mobilità/yoga di Ste (YouTube, guidato, lavora su tutto il corpo) come contenuto unico del post-partita. In futuro eventualmente spacchettato in esercizi singoli. ⚠️ serve l'URL del video |
 | Durate mancanti negli export Everfit | `docs/training-sessioni-modello-tecnica.md` |
 | **Video tecnica** (~30-40 clip) | quelli di fisica e fascia esistono già nel DB |

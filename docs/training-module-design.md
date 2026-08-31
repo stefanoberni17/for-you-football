@@ -160,6 +160,42 @@ Cosa NON fare: metà catalogo su Notion e metà su Supabase (due fonti di verit�
 - **Dashboard**: una card compatta stile `ActionsCard` — "La tua Card ⚽ · prossima seduta: Fascia L2 · ri-test tra 9 giorni". Un entry point, non un secondo cruscotto: la home resta del percorso mentale.
 - **Card radar**: Recharts è già in stack e ha `RadarChart` — zero dipendenze nuove. Un asse per `categoria_card`, area = livello attuale, area tratteggiata = baseline.
 
+### 2.1-bis ✅ UI del player seduta — decisione (v1.2, 27 ago)
+
+**Domanda di Ste:** esiste su GitHub qualcosa tipo l'interfaccia Everfit da riusare?
+Come lo mettiamo in app? Lui vorrebbe una **schermata separata dalla parte mentale**,
+con area riservata per testarla in privato.
+
+**Risposta breve: no, nessun progetto da adottare — e non serve.** La ricognizione su
+GitHub (topic `workout-tracker`, `fitness-app`, `gym-app` filtrati TS/JS) restituisce
+tracker completi (auth, DB, routine proprie) o timer minimali: adottarne uno
+significherebbe innestare un altro stack e un altro modello dati sopra il nostro, per
+avere in cambio una UI che non è quella che ci serve (nessuno ha test→card, catene,
+tecnica calcistica). Stessa conclusione di wger/Liftosaur nella Rev. 1 del documento.
+
+**Cosa ci serve davvero:** un *player di seduta*, che è un pattern noto e che **abbiamo
+già mezzo costruito in casa** — `PracticePopup` fa timer, step numerati, wake lock,
+audio, chiusura iPhone-safe. Il player training è quel componente più: lista item
+scorrevole, countdown di recupero tra le serie, contatore serie, video inline, tick di
+completamento, feedback 3-tap a fine seduta.
+
+**Riferimenti visivi da cui copiare i pattern** (guardare, non innestare):
+Everfit stesso (già usato da Ste), Hevy e Strong (schermata "workout in corso" con
+lista + timer di recupero che parte da solo), Freeletics (player guidato full-screen).
+
+**Come lo mettiamo in app — decisione:** binario **separato** dalla parte mentale,
+come chiede Ste.
+- Route dedicate `/allenamento/*` con **layout proprio** (niente rituale del mattino,
+  niente banner del percorso): la seduta è full-screen e immersiva, come `/chat`.
+- L'ingresso resta dentro la tab **Palestra** (hub a due binari Mente / Campo) + una card
+  compatta in dashboard: nessun sesto tab, ma dentro è un mondo suo.
+- **Area riservata per il test personale di Ste**: gating con un flag di accesso
+  (`profiles.training_access BOOLEAN`, default false — stesso pattern di `is_beta_free`).
+  Finché è false, le route `/allenamento/*` non compaiono nella UI e rispondono 404/redirect.
+  Ste si mette il flag a true e testa il modulo in produzione, da solo, con dati veri,
+  senza che nessun altro lo veda. Poi si apre a un gruppo, poi a tutti — nessun deploy
+  aggiuntivo, è un UPDATE su una riga.
+
 ### 2.2 API (pattern BFF esistente)
 
 `/api/training/*`: `tests` (GET batteria / POST risultato singolo), `card` (GET livelli+delta), `program` (GET assegnazione corrente), `session` (GET dettaglio), `complete` (POST completamento seduta). Identità solo da `getAuthUser`, chiamate via `authFetch()`, `requirePaidAccess` ovunque **tranne** l'eventuale lead magnet (§3, P0-lite). Nessun accesso Notion: tutto Supabase, quindi niente cache da gestire.
