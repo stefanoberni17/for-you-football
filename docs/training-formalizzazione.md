@@ -5,10 +5,10 @@
 > decise e bloccate. Le sezioni ✍️ sono proposte **da correggere direttamente qui
 > dentro**. Le righe ❓ si rispondono con una riga.
 >
-> **Stato: v0.8 — 27 agosto 2026.** Prime 5 schede eval compilate da Ste + 4 regole
-> nuove estratte: seduta MIX standard 40-60', fascia in apertura 10-15', stretching
-> post-partita ≥20' (contenuto da definire), ri-test 2gg dopo la partita, regola
-> dolore con sblocco dichiarativo. Versioni precedenti in history git.
+> **Stato: v0.9 — 27 agosto 2026.** 10 schede eval su 20 compilate. Regole nuove del
+> gruppo 2: tetto di 3 allenamenti fisici/settimana oltre la squadra, avanzamento
+> immediato post ri-test, rientro con ri-test oltre 3 settimane di stop, taglio della
+> seduta per priorità dichiarata. Versioni precedenti in history git.
 
 ---
 
@@ -36,6 +36,10 @@
 | Fascia in apertura | **Sempre qualche esercizio di fascia a inizio sessione, ~10-15'** (oltre alle eventuali sedute dedicate). (v0.8, dalle schede eval) |
 | Post-partita | Il giorno dopo la partita: **stretching e mobilità, almeno 20'** — ⚠️ contenuto NUOVO da definire (esercizi non ancora a catalogo). (v0.8) |
 | Ri-test | **2 giorni dopo la partita** (es. partita sabato → test lunedì), nella settimana deload. (v0.8) |
+| Tetto settimanale fisico | **Max 3 allenamenti fisici/settimana oltre agli allenamenti di squadra** — oltre è controproducente. Se l'utente chiede di più, il planner lo SPIEGA e offre volume extra su **tecnica e fascia**. (v0.9) |
+| Avanzamento post ri-test | Superato → volume **subito** sul gradino nuovo, skill sul successivo (nessuna transizione). Fallito → **più volume + focus skill** nel mese dopo. (v0.9) |
+| Rientro dopo stop | Fino a **3 settimane** ferme: riparte dai gradini di prima. **Oltre 3 settimane: si ri-testa.** (v0.9) |
+| Seduta accorciata | Si taglia per **priorità dichiarata** dall'utente (fisico/tecnica); se non dichiarata, estratto della seduta del giorno dando priorità a ciò che è stato meno lavorato nella settimana. (v0.9) |
 | Dolore (qualsiasi) | **Seduta sospesa** appena segnalato. Si riprende SOLO quando l'utente dichiara che è passato o che ha parlato con fisio/preparatore — flag di stato nel motore, non discrezione del planner. (v0.8) |
 
 ---
@@ -317,22 +321,22 @@ TU: ___
 ✅ TU: test 2 giorni dopo la partita (lunedì) + allenamento fascia+tecnica, ed eventuale altro allenamento skill successivo.
 
 **6 — Ri-test superato.** Al ri-test i piegamenti passano la soglia del gradino successivo. Come cambia la settimana dopo (volume e skill su quali esercizi)?
-TU: ___
+✅ TU: si passa subito al gradino successivo per il volume, e la skill sale al gradino ancora dopo. Nessuna transizione graduale.
 
 **7 — Ri-test fallito.** Ri-test sotto soglia: resta sul gradino. Cosa cambia (se cambia qualcosa) nella programmazione successiva?
-TU: ___
+✅ TU: si aumenta il volume e nel mese successivo si punta di più sulle skill.
 
 **8 — Torna dopo 3 settimane fermo.** Era spinta A1 prima dello stop. Riparte da dove era, scala di un gradino, o ri-test subito?
-TU: ___
+✅ TU: riparte da dov'era **fino a 3 settimane** di stop; **oltre le 3 settimane si ri-testa**.
 
 **9 — Chiede più volume.** B2, chiede «voglio allenarmi tutti i giorni, dammi di più». (I bounds tagliano comunque: cosa gli DICE il planner e cosa gli dà?)
-TU: ___
+✅ TU: si SPIEGA che più di **3 allenamenti fisici a settimana oltre alla squadra diventa controproducente**. Si può però aumentare il volume di **tecnica e fascia** (che non hanno lo stesso costo di recupero).
 
 **10 — Niente sbarra questa settimana.** Tirata gradino 4, in vacanza senza sbarra. Sostituzione o pausa dell'area?
 TU: ___
 
 **11 — Solo 15 minuti.** Richiesta: «oggi ho solo un quarto d'ora». Seduta prevista: volume spinta + fascia.
-TU: ___
+✅ TU: si taglia **in base alle priorità dichiarate dal ragazzo**: se la sua richiesta/obiettivo è il fisico → sessione fisica breve; se è tecnico → tecnica; se è "tutto" → si prende un **estratto della seduta prevista quel giorno**, dando priorità a fisico o tecnica **in base a cosa ha già fatto negli altri giorni** della settimana.
 
 **12 — Dolore segnalato.** Feedback con nota: «mi fa male la spalla quando spingo». (Per me qui il planner NON programma spinta e suggerisce di sentire un adulto/medico — conferma o correggi.)
 ✅ TU: confermato, e più severo — vale per QUALSIASI tipo di dolore: si sospende la seduta, e si riprende solo quando l'utente dice che è passato o che ha parlato con fisio/preparatore.
