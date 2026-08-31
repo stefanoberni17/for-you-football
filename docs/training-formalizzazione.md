@@ -36,7 +36,8 @@
 | Seduta mista | **Alternanza**: una seduta tecnica prima della fisica, la successiva dopo. |
 | Durata | Seduta fisica pura **20-30 min**; la **seduta MIX (tecnica+fisico) è il formato standard: ~40' in fascia B, 40-60' in fascia A** (in base al tempo dell'utente); fino a **90 min totali solo se l'utente lo richiede**. |
 | Fascia in apertura | **Sempre qualche esercizio di fascia a inizio sessione, ~10-15'** (oltre alle eventuali sedute dedicate). (v0.8, dalle schede eval) |
-| Post-partita | Il giorno dopo la partita: **stretching e mobilità almeno 20' + tecnica e fascia** (niente forza). ⚠️ Stretching/mobilità = contenuto NUOVO da definire. (v0.8/v1.0) |
+| Post-partita | Il giorno dopo la partita: **stretching e mobilità almeno 20' + tecnica e fascia** (niente forza). Contenuto v1: **video sessione mobilità/yoga di Ste** (YouTube, guidato, full body) — ⚠️ serve l'URL. (v1.2) |
+| Laterale / obliqui | Plank laterali, Copenhagen, rotazioni: **dentro i circuiti di forza ogni tanto**, 1-2 per circuito, non in tutte le sedute. Copenhagen solo da core ≥3 e mai il giorno prima della partita. (v1.2) |
 | Blocco forza | La forza comprende **di default tutte le aree** (push/pull/core/lombari): nessun tetto di aree attive, si distribuiscono i volumi. (v1.0) |
 | Parte bassa (gambe) | **Esclusa dalla v1**: resta solo la prevenzione via fascia. Se richiesta, il planner lo spiega e la indica come sviluppo futuro. (v1.0) |
 | Solo tecnica (richiesta) | Si asseconda — **ma la fascia resta comunque**. (v1.0) |
