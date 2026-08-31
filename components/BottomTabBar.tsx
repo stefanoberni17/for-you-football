@@ -37,10 +37,10 @@ export default function BottomTabBar() {
         <div className="flex justify-around items-center h-16 gap-1 px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-            // /sos fa parte dell'hub Strumenti: la tab resta accesa anche lì
+            // /sos e /allenamento/* fanno parte dell'hub Strumenti: tab accesa anche lì
             const isActive =
               pathname === tab.href ||
-              (tab.href === '/strumenti' && pathname === '/sos');
+              (tab.href === '/strumenti' && (pathname === '/sos' || pathname.startsWith('/allenamento')));
 
             return (
               <Link
