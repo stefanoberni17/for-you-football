@@ -5,9 +5,10 @@
 > decise e bloccate. Le sezioni ✍️ sono proposte **da correggere direttamente qui
 > dentro**. Le righe ❓ si rispondono con una riga.
 >
-> **Stato: v0.7 — 27 agosto 2026.** Percentuali circuito FINALI (50% push · 40% pull ·
-> 70% tenute cap 30"), doppio gradino ✅ bloccato, sbarra = requisito dell'AMRAP
-> (senza sbarra non si fa). Versioni precedenti in history git.
+> **Stato: v0.8 — 27 agosto 2026.** Prime 5 schede eval compilate da Ste + 4 regole
+> nuove estratte: seduta MIX standard 40-60', fascia in apertura 10-15', stretching
+> post-partita ≥20' (contenuto da definire), ri-test 2gg dopo la partita, regola
+> dolore con sblocco dichiarativo. Versioni precedenti in history git.
 
 ---
 
@@ -31,7 +32,11 @@
 | Video DB ESERCIZI | **Riusabili nel prodotto** (sono di Ste) → clip nuove quasi solo per la tecnica. |
 | Fascia | Tutta la parte fascia (toe bounces inclusi) vive nel binario fascia — cosa a parte, dentro il perimetro v1. |
 | Seduta mista | **Alternanza**: una seduta tecnica prima della fisica, la successiva dopo. |
-| Durata | Seduta fisica **20-30 min**; con tecnica + fascia si può salire fino a **90 min totali, solo se l'utente lo richiede**. |
+| Durata | Seduta fisica pura **20-30 min**; la **seduta MIX (tecnica+fisico) è il formato standard: ~40' in fascia B, 40-60' in fascia A** (in base al tempo dell'utente); fino a **90 min totali solo se l'utente lo richiede**. |
+| Fascia in apertura | **Sempre qualche esercizio di fascia a inizio sessione, ~10-15'** (oltre alle eventuali sedute dedicate). (v0.8, dalle schede eval) |
+| Post-partita | Il giorno dopo la partita: **stretching e mobilità, almeno 20'** — ⚠️ contenuto NUOVO da definire (esercizi non ancora a catalogo). (v0.8) |
+| Ri-test | **2 giorni dopo la partita** (es. partita sabato → test lunedì), nella settimana deload. (v0.8) |
+| Dolore (qualsiasi) | **Seduta sospesa** appena segnalato. Si riprende SOLO quando l'utente dichiara che è passato o che ha parlato con fisio/preparatore — flag di stato nel motore, non discrezione del planner. (v0.8) |
 
 ---
 
@@ -297,19 +302,19 @@ Il collaudo del planner: per ogni caso, cosa programmeresti tu. Diventano test
 automatici a ogni modifica del prompt.
 
 **1 — Primo ingresso base.** 14 anni, mai allenato. AMRAP → B. Test: piegamenti gradino 1, no sbarra, plank gradino 2. Allenamenti club mar/gio, partita sab. Nessuna richiesta.
-TU: ___
+✅ TU: 2 sedute MIX tecnica + fisico da ~40 minuti totali.
 
 **2 — Primo ingresso avanzato.** 17 anni, semi-pro. AMRAP → A. Piegamenti gradino 3 (arciere), pull-up gradino 5, core gradino 6. Club lun/mer/ven, partita dom.
-TU: ___
+✅ TU: 3 allenamenti — 2 fisico+tecnica da 40-60' (in base al tempo a disposizione) + 1 solo tecnica. Sempre qualche esercizio di fascia a inizio sessione (~10-15').
 
 **3 — Due partite.** Spinta B2, core B3. Partite mercoledì e domenica, club mar/gio/ven. Richiesta: «settimana piena, poco tempo».
-TU: ___
+✅ TU: 2 allenamenti — 1 skill EMOM + tecnica, l'altro fascia + tecnica. Nei giorni dopo le partite proporre stretching e mobilità, almeno 20' (⚠️ contenuto da definire).
 
 **4 — Feedback duro ripetuto.** Spinta A1: ultime 2 sedute volume «duro». Calendario normale, 1 partita domenica.
 TU: ___
 
 **5 — Settimana deload.** 4ª settimana del ciclo. Spinta B3, tirata B1, core A1. Partita sabato. Ri-test da piazzare.
-TU: ___
+✅ TU: test 2 giorni dopo la partita (lunedì) + allenamento fascia+tecnica, ed eventuale altro allenamento skill successivo.
 
 **6 — Ri-test superato.** Al ri-test i piegamenti passano la soglia del gradino successivo. Come cambia la settimana dopo (volume e skill su quali esercizi)?
 TU: ___
@@ -330,7 +335,7 @@ TU: ___
 TU: ___
 
 **12 — Dolore segnalato.** Feedback con nota: «mi fa male la spalla quando spingo». (Per me qui il planner NON programma spinta e suggerisce di sentire un adulto/medico — conferma o correggi.)
-TU: ___
+✅ TU: confermato, e più severo — vale per QUALSIASI tipo di dolore: si sospende la seduta, e si riprende solo quando l'utente dice che è passato o che ha parlato con fisio/preparatore.
 
 **13 — Giorno dopo la partita.** Partita ieri, oggi giorno libero dal club. Cosa può esserci oggi?
 TU: ___
