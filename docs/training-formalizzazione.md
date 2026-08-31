@@ -5,10 +5,11 @@
 > decise e bloccate. Le sezioni ✍️ sono proposte **da correggere direttamente qui
 > dentro**. Le righe ❓ si rispondono con una riga.
 >
-> **Stato: v0.9 — 27 agosto 2026.** 10 schede eval su 20 compilate. Regole nuove del
-> gruppo 2: tetto di 3 allenamenti fisici/settimana oltre la squadra, avanzamento
-> immediato post ri-test, rientro con ri-test oltre 3 settimane di stop, taglio della
-> seduta per priorità dichiarata. Versioni precedenti in history git.
+> **Stato: v1.0 — 27 agosto 2026.** 15 schede eval su 20. ⚠️ Correzione strutturale:
+> la FORZA comprende di default tutte le aree (niente tetto di "aree attive" — era una
+> mia assunzione). Aggiunte: parte bassa esclusa dalla v1, post-partita con tecnica e
+> fascia, solo-tecnica con fascia sempre, test mancanti da completare.
+> Versioni precedenti in history git.
 
 ---
 
@@ -34,7 +35,11 @@
 | Seduta mista | **Alternanza**: una seduta tecnica prima della fisica, la successiva dopo. |
 | Durata | Seduta fisica pura **20-30 min**; la **seduta MIX (tecnica+fisico) è il formato standard: ~40' in fascia B, 40-60' in fascia A** (in base al tempo dell'utente); fino a **90 min totali solo se l'utente lo richiede**. |
 | Fascia in apertura | **Sempre qualche esercizio di fascia a inizio sessione, ~10-15'** (oltre alle eventuali sedute dedicate). (v0.8, dalle schede eval) |
-| Post-partita | Il giorno dopo la partita: **stretching e mobilità, almeno 20'** — ⚠️ contenuto NUOVO da definire (esercizi non ancora a catalogo). (v0.8) |
+| Post-partita | Il giorno dopo la partita: **stretching e mobilità almeno 20' + tecnica e fascia** (niente forza). ⚠️ Stretching/mobilità = contenuto NUOVO da definire. (v0.8/v1.0) |
+| Blocco forza | La forza comprende **di default tutte le aree** (push/pull/core/lombari): nessun tetto di aree attive, si distribuiscono i volumi. (v1.0) |
+| Parte bassa (gambe) | **Esclusa dalla v1**: resta solo la prevenzione via fascia. Se richiesta, il planner lo spiega e la indica come sviluppo futuro. (v1.0) |
+| Solo tecnica (richiesta) | Si asseconda — **ma la fascia resta comunque**. (v1.0) |
+| Test mancanti | Sulle catene non testate si parte dall'esercizio più semplice, **spingendo l'utente a completare la batteria** appena possibile. (v1.0) |
 | Ri-test | **2 giorni dopo la partita** (es. partita sabato → test lunedì), nella settimana deload. (v0.8) |
 | Tetto settimanale fisico | **Max 3 allenamenti fisici/settimana oltre agli allenamenti di squadra** — oltre è controproducente. Se l'utente chiede di più, il planner lo SPIEGA e offre volume extra su **tecnica e fascia**. (v0.9) |
 | Avanzamento post ri-test | Superato → volume **subito** sul gradino nuovo, skill sul successivo (nessuna transizione). Fallito → **più volume + focus skill** nel mese dopo. (v0.9) |
@@ -52,9 +57,12 @@
    - **Volume / capacità** → sull'esercizio ATTUALE (tabata, max reps con recupero, AMRAP).
    - **Skill / tecnica del gesto** → sull'esercizio SUCCESSIVO (EMOM 1-2 reps, tanto recupero).
 3. **Recuperi sempre definiti e programmati, mai a sensazione.**
-4. **Settimana tipo:** 2 sedute per area di forza attiva (1 volume + 1 skill), giorni non
-   consecutivi. Max 2 aree di forza in parallelo + la fascia (che è sempre in parallelo,
-   2 giorni/settimana come da PROGRAMMA_FASCIA) + la tecnica.
+4. **Settimana tipo:** la **forza è un blocco unico che comprende TUTTE le aree**
+   (push, pull, core, lombari) — nessun tetto di "aree attive" (⚠️ corretto in v1.0:
+   il limite a 2 aree era una mia assunzione, non una regola di Ste). Si lavora su
+   tutto il blocco distribuendo i volumi, entro il tetto di **max 3 sedute fisiche a
+   settimana** oltre alla squadra. Fascia sempre in parallelo (+ in apertura sessione);
+   tecnica sempre presente.
 5. Deload, partita, feedback e durata: come da tabella decisioni sopra.
 
 ---
@@ -342,19 +350,19 @@ TU: ___
 ✅ TU: confermato, e più severo — vale per QUALSIASI tipo di dolore: si sospende la seduta, e si riprende solo quando l'utente dice che è passato o che ha parlato con fisio/preparatore.
 
 **13 — Giorno dopo la partita.** Partita ieri, oggi giorno libero dal club. Cosa può esserci oggi?
-TU: ___
+✅ TU: stretching/mobilità + **anche tecnica e fascia**. (Niente fisico di forza.)
 
-**14 — Vuole aggiungere la terza area.** Ha spinta + tirata attive, chiede di aggiungere conduzione (tecnica). La tecnica non conta come area di forza: cosa succede alla settimana?
-TU: ___
+**14 — Vuole aggiungere un'area di forza (core).** Ha spinta + tirata attive.
+✅ TU: **sì — la forza comprende di base TUTTE le aree** (push, pull, core, lombari). Non esiste un tetto di aree attive: si lavora sul blocco forza completo, con volumi distribuiti.
 
-**15 — Chiede esercizi gambe.** «Voglio allenare le gambe, mettimi gli squat». (Fuori ambito v1 by design: cosa risponde il planner?)
-TU: ___
+**15 — Chiede esercizi gambe.** «Voglio allenare le gambe, mettimi gli squat».
+✅ TU: per ora la **parte bassa è esclusa**; si tiene solo la prevenzione con la fascia e si spiega che l'allenamento della parte bassa è in valutazione per il futuro.
 
-**16 — Solo tecnica.** Richiesta: «questa settimana solo palleggi, niente fisica». Si asseconda? La fascia resta comunque?
-TU: ___
+**16 — Solo tecnica.** Richiesta: «questa settimana solo palleggi, niente fisica».
+✅ TU: si asseconda, ma **la fascia resta comunque**.
 
-**17 — Mini-batteria incompleta.** Dal lead magnet ha fatto solo AMRAP e piegamenti, mai test core/tirata. Come si programma quello che non è testato?
-TU: ___
+**17 — Mini-batteria incompleta.** Dal lead magnet ha fatto solo AMRAP e piegamenti, mai test core/tirata.
+✅ TU: si parte dalla cosa più semplice sulle catene non testate, ma **si spinge l'utente a completare la batteria di test** appena può.
 
 **18 — Utente PRO.** AMRAP → PRO, spinta gradino 7 (one-arm orizzontali), tirata gradino 8. Club 4 giorni + partita. Settimana tipo?
 TU: ___
