@@ -5,10 +5,11 @@
 > decise e bloccate. Le sezioni ✍️ sono proposte **da correggere direttamente qui
 > dentro**. Le righe ❓ si rispondono con una riga.
 >
-> **Stato: v1.0 — 27 agosto 2026.** 15 schede eval su 20. ⚠️ Correzione strutturale:
-> la FORZA comprende di default tutte le aree (niente tetto di "aree attive" — era una
-> mia assunzione). Aggiunte: parte bassa esclusa dalla v1, post-partita con tecnica e
-> fascia, solo-tecnica con fascia sempre, test mancanti da completare.
+> **Stato: v1.1 — 27 agosto 2026. ✅ EVAL SET COMPLETO (20/20) — METODOLOGIA CHIUSA.**
+> Ultime regole: qualità sopra il volume salendo di gradino, skill saltate → il planner
+> chiede il perché, primo accesso = batteria di test, consegne mentali agganciate
+> all'attenzione divisa (e alla gestione rabbia/pensieri nella tecnica).
+> Tabella di recap completa: `docs/training-recap-progressioni.md`.
 > Versioni precedenti in history git.
 
 ---
@@ -45,6 +46,10 @@
 | Avanzamento post ri-test | Superato → volume **subito** sul gradino nuovo, skill sul successivo (nessuna transizione). Fallito → **più volume + focus skill** nel mese dopo. (v0.9) |
 | Rientro dopo stop | Fino a **3 settimane** ferme: riparte dai gradini di prima. **Oltre 3 settimane: si ri-testa.** (v0.9) |
 | Seduta accorciata | Si taglia per **priorità dichiarata** dall'utente (fisico/tecnica); se non dichiarata, estratto della seduta del giorno dando priorità a ciò che è stato meno lavorato nella settimana. (v0.9) |
+| Qualità > volume salendo | Più si avanza nei gradini, **meno volume e più qualità**: il volume cala leggermente con la difficoltà. Eccezione: l'utente chiede esplicitamente di mettere massa. (v1.1) |
+| Skill saltate | Se l'utente salta ripetutamente le sedute skill, il planner **riorganizza e ne chiede il motivo** (tempo/difficoltà/noia) — non insiste a vuoto né lascia perdere. (v1.1) |
+| Primo accesso | Il primo passo è **la batteria di test**: nessuna seduta prima della card. (v1.1) |
+| Consegne mentali | Aggancio principale: **quando il percorso allena l'attenzione divisa**. Da valutare poi l'integrazione dentro gli esercizi di gestione rabbia/frustrazione/pensieri, **principalmente nella tecnica**. (v1.1) |
 | Dolore (qualsiasi) | **Seduta sospesa** appena segnalato. Si riprende SOLO quando l'utente dichiara che è passato o che ha parlato con fisio/preparatore — flag di stato nel motore, non discrezione del planner. (v0.8) |
 
 ---
@@ -322,8 +327,8 @@ automatici a ogni modifica del prompt.
 **3 — Due partite.** Spinta B2, core B3. Partite mercoledì e domenica, club mar/gio/ven. Richiesta: «settimana piena, poco tempo».
 ✅ TU: 2 allenamenti — 1 skill EMOM + tecnica, l'altro fascia + tecnica. Nei giorni dopo le partite proporre stretching e mobilità, almeno 20' (⚠️ contenuto da definire).
 
-**4 — Feedback duro ripetuto.** Spinta A1: ultime 2 sedute volume «duro». Calendario normale, 1 partita domenica.
-TU: ___
+**4 — Feedback duro ripetuto.** Spinta A1: ultime 3 sedute volume «duro». Calendario normale, 1 partita domenica.
+✅ TU: −10% di volume la settimana successiva, gradino invariato (regola generale già fissata).
 
 **5 — Settimana deload.** 4ª settimana del ciclo. Spinta B3, tirata B1, core A1. Partita sabato. Ri-test da piazzare.
 ✅ TU: test 2 giorni dopo la partita (lunedì) + allenamento fascia+tecnica, ed eventuale altro allenamento skill successivo.
@@ -340,8 +345,8 @@ TU: ___
 **9 — Chiede più volume.** B2, chiede «voglio allenarmi tutti i giorni, dammi di più». (I bounds tagliano comunque: cosa gli DICE il planner e cosa gli dà?)
 ✅ TU: si SPIEGA che più di **3 allenamenti fisici a settimana oltre alla squadra diventa controproducente**. Si può però aumentare il volume di **tecnica e fascia** (che non hanno lo stesso costo di recupero).
 
-**10 — Niente sbarra questa settimana.** Tirata gradino 4, in vacanza senza sbarra. Sostituzione o pausa dell'area?
-TU: ___
+**10 — Niente sbarra.** Tirata gradino 4, si ritrova senza sbarra.
+✅ TU: confermato — **la sbarra è un requisito**: niente sostituzioni di ripiego, l'area tirata (e l'AMRAP completo) restano non disponibili finché non ne ha una.
 
 **11 — Solo 15 minuti.** Richiesta: «oggi ho solo un quarto d'ora». Seduta prevista: volume spinta + fascia.
 ✅ TU: si taglia **in base alle priorità dichiarate dal ragazzo**: se la sua richiesta/obiettivo è il fisico → sessione fisica breve; se è tecnico → tecnica; se è "tutto" → si prende un **estratto della seduta prevista quel giorno**, dando priorità a fisico o tecnica **in base a cosa ha già fatto negli altri giorni** della settimana.
@@ -364,14 +369,17 @@ TU: ___
 **17 — Mini-batteria incompleta.** Dal lead magnet ha fatto solo AMRAP e piegamenti, mai test core/tirata.
 ✅ TU: si parte dalla cosa più semplice sulle catene non testate, ma **si spinge l'utente a completare la batteria di test** appena può.
 
-**18 — Utente PRO.** AMRAP → PRO, spinta gradino 7 (one-arm orizzontali), tirata gradino 8. Club 4 giorni + partita. Settimana tipo?
-TU: ___
+**18 — Utente PRO.** AMRAP → PRO, spinta gradino 7 (one-arm orizzontali), tirata gradino 8. Club 4 giorni + partita.
+✅ TU: **meno allenamenti e più qualità che volume**, man mano che si avanza. Salendo di difficoltà il volume cala leggermente — a meno che l'utente non chieda esplicitamente di mettere un po' di massa.
 
-**19 — Percorso mentale avanzato.** Come il caso 2, ma l'utente è alla W9 del percorso: quali consegne mentali/àncore entrano nella seduta? (strada pre-allenamento, Rilascio…)
-TU: ___
+**19 — Percorso mentale avanzato.** Come il caso 2, ma l'utente è alla W9 del percorso.
+✅ TU: la cosa da applicare davvero è **quando si inizia ad allenare l'attenzione divisa**. Poi, da valutare insieme, l'integrazione DENTRO gli esercizi di **gestione rabbia/frustrazione e dei pensieri — principalmente negli esercizi di tecnica**.
 
-**20 — Salta sempre la skill.** Da 3 settimane fa solo le sedute volume, mai le skill. Il planner insiste, riorganizza (skill dentro la seduta volume?), o lascia stare?
-TU: ___
+**20 — Salta sempre la skill.** Da 3 settimane fa solo le sedute volume, mai le skill.
+✅ TU: **riorganizza e cerca di capire perché** (il Coach chiede: tempo? difficoltà? noia?) — non insiste a vuoto e non lascia perdere.
+
+**21 — Il primo giorno in assoluto.** Registrato oggi, nessun test né AMRAP fatto. Apre la tab Campo.
+✅ TU: **si parte dai test.** Nessuna seduta "assaggio": la batteria è il primo passo, la card nasce da lì.
 
 ---
 
