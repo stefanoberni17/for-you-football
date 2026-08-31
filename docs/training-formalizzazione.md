@@ -5,10 +5,10 @@
 > decise e bloccate. Le sezioni ✍️ sono proposte **da correggere direttamente qui
 > dentro**. Le righe ❓ si rispondono con una riga.
 >
-> **Stato: v0.3 — 27 agosto 2026.** v0.2 + definizione AMRAP di Ste (circuito
-> personalizzato sui gradini raggiunti, 20', core/lombari a reps o tenute max 30")
-> e stato della parte tecnica (materiale esistente, manca la traduzione in catene).
-> Versioni precedenti in history git.
+> **Stato: v0.5 — 27 agosto 2026.** Terzo giro di risposte integrato: AMRAP con
+> formato fisso e soglie giri, tirata senza sbarra non attivabile, lombari approvata,
+> conduzione senza test, video riusabili, rombo a 7 punte, EMOM fino a 25',
+> feedback duro ×3. Versioni precedenti in history git.
 
 ---
 
@@ -24,7 +24,12 @@
 | Fascia | **= piede/caviglia** (towel curls, toe bounces, iso runner… — dal DB ESERCIZI, difficoltà 1-2-3): prevenzione/propriocezione. **Binario PARALLELO**: non allena la forza, non conta come "area attiva". ⚠️ Corretto in v0.4 — prima l'avevo confusa col core: il core è una normale catena di forza. |
 | Deload | 4ª settimana, volume 50-60%, **le sedute skill continuano**. Ri-test a fine settimana deload. |
 | Partita | **Nessuna fisica nei 2 giorni prima** (2 giorni prima consentita solo se necessario, meglio evitare) né il giorno partita. **Il giorno dopo ok.** |
-| Feedback "duro" ×2 | Settimana dopo: **volume −10%** (dentro i bounds). Gradino invariato. |
+| Feedback "duro" **×3 consecutive** | Settimana dopo: **volume −10%** (dentro i bounds). Gradino invariato. |
+| AMRAP generale | Formato fisso sul gradino raggiunto: **15 piegamenti + 30" core + 5 pull-up + 30" lombari** = 1 giro. 20 minuti. Soglie giri: **Base ≤ 6 · Intermedio ≤ 8 · Avanzato ≤ 10 · PRO > 10**. Ordine batteria: prima i test di catena, poi l'AMRAP. Ri-tara solo la fascia. Lead magnet: versione corta 8'. |
+| Tirata senza sbarra | **Area NON attivabile** (niente varianti di ripiego). |
+| Conduzione | **Nessun test dedicato** — si programma per periodizzazione. |
+| Video DB ESERCIZI | **Riusabili nel prodotto** (sono di Ste) → clip nuove quasi solo per la tecnica. |
+| Fascia | Tutta la parte fascia (toe bounces inclusi) vive nel binario fascia — cosa a parte, dentro il perimetro v1. |
 | Seduta mista | **Alternanza**: una seduta tecnica prima della fisica, la successiva dopo. |
 | Durata | Seduta fisica **20-30 min**; con tecnica + fascia si può salire fino a **90 min totali, solo se l'utente lo richiede**. |
 
@@ -68,26 +73,18 @@ con **l'esercizio del gradino raggiunto al test di catena**. Durata **20 minuti*
 contano i giri completati. Core e lombari nel circuito **a ripetizioni, non a tenuta**
 (oppure tenuta limitata a max 30").
 
-Conseguenze operative (da confermare):
+✅ Tutto confermato da Ste (v0.5):
 
-1. **Ordine della batteria**: prima i test di catena (che fissano i gradini), POI
-   l'AMRAP (che usa quei gradini). ❓ **2b.** Ok?
-2. **Variante-circuito per i gradini a tenuta**: ogni gradino core/lombari ha bisogno
-   di una versione a reps per il circuito. Proposta: si usa la variante dinamica del
-   gradino (hollow → hollow rocks, superman hold → superman alternato, arch hold →
-   arch rocks); dove non esiste, tenuta secca da 30". Le reps/giro le fissiamo nel
-   seed per gradino. ❓ **2c.** Ok?
-3. **Cosa misura**: essendo il circuito relativo al TUO gradino, i giri misurano la
-   capacità di lavoro *al tuo livello* — perfetto per fissare la fascia (B/A/PRO) di
-   OGGI. Non è però confrontabile nel tempo (al ri-test i gradini cambiano → circuito
-   diverso): il progresso lo raccontano i test di catena e l'avanzamento dei gradini,
-   l'AMRAP ri-tara solo la fascia. ❓ **2d.** Ti torna questa divisione dei ruoli?
-4. **Soglie giri in 20'**: B < ___ · A ___–___ · PRO > ___ (numeri tuoi, anche dopo
-   i primi dati reali).
-5. **Mini-batteria lead magnet**: 20 minuti di AMRAP non ci stanno in un magnete da
-   10-15'. Proposta: nel lead magnet la versione corta (**8 minuti**, stesso circuito
-   ma coi gradini d'ingresso stimati da 2 test rapidi: piegamenti + core) e l'AMRAP
-   completo da 20' come primo rituale in-app post-registrazione. ❓ **2e.** Ok?
+1. **Ordine batteria**: prima i test di catena (fissano i gradini), poi l'AMRAP.
+2. **Formato del giro (FISSO)**: con l'esercizio del gradino raggiunto su ogni catena —
+   **15 piegamenti + 30" core + 5 pull-up + 30" lombari** = 1 giro. Durata 20 minuti.
+   (Se la tirata non è attiva — niente sbarra — il giro è a 3 stazioni; da definire se
+   le soglie restano uguali o si alzano di 1: ❓ **2g**.)
+3. **Soglie giri in 20': Base ≤ 6 · Intermedio ≤ 8 · Avanzato ≤ 10 · PRO > 10.**
+4. **Ruoli**: l'AMRAP ri-tara la fascia (B/A/PRO di oggi); il progresso lo raccontano
+   i test di catena e i gradini avanzati.
+5. **Lead magnet**: versione corta **8 minuti** (gradini stimati da 2 test rapidi:
+   piegamenti + plank); l'AMRAP completo da 20' è il primo rituale in-app.
 
 ---
 
@@ -124,8 +121,7 @@ Conseguenze operative (da confermare):
 ```
 **Test:** max pull-up; se 0 → durata massima negativa (secondi).
 **Soglie (✅ da File_DB):** Base < 2 · Intermedio > 4 · Avanzato > 8 · Pro > 12
-❓ **3a (ancora aperta).** Chi non ha la sbarra: resta fuori dalla tirata, o variante
-"solo australian" (gradini 1-2 con un tavolo robusto)?
+✅ **3a risolta:** senza sbarra la tirata è **non attivabile** (nessuna variante di ripiego).
 
 ### 3.3 Core (✍️ aggiornata con le tue aggiunte — binario parallelo)
 
@@ -142,7 +138,7 @@ Conseguenze operative (da confermare):
 **Test (✅ risolto dal File_DB): plank frontale** — è già nella tua batteria con le soglie.
 **Soglie (✅ da File_DB):** Base < 30" · Intermedio > 40" · Avanzato > 60" · Pro > 120"
 
-### 3.4 Lombari / catena posteriore (✍️ ancora bozza mia — ❓ **3c** correggila)
+### 3.4 Lombari / catena posteriore (✅ approvata da Ste, v0.5)
 
 ```
 1. Superman hold (statico)
@@ -167,8 +163,8 @@ D3: SL toe bounces · Iso runner · SL runner (towel)
 **Test (✅ dal File_DB, a sensazione → in app diventa scelta multipla "dove senti la
 fatica?"):** 120" pogo jumps + 180" toe curls per lato. Base = fatica caviglia/piede ·
 Intermedio = quadricipiti/polpacci · Avanzato = flessori/coscia · Pro = glutei/addome.
-❓ **3d.** I toe bounces/pogo sono saltelli leggeri: confermi che rientrano nel perimetro
-v1 (prevenzione, non plyo) nonostante il "niente balzi programmati"?
+✅ **3d risolta:** tutta la parte fascia (toe bounces inclusi) vive nel binario fascia —
+è una cosa a parte, dentro il perimetro v1.
 
 ### 3.6 ✍️ Catene TECNICA v0.1 (estratte da Allenamenti_tecnica + Everfit — correggi)
 
@@ -202,25 +198,31 @@ soglie da definire: ___ (In alternativa/aggiunta: tiri traversa/palo, ma serve l
 3. Slalom solo dx / solo sx              7. Box dribbling a intensità alternata
 4. Slalom interno + suola                8. Box dribbling + visione (colori telefono)
 ```
-**Test proposto:** slalom cronometrato sui cinesini? ❓ **3e.** O la conduzione resta
-senza test (si entra dal livello palleggi)?
+✅ **3e risolta:** la conduzione **non ha test dedicato** — si programma per
+periodizzazione (base → movimento → dinamico → applicata).
 
 **Periodizzazione tecnica (✅ dichiarata nel tuo xlsx):** base → base+movimento leggero →
 dinamico → applicata/intensità — è la regola con cui il planner alza l'intensità dentro
 il gradino, settimana su settimana.
 
-**Video:** il DB ESERCIZI ha già i link YouTube (shorts) per gran parte della fisica e
-della fascia → le ~30-40 clip nuove servono soprattutto per la TECNICA. ❓ **3f.** I
-link del DB sono tuoi (riusabili nel prodotto) o di terzi?
+**Video:** ✅ i link YouTube del DB ESERCIZI **sono di Ste e riusabili nel prodotto**
+→ le clip nuove da girare servono quasi solo per la TECNICA.
 
 ### 3.7 Il "rombo" (card) — proposta v1
 
-Nel File_DB il rombo ha 8 voci di dettaglio + 5 generali, ma metà (resistenza, velocità,
-esplosiva, forza PB) è fuori dal perimetro v1. **Proposta rombo v1 a 5 punte** —
-Tecnica · Spinta · Tirata · Core · Fascia/Prevenzione — + il badge di fascia generale
-(B/A/PRO dall'AMRAP). Punteggi 0-100 per punta calcolati dalle soglie come nel tuo RECAP.
-❓ **3g.** Ok, o vuoi comunque misurare (senza allenare) anche resistenza/velocità/
-esplosiva per il rombo completo a 8?
+✅ **Definito da Ste (v0.5) — rombo v1 a 7 punte:**
+
+```
+Tecnica Palleggi · Tecnica Passaggi · Tecnica Controllo
+Forza Push · Forza Pull · Forza Core · Prevenzione Fascia
+```
+
++ badge di fascia generale (B/A/PRO dall'AMRAP). Punteggi 0-100 per punta calcolati
+dalle soglie come nel FOGLIO RECAP. Due dettagli da chiudere:
+❓ **3g-i.** "Tecnica Controllo" senza test conduzione: la punteggio col test muro
+(due tocchi/controlli) o resta qualitativa finché non c'è un test?
+❓ **3g-ii.** I lombari: concorrono alla punta "Forza Core" (media plank + superman)
+o a "Prevenzione Fascia"?
 
 ---
 
@@ -229,6 +231,11 @@ esplosiva per il rombo completo a 8?
 I paletti che il validatore impone al planner: l'AI personalizza *dentro*, mai fuori,
 qualunque cosa chieda l'utente. Tetti già tuoi: **push fino a 20 reps, tenute core fino
 a 90-120 secondi**. Il resto è bozza mia sui tuoi volumi tipici — **correggi i numeri**.
+
+**Come si legge la tabella:** `2–4 × 5–20 · 60"` = da 2 a 4 **serie**, da 5 a 20
+**ripetizioni** per serie (o secondi di tenuta per core/lombari), e **i secondi dopo il
+puntino sono il RECUPERO MINIMO tra le serie** — il planner può dare più recupero,
+mai meno.
 
 ### Sedute VOLUME (serie × reps o secondi · recupero minimo)
 
@@ -244,7 +251,7 @@ a 90-120 secondi**. Il resto è bozza mia sui tuoi volumi tipici — **correggi 
 | Parametro | Valore |
 |---|---|
 | Formato | EMOM |
-| Durata | 6–12 minuti |
+| Durata | 6–25 minuti (✅ esteso da Ste: anche 20-25' totali) |
 | Reps al minuto | 1–2 (esercizio successivo della catena) |
 | Nella settimana deload | ✅ continuano (volume invariato: sono già a basso volume) |
 
@@ -255,7 +262,7 @@ a 90-120 secondi**. Il resto è bozza mia sui tuoi volumi tipici — **correggi 
 | Seduta fisica | 20–30 min |
 | Tetto assoluto giornata (fisica+tecnica+fascia) | 90 min, SOLO su richiesta esplicita utente |
 | Deload (4ª settimana) | volume 50–60% delle sedute volume |
-| Feedback "duro" ×2 | −10% volume la settimana dopo |
+| Feedback "duro" ×3 consecutive | −10% volume la settimana dopo |
 | Finestra planner sulla catena | esercizio corrente (volume) / successivo (skill) — mai oltre |
 | Arti inferiori / balzi / carichi | ❌ mai, fuori ambito v1 by design |
 
@@ -332,20 +339,14 @@ TU: ___
 
 | # | Domanda |
 |---|---|
-| 2b | Ordine batteria: prima test di catena, poi AMRAP: ok? |
-| 2c | Variante dinamica dei gradini a tenuta per il circuito (rocks/alternato, altrimenti 30"): ok? |
-| 2d | Ruoli: AMRAP ri-tara solo la fascia, il progresso lo raccontano i test di catena: ok? |
-| 2e | Lead magnet: AMRAP corto 8' con gradini stimati da 2 test rapidi; il 20' completo in-app: ok? |
-| 2f | Soglie giri AMRAP 20' (B/A/PRO) — anche dopo i primi dati reali |
-| 3a | Tirata senza sbarra: variante australian o area non attivabile? |
-| 3c | Catena lombari: correzioni alla mia bozza (unico test/soglie ancora senza fonte) |
-| 3d | Fascia: toe bounces/pogo dentro il perimetro v1 (prevenzione, non plyo)? |
-| 3e | Conduzione: test cronometrato sui cinesini o nessun test dedicato? |
-| 3f | I video YouTube del DB ESERCIZI sono tuoi (riusabili) o di terzi? |
-| 3g | Rombo v1 a 5 punte (Tecnica/Spinta/Tirata/Core/Fascia) o completo a 8 con aree solo misurate? |
+| 2g | AMRAP senza tirata attiva (niente sbarra): giro a 3 stazioni con stesse soglie, o soglie +1? |
+| 3g-i | Punta "Tecnica Controllo": punteggio dal test muro o qualitativa? |
+| 3g-ii | Lombari: dentro la punta "Forza Core" o "Prevenzione Fascia"? |
 | — | Soglie test MURO (passaggi di prima in 2'): 4 numeri |
-| 4 | Numeri della tabella bounds: correggi quelli che stonano |
+| — | Soglie test LOMBARI (superman hold, secondi): 4 numeri |
+| 4 | Numeri della tabella bounds: ora che la notazione è chiara (il "· 60\"" è il recupero minimo), correggi quelli che stonano |
 | 6 | Compila le 20 schede eval (anche a voce, trascrivo io) |
+| — | Durate mancanti ⚠️ nella trascrizione Everfit (docs/training-sessioni-modello-tecnica.md) |
 
 **✅ Risolte dai file:** soglie push/pull/plank e palleggi (piede forte/debole/testa/
 piramide) · test core = plank · catena fascia con difficoltà e video · periodizzazione
