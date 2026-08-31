@@ -45,6 +45,7 @@ export default function StrumentiPage() {
   const [palestraOpen, setPalestraOpen] = useState(true);
   const [sosOpen, setSosOpen] = useState(true);
   const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
+  const [trainingAccess, setTrainingAccess] = useState(false);
 
   useEffect(() => {
     try {
@@ -74,10 +75,11 @@ export default function StrumentiPage() {
       }
       const { data: profile } = await supabase
         .from('profiles')
-        .select('current_week')
+        .select('current_week, training_access')
         .eq('user_id', session.user.id)
         .single();
       setCurrentWeek(profile?.current_week || 1);
+      setTrainingAccess((profile as { training_access?: boolean } | null)?.training_access === true);
       try {
         const res = await authFetch('/api/difficolta');
         if (res.ok) {
@@ -254,6 +256,23 @@ export default function StrumentiPage() {
       </div>
 
       <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
+        {/* ⚽ Campo — area training riservata (visibile solo con training_access) */}
+        {trainingAccess && (
+          <button
+            onClick={() => router.push('/allenamento')}
+            className="w-full bg-surface border border-forest-500/40 rounded-2xl shadow-lg p-5 flex items-center justify-between text-left transition-all active:scale-[0.99]"
+          >
+            <span className="flex items-center gap-4">
+              <span className="w-11 h-11 rounded-full bg-forest-500/15 flex items-center justify-center flex-shrink-0 text-xl" aria-hidden="true">⚽</span>
+              <span>
+                <span className="block text-base font-bold text-app">Campo — Allenamento</span>
+                <span className="block text-xs text-muted mt-0.5">Test, card giocatore e programma settimanale</span>
+              </span>
+            </span>
+            <span className="text-forest-400 text-lg flex-shrink-0">→</span>
+          </button>
+        )}
+
         {/* Reset rapido — l'attrezzo che serve più spesso, sempre in cima */}
         <button
           onClick={openMeditation}

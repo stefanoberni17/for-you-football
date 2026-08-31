@@ -1,0 +1,174 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { authFetch } from '@/lib/authFetch';
+import { DAY_NAMES } from '@/lib/constants';
+import TrainingSessionPlayer from '@/components/TrainingSessionPlayer';
+import { esercizioById } from '@/lib/trainingCatalog';
+import { ArrowLeft, Play } from 'lucide-react';
+
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string }
+
+type Phase = 'preview' | 'playing' | 'feedback' | 'done';
+
+export default function SessionePage() {
+  const router = useRouter();
+  const params = useParams();
+  const giorno = parseInt(String(params.giorno), 10);
+
+  const [planId, setPlanId] = useState<string | null>(null);
+  const [sessione, setSessione] = useState<PlanSession | null>(null);
+  const [painHold, setPainHold] = useState(false);
+  const [alreadyDone, setAlreadyDone] = useState(false);
+  const [phase, setPhase] = useState<Phase>('preview');
+  const [note, setNote] = useState('');
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { router.push('/login'); return; }
+    const res = await authFetch('/api/training/state');
+    if (res.status === 403) { router.push('/strumenti'); return; }
+    if (res.ok) {
+      const data = await res.json();
+      setPainHold(data.painHold);
+      const s = (data.plan?.plan?.sedute || []).find((x: PlanSession) => x.giorno === giorno);
+      setSessione(s || null);
+      setPlanId(data.plan?.id || null);
+      setAlreadyDone((data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno));
+    }
+    setLoading(false);
+  }, [router, giorno]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const inviaFeedback = async (feedback: 'facile' | 'ok' | 'duro') => {
+    if (!planId) return;
+    setSending(true);
+    try {
+      await authFetch('/api/training/complete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan_id: planId, giorno, feedback, note: note.trim() || undefined }),
+      });
+      setPhase('done');
+    } finally { setSending(false); }
+  };
+
+  if (loading) {
+    return <main className="min-h-screen bg-app flex items-center justify-center"><div className="text-4xl animate-ball-bounce">⚽</div></main>;
+  }
+  if (!sessione) {
+    return (
+      <main className="min-h-screen bg-app pt-safe px-5">
+        <div className="max-w-md mx-auto text-center pt-20">
+          <p className="text-muted mb-4">Nessuna seduta per questo giorno.</p>
+          <button onClick={() => router.push('/allenamento')} className="text-forest-400 font-semibold">← Torna al Campo</button>
+        </div>
+      </main>
+    );
+  }
+
+  const isFisica = ['mix', 'fisica', 'skill'].includes(sessione.tipo);
+
+  // Player full-screen
+  if (phase === 'playing') {
+    return (
+      <main className="min-h-screen bg-app flex flex-col" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+        <TrainingSessionPlayer
+          items={sessione.items}
+          titolo={sessione.titolo}
+          onComplete={() => setPhase('feedback')}
+          onExit={() => setPhase('preview')}
+        />
+      </main>
+    );
+  }
+
+  if (phase === 'feedback' || phase === 'done') {
+    return (
+      <main className="min-h-screen bg-app pt-safe pb-tabbar px-5">
+        <div className="max-w-md mx-auto text-center pt-16">
+          {phase === 'done' ? (
+            <>
+              <div className="text-5xl mb-4">💪</div>
+              <h1 className="text-2xl font-bold text-app mb-2">Seduta completata!</h1>
+              <p className="text-muted text-sm mb-8">Segnata sul piano — il feedback aiuta il preparatore a calibrare la prossima settimana.</p>
+              <button onClick={() => router.push('/allenamento')}
+                className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3.5 rounded-2xl">
+                Torna al Campo
+              </button>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold text-app mb-2">Com&apos;è andata?</h1>
+              <p className="text-muted text-sm mb-6">Un tap — serve a calibrare la settimana prossima.</p>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {(['facile', 'ok', 'duro'] as const).map((f) => (
+                  <button key={f} onClick={() => inviaFeedback(f)} disabled={sending}
+                    className="bg-surface border border-divider rounded-2xl py-5 text-app font-bold disabled:opacity-50">
+                    {f === 'facile' ? '😀' : f === 'ok' ? '👌' : '🥵'}<br /><span className="text-sm">{f}</span>
+                  </button>
+                ))}
+              </div>
+              <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={400}
+                placeholder="Note? (es. un fastidio, un esercizio troppo difficile) — opzionale"
+                className="w-full px-3 py-2.5 bg-surface border border-divider rounded-xl text-sm text-app outline-none focus:ring-2 focus:ring-forest-400 resize-none" />
+            </>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  // Preview seduta
+  return (
+    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
+      <div className="max-w-md mx-auto">
+        <button onClick={() => router.push('/allenamento')} className="inline-flex items-center gap-1.5 text-sm text-muted mb-3">
+          <ArrowLeft size={16} /> Campo
+        </button>
+        <p className="text-xs uppercase tracking-widest text-forest-400 font-bold mb-1">{DAY_NAMES[giorno]} · {sessione.tipo} · {sessione.durata_min}&apos;</p>
+        <h1 className="text-2xl font-bold text-app mb-2">{sessione.titolo}</h1>
+        {sessione.spiegazione && <p className="text-sm text-muted leading-relaxed mb-4">💡 {sessione.spiegazione}</p>}
+        {alreadyDone && (
+          <p className="text-xs font-semibold text-forest-300 bg-forest-500/10 border border-forest-500/30 rounded-xl px-3 py-2 mb-4">✓ Già completata — puoi rifarla, il piano resta segnato.</p>
+        )}
+        {painHold && isFisica && (
+          <p className="text-xs text-red-200 bg-red-500/10 border border-red-500/30 rounded-xl px-3 py-2 mb-4">
+            ⚠️ Hai un dolore segnalato: questa seduta fisica è in pausa. Sbloccala dal Campo quando è passato.
+          </p>
+        )}
+
+        <div className="space-y-2 mb-5">
+          {sessione.items.map((it, i) => {
+            const ex = esercizioById(it.esercizio_id);
+            if (!ex) return null;
+            return (
+              <div key={i} className="bg-surface border border-divider rounded-2xl p-3.5 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-surface-2 text-faint text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-app leading-snug">{ex.nome}</p>
+                  <p className="text-xs text-faint">
+                    {it.schema === 'emom'
+                      ? `EMOM ${it.serie}' · ${it.quantita}/min`
+                      : `${it.serie}×${it.quantita}${ex.unita === 'secondi' ? '"' : ex.unita === 'minuti' ? "'" : ''} · rec ${it.recupero_sec}"`}
+                  </p>
+                </div>
+                {ex.videoUrl && <span className="text-[10px] text-forest-400 font-bold shrink-0">▶ video</span>}
+              </div>
+            );
+          })}
+        </div>
+
+        <button onClick={() => setPhase('playing')} disabled={painHold && isFisica}
+          className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg inline-flex items-center justify-center gap-2 disabled:opacity-50">
+          <Play size={18} /> Inizia la seduta
+        </button>
+      </div>
+    </main>
+  );
+}
