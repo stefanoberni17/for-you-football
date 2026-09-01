@@ -32,6 +32,13 @@ export default function AllenamentoHub() {
   const [generating, setGenerating] = useState(false);
   const [richiesta, setRichiesta] = useState('');
   const [showRigenera, setShowRigenera] = useState(false);
+  // Tab "Hai un dolore?"
+  const [showPain, setShowPain] = useState(false);
+  const [painInt, setPainInt] = useState(5);
+  const [painDesc, setPainDesc] = useState('');
+  const [painDurante, setPainDurante] = useState<boolean | null>(null);
+  const [painSending, setPainSending] = useState(false);
+  const [painMsg, setPainMsg] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -62,6 +69,27 @@ export default function AllenamentoHub() {
       body: JSON.stringify({ resolved: true }),
     });
     await load();
+  };
+
+  const segnalaDolore = async () => {
+    if (!painDesc.trim() || painDurante === null) return;
+    setPainSending(true);
+    try {
+      const res = await authFetch('/api/training/pain', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intensita: painInt, descrizione: painDesc.trim(), duranteAllenamento: painDurante }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPainDesc(''); setPainDurante(null); setPainInt(5);
+        if (data.painHold) {
+          setShowPain(false); setPainMsg(null);
+          await load(); // il banner rosso prende il posto del form
+        } else {
+          setPainMsg('Registrato — sotto soglia: puoi allenarti, ma fermati subito se peggiora e riparla qui se continua.');
+        }
+      }
+    } finally { setPainSending(false); }
   };
 
   if (loading || !state) {
@@ -105,6 +133,61 @@ export default function AllenamentoHub() {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Tab "Hai un dolore?" — segnalazione strutturata (≥4/10 → pausa fisica) */}
+        {!state.painHold && (
+          <div className="bg-surface rounded-2xl border border-divider mb-5 overflow-hidden">
+            <button onClick={() => { setShowPain(!showPain); setPainMsg(null); }}
+              className="w-full flex items-center gap-3 p-4 text-left">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
+                <AlertTriangle size={18} className="text-amber-300" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-app">Hai un dolore particolare?</p>
+                <p className="text-xs text-faint">Segnalalo qui — decidiamo insieme se fermarci</p>
+              </div>
+              <ChevronRight size={16} className={`text-faint transition-transform ${showPain ? 'rotate-90' : ''}`} />
+            </button>
+            {showPain && (
+              <div className="px-4 pb-4 space-y-3">
+                <div>
+                  <div className="flex items-baseline justify-between mb-1">
+                    <label className="text-xs font-semibold text-muted">Quanto fa male?</label>
+                    <span className={`text-lg font-bold tabular-nums ${painInt >= 7 ? 'text-red-300' : painInt >= 4 ? 'text-amber-300' : 'text-forest-400'}`}>{painInt}/10</span>
+                  </div>
+                  <input type="range" min={1} max={10} step={1} value={painInt}
+                    onChange={(e) => setPainInt(Number(e.target.value))}
+                    className="w-full accent-[#2dd17a]" aria-label="Intensità del dolore da 1 a 10" />
+                  <div className="flex justify-between text-[10px] text-faint"><span>leggero fastidio</span><span>fortissimo</span></div>
+                </div>
+                <textarea value={painDesc} onChange={(e) => setPainDesc(e.target.value)} rows={2} maxLength={300}
+                  placeholder="Di cosa si tratta? (dove, quando lo senti — es. ginocchio destro quando calcio)"
+                  className="w-full px-3 py-2.5 bg-surface-2 border border-divider rounded-xl text-sm text-app outline-none focus:ring-2 focus:ring-forest-400 resize-none" />
+                <div>
+                  <p className="text-xs font-semibold text-muted mb-1.5">Lo senti durante l&apos;allenamento?</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {([true, false] as const).map((v) => (
+                      <button key={String(v)} onClick={() => setPainDurante(v)}
+                        className={`py-2 rounded-xl border text-sm font-semibold ${painDurante === v ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                        {v ? 'Sì' : 'No'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {painMsg && (
+                  <p className="text-xs text-forest-300 bg-forest-500/10 border border-forest-500/30 rounded-xl px-3 py-2">✓ {painMsg}</p>
+                )}
+                <button onClick={segnalaDolore} disabled={painSending || !painDesc.trim() || painDurante === null}
+                  className="w-full bg-forest-500 text-white font-bold py-3 rounded-xl disabled:opacity-50">
+                  {painSending ? 'Invio…' : 'Segnala'}
+                </button>
+                <p className="text-[10px] text-faint leading-relaxed">
+                  Da 4/10 in su le sedute fisiche vanno in pausa finché non dici che è passato o ne hai parlato con fisio/preparatore.
+                </p>
+              </div>
+            )}
           </div>
         )}
 

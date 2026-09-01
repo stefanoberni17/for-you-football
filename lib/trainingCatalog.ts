@@ -283,6 +283,7 @@ export const REGOLE = {
   feedbackDuroConsecutivi: 3,
   feedbackDuroRiduzione: 0.10,
   rientroRitestSettimane: 3,
+  painHoldSoglia: 4,             // segnalazione dolore ≥ 4/10 → sedute fisiche in pausa (sblocco manuale)
   // AMRAP — 40% del max sull'esercizio scelto dalla scala skill (tenute 70%, cap 30")
   amrapPushPct: 0.4,  amrapPushMin: 8,
   amrapPullPct: 0.4,  amrapPullMin: 4,
