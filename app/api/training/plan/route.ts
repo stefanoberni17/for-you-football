@@ -2,21 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
-import { generateWeekPlan, PLANNER_PROMPT_VERSION, detectPain } from '@/lib/trainingPlanner';
+import { generateWeekPlan, PLANNER_PROMPT_VERSION, detectPain, mondayOfThisWeekRome, updateTrainingMemory } from '@/lib/trainingPlanner';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
-
-function mondayOfThisWeek(): string {
-  const now = new Date();
-  const day = now.getDay(); // 0=Dom
-  const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  return monday.toISOString().slice(0, 10);
-}
 
 /** POST { richiesta? } → genera (o rigenera) il piano della settimana. */
 export async function POST(request: NextRequest) {
@@ -38,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     const { data: saved, error } = await supabaseAdmin.from('training_plans').insert({
       user_id: userId,
-      week_start: mondayOfThisWeek(),
+      week_start: mondayOfThisWeekRome(),
       richieste: richiesta || null,
       generato_da: generatoDa,
       model_id: generatoDa === 'llm' ? 'claude-sonnet-4-6' : null,
@@ -46,6 +37,9 @@ export async function POST(request: NextRequest) {
       plan,
     }).select('id, week_start, plan, generato_da, created_at').single();
     if (error || !saved) return NextResponse.json({ error: error?.message || 'save' }, { status: 500 });
+
+    // La richiesta alimenta la memoria del preparatore (obiettivi + note)
+    if (richiesta) await updateTrainingMemory(userId, richiesta, 'richiesta piano');
 
     return NextResponse.json({ success: true, plan: saved });
   } catch (err) {

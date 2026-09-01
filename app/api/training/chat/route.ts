@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
-import { trainingChat, detectPain } from '@/lib/trainingPlanner';
+import { trainingChat, detectPain, updateTrainingMemory } from '@/lib/trainingPlanner';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -39,6 +39,15 @@ export async function POST(request: NextRequest) {
     }
 
     const text = await trainingChat(userId, clean);
+
+    // Memoria preparatore: ogni 6 messaggi utente distilla la conversazione in
+    // training_goals/training_notes (fire-and-forget, come il recap del Coach)
+    const userMsgs = clean.filter((m) => m.role === 'user');
+    if (userMsgs.length > 0 && userMsgs.length % 6 === 0) {
+      const recenti = userMsgs.slice(-6).map((m) => m.content).join('\n');
+      updateTrainingMemory(userId, recenti, 'chat').catch((e) => console.error('training memory recap:', e));
+    }
+
     return NextResponse.json({ response: text, painHold });
   } catch (err) {
     console.error('training/chat error:', err);
