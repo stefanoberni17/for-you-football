@@ -22,6 +22,8 @@ export default function SessionePage() {
   const [planId, setPlanId] = useState<string | null>(null);
   const [sessione, setSessione] = useState<PlanSession | null>(null);
   const [painHold, setPainHold] = useState(false);
+  const [faticaAlta, setFaticaAlta] = useState(false); // dal check-in di oggi
+  const [scarico, setScarico] = useState(false); // alleggerisci: −1 serie sugli esercizi
   const [alreadyDone, setAlreadyDone] = useState(false);
   const [phase, setPhase] = useState<Phase>('preview');
   const [descOpen, setDescOpen] = useState<number | null>(null); // indice item con descrizione aperta
@@ -39,6 +41,7 @@ export default function SessionePage() {
     if (res.ok) {
       const data = await res.json();
       setPainHold(data.painHold);
+      setFaticaAlta(data.faticaAlta === true);
       const s = (data.plan?.plan?.sedute || []).find((x: PlanSession) => x.giorno === giorno);
       setSessione(s || null);
       setPlanId(data.plan?.id || null);
@@ -89,6 +92,10 @@ export default function SessionePage() {
 
   // Player full-screen
   const storageKey = planId ? `trainingSession:${planId}#${giorno}` : undefined;
+  // Modalità scarico: −1 serie su tutto tranne gli EMOM (mai sotto 1)
+  const itemsEffettivi = scarico
+    ? sessione.items.map((it) => (it.schema === 'emom' ? it : { ...it, serie: Math.max(1, it.serie - 1) }))
+    : sessione.items;
 
   if (phase === 'playing') {
     // Altezza fissa + scroll interno al player: con min-h-screen lo scroll si
@@ -96,8 +103,8 @@ export default function SessionePage() {
     return (
       <main className="bg-app flex flex-col overflow-hidden" style={{ height: '100vh', paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
         <TrainingSessionPlayer
-          items={sessione.items}
-          titolo={sessione.titolo}
+          items={itemsEffettivi}
+          titolo={scarico ? `${sessione.titolo} (scarico)` : sessione.titolo}
           storageKey={storageKey}
           initialProgress={resume ? savedProgress : null}
           onComplete={() => { setSavedProgress(null); setResume(false); setPhase('feedback'); }}
@@ -170,6 +177,17 @@ export default function SessionePage() {
           <p className="text-xs text-red-200 bg-red-500/10 border border-red-500/30 rounded-xl px-3 py-2 mb-4">
             ⚠️ Hai un dolore segnalato: questa seduta fisica è in pausa. Sbloccala dal Campo quando è passato.
           </p>
+        )}
+        {faticaAlta && isFisica && !alreadyDone && !painHold && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2.5 mb-4">
+            <p className="text-xs text-amber-200 leading-relaxed">
+              😮‍💨 Il check-in di oggi segna fatica alta (riposo/recupero bassi). Meglio alleggerire: una serie in meno per esercizio.
+            </p>
+            <button onClick={() => setScarico(!scarico)}
+              className={`mt-2 text-xs font-bold rounded-lg px-3 py-1.5 border ${scarico ? 'bg-amber-500/25 border-amber-400/40 text-amber-100' : 'bg-surface-2 border-divider text-app'}`}>
+              {scarico ? '✓ Modalità scarico attiva (−1 serie) — tocca per annullare' : 'Alleggerisci la seduta (−1 serie)'}
+            </button>
+          </div>
         )}
 
         <div className="space-y-2 mb-5">

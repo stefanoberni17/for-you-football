@@ -41,6 +41,25 @@ export function scoreTest(testId: string, valore: number): { livello: TestLivell
   return { livello: livelloFromValore(test, valore), punteggio: punteggioFromValore(test, valore) };
 }
 
+// ─── Check-in giornaliero → adattamento carico ──────────────────────────────
+
+export interface CheckinSnapshot { fisico: number | null; sonno: number | null; recupero: number | null; mentale: number | null }
+
+/** Oggi la fatica è troppa? (check-in: fisico/recupero bassi o poco sonno) */
+export function isFaticaAlta(c: CheckinSnapshot | null): boolean {
+  if (!c) return false;
+  return (c.fisico !== null && c.fisico <= REGOLE.scaricoFisicoMax)
+    || (c.recupero !== null && c.recupero <= REGOLE.scaricoRecuperoMax)
+    || (c.sonno !== null && c.sonno < REGOLE.scaricoSonnoMinOre);
+}
+
+/** Periodo prolungato con poco sonno/recupero? (medie ultimi 7 giorni) */
+export function isPeriodoScarso(media: { sonno: number; recupero: number; giorni: number } | null): boolean {
+  if (!media || media.giorni < 3) return false; // servono almeno 3 check-in per parlare di periodo
+  return media.recupero <= REGOLE.periodoScaricoRecuperoMedia
+    || media.sonno < REGOLE.periodoScaricoSonnoMediaOre;
+}
+
 // ─── Scala skill (ladder) ────────────────────────────────────────────────────
 //
 // Il test base dà il punto di partenza; poi l'utente testa il max su ogni
