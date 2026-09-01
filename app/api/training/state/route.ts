@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         lastValue: rows.find((r) => r.test_id === t.id)?.valore ?? null,
         lastLevel: rows.find((r) => r.test_id === t.id)?.livello_calcolato ?? null,
       })),
-      amrapCircuit: buildAmrapCircuit(rows, gradini),
+      amrapCircuit: buildAmrapCircuit(rows),
       openTestSession: openSession || null,
       plan: lastPlan || null,
       completions,

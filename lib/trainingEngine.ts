@@ -74,42 +74,41 @@ export function fasciaFromResults(results: TestResultRow[]): FasciaLivello {
 
 export interface AmrapStation { area: string; esercizioId: string; nome: string; quantita: number; unita: string }
 
-export function buildAmrapCircuit(results: TestResultRow[], gradini: Record<string, number>): AmrapStation[] {
+// Le stazioni AMRAP usano GLI STESSI ESERCIZI dei test: le % (50/40/70) sono
+// calcolate sul massimale di quell'esercizio, non hanno senso su un gradino diverso.
+export function buildAmrapCircuit(results: TestResultRow[]): AmrapStation[] {
   const stations: AmrapStation[] = [];
   const push = latestResult(results, 'test-push');
   const pull = latestResult(results, 'test-pull');
   const core = latestResult(results, 'test-core');
   const lomb = latestResult(results, 'test-lombari');
 
-  const pick = (area: AreaForza, gradino: number) => {
-    const catena = ESERCIZI.filter((e) => e.area === area).sort((a, b) => a.gradino - b.gradino);
-    return catena.find((e) => e.gradino === gradino) || catena[0];
-  };
+  const ex = (id: string) => ESERCIZI.find((e) => e.id === id)!;
 
   if (push) {
-    let reps = Math.round(push.valore * REGOLE.amrapPushPct);
-    let gradino = gradini['spinta'] || 1;
-    if (reps < REGOLE.amrapPushMin && gradino > 1) { gradino -= 1; reps = REGOLE.amrapPushMin; } // discesa di gradino
-    reps = Math.min(REGOLE.amrapPushMax, Math.max(REGOLE.amrapPushMin, reps));
-    const e = pick('spinta', gradino);
+    const reps = Math.min(REGOLE.amrapPushMax, Math.max(REGOLE.amrapPushMin, Math.round(push.valore * REGOLE.amrapPushPct)));
+    const e = ex('push-2'); // piegamenti — l'esercizio del test
     stations.push({ area: 'spinta', esercizioId: e.id, nome: e.nome, quantita: reps, unita: 'reps' });
   }
   if (core) {
     const sec = Math.min(REGOLE.amrapHoldCapSec, Math.max(REGOLE.amrapHoldMinSec, Math.round(core.valore * REGOLE.amrapHoldPct)));
-    const e = pick('core', gradini['core'] || 1);
+    const e = ex('core-2'); // plank — l'esercizio del test
     stations.push({ area: 'core', esercizioId: e.id, nome: e.nome, quantita: sec, unita: 'secondi' });
   }
   if (pull) {
-    let reps = Math.round(pull.valore * REGOLE.amrapPullPct);
-    let gradino = gradini['tirata'] || 1;
-    if (reps < REGOLE.amrapPullMin && gradino > 1) { gradino -= 1; reps = REGOLE.amrapPullMin; }
-    reps = Math.min(REGOLE.amrapPullMax, Math.max(REGOLE.amrapPullMin, reps));
-    const e = pick('tirata', gradino);
-    stations.push({ area: 'tirata', esercizioId: e.id, nome: e.nome, quantita: reps, unita: 'reps' });
+    // Pull-up è l'esercizio del test; se il max è quasi zero si scende alla regressione (australian)
+    if (pull.valore >= 1) {
+      const reps = Math.min(REGOLE.amrapPullMax, Math.max(REGOLE.amrapPullMin, Math.round(pull.valore * REGOLE.amrapPullPct)));
+      const e = ex('pull-5');
+      stations.push({ area: 'tirata', esercizioId: e.id, nome: e.nome, quantita: reps, unita: 'reps' });
+    } else {
+      const e = ex('pull-1');
+      stations.push({ area: 'tirata', esercizioId: e.id, nome: e.nome, quantita: REGOLE.amrapPullMin, unita: 'reps' });
+    }
   }
   if (lomb) {
     const sec = Math.min(REGOLE.amrapHoldCapSec, Math.max(REGOLE.amrapHoldMinSec, Math.round(lomb.valore * REGOLE.amrapHoldPct)));
-    const e = pick('lombari', gradini['lombari'] || 1);
+    const e = ex('lomb-1'); // superman hold — l'esercizio del test
     stations.push({ area: 'lombari', esercizioId: e.id, nome: e.nome, quantita: sec, unita: 'secondi' });
   }
   return stations;

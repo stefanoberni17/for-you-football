@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { esercizioById } from '@/lib/trainingCatalog';
-import { ChevronRight, Pause, Play, X } from 'lucide-react';
+import { ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 
 interface PlanItem {
   esercizio_id: string;
@@ -47,6 +47,7 @@ export default function TrainingSessionPlayer({
   const [serieFatte, setSerieFatte] = useState(0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
   const [showVideo, setShowVideo] = useState(false);
+  const [showDesc, setShowDesc] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   useWakeLock(true);
 
@@ -77,6 +78,7 @@ export default function TrainingSessionPlayer({
     setRestLeft(null);
     setSerieFatte(0);
     setShowVideo(false);
+    setShowDesc(false);
     if (itemIdx + 1 >= items.length) onComplete();
     else setItemIdx(itemIdx + 1);
   };
@@ -127,6 +129,17 @@ export default function TrainingSessionPlayer({
           </p>
           {(item.nota || ex.note) && (
             <p className="text-sm text-muted mt-2 leading-relaxed">{item.nota || ex.note}</p>
+          )}
+          {ex.descrizione && (
+            <div className="mt-3">
+              <button onClick={() => setShowDesc(!showDesc)}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-forest-400">
+                <Info size={14} /> {showDesc ? 'Nascondi descrizione' : 'Come si esegue'}
+              </button>
+              {showDesc && (
+                <p className="text-sm text-muted mt-2 leading-relaxed bg-surface-2 border border-divider rounded-xl px-3.5 py-3">{ex.descrizione}</p>
+              )}
+            </div>
           )}
           {ex.videoUrl && (
             <div className="mt-3">
