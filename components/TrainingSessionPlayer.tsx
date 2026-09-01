@@ -32,28 +32,42 @@ function unitaLabel(unita: string, quantita: number): string {
  * recupero automatico tra le serie, video dimostrativo, note. Schermo sempre
  * acceso (wake lock). Al termine: feedback 3-tap gestito dal parent.
  */
+export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx' }
+
 export default function TrainingSessionPlayer({
   items,
   titolo,
   onComplete,
   onExit,
+  storageKey,
+  initialProgress,
 }: {
   items: PlanItem[];
   titolo: string;
   onComplete: () => void;
   onExit: () => void;
+  storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
+  initialProgress?: PlayerProgress | null;
 }) {
-  const [itemIdx, setItemIdx] = useState(0);
-  const [serieFatte, setSerieFatte] = useState(0);
+  const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
+  const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
-  const [lato, setLato] = useState<'dx' | 'sx'>('dx'); // esercizi perLato: prima destro, poi sinistro
+  const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const execRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const latoRef = useRef<'dx' | 'sx'>('dx');
+  const latoRef = useRef<'dx' | 'sx'>(initialProgress?.lato ?? 'dx');
   useWakeLock(true);
+
+  // Progresso persistito: se l'utente esce (schermo/app) può riprendere da qui
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ itemIdx, serieFatte, lato, savedAt: Date.now() }));
+    } catch { /* no-op */ }
+  }, [storageKey, itemIdx, serieFatte, lato]);
 
   const item = items[itemIdx];
   const ex = item ? esercizioById(item.esercizio_id) : undefined;
@@ -98,8 +112,12 @@ export default function TrainingSessionPlayer({
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
     setShowDesc(false);
-    if (itemIdx + 1 >= items.length) onComplete();
-    else setItemIdx(itemIdx + 1);
+    if (itemIdx + 1 >= items.length) {
+      if (storageKey) { try { localStorage.removeItem(storageKey); } catch { /* no-op */ } }
+      onComplete();
+    } else {
+      setItemIdx(itemIdx + 1);
+    }
   };
 
   const handleSerieDone = () => {
