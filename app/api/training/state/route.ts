@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
       rombo: buildRombo(rows),
       tests: TESTS.map((t) => ({
         id: t.id, nome: t.nome, unita: t.unita, protocollo: t.protocollo,
+        scelte: t.scelte ?? null,
         done: doneTestIds.has(t.id),
         lastValue: rows.find((r) => r.test_id === t.id)?.valore ?? null,
         lastLevel: rows.find((r) => r.test_id === t.id)?.livello_calcolato ?? null,
