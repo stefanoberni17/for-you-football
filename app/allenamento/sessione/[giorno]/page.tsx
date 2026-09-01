@@ -77,8 +77,10 @@ export default function SessionePage() {
 
   // Player full-screen
   if (phase === 'playing') {
+    // Altezza fissa + scroll interno al player: con min-h-screen lo scroll si
+    // appoggiava al body, che su PWA iOS si blocca (stesso bug risolto su /chat)
     return (
-      <main className="min-h-screen bg-app flex flex-col" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+      <main className="bg-app flex flex-col overflow-hidden" style={{ height: '100vh', paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
         <TrainingSessionPlayer
           items={sessione.items}
           titolo={sessione.titolo}
@@ -158,7 +160,7 @@ export default function SessionePage() {
                     <p className="text-xs text-faint">
                       {it.schema === 'emom'
                         ? `EMOM ${it.serie}' · ${it.quantita}/min`
-                        : `${it.serie}×${it.quantita}${ex.unita === 'secondi' ? '"' : ex.unita === 'minuti' ? "'" : ''} · rec ${it.recupero_sec}"`}
+                        : `${it.serie}×${it.quantita}${ex.unita === 'secondi' ? '"' : ex.unita === 'minuti' ? "'" : ''}${ex.perLato ? ' (dx+sx)' : ''} · rec ${it.recupero_sec}"`}
                     </p>
                   </div>
                   {ex.videoUrl && <span className="text-[10px] text-forest-400 font-bold shrink-0">▶ video</span>}

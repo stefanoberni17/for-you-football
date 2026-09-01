@@ -25,6 +25,7 @@ export interface TrainingExercise {
   videoUrl?: string;
   note?: string;
   descrizione?: string; // come si esegue: posizione, movimento, errori comuni
+  perLato?: boolean; // esecuzione sdoppiata dx/sx (un piede/braccio/occhio per volta)
 }
 
 // ─── Catene FISICA ───────────────────────────────────────────────────────────
@@ -35,10 +36,10 @@ export const ESERCIZI: TrainingExercise[] = [
   { id: 'push-2', nome: 'Piegamenti', area: 'spinta', gradino: 2, unita: 'reps', videoUrl: 'https://youtube.com/shorts/0SlsazXrDyI' , descrizione: "Mani poco più larghe delle spalle, corpo in linea dai talloni alla testa, addome attivo. Petto a terra e braccia distese in cima, gomiti a ~45° dal busto. Errore comune: bacino che cade o si alza." },
   { id: 'push-3', nome: 'Piegamenti arciere', area: 'spinta', gradino: 3, unita: 'reps' , descrizione: "Mani molto larghe: scendi spostando il peso su un braccio mentre l'altro si distende di lato. Alterna i lati. Il braccio di lavoro fa quasi tutto, l'altro guida." },
   { id: 'push-4', nome: 'Piegamenti arciere inclinati', area: 'spinta', gradino: 4, unita: 'reps' , descrizione: "Come l'arciere ma con le mani su un rialzo (panca/gradino): l'inclinazione riduce il carico e prepara il lavoro a un braccio con range completo." },
-  { id: 'push-5', nome: 'Piegamenti 1 braccio — negative', area: 'spinta', gradino: 5, unita: 'reps' , descrizione: "Un braccio dietro la schiena, piedi larghi: SOLO la discesa, lenta (4-5 secondi), poi rimettiti in posizione con due braccia. Costruisce la forza eccentrica per il piegamento a un braccio." },
-  { id: 'push-6', nome: 'Piegamenti 1 braccio inclinati', area: 'spinta', gradino: 6, unita: 'reps' , descrizione: "Piegamento a un braccio con le mani su un rialzo. Piedi molto larghi, corpo rigido, spalla lontana dall'orecchio. Scendi controllato, spingi senza ruotare il busto." },
-  { id: 'push-7', nome: 'Piegamenti 1 braccio orizzontali', area: 'spinta', gradino: 7, unita: 'reps' , descrizione: "Il piegamento a un braccio completo a terra. Piedi larghi, core durissimo, il busto resta parallelo al pavimento: se ruoti vistosamente, torna al gradino prima." },
-  { id: 'push-8', nome: 'Piegamenti 1 braccio declinati', area: 'spinta', gradino: 8, unita: 'reps', videoUrl: 'https://youtube.com/shorts/Lbw-eJf6Jn4' , descrizione: "Piegamento a un braccio con i piedi su un rialzo: più carico sulla spalla. Solo con il gradino precedente pulito." },
+  { id: 'push-5', nome: 'Piegamenti 1 braccio — negative', area: 'spinta', gradino: 5, unita: 'reps', perLato: true , descrizione: "Un braccio dietro la schiena, piedi larghi: SOLO la discesa, lenta (4-5 secondi), poi rimettiti in posizione con due braccia. Costruisce la forza eccentrica per il piegamento a un braccio." },
+  { id: 'push-6', nome: 'Piegamenti 1 braccio inclinati', area: 'spinta', gradino: 6, unita: 'reps', perLato: true , descrizione: "Piegamento a un braccio con le mani su un rialzo. Piedi molto larghi, corpo rigido, spalla lontana dall'orecchio. Scendi controllato, spingi senza ruotare il busto." },
+  { id: 'push-7', nome: 'Piegamenti 1 braccio orizzontali', area: 'spinta', gradino: 7, unita: 'reps', perLato: true , descrizione: "Il piegamento a un braccio completo a terra. Piedi larghi, core durissimo, il busto resta parallelo al pavimento: se ruoti vistosamente, torna al gradino prima." },
+  { id: 'push-8', nome: 'Piegamenti 1 braccio declinati', area: 'spinta', gradino: 8, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/shorts/Lbw-eJf6Jn4' , descrizione: "Piegamento a un braccio con i piedi su un rialzo: più carico sulla spalla. Solo con il gradino precedente pulito." },
   // Tirata (pull) — richiede sbarra
   { id: 'pull-1', nome: 'Australian pull-up ginocchia piegate', area: 'tirata', gradino: 1, unita: 'reps' , descrizione: "Sotto una sbarra bassa (o un tavolo robusto), ginocchia piegate e piedi a terra: tira il petto alla sbarra tenendo il corpo in linea, scendi controllato." },
   { id: 'pull-2', nome: 'Australian pull-up gambe tese', area: 'tirata', gradino: 2, unita: 'reps' , descrizione: "Come sopra ma con le gambe tese e i talloni a terra: più corpo da tirare. Scapole attive, bacino in linea." },
@@ -48,13 +49,13 @@ export const ESERCIZI: TrainingExercise[] = [
   { id: 'pull-6', nome: 'Pull-up presa larga', area: 'tirata', gradino: 6, unita: 'reps' , descrizione: "Presa ben oltre le spalle: più lavoro di dorsali, meno di braccia. Range completo, discesa controllata." },
   { id: 'pull-7', nome: 'Archer pull-up', area: 'tirata', gradino: 7, unita: 'reps' , descrizione: "Un braccio tira, l'altro resta teso di lato sulla sbarra a guidare. Sali verso il braccio di lavoro. Alterna i lati." },
   { id: 'pull-8', nome: 'Typewriter / full moon', area: 'tirata', gradino: 8, unita: 'reps' , descrizione: "Sali da un lato (archer), trasla il mento lungo la sbarra fino all'altro braccio e scendi da lì. Fluido, senza cadere nel mezzo." },
-  { id: 'pull-9', nome: 'One-arm pull-up assistito', area: 'tirata', gradino: 9, unita: 'reps' , descrizione: "Un braccio sulla sbarra, l'altro afferra il polso o un asciugamano appeso: riduce gradualmente l'aiuto verso il one-arm." },
-  { id: 'pull-10', nome: 'One-arm pull-up', area: 'tirata', gradino: 10, unita: 'reps' , descrizione: "La trazione a un braccio completa. Solo con i gradini precedenti consolidati: spalla attiva, niente strattoni." },
+  { id: 'pull-9', nome: 'One-arm pull-up assistito', area: 'tirata', gradino: 9, unita: 'reps', perLato: true , descrizione: "Un braccio sulla sbarra, l'altro afferra il polso o un asciugamano appeso: riduce gradualmente l'aiuto verso il one-arm." },
+  { id: 'pull-10', nome: 'One-arm pull-up', area: 'tirata', gradino: 10, unita: 'reps', perLato: true , descrizione: "La trazione a un braccio completa. Solo con i gradini precedenti consolidati: spalla attiva, niente strattoni." },
   // Core
   { id: 'core-1', nome: 'Plank sulle ginocchia', area: 'core', gradino: 1, unita: 'secondi' , descrizione: "Gomiti sotto le spalle, ginocchia a terra, corpo in linea dalle ginocchia alla testa. Addome e glutei attivi, niente affossamento lombare." },
   { id: 'core-2', nome: 'Plank', area: 'core', gradino: 2, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/MdrinUXALJQ' , descrizione: "Gomiti sotto le spalle, piedi a terra, corpo in linea dai talloni alla testa. Spingi i gomiti nel pavimento, addome duro. Se il bacino cade, la serie è finita." },
   { id: 'core-3', nome: 'Plank a braccia tese, mani avanti (leva lunga)', area: 'core', gradino: 3, unita: 'secondi' , descrizione: "Plank a braccia tese, poi cammina con le mani sempre più avanti rispetto alle spalle: più la leva si allunga, più il core lavora. Fermati dove tieni la forma." },
-  { id: 'core-4', nome: 'Plank con braccio e gamba opposti sollevati', area: 'core', gradino: 4, unita: 'secondi' , descrizione: "Dal plank, solleva un braccio e la gamba opposta e TIENI la posizione senza ruotare il bacino. Metà tenuta per lato." },
+  { id: 'core-4', nome: 'Plank con braccio e gamba opposti sollevati', area: 'core', gradino: 4, unita: 'secondi', perLato: true , descrizione: "Dal plank, solleva un braccio e la gamba opposta e TIENI la posizione senza ruotare il bacino. Metà tenuta per lato." },
   { id: 'core-5', nome: 'Hollow hold ginocchia piegate', area: 'core', gradino: 5, unita: 'secondi' , descrizione: "Sdraiato a pancia in su: lombari INCOLLATE a terra, spalle e gambe sollevate, ginocchia piegate. Se le lombari si staccano, piega di più le ginocchia." },
   { id: 'core-6', nome: 'Hollow hold', area: 'core', gradino: 6, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/zTiwvx20mYc' , descrizione: "Come sopra ma con gambe tese e braccia dietro la testa: corpo a banana, lombari sempre a terra. La posizione chiave della ginnastica." },
   { id: 'core-7', nome: 'Hollow rocks', area: 'core', gradino: 7, unita: 'reps' , descrizione: "Dalla hollow, dondola avanti e indietro TENENDO la forma rigida: il movimento nasce dal dondolio, non da spinte. 1 dondolio = 1 rep." },
@@ -65,33 +66,33 @@ export const ESERCIZI: TrainingExercise[] = [
   { id: 'lomb-3', nome: 'Swimmer', area: 'lombari', gradino: 3, unita: 'secondi' , descrizione: "Dal superman, piccoli battiti alternati di braccia e gambe come nuotando. Il busto resta sollevato per tutta la durata." },
   { id: 'lomb-4', nome: 'Arch hold', area: 'lombari', gradino: 4, unita: 'secondi' , descrizione: "A pancia in giù, braccia lungo i fianchi o avanti: massima estensione tenuta, corpo ad arco. Più intensa del superman." },
   { id: 'lomb-5', nome: 'Arch rocks', area: 'lombari', gradino: 5, unita: 'reps' , descrizione: "Dall'arch hold, dondola avanti e indietro tenendo il corpo rigido in estensione. 1 dondolio = 1 rep." },
-  { id: 'lomb-6', nome: 'Ponte glutei a una gamba', area: 'lombari', gradino: 6, unita: 'reps', videoUrl: 'https://youtube.com/shorts/FQPEqDy8IBI' , descrizione: "A pancia in su, un piede a terra e l'altra gamba tesa: spingi il bacino in alto col tallone, stringi il gluteo in cima, scendi controllato. Metà reps per gamba." },
+  { id: 'lomb-6', nome: 'Ponte glutei a una gamba', area: 'lombari', gradino: 6, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/shorts/FQPEqDy8IBI' , descrizione: "A pancia in su, un piede a terra e l'altra gamba tesa: spingi il bacino in alto col tallone, stringi il gluteo in cima, scendi controllato. Metà reps per gamba." },
   // Laterale / obliqui — nei circuiti, 1-2 per volta, non in tutte le sedute
-  { id: 'lat-1', nome: 'Plank laterale sulle ginocchia', area: 'laterale', gradino: 1, unita: 'secondi' , descrizione: "Su un gomito e le ginocchia, corpo in linea: solleva il bacino e tieni. Il fianco lavora. Metà tenuta per lato." },
-  { id: 'lat-2', nome: 'Plank laterale', area: 'laterale', gradino: 2, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/MdrinUXALJQ' , descrizione: "Su un gomito e il bordo esterno del piede, corpo in linea dalla testa ai piedi: bacino alto, spalla lontana dall'orecchio. Metà tenuta per lato." },
-  { id: 'lat-3', nome: 'Plank laterale con abduzione gamba', area: 'laterale', gradino: 3, unita: 'secondi' , descrizione: "Dal plank laterale, solleva anche la gamba libera verso l'alto e tieni: fianco e anca lavorano insieme." },
-  { id: 'lat-4', nome: 'Copenhagen plank ginocchio piegato', area: 'laterale', gradino: 4, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/9pLQwT8RuUc', note: 'Impegnativo sugli adduttori: mai il giorno prima della partita.' , descrizione: "Fianco a una panca/sedia: il GINOCCHIO della gamba sopra appoggia sul rialzo, corpo in linea sospeso. Adduttori sotto carico: entra graduale, mai a freddo." },
-  { id: 'lat-5', nome: 'Copenhagen plank gamba tesa', area: 'laterale', gradino: 5, unita: 'secondi', note: 'Mai il giorno prima della partita.' , descrizione: "Come sopra ma con il PIEDE (gamba tesa) sul rialzo: molto più carico sugli adduttori. Solo con il gradino precedente pulito." },
+  { id: 'lat-1', nome: 'Plank laterale sulle ginocchia', area: 'laterale', gradino: 1, unita: 'secondi', perLato: true , descrizione: "Su un gomito e le ginocchia, corpo in linea: solleva il bacino e tieni. Il fianco lavora. Metà tenuta per lato." },
+  { id: 'lat-2', nome: 'Plank laterale', area: 'laterale', gradino: 2, unita: 'secondi', perLato: true, videoUrl: 'https://youtube.com/shorts/MdrinUXALJQ' , descrizione: "Su un gomito e il bordo esterno del piede, corpo in linea dalla testa ai piedi: bacino alto, spalla lontana dall'orecchio. Metà tenuta per lato." },
+  { id: 'lat-3', nome: 'Plank laterale con abduzione gamba', area: 'laterale', gradino: 3, unita: 'secondi', perLato: true , descrizione: "Dal plank laterale, solleva anche la gamba libera verso l'alto e tieni: fianco e anca lavorano insieme." },
+  { id: 'lat-4', nome: 'Copenhagen plank ginocchio piegato', area: 'laterale', gradino: 4, unita: 'secondi', perLato: true, videoUrl: 'https://youtube.com/shorts/9pLQwT8RuUc', note: 'Impegnativo sugli adduttori: mai il giorno prima della partita.' , descrizione: "Fianco a una panca/sedia: il GINOCCHIO della gamba sopra appoggia sul rialzo, corpo in linea sospeso. Adduttori sotto carico: entra graduale, mai a freddo." },
+  { id: 'lat-5', nome: 'Copenhagen plank gamba tesa', area: 'laterale', gradino: 5, unita: 'secondi', perLato: true, note: 'Mai il giorno prima della partita.' , descrizione: "Come sopra ma con il PIEDE (gamba tesa) sul rialzo: molto più carico sugli adduttori. Solo con il gradino precedente pulito." },
   { id: 'lat-6', nome: 'Russian twist / rotazioni controllate', area: 'laterale', gradino: 6, unita: 'reps' , descrizione: "Seduto, busto inclinato indietro, piedi a terra (o sollevati per aumentare): ruota il busto controllando il movimento da un lato all'altro. 1 rotazione completa = 1 rep. Niente strappi." },
   // Fascia — piede/caviglia (binario parallelo, prevenzione)
   { id: 'fascia-towel-curls', nome: 'Towel curls', area: 'fascia', gradino: 1, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/qW8YXLmdke0' , descrizione: "In piedi, avampiede su un asciugamano: 'arriccia' le dita come per accorciare la pianta del piede, trascinando l'asciugamano. Lento e completo." },
   { id: 'fascia-toes-updown', nome: 'Toes up/down', area: 'fascia', gradino: 1, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/1_TtKlvDeqk' , descrizione: "In piedi: solleva solo le dita tenendo l'avampiede a terra, poi solo l'avampiede tenendo le dita. Controllo, non velocità." },
   { id: 'fascia-toes-updown-2', nome: 'Toes up/down 2', area: 'fascia', gradino: 1, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/JctaRd1xxng' },
   { id: 'fascia-toe-bounces', nome: 'Toe bounces', area: 'fascia', gradino: 2, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/rleHrcL6teA' , descrizione: "Saltelli piccoli e rapidi sull'avampiede, tallone che NON tocca terra, caviglia rigida come una molla. Rimbalzo, non salto." },
-  { id: 'fascia-towel-slrdl', nome: 'FY Towel SLRDL', area: 'fascia', gradino: 2, unita: 'reps', videoUrl: 'https://youtube.com/shorts/_0TsEKkUqGw' , descrizione: "In equilibrio su una gamba con l'avampiede che tiene un asciugamano: inclinati avanti col busto (schiena dritta) e torna su. Il piede lavora per stabilizzare." },
-  { id: 'fascia-towel-8', nome: 'FY Towel 8', area: 'fascia', gradino: 2, unita: 'reps', videoUrl: 'https://youtube.com/shorts/V805vZi3rLs' , descrizione: "Sul posto, su una gamba: disegna un 8 col piede libero mentre il piede a terra (su asciugamano) stabilizza." },
-  { id: 'fascia-sl-toe-bounces', nome: 'SL toe bounces', area: 'fascia', gradino: 3, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/V5SVWUH1_50' , descrizione: "Toe bounces su una gamba sola: stessa molla, doppio lavoro di caviglia e piede. Metà durata per lato." },
-  { id: 'fascia-iso-runner', nome: 'Iso runner', area: 'fascia', gradino: 3, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/nvENLHoWSR4' , descrizione: "Posizione di affondo/corsa tenuta isometrica: piede avanti carico, caviglia e piede stabilizzano. Metà tenuta per lato." },
-  { id: 'fascia-sl-runner', nome: 'SL runner (towel)', area: 'fascia', gradino: 3, unita: 'secondi', videoUrl: 'https://youtube.com/shorts/_0TsEKkUqGw' , descrizione: "Su una gamba (avampiede su asciugamano), l'altra si muove avanti-dietro come nella corsa: il piede a terra lavora per non perdere l'equilibrio." },
+  { id: 'fascia-towel-slrdl', nome: 'FY Towel SLRDL', area: 'fascia', gradino: 2, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/shorts/_0TsEKkUqGw' , descrizione: "In equilibrio su una gamba con l'avampiede che tiene un asciugamano: inclinati avanti col busto (schiena dritta) e torna su. Il piede lavora per stabilizzare." },
+  { id: 'fascia-towel-8', nome: 'FY Towel 8', area: 'fascia', gradino: 2, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/shorts/V805vZi3rLs' , descrizione: "Sul posto, su una gamba: disegna un 8 col piede libero mentre il piede a terra (su asciugamano) stabilizza." },
+  { id: 'fascia-sl-toe-bounces', nome: 'SL toe bounces', area: 'fascia', gradino: 3, unita: 'secondi', perLato: true, videoUrl: 'https://youtube.com/shorts/V5SVWUH1_50' , descrizione: "Toe bounces su una gamba sola: stessa molla, doppio lavoro di caviglia e piede. Metà durata per lato." },
+  { id: 'fascia-iso-runner', nome: 'Iso runner', area: 'fascia', gradino: 3, unita: 'secondi', perLato: true, videoUrl: 'https://youtube.com/shorts/nvENLHoWSR4' , descrizione: "Posizione di affondo/corsa tenuta isometrica: piede avanti carico, caviglia e piede stabilizzano. Metà tenuta per lato." },
+  { id: 'fascia-sl-runner', nome: 'SL runner (towel)', area: 'fascia', gradino: 3, unita: 'secondi', perLato: true, videoUrl: 'https://youtube.com/shorts/_0TsEKkUqGw' , descrizione: "Su una gamba (avampiede su asciugamano), l'altra si muove avanti-dietro come nella corsa: il piede a terra lavora per non perdere l'equilibrio." },
   // Tecnica — Palleggi
   { id: 'pall-1', nome: 'Palleggi collo alternato', area: 'palleggi', gradino: 1, unita: 'minuti' , descrizione: "Palleggia alternando i due collo-piede. Caviglia bloccata, punta leggermente verso l'alto, palla sotto l'altezza del petto. Se cade, riparti e continua il conteggio cumulativo." },
-  { id: 'pall-2', nome: 'Palleggi collo solo sx / solo dx', area: 'palleggi', gradino: 2, unita: 'minuti' , descrizione: "Solo un piede per volta: prima tutte le reps col sinistro, poi col destro. Il piede debole avrà bisogno di più pazienza — è il punto." },
+  { id: 'pall-2', nome: 'Palleggi collo solo sx / solo dx', area: 'palleggi', gradino: 2, unita: 'minuti', perLato: true , descrizione: "Solo un piede per volta: prima tutte le reps col sinistro, poi col destro. Il piede debole avrà bisogno di più pazienza — è il punto." },
   { id: 'pall-3', nome: 'Palleggi interno (+ solo sx/dx)', area: 'palleggi', gradino: 3, unita: 'minuti' , descrizione: "Palleggi con l'interno del piede: tocchi corti e palla bassa. Alterna e poi isola sx/dx." },
   { id: 'pall-4', nome: 'Palleggi piramide / combo', area: 'palleggi', gradino: 4, unita: 'minuti', note: 'Collo sx, coscia sx, testa, coscia dx, collo dx = 1 ripetizione.' , descrizione: "La sequenza: collo sx → coscia sx → testa → coscia dx → collo dx = 1 ripetizione. Fluida, senza fretta tra i tocchi." },
   { id: 'pall-5', nome: 'Palleggi sotto il ginocchio / sopra il bacino', area: 'palleggi', gradino: 5, unita: 'minuti' , descrizione: "Controllo dell'altezza: una serie con OGNI tocco sotto il ginocchio (tocchi rapidi), una con ogni tocco sopra il bacino (tocchi dosati)." },
-  { id: 'pall-6', nome: 'Palleggi solo un piede / gamba sospesa', area: 'palleggi', gradino: 6, unita: 'minuti' , descrizione: "Palleggia con un solo piede senza mai appoggiare a terra la gamba che palleggia (gamba sospesa). Equilibrio e dosaggio." },
+  { id: 'pall-6', nome: 'Palleggi solo un piede / gamba sospesa', area: 'palleggi', gradino: 6, unita: 'minuti', perLato: true , descrizione: "Palleggia con un solo piede senza mai appoggiare a terra la gamba che palleggia (gamba sospesa). Equilibrio e dosaggio." },
   { id: 'pall-7', nome: 'Palleggi solo testa', area: 'palleggi', gradino: 7, unita: 'minuti' , descrizione: "Solo di testa: fronte, ginocchia morbide, occhi sulla palla. Piccoli aggiustamenti coi passi." },
-  { id: 'pall-8', nome: 'Palleggi con occhio chiuso (sx/dx)', area: 'palleggi', gradino: 8, unita: 'minuti' , descrizione: "Palleggia con un occhio chiuso (poi cambia): la percezione di profondità cambia, i tocchi devono adattarsi. 1 minuto per occhio." },
+  { id: 'pall-8', nome: 'Palleggi con occhio chiuso (sx/dx)', area: 'palleggi', gradino: 8, unita: 'minuti', perLato: true , descrizione: "Palleggia con un occhio chiuso (poi cambia): la percezione di profondità cambia, i tocchi devono adattarsi. 1 minuto per occhio." },
   { id: 'pall-9', nome: 'Palleggi palla + pallina da tennis', area: 'palleggi', gradino: 9, unita: 'minuti' , descrizione: "Alterna palla normale e pallina da tennis: la pallina non perdona tocchi sporchi. Torna alla palla e sembrerà enorme." },
   { id: 'pall-10', nome: 'Palleggi avanzati (cinesino) / freestyle 3 conetti', area: 'palleggi', gradino: 10, unita: 'minuti' , descrizione: "Palleggi avanzati: lancia la palla in alto, raccogli/riposiziona un cinesino e riprendi il palleggio (1 rep). Oppure freestyle attorno a 3 conetti senza far cadere la palla." },
   // Tecnica — Muro
@@ -107,9 +108,9 @@ export const ESERCIZI: TrainingExercise[] = [
   // Tecnica — Conduzione / Ball mastery (servono cinesini)
   { id: 'cond-1', nome: 'Slalom solo interno', area: 'conduzione', gradino: 1, unita: 'reps' , descrizione: "7-8 cinesini vicini (due piedi tra ognuno): slalom solo con l'interno dei piedi. Tocco pulito, testa che si alza man mano. 1 andata+ritorno + allungo di 10m = 1 rep." },
   { id: 'cond-2', nome: 'Slalom solo esterno', area: 'conduzione', gradino: 2, unita: 'reps' , descrizione: "Stesso slalom ma solo con l'esterno: più velocità del gesto, palla vicina." },
-  { id: 'cond-3', nome: 'Slalom solo dx / solo sx', area: 'conduzione', gradino: 3, unita: 'reps' , descrizione: "Slalom con un piede solo (tutto dx, poi tutto sx): visione periferica, sguardo 2-3 metri avanti, non sulla palla." },
+  { id: 'cond-3', nome: 'Slalom solo dx / solo sx', area: 'conduzione', gradino: 3, unita: 'reps', perLato: true , descrizione: "Slalom con un piede solo (tutto dx, poi tutto sx): visione periferica, sguardo 2-3 metri avanti, non sulla palla." },
   { id: 'cond-4', nome: 'Slalom interno + suola', area: 'conduzione', gradino: 4, unita: 'reps' , descrizione: "Slalom alternando interno e suola: la suola frena e cambia linea, l'interno spinge." },
-  { id: 'cond-5', nome: 'Conduzione 10m + cambio direzione (suola/esterno/Cruyff)', area: 'conduzione', gradino: 5, unita: 'reps' , descrizione: "Conduci palla 10 metri al 60-80% e cambia direzione a 180°: prima con la suola, poi con l'esterno, poi col Cruyff turn. 5 reps per piede e per tipo di cambio." },
+  { id: 'cond-5', nome: 'Conduzione 10m + cambio direzione (suola/esterno/Cruyff)', area: 'conduzione', gradino: 5, unita: 'reps', perLato: true , descrizione: "Conduci palla 10 metri al 60-80% e cambia direzione a 180°: prima con la suola, poi con l'esterno, poi col Cruyff turn. 5 reps per piede e per tipo di cambio." },
   { id: 'cond-6', nome: 'Box dribbling bassa intensità', area: 'conduzione', gradino: 6, unita: 'minuti' , descrizione: "In un quadrato di 4 cinesini (2-3 metri di lato): conduci, girati, dribbla a bassa intensità, prova finte di corpo. La palla non esce mai dal box." },
   { id: 'cond-7', nome: 'Box dribbling intensità alternata', area: 'conduzione', gradino: 7, unita: 'minuti' , descrizione: "Stesso box ma alternando: 2 minuti a bassa intensità, 1 a media/alta. Il ritmo cambia, il controllo resta." },
   { id: 'cond-8', nome: 'Box dribbling + visione (colori)', area: 'conduzione', gradino: 8, unita: 'minuti' , descrizione: "Box dribbling con l'esercizio dei colori (telefono su un supporto): guardi lo schermo, la palla resta incollata al piede. Conduzione a testa alta." },
@@ -133,22 +134,24 @@ export interface TrainingTest {
   soglie: { intermedio: number; avanzato: number; pro: number };
   // gradino d'ingresso in catena per livello del test
   entryMap?: Record<TestLivello, number>;
+  // esercizio della catena su cui si misura il test (punto di partenza della scala skill)
+  esercizioId?: string;
 }
 
 export const TESTS: TrainingTest[] = [
-  { id: 'test-push', nome: 'Max piegamenti', area: 'spinta', unita: 'reps',
+  { id: 'test-push', nome: 'Max piegamenti', area: 'spinta', unita: 'reps', esercizioId: 'push-2',
     protocollo: 'Piegamenti completi: petto a terra, braccia distese. Una serie a cedimento, forma pulita.',
     soglie: { intermedio: 15, avanzato: 30, pro: 40 },
     entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } }, // entry conservativa v0.2
-  { id: 'test-pull', nome: 'Max pull-up', area: 'tirata', unita: 'reps',
+  { id: 'test-pull', nome: 'Max pull-up', area: 'tirata', unita: 'reps', esercizioId: 'pull-5',
     protocollo: 'Pull-up completi dalla sospensione, mento sopra la sbarra. Se 0: segna 0 (partirai dalle australian).',
     soglie: { intermedio: 2, avanzato: 8, pro: 12 },
     entryMap: { base: 1, intermedio: 4, avanzato: 5, pro: 6 } }, // entry conservativa v0.2
-  { id: 'test-core', nome: 'Plank frontale max', area: 'core', unita: 'secondi',
+  { id: 'test-core', nome: 'Plank frontale max', area: 'core', unita: 'secondi', esercizioId: 'core-2',
     protocollo: 'Plank sui gomiti, corpo in linea. Tieni finché la forma resta pulita.',
     soglie: { intermedio: 30, avanzato: 60, pro: 120 },
     entryMap: { base: 1, intermedio: 2, avanzato: 4, pro: 6 } }, // entry conservativa v0.2
-  { id: 'test-lombari', nome: 'Superman hold max', area: 'lombari', unita: 'secondi',
+  { id: 'test-lombari', nome: 'Superman hold max', area: 'lombari', unita: 'secondi', esercizioId: 'lomb-1',
     protocollo: 'A pancia in giù, braccia e gambe sollevate. Tieni finché la forma resta pulita.',
     // ⚠️ soglie provvisorie (uniche non ancora date da Ste — da tarare)
     soglie: { intermedio: 30, avanzato: 60, pro: 90 },
@@ -172,7 +175,7 @@ export const TESTS: TrainingTest[] = [
     soglie: { intermedio: 60, avanzato: 90, pro: 120 },
     entryMap: { base: 1, intermedio: 3, avanzato: 5, pro: 7 } },
   { id: 'test-amrap', nome: 'AMRAP 20 minuti', unita: 'giri',
-    protocollo: 'Circuito: push + core + pull + lombari con l\'esercizio del tuo gradino e le ripetizioni calcolate. Conta i giri completi in 20 minuti. Richiede la sbarra.',
+    protocollo: 'Circuito: push + core + pull + lombari con gli esercizi scelti dalla tua scala skill e le quantità calcolate. Conta i giri completi in 20 minuti. Richiede la sbarra.',
     // soglie = giri: base ≤6, intermedio ≤8, avanzato ≤10, pro >10
     soglie: { intermedio: 7, avanzato: 9, pro: 11 } },
 ];
@@ -233,11 +236,14 @@ export const REGOLE = {
   feedbackDuroConsecutivi: 3,
   feedbackDuroRiduzione: 0.10,
   rientroRitestSettimane: 3,
-  // AMRAP — percentuali sul max del test
-  amrapPushPct: 0.5,  amrapPushMin: 3,  amrapPushMax: 15,
-  amrapPullPct: 0.4,  amrapPullMin: 1,  amrapPullMax: 5,
+  // AMRAP — 40% del max sull'esercizio scelto dalla scala skill (tenute 70%, cap 30")
+  amrapPushPct: 0.4,  amrapPushMin: 8,
+  amrapPullPct: 0.4,  amrapPullMin: 4,
   amrapHoldPct: 0.7,  amrapHoldMinSec: 15, amrapHoldCapSec: 30,
   amrapDurataMin: 20,
+  // Scala skill — soglia "regge il ciclo": l'esercizio AMRAP è il più avanzato
+  // della catena su cui l'utente supera la soglia (reps per push/pull, secondi tenute)
+  ladderMinPushReps: 20, ladderMinPullReps: 10, ladderMinHoldSec: 60,
 } as const;
 
 // ─── Rombo card — 7 punte ───────────────────────────────────────────────────

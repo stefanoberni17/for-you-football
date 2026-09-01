@@ -46,17 +46,34 @@ export default function TrainingSessionPlayer({
   const [itemIdx, setItemIdx] = useState(0);
   const [serieFatte, setSerieFatte] = useState(0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
+  const [lato, setLato] = useState<'dx' | 'sx'>('dx'); // esercizi perLato: prima destro, poi sinistro
+  const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const execRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const latoRef = useRef<'dx' | 'sx'>('dx');
   useWakeLock(true);
 
   const item = items[itemIdx];
   const ex = item ? esercizioById(item.esercizio_id) : undefined;
   const isEmom = item?.schema === 'emom';
   const totalSerie = isEmom ? item.serie : item?.serie ?? 0; // EMOM: serie = minuti
+  const isPerLato = !isEmom && ex?.perLato === true;
+  // Per lato: metà quantità per ogni lato (reps o secondi)
+  const quantitaLato = isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
+  const isTimed = !isEmom && (ex?.unita === 'secondi' || ex?.unita === 'minuti');
+  const execSeconds = ex?.unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
 
-  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
+  useEffect(() => () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (execRef.current) clearInterval(execRef.current);
+  }, []);
+
+  const stopExec = () => {
+    if (execRef.current) clearInterval(execRef.current);
+    setExecLeft(null);
+  };
 
   const startRest = (sec: number) => {
     setRestLeft(sec);
@@ -75,8 +92,10 @@ export default function TrainingSessionPlayer({
 
   const nextItem = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    stopExec();
     setRestLeft(null);
     setSerieFatte(0);
+    setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
     setShowDesc(false);
     if (itemIdx + 1 >= items.length) onComplete();
@@ -85,11 +104,38 @@ export default function TrainingSessionPlayer({
 
   const handleSerieDone = () => {
     try { navigator.vibrate?.(30); } catch { /* no-op */ }
+    stopExec();
+    // Esercizio per lato: il primo tap chiude il destro, si passa al sinistro
+    if (isPerLato && latoRef.current === 'dx') {
+      setLato('sx'); latoRef.current = 'sx';
+      return;
+    }
+    setLato('dx'); latoRef.current = 'dx';
     const next = serieFatte + 1;
     setSerieFatte(next);
     if (next >= totalSerie) nextItem();
     else startRest(item.recupero_sec);
   };
+
+  const startExecTimer = () => {
+    stopExec();
+    setExecLeft(execSeconds);
+    execRef.current = setInterval(() => {
+      setExecLeft((prev) => {
+        if (prev === null || prev <= 1) {
+          if (execRef.current) clearInterval(execRef.current);
+          try { navigator.vibrate?.([200, 100, 200]); } catch { /* no-op */ }
+          // fine tenuta → chiude lato/serie da solo
+          setTimeout(() => handleSerieDoneRef.current(), 0);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+  // handleSerieDone letto via ref dal callback del timer (evita closure stantia)
+  const handleSerieDoneRef = useRef(handleSerieDone);
+  useEffect(() => { handleSerieDoneRef.current = handleSerieDone; });
 
   if (!item || !ex) {
     return (
@@ -118,14 +164,16 @@ export default function TrainingSessionPlayer({
         ))}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-6">
+      <div className="flex-1 overflow-y-auto px-4 pb-tabbar">
         {/* Esercizio corrente */}
         <div className="bg-surface rounded-2xl p-5 border border-divider mb-4">
           <h2 className="text-xl font-bold text-app leading-snug">{ex.nome}</h2>
           <p className="text-forest-400 font-semibold mt-1">
             {isEmom
               ? `EMOM ${item.serie}' — ${item.quantita} reps al minuto`
-              : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)} · recupero ${item.recupero_sec}"`}
+              : isPerLato
+                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx) · recupero ${item.recupero_sec}"`
+                : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)} · recupero ${item.recupero_sec}"`}
           </p>
           {(item.nota || ex.note) && (
             <p className="text-sm text-muted mt-2 leading-relaxed">{item.nota || ex.note}</p>
@@ -171,11 +219,32 @@ export default function TrainingSessionPlayer({
         ) : (
           <div className="text-center">
             {!isEmom && (
-              <p className="text-sm text-muted mb-3">Serie {Math.min(serieFatte + 1, totalSerie)} di {totalSerie}</p>
+              <p className="text-sm text-muted mb-3">
+                Serie {Math.min(serieFatte + 1, totalSerie)} di {totalSerie}
+                {isPerLato && <span className="font-semibold text-app"> — lato {lato === 'dx' ? 'destro' : 'sinistro'}</span>}
+              </p>
+            )}
+            {isTimed && (
+              execLeft !== null ? (
+                <div className="bg-surface-2 rounded-2xl py-5 mb-3 border border-divider">
+                  <p className="text-[11px] uppercase tracking-widest text-faint mb-1">Esecuzione{isPerLato ? ` — ${lato === 'dx' ? 'destro' : 'sinistro'}` : ''}</p>
+                  <p className="text-5xl font-bold text-app tabular-nums">
+                    {execLeft >= 60 ? `${Math.floor(execLeft / 60)}:${String(execLeft % 60).padStart(2, '0')}` : `${execLeft}"`}
+                  </p>
+                  <button onClick={stopExec} className="text-xs text-faint mt-2">Ferma il timer</button>
+                </div>
+              ) : (
+                <button onClick={startExecTimer}
+                  className="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-forest-400 bg-forest-500/10 border border-forest-500/30 rounded-xl px-4 py-2.5">
+                  <Play size={14} /> Inizia timer esercizio ({unitaLabel(ex.unita, quantitaLato)})
+                </button>
+              )
             )}
             <button onClick={isEmom ? nextItem : handleSerieDone}
               className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg shadow-sm active:scale-[0.99] transition-all">
-              {isEmom ? 'EMOM finito → avanti' : serieFatte + 1 >= totalSerie ? '✓ Ultima serie fatta' : '✓ Serie fatta'}
+              {isEmom ? 'EMOM finito → avanti'
+                : isPerLato ? (lato === 'dx' ? '✓ Lato destro fatto' : `✓ Lato sinistro fatto${serieFatte + 1 >= totalSerie ? ' (ultima serie)' : ''}`)
+                : serieFatte + 1 >= totalSerie ? '✓ Ultima serie fatta' : '✓ Serie fatta'}
             </button>
             <button onClick={nextItem}
               className="mt-3 inline-flex items-center gap-1 text-sm text-faint">

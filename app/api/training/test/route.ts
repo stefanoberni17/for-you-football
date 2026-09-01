@@ -3,17 +3,21 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { scoreTest } from '@/lib/trainingEngine';
-import { testById } from '@/lib/trainingCatalog';
+import { esercizioById, testById } from '@/lib/trainingCatalog';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
+const AREE_LADDER = new Set(['spinta', 'tirata', 'core', 'lombari']);
+
 /**
- * POST { test_id, valore }        → salva un risultato (salvataggio incrementale,
- *                                    apre la sessione test se non ce n'è una aperta)
- * POST { action: 'complete' }     → chiude la sessione test aperta
+ * POST { test_id, valore }             → salva un risultato test (salvataggio incrementale,
+ *                                         apre la sessione test se non ce n'è una aperta)
+ * POST { skill_esercizio_id, valore }  → salva un punto della scala skill
+ *                                         (riga test_id = 'skill:<esercizio_id>')
+ * POST { action: 'complete' }          → chiude la sessione test aperta
  */
 export async function POST(request: NextRequest) {
   try {
@@ -31,10 +35,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    const { test_id, valore } = body || {};
-    const test = testById(test_id);
+    const { test_id, skill_esercizio_id, valore } = body || {};
     const num = Number(valore);
-    if (!test || !Number.isFinite(num) || num < 0 || num > 10000) {
+    const isSkill = typeof skill_esercizio_id === 'string' && skill_esercizio_id.length > 0;
+    const skillEx = isSkill ? esercizioById(skill_esercizio_id) : undefined;
+    const test = isSkill ? undefined : testById(test_id);
+    if (!Number.isFinite(num) || num < 0 || num > 10000
+      || (isSkill ? !skillEx || !AREE_LADDER.has(skillEx.area) : !test)) {
       return NextResponse.json({ error: 'Test o valore non valido' }, { status: 400 });
     }
 
@@ -50,6 +57,20 @@ export async function POST(request: NextRequest) {
         .select('id').single();
       if (error || !created) return NextResponse.json({ error: error?.message || 'session' }, { status: 500 });
       session = created;
+    }
+
+    // Punto scala skill: nessun livello/punteggio (non entra nel rombo), solo il max misurato
+    if (isSkill && skillEx) {
+      const { error: insertError } = await supabaseAdmin.from('training_test_results').insert({
+        user_id: userId,
+        test_session_id: session.id,
+        test_id: `skill:${skillEx.id}`,
+        valore: num,
+        livello_calcolato: 'skill',
+        punteggio_calcolato: 0,
+      });
+      if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 });
+      return NextResponse.json({ success: true, skill: true });
     }
 
     const scored = scoreTest(test_id, num)!;

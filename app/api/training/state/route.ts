@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
-import { buildAmrapCircuit, buildRombo, fasciaFromResults, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
+import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { TESTS } from '@/lib/trainingCatalog';
 
 const supabaseAdmin = createClient(
@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
         lastLevel: rows.find((r) => r.test_id === t.id)?.livello_calcolato ?? null,
       })),
       amrapCircuit: buildAmrapCircuit(rows),
+      ladders: LADDER_AREE.map((a) => ladderForArea(rows, a)).filter((l) => l !== null),
       openTestSession: openSession || null,
       plan: lastPlan || null,
       completions,
