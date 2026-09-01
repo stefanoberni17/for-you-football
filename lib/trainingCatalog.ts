@@ -180,11 +180,11 @@ export const TESTS: TrainingTest[] = [
   // Misurabile (equilibrio per lato) + qualitativi (dove si sente la fatica:
   // più in alto nella catena, meglio è) + autovalutazione dolori/fastidi.
   { id: 'test-fascia-eq-dx', nome: 'Fascia — Equilibrio occhi chiusi (destro)', unita: 'secondi',
-    protocollo: 'In piedi sulla gamba destra, occhi chiusi, mani libere: quanti secondi tieni l\'equilibrio senza appoggiare l\'altro piede? Max 3 tentativi, conta il migliore.',
+    protocollo: 'In piedi sulla gamba destra, occhi chiusi, mani libere: quanti secondi tieni l\'equilibrio senza appoggiare l\'altro piede? Max 2 tentativi, conta il migliore.',
     // ⚠️ soglie provvisorie — da tarare con Ste
     soglie: { intermedio: 10, avanzato: 20, pro: 30 } },
   { id: 'test-fascia-eq-sx', nome: 'Fascia — Equilibrio occhi chiusi (sinistro)', unita: 'secondi',
-    protocollo: 'Stesso test sulla gamba sinistra: quanti secondi a occhi chiusi senza appoggiare? Max 3 tentativi, conta il migliore.',
+    protocollo: 'Stesso test sulla gamba sinistra: quanti secondi a occhi chiusi senza appoggiare? Max 2 tentativi, conta il migliore.',
     soglie: { intermedio: 10, avanzato: 20, pro: 30 } },
   { id: 'test-fascia-eq-fatica', nome: 'Fascia — Dove senti la fatica (equilibrio)', unita: 'punti',
     protocollo: 'Subito dopo il test di equilibrio: dove hai sentito lavorare/affaticare di più? Più in alto nella catena, meglio è.',
@@ -194,25 +194,32 @@ export const TESTS: TrainingTest[] = [
       { label: 'Coscia', valore: 3 }, { label: 'Gluteo', valore: 4 },
     ] },
   { id: 'test-fascia-towel-fatica', nome: 'Fascia — Dove senti la fatica (towel curls)', unita: 'punti',
-    protocollo: 'Fai 2 serie di towel curls (30" l\'una): dove senti la fatica? Più in alto nella catena, meglio è.',
+    protocollo: 'Fai 1 serie di towel curls da 1 minuto: dove senti la fatica? Più in alto nella catena, meglio è.',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Piede', valore: 1 }, { label: 'Polpaccio', valore: 2 },
       { label: 'Coscia', valore: 3 }, { label: 'Gluteo', valore: 4 },
     ] },
-  { id: 'test-fascia-dolori', nome: 'Fascia — Dolori in questo periodo', unita: 'punti',
-    protocollo: 'Autovalutazione: dolori o fastidi generali (caviglie, piedi, ginocchia) in questo periodo?',
+  { id: 'test-fascia-dolori', nome: 'Fascia — Dolori alle articolazioni', unita: 'punti',
+    protocollo: 'Autovalutazione: hai dolori frequenti alle articolazioni (caviglie, ginocchia, anche) in questo periodo?',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Costanti', valore: 1 }, { label: 'Frequenti', valore: 2 },
       { label: 'Leggeri, ogni tanto', valore: 3 }, { label: 'Nessuno', valore: 4 },
     ] },
-  { id: 'test-fascia-fastidi-post', nome: 'Fascia — Fastidi dopo l\'allenamento', unita: 'punti',
-    protocollo: 'Autovalutazione: quanto spesso hai fastidi (caviglie, piedi, polpacci) il giorno dopo allenamenti o partite?',
+  { id: 'test-fascia-fastidi-post', nome: 'Fascia — Dolori dopo gli allenamenti', unita: 'punti',
+    protocollo: 'Autovalutazione: quanto spesso hai dolori (non semplice stanchezza) dopo gli allenamenti?',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Quasi sempre', valore: 1 }, { label: 'Spesso', valore: 2 },
       { label: 'A volte', valore: 3 }, { label: 'Mai', valore: 4 },
+    ] },
+  { id: 'test-fascia-fatica-partita', nome: 'Fascia — Dove senti la fatica dopo le partite', unita: 'punti',
+    protocollo: 'Dopo le partite senti la fatica in qualche zona in particolare o in tutto il corpo? (Glutei/addome o fatica generale = la catena lavora bene.)',
+    soglie: { intermedio: 2, avanzato: 3, pro: 4 },
+    scelte: [
+      { label: 'Piedi / caviglie', valore: 1 }, { label: 'Polpacci / ginocchia', valore: 2 },
+      { label: 'Fatica generale, tutto il corpo', valore: 3 }, { label: 'Glutei / addome', valore: 4 },
     ] },
   { id: 'test-amrap', nome: 'AMRAP 20 minuti', unita: 'giri',
     protocollo: 'Circuito: push + core + pull + lombari con gli esercizi scelti dalla tua scala skill e le quantità calcolate. Conta i giri completi in 20 minuti. Richiede la sbarra.',
@@ -295,5 +302,5 @@ export const ROMBO_PUNTE: { key: string; label: string; testIds: string[] }[] = 
   { key: 'forza_push', label: 'Forza Push', testIds: ['test-push'] },
   { key: 'forza_pull', label: 'Forza Pull', testIds: ['test-pull'] },
   { key: 'forza_core', label: 'Forza Core', testIds: ['test-core', 'test-lombari'] },
-  { key: 'prev_fascia', label: 'Prevenzione Fascia', testIds: ['test-fascia-eq-dx', 'test-fascia-eq-sx', 'test-fascia-eq-fatica', 'test-fascia-towel-fatica', 'test-fascia-dolori', 'test-fascia-fastidi-post'] },
+  { key: 'prev_fascia', label: 'Prevenzione Fascia', testIds: ['test-fascia-eq-dx', 'test-fascia-eq-sx', 'test-fascia-eq-fatica', 'test-fascia-towel-fatica', 'test-fascia-dolori', 'test-fascia-fastidi-post', 'test-fascia-fatica-partita'] },
 ];
