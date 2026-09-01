@@ -9,6 +9,7 @@ import { ArrowLeft, Check, Timer } from 'lucide-react';
 
 interface TestInfo {
   id: string; nome: string; unita: string; protocollo: string;
+  scelte: { label: string; valore: number }[] | null;
   done: boolean; lastValue: number | null; lastLevel: string | null;
 }
 interface AmrapStation { nome: string; quantita: number; unita: string }
@@ -155,25 +156,48 @@ export default function BatteriaTest() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-app">{t.nome}</p>
-                    {t.done && <p className="text-xs text-forest-400">{t.lastValue} {t.unita} — {LIVELLO_LABEL[t.lastLevel || ''] || t.lastLevel}</p>}
+                    {t.done && (
+                      <p className="text-xs text-forest-400">
+                        {t.scelte
+                          ? (t.scelte.find((s) => s.valore === t.lastValue)?.label ?? t.lastValue)
+                          : `${t.lastValue} ${t.unita}`} — {LIVELLO_LABEL[t.lastLevel || ''] || t.lastLevel}
+                      </p>
+                    )}
                   </div>
                 </div>
               </button>
               {current === t.id && (
                 <div className="mt-3 pt-3 border-t border-divider">
                   <p className="text-xs text-muted leading-relaxed mb-3">{t.protocollo}</p>
-                  {(t.unita === 'secondi') && timerLeft === null && (
-                    <button onClick={() => startTimer(5)} className="inline-flex items-center gap-1.5 text-xs text-forest-400 font-semibold mb-3">
-                      <Timer size={13} /> Avvia cronometro 5&apos; (di appoggio)
-                    </button>
+                  {t.scelte ? (
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      {t.scelte.map((s) => (
+                        <button key={s.valore} onClick={() => setValore(String(s.valore))}
+                          className={`py-2.5 px-3 rounded-xl border text-sm font-semibold transition-colors ${
+                            valore === String(s.valore)
+                              ? 'bg-forest-500 border-forest-500 text-white'
+                              : 'bg-surface-2 border-divider text-app'
+                          }`}>
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      {(t.unita === 'secondi') && timerLeft === null && (
+                        <button onClick={() => startTimer(5)} className="inline-flex items-center gap-1.5 text-xs text-forest-400 font-semibold mb-3">
+                          <Timer size={13} /> Avvia cronometro 5&apos; (di appoggio)
+                        </button>
+                      )}
+                      <div className="flex items-end justify-center gap-2 mb-3">
+                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
+                          onChange={(e) => setValore(e.target.value.replace(/[^0-9]/g, ''))}
+                          aria-label={`Risultato in ${t.unita}`}
+                          className="w-28 text-center text-3xl font-bold bg-surface-2 border border-divider rounded-2xl py-2.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
+                        <p className="text-sm text-faint pb-3">{t.unita}</p>
+                      </div>
+                    </>
                   )}
-                  <div className="flex items-end justify-center gap-2 mb-3">
-                    <input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
-                      onChange={(e) => setValore(e.target.value.replace(/[^0-9]/g, ''))}
-                      aria-label={`Risultato in ${t.unita}`}
-                      className="w-28 text-center text-3xl font-bold bg-surface-2 border border-divider rounded-2xl py-2.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-                    <p className="text-sm text-faint pb-3">{t.unita}</p>
-                  </div>
                   <button onClick={() => salva(t.id)} disabled={saving || !valoreValido}
                     className="w-full bg-forest-500 text-white font-bold py-3 rounded-xl disabled:opacity-60">
                     {saving ? 'Salvo…' : 'Salva risultato'}
