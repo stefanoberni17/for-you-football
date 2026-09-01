@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
-import { todayRome } from '@/lib/trainingPlanner';
+import { cicloInfo, todayRome } from '@/lib/trainingPlanner';
 import { TESTS } from '@/lib/trainingCatalog';
 
 const supabaseAdmin = createClient(
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
-    const [{ data: profile }, { data: results }, { data: openSession }, { data: lastPlan }] = await Promise.all([
+    const [{ data: profile }, { data: results }, { data: openSession }, { data: lastPlan }, { data: lastTestSession }] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
@@ -27,6 +27,9 @@ export async function GET(request: NextRequest) {
         .order('started_at', { ascending: false }).limit(1).maybeSingle(),
       supabaseAdmin.from('training_plans').select('id, week_start, plan, generato_da, richieste, created_at')
         .eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+      supabaseAdmin.from('training_test_sessions').select('completed_at')
+        .eq('user_id', userId).not('completed_at', 'is', null)
+        .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
     ]);
 
     const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }) => ({
@@ -76,6 +79,11 @@ export async function GET(request: NextRequest) {
       completions,
       checkinOggi,
       faticaAlta: isFaticaAlta(checkinOggi),
+      // Ciclo mensile: dall'ultima batteria/ri-test chiusa (fallback: ultimo risultato test)
+      ciclo: cicloInfo(
+        lastTestSession?.completed_at
+        || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
+      ),
     });
   } catch (err) {
     console.error('training/state error:', err);

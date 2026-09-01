@@ -23,6 +23,7 @@ interface TrainingState {
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string }; generato_da: string } | null;
   completions: { session_key: string; feedback: string | null }[];
+  ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
 }
 
 export default function AllenamentoHub() {
@@ -111,11 +112,39 @@ export default function AllenamentoHub() {
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold text-app">Campo ⚽</h1>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-forest-500/15 border border-forest-500/30 text-forest-300">
-            Fascia {state.fascia}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-forest-500/15 border border-forest-500/30 text-forest-300">
+              Fascia {state.fascia}
+            </span>
+            {!batteriaVuota && (
+              <span className={`text-xs font-bold px-3 py-1 rounded-full border ${state.ciclo.ritestDue ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' : 'bg-surface-2 border-divider text-muted'}`}>
+                Sett. {Math.min(state.ciclo.settimana, 4)}{state.ciclo.ritestDue ? '+' : ''}/4
+              </span>
+            )}
+          </div>
         </div>
         <p className="text-muted text-sm mb-5">Il tuo allenamento tecnico e fisico.</p>
+
+        {/* Ciclo: deload o ri-test */}
+        {!batteriaVuota && state.ciclo.isDeload && (
+          <div className="bg-surface border border-divider rounded-2xl p-3.5 mb-5">
+            <p className="text-xs text-muted leading-relaxed">
+              🔋 <span className="font-semibold text-app">Settimana di scarico (deload).</span> Quarta settimana del ciclo: volume ridotto per assorbire il lavoro — le skill continuano. La settimana prossima: ri-test.
+            </p>
+          </div>
+        )}
+        {!batteriaVuota && state.ciclo.ritestDue && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-5">
+            <p className="text-sm font-semibold text-amber-200 mb-0.5">📋 È ora del ri-test</p>
+            <p className="text-xs text-amber-200/80 leading-relaxed mb-2.5">
+              Sono passate più di 4 settimane dall&apos;ultimo test: l&apos;avanzamento di gradino passa da qui. Fallo idealmente 2 giorni dopo la partita, da fresco.
+            </p>
+            <Link href="/allenamento/test"
+              className="inline-block text-xs font-bold text-amber-100 bg-amber-500/25 border border-amber-400/40 rounded-lg px-3 py-1.5">
+              Rifai la batteria →
+            </Link>
+          </div>
+        )}
 
         {/* Pain hold */}
         {state.painHold && (
