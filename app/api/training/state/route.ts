@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
-import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
+import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
+import { todayRome } from '@/lib/trainingPlanner';
 import { TESTS } from '@/lib/trainingCatalog';
 
 const supabaseAdmin = createClient(
@@ -44,6 +45,17 @@ export async function GET(request: NextRequest) {
       completions = data || [];
     }
 
+    // Check-in di oggi → flag fatica alta (la seduta del giorno propone lo scarico)
+    const { data: cOggi } = await supabaseAdmin.from('daily_checkin')
+      .select('physical_state, sleep_hours, recovery_quality, mental_state')
+      .eq('user_id', userId).eq('date', todayRome()).maybeSingle();
+    const checkinOggi = cOggi ? {
+      fisico: cOggi.physical_state ?? null,
+      sonno: cOggi.sleep_hours != null ? Number(cOggi.sleep_hours) : null,
+      recupero: cOggi.recovery_quality ?? null,
+      mentale: cOggi.mental_state ?? null,
+    } : null;
+
     return NextResponse.json({
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
@@ -62,6 +74,8 @@ export async function GET(request: NextRequest) {
       openTestSession: openSession || null,
       plan: lastPlan || null,
       completions,
+      checkinOggi,
+      faticaAlta: isFaticaAlta(checkinOggi),
     });
   } catch (err) {
     console.error('training/state error:', err);

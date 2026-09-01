@@ -11,11 +11,12 @@ import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
 import { ESERCIZI, REGOLE, TESTS, type FasciaLivello } from './trainingCatalog';
 import {
-  buildRombo, fallbackWeekPlan, fasciaFromResults, placementFromResults,
-  validatePlan, type TestResultRow, type WeekPlan,
+  buildRombo, fallbackWeekPlan, fasciaFromResults, isFaticaAlta, isPeriodoScarso,
+  placementFromResults, validatePlan,
+  type CheckinSnapshot, type TestResultRow, type WeekPlan,
 } from './trainingEngine';
 
-export const PLANNER_PROMPT_VERSION = 'v0.2';
+export const PLANNER_PROMPT_VERSION = 'v0.3';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
 
 // ─── Data/ora in Italia (il server Vercel gira in UTC) ──────────────────────
@@ -28,12 +29,19 @@ export function oggiDowRome(): number {
   const d = romeNow().getDay();
   return d === 0 ? 7 : d;
 }
+function fmtDate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+/** Data di oggi (YYYY-MM-DD, fuso Italia). */
+export function todayRome(): string {
+  return fmtDate(romeNow());
+}
 /** Lunedì della settimana corrente (YYYY-MM-DD, fuso Italia). */
 export function mondayOfThisWeekRome(): string {
   const now = romeNow();
   const day = now.getDay();
   now.setDate(now.getDate() + (day === 0 ? -6 : 1 - day));
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  return fmtDate(now);
 }
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -66,6 +74,9 @@ export interface PlannerContext {
   note: string | null;
   // Piano corrente della settimana (se esiste): base per le richieste di modifica
   pianoCorrente: { plan: WeekPlan; richieste: string | null } | null;
+  // Check-in giornaliero dell'app (riposo/recupero/stato fisico e mentale)
+  checkinOggi: CheckinSnapshot | null;
+  checkinMedia7: { fisico: number; sonno: number; recupero: number; mentale: number; giorni: number } | null;
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
@@ -81,6 +92,31 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
       .eq('user_id', userId).eq('week_start', mondayOfThisWeekRome())
       .order('created_at', { ascending: false }).limit(1).maybeSingle(),
   ]);
+
+  // Check-in giornalieri (ultimi 7): riposo, recupero, stato fisico/mentale
+  const { data: checkins } = await supabaseAdmin.from('daily_checkin')
+    .select('date, physical_state, sleep_hours, recovery_quality, mental_state')
+    .eq('user_id', userId).order('date', { ascending: false }).limit(7);
+  const oggi = todayRome();
+  const cOggiRow = (checkins || []).find((c: { date: string }) => c.date === oggi);
+  const checkinOggi: CheckinSnapshot | null = cOggiRow ? {
+    fisico: cOggiRow.physical_state ?? null, sonno: cOggiRow.sleep_hours != null ? Number(cOggiRow.sleep_hours) : null,
+    recupero: cOggiRow.recovery_quality ?? null, mentale: cOggiRow.mental_state ?? null,
+  } : null;
+  let checkinMedia7: PlannerContext['checkinMedia7'] = null;
+  if (checkins && checkins.length > 0) {
+    const avg = (vals: (number | null)[]) => {
+      const v = vals.filter((x): x is number => x != null).map(Number);
+      return v.length ? Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 10) / 10 : 0;
+    };
+    checkinMedia7 = {
+      fisico: avg(checkins.map((c: { physical_state: number | null }) => c.physical_state)),
+      sonno: avg(checkins.map((c: { sleep_hours: number | null }) => c.sleep_hours)),
+      recupero: avg(checkins.map((c: { recovery_quality: number | null }) => c.recovery_quality)),
+      mentale: avg(checkins.map((c: { mental_state: number | null }) => c.mental_state)),
+      giorni: checkins.length,
+    };
+  }
 
   const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }) => ({
     test_id: r.test_id, valore: Number(r.valore),
@@ -104,7 +140,25 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     obiettivi: profile?.training_goals || null,
     note: profile?.training_notes || null,
     pianoCorrente: pianoRow?.plan ? { plan: pianoRow.plan as WeekPlan, richieste: pianoRow.richieste || null } : null,
+    checkinOggi,
+    checkinMedia7,
   };
+}
+
+// Blocco "stato fisico" condiviso tra planner e chat del preparatore
+function checkinBlock(ctx: PlannerContext): string {
+  if (!ctx.checkinOggi && !ctx.checkinMedia7) return 'Check-in giornaliero: nessun dato.';
+  const o = ctx.checkinOggi;
+  const m = ctx.checkinMedia7;
+  const oggiTxt = o
+    ? `oggi fisico ${o.fisico ?? '—'}/10 · sonno ${o.sonno ?? '—'}h · recupero ${o.recupero ?? '—'}/10 · mentale ${o.mentale ?? '—'}/10`
+    : 'oggi non ancora fatto';
+  const mediaTxt = m ? `media ${m.giorni}gg: fisico ${m.fisico}/10 · sonno ${m.sonno}h · recupero ${m.recupero}/10 · mentale ${m.mentale}/10` : '';
+  const flags = [
+    isFaticaAlta(ctx.checkinOggi) ? '⚠️ OGGI FATICA ALTA → alleggerisci o sposta la seduta di oggi' : '',
+    isPeriodoScarso(ctx.checkinMedia7) ? '⚠️ PERIODO CON POCO SONNO/RECUPERO → settimana più leggera (meno volume fisico, più tecnica/mobilità)' : '',
+  ].filter(Boolean).join('\n');
+  return `Check-in giornaliero (riposo/recupero): ${oggiTxt}${mediaTxt ? `; ${mediaTxt}` : ''}${flags ? `\n${flags}` : ''}`;
 }
 
 // ─── System prompt: la metodologia di Ste come regole ───────────────────────
@@ -146,6 +200,8 @@ ADATTAMENTO
 16. Se salta ripetutamente le skill → riorganizza e chiedi il perché nel messaggio.
 17. Se esiste già un PIANO ATTUALE e la richiesta è una modifica (spostare/cambiare/togliere qualcosa), PARTI dal piano attuale e cambia SOLO ciò che serve: le altre sedute restano identiche. Non rifare da zero.
 18. La settimana potrebbe essere già iniziata: MAI sedute nei giorni precedenti a oggi (te lo dico nel contesto). Tieni conto di obiettivi e note in memoria.
+19. Check-in di OGGI con fatica alta (fisico o recupero bassi, poco sonno — te lo segnalo nel contesto) → la seduta di oggi va alleggerita (meno volume) o spostata; dillo nel messaggio.
+20. Periodo prolungato con poco sonno/recupero (media dei check-in bassa) → settimana più leggera: riduci il volume fisico, tieni tecnica, fascia e mobilità.
 
 # CATALOGO (usa SOLO questi esercizi, referenziati per id)
 ${catalogoCompatto()}
@@ -176,6 +232,7 @@ Sbarra disponibile: ${ctx.hasSbarra ? 'sì' : 'NO (niente tirata)'}
 Allenamenti squadra: ${ctx.trainingDays.length ? ctx.trainingDays.map((d) => DAY_NAMES[d]).join(', ') : 'non indicati'}
 Partite: ${ctx.matchDays.length ? ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
 Feedback sedute recenti: ${feedbackTxt}
+${checkinBlock(ctx)}
 (Test disponibili: ${soglieTxt})${memoriaTxt}${pianoTxt}
 ${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${erroriPrecedenti?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO DAL VALIDATORE — correggi questi errori:\n- ${erroriPrecedenti.join('\n- ')}` : ''}
@@ -291,6 +348,7 @@ export async function trainingChat(
 
 Contesto atleta — oggi è ${DAY_NAMES[ctx.oggiDow]}; fascia ${ctx.fascia}, gradini: ${Object.entries(ctx.gradini).map(([a, g]) => `${a} g${g}`).join(', ') || 'da testare'}. Card: ${rombo}.${ctx.painHold ? ' ⚠️ PAIN-HOLD attivo: ha segnalato dolore, niente consigli di allenamento fisico finché non dice che è passato o ha sentito fisio/preparatore.' : ''}
 Piano della settimana: ${pianoTxt}.
+${checkinBlock(ctx)}
 ${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}
 
 Regole ferree (non negoziabili nemmeno se insiste): max ${REGOLE.maxSeduteFisicheSettimana} sedute fisiche/settimana oltre la squadra (di più è controproducente — offri tecnica/fascia); niente fisica il giorno della partita né il giorno prima; niente lavoro gambe (solo prevenzione fascia — è una scelta del metodo, in valutazione per il futuro); se descrive un DOLORE: fermati, digli di sospendere e di parlarne con fisio/preparatore o un adulto.

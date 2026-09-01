@@ -284,6 +284,12 @@ export const REGOLE = {
   feedbackDuroRiduzione: 0.10,
   rientroRitestSettimane: 3,
   painHoldSoglia: 4,             // segnalazione dolore ≥ 4/10 → sedute fisiche in pausa (sblocco manuale)
+  // Check-in giornaliero (riposo/recupero) → adattamento del carico
+  scaricoFisicoMax: 4,           // oggi: fisico ≤ 4 → fatica alta, alleggerire la seduta
+  scaricoRecuperoMax: 4,         // oggi: recupero ≤ 4 → fatica alta
+  scaricoSonnoMinOre: 6,         // oggi: sonno < 6h → fatica alta
+  periodoScaricoRecuperoMedia: 5,   // media 7gg recupero ≤ 5 → periodo di scarso recupero
+  periodoScaricoSonnoMediaOre: 6.5, // media 7gg sonno < 6.5h → periodo di scarso recupero
   // AMRAP — 40% del max sull'esercizio scelto dalla scala skill (tenute 70%, cap 30")
   amrapPushPct: 0.4,  amrapPushMin: 8,
   amrapPullPct: 0.4,  amrapPullMin: 4,
