@@ -16,7 +16,7 @@ import {
   type CheckinSnapshot, type TestResultRow, type WeekPlan,
 } from './trainingEngine';
 
-export const PLANNER_PROMPT_VERSION = 'v0.3';
+export const PLANNER_PROMPT_VERSION = 'v0.4';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
 
 // ─── Data/ora in Italia (il server Vercel gira in UTC) ──────────────────────
@@ -42,6 +42,28 @@ export function mondayOfThisWeekRome(): string {
   const day = now.getDay();
   now.setDate(now.getDate() + (day === 0 ? -6 : 1 - day));
   return fmtDate(now);
+}
+
+// ─── Ciclo mensile (4 settimane dal test/ri-test) ───────────────────────────
+//
+// Settimane 1-3 = carico progressivo · settimana 4 = DELOAD (volume 50-60%,
+// le skill continuano) · dalla 5ª = ri-test in ritardo → mantenimento leggero
+// finché l'utente non rifà la batteria (che azzera il ciclo).
+
+export interface CicloInfo { settimana: number; isDeload: boolean; ritestDue: boolean }
+
+export function cicloInfo(riferimento: string | null): CicloInfo {
+  if (!riferimento) return { settimana: 1, isDeload: false, ritestDue: false };
+  // Lunedì (fuso Italia) della settimana in cui è stato chiuso il test
+  const d = new Date(new Date(riferimento).toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
+  if (isNaN(d.getTime())) return { settimana: 1, isDeload: false, ritestDue: false };
+  const day = d.getDay();
+  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
+  d.setHours(0, 0, 0, 0);
+  const mondayNow = new Date(`${mondayOfThisWeekRome()}T00:00:00`);
+  const diffSettimane = Math.round((mondayNow.getTime() - d.getTime()) / (7 * 24 * 3600 * 1000));
+  const settimana = Math.max(1, diffSettimane + 1);
+  return { settimana, isDeload: settimana === 4, ritestDue: settimana >= 5 };
 }
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -77,12 +99,14 @@ export interface PlannerContext {
   // Check-in giornaliero dell'app (riposo/recupero/stato fisico e mentale)
   checkinOggi: CheckinSnapshot | null;
   checkinMedia7: { fisico: number; sonno: number; recupero: number; mentale: number; giorni: number } | null;
+  // Ciclo mensile: settimana 1-3 carico, 4 deload, 5+ ri-test in ritardo
+  ciclo: CicloInfo;
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, { data: results }, { data: calendar }, { data: completions }, { data: pianoRow }] = await Promise.all([
+  const [{ data: profile }, { data: results }, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes').eq('user_id', userId).maybeSingle(),
-    supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato')
+    supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
     supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
       .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
@@ -91,7 +115,15 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     supabaseAdmin.from('training_plans').select('plan, richieste')
       .eq('user_id', userId).eq('week_start', mondayOfThisWeekRome())
       .order('created_at', { ascending: false }).limit(1).maybeSingle(),
+    supabaseAdmin.from('training_test_sessions').select('completed_at')
+      .eq('user_id', userId).not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
   ]);
+
+  // Ciclo: parte dall'ultima batteria/ri-test chiusa; fallback = ultimo risultato test salvato
+  const cicloRiferimento = lastTestSession?.completed_at
+    || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null);
+  const ciclo = cicloInfo(cicloRiferimento);
 
   // Check-in giornalieri (ultimi 7): riposo, recupero, stato fisico/mentale
   const { data: checkins } = await supabaseAdmin.from('daily_checkin')
@@ -142,6 +174,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     pianoCorrente: pianoRow?.plan ? { plan: pianoRow.plan as WeekPlan, richieste: pianoRow.richieste || null } : null,
     checkinOggi,
     checkinMedia7,
+    ciclo,
   };
 }
 
@@ -203,6 +236,10 @@ ADATTAMENTO
 19. Check-in di OGGI con fatica alta (fisico o recupero bassi, poco sonno — te lo segnalo nel contesto) → la seduta di oggi va alleggerita (meno volume) o spostata; dillo nel messaggio.
 20. Periodo prolungato con poco sonno/recupero (media dei check-in bassa) → settimana più leggera: riduci il volume fisico, tieni tecnica, fascia e mobilità.
 
+CICLO MENSILE (te lo dico nel contesto: "settimana del ciclo N")
+21. Il ciclo dura 4 settimane dal test: settimane 1-3 carico progressivo, settimana 4 = DELOAD: volume fisico al 50-60% (meno serie/reps), le sedute skill EMOM continuano normali. Nel messaggio spiega che è la settimana di scarico e che serve.
+22. Settimana 5 o oltre = ri-test in ritardo: piano di mantenimento leggero e nel messaggio invita a rifare la batteria di test (idealmente 2 giorni dopo la partita). L'avanzamento passa SOLO dal ri-test.
+
 # CATALOGO (usa SOLO questi esercizi, referenziati per id)
 ${catalogoCompatto()}
 
@@ -232,6 +269,7 @@ Sbarra disponibile: ${ctx.hasSbarra ? 'sì' : 'NO (niente tirata)'}
 Allenamenti squadra: ${ctx.trainingDays.length ? ctx.trainingDays.map((d) => DAY_NAMES[d]).join(', ') : 'non indicati'}
 Partite: ${ctx.matchDays.length ? ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
 Feedback sedute recenti: ${feedbackTxt}
+Settimana del ciclo: ${ctx.ciclo.settimana} di 4${ctx.ciclo.isDeload ? ' — ⚠️ SETTIMANA DELOAD (regola 21)' : ctx.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 22)' : ''}
 ${checkinBlock(ctx)}
 (Test disponibili: ${soglieTxt})${memoriaTxt}${pianoTxt}
 ${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
@@ -347,7 +385,7 @@ export async function trainingChat(
   const system = `Sei il preparatore AI di For You Football: rispondi a domande sugli allenamenti tecnico/fisici di un giovane calciatore. Tono caldo, diretto, da campo — max 5-6 righe. NON sei il Coach mentale (quello vive in un'altra chat).
 
 Contesto atleta — oggi è ${DAY_NAMES[ctx.oggiDow]}; fascia ${ctx.fascia}, gradini: ${Object.entries(ctx.gradini).map(([a, g]) => `${a} g${g}`).join(', ') || 'da testare'}. Card: ${rombo}.${ctx.painHold ? ' ⚠️ PAIN-HOLD attivo: ha segnalato dolore, niente consigli di allenamento fisico finché non dice che è passato o ha sentito fisio/preparatore.' : ''}
-Piano della settimana: ${pianoTxt}.
+Piano della settimana: ${pianoTxt}. Settimana del ciclo: ${ctx.ciclo.settimana}/4${ctx.ciclo.isDeload ? ' (deload)' : ctx.ciclo.ritestDue ? ' (ri-test in ritardo: invitalo a rifare la batteria)' : ''}.
 ${checkinBlock(ctx)}
 ${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}
 
