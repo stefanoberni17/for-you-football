@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_NAMES } from '@/lib/constants';
-import TrainingSessionPlayer from '@/components/TrainingSessionPlayer';
+import TrainingSessionPlayer, { type PlayerProgress } from '@/components/TrainingSessionPlayer';
 import { esercizioById } from '@/lib/trainingCatalog';
 import { ArrowLeft, Info, Play } from 'lucide-react';
 
@@ -25,6 +25,8 @@ export default function SessionePage() {
   const [alreadyDone, setAlreadyDone] = useState(false);
   const [phase, setPhase] = useState<Phase>('preview');
   const [descOpen, setDescOpen] = useState<number | null>(null); // indice item con descrizione aperta
+  const [savedProgress, setSavedProgress] = useState<PlayerProgress | null>(null); // seduta interrotta
+  const [resume, setResume] = useState(false); // true = riprendi da savedProgress
   const [note, setNote] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -41,6 +43,16 @@ export default function SessionePage() {
       setSessione(s || null);
       setPlanId(data.plan?.id || null);
       setAlreadyDone((data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno));
+      // Seduta interrotta? (progresso salvato dal player in localStorage)
+      if (data.plan?.id && s) {
+        try {
+          const raw = localStorage.getItem(`trainingSession:${data.plan.id}#${giorno}`);
+          if (raw) {
+            const p = JSON.parse(raw) as PlayerProgress;
+            if (p.itemIdx > 0 || p.serieFatte > 0 || p.lato === 'sx') setSavedProgress(p);
+          }
+        } catch { /* no-op */ }
+      }
     }
     setLoading(false);
   }, [router, giorno]);
@@ -76,6 +88,8 @@ export default function SessionePage() {
   const isFisica = ['mix', 'fisica', 'skill'].includes(sessione.tipo);
 
   // Player full-screen
+  const storageKey = planId ? `trainingSession:${planId}#${giorno}` : undefined;
+
   if (phase === 'playing') {
     // Altezza fissa + scroll interno al player: con min-h-screen lo scroll si
     // appoggiava al body, che su PWA iOS si blocca (stesso bug risolto su /chat)
@@ -84,8 +98,20 @@ export default function SessionePage() {
         <TrainingSessionPlayer
           items={sessione.items}
           titolo={sessione.titolo}
-          onComplete={() => setPhase('feedback')}
-          onExit={() => setPhase('preview')}
+          storageKey={storageKey}
+          initialProgress={resume ? savedProgress : null}
+          onComplete={() => { setSavedProgress(null); setResume(false); setPhase('feedback'); }}
+          onExit={() => {
+            // Il progresso resta salvato: al rientro si può riprendere da qui
+            if (storageKey) {
+              try {
+                const raw = localStorage.getItem(storageKey);
+                setSavedProgress(raw ? (JSON.parse(raw) as PlayerProgress) : null);
+              } catch { /* no-op */ }
+            }
+            setResume(false);
+            setPhase('preview');
+          }}
         />
       </main>
     );
@@ -179,10 +205,29 @@ export default function SessionePage() {
           })}
         </div>
 
-        <button onClick={() => setPhase('playing')} disabled={painHold && isFisica}
-          className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg inline-flex items-center justify-center gap-2 disabled:opacity-50">
-          <Play size={18} /> Inizia la seduta
-        </button>
+        {savedProgress ? (
+          <div className="space-y-3">
+            <p className="text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2">
+              ⏸ Seduta interrotta all&apos;esercizio {Math.min(savedProgress.itemIdx + 1, sessione.items.length)} di {sessione.items.length}.
+            </p>
+            <button onClick={() => { setResume(true); setPhase('playing'); }} disabled={painHold && isFisica}
+              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg inline-flex items-center justify-center gap-2 disabled:opacity-50">
+              <Play size={18} /> Riprendi da dove eri
+            </button>
+            <button onClick={() => {
+              if (storageKey) { try { localStorage.removeItem(storageKey); } catch { /* no-op */ } }
+              setSavedProgress(null); setResume(false); setPhase('playing');
+            }} disabled={painHold && isFisica}
+              className="w-full bg-surface border border-divider text-app font-semibold py-3 rounded-2xl text-sm disabled:opacity-50">
+              Ricomincia da capo
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => { setResume(false); setPhase('playing'); }} disabled={painHold && isFisica}
+            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg inline-flex items-center justify-center gap-2 disabled:opacity-50">
+            <Play size={18} /> Inizia la seduta
+          </button>
+        )}
       </div>
     </main>
   );
