@@ -230,7 +230,7 @@ const AREE_FORZA = new Set(['spinta', 'tirata', 'core', 'lombari', 'laterale']);
  */
 export function validatePlan(
   plan: WeekPlan,
-  ctx: { fascia: FasciaLivello; matchDays: number[]; trainingDays: number[]; painHold: boolean; hasSbarra: boolean; maxDurataRichiesta?: number }
+  ctx: { fascia: FasciaLivello; matchDays: number[]; trainingDays: number[]; painHold: boolean; hasSbarra: boolean; maxDurataRichiesta?: number; oggiDow?: number }
 ): string[] {
   const errors: string[] = [];
   if (!plan?.sedute || !Array.isArray(plan.sedute) || plan.sedute.length === 0) {
@@ -247,6 +247,9 @@ export function validatePlan(
   let seduteFisiche = 0;
   for (const s of plan.sedute) {
     if (!s.giorno || s.giorno < 1 || s.giorno > 7) errors.push(`seduta "${s.titolo}": giorno non valido`);
+    // Settimana già iniziata: niente sedute nei giorni passati
+    if (ctx.oggiDow && s.giorno >= 1 && s.giorno < ctx.oggiDow)
+      errors.push(`seduta "${s.titolo}" al giorno ${s.giorno}: già passato (oggi è il giorno ${ctx.oggiDow})`);
     if (TIPI_FISICI.has(s.tipo)) {
       seduteFisiche++;
       if (ctx.painHold) errors.push(`seduta fisica "${s.titolo}" con pain-hold attivo`);
@@ -292,13 +295,16 @@ export function validatePlan(
 
 export function fallbackWeekPlan(
   gradini: Record<string, number>, fascia: FasciaLivello,
-  ctx: { matchDays: number[]; trainingDays: number[]; painHold: boolean; hasSbarra: boolean }
+  ctx: { matchDays: number[]; trainingDays: number[]; painHold: boolean; hasSbarra: boolean; oggiDow?: number }
 ): WeekPlan {
+  const oggi = ctx.oggiDow ?? 1;
   const vietati = new Set<number>();
   for (const md of ctx.matchDays) { vietati.add(md); vietati.add(md === 1 ? 7 : md - 1); }
   const occupati = new Set([...ctx.trainingDays, ...ctx.matchDays]);
-  const liberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => !occupati.has(d) && !vietati.has(d));
-  const giorni = liberi.length >= 2 ? liberi.slice(0, 2) : [1, 3].filter((d) => !vietati.has(d));
+  const liberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= oggi && !occupati.has(d) && !vietati.has(d));
+  const giorni = liberi.length >= 2
+    ? liberi.slice(0, 2)
+    : [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= oggi && !vietati.has(d)).slice(0, 2);
 
   const b = BOUNDS.spinta[fascia];
   const pick = (area: AreaForza) => {
@@ -308,14 +314,17 @@ export function fallbackWeekPlan(
   const fasciaEx = ESERCIZI.filter((e) => e.area === 'fascia' && e.gradino === 1).slice(0, 2);
   const pall = ESERCIZI.find((e) => e.id === 'pall-1')!;
 
+  // Se non resta nessun giorno libero da vincoli partita, la seduta scala a tecnica
+  const giornoFisica = giorni[0] ?? oggi;
+  const soloTecnica = ctx.painHold || vietati.has(giornoFisica);
   const fisica: PlanSession = {
-    giorno: giorni[0] ?? 1,
+    giorno: giornoFisica,
     titolo: 'Seduta mix — volume',
-    tipo: ctx.painHold ? 'tecnica' : 'mix',
+    tipo: soloTecnica ? 'tecnica' : 'mix',
     durata_min: fascia === 'B' ? REGOLE.durataMixB : 50,
     items: [
       ...fasciaEx.map((e) => ({ esercizio_id: e.id, serie: 2, quantita: 30, recupero_sec: 30, nota: 'Fascia in apertura' })),
-      ...(ctx.painHold ? [] : [
+      ...(soloTecnica ? [] : [
         { esercizio_id: pick('spinta').id, serie: b.serieMin + 1, quantita: Math.min(b.repsMax, 10), recupero_sec: b.recuperoMinSec },
         { esercizio_id: pick('core').id, serie: 3, quantita: Math.min(BOUNDS.core[fascia].repsMax, 40), recupero_sec: BOUNDS.core[fascia].recuperoMinSec },
         { esercizio_id: pick('lombari').id, serie: 2, quantita: Math.min(BOUNDS.lombari[fascia].repsMax, 30), recupero_sec: BOUNDS.lombari[fascia].recuperoMinSec },
@@ -325,7 +334,7 @@ export function fallbackWeekPlan(
     spiegazione: 'Piano base di sicurezza generato automaticamente.',
   };
   const tecnica: PlanSession = {
-    giorno: giorni[1] ?? 4,
+    giorno: giorni[1] ?? Math.min(7, oggi + 2),
     titolo: 'Seduta tecnica',
     tipo: 'tecnica',
     durata_min: 30,
