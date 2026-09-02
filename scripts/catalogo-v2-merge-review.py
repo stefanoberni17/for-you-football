@@ -9,8 +9,8 @@ Regole di merge (2 set 2026):
 - Gruppi nuovi scritti a mano → mappati sulle qualità canoniche (vedi GRUPPO_MAP);
   "headball" = attrezzo (il pallone Headball) → esercizio importato ma inattivo;
   "Fascia e forza" = fascia con qualità secondaria forza.
-- Liv: se Ste l'ha cambiato vale il suo; se ha cambiato solo D, Liv segue la
-  regola D (1-2 → B, 3 → A, 4-5 → PRO).
+- Liv: se Ste l'ha cambiato vale il suo; altrimenti segue D (≤3 → B: "fino al 3
+  lo possono fare tutti", 4 → A, 5 → PRO).
 - Note "solo in coppia" → flag in_coppia; "solo con headball" → attrezzatura headball.
 
 Uso: python3 scripts/catalogo-v2-merge-review.py <xlsx_di_ste>
@@ -57,7 +57,8 @@ YELLOW = ("OK?", "Gruppo corretto", "Difficoltà corretta", "Livello corretto", 
 
 
 def liv_from_d(d):
-    return "B" if d <= 2 else "A" if d == 3 else "PRO"
+    # Ste (2 set): la difficoltà è indipendente dal livello; fino a 3 lo possono fare tutti
+    return "B" if d <= 3 else "A" if d == 4 else "PRO"
 
 
 out = []
@@ -88,7 +89,10 @@ for num, base in by_num.items():
             if key in SOTTOGRUPPO:
                 row["sottogruppo"] = SOTTOGRUPPO[key]
             if key == "fascia e forza":
-                row["qualita_secondaria"] = "forza-parte-alta"
+                # Ste: spinte "overcoming isometrics" = forza parte alta E bassa (non fascia)
+                row["qualita"] = "forza-parte-alta"
+                row["qualita_secondaria"] = "forza-parte-bassa"
+                row["sottogruppo"] = "overcoming isometrics"
             if key == "headball":
                 row["attrezzatura"] = "headball"; row["attivo"] = False; stats["headball"] += 1
     # difficoltà
@@ -100,7 +104,7 @@ for num, base in by_num.items():
     l_new = (n.get("Livello corretto") or "").strip() or ((n["Liv"] or "").strip() if (n["Liv"] or "") != (o["Liv"] or "") else "")
     if l_new:
         row["livello_min"] = l_new.upper(); stats["liv"] += 1
-    elif d_changed:
+    else:
         row["livello_min"] = liv_from_d(row["difficolta"])
     if row["qualita"] == "pliometria-intensiva" and row["livello_min"] == "B":
         row["livello_min"] = "A"
@@ -121,8 +125,8 @@ for num, base in by_num.items():
     if note and not note.startswith("ESEMPIO"):
         row["note"] = note; stats["note"] += 1
         low = note.lower()
-        if "in coppia" in low or "solo con la headball" in low and "coppia" in low:
-            row["in_coppia"] = True; stats["coppia"] += 1
+        if "in coppia" in low:
+            row["in_coppia"] = True; row["attivo"] = False; stats["coppia"] += 1  # Ste: salva ma escludi per ora
         if "solo con headball" in low or "solo con la headball" in low:
             row["attrezzatura"] = "headball"; row["attivo"] = False
         if "escludi" in low:
