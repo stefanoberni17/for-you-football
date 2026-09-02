@@ -212,7 +212,23 @@ Restano solo **conferme** con default già applicati:
 3. Mapping "generale" del rombo corretto come proposto sopra (le formule del foglio puntano a intervalli sbagliati) — default: sì.
 4. Toe curls test: nel File_DB è 3' per piede, nell'app v1 è 1' — allineare a 3'? default: sì.
 
-## 9. Piano di implementazione (dopo le risposte)
+## 9. Piano di implementazione — stato
+
+| # | Passo | Stato |
+|---|---|---|
+| 1 | Catalogo v2 (qualità, attrezzatura, difficoltà, livello minimo) + import Everfit/File_DB con review di Ste | ✅ `lib/trainingCatalogV2.ts` + generato (260 esercizi, 224 attivi) |
+| 2 | Bounds per qualità, finestre partita, gating carico, convivenze, ordine in seduta nel validatore | ✅ `lib/trainingRulesV2.ts` + `validatePlan` (contesto `v2`) |
+| 3 | Template seduta (§5) nel prompt del planner + esempi dai workout Everfit | ⏳ |
+| 4 | Batteria palestra + campo (§2.3): test, 1RM Brzycki, soglie File_DB | ⏳ |
+| 5 | Fase stagione + carico totale (§7): RPE serale, calendario squadra, ACWR | ⏳ |
+| 6 | Onboarding "Il tuo setup": attrezzatura, esperienza palestra, compagno, fase | ⏳ (migration 017) |
+
+Note di implementazione del punto 2: gli esercizi v2 sono accettati dal validatore solo se il contesto `v2`
+(livello, attrezzatura, compagno, età, esperienza palestra, massimali) è presente — il planner v1 live non cambia.
+Pliometria intensiva a −1: ammessa solo 2×2 dentro una seduta tecnica/fascia (le sedute fisiche a −1 restano vietate dalla regola v1).
+Forza max/esplosiva: richiedono il massimale stimato dell'esercizio (batteria palestra); senza → solo regime base.
+
+### Piano originale
 
 1. Catalogo v2: nuove `Area`/`qualita`, campi `attrezzatura`, `difficolta`, `livelloMinimo`, `carico`; import degli esercizi Everfit con video (lista candidati da rivedere).
 2. Bounds per qualità nel validatore (§2) + finestre partita per qualità (§3) + regole di convivenza (§4).
