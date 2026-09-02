@@ -142,6 +142,17 @@ for r in out:
             and any(k in n for k in BASE_PALESTRA) and not any(k in n for k in ("body weight", "bodyweight", "jump", "wall", "sissy", "pistol", "iso", "atg")):
         r["attrezzatura"] = "palestra"
 
+# Decisioni di Ste (2 set): Sumo Deadlift fuori; Squat Bulgaro = bulgarian split squat con carico (test palestra);
+# Stacco Rumeno = esercizio-test della cerniera; nessuno stacco classico.
+for r in out:
+    n = r["nome"].lower()
+    if n == "sumo deadlift":
+        r["attivo"] = False; r["azione"] = "escludi (Ste: togli sumo deadlift)"
+    if n == "squat bulgaro":
+        r["note"] = (r.get("note") or "") + (" · " if r.get("note") else "") + "= bulgarian split squat con carico (esercizio-test batteria palestra)"
+    if n == "stacco rumeno":
+        r["note"] = (r.get("note") or "") + (" · " if r.get("note") else "") + "esercizio-test della cerniera (batteria palestra); nessuno stacco classico"
+
 json.dump(out, open("docs/training-catalogo-v2.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("righe:", len(out), "| attivi:", sum(1 for r in out if r["attivo"]), "| stats:", stats)
 from collections import Counter

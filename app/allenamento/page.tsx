@@ -9,7 +9,8 @@ import { DAY_SHORT_NAMES } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer,
 } from 'recharts';
-import { Activity, AlertTriangle, ChevronRight, ClipboardList, MessageCircle, RefreshCw } from 'lucide-react';
+import { Activity, AlertTriangle, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
+import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 
 interface RomboPoint { key: string; label: string; score: number | null }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
@@ -24,6 +25,8 @@ interface TrainingState {
   plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string }; generato_da: string } | null;
   completions: { session_key: string; feedback: string | null }[];
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
+  setup: TrainingSetup;
+  setupDisponibile: boolean;
 }
 
 export default function AllenamentoHub() {
@@ -40,6 +43,11 @@ export default function AllenamentoHub() {
   const [painDurante, setPainDurante] = useState<boolean | null>(null);
   const [painSending, setPainSending] = useState(false);
   const [painMsg, setPainMsg] = useState<string | null>(null);
+  // "Il tuo setup" (attrezzatura, esperienza, compagno, fase, peso, durata squadra)
+  const [showSetup, setShowSetup] = useState(false);
+  const [setupDraft, setSetupDraft] = useState<TrainingSetup | null>(null);
+  const [setupSaving, setSetupSaving] = useState(false);
+  const [setupMsg, setSetupMsg] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -70,6 +78,19 @@ export default function AllenamentoHub() {
       body: JSON.stringify({ resolved: true }),
     });
     await load();
+  };
+
+  const salvaSetup = async () => {
+    if (!setupDraft) return;
+    setSetupSaving(true); setSetupMsg(null);
+    try {
+      const res = await authFetch('/api/training/setup', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(setupDraft),
+      });
+      if (res.ok) { setSetupMsg('Salvato'); await load(); setTimeout(() => { setSetupMsg(null); setShowSetup(false); }, 900); }
+      else { const d = await res.json().catch(() => ({})); setSetupMsg(d.error || 'Errore nel salvataggio'); }
+    } finally { setSetupSaving(false); }
   };
 
   const segnalaDolore = async () => {
@@ -219,6 +240,101 @@ export default function AllenamentoHub() {
             )}
           </div>
         )}
+
+        {/* "Il tuo setup" — dati per le regole v2 (migration 017) */}
+        <div className="bg-surface rounded-2xl border border-divider mb-5 overflow-hidden">
+          <button onClick={() => { setShowSetup(!showSetup); setSetupDraft({ ...state.setup }); setSetupMsg(null); }}
+            className="w-full flex items-center gap-3 p-4 text-left">
+            <div className="w-10 h-10 rounded-xl bg-forest-500/15 flex items-center justify-center shrink-0">
+              <Settings2 size={18} className="text-forest-400" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-app">Il tuo setup</p>
+              <p className="text-xs text-faint">
+                {!state.setupDisponibile ? 'In arrivo (serve la migration 017)'
+                  : state.setup.attrezzatura.length === 0 && !state.setup.esperienzaPalestra && state.setup.pesoKg === null
+                    ? 'Attrezzatura, esperienza, fase della stagione — da compilare'
+                    : `${FASE_LABEL[state.setup.fase]} · ${state.setup.attrezzatura.length ? state.setup.attrezzatura.join(', ') : 'solo corpo libero'}`}
+              </p>
+            </div>
+            <ChevronRight size={16} className={`text-faint transition-transform ${showSetup ? 'rotate-90' : ''}`} />
+          </button>
+          {showSetup && setupDraft && state.setupDisponibile && (
+            <div className="px-4 pb-4 space-y-4">
+              <div>
+                <p className="text-xs font-semibold text-muted mb-1.5">Cosa hai a disposizione? (il corpo libero c&apos;è sempre)</p>
+                <div className="flex flex-wrap gap-2">
+                  {ATTREZZATURA_OPZIONI.map((a) => {
+                    const on = setupDraft.attrezzatura.includes(a);
+                    return (
+                      <button key={a} onClick={() => setSetupDraft({ ...setupDraft, attrezzatura: on ? setupDraft.attrezzatura.filter((x) => x !== a) : [...setupDraft.attrezzatura, a] })}
+                        className={`text-xs px-3 py-1.5 rounded-full border ${on ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                        {ATTREZZATURA_LABEL[a]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs font-semibold text-muted mb-1.5">Esperienza in palestra?</p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {([true, false] as const).map((v) => (
+                      <button key={String(v)} onClick={() => setSetupDraft({ ...setupDraft, esperienzaPalestra: v })}
+                        className={`py-2 rounded-xl border text-sm font-semibold ${setupDraft.esperienzaPalestra === v ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                        {v ? 'Sì' : 'No'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-muted mb-1.5">Ti alleni con un compagno?</p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {([true, false] as const).map((v) => (
+                      <button key={String(v)} onClick={() => setSetupDraft({ ...setupDraft, compagno: v })}
+                        className={`py-2 rounded-xl border text-sm font-semibold ${setupDraft.compagno === v ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                        {v ? 'Sì' : 'No'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-muted mb-1.5">Fase della stagione</p>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {FASI.map((f) => (
+                    <button key={f} onClick={() => setSetupDraft({ ...setupDraft, fase: f })}
+                      className={`py-2 px-3 rounded-xl border text-sm text-left font-semibold ${setupDraft.fase === f ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                      {FASE_LABEL[f]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs font-semibold text-muted mb-1.5">Peso corporeo (kg)</p>
+                  <input type="text" inputMode="decimal" value={setupDraft.pesoKg ?? ''} placeholder="es. 62"
+                    onChange={(e) => { const v = e.target.value.replace(',', '.').replace(/[^0-9.]/g, ''); setSetupDraft({ ...setupDraft, pesoKg: v === '' ? null : Number(v) }); }}
+                    className="w-full px-3 py-2 bg-surface-2 border border-divider rounded-xl text-sm text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-muted mb-1.5">Allenamento squadra (min)</p>
+                  <input type="text" inputMode="numeric" value={setupDraft.squadraDurataMin ?? ''} placeholder="es. 90"
+                    onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ''); setSetupDraft({ ...setupDraft, squadraDurataMin: v === '' ? null : Number(v) }); }}
+                    className="w-full px-3 py-2 bg-surface-2 border border-divider rounded-xl text-sm text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums" />
+                </div>
+              </div>
+              {setupMsg && <p className="text-xs text-forest-300">{setupMsg}</p>}
+              <button onClick={salvaSetup} disabled={setupSaving}
+                className="w-full bg-forest-500 text-white font-bold py-3 rounded-xl disabled:opacity-50">
+                {setupSaving ? 'Salvo…' : 'Salva il setup'}
+              </button>
+              <p className="text-[10px] text-faint leading-relaxed">
+                Servono per scegliere solo esercizi che puoi fare davvero e per dosare i carichi in sicurezza (fino ai 18 anni o senza esperienza in palestra: max 60% del massimale).
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Batteria non fatta → primo passo: test */}
         {batteriaVuota ? (
