@@ -1,0 +1,2455 @@
+[
+ {
+  "everfit_id": "666eade6bb1b660025a38cd9",
+  "titolo": "1vs1 - difesa da fermo",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "attacco",
+   "difesa",
+   "dribbling",
+   "esercizi in 2"
+  ],
+  "video": "https://youtu.be/DIJDTCQuEVI?si=IE58fiLe5NIrW-zs",
+  "thumbnail": "https://img.youtube.com/vi/DIJDTCQuEVI/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9f77a8b33cc002576d86d",
+  "titolo": "Advanced Fascia Progression",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia",
+   "propriocezione"
+  ],
+  "video": "https://youtu.be/o8MDW9RPZhQ",
+  "thumbnail": "https://img.youtube.com/vi/o8MDW9RPZhQ/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e742d603678500262da8c3",
+  "titolo": "Affondi in camminata",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [
+   "forza"
+  ],
+  "video": "https://youtube.com/watch?v=kAnLd3sRhmA?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/kAnLd3sRhmA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e742ebf65da7002424f9ae",
+  "titolo": "Affondi sul posto",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=ruFaw3pDMGQ?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/ruFaw3pDMGQ/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e7435e95bf7a0025024d63",
+  "titolo": "Affondo isometrico",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=nvENLHoWSR4?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/nvENLHoWSR4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9fa07f4080a0025f53d3c",
+  "titolo": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "resistenza",
+   "tecnica",
+   "velocità",
+   "visione"
+  ],
+  "video": "https://youtu.be/CPR99KAUm-4",
+  "thumbnail": "https://img.youtube.com/vi/CPR99KAUm-4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9c32dc825870025ab651e",
+  "titolo": "Allenamento Tecnica - Resistenza - Velocità - Forza Esplosiva",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "esplosività",
+   "tecnica",
+   "velocità"
+  ],
+  "video": "https://youtu.be/eCANAmeNDRw",
+  "thumbnail": "https://img.youtube.com/vi/eCANAmeNDRw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "665c2acfa2157a0025f05bf7",
+  "titolo": "Allungo",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "metabolico",
+   "resistenza"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "666586153c942f0025a0c831",
+  "titolo": "Allungo riscaldamento",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "riscaldamento"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e745a91793d60023d655af",
+  "titolo": "ATG Lunge",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=WGePf1hZ7_I?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/WGePf1hZ7_I/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e742738dddfd0025a403ff",
+  "titolo": "atg split squat",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [
+   "forza",
+   "mobilità"
+  ],
+  "video": "https://youtube.com/watch?v=a0iGmxKW4_0?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/a0iGmxKW4_0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e89da682d8c00025ff04d8",
+  "titolo": "Bench Flyes",
+  "categoria": "Strength",
+  "body_part": "Chest",
+  "tags": [
+   "petto",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=8QW9vvVUFWE?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/8QW9vvVUFWE/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6600956c27621100255ea434",
+  "titolo": "Box Dribbling",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "controllo",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "660095caab742800251bc02d",
+  "titolo": "Box dribbling + passaggio",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "controllo",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "67209be1977fcbbff96ed2d8",
+  "titolo": "Box Dribbling - headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "controllo",
+   "dribbling",
+   "tecnica applicata"
+  ],
+  "video": "https://youtu.be/nV1Ql0KoKkU",
+  "thumbnail": "https://img.youtube.com/vi/nV1Ql0KoKkU/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6601bcc46d1e780025fd0984",
+  "titolo": "BOX rapidità e Tiro",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "tecnica applicata",
+   "tiro",
+   "velocità"
+  ],
+  "video": "https://youtu.be/VTWEiS8eRJk?si=7IxiP0k7W_-KD_Yp",
+  "thumbnail": "https://img.youtube.com/vi/VTWEiS8eRJk/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6601be1286164c002489cb4e",
+  "titolo": "Calcio in alto e tiro in porta",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "tecnica applicata",
+   "tiro"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65da2552edfa8600275c2e07",
+  "titolo": "Calf Foam Roll",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=-KJiVXocFHM",
+  "thumbnail": "https://img.youtube.com/vi/-KJiVXocFHM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e4973fa883890025fa4812",
+  "titolo": "Calf raises",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://youtube.com/watch?v=De9Dl-RHKD0?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/De9Dl-RHKD0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "665c307c4d7ee30026dd3d7a",
+  "titolo": "Circuito Propriocezione",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "propriocezione"
+  ],
+  "video": "https://www.youtube.com/watch?v=SCjwTWXzrTM&list=PL6Dh3F0reiim9WhyG-t4iAYOk8Mbrvbcq&index=3&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/SCjwTWXzrTM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "665c2d162cfdf000250bd0ae",
+  "titolo": "Circuito Resistenza, Velocità, Tecnica x Esterno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "metabolico",
+   "resistenza",
+   "tecnica",
+   "velocità"
+  ],
+  "video": "https://www.youtube.com/watch?v=DLkmPVQgdFE",
+  "thumbnail": "https://img.youtube.com/vi/DLkmPVQgdFE/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e7430f839f2b0025cd0475",
+  "titolo": "copenaghen plank",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/9pLQwT8RuUc/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e89bfeb1909a00267a6892",
+  "titolo": "Crow Pose Progression",
+  "categoria": "Bodyweight",
+  "body_part": "Upper Push",
+  "tags": [
+   "core",
+   "fascia",
+   "forza",
+   "petto",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=ckQ2c9TSbc4?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/ckQ2c9TSbc4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e85591cc4197002574ce14",
+  "titolo": "cuban press",
+  "categoria": "Strength",
+  "body_part": "Shoulders",
+  "tags": [
+   "forza",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=OeD5pWAeRFo?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/OeD5pWAeRFo/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6745fcee2a61cd58822d69c0",
+  "titolo": "Dribbling visione e reattività - Avanzato",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "attacco",
+   "dribbling"
+  ],
+  "video": "https://youtube.com/watch?v=2mbmxURlV0g?si=6lSWNXdf3RnUKSYD",
+  "thumbnail": "https://img.youtube.com/vi/2mbmxURlV0g/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6745fcb17d88f34c0b32e536",
+  "titolo": "Dribbling visione e reattività - Base",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "attacco",
+   "dribbling"
+  ],
+  "video": "https://youtube.com/watch?v=2mbmxURlV0g?si=6lSWNXdf3RnUKSYD",
+  "thumbnail": "https://img.youtube.com/vi/2mbmxURlV0g/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "669431ec5da3db0026947b5b",
+  "titolo": "Drop Jump",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "pliometria"
+  ],
+  "video": "https://www.youtube.com/watch?v=rwYPvd_iVDk",
+  "thumbnail": "https://img.youtube.com/vi/rwYPvd_iVDk/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6727a26a9c32e3f2c3dc6fa0",
+  "titolo": "Equilibrio 1 pallina tennis fascia tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "palleggi",
+   "tecnica di base"
+  ],
+  "video": "https://www.youtube.com/watch?v=CfVvAUj_Fv4",
+  "thumbnail": "https://img.youtube.com/vi/CfVvAUj_Fv4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6727a29de77aa695fd2f36a9",
+  "titolo": "Equilibrio 2 pallina da tennis fascia tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "palleggi",
+   "tecnica di base"
+  ],
+  "video": "https://www.youtube.com/watch?v=DRoBrKDueh4",
+  "thumbnail": "https://img.youtube.com/vi/DRoBrKDueh4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6727a2ca7c32ff9324b89568",
+  "titolo": "Equilibrio 3 pallina da tennis fascia tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "palleggi",
+   "tecnica di base"
+  ],
+  "video": "https://www.youtube.com/watch?v=8NhZcJNOma4",
+  "thumbnail": "https://img.youtube.com/vi/8NhZcJNOma4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9fa96e942ad00254feae2",
+  "titolo": "Esercizi Elastici prevenzione e mobilità",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "core",
+   "mobilità",
+   "propriocezione"
+  ],
+  "video": "https://youtu.be/fX8KVJDoovY",
+  "thumbnail": "https://img.youtube.com/vi/fX8KVJDoovY/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666ea8b6c98eb80026f30a11",
+  "titolo": "Esercizi Resistenza alla Velocità",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "metabolico",
+   "resistenza",
+   "tecnica applicata"
+  ],
+  "video": "https://youtu.be/eCANAmeNDRw?si=JaVpOnvj6qEQlyHE",
+  "thumbnail": "https://img.youtube.com/vi/eCANAmeNDRw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eb50a8bc3b2002631e1d2",
+  "titolo": "Esercizio resistenza e tecnica funzionale",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "metabolico",
+   "resistenza",
+   "tecnica applicata"
+  ],
+  "video": "https://youtu.be/KtU_kvIz9LQ?si=xV7eOvw1jzWRlMPk",
+  "thumbnail": "https://img.youtube.com/vi/KtU_kvIz9LQ/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9f8f391d35b00238b82f3",
+  "titolo": "Esercizio Tecnica + Resistenza Funzionale Calcio",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "resistenza",
+   "tecnica",
+   "velocità"
+  ],
+  "video": "https://www.youtube.com/watch?v=KtU_kvIz9LQ&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/KtU_kvIz9LQ/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e89d8303ced500258c13ed",
+  "titolo": "Farmers Walk",
+  "categoria": "Distance (Long)",
+  "body_part": "Full Body",
+  "tags": [
+   "core",
+   "forza"
+  ],
+  "video": "https://youtube.com/watch?v=T2YWZbGhN2M?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/T2YWZbGhN2M/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6651b157b1f27a0025684fd3",
+  "titolo": "Fartlek",
+  "categoria": "Distance (Long)",
+  "body_part": null,
+  "tags": [
+   "resistenza"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "679b7fb72b6a335528ef9418",
+  "titolo": "Fascia A-Skip",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza esplosiva",
+   "pliometria",
+   "rapidità",
+   "velocità"
+  ],
+  "video": "https://www.youtube.com/watch?v=08abU7xxYEw",
+  "thumbnail": "https://img.youtube.com/vi/08abU7xxYEw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65da2712101e39002545f242",
+  "titolo": "Fascia adhesion tennis ball",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia",
+   "massaggi"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e89c42c087170025ebf0d0",
+  "titolo": "Fascia Arms Swing",
+  "categoria": "Timed",
+  "body_part": "Full Body",
+  "tags": [
+   "fascia",
+   "mobilità"
+  ],
+  "video": "https://youtube.com/watch?v=Wt0Dpkzk8E0?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/Wt0Dpkzk8E0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e89c66463483002550bb5e",
+  "titolo": "Fascia Bridge Bounces",
+  "categoria": "Bodyweight",
+  "body_part": "Legs",
+  "tags": [
+   "esplosività",
+   "fascia"
+  ],
+  "video": "https://youtube.com/watch?v=v4c7YJR85D0?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/v4c7YJR85D0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "679b7f8f2182a656ce42759a",
+  "titolo": "Fascia Front Jumps - Pliometria",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza esplosiva",
+   "pliometria",
+   "rapidità"
+  ],
+  "video": "https://www.youtube.com/watch?v=JqkG0gvTKls",
+  "thumbnail": "https://img.youtube.com/vi/JqkG0gvTKls/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65db2800c7344f0025b65c1a",
+  "titolo": "Fascia Iso Lounge Runner",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia",
+   "forza",
+   "propriocezione"
+  ],
+  "video": "https://youtube.com/watch?v=nvENLHoWSR4?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/nvENLHoWSR4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "679b7fe02182a656ce428550",
+  "titolo": "Fascia Lateral Jumps - Pliometria",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza esplosiva",
+   "pliometria",
+   "rapidità"
+  ],
+  "video": "https://www.youtube.com/watch?v=aF2Da_iwg4A",
+  "thumbnail": "https://img.youtube.com/vi/aF2Da_iwg4A/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65da2c63c7344f0025b561db",
+  "titolo": "Fascia Single leg RDL",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia"
+  ],
+  "video": "https://youtube.com/watch?v=_0TsEKkUqGw?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/_0TsEKkUqGw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e496887f9fe200257c405d",
+  "titolo": "Fascia Single leg runner (towel)",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=_0TsEKkUqGw?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/_0TsEKkUqGw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65ed901c90ac6b0025a84e54",
+  "titolo": "Fascia Standing Meditation",
+  "categoria": "Timed",
+  "body_part": "Full Body",
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65db26a9b2bd310025ba3f5c",
+  "titolo": "Fascia Toe Bounces Single Leg - Pogo Jumps",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=V5SVWUH1_50?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/V5SVWUH1_50/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65db233e99bc980025f1e7a8",
+  "titolo": "Fascia Towel figure 8",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia",
+   "propriocezione"
+  ],
+  "video": "https://youtube.com/watch?v=V805vZi3rLs?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/V805vZi3rLs/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9f9b89427160025213242",
+  "titolo": "Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "esplosività",
+   "forza",
+   "pliometria"
+  ],
+  "video": "https://youtu.be/jEXxxbQsqNw",
+  "thumbnail": "https://img.youtube.com/vi/jEXxxbQsqNw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e743b400e5f90025e909f3",
+  "titolo": "front squat",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=2-fkHNhdW4I?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/2-fkHNhdW4I/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66815b5b122c9900249c39ea",
+  "titolo": "FY Knee Extension",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "forza parte bassa",
+   "ginocchio",
+   "prevenzione"
+  ],
+  "video": "https://youtube.com/watch?v=XUSLWFnVF-c?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/XUSLWFnVF-c/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67210b245048adc5e369a832",
+  "titolo": "FY Lateral Step Up",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [
+   "forza",
+   "forza parte bassa",
+   "prevenzione"
+  ],
+  "video": "https://youtube.com/watch?v=qMur94X9Tp0?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/qMur94X9Tp0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66815ce8ffc75a002441a4af",
+  "titolo": "FY RDL con sviluppo Plio",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "pliometria"
+  ],
+  "video": "https://youtu.be/2eA0GIE31wU",
+  "thumbnail": "https://img.youtube.com/vi/2eA0GIE31wU/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66815bbe6ee32b0025ff2c96",
+  "titolo": "FY Split Squat",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "forza parte bassa"
+  ],
+  "video": "https://youtube.com/watch?v=7G-7pvahAoM?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/7G-7pvahAoM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66536837460ee000254ede4b",
+  "titolo": "FY Squat",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e7434168c1d500262dd60a",
+  "titolo": "Glute bridge ad una gamba",
+  "categoria": "Timed",
+  "body_part": "Glutes",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=FQPEqDy8IBI?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/FQPEqDy8IBI/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e8566fd7d6fb002502666d",
+  "titolo": "hollow hold",
+  "categoria": "Timed",
+  "body_part": "Abdominals",
+  "tags": [
+   "core",
+   "forza"
+  ],
+  "video": "https://youtube.com/watch?v=zTiwvx20mYc?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/zTiwvx20mYc/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e85572a0df93002405d5a7",
+  "titolo": "Incline dumbbell flyes",
+  "categoria": "Strength",
+  "body_part": "Chest",
+  "tags": [
+   "forza",
+   "petto",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=31e9p6cq070?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/31e9p6cq070/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6a096a57f9b48b0e5f7db307",
+  "titolo": "kettlebell clean to push",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=i3Z3LcUUYLk&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=9",
+  "thumbnail": "https://img.youtube.com/vi/i3Z3LcUUYLk/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6a096af41a8bdf79558d9602",
+  "titolo": "kettlebell dead clean",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=zZwe3IYJT2w&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=19",
+  "thumbnail": "https://img.youtube.com/vi/zZwe3IYJT2w/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6a096b6a43be64358b8b1891",
+  "titolo": "kettlebell kneeling snatch",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=j-0iYgFI6pM&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=21",
+  "thumbnail": "https://img.youtube.com/vi/j-0iYgFI6pM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6a096e7486ad5ebde4ca2dbd",
+  "titolo": "kettlebell rotational clean",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=mQ0S_nhGzS4",
+  "thumbnail": "https://img.youtube.com/vi/mQ0S_nhGzS4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6a0972d60bd4063b9df04708",
+  "titolo": "kettlebell rotational swing",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=TywyOJ9BYUs",
+  "thumbnail": "https://img.youtube.com/vi/TywyOJ9BYUs/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6a09692c78d6bcb20296bb0a",
+  "titolo": "Kettlebell snatch",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=TXOv6980Aqw&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=4",
+  "thumbnail": "https://img.youtube.com/vi/TXOv6980Aqw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e7440a80b79e0024159539",
+  "titolo": "Kettlebell swing",
+  "categoria": "Strength",
+  "body_part": "Power",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=E87gS0QjGOw?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/E87gS0QjGOw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6a0969cbcb315cbd5cb548da",
+  "titolo": "kettlebell swing high pull",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=MFE_XiLM30s&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=8",
+  "thumbnail": "https://img.youtube.com/vi/MFE_XiLM30s/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e853f594c6300025386f87",
+  "titolo": "Knee Jump Progression ( Box Jump)",
+  "categoria": "Bodyweight",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=ZdXn3VZVRRQ?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/ZdXn3VZVRRQ/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6829c9150fa1c1658d90d290",
+  "titolo": "Max Squat 90gradi",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6749801b29b2ebe64cf42755",
+  "titolo": "navette laterali con pallina da tennis",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "forza parte bassa",
+   "rapidità"
+  ],
+  "video": "https://www.youtube.com/watch?v=C4U8ip3peiY",
+  "thumbnail": "https://img.youtube.com/vi/C4U8ip3peiY/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e7439db18c7600252f6090",
+  "titolo": "nordic hamstring",
+  "categoria": "Strength",
+  "body_part": "Hamstrings",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=Wx_d0y8iGxM?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/Wx_d0y8iGxM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "665460f45fb9e90025e6c17a",
+  "titolo": "One Arm Push Up",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [
+   "forza parte alta"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6654617c2e1fc60025fa04fa",
+  "titolo": "One Arm Push Up Deep PRO",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [
+   "forza parte alta"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66546126ebac800025627b62",
+  "titolo": "One Arm Push Up Incline",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [
+   "forza parte alta"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb504839ea70024b12cb4",
+  "titolo": "Palleggi 1 piede alternati interno/esterno - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": "Palleggi alternati interno esterno - tecnica di base #tutorial #football https://youtube.com/watch?v=lEQEqGne-Ug?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb548f65c65002520fb0f",
+  "titolo": "Palleggi 1 piede interno/collo/esterno - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": "Palleggi collo interno esteno - tecnica di base #tutorial #football https://youtube.com/watch?v=C3gNbAoRXzI?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66009d947cf9590025b00892",
+  "titolo": "Palleggi al muro 1 tocco libero",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "passaggi al volo",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66009dbb0218f10026e0ec76",
+  "titolo": "Palleggi al muro 1 tocco solo interno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "passaggi al volo",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66009deacd73650025f77c3a",
+  "titolo": "Palleggi al muro 2 tocchi",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "passaggi al volo",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66009e837f6b980025123183",
+  "titolo": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "passaggi al volo",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66009e5086164c0024879bfe",
+  "titolo": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "passaggi al volo",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66009ef3e022800025208702",
+  "titolo": "Palleggi al muro liberi freestyle",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "passaggi al volo",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb5e413f6020025bfe677",
+  "titolo": "Palleggi altezza testa - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": "Palleggi di collo altezza testa - tecnica di base #tutorial #football https://youtube.com/watch?v=POmnAoqSD3w?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6727a2157601f24413515455",
+  "titolo": "Palleggi con pallina da tennis",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "palleggi",
+   "tecnica"
+  ],
+  "video": "https://youtu.be/vE5L562syyg?si=EDedVcAGWUH-j2Ru",
+  "thumbnail": "https://img.youtube.com/vi/vE5L562syyg/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "671fb9d4fe6c15546c101e3a",
+  "titolo": "Palleggi coscia e collo",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edbb7889eb6100269f65ab",
+  "titolo": "Palleggi Freestyle - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "palleggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e89d56f3795b002515648d",
+  "titolo": "Palleggi Freestyle 3 conetti",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "https://youtube.com/watch?v=B0bLp0sq_OU?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/B0bLp0sq_OU/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65edb6a5217ec20026b4d6e5",
+  "titolo": "Palleggi liberi + calcio alto - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "672f67d36419d2c6bdc12d64",
+  "titolo": "Palleggi liberi coscia e testa",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Palleggi solo coscia e testa - tecnica di base #tutorial #football https://youtube.com/watch?v=Fcf7r_xfbBw?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "672f67b0aa97c00ee2dcd594",
+  "titolo": "Palleggi liberi piedi coscia spalla testa",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Palleggi piedi coscia spalla testa - tecnica di base #tutorial #football https://youtube.com/watch?v=T4NG0_P-AT4?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "671fba30d696c0b9fc34bca0",
+  "titolo": "palleggi piedi coscia testa",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66008e05899af70026baf6aa",
+  "titolo": "Palleggi solo Collo",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66008e537cf9590025afe7bb",
+  "titolo": "Palleggi solo collo 3 tocchi alternati - TECNICA",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb4c985815e0026dad94d",
+  "titolo": "Palleggi solo interno - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "660094c5160a8a0026058ed6",
+  "titolo": "Palleggi solo interno 3 tocchi alternati - TECNICA",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb4a5839ea70024b12c29",
+  "titolo": "Palleggi solo testa - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb45413f6020025bfe595",
+  "titolo": "Palleggi solo un piede - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb59a1209e500256ba161",
+  "titolo": "Palleggi sotto al ginocchio - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "palleggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": "Palleggi sotto al ginocchio - tecnica di base https://youtube.com/shorts/3ShS3X4iev4?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edbd9313f5f50025c38784",
+  "titolo": "Passaggi a 10mt alternati, primo tocco suola - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "672f61ef13031acf1b98cb55",
+  "titolo": "Passaggi al muro - controllo alzando palla",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Passaggi al muro controllo alzando palla - tecnica di base #tutorial #football https://youtube.com/watch?v=4KuHcz9RXfg?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a2f6341d490025922965",
+  "titolo": "Passaggi al muro - Controllo interno, turn 180 - TECNICA",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "Passaggio controllo di interno e turn 180 - tecnica di base #tutorial #football https://youtube.com/watch?v=Ivh_aOY4Y48?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "672f6495b65505bdffddcf1e",
+  "titolo": "Passaggi al muro - controllo orientato con finta esterno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Passaggi al muro controllo con finta esterno - tecnica di base #tutorial #football https://youtube.com/watch?v=uaT93uaZr3Y?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "672f6436b65505bdffddc8a2",
+  "titolo": "Passaggi al muro - controllo orientato esterno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Passaggi al muro controllo orientato esterno - tecnica di base #tutorial #football https://youtube.com/watch?v=Qwxkv16cSJE?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "672f6384e84b6bb482afadba",
+  "titolo": "Passaggi al muro - controllo orientato interno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Passaggi al muro controllo orientato interno - tecnica di base #tutorial #football https://youtube.com/watch?v=508Oe27qu2c?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "672f62d43f661d0d09bbbd3e",
+  "titolo": "Passaggi al muro - controllo sombrero",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Passaggi al muro controllo con sombrero - tecnica di base #tutorial #football https://youtube.com/watch?v=XFGiqqid-yo?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a380879f3b00252a25d3",
+  "titolo": "Passaggi al muro - Controllo suola, sposto palla",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e9fa3553099b00251e24b2",
+  "titolo": "Passaggi al muro - VISIONE",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "resistenza",
+   "tecnica",
+   "velocità",
+   "visione"
+  ],
+  "video": "https://youtu.be/SSezNOH7eP8",
+  "thumbnail": "https://img.youtube.com/vi/SSezNOH7eP8/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65edc2f7e7892d00249fbcad",
+  "titolo": "Passaggi al muro 1 tocco collo - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edb6eee94f100025694311",
+  "titolo": "Passaggi al muro 1 tocco interno - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a4a83619830026c94a25",
+  "titolo": "Passaggi al muro 2 tocchi - Controllo di interno a chiudere",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "controllo",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "Passaggi al muro 2 tocchi interno 2 piedi - tecnica di base #tutorial #football  https://youtube.com/watch?v=LlkI17npYvA?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a45d77c63400250f8dc8",
+  "titolo": "Passaggi al muro 2 tocchi - controllo di interno ad aprire",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "controllo",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "Passaggi al muro 2 tocchi interno solo 1 piede - tecnica di base #tutorial #football https://youtube.com/watch?v=onV2Bm2FhX0?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a42776d8c90025041651",
+  "titolo": "Passaggi al muro 2 tocchi - controllo esterno, passaggio interno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica applicata",
+   "tecnica di base"
+  ],
+  "video": "Passaggi al muro 2 tocchi controllo esterno passaggio interno - tecnica di base #tutorial #football https://youtube.com/watch?v=I0xp9ZXWmUc?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65edc2b3699b1800235770f7",
+  "titolo": "Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a677aab7a500252ca448",
+  "titolo": "Passaggi al muro 5-10mt alto-basso",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "controllo",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6601b5a32dd5eb0025fc6ce9",
+  "titolo": "Passaggi al muro controllo 180gradi - TECNICA",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica"
+  ],
+  "video": "Passaggio e controllo a 180 - tecnica di base calcio #tutorial #football https://youtube.com/watch?v=OMnwTSqZbNY?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a3f0d6525c0024632e92",
+  "titolo": "Passaggi al muro in difficoltà",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "controllo",
+   "tecnica"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6731c0c98f60e76e81c1c87d",
+  "titolo": "Passaggi al muro ravvicinati interno esterno - tecnica di base",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Passaggi al muro ravvicinati interno esterno - tecnica di base #football https://youtube.com/watch?v=I4VWFgi-MZA?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6731c08adc3b9e89283645be",
+  "titolo": "Passaggi al muro ravvicinati solo collo - tecnica di base",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "Passaggi al muro ravvicinati solo collo - tecnica di base #football https://youtube.com/watch?v=1e_cy9gIlko?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "67bed4f8ac389a7625d6ff27",
+  "titolo": "Passaggi collo - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=z54BWxJ6lBc",
+  "thumbnail": "https://img.youtube.com/vi/z54BWxJ6lBc/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bee2e6d59c0168d1da7e3e",
+  "titolo": "passaggi dx/sx interno/collo/esterno con video - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=JfXud9Gj9hI&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/JfXud9Gj9hI/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bee1ef36c5a584948eb310",
+  "titolo": "passaggi dx/sx sinistra/avanti/destra con video - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=HisUhRQRZDI&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/HisUhRQRZDI/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bed521fb7c4c97f06b9df6",
+  "titolo": "Passaggi esterno - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=mAP9Ff8Fid0",
+  "thumbnail": "https://img.youtube.com/vi/mAP9Ff8Fid0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bed4127fdfcf9ea65af60f",
+  "titolo": "Passaggi in equilibrio su 1 piede - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=Ul_IkP5-eiI",
+  "thumbnail": "https://img.youtube.com/vi/Ul_IkP5-eiI/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bed4beade19275c57a51ef",
+  "titolo": "Passaggi interno - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=oEJvzIXqTyM&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/oEJvzIXqTyM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bee1a64979a03f1a658ce6",
+  "titolo": "Passaggi interno/collo/esterno con video - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=T92RYcHAehs&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/T92RYcHAehs/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65edb96833a5310025abf23e",
+  "titolo": "Passaggi liberi al muro - Tecnica",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "Passaggi",
+   "tecnica",
+   "tecnica di base"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "67bee1529a51c0bb893f0061",
+  "titolo": "Passaggi sinistra/avanti/destra con video - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=Wti4gRZhrl4&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/Wti4gRZhrl4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bed49d6b06e96681320fe6",
+  "titolo": "Passaggi SX/CC/DX interno/collo/esterno - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=GJd4Wj7agw0&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/GJd4Wj7agw0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67bed468d8318d063e1d730b",
+  "titolo": "Passaggi SX/Centro/DX - visione headball",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "headball",
+   "visione"
+  ],
+  "video": "https://www.youtube.com/watch?v=Lkidaf7wqFk&ab_channel=ForYouFunctionalYogaFootball",
+  "thumbnail": "https://img.youtube.com/vi/Lkidaf7wqFk/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e498355538700025393f6c",
+  "titolo": "Patrick step up",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=RDCTvQKcmv0?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/RDCTvQKcmv0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e8552a8f77da00247dcf16",
+  "titolo": "piegamenti con battito",
+  "categoria": "Bodyweight",
+  "body_part": "Upper Push",
+  "tags": [
+   "esplosività",
+   "forza"
+  ],
+  "video": "https://youtube.com/watch?v=d7jcWg62xSA?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/d7jcWg62xSA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e855af1c07670025591d53",
+  "titolo": "Piegamenti Hindu",
+  "categoria": "Bodyweight",
+  "body_part": "Upper Push",
+  "tags": [
+   "fascia",
+   "forza",
+   "mobilità",
+   "petto",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/S5JwmhB-rHc/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e85516b2f78f00256b360e",
+  "titolo": "piegamenti plyo",
+  "categoria": "Bodyweight",
+  "body_part": "Upper Push",
+  "tags": [
+   "esplosività",
+   "forza"
+  ],
+  "video": "https://youtube.com/watch?v=C-c4opf8G3w?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/C-c4opf8G3w/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6845b8bf81096ebd3b19b669",
+  "titolo": "Plank Jumps Fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "https://youtube.com/watch?v=FPZkcfY-2Yo?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/FPZkcfY-2Yo/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6845b8ef0008b4b60c32b0fd",
+  "titolo": "Plank torsione elastica fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": "https://youtube.com/watch?v=itq-E8EcZEQ?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/itq-E8EcZEQ/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65da2a75209fc70025983d71",
+  "titolo": "Pogo Jumps",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia"
+  ],
+  "video": "https://youtube.com/watch?v=rleHrcL6teA?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/rleHrcL6teA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e854d54699f2002506b6c2",
+  "titolo": "Pogo Jumps progression (Ankle Stiffness )",
+  "categoria": "Strength",
+  "body_part": "Calves",
+  "tags": [
+   "esplosività",
+   "forza",
+   "pliometria"
+  ],
+  "video": "https://youtube.com/watch?v=0vrnKZpOtPI?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/0vrnKZpOtPI/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e498827f91e0002574fc0b",
+  "titolo": "Poliquin step up",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=2ABf__3KZP4?feature=share",
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e9f7bf5ed328002552eaee",
+  "titolo": "Postura + Velocità Difensori",
+  "categoria": "Bodyweight",
+  "body_part": "Agility",
+  "tags": [
+   "Postura",
+   "esplosività",
+   "velocità"
+  ],
+  "video": "https://youtu.be/kWcCAKPMbdM",
+  "thumbnail": "https://img.youtube.com/vi/kWcCAKPMbdM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6601bda2b206f200274f6370",
+  "titolo": "Progressione tiri in porta - Tecnica di tiro",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "tiro"
+  ],
+  "video": "https://youtu.be/YGTHUBKF5hM?si=acfz7OnSl73G1BES",
+  "thumbnail": "https://img.youtube.com/vi/YGTHUBKF5hM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eb06f7c322900256da605",
+  "titolo": "Protezione palla figura 8 - fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza",
+   "tecnica"
+  ],
+  "video": "https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1",
+  "thumbnail": "https://img.youtube.com/vi/Ev-KPrVbsPA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eb0a2180e5f00266d6683",
+  "titolo": "Protezione palla laterale - palleggi - fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza",
+   "tecnica"
+  ],
+  "video": "https://youtube.com/watch?v=K55Sm0yGxME?si=m9CBgVvShKA_T1Gk",
+  "thumbnail": "https://img.youtube.com/vi/K55Sm0yGxME/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eaff0f7848d0025add09c",
+  "titolo": "Protezione palla laterale suola - fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza",
+   "tecnica"
+  ],
+  "video": "https://www.youtube.com/watch?v=XdDmJ6p3qfE",
+  "thumbnail": "https://img.youtube.com/vi/XdDmJ6p3qfE/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eb08a085f000025bd8c69",
+  "titolo": "Protezione palla schiena - fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza",
+   "tecnica"
+  ],
+  "video": "https://youtube.com/watch?v=fjhKOlmaYhM?si=tWoZPtPeMCInFzTu",
+  "thumbnail": "https://img.youtube.com/vi/fjhKOlmaYhM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "67d8068f19bed3b4e10a60a9",
+  "titolo": "Pull Up Around The World",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=9YZqQFtfcKo",
+  "thumbnail": "https://img.youtube.com/vi/9YZqQFtfcKo/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e89cc2b4691c00245034c1",
+  "titolo": "Rapidità Ankle Stiffness - Test",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "esplosività",
+   "forza",
+   "propriocezione",
+   "velocità"
+  ],
+  "video": "https://youtube.com/watch?v=YAF8Zi6HLi8?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/YAF8Zi6HLi8/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9fa6011c9190025dffdb6",
+  "titolo": "Rapidità movimenti attaccanti",
+  "categoria": "Bodyweight",
+  "body_part": "Agility",
+  "tags": [
+   "Postura",
+   "velocità"
+  ],
+  "video": "https://youtu.be/TfM9TJymxy8",
+  "thumbnail": "https://img.youtube.com/vi/TfM9TJymxy8/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "669432abcf6ebb00261aae38",
+  "titolo": "Reverse drop jumps",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "pliometria"
+  ],
+  "video": "https://www.youtube.com/watch?v=Mb_vKJ2ODCU",
+  "thumbnail": "https://img.youtube.com/vi/Mb_vKJ2ODCU/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e74296753feb00241f0cab",
+  "titolo": "reverse nordic",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [
+   "forza",
+   "mobilità"
+  ],
+  "video": "https://youtube.com/watch?v=VMULf9rZ4TE?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/VMULf9rZ4TE/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6651b27671a75c00261317fc",
+  "titolo": "Ripetute",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "resistenza"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "665c38cf6af9380025b58e5f",
+  "titolo": "Salite allungo",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "metabolico",
+   "resistenza"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "665c38f4f183620025842d52",
+  "titolo": "Salite Sprint",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "metabolico",
+   "resistenza"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "674980a61471d28ff14ea894",
+  "titolo": "Saltelli in mezzo affondo con switch",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "forza parte bassa",
+   "rapidità"
+  ],
+  "video": "https://www.youtube.com/watch?v=r_Dwebm0UQk",
+  "thumbnail": "https://img.youtube.com/vi/r_Dwebm0UQk/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6749812630e69e2abbc0349e",
+  "titolo": "saltelli in squat",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "forza parte bassa",
+   "rapidità"
+  ],
+  "video": "https://www.youtube.com/watch?v=IhDBeFEdBz4",
+  "thumbnail": "https://img.youtube.com/vi/IhDBeFEdBz4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "674980ef69bf5bffd2dac2bc",
+  "titolo": "saltelli in squat diagonale",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "forza parte bassa",
+   "rapidità"
+  ],
+  "video": "https://www.youtube.com/watch?v=KW7j7v8reag",
+  "thumbnail": "https://img.youtube.com/vi/KW7j7v8reag/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6677f4a429f861002488d755",
+  "titolo": "Salto triplo a 1 gamba e sprint",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "pliometria",
+   "velocità"
+  ],
+  "video": "https://www.youtube.com/watch?v=IeXJA-028nA",
+  "thumbnail": "https://img.youtube.com/vi/IeXJA-028nA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6677f44c18d00c00258808c3",
+  "titolo": "Salto triplo e sprint",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "pliometria",
+   "velocità"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e9fac411c9190025dffde9",
+  "titolo": "Sequenza Yoga - Prevenzione Pubalgia e rinforzo",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "prevenzione",
+   "pubalgia",
+   "yoga"
+  ],
+  "video": "https://youtu.be/n3VjhSqo4EM",
+  "thumbnail": "https://img.youtube.com/vi/n3VjhSqo4EM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9fb00c7e52e002625b6ef",
+  "titolo": "Sequenza Yoga - Prevenzione Pubalgia e ronforzo avanzato",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "prevenzione",
+   "pubalgia",
+   "yoga"
+  ],
+  "video": "https://youtu.be/3LK-pgWd5F8",
+  "thumbnail": "https://img.youtube.com/vi/3LK-pgWd5F8/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9fb637059070025270bd2",
+  "titolo": "Sequenza Yoga - Recupero e Mobilità",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "mobilità",
+   "prevenzione",
+   "pubalgia",
+   "yoga"
+  ],
+  "video": "https://youtu.be/iXgtmz6QnzA",
+  "thumbnail": "https://img.youtube.com/vi/iXgtmz6QnzA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9fb3bbafd0e0024c747b3",
+  "titolo": "Sequenza Yoga - Rinforzo Quadricipiti e Adduttori avanzato",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "forza",
+   "mobilità",
+   "prevenzione",
+   "pubalgia",
+   "yoga"
+  ],
+  "video": "https://youtu.be/MGTU2b00s5w",
+  "thumbnail": "https://img.youtube.com/vi/MGTU2b00s5w/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e8546b711f8100253930da",
+  "titolo": "Singl Leg RDL - SL Knee Jump Progression Advanced",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [
+   "esplosività",
+   "forza",
+   "pliometria"
+  ],
+  "video": "https://youtube.com/watch?v=5M85J6mWKz4?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/5M85J6mWKz4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66943265dac03c00254da9df",
+  "titolo": "Single leg drop e spinta interna",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "pliometria"
+  ],
+  "video": "https://www.youtube.com/watch?v=CLJr7cgOp60",
+  "thumbnail": "https://img.youtube.com/vi/CLJr7cgOp60/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66943230050d9500256e0e01",
+  "titolo": "Single Leg Drop e spinta laterale",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "pliometria"
+  ],
+  "video": "https://www.youtube.com/watch?v=DB8HS4sJP-Y",
+  "thumbnail": "https://img.youtube.com/vi/DB8HS4sJP-Y/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "669432dc209eb60025dc4df5",
+  "titolo": "Single leg lateral drop jump",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "pliometria"
+  ],
+  "video": "https://www.youtube.com/watch?v=-b3h-iylZ1s",
+  "thumbnail": "https://img.youtube.com/vi/-b3h-iylZ1s/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e7442f95bf7a0025024ffd",
+  "titolo": "single leg rdl",
+  "categoria": "Strength",
+  "body_part": "Hamstrings",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=Do1KR00uAqc?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/Do1KR00uAqc/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e85485d36b340025fa3249",
+  "titolo": "Single leg RDL - Sing leg RDL ginocchio piegato - 2 single leg jump",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [
+   "esplosività",
+   "forza",
+   "propriocezione"
+  ],
+  "video": "https://youtube.com/watch?v=1vfkHZS5BUg?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/1vfkHZS5BUg/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "669433133ab45300262f16d3",
+  "titolo": "single leg Reverse lateral drop progression",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "pliometria"
+  ],
+  "video": "https://www.youtube.com/watch?v=NqUjlWxJYdE",
+  "thumbnail": "https://img.youtube.com/vi/NqUjlWxJYdE/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e745761793d60023d6552b",
+  "titolo": "sissy squat",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://www.youtube.com/watch?v=Cu2THH1IQDA",
+  "thumbnail": "https://img.youtube.com/vi/Cu2THH1IQDA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6665827bd494070025ae50e9",
+  "titolo": "Sissy Squat Slide",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "forza parte bassa"
+  ],
+  "video": "https://youtu.be/o5YLyFdueBg",
+  "thumbnail": "https://img.youtube.com/vi/o5YLyFdueBg/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e853adb1909a002679e72c",
+  "titolo": "Skater Jump",
+  "categoria": "Bodyweight",
+  "body_part": "Legs",
+  "tags": [
+   "esplosività",
+   "forza"
+  ],
+  "video": "https://youtube.com/watch?v=jIdbGisRMV4?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/jIdbGisRMV4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66815cb8da989a002533fea0",
+  "titolo": "Spinta alternata Cavi - Core",
+  "categoria": "Strength",
+  "body_part": null,
+  "tags": [
+   "core",
+   "forza",
+   "prevenzione"
+  ],
+  "video": "https://youtu.be/-j_js9OIwBY",
+  "thumbnail": "https://img.youtube.com/vi/-j_js9OIwBY/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eb0dff7848d0025add17f",
+  "titolo": "Spinta frontale corsa - skip - fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza"
+  ],
+  "video": "https://youtube.com/watch?v=DUfENQ6h8NI?si=uZQcXfFCQICbVhwM",
+  "thumbnail": "https://img.youtube.com/vi/DUfENQ6h8NI/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e855d2d208d900253363d6",
+  "titolo": "Spinta isometrica al muro frontale",
+  "categoria": "Timed",
+  "body_part": "Full Body",
+  "tags": [
+   "fascia",
+   "forza",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=_mkVRSQ9_Qw?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/_mkVRSQ9_Qw/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e855e5c91f1800252a378e",
+  "titolo": "Spinta isometrica al muro laterale esterno",
+  "categoria": "Timed",
+  "body_part": "Full Body",
+  "tags": [
+   "core",
+   "fascia",
+   "forza",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=pNlUIME0BEY?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/pNlUIME0BEY/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e855f6eb3da200257891b2",
+  "titolo": "Spinta isometrica al muro laterale interno",
+  "categoria": "Timed",
+  "body_part": "Full Body",
+  "tags": [
+   "core",
+   "fascia",
+   "forza",
+   "push"
+  ],
+  "video": "https://youtube.com/watch?v=fTr5Gj6KgUc?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/fTr5Gj6KgUc/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eb044c98eb80026f314ed",
+  "titolo": "Spinta laterale e finta - protezione palla - fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza",
+   "tecnica"
+  ],
+  "video": "https://youtube.com/watch?v=nnSMkB7saNY?si=8Mg8VGvWQ4icDV8R",
+  "thumbnail": "https://img.youtube.com/vi/nnSMkB7saNY/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eb024e5571600245729e7",
+  "titolo": "Spinta laterale suola - protezione palla - fascia",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "fascia",
+   "forza",
+   "tecnica"
+  ],
+  "video": "https://youtube.com/watch?v=9HcNXIItrps?si=xU-NdxHMAh1wBAeG",
+  "thumbnail": "https://img.youtube.com/vi/9HcNXIItrps/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "665c29f4ee15eb0025aa2c83",
+  "titolo": "Sprint",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "velocità"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "67a31695bfac8ff01616377d",
+  "titolo": "Sprint con palla da fermo",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "forza esplosiva",
+   "pliometria",
+   "velocità"
+  ],
+  "video": "https://www.youtube.com/watch?v=aH5O95mInLM",
+  "thumbnail": "https://img.youtube.com/vi/aH5O95mInLM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9a85fe4840c00256cc0a4",
+  "titolo": "Sprint e Salite - Forza esplosiva",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "esplosività",
+   "velocità"
+  ],
+  "video": "https://youtu.be/VTJeEaJD2J4",
+  "thumbnail": "https://img.youtube.com/vi/VTJeEaJD2J4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "66008a119ce2ed00251f1d8e",
+  "titolo": "T sprint",
+  "categoria": "Bodyweight",
+  "body_part": "Speed",
+  "tags": [
+   "tecnica",
+   "velocità"
+  ],
+  "video": "https://youtu.be/rHL5XtEQe4w?si=VQZq2McfxcNEW7u8",
+  "thumbnail": "https://img.youtube.com/vi/rHL5XtEQe4w/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eab42f7848d0025adca46",
+  "titolo": "Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "esercizi in 2",
+   "riscaldamento",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "https://youtube.com/watch?v=BfB2ubvweSg?si=nnqaBA-eZ6eqX4I9",
+  "thumbnail": "https://img.youtube.com/vi/BfB2ubvweSg/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eaa3edf11e40025ddb2a7",
+  "titolo": "Tecnica a 2 - Palla bassa e palla alta",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "esercizi in 2",
+   "riscaldamento",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "https://youtube.com/watch?v=eYdKQtpTreA?si=Xdhnlm-hwMBNjrjb",
+  "thumbnail": "https://img.youtube.com/vi/eYdKQtpTreA/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eaa8cf7848d0025adc914",
+  "titolo": "Tecnica a 2 - Palleggio con 2 palle",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "esercizi in 2",
+   "riscaldamento",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "https://youtube.com/watch?v=RLk8Mx-SxgM?si=mJcft47thx7MxwwK",
+  "thumbnail": "https://img.youtube.com/vi/RLk8Mx-SxgM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eab0d90d25500257412d7",
+  "titolo": "Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "esercizi in 2",
+   "riscaldamento",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "https://youtube.com/watch?v=BfB2ubvweSg?si=nnqaBA-eZ6eqX4I9",
+  "thumbnail": "https://img.youtube.com/vi/BfB2ubvweSg/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666eaae7e5571600245720c1",
+  "titolo": "Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "esercizi in 2",
+   "riscaldamento",
+   "tecnica",
+   "tecnica applicata"
+  ],
+  "video": "https://youtube.com/watch?v=BfB2ubvweSg?si=nnqaBA-eZ6eqX4I9",
+  "thumbnail": "https://img.youtube.com/vi/BfB2ubvweSg/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6829cc47d8dfd421b3b8672e",
+  "titolo": "TEST EQUILIBRIO 1 GAMBA",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "67fcc7b551e41c266497b796",
+  "titolo": "Test Max Pull up",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "67fcc79990f30e532d7b9688",
+  "titolo": "Test Max push up",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66645bb6a12b27002562d616",
+  "titolo": "TEST NAVETTA 10mt - 30''",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "test"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6664425ed494070025aca790",
+  "titolo": "TEST RESISTENZA 1km",
+  "categoria": "Distance (Long)",
+  "body_part": null,
+  "tags": [
+   "test"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "666442879b1e0b00243e8ba8",
+  "titolo": "TEST RESISTENZA 3KM",
+  "categoria": "Distance (Long)",
+  "body_part": null,
+  "tags": [
+   "test"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6677f3dd942c2b00243f2235",
+  "titolo": "Test Salto in lungo - broad jump",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "forza parte bassa",
+   "pliometria"
+  ],
+  "video": "https://youtu.be/Lfnm4BZ5cY0?si=_3D7ijuXrIfL0kqh",
+  "thumbnail": "https://img.youtube.com/vi/Lfnm4BZ5cY0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "666442c097f11200251ee96d",
+  "titolo": "TEST VELOCITA' 100M",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "test"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "66657febffc86a0023a81a19",
+  "titolo": "TEST VELOCITA' 50M",
+  "categoria": "Distance (Short)",
+  "body_part": null,
+  "tags": [
+   "test"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "65e496f422e79300268ed4e6",
+  "titolo": "Tibialis raises",
+  "categoria": "Strength",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=P4H0NE-HCsE?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/P4H0NE-HCsE/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "6600a6ef49f3a80025f0f9bc",
+  "titolo": "tiri - rigore al palo",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "tiro"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a6c3b5b16400256757ce",
+  "titolo": "Tiri - rigore alla traversa",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "tecnica di base",
+   "tiro"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6600a7b7b206f200274d598d",
+  "titolo": "tiri - tecnica di tiro",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "tecnica di base",
+   "tiro"
+  ],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6601bf18160a8a002607c50d",
+  "titolo": "Tiri in porta dall'angolo - CROSS",
+  "categoria": "Bodyweight",
+  "body_part": null,
+  "tags": [],
+  "video": null,
+  "thumbnail": null
+ },
+ {
+  "everfit_id": "6601b64e5304560025904d4a",
+  "titolo": "Tiri in porta e VISIONE",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "tecnica applicata",
+   "tiro",
+   "visione"
+  ],
+  "video": "https://youtu.be/CPR99KAUm-4?si=alsjAoz5R5j9ESf_",
+  "thumbnail": "https://img.youtube.com/vi/CPR99KAUm-4/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e89b52268dbf00255ef16c",
+  "titolo": "Toes to Bar",
+  "categoria": "Bodyweight",
+  "body_part": "Full Body",
+  "tags": [
+   "core",
+   "forza"
+  ],
+  "video": "https://www.youtube.com/watch?v=jMUJ1KTZIeE&ab_channel=TestosteroneNation",
+  "thumbnail": "https://img.youtube.com/vi/jMUJ1KTZIeE/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65da29c75d18460024f50cca",
+  "titolo": "Toes up down",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia"
+  ],
+  "video": "https://www.youtube.com/watch?v=1_TtKlvDeqk",
+  "thumbnail": "https://img.youtube.com/vi/1_TtKlvDeqk/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65da2951209fc70025983b93",
+  "titolo": "Towel Curls",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia"
+  ],
+  "video": "https://www.youtube.com/watch?v=qW8YXLmdke0",
+  "thumbnail": "https://img.youtube.com/vi/qW8YXLmdke0/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e89c8b9b0d0f0026e4ff01",
+  "titolo": "Towel Curls - Tallone sollevato",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [
+   "fascia"
+  ],
+  "video": "https://youtube.com/watch?v=oGdTbZPCEz8?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/oGdTbZPCEz8/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9f8852275140024afbb48",
+  "titolo": "Videocorso Visione - Esercizi Base",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "visione"
+  ],
+  "video": "https://youtu.be/esfKOGy02cg",
+  "thumbnail": "https://img.youtube.com/vi/esfKOGy02cg/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e9f8a291d35b00238b82b1",
+  "titolo": "Videocorso Visione - Esercizi Intermedi",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "tecnica",
+   "visione"
+  ],
+  "video": "https://youtu.be/YIf7wWu4E40",
+  "thumbnail": "https://img.youtube.com/vi/YIf7wWu4E40/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "65e7437cfd827200255ff957",
+  "titolo": "Wall sit",
+  "categoria": "Timed",
+  "body_part": "Legs",
+  "tags": [],
+  "video": "https://youtube.com/watch?v=EuGsglumupM?feature=share",
+  "thumbnail": "https://img.youtube.com/vi/EuGsglumupM/maxresdefault.jpg"
+ },
+ {
+  "everfit_id": "668154be6ee32b0025ff1f01",
+  "titolo": "Yoga prevenzione e forza adduttori",
+  "categoria": "Timed",
+  "body_part": null,
+  "tags": [
+   "yoga"
+  ],
+  "video": "https://youtu.be/n3VjhSqo4EM?si=xHya_l_FxpbHJpzP",
+  "thumbnail": "https://img.youtube.com/vi/n3VjhSqo4EM/maxresdefault.jpg"
+ }
+]
