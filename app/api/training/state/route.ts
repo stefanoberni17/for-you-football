@@ -6,6 +6,7 @@ import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFatica
 import { cicloInfo, todayRome } from '@/lib/trainingPlanner';
 import { TESTS } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup } from '@/lib/trainingSetup';
+import { CATEGORIA_LABEL, ROMBO_V2, TESTS_V2 } from '@/lib/trainingTestsV2';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -18,11 +19,11 @@ export async function GET(request: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
-    const [{ data: profile }, { data: results }, { data: openSession }, { data: lastPlan }, { data: lastTestSession }] = await Promise.all([
+    const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: lastTestSession }] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
-        .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
-        .eq('user_id', userId).order('created_at', { ascending: false }).limit(80),
+        .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
+        .eq('user_id', userId).order('created_at', { ascending: false }).limit(120),
       supabaseAdmin.from('training_test_sessions').select('id, tipo, started_at')
         .eq('user_id', userId).is('completed_at', null)
         .order('started_at', { ascending: false }).limit(1).maybeSingle(),
@@ -33,6 +34,16 @@ export async function GET(request: NextRequest) {
         .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
     ]);
 
+    // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
+    type ResultRow = { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null };
+    let results: ResultRow[] | null = (resultsRes.data as ResultRow[] | null);
+    if (resultsRes.error && /dettaglio/.test(resultsRes.error.message)) {
+      const r2 = await supabaseAdmin.from('training_test_results')
+        .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
+        .eq('user_id', userId).order('created_at', { ascending: false }).limit(120);
+      results = r2.data as ResultRow[] | null;
+    }
+
     const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }) => ({
       test_id: r.test_id, valore: Number(r.valore),
       livello_calcolato: r.livello_calcolato, punteggio_calcolato: Number(r.punteggio_calcolato),
@@ -40,6 +51,30 @@ export async function GET(request: NextRequest) {
 
     const gradini = placementFromResults(rows);
     const doneTestIds = new Set(rows.map((r) => r.test_id));
+    const rawByTest = new Map<string, { valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }>();
+    for (const r of results || []) {
+      if (!rawByTest.has(r.test_id)) rawByTest.set(r.test_id, r); // il più recente
+    }
+    // Batteria v2: test da campo + palestra, raggruppati per categoria
+    const testsV2 = TESTS_V2.map((t) => {
+      const r = rawByTest.get(t.id);
+      return {
+        id: t.id, nome: t.nome, categoria: t.categoria, categoriaLabel: CATEGORIA_LABEL[t.categoria], unita: t.unita,
+        verso: t.verso, protocollo: t.protocollo, lift: !!t.lift, provvisorio: !!t.provvisorio,
+        done: !!r, lastValue: r ? Number(r.valore) : null, lastLevel: r?.livello_calcolato ?? null,
+        dettaglio: r?.dettaglio ?? null,
+      };
+    });
+    // Massimali stimati per esercizio v2 (dai lift) — entrano nel contesto v2 del validatore
+    const massimali: Record<string, number> = {};
+    for (const t of TESTS_V2) {
+      const r = rawByTest.get(t.id);
+      if (t.lift && r) massimali[t.lift.esercizioV2Id] = Number(r.valore);
+    }
+    const romboV2 = ROMBO_V2.map((p) => {
+      const scores = p.testIds.map((id) => rawByTest.get(id)).filter((r): r is NonNullable<typeof r> => !!r).map((r) => Number(r.punteggio_calcolato));
+      return { key: p.key, label: p.label, score: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null, fatti: scores.length, totali: p.testIds.length };
+    });
 
     // Completamenti del piano corrente
     let completions: { session_key: string; feedback: string | null }[] = [];
@@ -79,6 +114,9 @@ export async function GET(request: NextRequest) {
         lastLevel: rows.find((r) => r.test_id === t.id)?.livello_calcolato ?? null,
       })),
       amrapCircuit: buildAmrapCircuit(rows),
+      testsV2,
+      massimali,
+      romboV2,
       ladders: LADDER_AREE.map((a) => ladderForArea(rows, a)).filter((l) => l !== null),
       openTestSession: openSession || null,
       plan: lastPlan || null,
