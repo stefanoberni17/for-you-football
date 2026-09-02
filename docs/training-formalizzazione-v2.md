@@ -1,6 +1,6 @@
 # FYF Training — Formalizzazione v2: qualità fisiche complete
 
-> **Stato:** bozza v2.0 — 2 settembre 2026. Estende la v1 (corpo libero + tecnica + fascia,
+> **Stato:** bozza v2.1 — 2 settembre 2026 (risposte 3-6 recepite; aperti: gating fmax, soglie test campo). Estende la v1 (corpo libero + tecnica + fascia,
 > `docs/training-recap-progressioni.md`) alle qualità fisiche complete: forza in palestra,
 > forza esplosiva/pliometria, velocità, resistenza (aerobica, metabolico, RSA).
 > Fonte: risposte di Ste in chat (2 set 2026) + analisi dei suoi 203 workout e 18 programmi
@@ -41,10 +41,10 @@ un bound del validatore; ciò che è fuori viene rifiutato prima del salvataggio
 | Forza esplosiva | 4-6 | 60-70% | 1'30-2' | **esplosiva** |
 | Forza di base | 6-12 | — (carico che chiude la serie con 1-2 reps di margine) | 1'30 | controllata |
 
-Serie per esercizio **[PROPOSTA]**: forza max 3-5 · esplosiva 3-5 · base 3-4. Esercizi di forza per seduta: 3-5.
+Serie per esercizio **[STE ✅]**: forza max 3-5 · esplosiva 3-5 · base 3-4. Esercizi di forza per seduta: 3-5.
 
 **Progressione** = carico e ripetizioni: si alza il carico quando si chiude il range alto delle reps per 2 sedute
-consecutive con esecuzione pulita **[PROPOSTA]** (+2.5-5% parte alta, +5% parte bassa).
+consecutive con esecuzione pulita **[STE ✅]** (+2.5-5% parte alta, +5% parte bassa).
 
 ### 2.2 Esercizi base palestra **[DATI]** — i più usati nei workout/programmi di Ste
 
@@ -58,16 +58,25 @@ consecutive con esecuzione pulita **[PROPOSTA]** (+2.5-5% parte alta, +5% parte 
 | Esplosivi con carico | Kettlebell swing · Jump Squat · Medicine Ball Lateral Throw · KB clean/snatch | 3×15 @20 kg · 3×12 · 8×5 kg |
 
 **[PROPOSTA] Lista base v2** (5 pattern, 1-2 esercizi ciascuno): squat (bilanciere / goblet / split squat) ·
-cerniera (stacco / RDL / nordic) · spinta (panca / dips zavorrati) · tirata (trazioni zavorrate / rematore) ·
-esplosivo (KB swing / jump squat / lanci). Corpo libero v1 resta la regressione quando non c'è la palestra.
+cerniera (stacco / RDL / nordic) · **glutei: hip thrust con spinta sugli avampiedi, non sul tallone [STE ✅]** ·
+spinta (panca / dips zavorrati) · tirata (trazioni zavorrate / rematore) · esplosivo (KB swing / jump squat / lanci). Corpo libero v1 resta la regressione quando non c'è la palestra.
 
 ### 2.3 Carico di riferimento e gating **[STE: stima ok, ma meglio una sessione di test]**
 
 - Il **massimale è stimato**, mai testato direttamente: serie sub-massimale a cedimento tecnico (5-8 reps)
   → 1RM stimato con Epley (`1RM = peso × (1 + reps/30)`) → le % del §2.1 si calcolano da lì.
-- **Sessione di test forza** (batteria "palestra", una volta per ciclo): 1 esercizio per pattern (squat, stacco/RDL,
-  panca, trazioni) a 5-8 reps; + campo: broad jump (Test Salto in lungo), T sprint / sprint 10-30 m,
-  navetta 10 m × 30", test resistenza 1 km / 3 km, Rapidità Ankle Stiffness — tutti già presenti nei workout **[DATI]**.
+- **Sessione di test** = la batteria che Ste usa già su Everfit **[DATI — 4 workout "TEST"]**, più la stima 1RM:
+
+  | Test Everfit | Protocollo (dai workout) | Qualità | Soglie B/A/PRO |
+  |---|---|---|---|
+  | TEST FORZA PARTE BASSA | Broad jump 4×1 rec 3' · Rapidità Ankle Stiffness 2×20" rec 2' · Nordic hamstring 2×4 rec 3' · Iso lunge runner 4' · Equilibrio 1 gamba 2' | forza esplosiva / stiffness / catena posteriore | ⚠️ da File_DB |
+  | TEST PARTE ALTA | Max push-up · Max pull-up (+ riscaldamento 10 push / 5 pull / 40 crunch) | v1 (già live) | ✅ v1 |
+  | TEST RESISTENZA | 3 km · 1 km (rec 4') | aerobica | ⚠️ da File_DB (tempi) |
+  | TEST VELOCITÀ | 100 m ×3 rec 3' · 50 m ×3 rec 2' · T sprint ×3 rec 90" | velocità / rapidità | ⚠️ da File_DB (tempi) |
+  | **Palestra (nuovo)** | 1 esercizio per pattern (squat, stacco/RDL, panca, trazioni) a 5-8 reps → 1RM Epley | forza | livello dal rapporto 1RM/peso corporeo **[PROPOSTA]** |
+
+  Le soglie dei test da campo non sono nell'export Everfit (che ha solo i protocolli) né nella trascrizione v1 del
+  File_DB (coperti: push, pull, plank, palleggi, muro). **Servono dal File_DB o da Ste.**
 - **Gating [PROPOSTA — da confermare]**: forza massima (80-90%) solo con **≥16 anni** e livello **A/PRO** e
   batteria palestra fatta; sotto: forza di base ed esplosiva a carichi ≤70%. Le regole safety v1 restano
   (pain-hold, dolore ≥4/10, fatica alta → scarico).
@@ -84,8 +93,8 @@ esplosivo (KB swing / jump squat / lanci). Corpo libero v1 resta la regressione 
 
 | Tipo | Esercizi | Volume per seduta **[PROPOSTA]** | Livello | Esempi reali **[DATI]** |
 |---|---|---|---|---|
-| **Estensiva** | pogo jumps, saltelli, toe bounces, A-skip, skater | **60-100 contatti** (B) · 80-120 (A/PRO) | tutti | Pogo Jumps 2×120"/60" o 4×60"/60" · Toe Bounces SL 2×30"/30" · A-Skip 3-6×10"/20" |
-| **Intensiva** | drop jumps, depth jumps, salti in lungo/triplo, single leg drop | **30-60 contatti** | **solo A/PRO** | Drop Jump 3×2-3 rec 60" · Broad jump 3-4×2 rec 60" · Single leg lateral drop jump 2×10 rec 60" · Salto triplo + sprint 4-6 rec 30-60" · Reverse drop jumps 3×12 → 5×20 rec 120" |
+| **Estensiva** | pogo jumps, saltelli, toe bounces, A-skip, skater | **a tempo** (es. 2-4 × 60-120") — può superare i 100 contatti **[STE ✅]** | tutti | Pogo Jumps 2×120"/60" o 4×60"/60" · Toe Bounces SL 2×30"/30" · A-Skip 3-6×10"/20" |
+| **Intensiva** | drop jumps, depth jumps, salti in lungo/triplo, single leg drop | **30-60 contatti** **[STE ✅]** | **solo A/PRO** | Drop Jump 3×2-3 rec 60" · Broad jump 3-4×2 rec 60" · Single leg lateral drop jump 2×10 rec 60" · Salto triplo + sprint 4-6 rec 30-60" · Reverse drop jumps 3×12 → 5×20 rec 120" |
 
 Regola: si passa all'intensiva solo con l'estensiva consolidata e l'ankle stiffness test fatto **[PROPOSTA]**.
 
@@ -149,7 +158,7 @@ Ciclo 3+1 (deload alla 4ª, ri-test dalla 5ª) resta valido in tutte le fasi (gi
 
 ## 7. Carico totale (nostro + squadra) **[STE: "dovremmo fare un metodo di calcolo"] — [PROPOSTA]**
 
-Metodo **session-RPE** (Foster): `carico seduta = durata (min) × RPE (1-10)`, in unità arbitrarie (AU).
+Metodo **session-RPE** (Foster) **[STE ✅]**: `carico seduta = durata (min) × RPE (1-10)`, in unità arbitrarie (AU).
 - **Sedute FYF**: durata reale dal player; RPE dal feedback 3-tap (facile=3 · ok=5 · duro=8) o slider 1-10 opzionale.
 - **Sedute squadra**: dal calendario settimanale (giorni allenamento/partita) + durata tipica dichiarata (es. 90')
   + RPE serale chiesto dall'app (1 tap, come il check-in). Partita = 90' × RPE 8-9 di default.
@@ -161,12 +170,8 @@ Metodo **session-RPE** (Foster): `carico seduta = durata (min) × RPE (1-10)`, i
 
 ## 8. Cosa serve ancora (domande aperte)
 
-1. **Gating età/livello per forza massima** (§2.3): confermi ≥16 anni + A/PRO + batteria palestra fatta?
-2. **Sessione di test forza**: ok la batteria proposta (4 esercizi a 5-8 reps + broad jump, sprint, navetta, 1 km/3 km, ankle stiffness)? Quali soglie B/A/PRO per i test da campo?
-3. **Serie per esercizio di forza** e regola di progressione del carico (§2.1): ok i default?
-4. **Pliometria**: ok 60-100 / 30-60 contatti e intensiva solo A/PRO con estensiva consolidata?
-5. **Carico totale**: ok session-RPE con RPE serale della squadra (1 tap in più al giorno)? Durata tipica allenamento squadra da chiedere nel profilo?
-6. **Esercizi base**: la lista §2.2 va bene o togli/aggiungi qualcosa (hip thrust non compare nei tuoi workout)?
+1. **Gating forza massima** (§2.3) — in parole semplici: *chi può fare le serie pesanti all'80-90%?* Proposta: solo chi ha ≥16 anni, è di livello A/PRO e ha fatto la batteria palestra; tutti gli altri fanno forza di base ed esplosiva con carichi fino al 70%. Confermi, o cambi età/livello?
+2. **Soglie B/A/PRO dei test da campo** (broad jump in cm · 50 m, 100 m e T sprint in secondi · 1 km e 3 km in minuti · ankle stiffness): sono nel File_DB? Il file non è nel repo — serve ricaricarlo, oppure i numeri.
 
 ## 9. Piano di implementazione (dopo le risposte)
 
