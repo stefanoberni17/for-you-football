@@ -1,0 +1,6574 @@
+# Programmi Everfit — export 1 set 2026
+
+18 programmi di Ste (API interna `get-calendar-by-week`), demo Everfit escluse, programmi personali di clienti anonimizzati. Ogni giorno riporta i workout completi.
+
+| Programma | Settimane | Livello | Tag |
+|---|---|---|---|
+| Programma Tecnica Base 12 settimane | 12 | beginner | — |
+| Forza e Velocità 12 settimane | 12 | all_level | — |
+| Fascia Foundation Base | 8 | all_level | — |
+| Preparazione Estiva Completa Base | 8 | all_level | — |
+| Fascia Foundation Intermedio | 8 | intermediate | — |
+| VISIONE BASE | 8 | all_level | — |
+| Preparazione Estiva Completa PRO - CON PALESTRA | 5 | — | — |
+| Programma personale — cliente A (4 sett. forza) | 4 | — | — |
+| Preparazione Estiva 4 settimane | 4 | all_level | — |
+| Programma personale — cliente B (4 sett.) | 4 | advanced | — |
+| Off-Season PRO S1 | 2 | — | — |
+| Off Season TOP S1 | 1 | — | — |
+| in season | 1 | — | — |
+| forza corpo libero avanzato w1 | 1 | — | — |
+| forza corpo libero avanzato w3 | 1 | — | — |
+| Settimana 1 programma corpo libero | 1 | — | — |
+| In Season | 1 | — | — |
+| forza corpo libero avanzato w2 | 1 | — | — |
+
+## Programma Tecnica Base 12 settimane (12 sett.)
+_Programma di tecnica di base con 3 allenamenti a settimana per 12 settimane - versione Base_
+### Settimana 1
+- **Giorno 1 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 2× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 4'00" · rec 60" / 2'00" · rec 60"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 3 — Tecnica Palleggi B1 - tecnica di base**
+  - **regular**
+    - Palleggi solo Collo — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi sotto al ginocchio - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Palleggi altezza testa - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo un piede - Tecnica — 3× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 2× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi solo testa - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+- **Giorno 5 — Tecnica Freestyle**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 6'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 8'00" · rec 120"
+### Settimana 2
+- **Giorno 1 — Tecnica al Muro, passaggi e controllo A1**
+  - **regular**
+    - Palleggi coscia e collo — 1× 5'00" · rec 60"
+  - **regular**
+    - palleggi piedi coscia testa — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro controllo 180gradi - TECNICA — 2× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 2× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 3× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 3× 3'00" · rec 60"
+- **Giorno 3 — Tecnica Palleggi B2 - tecnica di base**
+  - **regular**
+    - Palleggi solo Collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi sotto al ginocchio - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Palleggi altezza testa - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi liberi + calcio alto - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo un piede - Tecnica — 2× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 3'00" · rec 60" / 2'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi solo testa - Tecnica — 3'00" · rec 60" / 2'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+- **Giorno 5 — tiri in porta - Tecnica di tiro B1**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 2× 5 reps · rec 120" (per lato)
+  - **regular**
+    - tiri - rigore al palo — 2× 5 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri - rigore alla traversa — 4 reps · rec 120" / 5 reps · rec 120" (per lato)
+  - **regular**
+    - Calcio in alto e tiro in porta — 2× 4 reps · rec 120" (per lato)
+### Settimana 3
+- **Giorno 1 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 2× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 2× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'00" · rec 60" / 2'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Tecnica Palleggi B3 - Tecnica di Base**
+  - **regular**
+    - Palleggi solo interno - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2'00" · rec 60"
+  - **regular**
+    - Palleggi sotto al ginocchio - Tecnica — 2× 2'00" · rec 30"
+  - **regular**
+    - Palleggi altezza testa - Tecnica — 2× 2'00" · rec 30"
+  - **regular**
+    - Palleggi liberi + calcio alto - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo un piede - Tecnica — 2× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 2× 3'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi solo testa - Tecnica — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 7'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 7'00" · rec 60"
+- **Giorno 5 — Tiri e Visione Libero A1 - Tecnica di base**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 1× 3 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri in porta e VISIONE — 2'00" · rec 60" / 2'00" · rec 120" (per lato; nota: ESEGUI L'ESERCIZIO A RITMO BASSO)
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 120" (per lato)
+### Settimana 4
+- **Giorno 1 — Tecnica A2 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Tecnica Palleggi A1 - Tecnica di base**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 2× 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 5'00" · rec 60"
+- **Giorno 5 — Tecnica Freestyle - dribbling**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 9'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 11'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+### Settimana 5
+- **Giorno 1 — Tecnica A3 Muro 2 tocchi - Tecnica di base 1**
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 2'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo di interno ad aprire — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - Controllo di interno a chiudere — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 5'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Tecnica palleggi A2 - Tecnica di base**
+  - **regular**
+    - Palleggi al muro 1 tocco solo interno — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 1 tocco libero — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 4'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 5 — Tiri e Visione Libero A1 - Tecnica di base**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 1× 3 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri in porta e VISIONE — 2'00" · rec 60" / 2'00" · rec 120" (per lato; nota: ESEGUI L'ESERCIZIO A RITMO BASSO)
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 120" (per lato)
+### Settimana 6
+- **Giorno 1 — Tecnica A2 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Tecnica Palleggi A3 - Tecnica di base**
+  - **regular**
+    - Palleggi al muro 2 tocchi — 2× 4'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 6'00" · rec 60" / 6'00" · rec 120"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× 3'00" · rec 120" (per lato)
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5'00"
+- **Giorno 5 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+### Settimana 7
+- **Giorno 1 — Tecnica A3 Muro 2 tocchi - Tecnica di base 1**
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 2'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo di interno ad aprire — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - Controllo di interno a chiudere — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 5'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Tecnica Palleggi A1 - Tecnica di base**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 2× 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 5'00" · rec 60"
+- **Giorno 5 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+### Settimana 8
+- **Giorno 1 — Fascia e tecnica Funzionale A2**
+  - **regular**
+    - Protezione palla figura 8 - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Protezione palla schiena - fascia — 2× 1'00" · rec 60"
+  - **regular**
+    - Protezione palla laterale suola - fascia — 2× 30" · rec 60"
+  - **regular**
+    - Spinta laterale suola - protezione palla - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Spinta laterale e finta - protezione palla - fascia — 3× 30" · rec 60"
+  - **regular**
+    - Protezione palla laterale - palleggi - fascia — 3× 30" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 120"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00" · rec 120"
+- **Giorno 3 — Tecnica A3 Muro 2 tocchi - Tecnica di base 1**
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 2'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo di interno ad aprire — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - Controllo di interno a chiudere — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 5'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 5 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+### Settimana 9
+- **Giorno 1 — Tecnica al Muro, passaggi e controllo A1**
+  - **regular**
+    - Palleggi coscia e collo — 1× 5'00" · rec 60"
+  - **regular**
+    - palleggi piedi coscia testa — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro controllo 180gradi - TECNICA — 2× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 2× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 3× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 3× 3'00" · rec 60"
+- **Giorno 3 — Tecnica Palleggi A3 - Tecnica di base**
+  - **regular**
+    - Palleggi al muro 2 tocchi — 2× 4'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 6'00" · rec 60" / 6'00" · rec 120"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× 3'00" · rec 120" (per lato)
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5'00"
+- **Giorno 5 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+### Settimana 10
+- **Giorno 1 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00"
+  - **regular**
+    - Passaggi al muro 1 tocco interno 1 piede - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi al muro solo collo di prima - Tecnica — 1× 4'00"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 3 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 6'00" · rec 60"
+- **Giorno 5 — tiri in porta - Tecnica di tiro A1**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 1× 3 reps · rec 120" (per lato)
+  - **regular**
+    - tiri - rigore al palo — 2× 5 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri - rigore alla traversa — 4 reps · rec 120" / 5 reps · rec 120" (per lato)
+  - **regular**
+    - Calcio in alto e tiro in porta — 3× 4 reps · rec 120" (per lato)
+### Settimana 11
+- **Giorno 1 — passaggi al muro - Tecnica Visione A1**
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 2'00" · rec 60" (nota: INTENSITÀ BASSA)
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 2'00" · rec 60" (nota: INTENSITÀ BASSA)
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 5'00" · rec 90"
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 2'00" · rec 60" (nota: INTENSITÀ BASSA)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00" · rec 60"
+- **Giorno 3 — Tecnica Palleggi A4 - Tecnica di base**
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 4'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× 3'00" · rec 120" (per lato)
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5'00"
+  - **regular**
+    - palleggi piedi coscia testa — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi liberi + calcio alto - Tecnica — 2× 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 5 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+### Settimana 12
+- **Giorno 1 — Tecnica A3 Muro 2 tocchi - Tecnica di base 1**
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 2'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo di interno ad aprire — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - Controllo di interno a chiudere — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 5'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — tiri in porta - Tecnica di tiro A1**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 1× 3 reps · rec 120" (per lato)
+  - **regular**
+    - tiri - rigore al palo — 2× 5 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri - rigore alla traversa — 4 reps · rec 120" / 5 reps · rec 120" (per lato)
+  - **regular**
+    - Calcio in alto e tiro in porta — 3× 4 reps · rec 120" (per lato)
+- **Giorno 5 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+
+## Forza e Velocità 12 settimane (12 sett.)
+### Settimana 1
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Forza Esplosiva A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" / 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 2 reps · rec 60" / 2 reps · rec 60" / 2 reps · rec 120"
+  - **regular**
+    - Drop Jump — 3× 2 reps · rec 60"
+  - **regular**
+    - Fascia Lateral Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 90"
+  - **regular**
+    - Fascia Front Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato)
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — TEST VELOCITA'**
+  - **regular**
+    - TEST VELOCITA' 100M — 3× rec 180" · distance_short 100 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - TEST VELOCITA' 50M — 3× rec 120" · distance_short 50 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - T sprint — 3× 1 reps · rec 90" (nota: ESEGUI SENZA PALLA E PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+### Settimana 2
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 2 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — velocità e forza esplosiva B1**
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 120" · cadence 2 (nota: a 2 piedi)
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 3× 1'00" · rec 120"
+### Settimana 3
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Forza Esplosiva A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" / 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 2 reps · rec 60" / 2 reps · rec 60" / 2 reps · rec 120"
+  - **regular**
+    - Drop Jump — 3× 2 reps · rec 60"
+  - **regular**
+    - Fascia Lateral Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 90"
+  - **regular**
+    - Fascia Front Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato)
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+### Settimana 4
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 2 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Velocità A1**
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Sprint con palla da fermo — rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 60" · distance_short 30 / rec 60" · distance_short 30 / rec 30" · distance_short 10 / rec 30" · distance_short 10
+  - **regular**
+    - Sprint — 3" · rec 90" · distance_short 20 / 3" · rec 90" · distance_short 20 / 4" · rec 90" · distance_short 30 / 4" · rec 90" · distance_short 30
+  - **regular**
+    - T sprint — 4× 1 reps · rec 90"
+### Settimana 5
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Forza Esplosiva A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" / 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 2 reps · rec 60" / 2 reps · rec 60" / 2 reps · rec 120"
+  - **regular**
+    - Drop Jump — 3× 2 reps · rec 60"
+  - **regular**
+    - Fascia Lateral Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 90"
+  - **regular**
+    - Fascia Front Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato)
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — TEST VELOCITA'**
+  - **regular**
+    - TEST VELOCITA' 100M — 3× rec 180" · distance_short 100 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - TEST VELOCITA' 50M — 3× rec 120" · distance_short 50 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - T sprint — 3× 1 reps · rec 90" (nota: ESEGUI SENZA PALLA E PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+### Settimana 6
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 2 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — Velocità e forza esplosiva B2**
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 120" · cadence 2 (nota: a 2 piedi)
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Sprint con palla da fermo — rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 60" · distance_short 30 / rec 60" · distance_short 30 / rec 30" · distance_short 10 / rec 30" · distance_short 10
+  - **regular**
+    - Postura + Velocità Difensori — 3× 1'00" · rec 120"
+### Settimana 7
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Forza Esplosiva A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" / 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 2 reps · rec 60" / 2 reps · rec 60" / 2 reps · rec 120"
+  - **regular**
+    - Drop Jump — 3× 2 reps · rec 60"
+  - **regular**
+    - Fascia Lateral Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 90"
+  - **regular**
+    - Fascia Front Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato)
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità 2**
+  - **regular**
+    - Fascia A-Skip — 5× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 10" · rec 20" (per lato)
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+### Settimana 8
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 2 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Pliometria Rapidità Velocità B2**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 3× 2 reps · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 1× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Sprint — 3" · rec 60" · distance_short 10 / 3" · rec 60" · distance_short 10 / 3" · rec 60" · distance_short 10 / 3" · rec 60" · distance_short 10 / 5" · rec 120" · distance_short 20 / 5" · rec 120" · distance_short 20 / 5" · rec 120" · distance_short 20 / 8" · rec 180" · distance_short 50 / 8" · rec 180" · distance_short 50 / 8" · rec 120" · distance_short 20 / 8" · rec 0" · distance_short 10 / 8" · rec 180" · distance_short 50
+### Settimana 9
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 2 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — Velocità e forza esplosiva B2**
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 120" · cadence 2 (nota: a 2 piedi)
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Sprint con palla da fermo — rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 60" · distance_short 30 / rec 60" · distance_short 30 / rec 30" · distance_short 10 / rec 30" · distance_short 10
+  - **regular**
+    - Postura + Velocità Difensori — 3× 1'00" · rec 120"
+### Settimana 10
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Riscaldamento Sprint Velocità 2**
+  - **regular**
+    - Fascia A-Skip — 5× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 10" · rec 20" (per lato)
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 2 — Velocità A1**
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Sprint con palla da fermo — rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 60" · distance_short 30 / rec 60" · distance_short 30 / rec 30" · distance_short 10 / rec 30" · distance_short 10
+  - **regular**
+    - Sprint — 3" · rec 90" · distance_short 20 / 3" · rec 90" · distance_short 20 / 4" · rec 90" · distance_short 30 / 4" · rec 90" · distance_short 30
+  - **regular**
+    - T sprint — 4× 1 reps · rec 90"
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — Pliometria rapidità velocità A2**
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 120" · cadence 2 (nota: a 2 piedi)
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 3× 1'00" · rec 120"
+### Settimana 11
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Riscaldamento Sprint Velocità 2**
+  - **regular**
+    - Fascia A-Skip — 5× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 10" · rec 20" (per lato)
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 2 — Velocità A1**
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Sprint con palla da fermo — rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 60" · distance_short 30 / rec 60" · distance_short 30 / rec 30" · distance_short 10 / rec 30" · distance_short 10
+  - **regular**
+    - Sprint — 3" · rec 90" · distance_short 20 / 3" · rec 90" · distance_short 20 / 4" · rec 90" · distance_short 30 / 4" · rec 90" · distance_short 30
+  - **regular**
+    - T sprint — 4× 1 reps · rec 90"
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — Velocità B1 - short**
+  - **regular**
+    - Sprint — 2" · rec 90" · distance_short 10 / 2" · rec 90" · distance_short 10 / 4" · rec 90" · distance_short 20 / 4" · rec 90" · distance_short 20 / 4" · rec 90" · distance_short 20 / 4" · rec 90" · distance_short 30 / 4" · rec 90" · distance_short 30 / 4" · rec 90" · distance_short 30
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Sprint con palla da fermo — rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 30" · distance_short 10 / rec 30" · distance_short 10
+  - **regular**
+    - T sprint — 2× 1 reps · rec 90"
+### Settimana 12
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Forza Esplosiva A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" / 2 reps · rec 20" / 2 reps · rec 20" / 2 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 2 reps · rec 60" / 2 reps · rec 60" / 2 reps · rec 120"
+  - **regular**
+    - Drop Jump — 3× 2 reps · rec 60"
+  - **regular**
+    - Fascia Lateral Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 90"
+  - **regular**
+    - Fascia Front Jumps - Pliometria — 10" · rec 20" / 10" · rec 20" / 10" · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato)
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — TEST VELOCITA'**
+  - **regular**
+    - TEST VELOCITA' 100M — 3× rec 180" · distance_short 100 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - TEST VELOCITA' 50M — 3× rec 120" · distance_short 50 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - T sprint — 3× 1 reps · rec 90" (nota: ESEGUI SENZA PALLA E PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+
+## Fascia Foundation Base (8 sett.)
+### Settimana 1
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+### Settimana 2
+- **Giorno 1 — Fascia Foundations 1B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 2× 1'00" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 1B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 2× 1'00" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation tecnica A1-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00"
+### Settimana 3
+- **Giorno 1 — Fascia Foundations 1C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'00" · rec 30"
+- **Giorno 3 — Fascia Foundations 1C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'00" · rec 30"
+- **Giorno 5 — Fascia foundation tecnica A1-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00"
+### Settimana 4
+- **Giorno 1 — Fascia Foundations 1D**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'30" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 45" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 1D**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'30" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 45" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation tecnica A1-C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00"
+### Settimana 5
+- **Giorno 1 — Fascia Foundations 2A**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'00" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 2A**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'00" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 6
+- **Giorno 1 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 7
+- **Giorno 1 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 2'00" · rec 30" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 3× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00"
+### Settimana 8
+- **Giorno 1 — Fascia Foundations 2C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 2'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'45" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 1× 2'00" (per lato)
+- **Giorno 3 — Fascia Foundations 2C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 2'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'45" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 1× 2'00" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 2'00" · rec 30" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 3× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00"
+
+## Preparazione Estiva Completa Base (8 sett.)
+### Settimana 1
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Fascia Foundation B3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 2'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 2× 20" · rec 60"
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 1 — TEST RESISTENZA**
+  - **regular**
+    - TEST RESISTENZA 3KM — 1× 3000 m · rec 240"
+  - **regular**
+    - TEST RESISTENZA 1km — 1× 1000 m · rec 240"
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 3 — Forza Prevenzione B1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · rec 60"
+  - **regular**
+    - Calf raises — 2× 20 reps · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 2× 5 reps · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 2× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · rec 120" / 7 reps · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · rec 120" / 16 reps · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 10 reps · rec 60"
+- **Giorno 3 — Salite Resistenza B1**
+  - **regular**
+    - Sprint e Salite - Forza esplosiva — 1'30" · 200 m · rec 120" · round 4 / 1'10" · 150 m · rec 90" · round 4 / 50" · 100 m · rec 60" · round 4 / 20" · 50 m · rec 40" · round 6 (nota: esegui le salita in progressione, arrivando circa all 80% della velocità)
+  - **regular**
+    - BOX rapidità e Tiro — 1× 4 reps · rec 60" (nota: ESEGUI NON A MASSIMA VELOCITA', circa a 70/80%)
+- **Giorno 3 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 5 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Ripetute A1**
+  - **regular**
+    - Ripetute — 3 reps · 4'00" · rec 180" · distance_short 1000 / 3 reps · 2'20" · rec 120" · distance_short 600 / 3 reps · 1'00" · rec 60" · distance_short 300 / 3 reps · 40" · rec 50" · distance_short 200
+  - **regular**
+    - Fartlek — 20" · rec 40" · round 10 / 10" · rec 50" · round 10
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 120" / 1'30" · rec 120" / 1'00" · rec 120" / 2'00" · rec 120" (nota: A bassa intensità)
+- **Giorno 5 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00"
+  - **regular**
+    - Passaggi al muro 1 tocco interno 1 piede - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi al muro solo collo di prima - Tecnica — 1× 4'00"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+### Settimana 2
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Fascia Foundation B3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 2'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 2× 20" · rec 60"
+- **Giorno 1 — Fartlek A1**
+  - **regular**
+    - Fartlek — 1'00" · rec 60" · round 4 / 40" · rec 40" · round 6 / 30" · rec 30" · round 8 / 20" · rec 20" · round 10
+  - **regular**
+    - Ripetute — 1× 2 reps · 4'00" · rec 180" (nota: Corsa continua 4 minuti, non deve essere massimale ma buon ritmo (80% della fatica))
+  - **regular**
+    - Box Dribbling — 1× 2'00" · rec 60" · round 3 (nota: A Bassa intensità)
+- **Giorno 1 — Tecnica Freestyle A1**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+- **Giorno 1 — Forza Parte alta B1**
+  - **regular**
+    - Sit-Up — 4× 20 reps · rec 60"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Isometric Bear Crawl — 3× 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 10 reps · rec 60"
+  - **regular**
+    - Bear Crawl Lateral — 2× 10 reps · rec 60"
+  - **regular**
+    - Push-Up — 5× 20 reps · rec 60"
+  - **regular**
+    - Pull-Up — 3× 5 reps · rec 60"
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 3 — Forza Prevenzione B1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · rec 60"
+  - **regular**
+    - Calf raises — 2× 20 reps · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 2× 5 reps · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 2× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · rec 120" / 7 reps · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · rec 120" / 16 reps · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 10 reps · rec 60"
+- **Giorno 3 — Salite Resistenza B1**
+  - **regular**
+    - Sprint e Salite - Forza esplosiva — 1'30" · 200 m · rec 120" · round 4 / 1'10" · 150 m · rec 90" · round 4 / 50" · 100 m · rec 60" · round 4 / 20" · 50 m · rec 40" · round 6 (nota: esegui le salita in progressione, arrivando circa all 80% della velocità)
+  - **regular**
+    - BOX rapidità e Tiro — 1× 4 reps · rec 60" (nota: ESEGUI NON A MASSIMA VELOCITA', circa a 70/80%)
+- **Giorno 3 — Tecnica Palleggi B2 - tecnica di base**
+  - **regular**
+    - Palleggi solo Collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi sotto al ginocchio - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Palleggi altezza testa - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi liberi + calcio alto - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo un piede - Tecnica — 2× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 3'00" · rec 60" / 2'00" · rec 60" (per lato)
+  - **regular**
+    - Palleggi solo testa - Tecnica — 3'00" · rec 60" / 2'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+- **Giorno 5 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Ripetute A1**
+  - **regular**
+    - Ripetute — 3 reps · 4'00" · rec 180" · distance_short 1000 / 3 reps · 2'20" · rec 120" · distance_short 600 / 3 reps · 1'00" · rec 60" · distance_short 300 / 3 reps · 40" · rec 50" · distance_short 200
+  - **regular**
+    - Fartlek — 20" · rec 40" · round 10 / 10" · rec 50" · round 10
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 120" / 1'30" · rec 120" / 1'00" · rec 120" / 2'00" · rec 120" (nota: A bassa intensità)
+- **Giorno 5 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00"
+  - **regular**
+    - Passaggi al muro 1 tocco interno 1 piede - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi al muro solo collo di prima - Tecnica — 1× 4'00"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+### Settimana 3
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 1 — Salite Sprint A1**
+  - **Salite Metabolico A1** _(interval)_
+    - Salite Sprint — 15" · rec 60" · distance_short 50 / 10" · rec 60" · distance_short 29.999999999999996 / 10" · rec 60" · distance_short 29.999999999999996 / 8" · rec 60" · distance_short 20 / 4" · rec 60" · distance_short 10 / 4" · rec 60" · distance_short 10 / 4" · rec 60" · distance_short 10 / 7" · rec 60" · distance_short 20 / 7" · rec 60" · distance_short 20 / 4" · rec 60" · distance_short 10 / 4" · rec 180" · distance_short 10 (nota: i primi sprint graduali)
+- **Giorno 1 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 1 — Forza Parte alta B1**
+  - **regular**
+    - Sit-Up — 4× 20 reps · rec 60"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Isometric Bear Crawl — 3× 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 10 reps · rec 60"
+  - **regular**
+    - Bear Crawl Lateral — 2× 10 reps · rec 60"
+  - **regular**
+    - Push-Up — 5× 20 reps · rec 60"
+  - **regular**
+    - Pull-Up — 3× 5 reps · rec 60"
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fartlek A2**
+  - **1/1** _(interval)_
+    - Fartlek — 1'10" · rec 50" / 1'10" · rec 50" / 1'10" · rec 50" / 1'10" · rec 180" (nota: Fartlek 1/1)
+    - Fartlek — 40" · rec 30" / 40" · rec 30" / 40" · rec 30" / 40" · rec 180" (nota: Fartlek 40/40)
+    - Fartlek — 30" · rec 25" / 30" · rec 25" / 30" · rec 25" / 30" · rec 25" / 30" · rec 180"
+    - Fartlek — 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 180"
+    - Fartlek — 1× 4'00" · rec 240"
+- **Giorno 3 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 3 — Circuito addominali B1**
+  - **regular**
+    - Bicycle Crunch Straight Leg — 3× 30 reps · rec 30"
+  - **regular**
+    - Reverse Crunch — 3× 12 reps · rec 30"
+  - **regular**
+    - Full Moon Abs — 3× 12 reps · rec 30"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 30" (per lato)
+- **Giorno 5 — Fascia Foundation B3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 2'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 2× 20" · rec 60"
+- **Giorno 5 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 20 reps · rec 180"
+- **Giorno 5 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 6 — Fascia foundation tecnica A1-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00"
+### Settimana 4
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — pliometria B2**
+  - **regular**
+    - Drop Jump — 3× 4 reps · rec 90"
+  - **regular**
+    - Reverse drop jumps — 3× 20 reps · rec 120"
+  - **regular**
+    - Single Leg Drop e spinta laterale — 3× 2 reps · rec 90" (per lato)
+  - **regular**
+    - Single leg drop e spinta interna — 3× 2 reps · rec 90" (per lato)
+  - **regular**
+    - Single leg lateral drop jump — 3× 10 reps · rec 90" (per lato)
+- **Giorno 1 — Fartlek A3**
+  - **1/1** _(interval)_
+    - Fartlek — 1'00" · rec 60" / 50" · rec 50" / 40" · rec 40" / 30" · rec 30" / 30" · rec 30" / 40" · rec 40" / 50" · rec 50" / 1'00" · rec 60" (nota: Fartlek 1/1)
+    - Fartlek — 40" · rec 20" / 40" · rec 20" / 40" · rec 20" / 40" · rec 180" (nota: Fartlek 40/40)
+    - Fartlek — 30" · rec 60" / 30" · rec 60" / 30" · rec 60" / 30" · rec 180"
+    - Fartlek — 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 180"
+    - Fartlek — 1× 4'00" · rec 240"
+- **Giorno 1 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+- **Giorno 1 — Circuito addominali B1**
+  - **regular**
+    - Bicycle Crunch Straight Leg — 3× 30 reps · rec 30"
+  - **regular**
+    - Reverse Crunch — 3× 12 reps · rec 30"
+  - **regular**
+    - Full Moon Abs — 3× 12 reps · rec 30"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 30" (per lato)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Salite Metabolico A1**
+  - **Salite Metabolico A1** _(interval)_
+    - Salite allungo — 1'10" · 200 m · rec 90" / 1'10" · 200 m · rec 90" / 40" · 100 m · rec 60" / 40" · 100 m · rec 60" / 40" · 100 m · rec 180"
+    - Salite Sprint — 15" · rec 50" · distance_short 50 / 15" · rec 50" · distance_short 50 / 10" · rec 50" · distance_short 30 / 10" · rec 50" · distance_short 30 / 8" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 90" · distance_short 10 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10
+- **Giorno 3 — Tecnica visione A2**
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 5'00" · rec 180"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+  - **regular**
+    - Tiri in porta e VISIONE — 2× 3'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 180"
+- **Giorno 3 — Forza Parte alta B1**
+  - **regular**
+    - Sit-Up — 4× 20 reps · rec 60"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Isometric Bear Crawl — 3× 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 10 reps · rec 60"
+  - **regular**
+    - Bear Crawl Lateral — 2× 10 reps · rec 60"
+  - **regular**
+    - Push-Up — 5× 20 reps · rec 60"
+  - **regular**
+    - Pull-Up — 3× 5 reps · rec 60"
+- **Giorno 5 — Fascia Foundation B3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 2'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 2× 20" · rec 60"
+- **Giorno 5 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 20 reps · rec 180"
+- **Giorno 5 — tiri in porta - Tecnica di tiro A1**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 1× 3 reps · rec 120" (per lato)
+  - **regular**
+    - tiri - rigore al palo — 2× 5 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri - rigore alla traversa — 4 reps · rec 120" / 5 reps · rec 120" (per lato)
+  - **regular**
+    - Calcio in alto e tiro in porta — 3× 4 reps · rec 120" (per lato)
+- **Giorno 5 — Tecnica Freestyle A2**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 6 — Fascia foundation tecnica A1-C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00"
+### Settimana 5
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 1 — velocità e forza esplosiva B1**
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 120" · cadence 2 (nota: a 2 piedi)
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 3× 1'00" · rec 120"
+- **Giorno 1 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+- **Giorno 3 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+- **Giorno 3 — Metabolico B1**
+  - **1/1** _(interval)_
+    - Allungo — 3× 20" · rec 40" · distance_short 100
+    - Allungo — 7× 20" · rec 20" · distance_short 100
+    - Allungo — 8× 10" · rec 10" · distance_short 50
+    - Allungo — 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 180" · distance_short 100
+    - Allungo — 6× 10" · rec 20" · distance_short 60
+- **Giorno 3 — Tecnica Freestyle A2**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+- **Giorno 3 — Tecnica al Muro, passaggi e controllo A1 - short**
+  - **regular**
+    - palleggi piedi coscia testa — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro controllo 180gradi - TECNICA — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 2'00" · rec 0"
+- **Giorno 5 — Fascia Foundation B3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 2'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 2× 20" · rec 60"
+- **Giorno 5 — Resistenza e Tecnica funzionale B1**
+  - **regular**
+    - Esercizio resistenza e tecnica funzionale — 4× 3'00" · rec 180"
+- **Giorno 5 — Tecnica Freestyle A2**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 6 — Fascia foundation tecnica A1-C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00"
+### Settimana 6
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 1 — Salite Sprint A1**
+  - **Salite Sprint A1** _(interval)_
+    - Salite Sprint — 15" · rec 50" · distance_short 50 / 15" · rec 50" · distance_short 50 / 10" · rec 50" · distance_short 29.999999999999996 / 10" · rec 50" · distance_short 29.999999999999996 / 8" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 120" · distance_short 10 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10
+- **Giorno 1 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+- **Giorno 1 — Forza Parte alta B1**
+  - **regular**
+    - Sit-Up — 4× 20 reps · rec 60"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Isometric Bear Crawl — 3× 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 10 reps · rec 60"
+  - **regular**
+    - Bear Crawl Lateral — 2× 10 reps · rec 60"
+  - **regular**
+    - Push-Up — 5× 20 reps · rec 60"
+  - **regular**
+    - Pull-Up — 3× 5 reps · rec 60"
+- **Giorno 3 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+- **Giorno 3 — Fartlek A4**
+  - **1/1** _(interval)_
+    - Fartlek — 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 180"
+    - Fartlek — 1'00" · rec 60" / 50" · rec 50" / 40" · rec 40" / 30" · rec 30" / 20" · rec 20" / 10" · rec 10" / 10" · rec 10" / 20" · rec 20" / 30" · rec 30" / 40" · rec 40" / 50" · rec 50" / 1'00" · rec 240" (nota: Fartlek 1/1)
+    - Fartlek — 30" · rec 60" / 30" · rec 60" / 30" · rec 60" / 30" · rec 180"
+    - Fartlek — 40" · rec 20" / 40" · rec 20" / 40" · rec 20" / 40" · rec 180" (nota: Fartlek 40/40)
+    - Fartlek — 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 180"
+- **Giorno 3 — Tecnica Freestyle A2**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+- **Giorno 3 — Tecnica al Muro, passaggi e controllo A1 - short**
+  - **regular**
+    - palleggi piedi coscia testa — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro controllo 180gradi - TECNICA — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 1× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 2'00" · rec 0"
+- **Giorno 5 — Fascia Foundation B3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 2'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 2× 20" · rec 60"
+- **Giorno 5 — Resistenza e Tecnica funzionale B1**
+  - **regular**
+    - Esercizio resistenza e tecnica funzionale — 4× 3'00" · rec 180"
+- **Giorno 5 — Tecnica Freestyle A2**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+- **Giorno 5 — Dribbling e visione B1**
+  - **regular**
+    - Box dribbling + passaggio — 3× 1'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 3× 2'00" · rec 90"
+  - **regular**
+    - Dribbling visione e reattività - Base — 4× 6 reps · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 6 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 7
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Resistenza alla Velocità A1**
+  - **regular**
+    - T sprint — 2 reps · rec 60" / 2 reps · rec 60" / 2 reps · rec 60" / 2 reps · rec 240" (nota: ALTERNA 1 CON PALLA E 1 SENZA PALLA)
+  - **regular**
+    - TEST NAVETTA 10mt - 30'' — 30" · rec 60" / 30" · rec 60" / 30" · rec 60" / 30" · rec 180"
+  - **regular**
+    - Allenamento Tecnica - Resistenza - Velocità - Forza Esplosiva — 40" · rec 80" · distance_short 10 / 40" · rec 80" · distance_short 10 / 40" · rec 180" · distance_short 10 / 40" · rec 80" · distance_short 10 / 40" · rec 80" · distance_short 10 / 40" · rec 80" · distance_short 10 (nota: esegui ogni esercizio del video a rotazione per il tempo indicato)
+- **Giorno 1 — Tecnica Freestyle - dribbling passaggio**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 7'00" · rec 60" / 5'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 10'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Box dribbling + passaggio — 1× 3'00" · rec 60" (per lato; nota: intensità libera - bassa)
+- **Giorno 1 — Forza Parte alta B1**
+  - **regular**
+    - Sit-Up — 4× 20 reps · rec 60"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Isometric Bear Crawl — 3× 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 10 reps · rec 60"
+  - **regular**
+    - Bear Crawl Lateral — 2× 10 reps · rec 60"
+  - **regular**
+    - Push-Up — 5× 20 reps · rec 60"
+  - **regular**
+    - Pull-Up — 3× 5 reps · rec 60"
+- **Giorno 3 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+- **Giorno 3 — Fascia e tecnica Funzionale A1**
+  - **regular**
+    - Protezione palla figura 8 - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Protezione palla schiena - fascia — 2× 1'00" · rec 60"
+  - **regular**
+    - Protezione palla laterale suola - fascia — 2× 30" · rec 60"
+  - **regular**
+    - Spinta laterale suola - protezione palla - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Spinta laterale e finta - protezione palla - fascia — 3× 30" · rec 60"
+  - **regular**
+    - Protezione palla laterale - palleggi - fascia — 3× 30" · rec 60"
+- **Giorno 3 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 20 reps · rec 180"
+- **Giorno 3 — tiri in porta - Tecnica di tiro B1**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 2× 5 reps · rec 120" (per lato)
+  - **regular**
+    - tiri - rigore al palo — 2× 5 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri - rigore alla traversa — 4 reps · rec 120" / 5 reps · rec 120" (per lato)
+  - **regular**
+    - Calcio in alto e tiro in porta — 2× 4 reps · rec 120" (per lato)
+- **Giorno 5 — Fascia Foundation B3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 2'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 2× 20" · rec 60"
+- **Giorno 5 — Pliometria Rapidità Velocità B1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 2× 2 reps · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 5 — rapidità e Tiro**
+  - **regular**
+    - BOX rapidità e Tiro — 4× 2 reps · rec 60" (per lato)
+  - **regular**
+    - Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio — 3× 2'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 4× 2 reps · rec 30"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 6 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 8
+- **Giorno 1 — Fascia Foundations 1B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 2× 1'00" · rec 30" (per lato)
+- **Giorno 1 — Riscaldamento Sprint Velocità 2B**
+  - **regular**
+    - Fascia A-Skip — 4× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 2× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 10" · rec 20" (per lato)
+  - **regular**
+    - Allungo — 3× 10" · rec 20" · distance_short 50
+- **Giorno 1 — TEST VELOCITÀ**
+  - **regular**
+    - TEST VELOCITA' 100M — 3× rec 180" · distance_short 100 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - TEST VELOCITA' 50M — 3× rec 120" · distance_short 50 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - T sprint — 3× 1 reps · rec 90" (nota: ESEGUI SENZA PALLA E PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+- **Giorno 3 — TEST RESISTENZA**
+  - **regular**
+    - TEST RESISTENZA 3KM — 1× 3000 m · rec 240"
+  - **regular**
+    - TEST RESISTENZA 1km — 1× 1000 m · rec 240"
+- **Giorno 3 — Tecnica visione A2**
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 5'00" · rec 180"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+  - **regular**
+    - Tiri in porta e VISIONE — 2× 3'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 180"
+- **Giorno 5 — Fascia foundation tecnica A1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 2'00" · rec 45" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 4'00"
+- **Giorno 5 — Resistenza alla Velocità B1**
+  - **regular**
+    - T sprint — 3× 2 reps · rec 60" (nota: ALTERNA 1 CON PALLA E 1 SENZA PALLA)
+  - **regular**
+    - TEST NAVETTA 10mt - 30'' — 30" · rec 60" / 30" · rec 60" / 30" · rec 60" / 30" · rec 180"
+  - **regular**
+    - Allenamento Tecnica - Resistenza - Velocità - Forza Esplosiva — 30" · rec 60" · distance_short 10 / 30" · rec 60" · distance_short 10 / 30" · rec 180" · distance_short 10 / 30" · rec 60" · distance_short 10 / 30" · rec 60" · distance_short 10 / 30" · rec 180" · distance_short 10 (nota: esegui ogni esercizio del video a rotazione per il tempo indicato)
+- **Giorno 5 — Trecnica freestyle - dribbling e visione 1**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 9'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 2× 2'00" · rec 120" (nota: intensità libera - bassa)
+  - **regular**
+    - Dribbling visione e reattività - Base — 5× 6 reps · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 6 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+
+## Fascia Foundation Intermedio (8 sett.)
+_Questo programma di allenamento è progettato per sviluppare e ottimizzare il sistema fasciale, una componente chiave per la performance nel calcio. Grazie a esercizi mirati, il programma punta a migliorare elasticità, coordinazione, forza reattiva e mobilità, qualità fondamentali per gestire al meglio movimenti rapidi, cambi di direzione e situazioni di gioco intense. Ideale per atleti di livello _
+### Settimana 1
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia Foundations 1D**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'30" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 45" · rec 30" (per lato)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundation A3**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 30" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps — 4× 1'00" · rec 60" · cadence 2
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 1'00" · rec 60" (per lato)
+- **Giorno 4 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 2
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia Foundations 1E**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 3× 1'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 3× 45" · rec 30" (per lato)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundation A3**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 30" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps — 4× 1'00" · rec 60" · cadence 2
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 1'00" · rec 60" (per lato)
+- **Giorno 4 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 3
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia foundation A4**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 30" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 2× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps — 3× 1'30" · rec 30" · cadence 2
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 45" · rec 30" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 1'00" · rec 30" (per lato)
+- **Giorno 4 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 2'00" · rec 30" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 3× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00"
+### Settimana 4
+- **Giorno 1 — Fascia Foundations 1D**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'30" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 45" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 1D**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'30" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 45" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 2'00" · rec 30" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 3× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00"
+### Settimana 5
+- **Giorno 1 — Fascia Foundations 2A**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'00" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 2A**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'00" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 6
+- **Giorno 1 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 2× 2'00" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+### Settimana 7
+- **Giorno 1 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Fascia Foundations 2B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 2'00" · rec 30" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 3× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00"
+### Settimana 8
+- **Giorno 1 — Fascia Foundations 2C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 2'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'45" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 1× 2'00" (per lato)
+- **Giorno 3 — Fascia Foundations 2C**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 3'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 2'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 2'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 1'45" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 1× 2'00" (per lato)
+- **Giorno 5 — Fascia foundation Tecnica A2-B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Towel Curls — 1× 2'00" · rec 30" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 1 pallina tennis fascia tecnica — 2× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Equilibrio 2 pallina da tennis fascia tecnica — 3× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Palleggi con pallina da tennis — 1× 5'00"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 4'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00"
+
+## VISIONE BASE (8 sett.)
+_Con questo programma allenerai la tua visione, migliorando le tue capacità visive e di coordinazione, che sono fondamentali per un calciatore.
+_
+### Settimana 1
+- **Giorno 1 — Visione B1 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 3× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi collo - visione headball — 3× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi esterno - visione headball — 3× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 2× 1'30" · rec 20"
+  - **regular**
+    - Passaggi SX/Centro/DX - visione headball — 1× 2'00" · rec 30" (per lato)
+- **Giorno 4 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+### Settimana 2
+- **Giorno 1 — Visione B1 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 3× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi collo - visione headball — 3× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi esterno - visione headball — 3× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 2× 1'30" · rec 20"
+  - **regular**
+    - Passaggi SX/Centro/DX - visione headball — 1× 2'00" · rec 30" (per lato)
+- **Giorno 4 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+### Settimana 3
+- **Giorno 1 — Visione B2 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 2× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi collo - visione headball — 2× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi esterno - visione headball — 2× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 3× 1'30" · rec 20"
+  - **regular**
+    - Passaggi SX/Centro/DX - visione headball — 1'30" · rec 2" / 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi SX/CC/DX interno/collo/esterno - visione headball — 2× 1'30" · rec 20" (per lato)
+- **Giorno 4 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+### Settimana 4
+- **Giorno 1 — Visione B2 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 2× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi collo - visione headball — 2× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi esterno - visione headball — 2× 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 3× 1'30" · rec 20"
+  - **regular**
+    - Passaggi SX/Centro/DX - visione headball — 1'30" · rec 2" / 1'30" · rec 20" (per lato)
+  - **regular**
+    - Passaggi SX/CC/DX interno/collo/esterno - visione headball — 2× 1'30" · rec 20" (per lato)
+- **Giorno 4 — Tecnica visione A2**
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 5'00" · rec 180"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+  - **regular**
+    - Tiri in porta e VISIONE — 2× 3'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 180"
+### Settimana 5
+- **Giorno 1 — Visione B3 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi collo - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi esterno - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 2× 1'30" · rec 20" (nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi SX/Centro/DX - visione headball — 2× 1'30" · rec 2" (per lato)
+  - **regular**
+    - Passaggi SX/CC/DX interno/collo/esterno - visione headball — 3× 1'30" · rec 20" (per lato)
+- **Giorno 4 — Tecnica visione A2**
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 5'00" · rec 180"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+  - **regular**
+    - Tiri in porta e VISIONE — 2× 3'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 180"
+### Settimana 6
+- **Giorno 1 — Visione B4 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 2× 1'30" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi collo - visione headball — 2× 1'30" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi esterno - visione headball — 2× 1'30" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 2× 1'30" · rec 20" (nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi SX/Centro/DX - visione headball — 2× 1'30" · rec 2" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi SX/CC/DX interno/collo/esterno - visione headball — 2× 1'30" · rec 20" (per lato)
+- **Giorno 4 — Tiri e Visione Libero A1 - Tecnica di base**
+  - **regular**
+    - Progressione tiri in porta - Tecnica di tiro — 1× 3 reps · rec 60" (per lato)
+  - **regular**
+    - Tiri in porta e VISIONE — 2'00" · rec 60" / 2'00" · rec 120" (per lato; nota: ESEGUI L'ESERCIZIO A RITMO BASSO)
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 120" (per lato)
+### Settimana 7
+- **Giorno 1 — Visione B5 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi collo - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi esterno - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 2× 1'00" · rec 20" (nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi SX/CC/DX interno/collo/esterno - visione headball — 2× 1'30" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi sinistra/avanti/destra con video - visione headball — 2× 2'00" · rec 30"
+- **Giorno 4 — Dribbling e visione B1**
+  - **regular**
+    - Box dribbling + passaggio — 3× 1'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 3× 2'00" · rec 90"
+  - **regular**
+    - Dribbling visione e reattività - Base — 4× 6 reps · rec 60"
+### Settimana 8
+- **Giorno 1 — Visione B6 - headball**
+  - **regular**
+    - Passaggi interno - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi collo - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi esterno - visione headball — 2× 1'00" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi in equilibrio su 1 piede - visione headball — 2× 1'00" · rec 20" (nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi SX/CC/DX interno/collo/esterno - visione headball — 2× 1'30" · rec 20" (per lato; nota: ESEGUI L'ESERCIZIO CON UN OCCHIO CHIUSO IN OGNI SET)
+  - **regular**
+    - Passaggi sinistra/avanti/destra con video - visione headball — 1× 2'00" · rec 30" (per lato)
+  - **regular**
+    - Passaggi interno/collo/esterno con video - visione headball — 1× 2'00" · rec 30" (per lato)
+- **Giorno 4 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+
+## Preparazione Estiva Completa PRO - CON PALESTRA (5 sett.)
+### Settimana 1
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Fartlek A1**
+  - **regular**
+    - Fartlek — 1'00" · rec 60" · round 4 / 40" · rec 40" · round 6 / 30" · rec 30" · round 8 / 20" · rec 20" · round 10
+  - **regular**
+    - Ripetute — 1× 2 reps · 4'00" · rec 180" (nota: Corsa continua 4 minuti, non deve essere massimale ma buon ritmo (80% della fatica))
+  - **regular**
+    - Box Dribbling — 1× 2'00" · rec 60" · round 3 (nota: A Bassa intensità)
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+  - **regular**
+    - Tibialis raises — 2× 15 reps · rec 60"
+  - **regular**
+    - Calves raises — 1× 20 reps · rec 30" (per lato)
+  - **regular**
+    - atg split squat — 1× 5 reps (per lato)
+  - **regular**
+    - Barbell Squat — 5 reps · 85 kg · rec 120" / 5 reps · 80 kg · rec 120" / 6 reps · 75 kg · rec 120" (nota: Esegui lo squat con i talloni leggermente sollevati)
+  - **regular**
+    - Kettlebell swing — 15 reps · 20 kg · rec 90" / 13 reps · 24 kg · rec 90" / 10 reps · 28 kg · rec 90"
+  - **regular**
+    - nordic hamstring — 5 reps · rec 120" / 5 reps · 5 kg · rec 120" / 5 reps · rec 120"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 12 reps · rec 60"
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 2 — Salite Resistenza A1**
+  - **regular**
+    - Sprint e Salite - Forza esplosiva — 1'20" · 200 m · rec 120" · round 4 / 1'00" · 150 m · rec 90" · round 4 / 40" · 100 m · rec 60" · round 4 / 20" · 50 m · rec 40" · round 6 (nota: esegui le salita in progressione, arrivando circa all 80% della velocità)
+  - **regular**
+    - BOX rapidità e Tiro — 1× 4 reps · rec 60" (nota: ESEGUI NON A MASSIMA VELOCITA', circa a 70/80%)
+- **Giorno 2 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Ripetute A1**
+  - **regular**
+    - Ripetute — 3 reps · 4'00" · rec 180" · distance_short 1000 / 3 reps · 2'20" · rec 120" · distance_short 600 / 3 reps · 1'00" · rec 60" · distance_short 300 / 3 reps · 40" · rec 50" · distance_short 200
+  - **regular**
+    - Fartlek — 20" · rec 40" · round 10 / 10" · rec 50" · round 10
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 120" / 1'30" · rec 120" / 1'00" · rec 120" / 2'00" · rec 120" (nota: A bassa intensità)
+- **Giorno 3 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00"
+  - **regular**
+    - Passaggi al muro 1 tocco interno 1 piede - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi al muro solo collo di prima - Tecnica — 1× 4'00"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 4 — Forza Prevenzione A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 6 reps · 40 kg · rec 120" / 5 reps · 50 kg · rec 120" / 15 reps · 20 kg · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · 90 kg · rec 120" / 7 reps · 80 kg · rec 120" / 7 reps · 85 kg · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · 24 kg · rec 120" / 10 reps · 28 kg · rec 120" / 16 reps · 20 kg · rec 120" / 20 reps · 20 kg · rec 120" / 30 reps · 16 kg · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 3× 10 reps · rec 60"
+- **Giorno 5 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fartlek A1**
+  - **regular**
+    - Fartlek — 1'00" · rec 60" · round 4 / 40" · rec 40" · round 6 / 30" · rec 30" · round 8 / 20" · rec 20" · round 10
+  - **regular**
+    - Ripetute — 1× 2 reps · 4'00" · rec 180" (nota: Corsa continua 4 minuti, non deve essere massimale ma buon ritmo (80% della fatica))
+  - **regular**
+    - Box Dribbling — 1× 2'00" · rec 60" · round 3 (nota: A Bassa intensità)
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+### Settimana 2
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 1 — Fartlek A2**
+  - **1/1** _(interval)_
+    - Fartlek — 1'10" · rec 50" / 1'10" · rec 50" / 1'10" · rec 50" / 1'10" · rec 180" (nota: Fartlek 1/1)
+    - Fartlek — 40" · rec 30" / 40" · rec 30" / 40" · rec 30" / 40" · rec 180" (nota: Fartlek 40/40)
+    - Fartlek — 30" · rec 25" / 30" · rec 25" / 30" · rec 25" / 30" · rec 25" / 30" · rec 180"
+    - Fartlek — 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 180"
+    - Fartlek — 1× 4'00" · rec 240"
+- **Giorno 1 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · rec 60"
+  - **regular**
+    - Calf raises — 2× 20 reps · rec 30" (per lato)
+  - **regular**
+    - atg split squat — 2× 5 reps (per lato)
+  - **regular**
+    - Barbell Squat — 5 reps · 85 kg · rec 120" / 5 reps · 80 kg · rec 120" (nota: Esegui lo squat con i talloni leggermente sollevati)
+  - **regular**
+    - Kettlebell swing — 15 reps · 20 kg · rec 90" / 13 reps · 24 kg · rec 90" / 10 reps · 28 kg · rec 90"
+  - **regular**
+    - nordic hamstring — 5 reps · rec 120" / 5 reps · 5 kg · rec 120"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Toes to Bar — 2× 12 reps · rec 60"
+- **Giorno 2 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 2 — Forza Parte Alta PRO1**
+  - **regular**
+    - Crow Pose Progression — 2 reps · rec 90" / 2 reps · rec 90" / 1 reps · rec 60" / 1 reps · rec 60"
+  - **regular**
+    - One Arm Push Up Incline — 3× 12 reps · rec 90" (per lato)
+  - **regular**
+    - Muscle Up — 3 reps · 15 kg · rec 90" / 4 reps · 10 kg · rec 90" / 6 reps · rec 90" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+  - **regular**
+    - Weighted Dips (From Bars) — 8 reps · 40 kg · rec 120" / 10 reps · 30 kg · rec 120" / 12 reps · 20 kg · rec 120" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+- **Giorno 2 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 2 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 20 reps · rec 180"
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Fartlek A3**
+  - **1/1** _(interval)_
+    - Fartlek — 1'00" · rec 60" / 50" · rec 50" / 40" · rec 40" / 30" · rec 30" / 30" · rec 30" / 40" · rec 40" / 50" · rec 50" / 1'00" · rec 60" (nota: Fartlek 1/1)
+    - Fartlek — 40" · rec 20" / 40" · rec 20" / 40" · rec 20" / 40" · rec 180" (nota: Fartlek 40/40)
+    - Fartlek — 30" · rec 60" / 30" · rec 60" / 30" · rec 60" / 30" · rec 180"
+    - Fartlek — 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 180"
+    - Fartlek — 1× 4'00" · rec 240"
+- **Giorno 3 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 4 — Forza Parte Alta PRO1**
+  - **regular**
+    - Crow Pose Progression — 2× 2 reps · rec 90"
+  - **regular**
+    - One Arm Push Up Incline — 3× 12 reps · rec 90" (per lato)
+  - **regular**
+    - Muscle Up — 3 reps · 15 kg · rec 90" / 6 reps · rec 90" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+  - **regular**
+    - Weighted Dips (From Bars) — 8 reps · 40 kg · rec 120" / 12 reps · 20 kg · rec 120" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+- **Giorno 4 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 20 reps · rec 180"
+- **Giorno 4 — Forza Prevenzione A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 6 reps · 20 kg · rec 120" / 15 reps · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 2× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · 90 kg · rec 120" / 7 reps · 80 kg · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · 24 kg · rec 120" / 16 reps · 20 kg · rec 120" / 30 reps · 16 kg · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 1× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 2× 10 reps · rec 60"
+- **Giorno 4 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00"
+  - **regular**
+    - Passaggi al muro 1 tocco interno 1 piede - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi al muro solo collo di prima - Tecnica — 1× 4'00"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 5 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 5 — Salite Metabolico A1**
+  - **Salite Metabolico A1** _(interval)_
+    - Salite allungo — 1'10" · 200 m · rec 90" / 1'10" · 200 m · rec 90" / 40" · 100 m · rec 60" / 40" · 100 m · rec 60" / 40" · 100 m · rec 180"
+    - Salite Sprint — 15" · rec 50" · distance_short 50 / 15" · rec 50" · distance_short 50 / 10" · rec 50" · distance_short 30 / 10" · rec 50" · distance_short 30 / 8" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 90" · distance_short 10 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10
+- **Giorno 5 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+### Settimana 3
+- **Giorno 1 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 2 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+  - **regular**
+    - Tibialis raises — 2× 15 reps · rec 60"
+  - **regular**
+    - Calves raises — 1× 20 reps · rec 30" (per lato)
+  - **regular**
+    - atg split squat — 1× 5 reps (per lato)
+  - **regular**
+    - Barbell Squat — 5 reps · 85 kg · rec 120" / 5 reps · 80 kg · rec 120" / 6 reps · 75 kg · rec 120" (nota: Esegui lo squat con i talloni leggermente sollevati)
+  - **regular**
+    - Kettlebell swing — 15 reps · 20 kg · rec 90" / 13 reps · 24 kg · rec 90" / 10 reps · 28 kg · rec 90"
+  - **regular**
+    - nordic hamstring — 5 reps · rec 120" / 5 reps · 5 kg · rec 120" / 5 reps · rec 120"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 12 reps · rec 60"
+- **Giorno 2 — Salite Sprint A1**
+  - **Salite Metabolico A1** _(interval)_
+    - Salite Sprint — 15" · rec 60" · distance_short 50 / 10" · rec 60" · distance_short 29.999999999999996 / 10" · rec 60" · distance_short 29.999999999999996 / 8" · rec 60" · distance_short 20 / 4" · rec 60" · distance_short 10 / 4" · rec 60" · distance_short 10 / 4" · rec 60" · distance_short 10 / 7" · rec 60" · distance_short 20 / 7" · rec 60" · distance_short 20 / 4" · rec 60" · distance_short 10 / 4" · rec 180" · distance_short 10 (nota: i primi sprint graduali)
+- **Giorno 2 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 3 — Fartlek A4**
+  - **1/1** _(interval)_
+    - Fartlek — 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 40" / 20" · rec 180"
+    - Fartlek — 1'00" · rec 60" / 50" · rec 50" / 40" · rec 40" / 30" · rec 30" / 20" · rec 20" / 10" · rec 10" / 10" · rec 10" / 20" · rec 20" / 30" · rec 30" / 40" · rec 40" / 50" · rec 50" / 1'00" · rec 240" (nota: Fartlek 1/1)
+    - Fartlek — 30" · rec 60" / 30" · rec 60" / 30" · rec 60" / 30" · rec 180"
+    - Fartlek — 40" · rec 20" / 40" · rec 20" / 40" · rec 20" / 40" · rec 180" (nota: Fartlek 40/40)
+    - Fartlek — 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 20" / 10" · rec 180"
+- **Giorno 3 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 4 — Forza Parte Alta PRO1**
+  - **regular**
+    - Crow Pose Progression — 2× 2 reps · rec 90"
+  - **regular**
+    - One Arm Push Up Incline — 3× 12 reps · rec 90" (per lato)
+  - **regular**
+    - Muscle Up — 3 reps · 15 kg · rec 90" / 6 reps · rec 90" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+  - **regular**
+    - Weighted Dips (From Bars) — 8 reps · 40 kg · rec 120" / 12 reps · 20 kg · rec 120" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+- **Giorno 4 — Forza Prevenzione A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 6 reps · 20 kg · rec 120" / 15 reps · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 2× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · 90 kg · rec 120" / 7 reps · 80 kg · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · 24 kg · rec 120" / 16 reps · 20 kg · rec 120" / 30 reps · 16 kg · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 1× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 2× 10 reps · rec 60"
+- **Giorno 4 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 20 reps · rec 180"
+- **Giorno 5 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 5 — Ripetute A1**
+  - **regular**
+    - Ripetute — 3 reps · 4'00" · rec 180" · distance_short 1000 / 4 reps · 2'20" · rec 180" · distance_short 600 / 5 reps · 1'00" · rec 120" · distance_short 300 / 6 reps · 40" · rec 90" · distance_short 200
+- **Giorno 5 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+### Settimana 4
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Tecnica in 2 A1**
+  - **regular**
+    - Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno — 1× 3'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palla bassa e palla alta — 1× 5'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palleggio con 2 palle — 1× 5'00" · rec 60"
+- **Giorno 1 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 1 — 1vs1 difesa attacco**
+  - **regular**
+    - 1vs1 - difesa da fermo — 3× 10 reps · rec 120" (nota: 10 azioni a testa per ogni set)
+- **Giorno 2 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 2 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+  - **regular**
+    - Tibialis raises — 2× 15 reps · rec 60"
+  - **regular**
+    - Calves raises — 1× 20 reps · rec 30" (per lato)
+  - **regular**
+    - atg split squat — 1× 5 reps (per lato)
+  - **regular**
+    - Barbell Squat — 5 reps · 85 kg · rec 120" / 5 reps · 80 kg · rec 120" / 6 reps · 75 kg · rec 120" (nota: Esegui lo squat con i talloni leggermente sollevati)
+  - **regular**
+    - Kettlebell swing — 15 reps · 20 kg · rec 90" / 13 reps · 24 kg · rec 90" / 10 reps · 28 kg · rec 90"
+  - **regular**
+    - nordic hamstring — 5 reps · rec 120" / 5 reps · 5 kg · rec 120" / 5 reps · rec 120"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 12 reps · rec 60"
+- **Giorno 2 — Salite Metabolico A1**
+  - **Salite Metabolico A1** _(interval)_
+    - Salite allungo — 1'10" · 200 m · rec 90" / 40" · 100 m · rec 60"
+    - Salite Sprint — 15" · rec 50" · distance_short 50 / 10" · rec 50" · distance_short 29.999999999999996 / 8" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 90" · distance_short 10 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10
+- **Giorno 2 — Tecnica A2 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 3 — Tecnica in 2 A1**
+  - **regular**
+    - Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno — 1× 3'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palla bassa e palla alta — 1× 5'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palleggio con 2 palle — 1× 5'00" · rec 60"
+- **Giorno 3 — Resistenza e Tecnica funzionale A1**
+  - **regular**
+    - Esercizio resistenza e tecnica funzionale — 4× 4'00" · rec 180"
+- **Giorno 3 — 1vs1 difesa attacco**
+  - **regular**
+    - 1vs1 - difesa da fermo — 2× 10 reps · rec 120" (nota: 10 azioni a testa per ogni set)
+- **Giorno 4 — Forza Parte Alta PRO1**
+  - **regular**
+    - Crow Pose Progression — 3 reps · rec 90" / 2 reps · rec 90"
+  - **regular**
+    - One Arm Push Up Incline — 14 reps · rec 90" / 12 reps · rec 90" / 12 reps · rec 90" (per lato)
+  - **regular**
+    - Muscle Up — 4 reps · 15 kg · rec 90" / 6 reps · rec 90" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+  - **regular**
+    - Weighted Dips (From Bars) — 8 reps · 40 kg · rec 120" / 12 reps · 20 kg · rec 120" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+- **Giorno 4 — Forza Prevenzione A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 6 reps · 20 kg · rec 120" / 15 reps · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 2× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · 90 kg · rec 120" / 7 reps · 80 kg · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · 24 kg · rec 120" / 16 reps · 20 kg · rec 120" / 30 reps · 16 kg · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 1× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 2× 10 reps · rec 60"
+- **Giorno 4 — Tecnica visione A2**
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 5'00" · rec 180"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+  - **regular**
+    - Tiri in porta e VISIONE — 2× 3'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 180"
+- **Giorno 5 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 5 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 5 — Pliometria Rapidità Velocità A1**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 4× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Postura + Velocità Difensori — 2× 2'00" · rec 120"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 5 — Salite Sprint A1**
+  - **Salite Sprint A1** _(interval)_
+    - Salite Sprint — 15" · rec 50" · distance_short 50 / 15" · rec 50" · distance_short 50 / 10" · rec 50" · distance_short 29.999999999999996 / 10" · rec 50" · distance_short 29.999999999999996 / 8" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 120" · distance_short 10 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+### Settimana 5
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Tecnica in 2 A1**
+  - **regular**
+    - Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno — 1× 3'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palla bassa e palla alta — 1× 5'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palleggio con 2 palle — 1× 5'00" · rec 60"
+- **Giorno 1 — Pliometria rapidità velocità A2**
+  - **regular**
+    - Pogo Jumps — 1× 2'00" · rec 120" · cadence 2 (nota: a 2 piedi)
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 3× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Pogo Jumps progression (Ankle Stiffness ) — 2× 2 reps · 20 kg · rec 60"
+  - **regular**
+    - Singl Leg RDL - SL Knee Jump Progression Advanced — 2× 2 reps · 8 kg · rec 90"
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 2× 1'00" · rec 120"
+- **Giorno 1 — Tecnica visione A2**
+  - **regular**
+    - Passaggi al muro - VISIONE — 1× 5'00" · rec 180"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+  - **regular**
+    - Tiri in porta e VISIONE — 2× 3'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 180"
+- **Giorno 2 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 2 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+  - **regular**
+    - Tibialis raises — 2× 15 reps · rec 60"
+  - **regular**
+    - Calves raises — 1× 20 reps · rec 30" (per lato)
+  - **regular**
+    - atg split squat — 1× 5 reps (per lato)
+  - **regular**
+    - Barbell Squat — 5 reps · 85 kg · rec 120" / 5 reps · 80 kg · rec 120" / 6 reps · 75 kg · rec 120" (nota: Esegui lo squat con i talloni leggermente sollevati)
+  - **regular**
+    - Kettlebell swing — 15 reps · 20 kg · rec 90" / 13 reps · 24 kg · rec 90" / 10 reps · 28 kg · rec 90"
+  - **regular**
+    - nordic hamstring — 5 reps · rec 120" / 5 reps · 5 kg · rec 120" / 5 reps · rec 120"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 12 reps · rec 60"
+- **Giorno 2 — Salite Sprint A1**
+  - **Salite Sprint A1** _(interval)_
+    - Salite Sprint — 15" · rec 50" · distance_short 50 / 15" · rec 50" · distance_short 50 / 10" · rec 50" · distance_short 29.999999999999996 / 10" · rec 50" · distance_short 29.999999999999996 / 8" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 120" · distance_short 10 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10
+- **Giorno 2 — 1vs1 difesa attacco**
+  - **regular**
+    - 1vs1 - difesa da fermo — 2× 10 reps · rec 120" (nota: 10 azioni a testa per ogni set)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 3 — Tecnica in 2 A1**
+  - **regular**
+    - Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno — 1× 3'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palla bassa e palla alta — 1× 5'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palleggio con 2 palle — 1× 5'00" · rec 60"
+- **Giorno 3 — Resistenza e Tecnica funzionale A1**
+  - **regular**
+    - Esercizio resistenza e tecnica funzionale — 3× 4'00" · rec 180"
+- **Giorno 3 — Tecnica Applicata A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 2× 5'00" · rec 180"
+  - **regular**
+    - Circuito Resistenza, Velocità, Tecnica x Esterno — 2× 3'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 20 reps · rec 180"
+- **Giorno 3 — Tecnica A2 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro in difficoltà — 1× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 4 — Forza Parte Alta PRO1**
+  - **regular**
+    - Crow Pose Progression — 3 reps · rec 90" / 2 reps · rec 90"
+  - **regular**
+    - One Arm Push Up Incline — 14 reps · rec 90" / 12 reps · rec 90" / 12 reps · rec 90" (per lato)
+  - **regular**
+    - Muscle Up — 4 reps · 15 kg · rec 90" / 6 reps · rec 90" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+  - **regular**
+    - Weighted Dips (From Bars) — 8 reps · 40 kg · rec 120" / 12 reps · 20 kg · rec 120" (nota: piu diminuisce il peso, più cerca di essere veloce nel movimento)
+- **Giorno 4 — Forza Prevenzione A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 6 reps · 20 kg · rec 120" / 15 reps · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 2× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · 90 kg · rec 120" / 7 reps · 80 kg · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · 24 kg · rec 120" / 16 reps · 20 kg · rec 120" / 30 reps · 16 kg · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 1× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 2× 10 reps · rec 60"
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Tecnica palleggi A2**
+  - **regular**
+    - Palleggi al muro 1 tocco solo interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 1 tocco libero — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 4'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 5 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Metabolico A1**
+  - **1/1** _(interval)_
+    - Allungo — 20" · rec 40" · distance_short 100 / 20" · rec 40" · distance_short 100 / 20" · rec 40" · distance_short 100 / 20" · rec 180" · distance_short 100
+    - Allungo — 20" · rec 20" · distance_short 100 / 20" · rec 20" · distance_short 100 / 20" · rec 20" · distance_short 100 / 20" · rec 20" · distance_short 100 / 20" · rec 20" · distance_short 100 / 20" · rec 20" · distance_short 100 / 20" · rec 20" · distance_short 100 / 20" · rec 20" · distance_short 100 / 20" · rec 240" · distance_short 100
+    - Allungo — 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 10" · distance_short 50 / 10" · rec 240" · distance_short 50
+    - Allungo — 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 180" · distance_short 100
+    - Allungo — 10" · rec 20" · distance_short 59.99999999999999 / 10" · rec 20" · distance_short 59.99999999999999 / 10" · rec 20" · distance_short 59.99999999999999 / 10" · rec 20" · distance_short 59.99999999999999 / 10" · rec 20" · distance_short 59.99999999999999 / 10" · rec 20" · distance_short 59.99999999999999 / 10" · rec 20" · distance_short 59.99999999999999 / 10" · rec 180" · distance_short 59.99999999999999
+- **Giorno 5 — Tecnica in 2 A1**
+  - **regular**
+    - Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno — 1× 3'00" · rec 30" (per lato)
+  - **regular**
+    - Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno — 1× 3'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palla bassa e palla alta — 1× 5'00" · rec 30"
+  - **regular**
+    - Tecnica a 2 - Palleggio con 2 palle — 1× 5'00" · rec 60"
+- **Giorno 5 — 1vs1 difesa attacco**
+  - **regular**
+    - 1vs1 - difesa da fermo — 2× 10 reps · rec 120" (nota: 10 azioni a testa per ogni set)
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+- **Giorno 6 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+
+## Programma personale — cliente A (4 sett. forza) (4 sett.)
+### Settimana 1
+- **Giorno 2 — TEST PARTE ALTA**
+  - **regular**
+    - Test Max push up — 1× —
+  - **regular**
+    - Test Max Pull up — 1× —
+  - **Test Parte Alta AMRAP** _(amrap · 1200 · nel tempo del test cerca di eseguire più giri possibili del percorso, gestisci tu la pausa tra gli esercizi cercando di farne meno possibile)_
+    - Push-Up — 1× 10 reps
+    - Pull-Up — 1× 5 reps
+    - Bicycle Crunch Straight Leg — 1× 40 reps
+- **Giorno 2 — Pliometria rapidità velocità A2 - short**
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 60" · distance_short 10 / rec 90" · distance_short 20 (per lato)
+- **Giorno 4 — Riscaldamento Sprint Velocità 2**
+  - **regular**
+    - Fascia A-Skip — 5× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 10" · rec 20" (per lato)
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 4 — Pliometria Rapidità Velocità B1 - short**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 2× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 3× 2 reps · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 3× 20" · rec 60" (per lato)
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50 / 8" · rec 90" · distance_short 50
+- **Giorno 4 — TEST VELOCITÀ**
+  - **regular**
+    - TEST VELOCITA' 100M — 3× rec 180" · distance_short 100 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - TEST VELOCITA' 50M — 3× rec 120" · distance_short 50 (nota: PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+  - **regular**
+    - T sprint — 3× 1 reps · rec 90" (nota: ESEGUI SENZA PALLA E PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI)
+### Settimana 2
+- **Giorno 1 — Forza Parte alta B2**
+  - **regular**
+    - Archer Push Up — 3× 5 reps · rec 120" (per lato)
+  - **regular**
+    - Bicycle Crunch Straight Leg — 3× 20 reps · rec 60"
+  - **regular**
+    - Pull Up Around The World — 2× 3 reps · rec 120" (per lato)
+  - **regular**
+    - Piegamenti Hindu — 3× 6 reps · rec 120"
+  - **regular**
+    - hollow hold — 2× 1'00" · rec 30"
+  - **regular**
+    - Chin-Up — 3× 10 reps · rec 90"
+- **Giorno 1 — Pliometria B1 - short**
+  - **regular**
+    - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Drop Jump — 2× 2 reps · rec 90" (nota: rialzo di circa 30cm)
+  - **regular**
+    - Reverse drop jumps — 2× 10 reps · rec 90" (nota: rialzo di circa 30/40cm)
+  - **regular**
+    - Single Leg Drop e spinta laterale — 2× 2 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+- **Giorno 2 — Forza Parte Bassa B1**
+  - **regular**
+    - Wall sit — 3× 1'00" · rec 60"
+  - **regular**
+    - Fascia Iso Lounge Runner — 3× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Tibialis raises — 3× 20 reps · rec 60"
+  - **regular**
+    - Calf raises — 3× 12 reps · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 3× 30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 5 reps · rec 60"
+  - **regular**
+    - Glute bridge ad una gamba — 3× 30" · rec 60" (per lato)
+  - **regular**
+    - Jump Squat — 3× 12 reps · rec 60"
+- **Giorno 2 — Rapidità Velocità B1 - short**
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 1× 20" · rec 60"
+  - **regular**
+    - Hip External Rotation Skip — 2× 20 reps · rec 30"
+  - **regular**
+    - Fascia A-Skip — 3× 10" · rec 20"
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20
+- **Giorno 4 — Fascia Foundation B3 Forza - short**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 1× 1'00" · rec 60"
+  - **regular**
+    - Fascia Bridge Bounces — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 1× 15" · rec 45" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 1× 20" · rec 60"
+- **Giorno 4 — Pliometria Rapidità Velocità C1 - short**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 1× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 1× 2 reps · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 20" · rec 60" (per lato)
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50
+### Settimana 3
+- **Giorno 1 — Forza Parte alta B2**
+  - **regular**
+    - Archer Push Up — 3× 5 reps · rec 120" (per lato)
+  - **regular**
+    - Bicycle Crunch Straight Leg — 3× 20 reps · rec 60"
+  - **regular**
+    - Pull Up Around The World — 2× 3 reps · rec 120" (per lato)
+  - **regular**
+    - Piegamenti Hindu — 3× 6 reps · rec 120"
+  - **regular**
+    - hollow hold — 2× 1'00" · rec 30"
+  - **regular**
+    - Chin-Up — 3× 10 reps · rec 90"
+- **Giorno 1 — Circuito addominali B1**
+  - **regular**
+    - Bicycle Crunch Straight Leg — 3× 30 reps · rec 30"
+  - **regular**
+    - Reverse Crunch — 3× 12 reps · rec 30"
+  - **regular**
+    - Full Moon Abs — 3× 12 reps · rec 30"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 30" (per lato)
+- **Giorno 2 — Forza Parte Bassa B1**
+  - **regular**
+    - Wall sit — 3× 1'00" · rec 60"
+  - **regular**
+    - Fascia Iso Lounge Runner — 3× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Tibialis raises — 3× 20 reps · rec 60"
+  - **regular**
+    - Calf raises — 3× 12 reps · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 3× 30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 5 reps · rec 60"
+  - **regular**
+    - Glute bridge ad una gamba — 3× 30" · rec 60" (per lato)
+  - **regular**
+    - Jump Squat — 3× 12 reps · rec 60"
+- **Giorno 2 — Pliometria B1 - short**
+  - **regular**
+    - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Drop Jump — 2× 2 reps · rec 90" (nota: rialzo di circa 30cm)
+  - **regular**
+    - Reverse drop jumps — 2× 10 reps · rec 90" (nota: rialzo di circa 30/40cm)
+  - **regular**
+    - Single Leg Drop e spinta laterale — 2× 2 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+- **Giorno 4 — Pliometria B1 - short**
+  - **regular**
+    - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Drop Jump — 2× 2 reps · rec 90" (nota: rialzo di circa 30cm)
+  - **regular**
+    - Reverse drop jumps — 2× 10 reps · rec 90" (nota: rialzo di circa 30/40cm)
+  - **regular**
+    - Single Leg Drop e spinta laterale — 2× 2 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+- **Giorno 4 — Pliometria Rapidità Velocità C1 - short**
+  - **regular**
+    - Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi — 1× 4 reps · rec 60" (per lato)
+  - **regular**
+    - Test Salto in lungo - broad jump — 1× 2 reps · rec 60"
+  - **regular**
+    - Single leg lateral drop jump — 1× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 20" · rec 60" (per lato)
+  - **regular**
+    - Sprint — 3" · rec 50" · distance_short 10 / 3" · rec 50" · distance_short 10 / 5" · rec 60" · distance_short 20 / 5" · rec 60" · distance_short 20 / 8" · rec 90" · distance_short 50
+### Settimana 4
+- **Giorno 1 — Riscaldamento Sprint Velocità**
+  - **regular**
+    - Fascia A-Skip — 6× 10" · rec 20"
+  - **regular**
+    - Saltelli in mezzo affondo con switch — 3× 10" · rec 20"
+  - **regular**
+    - navette laterali con pallina da tennis — 3× 10" · rec 20"
+  - **regular**
+    - Allungo — 4× 10" · rec 20" · distance_short 50
+- **Giorno 1 — Salite Sprint A1**
+  - **Salite Sprint A1** _(interval)_
+    - Salite Sprint — 15" · rec 50" · distance_short 50 / 15" · rec 50" · distance_short 50 / 10" · rec 50" · distance_short 29.999999999999996 / 10" · rec 50" · distance_short 29.999999999999996 / 8" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 120" · distance_short 10 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 7" · rec 50" · distance_short 20 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10 / 4" · rec 30" · distance_short 10
+- **Giorno 1 — Forza Parte alta B2**
+  - **regular**
+    - Archer Push Up — 3× 5 reps · rec 120" (per lato)
+  - **regular**
+    - Bicycle Crunch Straight Leg — 3× 20 reps · rec 60"
+  - **regular**
+    - Pull Up Around The World — 2× 3 reps · rec 120" (per lato)
+  - **regular**
+    - Piegamenti Hindu — 3× 6 reps · rec 120"
+  - **regular**
+    - hollow hold — 2× 1'00" · rec 30"
+  - **regular**
+    - Chin-Up — 3× 10 reps · rec 90"
+- **Giorno 1 — Pliometria B1 - short**
+  - **regular**
+    - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Drop Jump — 2× 2 reps · rec 90" (nota: rialzo di circa 30cm)
+  - **regular**
+    - Reverse drop jumps — 2× 10 reps · rec 90" (nota: rialzo di circa 30/40cm)
+  - **regular**
+    - Single Leg Drop e spinta laterale — 2× 2 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+  - **regular**
+    - Single leg lateral drop jump — 2× 10 reps · rec 60" (per lato; nota: rialzo di circa 20/30cm)
+- **Giorno 2 — Forza Parte Bassa B1**
+  - **regular**
+    - Wall sit — 3× 1'00" · rec 60"
+  - **regular**
+    - Fascia Iso Lounge Runner — 3× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Tibialis raises — 3× 20 reps · rec 60"
+  - **regular**
+    - Calf raises — 3× 12 reps · rec 60" (per lato)
+  - **regular**
+    - copenaghen plank — 3× 30" · rec 60" (per lato)
+  - **regular**
+    - sissy squat — 3× 5 reps · rec 60"
+  - **regular**
+    - Glute bridge ad una gamba — 3× 30" · rec 60" (per lato)
+  - **regular**
+    - Jump Squat — 3× 12 reps · rec 60"
+- **Giorno 2 — Circuito addominali B1**
+  - **regular**
+    - Bicycle Crunch Straight Leg — 3× 30 reps · rec 30"
+  - **regular**
+    - Reverse Crunch — 3× 12 reps · rec 30"
+  - **regular**
+    - Full Moon Abs — 3× 12 reps · rec 30"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 30" (per lato)
+
+## Preparazione Estiva 4 settimane (4 sett.)
+### Settimana 1
+- **Giorno 1 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 1 — TEST FORZA PARTE BASSA**
+  - **regular**
+    - Test Salto in lungo - broad jump — 4× 1 reps · rec 180" (nota: segna la distanza del salto più lontano)
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 2× 20" · rec 120" (per lato; nota: segna quante ripetizioni riesci a fare nel tempo con ogni gamba)
+  - **regular**
+    - nordic hamstring — 2× 4 reps · rec 180" (nota: ESEGUI UN VIDEO DELL'ESECUZIONE COMPLETA)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 4'00" · rec 180" (per lato; nota: ESEGUI PER IL MASSIMO DEL TEMPO CON OGNI GAMBA, SEGNA IL TEMPO PER ENTRAMBE)
+  - **regular**
+    - TEST EQUILIBRIO 1 GAMBA — 1× 2'00" · rec 60" (per lato; nota: FAI IL VIDEO DELL'ESERCIZIO E SEGNA IL TEMPO CHE RIESCI A STARE IN EQUILIBRIO PER ENTRAMBE LE GAMBE)
+- **Giorno 1 — TEST RESISTENZA**
+  - **regular**
+    - TEST RESISTENZA 3KM — 1× 3000 m · rec 240"
+  - **regular**
+    - TEST RESISTENZA 1km — 1× 1000 m · rec 240"
+- **Giorno 3 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Fartlek A2**
+  - **1/1** _(interval)_
+    - Fartlek — 1'10" · rec 50" / 1'10" · rec 50" / 1'10" · rec 50" / 1'10" · rec 180" (nota: Fartlek 1/1)
+    - Fartlek — 40" · rec 30" / 40" · rec 30" / 40" · rec 30" / 40" · rec 180" (nota: Fartlek 40/40)
+    - Fartlek — 30" · rec 25" / 30" · rec 25" / 30" · rec 25" / 30" · rec 25" / 30" · rec 180"
+    - Fartlek — 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 15" / 20" · rec 180"
+    - Fartlek — 1× 4'00" · rec 240"
+- **Giorno 3 — Dribbling e visione A1**
+  - **regular**
+    - Box dribbling + passaggio — 3× 1'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 3× 2'00" · rec 90"
+  - **regular**
+    - Dribbling visione e reattività - Avanzato — 4× 8 reps · rec 60"
+- **Giorno 3 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 5 — Fascia Foundations 1B**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 2× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 2× 1'00" · rec 30" (per lato)
+- **Giorno 5 — Tecnica al Muro, passaggi e controllo A1**
+  - **regular**
+    - Palleggi coscia e collo — 1× 5'00" · rec 60"
+  - **regular**
+    - palleggi piedi coscia testa — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro controllo 180gradi - TECNICA — 2× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 5-10mt alto-basso — 2× 4'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 2× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro - Controllo interno, turn 180 - TECNICA — 3× 2'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 3× 3'00" · rec 60"
+- **Giorno 5 — Metabolico B1**
+  - **1/1** _(interval)_
+    - Allungo — 3× 20" · rec 40" · distance_short 100
+    - Allungo — 7× 20" · rec 20" · distance_short 100
+    - Allungo — 8× 10" · rec 10" · distance_short 50
+    - Allungo — 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 40" · distance_short 100 / 17" · rec 180" · distance_short 100
+    - Allungo — 6× 10" · rec 20" · distance_short 60
+- **Giorno 5 — rapidità e Tiro**
+  - **regular**
+    - BOX rapidità e Tiro — 4× 2 reps · rec 60" (per lato)
+  - **regular**
+    - Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio — 3× 2'00" · rec 120"
+  - **regular**
+    - Calcio in alto e tiro in porta — 4× 2 reps · rec 30"
+- **Giorno 6 — Tecnica Freestyle A1**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 2× 3'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+### Settimana 2
+- **Giorno 1 — Fascia Foundations 1D**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 1× 1'30" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Single leg runner (towel) — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Fascia Towel figure 8 — 1× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Pogo Jumps — 2× 1'30" · rec 30"
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 2× 45" · rec 30" (per lato)
+- **Giorno 1 — Resistenza e Tecnica funzionale A1**
+  - **regular**
+    - Esercizio resistenza e tecnica funzionale — 4× 4'00" · rec 180"
+### Settimana 3
+### Settimana 4
+
+## Programma personale — cliente B (4 sett.) (4 sett.)
+### Settimana 1
+### Settimana 2
+### Settimana 3
+### Settimana 4
+
+## Off-Season PRO S1 (2 sett.)
+### Settimana 1
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Fartlek A1**
+  - **regular**
+    - Fartlek — 1'00" · rec 60" · round 4 / 40" · rec 40" · round 6 / 30" · rec 30" · round 8 / 20" · rec 20" · round 10
+  - **regular**
+    - Ripetute — 1× 2 reps · 4'00" · rec 180" (nota: Corsa continua 4 minuti, non deve essere massimale ma buon ritmo (80% della fatica))
+  - **regular**
+    - Box Dribbling — 1× 2'00" · rec 60" · round 3 (nota: A Bassa intensità)
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+  - **regular**
+    - Tibialis raises — 2× 15 reps · rec 60"
+  - **regular**
+    - Calves raises — 1× 20 reps · rec 30" (per lato)
+  - **regular**
+    - atg split squat — 1× 5 reps (per lato)
+  - **regular**
+    - Barbell Squat — 5 reps · 85 kg · rec 120" / 5 reps · 80 kg · rec 120" / 6 reps · 75 kg · rec 120" (nota: Esegui lo squat con i talloni leggermente sollevati)
+  - **regular**
+    - Kettlebell swing — 15 reps · 20 kg · rec 90" / 13 reps · 24 kg · rec 90" / 10 reps · 28 kg · rec 90"
+  - **regular**
+    - nordic hamstring — 5 reps · rec 120" / 5 reps · 5 kg · rec 120" / 5 reps · rec 120"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 12 reps · rec 60"
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 2 — Salite Resistenza A1**
+  - **regular**
+    - Sprint e Salite - Forza esplosiva — 1'20" · 200 m · rec 120" · round 4 / 1'00" · 150 m · rec 90" · round 4 / 40" · 100 m · rec 60" · round 4 / 20" · 50 m · rec 40" · round 6 (nota: esegui le salita in progressione, arrivando circa all 80% della velocità)
+  - **regular**
+    - BOX rapidità e Tiro — 1× 4 reps · rec 60" (nota: ESEGUI NON A MASSIMA VELOCITA', circa a 70/80%)
+- **Giorno 2 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Ripetute A1**
+  - **regular**
+    - Ripetute — 3 reps · 4'00" · rec 180" · distance_short 1000 / 3 reps · 2'20" · rec 120" · distance_short 600 / 3 reps · 1'00" · rec 60" · distance_short 300 / 3 reps · 40" · rec 50" · distance_short 200
+  - **regular**
+    - Fartlek — 20" · rec 40" · round 10 / 10" · rec 50" · round 10
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 120" / 1'30" · rec 120" / 1'00" · rec 120" / 2'00" · rec 120" (nota: A bassa intensità)
+- **Giorno 3 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00"
+  - **regular**
+    - Passaggi al muro 1 tocco interno 1 piede - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi al muro solo collo di prima - Tecnica — 1× 4'00"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 4 — Forza Prevenzione A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 6 reps · 40 kg · rec 120" / 5 reps · 50 kg · rec 120" / 15 reps · 20 kg · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · 90 kg · rec 120" / 7 reps · 80 kg · rec 120" / 7 reps · 85 kg · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · 24 kg · rec 120" / 10 reps · 28 kg · rec 120" / 16 reps · 20 kg · rec 120" / 20 reps · 20 kg · rec 120" / 30 reps · 16 kg · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 3× 10 reps · rec 60"
+- **Giorno 5 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fartlek A1**
+  - **regular**
+    - Fartlek — 1'00" · rec 60" · round 4 / 40" · rec 40" · round 6 / 30" · rec 30" · round 8 / 20" · rec 20" · round 10
+  - **regular**
+    - Ripetute — 1× 2 reps · 4'00" · rec 180" (nota: Corsa continua 4 minuti, non deve essere massimale ma buon ritmo (80% della fatica))
+  - **regular**
+    - Box Dribbling — 1× 2'00" · rec 60" · round 3 (nota: A Bassa intensità)
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+### Settimana 2
+
+## Off Season TOP S1 (1 sett.)
+### Settimana 1
+- **Giorno 1 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 1 — Fartlek A1**
+  - **regular**
+    - Fartlek — 1'00" · rec 60" · round 4 / 40" · rec 40" · round 6 / 30" · rec 30" · round 8 / 20" · rec 20" · round 10
+  - **regular**
+    - Ripetute — 1× 2 reps · 4'00" · rec 180" (nota: Corsa continua 4 minuti, non deve essere massimale ma buon ritmo (80% della fatica))
+  - **regular**
+    - Box Dribbling — 1× 2'00" · rec 60" · round 3 (nota: A Bassa intensità)
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+  - **regular**
+    - Tibialis raises — 2× 15 reps · rec 60"
+  - **regular**
+    - Calves raises — 1× 20 reps · rec 30" (per lato)
+  - **regular**
+    - atg split squat — 1× 5 reps (per lato)
+  - **regular**
+    - Barbell Squat — 5 reps · 85 kg · rec 120" / 5 reps · 80 kg · rec 120" / 6 reps · 75 kg · rec 120" (nota: Esegui lo squat con i talloni leggermente sollevati)
+  - **regular**
+    - Kettlebell swing — 15 reps · 20 kg · rec 90" / 13 reps · 24 kg · rec 90" / 10 reps · 28 kg · rec 90"
+  - **regular**
+    - nordic hamstring — 5 reps · rec 120" / 5 reps · 5 kg · rec 120" / 5 reps · rec 120"
+  - **regular**
+    - copenaghen plank — 1× 1'00" · rec 30" (per lato)
+  - **regular**
+    - Toes to Bar — 1× 12 reps · rec 60"
+- **Giorno 2 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 2 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 2 — Salite Resistenza A1**
+  - **regular**
+    - Sprint e Salite - Forza esplosiva — 1'20" · 200 m · rec 120" · round 4 / 1'00" · 150 m · rec 90" · round 4 / 40" · 100 m · rec 60" · round 4 / 20" · 50 m · rec 40" · round 6 (nota: esegui le salita in progressione, arrivando circa all 80% della velocità)
+  - **regular**
+    - BOX rapidità e Tiro — 1× 4 reps · rec 60" (nota: ESEGUI NON A MASSIMA VELOCITA', circa a 70/80%)
+- **Giorno 2 — Tecnica A1 Muro**
+  - **regular**
+    - Passaggi al muro 1 tocco interno - Tecnica — 1× 5'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 1 tocco collo - Tecnica — 1× 4'00" · rec 120"
+  - **regular**
+    - Passaggi al muro - Controllo suola, sposto palla — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - controllo esterno, passaggio interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica — 1× 3'00" · rec 60"
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
+- **Giorno 3 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 3 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 3 — Ripetute A1**
+  - **regular**
+    - Ripetute — 3 reps · 4'00" · rec 180" · distance_short 1000 / 3 reps · 2'20" · rec 120" · distance_short 600 / 3 reps · 1'00" · rec 60" · distance_short 300 / 3 reps · 40" · rec 50" · distance_short 200
+  - **regular**
+    - Fartlek — 20" · rec 40" · round 10 / 10" · rec 50" · round 10
+  - **regular**
+    - Box dribbling + passaggio — 2'00" · rec 120" / 1'30" · rec 120" / 1'00" · rec 120" / 2'00" · rec 120" (nota: A bassa intensità)
+- **Giorno 3 — Passaggi al Muro - Tecnica di base**
+  - **regular**
+    - Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi liberi al muro - Tecnica — 1× 5'00"
+  - **regular**
+    - Passaggi al muro 1 tocco interno 1 piede - Tecnica — 1× 3'00" (per lato)
+  - **regular**
+    - Passaggi al muro solo collo di prima - Tecnica — 1× 4'00"
+  - **regular**
+    - Passaggi a 10mt alternati, primo tocco suola - Tecnica — 1× 5'00"
+- **Giorno 4 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 4 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 4 — Forza Prevenzione A1**
+  - **regular**
+    - Tibialis raises — 2× 20 reps · 10 kg · rec 60"
+  - **regular**
+    - Calf raises — 25 reps · 5 kg · rec 60" / 20 reps · 10 kg · rec 60" / 30 reps · 0 kg · rec 60" (per lato)
+  - **regular**
+    - atg split squat — 6 reps · 40 kg · rec 120" / 5 reps · 50 kg · rec 120" / 15 reps · 20 kg · rec 120" (per lato)
+  - **regular**
+    - sissy squat — 3× 8 reps · rec 60"
+  - **regular**
+    - FY Squat — 5 reps · 90 kg · rec 120" / 7 reps · 80 kg · rec 120" / 7 reps · 85 kg · rec 120"
+  - **regular**
+    - Kettlebell swing — 12 reps · 24 kg · rec 120" / 10 reps · 28 kg · rec 120" / 16 reps · 20 kg · rec 120" / 20 reps · 20 kg · rec 120" / 30 reps · 16 kg · rec 120"
+  - **regular**
+    - nordic hamstring — 2× 5 reps · rec 180"
+  - **regular**
+    - copenaghen plank — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Toes to Bar — 3× 10 reps · rec 60"
+- **Giorno 5 — Fascia Foundations 1**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
+- **Giorno 5 — Fartlek A1**
+  - **regular**
+    - Fartlek — 1'00" · rec 60" · round 4 / 40" · rec 40" · round 6 / 30" · rec 30" · round 8 / 20" · rec 20" · round 10
+  - **regular**
+    - Ripetute — 1× 2 reps · 4'00" · rec 180" (nota: Corsa continua 4 minuti, non deve essere massimale ma buon ritmo (80% della fatica))
+  - **regular**
+    - Box Dribbling — 1× 2'00" · rec 60" · round 3 (nota: A Bassa intensità)
+- **Giorno 5 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 6 — Yoga Recupero**
+  - **regular**
+    - Sequenza Yoga - Recupero e Mobilità — 1× 40'00"
+
+## in season (1 sett.)
+### Settimana 1
+- **Giorno 1 — Pliometria rapidità velocità A2**
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 2× 1'00" · rec 120"
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia e tecnica Funzionale A1**
+  - **regular**
+    - Protezione palla figura 8 - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Protezione palla schiena - fascia — 2× 1'00" · rec 60"
+  - **regular**
+    - Protezione palla laterale suola - fascia — 2× 30" · rec 60"
+  - **regular**
+    - Spinta laterale suola - protezione palla - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Spinta laterale e finta - protezione palla - fascia — 3× 30" · rec 60"
+  - **regular**
+    - Protezione palla laterale - palleggi - fascia — 3× 30" · rec 60"
+- **Giorno 1 — Dribbling A1**
+  - **regular**
+    - Box dribbling + passaggio — 3× 1'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 3× 2'00" · rec 90"
+- **Giorno 3 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 3 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 3 — Fascia e tecnica Funzionale A1**
+  - **regular**
+    - Protezione palla figura 8 - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Protezione palla schiena - fascia — 2× 1'00" · rec 60"
+  - **regular**
+    - Protezione palla laterale suola - fascia — 2× 30" · rec 60"
+  - **regular**
+    - Spinta laterale suola - protezione palla - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Spinta laterale e finta - protezione palla - fascia — 3× 30" · rec 60"
+  - **regular**
+    - Protezione palla laterale - palleggi - fascia — 3× 30" · rec 60"
+- **Giorno 3 — Tiri e Visione Libero A1**
+  - **regular**
+    - Tiri in porta e VISIONE — 4× 2'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 120" (per lato)
+- **Giorno 5 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 5 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+- **Giorno 5 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 5 — Tecnica Freestyle (short)**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00" · rec 120"
+- **Giorno 7 — Fascia Foundation A3**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+  - **regular**
+    - Fascia Arms Swing — 3× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Advanced Fascia Progression — 2× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 3× 10 reps · rec 60" (per lato)
+- **Giorno 7 — Tecnica palleggi A2**
+  - **regular**
+    - Palleggi al muro 1 tocco solo interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 1 tocco libero — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 4'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 7 — Dribbling A1**
+  - **regular**
+    - Box dribbling + passaggio — 3× 1'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 3× 2'00" · rec 90"
+- **Giorno 7 — Pliometria rapidità velocità A2**
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 2× 1'00" · rec 120"
+- **Giorno 7 — Tecnica Freestyle**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+
+## forza corpo libero avanzato w1 (1 sett.)
+### Settimana 1
+- **Giorno 1 — Forza full body HIIT corpo libero - B1**
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+- **Giorno 2 — Forza Parte Alta EMOM B2**
+  - **Forza Full Body EMOM B2** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Eccentric Handstand Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B2** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Eccentric Handstand Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B2** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Eccentric Handstand Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+- **Giorno 3 — Forza full body HIIT corpo libero - B1**
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+- **Giorno 4 — Forza Parte alta Push corpo libero**
+  - **regular**
+    - Sit-Up — 4× 20 reps · rec 60"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Isometric Bear Crawl — 3× 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 10 reps · rec 60"
+  - **regular**
+    - Bear Crawl Lateral — 2× 10 reps · rec 60"
+  - **regular**
+    - Push-Up — 5× 20 reps · rec 60"
+- **Giorno 5 — Forza full body HIIT corpo libero - B1**
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+
+## forza corpo libero avanzato w3 (1 sett.)
+### Settimana 1
+- **Giorno 1 — Forza full body HIIT corpo libero - B3**
+  - **Forza full body HIIT 5min - corpo libero - B3** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3 SHORT** _(interval)_
+    - Piegamenti Hindu — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3 SHORT** _(interval)_
+    - Piegamenti Hindu — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+- **Giorno 2 — Forza Parte Alta EMOM B4**
+  - **Forza Full Body EMOM B4** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Flutter Kick Abs Low — 1× 30" · rec 60"
+    - Type Writer Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B4** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Flutter Kick Abs Low — 1× 30" · rec 60"
+    - Type Writer Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B4** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Flutter Kick Abs Low — 1× 30" · rec 60"
+    - Type Writer Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+- **Giorno 3 — Forza full body HIIT corpo libero - B3**
+  - **Forza full body HIIT 5min - corpo libero - B3** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3 SHORT** _(interval)_
+    - Piegamenti Hindu — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3 SHORT** _(interval)_
+    - Piegamenti Hindu — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+- **Giorno 4 — Forza Parte alta Push corpo libero B3**
+  - **regular**
+    - Cross Body Mountain Climbers — 3× rec 20"
+  - **regular**
+    - Alternating 2 Point Plank — rec 30" / rec 30" / rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 12 reps · rec 30"
+  - **regular**
+    - Bear Crawl Lateral — 12 reps · rec 30" / 12 reps · rec 45"
+  - **regular**
+    - Push-Up — 2× 20 reps · rec 60"
+  - **regular**
+    - Full Moon Abs — 2× 16 reps · rec 60"
+  - **regular**
+    - Piegamenti Hindu — 2× 12 reps · rec 60"
+- **Giorno 5 — Forza full body HIIT corpo libero - B3**
+  - **Forza full body HIIT 5min - corpo libero - B3** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 40" · rec 20"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3 SHORT** _(interval)_
+    - Piegamenti Hindu — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B3 SHORT** _(interval)_
+    - Piegamenti Hindu — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Arm Climb (High to Forearm Plank) — 1× 30" · rec 30"
+    - Side Jackknife — 1× 40" · rec 20"
+    - Cross Body Mountain Climbers — 1× 40" · rec 20"
+
+## Settimana 1 programma corpo libero (1 sett.)
+### Settimana 1
+- **Giorno 2 — Forza full body HIIT corpo libero - B1**
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+- **Giorno 3 — Forza Parte alta Push corpo libero**
+  - **regular**
+    - Sit-Up — 4× 20 reps · rec 60"
+  - **regular**
+    - Plank with Twist — 3× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Isometric Bear Crawl — 3× 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 10 reps · rec 60"
+  - **regular**
+    - Bear Crawl Lateral — 2× 10 reps · rec 60"
+  - **regular**
+    - Push-Up — 5× 20 reps · rec 60"
+- **Giorno 4 — Forza Parte Alta EMOM B2**
+  - **Forza Full Body EMOM B2** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Eccentric Handstand Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B2** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Eccentric Handstand Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B2** _(interval)_
+    - Archer Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Eccentric Handstand Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+- **Giorno 5 — Forza full body HIIT corpo libero - B1**
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B1** _(interval)_
+    - Piegamenti Hindu — 1× 40" · rec 20"
+    - Skater Jump — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - hollow hold — 1× 40" · rec 20"
+    - Reverse Burpee — 1× 40" · rec 20"
+
+## In Season (1 sett.)
+### Settimana 1
+- **Giorno 1 — Pliometria rapidità velocità A2**
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 2× 1'00" · rec 120"
+- **Giorno 1 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 1 — Fascia e tecnica Funzionale A1**
+  - **regular**
+    - Protezione palla figura 8 - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Protezione palla schiena - fascia — 2× 1'00" · rec 60"
+  - **regular**
+    - Protezione palla laterale suola - fascia — 2× 30" · rec 60"
+  - **regular**
+    - Spinta laterale suola - protezione palla - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Spinta laterale e finta - protezione palla - fascia — 3× 30" · rec 60"
+  - **regular**
+    - Protezione palla laterale - palleggi - fascia — 3× 30" · rec 60"
+- **Giorno 1 — Dribbling A1**
+  - **regular**
+    - Box dribbling + passaggio — 3× 1'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 3× 2'00" · rec 90"
+- **Giorno 3 — Fascia Foundation 2**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+- **Giorno 3 — Tecnica Palleggi A1**
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi solo Collo — 1× 2 reps · 4'00" · rec 60"
+  - **regular**
+    - Palleggi solo collo 3 tocchi alternati - TECNICA — 1× 2 reps · 5'00" · rec 60"
+  - **regular**
+    - Palleggi 1 piede interno/collo/esterno - Tecnica — 1× —
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 3 — Fascia e tecnica Funzionale A1**
+  - **regular**
+    - Protezione palla figura 8 - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Protezione palla schiena - fascia — 2× 1'00" · rec 60"
+  - **regular**
+    - Protezione palla laterale suola - fascia — 2× 30" · rec 60"
+  - **regular**
+    - Spinta laterale suola - protezione palla - fascia — 2× 30" · rec 60" (per lato)
+  - **regular**
+    - Spinta laterale e finta - protezione palla - fascia — 3× 30" · rec 60"
+  - **regular**
+    - Protezione palla laterale - palleggi - fascia — 3× 30" · rec 60"
+- **Giorno 3 — Tiri e Visione Libero A1**
+  - **regular**
+    - Tiri in porta e VISIONE — 4× 2'00" · rec 60"
+  - **regular**
+    - Calcio in alto e tiro in porta — 1× 10 reps · rec 120" (per lato)
+- **Giorno 5 — Fascia Training - Rolling and fascia adhesion**
+  - **regular**
+    - Calves Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Peroneals Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Hamstring Foam Roll — 1× 2'00" (per lato)
+  - **regular**
+    - Rhomboids Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Quadriceps Foam Roll — 1× 1'00" (per lato)
+  - **regular**
+    - Piriformis Foam Roll — 1× 1'00" (per lato)
+- **Giorno 5 — Tecnica Visione A1**
+  - **regular**
+    - Passaggi al muro - VISIONE — 5× 2'00" · rec 60"
+  - **regular**
+    - Videocorso Visione - Esercizi Base — 1× 10'00" · rec 120"
+- **Giorno 5 — Fascia Foundation A3 Forza**
+  - **regular**
+    - Foam Roll Plantar Fascia — 1× 2'00" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Fascia Iso Lounge Runner — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Toe Bounces Single Leg - Pogo Jumps — 1× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Arms Swing — 2× 2'00" · rec 60"
+  - **regular**
+    - Advanced Fascia Progression — 2× 1'30" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 2× 10 reps · rec 60" (per lato)
+  - **regular**
+    - Spinta isometrica al muro frontale — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale interno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
+  - **regular**
+    - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
+- **Giorno 5 — Tecnica Freestyle (short)**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 5'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 5'00" · rec 120"
+- **Giorno 7 — Fascia Foundation A3**
+  - ** ** _(regular)_
+    - Fascia adhesion tennis ball — 1× 4'00" · rec 0"
+  - ** ** _(regular)_
+    - Toes up down — 2'00" · rec 45" / 2'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
+  - ** ** _(regular)_
+    - Fascia Single leg RDL — 2× 1'30" · rec 30" (per lato)
+  - **regular**
+    - Fascia Standing Meditation — 1× 5'00"
+  - **regular**
+    - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
+  - **regular**
+    - Fascia Arms Swing — 3× 1'00" · rec 60" (per lato)
+  - **regular**
+    - Advanced Fascia Progression — 2× 2'00" · rec 60" (per lato)
+  - **regular**
+    - Fascia Bridge Bounces — 3× 10 reps · rec 60" (per lato)
+- **Giorno 7 — Tecnica palleggi A2**
+  - **regular**
+    - Palleggi al muro 1 tocco solo interno — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 1 tocco libero — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi — 1× 4'00" · rec 60"
+  - **regular**
+    - palleggi al muro 2 tocchi - controllo interno, passaggio collo — 1× 3'00" · rec 60"
+  - **regular**
+    - Palleggi al muro 2 tocchi - controllo esterno, passaggio collo — 1× 5'00" · rec 60"
+  - **regular**
+    - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
+- **Giorno 7 — Dribbling A1**
+  - **regular**
+    - Box dribbling + passaggio — 3× 1'00" · rec 60"
+  - **regular**
+    - Box Dribbling — 3× 2'00" · rec 90"
+- **Giorno 7 — Pliometria rapidità velocità A2**
+  - **regular**
+    - Rapidità Ankle Stiffness - Test — 1× 20" · rec 60" (per lato)
+  - **regular**
+    - Salto triplo e sprint — rec 30" · distance_short 10 / rec 30" · distance_short 10 / rec 40" · distance_short 20 / rec 40" · distance_short 20 / rec 120" · distance_short 50 / rec 120" · distance_short 50
+  - **regular**
+    - Salto triplo a 1 gamba e sprint — rec 60" · distance_short 10 / rec 60" · distance_short 10 / rec 90" · distance_short 20 / rec 90" · distance_short 20 / rec 120" · distance_short 50 (per lato)
+  - **regular**
+    - Postura + Velocità Difensori — 2× 1'00" · rec 120"
+- **Giorno 7 — Tecnica Freestyle**
+  - **regular**
+    - Palleggi al muro liberi freestyle — 2× 10'00" · rec 120"
+  - **regular**
+    - Palleggi Freestyle 3 conetti — 1× 5 reps · rec 180"
+  - **regular**
+    - Palleggi Freestyle - Tecnica — 2× 10'00" · rec 120"
+
+## forza corpo libero avanzato w2 (1 sett.)
+### Settimana 1
+- **Giorno 1 — Forza full body HIIT corpo libero - B2**
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+- **Giorno 2 — Forza Parte Alta EMOM B3**
+  - **Forza Full Body EMOM B3** _(interval)_
+    - Diamond Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Decline Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B3** _(interval)_
+    - Diamond Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Decline Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+  - **Forza Full Body EMOM B3** _(interval)_
+    - Diamond Push Up — 1× 30" · rec 60"
+    - Body Weight Pistol Squat — 1× 30" · rec 60"
+    - Decline Push Up — 1× 30" · rec 60"
+    - Crow Pose Progression — 1× 30" · rec 60"
+- **Giorno 3 — Forza full body HIIT corpo libero - B2**
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+- **Giorno 4 — Forza Parte alta Push corpo libero B2**
+  - **regular**
+    - Flutter Kick Abs Low — 3× 1'00" · rec 20"
+  - **regular**
+    - Isometric Bear Crawl — 1'00" · rec 30" / 1'00" · rec 30" / 1'00" · rec 45"
+  - **regular**
+    - Bear Crawl Linear — 2× 12 reps · rec 30"
+  - **regular**
+    - Bear Crawl Lateral — 12 reps · rec 30" / 12 reps · rec 45"
+  - **regular**
+    - Push-Up — 2× 20 reps · rec 60"
+  - **regular**
+    - Diamond Push Up — 2× 15 reps · rec 60"
+  - **regular**
+    - Piegamenti Hindu — 2× 12 reps · rec 60"
+- **Giorno 5 — Forza full body HIIT corpo libero - B2**
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
+  - **Forza full body HIIT 5min - corpo libero - B2** _(interval)_
+    - Archer Push Up — 1× 40" · rec 20"
+    - Jump Squat — 1× 40" · rec 20"
+    - Diamond Push Up — 1× 40" · rec 20"
+    - Flutter Kicks — 1× 40" · rec 20"
+    - Burpee — 1× 40" · rec 20"
