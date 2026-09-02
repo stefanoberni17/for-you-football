@@ -5,6 +5,7 @@ import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, todayRome } from '@/lib/trainingPlanner';
 import { TESTS } from '@/lib/trainingCatalog';
+import { SETUP_SELECT, mapSetup } from '@/lib/trainingSetup';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -48,6 +49,11 @@ export async function GET(request: NextRequest) {
       completions = data || [];
     }
 
+    // "Il tuo setup" (migration 017) — se le colonne non esistono ancora, setup = default
+    const { data: setupRow, error: setupErr } = await supabaseAdmin.from('profiles').select(SETUP_SELECT).eq('user_id', userId).maybeSingle();
+    const setup = mapSetup(setupErr ? null : setupRow);
+    const setupDisponibile = !setupErr;
+
     // Check-in di oggi → flag fatica alta (la seduta del giorno propone lo scarico)
     const { data: cOggi } = await supabaseAdmin.from('daily_checkin')
       .select('physical_state, sleep_hours, recovery_quality, mental_state')
@@ -79,6 +85,8 @@ export async function GET(request: NextRequest) {
       completions,
       checkinOggi,
       faticaAlta: isFaticaAlta(checkinOggi),
+      setup,
+      setupDisponibile,
       // Ciclo mensile: dall'ultima batteria/ri-test chiusa (fallback: ultimo risultato test)
       ciclo: cicloInfo(
         lastTestSession?.completed_at
