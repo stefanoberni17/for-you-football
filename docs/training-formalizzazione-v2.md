@@ -1,6 +1,6 @@
 # FYF Training — Formalizzazione v2: qualità fisiche complete
 
-> **Stato:** bozza v2.1 — 2 settembre 2026 (risposte 3-6 recepite; aperti: gating fmax, soglie test campo). Estende la v1 (corpo libero + tecnica + fascia,
+> **Stato:** v2.2 — 2 settembre 2026. Tutte le domande chiuse (File_DB ricevuto: soglie complete, Brzycki, lista base; gating carico da Ste). Pronto per l'implementazione (§9). Estende la v1 (corpo libero + tecnica + fascia,
 > `docs/training-recap-progressioni.md`) alle qualità fisiche complete: forza in palestra,
 > forza esplosiva/pliometria, velocità, resistenza (aerobica, metabolico, RSA).
 > Fonte: risposte di Ste in chat (2 set 2026) + analisi dei suoi 203 workout e 18 programmi
@@ -57,14 +57,13 @@ consecutive con esecuzione pulita **[STE ✅]** (+2.5-5% parte alta, +5% parte b
 | Tirata | Pull-Up · Pull Up Around The World · Band Assisted Pull Up · Inverted Row | 5 · 3 rec 120" |
 | Esplosivi con carico | Kettlebell swing · Jump Squat · Medicine Ball Lateral Throw · KB clean/snatch | 3×15 @20 kg · 3×12 · 8×5 kg |
 
-**[PROPOSTA] Lista base v2** (5 pattern, 1-2 esercizi ciascuno): squat (bilanciere / goblet / split squat) ·
-cerniera (stacco / RDL / nordic) · **glutei: hip thrust con spinta sugli avampiedi, non sul tallone [STE ✅]** ·
-spinta (panca / dips zavorrati) · tirata (trazioni zavorrate / rematore) · esplosivo (KB swing / jump squat / lanci). Corpo libero v1 resta la regressione quando non c'è la palestra.
+**Lista base v2 [STE ✅ — foglio CALCOLO MASSIMALI]**: **squat · deadlift · hip thrust (spinta sugli avampiedi, non sul tallone) · bulgarian squat · panca piana · shoulder press · pull ups**. Accessori dai dati: nordic, RDL/single leg RDL, calf/tibialis raises, dips zavorrati; esplosivi: KB swing, jump squat, lanci. Il foglio DB ESERCIZI (82 voci: fascia con difficoltà 1-3, forza parte bassa/core, parte alta, core avanzato) è la seconda sorgente per il catalogo v2 insieme all'export Everfit. Corpo libero v1 resta la regressione senza palestra.
 
 ### 2.3 Carico di riferimento e gating **[STE: stima ok, ma meglio una sessione di test]**
 
 - Il **massimale è stimato**, mai testato direttamente: serie sub-massimale a cedimento tecnico (5-8 reps)
-  → 1RM stimato con Epley (`1RM = peso × (1 + reps/30)`) → le % del §2.1 si calcolano da lì.
+  → 1RM stimato con **Brzycki** — la formula del foglio CALCOLO MASSIMALI del File_DB **[DATI ✅]**:
+  `1RM = peso / (1.0278 − 0.0278 × reps)` → le % del §2.1 si calcolano da lì.
 - **Sessione di test** = la batteria che Ste usa già su Everfit **[DATI — 4 workout "TEST"]**, più la stima 1RM:
 
   | Test Everfit | Protocollo (dai workout) | Qualità | Soglie B/A/PRO |
@@ -73,12 +72,48 @@ spinta (panca / dips zavorrati) · tirata (trazioni zavorrate / rematore) · esp
   | TEST PARTE ALTA | Max push-up · Max pull-up (+ riscaldamento 10 push / 5 pull / 40 crunch) | v1 (già live) | ✅ v1 |
   | TEST RESISTENZA | 3 km · 1 km (rec 4') | aerobica | ⚠️ da File_DB (tempi) |
   | TEST VELOCITÀ | 100 m ×3 rec 3' · 50 m ×3 rec 2' · T sprint ×3 rec 90" | velocità / rapidità | ⚠️ da File_DB (tempi) |
-  | **Palestra (nuovo)** | 1 esercizio per pattern (squat, stacco/RDL, panca, trazioni) a 5-8 reps → 1RM Epley | forza | livello dal rapporto 1RM/peso corporeo **[PROPOSTA]** |
+  | **Palestra** | i 7 esercizi del foglio CALCOLO MASSIMALI **[DATI ✅]**: squat, deadlift, hip thrust, bulgarian squat, panca piana, shoulder press, pull ups — serie sub-massimale (5-10 reps) → 1RM Brzycki | forza | livello dal rapporto 1RM/peso corporeo **[PROPOSTA]** |
 
-  Le soglie dei test da campo non sono nell'export Everfit (che ha solo i protocolli) né nella trascrizione v1 del
-  File_DB (coperti: push, pull, plank, palleggi, muro). **Servono dal File_DB o da Ste.**
-- **Gating [PROPOSTA — da confermare]**: forza massima (80-90%) solo con **≥16 anni** e livello **A/PRO** e
-  batteria palestra fatta; sotto: forza di base ed esplosiva a carichi ≤70%. Le regole safety v1 restano
+  **Soglie complete dal File_DB (foglio TEST) [DATI ✅]** — file versionato in `docs/training-seed/File_DB_Allenamenti.xlsx`:
+
+  | Categoria | Test | PRO | Avanzato | Intermedio | Base | Protocollo |
+  |---|---|---|---|---|---|---|
+  | Resistenza | 1 km | < 3'30" | < 3'50" | < 4'10" | > 4' | |
+  | Resistenza | 3 km | < 11'45" | < 12'30" | < 13'45" | > 13'45" | |
+  | Capacità anaerobica | Navetta 10 m × 30" | > 12 | > 10 | > 7 | < 6 | timer 30", più navette possibili |
+  | Capacità anaerobica | 20" Ankle Jump Test | > 10 | 9 | > 7 | < 6 | |
+  | Capacità anaerobica | 20" SL Ankle Jump (dx / sx) | > 9 | 8 | > 6 | < 5 | per lato |
+  | Forza parte bassa | Wall sit iso | > 180" | > 120" | > 90" | < 80" | |
+  | Forza parte bassa | SL Wall sit iso (dx / sx) | > 90" | > 60" | > 40" | < 40" | per lato |
+  | Forza parte bassa | Affondo iso (dx / sx) | > 180" | > 120" | > 90" | < 80" | piede posteriore ad altezza petto/spalle, gamba dietro tesa |
+  | Forza parte alta | Push-up | > 40 | > 30 | > 20 | < 15 | ✅ già live v1 |
+  | Forza parte alta | Pull-up | > 12 | > 8 | > 4 | < 2 | ✅ già live v1 |
+  | Forza parte alta | Plank frontale | > 120" | > 60" | > 40" | < 30" | ✅ già live v1 |
+  | Velocità | 50 m | < 7" | < 8" | < 9" | > 10" | |
+  | Velocità | T sprint (10 m) | < 10" | < 12" | < 14" | > 14" | |
+  | Forza esplosiva | Broad jump | > 250 cm | > 200 cm | > 170 cm | < 160 cm | |
+  | Forza esplosiva | SL Broad jump (dx / sx) | > 240 cm | > 190 cm | > 150 cm | < 140 cm | per lato |
+  | Fascia | 120" Pogo jumps — dove senti la fatica | glutei/addome | flessori/coscia | quadricipiti/polpacci | caviglia/piede | 2 saltelli/sec sull'avampiede ✅ live v1 (scala 1-4) |
+  | Fascia | 180" Toe curls (dx / sx) — dove senti la fatica | glutei/addome | flessori/coscia | quadricipiti/polpacci | caviglia/piede | 3' per piede, 70-80% del peso sulla gamba avanti — ⚠️ v1 live usa 1' |
+  | Tecnica | Palleggi piede forte / debole / testa / piramide | > 150 / > 120 / > 100 / > 10 | > 100 / > 80 / > 50 / > 5 | > 50 / > 30 / > 25 / > 3 | < 50 / < 30 / < 25 / < 2 | ✅ già live v1 |
+  | Tecnica | 10 tiri traversa da fuori area (forte / debole) | > 4 | 3 | 2 | 1-0 | max 3 tentativi |
+  | Tecnica | 10 passaggi al palo da fuori area (forte / debole) | > 4 | 3 | 2 | 1-0 | max 3 tentativi |
+
+  Nota: nel File_DB la colonna LIVELLO (punteggio 0-100) è **inserita a mano**, non calcolata; il FOGLIO RECAP fa la
+  media per categoria (dettaglio: capac. anaerobica, resistenza, forza PB, forza PA, velocità, forza esplosiva, fascia,
+  tecnica) e poi "generale" (resistenza, forza, velocità, tecnica, prevenzione) — ma le formule "generale" del foglio
+  puntano a intervalli sbagliati (es. VELOCITÀ generale = media della forza PB). **[PROPOSTA]** mapping corretto:
+  Resistenza = 1/3 km + anaerobica · Forza = PB + PA + esplosiva · Velocità = 50 m + T sprint + ankle jump ·
+  Tecnica = tecnica · Prevenzione = fascia + wall sit/affondo iso. Punteggio per test: formula v0 dell'app (80 punti alla
+  soglia PRO, lineare, cap 110) finché Ste non dà riferimenti diversi.
+- **Gating carico [STE ✅]**:
+  | Profilo | Carico massimo |
+  |---|---|
+  | Esperienza in palestra **e** > 18 anni **e** livello A/PRO | **80-90%** (forza massima ammessa) |
+  | Zero esperienza in palestra **oppure** < 18 anni | **max 60%** |
+  | Tutti gli altri | **max 70%** |
+
+  "Esperienza in palestra" = dichiarata nell'onboarding attrezzatura (sì/no + da quanto). Le regole safety v1 restano
   (pain-hold, dolore ≥4/10, fatica alta → scarico).
 
 ### 2.4 Resistenza **[STE + DATI]**
@@ -168,10 +203,14 @@ Metodo **session-RPE** (Foster) **[STE ✅]**: `carico seduta = durata (min) × 
   per 2 settimane → il planner riduce il volume fisico e lo dice nel messaggio; periodo di scarso recupero (media 7 gg) → già fatto.
 - Il planner riceve: AU settimana corrente vs target di fase (§6), AU squadra vs AU FYF, ACWR.
 
-## 8. Cosa serve ancora (domande aperte)
+## 8. Stato domande
 
-1. **Gating forza massima** (§2.3) — in parole semplici: *chi può fare le serie pesanti all'80-90%?* Proposta: solo chi ha ≥16 anni, è di livello A/PRO e ha fatto la batteria palestra; tutti gli altri fanno forza di base ed esplosiva con carichi fino al 70%. Confermi, o cambi età/livello?
-2. **Soglie B/A/PRO dei test da campo** (broad jump in cm · 50 m, 100 m e T sprint in secondi · 1 km e 3 km in minuti · ankle stiffness): sono nel File_DB? Il file non è nel repo — serve ricaricarlo, oppure i numeri.
+Tutte le domande della v2.0 sono chiuse (gating carico, soglie test, serie/progressione, pliometria, carico totale, esercizi base).
+Restano solo **conferme** con default già applicati:
+1. Lista base palestra = i 7 del foglio massimali (+ accessori dai dati) — default: sì.
+2. Punteggio per test = formula v0 (80 alla soglia PRO, cap 110) al posto dei LIVELLO manuali del File_DB — default: sì.
+3. Mapping "generale" del rombo corretto come proposto sopra (le formule del foglio puntano a intervalli sbagliati) — default: sì.
+4. Toe curls test: nel File_DB è 3' per piede, nell'app v1 è 1' — allineare a 3'? default: sì.
 
 ## 9. Piano di implementazione (dopo le risposte)
 
