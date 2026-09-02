@@ -13,6 +13,9 @@ import {
   type AreaForza, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
 } from './trainingCatalog';
 
+import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2 } from './trainingRulesV2';
+import type { ExerciseV2 } from './trainingCatalogV2';
+
 export interface TestResultRow { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }
 
 // ─── Scoring ─────────────────────────────────────────────────────────────────
@@ -229,6 +232,9 @@ export interface PlanItem {
   recupero_sec: number;
   schema?: string;           // 'fisso' | 'amrap' | 'tabata' | 'emom' | 'max_reps'
   nota?: string;
+  // Catalogo v2 — forza con carico (docs/training-formalizzazione-v2.md §2.1)
+  regime?: 'max' | 'esplosiva' | 'base';
+  carico_pct?: number;       // % del massimale stimato (Brzycki)
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom
@@ -249,7 +255,12 @@ const AREE_FORZA = new Set(['spinta', 'tirata', 'core', 'lombari', 'laterale']);
  */
 export function validatePlan(
   plan: WeekPlan,
-  ctx: { fascia: FasciaLivello; matchDays: number[]; trainingDays: number[]; painHold: boolean; hasSbarra: boolean; maxDurataRichiesta?: number; oggiDow?: number }
+  ctx: {
+    fascia: FasciaLivello; matchDays: number[]; trainingDays: number[]; painHold: boolean; hasSbarra: boolean;
+    maxDurataRichiesta?: number; oggiDow?: number;
+    // Catalogo v2 (qualità fisiche complete): se assente, gli esercizi v2 vengono rifiutati
+    v2?: ContestoV2;
+  }
 ): string[] {
   const errors: string[] = [];
   if (!plan?.sedute || !Array.isArray(plan.sedute) || plan.sedute.length === 0) {
@@ -278,9 +289,17 @@ export function validatePlan(
     if (s.durata_min > maxDur) errors.push(`seduta "${s.titolo}": ${s.durata_min}' oltre il massimo (${maxDur}')`);
     if (!Array.isArray(s.items) || s.items.length === 0) { errors.push(`seduta "${s.titolo}": senza esercizi`); continue; }
 
+    const itemsV2: { it: PlanItem; ex: ExerciseV2 }[] = [];
     for (const it of s.items) {
       const ex = esercizioById(it.esercizio_id);
-      if (!ex) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
+      if (!ex) {
+        // Non è nel catalogo v1: prova il catalogo v2 (solo se il contesto v2 è abilitato)
+        if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
+        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays));
+        errors.push(...r.errors);
+        if (r.ex) itemsV2.push({ it, ex: r.ex });
+        continue;
+      }
       if (ex.area === 'tirata' && !ctx.hasSbarra) errors.push(`"${ex.nome}": tirata non attivabile senza sbarra`);
       if (AREE_FORZA.has(ex.area)) {
         const b = BOUNDS[ex.area as AreaForza | 'laterale'][ctx.fascia];
@@ -304,6 +323,7 @@ export function validatePlan(
           errors.push(`"${ex.nome}": recupero ${it.recupero_sec}" sotto il minimo tecnica ${TECNICA_RECUPERO_MIN_SEC}"`);
       }
     }
+    if (itemsV2.length > 0) errors.push(...validateSessionV2(itemsV2, s.titolo));
   }
   if (seduteFisiche > REGOLE.maxSeduteFisicheSettimana)
     errors.push(`${seduteFisiche} sedute fisiche: oltre il tetto di ${REGOLE.maxSeduteFisicheSettimana}/settimana`);

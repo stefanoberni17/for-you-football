@@ -133,6 +133,15 @@ for num, base in by_num.items():
             row["attivo"] = False; row["azione"] = "escludi per ora"
     out.append(row)
 
+# Esercizi base palestra (foglio CALCOLO MASSIMALI) → attrezzatura palestra anche se il nome non lo dice
+BASE_PALESTRA = ("squat", "deadlift", "stacco", "hip thrust", "hip trust", "squat bulgaro", "bulgarian", "panca", "bench",
+                 "shoulder press", "overhead press", "press con", "rematore", "leg press", "front squat", "sumo deadlift")
+for r in out:
+    n = r["nome"].lower()
+    if r["qualita"] in ("forza-parte-bassa", "forza-parte-alta") and r["attrezzatura"] == "corpo libero" \
+            and any(k in n for k in BASE_PALESTRA) and not any(k in n for k in ("body weight", "bodyweight", "jump", "wall", "sissy", "pistol", "iso", "atg")):
+        r["attrezzatura"] = "palestra"
+
 json.dump(out, open("docs/training-catalogo-v2.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("righe:", len(out), "| attivi:", sum(1 for r in out if r["attivo"]), "| stats:", stats)
 from collections import Counter

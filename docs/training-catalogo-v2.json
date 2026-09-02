@@ -208,7 +208,7 @@
  {
   "nome": "front squat",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
@@ -250,7 +250,7 @@
  {
   "nome": "FY Squat",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
@@ -269,7 +269,7 @@
  {
   "nome": "Hip Thrust",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
@@ -291,7 +291,7 @@
  {
   "nome": "Max Squat 90gradi",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
@@ -388,7 +388,7 @@
  {
   "nome": "Squat",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
@@ -410,7 +410,7 @@
  {
   "nome": "Squat Bulgaro",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
@@ -432,7 +432,7 @@
  {
   "nome": "Stacco Rumeno",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
@@ -454,7 +454,7 @@
  {
   "nome": "Sumo Deadlift",
   "qualita": "forza-parte-bassa",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "palestra",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
