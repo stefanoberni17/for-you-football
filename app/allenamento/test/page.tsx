@@ -16,6 +16,12 @@ interface AmrapStation { nome: string; quantita: number; unita: string }
 interface LadderPoint { esercizioId: string; nome: string; gradino: number; valore: number; unita: string }
 interface LadderNext { id: string; nome: string; gradino: number; unita: string; descrizione?: string }
 interface LadderInfo { area: string; soglia: number; points: LadderPoint[]; next: LadderNext | null; amrap: LadderPoint | null }
+interface TestV2Info {
+  id: string; nome: string; categoria: string; categoriaLabel: string; unita: string; verso: 'max' | 'min';
+  protocollo: string; lift: boolean; provvisorio: boolean;
+  done: boolean; lastValue: number | null; lastLevel: string | null;
+  dettaglio: { peso?: number; reps?: number; rapporto?: number | null; senza_peso_corporeo?: boolean } | null;
+}
 
 const LIVELLO_LABEL: Record<string, string> = {
   base: 'Base', intermedio: 'Intermedio', avanzato: 'Avanzato', pro: 'PRO',
@@ -30,6 +36,11 @@ export default function BatteriaTest() {
   const [tests, setTests] = useState<TestInfo[]>([]);
   const [amrapCircuit, setAmrapCircuit] = useState<AmrapStation[]>([]);
   const [ladders, setLadders] = useState<LadderInfo[]>([]);
+  const [testsV2, setTestsV2] = useState<TestV2Info[]>([]);
+  const [pesoCorporeo, setPesoCorporeo] = useState<number | null>(null);
+  const [v2Current, setV2Current] = useState<string | null>(null); // test v2 aperto
+  const [liftPeso, setLiftPeso] = useState('');
+  const [liftReps, setLiftReps] = useState('');
   const [current, setCurrent] = useState<string | null>(null); // test id aperto
   const [skillCurrent, setSkillCurrent] = useState<string | null>(null); // esercizio scala aperto
   const [valore, setValore] = useState(''); // input libero a testo, parse al salvataggio
@@ -51,6 +62,8 @@ export default function BatteriaTest() {
       setTests(data.tests);
       setAmrapCircuit(data.amrapCircuit || []);
       setLadders(data.ladders || []);
+      setTestsV2(data.testsV2 || []);
+      setPesoCorporeo(data.setup?.pesoKg ?? null);
     }
     setLoading(false);
   }, [router]);
@@ -91,6 +104,33 @@ export default function BatteriaTest() {
         setCurrent(null);
         setValore('');
         await load();
+      }
+    } finally { setSaving(false); }
+  };
+
+  const valoreDec = parseFloat(valore.replace(',', '.'));
+  const valoreDecValido = Number.isFinite(valoreDec) && valoreDec >= 0;
+
+  const salvaV2 = async (t: TestV2Info) => {
+    const body = t.lift
+      ? { test_id: t.id, peso: parseFloat(liftPeso.replace(',', '.')), reps: parseInt(liftReps, 10) }
+      : { test_id: t.id, valore: valoreDec };
+    if (t.lift ? !(Number.isFinite(body.peso) && Number.isInteger(body.reps)) : !valoreDecValido) return;
+    setSaving(true);
+    try {
+      const res = await authFetch('/api/training/test', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setSavedMsg(t.lift
+          ? `Massimale stimato ${data.valore} kg${data.dettaglio?.rapporto ? ` (${data.dettaglio.rapporto}× il peso corporeo — ${LIVELLO_LABEL[data.livello] || data.livello})` : ' — inserisci il peso corporeo nel setup per il livello'}`
+          : `Salvato — livello ${LIVELLO_LABEL[data.livello] || data.livello}`);
+        setTimeout(() => setSavedMsg(null), 3500);
+        setV2Current(null); setValore(''); setLiftPeso(''); setLiftReps('');
+        await load();
+      } else {
+        setSavedMsg(data.error || 'Errore'); setTimeout(() => setSavedMsg(null), 3500);
       }
     } finally { setSaving(false); }
   };
@@ -275,6 +315,77 @@ export default function BatteriaTest() {
                   )}
                 </div>
               ))}
+            </div>
+          </>
+        )}
+
+        {/* Batteria v2 — test da campo (File_DB) + palestra (massimali Brzycki) */}
+        {testsV2.length > 0 && (
+          <>
+            <h2 className="text-base font-bold text-app mb-1">Batteria campo e palestra</h2>
+            <p className="text-xs text-muted leading-relaxed mb-3">
+              Resistenza, navette, tenute, velocità, salti, tiri e passaggi — con le soglie del metodo. In palestra inserisci peso e ripetizioni di una serie pulita (5-10 reps): l&apos;app stima il massimale.
+              {pesoCorporeo === null && ' ⚠️ Per il livello in palestra serve il peso corporeo: inseriscilo in "Il tuo setup" nel Campo.'}
+            </p>
+            <div className="space-y-2.5 mb-6">
+              {Array.from(new Set(testsV2.map((t) => t.categoria))).map((cat) => {
+                const grp = testsV2.filter((t) => t.categoria === cat);
+                return (
+                  <div key={cat} className="rounded-2xl border bg-surface border-divider p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-bold text-app">{grp[0].categoriaLabel}</p>
+                      <p className="text-[11px] text-faint">{grp.filter((t) => t.done).length}/{grp.length}</p>
+                    </div>
+                    <div className="space-y-1">
+                      {grp.map((t) => (
+                        <div key={t.id}>
+                          <button onClick={() => { setV2Current(v2Current === t.id ? null : t.id); setCurrent(null); setSkillCurrent(null); setValore(t.lastValue != null && !t.lift ? String(t.lastValue) : ''); setLiftPeso(t.dettaglio?.peso != null ? String(t.dettaglio.peso) : ''); setLiftReps(t.dettaglio?.reps != null ? String(t.dettaglio.reps) : ''); }}
+                            className="w-full flex items-center justify-between text-left py-1">
+                            <span className={`text-xs ${t.done ? 'text-app' : 'text-muted'}`}>{t.done ? '✓ ' : ''}{t.nome}</span>
+                            <span className="text-xs font-semibold tabular-nums text-forest-400">
+                              {t.done ? (t.lift ? `${t.lastValue} kg` : fmtVal(t.lastValue!, t.unita === 'cm' ? 'cm' : t.unita)) : ''}
+                              {t.done && t.lastLevel && !(t.lift && t.dettaglio?.senza_peso_corporeo) ? ` · ${LIVELLO_LABEL[t.lastLevel] || t.lastLevel}` : ''}
+                            </span>
+                          </button>
+                          {v2Current === t.id && (
+                            <div className="pb-3 pt-1 border-t border-divider mt-1">
+                              <p className="text-[11px] text-muted leading-relaxed mb-2">{t.protocollo}{t.provvisorio ? ' ⚠️ soglie provvisorie' : ''}</p>
+                              {t.lift ? (
+                                <div className="flex items-end gap-2 flex-wrap">
+                                  <div className="text-center">
+                                    <input type="text" inputMode="decimal" value={liftPeso} placeholder="kg"
+                                      onChange={(e) => setLiftPeso(e.target.value.replace(/[^0-9.,]/g, ''))} aria-label="Peso in kg"
+                                      className="w-20 text-center text-lg font-bold bg-surface-2 border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
+                                    <p className="text-[10px] text-faint">kg</p>
+                                  </div>
+                                  <span className="text-faint pb-5">×</span>
+                                  <div className="text-center">
+                                    <input type="text" inputMode="numeric" pattern="[0-9]*" value={liftReps} placeholder="reps"
+                                      onChange={(e) => setLiftReps(e.target.value.replace(/[^0-9]/g, ''))} aria-label="Ripetizioni"
+                                      className="w-20 text-center text-lg font-bold bg-surface-2 border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
+                                    <p className="text-[10px] text-faint">reps (1-12)</p>
+                                  </div>
+                                  <button onClick={() => salvaV2(t)} disabled={saving || !liftPeso || !liftReps}
+                                    className="bg-forest-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs disabled:opacity-50 mb-4">Stima e salva</button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <input type="text" inputMode="decimal" value={valore} placeholder="0"
+                                    onChange={(e) => setValore(e.target.value.replace(/[^0-9.,]/g, ''))} aria-label={`Risultato ${t.nome}`}
+                                    className="w-24 text-center text-lg font-bold bg-surface-2 border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
+                                  <span className="text-[10px] text-faint">{t.unita}{t.verso === 'min' ? ' (meno è meglio)' : ''}</span>
+                                  <button onClick={() => salvaV2(t)} disabled={saving || !valoreDecValido}
+                                    className="bg-forest-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs disabled:opacity-50">Salva</button>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
         )}
