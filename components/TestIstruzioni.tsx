@@ -10,6 +10,7 @@ export interface TestIstruzioniData {
   serve?: string | null;
   passi?: string[] | null;
   inserisci?: string | null;
+  videoUrl?: string | null;
 }
 
 export default function TestIstruzioni({ t, nota }: { t: TestIstruzioniData; nota?: string | null }) {
@@ -33,6 +34,9 @@ export default function TestIstruzioni({ t, nota }: { t: TestIstruzioniData; not
         <p className="text-[11px] text-forest-300 leading-relaxed mt-2 bg-forest-500/10 border border-forest-500/20 rounded-lg px-2.5 py-1.5">
           <span className="font-semibold">Inserisci:</span> {t.inserisci}
         </p>
+      )}
+      {t.videoUrl && (
+        <a href={t.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-block text-[11px] font-semibold text-forest-400 mt-2">▶ Guarda il video del test</a>
       )}
       {nota && <p className="text-[11px] text-amber-300/90 mt-1.5">{nota}</p>}
     </div>

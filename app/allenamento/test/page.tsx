@@ -20,7 +20,7 @@ interface LadderNext { id: string; nome: string; gradino: number; unita: string;
 interface LadderInfo { area: string; soglia: number; points: LadderPoint[]; next: LadderNext | null; amrap: LadderPoint | null }
 interface TestV2Info {
   id: string; nome: string; categoria: string; categoriaLabel: string; unita: string; verso: 'max' | 'min';
-  protocollo: string; serve: string | null; passi: string[] | null; inserisci: string | null;
+  protocollo: string; serve: string | null; passi: string[] | null; inserisci: string | null; videoUrl: string | null;
   lift: boolean; provvisorio: boolean;
   done: boolean; lastValue: number | null; lastLevel: string | null;
   dettaglio: { peso?: number; reps?: number; rapporto?: number | null; senza_peso_corporeo?: boolean } | null;
