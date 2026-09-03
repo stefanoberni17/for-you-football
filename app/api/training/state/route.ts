@@ -6,7 +6,7 @@ import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFatica
 import { cicloInfo, todayRome } from '@/lib/trainingPlanner';
 import { TESTS } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup } from '@/lib/trainingSetup';
-import { CATEGORIA_LABEL, ROMBO_V2, TESTS_V2 } from '@/lib/trainingTestsV2';
+import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -60,7 +60,8 @@ export async function GET(request: NextRequest) {
       const r = rawByTest.get(t.id);
       return {
         id: t.id, nome: t.nome, categoria: t.categoria, categoriaLabel: CATEGORIA_LABEL[t.categoria], unita: t.unita,
-        verso: t.verso, protocollo: t.protocollo, lift: !!t.lift, provvisorio: !!t.provvisorio,
+        verso: t.verso, protocollo: t.protocollo, serve: t.serve ?? null, passi: t.passi ?? null, inserisci: t.inserisci ?? null,
+        lift: !!t.lift, provvisorio: !!t.provvisorio,
         done: !!r, lastValue: r ? Number(r.valore) : null, lastLevel: r?.livello_calcolato ?? null,
         dettaglio: r?.dettaglio ?? null,
       };
@@ -71,11 +72,6 @@ export async function GET(request: NextRequest) {
       const r = rawByTest.get(t.id);
       if (t.lift && r) massimali[t.lift.esercizioV2Id] = Number(r.valore);
     }
-    const romboV2 = ROMBO_V2.map((p) => {
-      const scores = p.testIds.map((id) => rawByTest.get(id)).filter((r): r is NonNullable<typeof r> => !!r).map((r) => Number(r.punteggio_calcolato));
-      return { key: p.key, label: p.label, score: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null, fatti: scores.length, totali: p.testIds.length };
-    });
-
     // Completamenti del piano corrente
     let completions: { session_key: string; feedback: string | null }[] = [];
     if (lastPlan?.id) {
@@ -108,6 +104,7 @@ export async function GET(request: NextRequest) {
       rombo: buildRombo(rows),
       tests: TESTS.map((t) => ({
         id: t.id, nome: t.nome, unita: t.unita, protocollo: t.protocollo,
+        serve: t.serve ?? null, passi: t.passi ?? null, inserisci: t.inserisci ?? null,
         scelte: t.scelte ?? null,
         done: doneTestIds.has(t.id),
         lastValue: rows.find((r) => r.test_id === t.id)?.valore ?? null,
@@ -116,7 +113,6 @@ export async function GET(request: NextRequest) {
       amrapCircuit: buildAmrapCircuit(rows),
       testsV2,
       massimali,
-      romboV2,
       ladders: LADDER_AREE.map((a) => ladderForArea(rows, a)).filter((l) => l !== null),
       openTestSession: openSession || null,
       plan: lastPlan || null,

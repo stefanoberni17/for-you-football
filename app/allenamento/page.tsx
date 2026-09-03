@@ -12,7 +12,7 @@ import {
 import { Activity, AlertTriangle, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 
-interface RomboPoint { key: string; label: string; score: number | null }
+interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string }
 interface TrainingState {
@@ -22,6 +22,7 @@ interface TrainingState {
   gradini: Record<string, number>;
   rombo: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
+  testsV2: { id: string; done: boolean }[];
   plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string }; generato_da: string } | null;
   completions: { session_key: string; feedback: string | null }[];
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
@@ -122,8 +123,12 @@ export default function AllenamentoHub() {
     );
   }
 
-  const testsFatti = state.tests.filter((t) => t.done).length;
+  const testsFatti = state.tests.filter((t) => t.done).length + (state.testsV2 || []).filter((t) => t.done).length;
+  const testsTotali = state.tests.length + (state.testsV2 || []).length;
   const batteriaVuota = testsFatti === 0;
+  const amrap = state.tests.find((t) => t.id === 'test-amrap');
+  const LIVELLO_LABEL: Record<string, string> = { base: 'Base', intermedio: 'Intermedio', avanzato: 'Avanzato', pro: 'PRO' };
+  const ROMBO_SHORT: Record<string, string> = { tiro_passaggio: 'Tiro/pass.', esplosivita: 'Esplosiv.' };
   const doneDays = new Set(state.completions.map((c) => Number(c.session_key.split('#')[1])));
   const sedute = state.plan?.plan?.sedute || [];
   const prossima = sedute.find((s) => !doneDays.has(s.giorno));
@@ -357,17 +362,36 @@ export default function AllenamentoHub() {
               <div className="flex items-center justify-between mb-1 px-1">
                 <p className="text-sm font-bold text-app flex items-center gap-1.5"><Activity size={15} className="text-forest-400" /> La tua Card</p>
                 <Link href="/allenamento/test" className="text-xs text-forest-400 font-semibold">
-                  {testsFatti < state.tests.length ? 'Completa i test →' : 'Ri-test →'}
+                  {testsFatti < testsTotali ? `Completa i test (${testsFatti}/${testsTotali}) →` : 'Ri-test →'}
                 </Link>
               </div>
-              <div style={{ width: '100%', height: 230 }}>
+              {amrap?.done && amrap.lastLevel && (
+                <p className="text-[11px] text-muted px-1 mb-1">
+                  Livello generale (AMRAP): <span className="font-semibold text-forest-300">{LIVELLO_LABEL[amrap.lastLevel] || amrap.lastLevel}</span> · {amrap.lastValue} giri
+                </p>
+              )}
+              <div style={{ width: '100%', height: 260 }}>
                 <ResponsiveContainer>
-                  <RadarChart data={state.rombo.map((p) => ({ label: p.label.replace('Tecnica ', 'T. ').replace('Forza ', 'F. ').replace('Prevenzione ', 'P. '), value: p.score ?? 0 }))} outerRadius="72%">
+                  <RadarChart data={state.rombo.map((p) => ({ label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0 }))} outerRadius="70%">
                     <PolarGrid stroke="#1f2924" />
                     <PolarAngleAxis dataKey="label" tick={{ fill: '#9ca7a0', fontSize: 10 }} />
                     <Radar dataKey="value" stroke="#2dd17a" fill="#2dd17a" fillOpacity={0.35} isAnimationActive={false} />
                   </RadarChart>
                 </ResponsiveContainer>
+              </div>
+              {/* Legenda: punteggio per punta + test fatti/totali (le punte senza test restano a 0 sul grafico) */}
+              <div className="grid grid-cols-2 gap-1.5 px-1 mb-3">
+                {state.rombo.map((p) => (
+                  <Link key={p.key} href="/allenamento/test"
+                    className={`flex items-center justify-between rounded-xl border px-2.5 py-1.5 ${p.score === null ? 'bg-surface border-divider' : 'bg-surface-2 border-divider'}`}>
+                    <span className={`text-[11px] ${p.score === null ? 'text-faint' : 'text-app'}`}>{p.label}</span>
+                    <span className="text-[11px] tabular-nums shrink-0 ml-2">
+                      {p.score === null
+                        ? <span className="text-faint">— · 0/{p.totali}</span>
+                        : <><span className="font-bold text-forest-300">{p.score}</span><span className="text-faint"> · {p.fatti}/{p.totali}</span></>}
+                    </span>
+                  </Link>
+                ))}
               </div>
               <div className="flex flex-wrap gap-1.5 px-1">
                 {Object.entries(state.gradini).map(([area, g]) => (
