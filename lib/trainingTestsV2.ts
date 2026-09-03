@@ -47,6 +47,8 @@ const SERIE_PULITA = 'Fai la serie finché la ripetizione successiva non sarebbe
 const RISCALDAMENTO_PALESTRA = 'Riscaldati con 2-3 serie a carichi crescenti, poi scegli un peso con cui pensi di fare tra 5 e 10 ripetizioni pulite.';
 const INSERISCI_LIFT = 'Il peso in kg e le ripetizioni fatte: l\'app stima il massimale.';
 
+const VIDEO_ANKLE_STIFFNESS = 'https://www.youtube.com/watch?v=YAF8Zi6HLi8'; // "Rapidità Ankle Stiffness - Test" (Everfit)
+
 export const TESTS_V2: TestV2[] = [
   // ── Resistenza (tempi in secondi, più basso è meglio) — File_DB ✅
   T('t2-1km', '1 km', 'resistenza', 'secondi', 'min', 'Il tuo tempo su 1 km corso al massimo.', 250, 230, 210, {
@@ -69,8 +71,9 @@ export const TESTS_V2: TestV2[] = [
     ],
     inserisci: 'Il numero di navette complete andata e ritorno (es. 9).',
   }),
-  T('t2-ankle-jump', 'Ankle jump test 20"', 'anaerobica', 'reps', 'max', 'Quanti percorsi completi di salti a caviglia rigida fai in 20 secondi.', 7, 9, 10, {
+  T('t2-ankle-jump', 'Ankle stiffness test 20"', 'anaerobica', 'reps', 'max', 'Quanti percorsi completi di salti a caviglia rigida fai in 20 secondi.', 7, 9, 10, {
     serve: 'Pavimento non scivoloso, un punto di riferimento a terra (una linea o un cinesino) e un timer da 20".',
+    videoUrl: VIDEO_ANKLE_STIFFNESS,
     passi: [
       'Piedi uniti sotto le anche, ginocchia quasi tese: si salta solo di caviglia, atterrando sull\'avampiede senza appoggiare il tallone.',
       'Il percorso è: salto avanti, indietro, di lato, avanti, indietro, di lato tornando al punto di partenza. Il percorso completo vale 1.',
@@ -78,15 +81,17 @@ export const TESTS_V2: TestV2[] = [
     ],
     inserisci: 'Il numero di percorsi completi in 20 secondi.',
   }),
-  T('t2-ankle-jump-dx', 'Ankle jump 20" — destro', 'anaerobica', 'reps', 'max', 'Stesso percorso sulla sola gamba destra.', 6, 8, 9, {
+  T('t2-ankle-jump-dx', 'Ankle stiffness 20" — destro', 'anaerobica', 'reps', 'max', 'Stesso percorso sulla sola gamba destra.', 6, 8, 9, {
     perLato: 'dx',
     serve: 'Pavimento non scivoloso, un riferimento a terra e un timer da 20".',
+    videoUrl: VIDEO_ANKLE_STIFFNESS,
     passi: ['Sulla sola gamba destra, ginocchio quasi teso, l\'altro piede sollevato.', 'Stesso percorso: avanti, indietro, di lato, avanti, indietro, di lato fino alla partenza = 1.', 'Conta i percorsi completi in 20 secondi. Se appoggi l\'altro piede, riprendi subito senza fermare il timer.'],
     inserisci: 'Il numero di percorsi completi in 20 secondi.',
   }),
-  T('t2-ankle-jump-sx', 'Ankle jump 20" — sinistro', 'anaerobica', 'reps', 'max', 'Stesso percorso sulla sola gamba sinistra.', 6, 8, 9, {
+  T('t2-ankle-jump-sx', 'Ankle stiffness 20" — sinistro', 'anaerobica', 'reps', 'max', 'Stesso percorso sulla sola gamba sinistra.', 6, 8, 9, {
     perLato: 'sx',
     serve: 'Pavimento non scivoloso, un riferimento a terra e un timer da 20".',
+    videoUrl: VIDEO_ANKLE_STIFFNESS,
     passi: ['Sulla sola gamba sinistra, ginocchio quasi teso, l\'altro piede sollevato.', 'Stesso percorso: avanti, indietro, di lato, avanti, indietro, di lato fino alla partenza = 1.', 'Conta i percorsi completi in 20 secondi. Se appoggi l\'altro piede, riprendi subito senza fermare il timer.'],
     inserisci: 'Il numero di percorsi completi in 20 secondi.',
   }),
