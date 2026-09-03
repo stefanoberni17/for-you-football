@@ -210,16 +210,17 @@ export function buildAmrapCircuit(results: TestResultRow[]): AmrapStation[] {
 
 // ─── Rombo card ──────────────────────────────────────────────────────────────
 
-export function buildRombo(results: TestResultRow[]): { key: string; label: string; score: number | null }[] {
+export interface RomboPunta { key: string; label: string; score: number | null; fatti: number; totali: number }
+
+export function buildRombo(results: TestResultRow[]): RomboPunta[] {
   return ROMBO_PUNTE.map((p) => {
-    if (p.testIds.length === 0) return { key: p.key, label: p.label, score: null };
     const scores: number[] = [];
     for (const tid of p.testIds) {
       const r = latestResult(results, tid);
       if (r) scores.push(Number(r.punteggio_calcolato));
     }
-    if (scores.length === 0) return { key: p.key, label: p.label, score: null };
-    return { key: p.key, label: p.label, score: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) };
+    const score = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+    return { key: p.key, label: p.label, score, fatti: scores.length, totali: p.testIds.length };
   });
 }
 

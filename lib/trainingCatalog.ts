@@ -129,7 +129,10 @@ export interface TrainingTest {
   nome: string;
   area?: Area; // catena a cui il test dà il placement
   unita: string;
-  protocollo: string;
+  protocollo: string;    // cosa misura, una riga
+  serve?: string;        // cosa ti serve (attrezzi, spazio, cronometro)
+  passi?: string[];      // come si fa, numerati
+  inserisci?: string;    // cosa scrivere nell'app e in che formato
   // soglie: valore MINIMO per raggiungere il livello (higher is better)
   soglie: { intermedio: number; avanzato: number; pro: number };
   // gradino d'ingresso in catena per livello del test
@@ -142,37 +145,100 @@ export interface TrainingTest {
 
 export const TESTS: TrainingTest[] = [
   { id: 'test-push', nome: 'Max piegamenti', area: 'spinta', unita: 'reps', esercizioId: 'push-2',
-    protocollo: 'Piegamenti completi: petto a terra, braccia distese. Una serie a cedimento, forma pulita.',
+    protocollo: 'Quanti piegamenti completi fai di fila. È il punto di partenza della scala Push.',
+    serve: 'Solo il pavimento. Fallo da fresco, dopo un riscaldamento leggero.',
+    passi: [
+      'Mani poco più larghe delle spalle, corpo in linea dai talloni alla testa.',
+      'Scendi finché il petto tocca terra, poi spingi fino a braccia completamente distese: questa è 1 ripetizione.',
+      'Vai avanti senza fermarti finché la forma resta pulita: se il bacino cade o resti fermo più di 2 secondi, la serie è finita.',
+    ],
+    inserisci: 'Il numero di ripetizioni complete (es. 23).',
     soglie: { intermedio: 15, avanzato: 30, pro: 40 },
     entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } }, // entry conservativa v0.2
   { id: 'test-pull', nome: 'Max pull-up', area: 'tirata', unita: 'reps', esercizioId: 'pull-5',
-    protocollo: 'Pull-up completi dalla sospensione, mento sopra la sbarra. Se 0: segna 0 (partirai dalle australian).',
+    protocollo: 'Quante trazioni complete fai di fila. È il punto di partenza della scala Pull.',
+    serve: 'Una sbarra a cui restare appesi con i piedi staccati da terra.',
+    passi: [
+      'Parti appeso a braccia completamente distese, presa poco più larga delle spalle.',
+      'Tira finché il mento supera la sbarra, poi scendi fino a braccia distese: questa è 1 ripetizione.',
+      'Niente slancio con le gambe. Fermati quando non arrivi più col mento sopra la sbarra.',
+    ],
+    inserisci: 'Il numero di trazioni complete. Se non ne fai nemmeno una, scrivi 0: partirai dalle australian pull-up.',
     soglie: { intermedio: 2, avanzato: 8, pro: 12 },
     entryMap: { base: 1, intermedio: 4, avanzato: 5, pro: 6 } }, // entry conservativa v0.2
   { id: 'test-core', nome: 'Plank frontale max', area: 'core', unita: 'secondi', esercizioId: 'core-2',
-    protocollo: 'Plank sui gomiti, corpo in linea. Tieni finché la forma resta pulita.',
+    protocollo: 'Quanti secondi tieni il plank con la forma pulita.',
+    serve: 'Pavimento e un cronometro (puoi usare quello dell\'app).',
+    passi: [
+      'Gomiti sotto le spalle, avambracci a terra, piedi uniti o poco distanti.',
+      'Corpo in linea dai talloni alla testa, addome e glutei attivi. Avvia il cronometro.',
+      'La prova finisce quando il bacino cade o si alza e non riesci più a correggerlo.',
+    ],
+    inserisci: 'I secondi tenuti (es. 75).',
     soglie: { intermedio: 30, avanzato: 60, pro: 120 },
     entryMap: { base: 1, intermedio: 2, avanzato: 4, pro: 6 } }, // entry conservativa v0.2
   { id: 'test-lombari', nome: 'Superman hold max', area: 'lombari', unita: 'secondi', esercizioId: 'lomb-1',
-    protocollo: 'A pancia in giù, braccia e gambe sollevate. Tieni finché la forma resta pulita.',
+    protocollo: 'Quanti secondi tieni braccia, petto e gambe sollevati da terra.',
+    serve: 'Pavimento (meglio un tappetino) e un cronometro.',
+    passi: [
+      'A pancia in giù, braccia distese avanti, sguardo verso il pavimento.',
+      'Solleva insieme braccia, petto e gambe da terra: da qui parte il cronometro.',
+      'Fermati quando le mani o i piedi tornano a toccare terra.',
+    ],
+    inserisci: 'I secondi tenuti.',
     // ⚠️ soglie provvisorie (uniche non ancora date da Ste — da tarare)
     soglie: { intermedio: 30, avanzato: 60, pro: 90 },
     entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } }, // entry conservativa v0.2
   { id: 'test-pall-forte', nome: 'Palleggi piede forte', area: 'palleggi', unita: 'reps',
-    protocollo: 'Palleggi consecutivi senza far cadere la palla. Max 3 tentativi.',
+    protocollo: 'Palleggi consecutivi col piede forte senza far cadere la palla.',
+    serve: 'Una palla e uno spazio piano.',
+    passi: [
+      'Palla in mano, lasciala cadere e palleggia solo col piede forte (collo o interno, come preferisci).',
+      'Conta ogni tocco. Se la palla tocca terra, la serie è finita.',
+      'Hai 3 tentativi: vale il migliore.',
+    ],
+    inserisci: 'Il numero di tocchi del tentativo migliore.',
     soglie: { intermedio: 50, avanzato: 100, pro: 150 },
     entryMap: { base: 1, intermedio: 3, avanzato: 5, pro: 8 } },
   { id: 'test-pall-debole', nome: 'Palleggi piede debole', unita: 'reps',
-    protocollo: 'Palleggi consecutivi col piede debole. Max 3 tentativi.',
+    protocollo: 'Palleggi consecutivi col piede debole senza far cadere la palla.',
+    serve: 'Una palla e uno spazio piano.',
+    passi: [
+      'Palla in mano, lasciala cadere e palleggia solo col piede debole: l\'altro non tocca mai la palla.',
+      'Conta ogni tocco. Se la palla tocca terra, la serie è finita.',
+      'Hai 3 tentativi: vale il migliore.',
+    ],
+    inserisci: 'Il numero di tocchi del tentativo migliore.',
     soglie: { intermedio: 30, avanzato: 80, pro: 120 } },
   { id: 'test-pall-testa', nome: 'Palleggi di testa', unita: 'reps',
-    protocollo: 'Palleggi di testa consecutivi. Max 3 tentativi.',
+    protocollo: 'Palleggi di testa consecutivi senza far cadere la palla.',
+    serve: 'Una palla e uno spazio piano.',
+    passi: [
+      'Lancia la palla in alto e palleggia solo di testa (fronte), ginocchia morbide, occhi sulla palla.',
+      'Conta ogni tocco. Se la palla tocca terra o un\'altra parte del corpo, la serie è finita.',
+      'Hai 3 tentativi: vale il migliore.',
+    ],
+    inserisci: 'Il numero di tocchi del tentativo migliore.',
     soglie: { intermedio: 25, avanzato: 50, pro: 100 } },
   { id: 'test-piramide', nome: 'Piramide palleggi', unita: 'reps',
-    protocollo: 'Collo sx → coscia sx → testa → coscia dx → collo dx = 1 ripetizione. Consecutivi, max 3 tentativi.',
+    protocollo: 'Quante sequenze complete collo sx → coscia sx → testa → coscia dx → collo dx fai di fila.',
+    serve: 'Una palla e uno spazio piano.',
+    passi: [
+      'La sequenza è: collo sinistro, coscia sinistra, testa, coscia destra, collo destro. Fatta tutta = 1 ripetizione.',
+      'Riparti subito con la sequenza successiva, senza tocchi in mezzo. Se la palla cade o sbagli l\'ordine, la serie finisce.',
+      'Hai 3 tentativi: vale il migliore.',
+    ],
+    inserisci: 'Il numero di sequenze complete.',
     soglie: { intermedio: 3, avanzato: 5, pro: 10 } },
   { id: 'test-muro', nome: 'Passaggi di prima in 2 minuti', area: 'muro', unita: 'reps',
-    protocollo: 'A 5 metri dal muro, passaggi di prima alternando i piedi: conta quanti in 2 minuti.',
+    protocollo: 'Quanti passaggi di prima contro il muro fai in 2 minuti.',
+    serve: 'Un muro, una palla, 5 metri di spazio piano e un timer.',
+    passi: [
+      'Segna una linea a 5 metri dal muro e mettiti dietro.',
+      'Avvia 2 minuti: passa la palla al muro di prima (un tocco solo) alternando piede destro e sinistro.',
+      'Conta solo i passaggi fatti da dietro la linea. Se la palla scappa, recuperala e continua: il tempo non si ferma.',
+    ],
+    inserisci: 'Il numero di passaggi in 2 minuti.',
     // ⚠️ soglie provvisorie — da dare da Ste
     soglie: { intermedio: 60, avanzato: 90, pro: 120 },
     entryMap: { base: 1, intermedio: 3, avanzato: 5, pro: 7 } },
@@ -180,49 +246,81 @@ export const TESTS: TrainingTest[] = [
   // Misurabile (equilibrio per lato) + qualitativi (dove si sente la fatica:
   // più in alto nella catena, meglio è) + autovalutazione dolori/fastidi.
   { id: 'test-fascia-eq-dx', nome: 'Fascia — Equilibrio occhi chiusi (destro)', unita: 'secondi',
-    protocollo: 'In piedi sulla gamba destra, occhi chiusi, mani libere: quanti secondi tieni l\'equilibrio senza appoggiare l\'altro piede? Max 2 tentativi, conta il migliore.',
+    protocollo: 'Quanti secondi stai in equilibrio sulla gamba destra a occhi chiusi.',
+    serve: 'Pavimento piano, scalzo, un cronometro.',
+    passi: [
+      'In piedi sulla gamba destra, l\'altro piede sollevato, mani libere lungo i fianchi.',
+      'Chiudi gli occhi e avvia il cronometro.',
+      'La prova finisce quando il piede libero tocca terra o ti aggrappi a qualcosa. 2 tentativi: vale il migliore.',
+    ],
+    inserisci: 'I secondi del tentativo migliore.',
     // ⚠️ soglie provvisorie — da tarare con Ste
     soglie: { intermedio: 10, avanzato: 20, pro: 30 } },
   { id: 'test-fascia-eq-sx', nome: 'Fascia — Equilibrio occhi chiusi (sinistro)', unita: 'secondi',
-    protocollo: 'Stesso test sulla gamba sinistra: quanti secondi a occhi chiusi senza appoggiare? Max 2 tentativi, conta il migliore.',
+    protocollo: 'Quanti secondi stai in equilibrio sulla gamba sinistra a occhi chiusi.',
+    serve: 'Pavimento piano, scalzo, un cronometro.',
+    passi: [
+      'In piedi sulla gamba sinistra, l\'altro piede sollevato, mani libere lungo i fianchi.',
+      'Chiudi gli occhi e avvia il cronometro.',
+      'La prova finisce quando il piede libero tocca terra o ti aggrappi a qualcosa. 2 tentativi: vale il migliore.',
+    ],
+    inserisci: 'I secondi del tentativo migliore.',
     soglie: { intermedio: 10, avanzato: 20, pro: 30 } },
   { id: 'test-fascia-eq-fatica', nome: 'Fascia — Dove senti la fatica (equilibrio)', unita: 'punti',
-    protocollo: 'Subito dopo il test di equilibrio: dove hai sentito lavorare/affaticare di più? Più in alto nella catena, meglio è.',
+    protocollo: 'Subito dopo i due test di equilibrio: dove hai sentito lavorare o affaticare di più?',
+    inserisci: 'Scegli la zona. Più in alto nella gamba la senti, meglio lavora tutta la catena.',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Piede', valore: 1 }, { label: 'Polpaccio', valore: 2 },
       { label: 'Coscia', valore: 3 }, { label: 'Gluteo', valore: 4 },
     ] },
   { id: 'test-fascia-towel-fatica', nome: 'Fascia — Dove senti la fatica (towel curls)', unita: 'punti',
-    protocollo: 'Fai 1 serie di towel curls da 1 minuto: dove senti la fatica? Più in alto nella catena, meglio è.',
+    protocollo: 'Una serie di towel curls da 1 minuto: dove senti la fatica?',
+    serve: 'Un asciugamano su un pavimento liscio, scalzo.',
+    passi: [
+      'In piedi, un piede avanti con l\'avampiede appoggiato sull\'asciugamano.',
+      'Per 1 minuto "arriccia" le dita trascinando l\'asciugamano verso di te: lento e completo, senza staccare il tallone.',
+      'A fine minuto nota dove senti la fatica.',
+    ],
+    inserisci: 'Scegli la zona. Più in alto la senti, meglio è.',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Piede', valore: 1 }, { label: 'Polpaccio', valore: 2 },
       { label: 'Coscia', valore: 3 }, { label: 'Gluteo', valore: 4 },
     ] },
   { id: 'test-fascia-dolori', nome: 'Fascia — Dolori alle articolazioni', unita: 'punti',
-    protocollo: 'Autovalutazione: hai dolori frequenti alle articolazioni (caviglie, ginocchia, anche) in questo periodo?',
+    protocollo: 'Autovalutazione: in questo periodo hai dolori frequenti a caviglie, ginocchia o anche?',
+    inserisci: 'Scegli la risposta più onesta: serve a dosare il lavoro, non a giudicarti.',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Costanti', valore: 1 }, { label: 'Frequenti', valore: 2 },
       { label: 'Leggeri, ogni tanto', valore: 3 }, { label: 'Nessuno', valore: 4 },
     ] },
   { id: 'test-fascia-fastidi-post', nome: 'Fascia — Dolori dopo gli allenamenti', unita: 'punti',
-    protocollo: 'Autovalutazione: quanto spesso hai dolori (non semplice stanchezza) dopo gli allenamenti?',
+    protocollo: 'Autovalutazione: quanto spesso hai dolori veri (non semplice stanchezza muscolare) dopo gli allenamenti?',
+    inserisci: 'Scegli la frequenza che ti descrive meglio.',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Quasi sempre', valore: 1 }, { label: 'Spesso', valore: 2 },
       { label: 'A volte', valore: 3 }, { label: 'Mai', valore: 4 },
     ] },
   { id: 'test-fascia-fatica-partita', nome: 'Fascia — Dove senti la fatica dopo le partite', unita: 'punti',
-    protocollo: 'Dopo le partite senti la fatica in qualche zona in particolare o in tutto il corpo? (Glutei/addome o fatica generale = la catena lavora bene.)',
+    protocollo: 'Dopo le partite, dove senti la fatica: in una zona precisa o in tutto il corpo?',
+    inserisci: 'Scegli la zona prevalente. Glutei/addome o fatica generale = la catena lavora bene.',
     soglie: { intermedio: 2, avanzato: 3, pro: 4 },
     scelte: [
       { label: 'Piedi / caviglie', valore: 1 }, { label: 'Polpacci / ginocchia', valore: 2 },
       { label: 'Fatica generale, tutto il corpo', valore: 3 }, { label: 'Glutei / addome', valore: 4 },
     ] },
   { id: 'test-amrap', nome: 'AMRAP 20 minuti', unita: 'giri',
-    protocollo: 'Circuito: push + core + pull + lombari con gli esercizi scelti dalla tua scala skill e le quantità calcolate. Conta i giri completi in 20 minuti. Richiede la sbarra.',
+    protocollo: 'Il test del livello generale: quanti giri del circuito completi in 20 minuti.',
+    serve: 'Sbarra e pavimento. Fallo DOPO i test di catena e la scala skill: il circuito è costruito sui tuoi risultati.',
+    passi: [
+      'Il circuito qui sotto è il tuo: push, core, pull, lombari con gli esercizi e le quantità scelti dalla scala.',
+      'Avvia i 20 minuti e fai le stazioni in ordine, senza pause programmate: riposa solo quando serve.',
+      'Conta i giri completi. Un giro a metà non vale.',
+    ],
+    inserisci: 'Il numero di giri completi.',
     // soglie = giri: base ≤6, intermedio ≤8, avanzato ≤10, pro >10
     soglie: { intermedio: 7, avanzato: 9, pro: 11 } },
 ];
@@ -300,14 +398,19 @@ export const REGOLE = {
   ladderMinPushReps: 20, ladderMinPullReps: 10, ladderMinHoldSec: 60,
 } as const;
 
-// ─── Rombo card — 7 punte ───────────────────────────────────────────────────
+// ─── Card — 10 punte (test v1 + batteria v2, ids in trainingTestsV2) ────────
+// Ogni punta = media dei punteggi (0-110) dei test fatti tra quelli elencati.
+// L'AMRAP non è una punta: è il livello generale, mostrato a parte.
 
 export const ROMBO_PUNTE: { key: string; label: string; testIds: string[] }[] = [
-  { key: 'tec_palleggi', label: 'Tecnica Palleggi', testIds: ['test-pall-forte', 'test-pall-debole', 'test-pall-testa', 'test-piramide'] },
-  { key: 'tec_passaggi', label: 'Tecnica Passaggi', testIds: ['test-muro'] },
-  { key: 'tec_controllo', label: 'Tecnica Controllo', testIds: ['test-muro'] }, // v0: proxy dal test muro (3g-i aperta)
-  { key: 'forza_push', label: 'Forza Push', testIds: ['test-push'] },
-  { key: 'forza_pull', label: 'Forza Pull', testIds: ['test-pull'] },
-  { key: 'forza_core', label: 'Forza Core', testIds: ['test-core', 'test-lombari'] },
-  { key: 'prev_fascia', label: 'Prevenzione Fascia', testIds: ['test-fascia-eq-dx', 'test-fascia-eq-sx', 'test-fascia-eq-fatica', 'test-fascia-towel-fatica', 'test-fascia-dolori', 'test-fascia-fastidi-post', 'test-fascia-fatica-partita'] },
+  { key: 'palleggi', label: 'Palleggi', testIds: ['test-pall-forte', 'test-pall-debole', 'test-pall-testa', 'test-piramide'] },
+  { key: 'tiro_passaggio', label: 'Tiro e passaggio', testIds: ['test-muro', 't2-tiri-traversa-forte', 't2-tiri-traversa-debole', 't2-passaggi-palo-forte', 't2-passaggi-palo-debole'] },
+  { key: 'push', label: 'Push', testIds: ['test-push', 't2-lift-panca', 't2-lift-shoulder-press'] },
+  { key: 'pull', label: 'Pull', testIds: ['test-pull', 't2-lift-pull-up'] },
+  { key: 'core', label: 'Core', testIds: ['test-core', 'test-lombari'] },
+  { key: 'gambe', label: 'Gambe', testIds: ['t2-wall-sit', 't2-wall-sit-dx', 't2-wall-sit-sx', 't2-affondo-iso-dx', 't2-affondo-iso-sx', 't2-lift-squat', 't2-lift-stacco-rumeno', 't2-lift-hip-thrust', 't2-lift-squat-bulgaro'] },
+  { key: 'esplosivita', label: 'Esplosività', testIds: ['t2-broad-jump', 't2-broad-jump-dx', 't2-broad-jump-sx', 't2-ankle-jump', 't2-ankle-jump-dx', 't2-ankle-jump-sx'] },
+  { key: 'velocita', label: 'Velocità', testIds: ['t2-50m', 't2-t-sprint'] },
+  { key: 'resistenza', label: 'Resistenza', testIds: ['t2-1km', 't2-3km', 't2-navetta-30'] },
+  { key: 'fascia', label: 'Fascia', testIds: ['test-fascia-eq-dx', 'test-fascia-eq-sx', 'test-fascia-eq-fatica', 'test-fascia-towel-fatica', 'test-fascia-dolori', 'test-fascia-fastidi-post', 'test-fascia-fatica-partita'] },
 ];

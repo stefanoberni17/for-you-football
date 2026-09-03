@@ -6,9 +6,11 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { ArrowLeft, Check, Timer } from 'lucide-react';
+import TestIstruzioni from '@/components/TestIstruzioni';
 
 interface TestInfo {
   id: string; nome: string; unita: string; protocollo: string;
+  serve: string | null; passi: string[] | null; inserisci: string | null;
   scelte: { label: string; valore: number }[] | null;
   done: boolean; lastValue: number | null; lastLevel: string | null;
 }
@@ -18,7 +20,8 @@ interface LadderNext { id: string; nome: string; gradino: number; unita: string;
 interface LadderInfo { area: string; soglia: number; points: LadderPoint[]; next: LadderNext | null; amrap: LadderPoint | null }
 interface TestV2Info {
   id: string; nome: string; categoria: string; categoriaLabel: string; unita: string; verso: 'max' | 'min';
-  protocollo: string; lift: boolean; provvisorio: boolean;
+  protocollo: string; serve: string | null; passi: string[] | null; inserisci: string | null;
+  lift: boolean; provvisorio: boolean;
   done: boolean; lastValue: number | null; lastLevel: string | null;
   dettaglio: { peso?: number; reps?: number; rapporto?: number | null; senza_peso_corporeo?: boolean } | null;
 }
@@ -177,7 +180,7 @@ export default function BatteriaTest() {
         </button>
         <h1 className="text-2xl font-bold text-app mb-1">Batteria di test</h1>
         <p className="text-muted text-sm mb-1">Un test alla volta, salvi subito, riprendi quando vuoi.</p>
-        <p className="text-xs text-forest-400 font-semibold mb-5">{fatti}/{tests.length} completati</p>
+        <p className="text-xs text-forest-400 font-semibold mb-5">{fatti + testsV2.filter((t) => t.done).length}/{tests.length + testsV2.length} completati</p>
 
         {savedMsg && (
           <div className="bg-forest-500/15 border border-forest-500/30 text-forest-300 text-sm font-semibold rounded-xl px-4 py-2.5 mb-4">
@@ -208,7 +211,7 @@ export default function BatteriaTest() {
               </button>
               {current === t.id && (
                 <div className="mt-3 pt-3 border-t border-divider">
-                  <p className="text-xs text-muted leading-relaxed mb-3">{t.protocollo}</p>
+                  <TestIstruzioni t={t} />
                   {t.scelte ? (
                     <div className="grid grid-cols-2 gap-2 mb-3">
                       {t.scelte.map((s) => (
@@ -349,7 +352,7 @@ export default function BatteriaTest() {
                           </button>
                           {v2Current === t.id && (
                             <div className="pb-3 pt-1 border-t border-divider mt-1">
-                              <p className="text-[11px] text-muted leading-relaxed mb-2">{t.protocollo}{t.provvisorio ? ' ⚠️ soglie provvisorie' : ''}</p>
+                              <TestIstruzioni t={t} nota={t.provvisorio ? '⚠️ Soglie di livello provvisorie: il valore è giusto, la fascia può cambiare.' : null} />
                               {t.lift ? (
                                 <div className="flex items-end gap-2 flex-wrap">
                                   <div className="text-center">
@@ -393,9 +396,7 @@ export default function BatteriaTest() {
         {/* AMRAP — dopo i test di catena (usa gli esercizi della scala) */}
         <div className={`rounded-2xl border p-4 mb-6 ${amrapDone ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
           <p className="text-sm font-bold text-app mb-1">AMRAP 20 minuti {amrapDone && '✓'}</p>
-          <p className="text-xs text-muted leading-relaxed mb-3">
-            Il test del livello generale: fai più giri che puoi in 20 minuti. Fallo DOPO test di catena e scala skill — il circuito usa gli esercizi scelti dalla scala, dosati sui tuoi massimali. Serve la sbarra.
-          </p>
+          {(() => { const a = tests.find((t) => t.id === 'test-amrap'); return a ? <TestIstruzioni t={a} /> : null; })()}
           {amrapCircuit.length > 0 ? (
             <div className="bg-surface-2 rounded-xl p-3 mb-3">
               <p className="text-[11px] uppercase tracking-widest text-faint mb-1.5">1 giro =</p>
