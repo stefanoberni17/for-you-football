@@ -30,6 +30,7 @@ export interface TestV2 {
   serve?: string;
   passi?: string[];
   inserisci?: string;
+  videoUrl?: string; // video dimostrativo (es. ankle jump test)
   soglie: { intermedio: number; avanzato: number; pro: number };
   perLato?: 'dx' | 'sx';
   // batteria palestra: l'utente inserisce peso × reps, il valore salvato è il 1RM stimato
@@ -59,35 +60,35 @@ export const TESTS_V2: TestV2[] = [
     inserisci: 'Il tempo in secondi: 12\'30" = 750. Meno è meglio.',
   }),
   // ── Capacità anaerobica — File_DB ✅
-  T('t2-navetta-30', 'Navetta 10 m × 30"', 'anaerobica', 'reps', 'max', 'Quante tratte da 10 metri corri in 30 secondi.', 7, 10, 12, {
+  T('t2-navetta-30', 'Navetta 10 m × 30"', 'anaerobica', 'reps', 'max', 'Quante navette complete (andata e ritorno su 10 metri) fai in 30 secondi.', 7, 10, 12, {
     serve: 'Due linee (o due coni) a 10 metri di distanza e un timer da 30" sul telefono.',
     passi: [
-      'Parti da una linea. Corri fino all\'altra e toccala con il piede, poi torna indietro: ogni tratta da 10 metri conta 1.',
+      'Parti da una linea. Corri fino all\'altra e toccala con il piede, poi torna alla partenza e tocca anche quella: andata + ritorno = 1 navetta.',
       'Cambia direzione il più veloce possibile: frenate e ripartenze sono il test.',
-      'Al suono dei 30" ti fermi: conta le tratte complete.',
+      'Al suono dei 30" ti fermi: conta le navette complete (un\'andata senza ritorno non vale).',
     ],
-    inserisci: 'Il numero di tratte da 10 m complete (es. 9).',
+    inserisci: 'Il numero di navette complete andata e ritorno (es. 9).',
   }),
-  T('t2-ankle-jump', 'Ankle jump test 20"', 'anaerobica', 'reps', 'max', 'Quanti salti a caviglia rigida fai in 20 secondi.', 7, 9, 10, {
-    serve: 'Pavimento non scivoloso e un timer da 20".',
+  T('t2-ankle-jump', 'Ankle jump test 20"', 'anaerobica', 'reps', 'max', 'Quanti percorsi completi di salti a caviglia rigida fai in 20 secondi.', 7, 9, 10, {
+    serve: 'Pavimento non scivoloso, un punto di riferimento a terra (una linea o un cinesino) e un timer da 20".',
     passi: [
-      'Piedi sotto le anche, ginocchia quasi tese: il salto nasce solo dalla caviglia, come una molla.',
-      'Salta il più alto che riesci a ogni rimbalzo, atterrando sull\'avampiede senza appoggiare il tallone.',
-      'Avvia i 20 secondi e conta i salti.',
+      'Piedi uniti sotto le anche, ginocchia quasi tese: si salta solo di caviglia, atterrando sull\'avampiede senza appoggiare il tallone.',
+      'Il percorso è: salto avanti, indietro, di lato, avanti, indietro, di lato tornando al punto di partenza. Il percorso completo vale 1.',
+      'Avvia i 20 secondi e ripeti il percorso il più veloce possibile: conta quanti ne completi (uno a metà non vale).',
     ],
-    inserisci: 'Il numero di salti in 20 secondi.',
+    inserisci: 'Il numero di percorsi completi in 20 secondi.',
   }),
-  T('t2-ankle-jump-dx', 'Ankle jump 20" — destro', 'anaerobica', 'reps', 'max', 'Stesso test sulla sola gamba destra.', 6, 8, 9, {
+  T('t2-ankle-jump-dx', 'Ankle jump 20" — destro', 'anaerobica', 'reps', 'max', 'Stesso percorso sulla sola gamba destra.', 6, 8, 9, {
     perLato: 'dx',
-    serve: 'Pavimento non scivoloso e un timer da 20".',
-    passi: ['Sulla sola gamba destra, ginocchio quasi teso, l\'altro piede sollevato.', 'Salta il più alto possibile dalla caviglia, atterrando sull\'avampiede.', 'Conta i salti in 20 secondi. Se appoggi l\'altro piede, riprendi subito senza fermare il timer.'],
-    inserisci: 'Il numero di salti in 20 secondi.',
+    serve: 'Pavimento non scivoloso, un riferimento a terra e un timer da 20".',
+    passi: ['Sulla sola gamba destra, ginocchio quasi teso, l\'altro piede sollevato.', 'Stesso percorso: avanti, indietro, di lato, avanti, indietro, di lato fino alla partenza = 1.', 'Conta i percorsi completi in 20 secondi. Se appoggi l\'altro piede, riprendi subito senza fermare il timer.'],
+    inserisci: 'Il numero di percorsi completi in 20 secondi.',
   }),
-  T('t2-ankle-jump-sx', 'Ankle jump 20" — sinistro', 'anaerobica', 'reps', 'max', 'Stesso test sulla sola gamba sinistra.', 6, 8, 9, {
+  T('t2-ankle-jump-sx', 'Ankle jump 20" — sinistro', 'anaerobica', 'reps', 'max', 'Stesso percorso sulla sola gamba sinistra.', 6, 8, 9, {
     perLato: 'sx',
-    serve: 'Pavimento non scivoloso e un timer da 20".',
-    passi: ['Sulla sola gamba sinistra, ginocchio quasi teso, l\'altro piede sollevato.', 'Salta il più alto possibile dalla caviglia, atterrando sull\'avampiede.', 'Conta i salti in 20 secondi. Se appoggi l\'altro piede, riprendi subito senza fermare il timer.'],
-    inserisci: 'Il numero di salti in 20 secondi.',
+    serve: 'Pavimento non scivoloso, un riferimento a terra e un timer da 20".',
+    passi: ['Sulla sola gamba sinistra, ginocchio quasi teso, l\'altro piede sollevato.', 'Stesso percorso: avanti, indietro, di lato, avanti, indietro, di lato fino alla partenza = 1.', 'Conta i percorsi completi in 20 secondi. Se appoggi l\'altro piede, riprendi subito senza fermare il timer.'],
+    inserisci: 'Il numero di percorsi completi in 20 secondi.',
   }),
   // ── Forza parte bassa (tenute) — File_DB ✅
   T('t2-wall-sit', 'Wall sit isometrico', 'forza-parte-bassa', 'secondi', 'max', 'Quanti secondi tieni la seduta al muro.', 90, 120, 180, {
@@ -117,7 +118,7 @@ export const TESTS_V2: TestV2[] = [
     passi: [
       'Per trovare la distanza giusta tra i piedi: mettiti in posizione di piegamenti, poi porta il piede destro avanti fino all\'altezza del petto/delle spalle.',
       'Da lì alzati col busto: sei in affondo, ginocchio destro piegato, gamba sinistra dietro il più tesa possibile con il tallone sollevato.',
-      'Busto dritto, mani libere. Avvia il cronometro: finisce quando il ginocchio dietro tocca terra o devi cambiare posizione.',
+      'Busto dritto, mani libere. Avvia il cronometro: la prova va a cedimento, cioè finisce quando non riesci più a mantenere la posizione di affondo (il ginocchio dietro scende, il busto crolla o devi rialzarti).',
     ],
     inserisci: 'I secondi tenuti.',
   }),
@@ -127,7 +128,7 @@ export const TESTS_V2: TestV2[] = [
     passi: [
       'Posizione di piegamenti, poi porta il piede sinistro avanti fino all\'altezza del petto/delle spalle.',
       'Alzati col busto: affondo con il ginocchio sinistro piegato, gamba destra dietro il più tesa possibile con il tallone sollevato.',
-      'Busto dritto, mani libere. Avvia il cronometro: finisce quando il ginocchio dietro tocca terra o devi cambiare posizione.',
+      'Busto dritto, mani libere. Avvia il cronometro: la prova va a cedimento, cioè finisce quando non riesci più a mantenere la posizione di affondo (il ginocchio dietro scende, il busto crolla o devi rialzarti).',
     ],
     inserisci: 'I secondi tenuti.',
   }),

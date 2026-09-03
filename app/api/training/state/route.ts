@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       const r = rawByTest.get(t.id);
       return {
         id: t.id, nome: t.nome, categoria: t.categoria, categoriaLabel: CATEGORIA_LABEL[t.categoria], unita: t.unita,
-        verso: t.verso, protocollo: t.protocollo, serve: t.serve ?? null, passi: t.passi ?? null, inserisci: t.inserisci ?? null,
+        verso: t.verso, protocollo: t.protocollo, serve: t.serve ?? null, passi: t.passi ?? null, inserisci: t.inserisci ?? null, videoUrl: t.videoUrl ?? null,
         lift: !!t.lift, provvisorio: !!t.provvisorio,
         done: !!r, lastValue: r ? Number(r.valore) : null, lastLevel: r?.livello_calcolato ?? null,
         dettaglio: r?.dettaglio ?? null,
