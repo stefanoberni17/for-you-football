@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { generateWeekPlan, PLANNER_PROMPT_VERSION, detectPain, mondayOfThisWeekRome, updateTrainingMemory } from '@/lib/trainingPlanner';
+import { generateWeekPlanV2, PLANNER_V2_PROMPT_VERSION } from '@/lib/trainingPlannerV2';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -25,7 +26,15 @@ export async function POST(request: NextRequest) {
       await supabaseAdmin.from('profiles').update({ training_pain_hold: true }).eq('user_id', userId);
     }
 
-    const { plan, generatoDa } = await generateWeekPlan(userId, richiesta);
+    // Planner v2 a blocchi (workout di Ste); se esplode, il v1 resta come rete di sicurezza
+    let plan, generatoDa: 'llm' | 'fallback', promptVersion = PLANNER_V2_PROMPT_VERSION;
+    try {
+      ({ plan, generatoDa } = await generateWeekPlanV2(userId, richiesta));
+    } catch (err) {
+      console.error('training/plan: planner v2 fallito, uso v1', (err as Error)?.message);
+      ({ plan, generatoDa } = await generateWeekPlan(userId, richiesta));
+      promptVersion = PLANNER_PROMPT_VERSION;
+    }
 
     const { data: saved, error } = await supabaseAdmin.from('training_plans').insert({
       user_id: userId,
@@ -33,7 +42,7 @@ export async function POST(request: NextRequest) {
       richieste: richiesta || null,
       generato_da: generatoDa,
       model_id: generatoDa === 'llm' ? 'claude-sonnet-4-6' : null,
-      prompt_version: PLANNER_PROMPT_VERSION,
+      prompt_version: promptVersion,
       plan,
     }).select('id, week_start, plan, generato_da, created_at').single();
     if (error || !saved) return NextResponse.json({ error: error?.message || 'save' }, { status: 500 });

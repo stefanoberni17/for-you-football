@@ -171,6 +171,8 @@ export interface ItemV2 {
   schema?: string;
   regime?: RegimeForza;   // forza con carico: 'max' | 'esplosiva' | 'base'
   carico_pct?: number;    // % del massimale stimato
+  carico_kg?: number;     // carico assoluto (blocchi / log per serie): se c'è il massimale diventa una % e passa gli stessi controlli
+  blocco_id?: string;
 }
 
 const CON_CARICO: ReadonlySet<AttrezzaturaV2> = new Set(['palestra', 'kettlebell']);
@@ -204,7 +206,7 @@ function quantitaOk(b: BoundsV2, unita: string): { min: number; max: number } | 
  * `giorniAllaPartita`: null se nessuna partita in settimana.
  */
 export function validateItemV2(
-  it: ItemV2, ctx: ContestoV2, giorniPartita: number | null
+  it: ItemV2, ctx: ContestoV2, giorniPartita: number | null, opts: { skipBounds?: boolean } = {}
 ): { errors: string[]; ex: ExerciseV2 | null } {
   const errors: string[] = [];
   const ex = esercizioV2ById(it.esercizio_id);
@@ -223,7 +225,7 @@ export function validateItemV2(
   if (ex.qualita === 'test') errors.push(`${n}: i test non vanno nel piano (batteria dedicata)`);
 
   // Bounds
-  const b = boundsPerItem(ex, it);
+  const b = opts.skipBounds ? null : boundsPerItem(ex, it);
   if (b) {
     if (it.serie < b.serieMin || it.serie > b.serieMax)
       errors.push(`${n}: ${it.serie} serie fuori bounds ${b.serieMin}-${b.serieMax}`);
@@ -248,6 +250,12 @@ export function validateItemV2(
     const regime = it.regime ?? 'base';
     const maxPct = caricoMaxPct({ eta: ctx.eta, esperienzaPalestra: ctx.esperienzaPalestra, livello: ctx.livello });
     if (regime === 'max' && maxPct < 80) errors.push(`${n}: forza massima non ammessa per questo profilo (carico max ${maxPct}%)`);
+    // carico assoluto con massimale noto → stessa verifica in % (gating + regime)
+    const oneRm = ctx.massimali?.[ex.id];
+    if (it.carico_pct === undefined && it.carico_kg !== undefined && oneRm && oneRm > 0) {
+      const pct = Math.round((it.carico_kg / oneRm) * 100);
+      if (pct > maxPct) errors.push(`${n}: ${it.carico_kg} kg = ${pct}% del massimale stimato (${oneRm} kg), oltre il massimo ammesso ${maxPct}%`);
+    }
     if (it.carico_pct !== undefined) {
       if (it.carico_pct > maxPct) errors.push(`${n}: carico ${it.carico_pct}% oltre il massimo ammesso ${maxPct}%`);
       const rb = BOUNDS_FORZA[regime];
@@ -273,7 +281,7 @@ export function validateItemV2(
 }
 
 /** Controlli a livello di seduta sugli esercizi v2: convivenze, contatti pliometria intensiva, ordine. */
-export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titolo: string): string[] {
+export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titolo: string, opts: { trusted?: boolean } = {}): string[] {
   const errors: string[] = [];
   const qualita = new Set<QualitaV2 | 'forza-max'>();
   for (const { it, ex } of items) {
@@ -286,7 +294,7 @@ export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titol
   const contatti = items
     .filter(({ ex }) => ex.qualita === 'pliometria-intensiva' && ex.unita === 'reps')
     .reduce((acc, { it }) => acc + it.serie * it.quantita, 0);
-  if (contatti > PLIO_INTENSIVA_CONTATTI.max)
+  if (contatti > PLIO_INTENSIVA_CONTATTI.max && !opts.trusted) // blocchi di Ste: la dose è sua (Pliometria B1 full ≈ 70-90 contatti)
     errors.push(`seduta "${titolo}": ${contatti} contatti di pliometria intensiva, oltre il massimo ${PLIO_INTENSIVA_CONTATTI.max}`);
   // Ordine: nessuna qualità metabolica prima di velocità/pliometria
   let maxOrdineVisto = -1;

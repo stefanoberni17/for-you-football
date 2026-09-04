@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
-import { esercizioById } from '@/lib/trainingCatalog';
+import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 
 interface PlanItem {
@@ -12,6 +12,8 @@ interface PlanItem {
   recupero_sec: number;
   schema?: string;
   nota?: string;
+  carico_kg?: number;
+  blocco_id?: string;
 }
 
 /** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
@@ -19,12 +21,6 @@ function youtubeEmbedUrl(url?: string): string | null {
   if (!url) return null;
   const m = url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
   return m ? `https://www.youtube.com/embed/${m[1]}` : null;
-}
-
-function unitaLabel(unita: string, quantita: number): string {
-  if (unita === 'secondi') return `${quantita}"`;
-  if (unita === 'minuti') return `${quantita}'`;
-  return `${quantita} reps`;
 }
 
 /**
@@ -41,6 +37,7 @@ export default function TrainingSessionPlayer({
   onExit,
   storageKey,
   initialProgress,
+  blocchi,
 }: {
   items: PlanItem[];
   titolo: string;
@@ -48,6 +45,7 @@ export default function TrainingSessionPlayer({
   onExit: () => void;
   storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
   initialProgress?: PlayerProgress | null;
+  blocchi?: { id: string; nome: string }[]; // planner v2: nome del blocco di ogni item
 }) {
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
   const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
@@ -70,7 +68,7 @@ export default function TrainingSessionPlayer({
   }, [storageKey, itemIdx, serieFatte, lato]);
 
   const item = items[itemIdx];
-  const ex = item ? esercizioById(item.esercizio_id) : undefined;
+  const ex = item ? esercizioAny(item.esercizio_id) : undefined;
   const isEmom = item?.schema === 'emom';
   const totalSerie = isEmom ? item.serie : item?.serie ?? 0; // EMOM: serie = minuti
   const isPerLato = !isEmom && ex?.perLato === true;
@@ -164,7 +162,8 @@ export default function TrainingSessionPlayer({
     );
   }
 
-  const embed = youtubeEmbedUrl(ex.videoUrl);
+  const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);
+  const caricoTxt = item.carico_kg ? ` @ ${item.carico_kg} kg` : '';
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -185,13 +184,16 @@ export default function TrainingSessionPlayer({
       <div className="flex-1 overflow-y-auto px-4 pb-tabbar">
         {/* Esercizio corrente */}
         <div className="bg-surface rounded-2xl p-5 border border-divider mb-4">
+          {item.blocco_id && blocchi?.find((b) => b.id === item.blocco_id) && (
+            <p className="text-[11px] uppercase tracking-widest text-forest-400 font-bold mb-1">{blocchi.find((b) => b.id === item.blocco_id)!.nome}</p>
+          )}
           <h2 className="text-xl font-bold text-app leading-snug">{ex.nome}</h2>
           <p className="text-forest-400 font-semibold mt-1">
             {isEmom
               ? `EMOM ${item.serie}' — ${item.quantita} reps al minuto`
               : isPerLato
-                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx) · recupero ${item.recupero_sec}"`
-                : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)} · recupero ${item.recupero_sec}"`}
+                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx)${caricoTxt} · recupero ${item.recupero_sec}"`
+                : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)}${caricoTxt} · recupero ${item.recupero_sec}"`}
           </p>
           {(item.nota || ex.note) && (
             <p className="text-sm text-muted mt-2 leading-relaxed">{item.nota || ex.note}</p>
@@ -209,7 +211,9 @@ export default function TrainingSessionPlayer({
           )}
           {ex.videoUrl && (
             <div className="mt-3">
-              {showVideo && embed ? (
+              {showVideo && ex.videoMp4 ? (
+                <video src={ex.videoUrl} controls playsInline className="w-full rounded-xl bg-black" style={{ maxHeight: 380 }} />
+              ) : showVideo && embed ? (
                 <div className="rounded-xl overflow-hidden" style={{ aspectRatio: '9/14', maxHeight: 380 }}>
                   <iframe src={embed} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
                 </div>

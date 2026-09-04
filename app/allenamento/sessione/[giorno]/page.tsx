@@ -6,11 +6,11 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_NAMES } from '@/lib/constants';
 import TrainingSessionPlayer, { type PlayerProgress } from '@/components/TrainingSessionPlayer';
-import { esercizioById } from '@/lib/trainingCatalog';
+import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ArrowLeft, Info, Play } from 'lucide-react';
 
-interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string }
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[] }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
@@ -107,6 +107,7 @@ export default function SessionePage() {
           titolo={scarico ? `${sessione.titolo} (scarico)` : sessione.titolo}
           storageKey={storageKey}
           initialProgress={resume ? savedProgress : null}
+          blocchi={sessione.blocchi}
           onComplete={() => { setSavedProgress(null); setResume(false); setPhase('feedback'); }}
           onExit={() => {
             // Il progresso resta salvato: al rientro si può riprendere da qui
@@ -192,11 +193,16 @@ export default function SessionePage() {
 
         <div className="space-y-2 mb-5">
           {sessione.items.map((it, i) => {
-            const ex = esercizioById(it.esercizio_id);
+            const ex = esercizioAny(it.esercizio_id);
             if (!ex) return null;
             const isOpen = descOpen === i;
+            const blocco = it.blocco_id && it.blocco_id !== sessione.items[i - 1]?.blocco_id ? sessione.blocchi?.find((b) => b.id === it.blocco_id) : undefined;
             return (
-              <div key={i} className="bg-surface border border-divider rounded-2xl p-3.5">
+              <div key={i}>
+              {blocco && (
+                <p className="text-[11px] uppercase tracking-widest text-forest-400 font-bold mt-3 mb-1.5 px-1">{blocco.nome} · ~{blocco.durataMin}&apos;</p>
+              )}
+              <div className="bg-surface border border-divider rounded-2xl p-3.5">
                 <div className="flex items-center gap-3">
                   <span className="w-7 h-7 rounded-lg bg-surface-2 text-faint text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                   <div className="flex-1 min-w-0">
@@ -204,7 +210,7 @@ export default function SessionePage() {
                     <p className="text-xs text-faint">
                       {it.schema === 'emom'
                         ? `EMOM ${it.serie}' · ${it.quantita}/min`
-                        : `${it.serie}×${it.quantita}${ex.unita === 'secondi' ? '"' : ex.unita === 'minuti' ? "'" : ''}${ex.perLato ? ' (dx+sx)' : ''} · rec ${it.recupero_sec}"`}
+                        : `${it.serie}×${unitaLabel(ex.unita, it.quantita)}${it.carico_kg ? ` @ ${it.carico_kg} kg` : ''}${ex.perLato ? ' (dx+sx)' : ''} · rec ${it.recupero_sec}"`}
                     </p>
                   </div>
                   {ex.videoUrl && <span className="text-[10px] text-forest-400 font-bold shrink-0">▶ video</span>}
@@ -218,6 +224,7 @@ export default function SessionePage() {
                 {isOpen && ex.descrizione && (
                   <p className="text-xs text-muted leading-relaxed mt-1.5 ml-10 pr-1">{ex.descrizione}</p>
                 )}
+              </div>
               </div>
             );
           })}

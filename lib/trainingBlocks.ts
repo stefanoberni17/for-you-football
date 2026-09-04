@@ -62,10 +62,19 @@ export const bloccoById = (id: string) => BLOCCHI.find((b) => b.id === id);
 /** Blocchi proponibili per un atleta: completi, livello ≤ atleta (o non indicato), attrezzatura disponibile. */
 export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: string[]; inCoppia: boolean }): Blocco[] {
   const disp = new Set(['corpo libero', ...ctx.attrezzatura]);
+  const liv = LIVELLO_ORDINE[ctx.livello];
+  // Famiglie senza varianti al livello dell'atleta (es. Fartlek: solo A1-A4): ammesso il
+  // gradino subito sopra — Ste dà "Fartlek A1" anche a un B (livello = dose, non accesso)
+  const famigliaHaLivello = new Map<string, boolean>();
+  for (const b of BLOCCHI) {
+    if (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv) famigliaHaLivello.set(b.famiglia, true);
+    else famigliaHaLivello.set(b.famiglia, famigliaHaLivello.get(b.famiglia) ?? false);
+  }
   return BLOCCHI.filter((b) =>
     b.completo
     && b.qualita !== 'test'
-    && (b.livello === null || LIVELLO_ORDINE[b.livello] <= LIVELLO_ORDINE[ctx.livello])
+    && (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv
+      || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia)))
     && b.attrezzatura.every((a) => disp.has(a))
     && (!b.inCoppia || ctx.inCoppia)
   );

@@ -246,6 +246,7 @@ export interface PlanSession {
   durata_min: number;
   items: PlanItem[];
   spiegazione?: string;
+  blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[]; // planner v2: blocchi impilati
 }
 export interface WeekPlan { sedute: PlanSession[]; messaggio?: string }
 
@@ -263,6 +264,8 @@ export function validatePlan(
     maxDurataRichiesta?: number; oggiDow?: number;
     // Catalogo v2 (qualità fisiche complete): se assente, gli esercizi v2 vengono rifiutati
     v2?: ContestoV2;
+    maxSeduteFisiche?: number;   // tetto per fase (planner v2); default REGOLE.maxSeduteFisicheSettimana
+    trustBlocks?: boolean;       // items con blocco_id (workout di Ste): niente controllo bounds, restano sicurezza/finestre/livello
   }
 ): string[] {
   const errors: string[] = [];
@@ -298,7 +301,7 @@ export function validatePlan(
       if (!ex) {
         // Non è nel catalogo v1: prova il catalogo v2 (solo se il contesto v2 è abilitato)
         if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
-        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays));
+        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: !!(ctx.trustBlocks && it.blocco_id) });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });
         continue;
@@ -307,6 +310,7 @@ export function validatePlan(
       const gp = giorniAllaPartita(s.giorno, ctx.matchDays);
       if (ex.area === 'mobilita' && gp !== null && gp <= 1)
         errors.push(`"${ex.nome}": yoga/recupero vietato il giorno della partita e il giorno prima`);
+      if (ctx.trustBlocks && it.blocco_id) continue; // dose di un blocco di Ste: fidata
       if (AREE_FORZA.has(ex.area)) {
         const b = BOUNDS[ex.area as AreaForza | 'laterale'][ctx.fascia];
         if (it.schema === 'emom') {
@@ -329,10 +333,11 @@ export function validatePlan(
           errors.push(`"${ex.nome}": recupero ${it.recupero_sec}" sotto il minimo tecnica ${TECNICA_RECUPERO_MIN_SEC}"`);
       }
     }
-    if (itemsV2.length > 0) errors.push(...validateSessionV2(itemsV2, s.titolo));
+    if (itemsV2.length > 0) errors.push(...validateSessionV2(itemsV2, s.titolo, { trusted: !!ctx.trustBlocks && itemsV2.every((x) => !!x.it.blocco_id) }));
   }
-  if (seduteFisiche > REGOLE.maxSeduteFisicheSettimana)
-    errors.push(`${seduteFisiche} sedute fisiche: oltre il tetto di ${REGOLE.maxSeduteFisicheSettimana}/settimana`);
+  const tetto = ctx.maxSeduteFisiche ?? REGOLE.maxSeduteFisicheSettimana;
+  if (seduteFisiche > tetto)
+    errors.push(`${seduteFisiche} sedute fisiche: oltre il tetto di ${tetto}/settimana`);
   return errors;
 }
 

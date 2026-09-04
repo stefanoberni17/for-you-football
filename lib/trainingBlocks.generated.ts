@@ -20,7 +20,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 20,
+  "durataMin": 19,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -74,7 +74,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 21,
+  "durataMin": 19,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -1162,7 +1162,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 27,
+  "durataMin": 25,
   "attrezzatura": [
    "campo"
   ],
@@ -1236,7 +1236,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 42,
+  "durataMin": 40,
   "attrezzatura": [
    "campo"
   ],
@@ -1335,7 +1335,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": 2,
   "variante": "full",
-  "durataMin": 47,
+  "durataMin": 34,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -1430,7 +1430,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 50,
+  "durataMin": 37,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -1536,7 +1536,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 53,
+  "durataMin": 41,
   "attrezzatura": [
    "campo",
    "piccoli attrezzi"
@@ -1658,7 +1658,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 4,
   "variante": "full",
-  "durataMin": 53,
+  "durataMin": 38,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -1771,7 +1771,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 5,
   "variante": "full",
-  "durataMin": 59,
+  "durataMin": 43,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -1892,7 +1892,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 6,
   "variante": "full",
-  "durataMin": 70,
+  "durataMin": 49,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2007,7 +2007,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 33,
+  "durataMin": 26,
   "attrezzatura": [
    "campo",
    "piccoli attrezzi"
@@ -2119,7 +2119,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 34,
+  "durataMin": 24,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2196,7 +2196,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 39,
+  "durataMin": 29,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2282,7 +2282,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 41,
+  "durataMin": 33,
   "attrezzatura": [
    "campo",
    "piccoli attrezzi"
@@ -2367,7 +2367,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 39,
+  "durataMin": 27,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2444,7 +2444,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 2,
   "variante": "short",
-  "durataMin": 23,
+  "durataMin": 17,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2513,7 +2513,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 53,
+  "durataMin": 39,
   "attrezzatura": [
    "campo",
    "piccoli attrezzi"
@@ -2607,7 +2607,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 40,
+  "durataMin": 27,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2693,7 +2693,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": 1,
   "variante": "full",
-  "durataMin": 36,
+  "durataMin": 23,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2772,7 +2772,7 @@ export const BLOCCHI: Blocco[] = [
   "progressione": 1,
   "variante": "full",
   "sottovariante": "B",
-  "durataMin": 47,
+  "durataMin": 30,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2870,7 +2870,7 @@ export const BLOCCHI: Blocco[] = [
   "progressione": 1,
   "variante": "full",
   "sottovariante": "D",
-  "durataMin": 44,
+  "durataMin": 29,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -2985,7 +2985,7 @@ export const BLOCCHI: Blocco[] = [
   "progressione": 2,
   "variante": "full",
   "sottovariante": "A",
-  "durataMin": 41,
+  "durataMin": 29,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -3091,7 +3091,7 @@ export const BLOCCHI: Blocco[] = [
   "progressione": 2,
   "variante": "full",
   "sottovariante": "C",
-  "durataMin": 43,
+  "durataMin": 29,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -3167,7 +3167,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
-  "durataMin": 19,
+  "durataMin": 11,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -3249,7 +3249,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 51,
+  "durataMin": 42,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -3875,7 +3875,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "PRO",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 42,
+  "durataMin": 39,
   "attrezzatura": [
    "campo"
   ],
@@ -3993,7 +3993,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "PRO",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 33,
+  "durataMin": 32,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -4101,7 +4101,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": 1,
   "variante": "full",
-  "durataMin": 20,
+  "durataMin": 19,
   "attrezzatura": [
    "palestra",
    "sbarra"
@@ -4203,7 +4203,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 42,
+  "durataMin": 41,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -4361,7 +4361,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 37,
+  "durataMin": 36,
   "attrezzatura": [
    "sbarra"
   ],
@@ -4435,7 +4435,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 40,
+  "durataMin": 39,
   "attrezzatura": [
    "sbarra"
   ],
@@ -4794,7 +4794,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 52,
+  "durataMin": 46,
   "attrezzatura": [
    "palestra",
    "piccoli attrezzi",
@@ -4925,7 +4925,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 58,
+  "durataMin": 54,
   "attrezzatura": [
    "palestra",
    "piccoli attrezzi",
@@ -5065,7 +5065,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 3,
   "variante": "short",
-  "durataMin": 41,
+  "durataMin": 38,
   "attrezzatura": [
    "palestra",
    "piccoli attrezzi",
@@ -5193,7 +5193,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "PRO",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 29,
+  "durataMin": 27,
   "attrezzatura": [
    "palestra",
    "sbarra"
@@ -5720,7 +5720,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
-  "durataMin": 34,
+  "durataMin": 33,
   "attrezzatura": [
    "kettlebell",
    "palestra"
@@ -5849,7 +5849,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 51,
+  "durataMin": 43,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -5940,7 +5940,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 34,
+  "durataMin": 27,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -6015,7 +6015,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
-  "durataMin": 34,
+  "durataMin": 31,
   "attrezzatura": [
    "kettlebell",
    "palestra",
@@ -6167,7 +6167,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 65,
+  "durataMin": 54,
   "attrezzatura": [
    "palestra",
    "sbarra"
@@ -6309,7 +6309,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 46,
+  "durataMin": 43,
   "attrezzatura": [
    "palestra"
   ],
@@ -6608,7 +6608,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 23,
+  "durataMin": 20,
   "attrezzatura": [
    "kettlebell",
    "palestra"
@@ -6683,7 +6683,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 23,
+  "durataMin": 17,
   "attrezzatura": [
    "kettlebell"
   ],
@@ -7168,7 +7168,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
-  "durataMin": 29,
+  "durataMin": 23,
   "attrezzatura": [
    "campo"
   ],
@@ -7321,7 +7321,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 51,
+  "durataMin": 49,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -7395,7 +7395,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 29,
+  "durataMin": 24,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -7469,7 +7469,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "short",
-  "durataMin": 23,
+  "durataMin": 19,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -7546,7 +7546,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 35,
+  "durataMin": 33,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -7614,7 +7614,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 37,
+  "durataMin": 35,
   "attrezzatura": [
    "campo"
   ],
@@ -7709,7 +7709,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 42,
+  "durataMin": 40,
   "attrezzatura": [
    "campo"
   ],
@@ -7840,7 +7840,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 34,
+  "durataMin": 31,
   "attrezzatura": [
    "campo"
   ],
@@ -7934,7 +7934,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "short",
-  "durataMin": 25,
+  "durataMin": 23,
   "attrezzatura": [
    "campo"
   ],
@@ -8020,7 +8020,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 41,
+  "durataMin": 39,
   "attrezzatura": [
    "campo"
   ],
@@ -8710,7 +8710,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
-  "durataMin": 13,
+  "durataMin": 12,
   "attrezzatura": [
    "campo"
   ],
@@ -9499,7 +9499,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 53,
+  "durataMin": 37,
   "attrezzatura": [
    "campo"
   ],
@@ -9864,7 +9864,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
-  "durataMin": 51,
+  "durataMin": 48,
   "attrezzatura": [
    "campo"
   ],
@@ -9941,7 +9941,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "short",
-  "durataMin": 41,
+  "durataMin": 38,
   "attrezzatura": [
    "campo"
   ],
@@ -10193,7 +10193,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 31,
+  "durataMin": 25,
   "attrezzatura": [
    "campo"
   ],
@@ -10494,7 +10494,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 47,
+  "durataMin": 44,
   "attrezzatura": [
    "campo"
   ],
@@ -10583,7 +10583,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 70,
+  "durataMin": 67,
   "attrezzatura": [
    "campo"
   ],
@@ -10681,7 +10681,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 45,
+  "durataMin": 39,
   "attrezzatura": [
    "campo"
   ],
@@ -10772,7 +10772,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 71,
+  "durataMin": 61,
   "attrezzatura": [
    "campo"
   ],
@@ -10871,7 +10871,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 72,
+  "durataMin": 63,
   "attrezzatura": [
    "campo"
   ],
@@ -10995,7 +10995,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 74,
+  "durataMin": 64,
   "attrezzatura": [
    "campo"
   ],
@@ -11199,7 +11199,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
-  "durataMin": 43,
+  "durataMin": 36,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -11430,7 +11430,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 18,
+  "durataMin": 17,
   "attrezzatura": [
    "campo"
   ],
@@ -11470,7 +11470,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 18,
+  "durataMin": 14,
   "attrezzatura": [
    "campo"
   ],
@@ -11531,7 +11531,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 20,
+  "durataMin": 19,
   "attrezzatura": [
    "campo"
   ],
@@ -11599,7 +11599,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 21,
+  "durataMin": 19,
   "attrezzatura": [
    "campo"
   ],
@@ -12104,7 +12104,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "A",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 48,
+  "durataMin": 47,
   "attrezzatura": [
    "campo"
   ],
@@ -12231,7 +12231,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 44,
+  "durataMin": 42,
   "attrezzatura": [
    "campo"
   ],
@@ -12343,7 +12343,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 47,
+  "durataMin": 45,
   "attrezzatura": [
    "campo"
   ],
@@ -12474,7 +12474,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 1,
   "variante": "full",
-  "durataMin": 41,
+  "durataMin": 26,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -12543,7 +12543,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 2,
   "variante": "full",
-  "durataMin": 42,
+  "durataMin": 27,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -12631,7 +12631,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 37,
+  "durataMin": 23,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -12714,7 +12714,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 4,
   "variante": "full",
-  "durataMin": 39,
+  "durataMin": 24,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -12798,7 +12798,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 5,
   "variante": "full",
-  "durataMin": 31,
+  "durataMin": 22,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -12881,7 +12881,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 6,
   "variante": "full",
-  "durataMin": 35,
+  "durataMin": 22,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -12975,7 +12975,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 7,
   "variante": "full",
-  "durataMin": 35,
+  "durataMin": 22,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
@@ -13047,7 +13047,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": "B",
   "progressione": 8,
   "variante": "full",
-  "durataMin": 32,
+  "durataMin": 21,
   "attrezzatura": [],
   "inCoppia": false,
   "items": [
