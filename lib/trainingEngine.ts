@@ -302,6 +302,9 @@ export function validatePlan(
         continue;
       }
       if (ex.area === 'tirata' && !ctx.hasSbarra) errors.push(`"${ex.nome}": tirata non attivabile senza sbarra`);
+      const gp = giorniAllaPartita(s.giorno, ctx.matchDays);
+      if (ex.area === 'mobilita' && gp !== null && gp <= 1)
+        errors.push(`"${ex.nome}": yoga/recupero vietato il giorno della partita e il giorno prima`);
       if (AREE_FORZA.has(ex.area)) {
         const b = BOUNDS[ex.area as AreaForza | 'laterale'][ctx.fascia];
         if (it.schema === 'emom') {

@@ -39,6 +39,7 @@ export interface ExerciseV2 {
   inCoppia?: boolean;            // serve un compagno
   videoUrl?: string;
   note?: string;                 // note di Ste (esecuzione, quando usarlo, cautele)
+  finestraPartita?: number;      // override della finestra partita della qualità (giorni vietati prima della partita)
   nomeEverfit?: string;          // nome originale su Everfit se rinominato
   v1Id?: string;                 // id dell'esercizio equivalente nel catalogo v1
   tags?: string[];

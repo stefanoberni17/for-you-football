@@ -5065,8 +5065,8 @@
  },
  {
   "nome": "Esercizi Elastici prevenzione e mobilità",
-  "qualita": "mobilita-recupero",
-  "attrezzatura": "palestra",
+  "qualita": "fascia-prevenzione",
+  "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
   "livello_min": "B",
   "unita": "minuti",
@@ -5080,11 +5080,12 @@
   ],
   "azione": "importa",
   "nome_everfit": "Esercizi Elastici prevenzione e mobilità",
-  "note": null,
+  "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": "prevenzione guidata",
+  "finestra_partita": 2
  },
  {
   "nome": "Fascia adhesion tennis ball",
@@ -5129,7 +5130,7 @@
  },
  {
   "nome": "Sequenza Yoga - Prevenzione Pubalgia e rinforzo",
-  "qualita": "mobilita-recupero",
+  "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
   "livello_min": "B",
@@ -5144,15 +5145,16 @@
   ],
   "azione": "importa",
   "nome_everfit": "Sequenza Yoga - Prevenzione Pubalgia e rinforzo",
-  "note": null,
+  "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": "prevenzione guidata",
+  "finestra_partita": 2
  },
  {
-  "nome": "Sequenza Yoga - Prevenzione Pubalgia e ronforzo avanzato",
-  "qualita": "mobilita-recupero",
+  "nome": "Sequenza Yoga - Prevenzione Pubalgia e rinforzo avanzato",
+  "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
   "livello_min": "B",
@@ -5167,11 +5169,12 @@
   ],
   "azione": "importa",
   "nome_everfit": "Sequenza Yoga - Prevenzione Pubalgia e ronforzo avanzato",
-  "note": null,
+  "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": "prevenzione guidata",
+  "finestra_partita": 2
  },
  {
   "nome": "Sequenza Yoga - Recupero e Mobilità",
@@ -5192,15 +5195,16 @@
   ],
   "azione": "importa",
   "nome_everfit": "Sequenza Yoga - Recupero e Mobilità",
-  "note": null,
+  "note": "Yoga di recupero (video, ~18'): solo quando sei molto affaticato o nei giorni dopo la partita. Mai il giorno prima o il giorno della partita.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": "recupero guidato",
+  "finestra_partita": 1
  },
  {
   "nome": "Sequenza Yoga - Rinforzo Quadricipiti e Adduttori avanzato",
-  "qualita": "mobilita-recupero",
+  "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "B",
@@ -5217,11 +5221,12 @@
   ],
   "azione": "importa",
   "nome_everfit": "Sequenza Yoga - Rinforzo Quadricipiti e Adduttori avanzato",
-  "note": null,
+  "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": "prevenzione guidata",
+  "finestra_partita": 2
  },
  {
   "nome": "Yoga prevenzione e forza adduttori",
@@ -5236,11 +5241,11 @@
   "tags": [
    "yoga"
   ],
-  "azione": "importa",
+  "azione": "escludi (duplicato: stesso video di \"Sequenza Yoga - Prevenzione Pubalgia e rinforzo\")",
   "nome_everfit": "Yoga prevenzione e forza adduttori",
   "note": null,
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
@@ -5553,5 +5558,78 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
+ },
+ {
+  "nome": "Sessione recupero dopo partita o allenamenti pesanti",
+  "qualita": "mobilita-recupero",
+  "attrezzatura": "corpo libero",
+  "difficolta": 1,
+  "livello_min": "B",
+  "unita": "minuti",
+  "per_lato": false,
+  "video": "https://www.youtube.com/watch?v=bpkpnZW9QD0",
+  "fonte": "YouTube",
+  "tags": [
+   "recupero",
+   "mobilità",
+   "yoga"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": "Sessione guidata di recupero (video, ~30'): il giorno dopo la partita o dopo allenamenti pesanti, o quando sei molto affaticato. Mai il giorno prima o il giorno della partita.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "recupero guidato",
+  "finestra_partita": 1
+ },
+ {
+  "nome": "Rinforzo e prevenzione adduttori, abduttori, glutei, core",
+  "qualita": "fascia-prevenzione",
+  "attrezzatura": "corpo libero",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "minuti",
+  "per_lato": false,
+  "video": "https://www.youtube.com/watch?v=-MYGiPYInbs",
+  "fonte": "YouTube",
+  "tags": [
+   "prevenzione",
+   "adduttori",
+   "glutei",
+   "core"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "prevenzione guidata",
+  "finestra_partita": 2
+ },
+ {
+  "nome": "Rinforzo e prevenzione rotazione anca e bacino",
+  "qualita": "fascia-prevenzione",
+  "attrezzatura": "corpo libero",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "minuti",
+  "per_lato": false,
+  "video": "https://www.youtube.com/watch?v=tVO19Euz5uY",
+  "fonte": "YouTube",
+  "tags": [
+   "prevenzione",
+   "anca",
+   "bacino"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "prevenzione guidata",
+  "finestra_partita": 2
  }
 ]

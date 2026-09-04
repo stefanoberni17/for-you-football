@@ -74,6 +74,8 @@ for r in rows:
         fields.append(f"videoUrl: {ts_str(r['video'])}")
     if r.get("note"):
         fields.append(f"note: {ts_str(r['note'])}")
+    if r.get("finestra_partita") is not None:
+        fields.append(f"finestraPartita: {int(r['finestra_partita'])}")
     if r.get("nome_everfit") and r["nome_everfit"] != r["nome"]:
         fields.append(f"nomeEverfit: {ts_str(r['nome_everfit'])}")
     v1 = v1_id(r["nome"]) if r["azione"] == "già in v1" else None

@@ -115,7 +115,7 @@ export const ESERCIZI: TrainingExercise[] = [
   { id: 'cond-7', nome: 'Box dribbling intensità alternata', area: 'conduzione', gradino: 7, unita: 'minuti' , descrizione: "Stesso box ma alternando: 2 minuti a bassa intensità, 1 a media/alta. Il ritmo cambia, il controllo resta." },
   { id: 'cond-8', nome: 'Box dribbling + visione (colori)', area: 'conduzione', gradino: 8, unita: 'minuti' , descrizione: "Box dribbling con l'esercizio dei colori (telefono su un supporto): guardi lo schermo, la palla resta incollata al piede. Conduzione a testa alta." },
   // Mobilità post-partita (video guidato di Ste — URL da inserire)
-  { id: 'mobilita-yoga', nome: 'Sessione mobilità/yoga guidata (video)', area: 'mobilita', gradino: 1, unita: 'minuti', videoUrl: 'https://youtu.be/iXgtmz6QnzA', note: 'Video "Sequenza Yoga - Recupero e Mobilità" (40 minuti, canale For You). Da fare il giorno dopo la partita, almeno 20 minuti.' , descrizione: "Segui il video guidato dall'inizio alla fine: respira, non forzare le posizioni, l'obiettivo è sciogliere ciò che la partita ha irrigidito." },
+  { id: 'mobilita-yoga', nome: 'Sessione mobilità/yoga guidata (video)', area: 'mobilita', gradino: 1, unita: 'minuti', videoUrl: 'https://youtu.be/iXgtmz6QnzA', note: 'Video "Sequenza Yoga - Recupero e Mobilità" (40 minuti, canale For You). Da fare quando sei molto affaticato o nei giorni dopo la partita, almeno 20 minuti. Mai il giorno prima o il giorno della partita.' , descrizione: "Segui il video guidato dall'inizio alla fine: respira, non forzare le posizioni, l'obiettivo è sciogliere ciò che la partita ha irrigidito." },
 ];
 
 export const esercizioById = (id: string) => ESERCIZI.find((e) => e.id === id);
