@@ -21,6 +21,12 @@ export const FASE_LABEL: Record<(typeof FASI)[number], string> = {
   in_season: 'In season',
 };
 
+/** Tetto sedute fisiche a settimana per fase — [STE, set 2026]: in season 3 (regola v1), preparazione con la squadra 1 (solo se richiesta), off season 6. */
+export const MAX_SEDUTE_FISICHE_PER_FASE: Record<(typeof FASI)[number], number> = { off_season: 6, preparazione_squadra: 1, in_season: 3 };
+
+/** Durata massima di una giornata (pila di blocchi) per fase: in off season Ste arriva a 90-100' — [test Utente E.] */
+export const MAX_DURATA_PER_FASE: Record<(typeof FASI)[number], number> = { off_season: 120, preparazione_squadra: 75, in_season: 90 };
+
 export const SETUP_SELECT = 'training_esperienza_palestra, training_attrezzatura, training_compagno, training_fase, training_peso_kg, training_squadra_durata_min';
 
 export interface TrainingSetup {

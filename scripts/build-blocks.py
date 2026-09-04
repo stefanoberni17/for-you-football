@@ -182,8 +182,7 @@ def durata_min(items, amrap_sec):
     for it in items:
         q = it["quantita"]
         lav = q if it["unita"] == "secondi" else q * 60 if it["unita"] == "minuti" else q / 5 if it["unita"] == "metri" else q * 3
-        if it.get("perLato"):
-            lav *= 2
+        # per lato: Everfit elenca già i due lati come serie separate → niente raddoppio
         sec += it["serie"] * (lav + it["recupero_sec"])
     return max(5, round(sec / 60) + 3)
 

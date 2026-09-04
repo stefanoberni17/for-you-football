@@ -14,7 +14,7 @@ import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type Traini
 
 interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string }[] }
 interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -426,7 +426,7 @@ export default function AllenamentoHub() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className={`text-sm font-semibold truncate ${done ? 'text-forest-300' : 'text-app'}`}>{s.titolo}</p>
-                          <p className="text-xs text-faint">{s.tipo} · {s.durata_min}&apos; · {s.items.length} esercizi</p>
+                          <p className="text-xs text-faint">{s.tipo} · {s.durata_min}&apos; · {s.blocchi?.length ? s.blocchi.map((b) => b.nome).join(' + ') : `${s.items.length} esercizi`}</p>
                         </div>
                         <ChevronRight size={16} className="text-faint shrink-0" />
                       </Link>
