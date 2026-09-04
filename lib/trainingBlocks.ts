@@ -44,6 +44,7 @@ export interface Blocco {
   progressione: number | null;   // dal codice (1/2/3…)
   variante: Variante;
   sottovariante?: string;        // lettera del sotto-codice (Fascia Foundations 1B, 1D, 2A…)
+  ruolo?: 'portiere';            // blocco nato per un ruolo (codice P1): preferito per quel ruolo, non esclusivo
   durataMin: number;             // stima
   attrezzatura: string[];        // oltre al corpo libero
   inCoppia: boolean;
@@ -108,7 +109,7 @@ export function bloccoRiga(b: Blocco): string {
   const liv = b.livello ? b.livello : '—';
   const prog = b.progressione ? `${liv}${b.progressione}` : liv;
   const attr = b.attrezzatura.length ? ` [${b.attrezzatura.join(', ')}]` : '';
-  return `${b.id} = ${b.nome} (${b.qualita}, ${prog}${b.sottovariante ?? ''}${b.variante === 'short' ? ', short' : ''}, ~${b.durataMin}'${attr})`;
+  return `${b.id} = ${b.nome} (${b.qualita}, ${prog}${b.sottovariante ?? ''}${b.variante === 'short' ? ', short' : ''}${b.ruolo ? `, per ${b.ruolo}` : ''}, ~${b.durataMin}'${attr})`;
 }
 
 /** Riepilogo per famiglia: quante progressioni esistono (per il planner: "la settimana dopo sali di codice"). */

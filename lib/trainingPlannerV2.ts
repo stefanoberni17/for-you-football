@@ -41,6 +41,7 @@ export interface ContextV2 {
   base: PlannerContext;
   setup: TrainingSetup;
   eta: number | null;
+  ruoli: string[];          // dal profilo (portiere, difensore…)
   v2: ContestoV2;
   blocchi: Blocco[];        // disponibili per questo atleta
   maxSeduteFisiche: number; // per fase
@@ -50,7 +51,7 @@ export interface ContextV2 {
 export async function loadContextV2(userId: string): Promise<ContextV2> {
   const [base, { data: prof }] = await Promise.all([
     loadPlannerContext(userId),
-    supabaseAdmin.from('profiles').select(`${SETUP_SELECT}, age, birth_date`).eq('user_id', userId).maybeSingle(),
+    supabaseAdmin.from('profiles').select(`${SETUP_SELECT}, age, birth_date, role`).eq('user_id', userId).maybeSingle(),
   ]);
   const setup = mapSetup(prof);
   let eta: number | null = prof?.age != null ? Number(prof.age) : null;
@@ -71,7 +72,8 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     livello: base.fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno,
     eta, esperienzaPalestra: setup.esperienzaPalestra, massimali,
   };
-  return { base, setup, eta, v2, blocchi: blocchiDisponibili(v2), maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxDurata: MAX_DURATA_PER_FASE[setup.fase] };
+  const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
+  return { base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2), maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxDurata: MAX_DURATA_PER_FASE[setup.fase] };
 }
 
 // ─── Espansione blocchi → sedute ────────────────────────────────────────────
@@ -171,6 +173,7 @@ COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
 7. Tecnica (palleggi, muro, dribbling, tiri, visione) come blocco finale o giornata a sé, se l'atleta ha campo/muro (attrezzatura "campo") e la vuole.
 8. Durata totale della giornata ≤ ${ctx.maxDurata}'. Poco tempo → varianti "short".
 9. Non ripetere lo stesso blocco principale due giorni di fila; forza e pliometria intensiva non nello stesso giorno della resistenza aerobica.
+9b. I blocchi "per portiere" (codice P1) sono nati per i portieri: preferiscili se l'atleta è portiere; per gli altri ruoli usali solo se non c'è un'alternativa B/A.
 
 PROGRESSIONE (settimana su settimana)
 10. Parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full). Sali di un codice SOLO se la settimana precedente è stata completata con feedback "facile"/"ok" e senza dolori; con feedback "duro" ripeti o torna a short.
@@ -206,7 +209,7 @@ function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[]): stri
   const massimali = Object.keys(ctx.v2.massimali || {}).length ? `Massimali stimati: ${Object.entries(ctx.v2.massimali!).map(([k, v]) => `${k} ${v} kg`).join(', ')}` : 'Nessun massimale (niente forza con carico in regime max/esplosiva)';
   return `# ATLETA
 OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 1} sono passati: sedute SOLO nei giorni ${b.oggiDow}-7` : ''}.
-Livello: ${b.fascia}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
+Livello: ${b.fascia}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
 Attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', ') : 'solo corpo libero'}
 Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~${ctx.setup.squadraDurataMin}'` : ''}
 Allenamenti squadra: ${b.trainingDays.length ? b.trainingDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuno'}

@@ -4101,6 +4101,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": 1,
   "variante": "full",
+  "ruolo": "portiere",
   "durataMin": 19,
   "attrezzatura": [
    "palestra",
@@ -5303,6 +5304,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": null,
   "variante": "full",
+  "ruolo": "portiere",
   "durataMin": 35,
   "attrezzatura": [
    "palestra",
@@ -5480,6 +5482,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": 1,
   "variante": "full",
+  "ruolo": "portiere",
   "durataMin": 37,
   "attrezzatura": [
    "palestra"
@@ -5623,6 +5626,7 @@ export const BLOCCHI: Blocco[] = [
   "livello": null,
   "progressione": 1,
   "variante": "full",
+  "ruolo": "portiere",
   "durataMin": 39,
   "attrezzatura": [],
   "inCoppia": false,
