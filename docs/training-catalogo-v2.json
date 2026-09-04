@@ -5631,5 +5631,28 @@
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
   "finestra_partita": 2
+ },
+ {
+  "nome": "Circuito addominali e lombari avanzato (guidato)",
+  "qualita": "core",
+  "attrezzatura": "corpo libero",
+  "difficolta": 4,
+  "livello_min": "A",
+  "unita": "minuti",
+  "per_lato": false,
+  "video": "https://www.youtube.com/watch?v=-Jcm417dMl8",
+  "fonte": "YouTube",
+  "tags": [
+   "core",
+   "lombari",
+   "guidato"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": "Circuito guidato dal video (~31'): segui il video dall'inizio alla fine. Avanzato: solo con hollow e plank consolidati.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "core guidato"
  }
 ]
