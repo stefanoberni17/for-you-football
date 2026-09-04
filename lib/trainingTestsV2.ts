@@ -195,45 +195,45 @@ export const TESTS_V2: TestV2[] = [
     passi: ['Palloni fermi appena fuori dall\'area.', 'Passaggio rasoterra col piede debole mirando a un palo: conta i palloni che lo colpiscono.', 'Fino a 3 serie da 10: vale la migliore.'],
     inserisci: 'Il numero di pali colpiti nella serie migliore (da 0 a 10).',
   }),
-  // ── Palestra: serie sub-massimale (5-10 reps) → 1RM Brzycki; soglie = 1RM / peso corporeo — ⚠️ PROVVISORIE
+  // ── Palestra: serie sub-massimale (5-10 reps) → 1RM Brzycki; soglie = 1RM / peso corporeo — confermate da Ste (set 2026)
   T('t2-lift-squat', 'Squat', 'palestra', 'kg', 'max', 'Stima del tuo massimale di squat da una serie sub-massimale.', 1.0, 1.3, 1.6, {
-    lift: { esercizioV2Id: 'fpb-squat', soglieRelative: true }, provvisorio: true,
+    lift: { esercizioV2Id: 'fpb-squat', soglieRelative: true },
     serve: 'Bilanciere e rack. Solo se hai già esperienza in palestra: altrimenti salta questo test.',
     passi: [RISCALDAMENTO_PALESTRA, 'Squat completo: scendi sotto il parallelo con la schiena neutra e i talloni a terra, risali fino a gambe distese.', SERIE_PULITA],
     inserisci: INSERISCI_LIFT,
   }),
   T('t2-lift-stacco-rumeno', 'Stacco rumeno', 'palestra', 'kg', 'max', 'Stima del tuo massimale di stacco rumeno da una serie sub-massimale.', 0.9, 1.2, 1.5, {
-    lift: { esercizioV2Id: 'fpb-stacco-rumeno', soglieRelative: true }, provvisorio: true,
+    lift: { esercizioV2Id: 'fpb-stacco-rumeno', soglieRelative: true },
     serve: 'Bilanciere. Solo con esperienza in palestra.',
     passi: [RISCALDAMENTO_PALESTRA, 'Bilanciere davanti alle cosce, ginocchia leggermente piegate: scendi spingendo il bacino indietro con la schiena neutra finché senti tirare dietro le cosce, poi risali.', SERIE_PULITA],
     inserisci: INSERISCI_LIFT,
   }),
   T('t2-lift-hip-thrust', 'Hip thrust', 'palestra', 'kg', 'max', 'Stima del tuo massimale di hip thrust da una serie sub-massimale.', 1.0, 1.4, 1.8, {
-    lift: { esercizioV2Id: 'fpb-hip-thrust', soglieRelative: true }, provvisorio: true,
+    lift: { esercizioV2Id: 'fpb-hip-thrust', soglieRelative: true },
     serve: 'Bilanciere e una panca. Solo con esperienza in palestra.',
     passi: [RISCALDAMENTO_PALESTRA, 'Spalle sulla panca, bilanciere sul bacino, piedi a terra. Spingi il bacino in alto caricando sugli avampiedi, non sul tallone: in cima glutei stretti e bacino in linea con le spalle.', SERIE_PULITA],
     inserisci: INSERISCI_LIFT,
   }),
   T('t2-lift-squat-bulgaro', 'Squat bulgaro', 'palestra', 'kg', 'max', 'Stima del tuo massimale di squat bulgaro (una gamba) da una serie sub-massimale.', 0.4, 0.6, 0.8, {
-    lift: { esercizioV2Id: 'fpb-squat-bulgaro', soglieRelative: true }, provvisorio: true,
+    lift: { esercizioV2Id: 'fpb-squat-bulgaro', soglieRelative: true },
     serve: 'Una panca e manubri (o bilanciere). Solo con esperienza in palestra.',
     passi: [RISCALDAMENTO_PALESTRA, 'Piede dietro sulla panca, piede avanti a terra, manubri in mano o bilanciere sulle spalle. Scendi finché il ginocchio dietro sfiora terra e risali.', 'Serie pulita tra 5 e 10 ripetizioni per gamba. Vale la gamba più debole.'],
     inserisci: 'Il carico totale in kg (es. due manubri da 12 = 24) e le ripetizioni PER GAMBA.',
   }),
   T('t2-lift-panca', 'Panca piana', 'palestra', 'kg', 'max', 'Stima del tuo massimale di panca piana da una serie sub-massimale.', 0.6, 0.8, 1.0, {
-    lift: { esercizioV2Id: 'fpa-panca-piana-con-bilanciere', soglieRelative: true }, provvisorio: true,
+    lift: { esercizioV2Id: 'fpa-panca-piana-con-bilanciere', soglieRelative: true },
     serve: 'Bilanciere e panca, meglio con qualcuno che ti assista. Solo con esperienza in palestra.',
     passi: [RISCALDAMENTO_PALESTRA, 'Sdraiato, piedi a terra, scapole strette. Scendi il bilanciere al petto e spingi fino a braccia distese, senza rimbalzo.', SERIE_PULITA],
     inserisci: INSERISCI_LIFT,
   }),
   T('t2-lift-shoulder-press', 'Shoulder press', 'palestra', 'kg', 'max', 'Stima del tuo massimale di spinta sopra la testa da una serie sub-massimale.', 0.4, 0.55, 0.7, {
-    lift: { esercizioV2Id: 'fpa-overhead-press-con-bilanciere', soglieRelative: true }, provvisorio: true,
+    lift: { esercizioV2Id: 'fpa-overhead-press-con-bilanciere', soglieRelative: true },
     serve: 'Bilanciere o manubri. Solo con esperienza in palestra.',
     passi: [RISCALDAMENTO_PALESTRA, 'In piedi o seduto, carico all\'altezza delle spalle: spingi sopra la testa fino a braccia distese, senza inarcare la schiena.', SERIE_PULITA],
     inserisci: 'Il carico in kg (con i manubri: il totale dei due) e le ripetizioni.',
   }),
   T('t2-lift-pull-up', 'Pull up zavorrato', 'palestra', 'kg', 'max', 'Stima del tuo massimale di trazione (corpo + zavorra) da una serie sub-massimale.', 1.1, 1.3, 1.5, {
-    lift: { esercizioV2Id: 'fpa-trazioni', soglieRelative: true }, provvisorio: true,
+    lift: { esercizioV2Id: 'fpa-trazioni', soglieRelative: true },
     serve: 'Sbarra e una cintura per la zavorra (o un disco tra le gambe).',
     passi: ['Se con la zavorra non arrivi a 5 trazioni pulite, fai il test a corpo libero (zavorra 0).', 'Dalla sospensione completa, mento sopra la sbarra, discesa fino a braccia distese. Niente slancio.', 'Serie pulita tra 5 e 10 ripetizioni.'],
     inserisci: 'SOLO la zavorra in kg (0 se a corpo libero) e le ripetizioni: il massimale è calcolato su peso corporeo + zavorra.',

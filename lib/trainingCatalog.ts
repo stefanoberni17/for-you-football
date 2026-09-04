@@ -115,7 +115,7 @@ export const ESERCIZI: TrainingExercise[] = [
   { id: 'cond-7', nome: 'Box dribbling intensità alternata', area: 'conduzione', gradino: 7, unita: 'minuti' , descrizione: "Stesso box ma alternando: 2 minuti a bassa intensità, 1 a media/alta. Il ritmo cambia, il controllo resta." },
   { id: 'cond-8', nome: 'Box dribbling + visione (colori)', area: 'conduzione', gradino: 8, unita: 'minuti' , descrizione: "Box dribbling con l'esercizio dei colori (telefono su un supporto): guardi lo schermo, la palla resta incollata al piede. Conduzione a testa alta." },
   // Mobilità post-partita (video guidato di Ste — URL da inserire)
-  { id: 'mobilita-yoga', nome: 'Sessione mobilità/yoga guidata (video)', area: 'mobilita', gradino: 1, unita: 'minuti', note: 'Video completo guidato — full body. Da fare il giorno dopo la partita, almeno 20 minuti.' , descrizione: "Segui il video guidato dall'inizio alla fine: respira, non forzare le posizioni, l'obiettivo è sciogliere ciò che la partita ha irrigidito." },
+  { id: 'mobilita-yoga', nome: 'Sessione mobilità/yoga guidata (video)', area: 'mobilita', gradino: 1, unita: 'minuti', videoUrl: 'https://youtu.be/iXgtmz6QnzA', note: 'Video "Sequenza Yoga - Recupero e Mobilità" (40 minuti, canale For You). Da fare il giorno dopo la partita, almeno 20 minuti.' , descrizione: "Segui il video guidato dall'inizio alla fine: respira, non forzare le posizioni, l'obiettivo è sciogliere ciò che la partita ha irrigidito." },
 ];
 
 export const esercizioById = (id: string) => ESERCIZI.find((e) => e.id === id);
@@ -186,7 +186,7 @@ export const TESTS: TrainingTest[] = [
       'Fermati quando le mani o i piedi tornano a toccare terra.',
     ],
     inserisci: 'I secondi tenuti.',
-    // ⚠️ soglie provvisorie (uniche non ancora date da Ste — da tarare)
+    // soglie confermate da Ste (set 2026)
     soglie: { intermedio: 30, avanzato: 60, pro: 90 },
     entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } }, // entry conservativa v0.2
   { id: 'test-pall-forte', nome: 'Palleggi piede forte', area: 'palleggi', unita: 'reps',
@@ -239,7 +239,7 @@ export const TESTS: TrainingTest[] = [
       'Conta solo i passaggi fatti da dietro la linea. Se la palla scappa, recuperala e continua: il tempo non si ferma.',
     ],
     inserisci: 'Il numero di passaggi in 2 minuti.',
-    // ⚠️ soglie provvisorie — da dare da Ste
+    // soglie confermate da Ste (set 2026)
     soglie: { intermedio: 60, avanzato: 90, pro: 120 },
     entryMap: { base: 1, intermedio: 3, avanzato: 5, pro: 7 } },
   // ─── Fascia (piede/caviglia) — batteria definita da Ste, set 2026 ─────────
@@ -254,7 +254,7 @@ export const TESTS: TrainingTest[] = [
       'La prova finisce quando il piede libero tocca terra o ti aggrappi a qualcosa. 2 tentativi: vale il migliore.',
     ],
     inserisci: 'I secondi del tentativo migliore.',
-    // ⚠️ soglie provvisorie — da tarare con Ste
+    // soglie confermate da Ste (set 2026)
     soglie: { intermedio: 10, avanzato: 20, pro: 30 } },
   { id: 'test-fascia-eq-sx', nome: 'Fascia — Equilibrio occhi chiusi (sinistro)', unita: 'secondi',
     protocollo: 'Quanti secondi stai in equilibrio sulla gamba sinistra a occhi chiusi.',
@@ -275,11 +275,11 @@ export const TESTS: TrainingTest[] = [
       { label: 'Coscia', valore: 3 }, { label: 'Gluteo', valore: 4 },
     ] },
   { id: 'test-fascia-towel-fatica', nome: 'Fascia — Dove senti la fatica (towel curls)', unita: 'punti',
-    protocollo: 'Una serie di towel curls da 1 minuto: dove senti la fatica?',
+    protocollo: 'Una serie di towel curls da 2 minuti (120"): dove senti la fatica?',
     serve: 'Un asciugamano su un pavimento liscio, scalzo.',
     passi: [
       'In piedi, un piede avanti con l\'avampiede appoggiato sull\'asciugamano.',
-      'Per 1 minuto "arriccia" le dita trascinando l\'asciugamano verso di te: lento e completo, senza staccare il tallone.',
+      'Per 2 minuti "arriccia" le dita trascinando l\'asciugamano verso di te: lento e completo, senza staccare il tallone.',
       'A fine minuto nota dove senti la fatica.',
     ],
     inserisci: 'Scegli la zona. Più in alto la senti, meglio è.',
