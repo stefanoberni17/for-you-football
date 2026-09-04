@@ -82,7 +82,8 @@ export const FINESTRA_PARTITA: Record<QualitaV2, number> = {
   'pliometria-intensiva': 2, // a −1 solo con reps minime (vedi PLIO_INTENSIVA_MENO1)
   'resistenza-aerobica': 4, 'resistenza-metabolico': 4, 'resistenza-rsa': 4,
   'fascia-prevenzione': 0, 'tecnica-palleggi': 0, 'tecnica-passaggi': 0, 'tecnica-conduzione': 0,
-  'tecnica-tiro': 0, 'tecnica-visione': 0, 'riscaldamento': 0, 'mobilita-recupero': 0,
+  'tecnica-tiro': 0, 'tecnica-visione': 0, 'riscaldamento': 0,
+  'mobilita-recupero': 1, // yoga/recupero guidato: mai il giorno prima o il giorno della partita — [STE]
   'test': 2, 'da-classificare': 4,
 };
 /** Regime forza massima: −3 giorni dalla partita — [STE] */
@@ -236,7 +237,7 @@ export function validateItemV2(
   // Finestra partita per qualità
   if (giorniPartita !== null) {
     const regimeMax = forzaConCarico && it.regime === 'max';
-    const finestra = regimeMax ? FINESTRA_FORZA_MAX : FINESTRA_PARTITA[ex.qualita];
+    const finestra = regimeMax ? FINESTRA_FORZA_MAX : (ex.finestraPartita ?? FINESTRA_PARTITA[ex.qualita]);
     if (giorniPartita <= finestra) {
       const plioMeno1Ok = ex.qualita === 'pliometria-intensiva' && giorniPartita === 1
         && it.serie <= PLIO_INTENSIVA_MENO1.serieMax && it.quantita <= PLIO_INTENSIVA_MENO1.repsMax;

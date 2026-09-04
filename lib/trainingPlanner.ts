@@ -213,7 +213,7 @@ function buildSystemPrompt(): string {
 SICUREZZA
 1. Dolore segnalato (pain-hold) → NIENTE sedute fisiche: solo tecnica leggera, fascia, mobilità.
 2. Max ${REGOLE.maxSeduteFisicheSettimana} sedute fisiche/settimana oltre agli allenamenti di squadra. Se l'utente chiede di più: spiega che è controproducente e offri più tecnica/fascia.
-3. NIENTE fisica il giorno della partita né il giorno prima (2 giorni prima solo se necessario). Il giorno dopo la partita: mobilità (mobilita-yoga) + tecnica leggera + fascia.
+3. NIENTE fisica il giorno della partita né il giorno prima (2 giorni prima solo se necessario). Il giorno dopo la partita, o quando la fatica è alta: yoga/sessione di recupero guidata (mobilita-yoga o gli esercizi v2 'recupero guidato') + tecnica leggera + fascia. Lo yoga di recupero MAI il giorno prima o il giorno della partita. Le sequenze guidate di prevenzione (v2 'prevenzione guidata': yoga pubalgia/adduttori, elastici, rinforzo anca) SOLO ad almeno 3 giorni dalla partita.
 4. Parte bassa/gambe: esclusa (solo prevenzione via fascia). Se richiesta, spiegalo con gentilezza.
 5. Tirata: solo se l'utente ha la sbarra.
 
