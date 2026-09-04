@@ -37,19 +37,19 @@ export const BOUNDS_FORZA: Record<RegimeForza, BoundsV2> = {
 /** Bounds per qualità (esercizi v2 non "forza con carico") — §2.4-§2.6 [STE + DATI] */
 export const BOUNDS_QUALITA: Partial<Record<QualitaV2, BoundsV2>> = {
   // corpo libero parte bassa/alta senza carico: come forza di base
-  'forza-parte-bassa': { serieMin: 2, serieMax: 4, repsMin: 5, repsMax: 15, secMin: 15, secMax: 180, recuperoMinSec: 60 },
+  'forza-parte-bassa': { serieMin: 2, serieMax: 4, repsMin: 5, repsMax: 15, secMin: 15, secMax: 180, recuperoMinSec: 60 }, // corpo libero: accessori (tibialis, calf) fino a 30 reps — vedi ACCESSORI_CORPO_LIBERO_REPS_MAX
   'forza-parte-alta':  { serieMin: 2, serieMax: 5, repsMin: 3, repsMax: 15, secMin: 10, secMax: 120, recuperoMinSec: 60 },
   'core':              { serieMin: 2, serieMax: 4, repsMin: 8, repsMax: 30, secMin: 15, secMax: 120, recuperoMinSec: 30 },
   // kettlebell / lanci: esplosivo, reps medio-basse
   'forza-esplosiva':   { serieMin: 3, serieMax: 5, repsMin: 3, repsMax: 15, secMin: 10, secMax: 40, recuperoMinSec: 60, esecuzione: 'esplosiva' },
   // pliometria estensiva A TEMPO (può superare i 100 contatti) — [STE]
-  'pliometria-estensiva': { serieMin: 2, serieMax: 4, secMin: 20, secMax: 120, repsMin: 10, repsMax: 30, recuperoMinSec: 30 },
+  'pliometria-estensiva': { serieMin: 2, serieMax: 4, secMin: 20, secMax: 120, repsMin: 10, repsMax: 30, recuperoMinSec: 30 }, // a tempo ≥60": anche 1 serie (pogo 1×60") — [STE, test Utente E.]
   // pliometria intensiva: 30-60 contatti per seduta, reps basse, recuperi lunghi — [STE]
   'pliometria-intensiva': { serieMin: 2, serieMax: 5, repsMin: 2, repsMax: 12, recuperoMinSec: 60 },
   // velocità: sprint 3-10" con recupero ≥ 1:10 — [DATI: 9-11 × 3" rec 50"]
-  'velocita':          { serieMin: 3, serieMax: 12, repsMin: 1, repsMax: 6, secMin: 3, secMax: 30, recuperoMinSec: 40 },
+  'velocita':          { serieMin: 2, serieMax: 12, repsMin: 1, repsMax: 6, secMin: 3, secMax: 30, recuperoMinSec: 40 }, // T sprint 2 serie — [STE]
   // aerobica: blocchi ~4' (3-5'), 12-20' effettivi, rec 3' — [STE]
-  'resistenza-aerobica': { serieMin: 3, serieMax: 5, minMin: 3, minMax: 5, secMin: 180, secMax: 300, recuperoMinSec: 150, recuperoMaxSec: 240 },
+  'resistenza-aerobica': { serieMin: 3, serieMax: 6, minMin: 3, minMax: 6, secMin: 180, secMax: 360, recuperoMinSec: 150, recuperoMaxSec: 240 }, // Fartlek a 5 blocchi fino a 6' — [STE]
   // metabolico: 15-70" intermittenti, 4-19 serie, rec 20-90" — [DATI]
   'resistenza-metabolico': { serieMin: 4, serieMax: 19, secMin: 15, secMax: 70, repsMin: 1, repsMax: 4, recuperoMinSec: 20, recuperoMaxSec: 90 },
   // RSA: 20-30" massimali, 6-12 serie a blocchi da 4, rec 40-60" — [STE]
@@ -63,6 +63,16 @@ export const BOUNDS_QUALITA: Partial<Record<QualitaV2, BoundsV2>> = {
   'riscaldamento':     { serieMin: 1, serieMax: 6, secMin: 10, secMax: 120, repsMin: 5, repsMax: 20, minMin: 1, minMax: 10, recuperoMinSec: 0 },
   'mobilita-recupero': { serieMin: 1, serieMax: 2, minMin: 2, minMax: 40, secMin: 30, secMax: 600, recuperoMinSec: 0 },
 };
+
+/**
+ * Formato ATTIVAZIONE (riscaldamento neuromuscolare: A-skip, saltelli, navette, allunghi):
+ * raffiche brevi, molte serie, recupero corto — [STE, set 2026]. Si attiva con
+ * item.schema === 'attivazione' sulle qualità fascia/plio estensiva/velocità/riscaldamento/metabolico.
+ */
+export const BOUNDS_ATTIVAZIONE: BoundsV2 = { serieMin: 3, serieMax: 8, secMin: 5, secMax: 20, repsMin: 5, repsMax: 20, recuperoMinSec: 15, recuperoMaxSec: 30 };
+export const QUALITA_ATTIVAZIONE: ReadonlySet<QualitaV2> = new Set<QualitaV2>(['fascia-prevenzione', 'pliometria-estensiva', 'velocita', 'riscaldamento', 'resistenza-metabolico']);
+/** Accessori parte bassa a corpo libero (tibialis, calf raises…): fino a 30 reps — [STE] */
+export const ACCESSORI_CORPO_LIBERO_REPS_MAX = 30;
 
 /** RSA: le serie vanno a blocchi da 4 con 2-3' tra i blocchi — [STE] */
 export const RSA_BLOCCO = { serie: 4, recuperoBloccoMinSec: 120, recuperoBloccoMaxSec: 180 } as const;
@@ -132,7 +142,7 @@ export const ORDINE_QUALITA: Partial<Record<QualitaV2, number>> = {
   'velocita': 2, 'pliometria-intensiva': 3, 'pliometria-estensiva': 3, 'forza-esplosiva': 4,
   'forza-parte-bassa': 5, 'forza-parte-alta': 5, 'core': 6,
   'resistenza-rsa': 7, 'resistenza-metabolico': 8, 'resistenza-aerobica': 9,
-  'mobilita-recupero': 10,
+  // mobilita-recupero: fuori dal controllo — in apertura (pallina, mobilità) non è un blocco metabolico [bug trovato col test Utente E.]
 };
 
 /** Qualità considerate "fisiche" (contano nel tetto sedute fisiche v1 e nelle finestre partita). */
@@ -173,7 +183,12 @@ function isForzaConCarico(ex: ExerciseV2, it: ItemV2): boolean {
 
 function boundsPerItem(ex: ExerciseV2, it: ItemV2): BoundsV2 | null {
   if (isForzaConCarico(ex, it)) return BOUNDS_FORZA[it.regime ?? 'base'];
-  return BOUNDS_QUALITA[ex.qualita] ?? null;
+  if (it.schema === 'attivazione' && QUALITA_ATTIVAZIONE.has(ex.qualita)) return BOUNDS_ATTIVAZIONE;
+  const b = BOUNDS_QUALITA[ex.qualita];
+  if (!b) return null;
+  if (ex.qualita === 'forza-parte-bassa' && ex.attrezzatura === 'corpo libero' && ex.unita === 'reps') return { ...b, repsMax: ACCESSORI_CORPO_LIBERO_REPS_MAX };
+  if (ex.qualita === 'pliometria-estensiva' && ex.unita === 'secondi' && it.quantita >= 60) return { ...b, serieMin: 1 };
+  return b;
 }
 
 function quantitaOk(b: BoundsV2, unita: string): { min: number; max: number } | null {
@@ -197,7 +212,10 @@ export function validateItemV2(
   const n = `"${ex.nome}"`;
 
   if (!ex.attivo) errors.push(`${n}: non disponibile (${ex.attrezzatura === 'headball' ? 'serve la Headball' : ex.inCoppia ? 'solo in coppia' : 'escluso'})`);
-  if (LIVELLO_ORDINE[ex.livelloMin] > LIVELLO_ORDINE[ctx.livello])
+  // Livello: decide la DOSE, non l'accesso — un esercizio "A" a un atleta B va a dose ridotta
+  // (serie al minimo, quantità entro metà range); solo gli esercizi marcati soloLivello sono esclusi — [STE, set 2026]
+  const sottoLivello = LIVELLO_ORDINE[ex.livelloMin] > LIVELLO_ORDINE[ctx.livello];
+  if (sottoLivello && ex.soloLivello)
     errors.push(`${n}: richiede livello ${ex.livelloMin}, l'atleta è ${ctx.livello}`);
   const disp = new Set<AttrezzaturaV2>(['corpo libero', ...ctx.attrezzatura]);
   if (!disp.has(ex.attrezzatura)) errors.push(`${n}: serve ${ex.attrezzatura}, non disponibile`);
@@ -212,6 +230,12 @@ export function validateItemV2(
     const q = quantitaOk(b, ex.unita);
     if (q && (it.quantita < q.min || it.quantita > q.max))
       errors.push(`${n}: ${it.quantita} ${ex.unita} fuori bounds ${q.min}-${q.max}`);
+    if (sottoLivello && !ex.soloLivello) {
+      const serieMax = b.serieMin;
+      const qMax = q ? Math.round((q.min + q.max) / 2) : null;
+      if (it.serie > serieMax) errors.push(`${n}: esercizio di livello ${ex.livelloMin} per un atleta ${ctx.livello} → dose ridotta, max ${serieMax} serie`);
+      if (qMax !== null && it.quantita > qMax) errors.push(`${n}: esercizio di livello ${ex.livelloMin} per un atleta ${ctx.livello} → dose ridotta, max ${qMax} ${ex.unita}`);
+    }
     if (it.recupero_sec < b.recuperoMinSec)
       errors.push(`${n}: recupero ${it.recupero_sec}" sotto il minimo ${b.recuperoMinSec}"`);
     if (b.recuperoMaxSec !== undefined && it.recupero_sec > b.recuperoMaxSec)

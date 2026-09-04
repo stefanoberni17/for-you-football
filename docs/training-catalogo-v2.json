@@ -1653,11 +1653,11 @@
    "esplosività",
    "forza"
   ],
-  "azione": "già in v1",
+  "azione": "importa (riattivato: usato nei workout di Ste)",
   "nome_everfit": "piegamenti plyo",
   "note": null,
   "in_coppia": false,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
@@ -1937,11 +1937,11 @@
   "video": "https://youtube.com/watch?v=V5SVWUH1_50",
   "fonte": "Everfit",
   "tags": [],
-  "azione": "già in v1",
+  "azione": "importa (riattivato: usato nei workout di Ste)",
   "nome_everfit": "Fascia Toe Bounces Single Leg - Pogo Jumps",
   "note": null,
   "in_coppia": false,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
@@ -2875,11 +2875,11 @@
   "tags": [
    "fascia"
   ],
-  "azione": "già in v1",
+  "azione": "importa (riattivato: usato nei workout di Ste)",
   "nome_everfit": "Towel Curls",
   "note": null,
   "in_coppia": false,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
@@ -3149,11 +3149,11 @@
    "petto",
    "push"
   ],
-  "azione": "già in v1",
+  "azione": "importa (riattivato: usato nei workout di Ste)",
   "nome_everfit": "Piegamenti Hindu",
   "note": null,
   "in_coppia": false,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
@@ -5089,7 +5089,7 @@
  },
  {
   "nome": "Fascia adhesion tennis ball",
-  "qualita": "mobilita-recupero",
+  "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
   "livello_min": "B",
@@ -5101,11 +5101,11 @@
    "fascia",
    "massaggi"
   ],
-  "azione": "escludi (recupero/non allenante)",
+  "azione": "importa (riattivato: apertura seduta nei workout di Ste)",
   "nome_everfit": "Fascia adhesion tennis ball",
-  "note": null,
+  "note": "Pallina sotto il piede, 3-4 minuti in apertura: non è allenante, prepara la fascia.",
   "in_coppia": false,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
@@ -5654,5 +5654,93 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "core guidato"
+ },
+ {
+  "nome": "Bear Crawl Linear",
+  "qualita": "core",
+  "attrezzatura": "corpo libero",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": false,
+  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F39-F.mp4",
+  "fonte": "Everfit",
+  "tags": [
+   "core",
+   "coordinazione"
+  ],
+  "azione": "importa",
+  "nome_everfit": "Bear Crawl Linear",
+  "note": "Quadrupedia con ginocchia a 2 cm da terra: avanza in linea, mano e piede opposti insieme. 1 passo = 1 rep.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "bear crawl"
+ },
+ {
+  "nome": "Bear Crawl Lateral",
+  "qualita": "core",
+  "attrezzatura": "corpo libero",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": false,
+  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F38-F.mp4",
+  "fonte": "Everfit",
+  "tags": [
+   "core",
+   "coordinazione"
+  ],
+  "azione": "importa",
+  "nome_everfit": "Bear Crawl Lateral",
+  "note": "Bear crawl di lato: bacino basso e fermo, spalle sopra le mani. 1 passo = 1 rep.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "bear crawl"
+ },
+ {
+  "nome": "Isometric Bear Crawl",
+  "qualita": "core",
+  "attrezzatura": "corpo libero",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "secondi",
+  "per_lato": false,
+  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F37-F.mp4",
+  "fonte": "Everfit",
+  "tags": [
+   "core"
+  ],
+  "azione": "importa",
+  "nome_everfit": "Isometric Bear Crawl",
+  "note": "Tenuta in quadrupedia con le ginocchia sollevate da terra: schiena piatta, addome attivo.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "bear crawl"
+ },
+ {
+  "nome": "Hip External Rotation Skip",
+  "qualita": "riscaldamento",
+  "attrezzatura": "corpo libero",
+  "difficolta": 1,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": false,
+  "video": "https://youtu.be/-bNvML_9Z1w",
+  "fonte": "Everfit",
+  "tags": [
+   "anca",
+   "attivazione",
+   "rapidità"
+  ],
+  "azione": "importa",
+  "nome_everfit": "Hip External Rotation Skip",
+  "note": "Skip con apertura dell'anca verso l'esterno a ogni passo: attivazione anca prima di rapidità e sprint.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "attivazione"
  }
 ]

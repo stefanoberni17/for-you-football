@@ -70,7 +70,8 @@ resistenza), spalmata su lun/mer/ven della prima settimana.
 ### Il validatore v2 sul programma di Ste
 
 Ho tradotto le 3 giornate in items v2 (livello B, attrezzatura palestra+campo+piccoli
-attrezzi, esperienza sì, 26 anni, nessun massimale): **56 violazioni**. Raggruppate:
+attrezzi, esperienza sì, 26 anni, nessun massimale): **56 violazioni** (prima delle correzioni
+del 4/9; dopo: **14**, tutte "dose ridotta" — vedi in fondo). Raggruppate:
 
 1. **`livelloMin` A su esercizi che Ste dà a un B a dose ridotta** (10 esercizi): drop jump,
    reverse drop, single-leg drop e spinta, single-leg lateral drop, copenhagen plank,
@@ -96,6 +97,18 @@ attrezzi, esperienza sì, 26 anni, nessun massimale): **56 violazioni**. Raggrup
 
 Cose che invece passano: 3 sedute fisiche (tetto 3), durate ≤ 90', nessuna finestra partita
 (off season), gating carico (70% per esperienza sì + B + >18: mai usato, tutto a corpo libero).
+
+### Dopo le correzioni del 4 set 2026
+
+Livello come dose (non esclusione, salvo `soloLivello`), formato "attivazione" (3-8 × 5-20",
+rec 15-30"), accessori corpo libero fino a 30 reps, pogo 1×60", T sprint 2 serie, Fartlek fino a
+6 blocchi da 6', riattivati Hindu/plyo push-up/towel curls/toe bounces SL/pallina, aggiunti Bear
+Crawl ×3 e Hip External Rotation Skip, mobilità fuori dal controllo d'ordine. Il programma di Ste
+passa da 56 a **14 violazioni**, tutte del tipo "dose ridotta per un B": la mia euristica (serie
+al minimo, quantità a metà range) è più prudente di Ste (reverse drop 2×10 vs max 7 reps, glute
+bridge 3×30" vs 2 serie, cuban press 3×10 vs 2×9). La lista dei 68 esercizi A/PRO da rivedere è in
+`docs/training-seed/livello-review-2026-09-04.xlsx`: per ognuno "solo questo livello" sì/no e
+la dose ridotta che vuole lui.
 
 ### Cosa deve fare il planner v2 (punto 3) per riprodurlo
 
