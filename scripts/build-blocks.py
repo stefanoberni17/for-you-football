@@ -146,10 +146,15 @@ def meta_from_title(t):
     m = re.search(r"\b(pro|b|a|p)\s?(\d)\b", tl)
     livello = None
     prog = None
+    ruolo = None
     if m:
         code = m.group(1)
-        livello = {"b": "B", "a": "A", "pro": "PRO", "p": None}[code]  # "P1": codice da chiarire con Ste (Push? PRO?)
+        livello = {"b": "B", "a": "A", "pro": "PRO", "p": None}[code]
         prog = int(m.group(2))
+        if code == "p":
+            ruolo = "portiere"  # "P1" = blocco nato per il portiere [STE] — riusato anche per gli altri, quindi non escluso
+    if re.search(r"(push|pull)\s?p\d\b", tl):
+        ruolo = "portiere"
     else:
         m2 = re.search(r"\b(\d)[a-d]?\b", tl)
         if m2 and "fascia" in tl:
@@ -172,7 +177,7 @@ def meta_from_title(t):
     fam = re.sub(r"\s{2,}", " ", fam).strip(" -")
     fam = re.sub(r"foundations?", "Foundation", fam, flags=re.I)
     fam = " ".join(w.capitalize() if w.islower() or w.isupper() and len(w) > 3 else w for w in fam.split())
-    return livello, prog, variante, qual, fam, sotto
+    return livello, prog, variante, qual, fam, sotto, ruolo
 
 
 def durata_min(items, amrap_sec):
@@ -219,7 +224,7 @@ for t, (_, w) in sorted(by_title.items(), key=lambda x: x[0].lower()):
                     attrezz.add(info[3])
                 if info[5]:
                     coppia = True
-    livello, prog, variante, qual_kw, fam, sotto = meta_from_title(t)
+    livello, prog, variante, qual_kw, fam, sotto, ruolo = meta_from_title(t)
     qual = qual_kw or (quali.most_common(1)[0][0] if quali else "da-classificare")
     base = slug(t)
     sid, k = base, 2
@@ -229,7 +234,7 @@ for t, (_, w) in sorted(by_title.items(), key=lambda x: x[0].lower()):
     seen.add(sid)
     blocchi.append({
         "id": sid, "nome": t, "nomeEverfit": t, "famiglia": fam, "qualita": qual, "qualitaSet": dict(quali),
-        "livello": livello, "progressione": prog, "variante": variante, **({"sottovariante": sotto} if sotto else {}),
+        "livello": livello, "progressione": prog, "variante": variante, **({"sottovariante": sotto} if sotto else {}), **({"ruolo": ruolo} if ruolo else {}),
         "durataMin": durata_min(items, amrap_sec), "attrezzatura": sorted(attrezz), "inCoppia": coppia,
         "items": items, "completo": not mancanti, "mancanti": sorted(set(mancanti)),
         **({"amrapSec": amrap_sec} if amrap_sec else {}),
