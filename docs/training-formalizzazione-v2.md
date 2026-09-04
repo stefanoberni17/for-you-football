@@ -210,7 +210,7 @@ Restano solo **conferme** con default già applicati:
 1. Lista base palestra = i 7 del foglio massimali (+ accessori dai dati) — default: sì.
 2. Punteggio per test = formula v0 (80 alla soglia PRO, cap 110) al posto dei LIVELLO manuali del File_DB — default: sì.
 3. Mapping "generale" del rombo corretto come proposto sopra (le formule del foglio puntano a intervalli sbagliati) — default: sì.
-4. Toe curls test: nel File_DB è 3' per piede, nell'app v1 è 1' — allineare a 3'? default: sì.
+4. Toe curls test: nel File_DB è 3' per piede, nell'app v1 era 1' — **deciso da Ste: 120"** (set 2026).
 
 ## 9. Piano di implementazione — stato
 
