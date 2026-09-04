@@ -236,6 +236,8 @@ export interface PlanItem {
   // Catalogo v2 — forza con carico (docs/training-formalizzazione-v2.md §2.1)
   regime?: 'max' | 'esplosiva' | 'base';
   carico_pct?: number;       // % del massimale stimato (Brzycki)
+  carico_kg?: number;        // carico assoluto proposto (dai blocchi Everfit o dal log per serie)
+  blocco_id?: string;        // blocco della libreria da cui viene l'item (lib/trainingBlocks)
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom
