@@ -333,7 +333,7 @@ export function validatePlan(
           errors.push(`"${ex.nome}": recupero ${it.recupero_sec}" sotto il minimo tecnica ${TECNICA_RECUPERO_MIN_SEC}"`);
       }
     }
-    if (itemsV2.length > 0) errors.push(...validateSessionV2(itemsV2, s.titolo, { trusted: !!ctx.trustBlocks && itemsV2.every((x) => !!x.it.blocco_id), livello: ctx.v2.livello }));
+    if (itemsV2.length > 0) errors.push(...validateSessionV2(itemsV2, s.titolo, { trusted: !!ctx.trustBlocks && itemsV2.every((x) => !!x.it.blocco_id), livello: ctx.v2?.livello }));
   }
   const tetto = ctx.maxSeduteFisiche ?? REGOLE.maxSeduteFisicheSettimana;
   if (seduteFisiche > tetto)
