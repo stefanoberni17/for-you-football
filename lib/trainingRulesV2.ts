@@ -79,8 +79,9 @@ export const RSA_BLOCCO = { serie: 4, recuperoBloccoMinSec: 120, recuperoBloccoM
 
 /** Pliometria intensiva: contatti totali per seduta — [STE] */
 // Conteggio serie × reps senza raddoppio dei lati. Blocchi di Ste: B1 short 48 · B1 69 · B2 96 · PRO1 101 · A1 158.
-// Alzato da 60 a 160 su indicazione di Ste (set 2026) per coprire tutte le sue progressioni.
-export const PLIO_INTENSIVA_CONTATTI = { min: 30, max: 160 } as const;
+// Soglia per LIVELLO su indicazione di Ste (set 2026): B 100 · A 160 · PRO 200.
+export const PLIO_INTENSIVA_CONTATTI = { min: 30, max: 100 } as const; // max = livello B (retrocompatibilità)
+export const PLIO_INTENSIVA_CONTATTI_MAX: Record<LivelloMinV2, number> = { B: 100, A: 160, PRO: 200 };
 
 // ─── Finestra partita: ultimo giorno utile prima della partita — §3 [STE] ───
 //
@@ -283,7 +284,7 @@ export function validateItemV2(
 }
 
 /** Controlli a livello di seduta sugli esercizi v2: convivenze, contatti pliometria intensiva, ordine. */
-export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titolo: string, opts: { trusted?: boolean } = {}): string[] {
+export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titolo: string, opts: { trusted?: boolean; livello?: LivelloMinV2 } = {}): string[] {
   const errors: string[] = [];
   const qualita = new Set<QualitaV2 | 'forza-max'>();
   for (const { it, ex } of items) {
@@ -296,8 +297,9 @@ export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titol
   const contatti = items
     .filter(({ ex }) => ex.qualita === 'pliometria-intensiva' && ex.unita === 'reps')
     .reduce((acc, { it }) => acc + it.serie * it.quantita, 0);
-  if (contatti > PLIO_INTENSIVA_CONTATTI.max && !opts.trusted) // blocchi di Ste: la dose è sua (Pliometria B1 full ≈ 70-90 contatti)
-    errors.push(`seduta "${titolo}": ${contatti} contatti di pliometria intensiva, oltre il massimo ${PLIO_INTENSIVA_CONTATTI.max}`);
+  const maxContatti = PLIO_INTENSIVA_CONTATTI_MAX[opts.livello ?? 'B'];
+  if (contatti > maxContatti && !opts.trusted) // blocchi di Ste: la dose è sua
+    errors.push(`seduta "${titolo}": ${contatti} contatti di pliometria intensiva, oltre il massimo ${maxContatti} per il livello ${opts.livello ?? 'B'}`);
   // Ordine: nessuna qualità metabolica prima di velocità/pliometria
   let maxOrdineVisto = -1;
   for (const { ex } of items) {
