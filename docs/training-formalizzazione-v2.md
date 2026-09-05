@@ -129,7 +129,7 @@ consecutive con esecuzione pulita **[STE ✅]** (+2.5-5% parte alta, +5% parte b
 | Tipo | Esercizi | Volume per seduta **[PROPOSTA]** | Livello | Esempi reali **[DATI]** |
 |---|---|---|---|---|
 | **Estensiva** | pogo jumps, saltelli, toe bounces, A-skip, skater | **a tempo** (es. 2-4 × 60-120") — può superare i 100 contatti **[STE ✅]** | tutti | Pogo Jumps 2×120"/60" o 4×60"/60" · Toe Bounces SL 2×30"/30" · A-Skip 3-6×10"/20" |
-| **Intensiva** | drop jumps, depth jumps, salti in lungo/triplo, single leg drop | **30-60 contatti** **[STE ✅]** | **solo A/PRO** | Drop Jump 3×2-3 rec 60" · Broad jump 3-4×2 rec 60" · Single leg lateral drop jump 2×10 rec 60" · Salto triplo + sprint 4-6 rec 30-60" · Reverse drop jumps 3×12 → 5×20 rec 120" |
+| **Intensiva** | drop jumps, depth jumps, salti in lungo/triplo, single leg drop | **contatti per livello: B ≤100 · A ≤160 · PRO ≤200 (Ste, set 2026; blocchi: B1 69, B2 96, A1 158)** **[STE ✅]** | **solo A/PRO** | Drop Jump 3×2-3 rec 60" · Broad jump 3-4×2 rec 60" · Single leg lateral drop jump 2×10 rec 60" · Salto triplo + sprint 4-6 rec 30-60" · Reverse drop jumps 3×12 → 5×20 rec 120" |
 
 Regola: si passa all'intensiva solo con l'estensiva consolidata e l'ankle stiffness test fatto **[PROPOSTA]**.
 
