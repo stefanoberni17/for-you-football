@@ -78,7 +78,9 @@ export const ACCESSORI_CORPO_LIBERO_REPS_MAX = 30;
 export const RSA_BLOCCO = { serie: 4, recuperoBloccoMinSec: 120, recuperoBloccoMaxSec: 180 } as const;
 
 /** Pliometria intensiva: contatti totali per seduta — [STE] */
-export const PLIO_INTENSIVA_CONTATTI = { min: 30, max: 60 } as const;
+// Conteggio serie × reps senza raddoppio dei lati. Blocchi di Ste: B1 short 48 · B1 69 · B2 96 · PRO1 101 · A1 158.
+// Alzato da 60 a 160 su indicazione di Ste (set 2026) per coprire tutte le sue progressioni.
+export const PLIO_INTENSIVA_CONTATTI = { min: 30, max: 160 } as const;
 
 // ─── Finestra partita: ultimo giorno utile prima della partita — §3 [STE] ───
 //
