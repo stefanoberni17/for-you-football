@@ -4,9 +4,11 @@ import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, todayRome } from '@/lib/trainingPlanner';
-import { TESTS } from '@/lib/trainingCatalog';
+import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup } from '@/lib/trainingSetup';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
+import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
+import { esercizioV2ById } from '@/lib/trainingCatalogV2';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -72,6 +74,19 @@ export async function GET(request: NextRequest) {
       const r = rawByTest.get(t.id);
       if (t.lift && r) massimali[t.lift.esercizioV2Id] = Number(r.valore);
     }
+    // Storico serie (log durante il recupero, ultime 4 settimane) → "ultima volta" per esercizio
+    const storicoSerie: Record<string, { testo: string; suggerimento: string }> = {};
+    try {
+      const since = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString();
+      const { data: logs } = await supabaseAdmin.from('training_set_logs')
+        .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
+        .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400);
+      for (const r of riepilogoEsercizi(((logs || []) as SetLogRow[]).map((l) => ({ ...l, quantita_prevista: Number(l.quantita_prevista), quantita_fatta: l.quantita_fatta == null ? null : Number(l.quantita_fatta), carico_previsto_kg: l.carico_previsto_kg == null ? null : Number(l.carico_previsto_kg), carico_fatto_kg: l.carico_fatto_kg == null ? null : Number(l.carico_fatto_kg) })))) {
+        const unita = esercizioById(r.esercizioId)?.unita ?? esercizioV2ById(r.esercizioId)?.unita ?? 'reps';
+        storicoSerie[r.esercizioId] = riepilogoUi(r, unita);
+      }
+    } catch { /* migration 019 non applicata: nessuno storico */ }
+
     // Completamenti del piano corrente
     let completions: { session_key: string; feedback: string | null }[] = [];
     if (lastPlan?.id) {
@@ -118,6 +133,7 @@ export async function GET(request: NextRequest) {
       plan: lastPlan || null,
       completions,
       checkinOggi,
+      storicoSerie,
       faticaAlta: isFaticaAlta(checkinOggi),
       setup,
       setupDisponibile,

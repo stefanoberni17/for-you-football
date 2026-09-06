@@ -14,14 +14,14 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
 import { isFaticaAlta, isPeriodoScarso, validatePlan, type PlanSession, type WeekPlan } from './trainingEngine';
-import { loadPlannerContext, type PlannerContext } from './trainingPlanner';
+import { loadPlannerContext, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, type TrainingSetup } from './trainingSetup';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.0-blocchi';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.1-blocchi-serie';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
 const DELOAD_SCALA = 0.6;
 
@@ -184,6 +184,7 @@ ADATTAMENTO
 13. Se esiste già un PIANO ATTUALE e la richiesta è una modifica, PARTI dal piano attuale e cambia SOLO ciò che serve (stessi blocchi negli altri giorni).
 14. Check-in di oggi con fatica alta → la seduta di oggi più leggera o spostata. Periodo prolungato con poco sonno/recupero → settimana più leggera (meno blocchi fisici).
 15. Ascolta obiettivi e note in memoria e la richiesta dell'utente (se non contraddice le regole sopra).
+16. STORICO SERIE (se presente): i suggerimenti SALI/TIENI/SCENDI per esercizio sono calcolati dai log dell'atleta. SALI = passa al codice successivo o da short a full; SCENDI = codice precedente o short. Non saltare codici.
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
 ${libreriaTesto(ctx)}
@@ -217,7 +218,7 @@ Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') 
 Feedback sedute recenti: ${feedbackTxt}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
-${massimali}${memoria}${piano}
+${massimali}${memoria}${storicoSerieBlock(b)}${piano}
 ${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}` : ''}
 
