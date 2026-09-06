@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_NAMES } from '@/lib/constants';
-import TrainingSessionPlayer, { type PlayerProgress } from '@/components/TrainingSessionPlayer';
+import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ArrowLeft, Info, Play } from 'lucide-react';
 
@@ -28,6 +28,7 @@ export default function SessionePage() {
   const [phase, setPhase] = useState<Phase>('preview');
   const [descOpen, setDescOpen] = useState<number | null>(null); // indice item con descrizione aperta
   const [savedProgress, setSavedProgress] = useState<PlayerProgress | null>(null); // seduta interrotta
+  const [storico, setStorico] = useState<Record<string, { testo: string; suggerimento: string }>>({}); // ultima volta per esercizio (log serie)
   const [resume, setResume] = useState(false); // true = riprendi da savedProgress
   const [note, setNote] = useState('');
   const [sending, setSending] = useState(false);
@@ -45,6 +46,7 @@ export default function SessionePage() {
       const s = (data.plan?.plan?.sedute || []).find((x: PlanSession) => x.giorno === giorno);
       setSessione(s || null);
       setPlanId(data.plan?.id || null);
+      setStorico(data.storicoSerie || {});
       setAlreadyDone((data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno));
       // Seduta interrotta? (progresso salvato dal player in localStorage)
       if (data.plan?.id && s) {
@@ -108,6 +110,13 @@ export default function SessionePage() {
           storageKey={storageKey}
           initialProgress={resume ? savedProgress : null}
           blocchi={sessione.blocchi}
+          onSetLog={(log: SetLogInput) => {
+            if (!planId) return;
+            authFetch('/api/training/set-log', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ plan_id: planId, giorno, ...log }),
+            }).catch(() => { /* fire-and-forget: la seduta non si ferma */ });
+          }}
           onComplete={() => { setSavedProgress(null); setResume(false); setPhase('feedback'); }}
           onExit={() => {
             // Il progresso resta salvato: al rientro si può riprendere da qui
@@ -215,6 +224,11 @@ export default function SessionePage() {
                   </div>
                   {ex.videoUrl && <span className="text-[10px] text-forest-400 font-bold shrink-0">▶ video</span>}
                 </div>
+                {storico[it.esercizio_id] && (
+                  <p className={`text-[11px] mt-1.5 ml-10 ${storico[it.esercizio_id].suggerimento === 'sali' ? 'text-forest-300' : storico[it.esercizio_id].suggerimento === 'scendi' ? 'text-amber-300' : 'text-faint'}`}>
+                    {storico[it.esercizio_id].suggerimento === 'sali' ? '↑ ' : storico[it.esercizio_id].suggerimento === 'scendi' ? '↓ ' : '→ '}{storico[it.esercizio_id].testo}
+                  </p>
+                )}
                 {ex.descrizione && (
                   <button onClick={() => setDescOpen(isOpen ? null : i)}
                     className="inline-flex items-center gap-1 text-[11px] text-forest-400 font-semibold mt-2 ml-10">

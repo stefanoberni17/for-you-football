@@ -29,6 +29,12 @@ function youtubeEmbedUrl(url?: string): string | null {
  * acceso (wake lock). Al termine: feedback 3-tap gestito dal parent.
  */
 export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx' }
+/** Log di una serie (compilato durante il recupero): quanto è stata dura + eventuali reps/kg diversi dal proposto. */
+export interface SetLogInput {
+  esercizio_id: string; serie: number; lato: '' | 'dx' | 'sx'; unita: string;
+  quantita_prevista: number; quantita_fatta: number | null;
+  carico_previsto_kg: number | null; carico_fatto_kg: number | null; rpe: number | null;
+}
 
 export default function TrainingSessionPlayer({
   items,
@@ -38,6 +44,7 @@ export default function TrainingSessionPlayer({
   storageKey,
   initialProgress,
   blocchi,
+  onSetLog,
 }: {
   items: PlanItem[];
   titolo: string;
@@ -46,10 +53,20 @@ export default function TrainingSessionPlayer({
   storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
   initialProgress?: PlayerProgress | null;
   blocchi?: { id: string; nome: string }[]; // planner v2: nome del blocco di ogni item
+  onSetLog?: (log: SetLogInput) => void;    // feedback per serie durante il recupero (fire-and-forget)
 }) {
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
   const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
+  // Recupero dopo l'ULTIMA serie: il countdown resta (spazio per il feedback), poi si passa all'esercizio dopo
+  const [restIsLast, setRestIsLast] = useState(false);
+  const restIsLastRef = useRef(false);
+  // Feedback della serie appena fatta (compilato durante il recupero)
+  const [pending, setPending] = useState<{ serie: number; quantita: number; unita: string; carico?: number } | null>(null);
+  const [rpe, setRpe] = useState<number | null>(null);
+  const [fattoTxt, setFattoTxt] = useState('');
+  const [caricoTxt, setCaricoTxt] = useState('');
+  const [logSaved, setLogSaved] = useState(false);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
@@ -87,14 +104,16 @@ export default function TrainingSessionPlayer({
     setExecLeft(null);
   };
 
-  const startRest = (sec: number) => {
-    setRestLeft(sec);
+  const startRest = (sec: number, last = false) => {
+    setRestIsLast(last); restIsLastRef.current = last;
+    setRestLeft(Math.max(sec, last ? 20 : sec)); // dopo l'ultima serie: almeno 20" per il feedback
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setRestLeft((prev) => {
         if (prev === null || prev <= 1) {
           if (timerRef.current) clearInterval(timerRef.current);
           try { navigator.vibrate?.([80, 60, 80]); } catch { /* no-op */ }
+          if (restIsLastRef.current) setTimeout(() => nextItemRef.current(), 0);
           return null;
         }
         return prev - 1;
@@ -102,10 +121,30 @@ export default function TrainingSessionPlayer({
     }, 1000);
   };
 
+  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string }) => {
+    if (!pending || !item || !onSetLog) return;
+    const r = over.rpe !== undefined ? over.rpe : rpe;
+    const f = over.fatto !== undefined ? over.fatto : fattoTxt;
+    const c = over.carico !== undefined ? over.carico : caricoTxt;
+    const fattoNum = f.trim() === '' ? null : Number(f.replace(',', '.'));
+    const caricoNum = c.trim() === '' ? null : Number(c.replace(',', '.'));
+    onSetLog({
+      esercizio_id: item.esercizio_id, serie: pending.serie, lato: '', unita: pending.unita,
+      quantita_prevista: pending.quantita,
+      quantita_fatta: fattoNum !== null && Number.isFinite(fattoNum) && fattoNum !== pending.quantita ? fattoNum : null,
+      carico_previsto_kg: pending.carico ?? null,
+      carico_fatto_kg: caricoNum !== null && Number.isFinite(caricoNum) && caricoNum !== pending.carico ? caricoNum : null,
+      rpe: r,
+    });
+    setLogSaved(true);
+  };
+
   const nextItem = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     stopExec();
     setRestLeft(null);
+    setRestIsLast(false); restIsLastRef.current = false;
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
@@ -129,9 +168,13 @@ export default function TrainingSessionPlayer({
     setLato('dx'); latoRef.current = 'dx';
     const next = serieFatte + 1;
     setSerieFatte(next);
-    if (next >= totalSerie) nextItem();
-    else startRest(item.recupero_sec);
+    // Serie chiusa → durante il recupero si può dare il feedback (RPE, reps/kg reali)
+    setPending({ serie: next, quantita: quantitaLato, unita: ex?.unita ?? 'reps', carico: item.carico_kg });
+    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false);
+    startRest(item.recupero_sec, next >= totalSerie);
   };
+  const nextItemRef = useRef(nextItem);
+  useEffect(() => { nextItemRef.current = nextItem; });
 
   const startExecTimer = () => {
     stopExec();
@@ -163,7 +206,7 @@ export default function TrainingSessionPlayer({
   }
 
   const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);
-  const caricoTxt = item.carico_kg ? ` @ ${item.carico_kg} kg` : '';
+  const caricoLabel = item.carico_kg ? ` @ ${item.carico_kg} kg` : '';
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -192,8 +235,8 @@ export default function TrainingSessionPlayer({
             {isEmom
               ? `EMOM ${item.serie}' — ${item.quantita} reps al minuto`
               : isPerLato
-                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx)${caricoTxt} · recupero ${item.recupero_sec}"`
-                : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)}${caricoTxt} · recupero ${item.recupero_sec}"`}
+                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx)${caricoLabel} · recupero ${item.recupero_sec}"`
+                : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)}${caricoLabel} · recupero ${item.recupero_sec}"`}
           </p>
           {(item.nota || ex.note) && (
             <p className="text-sm text-muted mt-2 leading-relaxed">{item.nota || ex.note}</p>
@@ -229,13 +272,44 @@ export default function TrainingSessionPlayer({
 
         {/* Recupero o azione */}
         {restLeft !== null ? (
-          <div className="bg-surface-2 rounded-2xl p-8 text-center border border-divider">
+          <div className="bg-surface-2 rounded-2xl p-6 text-center border border-divider">
             <p className="text-xs uppercase tracking-widest text-faint mb-1">Recupero</p>
             <p className="text-6xl font-bold text-app tabular-nums">{restLeft}&quot;</p>
-            <p className="text-sm text-muted mt-2">Prossima: serie {serieFatte + 1} di {totalSerie}</p>
-            <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); setRestLeft(null); }}
+            <p className="text-sm text-muted mt-2">{restIsLast ? 'Poi: prossimo esercizio' : `Prossima: serie ${serieFatte + 1} di ${totalSerie}`}</p>
+            {pending && onSetLog && (
+              <div className="mt-4 text-left bg-surface rounded-xl border border-divider p-3">
+                <p className="text-xs font-semibold text-app mb-2">Com&apos;è andata la serie {pending.serie}? <span className="text-faint font-normal">(1 = leggera · 10 = al limite)</span></p>
+                <div className="flex gap-1 justify-between mb-3">
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                    <button key={n} onClick={() => { setRpe(n); sendLog({ rpe: n }); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
+                      aria-label={`Difficoltà ${n}`}
+                      className={`flex-1 h-9 rounded-lg text-xs font-bold border transition-colors ${rpe === n ? (n >= 9 ? 'bg-red-500/80 border-red-400 text-white' : n >= 7 ? 'bg-amber-500/80 border-amber-400 text-white' : 'bg-forest-500 border-forest-500 text-white') : 'bg-surface-2 border-divider text-muted'}`}>
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[11px] text-faint">Fatte</span>
+                  <input type="text" inputMode="decimal" value={fattoTxt} onChange={(e) => setFattoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
+                    onBlur={() => sendLog({})} aria-label="Quantità fatta"
+                    className="w-16 text-center text-sm font-bold bg-surface-2 border border-divider rounded-lg py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums" />
+                  <span className="text-[11px] text-faint">{pending.unita}</span>
+                  {pending.carico !== undefined && (
+                    <>
+                      <span className="text-[11px] text-faint ml-2">con</span>
+                      <input type="text" inputMode="decimal" value={caricoTxt} onChange={(e) => setCaricoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
+                        onBlur={() => sendLog({})} aria-label="Carico usato in kg"
+                        className="w-16 text-center text-sm font-bold bg-surface-2 border border-divider rounded-lg py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums" />
+                      <span className="text-[11px] text-faint">kg</span>
+                    </>
+                  )}
+                  {logSaved && <span className="text-[11px] text-forest-400 font-semibold ml-auto">✓ salvato</span>}
+                </div>
+              </div>
+            )}
+            <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}
               className="mt-4 inline-flex items-center gap-1.5 text-sm text-faint">
-              <Pause size={14} /> Salta il recupero
+              <Pause size={14} /> {restIsLast ? 'Vai al prossimo esercizio' : 'Salta il recupero'}
             </button>
           </div>
         ) : (
