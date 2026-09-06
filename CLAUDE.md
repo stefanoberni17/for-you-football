@@ -111,6 +111,23 @@ for-you-football/
 │   ├── consent.ts                         # Consenso legale: getLatestAcceptedVersion + needsReacceptance (server-only)
 │   ├── activity.ts                        # filterActiveProfiles: esclude dai messaggi proattivi (cron) gli utenti inattivi >30gg (PROACTIVE_INACTIVITY_DAYS) — FAIL-OPEN
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API, safety (keywords, alert, SAFETY_REVIEW_MODE)
+│   ├── trainingAccess.ts                  # hasTrainingAccess(userId) — flag profiles.training_access (area riservata)
+│   ├── trainingSetup.ts                   # "Il tuo setup": attrezzatura, fase (off_season/preparazione_squadra/in_season), tetti sedute e durata per fase
+│   ├── trainingCatalog.ts                 # Catalogo v1: esercizi corpo libero + TESTS v1 (descrizioni 4 campi) + ROMBO_PUNTE (10 punte)
+│   ├── trainingCatalogV2.ts / .generated  # Catalogo v2 (309 esercizi, 277 attivi) generato da docs/training-catalogo-v2.json via scripts/build-catalog-v2.py
+│   ├── trainingTestsV2.ts                 # Batteria v2: test campo + palestra (massimale stimato Brzycki), soglie B/A/PRO, video
+│   ├── trainingRulesV2.ts                 # Regole v2: bounds per schema, finestre partita, plio contatti per livello, livello = dose
+│   ├── trainingBlocks.ts / .generated     # Libreria BLOCCHI (144 workout Everfit → blocchi componibili) via scripts/build-blocks.py
+│   ├── trainingEngine.ts                  # Motore deterministico: scoring, rombo, validatePlan (guardiano v1+v2, trustBlocks)
+│   ├── trainingPlanner.ts                 # Planner v1 (item per item) + trainingChat (preparatore AI) + memoria training_goals/notes
+│   ├── trainingPlannerV2.ts               # Planner v2 A BLOCCHI (default): Claude sceglie blocchi, il server espande e valida
+│   ├── trainingAdapt.ts                   # Auto-regolazione da training_set_logs: riepilogo per esercizio SALI/TIENI/SCENDI
+│   └── trainingExercise.ts                # esercizioAny(id): vista unificata v1/v2 per player e API
+├── scripts/
+│   ├── build-catalog-v2.py / build-blocks.py   # Rigenerano i .generated.ts dal JSON catalogo e dall'export Everfit
+│   ├── everfit-assign.mjs                 # Lettura/assegnazione allenamenti su Everfit (history/detail/copy/add/update/delete) — SOLO su richiesta di Ste
+│   └── youtube-channel-scan.py            # Scansione canale YouTube → docs/youtube-channel.{json,md}
+├── .claude/settings.json                  # Permesso pre-approvato per `node scripts/everfit-assign.mjs` nelle sessioni Claude (tracciato con git add -f: .claude/ è in .gitignore)
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # 3 cron Vercel: cleanup-telegram 03:00 UTC · daily-morning 06:00 UTC · daily-evening 16:00 UTC
 └── docs/
@@ -888,6 +905,42 @@ Ritorna `{ subscription_status, is_beta_free, next_billing_date, cancel_at_perio
 
 ---
 
+## FYF Training — modulo allenamento tecnico/fisico (area riservata)
+
+Binario separato dalla parte mentale, dietro `profiles.training_access` (default FALSE, attivazione solo via SQL, migration 015). Route `/allenamento/*` (hub, `/test`, `/sessione/[giorno]`, `/chat`), API `/api/training/{state,setup,test,plan,complete,pain,chat,set-log}` (auth + flag). Card d'ingresso "Campo" in `/strumenti` solo con flag. Metodologia sorgente: `docs/training-recap-progressioni.md`, formalizzazione v2: `docs/training-formalizzazione-v2.md`.
+
+### Principio: "l'LLM propone, i dati dispongono"
+Claude (`claude-sonnet-4-6`) propone il piano, `validatePlan` in `lib/trainingEngine.ts` lo accetta o lo rifiuta (1 retry → fallback deterministico). Nessun output del modello arriva all'utente senza passare dal validatore.
+
+### Setup atleta (migration 017, `lib/trainingSetup.ts`)
+Esperienza palestra (zero → carichi max 60%), attrezzatura (`palestra, kettlebell, sbarra, piccoli attrezzi, campo, headball`), compagno (esercizi "in coppia"), **fase stagione** con tetti: sedute fisiche/settimana `off_season 6 · preparazione_squadra 1 · in_season 3`, durata max `120' · 75' · 90'`. Peso corporeo per i test palestra.
+
+### Test (v1 `lib/trainingCatalog.ts` + v2 `lib/trainingTestsV2.ts`)
+- Descrizioni a 4 campi (`protocollo`, `serve`, `passi[]`, `inserisci`, `videoUrl?`) rese da `components/TestIstruzioni.tsx`. Batteria incrementale: si può fare un test alla volta.
+- v2 campo: navetta (andata+ritorno = 1), ankle stiffness 20" (video), affondo isometrico a cedimento, towel curls 120"… v2 palestra: serie sub-massimale → massimale stimato (Brzycki) salvato in `valore` + `dettaglio` JSONB (migration 018). Soglie B/A/PRO in rapporto al peso corporeo (squat 1.0/1.3/1.6, RDL 0.9/1.2/1.5, hip thrust 1.0/1.4/1.8, bulgaro 0.4/0.6/0.8, panca 0.6/0.8/1.0, shoulder press 0.4/0.55/0.7, pull-up 1.1/1.3/1.5) — confermate da Ste.
+- **Rombo a 10 punte** (`ROMBO_PUNTE`: palleggi, tiro/passaggio, push, pull, core, gambe, esplosività, velocità, resistenza, fascia) con `fatti/totali` per punta; radar Recharts nell'hub.
+
+### Catalogo v2 (`lib/trainingCatalogV2.generated.ts`, NON modificare a mano)
+Sorgente `docs/training-catalogo-v2.json` → `scripts/build-catalog-v2.py`. 309 esercizi (277 attivi) con qualità, livello minimo, attrezzatura, schema, `finestraPartita` (giorni minimi dalla partita), `soloLivello` (esclusione dura invece di dose ridotta), video YouTube/mp4. Include le sequenze yoga del canale: **yoga recupero** solo dopo partita/molto affaticati (mai prima), **yoga prevenzione** ≥3-4 giorni dalla partita, circuito addominali come core guidato. Video di visione: da decidere. Altri video (punizioni ecc.): fuori catalogo. Mappa canale in `docs/youtube-channel.md`.
+
+### Regole v2 (`lib/trainingRulesV2.ts`)
+Bounds per schema (fisso/interval/amrap/attivazione), `ACCESSORI_CORPO_LIBERO_REPS_MAX=30`, plio intensiva contatti max per livello `B 100 · A 160 · PRO 200` (serie×reps, senza raddoppio per lato), aerobica fino a 6×6', finestre partita per qualità (mobilità/recupero = 1 giorno). **Livello = dose, non accesso**: un esercizio sopra livello è ammesso con serie/quantità ridotte, salvo `soloLivello`. `carico_kg` controllato come % del massimale.
+
+### Blocchi (`lib/trainingBlocks.ts` + `.generated.ts`)
+Ste programma impilando workout con codice di progressione ("Fascia Foundations 1B", "Pliometria B1 - short", "Forza Parte Bassa B3"). I 203 workout Everfit esportati diventano 144 blocchi (131 completi) via `scripts/build-blocks.py`: famiglia, qualità, livello, progressione, variante short, sottovariante, `ruolo: 'portiere'` (P1: preferito per i portieri, non esclusivo), durata stimata, attrezzatura. `blocchiDisponibili()` filtra per livello/attrezzatura/coppia e ammette il gradino sopra se la famiglia non ha varianti al livello dell'atleta (es. Fartlek A1 a un B). Doc: `docs/training-blocchi.md`.
+
+### Planner v2 a blocchi (`lib/trainingPlannerV2.ts`, `PLANNER_V2_PROMPT_VERSION`)
+Default in `/api/training/plan` (v1 item-per-item come fallback). Claude riceve setup, età, ruoli, massimali, blocchi disponibili, tetti di fase e **storico serie**; risponde `{sedute:[{giorno, blocchi:[id]}]}`; il server espande i blocchi (deload scala 0.6), poi valida a livello blocco (durata e sedute per fase, blocchi ammessi) e item (finestre partita, livello, attrezzatura, ordine; `trustBlocks` salta bounds e contatti sugli item nati da blocco). Regola per il portiere (P1 preferito). Test su utente reale: `docs/training-test-utenti.md` (anonimizzato "Utente E.").
+
+### Feedback per serie e auto-regolazione (migration 019)
+Nel recupero il player (`components/TrainingSessionPlayer.tsx`) chiede RPE 1-10 e, se diversi, reps/secondi fatti e kg → `POST /api/training/set-log` (upsert su utente+sessione+esercizio+serie+lato, `skipped: 'migration_019'` se la tabella manca). `lib/trainingAdapt.ts` produce per esercizio un riepilogo SALI/TIENI/SCENDI usato dal planner (v1 e v2), dalla chat e come hint "↑ Ultima volta…" nel player. Tabelle: `training_test_sessions/results`, `training_plans` (append-only con model_id + prompt_version), `training_session_completions`, `training_set_logs`; memoria `profiles.training_goals/training_notes` (migration 016, scritte solo dal server).
+
+### Everfit (strumento di Ste, non dell'app)
+`scripts/everfit-assign.mjs` usa l'API interna dell'app coach (`api-prod3.everfit.io`, header `x-access-token`). Comandi: `history`, `detail`, `libdetail`, `copy` (bulk-copy di assegnazioni esistenti su una data), `add` (da workout di libreria), `update` (fonde i valori delle serie sulle serie esistenti: Everfit risponde 500 se `set_unit` arriva senza `_id`), `delete`. Nelle sessioni remote serve `NODE_USE_ENV_PROXY=1`. Flusso collaudato (settimana 7-13 settembre 2026): copia di prova su data lontana → verifica → delete → assegnazione vera → rilettura completa.
+**Vincoli fissi:** scritture su Everfit SOLO su richiesta esplicita di Ste, mai automatiche; il token NON va mai nel repo (scade ogni ~10 giorni, Ste lo incolla in chat); i dati dei clienti (export, programmi, payload) restano fuori dal repo (`docs/everfit-export/` è in gitignore) e nei documenti i clienti sono anonimizzati. Export libreria (senza clienti): `docs/everfit-workouts.{json,md}`, `docs/everfit-custom-exercises.{json,md}`, `docs/everfit-programs.{json,md}`.
+
+---
+
 ## Pattern e Convenzioni
 
 ### Fetch dati (BFF pattern — mai Notion direttamente dal client)
@@ -1017,9 +1070,11 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 
 - [x] **Fix — Stop messaggi proattivi a utenti inattivi >30gg (agosto 2026):** `lib/activity.ts` (`filterActiveProfiles`, soglia `PROACTIVE_INACTIVITY_DAYS = 30`) applicato ai cron daily-morning e daily-evening (Telegram + push). "Attivo" = almeno uno tra: account <30gg, giorno percorso toccato, check-in, Reset completato, messaggio Telegram SCRITTO DALL'UTENTE (`role='user'` — le pillole del Coach salvate come assistant NON contano), tick azioni. FAIL-OPEN su errori query. Il canale reattivo resta libero: se l'utente riscrive al Coach o riapre l'app, torna automaticamente nel giro. Bypass con `TEST_ONLY_USER_ID`. Response cron include `skippedInactive`.
 
-- [x] **Feature — FYF Training v0 (area riservata, agosto 2026):** binario allenamento tecnico/fisico dietro flag `profiles.training_access` (default FALSE — attivazione solo via SQL, migration 015; invisibile a tutti gli altri). Route `/allenamento/*` con layout separato dalla parte mentale (escluse dal rituale del mattino; tab Palestra attiva; card d'ingresso "Campo" in `/strumenti` solo con flag). Architettura "l'LLM propone, i dati dispongono": catalogo v0 in `lib/trainingCatalog.ts` (catene spinta/tirata/core/lombari/laterali + fascia piede-caviglia + tecnica palleggi/muro/conduzione, test con soglie reali dal File_DB, bounds per fascia B/A/PRO, config AMRAP 50%/40%/70%); motore deterministico `lib/trainingEngine.ts` (scoring 0-110 congelato alla scrittura, placement doppio-gradino, circuito AMRAP calcolato, `validatePlan` = guardiano su catalogo/bounds/partite/tetto-3-sedute/pain-hold, fallback deterministico); planner `lib/trainingPlanner.ts` (claude-sonnet-4-6, le regole della metodologia nel system prompt, output JSON validato con 1 retry → fallback; `trainingChat` = preparatore AI dedicato; `detectPain` → `profiles.training_pain_hold` con sblocco dichiarativo). API `/api/training/{state,test,plan,complete,pain,chat}` (auth + flag; rate limit sulla chat). UI: hub `/allenamento` (rombo radar 7 punte Recharts + piano settimanale + rigenera con richiesta libera), `/allenamento/test` (batteria incrementale + timer AMRAP 20'), `/allenamento/sessione/[giorno]` (player: serie a tap, countdown recupero, video YouTube embed, wake lock, feedback 3-tap), `/allenamento/chat`. Tabelle: training_test_sessions/results, training_plans (append-only con model_id+prompt_version), training_session_completions. Metodologia sorgente: docs/training-recap-progressioni.md.
+- [x] **Feature — FYF Training v0 (area riservata, agosto 2026):** binario allenamento dietro `profiles.training_access` (migration 015), route `/allenamento/*`, catalogo v1 + motore deterministico + planner Claude con validatore. Dettagli nella sezione **FYF Training** sopra.
+- [x] **FYF Training v2 (settembre 2026):** setup atleta con fase stagione (migration 017); batteria test v2 campo + palestra con descrizioni a 4 campi e video (migration 018); rombo a 10 punte; catalogo v2 da JSON (309 esercizi, sequenze yoga e video del canale mappati); regole v2 (livello = dose, finestre partita, plio contatti per livello); libreria di 144 blocchi dai workout Everfit; planner v2 a blocchi (default) con validazione blocco+item; feedback per serie con RPE e auto-regolazione (migration 019, applicata); script Everfit per leggere/assegnare allenamenti (`.claude/settings.json` pre-approva il comando). PR #49-#65.
 
 ### Da fare
+- [ ] **FYF Training — prossimi passi:** (1) Ste prova "Rigenera" nell'hub col planner v2 a blocchi e riporta cosa non torna; (2) review `docs/training-seed/livello-review-2026-09-04.xlsx` — i 68 esercizi A/PRO da marcare "solo questo livello" → `soloLivello` nel JSON catalogo → rigenerare; (3) decisione video di visione (collegarli all'esercizio quando va fatto); (4) fase stagione + carico totale (session-RPE, ACWR) per modulare la settimana; (5) libreria blocchi: aggiungere le progressioni che mancano (blocchi incompleti = esercizi Everfit non mappati, vedi `docs/training-blocchi.md`); (6) settimana Everfit successiva per "Utente E." (dal 14/9) con token nuovo; (7) apertura del modulo ad altri utenti test (flag via SQL) prima di pensare a UI/paywall.
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
 - [x] **Auth chain (giugno 2026):** rimosso fallback `userId || body.userId` da TUTTE le API route (identità solo da `getAuthUser` → 401); frontend convertito a `authFetch()` con Bearer token. Resta opzionale: `middleware.ts` per redirect `/login` a livello routing.
 - [x] **Fase 2 — Env vars:** tutte attive. `TELEGRAM_WEBHOOK_SECRET` configurata su Vercel + webhook registrato con `secret_token` (verificato agosto 2026: bot risponde, quindi env var e secret del webhook combaciano). `RESEND_API_KEY`, `SAFETY_ALERT_EMAIL` → configurate (giugno 2026).
