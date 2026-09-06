@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/everfit-assign.mjs *)",
+      "Bash(EVERFIT_ACCESS_TOKEN=* node scripts/everfit-assign.mjs *)"
+    ]
+  }
+}
