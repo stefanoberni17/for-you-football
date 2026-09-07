@@ -100,6 +100,7 @@ export function expandBlocco(b: Blocco, opt: { scala?: number } = {}): PlanItem[
       blocco_id: b.id,
     };
     if (it.carico_kg !== undefined) item.carico_kg = it.carico_kg;
+    if (it.perLato) item.per_lato = true;
     if (it.nota) item.nota = it.nota;
     return item;
   });

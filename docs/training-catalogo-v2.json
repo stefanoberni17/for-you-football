@@ -70,7 +70,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "stefano",
+  "video": null,
   "fonte": "File_DB",
   "tags": [
    "Forza",
@@ -83,7 +83,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": null
  },
  {
   "nome": "Affondo isometrico",
@@ -102,7 +103,14 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Affondo Isometrico Con Tallone Sollevato",
@@ -123,7 +131,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B ma meno tempo e in progressione"
+  "nota_livello": "anche B ma meno tempo e in progressione",
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "ATG Lunge",
@@ -144,7 +159,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B ma deve aver fatto ATG split squat per un po' di tempo"
+  "nota_livello": "anche B ma deve aver fatto ATG split squat per un po' di tempo",
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "atg split squat",
@@ -168,7 +190,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B con poche reps"
+  "nota_livello": "anche B con poche reps",
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Calf raises",
@@ -177,7 +206,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=De9Dl-RHKD0",
   "fonte": "Everfit + File_DB",
   "tags": [],
@@ -187,7 +216,14 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Polpaccio",
+   "Tendine d'Achille",
+   "Caviglia",
+   "Tibia",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Farmers Walk",
@@ -273,7 +309,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Squat a corpo libero in versione For You: scendi lento (3\") fino in fondo, pausa 1\" in basso con talloni a terra, risali deciso. Braccia avanti per l'equilibrio."
  },
  {
   "nome": "Hip Thrust",
@@ -375,7 +412,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "Anche A ma deve essere in grado di fare sissy assistito"
+  "nota_livello": "Anche A ma deve essere in grado di fare sissy assistito",
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Sissy Squat Slide",
@@ -420,7 +464,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Piedi larghezza spalle, punte leggermente in fuori. Scendi portando il bacino indietro e giù fino a cosce parallele (o più giù se controlli), ginocchia in linea con i piedi, schiena neutra. Spingi dai talloni."
  },
  {
   "nome": "Squat Bulgaro",
@@ -474,7 +519,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "stefano",
+  "video": null,
   "fonte": "File_DB",
   "tags": [
    "Forza",
@@ -486,7 +531,8 @@
   "in_coppia": false,
   "attivo": false,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": null
  },
  {
   "nome": "Wall sit",
@@ -505,7 +551,14 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Nordic",
@@ -548,7 +601,13 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "Anche B ma volume basso"
+  "nota_livello": "Anche B ma volume basso",
+  "sensazioni": [
+   "Femorale",
+   "Gluteo",
+   "Lombare (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "reverse nordic",
@@ -572,7 +631,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B ma prima in gradi di fare reverse nordic in isometria almeno 30 sec"
+  "nota_livello": "anche B ma prima in gradi di fare reverse nordic in isometria almeno 30 sec",
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Glute bridge ad una gamba",
@@ -593,7 +659,13 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B ma deve aver fatto glute bridge a 2 gambe per tempo"
+  "nota_livello": "anche B ma deve aver fatto glute bridge a 2 gambe per tempo",
+  "sensazioni": [
+   "Femorale",
+   "Gluteo",
+   "Lombare (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Rdl Progression",
@@ -634,7 +706,13 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche b ma poco peso"
+  "nota_livello": "anche b ma poco peso",
+  "sensazioni": [
+   "Femorale",
+   "Gluteo",
+   "Lombare (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Knee Raises (Con Barra Dip)",
@@ -770,7 +848,7 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=i3Z3LcUUYLk&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=9",
   "fonte": "Everfit",
   "tags": [],
@@ -943,13 +1021,13 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=9YZqQFtfcKo",
   "fonte": "Everfit",
   "tags": [],
   "azione": "importa",
   "nome_everfit": "Pull Up Around The World",
-  "note": null,
+  "note": "Per lato: destro = giro in senso orario, sinistro = giro in senso antiorario.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
@@ -1040,7 +1118,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "stefano",
+  "video": null,
   "fonte": "File_DB",
   "tags": [],
   "azione": "importa",
@@ -1049,7 +1127,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": null
  },
  {
   "nome": "Piegamenti Declinati",
@@ -1127,7 +1206,8 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": false
+  "solo_livello": false,
+  "descrizione": "Piegamento con le mani più larghe delle spalle: scendi spostando il peso su un braccio, l'altro resta quasi teso di lato (come un arco). Risali e alterna il lato alla ripetizione successiva. Corpo in linea."
  },
  {
   "nome": "One Arm Push Up",
@@ -1196,7 +1276,8 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core",
+  "descrizione": "Piegamento a un braccio con la mano d'appoggio su un rialzo (panca, gradino). Piedi larghi, mano libera dietro la schiena, corpo rigido. Scendi controllato e spingi. Alterna i lati come indicato."
  },
  {
   "nome": "One Arm Pushup",
@@ -1235,7 +1316,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Appeso alla sbarra, braccia tese: porta le ginocchia al petto arrotolando il bacino, scendi lento senza dondolare. Spalle attive."
  },
  {
   "nome": "copenaghen plank",
@@ -1244,7 +1326,7 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=9pLQwT8RuUc",
   "fonte": "Everfit + File_DB",
   "tags": [],
@@ -1256,7 +1338,13 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "riduci tempo"
+  "nota_livello": "riduci tempo",
+  "sensazioni": [
+   "Adduttori",
+   "Inguine (fastidio)",
+   "Obliqui",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Holllow Hold",
@@ -1297,7 +1385,13 @@
   "in_coppia": false,
   "attivo": false,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Addome",
+   "Lombare (fastidio)",
+   "Spalle",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Plank",
@@ -1316,7 +1410,13 @@
   "in_coppia": false,
   "attivo": false,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Addome",
+   "Lombare (fastidio)",
+   "Spalle",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Plank Su Palla",
@@ -1488,7 +1588,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=j-0iYgFI6pM&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=21",
   "fonte": "Everfit",
   "tags": [],
@@ -1575,7 +1675,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=zZwe3IYJT2w&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=19",
   "fonte": "Everfit",
   "tags": [],
@@ -1594,7 +1694,7 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=mQ0S_nhGzS4",
   "fonte": "Everfit",
   "tags": [],
@@ -1614,7 +1714,7 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=TywyOJ9BYUs",
   "fonte": "Everfit",
   "tags": [],
@@ -1634,7 +1734,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=TXOv6980Aqw&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=4",
   "fonte": "Everfit",
   "tags": [],
@@ -1787,7 +1887,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=v4c7YJR85D0",
   "fonte": "Everfit",
   "tags": [
@@ -1877,7 +1977,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=rleHrcL6teA",
   "fonte": "Everfit + File_DB",
   "tags": [
@@ -1889,7 +1989,14 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Polpaccio",
+   "Tendine d'Achille",
+   "Caviglia",
+   "Tibia",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Spinta frontale corsa - skip - fascia",
@@ -1999,7 +2106,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche",
+  "sensazioni": [
+   "Polpaccio",
+   "Tendine d'Achille",
+   "Caviglia",
+   "Tibia",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Pogo Jumps progression (Ankle Stiffness )",
@@ -2045,7 +2159,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": true,
-  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche",
+  "sensazioni": [
+   "Polpaccio",
+   "Tendine d'Achille",
+   "Caviglia",
+   "Tibia",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Jump 2 Up 1 Down",
@@ -2087,7 +2208,8 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B"
+  "nota_livello": "anche B",
+  "descrizione": "Dallo squat a metà altezza salta il più in alto possibile, braccia che accompagnano. Atterra morbido sugli avampiedi assorbendo con le ginocchia, riprendi la posizione e ripeti."
  },
  {
   "nome": "Drop Jump",
@@ -2363,7 +2485,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtu.be/VTWEiS8eRJk?si=7IxiP0k7W_-KD_Yp",
   "fonte": "Everfit",
   "tags": [
@@ -2583,7 +2705,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Scatto massimale sulla distanza indicata, partenza da fermo o lanciata come indicato. Recupero completo tra una ripetizione e l'altra: la qualità dello sprint conta più della quantità."
  },
  {
   "nome": "Sprint con palla da fermo",
@@ -2699,7 +2822,8 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B ma deve avere gia una base di pliometria e velocità"
+  "nota_livello": "anche B ma deve avere gia una base di pliometria e velocità",
+  "descrizione": "Da fermo, tre balzi consecutivi in avanti a due piedi (o come indicato), poi all'atterraggio del terzo scatta subito per la distanza indicata. Atterraggi morbidi, spinta massima, recupero completo."
  },
  {
   "nome": "Esercizio resistenza e tecnica funzionale",
@@ -2743,7 +2867,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Corsa a ritmo variato: alterna tratti veloci e tratti lenti secondo i tempi indicati nelle serie (es. 1' forte / 1' piano). Nei tratti forti resta sotto lo sprint, nei tratti piano non fermarti."
  },
  {
   "nome": "Ripetute",
@@ -2764,7 +2889,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Corsa a ritmo forte sulla distanza o il tempo indicato, poi recupero come indicato. Ritmo uniforme dall'inizio alla fine della ripetuta, non uno sprint."
  },
  {
   "nome": "Allungo",
@@ -2855,7 +2981,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Allungo in salita: corsa progressiva sulla distanza indicata, senza arrivare allo sprint. Torna in discesa camminando."
  },
  {
   "nome": "Salite Sprint",
@@ -2877,7 +3004,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Sprint in salita sulla distanza indicata: partenza da fermo, spinta massima, busto leggermente avanti. Torna in discesa camminando: il recupero è parte dell'esercizio."
  },
  {
   "nome": "Circuito Propriocezione",
@@ -2908,7 +3036,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=1_TtKlvDeqk",
   "fonte": "Everfit + File_DB",
   "tags": [
@@ -2920,7 +3048,15 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Pianta del piede",
+   "Dita",
+   "Polpaccio",
+   "Tibia",
+   "Crampo",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Toes Up Down 2",
@@ -2951,7 +3087,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=qW8YXLmdke0",
   "fonte": "Everfit + File_DB",
   "tags": [
@@ -2963,7 +3099,15 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Pianta del piede",
+   "Dita",
+   "Polpaccio",
+   "Tibia",
+   "Crampo",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Equilibrio 1 pallina tennis fascia tecnica",
@@ -2972,7 +3116,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=CfVvAUj_Fv4",
   "fonte": "Everfit",
   "tags": [
@@ -2995,7 +3139,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=DRoBrKDueh4",
   "fonte": "Everfit",
   "tags": [
@@ -3018,7 +3162,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=8NhZcJNOma4",
   "fonte": "Everfit",
   "tags": [
@@ -3041,7 +3185,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=Wt0Dpkzk8E0",
   "fonte": "Everfit",
   "tags": [
@@ -3063,7 +3207,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=nvENLHoWSR4",
   "fonte": "Everfit",
   "tags": [
@@ -3077,7 +3221,14 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Quadricipite",
+   "Gluteo",
+   "Anca",
+   "Ginocchio (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Fascia Towel figure 8",
@@ -3086,7 +3237,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=V805vZi3rLs",
   "fonte": "Everfit",
   "tags": [
@@ -3190,7 +3341,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Palleggi liberi con tutte le superfici: piede, coscia, testa. Tieni la palla in aria senza schemi, cambiando superficie quando vuoi. Serve come attivazione e per il controllo fine: ritmo tranquillo, testa alta."
  },
  {
   "nome": "Passaggi in equilibrio su 1 piede - visione headball",
@@ -3266,7 +3418,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=_mkVRSQ9_Qw",
   "fonte": "Everfit + File_DB",
   "tags": [
@@ -3289,7 +3441,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=pNlUIME0BEY",
   "fonte": "Everfit + File_DB",
   "tags": [
@@ -3313,7 +3465,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=fTr5Gj6KgUc",
   "fonte": "Everfit + File_DB",
   "tags": [
@@ -3369,7 +3521,14 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Polpaccio",
+   "Tendine d'Achille",
+   "Caviglia",
+   "Tibia",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Towel Curls - Tallone sollevato",
@@ -3440,7 +3599,7 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtu.be/o8MDW9RPZhQ",
   "fonte": "Everfit",
   "tags": [
@@ -3503,7 +3662,13 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": false
+  "solo_livello": false,
+  "sensazioni": [
+   "Femorale",
+   "Gluteo",
+   "Lombare (fastidio)",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Protezione palla figura 8 - fascia",
@@ -3512,7 +3677,7 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1",
   "fonte": "Everfit",
   "tags": [
@@ -3632,7 +3797,7 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=9HcNXIItrps?si=xU-NdxHMAh1wBAeG",
   "fonte": "Everfit",
   "tags": [
@@ -3717,7 +3882,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Rigioca al muro di prima con la superficie che preferisci (interno, collo, esterno). Un tocco solo, palla viva, entrambi i piedi."
  },
  {
   "nome": "Palleggi al muro 1 tocco solo interno",
@@ -3739,7 +3905,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Rigioca al muro di prima d'interno, palla che resta bassa, senza controllo. Ritmo continuo per il tempo indicato; alterna i piedi."
  },
  {
   "nome": "Palleggi al muro 2 tocchi",
@@ -3761,7 +3928,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Contro il muro a 2-3 metri: al ritorno un tocco di controllo e uno di rimando, tenendo la palla in aria. Libera scelta di superficie; alterna i piedi."
  },
  {
   "nome": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
@@ -3785,7 +3953,8 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "descrizione": "Contro il muro a 2-3 metri: controlla di esterno con il primo tocco e rimanda di collo con il secondo, palla sempre in aria. Cambia piede a metà tempo."
  },
  {
   "nome": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
@@ -3808,7 +3977,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Contro il muro a 2-3 metri: al ritorno controlla la palla d'interno con un tocco, poi rimandala al muro di collo con il secondo tocco. Ritmo costante, palla sempre in aria. Cambia piede a metà tempo."
  },
  {
   "nome": "Palleggi al muro liberi freestyle",
@@ -3831,7 +4001,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Davanti a un muro a 1-2 metri: calcia la palla contro il muro e controllala al ritorno come preferisci (di prima, con stop, di collo o d'interno). Nessuno schema: varia tocco e piede, tieni la palla viva."
  },
  {
   "nome": "Palleggi coscia e collo",
@@ -3853,7 +4024,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Palleggia alternando un tocco di coscia e uno di collo, con lo stesso lato e poi con l'altro. Coscia parallela a terra al contatto, palla bassa."
  },
  {
   "nome": "Palleggi Freestyle 3 conetti",
@@ -3891,7 +4063,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Palleggi liberi; ogni 5-6 tocchi calcia la palla alta (3-4 metri) e riprendi il palleggio al ritorno con un controllo morbido. Allena il controllo della palla che scende."
  },
  {
   "nome": "Palleggi solo Collo",
@@ -3913,7 +4086,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Palleggia solo di collo pieno, alternando i piedi liberamente. Palla bassa e ritmica, punta del piede leggermente verso l'alto. Se cade, riprendi da terra senza fermare il tempo."
  },
  {
   "nome": "Palleggi solo collo 3 tocchi alternati - TECNICA",
@@ -3935,7 +4109,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Palleggia solo di collo pieno alternando i piedi ogni 3 tocchi (3 destro, 3 sinistro). Palla bassa, caviglia ferma, ginocchio leggermente piegato. Se cade, riprendi subito."
  },
  {
   "nome": "Palleggi solo interno - Tecnica",
@@ -3958,7 +4133,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Palleggia solo con l'interno del piede, alternando i piedi. Il piede ruota verso l'esterno al contatto; tieni la palla bassa e vicina."
  },
  {
   "nome": "Palleggi solo interno 3 tocchi alternati - TECNICA",
@@ -4003,7 +4179,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Palleggia con un solo piede (collo pieno) per il tempo indicato, poi cambia piede. L'altro piede resta a terra, ginocchio morbido, busto sopra la palla."
  },
  {
   "nome": "Palleggi sotto al ginocchio - Tecnica",
@@ -4059,7 +4236,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "Passaggi al muro ravvicinati interno esterno - tecnica di base #football https://youtube.com/watch?v=I4VWFgi-MZA",
   "fonte": "Everfit",
   "tags": [],
@@ -4078,7 +4255,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "Passaggi al muro ravvicinati solo collo - tecnica di base #football https://youtube.com/watch?v=1e_cy9gIlko",
   "fonte": "Everfit",
   "tags": [],
@@ -4097,7 +4274,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit",
   "tags": [
@@ -4112,7 +4289,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Quattro coni a quadrato (3-4 m). Conduci la palla attorno al box con tocchi corti, a ogni lato cambia superficie (interno, esterno, suola). All'uscita dal box passaggio preciso al muro o al compagno, riprendi e riparti."
  },
  {
   "nome": "Passaggi a 10mt alternati, primo tocco suola - Tecnica",
@@ -4135,7 +4313,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Passaggi rasoterra a 10 metri (muro o compagno): al ritorno primo tocco con la suola per fermare e orientare, poi passaggio. Alterna il piede a ogni ripetizione."
  },
  {
   "nome": "Passaggi al muro - controllo alzando palla",
@@ -4144,7 +4323,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "Passaggi al muro controllo alzando palla - tecnica di base #tutorial #football https://youtube.com/watch?v=4KuHcz9RXfg",
   "fonte": "Everfit",
   "tags": [],
@@ -4186,7 +4365,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "Passaggi al muro controllo con finta esterno - tecnica di base #tutorial #football https://youtube.com/watch?v=uaT93uaZr3Y",
   "fonte": "Everfit",
   "tags": [],
@@ -4224,7 +4403,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "Passaggi al muro controllo orientato interno - tecnica di base #tutorial #football https://youtube.com/watch?v=508Oe27qu2c",
   "fonte": "Everfit",
   "tags": [],
@@ -4243,7 +4422,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "Passaggi al muro controllo con sombrero - tecnica di base #tutorial #football https://youtube.com/watch?v=XFGiqqid-yo",
   "fonte": "Everfit",
   "tags": [],
@@ -4276,7 +4455,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare. Alterna i lati e i piedi."
  },
  {
   "nome": "Passaggi al muro 1 tocco collo - Tecnica",
@@ -4299,7 +4479,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Passaggio al muro e rigiocata di prima di collo, senza controllo. Palla bassa e tesa, caviglia bloccata. Cambia piede a metà tempo."
  },
  {
   "nome": "Passaggi al muro 1 tocco interno - Tecnica",
@@ -4308,7 +4489,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit",
   "tags": [
@@ -4322,7 +4503,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Passaggio rasoterra al muro e rigiocata di prima d'interno, senza controllo. Distanza 2-4 metri, piede d'appoggio accanto alla palla. Cambia piede a metà tempo."
  },
  {
   "nome": "Passaggi al muro 2 tocchi - Controllo di interno a chiudere",
@@ -4379,7 +4561,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "Passaggi al muro 2 tocchi controllo esterno passaggio interno - tecnica di base #tutorial #football https://youtube.com/watch?v=I0xp9ZXWmUc",
   "fonte": "Everfit",
   "tags": [
@@ -4417,7 +4599,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Passaggio rasoterra al muro; al ritorno stop di esterno (primo tocco), poi rigioca di collo (secondo tocco). Cambia piede a metà tempo."
  },
  {
   "nome": "Passaggi al muro 5-10mt alto-basso",
@@ -4441,7 +4624,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "A 5-10 metri dal muro: alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria). Controlla il ritorno con un tocco orientato e rigioca. Entrambi i piedi."
  },
  {
   "nome": "Passaggi al muro controllo 180gradi - TECNICA",
@@ -4486,7 +4670,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Passaggi al muro con un vincolo che disturba: distanza corta, palla veloce, muro irregolare o un solo tocco. Lo scopo è reagire a ritorni imprevedibili: accetta gli errori e resta in controllo."
  },
  {
   "nome": "Passaggi collo - visione headball",
@@ -4641,7 +4826,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Passaggi contro il muro a distanza libera (3-8 m), rasoterra, con controllo e rimando. Varia piede, superficie e distanza senza schema: è la base di tocco."
  },
  {
   "nome": "Passaggi sinistra/avanti/destra con video - visione headball",
@@ -4716,7 +4902,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=BfB2ubvweSg?si=nnqaBA-eZ6eqX4I9",
   "fonte": "Everfit",
   "tags": [
@@ -4764,7 +4950,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=BfB2ubvweSg?si=nnqaBA-eZ6eqX4I9",
   "fonte": "Everfit",
   "tags": [
@@ -4859,7 +5045,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit",
   "tags": [
@@ -4873,7 +5059,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Calcia la palla in alto davanti a te, lasciala rimbalzare (o di prima, se indicato) e calcia in porta al volo o dopo il rimbalzo. Alterna i piedi. Cura il contatto pulito con la palla più della potenza."
  },
  {
   "nome": "tiri - rigore al palo",
@@ -4882,7 +5069,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit",
   "tags": [
@@ -4895,7 +5082,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Dal dischetto (o 11 m), mira al palo: tiro d'interno o di collo con l'obiettivo di colpire il palo o passargli vicino. Alterna palo destro e sinistro e i piedi."
  },
  {
   "nome": "Tiri - rigore alla traversa",
@@ -4904,7 +5092,7 @@
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit",
   "tags": [
@@ -4918,7 +5106,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Dal dischetto (o 11 m), mira alla traversa: tiro di collo con palla che sale. Cerca il contatto pulito sotto la palla. Alterna i piedi."
  },
  {
   "nome": "tiri - tecnica di tiro",
@@ -4969,7 +5158,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtu.be/CPR99KAUm-4?si=alsjAoz5R5j9ESf_",
   "fonte": "Everfit",
   "tags": [
@@ -4993,7 +5182,7 @@
   "difficolta": 3,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtu.be/YGTHUBKF5hM?si=acfz7OnSl73G1BES",
   "fonte": "Everfit",
   "tags": [
@@ -5140,7 +5329,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Corsa progressiva sulla distanza indicata: parti al 60% e arriva all'80-90% negli ultimi metri, senza mai sprintare al massimo. Torna camminando. Prepara gambe e tendini allo sprint."
  },
  {
   "nome": "Calf Foam Roll",
@@ -5205,7 +5395,16 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Pallina da tennis sotto la pianta del piede, in piedi o seduto. Rotola lentamente dal tallone alle dita e sui bordi, fermandoti 10-20\" nei punti che tirano. Pressione decisa ma mai dolore acuto. Poi cambia piede.",
+  "sensazioni": [
+   "Pianta del piede",
+   "Dita",
+   "Polpaccio",
+   "Tibia",
+   "Crampo",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Fascia Standing Meditation",
@@ -5224,7 +5423,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "In piedi, piedi larghezza bacino, ginocchia morbide, braccia rilassate. Occhi chiusi o sguardo basso: senti il peso sui piedi e respira col naso per il tempo indicato. Prepara il piede e la postura prima della fascia."
  },
  {
   "nome": "Sequenza Yoga - Prevenzione Pubalgia e rinforzo",
@@ -5456,7 +5656,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtube.com/watch?v=YAF8Zi6HLi8",
   "fonte": "Everfit",
   "tags": [
@@ -5471,7 +5671,14 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "sensazioni": [
+   "Polpaccio",
+   "Tendine d'Achille",
+   "Caviglia",
+   "Tibia",
+   "Poco o niente"
+  ]
  },
  {
   "nome": "Test Max Pull up",
@@ -5762,7 +5969,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F39-F.mp4",
+  "video": null,
   "fonte": "Everfit",
   "tags": [
    "core",
@@ -5774,7 +5981,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "bear crawl"
+  "sottogruppo": "bear crawl",
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Bear Crawl Lateral",
@@ -5784,7 +5992,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F38-F.mp4",
+  "video": null,
   "fonte": "Everfit",
   "tags": [
    "core",
@@ -5796,7 +6004,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "bear crawl"
+  "sottogruppo": "bear crawl",
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Isometric Bear Crawl",
@@ -5806,7 +6015,7 @@
   "livello_min": "B",
   "unita": "secondi",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F37-F.mp4",
+  "video": null,
   "fonte": "Everfit",
   "tags": [
    "core"
@@ -5817,7 +6026,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "bear crawl"
+  "sottogruppo": "bear crawl",
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Hip External Rotation Skip",
@@ -5850,7 +6060,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F13-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -5859,7 +6069,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Type Writer Push Up",
@@ -5964,7 +6175,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F9-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -5973,7 +6184,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Stacco da terra con bilanciere",
@@ -5983,7 +6195,7 @@
   "livello_min": "A",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F65-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -5994,7 +6206,8 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": true,
-  "nota_livello": "solo con tecnica dello stacco già appresa; mai come primo esercizio con bilanciere"
+  "nota_livello": "solo con tecnica dello stacco già appresa; mai come primo esercizio con bilanciere",
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Leg Press",
@@ -6004,7 +6217,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F30-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6013,7 +6226,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Dumbbell Lateral Raise",
@@ -6023,7 +6237,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F17-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6032,7 +6246,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Bodyweight Squat",
@@ -6042,7 +6257,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F60-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6051,7 +6266,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Body Weight Bulgarian Split Squat",
@@ -6175,7 +6391,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F49B-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6184,7 +6400,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Cable Reverse Crunch",
@@ -6203,7 +6420,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Ai cavi bassi con la cavigliera (o elastico): da supino, ginocchia piegate, porta il bacino verso il petto contro la resistenza e torna controllando. Spinta con l'addome, non con le gambe."
  },
  {
   "nome": "Hanging Oblique Knee Raise",
@@ -6232,7 +6450,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F51-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6241,7 +6459,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Full Moon Abs",
@@ -6260,7 +6479,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "Da supino, gambe tese unite sollevate: disegna un cerchio ampio con i piedi (una luna piena) mantenendo la zona lombare a terra. Un giro in un senso, il successivo nell'altro."
  },
  {
   "nome": "Sit-Up",
@@ -6289,7 +6509,7 @@
   "livello_min": "B",
   "unita": "secondi",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F57-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6298,7 +6518,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Arm Climb (High to Forearm Plank)",
@@ -6308,7 +6529,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F3-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6317,7 +6538,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Cross Body Mountain Climbers",
@@ -6327,7 +6549,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F12-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6336,7 +6558,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Incline Mountain Climbers",
@@ -6346,7 +6569,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F27-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6355,7 +6578,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Lower Back Curl",
@@ -6374,7 +6598,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "descrizione": "A pancia in giù, mani alle tempie o lungo i fianchi: solleva il busto da terra contraendo i lombari, pausa in alto, scendi lento. Sguardo a terra, collo neutro."
  },
  {
   "nome": "Medicine Ball Russian Twist",
@@ -6384,7 +6609,7 @@
   "livello_min": "B",
   "unita": "reps",
   "per_lato": false,
-  "video": "https://everfit-exercise-library.s3-us-west-1.amazonaws.com/videos-converted/F32-F.mp4",
+  "video": null,
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
@@ -6393,7 +6618,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
   "nome": "Medicine Ball Lateral Throw",
@@ -6459,7 +6685,7 @@
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=n4e5ZU58Snk",
   "fonte": "Everfit library",
   "tags": [],
@@ -6497,7 +6723,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://www.youtube.com/watch?v=BZEgqilQ044",
   "fonte": "Everfit library",
   "tags": [],
@@ -6516,7 +6742,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit library",
   "tags": [],
@@ -6526,7 +6752,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rolling"
+  "sottogruppo": "rolling",
+  "descrizione": "Polpaccio sul rullo, gamba tesa, l'altra sopra per aumentare la pressione. Rotola lento dal tendine d'Achille al ginocchio, fermandoti nei punti sensibili. Poi cambia gamba."
  },
  {
   "nome": "Peroneals Foam Roll",
@@ -6535,7 +6762,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit library",
   "tags": [],
@@ -6545,7 +6772,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rolling"
+  "sottogruppo": "rolling",
+  "descrizione": "Lato esterno della gamba sul rullo (tra caviglia e ginocchio), di fianco. Rotola lento su tutta la lunghezza, fermandoti dove tira. Poi cambia gamba."
  },
  {
   "nome": "Hamstring Foam Roll",
@@ -6554,7 +6782,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit library",
   "tags": [],
@@ -6564,7 +6792,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rolling"
+  "sottogruppo": "rolling",
+  "descrizione": "Posteriore della coscia sul rullo, seduto con le mani dietro. Rotola dal ginocchio al gluteo, gamba rilassata, pause nei punti sensibili. Poi cambia gamba."
  },
  {
   "nome": "Rhomboids Foam Roll",
@@ -6573,7 +6802,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit library",
   "tags": [],
@@ -6583,7 +6812,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rolling"
+  "sottogruppo": "rolling",
+  "descrizione": "Rullo sotto la parte alta della schiena, braccia incrociate al petto per aprire le scapole. Rotola tra le scapole per il tempo indicato, senza scendere sui lombari."
  },
  {
   "nome": "Quadriceps Foam Roll",
@@ -6592,7 +6822,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit library",
   "tags": [],
@@ -6602,7 +6832,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rolling"
+  "sottogruppo": "rolling",
+  "descrizione": "A pancia in giù sugli avambracci, quadricipite sul rullo. Rotola dal ginocchio all'anca, gamba rilassata, pause nei punti sensibili. Poi cambia gamba."
  },
  {
   "nome": "Piriformis Foam Roll",
@@ -6611,7 +6842,7 @@
   "difficolta": 1,
   "livello_min": "B",
   "unita": "secondi",
-  "per_lato": false,
+  "per_lato": true,
   "video": null,
   "fonte": "Everfit library",
   "tags": [],
@@ -6621,6 +6852,7 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rolling"
+  "sottogruppo": "rolling",
+  "descrizione": "Seduto sul rullo, caviglia sul ginocchio opposto, peso spostato sul gluteo della gamba incrociata. Piccoli movimenti sul punto profondo del gluteo. Poi cambia lato."
  }
 ]

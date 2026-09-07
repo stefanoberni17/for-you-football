@@ -30,6 +30,7 @@ export interface SetLogRow {
   carico_previsto_kg: number | null;
   carico_fatto_kg: number | null;
   rpe: number | null;
+  sensazione?: string | null;   // migration 020: "dove l'hai sentito?" (a fine esercizio)
   created_at: string;
 }
 
@@ -51,6 +52,8 @@ export interface RiepilogoEsercizio {
   e1rmKg: number | null;          // stima massimale da carico + reps + RIR (solo con carico)
   suggerimento: Suggerimento;
   motivo: string;                 // 1 riga per il planner/preparatore
+  sensazioni: Record<string, number>; // "dove l'hai sentito" → occorrenze (ultime 4 settimane)
+  fastidio: string | null;        // sensazione con "(fastidio)" scelta ≥2 volte → segnale per planner/chat
 }
 
 const media = (v: number[]) => (v.length ? Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 10) / 10 : 0);
@@ -125,10 +128,13 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
       motivo = `ultima seduta RPE ${ultimaSeduta.rpeMedio}: giusto così`;
     }
 
+    const sensazioni: Record<string, number> = {};
+    for (const r of rows) if (r.sensazione) sensazioni[r.sensazione] = (sensazioni[r.sensazione] ?? 0) + 1;
+    const fastidio = Object.entries(sensazioni).find(([k, n]) => /fastidio|crampo/i.test(k) && n >= 2)?.[0] ?? null;
     out.push({
       esercizioId, sedute: sessions.length, serieTotali: rows.length,
       ultimaData: last[0].created_at.slice(0, 10),
-      ultimaSeduta, rpeMedio2Sedute, e1rmKg, suggerimento, motivo,
+      ultimaSeduta, rpeMedio2Sedute, e1rmKg, suggerimento, motivo, sensazioni, fastidio,
     });
   }
   return out.sort((a, b) => b.ultimaData.localeCompare(a.ultimaData));
@@ -146,7 +152,9 @@ export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unita: strin
     : r.suggerimento === 'scendi'
       ? (u.caricoKg ? 'SCENDI −5-10%' : 'SCENDI −1-2 reps/serie o gradino precedente')
       : 'TIENI';
-  return `${nome} [${r.esercizioId}]: ${r.ultimaData} ${u.serie}×${fmtQ(u.quantitaFatta, unita)} (previsto ${fmtQ(u.quantitaPrevista, unita)})${carico}${rpe} · ${r.sedute} sedute → ${azione} (${r.motivo})`;
+  const sens = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, n]) => `${k}${n > 1 ? ` ×${n}` : ''}`).join(', ');
+  const sensTxt = sens ? ` · sentito: ${sens}${r.fastidio ? ` ⚠️ ${r.fastidio.toUpperCase()} ricorrente` : ''}` : '';
+  return `${nome} [${r.esercizioId}]: ${r.ultimaData} ${u.serie}×${fmtQ(u.quantitaFatta, unita)} (previsto ${fmtQ(u.quantitaPrevista, unita)})${carico}${rpe} · ${r.sedute} sedute → ${azione} (${r.motivo})${sensTxt}`;
 }
 
 /** Suggerimento breve per la UI della seduta ("Ultima volta: …"). */
@@ -156,5 +164,7 @@ export function riepilogoUi(r: RiepilogoEsercizio, unita: string): { testo: stri
   if (u.caricoKg) parti.push(`${u.caricoKg} kg`);
   if (u.rpeMedio != null) parti.push(`RPE ${u.rpeMedio}`);
   const hint = r.suggerimento === 'sali' ? 'oggi prova a salire un po\'' : r.suggerimento === 'scendi' ? 'oggi vai più leggero' : 'tieni così';
+  const top = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1])[0];
+  if (top) parti.push(`sentito: ${top[0]}`);
   return { testo: `Ultima volta: ${parti.join(' · ')} → ${hint}`, suggerimento: r.suggerimento };
 }

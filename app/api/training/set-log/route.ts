@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     };
     const quantitaPrevista = num(b.quantita_prevista, 10000);
     const rpe = b.rpe == null ? null : Number(b.rpe);
+    const sensazione = typeof b.sensazione === 'string' && b.sensazione.trim() ? b.sensazione.trim().slice(0, 40) : null;
 
     if (!planId || !Number.isInteger(giorno) || giorno < 1 || giorno > 7 || !esercizioId
       || !Number.isInteger(serie) || serie < 1 || serie > 30 || quantitaPrevista === null
@@ -53,8 +54,12 @@ export async function POST(request: NextRequest) {
       carico_fatto_kg: num(b.carico_fatto_kg, 500),
       rpe,
     };
-    const { error } = await supabaseAdmin.from('training_set_logs')
-      .upsert(row, { onConflict: 'user_id,session_key,esercizio_id,serie,lato' });
+    let { error } = await supabaseAdmin.from('training_set_logs')
+      .upsert(sensazione ? { ...row, sensazione } : row, { onConflict: 'user_id,session_key,esercizio_id,serie,lato' });
+    // Migration 020 non applicata: salva senza la sensazione
+    if (error && sensazione && /sensazione/.test(error.message)) {
+      ({ error } = await supabaseAdmin.from('training_set_logs').upsert(row, { onConflict: 'user_id,session_key,esercizio_id,serie,lato' }));
+    }
     if (error) {
       // Migration 019 non applicata: non rompere la seduta
       if (/training_set_logs/.test(error.message)) return NextResponse.json({ success: false, skipped: 'migration_019' });

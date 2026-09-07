@@ -11,6 +11,7 @@ export interface EsercizioView {
   nome: string;
   unita: string;          // reps | secondi | minuti | metri
   perLato: boolean;
+  sensazioni?: string[];  // opzioni "dove l'hai sentito?" a fine esercizio
   videoUrl?: string;
   videoMp4: boolean;      // true = file .mp4 diretto (libreria Everfit), non YouTube
   descrizione?: string;
@@ -26,7 +27,7 @@ export function esercizioAny(id: string): EsercizioView | undefined {
   const v2 = esercizioV2ById(id);
   if (v2) {
     const mp4 = !!v2.videoUrl && /\.mp4(\?|$)/i.test(v2.videoUrl);
-    return { id: v2.id, nome: v2.nome, unita: v2.unita, perLato: v2.perLato === true, videoUrl: v2.videoUrl, videoMp4: mp4, descrizione: v2.note, v2: true };
+    return { id: v2.id, nome: v2.nome, unita: v2.unita, perLato: v2.perLato === true, videoUrl: v2.videoUrl, videoMp4: mp4, descrizione: v2.descrizione ?? v2.note, note: v2.descrizione ? v2.note : undefined, sensazioni: v2.sensazioni, v2: true };
   }
   return undefined;
 }
