@@ -1,12 +1,12 @@
 # Libreria blocchi — report generazione
 
-203 workout Everfit → 144 blocchi (titoli distinti). Completi: 131 · incompleti: 13.
+203 workout Everfit → 144 blocchi (titoli distinti). Completi: 134 · incompleti: 10.
 
 Rigenerare: `python3 scripts/build-catalog-v2.py && python3 scripts/build-blocks.py`.
 
 ## Esercizi non mappati (occorrenze in blocchi)
 
-Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - visione headball (7) · Passaggi SX/CC/DX interno/collo/esterno - visione headball (7) · Passaggi esterno - visione headball (6) · Passaggi interno - visione headball (6) · Passaggi SX/Centro/DX - visione headball (4) · Passaggi sinistra/avanti/destra con video - visione headball (4) · Passaggi interno/collo/esterno con video - visione headball (3) · Box Dribbling - headball (1) · Barbell Deadlift (1) · Passaggi al muro 1 tocco interno 1 piede - Tecnica (1) · Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica (1) · Passaggi al muro solo collo di prima - Tecnica (1) · Tecnica a 2 - Palla bassa e palla alta (1) · Tecnica a 2 - Palleggio con 2 palle (1) · passaggi dx/sx sinistra/avanti/destra con video - visione headball (1) · Yoga prevenzione e forza adduttori (1)
+Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - visione headball (7) · Passaggi SX/CC/DX interno/collo/esterno - visione headball (7) · Passaggi esterno - visione headball (6) · Passaggi interno - visione headball (6) · Passaggi SX/Centro/DX - visione headball (4) · Passaggi sinistra/avanti/destra con video - visione headball (4) · Passaggi interno/collo/esterno con video - visione headball (3) · Box Dribbling - headball (1) · Barbell Deadlift (1) · passaggi dx/sx sinistra/avanti/destra con video - visione headball (1)
 
 ## Blocchi
 
@@ -79,7 +79,7 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `metabolico-a1-soft` | Metabolico A1 - SOFT | resistenza-metabolico | A | 1 | short | 21 | campo | ✓ |  |
 | `metabolico-a2` | Metabolico A2 | resistenza-metabolico | A | 2 | full | 39 | campo | ✓ |  |
 | `metabolico-b1` | Metabolico B1 | resistenza-metabolico | B | 1 | full | 25 | campo | ✓ |  |
-| `passaggi-al-muro-tecnica-di-base` | Passaggi al Muro - Tecnica di base | tecnica-passaggi | — | — | full | 23 | campo | ✗ | Passaggi al muro 1 tocco interno 1 piede - Tecnica, Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica, Passaggi al muro solo collo di prima - Tecnica |
+| `passaggi-al-muro-tecnica-di-base` | Passaggi al Muro - Tecnica di base | tecnica-passaggi | — | — | full | 23 | campo | ✓ |  |
 | `passaggi-al-muro-tecnica-visione-a1` | passaggi al muro - Tecnica Visione A1 | tecnica-visione | A | 1 | full | 43 | campo | ✓ |  |
 | `pliometria-a1` | pliometria A1 | pliometria-intensiva | A | 1 | full | 49 | — | ✓ |  |
 | `pliometria-b1` | Pliometria B1 | pliometria-intensiva | B | 1 | full | 24 | — | ✓ |  |
@@ -117,7 +117,7 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `tecnica-freestyle-a1` | Tecnica Freestyle A1 | tecnica-palleggi | A | 1 | full | 59 | campo | ✓ |  |
 | `tecnica-freestyle-a2` | Tecnica Freestyle A2 | tecnica-palleggi | A | 2 | full | 54 | campo | ✓ |  |
 | `tecnica-freestyle-pro1` | Tecnica Freestyle PRO1 | tecnica-palleggi | PRO | 1 | full | 65 | campo | ✓ |  |
-| `tecnica-in-2-a1` | Tecnica in 2 A1 | tecnica-palleggi | A | 1 | full | 25 | campo | ✗ | Tecnica a 2 - Palla bassa e palla alta, Tecnica a 2 - Palleggio con 2 palle |
+| `tecnica-in-2-a1` | Tecnica in 2 A1 | tecnica-palleggi | A | 1 | full | 25 | campo | ✓ |  |
 | `tecnica-palleggi-a1` | Tecnica Palleggi A1 | tecnica-palleggi | A | 1 | full | 35 | campo | ✓ |  |
 | `tecnica-palleggi-a2` | Tecnica palleggi A2 | tecnica-palleggi | A | 2 | full | 40 | campo | ✓ |  |
 | `tecnica-palleggi-a2-tecnica-di-base` | Tecnica palleggi A2 - Tecnica di base | tecnica-palleggi | A | 2 | full | 50 | campo | ✓ |  |
@@ -154,5 +154,5 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `visione-b7-headball` | Visione B7 - headball | tecnica-visione | B | 7 | full | 22 | — | ✗ | Passaggi SX/CC/DX interno/collo/esterno - visione headball, Passaggi collo - visione headball, Passaggi in equilibrio su 1 piede - visione headball, Passaggi interno/collo/esterno con video - visione headball, Passaggi sinistra/avanti/destra con video - visione headball |
 | `visione-b8-headball` | Visione B8 - headball | tecnica-visione | B | 8 | full | 21 | — | ✗ | Passaggi SX/CC/DX interno/collo/esterno - visione headball, Passaggi interno/collo/esterno con video - visione headball, Passaggi sinistra/avanti/destra con video - visione headball, passaggi dx/sx sinistra/avanti/destra con video - visione headball |
 | `visione-pro-1` | Visione PRO 1 | tecnica-visione | PRO | 1 | full | 27 | — | ✓ |  |
-| `yoga-forza-e-prevenzione` | Yoga forza e prevenzione | mobilita-recupero | — | — | full | 48 | — | ✗ | Yoga prevenzione e forza adduttori |
+| `yoga-forza-e-prevenzione` | Yoga forza e prevenzione | mobilita-recupero | — | — | full | 48 | — | ✓ |  |
 | `yoga-recupero` | Yoga Recupero | mobilita-recupero | — | — | full | 43 | — | ✓ |  |

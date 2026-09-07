@@ -3,7 +3,7 @@
  *
  * Sorgente: docs/everfit-workouts.json (203 workout Everfit, 144 titoli
  * distinti) → scripts/build-blocks.py. Alias ed euristiche nello script.
- * Blocchi completi: 131 · incompleti (esercizi non mappati): 13.
+ * Blocchi completi: 134 · incompleti (esercizi non mappati): 10.
  */
 import type { Blocco } from './trainingBlocks';
 
@@ -7167,7 +7167,7 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Passaggi Al Muro - Tecnica Di Base",
   "qualita": "tecnica-passaggi",
   "qualitaSet": {
-   "tecnica-passaggi": 2
+   "tecnica-passaggi": 5
   },
   "livello": null,
   "progressione": null,
@@ -7179,11 +7179,11 @@ export const BLOCCHI: Blocco[] = [
   "inCoppia": false,
   "items": [
    {
-    "esercizio_id": null,
+    "esercizio_id": "tpas-passaggi-al-muro-2-tocchi-controllo-esterno-pass",
     "nomeEverfit": "Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica",
     "serie": 1,
-    "quantita": 180.0,
-    "unita": "secondi",
+    "quantita": 3.0,
+    "unita": "minuti",
     "recupero_sec": 0,
     "perLato": true
    },
@@ -7196,20 +7196,20 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 0
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "tpas-passaggi-al-muro-1-tocco-interno-tecnica",
     "nomeEverfit": "Passaggi al muro 1 tocco interno 1 piede - Tecnica",
     "serie": 1,
-    "quantita": 180.0,
-    "unita": "secondi",
+    "quantita": 3.0,
+    "unita": "minuti",
     "recupero_sec": 0,
     "perLato": true
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "tpas-passaggi-al-muro-1-tocco-collo-tecnica",
     "nomeEverfit": "Passaggi al muro solo collo di prima - Tecnica",
     "serie": 1,
-    "quantita": 240.0,
-    "unita": "secondi",
+    "quantita": 4.0,
+    "unita": "minuti",
     "recupero_sec": 0
    },
    {
@@ -7221,12 +7221,8 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 0
    }
   ],
-  "completo": false,
-  "mancanti": [
-   "Passaggi al muro 1 tocco interno 1 piede - Tecnica",
-   "Passaggi al muro 2 tocchi, stop di esterno, passaggio interno - Tecnica",
-   "Passaggi al muro solo collo di prima - Tecnica"
-  ],
+  "completo": true,
+  "mancanti": [],
   "tags": []
  },
  {
@@ -10192,7 +10188,9 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Tecnica In",
   "qualita": "tecnica-palleggi",
   "qualitaSet": {
-   "tecnica-passaggi": 3
+   "tecnica-passaggi": 3,
+   "tecnica-conduzione": 1,
+   "tecnica-palleggi": 1
   },
   "livello": "A",
   "progressione": 1,
@@ -10201,7 +10199,7 @@ export const BLOCCHI: Blocco[] = [
   "attrezzatura": [
    "campo"
   ],
-  "inCoppia": false,
+  "inCoppia": true,
   "items": [
    {
     "esercizio_id": "tpas-tecnica-a-2-passaggi-rasoterra-stop-interno-pass-2",
@@ -10230,7 +10228,7 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 30
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "tcon-tecnica-a-2-palla-bassa-e-palla-alta",
     "nomeEverfit": "Tecnica a 2 - Palla bassa e palla alta",
     "serie": 1,
     "quantita": 5.0,
@@ -10238,7 +10236,7 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 30
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "tpal-tecnica-a-2-palleggio-con-2-palle",
     "nomeEverfit": "Tecnica a 2 - Palleggio con 2 palle",
     "serie": 1,
     "quantita": 5.0,
@@ -10246,11 +10244,8 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 60
    }
   ],
-  "completo": false,
-  "mancanti": [
-   "Tecnica a 2 - Palla bassa e palla alta",
-   "Tecnica a 2 - Palleggio con 2 palle"
-  ],
+  "completo": true,
+  "mancanti": [],
   "tags": []
  },
  {
@@ -13146,7 +13141,9 @@ export const BLOCCHI: Blocco[] = [
   "nomeEverfit": "Yoga forza e prevenzione",
   "famiglia": "Yoga Forza E Prevenzione",
   "qualita": "mobilita-recupero",
-  "qualitaSet": {},
+  "qualitaSet": {
+   "fascia-prevenzione": 1
+  },
   "livello": null,
   "progressione": null,
   "variante": "full",
@@ -13155,7 +13152,7 @@ export const BLOCCHI: Blocco[] = [
   "inCoppia": false,
   "items": [
    {
-    "esercizio_id": null,
+    "esercizio_id": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo",
     "nomeEverfit": "Yoga prevenzione e forza adduttori",
     "serie": 1,
     "quantita": 40.0,
@@ -13163,10 +13160,8 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 300
    }
   ],
-  "completo": false,
-  "mancanti": [
-   "Yoga prevenzione e forza adduttori"
-  ],
+  "completo": true,
+  "mancanti": [],
   "tags": []
  },
  {

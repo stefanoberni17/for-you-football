@@ -4048,7 +4048,7 @@
   "nome_everfit": "Tecnica a 2 - Palleggio con 2 palle",
   "note": "da fare solo in coppia",
   "in_coppia": true,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
@@ -4848,7 +4848,7 @@
   "nome_everfit": "Tecnica a 2 - Palla bassa e palla alta",
   "note": "solo in coppia",
   "in_coppia": true,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null
  },
