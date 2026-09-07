@@ -3,7 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
-import { cicloInfo, todayRome } from '@/lib/trainingPlanner';
+import { cicloInfo, todayRome, loadCarico } from '@/lib/trainingPlanner';
+import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup } from '@/lib/trainingSetup';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
@@ -111,6 +112,20 @@ export async function GET(request: NextRequest) {
       mentale: cOggi.mental_state ?? null,
     } : null;
 
+    const ciclo = cicloInfo(
+      lastTestSession?.completed_at
+      || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
+    );
+    const [carico, { data: calendar }] = await Promise.all([
+      loadCarico(userId, ciclo.isDeload),
+      supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
+        .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+    ]);
+    const squadraStimato = caricoSquadraStimato({
+      trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [],
+      squadraDurataMin: setup.squadraDurataMin, fase: setup.fase,
+    });
+
     return NextResponse.json({
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
@@ -138,10 +153,9 @@ export async function GET(request: NextRequest) {
       setup,
       setupDisponibile,
       // Ciclo mensile: dall'ultima batteria/ri-test chiusa (fallback: ultimo risultato test)
-      ciclo: cicloInfo(
-        lastTestSession?.completed_at
-        || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
-      ),
+      ciclo,
+      // Carico totale (session-RPE) ultime 4 settimane + stima squadra dal calendario
+      carico: { ...carico, statoLabel: STATO_LABEL[carico.stato], squadraStimato },
     });
   } catch (err) {
     console.error('training/state error:', err);

@@ -9,7 +9,7 @@ import { DAY_SHORT_NAMES } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer,
 } from 'recharts';
-import { Activity, AlertTriangle, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
+import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 
 interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number }
@@ -28,6 +28,12 @@ interface TrainingState {
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
   setup: TrainingSetup;
   setupDisponibile: boolean;
+  carico?: {
+    settimane: { lunedi: string; carico: number; sedute: number; corrente: boolean }[];
+    acuto: number; cronico: number; acwr: number | null;
+    stato: 'insufficiente' | 'poco' | 'ok' | 'alto' | 'rischio'; statoLabel: string;
+    target: { min: number; max: number } | null; squadraStimato: number;
+  };
 }
 
 export default function AllenamentoHub() {
@@ -401,6 +407,38 @@ export default function AllenamentoHub() {
                 ))}
               </div>
             </div>
+
+            {/* Carico settimanale (session-RPE) */}
+            {state.carico && (() => {
+              const c = state.carico;
+              const maxC = Math.max(1, ...c.settimane.map((w) => w.carico), c.target?.max ?? 0);
+              const colore = c.stato === 'ok' ? 'text-forest-300' : c.stato === 'rischio' ? 'text-red-400' : c.stato === 'alto' ? 'text-amber-400' : 'text-muted';
+              return (
+                <div className="bg-surface rounded-3xl border border-divider p-4 mb-5">
+                  <div className="flex items-center justify-between mb-2 px-1">
+                    <p className="text-sm font-bold text-app flex items-center gap-1.5"><Gauge size={15} className="text-forest-400" /> Carico settimanale</p>
+                    {c.acwr !== null && <span className={`text-[11px] font-semibold ${colore}`}>ACWR {c.acwr}</span>}
+                  </div>
+                  <div className="flex items-end gap-2 h-20 px-1 mb-2">
+                    {c.settimane.map((w) => (
+                      <div key={w.lunedi} className="flex-1 flex flex-col items-center justify-end h-full gap-1">
+                        <span className="text-[10px] text-faint tabular-nums">{w.carico || ''}</span>
+                        <div className={`w-full rounded-t-md ${w.corrente ? 'bg-forest-400' : 'bg-surface-2 border border-divider'}`}
+                          style={{ height: `${Math.max(w.carico > 0 ? 6 : 2, Math.round((w.carico / maxC) * 100))}%` }} />
+                        <span className="text-[10px] text-faint">{w.lunedi.slice(8)}/{w.lunedi.slice(5, 7)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className={`text-xs font-semibold px-1 ${colore}`}>{c.statoLabel}</p>
+                  <p className="text-[11px] text-muted px-1 mt-0.5">
+                    {c.acwr !== null
+                      ? <>Ultimi 7 giorni {c.acuto} · media settimanale {c.cronico}{c.target ? ` · target ${c.target.min}-${c.target.max}` : ''}</>
+                      : <>Carico = minuti × sforzo percepito. Vota le serie durante il recupero per renderlo preciso.</>}
+                    {c.squadraStimato > 0 && <> · squadra stimata +{c.squadraStimato}</>}
+                  </p>
+                </div>
+              );
+            })()}
 
             {/* Piano settimanale */}
             {state.plan ? (
