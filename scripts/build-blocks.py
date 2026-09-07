@@ -46,6 +46,11 @@ ALIAS = {
     "hollow hold": "core-6", "plank": "core-2", "alternating 2 point plank": "core-4",
     "hanging knee raise": "core2-hanging-knee-raises", "jump squat": "plioi-squat-jump",
     "box dribbling": "cond-6", "palleggi solo testa - tecnica": "pall-7", "allungo": "risc-allungo-riscaldamento",
+    # Nomi Everfit rinominati nel tempo → stesso esercizio in catalogo (chiusura blocchi incompleti, 7 set 2026)
+    "passaggi al muro 1 tocco interno 1 piede - tecnica": "tpas-passaggi-al-muro-1-tocco-interno-tecnica",
+    "passaggi al muro 2 tocchi, stop di esterno, passaggio interno - tecnica": "tpas-passaggi-al-muro-2-tocchi-controllo-esterno-pass",
+    "passaggi al muro solo collo di prima - tecnica": "tpas-passaggi-al-muro-1-tocco-collo-tecnica",
+    "yoga prevenzione e forza adduttori": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo",
 }
 
 
