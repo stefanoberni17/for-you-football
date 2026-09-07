@@ -4,16 +4,17 @@ import { useState } from 'react';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { DURATE, FOCUS_OPZIONI, MODIFICA_TIPI, type FocusId, type ModificaTipo, type RichiestaGuidata } from '@/lib/trainingRequest';
 
-interface SedutaLite { giorno: number; titolo: string }
+interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
 
 /**
  * Maschera guidata per generare o modificare la settimana: pochi campi che compongono
  * la richiesta al planner (e i vincoli per il validatore). Niente testo libero,
  * salvo una nota corta.
  */
-export default function TrainingPlanForm({ hasPlan, sedute, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, generating, onSubmit, onClose }: {
   hasPlan: boolean;
-  sedute: SedutaLite[];
+  sedute: SedutaLite[];      // tutte le sedute della settimana (anche passate: i loro giorni non sono liberi)
+  oggiDow: number;
   generating: boolean;
   onSubmit: (r: RichiestaGuidata) => void;
   onClose?: () => void;
@@ -24,17 +25,20 @@ export default function TrainingPlanForm({ hasPlan, sedute, generating, onSubmit
   const [focus, setFocus] = useState<FocusId[]>([]);
   const [note, setNote] = useState('');
   const [tipo, setTipo] = useState<ModificaTipo>('sposta');
-  const [mGiorno, setMGiorno] = useState<number | null>(sedute[0]?.giorno ?? null);
+  const modificabili = sedute.filter((s) => s.modificabile);
+  const [mGiorno, setMGiorno] = useState<number | null>(modificabili[0]?.giorno ?? null);
   const [mA, setMA] = useState<number | null>(null);
   const [mFocus, setMFocus] = useState<FocusId>('gambe');
   const [mDurata, setMDurata] = useState<number>(45);
 
   const toggle = <T,>(arr: T[], v: T, max?: number) => arr.includes(v) ? arr.filter((x) => x !== v) : (max && arr.length >= max ? arr : [...arr, v]);
-  const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => !sedute.some((s) => s.giorno === d));
+  const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= oggiDow && !sedute.some((s) => s.giorno === d));
   const chip = (active: boolean) => `text-xs font-semibold rounded-full px-3 py-1.5 border transition-colors ${active ? 'bg-forest-500/25 border-forest-400/60 text-forest-200' : 'bg-surface-2 border-divider text-muted'}`;
 
   const valida = (): string | null => {
     if (modo === 'nuova') return null;
+    if ((tipo === 'sposta' || tipo === 'togli_giorno') && !modificabili.length) return 'Nessuna seduta ancora da fare questa settimana';
+    if (tipo === 'sposta' && !giorniLiberi.length) return 'Nessun giorno libero da qui a domenica';
     if (tipo === 'sposta' && (!mGiorno || !mA)) return 'Scegli la seduta e il giorno nuovo';
     if (tipo === 'togli_giorno' && !mGiorno) return 'Scegli la seduta da togliere';
     return null;
@@ -101,7 +105,7 @@ export default function TrainingPlanForm({ hasPlan, sedute, generating, onSubmit
             <div className="mb-3">
               <p className="text-xs text-muted mb-1.5">Quale seduta</p>
               <div className="flex flex-wrap gap-1.5">
-                {sedute.map((s) => (
+                {modificabili.map((s) => (
                   <button key={s.giorno} type="button" onClick={() => { setMGiorno(s.giorno); setMA(null); }} className={chip(mGiorno === s.giorno)}>
                     {DAY_SHORT_NAMES[s.giorno]} · {s.titolo.slice(0, 18)}
                   </button>
