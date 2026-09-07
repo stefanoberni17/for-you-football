@@ -5,16 +5,18 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
-import { DAY_SHORT_NAMES } from '@/lib/constants';
+import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer,
 } from 'recharts';
 import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
+import TrainingPlanForm from '@/components/TrainingPlanForm';
+import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 
 interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string }[] }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string }[]; posticipata_da?: number; recupero?: boolean }
 interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -24,6 +26,9 @@ interface TrainingState {
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; done: boolean }[];
   plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string }; generato_da: string } | null;
+  oggiDow: number;
+  lunedi: string;
+  planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
   completions: { session_key: string; feedback: string | null }[];
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
   setup: TrainingSetup;
@@ -41,8 +46,9 @@ export default function AllenamentoHub() {
   const [state, setState] = useState<TrainingState | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [richiesta, setRichiesta] = useState('');
   const [showRigenera, setShowRigenera] = useState(false);
+  const [autoGen, setAutoGen] = useState(false); // nuova settimana preparata in automatico
+  const [posticipoMsg, setPosticipoMsg] = useState<string | null>(null);
   // Tab "Hai un dolore?"
   const [showPain, setShowPain] = useState(false);
   const [painInt, setPainInt] = useState(5);
@@ -67,16 +73,37 @@ export default function AllenamentoHub() {
 
   useEffect(() => { load(); }, [load]);
 
-  const generaPiano = async () => {
+  const generaPiano = useCallback(async (r: RichiestaGuidata) => {
     setGenerating(true);
     try {
       const res = await authFetch('/api/training/plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ richiesta: richiesta.trim() || undefined }),
+        body: JSON.stringify(r),
       });
-      if (res.ok) { setRichiesta(''); setShowRigenera(false); await load(); }
-    } finally { setGenerating(false); }
+      if (res.ok) { setShowRigenera(false); await load(); }
+    } finally { setGenerating(false); setAutoGen(false); }
+  }, [load]);
+
+  // Nuova settimana: se il piano è di una settimana passata, l'app prepara da sola quello nuovo
+  // (le sedute saltate della settimana scorsa vengono riproposte uguali dal planner)
+  useEffect(() => {
+    if (state?.planStale && !generating && !autoGen && !state.painHold) {
+      setAutoGen(true);
+      generaPiano({ modo: 'nuova' });
+    }
+  }, [state?.planStale, state?.painHold, generating, autoGen, generaPiano]);
+
+  const posticipa = async (giorno: number) => {
+    if (!state?.plan) return;
+    setPosticipoMsg(null);
+    const res = await authFetch('/api/training/plan', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan_id: state.plan.id, giorno }),
+    });
+    const d = await res.json().catch(() => ({}));
+    if (res.ok) { setPosticipoMsg(`Spostata a ${DAY_SHORT_NAMES[d.giorno]}`); await load(); }
+    else setPosticipoMsg(d.error || 'Non si può spostare');
   };
 
   const sbloccaDolore = async () => {
@@ -137,7 +164,11 @@ export default function AllenamentoHub() {
   const ROMBO_SHORT: Record<string, string> = { tiro_passaggio: 'Tiro/pass.', esplosivita: 'Esplosiv.' };
   const doneDays = new Set(state.completions.map((c) => Number(c.session_key.split('#')[1])));
   const sedute = state.plan?.plan?.sedute || [];
-  const prossima = sedute.find((s) => !doneDays.has(s.giorno));
+  const oggiDow = state.oggiDow || 1;
+  const statoDi = (s: PlanSession) => statoSeduta(s.giorno, oggiDow, doneDays.has(s.giorno));
+  // Prossima da fare: oggi, oppure quella di ieri ancora recuperabile, oppure la prima futura
+  const prossima = sedute.find((s) => statoDi(s) === 'oggi') || sedute.find((s) => statoDi(s) === 'recuperabile') || sedute.find((s) => statoDi(s) === 'futura');
+  const saltate = sedute.filter((s) => statoDi(s) === 'saltata').length;
 
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
@@ -453,28 +484,52 @@ export default function AllenamentoHub() {
                 {state.plan.plan.messaggio && (
                   <p className="text-xs text-muted italic leading-relaxed mb-3 px-1">💬 {state.plan.plan.messaggio}</p>
                 )}
+                {autoGen && generating && (
+                  <p className="text-xs text-forest-300 bg-forest-500/10 border border-forest-500/30 rounded-xl px-3 py-2 mb-3">⏳ Nuova settimana: sto preparando il piano…</p>
+                )}
+                {saltate > 0 && (
+                  <p className="text-[11px] text-muted px-1 mb-2">{saltate === 1 ? '1 seduta saltata' : `${saltate} sedute saltate`} questa settimana: restano in memoria, il calendario va avanti.</p>
+                )}
                 <div className="space-y-2">
                   {sedute.sort((a, b) => a.giorno - b.giorno).map((s) => {
-                    const done = doneDays.has(s.giorno);
-                    return (
-                      <Link key={s.giorno} href={`/allenamento/sessione/${s.giorno}`}
-                        className={`flex items-center gap-3 rounded-2xl border p-3.5 transition-all ${done ? 'bg-forest-500/10 border-forest-500/30' : 'bg-surface-2 border-divider'}`}>
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 ${done ? 'bg-forest-500 text-white' : 'bg-app text-muted'}`}>
+                    const stato = statoDi(s);
+                    const done = stato === 'fatta';
+                    const saltata = stato === 'saltata';
+                    const post = puoPosticipare(s, sedute, oggiDow, done);
+                    const badge = stato === 'recuperabile' ? 'Recupera oggi' : stato === 'oggi' ? 'Oggi' : saltata ? 'Saltata' : s.recupero ? 'Recupero' : s.posticipata_da ? `Spostata da ${DAY_SHORT_NAMES[s.posticipata_da]}` : null;
+                    const inner = (
+                      <>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 ${done ? 'bg-forest-500 text-white' : saltata ? 'bg-app text-faint line-through' : 'bg-app text-muted'}`}>
                           {done ? '✓' : DAY_SHORT_NAMES[s.giorno]}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-semibold truncate ${done ? 'text-forest-300' : 'text-app'}`}>{s.titolo}</p>
+                          <p className={`text-sm font-semibold truncate ${done ? 'text-forest-300' : saltata ? 'text-faint' : 'text-app'}`}>{s.titolo}</p>
                           <p className="text-xs text-faint">{s.tipo} · {s.durata_min}&apos; · {s.blocchi?.length ? s.blocchi.map((b) => b.nome).join(' + ') : `${s.items.length} esercizi`}</p>
+                          {badge && (
+                            <span className={`inline-block mt-1 text-[10px] font-bold rounded-full px-2 py-0.5 ${stato === 'recuperabile' ? 'bg-amber-500/20 text-amber-200' : stato === 'oggi' ? 'bg-forest-500/25 text-forest-200' : saltata ? 'bg-surface text-faint' : 'bg-surface text-muted'}`}>{badge}</span>
+                          )}
                         </div>
-                        <ChevronRight size={16} className="text-faint shrink-0" />
-                      </Link>
+                        {!saltata && <ChevronRight size={16} className="text-faint shrink-0" />}
+                      </>
+                    );
+                    const cls = `flex items-center gap-3 rounded-2xl border p-3.5 transition-all ${done ? 'bg-forest-500/10 border-forest-500/30' : saltata ? 'bg-surface border-divider opacity-70' : 'bg-surface-2 border-divider'}`;
+                    return (
+                      <div key={`${s.giorno}-${s.titolo}`}>
+                        {saltata ? <div className={cls}>{inner}</div> : <Link href={`/allenamento/sessione/${s.giorno}`} className={cls}>{inner}</Link>}
+                        {post.ok && (stato === 'oggi' || stato === 'recuperabile') && !state.painHold && (
+                          <button onClick={() => posticipa(s.giorno)} className="text-[11px] text-muted underline underline-offset-2 px-3 pt-1.5">
+                            Sposta a {DAY_NAMES_IT[post.a!]}
+                          </button>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
+                {posticipoMsg && <p className="text-[11px] text-amber-200 px-1 mt-2">{posticipoMsg}</p>}
                 {prossima && !state.painHold && (
                   <Link href={`/allenamento/sessione/${prossima.giorno}`}
                     className="block text-center bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3.5 rounded-2xl mt-3">
-                    Inizia: {prossima.titolo} →
+                    {statoDi(prossima) === 'recuperabile' ? 'Recupera' : 'Inizia'}: {prossima.titolo} →
                   </Link>
                 )}
               </div>
@@ -484,17 +539,15 @@ export default function AllenamentoHub() {
               </div>
             )}
 
-            {/* Genera / rigenera */}
+            {/* Genera / modifica — maschera guidata (niente testo libero) */}
             {(!state.plan || showRigenera) && (
-              <div className="bg-surface rounded-2xl border border-divider p-4 mb-5">
-                <textarea value={richiesta} onChange={(e) => setRichiesta(e.target.value)}
-                  placeholder="Richieste per questa settimana? (es. 'ho due partite', 'poco tempo', 'focus tecnica') — opzionale"
-                  className="w-full px-3 py-2.5 bg-surface-2 border border-divider rounded-xl text-sm text-app outline-none focus:ring-2 focus:ring-forest-400 resize-none" rows={2} maxLength={400} />
-                <button onClick={generaPiano} disabled={generating}
-                  className="w-full mt-2 bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl disabled:opacity-60">
-                  {generating ? 'Sto preparando la tua settimana…' : state.plan ? 'Rigenera il piano' : 'Genera il piano della settimana'}
-                </button>
-              </div>
+              <TrainingPlanForm
+                hasPlan={!!state.plan && !state.planStale}
+                sedute={sedute.filter((s) => statoDi(s) === 'oggi' || statoDi(s) === 'futura').map((s) => ({ giorno: s.giorno, titolo: s.titolo }))}
+                generating={generating}
+                onSubmit={generaPiano}
+                onClose={state.plan ? () => setShowRigenera(false) : undefined}
+              />
             )}
           </>
         )}

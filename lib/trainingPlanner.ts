@@ -455,7 +455,7 @@ ${checkinBlock(ctx)}
 ${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}${storicoSerieBlock(ctx, 8)}${caricoTesto(ctx.carico)}
 
 Regole ferree (non negoziabili nemmeno se insiste): max ${REGOLE.maxSeduteFisicheSettimana} sedute fisiche/settimana oltre la squadra (di più è controproducente — offri tecnica/fascia); niente fisica il giorno della partita né il giorno prima; niente lavoro gambe (solo prevenzione fascia — è una scelta del metodo, in valutazione per il futuro); se descrive un DOLORE: fermati, digli di sospendere e di parlarne con fisio/preparatore o un adulto.
-Se chiede di CAMBIARE il piano della settimana, digli di usare il bottone "Rigenera piano" scrivendo lì la richiesta — tu non modifichi il piano direttamente.
+Se chiede di CAMBIARE il piano della settimana, digli di usare "Rigenera" nel Campo: si apre una maschera con le modifiche possibili (sposta/togli una seduta, più leggera/intensa, meno tempo, cambia focus, aggiungi tecnica) — tu non modifichi il piano direttamente. Una seduta si può anche spostare al giorno dopo dal Campo, una volta sola.
 L'avanzamento di gradino passa SOLO dal ri-test. Non promettere avanzamenti.`;
   const completion = await anthropic.messages.create({
     model: PLANNER_MODEL, max_tokens: 800, system,

@@ -1,12 +1,12 @@
 # Libreria blocchi — report generazione
 
-203 workout Everfit → 144 blocchi (titoli distinti). Completi: 134 · incompleti: 10.
+203 workout Everfit → 144 blocchi (titoli distinti). Completi: 135 · incompleti: 9.
 
 Rigenerare: `python3 scripts/build-catalog-v2.py && python3 scripts/build-blocks.py`.
 
 ## Esercizi non mappati (occorrenze in blocchi)
 
-Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - visione headball (7) · Passaggi SX/CC/DX interno/collo/esterno - visione headball (7) · Passaggi esterno - visione headball (6) · Passaggi interno - visione headball (6) · Passaggi SX/Centro/DX - visione headball (4) · Passaggi sinistra/avanti/destra con video - visione headball (4) · Passaggi interno/collo/esterno con video - visione headball (3) · Box Dribbling - headball (1) · Barbell Deadlift (1) · passaggi dx/sx sinistra/avanti/destra con video - visione headball (1)
+Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - visione headball (7) · Passaggi SX/CC/DX interno/collo/esterno - visione headball (7) · Passaggi esterno - visione headball (6) · Passaggi interno - visione headball (6) · Passaggi SX/Centro/DX - visione headball (4) · Passaggi sinistra/avanti/destra con video - visione headball (4) · Passaggi interno/collo/esterno con video - visione headball (3) · Box Dribbling - headball (1) · passaggi dx/sx sinistra/avanti/destra con video - visione headball (1)
 
 ## Blocchi
 
@@ -50,7 +50,7 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `forza-full-body-hiit-corpo-libero-b1` | Forza full body HIIT corpo libero - B1 | forza-parte-alta | B | 1 | full | 23 | — | ✓ |  |
 | `forza-full-body-hiit-corpo-libero-b3` | Forza full body HIIT corpo libero - B3 | core | B | 3 | full | 23 | — | ✓ |  |
 | `forza-funzionale-e-pliometria-pro1` | Forza Funzionale e Pliometria PRO1 | pliometria-intensiva | PRO | 1 | full | 39 | campo | ✓ |  |
-| `forza-max-parte-bassa-pro1` | Forza max parte bassa PRO1 | forza-parte-bassa | PRO | 1 | full | 32 | — | ✗ | Barbell Deadlift |
+| `forza-max-parte-bassa-pro1` | Forza max parte bassa PRO1 | forza-parte-bassa | PRO | 1 | full | 32 | palestra | ✓ |  |
 | `forza-mix-p1` | Forza Mix P1 | forza-parte-alta | — | 1 | full | 19 | palestra, sbarra | ✓ |  |
 | `forza-parte-alta-b1` | Forza Parte alta B1 | forza-parte-alta | B | 1 | full | 41 | — | ✓ |  |
 | `forza-parte-alta-b1-short` | Forza Parte alta B1 - short | forza-parte-alta | B | 1 | short | 31 | — | ✓ |  |

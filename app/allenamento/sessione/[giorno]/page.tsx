@@ -25,6 +25,7 @@ export default function SessionePage() {
   const [faticaAlta, setFaticaAlta] = useState(false); // dal check-in di oggi
   const [scarico, setScarico] = useState(false); // alleggerisci: −1 serie sugli esercizi
   const [alreadyDone, setAlreadyDone] = useState(false);
+  const [saltata, setSaltata] = useState(false); // passata da 2+ giorni senza farla: il calendario è andato avanti
   const [phase, setPhase] = useState<Phase>('preview');
   const [descOpen, setDescOpen] = useState<number | null>(null); // indice item con descrizione aperta
   const [savedProgress, setSavedProgress] = useState<PlayerProgress | null>(null); // seduta interrotta
@@ -47,7 +48,9 @@ export default function SessionePage() {
       setSessione(s || null);
       setPlanId(data.plan?.id || null);
       setStorico(data.storicoSerie || {});
-      setAlreadyDone((data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno));
+      const fatta = (data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno);
+      setAlreadyDone(fatta);
+      setSaltata(!fatta && typeof data.oggiDow === 'number' && giorno < data.oggiDow - 1);
       // Seduta interrotta? (progresso salvato dal player in localStorage)
       if (data.plan?.id && s) {
         try {
@@ -84,6 +87,19 @@ export default function SessionePage() {
       <main className="min-h-screen bg-app pt-safe px-5">
         <div className="max-w-md mx-auto text-center pt-20">
           <p className="text-muted mb-4">Nessuna seduta per questo giorno.</p>
+          <button onClick={() => router.push('/allenamento')} className="text-forest-400 font-semibold">← Torna al Campo</button>
+        </div>
+      </main>
+    );
+  }
+
+  if (saltata) {
+    return (
+      <main className="min-h-screen bg-app pt-safe px-5">
+        <div className="max-w-md mx-auto text-center pt-20">
+          <p className="text-3xl mb-3">📅</p>
+          <p className="text-app font-semibold mb-1">Seduta saltata</p>
+          <p className="text-muted text-sm mb-6">Era {DAY_NAMES[giorno]}: si poteva recuperare il giorno dopo. Resta in memoria e, se la settimana finisce senza farla, il preparatore la ripropone uguale nella prossima.</p>
           <button onClick={() => router.push('/allenamento')} className="text-forest-400 font-semibold">← Torna al Campo</button>
         </div>
       </main>

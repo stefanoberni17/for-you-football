@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
-import { cicloInfo, todayRome, loadCarico } from '@/lib/trainingPlanner';
+import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup } from '@/lib/trainingSetup';
@@ -88,11 +88,15 @@ export async function GET(request: NextRequest) {
       }
     } catch { /* migration 019 non applicata: nessuno storico */ }
 
-    // Completamenti del piano corrente
+    // Completamenti della settimana del piano corrente: su TUTTI i piani di quella settimana
+    // (rigenera/modifica salvano una riga nuova, le sedute già fatte restano segnate per giorno)
     let completions: { session_key: string; feedback: string | null }[] = [];
     if (lastPlan?.id) {
+      const { data: piani } = await supabaseAdmin.from('training_plans').select('id')
+        .eq('user_id', userId).eq('week_start', lastPlan.week_start);
+      const ids = (piani || []).map((p: { id: string }) => p.id);
       const { data } = await supabaseAdmin.from('training_session_completions')
-        .select('session_key, feedback').eq('user_id', userId).eq('plan_id', lastPlan.id);
+        .select('session_key, feedback').eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
       completions = data || [];
     }
 
@@ -146,6 +150,10 @@ export async function GET(request: NextRequest) {
       ladders: LADDER_AREE.map((a) => ladderForArea(rows, a)).filter((l) => l !== null),
       openTestSession: openSession || null,
       plan: lastPlan || null,
+      // Settimana: giorno di oggi (1=Lun) e se il piano è di una settimana passata (→ l'hub ne prepara uno nuovo)
+      oggiDow: oggiDowRome(),
+      lunedi: mondayOfThisWeekRome(),
+      planStale: !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome(),
       completions,
       checkinOggi,
       storicoSerie,
