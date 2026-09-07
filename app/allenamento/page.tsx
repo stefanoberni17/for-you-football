@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
@@ -48,6 +48,8 @@ export default function AllenamentoHub() {
   const [generating, setGenerating] = useState(false);
   const [showRigenera, setShowRigenera] = useState(false);
   const [autoGen, setAutoGen] = useState(false); // nuova settimana preparata in automatico
+  const autoGenTried = useRef(false); // un solo tentativo automatico per apertura: se fallisce, resta il bottone
+  const [genError, setGenError] = useState<string | null>(null);
   const [posticipoMsg, setPosticipoMsg] = useState<string | null>(null);
   // Tab "Hai un dolore?"
   const [showPain, setShowPain] = useState(false);
@@ -81,18 +83,20 @@ export default function AllenamentoHub() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(r),
       });
-      if (res.ok) { setShowRigenera(false); await load(); }
+      if (res.ok) { setShowRigenera(false); setGenError(null); await load(); }
+      else { const d = await res.json().catch(() => ({})); setGenError(d.error || 'Non sono riuscito a preparare il piano. Riprova.'); }
     } finally { setGenerating(false); setAutoGen(false); }
   }, [load]);
 
   // Nuova settimana: se il piano è di una settimana passata, l'app prepara da sola quello nuovo
   // (le sedute saltate della settimana scorsa vengono riproposte uguali dal planner)
   useEffect(() => {
-    if (state?.planStale && !generating && !autoGen && !state.painHold) {
+    if (state?.planStale && !generating && !autoGen && !autoGenTried.current) {
+      autoGenTried.current = true;
       setAutoGen(true);
       generaPiano({ modo: 'nuova' });
     }
-  }, [state?.planStale, state?.painHold, generating, autoGen, generaPiano]);
+  }, [state?.planStale, generating, autoGen, generaPiano]);
 
   const posticipa = async (giorno: number) => {
     if (!state?.plan) return;
@@ -163,7 +167,8 @@ export default function AllenamentoHub() {
   const LIVELLO_LABEL: Record<string, string> = { base: 'Base', intermedio: 'Intermedio', avanzato: 'Avanzato', pro: 'PRO' };
   const ROMBO_SHORT: Record<string, string> = { tiro_passaggio: 'Tiro/pass.', esplosivita: 'Esplosiv.' };
   const doneDays = new Set(state.completions.map((c) => Number(c.session_key.split('#')[1])));
-  const sedute = state.plan?.plan?.sedute || [];
+  // Piano di una settimana passata: non è la settimana corrente (niente stati/CTA su sedute vecchie)
+  const sedute = state.planStale ? [] : [...(state.plan?.plan?.sedute || [])].sort((a, b) => a.giorno - b.giorno);
   const oggiDow = state.oggiDow || 1;
   const statoDi = (s: PlanSession) => statoSeduta(s.giorno, oggiDow, doneDays.has(s.giorno));
   // Prossima da fare: oggi, oppure quella di ieri ancora recuperabile, oppure la prima futura
@@ -472,7 +477,7 @@ export default function AllenamentoHub() {
             })()}
 
             {/* Piano settimanale */}
-            {state.plan ? (
+            {state.plan && !state.planStale ? (
               <div className="bg-surface rounded-3xl border border-divider p-4 mb-5">
                 <div className="flex items-center justify-between mb-3 px-1">
                   <p className="text-sm font-bold text-app">La tua settimana</p>
@@ -491,7 +496,7 @@ export default function AllenamentoHub() {
                   <p className="text-[11px] text-muted px-1 mb-2">{saltate === 1 ? '1 seduta saltata' : `${saltate} sedute saltate`} questa settimana: restano in memoria, il calendario va avanti.</p>
                 )}
                 <div className="space-y-2">
-                  {sedute.sort((a, b) => a.giorno - b.giorno).map((s) => {
+                  {sedute.map((s) => {
                     const stato = statoDi(s);
                     const done = stato === 'fatta';
                     const saltata = stato === 'saltata';
@@ -535,15 +540,19 @@ export default function AllenamentoHub() {
               </div>
             ) : (
               <div className="bg-surface rounded-3xl border border-divider p-5 mb-5 text-center">
-                <p className="text-sm text-muted mb-3">Card pronta — ora il programma: l&apos;AI compone la tua settimana sui tuoi livelli, il calendario e le regole del metodo.</p>
+                {state.planStale
+                  ? <p className="text-sm text-muted mb-1">{generating ? '⏳ Nuova settimana: sto preparando il piano…' : 'Nuova settimana: il piano della settimana scorsa è archiviato. Le sedute saltate vengono riproposte.'}</p>
+                  : <p className="text-sm text-muted mb-3">Card pronta — ora il programma: l&apos;AI compone la tua settimana sui tuoi livelli, il calendario e le regole del metodo.</p>}
               </div>
             )}
+            {genError && <p className="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2 mb-3">{genError}</p>}
 
             {/* Genera / modifica — maschera guidata (niente testo libero) */}
-            {(!state.plan || showRigenera) && (
+            {(!state.plan || state.planStale || showRigenera) && !(state.planStale && generating) && (
               <TrainingPlanForm
                 hasPlan={!!state.plan && !state.planStale}
-                sedute={sedute.filter((s) => statoDi(s) === 'oggi' || statoDi(s) === 'futura').map((s) => ({ giorno: s.giorno, titolo: s.titolo }))}
+                sedute={sedute.map((s) => ({ giorno: s.giorno, titolo: s.titolo, modificabile: statoDi(s) === 'oggi' || statoDi(s) === 'futura' }))}
+                oggiDow={oggiDow}
                 generating={generating}
                 onSubmit={generaPiano}
                 onClose={state.plan ? () => setShowRigenera(false) : undefined}

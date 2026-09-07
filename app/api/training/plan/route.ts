@@ -48,8 +48,10 @@ export async function POST(request: NextRequest) {
 
     // Planner v2 a blocchi (workout di Ste); se esplode, il v1 resta come rete di sicurezza
     let plan, generatoDa: 'llm' | 'fallback', promptVersion = PLANNER_V2_PROMPT_VERSION;
+    let violazioni: string[] | undefined;
+    let ctxV2: Awaited<ReturnType<typeof loadContextV2>> | null = null;
     try {
-      ({ plan, generatoDa } = await generateWeekPlanV2(userId, richiesta, vincoli));
+      ({ plan, generatoDa, violazioni, ctx: ctxV2 } = await generateWeekPlanV2(userId, richiesta, vincoli));
     } catch (err) {
       console.error('training/plan: planner v2 fallito, uso v1', (err as Error)?.message);
       ({ plan, generatoDa } = await generateWeekPlan(userId, richiesta));
@@ -59,9 +61,19 @@ export async function POST(request: NextRequest) {
     // Modifica a settimana iniziata: i giorni già passati restano come nel piano attuale
     // (fatti o saltati, sono storia: il planner lavora solo da oggi in poi)
     if (guidata?.modo === 'modifica' && pianoAttualeSedute) {
+      // Una modifica che il validatore ha rifiutato NON sostituisce il piano con quello di sicurezza:
+      // si tiene il piano attuale e si spiega il motivo
+      if (generatoDa === 'fallback') {
+        return NextResponse.json({ error: `Non sono riuscito ad applicare la modifica${violazioni?.[0] ? `: ${violazioni[0]}` : ''}. Il piano resta com'è.` }, { status: 409 });
+      }
       const oggi = oggiDowRome();
       const passate = pianoAttualeSedute.filter((s) => s.giorno < oggi);
       plan = { ...plan, sedute: [...passate, ...plan.sedute.filter((s) => s.giorno >= oggi)].sort((a, b) => a.giorno - b.giorno) };
+      // Il piano UNITO (passato + nuovo) deve rispettare i tetti settimanali nel suo insieme
+      if (ctxV2) {
+        const errori = validatePlan(plan, { ...validateCtxFor(ctxV2), oggiDow: undefined });
+        if (errori.length) return NextResponse.json({ error: `Non sono riuscito ad applicare la modifica: ${errori[0]}. Il piano resta com'è.` }, { status: 409 });
+      }
     }
 
     const { data: saved, error } = await supabaseAdmin.from('training_plans').insert({
@@ -76,7 +88,9 @@ export async function POST(request: NextRequest) {
     if (error || !saved) return NextResponse.json({ error: error?.message || 'save' }, { status: 500 });
 
     // La richiesta alimenta la memoria del preparatore (obiettivi + note)
-    if (richiesta) await updateTrainingMemory(userId, richiesta, 'richiesta piano');
+    // La memoria del preparatore si nutre solo di ciò che scrive l'atleta (nota della maschera o testo libero legacy)
+    const testoUtente = guidata ? guidata.note : richiesta;
+    if (testoUtente) await updateTrainingMemory(userId, testoUtente, 'richiesta piano');
 
     return NextResponse.json({ success: true, plan: saved });
   } catch (err) {

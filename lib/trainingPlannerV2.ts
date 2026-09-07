@@ -91,18 +91,34 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
  * quelle senza completamento). Regola di Ste: si ripropongono uguali nella nuova settimana.
  */
 async function loadDaRecuperare(userId: string): Promise<ContextV2['daRecuperare']> {
-  const lunedi = new Date(`${mondayOfThisWeekRome()}T00:00:00`);
+  const lunediStr = mondayOfThisWeekRome();
+  const lunedi = new Date(`${lunediStr}T00:00:00`);
   lunedi.setDate(lunedi.getDate() - 7);
   const weekStart = `${lunedi.getFullYear()}-${String(lunedi.getMonth() + 1).padStart(2, '0')}-${String(lunedi.getDate()).padStart(2, '0')}`;
-  const { data: prev } = await supabaseAdmin.from('training_plans').select('id, plan')
-    .eq('user_id', userId).eq('week_start', weekStart).order('created_at', { ascending: false }).limit(1).maybeSingle();
-  if (!prev?.plan) return [];
-  const { data: done } = await supabaseAdmin.from('training_session_completions').select('session_key')
-    .eq('user_id', userId).eq('plan_id', prev.id);
-  const fatti = new Set((done || []).map((d: { session_key: string }) => Number(d.session_key.split('#')[1])));
-  return ((prev.plan as WeekPlan).sedute || [])
-    .filter((s) => !fatti.has(s.giorno) && s.blocchi && s.blocchi.length > 0)
-    .map((s) => ({ titolo: s.titolo, blocchi: s.blocchi!.map((b) => b.id), giorno: s.giorno }));
+  // Piani di settimana scorsa e di questa: i completamenti sono legati al piano attivo al momento
+  // (rigenera/modifica creano righe nuove), quindi si guarda per giorno su TUTTI i piani della settimana
+  const { data: piani } = await supabaseAdmin.from('training_plans').select('id, week_start, plan, created_at')
+    .eq('user_id', userId).in('week_start', [weekStart, lunediStr]).order('created_at', { ascending: false });
+  const scorsa = (piani || []).filter((p) => p.week_start === weekStart);
+  const questa = (piani || []).filter((p) => p.week_start === lunediStr);
+  if (!scorsa.length) return [];
+  const ids = (piani || []).map((p) => p.id);
+  const { data: done } = await supabaseAdmin.from('training_session_completions').select('plan_id, session_key')
+    .eq('user_id', userId).in('plan_id', ids);
+  const fattiScorsa = new Set((done || []).filter((d) => scorsa.some((p) => p.id === d.plan_id)).map((d) => Number(d.session_key.split('#')[1])));
+  const chiave = (b: string[]) => [...b].sort().join('|');
+  // Recuperi già fatti in questa settimana (stessi blocchi di una seduta completata)
+  const fattiQuesta = new Set<string>();
+  for (const d of done || []) {
+    const p = questa.find((x) => x.id === d.plan_id);
+    const sed = (p?.plan as WeekPlan | undefined)?.sedute.find((x) => x.giorno === Number(d.session_key.split('#')[1]));
+    if (sed?.blocchi?.length) fattiQuesta.add(chiave(sed.blocchi.map((b) => b.id)));
+  }
+  const ultimo = scorsa[0].plan as WeekPlan; // il piano più recente della settimana scorsa (contiene anche i giorni passati)
+  return (ultimo.sedute || [])
+    .filter((s) => !fattiScorsa.has(s.giorno) && s.blocchi && s.blocchi.length > 0)
+    .map((s) => ({ titolo: s.titolo, blocchi: s.blocchi!.map((b) => b.id), giorno: s.giorno }))
+    .filter((r) => !fattiQuesta.has(chiave(r.blocchi)));
 }
 
 // ─── Espansione blocchi → sedute ────────────────────────────────────────────
@@ -163,7 +179,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     });
   }
   // Recuperi: le sedute saltate la settimana scorsa devono esserci UGUALI (fino al tetto sedute)
-  const attesi = ctx.daRecuperare.slice(0, ctx.maxSeduteFisiche);
+  const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= ctx.base.oggiDow
+    && !ctx.vincoli.giorniVietati?.includes(d) && (!ctx.vincoli.giorniAmmessi?.length || ctx.vincoli.giorniAmmessi.includes(d))
+    && !ctx.base.matchDays.includes(d));
+  const attesi = ctx.base.painHold ? [] : ctx.daRecuperare.slice(0, Math.min(ctx.maxSeduteFisiche, giorniLiberi.length));
   for (const r of attesi) {
     const key = [...r.blocchi].sort().join('|');
     if (!sedute.some((s) => (s.blocchi || []).map((b) => b.id).sort().join('|') === key))
@@ -314,7 +333,9 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   const principali: (Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
     ? [primo(ctx, 'tecnica-palleggi'), primo(ctx, 'tecnica-passaggi')]
     : [primo(ctx, 'forza-parte-alta', /B1/), primo(ctx, 'pliometria-intensiva', /short/i), primo(ctx, 'velocita', /short/i)];
-  const recuperi = ctx.daRecuperare.slice(0, ctx.maxSeduteFisiche);
+  const disponibili = new Set(ctx.blocchi.map((x) => x.id));
+  const recuperi = (b.painHold || ctx.setup.fase === 'preparazione_squadra') ? []
+    : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disponibili.has(id))).slice(0, ctx.maxSeduteFisiche);
   const sedute: SedutaLLM[] = giorni.map((g, i) => recuperi[i]
     ? { giorno: g, titolo: recuperi[i].titolo, spiegazione: 'Recupero della seduta saltata la settimana scorsa.', blocchi: recuperi[i].blocchi }
     : {
@@ -340,7 +361,7 @@ export function validateCtxFor(ctx: ContextV2): Parameters<typeof validatePlan>[
 
 export async function generateWeekPlanV2(
   userId: string, richiesta?: string, vincoli: Vincoli = {}
-): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2 }> {
+): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[] }> {
   const ctx = await loadContextV2(userId);
   ctx.vincoli = vincoli;
   const validateCtx = validateCtxFor(ctx);
@@ -365,5 +386,5 @@ export async function generateWeekPlanV2(
       break;
     }
   }
-  return { plan: fallbackPianoBlocchi(ctx), generatoDa: 'fallback', ctx };
+  return { plan: fallbackPianoBlocchi(ctx), generatoDa: 'fallback', ctx, violazioni: errori };
 }

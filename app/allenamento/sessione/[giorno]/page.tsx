@@ -44,7 +44,8 @@ export default function SessionePage() {
       const data = await res.json();
       setPainHold(data.painHold);
       setFaticaAlta(data.faticaAlta === true);
-      const s = (data.plan?.plan?.sedute || []).find((x: PlanSession) => x.giorno === giorno);
+      // Piano di una settimana passata: non si aprono più le sue sedute
+      const s = data.planStale ? null : (data.plan?.plan?.sedute || []).find((x: PlanSession) => x.giorno === giorno);
       setSessione(s || null);
       setPlanId(data.plan?.id || null);
       setStorico(data.storicoSerie || {});
