@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
-import { ChevronRight, Info, Pause, Play, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 
 interface PlanItem {
   esercizio_id: string;
@@ -14,6 +14,7 @@ interface PlanItem {
   nota?: string;
   carico_kg?: number;
   blocco_id?: string;
+  per_lato?: boolean;
 }
 
 /** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
@@ -34,6 +35,7 @@ export interface SetLogInput {
   esercizio_id: string; serie: number; lato: '' | 'dx' | 'sx'; unita: string;
   quantita_prevista: number; quantita_fatta: number | null;
   carico_previsto_kg: number | null; carico_fatto_kg: number | null; rpe: number | null;
+  sensazione?: string | null;   // "dove l'hai sentito?" (solo dopo l'ultima serie degli esercizi che lo chiedono)
 }
 
 export default function TrainingSessionPlayer({
@@ -67,6 +69,7 @@ export default function TrainingSessionPlayer({
   const [fattoTxt, setFattoTxt] = useState('');
   const [caricoTxt, setCaricoTxt] = useState('');
   const [logSaved, setLogSaved] = useState(false);
+  const [sensazione, setSensazione] = useState<string | null>(null);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
@@ -88,9 +91,9 @@ export default function TrainingSessionPlayer({
   const ex = item ? esercizioAny(item.esercizio_id) : undefined;
   const isEmom = item?.schema === 'emom';
   const totalSerie = isEmom ? item.serie : item?.serie ?? 0; // EMOM: serie = minuti
-  const isPerLato = !isEmom && ex?.perLato === true;
-  // Per lato: metà quantità per ogni lato (reps o secondi)
-  const quantitaLato = isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
+  // Per lato: dai blocchi di Ste (item.per_lato, quantità già PER LATO) o dal catalogo (quantità totale → metà per lato)
+  const isPerLato = !isEmom && (item?.per_lato === true || ex?.perLato === true);
+  const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
   const isTimed = !isEmom && (ex?.unita === 'secondi' || ex?.unita === 'minuti');
   const execSeconds = ex?.unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
 
@@ -121,9 +124,10 @@ export default function TrainingSessionPlayer({
     }, 1000);
   };
 
-  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string }) => {
+  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null }) => {
     if (!pending || !item || !onSetLog) return;
     const r = over.rpe !== undefined ? over.rpe : rpe;
+    const sens = over.sensazione !== undefined ? over.sensazione : sensazione;
     const f = over.fatto !== undefined ? over.fatto : fattoTxt;
     const c = over.carico !== undefined ? over.carico : caricoTxt;
     const fattoNum = f.trim() === '' ? null : Number(f.replace(',', '.'));
@@ -135,6 +139,7 @@ export default function TrainingSessionPlayer({
       carico_previsto_kg: pending.carico ?? null,
       carico_fatto_kg: caricoNum !== null && Number.isFinite(caricoNum) && caricoNum !== pending.carico ? caricoNum : null,
       rpe: r,
+      sensazione: sens,
     });
     setLogSaved(true);
   };
@@ -144,7 +149,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
@@ -172,6 +177,19 @@ export default function TrainingSessionPlayer({
     setPending({ serie: next, quantita: quantitaLato, unita: ex?.unita ?? 'reps', carico: item.carico_kg });
     setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false);
     startRest(item.recupero_sec, next >= totalSerie);
+  };
+  // Tornare all'esercizio precedente (tap sbagliato su "esercizio completato"): si riparte dalla sua prima serie
+  const prevItem = () => {
+    if (itemIdx === 0) return;
+    if (timerRef.current) clearInterval(timerRef.current);
+    stopExec();
+    setRestLeft(null);
+    setRestIsLast(false); restIsLastRef.current = false;
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null);
+    setSerieFatte(0);
+    setLato('dx'); latoRef.current = 'dx';
+    setShowVideo(false); setShowDesc(false);
+    setItemIdx(itemIdx - 1);
   };
   const nextItemRef = useRef(nextItem);
   useEffect(() => { nextItemRef.current = nextItem; });
@@ -278,7 +296,8 @@ export default function TrainingSessionPlayer({
             <p className="text-sm text-muted mt-2">{restIsLast ? 'Poi: prossimo esercizio' : `Prossima: serie ${serieFatte + 1} di ${totalSerie}`}</p>
             {pending && onSetLog && (
               <div className="mt-4 text-left bg-surface rounded-xl border border-divider p-3">
-                <p className="text-xs font-semibold text-app mb-2">Com&apos;è andata la serie {pending.serie}? <span className="text-faint font-normal">(1 = leggera · 10 = al limite)</span></p>
+                <p className="text-xs font-semibold text-app mb-1">Com&apos;è andata la serie {pending.serie}?</p>
+                <p className="text-[11px] text-faint mb-2">1-3 leggera · 5 impegnativa ma gestibile · 7-8 dura, ancora 2-3 ripetizioni in canna · 10 al limite, non ce n&apos;era più</p>
                 <div className="flex gap-1 justify-between mb-3">
                   {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                     <button key={n} onClick={() => { setRpe(n); sendLog({ rpe: n }); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
@@ -305,12 +324,31 @@ export default function TrainingSessionPlayer({
                   )}
                   {logSaved && <span className="text-[11px] text-forest-400 font-semibold ml-auto">✓ salvato</span>}
                 </div>
+                {restIsLast && ex?.sensazioni?.length ? (
+                  <div className="mt-3 pt-3 border-t border-divider">
+                    <p className="text-xs font-semibold text-app mb-1.5">Dove l&apos;hai sentito? <span className="text-faint font-normal">(come nei test)</span></p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {ex.sensazioni.map((opt) => (
+                        <button key={opt} onClick={() => { setSensazione(opt); sendLog({ sensazione: opt }); }}
+                          className={`text-xs font-semibold rounded-full px-3 py-1.5 border ${sensazione === opt ? (/fastidio|crampo/i.test(opt) ? 'bg-amber-500/25 border-amber-400/60 text-amber-100' : 'bg-forest-500/25 border-forest-400/60 text-forest-200') : 'bg-surface-2 border-divider text-muted'}`}>
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             )}
             <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}
               className="mt-4 inline-flex items-center gap-1.5 text-sm text-faint">
               <Pause size={14} /> {restIsLast ? 'Vai al prossimo esercizio' : 'Salta il recupero'}
             </button>
+            {restIsLast && (
+              <button onClick={() => { setRestLeft(null); if (timerRef.current) clearInterval(timerRef.current); setRestIsLast(false); restIsLastRef.current = false; setSerieFatte(Math.max(0, serieFatte - 1)); setPending(null); }}
+                className="block mx-auto mt-2 text-xs text-faint underline underline-offset-2">
+                Non era l&apos;ultima: torna alla serie
+              </button>
+            )}
           </div>
         ) : (
           <div className="text-center">
@@ -339,13 +377,19 @@ export default function TrainingSessionPlayer({
             <button onClick={isEmom ? nextItem : handleSerieDone}
               className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg shadow-sm active:scale-[0.99] transition-all">
               {isEmom ? 'EMOM finito → avanti'
-                : isPerLato ? (lato === 'dx' ? '✓ Lato destro fatto' : `✓ Lato sinistro fatto${serieFatte + 1 >= totalSerie ? ' (ultima serie)' : ''}`)
-                : serieFatte + 1 >= totalSerie ? '✓ Ultima serie fatta' : '✓ Serie fatta'}
+                : isPerLato ? (lato === 'dx' ? '✓ Lato destro fatto' : serieFatte + 1 >= totalSerie ? '✓ Esercizio completato' : '✓ Lato sinistro fatto')
+                : serieFatte + 1 >= totalSerie ? '✓ Esercizio completato' : '✓ Serie fatta'}
             </button>
-            <button onClick={nextItem}
-              className="mt-3 inline-flex items-center gap-1 text-sm text-faint">
-              Salta esercizio <ChevronRight size={14} />
-            </button>
+            <div className="mt-3 flex items-center justify-center gap-5">
+              {itemIdx > 0 && (
+                <button onClick={prevItem} className="inline-flex items-center gap-1 text-sm text-faint">
+                  <ChevronLeft size={14} /> Esercizio precedente
+                </button>
+              )}
+              <button onClick={nextItem} className="inline-flex items-center gap-1 text-sm text-faint">
+                Salta esercizio <ChevronRight size={14} />
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -239,6 +239,7 @@ export interface PlanItem {
   carico_pct?: number;       // % del massimale stimato (Brzycki)
   carico_kg?: number;        // carico assoluto proposto (dai blocchi Everfit o dal log per serie)
   blocco_id?: string;        // blocco della libreria da cui viene l'item (lib/trainingBlocks)
+  per_lato?: boolean;        // dai blocchi Everfit (each_side): dx poi sx, quantità indicata PER LATO (non dimezzata)
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom

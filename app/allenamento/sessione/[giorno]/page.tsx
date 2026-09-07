@@ -9,7 +9,9 @@ import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ArrowLeft, Info, Play } from 'lucide-react';
 
-interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string }
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string
+  per_lato?: boolean;
+}
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[] }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
@@ -236,7 +238,7 @@ export default function SessionePage() {
                     <p className="text-xs text-faint">
                       {it.schema === 'emom'
                         ? `EMOM ${it.serie}' · ${it.quantita}/min`
-                        : `${it.serie}×${unitaLabel(ex.unita, it.quantita)}${it.carico_kg ? ` @ ${it.carico_kg} kg` : ''}${ex.perLato ? ' (dx+sx)' : ''} · rec ${it.recupero_sec}"`}
+                        : `${it.serie}×${unitaLabel(ex.unita, it.quantita)}${it.carico_kg ? ` @ ${it.carico_kg} kg` : ''}${it.per_lato ? ' per lato' : ex.perLato ? ' (dx+sx)' : ''} · rec ${it.recupero_sec}"`}
                     </p>
                   </div>
                   {ex.videoUrl && <span className="text-[10px] text-forest-400 font-bold shrink-0">▶ video</span>}

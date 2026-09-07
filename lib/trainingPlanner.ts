@@ -162,9 +162,13 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   let setRpe: SetRpeRow[] = [];
   try {
     const since = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString();
-    const { data: logs } = await supabaseAdmin.from('training_set_logs')
-      .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
-      .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400);
+    const cols = 'session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at';
+    let logs: SetLogRow[] | null = (await supabaseAdmin.from('training_set_logs').select(`${cols}, sensazione`)
+      .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400)).data as SetLogRow[] | null;
+    if (!logs) { // migration 020 (sensazione) non applicata → senza la colonna
+      logs = (await supabaseAdmin.from('training_set_logs').select(cols)
+        .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400)).data as SetLogRow[] | null;
+    }
     storicoSerie = riepilogoEsercizi(((logs || []) as SetLogRow[]).map((l) => ({
       ...l, quantita_prevista: Number(l.quantita_prevista), quantita_fatta: l.quantita_fatta == null ? null : Number(l.quantita_fatta),
       carico_previsto_kg: l.carico_previsto_kg == null ? null : Number(l.carico_previsto_kg), carico_fatto_kg: l.carico_fatto_kg == null ? null : Number(l.carico_fatto_kg),
