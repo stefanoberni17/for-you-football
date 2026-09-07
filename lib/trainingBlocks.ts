@@ -71,11 +71,17 @@ export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: s
     if (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv) famigliaHaLivello.set(b.famiglia, true);
     else famigliaHaLivello.set(b.famiglia, famigliaHaLivello.get(b.famiglia) ?? false);
   }
+  // Il gradino sopra è escluso se il blocco contiene esercizi "solo questo livello" sopra l'atleta
+  // (review livelli 7 set 2026); nei blocchi al livello dell'atleta il blocco di Ste vince sull'esercizio
+  const haSoloLivelloSopra = (b: Blocco) => b.items.some((it) => {
+    const e = it.esercizio_id ? esercizioV2ById(it.esercizio_id) : undefined;
+    return !!e?.soloLivello && LIVELLO_ORDINE[e.livelloMin] > liv;
+  });
   return BLOCCHI.filter((b) =>
     b.completo
     && b.qualita !== 'test'
     && (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv
-      || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia)))
+      || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia) && !haSoloLivelloSopra(b)))
     && b.attrezzatura.every((a) => disp.has(a))
     && (!b.inCoppia || ctx.inCoppia)
   );

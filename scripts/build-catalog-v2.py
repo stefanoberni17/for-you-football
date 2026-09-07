@@ -76,6 +76,8 @@ for r in rows:
         fields.append(f"note: {ts_str(r['note'])}")
     if r.get("solo_livello"):
         fields.append("soloLivello: true")
+    if r.get("nota_livello"):
+        fields.append(f"notaLivello: {ts_str(r['nota_livello'])}")
     if r.get("finestra_partita") is not None:
         fields.append(f"finestraPartita: {int(r['finestra_partita'])}")
     if r.get("nome_everfit") and r["nome_everfit"] != r["nome"]:

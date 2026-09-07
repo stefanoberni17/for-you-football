@@ -121,7 +121,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma meno tempo e in progressione"
  },
  {
   "nome": "ATG Lunge",
@@ -140,7 +142,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma deve aver fatto ATG split squat per un po' di tempo"
  },
  {
   "nome": "atg split squat",
@@ -162,7 +166,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B con poche reps"
  },
  {
   "nome": "Calf raises",
@@ -222,7 +228,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma forte parte bassa in palestra con squat almeno 1.4 bw"
  },
  {
   "nome": "FY Lateral Step Up",
@@ -245,7 +253,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "FY Squat",
@@ -343,7 +352,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma deve essere in grado di fare 30 patrik step up"
  },
  {
   "nome": "sissy squat",
@@ -362,7 +373,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "Anche A ma deve essere in grado di fare sissy assistito"
  },
  {
   "nome": "Sissy Squat Slide",
@@ -383,7 +396,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B con poche reps"
  },
  {
   "nome": "Squat",
@@ -531,7 +546,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "Anche B ma volume basso"
  },
  {
   "nome": "reverse nordic",
@@ -553,7 +570,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma prima in gradi di fare reverse nordic in isometria almeno 30 sec"
  },
  {
   "nome": "Glute bridge ad una gamba",
@@ -572,7 +591,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma deve aver fatto glute bridge a 2 gambe per tempo"
  },
  {
   "nome": "Rdl Progression",
@@ -591,7 +612,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "single leg rdl",
@@ -610,7 +632,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche b ma poco peso"
  },
  {
   "nome": "Knee Raises (Con Barra Dip)",
@@ -670,7 +694,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "cuban press",
@@ -692,7 +717,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "Anche B ma peso basso"
  },
  {
   "nome": "Dips",
@@ -753,7 +780,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "Anche B ma peso basso"
  },
  {
   "nome": "kettlebell swing high pull",
@@ -924,7 +953,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Trazioni",
@@ -1076,7 +1106,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "Archer Pushup",
@@ -1095,7 +1126,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "One Arm Push Up",
@@ -1116,7 +1148,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
  },
  {
   "nome": "One Arm Push Up Deep PRO",
@@ -1137,7 +1171,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
  },
  {
   "nome": "One Arm Push Up Incline",
@@ -1158,7 +1194,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
  },
  {
   "nome": "One Arm Pushup",
@@ -1177,7 +1215,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Hanging Knee Raises",
@@ -1215,7 +1254,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "riduci tempo"
  },
  {
   "nome": "Holllow Hold",
@@ -1355,7 +1396,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "riduci peso e ripetizioni"
  },
  {
   "nome": "Toes to Bar",
@@ -1415,7 +1458,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Dragon Flag Tuck + Ecc",
@@ -1434,7 +1478,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "kettlebell kneeling snatch",
@@ -1498,7 +1543,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "FY Split Squat",
@@ -1558,7 +1604,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "forza funzionale"
+  "sottogruppo": "forza funzionale",
+  "solo_livello": true
  },
  {
   "nome": "kettlebell rotational swing",
@@ -1577,7 +1624,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "forza funzionale"
+  "sottogruppo": "forza funzionale",
+  "solo_livello": true
  },
  {
   "nome": "Kettlebell snatch",
@@ -1704,7 +1752,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "Fascia A-Skip",
@@ -1818,7 +1867,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Pogo Jumps",
@@ -1861,7 +1911,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B"
  },
  {
   "nome": "Toe Bounces",
@@ -1924,7 +1976,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
  },
  {
   "nome": "Fascia Toe Bounces Single Leg - Pogo Jumps",
@@ -1943,7 +1997,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
  },
  {
   "nome": "Pogo Jumps progression (Ankle Stiffness )",
@@ -1966,7 +2022,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
  },
  {
   "nome": "Single Leg Pogo Jumps",
@@ -1985,7 +2043,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true,
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
  },
  {
   "nome": "Jump 2 Up 1 Down",
@@ -2004,7 +2064,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
  },
  {
   "nome": "Squat Jump",
@@ -2023,7 +2085,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B"
  },
  {
   "nome": "Drop Jump",
@@ -2044,7 +2108,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "altezza bassa"
  },
  {
   "nome": "Knee Jump Progression ( Box Jump)",
@@ -2063,7 +2129,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Knee Jumps Progression (+ Box Jump)",
@@ -2082,7 +2149,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Reverse drop jumps",
@@ -2103,7 +2171,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
  },
  {
   "nome": "Singl Leg RDL - SL Knee Jump Progression Advanced",
@@ -2126,7 +2196,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Single leg drop e spinta interna",
@@ -2147,7 +2218,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Single Leg Drop e spinta laterale",
@@ -2168,7 +2240,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma solo dopo tante progressioni pliometriche fatte, raramente"
  },
  {
   "nome": "Single leg lateral drop jump",
@@ -2189,7 +2263,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma solo dopo tante progressioni pliometriche fatte, raramente"
  },
  {
   "nome": "single leg Reverse lateral drop progression",
@@ -2210,7 +2286,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Sl Rdl - Sl Knee Jump Progression Advanced",
@@ -2229,7 +2306,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
@@ -2595,7 +2673,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Salto triplo e sprint",
@@ -2618,7 +2697,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche B ma deve avere gia una base di pliometria e velocità"
  },
  {
   "nome": "Esercizio resistenza e tecnica funzionale",
@@ -2817,7 +2898,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "prevenzione"
+  "sottogruppo": "prevenzione",
+  "solo_livello": false
  },
  {
   "nome": "Toes up down",
@@ -3174,7 +3256,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Spinta isometrica al muro frontale",
@@ -3370,7 +3453,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Crow Pose Progression",
@@ -3395,7 +3479,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
  },
  {
   "nome": "Fascia Single leg RDL",
@@ -3416,7 +3502,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "Protezione palla figura 8 - fascia",
@@ -3439,7 +3526,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Protezione palla laterale - palleggi - fascia",
@@ -3462,7 +3550,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Protezione palla laterale suola - fascia",
@@ -3485,7 +3574,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "Protezione palla schiena - fascia",
@@ -3508,7 +3598,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "Spinta laterale e finta - protezione palla - fascia",
@@ -3531,7 +3622,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Spinta laterale suola - protezione palla - fascia",
@@ -3554,7 +3646,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": false
  },
  {
   "nome": "Palleggi 1 piede alternati interno/esterno - Tecnica",
@@ -3577,7 +3670,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Palleggi 1 piede interno/collo/esterno - Tecnica",
@@ -3600,7 +3694,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Palleggi al muro 1 tocco libero",
@@ -3689,7 +3784,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
@@ -4910,7 +5006,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Dribbling visione e reattività - Base",
@@ -5021,7 +5118,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true
  },
  {
   "nome": "Allungo riscaldamento",
@@ -5653,7 +5751,8 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "core guidato"
+  "sottogruppo": "core guidato",
+  "solo_livello": true
  },
  {
   "nome": "Bear Crawl Linear",

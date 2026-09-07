@@ -41,6 +41,7 @@ export interface ExerciseV2 {
   note?: string;                 // note di Ste (esecuzione, quando usarlo, cautele)
   finestraPartita?: number;      // override della finestra partita della qualità (giorni vietati prima della partita)
   soloLivello?: boolean;         // true = sotto livelloMin è ESCLUSO (default: ammesso a dose ridotta)
+  notaLivello?: string;          // indicazione di Ste per chi è sotto livello ("anche B ma poco peso", prerequisiti…) — review 7 set 2026
   nomeEverfit?: string;          // nome originale su Everfit se rinominato
   v1Id?: string;                 // id dell'esercizio equivalente nel catalogo v1
   tags?: string[];
