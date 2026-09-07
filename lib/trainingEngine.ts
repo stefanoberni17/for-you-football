@@ -248,6 +248,8 @@ export interface PlanSession {
   items: PlanItem[];
   spiegazione?: string;
   blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[]; // planner v2: blocchi impilati
+  posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
+  recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
 }
 export interface WeekPlan { sedute: PlanSession[]; messaggio?: string }
 

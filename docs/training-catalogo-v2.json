@@ -5979,7 +5979,7 @@
   "nome": "Stacco da terra con bilanciere",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
-  "difficolta": 4,
+  "difficolta": 5,
   "livello_min": "A",
   "unita": "reps",
   "per_lato": false,
@@ -5987,12 +5987,14 @@
   "fonte": "Everfit library",
   "tags": [],
   "azione": "importa (libreria Everfit usata nei workout di Ste)",
-  "nome_everfit": "Stacco da terra con bilanciere",
-  "note": "Escluso dal metodo (Ste): resta lo stacco rumeno.",
+  "nome_everfit": "Barbell Deadlift",
+  "note": "Escluso dal metodo (Ste): resta lo stacco rumeno. Deciso con Ste (7 set 2026): dentro, solo nei blocchi di forza massima.",
   "in_coppia": false,
-  "attivo": false,
+  "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "solo_livello": true,
+  "nota_livello": "solo con tecnica dello stacco già appresa; mai come primo esercizio con bilanciere"
  },
  {
   "nome": "Leg Press",

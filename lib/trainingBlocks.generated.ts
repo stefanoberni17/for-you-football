@@ -3,7 +3,7 @@
  *
  * Sorgente: docs/everfit-workouts.json (203 workout Everfit, 144 titoli
  * distinti) → scripts/build-blocks.py. Alias ed euristiche nello script.
- * Blocchi completi: 134 · incompleti (esercizi non mappati): 10.
+ * Blocchi completi: 135 · incompleti (esercizi non mappati): 9.
  */
 import type { Blocco } from './trainingBlocks';
 
@@ -3986,7 +3986,7 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Forza Max Parte Bassa",
   "qualita": "forza-parte-bassa",
   "qualitaSet": {
-   "forza-parte-bassa": 4,
+   "forza-parte-bassa": 8,
    "pliometria-intensiva": 2,
    "forza-esplosiva": 2
   },
@@ -3994,7 +3994,9 @@ export const BLOCCHI: Blocco[] = [
   "progressione": 1,
   "variante": "full",
   "durataMin": 32,
-  "attrezzatura": [],
+  "attrezzatura": [
+   "palestra"
+  ],
   "inCoppia": false,
   "items": [
    {
@@ -4016,7 +4018,7 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 150
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "fpb-stacco-da-terra-con-bilanciere",
     "nomeEverfit": "Barbell Deadlift",
     "serie": 1,
     "quantita": 5.0,
@@ -4025,7 +4027,7 @@ export const BLOCCHI: Blocco[] = [
     "carico_kg": 100.0
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "fpb-stacco-da-terra-con-bilanciere",
     "nomeEverfit": "Barbell Deadlift",
     "serie": 1,
     "quantita": 3.0,
@@ -4034,7 +4036,7 @@ export const BLOCCHI: Blocco[] = [
     "carico_kg": 120.0
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "fpb-stacco-da-terra-con-bilanciere",
     "nomeEverfit": "Barbell Deadlift",
     "serie": 1,
     "quantita": 1.0,
@@ -4043,7 +4045,7 @@ export const BLOCCHI: Blocco[] = [
     "carico_kg": 140.0
    },
    {
-    "esercizio_id": null,
+    "esercizio_id": "fpb-stacco-da-terra-con-bilanciere",
     "nomeEverfit": "Barbell Deadlift",
     "serie": 1,
     "quantita": 3.0,
@@ -4080,10 +4082,8 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    }
   ],
-  "completo": false,
-  "mancanti": [
-   "Barbell Deadlift"
-  ],
+  "completo": true,
+  "mancanti": [],
   "tags": []
  },
  {
