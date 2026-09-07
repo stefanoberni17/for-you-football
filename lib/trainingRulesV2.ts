@@ -209,7 +209,7 @@ function quantitaOk(b: BoundsV2, unita: string): { min: number; max: number } | 
  * `giorniAllaPartita`: null se nessuna partita in settimana.
  */
 export function validateItemV2(
-  it: ItemV2, ctx: ContestoV2, giorniPartita: number | null, opts: { skipBounds?: boolean } = {}
+  it: ItemV2, ctx: ContestoV2, giorniPartita: number | null, opts: { skipBounds?: boolean; skipSoloLivello?: boolean } = {}
 ): { errors: string[]; ex: ExerciseV2 | null } {
   const errors: string[] = [];
   const ex = esercizioV2ById(it.esercizio_id);
@@ -220,8 +220,9 @@ export function validateItemV2(
   // Livello: decide la DOSE, non l'accesso — un esercizio "A" a un atleta B va a dose ridotta
   // (serie al minimo, quantità entro metà range); solo gli esercizi marcati soloLivello sono esclusi — [STE, set 2026]
   const sottoLivello = LIVELLO_ORDINE[ex.livelloMin] > LIVELLO_ORDINE[ctx.livello];
-  if (sottoLivello && ex.soloLivello)
-    errors.push(`${n}: richiede livello ${ex.livelloMin}, l'atleta è ${ctx.livello}`);
+  // skipSoloLivello: item nato da un blocco di Ste di livello ≤ atleta — il blocco vince sull'esercizio
+  if (sottoLivello && ex.soloLivello && !opts.skipSoloLivello)
+    errors.push(`${n}: richiede livello ${ex.livelloMin}, l'atleta è ${ctx.livello}${ex.notaLivello ? ` (${ex.notaLivello})` : ''}`);
   const disp = new Set<AttrezzaturaV2>(['corpo libero', ...ctx.attrezzatura]);
   if (!disp.has(ex.attrezzatura)) errors.push(`${n}: serve ${ex.attrezzatura}, non disponibile`);
   if (ex.inCoppia && !ctx.inCoppia) errors.push(`${n}: serve un compagno`);

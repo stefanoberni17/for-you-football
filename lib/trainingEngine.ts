@@ -14,7 +14,8 @@ import {
 } from './trainingCatalog';
 
 import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2 } from './trainingRulesV2';
-import type { ExerciseV2 } from './trainingCatalogV2';
+import { LIVELLO_ORDINE, type ExerciseV2 } from './trainingCatalogV2';
+import { bloccoById } from './trainingBlocks';
 
 export interface TestResultRow { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }
 
@@ -301,7 +302,9 @@ export function validatePlan(
       if (!ex) {
         // Non è nel catalogo v1: prova il catalogo v2 (solo se il contesto v2 è abilitato)
         if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
-        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: !!(ctx.trustBlocks && it.blocco_id) });
+        const blocco = ctx.trustBlocks && it.blocco_id ? bloccoById(it.blocco_id) : undefined;
+        const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[ctx.v2.livello]);
+        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: !!blocco, skipSoloLivello: bloccoDiSte });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });
         continue;
