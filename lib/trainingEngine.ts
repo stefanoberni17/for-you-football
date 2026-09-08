@@ -7,7 +7,7 @@
  * bounds e regole (partite, tetto sedute, durate), qualunque cosa dica l'LLM.
  */
 import {
-  BOUNDS, ESERCIZI, REGOLE, ROMBO_PUNTE, TESTS,
+  BOUNDS, ESERCIZI, REGOLE, ROMBO_GRUPPI, ROMBO_PUNTE, TESTS,
   TECNICA_ITEM_MAX, TECNICA_ITEM_MIN, TECNICA_RECUPERO_MIN_SEC,
   catenaByArea, esercizioById, punteggioLivelli, testById,
   type AreaForza, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
@@ -213,7 +213,14 @@ export function buildAmrapCircuit(results: TestResultRow[]): AmrapStation[] {
 
 // ─── Rombo card ──────────────────────────────────────────────────────────────
 
-export interface RomboPunta { key: string; label: string; score: number | null; fatti: number; totali: number; nonValutabili: number }
+export interface RomboPunta {
+  key: string; label: string; gruppo: string;
+  score: number | null;          // ultimo risultato di ogni test (regole correnti), media
+  scoreIniziale: number | null;  // PRIMO risultato di ogni test (la partenza), stessa media
+  delta: number | null;          // score − scoreIniziale (0 se testato una volta sola)
+  fatti: number; totali: number; nonValutabili: number;
+}
+export interface RomboGruppo extends Omit<RomboPunta, 'gruppo'> { punte: string[] }
 
 /**
  * Punteggio di un risultato con le REGOLE CORRENTI dei test (non quello salvato):
@@ -238,20 +245,49 @@ export function punteggioRisultato(r: TestResultRow): number | null {
   return punteggioLivelli(v2.soglie, v2.verso, Number(r.valore));
 }
 
-/** Rombo a 10 punte: media dei punteggi (regole correnti) dell'ULTIMO risultato di ogni test della punta. */
+function firstResult(results: TestResultRow[], testId: string): TestResultRow | undefined {
+  for (let i = results.length - 1; i >= 0; i--) if (results[i].test_id === testId) return results[i];
+  return undefined;
+}
+const media = (xs: number[]) => xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null;
+
+/**
+ * Rombo DETTAGLIATO (11 punte): per ogni punta la media dei punteggi (regole correnti) dell'ULTIMO
+ * risultato di ogni test, e la stessa media sul PRIMO risultato (la partenza) per il confronto nel tempo.
+ */
 export function buildRombo(results: TestResultRow[]): RomboPunta[] {
   return ROMBO_PUNTE.map((p) => {
-    const scores: number[] = [];
+    const scores: number[] = [], iniziali: number[] = [];
     let fatti = 0, nonValutabili = 0;
     for (const tid of p.testIds) {
       const r = latestResult(results, tid);
       if (!r) continue;
       fatti++;
       const sc = punteggioRisultato(r);
-      if (sc === null) nonValutabili++; else scores.push(sc);
+      if (sc === null) { nonValutabili++; continue; }
+      scores.push(sc);
+      const primo = firstResult(results, tid);
+      const sc0 = primo ? punteggioRisultato(primo) : null;
+      iniziali.push(sc0 ?? sc); // primo risultato non valutabile (es. senza peso) → parte dall'attuale
     }
-    const score = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
-    return { key: p.key, label: p.label, score, fatti, totali: p.testIds.length, nonValutabili };
+    const score = media(scores), scoreIniziale = media(iniziali);
+    return { key: p.key, label: p.label, gruppo: p.gruppo, score, scoreIniziale, delta: score !== null && scoreIniziale !== null ? score - scoreIniziale : null, fatti, totali: p.testIds.length, nonValutabili };
+  });
+}
+
+/** Rombo BASE (6 punte): ogni gruppo è la media delle sue punte dettagliate con un punteggio (peso uguale per punta, non per test). */
+export function buildRomboBase(punte: RomboPunta[]): RomboGruppo[] {
+  return ROMBO_GRUPPI.map((g) => {
+    const mie = punte.filter((p) => p.gruppo === g.key);
+    const conScore = mie.filter((p) => p.score !== null);
+    const score = media(conScore.map((p) => p.score as number));
+    const scoreIniziale = media(conScore.map((p) => p.scoreIniziale ?? (p.score as number)));
+    return {
+      key: g.key, label: g.label, punte: mie.map((p) => p.key), score, scoreIniziale,
+      delta: score !== null && scoreIniziale !== null ? score - scoreIniziale : null,
+      fatti: mie.reduce((a, p) => a + p.fatti, 0), totali: mie.reduce((a, p) => a + p.totali, 0),
+      nonValutabili: mie.reduce((a, p) => a + p.nonValutabili, 0),
+    };
   });
 }
 

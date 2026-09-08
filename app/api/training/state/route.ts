@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
-import { LADDER_AREE, buildAmrapCircuit, buildRombo, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
+import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       supabaseAdmin.from('profiles').select('training_pain_hold, name').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
-        .eq('user_id', userId).order('created_at', { ascending: false }).limit(120),
+        .eq('user_id', userId).order('created_at', { ascending: false }).limit(400),
       supabaseAdmin.from('training_test_sessions').select('id, tipo, started_at')
         .eq('user_id', userId).is('completed_at', null)
         .order('started_at', { ascending: false }).limit(1).maybeSingle(),
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     if (resultsRes.error && /dettaglio/.test(resultsRes.error.message)) {
       const r2 = await supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
-        .eq('user_id', userId).order('created_at', { ascending: false }).limit(120);
+        .eq('user_id', userId).order('created_at', { ascending: false }).limit(400);
       results = r2.data as ResultRow[] | null;
     }
 
@@ -131,12 +131,14 @@ export async function GET(request: NextRequest) {
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase,
     });
 
+    const rombo = buildRombo(rows);
     return NextResponse.json({
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
       fascia: fasciaFromResults(rows),
       gradini,
-      rombo: buildRombo(rows),
+      rombo,
+      romboBase: buildRomboBase(rombo),
       tests: TESTS.map((t) => ({
         id: t.id, nome: t.nome, unita: t.unita, protocollo: t.protocollo,
         serve: t.serve ?? null, passi: t.passi ?? null, inserisci: t.inserisci ?? null,

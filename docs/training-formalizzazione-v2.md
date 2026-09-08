@@ -102,9 +102,10 @@ consecutive con esecuzione pulita **[STE ✅]** (+2.5-5% parte alta, +5% parte b
   Nota: nel File_DB la colonna LIVELLO (punteggio 0-100) è **inserita a mano**, non calcolata; il FOGLIO RECAP fa la
   media per categoria (dettaglio: capac. anaerobica, resistenza, forza PB, forza PA, velocità, forza esplosiva, fascia,
   tecnica) e poi "generale" (resistenza, forza, velocità, tecnica, prevenzione) — ma le formule "generale" del foglio
-  puntano a intervalli sbagliati (es. VELOCITÀ generale = media della forza PB). **[PROPOSTA]** mapping corretto:
-  Resistenza = 1/3 km + anaerobica · Forza = PB + PA + esplosiva · Velocità = 50 m + T sprint + ankle jump ·
-  Tecnica = tecnica · Prevenzione = fascia + wall sit/affondo iso. Punteggio per test (set 2026, `punteggioLivelli`): ancorato ai livelli,
+  puntano a intervalli sbagliati (es. VELOCITÀ generale = media della forza PB). **Mapping in app (set 2026, `ROMBO_GRUPPI`)**: vista base a 6 punte —
+  Forza parte alta = push + pull · Forza parte bassa = core + gambe (tenute + massimali) + esplosiva · Resistenza = 1/3 km +
+  anaerobica (navetta, ankle stiffness) · Velocità = 50 m + T sprint · Tecnica = palleggi + tiro/passaggio · Prevenzione = fascia;
+  vista dettaglio a 11 punte. Partenza (primo risultato per test) in grigio sotto il rombo attuale. Punteggio per test (set 2026, `punteggioLivelli`): ancorato ai livelli,
   40 alla soglia intermedio · 60 avanzato · 80 PRO · 100 un gradino oltre PRO, lineare dentro ogni fascia (verso rispettato
   per i tempi). Il rombo lo ricalcola dal valore con le regole correnti; i massimali senza peso corporeo non entrano.
 - **Gating carico [STE ✅]**:
