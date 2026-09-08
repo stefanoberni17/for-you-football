@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_NAMES } from '@/lib/constants';
+import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ArrowLeft, Info, Play } from 'lucide-react';
@@ -196,8 +197,11 @@ export default function SessionePage() {
         <button onClick={() => router.push('/allenamento')} className="inline-flex items-center gap-1.5 text-sm text-muted mb-3">
           <ArrowLeft size={16} /> Campo
         </button>
-        <p className="text-xs uppercase tracking-widest text-forest-400 font-bold mb-1">{DAY_NAMES[giorno]} · {sessione.tipo} · {sessione.durata_min}&apos;</p>
-        <h1 className="text-2xl font-bold text-app mb-2">{sessione.titolo}</h1>
+        <p className="text-xs uppercase tracking-widest text-forest-400 font-bold mb-1">{DAY_NAMES[giorno]} · {sessione.tipo}</p>
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <h1 className="text-2xl font-bold text-app">{sessione.titolo}</h1>
+          <span className="shrink-0 inline-flex items-center gap-1 text-sm font-bold text-forest-300 bg-forest-500/15 border border-forest-500/30 rounded-xl px-2.5 py-1 tabular-nums mt-1">⏱ ~{durataLabel(sessione.durata_min)}</span>
+        </div>
         {sessione.spiegazione && <p className="text-sm text-muted leading-relaxed mb-4">💡 {sessione.spiegazione}</p>}
         {alreadyDone && (
           <p className="text-xs font-semibold text-forest-300 bg-forest-500/10 border border-forest-500/30 rounded-xl px-3 py-2 mb-4">✓ Già completata — puoi rifarla, il piano resta segnato.</p>
@@ -228,7 +232,7 @@ export default function SessionePage() {
             return (
               <div key={i}>
               {blocco && (
-                <p className="text-[11px] uppercase tracking-widest text-forest-400 font-bold mt-3 mb-1.5 px-1">{blocco.nome} · ~{blocco.durataMin}&apos;</p>
+                <p className="text-[11px] uppercase tracking-widest text-forest-400 font-bold mt-3 mb-1.5 px-1">{nomeBloccoAtleta(blocco.nome)} · ~{blocco.durataMin}&apos;</p>
               )}
               <div className="bg-surface border border-divider rounded-2xl p-3.5">
                 <div className="flex items-center gap-3">
