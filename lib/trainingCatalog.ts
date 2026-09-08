@@ -12,6 +12,33 @@
 
 export type FasciaLivello = 'B' | 'A' | 'PRO';
 export type TestLivello = 'base' | 'intermedio' | 'avanzato' | 'pro';
+
+/**
+ * Punteggio 0-100 ANCORATO AI LIVELLI, uguale per tutti i test (v1, v2 campo, palestra):
+ * Base 0-40 (da 0 alla soglia intermedio) · Intermedio 40-60 · Avanzato 60-80 · PRO 80-100
+ * (100 a un gradino oltre la soglia PRO, cioè PRO + (PRO − avanzato)). Lineare dentro ogni fascia.
+ * Così "intermedio" vale ~40-60 su ogni punta del rombo, qualunque sia la scala del test
+ * (con la vecchia formula "valore/PRO × 80" un intermedio valeva 13 sul pull e 67 sulla resistenza).
+ * `verso: 'min'` = più basso è meglio (tempi): le fasce sono specchiate; sotto il livello base
+ * il punteggio scende a 0 a 2× la soglia intermedio.
+ */
+export function punteggioLivelli(soglie: { intermedio: number; avanzato: number; pro: number }, verso: 'max' | 'min', valore: number): number {
+  const { intermedio: i, avanzato: a, pro: p } = soglie;
+  const lin = (v: number, lo: number, hi: number, from: number, to: number) => hi === lo ? to : from + (to - from) * Math.min(1, Math.max(0, (v - lo) / (hi - lo)));
+  let score: number;
+  if (verso === 'max') {
+    if (valore >= p) score = lin(valore, p, p + Math.max(p - a, 1e-9), 80, 100);
+    else if (valore >= a) score = lin(valore, a, p, 60, 80);
+    else if (valore >= i) score = lin(valore, i, a, 40, 60);
+    else score = lin(valore, 0, i, 0, 40);
+  } else {
+    if (valore <= p) score = lin(p - valore, 0, Math.max(a - p, 1e-9), 80, 100);
+    else if (valore <= a) score = lin(a - valore, 0, a - p, 60, 80);
+    else if (valore <= i) score = lin(i - valore, 0, i - a, 40, 60);
+    else score = lin(2 * i - valore, 0, i, 0, 40);
+  }
+  return Math.round(Math.min(100, Math.max(0, score)) * 10) / 10;
+}
 export type AreaForza = 'spinta' | 'tirata' | 'core' | 'lombari';
 export type AreaTecnica = 'palleggi' | 'muro' | 'conduzione';
 export type Area = AreaForza | AreaTecnica | 'laterale' | 'fascia' | 'mobilita';

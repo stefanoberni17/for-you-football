@@ -47,9 +47,10 @@ export async function GET(request: NextRequest) {
       results = r2.data as ResultRow[] | null;
     }
 
-    const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }) => ({
+    const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }) => ({
       test_id: r.test_id, valore: Number(r.valore),
       livello_calcolato: r.livello_calcolato, punteggio_calcolato: Number(r.punteggio_calcolato),
+      dettaglio: r.dettaglio ?? null,
     }));
 
     const gradini = placementFromResults(rows);

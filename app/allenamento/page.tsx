@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer,
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from 'recharts';
 import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
@@ -15,7 +15,7 @@ import TrainingPlanForm from '@/components/TrainingPlanForm';
 import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 
-interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number }
+interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number; nonValutabili?: number }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string }[]; posticipata_da?: number; recupero?: boolean }
 interface TrainingState {
@@ -418,10 +418,16 @@ export default function AllenamentoHub() {
                   <RadarChart data={state.rombo.map((p) => ({ label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0 }))} outerRadius="70%">
                     <PolarGrid stroke="#1f2924" />
                     <PolarAngleAxis dataKey="label" tick={{ fill: '#9ca7a0', fontSize: 10 }} />
+                    {/* Scala fissa 0-100 (40 intermedio · 60 avanzato · 80 PRO): senza, Recharts scala sul massimo e un 30 ovunque sembra un poligono pieno */}
+                    <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
                     <Radar dataKey="value" stroke="#2dd17a" fill="#2dd17a" fillOpacity={0.35} isAnimationActive={false} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
+              <p className="text-[10px] text-faint px-1 mb-1.5">Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO. Ogni punta è la media dei suoi test.</p>
+              {state.rombo.some((p) => (p.nonValutabili ?? 0) > 0) && (
+                <p className="text-[10px] text-amber-200/80 px-1 mb-1.5">Alcuni massimali non entrano nel punteggio: manca il peso corporeo in &quot;Il tuo setup&quot;.</p>
+              )}
               {/* Legenda: punteggio per punta + test fatti/totali (le punte senza test restano a 0 sul grafico) */}
               <div className="grid grid-cols-2 gap-1.5 px-1 mb-3">
                 {state.rombo.map((p) => (

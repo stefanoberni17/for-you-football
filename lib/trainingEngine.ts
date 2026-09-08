@@ -9,15 +9,19 @@
 import {
   BOUNDS, ESERCIZI, REGOLE, ROMBO_PUNTE, TESTS,
   TECNICA_ITEM_MAX, TECNICA_ITEM_MIN, TECNICA_RECUPERO_MIN_SEC,
-  catenaByArea, esercizioById, testById,
+  catenaByArea, esercizioById, punteggioLivelli, testById,
   type AreaForza, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
 } from './trainingCatalog';
 
 import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2 } from './trainingRulesV2';
+import { testV2ById } from './trainingTestsV2';
 import { LIVELLO_ORDINE, type ExerciseV2 } from './trainingCatalogV2';
 import { bloccoById } from './trainingBlocks';
 
-export interface TestResultRow { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }
+export interface TestResultRow {
+  test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number;
+  dettaglio?: Record<string, unknown> | null; // migration 018 (lift: peso, reps, rapporto, senza_peso_corporeo)
+}
 
 // ─── Scoring ─────────────────────────────────────────────────────────────────
 
@@ -29,14 +33,12 @@ export function livelloFromValore(test: TrainingTest, valore: number): TestLivel
 }
 
 /**
- * Punteggio 0-110 — formula v0 (approssimazione della logica del FOGLIO RECAP,
- * da tarare): 80 punti al raggiungimento della soglia PRO, lineare sotto,
- * fino a +30 di bonus sopra. CONGELATO alla scrittura: le soglie future non
- * riscrivono la storia.
+ * Punteggio 0-100 ancorato ai livelli (vedi `punteggioLivelli`): 40 alla soglia intermedio,
+ * 60 ad avanzato, 80 a PRO, 100 un gradino oltre. Il valore salvato in `punteggio_calcolato`
+ * resta la storia; il rombo lo RICALCOLA dal valore con le regole correnti (buildRombo).
  */
 export function punteggioFromValore(test: TrainingTest, valore: number): number {
-  const score = (valore / test.soglie.pro) * 80;
-  return Math.round(Math.min(110, Math.max(0, score)) * 10) / 10;
+  return punteggioLivelli(test.soglie, 'max', valore);
 }
 
 export function scoreTest(testId: string, valore: number): { livello: TestLivello; punteggio: number } | null {
@@ -211,17 +213,45 @@ export function buildAmrapCircuit(results: TestResultRow[]): AmrapStation[] {
 
 // ─── Rombo card ──────────────────────────────────────────────────────────────
 
-export interface RomboPunta { key: string; label: string; score: number | null; fatti: number; totali: number }
+export interface RomboPunta { key: string; label: string; score: number | null; fatti: number; totali: number; nonValutabili: number }
 
+/**
+ * Punteggio di un risultato con le REGOLE CORRENTI dei test (non quello salvato):
+ * v1 → soglie del catalogo; v2 campo → soglie e verso; palestra → rapporto 1RM/peso corporeo
+ * (dal `dettaglio`, altrimenti valore/peso se noto). null = non valutabile (lift senza peso corporeo,
+ * test sconosciuto, punto scala skill).
+ */
+export function punteggioRisultato(r: TestResultRow): number | null {
+  const v1 = testById(r.test_id);
+  if (v1) return punteggioLivelli(v1.soglie, 'max', Number(r.valore));
+  const v2 = testV2ById(r.test_id);
+  if (!v2) return null;
+  if (v2.lift) {
+    const d = r.dettaglio || {};
+    let rapporto = typeof d.rapporto === 'number' ? d.rapporto : Number(d.rapporto);
+    if (!Number.isFinite(rapporto) || rapporto <= 0) {
+      const peso = Number(d.peso_corporeo);
+      rapporto = Number.isFinite(peso) && peso > 0 ? Number(r.valore) / peso : NaN;
+    }
+    return Number.isFinite(rapporto) && rapporto > 0 ? punteggioLivelli(v2.soglie, v2.verso, rapporto) : null;
+  }
+  return punteggioLivelli(v2.soglie, v2.verso, Number(r.valore));
+}
+
+/** Rombo a 10 punte: media dei punteggi (regole correnti) dell'ULTIMO risultato di ogni test della punta. */
 export function buildRombo(results: TestResultRow[]): RomboPunta[] {
   return ROMBO_PUNTE.map((p) => {
     const scores: number[] = [];
+    let fatti = 0, nonValutabili = 0;
     for (const tid of p.testIds) {
       const r = latestResult(results, tid);
-      if (r) scores.push(Number(r.punteggio_calcolato));
+      if (!r) continue;
+      fatti++;
+      const sc = punteggioRisultato(r);
+      if (sc === null) nonValutabili++; else scores.push(sc);
     }
     const score = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
-    return { key: p.key, label: p.label, score, fatti: scores.length, totali: p.testIds.length };
+    return { key: p.key, label: p.label, score, fatti, totali: p.testIds.length, nonValutabili };
   });
 }
 

@@ -104,8 +104,9 @@ consecutive con esecuzione pulita **[STE ✅]** (+2.5-5% parte alta, +5% parte b
   tecnica) e poi "generale" (resistenza, forza, velocità, tecnica, prevenzione) — ma le formule "generale" del foglio
   puntano a intervalli sbagliati (es. VELOCITÀ generale = media della forza PB). **[PROPOSTA]** mapping corretto:
   Resistenza = 1/3 km + anaerobica · Forza = PB + PA + esplosiva · Velocità = 50 m + T sprint + ankle jump ·
-  Tecnica = tecnica · Prevenzione = fascia + wall sit/affondo iso. Punteggio per test: formula v0 dell'app (80 punti alla
-  soglia PRO, lineare, cap 110) finché Ste non dà riferimenti diversi.
+  Tecnica = tecnica · Prevenzione = fascia + wall sit/affondo iso. Punteggio per test (set 2026, `punteggioLivelli`): ancorato ai livelli,
+  40 alla soglia intermedio · 60 avanzato · 80 PRO · 100 un gradino oltre PRO, lineare dentro ogni fascia (verso rispettato
+  per i tempi). Il rombo lo ricalcola dal valore con le regole correnti; i massimali senza peso corporeo non entrano.
 - **Gating carico [STE ✅]**:
   | Profilo | Carico massimo |
   |---|---|

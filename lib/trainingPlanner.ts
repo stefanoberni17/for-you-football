@@ -111,9 +111,9 @@ export interface PlannerContext {
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, { data: results }, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes').eq('user_id', userId).maybeSingle(),
-    supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
+    supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
     supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
       .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
@@ -126,6 +126,13 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
       .eq('user_id', userId).not('completed_at', 'is', null)
       .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
   ]);
+  // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
+  let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
+  if (resultsRes.error && /dettaglio/.test(resultsRes.error.message)) {
+    const r2 = await supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
+      .eq('user_id', userId).order('created_at', { ascending: false }).limit(60);
+    results = r2.data as typeof results;
+  }
 
   // Ciclo: parte dall'ultima batteria/ri-test chiusa; fallback = ultimo risultato test salvato
   const cicloRiferimento = lastTestSession?.completed_at
@@ -177,9 +184,10 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   } catch { /* no-op */ }
   const carico = await loadCarico(userId, ciclo.isDeload, setRpe);
 
-  const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number }) => ({
+  const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }) => ({
     test_id: r.test_id, valore: Number(r.valore),
     livello_calcolato: r.livello_calcolato, punteggio_calcolato: Number(r.punteggio_calcolato),
+    dettaglio: r.dettaglio ?? null,
   }));
   const gradini = placementFromResults(rows);
   // Sbarra: v0 — dedotta dal fatto che il test pull sia stato fatto con valore ≥ 0
