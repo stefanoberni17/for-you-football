@@ -15,7 +15,7 @@ import TrainingPlanForm from '@/components/TrainingPlanForm';
 import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 
-interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number; nonValutabili?: number }
+interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string }[]; posticipata_da?: number; recupero?: boolean }
 interface TrainingState {
@@ -24,6 +24,7 @@ interface TrainingState {
   fascia: string;
   gradini: Record<string, number>;
   rombo: RomboPoint[];
+  romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; done: boolean }[];
   plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string }; generato_da: string } | null;
@@ -47,6 +48,7 @@ export default function AllenamentoHub() {
   const [state, setState] = useState<TrainingState | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [vistaRombo, setVistaRombo] = useState<'base' | 'dettaglio'>('base');
   const [showRigenera, setShowRigenera] = useState(false);
   const [autoGen, setAutoGen] = useState(false); // nuova settimana preparata in automatico
   const autoGenTried = useRef(false); // un solo tentativo automatico per apertura: se fallisce, resta il bottone
@@ -166,7 +168,12 @@ export default function AllenamentoHub() {
   const batteriaVuota = testsFatti === 0;
   const amrap = state.tests.find((t) => t.id === 'test-amrap');
   const LIVELLO_LABEL: Record<string, string> = { base: 'Base', intermedio: 'Intermedio', avanzato: 'Avanzato', pro: 'PRO' };
-  const ROMBO_SHORT: Record<string, string> = { tiro_passaggio: 'Tiro/pass.', esplosivita: 'Esplosiv.' };
+  const ROMBO_SHORT: Record<string, string> = { tiro_passaggio: 'Tiro/pass.', esplosivita: 'Esplosiv.', res_velocita: 'Res. veloc.', forza_pa: 'Forza alta', forza_pb: 'Forza bassa', prevenzione: 'Prevenz.' };
+  const romboVisto: RomboPoint[] = vistaRombo === 'base' && state.romboBase ? state.romboBase : state.rombo;
+  // Partenza ≠ adesso su almeno una punta → si disegna anche il rombo grigio della partenza
+  const haStorico = romboVisto.some((p) => p.score !== null && p.scoreIniziale != null && p.scoreIniziale !== p.score);
+  const Delta = ({ d }: { d: number | null | undefined }) => d == null || d === 0 ? null
+    : <span className={`ml-1 text-[10px] font-bold ${d > 0 ? 'text-forest-300' : 'text-amber-300/80'}`}>{d > 0 ? `+${d}` : d}</span>;
   const doneDays = new Set(state.completions.map((c) => Number(c.session_key.split('#')[1])));
   // Piano di una settimana passata: non è la settimana corrente (niente stati/CTA su sedute vecchie)
   const sedute = state.planStale ? [] : [...(state.plan?.plan?.sedute || [])].sort((a, b) => a.giorno - b.giorno);
@@ -413,31 +420,49 @@ export default function AllenamentoHub() {
                   Livello generale (AMRAP): <span className="font-semibold text-forest-300">{LIVELLO_LABEL[amrap.lastLevel] || amrap.lastLevel}</span> · {amrap.lastValue} giri
                 </p>
               )}
+              <div className="flex gap-1.5 px-1 mb-1">
+                {(['base', 'dettaglio'] as const).map((v) => (
+                  <button key={v} type="button" onClick={() => setVistaRombo(v)}
+                    className={`text-[11px] font-semibold rounded-full px-3 py-1 border ${vistaRombo === v ? 'bg-forest-500/25 border-forest-400/60 text-forest-200' : 'bg-surface-2 border-divider text-muted'}`}>
+                    {v === 'base' ? 'Base' : 'Dettaglio'}
+                  </button>
+                ))}
+                {haStorico && <span className="text-[10px] text-faint self-center ml-1">grigio = partenza · verde = adesso</span>}
+              </div>
               <div style={{ width: '100%', height: 260 }}>
                 <ResponsiveContainer>
-                  <RadarChart data={state.rombo.map((p) => ({ label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0 }))} outerRadius="70%">
+                  <RadarChart data={romboVisto.map((p) => ({ label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }))} outerRadius="70%">
                     <PolarGrid stroke="#1f2924" />
                     <PolarAngleAxis dataKey="label" tick={{ fill: '#9ca7a0', fontSize: 10 }} />
                     {/* Scala fissa 0-100 (40 intermedio · 60 avanzato · 80 PRO): senza, Recharts scala sul massimo e un 30 ovunque sembra un poligono pieno */}
                     <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
+                    {haStorico && <Radar dataKey="partenza" stroke="#6b7470" strokeDasharray="4 3" fill="#6b7470" fillOpacity={0.15} isAnimationActive={false} />}
                     <Radar dataKey="value" stroke="#2dd17a" fill="#2dd17a" fillOpacity={0.35} isAnimationActive={false} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-[10px] text-faint px-1 mb-1.5">Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO. Ogni punta è la media dei suoi test.</p>
+              <p className="text-[10px] text-faint px-1 mb-1.5">
+                Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO.
+                {vistaRombo === 'base' ? ' Ogni punta è la media delle sue voci di dettaglio.' : ' Ogni punta è la media dei suoi test.'}
+              </p>
               {state.rombo.some((p) => (p.nonValutabili ?? 0) > 0) && (
                 <p className="text-[10px] text-amber-200/80 px-1 mb-1.5">Alcuni massimali non entrano nel punteggio: manca il peso corporeo in &quot;Il tuo setup&quot;.</p>
               )}
-              {/* Legenda: punteggio per punta + test fatti/totali (le punte senza test restano a 0 sul grafico) */}
+              {/* Legenda: punteggio per punta (+ progresso dalla partenza) e test fatti/totali; le punte senza test restano a 0 sul grafico */}
               <div className="grid grid-cols-2 gap-1.5 px-1 mb-3">
-                {state.rombo.map((p) => (
+                {romboVisto.map((p) => (
                   <Link key={p.key} href="/allenamento/test"
                     className={`flex items-center justify-between rounded-xl border px-2.5 py-1.5 ${p.score === null ? 'bg-surface border-divider' : 'bg-surface-2 border-divider'}`}>
                     <span className={`text-[11px] ${p.score === null ? 'text-faint' : 'text-app'}`}>{p.label}</span>
                     <span className="text-[11px] tabular-nums shrink-0 ml-2">
                       {p.score === null
                         ? <span className="text-faint">— · 0/{p.totali}</span>
-                        : <><span className="font-bold text-forest-300">{p.score}</span><span className="text-faint"> · {p.fatti}/{p.totali}</span></>}
+                        : <>
+                            {vistaRombo === 'dettaglio' && p.scoreIniziale != null && p.scoreIniziale !== p.score && <span className="text-faint">{p.scoreIniziale} → </span>}
+                            <span className="font-bold text-forest-300">{p.score}</span>
+                            <Delta d={p.delta} />
+                            <span className="text-faint"> · {p.fatti}/{p.totali}</span>
+                          </>}
                     </span>
                   </Link>
                 ))}

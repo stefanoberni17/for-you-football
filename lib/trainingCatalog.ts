@@ -429,15 +429,31 @@ export const REGOLE = {
 // Ogni punta = media dei punteggi (0-110) dei test fatti tra quelli elencati.
 // L'AMRAP non è una punta: è il livello generale, mostrato a parte.
 
-export const ROMBO_PUNTE: { key: string; label: string; testIds: string[] }[] = [
-  { key: 'palleggi', label: 'Palleggi', testIds: ['test-pall-forte', 'test-pall-debole', 'test-pall-testa', 'test-piramide'] },
-  { key: 'tiro_passaggio', label: 'Tiro e passaggio', testIds: ['test-muro', 't2-tiri-traversa-forte', 't2-tiri-traversa-debole', 't2-passaggi-palo-forte', 't2-passaggi-palo-debole'] },
-  { key: 'push', label: 'Push', testIds: ['test-push', 't2-lift-panca', 't2-lift-shoulder-press'] },
-  { key: 'pull', label: 'Pull', testIds: ['test-pull', 't2-lift-pull-up'] },
-  { key: 'core', label: 'Core', testIds: ['test-core', 'test-lombari'] },
-  { key: 'gambe', label: 'Gambe', testIds: ['t2-wall-sit', 't2-wall-sit-dx', 't2-wall-sit-sx', 't2-affondo-iso-dx', 't2-affondo-iso-sx', 't2-lift-squat', 't2-lift-stacco-rumeno', 't2-lift-hip-thrust', 't2-lift-squat-bulgaro'] },
-  { key: 'esplosivita', label: 'Esplosività', testIds: ['t2-broad-jump', 't2-broad-jump-dx', 't2-broad-jump-sx', 't2-ankle-jump', 't2-ankle-jump-dx', 't2-ankle-jump-sx'] },
-  { key: 'velocita', label: 'Velocità', testIds: ['t2-50m', 't2-t-sprint'] },
-  { key: 'resistenza', label: 'Resistenza', testIds: ['t2-1km', 't2-3km', 't2-navetta-30'] },
-  { key: 'fascia', label: 'Fascia', testIds: ['test-fascia-eq-dx', 'test-fascia-eq-sx', 'test-fascia-eq-fatica', 'test-fascia-towel-fatica', 'test-fascia-dolori', 'test-fascia-fastidi-post', 'test-fascia-fatica-partita'] },
+/**
+ * Rombo — vista DETTAGLIATA (11 punte), ognuna con i suoi test e il gruppo della vista base.
+ * Vista BASE (6 punte, `ROMBO_GRUPPI`): Forza parte alta = push + pull · Forza parte bassa = core + gambe +
+ * esplosività · Resistenza = aerobica (1-3 km) + resistenza alla velocità (navetta, ankle stiffness) ·
+ * Velocità · Tecnica = palleggi + tiro/passaggio · Prevenzione = fascia.
+ */
+export const ROMBO_PUNTE: { key: string; label: string; gruppo: string; testIds: string[] }[] = [
+  { key: 'push', label: 'Push', gruppo: 'forza_pa', testIds: ['test-push', 't2-lift-panca', 't2-lift-shoulder-press'] },
+  { key: 'pull', label: 'Pull', gruppo: 'forza_pa', testIds: ['test-pull', 't2-lift-pull-up'] },
+  { key: 'core', label: 'Core', gruppo: 'forza_pb', testIds: ['test-core', 'test-lombari'] },
+  { key: 'gambe', label: 'Gambe', gruppo: 'forza_pb', testIds: ['t2-wall-sit', 't2-wall-sit-dx', 't2-wall-sit-sx', 't2-affondo-iso-dx', 't2-affondo-iso-sx', 't2-lift-squat', 't2-lift-stacco-rumeno', 't2-lift-hip-thrust', 't2-lift-squat-bulgaro'] },
+  { key: 'esplosivita', label: 'Esplosività', gruppo: 'forza_pb', testIds: ['t2-broad-jump', 't2-broad-jump-dx', 't2-broad-jump-sx'] },
+  { key: 'aerobica', label: 'Aerobica', gruppo: 'resistenza', testIds: ['t2-1km', 't2-3km'] },
+  { key: 'res_velocita', label: 'Resist. alla velocità', gruppo: 'resistenza', testIds: ['t2-navetta-30', 't2-ankle-jump', 't2-ankle-jump-dx', 't2-ankle-jump-sx'] },
+  { key: 'velocita', label: 'Velocità', gruppo: 'velocita', testIds: ['t2-50m', 't2-t-sprint'] },
+  { key: 'palleggi', label: 'Palleggi', gruppo: 'tecnica', testIds: ['test-pall-forte', 'test-pall-debole', 'test-pall-testa', 'test-piramide'] },
+  { key: 'tiro_passaggio', label: 'Tiro e passaggio', gruppo: 'tecnica', testIds: ['test-muro', 't2-tiri-traversa-forte', 't2-tiri-traversa-debole', 't2-passaggi-palo-forte', 't2-passaggi-palo-debole'] },
+  { key: 'fascia', label: 'Fascia', gruppo: 'prevenzione', testIds: ['test-fascia-eq-dx', 'test-fascia-eq-sx', 'test-fascia-eq-fatica', 'test-fascia-towel-fatica', 'test-fascia-dolori', 'test-fascia-fastidi-post', 'test-fascia-fatica-partita'] },
+];
+
+export const ROMBO_GRUPPI: { key: string; label: string }[] = [
+  { key: 'forza_pa', label: 'Forza parte alta' },
+  { key: 'forza_pb', label: 'Forza parte bassa' },
+  { key: 'resistenza', label: 'Resistenza' },
+  { key: 'velocita', label: 'Velocità' },
+  { key: 'tecnica', label: 'Tecnica' },
+  { key: 'prevenzione', label: 'Prevenzione' },
 ];

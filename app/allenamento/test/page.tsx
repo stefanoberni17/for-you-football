@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { useWakeLock } from '@/lib/useWakeLock';
@@ -73,6 +74,8 @@ export default function BatteriaTest() {
   const [valore, setValore] = useState(''); // input libero a testo, parse al salvataggio
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
+  const [progressoMsg, setProgressoMsg] = useState<string | null>(null); // "+8 in Forza parte bassa" dopo un test
+  const romboBaseRef = useRef<{ key: string; label: string; score: number | null }[]>([]);
   const [loading, setLoading] = useState(true);
   // Timer AMRAP (20') e per i test a tempo
   const [timerLeft, setTimerLeft] = useState<number | null>(null);
@@ -91,11 +94,25 @@ export default function BatteriaTest() {
       setLadders(data.ladders || []);
       setTestsV2(data.testsV2 || []);
       setPesoCorporeo(data.setup?.pesoKg ?? null);
+      romboBaseRef.current = data.romboBase || [];
     }
     setLoading(false);
   }, [router]);
 
   useEffect(() => { load(); }, [load]);
+
+  /** Ricarica lo stato e, se un gruppo della Card è salito, lo dice ("+8 in Forza parte bassa"). */
+  const ricaricaConProgresso = useCallback(async () => {
+    const prima = new Map(romboBaseRef.current.map((g) => [g.key, g.score]));
+    await load();
+    const saliti = romboBaseRef.current
+      .map((g) => ({ label: g.label, delta: g.score !== null && prima.get(g.key) != null ? g.score - (prima.get(g.key) as number) : null }))
+      .filter((g): g is { label: string; delta: number } => g.delta !== null && g.delta > 0);
+    if (saliti.length) {
+      setProgressoMsg(`📈 ${saliti.map((g) => `+${g.delta} in ${g.label}`).join(' · ')}`);
+      setTimeout(() => setProgressoMsg(null), 5000);
+    }
+  }, [load]);
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
   const startTimer = (minutes: number) => {
@@ -130,7 +147,7 @@ export default function BatteriaTest() {
         setTimeout(() => setSavedMsg(null), 2500);
         setCurrent(null);
         setValore('');
-        await load();
+        await ricaricaConProgresso();
       }
     } finally { setSaving(false); }
   };
@@ -155,7 +172,7 @@ export default function BatteriaTest() {
           : `Salvato — livello ${LIVELLO_LABEL[data.livello] || data.livello}`);
         setTimeout(() => setSavedMsg(null), 3500);
         setV2Current(null); setValore(''); setLiftPeso(''); setLiftReps('');
-        await load();
+        await ricaricaConProgresso();
       } else {
         setSavedMsg(data.error || 'Errore'); setTimeout(() => setSavedMsg(null), 3500);
       }
@@ -276,6 +293,11 @@ export default function BatteriaTest() {
         {savedMsg && (
           <div className="bg-forest-500/15 border border-forest-500/30 text-forest-300 text-sm font-semibold rounded-xl px-4 py-2.5 mb-4">
             ✓ {savedMsg}
+          </div>
+        )}
+        {progressoMsg && (
+          <div className="bg-forest-500/25 border border-forest-400/50 text-forest-200 text-sm font-bold rounded-xl px-4 py-2.5 mb-4">
+            {progressoMsg} <Link href="/allenamento" className="text-xs font-semibold text-forest-300 underline ml-1">Vedi la Card</Link>
           </div>
         )}
 
