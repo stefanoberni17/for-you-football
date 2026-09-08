@@ -14,7 +14,7 @@
  * in una riga · `serve` = cosa ti serve · `passi` = come si fa, numerati ·
  * `inserisci` = cosa scrivere nell'app e in che formato.
  */
-import type { TestLivello } from './trainingCatalog';
+import { punteggioLivelli, type TestLivello } from './trainingCatalog';
 import { stima1RM } from './trainingRulesV2';
 
 export type CategoriaTestV2 =
@@ -262,10 +262,9 @@ export function livelloV2(test: TestV2, valore: number): TestLivello {
   return 'base';
 }
 
-/** Punteggio 0-110 con la formula v0 (80 alla soglia PRO): per verso 'min' il rapporto è invertito. */
+/** Punteggio 0-100 ancorato ai livelli (40 intermedio · 60 avanzato · 80 PRO · 100 un gradino oltre), rispettando il verso. */
 export function punteggioV2(test: TestV2, valore: number): number {
-  const ratio = test.verso === 'max' ? valore / test.soglie.pro : (valore > 0 ? test.soglie.pro / valore : 0);
-  return Math.round(Math.min(110, Math.max(0, ratio * 80)) * 10) / 10;
+  return punteggioLivelli(test.soglie, test.verso, valore);
 }
 
 /**
