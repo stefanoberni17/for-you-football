@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
+import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 
@@ -246,7 +247,7 @@ export default function TrainingSessionPlayer({
         {/* Esercizio corrente */}
         <div className="bg-surface rounded-2xl p-5 border border-divider mb-4">
           {item.blocco_id && blocchi?.find((b) => b.id === item.blocco_id) && (
-            <p className="text-[11px] uppercase tracking-widest text-forest-400 font-bold mb-1">{blocchi.find((b) => b.id === item.blocco_id)!.nome}</p>
+            <p className="text-[11px] uppercase tracking-widest text-forest-400 font-bold mb-1">{nomeBloccoAtleta(blocchi.find((b) => b.id === item.blocco_id)!.nome)}</p>
           )}
           <h2 className="text-xl font-bold text-app leading-snug">{ex.nome}</h2>
           <p className="text-forest-400 font-semibold mt-1">

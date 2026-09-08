@@ -22,6 +22,7 @@ import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRu
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 import type { Vincoli } from './trainingRequest';
+import { testoPerAtleta } from './trainingLabels';
 
 export const PLANNER_V2_PROMPT_VERSION = 'v2.2-recuperi-vincoli';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
@@ -171,9 +172,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     const chiaveBlocchi = blocchi.map((b) => b.id).sort().join('|');
     const recupero = ctx.daRecuperare.some((r) => [...r.blocchi].sort().join('|') === chiaveBlocchi);
     sedute.push({
-      giorno, titolo: s.titolo?.slice(0, 80) || blocchi.map((b) => b.famiglia).join(' + '),
+      giorno, titolo: testoPerAtleta(s.titolo?.slice(0, 80)) || blocchi.map((b) => b.famiglia).join(' + '),
       tipo: tipoDaBlocchi(blocchi), durata_min: durata, items,
-      spiegazione: s.spiegazione?.slice(0, 200),
+      spiegazione: testoPerAtleta(s.spiegazione?.slice(0, 200)),
       blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin })),
       ...(recupero ? { recupero: true } : {}),
     });
@@ -196,7 +197,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const previsto = caricoPianificato({ sedute }, c.calibrazione);
   if (c.tetto !== null && previsto > c.tetto)
     errors.push(`carico settimanale previsto ~${previsto} AU oltre il tetto di ${c.tetto} AU (cronico ${c.cronico}, ACWR ${c.acwr}) — togli un blocco principale o usa le varianti short (target ${c.target!.min}-${c.target!.max} AU)`);
-  return { plan: { sedute, messaggio: p.messaggio?.slice(0, 500) }, errors };
+  return { plan: { sedute, messaggio: testoPerAtleta(p.messaggio?.slice(0, 500)) }, errors };
 }
 
 // ─── Prompt ──────────────────────────────────────────────────────────────────
@@ -264,6 +265,7 @@ ${libreriaTesto(ctx)}
 
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
+LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
 giorno: 1=Lunedì … 7=Domenica. Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`;
 }
 

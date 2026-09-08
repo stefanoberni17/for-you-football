@@ -13,6 +13,7 @@ import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCir
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
+import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 
 interface RomboPoint { key: string; label: string; score: number | null; fatti: number; totali: number }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
@@ -480,7 +481,10 @@ export default function AllenamentoHub() {
             {state.plan && !state.planStale ? (
               <div className="bg-surface rounded-3xl border border-divider p-4 mb-5">
                 <div className="flex items-center justify-between mb-3 px-1">
-                  <p className="text-sm font-bold text-app">La tua settimana</p>
+                  <div>
+                    <p className="text-sm font-bold text-app">La tua settimana</p>
+                    <p className="text-[11px] text-muted">{sedute.length} {sedute.length === 1 ? 'seduta' : 'sedute'} · in tutto ~{durataLabel(sedute.reduce((a, s) => a + (s.durata_min || 0), 0))}</p>
+                  </div>
                   <button onClick={() => setShowRigenera(!showRigenera)}
                     className="text-xs text-forest-400 font-semibold inline-flex items-center gap-1">
                     <RefreshCw size={12} /> Rigenera
@@ -508,8 +512,11 @@ export default function AllenamentoHub() {
                           {done ? '✓' : DAY_SHORT_NAMES[s.giorno]}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-semibold truncate ${done ? 'text-forest-300' : saltata ? 'text-faint' : 'text-app'}`}>{s.titolo}</p>
-                          <p className="text-xs text-faint">{s.tipo} · {s.durata_min}&apos; · {s.blocchi?.length ? s.blocchi.map((b) => b.nome).join(' + ') : `${s.items.length} esercizi`}</p>
+                          <div className="flex items-center gap-2">
+                            <p className={`text-sm font-semibold truncate ${done ? 'text-forest-300' : saltata ? 'text-faint' : 'text-app'}`}>{s.titolo}</p>
+                            <span className={`shrink-0 text-[11px] font-bold rounded-md px-1.5 py-0.5 tabular-nums ${done || saltata ? 'bg-surface text-faint' : 'bg-forest-500/15 text-forest-300'}`}>~{durataLabel(s.durata_min)}</span>
+                          </div>
+                          <p className="text-xs text-faint">{s.blocchi?.length ? s.blocchi.map((b) => nomeBloccoAtleta(b.nome)).join(' + ') : `${s.items.length} esercizi`}</p>
                           {badge && (
                             <span className={`inline-block mt-1 text-[10px] font-bold rounded-full px-2 py-0.5 ${stato === 'recuperabile' ? 'bg-amber-500/20 text-amber-200' : stato === 'oggi' ? 'bg-forest-500/25 text-forest-200' : saltata ? 'bg-surface text-faint' : 'bg-surface text-muted'}`}>{badge}</span>
                           )}

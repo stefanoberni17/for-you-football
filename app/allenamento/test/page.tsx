@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { useWakeLock } from '@/lib/useWakeLock';
-import { ArrowLeft, Check, Timer } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, Timer } from 'lucide-react';
 import TestIstruzioni from '@/components/TestIstruzioni';
 
 interface TestInfo {
@@ -33,6 +33,30 @@ const AREA_LABEL: Record<string, string> = {
   spinta: 'Push', tirata: 'Pull', core: 'Core', lombari: 'Lombari',
 };
 const fmtVal = (v: number, unita: string) => `${v}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
+
+/** Blocco della batteria: numero, titolo, fatti/totali, richiudibile (chiuso da solo quando è completo). */
+function BloccoTest({ n, titolo, sottotitolo, fatti, totali, children }: {
+  n: number; titolo: string; sottotitolo?: string; fatti: number; totali: number; children: React.ReactNode;
+}) {
+  const completo = totali > 0 && fatti >= totali;
+  const [open, setOpen] = useState(!completo);
+  return (
+    <section className={`rounded-3xl border mb-4 ${completo ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
+      <button type="button" onClick={() => setOpen(!open)} className="w-full flex items-center gap-3 p-4 text-left" aria-expanded={open}>
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${completo ? 'bg-forest-500 text-white' : 'bg-app text-forest-300'}`}>
+          {completo ? <Check size={16} /> : n}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-app">Blocco {n} · {titolo}</p>
+          {sottotitolo && <p className="text-[11px] text-muted leading-snug">{sottotitolo}</p>}
+        </div>
+        <span className={`text-xs font-semibold tabular-nums shrink-0 ${completo ? 'text-forest-300' : 'text-faint'}`}>{fatti}/{totali}</span>
+        <ChevronDown size={16} className={`text-faint shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && <div className="px-4 pb-4">{children}</div>}
+    </section>
+  );
+}
 
 export default function BatteriaTest() {
   const router = useRouter();
@@ -172,25 +196,7 @@ export default function BatteriaTest() {
   const amrapDone = tests.find((t) => t.id === 'test-amrap')?.done;
   const catenaTests = tests.filter((t) => t.id !== 'test-amrap');
 
-  return (
-    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-      <div className="max-w-md mx-auto">
-        <button onClick={() => router.push('/allenamento')} className="inline-flex items-center gap-1.5 text-sm text-muted mb-3">
-          <ArrowLeft size={16} /> Campo
-        </button>
-        <h1 className="text-2xl font-bold text-app mb-1">Batteria di test</h1>
-        <p className="text-muted text-sm mb-1">Un test alla volta, salvi subito, riprendi quando vuoi.</p>
-        <p className="text-xs text-forest-400 font-semibold mb-5">{fatti + testsV2.filter((t) => t.done).length}/{tests.length + testsV2.length} completati</p>
-
-        {savedMsg && (
-          <div className="bg-forest-500/15 border border-forest-500/30 text-forest-300 text-sm font-semibold rounded-xl px-4 py-2.5 mb-4">
-            ✓ {savedMsg}
-          </div>
-        )}
-
-        {/* Test di catena — prima dei test, poi l'AMRAP */}
-        <div className="space-y-2.5 mb-6">
-          {catenaTests.map((t) => (
+  const cardV1 = (t: typeof tests[number]) => (
             <div key={t.id} className={`rounded-2xl border p-4 ${t.done ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
               <button onClick={() => { setCurrent(current === t.id ? null : t.id); setSkillCurrent(null); setValore(t.lastValue != null ? String(t.lastValue) : ''); }} className="w-full text-left">
                 <div className="flex items-center gap-3">
@@ -248,17 +254,37 @@ export default function BatteriaTest() {
                 </div>
               )}
             </div>
-          ))}
-        </div>
+  );
+  const gruppoV1 = (ids: (id: string) => boolean) => catenaTests.filter((t) => ids(t.id));
+  const forzaV1 = gruppoV1((id) => ['test-push', 'test-pull', 'test-core', 'test-lombari'].includes(id));
+  const tecnicaV1 = gruppoV1((id) => id.startsWith('test-pall') || id === 'test-muro');
+  const fasciaV1 = gruppoV1((id) => id.startsWith('test-fascia'));
+  const altriV1 = catenaTests.filter((t) => !forzaV1.includes(t) && !tecnicaV1.includes(t) && !fasciaV1.includes(t));
+  const v2Cats = Array.from(new Set(testsV2.map((t) => t.categoria)));
+  const nBase = 4; // blocchi fissi prima della batteria v2
 
-        {/* Scala skill — dopo il test base di ogni catena */}
+  return (
+    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
+      <div className="max-w-md mx-auto">
+        <button onClick={() => router.push('/allenamento')} className="inline-flex items-center gap-1.5 text-sm text-muted mb-3">
+          <ArrowLeft size={16} /> Campo
+        </button>
+        <h1 className="text-2xl font-bold text-app mb-1">Batteria di test</h1>
+        <p className="text-muted text-sm mb-1">Un test alla volta, salvi subito, riprendi quando vuoi.</p>
+        <p className="text-xs text-forest-400 font-semibold mb-5">{fatti + testsV2.filter((t) => t.done).length}/{tests.length + testsV2.length} completati</p>
+
+        {savedMsg && (
+          <div className="bg-forest-500/15 border border-forest-500/30 text-forest-300 text-sm font-semibold rounded-xl px-4 py-2.5 mb-4">
+            ✓ {savedMsg}
+          </div>
+        )}
+
+        <BloccoTest n={1} titolo="Forza a corpo libero" sottotitolo="Piegamenti, trazioni, plank, lombari: il tuo punto di partenza per le catene" fatti={forzaV1.filter((t) => t.done).length} totali={forzaV1.length}>
+          <div className="space-y-2.5">{forzaV1.map(cardV1)}</div>
+        </BloccoTest>
         {ladders.length > 0 && (
-          <>
-            <h2 className="text-base font-bold text-app mb-1">Scala skill</h2>
-            <p className="text-xs text-muted leading-relaxed mb-3">
-              Prova il max sull&apos;esercizio proposto: se superi la soglia si sale di gradino. Serve a scegliere gli esercizi giusti per AMRAP e sedute. Falla quando sei fresco — anche in giorni diversi. Tocca un risultato per ritestarlo.
-            </p>
-            <div className="space-y-2.5 mb-6">
+          <BloccoTest n={2} titolo="Scala skill" sottotitolo="Prova il max sull'esercizio proposto: sopra la soglia sali di gradino. Falla da fresco, anche in giorni diversi. Tocca un risultato per rifarlo." fatti={ladders.filter((l) => !l.next).length} totali={ladders.length}>
+            <div className="space-y-2.5">
               {ladders.map((l) => (
                 <div key={l.area} className="rounded-2xl border bg-surface border-divider p-4">
                   <div className="flex items-center justify-between mb-2">
@@ -319,26 +345,30 @@ export default function BatteriaTest() {
                 </div>
               ))}
             </div>
-          </>
+          </BloccoTest>
         )}
+        <BloccoTest n={3} titolo="Tecnica con la palla" sottotitolo="Palleggi e passaggi al muro" fatti={tecnicaV1.filter((t) => t.done).length} totali={tecnicaV1.length}>
+          <div className="space-y-2.5">{tecnicaV1.map(cardV1)}</div>
+        </BloccoTest>
+        <BloccoTest n={4} titolo="Fascia e piede" sottotitolo="Equilibrio, dove senti la fatica, dolori: serve per la prevenzione" fatti={fasciaV1.filter((t) => t.done).length} totali={fasciaV1.length}>
+          <div className="space-y-2.5">{fasciaV1.map(cardV1)}</div>
+        </BloccoTest>
+        {altriV1.length > 0 && <div className="space-y-2.5 mb-4">{altriV1.map(cardV1)}</div>}
+
+        {/* Scala skill — dopo il test base di ogni catena */}
 
         {/* Batteria v2 — test da campo (File_DB) + palestra (massimali Brzycki) */}
         {testsV2.length > 0 && (
           <>
-            <h2 className="text-base font-bold text-app mb-1">Batteria campo e palestra</h2>
-            <p className="text-xs text-muted leading-relaxed mb-3">
-              Resistenza, navette, tenute, velocità, salti, tiri e passaggi — con le soglie del metodo. In palestra inserisci peso e ripetizioni di una serie pulita (5-10 reps): l&apos;app stima il massimale.
-              {pesoCorporeo === null && ' ⚠️ Per il livello in palestra serve il peso corporeo: inseriscilo in "Il tuo setup" nel Campo.'}
-            </p>
-            <div className="space-y-2.5 mb-6">
-              {Array.from(new Set(testsV2.map((t) => t.categoria))).map((cat) => {
+            {pesoCorporeo === null && (
+              <p className="text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2 mb-4">⚠️ Per il livello in palestra serve il peso corporeo: inseriscilo in &quot;Il tuo setup&quot; nel Campo.</p>
+            )}
+            {v2Cats.map((cat, ci) => {
                 const grp = testsV2.filter((t) => t.categoria === cat);
                 return (
-                  <div key={cat} className="rounded-2xl border bg-surface border-divider p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-bold text-app">{grp[0].categoriaLabel}</p>
-                      <p className="text-[11px] text-faint">{grp.filter((t) => t.done).length}/{grp.length}</p>
-                    </div>
+                  <BloccoTest key={cat} n={nBase + ci + 1} titolo={grp[0].categoriaLabel}
+                    sottotitolo={cat === 'palestra' ? 'Inserisci peso e ripetizioni di una serie pulita (5-10): l\'app stima il massimale' : undefined}
+                    fatti={grp.filter((t) => t.done).length} totali={grp.length}>
                     <div className="space-y-1">
                       {grp.map((t) => (
                         <div key={t.id}>
@@ -386,16 +416,15 @@ export default function BatteriaTest() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </BloccoTest>
                 );
               })}
-            </div>
           </>
         )}
 
-        {/* AMRAP — dopo i test di catena (usa gli esercizi della scala) */}
-        <div className={`rounded-2xl border p-4 mb-6 ${amrapDone ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
-          <p className="text-sm font-bold text-app mb-1">AMRAP 20 minuti {amrapDone && '✓'}</p>
+        {/* AMRAP — ultimo blocco (usa gli esercizi della scala) */}
+        <BloccoTest n={nBase + v2Cats.length + 1} titolo="AMRAP 20 minuti" sottotitolo="Il test finale: quanti giri del circuito in 20 minuti" fatti={amrapDone ? 1 : 0} totali={1}>
+        <div>
           {(() => { const a = tests.find((t) => t.id === 'test-amrap'); return a ? <TestIstruzioni t={a} /> : null; })()}
           {amrapCircuit.length > 0 ? (
             <div className="bg-surface-2 rounded-xl p-3 mb-3">
@@ -432,6 +461,7 @@ export default function BatteriaTest() {
               className="bg-forest-500 text-white font-bold py-2.5 px-4 rounded-xl text-sm disabled:opacity-50">Salva</button>
           </div>
         </div>
+        </BloccoTest>
 
         {fatti > 0 && (
           <button onClick={chiudiBatteria}
