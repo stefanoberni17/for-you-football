@@ -14,7 +14,8 @@ export default function BottomTabBar() {
     pathname === '/reset-password' ||
     pathname === '/onboarding' ||
     pathname === '/privacy' ||
-    pathname === '/termini'
+    pathname === '/termini' ||
+    pathname === '/genitori'
   ) {
     return null;
   }

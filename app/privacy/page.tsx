@@ -37,6 +37,14 @@ export default function PrivacyPage() {
                 <p className="text-muted">Le risposte alle domande riflessive dei giorni del percorso (max 1000 caratteri ciascuna).</p>
               </div>
               <div className="bg-surface-2 border border-divider rounded-xl p-4">
+                <p className="font-semibold text-app mb-1">❤️ Dati sulla salute</p>
+                <p className="text-muted">Come stai, ore di sonno, recupero, dolori o fastidi che segnali, dove senti un esercizio, i risultati dei test fisici. Li inserisci tu e li salviamo solo con il tuo consenso esplicito, che chiediamo a parte. Servono a regolare percorso e allenamento, non vengono mai venduti né usati per pubblicità. Puoi chiederne la cancellazione quando vuoi.</p>
+              </div>
+              <div className="bg-surface-2 border border-divider rounded-xl p-4">
+                <p className="font-semibold text-app mb-1">🤖 Intelligenza artificiale ed età</p>
+                <p className="text-muted">Il Coach e il piano di allenamento usano un&apos;intelligenza artificiale: te lo diciamo sempre, non è una persona e può sbagliare. L&apos;app è per chi ha almeno 14 anni; dai 14 ai 17 anni puoi dare tu il consenso, e questa pagina è scritta per essere chiara anche per te. Per i genitori c&apos;è una <a href="/genitori" className="text-forest-400 underline">pagina dedicata</a>.</p>
+              </div>
+              <div className="bg-surface-2 border border-divider rounded-xl p-4">
                 <p className="font-semibold text-app mb-1">💬 Conversazioni Telegram</p>
                 <p className="text-muted">I messaggi scambiati con il Maestro AI tramite il bot Telegram, necessari per mantenere il contesto della conversazione.</p>
               </div>

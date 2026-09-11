@@ -21,6 +21,7 @@ interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min
 interface TrainingState {
   name: string | null;
   painHold: boolean;
+  consensi?: { health_data: boolean; training_idoneita: boolean };
   fascia: string;
   gradini: Record<string, number>;
   rombo: RomboPoint[];
@@ -49,6 +50,19 @@ export default function AllenamentoHub() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [vistaRombo, setVistaRombo] = useState<'base' | 'dettaglio'>('base');
+  // "Prima di iniziare" (migration 021): autodichiarazione di idoneità + consenso dati salute, una volta
+  const [okIdoneita, setOkIdoneita] = useState(false);
+  const [okSalute, setOkSalute] = useState(false);
+  const [consensiSending, setConsensiSending] = useState(false);
+  const [consensiErr, setConsensiErr] = useState<string | null>(null);
+  const inviaConsensi = async (docs: string[]) => {
+    setConsensiSending(true); setConsensiErr(null);
+    try {
+      const res = await authFetch('/api/consent', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ documents: docs, channel: 'training' }) });
+      if (!res.ok) { setConsensiErr('Non sono riuscito a salvare. Riprova.'); return; }
+      await load();
+    } finally { setConsensiSending(false); }
+  };
   const [showRigenera, setShowRigenera] = useState(false);
   const [autoGen, setAutoGen] = useState(false); // nuova settimana preparata in automatico
   const autoGenTried = useRef(false); // un solo tentativo automatico per apertura: se fallisce, resta il bottone
@@ -159,6 +173,51 @@ export default function AllenamentoHub() {
     return (
       <main className="min-h-screen bg-app flex items-center justify-center">
         <div className="text-4xl animate-ball-bounce">⚽</div>
+      </main>
+    );
+  }
+
+  // Ingresso nel Campo: prima seduta/test solo dopo l'autodichiarazione di idoneità (+ consenso salute se manca)
+  const mancaIdoneita = state.consensi ? !state.consensi.training_idoneita : false;
+  const mancaSalute = state.consensi ? !state.consensi.health_data : false;
+  if (mancaIdoneita || mancaSalute) {
+    const docs = [...(mancaIdoneita ? ['training_idoneita'] : []), ...(mancaSalute ? ['health_data'] : [])];
+    const pronto = (!mancaIdoneita || okIdoneita) && (!mancaSalute || okSalute);
+    return (
+      <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
+        <div className="max-w-md mx-auto">
+          <h1 className="text-2xl font-bold text-app mb-1">Campo ⚽</h1>
+          <p className="text-sm text-muted mb-5">Prima di iniziare, due cose. Le chiediamo una volta sola.</p>
+          <div className="bg-surface rounded-2xl border border-divider p-4 space-y-4">
+            <p className="text-sm text-app leading-relaxed">
+              Qui trovi test e sedute costruiti dal preparatore e proposti dall&apos;AI dentro le sue regole. Non sono una visita medica e non sostituiscono il tuo medico, il fisioterapista o il preparatore della squadra.
+            </p>
+            {mancaIdoneita && (
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" checked={okIdoneita} onChange={(e) => setOkIdoneita(e.target.checked)} className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0" />
+                <span className="text-xs text-muted leading-relaxed">
+                  Sto bene e non ho dolori, infortuni in corso o problemi di salute che mi impediscono di allenarmi. Se ho dubbi, o se un esercizio mi fa male, mi fermo e ne parlo con un medico. Se gioco in una società, ho il certificato medico in regola.
+                </span>
+              </label>
+            )}
+            {mancaSalute && (
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" checked={okSalute} onChange={(e) => setOkSalute(e.target.checked)} className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0" />
+                <span className="text-xs text-muted leading-relaxed">
+                  Acconsento a salvare i dati sulla salute che inserisco io (come sto, dolori, dove sento un esercizio). Servono solo a regolare l&apos;allenamento.
+                </span>
+              </label>
+            )}
+            {consensiErr && <p className="text-[11px] text-amber-300">{consensiErr}</p>}
+            <button type="button" disabled={!pronto || consensiSending} onClick={() => inviaConsensi(docs)}
+              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl disabled:opacity-50">
+              {consensiSending ? 'Un attimo…' : 'Entra nel Campo'}
+            </button>
+            <p className="text-[10px] text-faint leading-relaxed">
+              Hai meno di 18 anni? <Link href="/genitori" className="underline">Questa pagina</Link> spiega ai tuoi genitori cos&apos;è il Campo.
+            </p>
+          </div>
+        </div>
       </main>
     );
   }
@@ -289,7 +348,7 @@ export default function AllenamentoHub() {
                   {painSending ? 'Invio…' : 'Segnala'}
                 </button>
                 <p className="text-[10px] text-faint leading-relaxed">
-                  Da 4/10 in su le sedute fisiche vanno in pausa finché non dici che è passato o ne hai parlato con fisio/preparatore.
+                  Da 4/10 in su le sedute fisiche vanno in pausa finché non dici che è passato o ne hai parlato con fisio/preparatore. L&apos;app non fa diagnosi: con un dolore forte, o che dura da giorni, vai da un medico.
                 </p>
               </div>
             )}
@@ -524,6 +583,7 @@ export default function AllenamentoHub() {
                 {state.plan.plan.messaggio && (
                   <p className="text-xs text-muted italic leading-relaxed mb-3 px-1">💬 {state.plan.plan.messaggio}</p>
                 )}
+                <p className="text-[10px] text-faint px-1 mb-3">Piano proposto dall&apos;AI e controllato dalle regole del preparatore. Se qualcosa fa male, fermati.</p>
                 {autoGen && generating && (
                   <p className="text-xs text-forest-300 bg-forest-500/10 border border-forest-500/30 rounded-xl px-3 py-2 mb-3">⏳ Nuova settimana: sto preparando il piano…</p>
                 )}
