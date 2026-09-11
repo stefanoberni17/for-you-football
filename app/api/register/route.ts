@@ -57,7 +57,7 @@ function ageFromBirthDate(birthDate: string): number | null {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password, name, birth_date, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code, privacy_accepted, terms_accepted } = body;
+    const { email, password, name, birth_date, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code, privacy_accepted, terms_accepted, health_accepted } = body;
 
     // Valida codice invito beta (se presente)
     const isBeta = isValidBetaCode(beta_code);
@@ -104,6 +104,10 @@ export async function POST(req: NextRequest) {
         { error: 'Per registrarti devi accettare la Privacy Policy e i Termini di servizio' },
         { status: 400 }
       );
+    }
+    // Dati sulla salute (check-in fisico, dolori, sensazioni): consenso esplicito separato (GDPR art. 9)
+    if (health_accepted !== true) {
+      return NextResponse.json({ error: 'Per continuare serve il consenso al trattamento dei dati sulla salute' }, { status: 400 });
     }
 
     // 1. Crea utente con signUp — Supabase invia email di conferma automaticamente
@@ -235,6 +239,10 @@ export async function POST(req: NextRequest) {
       if (consentError) {
         console.error('🚨 CONSENT NON REGISTRATO per userId', userId, ':', consentError);
       }
+      // Riga separata: se la migration 021 non è applicata fallisce solo questa, non privacy/terms
+      const { error: healthErr } = await supabaseAdmin.from('consent_events').insert(
+        { user_id: userId, document_type: 'health_data', document_version: PRIVACY_VERSION, channel: 'registration' });
+      if (healthErr) console.error('🚨 CONSENT health_data NON REGISTRATO per userId', userId, ':', healthErr.message);
     } catch (consentErr) {
       console.error('🚨 CONSENT NON REGISTRATO (eccezione) per userId', userId, ':', (consentErr as Error)?.message);
     }

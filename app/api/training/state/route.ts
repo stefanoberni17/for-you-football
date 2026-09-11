@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { getConsents } from '@/lib/consent';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
@@ -121,10 +122,11 @@ export async function GET(request: NextRequest) {
       lastTestSession?.completed_at
       || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
     );
-    const [carico, { data: calendar }] = await Promise.all([
+    const [carico, { data: calendar }, consensiSet] = await Promise.all([
       loadCarico(userId, ciclo.isDeload),
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+      getConsents(userId),
     ]);
     const squadraStimato = caricoSquadraStimato({
       trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [],
@@ -163,6 +165,8 @@ export async function GET(request: NextRequest) {
       faticaAlta: isFaticaAlta(checkinOggi),
       setup,
       setupDisponibile,
+      // Consensi (migration 021): l'hub mostra 'Prima di iniziare' finché mancano
+      consensi: { health_data: consensiSet.has('health_data'), training_idoneita: consensiSet.has('training_idoneita') },
       // Ciclo mensile: dall'ultima batteria/ri-test chiusa (fallback: ultimo risultato test)
       ciclo,
       // Carico totale (session-RPE) ultime 4 settimane + stima squadra dal calendario

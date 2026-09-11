@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import SaveErrorBanner from './SaveErrorBanner';
 
@@ -45,11 +45,30 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
   const [mentalState, setMentalState] = useState<number>(5);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
+  // Consenso esplicito ai dati sulla salute (migration 021): chi si è registrato prima lo dà qui, una volta
+  const [needsHealthConsent, setNeedsHealthConsent] = useState(false);
+  const [healthConsent, setHealthConsent] = useState(false);
+  useEffect(() => {
+    authFetch('/api/consent').then(async (r) => {
+      if (!r.ok) return;
+      const c = await r.json();
+      if (c && c.health_data === false) setNeedsHealthConsent(true);
+    }).catch(() => { /* no-op: in dubbio non si blocca il check-in */ });
+  }, []);
 
   const handleSave = async () => {
+    if (needsHealthConsent && !healthConsent) return;
     setSaving(true);
     setSaveError(false);
     try {
+      if (needsHealthConsent) {
+        const rc = await authFetch('/api/consent', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ document: 'health_data', channel: 'checkin' }),
+        });
+        if (!rc.ok) throw new Error('consent failed');
+        setNeedsHealthConsent(false);
+      }
       const res = await authFetch('/api/checkin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -155,6 +174,13 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
 
         {/* Footer */}
         <div className="mt-7 space-y-3">
+          {needsHealthConsent && (
+            <label className="flex items-start gap-2.5 text-[11px] text-muted leading-relaxed cursor-pointer">
+              <input type="checkbox" checked={healthConsent} onChange={(e) => setHealthConsent(e.target.checked)}
+                className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0" />
+              <span>Acconsento a salvare questi dati sulla salute (come sto, sonno, recupero). Servono solo a regolare il percorso. Lo chiediamo una volta sola.</span>
+            </label>
+          )}
           {saveError && (
             <SaveErrorBanner
               message="Check-in non salvato. Riprova o salta per oggi."
@@ -163,7 +189,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           )}
           <button
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || (needsHealthConsent && !healthConsent)}
             className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 md:py-4 rounded-2xl text-sm md:text-base transition-all shadow-lg"
           >
             {saving ? 'Salvataggio...' : 'Salva e continua →'}

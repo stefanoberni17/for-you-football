@@ -290,6 +290,11 @@ export default function SessionePage() {
             <Play size={18} /> Inizia la seduta
           </button>
         )}
+        {isFisica && (
+          <p className="text-[10px] text-faint leading-relaxed text-center mt-3 px-2">
+            Se oggi hai un dolore o non ti senti bene, salta la seduta. Se un esercizio fa male, fermati: il dolore non si allena.
+          </p>
+        )}
       </div>
     </main>
   );

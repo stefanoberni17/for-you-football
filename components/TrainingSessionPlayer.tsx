@@ -336,6 +336,9 @@ export default function TrainingSessionPlayer({
                         </button>
                       ))}
                     </div>
+                    {sensazione && /fastidio|crampo|dolor/i.test(sensazione) && (
+                      <p className="text-[11px] text-amber-200/90 mt-2 leading-relaxed">Se il fastidio è forte o continua, fermati qui e parlane con un medico o con il preparatore.</p>
+                    )}
                   </div>
                 ) : null}
               </div>

@@ -494,10 +494,14 @@ export default function ProfiloPage() {
           <span>🚪</span><span>Esci dall&apos;account</span>
         </button>
 
-        <div className="text-center pb-4">
+        <div className="text-center pb-4 flex justify-center gap-4">
           <a href="/privacy" target="_blank" rel="noopener noreferrer"
             className="text-xs text-faint hover:text-muted underline">
             🔒 Privacy Policy
+          </a>
+          <a href="/genitori" target="_blank" rel="noopener noreferrer"
+            className="text-xs text-faint hover:text-muted underline">
+            👨‍👩‍👧 Per i genitori
           </a>
         </div>
       </form>

@@ -55,6 +55,7 @@ function RegisterContent() {
   const [birthDate, setBirthDate] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [healthAccepted, setHealthAccepted] = useState(false);
 
   // Step 2 — profilo atleta
   const [sport, setSport] = useState('calcio');
@@ -113,8 +114,8 @@ function RegisterContent() {
       setError(`Per usare For You Football devi avere almeno ${MIN_AGE} anni. Ti aspettiamo!`);
       return;
     }
-    if (!privacyAccepted || !termsAccepted) {
-      setError('Per continuare accetta la Privacy Policy e i Termini di servizio');
+    if (!privacyAccepted || !termsAccepted || !healthAccepted) {
+      setError('Per continuare accetta la Privacy Policy, i Termini di servizio e il trattamento dei dati sulla salute');
       return;
     }
     setStep(2);
@@ -140,6 +141,7 @@ function RegisterContent() {
           birth_date: birthDate,
           privacy_accepted: privacyAccepted,
           terms_accepted: termsAccepted,
+          health_accepted: healthAccepted,
           sport: sport || 'calcio',
           role: selectedRoles.length ? selectedRoles.join(',') : null,
           level: level || null,
@@ -335,6 +337,19 @@ function RegisterContent() {
                     . *
                   </label>
                 </div>
+                <div className="flex items-start gap-3">
+                  <input type="checkbox" id="health-consent" checked={healthAccepted}
+                    onChange={(e) => setHealthAccepted(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0 cursor-pointer" />
+                  <label htmlFor="health-consent" className="text-xs text-muted leading-relaxed cursor-pointer">
+                    Acconsento a salvare i dati sulla salute che inserisco io (come sto, sonno, dolori, sensazioni negli esercizi). Servono solo a regolare il percorso e l&apos;allenamento. *
+                  </label>
+                </div>
+                <p className="text-[11px] text-faint leading-relaxed">
+                  Hai meno di 18 anni? Fai leggere{' '}
+                  <a href="/genitori" target="_blank" rel="noopener noreferrer" className="text-forest-400 underline">questa pagina</a>
+                  {' '}a un genitore: spiega in due minuti cos&apos;è l&apos;app e cosa fa l&apos;AI.
+                </p>
               </div>
 
               <button type="submit"
