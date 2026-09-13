@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { markSessionActive } from '@/lib/activeSession';
 import { useWakeLock } from '@/lib/useWakeLock';
 
 type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
@@ -41,21 +42,28 @@ export default function PracticePopup({
 
   // Timer countdown — setta timerEnded; il passaggio a `done` avviene
   // nel useEffect sotto, che aspetta anche la fine dell'audio se in corso.
+  // Timer a TIMESTAMP (non a tick): iOS sospende i timer JS a schermo spento o in
+  // background; al ritorno il residuo si ricalcola da `endsAt` invece di ripartire da dove era.
+  const endsAtRef = useRef<number | null>(null);
   useEffect(() => {
-    if (phase !== 'practicing' || timeLeft === 0) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          setTimerEnded(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [phase, timeLeft]);
+    if (phase !== 'practicing') { endsAtRef.current = null; markSessionActive(false); return; }
+    markSessionActive(true);
+    if (endsAtRef.current === null) endsAtRef.current = Date.now() + totalSeconds * 1000;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const tick = () => {
+      const left = Math.max(0, Math.ceil(((endsAtRef.current ?? 0) - Date.now()) / 1000));
+      setTimeLeft(left);
+      if (left === 0) { setTimerEnded(true); if (timer) clearInterval(timer); }
+    };
+    tick();
+    timer = setInterval(tick, 500);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      if (timer) clearInterval(timer);
+      document.removeEventListener('visibilitychange', tick);
+      markSessionActive(false);
+    };
+  }, [phase, totalSeconds]);
 
   // Done quando il più lungo tra timer e audio è terminato.
   // Se l'utente non ha avviato l'audio (audioInProgress=false), `done` parte sul timer.
@@ -223,6 +231,7 @@ export default function PracticePopup({
   ) : null;
 
   const startPractice = () => {
+    endsAtRef.current = Date.now() + totalSeconds * 1000;
     setTimeLeft(totalSeconds);
     setTimerEnded(false);
     setPhase('practicing');

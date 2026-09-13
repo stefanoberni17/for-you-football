@@ -102,6 +102,7 @@ export default function HomePage() {
   const [actionPending, setActionPending] = useState<string | null>(null);
   const [weeklyMission, setWeeklyMission] = useState<string>('');
   const [installBannerVisible, setInstallBannerVisible] = useState(false);
+  const [telegramBannerVisible, setTelegramBannerVisible] = useState(false);
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -723,7 +724,7 @@ export default function HomePage() {
 
         {/* Recupero collegamento Telegram — terzo in priorità */}
         {!coachBannerVisible && !weeklyBannerVisible && telegramRecoveryCandidate && (
-          <TelegramRecoveryBanner hasTelegram={!!profile?.telegram_id} />
+          <TelegramRecoveryBanner hasTelegram={!!profile?.telegram_id} onVisibilityChange={setTelegramBannerVisible} />
         )}
 
         {/* Banner installazione PWA — ultimo in priorità */}
@@ -737,7 +738,7 @@ export default function HomePage() {
         suppressed={
           coachBannerVisible ||
           weeklyBannerVisible ||
-          telegramRecoveryCandidate ||
+          telegramBannerVisible ||
           installBannerVisible
         }
       />

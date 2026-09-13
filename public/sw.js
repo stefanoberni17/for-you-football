@@ -1,6 +1,11 @@
 // Service Worker — For You Football
 // Minimal SW for push notifications (no offline caching for now)
 
+// Aggiornamento: il SW nuovo si attiva subito e prende le finestre aperte,
+// così AppResume (ricarica al cambio build) trova sempre l'ultima versione.
+self.addEventListener('install', () => { self.skipWaiting(); });
+self.addEventListener('activate', (event) => { event.waitUntil(self.clients.claim()); });
+
 self.addEventListener('push', (event) => {
   const data = event.data?.json() ?? {};
   const title = data.title || 'For You Football';

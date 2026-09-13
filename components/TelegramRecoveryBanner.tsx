@@ -19,7 +19,7 @@ function today(): string {
  * web/widget). Un tap riusa il flusso deep-link del profilo.
  * Dismiss locale per giornata: chiuso oggi → riappare domani.
  */
-export default function TelegramRecoveryBanner({ hasTelegram }: { hasTelegram: boolean }) {
+export default function TelegramRecoveryBanner({ hasTelegram, onVisibilityChange }: { hasTelegram: boolean; onVisibilityChange?: (visible: boolean) => void }) {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [dismissed, setDismissed] = useState(true); // default nascosto per evitare flash/hydration mismatch
@@ -33,7 +33,11 @@ export default function TelegramRecoveryBanner({ hasTelegram }: { hasTelegram: b
     }
   }, []);
 
-  if (hasTelegram || dismissed) return null;
+  const visible = !hasTelegram && !dismissed;
+  useEffect(() => { onVisibilityChange?.(visible); }, [visible, onVisibilityChange]);
+  useEffect(() => () => { onVisibilityChange?.(false); }, [onVisibilityChange]);
+
+  if (!visible) return null;
 
   const handleLink = async () => {
     setLoading(true);
