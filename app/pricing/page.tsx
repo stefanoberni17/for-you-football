@@ -19,6 +19,12 @@ function PricingContent() {
   const [userId, setUserId] = useState<string | null>(null);
 
   const canceled = searchParams.get('checkout') === 'canceled';
+  // Pagamento fatto ma webhook non ancora arrivato dopo i 5 tentativi della home
+  const pending = searchParams.get('checkout') === 'pending';
+  // Contraente adulto: la ricevuta va a chi paga, non al profilo del ragazzo
+  const [payerEmail, setPayerEmail] = useState('');
+  const [accountEmail, setAccountEmail] = useState('');
+  const payerEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payerEmail.trim());
 
   useEffect(() => {
     const load = async () => {
@@ -28,6 +34,7 @@ function PricingContent() {
         return;
       }
       setUserId(session.user.id);
+      setAccountEmail(session.user.email || '');
 
       // Se paywall non è attivo (Stripe non configurato), non tenere l'utente qui.
       if (!isPaywallActive()) {
@@ -51,6 +58,10 @@ function PricingContent() {
 
   const handleCheckout = async () => {
     if (!userId) return;
+    if (!payerEmailValid) {
+      setError('Inserisci l\'email di chi paga: la ricevuta arriva lì.');
+      return;
+    }
     setLoading(true);
     setError('');
 
@@ -62,7 +73,7 @@ function PricingContent() {
           'Content-Type': 'application/json',
           ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
         },
-        body: JSON.stringify({ plan: selectedPlan }),
+        body: JSON.stringify({ plan: selectedPlan, payer_email: payerEmail.trim() }),
       });
 
       if (!res.ok) {
@@ -94,6 +105,12 @@ function PricingContent() {
         {canceled && (
           <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 text-sm text-amber-300">
             Checkout annullato. Puoi riprovare quando vuoi.
+          </div>
+        )}
+        {pending && (
+          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 text-sm text-amber-300">
+            Pagamento ricevuto, ma l&apos;attivazione sta tardando. Chiudi e riapri l&apos;app tra un minuto.
+            Se non si sblocca, scrivici a <a href="mailto:info@foryoufootball.it" className="underline">info@foryoufootball.it</a>: non serve pagare di nuovo.
           </div>
         )}
 
@@ -159,6 +176,35 @@ function PricingContent() {
               <span>{item}</span>
             </div>
           ))}
+        </div>
+
+        {/* Chi paga: contraente adulto. Il profilo resta quello del ragazzo. */}
+        <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
+          <label htmlFor="payer-email" className="block text-sm font-semibold text-app mb-1">
+            Email di chi paga
+          </label>
+          <p className="text-xs text-muted mb-3">
+            Di solito un genitore. Ricevuta e fattura arrivano a questa email; l&apos;account nell&apos;app resta il tuo.
+          </p>
+          <input
+            id="payer-email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            value={payerEmail}
+            onChange={(e) => setPayerEmail(e.target.value)}
+            placeholder="nome@esempio.it"
+            className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-app focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all"
+          />
+          {accountEmail && payerEmail.trim().toLowerCase() !== accountEmail.toLowerCase() && (
+            <button
+              type="button"
+              onClick={() => setPayerEmail(accountEmail)}
+              className="text-xs text-forest-400 hover:text-forest-300 mt-2 underline underline-offset-2"
+            >
+              Pago io, usa la mia email
+            </button>
+          )}
         </div>
 
         {error && (

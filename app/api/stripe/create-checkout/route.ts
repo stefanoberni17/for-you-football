@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { stripe, getOrCreateStripeCustomer, isStripeEnabled } from '@/lib/stripe';
+import { TERMS_VERSION } from '@/lib/constants';
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export const runtime = 'nodejs';
 
@@ -12,7 +15,10 @@ const supabaseAdmin = createClient(
 
 /**
  * POST /api/stripe/create-checkout
- * Body: { plan: 'onetime' | 'installments' }
+ * Body: { plan: 'onetime' | 'installments', payer_email: string }
+ *  - payer_email: email di CHI PAGA (contraente adulto, di solito un genitore).
+ *    Il customer Stripe prende questa email → ricevute e fatture all'adulto;
+ *    il profilo app resta quello del ragazzo (sera 5, review 13/9).
  *  - onetime:      Season 1 a prezzo pieno una tantum (mode: payment)
  *  - installments: Season 1 in 3 rate mensili (mode: subscription; il webhook
  *                  aggancia una Subscription Schedule con 3 iterazioni poi cancel)
@@ -44,6 +50,10 @@ async function createCheckout(request: NextRequest) {
   if (plan !== 'onetime' && plan !== 'installments') {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }
+  const payerEmail = String(body.payer_email || '').trim().toLowerCase();
+  if (!EMAIL_RE.test(payerEmail) || payerEmail.length > 254) {
+    return NextResponse.json({ error: 'Inserisci l\'email di chi paga (la ricevuta arriva lì)' }, { status: 400 });
+  }
 
   // Beta/comp e chi ha già acquistato Season 1 non devono passare per il checkout.
   const { data: profile } = await supabaseAdmin
@@ -65,6 +75,13 @@ async function createCheckout(request: NextRequest) {
 
   const customerId = await getOrCreateStripeCustomer(userId, user.email);
 
+  // Il contraente è l'adulto che paga: il customer Stripe porta la SUA email
+  // (ricevute, fatture delle rate, portal). Il legame col ragazzo resta in metadata.
+  await stripe.customers.update(customerId, {
+    email: payerEmail,
+    metadata: { supabase_user_id: userId, payer_email: payerEmail, athlete_email: user.email },
+  });
+
   const origin = request.headers.get('origin') || request.nextUrl.origin;
 
   const common = {
@@ -72,9 +89,17 @@ async function createCheckout(request: NextRequest) {
     automatic_tax: { enabled: false as const },
     success_url: `${origin}/?checkout=success`,
     cancel_url: `${origin}/pricing?checkout=canceled`,
+    // Indirizzo di fatturazione dell'adulto, salvato sul customer (serve `customer_update`
+    // quando si passa `customer`, altrimenti Stripe rifiuta la raccolta dell'indirizzo).
+    billing_address_collection: 'required' as const,
+    customer_update: { address: 'auto' as const, name: 'auto' as const },
+    // Accettazione dei Termini nel checkout: si attiva da sola quando TERMS_VERSION è
+    // compilata (richiede l'URL dei termini nelle impostazioni Stripe → Checkout).
+    ...(TERMS_VERSION ? { consent_collection: { terms_of_service: 'required' as const } } : {}),
     metadata: {
       supabase_user_id: userId,
       plan,
+      payer_email: payerEmail,
     },
   };
 

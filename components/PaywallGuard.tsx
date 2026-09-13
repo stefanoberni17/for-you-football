@@ -18,12 +18,21 @@ let checkedAt = 0;
 let lastResult: boolean | null = null; // true = deve andare al paywall
 const TTL_MS = 60_000;
 
+/** Da chiamare quando l'accesso cambia (es. attivazione post-checkout): butta via la cache. */
+export function resetPaywallCache() {
+  checkedAt = 0;
+  lastResult = null;
+}
+
 export default function PaywallGuard() {
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
     if (!pathname || PUBLIC.has(pathname)) return;
+    // Ritorno dal checkout: il webhook può arrivare qualche secondo dopo → la home
+    // gestisce l'attesa ("Attivazione in corso…"), qui non si rimbalza al paywall.
+    try { if (new URLSearchParams(window.location.search).get('checkout') === 'success') return; } catch { /* no-op */ }
     let cancelled = false;
     (async () => {
       try {
