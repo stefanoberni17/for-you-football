@@ -70,7 +70,7 @@ export async function sendSafetyAlert(
     console.error('❌ safety_review flag exception:', (flagErr as Error)?.message);
   }
 
-  const unlockHint = `Dopo aver verificato la conversazione, sblocca con:\nUPDATE profiles SET safety_review = FALSE WHERE user_id = '${userId}';`;
+  const unlockHint = `Dopo aver verificato la conversazione, sblocca rispondendo qui:\n/sblocca ${userId}\n(oppure via SQL: UPDATE profiles SET safety_review = FALSE WHERE user_id = '${userId}';)`;
 
   // Canale 1 — Telegram a Ste (arriva sul telefono anche fuori orario).
   // SAFETY_ALERT_TELEGRAM_CHAT_ID = chat_id Telegram personale di Ste

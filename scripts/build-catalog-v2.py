@@ -46,7 +46,8 @@ def v1_id(nome):
 seen = set()
 lines = []
 for r in rows:
-    base = f"{PREFIX[r['qualita']]}-{slug(r['nome'])}"
+    # `id` esplicito nel JSON → id stabile anche se il nome cambia (i blocchi lo referenziano)
+    base = r.get("id") or f"{PREFIX[r['qualita']]}-{slug(r['nome'])}"
     sid, k = base, 2
     while sid in seen:
         sid = f"{base}-{k}"; k += 1
