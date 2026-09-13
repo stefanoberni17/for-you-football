@@ -12,6 +12,9 @@ import {
   TELEGRAM_FORMAT
 } from '@/lib/coach-ai';
 import { checkRateLimit, COACH_HOURLY_LIMIT, ANON_HOURLY_LIMIT } from '@/lib/rateLimit';
+import { requirePaidAccess } from '@/lib/serverAccess';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 async function sendTelegramMessage(chatId: number, text: string) {
   const token = process.env.TELEGRAM_BOT_TOKEN!;
@@ -44,6 +47,34 @@ export async function POST(request: NextRequest) {
     const chatId = message.chat.id;
     const telegramUserId = message.from.id.toString();
     const userText = message.text;
+
+    // ── /sblocca <user_id>: sblocco del contenimento safety a un tap, SOLO dalla
+    // chat di Ste (SAFETY_ALERT_TELEGRAM_CHAT_ID, la stessa che riceve l'alert).
+    // Scrive safety_review=false via service role e lascia traccia nei log.
+    const alertChatId = process.env.SAFETY_ALERT_TELEGRAM_CHAT_ID;
+    if (userText.startsWith('/sblocca') && alertChatId && String(chatId) === String(alertChatId)) {
+      const target = userText.split(/\s+/)[1]?.trim();
+      if (!target || !UUID_RE.test(target)) {
+        await sendTelegramMessage(chatId, 'Uso: /sblocca <user_id> (lo trovi nell\'alert).');
+        return NextResponse.json({ ok: true });
+      }
+      const { data: unlocked, error: unlockErr } = await supabaseAdmin
+        .from('profiles')
+        .update({ safety_review: false })
+        .eq('user_id', target)
+        .eq('safety_review', true)
+        .select('user_id, name');
+      if (unlockErr) {
+        console.error('❌ /sblocca fallito per', target, ':', unlockErr.message);
+        await sendTelegramMessage(chatId, `Sblocco fallito: ${unlockErr.message}`);
+      } else if (!unlocked?.length) {
+        await sendTelegramMessage(chatId, 'Nessun utente in contenimento con questo id (già sbloccato o id sbagliato).');
+      } else {
+        console.log(`✅ safety_review sbloccato via Telegram per ${target} (${unlocked[0].name || '—'}) da chat ${chatId} il ${new Date().toISOString()}`);
+        await sendTelegramMessage(chatId, `✅ Sbloccato: ${unlocked[0].name || target}. Il Coach torna al percorso dal prossimo messaggio.`);
+      }
+      return NextResponse.json({ ok: true });
+    }
 
     // ── /start: deep-link di collegamento (t.me/<bot>?start=<codice>) ──────
     // Gestito PRIMA del lookup normale e mai salvato in conversazione.
@@ -148,6 +179,15 @@ export async function POST(request: NextRequest) {
 
     const userId = profile.user_id;
 
+    // Paywall: il Coach è contenuto a pagamento anche su Telegram (stesso gate di /api/chat).
+    if (!(await requirePaidAccess(userId))) {
+      await sendTelegramMessage(
+        chatId,
+        'Il Coach si attiva con Season 1. Apri l\'app per sbloccare il percorso: da lì torniamo a parlare qui. ⚽'
+      );
+      return NextResponse.json({ ok: true });
+    }
+
     if (!(await checkRateLimit(`tg-user:${userId}`, 'telegram', COACH_HOURLY_LIMIT))) {
       await sendTelegramMessage(
         chatId,
@@ -173,6 +213,10 @@ export async function POST(request: NextRequest) {
 
     const conversationHistory = (history || []).reverse();
     const isFirstMessage = conversationHistory.length === 0;
+    // L'API vuole che il primo messaggio sia dell'utente: il welcome di onboarding e le
+    // pillole dei cron sono righe `assistant` e possono trovarsi in testa alla finestra
+    // → la chiamata fallirebbe e l'utente resterebbe senza risposta. Si scartano.
+    while (conversationHistory.length && conversationHistory[0].role !== 'user') conversationHistory.shift();
 
     const userContext = await buildUserContext(userId);
     const firstMessageNote = isFirstMessage
@@ -181,7 +225,11 @@ export async function POST(request: NextRequest) {
     // Modalità contenimento (safety_review): il Coach resta nel protocollo
     // finché Ste non verifica la conversazione e sblocca manualmente.
     const inSafetyReview = profile.safety_review === true;
-    const systemPrompt = (inSafetyReview ? SAFETY_REVIEW_MODE : '') + SYSTEM_PROMPT + TELEGRAM_FORMAT + firstMessageNote + '\n\n' + userContext;
+    // Prompt caching come in /api/chat: prefisso stabile cachato, contesto volatile in coda.
+    const systemBlocks = [
+      { type: 'text', text: (inSafetyReview ? SAFETY_REVIEW_MODE : '') + SYSTEM_PROMPT + TELEGRAM_FORMAT, cache_control: { type: 'ephemeral' as const } },
+      { type: 'text', text: firstMessageNote + '\n\n' + userContext },
+    ];
 
     const messages = [
       ...conversationHistory.map((m: any) => ({
@@ -191,7 +239,7 @@ export async function POST(request: NextRequest) {
       { role: 'user' as const, content: userText },
     ];
 
-    const { text } = await callClaude(systemPrompt, messages, 1500, true);
+    const { text } = await callClaude(systemBlocks, messages, 1500, true);
 
     // Al primo messaggio: invia avviso privacy prima della risposta del Maestro
     if (isFirstMessage) {

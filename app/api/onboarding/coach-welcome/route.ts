@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
+import { requirePaidAccess } from '@/lib/serverAccess';
 import { anthropic, supabaseAdmin } from '@/lib/coach-ai';
 
 export const runtime = 'nodejs';
@@ -31,6 +32,9 @@ export async function POST(request: NextRequest) {
   const userId = await getAuthUser(request);
   if (!userId) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+  }
+  if (!(await requirePaidAccess(userId))) {
+    return NextResponse.json({ error: 'payment_required' }, { status: 403 });
   }
 
   // ── Carica profilo + check idempotenza ──────────────────────────────────

@@ -5448,7 +5448,8 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
-  "finestra_partita": 2
+  "finestra_partita": 2,
+  "id": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo"
  },
  {
   "nome": "Sequenza Yoga - Adduttori e inguine, rinforzo avanzato",
@@ -5472,7 +5473,8 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
-  "finestra_partita": 2
+  "finestra_partita": 2,
+  "id": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo-av"
  },
  {
   "nome": "Sequenza Yoga - Recupero e Mobilità",

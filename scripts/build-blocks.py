@@ -76,6 +76,9 @@ def lookup(name):
         for i, area, unita in V1CAT.values():
             if i == a:
                 return i, V1_QUALITA.get(area, "da-classificare"), unita, "corpo libero", True, False
+        # Alias che punta a un id sparito dal catalogo: NON inventare, il blocco resta incompleto
+        print(f"⚠️  ALIAS '{k}' → '{a}' non esiste nel catalogo")
+        return None
     if k in CAT:
         return CAT[k]
     if k in V1CAT:
@@ -257,6 +260,12 @@ header = f"""/**
 import type {{ Blocco }} from './trainingBlocks';
 
 export const BLOCCHI: Blocco[] = """
+# ── Integrità: ogni esercizio_id nei blocchi deve esistere nel catalogo ──────
+_ids = {info[0] for info in CAT.values()} | {v[0] for v in V1CAT.values()}
+_orfani = sorted({it["esercizio_id"] for b in blocchi for it in b["items"] if it.get("esercizio_id") and it["esercizio_id"] not in _ids})
+if _orfani:
+    raise SystemExit(f"❌ esercizio_id non presenti nel catalogo: {', '.join(_orfani)} — correggi ALIAS o il JSON prima di rigenerare")
+
 open("lib/trainingBlocks.generated.ts", "w", encoding="utf-8").write(
     header + json.dumps(blocchi, ensure_ascii=False, indent=1) + ";\n")
 

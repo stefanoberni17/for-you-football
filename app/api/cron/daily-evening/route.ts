@@ -35,7 +35,9 @@ export async function GET(request: NextRequest) {
   // l'ultima settimana pubblicata (vedi daily-morning).
   let query = supabaseAdmin
     .from('profiles')
-    .select('user_id, name, telegram_id, current_week, coach_notes, sport');
+    .select('user_id, name, telegram_id, current_week, coach_notes, sport')
+    // Contenimento safety (migration 014): niente pillole/reminder finché Ste non sblocca
+    .or('safety_review.is.null,safety_review.eq.false');
 
   if (testUserId) {
     query = query.eq('user_id', testUserId);
