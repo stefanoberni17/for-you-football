@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { stripe, getOrCreateStripeCustomer, isStripeEnabled } from '@/lib/stripe';
 import { TERMS_VERSION } from '@/lib/constants';
+import { logEvent } from '@/lib/events';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -124,5 +125,6 @@ async function createCheckout(request: NextRequest) {
         },
       });
 
+  logEvent(userId, 'checkout_started', { plan });
   return NextResponse.json({ url: session.url });
 }

@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import DailyCheckinModal from './DailyCheckinModal';
 import { CheckinContext } from './CheckinContext';
 import { todayItaly, dateItaly } from '@/lib/dateItaly';
+import { trackOnboarding } from '@/lib/onboardingTrack';
 
 export default function GlobalCheckinWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -28,8 +29,17 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
 
       setUserId(session.user.id);
 
-      // "Salta per oggi" persistito: il rituale non riappare fino a domani
+      // app_open: una volta al giorno per device (il server deduplica per utente).
+      // È il dato per le coorti D7/D28: "ha riaperto l'app", non "il bot gli ha scritto".
       const today = todayItaly();
+      try {
+        if (localStorage.getItem('appOpenLogged') !== today) {
+          localStorage.setItem('appOpenLogged', today);
+          trackOnboarding('app_open');
+        }
+      } catch { /* storage non disponibile */ }
+
+      // "Salta per oggi" persistito: il rituale non riappare fino a domani
       if (localStorage.getItem('ritualSkipped') === today) {
         setCheckinDone(true);
         return;

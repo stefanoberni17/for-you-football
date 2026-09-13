@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import { MIN_AGE, PRIVACY_VERSION, TERMS_VERSION } from '@/lib/constants';
 
 // Admin client — per upsert profilo (bypassa RLS)
@@ -201,6 +202,8 @@ export async function POST(req: NextRequest) {
       // Eccezione dal client Supabase (es. tabella non esistente, rete) — ignoriamo
       console.error('❌ Eccezione salvataggio profilo (non bloccante):', profileErr?.message);
     }
+
+    logEvent(userId, 'signup_completed', { sport: sport || 'calcio' });
 
     // 3. Snapshot baseline T0 — immutabile, per il confronto W12.
     //    Fire-and-forget, non blocca la registrazione. ON CONFLICT DO NOTHING

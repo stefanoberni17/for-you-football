@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { stripe, ensureInstallmentSchedule } from '@/lib/stripe';
@@ -134,6 +135,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       })
       .eq('user_id', userId);
 
+    logEvent(userId, 'payment_completed', { plan: 'onetime', amount_total: session.amount_total ?? null });
     console.log(`[stripe-webhook] ✓ checkout one-time completed — user ${userId} → season1_access`);
     return;
   }
@@ -152,6 +154,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     await ensureInstallmentSchedule(subscriptionId);
   }
 
+  logEvent(userId, 'payment_completed', { plan: 'installments', amount_total: session.amount_total ?? null });
   console.log(`[stripe-webhook] ✓ checkout installments completed — user ${userId} → active (1/3)`);
 }
 

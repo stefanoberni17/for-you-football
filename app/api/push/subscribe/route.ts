@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { logEvent } from '@/lib/events';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
       console.error('Push subscribe error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    logEvent(userId, 'push_enabled');
 
     return NextResponse.json({ success: true });
   } catch (err) {

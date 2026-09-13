@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) throw error;
+    logEvent(userId, 'checkin_saved');
 
     return NextResponse.json({ success: true, checkin: data });
   } catch (error: any) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import {
   buildUserContext,
   callClaude,
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
     ];
 
     const { text, usage } = await callClaude(systemBlocks, messages, 1500, true);
+    logEvent(userId, 'coach_message_sent', { channel: 'web' });
 
     // Memoria unificata: come su Telegram, la conversazione web viene distillata
     // in coach_notes (fire-and-forget). I messaggi grezzi NON vengono salvati —

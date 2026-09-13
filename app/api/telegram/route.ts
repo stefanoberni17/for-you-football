@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import {
   supabaseAdmin,
   buildUserContext,
@@ -249,6 +250,7 @@ export async function POST(request: NextRequest) {
     }
 
     await sendTelegramMessage(chatId, text);
+    logEvent(userId, 'coach_message_sent', { channel: 'telegram' });
 
     // Salva user message + risposta del Coach. Se il messaggio ha fatto
     // scattare l'alert, entrambe le righe vengono flaggate: il cleanup a 90

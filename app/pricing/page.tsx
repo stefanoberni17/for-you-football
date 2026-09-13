@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { hasActiveAccess, isPaywallActive } from '@/lib/checkAccess';
 import { SEASON_INSTALLMENTS, SEASON_PRICE_FULL, SEASON_PRICE_INSTALLMENT, SEASON_PRICE_ONETIME } from '@/lib/constants';
+import { trackOnboarding } from '@/lib/onboardingTrack';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,7 +52,9 @@ function PricingContent() {
 
       if (hasActiveAccess(profile)) {
         router.push('/');
+        return;
       }
+      trackOnboarding('pricing_view');
     };
     load();
   }, [router]);

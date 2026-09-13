@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno } from '@/lib/notion';
 import { GATE_DAY } from '@/lib/constants';
@@ -107,6 +108,7 @@ export async function POST(request: NextRequest) {
       );
 
     if (upsertError) throw upsertError;
+    logEvent(userId, 'gate_completed', { week: weekNumber });
 
     // Avanza current_week nel profilo (se non già oltre).
     // Modello subscription-based: l'accesso ai contenuti è gestito da /login e / (dashboard).

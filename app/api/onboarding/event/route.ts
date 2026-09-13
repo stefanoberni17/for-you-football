@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { CLIENT_EVENTS as CLIENT_EVENT_LIST } from '@/lib/events';
+import { todayItaly, dateItaly } from '@/lib/dateItaly';
 
 export const runtime = 'nodejs';
 
@@ -9,15 +11,9 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-// Whitelist eventi loggabili dal client. Eventi server-side
-// (telegram_binding_completed, coach_welcome_sent) NON passano da qui:
-// vengono scritti direttamente con service role dai rispettivi handler.
-const CLIENT_EVENTS = new Set([
-  'slide_view',
-  'telegram_collega_click',
-  'onboarding_started_percorso',
-  'ritual_completed',
-]);
+// Whitelist eventi loggabili dal client (lib/events.ts). Gli eventi server-side
+// (signup, giorno, gate, pagamento…) NON passano da qui: li scrive `logEvent`.
+const CLIENT_EVENTS = new Set<string>(CLIENT_EVENT_LIST);
 
 /**
  * POST /api/onboarding/event
@@ -41,6 +37,20 @@ export async function POST(request: NextRequest) {
   const { event, meta } = body || {};
   if (typeof event !== 'string' || !CLIENT_EVENTS.has(event)) {
     return NextResponse.json({ error: 'Unknown event' }, { status: 400 });
+  }
+
+  // app_open: una riga al giorno per utente (è il dato per D7/D28). Il client
+  // già filtra per data in localStorage; qui si chiude il buco multi-device.
+  if (event === 'app_open') {
+    const { data: last } = await supabaseAdmin
+      .from('onboarding_events')
+      .select('occurred_at')
+      .eq('user_id', userId)
+      .eq('event', 'app_open')
+      .order('occurred_at', { ascending: false })
+      .limit(1);
+    const lastAt = last?.[0]?.occurred_at;
+    if (lastAt && dateItaly(lastAt) === todayItaly()) return NextResponse.json({ ok: true, dedup: true });
   }
 
   const { error } = await supabaseAdmin

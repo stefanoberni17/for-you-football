@@ -6,6 +6,7 @@ import { markSessionActive } from '@/lib/activeSession';
 import { supabase } from '@/lib/supabase';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { todayItaly, dateItaly } from '@/lib/dateItaly';
+import { trackOnboarding } from '@/lib/onboardingTrack';
 
 const DURATION_OPTIONS = [
   { label: '1 min', seconds: 60 },
@@ -221,6 +222,7 @@ export default function MeditationPopup({
       .from('profiles')
       .update({ last_meditation_completed: todayStr() })
       .eq('user_id', userId);
+    trackOnboarding('reset_completed', { auto: !manualOpen, seconds: selectedDuration });
 
     audioRef.current?.pause();
     setShowPopup(false);

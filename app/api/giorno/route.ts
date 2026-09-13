@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
@@ -156,6 +157,7 @@ export async function POST(request: NextRequest) {
       );
 
     if (upsertError) throw upsertError;
+    logEvent(userId, 'day_completed', { week: weekNumber, day: dayNumber });
 
     // Salva riflessione in day_reflections (se c'è una risposta alla domanda)
     if (response) {
