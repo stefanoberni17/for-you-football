@@ -23,3 +23,8 @@ export function daysAgoItaly(n: number): string {
   d.setDate(d.getDate() - n);
   return FORMATTER.format(d);
 }
+
+/** Data (fuso italiano, YYYY-MM-DD) di un timestamp qualsiasi — per confrontare `completed_at` con "oggi". */
+export function dateItaly(value: string | Date): string {
+  return FORMATTER.format(typeof value === 'string' ? new Date(value) : value);
+}

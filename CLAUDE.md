@@ -655,7 +655,7 @@ La memoria persistente del Coach si basa su:
 
 ### Onboarding (`app/onboarding/page.tsx`)
 - Carousel 5 slide (benvenuto, come funziona [giorni+gate+strumenti+3 blocchi], "la tua giornata con l'app", Coach AI, pronto a iniziare)
-- **Slide Coach = gate morbido Telegram:** il CTA primario in basso è "📲 Collega il Coach" (deep-link), lo skip è il link esplicito "Continua senza promemoria →"; al ritorno da Telegram (`visibilitychange` → refetch `telegram_id`) la slide mostra "✅ Coach collegato" e torna il normale Continua
+- **Slide Coach solo informativa** (dal 13/9, sera 4): il collegamento Telegram NON si chiede più in onboarding (portava fuori dall'app prima del primo contenuto) ma sulla schermata "Giorno 1 completato" di `app/giorno/[week]/[day]/page.tsx`; `/start <codice>` nel webhook non scrive più `onboarding_completed`
 - Dopo "Inizia il percorso" (o "Salta introduzione"): step calendario (riuso `WeeklyCalendarPopup`, saltabile, POST `/api/calendar` week=1) → schermata rituale → `/`
 - Mostrato dopo prima registrazione
 
@@ -771,6 +771,7 @@ La memoria persistente del Coach si basa su:
 
 ### `PracticePopup.tsx`
 - UI pratica giornaliera con timer countdown
+- **"Ho finito ✓" dal 60 % del timer** (sera 4): bottone sotto il timer quando `timeLeft <= 40 %` della durata; chiude anche l'audio e porta a `done` (W1-G1 sono 50" di respiri: il timer da 3' senza uscita era un muro; Ste porta `Durata Minuti` di W1-G1 a 2 su Notion)
 - Animazione cerchio respirazione asimmetrica: inspirazione `durataInspira`s / espirazione `durataEspira`s (default 4/6)
 - Timer implementato con `setTimeout` ricorsivo (non `setInterval`) per supportare durate diverse per inhale/exhale
 - Props opzionali `durataInspira` e `durataEspira` passati da `app/giorno/[week]/[day]/page.tsx` (letti da Notion)
@@ -792,7 +793,7 @@ La memoria persistente del Coach si basa su:
 - Rebrand verde brand (no più viola/🧘): titolo "Il Reset", copy campo ("Naso, poi bocca — come in campo")
 - Setup: scelta durata (1/2/3/5 min) + mantra settimana
 - Fase Reset: cerchio animato con **respiro asimmetrico 4s inspira / 6s espira** (setTimeout ricorsivo, `INHALE_MS`/`EXHALE_MS`), countdown, toggle audio (nature/focus/mute)
-- Auto-show giornaliero soppresso se: `localStorage.ritualSkipped === oggi`, oppure `last_meditation_completed === oggi`, oppure **pratica del giorno già completata oggi** (query `user_day_progress` con `completed_at >= today`)
+- **Auto-show solo a giorno del percorso completato oggi e mai prima di W1-G3** (sera 4, review 13/9: prima proponeva il Reset ogni mattina di W1 prima che il percorso lo costruisse): query `user_day_progress` completed → serve `W1-G3` fatto E una riga con `completed_at` di oggi (fuso italiano, `dateItaly`). Soppresso anche se `localStorage.ritualSkipped === oggi` o `last_meditation_completed === oggi`. La pagina giorno lascia `sessionStorage.fyfDayCompletedPending` (`DAY_COMPLETED_KEY`) al completamento: al primo cambio pagina fuori da `/giorno/*` il controllo si ripete e il Reset viene proposto subito, senza aspettare il prossimo avvio
 - "Salta per oggi" (solo auto-mode) → persiste `ritualSkipped = oggi`
 - Aggiornamento `last_meditation_completed` su profilo al completamento
 
@@ -810,6 +811,7 @@ La memoria persistente del Coach si basa su:
 ### `GlobalCheckinWrapper.tsx`
 - Wrapper root (wrappa `GlobalMeditationWrapper` + children) — step 1 del rituale del mattino
 - Se `localStorage.ritualSkipped === oggi` → non mostra nulla (skip persistito)
+- **Check-in dal giorno 2** (sera 4): niente modale finché non esiste un giorno del percorso completato PRIMA di oggi (prima riga `user_day_progress` completed per `completed_at`, confronto in fuso italiano) — il primo contenuto viene prima di qualsiasi slider
 - Verifica check-in oggi via `GET /api/checkin` → se non fatto mostra `DailyCheckinModal`
 - Salta su `/login`, `/register`, `/onboarding`, `/pricing`, `/beta-complete`
 - On complete → `checkinDone = true` → il wrapper meditazione propone il Reset (rituale continuo)
@@ -972,6 +974,7 @@ Report: `docs/review-2026-09-13.md`; decisioni di Ste nella risposta del 13/9 (c
 
 - **Sera 2 (vendita, PR #81):** `BETA_MAX_WEEK = 12` con `WEEK_RECORD_IDS` 10-12 (senza, `leggi_percorso` rispondeva "non disponibile" per W10-12: il tool legge per id, non per numero) e `WEEK_TOOLS` 10-12; limiti riflessione giorno 1000→2000 e gate 800→1500 (W11-G4 è il Protocollo For You in una pagina); teaser "Prossimamente" in `/settimane` solo se `BETA_MAX_WEEK < 12`. Prezzi da `lib/constants.ts` (`SEASON_PRICE_ONETIME/INSTALLMENT/FULL`, `SEASON_INSTALLMENTS`: da tenere allineati ai Price Stripe in env), via la data "fino al 30 agosto" e "dal 1 settembre"; garanzia 4 settimane lasciata con TODO(termini). Home: card del Coach sotto l'hero finché `totalCompleted < 3`, poi in fondo. Registrazione step 2: "Salta per ora →". Onboarding: via il paragrafo "3-4 settimane" (l'unico disclaimer sui tempi resta W1-G1 su Notion, "2-3 settimane"). `components/PaywallGuard.tsx` nel layout: paywall client su tutte le pagine non pubbliche (fail-open, cache 60"); tab bar nascosta su `/pricing`.
 
+- **Sera 4 (il primo giorno):** rituale del mattino spento finché non c'è contenuto: check-in solo da chi ha un giorno completato prima di oggi (`GlobalCheckinWrapper`), Reset automatico solo a giorno completato oggi e mai prima di W1-G3 (`MeditationPopup`, marker `DAY_COMPLETED_KEY` dalla pagina giorno per riproporlo subito dopo "Giorno completato"). "Ho finito ✓" dal 60 % del timer in `PracticePopup`. Richiesta Telegram tolta dall'onboarding (slide Coach solo informativa) e messa sulla schermata "Giorno 1 completato" (card con deep-link, "✅ Coach collegato" al ritorno via `visibilitychange`, evento `telegram_collega_click` con `from: 'giorno1_completato'`); `/start <codice>` non scrive più `onboarding_completed`. Bozza della riflessione e della domanda pre-pratica in `sessionStorage` (`dayDraft-w{W}-d{D}`, debounce 600 ms, ripristino se il server non ha già un testo, clear al completamento). Helper `dateItaly(value)` in `lib/dateItaly.ts`.
 - **Sera 3 (il domani, PR #82):** push prompt non più soppresso per chi non ha Telegram (`TelegramRecoveryBanner` espone `onVisibilityChange`, la home sopprime solo se il banner è davvero in vista; i cron mattina/sera mandavano già la push a chi non ha `telegram_id`). **Ripresa PWA**: `components/AppResume.tsx` nel layout ricarica al ritorno in primo piano se è cambiato il giorno (`todayItaly`) o la build (`GET /api/version` = `VERCEL_GIT_COMMIT_SHA`) e non c'è una sessione in corso (`lib/activeSession.ts`, contatore alimentato da PracticePopup, MeditationPopup, TrainingSessionPlayer); `public/sw.js` fa `skipWaiting` + `clients.claim`. **Timer a timestamp** (`endsAt`, tick ogni 500 ms + ricalcolo su `visibilitychange`) in PracticePopup, MeditationPopup e nel player (recupero ed esecuzione): iOS sospende gli interval in background, prima il countdown si fermava.
 
 ### Everfit (strumento di Ste, non dell'app)

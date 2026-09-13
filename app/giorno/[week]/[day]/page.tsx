@@ -8,6 +8,9 @@ import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
+import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
+import { requestTelegramLinkUrl } from '@/lib/telegramLink';
+import { trackOnboarding } from '@/lib/onboardingTrack';
 
 export default function GiornoPage() {
   const params = useParams();
@@ -40,6 +43,16 @@ export default function GiornoPage() {
   // Giornata al rientro: l'utente vuole rileggere le istruzioni invece della sola riflessione
   const [reviewMode, setReviewMode] = useState(false);
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
+  // Telegram: la richiesta di collegamento vive sulla schermata "Giorno 1 completato"
+  // (via dall'onboarding: portava fuori dall'app prima del primo contenuto).
+  const [hasTelegram, setHasTelegram] = useState<boolean | null>(null);
+  const [telegramLinkLoading, setTelegramLinkLoading] = useState(false);
+  const [telegramLinkFailed, setTelegramLinkFailed] = useState(false);
+  const isFirstDay = weekNumber === 1 && dayNumber === 1;
+
+  // Bozza della riflessione (review 13/9: il gate aveva la bozza, il giorno no —
+  // chi chiudeva l'app a metà riflessione perdeva il testo). Vive in sessionStorage.
+  const draftKey = `dayDraft-w${weekNumber}-d${dayNumber}`;
 
   useEffect(() => {
     const init = async () => {
@@ -119,6 +132,26 @@ export default function GiornoPage() {
       if (data.prePraticaResponse) {
         setPrePraticaResponse(data.prePraticaResponse);
       }
+      // Ripristino bozza (solo se il giorno non è completato e il server non ha già un testo)
+      if (!data.completed) {
+        try {
+          const raw = sessionStorage.getItem(`dayDraft-w${weekNumber}-d${dayNumber}`);
+          if (raw) {
+            const draft = JSON.parse(raw) as { response?: string; prePraticaResponse?: string };
+            if (!data.response && draft.response) setResponse(draft.response);
+            if (!data.prePraticaResponse && draft.prePraticaResponse) setPrePraticaResponse(draft.prePraticaResponse);
+          }
+        } catch { /* bozza corrotta o storage non disponibile */ }
+      }
+
+      if (weekNumber === 1 && dayNumber === 1) {
+        const { data: prof } = await supabase
+          .from('profiles')
+          .select('telegram_id')
+          .eq('user_id', uid)
+          .maybeSingle();
+        setHasTelegram(!!prof?.telegram_id);
+      }
 
       // Mostra check del giorno precedente se non ancora risposto
       if (
@@ -182,6 +215,50 @@ export default function GiornoPage() {
     return `📅 Il tuo prossimo allenamento è ${DAY_NAMES[next]}. Prova questo in campo!`;
   };
 
+  // Autosave bozza (debounce 600 ms), stesso pattern del gate
+  useEffect(() => {
+    if (loading || completed) return;
+    const t = setTimeout(() => {
+      try {
+        if (!response && !prePraticaResponse) sessionStorage.removeItem(draftKey);
+        else sessionStorage.setItem(draftKey, JSON.stringify({ response, prePraticaResponse }));
+      } catch { /* storage non disponibile */ }
+    }, 600);
+    return () => clearTimeout(t);
+  }, [response, prePraticaResponse, loading, completed, draftKey]);
+
+  // Al ritorno da Telegram (visibilitychange) rileggi telegram_id: la card
+  // sulla schermata "Giorno 1 completato" passa a "✅ Coach collegato".
+  useEffect(() => {
+    if (!isFirstDay || !showSuccess || hasTelegram) return;
+    const onVisible = async () => {
+      if (document.visibilityState !== 'visible') return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data: p } = await supabase
+        .from('profiles')
+        .select('telegram_id')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      if (p?.telegram_id) { setHasTelegram(true); setTelegramLinkLoading(false); }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [isFirstDay, showSuccess, hasTelegram]);
+
+  const handleTelegramLink = async () => {
+    setTelegramLinkLoading(true);
+    setTelegramLinkFailed(false);
+    trackOnboarding('telegram_collega_click', { from: 'giorno1_completato' });
+    try {
+      const url = await requestTelegramLinkUrl();
+      window.location.href = url;
+    } catch {
+      setTelegramLinkFailed(true);
+      setTelegramLinkLoading(false);
+    }
+  };
+
   const handleComplete = async () => {
     if (saving) return;
     setSaving(true);
@@ -206,6 +283,11 @@ export default function GiornoPage() {
 
       setCompleted(true);
       setShowSuccess(true);
+      try {
+        sessionStorage.removeItem(draftKey);
+        // Il rituale ripropone il Reset al primo cambio pagina (solo da W1-G3 in poi)
+        sessionStorage.setItem(DAY_COMPLETED_KEY, '1');
+      } catch { /* no-op */ }
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([40, 60, 40]);
       }
@@ -278,11 +360,39 @@ export default function GiornoPage() {
             Ogni giorno conta. Stai costruendo qualcosa di reale.
           </p>
           {nextTitolo && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-4 mb-10 max-w-xs text-center">
+            <div className={`bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-4 max-w-xs text-center ${isFirstDay && hasTelegram !== null ? 'mb-5' : 'mb-10'}`}>
               <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">
                 Domani ti aspetta
               </p>
               <p className="text-white text-sm font-medium">{nextTitolo}</p>
+            </div>
+          )}
+
+          {/* Giorno 1: il momento giusto per portare il Coach sul telefono (era il gate dell'onboarding) */}
+          {isFirstDay && hasTelegram === false && (
+            <div className="bg-white/15 backdrop-blur-sm border border-white/25 rounded-2xl px-5 py-4 mb-10 w-full max-w-xs text-center">
+              <p className="text-white font-bold text-sm mb-1">Vuoi il Coach anche sul telefono?</p>
+              <p className="text-forest-100 text-xs leading-relaxed mb-3">
+                Ti scrive lui domattina e ti ricorda la pratica. Un tap e il Coach è nel tuo Telegram.
+              </p>
+              <button
+                onClick={handleTelegramLink}
+                disabled={telegramLinkLoading}
+                className="w-full bg-white text-forest-700 font-bold py-3 rounded-xl text-sm shadow hover:bg-forest-50 transition-all disabled:opacity-60"
+              >
+                {telegramLinkLoading ? 'Apriamo Telegram…' : '📲 Attiva il Coach su Telegram'}
+              </button>
+              {telegramLinkFailed && (
+                <p className="text-xs text-amber-200 mt-2">
+                  Non siamo riusciti ad aprire Telegram — lo trovi anche nel Profilo.
+                </p>
+              )}
+            </div>
+          )}
+          {isFirstDay && hasTelegram === true && (
+            <div className="bg-white/15 backdrop-blur-sm border border-white/25 rounded-2xl px-5 py-3 mb-10 max-w-xs text-center">
+              <p className="text-white font-semibold text-sm">✅ Coach collegato su Telegram</p>
+              <p className="text-forest-100 text-xs mt-0.5">Domattina ti scrive lui.</p>
             </div>
           )}
         </div>

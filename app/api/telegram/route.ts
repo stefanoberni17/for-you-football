@@ -108,9 +108,8 @@ export async function POST(request: NextRequest) {
               telegram_id: telegramUserId,
               telegram_link_code: null,
               telegram_link_code_expires: null,
-              // Chi collega da onboarding senza tornare sull'app non deve essere
-              // reimmerso nel carousel: il binding completato implica onboarding oltrepassato.
-              onboarding_completed: true,
+              // NON tocca onboarding_completed: il collegamento si chiede dopo il
+              // Giorno 1, e prima chiudeva l'onboarding saltando calendario e rituale.
             })
             .eq('user_id', linkProfile.user_id);
 

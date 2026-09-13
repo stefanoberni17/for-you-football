@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import DailyCheckinModal from './DailyCheckinModal';
 import { CheckinContext } from './CheckinContext';
-import { todayItaly } from '@/lib/dateItaly';
+import { todayItaly, dateItaly } from '@/lib/dateItaly';
 
 export default function GlobalCheckinWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -31,6 +31,28 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
       // "Salta per oggi" persistito: il rituale non riappare fino a domani
       const today = todayItaly();
       if (localStorage.getItem('ritualSkipped') === today) {
+        setCheckinDone(true);
+        return;
+      }
+
+      // Check-in dal giorno 2: prima del primo contenuto non si chiede nulla
+      // (review 13/9: quattro slider prima ancora di "Inizia: Giorno 1").
+      // "Giorno 2" = almeno un giorno del percorso completato PRIMA di oggi.
+      try {
+        const { data: done } = await supabase
+          .from('user_day_progress')
+          .select('completed_at')
+          .eq('user_id', session.user.id)
+          .eq('completed', true)
+          .not('completed_at', 'is', null)
+          .order('completed_at', { ascending: true })
+          .limit(1);
+        const first = done?.[0]?.completed_at;
+        if (!first || dateItaly(first) >= today) {
+          setCheckinDone(true);
+          return;
+        }
+      } catch {
         setCheckinDone(true);
         return;
       }
