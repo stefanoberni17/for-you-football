@@ -1116,6 +1116,17 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **Feature — FYF Training v0 (area riservata, agosto 2026):** binario allenamento dietro `profiles.training_access` (migration 015), route `/allenamento/*`, catalogo v1 + motore deterministico + planner Claude con validatore. Dettagli nella sezione **FYF Training** sopra.
 - [x] **FYF Training v2 (settembre 2026):** setup atleta con fase stagione (migration 017); batteria test v2 campo + palestra con descrizioni a 4 campi e video (migration 018); rombo a 10 punte; catalogo v2 da JSON (309 esercizi, sequenze yoga e video del canale mappati); regole v2 (livello = dose, finestre partita, plio contatti per livello); libreria di 144 blocchi dai workout Everfit; planner v2 a blocchi (default) con validazione blocco+item; feedback per serie con RPE e auto-regolazione (migration 019, applicata); script Everfit per leggere/assegnare allenamenti (`.claude/settings.json` pre-approva il comando). PR #49-#65.
 
+### Da fare — Ste (fuori dal codice, dalle sere 1-5)
+- [ ] Applicare la migration `021_consent_health_training.sql` su Supabase (PR #78), se non già fatta
+- [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
+- [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
+- [ ] Stripe dashboard: quando i termini definitivi esistono, inserire l'URL di `/termini` in Impostazioni → Checkout, POI compilare `TERMS_VERSION` (accende `consent_collection` nel checkout)
+- [ ] Notion: `Durata Minuti` di W1-G1 a 2
+- [ ] Prove sera 4 (PR #83): account nuovo → onboarding senza Telegram → home senza check-in né Reset → G1 con "Ho finito ✓" dopo il 60 % → card Telegram su "Giorno 1 completato"; account con G3 fatto → completa il giorno → "Torna alla settimana" → parte il Reset
+- [ ] Prove sera 5 (PR #83): pagamento di prova con l'email di un genitore nel campo → indirizzo richiesto da Stripe → ricevuta al genitore → "Attivazione in corso…" → home sbloccata
+- [ ] Prove sera 1: bot da un account appena collegato; `/sblocca` con id sbagliato; Vercel logs "Telegram webhook error"
+- [ ] Decidere se il Reset automatico deve tornare al mattino dal G4 (oggi: solo dopo il giorno completato, lettura letterale della review)
+
 ### Da fare
 - [ ] **FYF Training — prossimi passi:** (1) ✅ "Rigenera" col planner v2 provato da Ste; (2) ✅ review livelli applicata (PR #67); (3) settimana Everfit successiva per "Utente E." (dal 14/9) con token nuovo; (4) ✅ carico totale session-RPE/ACWR (PR #68) — da osservare sui dati reali quando ci saranno ≥2 settimane di sedute; (5) ✅ blocchi incompleti: 135/144 completi — Barbell Deadlift dentro (solo A, `soloLivello`), Headball disattivata per scelta di Ste (i 9 blocchi Visione restano incompleti finché non si attiva); (5b) ✅ maschera guidata per generare/modificare, salti/recuperi/posticipi, nuova settimana automatica con recupero delle sedute saltate — da provare sul campo; (6) video di visione: collegarli all'esercizio nel player — Ste lo fa dopo; (7) apertura del modulo ad altri utenti test (flag via SQL) prima di pensare a UI/paywall.
 - [ ] **Setup Supabase Storage:** creare bucket pubblico `practice-audio` da Dashboard Supabase. Naming file: `w{week}-d{day}.mp3`. Caricare i MP3 e incollare l'URL pubblico nel campo `Audio Pratica` del giorno corrispondente in Notion.
