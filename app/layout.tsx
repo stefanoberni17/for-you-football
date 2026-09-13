@@ -5,6 +5,7 @@ import BottomTabBar from "@/components/BottomTabBar";
 import GlobalCheckinWrapper from "@/components/GlobalCheckinWrapper";
 import GlobalMeditationWrapper from "@/components/GlobalMeditationWrapper";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import PaywallGuard from "@/components/PaywallGuard";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -56,6 +57,7 @@ export default function RootLayout({
           la pagina poteva scrollare e iOS PWA auto-scrollava al mount. */}
       <body>
         <ServiceWorkerRegistration />
+        <PaywallGuard />
         <GlobalCheckinWrapper>
           <GlobalMeditationWrapper>
             {children}

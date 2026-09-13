@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { hasActiveAccess, isPaywallActive } from '@/lib/checkAccess';
+import { SEASON_INSTALLMENTS, SEASON_PRICE_FULL, SEASON_PRICE_INSTALLMENT, SEASON_PRICE_ONETIME } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,7 +83,7 @@ function PricingContent() {
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center">
           <div className="inline-block bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-            🔓 Offerta Founder — fino al 30 agosto 2026
+            🔓 Offerta Founder
           </div>
           <h1 className="text-3xl font-bold text-app mb-2">Season 1 — Play Free</h1>
           <p className="text-muted">
@@ -97,7 +98,7 @@ function PricingContent() {
         )}
 
         <div className="space-y-3">
-          {/* One-time €69 */}
+          {/* Pagamento unico */}
           <button
             onClick={() => setSelectedPlan('onetime')}
             className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
@@ -112,7 +113,7 @@ function PricingContent() {
                 </span>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-app">€69</div>
+                <div className="text-2xl font-bold text-app">€{SEASON_PRICE_ONETIME}</div>
                 <div className="text-xs text-muted">una tantum</div>
               </div>
             </div>
@@ -121,7 +122,7 @@ function PricingContent() {
             </p>
           </button>
 
-          {/* 3 rate €29 */}
+          {/* Rate mensili */}
           <button
             onClick={() => setSelectedPlan('installments')}
             className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
@@ -131,12 +132,12 @@ function PricingContent() {
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-lg font-bold text-app">3 rate mensili</h2>
               <div className="text-right">
-                <div className="text-2xl font-bold text-app">€29 × 3</div>
+                <div className="text-2xl font-bold text-app">€{SEASON_PRICE_INSTALLMENT} × {SEASON_INSTALLMENTS}</div>
                 <div className="text-xs text-muted">poi stop automatico</div>
               </div>
             </div>
             <p className="text-sm text-muted">
-              Stesso percorso, pagamento diviso in 3. Dopo la terza rata gli addebiti si fermano
+              Stesso percorso, pagamento diviso in {SEASON_INSTALLMENTS}. Dopo la terza rata gli addebiti si fermano
               da soli e Season 1 resta tua per sempre.
             </p>
           </button>
@@ -171,9 +172,10 @@ function PricingContent() {
           disabled={loading}
           className="w-full bg-forest-600 hover:bg-forest-700 disabled:opacity-50 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md transition"
         >
-          {loading ? 'Attendi…' : selectedPlan === 'onetime' ? 'Sblocca Season 1 — €69 →' : 'Inizia con €29 →'}
+          {loading ? 'Attendi…' : selectedPlan === 'onetime' ? `Sblocca Season 1 — €${SEASON_PRICE_ONETIME} →` : `Inizia con €${SEASON_PRICE_INSTALLMENT} →`}
         </button>
 
+        {/* TODO(termini): la garanzia 4 settimane va formalizzata nei Termini (procedura, tempi, coordinamento con le 3 rate) — copy lasciato in attesa dell'avvocato */}
         <p className="text-center text-xs text-faint">
           Garanzia 4 settimane: provi le prime 4 settimane della tua Season — se non fa per te, rimborso completo.
         </p>
@@ -192,7 +194,7 @@ function PricingContent() {
           <div>
             <div className="text-sm font-semibold text-app">Come funzionano le 3 rate?</div>
             <div className="text-sm text-muted mt-1">
-              €29 oggi, poi €29 al mese per altri 2 mesi. Dopo la terza rata gli addebiti si
+              €{SEASON_PRICE_INSTALLMENT} oggi, poi €{SEASON_PRICE_INSTALLMENT} al mese per altri {SEASON_INSTALLMENTS - 1} mesi. Dopo la terza rata gli addebiti si
               fermano automaticamente. L&apos;accesso permanente si attiva al completamento delle 3 rate.
             </div>
           </div>
@@ -200,7 +202,7 @@ function PricingContent() {
           <div>
             <div className="text-sm font-semibold text-app">Perché &quot;prezzo founder&quot;?</div>
             <div className="text-sm text-muted mt-1">
-              Sei tra i primi: €69 invece di €99 (prezzo pieno dal 1 settembre). In cambio ci aiuti
+              Sei tra i primi: €{SEASON_PRICE_ONETIME} invece di €{SEASON_PRICE_FULL}. In cambio ci aiuti
               a rifinire il percorso con il tuo feedback — e partecipi al Cerchio For You dal vivo.
             </div>
           </div>

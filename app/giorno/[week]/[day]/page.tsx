@@ -435,11 +435,11 @@ export default function GiornoPage() {
               disabled={completed}
               className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
               rows={4}
-              maxLength={1000}
+              maxLength={2000}
               placeholder="Scrivi qui la tua risposta (opzionale)..."
             />
             {!completed && prePraticaResponse.length > 0 && (
-              <p className="text-xs text-faint mt-1 text-right">{prePraticaResponse.length}/1000</p>
+              <p className="text-xs text-faint mt-1 text-right">{prePraticaResponse.length}/2000</p>
             )}
           </div>
         )}
@@ -542,11 +542,11 @@ export default function GiornoPage() {
               disabled={completed}
               className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
               rows={4}
-              maxLength={1000}
+              maxLength={2000}
               placeholder="Scrivi qui la tua risposta (opzionale)..."
             />
             {!completed && response.length > 0 && (
-              <p className="text-xs text-faint mt-1 text-right">{response.length}/1000</p>
+              <p className="text-xs text-faint mt-1 text-right">{response.length}/2000</p>
             )}
           </div>
         )}
