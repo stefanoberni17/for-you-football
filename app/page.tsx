@@ -356,6 +356,42 @@ export default function HomePage() {
     }
   };
 
+  // Card del Coach: nei primi 3 giorni è l'elemento più legato alla retention (chi ha tenuto ha scritto al Coach),
+  // quindi sta subito sotto l'hero; dopo torna in fondo tra i banner soft.
+  const coachCard = coachBannerVisible ? (
+
+          <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
+            <button
+              onClick={() => {
+                setCoachMessageDismissed(true);
+                try {
+                  localStorage.setItem('coachMessageDismissed', profile.last_coach_message);
+                } catch { /* no-op */ }
+              }}
+              className="absolute top-3 right-3 text-faint hover:text-muted transition-colors"
+              aria-label="Chiudi"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <div className="flex items-start gap-3 pr-6">
+              <div className="text-xl flex-shrink-0">🤖</div>
+              <div className="flex-1">
+                <p className="text-xs font-bold text-forest-400 mb-1">Coach AI</p>
+                <p className="text-sm text-app leading-relaxed">{profile.last_coach_message}</p>
+                <button
+                  onClick={() => router.push('/chat')}
+                  className="mt-3 inline-flex items-center gap-1.5 bg-forest-500 hover:bg-forest-600 text-white text-xs font-semibold py-2 px-3.5 rounded-xl transition-colors"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                  Rispondi al Coach
+                </button>
+              </div>
+            </div>
+          </div>
+  ) : null;
+
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       {/* Header — compatto: solo greeting + mantra opzionale */}
@@ -396,7 +432,7 @@ export default function HomePage() {
                   <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Percorso completato</p>
                   <h2 className="text-2xl font-bold leading-tight">Ce l&apos;hai fatta!</h2>
                   <p className="text-forest-100 text-sm mt-1">
-                    Hai completato i primi due blocchi: lo strumento e il gioco nelle difficoltà.
+                    Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
                   </p>
                 </>
               ) : (
@@ -496,6 +532,8 @@ export default function HomePage() {
         )}
 
         {/* Reset rapido, SOS e cassetta vivono nella tab Strumenti (hub del campo) */}
+
+        {totalCompleted < 3 && coachCard}
 
         {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline */}
         <ActionsCard
@@ -671,39 +709,8 @@ export default function HomePage() {
           <BirthdateBanner userId={userId} hasBirthDate={!!profile.birth_date} />
         )}
 
-        {/* Ultimo messaggio Coach */}
-        {coachBannerVisible && (
-          <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
-            <button
-              onClick={() => {
-                setCoachMessageDismissed(true);
-                try {
-                  localStorage.setItem('coachMessageDismissed', profile.last_coach_message);
-                } catch { /* no-op */ }
-              }}
-              className="absolute top-3 right-3 text-faint hover:text-muted transition-colors"
-              aria-label="Chiudi"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-            <div className="flex items-start gap-3 pr-6">
-              <div className="text-xl flex-shrink-0">🤖</div>
-              <div className="flex-1">
-                <p className="text-xs font-bold text-forest-400 mb-1">Coach AI</p>
-                <p className="text-sm text-app leading-relaxed">{profile.last_coach_message}</p>
-                <button
-                  onClick={() => router.push('/chat')}
-                  className="mt-3 inline-flex items-center gap-1.5 bg-forest-500 hover:bg-forest-600 text-white text-xs font-semibold py-2 px-3.5 rounded-xl transition-colors"
-                >
-                  <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                  Rispondi al Coach
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Ultimo messaggio Coach — in fondo solo dopo i primi 3 giorni (prima sta sotto l'hero) */}
+        {totalCompleted >= 3 && coachCard}
 
         {/* Banner settimanale lunedì (con 0 azioni ci pensa l'empty-state di ActionsCard) */}
         {weeklyBannerVisible && (

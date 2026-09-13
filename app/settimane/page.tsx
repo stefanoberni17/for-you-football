@@ -257,7 +257,8 @@ export default function SettimanePage() {
               );
             })}
 
-            {/* Coming soon teaser */}
+            {/* Coming soon teaser — solo finché non sono pubblicate tutte e 12 */}
+            {BETA_MAX_WEEK < 12 && (
             <div className="relative pl-16">
               <div className="absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center bg-surface-2 ring-4 ring-app z-10">
                 <span className="text-2xl">✨</span>
@@ -270,6 +271,7 @@ export default function SettimanePage() {
                 </p>
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>

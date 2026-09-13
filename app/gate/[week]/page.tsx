@@ -248,7 +248,7 @@ export default function GatePage() {
                 disabled={completed}
                 className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
                 rows={3}
-                maxLength={800}
+                maxLength={1500}
                 placeholder="Scrivi qui..."
               />
             </div>

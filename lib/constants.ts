@@ -20,6 +20,9 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
   7: '380655f7-26c7-8146-bae0-e7012b43e5b2', // Week 7 — La Frustrazione e la Rabbia (Perdono)
   8: '380655f7-26c7-8124-adb5-fa3941de0da5', // Week 8 — Più della maglia (Lasciare Andare)
   9: '3ab655f7-26c7-81ff-9a49-f9a2f0ab9ecb', // Week 9 — Il Centro (Ritornare al Centro)
+  10: '3d5655f7-26c7-8154-8be3-e108f8df203d', // Week 10 — Giocare dal centro
+  11: '3d5655f7-26c7-8109-a792-d86ee5187109', // Week 11 — Il tuo metodo (Protocollo For You)
+  12: '3d6655f7-26c7-81ef-9fc4-d159583677e2', // Week 12 — Giocare libero
 };
 
 // ─── Age gate ────────────────────────────────────────────────────────────────
@@ -37,7 +40,14 @@ export const TERMS_VERSION = '';
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
 
 export const TOTAL_WEEKS = 12;
-export const BETA_MAX_WEEK = 8; // settimane disponibili (Blocco 1 + Blocco 2)
+export const BETA_MAX_WEEK = 12; // settimane disponibili: tutte e tre i blocchi (W9-12 pubblicate su Notion l'8-9/9/2026)
+
+// ─── Prezzi Season 1 (UNICA fonte per i copy; gli addebiti reali vengono dai Price Stripe in env) ──
+// Se cambiano i Price in env, cambiare anche questi: la pagina pricing non deve mai dire una cifra diversa da quella addebitata.
+export const SEASON_PRICE_ONETIME = 69;      // una tantum
+export const SEASON_PRICE_INSTALLMENT = 29;  // per rata
+export const SEASON_INSTALLMENTS = 3;        // numero rate
+export const SEASON_PRICE_FULL = 99;         // prezzo pieno di riferimento ("invece di")
 
 export const DAYS_PER_WEEK = 7;
 export const GATE_DAY = 7; // giorno gate — obbligatorio, non comprimibile
@@ -76,6 +86,9 @@ export const WEEK_TOOLS: Record<number, string> = {
   7: "L'Anticipo",
   8: 'Il Rilascio',
   9: 'La strada verso il centro',
+  10: "C'è qualcuno a casa",
+  11: 'Il Protocollo For You',
+  12: 'Giocare libero',
 };
 
 // ─── Sport supportati ────────────────────────────────────────────────────────

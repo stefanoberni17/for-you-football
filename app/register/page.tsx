@@ -123,8 +123,8 @@ function RegisterContent() {
   };
 
   // ── Submit finale ─────────────────────────────────────────────────────────
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setLoading(true);
     setError('');
 
@@ -487,6 +487,12 @@ function RegisterContent() {
                   rows={2} maxLength={500} />
               </div>
 
+              <p className="text-center -mt-2">
+                <button type="button" onClick={() => handleRegister()} disabled={loading}
+                  className="text-xs text-muted underline underline-offset-2 disabled:opacity-50">
+                  Salta per ora → (lo completi dal profilo)
+                </button>
+              </p>
               <div className="flex gap-3 pt-1">
                 <button type="button" onClick={() => { setStep(1); setError(''); }}
                   className="flex-1 py-3 px-4 rounded-xl border border-divider text-app font-semibold text-sm hover:bg-surface-2 transition-all">
