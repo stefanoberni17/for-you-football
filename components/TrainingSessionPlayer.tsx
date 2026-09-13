@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
+import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
@@ -77,6 +78,17 @@ export default function TrainingSessionPlayer({
   const [showDesc, setShowDesc] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const execRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Timer a TIMESTAMP: iOS sospende gli interval in background; al ritorno si ricalcola da qui
+  const restEndsRef = useRef<number | null>(null);
+  const execEndsRef = useRef<number | null>(null);
+  const restTickRef = useRef<(() => void) | null>(null);
+  const execTickRef = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    markSessionActive(true);
+    const onVis = () => { if (document.visibilityState === 'visible') { restTickRef.current?.(); execTickRef.current?.(); } };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { document.removeEventListener('visibilitychange', onVis); markSessionActive(false); };
+  }, []);
   const latoRef = useRef<'dx' | 'sx'>(initialProgress?.lato ?? 'dx');
   useWakeLock(true);
 
@@ -99,30 +111,36 @@ export default function TrainingSessionPlayer({
   const execSeconds = ex?.unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
 
   useEffect(() => () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
     if (execRef.current) clearInterval(execRef.current);
   }, []);
 
   const stopExec = () => {
     if (execRef.current) clearInterval(execRef.current);
+    execEndsRef.current = null; execTickRef.current = null;
     setExecLeft(null);
   };
 
   const startRest = (sec: number, last = false) => {
     setRestIsLast(last); restIsLastRef.current = last;
     setRestLeft(Math.max(sec, last ? 20 : sec)); // dopo l'ultima serie: almeno 20" per il feedback
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setRestLeft((prev) => {
-        if (prev === null || prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          try { navigator.vibrate?.([80, 60, 80]); } catch { /* no-op */ }
-          if (restIsLastRef.current) setTimeout(() => nextItemRef.current(), 0);
-          return null;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
+    restEndsRef.current = Date.now() + Math.max(sec, last ? 20 : sec) * 1000;
+    const tick = () => {
+      if (restEndsRef.current === null) return;
+      const left = Math.ceil((restEndsRef.current - Date.now()) / 1000);
+      if (left <= 0) {
+        restEndsRef.current = null; restTickRef.current = null;
+        if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
+        try { navigator.vibrate?.([80, 60, 80]); } catch { /* no-op */ }
+        setRestLeft(null);
+        if (restIsLastRef.current) setTimeout(() => nextItemRef.current(), 0);
+        return;
+      }
+      setRestLeft(left);
+    };
+    restTickRef.current = tick;
+    timerRef.current = setInterval(tick, 500);
   };
 
   const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null }) => {
@@ -146,7 +164,7 @@ export default function TrainingSessionPlayer({
   };
 
   const nextItem = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
@@ -182,7 +200,7 @@ export default function TrainingSessionPlayer({
   // Tornare all'esercizio precedente (tap sbagliato su "esercizio completato"): si riparte dalla sua prima serie
   const prevItem = () => {
     if (itemIdx === 0) return;
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
@@ -198,18 +216,23 @@ export default function TrainingSessionPlayer({
   const startExecTimer = () => {
     stopExec();
     setExecLeft(execSeconds);
-    execRef.current = setInterval(() => {
-      setExecLeft((prev) => {
-        if (prev === null || prev <= 1) {
-          if (execRef.current) clearInterval(execRef.current);
-          try { navigator.vibrate?.([200, 100, 200]); } catch { /* no-op */ }
-          // fine tenuta → chiude lato/serie da solo
-          setTimeout(() => handleSerieDoneRef.current(), 0);
-          return null;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    execEndsRef.current = Date.now() + execSeconds * 1000;
+    const tick = () => {
+      if (execEndsRef.current === null) return;
+      const left = Math.ceil((execEndsRef.current - Date.now()) / 1000);
+      if (left <= 0) {
+        execEndsRef.current = null; execTickRef.current = null;
+        if (execRef.current) clearInterval(execRef.current);
+        try { navigator.vibrate?.([200, 100, 200]); } catch { /* no-op */ }
+        setExecLeft(null);
+        // fine tenuta → chiude lato/serie da solo
+        setTimeout(() => handleSerieDoneRef.current(), 0);
+        return;
+      }
+      setExecLeft(left);
+    };
+    execTickRef.current = tick;
+    execRef.current = setInterval(tick, 500);
   };
   // handleSerieDone letto via ref dal callback del timer (evita closure stantia)
   const handleSerieDoneRef = useRef(handleSerieDone);
@@ -343,12 +366,12 @@ export default function TrainingSessionPlayer({
                 ) : null}
               </div>
             )}
-            <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}
+            <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null; if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}
               className="mt-4 inline-flex items-center gap-1.5 text-sm text-faint">
               <Pause size={14} /> {restIsLast ? 'Vai al prossimo esercizio' : 'Salta il recupero'}
             </button>
             {restIsLast && (
-              <button onClick={() => { setRestLeft(null); if (timerRef.current) clearInterval(timerRef.current); setRestIsLast(false); restIsLastRef.current = false; setSerieFatte(Math.max(0, serieFatte - 1)); setPending(null); }}
+              <button onClick={() => { setRestLeft(null); if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null; setRestIsLast(false); restIsLastRef.current = false; setSerieFatte(Math.max(0, serieFatte - 1)); setPending(null); }}
                 className="block mx-auto mt-2 text-xs text-faint underline underline-offset-2">
                 Non era l&apos;ultima: torna alla serie
               </button>

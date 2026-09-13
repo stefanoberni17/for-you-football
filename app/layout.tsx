@@ -6,6 +6,7 @@ import GlobalCheckinWrapper from "@/components/GlobalCheckinWrapper";
 import GlobalMeditationWrapper from "@/components/GlobalMeditationWrapper";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import PaywallGuard from "@/components/PaywallGuard";
+import AppResume from "@/components/AppResume";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body>
         <ServiceWorkerRegistration />
         <PaywallGuard />
+        <AppResume />
         <GlobalCheckinWrapper>
           <GlobalMeditationWrapper>
             {children}

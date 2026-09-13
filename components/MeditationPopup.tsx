@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { markSessionActive } from '@/lib/activeSession';
 import { supabase } from '@/lib/supabase';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { todayItaly } from '@/lib/dateItaly';
@@ -104,21 +105,27 @@ export default function MeditationPopup({
   }, [manualOpen]);
 
   // Timer countdown — solo durante il Reset
+  // Timer a TIMESTAMP: il residuo si ricalcola da `endsAt` anche dopo schermo spento/background
+  const endsAtRef = useRef<number | null>(null);
   useEffect(() => {
-    if (!showPopup || phase !== 'meditating' || timeLeft === 0) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          setIsTimerComplete(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [showPopup, phase, timeLeft]);
+    if (!showPopup || phase !== 'meditating') { endsAtRef.current = null; markSessionActive(false); return; }
+    markSessionActive(true);
+    if (endsAtRef.current === null) endsAtRef.current = Date.now() + selectedDuration * 1000;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const tick = () => {
+      const left = Math.max(0, Math.ceil(((endsAtRef.current ?? 0) - Date.now()) / 1000));
+      setTimeLeft(left);
+      if (left === 0) { setIsTimerComplete(true); if (timer) clearInterval(timer); }
+    };
+    tick();
+    timer = setInterval(tick, 500);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      if (timer) clearInterval(timer);
+      document.removeEventListener('visibilitychange', tick);
+      markSessionActive(false);
+    };
+  }, [showPopup, phase, selectedDuration]);
 
   // Animazione respiro asimmetrica 4s/6s — setTimeout ricorsivo
   useEffect(() => {
@@ -173,6 +180,7 @@ export default function MeditationPopup({
   }, [showPopup, phase, audioMode]);
 
   const startMeditation = () => {
+    endsAtRef.current = Date.now() + selectedDuration * 1000;
     setTimeLeft(selectedDuration);
     setIsTimerComplete(false);
     setPhase('meditating');
