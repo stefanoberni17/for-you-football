@@ -18,6 +18,7 @@
  */
 import type { QualitaV2 } from './trainingCatalogV2';
 import type { WeekPlan, PlanSession } from './trainingEngine';
+import type { SquadraSettimana } from './trainingSquadra';
 
 export interface CompletionRow { session_key: string; plan_id: string | null; feedback: string | null; completed_at: string }
 export interface SetRpeRow { session_key: string; rpe: number | null }
@@ -161,11 +162,16 @@ export function calcolaCarico(input: {
   return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto };
 }
 
-/** Stima del carico squadra per settimana (non misurato: dal calendario). */
-export function caricoSquadraStimato(p: { trainingDays: number[]; matchDays: number[]; squadraDurataMin: number | null; fase: string }): number {
+/**
+ * Stima del carico squadra per settimana (non misurato: dal calendario). Se l'atleta ha
+ * descritto gli allenamenti con la squadra (sforzo per giorno, migration 023) usa quello
+ * al posto dell'RPE fisso.
+ */
+export function caricoSquadraStimato(p: { trainingDays: number[]; matchDays: number[]; squadraDurataMin: number | null; fase: string; squadra?: SquadraSettimana }): number {
   if (p.fase === 'off_season') return 0;
   const durata = p.squadraDurataMin && p.squadraDurataMin > 0 ? p.squadraDurataMin : 90;
-  return Math.round(p.trainingDays.length * durata * RPE_SQUADRA + p.matchDays.length * 90 * RPE_PARTITA);
+  const allenamenti = p.trainingDays.reduce((a, d) => a + durata * (p.squadra?.[d]?.rpe ?? RPE_SQUADRA), 0);
+  return Math.round(allenamenti + p.matchDays.length * 90 * RPE_PARTITA);
 }
 
 export const STATO_LABEL: Record<StatoCarico, string> = {

@@ -114,6 +114,7 @@ for-you-football/
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API, safety (keywords, alert, SAFETY_REVIEW_MODE)
 │   ├── trainingAccess.ts                  # hasTrainingAccess(userId) — flag profiles.training_access (area riservata)
 │   ├── trainingSetup.ts                   # "Il tuo setup": attrezzatura, fase (off_season/preparazione_squadra/in_season), tetti sedute e durata per fase
+│   ├── trainingSquadra.ts                 # "Gli allenamenti con la squadra" (facoltativo): sforzo 1-10 + qualità per giorno squadra (profiles.training_squadra, migration 023), testo per i prompt
 │   ├── trainingCatalog.ts                 # Catalogo v1: esercizi corpo libero + TESTS v1 (descrizioni 4 campi) + ROMBO_PUNTE (10 punte)
 │   ├── trainingCatalogV2.ts / .generated  # Catalogo v2 (309 esercizi, 277 attivi) generato da docs/training-catalogo-v2.json via scripts/build-catalog-v2.py
 │   ├── trainingTestsV2.ts                 # Batteria v2: test campo + palestra (massimale stimato Brzycki), soglie B/A/PRO, video
@@ -945,6 +946,8 @@ Nel recupero il player (`components/TrainingSessionPlayer.tsx`) chiede RPE 1-10 
 ### Carico totale (`lib/trainingLoad.ts`, settembre 2026)
 Carico seduta = durata (dal piano) × RPE (media dei log per serie → feedback facile 4/ok 6/duro 8 → 6). Settimane lunedì-domenica: **acuto** = max(ultimi 7 giorni, ultima settimana completa), **cronico** = media delle settimane complete precedenti (fino a 3), **ACWR** = acuto/cronico con stato poco (<0.8) / ok (≤1.3) / alto (≤1.5) / rischio; serve storico ≥ 14 giorni. Target settimanale (cronico 90-110%, deload 50-70%, rischio 70-100%) e **tetto** (cronico +15%, deload 75%, rischio 105%): `expandPiano` del planner v2 rifiuta la settimana pianificata oltre il tetto (RPE atteso per qualità di blocco, calibrato sul rapporto RPE reale/atteso dell'atleta 0.7-1.3). Stima carico squadra dal calendario (allenamenti × durata × 6, partita 90' × 9) mostrata a parte. `loadCarico(userId)` in `trainingPlanner.ts`; `/api/training/state` ritorna `carico`; card "Carico settimanale" nell'hub.
 
+**Gli allenamenti con la squadra (facoltativo, 14/9, migration 023):** nella card carico, blocco richiudibile "Vuoi un piano più preciso?": per ogni giorno squadra del calendario l'atleta indica lo sforzo 1-10 e su cosa lavora il mister (`SQUADRA_QUALITA` in `lib/trainingSquadra.ts`: resistenza, forza in campo, rapidità e velocità, tecnica, tattica/partitella, prevenzione/core). Salvato in `profiles.training_squadra` JSONB per giorno della settimana (abitudine stabile: il calendario si svuota ogni lunedì) via `POST /api/training/setup { squadra }` (update separato: se la colonna manca il resto del setup passa e la risposta porta `squadraSalvata: false`). `loadSquadra(userId)` in `trainingPlanner.ts` (vuoto se la colonna manca) entra in `PlannerContext.squadra`: `caricoSquadraStimato` usa lo sforzo del giorno al posto del 6 fisso; `squadraTesto()` nei prompt del planner v1/v2 e della chat ("lunedì (sforzo 7/10: Resistenza), …"); regola 20 del planner v2 (`v2.4-squadra`): **bilancia, non vieta** (Ste: "non bloccherei l'allenamento il giorno dopo"): le qualità che la squadra fa già forte (≥7) non si raddoppiano salvo focus scelto, il giorno dopo una giornata da 8+ ci si allena su altro o in versione short, e il messaggio lo dice quando la squadra copre già un focus. Nessun controllo nel validatore.
+
 ### Review livelli (7 set 2026)
 Dal foglio `docs/training-seed/livello-review-2026-09-04.xlsx`: 28 esercizi `soloLivello` (esclusione dura sotto livello) + 31 `notaLivello` (indicazioni di dose: "anche B ma poco peso", prerequisiti). **Il blocco di Ste vince sull'esercizio**: gli item nati da un blocco di livello ≤ atleta saltano l'esclusione (`skipSoloLivello`); il gradino sopra è escluso da `blocchiDisponibili` se contiene esercizi solo-livello sopra l'atleta.
 
@@ -1126,6 +1129,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 
 ### Da fare — Ste (fuori dal codice, dalle sere 1-5)
 - [ ] Applicare la migration `021_consent_health_training.sql` su Supabase (PR #78), se non già fatta
+- [ ] Applicare la migration `023_training_squadra.sql` (PR #83): senza, il blocco "Vuoi un piano più preciso?" nella card carico risponde "manca la migration 023" e il resto del Campo funziona come prima
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
 - [ ] Stripe dashboard: quando i termini definitivi esistono, inserire l'URL di `/termini` in Impostazioni → Checkout, POI compilare `TERMS_VERSION` (accende `consent_collection` nel checkout)
