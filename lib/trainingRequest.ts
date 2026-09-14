@@ -50,6 +50,8 @@ export const FOCUS_QUALITA: Record<FocusId, readonly string[]> = {
 export const FOCUS_SETUP_MAX = FOCUS_OPZIONI.length;
 /** Piani generabili a settimana per atleta (nuova + modifica; il piano automatico del lunedì conta 1) — Ste, 14/9: un tetto alle rigenerazioni. */
 export const PIANI_MAX_SETTIMANA = 6;
+/** Interruttore del tetto: SPENTO finché testa solo Ste (14/9) — rimettere a true prima di aprire il Campo ad altri utenti. */
+export const PIANI_LIMITE_ATTIVO = false;
 /** Quanti obiettivi il validatore pretende davvero (i primi N in ordine di priorità). */
 export const FOCUS_OBBLIGATORI = 2;
 export const focusLabel = (id: FocusId): string => FOCUS_OPZIONI.find((f) => f.id === id)!.label;

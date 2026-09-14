@@ -48,8 +48,8 @@ interface TrainingState {
   };
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
-  // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA)
-  rigenerazioniRimaste?: number;
+  // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
+  rigenerazioniRimaste?: number | null;
 }
 
 export default function AllenamentoHub() {
