@@ -21,8 +21,13 @@ export const FOCUS_OPZIONI = [
   { id: 'tecnica', label: 'Tecnica palla', qualita: 'tecnica-palleggi' },
   { id: 'fascia', label: 'Prevenzione / fascia', qualita: 'fascia-prevenzione' },
   { id: 'recupero', label: 'Recupero', qualita: 'mobilita-recupero' },
+  { id: 'tutto', label: 'Tutto, in equilibrio', qualita: 'mix' },
 ] as const;
 export type FocusId = (typeof FOCUS_OPZIONI)[number]['id'];
+/** "Tutto, in equilibrio": esclusivo (Ste, 14/9) — programma bilanciato su tutti gli aspetti secondo la fase. */
+export const FOCUS_TUTTO: FocusId = 'tutto';
+/** In cosa si traduce "Tutto": l'ordine con cui il fallback e il prompt alternano gli aspetti. */
+export const FOCUS_BILANCIATO: FocusId[] = ['parte_alta', 'gambe', 'pliometria', 'velocita', 'resistenza', 'tecnica', 'fascia'];
 
 /**
  * Qualità di libreria che soddisfano ogni obiettivo: le usano il prompt (mappa
@@ -38,16 +43,18 @@ export const FOCUS_QUALITA: Record<FocusId, readonly string[]> = {
   tecnica: ['tecnica-palleggi', 'tecnica-passaggi', 'tecnica-conduzione', 'tecnica-tiro', 'tecnica-visione'],
   fascia: ['fascia-prevenzione'],
   recupero: ['mobilita-recupero'],
+  tutto: ['forza-parte-alta', 'forza-parte-bassa', 'forza-esplosiva', 'pliometria-intensiva', 'pliometria-estensiva', 'velocita',
+    'resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa', 'tecnica-palleggi', 'tecnica-passaggi', 'tecnica-conduzione', 'tecnica-tiro', 'tecnica-visione', 'fascia-prevenzione'],
 };
-/** Obiettivi nel setup ("su cosa vuoi lavorare in questa fase"): fino a 3, in ordine (migration 024). */
-export const FOCUS_SETUP_MAX = 3;
+/** Obiettivi nel setup ("su cosa vuoi lavorare in questa fase"): in ordine, senza limite (Ste, 14/9), oppure "Tutto". */
+export const FOCUS_SETUP_MAX = FOCUS_OPZIONI.length;
 /** Quanti obiettivi il validatore pretende davvero (i primi N in ordine di priorità). */
 export const FOCUS_OBBLIGATORI = 2;
 export const focusLabel = (id: FocusId): string => FOCUS_OPZIONI.find((f) => f.id === id)!.label;
 
 export const DURATE = [30, 45, 60, 75, 90] as const;
-/** Focus scelti dall'atleta: fino a 4, in ordine di priorità (Ste, 14/9: "scegliere proprio quello su cui si vuole lavorare"). */
-export const FOCUS_MAX = 4;
+/** Focus della settimana: in ordine di priorità, senza limite (Ste, 14/9: "in ordine ma senza un limite, oppure Tutto"). */
+export const FOCUS_MAX = FOCUS_OPZIONI.length;
 /** Sedute fisiche a settimana richieste dall'atleta (poi clampato al tetto della fase). */
 export const SEDUTE_MAX = 6;
 
@@ -84,8 +91,19 @@ export interface Vincoli {
 }
 
 const clampDay = (d: unknown): number | null => { const n = Number(d); return Number.isInteger(n) && n >= 1 && n <= 7 ? n : null; };
-export const focusValidi = (xs: unknown, max: number = FOCUS_MAX): FocusId[] =>
-  Array.isArray(xs) ? [...new Set(xs.filter((x): x is FocusId => FOCUS_OPZIONI.some((f) => f.id === x)))].slice(0, max) : [];
+export const focusValidi = (xs: unknown, max: number = FOCUS_MAX): FocusId[] => {
+  if (!Array.isArray(xs)) return [];
+  const validi = [...new Set(xs.filter((x): x is FocusId => FOCUS_OPZIONI.some((f) => f.id === x)))].slice(0, max);
+  return validi.includes(FOCUS_TUTTO) ? [FOCUS_TUTTO] : validi; // "Tutto" è esclusivo
+};
+/** Toggle di un chip obiettivo in una lista ordinata: "Tutto" esclude gli altri e viceversa. */
+export const toggleFocus = (lista: FocusId[], id: FocusId): FocusId[] => {
+  if (lista.includes(id)) return lista.filter((x) => x !== id);
+  if (id === FOCUS_TUTTO) return [FOCUS_TUTTO];
+  return [...lista.filter((x) => x !== FOCUS_TUTTO), id];
+};
+/** Obiettivi effettivi: "Tutto" diventa la sequenza bilanciata. */
+export const focusEspansi = (xs: FocusId[]): FocusId[] => xs[0] === FOCUS_TUTTO ? FOCUS_BILANCIATO : xs;
 const pulisci = (t: unknown, max: number) => (typeof t === 'string' ? t.replace(/<\/?[a-z_]+>/gi, '').replace(/```/g, "'").trim().slice(0, max) : '');
 
 /** Normalizza un body qualsiasi in una richiesta guidata (campi fuori range scartati). */
@@ -125,7 +143,9 @@ export function componiRichiesta(r: RichiestaGuidata, pianoAttuale?: PlanSession
     if (r.durataMax) { righe.push(`Tempo massimo per seduta: ${r.durataMax} minuti.`); vincoli.durataMax = r.durataMax; }
     if (r.focus?.length) {
       vincoli.obiettivi = r.focus;
-      righe.push(`Obiettivi di questa settimana, in ordine di priorità: ${r.focus.map((f, i) => `${i + 1}. ${focusLabel(f)}`).join(', ')} (i primi ${Math.min(FOCUS_OBBLIGATORI, r.focus.length)} devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni).`);
+      righe.push(r.focus[0] === FOCUS_TUTTO
+        ? 'Obiettivo di questa settimana: programma EQUILIBRATO su tutti gli aspetti (forza parte alta e gambe, esplosività, velocità, resistenza, tecnica, fascia) secondo la fase: nessun aspetto due volte prima che gli altri siano coperti.'
+        : `Obiettivi di questa settimana, in ordine di priorità: ${r.focus.map((f, i) => `${i + 1}. ${focusLabel(f)}`).join(', ')} (i primi ${Math.min(FOCUS_OBBLIGATORI, r.focus.length)} devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni).`);
     }
     if (r.note) righe.push(`Nota dell'atleta: "${r.note}"`);
     return { richiesta: righe.join('\n'), vincoli };

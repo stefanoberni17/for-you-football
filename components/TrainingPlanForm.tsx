@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
-import { DURATE, FOCUS_MAX, FOCUS_OPZIONI, MODIFICA_TIPI, SEDUTE_MAX, type FocusId, type ModificaTipo, type RichiestaGuidata } from '@/lib/trainingRequest';
+import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, MODIFICA_TIPI, SEDUTE_MAX, toggleFocus, type FocusId, type ModificaTipo, type RichiestaGuidata } from '@/lib/trainingRequest';
 
 interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
 
@@ -125,12 +125,13 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
               <button key={d} type="button" onClick={() => setDurata(durata === d ? null : d)} className={chip(durata === d)}>{d}&apos;</button>
             ))}
           </div>
-          <p className="text-xs font-semibold text-app mb-1.5">Su cosa vuoi lavorare questa settimana? <span className="text-faint font-normal">(fino a {FOCUS_MAX}, nell&apos;ordine in cui li scegli{focusSetup?.length ? ' · già impostati dal tuo setup, cambiali solo per questa settimana' : ''})</span></p>
+          <p className="text-xs font-semibold text-app mb-1.5">Su cosa vuoi lavorare questa settimana? <span className="text-faint font-normal">(nell&apos;ordine in cui li scegli, oppure &quot;Tutto&quot;{focusSetup?.length ? ' · già impostati dal tuo setup, cambiali solo per questa settimana' : ''})</span></p>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {FOCUS_OPZIONI.map((f) => {
               const idx = focus.indexOf(f.id);
               return (
-                <button key={f.id} type="button" onClick={() => setFocus(toggle(focus, f.id, FOCUS_MAX))} className={chip(idx >= 0)}>
+                <button key={f.id} type="button" onClick={() => setFocus(toggleFocus(focus, f.id))}
+                  className={`${chip(idx >= 0)}${idx < 0 && f.id === FOCUS_TUTTO ? ' !border-forest-500/50 !text-forest-200' : ''}`}>
                   {idx >= 0 && focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
                 </button>
               );
