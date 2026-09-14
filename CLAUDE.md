@@ -1128,6 +1128,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [ ] Prove sera 4 (PR #83): account nuovo → onboarding senza Telegram → home senza check-in né Reset → G1 con "Ho finito ✓" dopo il 60 % → card Telegram su "Giorno 1 completato"; account con G3 fatto → completa il giorno → "Torna alla settimana" → parte il Reset
 - [ ] Prove sera 5 (PR #83): pagamento di prova con l'email di un genitore nel campo → indirizzo richiesto da Stripe → ricevuta al genitore → "Attivazione in corso…" → home sbloccata
 - [ ] Prove sera 1: bot da un account appena collegato; `/sblocca` con id sbagliato; Vercel logs "Telegram webhook error"
+- [ ] Ri-registrare gli audio W1-G2 e W1-G3 dagli script Notion aggiornati (14/9): gli MP3 in produzione dicono ancora "Chin Mudra", gesto sull'espiro e i mantra vecchi
 - [ ] Decidere se il Reset automatico deve tornare al mattino dal G4 (oggi: solo dopo il giorno completato, lettura letterale della review)
 
 ### Da fare
