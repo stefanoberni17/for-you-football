@@ -128,6 +128,7 @@ for-you-football/
 ├── scripts/
 │   ├── build-catalog-v2.py / build-blocks.py   # Rigenerano i .generated.ts dal JSON catalogo e dall'export Everfit
 │   ├── everfit-assign.mjs                 # Lettura/assegnazione allenamenti su Everfit (history/detail/copy/add/update/delete) — SOLO su richiesta di Ste
+│   ├── coach-replay.mts                   # Replay di una chat col Coach contro il prompt VERO (scenari incorporati o --file), senza salvare nulla: `npx tsx scripts/coach-replay.mts` con ANTHROPIC_API_KEY in .env.local
 │   └── youtube-channel-scan.py            # Scansione canale YouTube → docs/youtube-channel.{json,md}
 ├── .claude/settings.json                  # Permesso pre-approvato per `node scripts/everfit-assign.mjs` nelle sessioni Claude (tracciato con git add -f: .claude/ è in .gitignore)
 ├── public/                                # SVG di default Next.js
