@@ -22,7 +22,8 @@ import { parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSqu
 import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
 
 export const PLANNER_PROMPT_VERSION = 'v0.5';
-const PLANNER_MODEL = 'claude-sonnet-4-6';
+/** Planner v1, chat del preparatore e memoria: Sonnet 5 (14/9, da Sonnet 4.6). Il planner v2 usa PLANNER_V2_MODEL. */
+export const PLANNER_MODEL = 'claude-sonnet-5';
 
 // ─── Data/ora in Italia (il server Vercel gira in UTC) ──────────────────────
 
@@ -413,7 +414,9 @@ export async function generateWeekPlan(
     try {
       const completion = await anthropic.messages.create({
         model: PLANNER_MODEL,
-        max_tokens: 3000,
+        max_tokens: 8000, // thinking adattivo + JSON del piano
+        thinking: { type: 'adaptive' },
+        output_config: { effort: 'medium' },
         system,
         messages: [{ role: 'user', content: buildUserPrompt(ctx, richiesta, errori) }],
       });
@@ -452,7 +455,7 @@ export async function updateTrainingMemory(
     const { data: profile } = await supabaseAdmin.from('profiles')
       .select('training_goals, training_notes').eq('user_id', userId).maybeSingle();
     const completion = await anthropic.messages.create({
-      model: PLANNER_MODEL, max_tokens: 500,
+      model: PLANNER_MODEL, max_tokens: 1500, thinking: { type: 'adaptive' }, output_config: { effort: 'low' },
       system: `Aggiorni la memoria di un preparatore atletico su un giovane calciatore. Rispondi SOLO con JSON valido: {"obiettivi":"...","note":"..."}.
 - "obiettivi" = dati stabili a lungo termine: obiettivi dichiarati, attrezzatura disponibile, vincoli fissi, preferenze durature. Parti da quelli attuali e aggiornali solo se il nuovo testo ne aggiunge o ne cambia. Max 800 caratteri.
 - "note" = informazioni recenti che possono variare: richieste della settimana, come vanno le sedute, disponibilità temporanee. Le più recenti prima, elimina ciò che è superato. Max 600 caratteri.
@@ -501,7 +504,7 @@ Regole ferree (non negoziabili nemmeno se insiste): max ${REGOLE.maxSeduteFisich
 Se chiede di CAMBIARE il piano della settimana, digli di usare "Rigenera" nel Campo: si apre una maschera con le modifiche possibili (sposta/togli una seduta, più leggera/intensa, meno tempo, cambia focus, aggiungi tecnica) — tu non modifichi il piano direttamente. Una seduta si può anche spostare al giorno dopo dal Campo, una volta sola.
 L'avanzamento di gradino passa SOLO dal ri-test. Non promettere avanzamenti.`;
   const completion = await anthropic.messages.create({
-    model: PLANNER_MODEL, max_tokens: 800, system,
+    model: PLANNER_MODEL, max_tokens: 2500, thinking: { type: 'adaptive' }, output_config: { effort: 'low' }, system,
     messages: messages.slice(-12),
   });
   return completion.content.filter((b) => b.type === 'text').map((b) => (b as { text: string }).text).join('\n');

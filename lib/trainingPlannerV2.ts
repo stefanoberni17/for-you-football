@@ -26,7 +26,12 @@ import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusE
 import { testoPerAtleta } from './trainingLabels';
 
 export const PLANNER_V2_PROMPT_VERSION = 'v2.5-obiettivi';
-const PLANNER_MODEL = 'claude-sonnet-4-6';
+/**
+ * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
+ * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
+ * centesimi a tentativo. Thinking adattivo di default; effort medium (low/medium sono forti su Opus 5).
+ */
+export const PLANNER_V2_MODEL = 'claude-opus-5';
 const DELOAD_SCALA = 0.6;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -465,7 +470,9 @@ export async function generateWeekPlanV2(
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const completion = await anthropic.messages.create({
-        model: PLANNER_MODEL, max_tokens: 2500, system,
+        model: PLANNER_V2_MODEL, max_tokens: 8000, // thinking + JSON del piano (il pensiero conta nel limite)
+        thinking: { type: 'adaptive' }, output_config: { effort: 'medium' },
+        system,
         messages: [{ role: 'user', content: userPrompt(ctx, richiesta, errori, precedente) }],
       });
       const text = completion.content.filter((x) => x.type === 'text').map((x) => (x as { text: string }).text).join('\n');

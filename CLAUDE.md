@@ -28,7 +28,7 @@
 | Styling | Tailwind CSS 4 |
 | Auth + DB | Supabase (PostgreSQL) + `@supabase/ssr` + `@supabase/auth-helpers-nextjs` |
 | CMS | Notion API (`@notionhq/client`) |
-| AI | Anthropic Claude Sonnet (`@anthropic-ai/sdk`) — modello: `claude-sonnet-4-6` |
+| AI | Anthropic (`@anthropic-ai/sdk` 0.74) — Coach, chat preparatore e planner v1: `claude-sonnet-5` (thinking adattivo, effort medium/low); planner v2 settimana: `claude-opus-5` (effort medium); pillole cron e benvenuto: `claude-haiku-4-5`. Dal 14/9 (prima Sonnet 4.6 + Haiku 4.5 datato) |
 | Bot | Telegram (`node-telegram-bot-api`) |
 | Charts | Recharts 3.8.1 |
 | Icons | Lucide React |
@@ -543,7 +543,7 @@ Totale: 15-20 sec. In campo, sempre.
 - `buildUserContext(userId)` — Costruisce contesto personalizzato leggendo da Supabase (include check-in fisico di oggi + media ultimi 7 giorni)
 - `LEGGI_PERCORSO_TOOL` — Tool Anthropic per leggere contenuto settimane/giorni da Notion in tempo reale
 - `executeLeggiPercorso(input)` — Esegue fetch settimana/giorno da Notion, ritorna testo strutturato
-- `callClaude(systemPrompt, messages, maxTokens, useTools, { maxWeek })` — Chiama `claude-sonnet-4-6` (se `useTools=true`: gestisce tool_use con doppia chiamata). `maxWeek` = `current_week` dell'utente (chat e Telegram lo passano): `leggi_percorso` rifiuta `week > maxWeek` con un tool result che ricorda la REGOLA ANTICIPAZIONI (14/9: prima "dammi la settimana dopo" passava dal tool)
+- `callClaude(systemPrompt, messages, maxTokens, useTools, { maxWeek })` — Chiama `COACH_MODEL` = `claude-sonnet-5` con `thinking: adaptive` + `effort: medium`; il `maxTokens` passato viene moltiplicato per `THINKING_HEADROOM` (2.5) perché su Sonnet 5 il pensiero conta nel limite (se `useTools=true`: gestisce tool_use con doppia chiamata). `maxWeek` = `current_week` dell'utente (chat e Telegram lo passano): `leggi_percorso` rifiuta `week > maxWeek` con un tool result che ricorda la REGOLA ANTICIPAZIONI (14/9: prima "dammi la settimana dopo" passava dal tool)
 - `generateCoachRecap(userId, messages)` — Distilla conversazione in coach_notes (pattern, temi, thread aperti)
 - `checkSafetyKeywords(text)` — Rileva parole chiave a rischio (suicidio, autolesionismo, violenza)
 - `SAFETY_KEYWORDS` — Lista keyword per detection
@@ -918,7 +918,7 @@ Ritorna `{ subscription_status, is_beta_free, next_billing_date, cancel_at_perio
 Binario separato dalla parte mentale, dietro `profiles.training_access` (default FALSE, attivazione solo via SQL, migration 015). Route `/allenamento/*` (hub, `/test`, `/sessione/[giorno]`, `/chat`), API `/api/training/{state,setup,test,plan,complete,pain,chat,set-log}` (auth + flag). Card d'ingresso "Campo" in `/strumenti` solo con flag. Metodologia sorgente: `docs/training-recap-progressioni.md`, formalizzazione v2: `docs/training-formalizzazione-v2.md`.
 
 ### Principio: "l'LLM propone, i dati dispongono"
-Claude (`claude-sonnet-4-6`) propone il piano, `validatePlan` in `lib/trainingEngine.ts` lo accetta o lo rifiuta (1 retry → fallback deterministico). Nessun output del modello arriva all'utente senza passare dal validatore.
+Claude propone il piano (`PLANNER_V2_MODEL` = `claude-opus-5` per il v2 a blocchi, `PLANNER_MODEL` = `claude-sonnet-5` per v1/chat/memoria — 14/9), `validatePlan` in `lib/trainingEngine.ts` lo accetta o lo rifiuta (3 tentativi con il piano rifiutato nel messaggio → fallback deterministico). **Tetto alle rigenerazioni** (Ste, 14/9): `PIANI_MAX_SETTIMANA = 6` piani per settimana per atleta (nuova + modifica; il piano automatico del lunedì conta 1): `/api/training/plan` risponde 429 `limite_settimanale` oltre, `/api/training/state` ritorna `rigenerazioniRimaste` e l'hub mostra "Rigenera (N)" sotto 3 e "Rigenerazioni finite" a 0. Nessun output del modello arriva all'utente senza passare dal validatore.
 
 ### Setup atleta (migration 017, `lib/trainingSetup.ts`)
 Esperienza palestra (zero → carichi max 60%), attrezzatura (`palestra, kettlebell, sbarra, piccoli attrezzi, campo, headball`), compagno (esercizi "in coppia"), **fase stagione** con tetti: sedute fisiche/settimana `off_season 6 · preparazione_squadra 1 · in_season 3`, durata max `120' · 75' · 90'`. Peso corporeo per i test palestra.
