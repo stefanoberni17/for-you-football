@@ -24,6 +24,27 @@ export const FOCUS_OPZIONI = [
 ] as const;
 export type FocusId = (typeof FOCUS_OPZIONI)[number]['id'];
 
+/**
+ * Qualità di libreria che soddisfano ogni obiettivo: le usano il prompt (mappa
+ * etichetta → id), il validatore (almeno un blocco per i primi due obiettivi) e il
+ * fallback (giornate costruite dagli obiettivi, non da una lista fissa).
+ */
+export const FOCUS_QUALITA: Record<FocusId, readonly string[]> = {
+  gambe: ['forza-parte-bassa', 'forza-esplosiva'],
+  parte_alta: ['forza-parte-alta'],
+  velocita: ['velocita'],
+  pliometria: ['pliometria-intensiva', 'pliometria-estensiva'],
+  resistenza: ['resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa'],
+  tecnica: ['tecnica-palleggi', 'tecnica-passaggi', 'tecnica-conduzione', 'tecnica-tiro', 'tecnica-visione'],
+  fascia: ['fascia-prevenzione'],
+  recupero: ['mobilita-recupero'],
+};
+/** Obiettivi nel setup ("su cosa vuoi lavorare in questa fase"): fino a 3, in ordine (migration 024). */
+export const FOCUS_SETUP_MAX = 3;
+/** Quanti obiettivi il validatore pretende davvero (i primi N in ordine di priorità). */
+export const FOCUS_OBBLIGATORI = 2;
+export const focusLabel = (id: FocusId): string => FOCUS_OPZIONI.find((f) => f.id === id)!.label;
+
 export const DURATE = [30, 45, 60, 75, 90] as const;
 /** Focus scelti dall'atleta: fino a 4, in ordine di priorità (Ste, 14/9: "scegliere proprio quello su cui si vuole lavorare"). */
 export const FOCUS_MAX = 4;
@@ -58,12 +79,13 @@ export interface Vincoli {
   giorniVietati?: number[];  // nessuna seduta in questi giorni
   durataMax?: number;        // minuti per seduta
   numSedute?: number;        // esattamente N sedute (clampato al tetto della fase e ai giorni ammessi)
+  obiettivi?: FocusId[];     // focus di QUESTA settimana (dalla maschera); assenti = obiettivi del setup
+  recuperiFacoltativi?: boolean; // richiesta esplicita dell'atleta: i recuperi non sono più un vincolo
 }
 
 const clampDay = (d: unknown): number | null => { const n = Number(d); return Number.isInteger(n) && n >= 1 && n <= 7 ? n : null; };
-const focusValidi = (xs: unknown): FocusId[] =>
-  Array.isArray(xs) ? [...new Set(xs.filter((x): x is FocusId => FOCUS_OPZIONI.some((f) => f.id === x)))].slice(0, FOCUS_MAX) : [];
-const focusLabel = (id: FocusId) => FOCUS_OPZIONI.find((f) => f.id === id)!.label;
+export const focusValidi = (xs: unknown, max: number = FOCUS_MAX): FocusId[] =>
+  Array.isArray(xs) ? [...new Set(xs.filter((x): x is FocusId => FOCUS_OPZIONI.some((f) => f.id === x)))].slice(0, max) : [];
 const pulisci = (t: unknown, max: number) => (typeof t === 'string' ? t.replace(/<\/?[a-z_]+>/gi, '').replace(/```/g, "'").trim().slice(0, max) : '');
 
 /** Normalizza un body qualsiasi in una richiesta guidata (campi fuori range scartati). */
@@ -96,13 +118,15 @@ export function componiRichiesta(r: RichiestaGuidata, pianoAttuale?: PlanSession
   const vincoli: Vincoli = {};
   const righe: string[] = [];
   if (r.modo === 'nuova') {
-    righe.push('NUOVA SETTIMANA.');
+    righe.push('NUOVA SETTIMANA (richiesta esplicita dell\'atleta: gli obiettivi vengono prima dei recuperi).');
+    vincoli.recuperiFacoltativi = true;
     if (r.giorni?.length) { righe.push(`Giorni disponibili per allenarsi con l'app: ${r.giorni.map((d) => DAY_NAMES[d]).join(', ')} (SOLO questi).`); vincoli.giorniAmmessi = r.giorni; }
     if (r.sedute) { righe.push(`Sedute fisiche richieste: ESATTAMENTE ${r.sedute} a settimana (se il tetto della fase lo permette).`); vincoli.numSedute = r.sedute; }
     if (r.durataMax) { righe.push(`Tempo massimo per seduta: ${r.durataMax} minuti.`); vincoli.durataMax = r.durataMax; }
-    if (r.focus?.length) righe.push(r.focus.length <= 2
-      ? `Focus della settimana: ${r.focus.map(focusLabel).join(' + ')} (dai priorità a questi blocchi, senza saltare le progressioni).`
-      : `Focus della settimana, in ordine di priorità: ${r.focus.map((f, i) => `${i + 1}. ${focusLabel(f)}`).join(', ')} (copri i primi due in ogni caso, gli altri dove c'è spazio, senza saltare le progressioni).`);
+    if (r.focus?.length) {
+      vincoli.obiettivi = r.focus;
+      righe.push(`Obiettivi di questa settimana, in ordine di priorità: ${r.focus.map((f, i) => `${i + 1}. ${focusLabel(f)}`).join(', ')} (i primi ${Math.min(FOCUS_OBBLIGATORI, r.focus.length)} devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni).`);
+    }
     if (r.note) righe.push(`Nota dell'atleta: "${r.note}"`);
     return { richiesta: righe.join('\n'), vincoli };
   }
@@ -133,7 +157,7 @@ export function componiRichiesta(r: RichiestaGuidata, pianoAttuale?: PlanSession
       if (giorniPiano.length) vincoli.giorniAmmessi = giorniPiano;
       break;
     case 'cambia_focus':
-      if (m.focus) righe.push(`Cambia il focus della settimana in: ${focusLabel(m.focus)}. Stessi giorni, sostituisci solo i blocchi principali che servono.`);
+      if (m.focus) { righe.push(`Cambia il focus della settimana in: ${focusLabel(m.focus)}. Stessi giorni, sostituisci solo i blocchi principali che servono.`); vincoli.obiettivi = [m.focus]; }
       if (giorniPiano.length) vincoli.giorniAmmessi = giorniPiano;
       break;
     case 'aggiungi_tecnica':

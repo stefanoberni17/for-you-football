@@ -19,6 +19,7 @@ import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLog
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoTesto, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
+import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
 
 export const PLANNER_PROMPT_VERSION = 'v0.5';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
@@ -111,6 +112,15 @@ export interface PlannerContext {
   carico: CaricoInfo;
   // Allenamenti con la squadra descritti dall'atleta (sforzo e qualità per giorno, migration 023) — vuoto se non compilato
   squadra: SquadraSettimana;
+  // Obiettivi della fase dal setup (migration 024), in ordine di priorità — vuoto se non compilati
+  focusSetup: FocusId[];
+}
+
+/** profiles.training_focus (migration 024): se la colonna manca → [], senza errore. */
+export async function loadFocusSetup(userId: string): Promise<FocusId[]> {
+  const { data, error } = await supabaseAdmin.from('profiles').select('training_focus').eq('user_id', userId).maybeSingle();
+  if (error || !data) return [];
+  return focusValidi((data as { training_focus?: unknown }).training_focus, FOCUS_SETUP_MAX);
 }
 
 /** profiles.training_squadra (migration 023): se la colonna manca → vuoto, senza errore. */
@@ -121,7 +131,7 @@ export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }, squadra] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }, squadra, focusSetup] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -136,6 +146,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
       .eq('user_id', userId).not('completed_at', 'is', null)
       .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
     loadSquadra(userId),
+    loadFocusSetup(userId),
   ]);
   // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
   let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
@@ -224,6 +235,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     storicoSerie,
     carico,
     squadra,
+    focusSetup,
   };
 }
 

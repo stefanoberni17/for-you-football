@@ -76,6 +76,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Piano di sicurezza: si salva PERCHÉ il planner AI è stato rifiutato (l'hub lo mostra, così si capisce e si corregge)
+    if (generatoDa === 'fallback' && violazioni?.length) plan = { ...plan, violazioni: violazioni.slice(0, 6) };
+
     const { data: saved, error } = await supabaseAdmin.from('training_plans').insert({
       user_id: userId,
       week_start: mondayOfThisWeekRome(),

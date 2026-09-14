@@ -11,12 +11,13 @@ interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
  * la richiesta al planner (e i vincoli per il validatore). Niente testo libero,
  * salvo una nota corta.
  */
-export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario, maxSedute, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario, maxSedute, focusSetup, generating, onSubmit, onClose }: {
   hasPlan: boolean;
   sedute: SedutaLite[];      // tutte le sedute della settimana (anche passate: i loro giorni non sono liberi)
   oggiDow: number;
   calendario?: { trainingDays: number[]; matchDays: number[] };  // settimana squadra caricata dall'utente
   maxSedute?: number;        // tetto sedute fisiche della fase
+  focusSetup?: FocusId[];    // obiettivi della fase dal setup: chip già selezionati, un cambio vale solo per questa settimana
   generating: boolean;
   onSubmit: (r: RichiestaGuidata) => void;
   onClose?: () => void;
@@ -25,7 +26,7 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
   const [giorni, setGiorni] = useState<number[]>([]);
   const [nSedute, setNSedute] = useState<number | null>(null);
   const [durata, setDurata] = useState<number | null>(null);
-  const [focus, setFocus] = useState<FocusId[]>([]);
+  const [focus, setFocus] = useState<FocusId[]>(focusSetup ?? []);
   const [note, setNote] = useState('');
   const [tipo, setTipo] = useState<ModificaTipo>('sposta');
   const modificabili = sedute.filter((s) => s.modificabile);
@@ -124,7 +125,7 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
               <button key={d} type="button" onClick={() => setDurata(durata === d ? null : d)} className={chip(durata === d)}>{d}&apos;</button>
             ))}
           </div>
-          <p className="text-xs font-semibold text-app mb-1.5">Su cosa vuoi lavorare? <span className="text-faint font-normal">(fino a {FOCUS_MAX}, nell&apos;ordine in cui li scegli)</span></p>
+          <p className="text-xs font-semibold text-app mb-1.5">Su cosa vuoi lavorare questa settimana? <span className="text-faint font-normal">(fino a {FOCUS_MAX}, nell&apos;ordine in cui li scegli{focusSetup?.length ? ' · già impostati dal tuo setup, cambiali solo per questa settimana' : ''})</span></p>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {FOCUS_OPZIONI.map((f) => {
               const idx = focus.indexOf(f.id);

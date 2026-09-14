@@ -8,7 +8,7 @@ import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } f
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup, MAX_SEDUTE_FISICHE_PER_FASE } from '@/lib/trainingSetup';
-import { loadSquadra } from '@/lib/trainingPlanner';
+import { loadFocusSetup, loadSquadra } from '@/lib/trainingPlanner';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
 import { esercizioV2ById } from '@/lib/trainingCatalogV2';
@@ -123,13 +123,16 @@ export async function GET(request: NextRequest) {
       lastTestSession?.completed_at
       || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
     );
-    const [carico, { data: calendar }, consensiSet, squadra] = await Promise.all([
+    const [carico, { data: calendar }, consensiSet, squadra, focusSetup] = await Promise.all([
       loadCarico(userId, ciclo.isDeload),
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
       getConsents(userId),
       loadSquadra(userId),
+      loadFocusSetup(userId),
     ]);
+    // Obiettivi della fase (migration 024): colonna letta a parte, così il setup base non dipende dalla migration
+    setup.focus = focusSetup;
     const squadraStimato = caricoSquadraStimato({
       trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [],
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
