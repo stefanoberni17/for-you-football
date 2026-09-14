@@ -9,7 +9,7 @@ import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup, MAX_SEDUTE_FISICHE_PER_FASE } from '@/lib/trainingSetup';
 import { loadFocusSetup, loadSquadra } from '@/lib/trainingPlanner';
-import { PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
+import { PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
 import { esercizioV2ById } from '@/lib/trainingCatalogV2';
@@ -168,8 +168,8 @@ export async function GET(request: NextRequest) {
       oggiDow: oggiDowRome(),
       lunedi: mondayOfThisWeekRome(),
       planStale: !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome(),
-      // Tetto alle rigenerazioni (PIANI_MAX_SETTIMANA per settimana, il piano automatico del lunedì conta 1)
-      rigenerazioniRimaste: Math.max(0, PIANI_MAX_SETTIMANA - pianiQuestaSettimana),
+      // Tetto alle rigenerazioni (PIANI_MAX_SETTIMANA per settimana, il piano automatico del lunedì conta 1); null = tetto spento
+      rigenerazioniRimaste: PIANI_LIMITE_ATTIVO ? Math.max(0, PIANI_MAX_SETTIMANA - pianiQuestaSettimana) : null,
       completions,
       checkinOggi,
       storicoSerie,
