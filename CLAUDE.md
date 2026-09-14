@@ -509,10 +509,11 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 
 ## Gli Strumenti del Blocco 1
 
-### Il Reset (Week 1 — Presenza)
-1. Respiro: naso (gonfia pancia) → bocca (alita su vetro)
-2. Chin Mudra: pollice + indice — invisibile in campo
-3. Mantra: "Qui e ora." o "Prossima azione." (scelta al Giorno 3)
+### Il Reset (Week 1 — Presenza) — canone = testo Notion W1-G1/G2/G3 (deciso da Ste il 13/9)
+1. Respiro contato: naso 4 secondi (gonfia la pancia) → bocca 6 secondi (alita su un vetro)
+2. Il gesto: pollice + indice uniti di entrambe le mani — attivato sull'inspirazione, tenuto per tutto il respiro fino a fine espirazione, poi rilasciato. Invisibile in campo. Il percorso NON gli dà un nome ("il tuo interruttore"): mai "Chin Mudra" verso l'utente
+3. Mantra ripetuto dentro mentre espira: "Reset." / "Riparto qui." / "Sono qui." o uno suo (scelta al Giorno 3)
+Allineati a questo canone (14/9): prompt Coach (`lib/coach-ai.ts`), fallback `GlobalMeditationWrapper` ("Reset."), pagine Notion "Script Audio" W1-G2 e W1-G3 (da RI-REGISTRARE: gli MP3 in produzione dicono ancora "Chin Mudra", gesto sull'espiro e "Qui e ora / Prossima azione").
 
 ### L'Observer (Week 2 — Osservazione)
 3 categorie: PASSATO / FUTURO / GIUDIZIO
@@ -800,7 +801,7 @@ La memoria persistente del Coach si basa su:
 
 ### `GlobalMeditationWrapper.tsx`
 - Context provider al livello root — step 2 del rituale del mattino (renderizza il popup quando `checkinDone`)
-- Carica mantra settimana corrente via `GET /api/settimana?week=N` → `settimana.mantraDashboard` (fallback `"Qui e ora."` se vuoto; fetch una sola volta, non a ogni cambio rotta)
+- Carica mantra settimana corrente via `GET /api/settimana?week=N` → `settimana.mantraDashboard` (fallback `"Reset."` se vuoto; fetch una sola volta, non a ogni cambio rotta)
 - Skip pages: `/login`, `/register`, `/onboarding`, `/pricing`, `/beta-complete`
 - Espone `openMeditation()` per l'uso on-demand (bottone "Reset rapido" in home, CTA schede SOS)
 - WeekName formato: "Il Reset — Presenza" (strumento + principio)
