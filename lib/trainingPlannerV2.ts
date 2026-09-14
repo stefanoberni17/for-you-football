@@ -24,7 +24,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import type { Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.2-recuperi-vincoli';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.3-sedute-focus';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
 const DELOAD_SCALA = 0.6;
 
@@ -189,6 +189,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     if (!sedute.some((s) => (s.blocchi || []).map((b) => b.id).sort().join('|') === key))
       errors.push(`manca la seduta da recuperare "${r.titolo}" (blocchi: ${r.blocchi.join(', ')}) — va riproposta uguale`);
   }
+  // Sedute richieste dall'atleta (maschera): esattamente N, entro il tetto della fase e i giorni ammessi
+  const nRichieste = seduteRichieste(ctx);
+  if (nRichieste !== null && sedute.length !== nRichieste)
+    errors.push(`l'atleta ha chiesto ${nRichieste} sedute a settimana: ne hai messe ${sedute.length} — metti esattamente ${nRichieste} giornate`);
   if (ctx.setup.fase === 'preparazione_squadra' && blocchiForza > 1)
     errors.push(`preparazione con la squadra: al massimo 1 blocco di forza a settimana (ne hai messi ${blocchiForza})`);
   // Carico totale: con almeno 2 settimane di storico la settimana pianificata non può superare il tetto
@@ -266,7 +270,15 @@ ${libreriaTesto(ctx)}
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
 LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
-giorno: 1=Lunedì … 7=Domenica. Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`;
+giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta).` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
+}
+
+/** Sedute richieste dall'atleta, clampate al tetto della fase e ai giorni ammessi (null = decide il planner). */
+function seduteRichieste(ctx: ContextV2): number | null {
+  const n = ctx.vincoli.numSedute;
+  if (!n) return null;
+  const giorniAmmessi = ctx.vincoli.giorniAmmessi?.length ? ctx.vincoli.giorniAmmessi.length : 7;
+  return Math.max(1, Math.min(n, ctx.maxSeduteFisiche, giorniAmmessi));
 }
 
 function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[]): string {
@@ -330,7 +342,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   for (const d of ctx.vincoli.giorniVietati || []) vietati.add(d);
   const ammesso = (d: number) => !ctx.vincoli.giorniAmmessi?.length || ctx.vincoli.giorniAmmessi.includes(d);
   const liberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !occupati.has(d) && !vietati.has(d) && ammesso(d));
-  const giorni = (liberi.length >= 2 ? liberi : [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !vietati.has(d) && ammesso(d))).slice(0, Math.max(2, Math.min(3, ctx.maxSeduteFisiche)));
+  const nSedute = seduteRichieste(ctx) ?? Math.max(2, Math.min(3, ctx.maxSeduteFisiche));
+  const giorni = (liberi.length >= nSedute ? liberi : [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !vietati.has(d) && ammesso(d))).slice(0, nSedute);
   const fascia = primo(ctx, 'fascia-prevenzione', /Foundations? 1\b/i);
   const principali: (Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
     ? [primo(ctx, 'tecnica-palleggi'), primo(ctx, 'tecnica-passaggi')]

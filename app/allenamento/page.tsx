@@ -36,6 +36,8 @@ interface TrainingState {
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
   setup: TrainingSetup;
   setupDisponibile: boolean;
+  calendario?: { trainingDays: number[]; matchDays: number[] };
+  maxSeduteFisiche?: number;
   carico?: {
     settimane: { lunedi: string; carico: number; sedute: number; corrente: boolean }[];
     acuto: number; cronico: number; acwr: number | null;
@@ -651,6 +653,8 @@ export default function AllenamentoHub() {
                 hasPlan={!!state.plan && !state.planStale}
                 sedute={sedute.map((s) => ({ giorno: s.giorno, titolo: s.titolo, modificabile: statoDi(s) === 'oggi' || statoDi(s) === 'futura' }))}
                 oggiDow={oggiDow}
+                calendario={state.calendario}
+                maxSedute={state.maxSeduteFisiche}
                 generating={generating}
                 onSubmit={generaPiano}
                 onClose={state.plan ? () => setShowRigenera(false) : undefined}
