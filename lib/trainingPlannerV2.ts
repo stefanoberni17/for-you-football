@@ -22,7 +22,7 @@ import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetu
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
-import { FOCUS_OBBLIGATORI, FOCUS_QUALITA, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
+import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
 export const PLANNER_V2_PROMPT_VERSION = 'v2.5-obiettivi';
@@ -212,6 +212,16 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     if (!sedute.some((s) => (s.blocchi || []).some((b) => qs.includes(b.qualita))))
       errors.push(`obiettivo "${focusLabel(f)}": nessun blocco ${qs.join('/')} in settimana — mettine almeno uno (es. ${cand.slice(0, 4).map((b) => b.id).join(', ')})`);
   }
+  // "Tutto, in equilibrio": niente aspetto obbligatorio, ma la settimana deve coprire aspetti DIVERSI
+  // (almeno 2 con 2+ giornate) — lo stesso blocco principale ripetuto non è equilibrio
+  if (ctx.obiettivi[0] === FOCUS_TUTTO && !ctx.base.painHold && sedute.length >= 2) {
+    // la fascia di apertura c'è sempre: non conta come "aspetto" coperto
+    const aspetti = FOCUS_BILANCIATO.filter((f) => f !== 'fascia');
+    const coperti = aspetti.filter((f) => sedute.some((s) => (s.blocchi || []).some((b) => FOCUS_QUALITA[f].includes(b.qualita))));
+    const minimi = Math.min(2, sedute.length - attesi.length);
+    if (coperti.length < minimi)
+      errors.push(`settimana equilibrata: copri almeno ${minimi} aspetti diversi tra ${aspetti.map(focusLabel).join(', ')} (ora: ${coperti.map(focusLabel).join(', ') || 'nessuno'})`);
+  }
   if (ctx.setup.fase === 'preparazione_squadra' && blocchiForza > 1)
     errors.push(`preparazione con la squadra: al massimo 1 blocco di forza a settimana (ne hai messi ${blocchiForza})`);
   // Carico totale: con almeno 2 settimane di storico la settimana pianificata non può superare il tetto
@@ -305,6 +315,7 @@ function seduteRichieste(ctx: ContextV2): number | null {
 /** Obiettivi che il validatore pretende davvero (i primi, in ordine), dati i posti disponibili. */
 function obiettiviDaControllare(ctx: ContextV2, recuperiAttesi = 0): FocusId[] {
   if (ctx.base.painHold) return [];
+  if (ctx.obiettivi[0] === FOCUS_TUTTO) return []; // equilibrio: controllo a parte in expandPiano
   const posti = (seduteRichieste(ctx) ?? ctx.maxSeduteFisiche) - recuperiAttesi;
   const max = ctx.setup.fase === 'preparazione_squadra' ? 1 : FOCUS_OBBLIGATORI;
   return ctx.obiettivi.slice(0, Math.max(0, Math.min(max, posti)));
@@ -314,6 +325,8 @@ function obiettiviDaControllare(ctx: ContextV2, recuperiAttesi = 0): FocusId[] {
 function obiettiviTesto(ctx: ContextV2): string {
   if (!ctx.obiettivi.length) return '\n# OBIETTIVI DELL\'ATLETA\nNessun obiettivo indicato: settimana equilibrata (forza, esplosività, tecnica) secondo la fase.';
   const dur = ctx.vincoli.obiettivi?.length ? 'per QUESTA settimana (dalla maschera)' : 'della fase (dal setup, valgono ogni settimana)';
+  if (ctx.obiettivi[0] === FOCUS_TUTTO)
+    return `\n# OBIETTIVI DELL'ATLETA ${dur}\nTUTTO, IN EQUILIBRIO: settimana bilanciata su tutti gli aspetti secondo la fase — alterna ${FOCUS_BILANCIATO.map(focusLabel).join(', ')}; nessun aspetto due volte prima che gli altri siano coperti (il validatore pretende almeno 2 aspetti diversi).`;
   const obbl = obiettiviDaControllare(ctx);
   const righe = ctx.obiettivi.map((f, i) => {
     const qs = FOCUS_QUALITA[f];
@@ -396,7 +409,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
       (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
     return cand.find((x) => x.durataMin + (fascia?.durataMin ?? 0) <= maxDur) ?? cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
   };
-  const dagliObiettivi = ctx.obiettivi.map(perObiettivo).filter((x): x is Blocco => !!x);
+  const dagliObiettivi = focusEspansi(ctx.obiettivi).map(perObiettivo).filter((x): x is Blocco => !!x);
   const principali: (Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
     ? [primo(ctx, 'tecnica-palleggi'), primo(ctx, 'tecnica-passaggi')]
     : dagliObiettivi.length ? dagliObiettivi

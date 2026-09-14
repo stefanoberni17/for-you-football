@@ -12,7 +12,7 @@ import {
 import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
-import { FOCUS_OPZIONI, FOCUS_SETUP_MAX, type FocusId } from '@/lib/trainingRequest';
+import { FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
@@ -449,21 +449,20 @@ export default function AllenamentoHub() {
                 </div>
               </div>
               <div>
-                <p className="text-xs font-semibold text-muted mb-1.5">Su cosa vuoi lavorare in questa fase? <span className="text-faint font-normal">(fino a {FOCUS_SETUP_MAX}, in ordine)</span></p>
+                <p className="text-xs font-semibold text-muted mb-1.5">Su cosa vuoi lavorare in questa fase? <span className="text-faint font-normal">(nell&apos;ordine in cui li scegli, oppure &quot;Tutto&quot;)</span></p>
                 <div className="flex flex-wrap gap-2">
                   {FOCUS_OPZIONI.map((f) => {
                     const idx = setupDraft.focus.indexOf(f.id);
                     const on = idx >= 0;
-                    const next = (): FocusId[] => on ? setupDraft.focus.filter((x) => x !== f.id) : setupDraft.focus.length >= FOCUS_SETUP_MAX ? setupDraft.focus : [...setupDraft.focus, f.id];
                     return (
-                      <button key={f.id} onClick={() => setSetupDraft({ ...setupDraft, focus: next() })}
-                        className={`text-xs px-3 py-1.5 rounded-full border ${on ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                      <button key={f.id} onClick={() => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, f.id) })}
+                        className={`text-xs px-3 py-1.5 rounded-full border ${on ? 'bg-forest-500 border-forest-500 text-white' : f.id === FOCUS_TUTTO ? 'bg-surface-2 border-forest-500/50 text-forest-200' : 'bg-surface-2 border-divider text-app'}`}>
                         {on && setupDraft.focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
                       </button>
                     );
                   })}
                 </div>
-                <p className="text-[10px] text-faint mt-1.5">Il preparatore li mette in ogni settimana, anche in quella preparata da sola il lunedì: i primi due hanno sempre almeno un blocco. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</p>
+                <p className="text-[10px] text-faint mt-1.5">Il preparatore li mette in ogni settimana, anche in quella preparata da sola il lunedì: i primi due hanno sempre almeno un blocco, gli altri dove c&apos;è spazio. &quot;Tutto&quot; = settimana equilibrata su ogni aspetto. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
