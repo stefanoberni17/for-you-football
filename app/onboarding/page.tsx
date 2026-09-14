@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
-import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
-import SaveErrorBanner from '@/components/SaveErrorBanner';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -18,25 +16,8 @@ export default function OnboardingPage() {
   const [showRitual, setShowRitual] = useState(false);
   const [ritualUserId, setRitualUserId] = useState('');
   const [completingRitual, setCompletingRitual] = useState(false);
-  const [telegramLinkLoading, setTelegramLinkLoading] = useState(false);
-  const [telegramLinkError, setTelegramLinkError] = useState(false);
-  const [telegramLinked, setTelegramLinked] = useState(false);
-
-  // Deep-link Telegram dalla slide 4 (riusa il flusso del profilo).
-  // NON setta onboarding_completed: il binding viene confermato dal webhook.
-  const handleTelegramLink = async () => {
-    setTelegramLinkLoading(true);
-    setTelegramLinkError(false);
-    trackOnboarding('telegram_collega_click');
-    try {
-      const url = await requestTelegramLinkUrl();
-      window.location.href = url;
-    } catch {
-      // Il gate deve dire cosa è successo, non lampeggiare e basta
-      setTelegramLinkError(true);
-      setTelegramLinkLoading(false);
-    }
-  };
+  // Il collegamento Telegram NON si chiede più qui (portava fuori dall'app al
+  // minuto 6): lo propone la schermata "Giorno 1 completato" (review 13/9, sera 4).
 
   // Guard: verifica auth e se onboarding gia completato
   useEffect(() => {
@@ -49,7 +30,7 @@ export default function OnboardingPage() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('onboarding_completed, telegram_id')
+        .select('onboarding_completed')
         .eq('user_id', session.user.id)
         .single();
 
@@ -58,33 +39,10 @@ export default function OnboardingPage() {
         return;
       }
 
-      setTelegramLinked(!!profile?.telegram_id);
       setReady(true);
     };
     check();
   }, [router]);
-
-  // Al ritorno dall'app Telegram (visibilitychange) rileggi telegram_id:
-  // se il bot ha completato il collegamento, la slide Coach mostra "✅ collegato"
-  // e la navigazione torna il normale "Continua". Stesso pattern di /profilo.
-  useEffect(() => {
-    const onVisible = async () => {
-      if (document.visibilityState !== 'visible') return;
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      const { data: p } = await supabase
-        .from('profiles')
-        .select('telegram_id')
-        .eq('user_id', session.user.id)
-        .single();
-      if (p?.telegram_id) {
-        setTelegramLinked(true);
-        setTelegramLinkLoading(false);
-      }
-    };
-    document.addEventListener('visibilitychange', onVisible);
-    return () => document.removeEventListener('visibilitychange', onVisible);
-  }, []);
 
   // Traccia la visualizzazione di ogni slide del carousel (funnel onboarding)
   useEffect(() => {
@@ -306,7 +264,7 @@ export default function OnboardingPage() {
       ),
     },
 
-    // ── SLIDE 4 — Coach AI (nav dedicata: collega Telegram / skip esplicito) ──
+    // ── SLIDE 4 — Coach AI (solo informativa: Telegram si collega dopo il Giorno 1) ──
     {
       title: 'Il tuo Coach AI',
       subtitle: 'Sempre con te, in campo e fuori',
@@ -338,24 +296,14 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-          {telegramLinked ? (
-            <div className="bg-forest-500/15 border border-forest-500/40 rounded-xl p-5 text-left">
-              <p className="text-app font-semibold mb-1">✅ Coach collegato</p>
-              <p className="text-sm text-muted leading-relaxed">
-                Riceverai i suoi messaggi ogni mattina, e puoi scrivergli quando vuoi —
-                prima della partita, dopo un errore, o solo per fare il punto.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-forest-500/10 border border-forest-500/30 rounded-xl p-5 text-left">
-              <p className="text-app font-semibold mb-1">Il Coach ti accompagna ogni giorno.</p>
-              <p className="text-sm text-muted leading-relaxed">
-                Ti scrive lui ogni mattina, ti ricorda la pratica, ed è lì quando ti serve —
-                prima della partita, dopo un errore, o solo per fare il punto.
-                Collegalo qui sotto: un tap e il Coach è nel tuo Telegram.
-              </p>
-            </div>
-          )}
+          <div className="bg-forest-500/10 border border-forest-500/30 rounded-xl p-5 text-left">
+            <p className="text-app font-semibold mb-1">Il Coach ti accompagna ogni giorno.</p>
+            <p className="text-sm text-muted leading-relaxed">
+              Lo trovi nella tab Coach. Dopo il primo giorno potrai portarlo anche sul
+              telefono: ti scrive lui, ti ricorda la pratica, ed è lì quando ti serve —
+              prima della partita, dopo un errore, o solo per fare il punto.
+            </p>
+          </div>
         </div>
       ),
     },
@@ -402,10 +350,6 @@ export default function OnboardingPage() {
 
   const currentContent = slides[currentSlide - 1];
   const isLastSlide = currentSlide === slides.length;
-  // La slide Coach ha una navigazione dedicata: il collegamento Telegram è
-  // l'azione primaria, lo skip è un link esplicito (niente "Continua" distratto).
-  const coachSlideNumber = slides.findIndex(s => s.title === 'Il tuo Coach AI') + 1;
-  const isCoachGate = currentSlide === coachSlideNumber && !telegramLinked;
 
   if (showCalendar) {
     return (
@@ -494,16 +438,6 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        {/* Errore apertura Telegram sul gate Coach */}
-        {isCoachGate && telegramLinkError && (
-          <div className="mb-3">
-            <SaveErrorBanner
-              message="Non siamo riusciti ad aprire Telegram. Riprova — o collega il Coach più tardi dal profilo."
-              onRetry={handleTelegramLink}
-            />
-          </div>
-        )}
-
         {/* Navigation */}
         <div className="flex gap-4">
           {currentSlide > 1 && (
@@ -516,22 +450,12 @@ export default function OnboardingPage() {
           )}
 
           {!isLastSlide ? (
-            isCoachGate ? (
-              <button
-                onClick={handleTelegramLink}
-                disabled={telegramLinkLoading}
-                className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
-              >
-                {telegramLinkLoading ? 'Apriamo Telegram…' : '📲 Collega il Coach — un tap'}
-              </button>
-            ) : (
-              <button
-                onClick={() => setCurrentSlide(s => s + 1)}
-                className="flex-1 bg-forest-500 hover:bg-forest-600 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-xl"
-              >
-                Continua →
-              </button>
-            )
+            <button
+              onClick={() => setCurrentSlide(s => s + 1)}
+              className="flex-1 bg-forest-500 hover:bg-forest-600 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-xl"
+            >
+              Continua →
+            </button>
           ) : (
             <button
               onClick={handleComplete}
@@ -549,24 +473,15 @@ export default function OnboardingPage() {
           )}
         </div>
 
-        {/* Skip link — sulla slide Coach lo skip è esplicito e dice cosa perdi */}
-        {isCoachGate ? (
+        {/* Skip link */}
+        {!isLastSlide && (
           <button
-            onClick={() => setCurrentSlide(s => s + 1)}
-            className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors"
+            onClick={handleComplete}
+            disabled={completing}
+            className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors disabled:opacity-50"
           >
-            Continua senza promemoria →
+            Salta introduzione →
           </button>
-        ) : (
-          !isLastSlide && (
-            <button
-              onClick={handleComplete}
-              disabled={completing}
-              className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors disabled:opacity-50"
-            >
-              Salta introduzione →
-            </button>
-          )
         )}
 
       </div>

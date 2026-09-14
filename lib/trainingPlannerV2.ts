@@ -16,6 +16,7 @@ import { DAY_NAMES } from './constants';
 import { isFaticaAlta, isPeriodoScarso, validatePlan, type PlanSession, type WeekPlan } from './trainingEngine';
 import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { caricoPianificato, caricoSquadraStimato, caricoTesto } from './trainingLoad';
+import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, type TrainingSetup } from './trainingSetup';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
@@ -24,7 +25,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import type { Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.2-recuperi-vincoli';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.4-squadra';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
 const DELOAD_SCALA = 0.6;
 
@@ -189,6 +190,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     if (!sedute.some((s) => (s.blocchi || []).map((b) => b.id).sort().join('|') === key))
       errors.push(`manca la seduta da recuperare "${r.titolo}" (blocchi: ${r.blocchi.join(', ')}) — va riproposta uguale`);
   }
+  // Sedute richieste dall'atleta (maschera): esattamente N, entro il tetto della fase e i giorni ammessi
+  const nRichieste = seduteRichieste(ctx);
+  if (nRichieste !== null && sedute.length !== nRichieste)
+    errors.push(`l'atleta ha chiesto ${nRichieste} sedute a settimana: ne hai messe ${sedute.length} — metti esattamente ${nRichieste} giornate`);
   if (ctx.setup.fase === 'preparazione_squadra' && blocchiForza > 1)
     errors.push(`preparazione con la squadra: al massimo 1 blocco di forza a settimana (ne hai messi ${blocchiForza})`);
   // Carico totale: con almeno 2 settimane di storico la settimana pianificata non può superare il tetto
@@ -258,6 +263,7 @@ ADATTAMENTO
 16. STORICO SERIE (se presente): i suggerimenti SALI/TIENI/SCENDI per esercizio sono calcolati dai log dell'atleta. SALI = passa al codice successivo o da short a full; SCENDI = codice precedente o short. Non saltare codici.
 18. SEDUTE DA RECUPERARE (se presenti): sono le sedute saltate la settimana scorsa. Riproponile UGUALI (stessi blocchi, stesso ordine) nei primi giorni utili, PRIMA di ogni nuova progressione; contano nel tetto delle sedute. Il validatore le controlla.
 19. VINCOLI DELLA RICHIESTA (giorni disponibili, giorni da lasciare liberi, tempo per seduta): sono regole dure, il validatore rifiuta chi le viola.
+20. SQUADRA DESCRITTA (se accanto ai giorni squadra ci sono sforzo e qualità): serve per BILANCIARE, mai per vietare. Le qualità che la squadra lavora già forte (sforzo ≥7) non le raddoppi nella stessa settimana, a meno che siano un focus scelto dall'atleta; il giorno dopo una giornata squadra da 8+ ci si allena comunque, ma con un blocco principale diverso da quello della squadra o in versione short. Quando la squadra copre già un focus, dillo nel messaggio.
 17. CARICO TOTALE (session-RPE, calcolato dai dati): resta nel TARGET indicato — al massimo +10% sul cronico da una settimana all'altra; ACWR alto/rischio → settimana uguale o più leggera della precedente; dopo 2+ settimane di stop riparti dal 70% del cronico. Il tetto lo fa rispettare il validatore: una settimana troppo carica viene rifiutata.
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
@@ -266,7 +272,15 @@ ${libreriaTesto(ctx)}
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
 LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
-giorno: 1=Lunedì … 7=Domenica. Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`;
+giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta).` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
+}
+
+/** Sedute richieste dall'atleta, clampate al tetto della fase e ai giorni ammessi (null = decide il planner). */
+function seduteRichieste(ctx: ContextV2): number | null {
+  const n = ctx.vincoli.numSedute;
+  if (!n) return null;
+  const giorniAmmessi = ctx.vincoli.giorniAmmessi?.length ? ctx.vincoli.giorniAmmessi.length : 7;
+  return Math.max(1, Math.min(n, ctx.maxSeduteFisiche, giorniAmmessi));
 }
 
 function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[]): string {
@@ -288,12 +302,12 @@ OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 
 Livello: ${b.fascia}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
 Attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', ') : 'solo corpo libero'}
 Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~${ctx.setup.squadraDurataMin}'` : ''}
-Allenamenti squadra: ${b.trainingDays.length ? b.trainingDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuno'}
+Allenamenti squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)}
 Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
 Feedback sedute recenti: ${feedbackTxt}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
-${massimali}${memoria}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${caricoTesto(b.carico, caricoSquadraStimato({ trainingDays: b.trainingDays, matchDays: b.matchDays, squadraDurataMin: ctx.setup.squadraDurataMin, fase: ctx.setup.fase }))}${piano}
+${massimali}${memoria}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${caricoTesto(b.carico, caricoSquadraStimato({ trainingDays: b.trainingDays, matchDays: b.matchDays, squadraDurataMin: ctx.setup.squadraDurataMin, fase: ctx.setup.fase, squadra: b.squadra }))}${piano}
 ${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}` : ''}
 
@@ -330,7 +344,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   for (const d of ctx.vincoli.giorniVietati || []) vietati.add(d);
   const ammesso = (d: number) => !ctx.vincoli.giorniAmmessi?.length || ctx.vincoli.giorniAmmessi.includes(d);
   const liberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !occupati.has(d) && !vietati.has(d) && ammesso(d));
-  const giorni = (liberi.length >= 2 ? liberi : [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !vietati.has(d) && ammesso(d))).slice(0, Math.max(2, Math.min(3, ctx.maxSeduteFisiche)));
+  const nSedute = seduteRichieste(ctx) ?? Math.max(2, Math.min(3, ctx.maxSeduteFisiche));
+  const giorni = (liberi.length >= nSedute ? liberi : [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !vietati.has(d) && ammesso(d))).slice(0, nSedute);
   const fascia = primo(ctx, 'fascia-prevenzione', /Foundations? 1\b/i);
   const principali: (Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
     ? [primo(ctx, 'tecnica-palleggi'), primo(ctx, 'tecnica-passaggi')]

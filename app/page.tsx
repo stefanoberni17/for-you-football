@@ -13,7 +13,8 @@ import {
   DayProgress,
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
-import { shouldRedirectToPaywall } from '@/lib/checkAccess';
+import { shouldRedirectToPaywall, hasActiveAccess } from '@/lib/checkAccess';
+import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
 import InstallBanner from '@/components/InstallBanner';
@@ -87,6 +88,9 @@ export default function HomePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  // Ritorno da Stripe (?checkout=success): l'accesso arriva col webhook, che può
+  // tardare qualche secondo. Si riprova 5 volte prima di rimandare al paywall.
+  const [activating, setActivating] = useState(false);
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [startedDays, setStartedDays] = useState<{ week: number; day: number }[]>([]);
   const [weekData, setWeekData] = useState<any>(null);
@@ -112,16 +116,37 @@ export default function HomePage() {
         return;
       }
 
-      const { data: profileData } = await supabase
+      let { data: profileData } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', session.user.id)
         .single();
 
-      // Paywall gate: se Stripe è configurato E utente non ha accesso → /pricing.
-      // Se Stripe non è ancora in env (deploy graduale), il gate è disattivato.
-      if (shouldRedirectToPaywall(profileData)) {
-        router.push('/pricing');
+      const fromCheckout = (() => {
+        try { return new URLSearchParams(window.location.search).get('checkout') === 'success'; } catch { return false; }
+      })();
+      if (fromCheckout && shouldRedirectToPaywall(profileData)) {
+        setActivating(true);
+        for (let i = 0; i < 5 && shouldRedirectToPaywall(profileData); i++) {
+          await new Promise((r) => setTimeout(r, 2000));
+          const { data: again } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+          if (again) profileData = again;
+        }
+        setActivating(false);
+      }
+      if (fromCheckout) {
+        resetPaywallCache();
+        try { window.history.replaceState(null, '', '/'); } catch { /* no-op */ }
+      }
+
+      // Settimana gratis (14/9): la home non rimbalza più al paywall. Solo il ritorno
+      // da Stripe senza attivazione dopo i 5 tentativi torna a /pricing.
+      if (fromCheckout && shouldRedirectToPaywall(profileData)) {
+        router.push('/pricing?checkout=pending');
         return;
       }
 
@@ -247,9 +272,12 @@ export default function HomePage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center px-6">
           <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-muted">Caricamento...</p>
+          <p className="text-xl text-muted">{activating ? 'Attivazione in corso…' : 'Caricamento...'}</p>
+          {activating && (
+            <p className="text-sm text-faint mt-2">Pagamento ricevuto. Stiamo sbloccando la tua Season, ci vuole qualche secondo.</p>
+          )}
         </div>
       </main>
     );
@@ -724,7 +752,7 @@ export default function HomePage() {
 
         {/* Recupero collegamento Telegram — terzo in priorità */}
         {!coachBannerVisible && !weeklyBannerVisible && telegramRecoveryCandidate && (
-          <TelegramRecoveryBanner hasTelegram={!!profile?.telegram_id} onVisibilityChange={setTelegramBannerVisible} />
+          <TelegramRecoveryBanner hasTelegram={!hasActiveAccess(profile) || !!profile?.telegram_id} onVisibilityChange={setTelegramBannerVisible} />
         )}
 
         {/* Banner installazione PWA — ultimo in priorità */}

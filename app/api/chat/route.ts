@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import {
   buildUserContext,
   callClaude,
@@ -13,6 +14,7 @@ import {
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
 import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
+import { FREE_COACH_MESSAGES } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,8 +24,27 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
+    // Settimana gratis: FREE_COACH_MESSAGES messaggi in chat senza Season 1 (contati
+    // sugli eventi coach_message_sent web di lib/events.ts). Oltre → 403 con il testo
+    // del Coach. Telegram resta di Season 1.
+    let freeRemaining: number | null = null;
     if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+      const { count } = await supabaseAdmin
+        .from('onboarding_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('event', 'coach_message_sent')
+        .eq('meta->>channel', 'web');
+      const used = count ?? 0;
+      if (used >= FREE_COACH_MESSAGES) {
+        return NextResponse.json({
+          error: 'payment_required',
+          reason: 'free_limit',
+          limit: FREE_COACH_MESSAGES,
+          message: `Questi erano i tuoi ${FREE_COACH_MESSAGES} messaggi della settimana gratis. Il percorso continua: al Gate della settimana 1 ci ritroviamo, e da lì ci sono sempre, qui e su Telegram.`,
+        }, { status: 403 });
+      }
+      freeRemaining = FREE_COACH_MESSAGES - used - 1;
     }
     if (!(await checkRateLimit(`web:${userId}`, 'chat', COACH_HOURLY_LIMIT))) {
       return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
@@ -46,10 +67,11 @@ export async function POST(request: NextRequest) {
     // nel protocollo — niente coaching finché non c'è lo sblocco manuale.
     const { data: safetyProfile } = await supabaseAdmin
       .from('profiles')
-      .select('safety_review')
+      .select('safety_review, current_week')
       .eq('user_id', userId)
       .maybeSingle();
     const inSafetyReview = safetyProfile?.safety_review === true;
+    const currentWeek = safetyProfile?.current_week || 1;
 
     const userContext = await buildUserContext(userId);
     // Prompt caching: il prefisso stabile (SYSTEM_PROMPT + WEB_FORMAT, ~stesso a ogni
@@ -62,7 +84,8 @@ export async function POST(request: NextRequest) {
       { type: 'text', text: '\n\n' + userContext },
     ];
 
-    const { text, usage } = await callClaude(systemBlocks, messages, 1500, true);
+    const { text, usage } = await callClaude(systemBlocks, messages, 1500, true, { maxWeek: currentWeek });
+    logEvent(userId, 'coach_message_sent', { channel: 'web' });
 
     // Memoria unificata: come su Telegram, la conversazione web viene distillata
     // in coach_notes (fire-and-forget). I messaggi grezzi NON vengono salvati —
@@ -77,7 +100,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       response: text,
-      usage
+      usage,
+      freeRemaining, // null = Season 1 (nessun limite)
     });
 
   } catch (error: any) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess } from '@/lib/serverAccess';
 import { todayItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
@@ -22,9 +22,6 @@ export async function GET(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
     const { data, error } = await supabaseAdmin
@@ -53,9 +50,6 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
-    }
     const { physicalState, sleepHours, recoveryQuality, mentalState } = body;
 
     // Validazione 0-10 per i campi numerici
@@ -83,6 +77,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) throw error;
+    logEvent(userId, 'checkin_saved');
 
     return NextResponse.json({ success: true, checkin: data });
   } catch (error: any) {

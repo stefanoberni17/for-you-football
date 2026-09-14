@@ -46,7 +46,7 @@ export default function PrivacyPage() {
               </div>
               <div className="bg-surface-2 border border-divider rounded-xl p-4">
                 <p className="font-semibold text-app mb-1">💬 Conversazioni Telegram</p>
-                <p className="text-muted">I messaggi scambiati con il Maestro AI tramite il bot Telegram, necessari per mantenere il contesto della conversazione.</p>
+                <p className="text-muted">I messaggi scambiati con il Coach AI tramite il bot Telegram, necessari per mantenere il contesto della conversazione.</p>
               </div>
             </div>
           </section>

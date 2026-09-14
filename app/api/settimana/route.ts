@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { queryDatabase, mapSettimana, mapGiorno } from '@/lib/notion';
+import { queryDatabase, mapSettimana, mapGiorno, senzaRegia } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess } from '@/lib/serverAccess';
+import { requireWeekAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,15 +18,15 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
-    }
-
     const { searchParams } = new URL(request.url);
     const weekNumber = parseInt(searchParams.get('week') || '0');
 
     if (!weekNumber) {
       return NextResponse.json({ error: 'Parametro week mancante' }, { status: 400 });
+    }
+    // Settimana gratis: W1 aperta, dalle successive serve Season 1
+    if (!(await requireWeekAccess(userId, weekNumber))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
     // Fetch settimana e giorni in parallelo
@@ -50,8 +50,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: `Settimana ${weekNumber} non trovata` }, { status: 404 });
     }
 
-    const settimana = mapSettimana(weekPages[0]);
-    const giorni = dayPages.map(mapGiorno);
+    // Regia del Coach (contesto/coachContesto) mai al client
+    const settimana = senzaRegia(mapSettimana(weekPages[0]));
+    const giorni = dayPages.map((p) => senzaRegia(mapGiorno(p)));
 
     return NextResponse.json({ settimana, giorni });
   } catch (error: any) {

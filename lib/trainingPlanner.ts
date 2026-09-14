@@ -18,6 +18,7 @@ import {
 import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLogRow } from './trainingAdapt';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoTesto, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
+import { parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 
 export const PLANNER_PROMPT_VERSION = 'v0.5';
 const PLANNER_MODEL = 'claude-sonnet-4-6';
@@ -108,10 +109,19 @@ export interface PlannerContext {
   storicoSerie: RiepilogoEsercizio[];
   // Carico totale (session-RPE) e ACWR delle ultime 4 settimane → target/tetto per la settimana
   carico: CaricoInfo;
+  // Allenamenti con la squadra descritti dall'atleta (sforzo e qualità per giorno, migration 023) — vuoto se non compilato
+  squadra: SquadraSettimana;
+}
+
+/** profiles.training_squadra (migration 023): se la colonna manca → vuoto, senza errore. */
+export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
+  const { data, error } = await supabaseAdmin.from('profiles').select('training_squadra').eq('user_id', userId).maybeSingle();
+  if (error || !data) return {};
+  return parseSquadra((data as { training_squadra?: unknown }).training_squadra);
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }, squadra] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -125,6 +135,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     supabaseAdmin.from('training_test_sessions').select('completed_at')
       .eq('user_id', userId).not('completed_at', 'is', null)
       .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
+    loadSquadra(userId),
   ]);
   // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
   let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
@@ -212,6 +223,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     ciclo,
     storicoSerie,
     carico,
+    squadra,
   };
 }
 
@@ -343,7 +355,7 @@ OGGI è ${DAY_NAMES[ctx.oggiDow]}${ctx.oggiDow > 1 ? ` — i giorni 1-${ctx.oggi
 Fascia: ${ctx.fascia}${ctx.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO (niente fisica)' : ''}
 Gradini per catena: ${gradiniTxt}
 Sbarra disponibile: ${ctx.hasSbarra ? 'sì' : 'NO (niente tirata)'}
-Allenamenti squadra: ${ctx.trainingDays.length ? ctx.trainingDays.map((d) => DAY_NAMES[d]).join(', ') : 'non indicati'}
+Allenamenti squadra: ${ctx.trainingDays.length ? squadraTesto(ctx.trainingDays, ctx.squadra, DAY_NAMES) : 'non indicati'}
 Partite: ${ctx.matchDays.length ? ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
 Feedback sedute recenti: ${feedbackTxt}
 Settimana del ciclo: ${ctx.ciclo.settimana} di 4${ctx.ciclo.isDeload ? ' — ⚠️ SETTIMANA DELOAD (regola 21)' : ctx.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 22)' : ''}
@@ -463,6 +475,7 @@ export async function trainingChat(
 
 Contesto atleta — oggi è ${DAY_NAMES[ctx.oggiDow]}; fascia ${ctx.fascia}, gradini: ${Object.entries(ctx.gradini).map(([a, g]) => `${a} g${g}`).join(', ') || 'da testare'}. Card: ${rombo}.${ctx.painHold ? ' ⚠️ PAIN-HOLD attivo: ha segnalato dolore, niente consigli di allenamento fisico finché non dice che è passato o ha sentito fisio/preparatore.' : ''}
 Piano della settimana: ${pianoTxt}. Settimana del ciclo: ${ctx.ciclo.settimana}/4${ctx.ciclo.isDeload ? ' (deload)' : ctx.ciclo.ritestDue ? ' (ri-test in ritardo: invitalo a rifare la batteria)' : ''}.
+Allenamenti con la squadra: ${squadraTesto(ctx.trainingDays, ctx.squadra, DAY_NAMES)}${ctx.matchDays.length ? ` · partite: ${ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ')}` : ''}. Se ha descritto sforzo e qualità, usali per consigliare (non per vietare): le qualità che la squadra fa già forte non vanno raddoppiate, il giorno dopo una giornata dura ci si allena comunque, ma su altro o più leggero.
 ${checkinBlock(ctx)}
 ${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}${storicoSerieBlock(ctx, 8)}${caricoTesto(ctx.carico)}
 

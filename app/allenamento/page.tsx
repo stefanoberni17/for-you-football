@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
+import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
@@ -36,12 +37,16 @@ interface TrainingState {
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
   setup: TrainingSetup;
   setupDisponibile: boolean;
+  calendario?: { trainingDays: number[]; matchDays: number[] };
+  maxSeduteFisiche?: number;
   carico?: {
     settimane: { lunedi: string; carico: number; sedute: number; corrente: boolean }[];
     acuto: number; cronico: number; acwr: number | null;
     stato: 'insufficiente' | 'poco' | 'ok' | 'alto' | 'rischio'; statoLabel: string;
     target: { min: number; max: number } | null; squadraStimato: number;
   };
+  // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
+  squadra?: SquadraSettimana;
 }
 
 export default function AllenamentoHub() {
@@ -80,6 +85,11 @@ export default function AllenamentoHub() {
   const [setupDraft, setSetupDraft] = useState<TrainingSetup | null>(null);
   const [setupSaving, setSetupSaving] = useState(false);
   const [setupMsg, setSetupMsg] = useState<string | null>(null);
+  // "Gli allenamenti con la squadra" (facoltativo): sforzo e qualità per giorno squadra, nella card carico
+  const [showSquadra, setShowSquadra] = useState(false);
+  const [squadraDraft, setSquadraDraft] = useState<SquadraSettimana>({});
+  const [squadraSaving, setSquadraSaving] = useState(false);
+  const [squadraMsg, setSquadraMsg] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -146,6 +156,19 @@ export default function AllenamentoHub() {
       if (res.ok) { setSetupMsg('Salvato'); await load(); setTimeout(() => { setSetupMsg(null); setShowSetup(false); }, 900); }
       else { const d = await res.json().catch(() => ({})); setSetupMsg(d.error || 'Errore nel salvataggio'); }
     } finally { setSetupSaving(false); }
+  };
+
+  const salvaSquadra = async () => {
+    setSquadraSaving(true); setSquadraMsg(null);
+    try {
+      const res = await authFetch('/api/training/setup', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ squadra: squadraDraft }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok && d.squadraSalvata !== false) { setSquadraMsg('Salvato: il preparatore ne tiene conto dal prossimo piano'); await load(); setTimeout(() => setSquadraMsg(null), 2500); }
+      else setSquadraMsg(d.error || 'Errore nel salvataggio');
+    } finally { setSquadraSaving(false); }
   };
 
   const segnalaDolore = async () => {
@@ -563,6 +586,83 @@ export default function AllenamentoHub() {
                       : <>Carico = minuti × sforzo percepito. Vota le serie durante il recupero per renderlo preciso.</>}
                     {c.squadraStimato > 0 && <> · squadra stimata +{c.squadraStimato}</>}
                   </p>
+
+                  {/* Gli allenamenti con la squadra (facoltativo): sforzo + qualità per giorno squadra */}
+                  {(() => {
+                    const giorniSquadra = state.calendario?.trainingDays ?? [];
+                    const descritti = giorniSquadra.filter((d) => state.squadra?.[d]).length;
+                    return (
+                      <div className="mt-3 border-t border-divider pt-3">
+                        <button onClick={() => { setShowSquadra(!showSquadra); setSquadraDraft({ ...(state.squadra || {}) }); setSquadraMsg(null); }}
+                          className="w-full flex items-center justify-between text-left px-1">
+                          <div>
+                            <p className="text-xs font-semibold text-app">Vuoi un piano più preciso?</p>
+                            <p className="text-[11px] text-muted">
+                              {descritti > 0
+                                ? `Allenamenti con la squadra descritti: ${descritti}/${giorniSquadra.length}`
+                                : 'Descrivi gli allenamenti con la squadra (facoltativo)'}
+                            </p>
+                          </div>
+                          <ChevronRight size={14} className={`text-faint transition-transform ${showSquadra ? 'rotate-90' : ''}`} />
+                        </button>
+                        {showSquadra && (
+                          <div className="mt-3 space-y-3">
+                            {giorniSquadra.length === 0 ? (
+                              <p className="text-[11px] text-muted px-1">
+                                Prima imposta i giorni di allenamento con la squadra dal calendario in home: qui poi puoi dire quanto è impegnativo ognuno.
+                              </p>
+                            ) : (
+                              <>
+                                <p className="text-[11px] text-muted px-1 leading-relaxed">
+                                  Per ogni giorno con la squadra: quanto è impegnativo di solito (1 = leggero, 10 = massimo) e su cosa lavorate. Il preparatore lo usa per non raddoppiare quello che fa già il mister, non per vietarti di allenarti.
+                                </p>
+                                {giorniSquadra.map((d) => {
+                                  const g = squadraDraft[d] || { rpe: null, qualita: [] as SquadraQualitaId[] };
+                                  const setG = (next: { rpe: number | null; qualita: SquadraQualitaId[] }) => {
+                                    const copia = { ...squadraDraft };
+                                    if (next.rpe === null && next.qualita.length === 0) delete copia[d]; else copia[d] = next;
+                                    setSquadraDraft(copia);
+                                  };
+                                  return (
+                                    <div key={d} className="bg-surface-2 rounded-2xl border border-divider p-3">
+                                      <p className="text-xs font-bold text-app mb-2">{DAY_NAMES_IT[d]}{state.calendario?.matchDays.includes(d) ? ' · ⚽ anche partita' : ''}</p>
+                                      <p className="text-[10px] text-faint mb-1">Sforzo{g.rpe !== null ? ` · ${g.rpe}/10` : ''}</p>
+                                      <div className="flex gap-1 mb-2">
+                                        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                                          <button key={n} type="button" onClick={() => setG({ ...g, rpe: g.rpe === n ? null : n })}
+                                            className={`flex-1 h-8 rounded-lg text-[11px] font-semibold tabular-nums border ${g.rpe === n ? 'bg-forest-500 border-forest-500 text-white' : g.rpe !== null && n < g.rpe ? 'bg-forest-500/25 border-forest-500/30 text-forest-200' : 'bg-surface border-divider text-muted'}`}>
+                                            {n}
+                                          </button>
+                                        ))}
+                                      </div>
+                                      <p className="text-[10px] text-faint mb-1">Su cosa lavorate</p>
+                                      <div className="flex flex-wrap gap-1.5">
+                                        {SQUADRA_QUALITA.map((q) => {
+                                          const on = g.qualita.includes(q.id);
+                                          return (
+                                            <button key={q.id} type="button"
+                                              onClick={() => setG({ ...g, qualita: on ? g.qualita.filter((x) => x !== q.id) : [...g.qualita, q.id] })}
+                                              className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${on ? 'bg-forest-500/20 border-forest-500/50 text-forest-200' : 'bg-surface border-divider text-muted'}`}>
+                                              {q.label}
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                                {squadraMsg && <p className="text-xs text-forest-300 px-1">{squadraMsg}</p>}
+                                <button onClick={salvaSquadra} disabled={squadraSaving}
+                                  className="w-full bg-forest-500 text-white font-bold py-2.5 rounded-xl text-sm disabled:opacity-50">
+                                  {squadraSaving ? 'Salvo…' : 'Salva'}
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })()}
@@ -651,6 +751,8 @@ export default function AllenamentoHub() {
                 hasPlan={!!state.plan && !state.planStale}
                 sedute={sedute.map((s) => ({ giorno: s.giorno, titolo: s.titolo, modificabile: statoDi(s) === 'oggi' || statoDi(s) === 'futura' }))}
                 oggiDow={oggiDow}
+                calendario={state.calendario}
+                maxSedute={state.maxSeduteFisiche}
                 generating={generating}
                 onSubmit={generaPiano}
                 onClose={state.plan ? () => setShowRigenera(false) : undefined}

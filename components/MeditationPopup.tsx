@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { markSessionActive } from '@/lib/activeSession';
 import { supabase } from '@/lib/supabase';
 import { useWakeLock } from '@/lib/useWakeLock';
-import { todayItaly } from '@/lib/dateItaly';
+import { todayItaly, dateItaly } from '@/lib/dateItaly';
+import { trackOnboarding } from '@/lib/onboardingTrack';
 
 const DURATION_OPTIONS = [
   { label: '1 min', seconds: 60 },
@@ -18,6 +20,8 @@ const INHALE_MS = 4000;
 const EXHALE_MS = 6000;
 
 const RITUAL_SKIP_KEY = 'ritualSkipped';
+/** Marker lasciato dalla pagina giorno al completamento (sessionStorage). */
+export const DAY_COMPLETED_KEY = 'fyfDayCompletedPending';
 
 // Il "giorno" del rituale segue il fuso italiano, come il check-in.
 const todayStr = todayItaly;
@@ -50,49 +54,62 @@ export default function MeditationPopup({
   useWakeLock(phase === 'meditating');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Controllo giornaliero (solo se non aperto manualmente)
-  useEffect(() => {
-    if (!userId || manualOpen) return;
+  // Controllo giornaliero (solo se non aperto manualmente).
+  // Il Reset automatico si propone SOLO a giorno del percorso completato (oggi)
+  // e mai prima che il percorso l'abbia costruito (W1-G3): al mattino la
+  // priorità è il contenuto del giorno, il Reset arriva dopo (review 13/9, sera 4).
+  const pathname = usePathname();
+  const manualOpenRef = useRef(manualOpen);
+  manualOpenRef.current = manualOpen;
+  const checkMeditation = useCallback(async () => {
+    if (!userId || manualOpenRef.current) return;
+    const today = todayStr();
 
-    const checkMeditation = async () => {
-      const today = todayStr();
+    // Skip già scelto oggi → il rituale torna domani
+    if (typeof window !== 'undefined' && localStorage.getItem(RITUAL_SKIP_KEY) === today) {
+      return;
+    }
 
-      // Skip già scelto oggi → il rituale torna domani
-      if (typeof window !== 'undefined' && localStorage.getItem(RITUAL_SKIP_KEY) === today) {
-        return;
-      }
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('last_meditation_completed')
+      .eq('user_id', userId)
+      .single();
 
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('last_meditation_completed')
-        .eq('user_id', userId)
-        .single();
+    const lastMeditation = profileData?.last_meditation_completed;
+    if (lastMeditation === today) return;
 
-      const lastMeditation = profileData?.last_meditation_completed;
-      if (lastMeditation === today) return;
+    const { data: doneRows } = await supabase
+      .from('user_day_progress')
+      .select('week_number, day_number, completed_at')
+      .eq('user_id', userId)
+      .eq('completed', true);
+    const rows = doneRows || [];
+    const resetBuilt = rows.some((r) => r.week_number === 1 && r.day_number === 3);
+    const dayDoneToday = rows.some((r) => r.completed_at && dateItaly(r.completed_at) === today);
+    if (!resetBuilt || !dayDoneToday) return;
 
-      // Pratica del giorno già completata oggi → ha già respirato, niente Reset imposto
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const { data: practiceToday } = await supabase
-        .from('user_day_progress')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('completed', true)
-        .gte('completed_at', todayStart.toISOString())
-        .limit(1);
-
-      if (practiceToday && practiceToday.length > 0) return;
-
-      setIsFirstTime(!lastMeditation); // null = prima volta in assoluto
-      setPhase('setup');
-      setSelectedDuration(60);
-      setIsTimerComplete(false);
-      setShowPopup(true);
-    };
-
-    checkMeditation();
+    setIsFirstTime(!lastMeditation); // null = prima volta in assoluto
+    setPhase('setup');
+    setSelectedDuration(60);
+    setIsTimerComplete(false);
+    setShowPopup(true);
   }, [userId]);
+
+  useEffect(() => { checkMeditation(); }, [checkMeditation]);
+
+  // Giorno completato in questa sessione (la pagina giorno lascia un marker):
+  // al primo cambio pagina dopo la schermata "Giorno completato" si ripete il
+  // controllo, così il Reset viene proposto senza aspettare il prossimo avvio.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      if (sessionStorage.getItem(DAY_COMPLETED_KEY) !== '1') return;
+      if (pathname.startsWith('/giorno/')) return;
+      sessionStorage.removeItem(DAY_COMPLETED_KEY);
+    } catch { return; }
+    checkMeditation();
+  }, [pathname, checkMeditation]);
 
   // Apertura manuale tramite pulsante home page
   useEffect(() => {
@@ -205,6 +222,7 @@ export default function MeditationPopup({
       .from('profiles')
       .update({ last_meditation_completed: todayStr() })
       .eq('user_id', userId);
+    trackOnboarding('reset_completed', { auto: !manualOpen, seconds: selectedDuration });
 
     audioRef.current?.pause();
     setShowPopup(false);

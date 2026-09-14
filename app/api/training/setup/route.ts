@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { ATTREZZATURA_OPZIONI, FASI, SETUP_SELECT as SELECT, mapSetup } from '@/lib/trainingSetup';
+import { parseSquadra } from '@/lib/trainingSquadra';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -23,7 +24,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/** POST { esperienzaPalestra?, attrezzatura?, compagno?, fase?, pesoKg?, squadraDurataMin? } → salva (solo i campi presenti) */
+/**
+ * POST { esperienzaPalestra?, attrezzatura?, compagno?, fase?, pesoKg?, squadraDurataMin?, squadra? } → salva (solo i campi presenti).
+ * `squadra` = { "1": { rpe, qualita[] }, … } (migration 023): salvata a parte, così se la colonna manca il resto del setup passa lo stesso.
+ */
 export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
@@ -53,11 +57,23 @@ export async function POST(request: NextRequest) {
       if (d !== null && (!Number.isInteger(d) || d < 30 || d > 180)) return NextResponse.json({ error: 'durata non valida (30-180 min)' }, { status: 400 });
       update.training_squadra_durata_min = d;
     }
-    if (Object.keys(update).length === 0) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+    const squadra = body.squadra !== undefined && body.squadra !== null && typeof body.squadra === 'object' ? parseSquadra(body.squadra) : null;
+    if (Object.keys(update).length === 0 && squadra === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+
+    let squadraSalvata: boolean | null = null;
+    if (squadra !== null) {
+      const { error: sqErr } = await supabaseAdmin.from('profiles').update({ training_squadra: squadra }).eq('user_id', userId);
+      squadraSalvata = !sqErr;
+      if (sqErr) console.error('training/setup squadra (serve la migration 023?):', sqErr.message);
+    }
+    if (Object.keys(update).length === 0) {
+      if (!squadraSalvata) return NextResponse.json({ error: 'Non riesco a salvare gli allenamenti con la squadra (manca la migration 023)' }, { status: 500 });
+      return NextResponse.json({ success: true, squadraSalvata, squadra });
+    }
 
     const { data, error } = await supabaseAdmin.from('profiles').update(update).eq('user_id', userId).select(SELECT).maybeSingle();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ success: true, setup: mapSetup(data) });
+    return NextResponse.json({ success: true, setup: mapSetup(data), squadraSalvata, squadra });
   } catch (err) {
     console.error('training/setup POST error:', err);
     return NextResponse.json({ error: 'internal' }, { status: 500 });

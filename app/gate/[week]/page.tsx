@@ -14,6 +14,7 @@ export default function GatePage() {
   const weekNumber = parseInt(params.week as string);
 
   const [loading, setLoading] = useState(true);
+  const [paywall, setPaywall] = useState(false);
   const [userId, setUserId] = useState('');
   const [giorno, setGiorno] = useState<any>(null);
   const [questions, setQuestions] = useState<string[]>([]);
@@ -53,6 +54,13 @@ export default function GatePage() {
 
       const res = await authFetch(`/api/gate?week=${weekNumber}&userId=${uid}`);
       const data = await res.json();
+
+      // Settimana gratis: il gate è il primo punto a pagamento ("si paga per continuare").
+      if (res.status === 403 && data?.error === 'payment_required') {
+        setPaywall(true);
+        setLoading(false);
+        return;
+      }
 
       if (data.error) {
         router.push(`/settimana/${weekNumber}`);
@@ -143,6 +151,35 @@ export default function GatePage() {
         <div className="text-center">
           <div className="text-6xl mb-4 animate-pulse">🔑</div>
           <p className="text-muted">Caricamento Gate...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (paywall) {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center pt-safe pb-6 px-6 text-white animate-fadeIn">
+        <div className="flex flex-col items-center text-center max-w-sm">
+          <div className="text-6xl mb-5">🔑</div>
+          <h1 className="text-3xl font-bold mb-3">Hai finito la settimana {weekNumber}</h1>
+          <p className="text-forest-100 text-sm leading-relaxed mb-2">
+            Sette giorni, uno strumento tuo. Il Gate è il momento in cui lo fissi: tre domande che chiudono la settimana e aprono la prossima.
+          </p>
+          <p className="text-white text-sm leading-relaxed mb-8">
+            Da qui in avanti è Season 1: il Gate, le settimane 2-12 e il Coach sempre con te.
+          </p>
+          <button
+            onClick={() => router.push('/pricing?from=gate')}
+            className="w-full bg-white text-forest-700 font-bold py-4 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
+          >
+            Sblocca Season 1 →
+          </button>
+          <button
+            onClick={() => router.push(`/settimana/${weekNumber}`)}
+            className="mt-5 text-forest-100 hover:text-white text-sm font-medium underline underline-offset-4 transition-colors"
+          >
+            Torna alla settimana
+          </button>
         </div>
       </main>
     );

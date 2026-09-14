@@ -243,6 +243,17 @@ export default function PracticePopup({
     setPhase('setup');
   };
 
+  // "Ho finito": dal 60 % del timer la pratica si può chiudere prima (review 13/9:
+  // W1-G1 sono 50" di respiri dentro un timer che nessuno poteva interrompere).
+  // Chiude anche l'audio: chi dice "ho finito" ha finito.
+  const canFinishEarly = phase === 'practicing' && !timerEnded && timeLeft <= totalSeconds * 0.4;
+  const finishEarly = () => {
+    stopAudio();
+    endsAtRef.current = Date.now();
+    setTimeLeft(0);
+    setTimerEnded(true);
+  };
+
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 
@@ -420,6 +431,15 @@ export default function PracticePopup({
                 ? 'Segui la pratica al tuo ritmo. Il timer ti guida ⚽'
                 : 'Segui gli step al tuo ritmo. Prenditi il tempo che ti serve 🧘'}
             </p>
+
+            {canFinishEarly && (
+              <button
+                onClick={finishEarly}
+                className="w-full mt-4 bg-surface-2 border border-forest-500/40 hover:border-forest-400 text-forest-300 font-semibold py-3 rounded-2xl transition-colors text-sm animate-fadeIn"
+              >
+                Ho finito ✓
+              </button>
+            )}
           </>
         )}
 

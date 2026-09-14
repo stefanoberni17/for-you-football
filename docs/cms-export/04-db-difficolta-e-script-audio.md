@@ -328,6 +328,8 @@ Il mister mi ha criticato duramente davanti a tutti e mi è rimasto addosso.
 
 Schema property: Titolo, Numero Settimana, Numero Giorno, Script Apertura, Script Pratica, Script Chiusura, Note Regia, Durata Stimata Secondi, Sottofondo Audio, Stato, File Audio URL.
 
+> **Nota (14/9/2026):** Script Pratica di W1-G2 e W1-G3 riallineati al canone del Reset (gesto sull'inspirazione tenuto fino a fine espirazione, niente "Chin Mudra", mantra Reset/Riparto qui/Sono qui) sia qui che su Notion (righe del DB + pagine "Script Audio"); gli MP3 in produzione sono da ri-registrare.
+
 > **Nota:** le righe G4, G5, G6, G7 hanno anche **contenuto nel body della pagina** (versione ElevenLabs aggiornata + note operative), riportato integralmente nelle rispettive sotto-sezioni "Contenuto pagina (body)". G1, G2, G3 hanno il body vuoto.
 
 ---
@@ -401,7 +403,7 @@ Il corpo impara prima della mente — usalo.
 
 **Script Pratica:**
 
-Occhi aperti, punto fisso, attenzione al plesso solare — come ieri.
+Occhi aperti, punto fisso, attenzione al punto sotto lo sterno — come ieri.
 \[PAUSA 2s\]
 Tre respiri per entrare.
 Inspira.
@@ -410,18 +412,20 @@ Espira.
 \[SUONO ESPIRA — 6s\]
 \[×3 totali\]
 \[PAUSA 2s\]
-Ora: al prossimo respiro — mentre espiri — unisci pollice e indice di entrambe le mani.
-Tieni il gesto finché l'espirazione non finisce.
+Ora: al prossimo respiro — mentre inspiri — unisci pollice e indice di entrambe le mani.
+Tieni il gesto per tutto il respiro, fino alla fine dell'espirazione. Poi rilascia.
 \[PAUSA 2s\]
-Inspira.
+Inspira — gesto.
 \[SUONO INSPIRA — 4s\]
-Espira — gesto.
+Espira — tieni il gesto.
 \[SUONO ESPIRA — 6s\]
-— Ripeti per tutti i cicli: respiro + gesto insieme. —
+Rilascia.
+— Ripeti per tutti i cicli: gesto sull'inspirazione, tenuto fino a fine espirazione. —
 \[SUONO INSPIRA — 4s × 9 ripetizioni con SUONO ESPIRA — 6s\]
 Questo gesto — pollice e indice uniti — è invisibile in campo.
 Puoi farlo nel tragitto verso la palla. Prima di un corner. Mentre aspetti il fischio.
 Nessuno lo nota. Ma tu sì.
+Non serve dargli un nome. Quando lo fai, stai tornando qui.
 \[SUONO FINE PRATICA\]
 
 **Script Chiusura:**
@@ -458,7 +462,7 @@ Da adesso hai il tuo strumento completo.
 
 **Script Pratica:**
 
-Occhi aperti, punto fisso, attenzione al plesso solare.
+Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.
 \[PAUSA 2s\]
 Prima di iniziare — scegli il tuo mantra.
 Hai tre opzioni:
@@ -474,12 +478,13 @@ Bene. Partiamo con tre respiri normali.
 \[SUONO ESPIRA — 6s\]
 \[×3\]
 \[PAUSA 2s\]
-Ora il Reset completo: al quarto respiro — mentre espiri — gesto + mantra dentro di te.
-Inspira.
+Ora il Reset completo: al quarto respiro — quando inspiri, attiva il gesto e tienilo. Quando espiri, ripeti dentro di te il tuo mantra. Rilascia il gesto a fine espirazione.
+Inspira — gesto.
 \[SUONO INSPIRA — 4s\]
-Espira — gesto — mantra.
+Espira — tieni il gesto — mantra.
 \[SUONO ESPIRA — 6s\]
-— Ripeti: gesto + mantra a ogni espirazione. —
+Rilascia.
+— Ripeti: gesto sull'inspirazione, mantra sull'espirazione, gesto tenuto per tutto il respiro. —
 \[SUONO INSPIRA — 4s × 9 ripetizioni con SUONO ESPIRA — 6s\]
 \[PAUSA 2s\]
 Fermati un momento.

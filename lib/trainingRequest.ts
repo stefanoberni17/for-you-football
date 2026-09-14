@@ -25,6 +25,10 @@ export const FOCUS_OPZIONI = [
 export type FocusId = (typeof FOCUS_OPZIONI)[number]['id'];
 
 export const DURATE = [30, 45, 60, 75, 90] as const;
+/** Focus scelti dall'atleta: fino a 4, in ordine di priorità (Ste, 14/9: "scegliere proprio quello su cui si vuole lavorare"). */
+export const FOCUS_MAX = 4;
+/** Sedute fisiche a settimana richieste dall'atleta (poi clampato al tetto della fase). */
+export const SEDUTE_MAX = 6;
 
 export const MODIFICA_TIPI = [
   { id: 'sposta', label: 'Sposta una seduta' },
@@ -41,8 +45,9 @@ export interface RichiestaGuidata {
   modo: Modo;
   // nuova settimana
   giorni?: number[];        // giorni in cui può allenarsi (1-7); vuoto = decide il planner
+  sedute?: number;          // quante sedute fisiche a settimana (1-SEDUTE_MAX); vuoto = decide il planner
   durataMax?: number;       // minuti per seduta
-  focus?: FocusId[];        // max 2
+  focus?: FocusId[];        // fino a FOCUS_MAX, in ordine di priorità
   note?: string;            // max 160 caratteri, opzionale
   // modifica del piano attuale (una sola)
   modifica?: { tipo: ModificaTipo; giorno?: number; a?: number; focus?: FocusId; durataMax?: number };
@@ -52,11 +57,12 @@ export interface Vincoli {
   giorniAmmessi?: number[];  // sedute SOLO in questi giorni
   giorniVietati?: number[];  // nessuna seduta in questi giorni
   durataMax?: number;        // minuti per seduta
+  numSedute?: number;        // esattamente N sedute (clampato al tetto della fase e ai giorni ammessi)
 }
 
 const clampDay = (d: unknown): number | null => { const n = Number(d); return Number.isInteger(n) && n >= 1 && n <= 7 ? n : null; };
 const focusValidi = (xs: unknown): FocusId[] =>
-  Array.isArray(xs) ? xs.filter((x): x is FocusId => FOCUS_OPZIONI.some((f) => f.id === x)).slice(0, 2) : [];
+  Array.isArray(xs) ? [...new Set(xs.filter((x): x is FocusId => FOCUS_OPZIONI.some((f) => f.id === x)))].slice(0, FOCUS_MAX) : [];
 const focusLabel = (id: FocusId) => FOCUS_OPZIONI.find((f) => f.id === id)!.label;
 const pulisci = (t: unknown, max: number) => (typeof t === 'string' ? t.replace(/<\/?[a-z_]+>/gi, '').replace(/```/g, "'").trim().slice(0, max) : '');
 
@@ -68,6 +74,7 @@ export function parseRichiesta(body: unknown): RichiestaGuidata | null {
   const r: RichiestaGuidata = { modo: b.modo };
   if (Array.isArray(b.giorni)) { const g = [...new Set(b.giorni.map(clampDay).filter((x): x is number => x !== null))].sort(); if (g.length) r.giorni = g; }
   if (DURATE.includes(Number(b.durataMax) as (typeof DURATE)[number])) r.durataMax = Number(b.durataMax);
+  const ns = Number(b.sedute); if (Number.isInteger(ns) && ns >= 1 && ns <= SEDUTE_MAX) r.sedute = ns;
   const f = focusValidi(b.focus); if (f.length) r.focus = f;
   const note = pulisci(b.note, 160); if (note) r.note = note;
   if (r.modo === 'modifica' && b.modifica && typeof b.modifica === 'object') {
@@ -91,8 +98,11 @@ export function componiRichiesta(r: RichiestaGuidata, pianoAttuale?: PlanSession
   if (r.modo === 'nuova') {
     righe.push('NUOVA SETTIMANA.');
     if (r.giorni?.length) { righe.push(`Giorni disponibili per allenarsi con l'app: ${r.giorni.map((d) => DAY_NAMES[d]).join(', ')} (SOLO questi).`); vincoli.giorniAmmessi = r.giorni; }
+    if (r.sedute) { righe.push(`Sedute fisiche richieste: ESATTAMENTE ${r.sedute} a settimana (se il tetto della fase lo permette).`); vincoli.numSedute = r.sedute; }
     if (r.durataMax) { righe.push(`Tempo massimo per seduta: ${r.durataMax} minuti.`); vincoli.durataMax = r.durataMax; }
-    if (r.focus?.length) righe.push(`Focus della settimana: ${r.focus.map(focusLabel).join(' + ')} (dai priorità a questi blocchi, senza saltare le progressioni).`);
+    if (r.focus?.length) righe.push(r.focus.length <= 2
+      ? `Focus della settimana: ${r.focus.map(focusLabel).join(' + ')} (dai priorità a questi blocchi, senza saltare le progressioni).`
+      : `Focus della settimana, in ordine di priorità: ${r.focus.map((f, i) => `${i + 1}. ${focusLabel(f)}`).join(', ')} (copri i primi due in ogni caso, gli altri dove c'è spazio, senza saltare le progressioni).`);
     if (r.note) righe.push(`Nota dell'atleta: "${r.note}"`);
     return { richiesta: righe.join('\n'), vincoli };
   }

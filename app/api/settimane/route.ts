@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { queryDatabase, mapSettimana } from '@/lib/notion';
+import { queryDatabase, mapSettimana, senzaRegia } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       sorts: [{ property: 'Numero Settimana', direction: 'ascending' }],
     });
 
-    const settimane = pages.map(mapSettimana);
+    const settimane = pages.map((p) => senzaRegia(mapSettimana(p)));
 
     return NextResponse.json({ settimane });
   } catch (error: any) {

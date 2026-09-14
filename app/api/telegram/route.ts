@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/events';
 import {
   supabaseAdmin,
   buildUserContext,
@@ -108,9 +109,8 @@ export async function POST(request: NextRequest) {
               telegram_id: telegramUserId,
               telegram_link_code: null,
               telegram_link_code_expires: null,
-              // Chi collega da onboarding senza tornare sull'app non deve essere
-              // reimmerso nel carousel: il binding completato implica onboarding oltrepassato.
-              onboarding_completed: true,
+              // NON tocca onboarding_completed: il collegamento si chiede dopo il
+              // Giorno 1, e prima chiudeva l'onboarding saltando calendario e rituale.
             })
             .eq('user_id', linkProfile.user_id);
 
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('user_id, safety_review')
+      .select('user_id, safety_review, current_week')
       .eq('telegram_id', telegramUserId)
       .single();
 
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
       { role: 'user' as const, content: userText },
     ];
 
-    const { text } = await callClaude(systemBlocks, messages, 1500, true);
+    const { text } = await callClaude(systemBlocks, messages, 1500, true, { maxWeek: profile.current_week || 1 });
 
     // Al primo messaggio: invia avviso privacy prima della risposta del Maestro
     if (isFirstMessage) {
@@ -250,6 +250,7 @@ export async function POST(request: NextRequest) {
     }
 
     await sendTelegramMessage(chatId, text);
+    logEvent(userId, 'coach_message_sent', { channel: 'telegram' });
 
     // Salva user message + risposta del Coach. Se il messaggio ha fatto
     // scattare l'alert, entrambe le righe vengono flaggate: il cleanup a 90

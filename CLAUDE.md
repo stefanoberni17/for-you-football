@@ -108,11 +108,13 @@ for-you-football/
 │   ├── sosCards.ts                        # 4 schede SOS statiche — ora FALLBACK di /api/difficolta se Notion non risponde
 │   ├── toolsCatalog.ts                    # Cassetta: 8 strumenti W1-8 (riferimento cos'è/quando/pratica) — riusati come àncora dalla Palestra
 │   ├── palestraCatalog.ts                 # Palestra per principio: 7 capacità × esercizi base ("Cosa allena" + step), àncora dai tool, unlock per principio/esercizio
+│   ├── events.ts                          # logEvent(userId, event, meta) → onboarding_events (server, fire-and-forget) + whitelist CLIENT_EVENTS
 │   ├── consent.ts                         # Consenso legale: getLatestAcceptedVersion + needsReacceptance (server-only)
 │   ├── activity.ts                        # filterActiveProfiles: esclude dai messaggi proattivi (cron) gli utenti inattivi >30gg (PROACTIVE_INACTIVITY_DAYS) — FAIL-OPEN
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API, safety (keywords, alert, SAFETY_REVIEW_MODE)
 │   ├── trainingAccess.ts                  # hasTrainingAccess(userId) — flag profiles.training_access (area riservata)
 │   ├── trainingSetup.ts                   # "Il tuo setup": attrezzatura, fase (off_season/preparazione_squadra/in_season), tetti sedute e durata per fase
+│   ├── trainingSquadra.ts                 # "Gli allenamenti con la squadra" (facoltativo): sforzo 1-10 + qualità per giorno squadra (profiles.training_squadra, migration 023), testo per i prompt
 │   ├── trainingCatalog.ts                 # Catalogo v1: esercizi corpo libero + TESTS v1 (descrizioni 4 campi) + ROMBO_PUNTE (10 punte)
 │   ├── trainingCatalogV2.ts / .generated  # Catalogo v2 (309 esercizi, 277 attivi) generato da docs/training-catalogo-v2.json via scripts/build-catalog-v2.py
 │   ├── trainingTestsV2.ts                 # Batteria v2: test campo + palestra (massimale stimato Brzycki), soglie B/A/PRO, video
@@ -340,15 +342,16 @@ channel          TEXT NOT NULL   -- 'registration' | 'reaccept'
 
 Il time-gate nei contenuti (`lib/dayUnlockLogic.ts`) forza comunque il ritmo 1 giorno/giorno.
 
-### Flusso registrazione
+### Flusso registrazione (settimana gratis, dal 14/9)
 
 ```
 register (step 1: account) → register (step 2: profilo atleta)
-  → conferma email → login
-  → profile check: is_beta_free || status='active' ? sì: dashboard, no: /pricing
-  → Stripe Checkout → webhook checkout.session.completed → status='active'
-  → redirect / → onboarding (se !onboarding_completed) → dashboard
+  → conferma email → login → onboarding (se !onboarding_completed) → dashboard
+  → W1 G1-G6 GRATIS (check-in, Card, test, azioni, SOS inclusi)
+  → /gate/1 → 403 payment_required → schermata "Hai finito la settimana 1" → /pricing?from=gate
+  → Stripe Checkout → webhook → home "Attivazione in corso…" → Gate, W2-12, Coach
 ```
+"Si paga per continuare, non per iniziare" (Ste, 13/9). `FREE_WEEKS = 1` in `lib/constants.ts`.
 
 ### Access gating
 
@@ -358,8 +361,9 @@ L'unica funzione di verità è `hasActiveAccess(profile)` in `lib/checkAccess.ts
 - `subscription_status='active'` → rate in corso
 - altrimenti → no access → redirect `/pricing`
 
-**Client-side:** check in `app/login/page.tsx` e `app/page.tsx` (dashboard) via `shouldRedirectToPaywall`.
-**Server-side:** `requirePaidAccess(userId)` in `lib/serverAccess.ts` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/giorno`, `/api/gate`, `/api/chat`, `/api/settimana`. `/api/settimane` richiede solo login (preview percorso). Soft se `STRIPE_SECRET_KEY` assente.
+**Settimana gratis (14/9):** `canAccessWeek(profile, week)` = pagante OPPURE `week <= FREE_WEEKS`; `isPaidRoute(pathname)` = `/chat`, `/week-complete/*`, `/giorno` e `/settimana` oltre `FREE_WEEKS`.
+**Client-side:** login e home NON rimbalzano più a `/pricing` (solo `?checkout=success` non attivato → `/pricing?checkout=pending`). `PaywallGuard` agisce solo sulle rotte a pagamento (esclusa `/chat`, che mostra il messaggio in pagina). Il gate (`app/gate/[week]`) su 403 mostra la schermata "Hai finito la settimana N" con CTA `/pricing?from=gate`. `ChatBot` su 403 mostra il messaggio del Coach + card "Sblocca Season 1". La card Telegram su "Giorno 1 completato" e il `TelegramRecoveryBanner` compaiono solo a chi ha Season 1 (il Coach è a pagamento).
+**Server-side:** `requireWeekAccess(userId, week)` su `/api/giorno` (GET/POST/PATCH) e `/api/settimana`; `requirePaidAccess(userId)` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/gate`, `/api/telegram`, `/api/telegram/link`. **Coach in chat: `FREE_COACH_MESSAGES = 10` messaggi gratis** (`/api/chat` conta gli eventi `coach_message_sent` con `meta.channel = 'web'` dell'utente non pagante; oltre → 403 con `reason: 'free_limit'` e il testo del Coach; la risposta porta `freeRemaining`, null per chi ha Season 1); `/api/onboarding/coach-welcome` gratis (il benvenuto in home vale anche in W1). Gratis (solo login): `/api/settimane`, `/api/checkin*`, `/api/actions*`, `/api/reflection`, `/api/calendar`, `/api/difficolta`. Soft se `STRIPE_SECRET_KEY` assente.
 
 ### Auth API (hardening giugno 2026)
 
@@ -462,8 +466,8 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `È Esercizio Principale` (checkbox) — true per giorno 4
 - `Domande Gate` (text — newline separated) — solo per giorno 7
 - `Tipo Giorno` (select)
-- `Contesto` (text) — **COACH-ONLY**: note di regia del giorno (passate al Coach via tool `leggi_percorso`). NON mostrato all'utente. Da W5 contiene istruzioni dietro le quinte (Regole, "non anticipare", sourcing storie) → mai esporlo in UI.
-- `Perché Funziona` (text) — **USER-FACING**: alimenta il box "💡 Perché funziona" sulla pagina pratica (giorni 1-6). Conferma scientifica leggibile di ciò che il ragazzo sta facendo (concetti reali, zero anticipazioni). Popolato W5-W8 (G1-G6); W1-W4 usano il loro `Contesto` come fallback finché non migrati. Draft: `docs/content-w5-w8/perche-funziona.md`.
+- `Contesto` (text) — **COACH-ONLY**: note di regia del giorno (passate al Coach via tool `leggi_percorso`). NON mostrato all'utente e dal 14/9 **non arriva nemmeno al client**: `senzaRegia()` in `lib/notion.ts` lo toglie (insieme a `Coach Contesto`) dalle risposte di `/api/giorno`, `/api/gate`, `/api/settimana`, `/api/settimane`. Da W5 contiene istruzioni dietro le quinte (Regole, "non anticipare", sourcing storie).
+- `Perché Funziona` (text) — **USER-FACING**: alimenta il box "💡 Perché funziona" sulla pagina pratica (giorni 1-6). Conferma scientifica leggibile di ciò che il ragazzo sta facendo (concetti reali, zero anticipazioni). Popolato W5-W8 (G1-G6); W1-W4 NON hanno più il fallback sul `Contesto` (14/9: il box resta vuoto finché Ste non scrive i 24 testi nel campo dedicato). Draft: `docs/content-w5-w8/perche-funziona.md`.
 - `Domanda Pre Pratica` (text) — domanda riflessione mostrata prima della pratica
 - `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)
@@ -508,18 +512,19 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 
 ## Gli Strumenti del Blocco 1
 
-### Il Reset (Week 1 — Presenza)
-1. Respiro: naso (gonfia pancia) → bocca (alita su vetro)
-2. Chin Mudra: pollice + indice — invisibile in campo
-3. Mantra: "Qui e ora." o "Prossima azione." (scelta al Giorno 3)
+### Il Reset (Week 1 — Presenza) — canone = testo Notion W1-G1/G2/G3 (deciso da Ste il 13/9)
+1. Respiro contato: naso 4 secondi (gonfia la pancia) → bocca 6 secondi (alita su un vetro)
+2. Il gesto: pollice + indice uniti di entrambe le mani — attivato sull'inspirazione, tenuto per tutto il respiro fino a fine espirazione, poi rilasciato. Invisibile in campo. Il percorso NON gli dà un nome ("il tuo interruttore"): mai "Chin Mudra" verso l'utente
+3. Mantra ripetuto dentro mentre espira: "Reset." / "Riparto qui." / "Sono qui." o uno suo (scelta al Giorno 3)
+Allineati a questo canone (14/9): prompt Coach (`lib/coach-ai.ts`), fallback `GlobalMeditationWrapper` ("Reset."), pagine Notion "Script Audio" W1-G2 e W1-G3 (da RI-REGISTRARE: gli MP3 in produzione dicono ancora "Chin Mudra", gesto sull'espiro e "Qui e ora / Prossima azione").
 
 ### L'Observer (Week 2 — Osservazione)
 3 categorie: PASSATO / FUTURO / GIUDIZIO
 Formula: Reset → Observer (nomina) → torna
 
-### Il Body Check (Week 3 — Ascolto)
-4 punti: Piedi → Stomaco → Petto/Respiro → Spalle/Mascella
-Solo notare, non modificare.
+### Il Body Check (Week 3 — Ascolto) — canone = testo W3-G1, UNICA lista (14/9)
+4 zone: PIEDI (radicato o galleggi?) → STOMACO (aperto o stretto?) → PETTO (respiro ampio o corto?) → SPALLE (alte e tese o basse e morbide?)
+Solo notare, non modificare. Il prompt del Coach usa solo questa lista (prima diceva testa → spalle → petto → pancia).
 Formula: Reset → Body Check → torna (10-15 sec extra)
 
 ### Il Protocollo Pressione (Week 4)
@@ -538,7 +543,7 @@ Totale: 15-20 sec. In campo, sempre.
 - `buildUserContext(userId)` — Costruisce contesto personalizzato leggendo da Supabase (include check-in fisico di oggi + media ultimi 7 giorni)
 - `LEGGI_PERCORSO_TOOL` — Tool Anthropic per leggere contenuto settimane/giorni da Notion in tempo reale
 - `executeLeggiPercorso(input)` — Esegue fetch settimana/giorno da Notion, ritorna testo strutturato
-- `callClaude(systemPrompt, messages, maxTokens, useTools)` — Chiama `claude-sonnet-4-6` (se `useTools=true`: gestisce tool_use con doppia chiamata)
+- `callClaude(systemPrompt, messages, maxTokens, useTools, { maxWeek })` — Chiama `claude-sonnet-4-6` (se `useTools=true`: gestisce tool_use con doppia chiamata). `maxWeek` = `current_week` dell'utente (chat e Telegram lo passano): `leggi_percorso` rifiuta `week > maxWeek` con un tool result che ricorda la REGOLA ANTICIPAZIONI (14/9: prima "dammi la settimana dopo" passava dal tool)
 - `generateCoachRecap(userId, messages)` — Distilla conversazione in coach_notes (pattern, temi, thread aperti)
 - `checkSafetyKeywords(text)` — Rileva parole chiave a rischio (suicidio, autolesionismo, violenza)
 - `SAFETY_KEYWORDS` — Lista keyword per detection
@@ -655,7 +660,7 @@ La memoria persistente del Coach si basa su:
 
 ### Onboarding (`app/onboarding/page.tsx`)
 - Carousel 5 slide (benvenuto, come funziona [giorni+gate+strumenti+3 blocchi], "la tua giornata con l'app", Coach AI, pronto a iniziare)
-- **Slide Coach = gate morbido Telegram:** il CTA primario in basso è "📲 Collega il Coach" (deep-link), lo skip è il link esplicito "Continua senza promemoria →"; al ritorno da Telegram (`visibilitychange` → refetch `telegram_id`) la slide mostra "✅ Coach collegato" e torna il normale Continua
+- **Slide Coach solo informativa** (dal 13/9, sera 4): il collegamento Telegram NON si chiede più in onboarding (portava fuori dall'app prima del primo contenuto) ma sulla schermata "Giorno 1 completato" di `app/giorno/[week]/[day]/page.tsx`; `/start <codice>` nel webhook non scrive più `onboarding_completed`
 - Dopo "Inizia il percorso" (o "Salta introduzione"): step calendario (riuso `WeeklyCalendarPopup`, saltabile, POST `/api/calendar` week=1) → schermata rituale → `/`
 - Mostrato dopo prima registrazione
 
@@ -742,7 +747,8 @@ La memoria persistente del Coach si basa su:
 ### `ChatBot.tsx`
 - Header: "Coach AI — Il tuo allenatore mentale"
 - Messaggio benvenuto personalizzato col nome (prop `userName` da `app/chat/page.tsx`; filtrato prima dell'invio a Claude)
-- **Conversazione persistita in `sessionStorage`** (`coachChatMessages`): sopravvive a refresh/cambio tab, si azzera alla chiusura browser. La memoria del Coach resta solo Telegram.
+- **Conversazione salvata sul dispositivo per utente** (14/9: `localStorage` chiave `coachChat:<userId>`, welcome + ultimi 40 messaggi; prima `sessionStorage`, persa alla chiusura dell'app). Si ripristina al rientro e il client rimanda la cronologia al server, quindi il Coach riprende il filo. `clearSavedChats()` al logout dal profilo (telefono condiviso). Il server continua a NON salvare i messaggi web: la memoria server resta `coach_notes`.
+- **Settimana gratis:** riga "ti restano N messaggi col Coach" (`freeRemaining` dalla API); al limite o senza accesso, messaggio del Coach + card "Sblocca Season 1".
 - Suggestion pills visibili solo prima del primo messaggio utente
 - Loader animato durante attesa risposta
 - Scroll automatico ai nuovi messaggi
@@ -763,14 +769,15 @@ La memoria persistente del Coach si basa su:
 
 ### `ActionsSetupSheet.tsx`
 - Bottom-sheet full-screen aperto da `/oggi?setup=1` o dal bottone "Modifica".
-- Pill toggle filtro: `[Per la tua settimana]` (default, rispetta REGOLA ANTICIPAZIONI tramite `allowedPrinciplesForWeek`) / `[Tutte]`.
-- Catalogo 20 azioni raggruppate per categoria collassabile (ChevronDown). Toggle "Settimana N" è z-[60] (sopra la BottomTabBar) e mostra count azioni nascoste.
+- Catalogo filtrato SOLO per la settimana dell'utente (`allowedPrinciplesForWeek`, REGOLA ANTICIPAZIONI): il toggle `[Tutte]` è stato tolto (14/9). Sotto il titolo una riga "Settimana N: X azioni. Altre Y arrivano con le prossime settimane."
+- Catalogo 20 azioni raggruppate per categoria collassabile (ChevronDown).
 - Item: checkbox custom + testo + badge principio (W1/W2/W3/W4).
 - Sezione "+ Aggiungi azione personalizzata" con input + select categoria + counter 120 char.
 - Sticky bottom: chip selezionate + counter "X/5" + bottone Salva (disabled fuori da 1-5).
 
 ### `PracticePopup.tsx`
 - UI pratica giornaliera con timer countdown
+- **"Ho finito ✓" dal 60 % del timer** (sera 4): bottone sotto il timer quando `timeLeft <= 40 %` della durata; chiude anche l'audio e porta a `done` (W1-G1 sono 50" di respiri: il timer da 3' senza uscita era un muro; Ste porta `Durata Minuti` di W1-G1 a 2 su Notion)
 - Animazione cerchio respirazione asimmetrica: inspirazione `durataInspira`s / espirazione `durataEspira`s (default 4/6)
 - Timer implementato con `setTimeout` ricorsivo (non `setInterval`) per supportare durate diverse per inhale/exhale
 - Props opzionali `durataInspira` e `durataEspira` passati da `app/giorno/[week]/[day]/page.tsx` (letti da Notion)
@@ -792,13 +799,13 @@ La memoria persistente del Coach si basa su:
 - Rebrand verde brand (no più viola/🧘): titolo "Il Reset", copy campo ("Naso, poi bocca — come in campo")
 - Setup: scelta durata (1/2/3/5 min) + mantra settimana
 - Fase Reset: cerchio animato con **respiro asimmetrico 4s inspira / 6s espira** (setTimeout ricorsivo, `INHALE_MS`/`EXHALE_MS`), countdown, toggle audio (nature/focus/mute)
-- Auto-show giornaliero soppresso se: `localStorage.ritualSkipped === oggi`, oppure `last_meditation_completed === oggi`, oppure **pratica del giorno già completata oggi** (query `user_day_progress` con `completed_at >= today`)
+- **Auto-show solo a giorno del percorso completato oggi e mai prima di W1-G3** (sera 4, review 13/9: prima proponeva il Reset ogni mattina di W1 prima che il percorso lo costruisse): query `user_day_progress` completed → serve `W1-G3` fatto E una riga con `completed_at` di oggi (fuso italiano, `dateItaly`). Soppresso anche se `localStorage.ritualSkipped === oggi` o `last_meditation_completed === oggi`. La pagina giorno lascia `sessionStorage.fyfDayCompletedPending` (`DAY_COMPLETED_KEY`) al completamento: al primo cambio pagina fuori da `/giorno/*` il controllo si ripete e il Reset viene proposto subito, senza aspettare il prossimo avvio
 - "Salta per oggi" (solo auto-mode) → persiste `ritualSkipped = oggi`
 - Aggiornamento `last_meditation_completed` su profilo al completamento
 
 ### `GlobalMeditationWrapper.tsx`
 - Context provider al livello root — step 2 del rituale del mattino (renderizza il popup quando `checkinDone`)
-- Carica mantra settimana corrente via `GET /api/settimana?week=N` → `settimana.mantraDashboard` (fallback `"Qui e ora."` se vuoto; fetch una sola volta, non a ogni cambio rotta)
+- Carica mantra settimana corrente via `GET /api/settimana?week=N` → `settimana.mantraDashboard` (fallback `"Reset."` se vuoto; fetch una sola volta, non a ogni cambio rotta)
 - Skip pages: `/login`, `/register`, `/onboarding`, `/pricing`, `/beta-complete`
 - Espone `openMeditation()` per l'uso on-demand (bottone "Reset rapido" in home, CTA schede SOS)
 - WeekName formato: "Il Reset — Presenza" (strumento + principio)
@@ -810,6 +817,7 @@ La memoria persistente del Coach si basa su:
 ### `GlobalCheckinWrapper.tsx`
 - Wrapper root (wrappa `GlobalMeditationWrapper` + children) — step 1 del rituale del mattino
 - Se `localStorage.ritualSkipped === oggi` → non mostra nulla (skip persistito)
+- **Check-in dal giorno 2** (sera 4): niente modale finché non esiste un giorno del percorso completato PRIMA di oggi (prima riga `user_day_progress` completed per `completed_at`, confronto in fuso italiano) — il primo contenuto viene prima di qualsiasi slider
 - Verifica check-in oggi via `GET /api/checkin` → se non fatto mostra `DailyCheckinModal`
 - Salta su `/login`, `/register`, `/onboarding`, `/pricing`, `/beta-complete`
 - On complete → `checkinDone = true` → il wrapper meditazione propone il Reset (rituale continuo)
@@ -892,7 +900,7 @@ Ritorna tutti i check-in degli ultimi N giorni (default 30) ordinati per data cr
 Cron job Vercel (03:00 UTC). Auth via `CRON_SECRET`. Elimina `telegram_conversations` > 90 giorni — **escluse le righe `safety_flagged`** (mai cancellate automaticamente).
 
 ### `POST /api/stripe/create-checkout`
-Body: `{ plan: 'early_bird' | 'full' }`. Crea Stripe Checkout Session (subscription mode, `allow_promotion_codes`), salva `supabase_user_id` in metadata sub, ritorna `{ url }`. Bypassa se `is_beta_free`.
+Body: `{ plan: 'onetime' | 'installments', payer_email }`. Crea Stripe Checkout Session (payment o subscription), salva `supabase_user_id` in metadata, ritorna `{ url }`. `payer_email` = contraente adulto: il customer Stripe prende quella email (ricevute all'adulto), indirizzo di fatturazione obbligatorio. Bypassa se `is_beta_free` o `season1_access`.
 
 ### `POST /api/stripe/webhook`
 Runtime: `nodejs`. Verifica signature (`STRIPE_WEBHOOK_SECRET`), idempotenza via `stripe_events`. Handler: `checkout.session.completed`, `customer.subscription.updated/deleted`, `invoice.payment_failed`. Aggiorna `subscription_status` su `profiles`.
@@ -938,11 +946,13 @@ Nel recupero il player (`components/TrainingSessionPlayer.tsx`) chiede RPE 1-10 
 ### Carico totale (`lib/trainingLoad.ts`, settembre 2026)
 Carico seduta = durata (dal piano) × RPE (media dei log per serie → feedback facile 4/ok 6/duro 8 → 6). Settimane lunedì-domenica: **acuto** = max(ultimi 7 giorni, ultima settimana completa), **cronico** = media delle settimane complete precedenti (fino a 3), **ACWR** = acuto/cronico con stato poco (<0.8) / ok (≤1.3) / alto (≤1.5) / rischio; serve storico ≥ 14 giorni. Target settimanale (cronico 90-110%, deload 50-70%, rischio 70-100%) e **tetto** (cronico +15%, deload 75%, rischio 105%): `expandPiano` del planner v2 rifiuta la settimana pianificata oltre il tetto (RPE atteso per qualità di blocco, calibrato sul rapporto RPE reale/atteso dell'atleta 0.7-1.3). Stima carico squadra dal calendario (allenamenti × durata × 6, partita 90' × 9) mostrata a parte. `loadCarico(userId)` in `trainingPlanner.ts`; `/api/training/state` ritorna `carico`; card "Carico settimanale" nell'hub.
 
+**Gli allenamenti con la squadra (facoltativo, 14/9, migration 023):** nella card carico, blocco richiudibile "Vuoi un piano più preciso?": per ogni giorno squadra del calendario l'atleta indica lo sforzo 1-10 e su cosa lavora il mister (`SQUADRA_QUALITA` in `lib/trainingSquadra.ts`: resistenza, forza in campo, rapidità e velocità, tecnica, tattica/partitella, prevenzione/core). Salvato in `profiles.training_squadra` JSONB per giorno della settimana (abitudine stabile: il calendario si svuota ogni lunedì) via `POST /api/training/setup { squadra }` (update separato: se la colonna manca il resto del setup passa e la risposta porta `squadraSalvata: false`). `loadSquadra(userId)` in `trainingPlanner.ts` (vuoto se la colonna manca) entra in `PlannerContext.squadra`: `caricoSquadraStimato` usa lo sforzo del giorno al posto del 6 fisso; `squadraTesto()` nei prompt del planner v1/v2 e della chat ("lunedì (sforzo 7/10: Resistenza), …"); regola 20 del planner v2 (`v2.4-squadra`): **bilancia, non vieta** (Ste: "non bloccherei l'allenamento il giorno dopo"): le qualità che la squadra fa già forte (≥7) non si raddoppiano salvo focus scelto, il giorno dopo una giornata da 8+ ci si allena su altro o in versione short, e il messaggio lo dice quando la squadra copre già un focus. Nessun controllo nel validatore.
+
 ### Review livelli (7 set 2026)
 Dal foglio `docs/training-seed/livello-review-2026-09-04.xlsx`: 28 esercizi `soloLivello` (esclusione dura sotto livello) + 31 `notaLivello` (indicazioni di dose: "anche B ma poco peso", prerequisiti). **Il blocco di Ste vince sull'esercizio**: gli item nati da un blocco di livello ≤ atleta saltano l'esclusione (`skipSoloLivello`); il gradino sopra è escluso da `blocchiDisponibili` se contiene esercizi solo-livello sopra l'atleta.
 
 ### Richiesta guidata, salti, posticipi, nuova settimana (`lib/trainingRequest.ts`, settembre 2026)
-- **Maschera al posto del testo libero** (`components/TrainingPlanForm.tsx`): "Rifai da capo" = giorni disponibili + tempo per seduta (30-90') + focus (max 2) + nota corta; "Modifica la settimana" = UNA modifica tra sposta/togli una seduta, più leggera/intensa, meno tempo, cambia focus, aggiungi tecnica. `parseRichiesta` normalizza il body, `componiRichiesta` produce il testo per il prompt **e i vincoli duri** (`giorniAmmessi`, `giorniVietati`, `durataMax`) che `expandPiano` fa rispettare (regola 19). Con "modifica" i giorni già passati restano quelli del piano attuale e i completamenti si leggono su tutti i piani della settimana (`/api/training/state`).
+- **Maschera al posto del testo libero** (`components/TrainingPlanForm.tsx`): "Rifai da capo" = **la settimana con la squadra** (chips ⚽ partita / · squadra da `user_weekly_calendar`, o invito a impostarla dalla home) + **quante sedute fisiche** (1..tetto di fase, vincolo duro `numSedute`: `seduteRichieste()` nel planner v2 lo limita al tetto e ai giorni ammessi, il validatore rifiuta un piano con un numero diverso) + giorni disponibili (con marker ⚽/·S) + tempo per seduta (30-90') + **focus fino a 4 in ordine di priorità** (`FOCUS_MAX`, il numero d'ordine è mostrato sul chip) + nota corta; "Modifica la settimana" = UNA modifica tra sposta/togli una seduta, più leggera/intensa, meno tempo, cambia focus, aggiungi tecnica. `parseRichiesta` normalizza il body, `componiRichiesta` produce il testo per il prompt **e i vincoli duri** (`giorniAmmessi`, `giorniVietati`, `durataMax`, `numSedute`) che `expandPiano` fa rispettare (regola 19). Con "modifica" i giorni già passati restano quelli del piano attuale e i completamenti si leggono su tutti i piani della settimana (`/api/training/state`, che ritorna anche `calendario` {trainingDays, matchDays} e `maxSeduteFisiche` per la maschera). `PLANNER_V2_PROMPT_VERSION = 'v2.3-sedute-focus'`.
 - **Stati seduta** (`statoSeduta`): fatta · oggi · **recuperabile** (era ieri: si può ancora fare oggi) · **saltata** (passata da 2+ giorni: resta in memoria, il calendario va avanti, la pagina seduta la blocca) · futura.
 - **Posticipo** (`PATCH /api/training/plan {plan_id, giorno}`): al giorno dopo, una volta sola (`posticipata_da`), giorno libero, mai oltre la domenica; il piano spostato ripassa dal validatore (finestre partita, tetti) e viene aggiornato in place.
 - **Nuova settimana**: se il piano è di una settimana passata (`planStale`) l'hub ne genera uno da solo; le sedute a blocchi **saltate la settimana precedente vengono riproposte uguali** (`daRecuperare` in `loadContextV2`, regola 18, controllo in `expandPiano` fino al tetto sedute, flag `recupero` sulla seduta, badge "Recupero" nell'hub; anche il fallback le mette per prime).
@@ -972,6 +982,11 @@ Report: `docs/review-2026-09-13.md`; decisioni di Ste nella risposta del 13/9 (c
 
 - **Sera 2 (vendita, PR #81):** `BETA_MAX_WEEK = 12` con `WEEK_RECORD_IDS` 10-12 (senza, `leggi_percorso` rispondeva "non disponibile" per W10-12: il tool legge per id, non per numero) e `WEEK_TOOLS` 10-12; limiti riflessione giorno 1000→2000 e gate 800→1500 (W11-G4 è il Protocollo For You in una pagina); teaser "Prossimamente" in `/settimane` solo se `BETA_MAX_WEEK < 12`. Prezzi da `lib/constants.ts` (`SEASON_PRICE_ONETIME/INSTALLMENT/FULL`, `SEASON_INSTALLMENTS`: da tenere allineati ai Price Stripe in env), via la data "fino al 30 agosto" e "dal 1 settembre"; garanzia 4 settimane lasciata con TODO(termini). Home: card del Coach sotto l'hero finché `totalCompleted < 3`, poi in fondo. Registrazione step 2: "Salta per ora →". Onboarding: via il paragrafo "3-4 settimane" (l'unico disclaimer sui tempi resta W1-G1 su Notion, "2-3 settimane"). `components/PaywallGuard.tsx` nel layout: paywall client su tutte le pagine non pubbliche (fail-open, cache 60"); tab bar nascosta su `/pricing`.
 
+- **Settimana gratis (14/9, confermata da Ste):** `FREE_WEEKS = 1`; vedi "Access gating". Il primo muro è il gate di W1: schermata dedicata + `/pricing?from=gate`. Coach in chat: `FREE_COACH_MESSAGES = 10` messaggi gratis con contatore e chiusura in voce del Coach; benvenuto in home gratis; Telegram resta di Season 1 (niente card Telegram su G1 per chi non paga). Chat salvata sul dispositivo per utente (`localStorage`, ultimi 40).
+- **Dopo le sere (14/9):** canone del Reset allineato (vedi "Il Reset" sopra). Una sola lista Body Check nel prompt (piedi → stomaco → petto → spalle, da W3-G1). `leggi_percorso` rifiuta le settimane oltre `current_week` (`callClaude(..., { maxWeek })`). `richText` in `lib/notion.ts` toglie gli asterischi markdown letterali (`stripMarkdownStars`: W6-W7 mostravano "**Un minuto**"); `senzaRegia()` esclude `contesto`/`coachContesto` da tutte le risposte al client; il box "Perché funziona" legge SOLO il campo dedicato (via il fallback W1-W4). Privacy: residuo "Maestro AI" corretto.
+- **Sere 6-7 (gli eventi):** `lib/events.ts` (`logEvent`, server, fire-and-forget) scrive in `onboarding_events` gli eventi `signup_completed` (register), `checkin_saved`, `day_completed {week,day}`, `gate_completed {week}`, `coach_message_sent {channel: web|telegram}`, `checkout_started {plan}`, `payment_completed {plan, amount_total}` (webhook), `push_enabled` (push/subscribe). Dal client via `trackOnboarding` → `/api/onboarding/event` (whitelist `CLIENT_EVENTS` in `lib/events.ts`): `reset_completed {auto, seconds}` (MeditationPopup), `pricing_view`, `app_open` (una volta al giorno per device da `GlobalCheckinWrapper` + dedup server per utente/giorno italiano). Migration `022_events_views.sql`: viste `v_attivita_utente` (SOLO azioni dell'utente: giorno, check-in, messaggio `role='user'`, tick, Reset, app_open — mai un messaggio in uscita del bot), `v_ultima_attivita`, `v_funnel_primo_giorno` (per utente: signup → G1 → primo Reset → primo messaggio Coach → G7, con fallback storici da `user_day_progress`/`telegram_conversations`), `v_funnel_primo_giorno_settimane`, `v_coorti_d7_d28` (attivo D7 = azione tra il 7° e il 13° giorno, D28 tra il 28° e il 34°, percentuali sugli eleggibili). `lib/activity.ts` (cron) già contava solo azioni dell'utente.
+- **Sera 5 (il contraente):** chi paga è un adulto. `/pricing` chiede l'**email di chi paga** (obbligatoria, link "Pago io, usa la mia email"); `create-checkout` la valida, aggiorna il customer Stripe con quella email (ricevute, fatture delle rate e portal all'adulto; `metadata.payer_email` + `athlete_email`, il profilo app resta del ragazzo), `billing_address_collection: 'required'` + `customer_update: { address, name: 'auto' }`, e `consent_collection.terms_of_service: 'required'` SOLO quando `TERMS_VERSION` è compilata (serve l'URL dei termini in Stripe → Impostazioni Checkout, altrimenti la session fallisce). **Ritorno da Stripe** (`/?checkout=success`): la home mostra "Attivazione in corso…" e rilegge il profilo fino a 5 volte ogni 2" prima di mandare a `/pricing?checkout=pending` (banner "non serve pagare di nuovo, scrivici"); `PaywallGuard` non rimbalza con `checkout=success` in URL ed espone `resetPaywallCache()` (la home la chiama dopo l'attivazione: la cache 60" teneva il "no accesso" vecchio).
+- **Sera 4 (il primo giorno):** rituale del mattino spento finché non c'è contenuto: check-in solo da chi ha un giorno completato prima di oggi (`GlobalCheckinWrapper`), Reset automatico solo a giorno completato oggi e mai prima di W1-G3 (`MeditationPopup`, marker `DAY_COMPLETED_KEY` dalla pagina giorno per riproporlo subito dopo "Giorno completato"). "Ho finito ✓" dal 60 % del timer in `PracticePopup`. Richiesta Telegram tolta dall'onboarding (slide Coach solo informativa) e messa sulla schermata "Giorno 1 completato" (card con deep-link, "✅ Coach collegato" al ritorno via `visibilitychange`, evento `telegram_collega_click` con `from: 'giorno1_completato'`); `/start <codice>` non scrive più `onboarding_completed`. Bozza della riflessione e della domanda pre-pratica in `sessionStorage` (`dayDraft-w{W}-d{D}`, debounce 600 ms, ripristino se il server non ha già un testo, clear al completamento). Helper `dateItaly(value)` in `lib/dateItaly.ts`.
 - **Sera 3 (il domani, PR #82):** push prompt non più soppresso per chi non ha Telegram (`TelegramRecoveryBanner` espone `onVisibilityChange`, la home sopprime solo se il banner è davvero in vista; i cron mattina/sera mandavano già la push a chi non ha `telegram_id`). **Ripresa PWA**: `components/AppResume.tsx` nel layout ricarica al ritorno in primo piano se è cambiato il giorno (`todayItaly`) o la build (`GET /api/version` = `VERCEL_GIT_COMMIT_SHA`) e non c'è una sessione in corso (`lib/activeSession.ts`, contatore alimentato da PracticePopup, MeditationPopup, TrainingSessionPlayer); `public/sw.js` fa `skipWaiting` + `clients.claim`. **Timer a timestamp** (`endsAt`, tick ogni 500 ms + ricalcolo su `visibilitychange`) in PracticePopup, MeditationPopup e nel player (recupero ed esecuzione): iOS sospende gli interval in background, prima il countdown si fermava.
 
 ### Everfit (strumento di Ste, non dell'app)
@@ -1111,6 +1126,21 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 
 - [x] **Feature — FYF Training v0 (area riservata, agosto 2026):** binario allenamento dietro `profiles.training_access` (migration 015), route `/allenamento/*`, catalogo v1 + motore deterministico + planner Claude con validatore. Dettagli nella sezione **FYF Training** sopra.
 - [x] **FYF Training v2 (settembre 2026):** setup atleta con fase stagione (migration 017); batteria test v2 campo + palestra con descrizioni a 4 campi e video (migration 018); rombo a 10 punte; catalogo v2 da JSON (309 esercizi, sequenze yoga e video del canale mappati); regole v2 (livello = dose, finestre partita, plio contatti per livello); libreria di 144 blocchi dai workout Everfit; planner v2 a blocchi (default) con validazione blocco+item; feedback per serie con RPE e auto-regolazione (migration 019, applicata); script Everfit per leggere/assegnare allenamenti (`.claude/settings.json` pre-approva il comando). PR #49-#65.
+
+### Da fare — Ste (fuori dal codice, dalle sere 1-5)
+- [ ] Applicare la migration `021_consent_health_training.sql` su Supabase (PR #78), se non già fatta
+- [x] Migration `023_training_squadra.sql` applicata su Supabase (Ste, 14/9)
+- [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
+- [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
+- [ ] Stripe dashboard: quando i termini definitivi esistono, inserire l'URL di `/termini` in Impostazioni → Checkout, POI compilare `TERMS_VERSION` (accende `consent_collection` nel checkout)
+- [ ] Notion: `Durata Minuti` di W1-G1 a 2
+- [ ] Prove sera 4 (PR #83): account nuovo → onboarding senza Telegram → home senza check-in né Reset → G1 con "Ho finito ✓" dopo il 60 % → card Telegram su "Giorno 1 completato"; account con G3 fatto → completa il giorno → "Torna alla settimana" → parte il Reset
+- [ ] Prove sera 5 (PR #83): pagamento di prova con l'email di un genitore nel campo → indirizzo richiesto da Stripe → ricevuta al genitore → "Attivazione in corso…" → home sbloccata
+- [ ] Prove sera 1: bot da un account appena collegato; `/sblocca` con id sbagliato; Vercel logs "Telegram webhook error"
+- [ ] Scrivere i 24 "Perché funziona" di W1-W4 su Notion nel campo dedicato (dal 14/9 il box in W1-W4 è vuoto: il fallback sul Contesto è stato tolto)
+- [ ] Ri-registrare gli audio W1-G2 e W1-G3 dagli script Notion aggiornati (14/9): gli MP3 in produzione dicono ancora "Chin Mudra", gesto sull'espiro e i mantra vecchi
+- [ ] Prova settimana gratis: account nuovo senza pagare → login → onboarding → home con il benvenuto del Coach → G1-G6 → al giorno 7 la schermata "Hai finito la settimana 1" → /pricing con il banner del Gate; chat Coach → "ti restano 9 messaggi", all'11° il messaggio di chiusura + "Sblocca Season 1"; chiudi e riapri l'app → la chat è ancora lì
+- [ ] Decidere se il Reset automatico deve tornare al mattino dal G4 (oggi: solo dopo il giorno completato, lettura letterale della review)
 
 ### Da fare
 - [ ] **FYF Training — prossimi passi:** (1) ✅ "Rigenera" col planner v2 provato da Ste; (2) ✅ review livelli applicata (PR #67); (3) settimana Everfit successiva per "Utente E." (dal 14/9) con token nuovo; (4) ✅ carico totale session-RPE/ACWR (PR #68) — da osservare sui dati reali quando ci saranno ≥2 settimane di sedute; (5) ✅ blocchi incompleti: 135/144 completi — Barbell Deadlift dentro (solo A, `soloLivello`), Headball disattivata per scelta di Ste (i 9 blocchi Visione restano incompleti finché non si attiva); (5b) ✅ maschera guidata per generare/modificare, salti/recuperi/posticipi, nuova settimana automatica con recupero delle sedute saltate — da provare sul campo; (6) video di visione: collegarli all'esercizio nel player — Ste lo fa dopo; (7) apertura del modulo ad altri utenti test (flag via SQL) prima di pensare a UI/paywall.

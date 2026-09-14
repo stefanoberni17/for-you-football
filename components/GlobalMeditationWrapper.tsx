@@ -46,8 +46,9 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
         const mantraText = (data?.settimana?.mantraDashboard || '')
           .replace(/<br>/g, '\n');
 
-        // Fallback: senza mantra da Notion il popup non renderizzava mai
-        setMantra(mantraText || 'Qui e ora.');
+        // Fallback: senza mantra da Notion il popup non renderizzava mai.
+        // Canone del Reset (W1-G3): "Reset." / "Riparto qui." / "Sono qui." — mai "Qui e ora".
+        setMantra(mantraText || 'Reset.');
         const tool = WEEK_TOOLS[currentWeek] || '';
         const principle = WEEK_PRINCIPLES[currentWeek] || '';
         setWeekName(tool ? `${tool} — ${principle}` : `Settimana ${currentWeek}`);
@@ -55,7 +56,7 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
         // Oltre l'ultima settimana pubblicata: il Reset resta vivo (rituale +
         // "Reset rapido" in Palestra/SOS) con il mantra base — prima il popup
         // non montava mai e i bottoni erano morti.
-        setMantra('Qui e ora.');
+        setMantra('Reset.');
         setWeekName('Il Reset — Presenza');
       }
     };

@@ -15,7 +15,18 @@ export interface ChatBotRef {
   sendSuggestion: (text: string) => void;
 }
 
-const CHAT_STORAGE_KEY = 'coachChatMessages';
+// Conversazione salvata sul DISPOSITIVO per utente (localStorage: sopravvive alla
+// chiusura dell'app, resta locale). Tetto agli ultimi CHAT_KEEP messaggi.
+const CHAT_STORAGE_PREFIX = 'coachChat:';
+const CHAT_KEEP = 40;
+export const chatStorageKey = (userId: string) => `${CHAT_STORAGE_PREFIX}${userId}`;
+/** Da chiamare al logout: toglie le chat salvate di tutti gli utenti su questo dispositivo. */
+export function clearSavedChats() {
+  try {
+    Object.keys(localStorage).filter(k => k.startsWith(CHAT_STORAGE_PREFIX)).forEach(k => localStorage.removeItem(k));
+    sessionStorage.removeItem('coachChatMessages');
+  } catch { /* no-op */ }
+}
 
 function makeWelcome(userName?: string): Message {
   return {
@@ -29,6 +40,9 @@ function makeWelcome(userName?: string): Message {
 
 export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Ref<ChatBotRef>; suggestions?: string[]; userName?: string }) {
   const [messages, setMessages] = useState<Message[]>([makeWelcome(userName)]);
+  // Settimana gratis: FREE_COACH_MESSAGES messaggi, poi 403 payment_required dalla API
+  const [paywalled, setPaywalled] = useState(false);
+  const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -42,12 +56,13 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
     getUser();
   }, []);
 
-  // Ripristina la conversazione dalla sessione (sopravvive a refresh/cambio tab,
-  // si azzera alla chiusura del browser). La memoria persistente del Coach resta
-  // solo su Telegram — questa è continuità di sessione, non storage permanente.
+  // Ripristina la conversazione salvata sul dispositivo per QUESTO utente (chiave per
+  // user id: su un telefono condiviso non si vede la chat di un altro). Il client
+  // rimanda la cronologia al server a ogni messaggio, quindi il Coach riprende il filo.
   useEffect(() => {
+    if (!userId) return;
     try {
-      const saved = sessionStorage.getItem(CHAT_STORAGE_KEY);
+      const saved = localStorage.getItem(chatStorageKey(userId));
       if (saved) {
         const parsed = JSON.parse(saved) as Array<{ role: 'user' | 'assistant'; content: string; timestamp: string }>;
         if (Array.isArray(parsed) && parsed.length > 1) {
@@ -56,7 +71,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
       }
     } catch { /* storage non disponibile — ignora */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   // Aggiorna il welcome col nome quando arriva (solo se conversazione non iniziata)
   useEffect(() => {
@@ -65,16 +80,18 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
     }
   }, [userName]);
 
-  // Salva la conversazione in sessione a ogni messaggio (oltre il solo welcome)
+  // Salva la conversazione sul dispositivo a ogni messaggio (oltre il solo welcome),
+  // tenendo il welcome + gli ultimi CHAT_KEEP messaggi
   useEffect(() => {
-    if (messages.length <= 1) return;
+    if (messages.length <= 1 || !userId) return;
     try {
-      sessionStorage.setItem(
-        CHAT_STORAGE_KEY,
-        JSON.stringify(messages.map(m => ({ ...m, timestamp: m.timestamp.toISOString() })))
+      const tail = messages.length > CHAT_KEEP + 1 ? [messages[0], ...messages.slice(-CHAT_KEEP)] : messages;
+      localStorage.setItem(
+        chatStorageKey(userId),
+        JSON.stringify(tail.map(m => ({ ...m, timestamp: m.timestamp.toISOString() })))
       );
     } catch { /* storage pieno/non disponibile — ignora */ }
-  }, [messages]);
+  }, [messages, userId]);
 
   // Scroll automatico solo del container messaggi interno (non della pagina intera).
   // scrollIntoView() in passato scrollava anche la <main> -> al mount la pagina chat
@@ -134,11 +151,27 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         }]);
         return;
       }
+      if (response.status === 403) {
+        const err = await response.json().catch(() => ({}));
+        if (err?.error === 'payment_required') {
+          setPaywalled(true);
+          setFreeRemaining(0);
+          setMessages(prev => [...prev, {
+            role: 'assistant' as const,
+            content: typeof err.message === 'string' && err.message
+              ? err.message
+              : 'Il Coach si attiva con Season 1. Nella settimana gratis hai il percorso, il check-in e la tua Carta: al Gate della settimana 1 ci ritroviamo qui, e da lì ti scrivo io.',
+            timestamp: new Date(),
+          }]);
+          return;
+        }
+      }
       if (!response.ok) {
         throw new Error('Failed to get response');
       }
 
       const data = await response.json();
+      if (typeof data.freeRemaining === 'number') setFreeRemaining(data.freeRemaining);
 
       const assistantMessage: Message = {
         role: 'assistant',
@@ -260,6 +293,19 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
           </div>
         )}
         <div ref={messagesEndRef} />
+        {!paywalled && freeRemaining !== null && (
+          <p className="text-[11px] text-faint text-center mt-1">
+            Settimana gratis: {freeRemaining === 0 ? 'era il tuo ultimo messaggio col Coach' : `ti restano ${freeRemaining} messaggi col Coach`}
+          </p>
+        )}
+        {paywalled && (
+          <div className="mx-1 mt-1 bg-forest-500/15 border border-forest-500/40 rounded-2xl p-4 text-center">
+            <p className="text-sm text-app font-semibold mb-2">Il Coach continua con Season 1</p>
+            <a href="/pricing" className="inline-block bg-forest-500 hover:bg-forest-600 text-white text-sm font-semibold py-2.5 px-5 rounded-xl transition-colors">
+              Sblocca Season 1 →
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Input */}

@@ -11,7 +11,7 @@ import {
   type ActionPrinciple,
   type CatalogAction,
 } from '@/lib/actionsCatalog';
-import { ChevronDown, X, Plus, Sparkles, ListFilter } from 'lucide-react';
+import { ChevronDown, X, Plus, Sparkles } from 'lucide-react';
 import SaveErrorBanner from './SaveErrorBanner';
 
 const MAX_ACTIONS = 5;
@@ -43,7 +43,6 @@ export default function ActionsSetupSheet({
   onSave,
   onClose,
 }: ActionsSetupSheetProps) {
-  const [filterMode, setFilterMode] = useState<'week' | 'all'>('week');
   const [selected, setSelected] = useState<SelectedAction[]>(initialActions);
   const [customText, setCustomText] = useState('');
   const [customCategory, setCustomCategory] = useState<ActionCategory>('mentale');
@@ -63,10 +62,9 @@ export default function ActionsSetupSheet({
   const hiddenCount = ACTIONS_CATALOG.length - weekFilteredCatalog.length;
   const hasFilter = hiddenCount > 0;
 
-  const visibleCatalog = useMemo(() => {
-    if (!hasFilter || filterMode === 'all') return ACTIONS_CATALOG;
-    return weekFilteredCatalog;
-  }, [filterMode, hasFilter, weekFilteredCatalog]);
+  // Solo le azioni dei principi già costruiti (REGOLA ANTICIPAZIONI): il toggle "Tutte"
+  // mostrava le azioni delle settimane future — tolto il 14/9 (review 13/9).
+  const visibleCatalog = weekFilteredCatalog;
 
   const groupedCatalog = useMemo(() => {
     const map: Record<ActionCategory, CatalogAction[]> = {
@@ -171,45 +169,15 @@ export default function ActionsSetupSheet({
           </button>
         </div>
 
-        {/* Filter toggle — visibile solo se ci sono azioni nascoste per la settimana corrente */}
-        {hasFilter ? (
-          <div className="px-5 pt-3 pb-3 border-b border-divider">
-            <div className="inline-flex bg-surface-2 rounded-full p-0.5 text-xs">
-              <button
-                onClick={() => setFilterMode('week')}
-                aria-pressed={filterMode === 'week'}
-                className={`px-3 py-1.5 rounded-full font-semibold transition-colors flex items-center gap-1.5 ${
-                  filterMode === 'week' ? 'bg-surface text-forest-300 shadow-sm' : 'text-muted'
-                }`}
-              >
-                <Sparkles className="w-3 h-3" aria-hidden="true" />
-                Settimana {currentWeek} ({weekFilteredCatalog.length})
-              </button>
-              <button
-                onClick={() => setFilterMode('all')}
-                aria-pressed={filterMode === 'all'}
-                className={`px-3 py-1.5 rounded-full font-semibold transition-colors flex items-center gap-1.5 ${
-                  filterMode === 'all' ? 'bg-surface text-forest-300 shadow-sm' : 'text-muted'
-                }`}
-              >
-                <ListFilter className="w-3 h-3" aria-hidden="true" />
-                Tutte ({ACTIONS_CATALOG.length})
-              </button>
-            </div>
-            {filterMode === 'week' && (
-              <p className="text-[11px] text-faint mt-2 leading-relaxed">
-                {hiddenCount} {hiddenCount === 1 ? 'azione nascosta' : 'azioni nascoste'} — disponibili dalle prossime settimane.
-              </p>
-            )}
-          </div>
-        ) : (
-          <div className="px-5 pt-2.5 pb-2.5 border-b border-divider">
-            <p className="text-[11px] text-forest-300 font-medium flex items-center gap-1">
-              <Sparkles className="w-3 h-3" aria-hidden="true" />
-              Tutte le {ACTIONS_CATALOG.length} azioni sono disponibili dalla settimana {currentWeek}
-            </p>
-          </div>
-        )}
+        {/* Nota sulle azioni in arrivo (REGOLA ANTICIPAZIONI: le azioni dei principi futuri non si vedono) */}
+        <div className="px-5 pt-2.5 pb-2.5 border-b border-divider">
+          <p className="text-[11px] text-forest-300 font-medium flex items-center gap-1">
+            <Sparkles className="w-3 h-3" aria-hidden="true" />
+            {hasFilter
+              ? `Settimana ${currentWeek}: ${weekFilteredCatalog.length} azioni. ${hiddenCount === 1 ? 'Un\'altra arriva' : `Altre ${hiddenCount} arrivano`} con le prossime settimane.`
+              : `Tutte le ${ACTIONS_CATALOG.length} azioni sono disponibili dalla settimana ${currentWeek}`}
+          </p>
+        </div>
 
         {/* Body — scroll */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">

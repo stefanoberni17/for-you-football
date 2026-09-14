@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess } from '@/lib/serverAccess';
 import { todayItaly } from '@/lib/dateItaly';
 
 export const dynamic = 'force-dynamic';
@@ -22,9 +21,6 @@ export async function GET(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
     const today = todayDate();
@@ -75,9 +71,6 @@ export async function POST(request: NextRequest) {
     const userId = authUserId;
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
     const actions: any[] = body.actions || [];
     if (!Array.isArray(actions) || actions.length < 1 || actions.length > 5) {

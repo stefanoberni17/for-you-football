@@ -111,10 +111,31 @@ export async function fetchPage(pageId: string): Promise<any> {
  *  silenziosamente il campo alla prima parola formattata. */
 export function richText(prop: any): string {
   const segments = prop?.rich_text || [];
-  return segments
-    .map((s: { plain_text?: string }) => s?.plain_text || '')
-    .join('')
-    .replace(/<br>/g, '\n');
+  return stripMarkdownStars(
+    segments
+      .map((s: { plain_text?: string }) => s?.plain_text || '')
+      .join('')
+      .replace(/<br>/g, '\n')
+  );
+}
+
+/** Toglie gli asterischi markdown letterali ("**Un minuto.**", "*solo*") che in W6-W7
+ *  erano finiti nel testo e l'app mostrava così com'erano (review 13/9). Il grassetto
+ *  vero di Notion è formattazione, non testo: non passa di qui. */
+export function stripMarkdownStars(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/(^|[^\w*])\*([^*\n]+?)\*(?![\w*])/g, '$1$2');
+}
+
+/** Versione per il client: SENZA i campi di regia del Coach (`contesto`, `coachContesto`).
+ *  Sono note per il modello (istruzioni, "non anticipare", sourcing storie) e non devono
+ *  arrivare nel browser — prima W1-W4 le mostravano come "Perché funziona". */
+export function senzaRegia<T extends { contesto?: string; coachContesto?: string }>(obj: T): Omit<T, 'contesto' | 'coachContesto'> {
+  const rest: Partial<T> = { ...obj };
+  delete rest.contesto;
+  delete rest.coachContesto;
+  return rest as Omit<T, 'contesto' | 'coachContesto'>;
 }
 
 /** Testo da title property (concatena tutti i segmenti, come richText) */
