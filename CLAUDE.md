@@ -1129,7 +1129,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 
 ### Da fare — Ste (fuori dal codice, dalle sere 1-5)
 - [ ] Applicare la migration `021_consent_health_training.sql` su Supabase (PR #78), se non già fatta
-- [ ] Applicare la migration `023_training_squadra.sql` (PR #83): senza, il blocco "Vuoi un piano più preciso?" nella card carico risponde "manca la migration 023" e il resto del Campo funziona come prima
+- [x] Migration `023_training_squadra.sql` applicata su Supabase (Ste, 14/9)
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
 - [ ] Stripe dashboard: quando i termini definitivi esistono, inserire l'URL di `/termini` in Impostazioni → Checkout, POI compilare `TERMS_VERSION` (accende `consent_collection` nel checkout)
