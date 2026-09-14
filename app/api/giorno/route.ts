@@ -3,7 +3,7 @@ import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess } from '@/lib/serverAccess';
+import { requireWeekAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,12 +34,12 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
-    }
-
     if (!weekNumber || !dayNumber) {
       return NextResponse.json({ error: 'Parametri week e day richiesti' }, { status: 400 });
+    }
+    // Settimana gratis: W1 aperta, dalle successive serve Season 1
+    if (!(await requireWeekAccess(userId, weekNumber))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
     // Calcola giorno precedente per il check
@@ -120,10 +120,10 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    if (!(await requirePaidAccess(userId))) {
+    const { weekNumber, dayNumber, response, prePraticaResponse, reflectionQuestion } = body;
+    if (weekNumber && !(await requireWeekAccess(userId, Number(weekNumber)))) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
-    const { weekNumber, dayNumber, response, prePraticaResponse, reflectionQuestion } = body;
 
     if (!userId || !weekNumber || !dayNumber) {
       return NextResponse.json(
@@ -218,10 +218,10 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    if (!(await requirePaidAccess(userId))) {
+    const { weekNumber, dayNumber, prePraticaResponse } = body;
+    if (weekNumber && !(await requireWeekAccess(userId, Number(weekNumber)))) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
-    const { weekNumber, dayNumber, prePraticaResponse } = body;
 
     if (!userId || !weekNumber || !dayNumber) {
       return NextResponse.json(
@@ -267,10 +267,10 @@ export async function PATCH(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    if (!(await requirePaidAccess(userId))) {
+    const { weekNumber, dayNumber, previousDayCheck } = body;
+    if (weekNumber && !(await requireWeekAccess(userId, Number(weekNumber)))) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
-    const { weekNumber, dayNumber, previousDayCheck } = body;
 
     if (!userId || !weekNumber || !dayNumber || previousDayCheck == null) {
       return NextResponse.json(

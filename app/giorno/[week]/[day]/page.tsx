@@ -11,6 +11,7 @@ import SaveErrorBanner from '@/components/SaveErrorBanner';
 import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
+import { hasActiveAccess } from '@/lib/checkAccess';
 
 export default function GiornoPage() {
   const params = useParams();
@@ -147,10 +148,12 @@ export default function GiornoPage() {
       if (weekNumber === 1 && dayNumber === 1) {
         const { data: prof } = await supabase
           .from('profiles')
-          .select('telegram_id')
+          .select('telegram_id, is_beta_free, subscription_status, season1_access')
           .eq('user_id', uid)
           .maybeSingle();
-        setHasTelegram(!!prof?.telegram_id);
+        // Il Coach su Telegram è di Season 1: nella settimana gratis la card non si mostra
+        // (null = niente card), niente vendita al Giorno 1.
+        setHasTelegram(hasActiveAccess(prof) ? !!prof?.telegram_id : null);
       }
 
       // Mostra check del giorno precedente se non ancora risposto

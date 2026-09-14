@@ -29,6 +29,8 @@ function makeWelcome(userName?: string): Message {
 
 export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Ref<ChatBotRef>; suggestions?: string[]; userName?: string }) {
   const [messages, setMessages] = useState<Message[]>([makeWelcome(userName)]);
+  // Settimana gratis: il Coach è di Season 1 → 403 payment_required dalla API
+  const [paywalled, setPaywalled] = useState(false);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -133,6 +135,18 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
           timestamp: new Date(),
         }]);
         return;
+      }
+      if (response.status === 403) {
+        const err = await response.json().catch(() => ({}));
+        if (err?.error === 'payment_required') {
+          setPaywalled(true);
+          setMessages(prev => [...prev, {
+            role: 'assistant' as const,
+            content: 'Il Coach si attiva con Season 1. Nella settimana gratis hai il percorso, il check-in e la tua Carta: al Gate della settimana 1 ci ritroviamo qui, e da lì ti scrivo io.',
+            timestamp: new Date(),
+          }]);
+          return;
+        }
       }
       if (!response.ok) {
         throw new Error('Failed to get response');
@@ -260,6 +274,14 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
           </div>
         )}
         <div ref={messagesEndRef} />
+        {paywalled && (
+          <div className="mx-1 mt-1 bg-forest-500/15 border border-forest-500/40 rounded-2xl p-4 text-center">
+            <p className="text-sm text-app font-semibold mb-2">Il Coach arriva con Season 1</p>
+            <a href="/pricing" className="inline-block bg-forest-500 hover:bg-forest-600 text-white text-sm font-semibold py-2.5 px-5 rounded-xl transition-colors">
+              Sblocca Season 1 →
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Input */}

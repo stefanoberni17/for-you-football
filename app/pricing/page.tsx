@@ -22,6 +22,7 @@ function PricingContent() {
   const canceled = searchParams.get('checkout') === 'canceled';
   // Pagamento fatto ma webhook non ancora arrivato dopo i 5 tentativi della home
   const pending = searchParams.get('checkout') === 'pending';
+  const fromGate = searchParams.get('from') === 'gate';
   // Contraente adulto: la ricevuta va a chi paga, non al profilo del ragazzo
   const [payerEmail, setPayerEmail] = useState('');
   const [accountEmail, setAccountEmail] = useState('');
@@ -103,7 +104,16 @@ function PricingContent() {
           <p className="text-muted">
             Il percorso completo di 12 settimane. Prezzo founder bloccato per sempre.
           </p>
+          <p className="text-xs text-faint mt-2">
+            La settimana 1 è gratis. Season 1 sblocca il Gate, le settimane 2-12 e il Coach.
+          </p>
         </div>
+
+        {fromGate && (
+          <div className="bg-forest-500/15 border border-forest-500/40 rounded-2xl p-4 text-sm text-app">
+            🔑 Hai finito la settimana 1. Il Gate ti aspetta: da qui si continua con Season 1.
+          </div>
+        )}
 
         {canceled && (
           <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 text-sm text-amber-300">

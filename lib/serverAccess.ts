@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { hasActiveAccess, type BillingProfile } from '@/lib/checkAccess';
+import { hasActiveAccess, canAccessWeek, type BillingProfile } from '@/lib/checkAccess';
 
 /**
  * serverAccess — verifica paywall lato server (API route).
@@ -29,6 +29,16 @@ export async function getBillingProfile(userId: string): Promise<BillingProfile 
  * Riusa hasActiveAccess (unico punto di verità: beta || season1 || sub attiva).
  * Se il paywall non è configurato (env Stripe assenti), lascia passare.
  */
+/**
+ * True se l'utente può accedere alla settimana `week`: pagante, oppure settimana gratis
+ * (FREE_WEEKS). Il gate resta su requirePaidAccess.
+ */
+export async function requireWeekAccess(userId: string, week: number): Promise<boolean> {
+  if (!process.env.STRIPE_SECRET_KEY) return true;
+  const profile = await getBillingProfile(userId);
+  return canAccessWeek(profile, week);
+}
+
 export async function requirePaidAccess(userId: string): Promise<boolean> {
   // Feature flag: senza Stripe configurato il paywall server è soft (come il client)
   if (!process.env.STRIPE_SECRET_KEY) return true;

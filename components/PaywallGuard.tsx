@@ -3,15 +3,15 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { shouldRedirectToPaywall, type BillingProfile } from '@/lib/checkAccess';
+import { shouldRedirectToPaywall, isPaidRoute, type BillingProfile } from '@/lib/checkAccess';
 
 /**
- * Paywall lato client su TUTTE le pagine protette (prima lo facevano solo `/` e `/login`:
- * chi non pagava navigava ovunque dalla tab bar e vedeva 403 grezzi).
- * Le API restano l'unica verità (`requirePaidAccess`); qui si evita solo di far
- * atterrare un non pagante su una pagina che non può usare.
+ * Paywall lato client sulle rotte A PAGAMENTO (settimana gratis dal 14/9: chi è registrato
+ * usa W1 G1-G6, check-in, Card e test senza pagare; il gate di W1, le settimane 2+ e il
+ * Coach richiedono Season 1 — vedi `isPaidRoute`). Il gate ha una schermata sua, la chat
+ * mostra il messaggio in pagina: qui si rimbalzano solo giorni/settimane oltre la gratis
+ * e week-complete. Le API restano l'unica verità (`requireWeekAccess`/`requirePaidAccess`).
  */
-const PUBLIC = new Set(['/login', '/register', '/reset-password', '/pricing', '/privacy', '/termini', '/genitori']);
 
 // Una verifica per sessione (finché la pagina resta viva), non a ogni cambio rotta
 let checkedAt = 0;
@@ -29,7 +29,7 @@ export default function PaywallGuard() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!pathname || PUBLIC.has(pathname)) return;
+    if (!pathname || !isPaidRoute(pathname) || pathname === '/chat') return;
     // Ritorno dal checkout: il webhook può arrivare qualche secondo dopo → la home
     // gestisce l'attesa ("Attivazione in corso…"), qui non si rimbalza al paywall.
     try { if (new URLSearchParams(window.location.search).get('checkout') === 'success') return; } catch { /* no-op */ }

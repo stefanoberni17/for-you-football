@@ -13,7 +13,7 @@ import {
   DayProgress,
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
-import { shouldRedirectToPaywall } from '@/lib/checkAccess';
+import { shouldRedirectToPaywall, hasActiveAccess } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
@@ -143,10 +143,10 @@ export default function HomePage() {
         try { window.history.replaceState(null, '', '/'); } catch { /* no-op */ }
       }
 
-      // Paywall gate: se Stripe è configurato E utente non ha accesso → /pricing.
-      // Se Stripe non è ancora in env (deploy graduale), il gate è disattivato.
-      if (shouldRedirectToPaywall(profileData)) {
-        router.push(fromCheckout ? '/pricing?checkout=pending' : '/pricing');
+      // Settimana gratis (14/9): la home non rimbalza più al paywall. Solo il ritorno
+      // da Stripe senza attivazione dopo i 5 tentativi torna a /pricing.
+      if (fromCheckout && shouldRedirectToPaywall(profileData)) {
+        router.push('/pricing?checkout=pending');
         return;
       }
 
@@ -752,7 +752,7 @@ export default function HomePage() {
 
         {/* Recupero collegamento Telegram — terzo in priorità */}
         {!coachBannerVisible && !weeklyBannerVisible && telegramRecoveryCandidate && (
-          <TelegramRecoveryBanner hasTelegram={!!profile?.telegram_id} onVisibilityChange={setTelegramBannerVisible} />
+          <TelegramRecoveryBanner hasTelegram={!hasActiveAccess(profile) || !!profile?.telegram_id} onVisibilityChange={setTelegramBannerVisible} />
         )}
 
         {/* Banner installazione PWA — ultimo in priorità */}

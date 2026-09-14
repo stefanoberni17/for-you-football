@@ -341,15 +341,16 @@ channel          TEXT NOT NULL   -- 'registration' | 'reaccept'
 
 Il time-gate nei contenuti (`lib/dayUnlockLogic.ts`) forza comunque il ritmo 1 giorno/giorno.
 
-### Flusso registrazione
+### Flusso registrazione (settimana gratis, dal 14/9)
 
 ```
 register (step 1: account) → register (step 2: profilo atleta)
-  → conferma email → login
-  → profile check: is_beta_free || status='active' ? sì: dashboard, no: /pricing
-  → Stripe Checkout → webhook checkout.session.completed → status='active'
-  → redirect / → onboarding (se !onboarding_completed) → dashboard
+  → conferma email → login → onboarding (se !onboarding_completed) → dashboard
+  → W1 G1-G6 GRATIS (check-in, Card, test, azioni, SOS inclusi)
+  → /gate/1 → 403 payment_required → schermata "Hai finito la settimana 1" → /pricing?from=gate
+  → Stripe Checkout → webhook → home "Attivazione in corso…" → Gate, W2-12, Coach
 ```
+"Si paga per continuare, non per iniziare" (Ste, 13/9). `FREE_WEEKS = 1` in `lib/constants.ts`.
 
 ### Access gating
 
@@ -359,8 +360,9 @@ L'unica funzione di verità è `hasActiveAccess(profile)` in `lib/checkAccess.ts
 - `subscription_status='active'` → rate in corso
 - altrimenti → no access → redirect `/pricing`
 
-**Client-side:** check in `app/login/page.tsx` e `app/page.tsx` (dashboard) via `shouldRedirectToPaywall`.
-**Server-side:** `requirePaidAccess(userId)` in `lib/serverAccess.ts` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/giorno`, `/api/gate`, `/api/chat`, `/api/settimana`. `/api/settimane` richiede solo login (preview percorso). Soft se `STRIPE_SECRET_KEY` assente.
+**Settimana gratis (14/9):** `canAccessWeek(profile, week)` = pagante OPPURE `week <= FREE_WEEKS`; `isPaidRoute(pathname)` = `/chat`, `/week-complete/*`, `/giorno` e `/settimana` oltre `FREE_WEEKS`.
+**Client-side:** login e home NON rimbalzano più a `/pricing` (solo `?checkout=success` non attivato → `/pricing?checkout=pending`). `PaywallGuard` agisce solo sulle rotte a pagamento (esclusa `/chat`, che mostra il messaggio in pagina). Il gate (`app/gate/[week]`) su 403 mostra la schermata "Hai finito la settimana N" con CTA `/pricing?from=gate`. `ChatBot` su 403 mostra il messaggio del Coach + card "Sblocca Season 1". La card Telegram su "Giorno 1 completato" e il `TelegramRecoveryBanner` compaiono solo a chi ha Season 1 (il Coach è a pagamento).
+**Server-side:** `requireWeekAccess(userId, week)` su `/api/giorno` (GET/POST/PATCH) e `/api/settimana`; `requirePaidAccess(userId)` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/gate`, `/api/chat`, `/api/telegram`, `/api/telegram/link`, `/api/onboarding/coach-welcome`. Gratis (solo login): `/api/settimane`, `/api/checkin*`, `/api/actions*`, `/api/reflection`, `/api/calendar`, `/api/difficolta`. Soft se `STRIPE_SECRET_KEY` assente.
 
 ### Auth API (hardening giugno 2026)
 
@@ -976,6 +978,7 @@ Report: `docs/review-2026-09-13.md`; decisioni di Ste nella risposta del 13/9 (c
 
 - **Sera 2 (vendita, PR #81):** `BETA_MAX_WEEK = 12` con `WEEK_RECORD_IDS` 10-12 (senza, `leggi_percorso` rispondeva "non disponibile" per W10-12: il tool legge per id, non per numero) e `WEEK_TOOLS` 10-12; limiti riflessione giorno 1000→2000 e gate 800→1500 (W11-G4 è il Protocollo For You in una pagina); teaser "Prossimamente" in `/settimane` solo se `BETA_MAX_WEEK < 12`. Prezzi da `lib/constants.ts` (`SEASON_PRICE_ONETIME/INSTALLMENT/FULL`, `SEASON_INSTALLMENTS`: da tenere allineati ai Price Stripe in env), via la data "fino al 30 agosto" e "dal 1 settembre"; garanzia 4 settimane lasciata con TODO(termini). Home: card del Coach sotto l'hero finché `totalCompleted < 3`, poi in fondo. Registrazione step 2: "Salta per ora →". Onboarding: via il paragrafo "3-4 settimane" (l'unico disclaimer sui tempi resta W1-G1 su Notion, "2-3 settimane"). `components/PaywallGuard.tsx` nel layout: paywall client su tutte le pagine non pubbliche (fail-open, cache 60"); tab bar nascosta su `/pricing`.
 
+- **Settimana gratis (14/9, confermata da Ste):** `FREE_WEEKS = 1`; vedi "Access gating". Il primo muro è il gate di W1: schermata dedicata + `/pricing?from=gate`. Coach a pagamento anche in W1 (chat: messaggio + card; niente card Telegram su G1 per chi non paga; `coach-welcome` risponde 403 e l'onboarding lo ignora).
 - **Dopo le sere (14/9):** canone del Reset allineato (vedi "Il Reset" sopra). Una sola lista Body Check nel prompt (piedi → stomaco → petto → spalle, da W3-G1). `leggi_percorso` rifiuta le settimane oltre `current_week` (`callClaude(..., { maxWeek })`). `richText` in `lib/notion.ts` toglie gli asterischi markdown letterali (`stripMarkdownStars`: W6-W7 mostravano "**Un minuto**"); `senzaRegia()` esclude `contesto`/`coachContesto` da tutte le risposte al client; il box "Perché funziona" legge SOLO il campo dedicato (via il fallback W1-W4). Privacy: residuo "Maestro AI" corretto.
 - **Sere 6-7 (gli eventi):** `lib/events.ts` (`logEvent`, server, fire-and-forget) scrive in `onboarding_events` gli eventi `signup_completed` (register), `checkin_saved`, `day_completed {week,day}`, `gate_completed {week}`, `coach_message_sent {channel: web|telegram}`, `checkout_started {plan}`, `payment_completed {plan, amount_total}` (webhook), `push_enabled` (push/subscribe). Dal client via `trackOnboarding` → `/api/onboarding/event` (whitelist `CLIENT_EVENTS` in `lib/events.ts`): `reset_completed {auto, seconds}` (MeditationPopup), `pricing_view`, `app_open` (una volta al giorno per device da `GlobalCheckinWrapper` + dedup server per utente/giorno italiano). Migration `022_events_views.sql`: viste `v_attivita_utente` (SOLO azioni dell'utente: giorno, check-in, messaggio `role='user'`, tick, Reset, app_open — mai un messaggio in uscita del bot), `v_ultima_attivita`, `v_funnel_primo_giorno` (per utente: signup → G1 → primo Reset → primo messaggio Coach → G7, con fallback storici da `user_day_progress`/`telegram_conversations`), `v_funnel_primo_giorno_settimane`, `v_coorti_d7_d28` (attivo D7 = azione tra il 7° e il 13° giorno, D28 tra il 28° e il 34°, percentuali sugli eleggibili). `lib/activity.ts` (cron) già contava solo azioni dell'utente.
 - **Sera 5 (il contraente):** chi paga è un adulto. `/pricing` chiede l'**email di chi paga** (obbligatoria, link "Pago io, usa la mia email"); `create-checkout` la valida, aggiorna il customer Stripe con quella email (ricevute, fatture delle rate e portal all'adulto; `metadata.payer_email` + `athlete_email`, il profilo app resta del ragazzo), `billing_address_collection: 'required'` + `customer_update: { address, name: 'auto' }`, e `consent_collection.terms_of_service: 'required'` SOLO quando `TERMS_VERSION` è compilata (serve l'URL dei termini in Stripe → Impostazioni Checkout, altrimenti la session fallisce). **Ritorno da Stripe** (`/?checkout=success`): la home mostra "Attivazione in corso…" e rilegge il profilo fino a 5 volte ogni 2" prima di mandare a `/pricing?checkout=pending` (banner "non serve pagare di nuovo, scrivici"); `PaywallGuard` non rimbalza con `checkout=success` in URL ed espone `resetPaywallCache()` (la home la chiama dopo l'attivazione: la cache 60" teneva il "no accesso" vecchio).
@@ -1131,6 +1134,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [ ] Prove sera 1: bot da un account appena collegato; `/sblocca` con id sbagliato; Vercel logs "Telegram webhook error"
 - [ ] Scrivere i 24 "Perché funziona" di W1-W4 su Notion nel campo dedicato (dal 14/9 il box in W1-W4 è vuoto: il fallback sul Contesto è stato tolto)
 - [ ] Ri-registrare gli audio W1-G2 e W1-G3 dagli script Notion aggiornati (14/9): gli MP3 in produzione dicono ancora "Chin Mudra", gesto sull'espiro e i mantra vecchi
+- [ ] Prova settimana gratis: account nuovo senza pagare → login → onboarding → home → G1-G6 → al giorno 7 la schermata "Hai finito la settimana 1" → /pricing con il banner del Gate; chat Coach → messaggio + "Sblocca Season 1"
 - [ ] Decidere se il Reset automatico deve tornare al mattino dal G4 (oggi: solo dopo il giorno completato, lettura letterale della review)
 
 ### Da fare

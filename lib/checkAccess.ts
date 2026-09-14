@@ -7,6 +7,8 @@
  * Beta tester (is_beta_free=true) e utenti comp bypassano tutto.
  */
 
+import { FREE_WEEKS } from '@/lib/constants';
+
 export type BillingProfile = {
   is_beta_free?: boolean | null;
   subscription_status?: string | null;
@@ -49,4 +51,23 @@ export function isPaywallActive(): boolean {
 export function shouldRedirectToPaywall(profile: BillingProfile | null | undefined): boolean {
   if (!isPaywallActive()) return false;
   return !hasActiveAccess(profile);
+}
+
+/**
+ * Settimana gratis (13/9): i giorni 1-6 delle prime FREE_WEEKS settimane sono aperti a chi
+ * è registrato; il gate (giorno 7), le settimane successive e il Coach richiedono Season 1.
+ * "Si paga per continuare, non per iniziare."
+ */
+export function canAccessWeek(profile: BillingProfile | null | undefined, week: number): boolean {
+  if (!isPaywallActive()) return true;
+  if (hasActiveAccess(profile)) return true;
+  return week <= FREE_WEEKS;
+}
+
+/** Rotte che restano a pagamento anche nella settimana gratis (usato dal PaywallGuard). */
+export function isPaidRoute(pathname: string): boolean {
+  if (pathname === '/chat' || pathname.startsWith('/week-complete/')) return true;
+  const m = pathname.match(/^\/(giorno|settimana)\/(\d+)/);
+  if (m) return parseInt(m[2]) > FREE_WEEKS;
+  return false;
 }
