@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('user_id, safety_review')
+      .select('user_id, safety_review, current_week')
       .eq('telegram_id', telegramUserId)
       .single();
 
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
       { role: 'user' as const, content: userText },
     ];
 
-    const { text } = await callClaude(systemBlocks, messages, 1500, true);
+    const { text } = await callClaude(systemBlocks, messages, 1500, true, { maxWeek: profile.current_week || 1 });
 
     // Al primo messaggio: invia avviso privacy prima della risposta del Maestro
     if (isFirstMessage) {

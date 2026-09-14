@@ -475,7 +475,7 @@ Week 2 | L'Observer            | 🔵 OSSERVAZIONE         | "Vedo cosa fa la mi
 Week 3 | Il Body Check         | 🟡 ASCOLTO              | "Sento il corpo. Non lo combatto."
        → Introduzione corpo delicata. Prima situazione, poi eventualmente corpo.
        → "E in quel momento, noti qualcosa nel corpo?" — solo come invito, non pressione.
-       → Il Body Check: una scansione rapida (testa → spalle → petto → pancia) prima di agire.
+       → Il Body Check (canone = testo W3-G1, UNICA lista da usare): 4 zone in sequenza — PIEDI (radicato o galleggi?) → STOMACO (aperto o stretto?) → PETTO (respiro ampio o corto?) → SPALLE (alte e tese o basse e morbide?). Solo notare, non modificare. Formula: Reset → Body Check → torna. Mai altre liste (testa, mascella, pancia…).
 
 Week 4 | Protocollo Pressione  | 🟡 ASCOLTO APPLICATO    | "Uso lo strumento nei momenti che contano."
        → ⚠️ PUNTO CRITICO. Il calciatore ha gli strumenti — ora deve usarli sotto pressione reale.
@@ -953,8 +953,15 @@ const LEGGI_PERCORSO_TOOL: Anthropic.Messages.Tool = {
   },
 };
 
-async function executeLeggiPercorso(input: { week: number; day?: number }): Promise<string> {
+async function executeLeggiPercorso(input: { week: number; day?: number }, maxWeek?: number): Promise<string> {
   const { week, day } = input;
+
+  // REGOLA ANTICIPAZIONI anche nel tool: il Coach non può leggere settimane oltre
+  // quella dell'utente (review 13/9: "dammi la settimana dopo" passava dal tool).
+  if (maxWeek && week > maxWeek) {
+    return `Settimana ${week} non ancora raggiunta: l'utente è alla settimana ${maxWeek}. ` +
+      `Non anticipare pratiche o strumenti futuri (REGOLA ANTICIPAZIONI): puoi dire solo, in generale, che arriverà più avanti.`;
+  }
 
   const weekPageId = WEEK_RECORD_IDS[week];
   if (!weekPageId) {
@@ -1018,7 +1025,8 @@ export async function callClaude(
   systemPrompt: string | any[],   // stringa, o blocchi system (con cache_control) per il prompt caching
   messages: { role: 'user' | 'assistant'; content: string }[],
   maxTokens: number = 1500,
-  useTools: boolean = false   // true solo per la web chat e Telegram — NON per generateCoachRecap
+  useTools: boolean = false,  // true solo per la web chat e Telegram — NON per generateCoachRecap
+  opts: { maxWeek?: number } = {}  // maxWeek = settimana corrente dell'utente: leggi_percorso non va oltre
 ): Promise<{ text: string; usage: any }> {
   const internalMessages: any[] = messages.map(m => ({ role: m.role, content: m.content }));
 
@@ -1056,7 +1064,7 @@ export async function callClaude(
   let toolResultContent: string;
   let isError = false;
   try {
-    toolResultContent = await executeLeggiPercorso(toolUseBlock.input as any);
+    toolResultContent = await executeLeggiPercorso(toolUseBlock.input as any, opts.maxWeek);
   } catch (err: any) {
     toolResultContent = `Errore nel recupero del contenuto da Notion: ${err.message}`;
     isError = true;

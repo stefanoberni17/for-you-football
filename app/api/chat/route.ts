@@ -47,10 +47,11 @@ export async function POST(request: NextRequest) {
     // nel protocollo — niente coaching finché non c'è lo sblocco manuale.
     const { data: safetyProfile } = await supabaseAdmin
       .from('profiles')
-      .select('safety_review')
+      .select('safety_review, current_week')
       .eq('user_id', userId)
       .maybeSingle();
     const inSafetyReview = safetyProfile?.safety_review === true;
+    const currentWeek = safetyProfile?.current_week || 1;
 
     const userContext = await buildUserContext(userId);
     // Prompt caching: il prefisso stabile (SYSTEM_PROMPT + WEB_FORMAT, ~stesso a ogni
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
       { type: 'text', text: '\n\n' + userContext },
     ];
 
-    const { text, usage } = await callClaude(systemBlocks, messages, 1500, true);
+    const { text, usage } = await callClaude(systemBlocks, messages, 1500, true, { maxWeek: currentWeek });
     logEvent(userId, 'coach_message_sent', { channel: 'web' });
 
     // Memoria unificata: come su Telegram, la conversazione web viene distillata
