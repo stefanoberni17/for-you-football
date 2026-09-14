@@ -54,6 +54,8 @@ export const GATE_DAY = 7; // giorno gate — obbligatorio, non comprimibile
 // Settimane gratis (deciso da Ste il 13/9): il contenuto G1-G6 della settimana 1 è aperto a chi
 // si registra; il gate di W1, le settimane successive e il Coach si sbloccano con Season 1.
 export const FREE_WEEKS = 1;
+// Messaggi al Coach (chat in app) inclusi nella settimana gratis; Telegram resta di Season 1.
+export const FREE_COACH_MESSAGES = 10;
 
 // Blocchi tematici
 export const BLOCKS = [
