@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
-import { queryDatabase, mapGiorno } from '@/lib/notion';
+import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { GATE_DAY } from '@/lib/constants';
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: `Gate settimana ${weekNumber} non trovato` }, { status: 404 });
     }
 
-    const giorno = mapGiorno(dayPages[0]);
+    const giorno = senzaRegia(mapGiorno(dayPages[0]));
     const progress = progressResult.data;
 
     return NextResponse.json({

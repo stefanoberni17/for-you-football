@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { queryDatabase, mapSettimana, mapGiorno } from '@/lib/notion';
+import { queryDatabase, mapSettimana, mapGiorno, senzaRegia } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
 
@@ -50,8 +50,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: `Settimana ${weekNumber} non trovata` }, { status: 404 });
     }
 
-    const settimana = mapSettimana(weekPages[0]);
-    const giorni = dayPages.map(mapGiorno);
+    // Regia del Coach (contesto/coachContesto) mai al client
+    const settimana = senzaRegia(mapSettimana(weekPages[0]));
+    const giorni = dayPages.map((p) => senzaRegia(mapGiorno(p)));
 
     return NextResponse.json({ settimana, giorni });
   } catch (error: any) {

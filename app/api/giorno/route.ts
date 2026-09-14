@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
-import { queryDatabase, mapGiorno } from '@/lib/notion';
+import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const giorno = mapGiorno(dayPages[0]);
+    const giorno = senzaRegia(mapGiorno(dayPages[0]));
     const progress = progressResult.data;
 
     return NextResponse.json({

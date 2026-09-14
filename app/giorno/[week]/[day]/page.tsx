@@ -573,15 +573,12 @@ export default function GiornoPage() {
               {giorno.pratica}
             </p>
 
-            {/* Perché funziona — campo USER-FACING dedicato (`percheFunziona`).
-                Il campo `contesto` è COACH-ONLY (note di regia) e NON va MAI mostrato qui.
-                Fallback transitorio: per W1-W4 il vecchio `contesto` era già scritto come
-                testo user-facing (scientifico ma leggibile) → lo riusiamo finché non
-                migriamo quei giorni nel campo dedicato. Da W5 in poi `contesto` è regia: mai mostrarlo. */}
+            {/* Perché funziona — SOLO dal campo USER-FACING dedicato (`percheFunziona`).
+                Il campo `contesto` è regia del Coach e dal 14/9 non arriva più al client
+                (`senzaRegia`): il vecchio fallback W1-W4 mostrava ACT, Yerkes-Dodson e
+                anticipazioni del Protocollo. Il box torna in W1-W4 quando Ste scrive i 24 testi. */}
             {(() => {
-              const perche =
-                (giorno.percheFunziona && giorno.percheFunziona.trim()) ||
-                (weekNumber <= 4 && giorno.contesto ? giorno.contesto.trim() : '');
+              const perche = giorno.percheFunziona && giorno.percheFunziona.trim();
               if (!perche) return null;
               return (
                 <div className="bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg px-4 py-4 mt-4">
