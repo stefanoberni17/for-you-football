@@ -12,6 +12,7 @@ import {
 import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
+import { FOCUS_OPZIONI, FOCUS_SETUP_MAX, type FocusId } from '@/lib/trainingRequest';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
@@ -29,7 +30,7 @@ interface TrainingState {
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; done: boolean }[];
-  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string }; generato_da: string } | null;
+  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; violazioni?: string[] }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
@@ -447,6 +448,23 @@ export default function AllenamentoHub() {
                   ))}
                 </div>
               </div>
+              <div>
+                <p className="text-xs font-semibold text-muted mb-1.5">Su cosa vuoi lavorare in questa fase? <span className="text-faint font-normal">(fino a {FOCUS_SETUP_MAX}, in ordine)</span></p>
+                <div className="flex flex-wrap gap-2">
+                  {FOCUS_OPZIONI.map((f) => {
+                    const idx = setupDraft.focus.indexOf(f.id);
+                    const on = idx >= 0;
+                    const next = (): FocusId[] => on ? setupDraft.focus.filter((x) => x !== f.id) : setupDraft.focus.length >= FOCUS_SETUP_MAX ? setupDraft.focus : [...setupDraft.focus, f.id];
+                    return (
+                      <button key={f.id} onClick={() => setSetupDraft({ ...setupDraft, focus: next() })}
+                        className={`text-xs px-3 py-1.5 rounded-full border ${on ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                        {on && setupDraft.focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-[10px] text-faint mt-1.5">Il preparatore li mette in ogni settimana, anche in quella preparata da sola il lunedì: i primi due hanno sempre almeno un blocco. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</p>
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-xs font-semibold text-muted mb-1.5">Peso corporeo (kg)</p>
@@ -684,6 +702,17 @@ export default function AllenamentoHub() {
                   <p className="text-xs text-muted italic leading-relaxed mb-3 px-1">💬 {state.plan.plan.messaggio}</p>
                 )}
                 <p className="text-[10px] text-faint px-1 mb-3">Piano proposto dall&apos;AI e controllato dalle regole del preparatore. Se qualcosa fa male, fermati.</p>
+                {state.plan.generato_da === 'fallback' && (
+                  <div className="text-[10px] text-amber-200/80 bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2 mb-3">
+                    <p className="font-semibold">Piano di sicurezza: il preparatore AI non ha rispettato le regole e il sistema ha messo una settimana base.</p>
+                    {!!state.plan.plan.violazioni?.length && (
+                      <ul className="mt-1 space-y-0.5 list-disc pl-4 text-faint">
+                        {state.plan.plan.violazioni.slice(0, 4).map((v, i) => <li key={i}>{v}</li>)}
+                      </ul>
+                    )}
+                    <p className="mt-1">Prova &quot;Rigenera&quot; con meno vincoli (più tempo per seduta o un obiettivo in meno).</p>
+                  </div>
+                )}
                 {autoGen && generating && (
                   <p className="text-xs text-forest-300 bg-forest-500/10 border border-forest-500/30 rounded-xl px-3 py-2 mb-3">⏳ Nuova settimana: sto preparando il piano…</p>
                 )}
@@ -753,6 +782,7 @@ export default function AllenamentoHub() {
                 oggiDow={oggiDow}
                 calendario={state.calendario}
                 maxSedute={state.maxSeduteFisiche}
+                focusSetup={state.setup.focus}
                 generating={generating}
                 onSubmit={generaPiano}
                 onClose={state.plan ? () => setShowRigenera(false) : undefined}

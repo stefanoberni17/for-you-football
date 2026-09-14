@@ -4,6 +4,8 @@
  * Colonne su profiles (migration 017), scritte solo via /api/training/setup.
  */
 
+import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
+
 /** Attrezzatura selezionabile (combacia con AttrezzaturaV2 del catalogo v2) */
 export const ATTREZZATURA_OPZIONI = ['palestra', 'kettlebell', 'sbarra', 'piccoli attrezzi', 'campo', 'headball'] as const;
 export const ATTREZZATURA_LABEL: Record<(typeof ATTREZZATURA_OPZIONI)[number], string> = {
@@ -36,6 +38,8 @@ export interface TrainingSetup {
   fase: (typeof FASI)[number];
   pesoKg: number | null;
   squadraDurataMin: number | null;
+  /** Obiettivi della fase, in ordine (migration 024): se la colonna manca → []. */
+  focus: FocusId[];
 }
 
 export function mapSetup(row: Record<string, unknown> | null | undefined): TrainingSetup {
@@ -46,6 +50,7 @@ export function mapSetup(row: Record<string, unknown> | null | undefined): Train
     fase: (FASI as readonly string[]).includes(String(row?.training_fase)) ? (row!.training_fase as TrainingSetup['fase']) : 'in_season',
     pesoKg: row?.training_peso_kg != null ? Number(row.training_peso_kg) : null,
     squadraDurataMin: row?.training_squadra_durata_min != null ? Number(row.training_squadra_durata_min) : null,
+    focus: focusValidi(row?.training_focus, FOCUS_SETUP_MAX),
   };
 }
 

@@ -318,7 +318,11 @@ export interface PlanSession {
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
 }
-export interface WeekPlan { sedute: PlanSession[]; messaggio?: string }
+export interface WeekPlan {
+  sedute: PlanSession[];
+  messaggio?: string;
+  violazioni?: string[];     // piano di sicurezza: cosa il planner AI non è riuscito a rispettare (per capire e correggere)
+}
 
 const TIPI_FISICI = new Set(['mix', 'fisica', 'skill']);
 const AREE_FORZA = new Set(['spinta', 'tirata', 'core', 'lombari', 'laterale']);
