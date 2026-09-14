@@ -9,6 +9,7 @@ import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup, MAX_SEDUTE_FISICHE_PER_FASE } from '@/lib/trainingSetup';
 import { loadFocusSetup, loadSquadra } from '@/lib/trainingPlanner';
+import { PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
 import { esercizioV2ById } from '@/lib/trainingCatalogV2';
@@ -94,9 +95,11 @@ export async function GET(request: NextRequest) {
     // Completamenti della settimana del piano corrente: su TUTTI i piani di quella settimana
     // (rigenera/modifica salvano una riga nuova, le sedute già fatte restano segnate per giorno)
     let completions: { session_key: string; feedback: string | null }[] = [];
+    let pianiQuestaSettimana = 0;
     if (lastPlan?.id) {
       const { data: piani } = await supabaseAdmin.from('training_plans').select('id')
         .eq('user_id', userId).eq('week_start', lastPlan.week_start);
+      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).length;
       const ids = (piani || []).map((p: { id: string }) => p.id);
       const { data } = await supabaseAdmin.from('training_session_completions')
         .select('session_key, feedback').eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
@@ -123,8 +126,7 @@ export async function GET(request: NextRequest) {
       lastTestSession?.completed_at
       || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
     );
-    const [carico, { data: calendar }, consensiSet, squadra, focusSetup] = await Promise.all([
-      loadCarico(userId, ciclo.isDeload),
+    const [{ data: calendar }, consensiSet, squadra, focusSetup] = await Promise.all([
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
       getConsents(userId),
@@ -137,6 +139,8 @@ export async function GET(request: NextRequest) {
       trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [],
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
     });
+    // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra
+    const carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato);
 
     const rombo = buildRombo(rows);
     return NextResponse.json({
@@ -164,6 +168,8 @@ export async function GET(request: NextRequest) {
       oggiDow: oggiDowRome(),
       lunedi: mondayOfThisWeekRome(),
       planStale: !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome(),
+      // Tetto alle rigenerazioni (PIANI_MAX_SETTIMANA per settimana, il piano automatico del lunedì conta 1)
+      rigenerazioniRimaste: Math.max(0, PIANI_MAX_SETTIMANA - pianiQuestaSettimana),
       completions,
       checkinOggi,
       storicoSerie,

@@ -48,6 +48,8 @@ interface TrainingState {
   };
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
+  // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA)
+  rigenerazioniRimaste?: number;
 }
 
 export default function AllenamentoHub() {
@@ -692,10 +694,14 @@ export default function AllenamentoHub() {
                     <p className="text-sm font-bold text-app">La tua settimana</p>
                     <p className="text-[11px] text-muted">{sedute.length} {sedute.length === 1 ? 'seduta' : 'sedute'} · in tutto ~{durataLabel(sedute.reduce((a, s) => a + (s.durata_min || 0), 0))}</p>
                   </div>
-                  <button onClick={() => setShowRigenera(!showRigenera)}
-                    className="text-xs text-forest-400 font-semibold inline-flex items-center gap-1">
-                    <RefreshCw size={12} /> Rigenera
-                  </button>
+                  {state.rigenerazioniRimaste === 0 ? (
+                    <span className="text-[11px] text-faint text-right">Rigenerazioni finite<br />per questa settimana</span>
+                  ) : (
+                    <button onClick={() => setShowRigenera(!showRigenera)}
+                      className="text-xs text-forest-400 font-semibold inline-flex items-center gap-1">
+                      <RefreshCw size={12} /> Rigenera{typeof state.rigenerazioniRimaste === 'number' && state.rigenerazioniRimaste <= 2 ? ` (${state.rigenerazioniRimaste})` : ''}
+                    </button>
+                  )}
                 </div>
                 {state.plan.plan.messaggio && (
                   <p className="text-xs text-muted italic leading-relaxed mb-3 px-1">💬 {state.plan.plan.messaggio}</p>

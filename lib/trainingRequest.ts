@@ -48,6 +48,8 @@ export const FOCUS_QUALITA: Record<FocusId, readonly string[]> = {
 };
 /** Obiettivi nel setup ("su cosa vuoi lavorare in questa fase"): in ordine, senza limite (Ste, 14/9), oppure "Tutto". */
 export const FOCUS_SETUP_MAX = FOCUS_OPZIONI.length;
+/** Piani generabili a settimana per atleta (nuova + modifica; il piano automatico del lunedì conta 1) — Ste, 14/9: un tetto alle rigenerazioni. */
+export const PIANI_MAX_SETTIMANA = 6;
 /** Quanti obiettivi il validatore pretende davvero (i primi N in ordine di priorità). */
 export const FOCUS_OBBLIGATORI = 2;
 export const focusLabel = (id: FocusId): string => FOCUS_OPZIONI.find((f) => f.id === id)!.label;

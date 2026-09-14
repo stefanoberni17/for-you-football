@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
-import { generateWeekPlan, PLANNER_PROMPT_VERSION, detectPain, mondayOfThisWeekRome, updateTrainingMemory } from '@/lib/trainingPlanner';
-import { generateWeekPlanV2, PLANNER_V2_PROMPT_VERSION, loadContextV2, validateCtxFor } from '@/lib/trainingPlannerV2';
-import { componiRichiesta, parseRichiesta, puoPosticipare, type Vincoli } from '@/lib/trainingRequest';
+import { generateWeekPlan, PLANNER_MODEL, PLANNER_PROMPT_VERSION, detectPain, mondayOfThisWeekRome, updateTrainingMemory } from '@/lib/trainingPlanner';
+import { generateWeekPlanV2, PLANNER_V2_MODEL, PLANNER_V2_PROMPT_VERSION, loadContextV2, validateCtxFor } from '@/lib/trainingPlannerV2';
+import { componiRichiesta, parseRichiesta, PIANI_MAX_SETTIMANA, puoPosticipare, type Vincoli } from '@/lib/trainingRequest';
 import { validatePlan, type WeekPlan } from '@/lib/trainingEngine';
 import { oggiDowRome } from '@/lib/trainingPlanner';
 
@@ -24,6 +24,16 @@ export async function POST(request: NextRequest) {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+
+    // Tetto alle rigenerazioni: ogni piano è una chiamata al modello (fino a 3 tentativi)
+    const { count: pianiSettimana } = await supabaseAdmin.from('training_plans').select('id', { count: 'exact', head: true })
+      .eq('user_id', userId).eq('week_start', mondayOfThisWeekRome());
+    if ((pianiSettimana ?? 0) >= PIANI_MAX_SETTIMANA) {
+      return NextResponse.json({
+        error: `Hai già rifatto il piano ${PIANI_MAX_SETTIMANA} volte questa settimana. Il conto riparte lunedì: intanto segui la settimana che hai, o parlane col preparatore in chat.`,
+        reason: 'limite_settimanale', limite: PIANI_MAX_SETTIMANA,
+      }, { status: 429 });
+    }
 
     const body = await request.json().catch(() => ({}));
     let richiesta = typeof body?.richiesta === 'string' ? body.richiesta.slice(0, 800) : undefined;
@@ -84,7 +94,7 @@ export async function POST(request: NextRequest) {
       week_start: mondayOfThisWeekRome(),
       richieste: richiesta || null,
       generato_da: generatoDa,
-      model_id: generatoDa === 'llm' ? 'claude-sonnet-4-6' : null,
+      model_id: generatoDa === 'llm' ? (promptVersion === PLANNER_V2_PROMPT_VERSION ? PLANNER_V2_MODEL : PLANNER_MODEL) : null,
       prompt_version: promptVersion,
       plan,
     }).select('id, week_start, plan, generato_da, created_at').single();

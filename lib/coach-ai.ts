@@ -1021,6 +1021,16 @@ async function executeLeggiPercorso(input: { week: number; day?: number }, maxWe
 
 // ─── callClaude ───────────────────────────────────────────────────────────────
 
+/**
+ * Modello del Coach (chat web, Telegram, recap memoria). 14/9: da Sonnet 4.6 a Sonnet 5 — costa meno per
+ * token (2/10 $ per milione contro 3/15, con un tokenizer che conta ~30 % di token in più) e segue le
+ * istruzioni più alla lettera. Su Sonnet 5 il thinking è adattivo di default e conta nel max_tokens:
+ * i limiti passati dai chiamanti vengono raddoppiati qui sotto (THINKING_HEADROOM).
+ */
+export const COACH_MODEL = 'claude-sonnet-5';
+const COACH_EFFORT = 'medium' as const;    // low = più veloce ma più superficiale; high = più lento
+const THINKING_HEADROOM = 2.5;             // max_tokens reale = richiesto × headroom (il pensiero conta nel limite)
+
 export async function callClaude(
   systemPrompt: string | any[],   // stringa, o blocchi system (con cache_control) per il prompt caching
   messages: { role: 'user' | 'assistant'; content: string }[],
@@ -1031,8 +1041,10 @@ export async function callClaude(
   const internalMessages: any[] = messages.map(m => ({ role: m.role, content: m.content }));
 
   const createParams: any = {
-    model: 'claude-sonnet-4-6',
-    max_tokens: maxTokens,
+    model: COACH_MODEL,
+    max_tokens: Math.round(maxTokens * THINKING_HEADROOM),
+    thinking: { type: 'adaptive' },
+    output_config: { effort: COACH_EFFORT },
     system: systemPrompt,
     messages: internalMessages,
     ...(useTools ? { tools: [LEGGI_PERCORSO_TOOL] } : {}),
@@ -1089,9 +1101,12 @@ export async function callClaude(
     },
   ];
 
+  // Il contenuto della prima risposta (thinking + tool_use) torna indietro intero: lo pretende l'API
   const completion2 = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: maxTokens,
+    model: COACH_MODEL,
+    max_tokens: Math.round(maxTokens * THINKING_HEADROOM),
+    thinking: { type: 'adaptive' },
+    output_config: { effort: COACH_EFFORT },
     system: systemPrompt,
     messages: messagesWithResult,
     tools: [LEGGI_PERCORSO_TOOL],
