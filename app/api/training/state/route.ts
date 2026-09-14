@@ -123,8 +123,7 @@ export async function GET(request: NextRequest) {
       lastTestSession?.completed_at
       || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
     );
-    const [carico, { data: calendar }, consensiSet, squadra, focusSetup] = await Promise.all([
-      loadCarico(userId, ciclo.isDeload),
+    const [{ data: calendar }, consensiSet, squadra, focusSetup] = await Promise.all([
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
       getConsents(userId),
@@ -137,6 +136,8 @@ export async function GET(request: NextRequest) {
       trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [],
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
     });
+    // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra
+    const carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato);
 
     const rombo = buildRombo(rows);
     return NextResponse.json({

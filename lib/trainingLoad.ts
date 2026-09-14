@@ -49,6 +49,7 @@ export interface CaricoInfo {
   calibrazione: number;              // RPE reale / RPE atteso per qualità (0.7-1.3), 1 = nessun dato
   target: { min: number; max: number } | null; // carico app consigliato per la prossima settimana
   tetto: number | null;              // sopra questo il validatore rifiuta (null = niente storico)
+  squadra: number;                   // carico squadra stimato a settimana (AU): base costante sotto acuto e cronico
 }
 
 /** RPE atteso per qualità di blocco (stima a priori, poi calibrata sui log dell'atleta). */
@@ -100,8 +101,11 @@ const round1 = (x: number) => Math.round(x * 10) / 10;
 export function calcolaCarico(input: {
   completions: CompletionRow[]; setRpe: SetRpeRow[]; plans: PlanRow[];
   oggi: string; lunedi: string; isDeload?: boolean;
+  /** Carico squadra stimato a settimana (AU): entra come base costante in acuto e cronico. */
+  squadraSettimanale?: number;
 }): CaricoInfo {
   const { oggi, lunedi } = input;
+  const S = Math.max(0, Math.round(input.squadraSettimanale ?? 0));
   const da = addDays(oggi, -27); // finestra di 28 giorni (oggi incluso)
   const planById = new Map(input.plans.map((p) => [p.id, p.plan]));
   const rpeBySession = new Map<string, number[]>();
@@ -148,18 +152,25 @@ export function calcolaCarico(input: {
   const precedenti = settimane.filter((w) => !w.corrente && lunediPrima !== null && w.lunedi >= lunediPrima);
   const cronico = giorniStorico >= MIN_GIORNI_STORICO && precedenti.length >= 2
     ? Math.round(precedenti.reduce((a, w) => a + w.carico, 0) / precedenti.length) : 0;
-  const acwr = cronico > 0 ? round1(acuto / cronico) : null;
+  // ACWR sul carico TOTALE (app + squadra): per chi si allena con la squadra il carico dell'app è una
+  // frazione; misurato da solo dava "alto/rischio" a ogni settimana normale (14/9: cronico app 439 AU,
+  // squadra ~2400 AU → il tetto bloccava qualsiasi settimana da 3 sedute)
+  const acwr = cronico > 0 ? round1((acuto + S) / (cronico + S)) : null;
   const stato: StatoCarico = acwr === null ? 'insufficiente'
     : acwr < ACWR_SOGLIE.poco ? 'poco' : acwr <= ACWR_SOGLIE.ok ? 'ok' : acwr <= ACWR_SOGLIE.alto ? 'alto' : 'rischio';
   const calibrazione = sommaAttesa > 0 ? Math.min(1.3, Math.max(0.7, round1(sommaReale / sommaAttesa))) : 1;
 
+  // Target e tetto: percentuali sul TOTALE, poi si toglie la squadra (che non si può ridurre) → quota app.
+  // In deload l'app riduce solo la propria parte (la squadra continua): percentuali sul cronico app.
   let target: CaricoInfo['target'] = null, tetto: number | null = null;
   if (cronico > 0) {
+    const tot = cronico + S;
+    const app = (x: number) => Math.max(0, Math.round(x - S));
     if (input.isDeload) { target = { min: Math.round(cronico * 0.5), max: Math.round(cronico * 0.7) }; tetto = Math.round(cronico * 0.75); }
-    else if (stato === 'rischio') { target = { min: Math.round(cronico * 0.7), max: cronico }; tetto = Math.round(cronico * 1.05); }
-    else { target = { min: Math.round(cronico * 0.9), max: Math.round(cronico * 1.1) }; tetto = Math.round(cronico * 1.15); }
+    else if (stato === 'rischio') { target = { min: app(tot * 0.7), max: app(tot) }; tetto = app(tot * 1.05); }
+    else { target = { min: app(tot * 0.9), max: app(tot * 1.1) }; tetto = app(tot * 1.15); }
   }
-  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto };
+  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, squadra: S };
 }
 
 /**
@@ -183,10 +194,11 @@ export const STATO_LABEL: Record<StatoCarico, string> = {
 };
 
 /** Blocco testo per i prompt del planner e del preparatore AI. */
-export function caricoTesto(c: CaricoInfo, squadra?: number): string {
+export function caricoTesto(c: CaricoInfo): string {
   const sett = c.settimane.map((s) => `${s.lunedi.slice(5)}: ${s.carico} AU (${s.sedute} sedute)${s.corrente ? ' ← in corso' : ''}`).join(' · ');
+  const squadra = c.squadra ? ` Squadra stimata (dal calendario): ~${c.squadra} AU/settimana in più, costante.` : '';
   if (c.acwr === null) {
-    return `\n# CARICO TOTALE (session-RPE: durata × RPE)\nStorico ${c.giorniStorico} giorni: ${sett}. Servono almeno ${MIN_GIORNI_STORICO} giorni per il rapporto acuto/cronico: nessun tetto, resta prudente (settimana simile alla precedente).${squadra ? ` Squadra stimata: ~${squadra} AU/settimana.` : ''}`;
+    return `\n# CARICO TOTALE (session-RPE: durata × RPE)\nStorico app ${c.giorniStorico} giorni: ${sett}. Servono almeno ${MIN_GIORNI_STORICO} giorni per il rapporto acuto/cronico: nessun tetto, resta prudente (settimana simile alla precedente).${squadra}`;
   }
-  return `\n# CARICO TOTALE (session-RPE: durata × RPE — calcolato dai dati)\nSettimane: ${sett}\nAcuto (ultimi 7gg / ultima settimana): ${c.acuto} AU · cronico (media settimane precedenti): ${c.cronico} AU · ACWR ${c.acwr} → ${c.stato.toUpperCase()}${squadra ? `\nSquadra stimata (non misurata): ~${squadra} AU/settimana in più` : ''}\nTARGET app per questa settimana: ${c.target!.min}-${c.target!.max} AU (tetto ${c.tetto} AU: oltre il validatore rifiuta). RPE reale/atteso: ${c.calibrazione}.`;
+  return `\n# CARICO TOTALE (session-RPE: durata × RPE — calcolato dai dati)\nSettimane app: ${sett}${squadra}\nAcuto app (ultimi 7gg / ultima settimana): ${c.acuto} AU · cronico app: ${c.cronico} AU · ACWR sul totale app+squadra ${c.acwr} → ${c.stato.toUpperCase()}\nTARGET app per questa settimana: ${c.target!.min}-${c.target!.max} AU (tetto ${c.tetto} AU: oltre il validatore rifiuta). RPE reale/atteso: ${c.calibrazione}.`;
 }
