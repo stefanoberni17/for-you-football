@@ -18,14 +18,14 @@ import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type Plann
 import { caricoPianificato, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
-import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, type TrainingSetup } from './trainingSetup';
+import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type TrainingSetup } from './trainingSetup';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.5-obiettivi';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.6-sedute-leggere';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -54,6 +54,7 @@ export interface ContextV2 {
   v2: ContestoV2;
   blocchi: Blocco[];        // disponibili per questo atleta
   maxSeduteFisiche: number; // per fase
+  maxSeduteTotali: number;  // fisiche + giornate leggere (fascia/tecnica/recupero)
   maxDurata: number;        // per fase
   // Sedute della settimana precedente non fatte: vanno riproposte UGUALI (stessi blocchi)
   daRecuperare: { titolo: string; blocchi: string[]; giorno: number }[];
@@ -90,7 +91,7 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
   return {
     base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
-    maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxDurata: MAX_DURATA_PER_FASE[setup.fase],
+    maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
     daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup,
   };
 }
@@ -203,10 +204,14 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     if (!sedute.some((s) => (s.blocchi || []).map((b) => b.id).sort().join('|') === key))
       errors.push(`manca la seduta da recuperare "${r.titolo}" (blocchi: ${r.blocchi.join(', ')}) — va riproposta uguale`);
   }
-  // Sedute richieste dall'atleta (maschera): esattamente N, entro il tetto della fase e i giorni ammessi
+  // Sedute richieste dall'atleta (maschera): esattamente N giornate (fisiche + leggere), entro il totale della fase e i giorni ammessi
   const nRichieste = seduteRichieste(ctx);
   if (nRichieste !== null && sedute.length !== nRichieste)
-    errors.push(`l'atleta ha chiesto ${nRichieste} sedute a settimana: ne hai messe ${sedute.length} — metti esattamente ${nRichieste} giornate`);
+    errors.push(`l'atleta ha chiesto ${nRichieste} giornate a settimana: ne hai messe ${sedute.length} — metti esattamente ${nRichieste} giornate`);
+  // Tetto fisico della fase (Ste, 16/9: 3 fisiche + 2 leggere): oltre, le giornate sono SOLO fascia/tecnica/recupero
+  const fisiche = sedute.filter((s) => s.tipo === 'fisica' || s.tipo === 'mix').length;
+  if (fisiche > ctx.maxSeduteFisiche)
+    errors.push(`${fisiche} giornate con blocchi fisici: il tetto è ${ctx.maxSeduteFisiche} — le altre giornate devono avere SOLO fascia/prevenzione, tecnica o mobilità/recupero`);
   // Obiettivi (setup o maschera): i primi N devono avere almeno un blocco della loro qualità.
   // N scende se le giornate non bastano (una sola seduta da 60' non tiene due blocchi di forza) o se i recuperi
   // occupano già dei posti; in preparazione con la squadra conta solo il primo (1 blocco di forza al massimo).
@@ -264,13 +269,14 @@ function systemPrompt(ctx: ContextV2): string {
     : fase === 'preparazione_squadra'
       ? 'PREPARAZIONE CON LA SQUADRA: la squadra fa il carico. Da noi SOLO tecnica, fascia e al massimo 1 blocco di forza a settimana (se lo chiede).'
       : `IN SEASON: massimo ${ctx.maxSeduteFisiche} sedute fisiche a settimana oltre alla squadra; il resto tecnica e fascia.`;
+  const leggereTxt = ` Oltre alle ${ctx.maxSeduteFisiche} fisiche puoi aggiungere fino a ${ctx.maxSeduteTotali - ctx.maxSeduteFisiche} giornate LEGGERE facoltative (solo fascia/prevenzione, tecnica o mobilità/recupero, nessun blocco di forza/esplosività/velocità/resistenza): il validatore conta le giornate con blocchi fisici. Se in cima agli obiettivi c'è la forza, riempi PRIMA i posti fisici con la forza e metti prevenzione e tecnica nelle giornate leggere, mai al posto di una seduta di forza.`;
   return `Sei il preparatore AI di For You Football. Componi il piano SETTIMANALE di un calciatore IMPILANDO BLOCCHI (workout già pronti del coach Ste), esattamente come fa lui: ogni giornata è una pila di 2-4 blocchi. Un validatore software controlla ogni piano: blocchi non in libreria, giornate troppo lunghe, sedute fisiche vicino alla partita o oltre il tetto vengono RIFIUTATI.
 
 # REGOLE (in ordine di priorità)
 
 SICUREZZA
 1. Dolore segnalato (pain-hold) → niente blocchi fisici: solo fascia, tecnica, mobilità/recupero.
-2. FASE: ${faseTxt}
+2. FASE: ${faseTxt}${leggereTxt}
 2b. OBIETTIVI DELL'ATLETA (sezione OBIETTIVI nel messaggio): sono la ragione del piano. Quelli segnati OBBLIGATORIO devono avere almeno un blocco principale della loro qualità nella settimana; il validatore lo controlla. Gli obiettivi vengono PRIMA dei recuperi e delle progressioni.
 3. Finestre partita (le rispetta il validatore, ma tu progetta già bene):
 ${finestreTesto()}
@@ -306,7 +312,7 @@ ${libreriaTesto(ctx)}
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
 LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
-giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta).` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
+giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta)${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
 }
 
 /** Sedute richieste dall'atleta, clampate al tetto della fase e ai giorni ammessi (null = decide il planner). */
@@ -314,14 +320,15 @@ function seduteRichieste(ctx: ContextV2): number | null {
   const n = ctx.vincoli.numSedute;
   if (!n) return null;
   const giorniAmmessi = ctx.vincoli.giorniAmmessi?.length ? ctx.vincoli.giorniAmmessi.length : 7;
-  return Math.max(1, Math.min(n, ctx.maxSeduteFisiche, giorniAmmessi));
+  return Math.max(1, Math.min(n, ctx.maxSeduteTotali ?? ctx.maxSeduteFisiche, giorniAmmessi));
 }
 
 /** Obiettivi che il validatore pretende davvero (i primi, in ordine), dati i posti disponibili. */
 function obiettiviDaControllare(ctx: ContextV2, recuperiAttesi = 0): FocusId[] {
   if (ctx.base.painHold) return [];
   if (ctx.obiettivi[0] === FOCUS_TUTTO) return []; // equilibrio: controllo a parte in expandPiano
-  const posti = (seduteRichieste(ctx) ?? ctx.maxSeduteFisiche) - recuperiAttesi;
+  // Solo i posti FISICI contano per gli obiettivi di forza: le giornate leggere oltre il tetto non li ospitano
+  const posti = Math.min(seduteRichieste(ctx) ?? ctx.maxSeduteFisiche, ctx.maxSeduteFisiche) - recuperiAttesi;
   const max = ctx.setup.fase === 'preparazione_squadra' ? 1 : FOCUS_OBBLIGATORI;
   return ctx.obiettivi.slice(0, Math.max(0, Math.min(max, posti)));
 }
@@ -404,7 +411,15 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   const ammesso = (d: number) => !ctx.vincoli.giorniAmmessi?.length || ctx.vincoli.giorniAmmessi.includes(d);
   const liberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !occupati.has(d) && !vietati.has(d) && ammesso(d));
   const nSedute = seduteRichieste(ctx) ?? Math.max(2, Math.min(3, ctx.maxSeduteFisiche));
-  const giorni = (liberi.length >= nSedute ? liberi : [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !vietati.has(d) && ammesso(d))).slice(0, nSedute);
+  // Giorni FISICI: mai partita né giorno prima; giorni LEGGERI (fascia/tecnica/recupero): anche il giorno prima della partita
+  const nFisici = Math.min(nSedute, ctx.maxSeduteFisiche);
+  const fisici = (liberi.length >= nFisici ? liberi : [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !vietati.has(d) && ammesso(d))).slice(0, nFisici);
+  const candLeggeri = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= b.oggiDow && !fisici.includes(d) && !b.matchDays.includes(d)
+    && !ctx.vincoli.giorniVietati?.includes(d) && ammesso(d));
+  // Prima i giorni senza squadra; se non bastano, una giornata leggera può stare anche in un giorno squadra
+  const leggeri = [...candLeggeri.filter((d) => !b.trainingDays.includes(d)), ...candLeggeri.filter((d) => b.trainingDays.includes(d))]
+    .slice(0, Math.max(0, nSedute - fisici.length)).sort((x, y) => x - y);
+  const giorni = [...fisici.map((d) => ({ d, fisico: true })), ...leggeri.map((d) => ({ d, fisico: false }))].sort((x, y) => x.d - y.d);
   const maxDur = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
   const fascia = primo(ctx, 'fascia-prevenzione', /Foundations? 1\b/i);
   // Giornate costruite dagli OBIETTIVI (setup o maschera), non da una lista fissa; senza obiettivi la vecchia terna
@@ -427,18 +442,22 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   // Richiesta esplicita: prima gli obiettivi, i recuperi negli slot che avanzano; piano automatico: prima i recuperi
   const nObiettivi = ctx.vincoli.recuperiFacoltativi ? Math.min(principali.length, giorni.length) : 0;
   const recuperoPer = (i: number) => ctx.vincoli.recuperiFacoltativi ? (i >= nObiettivi ? recuperi[i - nObiettivi] : undefined) : recuperi[i];
-  const baseSeduta = (g: number, i: number): SedutaLLM => {
-    const p = principali[i % Math.max(1, principali.length)];
+  // Oltre il tetto fisico della fase le giornate sono LEGGERE: fascia + tecnica (o recupero), niente forza
+  const leggero = primo(ctx, 'tecnica-palleggi') ?? primo(ctx, 'mobilita-recupero');
+  const baseSeduta = (g: number, i: number, fisico: boolean): SedutaLLM => {
+    const p = fisico ? principali[i % Math.max(1, principali.length)] : leggero;
     const conFascia = fascia && p && p.id !== fascia.id && fascia.durataMin + p.durataMin <= maxDur;
     return {
-      giorno: g, titolo: 'Seduta base', spiegazione: 'Piano base di sicurezza generato automaticamente.',
+      giorno: g, titolo: fisico ? 'Seduta base' : 'Giornata leggera', spiegazione: 'Piano base di sicurezza generato automaticamente.',
       blocchi: [conFascia ? fascia.id : undefined, p?.id ?? fascia?.id].filter((x): x is string => !!x),
     };
   };
-  let k = 0; // le giornate base scorrono gli obiettivi in ordine, i recuperi non consumano un obiettivo
-  const sedute: SedutaLLM[] = giorni.map((g, i) => {
-    const r = recuperoPer(i);
-    return r ? { giorno: g, titolo: r.titolo, spiegazione: 'Recupero della seduta saltata la settimana scorsa.', blocchi: r.blocchi } : baseSeduta(g, k++);
+  let k = 0; // le giornate fisiche scorrono gli obiettivi in ordine, i recuperi non consumano un obiettivo
+  let iFis = 0; // indice tra le sole giornate fisiche (i recuperi occupano posti fisici)
+  const sedute: SedutaLLM[] = giorni.map(({ d: g, fisico }) => {
+    if (!fisico) return baseSeduta(g, 0, false);
+    const r = recuperoPer(iFis++);
+    return r ? { giorno: g, titolo: r.titolo, spiegazione: 'Recupero della seduta saltata la settimana scorsa.', blocchi: r.blocchi } : baseSeduta(g, k++, true);
   }).filter((s) => s.blocchi.length > 0);
   const { plan } = expandPiano({ sedute, messaggio: 'Piano base della settimana (generato in modalità sicura).' }, ctx);
   return plan;

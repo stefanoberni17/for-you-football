@@ -11,12 +11,13 @@ interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
  * la richiesta al planner (e i vincoli per il validatore). Niente testo libero,
  * salvo una nota corta.
  */
-export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario, maxSedute, focusSetup, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, generating, onSubmit, onClose }: {
   hasPlan: boolean;
   sedute: SedutaLite[];      // tutte le sedute della settimana (anche passate: i loro giorni non sono liberi)
   oggiDow: number;
   calendario?: { trainingDays: number[]; matchDays: number[] };  // settimana squadra caricata dall'utente
-  maxSedute?: number;        // tetto sedute fisiche della fase
+  maxSedute?: number;        // giornate totali richiedibili (fisiche + leggere)
+  maxSeduteFisiche?: number; // di cui con blocchi fisici (tetto della fase)
   focusSetup?: FocusId[];    // obiettivi della fase dal setup: chip già selezionati, un cambio vale solo per questa settimana
   generating: boolean;
   onSubmit: (r: RichiestaGuidata) => void;
@@ -106,7 +107,7 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
             )}
           </div>
 
-          <p className="text-xs font-semibold text-app mb-1.5">Quante sedute a settimana? <span className="text-faint font-normal">(vuoto = decide il preparatore, massimo {tettoSedute} in questa fase)</span></p>
+          <p className="text-xs font-semibold text-app mb-1.5">Quante giornate a settimana? <span className="text-faint font-normal">(vuoto = decide il preparatore; massimo {tettoSedute}: {maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero)</span></p>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {Array.from({ length: tettoSedute }, (_, i) => i + 1).map((n) => (
               <button key={n} type="button" onClick={() => setNSedute(nSedute === n ? null : n)} className={chip(nSedute === n)}>{n}</button>

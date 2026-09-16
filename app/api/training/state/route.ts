@@ -7,7 +7,7 @@ import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromR
 import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
-import { SETUP_SELECT, mapSetup, MAX_SEDUTE_FISICHE_PER_FASE } from '@/lib/trainingSetup';
+import { SETUP_SELECT, mapSetup, MAX_SEDUTE_FISICHE_PER_FASE, maxSeduteTotali } from '@/lib/trainingSetup';
 import { loadFocusSetup, loadSquadra } from '@/lib/trainingPlanner';
 import { PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
@@ -187,6 +187,7 @@ export async function GET(request: NextRequest) {
       // Settimana squadra caricata dall'utente (per la maschera: si vede prima di scegliere i giorni)
       calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
       maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase],
+      maxSeduteTotali: maxSeduteTotali(setup.fase),
     });
   } catch (err) {
     console.error('training/state error:', err);
