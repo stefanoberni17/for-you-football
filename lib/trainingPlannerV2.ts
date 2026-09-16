@@ -215,6 +215,16 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // Obiettivi (setup o maschera): i primi N devono avere almeno un blocco della loro qualità.
   // N scende se le giornate non bastano (una sola seduta da 60' non tiene due blocchi di forza) o se i recuperi
   // occupano già dei posti; in preparazione con la squadra conta solo il primo (1 blocco di forza al massimo).
+  // Primo obiettivo = filo della settimana (Ste, 16/9): con ≥3 posti fisici deve stare in almeno 2 giornate
+  const primo = obiettiviDaControllare(ctx, attesi.length)[0];
+  const postiFisici = Math.min(seduteRichieste(ctx) ?? ctx.maxSeduteFisiche, ctx.maxSeduteFisiche) - attesi.length;
+  if (primo && postiFisici >= 3) {
+    const qsPrimo = FOCUS_QUALITA[primo];
+    const candPrimo = ctx.blocchi.filter((b) => qsPrimo.includes(b.qualita));
+    const giornatePrimo = sedute.filter((s) => (s.blocchi || []).some((b) => qsPrimo.includes(b.qualita as QualitaV2))).length;
+    if (candPrimo.length >= 2 && giornatePrimo === 1)
+      errors.push(`obiettivo principale "${focusLabel(primo)}": è in una sola giornata — con ${postiFisici} giornate fisiche mettilo in almeno 2 (in una anche in versione short o come secondo blocco, es. ${candPrimo.slice(0, 3).map((b) => b.id).join(', ')})`);
+  }
   for (const f of obiettiviDaControllare(ctx, attesi.length)) {
     const qs = FOCUS_QUALITA[f];
     const cand = ctx.blocchi.filter((b) => qs.includes(b.qualita));
@@ -278,9 +288,10 @@ SICUREZZA
 1. Dolore segnalato (pain-hold) → niente blocchi fisici: solo fascia, tecnica, mobilità/recupero.
 2. FASE: ${faseTxt}${leggereTxt}
 2b. OBIETTIVI DELL'ATLETA (sezione OBIETTIVI nel messaggio): sono la ragione del piano. Quelli segnati OBBLIGATORIO devono avere almeno un blocco principale della loro qualità nella settimana; il validatore lo controlla. Gli obiettivi vengono PRIMA dei recuperi e delle progressioni.
+2c. Il PRIMO obiettivo è il filo della settimana: con 3 o più giornate fisiche compare in ALMENO 2 (in una come blocco principale, nell'altra anche in versione short o come secondo blocco); il secondo obiettivo almeno una volta, anche come secondo blocco nella stessa giornata del primo se il tempo lo permette; gli altri nei posti che avanzano o nelle giornate leggere. Esempio con forza parte alta primo e gambe secondo, 3 fisiche + 1 leggera: lunedì parte alta + gambe, mercoledì parte alta + esplosività, venerdì fascia + tecnica, domenica parte alta short + prevenzione.
 3. Finestre partita (le rispetta il validatore, ma tu progetta già bene):
 ${finestreTesto()}
-   Il giorno dopo la partita, o con fatica alta: recupero guidato (yoga/sessione recupero) + fascia + tecnica leggera. Mai yoga di recupero il giorno prima o il giorno della partita.
+   Il giorno DOPO la partita: niente gambe (forza parte bassa, pliometria, velocità, resistenza). Vanno bene fascia/prevenzione, mobilità/recupero, tecnica leggera e la forza PARTE ALTA in versione short (volume ridotto: le gambe hanno giocato ieri e spesso si riallenano il giorno dopo). Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera. Mai yoga di recupero il giorno prima o il giorno della partita.
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
 
 COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
@@ -429,7 +440,11 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
       (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
     return cand.find((x) => x.durataMin + (fascia?.durataMin ?? 0) <= maxDur) ?? cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
   };
-  const dagliObiettivi = focusEspansi(ctx.obiettivi).map(perObiettivo).filter((x): x is Blocco => !!x);
+  const perOrdine = focusEspansi(ctx.obiettivi).map(perObiettivo).filter((x): x is Blocco => !!x);
+  // Il primo obiettivo è il filo della settimana: o1, o2, o1, o3, o1, … (con 3 giornate fisiche il primo compare 2 volte)
+  const dagliObiettivi = perOrdine.length > 1
+    ? Array.from({ length: perOrdine.length * 2 - 1 }, (_, i) => (i % 2 === 0 ? perOrdine[0] : perOrdine[(i + 1) / 2]))
+    : perOrdine;
   const principali: (Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
     ? [primo(ctx, 'tecnica-palleggi'), primo(ctx, 'tecnica-passaggi')]
     : dagliObiettivi.length ? dagliObiettivi
