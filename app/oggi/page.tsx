@@ -5,7 +5,9 @@ import { authFetch } from '@/lib/authFetch';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ActionsSetupSheet, { type SelectedAction } from '@/components/ActionsSetupSheet';
+import type { ActionCategory, ActionPrinciple } from '@/lib/actionsCatalog';
 import EmptyState from '@/components/EmptyState';
+import { AppLoader, BackButton, Button, Card } from '@/components/ui';
 import { Flame, Pencil, Target } from 'lucide-react';
 
 type ApiAction = {
@@ -37,6 +39,7 @@ function OggiPageInner() {
   const [actions, setActions] = useState<ApiAction[]>([]);
   const [todayCount, setTodayCount] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [streakThreshold, setStreakThreshold] = useState(3);
   const [showSetup, setShowSetup] = useState(false);
   const [pendingToggleId, setPendingToggleId] = useState<string | null>(null);
 
@@ -50,6 +53,7 @@ function OggiPageInner() {
     setActions(aData.actions || []);
     setTodayCount(aData.today_count || 0);
     setStreak(hData.current_streak || 0);
+    if (typeof hData.threshold === 'number') setStreakThreshold(hData.threshold);
   };
 
   useEffect(() => {
@@ -147,14 +151,7 @@ function OggiPageInner() {
   };
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento azioni…</p>
-        </div>
-      </main>
-    );
+    return <AppLoader label="Caricamento azioni…" />;
   }
 
   const total = actions.length;
@@ -166,8 +163,8 @@ function OggiPageInner() {
     text: a.action_text,
     source: a.source,
     catalog_id: a.catalog_id,
-    category: a.category as any,
-    principle: (a.principle as any) || null,
+    category: a.category as ActionCategory,
+    principle: (a.principle as ActionPrinciple) || null,
   }));
 
   return (
@@ -176,24 +173,19 @@ function OggiPageInner() {
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
         <div className="max-w-xl mx-auto">
-          <button
-            onClick={() => router.push('/')}
-            className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-          >
-            ← Home
-          </button>
-          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
+          <BackButton href="/" label="Home" tone="light" className="mb-4" />
+          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1">
             Oggi · {todayLongIt()}
           </p>
-          <h1 className="text-2xl font-bold text-white leading-tight mb-3">
+          <h1 className="font-display text-title-1 font-bold text-white leading-tight mb-3">
             Le tue 5 azioni
           </h1>
 
           {total > 0 ? (
             <>
-              <div className="flex items-baseline justify-between text-forest-100 text-xs mb-1.5">
-                <span className="font-medium">{todayCount}/{total} fatte oggi</span>
-                <span className="font-semibold">{percent}%</span>
+              <div className="flex items-baseline justify-between text-forest-100 mb-1.5">
+                <span className="font-display text-title-2 font-bold text-white tabular-nums">{todayCount}/{total} <span className="text-body-sm font-medium text-forest-100">fatte oggi</span></span>
+                <span className="text-body-sm font-semibold tabular-nums">{percent}%</span>
               </div>
               <div className="w-full bg-white/15 rounded-full h-1.5 overflow-hidden">
                 <div
@@ -203,7 +195,7 @@ function OggiPageInner() {
               </div>
             </>
           ) : (
-            <p className="text-forest-100 text-sm">
+            <p className="text-forest-100 text-body">
               Pianifica le tue 5 azioni: le stesse ogni giorno, per tutta la settimana.
             </p>
           )}
@@ -216,15 +208,15 @@ function OggiPageInner() {
         {total === 0 ? (
           <EmptyState
             icon={<Target className="w-6 h-6" aria-hidden="true" />}
-            iconBg="bg-amber-500/20"
-            iconColor="text-amber-300"
+            iconBg="bg-warning/20"
+            iconColor="text-warning"
             title="Comportati già oggi come il giocatore che vuoi diventare"
             subtitle="Scegli fino a 5 azioni concrete. Restano le stesse per tutta la settimana, le spunti ogni giorno. La consistenza vince sulla perfezione."
             cta={{ label: 'Pianifica le tue 5 azioni', onClick: () => setShowSetup(true) }}
           />
         ) : (
           <>
-            <div className="bg-surface rounded-2xl shadow-sm border border-divider overflow-hidden">
+            <Card padding="none" className="overflow-hidden">
               {actions.map((a, i) => {
                 const checked = a.completed_today;
                 return (
@@ -253,36 +245,37 @@ function OggiPageInner() {
                         </svg>
                       )}
                     </span>
-                    <p className={`flex-1 text-sm leading-relaxed ${checked ? 'text-muted line-through decoration-1' : 'text-app'}`}>
+                    <p className={`flex-1 text-body leading-relaxed ${checked ? 'text-muted line-through decoration-1' : 'text-app'}`}>
                       {a.action_text}
                     </p>
                   </button>
                 );
               })}
-            </div>
+            </Card>
 
-            <button
+            <Button
+              variant="secondary"
+              fullWidth
               onClick={() => setShowSetup(true)}
-              className="w-full bg-surface border border-divider text-app font-semibold py-3 rounded-xl hover:bg-surface-2 transition-colors flex items-center justify-center gap-2 text-sm"
+              icon={<Pencil size={18} aria-hidden="true" />}
             >
-              <Pencil className="w-4 h-4" aria-hidden="true" />
               Modifica le tue 5 azioni
-            </button>
+            </Button>
 
             {streak > 0 && (
-              <div className="bg-surface border border-orange-500/30 rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                  <Flame className="w-6 h-6 text-orange-400" aria-hidden="true" />
+              <Card padding="sm" className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
+                  <Flame className="w-6 h-6 text-warning" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-bold text-app">
+                  <p className="font-display text-title-3 font-bold text-app tabular-nums">
                     {streak} {streak === 1 ? 'giorno' : 'giorni'} di fila
                   </p>
-                  <p className="text-xs text-muted">
-                    Hai fatto almeno 3 azioni al giorno. Continua così.
+                  <p className="text-body-sm text-muted">
+                    Hai fatto almeno {streakThreshold} azioni al giorno. Continua così.
                   </p>
                 </div>
-              </div>
+              </Card>
             )}
           </>
         )}
@@ -307,14 +300,7 @@ function OggiPageInner() {
 
 export default function OggiPage() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento…</p>
-        </div>
-      </main>
-    }>
+    <Suspense fallback={<AppLoader />}>
       <OggiPageInner />
     </Suspense>
   );

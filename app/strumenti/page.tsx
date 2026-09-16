@@ -14,7 +14,8 @@ import {
 import { authFetch } from '@/lib/authFetch';
 import { useMeditation } from '@/components/MeditationContext';
 import PracticePopup from '@/components/PracticePopup';
-import { Lock, ChevronRight, ChevronDown, Play, Wind } from 'lucide-react';
+import { Lock, ChevronRight, ChevronDown, Play, Wind, Dumbbell, Zap, IdCard, Goal, Clock, Target } from 'lucide-react';
+import { AppLoader, BackButton, Button, Card, SectionTitle } from '@/components/ui';
 
 interface DiffCard {
   id: string;
@@ -23,6 +24,15 @@ interface DiffCard {
   sottotitolo: string;
   unlockedCount: number;
   totalCount: number;
+}
+
+function readOpen(key: string, fallback: boolean): boolean {
+  try {
+    const v = localStorage.getItem(key);
+    return v === null ? fallback : v === '1';
+  } catch {
+    return fallback; // storage non disponibile (o SSR) — default
+  }
 }
 
 /**
@@ -40,21 +50,13 @@ export default function StrumentiPage() {
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [activeExercise, setActiveExercise] = useState<PalestraExercise | null>(null);
   const [showToolPractice, setShowToolPractice] = useState(false);
-  // Sezioni espandibili: Palestra protagonista (aperta), Strumenti riferimento
-  // (chiusa), difficoltà in evidenza (aperta). Stato persistito.
-  const [palestraOpen, setPalestraOpen] = useState(true);
-  const [sosOpen, setSosOpen] = useState(true);
+  // Sezioni espandibili: Palestra protagonista (aperta), difficoltà chiusa di
+  // default (review 16/9). Stato persistito in localStorage (letto una volta
+  // nell'inizializzatore: la prima render mostra solo il loader, niente mismatch).
+  const [palestraOpen, setPalestraOpen] = useState(() => readOpen('strumentiHub.palestra', true));
+  const [sosOpen, setSosOpen] = useState(() => readOpen('strumentiHub.sos', false));
   const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
   const [trainingAccess, setTrainingAccess] = useState(false);
-
-  useEffect(() => {
-    try {
-      const p = localStorage.getItem('strumentiHub.palestra');
-      const s = localStorage.getItem('strumentiHub.sos');
-      if (p !== null) setPalestraOpen(p === '1');
-      if (s !== null) setSosOpen(s === '1');
-    } catch { /* storage non disponibile — default */ }
-  }, []);
 
   const toggleSection = (key: 'palestra' | 'sos') => {
     const setter = key === 'palestra' ? setPalestraOpen : setSosOpen;
@@ -93,14 +95,7 @@ export default function StrumentiPage() {
   }, [router]);
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento...</p>
-        </div>
-      </main>
-    );
+    return <AppLoader />;
   }
 
   const capUnlocked = unlockedCapacita(currentWeek).length;
@@ -112,25 +107,21 @@ export default function StrumentiPage() {
       <main className="min-h-screen bg-app pb-tabbar-lg">
         <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
           <div className="max-w-xl mx-auto">
-            <button
-              onClick={() => setSelectedCapacita(null)}
-              className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-            >
-              ← Palestra
-            </button>
+            <BackButton onClick={() => setSelectedCapacita(null)} label="Palestra" tone="light" className="mb-4" />
             <div className="text-4xl mb-2">{selectedCapacita.emoji}</div>
-            <h1 className="text-2xl font-bold text-white leading-tight">{selectedCapacita.principio}</h1>
-            <p className="text-forest-100 text-sm mt-1">{selectedCapacita.sottotitolo}</p>
+            <h1 className="font-display text-title-1 font-bold text-white leading-tight">{selectedCapacita.principio}</h1>
+            <p className="text-forest-100 text-body mt-1">{selectedCapacita.sottotitolo}</p>
           </div>
         </div>
 
         <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
-          <p className="text-xs text-muted px-1 leading-relaxed">
+          <p className="text-body-sm text-muted px-1 leading-relaxed">
             Esercizi base, da rifare quando vuoi — è allenandoli che diventano tuoi.
           </p>
           {esercizi.map(ex => (
-            <button
+            <Card
               key={ex.id}
+              padding="md"
               onClick={() => {
                 if (ex.ancora) {
                   const tool = TOOLS.find(t => t.id === ex.id);
@@ -139,24 +130,23 @@ export default function StrumentiPage() {
                   setActiveExercise(ex);
                 }
               }}
-              className="w-full bg-surface rounded-2xl shadow-sm p-5 border border-divider text-left hover:border-forest-500/40 transition-all active:scale-[0.99]"
             >
               <div className="flex items-center justify-between gap-3 mb-1.5">
-                <span className="text-sm font-bold text-app">
+                <span className="text-title-3 font-bold text-app">
                   {ex.nome}
                   {ex.ancora && (
-                    <span className="ml-2 text-[10px] font-semibold text-forest-400 align-middle uppercase tracking-wide">
+                    <span className="ml-2 text-overline font-semibold text-forest-400 align-middle uppercase tracking-wider">
                       strumento
                     </span>
                   )}
                 </span>
-                <span className="flex items-center gap-1.5 text-forest-300 text-xs font-bold flex-shrink-0">
-                  <Play className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="flex items-center gap-1.5 text-forest-300 text-body-sm font-bold flex-shrink-0">
+                  <Play size={16} aria-hidden="true" />
                   Allena · {ex.durataMinuti}&apos;
                 </span>
               </div>
-              <p className="text-xs text-muted leading-relaxed">{ex.cosaAllena}</p>
-            </button>
+              <p className="text-body-sm text-muted leading-relaxed">{ex.cosaAllena}</p>
+            </Card>
           ))}
           <div className="h-4" />
         </div>
@@ -182,46 +172,39 @@ export default function StrumentiPage() {
       <main className="min-h-screen bg-app pb-tabbar-lg">
         <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
           <div className="max-w-xl mx-auto">
-            <button
-              onClick={() => setSelectedTool(null)}
-              className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-            >
-              ← Indietro
-            </button>
+            <BackButton onClick={() => setSelectedTool(null)} label="Indietro" tone="light" className="mb-4" />
             <div className="text-4xl mb-2">{selectedTool.emoji}</div>
-            <h1 className="text-2xl font-bold text-white leading-tight">{selectedTool.nome}</h1>
-            <p className="text-forest-100 text-sm mt-1">
+            <h1 className="font-display text-title-1 font-bold text-white leading-tight">{selectedTool.nome}</h1>
+            <p className="text-forest-100 text-body mt-1">
               Settimana {selectedTool.week} · {selectedTool.principio}
             </p>
           </div>
         </div>
 
         <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            <p className="text-app text-sm leading-relaxed italic">{selectedTool.inUnaRiga}</p>
-          </div>
+          <Card padding="md">
+            <p className="text-app text-body leading-relaxed">{selectedTool.inUnaRiga}</p>
+          </Card>
 
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
-              ⚽ Quando usarlo
-            </h2>
-            <p className="text-app text-sm leading-relaxed">{selectedTool.quando}</p>
-          </div>
+          <Card padding="md">
+            <SectionTitle title="Quando usarlo" icon={<Clock size={18} />} className="mb-2" />
+            <p className="text-app text-body leading-relaxed">{selectedTool.quando}</p>
+          </Card>
 
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-            <h2 className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
-              🎯 La pratica
-            </h2>
-            <p className="text-app text-sm leading-relaxed whitespace-pre-line">{selectedTool.pratica}</p>
-          </div>
+          <Card padding="md">
+            <SectionTitle title="La pratica" icon={<Target size={18} />} className="mb-2" />
+            <p className="text-app text-body leading-relaxed whitespace-pre-line">{selectedTool.pratica}</p>
+          </Card>
 
-          <button
+          <Button
+            variant="hero"
+            size="lg"
+            fullWidth
             onClick={() => setShowToolPractice(true)}
-            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2"
+            icon={<Play size={20} aria-hidden="true" />}
           >
-            <Play className="w-4 h-4" aria-hidden="true" />
             Fai la pratica ora — {selectedTool.durataMinuti} min
-          </button>
+          </Button>
 
           <div className="h-4" />
         </div>
@@ -245,71 +228,75 @@ export default function StrumentiPage() {
     <main className="min-h-screen bg-app pb-tabbar-lg">
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-xl mx-auto">
-          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
-            🏋️ Il tuo campo
+          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1">
+            Il tuo campo
           </p>
-          <h1 className="text-2xl font-bold text-white leading-tight">Palestra</h1>
-          <p className="text-forest-100 text-sm mt-1">
+          <h1 className="font-display text-title-1 font-bold text-white leading-tight">Palestra</h1>
+          <p className="text-forest-100 text-body mt-1">
             Lo spazio dove ti alleni davvero — {capUnlocked} su {CAPACITA.length} capacità.
           </p>
         </div>
       </div>
 
       <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
-        {/* ⚽ Campo — area training riservata (visibile solo con training_access) */}
+        {/* Campo — area training riservata (visibile solo con training_access) */}
         {trainingAccess && (
-          <button
-            onClick={() => router.push('/allenamento')}
-            className="w-full bg-surface border border-forest-500/40 rounded-2xl shadow-lg p-5 flex items-center justify-between text-left transition-all active:scale-[0.99]"
-          >
+          <Card variant="accent" padding="md" href="/allenamento">
+            <span className="flex items-center justify-between gap-3">
             <span className="flex items-center gap-4">
-              <span className="w-11 h-11 rounded-full bg-forest-500/15 flex items-center justify-center flex-shrink-0 text-xl" aria-hidden="true">⚽</span>
+              <span className="w-11 h-11 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <Goal size={22} />
+              </span>
               <span>
-                <span className="block text-base font-bold text-app">Campo — Allenamento</span>
-                <span className="block text-xs text-muted mt-0.5">Test, card giocatore e programma settimanale</span>
+                <span className="block text-title-3 font-bold text-app">Campo — Allenamento</span>
+                <span className="block text-body-sm text-muted mt-0.5">Test, card giocatore e programma settimanale</span>
               </span>
             </span>
-            <span className="text-forest-400 text-lg flex-shrink-0">→</span>
-          </button>
+            <ChevronRight size={20} className="text-forest-400 flex-shrink-0" aria-hidden="true" />
+            </span>
+          </Card>
         )}
 
         {/* Reset rapido — l'attrezzo che serve più spesso, sempre in cima */}
-        <button
-          onClick={openMeditation}
-          className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 rounded-2xl shadow-lg p-5 flex items-center justify-between text-left transition-all active:scale-[0.99]"
-        >
+        <Card variant="hero" padding="md" onClick={openMeditation}>
+          <span className="flex items-center justify-between gap-3">
           <span className="flex items-center gap-4">
             <span className="w-11 h-11 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
-              <Wind className="w-5 h-5 text-white" aria-hidden="true" />
+              <Wind size={20} className="text-white" aria-hidden="true" />
             </span>
             <span>
-              <span className="block text-base font-bold text-white">Reset rapido</span>
-              <span className="block text-xs text-forest-100 mt-0.5">
+              <span className="block text-title-3 font-bold text-white">Reset rapido</span>
+              <span className="block text-body-sm text-forest-100 mt-0.5">
                 {mantra ? `«${mantra}» — 1 minuto di respiro` : '1 minuto di respiro — adesso'}
               </span>
             </span>
           </span>
-          <span className="text-white text-lg flex-shrink-0">→</span>
-        </button>
+          <ChevronRight size={20} className="text-white flex-shrink-0" aria-hidden="true" />
+          </span>
+        </Card>
 
         {/* ── La Palestra (per principio) — protagonista, aperta di default ──── */}
-        <div className="bg-surface rounded-2xl shadow-md border border-forest-500/30 overflow-hidden">
+        <div className="rounded-card bg-surface border border-forest-500/30 overflow-hidden">
           <button
+            type="button"
             onClick={() => toggleSection('palestra')}
             aria-expanded={palestraOpen}
-            className="w-full p-4 flex items-center justify-between text-left"
+            className="w-full min-h-[56px] p-4 flex items-center justify-between text-left"
           >
             <span className="flex items-center gap-3">
-              <span className="text-2xl" aria-hidden="true">🏋️</span>
+              <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <Dumbbell size={20} />
+              </span>
               <span>
-                <span className="block text-sm font-bold text-app">Allena una capacità</span>
-                <span className="block text-xs text-muted mt-0.5">
+                <span className="block text-title-3 font-bold text-app">Allena una capacità</span>
+                <span className="block text-body-sm text-muted mt-0.5">
                   {capUnlocked} di {CAPACITA.length} capacità — un principio alla volta
                 </span>
               </span>
             </span>
             <ChevronDown
-              className={`w-4 h-4 text-faint flex-shrink-0 transition-transform duration-200 ${palestraOpen ? 'rotate-180' : ''}`}
+              size={18}
+              className={`text-faint flex-shrink-0 transition-transform duration-200 ${palestraOpen ? 'rotate-180' : ''}`}
               aria-hidden="true"
             />
           </button>
@@ -322,15 +309,15 @@ export default function StrumentiPage() {
                   return (
                     <div
                       key={c.id}
-                      className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between opacity-50"
+                      className="w-full min-h-[56px] bg-surface-2 rounded-btn p-3.5 flex items-center justify-between opacity-50"
                     >
                       <span className="flex items-center gap-3">
                         <span className="w-9 h-9 rounded-full bg-app flex items-center justify-center flex-shrink-0">
-                          <Lock className="w-4 h-4 text-faint" aria-hidden="true" />
+                          <Lock size={16} className="text-faint" aria-hidden="true" />
                         </span>
                         <span>
-                          <span className="block text-sm font-bold text-muted">{c.principio}</span>
-                          <span className="block text-[11px] text-faint mt-0.5">
+                          <span className="block text-body font-bold text-muted">{c.principio}</span>
+                          <span className="block text-caption text-faint mt-0.5">
                             Si sblocca dalla Settimana {c.week}
                           </span>
                         </span>
@@ -341,17 +328,18 @@ export default function StrumentiPage() {
                 return (
                   <button
                     key={c.id}
+                    type="button"
                     onClick={() => setSelectedCapacita(c)}
-                    className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between text-left hover:bg-[#293429] transition-all active:scale-[0.99]"
+                    className="w-full min-h-[56px] bg-surface-2 rounded-btn p-3.5 flex items-center justify-between text-left hover:bg-surface-3 transition-all active:scale-[0.99]"
                   >
                     <span className="flex items-center gap-3">
                       <span className="text-2xl flex-shrink-0" aria-hidden="true">{c.emoji}</span>
                       <span>
-                        <span className="block text-sm font-bold text-app">{c.principio}</span>
-                        <span className="block text-xs text-muted mt-0.5">{c.sottotitolo}</span>
+                        <span className="block text-body font-bold text-app">{c.principio}</span>
+                        <span className="block text-body-sm text-muted mt-0.5">{c.sottotitolo}</span>
                       </span>
                     </span>
-                    <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
+                    <ChevronRight size={18} className="text-faint flex-shrink-0" aria-hidden="true" />
                   </button>
                 );
               })}
@@ -359,18 +347,21 @@ export default function StrumentiPage() {
           )}
         </div>
 
-        {/* ── Come affrontare le difficoltà (in evidenza, aperta di default) ── */}
-        <div className="bg-surface rounded-2xl shadow-md border border-amber-500/30 overflow-hidden">
+        {/* ── Come affrontare le difficoltà (chiusa di default) ── */}
+        <div className="rounded-card bg-surface border border-warning/30 overflow-hidden">
           <button
+            type="button"
             onClick={() => toggleSection('sos')}
             aria-expanded={sosOpen}
-            className="w-full p-4 flex items-center justify-between text-left"
+            className="w-full min-h-[56px] p-4 flex items-center justify-between text-left"
           >
             <span className="flex items-center gap-3">
-              <span className="text-2xl" aria-hidden="true">⚡</span>
+              <span className="w-10 h-10 rounded-full bg-warning/15 text-warning flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <Zap size={20} />
+              </span>
               <span>
-                <span className="block text-sm font-bold text-app">Come affrontare le difficoltà</span>
-                <span className="block text-xs text-muted mt-0.5">
+                <span className="block text-title-3 font-bold text-app">Come affrontare le difficoltà</span>
+                <span className="block text-body-sm text-muted mt-0.5">
                   {diffCards.length > 0
                     ? `${diffCards.length} situazioni — ogni guida cresce mentre avanzi`
                     : 'Le situazioni toste, una guida per ciascuna'}
@@ -378,7 +369,8 @@ export default function StrumentiPage() {
               </span>
             </span>
             <ChevronDown
-              className={`w-4 h-4 text-faint flex-shrink-0 transition-transform duration-200 ${sosOpen ? 'rotate-180' : ''}`}
+              size={18}
+              className={`text-faint flex-shrink-0 transition-transform duration-200 ${sosOpen ? 'rotate-180' : ''}`}
               aria-hidden="true"
             />
           </button>
@@ -388,50 +380,50 @@ export default function StrumentiPage() {
               {diffCards.map(card => (
                 <button
                   key={card.id}
+                  type="button"
                   onClick={() => router.push(`/sos?card=${card.id}`)}
-                  className="w-full bg-surface-2 rounded-xl p-3.5 flex items-center justify-between text-left hover:bg-[#293429] transition-all active:scale-[0.99]"
+                  className="w-full min-h-[56px] bg-surface-2 rounded-btn p-3.5 flex items-center justify-between text-left hover:bg-surface-3 transition-all active:scale-[0.99]"
                 >
                   <span className="flex items-center gap-3">
                     <span className="text-2xl flex-shrink-0" aria-hidden="true">{card.emoji}</span>
                     <span>
-                      <span className="block text-sm font-bold text-app">{card.difficolta}</span>
-                      {card.sottotitolo && <span className="block text-xs text-muted mt-0.5">{card.sottotitolo}</span>}
+                      <span className="block text-body font-bold text-app">{card.difficolta}</span>
+                      {card.sottotitolo && <span className="block text-body-sm text-muted mt-0.5">{card.sottotitolo}</span>}
                       {card.totalCount > 1 && (
-                        <span className="block text-[11px] text-forest-400 font-semibold mt-1">
+                        <span className="block text-caption text-forest-400 font-semibold mt-1">
                           {card.unlockedCount}/{card.totalCount} modi · cresce avanzando
                         </span>
                       )}
                     </span>
                   </span>
-                  <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
+                  <ChevronRight size={18} className="text-faint flex-shrink-0" aria-hidden="true" />
                 </button>
               ))}
-              <p className="text-xs text-faint text-center pt-1 pb-1 leading-relaxed">
-                Non trovi la tua situazione? Il Coach c&apos;è sempre —{' '}
-                <button onClick={() => router.push('/chat')} className="text-forest-400 font-semibold hover:underline">
-                  scrivigli
-                </button>
-              </p>
+              <div className="flex flex-wrap items-center justify-center gap-x-1 pt-1 text-body-sm text-muted text-center leading-relaxed">
+                <span>Non trovi la tua situazione? Il Coach c&apos;è sempre —</span>
+                <Button variant="ghost" size="sm" href="/chat">scrivigli</Button>
+              </div>
             </div>
           )}
         </div>
 
         {/* ── La Carta del Giocatore — si riempie man mano che avanzi ───────── */}
-        <button
-          onClick={() => router.push('/carta')}
-          className="w-full bg-surface rounded-2xl shadow-sm p-4 border border-divider flex items-center justify-between text-left hover:border-forest-500/40 transition-all active:scale-[0.99]"
-        >
+        <Card padding="sm" href="/carta">
+          <span className="flex items-center justify-between gap-3 min-h-[44px]">
           <span className="flex items-center gap-3">
-            <span className="text-2xl" aria-hidden="true">🎴</span>
+            <span className="w-10 h-10 rounded-full bg-surface-2 text-forest-400 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+              <IdCard size={20} />
+            </span>
             <span>
-              <span className="block text-sm font-bold text-app">La tua Carta del Giocatore</span>
-              <span className="block text-xs text-muted mt-0.5">
+              <span className="block text-title-3 font-bold text-app">La tua Carta del Giocatore</span>
+              <span className="block text-body-sm text-muted mt-0.5">
                 Il tuo gioco mentale, scritto da te — si riempie col percorso
               </span>
             </span>
           </span>
-          <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
-        </button>
+          <ChevronRight size={18} className="text-faint flex-shrink-0" aria-hidden="true" />
+          </span>
+        </Card>
 
         <div className="h-4" />
       </div>

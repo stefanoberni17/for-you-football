@@ -13,8 +13,9 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
-import { Activity, Moon, Zap, Brain, Flame, Target, TrendingUp, TrendingDown } from 'lucide-react';
+import { Activity, Moon, Zap, Brain, Flame, Target, TrendingUp, TrendingDown, ClipboardList, Inbox } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
+import { AppLoader, BackButton, Button, Card, Chip, SectionTitle } from '@/components/ui';
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 interface Checkin {
@@ -53,8 +54,8 @@ function trend(values: number[]): 'up' | 'down' | 'stable' {
 
 const TREND_ICON: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
 const TREND_COLOR: Record<string, string> = {
-  up: 'text-emerald-400',
-  down: 'text-red-400',
+  up: 'text-success',
+  down: 'text-danger',
   stable: 'text-faint',
 };
 
@@ -67,23 +68,25 @@ function scoreLabel(value: number): string {
   return 'Ottimo';
 }
 
+type TooltipProps = { active?: boolean; payload?: { value: number }[]; label?: string; metricName?: string };
+
 // Custom tooltip per tutti i grafici 0-10
-function ScoreTooltip({ active, payload, label, metricName }: any) {
+function ScoreTooltip({ active, payload, label, metricName }: TooltipProps) {
   if (!active || !payload?.length) return null;
-  const val = payload[0].value as number;
+  const val = payload[0].value;
   return (
-    <div className="bg-surface-2 border border-divider text-app text-xs rounded-lg px-3 py-2 shadow-lg">
-      <p className="font-semibold mb-1">{formatDate(label)}</p>
+    <div className="bg-surface-2 border border-divider text-app text-body-sm rounded-btn px-3 py-2 shadow-e2">
+      <p className="font-semibold mb-1">{formatDate(label ?? '')}</p>
       <p>{metricName}: <span className="font-bold">{val}/10</span> — {scoreLabel(val)}</p>
     </div>
   );
 }
 
-function SleepTooltip({ active, payload, label }: any) {
+function SleepTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-surface-2 border border-divider text-app text-xs rounded-lg px-3 py-2 shadow-lg">
-      <p className="font-semibold mb-1">{formatDate(label)}</p>
+    <div className="bg-surface-2 border border-divider text-app text-body-sm rounded-btn px-3 py-2 shadow-e2">
+      <p className="font-semibold mb-1">{formatDate(label ?? '')}</p>
       <p>Sonno: <span className="font-bold">{payload[0].value}h</span></p>
     </div>
   );
@@ -109,8 +112,8 @@ function DistributionBars({ values, colors }: { values: number[]; colors: { low:
       ].map(b => (
         <div key={b.label} className="flex-1 text-center">
           <div className={`h-1.5 rounded-full mb-1.5 ${b.color}`} style={{ opacity: b.pct > 0 ? 1 : 0.2 }} />
-          <p className="text-[10px] text-muted leading-tight">{b.label}</p>
-          <p className="text-xs font-bold text-app">{b.pct}%</p>
+          <p className="text-caption text-muted leading-tight">{b.label}</p>
+          <p className="text-body-sm font-bold text-app tabular-nums">{b.pct}%</p>
         </div>
       ))}
     </div>
@@ -132,17 +135,6 @@ export default function StatistichePage() {
     threshold: number;
   } | null>(null);
 
-  useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { router.push('/login'); return; }
-      setUserId(session.user.id);
-      await loadData(session.user.id, 90);
-      setLoading(false);
-    };
-    init();
-  }, [router]);
-
   const loadData = async (uid: string, days: number) => {
     const [checkinsRes, actionsRes] = await Promise.all([
       authFetch(`/api/checkin/history?userId=${uid}&days=${days}`),
@@ -155,6 +147,17 @@ export default function StatistichePage() {
       setActionsHistory(a);
     }
   };
+
+  useEffect(() => {
+    const init = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { router.push('/login'); return; }
+      setUserId(session.user.id);
+      await loadData(session.user.id, 90);
+      setLoading(false);
+    };
+    init();
+  }, [router]);
 
   const filtered = checkins.slice(-period);
   const today = checkins[checkins.length - 1];
@@ -207,14 +210,7 @@ export default function StatistichePage() {
   }
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-5xl mb-4 animate-pulse">📊</div>
-          <p className="text-muted">Caricamento statistiche...</p>
-        </div>
-      </main>
-    );
+    return <AppLoader label="Caricamento statistiche…" />;
   }
 
   return (
@@ -222,22 +218,17 @@ export default function StatistichePage() {
       <div className="max-w-xl mx-auto space-y-5">
 
         {/* Nav */}
-        <button
-          onClick={() => router.push('/')}
-          className="flex items-center gap-1 text-sm text-muted hover:text-forest-400 transition-colors"
-        >
-          ← Dashboard
-        </button>
+        <BackButton href="/" label="Home" />
 
         {/* Header */}
-        <div className="flex items-end justify-between">
+        <div className="flex items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-app">Le tue statistiche</h1>
-            <p className="text-muted text-sm mt-1">Andamento fisico e mentale</p>
+            <h1 className="font-display text-title-1 font-bold text-app">Le tue statistiche</h1>
+            <p className="text-muted text-body-sm mt-1">Andamento fisico e mentale</p>
           </div>
           {streak > 1 && (
-            <div className="bg-forest-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5" aria-hidden="true" />
+            <div className="bg-forest-500 text-white text-caption font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 flex-shrink-0 tabular-nums">
+              <Flame size={14} aria-hidden="true" />
               {streak} giorni di fila
             </div>
           )}
@@ -246,112 +237,106 @@ export default function StatistichePage() {
         {/* Periodo */}
         <div className="flex gap-2">
           {([7, 30, 90] as const).map(d => (
-            <button
+            <Chip
               key={d}
+              selected={period === d}
               onClick={() => setPeriod(d)}
-              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${
-                period === d
-                  ? 'bg-forest-500 text-white shadow-md'
-                  : 'bg-surface text-muted border border-divider hover:border-forest-500/40'
-              }`}
+              className="flex-1"
+              showCheck={false}
             >
               {d === 7 ? '7 giorni' : d === 30 ? '30 giorni' : '3 mesi'}
-            </button>
+            </Chip>
           ))}
         </div>
 
         {/* Card oggi */}
         {todayCheckin ? (
-          <div className="bg-gradient-to-r from-forest-500 to-forest-600 rounded-2xl p-5 text-white">
-            <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-3">Oggi</p>
+          <Card variant="hero" padding="md">
+            <p className="text-forest-100 text-overline font-semibold uppercase tracking-wider mb-3">Oggi</p>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/15 rounded-xl p-3">
-                <p className="text-forest-200 text-xs mb-1">Stato fisico</p>
-                <p className="text-xl font-bold">
+              <div className="bg-white/15 rounded-btn p-3">
+                <p className="text-forest-100 text-caption mb-1">Stato fisico</p>
+                <p className="font-display text-title-2 font-bold tabular-nums">
                   {todayCheckin.physical_state !== null ? `${todayCheckin.physical_state}/10` : '—'}
                 </p>
               </div>
-              <div className="bg-white/15 rounded-xl p-3">
-                <p className="text-forest-200 text-xs mb-1">Sonno</p>
-                <p className="text-xl font-bold">
+              <div className="bg-white/15 rounded-btn p-3">
+                <p className="text-forest-100 text-caption mb-1">Sonno</p>
+                <p className="font-display text-title-2 font-bold tabular-nums">
                   {todayCheckin.sleep_hours !== null ? `${todayCheckin.sleep_hours}h` : '—'}
                 </p>
               </div>
-              <div className="bg-white/15 rounded-xl p-3">
-                <p className="text-forest-200 text-xs mb-1">Recupero</p>
-                <p className="text-xl font-bold">
+              <div className="bg-white/15 rounded-btn p-3">
+                <p className="text-forest-100 text-caption mb-1">Recupero</p>
+                <p className="font-display text-title-2 font-bold tabular-nums">
                   {todayCheckin.recovery_quality !== null ? `${todayCheckin.recovery_quality}/10` : '—'}
                 </p>
               </div>
-              <div className="bg-white/15 rounded-xl p-3">
-                <p className="text-forest-200 text-xs mb-1">Stato mentale</p>
-                <p className="text-xl font-bold">
+              <div className="bg-white/15 rounded-btn p-3">
+                <p className="text-forest-100 text-caption mb-1">Stato mentale</p>
+                <p className="font-display text-title-2 font-bold tabular-nums">
                   {todayCheckin.mental_state !== null ? `${todayCheckin.mental_state}/10` : '—'}
                 </p>
               </div>
             </div>
-          </div>
+          </Card>
         ) : (
-          <div className="bg-surface rounded-2xl shadow-sm p-5 text-center border border-dashed border-divider">
-            <p className="text-faint text-sm">Nessun check-in oggi — torna alla dashboard per registrarlo</p>
-          </div>
+          <EmptyState
+            icon={<ClipboardList size={24} aria-hidden="true" />}
+            title="Nessun check-in oggi"
+            subtitle="Torna alla home per registrarlo: bastano 20 secondi."
+            cta={{ label: 'Vai alla home', href: '/' }}
+          />
         )}
 
         {/* ─── Le tue azioni — storico ─────────────────────────────────── */}
         {actionsHistory && actionsHistory.by_action.length > 0 && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-5">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-app flex items-center gap-2">
-                <Target className="w-4 h-4 text-forest-500" aria-hidden="true" />
-                Le tue 5 azioni
-              </h2>
-              <button
-                onClick={() => router.push('/oggi')}
-                className="text-xs text-forest-400 font-semibold hover:underline"
-              >
-                Vai a Oggi →
-              </button>
-            </div>
+          <div className="rounded-card bg-surface border border-divider p-5 space-y-5">
+            <SectionTitle
+              title="Le tue 5 azioni"
+              icon={<Target size={18} aria-hidden="true" />}
+              action={<Button variant="ghost" size="sm" href="/oggi">Vai a Oggi</Button>}
+            />
 
             {/* Streak counters */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-surface-2 border border-orange-500/30 rounded-xl p-3">
-                <p className="text-[10px] uppercase tracking-wider text-orange-300 font-semibold mb-0.5 flex items-center gap-1">
-                  <Flame className="w-3 h-3" aria-hidden="true" /> Streak attuale
+              <div className="bg-surface-2 border border-warning/30 rounded-btn p-3">
+                <p className="text-overline uppercase tracking-wider text-warning font-semibold mb-0.5 flex items-center gap-1">
+                  <Flame size={12} aria-hidden="true" /> Streak attuale
                 </p>
-                <p className="text-2xl font-bold text-orange-400 leading-tight">
+                <p className="font-display text-title-1 font-bold text-warning leading-tight tabular-nums">
                   {actionsHistory.current_streak}
-                  <span className="text-sm font-normal text-orange-300 ml-1">
+                  <span className="text-body-sm font-normal text-warning ml-1">
                     {actionsHistory.current_streak === 1 ? 'giorno' : 'giorni'}
                   </span>
                 </p>
               </div>
-              <div className="bg-surface-2 border border-divider rounded-xl p-3">
-                <p className="text-[10px] uppercase tracking-wider text-muted font-semibold mb-0.5">
+              <div className="bg-surface-2 border border-divider rounded-btn p-3">
+                <p className="text-overline uppercase tracking-wider text-muted font-semibold mb-0.5">
                   Streak record
                 </p>
-                <p className="text-2xl font-bold text-app leading-tight">
+                <p className="font-display text-title-1 font-bold text-app leading-tight tabular-nums">
                   {actionsHistory.longest_streak}
-                  <span className="text-sm font-normal text-muted ml-1">
+                  <span className="text-body-sm font-normal text-muted ml-1">
                     {actionsHistory.longest_streak === 1 ? 'giorno' : 'giorni'}
                   </span>
                 </p>
               </div>
             </div>
-            <p className="text-[11px] text-faint -mt-2">
+            <p className="text-body-sm text-muted -mt-2">
               Conta giorni con almeno {actionsHistory.threshold} azioni completate.
             </p>
 
             {/* Heatmap ultimi 30 giorni */}
             <div>
-              <p className="text-xs font-semibold text-app mb-2">Ultimi 30 giorni</p>
+              <p className="text-label font-semibold text-app mb-2">Ultimi 30 giorni</p>
               <div className="grid grid-cols-[repeat(30,minmax(0,1fr))] gap-1">
                 {actionsHistory.by_date.map(d => {
                   const c = d.completed;
                   const cls =
                     c >= 5 ? 'bg-forest-600' :
                     c >= 3 ? 'bg-forest-400' :
-                    c >= 1 ? 'bg-amber-500/60' :
+                    c >= 1 ? 'bg-warning/60' :
                     'bg-surface-2';
                   const isoToday = todayItaly();
                   return (
@@ -363,9 +348,9 @@ export default function StatistichePage() {
                   );
                 })}
               </div>
-              <div className="flex items-center justify-end gap-2 mt-2 text-[10px] text-muted">
+              <div className="flex items-center justify-end gap-2 mt-2 text-caption text-muted">
                 <span className="inline-block w-2 h-2 bg-surface-2 rounded-sm" /> 0
-                <span className="inline-block w-2 h-2 bg-amber-500/60 rounded-sm" /> 1-2
+                <span className="inline-block w-2 h-2 bg-warning/60 rounded-sm" /> 1-2
                 <span className="inline-block w-2 h-2 bg-forest-400 rounded-sm" /> 3-4
                 <span className="inline-block w-2 h-2 bg-forest-600 rounded-sm" /> 5
               </div>
@@ -379,15 +364,15 @@ export default function StatistichePage() {
               return (
                 <div className="space-y-3 pt-1">
                   <div>
-                    <p className="text-xs font-semibold text-app mb-2 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3 text-emerald-400" aria-hidden="true" />
+                    <p className="text-label font-semibold text-app mb-2 flex items-center gap-1">
+                      <TrendingUp size={14} className="text-success" aria-hidden="true" />
                       Le più costanti
                     </p>
                     <div className="space-y-1.5">
                       {top.map(a => (
-                        <div key={a.action_id} className="flex items-center gap-2 text-xs">
-                          <div className="flex-1 min-w-0 truncate text-app">{a.action_text}</div>
-                          <div className="text-emerald-400 font-bold tabular-nums flex-shrink-0">
+                        <div key={a.action_id} className="flex items-start gap-2 text-body-sm">
+                          <div className="flex-1 min-w-0 line-clamp-2 text-app">{a.action_text}</div>
+                          <div className="text-success font-bold tabular-nums flex-shrink-0">
                             {Math.round(a.completion_rate * 100)}%
                           </div>
                         </div>
@@ -396,15 +381,15 @@ export default function StatistichePage() {
                   </div>
                   {bottom.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-app mb-2 flex items-center gap-1">
-                        <TrendingDown className="w-3 h-3 text-red-400" aria-hidden="true" />
+                      <p className="text-label font-semibold text-app mb-2 flex items-center gap-1">
+                        <TrendingDown size={14} className="text-danger" aria-hidden="true" />
                         Su cui lavorare
                       </p>
                       <div className="space-y-1.5">
                         {bottom.map(a => (
-                          <div key={a.action_id} className="flex items-center gap-2 text-xs">
-                            <div className="flex-1 min-w-0 truncate text-app">{a.action_text}</div>
-                            <div className="text-red-400 font-bold tabular-nums flex-shrink-0">
+                          <div key={a.action_id} className="flex items-start gap-2 text-body-sm">
+                            <div className="flex-1 min-w-0 line-clamp-2 text-app">{a.action_text}</div>
+                            <div className="text-danger font-bold tabular-nums flex-shrink-0">
                               {Math.round(a.completion_rate * 100)}%
                             </div>
                           </div>
@@ -420,31 +405,28 @@ export default function StatistichePage() {
 
         {/* CTA pianifica le azioni se l'utente non ne ha ancora */}
         {actionsHistory && actionsHistory.active_count === 0 && (
-          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4">
+          <Card variant="warn" padding="sm">
             <div className="flex items-start gap-3 mb-3">
-              <Target className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <Target size={20} className="text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
               <div className="flex-1">
-                <p className="text-sm font-bold text-amber-200">
+                <p className="text-body font-bold text-app">
                   Non hai ancora pianificato le tue azioni
                 </p>
-                <p className="text-xs text-amber-300 mt-0.5 leading-relaxed">
+                <p className="text-body-sm text-muted mt-0.5 leading-relaxed">
                   Scegli 5 azioni concrete che fai ogni giorno. Lo streak parte appena cominci.
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => router.push('/oggi?setup=1')}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
-            >
-              Pianifica ora →
-            </button>
-          </div>
+            <Button variant="primary" fullWidth href="/oggi?setup=1">
+              Pianifica ora
+            </Button>
+          </Card>
         )}
 
         {/* Nessun dato */}
         {filtered.length === 0 && (
           <EmptyState
-            emoji="📭"
+            icon={<Inbox size={24} aria-hidden="true" />}
             title="Nessun dato nel periodo selezionato"
             subtitle="Completa i check-in giornalieri per vedere le statistiche"
           />
@@ -453,20 +435,21 @@ export default function StatistichePage() {
         {filtered.length > 0 && (
           <>
             {/* Medie periodo */}
-            <div className="bg-surface rounded-2xl shadow-sm p-5">
-              <h2 className="text-sm font-bold text-app uppercase tracking-wide mb-4">
-                Medie periodo
-                <span className="text-faint font-normal ml-2 normal-case">({filtered.length} check-in)</span>
-              </h2>
+            <div className="rounded-card bg-surface border border-divider p-5">
+              <SectionTitle
+                title="Medie periodo"
+                subtitle={`${filtered.length} check-in`}
+                className="mb-4"
+              />
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-faint mb-1">Stato fisico medio</p>
+                  <p className="text-caption text-muted mb-1">Stato fisico medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-forest-400">
+                    <p className="font-display text-title-1 font-bold text-forest-400 tabular-nums">
                       {avgPhysical > 0 ? `${avgPhysical}/10` : '—'}
                     </p>
                     {avgPhysical > 0 && (
-                      <span className={`text-sm font-bold ${TREND_COLOR[physicalTrend]}`}>
+                      <span className={`text-body font-bold ${TREND_COLOR[physicalTrend]}`}>
                         {TREND_ICON[physicalTrend]}
                       </span>
                     )}
@@ -481,13 +464,13 @@ export default function StatistichePage() {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-faint mb-1">Sonno medio</p>
+                  <p className="text-caption text-muted mb-1">Sonno medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-blue-400">
+                    <p className="font-display text-title-1 font-bold text-info tabular-nums">
                       {avgSleep > 0 ? `${avgSleep}h` : '—'}
                     </p>
                     {avgSleep > 0 && (
-                      <span className={`text-sm font-bold ${TREND_COLOR[sleepTrend]}`}>
+                      <span className={`text-body font-bold ${TREND_COLOR[sleepTrend]}`}>
                         {TREND_ICON[sleepTrend]}
                       </span>
                     )}
@@ -495,20 +478,20 @@ export default function StatistichePage() {
                   {avgSleep > 0 && (
                     <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
                       <div
-                        className="bg-blue-500 h-2 rounded-full transition-all"
+                        className="bg-info h-2 rounded-full transition-all"
                         style={{ width: `${Math.min((avgSleep / 10) * 100, 100)}%` }}
                       />
                     </div>
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-faint mb-1">Recupero medio</p>
+                  <p className="text-caption text-muted mb-1">Recupero medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-amber-400">
+                    <p className="font-display text-title-1 font-bold text-warning tabular-nums">
                       {avgRecovery > 0 ? `${avgRecovery}/10` : '—'}
                     </p>
                     {avgRecovery > 0 && (
-                      <span className={`text-sm font-bold ${TREND_COLOR[recoveryTrend]}`}>
+                      <span className={`text-body font-bold ${TREND_COLOR[recoveryTrend]}`}>
                         {TREND_ICON[recoveryTrend]}
                       </span>
                     )}
@@ -516,20 +499,20 @@ export default function StatistichePage() {
                   {avgRecovery > 0 && (
                     <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
                       <div
-                        className="bg-amber-500 h-2 rounded-full transition-all"
+                        className="bg-warning h-2 rounded-full transition-all"
                         style={{ width: `${(avgRecovery / 10) * 100}%` }}
                       />
                     </div>
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-faint mb-1">Stato mentale medio</p>
+                  <p className="text-caption text-muted mb-1">Stato mentale medio</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-purple-400">
+                    <p className="font-display text-title-1 font-bold text-purple-400 tabular-nums">
                       {avgMental > 0 ? `${avgMental}/10` : '—'}
                     </p>
                     {avgMental > 0 && (
-                      <span className={`text-sm font-bold ${TREND_COLOR[mentalTrend]}`}>
+                      <span className={`text-body font-bold ${TREND_COLOR[mentalTrend]}`}>
                         {TREND_ICON[mentalTrend]}
                       </span>
                     )}
@@ -548,25 +531,22 @@ export default function StatistichePage() {
 
             {/* Grafico stato fisico — Area chart */}
             {physicalChartData.length > 1 && (
-              <div className="bg-surface rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-app uppercase tracking-wide mb-4 flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-emerald-500" aria-hidden="true" />
-                  Stato fisico nel tempo
-                </h2>
+              <div className="rounded-card bg-surface border border-divider p-5">
+                <SectionTitle title="Stato fisico nel tempo" icon={<Activity size={18} aria-hidden="true" />} className="mb-4" />
                 <div className="h-44 -ml-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={physicalChartData}>
                       <defs>
                         <linearGradient id="gradPhysical" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                          <stop offset="5%" stopColor="var(--color-accent-glow)" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="var(--color-accent-glow)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
@@ -574,7 +554,7 @@ export default function StatistichePage() {
                       <YAxis
                         domain={[0, 10]}
                         ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -584,11 +564,11 @@ export default function StatistichePage() {
                         type="monotone"
                         dataKey="value"
                         name="Stato fisico"
-                        stroke="#10b981"
+                        stroke="var(--color-accent-glow)"
                         strokeWidth={2.5}
                         fill="url(#gradPhysical)"
-                        dot={{ r: 3, fill: '#10b981', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#10b981', stroke: '#0d1310', strokeWidth: 2 }}
+                        dot={{ r: 3, fill: 'var(--color-accent-glow)', strokeWidth: 0 }}
+                        activeDot={{ r: 5, fill: 'var(--color-accent-glow)', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -598,33 +578,30 @@ export default function StatistichePage() {
 
             {/* Grafico sonno — Area chart */}
             {sleepChartData.length > 1 && (
-              <div className="bg-surface rounded-2xl shadow-sm p-5">
-                <h2 className="text-sm font-bold text-app uppercase tracking-wide mb-4 flex items-center gap-2">
-                  <Moon className="w-4 h-4 text-blue-500" aria-hidden="true" />
-                  Ore di sonno nel tempo
-                </h2>
+              <div className="rounded-card bg-surface border border-divider p-5">
+                <SectionTitle title="Ore di sonno nel tempo" icon={<Moon size={18} aria-hidden="true" />} className="mb-4" />
                 <div className="h-44 -ml-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={sleepChartData}>
                       <defs>
                         <linearGradient id="gradSleep" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                          <stop offset="5%" stopColor="var(--color-info)" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="var(--color-info)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
                       />
                       <YAxis
-                        domain={[4, 10]}
-                        ticks={[4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        domain={[0, 12]}
+                        ticks={[0, 4, 8, 12]}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -635,51 +612,50 @@ export default function StatistichePage() {
                         type="monotone"
                         dataKey="value"
                         name="Sonno"
-                        stroke="#3b82f6"
+                        stroke="var(--color-info)"
                         strokeWidth={2.5}
                         fill="url(#gradSleep)"
-                        dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#3b82f6', stroke: '#0d1310', strokeWidth: 2 }}
+                        dot={{ r: 3, fill: 'var(--color-info)', strokeWidth: 0 }}
+                        activeDot={{ r: 5, fill: 'var(--color-info)', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="flex gap-3 mt-3 text-xs text-faint justify-center">
-                  <span>🟢 ≥8h ideale</span>
-                  <span>🟡 6-8h sufficiente</span>
-                  <span>🔴 &lt;6h scarso</span>
+                <div className="flex flex-wrap gap-x-3 gap-y-1 mt-3 text-caption text-muted justify-center">
+                  <span className="inline-flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-success" aria-hidden="true" /> ≥8h ideale</span>
+                  <span className="inline-flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-warning" aria-hidden="true" /> 6-8h sufficiente</span>
+                  <span className="inline-flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-danger" aria-hidden="true" /> &lt;6h scarso</span>
                 </div>
               </div>
             )}
 
             {/* Grafico recupero — Area chart */}
             {recoveryChartData.length > 1 && (
-              <div className="bg-surface rounded-2xl shadow-sm p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-app uppercase tracking-wide flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-amber-500" aria-hidden="true" />
-                    Recupero nel tempo
-                  </h2>
-                  {recoveryValues.length >= 4 && (
-                    <span className={`text-sm font-bold ${TREND_COLOR[recoveryTrend]}`}>
+              <div className="rounded-card bg-surface border border-divider p-5">
+                <SectionTitle
+                  title="Recupero nel tempo"
+                  icon={<Zap size={18} aria-hidden="true" />}
+                  className="mb-4"
+                  action={recoveryValues.length >= 4 ? (
+                    <span className={`inline-flex items-center h-11 px-2 text-body font-bold ${TREND_COLOR[recoveryTrend]}`}>
                       {TREND_ICON[recoveryTrend]}
                     </span>
-                  )}
-                </div>
+                  ) : undefined}
+                />
                 <div className="h-44 -ml-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={recoveryChartData}>
                       <defs>
                         <linearGradient id="gradRecovery" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                          <stop offset="5%" stopColor="var(--color-warning)" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="var(--color-warning)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
@@ -687,7 +663,7 @@ export default function StatistichePage() {
                       <YAxis
                         domain={[0, 10]}
                         ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -697,36 +673,35 @@ export default function StatistichePage() {
                         type="monotone"
                         dataKey="value"
                         name="Recupero"
-                        stroke="#f59e0b"
+                        stroke="var(--color-warning)"
                         strokeWidth={2.5}
                         fill="url(#gradRecovery)"
-                        dot={{ r: 3, fill: '#f59e0b', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#f59e0b', stroke: '#0d1310', strokeWidth: 2 }}
+                        dot={{ r: 3, fill: 'var(--color-warning)', strokeWidth: 0 }}
+                        activeDot={{ r: 5, fill: 'var(--color-warning)', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
                 <DistributionBars
                   values={recoveryValues}
-                  colors={{ low: 'bg-red-500', mid: 'bg-amber-500', high: 'bg-emerald-500' }}
+                  colors={{ low: 'bg-danger', mid: 'bg-warning', high: 'bg-success' }}
                 />
               </div>
             )}
 
             {/* Grafico stato mentale — Area chart */}
             {mentalChartData.length > 1 && (
-              <div className="bg-surface rounded-2xl shadow-sm p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-app uppercase tracking-wide flex items-center gap-2">
-                    <Brain className="w-4 h-4 text-purple-500" aria-hidden="true" />
-                    Stato mentale nel tempo
-                  </h2>
-                  {mentalValues.length >= 4 && (
-                    <span className={`text-sm font-bold ${TREND_COLOR[mentalTrend]}`}>
+              <div className="rounded-card bg-surface border border-divider p-5">
+                <SectionTitle
+                  title="Stato mentale nel tempo"
+                  icon={<Brain size={18} aria-hidden="true" />}
+                  className="mb-4"
+                  action={mentalValues.length >= 4 ? (
+                    <span className={`inline-flex items-center h-11 px-2 text-body font-bold ${TREND_COLOR[mentalTrend]}`}>
                       {TREND_ICON[mentalTrend]}
                     </span>
-                  )}
-                </div>
+                  ) : undefined}
+                />
                 <div className="h-44 -ml-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mentalChartData}>
@@ -736,11 +711,11 @@ export default function StatistichePage() {
                           <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2924" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
                       <XAxis
                         dataKey="date"
                         tickFormatter={formatShortDate}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         interval="preserveStartEnd"
@@ -748,7 +723,7 @@ export default function StatistichePage() {
                       <YAxis
                         domain={[0, 10]}
                         ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 10, fill: '#9ca7a0' }}
+                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
                         axisLine={false}
                         tickLine={false}
                         width={25}
@@ -762,14 +737,14 @@ export default function StatistichePage() {
                         strokeWidth={2.5}
                         fill="url(#gradMental)"
                         dot={{ r: 3, fill: '#8b5cf6', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#8b5cf6', stroke: '#0d1310', strokeWidth: 2 }}
+                        activeDot={{ r: 5, fill: '#8b5cf6', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
                 <DistributionBars
                   values={mentalValues}
-                  colors={{ low: 'bg-red-500', mid: 'bg-amber-500', high: 'bg-emerald-500' }}
+                  colors={{ low: 'bg-danger', mid: 'bg-warning', high: 'bg-success' }}
                 />
               </div>
             )}

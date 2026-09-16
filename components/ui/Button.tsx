@@ -27,6 +27,7 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'chi
   icon?: ReactNode;        // icona a sinistra (Lucide, 18-20 px)
   iconRight?: ReactNode;   // icona a destra (es. ChevronRight)
   href?: string;           // se presente diventa un Link
+  target?: string;         // con href: es. '_blank' (rel noopener aggiunto da solo)
   className?: string;
 }
 
@@ -46,7 +47,7 @@ const SIZE: Record<ButtonSize, string> = {
 
 export default function Button({
   children, variant = 'primary', size = 'md', fullWidth = false, loading = false,
-  icon, iconRight, href, className = '', disabled, type = 'button', ...rest
+  icon, iconRight, href, target, className = '', disabled, type = 'button', ...rest
 }: ButtonProps) {
   const cls = [
     'inline-flex items-center justify-center rounded-btn font-semibold select-none whitespace-nowrap',
@@ -62,7 +63,7 @@ export default function Button({
     </>
   );
   if (href && !disabled && !loading) {
-    return <Link href={href} className={cls} aria-label={rest['aria-label']}>{inner}</Link>;
+    return <Link href={href} target={target} rel={target === '_blank' ? 'noopener noreferrer' : undefined} className={cls} aria-label={rest['aria-label']}>{inner}</Link>;
   }
   return (
     <button type={type} disabled={disabled || loading} className={cls} {...rest}>{inner}</button>

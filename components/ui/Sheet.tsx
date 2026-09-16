@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
  * - Scrim tap-to-close (se onClose è passato), X 44 px sempre nello stesso punto.
  * - Header sticky (eyebrow + titolo + sottotitolo), body scrollabile, footer sticky per le CTA.
  * - fullscreen: per le pratiche in corso (timer, Reset): occupa tutto lo schermo, header trasparente.
- * - Su schermi larghi diventa un dialog centrato.
+ * - Su schermi larghi diventa un dialog centrato. z-[70]: sopra la tab bar (z-50) e i banner.
  */
 interface SheetProps {
   open: boolean;
@@ -42,7 +42,7 @@ export default function Sheet({ open, onClose, title, eyebrow, subtitle, childre
   if (!open) return null;
 
   return (
-    <div className={`fixed inset-0 z-50 flex ${fullscreen ? '' : 'items-end sm:items-center sm:justify-center'} animate-fadeIn`}
+    <div className={`fixed inset-0 z-[70] flex ${fullscreen ? '' : 'items-end sm:items-center sm:justify-center'} animate-fadeIn`}
       role="dialog" aria-modal="true" aria-label={ariaLabel ?? (typeof title === 'string' ? title : undefined)}>
       <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" onClick={onClose} aria-hidden />
       <div className={[
