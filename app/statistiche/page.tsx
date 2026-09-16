@@ -6,17 +6,30 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import {
   ResponsiveContainer,
+  ComposedChart,
   AreaChart,
   Area,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
+  ReferenceArea,
 } from 'recharts';
 import { Activity, Moon, Zap, Brain, Flame, Target, TrendingUp, TrendingDown, ClipboardList, Inbox } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
 import { AppLoader, BackButton, Button, Card, Chip, SectionTitle } from '@/components/ui';
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
+
+/**
+ * /statistiche — 4 blocchi (review 16/9, prima 9 card e 4 grafici):
+ *   1. Costanza  → streak delle azioni + heatmap 7×5 + le più/meno costanti
+ *   2. Come stai → 4 medie + UN grafico con fisico/recupero/mentale (periodo 7/30/90 qui, perché governa solo i check-in)
+ *   3. Sonno     → area con le fasce di riferimento
+ *   4. Oggi      → una riga con i 4 valori di oggi
+ * Un ragazzo vuole sapere "sto tenendo botta?": un solo streak con quel nome (le azioni),
+ * i check-in di fila sono una riga di testo. Colori delle serie SOLO dai token.
+ */
 
 interface Checkin {
   date: string;
@@ -26,6 +39,28 @@ interface Checkin {
   mental_state: number | null;
 }
 
+interface ActionsHistory {
+  by_date: { date: string; completed: number }[];
+  current_streak: number;
+  longest_streak: number;
+  by_action: { action_id: string; action_text: string; completion_rate: number; completed_days: number; total_days: number }[];
+  active_count: number;
+  threshold: number;
+}
+
+type Period = 7 | 30 | 90;
+type Trend = 'up' | 'down' | 'stable';
+
+// ─── Colori delle serie: solo token (+ il viola morbido, unico extra ammesso) ─
+const SERIES = {
+  fisico: { label: 'Fisico', color: 'var(--color-accent-glow)', Icon: Activity },
+  recupero: { label: 'Recupero', color: 'var(--color-warning)', Icon: Zap },
+  mentale: { label: 'Mentale', color: '#a78bfa', Icon: Brain },
+  sonno: { label: 'Sonno', color: 'var(--color-info)', Icon: Moon },
+} as const;
+const GRID = 'var(--color-divider)';
+const TICK = { fontSize: 12, fill: 'var(--color-text-muted)' };
+
 function avg(arr: number[]): number {
   if (!arr.length) return 0;
   return Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10;
@@ -33,7 +68,7 @@ function avg(arr: number[]): number {
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  return d.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
 function formatShortDate(dateStr: string): string {
@@ -41,81 +76,90 @@ function formatShortDate(dateStr: string): string {
   return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'numeric' });
 }
 
-function trend(values: number[]): 'up' | 'down' | 'stable' {
+function trend(values: number[]): Trend {
   if (values.length < 4) return 'stable';
   const half = Math.floor(values.length / 2);
-  const first = avg(values.slice(0, half));
-  const second = avg(values.slice(half));
-  const diff = second - first;
+  const diff = avg(values.slice(half)) - avg(values.slice(0, half));
   if (diff > 0.3) return 'up';
   if (diff < -0.3) return 'down';
   return 'stable';
 }
 
-const TREND_ICON: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
-const TREND_COLOR: Record<string, string> = {
-  up: 'text-success',
-  down: 'text-danger',
-  stable: 'text-faint',
-};
+const TREND_ICON: Record<Trend, string> = { up: '↑', down: '↓', stable: '→' };
+const TREND_COLOR: Record<Trend, string> = { up: 'text-success', down: 'text-danger', stable: 'text-faint' };
+const TREND_LABEL: Record<Trend, string> = { up: 'in salita', down: 'in calo', stable: 'stabile' };
 
-// Label descrittive per i valori 0-10
-function scoreLabel(value: number): string {
-  if (value <= 2) return 'Basso';
-  if (value <= 4) return 'Sotto la media';
-  if (value <= 6) return 'Nella media';
-  if (value <= 8) return 'Buono';
-  return 'Ottimo';
-}
-
-type TooltipProps = { active?: boolean; payload?: { value: number }[]; label?: string; metricName?: string };
-
-// Custom tooltip per tutti i grafici 0-10
-function ScoreTooltip({ active, payload, label, metricName }: TooltipProps) {
-  if (!active || !payload?.length) return null;
-  const val = payload[0].value;
-  return (
-    <div className="bg-surface-2 border border-divider text-app text-body-sm rounded-btn px-3 py-2 shadow-e2">
-      <p className="font-semibold mb-1">{formatDate(label ?? '')}</p>
-      <p>{metricName}: <span className="font-bold">{val}/10</span> — {scoreLabel(val)}</p>
-    </div>
-  );
-}
-
-function SleepTooltip({ active, payload, label }: TooltipProps) {
+// ─── Tooltip unico (bg-surface-2), con lo swatch della serie accanto al valore ─
+type TooltipPayload = { dataKey?: string | number; value?: number | string | null; color?: string; name?: string };
+function ChartTooltip({ active, payload, label, unit = '/10' }: { active?: boolean; payload?: TooltipPayload[]; label?: string; unit?: string }) {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-surface-2 border border-divider text-app text-body-sm rounded-btn px-3 py-2 shadow-e2">
-      <p className="font-semibold mb-1">{formatDate(label ?? '')}</p>
-      <p>Sonno: <span className="font-bold">{payload[0].value}h</span></p>
-    </div>
-  );
-}
-
-// Distribuzione per fasce 0-10
-function DistributionBars({ values, colors }: { values: number[]; colors: { low: string; mid: string; high: string } }) {
-  if (values.length === 0) return null;
-  const low = values.filter(v => v <= 3).length;
-  const mid = values.filter(v => v >= 4 && v <= 6).length;
-  const high = values.filter(v => v >= 7).length;
-  const total = values.length;
-  const pctLow = Math.round((low / total) * 100);
-  const pctMid = Math.round((mid / total) * 100);
-  const pctHigh = Math.round((high / total) * 100);
-
-  return (
-    <div className="flex gap-2 mt-4">
-      {[
-        { label: 'Basso (0-3)', pct: pctLow, color: colors.low },
-        { label: 'Medio (4-6)', pct: pctMid, color: colors.mid },
-        { label: 'Alto (7-10)', pct: pctHigh, color: colors.high },
-      ].map(b => (
-        <div key={b.label} className="flex-1 text-center">
-          <div className={`h-1.5 rounded-full mb-1.5 ${b.color}`} style={{ opacity: b.pct > 0 ? 1 : 0.2 }} />
-          <p className="text-caption text-muted leading-tight">{b.label}</p>
-          <p className="text-body-sm font-bold text-app tabular-nums">{b.pct}%</p>
-        </div>
+      <p className="font-semibold mb-1 capitalize">{formatDate(String(label ?? ''))}</p>
+      {payload.filter(p => p.value !== null && p.value !== undefined).map(p => (
+        <p key={String(p.dataKey)} className="flex items-center gap-2">
+          <span className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ background: p.color }} aria-hidden="true" />
+          <span className="text-muted">{p.name}</span>
+          <span className="font-bold tabular-nums ml-auto pl-3">{p.value}{unit}</span>
+        </p>
       ))}
+    </div>
+  );
+}
+
+// ─── Punto finale enfatizzato: un solo marker, sull'ultimo valore, con anello del colore della superficie ─
+type DotProps = { cx?: number; cy?: number; index?: number; value?: number | null };
+function endDot(color: string, lastIndex: number) {
+  const Dot = (p: DotProps) => {
+    if (p.index !== lastIndex || p.cx === undefined || p.cy === undefined || p.value === null || p.value === undefined) {
+      return <g key={`d-${p.index}`} />;
+    }
+    return <circle key={`d-${p.index}`} cx={p.cx} cy={p.cy} r={4.5} fill={color} stroke="var(--color-surface)" strokeWidth={2} />;
+  };
+  return Dot;
+}
+
+// ─── Heatmap 7 colonne (lun→dom) × righe, celle grandi ───────────────────────
+const WEEKDAYS = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+function heatLevel(c: number): string {
+  if (c >= 5) return 'bg-accent-glow';
+  if (c >= 3) return 'bg-forest-500/60';
+  if (c >= 1) return 'bg-forest-500/30';
+  return 'bg-surface-2';
+}
+function Heatmap({ days }: { days: { date: string; completed: number }[] }) {
+  if (!days.length) return null;
+  // Allinea la prima cella al suo giorno della settimana (lunedì = colonna 1)
+  const first = new Date(days[0].date + 'T12:00:00');
+  const pad = (first.getDay() + 6) % 7;
+  const cells: ({ date: string; completed: number } | null)[] = [...Array(pad).fill(null), ...days];
+  while (cells.length % 7 !== 0) cells.push(null);
+  const isoToday = todayItaly();
+  return (
+    <div>
+      <div className="grid grid-cols-7 gap-1.5 mb-1.5">
+        {WEEKDAYS.map((w, i) => (
+          <span key={i} className="text-caption text-faint text-center font-semibold" aria-hidden="true">{w}</span>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1.5" role="img" aria-label={`Azioni completate negli ultimi ${days.length} giorni`}>
+        {cells.map((d, i) => d ? (
+          <div
+            key={d.date}
+            className={`aspect-square min-h-9 rounded-md ${heatLevel(d.completed)} ${d.date === isoToday ? 'ring-2 ring-forest-300 ring-offset-2 ring-offset-surface' : ''}`}
+            title={`${formatDate(d.date)}: ${d.completed} azioni`}
+          />
+        ) : (
+          <div key={`pad-${i}`} className="aspect-square min-h-9" aria-hidden="true" />
+        ))}
+      </div>
+      <div className="flex items-center justify-end gap-x-2 mt-3 text-caption text-muted">
+        <span>Meno</span>
+        {[0, 1, 3, 5].map(n => (
+          <span key={n} className={`inline-block w-3.5 h-3.5 rounded-sm ${heatLevel(n)}`} aria-hidden="true" />
+        ))}
+        <span>Più</span>
+      </div>
     </div>
   );
 }
@@ -123,17 +167,9 @@ function DistributionBars({ values, colors }: { values: number[]; colors: { low:
 export default function StatistichePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState('');
   const [checkins, setCheckins] = useState<Checkin[]>([]);
-  const [period, setPeriod] = useState<7 | 30 | 90>(30);
-  const [actionsHistory, setActionsHistory] = useState<{
-    by_date: { date: string; completed: number }[];
-    current_streak: number;
-    longest_streak: number;
-    by_action: { action_id: string; action_text: string; completion_rate: number; completed_days: number; total_days: number }[];
-    active_count: number;
-    threshold: number;
-  } | null>(null);
+  const [period, setPeriod] = useState<Period>(30);
+  const [actionsHistory, setActionsHistory] = useState<ActionsHistory | null>(null);
 
   const loadData = async (uid: string, days: number) => {
     const [checkinsRes, actionsRes] = await Promise.all([
@@ -152,606 +188,322 @@ export default function StatistichePage() {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.push('/login'); return; }
-      setUserId(session.user.id);
       await loadData(session.user.id, 90);
       setLoading(false);
     };
     init();
   }, [router]);
 
+  // ─── Check-in: periodo, medie, tendenze ─────────────────────────────────
   const filtered = checkins.slice(-period);
-  const today = checkins[checkins.length - 1];
-  const isToday = today?.date === todayItaly();
-  const todayCheckin = isToday ? today : null;
+  const last = checkins[checkins.length - 1];
+  const todayCheckin = last?.date === todayItaly() ? last : null;
 
   const physicalValues = filtered.filter(c => c.physical_state !== null).map(c => c.physical_state as number);
   const sleepValues = filtered.filter(c => c.sleep_hours !== null).map(c => c.sleep_hours as number);
   const recoveryValues = filtered.filter(c => c.recovery_quality !== null).map(c => c.recovery_quality as number);
   const mentalValues = filtered.filter(c => c.mental_state !== null).map(c => c.mental_state as number);
 
-  const avgPhysical = avg(physicalValues);
-  const avgSleep = avg(sleepValues);
-  const avgRecovery = avg(recoveryValues);
-  const avgMental = avg(mentalValues);
+  const stats = [
+    { key: 'fisico', ...SERIES.fisico, value: avg(physicalValues), unit: '/10', trend: trend(physicalValues), n: physicalValues.length },
+    { key: 'sonno', ...SERIES.sonno, value: avg(sleepValues), unit: 'h', trend: trend(sleepValues), n: sleepValues.length },
+    { key: 'recupero', ...SERIES.recupero, value: avg(recoveryValues), unit: '/10', trend: trend(recoveryValues), n: recoveryValues.length },
+    { key: 'mentale', ...SERIES.mentale, value: avg(mentalValues), unit: '/10', trend: trend(mentalValues), n: mentalValues.length },
+  ] as const;
 
-  const physicalTrend = trend(physicalValues);
+  const stateChartData = filtered.map(c => ({
+    date: c.date,
+    fisico: c.physical_state,
+    recupero: c.recovery_quality,
+    mentale: c.mental_state,
+  }));
+  const sleepChartData = filtered.filter(c => c.sleep_hours !== null).map(c => ({ date: c.date, sonno: c.sleep_hours }));
   const sleepTrend = trend(sleepValues);
-  const recoveryTrend = trend(recoveryValues);
-  const mentalTrend = trend(mentalValues);
+  const avgSleep = avg(sleepValues);
 
-  // Dati per recharts
-  const physicalChartData = filtered
-    .filter(c => c.physical_state !== null)
-    .map(c => ({ date: c.date, value: c.physical_state }));
-
-  const sleepChartData = filtered
-    .filter(c => c.sleep_hours !== null)
-    .map(c => ({ date: c.date, value: c.sleep_hours }));
-
-  const recoveryChartData = filtered
-    .filter(c => c.recovery_quality !== null)
-    .map(c => ({ date: c.date, value: c.recovery_quality }));
-
-  const mentalChartData = filtered
-    .filter(c => c.mental_state !== null)
-    .map(c => ({ date: c.date, value: c.mental_state }));
-
-  // Streak check-in consecutivi. Se il check-in di OGGI non è ancora stato
-  // fatto, il conteggio parte da ieri: oggi non interrompe lo streak,
-  // semplicemente non conta ancora.
-  let streak = 0;
+  // Check-in di fila. Se oggi non è ancora fatto il conteggio parte da ieri:
+  // oggi non interrompe la serie, semplicemente non conta ancora.
+  let checkinStreak = 0;
   {
     const dates = new Set(checkins.map(c => c.date));
     let offset = dates.has(todayItaly()) ? 0 : 1;
-    while (dates.has(daysAgoItaly(offset))) {
-      streak++;
-      offset++;
-    }
+    while (dates.has(daysAgoItaly(offset))) { checkinStreak++; offset++; }
   }
 
+  // ─── Azioni: le più / meno costanti ──────────────────────────────────────
+  const sortedActions = actionsHistory ? [...actionsHistory.by_action].sort((a, b) => b.completion_rate - a.completion_rate) : [];
+  const topActions = sortedActions.slice(0, 3);
+  const bottomActions = sortedActions.length > 3 ? sortedActions.slice(-Math.min(3, sortedActions.length - 3)).reverse() : [];
+  const hasActions = !!actionsHistory && actionsHistory.by_action.length > 0;
+
   if (loading) {
-    return <AppLoader label="Caricamento statistiche…" />;
+    return <AppLoader label="Un attimo…" />;
   }
+
+  const periodLabel = period === 90 ? 'Ultimi 3 mesi' : `Ultimi ${period} giorni`;
 
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
 
-        {/* Nav */}
-        <BackButton href="/" label="Home" />
+        {/* ─── Header compatto ─────────────────────────────────────────── */}
+        <div>
+          <BackButton href="/" label="Home" />
+          <h1 className="font-display text-title-1 font-bold text-app mt-1">I tuoi dati</h1>
+          <p className="text-body-sm text-muted mt-0.5">Stai tenendo botta? Qui lo vedi.</p>
+        </div>
 
-        {/* Header */}
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <h1 className="font-display text-title-1 font-bold text-app">Le tue statistiche</h1>
-            <p className="text-muted text-body-sm mt-1">Andamento fisico e mentale</p>
-          </div>
-          {streak > 1 && (
-            <div className="bg-forest-500 text-white text-caption font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 flex-shrink-0 tabular-nums">
-              <Flame size={14} aria-hidden="true" />
-              {streak} giorni di fila
+        {/* ─── Blocco 1: Costanza ──────────────────────────────────────── */}
+        {hasActions && actionsHistory ? (
+          <Card padding="md" as="section" aria-label="Costanza">
+            <SectionTitle
+              title="Costanza"
+              icon={<Target size={18} aria-hidden="true" />}
+              action={<Button variant="ghost" size="sm" href="/oggi">Le tue 5 azioni</Button>}
+              className="mb-4"
+            />
+
+            <div className="flex items-end gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Flame size={28} className="text-warning shrink-0" aria-hidden="true" />
+                <p className="font-display text-display font-bold text-app leading-none">
+                  {actionsHistory.current_streak}
+                  <span className="text-title-3 font-semibold text-muted ml-1.5">
+                    {actionsHistory.current_streak === 1 ? 'giorno di fila' : 'giorni di fila'}
+                  </span>
+                </p>
+              </div>
+              <p className="text-caption text-muted tabular-nums pb-0.5">
+                Record: {actionsHistory.longest_streak} {actionsHistory.longest_streak === 1 ? 'giorno' : 'giorni'}
+              </p>
             </div>
-          )}
-        </div>
+            <p className="text-caption text-muted mt-1.5 mb-4">
+              Conta i giorni con almeno {actionsHistory.threshold} azioni fatte.
+            </p>
 
-        {/* Periodo */}
-        <div className="flex gap-2">
-          {([7, 30, 90] as const).map(d => (
-            <Chip
-              key={d}
-              selected={period === d}
-              onClick={() => setPeriod(d)}
-              className="flex-1"
-              showCheck={false}
-            >
-              {d === 7 ? '7 giorni' : d === 30 ? '30 giorni' : '3 mesi'}
-            </Chip>
-          ))}
-        </div>
+            <Heatmap days={actionsHistory.by_date} />
 
-        {/* Card oggi */}
+            {sortedActions.length > 1 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 pt-4 border-t border-divider">
+                <div>
+                  <p className="text-label font-semibold text-app mb-2 flex items-center gap-1.5">
+                    <TrendingUp size={14} className="text-success" aria-hidden="true" />
+                    Le più costanti
+                  </p>
+                  <ul className="space-y-2">
+                    {topActions.map(a => (
+                      <li key={a.action_id} className="flex items-start gap-3">
+                        <span className="flex-1 min-w-0 text-body-sm text-app line-clamp-2">{a.action_text}</span>
+                        <span className="text-body-sm font-bold tabular-nums text-app shrink-0">{Math.round(a.completion_rate * 100)}%</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {bottomActions.length > 0 && (
+                  <div>
+                    <p className="text-label font-semibold text-app mb-2 flex items-center gap-1.5">
+                      <TrendingDown size={14} className="text-danger" aria-hidden="true" />
+                      Su cui lavorare
+                    </p>
+                    <ul className="space-y-2">
+                      {bottomActions.map(a => (
+                        <li key={a.action_id} className="flex items-start gap-3">
+                          <span className="flex-1 min-w-0 text-body-sm text-app line-clamp-2">{a.action_text}</span>
+                          <span className="text-body-sm font-bold tabular-nums text-muted shrink-0">{Math.round(a.completion_rate * 100)}%</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </Card>
+        ) : actionsHistory && actionsHistory.active_count === 0 ? (
+          <Card variant="warn" padding="sm" as="section" aria-label="Costanza">
+            <div className="flex items-start gap-3 mb-3">
+              <Target size={20} className="text-warning shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="flex-1">
+                <p className="text-body font-bold text-app">Le tue 5 azioni non ci sono ancora</p>
+                <p className="text-body-sm text-muted mt-0.5 leading-relaxed">
+                  Scegli 5 cose concrete da fare ogni giorno. La serie parte appena cominci.
+                </p>
+              </div>
+            </div>
+            <Button variant="secondary" fullWidth href="/oggi?setup=1">Scegli le azioni</Button>
+          </Card>
+        ) : null}
+
+        {/* ─── Blocco 2: Come stai ─────────────────────────────────────── */}
+        {checkins.length === 0 ? (
+          <EmptyState
+            icon={<Inbox size={24} aria-hidden="true" />}
+            title="Ancora nessun check-in"
+            subtitle="Ogni mattina 20 secondi: da lì partono i tuoi numeri."
+          />
+        ) : (
+          <Card padding="md" as="section" aria-label="Come stai">
+            <SectionTitle
+              title="Come stai"
+              subtitle={`${periodLabel} · ${filtered.length} check-in`}
+              action={
+                <div className="flex gap-1" role="group" aria-label="Periodo">
+                  {([7, 30, 90] as const).map(d => (
+                    <Chip key={d} selected={period === d} onClick={() => setPeriod(d)} showCheck={false} className="px-3 min-w-11"
+                      ariaLabel={d === 90 ? 'Ultimi 3 mesi' : `Ultimi ${d} giorni`}>
+                      {d}
+                    </Chip>
+                  ))}
+                </div>
+              }
+              className="mb-4"
+            />
+
+            {filtered.length === 0 ? (
+              <p className="text-body-sm text-muted py-4 text-center">Nessun check-in in questo periodo.</p>
+            ) : (
+              <>
+                {/* 4 medie */}
+                <div className="grid grid-cols-4 gap-2">
+                  {stats.map(s => (
+                    <div key={s.key} className="min-w-0">
+                      <s.Icon size={18} style={{ color: s.color }} aria-hidden="true" />
+                      <p className="font-display text-title-2 font-bold text-app tabular-nums mt-1.5 leading-none">
+                        {s.n > 0 ? s.value : '—'}
+                        {s.n > 0 && <span className="text-caption font-semibold text-muted">{s.unit}</span>}
+                      </p>
+                      <p className="text-overline uppercase tracking-wider text-muted font-semibold mt-1.5">{s.label}</p>
+                      {s.n >= 4 && (
+                        <p className={`text-caption font-bold ${TREND_COLOR[s.trend]}`}>
+                          <span aria-hidden="true">{TREND_ICON[s.trend]}</span> <span className="sr-only">{TREND_LABEL[s.trend]}</span>
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Un solo grafico: fisico, recupero, mentale */}
+                {stateChartData.length > 1 && (
+                  <div className="mt-5">
+                    <div className="h-48 -ml-3">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart data={stateChartData} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
+                          <defs>
+                            <linearGradient id="gradFisico" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor={SERIES.fisico.color} stopOpacity={0.18} />
+                              <stop offset="100%" stopColor={SERIES.fisico.color} stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid stroke={GRID} vertical={false} />
+                          <XAxis dataKey="date" tickFormatter={formatShortDate} tick={TICK} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={24} />
+                          <YAxis domain={[0, 10]} ticks={[0, 5, 10]} tick={TICK} axisLine={false} tickLine={false} width={28} />
+                          <Tooltip content={<ChartTooltip />} cursor={{ stroke: GRID, strokeWidth: 1 }} />
+                          <Area type="monotone" dataKey="fisico" name={SERIES.fisico.label} stroke={SERIES.fisico.color} strokeWidth={2}
+                            fill="url(#gradFisico)" connectNulls dot={endDot(SERIES.fisico.color, stateChartData.length - 1)}
+                            activeDot={{ r: 5, fill: SERIES.fisico.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
+                          <Line type="monotone" dataKey="recupero" name={SERIES.recupero.label} stroke={SERIES.recupero.color} strokeWidth={2}
+                            connectNulls dot={endDot(SERIES.recupero.color, stateChartData.length - 1)}
+                            activeDot={{ r: 5, fill: SERIES.recupero.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
+                          <Line type="monotone" dataKey="mentale" name={SERIES.mentale.label} stroke={SERIES.mentale.color} strokeWidth={2}
+                            connectNulls dot={endDot(SERIES.mentale.color, stateChartData.length - 1)}
+                            activeDot={{ r: 5, fill: SERIES.mentale.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <ul className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-caption text-muted" aria-label="Legenda">
+                      {([SERIES.fisico, SERIES.recupero, SERIES.mentale] as const).map(s => (
+                        <li key={s.label} className="inline-flex items-center gap-1.5">
+                          <span className="inline-block w-3 h-0.5 rounded-full" style={{ background: s.color }} aria-hidden="true" />
+                          {s.label}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {checkinStreak > 1 && (
+                  <p className="text-caption text-muted mt-3 tabular-nums">{checkinStreak} giorni di check-in di fila.</p>
+                )}
+              </>
+            )}
+          </Card>
+        )}
+
+        {/* ─── Blocco 3: Sonno ─────────────────────────────────────────── */}
+        {sleepChartData.length > 1 && (
+          <Card padding="md" as="section" aria-label="Sonno">
+            <SectionTitle title="Sonno" subtitle={periodLabel} icon={<Moon size={18} aria-hidden="true" />} className="mb-3" />
+            <div className="flex items-baseline gap-2 mb-3">
+              <p className="font-display text-display font-bold text-app leading-none">
+                {avgSleep}<span className="text-title-3 font-semibold text-muted ml-1">h a notte</span>
+              </p>
+              {sleepValues.length >= 4 && (
+                <span className={`text-body font-bold ${TREND_COLOR[sleepTrend]}`}>
+                  <span aria-hidden="true">{TREND_ICON[sleepTrend]}</span> <span className="sr-only">{TREND_LABEL[sleepTrend]}</span>
+                </span>
+              )}
+            </div>
+            <div className="h-44 -ml-3">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sleepChartData} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
+                  <defs>
+                    <linearGradient id="gradSonno" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={SERIES.sonno.color} stopOpacity={0.18} />
+                      <stop offset="100%" stopColor={SERIES.sonno.color} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke={GRID} vertical={false} />
+                  {/* Fasce di riferimento al posto della legenda a pallini: sotto 6h poco, 7-9h la zona giusta */}
+                  <ReferenceArea y1={0} y2={6} fill="var(--color-warning)" fillOpacity={0.08} stroke="none" ifOverflow="hidden" />
+                  <ReferenceArea y1={7} y2={9} fill="var(--color-success)" fillOpacity={0.1} stroke="none" ifOverflow="hidden" />
+                  <XAxis dataKey="date" tickFormatter={formatShortDate} tick={TICK} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={24} />
+                  <YAxis domain={[0, 12]} ticks={[0, 6, 9, 12]} tick={TICK} axisLine={false} tickLine={false} width={28} tickFormatter={(v: number) => `${v}h`} />
+                  <Tooltip content={<ChartTooltip unit="h" />} cursor={{ stroke: GRID, strokeWidth: 1 }} />
+                  <Area type="monotone" dataKey="sonno" name="Sonno" stroke={SERIES.sonno.color} strokeWidth={2}
+                    fill="url(#gradSonno)" dot={endDot(SERIES.sonno.color, sleepChartData.length - 1)}
+                    activeDot={{ r: 5, fill: SERIES.sonno.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <p className="text-caption text-muted mt-2">
+              <span className="inline-block w-3 h-3 rounded-sm bg-success/25 align-middle mr-1" aria-hidden="true" />7-9 ore è la zona giusta.
+              <span className="inline-block w-3 h-3 rounded-sm bg-warning/25 align-middle ml-3 mr-1" aria-hidden="true" />Sotto le 6 recuperi poco.
+            </p>
+          </Card>
+        )}
+
+        {/* ─── Blocco 4: Oggi (una riga) ───────────────────────────────── */}
         {todayCheckin ? (
-          <Card variant="hero" padding="md">
-            <p className="text-forest-100 text-overline font-semibold uppercase tracking-wider mb-3">Oggi</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/15 rounded-btn p-3">
-                <p className="text-forest-100 text-caption mb-1">Stato fisico</p>
-                <p className="font-display text-title-2 font-bold tabular-nums">
-                  {todayCheckin.physical_state !== null ? `${todayCheckin.physical_state}/10` : '—'}
-                </p>
-              </div>
-              <div className="bg-white/15 rounded-btn p-3">
-                <p className="text-forest-100 text-caption mb-1">Sonno</p>
-                <p className="font-display text-title-2 font-bold tabular-nums">
-                  {todayCheckin.sleep_hours !== null ? `${todayCheckin.sleep_hours}h` : '—'}
-                </p>
-              </div>
-              <div className="bg-white/15 rounded-btn p-3">
-                <p className="text-forest-100 text-caption mb-1">Recupero</p>
-                <p className="font-display text-title-2 font-bold tabular-nums">
-                  {todayCheckin.recovery_quality !== null ? `${todayCheckin.recovery_quality}/10` : '—'}
-                </p>
-              </div>
-              <div className="bg-white/15 rounded-btn p-3">
-                <p className="text-forest-100 text-caption mb-1">Stato mentale</p>
-                <p className="font-display text-title-2 font-bold tabular-nums">
-                  {todayCheckin.mental_state !== null ? `${todayCheckin.mental_state}/10` : '—'}
-                </p>
+          <Card padding="sm" as="section" aria-label="Oggi">
+            <div className="flex items-center gap-3">
+              <p className="text-overline uppercase tracking-wider text-muted font-semibold shrink-0">Oggi</p>
+              <div className="flex-1 grid grid-cols-4 gap-2">
+                {([
+                  { ...SERIES.fisico, v: todayCheckin.physical_state, unit: '/10' },
+                  { ...SERIES.sonno, v: todayCheckin.sleep_hours, unit: 'h' },
+                  { ...SERIES.recupero, v: todayCheckin.recovery_quality, unit: '/10' },
+                  { ...SERIES.mentale, v: todayCheckin.mental_state, unit: '/10' },
+                ] as const).map(s => (
+                  <div key={s.label} className="flex items-center gap-1.5 min-w-0" title={s.label}>
+                    <s.Icon size={16} style={{ color: s.color }} aria-hidden="true" />
+                    <span className="sr-only">{s.label}</span>
+                    <span className="font-display text-body font-bold text-app tabular-nums truncate">
+                      {s.v !== null ? `${s.v}${s.unit}` : '—'}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </Card>
         ) : (
-          <EmptyState
-            icon={<ClipboardList size={24} aria-hidden="true" />}
-            title="Nessun check-in oggi"
-            subtitle="Torna alla home per registrarlo: bastano 20 secondi."
-            cta={{ label: 'Vai alla home', href: '/' }}
-          />
-        )}
-
-        {/* ─── Le tue azioni — storico ─────────────────────────────────── */}
-        {actionsHistory && actionsHistory.by_action.length > 0 && (
-          <div className="rounded-card bg-surface border border-divider p-5 space-y-5">
-            <SectionTitle
-              title="Le tue 5 azioni"
-              icon={<Target size={18} aria-hidden="true" />}
-              action={<Button variant="ghost" size="sm" href="/oggi">Vai a Oggi</Button>}
-            />
-
-            {/* Streak counters */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-surface-2 border border-warning/30 rounded-btn p-3">
-                <p className="text-overline uppercase tracking-wider text-warning font-semibold mb-0.5 flex items-center gap-1">
-                  <Flame size={12} aria-hidden="true" /> Streak attuale
-                </p>
-                <p className="font-display text-title-1 font-bold text-warning leading-tight tabular-nums">
-                  {actionsHistory.current_streak}
-                  <span className="text-body-sm font-normal text-warning ml-1">
-                    {actionsHistory.current_streak === 1 ? 'giorno' : 'giorni'}
-                  </span>
-                </p>
-              </div>
-              <div className="bg-surface-2 border border-divider rounded-btn p-3">
-                <p className="text-overline uppercase tracking-wider text-muted font-semibold mb-0.5">
-                  Streak record
-                </p>
-                <p className="font-display text-title-1 font-bold text-app leading-tight tabular-nums">
-                  {actionsHistory.longest_streak}
-                  <span className="text-body-sm font-normal text-muted ml-1">
-                    {actionsHistory.longest_streak === 1 ? 'giorno' : 'giorni'}
-                  </span>
-                </p>
-              </div>
+          <Card padding="sm" as="section" aria-label="Oggi">
+            <div className="flex items-center gap-3">
+              <ClipboardList size={20} className="text-muted shrink-0" aria-hidden="true" />
+              <p className="flex-1 text-body-sm text-muted">Oggi il check-in non l&apos;hai ancora fatto.</p>
+              <Button variant="ghost" size="sm" href="/">Fallo ora</Button>
             </div>
-            <p className="text-body-sm text-muted -mt-2">
-              Conta giorni con almeno {actionsHistory.threshold} azioni completate.
-            </p>
-
-            {/* Heatmap ultimi 30 giorni */}
-            <div>
-              <p className="text-label font-semibold text-app mb-2">Ultimi 30 giorni</p>
-              <div className="grid grid-cols-[repeat(30,minmax(0,1fr))] gap-1">
-                {actionsHistory.by_date.map(d => {
-                  const c = d.completed;
-                  const cls =
-                    c >= 5 ? 'bg-forest-600' :
-                    c >= 3 ? 'bg-forest-400' :
-                    c >= 1 ? 'bg-warning/60' :
-                    'bg-surface-2';
-                  const isoToday = todayItaly();
-                  return (
-                    <div
-                      key={d.date}
-                      className={`aspect-square rounded-sm ${cls} ${d.date === isoToday ? 'ring-1 ring-forest-300' : ''}`}
-                      title={`${d.date}: ${c} azioni`}
-                    />
-                  );
-                })}
-              </div>
-              <div className="flex items-center justify-end gap-2 mt-2 text-caption text-muted">
-                <span className="inline-block w-2 h-2 bg-surface-2 rounded-sm" /> 0
-                <span className="inline-block w-2 h-2 bg-warning/60 rounded-sm" /> 1-2
-                <span className="inline-block w-2 h-2 bg-forest-400 rounded-sm" /> 3-4
-                <span className="inline-block w-2 h-2 bg-forest-600 rounded-sm" /> 5
-              </div>
-            </div>
-
-            {/* Top / bottom azioni */}
-            {actionsHistory.by_action.length > 1 && (() => {
-              const sorted = [...actionsHistory.by_action].sort((a, b) => b.completion_rate - a.completion_rate);
-              const top = sorted.slice(0, Math.min(3, sorted.length));
-              const bottom = sorted.length > 3 ? sorted.slice(-Math.min(3, sorted.length - 3)).reverse() : [];
-              return (
-                <div className="space-y-3 pt-1">
-                  <div>
-                    <p className="text-label font-semibold text-app mb-2 flex items-center gap-1">
-                      <TrendingUp size={14} className="text-success" aria-hidden="true" />
-                      Le più costanti
-                    </p>
-                    <div className="space-y-1.5">
-                      {top.map(a => (
-                        <div key={a.action_id} className="flex items-start gap-2 text-body-sm">
-                          <div className="flex-1 min-w-0 line-clamp-2 text-app">{a.action_text}</div>
-                          <div className="text-success font-bold tabular-nums flex-shrink-0">
-                            {Math.round(a.completion_rate * 100)}%
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {bottom.length > 0 && (
-                    <div>
-                      <p className="text-label font-semibold text-app mb-2 flex items-center gap-1">
-                        <TrendingDown size={14} className="text-danger" aria-hidden="true" />
-                        Su cui lavorare
-                      </p>
-                      <div className="space-y-1.5">
-                        {bottom.map(a => (
-                          <div key={a.action_id} className="flex items-start gap-2 text-body-sm">
-                            <div className="flex-1 min-w-0 line-clamp-2 text-app">{a.action_text}</div>
-                            <div className="text-danger font-bold tabular-nums flex-shrink-0">
-                              {Math.round(a.completion_rate * 100)}%
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-          </div>
-        )}
-
-        {/* CTA pianifica le azioni se l'utente non ne ha ancora */}
-        {actionsHistory && actionsHistory.active_count === 0 && (
-          <Card variant="warn" padding="sm">
-            <div className="flex items-start gap-3 mb-3">
-              <Target size={20} className="text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <div className="flex-1">
-                <p className="text-body font-bold text-app">
-                  Non hai ancora pianificato le tue azioni
-                </p>
-                <p className="text-body-sm text-muted mt-0.5 leading-relaxed">
-                  Scegli 5 azioni concrete che fai ogni giorno. Lo streak parte appena cominci.
-                </p>
-              </div>
-            </div>
-            <Button variant="primary" fullWidth href="/oggi?setup=1">
-              Pianifica ora
-            </Button>
           </Card>
         )}
 
-        {/* Nessun dato */}
-        {filtered.length === 0 && (
-          <EmptyState
-            icon={<Inbox size={24} aria-hidden="true" />}
-            title="Nessun dato nel periodo selezionato"
-            subtitle="Completa i check-in giornalieri per vedere le statistiche"
-          />
-        )}
-
-        {filtered.length > 0 && (
-          <>
-            {/* Medie periodo */}
-            <div className="rounded-card bg-surface border border-divider p-5">
-              <SectionTitle
-                title="Medie periodo"
-                subtitle={`${filtered.length} check-in`}
-                className="mb-4"
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-caption text-muted mb-1">Stato fisico medio</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="font-display text-title-1 font-bold text-forest-400 tabular-nums">
-                      {avgPhysical > 0 ? `${avgPhysical}/10` : '—'}
-                    </p>
-                    {avgPhysical > 0 && (
-                      <span className={`text-body font-bold ${TREND_COLOR[physicalTrend]}`}>
-                        {TREND_ICON[physicalTrend]}
-                      </span>
-                    )}
-                  </div>
-                  {avgPhysical > 0 && (
-                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
-                      <div
-                        className="bg-forest-500 h-2 rounded-full transition-all"
-                        style={{ width: `${(avgPhysical / 10) * 100}%` }}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-caption text-muted mb-1">Sonno medio</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="font-display text-title-1 font-bold text-info tabular-nums">
-                      {avgSleep > 0 ? `${avgSleep}h` : '—'}
-                    </p>
-                    {avgSleep > 0 && (
-                      <span className={`text-body font-bold ${TREND_COLOR[sleepTrend]}`}>
-                        {TREND_ICON[sleepTrend]}
-                      </span>
-                    )}
-                  </div>
-                  {avgSleep > 0 && (
-                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
-                      <div
-                        className="bg-info h-2 rounded-full transition-all"
-                        style={{ width: `${Math.min((avgSleep / 10) * 100, 100)}%` }}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-caption text-muted mb-1">Recupero medio</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="font-display text-title-1 font-bold text-warning tabular-nums">
-                      {avgRecovery > 0 ? `${avgRecovery}/10` : '—'}
-                    </p>
-                    {avgRecovery > 0 && (
-                      <span className={`text-body font-bold ${TREND_COLOR[recoveryTrend]}`}>
-                        {TREND_ICON[recoveryTrend]}
-                      </span>
-                    )}
-                  </div>
-                  {avgRecovery > 0 && (
-                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
-                      <div
-                        className="bg-warning h-2 rounded-full transition-all"
-                        style={{ width: `${(avgRecovery / 10) * 100}%` }}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-caption text-muted mb-1">Stato mentale medio</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="font-display text-title-1 font-bold text-purple-400 tabular-nums">
-                      {avgMental > 0 ? `${avgMental}/10` : '—'}
-                    </p>
-                    {avgMental > 0 && (
-                      <span className={`text-body font-bold ${TREND_COLOR[mentalTrend]}`}>
-                        {TREND_ICON[mentalTrend]}
-                      </span>
-                    )}
-                  </div>
-                  {avgMental > 0 && (
-                    <div className="w-full bg-surface-2 rounded-full h-2 mt-1.5">
-                      <div
-                        className="bg-purple-500 h-2 rounded-full transition-all"
-                        style={{ width: `${(avgMental / 10) * 100}%` }}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Grafico stato fisico — Area chart */}
-            {physicalChartData.length > 1 && (
-              <div className="rounded-card bg-surface border border-divider p-5">
-                <SectionTitle title="Stato fisico nel tempo" icon={<Activity size={18} aria-hidden="true" />} className="mb-4" />
-                <div className="h-44 -ml-2">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={physicalChartData}>
-                      <defs>
-                        <linearGradient id="gradPhysical" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--color-accent-glow)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="var(--color-accent-glow)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
-                      <XAxis
-                        dataKey="date"
-                        tickFormatter={formatShortDate}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis
-                        domain={[0, 10]}
-                        ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={25}
-                      />
-                      <Tooltip content={<ScoreTooltip metricName="Stato fisico" />} />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        name="Stato fisico"
-                        stroke="var(--color-accent-glow)"
-                        strokeWidth={2.5}
-                        fill="url(#gradPhysical)"
-                        dot={{ r: 3, fill: 'var(--color-accent-glow)', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: 'var(--color-accent-glow)', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            )}
-
-            {/* Grafico sonno — Area chart */}
-            {sleepChartData.length > 1 && (
-              <div className="rounded-card bg-surface border border-divider p-5">
-                <SectionTitle title="Ore di sonno nel tempo" icon={<Moon size={18} aria-hidden="true" />} className="mb-4" />
-                <div className="h-44 -ml-2">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={sleepChartData}>
-                      <defs>
-                        <linearGradient id="gradSleep" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--color-info)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="var(--color-info)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
-                      <XAxis
-                        dataKey="date"
-                        tickFormatter={formatShortDate}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis
-                        domain={[0, 12]}
-                        ticks={[0, 4, 8, 12]}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={25}
-                        tickFormatter={(v: number) => `${v}h`}
-                      />
-                      <Tooltip content={<SleepTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        name="Sonno"
-                        stroke="var(--color-info)"
-                        strokeWidth={2.5}
-                        fill="url(#gradSleep)"
-                        dot={{ r: 3, fill: 'var(--color-info)', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: 'var(--color-info)', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex flex-wrap gap-x-3 gap-y-1 mt-3 text-caption text-muted justify-center">
-                  <span className="inline-flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-success" aria-hidden="true" /> ≥8h ideale</span>
-                  <span className="inline-flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-warning" aria-hidden="true" /> 6-8h sufficiente</span>
-                  <span className="inline-flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-danger" aria-hidden="true" /> &lt;6h scarso</span>
-                </div>
-              </div>
-            )}
-
-            {/* Grafico recupero — Area chart */}
-            {recoveryChartData.length > 1 && (
-              <div className="rounded-card bg-surface border border-divider p-5">
-                <SectionTitle
-                  title="Recupero nel tempo"
-                  icon={<Zap size={18} aria-hidden="true" />}
-                  className="mb-4"
-                  action={recoveryValues.length >= 4 ? (
-                    <span className={`inline-flex items-center h-11 px-2 text-body font-bold ${TREND_COLOR[recoveryTrend]}`}>
-                      {TREND_ICON[recoveryTrend]}
-                    </span>
-                  ) : undefined}
-                />
-                <div className="h-44 -ml-2">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={recoveryChartData}>
-                      <defs>
-                        <linearGradient id="gradRecovery" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--color-warning)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="var(--color-warning)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
-                      <XAxis
-                        dataKey="date"
-                        tickFormatter={formatShortDate}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis
-                        domain={[0, 10]}
-                        ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={25}
-                      />
-                      <Tooltip content={<ScoreTooltip metricName="Recupero" />} />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        name="Recupero"
-                        stroke="var(--color-warning)"
-                        strokeWidth={2.5}
-                        fill="url(#gradRecovery)"
-                        dot={{ r: 3, fill: 'var(--color-warning)', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: 'var(--color-warning)', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-                <DistributionBars
-                  values={recoveryValues}
-                  colors={{ low: 'bg-danger', mid: 'bg-warning', high: 'bg-success' }}
-                />
-              </div>
-            )}
-
-            {/* Grafico stato mentale — Area chart */}
-            {mentalChartData.length > 1 && (
-              <div className="rounded-card bg-surface border border-divider p-5">
-                <SectionTitle
-                  title="Stato mentale nel tempo"
-                  icon={<Brain size={18} aria-hidden="true" />}
-                  className="mb-4"
-                  action={mentalValues.length >= 4 ? (
-                    <span className={`inline-flex items-center h-11 px-2 text-body font-bold ${TREND_COLOR[mentalTrend]}`}>
-                      {TREND_ICON[mentalTrend]}
-                    </span>
-                  ) : undefined}
-                />
-                <div className="h-44 -ml-2">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={mentalChartData}>
-                      <defs>
-                        <linearGradient id="gradMental" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#232e27" />
-                      <XAxis
-                        dataKey="date"
-                        tickFormatter={formatShortDate}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis
-                        domain={[0, 10]}
-                        ticks={[0, 2, 4, 6, 8, 10]}
-                        tick={{ fontSize: 12, fill: '#9ca7a0' }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={25}
-                      />
-                      <Tooltip content={<ScoreTooltip metricName="Stato mentale" />} />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        name="Stato mentale"
-                        stroke="#8b5cf6"
-                        strokeWidth={2.5}
-                        fill="url(#gradMental)"
-                        dot={{ r: 3, fill: '#8b5cf6', strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: '#8b5cf6', stroke: 'var(--color-app-bg)', strokeWidth: 2 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-                <DistributionBars
-                  values={mentalValues}
-                  colors={{ low: 'bg-danger', mid: 'bg-warning', high: 'bg-success' }}
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        <div className="h-4" />
       </div>
     </main>
   );
