@@ -306,6 +306,9 @@ export interface PlanItem {
   carico_kg?: number;        // carico assoluto proposto (dai blocchi Everfit o dal log per serie)
   blocco_id?: string;        // blocco della libreria da cui viene l'item (lib/trainingBlocks)
   per_lato?: boolean;        // dai blocchi Everfit (each_side): dx poi sx, quantità indicata PER LATO (non dimezzata)
+  // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero';
+  lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom
@@ -314,7 +317,7 @@ export interface PlanSession {
   durata_min: number;
   items: PlanItem[];
   spiegazione?: string;
-  blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[]; // planner v2: blocchi impilati
+  blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
 }

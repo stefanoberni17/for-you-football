@@ -17,6 +17,8 @@ interface PlanItem {
   carico_kg?: number;
   blocco_id?: string;
   per_lato?: boolean;
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero'; // lib/trainingProgressione
+  lato_extra?: 'dx' | 'sx';  // una serie in più solo su questo lato (lato più debole)
 }
 
 /** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
@@ -66,7 +68,9 @@ export default function TrainingSessionPlayer({
   const [restIsLast, setRestIsLast] = useState(false);
   const restIsLastRef = useRef(false);
   // Feedback della serie appena fatta (compilato durante il recupero)
-  const [pending, setPending] = useState<{ serie: number; quantita: number; unita: string; carico?: number } | null>(null);
+  const [pending, setPending] = useState<{ serie: number; quantita: number; unita: string; carico?: number; lato: '' | 'dx' | 'sx' } | null>(null);
+  // Esercizi per lato: "più duro a destra / sinistra / uguali" → due righe di log (dx, sx) per la diagnosi degli squilibri
+  const [piuDuro, setPiuDuro] = useState<'dx' | 'sx' | 'uguali' | null>(null);
   const [rpe, setRpe] = useState<number | null>(null);
   const [fattoTxt, setFattoTxt] = useState('');
   const [caricoTxt, setCaricoTxt] = useState('');
@@ -103,9 +107,12 @@ export default function TrainingSessionPlayer({
   const item = items[itemIdx];
   const ex = item ? esercizioAny(item.esercizio_id) : undefined;
   const isEmom = item?.schema === 'emom';
-  const totalSerie = isEmom ? item.serie : item?.serie ?? 0; // EMOM: serie = minuti
   // Per lato: dai blocchi di Ste (item.per_lato, quantità già PER LATO) o dal catalogo (quantità totale → metà per lato)
   const isPerLato = !isEmom && (item?.per_lato === true || ex?.perLato === true);
+  // Serie extra sul lato più debole (lib/trainingProgressione): è l'ultima, solo su quel lato
+  const extraLato = isPerLato && item?.lato_extra ? 1 : 0;
+  const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato; // EMOM: serie = minuti
+  const isExtra = extraLato > 0 && serieFatte >= (item?.serie ?? 0);
   const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
   const isTimed = !isEmom && (ex?.unita === 'secondi' || ex?.unita === 'minuti');
   const execSeconds = ex?.unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
@@ -143,23 +150,33 @@ export default function TrainingSessionPlayer({
     timerRef.current = setInterval(tick, 500);
   };
 
-  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null }) => {
+  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null; piuDuro?: 'dx' | 'sx' | 'uguali' | null }) => {
     if (!pending || !item || !onSetLog) return;
     const r = over.rpe !== undefined ? over.rpe : rpe;
     const sens = over.sensazione !== undefined ? over.sensazione : sensazione;
+    const duro = over.piuDuro !== undefined ? over.piuDuro : piuDuro;
     const f = over.fatto !== undefined ? over.fatto : fattoTxt;
     const c = over.carico !== undefined ? over.carico : caricoTxt;
     const fattoNum = f.trim() === '' ? null : Number(f.replace(',', '.'));
     const caricoNum = c.trim() === '' ? null : Number(c.replace(',', '.'));
-    onSetLog({
-      esercizio_id: item.esercizio_id, serie: pending.serie, lato: '', unita: pending.unita,
+    const base = {
+      esercizio_id: item.esercizio_id, serie: pending.serie, unita: pending.unita,
       quantita_prevista: pending.quantita,
       quantita_fatta: fattoNum !== null && Number.isFinite(fattoNum) && fattoNum !== pending.quantita ? fattoNum : null,
       carico_previsto_kg: pending.carico ?? null,
       carico_fatto_kg: caricoNum !== null && Number.isFinite(caricoNum) && caricoNum !== pending.carico ? caricoNum : null,
       rpe: r,
       sensazione: sens,
-    });
+    };
+    if (isPerLato && pending.lato === '') {
+      // Una riga per lato: il lato "più duro" prende l'RPE detto, l'altro un punto in meno
+      // (è così che lib/trainingSquilibri legge la differenza tra i lati); "uguali" o senza risposta = stesso RPE
+      const meno = r != null && duro && duro !== 'uguali' ? Math.max(1, r - 1) : r;
+      onSetLog({ ...base, lato: 'dx', rpe: duro === 'sx' ? meno : r });
+      onSetLog({ ...base, lato: 'sx', rpe: duro === 'dx' ? meno : r });
+    } else {
+      onSetLog({ ...base, lato: pending.lato });
+    }
     setLogSaved(true);
   };
 
@@ -168,7 +185,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
@@ -184,17 +201,19 @@ export default function TrainingSessionPlayer({
   const handleSerieDone = () => {
     try { navigator.vibrate?.(30); } catch { /* no-op */ }
     stopExec();
-    // Esercizio per lato: il primo tap chiude il destro, si passa al sinistro
-    if (isPerLato && latoRef.current === 'dx') {
+    // Esercizio per lato: il primo tap chiude il destro, si passa al sinistro (la serie extra è su un lato solo)
+    if (isPerLato && !isExtra && latoRef.current === 'dx') {
       setLato('sx'); latoRef.current = 'sx';
       return;
     }
-    setLato('dx'); latoRef.current = 'dx';
     const next = serieFatte + 1;
+    // Dopo l'ultima serie normale, se c'è la serie extra si parte direttamente dal lato debole
+    const nextLato: 'dx' | 'sx' = extraLato > 0 && next === item.serie ? item.lato_extra! : 'dx';
+    setLato(nextLato); latoRef.current = nextLato;
     setSerieFatte(next);
     // Serie chiusa → durante il recupero si può dare il feedback (RPE, reps/kg reali)
-    setPending({ serie: next, quantita: quantitaLato, unita: ex?.unita ?? 'reps', carico: item.carico_kg });
-    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false);
+    setPending({ serie: next, quantita: quantitaLato, unita: ex?.unita ?? 'reps', carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
+    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null);
     startRest(item.recupero_sec, next >= totalSerie);
   };
   // Tornare all'esercizio precedente (tap sbagliato su "esercizio completato"): si riparte dalla sua prima serie
@@ -204,7 +223,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false); setShowDesc(false);
@@ -277,7 +296,7 @@ export default function TrainingSessionPlayer({
             {isEmom
               ? `EMOM ${item.serie}' — ${item.quantita} reps al minuto`
               : isPerLato
-                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx)${caricoLabel} · recupero ${item.recupero_sec}"`
+                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx)${extraLato ? ` + 1 solo ${item.lato_extra === 'sx' ? 'sinistro' : 'destro'}` : ''}${caricoLabel} · recupero ${item.recupero_sec}"`
                 : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)}${caricoLabel} · recupero ${item.recupero_sec}"`}
           </p>
           {(item.nota || ex.note) && (
@@ -348,6 +367,17 @@ export default function TrainingSessionPlayer({
                   )}
                   {logSaved && <span className="text-[11px] text-forest-400 font-semibold ml-auto">✓ salvato</span>}
                 </div>
+                {isPerLato && pending.lato === '' && (
+                  <div className="mt-3 pt-3 border-t border-divider flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-semibold text-app mr-1">Più duro a:</span>
+                    {([['dx', 'destra'], ['sx', 'sinistra'], ['uguali', 'uguali']] as const).map(([k, label]) => (
+                      <button key={k} onClick={() => { setPiuDuro(k); sendLog({ piuDuro: k }); }}
+                        className={`text-xs font-semibold rounded-full px-3 py-1.5 border ${piuDuro === k ? 'bg-forest-500/25 border-forest-400/60 text-forest-200' : 'bg-surface-2 border-divider text-muted'}`}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {restIsLast && ex?.sensazioni?.length ? (
                   <div className="mt-3 pt-3 border-t border-divider">
                     <p className="text-xs font-semibold text-app mb-1.5">Dove l&apos;hai sentito? <span className="text-faint font-normal">(come nei test)</span></p>
@@ -381,7 +411,7 @@ export default function TrainingSessionPlayer({
           <div className="text-center">
             {!isEmom && (
               <p className="text-sm text-muted mb-3">
-                Serie {Math.min(serieFatte + 1, totalSerie)} di {totalSerie}
+                {isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
                 {isPerLato && <span className="font-semibold text-app"> — lato {lato === 'dx' ? 'destro' : 'sinistro'}</span>}
               </p>
             )}
@@ -404,7 +434,7 @@ export default function TrainingSessionPlayer({
             <button onClick={isEmom ? nextItem : handleSerieDone}
               className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg shadow-sm active:scale-[0.99] transition-all">
               {isEmom ? 'EMOM finito → avanti'
-                : isPerLato ? (lato === 'dx' ? '✓ Lato destro fatto' : serieFatte + 1 >= totalSerie ? '✓ Esercizio completato' : '✓ Lato sinistro fatto')
+                : isPerLato ? (isExtra || (lato === 'sx' && serieFatte + 1 >= totalSerie) ? '✓ Esercizio completato' : lato === 'dx' ? '✓ Lato destro fatto' : '✓ Lato sinistro fatto')
                 : serieFatte + 1 >= totalSerie ? '✓ Esercizio completato' : '✓ Serie fatta'}
             </button>
             <div className="mt-3 flex items-center justify-center gap-5">
