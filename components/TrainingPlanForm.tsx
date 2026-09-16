@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, MODIFICA_TIPI, SEDUTE_MAX, toggleFocus, type FocusId, type ModificaTipo, type RichiestaGuidata } from '@/lib/trainingRequest';
-import { Button, Card, Chip, Input } from '@/components/ui';
+import { Button, Card, Chip, Input, Sheet } from '@/components/ui';
 
 interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
 
@@ -18,12 +18,15 @@ function Label({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
 }
 
 /**
- * Maschera guidata per generare o modificare la settimana: pochi campi che compongono
- * la richiesta al planner (e i vincoli per il validatore). Niente testo libero,
- * salvo una nota corta.
+ * Maschera guidata per generare o modificare la settimana, dentro uno Sheet: pochi campi
+ * che compongono la richiesta al planner (e i vincoli per il validatore). Niente testo
+ * libero, salvo una nota corta. Va montata solo quando è aperta (lo stato parte dai
+ * valori del setup ogni volta).
  */
-export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, generating, onSubmit, onClose }: {
+  open?: boolean;
   hasPlan: boolean;
+  errorMsg?: string | null;  // errore del server all'ultimo tentativo (si vede nel footer, sotto la CTA)
   sedute: SedutaLite[];      // tutte le sedute della settimana (anche passate: i loro giorni non sono liberi)
   oggiDow: number;
   calendario?: { trainingDays: number[]; matchDays: number[] };  // settimana squadra caricata dall'utente
@@ -85,7 +88,20 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
   };
 
   return (
-    <Card padding="sm" className="mb-5">
+    <Sheet
+      open={open}
+      onClose={generating ? undefined : onClose}
+      title={hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}
+      subtitle={hasPlan ? 'Una modifica alla volta, o tutta da capo.' : 'Dimmi quando e quanto: il resto lo fa il preparatore.'}
+      footer={
+        <>
+          {(errore || errorMsg) && <p className="text-body-sm text-warning">{errore || errorMsg}</p>}
+          <Button size="lg" fullWidth onClick={submit} disabled={!!errore} loading={generating}>
+            {generating ? 'Sto preparando la tua settimana…' : modo === 'modifica' ? 'Applica la modifica' : hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}
+          </Button>
+        </>
+      }
+    >
       {hasPlan && (
         <div className="grid grid-cols-2 gap-2 mb-4">
           {(['modifica', 'nuova'] as const).map((m) => (
@@ -197,15 +213,7 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
       )}
 
       <Input value={note} onChange={(e) => setNote(e.target.value)} maxLength={160}
-        placeholder="Una nota breve, se serve (es. 'sabato torneo') — opzionale" aria-label="Nota per il preparatore"
-        className="mb-3" />
-      {errore && <p className="text-body-sm text-warning mb-3">{errore}</p>}
-      <Button fullWidth onClick={submit} disabled={!!errore} loading={generating}>
-        {generating ? 'Sto preparando la tua settimana…' : modo === 'modifica' ? 'Applica la modifica' : hasPlan ? 'Rifai la settimana' : 'Genera il piano della settimana'}
-      </Button>
-      {onClose && !generating && (
-        <Button variant="ghost" fullWidth onClick={onClose} className="mt-2">Annulla</Button>
-      )}
-    </Card>
+        placeholder="Una nota breve, se serve (es. 'sabato torneo') — opzionale" aria-label="Nota per il preparatore" />
+    </Sheet>
   );
 }
