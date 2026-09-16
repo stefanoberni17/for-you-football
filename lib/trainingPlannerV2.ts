@@ -18,6 +18,8 @@ import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type Plann
 import { caricoPianificato, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
+import { squilibriTesto } from './trainingSquilibri';
+import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgressione';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
@@ -25,7 +27,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.6-sedute-leggere';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.8-progressioni';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -133,7 +135,7 @@ async function loadDaRecuperare(userId: string): Promise<ContextV2['daRecuperare
 
 // ─── Espansione blocchi → sedute ────────────────────────────────────────────
 
-interface SedutaLLM { giorno: number; titolo?: string; blocchi: string[]; spiegazione?: string }
+interface SedutaLLM { giorno: number; titolo?: string; blocchi: string[]; spiegazione?: string; leggeri?: string[] }
 interface PianoLLM { sedute: SedutaLLM[]; messaggio?: string }
 
 function tipoDaBlocchi(blocchi: Blocco[]): PlanSession['tipo'] {
@@ -168,8 +170,14 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       if (b.qualita === 'forza-parte-bassa' || b.qualita === 'forza-parte-alta') blocchiForza++;
     }
     if (blocchi.length === 0) { errors.push(`seduta del giorno ${s.giorno}: nessun blocco valido`); continue; }
-    const items = blocchi.flatMap((b) => expandBlocco(b, { scala }));
-    const durata = Math.round(blocchi.reduce((a, b) => a + b.durataMin, 0) * (scala < 1 ? 0.8 : 1));
+    // "Più leggero" per blocco (scelta di Claude, regola 22): serie ×0.7 come nel deload, solo sui blocchi fisici
+    const leggeri = new Set((Array.isArray(s.leggeri) ? s.leggeri : []).filter((id) => blocchi.some((b) => b.id === id && QUALITA_FISICHE.has(b.qualita))));
+    const items = blocchi.flatMap((b) => {
+      const leggero = leggeri.has(b.id);
+      const its = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
+      return leggero ? its.map((it) => ({ ...it, adattamento: 'leggero' as const })) : its;
+    });
+    const durata = Math.round(blocchi.reduce((a, b) => a + b.durataMin * (leggeri.has(b.id) ? 0.85 : 1), 0) * (scala < 1 ? 0.8 : 1));
     const maxDurata = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
     if (durata > maxDurata)
       errors.push(`seduta del giorno ${s.giorno}: ~${durata}' (${blocchi.map((b) => b.nome).join(' + ')}) oltre il massimo di ${maxDurata}' — togli un blocco o usa le varianti short`);
@@ -184,7 +192,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       giorno, titolo: testoPerAtleta(s.titolo?.slice(0, 80)) || blocchi.map((b) => b.famiglia).join(' + '),
       tipo: tipoDaBlocchi(blocchi), durata_min: durata, items,
       spiegazione: testoPerAtleta(s.spiegazione?.slice(0, 200)),
-      blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin })),
+      blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin, ...(leggeri.has(b.id) ? { leggero: true } : {}) })),
       ...(recupero ? { recupero: true } : {}),
     });
   }
@@ -311,17 +319,21 @@ ADATTAMENTO
 13. Se esiste già un PIANO ATTUALE e la richiesta è una modifica, PARTI dal piano attuale e cambia SOLO ciò che serve (stessi blocchi negli altri giorni).
 14. Check-in di oggi con fatica alta → la seduta di oggi più leggera o spostata. Periodo prolungato con poco sonno/recupero → settimana più leggera (meno blocchi fisici).
 15. Ascolta obiettivi e note in memoria e la richiesta dell'utente (se non contraddice le regole sopra).
-16. STORICO SERIE (se presente): i suggerimenti SALI/TIENI/SCENDI per esercizio sono calcolati dai log dell'atleta. SALI = passa al codice successivo o da short a full; SCENDI = codice precedente o short. Non saltare codici.
+16. STORICO SERIE (se presente): i suggerimenti SALI/TIENI/SCENDI per esercizio sono calcolati dai log dell'atleta. ${progressioniTesto()} A livello di BLOCCO: molti SALI nella stessa famiglia = passa al codice successivo o da short a full; SCENDI ripetuti = codice precedente o short. Non saltare codici.
 18. SEDUTE DA RECUPERARE (se presenti): sono le sedute saltate la settimana scorsa. Nel piano automatico di inizio settimana riproponile UGUALI (stessi blocchi, stesso ordine) nei primi giorni utili; contano nel tetto delle sedute e il validatore le controlla. Se invece l'atleta ha fatto una richiesta esplicita ("NUOVA SETTIMANA" nel messaggio), sono un suggerimento: prima gli obiettivi, un recupero entra solo se rispetta i vincoli (tempo per seduta) e avanza spazio.
 19. VINCOLI DELLA RICHIESTA (giorni disponibili, giorni da lasciare liberi, tempo per seduta): sono regole dure, il validatore rifiuta chi le viola.
 20. SQUADRA DESCRITTA (se accanto ai giorni squadra ci sono sforzo e qualità): serve per BILANCIARE, mai per vietare. Le qualità che la squadra lavora già forte (sforzo ≥7) non le raddoppi nella stessa settimana, a meno che siano un focus scelto dall'atleta; il giorno dopo una giornata squadra da 8+ ci si allena comunque, ma con un blocco principale diverso da quello della squadra o in versione short. Quando la squadra copre già un focus, dillo nel messaggio.
 17. CARICO TOTALE (session-RPE, calcolato dai dati): resta nel TARGET indicato — al massimo +10% sul cronico da una settimana all'altra; ACWR alto/rischio → settimana uguale o più leggera della precedente; dopo 2+ settimane di stop riparti dal 70% del cronico. Il tetto lo fa rispettare il validatore: una settimana troppo carica viene rifiutata.
+22. PIÙ LEGGERO PER BLOCCO: se una giornata va alleggerita senza cambiare blocco (check-in con fatica alta, giorno dopo la partita o dopo una giornata squadra da 8+, carico alto, richiesta "più leggera"), metti l'id del blocco nel campo "leggeri" della seduta: il server riduce le serie (×0.7). Vale solo per i blocchi fisici (forza, esplosività, pliometria, velocità, resistenza), non per fascia/tecnica/recupero. Preferiscilo alla variante short quando la short non esiste.
+21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole → tra i blocchi della stessa qualità preferisci quelli marcati [unilaterale] (lavoro una gamba alla volta) e nel messaggio digli di partire dal lato debole e di curarlo; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
+Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21).
 ${libreriaTesto(ctx)}
 
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
-{"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
+{"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"leggeri":["id-blocco-1"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
+"leggeri" è facoltativo (regola 22): solo id già presenti in "blocchi".
 LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
 giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta)${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
 }
@@ -383,7 +395,7 @@ Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') 
 Feedback sedute recenti: ${feedbackTxt}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
-${massimali}${memoria}${obiettiviTesto(ctx)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${caricoTesto(b.carico)}${piano}
+${massimali}${memoria}${obiettiviTesto(ctx)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${caricoTesto(b.carico)}${piano}
 ${preferenzeTesto(ctx, richiesta)}${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}${precedente ? `\nPiano rifiutato (parti da questo e cambia SOLO ciò che serve, es. togli un blocco o passa alla variante short): ${precedente}` : ''}` : ''}
 
@@ -475,7 +487,19 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
     return r ? { giorno: g, titolo: r.titolo, spiegazione: 'Recupero della seduta saltata la settimana scorsa.', blocchi: r.blocchi } : baseSeduta(g, k++, true);
   }).filter((s) => s.blocchi.length > 0);
   const { plan } = expandPiano({ sedute, messaggio: 'Piano base della settimana (generato in modalità sicura).' }, ctx);
-  return plan;
+  return conProgressioni(plan, ctx, validateCtxFor(ctx));
+}
+
+/**
+ * Progressioni sui singoli esercizi (lib/trainingProgressione): dose SALI/SCENDI dai log,
+ * gradino successivo sulle catene v1, serie extra sul lato debole. Si applicano DOPO il
+ * validatore, seduta per seduta, e ogni seduta adattata viene ricontrollata: se non passa
+ * resta quella base (il programma di Ste è sempre valido).
+ */
+function conProgressioni(plan: WeekPlan, ctx: ContextV2, validateCtx: Parameters<typeof validatePlan>[1]): WeekPlan {
+  const { plan: adattato } = adattaPiano(plan, { storico: ctx.base.storicoSerie, squilibri: ctx.base.squilibri },
+    (s) => validatePlan({ ...plan, sedute: [s] }, { ...validateCtx, oggiDow: undefined }));
+  return adattato;
 }
 
 // ─── Generazione ────────────────────────────────────────────────────────────
@@ -538,7 +562,7 @@ export async function generateWeekPlanV2(
       if (!raw) { errori = ['output non era JSON valido']; continue; }
       const { plan, errors } = expandPiano(raw, ctx);
       const violations = [...errors, ...(plan.sedute.length ? validatePlan(plan, validateCtx) : ['piano vuoto'])];
-      if (violations.length === 0) return { plan, generatoDa: 'llm', ctx };
+      if (violations.length === 0) return { plan: conProgressioni(plan, ctx, validateCtx), generatoDa: 'llm', ctx };
       console.error('trainingPlannerV2: piano rifiutato', violations);
       errori = violations.slice(0, 12);
       precedente = JSON.stringify({ sedute: (raw.sedute || []).map((s) => ({ giorno: s.giorno, blocchi: s.blocchi })) });

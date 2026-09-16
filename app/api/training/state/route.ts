@@ -13,6 +13,7 @@ import { PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest'
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
 import { esercizioV2ById } from '@/lib/trainingCatalogV2';
+import { calcolaSquilibri, squilibriRigheAtleta } from '@/lib/trainingSquilibri';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -81,12 +82,14 @@ export async function GET(request: NextRequest) {
     }
     // Storico serie (log durante il recupero, ultime 4 settimane) → "ultima volta" per esercizio
     const storicoSerie: Record<string, { testo: string; suggerimento: string }> = {};
+    let logsSerie: SetLogRow[] = [];
     try {
       const since = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString();
       const { data: logs } = await supabaseAdmin.from('training_set_logs')
         .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
         .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400);
-      for (const r of riepilogoEsercizi(((logs || []) as SetLogRow[]).map((l) => ({ ...l, quantita_prevista: Number(l.quantita_prevista), quantita_fatta: l.quantita_fatta == null ? null : Number(l.quantita_fatta), carico_previsto_kg: l.carico_previsto_kg == null ? null : Number(l.carico_previsto_kg), carico_fatto_kg: l.carico_fatto_kg == null ? null : Number(l.carico_fatto_kg) })))) {
+      logsSerie = ((logs || []) as SetLogRow[]).map((l) => ({ ...l, quantita_prevista: Number(l.quantita_prevista), quantita_fatta: l.quantita_fatta == null ? null : Number(l.quantita_fatta), carico_previsto_kg: l.carico_previsto_kg == null ? null : Number(l.carico_previsto_kg), carico_fatto_kg: l.carico_fatto_kg == null ? null : Number(l.carico_fatto_kg) }));
+      for (const r of riepilogoEsercizi(logsSerie)) {
         const unita = esercizioById(r.esercizioId)?.unita ?? esercizioV2ById(r.esercizioId)?.unita ?? 'reps';
         storicoSerie[r.esercizioId] = riepilogoUi(r, unita);
       }
@@ -145,6 +148,8 @@ export async function GET(request: NextRequest) {
     const carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato);
 
     const rombo = buildRombo(rows);
+    // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
+    const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
     return NextResponse.json({
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
@@ -190,6 +195,7 @@ export async function GET(request: NextRequest) {
       calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
       maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase],
       maxSeduteTotali: maxSeduteTotali(setup.fase),
+      squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
     });
   } catch (err) {
     console.error('training/state error:', err);

@@ -9,7 +9,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from 'recharts';
-import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
+import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Scale, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
@@ -19,7 +19,7 @@ import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 
 interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string }[]; posticipata_da?: number; recupero?: boolean }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean }[]; posticipata_da?: number; recupero?: boolean }
 interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -51,6 +51,8 @@ interface TrainingState {
   squadra?: SquadraSettimana;
   // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
   rigenerazioniRimaste?: number | null;
+  // Squilibri calcolati dai dati (dx/sx, push/pull, piede debole): righe già in linguaggio da atleta
+  squilibri?: { righe: string[]; latoDebole: 'dx' | 'sx' | null; pushPullDebole: 'push' | 'pull' | null; testPerLatoFatti: number };
 }
 
 export default function AllenamentoHub() {
@@ -612,6 +614,22 @@ export default function AllenamentoHub() {
                   </span>
                 ))}
               </div>
+              {/* Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): il piano ne tiene conto */}
+              {state.squilibri && (state.squilibri.righe.length > 0 || state.squilibri.testPerLatoFatti === 0) && (
+                <div className="mt-3 mx-1 rounded-xl border border-divider bg-surface-2 px-3 py-2.5">
+                  <p className="text-[11px] font-semibold text-app flex items-center gap-1.5"><Scale size={13} className="text-forest-400" /> Destro e sinistro, spinta e tirata</p>
+                  {state.squilibri.righe.length > 0 ? (
+                    <>
+                      <ul className="mt-1.5 space-y-1">
+                        {state.squilibri.righe.map((r) => <li key={r} className="text-[11px] text-muted leading-snug">· {r}</li>)}
+                      </ul>
+                      <p className="text-[10px] text-faint mt-1.5">Il piano della settimana ne tiene conto: più lavoro su una gamba sola, o più tirata. Parti sempre dal lato più debole.</p>
+                    </>
+                  ) : (
+                    <p className="text-[11px] text-muted mt-1">Fai i test su una gamba (affondo, wall sit, salto, rapidità di caviglia): così vediamo se un lato è più debole e il piano lo lavora di più.</p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Carico settimanale (session-RPE) */}
@@ -778,7 +796,7 @@ export default function AllenamentoHub() {
                             <p className={`text-sm font-semibold truncate ${done ? 'text-forest-300' : saltata ? 'text-faint' : 'text-app'}`}>{s.titolo}</p>
                             <span className={`shrink-0 text-[11px] font-bold rounded-md px-1.5 py-0.5 tabular-nums ${done || saltata ? 'bg-surface text-faint' : 'bg-forest-500/15 text-forest-300'}`}>~{durataLabel(s.durata_min)}</span>
                           </div>
-                          <p className="text-xs text-faint">{s.blocchi?.length ? s.blocchi.map((b) => nomeBloccoAtleta(b.nome)).join(' + ') : `${s.items.length} esercizi`}</p>
+                          <p className="text-xs text-faint">{s.blocchi?.length ? s.blocchi.map((b) => `${nomeBloccoAtleta(b.nome)}${b.leggero ? ' (più leggero)' : ''}`).join(' + ') : `${s.items.length} esercizi`}</p>
                           {badge && (
                             <span className={`inline-block mt-1 text-[10px] font-bold rounded-full px-2 py-0.5 ${stato === 'recuperabile' ? 'bg-amber-500/20 text-amber-200' : stato === 'oggi' ? 'bg-forest-500/25 text-forest-200' : saltata ? 'bg-surface text-faint' : 'bg-surface text-muted'}`}>{badge}</span>
                           )}

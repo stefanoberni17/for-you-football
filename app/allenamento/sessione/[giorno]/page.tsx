@@ -10,7 +10,7 @@ import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
 import { ArrowLeft, Info, Play } from 'lucide-react';
 
-interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero'; lato_extra?: 'dx' | 'sx'
   per_lato?: boolean;
 }
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[] }
@@ -247,6 +247,9 @@ export default function SessionePage() {
                   </div>
                   {ex.videoUrl && <span className="text-[10px] text-forest-400 font-bold shrink-0">▶ video</span>}
                 </div>
+                {it.adattamento && it.nota && (
+                  <p className={`text-[11px] mt-1.5 ml-10 leading-snug ${it.adattamento === 'scendi' || it.adattamento === 'leggero' ? 'text-amber-300' : 'text-forest-300'}`}>{it.nota}</p>
+                )}
                 {storico[it.esercizio_id] && (
                   <p className={`text-[11px] mt-1.5 ml-10 ${storico[it.esercizio_id].suggerimento === 'sali' ? 'text-forest-300' : storico[it.esercizio_id].suggerimento === 'scendi' ? 'text-amber-300' : 'text-faint'}`}>
                     {storico[it.esercizio_id].suggerimento === 'sali' ? '↑ ' : storico[it.esercizio_id].suggerimento === 'scendi' ? '↓ ' : '→ '}{storico[it.esercizio_id].testo}

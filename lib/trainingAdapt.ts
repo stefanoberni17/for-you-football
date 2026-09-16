@@ -83,7 +83,7 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
     const lastRpe = rpes(last);
     const lastCarico = carichi(last);
     const ultimaSeduta = {
-      serie: last.length,
+      serie: new Set(last.map((r) => r.serie)).size, // le righe per lato (dx, sx) contano come una serie
       quantitaPrevista: media(previste(last)),
       quantitaFatta: media(fatte(last)),
       caricoKg: lastCarico.length ? media(lastCarico) : null,

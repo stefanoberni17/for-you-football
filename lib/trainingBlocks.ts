@@ -116,7 +116,62 @@ export function bloccoRiga(b: Blocco): string {
   const liv = b.livello ? b.livello : '—';
   const prog = b.progressione ? `${liv}${b.progressione}` : liv;
   const attr = b.attrezzatura.length ? ` [${b.attrezzatura.join(', ')}]` : '';
-  return `${b.id} = ${b.nome} (${b.qualita}, ${prog}${b.sottovariante ?? ''}${b.variante === 'short' ? ', short' : ''}${b.ruolo ? `, per ${b.ruolo}` : ''}, ~${b.durataMin}'${attr})`;
+  const marker = profiloMarker(profiloBlocco(b));
+  return `${b.id} = ${b.nome} (${b.qualita}, ${prog}${b.sottovariante ?? ''}${b.variante === 'short' ? ', short' : ''}${b.ruolo ? `, per ${b.ruolo}` : ''}, ~${b.durataMin}'${attr})${marker ? ` ${marker}` : ''}`;
+}
+
+// ─── Profilo del blocco: unilaterale, push/pull (squilibri, settembre 2026) ──
+
+export type PatternEsercizio = 'push' | 'pull' | null;
+
+const RE_PULL = /\b(pull|trazion|row\b|rematore|chin[- ]?up|muscle up|australian|face pull|high pull)/i;
+const RE_PUSH = /\b(push|press|panca|dips?\b|flyes?|piegament|handstand|crow|spinta|arnold)/i;
+
+/**
+ * Spinta o tirata di un esercizio: dal catalogo v1 (area spinta/tirata) o, per il v2,
+ * dai tag push/pull e dal nome. Euristica di fase 1: la scheda per esercizio
+ * (distretto, pattern, muscoli) è la fase 3.
+ */
+export function patternEsercizio(esercizioId: string | null): PatternEsercizio {
+  if (!esercizioId) return null;
+  const v1 = esercizioById(esercizioId);
+  if (v1) return v1.area === 'spinta' ? 'push' : v1.area === 'tirata' ? 'pull' : null;
+  const v2 = esercizioV2ById(esercizioId);
+  if (!v2) return null;
+  const tags = v2.tags ?? [];
+  if (tags.includes('pull')) return 'pull';
+  if (tags.includes('push')) return 'push';
+  if (v2.qualita !== 'forza-parte-alta' && v2.qualitaSecondaria !== 'forza-parte-alta') return null;
+  if (RE_PULL.test(v2.nome)) return 'pull';
+  if (RE_PUSH.test(v2.nome)) return 'push';
+  return null;
+}
+
+export interface ProfiloBlocco { items: number; unilaterali: number; push: number; pull: number }
+
+/** Quanti item del blocco sono per lato, di spinta, di tirata. */
+export function profiloBlocco(b: Blocco): ProfiloBlocco {
+  const p: ProfiloBlocco = { items: 0, unilaterali: 0, push: 0, pull: 0 };
+  for (const it of b.items) {
+    p.items++;
+    const v2 = it.esercizio_id ? esercizioV2ById(it.esercizio_id) : undefined;
+    const v1 = it.esercizio_id ? esercizioById(it.esercizio_id) : undefined;
+    if (it.perLato || v2?.perLato || v1?.perLato) p.unilaterali++;
+    const pat = patternEsercizio(it.esercizio_id);
+    if (pat === 'push') p.push++;
+    if (pat === 'pull') p.pull++;
+  }
+  return p;
+}
+
+/** Marker compatto per la libreria nel prompt: [unilaterale] [push] [pull] [push+pull]. */
+export function profiloMarker(p: ProfiloBlocco): string {
+  const m: string[] = [];
+  if (p.items > 0 && p.unilaterali >= Math.max(2, Math.ceil(p.items / 2))) m.push('unilaterale');
+  if (p.push && p.pull) m.push('push+pull');
+  else if (p.push) m.push('push');
+  else if (p.pull) m.push('pull');
+  return m.length ? `[${m.join(', ')}]` : '';
 }
 
 /** Riepilogo per famiglia: quante progressioni esistono (per il planner: "la settimana dopo sali di codice"). */
