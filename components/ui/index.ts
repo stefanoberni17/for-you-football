@@ -10,3 +10,4 @@ export type { BannerTone } from './Banner';
 export { default as Sheet } from './Sheet';
 export { default as AppLoader } from './AppLoader';
 export { Field, Input, Textarea, Select } from './Field';
+export { default as Badge } from './Badge';

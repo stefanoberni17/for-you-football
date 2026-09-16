@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Smartphone } from 'lucide-react';
+import { Banner } from '@/components/ui';
 
 interface InstallBannerProps {
   totalCompleted: number;
@@ -32,6 +34,27 @@ const REMIND_DAYS = 3;
 // L'invito a installare arriva dopo il primo giorno completato: al primissimo
 // accesso l'utente ha già check-in + Reset + Giorno 1 davanti, non serve altro.
 const MIN_DAYS_COMPLETED = 1;
+
+const STEPS: Record<Exclude<Platform, 'other'>, { title: string; steps: React.ReactNode[] }> = {
+  ios: {
+    title: 'iPhone / iPad',
+    steps: [
+      <>Apri questa pagina in <strong>Safari</strong> (non Chrome)</>,
+      <>Tocca il pulsante <strong>Condividi</strong> in basso</>,
+      <>Scorri e tocca <strong>&ldquo;Aggiungi alla schermata Home&rdquo;</strong></>,
+      <>Conferma toccando <strong>&ldquo;Aggiungi&rdquo;</strong></>,
+    ],
+  },
+  android: {
+    title: 'Android',
+    steps: [
+      <>Apri questa pagina in <strong>Chrome</strong></>,
+      <>Tocca i <strong>3 puntini</strong> in alto a destra</>,
+      <>Tocca <strong>&ldquo;Installa app&rdquo;</strong> o <strong>&ldquo;Aggiungi a schermata Home&rdquo;</strong></>,
+      <>Conferma e <strong>l&apos;app appare sulla home</strong></>,
+    ],
+  },
+};
 
 export default function InstallBanner({ totalCompleted, onVisibilityChange }: InstallBannerProps) {
   const [show, setShow] = useState(false);
@@ -82,89 +105,34 @@ export default function InstallBanner({ totalCompleted, onVisibilityChange }: In
 
   if (!show) return null;
 
-  return (
-    <div className="bg-surface rounded-2xl shadow-sm p-5 border border-forest-500/25">
-      <div className="flex items-start gap-3 mb-3">
-        <div className="text-2xl flex-shrink-0">📲</div>
-        <div className="flex-1">
-          <p className="font-bold text-app text-sm">Installa l'app sul telefono</p>
-          <p className="text-xs text-muted mt-0.5 leading-relaxed">
-            Per un'esperienza migliore e per sfruttare al massimo l'app, aggiungila alla schermata Home del tuo telefono.
-          </p>
-        </div>
-      </div>
+  const guide = platform === 'ios' ? STEPS.ios : STEPS.android;
 
-      {!showSteps ? (
-        <button
-          onClick={() => setShowSteps(true)}
-          className="w-full bg-forest-500 hover:bg-forest-600 text-white font-bold py-2.5 rounded-xl text-sm transition-all mb-2"
-        >
-          Come si fa? →
-        </button>
-      ) : (
-        <div className="bg-surface-2 rounded-xl p-4 mb-3 border border-divider">
-          {platform === 'ios' ? (
-            <div className="space-y-3">
-              <p className="text-xs font-bold text-forest-300 uppercase tracking-wide">iPhone / iPad</p>
-              <div className="space-y-2">
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                  <p className="text-sm text-app">Apri questa pagina in <strong>Safari</strong> (non Chrome)</p>
-                </div>
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                  <p className="text-sm text-app">Tocca il pulsante <strong>Condividi</strong> <span className="inline-block text-base align-middle">⬆️</span> in basso</p>
-                </div>
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                  <p className="text-sm text-app">Scorri e tocca <strong>"Aggiungi alla schermata Home"</strong></p>
-                </div>
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
-                  <p className="text-sm text-app">Conferma toccando <strong>"Aggiungi"</strong></p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-xs font-bold text-forest-300 uppercase tracking-wide">Android</p>
-              <div className="space-y-2">
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                  <p className="text-sm text-app">Apri questa pagina in <strong>Chrome</strong></p>
-                </div>
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-                  <p className="text-sm text-app">Tocca i <strong>3 puntini</strong> ⋮ in alto a destra</p>
-                </div>
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                  <p className="text-sm text-app">Tocca <strong>"Installa app"</strong> o <strong>"Aggiungi a schermata Home"</strong></p>
-                </div>
-                <div className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
-                  <p className="text-sm text-app">Conferma e <strong>l'app appare sulla home</strong></p>
-                </div>
-              </div>
-            </div>
-          )}
+  // X = "Non mostrare" (per sempre); "Ricordamelo" = rimanda di qualche giorno;
+  // l'accordion "come si fa" si apre dall'azione secondaria e vive nel corpo.
+  return (
+    <Banner
+      tone="accent"
+      icon={<Smartphone size={20} />}
+      title="Installa l'app sul telefono"
+      action={{ label: 'Ricordamelo tra qualche giorno', onClick: handleRemindLater }}
+      secondary={{ label: showSteps ? 'Nascondi le istruzioni' : 'Come si fa?', onClick: () => setShowSteps(v => !v) }}
+      onClose={handleNeverShow}
+    >
+      <p>Per un&apos;esperienza migliore e per sfruttare al massimo l&apos;app, aggiungila alla schermata Home del tuo telefono.</p>
+
+      {showSteps && (
+        <div className="bg-surface-2 rounded-card p-4 mt-3 border border-divider space-y-3">
+          <p className="text-overline uppercase tracking-wider font-semibold text-forest-300">{guide.title}</p>
+          <ol className="space-y-2">
+            {guide.steps.map((step, i) => (
+              <li key={i} className="flex gap-2.5 items-start">
+                <span className="w-6 h-6 rounded-full bg-forest-500 text-white text-caption font-bold flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">{i + 1}</span>
+                <p className="text-body-sm text-app">{step}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       )}
-
-      <div className="flex gap-2">
-        <button
-          onClick={handleRemindLater}
-          className="flex-1 text-muted text-xs py-2 hover:text-app transition-colors"
-        >
-          Ricordamelo tra qualche giorno
-        </button>
-        <button
-          onClick={handleNeverShow}
-          className="text-faint text-xs py-2 px-3 hover:text-muted transition-colors"
-        >
-          Non mostrare
-        </button>
-      </div>
-    </div>
+    </Banner>
   );
 }

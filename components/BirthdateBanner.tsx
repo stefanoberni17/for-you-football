@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { Calendar } from 'lucide-react';
+import { Banner, Button, Field, Input } from '@/components/ui';
 
 /**
  * Prompt NON bloccante per gli utenti registrati prima dell'age gate:
@@ -68,36 +70,31 @@ export default function BirthdateBanner({
   };
 
   return (
-    <div className="bg-surface border border-divider rounded-2xl p-4 shadow-sm">
-      <p className="text-sm font-semibold text-app mb-1">Una cosa veloce 📅</p>
-      <p className="text-xs text-muted leading-relaxed mb-3">
+    <Banner
+      tone="info"
+      icon={<Calendar size={20} />}
+      title="Una cosa veloce"
+      secondary={{ label: 'Più tardi', onClick: handleDismiss }}
+    >
+      <p>
         Ci manca la tua data di nascita: è obbligatoria, sia per adattare il percorso
         alla tua età sia per requisiti di legge.
       </p>
-      {error && <p className="text-xs text-red-300 mb-2">{error}</p>}
-      <div className="flex items-center gap-2">
-        <input
-          type="date"
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          max={new Date().toISOString().slice(0, 10)}
-          className="flex-1 px-3 py-2 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
-          aria-label="Data di nascita"
-        />
-        <button
-          onClick={handleSave}
-          disabled={saving || !birthDate}
-          className="bg-forest-500 hover:bg-forest-600 text-white text-sm font-semibold py-2 px-4 rounded-xl transition-all disabled:opacity-50 shrink-0"
-        >
-          {saving ? '…' : 'Salva'}
-        </button>
+      <div className="flex flex-col gap-3 mt-3">
+        <Field label="Data di nascita" htmlFor="birthdate-banner" error={error || undefined}>
+          <Input
+            id="birthdate-banner"
+            type="date"
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            max={new Date().toISOString().slice(0, 10)}
+            invalid={!!error}
+          />
+        </Field>
+        <Button variant="primary" fullWidth onClick={handleSave} disabled={!birthDate} loading={saving}>
+          Salva
+        </Button>
       </div>
-      <button
-        onClick={handleDismiss}
-        className="text-xs text-faint hover:text-muted mt-2.5 transition-colors"
-      >
-        Più tardi
-      </button>
-    </div>
+    </Banner>
   );
 }

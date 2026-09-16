@@ -12,6 +12,8 @@ import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import { hasActiveAccess } from '@/lib/checkAccess';
+import { ArrowUp, Bot, Calendar, Check, ChevronLeft, ChevronRight, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun, Target } from 'lucide-react';
+import { AppLoader, BackButton, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
 export default function GiornoPage() {
   const params = useParams();
@@ -213,9 +215,9 @@ export default function GiornoPage() {
     // Trova il prossimo giorno di allenamento (oggi incluso o successivo)
     const next = sorted.find(d => d >= today) || sorted[0];
     if (next === today) {
-      return '📅 Oggi è giorno di allenamento. Prova questo in campo!';
+      return 'Oggi è giorno di allenamento. Prova questo in campo!';
     }
-    return `📅 Il tuo prossimo allenamento è ${DAY_NAMES[next]}. Prova questo in campo!`;
+    return `Il tuo prossimo allenamento è ${DAY_NAMES[next]}. Prova questo in campo!`;
   };
 
   // Autosave bozza (debounce 600 ms), stesso pattern del gate
@@ -327,14 +329,7 @@ export default function GiornoPage() {
   };
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento giorno...</p>
-        </div>
-      </main>
-    );
+    return <AppLoader label="Caricamento giorno..." />;
   }
 
   if (!giorno) return null;
@@ -352,66 +347,67 @@ export default function GiornoPage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center pt-safe pb-6 px-6 text-white animate-fadeIn">
         <div className="flex flex-col items-center animate-scaleIn">
-          <div className="w-24 h-24 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 shadow-2xl">
-            <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+          <div className="w-24 h-24 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 shadow-e3">
+            <Check className="w-12 h-12 text-white" strokeWidth={3} aria-hidden="true" />
           </div>
-          <h1 className="text-3xl font-bold mb-2 text-center">Giorno {dayNumber} completato</h1>
-          <p className="text-forest-100 text-sm text-center mb-1">Settimana {weekNumber}</p>
-          <p className="text-white text-sm text-center mb-8 max-w-xs">
+          <h1 className="font-display text-display font-bold mb-2 text-center">Giorno {dayNumber} completato</h1>
+          <p className="text-forest-100 text-body-sm text-center mb-1">Settimana {weekNumber}</p>
+          <p className="text-white text-body text-center mb-8 max-w-xs">
             Ogni giorno conta. Stai costruendo qualcosa di reale.
           </p>
           {nextTitolo && (
-            <div className={`bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-4 max-w-xs text-center ${isFirstDay && hasTelegram !== null ? 'mb-5' : 'mb-10'}`}>
-              <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">
+            <div className={`bg-white/10 backdrop-blur-sm rounded-card px-5 py-4 max-w-xs text-center ${isFirstDay && hasTelegram !== null ? 'mb-5' : 'mb-10'}`}>
+              <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
                 Domani ti aspetta
               </p>
-              <p className="text-white text-sm font-medium">{nextTitolo}</p>
+              <p className="text-white text-body font-medium">{nextTitolo}</p>
             </div>
           )}
 
           {/* Giorno 1: il momento giusto per portare il Coach sul telefono (era il gate dell'onboarding) */}
           {isFirstDay && hasTelegram === false && (
-            <div className="bg-white/15 backdrop-blur-sm border border-white/25 rounded-2xl px-5 py-4 mb-10 w-full max-w-xs text-center">
-              <p className="text-white font-bold text-sm mb-1">Vuoi il Coach anche sul telefono?</p>
-              <p className="text-forest-100 text-xs leading-relaxed mb-3">
+            <div className="bg-white/15 backdrop-blur-sm border border-white/25 rounded-card px-5 py-4 mb-10 w-full max-w-xs text-center">
+              <p className="text-white font-bold text-body mb-1">Vuoi il Coach anche sul telefono?</p>
+              <p className="text-forest-100 text-body-sm leading-relaxed mb-3">
                 Ti scrive lui domattina e ti ricorda la pratica. Un tap e il Coach è nel tuo Telegram.
               </p>
-              <button
-                onClick={handleTelegramLink}
-                disabled={telegramLinkLoading}
-                className="w-full bg-white text-forest-700 font-bold py-3 rounded-xl text-sm shadow hover:bg-forest-50 transition-all disabled:opacity-60"
-              >
-                {telegramLinkLoading ? 'Apriamo Telegram…' : '📲 Attiva il Coach su Telegram'}
-              </button>
+              <Button variant="inverse" fullWidth onClick={handleTelegramLink} loading={telegramLinkLoading}>
+                {telegramLinkLoading ? 'Apriamo Telegram…' : 'Attiva il Coach su Telegram'}
+              </Button>
               {telegramLinkFailed && (
-                <p className="text-xs text-amber-200 mt-2">
+                <p className="text-body-sm text-warning mt-2">
                   Non siamo riusciti ad aprire Telegram — lo trovi anche nel Profilo.
                 </p>
               )}
             </div>
           )}
           {isFirstDay && hasTelegram === true && (
-            <div className="bg-white/15 backdrop-blur-sm border border-white/25 rounded-2xl px-5 py-3 mb-10 max-w-xs text-center">
-              <p className="text-white font-semibold text-sm">✅ Coach collegato su Telegram</p>
-              <p className="text-forest-100 text-xs mt-0.5">Domattina ti scrive lui.</p>
+            <div className="bg-white/15 backdrop-blur-sm border border-white/25 rounded-card px-5 py-3 mb-10 max-w-xs text-center">
+              <p className="text-white font-semibold text-body flex items-center justify-center gap-1.5">
+                <Check className="w-4 h-4" strokeWidth={3} aria-hidden="true" /> Coach collegato su Telegram
+              </p>
+              <p className="text-forest-100 text-body-sm mt-0.5">Domattina ti scrive lui.</p>
             </div>
           )}
         </div>
-        <button
+        <Button
+          variant="inverse"
+          size="lg"
+          iconRight={<ChevronRight size={20} aria-hidden />}
           onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="bg-white text-forest-600 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
         >
-          Torna alla settimana →
-        </button>
+          Torna alla settimana
+        </Button>
         {/* Invito soft (non obbligo): hai voglia di allenarti ancora? → Palestra */}
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
+          className="mt-4 text-forest-100"
+          icon={<Dumbbell size={18} aria-hidden />}
           onClick={() => router.push('/strumenti')}
-          className="mt-5 text-forest-100 hover:text-white text-sm font-medium underline underline-offset-4 transition-colors"
         >
-          🏋️ Oppure allena ciò che vuoi in Palestra
-        </button>
+          Oppure allena ciò che vuoi in Palestra
+        </Button>
       </main>
     );
   }
@@ -422,29 +418,33 @@ export default function GiornoPage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center pt-safe pb-6 px-6 text-white animate-fadeIn">
         <div className="flex flex-col items-center animate-scaleIn text-center max-w-xs">
-          <div className="w-24 h-24 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 shadow-2xl text-5xl">
-            ☀️
+          <div className="w-24 h-24 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 shadow-e3">
+            <Sun className="w-12 h-12 text-white" aria-hidden="true" />
           </div>
-          <h1 className="text-3xl font-bold mb-3">Giornata avviata</h1>
-          <p className="text-white text-sm leading-relaxed mb-2">
+          <h1 className="font-display text-display font-bold mb-3">Giornata avviata</h1>
+          <p className="text-white text-body leading-relaxed mb-2">
             Il Reset è fatto, le istruzioni le hai. Adesso chiudi l&apos;app e vivi la tua giornata.
           </p>
-          <p className="text-forest-100 text-sm leading-relaxed mb-10">
+          <p className="text-forest-100 text-body leading-relaxed mb-10">
             Stasera torni qui: una riga e chiudi il giorno.
           </p>
         </div>
-        <button
+        <Button
+          variant="inverse"
+          size="lg"
+          iconRight={<ChevronRight size={20} aria-hidden />}
           onClick={() => router.push('/')}
-          className="bg-white text-forest-600 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
         >
-          Torna alla home →
-        </button>
-        <button
+          Torna alla home
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="mt-4"
           onClick={() => setJustStarted(false)}
-          className="mt-5 text-forest-100 hover:text-white text-sm font-medium underline underline-offset-4 transition-colors"
         >
-          Ho già vissuto la mia giornata → vai alla riflessione
-        </button>
+          Ho già vissuto la mia giornata: vai alla riflessione
+        </Button>
       </main>
     );
   }
@@ -455,22 +455,17 @@ export default function GiornoPage() {
       {/* Immersive header */}
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
         <div className="max-w-xl mx-auto">
-          <button
-            onClick={() => router.push(`/settimana/${weekNumber}`)}
-            className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-          >
-            ← Settimana {weekNumber}
-          </button>
-          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
+          <BackButton href={`/settimana/${weekNumber}`} label={`Settimana ${weekNumber}`} tone="light" className="mb-3" />
+          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1">
             Settimana {weekNumber} · Giorno {dayNumber}
             {giorno.durataMinuti > 0 ? ` · ${giorno.durataMinuti} min` : ''}
           </p>
-          <h1 className="text-2xl font-bold text-white leading-tight">
+          <h1 className="font-display text-title-1 font-bold text-white">
             {giorno.titolo?.replace(/^W\d+-G\d+ — /, '') || `Giorno ${dayNumber}`}
           </h1>
           {completed && (
-            <span className="inline-block mt-2 text-xs font-semibold text-forest-100 bg-white/15 px-3 py-1 rounded-full">
-              ✅ Già completato
+            <span className="inline-flex items-center gap-1 mt-2 text-caption font-semibold text-forest-100 bg-white/15 px-3 py-1 rounded-full">
+              <Check className="w-3.5 h-3.5" strokeWidth={3} aria-hidden="true" /> Già completato
             </span>
           )}
           {/* Progress dots inside header */}
@@ -498,18 +493,25 @@ export default function GiornoPage() {
 
         {/* Check giorno precedente */}
         {showCheck && giorno && (
-          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-5">
-            <p className="text-sm font-semibold text-amber-300 mb-2">🔄 Come è andata l'ultima pratica?</p>
-            <p className="text-app text-sm leading-relaxed mb-4">{giorno.testoCheck}</p>
+          <Card variant="warn" padding="md">
+            <p className="text-body font-semibold text-warning mb-2 flex items-center gap-2">
+              <RotateCcw className="w-4 h-4" aria-hidden="true" /> Come è andata l&apos;ultima pratica?
+            </p>
+            <p className="text-app text-body leading-relaxed mb-4">{giorno.testoCheck}</p>
             <div className="flex flex-col gap-2">
-              <button
+              <Button
+                variant="secondary"
+                fullWidth
+                icon={<Check size={18} aria-hidden />}
                 onClick={() => saveCheck(1)}
                 disabled={savingCheck}
-                className="text-left bg-surface border border-forest-500/40 text-forest-300 text-sm font-medium py-3 px-4 rounded-xl hover:bg-surface-2 transition-all disabled:opacity-50"
               >
-                ✅ Bene! Andiamo avanti
-              </button>
-              <button
+                Bene! Andiamo avanti
+              </Button>
+              <Button
+                variant="secondary"
+                fullWidth
+                icon={<Bot size={18} aria-hidden />}
                 onClick={() => {
                   saveCheck(0 as any);
                   const prompt = encodeURIComponent(
@@ -518,61 +520,62 @@ export default function GiornoPage() {
                   router.push(`/chat?prompt=${prompt}`);
                 }}
                 disabled={savingCheck}
-                className="text-left bg-surface border border-amber-500/30 text-amber-300 text-sm font-medium py-3 px-4 rounded-xl hover:bg-amber-500/10 transition-all disabled:opacity-50"
               >
-                🤖 Preferisco parlarne col Coach AI
-              </button>
+                Preferisco parlarne col Coach AI
+              </Button>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Slide content */}
         {currentSlideData?.type === 'apertura' && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5">
-            <h2 className="text-xs font-bold text-faint uppercase tracking-wide mb-3">Apertura</h2>
-            <p className="text-app text-base leading-relaxed whitespace-pre-line italic">
+          <Card padding="md">
+            <SectionTitle title="Apertura" className="mb-3" />
+            <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
               {giorno.apertura}
             </p>
-          </div>
+          </Card>
         )}
 
         {currentSlideData?.type === 'domanda_pre_pratica' && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5">
-            <h2 className="text-sm font-bold text-app mb-3 flex items-center gap-2">
-              ✏️ Prima di iniziare
-            </h2>
-            <p className="text-muted text-base mb-3 leading-relaxed">{giorno.domandaPrePratica}</p>
-            <textarea
-              value={prePraticaResponse}
-              onChange={(e) => setPrePraticaResponse(e.target.value)}
-              disabled={completed}
-              className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
-              rows={4}
-              maxLength={2000}
-              placeholder="Scrivi qui la tua risposta (opzionale)..."
-            />
-            {!completed && prePraticaResponse.length > 0 && (
-              <p className="text-xs text-faint mt-1 text-right">{prePraticaResponse.length}/2000</p>
-            )}
-          </div>
+          <Card padding="md">
+            <SectionTitle title="Prima di iniziare" icon={<PenLine size={18} />} className="mb-3" />
+            <p className="text-muted text-body mb-3 leading-relaxed">{giorno.domandaPrePratica}</p>
+            <Field
+              label="La tua risposta"
+              htmlFor="pre-pratica"
+              optional
+              counter={!completed && prePraticaResponse.length > 0 ? { value: prePraticaResponse.length, max: 2000 } : undefined}
+            >
+              <Textarea
+                id="pre-pratica"
+                value={prePraticaResponse}
+                onChange={(e) => setPrePraticaResponse(e.target.value)}
+                disabled={completed}
+                rows={4}
+                maxLength={2000}
+                placeholder="Scrivi qui la tua risposta (opzionale)..."
+              />
+            </Field>
+          </Card>
         )}
 
         {currentSlideData?.type === 'pratica' && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border border-forest-500/25">
-            <h2 className="text-sm font-bold text-forest-300 mb-3 flex items-center gap-2">
-              🎯 La Pratica
-              {giorno.durataMinuti > 0 && (
-                <span className="font-normal text-forest-400">({giorno.durataMinuti} min)</span>
-              )}
-            </h2>
+          <Card padding="md" className="border-forest-500/25">
+            <SectionTitle
+              title="La Pratica"
+              icon={<Target size={18} />}
+              subtitle={giorno.durataMinuti > 0 ? `${giorno.durataMinuti} min` : undefined}
+              className="mb-3"
+            />
             {prePraticaResponse && (
-              <div className="bg-surface-2 border border-divider rounded-xl px-4 py-3 mb-4 text-sm text-app italic leading-relaxed">
-                <p className="text-xs font-semibold text-faint not-italic mb-1">Quello che hai scritto:</p>
+              <Card variant="raised" padding="sm" className="mb-4 text-body-sm text-app leading-relaxed">
+                <p className="text-caption font-semibold text-muted mb-1">Quello che hai scritto:</p>
                 {prePraticaResponse}
-              </div>
+              </Card>
             )}
 
-            <p className="text-app text-base leading-relaxed whitespace-pre-line">
+            <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
 
@@ -584,109 +587,127 @@ export default function GiornoPage() {
               const perche = giorno.percheFunziona && giorno.percheFunziona.trim();
               if (!perche) return null;
               return (
-                <div className="bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg px-4 py-4 mt-4">
-                  <h3 className="text-base font-semibold text-emerald-300 mb-2">
-                    💡 Perché funziona
+                <div className="bg-forest-500/10 border-l-4 border-forest-500 rounded-r-lg px-4 py-4 mt-4">
+                  <h3 className="text-body font-semibold text-forest-300 mb-2 flex items-center gap-1.5">
+                    <Lightbulb className="w-4 h-4" aria-hidden="true" /> Perché funziona
                   </h3>
-                  <p className="text-sm text-app leading-relaxed">{perche}</p>
+                  <p className="text-body text-app leading-relaxed">{perche}</p>
                 </div>
               );
             })()}
 
             {/* Bottone pratica guidata */}
             {hasPracticeTimer && (
-              <button
-                onClick={() => setShowPracticePopup(true)}
-                className={`mt-4 w-full font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 ${
-                  completed
-                    ? 'bg-forest-500/20 text-forest-300 border border-forest-500/40 hover:bg-forest-500/30'
-                    : 'bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white'
-                }`}
-              >
-                {completed
-                  ? `🔄 Rifai la pratica (${giorno.durataMinuti} min)`
-                  : `▶ Inizia pratica guidata (${giorno.durataMinuti} min)`}
-              </button>
+              completed ? (
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  className="mt-4"
+                  icon={<RotateCcw size={18} aria-hidden />}
+                  onClick={() => setShowPracticePopup(true)}
+                >
+                  Rifai la pratica ({giorno.durataMinuti} min)
+                </Button>
+              ) : (
+                <Button
+                  variant="hero"
+                  size="lg"
+                  fullWidth
+                  className="mt-4"
+                  icon={<Play size={20} aria-hidden />}
+                  onClick={() => setShowPracticePopup(true)}
+                >
+                  Inizia pratica guidata ({giorno.durataMinuti} min)
+                </Button>
+              )
             )}
-          </div>
+          </Card>
         )}
 
         {currentSlideData?.type === 'nota' && (
-          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4">
-            <h3 className="text-xs font-bold text-amber-300 mb-1.5">⚽ Nota in campo</h3>
-            <p className="text-app text-base leading-relaxed whitespace-pre-line">
+          <Card variant="warn" padding="sm">
+            <SectionTitle as="h3" title="Nota in campo" className="mb-1.5" />
+            <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
               {giorno.notaCampo}
             </p>
             {getNextTrainingMessage() && (
-              <div className="mt-3 pt-3 border-t border-amber-500/30">
-                <p className="text-amber-300 text-xs font-medium">
+              <div className="mt-3 pt-3 border-t border-warning/30">
+                <p className="text-warning text-body-sm font-medium flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
                   {getNextTrainingMessage()}
                 </p>
               </div>
             )}
-          </div>
+          </Card>
         )}
 
         {currentSlideData?.type === 'domanda' && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5">
+          <Card padding="md">
             {jumpToReflection && (
-              <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-4 text-center">
-                <p className="text-sm text-amber-300">
-                  ☀️ Com'è andata la pratica durante la giornata?
+              <Card variant="warn" padding="sm" className="mb-4 text-center">
+                <p className="text-body text-warning flex items-center justify-center gap-1.5">
+                  <Sun className="w-4 h-4" aria-hidden="true" /> Com&apos;è andata la pratica durante la giornata?
                 </p>
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="mt-2"
+                  icon={<ArrowUp size={16} aria-hidden />}
                   onClick={() => { setReviewMode(true); setCurrentSlide(1); }}
-                  className="mt-1.5 text-xs text-faint hover:text-muted underline underline-offset-2 transition-colors"
                 >
-                  ↑ Rileggi prima le istruzioni del giorno
-                </button>
-              </div>
+                  Rileggi prima le istruzioni del giorno
+                </Button>
+              </Card>
             )}
-            <h2 className="text-sm font-bold text-app mb-3 flex items-center gap-2">
-              ✍️ Riflessione
-            </h2>
-            <p className="text-muted text-base mb-3 leading-relaxed">{giorno.domanda}</p>
-            <textarea
-              value={response}
-              onChange={(e) => setResponse(e.target.value)}
-              disabled={completed}
-              className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
-              rows={4}
-              maxLength={2000}
-              placeholder="Scrivi qui la tua risposta (opzionale)..."
-            />
-            {!completed && response.length > 0 && (
-              <p className="text-xs text-faint mt-1 text-right">{response.length}/2000</p>
-            )}
-          </div>
+            <SectionTitle title="Riflessione" icon={<PenLine size={18} />} className="mb-3" />
+            <p className="text-muted text-body mb-3 leading-relaxed">{giorno.domanda}</p>
+            <Field
+              label="La tua risposta"
+              htmlFor="riflessione"
+              optional
+              counter={!completed && response.length > 0 ? { value: response.length, max: 2000 } : undefined}
+            >
+              <Textarea
+                id="riflessione"
+                value={response}
+                onChange={(e) => setResponse(e.target.value)}
+                disabled={completed}
+                rows={4}
+                maxLength={2000}
+                placeholder="Scrivi qui la tua risposta (opzionale)..."
+              />
+            </Field>
+          </Card>
         )}
 
         {currentSlideData?.type === 'completa' && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5 text-center">
-            <div className="text-4xl mb-3">✅</div>
-            <h2 className="text-lg font-bold text-app mb-2">Pronto a completare?</h2>
-            <p className="text-sm text-muted">
-              Hai letto l'apertura e praticato. Segna il giorno come completato.
+          <Card padding="md" className="text-center">
+            <div className="w-14 h-14 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center mx-auto mb-3" aria-hidden="true">
+              <Check className="w-7 h-7" strokeWidth={3} />
+            </div>
+            <h2 className="font-display text-title-2 font-bold text-app mb-2">Pronto a completare?</h2>
+            <p className="text-body text-muted">
+              Hai letto l&apos;apertura e praticato. Segna il giorno come completato.
             </p>
-          </div>
+          </Card>
         )}
 
         {/* Pratica pre-partita: oggi è giorno partita OPPURE domani è giorno partita */}
         {isLastSlide && isMatchDay && settimanaData?.praticaPrePartita && (
-          <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-2xl p-5">
-            <p className="text-xs font-bold text-emerald-300 mb-2">🟢 Oggi giochi — pratica pre-partita</p>
-            <p className="text-app text-sm leading-relaxed whitespace-pre-line">
+          <Card variant="accent" padding="md">
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Oggi giochi — pratica pre-partita</p>
+            <p className="text-app text-body leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>
-          </div>
+          </Card>
         )}
         {isLastSlide && !isMatchDay && isPreMatchDay && settimanaData?.praticaPrePartita && (
-          <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-2xl p-5">
-            <p className="text-xs font-bold text-emerald-300 mb-2">🟢 Domani giochi — pratica pre-partita</p>
-            <p className="text-app text-sm leading-relaxed whitespace-pre-line">
+          <Card variant="accent" padding="md">
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Domani giochi — pratica pre-partita</p>
+            <p className="text-app text-body leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>
-          </div>
+          </Card>
         )}
 
         {saveError && (
@@ -701,59 +722,71 @@ export default function GiornoPage() {
         {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile */}
         <div className="flex gap-4">
           {effectiveSlide > 1 && !jumpToReflection && (
-            <button
+            <Button
+              variant="secondary"
+              className="flex-1"
+              icon={<ChevronLeft size={18} aria-hidden />}
               onClick={() => setCurrentSlide(s => s - 1)}
-              className="flex-1 bg-surface border border-divider text-app font-semibold py-3 rounded-xl hover:bg-surface-2 transition-all text-sm"
             >
-              ← Indietro
-            </button>
+              Indietro
+            </Button>
           )}
 
           {!isLastSlide && (
-            <button
+            <Button
+              variant="primary"
+              className="flex-1"
+              iconRight={<ChevronRight size={18} aria-hidden />}
               onClick={() => setCurrentSlide(s => s + 1)}
-              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl transition-all text-sm"
             >
-              Continua →
-            </button>
+              Continua
+            </Button>
           )}
 
           {isLastSlide && !completed && (
-            <button
+            <Button
+              variant="primary"
+              className="flex-1"
+              icon={<Check size={18} aria-hidden />}
               onClick={handleComplete}
-              disabled={saving}
-              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              loading={saving}
             >
-              {saving ? 'Salvataggio...' : '✅ Segna come completato'}
-            </button>
+              {saving ? 'Salvataggio...' : 'Segna come completato'}
+            </Button>
           )}
 
           {isLastSlide && completed && (
             nextUnlocked ? (
-              <button
+              <Button
+                variant="primary"
+                className="flex-1"
+                iconRight={<ChevronRight size={18} aria-hidden />}
                 onClick={handleContinue}
-                className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl shadow-lg hover:from-forest-600 hover:to-forest-700 transition-all text-sm"
               >
                 {dayNumber + 1 === GATE_DAY
-                  ? 'Vai al Gate →'
-                  : `Vai al Giorno ${dayNumber + 1} →`}
-              </button>
+                  ? 'Vai al Gate'
+                  : `Vai al Giorno ${dayNumber + 1}`}
+              </Button>
             ) : (
-              <button
+              <Button
+                variant="secondary"
+                className="flex-1"
+                iconRight={<ChevronRight size={18} aria-hidden />}
                 onClick={() => router.push(`/settimana/${weekNumber}`)}
-                className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl shadow-lg hover:from-forest-600 hover:to-forest-700 transition-all text-sm"
               >
-                Torna alla settimana →
-              </button>
+                Torna alla settimana
+              </Button>
             )
           )}
         </div>
 
         {/* Stato gia completato */}
         {completed && (
-          <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-3 text-center">
-            <p className="text-forest-300 font-semibold text-xs">✅ Giorno già completato — puoi rileggere le slide</p>
-          </div>
+          <Card variant="accent" padding="sm" className="text-center">
+            <p className="text-forest-300 font-semibold text-body-sm flex items-center justify-center gap-1.5">
+              <Check className="w-4 h-4" strokeWidth={3} aria-hidden="true" /> Giorno già completato — puoi rileggere le slide
+            </p>
+          </Card>
         )}
 
         <div className="h-4" />

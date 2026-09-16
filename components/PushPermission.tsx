@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
+import { Bell } from 'lucide-react';
+import { Banner } from '@/components/ui';
 
 interface PushPermissionProps {
   userId: string;
@@ -72,31 +74,16 @@ export default function PushPermission({ userId, suppressed = false }: PushPermi
 
   if (suppressed || !showBanner) return null;
 
+  // Banner inline come gli altri della home (prima: fixed sopra la tab bar).
   return (
-    <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 right-4 bg-gradient-to-r from-forest-600 to-forest-700 text-white rounded-2xl p-4 shadow-xl z-40 animate-fadeIn">
-      <div className="flex items-start gap-3">
-        <div className="text-2xl flex-shrink-0">🔔</div>
-        <div className="flex-1">
-          <p className="font-semibold text-sm mb-1">Attiva le notifiche</p>
-          <p className="text-xs text-white/80 leading-relaxed">
-            Ricevi un messaggio dal Coach ogni mattina e un promemoria serale per la tua pratica.
-          </p>
-        </div>
-      </div>
-      <div className="flex gap-2 mt-3">
-        <button
-          onClick={handleAccept}
-          className="flex-1 bg-white text-forest-700 font-bold py-2 rounded-xl text-sm hover:bg-forest-50 transition-colors"
-        >
-          Attiva
-        </button>
-        <button
-          onClick={handleDismiss}
-          className="px-4 py-2 text-white/70 text-sm hover:text-white transition-colors"
-        >
-          Non ora
-        </button>
-      </div>
-    </div>
+    <Banner
+      tone="accent"
+      icon={<Bell size={20} />}
+      title="Attiva le notifiche"
+      action={{ label: 'Attiva', onClick: handleAccept }}
+      secondary={{ label: 'Non ora', onClick: handleDismiss }}
+    >
+      Ricevi un messaggio dal Coach ogni mattina e un promemoria serale per la tua pratica.
+    </Banner>
   );
 }

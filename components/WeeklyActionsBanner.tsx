@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
-import { Calendar, RefreshCw, Check } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { Banner } from '@/components/ui';
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 interface WeeklyActionsBannerProps {
@@ -88,43 +89,16 @@ export default function WeeklyActionsBanner({
   };
 
   return (
-    <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl shadow-sm p-4">
-      <div className="flex items-start gap-3 mb-3">
-        <div className="w-10 h-10 rounded-full bg-amber-500/25 flex items-center justify-center flex-shrink-0">
-          <Calendar className="w-5 h-5 text-amber-300" aria-hidden="true" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-amber-200">
-            {needsSetup
-              ? 'Pianifica le tue 5 azioni'
-              : 'È lunedì — confermi le tue 5 azioni?'}
-          </p>
-          <p className="text-xs text-amber-300 mt-0.5 leading-relaxed">
-            {needsSetup
-              ? 'Stesse per tutta la settimana. Il modo migliore per diventare il giocatore che vuoi è comportarti già oggi come se lo fossi.'
-              : 'Puoi tenere le stesse oppure cambiarle. La consistenza vale più della perfezione.'}
-          </p>
-        </div>
-      </div>
-      <div className="flex gap-2">
-        <button
-          onClick={handleUpdate}
-          className="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-2.5 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5"
-        >
-          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
-          {needsSetup ? 'Pianifica ora' : 'Aggiorna'}
-        </button>
-        {!needsSetup && (
-          <button
-            onClick={handleKeep}
-            disabled={dismissing}
-            className="flex-1 bg-surface border border-amber-500/30 text-amber-300 text-sm font-semibold py-2.5 px-3 rounded-xl hover:bg-amber-500/10 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
-          >
-            <Check className="w-3.5 h-3.5" aria-hidden="true" />
-            Tieni le stesse
-          </button>
-        )}
-      </div>
-    </div>
+    <Banner
+      tone="warn"
+      icon={<Calendar size={20} />}
+      title={needsSetup ? 'Pianifica le tue 5 azioni' : 'È lunedì — confermi le tue 5 azioni?'}
+      action={{ label: needsSetup ? 'Pianifica ora' : 'Aggiorna', onClick: handleUpdate }}
+      secondary={!needsSetup ? { label: dismissing ? '…' : 'Tieni le stesse', onClick: handleKeep } : undefined}
+    >
+      {needsSetup
+        ? 'Stesse per tutta la settimana. Il modo migliore per diventare il giocatore che vuoi è comportarti già oggi come se lo fossi.'
+        : 'Puoi tenere le stesse oppure cambiarle. La consistenza vale più della perfezione.'}
+    </Banner>
   );
 }

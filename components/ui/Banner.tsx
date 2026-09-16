@@ -21,6 +21,7 @@ interface BannerProps {
   secondary?: { label: string; onClick: () => void };
   onClose?: () => void;
   className?: string;
+  role?: 'status' | 'alert';
 }
 
 const ICON_BG: Record<BannerTone, string> = {
@@ -33,11 +34,11 @@ const BORDER: Record<BannerTone, string> = {
   accent: 'border-forest-500/30', info: 'border-info/30', warn: 'border-warning/35', danger: 'border-danger/35',
 };
 
-export default function Banner({ tone = 'accent', icon, title, children, action, secondary, onClose, className = '' }: BannerProps) {
+export default function Banner({ tone = 'accent', icon, title, children, action, secondary, onClose, className = '', role = 'status' }: BannerProps) {
   const btn = 'inline-flex items-center justify-center h-11 px-4 rounded-btn text-body-sm font-semibold transition-colors';
   const primaryCls = `${btn} ${tone === 'warn' ? 'bg-warning text-app-bg hover:bg-warning/90' : tone === 'danger' ? 'bg-danger text-white' : 'bg-forest-500 text-white hover:bg-forest-600'}`;
   return (
-    <div role="status" className={`relative rounded-card bg-surface border ${BORDER[tone]} p-4 ${className}`}>
+    <div role={role} className={`relative rounded-card bg-surface border ${BORDER[tone]} p-4 ${className}`}>
       {onClose && (
         <button type="button" onClick={onClose} aria-label="Chiudi"
           className="absolute top-1 right-1 w-11 h-11 rounded-full flex items-center justify-center text-muted hover:text-app hover:bg-surface-2">

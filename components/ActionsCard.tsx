@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Target, ChevronRight, ChevronDown, Flame, Pencil } from 'lucide-react';
+import { Button, Card } from '@/components/ui';
 
 export type DashboardAction = {
   id: string;
@@ -84,28 +84,25 @@ export default function ActionsCard({
   // ─── Variante 1: empty (no azioni pianificate) ──────────────────────
   if (total === 0) {
     return (
-      <Link
-        href="/oggi?setup=1"
-        className="block bg-amber-500/15 border border-amber-500/30 rounded-2xl shadow-sm p-4 transition-all hover:shadow-md active:scale-[0.99]"
-      >
+      <Card variant="warn" padding="sm" href="/oggi?setup=1" aria-label="Pianifica le tue 5 azioni">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-amber-500/25 flex items-center justify-center flex-shrink-0">
-            <Target className="w-5 h-5 text-amber-300" aria-hidden="true" />
+          <div className="w-10 h-10 rounded-full bg-warning/15 flex items-center justify-center flex-shrink-0">
+            <Target className="w-5 h-5 text-warning" aria-hidden="true" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-amber-200">
+            <p className="text-body font-bold text-app">
               Pianifica le tue 5 azioni
             </p>
-            <p className="text-xs text-amber-300 mt-0.5">
+            <p className="text-body-sm text-muted mt-0.5">
               Cose concrete che fai ogni giorno
             </p>
           </div>
           <ChevronRight
-            className="w-5 h-5 text-amber-300 flex-shrink-0"
+            className="w-5 h-5 text-warning flex-shrink-0"
             aria-hidden="true"
           />
         </div>
-      </Link>
+      </Card>
     );
   }
 
@@ -115,13 +112,13 @@ export default function ActionsCard({
 
   // Container: gradient verde su all-done, surface altrimenti
   const containerCls = allDone
-    ? 'bg-gradient-to-r from-forest-500 to-forest-600 text-white border-transparent shadow-lg'
-    : 'bg-surface border-divider shadow-sm';
+    ? 'bg-gradient-to-r from-forest-500 to-forest-600 text-white border-transparent shadow-e2'
+    : 'bg-surface border-divider';
 
   return (
     <section
       aria-label="Le tue 5 azioni"
-      className={`rounded-2xl border overflow-hidden transition-all ${containerCls}`}
+      className={`rounded-card border overflow-hidden transition-all ${containerCls}`}
     >
       {/* HEADER — tap toggla expand */}
       <button
@@ -130,7 +127,7 @@ export default function ActionsCard({
         aria-expanded={hasInteractiveList ? expanded : undefined}
         aria-controls={hasInteractiveList ? 'actions-card-list' : undefined}
         disabled={!hasInteractiveList}
-        className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-transform ${
+        className={`w-full min-h-[64px] flex items-center gap-3 px-4 py-3.5 text-left transition-transform ${
           hasInteractiveList ? 'active:scale-[0.995]' : ''
         } disabled:cursor-default`}
       >
@@ -147,14 +144,14 @@ export default function ActionsCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline justify-between gap-2">
             <p
-              className={`text-sm font-bold ${
+              className={`text-body font-bold ${
                 allDone ? 'text-white' : 'text-app'
               }`}
             >
               {allDone ? `Tutte e ${total} fatte oggi` : 'Le tue 5 azioni'}
             </p>
             <p
-              className={`text-xs font-semibold tabular-nums ${
+              className={`text-body font-bold tabular-nums ${
                 allDone ? 'text-white' : 'text-forest-300'
               }`}
             >
@@ -171,10 +168,10 @@ export default function ActionsCard({
               />
             </div>
           ) : (
-            <p className="text-xs text-forest-100 mt-0.5 flex items-center gap-1">
+            <p className="text-body-sm text-forest-100 mt-0.5 flex items-center gap-1">
               {streak > 0 ? (
                 <>
-                  <Flame className="w-3 h-3" aria-hidden="true" /> {streak}{' '}
+                  <Flame className="w-3.5 h-3.5" aria-hidden="true" /> {streak}{' '}
                   giorni di fila di azioni
                 </>
               ) : (
@@ -270,7 +267,7 @@ export default function ActionsCard({
                       )}
                     </span>
                     <p
-                      className={`flex-1 text-sm leading-snug ${
+                      className={`flex-1 text-body leading-snug ${
                         checked
                           ? allDone
                             ? 'text-white/70 line-through decoration-1'
@@ -289,17 +286,18 @@ export default function ActionsCard({
           </ul>
 
           {/* Footer "Modifica" — porta a /oggi?setup=1 (riusa ActionsSetupSheet) */}
-          <Link
-            href="/oggi?setup=1"
-            className={`flex items-center justify-center gap-2 px-4 py-3 text-xs font-semibold transition-colors ${
-              allDone
-                ? 'text-white/85 hover:text-white border-t border-white/15'
-                : 'text-forest-300 hover:text-forest-200 border-t border-divider bg-surface-2'
-            }`}
-          >
-            <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
-            Modifica le tue 5 azioni
-          </Link>
+          <div className={`border-t ${allDone ? 'border-white/15' : 'border-divider bg-surface-2'}`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              fullWidth
+              href="/oggi?setup=1"
+              icon={<Pencil size={16} aria-hidden />}
+              className={`rounded-none ${allDone ? 'text-white/90 hover:bg-white/10' : 'text-forest-300'}`}
+            >
+              Modifica le tue 5 azioni
+            </Button>
+          </div>
         </div>
       )}
     </section>

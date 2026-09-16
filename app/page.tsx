@@ -22,7 +22,8 @@ import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
 import BirthdateBanner from '@/components/BirthdateBanner';
-import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target, MessageCircle } from 'lucide-react';
+import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target, Bot, Play, Dumbbell, Trophy, Check, Key, ChevronRight, Sun } from 'lucide-react';
+import { AppLoader, Banner, Button, Card, SectionTitle } from '@/components/ui';
 
 interface CheckinData {
   date: string;
@@ -271,14 +272,11 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center px-6">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-muted">{activating ? 'Attivazione in corso…' : 'Caricamento...'}</p>
-          {activating && (
-            <p className="text-sm text-faint mt-2">Pagamento ricevuto. Stiamo sbloccando la tua Season, ci vuole qualche secondo.</p>
-          )}
-        </div>
+      <main className="min-h-screen bg-app flex flex-col items-center justify-center px-6 text-center">
+        <AppLoader fullscreen={false} label={activating ? 'Attivazione in corso…' : 'Caricamento...'} />
+        {activating && (
+          <p className="text-body-sm text-muted -mt-6">Pagamento ricevuto. Stiamo sbloccando la tua Season, ci vuole qualche secondo.</p>
+        )}
       </main>
     );
   }
@@ -388,48 +386,31 @@ export default function HomePage() {
   // Card del Coach: nei primi 3 giorni è l'elemento più legato alla retention (chi ha tenuto ha scritto al Coach),
   // quindi sta subito sotto l'hero; dopo torna in fondo tra i banner soft.
   const coachCard = coachBannerVisible ? (
-
-          <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
-            <button
-              onClick={() => {
-                setCoachMessageDismissed(true);
-                try {
-                  localStorage.setItem('coachMessageDismissed', profile.last_coach_message);
-                } catch { /* no-op */ }
-              }}
-              className="absolute top-3 right-3 text-faint hover:text-muted transition-colors"
-              aria-label="Chiudi"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-            <div className="flex items-start gap-3 pr-6">
-              <div className="text-xl flex-shrink-0">🤖</div>
-              <div className="flex-1">
-                <p className="text-xs font-bold text-forest-400 mb-1">Coach AI</p>
-                <p className="text-sm text-app leading-relaxed">{profile.last_coach_message}</p>
-                <button
-                  onClick={() => router.push('/chat')}
-                  className="mt-3 inline-flex items-center gap-1.5 bg-forest-500 hover:bg-forest-600 text-white text-xs font-semibold py-2 px-3.5 rounded-xl transition-colors"
-                >
-                  <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                  Rispondi al Coach
-                </button>
-              </div>
-            </div>
-          </div>
+    <Banner
+      tone="accent"
+      icon={<Bot size={20} />}
+      title="Coach AI"
+      action={{ label: 'Rispondi al Coach', href: '/chat' }}
+      onClose={() => {
+        setCoachMessageDismissed(true);
+        try {
+          localStorage.setItem('coachMessageDismissed', profile.last_coach_message);
+        } catch { /* no-op */ }
+      }}
+    >
+      <p className="text-body text-app leading-relaxed">{profile.last_coach_message}</p>
+    </Banner>
   ) : null;
 
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       {/* Header — compatto: solo greeting + mantra opzionale */}
       <div className="max-w-2xl mx-auto mb-5">
-        <h1 className="text-3xl font-bold text-app">
+        <h1 className="font-display text-title-1 font-bold text-app">
           Ciao, {profile?.name || 'Campione'}! 👋
         </h1>
         {settimana?.mantraDashboard && (
-          <p className="italic text-muted text-sm mt-2">
+          <p className="font-quote italic text-muted text-body-lg mt-2">
             &ldquo;{settimana.mantraDashboard}&rdquo;
           </p>
         )}
@@ -439,49 +420,49 @@ export default function HomePage() {
         {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
             (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
         {profile?.current_week === 1 && totalCompleted === 0 && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
-            <p className="font-bold text-app mb-1">Ciao, {profile?.name}.</p>
-            <p className="font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
-            <p className="text-sm text-muted leading-relaxed">
+          <Card padding="md" className="border-l-4 border-l-forest-400">
+            <p className="text-body font-bold text-app mb-1">Ciao, {profile?.name}.</p>
+            <p className="text-body font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
+            <p className="text-body text-muted leading-relaxed">
               Molti giocatori scoprono che non è la tecnica il problema.
               È restare nella partita.
             </p>
-            <p className="text-sm text-muted mt-1">
+            <p className="text-body text-muted mt-1">
               Oggi impari il primo strumento. 3 minuti.
             </p>
-          </div>
+          </Card>
         )}
 
         {/* CTA principale */}
-        <div className="bg-gradient-to-r from-forest-500 to-forest-600 rounded-2xl shadow-lg p-6 text-white">
+        <Card variant="hero" padding="md">
           <div className="flex items-center justify-between mb-4">
             <div>
               {allDone ? (
                 <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Percorso completato</p>
-                  <h2 className="text-2xl font-bold leading-tight">Ce l&apos;hai fatta!</h2>
-                  <p className="text-forest-100 text-sm mt-1">
+                  <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
+                  <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta!</h2>
+                  <p className="text-forest-100 text-body-sm mt-1">
                     Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
                   </p>
                 </>
               ) : (
                 <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">
+                  <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
                     {comebackMode ? 'Bentornato' : `Settimana ${currentWeek}`}
                   </p>
-                  <h2 className="text-2xl font-bold leading-tight">
+                  <h2 className="font-display text-title-1 font-bold">
                     {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
                   </h2>
                   {settimana?.principio && (
-                    <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
+                    <p className="text-forest-100 text-body-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
                   )}
                   {comebackMode && (
-                    <p className="text-forest-100 text-sm mt-2">
+                    <p className="text-forest-100 text-body-sm mt-2">
                       Riprendi da dove eri: il Giorno {nextDay.day} ti aspetta. Bastano pochi minuti.
                     </p>
                   )}
                   {streak >= 2 && (
-                    <p className="text-amber-200 text-sm font-bold mt-2 flex items-center gap-1.5">
+                    <p className="text-warning text-body-sm font-bold mt-2 flex items-center gap-1.5">
                       <Flame className="w-4 h-4" aria-hidden="true" />
                       {streak} giorni di fila nel percorso
                     </p>
@@ -489,75 +470,54 @@ export default function HomePage() {
                 </>
               )}
             </div>
-            <div className="text-5xl">{allDone ? '🏆' : '⚽'}</div>
+            <div className="text-5xl" aria-hidden="true">{allDone ? '🏆' : '⚽'}</div>
           </div>
 
           {allDone ? (
             <div className="space-y-2.5">
-              <button
-                onClick={() => router.push('/strumenti')}
-                className="w-full bg-white text-forest-700 font-bold py-4 px-6 rounded-xl hover:bg-forest-50 transition-all text-base flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>🏋️</span>
-                <span>Allenati in Palestra</span>
-              </button>
-              <button
-                onClick={() => router.push('/beta-complete')}
-                className="w-full text-forest-100 hover:text-white text-xs font-medium underline underline-offset-4 transition-colors"
-              >
-                🏆 Rivedi schermata di completamento
-              </button>
+              <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+                Allenati in Palestra
+              </Button>
+              <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
+                Rivedi schermata di completamento
+              </Button>
             </div>
           ) : nextDayLocked ? (
             <div className="space-y-2.5">
-              <button
-                onClick={() => router.push('/strumenti')}
-                className="w-full bg-white text-forest-700 font-bold py-4 px-6 rounded-xl hover:bg-forest-50 transition-all text-base flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>🏋️</span>
-                <span>Allenati in Palestra</span>
-              </button>
-              <p className="text-forest-100 text-xs text-center">
-                ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani
+              <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+                Allenati in Palestra
+              </Button>
+              <p className="text-forest-100 text-body-sm text-center">
+                Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani
               </p>
             </div>
           ) : nextDayInCorso ? (
             <div className="space-y-2">
-              <button
-                onClick={() => router.push(`/giorno/${nextDay.week}/${nextDay.day}`)}
-                className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>🌤️</span>
-                <span>Chiudi il Giorno {nextDay.day} — com&apos;è andata?</span>
-              </button>
-              <p className="text-forest-100 text-xs">
+              <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+                Chiudi il Giorno {nextDay.day} — com&apos;è andata?
+              </Button>
+              <p className="text-forest-100 text-body-sm">
                 Giornata avviata stamattina: manca solo la riflessione (1 riga).
               </p>
             </div>
           ) : (
-            <button
-              onClick={() => router.push(`/giorno/${nextDay.week}/${nextDay.day}`)}
-              className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
-            >
-              <span>▶</span>
-              <span>
-                {totalCompleted === 0
-                  ? 'Inizia: Giorno 1'
-                  : `Continua: Sett. ${nextDay.week}, Giorno ${nextDay.day}`}
-              </span>
-            </button>
+            <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+              {totalCompleted === 0
+                ? 'Inizia: Giorno 1'
+                : `Continua: Sett. ${nextDay.week}, Giorno ${nextDay.day}`}
+            </Button>
           )}
-        </div>
+        </Card>
 
         {/* Missione della settimana — dal gate appena superato */}
         {weeklyMission && !allDone && (
-          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
-            <p className="text-xs font-bold text-forest-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+          <Card variant="accent" padding="sm">
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1.5 flex items-center gap-1.5">
               <Target className="w-3.5 h-3.5" aria-hidden="true" />
               Missione della settimana
             </p>
-            <p className="text-sm text-app leading-relaxed">{weeklyMission}</p>
-          </div>
+            <p className="text-body text-app leading-relaxed">{weeklyMission}</p>
+          </Card>
         )}
 
         {/* Reset rapido, SOS e cassetta vivono nella tab Strumenti (hub del campo) */}
@@ -574,12 +534,18 @@ export default function HomePage() {
         />
 
         {/* Progress settimana corrente */}
-        <div className="bg-surface rounded-2xl shadow-lg p-5">
-          <h2 className="text-base font-bold text-app mb-3 flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-forest-500" aria-hidden="true" />
-            Settimana {currentWeek} in corso
-            {weekDone && <span className="text-forest-500 text-sm font-medium">✓ Completata</span>}
-          </h2>
+        <Card padding="md">
+          <SectionTitle
+            title={`Settimana ${currentWeek} in corso`}
+            icon={<BarChart3 size={18} />}
+            subtitle={weekDone ? 'Completata' : undefined}
+            action={
+              <Button variant="ghost" size="sm" iconRight={<ChevronRight size={16} aria-hidden />} href={`/settimana/${currentWeek}`}>
+                Vedi settimana
+              </Button>
+            }
+            className="mb-3"
+          />
 
           {/* Day dots */}
           <div className="flex gap-1.5 mb-3">
@@ -591,32 +557,25 @@ export default function HomePage() {
               return (
                 <div
                   key={day}
-                  className={`flex-1 h-9 rounded-lg flex items-center justify-center text-xs font-bold ${
+                  className={`flex-1 h-9 rounded-lg flex items-center justify-center text-body-sm font-bold tabular-nums ${
                     done
                       ? 'bg-forest-500 text-white'
                       : isGate
                       ? 'bg-forest-500/20 text-forest-300 border border-forest-500/40'
                       : 'bg-surface-2 text-faint'
                   }`}
+                  aria-label={done ? `Giorno ${day} fatto` : isGate ? 'Giorno 7: Gate' : `Giorno ${day}`}
                 >
-                  {done ? '✓' : isGate ? '🔑' : day}
+                  {done ? <Check className="w-4 h-4" strokeWidth={3} aria-hidden="true" /> : isGate ? <Key className="w-4 h-4" aria-hidden="true" /> : day}
                 </div>
               );
             })}
           </div>
 
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-faint">
-              {weekProgress}/{DAYS_PER_WEEK} giorni · 🔑 Giorno 7 = Gate
-            </p>
-            <button
-              onClick={() => router.push(`/settimana/${currentWeek}`)}
-              className="text-xs text-forest-500 font-semibold hover:underline"
-            >
-              Vedi settimana →
-            </button>
-          </div>
-        </div>
+          <p className="text-body-sm text-muted flex items-center gap-1.5 tabular-nums">
+            {weekProgress}/{DAYS_PER_WEEK} giorni · <Key className="w-3.5 h-3.5" aria-hidden="true" /> Giorno 7 = Gate
+          </p>
+        </Card>
 
         {/* Preview statistiche */}
         {checkins.length >= 2 && (() => {
@@ -626,7 +585,7 @@ export default function HomePage() {
           const ment = checkins.filter(c => c.mental_state !== null).map(c => c.mental_state as number);
 
           const TREND_ARROW: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
-          const TREND_CLS: Record<string, string> = { up: 'text-emerald-400', down: 'text-red-400', stable: 'text-faint' };
+          const TREND_CLS: Record<string, string> = { up: 'text-success', down: 'text-danger', stable: 'text-faint' };
 
           const rows = [
             { Icon: Activity, label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/10', color: '#10b981', min: 0, max: 10 },
@@ -638,56 +597,52 @@ export default function HomePage() {
           if (rows.length === 0) return null;
 
           return (
-            <div className="bg-surface rounded-2xl shadow-lg p-5">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-bold text-app flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-forest-500" aria-hidden="true" />
-                  Il tuo stato
-                </h2>
-                <button
-                  onClick={() => router.push('/statistiche')}
-                  className="text-xs text-forest-500 font-semibold hover:underline"
-                >
-                  Vedi tutto →
-                </button>
-              </div>
+            <Card padding="md">
+              <SectionTitle
+                title="Il tuo stato"
+                icon={<TrendingUp size={18} />}
+                action={
+                  <Button variant="ghost" size="sm" iconRight={<ChevronRight size={16} aria-hidden />} href="/statistiche">
+                    Vedi tutto
+                  </Button>
+                }
+                className="mb-3"
+              />
               <div className="space-y-2.5">
                 {rows.map(r => {
                   const t = miniTrend(r.values);
                   const Icon = r.Icon;
                   return (
                     <div key={r.label} className="flex items-center gap-3">
-                      <span className="text-sm w-24 flex items-center gap-2">
+                      <span className="w-24 flex items-center gap-2">
                         <Icon className="w-4 h-4 text-muted" aria-hidden="true" style={{ color: r.color }} />
-                        <span className="text-muted text-xs font-medium">{r.label}</span>
+                        <span className="text-muted text-label font-medium">{r.label}</span>
                       </span>
                       <MiniSparkline values={r.values} color={r.color} min={r.min} max={r.max} />
                       <div className="flex items-baseline gap-1 ml-auto">
-                        <span className="text-sm font-bold text-app">{r.avg}{r.unit}</span>
-                        <span className={`text-xs font-bold ${TREND_CLS[t]}`}>{TREND_ARROW[t]}</span>
+                        <span className="text-body font-bold text-app tabular-nums">{r.avg}{r.unit}</span>
+                        <span className={`text-body-sm font-bold ${TREND_CLS[t]}`}>{TREND_ARROW[t]}</span>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
+            </Card>
           );
         })()}
 
         {/* Calendario settimanale */}
-        <div className="bg-surface rounded-2xl shadow-lg p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-bold text-app flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-forest-500" aria-hidden="true" />
-              La tua settimana
-            </h2>
-            <button
-              onClick={() => setShowCalendar(true)}
-              className="text-xs text-forest-500 font-semibold hover:underline"
-            >
-              {calendarData ? 'Modifica' : 'Imposta'}
-            </button>
-          </div>
+        <Card padding="md">
+          <SectionTitle
+            title="La tua settimana"
+            icon={<Calendar size={18} />}
+            action={
+              <Button variant="ghost" size="sm" onClick={() => setShowCalendar(true)}>
+                {calendarData ? 'Modifica' : 'Imposta'}
+              </Button>
+            }
+            className="mb-3"
+          />
 
           {calendarData ? (
             <div className="grid grid-cols-7 gap-1.5">
@@ -696,14 +651,14 @@ export default function HomePage() {
                 const isMatch = calendarData.matchDays.includes(day);
                 return (
                   <div key={day} className="text-center">
-                    <div className="text-[10px] text-faint mb-1">{DAY_SHORT_NAMES[day]}</div>
-                    <div className={`h-9 rounded-lg flex items-center justify-center text-sm ${
+                    <div className="text-overline uppercase text-faint mb-1">{DAY_SHORT_NAMES[day]}</div>
+                    <div className={`h-9 rounded-lg flex items-center justify-center text-body-sm ${
                       isTraining && isMatch
-                        ? 'bg-orange-500/20 text-orange-300'
+                        ? 'bg-warning/20 text-warning'
                         : isMatch
-                        ? 'bg-amber-500/20 text-amber-300'
+                        ? 'bg-warning/20 text-warning'
                         : isTraining
-                        ? 'bg-emerald-500/20 text-emerald-300'
+                        ? 'bg-forest-500/20 text-forest-300'
                         : 'bg-surface-2 text-faint'
                     }`}>
                       {isTraining && isMatch ? '⚽🏟️' : isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
@@ -713,11 +668,11 @@ export default function HomePage() {
               })}
             </div>
           ) : (
-            <p className="text-sm text-faint">
+            <p className="text-body-sm text-muted">
               Imposta i giorni di allenamento e partita per personalizzare il percorso.
             </p>
           )}
-        </div>
+        </Card>
 
         {/* Popup calendario */}
         {showCalendar && (
@@ -759,17 +714,19 @@ export default function HomePage() {
         {!coachBannerVisible && !weeklyBannerVisible && !telegramRecoveryCandidate && (
           <InstallBanner totalCompleted={totalCompleted} onVisibilityChange={setInstallBannerVisible} />
         )}
+
+        {/* Il push prompt aspetta se QUALSIASI banner inline è in vista, install incluso.
+            Inline come gli altri (prima era fixed sopra la tab bar). */}
+        <PushPermission
+          userId={userId}
+          suppressed={
+            coachBannerVisible ||
+            weeklyBannerVisible ||
+            telegramBannerVisible ||
+            installBannerVisible
+          }
+        />
       </div>
-      {/* Il push prompt aspetta se QUALSIASI banner inline è in vista, install incluso */}
-      <PushPermission
-        userId={userId}
-        suppressed={
-          coachBannerVisible ||
-          weeklyBannerVisible ||
-          telegramBannerVisible ||
-          installBannerVisible
-        }
-      />
     </main>
   );
 }
