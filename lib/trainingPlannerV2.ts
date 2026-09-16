@@ -18,6 +18,7 @@ import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type Plann
 import { caricoPianificato, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
+import { squilibriTesto } from './trainingSquilibri';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
@@ -25,7 +26,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.6-sedute-leggere';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.7-squilibri';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -316,8 +317,10 @@ ADATTAMENTO
 19. VINCOLI DELLA RICHIESTA (giorni disponibili, giorni da lasciare liberi, tempo per seduta): sono regole dure, il validatore rifiuta chi le viola.
 20. SQUADRA DESCRITTA (se accanto ai giorni squadra ci sono sforzo e qualità): serve per BILANCIARE, mai per vietare. Le qualità che la squadra lavora già forte (sforzo ≥7) non le raddoppi nella stessa settimana, a meno che siano un focus scelto dall'atleta; il giorno dopo una giornata squadra da 8+ ci si allena comunque, ma con un blocco principale diverso da quello della squadra o in versione short. Quando la squadra copre già un focus, dillo nel messaggio.
 17. CARICO TOTALE (session-RPE, calcolato dai dati): resta nel TARGET indicato — al massimo +10% sul cronico da una settimana all'altra; ACWR alto/rischio → settimana uguale o più leggera della precedente; dopo 2+ settimane di stop riparti dal 70% del cronico. Il tetto lo fa rispettare il validatore: una settimana troppo carica viene rifiutata.
+21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole → tra i blocchi della stessa qualità preferisci quelli marcati [unilaterale] (lavoro una gamba alla volta) e nel messaggio digli di partire dal lato debole e di curarlo; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
+Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21).
 ${libreriaTesto(ctx)}
 
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
@@ -383,7 +386,7 @@ Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') 
 Feedback sedute recenti: ${feedbackTxt}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
-${massimali}${memoria}${obiettiviTesto(ctx)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${caricoTesto(b.carico)}${piano}
+${massimali}${memoria}${obiettiviTesto(ctx)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${caricoTesto(b.carico)}${piano}
 ${preferenzeTesto(ctx, richiesta)}${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}${precedente ? `\nPiano rifiutato (parti da questo e cambia SOLO ciò che serve, es. togli un blocco o passa alla variante short): ${precedente}` : ''}` : ''}
 
