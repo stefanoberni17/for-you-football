@@ -1017,6 +1017,13 @@ Review completa e piano a 6 blocchi: `docs/ui-review-2026-09-16.md`. Brand da No
 
 **Screenshot con dati finti:** `scratchpad/ui/shoot.mjs` (fuori repo, sessione Claude): server dev su :3100 con Supabase e API intercettate, 13 pagine a 390×844; si rilancia dopo ogni blocco per il prima/dopo.
 
+**Restyle blocchi 1-5 (16 set 2026, PR #94)** — le pagine ristrutturate sopra il design system, logica invariata:
+- **Home:** hero = il giorno di oggi (titolo e minuti da `weekData.giorni`, CTA hero "Inizia"), poi "Le tue 5 azioni", UNA card "La tua settimana" (progress + calendario), "Il tuo stato" compresso, banner in fondo. `Badge` per lo streak.
+- **Percorso (`/settimane`):** hero "Sei qui" con la settimana in corso e "Riprendi: Giorno N"; le altre settimane sono righe compresse (fatte con badge "Fatta", bloccate con caption "si apre dopo il Gate N-1"). **Settimana:** card "Oggi" in cima, timeline con i titoli dei giorni, Gate in outline. **Giorno:** il check del giorno prima è la prima slide, un solo primario per schermata, "Perché funziona" in un `<details>`.
+- **Campo (`/allenamento`):** tre viste Oggi · Settimana · Card (`localStorage['campo.vista']`); "Oggi" = la seduta di oggi con "Inizia la seduta" sopra la piega; setup spostato in `/allenamento/setup`; maschera piano in `Sheet`; dolore in `Sheet`; carico come frase + `<details>`. **Seduta:** esercizi raggruppati per blocco, CTA sticky. **Player:** feedback a tre scelte Facile/Giusta/Durissima (= RPE 3/6/9), dettaglio 1-10 opzionale (`localStorage['player.rpeDettaglio']`), "Ho fatto diverso" per reps/kg. **Test:** hero "Il prossimo test" + blocchi richiudibili, input grande.
+- **Palestra (`/strumenti`):** hero "Riprendi" sull'ultimo esercizio aperto (`localStorage['palestra.ultimo']`). **SOS:** scheda in URL, "Fai questo, adesso" in cima. **Oggi:** numero grande X/5. **Statistiche:** 4 blocchi (oggi, settimana, sonno, azioni), `ComposedChart` + `AreaChart` sonno con `ReferenceArea`, grafici senza animazione. **Profilo:** riordinato, "Salva" sticky solo se ci sono modifiche.
+- **Ingresso:** onboarding a 3 slide, pricing con barra prezzo+CTA fissa e prezzo pieno barrato, chat e check-in rifiniti, popup pratica/Reset su `Sheet`.
+
 ## Pattern e Convenzioni
 
 ### Fetch dati (BFF pattern — mai Notion direttamente dal client)
