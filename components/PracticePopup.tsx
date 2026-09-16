@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Check, Headphones, Pause, Play, Sun, Target, Timer } from 'lucide-react';
 import { markSessionActive } from '@/lib/activeSession';
 import { useWakeLock } from '@/lib/useWakeLock';
+import { Button, Card, Sheet } from '@/components/ui';
 
 type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
 
@@ -188,28 +190,28 @@ export default function PracticePopup({
 
   const audioPlayer = audioUrl ? (
     !audioVisible ? (
-      <button
+      <Button
+        variant="secondary"
+        fullWidth
+        icon={<Headphones size={18} aria-hidden />}
         onClick={() => setAudioVisible(true)}
-        className="w-full bg-surface-2 hover:bg-[#293429] border border-forest-500/30 text-forest-300 font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 mb-4"
+        className="mb-4"
       >
-        🎧 Ascolta versione audio
-      </button>
+        Ascolta la versione audio
+      </Button>
     ) : (
-      <div className="bg-surface-2 backdrop-blur-sm border border-forest-500/30 rounded-xl p-3 mb-4 flex items-center gap-3">
+      <Card variant="raised" padding="sm" className="mb-4 flex items-center gap-3">
         <button
+          type="button"
           onClick={toggleAudio}
           aria-label={isAudioPlaying ? 'Pausa audio' : 'Riproduci audio'}
-          className="w-10 h-10 rounded-full bg-forest-500 hover:bg-forest-600 text-white flex items-center justify-center flex-shrink-0 transition-colors"
+          className="w-12 h-12 rounded-full bg-forest-500 hover:bg-forest-600 text-white flex items-center justify-center flex-shrink-0 transition-colors"
         >
-          {isAudioPlaying ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-          )}
+          {isAudioPlaying ? <Pause size={20} aria-hidden /> : <Play size={20} className="ml-0.5" aria-hidden />}
         </button>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between text-xs text-muted mb-1">
-            <span className="font-medium">🎧 Guida audio</span>
+          <div className="flex items-center justify-between text-caption text-muted mb-1">
+            <span className="font-medium inline-flex items-center gap-1"><Headphones size={14} aria-hidden /> Guida audio</span>
             <span className="tabular-nums">
               {formatAudioTime(audioCurrentTime)} / {formatAudioTime(audioDuration)}
             </span>
@@ -221,12 +223,12 @@ export default function PracticePopup({
             />
           </div>
           {audioFailed && (
-            <p className="text-[11px] text-amber-300 mt-1">
+            <p className="text-caption text-warning mt-1">
               Audio non disponibile — continua col timer, va bene lo stesso.
             </p>
           )}
         </div>
-      </div>
+      </Card>
     )
   ) : null;
 
@@ -265,237 +267,195 @@ export default function PracticePopup({
     .map(s => s.trim().replace(/^\d+[.)]\s*/, ''))
     .filter(Boolean);
 
+  const timerLabel = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
-      <div className="flex min-h-full items-center justify-center p-4 pb-24">
-      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn">
-        {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
+    <>
+      {/* L'elemento audio vive fuori dagli Sheet: resta montato tra una fase e l'altra */}
+      {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
 
-        {phase === 'setup' && (
+      {/* ─── SETUP ─── */}
+      <Sheet
+        open={phase === 'setup'}
+        onClose={handleSkip}
+        closeLabel="Ho già praticato da solo"
+        eyebrow={weekTool}
+        title={tipoPratica === 'giornata' ? 'Pratica del giorno' : 'Pratica guidata'}
+        subtitle={titolo}
+        footer={
           <>
-            <div className="text-center mb-5">
-              <div className="text-5xl md:text-6xl mb-3">
-                {tipoPratica === 'giornata' ? '🌤️' : '🎯'}
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
-                {tipoPratica === 'giornata' ? 'Pratica del giorno' : 'Pratica Guidata'}
-              </h2>
-              {weekTool && (
-                <p className="text-sm text-forest-500 font-semibold mb-1">
-                  🔧 {weekTool}
-                </p>
-              )}
-              <p className="text-xs text-muted">{titolo}</p>
-            </div>
-
-            {audioPlayer}
-
-            {/* Step della pratica */}
-            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-5 mb-5 border border-forest-500/25">
-              <div className="space-y-2.5">
-                {practiceSteps.map((step, i) => (
-                  <div key={i} className="flex gap-3 items-start">
-                    <span className="w-6 h-6 rounded-full bg-forest-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                      {i + 1}
-                    </span>
-                    <p className="text-base text-app leading-relaxed">{step}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {tipoPratica === 'giornata' ? (
-              /* GIORNATA: niente timer, bottone "Ho capito" */
-              <>
-                <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-5 text-center">
-                  <p className="text-sm text-amber-300">
-                    ☀️ Questa pratica si fa <span className="font-bold">durante la giornata</span> — non adesso.
-                    Torna stasera per la riflessione.
-                  </p>
-                </div>
-                <button
-                  onClick={startPractice}
-                  className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
-                >
-                  🧘 Fai il Reset breve e inizia
-                </button>
-              </>
-            ) : (
-              /* TUTTI GLI ALTRI TIPI: timer normale */
-              <>
-                <div className="text-center mb-5">
-                  <p className="text-sm text-muted">
-                    ⏱️ Durata: <span className="font-bold text-forest-300">{durataMinuti} minuti</span>
-                  </p>
-                </div>
-                <button
-                  onClick={startPractice}
-                  className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
-                >
-                  ▶ Inizia la pratica
-                </button>
-              </>
-            )}
-            <button
-              onClick={handleSkip}
-              className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
+            <Button
+              variant="hero"
+              size="lg"
+              fullWidth
+              icon={tipoPratica === 'giornata' ? <Sun size={20} aria-hidden /> : <Play size={20} aria-hidden />}
+              onClick={startPractice}
             >
-              Ho già praticato da solo →
-            </button>
+              {tipoPratica === 'giornata' ? 'Fai il Reset breve e inizia' : 'Inizia la pratica'}
+            </Button>
+            <Button variant="ghost" fullWidth onClick={handleSkip}>
+              Ho già praticato da solo
+            </Button>
           </>
-        )}
+        }
+      >
+        <div className="flex justify-center mb-4 text-forest-400" aria-hidden>
+          {tipoPratica === 'giornata' ? <Sun size={40} /> : <Target size={40} />}
+        </div>
 
-        {phase === 'practicing' && (
-          <>
-            {/* Chiudi — fixed nel viewport con safe-area iPhone, sempre visibile */}
-            <button
-              onClick={exitToSetup}
-              className="fixed right-4 z-50 text-white bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors p-2 rounded-full"
-              style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
-              aria-label="Torna al setup"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
+        {audioPlayer}
 
-            <div className="text-center mb-4">
-              <h2 className="text-xl md:text-2xl font-bold text-app mb-1">
-                {weekTool || 'Pratica in corso'}
-              </h2>
-              <p className="text-xs text-muted">{titolo}</p>
-            </div>
-
-            {audioPlayer}
-
-            {/* Step pratica visibili durante timer */}
-            <div className="bg-surface-2 backdrop-blur-sm rounded-xl p-3 mb-5 border border-divider max-h-24 overflow-y-auto">
-              <div className="space-y-1">
-                {practiceSteps.map((step, i) => (
-                  <p key={i} className="text-xs text-muted leading-relaxed">
-                    <span className="font-bold text-forest-400">{i + 1}.</span> {step}
-                  </p>
-                ))}
+        {/* Step della pratica */}
+        <Card variant="raised" padding="sm" className="mb-4">
+          <div className="space-y-3">
+            {practiceSteps.map((step, i) => (
+              <div key={i} className="flex gap-3 items-start">
+                <span className="w-6 h-6 rounded-full bg-forest-500 text-white text-caption font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                  {i + 1}
+                </span>
+                <p className="text-body text-app leading-relaxed">{step}</p>
               </div>
-            </div>
+            ))}
+          </div>
+        </Card>
 
-            {/* Timer area — condizionale in base al tipo pratica */}
-            <div className="flex flex-col items-center mb-6">
-              {showBreathCircle ? (
-                /* RESPIRAZIONE: cerchio animato + timer */
-                <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
-                  <div
-                    className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform ease-in-out ${
-                      breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
-                    }`}
-                    style={{
-                      opacity: 0.6,
-                      transitionDuration: `${breathPhase === 'inhale' ? durataInspira : durataEspira}s`,
-                    }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-4xl md:text-5xl font-bold text-white mb-1">
-                        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-                      </div>
-                      <div className="text-xs md:text-sm text-white/90 font-medium">
-                        {timerEnded && audioInProgress
-                          ? '🎧 Continua ad ascoltare...'
-                          : breathPhase === 'inhale' ? '🌬️ Inspira...' : '💨 Espira...'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* VISUALIZZAZIONE / RIFLESSIONE: solo timer countdown */
-                <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-forest-400/20 to-forest-500/20 border-2 border-forest-400/30" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-4xl md:text-5xl font-bold text-forest-300 mb-1">
-                        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-                      </div>
-                      <div className="text-xs md:text-sm text-forest-400/70 font-medium">
-                        {timerEnded && audioInProgress
-                          ? '🎧 Continua ad ascoltare...'
-                          : tipoPratica === 'riflessione' ? '🧘 Rifletti...' : '👁️ Osserva...'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <p className="text-xs text-center text-muted">
-              {showBreathCircle
-                ? 'Segui la pratica al tuo ritmo. Il timer ti guida ⚽'
-                : 'Segui gli step al tuo ritmo. Prenditi il tempo che ti serve 🧘'}
+        {tipoPratica === 'giornata' ? (
+          /* GIORNATA: niente timer, si porta in giornata */
+          <Card variant="warn" padding="sm" className="text-center">
+            <p className="text-body-sm text-warning">
+              Questa pratica si fa <span className="font-bold">durante la giornata</span> — non adesso.
+              Torna stasera per la riflessione.
             </p>
-
-            {canFinishEarly && (
-              <button
-                onClick={finishEarly}
-                className="w-full mt-4 bg-surface-2 border border-forest-500/40 hover:border-forest-400 text-forest-300 font-semibold py-3 rounded-2xl transition-colors text-sm animate-fadeIn"
-              >
-                Ho finito ✓
-              </button>
-            )}
-          </>
+          </Card>
+        ) : (
+          /* TUTTI GLI ALTRI TIPI: timer normale */
+          <p className="text-body-sm text-muted text-center inline-flex w-full items-center justify-center gap-1.5">
+            <Timer size={16} aria-hidden />
+            Durata: <span className="font-bold text-forest-300">{durataMinuti} minuti</span>
+          </p>
         )}
+      </Sheet>
 
-        {phase === 'done' && (
-          <>
-            <div className="text-center mb-6">
-              {tipoPratica === 'giornata' ? (
-                <>
-                  <div className="text-6xl md:text-7xl mb-4">☀️</div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
-                    Ora tocca a te!
-                  </h2>
-                  <p className="text-sm text-muted leading-relaxed">
-                    Porta la pratica nella tua giornata. Torna quando hai finito per completare la riflessione.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="text-6xl md:text-7xl mb-4">🏆</div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
-                    Pratica completata!
-                  </h2>
-                  <p className="text-sm text-muted leading-relaxed">
-                    Ottimo lavoro. Un allenamento alla volta, come in campo.
-                  </p>
-                </>
-              )}
+      {/* ─── IN CORSO (fullscreen, X = torna al setup) ─── */}
+      <Sheet
+        open={phase === 'practicing'}
+        fullscreen
+        onClose={exitToSetup}
+        closeLabel="Torna al setup"
+        title={weekTool || 'Pratica in corso'}
+        subtitle={titolo}
+      >
+        {audioPlayer}
+
+        {/* Step pratica visibili durante timer */}
+        <div className="mb-5 space-y-2">
+          {practiceSteps.map((step, i) => (
+            <p key={i} className="text-body text-muted leading-relaxed">
+              <span className="font-bold text-forest-400">{i + 1}.</span> {step}
+            </p>
+          ))}
+        </div>
+
+        {/* Timer area — condizionale in base al tipo pratica */}
+        <div className="flex flex-col items-center mb-6">
+          {showBreathCircle ? (
+            /* RESPIRAZIONE: cerchio animato + timer */
+            <div className="relative w-40 h-40 md:w-48 md:h-48 mb-4">
+              <div
+                className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform ease-in-out ${
+                  breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
+                }`}
+                style={{
+                  opacity: 0.6,
+                  transitionDuration: `${breathPhase === 'inhale' ? durataInspira : durataEspira}s`,
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="font-display text-display font-bold text-white mb-1 tabular-nums">
+                    {timerLabel}
+                  </div>
+                  <div className="text-body-sm text-white/90 font-medium">
+                    {timerEnded && audioInProgress
+                      ? 'Continua ad ascoltare…'
+                      : breathPhase === 'inhale' ? 'Inspira…' : 'Espira…'}
+                  </div>
+                </div>
+              </div>
             </div>
+          ) : (
+            /* VISUALIZZAZIONE / RIFLESSIONE: solo timer countdown */
+            <div className="relative w-40 h-40 md:w-48 md:h-48 mb-4">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-forest-400/20 to-forest-500/20 border-2 border-forest-400/30" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="font-display text-display font-bold text-forest-300 mb-1 tabular-nums">
+                    {timerLabel}
+                  </div>
+                  <div className="text-body-sm text-forest-400/80 font-medium">
+                    {timerEnded && audioInProgress
+                      ? 'Continua ad ascoltare…'
+                      : tipoPratica === 'riflessione' ? 'Rifletti…' : 'Osserva…'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
-            <button
-              onClick={handleComplete}
-              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base"
-            >
-              {tipoPratica === 'giornata' ? 'Ho capito, ci provo oggi →' : 'Continua →'}
-            </button>
-          </>
+        <p className="text-body-sm text-center text-muted">
+          {showBreathCircle
+            ? 'Segui la pratica al tuo ritmo. Il timer ti guida.'
+            : 'Segui gli step al tuo ritmo. Prenditi il tempo che ti serve.'}
+        </p>
+
+        {canFinishEarly && (
+          <Button
+            variant="secondary"
+            fullWidth
+            icon={<Check size={18} aria-hidden />}
+            onClick={finishEarly}
+            className="mt-4 animate-fadeIn"
+          >
+            Ho finito
+          </Button>
         )}
-      </div>
-      </div>
+      </Sheet>
 
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+      {/* ─── FATTO ─── */}
+      <Sheet
+        open={phase === 'done'}
+        ariaLabel={tipoPratica === 'giornata' ? 'Ora tocca a te' : 'Pratica completata'}
+        footer={
+          <Button variant="hero" size="lg" fullWidth onClick={handleComplete}>
+            {tipoPratica === 'giornata' ? 'Ho capito, ci provo oggi' : 'Continua'}
+          </Button>
         }
-        @keyframes scaleIn {
-          from { transform: scale(0.9); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
-        }
-        .animate-scaleIn {
-          animation: scaleIn 0.4s ease-out;
-        }
-      `}</style>
-    </div>
+      >
+        <div className="text-center pt-4 pb-2">
+          {tipoPratica === 'giornata' ? (
+            <>
+              <div className="text-6xl mb-4" aria-hidden>☀️</div>
+              <h2 className="font-display text-title-1 font-bold text-app mb-2">
+                Ora tocca a te!
+              </h2>
+              <p className="text-body text-muted leading-relaxed">
+                Porta la pratica nella tua giornata. Torna quando hai finito per completare la riflessione.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="text-6xl mb-4" aria-hidden>🏆</div>
+              <h2 className="font-display text-title-1 font-bold text-app mb-2">
+                Pratica completata!
+              </h2>
+              <p className="text-body text-muted leading-relaxed">
+                Ottimo lavoro. Un allenamento alla volta, come in campo.
+              </p>
+            </>
+          )}
+        </div>
+      </Sheet>
+    </>
   );
 }

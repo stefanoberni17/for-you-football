@@ -7,6 +7,8 @@ import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY } from '@/lib/constants';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
+import { Check, Key, PenLine, Target } from 'lucide-react';
+import { AppLoader, BackButton, Badge, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
 export default function GatePage() {
   const params = useParams();
@@ -145,41 +147,26 @@ export default function GatePage() {
     }
   };
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse">🔑</div>
-          <p className="text-muted">Caricamento Gate...</p>
-        </div>
-      </main>
-    );
-  }
+  if (loading) return <AppLoader label="Caricamento Gate…" />;
 
   if (paywall) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center pt-safe pb-6 px-6 text-white animate-fadeIn">
-        <div className="flex flex-col items-center text-center max-w-sm">
-          <div className="text-6xl mb-5">🔑</div>
-          <h1 className="text-3xl font-bold mb-3">Hai finito la settimana {weekNumber}</h1>
-          <p className="text-forest-100 text-sm leading-relaxed mb-2">
+        <div className="flex flex-col items-center text-center max-w-sm w-full">
+          <div className="flex justify-center mb-5 text-forest-100" aria-hidden><Key size={56} /></div>
+          <h1 className="font-display text-title-1 font-bold mb-3">Hai finito la settimana {weekNumber}</h1>
+          <p className="text-forest-100 text-body leading-relaxed mb-2">
             Sette giorni, uno strumento tuo. Il Gate è il momento in cui lo fissi: tre domande che chiudono la settimana e aprono la prossima.
           </p>
-          <p className="text-white text-sm leading-relaxed mb-8">
+          <p className="text-white text-body leading-relaxed mb-8">
             Da qui in avanti è Season 1: il Gate, le settimane 2-12 e il Coach sempre con te.
           </p>
-          <button
-            onClick={() => router.push('/pricing?from=gate')}
-            className="w-full bg-white text-forest-700 font-bold py-4 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
-          >
-            Sblocca Season 1 →
-          </button>
-          <button
-            onClick={() => router.push(`/settimana/${weekNumber}`)}
-            className="mt-5 text-forest-100 hover:text-white text-sm font-medium underline underline-offset-4 transition-colors"
-          >
+          <Button variant="inverse" size="lg" fullWidth onClick={() => router.push('/pricing?from=gate')}>
+            Sblocca Season 1
+          </Button>
+          <Button variant="ghost" onClick={() => router.push(`/settimana/${weekNumber}`)} className="mt-3 text-forest-100">
             Torna alla settimana
-          </button>
+          </Button>
         </div>
       </main>
     );
@@ -188,27 +175,24 @@ export default function GatePage() {
   if (showCelebration) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-7xl mb-6">🏆</div>
-        <h1 className="text-3xl font-bold mb-2 text-center">Settimana {weekNumber} completata!</h1>
-        <p className="text-white text-center mb-2 text-sm">Hai superato il Gate</p>
-        <p className="text-white text-sm text-center mb-8 max-w-xs leading-relaxed">
+        <div className="text-7xl mb-6" aria-hidden>🏆</div>
+        <h1 className="font-display text-title-1 font-bold mb-2 text-center">Settimana {weekNumber} completata!</h1>
+        <p className="text-white text-center mb-2 text-body">Hai superato il Gate</p>
+        <p className="text-white text-body text-center mb-8 max-w-xs leading-relaxed">
           Ogni settimana è un mattone. La prossima si sblocca domattina —
           oggi hai chiuso il cerchio.
         </p>
         {giorno?.missioneSettimana && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-4 mb-8 max-w-sm text-center">
-            <p className="text-forest-100 text-xs font-bold uppercase tracking-wider mb-1.5">
-              🎯 La tua missione per la prossima settimana
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-card px-5 py-4 mb-8 max-w-sm text-center">
+            <p className="text-forest-100 text-overline font-bold uppercase tracking-wider mb-1.5 inline-flex items-center gap-1.5">
+              <Target size={14} aria-hidden /> La tua missione per la prossima settimana
             </p>
-            <p className="text-white text-sm leading-relaxed">{giorno.missioneSettimana}</p>
+            <p className="text-white text-body leading-relaxed">{giorno.missioneSettimana}</p>
           </div>
         )}
-        <button
-          onClick={() => router.push(`/week-complete/${weekNumber}`)}
-          className="bg-white text-forest-500 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:bg-forest-50 transition-all"
-        >
-          Vedi il riepilogo →
-        </button>
+        <Button variant="inverse" size="lg" onClick={() => router.push(`/week-complete/${weekNumber}`)}>
+          Vedi il riepilogo
+        </Button>
       </main>
     );
   }
@@ -217,80 +201,69 @@ export default function GatePage() {
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
 
-        <button
-          onClick={() => router.push(`/settimana/${weekNumber}`)}
-          className="flex items-center gap-1 text-sm text-muted hover:text-forest-400 transition-colors"
-        >
-          ← Settimana {weekNumber}
-        </button>
+        <BackButton tone="light" label={`Settimana ${weekNumber}`} onClick={() => router.push(`/settimana/${weekNumber}`)} />
 
         {/* Header Gate */}
-        <div className="bg-surface rounded-2xl shadow-lg p-5 border-l-4 border-forest-500">
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-xs font-semibold text-forest-300 bg-forest-500/20 px-2.5 py-1 rounded-full">
-              🔑 Gate · Settimana {weekNumber}
-            </span>
+        <Card className="border-l-4 border-l-forest-500">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <Badge tone="accent" icon={<Key size={12} aria-hidden />}>Gate · Settimana {weekNumber}</Badge>
             {completed && (
-              <span className="text-xs font-semibold text-emerald-300 bg-emerald-500/15 px-2.5 py-1 rounded-full">
-                ✅ Completato
-              </span>
+              <Badge tone="success" icon={<Check size={12} strokeWidth={3} aria-hidden />}>Completato</Badge>
             )}
           </div>
-          <h1 className="text-xl font-bold text-app">Chiusura settimana</h1>
-          <p className="text-muted text-sm mt-1">Giorno 7 — Il punto sulla settimana</p>
-        </div>
+          <h1 className="font-display text-title-1 font-bold text-app">Chiusura settimana</h1>
+          <p className="text-muted text-body-sm mt-1">Giorno 7 — Il punto sulla settimana</p>
+        </Card>
 
         {/* Apertura */}
         {giorno?.apertura && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5">
-            <p className="text-app text-sm leading-relaxed italic whitespace-pre-line">
+          <Card>
+            <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
               {giorno.apertura}
             </p>
-          </div>
+          </Card>
         )}
 
         {/* Prima di rispondere */}
         {giorno?.pratica && (
-          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
-            <h3 className="text-xs font-bold text-forest-300 mb-2">🎯 Prima di rispondere</h3>
-            <p className="text-app text-sm leading-relaxed whitespace-pre-line">
+          <Card variant="accent" padding="sm">
+            <SectionTitle as="h3" title="Prima di rispondere" icon={<Target size={18} />} className="mb-2" />
+            <p className="text-app text-body leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
-          </div>
+          </Card>
         )}
 
         {/* Le domande del Gate */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-5">
-          <div>
-            <h2 className="text-sm font-bold text-app flex items-center gap-2">
-              ✍️ Le domande del Gate
-            </h2>
-            <p className="text-xs text-faint mt-0.5">
-              Rispondi a {questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'} per sbloccare la settimana successiva
-            </p>
-          </div>
+        <Card className="space-y-5">
+          <SectionTitle
+            title="Le domande del Gate"
+            icon={<PenLine size={18} />}
+            subtitle={`Rispondi a ${questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'} per sbloccare la settimana successiva`}
+          />
 
           {questions.length === 0 && (
             <SaveErrorBanner message="Non siamo riusciti a caricare le domande. Ricarica la pagina — se il problema resta, scrivici." />
           )}
 
-          {questions.map((q, i) => (
-            <div key={i}>
-              <label className="block text-sm font-medium text-app mb-2 leading-relaxed">
-                {q}
-              </label>
-              <textarea
-                value={answers[`q${i + 1}`] || ''}
-                onChange={(e) => setAnswers(prev => ({ ...prev, [`q${i + 1}`]: e.target.value }))}
-                disabled={completed}
-                className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-sm text-app resize-none focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none disabled:opacity-60 transition-all"
-                rows={3}
-                maxLength={1500}
-                placeholder="Scrivi qui..."
-              />
-            </div>
-          ))}
-        </div>
+          {questions.map((q, i) => {
+            const key = `q${i + 1}`;
+            const value = answers[key] || '';
+            return (
+              <Field key={i} label={<span className="text-body font-medium leading-relaxed">{q}</span>} htmlFor={`gate-${key}`} counter={{ value: value.length, max: 1500 }}>
+                <Textarea
+                  id={`gate-${key}`}
+                  value={value}
+                  onChange={(e) => setAnswers(prev => ({ ...prev, [key]: e.target.value }))}
+                  disabled={completed}
+                  rows={5}
+                  maxLength={1500}
+                  placeholder="Scrivi qui…"
+                />
+              </Field>
+            );
+          })}
+        </Card>
 
         {/* Bottone */}
         {!completed ? (
@@ -301,30 +274,33 @@ export default function GatePage() {
                 onRetry={handleSubmit}
               />
             )}
-            <button
+            <Button
+              variant="hero"
+              size="lg"
+              fullWidth
+              icon={<Key size={20} aria-hidden />}
               onClick={handleSubmit}
-              disabled={!allAnswered || saving}
-              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-2xl text-base shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={!allAnswered}
+              loading={saving}
             >
-              {saving ? 'Salvataggio...' : '🔑 Completa il Gate'}
-            </button>
+              {saving ? 'Salvataggio…' : 'Completa il Gate'}
+            </Button>
             {!allAnswered && questions.length > 0 && (
-              <p className="text-xs text-faint text-center">
+              <p className="text-body-sm text-muted text-center">
                 Rispondi a {questions.length > 1 ? `tutte e ${questions.length} le domande` : 'la domanda'} per continuare
               </p>
             )}
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4 text-center">
-              <p className="text-forest-300 font-semibold text-sm">✅ Gate già completato</p>
-            </div>
-            <button
-              onClick={() => router.push(`/week-complete/${weekNumber}`)}
-              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all"
-            >
-              Vedi riepilogo settimana →
-            </button>
+            <Card variant="accent" padding="sm" className="text-center">
+              <p className="text-forest-300 font-semibold text-body inline-flex items-center gap-1.5">
+                <Check size={18} strokeWidth={3} aria-hidden /> Gate già completato
+              </p>
+            </Card>
+            <Button variant="secondary" size="lg" fullWidth onClick={() => router.push(`/week-complete/${weekNumber}`)}>
+              Vedi riepilogo settimana
+            </Button>
           </div>
         )}
 

@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import { AppLoader, Badge, Button, Card } from '@/components/ui';
+import { BookOpen, Brain, Calendar, Check, ChevronLeft, ChevronRight, Compass, Key, Sun, Wind, Wrench } from 'lucide-react';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -129,17 +131,17 @@ export default function OnboardingPage() {
       subtitle: 'Allenamento mentale per calciatori',
       content: (
         <div className="text-center max-w-xl mx-auto">
-          <div className="text-8xl mb-8">⚽</div>
-          <p className="text-2xl font-bold text-app leading-snug mb-2">
+          <div className="text-8xl mb-8" aria-hidden>⚽</div>
+          <p className="font-display text-title-2 font-bold text-app leading-snug mb-2">
             Quante volte in campo la testa parte…
           </p>
-          <p className="text-2xl font-bold text-app leading-snug mb-8">
+          <p className="font-display text-title-2 font-bold text-app leading-snug mb-8">
             e non riesci più a tornare nella partita?
           </p>
-          <p className="text-muted text-sm">
+          <p className="text-muted text-body">
             12 settimane · 5-15 minuti al giorno
           </p>
-          <p className="text-muted text-sm">
+          <p className="text-muted text-body">
             Strumenti mentali reali — da usare in campo.
           </p>
         </div>
@@ -152,31 +154,31 @@ export default function OnboardingPage() {
       subtitle: '12 settimane, un passo alla volta',
       content: (
         <div className="max-w-2xl mx-auto space-y-4">
-          <div className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
+          <Card className="border-l-4 border-l-forest-400">
             <div className="flex items-start gap-4">
-              <span className="text-3xl">📅</span>
+              <Calendar size={28} className="text-forest-400 shrink-0" aria-hidden />
               <div>
-                <h3 className="font-bold text-app mb-1">7 giorni a settimana</h3>
-                <p className="text-sm text-muted leading-relaxed">
+                <h3 className="text-title-3 font-bold text-app mb-1">7 giorni a settimana</h3>
+                <p className="text-body text-muted leading-relaxed">
                   I giorni si sbloccano uno alla volta. Il Giorno 7 è il <strong>Gate</strong>:
                   una review che consolida quello che hai imparato e apre la settimana successiva.
                 </p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-surface rounded-xl p-5 border-l-4 border-blue-400">
+          <Card className="border-l-4 border-l-info">
             <div className="flex items-start gap-4">
-              <span className="text-3xl">🔧</span>
+              <Wrench size={28} className="text-info shrink-0" aria-hidden />
               <div>
-                <h3 className="font-bold text-app mb-1">Uno strumento mentale per settimana</h3>
-                <p className="text-sm text-muted leading-relaxed">
+                <h3 className="text-title-3 font-bold text-app mb-1">Uno strumento mentale per settimana</h3>
+                <p className="text-body text-muted leading-relaxed">
                   Ogni settimana costruisci uno strumento specifico — si parte dal Reset e
                   si sale, settimana dopo settimana. Strumenti da usare subito in campo.
                 </p>
               </div>
             </div>
-          </div>
+          </Card>
 
           {[
             {
@@ -190,33 +192,29 @@ export default function OnboardingPage() {
               weeks: '5–8',
               block: 'Blocco 2 — Giocare nelle difficoltà',
               desc: 'Errori, pressione, giudizio, rabbia: impari a giocarci dentro.',
-              color: 'bg-blue-500',
+              color: 'bg-info',
               badge: null,
             },
             {
               weeks: '9–12',
               block: 'Blocco 3 — Giocare libero',
               desc: 'L’ultimo passo: mettere tutto insieme e giocare libero.',
-              color: 'bg-violet-500',
+              color: 'bg-forest-700',
               badge: 'In arrivo',
             },
           ].map((b) => (
-            <div key={b.weeks} className="bg-surface border border-divider rounded-xl p-3 flex items-center gap-3 shadow-sm">
-              <div className={`${b.color} text-white w-12 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0`}>
+            <Card key={b.weeks} padding="sm" className="flex items-center gap-3">
+              <div className={`${b.color} text-white rounded-btn px-3 h-8 flex items-center justify-center text-overline font-bold shrink-0`}>
                 {b.weeks}
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-app text-sm">
+                <p className="font-bold text-app text-body">
                   {b.block}
-                  {b.badge && (
-                    <span className="ml-2 text-[10px] font-semibold text-faint bg-surface-2 border border-divider rounded-full px-2 py-0.5 align-middle">
-                      {b.badge}
-                    </span>
-                  )}
+                  {b.badge && <Badge tone="neutral" className="ml-2 align-middle">{b.badge}</Badge>}
                 </p>
-                <p className="text-xs text-muted leading-relaxed">{b.desc}</p>
+                <p className="text-body-sm text-muted leading-relaxed">{b.desc}</p>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ),
@@ -230,35 +228,35 @@ export default function OnboardingPage() {
         <div className="max-w-2xl mx-auto space-y-4">
           {[
             {
-              emoji: '☀️',
+              icon: <Sun size={28} className="text-forest-400 shrink-0" aria-hidden />,
               title: 'Check-in del mattino',
               desc: '30 secondi appena apri l’app: 4 cursori per dire come stai. Il Coach li legge e ti conosce meglio.',
             },
             {
-              emoji: '🌬️',
+              icon: <Wind size={28} className="text-forest-400 shrink-0" aria-hidden />,
               title: 'Il Reset',
               desc: 'Un minuto di respiro subito dopo. È il rituale del mattino: lo stesso strumento che poi userai in campo.',
             },
             {
-              emoji: '📖',
+              icon: <BookOpen size={28} className="text-forest-400 shrink-0" aria-hidden />,
               title: 'Il giorno del percorso',
               desc: '5-15 minuti: apertura, pratica guidata, una domanda. Un giorno alla volta.',
             },
             {
-              emoji: '✅',
+              icon: <Check size={28} className="text-forest-400 shrink-0" aria-hidden />,
               title: 'Le tue 5 azioni',
               desc: 'Cinque azioni concrete che scegli tu, le stesse per tutta la settimana. Le spunti durante la giornata.',
             },
           ].map((s) => (
-            <div key={s.title} className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
+            <Card key={s.title} className="border-l-4 border-l-forest-400">
               <div className="flex items-start gap-4">
-                <span className="text-3xl">{s.emoji}</span>
+                {s.icon}
                 <div>
-                  <h3 className="font-bold text-app mb-1">{s.title}</h3>
-                  <p className="text-sm text-muted leading-relaxed">{s.desc}</p>
+                  <h3 className="text-title-3 font-bold text-app mb-1">{s.title}</h3>
+                  <p className="text-body text-muted leading-relaxed">{s.desc}</p>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ),
@@ -270,40 +268,40 @@ export default function OnboardingPage() {
       subtitle: 'Sempre con te, in campo e fuori',
       content: (
         <div className="max-w-xl mx-auto text-center">
-          <div className="text-7xl mb-6">🧠</div>
-          <p className="text-lg text-app mb-6 leading-relaxed">
+          <div className="flex justify-center mb-6 text-forest-400" aria-hidden><Brain size={64} /></div>
+          <p className="text-body-lg text-app mb-6 leading-relaxed">
             Hai accesso a un <strong>Coach AI</strong> dedicato che conosce il
             tuo percorso e può guidarti in qualsiasi momento.
           </p>
 
-          <div className="bg-surface-2 rounded-xl p-6 text-left mb-4 space-y-3">
-            <p className="font-semibold text-app mb-2">Il Coach AI può aiutarti a:</p>
-            <p className="flex items-center gap-3 text-sm text-app">
-              <span className="text-forest-400">✓</span>
+          <Card variant="raised" className="text-left mb-4 space-y-3">
+            <p className="font-semibold text-app text-body mb-2">Il Coach AI può aiutarti a:</p>
+            <p className="flex items-center gap-3 text-body text-app">
+              <Check size={18} className="text-forest-400 shrink-0" aria-hidden />
               Applicare gli strumenti mentali alle tue situazioni reali
             </p>
-            <p className="flex items-center gap-3 text-sm text-app">
-              <span className="text-forest-400">✓</span>
+            <p className="flex items-center gap-3 text-body text-app">
+              <Check size={18} className="text-forest-400 shrink-0" aria-hidden />
               Elaborare un errore o una partita difficile
             </p>
-            <p className="flex items-center gap-3 text-sm text-app">
-              <span className="text-forest-400">✓</span>
+            <p className="flex items-center gap-3 text-body text-app">
+              <Check size={18} className="text-forest-400 shrink-0" aria-hidden />
               Prepararsi mentalmente alla partita
             </p>
-            <p className="flex items-center gap-3 text-sm text-app">
-              <span className="text-forest-400">✓</span>
+            <p className="flex items-center gap-3 text-body text-app">
+              <Check size={18} className="text-forest-400 shrink-0" aria-hidden />
               Rispondere alle tue domande sul percorso
             </p>
-          </div>
+          </Card>
 
-          <div className="bg-forest-500/10 border border-forest-500/30 rounded-xl p-5 text-left">
-            <p className="text-app font-semibold mb-1">Il Coach ti accompagna ogni giorno.</p>
-            <p className="text-sm text-muted leading-relaxed">
+          <Card variant="accent" className="text-left">
+            <p className="text-app text-body font-semibold mb-1">Il Coach ti accompagna ogni giorno.</p>
+            <p className="text-body text-muted leading-relaxed">
               Lo trovi nella tab Coach. Dopo il primo giorno potrai portarlo anche sul
               telefono: ti scrive lui, ti ricorda la pratica, ed è lì quando ti serve —
               prima della partita, dopo un errore, o solo per fare il punto.
             </p>
-          </div>
+          </Card>
         </div>
       ),
     },
@@ -314,35 +312,35 @@ export default function OnboardingPage() {
       subtitle: '',
       content: (
         <div className="max-w-xl mx-auto">
-          <div className="bg-gradient-to-br from-forest-500 to-forest-600 text-white rounded-2xl p-8 mb-6 shadow-xl">
-            <p className="text-sm text-white mb-2 uppercase tracking-wide font-semibold">Settimana 1</p>
-            <h3 className="text-3xl font-bold mb-4">Il Reset</h3>
-            <p className="text-forest-50 mb-6 leading-relaxed">
+          <Card variant="hero" className="mb-6">
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-2">Settimana 1</p>
+            <h3 className="font-display text-title-1 font-bold mb-4">Il Reset</h3>
+            <p className="text-body text-forest-50 mb-6 leading-relaxed">
               Inizia dal fondamentale: tornare al presente in qualsiasi momento.
               Tre respiri. Una mente libera.
             </p>
-            <div className="space-y-2 text-sm bg-white/10 rounded-xl p-4">
+            <div className="space-y-2 text-body-sm bg-white/10 rounded-card p-4">
               <p className="flex items-center gap-2">
-                <span>🗓</span> 7 giorni di pratica guidata
+                <Calendar size={18} aria-hidden /> 7 giorni di pratica guidata
               </p>
               <p className="flex items-center gap-2">
-                <span>🧭</span> Principio: Presenza
+                <Compass size={18} aria-hidden /> Principio: Presenza
               </p>
               <p className="flex items-center gap-2">
-                <span>🔑</span> Giorno 7: Gate settimanale
+                <Key size={18} aria-hidden /> Giorno 7: Gate settimanale
               </p>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-surface rounded-xl p-5 border-l-4 border-forest-400">
-            <p className="text-app leading-relaxed text-sm">
+          <Card className="border-l-4 border-l-forest-400">
+            <p className="text-app leading-relaxed text-body">
               Non è un corso teorico. È un allenamento quotidiano che porta
               risultati concreti <strong>nelle partite, negli allenamenti, nella testa</strong>.
             </p>
-            <p className="text-muted mt-3 text-sm italic">
+            <p className="text-muted mt-3 text-body">
               Il primo passo: 5-15 minuti al giorno, per 7 giorni. Inizia oggi.
             </p>
-          </div>
+          </Card>
         </div>
       ),
     },
@@ -367,43 +365,39 @@ export default function OnboardingPage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-forest-700 to-forest-900 flex flex-col items-center justify-center p-8 text-white">
         <div className="max-w-sm w-full text-center space-y-6">
-          <p className="text-3xl font-light">Prima di iniziare.</p>
+          <h1 className="font-display text-title-1 font-bold">Prima di iniziare.</h1>
 
-          <div className="bg-white/10 rounded-2xl px-5 py-4 text-left space-y-3 text-sm leading-relaxed text-white/80">
-            <p className="font-semibold text-white/90 text-base">Una cosa prima di iniziare.</p>
+          <div className="bg-white/10 rounded-card px-5 py-4 text-left space-y-3 text-body leading-relaxed text-white/85">
             <p>
               Nei primi giorni potresti non sentire grandi differenze in campo. È normale: stai costruendo lo strumento, non lo stai ancora usando.
             </p>
             <p className="font-medium text-white/90">
-              L'unica cosa che conta in questa fase è un giorno alla volta, anche quando non senti ancora niente.
+              L&apos;unica cosa che conta in questa fase è un giorno alla volta, anche quando non senti ancora niente.
             </p>
           </div>
 
-          <div className="space-y-3 text-lg leading-relaxed">
+          <div className="space-y-3 text-body-lg leading-relaxed">
             <p>Fai una promessa a te stesso.</p>
             <p>Non devi fare tutto perfetto.</p>
             <p>Devi solo <strong>tornare quando te ne ricordi.</strong></p>
             <p>Questo è il gioco.</p>
           </div>
-          <button
+          <Button
+            variant="inverse"
+            size="lg"
+            fullWidth
             onClick={handleRitualComplete}
-            disabled={completingRitual}
-            className="mt-8 w-full bg-white text-forest-700 font-bold py-4 rounded-2xl text-base shadow-lg hover:bg-forest-50 transition-all disabled:opacity-70"
+            loading={completingRitual}
+            className="mt-8"
           >
-            {completingRitual ? 'Il Coach ti sta accogliendo…' : 'HO CAPITO'}
-          </button>
+            {completingRitual ? 'Il Coach ti sta accogliendo…' : 'Ho capito'}
+          </Button>
         </div>
       </main>
     );
   }
 
-  if (!ready) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-6xl animate-ball-bounce">⚽</div>
-      </main>
-    );
-  }
+  if (!ready) return <AppLoader />;
 
   return (
     <main className="min-h-screen bg-app flex items-center justify-center p-4">
@@ -424,64 +418,68 @@ export default function OnboardingPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-surface rounded-3xl shadow-2xl p-8 md:p-12 mb-6 min-h-[32rem]">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-app text-center mb-2">
+        <Card className="mb-6 min-h-[32rem] md:p-10">
+          <h1 className="font-display text-display font-extrabold text-app text-center mb-2">
             {currentContent.title}
           </h1>
           {currentContent.subtitle && (
-            <p className="text-center text-forest-400 font-semibold mb-6 text-sm uppercase tracking-widest">
+            <p className="text-center text-forest-400 font-semibold mb-6 text-overline uppercase tracking-wider">
               {currentContent.subtitle}
             </p>
           )}
           <div className="mt-8">
             {currentContent.content}
           </div>
-        </div>
+        </Card>
 
         {/* Navigation */}
-        <div className="flex gap-4">
+        <div className="flex gap-3">
           {currentSlide > 1 && (
-            <button
+            <Button
+              variant="secondary"
+              size="lg"
+              icon={<ChevronLeft size={20} aria-hidden />}
               onClick={() => setCurrentSlide(s => s - 1)}
-              className="flex-1 bg-surface border-2 border-divider text-app font-semibold py-4 rounded-xl hover:border-forest-500/40 hover:bg-surface-2 transition-all"
+              className="shrink-0"
             >
-              ← Indietro
-            </button>
+              Indietro
+            </Button>
           )}
 
           {!isLastSlide ? (
-            <button
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              iconRight={<ChevronRight size={20} aria-hidden />}
               onClick={() => setCurrentSlide(s => s + 1)}
-              className="flex-1 bg-forest-500 hover:bg-forest-600 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-xl"
             >
-              Continua →
-            </button>
+              Continua
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="hero"
+              size="lg"
+              fullWidth
               onClick={handleComplete}
-              disabled={completing}
-              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+              loading={completing}
             >
-              {completing ? (
-                <>
-                  <span className="animate-spin">⏳</span> Preparazione...
-                </>
-              ) : (
-                <>⚽ Inizia il percorso</>
-              )}
-            </button>
+              {completing ? 'Preparazione…' : 'Inizia il percorso'}
+            </Button>
           )}
         </div>
 
         {/* Skip link */}
         {!isLastSlide && (
-          <button
+          <Button
+            variant="ghost"
+            fullWidth
             onClick={handleComplete}
             disabled={completing}
-            className="w-full text-center text-sm text-faint hover:text-muted mt-4 transition-colors disabled:opacity-50"
+            className="mt-3"
           >
-            Salta introduzione →
-          </button>
+            Salta introduzione
+          </Button>
         )}
 
       </div>

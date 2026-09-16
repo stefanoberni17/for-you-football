@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { supabase } from '@/lib/supabase';
-import { Send, Loader2 } from 'lucide-react';
+import { Send, Loader2, Lightbulb } from 'lucide-react';
+import { Button, Chip, Input } from '@/components/ui';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -203,26 +204,26 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
   }));
 
   // rounded-t-3xl: bordi arrotondati solo in alto. In basso la card si attacca
-  // visivamente alla BottomTabBar full-width. Shadow solo verso l'alto (no effetto
-  // "sollevata"). Su sm+ aggiungiamo border-radius completo per estetica desktop.
+  // visivamente alla BottomTabBar full-width. Su sm+ aggiungiamo border-radius
+  // completo per estetica desktop.
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-surface rounded-t-3xl sm:rounded-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.4)] sm:shadow-2xl overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 bg-surface rounded-t-sheet sm:rounded-sheet shadow-e2 overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white p-4 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center font-bold text-lg" aria-hidden="true">
+          <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center font-bold text-title-3" aria-hidden="true">
             C
           </div>
           <div>
-            <h3 className="font-semibold text-base">Coach AI</h3>
-            <p className="text-xs text-forest-50 opacity-90">Il tuo allenatore mentale</p>
+            <h3 className="font-display font-semibold text-title-3">Coach AI</h3>
+            <p className="text-body-sm text-forest-50 opacity-90">Il tuo allenatore mentale</p>
           </div>
         </div>
       </div>
 
-      {/* Trasparenza AI (art. 50 AI Act): sempre visibile, non dismissibile */}
+      {/* Trasparenza AI (art. 50 AI Act): sempre visibile, non dismissibile, una riga sotto l'header */}
       <div className="bg-surface-2 border-b border-divider px-4 py-1.5 flex-shrink-0">
-        <p className="text-[11px] text-muted text-center leading-snug">
+        <p className="text-caption text-muted text-center leading-snug">
           Stai parlando con un Coach AI, non con una persona. Ricordati che l&apos;AI può fare errori.
         </p>
       </div>
@@ -232,16 +233,14 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         {/* Suggestion pills — visible only before user sends first message */}
         {suggestions && suggestions.length > 0 && messages.length <= 1 && (
           <div className="pb-2">
-            <p className="text-xs text-faint mb-2 font-medium">💡 Suggerimenti per iniziare:</p>
-            <div className="flex flex-wrap gap-2">
-              {suggestions.map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => sendMessageText(s)}
-                  className="text-left text-xs bg-forest-500/15 text-forest-300 border border-forest-500/30 rounded-full px-3 py-1.5 hover:bg-forest-500/25 hover:border-forest-500/40 transition-colors active:scale-95"
-                >
+            <p className="text-body-sm text-muted mb-2 font-medium inline-flex items-center gap-1.5">
+              <Lightbulb size={16} className="text-forest-400" aria-hidden /> Suggerimenti per iniziare
+            </p>
+            <div className="flex flex-col gap-2">
+              {suggestions.slice(0, 3).map((s, i) => (
+                <Chip key={i} onClick={() => sendMessageText(s)} className="w-full justify-start text-left whitespace-normal h-auto! min-h-[44px] py-2">
                   {s}
-                </button>
+                </Chip>
               ))}
             </div>
           </div>
@@ -255,55 +254,43 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
           >
             {message.role === 'assistant' && (
               <div
-                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-forest-500 text-white text-xs font-bold"
+                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-forest-500 text-white text-caption font-bold"
                 aria-hidden="true"
               >
                 C
               </div>
             )}
             <div
-              className={`max-w-[78%] rounded-2xl px-4 py-2.5 ${
+              className={`max-w-[78%] rounded-card px-4 py-2.5 ${
                 message.role === 'user'
                   ? 'bg-forest-500 text-white rounded-br-md'
-                  : 'bg-surface-2 text-app rounded-bl-md shadow-sm border border-divider'
+                  : 'bg-surface-2 text-app rounded-bl-md border border-divider'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
-              <p
-                className={`text-[10px] mt-1 ${
-                  message.role === 'user' ? 'text-forest-50 opacity-80' : 'text-faint'
-                }`}
-              >
-                {message.timestamp.toLocaleTimeString('it-IT', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </p>
+              <p className="text-body whitespace-pre-wrap leading-relaxed">{message.content}</p>
             </div>
           </div>
         ))}
         {isLoading && (
           <div className="flex gap-2.5">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-forest-500 text-white flex items-center justify-center text-xs font-bold" aria-hidden="true">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-forest-500 text-white flex items-center justify-center text-caption font-bold" aria-hidden="true">
               C
             </div>
-            <div className="bg-surface-2 rounded-2xl rounded-bl-md shadow-sm border border-divider px-4 py-3">
+            <div className="bg-surface-2 rounded-card rounded-bl-md border border-divider px-4 py-3">
               <Loader2 className="w-5 h-5 animate-spin text-forest-500" aria-label="Il Coach sta scrivendo" />
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
         {!paywalled && freeRemaining !== null && (
-          <p className="text-[11px] text-faint text-center mt-1">
+          <p className="text-caption text-muted text-center mt-1">
             Settimana gratis: {freeRemaining === 0 ? 'era il tuo ultimo messaggio col Coach' : `ti restano ${freeRemaining} messaggi col Coach`}
           </p>
         )}
         {paywalled && (
-          <div className="mx-1 mt-1 bg-forest-500/15 border border-forest-500/40 rounded-2xl p-4 text-center">
-            <p className="text-sm text-app font-semibold mb-2">Il Coach continua con Season 1</p>
-            <a href="/pricing" className="inline-block bg-forest-500 hover:bg-forest-600 text-white text-sm font-semibold py-2.5 px-5 rounded-xl transition-colors">
-              Sblocca Season 1 →
-            </a>
+          <div className="mx-1 mt-1 bg-forest-500/10 border border-forest-500/35 rounded-card p-4 text-center">
+            <p className="text-body text-app font-semibold mb-3">Il Coach continua con Season 1</p>
+            <Button variant="primary" href="/pricing">Sblocca Season 1</Button>
           </div>
         )}
       </div>
@@ -311,20 +298,20 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
       {/* Input */}
       <form onSubmit={handleSubmit} className="p-3 border-t border-divider bg-surface">
         <div className="flex gap-2 items-end">
-          <input
+          <Input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Scrivi al Coach…"
             disabled={isLoading}
             aria-label="Messaggio per il Coach"
-            className="flex-1 px-4 py-3 bg-surface-2 border border-divider rounded-2xl focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent disabled:opacity-60 text-sm text-app"
+            className="flex-1"
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
             aria-label="Invia messaggio"
-            className="w-12 h-12 flex items-center justify-center bg-forest-500 text-white rounded-2xl hover:bg-forest-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm"
+            className="w-12 h-12 flex items-center justify-center bg-forest-500 text-white rounded-btn hover:bg-forest-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-e1 shrink-0"
           >
             {isLoading ? (
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />

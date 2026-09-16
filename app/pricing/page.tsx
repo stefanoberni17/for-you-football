@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { hasActiveAccess, isPaywallActive } from '@/lib/checkAccess';
 import { SEASON_INSTALLMENTS, SEASON_PRICE_FULL, SEASON_PRICE_INSTALLMENT, SEASON_PRICE_ONETIME } from '@/lib/constants';
 import { trackOnboarding } from '@/lib/onboardingTrack';
+import { Check, Key, ShieldCheck, Unlock } from 'lucide-react';
+import { AppLoader, Badge, Button, Card, Field, Input } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -93,89 +95,96 @@ function PricingContent() {
     }
   };
 
+  const planCard = (plan: Plan, title: string, price: React.ReactNode, priceNote: string, desc: string, badge?: string) => {
+    const active = selectedPlan === plan;
+    return (
+      <Card
+        variant={active ? 'accent' : 'default'}
+        onClick={() => setSelectedPlan(plan)}
+        aria-label={`${title}, ${priceNote}${active ? ', selezionato' : ''}`}
+        className={active ? 'border-forest-500' : ''}
+      >
+        <div className="flex items-start gap-3">
+          <span
+            aria-hidden
+            className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${active ? 'border-forest-400' : 'border-divider'}`}
+          >
+            {active && <span className="w-3 h-3 rounded-full bg-forest-400" />}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="block font-display text-title-3 font-bold text-app">{title}</span>
+                {badge && <Badge tone="accent">{badge}</Badge>}
+              </div>
+              <div className="text-right shrink-0">
+                <div className="font-display text-title-1 font-bold text-app tabular-nums">{price}</div>
+                <div className="text-caption text-muted">{priceNote}</div>
+              </div>
+            </div>
+            <p className="text-body-sm text-muted">{desc}</p>
+          </div>
+        </div>
+      </Card>
+    );
+  };
+
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center">
-          <div className="inline-block bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-            🔓 Offerta Founder
+          <div className="inline-flex items-center gap-1.5 bg-warning/15 border border-warning/30 text-warning text-overline uppercase tracking-wider font-semibold px-3 py-1.5 rounded-full mb-3">
+            <Unlock size={14} aria-hidden /> Offerta Founder
           </div>
-          <h1 className="text-3xl font-bold text-app mb-2">Season 1 — Play Free</h1>
-          <p className="text-muted">
+          <h1 className="font-display text-title-1 font-bold text-app mb-2">Season 1 — Play Free</h1>
+          <p className="text-body text-muted">
             Il percorso completo di 12 settimane. Prezzo founder bloccato per sempre.
           </p>
-          <p className="text-xs text-faint mt-2">
+          <p className="text-body-sm text-muted mt-2">
             La settimana 1 è gratis. Season 1 sblocca il Gate, le settimane 2-12 e il Coach.
           </p>
         </div>
 
         {fromGate && (
-          <div className="bg-forest-500/15 border border-forest-500/40 rounded-2xl p-4 text-sm text-app">
-            🔑 Hai finito la settimana 1. Il Gate ti aspetta: da qui si continua con Season 1.
-          </div>
+          <Card variant="accent" padding="sm" className="flex items-start gap-3 text-body-sm text-app">
+            <Key size={20} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+            <span>Hai finito la settimana 1. Il Gate ti aspetta: da qui si continua con Season 1.</span>
+          </Card>
         )}
 
         {canceled && (
-          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 text-sm text-amber-300">
+          <Card variant="warn" padding="sm" className="text-body-sm text-warning">
             Checkout annullato. Puoi riprovare quando vuoi.
-          </div>
+          </Card>
         )}
         {pending && (
-          <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 text-sm text-amber-300">
+          <Card variant="warn" padding="sm" className="text-body-sm text-warning">
             Pagamento ricevuto, ma l&apos;attivazione sta tardando. Chiudi e riapri l&apos;app tra un minuto.
             Se non si sblocca, scrivici a <a href="mailto:info@foryoufootball.it" className="underline">info@foryoufootball.it</a>: non serve pagare di nuovo.
-          </div>
+          </Card>
         )}
 
         <div className="space-y-3">
-          {/* Pagamento unico */}
-          <button
-            onClick={() => setSelectedPlan('onetime')}
-            className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
-              selectedPlan === 'onetime' ? 'border-forest-500 shadow-md' : 'border-divider'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-app">Pagamento unico</h2>
-                <span className="bg-forest-500/20 text-forest-300 text-xs font-semibold px-2 py-0.5 rounded-full">
-                  Consigliato
-                </span>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-app">€{SEASON_PRICE_ONETIME}</div>
-                <div className="text-xs text-muted">una tantum</div>
-              </div>
-            </div>
-            <p className="text-sm text-muted">
-              Season 1 completa, tua per sempre. Un solo pagamento, nessun rinnovo, nessun abbonamento.
-            </p>
-          </button>
-
-          {/* Rate mensili */}
-          <button
-            onClick={() => setSelectedPlan('installments')}
-            className={`w-full text-left bg-surface rounded-2xl shadow-sm p-5 border-2 transition ${
-              selectedPlan === 'installments' ? 'border-forest-500 shadow-md' : 'border-divider'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-bold text-app">3 rate mensili</h2>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-app">€{SEASON_PRICE_INSTALLMENT} × {SEASON_INSTALLMENTS}</div>
-                <div className="text-xs text-muted">poi stop automatico</div>
-              </div>
-            </div>
-            <p className="text-sm text-muted">
-              Stesso percorso, pagamento diviso in {SEASON_INSTALLMENTS}. Dopo la terza rata gli addebiti si fermano
-              da soli e Season 1 resta tua per sempre.
-            </p>
-          </button>
+          {planCard(
+            'onetime',
+            'Pagamento unico',
+            <>€{SEASON_PRICE_ONETIME}</>,
+            'una tantum',
+            'Season 1 completa, tua per sempre. Un solo pagamento, nessun rinnovo, nessun abbonamento.',
+            'Consigliato',
+          )}
+          {planCard(
+            'installments',
+            '3 rate mensili',
+            <>€{SEASON_PRICE_INSTALLMENT} × {SEASON_INSTALLMENTS}</>,
+            'poi stop automatico',
+            `Stesso percorso, pagamento diviso in ${SEASON_INSTALLMENTS}. Dopo la terza rata gli addebiti si fermano da soli e Season 1 resta tua per sempre.`,
+          )}
         </div>
 
         {/* Cosa include */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-2">
-          <h3 className="font-bold text-app mb-3">Cosa include</h3>
+        <Card className="space-y-2">
+          <h3 className="font-display text-title-3 font-bold text-app mb-3">Cosa include</h3>
           {[
             '12 settimane di percorso (3 blocchi: lo strumento, le difficoltà, giocare libero)',
             'Coach AI personale — in app e su Telegram, 7 giorni su 7',
@@ -184,91 +193,83 @@ function PricingContent() {
             '1 Cerchio For You dal vivo (riservato ai founder)',
             'Gruppo founder — co-sviluppi il percorso con noi',
           ].map((item) => (
-            <div key={item} className="flex items-start gap-2 text-sm text-muted">
-              <span className="text-forest-400 mt-0.5">✓</span>
+            <div key={item} className="flex items-start gap-2 text-body text-muted">
+              <Check size={18} className="text-forest-400 mt-0.5 shrink-0" aria-hidden />
               <span>{item}</span>
             </div>
           ))}
-        </div>
+        </Card>
 
         {/* Chi paga: contraente adulto. Il profilo resta quello del ragazzo. */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 border border-divider">
-          <label htmlFor="payer-email" className="block text-sm font-semibold text-app mb-1">
-            Email di chi paga
-          </label>
-          <p className="text-xs text-muted mb-3">
-            Di solito un genitore. Ricevuta e fattura arrivano a questa email; l&apos;account nell&apos;app resta il tuo.
-          </p>
-          <input
-            id="payer-email"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            value={payerEmail}
-            onChange={(e) => setPayerEmail(e.target.value)}
-            placeholder="nome@esempio.it"
-            className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl text-app focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all"
-          />
+        <Card>
+          <Field
+            label="Email di chi paga"
+            htmlFor="payer-email"
+            helper="Di solito un genitore. Ricevuta e fattura arrivano a questa email; l'account nell'app resta il tuo."
+          >
+            <Input
+              id="payer-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={payerEmail}
+              onChange={(e) => setPayerEmail(e.target.value)}
+              placeholder="nome@esempio.it"
+            />
+          </Field>
           {accountEmail && payerEmail.trim().toLowerCase() !== accountEmail.toLowerCase() && (
-            <button
-              type="button"
-              onClick={() => setPayerEmail(accountEmail)}
-              className="text-xs text-forest-400 hover:text-forest-300 mt-2 underline underline-offset-2"
-            >
+            <Button variant="ghost" size="sm" onClick={() => setPayerEmail(accountEmail)} className="mt-1 -ml-4">
               Pago io, usa la mia email
-            </button>
+            </Button>
           )}
-        </div>
+        </Card>
 
         {error && (
-          <div className="bg-red-500/15 border border-red-500/30 rounded-2xl p-4 text-sm text-red-300">
+          <Card variant="danger" padding="sm" className="text-body-sm text-danger" aria-label="Errore">
             {error}
-          </div>
+          </Card>
         )}
 
-        <button
-          onClick={handleCheckout}
-          disabled={loading}
-          className="w-full bg-forest-600 hover:bg-forest-700 disabled:opacity-50 text-white font-semibold py-3.5 px-6 rounded-2xl shadow-md transition"
-        >
-          {loading ? 'Attendi…' : selectedPlan === 'onetime' ? `Sblocca Season 1 — €${SEASON_PRICE_ONETIME} →` : `Inizia con €${SEASON_PRICE_INSTALLMENT} →`}
-        </button>
+        <Button variant="hero" size="lg" fullWidth onClick={handleCheckout} loading={loading}>
+          {loading ? 'Attendi…' : selectedPlan === 'onetime' ? `Sblocca Season 1 — €${SEASON_PRICE_ONETIME}` : `Inizia con €${SEASON_PRICE_INSTALLMENT}`}
+        </Button>
 
         {/* TODO(termini): la garanzia 4 settimane va formalizzata nei Termini (procedura, tempi, coordinamento con le 3 rate) — copy lasciato in attesa dell'avvocato */}
-        <p className="text-center text-xs text-faint">
-          Garanzia 4 settimane: provi le prime 4 settimane della tua Season — se non fa per te, rimborso completo.
+        <p className="flex items-start justify-center gap-2 text-body-sm text-app">
+          <ShieldCheck size={18} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+          <span>Garanzia 4 settimane: provi le prime 4 settimane della tua Season — se non fa per te, rimborso completo.</span>
         </p>
 
-        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
-          <h3 className="font-bold text-app">Domande frequenti</h3>
+        <Card className="space-y-1">
+          <h3 className="font-display text-title-3 font-bold text-app mb-2">Domande frequenti</h3>
 
-          <div>
-            <div className="text-sm font-semibold text-app">È un abbonamento?</div>
-            <div className="text-sm text-muted mt-1">
+          <details className="group border-t border-divider">
+            <summary className="min-h-[48px] flex items-center text-body font-semibold text-app cursor-pointer list-none">È un abbonamento?</summary>
+            <div className="text-body text-muted pb-3">
               No. Paghi Season 1 una volta (o in 3 rate) e resta tua. Nessun rinnovo automatico,
               niente da disdire.
             </div>
-          </div>
+          </details>
 
-          <div>
-            <div className="text-sm font-semibold text-app">Come funzionano le 3 rate?</div>
-            <div className="text-sm text-muted mt-1">
+          <details className="group border-t border-divider">
+            <summary className="min-h-[48px] flex items-center text-body font-semibold text-app cursor-pointer list-none">Come funzionano le 3 rate?</summary>
+            <div className="text-body text-muted pb-3">
               €{SEASON_PRICE_INSTALLMENT} oggi, poi €{SEASON_PRICE_INSTALLMENT} al mese per altri {SEASON_INSTALLMENTS - 1} mesi. Dopo la terza rata gli addebiti si
               fermano automaticamente. L&apos;accesso permanente si attiva al completamento delle 3 rate.
             </div>
-          </div>
+          </details>
 
-          <div>
-            <div className="text-sm font-semibold text-app">Perché &quot;prezzo founder&quot;?</div>
-            <div className="text-sm text-muted mt-1">
+          <details className="group border-t border-divider">
+            <summary className="min-h-[48px] flex items-center text-body font-semibold text-app cursor-pointer list-none">Perché &quot;prezzo founder&quot;?</summary>
+            <div className="text-body text-muted pb-3">
               Sei tra i primi: €{SEASON_PRICE_ONETIME} invece di €{SEASON_PRICE_FULL}. In cambio ci aiuti
               a rifinire il percorso con il tuo feedback — e partecipi al Cerchio For You dal vivo.
             </div>
-          </div>
+          </details>
 
-          <div>
-            <div className="text-sm font-semibold text-app">Come funziona la garanzia?</div>
-            <div className="text-sm text-muted mt-1">
+          <details className="group border-t border-divider">
+            <summary className="min-h-[48px] flex items-center text-body font-semibold text-app cursor-pointer list-none">Come funziona la garanzia?</summary>
+            <div className="text-body text-muted pb-3">
               Hai 4 settimane per provare la tua Season dall&apos;inizio. Se non fa per te,
               scrivici a{' '}
               <a href="mailto:info@foryoufootball.it" className="text-forest-300 underline underline-offset-2">
@@ -276,15 +277,15 @@ function PricingContent() {
               </a>{' '}
               e ti rimborsiamo per intero.
             </div>
-          </div>
+          </details>
 
-          <div>
-            <div className="text-sm font-semibold text-app">Pagamento sicuro?</div>
-            <div className="text-sm text-muted mt-1">
+          <details className="group border-t border-divider">
+            <summary className="min-h-[48px] flex items-center text-body font-semibold text-app cursor-pointer list-none">Pagamento sicuro?</summary>
+            <div className="text-body text-muted pb-3">
               Elaboriamo i pagamenti tramite Stripe. Apple Pay e Google Pay disponibili.
             </div>
-          </div>
-        </div>
+          </details>
+        </Card>
       </div>
     </main>
   );
@@ -292,7 +293,7 @@ function PricingContent() {
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-app flex items-center justify-center text-muted">Caricamento…</div>}>
+    <Suspense fallback={<AppLoader />}>
       <PricingContent />
     </Suspense>
   );

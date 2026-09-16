@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { Button, Card, Field, Input } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -92,101 +93,78 @@ export default function LoginPage() {
 
       {/* ── Hero brand ── */}
       <div className="text-center mb-7 w-full max-w-sm">
-        <div className="text-5xl mb-3">⚽</div>
-        <h1 className="text-2xl font-bold text-app tracking-tight">
+        <div className="text-5xl mb-3" aria-hidden>⚽</div>
+        <h1 className="font-display text-title-1 font-bold text-app tracking-tight">
           For You Football
         </h1>
-        <p className="text-forest-400 font-semibold text-xs mt-1 uppercase tracking-widest">
+        <p className="text-forest-400 font-semibold text-overline mt-1 uppercase tracking-wider">
           Allenamento mentale per calciatori
         </p>
-
-        {/* Quote */}
-        <div className="mt-4 bg-surface-2 backdrop-blur-sm rounded-2xl px-5 py-3 border border-divider shadow-sm">
-          <p className="text-muted text-sm leading-relaxed italic">
-            "La mente è il muscolo più importante in campo.
-            <br />
-            Allenala ogni giorno."
-          </p>
-        </div>
       </div>
 
       {/* ── Form card ── */}
-      <div className="bg-surface rounded-2xl shadow-xl p-7 w-full max-w-sm">
-        <h2 className="text-xl font-bold text-app mb-0.5">Bentornato in campo!</h2>
-        <p className="text-muted text-sm mb-6">Il tuo allenamento mentale ti aspetta.</p>
+      <Card className="w-full max-w-sm">
+        <h2 className="font-display text-title-2 font-bold text-app mb-0.5">Bentornato in campo!</h2>
+        <p className="text-muted text-body-sm mb-6">Il tuo allenamento mentale ti aspetta.</p>
 
         <form onSubmit={handleLogin} className="space-y-5">
           {error && (
-            <div className="bg-red-500/15 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm">
+            <div className="bg-danger/15 border border-danger/30 text-danger px-4 py-3 rounded-btn text-body-sm" role="alert">
               {error}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-app mb-1.5">
-              Email
-            </label>
-            <input
+          <Field label="Email" htmlFor="login-email">
+            <Input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm text-app"
               placeholder="tua@email.com"
+              autoComplete="email"
+              inputMode="email"
               required
             />
-          </div>
+          </Field>
 
-          <div>
-            <label className="block text-sm font-medium text-app mb-1.5">
-              Password
-            </label>
-            <input
+          <Field label="Password" htmlFor="login-password">
+            <Input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm text-app"
               placeholder="••••••••"
+              autoComplete="current-password"
               required
             />
-          </div>
+          </Field>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-          >
+          <Button type="submit" variant="primary" size="lg" fullWidth loading={loading}>
             {loading ? 'Accesso in corso…' : 'Accedi'}
-          </button>
+          </Button>
         </form>
 
         {/* Password dimenticata */}
         <div className="mt-3 text-center">
           {resetSent ? (
-            <p className="text-sm text-forest-300">
-              ✉️ Se l&apos;email esiste, ti abbiamo inviato il link per reimpostare la password.
+            <p className="text-body-sm text-forest-300">
+              Se l&apos;email esiste, ti abbiamo inviato il link per reimpostare la password.
             </p>
           ) : (
-            <button
-              onClick={handleForgotPassword}
-              disabled={resetLoading}
-              className="text-sm text-muted hover:text-app transition-colors disabled:opacity-50"
-            >
+            <Button variant="ghost" size="sm" onClick={handleForgotPassword} loading={resetLoading} className="text-muted">
               {resetLoading ? 'Invio in corso…' : 'Password dimenticata?'}
-            </button>
+            </Button>
           )}
         </div>
 
         {/* Link registrazione */}
-        <p className="mt-5 text-center text-sm text-muted">
-          Non hai un account?{' '}
-          <button
-            onClick={() => router.push('/register')}
-            className="text-forest-400 hover:text-forest-300 font-semibold"
-          >
+        <p className="mt-4 text-center text-body-sm text-muted flex items-center justify-center gap-1 flex-wrap">
+          <span>Non hai un account?</span>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/register')}>
             Registrati
-          </button>
+          </Button>
         </p>
-      </div>
+      </Card>
     </main>
   );
 }

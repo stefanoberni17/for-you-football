@@ -5,6 +5,8 @@ import { authFetch } from '@/lib/authFetch';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { BETA_MAX_WEEK, WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
+import { Hourglass, Target, Wrench } from 'lucide-react';
+import { AppLoader, Button, SectionTitle } from '@/components/ui';
 
 export default function WeekCompletePage() {
   const params = useParams();
@@ -32,13 +34,7 @@ export default function WeekCompletePage() {
     init();
   }, [weekNumber, router]);
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex items-center justify-center">
-        <div className="text-6xl animate-pulse">🏆</div>
-      </main>
-    );
-  }
+  if (loading) return <AppLoader />;
 
   const nextWeek = weekNumber + 1;
   const nextAvailable = nextWeek <= BETA_MAX_WEEK;
@@ -49,67 +45,65 @@ export default function WeekCompletePage() {
     <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 pt-safe-immersive px-5 pb-tabbar flex flex-col items-center">
       <div className="w-full max-w-md">
 
-        {/* Frase settimana — momento "wow" */}
-        {settimana?.fraseSettimana && (
-          <div className="text-center mb-8">
-            <p className="text-2xl font-bold text-white leading-snug">
-              &ldquo;{settimana.fraseSettimana}&rdquo;
-            </p>
-          </div>
-        )}
-
         {/* Celebration */}
         <div className="text-center mb-8">
-          <div className="text-8xl mb-4">🏆</div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <div className="text-8xl mb-4" aria-hidden>🏆</div>
+          <h1 className="font-display text-display font-bold text-white mb-2">
             Settimana {weekNumber} completata!
           </h1>
-          <p className="text-white text-base">
+          <p className="text-white text-body">
             Hai fatto tutto. Ogni giorno, anche i più duri.
           </p>
+
+          {/* Frase settimana — momento "wow" */}
+          {settimana?.fraseSettimana && (
+            <p className="font-quote text-title-2 text-forest-100 leading-snug mt-6">
+              &ldquo;{settimana.fraseSettimana}&rdquo;
+            </p>
+          )}
         </div>
 
         {/* Filo rosso — il verbo del cammino di questa settimana */}
         {settimana?.filoRosso && (
           <div className="text-center mb-8">
             <div className="inline-block bg-white/15 backdrop-blur-sm border border-white/25 rounded-full px-6 py-3">
-              <p className="text-white text-lg font-semibold">{settimana.filoRosso}</p>
+              <p className="text-white text-body-lg font-semibold">{settimana.filoRosso}</p>
             </div>
           </div>
         )}
 
         {/* Riepilogo strumento */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-5 border border-white/20">
-          <h2 className="text-white font-bold text-base mb-4 text-center">
-            🔧 Strumento che porti con te
-          </h2>
+        <div className="bg-white/10 backdrop-blur-sm rounded-card p-6 mb-5 border border-white/20">
+          <SectionTitle title="Strumento che porti con te" icon={<Wrench size={18} />} className="mb-4 justify-center! [&_h2]:text-white [&_h2_span]:text-white" />
 
           {strumento && (
-            <div className="bg-white/20 rounded-xl p-4 mb-3 text-center">
-              <p className="text-white font-bold text-xl">{strumento}</p>
+            <div className="bg-white/20 rounded-card p-4 mb-3 text-center">
+              <p className="font-display text-white font-bold text-title-2">{strumento}</p>
             </div>
           )}
 
           {principio && (
-            <p className="text-white text-sm text-center">
+            <p className="text-white text-body text-center">
               Principio: <span className="font-semibold text-white">{principio}</span>
             </p>
           )}
 
           {settimana?.messaggioChiusura && (
-            <p className="text-white text-sm leading-relaxed mt-4 italic text-center">
-              "{settimana.messaggioChiusura}"
+            <p className="font-quote text-white text-body-lg leading-relaxed mt-4 text-center">
+              &ldquo;{settimana.messaggioChiusura}&rdquo;
             </p>
           )}
         </div>
 
         {/* Missione per la settimana successiva */}
         {missione && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 mb-5 border border-white/20">
-            <h2 className="text-white font-bold text-sm mb-2 text-center">
-              🎯 La tua missione per la {nextAvailable ? `Settimana ${nextWeek}` : 'prossima fase'}
-            </h2>
-            <p className="text-white text-sm leading-relaxed text-center">{missione}</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-card p-5 mb-5 border border-white/20">
+            <SectionTitle
+              title={`La tua missione per la ${nextAvailable ? `Settimana ${nextWeek}` : 'prossima fase'}`}
+              icon={<Target size={18} />}
+              className="mb-2 justify-center! [&_h2]:text-white [&_h2_span]:text-white"
+            />
+            <p className="text-white text-body leading-relaxed text-center">{missione}</p>
           </div>
         )}
 
@@ -117,38 +111,28 @@ export default function WeekCompletePage() {
         <div className="space-y-3">
           {nextAvailable ? (
             <>
-              <button
-                onClick={() => router.push(`/settimana/${nextWeek}`)}
-                className="w-full bg-white text-forest-600 font-bold py-4 px-6 rounded-2xl text-base shadow-lg hover:bg-forest-50 transition-all flex items-center justify-center gap-2"
-              >
-                <span>Vai alla Settimana {nextWeek}</span>
-                <span>→</span>
-              </button>
-              <p className="text-forest-50 text-xs text-center leading-relaxed">
+              <Button variant="hero" size="lg" fullWidth onClick={() => router.push(`/settimana/${nextWeek}`)}>
+                Vai alla Settimana {nextWeek}
+              </Button>
+              <p className="text-forest-50 text-body-sm text-center leading-relaxed">
                 Un giorno al giorno: se hai chiuso il Gate oggi, il Giorno 1 si apre domattina.
               </p>
-              <button
-                onClick={() => router.push('/')}
-                className="w-full text-forest-50 hover:text-white text-sm py-2 transition-colors text-center"
-              >
+              <Button variant="inverse" fullWidth onClick={() => router.push('/')}>
                 Torna alla Home
-              </button>
+              </Button>
             </>
           ) : (
             <>
-              <div className="bg-white/10 border border-white/20 rounded-2xl p-5 text-center">
-                <p className="text-2xl mb-2">⏳</p>
-                <p className="text-white font-bold mb-1">Hai completato tutte le settimane disponibili!</p>
-                <p className="text-white text-sm leading-relaxed">
+              <div className="bg-white/10 border border-white/20 rounded-card p-5 text-center">
+                <div className="flex justify-center mb-2 text-forest-100" aria-hidden><Hourglass size={28} /></div>
+                <p className="text-white font-bold text-body mb-1">Hai completato tutte le settimane disponibili!</p>
+                <p className="text-white text-body leading-relaxed">
                   Le prossime settimane arriveranno presto. Stai facendo un lavoro straordinario.
                 </p>
               </div>
-              <button
-                onClick={() => router.push('/')}
-                className="w-full bg-white text-forest-600 font-bold py-4 rounded-2xl shadow-lg hover:bg-forest-50 transition-all"
-              >
-                Torna alla Home 🏠
-              </button>
+              <Button variant="inverse" size="lg" fullWidth onClick={() => router.push('/')}>
+                Torna alla Home
+              </Button>
             </>
           )}
         </div>
