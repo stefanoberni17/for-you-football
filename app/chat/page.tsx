@@ -6,11 +6,11 @@ import { supabase } from '@/lib/supabase';
 import ChatBot, { ChatBotRef } from '@/components/ChatBot';
 import { AppLoader } from '@/components/ui';
 
+// Massimo 3, corti (≤ 6 parole): si leggono in un colpo d'occhio (review 16/9)
 const suggestions = [
-  "Come gestisco l'ansia prima di una partita?",
-  "Aiutami a riflettere sulla settimana corrente",
-  "Ho sbagliato un gol importante, come faccio a resettarmi?",
-  "Sto perdendo fiducia in me stesso, cosa faccio?",
+  'Ansia prima della partita',
+  'Ho sbagliato, come riparto?',
+  'Sto perdendo fiducia',
 ];
 
 function ChatContent() {

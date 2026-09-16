@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import SaveErrorBanner from './SaveErrorBanner';
-import { Button, Sheet } from '@/components/ui';
+import { Button, Card, Sheet } from '@/components/ui';
 
 interface DailyCheckinModalProps {
   userId: string;
@@ -91,50 +91,49 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
     }
   };
 
-  const sliderRow = (
-    emoji: string,
+  // Ogni cursore in una card sollevata: nome, valore grande a destra, descrizione, slider
+  const sliderCard = (
+    id: string,
     title: string,
-    value: number,
-    setValue: (v: number) => void,
-    labels: Record<number, string>,
-    edges: [string, string, string]
+    display: React.ReactNode,
+    description: string,
+    valueColor: string,
+    input: React.ReactNode,
+    edges: [string, string, string],
   ) => (
-    <div className="w-full">
-      <div className="flex items-end justify-between gap-3 mb-1">
-        <span className="text-body font-semibold text-app">
-          <span className="mr-1.5" aria-hidden>{emoji}</span>
-          {title}
-        </span>
-        <span className="text-right">
-          <span className={`font-display text-title-1 font-bold tabular-nums ${getSliderColor(value)}`}>
-            {value}<span className="text-body-sm font-semibold text-muted">/10</span>
-          </span>
-          <span className="block text-body-sm text-muted">{getSliderLabel(value, labels)}</span>
-        </span>
+    <Card variant="raised" padding="sm">
+      <div className="flex items-start justify-between gap-3">
+        <label htmlFor={id} className="text-label font-semibold text-muted uppercase tracking-wide pt-1.5">{title}</label>
+        <span className={`font-display text-title-1 font-bold tabular-nums ${valueColor}`}>{display}</span>
       </div>
-      <input
-        type="range"
-        min={0}
-        max={10}
-        step={1}
-        value={value}
-        onChange={e => setValue(parseInt(e.target.value))}
-        aria-label={title}
-        className="w-full cursor-pointer"
-      />
-      <div className="flex justify-between text-caption text-faint">
+      <p className="text-body-sm text-app mb-2">{description}</p>
+      {input}
+      <div className="flex justify-between text-caption text-faint mt-1">
         <span>{edges[0]}</span>
         <span>{edges[1]}</span>
         <span>{edges[2]}</span>
       </div>
-    </div>
+    </Card>
+  );
+
+  const slider = (id: string, value: number, setValue: (v: number) => void) => (
+    <input
+      id={id}
+      type="range"
+      min={0}
+      max={10}
+      step={1}
+      value={value}
+      onChange={e => setValue(parseInt(e.target.value))}
+      className="w-full cursor-pointer"
+    />
   );
 
   return (
     <Sheet
       open
       title="Come stai oggi?"
-      subtitle="30 secondi di onestà — il Coach li userà per supportarti"
+      subtitle="20 secondi. Poi si va in campo."
       footer={
         <>
           {saveError && (
@@ -151,7 +150,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
             loading={saving}
             disabled={needsHealthConsent && !healthConsent}
           >
-            {saving ? 'Salvataggio…' : 'Salva e continua'}
+            Salva
           </Button>
           <Button variant="ghost" fullWidth onClick={onSkip}>
             Salta per oggi
@@ -159,44 +158,48 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
         </>
       }
     >
-      <div className="space-y-5 pt-2">
-        {sliderRow('💪', 'Fisico', physicalState, setPhysicalState, PHYSICAL_LABELS, ['Esausto', 'Nella media', 'Perfetto'])}
+      <div className="space-y-3 pt-1">
+        {sliderCard(
+          'checkin-fisico', 'Fisico',
+          <>{physicalState}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          getSliderLabel(physicalState, PHYSICAL_LABELS), getSliderColor(physicalState),
+          slider('checkin-fisico', physicalState, setPhysicalState),
+          ['Esausto', 'Nella media', 'Perfetto'],
+        )}
 
-        {/* Sonno (scala diversa: ore) */}
-        <div className="w-full">
-          <div className="flex items-end justify-between gap-3 mb-1">
-            <span className="text-body font-semibold text-app">
-              <span className="mr-1.5" aria-hidden>😴</span>
-              Sonno
-            </span>
-            <span className="text-right">
-              <span className="font-display text-title-1 font-bold tabular-nums text-app">
-                {sleepHours}<span className="text-body-sm font-semibold text-muted">h</span>
-              </span>
-              <span className="block text-body-sm text-muted">
-                {sleepHours < 6 ? 'poco' : sleepHours >= 8 ? 'ottimo' : 'nella norma'}
-              </span>
-            </span>
-          </div>
+        {sliderCard(
+          'checkin-sonno', 'Sonno',
+          <>{sleepHours}<span className="text-body-sm font-semibold text-muted">h</span></>,
+          sleepHours < 6 ? 'Poco' : sleepHours >= 8 ? 'Ottimo' : 'Nella norma',
+          sleepHours < 6 ? 'text-warning' : sleepHours >= 8 ? 'text-accent-glow' : 'text-forest-400',
           <input
+            id="checkin-sonno"
             type="range"
             min={4}
             max={12}
             step={0.5}
             value={sleepHours}
             onChange={e => setSleepHours(parseFloat(e.target.value))}
-            aria-label="Sonno"
             className="w-full cursor-pointer"
-          />
-          <div className="flex justify-between text-caption text-faint">
-            <span>4h</span>
-            <span>8h</span>
-            <span>12h</span>
-          </div>
-        </div>
+          />,
+          ['4h', '8h', '12h'],
+        )}
 
-        {sliderRow('🦵', 'Recupero muscolare', recoveryQuality, setRecoveryQuality, RECOVERY_LABELS, ['Esausto', 'Normale', 'Fresco'])}
-        {sliderRow('🧠', 'Mentale', mentalState, setMentalState, MENTAL_LABELS, ['Testa altrove', 'Normale', 'Lucido'])}
+        {sliderCard(
+          'checkin-recupero', 'Recupero',
+          <>{recoveryQuality}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          getSliderLabel(recoveryQuality, RECOVERY_LABELS), getSliderColor(recoveryQuality),
+          slider('checkin-recupero', recoveryQuality, setRecoveryQuality),
+          ['Esausto', 'Normale', 'Fresco'],
+        )}
+
+        {sliderCard(
+          'checkin-mentale', 'Testa',
+          <>{mentalState}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          getSliderLabel(mentalState, MENTAL_LABELS), getSliderColor(mentalState),
+          slider('checkin-mentale', mentalState, setMentalState),
+          ['Altrove', 'Normale', 'Lucido'],
+        )}
 
         {needsHealthConsent && (
           <label className="flex items-start gap-3 min-h-[44px] py-2 text-body-sm text-app leading-relaxed cursor-pointer">

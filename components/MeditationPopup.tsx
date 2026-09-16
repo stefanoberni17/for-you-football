@@ -240,19 +240,6 @@ export default function MeditationPopup({
 
   const exitToSetup = () => { audioRef.current?.pause(); setPhase('setup'); };
 
-  const mantraBox = (
-    <Card variant="raised" padding="md" className="mb-6 border-forest-500/30">
-      {isFirstTime && phase === 'setup' && (
-        <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 text-center mb-2">
-          Il mantra della tua settimana
-        </p>
-      )}
-      <p className="font-quote text-title-2 text-forest-300 text-center leading-relaxed">
-        &ldquo;{mantra}&rdquo;
-      </p>
-    </Card>
-  );
-
   return (
     <>
       {/* L'elemento audio vive fuori dagli Sheet: resta montato tra una fase e l'altra */}
@@ -277,17 +264,26 @@ export default function MeditationPopup({
           </>
         }
       >
-        <p className="text-body text-app font-medium leading-relaxed text-center mb-5 whitespace-pre-line">
+        <p className="text-body-sm text-muted leading-relaxed text-center mb-5 whitespace-pre-line">
           {isFirstTime
             ? 'Tre respiri prima di iniziare.\nÈ lo strumento che porterai in campo.'
-            : '1 minuto. Naso, poi bocca — come in campo.'}
+            : 'Naso, poi bocca. Come in campo.'}
         </p>
 
-        {mantraBox}
+        <Card variant="raised" padding="md" className="mb-6 border-forest-500/30">
+          {isFirstTime && (
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 text-center mb-2">
+              Il mantra della tua settimana
+            </p>
+          )}
+          <p className="font-quote text-title-2 text-forest-300 text-center leading-relaxed">
+            &ldquo;{mantra}&rdquo;
+          </p>
+        </Card>
 
         {/* Selezione durata */}
         <div>
-          <p className="text-body-sm text-muted text-center mb-3 font-medium inline-flex w-full items-center justify-center gap-1.5">
+          <p className="text-body-sm text-muted text-center mb-3 inline-flex w-full items-center justify-center gap-1.5">
             <Timer size={16} aria-hidden /> Quanto tempo hai adesso?
           </p>
           <div className="grid grid-cols-4 gap-2">
@@ -307,7 +303,7 @@ export default function MeditationPopup({
         </div>
       </Sheet>
 
-      {/* ── FASE RESET (fullscreen, X = interrompi) ── */}
+      {/* ── FASE RESET (fullscreen, X = interrompi). Solo il respiro: niente altro testo. ── */}
       <Sheet
         open={phase === 'meditating'}
         fullscreen
@@ -316,37 +312,42 @@ export default function MeditationPopup({
         title="Il Reset"
         subtitle={weekName}
       >
-        <p className="text-body text-app font-medium text-center mb-5">
-          Resta qui. Solo questo minuto.
-        </p>
-
-        {mantraBox}
-
-        {/* Timer e animazione respiro */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="relative w-40 h-40 md:w-48 md:h-48 mb-5">
-            <div
-              className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-600 transition-transform ease-in-out ${
-                breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
-              }`}
-              style={{
-                opacity: 0.6,
-                transitionDuration: breathPhase === 'inhale' ? `${INHALE_MS}ms` : `${EXHALE_MS}ms`,
-              }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="font-display text-display font-bold text-white mb-1 tabular-nums">
-                  {timerLabel}
-                </div>
-                <div className="text-body-sm text-white/90 font-medium">
-                  {breathPhase === 'inhale' ? 'Inspira dal naso…' : 'Espira dalla bocca…'}
-                </div>
+        <div className="min-h-full flex flex-col items-center justify-between gap-6 py-4">
+          <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full">
+            {/* Cerchio del respiro */}
+            <div className="relative w-[220px] h-[220px] md:w-64 md:h-64">
+              <div
+                className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-600 transition-transform ease-in-out motion-reduce:transition-none ${
+                  breathPhase === 'inhale' ? 'scale-100' : 'scale-[0.7]'
+                }`}
+                style={{
+                  opacity: 0.7,
+                  transitionDuration: breathPhase === 'inhale' ? `${INHALE_MS}ms` : `${EXHALE_MS}ms`,
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="font-display text-title-2 font-bold text-white" aria-live="polite">
+                  {breathPhase === 'inhale' ? 'Inspira' : 'Espira'}
+                </p>
               </div>
             </div>
+
+            <p className="font-quote text-title-2 text-forest-300 text-center leading-relaxed">
+              &ldquo;{mantra}&rdquo;
+            </p>
+
+            <p className="font-display text-title-1 font-bold text-app tabular-nums" aria-label={`Mancano ${timerLabel}`}>
+              {timerLabel}
+            </p>
+
+            {isTimerComplete && (
+              <Button variant="hero" size="lg" fullWidth onClick={completeMeditation} className="max-w-xs animate-fadeIn">
+                Ho finito
+              </Button>
+            )}
           </div>
 
-          {/* Toggle Audio */}
+          {/* Audio di sottofondo: tre chip piccole in fondo */}
           <div className="flex gap-2" role="group" aria-label="Audio di sottofondo">
             <Chip selected={audioMode === 'nature'} onClick={() => setAudioMode('nature')} showCheck={false}
               icon={<Leaf size={16} aria-hidden />} ariaLabel="Suoni della natura">
@@ -362,17 +363,6 @@ export default function MeditationPopup({
             </Chip>
           </div>
         </div>
-
-        {/* Bottone completamento */}
-        <Button variant="hero" size="lg" fullWidth onClick={completeMeditation} disabled={!isTimerComplete}>
-          {isTimerComplete ? 'Fatto' : 'Segui il respiro…'}
-        </Button>
-
-        {!isTimerComplete && (
-          <p className="text-body-sm text-center text-muted mt-3">
-            Naso che gonfia la pancia, bocca come su un vetro.
-          </p>
-        )}
       </Sheet>
     </>
   );

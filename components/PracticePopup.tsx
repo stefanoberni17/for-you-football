@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Check, Headphones, Pause, Play, Sun, Target, Timer } from 'lucide-react';
 import { markSessionActive } from '@/lib/activeSession';
 import { useWakeLock } from '@/lib/useWakeLock';
-import { Button, Card, Sheet } from '@/components/ui';
+import { Button, Card, Chip, Sheet } from '@/components/ui';
 
 type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
 
@@ -188,6 +188,7 @@ export default function PracticePopup({
     return `${m}:${String(sec).padStart(2, '0')}`;
   };
 
+  // Setup: bottone che apre il mini-player. In corso: una sola chip play/pausa in fondo.
   const audioPlayer = audioUrl ? (
     !audioVisible ? (
       <Button
@@ -224,12 +225,29 @@ export default function PracticePopup({
           </div>
           {audioFailed && (
             <p className="text-caption text-warning mt-1">
-              Audio non disponibile — continua col timer, va bene lo stesso.
+              Audio non disponibile. Vai col timer, va bene lo stesso.
             </p>
           )}
         </div>
       </Card>
     )
+  ) : null;
+
+  const audioChip = audioUrl ? (
+    <div className="flex flex-col items-center gap-1">
+      <Chip
+        selected={isAudioPlaying}
+        onClick={toggleAudio}
+        showCheck={false}
+        icon={isAudioPlaying ? <Pause size={16} aria-hidden /> : <Headphones size={16} aria-hidden />}
+        ariaLabel={isAudioPlaying ? 'Pausa audio guida' : 'Riproduci audio guida'}
+      >
+        {isAudioPlaying ? `Audio ${formatAudioTime(audioCurrentTime)} / ${formatAudioTime(audioDuration)}` : 'Audio guida'}
+      </Chip>
+      {audioFailed && (
+        <p className="text-caption text-warning">Audio non disponibile. Vai col timer.</p>
+      )}
+    </div>
   ) : null;
 
   const startPractice = () => {
@@ -248,7 +266,8 @@ export default function PracticePopup({
   // "Ho finito": dal 60 % del timer la pratica si può chiudere prima (review 13/9:
   // W1-G1 sono 50" di respiri dentro un timer che nessuno poteva interrompere).
   // Chiude anche l'audio: chi dice "ho finito" ha finito.
-  const canFinishEarly = phase === 'practicing' && !timerEnded && timeLeft <= totalSeconds * 0.4;
+  // Resta disponibile anche a timer scaduto con l'audio ancora in corso: chiude l'audio e va a `done`.
+  const canFinishEarly = phase === 'practicing' && timeLeft <= totalSeconds * 0.4;
   const finishEarly = () => {
     stopAudio();
     endsAtRef.current = Date.now();
@@ -336,7 +355,7 @@ export default function PracticePopup({
         )}
       </Sheet>
 
-      {/* ─── IN CORSO (fullscreen, X = torna al setup) ─── */}
+      {/* ─── IN CORSO (fullscreen, X = torna al setup). Gli step, il cerchio, il tempo: niente altro. ─── */}
       <Sheet
         open={phase === 'practicing'}
         fullscreen
@@ -345,81 +364,60 @@ export default function PracticePopup({
         title={weekTool || 'Pratica in corso'}
         subtitle={titolo}
       >
-        {audioPlayer}
+        <div className="min-h-full flex flex-col items-center justify-between gap-6 py-2">
+          {/* Step della pratica: sono il contenuto, restano leggibili ma leggeri */}
+          <ol className="w-full space-y-1.5">
+            {practiceSteps.map((step, i) => (
+              <li key={i} className="text-body-sm text-muted leading-relaxed">
+                <span className="font-bold text-forest-400">{i + 1}.</span> {step}
+              </li>
+            ))}
+          </ol>
 
-        {/* Step pratica visibili durante timer */}
-        <div className="mb-5 space-y-2">
-          {practiceSteps.map((step, i) => (
-            <p key={i} className="text-body text-muted leading-relaxed">
-              <span className="font-bold text-forest-400">{i + 1}.</span> {step}
+          <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full">
+            {showBreathCircle ? (
+              /* RESPIRAZIONE: cerchio che respira, dentro solo il verso */
+              <div className="relative w-[220px] h-[220px] md:w-64 md:h-64">
+                <div
+                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-600 transition-transform ease-in-out motion-reduce:transition-none ${
+                    breathPhase === 'inhale' ? 'scale-100' : 'scale-[0.7]'
+                  }`}
+                  style={{
+                    opacity: 0.7,
+                    transitionDuration: `${breathPhase === 'inhale' ? durataInspira : durataEspira}s`,
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="font-display text-title-2 font-bold text-white" aria-live="polite">
+                    {timerEnded && audioInProgress ? 'Ascolta' : breathPhase === 'inhale' ? 'Inspira' : 'Espira'}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              /* VISUALIZZAZIONE / RIFLESSIONE: anello fermo */
+              <div className="relative w-[220px] h-[220px] md:w-64 md:h-64">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-forest-400/20 to-forest-500/20 border-2 border-forest-400/30" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="font-display text-title-2 font-bold text-forest-300">
+                    {timerEnded && audioInProgress ? 'Ascolta' : tipoPratica === 'riflessione' ? 'Rifletti' : 'Osserva'}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <p className="font-display text-title-1 font-bold text-app tabular-nums" aria-label={`Mancano ${timerLabel}`}>
+              {timerLabel}
             </p>
-          ))}
+
+            {canFinishEarly && (
+              <Button variant="hero" size="lg" fullWidth onClick={finishEarly} className="max-w-xs animate-fadeIn">
+                Ho finito
+              </Button>
+            )}
+          </div>
+
+          {audioChip}
         </div>
-
-        {/* Timer area — condizionale in base al tipo pratica */}
-        <div className="flex flex-col items-center mb-6">
-          {showBreathCircle ? (
-            /* RESPIRAZIONE: cerchio animato + timer */
-            <div className="relative w-40 h-40 md:w-48 md:h-48 mb-4">
-              <div
-                className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-500 transition-transform ease-in-out ${
-                  breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
-                }`}
-                style={{
-                  opacity: 0.6,
-                  transitionDuration: `${breathPhase === 'inhale' ? durataInspira : durataEspira}s`,
-                }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="font-display text-display font-bold text-white mb-1 tabular-nums">
-                    {timerLabel}
-                  </div>
-                  <div className="text-body-sm text-white/90 font-medium">
-                    {timerEnded && audioInProgress
-                      ? 'Continua ad ascoltare…'
-                      : breathPhase === 'inhale' ? 'Inspira…' : 'Espira…'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* VISUALIZZAZIONE / RIFLESSIONE: solo timer countdown */
-            <div className="relative w-40 h-40 md:w-48 md:h-48 mb-4">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-forest-400/20 to-forest-500/20 border-2 border-forest-400/30" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="font-display text-display font-bold text-forest-300 mb-1 tabular-nums">
-                    {timerLabel}
-                  </div>
-                  <div className="text-body-sm text-forest-400/80 font-medium">
-                    {timerEnded && audioInProgress
-                      ? 'Continua ad ascoltare…'
-                      : tipoPratica === 'riflessione' ? 'Rifletti…' : 'Osserva…'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <p className="text-body-sm text-center text-muted">
-          {showBreathCircle
-            ? 'Segui la pratica al tuo ritmo. Il timer ti guida.'
-            : 'Segui gli step al tuo ritmo. Prenditi il tempo che ti serve.'}
-        </p>
-
-        {canFinishEarly && (
-          <Button
-            variant="secondary"
-            fullWidth
-            icon={<Check size={18} aria-hidden />}
-            onClick={finishEarly}
-            className="mt-4 animate-fadeIn"
-          >
-            Ho finito
-          </Button>
-        )}
       </Sheet>
 
       {/* ─── FATTO ─── */}
@@ -427,34 +425,24 @@ export default function PracticePopup({
         open={phase === 'done'}
         ariaLabel={tipoPratica === 'giornata' ? 'Ora tocca a te' : 'Pratica completata'}
         footer={
-          <Button variant="hero" size="lg" fullWidth onClick={handleComplete}>
-            {tipoPratica === 'giornata' ? 'Ho capito, ci provo oggi' : 'Continua'}
+          <Button variant="primary" size="lg" fullWidth onClick={handleComplete}>
+            {tipoPratica === 'giornata' ? 'Ci provo oggi' : 'Fatto'}
           </Button>
         }
       >
-        <div className="text-center pt-4 pb-2">
-          {tipoPratica === 'giornata' ? (
-            <>
-              <div className="text-6xl mb-4" aria-hidden>☀️</div>
-              <h2 className="font-display text-title-1 font-bold text-app mb-2">
-                Ora tocca a te!
-              </h2>
-              <p className="text-body text-muted leading-relaxed">
-                Porta la pratica nella tua giornata. Torna quando hai finito per completare la riflessione.
-              </p>
-            </>
-          ) : (
-            <>
-              <div className="text-6xl mb-4" aria-hidden>🏆</div>
-              <h2 className="font-display text-title-1 font-bold text-app mb-2">
-                Pratica completata!
-              </h2>
-              <p className="text-body text-muted leading-relaxed">
-                Ottimo lavoro. Un allenamento alla volta, come in campo.
-              </p>
-            </>
-          )}
-        </div>
+        <Card variant="accent" className="text-center mt-2">
+          <div className="w-16 h-16 rounded-full bg-forest-500 text-white flex items-center justify-center mx-auto mb-4 animate-scaleIn" aria-hidden>
+            {tipoPratica === 'giornata' ? <Sun size={32} strokeWidth={2.5} /> : <Check size={36} strokeWidth={3} />}
+          </div>
+          <h2 className="font-display text-title-1 font-bold text-app mb-2">
+            {tipoPratica === 'giornata' ? 'Ora tocca a te' : 'Pratica fatta'}
+          </h2>
+          <p className="text-body text-muted leading-relaxed">
+            {tipoPratica === 'giornata'
+              ? 'Portala in giornata. Stasera torni qui per la riflessione.'
+              : 'Un allenamento alla volta, come in campo.'}
+          </p>
+        </Card>
       </Sheet>
     </>
   );

@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { supabase } from '@/lib/supabase';
-import { Send, Loader2, Lightbulb } from 'lucide-react';
-import { Button, Chip, Input } from '@/components/ui';
+import { Send } from 'lucide-react';
+import { Badge, Button, Chip, Input } from '@/components/ui';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -203,90 +203,68 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
     sendSuggestion: (text: string) => sendMessageText(text),
   }));
 
-  // rounded-t-3xl: bordi arrotondati solo in alto. In basso la card si attacca
-  // visivamente alla BottomTabBar full-width. Su sm+ aggiungiamo border-radius
-  // completo per estetica desktop.
+  // Bordi arrotondati solo in alto: in basso la card si attacca alla tab bar.
+  const freeBadge = !paywalled && freeRemaining !== null
+    ? `${freeRemaining} ${freeRemaining === 1 ? 'messaggio' : 'messaggi'} gratis`
+    : null;
+
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-surface rounded-t-sheet sm:rounded-sheet shadow-e2 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white p-4 flex-shrink-0">
+      <div className="bg-gradient-to-r from-forest-500 to-forest-600 text-white px-4 pt-4 pb-3 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center font-bold text-title-3" aria-hidden="true">
             C
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h3 className="font-display font-semibold text-title-3">Coach AI</h3>
             <p className="text-body-sm text-forest-50 opacity-90">Il tuo allenatore mentale</p>
           </div>
+          {freeBadge && <Badge tone="neutral" className="shrink-0">{freeBadge}</Badge>}
         </div>
-      </div>
-
-      {/* Trasparenza AI (art. 50 AI Act): sempre visibile, non dismissibile, una riga sotto l'header */}
-      <div className="bg-surface-2 border-b border-divider px-4 py-1.5 flex-shrink-0">
-        <p className="text-caption text-muted text-center leading-snug">
-          Stai parlando con un Coach AI, non con una persona. Ricordati che l&apos;AI può fare errori.
+        {/* Trasparenza AI (art. 50 AI Act): sempre visibile, non dismissibile */}
+        <p className="text-caption text-forest-50/80 mt-2.5 leading-snug">
+          Stai parlando con un Coach AI, non con una persona. L&apos;AI può fare errori.
         </p>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-app">
-        {/* Suggestion pills — visible only before user sends first message */}
-        {suggestions && suggestions.length > 0 && messages.length <= 1 && (
-          <div className="pb-2">
-            <p className="text-body-sm text-muted mb-2 font-medium inline-flex items-center gap-1.5">
-              <Lightbulb size={16} className="text-forest-400" aria-hidden /> Suggerimenti per iniziare
-            </p>
-            <div className="flex flex-col gap-2">
-              {suggestions.slice(0, 3).map((s, i) => (
-                <Chip key={i} onClick={() => sendMessageText(s)} className="w-full justify-start text-left whitespace-normal h-auto! min-h-[44px] py-2">
-                  {s}
-                </Chip>
-              ))}
-            </div>
-          </div>
-        )}
+      {/* Messaggi */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-app">
         {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex gap-2.5 ${
-              message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-            }`}
-          >
-            {message.role === 'assistant' && (
-              <div
-                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-forest-500 text-white text-caption font-bold"
-                aria-hidden="true"
-              >
-                C
-              </div>
-            )}
+          <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-[78%] rounded-card px-4 py-2.5 ${
+              className={`max-w-[85%] px-4 py-2.5 rounded-[18px] ${
                 message.role === 'user'
                   ? 'bg-forest-500 text-white rounded-br-md'
-                  : 'bg-surface-2 text-app rounded-bl-md border border-divider'
+                  : 'bg-surface-2 text-app rounded-bl-md'
               }`}
             >
               <p className="text-body whitespace-pre-wrap leading-relaxed">{message.content}</p>
             </div>
           </div>
         ))}
+
+        {/* Suggerimenti: solo prima del primo messaggio, massimo 3, corti */}
+        {suggestions && suggestions.length > 0 && messages.length <= 1 && !isLoading && (
+          <div className="flex flex-wrap gap-2 pt-1" aria-label="Suggerimenti per iniziare">
+            {suggestions.slice(0, 3).map((s, i) => (
+              <Chip key={i} onClick={() => sendMessageText(s)}>
+                {s}
+              </Chip>
+            ))}
+          </div>
+        )}
+
         {isLoading && (
-          <div className="flex gap-2.5">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-forest-500 text-white flex items-center justify-center text-caption font-bold" aria-hidden="true">
-              C
-            </div>
-            <div className="bg-surface-2 rounded-card rounded-bl-md border border-divider px-4 py-3">
-              <Loader2 className="w-5 h-5 animate-spin text-forest-500" aria-label="Il Coach sta scrivendo" />
+          <div className="flex justify-start">
+            <div className="bg-surface-2 rounded-[18px] rounded-bl-md px-4 py-3.5 flex items-center gap-1.5" role="status" aria-label="Il Coach sta scrivendo">
+              {[0, 150, 300].map((delay) => (
+                <span key={delay} className="w-2 h-2 rounded-full bg-forest-400 animate-bounce motion-reduce:animate-none" style={{ animationDelay: `${delay}ms` }} aria-hidden />
+              ))}
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
-        {!paywalled && freeRemaining !== null && (
-          <p className="text-caption text-muted text-center mt-1">
-            Settimana gratis: {freeRemaining === 0 ? 'era il tuo ultimo messaggio col Coach' : `ti restano ${freeRemaining} messaggi col Coach`}
-          </p>
-        )}
         {paywalled && (
           <div className="mx-1 mt-1 bg-forest-500/10 border border-forest-500/35 rounded-card p-4 text-center">
             <p className="text-body text-app font-semibold mb-3">Il Coach continua con Season 1</p>
@@ -295,9 +273,9 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         )}
       </div>
 
-      {/* Input */}
+      {/* Input: Enter invia (submit del form) */}
       <form onSubmit={handleSubmit} className="p-3 border-t border-divider bg-surface">
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-center">
           <Input
             type="text"
             value={input}
@@ -313,11 +291,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
             aria-label="Invia messaggio"
             className="w-12 h-12 flex items-center justify-center bg-forest-500 text-white rounded-btn hover:bg-forest-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-e1 shrink-0"
           >
-            {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-            ) : (
-              <Send className="w-5 h-5" aria-hidden="true" />
-            )}
+            <Send className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
       </form>
