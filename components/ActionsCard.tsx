@@ -110,9 +110,9 @@ export default function ActionsCard({
   const percent = Math.round((todayCount / total) * 100);
   const hasInteractiveList = actions.length > 0 && typeof onToggle === 'function';
 
-  // Container: gradient verde su all-done, surface altrimenti
+  // Container: all-done = bordo verde (l'unico gradiente della home è l'hero), surface altrimenti
   const containerCls = allDone
-    ? 'bg-gradient-to-r from-forest-500 to-forest-600 text-white border-transparent shadow-e2'
+    ? 'bg-forest-500/10 border-forest-500/40'
     : 'bg-surface border-divider';
 
   return (
@@ -133,7 +133,7 @@ export default function ActionsCard({
       >
         <div
           className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-            allDone ? 'bg-white/20' : 'bg-forest-500/15'
+            allDone ? 'bg-forest-500' : 'bg-forest-500/15'
           }`}
         >
           <Target
@@ -145,14 +145,14 @@ export default function ActionsCard({
           <div className="flex items-baseline justify-between gap-2">
             <p
               className={`text-body font-bold ${
-                allDone ? 'text-white' : 'text-app'
+                'text-app'
               }`}
             >
               {allDone ? `Tutte e ${total} fatte oggi` : 'Le tue 5 azioni'}
             </p>
             <p
               className={`text-body font-bold tabular-nums ${
-                allDone ? 'text-white' : 'text-forest-300'
+                'text-forest-300'
               }`}
             >
               {todayCount}/{total}
@@ -168,7 +168,7 @@ export default function ActionsCard({
               />
             </div>
           ) : (
-            <p className="text-body-sm text-forest-100 mt-0.5 flex items-center gap-1">
+            <p className="text-body-sm text-forest-300 mt-0.5 flex items-center gap-1">
               {streak > 0 ? (
                 <>
                   <Flame className="w-3.5 h-3.5" aria-hidden="true" /> {streak}{' '}
@@ -186,14 +186,12 @@ export default function ActionsCard({
           <ChevronDown
             className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${
               expanded ? 'rotate-180' : ''
-            } ${allDone ? 'text-white' : 'text-faint'}`}
+            } text-faint`}
             aria-hidden="true"
           />
         ) : (
           <ChevronRight
-            className={`w-5 h-5 flex-shrink-0 ${
-              allDone ? 'text-white' : 'text-faint'
-            }`}
+            className="w-5 h-5 flex-shrink-0 text-faint"
             aria-hidden="true"
           />
         )}
@@ -235,26 +233,20 @@ export default function ActionsCard({
                     aria-checked={checked}
                     aria-label={a.action_text}
                     className={`w-full text-left flex items-start gap-3 px-4 py-3 min-h-[52px] transition-colors ${
-                      allDone ? 'hover:bg-white/5' : 'hover:bg-surface-2'
+                      'hover:bg-surface-2'
                     }`}
                   >
                     <span
                       className={`mt-0.5 w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                         checked
-                          ? allDone
-                            ? 'bg-white border-white'
-                            : 'bg-forest-500 border-forest-500'
-                          : allDone
-                          ? 'border-white/50 bg-transparent'
+                          ? 'bg-forest-500 border-forest-500'
                           : 'border-divider bg-surface-2'
                       }`}
                       aria-hidden="true"
                     >
                       {checked && (
                         <svg
-                          className={`w-4 h-4 ${
-                            allDone ? 'text-forest-600' : 'text-white'
-                          }`}
+                          className="w-4 h-4 text-white"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -267,15 +259,7 @@ export default function ActionsCard({
                       )}
                     </span>
                     <p
-                      className={`flex-1 text-body leading-snug ${
-                        checked
-                          ? allDone
-                            ? 'text-white/70 line-through decoration-1'
-                            : 'text-muted line-through decoration-1'
-                          : allDone
-                          ? 'text-white'
-                          : 'text-app'
-                      }`}
+                      className={`flex-1 text-body leading-snug ${checked ? 'text-muted line-through decoration-1' : 'text-app'}`}
                     >
                       {a.action_text}
                     </p>
@@ -286,14 +270,14 @@ export default function ActionsCard({
           </ul>
 
           {/* Footer "Modifica" — porta a /oggi?setup=1 (riusa ActionsSetupSheet) */}
-          <div className={`border-t ${allDone ? 'border-white/15' : 'border-divider bg-surface-2'}`}>
+          <div className="border-t border-divider bg-surface-2">
             <Button
               variant="ghost"
               size="sm"
               fullWidth
               href="/oggi?setup=1"
               icon={<Pencil size={16} aria-hidden />}
-              className={`rounded-none ${allDone ? 'text-white/90 hover:bg-white/10' : 'text-forest-300'}`}
+              className="rounded-none text-forest-300"
             >
               Modifica le tue 5 azioni
             </Button>

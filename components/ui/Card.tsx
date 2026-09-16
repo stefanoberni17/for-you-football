@@ -25,13 +25,14 @@ interface CardProps {
   'aria-label'?: string;
 }
 
+// Superficie leggermente illuminata in alto (inset) e bordo a bassa opacità: profondità senza ombre pesanti
 const VARIANT: Record<CardVariant, string> = {
-  default: 'bg-surface border border-divider',
-  raised: 'bg-surface-2 border border-divider',
+  default: 'bg-surface border border-white/6 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]',
+  raised: 'bg-surface-2 border border-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
   accent: 'bg-forest-500/10 border border-forest-500/35',
   warn: 'bg-warning/10 border border-warning/30',
   danger: 'bg-danger/10 border border-danger/30',
-  hero: 'bg-gradient-to-br from-forest-500 to-forest-700 text-white border border-forest-400/20 shadow-e2',
+  hero: 'relative overflow-hidden text-white border border-forest-400/25 shadow-[0_12px_40px_rgba(26,150,96,0.25)] bg-[radial-gradient(120%_90%_at_0%_0%,#22b873_0%,#1a9660_45%,#0e5c3a_100%)]',
 };
 const PAD = { none: '', sm: 'p-4', md: 'p-5' };
 

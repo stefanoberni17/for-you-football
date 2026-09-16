@@ -31,12 +31,14 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'chi
   className?: string;
 }
 
+// Luce dall'alto (inset) + ombra sotto: i bottoni hanno corpo, non sono rettangoli piatti
+const LIT = 'shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_1px_2px_rgba(0,0,0,0.4)]';
 const VARIANT: Record<ButtonVariant, string> = {
-  primary: 'bg-forest-500 text-white hover:bg-forest-600 active:bg-forest-700 shadow-e1',
-  hero: 'bg-gradient-to-r from-forest-500 to-forest-600 text-white hover:from-forest-600 hover:to-forest-700 shadow-glow',
-  secondary: 'bg-surface-2 text-app border border-divider hover:bg-surface-3 active:bg-surface-3',
-  ghost: 'bg-transparent text-forest-400 hover:bg-surface-2 active:bg-surface-2',
-  inverse: 'bg-white text-forest-700 hover:bg-forest-50 shadow-e2',
+  primary: `bg-gradient-to-b from-[#1fa86b] to-forest-500 text-white hover:from-forest-500 hover:to-forest-600 ${LIT}`,
+  hero: 'bg-gradient-to-br from-[#22b873] via-forest-500 to-forest-600 text-white hover:to-forest-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_28px_rgba(45,209,122,0.32)]',
+  secondary: 'bg-surface-2 text-app border border-white/8 hover:bg-surface-3 hover:border-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]',
+  ghost: 'bg-transparent text-forest-400 hover:bg-forest-500/10 active:bg-forest-500/15',
+  inverse: 'bg-white text-forest-700 hover:bg-forest-50 shadow-[0_6px_20px_rgba(0,0,0,0.25),inset_0_-1px_0_rgba(0,0,0,0.06)]',
   danger: 'bg-danger/12 text-danger border border-danger/30 hover:bg-danger/20',
 };
 const SIZE: Record<ButtonSize, string> = {
@@ -51,7 +53,7 @@ export default function Button({
 }: ButtonProps) {
   const cls = [
     'inline-flex items-center justify-center rounded-btn font-semibold select-none whitespace-nowrap',
-    'transition-[background-color,transform,opacity] duration-150 active:scale-[0.98]',
+    'transition-[background-color,transform,opacity,box-shadow] duration-150 active:scale-[0.98] active:brightness-95',
     'disabled:opacity-50 disabled:pointer-events-none',
     VARIANT[variant], SIZE[size], fullWidth ? 'w-full' : '', className,
   ].join(' ');
