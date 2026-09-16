@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { isWeekUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
+import { isWeekUnlocked, isWeekCompleted, getWeekProgress, isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY } from '@/lib/constants';
-import { Lock, Check, Compass, Wrench, ChevronRight, MapPin, Clock, Sparkles } from 'lucide-react';
-import { AppLoader, Card } from '@/components/ui';
+import { Lock, Check, ChevronRight, Sparkles, Play, Trophy, Clock } from 'lucide-react';
+import { AppLoader, Badge, Button, Card, SectionTitle } from '@/components/ui';
 
 interface Settimana {
   id: string;
@@ -19,13 +19,23 @@ interface Settimana {
   stato: string;
 }
 
+interface ProgressRow {
+  week_number: number;
+  day_number: number;
+  completed: boolean;
+  completed_at: string | null;
+  compressed: boolean | null;
+}
+
+const cleanTitle = (t?: string) => t?.replace(/^Week \d+ — /, '') || t || '';
+
 export default function SettimanePage() {
   const router = useRouter();
   const [settimane, setSettimane] = useState<Settimana[]>([]);
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+  const [currentWeek, setCurrentWeek] = useState(1);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -47,7 +57,7 @@ export default function SettimanePage() {
         return;
       }
 
-      setProfile(profileData);
+      setCurrentWeek(profileData.current_week || 1);
 
       const { data: progress } = await supabase
         .from('user_day_progress')
@@ -56,7 +66,7 @@ export default function SettimanePage() {
         .eq('completed', true);
 
       setCompletedDays(
-        (progress || []).map((p: any) => ({
+        ((progress || []) as ProgressRow[]).map((p) => ({
           weekNumber: p.week_number,
           dayNumber: p.day_number,
           completed: p.completed,
@@ -93,188 +103,226 @@ export default function SettimanePage() {
     return <AppLoader label="Caricamento percorso..." />;
   }
 
-  const currentWeek = profile?.current_week || 1;
   const unlockedCount = Array.from({ length: BETA_MAX_WEEK }, (_, i) => i + 1)
     .filter(w => isWeekUnlocked(w, completedDays)).length;
-  const totalCompletedWeeks = Array.from({ length: BETA_MAX_WEEK }, (_, i) => i + 1)
-    .filter(w => isWeekCompleted(w, completedDays)).length;
+
+  // ── "Sei qui": la settimana in cui si sta lavorando ──
+  // Dopo il Gate di W, current_week è già W+1 ma W+1 si apre domattina (time-gate):
+  // in quel caso "sei qui" resta W, completata, e la card dice che la prossima si apre domani.
+  const allDone = currentWeek > BETA_MAX_WEEK;
+  const hereWeek = !allDone && currentWeek > 1 && !isWeekUnlocked(currentWeek, completedDays)
+    ? currentWeek - 1
+    : Math.min(currentWeek, BETA_MAX_WEEK);
+  const hereData = settimane.find(s => s.weekNumber === hereWeek);
+  const hereProgress = getWeekProgress(hereWeek, completedDays);
+  const hereCompleted = isWeekCompleted(hereWeek, completedDays);
+  const herePercent = Math.round((hereProgress / DAYS_PER_WEEK) * 100);
+  const hereNextDay = Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1)
+    .find(d => !completedDays.some(p => p.weekNumber === hereWeek && p.dayNumber === d && p.completed)) ?? null;
+  const hereNextUnlocked = hereNextDay !== null && isDayUnlocked(hereWeek, hereNextDay, completedDays);
+  const nextWeekAvailable = hereWeek + 1 <= BETA_MAX_WEEK;
+  const hereDetail = [hereData?.principio, hereData?.strumento].filter(Boolean).join(' · ');
 
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
 
-      {/* Immersive header */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
+      {/* Header immersive: corto, una riga di stato */}
+      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-3xl mx-auto">
           <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-2">
-            Season 1 · {BETA_MAX_WEEK} settimane disponibili
+            Season 1 · Play Free
           </p>
-          <h1 className="font-display text-display font-bold text-white mb-3">
-            Il Tuo Percorso
+          <h1 className="font-display text-display font-bold text-white mb-2">
+            Il tuo percorso
           </h1>
-          <p className="text-forest-100 text-body leading-relaxed mb-5">
-            12 settimane per costruire la tua mente da calciatore. Un giorno alla volta.
+          <p className="text-forest-100 text-body-sm tabular-nums">
+            {unlockedCount} {unlockedCount === 1 ? 'settimana sbloccata' : 'settimane sbloccate'} · {completedDays.length} {completedDays.length === 1 ? 'giorno fatto' : 'giorni fatti'}
           </p>
-
-          {/* Quick stats */}
-          <div className="flex gap-3">
-            <div className="bg-white/10 backdrop-blur-sm rounded-card px-4 py-2.5 flex-1">
-              <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-0.5">Sbloccate</p>
-              <p className="text-white font-display text-title-2 font-bold tabular-nums">{unlockedCount}<span className="text-forest-200 text-body-sm font-normal">/{BETA_MAX_WEEK}</span></p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-card px-4 py-2.5 flex-1">
-              <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-0.5">Completate</p>
-              <p className="text-white font-display text-title-2 font-bold tabular-nums">{totalCompletedWeeks}<span className="text-forest-200 text-body-sm font-normal">/{BETA_MAX_WEEK}</span></p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-card px-4 py-2.5 flex-1">
-              <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-0.5">Giorni</p>
-              <p className="text-white font-display text-title-2 font-bold tabular-nums">{completedDays.length}</p>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Timeline content */}
-      <div className="max-w-3xl mx-auto px-4 -mt-10">
-        <div className="relative">
-          {/* Vertical timeline line */}
-          <div className="absolute left-[27px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-forest-500 via-forest-700 to-divider" aria-hidden="true" />
+      <div className="max-w-3xl mx-auto px-4 -mt-8 space-y-6">
 
-          <div className="space-y-4">
-            {settimane.map((settimana) => {
-              const unlocked = isWeekUnlocked(settimana.weekNumber, completedDays);
-              const completed = isWeekCompleted(settimana.weekNumber, completedDays);
-              const progress = getWeekProgress(settimana.weekNumber, completedDays);
-              const isCurrent = settimana.weekNumber === currentWeek && !completed;
-              const percent = Math.round((progress / DAYS_PER_WEEK) * 100);
-              // Gate della settimana precedente superato OGGI → sblocco domattina
-              const opensTomorrow =
-                !unlocked &&
-                settimana.weekNumber > 1 &&
-                isTimeLocked(settimana.weekNumber - 1, GATE_DAY, completedDays);
+        {/* ── Sei qui: l'unico gradiente e l'unico CTA della pagina ── */}
+        {allDone ? (
+          <Card variant="hero" padding="md" as="section" aria-label="Percorso completato">
+            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
+            <h2 className="font-display text-title-1 font-bold mb-1">Ce l&apos;hai fatta!</h2>
+            <p className="text-forest-100 text-body-sm mb-4">
+              Tutte le settimane della tua Season sono fatte. Il campo resta tuo.
+            </p>
+            <Button variant="inverse" size="lg" fullWidth icon={<Trophy size={20} aria-hidden />} href="/beta-complete">
+              Rivedi il traguardo
+            </Button>
+          </Card>
+        ) : (
+          <Card variant="hero" padding="md" as="section" aria-label={`Sei qui: Settimana ${hereWeek}`}>
+            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
+              Settimana {hereWeek} · {hereCompleted ? 'completata' : 'in corso'}
+            </p>
+            <h2 className="font-display text-title-1 font-bold mb-1">
+              {cleanTitle(hereData?.titolo) || `Settimana ${hereWeek}`}
+            </h2>
+            {hereDetail && (
+              <p className="text-forest-100 text-body-sm">{hereDetail}</p>
+            )}
 
-              const cardBody = (
-                <>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className={`text-overline uppercase tracking-wider font-semibold ${
-                        unlocked ? 'text-forest-400' : 'text-faint'
-                      }`}>
-                        Settimana {settimana.weekNumber}
-                      </span>
-                      {isCurrent && (
-                        <span className="inline-flex items-center gap-1 text-overline uppercase tracking-wider font-semibold text-forest-300 bg-forest-500/20 px-2 py-0.5 rounded-full">
-                          <MapPin className="w-3 h-3" aria-hidden="true" /> In corso
-                        </span>
-                      )}
-                      {completed && (
-                        <span className="inline-flex items-center gap-1 text-overline uppercase tracking-wider font-semibold text-forest-300 bg-forest-500/20 px-2 py-0.5 rounded-full">
-                          <Check className="w-3 h-3" strokeWidth={3} aria-hidden="true" /> Fatto
-                        </span>
-                      )}
-                    </div>
-                    {unlocked && (
-                      <ChevronRight className="w-5 h-5 text-faint flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    )}
-                  </div>
+            {/* Progresso: una volta sola */}
+            <div className="mt-4 mb-4">
+              <div className="w-full bg-white/15 rounded-full h-1.5 overflow-hidden">
+                <div className="h-full rounded-full bg-white transition-all duration-500" style={{ width: `${herePercent}%` }} />
+              </div>
+              <p className="text-forest-100 text-body-sm tabular-nums mt-1.5">{hereProgress}/{DAYS_PER_WEEK} giorni</p>
+            </div>
 
-                  <h3 className={`font-display text-title-3 font-bold mb-1.5 ${unlocked ? 'text-app' : 'text-faint'}`}>
-                    {settimana.titolo?.replace(/^Week \d+ — /, '') || settimana.titolo}
-                  </h3>
+            {hereCompleted ? (
+              <>
+                <p className="text-white text-body-sm font-semibold mb-3 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4" aria-hidden="true" />
+                  {nextWeekAvailable
+                    ? `La Settimana ${hereWeek + 1} si apre domattina`
+                    : 'Hai finito tutte le settimane disponibili'}
+                </p>
+                <Button variant="inverse" size="lg" fullWidth iconRight={<ChevronRight size={20} aria-hidden />} href={`/settimana/${hereWeek}`}>
+                  Vedi la settimana
+                </Button>
+              </>
+            ) : hereNextUnlocked && hereNextDay !== null ? (
+              <Button
+                variant="inverse"
+                size="lg"
+                fullWidth
+                icon={<Play size={20} aria-hidden />}
+                href={hereNextDay === GATE_DAY ? `/gate/${hereWeek}` : `/giorno/${hereWeek}/${hereNextDay}`}
+              >
+                {completedDays.length === 0 ? 'Inizia: Giorno 1' : `Riprendi: Giorno ${hereNextDay}`}
+              </Button>
+            ) : (
+              <>
+                <p className="text-white text-body-sm font-semibold mb-3 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4" aria-hidden="true" />
+                  {isWeekUnlocked(hereWeek, completedDays)
+                    ? `Il Giorno ${hereNextDay} si apre domattina`
+                    : `Si apre dopo il Gate della Settimana ${hereWeek - 1}`}
+                </p>
+                <Button variant="inverse" size="lg" fullWidth iconRight={<ChevronRight size={20} aria-hidden />} href={`/settimana/${hereWeek}`}>
+                  Vedi la settimana
+                </Button>
+              </>
+            )}
+          </Card>
+        )}
 
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                    {settimana.principio && (
-                      <p className={`text-body-sm font-medium flex items-center gap-1 ${unlocked ? 'text-forest-400' : 'text-faint'}`}>
-                        <Compass className="w-3.5 h-3.5" aria-hidden="true" />
-                        {settimana.principio}
-                      </p>
-                    )}
-                    {settimana.strumento && (
-                      <p className={`text-body-sm flex items-center gap-1 ${unlocked ? 'text-muted' : 'text-faint'}`}>
-                        <Wrench className="w-3.5 h-3.5" aria-hidden="true" />
-                        {settimana.strumento}
-                      </p>
-                    )}
-                  </div>
+        {/* ── Tutte le settimane ── */}
+        <section aria-label="Tutte le settimane">
+          <SectionTitle title="Tutte le settimane" size="lg" className="mb-4 px-1" />
 
-                  {/* Progress bar */}
-                  {unlocked ? (
-                    <div>
-                      <div className="flex justify-between text-caption text-muted mb-1.5 tabular-nums">
-                        <span className="font-medium">{completed ? 'Completata' : `${progress}/${DAYS_PER_WEEK} giorni`}</span>
-                        <span className="font-semibold">{percent}%</span>
-                      </div>
-                      <div className="w-full bg-surface-2 rounded-full h-1.5 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-forest-400 to-forest-500 transition-all duration-500"
-                          style={{ width: `${percent}%` }}
-                        />
-                      </div>
-                    </div>
-                  ) : opensTomorrow ? (
-                    <p className="text-body-sm text-forest-400 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                      Gate superato — si sblocca domattina
-                    </p>
-                  ) : (
-                    <p className="text-body-sm text-muted flex items-center gap-1.5">
-                      <Lock className="w-3.5 h-3.5" aria-hidden="true" />
-                      Completa il Gate della settimana precedente
-                    </p>
-                  )}
-                </>
-              );
+          <div className="relative">
+            {/* Linea verticale della timeline */}
+            <div className="absolute left-[19px] top-5 bottom-5 w-0.5 bg-divider" aria-hidden="true" />
 
-              return (
-                <div key={settimana.id} className="relative pl-16">
-                  {/* Timeline node */}
-                  <div className={`absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center font-display font-bold text-title-3 shadow-e1 ring-4 ring-app z-10 ${
+            <div className="space-y-2">
+              {settimane.map((settimana) => {
+                const n = settimana.weekNumber;
+                const unlocked = isWeekUnlocked(n, completedDays);
+                const completed = isWeekCompleted(n, completedDays);
+                const progress = getWeekProgress(n, completedDays);
+                const percent = Math.round((progress / DAYS_PER_WEEK) * 100);
+                const active = unlocked && !completed;
+                const titolo = cleanTitle(settimana.titolo);
+                // Gate della settimana precedente superato OGGI → sblocco domattina
+                const opensTomorrow = !unlocked && n > 1 && isTimeLocked(n - 1, GATE_DAY, completedDays);
+                const detail = [settimana.principio, settimana.strumento].filter(Boolean).join(' · ');
+
+                // Nodo della timeline (40 px, allineato alla linea)
+                const node = (
+                  <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-body-sm font-bold ring-4 ring-app z-10 ${
                     completed
                       ? 'bg-forest-500 text-white'
-                      : isCurrent
-                      ? 'bg-surface text-forest-300 ring-forest-500/40'
-                      : unlocked
-                      ? 'bg-surface text-forest-300'
+                      : active
+                      ? 'bg-surface text-forest-300 border-2 border-forest-500'
                       : 'bg-surface-2 text-faint'
-                  }`}>
-                    {completed ? <Check className="w-6 h-6" strokeWidth={3} aria-hidden="true" /> : !unlocked ? <Lock className="w-5 h-5" aria-hidden="true" /> : settimana.weekNumber}
+                  }`} aria-hidden="true">
+                    {completed ? <Check className="w-5 h-5" strokeWidth={3} /> : !unlocked ? <Lock className="w-4 h-4" /> : n}
                   </div>
+                );
 
-                  {/* Card */}
-                  {unlocked ? (
-                    <Card
-                      href={`/settimana/${settimana.weekNumber}`}
-                      padding="md"
-                      className={isCurrent ? 'border-forest-500/50 ring-1 ring-forest-500/30' : ''}
-                      aria-label={`Settimana ${settimana.weekNumber}`}
-                    >
-                      {cardBody}
+                // Settimana in corso: card con progresso (barra + X/7, una volta)
+                if (active) {
+                  return (
+                    <div key={settimana.id} className="relative pl-12">
+                      {node}
+                      <Card href={`/settimana/${n}`} variant="accent" padding="sm" aria-label={`Settimana ${n}: ${titolo}`}>
+                        <div className="flex items-start justify-between gap-3 mb-1">
+                          <p className="text-overline uppercase tracking-wider font-semibold text-forest-300">Settimana {n}</p>
+                          <ChevronRight className="w-5 h-5 text-faint shrink-0" aria-hidden="true" />
+                        </div>
+                        <h3 className="font-display text-title-3 font-bold text-app mb-0.5">{titolo}</h3>
+                        {detail && <p className="text-body-sm text-muted mb-3">{detail}</p>}
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 bg-surface-2 rounded-full h-1.5 overflow-hidden">
+                            <div className="h-full rounded-full bg-forest-500 transition-all duration-500" style={{ width: `${percent}%` }} />
+                          </div>
+                          <span className="text-caption text-muted tabular-nums font-medium shrink-0">{progress}/{DAYS_PER_WEEK}</span>
+                        </div>
+                      </Card>
+                    </div>
+                  );
+                }
+
+                // Settimana fatta: riga compressa
+                if (completed) {
+                  return (
+                    <div key={settimana.id} className="relative pl-12">
+                      {node}
+                      <Card href={`/settimana/${n}`} padding="sm" className="min-h-[56px]" aria-label={`Settimana ${n}: ${titolo}, fatta`}>
+                        <div className="flex items-center gap-3 min-h-6">
+                          <p className="flex-1 min-w-0 text-body text-app truncate">
+                            <span className="font-semibold">Settimana {n}</span> · {titolo}
+                          </p>
+                          <Badge tone="success">Fatta</Badge>
+                          <ChevronRight className="w-5 h-5 text-faint shrink-0" aria-hidden="true" />
+                        </div>
+                      </Card>
+                    </div>
+                  );
+                }
+
+                // Settimana futura: riga compressa, tap → dove si fa il Gate che la apre
+                return (
+                  <div key={settimana.id} className="relative pl-12">
+                    {node}
+                    <Card href={`/settimana/${Math.max(1, n - 1)}`} padding="sm" className="min-h-[56px]" aria-label={`Settimana ${n}: ${titolo}. ${opensTomorrow ? 'Si apre domani' : `Si apre dopo il Gate della Settimana ${n - 1}`}`}>
+                      <div className="flex items-center gap-3 min-h-6">
+                        <p className="flex-1 min-w-0 text-body text-muted truncate">
+                          <span className="font-semibold">Settimana {n}</span> · {titolo}
+                        </p>
+                        <Badge tone="neutral">{opensTomorrow ? 'Domani' : `Dopo il Gate ${n - 1}`}</Badge>
+                      </div>
                     </Card>
-                  ) : (
-                    <Card padding="md" className="opacity-70" aria-label={`Settimana ${settimana.weekNumber} bloccata`}>
-                      {cardBody}
-                    </Card>
-                  )}
+                  </div>
+                );
+              })}
+
+              {/* Prossimamente: una riga, solo finché non sono pubblicate tutte e 12 */}
+              {BETA_MAX_WEEK < 12 && (
+                <div className="relative pl-12">
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center bg-surface-2 text-forest-400 ring-4 ring-app z-10" aria-hidden="true">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <Card padding="sm" className="min-h-[56px] border-dashed">
+                    <div className="flex items-center gap-3 min-h-6">
+                      <p className="flex-1 min-w-0 text-body text-muted truncate">
+                        <span className="font-semibold">Settimane {BETA_MAX_WEEK + 1}–12</span> · Giocare libero
+                      </p>
+                      <Badge tone="neutral">In arrivo</Badge>
+                    </div>
+                  </Card>
                 </div>
-              );
-            })}
-
-            {/* Coming soon teaser — solo finché non sono pubblicate tutte e 12 */}
-            {BETA_MAX_WEEK < 12 && (
-            <div className="relative pl-16">
-              <div className="absolute left-0 top-2 w-14 h-14 rounded-full flex items-center justify-center bg-surface-2 ring-4 ring-app z-10 text-forest-400">
-                <Sparkles className="w-6 h-6" aria-hidden="true" />
-              </div>
-              <Card variant="raised" padding="md" className="border-dashed border-forest-500/30">
-                <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">Prossimamente</p>
-                <p className="text-body font-semibold text-app mb-1">Settimane 9–12</p>
-                <p className="text-body-sm text-muted leading-relaxed">
-                  Il Blocco 3 — Giocare libero. La destinazione del percorso. In arrivo.
-                </p>
-              </Card>
+              )}
             </div>
-            )}
           </div>
-        </div>
+        </section>
       </div>
     </main>
   );
