@@ -12,7 +12,7 @@ import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import { hasActiveAccess } from '@/lib/checkAccess';
-import { ArrowUp, Bot, Calendar, Check, ChevronLeft, ChevronRight, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun, Target } from 'lucide-react';
+import { ArrowUp, Bot, Calendar, Check, ChevronLeft, ChevronRight, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
 import { AppLoader, BackButton, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
 export default function GiornoPage() {
@@ -41,6 +41,9 @@ export default function GiornoPage() {
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
   const [showPracticePopup, setShowPracticePopup] = useState(false);
+  // Pratica guidata completata in QUESTA sessione: finché non lo è, "Continua" resta secondario
+  // (un solo primario per schermata: "Inizia la pratica").
+  const [practiceDone, setPracticeDone] = useState(false);
   // Giornata: avviata in QUESTA sessione (mostra la schermata di uscita, non il salto alla riflessione)
   const [justStarted, setJustStarted] = useState(false);
   // Giornata al rientro: l'utente vuole rileggere le istruzioni invece della sola riflessione
@@ -173,13 +176,17 @@ export default function GiornoPage() {
     init();
   }, [weekNumber, dayNumber, router]);
 
-  // Costruisci array slide dinamico
+  // Costruisci array slide dinamico.
+  // Il check di ieri è la PRIMA slide (review 16/9: prima stava sopra il contenuto di oggi);
+  // sparisce appena risposto. La nota in campo sta in fondo alla slide della pratica.
+  const notaInPratica = !!(giorno?.pratica && giorno?.haNotaCampo && giorno?.notaCampo);
   const slides: { type: string; label: string }[] = [];
   if (giorno) {
+    if (showCheck) slides.push({ type: 'check', label: 'Ieri' });
     if (giorno.apertura) slides.push({ type: 'apertura', label: 'Apertura' });
     if (giorno.domandaPrePratica) slides.push({ type: 'domanda_pre_pratica', label: 'Riflessione' });
     if (giorno.pratica) slides.push({ type: 'pratica', label: 'Pratica' });
-    if (giorno.haNotaCampo && giorno.notaCampo) slides.push({ type: 'nota', label: 'Nota Campo' });
+    if (!notaInPratica && giorno.haNotaCampo && giorno.notaCampo) slides.push({ type: 'nota', label: 'Nota Campo' });
     if (giorno.domanda) slides.push({ type: 'domanda', label: 'Riflessione' });
     // Se non c'e domanda, aggiungi slide completamento
     if (!giorno.domanda) slides.push({ type: 'completa', label: 'Completa' });
@@ -197,6 +204,11 @@ export default function GiornoPage() {
   const isLastSlide = effectiveSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
   const weekTool = WEEK_TOOLS[weekNumber] || undefined;
+  const isCheckSlide = currentSlideData?.type === 'check';
+  // Sulla slide della pratica il primario è "Inizia la pratica": "Continua" torna primario
+  // solo dopo la pratica guidata (o se il giorno è già fatto).
+  const continueIsSecondary = currentSlideData?.type === 'pratica' && hasPracticeTimer && !completed && !practiceDone;
+  const dayTitle = giorno?.titolo?.replace(/^W\d+-G\d+ — /, '') || `Giorno ${dayNumber}`;
   // Usa il giorno REALE della settimana (1=Lun, 7=Dom), non il dayNumber del percorso
   const jsDay = new Date().getDay();
   const todayWeekday = jsDay === 0 ? 7 : jsDay;
@@ -351,9 +363,8 @@ export default function GiornoPage() {
             <Check className="w-12 h-12 text-white" strokeWidth={3} aria-hidden="true" />
           </div>
           <h1 className="font-display text-display font-bold mb-2 text-center">Giorno {dayNumber} completato</h1>
-          <p className="text-forest-100 text-body-sm text-center mb-1">Settimana {weekNumber}</p>
-          <p className="text-white text-body text-center mb-8 max-w-xs">
-            Ogni giorno conta. Stai costruendo qualcosa di reale.
+          <p className="text-forest-100 text-body text-center mb-8 max-w-xs">
+            Settimana {weekNumber}. Un giorno alla volta: così si costruisce.
           </p>
           {nextTitolo && (
             <div className={`bg-white/10 backdrop-blur-sm rounded-card px-5 py-4 max-w-xs text-center ${isFirstDay && hasTelegram !== null ? 'mb-5' : 'mb-10'}`}>
@@ -371,7 +382,7 @@ export default function GiornoPage() {
               <p className="text-forest-100 text-body-sm leading-relaxed mb-3">
                 Ti scrive lui domattina e ti ricorda la pratica. Un tap e il Coach è nel tuo Telegram.
               </p>
-              <Button variant="inverse" fullWidth onClick={handleTelegramLink} loading={telegramLinkLoading}>
+              <Button variant="secondary" fullWidth onClick={handleTelegramLink} loading={telegramLinkLoading}>
                 {telegramLinkLoading ? 'Apriamo Telegram…' : 'Attiva il Coach su Telegram'}
               </Button>
               {telegramLinkFailed && (
@@ -406,7 +417,7 @@ export default function GiornoPage() {
           icon={<Dumbbell size={18} aria-hidden />}
           onClick={() => router.push('/strumenti')}
         >
-          Oppure allena ciò che vuoi in Palestra
+          Vuoi fare altro? Vai in Palestra
         </Button>
       </main>
     );
@@ -423,10 +434,10 @@ export default function GiornoPage() {
           </div>
           <h1 className="font-display text-display font-bold mb-3">Giornata avviata</h1>
           <p className="text-white text-body leading-relaxed mb-2">
-            Il Reset è fatto, le istruzioni le hai. Adesso chiudi l&apos;app e vivi la tua giornata.
+            Le istruzioni le hai. Chiudi l&apos;app e vai in campo.
           </p>
           <p className="text-forest-100 text-body leading-relaxed mb-10">
-            Stasera torni qui: una riga e chiudi il giorno.
+            Stasera torni qui: una riga e il giorno è chiuso.
           </p>
         </div>
         <Button
@@ -443,7 +454,7 @@ export default function GiornoPage() {
           className="mt-4"
           onClick={() => setJustStarted(false)}
         >
-          Ho già vissuto la mia giornata: vai alla riflessione
+          Ho già vissuto la mia giornata
         </Button>
       </main>
     );
@@ -452,25 +463,20 @@ export default function GiornoPage() {
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
 
-      {/* Immersive header */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
+      {/* Immersive header (compatto: l'unico gradiente della schermata) */}
+      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-10">
         <div className="max-w-xl mx-auto">
           <BackButton href={`/settimana/${weekNumber}`} label={`Settimana ${weekNumber}`} tone="light" className="mb-3" />
           <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1">
             Settimana {weekNumber} · Giorno {dayNumber}
             {giorno.durataMinuti > 0 ? ` · ${giorno.durataMinuti} min` : ''}
           </p>
-          <h1 className="font-display text-title-1 font-bold text-white">
-            {giorno.titolo?.replace(/^W\d+-G\d+ — /, '') || `Giorno ${dayNumber}`}
+          <h1 className="font-display text-title-1 font-bold text-white" style={{ textWrap: 'balance' }}>
+            {dayTitle}
           </h1>
-          {completed && (
-            <span className="inline-flex items-center gap-1 mt-2 text-caption font-semibold text-forest-100 bg-white/15 px-3 py-1 rounded-full">
-              <Check className="w-3.5 h-3.5" strokeWidth={3} aria-hidden="true" /> Già completato
-            </span>
-          )}
-          {/* Progress dots inside header */}
+          {/* Progress dots */}
           {totalSlides > 1 && (
-            <div className="flex gap-2 mt-5">
+            <div className="flex gap-2 mt-4" aria-hidden="true">
               {slides.map((_, i) => (
                 <div
                   key={i}
@@ -489,24 +495,26 @@ export default function GiornoPage() {
       </div>
 
       {/* Content area — pulled up over header */}
-      <div className="max-w-xl mx-auto px-4 -mt-10 space-y-4">
+      <div className="max-w-xl mx-auto px-4 -mt-6 space-y-4">
 
-        {/* Check giorno precedente */}
-        {showCheck && giorno && (
-          <Card variant="warn" padding="md">
-            <p className="text-body font-semibold text-warning mb-2 flex items-center gap-2">
-              <RotateCcw className="w-4 h-4" aria-hidden="true" /> Come è andata l&apos;ultima pratica?
-            </p>
-            <p className="text-app text-body leading-relaxed mb-4">{giorno.testoCheck}</p>
-            <div className="flex flex-col gap-2">
+        {/* Slide 0 — check del giorno precedente (solo se non ancora risposto) */}
+        {isCheckSlide && (
+          <Card padding="md">
+            <SectionTitle
+              title="Com'è andata l'ultima pratica?"
+              icon={<RotateCcw size={18} />}
+              className="mb-3"
+            />
+            <p className="text-app text-body-lg leading-relaxed mb-5">{giorno.testoCheck}</p>
+            <div className="flex flex-col gap-3">
               <Button
-                variant="secondary"
+                variant="primary"
                 fullWidth
                 icon={<Check size={18} aria-hidden />}
                 onClick={() => saveCheck(1)}
-                disabled={savingCheck}
+                loading={savingCheck}
               >
-                Bene! Andiamo avanti
+                Bene, andiamo avanti
               </Button>
               <Button
                 variant="secondary"
@@ -521,7 +529,7 @@ export default function GiornoPage() {
                 }}
                 disabled={savingCheck}
               >
-                Preferisco parlarne col Coach AI
+                Preferisco parlarne col Coach
               </Button>
             </div>
           </Card>
@@ -539,8 +547,12 @@ export default function GiornoPage() {
 
         {currentSlideData?.type === 'domanda_pre_pratica' && (
           <Card padding="md">
-            <SectionTitle title="Prima di iniziare" icon={<PenLine size={18} />} className="mb-3" />
-            <p className="text-muted text-body mb-3 leading-relaxed">{giorno.domandaPrePratica}</p>
+            <SectionTitle
+              title="Prima di iniziare"
+              icon={<PenLine size={18} />}
+              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domandaPrePratica}</span>}
+              className="mb-4"
+            />
             <Field
               label="La tua risposta"
               htmlFor="pre-pratica"
@@ -554,7 +566,7 @@ export default function GiornoPage() {
                 disabled={completed}
                 rows={4}
                 maxLength={2000}
-                placeholder="Scrivi qui la tua risposta (opzionale)..."
+                placeholder="Scrivi qui, se vuoi..."
               />
             </Field>
           </Card>
@@ -563,104 +575,105 @@ export default function GiornoPage() {
         {currentSlideData?.type === 'pratica' && (
           <Card padding="md" className="border-forest-500/25">
             <SectionTitle
-              title="La Pratica"
-              icon={<Target size={18} />}
-              subtitle={giorno.durataMinuti > 0 ? `${giorno.durataMinuti} min` : undefined}
+              title="La pratica"
+              subtitle={[giorno.durataMinuti > 0 ? `${giorno.durataMinuti} min` : null, weekTool].filter(Boolean).join(' · ') || undefined}
               className="mb-3"
             />
             {prePraticaResponse && (
-              <Card variant="raised" padding="sm" className="mb-4 text-body-sm text-app leading-relaxed">
-                <p className="text-caption font-semibold text-muted mb-1">Quello che hai scritto:</p>
-                {prePraticaResponse}
-              </Card>
+              <p className="text-caption text-muted line-clamp-2 mb-3">Hai scritto: {prePraticaResponse}</p>
             )}
 
             <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
 
-            {/* Perché funziona — SOLO dal campo USER-FACING dedicato (`percheFunziona`).
-                Il campo `contesto` è regia del Coach e dal 14/9 non arriva più al client
-                (`senzaRegia`): il vecchio fallback W1-W4 mostrava ACT, Yerkes-Dodson e
-                anticipazioni del Protocollo. Il box torna in W1-W4 quando Ste scrive i 24 testi. */}
-            {(() => {
-              const perche = giorno.percheFunziona && giorno.percheFunziona.trim();
-              if (!perche) return null;
-              return (
-                <div className="bg-forest-500/10 border-l-4 border-forest-500 rounded-r-lg px-4 py-4 mt-4">
-                  <h3 className="text-body font-semibold text-forest-300 mb-2 flex items-center gap-1.5">
-                    <Lightbulb className="w-4 h-4" aria-hidden="true" /> Perché funziona
-                  </h3>
-                  <p className="text-body text-app leading-relaxed">{perche}</p>
-                </div>
-              );
-            })()}
-
-            {/* Bottone pratica guidata */}
+            {/* UN solo primario: la pratica guidata */}
             {hasPracticeTimer && (
               completed ? (
                 <Button
                   variant="secondary"
                   fullWidth
-                  className="mt-4"
+                  className="mt-5"
                   icon={<RotateCcw size={18} aria-hidden />}
                   onClick={() => setShowPracticePopup(true)}
                 >
-                  Rifai la pratica ({giorno.durataMinuti} min)
+                  Rifai la pratica
                 </Button>
               ) : (
                 <Button
                   variant="hero"
                   size="lg"
                   fullWidth
-                  className="mt-4"
+                  className="mt-5"
                   icon={<Play size={20} aria-hidden />}
                   onClick={() => setShowPracticePopup(true)}
                 >
-                  Inizia pratica guidata ({giorno.durataMinuti} min)
+                  Inizia la pratica
                 </Button>
               )
             )}
+
+            {/* Nota in campo: dopo il contenuto, mai prima */}
+            {notaInPratica && (
+              <Card variant="warn" padding="sm" className="mt-4">
+                <p className="text-body font-semibold text-warning mb-1">Nota in campo</p>
+                <p className="text-app text-body-sm leading-relaxed whitespace-pre-line">
+                  {giorno.notaCampo}
+                </p>
+                {getNextTrainingMessage() && (
+                  <p className="text-warning text-body-sm font-medium flex items-center gap-1.5 mt-3 pt-3 border-t border-warning/30">
+                    <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    {getNextTrainingMessage()}
+                  </p>
+                )}
+              </Card>
+            )}
+
+            {/* Perché funziona — SOLO dal campo USER-FACING dedicato (`percheFunziona`).
+                Il campo `contesto` è regia del Coach e dal 14/9 non arriva più al client
+                (`senzaRegia`): il vecchio fallback W1-W4 mostrava ACT, Yerkes-Dodson e
+                anticipazioni del Protocollo. Il box torna in W1-W4 quando Ste scrive i 24 testi.
+                Chiuso di default: la teoria sta sotto l'azione. */}
+            {(() => {
+              const perche = giorno.percheFunziona && giorno.percheFunziona.trim();
+              if (!perche) return null;
+              return (
+                <details className="group mt-4 border-t border-divider">
+                  <summary className="min-h-[48px] flex items-center gap-2 text-body font-semibold text-forest-300 cursor-pointer list-none select-none">
+                    <Lightbulb className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    <span className="flex-1">Perché funziona</span>
+                    <ChevronRight size={18} className="text-muted transition-transform group-open:rotate-90" aria-hidden />
+                  </summary>
+                  <p className="text-body-sm text-muted leading-relaxed pb-3">{perche}</p>
+                </details>
+              );
+            })()}
           </Card>
         )}
 
         {currentSlideData?.type === 'nota' && (
-          <Card variant="warn" padding="sm">
-            <SectionTitle as="h3" title="Nota in campo" className="mb-1.5" />
+          <Card variant="warn" padding="md">
+            <SectionTitle title="Nota in campo" className="mb-2" />
             <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
               {giorno.notaCampo}
             </p>
             {getNextTrainingMessage() && (
-              <div className="mt-3 pt-3 border-t border-warning/30">
-                <p className="text-warning text-body-sm font-medium flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  {getNextTrainingMessage()}
-                </p>
-              </div>
+              <p className="text-warning text-body-sm font-medium flex items-center gap-1.5 mt-3 pt-3 border-t border-warning/30">
+                <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
+                {getNextTrainingMessage()}
+              </p>
             )}
           </Card>
         )}
 
         {currentSlideData?.type === 'domanda' && (
           <Card padding="md">
-            {jumpToReflection && (
-              <Card variant="warn" padding="sm" className="mb-4 text-center">
-                <p className="text-body text-warning flex items-center justify-center gap-1.5">
-                  <Sun className="w-4 h-4" aria-hidden="true" /> Com&apos;è andata la pratica durante la giornata?
-                </p>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="mt-2"
-                  icon={<ArrowUp size={16} aria-hidden />}
-                  onClick={() => { setReviewMode(true); setCurrentSlide(1); }}
-                >
-                  Rileggi prima le istruzioni del giorno
-                </Button>
-              </Card>
-            )}
-            <SectionTitle title="Riflessione" icon={<PenLine size={18} />} className="mb-3" />
-            <p className="text-muted text-body mb-3 leading-relaxed">{giorno.domanda}</p>
+            <SectionTitle
+              title={jumpToReflection ? "Com'è andata oggi?" : 'La tua riflessione'}
+              icon={jumpToReflection ? <Sun size={18} /> : <PenLine size={18} />}
+              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domanda}</span>}
+              className="mb-4"
+            />
             <Field
               label="La tua risposta"
               htmlFor="riflessione"
@@ -674,9 +687,21 @@ export default function GiornoPage() {
                 disabled={completed}
                 rows={4}
                 maxLength={2000}
-                placeholder="Scrivi qui la tua risposta (opzionale)..."
+                placeholder="Scrivi qui, se vuoi..."
               />
             </Field>
+            {/* Escape hatch (giornata al rientro): sotto il contenuto, non in cima */}
+            {jumpToReflection && (
+              <Button
+                variant="secondary"
+                size="sm"
+                className="mt-4"
+                icon={<ArrowUp size={16} aria-hidden />}
+                onClick={() => { setReviewMode(true); setCurrentSlide(1); }}
+              >
+                Rileggi prima le istruzioni
+              </Button>
+            )}
           </Card>
         )}
 
@@ -685,18 +710,18 @@ export default function GiornoPage() {
             <div className="w-14 h-14 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center mx-auto mb-3" aria-hidden="true">
               <Check className="w-7 h-7" strokeWidth={3} />
             </div>
-            <h2 className="font-display text-title-2 font-bold text-app mb-2">Pronto a completare?</h2>
+            <h2 className="font-display text-title-2 font-bold text-app mb-2">Fatto per oggi?</h2>
             <p className="text-body text-muted">
-              Hai letto l&apos;apertura e praticato. Segna il giorno come completato.
+              Letto e provato. Chiudi il giorno.
             </p>
           </Card>
         )}
 
-        {/* Pratica pre-partita: oggi è giorno partita OPPURE domani è giorno partita */}
+        {/* Pratica pre-partita: oggi è giorno partita OPPURE domani è giorno partita (dopo il contenuto) */}
         {isLastSlide && isMatchDay && settimanaData?.praticaPrePartita && (
           <Card variant="accent" padding="md">
             <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Oggi giochi — pratica pre-partita</p>
-            <p className="text-app text-body leading-relaxed whitespace-pre-line">
+            <p className="text-app text-body-sm leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>
           </Card>
@@ -704,7 +729,7 @@ export default function GiornoPage() {
         {isLastSlide && !isMatchDay && isPreMatchDay && settimanaData?.praticaPrePartita && (
           <Card variant="accent" padding="md">
             <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Domani giochi — pratica pre-partita</p>
-            <p className="text-app text-body leading-relaxed whitespace-pre-line">
+            <p className="text-app text-body-sm leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>
           </Card>
@@ -719,72 +744,75 @@ export default function GiornoPage() {
           </div>
         )}
 
-        {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile */}
-        <div className="flex gap-4">
-          {effectiveSlide > 1 && !jumpToReflection && (
-            <Button
-              variant="secondary"
-              className="flex-1"
-              icon={<ChevronLeft size={18} aria-hidden />}
-              onClick={() => setCurrentSlide(s => s - 1)}
-            >
-              Indietro
-            </Button>
-          )}
-
-          {!isLastSlide && (
-            <Button
-              variant="primary"
-              className="flex-1"
-              iconRight={<ChevronRight size={18} aria-hidden />}
-              onClick={() => setCurrentSlide(s => s + 1)}
-            >
-              Continua
-            </Button>
-          )}
-
-          {isLastSlide && !completed && (
-            <Button
-              variant="primary"
-              className="flex-1"
-              icon={<Check size={18} aria-hidden />}
-              onClick={handleComplete}
-              loading={saving}
-            >
-              {saving ? 'Salvataggio...' : 'Segna come completato'}
-            </Button>
-          )}
-
-          {isLastSlide && completed && (
-            nextUnlocked ? (
-              <Button
-                variant="primary"
-                className="flex-1"
-                iconRight={<ChevronRight size={18} aria-hidden />}
-                onClick={handleContinue}
-              >
-                {dayNumber + 1 === GATE_DAY
-                  ? 'Vai al Gate'
-                  : `Vai al Giorno ${dayNumber + 1}`}
-              </Button>
-            ) : (
+        {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile.
+            Sulla slide del check i due bottoni sono già la navigazione. */}
+        {!isCheckSlide && (
+          <div className="flex gap-4">
+            {effectiveSlide > 1 && !jumpToReflection && (
               <Button
                 variant="secondary"
                 className="flex-1"
-                iconRight={<ChevronRight size={18} aria-hidden />}
-                onClick={() => router.push(`/settimana/${weekNumber}`)}
+                icon={<ChevronLeft size={18} aria-hidden />}
+                onClick={() => setCurrentSlide(s => s - 1)}
               >
-                Torna alla settimana
+                Indietro
               </Button>
-            )
-          )}
-        </div>
+            )}
+
+            {!isLastSlide && (
+              <Button
+                variant={continueIsSecondary ? 'secondary' : 'primary'}
+                className="flex-1"
+                iconRight={<ChevronRight size={18} aria-hidden />}
+                onClick={() => setCurrentSlide(s => s + 1)}
+              >
+                Continua
+              </Button>
+            )}
+
+            {isLastSlide && !completed && (
+              <Button
+                variant="primary"
+                className="flex-1"
+                icon={<Check size={18} aria-hidden />}
+                onClick={handleComplete}
+                loading={saving}
+              >
+                {saving ? 'Salvo...' : 'Ho fatto'}
+              </Button>
+            )}
+
+            {isLastSlide && completed && (
+              nextUnlocked ? (
+                <Button
+                  variant="primary"
+                  className="flex-1"
+                  iconRight={<ChevronRight size={18} aria-hidden />}
+                  onClick={handleContinue}
+                >
+                  {dayNumber + 1 === GATE_DAY
+                    ? 'Vai al Gate'
+                    : `Vai al Giorno ${dayNumber + 1}`}
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  className="flex-1"
+                  iconRight={<ChevronRight size={18} aria-hidden />}
+                  onClick={() => router.push(`/settimana/${weekNumber}`)}
+                >
+                  Torna alla settimana
+                </Button>
+              )
+            )}
+          </div>
+        )}
 
         {/* Stato gia completato */}
         {completed && (
           <Card variant="accent" padding="sm" className="text-center">
             <p className="text-forest-300 font-semibold text-body-sm flex items-center justify-center gap-1.5">
-              <Check className="w-4 h-4" strokeWidth={3} aria-hidden="true" /> Giorno già completato — puoi rileggere le slide
+              <Check className="w-4 h-4" strokeWidth={3} aria-hidden="true" /> Giorno già fatto. Puoi rileggere quando vuoi.
             </p>
           </Card>
         )}
@@ -795,7 +823,7 @@ export default function GiornoPage() {
       {/* Practice Popup */}
       {showPracticePopup && (
         <PracticePopup
-          titolo={giorno.titolo?.replace(/^W\d+-G\d+ — /, '') || `Giorno ${dayNumber}`}
+          titolo={dayTitle}
           pratica={giorno.pratica}
           durataMinuti={giorno.durataMinuti}
           weekTool={weekTool}
@@ -805,6 +833,7 @@ export default function GiornoPage() {
           audioUrl={giorno.audioUrl || undefined}
           onComplete={async () => {
             setShowPracticePopup(false);
+            setPracticeDone(true);
             // Per tipo "giornata": segna come "started" e mostra messaggio uscita
             if (giorno.tipoPratica === 'giornata' && !started && !completed) {
               try {
