@@ -397,13 +397,13 @@ export default function StatistichePage() {
                           <XAxis dataKey="date" tickFormatter={formatShortDate} tick={TICK} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={24} />
                           <YAxis domain={[0, 10]} ticks={[0, 5, 10]} tick={TICK} axisLine={false} tickLine={false} width={28} />
                           <Tooltip content={<ChartTooltip />} cursor={{ stroke: GRID, strokeWidth: 1 }} />
-                          <Area type="monotone" dataKey="fisico" name={SERIES.fisico.label} stroke={SERIES.fisico.color} strokeWidth={2}
+                          <Area type="monotone" isAnimationActive={false} dataKey="fisico" name={SERIES.fisico.label} stroke={SERIES.fisico.color} strokeWidth={2}
                             fill="url(#gradFisico)" connectNulls dot={endDot(SERIES.fisico.color, stateChartData.length - 1)}
                             activeDot={{ r: 5, fill: SERIES.fisico.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
-                          <Line type="monotone" dataKey="recupero" name={SERIES.recupero.label} stroke={SERIES.recupero.color} strokeWidth={2}
+                          <Line type="monotone" isAnimationActive={false} dataKey="recupero" name={SERIES.recupero.label} stroke={SERIES.recupero.color} strokeWidth={2}
                             connectNulls dot={endDot(SERIES.recupero.color, stateChartData.length - 1)}
                             activeDot={{ r: 5, fill: SERIES.recupero.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
-                          <Line type="monotone" dataKey="mentale" name={SERIES.mentale.label} stroke={SERIES.mentale.color} strokeWidth={2}
+                          <Line type="monotone" isAnimationActive={false} dataKey="mentale" name={SERIES.mentale.label} stroke={SERIES.mentale.color} strokeWidth={2}
                             connectNulls dot={endDot(SERIES.mentale.color, stateChartData.length - 1)}
                             activeDot={{ r: 5, fill: SERIES.mentale.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
                         </ComposedChart>
@@ -458,7 +458,7 @@ export default function StatistichePage() {
                   <XAxis dataKey="date" tickFormatter={formatShortDate} tick={TICK} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={24} />
                   <YAxis domain={[0, 12]} ticks={[0, 6, 9, 12]} tick={TICK} axisLine={false} tickLine={false} width={28} tickFormatter={(v: number) => `${v}h`} />
                   <Tooltip content={<ChartTooltip unit="h" />} cursor={{ stroke: GRID, strokeWidth: 1 }} />
-                  <Area type="monotone" dataKey="sonno" name="Sonno" stroke={SERIES.sonno.color} strokeWidth={2}
+                  <Area type="monotone" isAnimationActive={false} dataKey="sonno" name="Sonno" stroke={SERIES.sonno.color} strokeWidth={2}
                     fill="url(#gradSonno)" dot={endDot(SERIES.sonno.color, sleepChartData.length - 1)}
                     activeDot={{ r: 5, fill: SERIES.sonno.color, stroke: 'var(--color-surface)', strokeWidth: 2 }} />
                 </AreaChart>
