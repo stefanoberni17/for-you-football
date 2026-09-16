@@ -11,27 +11,66 @@
 }
 
 @theme {
-  /* Palette forest brand — accent (invariate, restano i verdi del logo) */
-  --color-forest-50:  #f0f1f0;
-  --color-forest-100: #e8eae8;
-  --color-forest-200: #e0e4e0;
-  --color-forest-300: #d0d8d0;
-  --color-forest-400: #b8c0b8;
+  /* ─── Font (app/layout.tsx, next/font). Brand Notion: Outfit per tutto, Crimson Pro corsivo solo per le citazioni ─── */
+  --font-sans: var(--font-outfit), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-outfit), system-ui, sans-serif;
+  --font-quote: var(--font-crimson), Georgia, "Times New Roman", serif;
+
+  /* ─── Palette forest brand ───────────────────────────────────────────────
+     50-200: quasi bianchi, testo secondario SUGLI HEADER A GRADIENTE.
+     300-400: verdi chiari, l'ACCENTO SUL TESTO su fondo scuro (review 16/9:
+     prima erano grigi e 165 usi di text-forest-300/400 si vedevano spenti).
+     500-700: i verdi del logo, riempimenti e gradienti. */
+  --color-forest-50:  #f0f6f2;
+  --color-forest-100: #e3efe7;
+  --color-forest-200: #cfe6d8;
+  --color-forest-300: #8fe0b3;
+  --color-forest-400: #4fd394;
   --color-forest-500: #1a9660;
   --color-forest-600: #147848;
   --color-forest-700: #0e5c3a;
   --color-forest-800: #111c14;
   --color-forest-900: #0a1410;
 
-  /* Palette DARK "For You Dark" — ispirata Spotify ma con tinta forest brand */
+  /* ─── Superfici "For You Dark" (nero verdognolo, stile Spotify) ─── */
   --color-app-bg:        #0d1310;
   --color-surface:       #161e19;
   --color-surface-2:     #1f2a23;
-  --color-divider:       #1f2924;
+  --color-surface-3:     #293429;   /* hover / pressed / chip attivo neutro (prima hardcoded bg-[#293429]) */
+  --color-divider:       #232e27;
   --color-text-app:      #ecefec;
-  --color-text-muted:    #9ca7a0;
-  --color-text-faint:    #6b7470;
-  --color-accent-glow:   #2dd17a;
+  --color-text-muted:    #9ca7a0;   /* 6.9:1 su surface */
+  --color-text-faint:    #7f8a83;   /* 4.8:1 su surface (prima #6b7470 = 3.5:1): solo metadati */
+  --color-accent-glow:   #2dd17a;   /* tab attiva, glow, success */
+
+  /* ─── Colori semantici (separati dall'accento: il verde brand NON è "ok") ─── */
+  --color-success: #2dd17a;
+  --color-warning: #f0b429;
+  --color-danger:  #ef6461;
+  --color-info:    #5aa9e6;
+
+  /* ─── Scala tipografica mobile (rapporto ~1.2). Minimo 12 px; 11 px SOLO overline uppercase. ─── */
+  --text-display: 32px;  --text-display--line-height: 36px;  --text-display--letter-spacing: -0.02em;
+  --text-title-1: 24px;  --text-title-1--line-height: 30px;  --text-title-1--letter-spacing: -0.01em;
+  --text-title-2: 20px;  --text-title-2--line-height: 26px;
+  --text-title-3: 17px;  --text-title-3--line-height: 24px;
+  --text-body-lg: 17px;  --text-body-lg--line-height: 26px;
+  --text-body:    15px;  --text-body--line-height: 23px;
+  --text-body-sm: 14px;  --text-body-sm--line-height: 21px;
+  --text-label:   13px;  --text-label--line-height: 16px;
+  --text-caption: 12px;  --text-caption--line-height: 16px;
+  --text-overline: 11px; --text-overline--line-height: 14px; --text-overline--letter-spacing: 0.08em;
+
+  /* ─── Raggi per ruolo ─── */
+  --radius-btn:   14px;
+  --radius-card:  20px;
+  --radius-sheet: 28px;
+
+  /* ─── Elevazione: su dark contano superficie e bordo, l'ombra solo per i piani sollevati ─── */
+  --shadow-e1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-e2: 0 4px 16px rgb(0 0 0 / 0.45);
+  --shadow-e3: 0 12px 40px rgb(0 0 0 / 0.55);
+  --shadow-glow: 0 0 24px rgb(45 209 122 / 0.28);
 }
 
 html,
@@ -46,7 +85,18 @@ body {
 body {
   background: #0d1310;
   color: #ecefec;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+/* Citazioni: mantra, frasi firma, "Filo Rosso" (Crimson Pro corsivo, solo pullquote) */
+.font-quote {
+  font-family: var(--font-quote);
+  font-style: italic;
 }
 
 /* Testo input — chiaro su dark, placeholder leggibile */
@@ -55,6 +105,26 @@ textarea,
 select {
   color: #ecefec !important;
   background-color: #0a0f0c;
+  font-family: var(--font-sans);
+}
+/* Slider nativi: traccia sottile ma thumb grande (i 4 slider del check-in erano alti 8 px) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 44px;
+  background: transparent;
+  padding: 0;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: #293429; }
+input[type="range"]::-moz-range-track { height: 6px; border-radius: 999px; background: #293429; }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 28px; height: 28px; margin-top: -11px; border-radius: 999px;
+  background: #2dd17a; border: 3px solid #0d1310; box-shadow: 0 0 0 1px #2dd17a;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 28px; height: 28px; border-radius: 999px;
+  background: #2dd17a; border: 3px solid #0d1310; box-shadow: 0 0 0 1px #2dd17a;
 }
 
 input::placeholder,
@@ -65,14 +135,8 @@ textarea::placeholder {
 
 /* Tailwind utility shortcuts per dark theme */
 @layer utilities {
-  .bg-app { background-color: #0d1310; }
-  .bg-surface { background-color: #161e19; }
-  .bg-surface-2 { background-color: #1f2a23; }
-  .border-divider { border-color: #1f2924; }
-  .divide-divider > * + * { border-color: #1f2924; }
-  .text-app { color: #ecefec; }
-  .text-muted { color: #9ca7a0; }
-  .text-faint { color: #6b7470; }
+  /* Tap target minimo (Apple HIG 44 pt) per link e icone cliccabili */
+  .tap { min-height: 44px; min-width: 44px; }
 
   /* Dynamic viewport height — su iOS si aggiorna con tastiera/url bar
      (fix per chat "che si rialza" quando appare la keyboard). Fallback vh. */
@@ -140,8 +204,19 @@ textarea::placeholder {
 
 /* Focus-visible globale per accessibilità keyboard (calibrato sul dark).
    Si attiva solo da tastiera (Tab), non da click — mantiene la UX touch pulita. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   outline: none;
   box-shadow:
     0 0 0 2px #0d1310,
