@@ -18,7 +18,7 @@ import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type Plann
 import { caricoPianificato, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
-import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type TrainingSetup } from './trainingSetup';
+import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
@@ -384,7 +384,7 @@ Feedback sedute recenti: ${feedbackTxt}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
 ${massimali}${memoria}${obiettiviTesto(ctx)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${caricoTesto(b.carico)}${piano}
-${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
+${preferenzeTesto(ctx, richiesta)}${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}${precedente ? `\nPiano rifiutato (parti da questo e cambia SOLO ciò che serve, es. togli un blocco o passa alla variante short): ${precedente}` : ''}` : ''}
 
 Componi la settimana a blocchi in JSON.`;
@@ -491,11 +491,35 @@ export function validateCtxFor(ctx: ContextV2): Parameters<typeof validatePlan>[
   };
 }
 
+/**
+ * Preferenze del setup (giorni disponibili, giornate a settimana, tempo per seduta — migration 025):
+ * nel piano AUTOMATICO (nessuna richiesta) diventano i vincoli; con una richiesta esplicita valgono
+ * solo i valori della maschera (che li propone già compilati: un cambio vale per quella settimana).
+ */
+export function applicaPreferenzeSetup(pref: PreferenzeSetup | undefined, vincoli: Vincoli, richiesta?: string): Vincoli {
+  if (richiesta || !pref) return vincoli;
+  const v: Vincoli = { ...vincoli };
+  if (!v.giorniAmmessi?.length && pref.giorni.length) v.giorniAmmessi = pref.giorni;
+  if (!v.numSedute && pref.sedute) v.numSedute = pref.sedute;
+  if (!v.durataMax && pref.durataMin) v.durataMax = pref.durataMin;
+  return v;
+}
+
+function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
+  const p = ctx.base.preferenzeSetup;
+  if (richiesta || !p || (!p.giorni.length && !p.sedute && !p.durataMin)) return '';
+  const righe: string[] = [];
+  if (p.giorni.length) righe.push(`- Giorni in cui può allenarsi con l'app: ${p.giorni.map((d) => DAY_NAMES[d]).join(', ')} (SOLO questi).`);
+  if (p.sedute) righe.push(`- Giornate a settimana: ESATTAMENTE ${seduteRichieste(ctx) ?? p.sedute}.`);
+  if (p.durataMin) righe.push(`- Tempo massimo per seduta: ${p.durataMin} minuti.`);
+  return `\n# PREFERENZE DEL SETUP (regole dure: il validatore le controlla)\n${righe.join('\n')}`;
+}
+
 export async function generateWeekPlanV2(
   userId: string, richiesta?: string, vincoli: Vincoli = {}
 ): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[] }> {
   const ctx = await loadContextV2(userId);
-  ctx.vincoli = vincoli;
+  ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
   if (vincoli.obiettivi?.length) ctx.obiettivi = vincoli.obiettivi;
   const validateCtx = validateCtxFor(ctx);
   const system = systemPrompt(ctx);

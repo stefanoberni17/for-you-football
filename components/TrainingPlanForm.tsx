@@ -11,7 +11,7 @@ interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
  * la richiesta al planner (e i vincoli per il validatore). Niente testo libero,
  * salvo una nota corta.
  */
-export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, generating, onSubmit, onClose }: {
   hasPlan: boolean;
   sedute: SedutaLite[];      // tutte le sedute della settimana (anche passate: i loro giorni non sono liberi)
   oggiDow: number;
@@ -19,14 +19,15 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
   maxSedute?: number;        // giornate totali richiedibili (fisiche + leggere)
   maxSeduteFisiche?: number; // di cui con blocchi fisici (tetto della fase)
   focusSetup?: FocusId[];    // obiettivi della fase dal setup: chip già selezionati, un cambio vale solo per questa settimana
+  preferenzeSetup?: { giorni: number[]; sedute: number | null; durataMin: number | null }; // dal setup (migration 025): già compilati, un cambio vale per questa settimana
   generating: boolean;
   onSubmit: (r: RichiestaGuidata) => void;
   onClose?: () => void;
 }) {
   const [modo, setModo] = useState<'nuova' | 'modifica'>(hasPlan ? 'modifica' : 'nuova');
-  const [giorni, setGiorni] = useState<number[]>([]);
-  const [nSedute, setNSedute] = useState<number | null>(null);
-  const [durata, setDurata] = useState<number | null>(null);
+  const [giorni, setGiorni] = useState<number[]>(preferenzeSetup?.giorni ?? []);
+  const [nSedute, setNSedute] = useState<number | null>(preferenzeSetup?.sedute ?? null);
+  const [durata, setDurata] = useState<number | null>(preferenzeSetup?.durataMin ?? null);
   const [focus, setFocus] = useState<FocusId[]>(focusSetup ?? []);
   const [note, setNote] = useState('');
   const [tipo, setTipo] = useState<ModificaTipo>('sposta');

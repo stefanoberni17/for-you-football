@@ -12,7 +12,7 @@ import {
 import { Activity, AlertTriangle, ChevronRight, ClipboardList, Gauge, MessageCircle, RefreshCw, Settings2 } from 'lucide-react';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
-import { FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
+import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
@@ -467,6 +467,42 @@ export default function AllenamentoHub() {
                 </div>
                 <p className="text-[10px] text-faint mt-1.5">Il preparatore li mette in ogni settimana, anche in quella preparata da sola il lunedì: i primi due hanno sempre almeno un blocco, gli altri dove c&apos;è spazio. &quot;Tutto&quot; = settimana equilibrata su ogni aspetto. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</p>
               </div>
+              <div>
+                <p className="text-xs font-semibold text-muted mb-1.5">Quando puoi allenarti con l&apos;app? <span className="text-faint font-normal">(vuoto = decide il preparatore)</span></p>
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => {
+                    const on = (setupDraft.giorni ?? []).includes(d);
+                    const mark = state.calendario?.matchDays.includes(d) ? ' ⚽' : state.calendario?.trainingDays.includes(d) ? ' ·S' : '';
+                    return (
+                      <button key={d} onClick={() => setSetupDraft({ ...setupDraft, giorni: on ? (setupDraft.giorni ?? []).filter((x) => x !== d) : [...(setupDraft.giorni ?? []), d].sort((a, b) => a - b) })}
+                        className={`text-xs px-3 py-1.5 rounded-full border ${on ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                        {DAY_SHORT_NAMES[d]}{mark}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs font-semibold text-muted mb-1.5">Giornate a settimana <span className="text-faint font-normal">(max {state.maxSeduteTotali ?? state.maxSeduteFisiche ?? 3})</span></p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Array.from({ length: state.maxSeduteTotali ?? state.maxSeduteFisiche ?? 3 }, (_, i) => i + 1).map((n) => (
+                      <button key={n} onClick={() => setSetupDraft({ ...setupDraft, sedute: setupDraft.sedute === n ? null : n })}
+                        className={`text-xs px-3 py-1.5 rounded-full border ${setupDraft.sedute === n ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>{n}</button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-muted mb-1.5">Tempo per seduta</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DURATE.map((d) => (
+                      <button key={d} onClick={() => setSetupDraft({ ...setupDraft, durataMin: setupDraft.durataMin === d ? null : d })}
+                        className={`text-xs px-3 py-1.5 rounded-full border ${setupDraft.durataMin === d ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>{d}&apos;</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-[10px] text-faint -mt-2">Valgono per ogni settimana, anche per il piano preparato da solo il lunedì. In &quot;Rifai da capo&quot; li trovi già compilati e puoi cambiarli per una settimana sola. Oltre le {state.maxSeduteFisiche ?? 3} giornate con forza o corsa, le altre sono solo fascia, tecnica o recupero.</p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-xs font-semibold text-muted mb-1.5">Peso corporeo (kg)</p>
@@ -790,6 +826,7 @@ export default function AllenamentoHub() {
                 maxSedute={state.maxSeduteTotali ?? state.maxSeduteFisiche}
                 maxSeduteFisiche={state.maxSeduteFisiche}
                 focusSetup={state.setup.focus}
+                preferenzeSetup={{ giorni: state.setup.giorni ?? [], sedute: state.setup.sedute ?? null, durataMin: state.setup.durataMin ?? null }}
                 generating={generating}
                 onSubmit={generaPiano}
                 onClose={state.plan ? () => setShowRigenera(false) : undefined}
