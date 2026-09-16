@@ -1005,6 +1005,18 @@ Report: `docs/review-2026-09-13.md`; decisioni di Ste nella risposta del 13/9 (c
 
 ---
 
+## Design system (blocco 0 del restyle, 16 set 2026)
+
+Review completa e piano a 6 blocchi: `docs/ui-review-2026-09-16.md`. Brand da Notion ("Brief Landing Page → Brand & stile visivo"): Forest Green su grigio metallo, **Outfit per tutto**, **Crimson Pro corsivo solo per le citazioni**, tono essenziale, niente yoga/candele, niente emoji decorative. Principi UX di Ste (Notion "Struttura App"): frizione minima (pratica in <30", nessun menù nascosto), progresso visibile, nessun obbligo, il Coach non appare senza invito. Voce (Notion "Voce"): parole da spogliatoio anche nella microcopy dell'interfaccia.
+
+**Token (`app/globals.css`, blocco `@theme`)** — unica fonte: font `--font-sans`/`--font-display` (Outfit, caricato in `app/layout.tsx` come `--font-outfit`) e `--font-quote` (Crimson Pro, classe `.font-quote`); palette `forest-50..200` quasi bianchi (testo sugli header a gradiente), `forest-300 #8fe0b3` / `forest-400 #4fd394` = ACCENTO SUL TESTO (prima erano grigi), `forest-500..700` riempimenti; superfici `app-bg / surface / surface-2 / surface-3 (hover) / divider`; testo `text-app / text-muted / text-faint` (faint solo metadati, contrasto AA); `accent-glow #2dd17a` per tab attiva e glow; semantici `success / warning / danger / info`; scala `text-display 32 · title-1 24 · title-2 20 · title-3 17 · body-lg 17 · body 15 (default) · body-sm 14 · label 13 · caption 12 · overline 11 (solo uppercase)` — **`text-[9px]`/`text-[10px]`/`text-[11px]` vietati**; raggi `rounded-btn 14 · rounded-card 20 · rounded-sheet 28`; ombre `shadow-e1/e2/e3/glow`; utility `.tap` (44×44); slider nativi con thumb 28 px; `prefers-reduced-motion`.
+
+**Componenti (`components/ui/`, barrel `@/components/ui`)** — `Button` (variant `primary` tinta piatta = UNA per schermata · `hero` gradiente = solo i momenti: Inizia, Gate, fine settimana · `secondary` · `ghost` sempre 44 px · `inverse` bianco su gradiente · `danger`; size sm 44 / md 48 / lg 56; `href` → Link, `loading`, `icon`) · `BackButton` (44 px, `tone light|dark`) · `Card` (`default|raised|accent|warn|danger|hero`, `href/onClick`) · `SectionTitle` (title-3/title-2 + subtitle + `action`) · `Chip` (44 px, selezionato = riempimento + check) · `Banner` (un solo design per suggerimenti/avvisi, X 44 px, mai fixed, mai a fondo pieno) · `Sheet` (bottom sheet unico: handle, header con X, body scroll, footer sticky, `fullscreen` per le pratiche) · `AppLoader` · `Field` + `Input`/`Textarea`/`Select` (min 48 px, focus verde). `SecondaryButton` eliminato; `EmptyState` resta e usa `Button`.
+
+**Regole di pagina:** l'azione di adesso sopra la piega; un solo gradiente e un solo primario per schermata; configurazione e numeri dietro un "dettagli"; le cose bloccate si riassumono in una riga; niente linguaggio di sistema (migration, validatore, quote, enum, ACWR); icone Lucide, emoji solo se contenuto; ogni elemento cliccabile ≥ 44 px; contenuto ≥ 14 px.
+
+**Screenshot con dati finti:** `scratchpad/ui/shoot.mjs` (fuori repo, sessione Claude): server dev su :3100 con Supabase e API intercettate, 13 pagine a 390×844; si rilancia dopo ogni blocco per il prima/dopo.
+
 ## Pattern e Convenzioni
 
 ### Fetch dati (BFF pattern — mai Notion direttamente dal client)

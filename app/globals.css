@@ -191,6 +191,13 @@ textarea::placeholder {
 .animate-scaleIn {
   animation: scaleIn 0.4s ease-out;
 }
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slideUp {
+  animation: slideUp 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
 @keyframes ballBounce {
   0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
