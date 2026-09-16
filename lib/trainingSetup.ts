@@ -4,7 +4,7 @@
  * Colonne su profiles (migration 017), scritte solo via /api/training/setup.
  */
 
-import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
+import { DURATE, FOCUS_SETUP_MAX, SEDUTE_MAX, focusValidi, type FocusId } from './trainingRequest';
 
 /** Attrezzatura selezionabile (combacia con AttrezzaturaV2 del catalogo v2) */
 export const ATTREZZATURA_OPZIONI = ['palestra', 'kettlebell', 'sbarra', 'piccoli attrezzi', 'campo', 'headball'] as const;
@@ -44,6 +44,25 @@ export interface TrainingSetup {
   squadraDurataMin: number | null;
   /** Obiettivi della fase, in ordine (migration 024): se la colonna manca → []. */
   focus: FocusId[];
+  /** Preferenze stabili (migration 025, Ste 16/9): giorni disponibili con l'app, giornate a settimana, tempo per seduta. */
+  giorni: number[];
+  sedute: number | null;
+  durataMin: number | null;
+}
+
+export interface PreferenzeSetup { giorni: number[]; sedute: number | null; durataMin: number | null }
+
+/** Legge/valida le preferenze dal profilo (colonne della migration 025): se mancano → vuote. */
+export function preferenzeValide(row: Record<string, unknown> | null | undefined): PreferenzeSetup {
+  const giorni = Array.isArray(row?.training_giorni)
+    ? [...new Set((row!.training_giorni as unknown[]).map(Number).filter((d) => Number.isInteger(d) && d >= 1 && d <= 7))].sort((a, b) => a - b) : [];
+  const s = Number(row?.training_sedute);
+  const d = Number(row?.training_durata_min);
+  return {
+    giorni,
+    sedute: Number.isInteger(s) && s >= 1 && s <= SEDUTE_MAX ? s : null,
+    durataMin: (DURATE as readonly number[]).includes(d) ? d : null,
+  };
 }
 
 export function mapSetup(row: Record<string, unknown> | null | undefined): TrainingSetup {
@@ -55,6 +74,7 @@ export function mapSetup(row: Record<string, unknown> | null | undefined): Train
     pesoKg: row?.training_peso_kg != null ? Number(row.training_peso_kg) : null,
     squadraDurataMin: row?.training_squadra_durata_min != null ? Number(row.training_squadra_durata_min) : null,
     focus: focusValidi(row?.training_focus, FOCUS_SETUP_MAX),
+    ...preferenzeValide(row),
   };
 }
 

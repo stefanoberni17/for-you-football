@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
-import { ATTREZZATURA_OPZIONI, FASI, SETUP_SELECT as SELECT, mapSetup } from '@/lib/trainingSetup';
+import { ATTREZZATURA_OPZIONI, FASI, SETUP_SELECT as SELECT, mapSetup, preferenzeValide } from '@/lib/trainingSetup';
 import { parseSquadra } from '@/lib/trainingSquadra';
 import { FOCUS_SETUP_MAX, focusValidi } from '@/lib/trainingRequest';
 
@@ -61,7 +61,17 @@ export async function POST(request: NextRequest) {
     }
     const squadra = body.squadra !== undefined && body.squadra !== null && typeof body.squadra === 'object' ? parseSquadra(body.squadra) : null;
     const focus = Array.isArray(body.focus) ? focusValidi(body.focus, FOCUS_SETUP_MAX) : null;
-    if (Object.keys(update).length === 0 && squadra === null && focus === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+    // Preferenze (migration 025): giorni con l'app, giornate a settimana, tempo per seduta — update separato fail-soft
+    const haPref = body.giorni !== undefined || body.sedute !== undefined || body.durataMin !== undefined;
+    const pref = haPref ? preferenzeValide({ training_giorni: body.giorni, training_sedute: body.sedute, training_durata_min: body.durataMin }) : null;
+    if (Object.keys(update).length === 0 && squadra === null && focus === null && pref === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+
+    let preferenzeSalvate: boolean | null = null;
+    if (pref !== null) {
+      const { error: pErr } = await supabaseAdmin.from('profiles').update({ training_giorni: pref.giorni, training_sedute: pref.sedute, training_durata_min: pref.durataMin }).eq('user_id', userId);
+      preferenzeSalvate = !pErr;
+      if (pErr) console.error('training/setup preferenze (serve la migration 025?):', pErr.message);
+    }
 
     let focusSalvato: boolean | null = null;
     if (focus !== null) {
@@ -79,13 +89,15 @@ export async function POST(request: NextRequest) {
     if (Object.keys(update).length === 0) {
       if (squadra !== null && !squadraSalvata) return NextResponse.json({ error: 'Non riesco a salvare gli allenamenti con la squadra (manca la migration 023)' }, { status: 500 });
       if (focus !== null && !focusSalvato) return NextResponse.json({ error: 'Non riesco a salvare gli obiettivi (manca la migration 024)' }, { status: 500 });
-      return NextResponse.json({ success: true, squadraSalvata, squadra, focusSalvato, focus });
+      if (pref !== null && !preferenzeSalvate) return NextResponse.json({ error: 'Non riesco a salvare giorni e tempo (manca la migration 025)' }, { status: 500 });
+      return NextResponse.json({ success: true, squadraSalvata, squadra, focusSalvato, focus, preferenzeSalvate });
     }
 
     const { data, error } = await supabaseAdmin.from('profiles').update(update).eq('user_id', userId).select(SELECT).maybeSingle();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     if (focus !== null && !focusSalvato) return NextResponse.json({ error: 'Setup salvato, ma non gli obiettivi (manca la migration 024)' }, { status: 500 });
-    return NextResponse.json({ success: true, setup: { ...mapSetup(data), ...(focus !== null ? { focus } : {}) }, squadraSalvata, squadra, focusSalvato });
+    if (pref !== null && !preferenzeSalvate) return NextResponse.json({ error: 'Setup salvato, ma non giorni e tempo (manca la migration 025)' }, { status: 500 });
+    return NextResponse.json({ success: true, setup: { ...mapSetup(data), ...(focus !== null ? { focus } : {}), ...(pref ?? {}) }, squadraSalvata, squadra, focusSalvato, preferenzeSalvate });
   } catch (err) {
     console.error('training/setup POST error:', err);
     return NextResponse.json({ error: 'internal' }, { status: 500 });

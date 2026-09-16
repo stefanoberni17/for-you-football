@@ -7,6 +7,7 @@
  * prompt → fallback deterministico. Mai generazione live durante la seduta.
  */
 import Anthropic from '@anthropic-ai/sdk';
+import { preferenzeValide, type PreferenzeSetup } from './trainingSetup';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
 import { ESERCIZI, REGOLE, TESTS, type FasciaLivello } from './trainingCatalog';
@@ -115,9 +116,17 @@ export interface PlannerContext {
   squadra: SquadraSettimana;
   // Obiettivi della fase dal setup (migration 024), in ordine di priorità — vuoto se non compilati
   focusSetup: FocusId[];
+  preferenzeSetup: PreferenzeSetup; // giorni/giornate/tempo dal setup (migration 025): valgono nel piano automatico
 }
 
 /** profiles.training_focus (migration 024): se la colonna manca → [], senza errore. */
+/** profiles.training_giorni/sedute/durata_min (migration 025): se le colonne mancano → preferenze vuote. */
+export async function loadPreferenzeSetup(userId: string): Promise<PreferenzeSetup> {
+  const { data, error } = await supabaseAdmin.from('profiles').select('training_giorni, training_sedute, training_durata_min').eq('user_id', userId).maybeSingle();
+  if (error || !data) return { giorni: [], sedute: null, durataMin: null };
+  return preferenzeValide(data as Record<string, unknown>);
+}
+
 export async function loadFocusSetup(userId: string): Promise<FocusId[]> {
   const { data, error } = await supabaseAdmin.from('profiles').select('training_focus').eq('user_id', userId).maybeSingle();
   if (error || !data) return [];
@@ -132,7 +141,7 @@ export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }, squadra, focusSetup] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }, squadra, focusSetup, preferenzeSetup] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -148,6 +157,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
       .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
     loadSquadra(userId),
     loadFocusSetup(userId),
+    loadPreferenzeSetup(userId),
   ]);
   // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
   let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
@@ -243,6 +253,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     carico,
     squadra,
     focusSetup,
+    preferenzeSetup,
   };
 }
 
