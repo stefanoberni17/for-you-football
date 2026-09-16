@@ -40,6 +40,7 @@ interface TrainingState {
   setupDisponibile: boolean;
   calendario?: { trainingDays: number[]; matchDays: number[] };
   maxSeduteFisiche?: number;
+  maxSeduteTotali?: number;  // fisiche + giornate leggere (fascia/tecnica/recupero)
   carico?: {
     settimane: { lunedi: string; carico: number; sedute: number; corrente: boolean }[];
     acuto: number; cronico: number; acwr: number | null;
@@ -786,7 +787,8 @@ export default function AllenamentoHub() {
                 sedute={sedute.map((s) => ({ giorno: s.giorno, titolo: s.titolo, modificabile: statoDi(s) === 'oggi' || statoDi(s) === 'futura' }))}
                 oggiDow={oggiDow}
                 calendario={state.calendario}
-                maxSedute={state.maxSeduteFisiche}
+                maxSedute={state.maxSeduteTotali ?? state.maxSeduteFisiche}
+                maxSeduteFisiche={state.maxSeduteFisiche}
                 focusSetup={state.setup.focus}
                 generating={generating}
                 onSubmit={generaPiano}

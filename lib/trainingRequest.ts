@@ -60,7 +60,7 @@ export const DURATE = [30, 45, 60, 75, 90] as const;
 /** Focus della settimana: in ordine di priorità, senza limite (Ste, 14/9: "in ordine ma senza un limite, oppure Tutto"). */
 export const FOCUS_MAX = FOCUS_OPZIONI.length;
 /** Sedute fisiche a settimana richieste dall'atleta (poi clampato al tetto della fase). */
-export const SEDUTE_MAX = 6;
+export const SEDUTE_MAX = 7;
 
 export const MODIFICA_TIPI = [
   { id: 'sposta', label: 'Sposta una seduta' },
@@ -77,7 +77,7 @@ export interface RichiestaGuidata {
   modo: Modo;
   // nuova settimana
   giorni?: number[];        // giorni in cui può allenarsi (1-7); vuoto = decide il planner
-  sedute?: number;          // quante sedute fisiche a settimana (1-SEDUTE_MAX); vuoto = decide il planner
+  sedute?: number;          // quante giornate a settimana (1-SEDUTE_MAX; il planner le clampa a fisiche + leggere della fase); vuoto = decide il planner
   durataMax?: number;       // minuti per seduta
   focus?: FocusId[];        // fino a FOCUS_MAX, in ordine di priorità
   note?: string;            // max 160 caratteri, opzionale
