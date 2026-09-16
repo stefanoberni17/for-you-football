@@ -277,9 +277,10 @@ export default function SettimanePage() {
                       {node}
                       <Card href={`/settimana/${n}`} padding="sm" className="min-h-[56px]" aria-label={`Settimana ${n}: ${titolo}, fatta`}>
                         <div className="flex items-center gap-3 min-h-6">
-                          <p className="flex-1 min-w-0 text-body text-app truncate">
-                            <span className="font-semibold">Settimana {n}</span> · {titolo}
-                          </p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-caption text-faint">Settimana {n}</p>
+                            <p className="text-body font-semibold text-app truncate">{titolo}</p>
+                          </div>
                           <Badge tone="success">Fatta</Badge>
                           <ChevronRight className="w-5 h-5 text-faint shrink-0" aria-hidden="true" />
                         </div>
@@ -294,10 +295,11 @@ export default function SettimanePage() {
                     {node}
                     <Card href={`/settimana/${Math.max(1, n - 1)}`} padding="sm" className="min-h-[56px]" aria-label={`Settimana ${n}: ${titolo}. ${opensTomorrow ? 'Si apre domani' : `Si apre dopo il Gate della Settimana ${n - 1}`}`}>
                       <div className="flex items-center gap-3 min-h-6">
-                        <p className="flex-1 min-w-0 text-body text-muted truncate">
-                          <span className="font-semibold">Settimana {n}</span> · {titolo}
-                        </p>
-                        <Badge tone="neutral">{opensTomorrow ? 'Domani' : `Dopo il Gate ${n - 1}`}</Badge>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-caption text-faint">Settimana {n} · {opensTomorrow ? 'si apre domani' : `si apre dopo il Gate ${n - 1}`}</p>
+                          <p className="text-body font-semibold text-muted truncate">{titolo}</p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-faint shrink-0" aria-hidden="true" />
                       </div>
                     </Card>
                   </div>

@@ -244,7 +244,7 @@ export default function BatteriaTest() {
   const catenaTests = tests.filter((t) => t.id !== 'test-amrap');
   const gruppoV1 = (ids: (id: string) => boolean) => catenaTests.filter((t) => ids(t.id));
   const forzaV1 = gruppoV1((id) => ['test-push', 'test-pull', 'test-core', 'test-lombari'].includes(id));
-  const tecnicaV1 = gruppoV1((id) => id.startsWith('test-pall') || id === 'test-muro');
+  const tecnicaV1 = gruppoV1((id) => id.startsWith('test-pall') || id === 'test-piramide' || id === 'test-muro');
   const fasciaV1 = gruppoV1((id) => id.startsWith('test-fascia'));
   const altriV1 = catenaTests.filter((t) => !forzaV1.includes(t) && !tecnicaV1.includes(t) && !fasciaV1.includes(t));
   const v2Cats = Array.from(new Set(testsV2.map((t) => t.categoria)));
