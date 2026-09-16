@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { useWakeLock } from '@/lib/useWakeLock';
-import { ArrowLeft, Check, ChevronDown, Timer } from 'lucide-react';
+import { AlertTriangle, Check, ChevronDown, Plus, Timer, TrendingUp } from 'lucide-react';
 import TestIstruzioni from '@/components/TestIstruzioni';
+import { AppLoader, BackButton, Button, Card, Chip, Input } from '@/components/ui';
 
 interface TestInfo {
   id: string; nome: string; unita: string; protocollo: string;
@@ -34,6 +34,8 @@ const AREA_LABEL: Record<string, string> = {
   spinta: 'Push', tirata: 'Pull', core: 'Core', lombari: 'Lombari',
 };
 const fmtVal = (v: number, unita: string) => `${v}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
+// Campo numerico piccolo (risultato di un test): Input del design system, valore grande e centrato
+const NUM_INPUT = 'text-center font-bold tabular-nums';
 
 /** Blocco della batteria: numero, titolo, fatti/totali, richiudibile (chiuso da solo quando è completo). */
 function BloccoTest({ n, titolo, sottotitolo, fatti, totali, children }: {
@@ -42,17 +44,17 @@ function BloccoTest({ n, titolo, sottotitolo, fatti, totali, children }: {
   const completo = totali > 0 && fatti >= totali;
   const [open, setOpen] = useState(!completo);
   return (
-    <section className={`rounded-3xl border mb-4 ${completo ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
-      <button type="button" onClick={() => setOpen(!open)} className="w-full flex items-center gap-3 p-4 text-left" aria-expanded={open}>
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${completo ? 'bg-forest-500 text-white' : 'bg-app text-forest-300'}`}>
+    <section className={`rounded-card border mb-4 ${completo ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
+      <button type="button" onClick={() => setOpen(!open)} className="w-full min-h-[56px] flex items-center gap-3 p-4 text-left" aria-expanded={open}>
+        <div className={`w-9 h-9 rounded-btn flex items-center justify-center text-body-sm font-bold shrink-0 ${completo ? 'bg-forest-500 text-white' : 'bg-app text-forest-300'}`}>
           {completo ? <Check size={16} /> : n}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-app">Blocco {n} · {titolo}</p>
-          {sottotitolo && <p className="text-[11px] text-muted leading-snug">{sottotitolo}</p>}
+          <p className="text-body font-bold text-app">Blocco {n} · {titolo}</p>
+          {sottotitolo && <p className="text-body-sm text-muted leading-snug">{sottotitolo}</p>}
         </div>
-        <span className={`text-xs font-semibold tabular-nums shrink-0 ${completo ? 'text-forest-300' : 'text-faint'}`}>{fatti}/{totali}</span>
-        <ChevronDown size={16} className={`text-faint shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <span className={`text-caption font-semibold tabular-nums shrink-0 ${completo ? 'text-forest-300' : 'text-faint'}`}>{fatti}/{totali}</span>
+        <ChevronDown size={18} className={`text-muted shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && <div className="px-4 pb-4">{children}</div>}
     </section>
@@ -109,7 +111,7 @@ export default function BatteriaTest() {
       .map((g) => ({ label: g.label, delta: g.score !== null && prima.get(g.key) != null ? g.score - (prima.get(g.key) as number) : null }))
       .filter((g): g is { label: string; delta: number } => g.delta !== null && g.delta > 0);
     if (saliti.length) {
-      setProgressoMsg(`📈 ${saliti.map((g) => `+${g.delta} in ${g.label}`).join(' · ')}`);
+      setProgressoMsg(saliti.map((g) => `+${g.delta} in ${g.label}`).join(' · '));
       setTimeout(() => setProgressoMsg(null), 5000);
     }
   }, [load]);
@@ -206,7 +208,7 @@ export default function BatteriaTest() {
   };
 
   if (loading) {
-    return <main className="min-h-screen bg-app flex items-center justify-center"><div className="text-4xl animate-ball-bounce">⚽</div></main>;
+    return <AppLoader />;
   }
 
   const fatti = tests.filter((t) => t.done).length;
@@ -214,16 +216,16 @@ export default function BatteriaTest() {
   const catenaTests = tests.filter((t) => t.id !== 'test-amrap');
 
   const cardV1 = (t: typeof tests[number]) => (
-            <div key={t.id} className={`rounded-2xl border p-4 ${t.done ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
-              <button onClick={() => { setCurrent(current === t.id ? null : t.id); setSkillCurrent(null); setValore(t.lastValue != null ? String(t.lastValue) : ''); }} className="w-full text-left">
+            <div key={t.id} className={`rounded-card border p-4 ${t.done ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
+              <button type="button" onClick={() => { setCurrent(current === t.id ? null : t.id); setSkillCurrent(null); setValore(t.lastValue != null ? String(t.lastValue) : ''); }} className="w-full min-h-[52px] text-left" aria-expanded={current === t.id}>
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${t.done ? 'bg-forest-500 text-white' : 'bg-surface-2 text-faint'}`}>
-                    {t.done ? <Check size={15} /> : <span className="text-xs font-bold">·</span>}
+                    {t.done ? <Check size={15} /> : <span className="text-caption font-bold">·</span>}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-app">{t.nome}</p>
+                    <p className="text-body font-semibold text-app">{t.nome}</p>
                     {t.done && (
-                      <p className="text-xs text-forest-400">
+                      <p className="text-body-sm text-forest-400">
                         {t.scelte
                           ? (t.scelte.find((s) => s.valore === t.lastValue)?.label ?? t.lastValue)
                           : `${t.lastValue} ${t.unita}`} — {LIVELLO_LABEL[t.lastLevel || ''] || t.lastLevel}
@@ -238,36 +240,28 @@ export default function BatteriaTest() {
                   {t.scelte ? (
                     <div className="grid grid-cols-2 gap-2 mb-3">
                       {t.scelte.map((s) => (
-                        <button key={s.valore} onClick={() => setValore(String(s.valore))}
-                          className={`py-2.5 px-3 rounded-xl border text-sm font-semibold transition-colors ${
-                            valore === String(s.valore)
-                              ? 'bg-forest-500 border-forest-500 text-white'
-                              : 'bg-surface-2 border-divider text-app'
-                          }`}>
+                        <Chip key={s.valore} selected={valore === String(s.valore)} onClick={() => setValore(String(s.valore))} className="w-full">
                           {s.label}
-                        </button>
+                        </Chip>
                       ))}
                     </div>
                   ) : (
                     <>
                       {(t.unita === 'secondi') && timerLeft === null && (
-                        <button onClick={() => startTimer(5)} className="inline-flex items-center gap-1.5 text-xs text-forest-400 font-semibold mb-3">
-                          <Timer size={13} /> Avvia cronometro 5&apos; (di appoggio)
-                        </button>
+                        <div className="mb-2 -ml-4">
+                          <Button variant="ghost" size="sm" icon={<Timer size={16} />} onClick={() => startTimer(5)}>Avvia cronometro 5&apos; (di appoggio)</Button>
+                        </div>
                       )}
                       <div className="flex items-end justify-center gap-2 mb-3">
-                        <input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
+                        <Input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
                           onChange={(e) => setValore(e.target.value.replace(/[^0-9]/g, ''))}
                           aria-label={`Risultato in ${t.unita}`}
-                          className="w-28 text-center text-3xl font-bold bg-surface-2 border border-divider rounded-2xl py-2.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-                        <p className="text-sm text-faint pb-3">{t.unita}</p>
+                          className={`w-28 !text-3xl ${NUM_INPUT}`} />
+                        <p className="text-caption text-muted pb-3">{t.unita}</p>
                       </div>
                     </>
                   )}
-                  <button onClick={() => salva(t.id)} disabled={saving || !valoreValido}
-                    className="w-full bg-forest-500 text-white font-bold py-3 rounded-xl disabled:opacity-60">
-                    {saving ? 'Salvo…' : 'Salva risultato'}
-                  </button>
+                  <Button fullWidth loading={saving} disabled={!valoreValido} onClick={() => salva(t.id)}>Salva risultato</Button>
                 </div>
               )}
             </div>
@@ -283,22 +277,23 @@ export default function BatteriaTest() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <button onClick={() => router.push('/allenamento')} className="inline-flex items-center gap-1.5 text-sm text-muted mb-3">
-          <ArrowLeft size={16} /> Campo
-        </button>
-        <h1 className="text-2xl font-bold text-app mb-1">Batteria di test</h1>
-        <p className="text-muted text-sm mb-1">Un test alla volta, salvi subito, riprendi quando vuoi.</p>
-        <p className="text-xs text-forest-400 font-semibold mb-5">{fatti + testsV2.filter((t) => t.done).length}/{tests.length + testsV2.length} completati</p>
+        <BackButton onClick={() => router.push('/allenamento')} label="Campo" className="mb-2" />
+        <h1 className="font-display text-title-1 font-bold text-app mb-1">Batteria di test</h1>
+        <p className="text-body text-muted mb-1">Un test alla volta, salvi subito, riprendi quando vuoi.</p>
+        <p className="text-body-sm text-forest-400 font-semibold mb-5 tabular-nums">{fatti + testsV2.filter((t) => t.done).length}/{tests.length + testsV2.length} completati</p>
 
         {savedMsg && (
-          <div className="bg-forest-500/15 border border-forest-500/30 text-forest-300 text-sm font-semibold rounded-xl px-4 py-2.5 mb-4">
-            ✓ {savedMsg}
-          </div>
+          <Card variant="accent" padding="sm" className="mb-4">
+            <p className="text-body-sm font-semibold text-forest-300 flex items-center gap-2"><Check size={16} className="shrink-0" aria-hidden /> {savedMsg}</p>
+          </Card>
         )}
         {progressoMsg && (
-          <div className="bg-forest-500/25 border border-forest-400/50 text-forest-200 text-sm font-bold rounded-xl px-4 py-2.5 mb-4">
-            {progressoMsg} <Link href="/allenamento" className="text-xs font-semibold text-forest-300 underline ml-1">Vedi la Card</Link>
-          </div>
+          <Card variant="accent" padding="sm" className="mb-4">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <p className="text-body-sm font-bold text-forest-300 flex items-center gap-2"><TrendingUp size={16} className="shrink-0" aria-hidden /> {progressoMsg}</p>
+              <Button variant="ghost" size="sm" href="/allenamento" className="-mr-2">Vedi la Card</Button>
+            </div>
+          </Card>
         )}
 
         <BloccoTest n={1} titolo="Forza a corpo libero" sottotitolo="Piegamenti, trazioni, plank, lombari: il tuo punto di partenza per le catene" fatti={forzaV1.filter((t) => t.done).length} totali={forzaV1.length}>
@@ -308,63 +303,62 @@ export default function BatteriaTest() {
           <BloccoTest n={2} titolo="Scala skill" sottotitolo="Prova il max sull'esercizio proposto: sopra la soglia sali di gradino. Falla da fresco, anche in giorni diversi. Tocca un risultato per rifarlo." fatti={ladders.filter((l) => !l.next).length} totali={ladders.length}>
             <div className="space-y-2.5">
               {ladders.map((l) => (
-                <div key={l.area} className="rounded-2xl border bg-surface border-divider p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-bold text-app">{AREA_LABEL[l.area] || l.area}</p>
-                    <p className="text-[11px] text-faint">soglia {fmtVal(l.soglia, l.points[0]?.unita || 'reps')}</p>
+                <Card key={l.area} padding="sm">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-body font-bold text-app">{AREA_LABEL[l.area] || l.area}</p>
+                    <p className="text-caption text-muted">soglia {fmtVal(l.soglia, l.points[0]?.unita || 'reps')}</p>
                   </div>
-                  <div className="space-y-1 mb-2">
+                  <div className="mb-2">
                     {l.points.map((p) => (
                       <div key={p.esercizioId}>
-                        <button onClick={() => {
+                        <button type="button" onClick={() => {
                           setSkillCurrent(skillCurrent === p.esercizioId ? null : p.esercizioId);
                           setCurrent(null); setValore(String(p.valore));
-                        }} className="w-full flex items-center justify-between text-left py-0.5">
-                          <span className="text-xs text-app">{p.nome}</span>
-                          <span className={`text-xs font-semibold tabular-nums ${p.valore >= l.soglia ? 'text-forest-400' : 'text-faint'}`}>
-                            {fmtVal(p.valore, p.unita)} {p.valore >= l.soglia ? '✓' : ''}
+                        }} className="w-full min-h-[52px] flex items-center justify-between gap-3 text-left py-1" aria-expanded={skillCurrent === p.esercizioId}>
+                          <span className="text-body-sm text-app">{p.nome}</span>
+                          <span className={`text-body-sm font-semibold tabular-nums shrink-0 inline-flex items-center gap-1 ${p.valore >= l.soglia ? 'text-forest-400' : 'text-muted'}`}>
+                            {fmtVal(p.valore, p.unita)} {p.valore >= l.soglia ? <Check size={14} aria-hidden /> : null}
                           </span>
                         </button>
                         {skillCurrent === p.esercizioId && (
                           <div className="flex items-center gap-2 py-2">
-                            <input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
+                            <Input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
                               onChange={(e) => setValore(e.target.value.replace(/[^0-9]/g, ''))}
                               aria-label={`Ritesta ${p.nome}`}
-                              className="w-20 text-center text-lg font-bold bg-surface-2 border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-                            <span className="text-[10px] text-faint">{p.unita}</span>
-                            <button onClick={() => salvaSkill(p.esercizioId)} disabled={saving || !valoreValido}
-                              className="bg-forest-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs disabled:opacity-50">Salva</button>
+                              className={`w-20 ${NUM_INPUT}`} />
+                            <span className="text-caption text-muted">{p.unita}</span>
+                            <Button size="sm" loading={saving} disabled={!valoreValido} onClick={() => salvaSkill(p.esercizioId)}>Salva</Button>
                           </div>
                         )}
                       </div>
                     ))}
                   </div>
                   {l.next ? (
-                    <div className="bg-surface-2 rounded-xl p-3">
-                      <p className="text-xs font-semibold text-app mb-0.5">Prossimo: {l.next.nome}</p>
-                      {l.next.descrizione && <p className="text-[11px] text-muted leading-relaxed mb-2">{l.next.descrizione}</p>}
-                      <p className="text-[11px] text-forest-400 font-semibold mb-2">Obiettivo: ≥ {fmtVal(l.soglia, l.next.unita)} per salire ancora</p>
+                    <Card variant="raised" padding="sm">
+                      <p className="text-body-sm font-semibold text-app mb-0.5">Prossimo: {l.next.nome}</p>
+                      {l.next.descrizione && <p className="text-body-sm text-muted leading-relaxed mb-2">{l.next.descrizione}</p>}
+                      <p className="text-body-sm text-forest-400 font-semibold mb-2">Obiettivo: ≥ {fmtVal(l.soglia, l.next.unita)} per salire ancora</p>
                       {skillCurrent === l.next.id ? (
                         <div className="flex items-center gap-2">
-                          <input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
+                          <Input type="text" inputMode="numeric" pattern="[0-9]*" value={valore} placeholder="0"
                             onChange={(e) => setValore(e.target.value.replace(/[^0-9]/g, ''))}
                             aria-label={`Risultato ${l.next.nome}`}
-                            className="w-20 text-center text-lg font-bold bg-app border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-                          <span className="text-[10px] text-faint">{l.next.unita}</span>
-                          <button onClick={() => salvaSkill(l.next!.id)} disabled={saving || !valoreValido}
-                            className="bg-forest-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs disabled:opacity-50">Salva</button>
+                            className={`w-20 ${NUM_INPUT}`} />
+                          <span className="text-caption text-muted">{l.next.unita}</span>
+                          <Button size="sm" loading={saving} disabled={!valoreValido} onClick={() => salvaSkill(l.next!.id)}>Salva</Button>
                         </div>
                       ) : (
-                        <button onClick={() => { setSkillCurrent(l.next!.id); setCurrent(null); setValore(''); }}
-                          className="text-xs font-semibold text-forest-400">+ Inserisci il max</button>
+                        <div className="-ml-4">
+                          <Button variant="ghost" size="sm" icon={<Plus size={16} />} onClick={() => { setSkillCurrent(l.next!.id); setCurrent(null); setValore(''); }}>Inserisci il max</Button>
+                        </div>
                       )}
-                    </div>
+                    </Card>
                   ) : (
-                    <p className="text-[11px] font-semibold text-forest-300">
-                      ✓ Scala completa{l.amrap ? ` — per l'AMRAP: ${l.amrap.nome}` : ''}
+                    <p className="text-body-sm font-semibold text-forest-300 flex items-center gap-1.5">
+                      <Check size={14} aria-hidden /> Scala completa{l.amrap ? ` — per l'AMRAP: ${l.amrap.nome}` : ''}
                     </p>
                   )}
-                </div>
+                </Card>
               ))}
             </div>
           </BloccoTest>
@@ -383,7 +377,9 @@ export default function BatteriaTest() {
         {testsV2.length > 0 && (
           <>
             {pesoCorporeo === null && (
-              <p className="text-[11px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2 mb-4">⚠️ Per il livello in palestra serve il peso corporeo: inseriscilo in &quot;Il tuo setup&quot; nel Campo.</p>
+              <Card variant="warn" padding="sm" className="mb-4">
+                <p className="text-body-sm text-warning flex gap-2"><AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden /><span>Per il livello in palestra serve il peso corporeo: inseriscilo in &quot;Il tuo setup&quot; nel Campo.</span></p>
+              </Card>
             )}
             {v2Cats.map((cat, ci) => {
                 const grp = testsV2.filter((t) => t.categoria === cat);
@@ -391,46 +387,44 @@ export default function BatteriaTest() {
                   <BloccoTest key={cat} n={nBase + ci + 1} titolo={grp[0].categoriaLabel}
                     sottotitolo={cat === 'palestra' ? 'Inserisci peso e ripetizioni di una serie pulita (5-10): l\'app stima il massimale' : undefined}
                     fatti={grp.filter((t) => t.done).length} totali={grp.length}>
-                    <div className="space-y-1">
+                    <div>
                       {grp.map((t) => (
                         <div key={t.id}>
-                          <button onClick={() => { setV2Current(v2Current === t.id ? null : t.id); setCurrent(null); setSkillCurrent(null); setValore(t.lastValue != null && !t.lift ? String(t.lastValue) : ''); setLiftPeso(t.dettaglio?.peso != null ? String(t.dettaglio.peso) : ''); setLiftReps(t.dettaglio?.reps != null ? String(t.dettaglio.reps) : ''); }}
-                            className="w-full flex items-center justify-between text-left py-1">
-                            <span className={`text-xs ${t.done ? 'text-app' : 'text-muted'}`}>{t.done ? '✓ ' : ''}{t.nome}</span>
-                            <span className="text-xs font-semibold tabular-nums text-forest-400">
+                          <button type="button" onClick={() => { setV2Current(v2Current === t.id ? null : t.id); setCurrent(null); setSkillCurrent(null); setValore(t.lastValue != null && !t.lift ? String(t.lastValue) : ''); setLiftPeso(t.dettaglio?.peso != null ? String(t.dettaglio.peso) : ''); setLiftReps(t.dettaglio?.reps != null ? String(t.dettaglio.reps) : ''); }}
+                            className="w-full min-h-[52px] flex items-center justify-between gap-3 text-left py-1" aria-expanded={v2Current === t.id}>
+                            <span className={`text-body-sm inline-flex items-center gap-1.5 ${t.done ? 'text-app' : 'text-muted'}`}>{t.done ? <Check size={14} className="text-forest-400 shrink-0" aria-hidden /> : null}{t.nome}</span>
+                            <span className="text-body-sm font-semibold tabular-nums text-forest-400 shrink-0">
                               {t.done ? (t.lift ? `${t.lastValue} kg` : fmtVal(t.lastValue!, t.unita === 'cm' ? 'cm' : t.unita)) : ''}
                               {t.done && t.lastLevel && !(t.lift && t.dettaglio?.senza_peso_corporeo) ? ` · ${LIVELLO_LABEL[t.lastLevel] || t.lastLevel}` : ''}
                             </span>
                           </button>
                           {v2Current === t.id && (
-                            <div className="pb-3 pt-1 border-t border-divider mt-1">
-                              <TestIstruzioni t={t} nota={t.provvisorio ? '⚠️ Soglie di livello provvisorie: il valore è giusto, la fascia può cambiare.' : null} />
+                            <div className="pb-3 pt-2 border-t border-divider mt-1">
+                              <TestIstruzioni t={t} />
                               {t.lift ? (
                                 <div className="flex items-end gap-2 flex-wrap">
                                   <div className="text-center">
-                                    <input type="text" inputMode="decimal" value={liftPeso} placeholder="kg"
+                                    <Input type="text" inputMode="decimal" value={liftPeso} placeholder="kg"
                                       onChange={(e) => setLiftPeso(e.target.value.replace(/[^0-9.,]/g, ''))} aria-label="Peso in kg"
-                                      className="w-20 text-center text-lg font-bold bg-surface-2 border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-                                    <p className="text-[10px] text-faint">kg</p>
+                                      className={`w-20 ${NUM_INPUT}`} />
+                                    <p className="text-caption text-muted mt-1">kg</p>
                                   </div>
-                                  <span className="text-faint pb-5">×</span>
+                                  <span className="text-muted pb-6">×</span>
                                   <div className="text-center">
-                                    <input type="text" inputMode="numeric" pattern="[0-9]*" value={liftReps} placeholder="reps"
+                                    <Input type="text" inputMode="numeric" pattern="[0-9]*" value={liftReps} placeholder="reps"
                                       onChange={(e) => setLiftReps(e.target.value.replace(/[^0-9]/g, ''))} aria-label="Ripetizioni"
-                                      className="w-20 text-center text-lg font-bold bg-surface-2 border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-                                    <p className="text-[10px] text-faint">reps (1-12)</p>
+                                      className={`w-20 ${NUM_INPUT}`} />
+                                    <p className="text-caption text-muted mt-1">reps (1-12)</p>
                                   </div>
-                                  <button onClick={() => salvaV2(t)} disabled={saving || !liftPeso || !liftReps}
-                                    className="bg-forest-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs disabled:opacity-50 mb-4">Stima e salva</button>
+                                  <Button size="sm" loading={saving} disabled={!liftPeso || !liftReps} onClick={() => salvaV2(t)} className="mb-5">Stima e salva</Button>
                                 </div>
                               ) : (
-                                <div className="flex items-center gap-2">
-                                  <input type="text" inputMode="decimal" value={valore} placeholder="0"
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <Input type="text" inputMode="decimal" value={valore} placeholder="0"
                                     onChange={(e) => setValore(e.target.value.replace(/[^0-9.,]/g, ''))} aria-label={`Risultato ${t.nome}`}
-                                    className="w-24 text-center text-lg font-bold bg-surface-2 border border-divider rounded-xl py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-                                  <span className="text-[10px] text-faint">{t.unita}{t.verso === 'min' ? ' (meno è meglio)' : ''}</span>
-                                  <button onClick={() => salvaV2(t)} disabled={saving || !valoreDecValido}
-                                    className="bg-forest-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs disabled:opacity-50">Salva</button>
+                                    className={`w-24 ${NUM_INPUT}`} />
+                                  <span className="text-caption text-muted">{t.unita}{t.verso === 'min' ? ' (meno è meglio)' : ''}</span>
+                                  <Button size="sm" loading={saving} disabled={!valoreDecValido} onClick={() => salvaV2(t)}>Salva</Button>
                                 </div>
                               )}
                             </div>
@@ -449,50 +443,45 @@ export default function BatteriaTest() {
         <div>
           {(() => { const a = tests.find((t) => t.id === 'test-amrap'); return a ? <TestIstruzioni t={a} /> : null; })()}
           {amrapCircuit.length > 0 ? (
-            <div className="bg-surface-2 rounded-xl p-3 mb-3">
-              <p className="text-[11px] uppercase tracking-widest text-faint mb-1.5">1 giro =</p>
+            <Card variant="raised" padding="sm" className="mb-3">
+              <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1.5">1 giro =</p>
               {amrapCircuit.map((s, i) => (
-                <p key={i} className="text-sm text-app">• {s.quantita}{s.unita === 'secondi' ? '"' : ''} {s.nome}</p>
+                <p key={i} className="text-body text-app">• {s.quantita}{s.unita === 'secondi' ? '"' : ''} {s.nome}</p>
               ))}
-            </div>
+            </Card>
           ) : (
-            <p className="text-xs text-amber-300/90 mb-3">Completa prima i test di catena per vedere il tuo circuito.</p>
+            <p className="text-body-sm text-warning mb-3">Completa prima i test di catena per vedere il tuo circuito.</p>
           )}
           {timerLeft !== null ? (
             <div className="text-center py-3">
-              <p className="text-5xl font-bold text-app tabular-nums">{Math.floor(timerLeft / 60)}:{String(timerLeft % 60).padStart(2, '0')}</p>
-              <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); setTimerLeft(null); }} className="text-xs text-faint mt-2">Ferma il timer</button>
+              <p className="font-display text-5xl font-bold text-app tabular-nums">{Math.floor(timerLeft / 60)}:{String(timerLeft % 60).padStart(2, '0')}</p>
+              <div className="mt-1"><Button variant="ghost" size="sm" onClick={() => { if (timerRef.current) clearInterval(timerRef.current); setTimerLeft(null); }}>Ferma il timer</Button></div>
             </div>
           ) : (
-            <button onClick={() => startTimer(20)} disabled={amrapCircuit.length === 0}
-              className="w-full bg-surface-2 border border-divider text-app font-semibold py-2.5 rounded-xl text-sm mb-3 disabled:opacity-50 inline-flex items-center justify-center gap-2">
-              <Timer size={15} /> Avvia i 20 minuti
-            </button>
+            <Button variant="secondary" fullWidth icon={<Timer size={18} />} disabled={amrapCircuit.length === 0} onClick={() => startTimer(20)} className="mb-3">
+              Avvia i 20 minuti
+            </Button>
           )}
           <div className="flex items-center gap-3">
             <div className="flex items-end gap-2 flex-1 justify-center">
-              <input type="text" inputMode="numeric" pattern="[0-9]*"
+              <Input type="text" inputMode="numeric" pattern="[0-9]*"
                 value={current === 'test-amrap' ? valore : ''} placeholder="0"
                 onFocus={() => { if (current !== 'test-amrap') { setCurrent('test-amrap'); setValore(''); } }}
                 onChange={(e) => { setCurrent('test-amrap'); setValore(e.target.value.replace(/[^0-9]/g, '')); }}
                 aria-label="Giri completati"
-                className="w-24 text-center text-2xl font-bold bg-surface-2 border border-divider rounded-xl py-2 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums placeholder:text-faint" />
-              <p className="text-[10px] text-faint pb-2.5">giri</p>
+                className={`w-24 !text-2xl ${NUM_INPUT}`} />
+              <p className="text-caption text-muted pb-3">giri</p>
             </div>
-            <button onClick={() => salva('test-amrap')} disabled={saving || current !== 'test-amrap' || !valoreValido || amrapCircuit.length === 0}
-              className="bg-forest-500 text-white font-bold py-2.5 px-4 rounded-xl text-sm disabled:opacity-50">Salva</button>
+            <Button size="sm" loading={saving} disabled={current !== 'test-amrap' || !valoreValido || amrapCircuit.length === 0} onClick={() => salva('test-amrap')}>Salva</Button>
           </div>
         </div>
         </BloccoTest>
 
         {fatti > 0 && (
-          <button onClick={chiudiBatteria}
-            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3.5 rounded-2xl">
-            Chiudi la batteria → vai alla Card
-          </button>
+          <Button size="lg" fullWidth onClick={chiudiBatteria}>Chiudi la batteria e vai alla Card</Button>
         )}
-        <p className="text-[11px] text-faint text-center mt-3 leading-relaxed">
-          ⚠️ Fermati subito se senti dolore. I test si possono completare anche in giorni diversi.
+        <p className="text-body-sm text-warning text-center mt-3 leading-relaxed">
+          Fermati subito se senti dolore. I test si possono completare anche in giorni diversi.
         </p>
       </div>
     </main>

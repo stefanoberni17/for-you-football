@@ -1,10 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, MODIFICA_TIPI, SEDUTE_MAX, toggleFocus, type FocusId, type ModificaTipo, type RichiestaGuidata } from '@/lib/trainingRequest';
+import { Button, Card, Chip, Input } from '@/components/ui';
 
 interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
+
+/** Etichetta corta di un gruppo di chip; la parentetica va sotto, in caption. */
+function Label({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
+  return (
+    <div className="mb-2">
+      <p className="text-label font-semibold text-app">{children}</p>
+      {hint && <p className="text-caption text-muted mt-0.5">{hint}</p>}
+    </div>
+  );
+}
 
 /**
  * Maschera guidata per generare o modificare la settimana: pochi campi che compongono
@@ -39,7 +50,6 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
 
   const toggle = <T,>(arr: T[], v: T, max?: number) => arr.includes(v) ? arr.filter((x) => x !== v) : (max && arr.length >= max ? arr : [...arr, v]);
   const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= oggiDow && !sedute.some((s) => s.giorno === d));
-  const chip = (active: boolean) => `text-xs font-semibold rounded-full px-3 py-1.5 border transition-colors ${active ? 'bg-forest-500/25 border-forest-400/60 text-forest-200' : 'bg-surface-2 border-divider text-muted'}`;
 
   const squadra = calendario?.trainingDays ?? [];
   const partite = calendario?.matchDays ?? [];
@@ -75,14 +85,13 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
   };
 
   return (
-    <div className="bg-surface rounded-2xl border border-divider p-4 mb-5">
+    <Card padding="sm" className="mb-5">
       {hasPlan && (
-        <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="grid grid-cols-2 gap-2 mb-4">
           {(['modifica', 'nuova'] as const).map((m) => (
-            <button key={m} type="button" onClick={() => setModo(m)}
-              className={`text-xs font-bold rounded-xl py-2 border ${modo === m ? 'bg-forest-500/25 border-forest-400/60 text-forest-200' : 'bg-surface-2 border-divider text-muted'}`}>
+            <Chip key={m} size="lg" selected={modo === m} onClick={() => setModo(m)} className="w-full">
               {m === 'modifica' ? 'Modifica la settimana' : 'Rifai da capo'}
-            </button>
+            </Chip>
           ))}
         </div>
       )}
@@ -90,114 +99,113 @@ export default function TrainingPlanForm({ hasPlan, sedute, oggiDow, calendario,
       {modo === 'nuova' ? (
         <>
           {/* La settimana squadra caricata dall'utente: si vede PRIMA di scegliere i giorni */}
-          <div className="bg-surface-2 border border-divider rounded-xl px-3 py-2.5 mb-3">
-            <p className="text-[11px] font-semibold text-muted mb-1">La tua settimana con la squadra</p>
+          <Card variant="raised" padding="sm" className="mb-4">
+            <p className="text-label font-semibold text-muted mb-2">La tua settimana con la squadra</p>
             {haCalendario ? (
               <div className="flex flex-wrap gap-1.5">
                 {[1, 2, 3, 4, 5, 6, 7].map((d) => {
                   const p = partite.includes(d), s = squadra.includes(d);
                   return (
-                    <span key={d} className={`text-[11px] rounded-full px-2 py-1 border ${p ? 'bg-amber-500/15 border-amber-500/40 text-amber-200' : s ? 'bg-forest-500/15 border-forest-500/40 text-forest-200' : 'border-divider text-faint'}`}>
+                    <span key={d} className={`text-caption rounded-full px-2.5 py-1 border ${p ? 'bg-warning/15 border-warning/40 text-warning' : s ? 'bg-forest-500/15 border-forest-500/40 text-forest-300' : 'border-divider text-muted'}`}>
                       {DAY_SHORT_NAMES[d]}{p ? ' ⚽ partita' : s ? ' · squadra' : ''}
                     </span>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-[11px] text-faint">Nessun calendario caricato: impostalo dalla home (card calendario), così le sedute girano intorno a squadra e partita.</p>
+              <p className="text-body-sm text-muted">Nessun calendario caricato: impostalo dalla home (card calendario), così le sedute girano intorno a squadra e partita.</p>
             )}
-          </div>
+          </Card>
 
-          <p className="text-xs font-semibold text-app mb-1.5">Quante giornate a settimana? <span className="text-faint font-normal">(vuoto = decide il preparatore; massimo {tettoSedute}: {maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero)</span></p>
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <Label hint={`Vuoto = decide il preparatore. Massimo ${tettoSedute}: ${maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero.`}>Quante giornate a settimana?</Label>
+          <div className="flex flex-wrap gap-2 mb-4">
             {Array.from({ length: tettoSedute }, (_, i) => i + 1).map((n) => (
-              <button key={n} type="button" onClick={() => setNSedute(nSedute === n ? null : n)} className={chip(nSedute === n)}>{n}</button>
+              <Chip key={n} selected={nSedute === n} showCheck={false} onClick={() => setNSedute(nSedute === n ? null : n)}>{n}</Chip>
             ))}
           </div>
 
-          <p className="text-xs font-semibold text-app mb-1.5">Quando puoi allenarti con l&apos;app? <span className="text-faint font-normal">(vuoto = decide il preparatore)</span></p>
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <Label hint="Vuoto = decide il preparatore.">Quando puoi allenarti con l&apos;app?</Label>
+          <div className="flex flex-wrap gap-2 mb-4">
             {[1, 2, 3, 4, 5, 6, 7].map((d) => (
-              <button key={d} type="button" onClick={() => setGiorni(toggle(giorni, d).sort())} className={chip(giorni.includes(d))}>{DAY_SHORT_NAMES[d]}{marker(d)}</button>
+              <Chip key={d} selected={giorni.includes(d)} showCheck={false} onClick={() => setGiorni(toggle(giorni, d).sort())}>{DAY_SHORT_NAMES[d]}{marker(d)}</Chip>
             ))}
           </div>
-          <p className="text-xs font-semibold text-app mb-1.5">Tempo per seduta</p>
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <Label>Tempo per seduta</Label>
+          <div className="flex flex-wrap gap-2 mb-4">
             {DURATE.map((d) => (
-              <button key={d} type="button" onClick={() => setDurata(durata === d ? null : d)} className={chip(durata === d)}>{d}&apos;</button>
+              <Chip key={d} selected={durata === d} showCheck={false} onClick={() => setDurata(durata === d ? null : d)}>{d}&apos;</Chip>
             ))}
           </div>
-          <p className="text-xs font-semibold text-app mb-1.5">Su cosa vuoi lavorare questa settimana? <span className="text-faint font-normal">(nell&apos;ordine in cui li scegli, oppure &quot;Tutto&quot;{focusSetup?.length ? ' · già impostati dal tuo setup, cambiali solo per questa settimana' : ''})</span></p>
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <Label hint={`Nell'ordine in cui li scegli, oppure "Tutto".${focusSetup?.length ? ' Già impostati dal tuo setup: cambiali solo per questa settimana.' : ''}`}>Su cosa vuoi lavorare questa settimana?</Label>
+          <div className="flex flex-wrap gap-2 mb-4">
             {FOCUS_OPZIONI.map((f) => {
               const idx = focus.indexOf(f.id);
               return (
-                <button key={f.id} type="button" onClick={() => setFocus(toggleFocus(focus, f.id))}
-                  className={`${chip(idx >= 0)}${idx < 0 && f.id === FOCUS_TUTTO ? ' !border-forest-500/50 !text-forest-200' : ''}`}>
+                <Chip key={f.id} selected={idx >= 0} onClick={() => setFocus(toggleFocus(focus, f.id))}
+                  className={idx < 0 && f.id === FOCUS_TUTTO ? '!border-forest-500/50 !text-forest-300' : ''}>
                   {idx >= 0 && focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
-                </button>
+                </Chip>
               );
             })}
           </div>
         </>
       ) : (
         <>
-          <p className="text-xs font-semibold text-app mb-1.5">Cosa vuoi cambiare? <span className="text-faint font-normal">(una cosa alla volta)</span></p>
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <Label hint="Una cosa alla volta.">Cosa vuoi cambiare?</Label>
+          <div className="flex flex-wrap gap-2 mb-4">
             {MODIFICA_TIPI.map((t) => (
-              <button key={t.id} type="button" onClick={() => setTipo(t.id)} className={chip(tipo === t.id)}>{t.label}</button>
+              <Chip key={t.id} selected={tipo === t.id} onClick={() => setTipo(t.id)}>{t.label}</Chip>
             ))}
           </div>
           {(tipo === 'sposta' || tipo === 'togli_giorno') && (
-            <div className="mb-3">
-              <p className="text-xs text-muted mb-1.5">Quale seduta</p>
-              <div className="flex flex-wrap gap-1.5">
+            <div className="mb-4">
+              <Label>Quale seduta</Label>
+              <div className="flex flex-wrap gap-2">
                 {modificabili.map((s) => (
-                  <button key={s.giorno} type="button" onClick={() => { setMGiorno(s.giorno); setMA(null); }} className={chip(mGiorno === s.giorno)}>
+                  <Chip key={s.giorno} selected={mGiorno === s.giorno} onClick={() => { setMGiorno(s.giorno); setMA(null); }}>
                     {DAY_SHORT_NAMES[s.giorno]} · {s.titolo.slice(0, 18)}
-                  </button>
+                  </Chip>
                 ))}
               </div>
             </div>
           )}
           {tipo === 'sposta' && (
-            <div className="mb-3">
-              <p className="text-xs text-muted mb-1.5">A quale giorno <span className="text-faint">(solo giorni liberi)</span></p>
-              <div className="flex flex-wrap gap-1.5">
+            <div className="mb-4">
+              <Label hint="Solo giorni liberi.">A quale giorno</Label>
+              <div className="flex flex-wrap gap-2">
                 {giorniLiberi.map((d) => (
-                  <button key={d} type="button" onClick={() => setMA(d)} className={chip(mA === d)}>{DAY_NAMES[d]}</button>
+                  <Chip key={d} selected={mA === d} onClick={() => setMA(d)}>{DAY_NAMES[d]}</Chip>
                 ))}
               </div>
             </div>
           )}
           {tipo === 'cambia_focus' && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
+            <div className="flex flex-wrap gap-2 mb-4">
               {FOCUS_OPZIONI.map((f) => (
-                <button key={f.id} type="button" onClick={() => setMFocus(f.id)} className={chip(mFocus === f.id)}>{f.label}</button>
+                <Chip key={f.id} selected={mFocus === f.id} onClick={() => setMFocus(f.id)}>{f.label}</Chip>
               ))}
             </div>
           )}
           {tipo === 'meno_tempo' && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
+            <div className="flex flex-wrap gap-2 mb-4">
               {DURATE.map((d) => (
-                <button key={d} type="button" onClick={() => setMDurata(d)} className={chip(mDurata === d)}>{d}&apos;</button>
+                <Chip key={d} selected={mDurata === d} showCheck={false} onClick={() => setMDurata(d)}>{d}&apos;</Chip>
               ))}
             </div>
           )}
         </>
       )}
 
-      <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={160}
-        placeholder="Una nota breve, se serve (es. 'sabato torneo') — opzionale"
-        className="w-full px-3 py-2.5 bg-surface-2 border border-divider rounded-xl text-sm text-app outline-none focus:ring-2 focus:ring-forest-400 mb-2" />
-      {errore && <p className="text-[11px] text-amber-300 mb-2">{errore}</p>}
-      <button type="button" onClick={submit} disabled={generating || !!errore}
-        className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-3 rounded-xl disabled:opacity-60">
+      <Input value={note} onChange={(e) => setNote(e.target.value)} maxLength={160}
+        placeholder="Una nota breve, se serve (es. 'sabato torneo') — opzionale" aria-label="Nota per il preparatore"
+        className="mb-3" />
+      {errore && <p className="text-body-sm text-warning mb-3">{errore}</p>}
+      <Button fullWidth onClick={submit} disabled={!!errore} loading={generating}>
         {generating ? 'Sto preparando la tua settimana…' : modo === 'modifica' ? 'Applica la modifica' : hasPlan ? 'Rifai la settimana' : 'Genera il piano della settimana'}
-      </button>
+      </Button>
       {onClose && !generating && (
-        <button type="button" onClick={onClose} className="w-full text-xs text-muted mt-2 py-1">Annulla</button>
+        <Button variant="ghost" fullWidth onClick={onClose} className="mt-2">Annulla</Button>
       )}
-    </div>
+    </Card>
   );
 }
