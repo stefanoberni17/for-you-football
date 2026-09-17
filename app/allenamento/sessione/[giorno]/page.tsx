@@ -271,7 +271,7 @@ export default function SessionePage() {
                           <p className="text-body font-semibold text-app leading-snug">{ex.nome}</p>
                           <p className="text-body-sm text-muted tabular-nums">
                             {it.schema === 'emom'
-                              ? <>EMOM <span className={num}>{it.serie}&apos;</span> · <span className={num}>{it.quantita}</span>/min</>
+                              ? <>EMOM · <span className={num}>{it.serie}</span> {it.serie === 1 ? 'giro' : 'giri'} · <span className={num}>{unitaLabel(unita, it.quantita)}</span> al minuto, poi riposo fino allo scadere</>
                               : <>
                                   <span className={num}>{it.serie} × {unitaLabel(unita, it.quantita)}</span>
                                   {it.carico_kg ? <> · <span className={num}>{it.carico_kg} kg</span></> : null}

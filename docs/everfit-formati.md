@@ -31,6 +31,12 @@ mano, senza il timer del minuto.
   ripetizioni, `[duration, rest]` per quelli a tempo (gli id dei campi sono in
   `GET /api/exercise/fields`: Time `…76006`, Reps `…7600b`, Rest `…76011`, Weight `…7600d`).
 - Descrizione del workout: "EMOM N': ogni minuto parte un esercizio…", note corte per esercizio.
+- **Come lo legge l'app (17/9/2026):** le sezioni EMOM consecutive con lo stesso titolo diventano
+  UN esercizio per riga con `serie` = giri e `quantità` = reps al minuto; il player le fa girare a
+  rotazione, un minuto per esercizio, col resto del minuto di recupero. Se in Everfit ci sono le
+  `reps` valgono quelle; se c'è solo `duration` (come nei B2/B4: 30" + 60"), l'esercizio a reps
+  prende la regola di Ste (**3 reps**, **2 se esplosivo**: salti, lanci, sprint) e la tenuta tiene i
+  suoi secondi. Costanti `EMOM_REPS` / `EMOM_REPS_ESPLOSIVO` in `scripts/build-blocks.py`.
 
 ## Esercizi custom: "Incline" e "Decline" nella libreria di Ste
 
