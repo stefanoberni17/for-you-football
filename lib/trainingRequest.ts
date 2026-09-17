@@ -89,7 +89,7 @@ export interface Vincoli {
   giorniAmmessi?: number[];  // sedute SOLO in questi giorni
   giorniVietati?: number[];  // nessuna seduta in questi giorni
   durataMax?: number;        // minuti per seduta
-  numSedute?: number;        // esattamente N sedute (clampato al tetto della fase e ai giorni ammessi)
+  numSedute?: number;        // esattamente N sedute (clampato al tetto della fase e ai giorni ammessi ancora davanti, da oggi a domenica)
   obiettivi?: FocusId[];     // focus di QUESTA settimana (dalla maschera); assenti = obiettivi del setup
   recuperiFacoltativi?: boolean; // richiesta esplicita dell'atleta: i recuperi non sono più un vincolo
 }

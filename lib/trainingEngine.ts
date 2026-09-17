@@ -325,6 +325,7 @@ export interface WeekPlan {
   sedute: PlanSession[];
   messaggio?: string;
   violazioni?: string[];     // piano di sicurezza: cosa il planner AI non è riuscito a rispettare (per capire e correggere)
+  nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
 }
 
 const TIPI_FISICI = new Set(['mix', 'fisica', 'skill']);
