@@ -100,6 +100,10 @@ export function expandBlocco(b: Blocco, opt: { scala?: number } = {}): PlanItem[
       blocco_id: b.id,
     };
     if (it.carico_kg !== undefined) item.carico_kg = it.carico_kg;
+    // Unità del blocco quando NON è quella del catalogo (Everfit: 30" di Archer Push Up in un EMOM, esercizio a reps):
+    // senza, l'app mostrava e cronometrava "30 reps" (Ste, 17/9)
+    const unitaCatalogo = esercizioById(it.esercizio_id!)?.unita ?? esercizioV2ById(it.esercizio_id!)?.unita;
+    if (unitaCatalogo && it.unita !== unitaCatalogo) item.unita = it.unita;
     if (it.perLato) item.per_lato = true;
     if (it.nota) item.nota = it.nota;
     return item;

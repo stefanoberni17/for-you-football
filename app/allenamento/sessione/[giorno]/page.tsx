@@ -7,7 +7,7 @@ import { authFetch } from '@/lib/authFetch';
 import { DAY_NAMES } from '@/lib/constants';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
-import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
+import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, SectionTitle, Textarea } from '@/components/ui';
 
@@ -261,7 +261,8 @@ export default function SessionePage() {
                   const ex = esercizioAny(it.esercizio_id);
                   if (!ex) return null;
                   const isOpen = descOpen === i;
-                  const sug = storico[it.esercizio_id];
+                  const unita = unitaItem(it, ex);
+                  const sug = unita === ex.unita ? storico[it.esercizio_id] : undefined; // a tempo in un EMOM: il log a reps di un altro blocco non c'entra
                   return (
                     <div key={i} className="py-3 px-1">
                       <div className="flex items-start gap-3">
@@ -272,7 +273,7 @@ export default function SessionePage() {
                             {it.schema === 'emom'
                               ? <>EMOM <span className={num}>{it.serie}&apos;</span> · <span className={num}>{it.quantita}</span>/min</>
                               : <>
-                                  <span className={num}>{it.serie} × {unitaLabel(ex.unita, it.quantita)}</span>
+                                  <span className={num}>{it.serie} × {unitaLabel(unita, it.quantita)}</span>
                                   {it.carico_kg ? <> · <span className={num}>{it.carico_kg} kg</span></> : null}
                                   {it.per_lato ? ' per lato' : ex.perLato ? ' (dx+sx)' : ''}
                                   {' · recupero '}<span className={num}>{it.recupero_sec}&quot;</span>

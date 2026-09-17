@@ -306,6 +306,7 @@ export interface PlanItem {
   carico_kg?: number;        // carico assoluto proposto (dai blocchi Everfit o dal log per serie)
   blocco_id?: string;        // blocco della libreria da cui viene l'item (lib/trainingBlocks)
   per_lato?: boolean;        // dai blocchi Everfit (each_side): dx poi sx, quantità indicata PER LATO (non dimezzata)
+  unita?: 'reps' | 'secondi' | 'minuti' | 'metri'; // SOLO se diversa dal catalogo: in Everfit Ste ha programmato a tempo un esercizio a reps (EMOM 30") o viceversa
   // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
   adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero';
   lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
-import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
+import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input } from '@/components/ui';
 
@@ -49,6 +49,10 @@ export interface SetLogInput {
   carico_previsto_kg: number | null; carico_fatto_kg: number | null; rpe: number | null;
   sensazione?: string | null;   // "dove l'hai sentito?" (solo dopo l'ultima serie degli esercizi che lo chiedono)
 }
+
+// Timestamp per i timer di recupero/esecuzione (partono da eventi e setInterval, mai in render):
+// il lint del compilatore React segnalerebbe Date.now() come impuro dentro queste funzioni.
+const nowMs = () => Date.now();
 
 export default function TrainingSessionPlayer({
   items,
@@ -117,6 +121,7 @@ export default function TrainingSessionPlayer({
 
   const item = items[itemIdx];
   const ex = item ? esercizioAny(item.esercizio_id) : undefined;
+  const unita = item ? unitaItem(item, ex) : 'reps'; // del blocco se diversa dal catalogo (EMOM a tempo)
   const isEmom = item?.schema === 'emom';
   // Per lato: dai blocchi di Ste (item.per_lato, quantità già PER LATO) o dal catalogo (quantità totale → metà per lato)
   const isPerLato = !isEmom && (item?.per_lato === true || ex?.perLato === true);
@@ -125,8 +130,8 @@ export default function TrainingSessionPlayer({
   const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato; // EMOM: serie = minuti
   const isExtra = extraLato > 0 && serieFatte >= (item?.serie ?? 0);
   const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
-  const isTimed = !isEmom && (ex?.unita === 'secondi' || ex?.unita === 'minuti');
-  const execSeconds = ex?.unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
+  const isTimed = !isEmom && (unita === 'secondi' || unita === 'minuti');
+  const execSeconds = unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
 
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
@@ -143,7 +148,7 @@ export default function TrainingSessionPlayer({
     setRestIsLast(last); restIsLastRef.current = last;
     setRestLeft(Math.max(sec, last ? 20 : sec)); // dopo l'ultima serie: almeno 20" per il feedback
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
-    restEndsRef.current = Date.now() + Math.max(sec, last ? 20 : sec) * 1000;
+    restEndsRef.current = nowMs() + Math.max(sec, last ? 20 : sec) * 1000;
     const tick = () => {
       if (restEndsRef.current === null) return;
       const left = Math.ceil((restEndsRef.current - Date.now()) / 1000);
@@ -223,7 +228,7 @@ export default function TrainingSessionPlayer({
     setLato(nextLato); latoRef.current = nextLato;
     setSerieFatte(next);
     // Serie chiusa → durante il recupero si può dare il feedback (RPE, reps/kg reali)
-    setPending({ serie: next, quantita: quantitaLato, unita: ex?.unita ?? 'reps', carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
+    setPending({ serie: next, quantita: quantitaLato, unita, carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
     setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null); setShowDiverso(false);
     startRest(item.recupero_sec, next >= totalSerie);
   };
@@ -246,7 +251,7 @@ export default function TrainingSessionPlayer({
   const startExecTimer = () => {
     stopExec();
     setExecLeft(execSeconds);
-    execEndsRef.current = Date.now() + execSeconds * 1000;
+    execEndsRef.current = nowMs() + execSeconds * 1000;
     const tick = () => {
       if (execEndsRef.current === null) return;
       const left = Math.ceil((execEndsRef.current - Date.now()) / 1000);
@@ -285,7 +290,7 @@ export default function TrainingSessionPlayer({
   const parametri = isEmom
     ? `EMOM ${item.serie}' · ${item.quantita} reps al minuto`
     : [
-      `${item.serie} × ${unitaLabel(ex.unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`,
+      `${item.serie} × ${unitaLabel(unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`,
       extraLato ? `+1 ${item.lato_extra === 'sx' ? 'sinistro' : 'destro'}` : '',
       item.carico_kg ? `${item.carico_kg} kg` : '',
       `recupero ${item.recupero_sec}"`,
@@ -508,7 +513,7 @@ export default function TrainingSessionPlayer({
                 ) : (
                   <div className="mt-3">
                     <Button variant="secondary" size="lg" fullWidth icon={<Play size={18} />} onClick={startExecTimer}>
-                      Parti col timer ({unitaLabel(ex.unita, quantitaLato)})
+                      Parti col timer ({unitaLabel(unita, quantitaLato)})
                     </Button>
                   </div>
                 )

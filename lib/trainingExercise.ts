@@ -32,6 +32,11 @@ export function esercizioAny(id: string): EsercizioView | undefined {
   return undefined;
 }
 
+/** Unità con cui fare un item: quella del blocco di Ste se diversa dal catalogo (EMOM a tempo), altrimenti quella dell'esercizio. */
+export function unitaItem(it: { esercizio_id: string; unita?: string }, ex?: { unita: string } | null): string {
+  return it.unita ?? ex?.unita ?? esercizioAny(it.esercizio_id)?.unita ?? 'reps';
+}
+
 export function unitaLabel(unita: string, quantita: number): string {
   if (unita === 'secondi') return `${quantita}"`;
   if (unita === 'minuti') return `${quantita}'`;
