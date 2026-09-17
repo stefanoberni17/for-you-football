@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { clearSavedChats } from '@/components/ChatBot';
 import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
@@ -8,39 +8,69 @@ import { supabase } from '@/lib/supabase';
 import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import SubscriptionSection from '@/components/SubscriptionSection';
+import { AppLoader, Badge, Button, Card, Chip, Field, Input, SectionTitle, Select, Textarea } from '@/components/ui';
+import { Bot, Bell, LogOut, Lock, Users, Check } from 'lucide-react';
 
-// ── Chip multi-select riusabile ───────────────────────────────────────────────
+/**
+ * /profilo — riordinato (review 16/9): prima Telegram e Push avevano i bottoni più
+ * piccoli della pagina, le textarea che servono al Coach erano alla quarta schermata
+ * e "Salva" a quattro schermate dal form.
+ * Ordine: Chi sei → Il tuo percorso → Come ti raggiungo → Il tuo accesso → Esci.
+ * "Salva" sticky in fondo, SOLO quando qualcosa è cambiato.
+ */
+
+// ── Chip multi-select riusabile (anche single-select: sport) ─────────────────
 function ChipGroup({
   options,
   selected,
   onToggle,
 }: {
-  options: readonly { value: string; label: string }[];
+  options: readonly { value: string; label: string; icon?: string }[];
   selected: string[];
   onToggle: (value: string) => void;
 }) {
   return (
     <div className="flex flex-wrap gap-2">
-      {options.map((opt) => {
-        const active = selected.includes(opt.value);
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => onToggle(opt.value)}
-            className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
-              active
-                ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
-                : 'bg-surface text-muted border-divider hover:border-forest-500/40 hover:text-forest-300'
-            }`}
-          >
-            {active ? '✓ ' : ''}{opt.label}
-          </button>
-        );
-      })}
+      {options.map((opt) => (
+        <Chip
+          key={opt.value}
+          selected={selected.includes(opt.value)}
+          onClick={() => onToggle(opt.value)}
+          icon={opt.icon ? <span aria-hidden="true">{opt.icon}</span> : undefined}
+        >
+          {opt.label}
+        </Chip>
+      ))}
     </div>
   );
 }
+
+// ── Riga "canale" (Telegram, Push): icona, stato, bottone a destra ───────────
+function ChannelRow({
+  icon, active, title, status, action, note,
+}: { icon: React.ReactNode; active: boolean; title: string; status: React.ReactNode; action?: React.ReactNode; note?: string }) {
+  return (
+    <div>
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${active ? 'bg-forest-500/20 text-forest-400' : 'bg-surface-2 text-muted'}`} aria-hidden="true">
+          {icon}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-app text-body">{title}</p>
+          <p className="text-body-sm text-muted flex items-center gap-1">{status}</p>
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
+      </div>
+      {note && <p className="text-caption text-muted mt-2 leading-relaxed pl-13">{note}</p>}
+    </div>
+  );
+}
+
+// I campi del form che finiscono in `profiles` (per capire se è cambiato qualcosa)
+type FormSnapshot = {
+  nome: string; eta: string; sport: string; roles: string; level: string; fears: string;
+  goals: string; dream: string; currentSituation: string;
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -48,7 +78,7 @@ export default function ProfiloPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
   const [error, setError] = useState('');
 
   const [userId, setUserId] = useState('');
@@ -74,11 +104,21 @@ export default function ProfiloPage() {
   const [dream, setDream] = useState('');
   const [currentSituation, setCurrentSituation] = useState('');
 
+  // Valori caricati (o salvati): il form è "sporco" se si discosta da questi
+  const [snapshot, setSnapshot] = useState<FormSnapshot | null>(null);
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const toggleRole = (v: string) =>
     setSelectedRoles((prev) => prev.includes(v) ? prev.filter((r) => r !== v) : [...prev, v]);
 
   const toggleFear = (v: string) =>
     setSelectedFears((prev) => prev.includes(v) ? prev.filter((f) => f !== v) : [...prev, v]);
+
+  const current: FormSnapshot = {
+    nome, eta, sport, roles: selectedRoles.join(','), level, fears: selectedFears.join(','),
+    goals, dream, currentSituation,
+  };
+  const dirty = !!snapshot && (Object.keys(current) as (keyof FormSnapshot)[]).some((k) => current[k] !== snapshot[k]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -95,6 +135,8 @@ export default function ProfiloPage() {
         .single();
 
       if (p) {
+        const roles: string[] = p.role ? p.role.split(',').filter(Boolean) : [];
+        const fears: string[] = p.biggest_fear ? p.biggest_fear.split(',').filter(Boolean) : [];
         setNome(p.name || '');
         setEta(p.age?.toString() || '');
         setCurrentWeek(p.current_week?.toString() || '1');
@@ -104,8 +146,15 @@ export default function ProfiloPage() {
         setGoals(p.goals || '');
         setDream(p.dream || '');
         setCurrentSituation(p.current_situation || '');
-        setSelectedRoles(p.role ? p.role.split(',').filter(Boolean) : []);
-        setSelectedFears(p.biggest_fear ? p.biggest_fear.split(',').filter(Boolean) : []);
+        setSelectedRoles(roles);
+        setSelectedFears(fears);
+        setSnapshot({
+          nome: p.name || '', eta: p.age?.toString() || '', sport: p.sport || 'calcio',
+          roles: roles.join(','), level: p.level || '', fears: fears.join(','),
+          goals: p.goals || '', dream: p.dream || '', currentSituation: p.current_situation || '',
+        });
+      } else {
+        setSnapshot({ nome: '', eta: '', sport: 'calcio', roles: '', level: '', fears: '', goals: '', dream: '', currentSituation: '' });
       }
 
       // Check push notification status
@@ -150,11 +199,14 @@ export default function ProfiloPage() {
     return () => document.removeEventListener('visibilitychange', refresh);
   }, [userId]);
 
+  useEffect(() => () => { if (savedTimer.current) clearTimeout(savedTimer.current); }, []);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!dirty) return;
     setSaving(true);
     setError('');
-    setSuccess(false);
+    setJustSaved(false);
 
     try {
       const { error: updateError } = await supabase
@@ -177,10 +229,12 @@ export default function ProfiloPage() {
 
       if (updateError) throw updateError;
 
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message);
+      setSnapshot(current);
+      setJustSaved(true);
+      if (savedTimer.current) clearTimeout(savedTimer.current);
+      savedTimer.current = setTimeout(() => setJustSaved(false), 2000);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Errore');
     } finally {
       setSaving(false);
     }
@@ -247,37 +301,33 @@ export default function ProfiloPage() {
     try {
       const url = await requestTelegramLinkUrl();
       window.location.href = url;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Errore');
       setTelegramLinkLoading(false);
     }
   };
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-muted">Caricamento...</p>
-        </div>
-      </main>
-    );
+    return <AppLoader />;
   }
+
+  const showSaveBar = dirty || justSaved || saving;
 
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
 
-      {/* Header */}
+      {/* ── Header: avatar, nome, email, settimana ─────────────────────── */}
       <div className="max-w-xl mx-auto mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-forest-500 to-forest-600 flex items-center justify-center shadow-md">
-            <span className="text-white font-bold text-xl">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-forest-500 to-forest-600 flex items-center justify-center shadow-e1 shrink-0" aria-hidden="true">
+            <span className="text-white font-display font-bold text-title-1">
               {nome ? nome.charAt(0).toUpperCase() : '⚽'}
             </span>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-app">Il tuo Profilo</h1>
-            <p className="text-sm text-muted">{email}</p>
+          <div className="min-w-0">
+            <h1 className="font-display text-title-1 font-bold text-app truncate">{nome || 'Il tuo profilo'}</h1>
+            <p className="text-body-sm text-muted truncate">{email}</p>
+            <Badge tone="accent" className="mt-1.5">Settimana {currentWeek}</Badge>
           </div>
         </div>
       </div>
@@ -285,227 +335,169 @@ export default function ProfiloPage() {
       <form onSubmit={handleSave} className="max-w-xl mx-auto space-y-5">
 
         {error && (
-          <div className="bg-red-500/15 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm">{error}</div>
+          <Card variant="danger" padding="sm"><p className="text-body-sm text-danger">{error}</p></Card>
         )}
 
-        {/* ── Coach Telegram (IN ALTO) ──────────────────────────────────────── */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${telegramId ? 'bg-forest-500/20' : 'bg-blue-500/15'}`}>
-                🤖
-              </div>
-              <div>
-                <p className="font-bold text-app text-sm">Coach su Telegram</p>
-                <p className="text-xs text-muted">
-                  {telegramId ? '✅ Collegato' : 'Non ancora collegato'}
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={handleTelegramLink}
-              disabled={telegramLinkLoading}
-              className={`text-xs font-bold px-4 py-2 rounded-xl transition-all disabled:opacity-50 ${
-                telegramId
-                  ? 'text-muted bg-surface-2 hover:bg-[#293429]'
-                  : 'text-white bg-forest-500 hover:bg-forest-600 shadow-sm'
-              }`}
-            >
-              {telegramLinkLoading ? 'Attendi…' : telegramId ? 'Ricollega' : 'Collega'}
-            </button>
-          </div>
-          {!telegramId && (
-            <p className="text-xs text-faint mt-3 leading-relaxed">
-              Un tap: si apre Telegram e il collegamento è automatico. Poi puoi scrivere al Coach ovunque, in qualsiasi momento.
-            </p>
-          )}
-        </div>
+        {/* ── (a) Chi sei ───────────────────────────────────────────────── */}
+        <Card padding="md" as="section" aria-label="Chi sei" className="space-y-5">
+          <SectionTitle title="Chi sei" />
 
-        {/* ── Notifiche Push ─────────────────────────────────────────────── */}
-        {pushStatus !== 'unsupported' && pushStatus !== 'loading' && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${pushStatus === 'active' ? 'bg-forest-500/20' : 'bg-surface-2'}`}>
-                  🔔
-                </div>
-                <div>
-                  <p className="font-bold text-app text-sm">Notifiche push</p>
-                  <p className="text-xs text-muted">
-                    {pushStatus === 'active' && 'Attive — ricevi messaggi dal Coach'}
-                    {pushStatus === 'inactive' && 'Non attive'}
-                    {pushStatus === 'denied' && 'Bloccate dal browser'}
-                  </p>
-                </div>
-              </div>
-              {pushStatus !== 'denied' && (
-                <button
-                  type="button"
-                  onClick={handlePushToggle}
-                  disabled={pushLoading}
-                  className={`text-xs font-bold px-4 py-2 rounded-xl transition-all disabled:opacity-40 ${
-                    pushStatus === 'active'
-                      ? 'text-muted bg-surface-2 hover:bg-[#293429]'
-                      : 'text-white bg-forest-500 hover:bg-forest-600 shadow-sm'
-                  }`}
-                >
-                  {pushLoading ? '...' : pushStatus === 'active' ? 'Disattiva' : 'Attiva'}
-                </button>
-              )}
-            </div>
-            {pushStatus === 'denied' && (
-              <p className="text-xs text-faint mt-3 leading-relaxed">
-                Hai bloccato le notifiche nelle impostazioni del browser. Per riattivarle, vai nelle impostazioni del sito.
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* ── Settimana corrente ───────────────────────────────────────────── */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 border border-forest-500/25">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🎯</span>
-            <div>
-              <p className="font-bold text-app">Settimana {currentWeek}</p>
-              <p className="text-xs text-muted">Si aggiorna automaticamente completando i giorni</p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Abbonamento ──────────────────────────────────────────────────── */}
-        <SubscriptionSection />
-
-        {/* ── Dati personali ───────────────────────────────────────────────── */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
-          <h3 className="font-semibold text-app text-sm uppercase tracking-wide">Dati personali</h3>
-
-          <div>
-            <label className="block text-sm font-medium text-app mb-1.5">Nome *</label>
-            <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required
-              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
-              placeholder="Il tuo nome" />
+          <div className="grid grid-cols-[1fr_auto] gap-3">
+            <Field label="Nome" htmlFor="profilo-nome">
+              <Input id="profilo-nome" type="text" value={nome} onChange={(e) => setNome(e.target.value)} required
+                placeholder="Il tuo nome" autoComplete="given-name" />
+            </Field>
+            <Field label="Età" htmlFor="profilo-eta" className="w-24">
+              <Input id="profilo-eta" type="number" value={eta} onChange={(e) => setEta(e.target.value)}
+                placeholder="18" min="10" max="60" inputMode="numeric" />
+            </Field>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-app mb-1.5">Età</label>
-            <input type="number" value={eta} onChange={(e) => setEta(e.target.value)}
-              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
-              placeholder="Es. 18" min="10" max="60" />
-          </div>
-        </div>
-
-        {/* ── Profilo calciatore ───────────────────────────────────────────── */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-5">
-          <h3 className="font-semibold text-app text-sm uppercase tracking-wide">Il tuo profilo da atleta</h3>
-
-          {/* Sport */}
-          <div>
-            <label className="block text-sm font-medium text-app mb-2">Che sport pratichi?</label>
-            <div className="flex flex-wrap gap-2">
-              {SPORTS.map((s) => (
-                <button
-                  key={s.value}
-                  type="button"
-                  onClick={() => { setSport(s.value); setSelectedRoles([]); }}
-                  className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all border ${
-                    sport === s.value
-                      ? 'bg-forest-500 text-white border-forest-500 shadow-sm'
-                      : 'bg-surface text-muted border-divider hover:border-forest-500/40 hover:text-forest-300'
-                  }`}
-                >
-                  {s.icon} {s.label}
-                </button>
-              ))}
-            </div>
+            <p className="text-label font-semibold text-app mb-2">Che sport fai?</p>
+            <ChipGroup
+              options={SPORTS}
+              selected={[sport]}
+              onToggle={(v) => { setSport(v); setSelectedRoles([]); }}
+            />
           </div>
 
-          {/* Ruoli (dinamici per sport) */}
           {(SPORT_ROLES[sport]?.length ?? 0) > 0 && (
-          <div>
-            <label className="block text-sm font-medium text-app mb-2">
-              Che ruolo hai? <span className="text-faint font-normal">(anche più di uno)</span>
-            </label>
-            <ChipGroup options={SPORT_ROLES[sport] || []} selected={selectedRoles} onToggle={toggleRole} />
-          </div>
+            <div>
+              <p className="text-label font-semibold text-app mb-2">
+                Che ruolo hai? <span className="text-faint font-normal">(anche più di uno)</span>
+              </p>
+              <ChipGroup options={SPORT_ROLES[sport] || []} selected={selectedRoles} onToggle={toggleRole} />
+            </div>
           )}
 
-          {/* Livello */}
-          <div>
-            <label className="block text-sm font-medium text-app mb-1.5">A che livello giochi?</label>
-            <select value={level} onChange={(e) => setLevel(e.target.value)}
-              className="w-full px-4 py-2.5 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm bg-surface-2 text-app">
-              <option value="">Seleziona…</option>
+          <Field label="A che livello giochi?" htmlFor="profilo-livello">
+            <Select id="profilo-livello" value={level} onChange={(e) => setLevel(e.target.value)}>
+              <option value="">Scegli…</option>
               {PLAYER_LEVELS.map((l) => (
                 <option key={l.value} value={l.value}>{l.label}</option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </Field>
 
-          {/* Paure */}
           <div>
-            <label className="block text-sm font-medium text-app mb-1">
-              Cosa ti blocca mentalmente in campo?
-            </label>
-            <p className="text-xs text-faint mb-2">Puoi selezionarne più di una</p>
+            <p className="text-label font-semibold text-app mb-2">
+              Cosa ti blocca in campo? <span className="text-faint font-normal">(anche più di una)</span>
+            </p>
             <ChipGroup options={SPORT_FEARS[sport] || SPORT_FEARS['altro']} selected={selectedFears} onToggle={toggleFear} />
           </div>
-        </div>
+        </Card>
 
-        {/* ── Percorso ────────────────────────────────────────────────────── */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 space-y-4">
-          <h3 className="font-semibold text-app text-sm uppercase tracking-wide">Il tuo percorso</h3>
+        {/* ── (b) Il tuo percorso ───────────────────────────────────────── */}
+        <Card padding="md" as="section" aria-label="Il tuo percorso" className="space-y-4">
+          <SectionTitle title="Il tuo percorso" subtitle="Il Coach parte da qui: più è vero, più ti serve." />
 
-          <div>
-            <label className="block text-sm font-medium text-app mb-1.5">
-              Cosa vuoi migliorare con questo percorso?
-            </label>
-            <textarea value={goals} onChange={(e) => setGoals(e.target.value)} rows={3}
-              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none text-app"
+          <Field label="Cosa vuoi migliorare con questo percorso?" htmlFor="profilo-goals" counter={{ value: goals.length, max: 500 }}>
+            <Textarea id="profilo-goals" value={goals} onChange={(e) => setGoals(e.target.value)} rows={3}
               placeholder="Es. Gestire meglio la pressione, smettere di pensare agli errori…" maxLength={500} />
-          </div>
+          </Field>
 
-          <div>
-            <label className="block text-sm font-medium text-app mb-1.5">Dove vuoi arrivare nel tuo sport?</label>
-            <input type="text" value={dream} onChange={(e) => setDream(e.target.value)}
-              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm text-app"
+          <Field label="Dove vuoi arrivare?" htmlFor="profilo-dream" counter={{ value: dream.length, max: 300 }}>
+            <Textarea id="profilo-dream" value={dream} onChange={(e) => setDream(e.target.value)} rows={2}
               placeholder="Es. Giocare in prima squadra, fare il salto di categoria…" maxLength={300} />
-          </div>
+          </Field>
 
-          <div>
-            <label className="block text-sm font-medium text-app mb-1.5">
-              Come stai vivendo questo periodo in campo e nel tuo sport?
-            </label>
-            <textarea value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)} rows={2}
-              className="w-full px-4 py-2.5 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-sm resize-none text-app"
+          <Field label="Come stai vivendo questo periodo in campo?" htmlFor="profilo-situazione" counter={{ value: currentSituation.length, max: 500 }}>
+            <Textarea id="profilo-situazione" value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)} rows={3}
               placeholder="Es. Ho perso il posto da titolare e faccio fatica a ritrovare fiducia…" maxLength={500} />
+          </Field>
+        </Card>
+
+        {/* ── (c) Come ti raggiungo ─────────────────────────────────────── */}
+        <Card padding="md" as="section" aria-label="Come ti raggiungo" className="space-y-4">
+          <SectionTitle title="Come ti raggiungo" />
+
+          <ChannelRow
+            icon={<Bot size={20} />}
+            active={!!telegramId}
+            title="Coach su Telegram"
+            status={telegramId ? <><Check size={14} className="text-success" aria-hidden="true" /> Collegato</> : 'Non collegato'}
+            action={
+              <Button variant="secondary" size="sm" onClick={handleTelegramLink} loading={telegramLinkLoading}>
+                {telegramId ? 'Ricollega' : 'Collega'}
+              </Button>
+            }
+            note={telegramId ? undefined : 'Un tap: si apre Telegram e il collegamento è automatico. Poi scrivi al Coach quando vuoi.'}
+          />
+
+          {pushStatus !== 'unsupported' && pushStatus !== 'loading' && (
+            <>
+              <div className="border-t border-divider" />
+              <ChannelRow
+                icon={<Bell size={20} />}
+                active={pushStatus === 'active'}
+                title="Notifiche"
+                status={
+                  pushStatus === 'active' ? <><Check size={14} className="text-success" aria-hidden="true" /> Attive</>
+                    : pushStatus === 'denied' ? 'Bloccate dal browser'
+                      : 'Spente'
+                }
+                action={pushStatus !== 'denied' ? (
+                  <Button variant="secondary" size="sm" onClick={handlePushToggle} loading={pushLoading}>
+                    {pushStatus === 'active' ? 'Spegni' : 'Accendi'}
+                  </Button>
+                ) : undefined}
+                note={pushStatus === 'denied' ? 'Le hai bloccate nelle impostazioni del browser: da lì si riaccendono.' : undefined}
+              />
+            </>
+          )}
+        </Card>
+
+        {/* ── (d) Il tuo accesso ────────────────────────────────────────── */}
+        <SubscriptionSection />
+
+        {/* ── (e) Esci ──────────────────────────────────────────────────── */}
+        <Button
+          variant="danger"
+          fullWidth
+          onClick={handleLogout}
+          icon={<LogOut size={18} aria-hidden="true" />}
+        >
+          Esci dall&apos;account
+        </Button>
+
+        {/* ── (f) Privacy / genitori ────────────────────────────────────── */}
+        <div className="flex flex-wrap justify-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.open('/privacy', '_blank', 'noopener,noreferrer')}
+            icon={<Lock size={16} aria-hidden="true" />}
+          >
+            Privacy
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.open('/genitori', '_blank', 'noopener,noreferrer')}
+            icon={<Users size={16} aria-hidden="true" />}
+          >
+            Per i genitori
+          </Button>
+        </div>
+
+        {/* ── Salva sticky: compare solo se qualcosa è cambiato ─────────── */}
+        {showSaveBar && (
+          <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 -mx-4 px-4 bg-app-bg/90 backdrop-blur pt-3 pb-2">
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={saving}
+              disabled={!dirty && !justSaved}
+              icon={justSaved ? <Check size={20} aria-hidden="true" /> : undefined}
+              aria-live="polite"
+            >
+              {saving ? 'Salvo…' : justSaved ? 'Salvato' : 'Salva'}
+            </Button>
           </div>
-        </div>
-
-        {/* ── Salva ───────────────────────────────────────────────────────── */}
-        <button type="submit" disabled={saving}
-          className={`w-full font-bold py-3.5 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed text-white shadow-sm ${
-            success ? 'bg-forest-500' : 'bg-forest-500 hover:bg-forest-600'
-          }`}>
-          {saving ? 'Salvataggio…' : success ? '✅ Salvato!' : '💾 Salva modifiche'}
-        </button>
-
-        {/* Logout + Privacy */}
-        <button type="button" onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 py-3 px-6 text-sm text-red-300 hover:text-red-200 hover:bg-red-500/10 rounded-xl transition-all border border-red-500/30">
-          <span>🚪</span><span>Esci dall&apos;account</span>
-        </button>
-
-        <div className="text-center pb-4 flex justify-center gap-4">
-          <a href="/privacy" target="_blank" rel="noopener noreferrer"
-            className="text-xs text-faint hover:text-muted underline">
-            🔒 Privacy Policy
-          </a>
-          <a href="/genitori" target="_blank" rel="noopener noreferrer"
-            className="text-xs text-faint hover:text-muted underline">
-            👨‍👩‍👧 Per i genitori
-          </a>
-        </div>
+        )}
       </form>
     </main>
   );

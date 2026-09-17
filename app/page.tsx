@@ -7,9 +7,7 @@ import { supabase } from '@/lib/supabase';
 import {
   getNextDay,
   getWeekProgress,
-  isWeekCompleted,
   isDayUnlocked,
-  isTimeLocked,
   DayProgress,
 } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
@@ -22,7 +20,8 @@ import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
 import BirthdateBanner from '@/components/BirthdateBanner';
-import { Activity, Moon, Zap, Brain, TrendingUp, Calendar, BarChart3, Compass, Flame, Target, MessageCircle } from 'lucide-react';
+import { Activity, Moon, Zap, Brain, Calendar, Flame, Target, Bot, Play, Dumbbell, Trophy, Check, Key, ChevronRight, Sun } from 'lucide-react';
+import { AppLoader, Badge, Banner, Button, Card, SectionTitle } from '@/components/ui';
 
 interface CheckinData {
   date: string;
@@ -64,24 +63,6 @@ function miniTrend(values: number[]): 'up' | 'down' | 'stable' {
   if (diff > 0.3) return 'up';
   if (diff < -0.3) return 'down';
   return 'stable';
-}
-
-function MiniSparkline({ values, color, min, max }: { values: number[]; color: string; min: number; max: number }) {
-  if (values.length < 2) return null;
-  const w = 80, h = 24, px = 2, py = 3;
-  const range = max - min || 1;
-  const points = values.map((v, i) => {
-    const x = px + (i / (values.length - 1)) * (w - 2 * px);
-    const y = h - py - ((v - min) / range) * (h - 2 * py);
-    return `${x},${y}`;
-  });
-  const areaPoints = `${px},${h - py} ${points.join(' ')} ${w - px},${h - py}`;
-  return (
-    <svg width={w} height={h} className="flex-shrink-0">
-      <polygon points={areaPoints} fill={color} opacity={0.15} />
-      <polyline points={points.join(' ')} fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
 }
 
 export default function HomePage() {
@@ -271,14 +252,11 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center px-6">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-muted">{activating ? 'Attivazione in corso…' : 'Caricamento...'}</p>
-          {activating && (
-            <p className="text-sm text-faint mt-2">Pagamento ricevuto. Stiamo sbloccando la tua Season, ci vuole qualche secondo.</p>
-          )}
-        </div>
+      <main className="min-h-screen bg-app flex flex-col items-center justify-center px-6 text-center">
+        <AppLoader fullscreen={false} label={activating ? 'Attivazione in corso…' : 'Caricamento...'} />
+        {activating && (
+          <p className="text-body-sm text-muted -mt-6">Pagamento ricevuto. Stiamo sbloccando la tua Season, ci vuole qualche secondo.</p>
+        )}
       </main>
     );
   }
@@ -286,7 +264,6 @@ export default function HomePage() {
   const currentWeek = profile?.current_week || 1;
   const settimana = weekData?.settimana;
   const weekProgress = getWeekProgress(currentWeek, completedDays);
-  const weekDone = isWeekCompleted(currentWeek, completedDays);
   const nextDay = getNextDay(completedDays);
   const nextDayLocked = !isDayUnlocked(nextDay.week, nextDay.day, completedDays);
   // Giornata avviata ma non chiusa: il CTA diventa "chiudi il giorno"
@@ -297,6 +274,19 @@ export default function HomePage() {
   // "Beta finita" = ha completato tutti i giorni OPPURE current_week è oltre il max disponibile
   // (succede quando il gate G7 incrementa current_week ma magari qualche giorno è compressed).
   const allDone = totalCompleted >= totalDays || currentWeek > BETA_MAX_WEEK;
+  // Il giorno di oggi (titolo e durata da Notion, se la settimana caricata è quella del prossimo giorno)
+  const todayGiorno = nextDay.week === currentWeek
+    ? (weekData?.giorni as any[] | undefined)?.find((g) => g.dayNumber === nextDay.day)
+    : undefined;
+  const todayTitle: string | undefined = todayGiorno?.titolo?.replace(/^W\d+-G\d+ — /, '');
+  const todayMinutes: number | undefined = todayGiorno?.durataMinuti || undefined;
+  // I tuoi numeri (ultimi 7 check-in): 4 medie con tendenza, senza sparkline
+  const statRows = checkins.length >= 2 ? [
+    { Icon: Activity, label: 'Fisico', values: checkins.filter(c => c.physical_state !== null).map(c => c.physical_state as number), unit: '/10', color: 'var(--color-accent-glow)' },
+    { Icon: Moon, label: 'Sonno', values: checkins.filter(c => c.sleep_hours !== null).map(c => c.sleep_hours as number), unit: 'h', color: 'var(--color-info)' },
+    { Icon: Zap, label: 'Recupero', values: checkins.filter(c => c.recovery_quality !== null).map(c => c.recovery_quality as number), unit: '/10', color: 'var(--color-warning)' },
+    { Icon: Brain, label: 'Mentale', values: checkins.filter(c => c.mental_state !== null).map(c => c.mental_state as number), unit: '/10', color: '#a78bfa' },
+  ].map(r => ({ ...r, avg: miniAvg(r.values) })).filter(r => r.values.length >= 2) : [];
 
   // Rientro dopo assenza: streak a zero e ultimo giorno completato ≥3 giorni fa
   // → l'hero accoglie invece di mostrare solo lo streak perso.
@@ -388,48 +378,36 @@ export default function HomePage() {
   // Card del Coach: nei primi 3 giorni è l'elemento più legato alla retention (chi ha tenuto ha scritto al Coach),
   // quindi sta subito sotto l'hero; dopo torna in fondo tra i banner soft.
   const coachCard = coachBannerVisible ? (
-
-          <div className="bg-surface rounded-2xl shadow-sm p-4 border border-forest-500/30 relative">
-            <button
-              onClick={() => {
-                setCoachMessageDismissed(true);
-                try {
-                  localStorage.setItem('coachMessageDismissed', profile.last_coach_message);
-                } catch { /* no-op */ }
-              }}
-              className="absolute top-3 right-3 text-faint hover:text-muted transition-colors"
-              aria-label="Chiudi"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-            <div className="flex items-start gap-3 pr-6">
-              <div className="text-xl flex-shrink-0">🤖</div>
-              <div className="flex-1">
-                <p className="text-xs font-bold text-forest-400 mb-1">Coach AI</p>
-                <p className="text-sm text-app leading-relaxed">{profile.last_coach_message}</p>
-                <button
-                  onClick={() => router.push('/chat')}
-                  className="mt-3 inline-flex items-center gap-1.5 bg-forest-500 hover:bg-forest-600 text-white text-xs font-semibold py-2 px-3.5 rounded-xl transition-colors"
-                >
-                  <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                  Rispondi al Coach
-                </button>
-              </div>
-            </div>
-          </div>
+    <Banner
+      tone="accent"
+      icon={<Bot size={20} />}
+      title="Coach AI"
+      action={{ label: 'Rispondi al Coach', href: '/chat' }}
+      onClose={() => {
+        setCoachMessageDismissed(true);
+        try {
+          localStorage.setItem('coachMessageDismissed', profile.last_coach_message);
+        } catch { /* no-op */ }
+      }}
+    >
+      <p className="text-body text-app leading-relaxed">{profile.last_coach_message}</p>
+    </Banner>
   ) : null;
 
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
-      {/* Header — compatto: solo greeting + mantra opzionale */}
-      <div className="max-w-2xl mx-auto mb-5">
-        <h1 className="text-3xl font-bold text-app">
-          Ciao, {profile?.name || 'Campione'}! 👋
-        </h1>
+      {/* Header: saluto in una riga + streak; il mantra della settimana sotto, nel font delle citazioni */}
+      <div className="max-w-2xl mx-auto mb-4">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="font-display text-title-2 font-bold text-app">
+            Ciao, {profile?.name || 'campione'}
+          </h1>
+          {streak >= 2 && !allDone && (
+            <Badge tone="warn" icon={<Flame size={13} aria-hidden />}>{streak} di fila</Badge>
+          )}
+        </div>
         {settimana?.mantraDashboard && (
-          <p className="italic text-muted text-sm mt-2">
+          <p className="font-quote text-body-lg text-muted mt-1">
             &ldquo;{settimana.mantraDashboard}&rdquo;
           </p>
         )}
@@ -439,128 +417,111 @@ export default function HomePage() {
         {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
             (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
         {profile?.current_week === 1 && totalCompleted === 0 && (
-          <div className="bg-surface rounded-2xl shadow-sm p-5 border-l-4 border-forest-400">
-            <p className="font-bold text-app mb-1">Ciao, {profile?.name}.</p>
-            <p className="font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
-            <p className="text-sm text-muted leading-relaxed">
+          <Card padding="md" className="border-l-4 border-l-forest-400">
+            <p className="text-body font-bold text-app mb-1">Ciao, {profile?.name}.</p>
+            <p className="text-body font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
+            <p className="text-body text-muted leading-relaxed">
               Molti giocatori scoprono che non è la tecnica il problema.
               È restare nella partita.
             </p>
-            <p className="text-sm text-muted mt-1">
+            <p className="text-body text-muted mt-1">
               Oggi impari il primo strumento. 3 minuti.
             </p>
-          </div>
+          </Card>
         )}
 
-        {/* CTA principale */}
-        <div className="bg-gradient-to-r from-forest-500 to-forest-600 rounded-2xl shadow-lg p-6 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              {allDone ? (
-                <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">Percorso completato</p>
-                  <h2 className="text-2xl font-bold leading-tight">Ce l&apos;hai fatta!</h2>
-                  <p className="text-forest-100 text-sm mt-1">
-                    Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-forest-100 text-xs font-semibold uppercase tracking-wider mb-1">
-                    {comebackMode ? 'Bentornato' : `Settimana ${currentWeek}`}
-                  </p>
-                  <h2 className="text-2xl font-bold leading-tight">
-                    {WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || `Settimana ${currentWeek}`}
-                  </h2>
-                  {settimana?.principio && (
-                    <p className="text-forest-100 text-sm mt-1 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" aria-hidden="true" />{settimana.principio}</p>
-                  )}
-                  {comebackMode && (
-                    <p className="text-forest-100 text-sm mt-2">
-                      Riprendi da dove eri: il Giorno {nextDay.day} ti aspetta. Bastano pochi minuti.
-                    </p>
-                  )}
-                  {streak >= 2 && (
-                    <p className="text-amber-200 text-sm font-bold mt-2 flex items-center gap-1.5">
-                      <Flame className="w-4 h-4" aria-hidden="true" />
-                      {streak} giorni di fila nel percorso
-                    </p>
-                  )}
-                </>
-              )}
-            </div>
-            <div className="text-5xl">{allDone ? '🏆' : '⚽'}</div>
-          </div>
-
+        {/* ─── Il giorno di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina. ─── */}
+        <Card variant="hero" padding="md">
           {allDone ? (
-            <div className="space-y-2.5">
-              <button
-                onClick={() => router.push('/strumenti')}
-                className="w-full bg-white text-forest-700 font-bold py-4 px-6 rounded-xl hover:bg-forest-50 transition-all text-base flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>🏋️</span>
-                <span>Allenati in Palestra</span>
-              </button>
-              <button
-                onClick={() => router.push('/beta-complete')}
-                className="w-full text-forest-100 hover:text-white text-xs font-medium underline underline-offset-4 transition-colors"
-              >
-                🏆 Rivedi schermata di completamento
-              </button>
-            </div>
-          ) : nextDayLocked ? (
-            <div className="space-y-2.5">
-              <button
-                onClick={() => router.push('/strumenti')}
-                className="w-full bg-white text-forest-700 font-bold py-4 px-6 rounded-xl hover:bg-forest-50 transition-all text-base flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>🏋️</span>
-                <span>Allenati in Palestra</span>
-              </button>
-              <p className="text-forest-100 text-xs text-center">
-                ⏳ Il prossimo giorno (Sett. {nextDay.week}, Giorno {nextDay.day}) sarà disponibile domani
+            <>
+              <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
+              <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta</h2>
+              <p className="text-forest-100 text-body-sm mt-1 mb-4">
+                Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
               </p>
-            </div>
-          ) : nextDayInCorso ? (
-            <div className="space-y-2">
-              <button
-                onClick={() => router.push(`/giorno/${nextDay.week}/${nextDay.day}`)}
-                className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>🌤️</span>
-                <span>Chiudi il Giorno {nextDay.day} — com&apos;è andata?</span>
-              </button>
-              <p className="text-forest-100 text-xs">
-                Giornata avviata stamattina: manca solo la riflessione (1 riga).
-              </p>
-            </div>
+              <div className="space-y-2">
+                <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+                  Allenati in Palestra
+                </Button>
+                <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
+                  Rivedi il traguardo
+                </Button>
+              </div>
+            </>
           ) : (
-            <button
-              onClick={() => router.push(`/giorno/${nextDay.week}/${nextDay.day}`)}
-              className="w-full sm:w-auto bg-white text-forest-700 font-bold py-3.5 px-6 rounded-xl hover:bg-forest-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm"
-            >
-              <span>▶</span>
-              <span>
-                {totalCompleted === 0
-                  ? 'Inizia: Giorno 1'
-                  : `Continua: Sett. ${nextDay.week}, Giorno ${nextDay.day}`}
-              </span>
-            </button>
+            <>
+              <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
+                {comebackMode ? 'Bentornato' : `Settimana ${currentWeek} · ${WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || ''}`}
+              </p>
+              <h2 className="font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
+                {nextDayLocked
+                  ? 'Il prossimo giorno si apre domattina'
+                  : todayTitle || `Giorno ${nextDay.day}`}
+              </h2>
+              <p className="text-forest-100 text-body-sm mt-1.5">
+                {comebackMode
+                  ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
+                  : nextDayLocked
+                    ? `Settimana ${nextDay.week}, Giorno ${nextDay.day}. Intanto la Palestra è aperta.`
+                    : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
+              </p>
+
+              <div className="mt-4">
+                {nextDayLocked ? (
+                  <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+                    Allenati in Palestra
+                  </Button>
+                ) : nextDayInCorso ? (
+                  <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+                    Com&apos;è andata oggi?
+                  </Button>
+                ) : (
+                  <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+                    {totalCompleted === 0 ? 'Inizia il Giorno 1' : `Inizia il Giorno ${nextDay.day}`}
+                  </Button>
+                )}
+                {nextDayInCorso && (
+                  <p className="text-forest-100 text-body-sm mt-2">Giornata avviata: manca solo la riflessione, una riga.</p>
+                )}
+              </div>
+
+              {/* Progresso della settimana: una volta sola, qui */}
+              <div className="mt-5 pt-4 border-t border-white/15">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex gap-1.5 flex-1" aria-label={`${weekProgress} giorni su ${DAYS_PER_WEEK} fatti`}>
+                    {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map(day => {
+                      const done = completedDays.some(d => d.weekNumber === currentWeek && d.dayNumber === day && d.completed);
+                      const isGate = day === GATE_DAY;
+                      const isNext = !done && nextDay.week === currentWeek && nextDay.day === day;
+                      return (
+                        <div key={day} aria-hidden
+                          className={`flex-1 h-7 rounded-md flex items-center justify-center text-caption font-bold tabular-nums ${
+                            done ? 'bg-white text-forest-700' : isNext ? 'bg-white/25 text-white ring-1 ring-white/60' : 'bg-white/10 text-forest-100/80'
+                          }`}>
+                          {done ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : isGate ? <Key className="w-3.5 h-3.5" /> : day}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-forest-100 -mr-3" iconRight={<ChevronRight size={16} aria-hidden />} href={`/settimana/${currentWeek}`}>
+                    Settimana
+                  </Button>
+                </div>
+              </div>
+            </>
           )}
-        </div>
+        </Card>
 
         {/* Missione della settimana — dal gate appena superato */}
         {weeklyMission && !allDone && (
-          <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
-            <p className="text-xs font-bold text-forest-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+          <Card variant="accent" padding="sm">
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1.5 flex items-center gap-1.5">
               <Target className="w-3.5 h-3.5" aria-hidden="true" />
               Missione della settimana
             </p>
-            <p className="text-sm text-app leading-relaxed">{weeklyMission}</p>
-          </div>
+            <p className="text-body text-app leading-relaxed">{weeklyMission}</p>
+          </Card>
         )}
-
-        {/* Reset rapido, SOS e cassetta vivono nella tab Strumenti (hub del campo) */}
 
         {totalCompleted < 3 && coachCard}
 
@@ -573,151 +534,66 @@ export default function HomePage() {
           onToggle={handleActionToggle}
         />
 
-        {/* Progress settimana corrente */}
-        <div className="bg-surface rounded-2xl shadow-lg p-5">
-          <h2 className="text-base font-bold text-app mb-3 flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-forest-500" aria-hidden="true" />
-            Settimana {currentWeek} in corso
-            {weekDone && <span className="text-forest-500 text-sm font-medium">✓ Completata</span>}
-          </h2>
-
-          {/* Day dots */}
-          <div className="flex gap-1.5 mb-3">
-            {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map(day => {
-              const done = completedDays.some(
-                d => d.weekNumber === currentWeek && d.dayNumber === day && d.completed
-              );
-              const isGate = day === GATE_DAY;
-              return (
-                <div
-                  key={day}
-                  className={`flex-1 h-9 rounded-lg flex items-center justify-center text-xs font-bold ${
-                    done
-                      ? 'bg-forest-500 text-white'
-                      : isGate
-                      ? 'bg-forest-500/20 text-forest-300 border border-forest-500/40'
-                      : 'bg-surface-2 text-faint'
-                  }`}
-                >
-                  {done ? '✓' : isGate ? '🔑' : day}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-faint">
-              {weekProgress}/{DAYS_PER_WEEK} giorni · 🔑 Giorno 7 = Gate
-            </p>
-            <button
-              onClick={() => router.push(`/settimana/${currentWeek}`)}
-              className="text-xs text-forest-500 font-semibold hover:underline"
-            >
-              Vedi settimana →
-            </button>
-          </div>
-        </div>
-
-        {/* Preview statistiche */}
-        {checkins.length >= 2 && (() => {
-          const phys = checkins.filter(c => c.physical_state !== null).map(c => c.physical_state as number);
-          const sleep = checkins.filter(c => c.sleep_hours !== null).map(c => c.sleep_hours as number);
-          const rec = checkins.filter(c => c.recovery_quality !== null).map(c => c.recovery_quality as number);
-          const ment = checkins.filter(c => c.mental_state !== null).map(c => c.mental_state as number);
-
-          const TREND_ARROW: Record<string, string> = { up: '↑', down: '↓', stable: '→' };
-          const TREND_CLS: Record<string, string> = { up: 'text-emerald-400', down: 'text-red-400', stable: 'text-faint' };
-
-          const rows = [
-            { Icon: Activity, label: 'Fisico', values: phys, avg: miniAvg(phys), unit: '/10', color: '#10b981', min: 0, max: 10 },
-            { Icon: Moon, label: 'Sonno', values: sleep, avg: miniAvg(sleep), unit: 'h', color: '#3b82f6', min: 4, max: 10 },
-            { Icon: Zap, label: 'Recupero', values: rec, avg: miniAvg(rec), unit: '/10', color: '#f59e0b', min: 0, max: 10 },
-            { Icon: Brain, label: 'Mentale', values: ment, avg: miniAvg(ment), unit: '/10', color: '#8b5cf6', min: 0, max: 10 },
-          ].filter(r => r.values.length >= 2);
-
-          if (rows.length === 0) return null;
-
-          return (
-            <div className="bg-surface rounded-2xl shadow-lg p-5">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-bold text-app flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-forest-500" aria-hidden="true" />
-                  Il tuo stato
-                </h2>
-                <button
-                  onClick={() => router.push('/statistiche')}
-                  className="text-xs text-forest-500 font-semibold hover:underline"
-                >
-                  Vedi tutto →
-                </button>
-              </div>
-              <div className="space-y-2.5">
-                {rows.map(r => {
-                  const t = miniTrend(r.values);
-                  const Icon = r.Icon;
-                  return (
-                    <div key={r.label} className="flex items-center gap-3">
-                      <span className="text-sm w-24 flex items-center gap-2">
-                        <Icon className="w-4 h-4 text-muted" aria-hidden="true" style={{ color: r.color }} />
-                        <span className="text-muted text-xs font-medium">{r.label}</span>
-                      </span>
-                      <MiniSparkline values={r.values} color={r.color} min={r.min} max={r.max} />
-                      <div className="flex items-baseline gap-1 ml-auto">
-                        <span className="text-sm font-bold text-app">{r.avg}{r.unit}</span>
-                        <span className={`text-xs font-bold ${TREND_CLS[t]}`}>{TREND_ARROW[t]}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Calendario settimanale */}
-        <div className="bg-surface rounded-2xl shadow-lg p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-bold text-app flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-forest-500" aria-hidden="true" />
-              La tua settimana
-            </h2>
-            <button
-              onClick={() => setShowCalendar(true)}
-              className="text-xs text-forest-500 font-semibold hover:underline"
-            >
-              {calendarData ? 'Modifica' : 'Imposta'}
-            </button>
-          </div>
-
+        {/* ─── La tua settimana: calendario (tappabile) + i tuoi numeri, in una card sola ─── */}
+        <Card padding="md">
+          <SectionTitle
+            title="La tua settimana"
+            icon={<Calendar size={18} />}
+            action={
+              <Button variant="ghost" size="sm" onClick={() => setShowCalendar(true)}>
+                {calendarData ? 'Modifica' : 'Imposta'}
+              </Button>
+            }
+            className="mb-3"
+          />
           {calendarData ? (
-            <div className="grid grid-cols-7 gap-1.5">
+            <button type="button" onClick={() => setShowCalendar(true)} aria-label="Modifica i giorni di allenamento e partita"
+              className="w-full grid grid-cols-7 gap-1.5 rounded-btn -mx-1 px-1 py-1 hover:bg-surface-2 transition-colors">
               {[1, 2, 3, 4, 5, 6, 7].map((day) => {
                 const isTraining = calendarData.trainingDays.includes(day);
                 const isMatch = calendarData.matchDays.includes(day);
                 return (
-                  <div key={day} className="text-center">
-                    <div className="text-[10px] text-faint mb-1">{DAY_SHORT_NAMES[day]}</div>
-                    <div className={`h-9 rounded-lg flex items-center justify-center text-sm ${
-                      isTraining && isMatch
-                        ? 'bg-orange-500/20 text-orange-300'
-                        : isMatch
-                        ? 'bg-amber-500/20 text-amber-300'
-                        : isTraining
-                        ? 'bg-emerald-500/20 text-emerald-300'
-                        : 'bg-surface-2 text-faint'
-                    }`}>
-                      {isTraining && isMatch ? '⚽🏟️' : isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
-                    </div>
-                  </div>
+                  <span key={day} className="text-center">
+                    <span className="block text-overline uppercase text-faint mb-1">{DAY_SHORT_NAMES[day]}</span>
+                    <span className={`h-10 rounded-btn flex items-center justify-center text-caption font-bold ${
+                      isMatch ? 'bg-warning/20 text-warning' : isTraining ? 'bg-forest-500/20 text-forest-300' : 'bg-surface-2 text-faint'
+                    }`} aria-hidden>
+                      {isMatch ? <Trophy className="w-4 h-4" /> : isTraining ? <Dumbbell className="w-4 h-4" /> : '·'}
+                    </span>
+                  </span>
                 );
               })}
-            </div>
+            </button>
           ) : (
-            <p className="text-sm text-faint">
-              Imposta i giorni di allenamento e partita per personalizzare il percorso.
+            <p className="text-body-sm text-muted">
+              Segna allenamenti e partita: il percorso si adatta ai tuoi giorni.
             </p>
           )}
-        </div>
+
+          {statRows.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-divider">
+              <div className="grid grid-cols-4 gap-2">
+                {statRows.map(r => {
+                  const t = miniTrend(r.values);
+                  const Icon = r.Icon;
+                  return (
+                    <div key={r.label} className="rounded-btn bg-surface-2 px-2 py-2.5 text-center">
+                      <Icon className="w-4 h-4 mx-auto mb-1" style={{ color: r.color }} aria-hidden="true" />
+                      <p className="font-display text-title-3 font-bold text-app tabular-nums leading-none">
+                        {r.avg}<span className="text-caption text-muted font-normal">{r.unit}</span>
+                        <span className={`text-caption ml-0.5 ${t === 'up' ? 'text-success' : t === 'down' ? 'text-danger' : 'text-faint'}`}>{t === 'up' ? '↑' : t === 'down' ? '↓' : ''}</span>
+                      </p>
+                      <p className="text-overline uppercase tracking-wider text-muted mt-1">{r.label}</p>
+                    </div>
+                  );
+                })}
+              </div>
+              <Button variant="ghost" size="sm" fullWidth className="mt-2" iconRight={<ChevronRight size={16} aria-hidden />} href="/statistiche">
+                Tutti i tuoi dati
+              </Button>
+            </div>
+          )}
+        </Card>
 
         {/* Popup calendario */}
         {showCalendar && (
@@ -759,17 +635,19 @@ export default function HomePage() {
         {!coachBannerVisible && !weeklyBannerVisible && !telegramRecoveryCandidate && (
           <InstallBanner totalCompleted={totalCompleted} onVisibilityChange={setInstallBannerVisible} />
         )}
+
+        {/* Il push prompt aspetta se QUALSIASI banner inline è in vista, install incluso.
+            Inline come gli altri (prima era fixed sopra la tab bar). */}
+        <PushPermission
+          userId={userId}
+          suppressed={
+            coachBannerVisible ||
+            weeklyBannerVisible ||
+            telegramBannerVisible ||
+            installBannerVisible
+          }
+        />
       </div>
-      {/* Il push prompt aspetta se QUALSIASI banner inline è in vista, install incluso */}
-      <PushPermission
-        userId={userId}
-        suppressed={
-          coachBannerVisible ||
-          weeklyBannerVisible ||
-          telegramBannerVisible ||
-          installBannerVisible
-        }
-      />
     </main>
   );
 }

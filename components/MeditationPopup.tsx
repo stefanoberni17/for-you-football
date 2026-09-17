@@ -7,6 +7,8 @@ import { supabase } from '@/lib/supabase';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { todayItaly, dateItaly } from '@/lib/dateItaly';
 import { trackOnboarding } from '@/lib/onboardingTrack';
+import { Leaf, Waves, VolumeX, Timer } from 'lucide-react';
+import { Button, Card, Chip, Sheet } from '@/components/ui';
 
 const DURATION_OPTIONS = [
   { label: '1 min', seconds: 60 },
@@ -234,211 +236,134 @@ export default function MeditationPopup({
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
+  const timerLabel = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+
+  const exitToSetup = () => { audioRef.current?.pause(); setPhase('setup'); };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
+    <>
+      {/* L'elemento audio vive fuori dagli Sheet: resta montato tra una fase e l'altra */}
       <audio ref={audioRef} />
 
-      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-10 relative animate-scaleIn my-auto">
-
-        {phase === 'setup' ? (
-          /* ── FASE SETUP ── */
+      {/* ── FASE SETUP ── */}
+      <Sheet
+        open={phase === 'setup'}
+        onClose={handleSkip}
+        closeLabel={isFirstTime ? 'Lo farò più tardi' : 'Salta per oggi'}
+        eyebrow={manualOpen ? 'Reset rapido' : 'Il rituale del mattino'}
+        title={isFirstTime ? 'Il tuo primo Reset' : 'Il Reset'}
+        subtitle={weekName}
+        footer={
           <>
-            <div className="text-center mb-6">
-              <div className="text-5xl md:text-6xl mb-3">
-                {isFirstTime ? '🌱' : '⚽'}
-              </div>
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-forest-300 mb-1">
-                {manualOpen ? 'Reset rapido' : 'Il rituale del mattino'}
-              </p>
-              <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
-                {isFirstTime ? 'Il tuo primo Reset' : 'Il Reset'}
-              </h2>
-              <p className="text-xs md:text-sm text-muted mb-2">{weekName}</p>
-              <p className="text-sm md:text-base text-app font-medium leading-relaxed">
-                {isFirstTime
-                  ? 'Tre respiri prima di iniziare.\nÈ lo strumento che porterai in campo.'
-                  : '1 minuto. Naso, poi bocca — come in campo.'}
-              </p>
-            </div>
+            <Button variant="hero" size="lg" fullWidth onClick={startMeditation}>
+              Inizia il Reset
+            </Button>
+            <Button variant="ghost" fullWidth onClick={handleSkip}>
+              {isFirstTime ? 'Lo farò più tardi' : 'Salta per oggi'}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-body-sm text-muted leading-relaxed text-center mb-5 whitespace-pre-line">
+          {isFirstTime
+            ? 'Tre respiri prima di iniziare.\nÈ lo strumento che porterai in campo.'
+            : 'Naso, poi bocca. Come in campo.'}
+        </p>
 
-            {/* Mantra */}
-            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-forest-500/30">
-              {isFirstTime && (
-                <p className="text-xs text-forest-300 font-semibold text-center mb-2 uppercase tracking-wide">
-                  Il mantra della tua settimana
+        <Card variant="raised" padding="md" className="mb-6 border-forest-500/30">
+          {isFirstTime && (
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 text-center mb-2">
+              Il mantra della tua settimana
+            </p>
+          )}
+          <p className="font-quote text-title-2 text-forest-300 text-center leading-relaxed">
+            &ldquo;{mantra}&rdquo;
+          </p>
+        </Card>
+
+        {/* Selezione durata */}
+        <div>
+          <p className="text-body-sm text-muted text-center mb-3 inline-flex w-full items-center justify-center gap-1.5">
+            <Timer size={16} aria-hidden /> Quanto tempo hai adesso?
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {DURATION_OPTIONS.map(({ label, seconds: s }) => (
+              <Chip
+                key={s}
+                size="lg"
+                selected={selectedDuration === s}
+                onClick={() => setSelectedDuration(s)}
+                showCheck={false}
+                className="w-full px-1!"
+              >
+                {label}
+              </Chip>
+            ))}
+          </div>
+        </div>
+      </Sheet>
+
+      {/* ── FASE RESET (fullscreen, X = interrompi). Solo il respiro: niente altro testo. ── */}
+      <Sheet
+        open={phase === 'meditating'}
+        fullscreen
+        onClose={exitToSetup}
+        closeLabel="Interrompi il Reset"
+        title="Il Reset"
+        subtitle={weekName}
+      >
+        <div className="min-h-full flex flex-col items-center justify-between gap-6 py-4">
+          <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full">
+            {/* Cerchio del respiro */}
+            <div className="relative w-[220px] h-[220px] md:w-64 md:h-64">
+              <div
+                className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-600 transition-transform ease-in-out motion-reduce:transition-none ${
+                  breathPhase === 'inhale' ? 'scale-100' : 'scale-[0.7]'
+                }`}
+                style={{
+                  opacity: 0.7,
+                  transitionDuration: breathPhase === 'inhale' ? `${INHALE_MS}ms` : `${EXHALE_MS}ms`,
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="font-display text-title-2 font-bold text-white" aria-live="polite">
+                  {breathPhase === 'inhale' ? 'Inspira' : 'Espira'}
                 </p>
-              )}
-              <p className="text-base md:text-lg text-forest-200 italic font-medium text-center leading-relaxed">
-                "{mantra}"
-              </p>
-            </div>
-
-            {/* Selezione durata */}
-            <div className="mb-6">
-              <p className="text-sm text-muted text-center mb-3 font-medium">
-                ⏱️ Quanto tempo hai adesso?
-              </p>
-              <div className="grid grid-cols-4 gap-2">
-                {DURATION_OPTIONS.map(({ label, seconds: s }) => (
-                  <button
-                    key={s}
-                    onClick={() => setSelectedDuration(s)}
-                    className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                      selectedDuration === s
-                        ? 'bg-forest-600 text-white shadow-lg scale-105'
-                        : 'bg-surface-2 text-muted border border-divider hover:border-forest-500/40 hover:text-forest-300'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
               </div>
             </div>
 
-            {/* Azioni */}
-            <button
-              onClick={startMeditation}
-              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 md:py-4 rounded-2xl transition-all mb-3 text-sm md:text-base"
-            >
-              Inizia il Reset →
-            </button>
-            <button
-              onClick={handleSkip}
-              className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
-            >
-              {isFirstTime ? 'Lo farò più tardi →' : 'Salta per oggi →'}
-            </button>
-          </>
-        ) : (
-          /* ── FASE RESET ── */
-          <>
-            {/* Pulsante per tornare al setup */}
-            <button
-              onClick={() => { audioRef.current?.pause(); setPhase('setup'); }}
-              className="absolute top-4 right-4 text-faint hover:text-muted transition-colors p-1 rounded-full hover:bg-surface-2"
-              aria-label="Interrompi il Reset"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
+            <p className="font-quote text-title-2 text-forest-300 text-center leading-relaxed">
+              &ldquo;{mantra}&rdquo;
+            </p>
 
-            <div className="text-center mb-6">
-              <div className="text-5xl md:text-6xl mb-3">⚽</div>
-              <h2 className="text-2xl md:text-3xl font-bold text-app mb-2">
-                Il Reset
-              </h2>
-              <p className="text-xs md:text-sm text-muted mb-2">{weekName}</p>
-              <p className="text-sm md:text-base text-app font-medium">
-                Resta qui. Solo questo minuto.
-              </p>
-            </div>
+            <p className="font-display text-title-1 font-bold text-app tabular-nums" aria-label={`Mancano ${timerLabel}`}>
+              {timerLabel}
+            </p>
 
-            {/* Mantra */}
-            <div className="bg-surface-2 backdrop-blur-sm rounded-2xl p-4 md:p-6 mb-6 border border-forest-500/30">
-              <p className="text-base md:text-lg text-forest-200 italic font-medium text-center leading-relaxed">
-                "{mantra}"
-              </p>
-            </div>
-
-            {/* Timer e animazione respiro */}
-            <div className="flex flex-col items-center mb-6">
-              <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4 md:mb-6">
-                <div
-                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-forest-400 to-forest-600 transition-transform ease-in-out ${
-                    breathPhase === 'inhale' ? 'scale-100' : 'scale-75'
-                  }`}
-                  style={{
-                    opacity: 0.6,
-                    transitionDuration: breathPhase === 'inhale' ? `${INHALE_MS}ms` : `${EXHALE_MS}ms`,
-                  }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-4xl md:text-5xl font-bold text-white mb-1 md:mb-2">
-                      {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs md:text-sm text-white/90 font-medium">
-                      {breathPhase === 'inhale' ? '🌬️ Inspira dal naso...' : '💨 Espira dalla bocca...'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Toggle Audio */}
-              <div className="flex gap-1 md:gap-2 bg-surface-2 backdrop-blur-sm rounded-full p-1.5 md:p-2">
-                <button
-                  onClick={() => setAudioMode('nature')}
-                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
-                    audioMode === 'nature'
-                      ? 'bg-forest-500 text-white shadow-lg'
-                      : 'bg-surface text-muted hover:bg-[#293429]'
-                  }`}
-                >
-                  🌊 Natura
-                </button>
-                <button
-                  onClick={() => setAudioMode('focus')}
-                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
-                    audioMode === 'focus'
-                      ? 'bg-forest-500 text-white shadow-lg'
-                      : 'bg-surface text-muted hover:bg-[#293429]'
-                  }`}
-                >
-                  ⚽ Focus
-                </button>
-                <button
-                  onClick={() => setAudioMode('mute')}
-                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all ${
-                    audioMode === 'mute'
-                      ? 'bg-surface-2 text-app shadow-lg ring-1 ring-divider'
-                      : 'bg-surface text-muted hover:bg-[#293429]'
-                  }`}
-                >
-                  🔇
-                </button>
-              </div>
-            </div>
-
-            {/* Bottone completamento */}
-            <button
-              onClick={completeMeditation}
-              disabled={!isTimerComplete}
-              className={`w-full font-bold py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base ${
-                isTimerComplete
-                  ? 'bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white cursor-pointer'
-                  : 'bg-surface-2 text-faint cursor-not-allowed'
-              }`}
-            >
-              {isTimerComplete ? 'Fatto ✓' : 'Segui il respiro...'}
-            </button>
-
-            {!isTimerComplete && (
-              <p className="text-xs text-center text-muted mt-3">
-                Naso che gonfia la pancia, bocca come su un vetro.
-              </p>
+            {isTimerComplete && (
+              <Button variant="hero" size="lg" fullWidth onClick={completeMeditation} className="max-w-xs animate-fadeIn">
+                Ho finito
+              </Button>
             )}
-          </>
-        )}
-      </div>
+          </div>
 
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes scaleIn {
-          from { transform: scale(0.9); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
-        }
-        .animate-scaleIn {
-          animation: scaleIn 0.4s ease-out;
-        }
-      `}</style>
-    </div>
+          {/* Audio di sottofondo: tre chip piccole in fondo */}
+          <div className="flex gap-2" role="group" aria-label="Audio di sottofondo">
+            <Chip selected={audioMode === 'nature'} onClick={() => setAudioMode('nature')} showCheck={false}
+              icon={<Leaf size={16} aria-hidden />} ariaLabel="Suoni della natura">
+              Natura
+            </Chip>
+            <Chip selected={audioMode === 'focus'} onClick={() => setAudioMode('focus')} showCheck={false}
+              icon={<Waves size={16} aria-hidden />} ariaLabel="Audio focus">
+              Focus
+            </Chip>
+            <Chip selected={audioMode === 'mute'} onClick={() => setAudioMode('mute')} showCheck={false} tone="neutral"
+              icon={<VolumeX size={16} aria-hidden />} ariaLabel="Senza audio">
+              Muto
+            </Chip>
+          </div>
+        </div>
+      </Sheet>
+    </>
   );
 }

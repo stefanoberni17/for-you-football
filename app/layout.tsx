@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Outfit } from "next/font/google";
+import { Crimson_Pro, Outfit } from "next/font/google";
 import BottomTabBar from "@/components/BottomTabBar";
 import GlobalCheckinWrapper from "@/components/GlobalCheckinWrapper";
 import GlobalMeditationWrapper from "@/components/GlobalMeditationWrapper";
@@ -8,10 +8,21 @@ import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import PaywallGuard from "@/components/PaywallGuard";
 import AppResume from "@/components/AppResume";
 
+// Brand (Notion, "Brief Landing Page → Brand & stile visivo"): Outfit per tutto (700 titoli,
+// 400/500 UI), Crimson Pro corsivo SOLO per le citazioni (mantra, frasi firma). Review 16/9:
+// prima Outfit era caricato ma body { font-family: Arial } in globals.css lo annullava.
 const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-outfit",
+});
+const crimson = Crimson_Pro({
+  subsets: ["latin"],
+  display: "swap",
+  style: ["italic"],
+  weight: ["400", "500"],
+  variable: "--font-crimson",
 });
 
 export const metadata: Metadata = {
@@ -52,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" className={outfit.className}>
+    <html lang="it" className={`${outfit.variable} ${crimson.variable}`}>
       {/* Body senza pb-tabbar: ogni page lo applica gia sul <main>. Body con
           pb-tabbar + main height:100vh (es. /chat) avrebbe body > 100vh ->
           la pagina poteva scrollare e iOS PWA auto-scrollava al mount. */}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { SPORT_ROLES, PLAYER_ROLES } from '@/lib/constants';
 import { Download } from 'lucide-react';
+import { AppLoader, BackButton, Button } from '@/components/ui';
 
 /**
  * La Carta del Giocatore — il documento personale che resta a fine percorso.
@@ -24,19 +25,19 @@ interface CartaData {
   giorniCompletati: number;
 }
 
-function FieldBlock({ label, value, placeholder }: { label: string; value: string | null; placeholder: string }) {
+function FieldBlock({ label, value, placeholder, quote = false }: { label: string; value: string | null; placeholder: string; quote?: boolean }) {
   return (
-    <div className="border border-divider print:border-gray-300 rounded-2xl p-4">
-      <p className="text-[11px] font-bold uppercase tracking-widest text-forest-400 print:text-green-700 mb-1.5">
+    <div className="border border-divider print:border-gray-300 rounded-card p-4">
+      <p className="text-overline font-semibold uppercase tracking-wider text-forest-400 print:text-green-700 mb-1.5">
         {label}
       </p>
       {value ? (
-        <p className="text-sm text-app print:text-black italic leading-relaxed whitespace-pre-line">
+        <p className={`text-body text-app print:text-black leading-relaxed whitespace-pre-line ${quote ? 'font-quote italic text-body-lg' : ''}`}>
           &ldquo;{value}&rdquo;
         </p>
       ) : (
         <div>
-          <p className="text-xs text-faint print:text-gray-500 mb-2">{placeholder}</p>
+          <p className="text-body-sm text-muted print:text-gray-500 mb-2">{placeholder}</p>
           <div className="border-b border-dashed border-divider print:border-gray-400 h-5" />
           <div className="border-b border-dashed border-divider print:border-gray-400 h-5" />
         </div>
@@ -75,7 +76,7 @@ export default function CartaPage() {
       const ruoli = (profile?.role || '')
         .split(',')
         .filter(Boolean)
-        .map((v: string) => roleOptions.find((r: any) => r.value === v)?.label || v);
+        .map((v: string) => roleOptions.find((r: { value: string; label: string }) => r.value === v)?.label || v);
 
       const day = (w: number, d: number) =>
         progress?.find(p => p.week_number === w && p.day_number === d);
@@ -96,14 +97,7 @@ export default function CartaPage() {
   }, [router]);
 
   if (loading || !carta) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento...</p>
-        </div>
-      </main>
-    );
+    return <AppLoader />;
   }
 
   return (
@@ -112,84 +106,81 @@ export default function CartaPage() {
 
         {/* Controlli — mai in stampa */}
         <div className="no-print flex items-center justify-between">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-1 text-sm text-muted hover:text-forest-400 transition-colors"
-          >
-            ← Indietro
-          </button>
-          <button
+          <BackButton onClick={() => router.back()} label="Indietro" />
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => window.print()}
-            className="flex items-center gap-2 bg-forest-500 hover:bg-forest-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
+            icon={<Download size={18} aria-hidden="true" />}
           >
-            <Download className="w-3.5 h-3.5" aria-hidden="true" />
             Scarica PDF
-          </button>
+          </Button>
         </div>
 
         {/* ── LA CARTA ──────────────────────────────────────────────────────── */}
-        <div className="bg-surface print:bg-white rounded-3xl print:rounded-none shadow-xl print:shadow-none border-2 border-forest-500/40 print:border-green-700 p-6 md:p-8 space-y-5">
+        <div className="bg-surface print:bg-white rounded-card print:rounded-none shadow-e2 print:shadow-none border-2 border-forest-500/40 print:border-green-700 p-6 md:p-8 space-y-5">
 
           {/* Intestazione */}
           <div className="text-center border-b border-divider print:border-gray-300 pb-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-forest-400 print:text-green-700 mb-2">
+            <p className="text-overline font-semibold uppercase tracking-wider text-forest-400 print:text-green-700 mb-2">
               For You Football · Season 1
             </p>
-            <h1 className="text-3xl font-bold text-app print:text-black leading-tight">
+            <h1 className="font-display text-display font-bold text-app print:text-black leading-tight">
               {carta.nome}
             </h1>
             {carta.ruoli.length > 0 && (
-              <p className="text-sm text-muted print:text-gray-600 mt-1">
+              <p className="text-body text-muted print:text-gray-600 mt-1">
                 {carta.ruoli.join(' · ')}
               </p>
             )}
-            <p className="text-xs text-faint print:text-gray-500 mt-3">
+            <p className="text-body-sm text-muted print:text-gray-500 mt-3">
               Carta del Giocatore — il mio gioco mentale, scritto da me
             </p>
           </div>
 
           <FieldBlock
-            label="🌬️ Il mio mantra"
+            label="Il mio mantra"
             value={carta.mantra}
+            quote
             placeholder="La parola che mi riporta qui (la scegli al Giorno 3 della Settimana 1):"
           />
 
           <FieldBlock
-            label="🦵 La mia mappa"
+            label="La mia mappa"
             value={carta.mappa}
             placeholder="Dove porta la tensione il mio corpo in campo (la trovi nella Settimana 3):"
           />
 
           <FieldBlock
-            label="✨ La mia firma del gioco libero"
+            label="La mia firma del gioco libero"
             value={carta.firma}
             placeholder="Come si sente il mio corpo quando gioco libero (Settimana 3, Giorno 3):"
           />
 
           <FieldBlock
-            label="🛡️ Il mio Protocollo"
+            label="Il mio Protocollo"
             value={carta.protocollo}
             placeholder="SENTI → NOMINA → TORNA, nelle mie parole (lo scrivi alla Settimana 4):"
           />
 
           <FieldBlock
-            label="🧍 Chi sono, oltre la maglia"
+            label="Chi sono, oltre la maglia"
             value={carta.cinqueCose}
             placeholder="Le cinque cose che sono anche senza il pallone (le scrivi alla Settimana 8):"
           />
 
           {/* Footer carta */}
           <div className="flex items-center justify-between border-t border-divider print:border-gray-300 pt-4">
-            <p className="text-xs text-faint print:text-gray-500">
+            <p className="text-caption text-faint print:text-gray-500 tabular-nums">
               {carta.giorniCompletati} giorni di percorso completati
             </p>
-            <p className="text-xs font-bold text-forest-400 print:text-green-700">
-              ⚽ Play Free
+            <p className="text-caption font-bold text-forest-400 print:text-green-700">
+              Play Free
             </p>
           </div>
         </div>
 
-        <p className="no-print text-xs text-faint text-center leading-relaxed px-4">
+        <p className="no-print text-body-sm text-muted text-center leading-relaxed px-4">
           Stampala e mettila nell&apos;armadietto. I campi vuoti si riempiono andando avanti nel percorso — o a penna.
         </p>
 

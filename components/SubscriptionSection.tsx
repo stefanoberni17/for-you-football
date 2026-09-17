@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { Button, Card, SectionTitle } from '@/components/ui';
+import { AlertTriangle, Check, Crown } from 'lucide-react';
 
 type SubData = {
   subscription_status: 'none' | 'active' | 'past_due' | 'canceled';
@@ -70,12 +72,14 @@ export default function SubscriptionSection() {
     }
   };
 
+  const title = <SectionTitle title="Il tuo accesso" className="mb-3" />;
+
   if (loading) {
     return (
-      <div className="bg-surface rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Abbonamento</h3>
-        <p className="text-sm text-faint">Caricamento…</p>
-      </div>
+      <Card padding="md">
+        {title}
+        <p className="text-body-sm text-muted">Caricamento…</p>
+      </Card>
     );
   }
 
@@ -88,36 +92,36 @@ export default function SubscriptionSection() {
   // Accesso beta / comp
   if (is_beta_free) {
     return (
-      <div className="bg-surface rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Il tuo accesso</h3>
-        <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-4">
+      <Card padding="md">
+        {title}
+        <Card variant="accent" padding="sm">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xl">⭐</span>
-            <p className="font-semibold text-forest-300 text-sm">Accesso gratuito</p>
+            <Crown size={20} className="text-forest-400 flex-shrink-0" aria-hidden="true" />
+            <p className="font-semibold text-forest-300 text-body">Accesso gratuito</p>
           </div>
-          <p className="text-xs text-forest-200 leading-relaxed">
+          <p className="text-body-sm text-muted leading-relaxed">
             Hai accesso completo al percorso senza costi. Grazie per essere parte della community.
           </p>
-        </div>
-      </div>
+        </Card>
+      </Card>
     );
   }
 
   // Season 1 acquistata (one-time o 3 rate completate): accesso permanente
   if (season1_access) {
     return (
-      <div className="bg-surface rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Il tuo accesso</h3>
-        <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-4">
+      <Card padding="md">
+        {title}
+        <Card variant="accent" padding="sm">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xl">🏆</span>
-            <p className="font-semibold text-forest-300 text-sm">Season 1 — accesso completo</p>
+            <Crown size={20} className="text-forest-400 flex-shrink-0" aria-hidden="true" />
+            <p className="font-semibold text-forest-300 text-body">Season 1 — accesso completo</p>
           </div>
-          <p className="text-xs text-forest-200 leading-relaxed">
+          <p className="text-body-sm text-muted leading-relaxed">
             Season 1 è tua per sempre. Nessun rinnovo, nessun addebito futuro.
           </p>
-        </div>
-      </div>
+        </Card>
+      </Card>
     );
   }
 
@@ -129,89 +133,105 @@ export default function SubscriptionSection() {
     const paid = Math.max(installments_paid, 1); // la 1ª rata è pagata al checkout
 
     return (
-      <div className="bg-surface rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Il tuo accesso</h3>
+      <Card padding="md">
+        {title}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <p className="text-sm font-semibold text-app">Season 1 — rate {paid}/3 pagate</p>
-              </div>
-              {billingDate && paid < 3 && (
-                <p className="text-xs text-muted mt-1">
-                  {`Prossima rata: ${billingDate}`}
-                </p>
-              )}
-              <p className="text-xs text-faint mt-1">
-                Dopo la terza rata gli addebiti si fermano e Season 1 resta tua per sempre.
-              </p>
+          <div>
+            <div className="flex items-center gap-2">
+              <Check size={18} className="text-success flex-shrink-0" aria-hidden="true" />
+              <p className="text-body font-semibold text-app tabular-nums">Season 1 — rate {paid}/3 pagate</p>
             </div>
+            {/* Barra a 3 segmenti: una per rata */}
+            <div className="flex gap-1.5 mt-2" role="img" aria-label={`${paid} rate su 3 pagate`}>
+              {[1, 2, 3].map(n => (
+                <span
+                  key={n}
+                  className={`h-1.5 flex-1 rounded-full ${n <= paid ? 'bg-forest-500' : 'bg-surface-3'}`}
+                />
+              ))}
+            </div>
+            {billingDate && paid < 3 && (
+              <p className="text-body-sm text-muted mt-2">
+                {`Prossima rata: ${billingDate}`}
+              </p>
+            )}
+            <p className="text-body-sm text-muted mt-1">
+              Dopo la terza rata gli addebiti si fermano e Season 1 resta tua per sempre.
+            </p>
           </div>
 
           {cancel_at_period_end && (
-            <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl px-3 py-2 text-xs text-amber-300">
-              Cancellazione programmata. Senza le 3 rate complete l&apos;accesso termina alla scadenza.
-            </div>
+            <Card variant="warn" padding="sm" className="flex items-start gap-2">
+              <AlertTriangle size={18} className="text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <p className="text-body-sm text-warning">
+                Cancellazione programmata. Senza le 3 rate complete l&apos;accesso termina alla scadenza.
+              </p>
+            </Card>
           )}
 
-          <button
+          <Button
+            variant="secondary"
+            fullWidth
             onClick={openPortal}
-            disabled={portalLoading}
-            className="w-full bg-surface-2 hover:bg-[#293429] text-forest-300 font-semibold py-2.5 rounded-xl text-sm transition disabled:opacity-50"
+            loading={portalLoading}
           >
-            {portalLoading ? 'Attendi…' : 'Gestisci pagamento →'}
-          </button>
+            {portalLoading ? 'Attendi…' : 'Gestisci pagamento'}
+          </Button>
 
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && <p className="text-body-sm text-danger">{error}</p>}
         </div>
-      </div>
+      </Card>
     );
   }
 
   // past_due (rata non riuscita)
   if (subscription_status === 'past_due') {
     return (
-      <div className="bg-surface rounded-2xl shadow-sm p-5">
-        <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Il tuo accesso</h3>
-        <div className="bg-red-500/15 border border-red-500/30 rounded-xl p-4 mb-3">
-          <p className="font-semibold text-red-300 text-sm mb-1">⚠ Rata non riuscita</p>
-          <p className="text-xs text-red-400 leading-relaxed">
+      <Card padding="md">
+        {title}
+        <Card variant="danger" padding="sm" className="mb-3">
+          <div className="flex items-center gap-2 mb-1">
+            <AlertTriangle size={18} className="text-danger flex-shrink-0" aria-hidden="true" />
+            <p className="font-semibold text-danger text-body">Rata non riuscita</p>
+          </div>
+          <p className="text-body-sm text-muted leading-relaxed">
             L&apos;ultimo addebito non è andato a buon fine. Aggiorna il metodo di pagamento per riattivare l&apos;accesso e completare le 3 rate.
           </p>
-        </div>
-        <button
+        </Card>
+        <Button
+          variant="secondary"
+          fullWidth
           onClick={openPortal}
-          disabled={portalLoading}
-          className="w-full bg-forest-600 hover:bg-forest-700 text-white font-semibold py-2.5 rounded-xl text-sm transition disabled:opacity-50"
+          loading={portalLoading}
         >
           {portalLoading ? 'Attendi…' : 'Aggiorna pagamento'}
-        </button>
-        {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
-      </div>
+        </Button>
+        {error && <p className="text-body-sm text-danger mt-2">{error}</p>}
+      </Card>
     );
   }
 
   // canceled / none
   return (
-    <div className="bg-surface rounded-2xl shadow-sm p-5">
-      <h3 className="font-semibold text-app text-sm uppercase tracking-wide mb-3">Il tuo accesso</h3>
-      <div className="bg-surface-2 border border-divider rounded-xl p-4 mb-3">
-        <p className="font-semibold text-app text-sm mb-1">
+    <Card padding="md">
+      {title}
+      <Card variant="raised" padding="sm" className="mb-3">
+        <p className="font-semibold text-app text-body mb-1">
           {subscription_status === 'canceled' ? 'Pagamento interrotto' : 'Season 1 non ancora sbloccata'}
         </p>
-        <p className="text-xs text-muted leading-relaxed">
+        <p className="text-body-sm text-muted leading-relaxed">
           {subscription_status === 'canceled'
             ? 'Le rate sono state interrotte prima del completamento. Sblocca Season 1 per riprendere il percorso.'
             : 'Sblocca Season 1 per accedere al percorso completo.'}
         </p>
-      </div>
-      <button
+      </Card>
+      <Button
+        variant="primary"
+        fullWidth
         onClick={() => router.push('/pricing')}
-        className="w-full bg-forest-600 hover:bg-forest-700 text-white font-semibold py-2.5 rounded-xl text-sm transition"
       >
         Sblocca Season 1
-      </button>
-    </div>
+      </Button>
+    </Card>
   );
 }

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { CheckCircle2, TimerOff } from 'lucide-react';
+import { Button, Card, Field, Input } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -61,83 +63,72 @@ export default function ResetPasswordPage() {
   return (
     <main className="min-h-screen bg-app flex flex-col items-center justify-center p-5">
       <div className="text-center mb-7 w-full max-w-sm">
-        <div className="text-5xl mb-3">⚽</div>
-        <h1 className="text-2xl font-bold text-app tracking-tight">For You Football</h1>
+        <div className="text-5xl mb-3" aria-hidden>⚽</div>
+        <h1 className="font-display text-title-1 font-bold text-app tracking-tight">For You Football</h1>
       </div>
 
-      <div className="bg-surface rounded-2xl shadow-xl p-7 w-full max-w-sm">
+      <Card className="w-full max-w-sm">
         {done ? (
           <div className="text-center py-4">
-            <div className="text-4xl mb-3">✅</div>
-            <h2 className="text-xl font-bold text-app mb-1">Password aggiornata</h2>
-            <p className="text-muted text-sm">Ti riportiamo in campo…</p>
+            <div className="flex justify-center mb-3 text-accent-glow" aria-hidden><CheckCircle2 size={40} /></div>
+            <h2 className="font-display text-title-2 font-bold text-app mb-1">Password aggiornata</h2>
+            <p className="text-muted text-body-sm">Ti riportiamo in campo…</p>
           </div>
         ) : sessionReady === false ? (
           <div className="text-center py-4">
-            <div className="text-4xl mb-3">⏱</div>
-            <h2 className="text-xl font-bold text-app mb-2">Link scaduto</h2>
-            <p className="text-muted text-sm mb-5">
+            <div className="flex justify-center mb-3 text-muted" aria-hidden><TimerOff size={40} /></div>
+            <h2 className="font-display text-title-2 font-bold text-app mb-2">Link scaduto</h2>
+            <p className="text-muted text-body-sm mb-5">
               Il link per reimpostare la password non è più valido.
               Richiedine uno nuovo dalla pagina di accesso.
             </p>
-            <button
-              onClick={() => router.push('/login')}
-              className="w-full bg-forest-500 hover:bg-forest-600 text-white font-bold py-3.5 px-4 rounded-xl transition-all"
-            >
+            <Button variant="primary" size="lg" fullWidth onClick={() => router.push('/login')}>
               Torna al login
-            </button>
+            </Button>
           </div>
         ) : (
           <>
-            <h2 className="text-xl font-bold text-app mb-0.5">Nuova password</h2>
-            <p className="text-muted text-sm mb-6">Scegli la password per il tuo account.</p>
+            <h2 className="font-display text-title-2 font-bold text-app mb-0.5">Nuova password</h2>
+            <p className="text-muted text-body-sm mb-6">Scegli la password per il tuo account.</p>
 
             <form onSubmit={handleSave} className="space-y-5">
               {error && (
-                <div className="bg-red-500/15 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm">
+                <div className="bg-danger/15 border border-danger/30 text-danger px-4 py-3 rounded-btn text-body-sm" role="alert">
                   {error}
                 </div>
               )}
 
-              <div>
-                <label className="block text-sm font-medium text-app mb-1.5">
-                  Nuova password
-                </label>
-                <input
+              <Field label="Nuova password" htmlFor="new-password">
+                <Input
+                  id="new-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm text-app"
                   placeholder="Minimo 8 caratteri"
+                  autoComplete="new-password"
                   required
                 />
-              </div>
+              </Field>
 
-              <div>
-                <label className="block text-sm font-medium text-app mb-1.5">
-                  Conferma password
-                </label>
-                <input
+              <Field label="Conferma password" htmlFor="confirm-password">
+                <Input
+                  id="confirm-password"
                   type="password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
-                  className="w-full px-4 py-3 bg-surface-2 border border-divider rounded-xl focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none transition-all text-sm text-app"
                   placeholder="Ripeti la password"
+                  autoComplete="new-password"
                   required
                 />
-              </div>
+              </Field>
 
-              <button
-                type="submit"
-                disabled={saving || sessionReady === null}
-                className="w-full bg-forest-500 hover:bg-forest-600 active:bg-forest-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all disabled:opacity-50 shadow-sm"
-              >
+              <Button type="submit" variant="primary" size="lg" fullWidth loading={saving} disabled={sessionReady === null}>
                 {saving ? 'Salvataggio…' : 'Salva la nuova password'}
-              </button>
+              </Button>
             </form>
           </>
         )}
-      </div>
+      </Card>
     </main>
   );
 }

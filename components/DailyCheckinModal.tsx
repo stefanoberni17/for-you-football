@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import SaveErrorBanner from './SaveErrorBanner';
+import { Button, Card, Sheet } from '@/components/ui';
 
 interface DailyCheckinModalProps {
   userId: string;
@@ -32,10 +33,10 @@ function getSliderLabel(value: number, labels: Record<number, string>): string {
 }
 
 function getSliderColor(value: number): string {
-  if (value <= 3) return 'text-red-400';
-  if (value <= 5) return 'text-amber-400';
+  if (value <= 3) return 'text-danger';
+  if (value <= 5) return 'text-warning';
   if (value <= 7) return 'text-forest-400';
-  return 'text-emerald-400';
+  return 'text-accent-glow';
 }
 
 export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyCheckinModalProps) {
@@ -90,119 +91,124 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
     }
   };
 
-  const sliderRow = (
-    emoji: string,
+  // Ogni cursore in una card sollevata: nome, valore grande a destra, descrizione, slider
+  const sliderCard = (
+    id: string,
     title: string,
-    value: number,
-    setValue: (v: number) => void,
-    labels: Record<number, string>,
-    edges: [string, string, string]
+    display: React.ReactNode,
+    description: string,
+    valueColor: string,
+    input: React.ReactNode,
+    edges: [string, string, string],
   ) => (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-sm font-semibold text-app">
-          <span className="mr-1.5">{emoji}</span>
-          {title}
-        </span>
-        <span className={`text-sm font-bold ${getSliderColor(value)}`}>
-          {value}/10 — {getSliderLabel(value, labels)}
-        </span>
+    <Card variant="raised" padding="sm">
+      <div className="flex items-start justify-between gap-3">
+        <label htmlFor={id} className="text-label font-semibold text-muted uppercase tracking-wide pt-1.5">{title}</label>
+        <span className={`font-display text-title-1 font-bold tabular-nums ${valueColor}`}>{display}</span>
       </div>
-      <input
-        type="range"
-        min={0}
-        max={10}
-        step={1}
-        value={value}
-        onChange={e => setValue(parseInt(e.target.value))}
-        className="w-full accent-forest-500 cursor-pointer h-2"
-      />
-      <div className="flex justify-between text-[10px] text-faint mt-1">
+      <p className="text-body-sm text-app mb-2">{description}</p>
+      {input}
+      <div className="flex justify-between text-caption text-faint mt-1">
         <span>{edges[0]}</span>
         <span>{edges[1]}</span>
         <span>{edges[2]}</span>
       </div>
-    </div>
+    </Card>
+  );
+
+  const slider = (id: string, value: number, setValue: (v: number) => void) => (
+    <input
+      id={id}
+      type="range"
+      min={0}
+      max={10}
+      step={1}
+      value={value}
+      onChange={e => setValue(parseInt(e.target.value))}
+      className="w-full cursor-pointer"
+    />
   );
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative animate-scaleIn my-auto">
-
-        <div className="text-center mb-6">
-          <h2 className="text-xl md:text-2xl font-bold text-app mb-1">Come stai oggi?</h2>
-          <p className="text-muted text-sm">30 secondi di onestà — il Coach li userà per supportarti</p>
-        </div>
-
-        <div className="space-y-5">
-          {sliderRow('💪', 'Fisico', physicalState, setPhysicalState, PHYSICAL_LABELS, ['Esausto', 'Nella media', 'Perfetto'])}
-
-          {/* Sonno (scala diversa: ore) */}
-          <div className="w-full">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-sm font-semibold text-app">
-                <span className="mr-1.5">😴</span>
-                Sonno
-              </span>
-              <span className="text-sm font-bold text-app">
-                {sleepHours}h
-                <span className="text-muted font-normal">
-                  {' — '}
-                  {sleepHours < 6 ? 'poco' : sleepHours >= 8 ? 'ottimo' : 'nella norma'}
-                </span>
-              </span>
-            </div>
-            <input
-              type="range"
-              min={4}
-              max={12}
-              step={0.5}
-              value={sleepHours}
-              onChange={e => setSleepHours(parseFloat(e.target.value))}
-              className="w-full accent-forest-400 cursor-pointer h-2"
-            />
-            <div className="flex justify-between text-[10px] text-faint mt-1">
-              <span>4h</span>
-              <span>8h</span>
-              <span>12h</span>
-            </div>
-          </div>
-
-          {sliderRow('🦵', 'Recupero muscolare', recoveryQuality, setRecoveryQuality, RECOVERY_LABELS, ['Esausto', 'Normale', 'Fresco'])}
-          {sliderRow('🧠', 'Mentale', mentalState, setMentalState, MENTAL_LABELS, ['Testa altrove', 'Normale', 'Lucido'])}
-        </div>
-
-        {/* Footer */}
-        <div className="mt-7 space-y-3">
-          {needsHealthConsent && (
-            <label className="flex items-start gap-2.5 text-[11px] text-muted leading-relaxed cursor-pointer">
-              <input type="checkbox" checked={healthConsent} onChange={(e) => setHealthConsent(e.target.checked)}
-                className="mt-0.5 w-4 h-4 accent-forest-500 shrink-0" />
-              <span>Acconsento a salvare questi dati sulla salute (come sto, sonno, recupero). Servono solo a regolare il percorso. Lo chiediamo una volta sola.</span>
-            </label>
-          )}
+    <Sheet
+      open
+      title="Come stai oggi?"
+      subtitle="20 secondi. Poi si va in campo."
+      footer={
+        <>
           {saveError && (
             <SaveErrorBanner
               message="Check-in non salvato. Riprova o salta per oggi."
               onRetry={handleSave}
             />
           )}
-          <button
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
             onClick={handleSave}
-            disabled={saving || (needsHealthConsent && !healthConsent)}
-            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 md:py-4 rounded-2xl text-sm md:text-base transition-all shadow-lg"
+            loading={saving}
+            disabled={needsHealthConsent && !healthConsent}
           >
-            {saving ? 'Salvataggio...' : 'Salva e continua →'}
-          </button>
-          <button
-            onClick={onSkip}
-            className="w-full text-faint hover:text-muted text-sm py-2 transition-colors"
-          >
+            Salva
+          </Button>
+          <Button variant="ghost" fullWidth onClick={onSkip}>
             Salta per oggi
-          </button>
-        </div>
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-3 pt-1">
+        {sliderCard(
+          'checkin-fisico', 'Fisico',
+          <>{physicalState}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          getSliderLabel(physicalState, PHYSICAL_LABELS), getSliderColor(physicalState),
+          slider('checkin-fisico', physicalState, setPhysicalState),
+          ['Esausto', 'Nella media', 'Perfetto'],
+        )}
 
+        {sliderCard(
+          'checkin-sonno', 'Sonno',
+          <>{sleepHours}<span className="text-body-sm font-semibold text-muted">h</span></>,
+          sleepHours < 6 ? 'Poco' : sleepHours >= 8 ? 'Ottimo' : 'Nella norma',
+          sleepHours < 6 ? 'text-warning' : sleepHours >= 8 ? 'text-accent-glow' : 'text-forest-400',
+          <input
+            id="checkin-sonno"
+            type="range"
+            min={4}
+            max={12}
+            step={0.5}
+            value={sleepHours}
+            onChange={e => setSleepHours(parseFloat(e.target.value))}
+            className="w-full cursor-pointer"
+          />,
+          ['4h', '8h', '12h'],
+        )}
+
+        {sliderCard(
+          'checkin-recupero', 'Recupero',
+          <>{recoveryQuality}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          getSliderLabel(recoveryQuality, RECOVERY_LABELS), getSliderColor(recoveryQuality),
+          slider('checkin-recupero', recoveryQuality, setRecoveryQuality),
+          ['Esausto', 'Normale', 'Fresco'],
+        )}
+
+        {sliderCard(
+          'checkin-mentale', 'Testa',
+          <>{mentalState}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          getSliderLabel(mentalState, MENTAL_LABELS), getSliderColor(mentalState),
+          slider('checkin-mentale', mentalState, setMentalState),
+          ['Altrove', 'Normale', 'Lucido'],
+        )}
+
+        {needsHealthConsent && (
+          <label className="flex items-start gap-3 min-h-[44px] py-2 text-body-sm text-app leading-relaxed cursor-pointer">
+            <input type="checkbox" checked={healthConsent} onChange={(e) => setHealthConsent(e.target.checked)}
+              className="mt-0.5 w-6 h-6 accent-forest-500 shrink-0" />
+            <span>Acconsento a salvare questi dati sulla salute (come sto, sonno, recupero). Servono solo a regolare il percorso. Lo chiediamo una volta sola.</span>
+          </label>
+        )}
       </div>
-    </div>
+    </Sheet>
   );
 }

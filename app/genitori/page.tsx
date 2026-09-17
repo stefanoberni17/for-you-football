@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Button, Card } from '@/components/ui';
 
 export const metadata = { title: 'Per i genitori — For You Football' };
 
@@ -9,21 +10,21 @@ export const metadata = { title: 'Per i genitori — For You Football' };
  */
 function Box({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-surface-2 border border-divider rounded-xl p-4">
-      <p className="font-semibold text-app mb-1">{title}</p>
-      <div className="text-muted leading-relaxed">{children}</div>
-    </div>
+    <Card variant="raised" padding="sm">
+      <p className="text-title-3 font-semibold text-app mb-1">{title}</p>
+      <div className="text-body text-muted leading-relaxed">{children}</div>
+    </Card>
   );
 }
 
 export default function GenitoriPage() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-10 px-5">
-      <div className="max-w-md mx-auto text-sm">
+      <div className="max-w-md mx-auto text-body">
         <div className="mb-6">
-          <p className="text-xs font-semibold text-forest-400 mb-1">For You Football</p>
-          <h1 className="text-2xl font-bold text-app">Per i genitori</h1>
-          <p className="text-muted mt-1">Due minuti per capire cosa usa tuo figlio o tua figlia.</p>
+          <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">For You Football</p>
+          <h1 className="font-display text-title-1 font-bold text-app">Per i genitori</h1>
+          <p className="text-body text-muted mt-1">Due minuti per capire cosa usa tuo figlio o tua figlia.</p>
         </div>
 
         <div className="space-y-3">
@@ -53,10 +54,10 @@ export default function GenitoriPage() {
           </Box>
         </div>
 
-        <div className="flex gap-4 justify-center mt-8 text-xs text-faint">
-          <Link href="/privacy" className="underline">Privacy</Link>
-          <Link href="/termini" className="underline">Termini</Link>
-          <Link href="/" className="underline">Torna all&apos;app</Link>
+        <div className="flex gap-2 justify-center mt-8 flex-wrap">
+          <Button variant="ghost" size="sm" href="/privacy" className="text-muted">Privacy</Button>
+          <Button variant="ghost" size="sm" href="/termini" className="text-muted">Termini</Button>
+          <Button variant="ghost" size="sm" href="/">Torna all&apos;app</Button>
         </div>
       </div>
     </main>

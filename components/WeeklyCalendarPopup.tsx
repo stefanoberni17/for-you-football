@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { DAY_SHORT_NAMES } from '@/lib/constants';
 import SaveErrorBanner from './SaveErrorBanner';
+import { Button, Sheet } from '@/components/ui';
 
 interface WeeklyCalendarPopupProps {
   weekNumber: number;
@@ -59,150 +60,118 @@ export default function WeeklyCalendarPopup({
   const canSave = selectedTraining.length > 0;
   const [saveFailed, setSaveFailed] = useState(false);
 
+  const dayCell = (selected: boolean, selectedCls: string, hoverCls: string) =>
+    `h-12 rounded-btn text-body-sm font-semibold transition-colors ${
+      selected ? selectedCls : `bg-surface-2 text-muted border border-divider ${hoverCls}`
+    }`;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 pb-24 animate-fadeIn overflow-y-auto">
-      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative animate-scaleIn my-auto">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="text-4xl mb-2">📅</div>
-          <h2 className="text-xl font-bold text-app">
-            Imposta la tua settimana
-          </h2>
-          <p className="text-sm text-muted mt-1">
-            Settimana {weekNumber}
-          </p>
-        </div>
-
-        {/* Giorni di allenamento */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-app mb-3">
-            ⚽ Giorni di allenamento
-          </h3>
-          <div className="grid grid-cols-7 gap-1.5">
-            {days.map((day) => {
-              const isTraining = selectedTraining.includes(day);
-              return (
-                <button
-                  key={`t-${day}`}
-                  onClick={() => toggleTraining(day)}
-                  className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
-                    isTraining
-                      ? 'bg-emerald-500 text-white shadow-md scale-105'
-                      : 'bg-surface-2 text-muted border border-divider hover:border-emerald-500/40'
-                  }`}
-                >
-                  {DAY_SHORT_NAMES[day]}
-                </button>
-              );
-            })}
-          </div>
-          <p className="text-xs text-faint mt-2">
-            {selectedTraining.length === 0
-              ? 'Seleziona almeno un giorno'
-              : `${selectedTraining.length} ${selectedTraining.length === 1 ? 'allenamento' : 'allenamenti'}`}
-          </p>
-        </div>
-
-        {/* Giorni partita */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-app mb-3">
-            🏟️ Giorni partita <span className="font-normal text-faint">(opzionale)</span>
-          </h3>
-          <div className="grid grid-cols-7 gap-1.5 mb-2">
-            {days.map((day) => {
-              const isMatch = selectedMatch.includes(day);
-              return (
-                <button
-                  key={`m-${day}`}
-                  onClick={() => toggleMatch(day)}
-                  className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
-                    isMatch
-                      ? 'bg-amber-500 text-white shadow-md scale-105'
-                      : 'bg-surface-2 text-muted border border-divider hover:border-amber-500/40'
-                  }`}
-                >
-                  {DAY_SHORT_NAMES[day]}
-                </button>
-              );
-            })}
-          </div>
-          {selectedMatch.length > 0 ? (
-            <p className="text-xs text-faint">
-              {selectedMatch.length} {selectedMatch.length === 1 ? 'partita' : 'partite'}
-              {' · '}
-              <button
-                onClick={() => setSelectedMatch([])}
-                className="text-faint hover:text-muted transition-colors underline"
-              >
-                Rimuovi tutte
-              </button>
-            </p>
-          ) : (
-            <p className="text-xs text-faint">Nessuna partita selezionata</p>
-          )}
-        </div>
-
-        {/* Riepilogo visuale */}
-        {(selectedTraining.length > 0 || selectedMatch.length > 0) && (
-          <div className="bg-surface-2 backdrop-blur-sm rounded-xl p-3 mb-6 border border-divider">
-            <div className="grid grid-cols-7 gap-1">
-              {days.map((day) => {
-                const isTraining = selectedTraining.includes(day);
-                const isMatch = selectedMatch.includes(day);
-                const isBoth = isTraining && isMatch;
-                return (
-                  <div key={`r-${day}`} className="text-center">
-                    <div className="text-[10px] text-faint mb-0.5">{DAY_SHORT_NAMES[day]}</div>
-                    <div className={`text-sm ${isBoth ? 'text-orange-400' : isMatch ? 'text-amber-400' : isTraining ? 'text-emerald-400' : 'text-faint'}`}>
-                      {isBoth ? '⚽🏟️' : isMatch ? '🏟️' : isTraining ? '⚽' : '·'}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Bottoni */}
-        <div className="space-y-3">
-          <button
-            onClick={handleSave}
-            disabled={!canSave || saving}
-            className={`w-full py-3.5 rounded-xl font-bold text-white transition-all ${
-              canSave && !saving
-                ? 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg'
-                : 'bg-surface-2 text-faint cursor-not-allowed'
-            }`}
-          >
-            {saving ? 'Salvataggio...' : 'Salva calendario'}
-          </button>
+    <Sheet
+      open
+      onClose={onSkip}
+      closeLabel="Lo farò dopo"
+      title="Imposta la tua settimana"
+      subtitle={`Settimana ${weekNumber}`}
+      footer={
+        <>
           {saveFailed && (
             <SaveErrorBanner
               message="Calendario non salvato. Riprova, oppure salta e impostalo dopo."
               onRetry={handleSave}
             />
           )}
-          <button
-            onClick={onSkip}
-            className="w-full py-2 text-sm text-faint hover:text-muted transition-colors"
-          >
+          <Button variant="primary" size="lg" fullWidth onClick={handleSave} disabled={!canSave} loading={saving}>
+            {saving ? 'Salvataggio…' : 'Salva calendario'}
+          </Button>
+          <Button variant="ghost" fullWidth onClick={onSkip}>
             Lo farò dopo
-          </button>
+          </Button>
+        </>
+      }
+    >
+      {/* Giorni di allenamento */}
+      <div className="mb-6 pt-2">
+        <h3 className="text-title-3 font-semibold text-app mb-3">
+          Giorni di allenamento
+        </h3>
+        <div className="grid grid-cols-7 gap-1.5" role="group" aria-label="Giorni di allenamento">
+          {days.map((day) => {
+            const isTraining = selectedTraining.includes(day);
+            return (
+              <button
+                type="button"
+                key={`t-${day}`}
+                onClick={() => toggleTraining(day)}
+                aria-pressed={isTraining}
+                className={dayCell(isTraining, 'bg-forest-500 text-white', 'hover:border-forest-500/40')}
+              >
+                {DAY_SHORT_NAMES[day]}
+              </button>
+            );
+          })}
         </div>
+        <p className="text-caption text-muted mt-2">
+          {selectedTraining.length === 0
+            ? 'Seleziona almeno un giorno'
+            : `${selectedTraining.length} ${selectedTraining.length === 1 ? 'allenamento' : 'allenamenti'}`}
+        </p>
       </div>
 
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes scaleIn {
-          from { transform: scale(0.9); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
-        .animate-scaleIn { animation: scaleIn 0.4s ease-out; }
-      `}</style>
-    </div>
+      {/* Giorni partita */}
+      <div className="mb-6">
+        <h3 className="text-title-3 font-semibold text-app mb-3">
+          Giorni partita <span className="text-body-sm font-normal text-muted">(opzionale)</span>
+        </h3>
+        <div className="grid grid-cols-7 gap-1.5 mb-1" role="group" aria-label="Giorni partita">
+          {days.map((day) => {
+            const isMatch = selectedMatch.includes(day);
+            return (
+              <button
+                type="button"
+                key={`m-${day}`}
+                onClick={() => toggleMatch(day)}
+                aria-pressed={isMatch}
+                className={dayCell(isMatch, 'bg-warning text-app-bg', 'hover:border-warning/40')}
+              >
+                {DAY_SHORT_NAMES[day]}
+              </button>
+            );
+          })}
+        </div>
+        {selectedMatch.length > 0 ? (
+          <div className="flex items-center gap-1 text-caption text-muted">
+            <span>{selectedMatch.length} {selectedMatch.length === 1 ? 'partita' : 'partite'}</span>
+            <span aria-hidden>·</span>
+            <Button variant="ghost" size="sm" onClick={() => setSelectedMatch([])} className="text-muted">
+              Rimuovi tutte
+            </Button>
+          </div>
+        ) : (
+          <p className="text-caption text-muted">Nessuna partita selezionata</p>
+        )}
+      </div>
+
+      {/* Riepilogo visuale */}
+      {(selectedTraining.length > 0 || selectedMatch.length > 0) && (
+        <div className="bg-surface-2 rounded-card p-3 border border-divider">
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((day) => {
+              const isTraining = selectedTraining.includes(day);
+              const isMatch = selectedMatch.includes(day);
+              const isBoth = isTraining && isMatch;
+              return (
+                <div key={`r-${day}`} className="text-center">
+                  <div className="text-caption text-faint mb-0.5">{DAY_SHORT_NAMES[day]}</div>
+                  <div className={`text-caption font-semibold ${isBoth ? 'text-warning' : isMatch ? 'text-warning' : isTraining ? 'text-forest-400' : 'text-faint'}`}>
+                    {isBoth ? 'A+P' : isMatch ? 'P' : isTraining ? 'A' : '·'}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-caption text-faint mt-2 text-center">A = allenamento · P = partita</p>
+        </div>
+      )}
+    </Sheet>
   );
 }

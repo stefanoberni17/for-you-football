@@ -13,6 +13,7 @@ import {
 } from '@/lib/actionsCatalog';
 import { ChevronDown, X, Plus, Sparkles } from 'lucide-react';
 import SaveErrorBanner from './SaveErrorBanner';
+import { Button, Field, Input, Select, Sheet } from '@/components/ui';
 
 const MAX_ACTIONS = 5;
 const CUSTOM_MAX_LEN = 120;
@@ -47,8 +48,9 @@ export default function ActionsSetupSheet({
   const [customText, setCustomText] = useState('');
   const [customCategory, setCustomCategory] = useState<ActionCategory>('mentale');
   const [showCustomForm, setShowCustomForm] = useState(false);
+  // Solo la prima categoria aperta di default (review 16/9: meno muro di testo)
   const [openCategories, setOpenCategories] = useState<Set<ActionCategory>>(
-    new Set(CATEGORY_ORDER)
+    new Set(CATEGORY_ORDER.slice(0, 1))
   );
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -148,54 +150,87 @@ export default function ActionsSetupSheet({
     }
   };
 
+  const footer = (
+    <>
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+          {selected.map(s => (
+            <span
+              key={s.key}
+              className="inline-flex items-center gap-1 h-11 pl-3 pr-1 text-body-sm bg-forest-500/20 text-forest-300 rounded-full max-w-[240px]"
+            >
+              <span className="truncate">{s.text}</span>
+              <button
+                type="button"
+                onClick={() => removeSelected(s.key)}
+                aria-label={`Rimuovi: ${s.text}`}
+                className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-forest-500/30 hover:text-forest-200"
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+      {saveError && (
+        <SaveErrorBanner
+          message="Le azioni non sono state salvate. Riprova."
+          onRetry={handleSave}
+        />
+      )}
+      <p className="text-body font-bold tabular-nums">
+        <span className={canSave ? 'text-forest-300' : 'text-faint'}>{selected.length}</span>
+        <span className="text-faint font-normal">/{MAX_ACTIONS} selezionate</span>
+      </p>
+      <Button
+        variant="primary"
+        fullWidth
+        onClick={handleSave}
+        disabled={!canSave}
+        loading={saving}
+      >
+        {saving ? 'Salvataggio…' : 'Salva le azioni'}
+      </Button>
+    </>
+  );
+
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/60 flex items-end md:items-center justify-center animate-fadeIn">
-      <div className="bg-surface w-full md:max-w-2xl md:rounded-3xl shadow-2xl flex flex-col h-[92vh] md:h-[88vh] overflow-hidden animate-scaleIn">
-
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3 border-b border-divider">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-bold text-app">Le tue 5 azioni</h2>
-            <p className="text-xs text-muted mt-0.5 leading-relaxed">
-              Scegli max 5 azioni. Restano le stesse per la settimana — le spunti ogni giorno, ripartono la notte.
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            aria-label="Chiudi"
-            className="text-faint hover:text-muted p-1 -mt-1 rounded-full hover:bg-surface-2"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
+    <div>
+      <Sheet
+        open
+        onClose={onClose}
+        title="Le tue 5 azioni"
+        subtitle="Scegli max 5 azioni. Restano le stesse per la settimana — le spunti ogni giorno, ripartono la notte."
+        footer={footer}
+      >
         {/* Nota sulle azioni in arrivo (REGOLA ANTICIPAZIONI: le azioni dei principi futuri non si vedono) */}
-        <div className="px-5 pt-2.5 pb-2.5 border-b border-divider">
-          <p className="text-[11px] text-forest-300 font-medium flex items-center gap-1">
-            <Sparkles className="w-3 h-3" aria-hidden="true" />
-            {hasFilter
-              ? `Settimana ${currentWeek}: ${weekFilteredCatalog.length} azioni. ${hiddenCount === 1 ? 'Un\'altra arriva' : `Altre ${hiddenCount} arrivano`} con le prossime settimane.`
-              : `Tutte le ${ACTIONS_CATALOG.length} azioni sono disponibili dalla settimana ${currentWeek}`}
-          </p>
-        </div>
+        <p className="text-caption text-forest-300 font-medium flex items-center gap-1.5 pb-3 border-b border-divider mb-3">
+          <Sparkles size={14} aria-hidden="true" />
+          {hasFilter
+            ? `Settimana ${currentWeek}: ${weekFilteredCatalog.length} azioni. ${hiddenCount === 1 ? 'Un\'altra arriva' : `Altre ${hiddenCount} arrivano`} con le prossime settimane.`
+            : `Tutte le ${ACTIONS_CATALOG.length} azioni sono disponibili dalla settimana ${currentWeek}`}
+        </p>
 
-        {/* Body — scroll */}
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+        <div className="space-y-3">
           {CATEGORY_ORDER.map(cat => {
             const items = groupedCatalog[cat];
             if (items.length === 0) return null;
             const open = openCategories.has(cat);
             return (
-              <div key={cat} className="border border-divider rounded-xl overflow-hidden">
+              <div key={cat} className="border border-divider rounded-card overflow-hidden">
                 <button
+                  type="button"
                   onClick={() => toggleCategory(cat)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-surface-2 hover:bg-[#293429] transition-colors"
+                  aria-expanded={open}
+                  className="w-full min-h-[48px] flex items-center justify-between px-4 py-3 bg-surface-2 hover:bg-surface-3 transition-colors"
                 >
-                  <span className="text-sm font-semibold text-app">
+                  <span className="text-body font-semibold text-app">
                     {CATEGORY_LABELS[cat]} <span className="text-faint font-normal">({items.length})</span>
                   </span>
                   <ChevronDown
-                    className={`w-4 h-4 text-faint transition-transform ${open ? 'rotate-180' : ''}`}
+                    size={18}
+                    className={`text-faint transition-transform ${open ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
                   />
                 </button>
                 {open && (
@@ -206,10 +241,12 @@ export default function ActionsSetupSheet({
                       return (
                         <button
                           key={a.id}
+                          type="button"
                           onClick={() => toggleCatalog(a)}
                           disabled={disabled}
-                          aria-pressed={checked}
-                          className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors ${
+                          role="checkbox"
+                          aria-checked={checked}
+                          className={`w-full text-left px-4 py-3 min-h-[56px] flex items-start gap-3 transition-colors ${
                             checked
                               ? 'bg-forest-500/10'
                               : disabled
@@ -218,7 +255,7 @@ export default function ActionsSetupSheet({
                           }`}
                         >
                           <span
-                            className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                            className={`mt-0.5 w-7 h-7 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                               checked
                                 ? 'bg-forest-500 border-forest-500'
                                 : 'border-divider bg-surface-2'
@@ -226,17 +263,17 @@ export default function ActionsSetupSheet({
                             aria-hidden="true"
                           >
                             {checked && (
-                              <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="20 6 9 17 4 12" />
                               </svg>
                             )}
                           </span>
                           <span className="flex-1 min-w-0">
-                            <p className={`text-sm leading-snug ${checked ? 'text-app font-medium' : 'text-app'}`}>
+                            <p className={`text-body leading-snug ${checked ? 'text-app font-medium' : 'text-app'}`}>
                               {a.text}
                             </p>
                             {a.principle && (
-                              <span className="inline-block mt-1 text-[10px] font-semibold text-forest-300 bg-forest-500/20 px-1.5 py-0.5 rounded">
+                              <span className="inline-block mt-1 text-overline uppercase tracking-wider font-semibold text-forest-300 bg-forest-500/20 px-1.5 py-0.5 rounded">
                                 {PRINCIPLE_LABELS[a.principle]}
                               </span>
                             )}
@@ -251,106 +288,66 @@ export default function ActionsSetupSheet({
           })}
 
           {/* Custom action */}
-          <div className="border border-dashed border-divider rounded-xl p-4">
+          <div className="border border-dashed border-divider rounded-card p-4">
             {!showCustomForm ? (
-              <button
+              <Button
+                variant="ghost"
+                fullWidth
                 onClick={() => setShowCustomForm(true)}
                 disabled={selected.length >= MAX_ACTIONS}
-                className="w-full flex items-center justify-center gap-2 text-sm text-forest-300 font-semibold py-2 hover:text-forest-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                icon={<Plus size={18} aria-hidden="true" />}
               >
-                <Plus className="w-4 h-4" aria-hidden="true" />
-                Aggiungi un'azione tua
-              </button>
+                Aggiungi un&apos;azione tua
+              </Button>
             ) : (
               <div className="space-y-3">
-                <input
-                  type="text"
-                  value={customText}
-                  onChange={e => setCustomText(e.target.value.slice(0, CUSTOM_MAX_LEN))}
-                  placeholder="Es. Faccio 50 passaggi al muro ogni giorno"
-                  className="w-full px-3 py-2.5 bg-surface-2 border border-divider rounded-xl text-sm focus:ring-2 focus:ring-forest-400 focus:border-transparent outline-none text-app"
-                  autoFocus
-                />
-                <div className="flex items-center gap-2">
-                  <select
+                <Field
+                  label="La tua azione"
+                  htmlFor="custom-action-text"
+                  counter={{ value: customText.length, max: CUSTOM_MAX_LEN }}
+                >
+                  <Input
+                    id="custom-action-text"
+                    type="text"
+                    value={customText}
+                    onChange={e => setCustomText(e.target.value.slice(0, CUSTOM_MAX_LEN))}
+                    maxLength={CUSTOM_MAX_LEN}
+                    placeholder="Es. Faccio 50 passaggi al muro ogni giorno"
+                    autoFocus
+                  />
+                </Field>
+                <Field label="Categoria" htmlFor="custom-action-category">
+                  <Select
+                    id="custom-action-category"
                     value={customCategory}
                     onChange={e => setCustomCategory(e.target.value as ActionCategory)}
-                    className="flex-1 px-3 py-2 bg-surface-2 border border-divider rounded-xl text-xs text-app"
                   >
                     {CATEGORY_ORDER.map(c => (
                       <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
                     ))}
-                  </select>
-                  <p className="text-[10px] text-faint tabular-nums">
-                    {customText.length}/{CUSTOM_MAX_LEN}
-                  </p>
-                </div>
+                  </Select>
+                </Field>
                 <div className="flex gap-2">
-                  <button
+                  <Button
+                    variant="primary"
+                    className="flex-1"
                     onClick={addCustom}
                     disabled={!customText.trim() || selected.length >= MAX_ACTIONS}
-                    className="flex-1 bg-forest-500 hover:bg-forest-600 text-white text-sm font-semibold py-2 rounded-xl transition-colors disabled:opacity-40"
                   >
                     Aggiungi
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="ghost"
                     onClick={() => { setShowCustomForm(false); setCustomText(''); }}
-                    className="text-sm text-muted px-3"
                   >
                     Annulla
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
           </div>
         </div>
-
-        {/* Selected summary + Save */}
-        <div className="border-t border-divider bg-surface px-5 pt-3 pb-3" style={{ paddingBottom: 'max(5.5rem, calc(4.5rem + env(safe-area-inset-bottom)))' }}>
-          {selected.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3 max-h-20 overflow-y-auto">
-              {selected.map(s => (
-                <span
-                  key={s.key}
-                  className="inline-flex items-center gap-1 text-[11px] bg-forest-500/20 text-forest-300 px-2 py-1 rounded-full max-w-[200px]"
-                >
-                  <span className="truncate">{s.text}</span>
-                  <button
-                    onClick={() => removeSelected(s.key)}
-                    aria-label="Rimuovi"
-                    className="hover:text-forest-200 flex-shrink-0"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-          {saveError && (
-            <div className="mb-2">
-              <SaveErrorBanner
-                message="Le azioni non sono state salvate. Riprova."
-                onRetry={handleSave}
-              />
-            </div>
-          )}
-          <div className="flex items-center gap-3">
-            <p className="text-xs text-muted tabular-nums">
-              <span className={`font-bold ${canSave ? 'text-forest-300' : 'text-faint'}`}>
-                {selected.length}
-              </span>
-              <span className="text-faint">/{MAX_ACTIONS} selezionate</span>
-            </p>
-            <button
-              onClick={handleSave}
-              disabled={!canSave || saving}
-              className="flex-1 bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white text-sm font-bold py-2.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {saving ? 'Salvataggio…' : 'Salva le 5 azioni'}
-            </button>
-          </div>
-        </div>
-      </div>
+      </Sheet>
     </div>
   );
 }

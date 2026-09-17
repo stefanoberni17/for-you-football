@@ -5,8 +5,10 @@ import { authFetch } from '@/lib/authFetch';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ActionsSetupSheet, { type SelectedAction } from '@/components/ActionsSetupSheet';
+import type { ActionCategory, ActionPrinciple } from '@/lib/actionsCatalog';
 import EmptyState from '@/components/EmptyState';
-import { Flame, Pencil, Target } from 'lucide-react';
+import { AppLoader, BackButton, Badge, Button, Card } from '@/components/ui';
+import { Check, Flame, Pencil, Target } from 'lucide-react';
 
 type ApiAction = {
   id: string;
@@ -37,6 +39,7 @@ function OggiPageInner() {
   const [actions, setActions] = useState<ApiAction[]>([]);
   const [todayCount, setTodayCount] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [streakThreshold, setStreakThreshold] = useState(3);
   const [showSetup, setShowSetup] = useState(false);
   const [pendingToggleId, setPendingToggleId] = useState<string | null>(null);
 
@@ -50,6 +53,7 @@ function OggiPageInner() {
     setActions(aData.actions || []);
     setTodayCount(aData.today_count || 0);
     setStreak(hData.current_streak || 0);
+    if (typeof hData.threshold === 'number') setStreakThreshold(hData.threshold);
   };
 
   useEffect(() => {
@@ -107,7 +111,7 @@ function OggiPageInner() {
       if (!res.ok) throw new Error('toggle failed');
       // Ricarica per coerenza con server (anche per streak)
       await reload(userId);
-    } catch (err) {
+    } catch {
       // Rollback su errore — anche il contatore header, non solo la lista
       setActions(prev =>
         prev.map(a => (a.id === actionId ? { ...a, completed_today: !a.completed_today } : a))
@@ -147,14 +151,7 @@ function OggiPageInner() {
   };
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento azioni…</p>
-        </div>
-      </main>
-    );
+    return <AppLoader label="Caricamento azioni…" />;
   }
 
   const total = actions.length;
@@ -166,36 +163,38 @@ function OggiPageInner() {
     text: a.action_text,
     source: a.source,
     catalog_id: a.catalog_id,
-    category: a.category as any,
-    principle: (a.principle as any) || null,
+    category: a.category as ActionCategory,
+    principle: (a.principle as ActionPrinciple) || null,
   }));
 
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
 
-      {/* Immersive header */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-16">
+      {/* Header immersive: data, numero grande, barra, streak */}
+      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-xl mx-auto">
-          <button
-            onClick={() => router.push('/')}
-            className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-          >
-            ← Home
-          </button>
-          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">
+          <BackButton href="/" label="Home" tone="light" className="mb-2" />
+          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">
             Oggi · {todayLongIt()}
           </p>
-          <h1 className="text-2xl font-bold text-white leading-tight mb-3">
-            Le tue 5 azioni
-          </h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="font-display text-title-1 font-bold text-white leading-tight">
+              Le tue 5 azioni
+            </h1>
+            {streak > 0 && (
+              <Badge tone="warn" icon={<Flame size={14} aria-hidden="true" />} className="mt-1 shrink-0">
+                {streak} {streak === 1 ? 'giorno' : 'giorni'} di fila
+              </Badge>
+            )}
+          </div>
 
           {total > 0 ? (
             <>
-              <div className="flex items-baseline justify-between text-forest-100 text-xs mb-1.5">
-                <span className="font-medium">{todayCount}/{total} fatte oggi</span>
-                <span className="font-semibold">{percent}%</span>
-              </div>
-              <div className="w-full bg-white/15 rounded-full h-1.5 overflow-hidden">
+              <p className="mt-3 flex items-baseline gap-2 text-white">
+                <span className="font-display text-display font-bold tabular-nums">{todayCount}/{total}</span>
+                <span className="text-body-sm text-forest-100">fatte oggi</span>
+              </p>
+              <div className="w-full bg-white/15 rounded-full h-1.5 overflow-hidden mt-2" role="progressbar" aria-valuenow={todayCount} aria-valuemin={0} aria-valuemax={total} aria-label="Azioni fatte oggi">
                 <div
                   className="h-full rounded-full bg-white transition-all duration-500"
                   style={{ width: `${percent}%` }}
@@ -203,28 +202,28 @@ function OggiPageInner() {
               </div>
             </>
           ) : (
-            <p className="text-forest-100 text-sm">
-              Pianifica le tue 5 azioni: le stesse ogni giorno, per tutta la settimana.
+            <p className="text-forest-100 text-body-sm mt-2">
+              Le stesse ogni giorno, per tutta la settimana. Le spunti quando le fai.
             </p>
           )}
         </div>
       </div>
 
       {/* Content area */}
-      <div className="max-w-xl mx-auto px-4 -mt-10 space-y-4">
+      <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
 
         {total === 0 ? (
           <EmptyState
             icon={<Target className="w-6 h-6" aria-hidden="true" />}
-            iconBg="bg-amber-500/20"
-            iconColor="text-amber-300"
-            title="Comportati già oggi come il giocatore che vuoi diventare"
-            subtitle="Scegli fino a 5 azioni concrete. Restano le stesse per tutta la settimana, le spunti ogni giorno. La consistenza vince sulla perfezione."
-            cta={{ label: 'Pianifica le tue 5 azioni', onClick: () => setShowSetup(true) }}
+            iconBg="bg-forest-500/15"
+            iconColor="text-forest-400"
+            title="Gioca già oggi come il giocatore che vuoi diventare"
+            subtitle="Fino a 5 azioni concrete. Restano le stesse per tutta la settimana, le spunti ogni giorno."
+            cta={{ label: 'Scegli le tue azioni', onClick: () => setShowSetup(true) }}
           />
         ) : (
           <>
-            <div className="bg-surface rounded-2xl shadow-sm border border-divider overflow-hidden">
+            <Card padding="none" className="overflow-hidden">
               {actions.map((a, i) => {
                 const checked = a.completed_today;
                 return (
@@ -247,43 +246,28 @@ function OggiPageInner() {
                       }`}
                       aria-hidden="true"
                     >
-                      {checked && (
-                        <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      )}
+                      {checked && <Check size={16} strokeWidth={3} className="text-white" />}
                     </span>
-                    <p className={`flex-1 text-sm leading-relaxed ${checked ? 'text-muted line-through decoration-1' : 'text-app'}`}>
+                    <p className={`flex-1 text-body leading-relaxed ${checked ? 'text-muted line-through decoration-1' : 'text-app'}`}>
                       {a.action_text}
                     </p>
                   </button>
                 );
               })}
-            </div>
+            </Card>
 
-            <button
+            <p className="text-caption text-muted px-1">
+              Lo streak conta i giorni con almeno {streakThreshold} azioni fatte.
+            </p>
+
+            <Button
+              variant="secondary"
+              fullWidth
               onClick={() => setShowSetup(true)}
-              className="w-full bg-surface border border-divider text-app font-semibold py-3 rounded-xl hover:bg-surface-2 transition-colors flex items-center justify-center gap-2 text-sm"
+              icon={<Pencil size={18} aria-hidden="true" />}
             >
-              <Pencil className="w-4 h-4" aria-hidden="true" />
               Modifica le tue 5 azioni
-            </button>
-
-            {streak > 0 && (
-              <div className="bg-surface border border-orange-500/30 rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                  <Flame className="w-6 h-6 text-orange-400" aria-hidden="true" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-bold text-app">
-                    {streak} {streak === 1 ? 'giorno' : 'giorni'} di fila
-                  </p>
-                  <p className="text-xs text-muted">
-                    Hai fatto almeno 3 azioni al giorno. Continua così.
-                  </p>
-                </div>
-              </div>
-            )}
+            </Button>
           </>
         )}
 
@@ -307,14 +291,7 @@ function OggiPageInner() {
 
 export default function OggiPage() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento…</p>
-        </div>
-      </main>
-    }>
+    <Suspense fallback={<AppLoader />}>
       <OggiPageInner />
     </Suspense>
   );

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
-import { MessageCircle, X } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
+import { Banner } from '@/components/ui';
 
 const DISMISS_KEY = 'telegramRecoveryDismissed';
 
@@ -59,37 +60,19 @@ export default function TelegramRecoveryBanner({ hasTelegram, onVisibilityChange
   };
 
   return (
-    <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl shadow-sm p-4 relative">
-      <button
-        onClick={handleDismiss}
-        className="absolute top-3 right-3 text-faint hover:text-muted transition-colors"
-        aria-label="Chiudi"
-      >
-        <X className="w-4 h-4" aria-hidden="true" />
-      </button>
-      <div className="flex items-start gap-3 pr-6 mb-3">
-        <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-          <MessageCircle className="w-5 h-5 text-blue-300" aria-hidden="true" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-blue-200">Attiva il Coach sul telefono</p>
-          <p className="text-xs text-blue-300 mt-0.5 leading-relaxed">
-            Ti scrive lui ogni giorno e ti ricorda la pratica. Un tap e il Coach è nel tuo Telegram.
-          </p>
-        </div>
-      </div>
-      <button
-        onClick={handleLink}
-        disabled={loading}
-        className="w-full bg-forest-500 hover:bg-forest-600 text-white text-sm font-semibold py-2.5 px-3 rounded-xl transition-colors disabled:opacity-50"
-      >
-        {loading ? 'Apriamo Telegram…' : '📲 Attiva il Coach — un tap'}
-      </button>
+    <Banner
+      tone="info"
+      icon={<MessageCircle size={20} />}
+      title="Attiva il Coach sul telefono"
+      action={{ label: loading ? 'Apriamo Telegram…' : 'Attiva il Coach — un tap', onClick: handleLink, loading }}
+      onClose={handleDismiss}
+    >
+      Ti scrive lui ogni giorno e ti ricorda la pratica. Un tap e il Coach è nel tuo Telegram.
       {failed && (
-        <p className="text-xs text-red-300 mt-2 text-center">
+        <p className="text-body-sm text-danger mt-2">
           Non siamo riusciti ad aprire Telegram — riprova tra poco.
         </p>
       )}
-    </div>
+    </Banner>
   );
 }

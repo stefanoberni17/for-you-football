@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { BETA_MAX_WEEK, SPORT_FEARS, PLAYER_FEARS } from '@/lib/constants';
+import { BarChart3, Check, Dumbbell, IdCard, Map, MessageCircle } from 'lucide-react';
+import { Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
 interface MirrorData {
   situazioneIniziale: string | null;
@@ -130,166 +132,162 @@ export default function BetaCompletePage() {
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="bg-surface rounded-3xl shadow-xl p-8 text-center">
-          <div className="text-6xl mb-4">🏆</div>
-          <h1 className="text-3xl font-bold text-app mb-2">
+        <Card className="text-center">
+          <div className="text-6xl mb-4" aria-hidden>🏆</div>
+          <h1 className="font-display text-title-1 font-bold text-app mb-2">
             Ce l&apos;hai fatta, {name}.
           </h1>
-          <p className="text-muted leading-relaxed">
+          <p className="text-body text-muted leading-relaxed">
             Hai completato tutte le {BETA_MAX_WEEK} settimane disponibili.
             Hai costruito lo strumento — Presenza, Osservazione, Ascolto, Protocollo Pressione —
             e hai imparato a giocare nelle difficoltà: Accettazione, Lasciare Andare, Perdono.
           </p>
-          <p className="text-muted leading-relaxed mt-3">
+          <p className="text-body text-muted leading-relaxed mt-3">
             L&apos;ultimo blocco — Giocare libero, il ritorno al centro — sta arrivando.
             Ti scriveremo non appena sarà disponibile.
           </p>
-        </div>
+        </Card>
 
         {/* ── Il tuo prima e dopo — le sue parole, non le nostre ────────────── */}
         {hasMirrorContent && (
-          <div className="bg-surface rounded-3xl shadow-lg p-6 space-y-5">
-            <div>
-              <h2 className="text-lg font-bold text-app">Il tuo prima e dopo</h2>
-              <p className="text-sm text-muted mt-1">
-                Non te lo diciamo noi, com&apos;è andata. Te lo dicono le tue parole.
-              </p>
-            </div>
+          <Card className="space-y-5">
+            <SectionTitle
+              size="lg"
+              title="Il tuo prima e dopo"
+              subtitle="Non te lo diciamo noi, com'è andata. Te lo dicono le tue parole."
+            />
 
             {(mirror.situazioneIniziale || mirror.paure.length > 0) && (
-              <div className="bg-surface-2 border border-divider rounded-2xl p-4">
-                <p className="text-xs font-bold text-faint uppercase tracking-wide mb-2">
+              <Card variant="raised" padding="sm">
+                <p className="text-overline font-bold text-faint uppercase tracking-wider mb-2">
                   Da dove sei partito — all&apos;inizio del percorso
                 </p>
                 {mirror.situazioneIniziale && (
-                  <p className="text-sm text-app italic leading-relaxed">
+                  <p className="font-quote text-body-lg text-app leading-relaxed">
                     &ldquo;{mirror.situazioneIniziale}&rdquo;
                   </p>
                 )}
                 {mirror.paure.length > 0 && (
-                  <p className="text-xs text-muted mt-2">
+                  <p className="text-body-sm text-muted mt-2">
                     La tua paura: {mirror.paure.join(' · ')}
                   </p>
                 )}
-              </div>
+              </Card>
             )}
 
             {mirror.gateW1 && (
-              <div className="bg-surface-2 border border-divider rounded-2xl p-4">
-                <p className="text-xs font-bold text-faint uppercase tracking-wide mb-2">
+              <Card variant="raised" padding="sm">
+                <p className="text-overline font-bold text-faint uppercase tracking-wider mb-2">
                   Fine Settimana 1 — scrivevi:
                 </p>
-                <p className="text-sm text-app italic leading-relaxed">
+                <p className="font-quote text-body-lg text-app leading-relaxed">
                   &ldquo;{mirror.gateW1}&rdquo;
                 </p>
-              </div>
+              </Card>
             )}
 
             {mirror.gateFinal && (
-              <div className="bg-forest-500/15 border border-forest-500/30 rounded-2xl p-4">
-                <p className="text-xs font-bold text-forest-300 uppercase tracking-wide mb-2">
+              <Card variant="accent" padding="sm">
+                <p className="text-overline font-bold text-forest-300 uppercase tracking-wider mb-2">
                   Fine Settimana {BETA_MAX_WEEK} — hai scritto:
                 </p>
-                <p className="text-sm text-forest-100 italic leading-relaxed">
+                <p className="font-quote text-body-lg text-forest-100 leading-relaxed">
                   &ldquo;{mirror.gateFinal}&rdquo;
                 </p>
-              </div>
+              </Card>
             )}
 
             {/* I numeri — piccoli, le parole grandi */}
             <div className="flex gap-3 text-center">
-              <div className="flex-1 bg-surface-2 rounded-xl py-3">
-                <p className="text-xl font-bold text-app">{mirror.giorniCompletati}</p>
-                <p className="text-[11px] text-faint">giorni completati</p>
+              <div className="flex-1 bg-surface-2 rounded-card py-3">
+                <p className="font-display text-title-2 font-bold text-app tabular-nums">{mirror.giorniCompletati}</p>
+                <p className="text-caption text-faint">giorni completati</p>
               </div>
               {mirror.mentalePrima !== null && mirror.mentaleDopo !== null && (
-                <div className="flex-1 bg-surface-2 rounded-xl py-3">
-                  <p className="text-xl font-bold text-app">
+                <div className="flex-1 bg-surface-2 rounded-card py-3">
+                  <p className="font-display text-title-2 font-bold text-app tabular-nums">
                     {mirror.mentalePrima} → {mirror.mentaleDopo}
                   </p>
-                  <p className="text-[11px] text-faint">stato mentale, prima e ultima settimana</p>
+                  <p className="text-caption text-faint">stato mentale, prima e ultima settimana</p>
                 </div>
               )}
             </div>
 
             <div className="border-t border-divider pt-4">
-              <p className="text-sm text-app leading-relaxed mb-3">
+              <p className="text-body text-app leading-relaxed mb-3">
                 Rileggi il ragazzo che ha scritto quelle righe.{' '}
                 <strong>Cosa sa adesso, che lui non sapeva?</strong>
               </p>
-              <button
+              <Button
+                variant="primary"
+                fullWidth
+                icon={<MessageCircle size={18} aria-hidden />}
                 onClick={() => router.push(`/chat?prompt=${encodeURIComponent(mirrorPrompt)}`)}
-                className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3 rounded-xl transition-all text-sm"
               >
-                💬 Rifletti col Coach
-              </button>
+                Rifletti col Coach
+              </Button>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* ── Cosa ti resta ──────────────────────────────────────────────────── */}
-        <div className="bg-surface rounded-3xl shadow-lg p-6">
-          <h2 className="text-lg font-bold text-app mb-1">Cosa ti resta</h2>
-          <p className="text-sm text-muted mb-4">
-            Il percorso si ferma qui (per ora). Gli strumenti no — sono tuoi.
-          </p>
-          <div className="space-y-3">
-            <button
-              onClick={() => router.push('/strumenti')}
-              className="w-full bg-surface-2 hover:bg-[#293429] text-app font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2"
-            >
-              🏋️ Vai in Palestra — gli strumenti sono tuoi
-            </button>
-            <button
-              onClick={() => router.push('/carta')}
-              className="w-full bg-surface border border-forest-500/40 text-forest-300 font-bold py-3 rounded-xl hover:bg-surface-2 transition-all text-sm flex items-center justify-center gap-2"
-            >
-              🎴 La tua Carta del Giocatore
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-surface rounded-3xl shadow-lg p-6">
-          <h2 className="text-lg font-bold text-app mb-2">Com&apos;è andata?</h2>
-          <p className="text-sm text-muted mb-3">
-            Il tuo feedback ci aiuta a costruire il resto del percorso. Due righe vanno benissimo.
-          </p>
-          <textarea
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Cosa ha funzionato? Cosa cambieresti?"
-            rows={5}
-            className="w-full rounded-xl bg-surface-2 border border-divider p-3 text-sm text-app focus:outline-none focus:border-forest-400"
+        <Card>
+          <SectionTitle
+            size="lg"
+            title="Cosa ti resta"
+            subtitle="Il percorso si ferma qui (per ora). Gli strumenti no — sono tuoi."
+            className="mb-4"
           />
-          <button
-            onClick={sendFeedback}
-            disabled={sending || !feedback.trim() || sent}
-            className="mt-3 w-full bg-forest-500 hover:bg-forest-600 disabled:bg-surface-2 disabled:text-faint text-white font-bold py-3 rounded-xl transition-all"
-          >
-            {sent ? '✓ Grazie' : sending ? 'Invio…' : 'Invia feedback'}
-          </button>
-        </div>
+          <div className="space-y-3">
+            <Button variant="secondary" fullWidth icon={<Dumbbell size={18} aria-hidden />} onClick={() => router.push('/strumenti')}>
+              Vai in Palestra — gli strumenti sono tuoi
+            </Button>
+            <Button variant="secondary" fullWidth icon={<IdCard size={18} aria-hidden />} onClick={() => router.push('/carta')}>
+              La tua Carta del Giocatore
+            </Button>
+          </div>
+        </Card>
 
-        <div className="bg-surface rounded-3xl shadow-lg p-6 space-y-3">
-          <button
-            onClick={() => router.push('/chat')}
-            className="w-full bg-surface-2 hover:bg-[#293429] text-forest-300 font-bold py-3 rounded-xl transition-all"
+        <Card>
+          <SectionTitle
+            size="lg"
+            title="Com'è andata?"
+            subtitle="Il tuo feedback ci aiuta a costruire il resto del percorso. Due righe vanno benissimo."
+            className="mb-3"
+          />
+          <Field label="Il tuo feedback" htmlFor="beta-feedback">
+            <Textarea
+              id="beta-feedback"
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              placeholder="Cosa ha funzionato? Cosa cambieresti?"
+              rows={5}
+            />
+          </Field>
+          <Button
+            variant="primary"
+            fullWidth
+            className="mt-3"
+            onClick={sendFeedback}
+            disabled={!feedback.trim() || sent}
+            loading={sending}
+            icon={sent ? <Check size={18} aria-hidden /> : undefined}
           >
-            💬 Parla con il Coach
-          </button>
-          <button
-            onClick={() => router.push('/statistiche')}
-            className="w-full bg-surface border border-forest-500/40 text-forest-300 font-bold py-3 rounded-xl hover:bg-surface-2 transition-all"
-          >
-            📊 Rivedi le tue statistiche
-          </button>
-          <button
-            onClick={() => router.push('/settimane')}
-            className="w-full bg-surface border border-divider text-app font-bold py-3 rounded-xl hover:bg-surface-2 transition-all"
-          >
-            🗺️ Torna al percorso
-          </button>
-        </div>
+            {sent ? 'Grazie' : sending ? 'Invio…' : 'Invia feedback'}
+          </Button>
+        </Card>
+
+        <Card className="space-y-3">
+          <Button variant="secondary" fullWidth icon={<MessageCircle size={18} aria-hidden />} onClick={() => router.push('/chat')}>
+            Parla con il Coach
+          </Button>
+          <Button variant="secondary" fullWidth icon={<BarChart3 size={18} aria-hidden />} onClick={() => router.push('/statistiche')}>
+            Rivedi le tue statistiche
+          </Button>
+          <Button variant="secondary" fullWidth icon={<Map size={18} aria-hidden />} onClick={() => router.push('/settimane')}>
+            Torna al percorso
+          </Button>
+        </Card>
       </div>
     </main>
   );

@@ -5,7 +5,15 @@ import { useWakeLock } from '@/lib/useWakeLock';
 import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
-import { ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
+import { Badge, Button, Card, Chip, Input } from '@/components/ui';
+
+// Feedback della serie a 3 scelte (recupero: sudati, con una mano): stessa scala RPE 1-10 dei log
+const SCELTE_RPE = [['Facile', 3], ['Giusta', 6], ['Durissima', 9]] as const;
+const RPE_DETTAGLIO_KEY = 'player.rpeDettaglio';
+const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Gradino nuovo', lato: 'Lato debole', leggero: 'Più leggero',
+};
 
 interface PlanItem {
   esercizio_id: string;
@@ -75,6 +83,9 @@ export default function TrainingSessionPlayer({
   const [fattoTxt, setFattoTxt] = useState('');
   const [caricoTxt, setCaricoTxt] = useState('');
   const [logSaved, setLogSaved] = useState(false);
+  // Scala 1-10 al posto delle 3 scelte: chi la preferisce la ritrova (localStorage)
+  const [dettaglio, setDettaglio] = useState(() => { try { return typeof window !== 'undefined' && localStorage.getItem(RPE_DETTAGLIO_KEY) === '1'; } catch { return false; } });
+  const [showDiverso, setShowDiverso] = useState(false); // "Ho fatto diverso": input fatte/kg
   const [sensazione, setSensazione] = useState<string | null>(null);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
@@ -185,7 +196,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setShowDiverso(false);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
@@ -213,7 +224,7 @@ export default function TrainingSessionPlayer({
     setSerieFatte(next);
     // Serie chiusa → durante il recupero si può dare il feedback (RPE, reps/kg reali)
     setPending({ serie: next, quantita: quantitaLato, unita: ex?.unita ?? 'reps', carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
-    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null);
+    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null); setShowDiverso(false);
     startRest(item.recupero_sec, next >= totalSerie);
   };
   // Tornare all'esercizio precedente (tap sbagliato su "esercizio completato"): si riparte dalla sua prima serie
@@ -223,7 +234,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setShowDiverso(false);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false); setShowDesc(false);
@@ -259,195 +270,264 @@ export default function TrainingSessionPlayer({
 
   if (!item || !ex) {
     return (
-      <div className="p-6 text-center text-muted">
+      <div className="p-6 text-center text-body text-muted">
         Esercizio non trovato nel catalogo.
-        <button onClick={onExit} className="block mx-auto mt-4 text-forest-400 font-semibold">Esci</button>
+        <div className="mt-4"><Button variant="secondary" onClick={onExit}>Esci</Button></div>
       </div>
     );
   }
 
   const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);
-  const caricoLabel = item.carico_kg ? ` @ ${item.carico_kg} kg` : '';
+  const videoVisibile = showVideo && !!ex.videoUrl && (!!ex.videoMp4 || !!embed);
+  const blocco = item.blocco_id ? blocchi?.find((b) => b.id === item.blocco_id) : undefined;
+  const latoLabel = lato === 'dx' ? 'destro' : 'sinistro';
+  // Parametri dell'esercizio: "3 × 12 · recupero 90"" (per lato, carico, serie extra sul lato debole)
+  const parametri = isEmom
+    ? `EMOM ${item.serie}' · ${item.quantita} reps al minuto`
+    : [
+      `${item.serie} × ${unitaLabel(ex.unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`,
+      extraLato ? `+1 ${item.lato_extra === 'sx' ? 'sinistro' : 'destro'}` : '',
+      item.carico_kg ? `${item.carico_kg} kg` : '',
+      `recupero ${item.recupero_sec}"`,
+    ].filter(Boolean).join(' · ');
+  const ctaLabel = isEmom ? 'EMOM finito, vai avanti'
+    : isPerLato ? (isExtra || (lato === 'sx' && serieFatte + 1 >= totalSerie) ? 'Esercizio completato' : lato === 'dx' ? 'Lato destro fatto' : 'Lato sinistro fatto')
+    : serieFatte + 1 >= totalSerie ? 'Esercizio completato' : 'Serie fatta';
+  const rpeCls = (n: number) => rpe === n
+    ? (n >= 9 ? 'bg-danger border-danger text-white' : n >= 7 ? 'bg-warning border-warning text-app-bg' : 'bg-forest-500 border-forest-500 text-white')
+    : 'bg-surface-2 border-divider text-muted';
+  const toggleDettaglio = () => {
+    const next = !dettaglio;
+    setDettaglio(next);
+    try { localStorage.setItem(RPE_DETTAGLIO_KEY, next ? '1' : '0'); } catch { /* no-op */ }
+  };
+  const clearRest = () => { if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null; };
+  const fmtSec = (sec: number) => (sec >= 60 ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}` : `${sec}"`);
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
       {/* Header: progresso item + chiudi */}
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="text-xs text-muted font-medium">{titolo} · esercizio {itemIdx + 1}/{items.length}</div>
-        <button onClick={onExit} aria-label="Esci dalla seduta"
-          className="w-9 h-9 rounded-full bg-surface-2 flex items-center justify-center text-muted">
-          <X size={18} />
+      <div className="flex items-center justify-between px-4 py-2">
+        <div className="text-caption text-muted font-medium truncate">{titolo} · esercizio {itemIdx + 1}/{items.length}</div>
+        <button type="button" onClick={onExit} aria-label="Esci dalla seduta"
+          className="w-11 h-11 shrink-0 rounded-full bg-surface-2 hover:bg-surface-3 flex items-center justify-center text-muted hover:text-app">
+          <X size={20} />
         </button>
       </div>
-      <div className="flex gap-1 px-4 mb-4">
+      <div className="flex gap-1 px-4 mb-4" aria-hidden>
         {items.map((_, i) => (
-          <div key={i} className={`h-1 flex-1 rounded-full ${i < itemIdx ? 'bg-forest-500' : i === itemIdx ? 'bg-forest-400/60' : 'bg-surface-2'}`} />
+          <div key={i} className={`h-1.5 flex-1 rounded-full ${i < itemIdx ? 'bg-accent-glow' : i === itemIdx ? 'bg-accent-glow/50' : 'bg-surface-2'}`} />
         ))}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-tabbar">
+      {/* Corpo scrollabile: la CTA principale è sticky in fondo (mt-auto: in fondo anche se il contenuto è corto) */}
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4 pb-tabbar">
         {/* Esercizio corrente */}
-        <div className="bg-surface rounded-2xl p-5 border border-divider mb-4">
-          {item.blocco_id && blocchi?.find((b) => b.id === item.blocco_id) && (
-            <p className="text-[11px] uppercase tracking-widest text-forest-400 font-bold mb-1">{nomeBloccoAtleta(blocchi.find((b) => b.id === item.blocco_id)!.nome)}</p>
+        <Card className="mb-4">
+          {blocco && (
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{nomeBloccoAtleta(blocco.nome)}</p>
           )}
-          <h2 className="text-xl font-bold text-app leading-snug">{ex.nome}</h2>
-          <p className="text-forest-400 font-semibold mt-1">
-            {isEmom
-              ? `EMOM ${item.serie}' — ${item.quantita} reps al minuto`
-              : isPerLato
-                ? `${item.serie} serie × ${unitaLabel(ex.unita, quantitaLato)} per lato (dx + sx)${extraLato ? ` + 1 solo ${item.lato_extra === 'sx' ? 'sinistro' : 'destro'}` : ''}${caricoLabel} · recupero ${item.recupero_sec}"`
-                : `${item.serie} serie × ${unitaLabel(ex.unita, item.quantita)}${caricoLabel} · recupero ${item.recupero_sec}"`}
-          </p>
-          {(item.nota || ex.note) && (
-            <p className="text-sm text-muted mt-2 leading-relaxed">{item.nota || ex.note}</p>
+          <h2 className="font-display text-title-1 font-bold text-app leading-tight">{ex.nome}</h2>
+          <p className="text-body-lg font-semibold tabular-nums text-forest-400 mt-1">{parametri}</p>
+          {item.nota && (
+            <div className="mt-3 flex items-start gap-2">
+              <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
+                {item.adattamento ? ADATTAMENTO_LABEL[item.adattamento] : 'Nota'}
+              </Badge>
+              <p className="text-body-sm text-app leading-snug">{item.nota}</p>
+            </div>
           )}
-          {ex.descrizione && (
-            <div className="mt-3">
-              <button onClick={() => setShowDesc(!showDesc)}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-forest-400">
-                <Info size={14} /> {showDesc ? 'Nascondi descrizione' : 'Come si esegue'}
-              </button>
-              {showDesc && (
-                <p className="text-sm text-muted mt-2 leading-relaxed bg-surface-2 border border-divider rounded-xl px-3.5 py-3">{ex.descrizione}</p>
+          {!item.nota && ex.note && (
+            <p className="text-body-sm text-muted mt-2 leading-relaxed">{ex.note}</p>
+          )}
+          {(ex.descrizione || (ex.videoUrl && !videoVisibile)) && (
+            <div className="mt-3 flex gap-2 flex-wrap">
+              {ex.descrizione && (
+                <Button variant="secondary" size="sm" icon={<Info size={16} />} onClick={() => setShowDesc(!showDesc)}>
+                  {showDesc ? 'Nascondi' : 'Come si esegue'}
+                </Button>
+              )}
+              {ex.videoUrl && !videoVisibile && (
+                <Button variant="secondary" size="sm" icon={<Play size={16} />} onClick={() => setShowVideo(true)}>
+                  Guarda il video
+                </Button>
               )}
             </div>
           )}
-          {ex.videoUrl && (
+          {showDesc && ex.descrizione && (
+            <p className="text-body text-muted mt-3 leading-relaxed bg-surface-2 border border-divider rounded-btn px-3.5 py-3">{ex.descrizione}</p>
+          )}
+          {videoVisibile && (
             <div className="mt-3">
-              {showVideo && ex.videoMp4 ? (
-                <video src={ex.videoUrl} controls playsInline className="w-full rounded-xl bg-black" style={{ maxHeight: 380 }} />
-              ) : showVideo && embed ? (
-                <div className="rounded-xl overflow-hidden" style={{ aspectRatio: '9/14', maxHeight: 380 }}>
-                  <iframe src={embed} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
-                </div>
+              {ex.videoMp4 ? (
+                <video src={ex.videoUrl} controls playsInline className="w-full rounded-btn bg-black" style={{ maxHeight: 380 }} />
               ) : (
-                <button onClick={() => setShowVideo(true)}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-forest-400 bg-forest-500/10 border border-forest-500/30 rounded-xl px-4 py-2">
-                  <Play size={15} /> Guarda il video
-                </button>
+                <div className="rounded-btn overflow-hidden" style={{ aspectRatio: '9/14', maxHeight: 380 }}>
+                  <iframe src={embed!} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
+                </div>
               )}
             </div>
           )}
-        </div>
+        </Card>
 
-        {/* Recupero o azione */}
         {restLeft !== null ? (
-          <div className="bg-surface-2 rounded-2xl p-6 text-center border border-divider">
-            <p className="text-xs uppercase tracking-widest text-faint mb-1">Recupero</p>
-            <p className="text-6xl font-bold text-app tabular-nums">{restLeft}&quot;</p>
-            <p className="text-sm text-muted mt-2">{restIsLast ? 'Poi: prossimo esercizio' : `Prossima: serie ${serieFatte + 1} di ${totalSerie}`}</p>
+          <>
+            {/* Recupero: timer grande + feedback a 3 scelte */}
+            <Card variant="raised" className="text-center">
+              <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">Recupero</p>
+              <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">{restLeft}&quot;</p>
+              <p className="text-body text-muted mt-1">{restIsLast ? 'Poi: prossimo esercizio' : `Poi: serie ${serieFatte + 1} di ${totalSerie}`}</p>
+            </Card>
+
             {pending && onSetLog && (
-              <div className="mt-4 text-left bg-surface rounded-xl border border-divider p-3">
-                <p className="text-xs font-semibold text-app mb-1">Com&apos;è andata la serie {pending.serie}?</p>
-                <p className="text-[11px] text-faint mb-2">1-3 leggera · 5 impegnativa ma gestibile · 7-8 dura, ancora 2-3 ripetizioni in canna · 10 al limite, non ce n&apos;era più</p>
-                <div className="flex gap-1 justify-between mb-3">
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                    <button key={n} onClick={() => { setRpe(n); sendLog({ rpe: n }); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
-                      aria-label={`Difficoltà ${n}`}
-                      className={`flex-1 h-9 rounded-lg text-xs font-bold border transition-colors ${rpe === n ? (n >= 9 ? 'bg-red-500/80 border-red-400 text-white' : n >= 7 ? 'bg-amber-500/80 border-amber-400 text-white' : 'bg-forest-500 border-forest-500 text-white') : 'bg-surface-2 border-divider text-muted'}`}>
-                      {n}
-                    </button>
-                  ))}
+              <div className="mt-4">
+                <div className="flex items-baseline justify-between gap-3 mb-2">
+                  <p className="text-label font-semibold text-app">Com&apos;è andata la serie {pending.serie}?</p>
+                  {logSaved && <span className="text-caption text-forest-400 font-semibold inline-flex items-center gap-1"><Check size={14} aria-hidden /> salvato</span>}
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] text-faint">Fatte</span>
-                  <input type="text" inputMode="decimal" value={fattoTxt} onChange={(e) => setFattoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
-                    onBlur={() => sendLog({})} aria-label="Quantità fatta"
-                    className="w-16 text-center text-sm font-bold bg-surface-2 border border-divider rounded-lg py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums" />
-                  <span className="text-[11px] text-faint">{pending.unita}</span>
-                  {pending.carico !== undefined && (
-                    <>
-                      <span className="text-[11px] text-faint ml-2">con</span>
-                      <input type="text" inputMode="decimal" value={caricoTxt} onChange={(e) => setCaricoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
-                        onBlur={() => sendLog({})} aria-label="Carico usato in kg"
-                        className="w-16 text-center text-sm font-bold bg-surface-2 border border-divider rounded-lg py-1.5 text-app outline-none focus:ring-2 focus:ring-forest-400 tabular-nums" />
-                      <span className="text-[11px] text-faint">kg</span>
-                    </>
-                  )}
-                  {logSaved && <span className="text-[11px] text-forest-400 font-semibold ml-auto">✓ salvato</span>}
-                </div>
-                {isPerLato && pending.lato === '' && (
-                  <div className="mt-3 pt-3 border-t border-divider flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs font-semibold text-app mr-1">Più duro a:</span>
-                    {([['dx', 'destra'], ['sx', 'sinistra'], ['uguali', 'uguali']] as const).map(([k, label]) => (
-                      <button key={k} onClick={() => { setPiuDuro(k); sendLog({ piuDuro: k }); }}
-                        className={`text-xs font-semibold rounded-full px-3 py-1.5 border ${piuDuro === k ? 'bg-forest-500/25 border-forest-400/60 text-forest-200' : 'bg-surface-2 border-divider text-muted'}`}>
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {restIsLast && ex?.sensazioni?.length ? (
-                  <div className="mt-3 pt-3 border-t border-divider">
-                    <p className="text-xs font-semibold text-app mb-1.5">Dove l&apos;hai sentito? <span className="text-faint font-normal">(come nei test)</span></p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {ex.sensazioni.map((opt) => (
-                        <button key={opt} onClick={() => { setSensazione(opt); sendLog({ sensazione: opt }); }}
-                          className={`text-xs font-semibold rounded-full px-3 py-1.5 border ${sensazione === opt ? (/fastidio|crampo/i.test(opt) ? 'bg-amber-500/25 border-amber-400/60 text-amber-100' : 'bg-forest-500/25 border-forest-400/60 text-forest-200') : 'bg-surface-2 border-divider text-muted'}`}>
-                          {opt}
+                {dettaglio ? (
+                  <>
+                    <div className="grid grid-cols-5 gap-2">
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                        <button key={n} type="button" onClick={() => { setRpe(n); sendLog({ rpe: n }); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
+                          aria-label={`Difficoltà ${n}`} aria-pressed={rpe === n}
+                          className={`h-12 rounded-btn text-body font-bold border tabular-nums transition-colors ${rpeCls(n)}`}>
+                          {n}
                         </button>
                       ))}
                     </div>
+                    <p className="text-caption text-muted text-center mt-1.5">1-3 facile · 5 impegnativa · 7-8 dura · 10 al limite</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-3 gap-2">
+                      {SCELTE_RPE.map(([label, n]) => (
+                        <Button key={label} size="lg" variant={rpe === n ? 'primary' : 'secondary'} aria-pressed={rpe === n}
+                          className="px-2"
+                          onClick={() => { setRpe(n); sendLog({ rpe: n }); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}>
+                          {label}
+                        </Button>
+                      ))}
+                    </div>
+                    <p className="text-caption text-muted text-center mt-1.5">= RPE 3 / 6 / 9</p>
+                  </>
+                )}
+                <div className="flex items-center justify-between gap-3 flex-wrap -ml-3 mt-1">
+                  <Button variant="ghost" size="sm" onClick={toggleDettaglio}>
+                    {dettaglio ? 'Torna alle 3 scelte' : 'Vuoi essere preciso? 1-10'}
+                  </Button>
+                  {!showDiverso && (
+                    <Button variant="ghost" size="sm" onClick={() => setShowDiverso(true)}>Ho fatto diverso</Button>
+                  )}
+                </div>
+                {pending.carico !== undefined && !showDiverso && (
+                  <p className="text-body-sm text-muted tabular-nums">Carico previsto: <span className="font-semibold text-app">{pending.carico} kg</span></p>
+                )}
+
+                {showDiverso && (
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <div>
+                      <label htmlFor="player-fatte" className="block text-label font-semibold text-app mb-1.5">Fatte ({pending.unita})</label>
+                      <Input id="player-fatte" type="text" inputMode="decimal" value={fattoTxt} onChange={(e) => setFattoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
+                        onBlur={() => sendLog({})} className="text-center !text-title-2 font-display font-bold tabular-nums" />
+                    </div>
+                    {pending.carico !== undefined && (
+                      <div>
+                        <label htmlFor="player-kg" className="block text-label font-semibold text-app mb-1.5">Carico (kg)</label>
+                        <Input id="player-kg" type="text" inputMode="decimal" value={caricoTxt} onChange={(e) => setCaricoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
+                          onBlur={() => sendLog({})} className="text-center !text-title-2 font-display font-bold tabular-nums" />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {isPerLato && pending.lato === '' && (
+                  <div className="mt-4">
+                    <p className="text-label font-semibold text-app mb-2">Più duro a:</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {([['dx', 'destra'], ['sx', 'sinistra'], ['uguali', 'uguali']] as const).map(([k, label]) => (
+                        <Chip key={k} selected={piuDuro === k} onClick={() => { setPiuDuro(k); sendLog({ piuDuro: k }); }}>
+                          {label}
+                        </Chip>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {restIsLast && ex?.sensazioni?.length ? (
+                  <div className="mt-4">
+                    <p className="text-label font-semibold text-app mb-2">Dove l&apos;hai sentito?</p>
+                    <div className="flex flex-wrap gap-2">
+                      {ex.sensazioni.map((opt) => (
+                        <Chip key={opt} selected={sensazione === opt} tone={/fastidio|crampo/i.test(opt) ? 'warn' : 'accent'}
+                          onClick={() => { setSensazione(opt); sendLog({ sensazione: opt }); }}>
+                          {opt}
+                        </Chip>
+                      ))}
+                    </div>
                     {sensazione && /fastidio|crampo|dolor/i.test(sensazione) && (
-                      <p className="text-[11px] text-amber-200/90 mt-2 leading-relaxed">Se il fastidio è forte o continua, fermati qui e parlane con un medico o con il preparatore.</p>
+                      <p className="text-body-sm text-warning mt-2 leading-relaxed">Se il fastidio è forte o continua, fermati qui e parlane con un medico o con il preparatore.</p>
                     )}
                   </div>
                 ) : null}
               </div>
             )}
-            <button onClick={() => { if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null; if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}
-              className="mt-4 inline-flex items-center gap-1.5 text-sm text-faint">
-              <Pause size={14} /> {restIsLast ? 'Vai al prossimo esercizio' : 'Salta il recupero'}
-            </button>
-            {restIsLast && (
-              <button onClick={() => { setRestLeft(null); if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null; setRestIsLast(false); restIsLastRef.current = false; setSerieFatte(Math.max(0, serieFatte - 1)); setPending(null); }}
-                className="block mx-auto mt-2 text-xs text-faint underline underline-offset-2">
-                Non era l&apos;ultima: torna alla serie
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="text-center">
-            {!isEmom && (
-              <p className="text-sm text-muted mb-3">
-                {isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
-                {isPerLato && <span className="font-semibold text-app"> — lato {lato === 'dx' ? 'destro' : 'sinistro'}</span>}
-              </p>
-            )}
-            {isTimed && (
-              execLeft !== null ? (
-                <div className="bg-surface-2 rounded-2xl py-5 mb-3 border border-divider">
-                  <p className="text-[11px] uppercase tracking-widest text-faint mb-1">Esecuzione{isPerLato ? ` — ${lato === 'dx' ? 'destro' : 'sinistro'}` : ''}</p>
-                  <p className="text-5xl font-bold text-app tabular-nums">
-                    {execLeft >= 60 ? `${Math.floor(execLeft / 60)}:${String(execLeft % 60).padStart(2, '0')}` : `${execLeft}"`}
-                  </p>
-                  <button onClick={stopExec} className="text-xs text-faint mt-2">Ferma il timer</button>
+
+            {/* Slot fisso in fondo: qui il pollice trova sempre il bottone */}
+            <div className="mt-auto sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] -mx-4 px-4 pt-3 pb-1 bg-app-bg/90 backdrop-blur">
+              <Button variant="secondary" size="lg" fullWidth icon={<Pause size={18} />}
+                onClick={() => { clearRest(); if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}>
+                {restIsLast ? 'Vai al prossimo' : 'Salta il recupero'}
+              </Button>
+              {restIsLast && (
+                <div className="mt-2 text-center">
+                  <Button variant="secondary" size="sm"
+                    onClick={() => { setRestLeft(null); clearRest(); setRestIsLast(false); restIsLastRef.current = false; setSerieFatte(Math.max(0, serieFatte - 1)); setPending(null); }}>
+                    Non era l&apos;ultima: torna alla serie
+                  </Button>
                 </div>
-              ) : (
-                <button onClick={startExecTimer}
-                  className="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-forest-400 bg-forest-500/10 border border-forest-500/30 rounded-xl px-4 py-2.5">
-                  <Play size={14} /> Inizia timer esercizio ({unitaLabel(ex.unita, quantitaLato)})
-                </button>
-              )
-            )}
-            <button onClick={isEmom ? nextItem : handleSerieDone}
-              className="w-full bg-gradient-to-r from-forest-500 to-forest-600 text-white font-bold py-4 rounded-2xl text-lg shadow-sm active:scale-[0.99] transition-all">
-              {isEmom ? 'EMOM finito → avanti'
-                : isPerLato ? (isExtra || (lato === 'sx' && serieFatte + 1 >= totalSerie) ? '✓ Esercizio completato' : lato === 'dx' ? '✓ Lato destro fatto' : '✓ Lato sinistro fatto')
-                : serieFatte + 1 >= totalSerie ? '✓ Esercizio completato' : '✓ Serie fatta'}
-            </button>
-            <div className="mt-3 flex items-center justify-center gap-5">
-              {itemIdx > 0 && (
-                <button onClick={prevItem} className="inline-flex items-center gap-1 text-sm text-faint">
-                  <ChevronLeft size={14} /> Esercizio precedente
-                </button>
               )}
-              <button onClick={nextItem} className="inline-flex items-center gap-1 text-sm text-faint">
-                Salta esercizio <ChevronRight size={14} />
-              </button>
             </div>
-          </div>
+          </>
+        ) : (
+          <>
+            {/* Serie in corso */}
+            <div className="text-center">
+              {!isEmom && (
+                <p className="text-body text-muted">
+                  {isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
+                  {isPerLato && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
+                </p>
+              )}
+              {isTimed && (
+                execLeft !== null ? (
+                  <Card variant="raised" className="mt-3 text-center">
+                    <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">Tieni{isPerLato ? ` — ${latoLabel}` : ''}</p>
+                    <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">{fmtSec(execLeft)}</p>
+                    <div className="mt-1"><Button variant="ghost" size="sm" onClick={stopExec}>Ferma il timer</Button></div>
+                  </Card>
+                ) : (
+                  <div className="mt-3">
+                    <Button variant="secondary" size="lg" fullWidth icon={<Play size={18} />} onClick={startExecTimer}>
+                      Parti col timer ({unitaLabel(ex.unita, quantitaLato)})
+                    </Button>
+                  </div>
+                )
+              )}
+            </div>
+
+            {/* Slot fisso in fondo: la CTA principale sempre nello stesso punto */}
+            <div className="mt-auto sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] -mx-4 px-4 pt-3 pb-1 bg-app-bg/90 backdrop-blur">
+              <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={isEmom ? nextItem : handleSerieDone}>
+                {ctaLabel}
+              </Button>
+              <div className="mt-2 flex items-center justify-between gap-6">
+                {itemIdx > 0 ? (
+                  <Button variant="ghost" size="sm" icon={<ChevronLeft size={16} />} onClick={prevItem} className="-ml-3">Esercizio precedente</Button>
+                ) : <span />}
+                <Button variant="danger" size="sm" iconRight={<ChevronRight size={16} />} onClick={nextItem}>Salta esercizio</Button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

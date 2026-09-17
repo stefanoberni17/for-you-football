@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { useMeditation } from '@/components/MeditationContext';
-import { ChevronRight, Wind, MessageCircle, Lock } from 'lucide-react';
+import { ChevronRight, Wind, MessageCircle, Zap } from 'lucide-react';
+import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
+import EmptyState from '@/components/EmptyState';
 
 interface Layer {
   sbloccoSettimana: number;
@@ -17,7 +19,7 @@ interface Layer {
   chiusura: string;
   coachPrompt: string;
 }
-interface Card {
+interface SosCard {
   id: string;
   difficolta: string;
   emoji: string;
@@ -27,13 +29,34 @@ interface Card {
   layers: Layer[];
 }
 
+function Steps({ steps, size = 'lg' }: { steps: string[]; size?: 'lg' | 'md' }) {
+  return (
+    <ol className="space-y-3">
+      {steps.map((step, i) => (
+        <li key={i} className="flex gap-3">
+          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-forest-500 text-white text-label font-bold flex items-center justify-center mt-0.5 tabular-nums" aria-hidden="true">
+            {i + 1}
+          </span>
+          <p className={`${size === 'lg' ? 'text-body-lg' : 'text-body'} text-app leading-relaxed`}>{step}</p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/**
+ * Come affrontare le difficoltà (review 16/9, blocco 3): in una schermata di
+ * emergenza si esegue, non si legge. Il dettaglio apre con gli step del layer
+ * "Adesso" e il Reset; scena e chiusura vengono dopo; i layer bloccati sono
+ * una riga in fondo. La scheda aperta vive nell'URL (?card=) come prima.
+ */
 function SosContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { openMeditation } = useMeditation();
   const [loading, setLoading] = useState(true);
-  const [cards, setCards] = useState<Card[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [cards, setCards] = useState<SosCard[]>([]);
+  const selectedId = searchParams.get('card');
 
   useEffect(() => {
     const load = async () => {
@@ -49,123 +72,112 @@ function SosContent() {
           setCards(data.cards || []);
         }
       } catch {}
-      const param = searchParams.get('card');
-      if (param) setSelectedId(param);
       setLoading(false);
     };
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router]);
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-muted">Caricamento...</p>
-        </div>
-      </main>
-    );
+    return <AppLoader />;
   }
 
   const selected = cards.find(c => c.id === selectedId) || null;
 
-  // ── Dettaglio scheda (a layer) ────────────────────────────────────────────
+  // ── Dettaglio scheda: prima gli step, poi il resto ────────────────────────
   if (selected) {
-    const firstUnlocked = selected.layers.find(l => l.unlocked);
-    const coachPrompt = firstUnlocked?.coachPrompt || '';
+    const unlockedLayers = selected.layers.filter(l => l.unlocked);
+    const lockedLayers = selected.layers.filter(l => !l.unlocked);
+    const [now, ...others] = unlockedLayers;
+    const coachPrompt = now?.coachPrompt || '';
+    const nextWeek = lockedLayers.length > 0 ? Math.min(...lockedLayers.map(l => l.sbloccoSettimana)) : null;
+
     return (
       <main className="min-h-screen bg-app pb-tabbar-lg">
         <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
           <div className="max-w-xl mx-auto">
-            <button
-              onClick={() => setSelectedId(null)}
-              className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-            >
-              ← Tutte le difficoltà
-            </button>
-            <div className="text-4xl mb-2">{selected.emoji}</div>
-            <h1 className="text-2xl font-bold text-white leading-tight">{selected.difficolta}</h1>
-            {selected.sottotitolo && <p className="text-forest-100 text-sm mt-1">{selected.sottotitolo}</p>}
-            {selected.totalCount > 1 && (
-              <p className="text-forest-200 text-xs mt-2">
-                {selected.unlockedCount} di {selected.totalCount} modi sbloccati — cresce mentre avanzi
-              </p>
-            )}
+            <BackButton href="/sos" label="Difficoltà" tone="light" className="mb-2" />
+            <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">Adesso</p>
+            <h1 className="font-display text-title-1 font-bold text-white leading-tight">
+              <span className="mr-2" aria-hidden="true">{selected.emoji}</span>{selected.difficolta}
+            </h1>
+            {selected.sottotitolo && <p className="text-forest-100 text-body-sm mt-1">{selected.sottotitolo}</p>}
           </div>
         </div>
 
         <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
-          {selected.layers.map((layer, i) =>
-            layer.unlocked ? (
-              <div key={i} className="bg-surface rounded-2xl shadow-sm border border-divider overflow-hidden">
-                <div className="px-5 pt-4 pb-2 flex items-center justify-between">
-                  <span className="text-sm font-bold text-app">{layer.titoloLayer}</span>
-                  {layer.strumento && (
-                    <span className="text-[11px] font-semibold text-forest-300 bg-forest-500/15 px-2 py-0.5 rounded-full">
-                      {layer.strumento}
-                    </span>
+          {/* ── Fai questo, adesso: il layer Reset, solo gli step e il bottone ── */}
+          {now ? (
+            <>
+              <Card variant="accent" padding="md" as="section" aria-label="Fai questo, adesso">
+                <SectionTitle title="Fai questo, adesso" subtitle={now.strumento || undefined} className="mb-4" />
+                {now.pratica.length > 0 && <Steps steps={now.pratica} />}
+                <div className="mt-5">
+                  <Button
+                    variant="hero"
+                    size="lg"
+                    fullWidth
+                    onClick={openMeditation}
+                    icon={<Wind size={20} aria-hidden="true" />}
+                  >
+                    Fai il Reset ora
+                  </Button>
+                </div>
+              </Card>
+
+              {(now.apertura || now.chiusura) && (
+                <div className="px-1 space-y-3">
+                  {now.apertura && (
+                    <p className="text-body text-muted leading-relaxed whitespace-pre-line">{now.apertura}</p>
+                  )}
+                  {now.chiusura && (
+                    <p className="font-quote text-body-lg text-forest-300 leading-relaxed">{now.chiusura}</p>
                   )}
                 </div>
-                <div className="px-5 pb-5 space-y-3">
-                  {layer.apertura && (
-                    <p className="text-app text-sm leading-relaxed italic whitespace-pre-line">{layer.apertura}</p>
-                  )}
-                  {layer.pratica.length > 0 && (
-                    <ol className="space-y-2.5 pt-1">
-                      {layer.pratica.map((step, j) => (
-                        <li key={j} className="flex gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-forest-500/20 text-forest-300 text-xs font-bold flex items-center justify-center mt-0.5">
-                            {j + 1}
-                          </span>
-                          <p className="text-app text-sm leading-relaxed">{step}</p>
-                        </li>
-                      ))}
-                    </ol>
-                  )}
-                  {layer.chiusura && (
-                    <div className="bg-forest-500/15 border border-forest-500/30 rounded-xl p-3 mt-1">
-                      <p className="text-forest-200 text-sm leading-relaxed italic">{layer.chiusura}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div
-                key={i}
-                className="bg-surface rounded-2xl border border-divider px-5 py-4 flex items-center justify-between opacity-60"
-              >
-                <span className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-surface-2 flex items-center justify-center flex-shrink-0">
-                    <Lock className="w-4 h-4 text-faint" aria-hidden="true" />
-                  </span>
-                  <span>
-                    <span className="block text-sm font-semibold text-muted">{layer.titoloLayer}</span>
-                    <span className="block text-[11px] text-faint mt-0.5">
-                      {layer.strumento ? `${layer.strumento} · ` : ''}si sblocca alla Settimana {layer.sbloccoSettimana}
-                    </span>
-                  </span>
-                </span>
-              </div>
-            )
+              )}
+            </>
+          ) : (
+            <Card variant="accent" padding="md" as="section" aria-label="Fai questo, adesso">
+              <SectionTitle title="Fai questo, adesso" subtitle="Un minuto di respiro, poi torna in campo" className="mb-4" />
+              <Button variant="hero" size="lg" fullWidth onClick={openMeditation} icon={<Wind size={20} aria-hidden="true" />}>
+                Fai il Reset ora
+              </Button>
+            </Card>
           )}
 
-          <button
-            onClick={openMeditation}
-            className="w-full bg-gradient-to-r from-forest-500 to-forest-600 hover:from-forest-600 hover:to-forest-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2"
-          >
-            <Wind className="w-4 h-4" aria-hidden="true" />
-            Fai il Reset ora — 1 minuto
-          </button>
+          {/* ── Gli altri modi sbloccati, uno dopo l'altro ── */}
+          {others.map((layer, i) => (
+            <Card key={i} padding="md" as="section" aria-label={layer.titoloLayer}>
+              <SectionTitle
+                title={layer.titoloLayer}
+                action={layer.strumento ? <Badge tone="accent" className="mt-1.5 mr-2">{layer.strumento}</Badge> : undefined}
+                className="mb-3"
+              />
+              {layer.apertura && (
+                <p className="text-body-sm text-muted leading-relaxed whitespace-pre-line mb-3">{layer.apertura}</p>
+              )}
+              {layer.pratica.length > 0 && <Steps steps={layer.pratica} size="md" />}
+              {layer.chiusura && (
+                <p className="font-quote text-body-lg text-forest-300 leading-relaxed mt-4">{layer.chiusura}</p>
+              )}
+            </Card>
+          ))}
+
+          {lockedLayers.length > 0 && (
+            <p className="text-caption text-muted px-1">
+              {lockedLayers.length === 1 ? 'Un altro modo si sblocca' : `Altri ${lockedLayers.length} modi si sbloccano`} avanzando
+              {nextWeek !== null ? ` (Settimana ${nextWeek})` : ''}.
+            </p>
+          )}
 
           {coachPrompt && (
-            <button
-              onClick={() => router.push(`/chat?prompt=${encodeURIComponent(coachPrompt)}`)}
-              className="w-full bg-surface border border-forest-500/30 text-forest-300 font-semibold py-3.5 rounded-2xl transition-all text-sm flex items-center justify-center gap-2 hover:border-forest-500/50"
+            <Button
+              variant="ghost"
+              fullWidth
+              href={`/chat?prompt=${encodeURIComponent(coachPrompt)}`}
+              icon={<MessageCircle size={18} aria-hidden="true" />}
             >
-              <MessageCircle className="w-4 h-4" aria-hidden="true" />
               Parlane col Coach
-            </button>
+            </Button>
           )}
 
           <div className="h-4" />
@@ -179,49 +191,47 @@ function SosContent() {
     <main className="min-h-screen bg-app pb-tabbar-lg">
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-xl mx-auto">
-          <button
-            onClick={() => router.push('/strumenti')}
-            className="flex items-center gap-1 text-forest-100 hover:text-white text-sm mb-5 transition-colors"
-          >
-            ← Palestra
-          </button>
-          <p className="text-forest-200 text-xs font-semibold uppercase tracking-widest mb-1">⚡ Quando si fa dura</p>
-          <h1 className="text-2xl font-bold text-white leading-tight">Come affrontare le difficoltà</h1>
-          <p className="text-forest-100 text-sm mt-1">
-            Una guida per ogni momento tosto — e cresce con te, man mano che sblocchi strumenti.
-          </p>
+          <BackButton href="/strumenti" label="Palestra" tone="light" className="mb-2" />
+          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">Adesso</p>
+          <h1 className="font-display text-title-1 font-bold text-white leading-tight">Cosa ti succede?</h1>
+          <p className="text-forest-100 text-body-sm mt-1">Scegli la situazione: trovi cosa fare subito.</p>
         </div>
       </div>
 
       <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
+        {cards.length === 0 && (
+          <EmptyState
+            icon={<Zap size={24} aria-hidden="true" />}
+            iconBg="bg-warning/15"
+            iconColor="text-warning"
+            title="Nessuna guida disponibile adesso"
+            subtitle="Le guide arrivano con il percorso. Se hai una situazione tosta, il Coach c'è sempre."
+            cta={{ label: 'Scrivi al Coach', href: '/chat' }}
+          />
+        )}
         {cards.map(card => (
-          <button
-            key={card.id}
-            onClick={() => setSelectedId(card.id)}
-            className="w-full bg-surface rounded-2xl shadow-sm p-4 border border-divider flex items-center justify-between text-left hover:border-forest-500/40 transition-all active:scale-[0.99]"
-          >
-            <span className="flex items-center gap-3">
-              <span className="text-2xl" aria-hidden="true">{card.emoji}</span>
-              <span>
-                <span className="block text-sm font-bold text-app">{card.difficolta}</span>
-                {card.sottotitolo && <span className="block text-xs text-muted mt-0.5">{card.sottotitolo}</span>}
-                {card.totalCount > 1 && (
-                  <span className="block text-[11px] text-forest-400 font-semibold mt-1">
-                    {card.unlockedCount}/{card.totalCount} modi · cresce avanzando
+          <Card key={card.id} padding="sm" href={`/sos?card=${card.id}`} aria-label={card.difficolta}>
+            <span className="flex items-center justify-between gap-3 min-h-[44px]">
+              <span className="flex items-center gap-3 min-w-0">
+                <span className="text-2xl w-10 text-center flex-shrink-0" aria-hidden="true">{card.emoji}</span>
+                <span className="min-w-0">
+                  <span className="flex items-center gap-2 flex-wrap">
+                    <span className="text-title-3 font-bold text-app">{card.difficolta}</span>
+                    {card.totalCount > 1 && <Badge tone="neutral">{card.unlockedCount} {card.unlockedCount === 1 ? 'modo' : 'modi'}</Badge>}
                   </span>
-                )}
+                  {card.sottotitolo && <span className="block text-body-sm text-muted mt-0.5">{card.sottotitolo}</span>}
+                </span>
               </span>
+              <ChevronRight size={18} className="text-faint flex-shrink-0" aria-hidden="true" />
             </span>
-            <ChevronRight className="w-4 h-4 text-faint flex-shrink-0" aria-hidden="true" />
-          </button>
+          </Card>
         ))}
 
-        <p className="text-xs text-faint text-center pt-2 leading-relaxed">
-          Non trovi la tua situazione? Il Coach c&apos;è sempre —{' '}
-          <button onClick={() => router.push('/chat')} className="text-forest-400 font-semibold hover:underline">
-            scrivigli
-          </button>
-        </p>
+        {cards.length > 0 && (
+          <Button variant="ghost" fullWidth href="/chat" icon={<MessageCircle size={18} aria-hidden="true" />}>
+            Non c&apos;è la tua? Scrivi al Coach
+          </Button>
+        )}
         <div className="h-4" />
       </div>
     </main>
@@ -230,16 +240,7 @@ function SosContent() {
 
 export default function SosPage() {
   return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen bg-app flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-            <p className="text-muted">Caricamento...</p>
-          </div>
-        </main>
-      }
-    >
+    <Suspense fallback={<AppLoader />}>
       <SosContent />
     </Suspense>
   );

@@ -4,12 +4,13 @@ import { Suspense, useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ChatBot, { ChatBotRef } from '@/components/ChatBot';
+import { AppLoader } from '@/components/ui';
 
+// Massimo 3, corti (≤ 6 parole): si leggono in un colpo d'occhio (review 16/9)
 const suggestions = [
-  "Come gestisco l'ansia prima di una partita?",
-  "Aiutami a riflettere sulla settimana corrente",
-  "Ho sbagliato un gol importante, come faccio a resettarmi?",
-  "Sto perdendo fiducia in me stesso, cosa faccio?",
+  'Ansia prima della partita',
+  'Ho sbagliato, come riparto?',
+  'Sto perdendo fiducia',
 ];
 
 function ChatContent() {
@@ -52,16 +53,7 @@ function ChatContent() {
     }
   }, [loading, promptSent, searchParams, router]);
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-muted">Caricamento...</p>
-        </div>
-      </main>
-    );
-  }
+  if (loading) return <AppLoader />;
 
   // Flow normale del body (no piu fixed inset-0): le pagine fixed full-screen
   // su PWA iOS standalone facevano collassare il viewport sotto la safe-area-bottom,
@@ -79,14 +71,7 @@ function ChatContent() {
 
 export default function ChatPage() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen bg-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-ball-bounce">⚽</div>
-          <p className="text-xl text-muted">Caricamento...</p>
-        </div>
-      </main>
-    }>
+    <Suspense fallback={<AppLoader />}>
       <ChatContent />
     </Suspense>
   );
