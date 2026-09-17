@@ -1163,7 +1163,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [ ] Applicare la migration `021_consent_health_training.sql` su Supabase (PR #78), se non già fatta
 - [x] Migration `023_training_squadra.sql` applicata su Supabase (Ste, 14/9)
 - [x] Migration `024_training_focus.sql` applicata su Supabase (Ste, 14/9)
-- [ ] Applicare la migration `025_training_preferenze.sql` su Supabase (giorni/giornate/tempo nel setup): senza, il salvataggio del setup risponde "manca la migration 025"
+- [x] Migration `025_training_preferenze.sql` applicata su Supabase (Ste, 17/9)
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
