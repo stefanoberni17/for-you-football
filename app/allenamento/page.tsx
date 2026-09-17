@@ -9,7 +9,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from 'recharts';
-import { Activity, AlertTriangle, BatteryLow, Check, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2 } from 'lucide-react';
+import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2 } from 'lucide-react';
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
@@ -30,7 +30,7 @@ export interface TrainingState {
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; done: boolean }[];
-  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; violazioni?: string[] }; generato_da: string } | null;
+  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[] }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
@@ -428,6 +428,12 @@ export default function AllenamentoHub() {
               <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
                 <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
                 <span>{state.plan!.plan.messaggio}</span>
+              </p>
+            )}
+            {state.plan!.plan.nota && (
+              <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
+                <CalendarClock size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+                <span>{state.plan!.plan.nota}</span>
               </p>
             )}
             {state.plan!.generato_da === 'fallback' && (

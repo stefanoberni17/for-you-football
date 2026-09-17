@@ -60,6 +60,12 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   const tettoSedute = Math.max(1, Math.min(SEDUTE_MAX, maxSedute ?? SEDUTE_MAX));
   const marker = (d: number) => partite.includes(d) ? ' ⚽' : squadra.includes(d) ? ' ·S' : '';
 
+  // Settimana avviata: i giorni scelti già passati non contano; il server mette solo le giornate che ci stanno da oggi a domenica
+  const giorniAvanti = giorni.filter((d) => d >= oggiDow);
+  const avviso = modo === 'nuova' && nSedute && giorni.length && giorniAvanti.length < nSedute
+    ? `Oggi è ${DAY_NAMES[oggiDow].toLowerCase()}: dei giorni scelti ne restano ${giorniAvanti.length === 1 ? '1, quindi questa settimana metto 1 giornata' : `${giorniAvanti.length}, quindi questa settimana metto ${giorniAvanti.length} giornate`}. Da lunedì si riparte con ${nSedute}.`
+    : null;
+
   const valida = (): string | null => {
     if (modo === 'nuova') {
       if (nSedute && giorni.length && giorni.length < nSedute) return `Hai scelto ${nSedute} sedute ma solo ${giorni.length} giorni: aggiungi giorni o togli sedute`;
@@ -96,6 +102,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
       footer={
         <>
           {(errore || errorMsg) && <p className="text-body-sm text-warning">{errore || errorMsg}</p>}
+          {!errore && !errorMsg && avviso && <p className="text-body-sm text-muted">{avviso}</p>}
           <Button size="lg" fullWidth onClick={submit} disabled={!!errore} loading={generating}>
             {generating ? 'Sto preparando la tua settimana…' : modo === 'modifica' ? 'Applica la modifica' : hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}
           </Button>

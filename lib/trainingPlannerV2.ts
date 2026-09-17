@@ -27,7 +27,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.8-progressioni';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.9-settimana-avviata';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -335,15 +335,36 @@ ${libreriaTesto(ctx)}
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"leggeri":["id-blocco-1"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
 "leggeri" è facoltativo (regola 22): solo id già presenti in "blocchi".
 LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
-giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta)${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
+giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta${notaSettimanaAvviata(ctx) ? `: ne aveva chieste ${ctx.vincoli.numSedute}, ma la settimana è avviata e restano solo ${giorniRimasti(ctx).map((d) => DAY_NAMES[d]).join(', ')}` : ''})${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
 }
 
-/** Sedute richieste dall'atleta, clampate al tetto della fase e ai giorni ammessi (null = decide il planner). */
+/** Giorni in cui una seduta può ancora stare: da oggi in poi, tra quelli ammessi e non vietati. */
+function giorniRimasti(ctx: ContextV2): number[] {
+  return [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= ctx.base.oggiDow
+    && !ctx.vincoli.giorniVietati?.includes(d) && (!ctx.vincoli.giorniAmmessi?.length || ctx.vincoli.giorniAmmessi.includes(d)));
+}
+
+/**
+ * Sedute richieste dall'atleta, clampate al tetto della fase e ai giorni ammessi ANCORA DAVANTI (null = decide il planner).
+ * Ste, 17/9: "Rifai da capo" di giovedì con 4 giornate su lun/mer/ven/dom → restavano 2 giorni ma il validatore
+ * pretendeva 4 → ogni piano di Claude rifiutato → settimana base senza forza. A settimana avviata il numero scende
+ * ai giorni rimasti (`notaSettimanaAvviata` lo dice all'atleta); da lunedì si riparte con la settimana intera.
+ */
 function seduteRichieste(ctx: ContextV2): number | null {
   const n = ctx.vincoli.numSedute;
   if (!n) return null;
-  const giorniAmmessi = ctx.vincoli.giorniAmmessi?.length ? ctx.vincoli.giorniAmmessi.length : 7;
-  return Math.max(1, Math.min(n, ctx.maxSeduteTotali ?? ctx.maxSeduteFisiche, giorniAmmessi));
+  return Math.max(1, Math.min(n, ctx.maxSeduteTotali ?? ctx.maxSeduteFisiche, giorniRimasti(ctx).length));
+}
+
+/** Riga per l'atleta quando le giornate richieste sono scese perché la settimana è già avviata (null = niente da dire). */
+export function notaSettimanaAvviata(ctx: ContextV2): string | null {
+  const n = ctx.vincoli.numSedute;
+  if (!n || ctx.base.oggiDow <= 1) return null;
+  const volute = Math.min(n, ctx.maxSeduteTotali ?? ctx.maxSeduteFisiche);
+  const rimasti = giorniRimasti(ctx).length;
+  if (rimasti >= volute) return null;
+  const r = Math.max(1, rimasti);
+  return `Settimana già avviata (oggi è ${DAY_NAMES[ctx.base.oggiDow].toLowerCase()}): da qui a domenica ${r === 1 ? '1 giornata' : `${r} giornate`} invece di ${volute}. Da lunedì si riparte con la settimana intera.`;
 }
 
 /** Obiettivi che il validatore pretende davvero (i primi, in ordine), dati i posti disponibili. */
@@ -544,7 +565,11 @@ export async function generateWeekPlanV2(
 ): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[] }> {
   const ctx = await loadContextV2(userId);
   ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
+  // Giorni ammessi tutti passati (es. domenica con lun/mer/ven): senza allargare ai giorni rimasti nessun piano è possibile
+  if (ctx.vincoli.giorniAmmessi?.length && giorniRimasti(ctx).length === 0) ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
   if (vincoli.obiettivi?.length) ctx.obiettivi = vincoli.obiettivi;
+  const nota = notaSettimanaAvviata(ctx);
+  const conNota = (plan: WeekPlan): WeekPlan => (nota ? { ...plan, nota } : plan);
   const validateCtx = validateCtxFor(ctx);
   const system = systemPrompt(ctx);
   let errori: string[] | undefined;
@@ -562,7 +587,7 @@ export async function generateWeekPlanV2(
       if (!raw) { errori = ['output non era JSON valido']; continue; }
       const { plan, errors } = expandPiano(raw, ctx);
       const violations = [...errors, ...(plan.sedute.length ? validatePlan(plan, validateCtx) : ['piano vuoto'])];
-      if (violations.length === 0) return { plan: conProgressioni(plan, ctx, validateCtx), generatoDa: 'llm', ctx };
+      if (violations.length === 0) return { plan: conNota(conProgressioni(plan, ctx, validateCtx)), generatoDa: 'llm', ctx };
       console.error('trainingPlannerV2: piano rifiutato', violations);
       errori = violations.slice(0, 12);
       precedente = JSON.stringify({ sedute: (raw.sedute || []).map((s) => ({ giorno: s.giorno, blocchi: s.blocchi })) });
@@ -571,5 +596,5 @@ export async function generateWeekPlanV2(
       break;
     }
   }
-  return { plan: fallbackPianoBlocchi(ctx), generatoDa: 'fallback', ctx, violazioni: errori };
+  return { plan: conNota(fallbackPianoBlocchi(ctx)), generatoDa: 'fallback', ctx, violazioni: errori };
 }
