@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
+import { cachedJson } from '@/lib/clientCache';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isWeekUnlocked, isWeekCompleted, getWeekProgress, isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
@@ -46,11 +47,20 @@ export default function SettimanePage() {
         return;
       }
 
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .single();
+      // Profilo, progresso e lista settimane (Notion, in cache sul dispositivo) partono insieme
+      const [{ data: profileData }, { data: progress }, listJson] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single(),
+        supabase
+          .from('user_day_progress')
+          .select('week_number, day_number, completed, completed_at, compressed')
+          .eq('user_id', session.user.id)
+          .eq('completed', true),
+        cachedJson<{ settimane?: Settimana[] }>('settimane', () => authFetch('/api/settimane')),
+      ]);
 
       if (!profileData?.onboarding_completed) {
         router.push('/onboarding');
@@ -58,12 +68,6 @@ export default function SettimanePage() {
       }
 
       setCurrentWeek(profileData.current_week || 1);
-
-      const { data: progress } = await supabase
-        .from('user_day_progress')
-        .select('week_number, day_number, completed, completed_at, compressed')
-        .eq('user_id', session.user.id)
-        .eq('completed', true);
 
       setCompletedDays(
         ((progress || []) as ProgressRow[]).map((p) => ({
@@ -75,29 +79,17 @@ export default function SettimanePage() {
         }))
       );
 
+      const list = (listJson?.settimane || [])
+        .filter((s: Settimana) => s.weekNumber <= BETA_MAX_WEEK)
+        .sort((a: Settimana, b: Settimana) => a.weekNumber - b.weekNumber);
+      if (!listJson) console.error('Errore caricamento settimane');
+      setSettimane(list);
       setCheckingAuth(false);
+      setLoading(false);
     };
 
     checkAuth();
   }, [router]);
-
-  useEffect(() => {
-    if (checkingAuth) return;
-
-    authFetch('/api/settimane')
-      .then(res => res.json())
-      .then(data => {
-        const list = (data.settimane || [])
-          .filter((s: Settimana) => s.weekNumber <= BETA_MAX_WEEK)
-          .sort((a: Settimana, b: Settimana) => a.weekNumber - b.weekNumber);
-        setSettimane(list);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Errore caricamento settimane:', err);
-        setLoading(false);
-      });
-  }, [checkingAuth]);
 
   if (checkingAuth || loading) {
     return <AppLoader label="Caricamento percorso..." />;

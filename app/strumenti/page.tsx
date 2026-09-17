@@ -12,6 +12,7 @@ import {
   type PalestraExercise,
 } from '@/lib/palestraCatalog';
 import { authFetch } from '@/lib/authFetch';
+import { readCache, writeCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
 import PracticePopup from '@/components/PracticePopup';
 import { ChevronRight, ChevronDown, Play, Wind, IdCard, Goal, Clock, Target, Wrench, MessageCircle } from 'lucide-react';
@@ -155,19 +156,32 @@ export default function StrumentiPage() {
         router.push('/login');
         return;
       }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_week, training_access')
-        .eq('user_id', session.user.id)
-        .single();
-      setCurrentWeek(profile?.current_week || 1);
+      // Profilo e schede insieme. Le schede dipendono dalla settimana (layer bloccati):
+      // in cache con la settimana accanto, valide solo se la settimana è la stessa.
+      type DiffCache = { week: number; cards: DiffCard[] };
+      const cached = readCache<DiffCache>('difficolta');
+      const [{ data: profile }, res] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('current_week, training_access')
+          .eq('user_id', session.user.id)
+          .single(),
+        cached ? Promise.resolve(null) : authFetch('/api/difficolta').catch(() => null),
+      ]);
+      const week = profile?.current_week || 1;
+      setCurrentWeek(week);
       setTrainingAccess((profile as { training_access?: boolean } | null)?.training_access === true);
       setLastId(readLast());
       try {
-        const res = await authFetch('/api/difficolta');
-        if (res.ok) {
-          const data = await res.json();
-          setDiffCards(data.cards || []);
+        if (cached && cached.week === week) {
+          setDiffCards(cached.cards || []);
+        } else {
+          const r = res ?? (await authFetch('/api/difficolta'));
+          if (r.ok) {
+            const data = await r.json();
+            setDiffCards(data.cards || []);
+            writeCache<DiffCache>('difficolta', { week, cards: data.cards || [] });
+          }
         }
       } catch { /* non bloccante */ }
       setLoading(false);
