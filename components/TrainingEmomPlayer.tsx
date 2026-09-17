@@ -103,9 +103,9 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   const prossimoIdx = minuto + 1 < totale ? sequenza[minuto + 1] : null;
   const prossimo = prossimoIdx !== null ? items[prossimoIdx] : null;
   const prossimoEx = prossimo ? esercizioAny(prossimo.esercizio_id) : undefined;
-  const cosaFare = (it: EmomItem, u: string) => (u === 'secondi' || u === 'minuti')
-    ? `${unitaLabel(u, it.quantita)} di tenuta, poi riposa fino allo scadere del minuto`
-    : `${it.quantita} ${it.quantita === 1 ? 'ripetizione' : 'ripetizioni'} fatte bene, poi riposa fino allo scadere del minuto`;
+  const cosaFare = (it: EmomItem, u: string, perLato: boolean) => (u === 'secondi' || u === 'minuti')
+    ? `${unitaLabel(u, it.quantita)} di tenuta${perLato ? ' per lato' : ''}, poi riposa fino allo scadere del minuto`
+    : `${it.quantita} ${it.quantita === 1 ? 'ripetizione' : 'ripetizioni'} fatte bene${perLato ? ', alternando destra e sinistra' : ''}, poi riposa fino allo scadere del minuto`;
 
   if (!item || !ex) return null;
 
@@ -133,7 +133,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
         <Card className="mb-4">
           {bloccoNome && <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{bloccoNome}</p>}
           <h2 className="font-display text-title-1 font-bold text-app leading-tight">{ex.nome}</h2>
-          <p className="text-body-lg font-semibold text-forest-400 mt-1">{cosaFare(item, unita)}</p>
+          <p className="text-body-lg font-semibold text-forest-400 mt-1">{cosaFare(item, unita, ex.perLato)}</p>
           {item.nota && <p className="text-body-sm text-app mt-2 leading-snug">{item.nota}</p>}
           {ex.descrizione && (
             <div className="mt-3">
