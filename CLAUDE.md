@@ -1160,7 +1160,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] **FYF Training v2 (settembre 2026):** setup atleta con fase stagione (migration 017); batteria test v2 campo + palestra con descrizioni a 4 campi e video (migration 018); rombo a 10 punte; catalogo v2 da JSON (309 esercizi, sequenze yoga e video del canale mappati); regole v2 (livello = dose, finestre partita, plio contatti per livello); libreria di 144 blocchi dai workout Everfit; planner v2 a blocchi (default) con validazione blocco+item; feedback per serie con RPE e auto-regolazione (migration 019, applicata); script Everfit per leggere/assegnare allenamenti (`.claude/settings.json` pre-approva il comando). PR #49-#65.
 
 ### Da fare — Ste (fuori dal codice, dalle sere 1-5)
-- [ ] Applicare la migration `021_consent_health_training.sql` su Supabase (PR #78), se non già fatta
+- [x] Migration `021_consent_health_training.sql` applicata su Supabase (verificata il 17/9: il vincolo su `consent_events.document_type` include `health_data` e `training_idoneita`)
 - [x] Migration `023_training_squadra.sql` applicata su Supabase (Ste, 14/9)
 - [x] Migration `024_training_focus.sql` applicata su Supabase (Ste, 14/9)
 - [x] Migration `025_training_preferenze.sql` applicata su Supabase (Ste, 17/9)
