@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { clearSavedChats } from '@/components/ChatBot';
+import { clearContentCache } from '@/lib/clientCache';
 import { authFetch } from '@/lib/authFetch';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -286,6 +287,7 @@ export default function ProfiloPage() {
 
   const handleLogout = async () => {
     clearSavedChats(); // la chat col Coach resta sul dispositivo solo finché si è loggati
+    clearContentCache();
     const { error } = await supabase.auth.signOut();
     if (!error) router.push('/login');
     else setError('Errore durante il logout');

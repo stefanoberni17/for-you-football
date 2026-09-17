@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
+import { readCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
 import { ChevronRight, Wind, MessageCircle, Zap } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
@@ -64,6 +65,13 @@ function SosContent() {
       if (!session) {
         router.push('/login');
         return;
+      }
+      // Le schede in cache (scritte dalla Palestra) si mostrano subito; la rete le
+      // aggiorna appena risponde (i layer sbloccati dipendono dalla settimana).
+      const cached = readCache<{ week: number; cards: SosCard[] }>('difficolta');
+      if (cached?.cards?.length) {
+        setCards(cached.cards);
+        setLoading(false);
       }
       try {
         const res = await authFetch('/api/difficolta');

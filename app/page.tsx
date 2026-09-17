@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
+import { cachedJson } from '@/lib/clientCache';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import {
@@ -152,67 +153,65 @@ export default function HomePage() {
         }
       } catch { /* no-op */ }
 
-      // Carica progresso giorni
-      const { data: progress } = await supabase
-        .from('user_day_progress')
-        .select('week_number, day_number, completed, completed_at, compressed')
-        .eq('user_id', session.user.id)
-        .eq('completed', true);
+      // Una sola andata e ritorno per tutto quello che serve alla home (prima erano
+      // nove richieste in fila: ogni tab aspettava ~2 s con una connessione da telefono).
+      // Il contenuto della settimana (Notion) arriva dalla cache sul dispositivo se è fresco.
+      const uid = session.user.id;
+      const currentWeek = profileData?.current_week || 1;
+      const soft = (p: Promise<Response>): Promise<Response | null> => p.catch(() => null);
+      const [progressRes, startedRes, weekJson, checkinRes, gateRes, calRes, aRes, hRes] = await Promise.all([
+        supabase
+          .from('user_day_progress')
+          .select('week_number, day_number, completed, completed_at, compressed')
+          .eq('user_id', uid)
+          .eq('completed', true),
+        // Giornate avviate ma non chiuse (righe "started" — solo i giorni tipo "giornata"
+        // le creano, via PUT /api/giorno): servono per il CTA "chiudi il giorno"
+        supabase
+          .from('user_day_progress')
+          .select('week_number, day_number')
+          .eq('user_id', uid)
+          .eq('completed', false),
+        cachedJson<unknown>(`settimana:${currentWeek}`, () => authFetch(`/api/settimana?week=${currentWeek}`)),
+        soft(authFetch(`/api/checkin/history?userId=${uid}&days=7`)),
+        // Missione della settimana: vive sul G7 della settimana precedente,
+        // mostrata solo se quel gate è stato superato
+        currentWeek >= 2 ? soft(authFetch(`/api/gate?week=${currentWeek - 1}`)) : Promise.resolve(null),
+        soft(authFetch(`/api/calendar?userId=${uid}&week=${currentWeek}`)),
+        soft(authFetch(`/api/actions?userId=${uid}`)),
+        soft(authFetch(`/api/actions/history?userId=${uid}&days=14`)),
+      ]);
 
-      const days: DayProgress[] = (progress || []).map((p: any) => ({
+      const days: DayProgress[] = (progressRes.data || []).map((p: any) => ({
         weekNumber: p.week_number,
         dayNumber: p.day_number,
         completed: p.completed,
         completedAt: p.completed_at || null,
         compressed: p.compressed || false,
       }));
-
       setCompletedDays(days);
+      setStartedDays((startedRes.data || []).map((r: any) => ({ week: r.week_number, day: r.day_number })));
 
-      // Giornate avviate ma non chiuse (righe "started" — solo i giorni tipo "giornata"
-      // le creano, via PUT /api/giorno): servono per il CTA "chiudi il giorno"
-      try {
-        const { data: startedRows } = await supabase
-          .from('user_day_progress')
-          .select('week_number, day_number')
-          .eq('user_id', session.user.id)
-          .eq('completed', false);
-        setStartedDays((startedRows || []).map((r: any) => ({ week: r.week_number, day: r.day_number })));
-      } catch { /* non bloccante */ }
-
-      // Carica dati settimana corrente
-      const currentWeek = profileData?.current_week || 1;
-      const weekRes = await authFetch(`/api/settimana?week=${currentWeek}`);
-      const weekJson = await weekRes.json();
       setWeekData(weekJson);
 
-      // Carica check-in ultimi 7 giorni
       try {
-        const checkinRes = await authFetch(`/api/checkin/history?userId=${session.user.id}&days=7`);
-        if (checkinRes.ok) {
+        if (checkinRes?.ok) {
           const checkinJson = await checkinRes.json();
           setCheckins(checkinJson.checkins || []);
         }
       } catch {}
 
-      // Missione della settimana: vive sul G7 della settimana precedente,
-      // mostrata solo se quel gate è stato superato
-      if (currentWeek >= 2) {
-        try {
-          const gateRes = await authFetch(`/api/gate?week=${currentWeek - 1}`);
-          if (gateRes.ok) {
-            const gateJson = await gateRes.json();
-            if (gateJson.completed && gateJson.giorno?.missioneSettimana) {
-              setWeeklyMission(gateJson.giorno.missioneSettimana);
-            }
-          }
-        } catch {}
-      }
-
-      // Carica calendario settimanale
       try {
-        const calRes = await authFetch(`/api/calendar?userId=${session.user.id}&week=${currentWeek}`);
-        if (calRes.ok) {
+        if (gateRes?.ok) {
+          const gateJson = await gateRes.json();
+          if (gateJson.completed && gateJson.giorno?.missioneSettimana) {
+            setWeeklyMission(gateJson.giorno.missioneSettimana);
+          }
+        }
+      } catch {}
+
+      try {
+        if (calRes?.ok) {
           const calJson = await calRes.json();
           if (calJson.trainingDays?.length > 0) {
             setCalendarData(calJson);
@@ -220,13 +219,9 @@ export default function HomePage() {
         }
       } catch {}
 
-      // Carica azioni settimanali (per ActionsCard + Banner)
+      // Azioni settimanali (per ActionsCard + Banner)
       try {
-        const [aRes, hRes] = await Promise.all([
-          authFetch(`/api/actions?userId=${session.user.id}`),
-          authFetch(`/api/actions/history?userId=${session.user.id}&days=14`),
-        ]);
-        if (aRes.ok) {
+        if (aRes?.ok) {
           const a = await aRes.json();
           setActionsTotal(a.total || 0);
           setActionsTodayCount(a.today_count || 0);
@@ -238,7 +233,7 @@ export default function HomePage() {
             }))
           );
         }
-        if (hRes.ok) {
+        if (hRes?.ok) {
           const h = await hRes.json();
           setActionsStreak(h.current_streak || 0);
         }

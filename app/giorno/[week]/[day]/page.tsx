@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
+import { cachedJson } from '@/lib/clientCache';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
@@ -68,12 +69,25 @@ export default function GiornoPage() {
       const uid = session.user.id;
       setUserId(uid);
 
-      // Controlla se il giorno e sbloccato
-      const { data: progressData } = await supabase
-        .from('user_day_progress')
-        .select('week_number, day_number, completed, completed_at, compressed')
-        .eq('user_id', uid)
-        .eq('completed', true);
+      // Se e il gate (giorno 7) → redirect alla pagina gate
+      if (dayNumber === GATE_DAY) {
+        router.push(`/gate/${weekNumber}`);
+        return;
+      }
+
+      // Progresso e contenuti partono insieme; il controllo di sblocco viene comunque
+      // PRIMA di mostrare qualcosa (se il giorno è chiuso si torna alla settimana).
+      // Il contenuto della settimana (Notion) arriva dalla cache sul dispositivo se è fresco.
+      const [{ data: progressData }, giornoRes, calendarRes, settimanaJson] = await Promise.all([
+        supabase
+          .from('user_day_progress')
+          .select('week_number, day_number, completed, completed_at, compressed')
+          .eq('user_id', uid)
+          .eq('completed', true),
+        authFetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`),
+        authFetch(`/api/calendar?userId=${uid}&week=${weekNumber}`).catch(() => null),
+        cachedJson<{ settimana?: unknown; giorni?: unknown[] }>(`settimana:${weekNumber}`, () => authFetch(`/api/settimana?week=${weekNumber}`)),
+      ]);
 
       const completedDays: DayProgress[] = (progressData || []).map((p: any) => ({
         weekNumber: p.week_number,
@@ -92,19 +106,6 @@ export default function GiornoPage() {
       // bottone-rimbalzo se il successivo è ancora time-locked
       setNextUnlocked(isDayUnlocked(weekNumber, dayNumber + 1, completedDays));
 
-      // Se e il gate (giorno 7) → redirect alla pagina gate
-      if (dayNumber === GATE_DAY) {
-        router.push(`/gate/${weekNumber}`);
-        return;
-      }
-
-      // Fetch contenuto giorno + calendario + settimana in parallelo
-      const [giornoRes, calendarRes, settimanaRes] = await Promise.all([
-        authFetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`),
-        authFetch(`/api/calendar?userId=${uid}&week=${weekNumber}`),
-        authFetch(`/api/settimana?week=${weekNumber}`),
-      ]);
-
       const data = await giornoRes.json();
 
       if (data.error) {
@@ -115,18 +116,17 @@ export default function GiornoPage() {
 
       // Carica calendario settimanale
       try {
-        const calData = await calendarRes.json();
+        const calData = calendarRes ? await calendarRes.json() : {};
         if (calData.trainingDays && calData.trainingDays.length > 0) {
           setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
         }
       } catch { /* calendario non configurato — ignora */ }
 
       // Carica dati settimana (per pratica pre-partita + teaser giorno successivo)
-      try {
-        const settimanaJson = await settimanaRes.json();
+      if (settimanaJson) {
         setSettimanaData(settimanaJson.settimana);
         setGiorniData(settimanaJson.giorni || []);
-      } catch { /* ignora */ }
+      }
 
       setGiorno(data.giorno);
       setCompleted(data.completed);

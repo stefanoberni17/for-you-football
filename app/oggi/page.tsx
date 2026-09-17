@@ -63,14 +63,15 @@ function OggiPageInner() {
       const uid = session.user.id;
       setUserId(uid);
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_week')
-        .eq('user_id', uid)
-        .single();
+      const [{ data: profile }] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('current_week')
+          .eq('user_id', uid)
+          .single(),
+        reload(uid),
+      ]);
       setCurrentWeek(profile?.current_week || 1);
-
-      await reload(uid);
       setLoading(false);
 
       // Apri il setup se richiesto via query

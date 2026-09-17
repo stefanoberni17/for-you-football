@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
+import { cachedJson } from '@/lib/clientCache';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { WEEK_RECORD_IDS, WEEK_TOOLS, WEEK_PRINCIPLES } from '@/lib/constants';
@@ -39,9 +40,8 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
       const currentWeek = profileData?.current_week || 1;
 
       if (WEEK_RECORD_IDS[currentWeek]) {
-        const response = await authFetch(`/api/settimana?week=${currentWeek}`);
-        if (!response.ok) return;
-        const data = await response.json();
+        const data = await cachedJson<{ error?: string; settimana?: { mantraDashboard?: string } }>(`settimana:${currentWeek}`, () => authFetch(`/api/settimana?week=${currentWeek}`));
+        if (!data || data.error) return;
 
         const mantraText = (data?.settimana?.mantraDashboard || '')
           .replace(/<br>/g, '\n');

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
+import { cachedJson } from '@/lib/clientCache';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isWeekUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
@@ -58,11 +59,20 @@ export default function SettimanaPage() {
   const [introExpanded, setIntroExpanded] = useState(false);
 
   const loadProgress = async (uid: string): Promise<DayProgress[]> => {
-    const { data: progress } = await supabase
-      .from('user_day_progress')
-      .select('week_number, day_number, completed, completed_at, compressed')
-      .eq('user_id', uid)
-      .eq('completed', true);
+    // Giorni fatti e giornate avviate ma non chiuse (righe "started" — le creano
+    // solo i giorni tipo "giornata"): la timeline le mostra come "In corso"
+    const [{ data: progress }, startedRes] = await Promise.all([
+      supabase
+        .from('user_day_progress')
+        .select('week_number, day_number, completed, completed_at, compressed')
+        .eq('user_id', uid)
+        .eq('completed', true),
+      supabase
+        .from('user_day_progress')
+        .select('week_number, day_number')
+        .eq('user_id', uid)
+        .eq('completed', false),
+    ]);
 
     const days: DayProgress[] = ((progress || []) as ProgressRow[]).map((p) => ({
       weekNumber: p.week_number,
@@ -73,16 +83,7 @@ export default function SettimanaPage() {
     }));
     setCompletedDays(days);
 
-    // Giornate avviate ma non chiuse (righe "started" — le creano solo i giorni
-    // tipo "giornata"): la timeline le mostra come "In corso"
-    try {
-      const { data: startedRows } = await supabase
-        .from('user_day_progress')
-        .select('week_number, day_number')
-        .eq('user_id', uid)
-        .eq('completed', false);
-      setStartedDays(((startedRows || []) as ProgressRow[]).map((r) => ({ week: r.week_number, day: r.day_number })));
-    } catch { /* non bloccante */ }
+    setStartedDays(((startedRes.data || []) as ProgressRow[]).map((r) => ({ week: r.week_number, day: r.day_number })));
 
     return days;
   };
@@ -98,15 +99,14 @@ export default function SettimanaPage() {
         return;
       }
 
-      const [settimanaRes, progress, calendarRes] = await Promise.all([
-        authFetch(`/api/settimana?week=${weekNumber}`),
+      const [data, progress, calendarRes] = await Promise.all([
+        cachedJson<{ error?: string; settimana?: SettimanaDettaglio; giorni?: GiornoRiga[] }>(`settimana:${weekNumber}`, () => authFetch(`/api/settimana?week=${weekNumber}`)),
         loadProgress(session.user.id),
-        authFetch(`/api/calendar?userId=${session.user.id}&week=${weekNumber}`),
+        authFetch(`/api/calendar?userId=${session.user.id}&week=${weekNumber}`).catch(() => null),
       ]);
 
-      const data = await settimanaRes.json();
-      if (data.error) {
-        console.error('Errore settimana:', data.error);
+      if (!data || data.error || !data.settimana) {
+        console.error('Errore settimana:', data?.error || 'risposta vuota');
         router.push('/settimane');
         return;
       }
@@ -115,7 +115,7 @@ export default function SettimanaPage() {
       // Il cron notturno svuota training_days ogni lunedì → se vuoto, banner
       // inline non bloccante (niente più popup automatico che si accavalla
       // a check-in/Reset il lunedì mattina)
-      const calData = await calendarRes.json();
+      const calData = calendarRes ? await calendarRes.json().catch(() => ({})) : {};
       if (calData.trainingDays && calData.trainingDays.length > 0) {
         setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
       }
