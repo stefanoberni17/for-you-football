@@ -18,6 +18,7 @@ import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type Plann
 import { caricoPianificato, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
+import { costruisciEmomSkill, emomSkillTesto, EMOM_SKILL_ID } from './trainingEmomSkill';
 import { squilibriTesto } from './trainingSquilibri';
 import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgressione';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
@@ -27,7 +28,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.9-settimana-avviata';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.10-emom-skill';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -91,8 +92,10 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     eta, esperienzaPalestra: setup.esperienzaPalestra, massimali,
   };
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
+  // EMOM Skill: blocco virtuale costruito sulle scale skill dell'atleta (gradino dopo l'ultimo testato), accanto ai blocchi di Ste
+  const emomSkill = costruisciEmomSkill(base.results, { hasSbarra: base.hasSbarra || setup.attrezzatura.includes('sbarra') });
   return {
-    base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
+    base, setup, eta, ruoli, v2, blocchi: [...blocchiDisponibili(v2), ...(emomSkill ? [emomSkill] : [])],
     maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
     daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup,
   };
@@ -149,6 +152,11 @@ function tipoDaBlocchi(blocchi: Blocco[]): PlanSession['tipo'] {
   return 'fascia';
 }
 
+/** Blocco per id: prima quelli del contesto (compreso l'EMOM Skill virtuale), poi la libreria. */
+function bloccoDi(ctx: ContextV2, id: string): Blocco | undefined {
+  return ctx.blocchi.find((b) => b.id === id) ?? bloccoById(id);
+}
+
 /** Espande le sedute a blocchi in sedute con items; ritorna anche gli errori a livello di blocco. */
 export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; errors: string[] } {
   const errors: string[] = [];
@@ -160,7 +168,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     const ids = Array.isArray(s.blocchi) ? s.blocchi : [];
     const blocchi: Blocco[] = [];
     for (const id of ids) {
-      const b = bloccoById(id);
+      const b = bloccoDi(ctx, id);
       if (!b) { errors.push(`blocco sconosciuto: "${id}" (usa solo gli id della libreria)`); continue; }
       if (!disponibili.has(id)) {
         const why = !b.completo ? 'incompleto' : b.livello && b.livello !== ctx.v2.livello ? `livello ${b.livello}` : b.inCoppia ? 'serve un compagno' : `serve ${b.attrezzatura.join('/')}`;
@@ -204,7 +212,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // prima gli obiettivi (14/9: un recupero da 79' + "massimo 60'" rendeva impossibile ogni piano → fallback senza forza)
   const maxDurRec = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
   const riproponibile = (r: ContextV2['daRecuperare'][number]) => r.blocchi.every((id) => disponibili.has(id))
-    && r.blocchi.reduce((a, id) => a + (bloccoById(id)?.durataMin ?? 0), 0) <= maxDurRec;
+    && r.blocchi.reduce((a, id) => a + (bloccoDi(ctx, id)?.durataMin ?? 0), 0) <= maxDurRec;
   const attesi = ctx.base.painHold || ctx.vincoli.recuperiFacoltativi ? []
     : ctx.daRecuperare.filter(riproponibile).slice(0, Math.min(ctx.maxSeduteFisiche, giorniLiberi.length));
   for (const r of attesi) {
@@ -282,6 +290,7 @@ function finestreTesto(): string {
 
 function systemPrompt(ctx: ContextV2): string {
   const fase = ctx.setup.fase;
+  const emomSkill = ctx.blocchi.find((b) => b.id === EMOM_SKILL_ID);
   const faseTxt = fase === 'off_season'
     ? `OFF SEASON (nessuna squadra): fino a ${ctx.maxSeduteFisiche} sedute fisiche a settimana, si può costruire.`
     : fase === 'preparazione_squadra'
@@ -326,6 +335,7 @@ ADATTAMENTO
 17. CARICO TOTALE (session-RPE, calcolato dai dati): resta nel TARGET indicato — al massimo +10% sul cronico da una settimana all'altra; ACWR alto/rischio → settimana uguale o più leggera della precedente; dopo 2+ settimane di stop riparti dal 70% del cronico. Il tetto lo fa rispettare il validatore: una settimana troppo carica viene rifiutata.
 22. PIÙ LEGGERO PER BLOCCO: se una giornata va alleggerita senza cambiare blocco (check-in con fatica alta, giorno dopo la partita o dopo una giornata squadra da 8+, carico alto, richiesta "più leggera"), metti l'id del blocco nel campo "leggeri" della seduta: il server riduce le serie (×0.7). Vale solo per i blocchi fisici (forza, esplosività, pliometria, velocità, resistenza), non per fascia/tecnica/recupero. Preferiscilo alla variante short quando la short non esiste.
 21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole → tra i blocchi della stessa qualità preferisci quelli marcati [unilaterale] (lavoro una gamba alla volta) e nel messaggio digli di partire dal lato debole e di curarlo; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
+${emomSkill ? `23. EMOM SKILL: \`${emomSkill.id}\` è costruito sulle scale skill dell'atleta (per ogni catena l'esercizio del gradino DOPO l'ultimo testato): poche ripetizioni di qualità al minuto, il resto del minuto è recupero. Usalo come blocco principale o secondo blocco quando l'obiettivo è parte alta, forza a corpo libero o skill, al massimo una volta a settimana, mai il giorno prima della partita (è forza). ${emomSkillTesto(emomSkill)}` : ''}
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
 Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21).
@@ -486,7 +496,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   // Recuperi: solo se tutti i blocchi sono disponibili e la seduta sta nel tempo massimo richiesto
   const recuperi = (b.painHold || ctx.setup.fase === 'preparazione_squadra') ? []
     : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disponibili.has(id))
-      && r.blocchi.reduce((a, id) => a + (bloccoById(id)?.durataMin ?? 0), 0) <= maxDur).slice(0, ctx.maxSeduteFisiche);
+      && r.blocchi.reduce((a, id) => a + (bloccoDi(ctx, id)?.durataMin ?? 0), 0) <= maxDur).slice(0, ctx.maxSeduteFisiche);
   // Richiesta esplicita: prima gli obiettivi, i recuperi negli slot che avanzano; piano automatico: prima i recuperi
   const nObiettivi = ctx.vincoli.recuperiFacoltativi ? Math.min(principali.length, giorni.length) : 0;
   const recuperoPer = (i: number) => ctx.vincoli.recuperiFacoltativi ? (i >= nObiettivi ? recuperi[i - nObiettivi] : undefined) : recuperi[i];

@@ -188,12 +188,65 @@ def meta_from_title(t):
     return livello, prog, variante, qual, fam, sotto, ruolo
 
 
+# ── EMOM a rotazione (Ste, 17/9/2026) ────────────────────────────────────────
+# Un EMOM serve a migliorare le skill con POCHE ripetizioni di qualità e il resto del minuto di
+# recupero: max 3-4 reps, 1-2 quasi massimali se è forza esplosiva (broad jump, salto in alto).
+# In Everfit un EMOM è una sezione `interval` per giro (stesso titolo, una sotto l'altra): qui
+# diventa UN item per esercizio con serie = giri, quantità = reps al minuto (o secondi di lavoro
+# per le tenute), recupero 0 (il resto del minuto). Il player lo fa girare un minuto per esercizio.
+EMOM_REPS = 3             # skill e forza: poche reps di qualità (max 3-4)
+EMOM_REPS_ESPLOSIVO = 2   # esplosivi: 1-2 reps quasi massimali
+QUALITA_ESPLOSIVE = {"forza-esplosiva", "pliometria-intensiva", "pliometria-estensiva", "velocita"}
+RE_ESPLOSIVO = re.compile(r"jump|salto|balz|broad|hop\b|bound|box |lancio|throw|sprint", re.I)
+
+
+def is_emom(sec, titolo):
+    return "emom" in ((sec.get("title") or "") + " " + titolo).lower()
+
+
+def emom_items(sections, titolo):
+    """Sezioni EMOM consecutive con lo stesso titolo = giri di un circuito a minuti."""
+    gruppo = slug(sections[0].get("title") or titolo) or "emom"
+    ordine, per_ex = [], {}
+    for s in sections:
+        for ex in s.get("esercizi", []):
+            name = ex.get("esercizio", "?")
+            if name not in per_ex:
+                ordine.append(name)
+                per_ex[name] = {"ex": ex, "giri": 0}
+            per_ex[name]["giri"] += 1
+    out = []
+    for name in ordine:
+        ex = per_ex[name]["ex"]
+        info = lookup(name)
+        s0 = (ex.get("serie") or [{}])[0]
+        reps, dur = num(s0.get("reps")), num(s0.get("duration"))
+        cat_unita = info[2] if info else "reps"
+        if reps:
+            unita, q = "reps", reps                      # EMOM misto: reps scritte in Everfit (duration 60 + reps + rest 0)
+        elif cat_unita in ("secondi", "minuti") and dur and dur < 60:
+            unita, q = "secondi", dur                    # tenuta: i secondi di lavoro dentro il minuto
+        else:
+            esplosivo = bool(info and (info[1] in QUALITA_ESPLOSIVE or RE_ESPLOSIVO.search(name)))
+            unita, q = "reps", (EMOM_REPS_ESPLOSIVO if esplosivo else EMOM_REPS)
+        it = {"esercizio_id": info[0] if info and info[4] else None, "nomeEverfit": name,
+              "serie": per_ex[name]["giri"], "quantita": q, "unita": unita, "recupero_sec": 0,
+              "schema": "emom", "emomGruppo": gruppo, "sezione": sections[0].get("title") or None}
+        if ex.get("nota"):
+            it["nota"] = str(ex["nota"])[:160]
+        out.append((it, info))
+    return out
+
+
 def durata_min(items, amrap_sec):
     if amrap_sec:
         return round(amrap_sec / 60) + 3
     sec = 0
     for it in items:
         q = it["quantita"]
+        if it.get("schema") == "emom":
+            sec += it["serie"] * 60                      # un minuto per giro, recupero compreso
+            continue
         lav = q if it["unita"] == "secondi" else q * 60 if it["unita"] == "minuti" else q / 5 if it["unita"] == "metri" else q * 3
         # per lato: Everfit elenca già i due lati come serie separate → niente raddoppio
         sec += it["serie"] * (lav + it["recupero_sec"])
@@ -216,22 +269,39 @@ seen = set()
 for t, (_, w) in sorted(by_title.items(), key=lambda x: x[0].lower()):
     items, mancanti, quali, attrezz, coppia = [], [], Counter(), set(), False
     amrap_sec = None
-    for s in w.get("sezioni", []):
+
+    def registra(its, info, nome):
+        items.extend(its)
+        if not info or not info[4]:
+            mancanti.append(nome)
+        else:
+            quali[info[1]] += sum(i["serie"] for i in its) or 1
+            if info[3] and info[3] != "corpo libero":
+                attrezz.add(info[3])
+            if info[5]:
+                coppia = True
+
+    sezioni = w.get("sezioni", [])
+    i = 0
+    while i < len(sezioni):
+        s = sezioni[i]
+        if is_emom(s, t):
+            # giri = sezioni EMOM consecutive con lo stesso titolo
+            j = i
+            while j < len(sezioni) and is_emom(sezioni[j], t) and (sezioni[j].get("title") or "") == (s.get("title") or ""):
+                j += 1
+            for it, info in emom_items(sezioni[i:j], t):
+                registra([it], info, it["nomeEverfit"])
+            i = j
+            continue
         formato = s.get("formato") or "regular"
         if formato == "amrap" and s.get("time"):
             amrap_sec = int(s["time"])
         sez = (s.get("title") or "").strip() or None
         for ex in s.get("esercizi", []):
             its, info = items_from_exercise(ex, sez, formato)
-            items.extend(its)
-            if not info or not info[4]:
-                mancanti.append(ex.get("esercizio", "?"))
-            else:
-                quali[info[1]] += sum(i["serie"] for i in its) or 1
-                if info[3] and info[3] != "corpo libero":
-                    attrezz.add(info[3])
-                if info[5]:
-                    coppia = True
+            registra(its, info, ex.get("esercizio", "?"))
+        i += 1
     livello, prog, variante, qual_kw, fam, sotto, ruolo = meta_from_title(t)
     qual = qual_kw or (quali.most_common(1)[0][0] if quali else "da-classificare")
     base = slug(t)

@@ -56,8 +56,8 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `forza-parte-alta-b1-short` | Forza Parte alta B1 - short | forza-parte-alta | B | 1 | short | 31 | — | ✓ |  |
 | `forza-parte-alta-b2` | Forza Parte alta B2 | forza-parte-alta | B | 2 | full | 36 | sbarra | ✓ |  |
 | `forza-parte-alta-b3` | Forza Parte alta B3 | forza-parte-alta | B | 3 | full | 39 | sbarra | ✓ |  |
-| `forza-parte-alta-emom-b2` | Forza Parte Alta EMOM B2 | forza-parte-alta | B | 2 | full | 21 | — | ✓ |  |
-| `forza-parte-alta-emom-b4` | Forza Parte Alta EMOM B4 | forza-parte-alta | B | 4 | full | 21 | — | ✓ |  |
+| `forza-parte-alta-emom-b2` | Forza Parte Alta EMOM B2 | forza-parte-alta | B | 2 | full | 15 | — | ✓ |  |
+| `forza-parte-alta-emom-b4` | Forza Parte Alta EMOM B4 | forza-parte-alta | B | 4 | full | 15 | — | ✓ |  |
 | `forza-parte-alta-pro-a2` | Forza parte alta Pro A2 | forza-parte-alta | A | 2 | full | 46 | palestra, piccoli attrezzi, sbarra | ✓ |  |
 | `forza-parte-alta-pro-a3` | Forza parte alta Pro A3 | forza-parte-alta | A | 3 | full | 54 | palestra, piccoli attrezzi, sbarra | ✓ |  |
 | `forza-parte-alta-pro-a3-short` | Forza parte alta Pro A3 - short | forza-parte-alta | A | 3 | short | 38 | palestra, piccoli attrezzi, sbarra | ✓ |  |

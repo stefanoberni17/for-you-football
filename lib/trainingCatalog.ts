@@ -406,6 +406,7 @@ export const REGOLE = {
   durataMixAMax: 60,
   fasciaAperturaMin: 10,         // 10-15' di fascia in apertura
   emomMinuti: { min: 6, max: 25 },
+  emomRepsMax: 4,                // EMOM = skill: poche reps di qualità al minuto (1-2 se esplosive), il resto del minuto è recupero (Ste, 17/9)
   deloadVolumePct: 0.55,         // 50-60%
   feedbackDuroConsecutivi: 3,
   feedbackDuroRiduzione: 0.10,

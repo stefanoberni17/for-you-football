@@ -306,6 +306,8 @@ export interface PlanItem {
   carico_kg?: number;        // carico assoluto proposto (dai blocchi Everfit o dal log per serie)
   blocco_id?: string;        // blocco della libreria da cui viene l'item (lib/trainingBlocks)
   per_lato?: boolean;        // dai blocchi Everfit (each_side): dx poi sx, quantità indicata PER LATO (non dimezzata)
+  emom_gruppo?: string;      // EMOM a rotazione (Ste, 17/9): gli item con lo stesso gruppo si alternano un minuto ciascuno; serie = giri, quantita = reps al minuto, recupero = il resto del minuto
+  unita?: 'reps' | 'secondi' | 'minuti' | 'metri'; // SOLO se diversa dal catalogo: in Everfit Ste ha programmato a tempo un esercizio a reps (EMOM 30") o viceversa
   // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
   adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero';
   lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)
@@ -394,10 +396,12 @@ export function validatePlan(
       if (AREE_FORZA.has(ex.area)) {
         const b = BOUNDS[ex.area as AreaForza | 'laterale'][ctx.fascia];
         if (it.schema === 'emom') {
-          const durata = it.serie; // per EMOM: serie = minuti totali
+          // EMOM: serie = minuti; a rotazione (emom_gruppo) i minuti sono la somma dei giri del gruppo
+          const durata = it.emom_gruppo ? s.items.filter((x) => x.emom_gruppo === it.emom_gruppo).reduce((a, x) => a + x.serie, 0) : it.serie;
           if (durata < REGOLE.emomMinuti.min || durata > REGOLE.emomMinuti.max)
             errors.push(`"${ex.nome}" EMOM ${durata}': fuori range ${REGOLE.emomMinuti.min}-${REGOLE.emomMinuti.max}'`);
-          if (it.quantita < 1 || it.quantita > 2) errors.push(`"${ex.nome}" EMOM: reps/minuto deve essere 1-2`);
+          if (ex.unita === 'reps' && (it.quantita < 1 || it.quantita > REGOLE.emomRepsMax))
+            errors.push(`"${ex.nome}" EMOM: reps al minuto deve essere 1-${REGOLE.emomRepsMax} (poche, di qualità)`);
         } else {
           if (it.serie < b.serieMin || it.serie > b.serieMax)
             errors.push(`"${ex.nome}": ${it.serie} serie fuori bounds ${b.serieMin}-${b.serieMax} (fascia ${ctx.fascia})`);

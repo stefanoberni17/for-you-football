@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
-import { esercizioAny, unitaLabel } from '@/lib/trainingExercise';
+import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
+import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input } from '@/components/ui';
 
@@ -25,6 +26,8 @@ interface PlanItem {
   carico_kg?: number;
   blocco_id?: string;
   per_lato?: boolean;
+  unita?: string;            // unità del blocco se diversa dal catalogo (EMOM a tempo, metri…)
+  emom_gruppo?: string;      // EMOM a rotazione: gli item consecutivi con lo stesso gruppo girano un minuto ciascuno
   adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero'; // lib/trainingProgressione
   lato_extra?: 'dx' | 'sx';  // una serie in più solo su questo lato (lato più debole)
 }
@@ -49,6 +52,10 @@ export interface SetLogInput {
   carico_previsto_kg: number | null; carico_fatto_kg: number | null; rpe: number | null;
   sensazione?: string | null;   // "dove l'hai sentito?" (solo dopo l'ultima serie degli esercizi che lo chiedono)
 }
+
+// Timestamp per i timer di recupero/esecuzione (partono da eventi e setInterval, mai in render):
+// il lint del compilatore React segnalerebbe Date.now() come impuro dentro queste funzioni.
+const nowMs = () => Date.now();
 
 export default function TrainingSessionPlayer({
   items,
@@ -117,7 +124,14 @@ export default function TrainingSessionPlayer({
 
   const item = items[itemIdx];
   const ex = item ? esercizioAny(item.esercizio_id) : undefined;
+  const unita = item ? unitaItem(item, ex) : 'reps'; // del blocco se diversa dal catalogo (EMOM a tempo)
   const isEmom = item?.schema === 'emom';
+  // EMOM a rotazione: il gruppo = questo item + i successivi consecutivi con lo stesso emom_gruppo (un item solo se non ha gruppo)
+  const emomGruppo: PlanItem[] = [];
+  if (isEmom && item) {
+    emomGruppo.push(item);
+    for (let j = itemIdx + 1; j < items.length && item.emom_gruppo && items[j].schema === 'emom' && items[j].emom_gruppo === item.emom_gruppo; j++) emomGruppo.push(items[j]);
+  }
   // Per lato: dai blocchi di Ste (item.per_lato, quantità già PER LATO) o dal catalogo (quantità totale → metà per lato)
   const isPerLato = !isEmom && (item?.per_lato === true || ex?.perLato === true);
   // Serie extra sul lato più debole (lib/trainingProgressione): è l'ultima, solo su quel lato
@@ -125,8 +139,8 @@ export default function TrainingSessionPlayer({
   const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato; // EMOM: serie = minuti
   const isExtra = extraLato > 0 && serieFatte >= (item?.serie ?? 0);
   const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
-  const isTimed = !isEmom && (ex?.unita === 'secondi' || ex?.unita === 'minuti');
-  const execSeconds = ex?.unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
+  const isTimed = !isEmom && (unita === 'secondi' || unita === 'minuti');
+  const execSeconds = unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
 
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
@@ -143,7 +157,7 @@ export default function TrainingSessionPlayer({
     setRestIsLast(last); restIsLastRef.current = last;
     setRestLeft(Math.max(sec, last ? 20 : sec)); // dopo l'ultima serie: almeno 20" per il feedback
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
-    restEndsRef.current = Date.now() + Math.max(sec, last ? 20 : sec) * 1000;
+    restEndsRef.current = nowMs() + Math.max(sec, last ? 20 : sec) * 1000;
     const tick = () => {
       if (restEndsRef.current === null) return;
       const left = Math.ceil((restEndsRef.current - Date.now()) / 1000);
@@ -191,7 +205,7 @@ export default function TrainingSessionPlayer({
     setLogSaved(true);
   };
 
-  const nextItem = () => {
+  const avanza = (step: number) => {
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
     stopExec();
     setRestLeft(null);
@@ -201,12 +215,21 @@ export default function TrainingSessionPlayer({
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
     setShowDesc(false);
-    if (itemIdx + 1 >= items.length) {
+    if (itemIdx + step >= items.length) {
       if (storageKey) { try { localStorage.removeItem(storageKey); } catch { /* no-op */ } }
       onComplete();
     } else {
-      setItemIdx(itemIdx + 1);
+      setItemIdx(itemIdx + step);
     }
+  };
+  const nextItem = () => avanza(1);
+  // Fine dell'EMOM: un log per esercizio (serie = giri fatti, stesso RPE per tutto il circuito), poi si salta l'intero gruppo
+  const emomDone = (r: number | null, giriFatti: number[]) => {
+    if (onSetLog) emomGruppo.forEach((it, i) => {
+      if (giriFatti[i] > 0) onSetLog({ esercizio_id: it.esercizio_id, serie: giriFatti[i], lato: '', unita: unitaItem(it, esercizioAny(it.esercizio_id)),
+        quantita_prevista: it.quantita, quantita_fatta: null, carico_previsto_kg: null, carico_fatto_kg: null, rpe: r });
+    });
+    avanza(emomGruppo.length);
   };
 
   const handleSerieDone = () => {
@@ -223,7 +246,7 @@ export default function TrainingSessionPlayer({
     setLato(nextLato); latoRef.current = nextLato;
     setSerieFatte(next);
     // Serie chiusa → durante il recupero si può dare il feedback (RPE, reps/kg reali)
-    setPending({ serie: next, quantita: quantitaLato, unita: ex?.unita ?? 'reps', carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
+    setPending({ serie: next, quantita: quantitaLato, unita, carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
     setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null); setShowDiverso(false);
     startRest(item.recupero_sec, next >= totalSerie);
   };
@@ -246,7 +269,7 @@ export default function TrainingSessionPlayer({
   const startExecTimer = () => {
     stopExec();
     setExecLeft(execSeconds);
-    execEndsRef.current = Date.now() + execSeconds * 1000;
+    execEndsRef.current = nowMs() + execSeconds * 1000;
     const tick = () => {
       if (execEndsRef.current === null) return;
       const left = Math.ceil((execEndsRef.current - Date.now()) / 1000);
@@ -283,9 +306,9 @@ export default function TrainingSessionPlayer({
   const latoLabel = lato === 'dx' ? 'destro' : 'sinistro';
   // Parametri dell'esercizio: "3 × 12 · recupero 90"" (per lato, carico, serie extra sul lato debole)
   const parametri = isEmom
-    ? `EMOM ${item.serie}' · ${item.quantita} reps al minuto`
+    ? `EMOM · ${item.serie} ${item.serie === 1 ? 'giro' : 'giri'} · ${unitaLabel(unita, item.quantita)} al minuto`
     : [
-      `${item.serie} × ${unitaLabel(ex.unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`,
+      `${item.serie} × ${unitaLabel(unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`,
       extraLato ? `+1 ${item.lato_extra === 'sx' ? 'sinistro' : 'destro'}` : '',
       item.carico_kg ? `${item.carico_kg} kg` : '',
       `recupero ${item.recupero_sec}"`,
@@ -321,6 +344,10 @@ export default function TrainingSessionPlayer({
       </div>
 
       {/* Corpo scrollabile: la CTA principale è sticky in fondo (mt-auto: in fondo anche se il contenuto è corto) */}
+      {isEmom ? (
+        <TrainingEmomPlayer key={itemIdx} items={emomGruppo} bloccoNome={blocco ? nomeBloccoAtleta(blocco.nome) : undefined}
+          onDone={emomDone} onSkip={() => avanza(emomGruppo.length)} />
+      ) : (
       <div className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4 pb-tabbar">
         {/* Esercizio corrente */}
         <Card className="mb-4">
@@ -508,7 +535,7 @@ export default function TrainingSessionPlayer({
                 ) : (
                   <div className="mt-3">
                     <Button variant="secondary" size="lg" fullWidth icon={<Play size={18} />} onClick={startExecTimer}>
-                      Parti col timer ({unitaLabel(ex.unita, quantitaLato)})
+                      Parti col timer ({unitaLabel(unita, quantitaLato)})
                     </Button>
                   </div>
                 )
@@ -530,6 +557,7 @@ export default function TrainingSessionPlayer({
           </>
         )}
       </div>
+      )}
     </div>
   );
 }

@@ -75,8 +75,9 @@ function passo(quantita: number, unita: string, verso: 1 | -1): number {
 function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   if (it.schema && it.schema !== 'fisso') return null;      // EMOM/AMRAP/interval: dose del blocco
   if (r.suggerimento === 'tieni') return null;
-  const unita = unitaDi(it.esercizio_id);
+  const unita = it.unita ?? unitaDi(it.esercizio_id);
   if (!unita) return null;
+  if (r.ultimaSeduta.unita && r.ultimaSeduta.unita !== unita) return null; // log in un'altra unità (blocco a tempo vs a reps): non si confrontano
   const verso: 1 | -1 = r.suggerimento === 'sali' ? 1 : -1;
   const base = it.quantita;                                  // programma di Ste
   const ultima = r.ultimaSeduta;
@@ -111,6 +112,7 @@ function gradinoSuccessivo(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null
   if (it.schema && it.schema !== 'fisso') return null;
   const ex = esercizioById(it.esercizio_id);
   if (!ex || !AREE_CATENA.has(ex.area)) return null;
+  if (it.unita && it.unita !== ex.unita) return null; // dose in un'altra unità: il gradino della catena non si applica
   const tetto = Math.round(it.quantita * (1 + PROGRESSIONE_MAX_DRIFT));
   if (r.ultimaSeduta.quantitaPrevista < tetto) return null;     // prima si sale di dose
   const catena = catenaByArea(ex.area);

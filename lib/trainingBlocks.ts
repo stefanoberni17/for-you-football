@@ -28,7 +28,8 @@ export interface BloccoItem {
   recupero_sec: number;
   carico_kg?: number;
   perLato?: boolean;
-  schema?: 'fisso' | 'interval' | 'amrap' | 'attivazione';
+  schema?: 'fisso' | 'interval' | 'amrap' | 'attivazione' | 'emom';
+  emomGruppo?: string;           // EMOM a rotazione: gli item dello stesso gruppo si alternano un minuto ciascuno (serie = giri, quantita = reps al minuto)
   sezione?: string;              // titolo della sezione Everfit (es. "1/1" nel Fartlek)
   nota?: string;
 }
@@ -100,7 +101,12 @@ export function expandBlocco(b: Blocco, opt: { scala?: number } = {}): PlanItem[
       blocco_id: b.id,
     };
     if (it.carico_kg !== undefined) item.carico_kg = it.carico_kg;
+    // Unità del blocco quando NON è quella del catalogo (Everfit: 30" di Archer Push Up in un EMOM, esercizio a reps):
+    // senza, l'app mostrava e cronometrava "30 reps" (Ste, 17/9)
+    const unitaCatalogo = esercizioById(it.esercizio_id!)?.unita ?? esercizioV2ById(it.esercizio_id!)?.unita;
+    if (unitaCatalogo && it.unita !== unitaCatalogo) item.unita = it.unita;
     if (it.perLato) item.per_lato = true;
+    if (it.schema === 'emom' && it.emomGruppo) item.emom_gruppo = it.emomGruppo;
     if (it.nota) item.nota = it.nota;
     return item;
   });

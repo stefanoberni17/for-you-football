@@ -43,6 +43,7 @@ export interface RiepilogoEsercizio {
   ultimaData: string;             // YYYY-MM-DD
   ultimaSeduta: {
     serie: number;
+    unita: string;                // unità dei log (reps/secondi…): può differire dal catalogo se il blocco era a tempo
     quantitaPrevista: number;     // media
     quantitaFatta: number;        // media (fallback: prevista)
     caricoKg: number | null;      // carico usato (media)
@@ -84,6 +85,7 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
     const lastCarico = carichi(last);
     const ultimaSeduta = {
       serie: new Set(last.map((r) => r.serie)).size, // le righe per lato (dx, sx) contano come una serie
+      unita: last[0].unita || 'reps',
       quantitaPrevista: media(previste(last)),
       quantitaFatta: media(fatte(last)),
       caricoKg: lastCarico.length ? media(lastCarico) : null,
@@ -143,7 +145,8 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
 const fmtQ = (q: number, unita: string) => `${q}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
 
 /** Riga compatta per il prompt del planner/preparatore. */
-export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unita: string): string {
+export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unitaCatalogo: string): string {
+  const unita = r.ultimaSeduta.unita || unitaCatalogo;
   const u = r.ultimaSeduta;
   const carico = u.caricoKg ? ` @ ${u.caricoKg} kg${r.e1rmKg ? ` (e1RM ~${r.e1rmKg} kg)` : ''}` : '';
   const rpe = u.rpeMedio != null ? ` RPE ${u.rpeMedio}` : '';
@@ -158,8 +161,9 @@ export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unita: strin
 }
 
 /** Suggerimento breve per la UI della seduta ("Ultima volta: …"). */
-export function riepilogoUi(r: RiepilogoEsercizio, unita: string): { testo: string; suggerimento: Suggerimento } {
+export function riepilogoUi(r: RiepilogoEsercizio, unitaCatalogo: string): { testo: string; suggerimento: Suggerimento } {
   const u = r.ultimaSeduta;
+  const unita = u.unita || unitaCatalogo;
   const parti = [`${u.serie}×${fmtQ(u.quantitaFatta, unita)}`];
   if (u.caricoKg) parti.push(`${u.caricoKg} kg`);
   if (u.rpeMedio != null) parti.push(`RPE ${u.rpeMedio}`);
