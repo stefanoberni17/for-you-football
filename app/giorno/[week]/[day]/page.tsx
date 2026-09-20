@@ -205,6 +205,10 @@ export default function GiornoPage() {
   const riflessioneAlle = startedAt ? oraItaly(riflessioneApreAlle(startedAt)) : null;
   const jumpToReflection = riflessioneOk && !justStarted && !reviewMode;
   const giornataInAttesa = isGiornataInCorso && !riflessioneOk && !justStarted && !reviewMode;
+  // Giornata non ancora avviata: dalla pratica si esce SOLO concludendo la prima parte (i 3 Reset,
+  // o "Vai senza Reset"): niente "Continua" verso la domanda, niente "Ho fatto" senza avvio.
+  // (Ste, 20/9: "deve iniziare da quando conclude la prima parte della pratica, quindi prima della riflessione")
+  const giornataDaAvviare = giorno?.tipoPratica === 'giornata' && !completed && !started;
 
   const totalSlides = slides.length;
   const effectiveSlide = jumpToReflection ? totalSlides : currentSlide;
@@ -844,7 +848,7 @@ export default function GiornoPage() {
               </Button>
             )}
 
-            {!isLastSlide && (
+            {!isLastSlide && !(giornataDaAvviare && currentSlideData?.type === 'pratica') && (
               <Button
                 variant={continueIsSecondary ? 'secondary' : 'primary'}
                 className="flex-1"
@@ -860,7 +864,13 @@ export default function GiornoPage() {
                 Si chiude dalle {riflessioneAlle}
               </Button>
             )}
-            {isLastSlide && !completed && !(isGiornataInCorso && !riflessioneOk) && (
+            {isLastSlide && giornataDaAvviare && (
+              <Button variant="secondary" className="flex-1" icon={<Sun size={18} aria-hidden />}
+                onClick={() => setCurrentSlide(Math.max(1, slides.findIndex(sl => sl.type === 'pratica') + 1))}>
+                Prima la pratica
+              </Button>
+            )}
+            {isLastSlide && !completed && !giornataDaAvviare && !(isGiornataInCorso && !riflessioneOk) && (
               <Button
                 variant="primary"
                 className="flex-1"
