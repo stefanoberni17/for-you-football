@@ -8,6 +8,10 @@ import { Button, Card, Chip, Sheet } from '@/components/ui';
 
 type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
 
+// Reset breve delle giornate: 3 respiri (4" naso + 6" bocca) = 30"
+const RESET_BREVE_SEC = 30;
+const RESET_BREVE_STEPS = ['Occhi aperti, un punto fisso, il punto sotto lo sterno.', 'Naso 4 secondi con il gesto, bocca 6 secondi con il mantra.', 'Tre respiri. Poi vai in giornata.'];
+
 interface PracticePopupProps {
   titolo: string;
   pratica: string;
@@ -35,7 +39,9 @@ export default function PracticePopup({
 }: PracticePopupProps) {
   const [phase, setPhase] = useState<'setup' | 'practicing' | 'done'>('setup');
   useWakeLock(phase === 'practicing');
-  const totalSeconds = durataMinuti * 60;
+  // Giornata: il popup è solo il RESET BREVE del mattino (3 respiri, naso 4 / bocca 6), non la durata di Notion
+  const isGiornata = tipoPratica === 'giornata';
+  const totalSeconds = isGiornata ? RESET_BREVE_SEC : durataMinuti * 60;
   const [timeLeft, setTimeLeft] = useState(totalSeconds);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
   const [timerEnded, setTimerEnded] = useState(false);
@@ -76,8 +82,8 @@ export default function PracticePopup({
     }
   }, [phase, timerEnded, audioInProgress]);
 
-  // Animazione respiro — solo per tipo "respirazione"
-  const showBreathCircle = tipoPratica === 'respirazione';
+  // Animazione respiro — per tipo "respirazione" e per il Reset breve delle giornate
+  const showBreathCircle = tipoPratica === 'respirazione' || isGiornata;
 
   useEffect(() => {
     if (phase !== 'practicing' || !showBreathCircle) return;
@@ -281,7 +287,7 @@ export default function PracticePopup({
   // Parse pratica in step numerati. La numerazione è generata dal codice:
   // se il CMS contiene già "1." / "2)" a inizio riga la togliamo, altrimenti
   // l'utente vedrebbe "1. 1." (succede nelle pratiche W1 e in alcune W6-W9).
-  const practiceSteps = pratica
+  const practiceSteps = isGiornata ? RESET_BREVE_STEPS : pratica
     .split('\n')
     .map(s => s.trim().replace(/^\d+[.)]\s*/, ''))
     .filter(Boolean);
@@ -297,9 +303,9 @@ export default function PracticePopup({
       <Sheet
         open={phase === 'setup'}
         onClose={handleSkip}
-        closeLabel="Ho già praticato da solo"
+        closeLabel={isGiornata ? 'Vai senza Reset' : 'Ho già praticato da solo'}
         eyebrow={weekTool}
-        title={tipoPratica === 'giornata' ? 'Pratica del giorno' : 'Pratica guidata'}
+        title={isGiornata ? 'Reset breve' : 'Pratica guidata'}
         subtitle={titolo}
         footer={
           <>
@@ -310,10 +316,10 @@ export default function PracticePopup({
               icon={tipoPratica === 'giornata' ? <Sun size={20} aria-hidden /> : <Play size={20} aria-hidden />}
               onClick={startPractice}
             >
-              {tipoPratica === 'giornata' ? 'Fai il Reset breve e inizia' : 'Inizia la pratica'}
+              {isGiornata ? 'Parti: tre respiri' : 'Inizia la pratica'}
             </Button>
             <Button variant="ghost" fullWidth onClick={handleSkip}>
-              Ho già praticato da solo
+              {isGiornata ? 'Vai senza Reset' : 'Ho già praticato da solo'}
             </Button>
           </>
         }
@@ -338,14 +344,12 @@ export default function PracticePopup({
           </div>
         </Card>
 
-        {tipoPratica === 'giornata' ? (
-          /* GIORNATA: niente timer, si porta in giornata */
-          <Card variant="warn" padding="sm" className="text-center">
-            <p className="text-body-sm text-warning">
-              Questa pratica si fa <span className="font-bold">durante la giornata</span> — non adesso.
-              Torna stasera per la riflessione.
-            </p>
-          </Card>
+        {isGiornata ? (
+          /* GIORNATA: il Reset breve porta qui prima di uscire; la missione resta sulla pagina */
+          <p className="text-body-sm text-muted text-center inline-flex w-full items-center justify-center gap-1.5">
+            <Timer size={16} aria-hidden />
+            Mezzo minuto. Poi la giornata è tua.
+          </p>
         ) : (
           /* TUTTI GLI ALTRI TIPI: timer normale */
           <p className="text-body-sm text-muted text-center inline-flex w-full items-center justify-center gap-1.5">
@@ -361,7 +365,7 @@ export default function PracticePopup({
         fullscreen
         onClose={exitToSetup}
         closeLabel="Torna al setup"
-        title={weekTool || 'Pratica in corso'}
+        title={isGiornata ? 'Reset breve' : (weekTool || 'Pratica in corso')}
         subtitle={titolo}
       >
         <div className="min-h-full flex flex-col items-center justify-between gap-6 py-2">
@@ -426,7 +430,7 @@ export default function PracticePopup({
         ariaLabel={tipoPratica === 'giornata' ? 'Ora tocca a te' : 'Pratica completata'}
         footer={
           <Button variant="primary" size="lg" fullWidth onClick={handleComplete}>
-            {tipoPratica === 'giornata' ? 'Ci provo oggi' : 'Fatto'}
+            {isGiornata ? 'Vai in giornata' : 'Fatto'}
           </Button>
         }
       >
@@ -438,8 +442,8 @@ export default function PracticePopup({
             {tipoPratica === 'giornata' ? 'Ora tocca a te' : 'Pratica fatta'}
           </h2>
           <p className="text-body text-muted leading-relaxed">
-            {tipoPratica === 'giornata'
-              ? 'Portala in giornata. Stasera torni qui per la riflessione.'
+            {isGiornata
+              ? 'Sei qui. Ora vivi la giornata: la missione la trovi sulla pagina del giorno, la riflessione si apre tra qualche ora.'
               : 'Un allenamento alla volta, come in campo.'}
           </p>
         </Card>

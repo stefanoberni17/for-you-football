@@ -5,7 +5,8 @@ import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
+import { isDayUnlocked, isTimeLocked, riflessioneAperta, riflessioneApreAlle, DayProgress } from '@/lib/dayUnlockLogic';
+import { oraItaly } from '@/lib/dateItaly';
 import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
@@ -13,7 +14,7 @@ import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import { hasActiveAccess } from '@/lib/checkAccess';
-import { ArrowUp, Bot, Calendar, Check, ChevronLeft, ChevronRight, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
+import { ArrowUp, Bot, Calendar, Check, ChevronLeft, ChevronRight, Clock, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
 import { AppLoader, BackButton, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
 export default function GiornoPage() {
@@ -27,6 +28,7 @@ export default function GiornoPage() {
   const [giorno, setGiorno] = useState<any>(null);
   const [completed, setCompleted] = useState(false);
   const [started, setStarted] = useState(false); // giornata: giorno iniziato ma non completato
+  const [startedAt, setStartedAt] = useState<string | null>(null); // giornata: avvio del mattino (la riflessione si apre GIORNATA_ATTESA_ORE dopo)
   const [savedResponse, setSavedResponse] = useState<string | null>(null);
   const [response, setResponse] = useState('');
   const [prePraticaResponse, setPrePraticaResponse] = useState('');
@@ -81,7 +83,7 @@ export default function GiornoPage() {
       const [{ data: progressData }, giornoRes, calendarRes, settimanaJson] = await Promise.all([
         supabase
           .from('user_day_progress')
-          .select('week_number, day_number, completed, completed_at, compressed')
+          .select('week_number, day_number, completed, completed_at, compressed, created_at')
           .eq('user_id', uid)
           .eq('completed', true),
         authFetch(`/api/giorno?week=${weekNumber}&day=${dayNumber}&userId=${uid}`),
@@ -95,6 +97,7 @@ export default function GiornoPage() {
         completed: p.completed,
         completedAt: p.completed_at || null,
         compressed: p.compressed || false,
+        startedAt: p.created_at || null,
       }));
 
       if (!isDayUnlocked(weekNumber, dayNumber, completedDays)) {
@@ -131,6 +134,7 @@ export default function GiornoPage() {
       setGiorno(data.giorno);
       setCompleted(data.completed);
       setStarted(data.started && !data.completed); // "in corso" solo se started ma non completed
+      setStartedAt(data.startedAt || null);
       if (data.response) {
         setSavedResponse(data.response);
         setResponse(data.response);
@@ -196,7 +200,11 @@ export default function GiornoPage() {
   // della domanda. NON scatta se l'avvio è appena avvenuto in questa sessione
   // (justStarted → schermata "giornata avviata") né in modalità rilettura.
   const isGiornataInCorso = started && !completed && giorno?.tipoPratica === 'giornata';
-  const jumpToReflection = isGiornataInCorso && !justStarted && !reviewMode;
+  // La riflessione si apre GIORNATA_ATTESA_ORE dopo l'avvio (Ste, 20/9): prima, la giornata è "in corso"
+  const riflessioneOk = isGiornataInCorso && riflessioneAperta(startedAt);
+  const riflessioneAlle = startedAt ? oraItaly(riflessioneApreAlle(startedAt)) : null;
+  const jumpToReflection = riflessioneOk && !justStarted && !reviewMode;
+  const giornataInAttesa = isGiornataInCorso && !riflessioneOk && !justStarted && !reviewMode;
 
   const totalSlides = slides.length;
   const effectiveSlide = jumpToReflection ? totalSlides : currentSlide;
@@ -276,6 +284,21 @@ export default function GiornoPage() {
     }
   };
 
+  // Giornata: l'avvio si segna appena il ragazzo decide di andare (con o senza Reset breve),
+  // non alla fine del popup: chi chiudeva il popup restava senza giornata avviata.
+  const avviaGiornata = async () => {
+    if (started || completed) return;
+    setStarted(true);
+    setStartedAt(new Date().toISOString());
+    try {
+      await authFetch('/api/giorno', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, weekNumber, dayNumber, prePraticaResponse: prePraticaResponse.trim() || null }),
+      });
+    } catch { /* non bloccante: al rientro il server dirà com'è */ }
+  };
+
   const handleComplete = async () => {
     if (saving) return;
     setSaving(true);
@@ -302,8 +325,9 @@ export default function GiornoPage() {
       setShowSuccess(true);
       try {
         sessionStorage.removeItem(draftKey);
-        // Il rituale ripropone il Reset al primo cambio pagina (solo da W1-G3 in poi)
-        sessionStorage.setItem(DAY_COMPLETED_KEY, '1');
+        // Il rituale ripropone il Reset al primo cambio pagina (solo da W1-G3 in poi);
+        // non dopo la chiusura serale di una giornata: a quell'ora il Reset non è il gesto giusto
+        if (giorno?.tipoPratica !== 'giornata') sessionStorage.setItem(DAY_COMPLETED_KEY, '1');
       } catch { /* no-op */ }
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate([40, 60, 40]);
@@ -437,7 +461,7 @@ export default function GiornoPage() {
             Le istruzioni le hai. Chiudi l&apos;app e vai in campo.
           </p>
           <p className="text-forest-100 text-body leading-relaxed mb-10">
-            Stasera torni qui: una riga e il giorno è chiuso.
+            {riflessioneAlle ? `Dalle ${riflessioneAlle} torni qui: una riga e il giorno è chiuso.` : 'Più tardi torni qui: una riga e il giorno è chiuso.'}
           </p>
         </div>
         <Button
@@ -452,10 +476,43 @@ export default function GiornoPage() {
           variant="secondary"
           size="sm"
           className="mt-4"
-          onClick={() => setJustStarted(false)}
+          onClick={() => { setJustStarted(false); setReviewMode(true); setCurrentSlide(1); }}
         >
-          Ho già vissuto la mia giornata
+          Rileggi la missione
         </Button>
+      </main>
+    );
+  }
+
+  // Giornata in corso, riflessione non ancora aperta: la missione, l'ora, la home.
+  if (giornataInAttesa) {
+    return (
+      <main className="min-h-screen bg-app pb-tabbar-lg">
+        <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-10">
+          <div className="max-w-xl mx-auto">
+            <BackButton href={`/settimana/${weekNumber}`} label={`Settimana ${weekNumber}`} tone="light" className="mb-3" />
+            <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1">Settimana {weekNumber} · Giorno {dayNumber} · in corso</p>
+            <h1 className="font-display text-title-1 font-bold text-white" style={{ textWrap: 'balance' }}>{dayTitle}</h1>
+          </div>
+        </div>
+        <div className="max-w-xl mx-auto px-4 -mt-6 space-y-4">
+          <Card variant="accent" padding="md">
+            <p className="text-body font-semibold text-forest-300 flex items-center gap-2"><Clock size={18} aria-hidden /> La riflessione si apre alle {riflessioneAlle}</p>
+            <p className="text-body-sm text-muted mt-1">Intanto vivi la giornata. Quando torni, una riga e il giorno è chiuso.</p>
+          </Card>
+          <Card padding="md">
+            <SectionTitle title="La tua missione di oggi" icon={<Sun size={18} />} className="mb-3" />
+            <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">{giorno.pratica}</p>
+          </Card>
+          <div className="flex gap-4">
+            <Button variant="secondary" className="flex-1" icon={<ArrowUp size={18} aria-hidden />} onClick={() => { setReviewMode(true); setCurrentSlide(1); }}>
+              Rileggi tutto
+            </Button>
+            <Button variant="primary" className="flex-1" iconRight={<ChevronRight size={18} aria-hidden />} href="/">
+              Torna alla home
+            </Button>
+          </div>
+        </div>
       </main>
     );
   }
@@ -587,8 +644,25 @@ export default function GiornoPage() {
               {giorno.pratica}
             </p>
 
-            {/* UN solo primario: la pratica guidata */}
-            {hasPracticeTimer && (
+            {/* Giornata: si parte con un Reset breve (3 respiri) o senza; in entrambi i casi la giornata è avviata */}
+            {giorno.tipoPratica === 'giornata' && !completed && !started && (
+              <div className="mt-5 flex flex-col gap-3">
+                <Button variant="hero" size="lg" fullWidth icon={<Sun size={20} aria-hidden />}
+                  onClick={() => { avviaGiornata(); setShowPracticePopup(true); }}>
+                  Reset breve e vai
+                </Button>
+                <Button variant="ghost" fullWidth onClick={() => { avviaGiornata(); setJustStarted(true); }}>
+                  Vai senza Reset
+                </Button>
+              </div>
+            )}
+            {giorno.tipoPratica === 'giornata' && !completed && started && (
+              <Card variant="accent" padding="sm" className="mt-5">
+                <p className="text-body-sm text-forest-300 flex items-center gap-2"><Sun size={16} aria-hidden /> Giornata avviata{riflessioneAlle && !riflessioneOk ? ` · la riflessione si apre alle ${riflessioneAlle}` : ''}</p>
+              </Card>
+            )}
+            {/* UN solo primario: la pratica guidata (non per le giornate: il loro Reset breve è sopra) */}
+            {hasPracticeTimer && giorno.tipoPratica !== 'giornata' && (
               completed ? (
                 <Button
                   variant="secondary"
@@ -668,6 +742,16 @@ export default function GiornoPage() {
 
         {currentSlideData?.type === 'domanda' && (
           <Card padding="md">
+            {jumpToReflection && giorno.pratica && (
+              <details className="group mb-4 border-b border-divider">
+                <summary className="min-h-[48px] flex items-center gap-2 text-body font-semibold text-forest-300 cursor-pointer list-none select-none">
+                  <Sun className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <span className="flex-1">La missione di oggi</span>
+                  <ChevronRight size={18} className="text-muted transition-transform group-open:rotate-90" aria-hidden />
+                </summary>
+                <p className="text-body-sm text-muted leading-relaxed whitespace-pre-line pb-3">{giorno.pratica}</p>
+              </details>
+            )}
             <SectionTitle
               title={jumpToReflection ? "Com'è andata oggi?" : 'La tua riflessione'}
               icon={jumpToReflection ? <Sun size={18} /> : <PenLine size={18} />}
@@ -770,7 +854,12 @@ export default function GiornoPage() {
               </Button>
             )}
 
-            {isLastSlide && !completed && (
+            {isLastSlide && !completed && isGiornataInCorso && !riflessioneOk && (
+              <Button variant="secondary" className="flex-1" icon={<Clock size={18} aria-hidden />} href="/">
+                Si chiude dalle {riflessioneAlle}
+              </Button>
+            )}
+            {isLastSlide && !completed && !(isGiornataInCorso && !riflessioneOk) && (
               <Button
                 variant="primary"
                 className="flex-1"
@@ -831,28 +920,16 @@ export default function GiornoPage() {
           durataEspira={giorno.durataEspira || undefined}
           tipoPratica={giorno.tipoPratica || 'respirazione'}
           audioUrl={giorno.audioUrl || undefined}
-          onComplete={async () => {
+          onComplete={() => {
             setShowPracticePopup(false);
             setPracticeDone(true);
-            // Per tipo "giornata": segna come "started" e mostra messaggio uscita
-            if (giorno.tipoPratica === 'giornata' && !started && !completed) {
-              try {
-                await authFetch('/api/giorno', {
-                  method: 'PUT',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    userId,
-                    weekNumber,
-                    dayNumber,
-                    prePraticaResponse: prePraticaResponse.trim() || null,
-                  }),
-                });
-                setStarted(true);
-                setJustStarted(true); // → schermata "giornata avviata"
-              } catch { /* non bloccante */ }
-            }
+            // Giornata: l'avvio è già segnato (avviaGiornata) → schermata di uscita
+            if (giorno.tipoPratica === 'giornata' && !completed) setJustStarted(true);
           }}
-          onSkip={() => setShowPracticePopup(false)}
+          onSkip={() => {
+            setShowPracticePopup(false);
+            if (giorno.tipoPratica === 'giornata' && !completed && started) setJustStarted(true);
+          }}
         />
       )}
     </main>

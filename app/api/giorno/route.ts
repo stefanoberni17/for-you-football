@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       userId
         ? supabaseAdmin
             .from('user_day_progress')
-            .select('completed, completed_at, response, pre_pratica_response, compressed, gate_answers')
+            .select('completed, completed_at, response, pre_pratica_response, compressed, gate_answers, created_at')
             .eq('user_id', userId)
             .eq('week_number', weekNumber)
             .eq('day_number', dayNumber)
@@ -91,6 +91,7 @@ export async function GET(request: NextRequest) {
       giorno,
       completed: progress?.completed ?? false,
       started: progress !== null, // riga esiste = giorno iniziato (anche se non completato)
+      startedAt: progress?.created_at ?? null, // giornata: avvio del mattino (la riflessione si apre GIORNATA_ATTESA_ORE dopo)
       completedAt: progress?.completed_at ?? null,
       response: progress?.response ?? null,
       prePraticaResponse: progress?.pre_pratica_response ?? null,

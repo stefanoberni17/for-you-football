@@ -31,6 +31,7 @@ interface ProgressRow {
   completed?: boolean;
   completed_at?: string | null;
   compressed?: boolean | null;
+  created_at?: string | null;
 }
 
 const DAY_SHORT = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
@@ -64,7 +65,7 @@ export default function SettimanaPage() {
     const [{ data: progress }, startedRes] = await Promise.all([
       supabase
         .from('user_day_progress')
-        .select('week_number, day_number, completed, completed_at, compressed')
+        .select('week_number, day_number, completed, completed_at, compressed, created_at')
         .eq('user_id', uid)
         .eq('completed', true),
       supabase
@@ -80,6 +81,7 @@ export default function SettimanaPage() {
       completed: !!p.completed,
       completedAt: p.completed_at || null,
       compressed: p.compressed || false,
+      startedAt: p.created_at || null,
     }));
     setCompletedDays(days);
 

@@ -37,7 +37,7 @@ export default function GatePage() {
       // Controlla se il gate (giorno 7) è sbloccato (time-gate)
       const { data: progressData } = await supabase
         .from('user_day_progress')
-        .select('week_number, day_number, completed, completed_at, compressed')
+        .select('week_number, day_number, completed, completed_at, compressed, created_at')
         .eq('user_id', uid)
         .eq('completed', true);
 
@@ -47,6 +47,7 @@ export default function GatePage() {
         completed: p.completed,
         completedAt: p.completed_at || null,
         compressed: p.compressed || false,
+        startedAt: p.created_at || null,
       }));
 
       if (!isDayUnlocked(weekNumber, GATE_DAY, completedDays)) {
