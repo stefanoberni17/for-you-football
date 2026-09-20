@@ -284,8 +284,9 @@ export default function GiornoPage() {
     }
   };
 
-  // Giornata: l'avvio si segna appena il ragazzo decide di andare (con o senza Reset breve),
-  // non alla fine del popup: chi chiudeva il popup restava senza giornata avviata.
+  // Giornata: l'avvio si segna quando FINISCE la parte iniziale (Ste, 20/9: "4 ore da quando finisce"):
+  // alla fine del Reset breve o al tap "Vai senza Reset". Ogni uscita dal popup passa di qui,
+  // quindi nessuno resta senza giornata avviata.
   const avviaGiornata = async () => {
     if (started || completed) return;
     setStarted(true);
@@ -648,7 +649,7 @@ export default function GiornoPage() {
             {giorno.tipoPratica === 'giornata' && !completed && !started && (
               <div className="mt-5 flex flex-col gap-3">
                 <Button variant="hero" size="lg" fullWidth icon={<Sun size={20} aria-hidden />}
-                  onClick={() => { avviaGiornata(); setShowPracticePopup(true); }}>
+                  onClick={() => setShowPracticePopup(true)}>
                   Reset breve e vai
                 </Button>
                 <Button variant="ghost" fullWidth onClick={() => { avviaGiornata(); setJustStarted(true); }}>
@@ -923,12 +924,13 @@ export default function GiornoPage() {
           onComplete={() => {
             setShowPracticePopup(false);
             setPracticeDone(true);
-            // Giornata: l'avvio è già segnato (avviaGiornata) → schermata di uscita
-            if (giorno.tipoPratica === 'giornata' && !completed) setJustStarted(true);
+            // Giornata: la parte iniziale finisce qui → avvio segnato, schermata di uscita
+            if (giorno.tipoPratica === 'giornata' && !completed) { avviaGiornata(); setJustStarted(true); }
           }}
           onSkip={() => {
             setShowPracticePopup(false);
-            if (giorno.tipoPratica === 'giornata' && !completed && started) setJustStarted(true);
+            // "Vai senza Reset" dal popup: la parte iniziale finisce comunque qui
+            if (giorno.tipoPratica === 'giornata' && !completed) { avviaGiornata(); setJustStarted(true); }
           }}
         />
       )}
