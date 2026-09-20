@@ -24,6 +24,13 @@ export function daysAgoItaly(n: number): string {
   return FORMATTER.format(d);
 }
 
+const ORA = new Intl.DateTimeFormat('it-IT', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' });
+
+/** Ora italiana "HH:MM" di un timestamp (es. "18:40"). */
+export function oraItaly(value: string | Date): string {
+  return ORA.format(typeof value === 'string' ? new Date(value) : value);
+}
+
 /** Data (fuso italiano, YYYY-MM-DD) di un timestamp qualsiasi — per confrontare `completed_at` con "oggi". */
 export function dateItaly(value: string | Date): string {
   return FORMATTER.format(typeof value === 'string' ? new Date(value) : value);

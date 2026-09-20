@@ -10,7 +10,10 @@ import {
   getWeekProgress,
   isDayUnlocked,
   DayProgress,
+  riflessioneAperta,
+  riflessioneApreAlle,
 } from '@/lib/dayUnlockLogic';
+import { oraItaly } from '@/lib/dateItaly';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
 import { shouldRedirectToPaywall, hasActiveAccess } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
@@ -74,7 +77,7 @@ export default function HomePage() {
   // tardare qualche secondo. Si riprova 5 volte prima di rimandare al paywall.
   const [activating, setActivating] = useState(false);
   const [completedDays, setCompletedDays] = useState<DayProgress[]>([]);
-  const [startedDays, setStartedDays] = useState<{ week: number; day: number }[]>([]);
+  const [startedDays, setStartedDays] = useState<{ week: number; day: number; startedAt: string | null }[]>([]);
   const [weekData, setWeekData] = useState<any>(null);
   const [userId, setUserId] = useState('');
   const [coachMessageDismissed, setCoachMessageDismissed] = useState(false);
@@ -162,14 +165,14 @@ export default function HomePage() {
       const [progressRes, startedRes, weekJson, checkinRes, gateRes, calRes, aRes, hRes] = await Promise.all([
         supabase
           .from('user_day_progress')
-          .select('week_number, day_number, completed, completed_at, compressed')
+          .select('week_number, day_number, completed, completed_at, compressed, created_at')
           .eq('user_id', uid)
           .eq('completed', true),
         // Giornate avviate ma non chiuse (righe "started" — solo i giorni tipo "giornata"
         // le creano, via PUT /api/giorno): servono per il CTA "chiudi il giorno"
         supabase
           .from('user_day_progress')
-          .select('week_number, day_number')
+          .select('week_number, day_number, created_at')
           .eq('user_id', uid)
           .eq('completed', false),
         cachedJson<unknown>(`settimana:${currentWeek}`, () => authFetch(`/api/settimana?week=${currentWeek}`)),
@@ -188,9 +191,10 @@ export default function HomePage() {
         completed: p.completed,
         completedAt: p.completed_at || null,
         compressed: p.compressed || false,
+        startedAt: p.created_at || null,
       }));
       setCompletedDays(days);
-      setStartedDays((startedRes.data || []).map((r: any) => ({ week: r.week_number, day: r.day_number })));
+      setStartedDays((startedRes.data || []).map((r: any) => ({ week: r.week_number, day: r.day_number, startedAt: r.created_at || null })));
 
       setWeekData(weekJson);
 
@@ -262,7 +266,11 @@ export default function HomePage() {
   const nextDay = getNextDay(completedDays);
   const nextDayLocked = !isDayUnlocked(nextDay.week, nextDay.day, completedDays);
   // Giornata avviata ma non chiusa: il CTA diventa "chiudi il giorno"
-  const nextDayInCorso = !nextDayLocked && startedDays.some(d => d.week === nextDay.week && d.day === nextDay.day);
+  const giornataAvviata = !nextDayLocked ? startedDays.find(d => d.week === nextDay.week && d.day === nextDay.day) : undefined;
+  const nextDayInCorso = !!giornataAvviata;
+  // La riflessione si apre GIORNATA_ATTESA_ORE dopo l'avvio: prima, la home dice a che ora
+  const riflessioneOk = !!giornataAvviata && riflessioneAperta(giornataAvviata.startedAt);
+  const riflessioneAlle = giornataAvviata?.startedAt && !riflessioneOk ? oraItaly(riflessioneApreAlle(giornataAvviata.startedAt)) : null;
   const totalCompleted = completedDays.length;
   const totalDays = BETA_MAX_WEEK * DAYS_PER_WEEK;
   const streak = pathStreak(completedDays);
@@ -468,7 +476,7 @@ export default function HomePage() {
                   </Button>
                 ) : nextDayInCorso ? (
                   <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                    Com&apos;è andata oggi?
+                    {riflessioneOk ? "Com'è andata oggi?" : 'Giornata in corso'}
                   </Button>
                 ) : (
                   <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
@@ -476,7 +484,9 @@ export default function HomePage() {
                   </Button>
                 )}
                 {nextDayInCorso && (
-                  <p className="text-forest-100 text-body-sm mt-2">Giornata avviata: manca solo la riflessione, una riga.</p>
+                  <p className="text-forest-100 text-body-sm mt-2">
+                    {riflessioneOk ? 'Giornata avviata: manca solo la riflessione, una riga.' : `Vivi la giornata. La riflessione si apre alle ${riflessioneAlle}.`}
+                  </p>
                 )}
               </div>
 

@@ -1,11 +1,13 @@
-import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY } from './constants';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, GIORNATA_ATTESA_ORE } from './constants';
 
 /**
  * Logica sblocco giorni e settimane — For You Football
  *
  * Regole:
  * - Giorno 1 di settimana 1: sempre disponibile
- * - Giorno N si sblocca solo se giorno N-1 è completato E completato prima di oggi (time-gate)
+ * - Giorno N si sblocca solo se giorno N-1 è completato E completato prima di oggi (time-gate);
+ *   per i giorni "giornata" conta l'AVVIO (startedAt = created_at della riga): chi vive la giornata
+ *   e risponde la mattina dopo non perde un giorno (Ste, 20/9)
  * - Giorno 1 di settimana W si sblocca solo se gate (giorno 7) di settimana W-1 è completato prima di oggi
  * - Giorno 7 (gate) non si comprime mai
  * - Giorni saltati si "comprimono" → solo pratica core (3 min), poi si sblocca il successivo
@@ -18,6 +20,7 @@ export interface DayProgress {
   completed: boolean;
   completedAt: string | null;
   compressed: boolean;
+  startedAt?: string | null; // created_at della riga: per i giorni "giornata" è l'avvio del mattino
 }
 
 /**
@@ -36,6 +39,19 @@ function isCompletedBeforeToday(completedAt: string | null, now: Date): boolean 
  */
 function findDay(completedDays: DayProgress[], week: number, day: number): DayProgress | undefined {
   return completedDays.find((d) => d.weekNumber === week && d.dayNumber === day);
+}
+
+/** Momento che conta per il time-gate: l'avvio se c'è (giornata), altrimenti la chiusura. */
+function riferimentoChiusura(d: DayProgress): string | null {
+  return d.startedAt && d.completedAt && new Date(d.startedAt) < new Date(d.completedAt) ? d.startedAt : d.completedAt;
+}
+
+/** Giornata: la riflessione si apre GIORNATA_ATTESA_ORE dopo l'avvio. */
+export function riflessioneApreAlle(startedAt: string): Date {
+  return new Date(new Date(startedAt).getTime() + GIORNATA_ATTESA_ORE * 3600_000);
+}
+export function riflessioneAperta(startedAt: string | null | undefined, now: Date = new Date()): boolean {
+  return !!startedAt && now >= riflessioneApreAlle(startedAt);
 }
 
 /**
@@ -57,12 +73,12 @@ export function isDayUnlocked(
   // Primo giorno di una settimana (W > 1) → richiede gate completato nella settimana precedente (prima di oggi)
   if (dayNumber === 1) {
     const previousGate = findDay(completedDays, weekNumber - 1, GATE_DAY);
-    return !!previousGate?.completed && isCompletedBeforeToday(previousGate.completedAt, now);
+    return !!previousGate?.completed && isCompletedBeforeToday(riferimentoChiusura(previousGate), now);
   }
 
-  // Giorno N (N > 1) → richiede giorno N-1 completato prima di oggi
+  // Giorno N (N > 1) → richiede giorno N-1 completato (o avviato, se giornata) prima di oggi
   const previousDay = findDay(completedDays, weekNumber, dayNumber - 1);
-  return !!previousDay?.completed && isCompletedBeforeToday(previousDay.completedAt, now);
+  return !!previousDay?.completed && isCompletedBeforeToday(riferimentoChiusura(previousDay), now);
 }
 
 /**
@@ -78,8 +94,8 @@ export function isTimeLocked(
   const day = findDay(completedDays, weekNumber, dayNumber);
   if (!day?.completed || !day.completedAt) return false;
 
-  // Se è completato ma NON prima di oggi → è time-locked (completato oggi)
-  return !isCompletedBeforeToday(day.completedAt, now);
+  // Se è completato ma NON prima di oggi → è time-locked (completato oggi; per le giornate conta l'avvio)
+  return !isCompletedBeforeToday(riferimentoChiusura(day), now);
 }
 
 /**
@@ -90,7 +106,7 @@ export function isWeekUnlocked(weekNumber: number, completedDays: DayProgress[],
   if (weekNumber === 1) return true;
 
   const previousGate = findDay(completedDays, weekNumber - 1, GATE_DAY);
-  return !!previousGate?.completed && isCompletedBeforeToday(previousGate.completedAt, now);
+  return !!previousGate?.completed && isCompletedBeforeToday(riferimentoChiusura(previousGate), now);
 }
 
 /**

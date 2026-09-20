@@ -51,6 +51,8 @@ export const SEASON_PRICE_FULL = 99;         // prezzo pieno di riferimento ("in
 
 export const DAYS_PER_WEEK = 7;
 export const GATE_DAY = 7; // giorno gate — obbligatorio, non comprimibile
+// Giorni di tipo "giornata" (i G5): la riflessione si apre N ore dopo l'avvio del mattino (Ste, 20/9: "4 ore dopo aver letto la prima parte")
+export const GIORNATA_ATTESA_ORE = 4;
 // Settimane gratis (deciso da Ste il 13/9): il contenuto G1-G6 della settimana 1 è aperto a chi
 // si registra; il gate di W1, le settimane successive e il Coach si sbloccano con Season 1.
 export const FREE_WEEKS = 1;

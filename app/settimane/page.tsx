@@ -26,6 +26,7 @@ interface ProgressRow {
   completed: boolean;
   completed_at: string | null;
   compressed: boolean | null;
+  created_at?: string | null;
 }
 
 const cleanTitle = (t?: string) => t?.replace(/^Week \d+ — /, '') || t || '';
@@ -56,7 +57,7 @@ export default function SettimanePage() {
           .single(),
         supabase
           .from('user_day_progress')
-          .select('week_number, day_number, completed, completed_at, compressed')
+          .select('week_number, day_number, completed, completed_at, compressed, created_at')
           .eq('user_id', session.user.id)
           .eq('completed', true),
         cachedJson<{ settimane?: Settimana[] }>('settimane', () => authFetch('/api/settimane')),
@@ -76,6 +77,7 @@ export default function SettimanePage() {
           completed: p.completed,
           completedAt: p.completed_at || null,
           compressed: p.compressed || false,
+        startedAt: p.created_at || null,
         }))
       );
 
