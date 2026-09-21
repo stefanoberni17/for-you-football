@@ -134,9 +134,12 @@ export default function SessionePage() {
 
   if (phase === 'playing') {
     // Altezza fissa + scroll interno al player: con min-h-screen lo scroll si
-    // appoggiava al body, che su PWA iOS si blocca (stesso bug risolto su /chat)
+    // appoggiava al body, che su PWA iOS si blocca (stesso bug risolto su /chat).
+    // 100dvh, non 100vh (Ste, 21/9: "taglia qualche pulsante"): su Safari iOS con la barra del
+    // browser 100vh sfora sotto il bordo visibile e la riga sotto la CTA finiva dietro la tab bar.
+    // Stessa utility della chat (h-dvh-screen: 100vh con ripiego, 100dvh dove esiste).
     return (
-      <main className="bg-app flex flex-col overflow-hidden" style={{ height: '100vh', paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+      <main className="bg-app flex flex-col overflow-hidden h-dvh-screen" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
         <TrainingSessionPlayer
           items={itemsEffettivi}
           titolo={scarico ? `${sessione.titolo} (scarico)` : sessione.titolo}

@@ -90,8 +90,8 @@ export default function TrainingSessionPlayer({
   const [fattoTxt, setFattoTxt] = useState('');
   const [caricoTxt, setCaricoTxt] = useState('');
   const [logSaved, setLogSaved] = useState(false);
-  // Scala 1-10 al posto delle 3 scelte: chi la preferisce la ritrova (localStorage)
-  const [dettaglio, setDettaglio] = useState(() => { try { return typeof window !== 'undefined' && localStorage.getItem(RPE_DETTAGLIO_KEY) === '1'; } catch { return false; } });
+  // Scala 1-10 predefinita (Ste, 21/9: "era meglio la scala 1-10 come prima"); le 3 scelte restano un'opzione (localStorage)
+  const [dettaglio, setDettaglio] = useState(() => { try { return typeof window === 'undefined' || localStorage.getItem(RPE_DETTAGLIO_KEY) !== '0'; } catch { return true; } });
   const [showDiverso, setShowDiverso] = useState(false); // "Ho fatto diverso": input fatte/kg
   const [sensazione, setSensazione] = useState<string | null>(null);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
@@ -441,7 +441,7 @@ export default function TrainingSessionPlayer({
                 )}
                 <div className="flex items-center justify-between gap-3 flex-wrap -ml-3 mt-1">
                   <Button variant="ghost" size="sm" onClick={toggleDettaglio}>
-                    {dettaglio ? 'Torna alle 3 scelte' : 'Vuoi essere preciso? 1-10'}
+                    {dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}
                   </Button>
                   {!showDiverso && (
                     <Button variant="ghost" size="sm" onClick={() => setShowDiverso(true)}>Ho fatto diverso</Button>
