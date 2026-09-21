@@ -15,7 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
 import { isFaticaAlta, isPeriodoScarso, validatePlan, type PlanSession, type WeekPlan } from './trainingEngine';
 import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
-import { caricoPianificato, caricoTesto } from './trainingLoad';
+import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
 import { costruisciEmomSkill, emomSkillTesto, EMOM_SKILL_ID } from './trainingEmomSkill';
@@ -263,9 +263,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // Carico totale: con almeno 2 settimane di storico la settimana pianificata non può superare il tetto
   // (cronico +15%, deload 75%, ACWR a rischio 105%) — session-RPE calibrato sui log dell'atleta
   const c = ctx.base.carico;
-  const previsto = caricoPianificato({ sedute }, c.calibrazione);
+  const previsto = caricoPianificato({ sedute }, c.calibrazione, ctx.base.ciclo.isDeload ? DELOAD_RPE : 1);
   if (c.tetto !== null && previsto > c.tetto)
-    errors.push(`carico settimanale previsto ~${previsto} AU oltre il tetto di ${c.tetto} AU (cronico ${c.cronico}, ACWR ${c.acwr}) — togli un blocco principale o usa le varianti short (target ${c.target!.min}-${c.target!.max} AU)`);
+    errors.push(`carico settimanale previsto ~${previsto} AU oltre il tetto di ${c.tetto} AU (cronico ${c.cronico}, ACWR ${c.acwr}${ctx.base.ciclo.isDeload ? ', settimana di scarico' : ''}) — togli un blocco principale o usa le varianti short (target ${c.target!.min}-${c.target!.max} AU)`);
   return { plan: { sedute, messaggio: testoPerAtleta(p.messaggio?.slice(0, 500)) }, errors };
 }
 
