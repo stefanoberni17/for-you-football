@@ -264,8 +264,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // (cronico +15%, deload 75%, ACWR a rischio 105%) — session-RPE calibrato sui log dell'atleta
   const c = ctx.base.carico;
   const previsto = caricoPianificato({ sedute }, c.calibrazione, ctx.base.ciclo.isDeload ? DELOAD_RPE : 1);
-  if (c.tetto !== null && previsto > c.tetto)
-    errors.push(`carico settimanale previsto ~${previsto} AU oltre il tetto di ${c.tetto} AU (cronico ${c.cronico}, ACWR ${c.acwr}${ctx.base.ciclo.isDeload ? ', settimana di scarico' : ''}) — togli un blocco principale o usa le varianti short (target ${c.target!.min}-${c.target!.max} AU)`);
+  // Rifiuto solo oltre il tetto DURO (ACWR 1.5 sul totale); il tetto "guida" resta nel prompt (21/9)
+  if (c.tettoDuro !== null && previsto > c.tettoDuro)
+    errors.push(`carico settimanale previsto ~${previsto} AU: porterebbe il rapporto acuto/cronico oltre 1.5 (tetto ${c.tettoDuro} AU; cronico ${c.cronico}, ACWR ${c.acwr}${ctx.base.ciclo.isDeload ? ', settimana di scarico' : ''}) — togli un blocco principale o usa le varianti short (target ${c.target!.min}-${c.target!.max} AU)`);
   return { plan: { sedute, messaggio: testoPerAtleta(p.messaggio?.slice(0, 500)) }, errors };
 }
 
