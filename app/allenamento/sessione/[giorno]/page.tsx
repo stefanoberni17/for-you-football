@@ -23,7 +23,7 @@ const TIPO_LABEL: Record<string, string> = {
   fisica: 'Fisica', mix: 'Fisica e tecnica', tecnica: 'Tecnica', skill: 'Tecnica', fascia: 'Fascia e prevenzione', recupero: 'Recupero',
 };
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Gradino nuovo', lato: 'Lato debole', leggero: 'Più leggero',
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero',
 };
 const FEEDBACK: { key: 'facile' | 'ok' | 'duro'; emoji: string; label: string }[] = [
   { key: 'facile', emoji: '😀', label: 'Facile' }, { key: 'ok', emoji: '👌', label: 'Giusta' }, { key: 'duro', emoji: '🥵', label: 'Dura' },

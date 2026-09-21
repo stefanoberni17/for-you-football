@@ -13,7 +13,7 @@ import { Badge, Button, Card, Chip, Input } from '@/components/ui';
 const SCELTE_RPE = [['Facile', 3], ['Giusta', 6], ['Durissima', 9]] as const;
 const RPE_DETTAGLIO_KEY = 'player.rpeDettaglio';
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Gradino nuovo', lato: 'Lato debole', leggero: 'Più leggero',
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero',
 };
 
 interface PlanItem {

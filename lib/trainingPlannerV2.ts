@@ -531,7 +531,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
  * resta quella base (il programma di Ste è sempre valido).
  */
 function conProgressioni(plan: WeekPlan, ctx: ContextV2, validateCtx: Parameters<typeof validatePlan>[1]): WeekPlan {
-  const { plan: adattato } = adattaPiano(plan, { storico: ctx.base.storicoSerie, squilibri: ctx.base.squilibri },
+  const { plan: adattato } = adattaPiano(plan, { storico: ctx.base.storicoSerie, squilibri: ctx.base.squilibri, results: ctx.base.results },
     (s) => validatePlan({ ...plan, sedute: [s] }, { ...validateCtx, oggiDow: undefined }));
   return adattato;
 }
