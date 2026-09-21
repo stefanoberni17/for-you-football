@@ -19,7 +19,7 @@ import {
 } from './trainingEngine';
 import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLogRow } from './trainingAdapt';
 import { esercizioV2ById } from './trainingCatalogV2';
-import { calcolaCarico, caricoSquadraStimato, caricoTesto, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
+import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
 
@@ -221,8 +221,10 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     setRpe = ((logs || []) as SetRpeRow[]).map((l) => ({ session_key: l.session_key, rpe: l.rpe }));
   } catch { /* no-op */ }
   // Carico squadra stimato (calendario + sforzi descritti): base costante sotto acuto e cronico
+  // Calendario vuoto (lunedì mattina, dopo il cron): i giorni squadra vengono dall'abitudine descritta nel setup
+  const trainingDays = giorniSquadra(calendar?.training_days || [], squadra);
   const squadraSettimanale = caricoSquadraStimato({
-    trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [],
+    trainingDays, matchDays: calendar?.match_days || [],
     squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null,
     fase: profile?.training_fase || 'in_season', squadra,
   });
@@ -242,7 +244,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     fascia: fasciaFromResults(rows),
     gradini,
     matchDays: calendar?.match_days || [],
-    trainingDays: calendar?.training_days || [],
+    trainingDays,
     painHold: profile?.training_pain_hold === true,
     hasSbarra,
     results: rows,

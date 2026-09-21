@@ -150,13 +150,15 @@ export default function AllenamentoHub() {
 
   useEffect(() => { load(); }, [load]);
 
-  const generaPiano = useCallback(async (r: RichiestaGuidata) => {
+  // Senza richiesta = piano AUTOMATICO: preferenze del setup applicate, recuperi obbligatori
+  // (21/9: `{ modo: 'nuova' }` lo faceva passare per una richiesta esplicita → preferenze ignorate)
+  const generaPiano = useCallback(async (r?: RichiestaGuidata) => {
     setGenerating(true);
     try {
       const res = await authFetch('/api/training/plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(r),
+        body: JSON.stringify(r ?? {}),
       });
       if (res.ok) { setShowRigenera(false); setGenError(null); await load(); }
       else { const d = await res.json().catch(() => ({})); setGenError(d.error || 'Non sono riuscito a preparare il piano. Riprova.'); }
@@ -169,7 +171,7 @@ export default function AllenamentoHub() {
     if (state?.planStale && !generating && !autoGen && !autoGenTried.current) {
       autoGenTried.current = true;
       setAutoGen(true);
-      generaPiano({ modo: 'nuova' });
+      generaPiano();
     }
   }, [state?.planStale, generating, autoGen, generaPiano]);
 
@@ -439,6 +441,16 @@ export default function AllenamentoHub() {
             {state.plan!.generato_da === 'fallback' && (
               <Card variant="warn" padding="sm" className="mb-3">
                 <p className="text-body-sm text-warning">Questa volta ho preparato una settimana base. Riprova con più tempo per seduta o meno vincoli.</p>
+                {!!state.plan!.plan.violazioni?.length && (
+                  <details className="mt-2">
+                    <summary className="text-body-sm text-warning/80 cursor-pointer tap flex items-center">Perché</summary>
+                    <ul className="mt-1 space-y-1">
+                      {state.plan!.plan.violazioni.slice(0, 4).map((v, i) => (
+                        <li key={i} className="text-caption text-muted leading-snug">· {v}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
               </Card>
             )}
             {saltate > 0 && (

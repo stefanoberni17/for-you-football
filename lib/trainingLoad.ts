@@ -181,8 +181,20 @@ export function calcolaCarico(input: {
 export function caricoSquadraStimato(p: { trainingDays: number[]; matchDays: number[]; squadraDurataMin: number | null; fase: string; squadra?: SquadraSettimana }): number {
   if (p.fase === 'off_season') return 0;
   const durata = p.squadraDurataMin && p.squadraDurataMin > 0 ? p.squadraDurataMin : 90;
-  const allenamenti = p.trainingDays.reduce((a, d) => a + durata * (p.squadra?.[d]?.rpe ?? RPE_SQUADRA), 0);
+  const giorni = giorniSquadra(p.trainingDays, p.squadra);
+  const allenamenti = giorni.reduce((a, d) => a + durata * (p.squadra?.[d]?.rpe ?? RPE_SQUADRA), 0);
   return Math.round(allenamenti + p.matchDays.length * 90 * RPE_PARTITA);
+}
+
+/**
+ * Giorni con la squadra: dal calendario della settimana; se è vuoto (il cron lo svuota ogni lunedì
+ * alle 3, e il piano automatico parte alla prima apertura), dall'abitudine descritta in
+ * "Gli allenamenti con la squadra" (profiles.training_squadra, per giorno della settimana).
+ * Senza questo il lunedì S valeva 0 e il tetto del carico tornava a rifiutare ogni settimana (21/9).
+ */
+export function giorniSquadra(trainingDays: number[], squadra?: SquadraSettimana): number[] {
+  if (trainingDays.length) return trainingDays;
+  return Object.keys(squadra ?? {}).map(Number).filter((d) => d >= 1 && d <= 7).sort((a, b) => a - b);
 }
 
 export const STATO_LABEL: Record<StatoCarico, string> = {

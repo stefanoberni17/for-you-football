@@ -602,7 +602,9 @@ export async function generateWeekPlanV2(
       errori = violations.slice(0, 12);
       precedente = JSON.stringify({ sedute: (raw.sedute || []).map((s) => ({ giorno: s.giorno, blocchi: s.blocchi })) });
     } catch (err) {
-      console.error('trainingPlannerV2: errore Claude', (err as Error)?.message);
+      const msg = (err as Error)?.message || String(err);
+      console.error('trainingPlannerV2: errore Claude', msg);
+      errori = [...(errori ?? []), `il planner AI non ha risposto (${msg.slice(0, 160)})`];
       break;
     }
   }
