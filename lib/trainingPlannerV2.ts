@@ -28,7 +28,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.10-emom-skill';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.11-recuperi-fisici';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -130,8 +130,10 @@ async function loadDaRecuperare(userId: string): Promise<ContextV2['daRecuperare
     if (sed?.blocchi?.length) fattiQuesta.add(chiave(sed.blocchi.map((b) => b.id)));
   }
   const ultimo = scorsa[0].plan as WeekPlan; // il piano più recente della settimana scorsa (contiene anche i giorni passati)
+  // Si recuperano solo le giornate dove si LAVORA (blocchi fisici: forza, esplosività, velocità, resistenza).
+  // Una giornata di fascia, tecnica o recupero saltata non è un buco nella progressione (Ste, 21/9)
   return (ultimo.sedute || [])
-    .filter((s) => !fattiScorsa.has(s.giorno) && s.blocchi && s.blocchi.length > 0)
+    .filter((s) => !fattiScorsa.has(s.giorno) && s.blocchi && s.blocchi.length > 0 && (s.tipo === 'fisica' || s.tipo === 'mix'))
     .map((s) => ({ titolo: s.titolo, blocchi: s.blocchi!.map((b) => b.id), giorno: s.giorno }))
     .filter((r) => !fattiQuesta.has(chiave(r.blocchi)));
 }
@@ -306,7 +308,7 @@ SICUREZZA
 1. Dolore segnalato (pain-hold) → niente blocchi fisici: solo fascia, tecnica, mobilità/recupero.
 2. FASE: ${faseTxt}${leggereTxt}
 2b. OBIETTIVI DELL'ATLETA (sezione OBIETTIVI nel messaggio): sono la ragione del piano. Quelli segnati OBBLIGATORIO devono avere almeno un blocco principale della loro qualità nella settimana; il validatore lo controlla. Gli obiettivi vengono PRIMA dei recuperi e delle progressioni.
-2c. Il PRIMO obiettivo è il filo della settimana: con 3 o più giornate fisiche compare in ALMENO 2 (in una come blocco principale, nell'altra anche in versione short o come secondo blocco); il secondo obiettivo almeno una volta, anche come secondo blocco nella stessa giornata del primo se il tempo lo permette; gli altri nei posti che avanzano o nelle giornate leggere. Esempio con forza parte alta primo e gambe secondo, 3 fisiche + 1 leggera: lunedì parte alta + gambe, mercoledì parte alta + esplosività, venerdì fascia + tecnica, domenica parte alta short + prevenzione.
+2c. Il PRIMO obiettivo è il filo della settimana: con 3 o più giornate fisiche compare in ALMENO 2 (in una come blocco principale, nell'altra anche in versione short o come secondo blocco); il secondo obiettivo almeno una volta, anche come secondo blocco nella stessa giornata del primo se il tempo lo permette; gli altri nei posti che avanzano o nelle giornate leggere. Il primo obiettivo va nelle PRIME giornate fisiche disponibili della settimana (lunedì e mercoledì, non mercoledì e domenica): se poi qualcosa salta, il lavoro principale è già fatto. Esempio con forza parte alta primo e gambe secondo, 3 fisiche + 1 leggera: lunedì parte alta + gambe, mercoledì parte alta + esplosività, venerdì fascia + tecnica, domenica parte alta short + prevenzione.
 3. Finestre partita (le rispetta il validatore, ma tu progetta già bene):
 ${finestreTesto()}
    Il giorno DOPO la partita: niente gambe (forza parte bassa, pliometria, velocità, resistenza). Vanno bene fascia/prevenzione, mobilità/recupero, tecnica leggera e la forza PARTE ALTA in versione short (volume ridotto: le gambe hanno giocato ieri e spesso si riallenano il giorno dopo). Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera. Mai yoga di recupero il giorno prima o il giorno della partita.
@@ -330,7 +332,7 @@ ADATTAMENTO
 14. Check-in di oggi con fatica alta → la seduta di oggi più leggera o spostata. Periodo prolungato con poco sonno/recupero → settimana più leggera (meno blocchi fisici).
 15. Ascolta obiettivi e note in memoria e la richiesta dell'utente (se non contraddice le regole sopra).
 16. STORICO SERIE (se presente): i suggerimenti SALI/TIENI/SCENDI per esercizio sono calcolati dai log dell'atleta. ${progressioniTesto()} A livello di BLOCCO: molti SALI nella stessa famiglia = passa al codice successivo o da short a full; SCENDI ripetuti = codice precedente o short. Non saltare codici.
-18. SEDUTE DA RECUPERARE (se presenti): sono le sedute saltate la settimana scorsa. Nel piano automatico di inizio settimana riproponile UGUALI (stessi blocchi, stesso ordine) nei primi giorni utili; contano nel tetto delle sedute e il validatore le controlla. Se invece l'atleta ha fatto una richiesta esplicita ("NUOVA SETTIMANA" nel messaggio), sono un suggerimento: prima gli obiettivi, un recupero entra solo se rispetta i vincoli (tempo per seduta) e avanza spazio.
+18. SEDUTE DA RECUPERARE (se presenti): sono le sedute FISICHE saltate la settimana scorsa (le giornate leggere saltate non si recuperano). Nel piano automatico di inizio settimana riproponile UGUALI (stessi blocchi, stesso ordine) nei primi giorni utili; contano nel tetto delle sedute e il validatore le controlla. Se invece l'atleta ha fatto una richiesta esplicita ("NUOVA SETTIMANA" nel messaggio), sono un suggerimento: prima gli obiettivi, un recupero entra solo se rispetta i vincoli (tempo per seduta) e avanza spazio.
 19. VINCOLI DELLA RICHIESTA (giorni disponibili, giorni da lasciare liberi, tempo per seduta): sono regole dure, il validatore rifiuta chi le viola.
 20. SQUADRA DESCRITTA (se accanto ai giorni squadra ci sono sforzo e qualità): serve per BILANCIARE, mai per vietare. Le qualità che la squadra lavora già forte (sforzo ≥7) non le raddoppi nella stessa settimana, a meno che siano un focus scelto dall'atleta; il giorno dopo una giornata squadra da 8+ ci si allena comunque, ma con un blocco principale diverso da quello della squadra o in versione short. Quando la squadra copre già un focus, dillo nel messaggio.
 17. CARICO TOTALE (session-RPE, calcolato dai dati): resta nel TARGET indicato — al massimo +10% sul cronico da una settimana all'altra; ACWR alto/rischio → settimana uguale o più leggera della precedente; dopo 2+ settimane di stop riparti dal 70% del cronico. Il tetto lo fa rispettare il validatore: una settimana troppo carica viene rifiutata.
