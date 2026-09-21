@@ -78,9 +78,16 @@ export function rpeAttesoSeduta(s: PlanSession): number {
   return RPE_TIPO[s.tipo] ?? 6;
 }
 
-/** Carico pianificato di una settimana (AU), con la calibrazione dell'atleta. */
-export function caricoPianificato(plan: WeekPlan, calibrazione = 1): number {
-  return Math.round(plan.sedute.reduce((a, s) => a + (s.durata_min || 0) * rpeAttesoSeduta(s) * calibrazione, 0));
+/**
+ * In scarico il server riduce le serie (×0.6) e la durata (×0.8) di ogni blocco: una seduta così
+ * alleggerita si sente anche meno dura. La stima del carico usa l'RPE della qualità × questo fattore
+ * (21/9: senza, la settimana di scarico era stimata come una normale accorciata e sforava sempre il tetto).
+ */
+export const DELOAD_RPE = 0.75;
+
+/** Carico pianificato di una settimana (AU), con la calibrazione dell'atleta e il fattore RPE (scarico). */
+export function caricoPianificato(plan: WeekPlan, calibrazione = 1, fattoreRpe = 1): number {
+  return Math.round(plan.sedute.reduce((a, s) => a + (s.durata_min || 0) * rpeAttesoSeduta(s) * calibrazione * fattoreRpe, 0));
 }
 
 function romeDate(iso: string): string {
@@ -161,12 +168,15 @@ export function calcolaCarico(input: {
   const calibrazione = sommaAttesa > 0 ? Math.min(1.3, Math.max(0.7, round1(sommaReale / sommaAttesa))) : 1;
 
   // Target e tetto: percentuali sul TOTALE, poi si toglie la squadra (che non si può ridurre) → quota app.
-  // In deload l'app riduce solo la propria parte (la squadra continua): percentuali sul cronico app.
+  // In deload il TARGET resta sul cronico app (50-70 %: l'app riduce solo la propria parte, la squadra
+  // continua) ma il TETTO è il 75 % del tetto normale: la riduzione vera la fa già il server (serie ×0.6,
+  // durata ×0.8, varianti short). Prima il tetto era 0.75 × cronico app (21/9: 293 AU contro un tetto
+  // normale di ~700 con la squadra) e con le 3 giornate del setup nessun piano passava → settimana base.
   let target: CaricoInfo['target'] = null, tetto: number | null = null;
   if (cronico > 0) {
     const tot = cronico + S;
     const app = (x: number) => Math.max(0, Math.round(x - S));
-    if (input.isDeload) { target = { min: Math.round(cronico * 0.5), max: Math.round(cronico * 0.7) }; tetto = Math.round(cronico * 0.75); }
+    if (input.isDeload) { target = { min: Math.round(cronico * 0.5), max: Math.round(cronico * 0.7) }; tetto = Math.round(app(tot * 1.15) * 0.75); }
     else if (stato === 'rischio') { target = { min: app(tot * 0.7), max: app(tot) }; tetto = app(tot * 1.05); }
     else { target = { min: app(tot * 0.9), max: app(tot * 1.1) }; tetto = app(tot * 1.15); }
   }
