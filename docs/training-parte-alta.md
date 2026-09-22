@@ -92,8 +92,9 @@ tirata 10 fino alla presa larga (pull-1..6), 5 dall'archer (pull-7..10). Cambia 
 - **Spinta verticale a corpo libero**: scala pike push-up → pike con piedi rialzati → handstand push-up eccentrico
   (oggi c'è solo overhead press con manubri/bilanciere e l'handstand eccentrico a PRO).
 - **Tirate orizzontali senza sbarra**: rematore a un braccio con manubrio/kettlebell, rematore sotto al tavolo (lista di Ste).
-- **Esplosività**: salto in lungo da fermo, salto in alto da fermo, sprint 10 m come esercizi dedicati (oggi il salto in lungo
-  esiste solo come test e in versione dalle ginocchia; lo sprint come `vel-sprint` generico) + le variazioni sprint.
+- **Esplosività** (AGGIUNTI 22/9): `fesp-salto-in-lungo-da-fermo`, `fesp-salto-in-alto-da-fermo`, `vel-sprint-10-m` (senza video) e le
+  5 variazioni sprint con video del canale, tag `variante-sprint`: `vel-giro-180-piegamento-e-sprint`, `vel-burpee-e-sprint`,
+  `vel-piegamento-a-terra-e-sprint`, `vel-sprint-con-partenza-in-ginocchio-laterale` (per lato), `vel-sprint-con-partenza-in-ginocchio`.
 - "Dorsali" = catena lombari (superman, arch hold, arch rocks).
 
 ## Motore: cosa cambia

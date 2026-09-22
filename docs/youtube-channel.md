@@ -59,31 +59,31 @@ Collegato il 22/9: "Passaggi al muro 1 tocco collo" → `Passaggi al muro 1 tocc
 
 | Short | Proposta |
 |---|---|
-| [Giro 180º piegamento e sprint](https://youtube.com/shorts/s8AM8jty5-o) | NUOVO esercizio `velocita`, tag `variante-sprint` |
-| [Burpee e sprint](https://youtube.com/shorts/XkMDtZ2AnQs) | NUOVO, `variante-sprint` |
-| [Piegamento a terra e sprint](https://youtube.com/shorts/bDwr7WxZdWo) | NUOVO, `variante-sprint` (= "partenza da sdraiato") |
-| [Sprint con partenza in ginocchio laterale](https://youtube.com/shorts/x6RyCdfPcnA) | NUOVO, `variante-sprint`, per lato |
-| [Sprint con partenza in ginocchio](https://youtube.com/shorts/4mn2rv1ulU0) | NUOVO, `variante-sprint` |
-| [Allenamento velocità, forza esplosiva, accelerazione](https://youtube.com/shorts/QpAlCjqXBKk) | da vedere: compilation o esercizio? |
-| [Palleggio sprint e tiro in porta](https://youtube.com/shorts/GBH47rEC5zo) | candidato `tecnica-tiro` (oggi "Calcio in alto e tiro in porta" e "tiri - tecnica di tiro" sono senza video) |
-| [Sprint e tiro in porta](https://youtube.com/shorts/onjvnDBDyjA) | candidato `tecnica-tiro` |
-| [Ankle stiffness con manubri](https://youtube.com/shorts/eczdqr2oU7w) | candidato variante A/PRO di "Pogo Jumps progression (Ankle Stiffness)" |
+| [Giro 180º piegamento e sprint](https://youtube.com/shorts/s8AM8jty5-o) | AGGIUNTO 22/9: `vel-giro-180-piegamento-e-sprint` (velocita, tag variante-sprint) |
+| [Burpee e sprint](https://youtube.com/shorts/XkMDtZ2AnQs) | AGGIUNTO: `vel-burpee-e-sprint` |
+| [Piegamento a terra e sprint](https://youtube.com/shorts/bDwr7WxZdWo) | AGGIUNTO: `vel-piegamento-a-terra-e-sprint` (= "partenza da sdraiato") |
+| [Sprint con partenza in ginocchio laterale](https://youtube.com/shorts/x6RyCdfPcnA) | AGGIUNTO: `vel-sprint-con-partenza-in-ginocchio-laterale` (per lato) |
+| [Sprint con partenza in ginocchio](https://youtube.com/shorts/4mn2rv1ulU0) | AGGIUNTO: `vel-sprint-con-partenza-in-ginocchio` |
+| [Allenamento velocità, forza esplosiva, accelerazione](https://youtube.com/shorts/QpAlCjqXBKk) | è l'insieme degli sprint qui sopra (Ste, 22/9): non è un esercizio, fuori catalogo |
+| [Palleggio sprint e tiro in porta](https://youtube.com/shorts/GBH47rEC5zo) | AGGIUNTO: `vel-palleggio-sprint-e-tiro-in-porta` (velocità in campo, Ste 22/9) |
+| [Sprint e tiro in porta](https://youtube.com/shorts/onjvnDBDyjA) | AGGIUNTO: `vel-sprint-e-tiro-in-porta` (velocità in campo) |
+| [Ankle stiffness con manubri](https://youtube.com/shorts/eczdqr2oU7w) | AGGIUNTO: `fasc-ankle-stiffness-con-manubri` (fascia-prevenzione: polpacci, fascia del piede e caviglia; non sono salti, equilibrio in punta di piedi — Ste 22/9) |
 
-Manca ancora: salto in lungo da fermo e salto in alto da fermo come esercizi (non test) — senza video, da registrare.
+Aggiunti anche senza video (da registrare): `vel-sprint-10-m`, `fesp-salto-in-lungo-da-fermo`, `fesp-salto-in-alto-da-fermo`.
 
 ### Prevenzione e forza
 
 | Short | Proposta |
 |---|---|
-| [Eccentric elevated hamstring single leg](https://youtube.com/shorts/pvz1imwG2hM) | candidato `forza-parte-bassa` (nordic esiste già con video: variante a una gamba?) |
-| [Elevated Hamstring bridge single leg](https://youtube.com/shorts/1Mb78dXSxso) | candidato `fascia-prevenzione` o `forza-parte-bassa` |
-| [Core hamstrings running - prevenzione](https://youtube.com/shorts/Szavvv-yaE8) | candidato `fascia-prevenzione` |
-| [Copenhagen plank fy](https://youtube.com/shorts/ctzBaTKX5qE) | il catalogo v1 ha `lat-4`/`lat-5` con un altro video: sostituire? |
+| [Eccentric elevated hamstring single leg](https://youtube.com/shorts/pvz1imwG2hM) | AGGIUNTO: `fpb-eccentric-elevated-hamstring-single-leg` (catena posteriore, livello A, parte bassa + lombari — Ste 22/9) |
+| [Elevated Hamstring bridge single leg](https://youtube.com/shorts/1Mb78dXSxso) | AGGIUNTO: `fpb-elevated-hamstring-bridge-single-leg` (catena posteriore, A) |
+| [Core hamstrings running - prevenzione](https://youtube.com/shorts/Szavvv-yaE8) | AGGIUNTO: `fpb-core-hamstrings-running` (catena posteriore, A) |
+| [Copenhagen plank fy](https://youtube.com/shorts/ctzBaTKX5qE) | AGGIUNTO: `fpb-copenhagen-plank-fy` (catena posteriore, A); i `lat-4`/`lat-5` v1 restano nella scala laterale |
 | [Test reattività e forza caviglie / piede](https://youtube.com/shorts/nkje-N1qxSU) | doppione del test ankle stiffness (già collegato a un altro short)? |
 | [Allenare i piedi e il sistema fasciale](https://youtube.com/shorts/Oh78p4PZ61w) · [Allenare i piedi e la fascia](https://youtube.com/shorts/BIK6s6S17wU) | divulgativi: fuori catalogo salvo diversa indicazione |
 | [Crow pose to handstand](https://youtube.com/shorts/jZLW7_-PNYw) | "Crow Pose Progression" (PRO) ha già un video: alternativo |
 | [Esercizio 1vs1 calcio](https://youtube.com/shorts/aDOYiaJ4W1A) | "1vs1 - difesa da fermo" è collegato al video lungo: alternativo |
-| [Kross first touch](https://youtube.com/shorts/dnCYoY9xnKM) | tecnica (controllo)? da decidere |
+| [Kross first touch](https://youtube.com/shorts/dnCYoY9xnKM) | fuori catalogo (Ste, 22/9) |
 
 ### Fuori catalogo (tattica, commento, meditazione, clip)
 Meditazione guidata 2 minuti · Ronaldo · Un trucco per prendere posizione sull'attaccante · Visual Training nel calcio ·
