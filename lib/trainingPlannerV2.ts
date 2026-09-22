@@ -18,7 +18,8 @@ import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type Plann
 import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
-import { costruisciEmomSkill, emomSkillTesto, EMOM_SKILL_ID } from './trainingEmomSkill';
+import { esercizioById } from './trainingCatalog';
+import { costruisciParteAlta, isParteAlta, parteAltaTesto, vuoleParteBassa, PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID } from './trainingParteAlta';
 import { squilibriTesto } from './trainingSquilibri';
 import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgressione';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
@@ -28,7 +29,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.11-recuperi-fisici';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.12-parte-alta';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -92,13 +93,27 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     eta, esperienzaPalestra: setup.esperienzaPalestra, massimali,
   };
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
-  // EMOM Skill: blocco virtuale costruito sulle scale skill dell'atleta (gradino dopo l'ultimo testato), accanto ai blocchi di Ste
-  const emomSkill = costruisciEmomSkill(base.results, { hasSbarra: base.hasSbarra || setup.attrezzatura.includes('sbarra') });
-  return {
-    base, setup, eta, ruoli, v2, blocchi: [...blocchiDisponibili(v2), ...(emomSkill ? [emomSkill] : [])],
+  const ctx: ContextV2 = {
+    base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
     maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
     daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup,
   };
+  aggiornaParteAlta(ctx);
+  return ctx;
+}
+
+/**
+ * Parte alta dalle scale (Ste, 22/9): blocchi virtuali `pa-*` costruiti sui gradini dell'atleta, accanto ai
+ * blocchi di Ste. Si ricostruiscono quando cambiano gli obiettivi (salti e sprint nell'EMOM solo con la parte bassa).
+ */
+function aggiornaParteAlta(ctx: ContextV2): void {
+  const lun = new Date(`${mondayOfThisWeekRome()}T00:00:00`);
+  const settimana = Math.floor((lun.getTime() - Date.UTC(2026, 0, 5)) / (7 * 86400000)); // n. settimana da un lunedì fisso: ruota la variante di sprint
+  const pa = costruisciParteAlta(ctx.base.results, {
+    livello: ctx.v2.livello, attrezzatura: ctx.setup.attrezzatura, hasSbarra: ctx.base.hasSbarra || ctx.setup.attrezzatura.includes('sbarra'),
+    parteBassa: vuoleParteBassa(ctx.obiettivi), settimana,
+  });
+  ctx.blocchi = [...ctx.blocchi.filter((b) => !isParteAlta(b.id)), ...pa];
 }
 
 /**
@@ -184,7 +199,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     const leggeri = new Set((Array.isArray(s.leggeri) ? s.leggeri : []).filter((id) => blocchi.some((b) => b.id === id && QUALITA_FISICHE.has(b.qualita))));
     const items = blocchi.flatMap((b) => {
       const leggero = leggeri.has(b.id);
-      const its = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
+      const its0 = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
+      // Parte alta dalle scale: gli esercizi delle catene v1 sono GIÀ al gradino dell'atleta (lib/trainingParteAlta) —
+      // badge "Il tuo gradino" e niente sostituzione in `alGradino`; i log per serie (SALI/SCENDI) si applicano lo stesso
+      const its = isParteAlta(b.id) ? its0.map((it) => (it.schema === 'fisso' && esercizioById(it.esercizio_id) ? { ...it, adattamento: 'gradino' as const } : it)) : its0;
       return leggero ? its.map((it) => ({ ...it, adattamento: 'leggero' as const })) : its;
     });
     const durata = Math.round(blocchi.reduce((a, b) => a + b.durataMin * (leggeri.has(b.id) ? 0.85 : 1), 0) * (scala < 1 ? 0.8 : 1));
@@ -291,9 +309,24 @@ function finestreTesto(): string {
     .map(([g, qs]) => `- entro ${g} giorni dalla partita (e il giorno stesso) NIENTE: ${qs.join(', ')}`).join('\n');
 }
 
+/** Regola 23: le sedute di parte alta costruite sulle scale (docs/training-parte-alta.md). */
+function parteAltaRegola(ctx: ContextV2): string {
+  const pa = ctx.blocchi.filter((b) => isParteAlta(b.id));
+  if (!pa.length) return '23. PARTE ALTA: l\'atleta non ha ancora testato le scale skill (spinta/tirata): per la forza parte alta usa i blocchi della libreria e nel messaggio invitalo a fare i test della scala skill, così le sedute vengono costruite sui suoi gradini.';
+  const ha = (id: string) => pa.some((b) => b.id === id);
+  const sett = ctx.base.ciclo.settimana;
+  const formatoSett = ctx.base.ciclo.isDeload ? `settimana ${sett} = SCARICO: solo \`${PA_EMOM_ID}\` (l\'EMOM non fa fatica e resta uguale), niente serie`
+    : `settimana ${sett} del ciclo: la seduta a rotazione è a SERIE (\`${PA_SERIE_ID}\`; con tre sedute di parte alta \`${PA_SERIE_PUSH_ID}\` e \`${PA_SERIE_PULL_ID}\`)`;
+  return `23. PARTE ALTA DALLE SCALE (blocchi \`pa-*\`, costruiti dal server sui gradini dell'atleta: preferiscili SEMPRE ai blocchi Everfit di forza-parte-alta, che restano per la palestra o come contorno):
+- ${ha(PA_EMOM_ID) ? `\`${PA_EMOM_ID}\` = skill più esplosività: un esercizio al minuto, 2-3 ripetizioni alla massima intensità (spinta e tirata al gradino SOPRA l'ultimo testato${vuoleParteBassa(ctx.obiettivi) ? ', salti da fermo e uno sprint' : ''}), zero fatica. Con 2 o più sedute di parte alta a settimana ce n'è SEMPRE una EMOM. Va bene anche a 2 giorni dalla partita (i salti e lo sprint qui non stancano), non il giorno prima.` : 'EMOM non disponibile (mancano i test delle scale).'}
+- ${ha(PA_SERIE_ID) ? `\`${PA_SERIE_ID}\` = serie classiche sull'ultimo gradino completato (3-4 serie al 60-70 % del max, recupero 90"): spinta in due varianti + spinta verticale, tirata + rematore, core, dorsali.` : ''}${ha(PA_SERIE_PUSH_ID) ? ` \`${PA_SERIE_PUSH_ID}\` = focus spinta (3-4 spinta, 1 tirata), \`${PA_SERIE_PULL_ID}\` = focus tirata: con TRE sedute di parte alta usa EMOM + focus spinta + focus tirata; se gli squilibri dicono che la tirata è indietro, la seduta focus va sulla tirata (e viceversa).` : ''}
+- Rotazione sul ciclo di 4 settimane: ${formatoSett}. (Tabata e AMRAP arriveranno: per ora la rotazione è serie/EMOM.)
+- Ogni blocco \`pa-*\` è una seduta intera di parte alta: al massimo uno per giornata, più fascia o tecnica se ci sta nel tempo. Mai due \`pa-*\` nello stesso giorno, mai il giorno prima della partita.
+Composizione: ${pa.map(parteAltaTesto).join(' || ')}`;
+}
+
 function systemPrompt(ctx: ContextV2): string {
   const fase = ctx.setup.fase;
-  const emomSkill = ctx.blocchi.find((b) => b.id === EMOM_SKILL_ID);
   const faseTxt = fase === 'off_season'
     ? `OFF SEASON (nessuna squadra): fino a ${ctx.maxSeduteFisiche} sedute fisiche a settimana, si può costruire.`
     : fase === 'preparazione_squadra'
@@ -338,7 +371,7 @@ ADATTAMENTO
 17. CARICO TOTALE (session-RPE, calcolato dai dati): resta nel TARGET indicato — al massimo +10% sul cronico da una settimana all'altra; ACWR alto/rischio → settimana uguale o più leggera della precedente; dopo 2+ settimane di stop riparti dal 70% del cronico. Il tetto lo fa rispettare il validatore: una settimana troppo carica viene rifiutata.
 22. PIÙ LEGGERO PER BLOCCO: se una giornata va alleggerita senza cambiare blocco (check-in con fatica alta, giorno dopo la partita o dopo una giornata squadra da 8+, carico alto, richiesta "più leggera"), metti l'id del blocco nel campo "leggeri" della seduta: il server riduce le serie (×0.7). Vale solo per i blocchi fisici (forza, esplosività, pliometria, velocità, resistenza), non per fascia/tecnica/recupero. Preferiscilo alla variante short quando la short non esiste.
 21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole → tra i blocchi della stessa qualità preferisci quelli marcati [unilaterale] (lavoro una gamba alla volta) e nel messaggio digli di partire dal lato debole e di curarlo; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
-${emomSkill ? `23. EMOM SKILL: \`${emomSkill.id}\` è costruito sulle scale skill dell'atleta (per ogni catena l'esercizio del gradino DOPO l'ultimo testato): poche ripetizioni di qualità al minuto, il resto del minuto è recupero. Usalo come blocco principale o secondo blocco quando l'obiettivo è parte alta, forza a corpo libero o skill, al massimo una volta a settimana, mai il giorno prima della partita (è forza). ${emomSkillTesto(emomSkill)}` : ''}
+${parteAltaRegola(ctx)}
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
 Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21).
@@ -482,8 +515,9 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   // Giornate costruite dagli OBIETTIVI (setup o maschera), non da una lista fissa; senza obiettivi la vecchia terna
   const rango = (x: Blocco) => x.livello === ctx.v2.livello ? 0 : x.livello === null ? 1 : 2; // prima i blocchi del livello dell'atleta
   const perObiettivo = (f: FocusId): Blocco | undefined => {
+    const pa = (x: Blocco) => (isParteAlta(x.id) ? 0 : 1); // parte alta dalle scale prima dei blocchi Everfit
     const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id).sort((x, y) =>
-      (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
+      (pa(x) - pa(y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
     return cand.find((x) => x.durataMin + (fascia?.durataMin ?? 0) <= maxDur) ?? cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
   };
   const perOrdine = focusEspansi(ctx.obiettivi).map(perObiettivo).filter((x): x is Blocco => !!x);
@@ -580,7 +614,7 @@ export async function generateWeekPlanV2(
   ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
   // Giorni ammessi tutti passati (es. domenica con lun/mer/ven): senza allargare ai giorni rimasti nessun piano è possibile
   if (ctx.vincoli.giorniAmmessi?.length && giorniRimasti(ctx).length === 0) ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
-  if (vincoli.obiettivi?.length) ctx.obiettivi = vincoli.obiettivi;
+  if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; aggiornaParteAlta(ctx); }
   const nota = notaSettimanaAvviata(ctx);
   const conNota = (plan: WeekPlan): WeekPlan => (nota ? { ...plan, nota } : plan);
   const validateCtx = validateCtxFor(ctx);

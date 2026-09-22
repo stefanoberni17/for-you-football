@@ -395,7 +395,9 @@ export function validatePlan(
         if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
         const blocco = ctx.trustBlocks && it.blocco_id ? bloccoById(it.blocco_id) : undefined;
         const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[ctx.v2.livello]);
-        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: !!blocco, skipSoloLivello: bloccoDiSte });
+        // Fidato anche il blocco VIRTUALE (parte alta dalle scale, `pa-*`): non è nella libreria ma l'ha dosato il server
+        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && it.blocco_id.startsWith('pa-'));
+        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });
         continue;

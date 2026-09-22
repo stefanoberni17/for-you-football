@@ -6860,7 +6860,7 @@
  {
   "nome": "Sprint 10 m",
   "qualita": "velocita",
-  "attrezzatura": "campo",
+  "attrezzatura": "corpo libero",
   "difficolta": 2,
   "livello_min": "B",
   "unita": "reps",
@@ -6872,17 +6872,18 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "Partenza in piedi, 10 metri a tutta. Uno solo, poi cammina indietro e recupera del tutto: conta la qualità, non la fatica."
+  "descrizione": "Partenza in piedi, 10 metri a tutta. Uno solo, poi cammina indietro e recupera del tutto: conta la qualità, non la fatica.",
+  "finestra_partita": 1
  },
  {
   "nome": "Giro 180° piegamento e sprint",
   "qualita": "velocita",
-  "attrezzatura": "campo",
+  "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
@@ -6895,17 +6896,18 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "Di spalle alla direzione di corsa: giro di 180°, un piegamento a terra, ti rialzi e parti in sprint per 10 metri."
+  "descrizione": "Di spalle alla direzione di corsa: giro di 180°, un piegamento a terra, ti rialzi e parti in sprint per 10 metri.",
+  "finestra_partita": 1
  },
  {
   "nome": "Burpee e sprint",
   "qualita": "velocita",
-  "attrezzatura": "campo",
+  "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
@@ -6918,17 +6920,18 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "Un burpee completo (a terra, salto) e appena atterri parti in sprint per 10 metri."
+  "descrizione": "Un burpee completo (a terra, salto) e appena atterri parti in sprint per 10 metri.",
+  "finestra_partita": 1
  },
  {
   "nome": "Piegamento a terra e sprint",
   "qualita": "velocita",
-  "attrezzatura": "campo",
+  "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
@@ -6941,17 +6944,18 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "Partenza da sdraiato a pancia in giù: un piegamento, ti rialzi e parti in sprint per 10 metri."
+  "descrizione": "Partenza da sdraiato a pancia in giù: un piegamento, ti rialzi e parti in sprint per 10 metri.",
+  "finestra_partita": 1
  },
  {
   "nome": "Sprint con partenza in ginocchio laterale",
   "qualita": "velocita",
-  "attrezzatura": "campo",
+  "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
@@ -6964,17 +6968,18 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "In ginocchio di fianco alla direzione di corsa: ti alzi ruotando e parti in sprint per 10 metri. Una partenza per lato."
+  "descrizione": "In ginocchio di fianco alla direzione di corsa: ti alzi ruotando e parti in sprint per 10 metri. Una partenza per lato.",
+  "finestra_partita": 1
  },
  {
   "nome": "Sprint con partenza in ginocchio",
   "qualita": "velocita",
-  "attrezzatura": "campo",
+  "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
@@ -6987,12 +6992,13 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "In ginocchio, di fronte alla direzione di corsa: ti alzi senza appoggiare le mani e parti in sprint per 10 metri."
+  "descrizione": "In ginocchio, di fronte alla direzione di corsa: ti alzi senza appoggiare le mani e parti in sprint per 10 metri.",
+  "finestra_partita": 1
  },
  {
   "nome": "Salto in lungo da fermo",
@@ -7010,12 +7016,13 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Piedi paralleli, carica con le braccia e salta in avanti il più lontano possibile, atterraggio a due piedi ammortizzato. Poche reps, ogni salto a tutta."
+  "descrizione": "Piedi paralleli, carica con le braccia e salta in avanti il più lontano possibile, atterraggio a due piedi ammortizzato. Poche reps, ogni salto a tutta.",
+  "finestra_partita": 1
  },
  {
   "nome": "Salto in alto da fermo",
@@ -7033,12 +7040,13 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": null,
-  "note": null,
+  "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Piedi paralleli, carica con le braccia e salta in alto il più possibile, atterraggio morbido sull'avampiede. Poche reps, ogni salto a tutta."
+  "descrizione": "Piedi paralleli, carica con le braccia e salta in alto il più possibile, atterraggio morbido sull'avampiede. Poche reps, ogni salto a tutta.",
+  "finestra_partita": 1
  },
  {
   "nome": "Palleggio, sprint e tiro in porta",

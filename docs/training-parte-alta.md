@@ -98,15 +98,21 @@ Agganciata al ciclo di 4 settimane (`cicloInfo`):
 - "Dorsali" = catena lombari (superman, arch hold, arch rocks).
 
 ## Motore: cosa cambia
-1. `lib/trainingParteAlta.ts` (nuovo): blocchi virtuali `pa-serie`, `pa-serie-push`, `pa-serie-pull`, `pa-amrap`, `pa-tabata`,
-   `pa-emom` costruiti a ogni piano da `results` + attrezzatura + obiettivi, come `costruisciEmomSkill`. Sostituisce
-   `emom-skill` (che diventa `pa-emom`).
-2. `loadContextV2` li aggiunge a `ctx.blocchi`; `bloccoDi` li risolve; prompt: regola nuova al posto della 23
-   (formato per settimana del ciclo, 1 EMOM sempre, focus push/pull con 3 sedute). Bump `PLANNER_V2_PROMPT_VERSION`.
-3. Validatore: gli item nati da questi blocchi sono fidati; eccezione finestra partita per salti/sprint a −2 dentro `pa-emom`.
-4. **Player**: oggi gestisce solo `fisso` ed `emom`. Servono `tabata` (timer lavoro/riposo a stazioni, giri, vibrazione al cambio)
-   e `amrap` (countdown + contatore giri, un log per esercizio con i giri fatti), sul modello di `TrainingEmomPlayer.tsx`.
+1. **FATTO (22/9)** `lib/trainingParteAlta.ts`: blocchi virtuali `pa-serie`, `pa-serie-push`, `pa-serie-pull` (focus solo con la scala di
+   tirata testata e la sbarra) e `pa-emom`, costruiti da `costruisciParteAlta(results, { livello, attrezzatura, hasSbarra, parteBassa, settimana })`
+   a ogni piano (`aggiornaParteAlta(ctx)` in `loadContextV2` e di nuovo se la maschera cambia gli obiettivi). Sostituisce `emom-skill`
+   (`lib/trainingEmomSkill.ts` eliminato). Serie: gradino = `l.amrap ?? l.points[0]` (sotto soglia: 60 % del max senza minimo), 4 serie A/PRO
+   e 3 B sul gradino, 3 sugli accessori; variante = gradino sotto (da quello a terra) o diamond; spinta verticale per livello (palestra →
+   overhead press); rematori per attrezzatura (gorilla row → australiane → bilanciere → sotto al tavolo); core e dorsali 3 × 70 % del max.
+   EMOM: giri = clamp(10 / stazioni, 2, 5); sprint a rotazione sulla settimana; `Blocco.senzaScarico` → `expandBlocco` non riduce le serie nel deload.
+2. **FATTO** prompt: regola 23 riscritta (`parteAltaRegola`), `PLANNER_V2_PROMPT_VERSION = 'v2.12-parte-alta'`; fallback: i `pa-*` prima
+   dei blocchi Everfit per l'obiettivo parte alta; `expandPiano` marca gli item a serie dei `pa-*` con `adattamento: 'gradino'` (badge
+   "Il tuo gradino", `alGradino` non li tocca, i log SALI/SCENDI sì).
+3. **FATTO** validatore: item v2 di un blocco `pa-*` fidati come i blocchi di Ste (`fidato` in `validatePlan`); salti da fermo, sprint 10 m e
+   variazioni sprint hanno `finestra_partita: 1` nel catalogo (ammessi a −2, vietati a −1).
+4. **DA FARE — Player**: oggi gestisce solo `fisso` ed `emom`. Servono `tabata` (timer lavoro/riposo a stazioni, giri, vibrazione al cambio)
+   e `amrap` (countdown + contatore giri, un log per esercizio con i giri fatti), sul modello di `TrainingEmomPlayer.tsx`; poi `pa-tabata`
+   e `pa-amrap` nel generatore e la rotazione completa (settimana 2 tabata, 3 AMRAP) nella regola 23.
 5. Log per serie: invariati (esercizio, serie, reps/secondi, RPE); per tabata e AMRAP un log per esercizio con i giri.
 
-Ordine di lavoro: catalogo (liste di Ste) → soglie → generatore → player tabata/AMRAP → prompt. Parte bassa e tecnica dopo,
-sulla stessa impalcatura.
+Parte bassa e tecnica dopo, sulla stessa impalcatura.
