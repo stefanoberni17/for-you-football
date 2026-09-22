@@ -82,16 +82,16 @@ Agganciata al ciclo di 4 settimane (`cicloInfo`):
 - 60': + fascia e lombari.
 - 75-90': + una variante in più (seconda spinta verticale o secondo rematore) o prevenzione.
 
-## Soglie a scalare (DA CONFERMARE con Ste)
-Oggi un gradino conta se supera 20 push / 10 pull / 60" tenute (`LADDER_SOGLIE`). Sui gradini alti è troppo.
-Proposta: spinta 20 fino all'arciere (push-1..4), 10 dal one-arm negativo (push-5..6), 5 dal one-arm (push-7..8);
-tirata 10 fino alla presa larga (pull-1..6), 5 dall'archer (pull-7..10). Cambia anche "Al tuo gradino"
-(`alGradino` in `lib/trainingProgressione.ts`), che usa la stessa soglia.
+## Soglie a scalare (confermate da Ste il 22/9, FATTO)
+`sogliaGradino(area, gradino)` in `lib/trainingEngine.ts`: spinta 20 fino all'arciere (push-1..4), 10 dal one-arm negativo
+(push-5..6), 5 dal one-arm (push-7..8); tirata 10 fino alla presa larga (pull-1..6), 5 dall'archer (pull-7..10); core e lombari 60".
+`LadderPoint.soglia` e `next.soglia` portano la soglia del gradino; "Al tuo gradino" (`alGradino`) e la pagina test le usano.
 
 ## Catalogo: cosa manca
-- **Spinta verticale a corpo libero**: scala pike push-up → pike con piedi rialzati → handstand push-up eccentrico
-  (oggi c'è solo overhead press con manubri/bilanciere e l'handstand eccentrico a PRO).
-- **Tirate orizzontali senza sbarra**: rematore a un braccio con manubrio/kettlebell, rematore sotto al tavolo (lista di Ste).
+- **Spinta verticale a corpo libero** (AGGIUNTI 22/9, sottogruppo "spinta verticale"): `fpa-pike-push-up` (B) → `fpa-pike-push-up-piedi-rialzati` (A)
+  → `fpa-eccentric-handstand-push-up` (PRO, c'era) → `fpa-handstand-push-up` (PRO, completo, Ste). In palestra restano overhead press manubri/bilanciere.
+- **Tirate orizzontali senza sbarra** (AGGIUNTI 22/9, sottogruppo "tirata orizzontale"): `fpa-gorilla-row` (kettlebell, per lato — Ste lo preferisce al
+  rematore a un braccio) e `fpa-rematore-sotto-al-tavolo` (corpo libero); con sbarra bassa `fpa-trazioni-australiane`, in palestra `fpa-rematore-con-bilanciere`.
 - **Esplosività** (AGGIUNTI 22/9): `fesp-salto-in-lungo-da-fermo`, `fesp-salto-in-alto-da-fermo`, `vel-sprint-10-m` (senza video) e le
   5 variazioni sprint con video del canale, tag `variante-sprint`: `vel-giro-180-piegamento-e-sprint`, `vel-burpee-e-sprint`,
   `vel-piegamento-a-terra-e-sprint`, `vel-sprint-con-partenza-in-ginocchio-laterale` (per lato), `vel-sprint-con-partenza-in-ginocchio`.

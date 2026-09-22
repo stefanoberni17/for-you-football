@@ -7195,5 +7195,120 @@
   "attivo": true,
   "qualita_secondaria": "core",
   "sottogruppo": "catena posteriore"
+ },
+ {
+  "nome": "Pike push-up",
+  "qualita": "forza-parte-alta",
+  "attrezzatura": "corpo libero",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 22/9/2026, parte alta dalle scale)",
+  "tags": [
+   "push",
+   "spinta verticale"
+  ],
+  "azione": "aggiunto 22/9/2026",
+  "nome_everfit": null,
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "spinta verticale",
+  "descrizione": "A V rovesciata, mani a terra poco più larghe delle spalle, bacino alto: piega i gomiti portando la testa verso il pavimento davanti alle mani, poi spingi. Le spalle lavorano come in una spinta sopra la testa."
+ },
+ {
+  "nome": "Pike push-up piedi rialzati",
+  "qualita": "forza-parte-alta",
+  "attrezzatura": "corpo libero",
+  "difficolta": 3,
+  "livello_min": "A",
+  "unita": "reps",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 22/9/2026, parte alta dalle scale)",
+  "tags": [
+   "push",
+   "spinta verticale"
+  ],
+  "azione": "aggiunto 22/9/2026",
+  "nome_everfit": null,
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "spinta verticale",
+  "descrizione": "Come il pike push-up ma con i piedi su una panca o un gradino: il busto è quasi verticale e il carico sulle spalle cresce. Testa che scende tra le mani, gomiti a 45°."
+ },
+ {
+  "nome": "Handstand push-up",
+  "qualita": "forza-parte-alta",
+  "attrezzatura": "corpo libero",
+  "difficolta": 5,
+  "livello_min": "PRO",
+  "unita": "reps",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 22/9/2026, parte alta dalle scale)",
+  "tags": [
+   "push",
+   "spinta verticale"
+  ],
+  "azione": "aggiunto 22/9/2026",
+  "nome_everfit": null,
+  "note": "Il gradino dopo Eccentric Handstand Push Up.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "spinta verticale",
+  "descrizione": "In verticale con i piedi appoggiati al muro: scendi finché la testa sfiora il pavimento e risali a braccia distese. Corpo in linea, addome duro, niente inarcamento. Solo con l'eccentrico pulito."
+ },
+ {
+  "nome": "Gorilla row",
+  "qualita": "forza-parte-alta",
+  "attrezzatura": "kettlebell",
+  "difficolta": 3,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": true,
+  "video": null,
+  "fonte": "Ste (chat 22/9/2026, parte alta dalle scale)",
+  "tags": [
+   "pull",
+   "tirata orizzontale"
+  ],
+  "azione": "aggiunto 22/9/2026",
+  "nome_everfit": null,
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "tirata orizzontale",
+  "descrizione": "Due kettlebell a terra tra i piedi, gambe piegate e schiena piatta come in un rematore: tira un kettlebell al fianco mentre l'altra mano resta appoggiata sull'altro, poi cambia. Il gomito passa vicino al corpo, il busto non ruota."
+ },
+ {
+  "nome": "Rematore sotto al tavolo",
+  "qualita": "forza-parte-alta",
+  "attrezzatura": "corpo libero",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 22/9/2026, parte alta dalle scale)",
+  "tags": [
+   "pull",
+   "tirata orizzontale"
+  ],
+  "azione": "aggiunto 22/9/2026",
+  "nome_everfit": null,
+  "note": "La tirata orizzontale di chi non ha sbarra né kettlebell.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "tirata orizzontale",
+  "descrizione": "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso il tavolo e scendi controllato. Piedi più vicini = più facile."
  }
 ]

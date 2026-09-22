@@ -162,7 +162,7 @@ function alGradino(it: PlanItem, scale: Map<AreaForza, LadderState | null>): Pla
   const catena = catenaByArea(ex.area);
   let target = ex, dose = it.quantita, perche = '';
   const p = l.amrap ?? l.points[0];
-  if (l.amrap || p.valore >= l.soglia / 2) {
+  if (l.amrap || p.valore >= p.soglia / 2) {
     // Il gradino su cui l'atleta ha un massimo utile: dose dal suo massimo
     const t = esercizioById(p.esercizioId);
     if (!t || t.unita !== ex.unita) return null;
