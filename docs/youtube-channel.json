@@ -2,434 +2,1138 @@
  "canale": "ForYou Functional Yoga Football",
  "channel_id": "UCrpiFJOHWyzO7qanluppQeQ",
  "handle": "@foryoufunctionalyogafootba9246",
- "scansione": "2026-09-04",
+ "scansione": "2026-09-22",
  "videos": [
+  {
+   "id": "TnyXe2YLKx8",
+   "titolo": "Presentazione programma Off-season standard calcio",
+   "durata": "3:31",
+   "tipo": "video",
+   "ordine": 0,
+   "playlist": []
+  },
   {
    "id": "o8MDW9RPZhQ",
    "titolo": "Advanced Fascia with elastic band",
    "durata": "1:32",
-   "playlist": [],
-   "collegato_a": [
-    "Advanced Fascia Progression"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "KtU_kvIz9LQ",
-   "titolo": "Allenamento di resistenza, tecnica e velocità per il calcio",
-   "durata": "1:30",
-   "playlist": [],
-   "collegato_a": [
-    "Esercizio Tecnica + Resistenza Funzionale Calcio",
-    "Esercizio resistenza e tecnica funzionale"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "VTJeEaJD2J4",
-   "titolo": "Allenamento di sprint e salite per il calcio per migliorare forza esplosiva e velocità",
-   "durata": "3:08",
-   "playlist": [],
-   "collegato_a": [
-    "Sprint e Salite - Forza esplosiva"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "LqRXesBqaZc",
-   "titolo": "Allenamento reattività, velocità di pensiero e visione di gioco per il calcio",
-   "durata": "7:07",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "VISIONE — da decidere (idea: video collegato all'esercizio di visione quando va fatto)"
-  },
-  {
-   "id": "XD6FJlCG_Dc",
-   "titolo": "Allenamento resistenza calcio",
-   "durata": "2:16",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "awqORbTjMYo",
-   "titolo": "Benefici della meditazione nel calcio",
-   "durata": "9:31",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "dMIAA6lhoYA",
-   "titolo": "Circuito forza esplosiva per il calcio - tecnica e resistenza",
-   "durata": "2:16",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "TfM9TJymxy8",
-   "titolo": "Esercizi di rapidità per movimenti degli attaccanti nel calcio",
-   "durata": "4:48",
-   "playlist": [],
-   "collegato_a": [
-    "Rapidità movimenti attaccanti"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "DIJDTCQuEVI",
-   "titolo": "Esercizio per migliorare 1vs1 difesa e attacco allenamento per il calcio",
-   "durata": "2:57",
-   "playlist": [],
-   "collegato_a": [
-    "1vs1 - difesa da fermo"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "LCUx-vWajaM",
-   "titolo": "Esercizio resistenza con palla per calcio",
-   "durata": "3:07",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "SSezNOH7eP8",
-   "titolo": "Esercizio visione di gioco e velocità di pensiero per il calcio",
-   "durata": "1:14",
-   "playlist": [],
-   "collegato_a": [
-    "Passaggi al muro - VISIONE"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "2eA0GIE31wU",
-   "titolo": "FY RDL con sviluppo",
-   "durata": "2:03",
-   "playlist": [],
-   "collegato_a": [
-    "FY RDL con sviluppo Plio"
-   ],
-   "proposta": ""
+   "tipo": "video",
+   "ordine": 1,
+   "playlist": []
   },
   {
    "id": "nV1Ql0KoKkU",
    "titolo": "Headball box dribbling",
    "durata": "1:39",
-   "playlist": [],
-   "collegato_a": [
-    "Box Dribbling - headball"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "lIGHaGQ50R0",
-   "titolo": "La meditazione per diventare più forti mentalmente nel calcio e nello sport",
-   "durata": "9:31",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "v9wYM2rs2gs",
-   "titolo": "Posizionamento difensore - tattica individuale calcio",
-   "durata": "6:38",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "TnyXe2YLKx8",
-   "titolo": "Presentazione programma Off-season standard calcio",
-   "durata": "3:31",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "GVvXmZ6-YsA",
-   "titolo": "Principio difensivo - postura del corpo",
-   "durata": "4:51",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "VTWEiS8eRJk",
-   "titolo": "Rapidità velocità e tiri in porta allenamento calcio",
-   "durata": "1:13",
-   "playlist": [],
-   "collegato_a": [
-    "BOX rapidità e Tiro"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "eCANAmeNDRw",
-   "titolo": "Resistenza alla velocità, forza esplosiva e tecnica",
-   "durata": "1:47",
-   "playlist": [],
-   "collegato_a": [
-    "Allenamento Tecnica - Resistenza - Velocità - Forza Esplosiva",
-    "Esercizi Resistenza alla Velocità"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "-MYGiPYInbs",
-   "titolo": "Rinforzo e prevenzione adduttori - abduttori - glutei - core per il calcio",
-   "durata": "4:49",
-   "playlist": [],
-   "collegato_a": [
-    "Rinforzo e prevenzione adduttori, abduttori, glutei, core"
-   ],
-   "proposta": "AGGIUNTO: fascia-prevenzione / prevenzione guidata"
-  },
-  {
-   "id": "tVO19Euz5uY",
-   "titolo": "Rinforzo e prevenzione rotazione anca e bacino",
-   "durata": "1:14",
-   "playlist": [],
-   "collegato_a": [
-    "Rinforzo e prevenzione rotazione anca e bacino"
-   ],
-   "proposta": "AGGIUNTO: fascia-prevenzione / prevenzione guidata"
-  },
-  {
-   "id": "-j_js9OIwBY",
-   "titolo": "Spinta alternata con cavi",
-   "durata": "1:23",
-   "playlist": [],
-   "collegato_a": [
-    "Spinta alternata Cavi - Core"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "rHL5XtEQe4w",
-   "titolo": "T sprint con palla e senza",
-   "durata": "1:21",
-   "playlist": [],
-   "collegato_a": [
-    "T sprint"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "Lfnm4BZ5cY0",
-   "titolo": "TEST SALTO IN LUNGO - Broad Jump",
-   "durata": "5:10",
-   "playlist": [],
-   "collegato_a": [
-    "Test Salto in lungo - broad jump"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "bCEnWPJzp_8",
-   "titolo": "Video colori bianco nero - visione di gioco e reattività",
-   "durata": "10:26",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "VISIONE — da decidere"
-  },
-  {
-   "id": "IPbeSEfeE2c",
-   "titolo": "Video schermo dribbling 1",
-   "durata": "4:01",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "VISIONE — da decidere"
+   "tipo": "video",
+   "ordine": 2,
+   "playlist": []
   },
   {
    "id": "aS7CmLiC0nQ",
    "titolo": "Video schermo dribbling 2",
    "durata": "5:03",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "VISIONE — da decidere"
+   "tipo": "video",
+   "ordine": 3,
+   "playlist": []
+  },
+  {
+   "id": "IPbeSEfeE2c",
+   "titolo": "Video schermo dribbling 1",
+   "durata": "4:01",
+   "tipo": "video",
+   "ordine": 4,
+   "playlist": []
+  },
+  {
+   "id": "v9wYM2rs2gs",
+   "titolo": "Posizionamento difensore - tattica individuale calcio",
+   "durata": "6:38",
+   "tipo": "video",
+   "ordine": 5,
+   "playlist": []
+  },
+  {
+   "id": "2eA0GIE31wU",
+   "titolo": "FY RDL con sviluppo",
+   "durata": "2:03",
+   "tipo": "video",
+   "ordine": 6,
+   "playlist": []
+  },
+  {
+   "id": "-j_js9OIwBY",
+   "titolo": "Spinta alternata con cavi",
+   "durata": "1:23",
+   "tipo": "video",
+   "ordine": 7,
+   "playlist": []
+  },
+  {
+   "id": "lIGHaGQ50R0",
+   "titolo": "La meditazione per diventare più forti mentalmente nel calcio e nello sport",
+   "durata": "9:31",
+   "tipo": "video",
+   "ordine": 8,
+   "playlist": []
+  },
+  {
+   "id": "-MYGiPYInbs",
+   "titolo": "Rinforzo e prevenzione adduttori - abduttori - glutei - core per il calcio",
+   "durata": "4:49",
+   "tipo": "video",
+   "ordine": 9,
+   "playlist": []
+  },
+  {
+   "id": "tVO19Euz5uY",
+   "titolo": "Rinforzo e prevenzione rotazione anca e bacino",
+   "durata": "1:14",
+   "tipo": "video",
+   "ordine": 10,
+   "playlist": []
+  },
+  {
+   "id": "Lfnm4BZ5cY0",
+   "titolo": "TEST SALTO IN LUNGO - Broad Jump",
+   "durata": "5:10",
+   "tipo": "video",
+   "ordine": 11,
+   "playlist": []
+  },
+  {
+   "id": "VTWEiS8eRJk",
+   "titolo": "Rapidità velocità e tiri in porta allenamento calcio",
+   "durata": "1:13",
+   "tipo": "video",
+   "ordine": 12,
+   "playlist": []
+  },
+  {
+   "id": "rHL5XtEQe4w",
+   "titolo": "T sprint con palla e senza",
+   "durata": "1:21",
+   "tipo": "video",
+   "ordine": 13,
+   "playlist": []
+  },
+  {
+   "id": "VTJeEaJD2J4",
+   "titolo": "Allenamento di sprint e salite per il calcio per migliorare forza esplosiva e velocità",
+   "durata": "3:08",
+   "tipo": "video",
+   "ordine": 14,
+   "playlist": []
+  },
+  {
+   "id": "eCANAmeNDRw",
+   "titolo": "Resistenza alla velocità, forza esplosiva e tecnica",
+   "durata": "1:47",
+   "tipo": "video",
+   "ordine": 15,
+   "playlist": []
+  },
+  {
+   "id": "bCEnWPJzp_8",
+   "titolo": "Video colori bianco nero - visione di gioco e reattività",
+   "durata": "10:26",
+   "tipo": "video",
+   "ordine": 16,
+   "playlist": []
+  },
+  {
+   "id": "LCUx-vWajaM",
+   "titolo": "Esercizio resistenza con palla per calcio",
+   "durata": "3:07",
+   "tipo": "video",
+   "ordine": 17,
+   "playlist": []
+  },
+  {
+   "id": "KtU_kvIz9LQ",
+   "titolo": "Allenamento di resistenza, tecnica e velocità per il calcio",
+   "durata": "1:30",
+   "tipo": "video",
+   "ordine": 18,
+   "playlist": []
   },
   {
    "id": "Bj07bevdQ5A",
    "titolo": "Visione periferica e tecnica allenamento per il calcio visual training",
    "durata": "1:13",
-   "playlist": [],
-   "collegato_a": [],
-   "proposta": "VISIONE — da decidere"
+   "tipo": "video",
+   "ordine": 19,
+   "playlist": []
+  },
+  {
+   "id": "DIJDTCQuEVI",
+   "titolo": "Esercizio per migliorare 1vs1 difesa e attacco allenamento per il calcio",
+   "durata": "2:57",
+   "tipo": "video",
+   "ordine": 20,
+   "playlist": []
+  },
+  {
+   "id": "awqORbTjMYo",
+   "titolo": "Benefici della meditazione nel calcio",
+   "durata": "9:31",
+   "tipo": "video",
+   "ordine": 21,
+   "playlist": []
   },
   {
    "id": "2FG2fZhDLJo",
    "titolo": "Consigli e Esercizi per tiri e Punizioni con Barriera",
    "durata": "7:32",
+   "tipo": "video",
+   "ordine": 22,
    "playlist": [
     "Calci di Punizione - Free kicks"
-   ],
-   "collegato_a": [],
-   "proposta": "fuori catalogo (deciso da Ste, set 2026)"
-  },
-  {
-   "id": "YGTHUBKF5hM",
-   "titolo": "Esercizi e consigli per il calcio di punizione e tiri",
-   "durata": "33:53",
-   "playlist": [
-    "Calci di Punizione - Free kicks"
-   ],
-   "collegato_a": [
-    "Progressione tiri in porta - Tecnica di tiro"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "-Jcm417dMl8",
-   "titolo": "Circuito addominali e lombari avanzato",
-   "durata": "31:19",
-   "playlist": [
-    "Esercizi di Rinforzo e Prevenzione"
-   ],
-   "collegato_a": [],
-   "proposta": "AGGIUNTO: core / core guidato"
-  },
-  {
-   "id": "fX8KVJDoovY",
-   "titolo": "Esercizi con elastici funzionali al calcio per rinforzo e prevenzione",
-   "durata": "15:03",
-   "playlist": [
-    "Esercizi di Rinforzo e Prevenzione"
-   ],
-   "collegato_a": [
-    "Esercizi Elastici prevenzione e mobilità"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "SCjwTWXzrTM",
-   "titolo": "Esercizi di prevenzione, propriocezione, instabilità sullo skimmy",
-   "durata": "20:36",
-   "playlist": [
-    "Esercizi di Rinforzo e Prevenzione"
-   ],
-   "collegato_a": [
-    "Circuito Propriocezione"
-   ],
-   "proposta": ""
-  },
-  {
-   "id": "bpkpnZW9QD0",
-   "titolo": "Sessione recupero dopo partita o allenamenti pesanti",
-   "durata": "30:14",
-   "playlist": [
-    "Esercizi per il recupero"
-   ],
-   "collegato_a": [
-    "Sessione recupero dopo partita o allenamenti pesanti"
-   ],
-   "proposta": "AGGIUNTO: mobilita-recupero / recupero guidato"
+   ]
   },
   {
    "id": "CPR99KAUm-4",
    "titolo": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
    "durata": "1:51",
+   "tipo": "video",
+   "ordine": 23,
    "playlist": [
     "Rapidità e velocità"
-   ],
-   "collegato_a": [
-    "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
-    "Tiri in porta e VISIONE"
-   ],
-   "proposta": ""
+   ]
   },
   {
-   "id": "DLkmPVQgdFE",
-   "titolo": "Esercizio di rapidità, velocità e tecnica funzionale al calcio",
-   "durata": "0:54",
+   "id": "dMIAA6lhoYA",
+   "titolo": "Circuito forza esplosiva per il calcio - tecnica e resistenza",
+   "durata": "2:16",
+   "tipo": "video",
+   "ordine": 24,
+   "playlist": []
+  },
+  {
+   "id": "SSezNOH7eP8",
+   "titolo": "Esercizio visione di gioco e velocità di pensiero per il calcio",
+   "durata": "1:14",
+   "tipo": "video",
+   "ordine": 25,
+   "playlist": []
+  },
+  {
+   "id": "LqRXesBqaZc",
+   "titolo": "Allenamento reattività, velocità di pensiero e visione di gioco per il calcio",
+   "durata": "7:07",
+   "tipo": "video",
+   "ordine": 26,
+   "playlist": []
+  },
+  {
+   "id": "GVvXmZ6-YsA",
+   "titolo": "Principio difensivo - postura del corpo",
+   "durata": "4:51",
+   "tipo": "video",
+   "ordine": 27,
+   "playlist": []
+  },
+  {
+   "id": "TfM9TJymxy8",
+   "titolo": "Esercizi di rapidità per movimenti degli attaccanti nel calcio",
+   "durata": "4:48",
+   "tipo": "video",
+   "ordine": 28,
+   "playlist": []
+  },
+  {
+   "id": "YGTHUBKF5hM",
+   "titolo": "Esercizi e consigli per il calcio di punizione e tiri",
+   "durata": "33:53",
+   "tipo": "video",
+   "ordine": 29,
    "playlist": [
-    "Rapidità e velocità"
-   ],
-   "collegato_a": [
-    "Circuito Resistenza, Velocità, Tecnica x Esterno"
-   ],
-   "proposta": ""
+    "Calci di Punizione - Free kicks"
+   ]
+  },
+  {
+   "id": "fX8KVJDoovY",
+   "titolo": "Esercizi con elastici funzionali al calcio per rinforzo e prevenzione",
+   "durata": "15:03",
+   "tipo": "video",
+   "ordine": 30,
+   "playlist": [
+    "Esercizi di Rinforzo e Prevenzione"
+   ]
   },
   {
    "id": "n3VjhSqo4EM",
    "titolo": "Esercizi Prevenzione pubalgia o infiammazione agli adduttori e allungamento",
    "durata": "35:21",
+   "tipo": "video",
+   "ordine": 31,
    "playlist": [
-    "Yoga per il calcio",
+    "Esercizi di Rinforzo e Prevenzione",
+    "Yoga per il calcio"
+   ]
+  },
+  {
+   "id": "SCjwTWXzrTM",
+   "titolo": "Esercizi di prevenzione, propriocezione, instabilità sullo skimmy",
+   "durata": "20:36",
+   "tipo": "video",
+   "ordine": 32,
+   "playlist": [
     "Esercizi di Rinforzo e Prevenzione"
-   ],
-   "collegato_a": [
-    "Sequenza Yoga - Prevenzione Pubalgia e rinforzo",
-    "Yoga prevenzione e forza adduttori"
-   ],
-   "proposta": ""
+   ]
+  },
+  {
+   "id": "XD6FJlCG_Dc",
+   "titolo": "Allenamento resistenza calcio",
+   "durata": "2:16",
+   "tipo": "video",
+   "ordine": 33,
+   "playlist": []
+  },
+  {
+   "id": "-Jcm417dMl8",
+   "titolo": "Circuito addominali e lombari avanzato",
+   "durata": "31:19",
+   "tipo": "video",
+   "ordine": 34,
+   "playlist": [
+    "Esercizi di Rinforzo e Prevenzione"
+   ]
+  },
+  {
+   "id": "bpkpnZW9QD0",
+   "titolo": "Sessione recupero dopo partita o allenamenti pesanti",
+   "durata": "30:14",
+   "tipo": "video",
+   "ordine": 35,
+   "playlist": [
+    "Esercizi per il recupero"
+   ]
   },
   {
    "id": "3LK-pgWd5F8",
    "titolo": "Functional yoga addominali adduttori flessori pubalgia per calcio",
    "durata": "39:13",
+   "tipo": "video",
+   "ordine": 36,
    "playlist": [
-    "Yoga per il calcio",
-    "Esercizi di Rinforzo e Prevenzione"
-   ],
-   "collegato_a": [
-    "Sequenza Yoga - Prevenzione Pubalgia e rinforzo avanzato"
-   ],
-   "proposta": ""
+    "Esercizi di Rinforzo e Prevenzione",
+    "Yoga per il calcio"
+   ]
   },
   {
    "id": "MGTU2b00s5w",
    "titolo": "Yoga calcio funzionale rinforzo quadricipiti e adduttori per prevenire infortuni e pubalgia",
    "durata": "45:54",
+   "tipo": "video",
+   "ordine": 37,
    "playlist": [
-    "Yoga per il calcio",
-    "Esercizi di Rinforzo e Prevenzione"
-   ],
-   "collegato_a": [
-    "Sequenza Yoga - Rinforzo Quadricipiti e Adduttori avanzato"
-   ],
-   "proposta": ""
+    "Esercizi di Rinforzo e Prevenzione",
+    "Yoga per il calcio"
+   ]
   },
   {
    "id": "iXgtmz6QnzA",
    "titolo": "Yoga per il recupero e rilassamento nel calcio",
    "durata": "17:30",
+   "tipo": "video",
+   "ordine": 38,
    "playlist": [
-    "Yoga per il calcio",
-    "Esercizi per il recupero"
-   ],
-   "collegato_a": [
-    "Sequenza Yoga - Recupero e Mobilità",
-    "Sessione mobilità/yoga guidata (video)"
-   ],
-   "proposta": ""
+    "Esercizi per il recupero",
+    "Yoga per il calcio"
+   ]
+  },
+  {
+   "id": "s8AM8jty5-o",
+   "titolo": "Giro 180º piegamento e sprint",
+   "durata": "0:07",
+   "tipo": "short",
+   "ordine": 0,
+   "playlist": [
+    "Rapidità e velocità"
+   ]
+  },
+  {
+   "id": "XkMDtZ2AnQs",
+   "titolo": "Burpee e sprint",
+   "durata": "0:05",
+   "tipo": "short",
+   "ordine": 1,
+   "playlist": [
+    "Rapidità e velocità"
+   ]
+  },
+  {
+   "id": "bDwr7WxZdWo",
+   "titolo": "Piegamento a terra e sprint",
+   "durata": "0:04",
+   "tipo": "short",
+   "ordine": 2,
+   "playlist": [
+    "Rapidità e velocità"
+   ]
+  },
+  {
+   "id": "x6RyCdfPcnA",
+   "titolo": "Sprint con partenza in ginocchio laterale",
+   "durata": "0:06",
+   "tipo": "short",
+   "ordine": 3,
+   "playlist": [
+    "Rapidità e velocità"
+   ]
+  },
+  {
+   "id": "4mn2rv1ulU0",
+   "titolo": "Sprint con partenza in ginocchio.",
+   "durata": "0:04",
+   "tipo": "short",
+   "ordine": 4,
+   "playlist": [
+    "Rapidità e velocità"
+   ]
+  },
+  {
+   "id": "QpAlCjqXBKk",
+   "titolo": "Allenamento velocità, forza esplosiva, accelerazione per #calcio #allenamentocalcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 5,
+   "playlist": []
+  },
+  {
+   "id": "GBH47rEC5zo",
+   "titolo": "Palleggio sprint e tiro in porta #allenamentocalcio #football #calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 6,
+   "playlist": []
+  },
+  {
+   "id": "onjvnDBDyjA",
+   "titolo": "Sprint e tiro in porta #football #allenamentocalcio #calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 7,
+   "playlist": []
+  },
+  {
+   "id": "1mJAf1qTUrg",
+   "titolo": "Meditazione guidata 2 minuti #meditazione #calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 8,
+   "playlist": []
+  },
+  {
+   "id": "b4J61dKhYvA",
+   "titolo": "Ronaldo #fenomeno #dribbblers",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 9,
+   "playlist": []
+  },
+  {
+   "id": "itq-E8EcZEQ",
+   "titolo": "Plank torsione elastica #allenamentoacorpolibero #allenamentocalcio #coreworkout",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 10,
+   "playlist": []
+  },
+  {
+   "id": "FPZkcfY-2Yo",
+   "titolo": "Plank jumps - elasticità core #football #allenamentoacorpolibero #allenamentocalcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 11,
+   "playlist": []
+  },
+  {
+   "id": "8hiq9jrM3Is",
+   "titolo": "Un trucco per prendere posizione sull’attaccante #sergioramos #football #calcio #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 12,
+   "playlist": []
+  },
+  {
+   "id": "eczdqr2oU7w",
+   "titolo": "Ankle stiffness con manubri #football #dribbblers #calcio #soccer #plyometric #sprint #velocità",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 13,
+   "playlist": []
+  },
+  {
+   "id": "HArgbyegMsc",
+   "titolo": "Visual Training nel calcio #football #soccer #calcio #dribbblers",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 14,
+   "playlist": []
+  },
+  {
+   "id": "M71YYNFUato",
+   "titolo": "Allenamento tiri in porta Real Madrid #calcio #football #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 15,
+   "playlist": []
+  },
+  {
+   "id": "nMzyoLhWsI8",
+   "titolo": "CALCIO TAVERNELLO🍷una azione difensiva incredibile! #football #calcio #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 16,
+   "playlist": []
+  },
+  {
+   "id": "CF1Qh7OIxvQ",
+   "titolo": "Il talento si crea con l’allenamento #calcio #tecnica #brazil #allenamento",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 17,
+   "playlist": []
+  },
+  {
+   "id": "IeXJA-028nA",
+   "titolo": "Salto triplo e sprint #pliometria #velocità e #forza esplosiva #plyometric #sprint",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 18,
+   "playlist": []
+  },
+  {
+   "id": "aH5O95mInLM",
+   "titolo": "Velocitá e sprint con palla #calcio #sprint #velocità #plyometric",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 19,
+   "playlist": []
+  },
+  {
+   "id": "08abU7xxYEw",
+   "titolo": "Fascia A-Skip - tecnica corsa #football #tutorial #plyometrics #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 20,
+   "playlist": []
+  },
+  {
+   "id": "JqkG0gvTKls",
+   "titolo": "Front jumps - pliometria e fascia #football #tutorial #plyometrics #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 21,
+   "playlist": []
+  },
+  {
+   "id": "aF2Da_iwg4A",
+   "titolo": "Lateral jumps - pliometria e fascia #football #tutorial #plyometrics #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 22,
+   "playlist": []
+  },
+  {
+   "id": "C4U8ip3peiY",
+   "titolo": "Navette laterali con pallina da tennis #football #forza",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 23,
+   "playlist": []
+  },
+  {
+   "id": "r_Dwebm0UQk",
+   "titolo": "Saltelli in mezzo affondo con switch - pliometria e forza #plyometrics #football #soccer #tutorial",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 24,
+   "playlist": []
+  },
+  {
+   "id": "KW7j7v8reag",
+   "titolo": "Saltelli in squat diagonale - pliometria e forza #plyometrics #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 25,
+   "playlist": []
+  },
+  {
+   "id": "IhDBeFEdBz4",
+   "titolo": "Saltelli in squat - pliometria e forza #plyometrics #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 26,
+   "playlist": []
+  },
+  {
+   "id": "2mbmxURlV0g",
+   "titolo": "Esercizio dribbling e visione per il calcio #football #skills #footwork #soccer #tutorial",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 27,
+   "playlist": []
+  },
+  {
+   "id": "I4VWFgi-MZA",
+   "titolo": "Passaggi al muro ravvicinati interno esterno - tecnica di base #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 28,
+   "playlist": []
+  },
+  {
+   "id": "1e_cy9gIlko",
+   "titolo": "Passaggi al muro ravvicinati solo collo - tecnica di base #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 29,
+   "playlist": []
+  },
+  {
+   "id": "T4NG0_P-AT4",
+   "titolo": "Palleggi piedi coscia spalla testa - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 30,
+   "playlist": []
+  },
+  {
+   "id": "Fcf7r_xfbBw",
+   "titolo": "Palleggi solo coscia e testa - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 31,
+   "playlist": []
+  },
+  {
+   "id": "ukfHZly5aSw",
+   "titolo": "Passaggi al muro 1 tocco collo - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 32,
+   "playlist": []
+  },
+  {
+   "id": "lEQEqGne-Ug",
+   "titolo": "Palleggi alternati interno esterno - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 33,
+   "playlist": []
+  },
+  {
+   "id": "C3gNbAoRXzI",
+   "titolo": "Palleggi collo interno esteno - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 34,
+   "playlist": []
+  },
+  {
+   "id": "POmnAoqSD3w",
+   "titolo": "Palleggi di collo altezza testa - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 35,
+   "playlist": []
+  },
+  {
+   "id": "3ShS3X4iev4",
+   "titolo": "Palleggi di collo sotto al ginocchio - tecnica di base",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 36,
+   "playlist": []
+  },
+  {
+   "id": "uaT93uaZr3Y",
+   "titolo": "Passaggi al muro controllo con finta esterno - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 37,
+   "playlist": []
+  },
+  {
+   "id": "Qwxkv16cSJE",
+   "titolo": "Passaggi al muro controllo orientato esterno - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 38,
+   "playlist": []
+  },
+  {
+   "id": "508Oe27qu2c",
+   "titolo": "Passaggi al muro controllo orientato interno - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 39,
+   "playlist": []
+  },
+  {
+   "id": "XFGiqqid-yo",
+   "titolo": "Passaggi al muro controllo con sombrero - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 40,
+   "playlist": []
+  },
+  {
+   "id": "4KuHcz9RXfg",
+   "titolo": "Passaggi al muro controllo alzando palla - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 41,
+   "playlist": []
+  },
+  {
+   "id": "I0xp9ZXWmUc",
+   "titolo": "Passaggi al muro 2 tocchi controllo esterno passaggio interno - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 42,
+   "playlist": []
+  },
+  {
+   "id": "LlkI17npYvA",
+   "titolo": "Passaggi al muro 2 tocchi interno 2 piedi - tecnica di base #tutorial #football ￼",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 43,
+   "playlist": []
+  },
+  {
+   "id": "onV2Bm2FhX0",
+   "titolo": "Passaggi al muro 2 tocchi interno solo 1 piede - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 44,
+   "playlist": []
+  },
+  {
+   "id": "Ivh_aOY4Y48",
+   "titolo": "Passaggio controllo di interno e turn 180 - tecnica di base #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 45,
+   "playlist": []
+  },
+  {
+   "id": "OMnwTSqZbNY",
+   "titolo": "Passaggio e controllo a 180 - tecnica di base calcio #tutorial #football",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 46,
+   "playlist": []
+  },
+  {
+   "id": "vE5L562syyg",
+   "titolo": "Palleggio pallina da tennis controllo palla fascia per calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 47,
+   "playlist": []
+  },
+  {
+   "id": "8NhZcJNOma4",
+   "titolo": "Equilibrio 3 tencica rimbalzo pallina da tennis controllo palla fascia per calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 48,
+   "playlist": []
+  },
+  {
+   "id": "DRoBrKDueh4",
+   "titolo": "Equilibrio 2 tecnica rimbalzo pallina da tennis controllo palla fascia per calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 49,
+   "playlist": []
+  },
+  {
+   "id": "CfVvAUj_Fv4",
+   "titolo": "Equilibrio pallina da tennis controllo palla fascia per calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 50,
+   "playlist": []
+  },
+  {
+   "id": "qMur94X9Tp0",
+   "titolo": "FY lateral step up / esercizio prevenzione infortuni per il calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 51,
+   "playlist": []
+  },
+  {
+   "id": "rleHrcL6teA",
+   "titolo": "Fascia pogo jumps",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 52,
+   "playlist": []
+  },
+  {
+   "id": "oGdTbZPCEz8",
+   "titolo": "Towel curls tallone sollevato (toe curls)",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 53,
+   "playlist": []
+  },
+  {
+   "id": "NqUjlWxJYdE",
+   "titolo": "Reverse lateral drop jump progression - cambi direzione calcio avanzato pliometria",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 54,
+   "playlist": []
+  },
+  {
+   "id": "-b3h-iylZ1s",
+   "titolo": "Single leg lateral drop jump",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 55,
+   "playlist": []
+  },
+  {
+   "id": "Mb_vKJ2ODCU",
+   "titolo": "Reverse drop jump - reattività e velocità calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 56,
+   "playlist": []
+  },
+  {
+   "id": "CLJr7cgOp60",
+   "titolo": "Single leg drop jump interno",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 57,
+   "playlist": []
+  },
+  {
+   "id": "DB8HS4sJP-Y",
+   "titolo": "Single leg lateral drop e spinta - cambi direzione calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 58,
+   "playlist": []
+  },
+  {
+   "id": "rwYPvd_iVDk",
+   "titolo": "Drop jump - reattività esplosività calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 59,
+   "playlist": []
+  },
+  {
+   "id": "7G-7pvahAoM",
+   "titolo": "FY Split Squat",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 60,
+   "playlist": []
+  },
+  {
+   "id": "XUSLWFnVF-c",
+   "titolo": "FY Knees Extensions",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 61,
+   "playlist": []
+  },
+  {
+   "id": "ec7UiNedKhg",
+   "titolo": "Esercizi in palestra e sport #calcio #football #tutorial #sports #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 62,
+   "playlist": []
+  },
+  {
+   "id": "pvz1imwG2hM",
+   "titolo": "Eccentric elevated hamstring single leg #calcio #football #tutorial #sports #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 63,
+   "playlist": []
+  },
+  {
+   "id": "1Mb78dXSxso",
+   "titolo": "Elevated Hamstring bridge single leg #calcio #football #tutorial #sports #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 64,
+   "playlist": []
+  },
+  {
+   "id": "Szavvv-yaE8",
+   "titolo": "Core hamstrings running - prevenzione #calcio #football #tutorial #sports #soccer",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 65,
+   "playlist": []
+  },
+  {
+   "id": "ctzBaTKX5qE",
+   "titolo": "Copenhagen plank fy #calcio #football #tutorial #soccer #sports",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 66,
+   "playlist": []
+  },
+  {
+   "id": "nkje-N1qxSU",
+   "titolo": "Test reattività e forza caviglie / piede",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 67,
+   "playlist": []
+  },
+  {
+   "id": "Oh78p4PZ61w",
+   "titolo": "Allenare i piedi e il sistema fasciale",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 68,
+   "playlist": []
+  },
+  {
+   "id": "aDOYiaJ4W1A",
+   "titolo": "Esercizio 1vs1 calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 69,
+   "playlist": []
+  },
+  {
+   "id": "BfB2ubvweSg",
+   "titolo": "Esercizio Tecnica Calcio - passaggi a 2 rasoterra",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 70,
+   "playlist": []
+  },
+  {
+   "id": "RLk8Mx-SxgM",
+   "titolo": "Esercizio Tecnica Calcio - palleggio in 2 con 2 palloni",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 71,
+   "playlist": []
+  },
+  {
+   "id": "eYdKQtpTreA",
+   "titolo": "Esercizio tecnica calcio - passaggio a terra e al volo in 2",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 72,
+   "playlist": []
+  },
+  {
+   "id": "o5YLyFdueBg",
+   "titolo": "FORZA MAX Slide Sissy Squat",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 73,
+   "playlist": []
+  },
+  {
+   "id": "DUfENQ6h8NI",
+   "titolo": "Spinta frontale corsa - fascia - skip isometria",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 74,
+   "playlist": []
+  },
+  {
+   "id": "K55Sm0yGxME",
+   "titolo": "Protezione palla laterale palleggi - fascia",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 75,
+   "playlist": []
+  },
+  {
+   "id": "fjhKOlmaYhM",
+   "titolo": "Protezione palla schiena - fascia",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 76,
+   "playlist": []
+  },
+  {
+   "id": "Ev-KPrVbsPA",
+   "titolo": "Protezione palla figura 8 suola - fascia",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 77,
+   "playlist": []
+  },
+  {
+   "id": "nnSMkB7saNY",
+   "titolo": "Spinta laterale e finta - protezione palla - fascia",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 78,
+   "playlist": []
+  },
+  {
+   "id": "9HcNXIItrps",
+   "titolo": "Spinta laterale suola - protezione palla - fascia",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 79,
+   "playlist": []
+  },
+  {
+   "id": "XdDmJ6p3qfE",
+   "titolo": "Protezione palla laterale suola - Fascia",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 80,
+   "playlist": []
+  },
+  {
+   "id": "jZLW7_-PNYw",
+   "titolo": "Crow pose to handstand #tutorial",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 81,
+   "playlist": []
+  },
+  {
+   "id": "BIK6s6S17wU",
+   "titolo": "Allenare i piedi e la fascia",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 82,
+   "playlist": []
+  },
+  {
+   "id": "dnCYoY9xnKM",
+   "titolo": "Kross first touch",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 83,
+   "playlist": []
+  },
+  {
+   "id": "ULonVNWqPhw",
+   "titolo": "Qual’è il modulo migliore per pressare alto?",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 84,
+   "playlist": []
+  },
+  {
+   "id": "G847XpmL7CA",
+   "titolo": "Real Madrid azione e gol",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 85,
+   "playlist": []
+  },
+  {
+   "id": "YAF8Zi6HLi8",
+   "titolo": "Test rapidità e reattività caviglie per il calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 86,
+   "playlist": []
+  },
+  {
+   "id": "4XpQticB6eo",
+   "titolo": "L’importanza dell’allenamento di forza nel calcio",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 87,
+   "playlist": []
+  },
+  {
+   "id": "B0bLp0sq_OU",
+   "titolo": "Palleggi Freestyle pallina su 3 conetti",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 88,
+   "playlist": []
+  },
+  {
+   "id": "HJPfyMZdYnc",
+   "titolo": "3 dettagli che possono fare la differenza per un calciatore nel contropiede",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 89,
+   "playlist": []
+  },
+  {
+   "id": "IyFNwom5Gno",
+   "titolo": "Busquets insegna l’arte del primo controllo",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 90,
+   "playlist": []
+  },
+  {
+   "id": "l2_cONp3Sjk",
+   "titolo": "Come fare più assist!  maestro Guti",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 91,
+   "playlist": []
+  },
+  {
+   "id": "Z87AOAXibyA",
+   "titolo": "Il segreto di Robben per fare i dribbling",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 92,
+   "playlist": []
+  },
+  {
+   "id": "qCpa_IEVWQw",
+   "titolo": "Sergio ramos defence",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 93,
+   "playlist": []
+  },
+  {
+   "id": "DLkmPVQgdFE",
+   "titolo": "Esercizio di rapidità, velocità e tecnica funzionale al calcio",
+   "durata": "0:54",
+   "tipo": "short",
+   "ordine": 94,
+   "playlist": [
+    "Rapidità e velocità"
+   ]
+  },
+  {
+   "id": "hI3OexkWq6g",
+   "titolo": "Fall in love with the journey, not only the destination!",
+   "durata": "",
+   "tipo": "short",
+   "ordine": 95,
+   "playlist": []
   }
  ],
  "playlists": {
-  "PL6Dh3F0reiimRK3JZ9tAqiLf6NAAUVOrN": {
-   "nome": "Yoga per il calcio",
-   "ids": [
-    "iXgtmz6QnzA",
-    "MGTU2b00s5w",
-    "3LK-pgWd5F8",
-    "n3VjhSqo4EM"
-   ]
-  },
-  "PL6Dh3F0reiimL6xzoUWARfZtEjXT1jk7F": {
-   "nome": "Esercizi per il recupero",
-   "ids": [
-    "iXgtmz6QnzA",
-    "bpkpnZW9QD0"
-   ]
-  },
   "PL6Dh3F0reiinrucPCcdzi0RD-heBbF0Jz": {
    "nome": "Rapidità e velocità",
    "ids": [
     "DLkmPVQgdFE",
-    "CPR99KAUm-4"
+    "CPR99KAUm-4",
+    "x6RyCdfPcnA",
+    "4mn2rv1ulU0",
+    "bDwr7WxZdWo",
+    "XkMDtZ2AnQs",
+    "s8AM8jty5-o"
    ]
   },
   "PL6Dh3F0reiimEx2k4HDt8ELOAIp6Rm4iB": {
@@ -448,6 +1152,22 @@
     "3LK-pgWd5F8",
     "MGTU2b00s5w",
     "fX8KVJDoovY"
+   ]
+  },
+  "PL6Dh3F0reiimL6xzoUWARfZtEjXT1jk7F": {
+   "nome": "Esercizi per il recupero",
+   "ids": [
+    "iXgtmz6QnzA",
+    "bpkpnZW9QD0"
+   ]
+  },
+  "PL6Dh3F0reiimRK3JZ9tAqiLf6NAAUVOrN": {
+   "nome": "Yoga per il calcio",
+   "ids": [
+    "iXgtmz6QnzA",
+    "MGTU2b00s5w",
+    "3LK-pgWd5F8",
+    "n3VjhSqo4EM"
    ]
   }
  }

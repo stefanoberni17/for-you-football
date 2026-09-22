@@ -49,6 +49,13 @@ def extract(d):
         badges = []; walk(p, "thumbnailBadgeViewModel", badges)
         dur = next((b.get("text") for b in badges if re.match(r"^\d+:\d\d", str(b.get("text", "")))), "")
         out[cid] = {"id": cid, "titolo": txt(meta.get("title")), "durata": dur}
+    SL = []; walk(d, "shortsLockupViewModel", SL)
+    for p in SL:
+        vid = (p.get("onTap", {}).get("innertubeCommand", {}).get("reelWatchEndpoint", {}) or {}).get("videoId")
+        if not vid: continue
+        title = txt((p.get("overlayMetadata", {}).get("primaryText")) or {}) or re.sub(r",\s*[^,]*- riproduci Short$", "", p.get("accessibilityText", ""))
+        out.setdefault(vid, {"id": vid, "titolo": title, "durata": ""})
+        out[vid]["tipo"] = "short"
     G = []
     def g(o):
         if isinstance(o, dict):
@@ -64,20 +71,34 @@ def extract(d):
     return out
 
 
-def main():
-    html = get(f"https://www.youtube.com/channel/{CHANNEL_ID}/videos")
-    d = yt_data(html); videos = extract(d)
+def scan_tab(tab, videos, tipo):
+    """Scorre una tab del canale (/videos o /shorts) con le continuation. Ordine = più recenti prima."""
+    html = get(f"https://www.youtube.com/channel/{CHANNEL_ID}/{tab}")
+    d = yt_data(html); got = extract(d)
     key = re.search(r'"INNERTUBE_API_KEY":"([^"]+)"', html).group(1)
     ver = re.search(r'"INNERTUBE_CLIENT_VERSION":"([^"]+)"', html).group(1)
+    ordine = 0
+    def add(got):
+        nonlocal ordine
+        for k, v in got.items():
+            if k in videos: continue
+            v.setdefault("tipo", tipo); v["ordine"] = ordine; ordine += 1
+            videos[k] = v
+    before = len(videos); add(got)
     conts = []; walk(d, "continuationCommand", conts); tok = conts[0]["token"] if conts else None
     n = 0
     while tok and n < 30:
         body = json.dumps({"context": {"client": {"clientName": "WEB", "clientVersion": ver, "hl": "it", "gl": "IT"}}, "continuation": tok}).encode()
         r = json.loads(get("https://www.youtube.com/youtubei/v1/browse?key=" + key, data=body, extra={"Content-Type": "application/json"}))
-        got = extract(r); before = len(videos)
-        for k, v in got.items(): videos.setdefault(k, v)
+        got = extract(r); before = len(videos); add(got)
         conts = []; walk(r, "continuationCommand", conts); tok = conts[0]["token"] if conts else None; n += 1
         if len(videos) == before: break
+
+
+def main():
+    videos = {}
+    scan_tab("videos", videos, "video")
+    scan_tab("shorts", videos, "short")
     ph = get(f"https://www.youtube.com/channel/{CHANNEL_ID}/playlists"); pd = yt_data(ph)
     pls = {}
     L = []; walk(pd, "lockupViewModel", L)
@@ -93,9 +114,13 @@ def main():
         pls[pid] = {"nome": name, "ids": list(got.keys())}
     for vid, v in videos.items():
         v["playlist"] = [p["nome"] for p in pls.values() if vid in p["ids"]]
-    json.dump({"channel_id": CHANNEL_ID, "videos": list(videos.values()), "playlists": pls},
+        v.setdefault("tipo", "video"); v.setdefault("ordine", 9999)
+    import datetime
+    json.dump({"canale": "ForYou Functional Yoga Football", "channel_id": CHANNEL_ID, "handle": "@foryoufunctionalyogafootba9246",
+               "scansione": datetime.date.today().isoformat(), "videos": list(videos.values()), "playlists": pls},
               open("docs/youtube-channel.json", "w"), ensure_ascii=False, indent=1)
-    print(f"{len(videos)} video, {len(pls)} playlist → docs/youtube-channel.json")
+    ns = sum(1 for v in videos.values() if v["tipo"] == "short")
+    print(f"{len(videos)} video ({ns} short), {len(pls)} playlist → docs/youtube-channel.json")
 
 
 if __name__ == "__main__":
