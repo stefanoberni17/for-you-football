@@ -6588,8 +6588,7 @@ export const BLOCCHI: Blocco[] = [
     "quantita": 12.0,
     "unita": "reps",
     "recupero_sec": 30,
-    "carico_kg": 16.0,
-    "perLato": true
+    "carico_kg": 16.0
    },
    {
     "esercizio_id": "fesp-kettlebell-rotational-clean",

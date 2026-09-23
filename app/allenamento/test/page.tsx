@@ -16,8 +16,8 @@ interface TestInfo {
   done: boolean; lastValue: number | null; lastLevel: string | null;
 }
 interface AmrapStation { nome: string; quantita: number; unita: string }
-interface LadderPoint { esercizioId: string; nome: string; gradino: number; valore: number; unita: string }
-interface LadderNext { id: string; nome: string; gradino: number; unita: string; descrizione?: string }
+interface LadderPoint { esercizioId: string; nome: string; gradino: number; valore: number; unita: string; soglia: number }
+interface LadderNext { id: string; nome: string; gradino: number; unita: string; descrizione?: string; soglia: number }
 interface LadderInfo { area: string; soglia: number; points: LadderPoint[]; next: LadderNext | null; amrap: LadderPoint | null }
 interface TestV2Info {
   id: string; nome: string; categoria: string; categoriaLabel: string; unita: string; verso: 'max' | 'min';
@@ -376,7 +376,7 @@ export default function BatteriaTest() {
                 <Card key={l.area} padding="sm">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-body font-bold text-app">{AREA_LABEL[l.area] || l.area}</p>
-                    <p className="text-caption text-muted">soglia {fmtVal(l.soglia, l.points[0]?.unita || 'reps')}</p>
+                    <p className="text-caption text-muted">soglia {fmtVal(l.soglia, l.points[0]?.unita || 'reps')}{l.area === 'spinta' || l.area === 'tirata' ? ', meno sui gradini alti' : ''}</p>
                   </div>
                   <div className="mb-2">
                     {l.points.map((p) => (
@@ -386,8 +386,8 @@ export default function BatteriaTest() {
                           setCurrent(null); setV2Current(null); setValore(String(p.valore));
                         }} className="w-full min-h-[56px] flex items-center justify-between gap-3 text-left py-1" aria-expanded={skillCurrent === p.esercizioId}>
                           <span className="text-body text-app">{p.nome}</span>
-                          <span className={`text-body-sm font-semibold tabular-nums shrink-0 inline-flex items-center gap-1 ${p.valore >= l.soglia ? 'text-forest-400' : 'text-muted'}`}>
-                            {fmtVal(p.valore, p.unita)} {p.valore >= l.soglia ? <Check size={14} aria-hidden /> : null}
+                          <span className={`text-body-sm font-semibold tabular-nums shrink-0 inline-flex items-center gap-1 ${p.valore >= p.soglia ? 'text-forest-400' : 'text-muted'}`}>
+                            {fmtVal(p.valore, p.unita)} {p.valore >= p.soglia ? <Check size={14} aria-hidden /> : null}
                           </span>
                         </button>
                         {skillCurrent === p.esercizioId && (
@@ -403,7 +403,7 @@ export default function BatteriaTest() {
                     <Card variant="raised" padding="sm">
                       <p className="text-body font-semibold text-app mb-0.5">Prossimo: {l.next.nome}</p>
                       {l.next.descrizione && <p className="text-body-sm text-muted leading-relaxed mb-2">{l.next.descrizione}</p>}
-                      <p className="text-body-sm text-forest-400 font-semibold mb-2">Obiettivo: ≥ {fmtVal(l.soglia, l.next.unita)} per salire ancora</p>
+                      <p className="text-body-sm text-forest-400 font-semibold mb-2">Obiettivo: ≥ {fmtVal(l.next.soglia, l.next.unita)} per salire ancora</p>
                       {skillCurrent === l.next.id ? (
                         <div className="space-y-3">
                           <RisultatoInput value={valore} onChange={setValore} unita={l.next.unita} ariaLabel={`Risultato ${l.next.nome}`} />

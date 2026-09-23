@@ -68,7 +68,7 @@ export default function TrainingChatPage() {
   }, [input, messages, sending]);
 
   return (
-    <main className="bg-app flex flex-col overflow-hidden" style={{ height: '100vh', paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+    <main className="bg-app flex flex-col overflow-hidden h-dvh-screen" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
       <div className="max-w-md mx-auto w-full flex flex-col flex-1 min-h-0 pb-tabbar">
         {/* Header */}
         <div className="px-5 pb-2 flex items-center gap-2">

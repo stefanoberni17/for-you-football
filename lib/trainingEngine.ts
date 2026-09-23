@@ -87,12 +87,23 @@ export const LADDER_SOGLIE: Record<AreaForza, number> = {
   lombari: REGOLE.ladderMinHoldSec,
 };
 
-export interface LadderPoint { esercizioId: string; nome: string; gradino: number; valore: number; unita: string }
+/**
+ * Soglie a scalare (Ste, 22/9/2026): sui gradini alti 20 push / 10 pull sono troppi.
+ * Spinta: 20 fino all'arciere (gradini 1-4), 10 dal one-arm negativo (5-6), 5 dal one-arm (7-8).
+ * Tirata: 10 fino alla presa larga (1-6), 5 dall'archer (7-10). Core e lombari: 60" su tutti.
+ */
+export function sogliaGradino(area: AreaForza, gradino: number): number {
+  if (area === 'spinta') return gradino >= 7 ? 5 : gradino >= 5 ? 10 : LADDER_SOGLIE.spinta;
+  if (area === 'tirata') return gradino >= 7 ? 5 : LADDER_SOGLIE.tirata;
+  return LADDER_SOGLIE[area];
+}
+
+export interface LadderPoint { esercizioId: string; nome: string; gradino: number; valore: number; unita: string; soglia: number }
 export interface LadderState {
   area: AreaForza;
-  soglia: number;
+  soglia: number;                   // soglia del gradino base (per i gradini alti vedi `sogliaGradino` / `LadderPoint.soglia`)
   points: LadderPoint[];            // max misurati (test base + skill), dal gradino più basso
-  next: TrainingExercise | null;    // prossimo esercizio da testare (null = scala completa)
+  next: (TrainingExercise & { soglia: number }) | null; // prossimo esercizio da testare, con la SUA soglia (null = scala completa)
   amrap: LadderPoint | null;        // esercizio scelto per la stazione AMRAP (null = nessuno sopra soglia)
   gradinoEsecuzione: number;
   gradinoLavoro: number;            // usato per il placement delle sedute
@@ -117,19 +128,20 @@ export function ladderForArea(results: TestResultRow[], area: AreaForza): Ladder
   }
   const points: LadderPoint[] = catena
     .filter((e) => byEx.has(e.id))
-    .map((e) => ({ esercizioId: e.id, nome: e.nome, gradino: e.gradino, valore: byEx.get(e.id)!, unita: e.unita }));
+    .map((e) => ({ esercizioId: e.id, nome: e.nome, gradino: e.gradino, valore: byEx.get(e.id)!, unita: e.unita, soglia: sogliaGradino(area, e.gradino) }));
 
-  const qualifying = points.filter((p) => p.valore >= soglia);
+  const qualifying = points.filter((p) => p.valore >= p.soglia);
   const amrap = qualifying.length > 0 ? qualifying[qualifying.length - 1] : null;
   const highest = points[points.length - 1];
   const lowest = points[0];
 
-  let next: TrainingExercise | null = null;
-  if (highest.valore >= soglia) {
-    next = catena.find((e) => e.gradino > highest.gradino) || null; // si sale
+  let nextEx: TrainingExercise | null = null;
+  if (highest.valore >= highest.soglia) {
+    nextEx = catena.find((e) => e.gradino > highest.gradino) || null; // si sale
   } else if (!amrap && lowest.gradino > 1) {
-    next = [...catena].reverse().find((e) => e.gradino < lowest.gradino) || null; // si scende
+    nextEx = [...catena].reverse().find((e) => e.gradino < lowest.gradino) || null; // si scende
   }
+  const next = nextEx ? { ...nextEx, soglia: sogliaGradino(area, nextEx.gradino) } : null;
 
   const tested = points.filter((p) => p.valore > 0);
   const gradinoEsecuzione = tested.length > 0 ? tested[tested.length - 1].gradino : 1;
@@ -383,7 +395,9 @@ export function validatePlan(
         if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
         const blocco = ctx.trustBlocks && it.blocco_id ? bloccoById(it.blocco_id) : undefined;
         const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[ctx.v2.livello]);
-        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: !!blocco, skipSoloLivello: bloccoDiSte });
+        // Fidato anche il blocco VIRTUALE (parte alta dalle scale, `pa-*`): non è nella libreria ma l'ha dosato il server
+        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && it.blocco_id.startsWith('pa-'));
+        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });
         continue;

@@ -21,6 +21,7 @@ export interface EmomItem {
 }
 
 const SCELTE_RPE = [['Facile', 3], ['Giusta', 6], ['Durissima', 9]] as const;
+const RPE_DETTAGLIO_KEY = 'player.rpeDettaglio'; // stessa preferenza del player: scala 1-10 predefinita
 const MINUTO_MS = 60_000;
 const nowMs = () => Date.now();
 
@@ -47,6 +48,8 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   const [finito, setFinito] = useState(false);
   const [rpe, setRpe] = useState<number | null>(null);
   const [showDesc, setShowDesc] = useState(false);
+  const [dettaglio, setDettaglio] = useState(() => { try { return typeof window === 'undefined' || localStorage.getItem(RPE_DETTAGLIO_KEY) !== '0'; } catch { return true; } });
+  const toggleDettaglio = () => { const next = !dettaglio; setDettaglio(next); try { localStorage.setItem(RPE_DETTAGLIO_KEY, next ? '1' : '0'); } catch { /* no-op */ } };
   const startRef = useRef<number | null>(null);      // timestamp di partenza del circuito
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const minutoRef = useRef(0);
@@ -152,15 +155,33 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
       ) : (
         <Card className="mb-4">
           <p className="text-label font-semibold text-app mb-2">Com&apos;è andato l&apos;EMOM?</p>
-          <div className="grid grid-cols-3 gap-2">
-            {SCELTE_RPE.map(([label, n]) => (
-              <Button key={label} size="lg" variant={rpe === n ? 'primary' : 'secondary'} aria-pressed={rpe === n} className="px-2"
-                onClick={() => { setRpe(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}>
-                {label}
-              </Button>
-            ))}
-          </div>
-          <p className="text-caption text-muted text-center mt-1.5">= RPE 3 / 6 / 9</p>
+          {dettaglio ? (
+            <>
+              <div className="grid grid-cols-5 gap-2">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                  <button key={n} type="button" aria-label={`Difficoltà ${n}`} aria-pressed={rpe === n}
+                    onClick={() => { setRpe(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
+                    className={`h-12 rounded-btn text-body font-bold border tabular-nums transition-colors ${rpe === n ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <p className="text-caption text-muted text-center mt-1.5">1-3 facile · 5 impegnativa · 7-8 dura · 10 al limite</p>
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                {SCELTE_RPE.map(([label, n]) => (
+                  <Button key={label} size="lg" variant={rpe === n ? 'primary' : 'secondary'} aria-pressed={rpe === n} className="px-2"
+                    onClick={() => { setRpe(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}>
+                    {label}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-caption text-muted text-center mt-1.5">= RPE 3 / 6 / 9</p>
+            </>
+          )}
+          <div className="-ml-3 mt-1"><Button variant="ghost" size="sm" onClick={toggleDettaglio}>{dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}</Button></div>
         </Card>
       )}
 

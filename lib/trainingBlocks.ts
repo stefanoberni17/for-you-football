@@ -55,6 +55,7 @@ export interface Blocco {
   amrapSec?: number;             // se il blocco è un AMRAP
   descrizione?: string;
   tags: string[];
+  senzaScarico?: boolean;        // blocco virtuale che non fa fatica (EMOM skill): serie NON ridotte nel deload né dal "più leggero"
 }
 
 export { BLOCCHI };
@@ -90,7 +91,7 @@ export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: s
 
 /** Espande un blocco negli items del piano (esercizio_id, serie, quantità, recupero, carico, schema). */
 export function expandBlocco(b: Blocco, opt: { scala?: number } = {}): PlanItem[] {
-  const scala = opt.scala ?? 1; // es. 0.6 in deload: meno serie, mai sotto 1
+  const scala = b.senzaScarico ? 1 : opt.scala ?? 1; // es. 0.6 in deload: meno serie, mai sotto 1
   return b.items.filter((it) => it.esercizio_id).map((it) => {
     const item: PlanItem = {
       esercizio_id: it.esercizio_id!,
