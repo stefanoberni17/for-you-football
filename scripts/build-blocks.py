@@ -12,6 +12,7 @@ import unicodedata
 from collections import Counter
 
 WORKOUTS = json.load(open("docs/everfit-workouts.json", encoding="utf-8"))
+ALTERNATI = {"kettlebell rotational swing"}
 if isinstance(WORKOUTS, dict):
     WORKOUTS = WORKOUTS.get("workouts", [])
 GEN = open("lib/trainingCatalogV2.generated.ts", encoding="utf-8").read()
@@ -120,7 +121,9 @@ def items_from_exercise(ex, sezione, formato):
               "serie": n, "quantita": q, "unita": unita, "recupero_sec": int(rest)}
         if weight:
             it["carico_kg"] = weight
-        if ex.get("per_lato"):
+        # Esercizi ALTERNATI dx/sx a ogni rep (Ste, 23/9): non si fanno "per lato" anche se Everfit dice each_side,
+        # le reps indicate sono il totale (12 = 6 dx + 6 sx alternate)
+        if ex.get("per_lato") and name.strip().lower() not in ALTERNATI:
             it["perLato"] = True
         if formato in ("interval", "amrap"):
             it["schema"] = formato

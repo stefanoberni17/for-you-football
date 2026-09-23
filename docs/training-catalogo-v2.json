@@ -1714,18 +1714,19 @@
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": true,
+  "per_lato": false,
   "video": "https://www.youtube.com/watch?v=TywyOJ9BYUs",
   "fonte": "Everfit",
   "tags": [],
   "azione": "importa",
   "nome_everfit": "kettlebell rotational swing",
-  "note": null,
+  "note": "Alternato dx/sx (Ste, 23/9): niente serie per lato.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
-  "solo_livello": true
+  "solo_livello": true,
+  "descrizione": "Si fa ALTERNANDO destra e sinistra a ogni ripetizione, non un lato alla volta: le ripetizioni indicate sono il totale (12 reps = 6 a destra e 6 a sinistra, alternate). Kettlebell tra le gambe, swing con rotazione del busto verso un lato, torna al centro e vai dall'altro."
  },
  {
   "nome": "Kettlebell snatch",
