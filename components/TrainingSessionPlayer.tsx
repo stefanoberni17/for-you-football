@@ -92,7 +92,6 @@ export default function TrainingSessionPlayer({
   const [logSaved, setLogSaved] = useState(false);
   // Scala 1-10 predefinita (Ste, 21/9: "era meglio la scala 1-10 come prima"); le 3 scelte restano un'opzione (localStorage)
   const [dettaglio, setDettaglio] = useState(() => { try { return typeof window === 'undefined' || localStorage.getItem(RPE_DETTAGLIO_KEY) !== '0'; } catch { return true; } });
-  const [showDiverso, setShowDiverso] = useState(false); // "Ho fatto diverso": input fatte/kg
   const [sensazione, setSensazione] = useState<string | null>(null);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
@@ -210,7 +209,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setShowDiverso(false);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
@@ -247,7 +246,7 @@ export default function TrainingSessionPlayer({
     setSerieFatte(next);
     // Serie chiusa → durante il recupero si può dare il feedback (RPE, reps/kg reali)
     setPending({ serie: next, quantita: quantitaLato, unita, carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
-    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null); setShowDiverso(false);
+    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null);
     startRest(item.recupero_sec, next >= totalSerie);
   };
   // Tornare all'esercizio precedente (tap sbagliato su "esercizio completato"): si riparte dalla sua prima serie
@@ -257,7 +256,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setShowDiverso(false);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
     setSerieFatte(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false); setShowDesc(false);
@@ -439,33 +438,32 @@ export default function TrainingSessionPlayer({
                     <p className="text-caption text-muted text-center mt-1.5">= RPE 3 / 6 / 9</p>
                   </>
                 )}
-                <div className="flex items-center justify-between gap-3 flex-wrap -ml-3 mt-1">
-                  <Button variant="ghost" size="sm" onClick={toggleDettaglio}>
-                    {dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}
-                  </Button>
-                  {!showDiverso && (
-                    <Button variant="ghost" size="sm" onClick={() => setShowDiverso(true)}>Ho fatto diverso</Button>
-                  )}
-                </div>
-                {pending.carico !== undefined && !showDiverso && (
-                  <p className="text-body-sm text-muted tabular-nums">Carico previsto: <span className="font-semibold text-app">{pending.carico} kg</span></p>
-                )}
-
-                {showDiverso && (
-                  <div className="grid grid-cols-2 gap-3 mt-2">
+                {/* Reps fatte e kg SEMPRE visibili (Ste, 22/9: "se ho fatto fare archer push up 8 reps e uno ne fa 10 facili
+                    lo deve considerare per il prossimo"): prefillati col previsto, si cambiano solo se è andata diversa */}
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div>
+                    <label htmlFor="player-fatte" className="block text-label font-semibold text-app mb-1.5">Fatte ({pending.unita})</label>
+                    <Input id="player-fatte" type="text" inputMode="decimal" value={fattoTxt} onChange={(e) => setFattoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
+                      onBlur={() => sendLog({})} className="text-center !text-title-2 font-display font-bold tabular-nums" />
+                  </div>
+                  {pending.carico !== undefined ? (
                     <div>
-                      <label htmlFor="player-fatte" className="block text-label font-semibold text-app mb-1.5">Fatte ({pending.unita})</label>
-                      <Input id="player-fatte" type="text" inputMode="decimal" value={fattoTxt} onChange={(e) => setFattoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
+                      <label htmlFor="player-kg" className="block text-label font-semibold text-app mb-1.5">Carico (kg)</label>
+                      <Input id="player-kg" type="text" inputMode="decimal" value={caricoTxt} onChange={(e) => setCaricoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
                         onBlur={() => sendLog({})} className="text-center !text-title-2 font-display font-bold tabular-nums" />
                     </div>
-                    {pending.carico !== undefined && (
-                      <div>
-                        <label htmlFor="player-kg" className="block text-label font-semibold text-app mb-1.5">Carico (kg)</label>
-                        <Input id="player-kg" type="text" inputMode="decimal" value={caricoTxt} onChange={(e) => setCaricoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
-                          onBlur={() => sendLog({})} className="text-center !text-title-2 font-display font-bold tabular-nums" />
-                      </div>
-                    )}
-                  </div>
+                  ) : (
+                    <div className="flex items-end">
+                      <Button variant="ghost" size="sm" className="-ml-3" onClick={toggleDettaglio}>
+                        {dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                {pending.carico !== undefined && (
+                  <Button variant="ghost" size="sm" className="-ml-3 mt-1" onClick={toggleDettaglio}>
+                    {dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}
+                  </Button>
                 )}
 
                 {isPerLato && pending.lato === '' && (

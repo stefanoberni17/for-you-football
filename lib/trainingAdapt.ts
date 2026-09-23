@@ -57,6 +57,7 @@ export interface RiepilogoEsercizio {
   fastidio: string | null;        // sensazione con "(fastidio)" scelta ≥2 volte → segnale per planner/chat
 }
 
+const fmtQ = (q: number, unita: string) => `${q}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
 const media = (v: number[]) => (v.length ? Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 10) / 10 : 0);
 
 /** Riepilogo per esercizio dai log (già ordinati o no). */
@@ -111,6 +112,9 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
     // Suggerimento deterministico
     const sottoPrevista = last.filter((r) => r.quantita_fatta != null && r.quantita_fatta < r.quantita_prevista).length;
     const metaSerieSotto = sottoPrevista >= Math.ceil(last.length / 2);
+    // Ha fatto PIÙ del previsto (Ste, 22/9: "8 reps previste, ne fa 10 facili → lo deve considerare per il prossimo")
+    const sopraPrevista = last.filter((r) => r.quantita_fatta != null && r.quantita_fatta > r.quantita_prevista).length;
+    const metaSerieSopra = sopraPrevista >= Math.ceil(last.length / 2) && !metaSerieSotto;
     let suggerimento: Suggerimento = 'tieni';
     let motivo = 'dati insufficienti o nella norma: mantieni';
     if (ultimaSeduta.rpeMedio != null && (ultimaSeduta.rpeMedio >= 9.5 || metaSerieSotto)) {
@@ -118,6 +122,10 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
       motivo = metaSerieSotto
         ? `ultima seduta: ${sottoPrevista}/${last.length} serie sotto il previsto`
         : `ultima seduta RPE ${ultimaSeduta.rpeMedio}: al limite`;
+    } else if (metaSerieSopra && (ultimaSeduta.rpeMedio == null || ultimaSeduta.rpeMedio <= 7)) {
+      // Basta UNA seduta: la dose fatta è un dato misurato, non una sensazione
+      suggerimento = 'sali';
+      motivo = `ultima seduta: fatte ${fmtQ(ultimaSeduta.quantitaFatta, ultimaSeduta.unita)} su ${fmtQ(ultimaSeduta.quantitaPrevista, ultimaSeduta.unita)} previste${ultimaSeduta.rpeMedio != null ? ` con RPE ${ultimaSeduta.rpeMedio}` : ''}: si riparte da lì`;
     } else if (sessions.length >= 2 && rpeMedio2Sedute != null && rpeMedio2Sedute <= 6) {
       const tutteFatte = sessions.slice(0, 2).flat().every((r) => (r.quantita_fatta ?? r.quantita_prevista) >= r.quantita_prevista);
       if (tutteFatte) {
@@ -141,8 +149,6 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
   }
   return out.sort((a, b) => b.ultimaData.localeCompare(a.ultimaData));
 }
-
-const fmtQ = (q: number, unita: string) => `${q}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
 
 /** Riga compatta per il prompt del planner/preparatore. */
 export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unitaCatalogo: string): string {

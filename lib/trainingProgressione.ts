@@ -102,10 +102,16 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
     const nuovo = round05(Math.min(it.carico_kg * (1 + PROGRESSIONE_MAX_DRIFT), Math.max(it.carico_kg * 0.7, da + delta)));
     if (nuovo !== it.carico_kg) { out.carico_kg = nuovo; cambiato = true; }
   } else if (unita === 'reps' || unita === 'secondi') {
-    // Corpo libero / tenute: dalla dose dell'ultima volta (stessa unità) ± un passo
-    const da = ultima.quantitaPrevista > 0 && Math.abs(ultima.quantitaPrevista - base) <= base * (PROGRESSIONE_MAX_DRIFT + 0.05)
+    // Corpo libero / tenute: dalla dose dell'ultima volta (stessa unità) ± un passo.
+    // Se ha FATTO più del previsto (Ste, 22/9: "8 previste, 10 facili"), si riparte da quanto ha fatto davvero:
+    // il tetto sul programma (+30 %) non può stare sotto una dose già dimostrata più un passo
+    const prevista = ultima.quantitaPrevista > 0 && Math.abs(ultima.quantitaPrevista - base) <= base * (PROGRESSIONE_MAX_DRIFT + 0.05)
       ? ultima.quantitaPrevista : base;
-    const tetto = unita === 'reps' ? Math.min(ACCESSORI_CORPO_LIBERO_REPS_MAX, Math.round(base * (1 + PROGRESSIONE_MAX_DRIFT))) : Math.min(SECONDI_MAX, Math.round(base * (1 + PROGRESSIONE_MAX_DRIFT)));
+    const fatta = ultima.quantitaFatta > 0 && ultima.quantitaFatta <= base * 2 ? ultima.quantitaFatta : prevista;
+    const da = verso === 1 ? Math.max(prevista, fatta) : Math.min(prevista, fatta);
+    const dimostrata = verso === 1 && fatta > prevista ? Math.round(fatta + passo(fatta, unita, 1)) : 0;
+    const capUnita = unita === 'reps' ? ACCESSORI_CORPO_LIBERO_REPS_MAX : SECONDI_MAX;
+    const tetto = Math.min(capUnita, Math.max(Math.round(base * (1 + PROGRESSIONE_MAX_DRIFT)), dimostrata));
     const pavimento = Math.max(unita === 'reps' ? 1 : 5, Math.round(base * 0.7));
     const nuovo = Math.min(tetto, Math.max(pavimento, Math.round(da + passo(da, unita, verso))));
     if (nuovo !== it.quantita) { out.quantita = nuovo; cambiato = true; }
@@ -113,7 +119,10 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   if (!cambiato) return null;
   out.adattamento = verso === 1 ? 'sali' : 'scendi';
   const cosa = out.carico_kg !== it.carico_kg ? `${out.carico_kg} kg (programma ${it.carico_kg})` : `${out.quantita}${unita === 'secondi' ? '"' : ''} (programma ${base})`;
-  out.nota = verso === 1 ? `↑ ${cosa}: le ultime volte ti era facile` : `↓ ${cosa}: l'ultima volta era al limite`;
+  const piuDelPrevisto = verso === 1 && !out.carico_kg && ultima.quantitaFatta > ultima.quantitaPrevista;
+  out.nota = verso === 1
+    ? (piuDelPrevisto ? `↑ ${cosa}: l'ultima volta ne hai fatte ${ultima.quantitaFatta}${unita === 'secondi' ? '"' : ''} su ${ultima.quantitaPrevista}` : `↑ ${cosa}: le ultime volte ti era facile`)
+    : `↓ ${cosa}: l'ultima volta era al limite`;
   return out;
 }
 
