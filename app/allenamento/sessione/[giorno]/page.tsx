@@ -25,9 +25,11 @@ const TIPO_LABEL: Record<string, string> = {
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
   sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero',
 };
-const FEEDBACK: { key: 'facile' | 'ok' | 'duro'; emoji: string; label: string }[] = [
-  { key: 'facile', emoji: '😀', label: 'Facile' }, { key: 'ok', emoji: '👌', label: 'Giusta' }, { key: 'duro', emoji: '🥵', label: 'Dura' },
-];
+type Giudizio = 'facile' | 'ok' | 'duro';
+const GIUDIZI: { key: Giudizio; label: string }[] = [{ key: 'facile', label: 'Facile' }, { key: 'ok', label: 'Giusto' }, { key: 'duro', label: 'Duro' }];
+const rpeCls = (n: number, sel: number | null) => sel === n
+  ? (n <= 3 ? 'bg-success text-white border-success' : n <= 6 ? 'bg-forest-500 text-white border-forest-500' : n <= 8 ? 'bg-warning text-app border-warning' : 'bg-danger text-white border-danger')
+  : 'bg-surface-2 text-app border-divider';
 
 export default function SessionePage() {
   const router = useRouter();
@@ -47,6 +49,8 @@ export default function SessionePage() {
   const [storico, setStorico] = useState<Record<string, { testo: string; suggerimento: string }>>({}); // ultima volta per esercizio (log serie)
   const [resume, setResume] = useState(false); // true = riprendi da savedProgress
   const [note, setNote] = useState('');
+  const [rpeSeduta, setRpeSeduta] = useState<number | null>(null); // voto 1-10 sulla seduta intera (Ste, 23/9)
+  const [giudizi, setGiudizi] = useState<Record<string, Giudizio>>({}); // giudizio per blocco
   const [spiegazioneOpen, setSpiegazioneOpen] = useState(false); // "Leggi tutto" sulla spiegazione del planner
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -84,13 +88,16 @@ export default function SessionePage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const inviaFeedback = async (feedback: 'facile' | 'ok' | 'duro') => {
+  // Fine seduta (Ste, 23/9): voto 1-10 sulla seduta, giudizio per blocco, nota. Il server ricava
+  // anche il vecchio facile/ok/duro dal voto; senza voto si salva comunque il completamento.
+  const inviaFeedback = async () => {
     if (!planId) return;
     setSending(true);
     try {
+      const blocchi = (sessione?.blocchi || []).filter((b) => giudizi[b.id]).map((b) => ({ id: b.id, nome: nomeBloccoAtleta(b.nome), giudizio: giudizi[b.id] }));
       await authFetch('/api/training/complete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan_id: planId, giorno, feedback, note: note.trim() || undefined }),
+        body: JSON.stringify({ plan_id: planId, giorno, rpe: rpeSeduta ?? undefined, blocchi, note: note.trim() || undefined }),
       });
       setPhase('done');
     } finally { setSending(false); }
@@ -184,18 +191,43 @@ export default function SessionePage() {
           ) : (
             <>
               <h1 className="font-display text-title-1 font-bold text-app mb-2">Com&apos;è andata?</h1>
-              <p className="text-body text-muted mb-6">Un tap. Serve a calibrare la settimana prossima.</p>
-              <div className="grid grid-cols-3 gap-3 mb-5">
-                {FEEDBACK.map((f) => (
-                  <Button key={f.key} variant="secondary" size="lg" disabled={sending} onClick={() => inviaFeedback(f.key)} className="px-2">
-                    <span aria-hidden className="mr-1.5">{f.emoji}</span>{f.label}
-                  </Button>
-                ))}
+              <p className="text-body text-muted mb-5">Venti secondi. Serve a costruire la settimana prossima.</p>
+              <div className="text-left mb-5">
+                <p className="text-label font-semibold text-app mb-2">La seduta, da 1 a 10</p>
+                <div className="grid grid-cols-5 gap-2">
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                    <button key={n} type="button" onClick={() => { setRpeSeduta(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
+                      aria-label={`Voto ${n}`} aria-pressed={rpeSeduta === n}
+                      className={`h-12 rounded-btn text-body font-bold border tabular-nums transition-colors ${rpeCls(n, rpeSeduta)}`}>
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-caption text-muted text-center mt-1.5">1-3 facile · 5 giusta · 7-8 dura · 10 al limite</p>
               </div>
+              {(sessione?.blocchi?.length ?? 0) > 0 && (
+                <div className="text-left mb-5">
+                  <p className="text-label font-semibold text-app mb-2">Blocco per blocco</p>
+                  <div className="space-y-2.5">
+                    {sessione!.blocchi!.map((b) => (
+                      <div key={b.id} className="flex items-center justify-between gap-3">
+                        <p className="text-body text-app min-w-0 truncate">{nomeBloccoAtleta(b.nome)}</p>
+                        <div className="flex gap-1.5 shrink-0">
+                          {GIUDIZI.map((g) => (
+                            <Chip key={g.key} selected={giudizi[b.id] === g.key} onClick={() => setGiudizi((prev) => ({ ...prev, [b.id]: g.key }))}>{g.label}</Chip>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <Field label="Note" optional htmlFor="seduta-note" className="text-left" counter={{ value: note.length, max: 400 }}>
                 <Textarea id="seduta-note" value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={400}
-                  placeholder="Un fastidio, un esercizio troppo difficile…" />
+                  placeholder="Un fastidio, un esercizio troppo difficile, troppo lunga…" />
               </Field>
+              <Button size="lg" fullWidth loading={sending} disabled={rpeSeduta === null} onClick={inviaFeedback} className="mt-4">Salva</Button>
+              <div className="mt-1"><Button variant="ghost" size="sm" disabled={sending} onClick={inviaFeedback}>Segna fatta senza voto</Button></div>
             </>
           )}
         </div>

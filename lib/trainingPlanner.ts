@@ -96,7 +96,7 @@ export interface PlannerContext {
   painHold: boolean;
   hasSbarra: boolean;
   results: TestResultRow[];
-  feedbackRecenti: { feedback: string | null; note: string | null; completed_at: string }[];
+  feedbackRecenti: FeedbackSeduta[];
   weekOfPath?: number; // settimana del percorso mentale (per le consegne, in futuro)
   oggiDow: number; // 1=Lun … 7=Dom (Italia)
   // Memoria preparatore (profiles.training_goals / training_notes)
@@ -137,6 +137,38 @@ export async function loadFocusSetup(userId: string): Promise<FocusId[]> {
 }
 
 /** profiles.training_squadra (migration 023): se la colonna manca → vuoto, senza errore. */
+/** Feedback di fine seduta (migration 026: voto 1-10 e giudizio per blocco; prima solo facile/ok/duro + nota) */
+export interface FeedbackSeduta {
+  feedback: string | null; note: string | null; completed_at: string;
+  rpe?: number | null;
+  feedback_blocchi?: { id: string; nome?: string; giudizio: 'facile' | 'ok' | 'duro' }[] | null;
+  session_key?: string;
+}
+
+/** Ultime sedute completate con il feedback; se la migration 026 manca, ripiega sulle colonne storiche. */
+export async function loadFeedbackRecenti(userId: string, limit = 12): Promise<FeedbackSeduta[]> {
+  const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
+    .eq('user_id', userId).order('completed_at', { ascending: false }).limit(limit);
+  const full = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key');
+  if (!full.error) return (full.data || []) as unknown as FeedbackSeduta[];
+  const base = await q('feedback, note, completed_at, session_key');
+  return (base.data || []) as unknown as FeedbackSeduta[];
+}
+
+/** Blocco per il prompt: una riga per seduta, con voto, giudizio per blocco e nota (ultime 12 sedute). */
+export function feedbackSeduteBlock(righe: FeedbackSeduta[]): string {
+  if (!righe.length) return '\nFeedback sedute recenti: nessuna seduta ancora completata';
+  const giud: Record<string, string> = { facile: 'facile', ok: 'giusto', duro: 'duro' };
+  const lines = righe.map((f) => {
+    const data = f.completed_at.slice(0, 10);
+    const voto = f.rpe != null ? `voto ${f.rpe}/10` : (f.feedback ? giud[f.feedback] ?? f.feedback : '—');
+    const blocchi = (f.feedback_blocchi || []).map((b) => `${b.nome || b.id} [${b.id}]: ${giud[b.giudizio] ?? b.giudizio}`).join(' · ');
+    const nota = f.note ? ` · "${sanitize(f.note)}"` : '';
+    return `- ${data}: ${voto}${blocchi ? ` · blocchi: ${blocchi}` : ''}${nota}`;
+  });
+  return `\n# FEEDBACK SEDUTE (dall'atleta a fine seduta, dalla più recente; il giudizio per blocco decide il codice della settimana dopo — regola 10)\n${lines.join('\n')}`;
+}
+
 export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
   const { data, error } = await supabaseAdmin.from('profiles').select('training_squadra').eq('user_id', userId).maybeSingle();
   if (error || !data) return {};
@@ -144,14 +176,13 @@ export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, resultsRes, { data: calendar }, { data: completions }, { data: pianoRow }, { data: lastTestSession }, squadra, focusSetup, preferenzeSetup] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: lastTestSession }, squadra, focusSetup, preferenzeSetup] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
     supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
       .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
-    supabaseAdmin.from('training_session_completions').select('feedback, note, completed_at')
-      .eq('user_id', userId).order('completed_at', { ascending: false }).limit(8),
+    loadFeedbackRecenti(userId),
     supabaseAdmin.from('training_plans').select('plan, richieste')
       .eq('user_id', userId).eq('week_start', mondayOfThisWeekRome())
       .order('created_at', { ascending: false }).limit(1).maybeSingle(),
@@ -272,13 +303,16 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
  */
 export async function loadCarico(userId: string, isDeload: boolean, setRpe?: SetRpeRow[], squadraSettimanale = 0): Promise<CaricoInfo> {
   const since = new Date(Date.now() - 35 * 24 * 3600 * 1000).toISOString();
-  const [{ data: completions }, { data: plans }] = await Promise.all([
-    supabaseAdmin.from('training_session_completions').select('session_key, plan_id, feedback, completed_at')
-      .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60),
+  const selCompletions = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
+    .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60);
+  const [complRes, { data: plans }] = await Promise.all([
+    selCompletions('session_key, plan_id, feedback, completed_at, rpe'),
     supabaseAdmin.from('training_plans').select('id, plan')
       .eq('user_id', userId).gte('created_at', new Date(Date.now() - 49 * 24 * 3600 * 1000).toISOString())
       .order('created_at', { ascending: false }).limit(20),
   ]);
+  // Migration 026 non applicata → senza la colonna `rpe` (si usa la media delle serie come prima)
+  const completions = complRes.error ? (await selCompletions('session_key, plan_id, feedback, completed_at')).data : complRes.data;
   let rpe = setRpe;
   if (!rpe) {
     try {
@@ -288,7 +322,7 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
     } catch { rpe = []; }
   }
   return calcolaCarico({
-    completions: (completions || []) as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[],
+    completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[],
     oggi: todayRome(), lunedi: mondayOfThisWeekRome(), isDeload, squadraSettimanale,
   });
 }
@@ -379,9 +413,6 @@ NOTE FORMATO: "quantita" = reps, secondi o minuti secondo l'unità dell'esercizi
 
 function buildUserPrompt(ctx: PlannerContext, richiesta?: string, erroriPrecedenti?: string[]): string {
   const gradiniTxt = Object.entries(ctx.gradini).map(([a, g]) => `${a}: gradino ${g}`).join(', ') || 'nessun test di catena ancora fatto (parti dai gradini 1)';
-  const feedbackTxt = ctx.feedbackRecenti.length
-    ? ctx.feedbackRecenti.map((f) => `${f.feedback || '—'}${f.note ? ` ("${sanitize(f.note)}")` : ''}`).join(', ')
-    : 'nessuna seduta ancora completata';
   const soglieTxt = TESTS.filter((t) => t.area).map((t) => t.id).join(', ');
   const memoriaTxt = (ctx.obiettivi || ctx.note)
     ? `\n# MEMORIA ATLETA\nObiettivi a lungo termine: ${ctx.obiettivi || '—'}\nNote recenti: ${ctx.note || '—'}`
@@ -396,7 +427,7 @@ Gradini per catena: ${gradiniTxt}
 Sbarra disponibile: ${ctx.hasSbarra ? 'sì' : 'NO (niente tirata)'}
 Allenamenti squadra: ${ctx.trainingDays.length ? squadraTesto(ctx.trainingDays, ctx.squadra, DAY_NAMES) : 'non indicati'}
 Partite: ${ctx.matchDays.length ? ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
-Feedback sedute recenti: ${feedbackTxt}
+${feedbackSeduteBlock(ctx.feedbackRecenti)}
 Settimana del ciclo: ${ctx.ciclo.settimana} di 4${ctx.ciclo.isDeload ? ' — ⚠️ SETTIMANA DELOAD (regola 21)' : ctx.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 22)' : ''}
 ${checkinBlock(ctx)}
 (Test disponibili: ${soglieTxt})${memoriaTxt}${storicoSerieBlock(ctx)}${squilibriTesto(ctx.squilibri)}${caricoTesto(ctx.carico)}${pianoTxt}
