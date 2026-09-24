@@ -9,27 +9,50 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-/** POST { plan_id, giorno, feedback?, note? } → seduta completata. */
+const GIUDIZI = ['facile', 'ok', 'duro'] as const;
+type Giudizio = (typeof GIUDIZI)[number];
+/** Voto 1-10 → le tre scelte storiche (i consumatori vecchi leggono `feedback`) */
+const feedbackDaRpe = (rpe: number): Giudizio => (rpe <= 4 ? 'facile' : rpe >= 8 ? 'duro' : 'ok');
+
+/**
+ * POST { plan_id, giorno, feedback?, rpe?, blocchi?, note? } → seduta completata.
+ * `rpe` 1-10 sulla seduta intera e `blocchi` [{ id, nome, giudizio }] (migration 026): se le colonne
+ * mancano, il completamento passa lo stesso senza (`skipped: 'migration_026'`).
+ */
 export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
-    const { plan_id, giorno, feedback, note } = await request.json();
+    const body = await request.json();
+    const { plan_id, giorno, note } = body;
     if (!plan_id || !giorno) return NextResponse.json({ error: 'plan_id e giorno obbligatori' }, { status: 400 });
-    if (feedback && !['facile', 'ok', 'duro'].includes(feedback)) {
-      return NextResponse.json({ error: 'feedback non valido' }, { status: 400 });
-    }
+    const rpe = body.rpe == null ? null : Number(body.rpe);
+    if (rpe !== null && (!Number.isInteger(rpe) || rpe < 1 || rpe > 10)) return NextResponse.json({ error: 'rpe non valido' }, { status: 400 });
+    let feedback: Giudizio | null = (GIUDIZI as readonly string[]).includes(body.feedback) ? body.feedback : null;
+    if (body.feedback && !feedback) return NextResponse.json({ error: 'feedback non valido' }, { status: 400 });
+    if (!feedback && rpe !== null) feedback = feedbackDaRpe(rpe);
+    // Giudizio per blocco: solo righe ben formate, max 8
+    const blocchi = Array.isArray(body.blocchi)
+      ? body.blocchi.filter((b: unknown) => b && typeof b === 'object' && typeof (b as { id?: unknown }).id === 'string'
+          && (GIUDIZI as readonly string[]).includes(String((b as { giudizio?: unknown }).giudizio)))
+        .slice(0, 8).map((b: { id: string; nome?: unknown; giudizio: Giudizio }) => ({ id: b.id.slice(0, 80), nome: typeof b.nome === 'string' ? b.nome.slice(0, 80) : b.id, giudizio: b.giudizio }))
+      : [];
 
     const sessionKey = `${plan_id}#${giorno}`;
-    const { error } = await supabaseAdmin.from('training_session_completions').upsert({
-      user_id: userId,
-      plan_id,
-      session_key: sessionKey,
-      feedback: feedback || null,
+    const base = {
+      user_id: userId, plan_id, session_key: sessionKey, feedback,
       note: typeof note === 'string' ? note.slice(0, 500) : null,
-    }, { onConflict: 'user_id,session_key' });
+    };
+    let skipped: string | undefined;
+    let { error } = await supabaseAdmin.from('training_session_completions')
+      .upsert({ ...base, rpe, feedback_blocchi: blocchi.length ? blocchi : null }, { onConflict: 'user_id,session_key' });
+    if (error && /rpe|feedback_blocchi|column/i.test(error.message)) {
+      // Migration 026 non applicata: si salva come prima
+      skipped = 'migration_026';
+      ({ error } = await supabaseAdmin.from('training_session_completions').upsert(base, { onConflict: 'user_id,session_key' }));
+    }
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
     // Regola dolore: nota che segnala dolore → pain-hold finché l'utente non sblocca
@@ -39,7 +62,7 @@ export async function POST(request: NextRequest) {
       await supabaseAdmin.from('profiles').update({ training_pain_hold: true }).eq('user_id', userId);
     }
 
-    return NextResponse.json({ success: true, painHold });
+    return NextResponse.json({ success: true, painHold, ...(skipped ? { skipped } : {}) });
   } catch (err) {
     console.error('training/complete error:', err);
     return NextResponse.json({ error: 'internal' }, { status: 500 });

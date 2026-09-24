@@ -14,7 +14,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
 import { isFaticaAlta, isPeriodoScarso, validatePlan, type PlanSession, type WeekPlan } from './trainingEngine';
-import { loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
+import { feedbackSeduteBlock, loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
@@ -356,7 +356,7 @@ COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
 9b. I blocchi "per portiere" (codice P1) sono nati per i portieri: preferiscili se l'atleta è portiere; per gli altri ruoli usali solo se non c'è un'alternativa B/A.
 
 PROGRESSIONE (settimana su settimana)
-10. Parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full). Sali di un codice SOLO se la settimana precedente è stata completata con feedback "facile"/"ok" e senza dolori; con feedback "duro" ripeti o torna a short.
+10. Parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full). Guarda il FEEDBACK SEDUTE: per ogni famiglia, il giudizio dell'atleta sul BLOCCO fatto l'ultima volta decide il passo — "facile" → codice successivo (o da short a full), "giusto" → stesso codice, "duro" o voto ≥ 8 o dolori → stesso codice in short o codice precedente. Mai saltare un codice. Se non ha mai fatto quella famiglia, parti dal più basso.
 11. Settimana 4 del ciclo = DELOAD: scegli varianti short e dillo nel messaggio (il server riduce anche le serie).
 12. Settimana 5+ = ri-test in ritardo: piano leggero e invita a rifare la batteria.
 
@@ -440,9 +440,6 @@ function obiettiviTesto(ctx: ContextV2): string {
 
 function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[], precedente?: string): string {
   const b = ctx.base;
-  const feedbackTxt = b.feedbackRecenti.length
-    ? b.feedbackRecenti.map((f) => `${f.feedback || '—'}${f.note ? ` ("${sanitize(f.note)}")` : ''}`).join(', ')
-    : 'nessuna seduta ancora completata';
   const o = b.checkinOggi; const m = b.checkinMedia7;
   const checkin = o ? `oggi fisico ${o.fisico ?? '—'}/10 · sonno ${o.sonno ?? '—'}h · recupero ${o.recupero ?? '—'}/10` : 'oggi non fatto';
   const media = m ? `; media ${m.giorni}gg: fisico ${m.fisico} · sonno ${m.sonno}h · recupero ${m.recupero}` : '';
@@ -459,7 +456,7 @@ Attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', '
 Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~${ctx.setup.squadraDurataMin}'` : ''}
 Allenamenti squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)}
 Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
-Feedback sedute recenti: ${feedbackTxt}
+${feedbackSeduteBlock(b.feedbackRecenti)}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
 ${massimali}${memoria}${obiettiviTesto(ctx)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${caricoTesto(b.carico)}${piano}

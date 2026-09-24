@@ -20,7 +20,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import type { WeekPlan, PlanSession } from './trainingEngine';
 import type { SquadraSettimana } from './trainingSquadra';
 
-export interface CompletionRow { session_key: string; plan_id: string | null; feedback: string | null; completed_at: string }
+export interface CompletionRow { session_key: string; plan_id: string | null; feedback: string | null; completed_at: string; rpe?: number | null }
 export interface SetRpeRow { session_key: string; rpe: number | null }
 export interface PlanRow { id: string; plan: WeekPlan }
 
@@ -29,8 +29,8 @@ export interface SedutaCarico {
   sessionKey: string;
   titolo: string;
   durataMin: number;
-  rpe: number;             // percepito (log serie / feedback / default)
-  rpeFonte: 'serie' | 'feedback' | 'default';
+  rpe: number;             // percepito (voto di fine seduta / log serie / feedback / default)
+  rpeFonte: 'seduta' | 'serie' | 'feedback' | 'default';
   carico: number;          // AU = durata × rpe
 }
 
@@ -134,10 +134,12 @@ export function calcolaCarico(input: {
     const durataMin = s?.durata_min && s.durata_min > 0 ? s.durata_min : 45;
     const logs = rpeBySession.get(c.session_key);
     let rpe: number, rpeFonte: SedutaCarico['rpeFonte'];
-    if (logs && logs.length) { rpe = logs.reduce((a, b) => a + b, 0) / logs.length; rpeFonte = 'serie'; }
+    // Il voto 1-10 di fine seduta (Ste, 23/9) vale più della media delle serie: è il giudizio sull'intera seduta
+    if (c.rpe != null && c.rpe >= 1 && c.rpe <= 10) { rpe = c.rpe; rpeFonte = 'seduta'; }
+    else if (logs && logs.length) { rpe = logs.reduce((a, b) => a + b, 0) / logs.length; rpeFonte = 'serie'; }
     else if (c.feedback && RPE_FEEDBACK[c.feedback]) { rpe = RPE_FEEDBACK[c.feedback]; rpeFonte = 'feedback'; }
     else { rpe = 6; rpeFonte = 'default'; }
-    if (rpeFonte === 'serie' && s) { sommaReale += rpe * durataMin; sommaAttesa += rpeAttesoSeduta(s) * durataMin; }
+    if ((rpeFonte === 'serie' || rpeFonte === 'seduta') && s) { sommaReale += rpe * durataMin; sommaAttesa += rpeAttesoSeduta(s) * durataMin; }
     sedute.push({ data, sessionKey: c.session_key, titolo: s?.titolo || 'Seduta', durataMin, rpe: round1(rpe), rpeFonte, carico: Math.round(durataMin * rpe) });
   }
   sedute.sort((a, b) => b.data.localeCompare(a.data));
