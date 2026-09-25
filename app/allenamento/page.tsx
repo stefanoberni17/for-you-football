@@ -55,7 +55,7 @@ export interface TrainingState {
   // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
   rigenerazioniRimaste?: number | null;
   // Squilibri calcolati dai dati (dx/sx, push/pull, piede debole): righe già in linguaggio da atleta
-  squilibri?: { righe: string[]; latoDebole: 'dx' | 'sx' | null; pushPullDebole: 'push' | 'pull' | null; testPerLatoFatti: number };
+  squilibri?: { righe: string[]; latoDebole: 'dx' | 'sx' | null; latoDeboleAlto?: 'dx' | 'sx' | null; pushPullDebole: 'push' | 'pull' | null; testPerLatoFatti: number };
 }
 
 type Vista = 'oggi' | 'settimana' | 'card';
@@ -639,6 +639,12 @@ export default function AllenamentoHub() {
                     {state.squilibri.righe.map((r) => <li key={r} className="text-body-sm text-muted leading-snug">· {r}</li>)}
                   </ul>
                   <p className="text-body-sm text-muted mt-1.5">Il piano della settimana ne tiene conto: più lavoro su una gamba sola, o più tirata. Parti sempre dal lato più debole.</p>
+                  {state.squilibri.latoDebole && !state.setup.focus.some((f) => f === 'fascia' || f === 'tutto') && (
+                    <div className="mt-2.5">
+                      <p className="text-body-sm text-app leading-snug mb-2">Per pareggiare le gambe non servono serie in più: serve la fascia. Non è tra i tuoi obiettivi.</p>
+                      <Button variant="secondary" size="sm" href="/allenamento/setup?fascia=1">Aggiungi la fascia agli obiettivi</Button>
+                    </div>
+                  )}
                 </>
               ) : (
                 <p className="text-body-sm text-muted mt-1">Fai i test su una gamba (affondo, wall sit, salto, rapidità di caviglia): così vediamo se un lato è più debole e il piano lo lavora di più.</p>

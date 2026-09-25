@@ -12,9 +12,12 @@
  *    quando la dose è già al tetto e i log dicono ancora SALI, l'esercizio passa
  *    al gradino dopo della catena con una dose ridotta (×0.7). Per il catalogo v2
  *    il "successivo" non è ancora modellato (difficoltà e livello soltanto).
- * 3. LATO DEBOLE (lib/trainingSquilibri): negli esercizi per lato delle gambe
+ * 3. LATO DEBOLE (lib/trainingSquilibri): negli esercizi per lato delle GAMBE
  *    una serie in più sul lato più debole (al massimo LATO_EXTRA_MAX_ITEMS per
  *    seduta). Il player la esegue come ultima serie, solo su quel lato.
+ *    Ste, 25/9: solo lo stesso distretto del test (un affondo debole a destra non
+ *    tocca i piegamenti a un braccio) e poche serie in più: per pareggiare si
+ *    lavora sulla fascia, consigliata negli obiettivi se manca.
  * 4. "PIÙ LEGGERO" lo decide Claude per blocco (campo `leggeri` nel JSON del
  *    piano): serie ×0.7, gestito in expandPiano con la stessa scala del deload.
  * 0. AL TUO GRADINO (21/9, Ste: "mi ha fatto fare push up normali anche se sono
@@ -30,7 +33,7 @@
  */
 import type { PlanItem, PlanSession, WeekPlan } from './trainingEngine';
 import type { RiepilogoEsercizio } from './trainingAdapt';
-import type { Squilibri, Lato } from './trainingSquilibri';
+import { distrettoEsercizio, type Squilibri, type Lato } from './trainingSquilibri';
 import { catenaByArea, esercizioById, type AreaForza } from './trainingCatalog';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { ACCESSORI_CORPO_LIBERO_REPS_MAX } from './trainingRulesV2';
@@ -41,15 +44,12 @@ export const PASSO_KG_PCT = 0.025;           // +2.5 % kg (SALI) — SCENDI: −
 export const PASSO_KG_MIN = 1;               // almeno 1 kg, arrotondato a 0.5
 export const SECONDI_MAX = 120;              // tenute: mai oltre 2'
 export const GRADINO_SCALA = 0.7;            // dose del nuovo gradino rispetto alla base del blocco
-export const LATO_EXTRA_MAX_ITEMS = 2;       // serie extra sul lato debole: al massimo 2 esercizi per seduta
+export const LATO_EXTRA_MAX_ITEMS = 1;       // serie extra sul lato debole: al massimo 1 esercizio per seduta (Ste, 25/9: "piuttosto che aumentare molto le serie, la fascia")
 export const LEGGERO_SCALA = 0.7;            // "più leggero" scelto da Claude per blocco
 export const GRADINO_DOSE_PCT = 0.7;         // al gradino dell'atleta: reps/secondi = 70 % del massimo misurato nel test
 
 export type Adattamento = 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero';
 
-/** Qualità v2 / aree v1 "gambe e piede": solo qui ha senso la serie extra sul lato debole. */
-const QUALITA_GAMBE = new Set(['forza-parte-bassa', 'forza-esplosiva', 'pliometria-estensiva', 'pliometria-intensiva', 'fascia-prevenzione', 'velocita']);
-const AREE_GAMBE_V1 = new Set(['fascia', 'lombari', 'laterale']);
 /** Catene v1 con un "gradino dopo" sensato per la forza (le tecniche hanno i loro percorsi). */
 const AREE_CATENA = new Set(['spinta', 'tirata', 'core', 'laterale', 'lombari']);
 
@@ -68,12 +68,8 @@ function unitaDi(id: string): string | null {
 function isPerLato(it: PlanItem): boolean {
   return it.per_lato === true || esercizioById(it.esercizio_id)?.perLato === true || esercizioV2ById(it.esercizio_id)?.perLato === true;
 }
-function isGambe(id: string): boolean {
-  const v1 = esercizioById(id);
-  if (v1) return AREE_GAMBE_V1.has(v1.area);
-  const v2 = esercizioV2ById(id);
-  return !!v2 && (QUALITA_GAMBE.has(v2.qualita) || (v2.qualitaSecondaria !== undefined && QUALITA_GAMBE.has(v2.qualitaSecondaria)));
-}
+/** Solo gambe, piede e fascia: la serie extra sul lato debole segue il distretto dei test (mai la parte alta). */
+const isGambe = (id: string): boolean => distrettoEsercizio(id) === 'gambe';
 
 /** Passo in su/giù per una quantità (reps o secondi). */
 function passo(quantita: number, unita: string, verso: 1 | -1): number {
@@ -216,7 +212,7 @@ export function adattaItems(items: PlanItem[], ctx: ContestoProgressione): PlanI
     // Serie extra sul lato debole: non su un esercizio appena alleggerito (SCENDI/leggero) né su un gradino nuovo
     if (latoDebole && latoExtra < LATO_EXTRA_MAX_ITEMS && (!out.adattamento || out.adattamento === 'sali') && isPerLato(out) && isGambe(out.esercizio_id) && (!out.schema || out.schema === 'fisso')) {
       latoExtra++;
-      out = { ...out, lato_extra: latoDebole, nota: [out.nota, `Serie in più a ${latoDebole === 'sx' ? 'sinistra' : 'destra'}: è il lato più debole.`].filter(Boolean).join(' ') };
+      out = { ...out, lato_extra: latoDebole, nota: [out.nota, `Una serie in più a ${latoDebole === 'sx' ? 'sinistra' : 'destra'}: è il lato più debole. Per pareggiare davvero conta la fascia.`].filter(Boolean).join(' ') };
       if (!out.adattamento) out.adattamento = 'lato';
     }
     return out;

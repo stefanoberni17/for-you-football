@@ -32,6 +32,25 @@ export const SOGLIA_SERIE_QUANTITA = 0.9; // quantità fatta su un lato sotto il
 export const SEDUTE_MIN_SERIE = 2;      // sedute in cui il lato perde per segnalarlo
 
 export type Lato = 'dx' | 'sx';
+export type Distretto = 'gambe' | 'alto';
+
+/**
+ * Distretto di un esercizio per lato (Ste, 25/9: "se nei test la parte destra inferiore è più debole
+ * ti fa aumentare anche le serie per la parte alta destra, ma non è detto che siano collegati").
+ * gambe = gambe, piede, fascia; alto = spinta, tirata, core, spalle. null = non per lato o non chiaro.
+ */
+const ALTO_RE = /arm|bracci|spall|push|pull|plank|crow|handstand|pike|row|remator|trazion|piegament|dip\b|press/i;
+export function distrettoEsercizio(id: string): Distretto | null {
+  const v1 = ESERCIZI.find((e) => e.id === id);
+  if (v1) return ['spinta', 'tirata', 'core'].includes(v1.area) ? 'alto' : ['fascia', 'lombari', 'laterale'].includes(v1.area) ? 'gambe' : null;
+  const v2 = esercizioV2ById(id);
+  if (!v2) return null;
+  const alto = v2.qualita === 'forza-parte-alta' || v2.qualitaSecondaria === 'forza-parte-alta'
+    || (v2.tags ?? []).some((t) => /push|pull|petto|spalle|dorsali/i.test(t)) || ALTO_RE.test(v2.nome);
+  if (alto) return 'alto';
+  const gambe = ['forza-parte-bassa', 'forza-esplosiva', 'pliometria-estensiva', 'pliometria-intensiva', 'velocita', 'fascia-prevenzione'];
+  return gambe.includes(v2.qualita) || (v2.qualitaSecondaria !== undefined && gambe.includes(v2.qualitaSecondaria)) ? 'gambe' : null;
+}
 
 /** Coppie di test per lato: stessa misura, destro e sinistro (tutti "più è meglio"). */
 export const COPPIE_LATO: { chiave: string; label: string; dx: string; sx: string; unita: string; gruppo: 'gambe' | 'fascia' }[] = [
@@ -62,7 +81,8 @@ export interface SquilibrioSerie {
 }
 export interface Squilibri {
   lati: SquilibrioLato[];
-  latoDebole: Lato | null;   // sintesi gambe: il lato che perde in più test (o nei log) — null se pari o senza dati
+  latoDebole: Lato | null;   // sintesi GAMBE: il lato che perde in più test (o nei log delle gambe) — null se pari o senza dati
+  latoDeboleAlto: Lato | null; // sintesi PARTE ALTA: solo dai log per lato degli esercizi di spinta/tirata (25/9: distretti separati)
   pushPull: { push: number | null; pull: number | null; debole: 'push' | 'pull' | null; diff: number | null };
   serie: SquilibrioSerie[];
   piede: { label: string; rapporto: number; forte: number; debole: number }[]; // piede debole sotto soglia
@@ -146,11 +166,16 @@ export function calcolaSquilibri(input: { results: TestResultRow[]; logs: SetLog
   const { lati, coppieFatte } = squilibriDaTest(input.results);
   const serie = squilibriDaSerie(input.logs);
 
-  // Sintesi gambe: voti per lato (i test marcati valgono doppio, i log un voto per esercizio)
-  let votiDx = 0, votiSx = 0;
-  for (const l of lati) { const peso = l.grado === 'marcato' ? 2 : 1; if (l.debole === 'dx') votiDx += peso; else votiSx += peso; }
-  for (const s of serie) { if (s.debole === 'dx') votiDx++; else votiSx++; }
-  const latoDebole: Lato | null = votiDx === votiSx ? null : votiDx > votiSx ? 'dx' : 'sx';
+  // Sintesi per DISTRETTO (25/9): i test per lato sono tutti di gambe/fascia, i log contano solo per il
+  // distretto del loro esercizio — un affondo più duro a destra non dice niente sui piegamenti a un braccio.
+  const voti = (d: Distretto): Lato | null => {
+    let dx = 0, sx = 0;
+    if (d === 'gambe') for (const l of lati) { const peso = l.grado === 'marcato' ? 2 : 1; if (l.debole === 'dx') dx += peso; else sx += peso; }
+    for (const s of serie) { if (distrettoEsercizio(s.esercizioId) !== d) continue; if (s.debole === 'dx') dx++; else sx++; }
+    return dx === sx ? null : dx > sx ? 'dx' : 'sx';
+  };
+  const latoDebole = voti('gambe');
+  const latoDeboleAlto = voti('alto');
 
   // Push vs pull dal rombo (punteggi 0-100 ancorati ai livelli)
   const rombo = buildRombo(input.results);
@@ -171,7 +196,7 @@ export function calcolaSquilibri(input: { results: TestResultRow[]; logs: SetLog
     if (rapporto < SOGLIA_PIEDE_DEBOLE) piede.push({ label: c.label, rapporto, forte: f.valore, debole: d.valore });
   }
 
-  return { lati, latoDebole, pushPull, serie, piede, testPerLatoFatti: coppieFatte };
+  return { lati, latoDebole, latoDeboleAlto, pushPull, serie, piede, testPerLatoFatti: coppieFatte };
 }
 
 export function haSquilibri(s: Squilibri): boolean {
@@ -201,7 +226,10 @@ export function squilibriTesto(s: Squilibri): string {
     righe.push(`- Push ${push} vs Pull ${pull} (rombo 0-100): ${s.pushPull.debole === 'pull' ? 'la TIRATA' : 'la SPINTA'} è indietro di ${Math.abs(diff!)} punti`);
   }
   for (const p of s.piede) righe.push(`- Piede debole al ${Math.round(p.rapporto * 100)} % del forte nei ${p.label} (${p.debole} vs ${p.forte})`);
-  const sintesi = s.latoDebole ? `Sintesi gambe: lato ${LATO_NOME[s.latoDebole].toUpperCase()} da lavorare di più.\n` : '';
+  const sintesi = [
+    s.latoDebole ? `Sintesi GAMBE: lato ${LATO_NOME[s.latoDebole].toUpperCase()} più debole → la strada per pareggiare è la FASCIA (blocchi di fascia unilaterali nelle giornate leggere), non serie in più.` : '',
+    s.latoDeboleAlto ? `Sintesi PARTE ALTA: lato ${LATO_NOME[s.latoDeboleAlto].toUpperCase()} più in difficoltà nei log (distretto separato dalle gambe).` : '',
+  ].filter(Boolean).map((r) => `${r}\n`).join('');
   return `\n# SQUILIBRI (calcolati dai test e dai log per serie — regola 21)\n${sintesi}${righe.join('\n')}`;
 }
 

@@ -222,7 +222,7 @@ export async function GET(request: NextRequest) {
       calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
       maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase],
       maxSeduteTotali: maxSeduteTotali(setup.fase),
-      squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
+      squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, latoDeboleAlto: squilibri.latoDeboleAlto, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
     });
   } catch (err) {
     console.error('training/state error:', err);
