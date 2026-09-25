@@ -4,8 +4,11 @@ import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
 import { requireWeekAccess } from '@/lib/serverAccess';
+import { checkDayUnlocked, parseWeekDay } from '@/lib/serverUnlock';
+import { GATE_DAY } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60; // Notion + Supabase: mai oltre i 10 s di default (review 25/9)
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -110,8 +113,9 @@ export async function GET(request: NextRequest) {
  * Segna un giorno come completato e salva la risposta opzionale.
  * Il giorno 7 (gate) NON viene marcato da questa route — usa /api/gate.
  *
- * Body: { userId, weekNumber, dayNumber, response? }
- * Response: { success: true, nextDay: { week, day } }
+ * Body: { weekNumber, dayNumber, response?, prePraticaResponse?, reflectionQuestion? }
+ * Response: { success: true, nextDay: { week, day } } — 403 day_locked se il time-gate
+ * non è soddisfatto (giorno prima non fatto, o fatto oggi); alreadyCompleted: true se il giorno era già fatto.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -121,24 +125,35 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    const { weekNumber, dayNumber, response, prePraticaResponse, reflectionQuestion } = body;
-    if (weekNumber && !(await requireWeekAccess(userId, Number(weekNumber)))) {
+    const wd = parseWeekDay(body.weekNumber, body.dayNumber);
+    if (!wd) {
+      return NextResponse.json({ error: 'weekNumber (1-12) e dayNumber (1-7) richiesti' }, { status: 400 });
+    }
+    const { weekNumber, dayNumber } = wd;
+    const response = typeof body.response === 'string' ? body.response.slice(0, 2000) : null;
+    const prePraticaResponse = typeof body.prePraticaResponse === 'string' ? body.prePraticaResponse.slice(0, 1000) : null;
+    const reflectionQuestion = typeof body.reflectionQuestion === 'string' ? body.reflectionQuestion.slice(0, 500) : null;
+    if (!(await requireWeekAccess(userId, weekNumber))) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
-    if (!userId || !weekNumber || !dayNumber) {
-      return NextResponse.json(
-        { error: 'userId, weekNumber e dayNumber richiesti' },
-        { status: 400 }
-      );
-    }
-
     // Giorno 7 va gestito da /api/gate
-    if (dayNumber === 7) {
+    if (dayNumber === GATE_DAY) {
       return NextResponse.json(
         { error: 'Giorno 7 è un gate — usa POST /api/gate' },
         { status: 400 }
       );
+    }
+
+    // Time-gate lato server: il giorno prima fatto, e fatto prima di oggi (fuso italiano).
+    // Un giorno già completato non si ricompleta (completed_at e risposta restano quelli veri).
+    const unlock = await checkDayUnlocked(supabaseAdmin, userId, weekNumber, dayNumber);
+    if (!unlock.unlocked) {
+      return NextResponse.json({ error: 'day_locked' }, { status: 403 });
+    }
+    if (unlock.alreadyCompleted) {
+      const nextDay = dayNumber < 7 ? { week: weekNumber, day: dayNumber + 1 } : { week: weekNumber + 1, day: 1 };
+      return NextResponse.json({ success: true, alreadyCompleted: true, nextDay });
     }
 
     // Upsert progresso giorno
@@ -219,16 +234,26 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    const { weekNumber, dayNumber, prePraticaResponse } = body;
-    if (weekNumber && !(await requireWeekAccess(userId, Number(weekNumber)))) {
+    const wd = parseWeekDay(body.weekNumber, body.dayNumber);
+    if (!wd) {
+      return NextResponse.json({ error: 'weekNumber (1-12) e dayNumber (1-7) richiesti' }, { status: 400 });
+    }
+    const { weekNumber, dayNumber } = wd;
+    const prePraticaResponse = typeof body.prePraticaResponse === 'string' ? body.prePraticaResponse.slice(0, 1000) : null;
+    if (!(await requireWeekAccess(userId, weekNumber))) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
+    if (dayNumber === GATE_DAY) {
+      return NextResponse.json({ error: 'Giorno 7 è un gate — usa POST /api/gate' }, { status: 400 });
+    }
 
-    if (!userId || !weekNumber || !dayNumber) {
-      return NextResponse.json(
-        { error: 'userId, weekNumber e dayNumber richiesti' },
-        { status: 400 }
-      );
+    // Time-gate lato server (stessa regola del POST). Un giorno già completato non si "riavvia".
+    const unlock = await checkDayUnlocked(supabaseAdmin, userId, weekNumber, dayNumber);
+    if (!unlock.unlocked) {
+      return NextResponse.json({ error: 'day_locked' }, { status: 403 });
+    }
+    if (unlock.alreadyCompleted) {
+      return NextResponse.json({ success: true, alreadyCompleted: true });
     }
 
     // Crea riga con completed: false (se non esiste già)
@@ -240,7 +265,7 @@ export async function PUT(request: NextRequest) {
           week_number: weekNumber,
           day_number: dayNumber,
           completed: false,
-          pre_pratica_response: prePraticaResponse || null,
+          pre_pratica_response: prePraticaResponse,
         },
         { onConflict: 'user_id,week_number,day_number' }
       );
@@ -268,36 +293,39 @@ export async function PATCH(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    const { weekNumber, dayNumber, previousDayCheck } = body;
-    if (weekNumber && !(await requireWeekAccess(userId, Number(weekNumber)))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
-    }
-
-    if (!userId || !weekNumber || !dayNumber || previousDayCheck == null) {
+    const wd = parseWeekDay(body.weekNumber, body.dayNumber);
+    const previousDayCheck = Number(body.previousDayCheck);
+    if (!wd || ![1, 2, 3].includes(previousDayCheck)) {
       return NextResponse.json(
-        { error: 'userId, weekNumber, dayNumber e previousDayCheck richiesti' },
+        { error: 'weekNumber (1-12), dayNumber (1-7) e previousDayCheck (1-3) richiesti' },
         { status: 400 }
       );
+    }
+    const { weekNumber, dayNumber } = wd;
+    if (!(await requireWeekAccess(userId, weekNumber))) {
+      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
     if (weekNumber === 1 && dayNumber === 1) {
       return NextResponse.json({ error: 'Nessun giorno precedente' }, { status: 400 });
     }
 
+    // Il check si salva sulla riga del giorno PRIMA: quel giorno deve essere davvero fatto
+    // (= questo giorno sbloccato). Solo UPDATE: niente righe create dal check.
+    const unlock = await checkDayUnlocked(supabaseAdmin, userId, weekNumber, dayNumber);
+    if (!unlock.unlocked) {
+      return NextResponse.json({ error: 'day_locked' }, { status: 403 });
+    }
+
     const prevWeek = dayNumber === 1 ? weekNumber - 1 : weekNumber;
-    const prevDay  = dayNumber === 1 ? 7 : dayNumber - 1;
+    const prevDay  = dayNumber === 1 ? GATE_DAY : dayNumber - 1;
 
     const { error } = await supabaseAdmin
       .from('user_day_progress')
-      .upsert(
-        {
-          user_id: userId,
-          week_number: prevWeek,
-          day_number: prevDay,
-          previous_day_check: previousDayCheck,
-        },
-        { onConflict: 'user_id,week_number,day_number' }
-      );
+      .update({ previous_day_check: previousDayCheck })
+      .eq('user_id', userId)
+      .eq('week_number', prevWeek)
+      .eq('day_number', prevDay);
 
     if (error) throw error;
     return NextResponse.json({ success: true });

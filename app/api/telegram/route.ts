@@ -26,6 +26,8 @@ async function sendTelegramMessage(chatId: number, text: string) {
   });
 }
 
+export const maxDuration = 60; // Claude con thinking + Notion + Supabase: mai i 10 s di default (review 25/9)
+
 export async function POST(request: NextRequest) {
   try {
     // Verifica che la richiesta provenga davvero da Telegram.

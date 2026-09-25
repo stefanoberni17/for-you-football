@@ -19,6 +19,8 @@ const supabaseAdmin = createClient(
  * → testo per il prompt + vincoli duri per il validatore (lib/trainingRequest).
  * Body legacy: { richiesta?: string } (testo libero, solo prompt).
  */
+export const maxDuration = 60; // Claude con thinking + Notion + Supabase: mai i 10 s di default (review 25/9)
+
 export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);

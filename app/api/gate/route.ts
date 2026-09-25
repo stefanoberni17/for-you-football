@@ -3,6 +3,24 @@ import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { GATE_DAY } from '@/lib/constants';
+import { checkDayUnlocked, parseWeekDay, settimanaProntaPerIlGate } from '@/lib/serverUnlock';
+
+export const maxDuration = 60;
+
+const GATE_ANSWER_MAX = 1500;
+const GATE_QUESTIONS = 3;
+
+/** Le risposte del gate: oggetto q1..q3 con testo non vuoto (come la pagina), tagliato a 1500. */
+function gateAnswersValide(raw: unknown): Record<string, string> | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const out: Record<string, string> = {};
+  for (let i = 1; i <= GATE_QUESTIONS; i++) {
+    const v = (raw as Record<string, unknown>)[`q${i}`];
+    if (typeof v !== 'string' || !v.trim()) return null;
+    out[`q${i}`] = v.trim().slice(0, GATE_ANSWER_MAX);
+  }
+  return out;
+}
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
 
@@ -83,13 +101,24 @@ export async function POST(request: NextRequest) {
     if (!(await requirePaidAccess(userId))) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
-    const { weekNumber, answers } = body;
-
-    if (!userId || !weekNumber || !answers) {
+    const wd = parseWeekDay(body.weekNumber, GATE_DAY);
+    const answers = gateAnswersValide(body.answers);
+    if (!wd || !answers) {
       return NextResponse.json(
-        { error: 'userId, weekNumber e answers richiesti' },
+        { error: 'weekNumber (1-12) e answers (tre risposte non vuote, max 1500 caratteri) richiesti' },
         { status: 400 }
       );
+    }
+    const { weekNumber } = wd;
+
+    // Time-gate lato server: giorni 1-6 tutti fatti e il 6 fatto prima di oggi (fuso italiano).
+    // Un gate già passato non si ripassa (le risposte restano quelle vere).
+    const unlock = await checkDayUnlocked(supabaseAdmin, userId, weekNumber, GATE_DAY);
+    if (!unlock.unlocked || !settimanaProntaPerIlGate(unlock.progress, weekNumber)) {
+      return NextResponse.json({ error: 'day_locked' }, { status: 403 });
+    }
+    if (unlock.alreadyCompleted) {
+      return NextResponse.json({ success: true, alreadyCompleted: true });
     }
 
     // Salva gate_answers + marca giorno 7 come completato

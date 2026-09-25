@@ -90,7 +90,14 @@ function filterMessages(
   });
 }
 
+export const maxDuration = 60;
+
 export async function GET(request: NextRequest) {
+  // Senza CRON_SECRET in env, "Bearer undefined" avrebbe autenticato chiunque (review 25/9)
+  if (!process.env.CRON_SECRET) {
+    console.error('CRON_SECRET non configurata: cron rifiutato');
+    return NextResponse.json({ error: 'cron_secret_missing' }, { status: 500 });
+  }
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -153,9 +160,11 @@ export async function GET(request: NextRequest) {
         .eq('week_number', week)
         .maybeSingle();
 
-      const jsDay = today.getDay(); // 0=Sun, 1=Mon...
-      const isMatchDay = calendar?.match_days?.includes(jsDay);
-      const isTrainingDay = calendar?.training_days?.includes(jsDay);
+      // Il calendario salva 1=Lun … 7=Dom (lib/constants); getDay() dà 0 per la domenica:
+      // prima la domenica non era mai giorno partita (review 25/9)
+      const appDay = today.getDay() === 0 ? 7 : today.getDay();
+      const isMatchDay = calendar?.match_days?.includes(appDay);
+      const isTrainingDay = calendar?.training_days?.includes(appDay);
 
       let dayContext = '';
       if (isMatchDay) dayContext = 'Oggi ha una partita.';

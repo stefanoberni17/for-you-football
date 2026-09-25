@@ -1,4 +1,5 @@
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, GIORNATA_ATTESA_ORE } from './constants';
+import { dateItaly } from './dateItaly';
 
 /**
  * Logica sblocco giorni e settimane — For You Football
@@ -24,14 +25,15 @@ export interface DayProgress {
 }
 
 /**
- * Verifica se un giorno è stato completato prima dell'inizio di oggi (mezzanotte locale).
+ * Verifica se un giorno è stato completato prima dell'inizio di oggi, in FUSO ITALIANO.
  * Questo implementa il time-gate: il giorno successivo si sblocca solo il giorno dopo.
+ * Stesso "oggi" di check-in, rituale e ripresa (lib/dateItaly): prima usava la
+ * mezzanotte del dispositivo, e sul server (UTC) o spostando l'orologio del
+ * telefono il giorno dopo si apriva prima (review 25/9).
  */
 function isCompletedBeforeToday(completedAt: string | null, now: Date): boolean {
   if (!completedAt) return false;
-  const completedDate = new Date(completedAt);
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return completedDate < todayStart;
+  return dateItaly(completedAt) < dateItaly(now);
 }
 
 /**
