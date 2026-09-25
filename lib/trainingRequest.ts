@@ -20,6 +20,7 @@ export const FOCUS_OPZIONI = [
   { id: 'resistenza', label: 'Resistenza', qualita: 'resistenza-aerobica' },
   { id: 'tecnica', label: 'Tecnica palla', qualita: 'tecnica-palleggi' },
   { id: 'fascia', label: 'Prevenzione / fascia', qualita: 'fascia-prevenzione' },
+  { id: 'kettlebell', label: 'Forza funzionale kettlebell', qualita: 'forza-esplosiva' }, // sezione dedicata (Ste, 25/9): blocchi kb-* composti dal server
   { id: 'recupero', label: 'Recupero', qualita: 'mobilita-recupero' },
   { id: 'tutto', label: 'Tutto, in equilibrio', qualita: 'mix' },
 ] as const;
@@ -42,6 +43,7 @@ export const FOCUS_QUALITA: Record<FocusId, readonly string[]> = {
   resistenza: ['resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa'],
   tecnica: ['tecnica-palleggi', 'tecnica-passaggi', 'tecnica-conduzione', 'tecnica-tiro', 'tecnica-visione'],
   fascia: ['fascia-prevenzione'],
+  kettlebell: ['forza-esplosiva'], // soddisfatto SOLO dai blocchi kb-* (controllo dedicato in expandPiano)
   recupero: ['mobilita-recupero'],
   tutto: ['forza-parte-alta', 'forza-parte-bassa', 'forza-esplosiva', 'pliometria-intensiva', 'pliometria-estensiva', 'velocita',
     'resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa', 'tecnica-palleggi', 'tecnica-passaggi', 'tecnica-conduzione', 'tecnica-tiro', 'tecnica-visione', 'fascia-prevenzione'],

@@ -31,10 +31,12 @@ import { testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi } from './trainingLivelli';
 import { FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, ROLLING_ID } from './trainingFascia';
+import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
+import { calcolaMemoriaTecnica, isMazzo, scalaDi, tecnicaTesto, type MemoriaTecnica } from './trainingTecnica';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.17-fascia-tre-ruoli';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.18-tecnica-kettlebell';
 /**
  * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
  * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
@@ -78,6 +80,8 @@ export interface ContextV2 {
   memoria: MemoriaBlocchi;
   // Note delle regole applicate dal server (pliometria in B, sprint con palla…) per il prompt
   noteRegole: string[];
+  memoriaTecnica: MemoriaTecnica;   // scale muro/palleggi e mazzo del quinto giorno (regola 28)
+  kettlebell: { fascia: FasciaKb; settimaneBase: number; settimaneIntermedio: number } | null; // sezione kettlebell attiva (obiettivo + attrezzo)
 }
 
 export async function loadContextV2(userId: string): Promise<ContextV2> {
@@ -109,8 +113,10 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
     maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
     daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup, memoria: {}, noteRegole: [],
+    memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null,
   };
   aggiornaParteAlta(ctx);
+  aggiornaKettlebell(ctx);
   await completaFeedbackDaiPiani(base.feedbackRecenti);
   // Velocità e pliometria (Ste, 24-25/9): pliometria solo B nelle prime settimane, sprint con palla dalla 5ª, salite in season una ogni 4 settimane; riscaldamento fisso in libreria
   const lunediCorrente = mondayOfThisWeekRome();
@@ -124,7 +130,22 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
   ctx.memoria = calcolaMemoriaBlocchi(base.feedbackRecenti, { disponibili: ctx.blocchi, lunediCorrente, livello: v2.livello, livelli: base.livelli, isDeload: base.ciclo.isDeload });
   // Assaggio/promozione del livello sopra: quei blocchi entrano tra i disponibili (Claude li vede in libreria, il validatore li accetta)
   for (const b of blocchiFuoriLivello(ctx.memoria)) if (!ctx.blocchi.some((x) => x.id === b.id)) ctx.blocchi.push(b);
+  // Tecnica (regola 28): scale muro/palleggi e mazzo, dalle settimane precedenti
+  ctx.memoriaTecnica = calcolaMemoriaTecnica(base.feedbackRecenti, ctx.blocchi, lunediCorrente);
   return ctx;
+}
+
+/**
+ * Kettlebell (Ste, 25/9): sezione dedicata, entra solo con l'attrezzo E l'obiettivo `kettlebell` (setup o maschera).
+ * I blocchi virtuali kb-* sono composti dal server sulle fasce raggiunte (log per serie).
+ */
+function aggiornaKettlebell(ctx: ContextV2): void {
+  ctx.blocchi = ctx.blocchi.filter((b) => !isKettlebell(b.id));
+  ctx.kettlebell = null;
+  if (!ctx.setup.attrezzatura.includes('kettlebell') || !ctx.obiettivi.includes('kettlebell')) return;
+  const kb = costruisciKettlebell(ctx.base.logsSerie);
+  ctx.blocchi.push(...kb.blocchi);
+  ctx.kettlebell = { fascia: kb.fascia, settimaneBase: kb.settimaneBase, settimaneIntermedio: kb.settimaneIntermedio };
 }
 
 /**
@@ -229,6 +250,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // Sprint: tetto per seduta più basso se nella settimana c'è l'EMOM della parte alta con lo sprint (Ste, 25/9)
   const settimanaConEmom = (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).includes(PA_EMOM_ID));
   const sprintMax = settimanaConEmom ? SPRINT_MAX_CON_EMOM : SPRINT_MAX_SEDUTA;
+  // Kettlebell attivo nella settimana: la forza parte bassa con pesi va più leggera (Ste, 25/9: "si somma alla parte bassa")
+  const kbSettimana = (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).some((id) => isKettlebell(id)));
+  let blocchiKb = 0;
   let giornateVelocita = 0;
   let blocchiSalite = 0;
   let giornatePercorsoFascia = 0;
@@ -257,6 +281,21 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         const sost = sostitutoDallaMemoria(ctx.memoria, blocchi[i]);
         if (!sost || !disponibili.has(sost.id) || blocchi.some((b) => b.id === sost.id)) continue;
         blocchi[i] = sost;
+      }
+      // Scale di tecnica (regola 28): il codice lo decide il server, come per le famiglie
+      for (let i = 0; i < blocchi.length; i++) {
+        const sc = scalaDi(blocchi[i].id);
+        const mt = sc ? ctx.memoriaTecnica.scale[sc] : undefined;
+        if (!mt || mt.ammessi.includes(blocchi[i].id) || !disponibili.has(mt.prossimo.id) || blocchi.some((b) => b.id === mt.prossimo.id)) continue;
+        blocchi[i] = mt.prossimo;
+      }
+      for (const b of blocchi) {
+        const sc = scalaDi(b.id);
+        const mt = sc ? ctx.memoriaTecnica.scale[sc] : undefined;
+        const notaT = mt && mt.ammessi.includes(b.id) ? notaPasso(mt.passo) : null;
+        if (notaT) noteMemoria.set(b.id, notaT);
+        if (isMazzo(b) && ctx.memoriaTecnica.mazzo && b.qualita === ctx.memoriaTecnica.mazzo.tipo)
+          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è lo stesso tipo di tecnica (${b.qualita}) della settimana scorsa ("${ctx.memoriaTecnica.mazzo.ultimo.nome}") — il mazzo del quinto giorno ruota, scegli un tipo diverso`);
       }
       for (const b of blocchi) {
         const m = ctx.memoria[b.famiglia];
@@ -311,9 +350,19 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     const leggeri = new Set((Array.isArray(s.leggeri) ? s.leggeri : []).filter((id) => blocchi.some((b) => b.id === id && QUALITA_FISICHE.has(b.qualita))));
     // Assaggio del livello sopra (memoria): serie ×0.7 forzate dal server, qualunque cosa abbia scelto Claude
     if (!recupero) for (const b of blocchi) if (ctx.memoria[b.famiglia]?.leggero && ctx.memoria[b.famiglia].prossimo.id === b.id) leggeri.add(b.id);
+    // Kettlebell (Ste, 25/9): uno a settimana; nella stessa settimana la parte bassa con pesi va più leggera (×0.7)
+    const kbOggi = blocchi.filter((b) => isKettlebell(b.id)).length;
+    blocchiKb += kbOggi;
+    if (blocchiKb > 1) errors.push(`seduta del giorno ${s.giorno}: secondo blocco kettlebell della settimana — al massimo UNO (Ste)`);
+    if (kbSettimana) for (const b of blocchi) {
+      if (isKettlebell(b.id) || b.qualita !== 'forza-parte-bassa' || leggeri.has(b.id)) continue;
+      if (b.attrezzatura.includes('palestra') || b.items.some((it) => it.carico_kg)) { leggeri.add(b.id); noteMemoria.set(b.id, 'kettlebell attivo: parte bassa più leggera'); }
+    }
     const items = blocchi.flatMap((b) => {
       const leggero = leggeri.has(b.id);
-      const ritorno = !recupero && ctx.memoria[b.famiglia]?.serieExtra && ctx.memoria[b.famiglia].prossimo.id === b.id;
+      const sc = scalaDi(b.id);
+      const ritorno = !recupero && ((ctx.memoria[b.famiglia]?.serieExtra && ctx.memoria[b.famiglia].prossimo.id === b.id)
+        || (sc && ctx.memoriaTecnica.scale[sc]?.serieExtra && ctx.memoriaTecnica.scale[sc]!.prossimo.id === b.id));
       const its00 = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
       // Ritorno a inizio scala (fascia): una serie in più su ogni esercizio a serie fisse
       const its0 = ritorno ? its00.map((it) => (!it.schema || it.schema === 'fisso' ? { ...it, serie: it.serie + 1 } : it)) : its00;
@@ -372,19 +421,27 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // Primo obiettivo = filo della settimana (Ste, 16/9): con ≥3 posti fisici deve stare in almeno 2 giornate
   const primo = obiettiviDaControllare(ctx, attesi.length)[0];
   const postiFisici = Math.min(seduteRichieste(ctx) ?? ctx.maxSeduteFisiche, ctx.maxSeduteFisiche) - attesi.length;
-  if (primo && postiFisici >= 3) {
+  // Un blocco kettlebell copre SOLO l'obiettivo kettlebell (Ste: "si somma alla parte bassa", non la sostituisce)
+  const copre = (b: { id: string; qualita: string }, qs: readonly string[]) => { if (isKettlebell(b.id)) return false; const bl = bloccoDi(ctx, b.id); return bl ? bloccoCopre(bl, qs) : qs.includes(b.qualita); };
+  if (primo && primo !== 'kettlebell' && postiFisici >= 3) {
     const qsPrimo = FOCUS_QUALITA[primo];
-    const candPrimo = ctx.blocchi.filter((b) => qsPrimo.includes(b.qualita));
-    const giornatePrimo = sedute.filter((s) => (s.blocchi || []).some((b) => { const bl = bloccoDi(ctx, b.id); return bl ? bloccoCopre(bl, qsPrimo) : qsPrimo.includes(b.qualita as QualitaV2); })).length;
+    const candPrimo = ctx.blocchi.filter((b) => qsPrimo.includes(b.qualita) && !isKettlebell(b.id));
+    const giornatePrimo = sedute.filter((s) => (s.blocchi || []).some((b) => copre(b, qsPrimo))).length;
     if (candPrimo.length >= 2 && giornatePrimo === 1)
       errors.push(`obiettivo principale "${focusLabel(primo)}": è in una sola giornata — con ${postiFisici} giornate fisiche mettilo in almeno 2 (in una anche in versione short o come secondo blocco, es. ${candPrimo.slice(0, 3).map((b) => b.id).join(', ')})`);
   }
   for (const f of obiettiviDaControllare(ctx, attesi.length)) {
+    if (f === 'kettlebell') {
+      const kb = ctx.blocchi.filter((b) => isKettlebell(b.id));
+      if (kb.length && !sedute.some((s) => (s.blocchi || []).some((b) => isKettlebell(b.id))))
+        errors.push(`obiettivo "${focusLabel(f)}": nessun blocco kettlebell in settimana — mettine uno (${kb.map((b) => b.id).join(', ')})`);
+      continue;
+    }
     const qs = FOCUS_QUALITA[f];
-    const cand = ctx.blocchi.filter((b) => qs.includes(b.qualita));
+    const cand = ctx.blocchi.filter((b) => qs.includes(b.qualita) && !isKettlebell(b.id));
     if (!cand.length) continue; // nessun blocco di quella qualità per questo atleta: non si può pretendere
     // Un blocco copre l'obiettivo anche come qualità secondaria se pesa almeno un quarto (rapidità e tiro = velocità + tecnica)
-    if (!sedute.some((s) => (s.blocchi || []).some((b) => { const bl = bloccoDi(ctx, b.id); return bl ? bloccoCopre(bl, qs) : qs.includes(b.qualita); })))
+    if (!sedute.some((s) => (s.blocchi || []).some((b) => copre(b, qs))))
       errors.push(`obiettivo "${focusLabel(f)}": nessun blocco ${qs.join('/')} in settimana — mettine almeno uno (es. ${cand.slice(0, 4).map((b) => b.id).join(', ')})`);
   }
   // "Tutto, in equilibrio": niente aspetto obbligatorio, ma la settimana deve coprire aspetti DIVERSI
@@ -493,6 +550,8 @@ ADATTAMENTO
 ${parteAltaRegola(ctx)}
 ${velocitaPliometriaRegola({ velocitaETecnica: ctx.obiettivi.includes('velocita') && ctx.obiettivi.includes('tecnica') })}
 ${fasciaRegola()}
+${ctx.kettlebell ? kettlebellTesto(ctx.kettlebell) : '27. KETTLEBELL: non attivo (serve l\'attrezzo e l\'obiettivo "Forza funzionale kettlebell"): non usare esercizi kettlebell sparsi.'}
+${tecnicaTesto(ctx.memoriaTecnica, ctx.blocchi)}
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
 Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21) · [apertura] / [fascia: percorso] / [fascia forza = FORZA gambe] = i tre ruoli della fascia (regola 26).
@@ -735,7 +794,7 @@ export async function generateWeekPlanV2(
   ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
   // Giorni ammessi tutti passati (es. domenica con lun/mer/ven): senza allargare ai giorni rimasti nessun piano è possibile
   if (ctx.vincoli.giorniAmmessi?.length && giorniRimasti(ctx).length === 0) ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
-  if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; aggiornaParteAlta(ctx); }
+  if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; aggiornaParteAlta(ctx); aggiornaKettlebell(ctx); }
   const nota = notaSettimanaAvviata(ctx);
   const conNota = (plan: WeekPlan): WeekPlan => (nota ? { ...plan, nota } : plan);
   const validateCtx = validateCtxFor(ctx);

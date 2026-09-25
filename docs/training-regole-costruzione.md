@@ -90,6 +90,8 @@ Dal "Programma Tecnica Base 12 settimane": giorno 1 muro, giorno 3 palleggi, gio
 - **Ritorno alla settimana 9**: voluto. Dopo **8 settimane** su una scala si torna al primo codice (settimana 9 = `Muro A1` della settimana 2, settimana 10 = `Passaggi al muro base` della settimana 1) con serie o minuti in più. Regola generale: **ogni ciclo di 8 settimane riporta le basi**, vale per tecnica e per la fascia (punto 1).
 - **Il codice sale** con giudizio facile/giusto sull'ultimo blocco della scala; con "duro" resta; le giornate di tecnica sono leggere (non contano nel tetto fisico) e vanno bene anche il giorno prima della partita (a bassa intensità: "Box dribbling — bassa intensità" nei programmi).
 
+Nel codice (25/9, `lib/trainingTecnica.ts`): `SCALA_MURO` e `SCALA_PALLEGGI` come sequenze di id (le famiglie in libreria sono diverse: la memoria per famiglia non basta), `MAZZO` con i 7 blocchi del quinto giorno; `calcolaMemoriaTecnica` dalle settimane precedenti: facile/giusto → codice successivo, duro → stesso, dopo 8 settimane sulla scala (`TECNICA_CICLO_SETTIMANE`) o a fine scala → primo codice con una serie in più (`ritorno`); il mazzo ricorda il TIPO (qualità) della settimana scorsa e `expandPiano` rifiuta lo stesso tipo due settimane di fila; un codice diverso da quello deciso viene sostituito come per le famiglie. Regola 28 + sezione "# TECNICA" nel prompt. In libreria mancano `Tecnica Palleggi A1 - Tecnica di base` (si usa `tecnica-palleggi-a1`) e i blocchi Headball (incompleti).
+
 ---
 
 ## 5. Kettlebell (Ste, 24-25/9)
@@ -122,7 +124,7 @@ Due leve di progressione, da tenere separate:
 | kettlebell rotational clean | avanzato | 12 kg | 16-20 kg | `solo_livello` A |
 | Kettlebell Advanced Windmill | avanzato | 8 kg | 16 kg | mobilità + forza sopra la testa: peso basso anche per gli avanzati |
 
-Da fare nel codice: campi `fascia_kb` e `peso_riferimento` nel JSON del catalogo; blocchi virtuali `kb-base` / `kb-intermedio` / `kb-avanzato` composti dal server (come `pa-*`); regola "kettlebell attivo → parte bassa con pesi in short"; passo di 4 kg in `adattaDose` per l'attrezzatura kettlebell.
+Nel codice (25/9, `lib/trainingKettlebell.ts`): campi `fascia_kb` e `peso_kg` nel JSON del catalogo (→ `fasciaKb`, `pesoKg`; aggiunti **Goblet squat** e **Kettlebell swing a una mano**, i tre esercizi con attrezzatura "palestra" corretti a "kettlebell"); blocchi virtuali `kb-base` / `kb-intermedio` / `kb-avanzato` composti dal server (come `pa-*`, fidati dal validatore) e messi in libreria SOLO con il kettlebell tra gli attrezzi e l'obiettivo **"Forza funzionale kettlebell"** (`kettlebell` in `FOCUS_OPZIONI`, setup o maschera), fino alla fascia raggiunta: intermedio dopo 4 settimane facili (RPE medio ≤ 6 nei log per serie) sulla base, avanzato dopo 6 sull'intermedio; un blocco kettlebell a settimana (errore oltre) e copre SOLO l'obiettivo kettlebell; **kettlebell attivo → i blocchi di forza parte bassa con pesi vanno a serie ×0.7** (nota "kettlebell attivo: parte bassa più leggera"); passo di **4 kg** in su e in giù in `adattaDose` per gli esercizi kettlebell (griglia 8-12-16-20…). Regola 27 nel prompt. I pesi di partenza della tabella sono quelli del catalogo: da rivedere sui log.
 
 ---
 
@@ -135,5 +137,5 @@ Da fare nel codice: campi `fascia_kb` e `peso_riferimento` nel JSON del catalogo
 | 1. tre famiglie fascia | `lib/trainingFascia.ts` + override qualità in `trainingBlocks.ts` + `expandPiano` (apertura aggiunta/spostata in testa, mai da sola, percorso ≤ 3/settimana) + memoria (ritorno a fine scala con una serie in più) + regola 26 | fatto 25/9 |
 | 2. plio: ingresso in B (4 settimane, blocchi A/PRO esclusi), onda B/A, duro → 2 settimane B, scarico in B | `lib/trainingVelocita.ts` (`filtraVelocitaPliometria`) + memoria (`calcolaOnda`, passi `onda-a`/`onda-b`) + `expandPiano` (scarico) | fatto 25/9 |
 | 3. velocità: 6-8 sprint (6 con EMOM) limati dal server, riscaldamento fisso `risc-velocita` in testa, 1 giornata a settimana, con palla dalla 5ª settimana | `lib/trainingVelocita.ts` + `expandPiano` + `validateSessionV2` (rete di sicurezza) + regole 24-25 del prompt | fatto 25/9 (salite: 1 a settimana, in season 1 ogni 4, mai nello scarico) |
-| 4. tecnica: due scale + mazzo + ritorno a 8 settimane | server | da fare |
-| 5. kettlebell: sezione dedicata, fasce, pesi a passi di 4 kg, parte bassa ridotta | catalogo + blocchi virtuali `kb-*` + `adattaDose` | da fare (fasce confermate, pesi da rivedere sui log) |
+| 4. tecnica: scala muro, scala palleggi, mazzo del quinto giorno, ritorno dopo 8 settimane | `lib/trainingTecnica.ts` + sostituzione/errore in `expandPiano` + regola 28 | fatto 25/9 |
+| 5. kettlebell: fasce base/intermedio/avanzato, blocchi kb-*, parte bassa più leggera, passo 4 kg | `lib/trainingKettlebell.ts` + catalogo (`fasciaKb`, `pesoKg`) + obiettivo `kettlebell` + `adattaDose` + regola 27 | fatto 25/9 (pesi di partenza da rivedere sui log) |

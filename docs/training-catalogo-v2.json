@@ -844,7 +844,7 @@
  {
   "nome": "kettlebell clean to push",
   "qualita": "forza-parte-alta",
-  "attrezzatura": "palestra",
+  "attrezzatura": "kettlebell",
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
@@ -860,12 +860,14 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "Anche B ma peso basso"
+  "nota_livello": "Anche B ma peso basso",
+  "fascia_kb": "avanzato",
+  "peso_kg": 12
  },
  {
   "nome": "kettlebell swing high pull",
   "qualita": "forza-parte-alta",
-  "attrezzatura": "palestra",
+  "attrezzatura": "kettlebell",
   "difficolta": 3,
   "livello_min": "B",
   "unita": "reps",
@@ -879,7 +881,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "fascia_kb": "intermedio",
+  "peso_kg": 12
  },
  {
   "nome": "Overhead Press Con Manubri",
@@ -1584,7 +1588,7 @@
  {
   "nome": "kettlebell kneeling snatch",
   "qualita": "forza-esplosiva",
-  "attrezzatura": "palestra",
+  "attrezzatura": "kettlebell",
   "difficolta": 1,
   "livello_min": "B",
   "unita": "reps",
@@ -1598,7 +1602,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "fascia_kb": "intermedio",
+  "peso_kg": 12
  },
  {
   "nome": "Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi",
@@ -1685,7 +1691,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "forza funzionale"
+  "sottogruppo": "forza funzionale",
+  "fascia_kb": "intermedio",
+  "peso_kg": 12
  },
  {
   "nome": "kettlebell rotational clean",
@@ -1705,7 +1713,9 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
-  "solo_livello": true
+  "solo_livello": true,
+  "fascia_kb": "avanzato",
+  "peso_kg": 12
  },
  {
   "nome": "kettlebell rotational swing",
@@ -1726,7 +1736,9 @@
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
   "solo_livello": true,
-  "descrizione": "Si fa ALTERNANDO destra e sinistra a ogni ripetizione, non un lato alla volta: le ripetizioni indicate sono il totale (12 reps = 6 a destra e 6 a sinistra, alternate). Kettlebell tra le gambe, swing con rotazione del busto verso un lato, torna al centro e vai dall'altro."
+  "descrizione": "Si fa ALTERNANDO destra e sinistra a ogni ripetizione, non un lato alla volta: le ripetizioni indicate sono il totale (12 reps = 6 a destra e 6 a sinistra, alternate). Kettlebell tra le gambe, swing con rotazione del busto verso un lato, torna al centro e vai dall'altro.",
+  "fascia_kb": "avanzato",
+  "peso_kg": 12
  },
  {
   "nome": "Kettlebell snatch",
@@ -1745,7 +1757,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "forza funzionale"
+  "sottogruppo": "forza funzionale",
+  "fascia_kb": "intermedio",
+  "peso_kg": 12
  },
  {
   "nome": "Kettlebell swing",
@@ -1764,7 +1778,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "forza funzionale"
+  "sottogruppo": "forza funzionale",
+  "fascia_kb": "base",
+  "peso_kg": 16
  },
  {
   "nome": "piegamenti con battito",
@@ -6660,7 +6676,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "fascia_kb": "avanzato",
+  "peso_kg": 8
  },
  {
   "nome": "Kettlebell Bent Over Row with Rotation",
@@ -6679,7 +6697,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "fascia_kb": "base",
+  "peso_kg": 12
  },
  {
   "nome": "Kettlebell Figure 8",
@@ -6698,7 +6718,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "fascia_kb": "base",
+  "peso_kg": 12
  },
  {
   "nome": "Kettlebell Cross Chop",
@@ -6717,7 +6739,9 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "fascia_kb": "intermedio",
+  "peso_kg": 12
  },
  {
   "nome": "Foam Roll Plantar Fascia",
@@ -7295,7 +7319,9 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "tirata orizzontale",
-  "descrizione": "Due kettlebell a terra tra i piedi, gambe piegate e schiena piatta come in un rematore: tira un kettlebell al fianco mentre l'altra mano resta appoggiata sull'altro, poi cambia. Il gomito passa vicino al corpo, il busto non ruota."
+  "descrizione": "Due kettlebell a terra tra i piedi, gambe piegate e schiena piatta come in un rematore: tira un kettlebell al fianco mentre l'altra mano resta appoggiata sull'altro, poi cambia. Il gomito passa vicino al corpo, il busto non ruota.",
+  "fascia_kb": "base",
+  "peso_kg": 12
  },
  {
   "nome": "Rematore sotto al tavolo",
@@ -7369,5 +7395,59 @@
    "mobilità"
   ],
   "descrizione": "Per i minuti indicati muovi caviglie, anche, bacino e spalle: circonduzioni delle caviglie, slanci della gamba avanti e di lato, affondi camminati con rotazione del busto, ginocchia al petto, cerchi con le braccia. Ampiezza crescente, mai forzata."
+ },
+ {
+  "id": "fpb-goblet-squat",
+  "nome": "Goblet squat",
+  "qualita": "forza-parte-bassa",
+  "attrezzatura": "kettlebell",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste 25/9",
+  "tags": [
+   "kettlebell",
+   "squat"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": null,
+  "solo_livello": false,
+  "fascia_kb": "base",
+  "peso_kg": 16,
+  "descrizione": "Kettlebell tenuto al petto con due mani, piedi poco più larghi delle spalle. Scendi con il sedere tra i talloni tenendo il petto alto e i gomiti dentro le ginocchia, poi spingi il pavimento. Errore comune: talloni che si alzano."
+ },
+ {
+  "id": "fesp-kettlebell-swing-una-mano",
+  "nome": "Kettlebell swing a una mano",
+  "qualita": "forza-esplosiva",
+  "attrezzatura": "kettlebell",
+  "difficolta": 3,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": true,
+  "video": null,
+  "fonte": "Ste 25/9",
+  "tags": [
+   "kettlebell",
+   "swing"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": null,
+  "solo_livello": false,
+  "fascia_kb": "intermedio",
+  "peso_kg": 12,
+  "descrizione": "Come lo swing a due mani ma con una sola: il kettlebell parte tra le ginocchia, le anche sparano in avanti e il braccio è solo un cavo. Spalla ferma, busto che non ruota. Errore comune: tirare col braccio."
  }
 ]

@@ -47,6 +47,8 @@ export interface ExerciseV2 {
   nomeEverfit?: string;          // nome originale su Everfit se rinominato
   v1Id?: string;                 // id dell'esercizio equivalente nel catalogo v1
   tags?: string[];
+  fasciaKb?: 'base' | 'intermedio' | 'avanzato'; // kettlebell (Ste, 25/9): fascia di esercizio — si sale dopo 4 settimane facili (lib/trainingKettlebell)
+  pesoKg?: number;               // kettlebell: peso di partenza (passo di 4 kg nella progressione)
   attivo: boolean;               // false = importato ma non proposto (headball, duplicato v1, escluso)
   fonte: string;
 }
