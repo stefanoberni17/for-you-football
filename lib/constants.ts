@@ -92,8 +92,8 @@ export const WEEK_TOOLS: Record<number, string> = {
   6: 'Fatto vs Storia',
   7: "L'Anticipo",
   8: 'Il Rilascio',
-  9: 'La strada verso il centro',
-  10: "C'è qualcuno a casa",
+  9: 'La routine',                      // rev. 19/09 (Ste): mai "la strada"
+  10: 'Due secondi per tornare presente', // rev. 19/09: "C'è qualcuno a casa" tolto il 13/09
   11: 'Il Protocollo For You',
   12: 'Giocare libero',
 };

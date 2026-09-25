@@ -14,20 +14,34 @@ export const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-// ⚠️ SAFETY KEYWORDS per detection contenuti a rischio
-export const SAFETY_KEYWORDS = [
-  // Espressioni dirette
+// ⚠️ SAFETY — DUE LIVELLI (review 25/9; le liste DEFINITIVE le decide lo psicologo).
+//  BLOCCO: frasi inequivocabili → alert a Ste + Coach in MODALITÀ CONTENIMENTO (safety_review)
+//          per SAFETY_REVIEW_HOURS ore, o finché Ste non verifica e sblocca (/sblocca).
+//  ALERT:  parole ambigue, spesso italiano da campo ("ci hanno ammazzato 4-0", "non ce la
+//          faccio più a correre", "mi faccio schifo dopo quel rigore") → solo alert a Ste;
+//          il Coach continua a lavorare e legge il contesto da solo (il protocollo SITUAZIONI
+//          A RISCHIO nel prompt vale comunque). Prima un solo livello: un 4-0 metteva il
+//          ragazzo in contenimento senza scadenza.
+export const SAFETY_KEYWORDS_BLOCCO = [
   'suicidio', 'suicidarmi', 'voglio morire', 'uccidermi', 'togliermi la vita',
-  'farla finita', 'ammazzarmi', 'non voglio più vivere',
+  'farla finita', 'ammazzarmi', 'non voglio più vivere', 'non voglio svegliarmi',
   'autolesionismo', 'tagliarmi', 'farmi del male',
-  'uccidere', 'ammazzare', 'fare del male a', 'voglio uccidere',
-  'violenza', 'picchiare', 'aggredire',
-  // Espressioni indirette
-  'vorrei sparire', 'vorrei scomparire', 'non ce la faccio più',
-  'mi faccio schifo', 'non merito di vivere', 'meglio se non ci fossi',
-  'sarebbe meglio senza di me', 'non ha più senso', 'non vedo via d\'uscita',
-  'voglio che finisca tutto', 'non riesco più ad andare avanti'
+  'voglio uccidere',
+  'vorrei sparire', 'vorrei scomparire', 'non merito di vivere', 'meglio se non ci fossi',
+  'sarebbe meglio senza di me', 'voglio che finisca tutto', 'non vedo via d\'uscita',
 ];
+export const SAFETY_KEYWORDS_ALERT = [
+  'uccidere', 'ammazzare', 'fare del male a',
+  'violenza', 'picchiare', 'aggredire',
+  'non ce la faccio più', 'mi faccio schifo', 'non ha più senso', 'non riesco più ad andare avanti',
+  // Disturbi alimentari e abusi: solo alert finché lo psicologo non decide (gap segnalato ad agosto)
+  'smetto di mangiare', 'non mangio più', 'vomito apposta', 'mi tocca', 'abusato',
+];
+/** Compatibilità: tutte le keyword, senza distinzione di livello. */
+export const SAFETY_KEYWORDS = [...SAFETY_KEYWORDS_BLOCCO, ...SAFETY_KEYWORDS_ALERT];
+export type LivelloSafety = 'blocco' | 'alert';
+/** Ore di contenimento automatico senza verifica: poi il Coach riprende e Ste riceve un promemoria. */
+export const SAFETY_REVIEW_HOURS = 48;
 
 // ⚠️ Invia alert su DUE canali (email Resend + Telegram a Ste), così la
 // notifica arriva anche fuori orario. Non blocca mai il flusso: fire-and-forget,
@@ -36,16 +50,40 @@ export const SAFETY_KEYWORDS = [
 export async function sendSafetyAlert(
   userId: string,
   channel: 'web' | 'telegram',
-  messageContent: string
+  messageContent: string,
+  livello: LivelloSafety = 'blocco'
 ): Promise<void> {
   const preview = messageContent.substring(0, 200);
   console.error('🚨 SAFETY ALERT', {
     userId,
     channel,
+    livello,
     preview,
     timestamp: new Date().toISOString(),
   });
 
+  // Flag di revisione (solo livello BLOCCO): da questo momento il Coach resta in
+  // MODALITÀ CONTENIMENTO per questo utente (web + Telegram) finché Ste non verifica
+  // e sblocca, o per SAFETY_REVIEW_HOURS ore. Scritto e ATTESO qui, prima che il
+  // chiamante legga il profilo: il contenimento vale già dal turno che lo fa scattare
+  // (prima era fire-and-forget e riletto subito dopo → casuale). Il resto dell'app non viene toccato.
+  if (livello === 'blocco') {
+    try {
+      const { error: flagError } = await supabaseAdmin
+        .from('profiles')
+        .update({ safety_review: true, safety_review_at: new Date().toISOString() })
+        .eq('user_id', userId);
+      if (flagError) console.error('❌ safety_review flag error:', flagError.message);
+    } catch (flagErr) {
+      console.error('❌ safety_review flag exception:', (flagErr as Error)?.message);
+    }
+  }
+
+  // Le notifiche (Telegram a Ste + email) non bloccano la risposta al ragazzo.
+  notificaSafety(userId, channel, preview, livello).catch((err) => console.error('sendSafetyAlert notify failed:', err));
+}
+
+async function notificaSafety(userId: string, channel: 'web' | 'telegram', preview: string, livello: LivelloSafety): Promise<void> {
   let userName = 'Unknown';
   try {
     const { data } = await supabaseAdmin
@@ -56,21 +94,10 @@ export async function sendSafetyAlert(
     if (data?.name) userName = data.name;
   } catch {}
 
-  // Flag di revisione: da questo momento il Coach resta in MODALITÀ
-  // CONTENIMENTO per questo utente (web + Telegram) finché Ste non verifica
-  // la conversazione e sblocca manualmente (migration 014). Il resto
-  // dell'app non viene toccato.
-  try {
-    const { error: flagError } = await supabaseAdmin
-      .from('profiles')
-      .update({ safety_review: true, safety_review_at: new Date().toISOString() })
-      .eq('user_id', userId);
-    if (flagError) console.error('❌ safety_review flag error:', flagError.message);
-  } catch (flagErr) {
-    console.error('❌ safety_review flag exception:', (flagErr as Error)?.message);
-  }
-
-  const unlockHint = `Dopo aver verificato la conversazione, sblocca rispondendo qui:\n/sblocca ${userId}\n(oppure via SQL: UPDATE profiles SET safety_review = FALSE WHERE user_id = '${userId}';)`;
+  const unlockHint = livello === 'blocco'
+    ? `⛔ Coach in modalità contenimento per questo utente (scade da sola tra ${SAFETY_REVIEW_HOURS} ore).\nDopo aver verificato la conversazione, sblocca rispondendo qui:\n/sblocca ${userId}\n(oppure via SQL: UPDATE profiles SET safety_review = FALSE WHERE user_id = '${userId}';)`
+    : `ℹ️ Livello ALERT (parole ambigue, spesso gergo da campo): il Coach continua a lavorare, nessun blocco. Leggi la conversazione quando puoi.`;
+  const titolo = livello === 'blocco' ? '🚨 SAFETY ALERT' : '⚠️ SAFETY (solo avviso)';
 
   // Canale 1 — Telegram a Ste (arriva sul telefono anche fuori orario).
   // SAFETY_ALERT_TELEGRAM_CHAT_ID = chat_id Telegram personale di Ste
@@ -84,7 +111,7 @@ export async function sendSafetyAlert(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: alertChatId,
-          text: `🚨 SAFETY ALERT (${channel})\nUtente: ${userName}\nUser ID: ${userId}\n\nMessaggio (primi 200 caratteri):\n"${preview}"\n\n⛔ Coach in modalità contenimento per questo utente.\n${unlockHint}\n\nDettagli completi su Supabase.`,
+          text: `${titolo} (${channel})\nUtente: ${userName}\nUser ID: ${userId}\n\nMessaggio (primi 200 caratteri):\n"${preview}"\n\n${unlockHint}\n\nDettagli completi su Supabase.`,
         }),
       });
     } catch (error) {
@@ -105,16 +132,16 @@ export async function sendSafetyAlert(
       body: JSON.stringify({
         from: 'For You Football Alerts <alerts@foryoufootball.it>',
         to: process.env.SAFETY_ALERT_EMAIL || 'foryou.innerpath@gmail.com',
-        subject: `🚨 Safety Alert (${channel}) — For You Football`,
+        subject: `${titolo} (${channel}) — For You Football`,
         html: `
           <h2>⚠️ Contenuto a rischio rilevato</h2>
           <p><strong>User ID:</strong> ${userId}</p>
           <p><strong>Nome:</strong> ${userName}</p>
           <p><strong>Canale:</strong> ${channel}</p>
+          <p><strong>Livello:</strong> ${livello}</p>
           <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
           <p><strong>Messaggio (primi 200 caratteri):</strong></p>
           <blockquote>${preview.replace(/</g, '&lt;')}</blockquote>
-          <p>⛔ <strong>Coach in modalità contenimento per questo utente</strong> (solo protocollo, niente coaching) finché non sblocchi.</p>
           <pre>${unlockHint.replace(/</g, '&lt;')}</pre>
           <p>Accedi a Supabase per vedere i dettagli completi.</p>
         `,
@@ -125,9 +152,48 @@ export async function sendSafetyAlert(
   }
 }
 
-export function checkSafetyKeywords(text: string): boolean {
+/** Livello di rischio del testo: 'blocco' (frasi inequivocabili), 'alert' (ambigue) o null. */
+export function checkSafety(text: string): LivelloSafety | null {
   const lowerText = text.toLowerCase();
-  return SAFETY_KEYWORDS.some(keyword => lowerText.includes(keyword));
+  if (SAFETY_KEYWORDS_BLOCCO.some((k) => lowerText.includes(k))) return 'blocco';
+  if (SAFETY_KEYWORDS_ALERT.some((k) => lowerText.includes(k))) return 'alert';
+  return null;
+}
+
+/** Compatibilità: true se il testo fa scattare un qualsiasi livello. */
+export function checkSafetyKeywords(text: string): boolean {
+  return checkSafety(text) !== null;
+}
+
+/**
+ * Il Coach è in contenimento per questo utente? Legge il flag e la sua data: dopo
+ * SAFETY_REVIEW_HOURS senza verifica il contenimento SCADE da solo (il flag viene
+ * tolto e Ste riceve un promemoria su Telegram). Un flag senza data (pre-014) resta attivo.
+ */
+export async function resolveSafetyReview(profile: { user_id: string; name?: string | null; safety_review?: boolean | null; safety_review_at?: string | null } | null | undefined): Promise<boolean> {
+  if (!profile?.safety_review) return false;
+  if (!profile.safety_review_at) return true;
+  const scadenza = new Date(profile.safety_review_at).getTime() + SAFETY_REVIEW_HOURS * 3600_000;
+  if (Date.now() < scadenza) return true;
+  try {
+    await supabaseAdmin.from('profiles').update({ safety_review: false }).eq('user_id', profile.user_id).eq('safety_review', true);
+    console.warn(`safety_review scaduto senza verifica per ${profile.user_id} (dal ${profile.safety_review_at})`);
+    const alertChatId = process.env.SAFETY_ALERT_TELEGRAM_CHAT_ID;
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    if (alertChatId && botToken) {
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: alertChatId,
+          text: `⏰ Contenimento SCADUTO senza verifica (${SAFETY_REVIEW_HOURS} ore)\nUtente: ${profile.name || '—'}\nUser ID: ${profile.user_id}\n\nIl Coach ha ripreso a lavorare con lui. Leggi la conversazione su Supabase (telegram_conversations, safety_flagged) quando puoi.`,
+        }),
+      }).catch((err) => console.error('safety_review scadenza notify failed:', err));
+    }
+  } catch (err) {
+    console.error('resolveSafetyReview error:', (err as Error)?.message);
+  }
+  return false;
 }
 
 // Neutralizza marker che potrebbero essere usati per prompt injection
@@ -315,7 +381,7 @@ Evita frasi riempitive o motivazionali. Niente prediche. Niente riassunti del me
 - Per Accettazione (W5-6): "Questo c'è." / "Puoi giocare anche con questo." / "non devi risolverlo prima di entrare in campo". W5 = l'errore (catena → Stacco → prossima azione); W6 = giudizio/pressione (fatto vs storia, "tieni il fatto")
 - Per Perdono (W7): "la rabbia non esplode: sale" / "sentila salire, poi scegli tu" / "non devi vergognarti di averla" / la scala (un gradino prima di esplodere c'è sempre l'Anticipo). Niente "fuoco", niente "energia da guidare": è la retorica che il percorso stesso vieta
 - Per Lasciare Andare (W8): "posa il peso" / lo zaino (cosa ti porti in campo, cosa lasci fuori) / "il calcio è una parte di te, non tutto" / il Rilascio (l'espirazione che lascia il risultato sul campo). Niente "vali più di…": suona da Instagram
-- Per Ritornare al Centro (W9+): "il centro" / "torna dove sai giocare" / "la tua strada verso il centro" / "corpo presente, testa sulla prossima azione" — usa le parole CHE LUI ha scritto per la sua strada, quando le conosci
+- Per Ritornare al Centro (W9+): "il centro" / "torna dove sai giocare" / "la tua routine" (MAI "la strada": nome tolto il 19/09) / "corpo presente, testa sulla prossima azione" — usa le parole CHE LUI ha scritto per la sua routine, quando le conosci
 ⚠️ Non usare il linguaggio dell'Accettazione, del Perdono o del Centro con calciatori in Week 1-4 — è prematuro.
 
 # ESEMPI DA CALCIATORI REALI
@@ -560,21 +626,38 @@ Week 8 | Più della maglia           | 🔴 LASCIARE ANDARE      | "Sei più del
 
 Week 9  | Il Centro                  | ⚪ CENTRO              | "Torna dove sai giocare."
         → Il Reset per 8 settimane ha detto "torna" — W9 dà un NOME al posto dove si torna: il Centro (lo stato in cui gioca libero: corpo presente, testa sulla prossima azione). Ci è già stato — non è da costruire, è da riconoscere.
-        → Strumento: la STRADA verso il centro — una sequenza personale in 3 pezzi (un gesto per il corpo, un posto per la testa, una parola di direzione) + il Reset come ultimo passo. La scrive LUI al G4: se te ne parla, usa LE SUE PAROLE (il suo gesto, la sua parola), non modelli generici.
+        → Strumento: la ROUTINE per arrivare presente (si dice "la routine", MAI "la strada": nome tolto il 19/09) — una sequenza personale in 3 pezzi (un gesto per il corpo, un posto per la testa, una parola di direzione) + il Reset come ultimo passo. La scrive LUI al G4: se te ne parla, usa LE SUE PAROLE (il suo gesto, la sua parola), non modelli generici.
         → Due versioni: completa (pre-partita) e 60 secondi (allenamento, subentro, ritardo). Spingi la versione corta: si allena molte più volte di quanto gioca.
-        → ⚠️ Scaramanzia: se emerge, niente giudizio — è un bisogno di controllo che cerca casa. Differenza chiave: il rito scaramantico mette il potere FUORI (le calze, il "se lo salto va male"), la strada lo mette DENTRO (è sua, la governa lui). Stesso gesto, direzione opposta.
+        → ⚠️ Scaramanzia: se emerge, niente giudizio — è un bisogno di controllo che cerca casa. Differenza chiave: il rito scaramantico mette il potere FUORI (le calze, il "se lo salto va male"), la routine lo mette DENTRO (è sua, la governa lui). Stesso gesto, direzione opposta.
         → ⚠️ NON nominare né promettere il "flow" / "la zona" (è W10). Se racconta momenti in cui "spariva tutto", accogli e digli solo di notarli — senza etichette, senza spiegazioni.
-        → Anti-checklist: se la strada diventa pilota automatico è già rotta — suggerisci di cambiarla di un dettaglio, non di eseguirla meglio.
+        → Anti-checklist: se la routine diventa pilota automatico è già rotta — suggerisci di cambiarla di un dettaglio, non di eseguirla meglio.
 
-Week 10 | Ritornare al Centro appl.  | ⚪ CENTRO APPL.        | "Resto centrato anche nel caos."
-        → Connessione col Sé: tornare alla parte più autentica del calciatore. Non perfetto — presente e consapevole.
+Week 10 | Giocare dal centro         | ⚪ CENTRO APPL.        | "Pausa: qui. Gioco: fuori."
+        → DUE SECONDI PER TORNARE PRESENTE quando il gioco è fermo (sentire che c'è: i piedi, il respiro, dove sta), e TUTTA l'attenzione fuori quando gioca (palla, spazio, compagni, avversari). Lo stesso gesto di W9 all'ingresso, usato per tutta la partita nei momenti fermi: rimessa, palla fuori, punizione, palla lontana.
+        → LINGUAGGIO (rev. 19/09): "torna presente", "due secondi", "momenti fermi" o "momenti morti", "fuori mentre giochi, dentro quando il gioco è fermo". MAI "l'interruttore", MAI "c'è qualcuno a casa", mai flow / attenzione divisa / focus / scanning.
+        → REGOLA CENTRALE: mentre gioca il gesto deve essere automatico; MAI istruzioni sul corpo durante l'azione. Body Check (W3) e Protocollo Pressione (W4) vivono negli stessi momenti fermi: W10 non li contraddice.
+        → TECNICA vs GIOCO (decisione di Ste, 17/09): quando ALLENA la tecnica si concentra sul gesto, ed è giusto; quando GIOCA il gesto esce da solo. Se chiede "allora non curo più il gesto?": la risposta è questa. Perché: anche un passaggio banale è tutto il corpo insieme, se controlli un pezzo ti irrigidisci.
+        → Frame: sparire non è l'errore, accorgersi È l'esercizio. La palla che cade nei palleggi è un DATO, non si contano i palleggi. "Non ci riesco, sparisco sempre" → quante volte te ne sei accorto? Ognuna è una volta che sei tornato. "In partita non c'è tempo" → una rimessa, un rientro, un fallo: due secondi ci sono sempre.
+        → Chi "sente tutto" non ha un senso in più: è arrivato tranquillo. Se dice che restava presente e la palla non cadeva: nomina la differenza (non si stava controllando), NON svilupparlo, è lavoro di stagioni future.
 
-Week 11 | Libertà                    | 🌕 LIBERTÀ             | "Gioco senza catene."
-Week 12 | La Via                     | 🌕 LA VIA              | "Questo sono io. Questo è il mio gioco."
-        → Il percorso non finisce — si approfondisce. La Via non è una destinazione, è un modo di stare in campo.
+Week 11 | Il tuo metodo              | 🌕 LIBERTÀ             | "È tuo. Aggiornalo."
+        → Strumento: il PROTOCOLLO FOR YOU, il metodo in una pagina scritto dal giocatore con le sue parole. NESSUNO strumento nuovo. Da G1 a G3 si dice "il tuo metodo"; "Protocollo For You" entra solo da G4. NON confonderlo con il Protocollo Pressione (W4, senti-nomina-torna): quello è uno strumento del durante, il Protocollo For You è la pagina che li contiene tutti.
+        → Cinque parti: PRIMA (routine di W9 nelle tre versioni + condizioni di W10) · DURANTE (due secondi quando il gioco è fermo + tre RISPOSTE PRONTE: errore → Stacco, pressione → senti-nomina-torna compresso, sale qualcosa → Anticipo) · DOPO (Rilascio + rilettura di due minuti) · QUANDO NON FUNZIONA (il ritorno) · FUORI DAL CAMPO (una riga, facoltativa). Regola del durante: UNA cosa per situazione, in partita non c'è un menù. Si dice "risposte pronte", mai "riflessi".
+        → G3 è la giornata delicata: perdono verso sé nel percorso (richiamo a W7). Frame: IL RITORNO È UNO STRUMENTO, chi si è fermato e ripreso ha fatto una cosa più difficile di chi non si è mai fermato. Riconosci, non consolare; fai sostare, non scavare; se emerge qualcosa più grande del percorso → contenimento e persona di fiducia. La voce che giudica i buchi è giudizio (Observer), non un fatto.
+        → Il Protocollo non è un compito né burocrazia: si taglia tutto ciò che è lì perché suonava bene. G5 lo porta fuori dal campo (chiedi "dove altro potrebbe servirti" SOLO se lui apre). G6: rilettura + confronto con la pagina IMMAGINATA della prima settimana, NON con le risposte reali dell'onboarding (è il dispositivo di W12). "Oggi non c'è niente da festeggiare": un metodo non si finisce, si aggiorna. La Carta del Giocatore (W8) resta sigillata.
+        → "Niente parte da solo, li devo chiamare tutti" → chiamarli è già possederli (a Ste il Reset ha chiesto settimane prima di venire da solo: dopo dieci settimane sei in perfetta media). "Ho saltato due settimane, non vale" → sei tornato, e il ritorno è lo strumento più difficile. "Per l'errore uso due strumenti" → in partita ne hai uno: quale ti viene da solo?
+
+Week 12 | Giocare libero             | 🌕 LA VIA              | "Entro io. Libero."
+        → NESSUNO strumento nuovo: la settimana RIFÀ le pratiche del percorso, uguali (G1 Reset + Observer · G2 Body Check + firma del gioco libero · G3 Stacco + Fatto vs Storia · G4 il metodo intero in una partita immaginata · G5 la stessa cosa vera · G6 le risposte dell'onboarding accanto a oggi · G7 gate finale e mantenimento). Frame di ogni giornata: "è lo stesso esercizio, ma non è la stessa persona a farlo: oggi sai cosa fa, dove ti porta e quando ti serve". NON chiedere "cosa senti che non sentivi": non metterlo a caccia di differenze, fai notare la chiarezza con cui ora lo fa.
+        → REGOLA DEL CONFRONTO: sempre e solo con sé stesso del primo giorno. MAI "sei migliorato" detto da te: è lui che rifà e vede. "Non vedo differenze" → "sai cosa stai facendo e perché. Il primo giorno no. È questa la differenza, e il resto viene da lì". I benefici in campo crescono col tempo: crescita della pratica, mai promessa.
+        → IL DOPO: il percorso finisce, il metodo no — Protocollo ogni giorno, Reset, azioni, check-in, e tu che resti; rilettura dopo ogni partita, Protocollo che si aggiorna. NON promettere né nominare una Season 2: "poi c'è il tuo metodo, e ci sono io. Quando ci sarà altro lo saprai".
+        → NON FARE: celebrare ("ce l'hai fatta!"), fare bilanci al posto suo, riaprire i temi delicati di W7, W8 o W11-G3 (se emergono: sostare, contenimento, rimando). Chi arriva a W12 dopo essersi fermato: riconoscerlo, non consolarlo. In W12 parli meno di tutte le altre settimane: specchio, quasi silenzio, max 3 frasi.
+
+TONO BLOCCO 3 (W9-W12): meno insegnamento, più specchio. Max 3-4 frasi. Modalità PARTITA se stress acuto. Linguaggio (rev. 19/09, Ste): LA ROUTINE (mai "la strada"), MOMENTI FERMI, DUE SECONDI PER TORNARE PRESENTE (mai "l'interruttore", mai "qualcuno a casa"), RISPOSTE PRONTE (mai "riflessi"), LA RISPOSTA CHE HAI SCELTO.
 
 **MAPPA STRUMENTI — "quando uso cosa" (da W9 il carico è massimo: usala per orientare, senza trasformarla in lezione):**
-- Prima di entrare (partita/allenamento) → la Strada verso il centro (W9); versione 60s se c'è poco tempo
+- Prima di entrare (partita/allenamento) → la routine per arrivare presente (W9); versione 60s se c'è poco tempo
+- Il gioco è fermo (rimessa, fallo, palla lontana) → due secondi per tornare presente (W10); mentre gioca, tutto fuori
 - La testa è partita, sono fuori dal presente → Il Reset (W1)
 - Un pensiero mi porta via (passato/futuro/giudizio) → L'Observer (W2)
 - Sento che qualcosa sale ma non so cosa → Il Body Check (W3)
@@ -583,6 +666,8 @@ Week 12 | La Via                     | 🌕 LA VIA              | "Questo sono i
 - Un giudizio mi brucia (mister, tribuna, social) → Fatto vs Storia (W6)
 - La rabbia sta salendo → L'Anticipo (W7)
 - Mi porto addosso la partita di ieri / entro contratto → Il Rilascio (W8)
+- Non funziona niente, mi sono fermato → il ritorno (W11: "quando non funziona" è una parte del suo Protocollo)
+- Da W11 tutto questo sta nel SUO Protocollo For You, con le sue parole: se lo conosci (riflessioni, gate), rimanda a quello, non alla mappa
 Regola d'uso: UNO strumento alla volta, quello del momento. Se il calciatore è confuso su quale usare, parti sempre dal Reset.
 
 ---
@@ -669,79 +754,93 @@ Stai rispondendo nella chat web dell'app. Tieni presente:
 - Una sola domanda per messaggio, mai due`;
 
 export async function buildUserContext(userId: string): Promise<string> {
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('name, age, sport, goals, dream, current_situation, current_week, role, level, biggest_fear, coach_notes')
-    .eq('user_id', userId)
-    .single();
-
-  // Progresso giorni completati
-  const { data: completedDays } = await supabaseAdmin
-    .from('user_day_progress')
-    .select('week_number, day_number, compressed')
-    .eq('user_id', userId)
-    .eq('completed', true)
-    .order('week_number', { ascending: true })
-    .order('day_number', { ascending: true });
-
-  // Riflessioni post-giorno
-  const { data: reflections } = await supabaseAdmin
-    .from('day_reflections')
-    .select('week_number, day_number, reflection_question, reflection_text, created_at')
-    .eq('user_id', userId)
-    .order('week_number', { ascending: true })
-    .order('day_number', { ascending: true });
-
-  // Risposte ai Gate — il materiale più ragionato che il giocatore scrive.
-  // Ultimi 2 gate, così il Coach vede il bilancio di fine settimana.
-  const { data: gateRows } = await supabaseAdmin
-    .from('user_day_progress')
-    .select('week_number, gate_answers')
-    .eq('user_id', userId)
-    .eq('day_number', 7)
-    .eq('completed', true)
-    .not('gate_answers', 'is', null)
-    .order('week_number', { ascending: false })
-    .limit(2);
-
-  // Intenzioni pre-pratica recenti (domanda "Prima di iniziare")
-  const { data: prePraticaRows } = await supabaseAdmin
-    .from('user_day_progress')
-    .select('week_number, day_number, pre_pratica_response')
-    .eq('user_id', userId)
-    .not('pre_pratica_response', 'is', null)
-    .order('week_number', { ascending: false })
-    .order('day_number', { ascending: false })
-    .limit(3);
+  // Tutte le letture che non dipendono l'una dall'altra partono insieme (review 25/9:
+  // prima erano ~10 query in fila, con il profilo letto tre volte lungo la richiesta).
+  const todayStr = todayItaly();
+  const sevenDaysAgo = daysAgoItaly(7);
+  const [
+    { data: profile },
+    { data: completedDays },
+    { data: reflections },
+    { data: gateRows },
+    { data: prePraticaRows },
+    { data: todayCheckin },
+    { data: weekCheckins },
+    { data: weeklyActions },
+  ] = await Promise.all([
+    supabaseAdmin
+      .from('profiles')
+      .select('name, age, sport, goals, dream, current_situation, current_week, role, level, biggest_fear, coach_notes')
+      .eq('user_id', userId)
+      .single(),
+    // Progresso giorni completati
+    supabaseAdmin
+      .from('user_day_progress')
+      .select('week_number, day_number, compressed')
+      .eq('user_id', userId)
+      .eq('completed', true)
+      .order('week_number', { ascending: true })
+      .order('day_number', { ascending: true }),
+    // Riflessioni post-giorno (le ultime 5 nel prompt: si leggono solo quelle)
+    supabaseAdmin
+      .from('day_reflections')
+      .select('week_number, day_number, reflection_question, reflection_text, created_at')
+      .eq('user_id', userId)
+      .order('week_number', { ascending: false })
+      .order('day_number', { ascending: false })
+      .limit(5),
+    // Risposte ai Gate — il materiale più ragionato che il giocatore scrive.
+    // Ultimi 2 gate, così il Coach vede il bilancio di fine settimana.
+    supabaseAdmin
+      .from('user_day_progress')
+      .select('week_number, gate_answers')
+      .eq('user_id', userId)
+      .eq('day_number', 7)
+      .eq('completed', true)
+      .not('gate_answers', 'is', null)
+      .order('week_number', { ascending: false })
+      .limit(2),
+    // Intenzioni pre-pratica recenti (domanda "Prima di iniziare")
+    supabaseAdmin
+      .from('user_day_progress')
+      .select('week_number, day_number, pre_pratica_response')
+      .eq('user_id', userId)
+      .not('pre_pratica_response', 'is', null)
+      .order('week_number', { ascending: false })
+      .order('day_number', { ascending: false })
+      .limit(3),
+    // Check-in fisico e mentale — oggi + ultimi 7 giorni (giorno italiano)
+    supabaseAdmin
+      .from('daily_checkin')
+      .select('physical_state, sleep_hours, recovery_quality, mental_state')
+      .eq('user_id', userId)
+      .eq('date', todayStr)
+      .maybeSingle(),
+    supabaseAdmin
+      .from('daily_checkin')
+      .select('physical_state, sleep_hours, recovery_quality, mental_state')
+      .eq('user_id', userId)
+      .gte('date', sevenDaysAgo)
+      .order('date', { ascending: false }),
+    // "Le tue azioni durante il giorno"
+    supabaseAdmin
+      .from('user_actions')
+      .select('id, action_text, position')
+      .eq('user_id', userId)
+      .is('archived_at', null)
+      .order('position', { ascending: true }),
+  ]);
 
   const currentWeek = profile?.current_week || 1;
   const totalCompleted = completedDays?.length || 0;
 
-  // Calendario settimanale
+  // Calendario settimanale (dipende da current_week: parte dopo il profilo)
   const { data: calendar } = await supabaseAdmin
     .from('user_weekly_calendar')
     .select('training_days, match_days')
     .eq('user_id', userId)
     .eq('week_number', currentWeek)
     .maybeSingle();
-
-  // Check-in fisico e mentale — oggi + ultimi 7 giorni (giorno italiano)
-  const todayStr = todayItaly();
-  const sevenDaysAgo = daysAgoItaly(7);
-
-  const { data: todayCheckin } = await supabaseAdmin
-    .from('daily_checkin')
-    .select('physical_state, sleep_hours, recovery_quality, mental_state')
-    .eq('user_id', userId)
-    .eq('date', todayStr)
-    .maybeSingle();
-
-  const { data: weekCheckins } = await supabaseAdmin
-    .from('daily_checkin')
-    .select('physical_state, sleep_hours, recovery_quality, mental_state')
-    .eq('user_id', userId)
-    .gte('date', sevenDaysAgo)
-    .order('date', { ascending: false });
 
   // Calcola medie check-in ultimi 7 giorni (pre-calcolate fuori dal template)
   let weekCheckinSummary = '';
@@ -757,14 +856,7 @@ export async function buildUserContext(userId: string): Promise<string> {
     weekCheckinSummary = `\n**ULTIMI 7 GIORNI (media su ${weekCheckins.length} check-in):**\n- Stato fisico medio: ${avgP !== null ? `${avgP}/10` : '—'}\n- Sonno medio: ${avgS !== null ? `${avgS}h` : '—'}\n- Recupero muscolare medio: ${avgR !== null ? `${avgR}/10` : '—'}\n- Stato mentale medio: ${avgM !== null ? `${avgM}/10` : '—'}`;
   }
 
-  // "Le tue azioni durante il giorno" + completion rate ultimi 7gg
-  const { data: weeklyActions } = await supabaseAdmin
-    .from('user_actions')
-    .select('id, action_text, position')
-    .eq('user_id', userId)
-    .is('archived_at', null)
-    .order('position', { ascending: true });
-
+  // Completion rate ultimi 7gg delle azioni (dipende dagli id: seconda ondata)
   let weeklyActionsSummary = '';
   if (weeklyActions && weeklyActions.length > 0) {
     const actionIds = weeklyActions.map((a: any) => a.id);
@@ -859,11 +951,13 @@ ${lines}
     }
   }
 
+  // Data italiana: sul server (UTC) tra mezzanotte e le due il Coach credeva che fosse ieri
   const todayDate = new Date().toLocaleDateString('it-IT', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+    timeZone: 'Europe/Rome',
   });
 
   return `
@@ -908,7 +1002,7 @@ ${weeklyActionsSummary}
 
 ## Riflessioni dal campo
 ${reflections && reflections.length > 0
-  ? reflections.slice(-5).map((r: any) => `
+  ? [...reflections].reverse().map((r: any) => `
 **Sett.${r.week_number} Giorno ${r.day_number}**
 Domanda: "${r.reflection_question || ''}"
 Risposta: "${r.reflection_text}"
@@ -931,11 +1025,12 @@ const RECAP_SYSTEM_PROMPT = `Sei un assistente che distilla conversazioni tra un
 
 Il tuo compito è aggiornare le note di memoria sul profilo dell'utente. Estrai solo pattern comportamentali generali e temi ricorrenti — NON copiare mai confessioni, contenuti sensibili o dettagli personali verbatim.
 
-Produci un testo conciso (max 300 parole) con questo formato:
+Produci un testo conciso (max 350 parole) con questo formato:
 **Temi ricorrenti:** [temi che emergono spesso]
 **Pattern emersi:** [osservazioni oggettive sul modo di relazionarsi]
 **Thread aperti:** [temi non risolti che potrebbero riemergere]
 **Metafore che risuonano:** [simboli o immagini che hanno avuto impatto]
+**Cassetto:** [una riga per ogni tema che il Coach ha RIMANDATO a una settimana futura del percorso (identità oltre il calcio, origine di un pattern emotivo, significato di una sensazione, perdono profondo, esperienze passate), nel formato "[CASSETTO] tema, in una frase — da riaprire in W<n>". Il Coach lo dice con frasi come "la salviamo qui e ci torniamo", "ci sono step prima". Conserva SEMPRE le voci [CASSETTO] delle note precedenti finché non sono state riaperte in conversazione; se non c'è niente scrivi "—"]
 
 Sii neutro e descrittivo. Nessuna diagnosi psicologica. Nessun giudizio di valore.`;
 
@@ -1082,13 +1177,44 @@ export const COACH_MODEL = 'claude-sonnet-5';
 const COACH_EFFORT = 'medium' as const;    // low = più veloce ma più superficiale; high = più lento
 const THINKING_HEADROOM = 2.5;             // max_tokens reale = richiesto × headroom (il pensiero conta nel limite)
 
+/** Testo della risposta. Una risposta VUOTA o tagliata da max_tokens è un errore, non una riga vuota da salvare (review 25/9). */
+function testoDa(completion: Anthropic.Messages.Message): string {
+  const text = completion.content
+    .filter((block): block is Anthropic.Messages.TextBlock => block.type === 'text')
+    .map((block) => block.text)
+    .join('\n')
+    .trim();
+  if (completion.stop_reason === 'max_tokens') {
+    console.error(`callClaude: risposta tagliata da max_tokens (${completion.usage.output_tokens} token in uscita)`);
+    if (!text) throw new Error('coach_max_tokens');
+  }
+  if (!text) throw new Error('coach_empty');
+  return text;
+}
+
+export interface CoachUsage { input_tokens: number; output_tokens: number; cache_read_input_tokens: number; cache_creation_input_tokens: number }
+function usageDi(completion: Anthropic.Messages.Message): CoachUsage {
+  const u = completion.usage;
+  return {
+    input_tokens: u?.input_tokens ?? 0,
+    output_tokens: u?.output_tokens ?? 0,
+    cache_read_input_tokens: u?.cache_read_input_tokens ?? 0,
+    cache_creation_input_tokens: u?.cache_creation_input_tokens ?? 0,
+  };
+}
+/** Un log per chiamata: si vede se la cache del prompt lavora (letti > 0) o se si paga solo la scrittura. */
+function logUsage(tag: string, completion: Anthropic.Messages.Message) {
+  const u = usageDi(completion);
+  console.log(`coach usage [${tag}]: in ${u.input_tokens} · out ${u.output_tokens} · cache letti ${u.cache_read_input_tokens} · cache scritti ${u.cache_creation_input_tokens} · stop ${completion.stop_reason}`);
+}
+
 export async function callClaude(
   systemPrompt: string | any[],   // stringa, o blocchi system (con cache_control) per il prompt caching
   messages: { role: 'user' | 'assistant'; content: string }[],
   maxTokens: number = 1500,
   useTools: boolean = false,  // true solo per la web chat e Telegram — NON per generateCoachRecap
   opts: { maxWeek?: number } = {}  // maxWeek = settimana corrente dell'utente: leggi_percorso non va oltre
-): Promise<{ text: string; usage: any }> {
+): Promise<{ text: string; usage: CoachUsage }> {
   const internalMessages: any[] = messages.map(m => ({ role: m.role, content: m.content }));
 
   const createParams: any = {
@@ -1102,14 +1228,12 @@ export async function callClaude(
   };
 
   const completion = await anthropic.messages.create(createParams);
+  logUsage('coach', completion);
 
   // Nessun tool use — percorso normale
   if (completion.stop_reason !== 'tool_use') {
-    const text = completion.content
-      .filter((block: any) => block.type === 'text')
-      .map((block: any) => block.text)
-      .join('\n');
-    return { text, usage: completion.usage };
+    const text = testoDa(completion);
+    return { text, usage: usageDi(completion) };
   }
 
   // Il Coach ha chiamato leggi_percorso → esegui il tool
@@ -1117,11 +1241,7 @@ export async function callClaude(
 
   if (!toolUseBlock || toolUseBlock.name !== 'leggi_percorso') {
     // Fallback: restituisci testo già presente (non dovrebbe succedere)
-    const text = completion.content
-      .filter((block: any) => block.type === 'text')
-      .map((block: any) => block.text)
-      .join('\n');
-    return { text: text || '', usage: completion.usage };
+    return { text: testoDa(completion), usage: usageDi(completion) };
   }
 
   let toolResultContent: string;
@@ -1163,14 +1283,14 @@ export async function callClaude(
     tools: [LEGGI_PERCORSO_TOOL],
   });
 
-  const text = completion2.content
-    .filter((block: any) => block.type === 'text')
-    .map((block: any) => block.text)
-    .join('\n');
-
+  logUsage('coach+tool', completion2);
+  const text = testoDa(completion2);
+  const u1 = usageDi(completion), u2 = usageDi(completion2);
   const usage = {
-    input_tokens: (completion.usage.input_tokens ?? 0) + (completion2.usage.input_tokens ?? 0),
-    output_tokens: (completion.usage.output_tokens ?? 0) + (completion2.usage.output_tokens ?? 0),
+    input_tokens: u1.input_tokens + u2.input_tokens,
+    output_tokens: u1.output_tokens + u2.output_tokens,
+    cache_read_input_tokens: u1.cache_read_input_tokens + u2.cache_read_input_tokens,
+    cache_creation_input_tokens: u1.cache_creation_input_tokens + u2.cache_creation_input_tokens,
   };
 
   return { text, usage };

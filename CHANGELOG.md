@@ -2,8 +2,16 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-09-25 — Sera B: il Coach (review 25/9)
+- **Safety a due livelli** (`SAFETY_KEYWORDS_BLOCCO` / `SAFETY_KEYWORDS_ALERT`, `checkSafety`): le frasi inequivocabili mettono il Coach in contenimento, il gergo da campo avvisa soltanto; il flag viene scritto e atteso prima di costruire il prompt; il contenimento **scade dopo 48 ore** (`resolveSafetyReview`) con promemoria a Ste. Liste provvisorie: le definitive le decide lo psicologo.
+- **Recap per utente**: contatore sugli eventi (web) e sulle righe `role='user'` (Telegram) invece della lunghezza della cronologia; il prompt del recap ha la sezione **Cassetto** con il tag `[CASSETTO]`.
+- `buildUserContext` in parallelo (`Promise.all`), riflessioni limitate a 5, data in fuso italiano.
+- `callClaude`: risposta vuota o tagliata = errore (Telegram risponde "riscrivimi tra un minuto"), `CoachUsage` con i token letti/scritti in cache e un log per chiamata.
+- Prompt: W10-12 dal `Coach Contesto` di Notion, mappa strumenti fino a W11, nomi rev. 19/09 ("la routine", "due secondi per tornare presente"); `WEEK_TOOLS` 9-10 allineati.
+- `coach-replay.mts`: scenari `ammazzato`, `blocco`, `assistant-falso`, livello safety stampato per turno, contenimento simulato, token letti dalla cache.
+
 ## 2026-09-25 — Sera A: il confine col client (review 25/9)
-- **Migration 027** (`docs/migrations/027_client_boundary.sql`, DA APPLICARE): le cinque viste analytics della 022 con `security_invoker` + `REVOKE` da anon/authenticated (erano leggibili da chiunque con la anon key); trigger `protect_server_columns` su `profiles` (sostituisce `protect_safety_review`) per `training_access`, `training_pain_hold`, `training_goals/notes`, `current_week`, `telegram_id`, `telegram_link_code*`, `coach_notes`, `last_coach_message`, `birth_date` una volta impostata; via le policy insert/update del client su `user_day_progress`; `ON DELETE CASCADE` su `daily_checkin`.
+- **Migration 027** (`docs/migrations/027_client_boundary.sql`, applicata il 25/9): le cinque viste analytics della 022 con `security_invoker` + `REVOKE` da anon/authenticated (erano leggibili da chiunque con la anon key); trigger `protect_server_columns` su `profiles` (sostituisce `protect_safety_review`) per `training_access`, `training_pain_hold`, `training_goals/notes`, `current_week`, `telegram_id`, `telegram_link_code*`, `coach_notes`, `last_coach_message`, `birth_date` una volta impostata; via le policy insert/update del client su `user_day_progress`; `ON DELETE CASCADE` su `daily_checkin`.
 - **Time-gate lato server** (`lib/serverUnlock.ts`): `POST/PUT/PATCH /api/giorno` e `POST /api/gate` pretendono il giorno prima fatto e fatto prima di oggi in fuso italiano, week 1-12 e day 1-7 interi, gate con i giorni 1-6 fatti e tre risposte non vuote; un giorno fatto non si ricompleta. `isCompletedBeforeToday` in `lib/dayUnlockLogic.ts` usa `dateItaly` (prima la mezzanotte del dispositivo: sul server era UTC, sul telefono bastava spostare l'orologio).
 - **Chat**: schema sui messaggi (`puliziaMessaggi`), come già `/api/training/chat`.
 - `maxDuration = 60` su chat, Telegram, cron e plan; i cron rifiutano la richiesta se `CRON_SECRET` manca; nel cron del mattino la domenica è il giorno 7.

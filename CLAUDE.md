@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 026; **la 027 (confine col client) va applicata a mano** dopo il merge di Sera A. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 027 (25/9). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -553,14 +553,14 @@ Totale: 15-20 sec. In campo, sempre.
 ## Coach AI — Architettura Conversazioni (`lib/coach-ai.ts`)
 
 ### Funzioni esportate
-- `SYSTEM_PROMPT` — Prompt Coach AI completo (~395 righe, hardcoded in questo file — UNICA fonte di verità, nessun doc Notion viene letto a runtime): identità, progressione settimanale W1-W9 + Blocco 3, mappa strumenti "quando uso cosa", linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio. **Sezione `# FUORI DAL CAMPO` (14/9, dopo una chat di Ste su disciplina/direzione):** i temi della vita (disciplina, motivazione, sentirsi perso, scuola, famiglia, amici) sono materia del Coach — non li rimanda "a chi ti segue nella vita" né riporta al campo chi ha detto che il problema è fuori; il campo è risorsa, non recinto; il cassetto tiene solo l'identità profonda. Regole aggiunte: le risposte brevi rispondono all'ULTIMA domanda del Coach (rileggerla prima di interpretarle), niente "Ciao"/nome a metà conversazione, niente diminutivi. **Sezione `# VOCE` (17/9, da Notion "🎤 VOCE — Come parla For You Football"):** il Coach parla come Ste su una panchina dopo l'allenamento: scena prima della teoria, spiegazioni col pallone, domande dirette, sgonfia invece di gonfiare, ammette di non sapere, ritmo parlato, una battuta leggera sulle cose normali del calcio quando la sente giusta (anche per sdrammatizzare un concetto pesante; mai sul ragazzo, mai su di sé, mai nel protocollo a rischio); NON parla mai di sé (niente "io", niente "come AI"); parole da spogliatoio ("nota" > "capisci", "fai" > "trasforma"), niente frasi da Instagram, niente vocabolario nuovo oltre ai nomi degli strumenti, mai il ragazzo come problema. I 5 esempi vissuti di Ste raccolti su Notion sono citabili SOLO in forma generica ("c'è chi…", senza nome, mai come esperienze del Coach), mai inventarne altri (Ste, 17/9). Allineati alla Voce anche: LINGUAGGIO (via "Sembra emergere"), W7 (via "fuoco"/"energia da guidare": "la rabbia non esplode: sale"), W8 (via "vali più di…"), gli esempi di FAR SOSTARE, i nomi del catalogo pratiche (per il Coach, non per il ragazzo), `WEB_FORMAT` (ritmo parlato, non "lettera breve"). Include `REGOLA ANTICIPAZIONI` (anticipazioni generiche OK, dettagli pratiche/strumenti futuri NO) e sezione `# ESEMPI DA CALCIATORI REALI`: catalogo fisso di 7 esempi verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo il Fenomeno) — il Coach usa SOLO questi, non inventa statistiche
+- `SYSTEM_PROMPT` — Prompt Coach AI completo (~420 righe, hardcoded in questo file — UNICA fonte di verità, nessun doc Notion viene letto a runtime): identità, progressione settimanale W1-W12 (W10-12 dal 25/9, dal `Coach Contesto` di Notion: due secondi per tornare presente, Protocollo For You, giocare libero; linguaggio rev. 19/09: "la routine" mai "la strada", mai "l'interruttore" né "c'è qualcuno a casa", "risposte pronte" mai "riflessi" — anche `WEEK_TOOLS` 9-10 in `lib/constants.ts` sono allineati), mappa strumenti "quando uso cosa", linguaggio, regolazione profondità, catalogo pratiche, situazioni a rischio. **Sezione `# FUORI DAL CAMPO` (14/9, dopo una chat di Ste su disciplina/direzione):** i temi della vita (disciplina, motivazione, sentirsi perso, scuola, famiglia, amici) sono materia del Coach — non li rimanda "a chi ti segue nella vita" né riporta al campo chi ha detto che il problema è fuori; il campo è risorsa, non recinto; il cassetto tiene solo l'identità profonda. Regole aggiunte: le risposte brevi rispondono all'ULTIMA domanda del Coach (rileggerla prima di interpretarle), niente "Ciao"/nome a metà conversazione, niente diminutivi. **Sezione `# VOCE` (17/9, da Notion "🎤 VOCE — Come parla For You Football"):** il Coach parla come Ste su una panchina dopo l'allenamento: scena prima della teoria, spiegazioni col pallone, domande dirette, sgonfia invece di gonfiare, ammette di non sapere, ritmo parlato, una battuta leggera sulle cose normali del calcio quando la sente giusta (anche per sdrammatizzare un concetto pesante; mai sul ragazzo, mai su di sé, mai nel protocollo a rischio); NON parla mai di sé (niente "io", niente "come AI"); parole da spogliatoio ("nota" > "capisci", "fai" > "trasforma"), niente frasi da Instagram, niente vocabolario nuovo oltre ai nomi degli strumenti, mai il ragazzo come problema. I 5 esempi vissuti di Ste raccolti su Notion sono citabili SOLO in forma generica ("c'è chi…", senza nome, mai come esperienze del Coach), mai inventarne altri (Ste, 17/9). Allineati alla Voce anche: LINGUAGGIO (via "Sembra emergere"), W7 (via "fuoco"/"energia da guidare": "la rabbia non esplode: sale"), W8 (via "vali più di…"), gli esempi di FAR SOSTARE, i nomi del catalogo pratiche (per il Coach, non per il ragazzo), `WEB_FORMAT` (ritmo parlato, non "lettera breve"). Include `REGOLA ANTICIPAZIONI` (anticipazioni generiche OK, dettagli pratiche/strumenti futuri NO) e sezione `# ESEMPI DA CALCIATORI REALI`: catalogo fisso di 7 esempi verificati (CR7, Iniesta, Ibra, Messi, Buffon, Baggio, Ronaldo il Fenomeno) — il Coach usa SOLO questi, non inventa statistiche
 - `SYSTEM_PROMPT_NOT_REGISTERED` — Risposta per utenti Telegram non registrati
 - `WEB_FORMAT` — Regole formattazione per web chat (markdown leggero, max 4-6 righe)
 - `TELEGRAM_FORMAT` — Regole formattazione per Telegram (niente markdown, max 4-5 righe, colloquiale)
 - `buildUserContext(userId)` — Costruisce contesto personalizzato leggendo da Supabase (include check-in fisico di oggi + media ultimi 7 giorni)
 - `LEGGI_PERCORSO_TOOL` — Tool Anthropic per leggere contenuto settimane/giorni da Notion in tempo reale
 - `executeLeggiPercorso(input)` — Esegue fetch settimana/giorno da Notion, ritorna testo strutturato
-- `callClaude(systemPrompt, messages, maxTokens, useTools, { maxWeek })` — Chiama `COACH_MODEL` = `claude-sonnet-5` con `thinking: adaptive` + `effort: medium`; il `maxTokens` passato viene moltiplicato per `THINKING_HEADROOM` (2.5) perché su Sonnet 5 il pensiero conta nel limite (se `useTools=true`: gestisce tool_use con doppia chiamata). `maxWeek` = `current_week` dell'utente (chat e Telegram lo passano): `leggi_percorso` rifiuta `week > maxWeek` con un tool result che ricorda la REGOLA ANTICIPAZIONI (14/9: prima "dammi la settimana dopo" passava dal tool)
+- `callClaude(systemPrompt, messages, maxTokens, useTools, { maxWeek })` — Chiama `COACH_MODEL` = `claude-sonnet-5` con `thinking: adaptive` + `effort: medium`; il `maxTokens` passato viene moltiplicato per `THINKING_HEADROOM` (2.5) perché su Sonnet 5 il pensiero conta nel limite (se `useTools=true`: gestisce tool_use con doppia chiamata). `maxWeek` = `current_week` dell'utente (chat e Telegram lo passano): `leggi_percorso` rifiuta `week > maxWeek` con un tool result che ricorda la REGOLA ANTICIPAZIONI (14/9: prima "dammi la settimana dopo" passava dal tool). **Dal 25/9:** una risposta vuota o tagliata da `max_tokens` senza testo è un errore (`coach_empty` / `coach_max_tokens`, mai una riga vuota salvata; Telegram risponde "riscrivimi tra un minuto"); ritorna `CoachUsage` con `cache_read_input_tokens` / `cache_creation_input_tokens` e logga `coach usage [tag]` a ogni chiamata (così si vede se la cache del prompt lavora: la scelta su `ttl: '1h'` si prende dopo una settimana di log)
 - `generateCoachRecap(userId, messages)` — Distilla conversazione in coach_notes (pattern, temi, thread aperti)
 - `checkSafetyKeywords(text)` — Rileva parole chiave a rischio (suicidio, autolesionismo, violenza)
 - `SAFETY_KEYWORDS` — Lista keyword per detection
@@ -586,7 +586,7 @@ Risposta mostrata in UI
 - **Tool use abilitato** — il Coach può leggere pratiche/giorni da Notion via `leggi_percorso`
 - Conversazioni **NON salvate in DB** — vivono nello state React + `sessionStorage` (sopravvivono a refresh, si azzerano alla chiusura browser)
 - Ad ogni messaggio il client invia l'intera cronologia in-memory
-- **Memoria unificata (giugno 2026):** ogni 10 messaggi di sessione web, `generateCoachRecap` distilla la conversazione in `coach_notes` (fire-and-forget) — i messaggi grezzi restano non salvati, ma il Coach ricorda i temi su entrambi i canali
+- **Memoria unificata (giugno 2026):** ogni 10 messaggi dell'utente, `generateCoachRecap` distilla la conversazione in `coach_notes` (fire-and-forget) — i messaggi grezzi restano non salvati, ma il Coach ricorda i temi su entrambi i canali. Dal 25/9 il contatore è **per utente** (eventi `coach_message_sent` web; su Telegram le righe `role='user'`): prima era la lunghezza della cronologia, che il client tiene a 40, e da lì il recap non scattava più. Il prompt del recap ha la sezione **Cassetto** (`[CASSETTO] tema — da riaprire in W<n>`, conservata finché non viene riaperta): prima il Coach prometteva "la salviamo qui" ma nessuno la scriveva
 - Il messaggio di benvenuto iniziale (hardcoded in ChatBot.tsx, personalizzato col nome) viene **filtrato** prima dell'invio a Claude per non confondere il modello
 - Max tokens: 1500
 
@@ -613,7 +613,7 @@ Se registrato:
 **Caratteristiche:**
 - Conversazioni **salvate in DB** (`telegram_conversations`)
 - Sliding window: ultimi 20 messaggi come contesto per Claude
-- Ogni 20 messaggi: genera recap → salva in `profiles.coach_notes`
+- Ogni 10 messaggi scritti dall'utente (`role='user'`, le pillole dei cron non contano): genera recap → salva in `profiles.coach_notes`
 - Recap usa ultimi 40 messaggi per avere più contesto
 - Conversazioni cancellate dopo 90 giorni (cron job nightly)
 - Primo messaggio: avviso privacy + presentazione Coach
@@ -623,7 +623,7 @@ Se registrato:
 ### Contesto condiviso (`buildUserContext`)
 
 Entrambi i canali (web + Telegram) usano `buildUserContext(userId)` che legge:
-- **Data odierna:** data reale passata come prima riga del contesto (evita hallucination del giorno della settimana)
+- **Data odierna:** data reale in fuso italiano come prima riga del contesto (evita hallucination del giorno della settimana; prima era l'ora del server UTC: tra mezzanotte e le due era ieri). Le letture indipendenti partono insieme (`Promise.all`), riflessioni limitate alle ultime 5
 - **Profilo atleta:** nome, età, ruolo/i, livello, paure, situazione, obiettivi, sogno
 - **Progresso:** tutti i giorni completati + ultimi 3 mostrati
 - **Riflessioni dal campo:** ultime 5 riflessioni (domanda + risposta)
@@ -641,13 +641,15 @@ La memoria persistente del Coach si basa su:
 
 **Memoria unificata:** entrambi i canali alimentano `coach_notes` ed entrambi la leggono via `buildUserContext` — il Coach ricorda i temi ovunque gli si parli. I messaggi grezzi della web chat restano comunque non salvati in DB (solo Telegram salva le conversazioni).
 
-### Safety
+### Safety (due livelli dal 25/9, Sera B)
 
-- `SAFETY_KEYWORDS`: ~30 keyword (italiano) per rilevare contenuti a rischio
-- `checkSafetyKeywords()`: controlla se il testo contiene keyword → boolean
-- `sendSafetyAlert(userId, channel, messageContent)`: sempre `console.error`; email via Resend (ATTIVA in prod da giugno 2026: `RESEND_API_KEY` + `SAFETY_ALERT_EMAIL` su Vercel, mittente `alerts@foryoufootball.it` — dominio verificato Resend) — non blocca la risposta
-- **Attivo** in `/api/chat` (ultimo messaggio utente) e `/api/telegram` (dopo lookup userId) — fire-and-forget
-- Il system prompt include istruzioni per situazioni a rischio (rimando a professionisti, Telefono Amico)
+- `SAFETY_KEYWORDS_BLOCCO` (frasi inequivocabili: suicidio, farla finita, sarebbe meglio senza di me, non voglio svegliarmi…) e `SAFETY_KEYWORDS_ALERT` (parole ambigue, spesso gergo da campo: ammazzare, picchiare, non ce la faccio più, mi faccio schifo; più disturbi alimentari e abusi in attesa dello psicologo). **Le liste definitive le decide lo psicologo**: quelle nel codice sono una divisione provvisoria. `SAFETY_KEYWORDS` = unione (compatibilità).
+- `checkSafety(text)` → `'blocco' | 'alert' | null`; `checkSafetyKeywords()` resta come boolean.
+- `sendSafetyAlert(userId, channel, testo, livello)`: con `'blocco'` scrive `safety_review = true` e la data **e viene atteso** dal chiamante (il contenimento vale già dal turno che lo fa scattare; prima era fire-and-forget e riletto subito dopo), poi avvisa Ste su Telegram (`SAFETY_ALERT_TELEGRAM_CHAT_ID`) ed email Resend senza bloccare la risposta; con `'alert'` avvisa soltanto ("solo avviso"), il Coach continua a lavorare.
+- `resolveSafetyReview(profile)`: il contenimento **scade da solo dopo `SAFETY_REVIEW_HOURS = 48`** senza verifica: il flag viene tolto e Ste riceve un promemoria su Telegram. Un flag senza data (pre-014) resta attivo. Sblocco manuale prima della scadenza: `/sblocca <user_id>` dalla chat di Ste.
+- Attivo in `/api/chat` (ultimo messaggio utente) e `/api/telegram`; su Telegram un blocco scattato adesso mette il prefisso `SAFETY_REVIEW_MODE` già in questa risposta.
+- Il system prompt include il protocollo SITUAZIONI A RISCHIO (rimando a persone reali, Telefono Amico), che vale anche a livello alert.
+- Regressione: `npx tsx scripts/coach-replay.mts --scenario ammazzato` (gergo → alert, il Coach lavora), `--scenario blocco` (contenimento), `--scenario assistant-falso` (turno assistant iniettato: il Coach non deve seguirlo).
 
 ---
 
@@ -1073,7 +1075,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `024_training_focus.sql` applicata su Supabase (Ste, 14/9)
 - [x] Migration `025_training_preferenze.sql` applicata su Supabase (Ste, 17/9)
 - [x] Migration `026_session_feedback.sql` applicata su Supabase (Ste, 24/9)
-- [ ] **Migration `027_client_boundary.sql` da applicare su Supabase** (Sera A, 25/9): viste analytics chiuse, colonne server-only di `profiles` protette, `user_day_progress` solo lettura dal client, cascade su `daily_checkin`. Verifiche in coda al file.
+- [x] Migration `027_client_boundary.sql` applicata su Supabase (Ste, 25/9)
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)

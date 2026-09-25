@@ -3,8 +3,9 @@ import { logEvent } from '@/lib/events';
 import {
   buildUserContext,
   callClaude,
-  checkSafetyKeywords,
+  checkSafety,
   sendSafetyAlert,
+  resolveSafetyReview,
   generateCoachRecap,
   supabaseAdmin,
   SAFETY_REVIEW_MODE,
@@ -18,6 +19,7 @@ import { FREE_COACH_MESSAGES } from '@/lib/constants';
 
 export const maxDuration = 60; // due chiamate Sonnet con thinking + Notion: mai i 10 s di default (review 25/9)
 
+const RECAP_OGNI_MESSAGGI_WEB = 10; // un recap ogni 10 messaggi dell'utente (contati sugli eventi)
 const CHAT_MESSAGES_MAX = 41;   // ChatBot tiene 40 messaggi + quello nuovo
 const CHAT_CONTENT_MAX = 4000;  // caratteri per messaggio
 
@@ -75,22 +77,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Messages required' }, { status: 400 });
     }
 
+    // Safety a due livelli: 'blocco' scrive il flag (atteso, così il contenimento vale
+    // già da questo turno) e avvisa Ste; 'alert' avvisa soltanto.
     const lastUserMessage = messages[messages.length - 1];
-    if (userId && lastUserMessage?.role === 'user' && checkSafetyKeywords(lastUserMessage.content)) {
-      sendSafetyAlert(userId, 'web', lastUserMessage.content).catch(err =>
-        console.error('sendSafetyAlert failed:', err)
-      );
+    const livelloSafety = lastUserMessage?.role === 'user' ? checkSafety(lastUserMessage.content) : null;
+    if (livelloSafety) {
+      await sendSafetyAlert(userId, 'web', lastUserMessage.content, livelloSafety);
     }
 
-    // Modalità contenimento: se il profilo è in safety_review (un messaggio ha
-    // fatto scattare l'alert e Ste non ha ancora verificato), il Coach resta
-    // nel protocollo — niente coaching finché non c'è lo sblocco manuale.
+    // Modalità contenimento: se il profilo è in safety_review (un messaggio ha fatto
+    // scattare il blocco e Ste non ha ancora verificato) il Coach resta nel protocollo,
+    // finché non c'è lo sblocco manuale o per SAFETY_REVIEW_HOURS ore (poi scade da solo).
     const { data: safetyProfile } = await supabaseAdmin
       .from('profiles')
-      .select('safety_review, current_week')
+      .select('user_id, name, safety_review, safety_review_at, current_week')
       .eq('user_id', userId)
       .maybeSingle();
-    const inSafetyReview = safetyProfile?.safety_review === true;
+    const inSafetyReview = await resolveSafetyReview(safetyProfile);
     const currentWeek = safetyProfile?.current_week || 1;
 
     const userContext = await buildUserContext(userId);
@@ -107,12 +110,19 @@ export async function POST(request: NextRequest) {
     const { text, usage } = await callClaude(systemBlocks, messages, 1500, true, { maxWeek: currentWeek });
     logEvent(userId, 'coach_message_sent', { channel: 'web' });
 
-    // Memoria unificata: come su Telegram, la conversazione web viene distillata
-    // in coach_notes (fire-and-forget). I messaggi grezzi NON vengono salvati —
-    // contribuiscono solo alla memoria distillata del Coach. Soglia più bassa di
-    // Telegram (10 vs 20) perché la sessione web si azzera alla chiusura browser.
-    const fullConversation = [...messages, { role: 'assistant', content: text }];
-    if (fullConversation.length % 10 === 0) {
+    // Memoria unificata: come su Telegram, la conversazione web viene distillata in
+    // coach_notes (fire-and-forget). I messaggi grezzi NON vengono salvati. Il contatore
+    // è PER UTENTE (eventi coach_message_sent web, che crescono a ogni messaggio): prima
+    // era la lunghezza della cronologia, che il client tiene a 40 → da lì il recap non
+    // scattava più proprio per chi usa di più il Coach (review 25/9).
+    const { count: inviatiWeb } = await supabaseAdmin
+      .from('onboarding_events')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('event', 'coach_message_sent')
+      .eq('meta->>channel', 'web');
+    const fullConversation = [...messages, { role: 'assistant' as const, content: text }];
+    if (((inviatiWeb ?? 0) + 1) % RECAP_OGNI_MESSAGGI_WEB === 0) {
       generateCoachRecap(userId, fullConversation.slice(-40)).catch(err =>
         console.error('Recap generation error (web):', err)
       );
