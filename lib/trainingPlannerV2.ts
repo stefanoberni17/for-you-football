@@ -30,7 +30,7 @@ import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusE
 import { testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi } from './trainingLivelli';
-import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
+import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { LIVELLO_ORDINE } from './trainingCatalogV2';
 
 export const PLANNER_V2_PROMPT_VERSION = 'v2.15-velocita-pliometria';
@@ -108,14 +108,16 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
   };
   aggiornaParteAlta(ctx);
   await completaFeedbackDaiPiani(base.feedbackRecenti);
-  // Velocità e pliometria (Ste, 24-25/9): pliometria solo B nelle prime settimane, sprint con palla dalla 5ª; riscaldamento fisso in libreria
+  // Velocità e pliometria (Ste, 24-25/9): pliometria solo B nelle prime settimane, sprint con palla dalla 5ª, salite in season una ogni 4 settimane; riscaldamento fisso in libreria
+  const lunediCorrente = mondayOfThisWeekRome();
   const regole = filtraVelocitaPliometria(ctx.blocchi, {
     settimaneAllenamento: settimaneAllenamento(base.feedbackRecenti), settimanePlio: settimanePliometria(base.feedbackRecenti, bloccoById),
     tecnicaTraGliObiettivi: ctx.obiettivi.includes('tecnica') || ctx.obiettivi.includes(FOCUS_TUTTO), inSeasonOPreparazione: setup.fase !== 'off_season',
+    inSeason: setup.fase === 'in_season', isDeload: base.ciclo.isDeload, settimaneDalleSalite: settimaneDalleSalite(base.feedbackRecenti, bloccoById, lunediCorrente),
   });
   ctx.blocchi = regole.blocchi; ctx.noteRegole = regole.note;
   if (setup.attrezzatura.includes('campo')) ctx.blocchi.push(bloccoRiscaldamentoVelocita());
-  ctx.memoria = calcolaMemoriaBlocchi(base.feedbackRecenti, { disponibili: ctx.blocchi, lunediCorrente: mondayOfThisWeekRome(), livello: v2.livello, livelli: base.livelli, isDeload: base.ciclo.isDeload });
+  ctx.memoria = calcolaMemoriaBlocchi(base.feedbackRecenti, { disponibili: ctx.blocchi, lunediCorrente, livello: v2.livello, livelli: base.livelli, isDeload: base.ciclo.isDeload });
   // Assaggio/promozione del livello sopra: quei blocchi entrano tra i disponibili (Claude li vede in libreria, il validatore li accetta)
   for (const b of blocchiFuoriLivello(ctx.memoria)) if (!ctx.blocchi.some((x) => x.id === b.id)) ctx.blocchi.push(b);
   return ctx;
@@ -224,6 +226,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const settimanaConEmom = (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).includes(PA_EMOM_ID));
   const sprintMax = settimanaConEmom ? SPRINT_MAX_CON_EMOM : SPRINT_MAX_SEDUTA;
   let giornateVelocita = 0;
+  let blocchiSalite = 0;
   const velocitaVera = (b: Blocco) => !isParteAlta(b.id) && b.id !== RISC_VELOCITA_ID && isVelocita(b);
   for (const s of p.sedute || []) {
     const ids = Array.isArray(s.blocchi) ? s.blocchi : [];
@@ -265,9 +268,13 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         }
       }
     }
-    // Velocità (Ste, 25/9): riscaldamento fisso in testa a ogni seduta con sprint; una sola giornata di velocità a settimana
-    if (blocchi.some(velocitaVera)) {
-      giornateVelocita++;
+    // Salite (Ste, 25/9: pesanti): al massimo UN blocco a settimana (in season una ogni 4 settimane: già filtrate dalla libreria)
+    const salite = blocchi.filter(isSalite);
+    blocchiSalite += salite.length;
+    if (blocchiSalite > 1) errors.push(`seduta del giorno ${s.giorno}: ${salite.map((b) => b.nome).join(' + ')} — al massimo UN blocco di salite a settimana (Ste: sono pesanti)`);
+    // Velocità (Ste, 25/9): riscaldamento fisso in testa a ogni seduta con sprint o salite; una sola giornata di velocità a settimana
+    if (blocchi.some(velocitaVera) || salite.length) {
+      if (blocchi.some(velocitaVera)) giornateVelocita++;
       if (!blocchi.some((b) => b.id === RISC_VELOCITA_ID)) {
         const risc = bloccoDi(ctx, RISC_VELOCITA_ID);
         if (risc && disponibili.has(risc.id)) { blocchi.unshift(risc); noteMemoria.set(risc.id, 'aggiunto dal server'); }
