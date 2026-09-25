@@ -35,11 +35,14 @@ import { LIVELLO_ORDINE } from './trainingCatalogV2';
 
 export const PLANNER_V2_PROMPT_VERSION = 'v2.15-velocita-pliometria';
 /**
- * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
- * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
- * centesimi a tentativo. Thinking adattivo di default; effort medium (low/medium sono forti su Opus 5).
+ * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
+ * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
+ * ragionamento conta: un piano a settimana per atleta, pochi centesimi a tentativo. Thinking adattivo
+ * (su Opus 5.5 non si può spegnere), effort medium esplicito. Il system prompt (setup, libreria dei
+ * blocchi, regole) è identico nei 3 tentativi e cambia poco tra le rigenerazioni della stessa settimana:
+ * va in cache (`cache_control`), i tentativi dopo il primo lo leggono a un decimo del prezzo.
  */
-export const PLANNER_V2_MODEL = 'claude-opus-5';
+export const PLANNER_V2_MODEL = 'claude-opus-5-5';
 const DELOAD_SCALA = 0.6;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -720,9 +723,11 @@ export async function generateWeekPlanV2(
       const completion = await anthropic.messages.create({
         model: PLANNER_V2_MODEL, max_tokens: 8000, // thinking + JSON del piano (il pensiero conta nel limite)
         thinking: { type: 'adaptive' }, output_config: { effort: 'medium' },
-        system,
+        system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userPrompt(ctx, richiesta, errori, precedente) }],
       });
+      const u = completion.usage;
+      console.log('trainingPlannerV2: usage', { tentativo: attempt + 1, input: u.input_tokens, cacheScritta: u.cache_creation_input_tokens, cacheLetta: u.cache_read_input_tokens, output: u.output_tokens });
       const text = completion.content.filter((x) => x.type === 'text').map((x) => (x as { text: string }).text).join('\n');
       const raw = extractJson(text);
       if (!raw) { errori = ['output non era JSON valido']; continue; }
