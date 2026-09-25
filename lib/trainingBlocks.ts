@@ -17,6 +17,7 @@ import { esercizioById } from './trainingCatalog';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { PlanItem } from './trainingEngine';
 import { FAMIGLIA_FASCIA_FORZA, fasciaMarker } from './trainingFascia';
+import { KG_SENZA_MASSIMALE_MAX } from './trainingRulesV2';
 
 export type Variante = 'full' | 'short';
 
@@ -64,7 +65,19 @@ export interface Blocco {
  * PARTE BASSA a tutti gli effetti (conta come seduta fisica, copre l'obiettivo gambe), non prevenzione.
  * Il generato lo classifica per gli esercizi (fascia + spinte isometriche = parte alta): qui si corregge.
  */
-export const BLOCCHI: Blocco[] = (BLOCCHI_GENERATI as Blocco[]).map((b) => {
+/**
+ * Livello per i blocchi che in Everfit non hanno un codice (review 25/9): 31 blocchi hanno `livello: null`
+ * e sono disponibili a tutti. Va bene per fascia, tecnica, test, riscaldamenti, yoga e i P1 del portiere;
+ * NON per i due blocchi di forza con bilanciere (squat 3×80/90/95, stacchi), che ora contano come A.
+ * Il resto della lista è da decidere con Ste blocco per blocco.
+ */
+const LIVELLO_OVERRIDE: Record<string, LivelloMinV2> = {
+  'forza-parte-bassa-forza-max': 'A',
+  'forza-parte-bassa-completa-palestra': 'A',
+};
+
+export const BLOCCHI: Blocco[] = (BLOCCHI_GENERATI as Blocco[]).map((b0) => {
+  const b = b0.livello === null && LIVELLO_OVERRIDE[b0.id] ? { ...b0, livello: LIVELLO_OVERRIDE[b0.id] } : b0;
   if (b.famiglia !== FAMIGLIA_FASCIA_FORZA) return b;
   const tot = Object.values(b.qualitaSet).reduce((a, n) => a + (n ?? 0), 0);
   return { ...b, qualita: 'forza-parte-bassa', qualitaSet: { ...b.qualitaSet, 'forza-parte-bassa': tot } };
@@ -80,6 +93,9 @@ export function bloccoHaSoloLivelloSopra(b: Blocco, livello: LivelloMinV2): bool
     return !!e?.soloLivello && LIVELLO_ORDINE[e.livelloMin] > liv;
   });
 }
+
+/** Il blocco prescrive carichi oltre il tetto senza massimale (bilanciere, sovraccarichi pesanti)? */
+export const bloccoHaCarichiPesanti = (b: Blocco) => b.items.some((it) => (it.carico_kg ?? 0) > KG_SENZA_MASSIMALE_MAX);
 
 /**
  * Blocchi proponibili per un atleta: completi, livello ≤ atleta (o non indicato), attrezzatura disponibile.
@@ -103,7 +119,8 @@ export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: s
     return b.completo
       && b.qualita !== 'test'
       && (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv
-        || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia) && !bloccoHaSoloLivelloSopra(b, ctx.livelloPerQualita?.[b.qualita] ?? ctx.livello)))
+        // Il gradino sopra MAI per i blocchi con carichi pesanti (bilanciere): un B non riceve "Forza Max" (review 25/9)
+        || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia) && !bloccoHaCarichiPesanti(b) && !bloccoHaSoloLivelloSopra(b, ctx.livelloPerQualita?.[b.qualita] ?? ctx.livello)))
       && b.attrezzatura.every((a) => disp.has(a))
       && (!b.inCoppia || ctx.inCoppia);
   });

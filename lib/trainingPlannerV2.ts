@@ -23,6 +23,7 @@ import { costruisciParteAlta, isParteAlta, parteAltaTesto, vuoleParteBassa, PA_E
 import { squilibriTesto } from './trainingSquilibri';
 import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgressione';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
+import { limaCarichi } from './trainingCarico';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
@@ -372,8 +373,14 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       return leggero ? its.map((it) => ({ ...it, adattamento: 'leggero' as const })) : its;
     });
     // Sprint massimali: oltre il tetto il server toglie serie dalla coda (prima le distanze lunghe)
-    const { items: itemsLimati, tolti } = limaSprint(items, sprintMax);
+    const { items: itemsLimati0, tolti } = limaSprint(items, sprintMax);
     if (tolti > 0) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${tolti} sprint in meno: tetto di ${sprintMax}`); }
+    // Kg dei blocchi dietro il tetto dell'atleta (lib/trainingCarico): senza massimale max 20 kg, con massimale caricoMaxPct
+    const { items: itemsLimati, limati: carichiLimati } = limaCarichi(itemsLimati0, ctx.v2);
+    if (carichiLimati > 0) {
+      const conKg = blocchi.find((b) => b.items.some((it) => it.carico_kg));
+      if (conKg && !noteMemoria.has(conKg.id)) noteMemoria.set(conKg.id, Object.keys(ctx.v2.massimali || {}).length ? 'carichi al tuo massimale' : 'carichi leggeri: prima i test in palestra');
+    }
     const durata = Math.round(blocchi.reduce((a, b) => a + b.durataMin * (leggeri.has(b.id) ? 0.85 : 1), 0) * (scala < 1 ? 0.8 : 1));
     const maxDurata = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
     if (durata > maxDurata)
@@ -672,7 +679,7 @@ function primo(ctx: ContextV2, q: QualitaV2, pref?: RegExp): Blocco | undefined 
   return (pref && cand.find((b) => pref.test(b.nome))) || cand[0];
 }
 
-export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
+export function fallbackPianoBlocchi(ctx: ContextV2): { plan: WeekPlan; violazioni: string[] } {
   const b = ctx.base;
   const vietati = new Set<number>();
   for (const md of b.matchDays) { vietati.add(md); vietati.add(md === 1 ? 7 : md - 1); }
@@ -734,8 +741,24 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
     const r = recuperoPer(iFis++);
     return r ? { giorno: g, titolo: r.titolo, spiegazione: 'Recupero della seduta saltata la settimana scorsa.', blocchi: r.blocchi } : baseSeduta(g, k++, true);
   }).filter((s) => s.blocchi.length > 0);
-  const { plan } = expandPiano({ sedute, messaggio: 'Piano base della settimana (generato in modalità sicura).' }, ctx);
-  return conProgressioni(plan, ctx, validateCtxFor(ctx));
+  // Il piano base passa dal VALIDATORE come quello di Claude (review 25/9: prima usciva da expandPiano
+  // scartando gli errori — finestre partita, tetto di carico, salite e velocità non erano controllati).
+  // Se non passa, seconda chance con sole giornate leggere (apertura + tecnica o mobilità, niente forza);
+  // se non passa neanche quella, il piano viene salvato con le SUE violazioni, mostrate nell'hub.
+  const vctx = validateCtxFor(ctx);
+  const tenta = (ss: SedutaLLM[], messaggio: string) => {
+    const { plan, errors } = expandPiano({ sedute: ss, messaggio }, ctx);
+    const violazioni = [...errors, ...(plan.sedute.length ? validatePlan(plan, vctx) : ['piano vuoto'])];
+    return { plan, violazioni };
+  };
+  let esito = tenta(sedute, 'Piano base della settimana (generato in modalità sicura).');
+  if (esito.violazioni.length) {
+    const soloLeggere = giorni.map(({ d }) => baseSeduta(d, 0, false)).filter((x) => x.blocchi.length > 0);
+    const esito2 = tenta(soloLeggere, 'Piano base della settimana: solo giornate leggere (il piano completo non rispettava le regole).');
+    if (!esito2.violazioni.length) esito = esito2;
+    else console.error('trainingPlannerV2: anche il piano base viola le regole', esito.violazioni);
+  }
+  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: esito.violazioni };
 }
 
 /**
@@ -827,5 +850,6 @@ export async function generateWeekPlanV2(
       break;
     }
   }
-  return { plan: conNota(fallbackPianoBlocchi(ctx)), generatoDa: 'fallback', ctx, violazioni: errori };
+  const base = fallbackPianoBlocchi(ctx);
+  return { plan: conNota(base.plan), generatoDa: 'fallback', ctx, violazioni: [...(errori ?? []), ...base.violazioni.map((v) => `piano base: ${v}`)] };
 }
