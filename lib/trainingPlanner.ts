@@ -21,6 +21,7 @@ import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLog
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
+import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
 import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
 
 export const PLANNER_PROMPT_VERSION = 'v0.5';
@@ -90,6 +91,7 @@ function sanitize(text: string): string {
 
 export interface PlannerContext {
   fascia: FasciaLivello;
+  livelli: LivelliQualita; // 25/9: livello per qualità dai test di quella qualità (lib/trainingLivelli)
   gradini: Record<string, number>;
   matchDays: number[];
   trainingDays: number[];
@@ -278,8 +280,10 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   // Sbarra: v0 — dedotta dal fatto che il test pull sia stato fatto con valore ≥ 0
   const hasSbarra = rows.some((r) => r.test_id === 'test-pull');
 
+  const fascia = fasciaFromResults(rows);
   return {
-    fascia: fasciaFromResults(rows),
+    fascia,
+    livelli: livelliPerQualita(rows, fascia),
     gradini,
     matchDays: calendar?.match_days || [],
     trainingDays,

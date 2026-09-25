@@ -15,8 +15,8 @@
  * contano: il codice si decide dalle settimane precedenti, così un "Modifica" a metà settimana non lo cambia.
  */
 import type { Blocco } from './trainingBlocks';
-import { BLOCCHI, bloccoById } from './trainingBlocks';
-import { LIVELLO_ORDINE } from './trainingCatalogV2';
+import { BLOCCHI, bloccoById, bloccoHaSoloLivelloSopra } from './trainingBlocks';
+import { LIVELLO_ORDINE, type LivelloMinV2, type QualitaV2 } from './trainingCatalogV2';
 import { isParteAlta } from './trainingParteAlta';
 
 export type Giudizio = 'facile' | 'ok' | 'duro';
@@ -29,7 +29,15 @@ export interface FeedbackPerMemoria {
   feedback_blocchi?: { id: string; giudizio: Giudizio }[] | null;
 }
 
-export type Passo = 'avanti' | 'stesso' | 'indietro' | 'short' | 'full';
+export type Passo = 'avanti' | 'stesso' | 'indietro' | 'short' | 'full' | 'assaggio' | 'promosso';
+
+/**
+ * ASSAGGIO DEL LIVELLO SOPRA (Ste, 25/9): all'ultimo codice del proprio livello, dopo 2 settimane
+ * "facile", il primo codice del livello sopra entra con serie ×0.7 (`leggero`); dopo altre 2
+ * settimane facile/giusto passa a dose piena ("promosso"); oltre non si va senza il ri-test
+ * (il livello per qualità lo decidono i test). Esclusi i blocchi con esercizi "solo livello".
+ */
+export const ASSAGGIO_SETTIMANE = 2;
 
 export interface MemoriaFamiglia {
   famiglia: string;
@@ -40,6 +48,8 @@ export interface MemoriaFamiglia {
   ammessi: string[];       // id ammessi per la famiglia (il prossimo e, se il passo lo consente, l'altra variante dello stesso codice)
   passo: Passo;
   motivo: string;          // per il prompt (perché questo codice)
+  fuoriLivello?: boolean;  // il prossimo è un blocco del livello sopra (assaggio/promosso): va aggiunto ai disponibili
+  leggero?: boolean;       // assaggio: il server forza serie ×0.7
 }
 
 export type MemoriaBlocchi = Record<string, MemoriaFamiglia>;
@@ -92,9 +102,12 @@ const regolaDi = (famiglia: string) => REGOLE_FAMIGLIA.find((r) => r.match.test(
  * altrimenti la famiglia non entra nella memoria (nessun vincolo).
  */
 export function calcolaMemoriaBlocchi(
-  feedback: FeedbackPerMemoria[], opt: { disponibili: Blocco[]; lunediCorrente: string },
+  feedback: FeedbackPerMemoria[],
+  opt: { disponibili: Blocco[]; lunediCorrente: string; livello?: LivelloMinV2; livelli?: Partial<Record<QualitaV2, LivelloMinV2>> },
 ): MemoriaBlocchi {
   const disp = new Set(opt.disponibili.map((b) => b.id));
+  const livAtleta = (q: QualitaV2) => LIVELLO_ORDINE[opt.livelli?.[q] ?? opt.livello ?? 'B'];
+  const livNome = (q: QualitaV2): LivelloMinV2 => opt.livelli?.[q] ?? opt.livello ?? 'B';
   const righe = feedback
     .filter((f) => f.feedback_blocchi?.length && dataRoma(f.completed_at) < opt.lunediCorrente)
     .sort((a, b) => (a.completed_at < b.completed_at ? 1 : -1));
@@ -131,19 +144,46 @@ export function calcolaMemoriaBlocchi(
     const regola = regolaDi(famiglia);
     const disponibile = (b?: Blocco) => !!b && disp.has(b.id);
     let prossimo: Blocco | undefined; let passo: Passo = 'stesso'; let motivo = '';
+    let fuoriLivello = false; let leggero = false;
     const stesso = (perche: string) => { prossimo = disponibile(u.blocco) ? u.blocco : disponibile(g.full) ? g.full : disponibile(g.short) ? g.short : undefined; passo = 'stesso'; motivo = perche; };
+    const nSettCodice = settimaneCodice.get(chiave)?.size ?? 1;
+    // L'ultimo blocco era un ASSAGGIO del livello sopra (blocco sopra il livello della sua qualità)?
+    const sopraLivello = u.blocco.livello !== null && LIVELLO_ORDINE[u.blocco.livello] > livAtleta(u.blocco.qualita);
+    if (sopraLivello) {
+      fuoriLivello = true;
+      const prev = scala[pos - 1];
+      if (u.giudizio === 'duro') {
+        if (prev && (disponibile(prev.full) || disponibile(prev.short))) { prossimo = disponibile(prev.full) ? prev.full : prev.short; passo = 'indietro'; motivo = 'la prova del livello sopra è stata dura: si torna al codice prima'; fuoriLivello = false; }
+        else { prossimo = u.blocco; passo = 'assaggio'; leggero = true; motivo = 'la prova del livello sopra è stata dura: resta a dose ridotta'; }
+      } else if (nSettCodice >= ASSAGGIO_SETTIMANE) {
+        prossimo = u.blocco; passo = 'promosso'; motivo = `prova del livello sopra superata (${nSettCodice} settimane): dose piena; per andare oltre serve il ri-test`;
+      } else {
+        prossimo = u.blocco; passo = 'assaggio'; leggero = true; motivo = `prova del livello sopra, settimana ${nSettCodice + 1} di ${ASSAGGIO_SETTIMANE} a dose ridotta`;
+      }
+      if (!prossimo) continue;
+      memoria[famiglia] = { famiglia, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo, ammessi: [prossimo.id], passo, motivo, fuoriLivello, leggero };
+      continue;
+    }
     if (u.giudizio === 'facile') {
-      const nSettCodice = settimaneCodice.get(chiave)?.size ?? 1;
       if (u.blocco.variante === 'short' && disponibile(g.full)) { prossimo = g.full; passo = 'full'; motivo = 'la versione breve è stata facile: versione completa'; }
       else if (regola?.settimanePerCodice && nSettCodice < regola.settimanePerCodice)
         stesso(`facile, ma questa famiglia avanza dopo ${regola.settimanePerCodice} settimane sullo stesso codice (fatte ${nSettCodice})`);
       else {
         const next = scala[pos + 1];
         const nSettLivello = settimaneLivello.get(`${famiglia}|${u.blocco.livello ?? 'B'}`)?.size ?? 1;
+        const nextBlocco = next?.full ?? next?.short;
         if (!next) stesso('facile, ma è l\'ultimo codice della famiglia');
         else if (next.livello > g.livello && regola?.settimanePerLivello && nSettLivello < regola.settimanePerLivello)
           stesso(`facile, ma prima del livello sopra servono ${regola.settimanePerLivello} settimane a questo livello (fatte ${nSettLivello})`);
-        else if (!disponibile(next.full) && !disponibile(next.short)) stesso('facile, ma il codice successivo non è disponibile per il tuo livello/attrezzatura');
+        else if (!disponibile(next.full) && !disponibile(next.short)) {
+          // Codice sopra il livello della qualità: ASSAGGIO a serie ×0.7 dopo 2 settimane facile, se il blocco non ha esercizi "solo livello"
+          const livQ = livNome(u.blocco.qualita);
+          if (nextBlocco && next.livello === livAtleta(u.blocco.qualita) + 1 && nSettCodice >= ASSAGGIO_SETTIMANE && !bloccoHaSoloLivelloSopra(nextBlocco, livQ)
+            && nextBlocco.attrezzatura.every((a) => opt.disponibili.some((d) => d.attrezzatura.includes(a)) || a === 'corpo libero')) {
+            prossimo = nextBlocco; passo = 'assaggio'; leggero = true; fuoriLivello = true;
+            motivo = `facile per ${nSettCodice} settimane all'ultimo codice del livello ${livQ}: prova del livello sopra a dose ridotta`;
+          } else stesso(nSettCodice < ASSAGGIO_SETTIMANE ? `facile, ma è l'ultimo codice del livello: dopo ${ASSAGGIO_SETTIMANE} settimane facile si prova il livello sopra` : 'facile, ma il codice successivo non è disponibile per il tuo livello/attrezzatura');
+        }
         else { prossimo = disponibile(next.full) ? next.full : next.short; passo = 'avanti'; motivo = 'l\'ultima volta è stato facile: codice successivo'; }
       }
     } else if (u.giudizio === 'duro') {
@@ -156,9 +196,9 @@ export function calcolaMemoriaBlocchi(
     } else stesso('l\'ultima volta è stato giusto: stesso codice');
     if (!prossimo) continue;
     const gp = scala.find((x) => x.chiave === chiaveCodice(prossimo!.id))!;
-    const ammessi = passo === 'full' ? [prossimo.id] : passo === 'short' ? [prossimo.id]
+    const ammessi = passo === 'full' || passo === 'short' || passo === 'assaggio' ? [prossimo.id]
       : [gp.full, gp.short].filter((b): b is Blocco => disponibile(b)).map((b) => b.id);
-    memoria[famiglia] = { famiglia, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo, ammessi: ammessi.length ? ammessi : [prossimo.id], passo, motivo };
+    memoria[famiglia] = { famiglia, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo, ammessi: ammessi.length ? ammessi : [prossimo.id], passo, motivo, ...(fuoriLivello ? { fuoriLivello } : {}), ...(leggero ? { leggero } : {}) };
   }
   return memoria;
 }
@@ -187,11 +227,23 @@ export function notaPasso(passo: Passo): string | null {
     case 'full': return 'versione completa';
     case 'short': return 'versione breve';
     case 'indietro': return 'un passo indietro';
+    case 'assaggio': return 'prova del livello sopra';
+    case 'promosso': return 'livello sopra, dose piena';
     default: return null;
   }
 }
 
 const GIUDIZIO_TXT: Record<Giudizio, string> = { facile: 'facile', ok: 'giusto', duro: 'duro' };
+
+/** Blocchi del livello sopra entrati per assaggio/promozione: vanno aggiunti ai disponibili dell'atleta. */
+export function blocchiFuoriLivello(memoria: MemoriaBlocchi): Blocco[] {
+  return Object.values(memoria).filter((m) => m.fuoriLivello).map((m) => m.prossimo);
+}
+
+/** Famiglie che hanno finito i codici del livello (o sono in prova del livello sopra): il ri-test mirato parte da qui. */
+export function famiglieAlTetto(memoria: MemoriaBlocchi): MemoriaFamiglia[] {
+  return Object.values(memoria).filter((m) => m.fuoriLivello || /ultimo codice|livello sopra/.test(m.motivo));
+}
 
 /** Sezione per il prompt del planner (regola 10). */
 export function memoriaBlocchiTesto(memoria: MemoriaBlocchi): string {

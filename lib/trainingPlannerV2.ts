@@ -28,9 +28,10 @@ import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
-import { ammessoDallaMemoria, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
+import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
+import { livelliTesto, livelloDi } from './trainingLivelli';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.13-memoria-blocchi';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.14-livelli-qualita';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -92,7 +93,7 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     if (r) massimali[t.lift.esercizioV2Id] = r.valore;
   }
   const v2: ContestoV2 = {
-    livello: base.fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno,
+    livello: base.fascia, livelloPerQualita: base.livelli, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno,
     eta, esperienzaPalestra: setup.esperienzaPalestra, massimali,
   };
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
@@ -103,7 +104,9 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
   };
   aggiornaParteAlta(ctx);
   await completaFeedbackDaiPiani(base.feedbackRecenti);
-  ctx.memoria = calcolaMemoriaBlocchi(base.feedbackRecenti, { disponibili: ctx.blocchi, lunediCorrente: mondayOfThisWeekRome() });
+  ctx.memoria = calcolaMemoriaBlocchi(base.feedbackRecenti, { disponibili: ctx.blocchi, lunediCorrente: mondayOfThisWeekRome(), livello: v2.livello, livelli: base.livelli });
+  // Assaggio/promozione del livello sopra: quei blocchi entrano tra i disponibili (Claude li vede in libreria, il validatore li accetta)
+  for (const b of blocchiFuoriLivello(ctx.memoria)) if (!ctx.blocchi.some((x) => x.id === b.id)) ctx.blocchi.push(b);
   return ctx;
 }
 
@@ -135,7 +138,7 @@ function aggiornaParteAlta(ctx: ContextV2): void {
   const lun = new Date(`${mondayOfThisWeekRome()}T00:00:00`);
   const settimana = Math.floor((lun.getTime() - Date.UTC(2026, 0, 5)) / (7 * 86400000)); // n. settimana da un lunedì fisso: ruota la variante di sprint
   const pa = costruisciParteAlta(ctx.base.results, {
-    livello: ctx.v2.livello, attrezzatura: ctx.setup.attrezzatura, hasSbarra: ctx.base.hasSbarra || ctx.setup.attrezzatura.includes('sbarra'),
+    livello: livelloDi(ctx.base.livelli, 'forza-parte-alta', ctx.v2.livello), attrezzatura: ctx.setup.attrezzatura, hasSbarra: ctx.base.hasSbarra || ctx.setup.attrezzatura.includes('sbarra'),
     parteBassa: vuoleParteBassa(ctx.obiettivi), settimana,
   });
   ctx.blocchi = [...ctx.blocchi.filter((b) => !isParteAlta(b.id)), ...pa];
@@ -239,6 +242,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     }
     // "Più leggero" per blocco (scelta di Claude, regola 22): serie ×0.7 come nel deload, solo sui blocchi fisici
     const leggeri = new Set((Array.isArray(s.leggeri) ? s.leggeri : []).filter((id) => blocchi.some((b) => b.id === id && QUALITA_FISICHE.has(b.qualita))));
+    // Assaggio del livello sopra (memoria): serie ×0.7 forzate dal server, qualunque cosa abbia scelto Claude
+    if (!recupero) for (const b of blocchi) if (ctx.memoria[b.famiglia]?.leggero && ctx.memoria[b.famiglia].prossimo.id === b.id) leggeri.add(b.id);
     const items = blocchi.flatMap((b) => {
       const leggero = leggeri.has(b.id);
       const its0 = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
@@ -491,7 +496,7 @@ function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[], prece
   const massimali = Object.keys(ctx.v2.massimali || {}).length ? `Massimali stimati: ${Object.entries(ctx.v2.massimali!).map(([k, v]) => `${k} ${v} kg`).join(', ')}` : 'Nessun massimale (niente forza con carico in regime max/esplosiva)';
   return `# ATLETA
 OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 1} sono passati: sedute SOLO nei giorni ${b.oggiDow}-7` : ''}.
-Livello: ${b.fascia}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
+Livello: ${b.fascia}${livelliTesto(b.livelli, b.fascia)}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
 Attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', ') : 'solo corpo libero'}
 Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~${ctx.setup.squadraDurataMin}'` : ''}
 Allenamenti squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)}

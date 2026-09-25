@@ -62,31 +62,41 @@ export { BLOCCHI };
 
 export const bloccoById = (id: string) => BLOCCHI.find((b) => b.id === id);
 
-/** Blocchi proponibili per un atleta: completi, livello ≤ atleta (o non indicato), attrezzatura disponibile. */
-export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: string[]; inCoppia: boolean }): Blocco[] {
+/** Il blocco contiene esercizi "solo questo livello" sopra il livello dato? (review livelli 7 set 2026) */
+export function bloccoHaSoloLivelloSopra(b: Blocco, livello: LivelloMinV2): boolean {
+  const liv = LIVELLO_ORDINE[livello];
+  return b.items.some((it) => {
+    const e = it.esercizio_id ? esercizioV2ById(it.esercizio_id) : undefined;
+    return !!e?.soloLivello && LIVELLO_ORDINE[e.livelloMin] > liv;
+  });
+}
+
+/**
+ * Blocchi proponibili per un atleta: completi, livello ≤ atleta (o non indicato), attrezzatura disponibile.
+ * `livelloPerQualita` (25/9): il livello della qualità del blocco, se i test di quella qualità lo danno
+ * (un A nei salti apre i blocchi A di pliometria anche se l'AMRAP dice B); altrimenti `livello`.
+ */
+export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: string[]; inCoppia: boolean; livelloPerQualita?: Partial<Record<QualitaV2, LivelloMinV2>> }): Blocco[] {
   const disp = new Set(['corpo libero', ...ctx.attrezzatura]);
-  const liv = LIVELLO_ORDINE[ctx.livello];
+  const livDi = (b: Blocco) => LIVELLO_ORDINE[ctx.livelloPerQualita?.[b.qualita] ?? ctx.livello];
   // Famiglie senza varianti al livello dell'atleta (es. Fartlek: solo A1-A4): ammesso il
   // gradino subito sopra — Ste dà "Fartlek A1" anche a un B (livello = dose, non accesso)
   const famigliaHaLivello = new Map<string, boolean>();
   for (const b of BLOCCHI) {
-    if (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv) famigliaHaLivello.set(b.famiglia, true);
+    if (b.livello === null || LIVELLO_ORDINE[b.livello] <= livDi(b)) famigliaHaLivello.set(b.famiglia, true);
     else famigliaHaLivello.set(b.famiglia, famigliaHaLivello.get(b.famiglia) ?? false);
   }
-  // Il gradino sopra è escluso se il blocco contiene esercizi "solo questo livello" sopra l'atleta
-  // (review livelli 7 set 2026); nei blocchi al livello dell'atleta il blocco di Ste vince sull'esercizio
-  const haSoloLivelloSopra = (b: Blocco) => b.items.some((it) => {
-    const e = it.esercizio_id ? esercizioV2ById(it.esercizio_id) : undefined;
-    return !!e?.soloLivello && LIVELLO_ORDINE[e.livelloMin] > liv;
+  // Il gradino sopra è escluso se il blocco contiene esercizi "solo questo livello" sopra l'atleta;
+  // nei blocchi al livello dell'atleta il blocco di Ste vince sull'esercizio
+  return BLOCCHI.filter((b) => {
+    const liv = livDi(b);
+    return b.completo
+      && b.qualita !== 'test'
+      && (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv
+        || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia) && !bloccoHaSoloLivelloSopra(b, ctx.livelloPerQualita?.[b.qualita] ?? ctx.livello)))
+      && b.attrezzatura.every((a) => disp.has(a))
+      && (!b.inCoppia || ctx.inCoppia);
   });
-  return BLOCCHI.filter((b) =>
-    b.completo
-    && b.qualita !== 'test'
-    && (b.livello === null || LIVELLO_ORDINE[b.livello] <= liv
-      || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia) && !haSoloLivelloSopra(b)))
-    && b.attrezzatura.every((a) => disp.has(a))
-    && (!b.inCoppia || ctx.inCoppia)
-  );
 }
 
 /** Espande un blocco negli items del piano (esercizio_id, serie, quantità, recupero, carico, schema). */

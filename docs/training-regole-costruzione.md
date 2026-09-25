@@ -29,6 +29,14 @@ Per ogni famiglia il server guarda l'ULTIMO blocco fatto e il suo giudizio:
 Mai saltare un codice. Mai andare oltre il livello dell'atleta + 1 (regola già in `blocchiDisponibili`).
 Il salto di livello (B → A) richiede il criterio della famiglia (sotto), non basta un "facile".
 
+### 0b. Livello per qualità, assaggio del livello sopra, ri-test mirato (Ste, 25/9: "ok")
+
+**Problema:** un B che segna "facile" sull'ultimo codice B di una famiglia restava fermo, perché il livello veniva da un solo test (l'AMRAP) e valeva per tutto. Tre risposte insieme:
+
+1. **Livello per qualità** (`lib/trainingLivelli.ts`): ogni qualità ha il suo livello dai test di quella qualità (soglie B/A/PRO già nei test): parte alta = AMRAP + scale push/pull · gambe = massimali + tenute + salti · esplosività e pliometria = salti + ankle stiffness · velocità = 50 m e T-sprint · resistenza = km e navetta · tecnica = palleggi, tiri e passaggi. Livello = mediana bassa degli ultimi risultati; con un solo test al massimo un gradino sopra il globale; senza test = globale. Lo usano `blocchiDisponibili` (un A nei salti apre i blocchi A di pliometria anche con l'AMRAP a B), il validatore (dose per livello, contatti di pliometria) e la parte alta dalle scale.
+2. **Assaggio del livello sopra** (`ASSAGGIO_SETTIMANE = 2` in `lib/trainingMemoriaBlocchi.ts`): all'ultimo codice del proprio livello, dopo 2 settimane "facile", entra il primo codice del livello sopra con **serie ×0.7** (badge "prova del livello sopra"); dopo altre 2 settimane facile/giusto → **dose piena** ("livello sopra, dose piena"); un "duro" riporta al codice prima. Oltre il primo codice del livello sopra non si va senza il test. Esclusi i blocchi con esercizi "solo livello" sopra l'atleta (es. `Pliometria A1` e `Velocità A1` hanno i salti a una gamba: lì serve il test).
+3. **Ri-test mirato**: alla settimana 4 (scarico) e dalla 5 (ri-test), l'hub dice quali test rifare: quelli delle qualità dove una famiglia ha finito i codici del livello o è in prova del livello sopra (`famiglieAlTetto` → `testIdsPerQualita`), non tutta la batteria.
+
 ---
 
 ## 1. Fascia (Ste, 24/9: "giornata facoltativa; Fascia Forza è un'altra cosa")
@@ -122,6 +130,7 @@ Da fare nel codice: campi `fascia_kb` e `peso_riferimento` nel JSON del catalogo
 | Regola | Dove | Stato |
 |---|---|---|
 | 0. codice successivo dal giudizio | `lib/trainingMemoriaBlocchi.ts`: prompt (regola 10) + sostituzione in `expandPiano` + fallback | fatto 25/9 (con le settimane minime di fascia e pliometria) |
+| 0b. livello per qualità, assaggio, ri-test mirato | `lib/trainingLivelli.ts`, memoria (`assaggio`/`promosso`), `/api/training/state` (`livelli`, `ritestMirato`) + hub | fatto 25/9 |
 | 1. tre famiglie fascia | prompt / validatore | da fare |
 | 2. plio: ingresso in B, onda B/A | server | da fare |
 | 3. velocità: 6-8 sprint (6 con EMOM), riscaldamento fisso `risc-velocita`, con palla dalla 5ª settimana | validatore + prompt | da fare |

@@ -14,6 +14,11 @@ import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
 import { esercizioV2ById } from '@/lib/trainingCatalogV2';
 import { calcolaSquilibri, squilibriRigheAtleta } from '@/lib/trainingSquilibri';
+import { livelliPerQualita, nomeTest, QUALITA_LABEL, testIdsPerQualita } from '@/lib/trainingLivelli';
+import { loadFeedbackRecenti } from '@/lib/trainingPlanner';
+import { blocchiDisponibili } from '@/lib/trainingBlocks';
+import { calcolaMemoriaBlocchi, famiglieAlTetto } from '@/lib/trainingMemoriaBlocchi';
+import type { QualitaV2 } from '@/lib/trainingCatalogV2';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -150,10 +155,32 @@ export async function GET(request: NextRequest) {
     const rombo = buildRombo(rows);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
     const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
+    // Livello per qualità (25/9) e ri-test mirato: le famiglie che hanno finito i codici del loro livello
+    // (o sono in prova del livello sopra) dicono quali test rifare, non tutta la batteria
+    const fascia = fasciaFromResults(rows);
+    const livelli = livelliPerQualita(rows, fascia);
+    const feedbackRecenti = await loadFeedbackRecenti(userId);
+    const memoria = calcolaMemoriaBlocchi(feedbackRecenti, {
+      disponibili: blocchiDisponibili({ livello: fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, livelloPerQualita: livelli }),
+      lunediCorrente: mondayOfThisWeekRome(), livello: fascia, livelli,
+    });
+    const perQualita = new Map<QualitaV2, string[]>();
+    for (const m of famiglieAlTetto(memoria)) {
+      const q = m.prossimo.qualita;
+      if (!testIdsPerQualita(q).length) continue;
+      perQualita.set(q, [...(perQualita.get(q) ?? []), m.famiglia]);
+    }
+    const ritestMirato = [...perQualita.entries()].map(([q, famiglie]) => ({
+      qualita: q, label: QUALITA_LABEL[q] ?? q, famiglie,
+      tests: testIdsPerQualita(q).filter((id) => !/-dx$|-sx$/.test(id)).map((id) => ({ id, nome: nomeTest(id) })),
+    }));
     return NextResponse.json({
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
-      fascia: fasciaFromResults(rows),
+      fascia,
+      // Livello per qualità (solo quelle con test propri) e test da rifare prima del ri-test
+      livelli: (Object.keys(QUALITA_LABEL) as QualitaV2[]).map((q) => ({ qualita: q, label: QUALITA_LABEL[q], livello: livelli[q] ?? fascia })),
+      ritestMirato,
       gradini,
       rombo,
       romboBase: buildRomboBase(rombo),
