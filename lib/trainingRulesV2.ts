@@ -148,6 +148,13 @@ export function caricoMaxPct(p: ProfiloCarico): number {
   return 70;
 }
 
+/**
+ * Carico in kg SENZA massimale (review 25/9): i blocchi di Ste portano kg che erano prescrizioni
+ * Everfit per clienti specifici (squat 3×80/90/95); senza il test in palestra nessuno sa che % siano
+ * per QUESTO ragazzo. Oltre questo tetto il server lima (lib/trainingCarico) e il validatore rifiuta.
+ */
+export const KG_SENZA_MASSIMALE_MAX = 20;
+
 /** Brzycki (foglio CALCOLO MASSIMALI del File_DB): 1RM = peso / (1.0278 − 0.0278 × reps) */
 export function stima1RM(peso: number, reps: number): number {
   if (reps < 1 || reps > 12) return NaN; // fuori dal range in cui la formula è affidabile
@@ -297,6 +304,13 @@ export function validateItemV2(
     }
     if ((regime === 'max' || regime === 'esplosiva') && !(ctx.massimali && ctx.massimali[ex.id]))
       errors.push(`${n}: regime ${regime} richiede il massimale stimato (batteria palestra non fatta)`);
+  }
+  // Rete di sicurezza sui kg (vale ANCHE per gli item fidati dei blocchi): senza massimale non si
+  // supera KG_SENZA_MASSIMALE_MAX; con massimale il tetto è caricoMaxPct (età, esperienza, livello)
+  if (it.carico_kg !== undefined && it.carico_kg > 0) {
+    const oneRm = ctx.massimali?.[ex.id];
+    if (!(oneRm && oneRm > 0) && it.carico_kg > KG_SENZA_MASSIMALE_MAX)
+      errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${KG_SENZA_MASSIMALE_MAX} kg finché non fa i test in palestra)`);
   }
 
   // Finestra partita per qualità

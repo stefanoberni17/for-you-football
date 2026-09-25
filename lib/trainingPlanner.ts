@@ -7,7 +7,8 @@
  * prompt → fallback deterministico. Mai generazione live durante la seduta.
  */
 import Anthropic from '@anthropic-ai/sdk';
-import { preferenzeValide, type PreferenzeSetup } from './trainingSetup';
+import { preferenzeValide, FASE_LABEL, FASI, MAX_SEDUTE_FISICHE_PER_FASE, MAX_SEDUTE_LEGGERE_EXTRA, type PreferenzeSetup } from './trainingSetup';
+import { KG_SENZA_MASSIMALE_MAX } from './trainingRulesV2';
 import { calcolaSquilibri, squilibriTesto, type Squilibri } from './trainingSquilibri';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
@@ -118,6 +119,8 @@ export interface PlannerContext {
   carico: CaricoInfo;
   // Allenamenti con la squadra descritti dall'atleta (sforzo e qualità per giorno, migration 023) — vuoto se non compilato
   squadra: SquadraSettimana;
+  // Fase della stagione dal setup (migration 017): i tetti della chat del preparatore sono gli stessi del piano
+  fase: (typeof FASI)[number];
   // Obiettivi della fase dal setup (migration 024), in ordine di priorità — vuoto se non compilati
   focusSetup: FocusId[];
   preferenzeSetup: PreferenzeSetup; // giorni/giornate/tempo dal setup (migration 025): valgono nel piano automatico
@@ -264,10 +267,11 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   // Carico squadra stimato (calendario + sforzi descritti): base costante sotto acuto e cronico
   // Calendario vuoto (lunedì mattina, dopo il cron): i giorni squadra vengono dall'abitudine descritta nel setup
   const trainingDays = giorniSquadra(calendar?.training_days || [], squadra);
+  const faseSetup: (typeof FASI)[number] = profile?.training_fase && (FASI as readonly string[]).includes(profile.training_fase) ? profile.training_fase : 'in_season';
   const squadraSettimanale = caricoSquadraStimato({
     trainingDays, matchDays: calendar?.match_days || [],
     squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null,
-    fase: profile?.training_fase || 'in_season', squadra,
+    fase: faseSetup, squadra,
   });
   const carico = await loadCarico(userId, ciclo.isDeload, setRpe, squadraSettimanale);
 
@@ -303,7 +307,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     storicoSerie,
     logsSerie,
     carico,
-    squadra,
+    squadra, fase: faseSetup,
     focusSetup,
     preferenzeSetup,
     squilibri,
@@ -564,7 +568,7 @@ Allenamenti con la squadra: ${squadraTesto(ctx.trainingDays, ctx.squadra, DAY_NA
 ${checkinBlock(ctx)}
 ${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}${storicoSerieBlock(ctx, 8)}${squilibriTesto(ctx.squilibri)}${caricoTesto(ctx.carico)}
 
-Regole ferree (non negoziabili nemmeno se insiste): max ${REGOLE.maxSeduteFisicheSettimana} sedute fisiche/settimana oltre la squadra (di più è controproducente — offri tecnica/fascia); niente fisica il giorno della partita né il giorno prima; niente lavoro gambe (solo prevenzione fascia — è una scelta del metodo, in valutazione per il futuro); se descrive un DOLORE: fermati, digli di sospendere e di parlarne con fisio/preparatore o un adulto.
+Regole ferree (non negoziabili nemmeno se insiste), le STESSE del piano che riceve nel Campo: fase ${FASE_LABEL[ctx.fase]} → max ${MAX_SEDUTE_FISICHE_PER_FASE[ctx.fase]} sedute fisiche/settimana oltre la squadra, più al massimo ${MAX_SEDUTE_LEGGERE_EXTRA} giornate leggere (fascia, tecnica, mobilità); niente fisica il giorno della partita né il giorno prima; il lavoro gambe c'è (blocchi del preparatore: forza parte bassa, esplosività, pliometria) e non va negato; i carichi in kg valgono solo dopo i test in palestra (senza massimale il piano tiene al massimo ${KG_SENZA_MASSIMALE_MAX} kg; sotto i 18 anni o senza esperienza max 60 % del massimale); se descrive un DOLORE: fermati, digli di sospendere e di parlarne con fisio/preparatore o un adulto.
 Se chiede di CAMBIARE il piano della settimana, digli di usare "Rigenera" nel Campo: si apre una maschera con le modifiche possibili (sposta/togli una seduta, più leggera/intensa, meno tempo, cambia focus, aggiungi tecnica) — tu non modifichi il piano direttamente. Una seduta si può anche spostare al giorno dopo dal Campo, una volta sola.
 L'avanzamento di gradino passa SOLO dal ri-test. Non promettere avanzamenti.
 Se c'è la sezione SQUILIBRI: sono calcolati dai suoi test e dai suoi log, non dal modello. Se chiede su cosa lavorare, parti da lì (lato più debole, tirata o spinta indietro, piede debole) e digli che il piano ne tiene conto; se non ha ancora fatto i test per lato, invitalo a farli.`;

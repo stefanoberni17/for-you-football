@@ -4,6 +4,7 @@ import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { updateTrainingMemory } from '@/lib/trainingPlanner';
 import { REGOLE } from '@/lib/trainingCatalog';
+import { notificaSte } from '@/lib/notifyOwner';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -28,10 +29,14 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json().catch(() => ({}));
 
+    const nome = async () => (await supabaseAdmin.from('profiles').select('name').eq('user_id', userId).maybeSingle()).data?.name || '—';
+
     if (body?.resolved === true) {
       const { error } = await supabaseAdmin.from('profiles')
         .update({ training_pain_hold: false }).eq('user_id', userId);
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      // Lo sblocco resta dichiarativo (un tap del ragazzo), ma Ste lo viene a sapere (review 25/9)
+      await notificaSte(`🩹 Campo: ${await nome()} ha tolto da solo la pausa per dolore (dice che è passato o ha sentito fisio/preparatore).\nUser ID: ${userId}`);
       return NextResponse.json({ success: true });
     }
 
@@ -48,6 +53,7 @@ export async function POST(request: NextRequest) {
       const { error } = await supabaseAdmin.from('profiles')
         .update({ training_pain_hold: true }).eq('user_id', userId);
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      await notificaSte(`🩹 Campo: ${await nome()} ha segnalato un dolore ${intensita}/10${durante ? ' durante l\'allenamento' : ''}: "${descrizione}".\nSedute fisiche in pausa finché non la toglie lui.\nUser ID: ${userId}`);
     }
 
     // Il planner e il preparatore devono saperlo anche sotto soglia

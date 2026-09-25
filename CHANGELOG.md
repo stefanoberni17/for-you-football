@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-09-25 — Sera C: il Campo in sicurezza, poi congelato (review 25/9)
+- **Kg dei blocchi dietro il tetto** (`lib/trainingCarico.ts`): con massimale ≤ `caricoMaxPct` × 1RM, senza massimale ≤ 20 kg (`KG_SENZA_MASSIMALE_MAX`), nota sull'item; rete nel validatore anche per gli item fidati. Prima un quattordicenne con "palestra" e senza test riceveva squat 3×80/90/95.
+- **Livello** ad A per i due blocchi di forza con bilanciere senza codice (`LIVELLO_OVERRIDE`); il gradino sopra non vale per i blocchi con carichi pesanti.
+- **Il piano base passa dal validatore** (seconda chance con sole giornate leggere; altrimenti salvato con le sue violazioni).
+- **Pausa dolore**: Ste avvisato su Telegram quando il ragazzo la mette e quando la toglie (`lib/notifyOwner.ts`).
+- **Chat del preparatore** allineata al piano: tetti per fase, lavoro gambe ammesso, kg solo dopo i test (prima diceva "niente gambe, max 3 sedute" e negava il piano appena ricevuto).
+- `PIANI_LIMITE_ATTIVO = true`. Il Campo è **congelato**: nessuna regola nuova finché tre atleti non hanno quattro settimane di log.
+
 ## 2026-09-25 — Sera B: il Coach (review 25/9)
 - **Safety a due livelli** (`SAFETY_KEYWORDS_BLOCCO` / `SAFETY_KEYWORDS_ALERT`, `checkSafety`): le frasi inequivocabili mettono il Coach in contenimento, il gergo da campo avvisa soltanto; il flag viene scritto e atteso prima di costruire il prompt; il contenimento **scade dopo 48 ore** (`resolveSafetyReview`) con promemoria a Ste. Liste provvisorie: le definitive le decide lo psicologo.
 - **Recap per utente**: contatore sugli eventi (web) e sulle righe `role='user'` (Telegram) invece della lunghezza della cronologia; il prompt del recap ha la sezione **Cassetto** con il tag `[CASSETTO]`.
