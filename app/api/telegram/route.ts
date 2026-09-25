@@ -4,8 +4,9 @@ import {
   supabaseAdmin,
   buildUserContext,
   callClaude,
-  checkSafetyKeywords,
+  checkSafety,
   sendSafetyAlert,
+  resolveSafetyReview,
   generateCoachRecap,
   SAFETY_REVIEW_MODE,
   SYSTEM_PROMPT,
@@ -27,8 +28,10 @@ async function sendTelegramMessage(chatId: number, text: string) {
 }
 
 export const maxDuration = 60; // Claude con thinking + Notion + Supabase: mai i 10 s di default (review 25/9)
+const RECAP_OGNI_MESSAGGI_UTENTE = 10;
 
 export async function POST(request: NextRequest) {
+  let chatIdPerErrore: number | null = null; // per rispondere qualcosa anche se la risposta del Coach fallisce
   try {
     // Verifica che la richiesta provenga davvero da Telegram.
     // Il secret_token va registrato con setWebhook e confrontato qui.
@@ -48,6 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     const chatId = message.chat.id;
+    chatIdPerErrore = chatId;
     const telegramUserId = message.from.id.toString();
     const userText = message.text;
 
@@ -160,7 +164,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('user_id, safety_review, current_week')
+      .select('user_id, name, safety_review, safety_review_at, current_week')
       .eq('telegram_id', telegramUserId)
       .single();
 
@@ -198,11 +202,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    const safetyTriggered = checkSafetyKeywords(userText);
-    if (safetyTriggered) {
-      sendSafetyAlert(userId, 'telegram', userText).catch(err =>
-        console.error('sendSafetyAlert failed:', err)
-      );
+    // Safety a due livelli: 'blocco' scrive il flag (atteso) e avvisa Ste, 'alert' avvisa soltanto.
+    const livelloSafety = checkSafety(userText);
+    const safetyTriggered = livelloSafety !== null;
+    if (livelloSafety) {
+      await sendSafetyAlert(userId, 'telegram', userText, livelloSafety);
     }
 
     // Carica ultimi 20 messaggi (sliding window)
@@ -224,9 +228,10 @@ export async function POST(request: NextRequest) {
     const firstMessageNote = isFirstMessage
       ? '\n\n# PRIMO CONTATTO TELEGRAM\nÈ la prima volta che questo utente ti scrive su Telegram. Accoglilo calorosamente, presentati brevemente come il Coach AI del suo percorso di allenamento mentale. Fai UNA sola domanda semplice e aperta per capire come sta in questo momento — niente di profondo o terapeutico. Massimo 3-4 frasi in totale.'
       : '';
-    // Modalità contenimento (safety_review): il Coach resta nel protocollo
-    // finché Ste non verifica la conversazione e sblocca manualmente.
-    const inSafetyReview = profile.safety_review === true;
+    // Modalità contenimento (safety_review): il Coach resta nel protocollo finché Ste
+    // non verifica e sblocca, o per SAFETY_REVIEW_HOURS ore; un blocco scattato ADESSO
+    // vale già da questa risposta (il profilo era stato letto prima del controllo).
+    const inSafetyReview = livelloSafety === 'blocco' || await resolveSafetyReview(profile);
     // Prompt caching come in /api/chat: prefisso stabile cachato, contesto volatile in coda.
     const systemBlocks = [
       { type: 'text', text: (inSafetyReview ? SAFETY_REVIEW_MODE : '') + SYSTEM_PROMPT + TELEGRAM_FORMAT, cache_control: { type: 'ephemeral' as const } },
@@ -272,13 +277,16 @@ export async function POST(request: NextRequest) {
       if (retryError) console.error('❌ Errore salvataggio conversazione (retry):', retryError);
     }
 
-    // Ogni 20 messaggi totali → aggiorna il recap (fire-and-forget)
+    // Ogni 10 messaggi SCRITTI DALL'UTENTE → aggiorna il recap (fire-and-forget).
+    // Si contano solo le righe role='user': le pillole dei cron (assistant) prima
+    // facevano slittare il conteggio a ogni invio (review 25/9).
     const { count } = await supabaseAdmin
       .from('telegram_conversations')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .eq('role', 'user');
 
-    if (count && count % 20 === 0) {
+    if (count && count % RECAP_OGNI_MESSAGGI_UTENTE === 0) {
       const { data: recapMessages } = await supabaseAdmin
         .from('telegram_conversations')
         .select('role, content')
@@ -294,7 +302,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
+    // Un 529 di Anthropic, una risposta vuota (coach_empty) o tagliata (coach_max_tokens):
+    // prima il ragazzo restava senza risposta. Si risponde ok a Telegram (niente
+    // ri-consegna dell'update, che costerebbe una seconda chiamata) e gli si dice di riprovare.
     console.error('Telegram webhook error:', error);
+    if (chatIdPerErrore) {
+      await sendTelegramMessage(chatIdPerErrore, 'Non sono riuscito a risponderti adesso. Riscrivimi tra un minuto. ⚽').catch(() => {});
+    }
     return NextResponse.json({ ok: true });
   }
 }
