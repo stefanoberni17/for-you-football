@@ -1,18 +1,19 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useCallback, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
-import { AppLoader, BackButton, Button, Card, Chip, Field, Input, SectionTitle } from '@/components/ui';
+import { AppLoader, BackButton, Banner, Button, Card, Chip, Field, Input, SectionTitle, RpeScale } from '@/components/ui';
+import { Scale } from 'lucide-react';
 import type { TrainingState } from '@/app/allenamento/page';
 
 // Dal /api/training/state (stessa chiamata dell'hub) servono solo setup, calendario, tetti e squadra
-type SetupState = Pick<TrainingState, 'setup' | 'setupDisponibile' | 'calendario' | 'maxSeduteFisiche' | 'maxSeduteTotali' | 'squadra'>;
+type SetupState = Pick<TrainingState, 'setup' | 'setupDisponibile' | 'calendario' | 'maxSeduteFisiche' | 'maxSeduteTotali' | 'squadra' | 'squilibri'>;
 
 // Etichetta di un gruppo di controlli (chip, Sì/No): label corta + parentetica sotto
 function GroupLabel({ children, hint }: { children: React.ReactNode; hint?: React.ReactNode }) {
@@ -32,8 +33,9 @@ const siNo = ([true, false] as const);
  * peso e gli allenamenti con la squadra. Salva con gli stessi POST a /api/training/setup
  * che usava l'hub (setup + focus + preferenze in un colpo, squadra a parte).
  */
-export default function SetupPage() {
+function SetupPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [state, setState] = useState<SetupState | null>(null);
   const [loading, setLoading] = useState(true);
   const [setupDraft, setSetupDraft] = useState<TrainingSetup | null>(null);
@@ -52,11 +54,13 @@ export default function SetupPage() {
     if (res.ok) {
       const data: SetupState = await res.json();
       setState(data);
-      setSetupDraft({ ...data.setup });
+      // Dall'hub "Aggiungi la fascia agli obiettivi" (?fascia=1): la fascia entra già selezionata, poi si salva
+      const conFascia = searchParams.get('fascia') === '1' && !data.setup.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO);
+      setSetupDraft({ ...data.setup, focus: conFascia ? toggleFocus(data.setup.focus, 'fascia') : data.setup.focus });
       setSquadraDraft({ ...(data.squadra || {}) });
     }
     setLoading(false);
-  }, [router]);
+  }, [router, searchParams]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -185,6 +189,12 @@ export default function SetupPage() {
           {/* Su cosa vuoi lavorare */}
           <Card padding="sm">
             <SectionTitle title="Su cosa vuoi lavorare" subtitle="In questa fase, nell'ordine in cui li scegli. Oppure &quot;Tutto&quot;." className="mb-3" />
+            {state.squilibri?.latoDebole && !setupDraft.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) && (
+              <Banner tone="accent" icon={<Scale size={20} />} title={`Gamba ${state.squilibri.latoDebole === 'sx' ? 'sinistra' : 'destra'} più debole nei test`} className="mb-3"
+                action={{ label: 'Aggiungi la fascia', onClick: () => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, 'fascia') }) }}>
+                Per pareggiare non servono serie in più: serve la fascia. Mettila tra gli obiettivi.
+              </Banner>
+            )}
             <div className="flex flex-wrap gap-2">
               {FOCUS_OPZIONI.map((f) => {
                 const idx = setupDraft.focus.indexOf(f.id);
@@ -280,15 +290,7 @@ export default function SetupPage() {
                     return (
                       <Card key={d} variant="raised" padding="sm">
                         <p className="text-body font-bold text-app mb-2">{DAY_NAMES[d]}{state.calendario?.matchDays.includes(d) ? ' · anche partita' : ''}</p>
-                        <p className="text-caption text-muted mb-1.5">Sforzo{g.rpe !== null ? ` · ${g.rpe}/10` : ''}</p>
-                        <div className="grid grid-cols-5 gap-1.5 mb-3">
-                          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                            <button key={n} type="button" onClick={() => setG({ ...g, rpe: g.rpe === n ? null : n })} aria-pressed={g.rpe === n}
-                              className={`h-11 rounded-btn text-body-sm font-semibold tabular-nums border transition-colors ${g.rpe === n ? 'bg-forest-500 border-forest-500 text-white' : g.rpe !== null && n < g.rpe ? 'bg-forest-500/25 border-forest-500/30 text-forest-300' : 'bg-surface border-divider text-muted'}`}>
-                              {n}
-                            </button>
-                          ))}
-                        </div>
+                        <RpeScale value={g.rpe} onChange={(n) => setG({ ...g, rpe: g.rpe === n ? null : n })} tipo="sforzo" ariaPrefix="Sforzo" label="Sforzo di solito" className="mb-3" />
                         <p className="text-caption text-muted mb-1.5">Su cosa lavorate</p>
                         <div className="flex flex-wrap gap-2">
                           {SQUADRA_QUALITA.map((q) => {
@@ -320,5 +322,14 @@ export default function SetupPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+// useSearchParams (?fascia=1 dall'hub) vuole un confine Suspense per la build statica
+export default function SetupPage() {
+  return (
+    <Suspense fallback={<AppLoader />}>
+      <SetupPageInner />
+    </Suspense>
   );
 }
