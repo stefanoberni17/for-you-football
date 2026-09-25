@@ -34,6 +34,7 @@
 import type { PlanItem, PlanSession, WeekPlan } from './trainingEngine';
 import type { RiepilogoEsercizio } from './trainingAdapt';
 import { distrettoEsercizio, type Squilibri, type Lato } from './trainingSquilibri';
+import { isEsercizioKettlebell, KB_PASSO_KG } from './trainingKettlebell';
 import { catenaByArea, esercizioById, type AreaForza } from './trainingCatalog';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { ACCESSORI_CORPO_LIBERO_REPS_MAX } from './trainingRulesV2';
@@ -94,8 +95,11 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   // Carico: kg dall'ultima volta ±%, tetto +30 % sul blocco, mai sotto il 70 %
   if (it.carico_kg && it.carico_kg > 0) {
     const da = ultima.caricoKg && ultima.caricoKg > 0 ? ultima.caricoKg : it.carico_kg;
-    const delta = verso === 1 ? Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT) : -Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT * 2);
-    const nuovo = round05(Math.min(it.carico_kg * (1 + PROGRESSIONE_MAX_DRIFT), Math.max(it.carico_kg * 0.7, da + delta)));
+    // Kettlebell (Ste, 25/9): il passo è discreto, 4 kg (8 → 12 → 16 → 20 …), in su e in giù
+    const kb = isEsercizioKettlebell(it.esercizio_id);
+    const delta = kb ? verso * KB_PASSO_KG : verso === 1 ? Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT) : -Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT * 2);
+    const grezzo = Math.min(it.carico_kg * (1 + PROGRESSIONE_MAX_DRIFT) + (kb ? KB_PASSO_KG / 2 : 0), Math.max(it.carico_kg * 0.7, da + delta));
+    const nuovo = kb ? Math.max(KB_PASSO_KG, Math.round(grezzo / KB_PASSO_KG) * KB_PASSO_KG) : round05(grezzo);
     if (nuovo !== it.carico_kg) { out.carico_kg = nuovo; cambiato = true; }
   } else if (unita === 'reps' || unita === 'secondi') {
     // Corpo libero / tenute: dalla dose dell'ultima volta (stessa unità) ± un passo.

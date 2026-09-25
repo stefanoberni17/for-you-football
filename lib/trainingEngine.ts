@@ -396,7 +396,7 @@ export function validatePlan(
         const blocco = ctx.trustBlocks && it.blocco_id ? bloccoById(it.blocco_id) : undefined;
         const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)]);
         // Fidato anche il blocco VIRTUALE (parte alta dalle scale, `pa-*`): non è nella libreria ma l'ha dosato il server
-        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && it.blocco_id.startsWith('pa-'));
+        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('kb-')));
         const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });

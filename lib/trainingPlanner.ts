@@ -113,6 +113,7 @@ export interface PlannerContext {
   ciclo: CicloInfo;
   // Log per serie (RPE, reps/kg reali) delle ultime 4 settimane → suggerimento per esercizio
   storicoSerie: RiepilogoEsercizio[];
+  logsSerie: SetLogRow[];        // log per serie grezzi (kettlebell: fascia dalle settimane facili)
   // Carico totale (session-RPE) e ACWR delle ultime 4 settimane → target/tetto per la settimana
   carico: CaricoInfo;
   // Allenamenti con la squadra descritti dall'atleta (sforzo e qualità per giorno, migration 023) — vuoto se non compilato
@@ -300,6 +301,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     checkinMedia7,
     ciclo,
     storicoSerie,
+    logsSerie,
     carico,
     squadra,
     focusSetup,

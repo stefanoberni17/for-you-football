@@ -92,6 +92,11 @@ for r in rows:
         fields.append(f"v1Id: {ts_str(v1)}")
     if r.get("tags"):
         fields.append(f"tags: {ts_str(r['tags'])}")
+    # Kettlebell (Ste, 25/9): fascia base/intermedio/avanzato e peso di partenza (docs/training-regole-costruzione.md §5)
+    if r.get("fascia_kb"):
+        fields.append(f"fasciaKb: {ts_str(r['fascia_kb'])}")
+    if r.get("peso_kg") is not None:
+        fields.append(f"pesoKg: {int(r['peso_kg'])}")
     lines.append("  { " + ", ".join(fields) + " },")
 
 header = """/**
