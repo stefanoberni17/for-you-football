@@ -30,10 +30,11 @@ import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusE
 import { testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi } from './trainingLivelli';
+import { FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, ROLLING_ID } from './trainingFascia';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.16-squilibri-fascia';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.17-fascia-tre-ruoli';
 /**
  * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
  * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
@@ -230,6 +231,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const sprintMax = settimanaConEmom ? SPRINT_MAX_CON_EMOM : SPRINT_MAX_SEDUTA;
   let giornateVelocita = 0;
   let blocchiSalite = 0;
+  let giornatePercorsoFascia = 0;
   const velocitaVera = (b: Blocco) => !isParteAlta(b.id) && b.id !== RISC_VELOCITA_ID && isVelocita(b);
   for (const s of p.sedute || []) {
     const ids = Array.isArray(s.blocchi) ? s.blocchi : [];
@@ -287,13 +289,34 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       }
       if (giornateVelocita > 1) errors.push(`seduta del giorno ${s.giorno}: seconda giornata di velocità nella settimana — al massimo UNA (Ste)`);
     }
+    // Fascia a tre ruoli (Ste, 24/9): l'apertura sta in testa a ogni seduta fisica (se manca il server mette il rolling),
+    // mai da sola come giornata; il percorso fascia è una giornata leggera, al massimo 3 a settimana
+    const fisicaOggi = blocchi.some((b) => QUALITA_FISICHE.has(b.qualita));
+    if (blocchi.length && blocchi.every(isApertura))
+      errors.push(`seduta del giorno ${s.giorno}: solo l'apertura (${blocchi.map((b) => b.nome).join(' + ')}) — l'apertura sta in testa a una seduta, non è una giornata: aggiungi un blocco principale o un blocco del percorso fascia`);
+    else if (fisicaOggi && !blocchi.some(isApertura) && !blocchi.some((b) => b.id === RISC_VELOCITA_ID)) {
+      const rolling = bloccoDi(ctx, ROLLING_ID);
+      const maxDurataSeduta = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
+      const durataOra = blocchi.reduce((a, b) => a + b.durataMin, 0);
+      if (rolling && disponibili.has(rolling.id) && durataOra + rolling.durataMin <= maxDurataSeduta) { blocchi.unshift(rolling); noteMemoria.set(rolling.id, 'apertura aggiunta dal server'); }
+    } else if (blocchi[0] && !isApertura(blocchi[0]) && blocchi[0].id !== RISC_VELOCITA_ID) {
+      const idx = blocchi.findIndex(isApertura);
+      if (idx > 0) blocchi.unshift(...blocchi.splice(idx, 1));
+    }
+    if (blocchi.some(isFasciaPercorso)) {
+      giornatePercorsoFascia++;
+      if (giornatePercorsoFascia > FASCIA_PERCORSO_MAX_SETTIMANA) errors.push(`seduta del giorno ${s.giorno}: ${giornatePercorsoFascia}ª giornata del percorso fascia — al massimo ${FASCIA_PERCORSO_MAX_SETTIMANA} a settimana (Ste)`);
+    }
     // "Più leggero" per blocco (scelta di Claude, regola 22): serie ×0.7 come nel deload, solo sui blocchi fisici
     const leggeri = new Set((Array.isArray(s.leggeri) ? s.leggeri : []).filter((id) => blocchi.some((b) => b.id === id && QUALITA_FISICHE.has(b.qualita))));
     // Assaggio del livello sopra (memoria): serie ×0.7 forzate dal server, qualunque cosa abbia scelto Claude
     if (!recupero) for (const b of blocchi) if (ctx.memoria[b.famiglia]?.leggero && ctx.memoria[b.famiglia].prossimo.id === b.id) leggeri.add(b.id);
     const items = blocchi.flatMap((b) => {
       const leggero = leggeri.has(b.id);
-      const its0 = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
+      const ritorno = !recupero && ctx.memoria[b.famiglia]?.serieExtra && ctx.memoria[b.famiglia].prossimo.id === b.id;
+      const its00 = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
+      // Ritorno a inizio scala (fascia): una serie in più su ogni esercizio a serie fisse
+      const its0 = ritorno ? its00.map((it) => (!it.schema || it.schema === 'fisso' ? { ...it, serie: it.serie + 1 } : it)) : its00;
       // Parte alta dalle scale: gli esercizi delle catene v1 sono GIÀ al gradino dell'atleta (lib/trainingParteAlta) —
       // badge "Il tuo gradino" e niente sostituzione in `alGradino`; i log per serie (SALI/SCENDI) si applicano lo stesso
       const its = isParteAlta(b.id) ? its0.map((it) => (it.schema === 'fisso' && esercizioById(it.esercizio_id) ? { ...it, adattamento: 'gradino' as const } : it)) : its0;
@@ -444,7 +467,7 @@ ${finestreTesto()}
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
 
 COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
-5. Apertura: un blocco fascia (Fascia Foundation…) o riscaldamento (Riscaldamento Sprint…) — SEMPRE, 10-35'.
+5. Apertura: un blocco [apertura] (rolling ~10' o Fascia Foundations 1) o il riscaldamento fisso della velocità — SEMPRE in testa a ogni seduta fisica, mai da sola (regola 26).
 6. Poi 1-2 blocchi principali della giornata (forza parte bassa/alta, pliometria, velocità, resistenza, kettlebell…). Ordine: neuromuscolare (velocità, pliometria, forza) PRIMA del metabolico (resistenza, fartlek).
 7. Tecnica (palleggi, muro, dribbling, tiri, visione) come blocco finale o giornata a sé, se l'atleta ha campo/muro (attrezzatura "campo") e la vuole.
 8. Durata totale della giornata ≤ ${ctx.maxDurata}' (o il tempo massimo chiesto dall'atleta). SOMMA le durate "~N'" dei blocchi PRIMA di scrivere la giornata: apertura (fascia/riscaldamento 15-30') + UN blocco principale che ci stia; un terzo blocco SOLO se la somma resta sotto il massimo. Con 60' non ci sta quasi mai un terzo blocco: scegli la variante short o rinuncia alla tecnica.
@@ -469,9 +492,10 @@ ADATTAMENTO
 21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole nelle GAMBE → la strada per pareggiare è la FASCIA, non le serie in più (Ste, 25/9): se c'è una giornata leggera o spazio, metti un blocco di fascia (marcato [unilaterale]) e tra i blocchi della stessa qualità preferisci quelli [unilaterale]; nel messaggio digli di partire dal lato debole e che la fascia serve a pareggiare (la serie in più su un esercizio la aggiunge il server, al massimo una a seduta). Un lato debole nelle gambe NON dice niente sulla parte alta: non toccare spinta e tirata per quello; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
 ${parteAltaRegola(ctx)}
 ${velocitaPliometriaRegola({ velocitaETecnica: ctx.obiettivi.includes('velocita') && ctx.obiettivi.includes('tecnica') })}
+${fasciaRegola()}
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
-Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21).
+Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21) · [apertura] / [fascia: percorso] / [fascia forza = FORZA gambe] = i tre ruoli della fascia (regola 26).
 ${libreriaTesto(ctx)}
 
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
