@@ -23,7 +23,14 @@ async function sendTelegramMessage(chatId: string, text: string) {
   });
 }
 
+export const maxDuration = 60;
+
 export async function GET(request: NextRequest) {
+  // Senza CRON_SECRET in env, "Bearer undefined" avrebbe autenticato chiunque (review 25/9)
+  if (!process.env.CRON_SECRET) {
+    console.error('CRON_SECRET non configurata: cron rifiutato');
+    return NextResponse.json({ error: 'cron_secret_missing' }, { status: 500 });
+  }
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

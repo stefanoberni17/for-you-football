@@ -16,6 +16,23 @@ import { requirePaidAccess } from '@/lib/serverAccess';
 import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
 import { FREE_COACH_MESSAGES } from '@/lib/constants';
 
+export const maxDuration = 60; // due chiamate Sonnet con thinking + Notion: mai i 10 s di default (review 25/9)
+
+const CHAT_MESSAGES_MAX = 41;   // ChatBot tiene 40 messaggi + quello nuovo
+const CHAT_CONTENT_MAX = 4000;  // caratteri per messaggio
+
+/** Solo turni user/assistant con contenuto stringa, tagliati; l'ultimo deve essere dell'utente. */
+function puliziaMessaggi(raw: unknown): { role: 'user' | 'assistant'; content: string }[] | null {
+  if (!Array.isArray(raw) || raw.length === 0) return null;
+  const clean = raw
+    .filter((m): m is { role: 'user' | 'assistant'; content: string } =>
+      !!m && typeof m === 'object' && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.trim().length > 0)
+    .map((m) => ({ role: m.role, content: m.content.slice(0, CHAT_CONTENT_MAX) }))
+    .slice(-CHAT_MESSAGES_MAX);
+  if (!clean.length || clean[clean.length - 1].role !== 'user') return null;
+  return clean;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const authUserId = await getAuthUser(request);
@@ -49,14 +66,17 @@ export async function POST(request: NextRequest) {
     if (!(await checkRateLimit(`web:${userId}`, 'chat', COACH_HOURLY_LIMIT))) {
       return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
     }
-    const { messages } = body;
-
-    if (!messages || messages.length === 0) {
+    // Schema sui messaggi (review 25/9): prima il body arrivava al modello com'era —
+    // ruoli non filtrati (turni "assistant" falsi contro anticipazioni e safety),
+    // contenuto anche non stringa (saltava il controllo keyword), nessun tetto.
+    // Stessa pulizia di /api/training/chat.
+    const messages = puliziaMessaggi(body?.messages);
+    if (!messages) {
       return NextResponse.json({ error: 'Messages required' }, { status: 400 });
     }
 
     const lastUserMessage = messages[messages.length - 1];
-    if (userId && lastUserMessage?.role === 'user' && typeof lastUserMessage.content === 'string' && checkSafetyKeywords(lastUserMessage.content)) {
+    if (userId && lastUserMessage?.role === 'user' && checkSafetyKeywords(lastUserMessage.content)) {
       sendSafetyAlert(userId, 'web', lastUserMessage.content).catch(err =>
         console.error('sendSafetyAlert failed:', err)
       );
