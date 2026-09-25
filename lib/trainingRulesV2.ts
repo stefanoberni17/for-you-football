@@ -158,7 +158,8 @@ export const QUALITA_FISICHE: ReadonlySet<QualitaV2> = new Set<QualitaV2>([
 
 
 export interface ContestoV2 {
-  livello: LivelloMinV2;          // fascia dell'atleta (B/A/PRO)
+  livello: LivelloMinV2;          // fascia dell'atleta (B/A/PRO) dall'AMRAP
+  livelloPerQualita?: Partial<Record<QualitaV2, LivelloMinV2>>; // 25/9: livello dai test di ogni qualità (lib/trainingLivelli)
   attrezzatura: AttrezzaturaV2[]; // cosa ha a disposizione (corpo libero sempre incluso)
   inCoppia: boolean;              // può allenarsi con un compagno
   eta: number | null;
@@ -204,6 +205,10 @@ function quantitaOk(b: BoundsV2, unita: string): { min: number; max: number } | 
   return null;
 }
 
+/** Livello dell'atleta per una qualità: quello dei suoi test se c'è, altrimenti la fascia globale. */
+export const livelloPerQualita = (ctx: ContestoV2, q: QualitaV2 | undefined): LivelloMinV2 =>
+  (q && ctx.livelloPerQualita?.[q]) || ctx.livello;
+
 /**
  * Valida un item che referenzia il catalogo v2. Ritorna le violazioni (vuoto = ok).
  * `giorniAllaPartita`: null se nessuna partita in settimana.
@@ -219,10 +224,11 @@ export function validateItemV2(
   if (!ex.attivo) errors.push(`${n}: non disponibile (${ex.attrezzatura === 'headball' ? 'serve la Headball' : ex.inCoppia ? 'solo in coppia' : 'escluso'})`);
   // Livello: decide la DOSE, non l'accesso — un esercizio "A" a un atleta B va a dose ridotta
   // (serie al minimo, quantità entro metà range); solo gli esercizi marcati soloLivello sono esclusi — [STE, set 2026]
-  const sottoLivello = LIVELLO_ORDINE[ex.livelloMin] > LIVELLO_ORDINE[ctx.livello];
+  const livelloAtleta = livelloPerQualita(ctx, ex.qualita);
+  const sottoLivello = LIVELLO_ORDINE[ex.livelloMin] > LIVELLO_ORDINE[livelloAtleta];
   // skipSoloLivello: item nato da un blocco di Ste di livello ≤ atleta — il blocco vince sull'esercizio
   if (sottoLivello && ex.soloLivello && !opts.skipSoloLivello)
-    errors.push(`${n}: richiede livello ${ex.livelloMin}, l'atleta è ${ctx.livello}${ex.notaLivello ? ` (${ex.notaLivello})` : ''}`);
+    errors.push(`${n}: richiede livello ${ex.livelloMin}, l'atleta è ${livelloAtleta}${ex.notaLivello ? ` (${ex.notaLivello})` : ''}`);
   const disp = new Set<AttrezzaturaV2>(['corpo libero', ...ctx.attrezzatura]);
   if (!disp.has(ex.attrezzatura)) errors.push(`${n}: serve ${ex.attrezzatura}, non disponibile`);
   if (ex.inCoppia && !ctx.inCoppia) errors.push(`${n}: serve un compagno`);
@@ -239,8 +245,8 @@ export function validateItemV2(
     if (sottoLivello && !ex.soloLivello) {
       const serieMax = b.serieMin;
       const qMax = q ? Math.round((q.min + q.max) / 2) : null;
-      if (it.serie > serieMax) errors.push(`${n}: esercizio di livello ${ex.livelloMin} per un atleta ${ctx.livello} → dose ridotta, max ${serieMax} serie`);
-      if (qMax !== null && it.quantita > qMax) errors.push(`${n}: esercizio di livello ${ex.livelloMin} per un atleta ${ctx.livello} → dose ridotta, max ${qMax} ${ex.unita}`);
+      if (it.serie > serieMax) errors.push(`${n}: esercizio di livello ${ex.livelloMin} per un atleta ${livelloAtleta} → dose ridotta, max ${serieMax} serie`);
+      if (qMax !== null && it.quantita > qMax) errors.push(`${n}: esercizio di livello ${ex.livelloMin} per un atleta ${livelloAtleta} → dose ridotta, max ${qMax} ${ex.unita}`);
     }
     if (it.recupero_sec < b.recuperoMinSec)
       errors.push(`${n}: recupero ${it.recupero_sec}" sotto il minimo ${b.recuperoMinSec}"`);

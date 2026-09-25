@@ -21,6 +21,7 @@ import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLog
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
+import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
 import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
 
 export const PLANNER_PROMPT_VERSION = 'v0.5';
@@ -90,6 +91,7 @@ function sanitize(text: string): string {
 
 export interface PlannerContext {
   fascia: FasciaLivello;
+  livelli: LivelliQualita; // 25/9: livello per qualità dai test di quella qualità (lib/trainingLivelli)
   gradini: Record<string, number>;
   matchDays: number[];
   trainingDays: number[];
@@ -143,20 +145,27 @@ export interface FeedbackSeduta {
   rpe?: number | null;
   feedback_blocchi?: { id: string; nome?: string; giudizio: 'facile' | 'ok' | 'duro' }[] | null;
   session_key?: string;
+  plan_id?: string | null;
 }
 
-/** Ultime sedute completate con il feedback; se la migration 026 manca, ripiega sulle colonne storiche. */
-export async function loadFeedbackRecenti(userId: string, limit = 12): Promise<FeedbackSeduta[]> {
+/**
+ * Ultime sedute completate con il feedback (40: la memoria dei blocchi guarda anche famiglie fatte
+ * settimane fa); se la migration 026 manca, ripiega sulle colonne storiche.
+ */
+export async function loadFeedbackRecenti(userId: string, limit = 40): Promise<FeedbackSeduta[]> {
   const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).order('completed_at', { ascending: false }).limit(limit);
-  const full = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key');
+  const full = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key, plan_id');
   if (!full.error) return (full.data || []) as unknown as FeedbackSeduta[];
-  const base = await q('feedback, note, completed_at, session_key');
+  const base = await q('feedback, note, completed_at, session_key, plan_id');
   return (base.data || []) as unknown as FeedbackSeduta[];
 }
 
+export const FEEDBACK_NEL_PROMPT = 12;
+
 /** Blocco per il prompt: una riga per seduta, con voto, giudizio per blocco e nota (ultime 12 sedute). */
-export function feedbackSeduteBlock(righe: FeedbackSeduta[]): string {
+export function feedbackSeduteBlock(tutte: FeedbackSeduta[]): string {
+  const righe = tutte.slice(0, FEEDBACK_NEL_PROMPT);
   if (!righe.length) return '\nFeedback sedute recenti: nessuna seduta ancora completata';
   const giud: Record<string, string> = { facile: 'facile', ok: 'giusto', duro: 'duro' };
   const lines = righe.map((f) => {
@@ -271,8 +280,10 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   // Sbarra: v0 — dedotta dal fatto che il test pull sia stato fatto con valore ≥ 0
   const hasSbarra = rows.some((r) => r.test_id === 'test-pull');
 
+  const fascia = fasciaFromResults(rows);
   return {
-    fascia: fasciaFromResults(rows),
+    fascia,
+    livelli: livelliPerQualita(rows, fascia),
     gradini,
     matchDays: calendar?.match_days || [],
     trainingDays,

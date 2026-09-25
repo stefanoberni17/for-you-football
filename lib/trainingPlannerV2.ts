@@ -28,8 +28,10 @@ import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { testoPerAtleta } from './trainingLabels';
+import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
+import { livelliTesto, livelloDi } from './trainingLivelli';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.12-parte-alta';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.14-livelli-qualita';
 /**
  * Modello del planner v2 (14/9): Opus 5. Il piano è un problema di vincoli (durate, tetto del carico,
  * obiettivi, finestre partita) dove il ragionamento conta: un piano a settimana per atleta, ~10-15
@@ -66,6 +68,8 @@ export interface ContextV2 {
   vincoli: Vincoli;
   // Obiettivi in ordine di priorità: quelli della richiesta (maschera) o, in assenza, quelli del setup
   obiettivi: FocusId[];
+  // Memoria dei blocchi: per famiglia, il codice di questa settimana deciso dai giudizi delle settimane precedenti
+  memoria: MemoriaBlocchi;
 }
 
 export async function loadContextV2(userId: string): Promise<ContextV2> {
@@ -89,17 +93,41 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     if (r) massimali[t.lift.esercizioV2Id] = r.valore;
   }
   const v2: ContestoV2 = {
-    livello: base.fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno,
+    livello: base.fascia, livelloPerQualita: base.livelli, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno,
     eta, esperienzaPalestra: setup.esperienzaPalestra, massimali,
   };
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
   const ctx: ContextV2 = {
     base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
     maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase], maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
-    daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup,
+    daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup, memoria: {},
   };
   aggiornaParteAlta(ctx);
+  await completaFeedbackDaiPiani(base.feedbackRecenti);
+  ctx.memoria = calcolaMemoriaBlocchi(base.feedbackRecenti, { disponibili: ctx.blocchi, lunediCorrente: mondayOfThisWeekRome(), livello: v2.livello, livelli: base.livelli });
+  // Assaggio/promozione del livello sopra: quei blocchi entrano tra i disponibili (Claude li vede in libreria, il validatore li accetta)
+  for (const b of blocchiFuoriLivello(ctx.memoria)) if (!ctx.blocchi.some((x) => x.id === b.id)) ctx.blocchi.push(b);
   return ctx;
+}
+
+/**
+ * Sedute completate SENZA giudizio per blocco (prima della migration 026, o "Segna fatta senza voto"):
+ * i blocchi si ricavano dal piano (session_key = plan_id#giorno) e il giudizio dal voto o dal feedback
+ * a tre scelte (nessuno = "giusto"), così contano lo stesso nella memoria dei blocchi.
+ */
+async function completaFeedbackDaiPiani(feedback: PlannerContext['feedbackRecenti']): Promise<void> {
+  const senza = feedback.filter((f) => !f.feedback_blocchi?.length && f.plan_id && f.session_key);
+  if (!senza.length) return;
+  const ids = [...new Set(senza.map((f) => f.plan_id as string))];
+  const { data } = await supabaseAdmin.from('training_plans').select('id, plan').in('id', ids);
+  const piani = new Map((data || []).map((r: { id: string; plan: WeekPlan }) => [r.id, r.plan]));
+  for (const f of senza) {
+    const giorno = Number(f.session_key!.split('#')[1]);
+    const seduta = piani.get(f.plan_id as string)?.sedute?.find((x) => x.giorno === giorno);
+    if (!seduta?.blocchi?.length) continue;
+    const giudizio: Giudizio = f.rpe != null ? feedbackDaRpe(f.rpe) : f.feedback === 'facile' || f.feedback === 'duro' ? f.feedback : 'ok';
+    f.feedback_blocchi = seduta.blocchi.map((b) => ({ id: b.id, nome: b.nome, giudizio }));
+  }
 }
 
 /**
@@ -110,7 +138,7 @@ function aggiornaParteAlta(ctx: ContextV2): void {
   const lun = new Date(`${mondayOfThisWeekRome()}T00:00:00`);
   const settimana = Math.floor((lun.getTime() - Date.UTC(2026, 0, 5)) / (7 * 86400000)); // n. settimana da un lunedì fisso: ruota la variante di sprint
   const pa = costruisciParteAlta(ctx.base.results, {
-    livello: ctx.v2.livello, attrezzatura: ctx.setup.attrezzatura, hasSbarra: ctx.base.hasSbarra || ctx.setup.attrezzatura.includes('sbarra'),
+    livello: livelloDi(ctx.base.livelli, 'forza-parte-alta', ctx.v2.livello), attrezzatura: ctx.setup.attrezzatura, hasSbarra: ctx.base.hasSbarra || ctx.setup.attrezzatura.includes('sbarra'),
     parteBassa: vuoleParteBassa(ctx.obiettivi), settimana,
   });
   ctx.blocchi = [...ctx.blocchi.filter((b) => !isParteAlta(b.id)), ...pa];
@@ -195,8 +223,27 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       if (b.qualita === 'forza-parte-bassa' || b.qualita === 'forza-parte-alta') blocchiForza++;
     }
     if (blocchi.length === 0) { errors.push(`seduta del giorno ${s.giorno}: nessun blocco valido`); continue; }
+    // Recupero di una seduta saltata: va riproposta UGUALE, la memoria non la tocca
+    const chiaveBlocchi = blocchi.map((b) => b.id).sort().join('|');
+    const recupero = ctx.daRecuperare.some((r) => [...r.blocchi].sort().join('|') === chiaveBlocchi);
+    // Memoria dei blocchi: un codice diverso da quello deciso dai giudizi viene sostituito (l'LLM propone, i dati dispongono)
+    const noteMemoria = new Map<string, string>();
+    if (!recupero) {
+      for (let i = 0; i < blocchi.length; i++) {
+        const sost = sostitutoDallaMemoria(ctx.memoria, blocchi[i]);
+        if (!sost || !disponibili.has(sost.id) || blocchi.some((b) => b.id === sost.id)) continue;
+        blocchi[i] = sost;
+      }
+      for (const b of blocchi) {
+        const m = ctx.memoria[b.famiglia];
+        const nota = m && m.ammessi.includes(b.id) ? notaPasso(m.passo) : null;
+        if (nota) noteMemoria.set(b.id, nota);
+      }
+    }
     // "Più leggero" per blocco (scelta di Claude, regola 22): serie ×0.7 come nel deload, solo sui blocchi fisici
     const leggeri = new Set((Array.isArray(s.leggeri) ? s.leggeri : []).filter((id) => blocchi.some((b) => b.id === id && QUALITA_FISICHE.has(b.qualita))));
+    // Assaggio del livello sopra (memoria): serie ×0.7 forzate dal server, qualunque cosa abbia scelto Claude
+    if (!recupero) for (const b of blocchi) if (ctx.memoria[b.famiglia]?.leggero && ctx.memoria[b.famiglia].prossimo.id === b.id) leggeri.add(b.id);
     const items = blocchi.flatMap((b) => {
       const leggero = leggeri.has(b.id);
       const its0 = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
@@ -214,13 +261,11 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       errors.push(`seduta di ${DAY_NAMES[giorno] ?? giorno}: l'atleta si allena SOLO nei giorni ${ctx.vincoli.giorniAmmessi.map((d) => DAY_NAMES[d]).join(', ')}`);
     if (ctx.vincoli.giorniVietati?.includes(giorno))
       errors.push(`seduta di ${DAY_NAMES[giorno] ?? giorno}: giorno da lasciare libero (richiesta dell'atleta)`);
-    const chiaveBlocchi = blocchi.map((b) => b.id).sort().join('|');
-    const recupero = ctx.daRecuperare.some((r) => [...r.blocchi].sort().join('|') === chiaveBlocchi);
     sedute.push({
       giorno, titolo: testoPerAtleta(s.titolo?.slice(0, 80)) || blocchi.map((b) => b.famiglia).join(' + '),
       tipo: tipoDaBlocchi(blocchi), durata_min: durata, items,
       spiegazione: testoPerAtleta(s.spiegazione?.slice(0, 200)),
-      blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin, ...(leggeri.has(b.id) ? { leggero: true } : {}) })),
+      blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin, ...(leggeri.has(b.id) ? { leggero: true } : {}), ...(noteMemoria.has(b.id) ? { nota: noteMemoria.get(b.id) } : {}) })),
       ...(recupero ? { recupero: true } : {}),
     });
   }
@@ -356,7 +401,7 @@ COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
 9b. I blocchi "per portiere" (codice P1) sono nati per i portieri: preferiscili se l'atleta è portiere; per gli altri ruoli usali solo se non c'è un'alternativa B/A.
 
 PROGRESSIONE (settimana su settimana)
-10. Parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full). Guarda il FEEDBACK SEDUTE: per ogni famiglia, il giudizio dell'atleta sul BLOCCO fatto l'ultima volta decide il passo — "facile" → codice successivo (o da short a full), "giusto" → stesso codice, "duro" o voto ≥ 8 o dolori → stesso codice in short o codice precedente. Mai saltare un codice. Se non ha mai fatto quella famiglia, parti dal più basso.
+10. MEMORIA DEI BLOCCHI (sezione nel messaggio, calcolata dal server): per ogni famiglia già fatta nelle settimane precedenti il codice di questa settimana è GIÀ deciso dal giudizio dell'atleta sull'ultimo blocco ("facile" → codice successivo o da short a full, "giusto" → stesso, "duro" o voto ≥ 8 → short o codice precedente; mai saltare un codice; Fascia Foundation avanza dopo 2 settimane, Pliometria resta in B almeno 4). Se usi quella famiglia, usa SOLO gli id indicati: un id diverso viene sostituito dal server. Puoi sempre scegliere un'altra famiglia. Famiglie mai fatte: parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full).
 11. Settimana 4 del ciclo = DELOAD: scegli varianti short e dillo nel messaggio (il server riduce anche le serie).
 12. Settimana 5+ = ri-test in ritardo: piano leggero e invita a rifare la batteria.
 
@@ -451,7 +496,7 @@ function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[], prece
   const massimali = Object.keys(ctx.v2.massimali || {}).length ? `Massimali stimati: ${Object.entries(ctx.v2.massimali!).map(([k, v]) => `${k} ${v} kg`).join(', ')}` : 'Nessun massimale (niente forza con carico in regime max/esplosiva)';
   return `# ATLETA
 OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 1} sono passati: sedute SOLO nei giorni ${b.oggiDow}-7` : ''}.
-Livello: ${b.fascia}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
+Livello: ${b.fascia}${livelliTesto(b.livelli, b.fascia)}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
 Attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', ') : 'solo corpo libero'}
 Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~${ctx.setup.squadraDurataMin}'` : ''}
 Allenamenti squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)}
@@ -459,7 +504,7 @@ Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') 
 ${feedbackSeduteBlock(b.feedbackRecenti)}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
-${massimali}${memoria}${obiettiviTesto(ctx)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${caricoTesto(b.carico)}${piano}
+${massimali}${memoria}${obiettiviTesto(ctx)}${memoriaBlocchiTesto(ctx.memoria)}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${caricoTesto(b.carico)}${piano}
 ${preferenzeTesto(ctx, richiesta)}${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}${precedente ? `\nPiano rifiutato (parti da questo e cambia SOLO ciò che serve, es. togli un blocco o passa alla variante short): ${precedente}` : ''}` : ''}
 
@@ -483,9 +528,12 @@ function extractJson(text: string): PianoLLM | null {
 
 // ─── Fallback deterministico a blocchi ──────────────────────────────────────
 
+/** Nel fallback la memoria dei blocchi vale come per Claude: le famiglie già fatte solo con il codice deciso, e quello per primo. */
+const memoriaRank = (ctx: ContextV2, b: Blocco) => (ctx.memoria[b.famiglia]?.prossimo.id === b.id ? 0 : 1);
+
 function primo(ctx: ContextV2, q: QualitaV2, pref?: RegExp): Blocco | undefined {
-  const cand = ctx.blocchi.filter((b) => b.qualita === q).sort((a, b) =>
-    ((a.livello ? 1 : 0) - (b.livello ? 1 : 0)) || ((a.progressione ?? 1) - (b.progressione ?? 1)) || ((a.variante === 'short' ? 0 : 1) - (b.variante === 'short' ? 0 : 1)));
+  const cand = ctx.blocchi.filter((b) => b.qualita === q && ammessoDallaMemoria(ctx.memoria, b)).sort((a, b) =>
+    (memoriaRank(ctx, a) - memoriaRank(ctx, b)) || ((a.livello ? 1 : 0) - (b.livello ? 1 : 0)) || ((a.progressione ?? 1) - (b.progressione ?? 1)) || ((a.variante === 'short' ? 0 : 1) - (b.variante === 'short' ? 0 : 1)));
   return (pref && cand.find((b) => pref.test(b.nome))) || cand[0];
 }
 
@@ -513,8 +561,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2): WeekPlan {
   const rango = (x: Blocco) => x.livello === ctx.v2.livello ? 0 : x.livello === null ? 1 : 2; // prima i blocchi del livello dell'atleta
   const perObiettivo = (f: FocusId): Blocco | undefined => {
     const pa = (x: Blocco) => (isParteAlta(x.id) ? 0 : 1); // parte alta dalle scale prima dei blocchi Everfit
-    const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id).sort((x, y) =>
-      (pa(x) - pa(y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
+    const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id && ammessoDallaMemoria(ctx.memoria, x)).sort((x, y) =>
+      (pa(x) - pa(y)) || (memoriaRank(ctx, x) - memoriaRank(ctx, y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
     return cand.find((x) => x.durataMin + (fascia?.durataMin ?? 0) <= maxDur) ?? cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
   };
   const perOrdine = focusEspansi(ctx.obiettivi).map(perObiettivo).filter((x): x is Blocco => !!x);

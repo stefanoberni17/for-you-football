@@ -13,7 +13,7 @@ import {
   type AreaForza, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
 } from './trainingCatalog';
 
-import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2 } from './trainingRulesV2';
+import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2, livelloPerQualita } from './trainingRulesV2';
 import { testV2ById } from './trainingTestsV2';
 import { LIVELLO_ORDINE, type ExerciseV2 } from './trainingCatalogV2';
 import { bloccoById } from './trainingBlocks';
@@ -331,7 +331,7 @@ export interface PlanSession {
   durata_min: number;
   items: PlanItem[];
   spiegazione?: string;
-  blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude)
+  blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
 }
@@ -394,7 +394,7 @@ export function validatePlan(
         // Non è nel catalogo v1: prova il catalogo v2 (solo se il contesto v2 è abilitato)
         if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
         const blocco = ctx.trustBlocks && it.blocco_id ? bloccoById(it.blocco_id) : undefined;
-        const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[ctx.v2.livello]);
+        const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)]);
         // Fidato anche il blocco VIRTUALE (parte alta dalle scale, `pa-*`): non è nella libreria ma l'ha dosato il server
         const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && it.blocco_id.startsWith('pa-'));
         const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
@@ -431,7 +431,7 @@ export function validatePlan(
           errors.push(`"${ex.nome}": recupero ${it.recupero_sec}" sotto il minimo tecnica ${TECNICA_RECUPERO_MIN_SEC}"`);
       }
     }
-    if (itemsV2.length > 0) errors.push(...validateSessionV2(itemsV2, s.titolo, { trusted: !!ctx.trustBlocks && itemsV2.every((x) => !!x.it.blocco_id), livello: ctx.v2?.livello }));
+    if (itemsV2.length > 0) errors.push(...validateSessionV2(itemsV2, s.titolo, { trusted: !!ctx.trustBlocks && itemsV2.every((x) => !!x.it.blocco_id), livello: ctx.v2 ? livelloPerQualita(ctx.v2, 'pliometria-intensiva') : undefined }));
   }
   const tetto = ctx.maxSeduteFisiche ?? REGOLE.maxSeduteFisicheSettimana;
   if (seduteFisiche > tetto)

@@ -19,7 +19,7 @@ import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Shee
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean }[]; posticipata_da?: number; recupero?: boolean }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -36,6 +36,9 @@ export interface TrainingState {
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
   completions: { session_key: string; feedback: string | null }[];
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
+  // Livello per qualità (dai test di quella qualità) e ri-test mirato (famiglie che hanno finito i codici del livello)
+  livelli?: { qualita: string; label?: string; livello: string }[];
+  ritestMirato?: { qualita: string; label: string; famiglie: string[]; tests: { id: string; nome: string }[] }[];
   setup: TrainingSetup;
   setupDisponibile: boolean;
   calendario?: { trainingDays: number[]; matchDays: number[] };
@@ -268,6 +271,8 @@ export default function AllenamentoHub() {
   const testsFatti = state.tests.filter((t) => t.done).length + (state.testsV2 || []).filter((t) => t.done).length;
   const testsTotali = state.tests.length + (state.testsV2 || []).length;
   const batteriaVuota = testsFatti === 0;
+  const livelliDiversi = (state?.livelli ?? []).filter((l) => l.livello !== state?.fascia && l.label);
+  const ritestMiratoTesto = state?.ritestMirato?.length ? state.ritestMirato.map((r) => r.tests.map((t) => t.nome).join(', ')).join('; ') : '';
   const amrap = state.tests.find((t) => t.id === 'test-amrap');
   const romboVisto: RomboPoint[] = vistaRombo === 'base' && state.romboBase ? state.romboBase : state.rombo;
   // Partenza ≠ adesso su almeno una punta → si disegna anche il rombo grigio della partenza
@@ -477,7 +482,7 @@ export default function AllenamentoHub() {
                         <p className={`text-body font-semibold truncate ${done ? 'text-forest-300' : saltata ? 'text-faint' : 'text-app'}`}>{s.titolo}</p>
                         <span className={`shrink-0 text-caption font-bold rounded-md px-1.5 py-0.5 tabular-nums ${done || saltata ? 'bg-surface text-faint' : 'bg-forest-500/15 text-forest-300'}`}>~{durataLabel(s.durata_min)}</span>
                       </div>
-                      <p className="text-body-sm text-muted">{s.blocchi?.length ? s.blocchi.map((b) => `${nomeBloccoAtleta(b.nome)}${b.leggero ? ' (più leggero)' : ''}`).join(' + ') : `${s.items.length} esercizi`}</p>
+                      <p className="text-body-sm text-muted">{s.blocchi?.length ? s.blocchi.map((b) => `${nomeBloccoAtleta(b.nome)}${b.leggero ? ' (più leggero)' : ''}${b.nota ? ` (${b.nota})` : ''}`).join(' + ') : `${s.items.length} esercizi`}</p>
                       {badge && <div className="mt-1">{badge}</div>}
                     </div>
                     {!saltata && <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />}
@@ -666,7 +671,7 @@ export default function AllenamentoHub() {
           </div>
         </div>
         <p className="text-body-sm text-muted mb-4">
-          Livello {state.fascia}{!batteriaVuota && <> · Settimana {Math.min(state.ciclo.settimana, 4)}{state.ciclo.ritestDue ? '+' : ''} di 4 del ciclo</>}
+          Livello {state.fascia}{livelliDiversi.length > 0 && <> ({livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')})</>}{!batteriaVuota && <> · Settimana {Math.min(state.ciclo.settimana, 4)}{state.ciclo.ritestDue ? '+' : ''} di 4 del ciclo</>}
         </p>
 
         {/* Avvisi in cima SOLO quando attivi: dolore, scarico, ri-test */}
@@ -690,7 +695,7 @@ export default function AllenamentoHub() {
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-body-sm text-muted leading-relaxed flex gap-2">
               <BatteryLow size={18} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-              <span><span className="font-semibold text-app">Settimana di scarico.</span> Quarta settimana del ciclo: meno volume per assorbire il lavoro, la tecnica continua. La settimana prossima: ri-test.</span>
+              <span><span className="font-semibold text-app">Settimana di scarico.</span> Quarta settimana del ciclo: meno volume per assorbire il lavoro, la tecnica continua. La settimana prossima: ri-test.{ritestMiratoTesto && <> Da rifare prima: {ritestMiratoTesto}.</>}</span>
             </p>
           </Card>
         )}
@@ -699,6 +704,7 @@ export default function AllenamentoHub() {
             <p className="text-body font-semibold text-warning mb-0.5 flex items-center gap-2"><ClipboardList size={18} aria-hidden /> È ora del ri-test</p>
             <p className="text-body-sm text-muted leading-relaxed mb-3">
               Sono passate più di 4 settimane dall&apos;ultimo test: da qui passa il salto di livello. Fallo idealmente 2 giorni dopo la partita, da fresco.
+              {ritestMiratoTesto && <> <span className="text-app">Da rifare prima: {ritestMiratoTesto}</span> (hai finito i codici del tuo livello in {state.ritestMirato!.flatMap((r) => r.famiglie).join(', ')}).</>}
             </p>
             <Button variant="secondary" size="sm" href="/allenamento/test">Rifai i test</Button>
           </Card>
