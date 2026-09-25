@@ -143,20 +143,27 @@ export interface FeedbackSeduta {
   rpe?: number | null;
   feedback_blocchi?: { id: string; nome?: string; giudizio: 'facile' | 'ok' | 'duro' }[] | null;
   session_key?: string;
+  plan_id?: string | null;
 }
 
-/** Ultime sedute completate con il feedback; se la migration 026 manca, ripiega sulle colonne storiche. */
-export async function loadFeedbackRecenti(userId: string, limit = 12): Promise<FeedbackSeduta[]> {
+/**
+ * Ultime sedute completate con il feedback (40: la memoria dei blocchi guarda anche famiglie fatte
+ * settimane fa); se la migration 026 manca, ripiega sulle colonne storiche.
+ */
+export async function loadFeedbackRecenti(userId: string, limit = 40): Promise<FeedbackSeduta[]> {
   const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).order('completed_at', { ascending: false }).limit(limit);
-  const full = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key');
+  const full = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key, plan_id');
   if (!full.error) return (full.data || []) as unknown as FeedbackSeduta[];
-  const base = await q('feedback, note, completed_at, session_key');
+  const base = await q('feedback, note, completed_at, session_key, plan_id');
   return (base.data || []) as unknown as FeedbackSeduta[];
 }
 
+export const FEEDBACK_NEL_PROMPT = 12;
+
 /** Blocco per il prompt: una riga per seduta, con voto, giudizio per blocco e nota (ultime 12 sedute). */
-export function feedbackSeduteBlock(righe: FeedbackSeduta[]): string {
+export function feedbackSeduteBlock(tutte: FeedbackSeduta[]): string {
+  const righe = tutte.slice(0, FEEDBACK_NEL_PROMPT);
   if (!righe.length) return '\nFeedback sedute recenti: nessuna seduta ancora completata';
   const giud: Record<string, string> = { facile: 'facile', ok: 'giusto', duro: 'duro' };
   const lines = righe.map((f) => {

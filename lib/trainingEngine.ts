@@ -331,7 +331,7 @@ export interface PlanSession {
   durata_min: number;
   items: PlanItem[];
   spiegazione?: string;
-  blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude)
+  blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
 }

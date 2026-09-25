@@ -19,7 +19,7 @@ import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Shee
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean }[]; posticipata_da?: number; recupero?: boolean }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -477,7 +477,7 @@ export default function AllenamentoHub() {
                         <p className={`text-body font-semibold truncate ${done ? 'text-forest-300' : saltata ? 'text-faint' : 'text-app'}`}>{s.titolo}</p>
                         <span className={`shrink-0 text-caption font-bold rounded-md px-1.5 py-0.5 tabular-nums ${done || saltata ? 'bg-surface text-faint' : 'bg-forest-500/15 text-forest-300'}`}>~{durataLabel(s.durata_min)}</span>
                       </div>
-                      <p className="text-body-sm text-muted">{s.blocchi?.length ? s.blocchi.map((b) => `${nomeBloccoAtleta(b.nome)}${b.leggero ? ' (più leggero)' : ''}`).join(' + ') : `${s.items.length} esercizi`}</p>
+                      <p className="text-body-sm text-muted">{s.blocchi?.length ? s.blocchi.map((b) => `${nomeBloccoAtleta(b.nome)}${b.leggero ? ' (più leggero)' : ''}${b.nota ? ` (${b.nota})` : ''}`).join(' + ') : `${s.items.length} esercizi`}</p>
                       {badge && <div className="mt-1">{badge}</div>}
                     </div>
                     {!saltata && <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />}

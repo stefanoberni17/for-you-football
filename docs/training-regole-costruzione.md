@@ -56,18 +56,20 @@ Regole:
 
 ---
 
-## 3. Velocità (Ste, 24/9: "sprint negli EMOM contano se inseriti; con obiettivo velocità una dedicata anche in season; max 6-10 sprint massimali")
+## 3. Velocità (Ste, 24-25/9)
 
 Dai programmi: UNA giornata velocità a settimana, sempre aperta da `Riscaldamento Sprint Velocità` (A-skip, saltelli in affondo, navette, allunghi 4×50 m); gli sprint con palla (`Sprint con palla da fermo`, `rapidità e Tiro`, `Palleggio sprint e tiro`) compaiono nella seconda metà della preparazione e mai il giorno prima della partita.
 
 Regole:
-- **Quante**: 1 giornata velocità a settimana se "velocità" è tra gli obiettivi, anche in season (`in_season` ha 3 posti fisici: velocità ne prende 1). Off season fino a 2. Senza obiettivo velocità: nessuna dedicata, gli sprint arrivano dall'EMOM della parte alta e dai blocchi `Velocità e forza esplosiva`.
-- **Sprint massimali per seduta: 6-10** (`SPRINT_MAX_SEDUTA = 10`, minimo utile 6). Si contano gli item "Sprint" e "Salite Sprint" (10/20/30/50 m); NON si contano salto+sprint, sprint con palla e T sprint (tecnica ed esplosività, con recuperi diversi). Nei blocchi di Ste: A1 9, B1 short 8, B2 12 nominali ma con 3 da 1 rep, `Pliometria RV B1` 11 (unico sopra 10: da rivedere o da lasciare come tetto "storico"). Gli sprint dell'EMOM `pa-emom` (1 per giro, 2-5 giri) si sommano al conteggio se nella stessa settimana c'è anche la giornata dedicata: il validatore controlla il totale settimanale ≤ 10 + giri EMOM… **da confermare**: tetto per seduta (10) o per settimana?
-- **Apertura obbligatoria**: `Riscaldamento Sprint Velocità` (o `2`) prima di ogni blocco `Velocità*` / `Pliometria Rapidità Velocità*` / `Salite Sprint`. Come il rolling per la forza.
+- **Quante**: al massimo **1 giornata velocità a settimana** (in season come off season) se "velocità" è tra gli obiettivi. Senza obiettivo velocità: nessuna dedicata, gli sprint arrivano dall'EMOM della parte alta e dai blocchi `Velocità e forza esplosiva`.
+- **Sprint massimali per seduta: 6-8** (`SPRINT_MAX_SEDUTA = 8`), per chiunque inizi, B o PRO. Se nella stessa settimana c'è già l'EMOM della parte alta con lo sprint (`pa-emom`), la giornata dedicata scende a **6**. Si contano gli item "Sprint" e "Salite Sprint" (10/20/30/50 m); NON si contano salto+sprint, sprint con palla e T sprint (tecnica ed esplosività, recuperi diversi). Nei blocchi di Ste: A1 9, B1 short 8, B2 12 nominali (3 da 1 rep), `Pliometria RV B1` 11: sopra 8 il server toglie gli sprint in coda (prima i 50 m) fino a rientrare, a partire dal blocco fatto per la prima volta.
+- **Riscaldamento fisso prima di ogni seduta di velocità** (Ste, 25/9), blocco virtuale `risc-velocita` (~15'):
+  1. corsetta 4' (`Corsa lenta`, unità minuti);
+  2. mobilità libera 3-4' (`Mobilità libera riscaldamento`: testo, senza video finché Ste non lo registra: sul canale non c'è un riscaldamento calcio, solo elastici/recupero/yoga → `docs/training-video-da-registrare.md`);
+  3. allunghi progressivi con recupero completo: **2 al 50 %**, **2 al 70 %**, **2 all'80-90 %**; distanza 50 m (fino a 100 m solo per quelli al 50 e al 70 %).
+  Sostituisce `Riscaldamento Sprint Velocità` come apertura obbligatoria; i blocchi di Ste con A-skip/navette restano disponibili come "attivazione" dopo il riscaldamento.
 - **Con palla**: `Velocità A1`, `Velocità e forza esplosiva B2/A1`, `rapidità e Tiro`, `Palleggio sprint e tiro`, `Sprint e tiro` solo dalla 5ª settimana di ciclo e solo se anche la tecnica è tra gli obiettivi o l'atleta è in preparazione/in season (non in off season lontano dalle partite).
 - **Finestra partita**: velocità a −2 ammessa (short), −1 no. Il giorno dopo la partita no.
-
----
 
 ## 4. Tecnica (Ste, 24/9: "ritorno voluto per consolidare: dopo un ciclo di 8 settimane si riportano le basi")
 
@@ -81,24 +83,27 @@ Dal "Programma Tecnica Base 12 settimane": giorno 1 muro, giorno 3 palleggi, gio
 
 ---
 
-## 5. Kettlebell (Ste, 24/9: "i pesi dipendono dall'esercizio; base → intermedi dopo 4 settimane fatte facilmente → avanzati dopo 4-8 settimane")
+## 5. Kettlebell (Ste, 24-25/9)
 
 Nei programmi il kettlebell compare quasi solo come `Kettlebell swing` dentro la forza parte bassa, con tre schemi: 12/16 reps senza peso (base), piramide a salire 15@20 / 13@24 / 10@28 kg (PRO), piramide a scendere 12@24 / 16@20 / 30@16 kg. Il catalogo ha 13 esercizi kettlebell, quasi tutti mai usati nei blocchi.
 
+**Posto nella settimana (Ste, 25/9):** il kettlebell è una **sezione dedicata** ("Forza funzionale kettlebell"), non un esercizio sparso. Quando è attiva **si somma alla parte bassa**: la forza parte bassa con sovraccarichi della stessa settimana va **ridotta leggermente** (una serie in meno o variante short sui blocchi con pesi). Per il calcio Ste preferisce il kettlebell alla palestra: la parte bassa con sovraccarichi resta sugli **esercizi di base** (squat, FY squat, bulgaro, RDL, hip thrust, affondi: quelli già concordati) e il resto della forza funzionale/esplosiva passa dal kettlebell.
+
 Due leve di progressione, da tenere separate:
 1. **Tipo di esercizio** (fascia base / intermedio / avanzato): si passa alla fascia dopo quando quella prima è stata fatta per **almeno 4 settimane con giudizio facile** (base → intermedio) e **4-8 settimane** (intermedio → avanzato). Il server lo misura dai log: settimane distinte con almeno una seduta che contiene un esercizio della fascia, RPE medio ≤ 6.
-2. **Peso** dentro lo stesso esercizio: +4 kg (il passo dei kettlebell) quando l'atleta tiene le serie previste al peso di riferimento con RPE ≤ 7 per 2 sedute (usa `adattaDose` sui kg, oggi +2.5 % → per i kettlebell il passo è discreto: 8 → 12 → 16 → 20 → 24 → 28 → 32). Un avanzato può usare un peso più basso su un esercizio tecnico (rotational, snatch): il peso di riferimento è per esercizio, non per atleta.
+2. **Peso** dentro lo stesso esercizio: +4 kg (il passo dei kettlebell) quando l'atleta tiene le serie previste al peso di riferimento con RPE ≤ 7 per 2 sedute (`adattaDose` sui kg oggi fa +2.5 %: per i kettlebell il passo è discreto: 8 → 12 → 16 → 20 → 24 → 28 → 32). Un avanzato può usare un peso più basso su un esercizio tecnico (rotational, snatch, windmill): il peso di riferimento è per esercizio, non per atleta.
 
-**Bozza da correggere (Ste):** fascia, peso di partenza per un ragazzo di 14-20 anni (B), peso "obiettivo" della fascia.
+**Fasce (Ste, 25/9: "kneeling snatch è intermedio", "aggiungi entrambi"; i pesi sotto non sono stati corretti: valgono come partenza, da rivedere sui log):**
 
-| Esercizio (catalogo) | Fascia proposta | Peso di partenza | Peso obiettivo | Note |
+| Esercizio (catalogo) | Fascia | Peso di partenza | Peso obiettivo | Note |
 |---|---|---|---|---|
-| Kettlebell swing (2 mani) | base | 12-16 kg | 24 kg | il pilastro: entra ovunque, 3×12-16 |
+| Kettlebell swing (2 mani) | base | 12-16 kg | 24 kg | il pilastro: 3×12-16 |
+| Goblet squat | base (**da aggiungere**) | 12-16 kg | 24 kg | squat con kettlebell al petto |
 | Kettlebell Figure 8 | base | 8-12 kg | 16 kg | core, tecnica di passaggio |
 | Kettlebell Bent Over Row with Rotation | base | 12 kg | 16-20 kg | tirata per lato |
 | Gorilla row | base | 12 kg per mano | 20 kg | tirata (parte alta dalle scale) |
-| kettlebell kneeling snatch | base | 8-12 kg | 16 kg | didattica dello snatch, difficoltà 1 nel catalogo |
-| Kettlebell swing a una mano | **intermedio** (da aggiungere al catalogo) | 12 kg | 20 kg | ponte tra swing e clean/snatch |
+| Kettlebell swing a una mano | intermedio (**da aggiungere**) | 12 kg | 20 kg | ponte tra swing e clean/snatch |
+| kettlebell kneeling snatch | intermedio | 8-12 kg | 16 kg | didattica dello snatch |
 | kettlebell dead clean | intermedio | 12 kg | 20 kg | per lato |
 | kettlebell swing high pull | intermedio | 12 kg | 16-20 kg | |
 | Kettlebell Cross Chop | intermedio | 8-12 kg | 16 kg | rotazione |
@@ -108,7 +113,7 @@ Due leve di progressione, da tenere separate:
 | kettlebell rotational clean | avanzato | 12 kg | 16-20 kg | `solo_livello` A |
 | Kettlebell Advanced Windmill | avanzato | 8 kg | 16 kg | mobilità + forza sopra la testa: peso basso anche per gli avanzati |
 
-Domande aperte a Ste: (a) aggiungere swing a una mano e goblet squat al catalogo? (b) i pesi sopra vanno bene per un 14-16enne o partiamo da 8-12 su tutto? (c) il kettlebell entra come blocco a sé ("Forza funzionale kettlebell B1/A1/PRO1") o solo come esercizio dentro la forza parte bassa, come oggi?
+Da fare nel codice: campi `fascia_kb` e `peso_riferimento` nel JSON del catalogo; blocchi virtuali `kb-base` / `kb-intermedio` / `kb-avanzato` composti dal server (come `pa-*`); regola "kettlebell attivo → parte bassa con pesi in short"; passo di 4 kg in `adattaDose` per l'attrezzatura kettlebell.
 
 ---
 
@@ -116,9 +121,9 @@ Domande aperte a Ste: (a) aggiungere swing a una mano e goblet squat al catalogo
 
 | Regola | Dove | Stato |
 |---|---|---|
-| 0. codice successivo dal giudizio | regola 10 del prompt v2 (Claude decide) | fatto 24/9 · da spostare nel server (memoria dei blocchi) |
+| 0. codice successivo dal giudizio | `lib/trainingMemoriaBlocchi.ts`: prompt (regola 10) + sostituzione in `expandPiano` + fallback | fatto 25/9 (con le settimane minime di fascia e pliometria) |
 | 1. tre famiglie fascia | prompt / validatore | da fare |
 | 2. plio: ingresso in B, onda B/A | server | da fare |
-| 3. velocità: 6-10 sprint, apertura obbligatoria, con palla dalla 5ª settimana | validatore + prompt | da fare (conferma tetto per seduta o settimana) |
+| 3. velocità: 6-8 sprint (6 con EMOM), riscaldamento fisso `risc-velocita`, con palla dalla 5ª settimana | validatore + prompt | da fare |
 | 4. tecnica: due scale + mazzo + ritorno a 8 settimane | server | da fare |
-| 5. kettlebell: fasce e pesi | catalogo (`fascia_kb`, `peso_riferimento`) + `adattaDose` a passi di 4 kg | bozza, aspetta le correzioni |
+| 5. kettlebell: sezione dedicata, fasce, pesi a passi di 4 kg, parte bassa ridotta | catalogo + blocchi virtuali `kb-*` + `adattaDose` | da fare (fasce confermate, pesi da rivedere sui log) |
