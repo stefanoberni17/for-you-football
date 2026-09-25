@@ -76,7 +76,7 @@ Regole:
   2. mobilità libera 3-4' (`Mobilità libera riscaldamento`: testo, senza video finché Ste non lo registra: sul canale non c'è un riscaldamento calcio, solo elastici/recupero/yoga → `docs/training-video-da-registrare.md`);
   3. allunghi progressivi con recupero completo: **2 al 50 %**, **2 al 70 %**, **2 all'80-90 %**; distanza 50 m (fino a 100 m solo per quelli al 50 e al 70 %).
   Sostituisce `Riscaldamento Sprint Velocità` come apertura obbligatoria; i blocchi di Ste con A-skip/navette restano disponibili come "attivazione" dopo il riscaldamento.
-- **Con palla**: `Velocità A1`, `Velocità e forza esplosiva B2/A1`, `rapidità e Tiro`, `Palleggio sprint e tiro`, `Sprint e tiro` solo dalla 5ª settimana di ciclo e solo se anche la tecnica è tra gli obiettivi o l'atleta è in preparazione/in season (non in off season lontano dalle partite).
+- **Con palla**: `Velocità A1`, `Velocità e forza esplosiva B2/A1`, `rapidità e Tiro`, `Palleggio sprint e tiro`, `Sprint e tiro`: **subito se la tecnica è tra gli obiettivi** (Ste, 25/9: chi fa sprint e tecnica sfrutta i blocchi con velocità e tiri, che coprono due obiettivi in una seduta e contano per entrambi nel validatore: un blocco copre una qualità anche come secondaria se pesa almeno un quarto delle serie), altrimenti dalla 5ª settimana di allenamento e solo in preparazione/in season.
 - **Finestra partita**: velocità a −2 ammessa (short), −1 no. Il giorno dopo la partita no.
 
 ## 4. Tecnica (Ste, 24/9: "ritorno voluto per consolidare: dopo un ciclo di 8 settimane si riportano le basi")

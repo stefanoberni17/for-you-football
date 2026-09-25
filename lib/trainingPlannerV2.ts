@@ -30,7 +30,7 @@ import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusE
 import { testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi } from './trainingLivelli';
-import { bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
+import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { LIVELLO_ORDINE } from './trainingCatalogV2';
 
 export const PLANNER_V2_PROMPT_VERSION = 'v2.15-velocita-pliometria';
@@ -342,7 +342,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   if (primo && postiFisici >= 3) {
     const qsPrimo = FOCUS_QUALITA[primo];
     const candPrimo = ctx.blocchi.filter((b) => qsPrimo.includes(b.qualita));
-    const giornatePrimo = sedute.filter((s) => (s.blocchi || []).some((b) => qsPrimo.includes(b.qualita as QualitaV2))).length;
+    const giornatePrimo = sedute.filter((s) => (s.blocchi || []).some((b) => { const bl = bloccoDi(ctx, b.id); return bl ? bloccoCopre(bl, qsPrimo) : qsPrimo.includes(b.qualita as QualitaV2); })).length;
     if (candPrimo.length >= 2 && giornatePrimo === 1)
       errors.push(`obiettivo principale "${focusLabel(primo)}": è in una sola giornata — con ${postiFisici} giornate fisiche mettilo in almeno 2 (in una anche in versione short o come secondo blocco, es. ${candPrimo.slice(0, 3).map((b) => b.id).join(', ')})`);
   }
@@ -350,7 +350,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     const qs = FOCUS_QUALITA[f];
     const cand = ctx.blocchi.filter((b) => qs.includes(b.qualita));
     if (!cand.length) continue; // nessun blocco di quella qualità per questo atleta: non si può pretendere
-    if (!sedute.some((s) => (s.blocchi || []).some((b) => qs.includes(b.qualita))))
+    // Un blocco copre l'obiettivo anche come qualità secondaria se pesa almeno un quarto (rapidità e tiro = velocità + tecnica)
+    if (!sedute.some((s) => (s.blocchi || []).some((b) => { const bl = bloccoDi(ctx, b.id); return bl ? bloccoCopre(bl, qs) : qs.includes(b.qualita); })))
       errors.push(`obiettivo "${focusLabel(f)}": nessun blocco ${qs.join('/')} in settimana — mettine almeno uno (es. ${cand.slice(0, 4).map((b) => b.id).join(', ')})`);
   }
   // "Tutto, in equilibrio": niente aspetto obbligatorio, ma la settimana deve coprire aspetti DIVERSI
@@ -457,7 +458,7 @@ ADATTAMENTO
 22. PIÙ LEGGERO PER BLOCCO: se una giornata va alleggerita senza cambiare blocco (check-in con fatica alta, giorno dopo la partita o dopo una giornata squadra da 8+, carico alto, richiesta "più leggera"), metti l'id del blocco nel campo "leggeri" della seduta: il server riduce le serie (×0.7). Vale solo per i blocchi fisici (forza, esplosività, pliometria, velocità, resistenza), non per fascia/tecnica/recupero. Preferiscilo alla variante short quando la short non esiste.
 21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole → tra i blocchi della stessa qualità preferisci quelli marcati [unilaterale] (lavoro una gamba alla volta) e nel messaggio digli di partire dal lato debole e di curarlo; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
 ${parteAltaRegola(ctx)}
-${velocitaPliometriaRegola()}
+${velocitaPliometriaRegola({ velocitaETecnica: ctx.obiettivi.includes('velocita') && ctx.obiettivi.includes('tecnica') })}
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
 Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21).

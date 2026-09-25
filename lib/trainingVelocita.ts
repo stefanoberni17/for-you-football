@@ -121,18 +121,32 @@ export function filtraVelocitaPliometria(
     out = out.filter((b) => !isPliometria(b) || b.livello === null || LIVELLO_ORDINE[b.livello] <= LIVELLO_ORDINE.B);
     note.push(`PLIOMETRIA: l'atleta ha ${opt.settimanePlio} settimane di pliometria alle spalle (minimo ${PLIO_SETTIMANE_B_MIN} in B prima dell'intensiva A): solo blocchi B.`);
   }
-  const conPallaOk = opt.settimaneAllenamento >= CON_PALLA_DALLA_SETTIMANA && (opt.tecnicaTraGliObiettivi || opt.inSeasonOPreparazione);
+  // Con palla: subito se la tecnica è tra gli obiettivi (Ste, 25/9: chi fa sprint E tecnica sfrutta i blocchi con velocità e tiri),
+  // altrimenti dalla 5ª settimana in season/preparazione
+  const conPallaOk = opt.tecnicaTraGliObiettivi || (opt.settimaneAllenamento >= CON_PALLA_DALLA_SETTIMANA && opt.inSeasonOPreparazione);
   if (!conPallaOk && out.some(haConPalla)) {
     out = out.filter((b) => !haConPalla(b));
     note.push(opt.settimaneAllenamento < CON_PALLA_DALLA_SETTIMANA
-      ? `VELOCITÀ CON PALLA: dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana di allenamento (ora ${opt.settimaneAllenamento}): i blocchi con sprint con palla non sono disponibili.`
+      ? `VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana di allenamento (ora ${opt.settimaneAllenamento}): i blocchi con sprint con palla non sono disponibili.`
       : 'VELOCITÀ CON PALLA: solo con la tecnica tra gli obiettivi o in season/preparazione: i blocchi con sprint con palla non sono disponibili.');
   }
   return { blocchi: out, note };
 }
 
+/** Un blocco "copre" una qualità anche quando non è la dominante, se quella qualità pesa almeno un quarto delle serie (rapidità e tiro: velocità + tiro). */
+export const COPERTURA_MIN = 0.25;
+export function bloccoCopre(b: Blocco, qualita: readonly string[]): boolean {
+  if (qualita.includes(b.qualita)) return true;
+  const tot = Object.values(b.qualitaSet).reduce((a, n) => a + (n ?? 0), 0);
+  if (!tot) return false;
+  return Object.entries(b.qualitaSet).some(([q, n]) => qualita.includes(q) && (n ?? 0) / tot >= COPERTURA_MIN);
+}
+
 /** Regole 24-25 per il prompt del planner v2. */
-export function velocitaPliometriaRegola(): string {
-  return `24. VELOCITÀ (Ste, 25/9): al massimo UNA giornata di velocità a settimana. Ogni seduta con un blocco di velocità o sprint apre con \`${RISC_VELOCITA_ID}\` (corsetta 4', mobilità 4', 6 allunghi progressivi: ~15', contalo nel budget di tempo); se non lo metti, il server lo aggiunge in testa. Sprint massimali per seduta: ${SPRINT_MIN_SEDUTA}-${SPRINT_MAX_SEDUTA} (${SPRINT_MAX_CON_EMOM} se nella settimana c'è anche l'EMOM della parte alta con lo sprint): contano Sprint e le varianti a 10 m, non salto+sprint, sprint con palla, T-sprint e Salite Sprint (metabolico); oltre, il server toglie sprint dalla coda. Gli sprint con palla solo dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana (la libreria li mostra solo quando sono ammessi).
+export function velocitaPliometriaRegola(opt: { velocitaETecnica: boolean }): string {
+  const combo = opt.velocitaETecnica
+    ? ` VELOCITÀ + TECNICA tra gli obiettivi: sfrutta i blocchi che uniscono sprint e palla (rapidità e tiro, velocità con sprint con palla, palleggio-sprint-tiro): coprono due obiettivi in una seduta e contano per entrambi.`
+    : '';
+  return `24. VELOCITÀ (Ste, 25/9): al massimo UNA giornata di velocità a settimana.${combo} Ogni seduta con un blocco di velocità o sprint apre con \`${RISC_VELOCITA_ID}\` (corsetta 4', mobilità 4', 6 allunghi progressivi: ~15', contalo nel budget di tempo); se non lo metti, il server lo aggiunge in testa. Sprint massimali per seduta: ${SPRINT_MIN_SEDUTA}-${SPRINT_MAX_SEDUTA} (${SPRINT_MAX_CON_EMOM} se nella settimana c'è anche l'EMOM della parte alta con lo sprint): contano Sprint e le varianti a 10 m, non salto+sprint, sprint con palla, T-sprint e Salite Sprint (metabolico); oltre, il server toglie sprint dalla coda. Gli sprint con palla: subito se la tecnica è tra gli obiettivi, altrimenti dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana (la libreria li mostra solo quando sono ammessi).
 25. PLIOMETRIA (Ste, 24/9): chi inizia resta sui blocchi B per almeno ${PLIO_SETTIMANE_B_MIN} settimane (la libreria mostra solo quelli); dopo, la memoria dei blocchi alterna una settimana intensiva (A) e una di richiamo (B); un "duro" sull'intensiva riporta al richiamo per 2 settimane; nella settimana di scarico la pliometria resta in B, versione short.`;
 }
