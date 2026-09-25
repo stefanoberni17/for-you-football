@@ -12,10 +12,11 @@
  * un blocco è "completo" se tutti gli esercizi sono mappati.
  */
 import type { QualitaV2, LivelloMinV2 } from './trainingCatalogV2';
-import { BLOCCHI } from './trainingBlocks.generated';
+import { BLOCCHI as BLOCCHI_GENERATI } from './trainingBlocks.generated';
 import { esercizioById } from './trainingCatalog';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { PlanItem } from './trainingEngine';
+import { FAMIGLIA_FASCIA_FORZA, fasciaMarker } from './trainingFascia';
 
 export type Variante = 'full' | 'short';
 
@@ -58,7 +59,16 @@ export interface Blocco {
   senzaScarico?: boolean;        // blocco virtuale che non fa fatica (EMOM skill): serie NON ridotte nel deload né dal "più leggero"
 }
 
-export { BLOCCHI };
+/**
+ * Fascia Foundation Forza (Ste, 24/9): isometrie overcoming e skip, "forza vera" — è un blocco di FORZA
+ * PARTE BASSA a tutti gli effetti (conta come seduta fisica, copre l'obiettivo gambe), non prevenzione.
+ * Il generato lo classifica per gli esercizi (fascia + spinte isometriche = parte alta): qui si corregge.
+ */
+export const BLOCCHI: Blocco[] = (BLOCCHI_GENERATI as Blocco[]).map((b) => {
+  if (b.famiglia !== FAMIGLIA_FASCIA_FORZA) return b;
+  const tot = Object.values(b.qualitaSet).reduce((a, n) => a + (n ?? 0), 0);
+  return { ...b, qualita: 'forza-parte-bassa', qualitaSet: { ...b.qualitaSet, 'forza-parte-bassa': tot } };
+});
 
 export const bloccoById = (id: string) => BLOCCHI.find((b) => b.id === id);
 
@@ -133,7 +143,7 @@ export function bloccoRiga(b: Blocco): string {
   const liv = b.livello ? b.livello : '—';
   const prog = b.progressione ? `${liv}${b.progressione}` : liv;
   const attr = b.attrezzatura.length ? ` [${b.attrezzatura.join(', ')}]` : '';
-  const marker = profiloMarker(profiloBlocco(b));
+  const marker = [profiloMarker(profiloBlocco(b)), fasciaMarker(b)].filter(Boolean).join(' ');
   return `${b.id} = ${b.nome} (${b.qualita}, ${prog}${b.sottovariante ?? ''}${b.variante === 'short' ? ', short' : ''}${b.ruolo ? `, per ${b.ruolo}` : ''}, ~${b.durataMin}'${attr})${marker ? ` ${marker}` : ''}`;
 }
 

@@ -29,7 +29,7 @@ export interface FeedbackPerMemoria {
   feedback_blocchi?: { id: string; giudizio: Giudizio }[] | null;
 }
 
-export type Passo = 'avanti' | 'stesso' | 'indietro' | 'short' | 'full' | 'assaggio' | 'promosso' | 'onda-a' | 'onda-b';
+export type Passo = 'avanti' | 'stesso' | 'indietro' | 'short' | 'full' | 'assaggio' | 'promosso' | 'onda-a' | 'onda-b' | 'ritorno';
 
 /**
  * ASSAGGIO DEL LIVELLO SOPRA (Ste, 25/9): all'ultimo codice del proprio livello, dopo 2 settimane
@@ -50,13 +50,17 @@ export interface MemoriaFamiglia {
   motivo: string;          // per il prompt (perché questo codice)
   fuoriLivello?: boolean;  // il prossimo è un blocco del livello sopra (assaggio/promosso): va aggiunto ai disponibili
   leggero?: boolean;       // assaggio: il server forza serie ×0.7
+  serieExtra?: boolean;    // ritorno (fascia): finita la scala si riparte dal primo codice con una serie in più
 }
 
 export type MemoriaBlocchi = Record<string, MemoriaFamiglia>;
 
 /** Regole per famiglia: settimane minime sullo stesso codice prima di avanzare, e al livello prima di salire. */
-const REGOLE_FAMIGLIA: { match: RegExp; settimanePerCodice?: number; settimanePerLivello?: number; onda?: boolean }[] = [
-  { match: /^Fascia Foundation$/i, settimanePerCodice: 2 },
+const REGOLE_FAMIGLIA: { match: RegExp; settimanePerCodice?: number; settimanePerLivello?: number; onda?: boolean; ritorno?: boolean }[] = [
+  // Fascia (Ste, 24/9): un codice per 2 settimane; finita la scala del proprio livello si torna al primo codice
+  // del gruppo con una serie in più (consolidamento, come la tecnica) — niente assaggio del livello sopra
+  { match: /^Fascia Foundation$/i, settimanePerCodice: 2, ritorno: true },
+  { match: /^Fascia Foundation Tecnica$/i, settimanePerCodice: 2, ritorno: true },
   // Pliometria (Ste, 24/9): almeno 4 settimane in B, poi ONDA B → A → B → A; un "duro" sull'A → B per 2 settimane; scarico in B short
   { match: /pliometria/i, settimanePerLivello: 4, onda: true },
 ];
@@ -151,7 +155,16 @@ export function calcolaMemoriaBlocchi(
     const regola = regolaDi(famiglia);
     const disponibile = (b?: Blocco) => !!b && disp.has(b.id);
     let prossimo: Blocco | undefined; let passo: Passo = 'stesso'; let motivo = '';
-    let fuoriLivello = false; let leggero = false;
+    let fuoriLivello = false; let leggero = false; let serieExtra = false;
+    // RITORNO (fascia): a fine scala del livello si riparte dal primo codice del gruppo (2A per la base, A3 per l'A) con una serie in più
+    const ritorno = (perche: string) => {
+      const stessoLivello = scala.filter((x) => x.livello === g.livello);
+      const gruppo = g.livello === LIVELLO_ORDINE.B && stessoLivello.some((x) => x.progressione === g.progressione && x !== g) ? stessoLivello.filter((x) => x.progressione === g.progressione) : stessoLivello;
+      const primo = gruppo.find((x) => ((x.full ?? x.short)?.sottovariante ?? '') === 'A') ?? gruppo[0];
+      const b = primo && (disponibile(primo.full) ? primo.full : disponibile(primo.short) ? primo.short : undefined);
+      if (!b || b.id === u.blocco.id) { stesso(perche); return; }
+      prossimo = b; passo = 'ritorno'; serieExtra = true; motivo = perche;
+    };
     // ONDA (pliometria): con blocchi B e A disponibili si alterna intensiva (A) e richiamo (B)
     const onda = regola?.onda ? calcolaOnda(u, scala, storicoPerFamiglia.get(famiglia) ?? [], settimaneLivello.get(`${famiglia}|B`)?.size ?? 0, regola.settimanePerLivello ?? 0, disponibile, opt.lunediCorrente, !!opt.isDeload) : null;
     if (onda) {
@@ -187,7 +200,8 @@ export function calcolaMemoriaBlocchi(
         const next = scala[pos + 1];
         const nSettLivello = settimaneLivello.get(`${famiglia}|${u.blocco.livello ?? 'B'}`)?.size ?? 1;
         const nextBlocco = next?.full ?? next?.short;
-        if (!next) stesso('facile, ma è l\'ultimo codice della famiglia');
+        if (regola?.ritorno && (!next || next.livello > livAtleta(u.blocco.qualita))) ritorno('finita la scala della fascia: si riparte dal primo codice con una serie in più');
+        else if (!next) stesso('facile, ma è l\'ultimo codice della famiglia');
         else if (next.livello > g.livello && regola?.settimanePerLivello && nSettLivello < regola.settimanePerLivello)
           stesso(`facile, ma prima del livello sopra servono ${regola.settimanePerLivello} settimane a questo livello (fatte ${nSettLivello})`);
         else if (!disponibile(next.full) && !disponibile(next.short)) {
@@ -213,7 +227,7 @@ export function calcolaMemoriaBlocchi(
     const gp = scala.find((x) => x.chiave === chiaveCodice(prossimo!.id))!;
     const ammessi = passo === 'full' || passo === 'short' || passo === 'assaggio' ? [prossimo.id]
       : [gp.full, gp.short].filter((b): b is Blocco => disponibile(b)).map((b) => b.id);
-    memoria[famiglia] = { famiglia, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo, ammessi: ammessi.length ? ammessi : [prossimo.id], passo, motivo, ...(fuoriLivello ? { fuoriLivello } : {}), ...(leggero ? { leggero } : {}) };
+    memoria[famiglia] = { famiglia, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo, ammessi: ammessi.length ? ammessi : [prossimo.id], passo, motivo, ...(fuoriLivello ? { fuoriLivello } : {}), ...(leggero ? { leggero } : {}), ...(serieExtra ? { serieExtra } : {}) };
   }
   return memoria;
 }
@@ -285,6 +299,7 @@ export function notaPasso(passo: Passo): string | null {
     case 'promosso': return 'livello sopra, dose piena';
     case 'onda-a': return 'settimana intensiva';
     case 'onda-b': return 'settimana di richiamo';
+    case 'ritorno': return 'si ricomincia, una serie in più';
     default: return null;
   }
 }
