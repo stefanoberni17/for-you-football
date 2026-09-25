@@ -70,7 +70,7 @@ Dai programmi: UNA giornata velocità a settimana, sempre aperta da `Riscaldamen
 
 Regole:
 - **Quante**: al massimo **1 giornata velocità a settimana** (in season come off season) se "velocità" è tra gli obiettivi. Senza obiettivo velocità: nessuna dedicata, gli sprint arrivano dall'EMOM della parte alta e dai blocchi `Velocità e forza esplosiva`.
-- **Sprint massimali per seduta: 6-8** (`SPRINT_MAX_SEDUTA = 8`), per chiunque inizi, B o PRO. Se nella stessa settimana c'è già l'EMOM della parte alta con lo sprint (`pa-emom`), la giornata dedicata scende a **6**. Si contano gli item "Sprint" e "Salite Sprint" (10/20/30/50 m); NON si contano salto+sprint, sprint con palla e T sprint (tecnica ed esplosività, recuperi diversi). Nei blocchi di Ste: A1 9, B1 short 8, B2 12 nominali (3 da 1 rep), `Pliometria RV B1` 11: sopra 8 il server toglie gli sprint in coda (prima i 50 m) fino a rientrare, a partire dal blocco fatto per la prima volta.
+- **Sprint massimali per seduta: 6-8** (`SPRINT_MAX_SEDUTA = 8`), per chiunque inizi, B o PRO. Se nella stessa settimana c'è già l'EMOM della parte alta con lo sprint (`pa-emom`), la giornata dedicata scende a **6**. Si contano gli item "Sprint" (10/20/30/50 m), "Sprint 10 m" e le sue varianti; NON si contano salto+sprint, sprint con palla, T sprint (tecnica ed esplosività, recuperi diversi) né le **Salite Sprint** (blocco metabolico da 14 salite: **da confermare con Ste**). Nei blocchi di Ste: `Pliometria RV A1` 9, `Velocità B1 short` 8, `Pliometria RV B2` 12, `Pliometria RV B1` 11: sopra il tetto il server toglie serie di sprint dalla coda (prima le distanze lunghe) e lo segnala accanto al blocco ("N sprint in meno: tetto di 8").
 - **Riscaldamento fisso prima di ogni seduta di velocità** (Ste, 25/9), blocco virtuale `risc-velocita` (~15'):
   1. corsetta 4' (`Corsa lenta`, unità minuti);
   2. mobilità libera 3-4' (`Mobilità libera riscaldamento`: testo, senza video finché Ste non lo registra: sul canale non c'è un riscaldamento calcio, solo elastici/recupero/yoga → `docs/training-video-da-registrare.md`);
@@ -132,7 +132,7 @@ Da fare nel codice: campi `fascia_kb` e `peso_riferimento` nel JSON del catalogo
 | 0. codice successivo dal giudizio | `lib/trainingMemoriaBlocchi.ts`: prompt (regola 10) + sostituzione in `expandPiano` + fallback | fatto 25/9 (con le settimane minime di fascia e pliometria) |
 | 0b. livello per qualità, assaggio, ri-test mirato | `lib/trainingLivelli.ts`, memoria (`assaggio`/`promosso`), `/api/training/state` (`livelli`, `ritestMirato`) + hub | fatto 25/9 |
 | 1. tre famiglie fascia | prompt / validatore | da fare |
-| 2. plio: ingresso in B, onda B/A | server | da fare |
-| 3. velocità: 6-8 sprint (6 con EMOM), riscaldamento fisso `risc-velocita`, con palla dalla 5ª settimana | validatore + prompt | da fare |
+| 2. plio: ingresso in B (4 settimane, blocchi A/PRO esclusi), onda B/A, duro → 2 settimane B, scarico in B | `lib/trainingVelocita.ts` (`filtraVelocitaPliometria`) + memoria (`calcolaOnda`, passi `onda-a`/`onda-b`) + `expandPiano` (scarico) | fatto 25/9 |
+| 3. velocità: 6-8 sprint (6 con EMOM) limati dal server, riscaldamento fisso `risc-velocita` in testa, 1 giornata a settimana, con palla dalla 5ª settimana | `lib/trainingVelocita.ts` + `expandPiano` + `validateSessionV2` (rete di sicurezza) + regole 24-25 del prompt | fatto 25/9 (Salite Sprint fuori dal conteggio: da confermare) |
 | 4. tecnica: due scale + mazzo + ritorno a 8 settimane | server | da fare |
 | 5. kettlebell: sezione dedicata, fasce, pesi a passi di 4 kg, parte bassa ridotta | catalogo + blocchi virtuali `kb-*` + `adattaDose` | da fare (fasce confermate, pesi da rivedere sui log) |

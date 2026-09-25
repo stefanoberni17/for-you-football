@@ -29,7 +29,7 @@ export interface FeedbackPerMemoria {
   feedback_blocchi?: { id: string; giudizio: Giudizio }[] | null;
 }
 
-export type Passo = 'avanti' | 'stesso' | 'indietro' | 'short' | 'full' | 'assaggio' | 'promosso';
+export type Passo = 'avanti' | 'stesso' | 'indietro' | 'short' | 'full' | 'assaggio' | 'promosso' | 'onda-a' | 'onda-b';
 
 /**
  * ASSAGGIO DEL LIVELLO SOPRA (Ste, 25/9): all'ultimo codice del proprio livello, dopo 2 settimane
@@ -55,10 +55,13 @@ export interface MemoriaFamiglia {
 export type MemoriaBlocchi = Record<string, MemoriaFamiglia>;
 
 /** Regole per famiglia: settimane minime sullo stesso codice prima di avanzare, e al livello prima di salire. */
-const REGOLE_FAMIGLIA: { match: RegExp; settimanePerCodice?: number; settimanePerLivello?: number }[] = [
+const REGOLE_FAMIGLIA: { match: RegExp; settimanePerCodice?: number; settimanePerLivello?: number; onda?: boolean }[] = [
   { match: /^Fascia Foundation$/i, settimanePerCodice: 2 },
-  { match: /pliometria/i, settimanePerLivello: 4 },
+  // Pliometria (Ste, 24/9): almeno 4 settimane in B, poi ONDA B → A → B → A; un "duro" sull'A → B per 2 settimane; scarico in B short
+  { match: /pliometria/i, settimanePerLivello: 4, onda: true },
 ];
+/** Settimane di richiamo in B dopo un "duro" sull'intensiva. */
+export const ONDA_RICHIAMO_DOPO_DURO = 2;
 const FAMIGLIE_ESCLUSE = new Set(['test', 'riscaldamento']);
 
 /** Voto seduta ≥ 8 = seduta dura per Ste, anche se il blocco è stato segnato "giusto". */
@@ -103,7 +106,7 @@ const regolaDi = (famiglia: string) => REGOLE_FAMIGLIA.find((r) => r.match.test(
  */
 export function calcolaMemoriaBlocchi(
   feedback: FeedbackPerMemoria[],
-  opt: { disponibili: Blocco[]; lunediCorrente: string; livello?: LivelloMinV2; livelli?: Partial<Record<QualitaV2, LivelloMinV2>> },
+  opt: { disponibili: Blocco[]; lunediCorrente: string; livello?: LivelloMinV2; livelli?: Partial<Record<QualitaV2, LivelloMinV2>>; isDeload?: boolean },
 ): MemoriaBlocchi {
   const disp = new Set(opt.disponibili.map((b) => b.id));
   const livAtleta = (q: QualitaV2) => LIVELLO_ORDINE[opt.livelli?.[q] ?? opt.livello ?? 'B'];
@@ -115,12 +118,16 @@ export function calcolaMemoriaBlocchi(
   const settimaneCodice = new Map<string, Set<string>>();   // chiave codice → settimane
   const settimaneLivello = new Map<string, Set<string>>();  // famiglia|livello → settimane
   const ultimoPerFamiglia = new Map<string, { blocco: Blocco; giudizio: Giudizio; data: string }>();
+  const storicoPerFamiglia = new Map<string, { blocco: Blocco; giudizio: Giudizio; settimana: string }[]>(); // dal più recente
   for (const f of righe) {
     const data = dataRoma(f.completed_at);
     const settimana = lunediDi(data);
     for (const fb of f.feedback_blocchi!) {
       const b = bloccoById(fb.id);
       if (!b || isParteAlta(b.id) || FAMIGLIE_ESCLUSE.has(b.qualita)) continue;
+      const giudizioRiga: Giudizio = f.rpe != null && f.rpe >= 8 ? 'duro' : fb.giudizio;
+      if (!storicoPerFamiglia.has(b.famiglia)) storicoPerFamiglia.set(b.famiglia, []);
+      storicoPerFamiglia.get(b.famiglia)!.push({ blocco: b, giudizio: giudizioRiga, settimana });
       const chiave = chiaveCodice(b.id);
       if (!settimaneCodice.has(chiave)) settimaneCodice.set(chiave, new Set());
       settimaneCodice.get(chiave)!.add(settimana);
@@ -145,6 +152,14 @@ export function calcolaMemoriaBlocchi(
     const disponibile = (b?: Blocco) => !!b && disp.has(b.id);
     let prossimo: Blocco | undefined; let passo: Passo = 'stesso'; let motivo = '';
     let fuoriLivello = false; let leggero = false;
+    // ONDA (pliometria): con blocchi B e A disponibili si alterna intensiva (A) e richiamo (B)
+    const onda = regola?.onda ? calcolaOnda(u, scala, storicoPerFamiglia.get(famiglia) ?? [], settimaneLivello.get(`${famiglia}|B`)?.size ?? 0, regola.settimanePerLivello ?? 0, disponibile, opt.lunediCorrente, !!opt.isDeload) : null;
+    if (onda) {
+      const gp = scala.find((x) => x.chiave === chiaveCodice(onda.prossimo.id))!;
+      const ammessiOnda = onda.passo === 'onda-b' && opt.isDeload ? [onda.prossimo.id] : [gp.full, gp.short].filter((b): b is Blocco => disponibile(b)).map((b) => b.id);
+      memoria[famiglia] = { famiglia, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo: onda.prossimo, ammessi: ammessiOnda.length ? ammessiOnda : [onda.prossimo.id], passo: onda.passo, motivo: onda.motivo };
+      continue;
+    }
     const stesso = (perche: string) => { prossimo = disponibile(u.blocco) ? u.blocco : disponibile(g.full) ? g.full : disponibile(g.short) ? g.short : undefined; passo = 'stesso'; motivo = perche; };
     const nSettCodice = settimaneCodice.get(chiave)?.size ?? 1;
     // L'ultimo blocco era un ASSAGGIO del livello sopra (blocco sopra il livello della sua qualità)?
@@ -203,6 +218,45 @@ export function calcolaMemoriaBlocchi(
   return memoria;
 }
 
+/** Settimane intere tra due lunedì (YYYY-MM-DD). */
+const settimaneTra = (da: string, a: string) => Math.round((new Date(`${a}T00:00:00Z`).getTime() - new Date(`${da}T00:00:00Z`).getTime()) / (7 * 86400000));
+
+/**
+ * Onda della pliometria (Ste, 24/9): dopo l'ingresso in B, si alterna una settimana intensiva (A) e una di richiamo (B).
+ * Ultimo A → B (il B più alto disponibile); ultimo B → A (dopo l'ultimo A fatto se era facile, lo stesso se giusto,
+ * il primo A se mai fatto), salvo un "duro" sull'A nelle ultime 2 settimane (→ ancora B) o meno di
+ * `settimanePerLivello` settimane in B. Deload: B in versione breve. Null se la famiglia non ha B e A disponibili.
+ */
+function calcolaOnda(
+  u: { blocco: Blocco; giudizio: Giudizio }, scala: Gradino[], storico: { blocco: Blocco; giudizio: Giudizio; settimana: string }[],
+  settimaneInB: number, settimanePerLivello: number, disponibile: (b?: Blocco) => boolean, lunediCorrente: string, isDeload: boolean,
+): { prossimo: Blocco; passo: Passo; motivo: string } | null {
+  const gradiniB = scala.filter((g) => g.livello === LIVELLO_ORDINE.B && (disponibile(g.full) || disponibile(g.short)));
+  const gradiniA = scala.filter((g) => g.livello > LIVELLO_ORDINE.B && (disponibile(g.full) || disponibile(g.short)));
+  if (!gradiniB.length || !gradiniA.length) return null;
+  const pick = (g: Gradino, short = false): Blocco => (short && disponibile(g.short) ? g.short! : disponibile(g.full) ? g.full! : g.short!);
+  const topB = gradiniB[gradiniB.length - 1];
+  const eraA = (b: Blocco) => b.livello !== null && LIVELLO_ORDINE[b.livello] > LIVELLO_ORDINE.B;
+  const ultimoA = storico.find((x) => eraA(x.blocco));
+  if (isDeload) return { prossimo: pick(topB, true), passo: 'onda-b', motivo: 'settimana di scarico: pliometria in B, versione breve' };
+  if (eraA(u.blocco)) {
+    return u.giudizio === 'duro'
+      ? { prossimo: pick(topB), passo: 'onda-b', motivo: `l'intensiva è stata dura: ${ONDA_RICHIAMO_DOPO_DURO} settimane di richiamo in B` }
+      : { prossimo: pick(topB), passo: 'onda-b', motivo: 'onda: dopo la settimana intensiva, una di richiamo in B' };
+  }
+  // ultimo era B
+  if (ultimoA?.giudizio === 'duro' && settimaneTra(ultimoA.settimana, lunediCorrente) <= ONDA_RICHIAMO_DOPO_DURO)
+    return { prossimo: pick(topB), passo: 'onda-b', motivo: `richiamo in B dopo l'intensiva dura (${ONDA_RICHIAMO_DOPO_DURO} settimane)` };
+  if (settimaneInB < settimanePerLivello)
+    return { prossimo: pick(topB), passo: 'onda-b', motivo: `richiamo in B: servono ${settimanePerLivello} settimane in B prima dell'intensiva (fatte ${settimaneInB})` };
+  let gA = gradiniA[0];
+  if (ultimoA) {
+    const posA = gradiniA.findIndex((g) => g.chiave === chiaveCodice(ultimoA.blocco.id));
+    if (posA >= 0) gA = ultimoA.giudizio === 'facile' && gradiniA[posA + 1] ? gradiniA[posA + 1] : gradiniA[posA];
+  }
+  return { prossimo: pick(gA), passo: 'onda-a', motivo: 'onda: settimana intensiva (A)' };
+}
+
 /** Il blocco è ammesso per la sua famiglia? (nessuna memoria = tutto ammesso) */
 export function ammessoDallaMemoria(memoria: MemoriaBlocchi, b: Blocco): boolean {
   const m = memoria[b.famiglia];
@@ -229,6 +283,8 @@ export function notaPasso(passo: Passo): string | null {
     case 'indietro': return 'un passo indietro';
     case 'assaggio': return 'prova del livello sopra';
     case 'promosso': return 'livello sopra, dose piena';
+    case 'onda-a': return 'settimana intensiva';
+    case 'onda-b': return 'settimana di richiamo';
     default: return null;
   }
 }
