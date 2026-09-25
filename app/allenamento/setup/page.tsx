@@ -8,7 +8,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
-import { AppLoader, BackButton, Button, Card, Chip, Field, Input, SectionTitle } from '@/components/ui';
+import { AppLoader, BackButton, Button, Card, Chip, Field, Input, SectionTitle, RpeScale } from '@/components/ui';
 import type { TrainingState } from '@/app/allenamento/page';
 
 // Dal /api/training/state (stessa chiamata dell'hub) servono solo setup, calendario, tetti e squadra
@@ -280,15 +280,7 @@ export default function SetupPage() {
                     return (
                       <Card key={d} variant="raised" padding="sm">
                         <p className="text-body font-bold text-app mb-2">{DAY_NAMES[d]}{state.calendario?.matchDays.includes(d) ? ' · anche partita' : ''}</p>
-                        <p className="text-caption text-muted mb-1.5">Sforzo{g.rpe !== null ? ` · ${g.rpe}/10` : ''}</p>
-                        <div className="grid grid-cols-5 gap-1.5 mb-3">
-                          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                            <button key={n} type="button" onClick={() => setG({ ...g, rpe: g.rpe === n ? null : n })} aria-pressed={g.rpe === n}
-                              className={`h-11 rounded-btn text-body-sm font-semibold tabular-nums border transition-colors ${g.rpe === n ? 'bg-forest-500 border-forest-500 text-white' : g.rpe !== null && n < g.rpe ? 'bg-forest-500/25 border-forest-500/30 text-forest-300' : 'bg-surface border-divider text-muted'}`}>
-                              {n}
-                            </button>
-                          ))}
-                        </div>
+                        <RpeScale value={g.rpe} onChange={(n) => setG({ ...g, rpe: g.rpe === n ? null : n })} tipo="sforzo" ariaPrefix="Sforzo" label="Sforzo di solito" className="mb-3" />
                         <p className="text-caption text-muted mb-1.5">Su cosa lavorate</p>
                         <div className="flex flex-wrap gap-2">
                           {SQUADRA_QUALITA.map((q) => {

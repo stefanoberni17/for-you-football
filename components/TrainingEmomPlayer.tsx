@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
-import { Check, Info, Play, Square } from 'lucide-react';
-import { Button, Card } from '@/components/ui';
+import { Check, Info, Play, Square, X } from 'lucide-react';
+import { Button, Card, RpeScale } from '@/components/ui';
 
 /**
  * EMOM a rotazione (Ste, 17/9/2026): ogni minuto parte un esercizio diverso, poche
@@ -20,9 +20,14 @@ export interface EmomItem {
   nota?: string;
 }
 
-const SCELTE_RPE = [['Facile', 3], ['Giusta', 6], ['Durissima', 9]] as const;
-const RPE_DETTAGLIO_KEY = 'player.rpeDettaglio'; // stessa preferenza del player: scala 1-10 predefinita
 const MINUTO_MS = 60_000;
+
+/** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
+function youtubeEmbedUrl(url?: string): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+}
 const nowMs = () => Date.now();
 
 /** Sequenza dei minuti: giro dopo giro, un esercizio per minuto (chi ha meno giri esce prima). */
@@ -48,8 +53,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   const [finito, setFinito] = useState(false);
   const [rpe, setRpe] = useState<number | null>(null);
   const [showDesc, setShowDesc] = useState(false);
-  const [dettaglio, setDettaglio] = useState(() => { try { return typeof window === 'undefined' || localStorage.getItem(RPE_DETTAGLIO_KEY) !== '0'; } catch { return true; } });
-  const toggleDettaglio = () => { const next = !dettaglio; setDettaglio(next); try { localStorage.setItem(RPE_DETTAGLIO_KEY, next ? '1' : '0'); } catch { /* no-op */ } };
+  const [showVideo, setShowVideo] = useState(false);
   const startRef = useRef<number | null>(null);      // timestamp di partenza del circuito
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const minutoRef = useRef(0);
@@ -66,7 +70,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
       return;
     }
     if (m !== minutoRef.current) {
-      minutoRef.current = m; setMinuto(m); setShowDesc(false);
+      minutoRef.current = m; setMinuto(m); setShowDesc(false); setShowVideo(false);
       try { navigator.vibrate?.([200, 100, 200]); } catch { /* no-op */ }
     }
     setLeft(Math.max(0, Math.ceil((MINUTO_MS - (trascorsi % MINUTO_MS)) / 1000)));
@@ -111,9 +115,13 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
     : `${it.quantita} ${it.quantita === 1 ? 'ripetizione' : 'ripetizioni'} fatte bene${perLato ? ', alternando destra e sinistra' : ''}, poi riposa fino allo scadere del minuto`;
 
   if (!item || !ex) return null;
+  const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);
+  const haVideo = !!ex.videoUrl && (!!ex.videoMp4 || !!embed);
+  // Slot fisso in fondo: sticky a bottom-0 (lo scroller non ha padding in basso: vedi TrainingSessionPlayer)
+  const SLOT = 'mt-auto sticky bottom-0 -mx-4 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-app-bg/92 backdrop-blur';
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4 pb-tabbar">
+    <div className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4">
       {/* Il minuto: grande, sempre in cima */}
       <Card variant="raised" className="text-center mb-4">
         <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">
@@ -138,14 +146,34 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
           <h2 className="font-display text-title-1 font-bold text-app leading-tight">{ex.nome}</h2>
           <p className="text-body-lg font-semibold text-forest-400 mt-1">{cosaFare(item, unita, ex.perLato)}</p>
           {item.nota && <p className="text-body-sm text-app mt-2 leading-snug">{item.nota}</p>}
-          {ex.descrizione && (
-            <div className="mt-3">
-              <Button variant="secondary" size="sm" icon={<Info size={16} />} onClick={() => setShowDesc(!showDesc)}>
-                {showDesc ? 'Nascondi' : 'Come si esegue'}
-              </Button>
-              {showDesc && (
-                <p className="text-body text-muted mt-3 leading-relaxed bg-surface-2 border border-divider rounded-btn px-3.5 py-3">{ex.descrizione}</p>
+          {(ex.descrizione || haVideo) && (
+            <div className="mt-3 flex gap-2 flex-wrap">
+              {ex.descrizione && (
+                <Button variant="secondary" size="sm" icon={<Info size={16} />} aria-expanded={showDesc} onClick={() => setShowDesc(!showDesc)}>
+                  {showDesc ? 'Nascondi' : 'Come si esegue'}
+                </Button>
               )}
+              {haVideo && (
+                <Button variant="secondary" size="sm" icon={showVideo ? <X size={16} /> : <Play size={16} />} aria-expanded={showVideo} onClick={() => setShowVideo(!showVideo)}>
+                  {showVideo ? 'Chiudi il video' : 'Guarda il video'}
+                </Button>
+              )}
+            </div>
+          )}
+          {showDesc && ex.descrizione && (
+            <p className="text-body text-muted mt-3 leading-relaxed bg-surface-2 border border-divider rounded-btn px-3.5 py-3">{ex.descrizione}</p>
+          )}
+          {showVideo && haVideo && (
+            <div className="mt-3 relative rounded-btn overflow-hidden bg-black" style={{ height: 'clamp(220px, 40vh, 360px)' }}>
+              {ex.videoMp4 ? (
+                <video src={ex.videoUrl} controls playsInline className="w-full h-full object-contain" />
+              ) : (
+                <iframe src={embed!} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
+              )}
+              <button type="button" onClick={() => setShowVideo(false)} aria-label="Chiudi il video"
+                className="absolute top-2 right-2 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center">
+                <X size={20} />
+              </button>
             </div>
           )}
           {prossimo && prossimoEx && (
@@ -154,39 +182,12 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
         </Card>
       ) : (
         <Card className="mb-4">
-          <p className="text-label font-semibold text-app mb-2">Com&apos;è andato l&apos;EMOM?</p>
-          {dettaglio ? (
-            <>
-              <div className="grid grid-cols-5 gap-2">
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                  <button key={n} type="button" aria-label={`Difficoltà ${n}`} aria-pressed={rpe === n}
-                    onClick={() => { setRpe(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
-                    className={`h-12 rounded-btn text-body font-bold border tabular-nums transition-colors ${rpe === n ? 'bg-forest-500 border-forest-500 text-white' : 'bg-surface-2 border-divider text-app'}`}>
-                    {n}
-                  </button>
-                ))}
-              </div>
-              <p className="text-caption text-muted text-center mt-1.5">1-3 facile · 5 impegnativa · 7-8 dura · 10 al limite</p>
-            </>
-          ) : (
-            <>
-              <div className="grid grid-cols-3 gap-2">
-                {SCELTE_RPE.map(([label, n]) => (
-                  <Button key={label} size="lg" variant={rpe === n ? 'primary' : 'secondary'} aria-pressed={rpe === n} className="px-2"
-                    onClick={() => { setRpe(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}>
-                    {label}
-                  </Button>
-                ))}
-              </div>
-              <p className="text-caption text-muted text-center mt-1.5">= RPE 3 / 6 / 9</p>
-            </>
-          )}
-          <div className="-ml-3 mt-1"><Button variant="ghost" size="sm" onClick={toggleDettaglio}>{dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}</Button></div>
+          <RpeScale value={rpe} onChange={setRpe} tipo="serie" ariaPrefix="EMOM" label="Com'è andato l'EMOM?" />
         </Card>
       )}
 
       {/* Slot fisso in fondo */}
-      <div className="mt-auto sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] -mx-4 px-4 pt-3 pb-1 bg-app-bg/90 backdrop-blur">
+      <div className={SLOT}>
         {finito ? (
           <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={() => onDone(rpe, giriFatti())}>Vai avanti</Button>
         ) : running ? (

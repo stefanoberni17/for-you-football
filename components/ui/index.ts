@@ -11,3 +11,5 @@ export { default as Sheet } from './Sheet';
 export { default as AppLoader } from './AppLoader';
 export { Field, Input, Textarea, Select } from './Field';
 export { default as Badge } from './Badge';
+export { default as RpeScale, rpeFrase } from './RpeScale';
+export type { RpeTipo } from './RpeScale';

@@ -9,7 +9,7 @@ import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play } from 'lucide-react';
-import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, SectionTitle, Textarea } from '@/components/ui';
+import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
 
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero'; lato_extra?: 'dx' | 'sx'
   per_lato?: boolean;
@@ -27,9 +27,6 @@ const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = 
 };
 type Giudizio = 'facile' | 'ok' | 'duro';
 const GIUDIZI: { key: Giudizio; label: string }[] = [{ key: 'facile', label: 'Facile' }, { key: 'ok', label: 'Giusto' }, { key: 'duro', label: 'Duro' }];
-const rpeCls = (n: number, sel: number | null) => sel === n
-  ? (n <= 3 ? 'bg-success text-white border-success' : n <= 6 ? 'bg-forest-500 text-white border-forest-500' : n <= 8 ? 'bg-warning text-app border-warning' : 'bg-danger text-white border-danger')
-  : 'bg-surface-2 text-app border-divider';
 
 export default function SessionePage() {
   const router = useRouter();
@@ -140,13 +137,11 @@ export default function SessionePage() {
     : sessione.items;
 
   if (phase === 'playing') {
-    // Altezza fissa + scroll interno al player: con min-h-screen lo scroll si
-    // appoggiava al body, che su PWA iOS si blocca (stesso bug risolto su /chat).
-    // 100dvh, non 100vh (Ste, 21/9: "taglia qualche pulsante"): su Safari iOS con la barra del
-    // browser 100vh sfora sotto il bordo visibile e la riga sotto la CTA finiva dietro la tab bar.
-    // Stessa utility della chat (h-dvh-screen: 100vh con ripiego, 100dvh dove esiste).
+    // Layer FISSO a schermo intero sopra la tab bar (z-[60] > z-50): niente 100vh/100dvh da azzeccare,
+    // niente doppia safe-area, la CTA sta sempre sopra il bordo. (Prima: main 100dvh con la tab bar
+    // sotto e uno slot sticky dentro uno scroller con padding: i pulsanti finivano tagliati, Ste 21 e 25/9.)
     return (
-      <main className="bg-app flex flex-col overflow-hidden h-dvh-screen" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+      <div className="fixed inset-0 z-[60] bg-app flex flex-col" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }} role="dialog" aria-modal="true" aria-label="Seduta in corso">
         <TrainingSessionPlayer
           items={itemsEffettivi}
           titolo={scarico ? `${sessione.titolo} (scarico)` : sessione.titolo}
@@ -173,7 +168,7 @@ export default function SessionePage() {
             setPhase('preview');
           }}
         />
-      </main>
+      </div>
     );
   }
 
@@ -192,29 +187,17 @@ export default function SessionePage() {
             <>
               <h1 className="font-display text-title-1 font-bold text-app mb-2">Com&apos;è andata?</h1>
               <p className="text-body text-muted mb-5">Venti secondi. Serve a costruire la settimana prossima.</p>
-              <div className="text-left mb-5">
-                <p className="text-label font-semibold text-app mb-2">La seduta, da 1 a 10</p>
-                <div className="grid grid-cols-5 gap-2">
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                    <button key={n} type="button" onClick={() => { setRpeSeduta(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
-                      aria-label={`Voto ${n}`} aria-pressed={rpeSeduta === n}
-                      className={`h-12 rounded-btn text-body font-bold border tabular-nums transition-colors ${rpeCls(n, rpeSeduta)}`}>
-                      {n}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-caption text-muted text-center mt-1.5">1-3 facile · 5 giusta · 7-8 dura · 10 al limite</p>
-              </div>
+              <RpeScale value={rpeSeduta} onChange={setRpeSeduta} tipo="seduta" ariaPrefix="Seduta" label="La seduta, da 1 a 10" className="text-left mb-5" />
               {(sessione?.blocchi?.length ?? 0) > 0 && (
                 <div className="text-left mb-5">
                   <p className="text-label font-semibold text-app mb-2">Blocco per blocco</p>
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     {sessione!.blocchi!.map((b) => (
-                      <div key={b.id} className="flex items-center justify-between gap-3">
-                        <p className="text-body text-app min-w-0 truncate">{nomeBloccoAtleta(b.nome)}</p>
-                        <div className="flex gap-1.5 shrink-0">
+                      <div key={b.id}>
+                        <p className="text-body font-semibold text-app leading-snug mb-1.5">{nomeBloccoAtleta(b.nome)}</p>
+                        <div className="grid grid-cols-3 gap-2">
                           {GIUDIZI.map((g) => (
-                            <Chip key={g.key} selected={giudizi[b.id] === g.key} onClick={() => setGiudizi((prev) => ({ ...prev, [b.id]: g.key }))}>{g.label}</Chip>
+                            <Chip key={g.key} selected={giudizi[b.id] === g.key} className="w-full" onClick={() => setGiudizi((prev) => ({ ...prev, [b.id]: g.key }))}>{g.label}</Chip>
                           ))}
                         </div>
                       </div>
@@ -379,7 +362,7 @@ export default function SessionePage() {
             </Button>
           )}
           {isFisica && (
-            <p className="text-caption text-muted text-center mt-2 truncate">Se un esercizio fa male, fermati: il dolore non si allena.</p>
+            <p className="text-caption text-muted text-center mt-2">Se un esercizio fa male, fermati: il dolore non si allena.</p>
           )}
         </div>
       </div>

@@ -7,11 +7,8 @@ import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
-import { Badge, Button, Card, Chip, Input } from '@/components/ui';
+import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
 
-// Feedback della serie a 3 scelte (recupero: sudati, con una mano): stessa scala RPE 1-10 dei log
-const SCELTE_RPE = [['Facile', 3], ['Giusta', 6], ['Durissima', 9]] as const;
-const RPE_DETTAGLIO_KEY = 'player.rpeDettaglio';
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
   sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero',
 };
@@ -90,8 +87,6 @@ export default function TrainingSessionPlayer({
   const [fattoTxt, setFattoTxt] = useState('');
   const [caricoTxt, setCaricoTxt] = useState('');
   const [logSaved, setLogSaved] = useState(false);
-  // Scala 1-10 predefinita (Ste, 21/9: "era meglio la scala 1-10 come prima"); le 3 scelte restano un'opzione (localStorage)
-  const [dettaglio, setDettaglio] = useState(() => { try { return typeof window === 'undefined' || localStorage.getItem(RPE_DETTAGLIO_KEY) !== '0'; } catch { return true; } });
   const [sensazione, setSensazione] = useState<string | null>(null);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
@@ -108,7 +103,10 @@ export default function TrainingSessionPlayer({
     markSessionActive(true);
     const onVis = () => { if (document.visibilityState === 'visible') { restTickRef.current?.(); execTickRef.current?.(); } };
     document.addEventListener('visibilitychange', onVis);
-    return () => { document.removeEventListener('visibilitychange', onVis); markSessionActive(false); };
+    // Il player è un layer fisso a schermo intero (sopra la tab bar): la pagina sotto non deve scorrere
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('visibilitychange', onVis); markSessionActive(false); document.body.style.overflow = prevOverflow; };
   }, []);
   const latoRef = useRef<'dx' | 'sx'>(initialProgress?.lato ?? 'dx');
   useWakeLock(true);
@@ -300,34 +298,27 @@ export default function TrainingSessionPlayer({
   }
 
   const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);
-  const videoVisibile = showVideo && !!ex.videoUrl && (!!ex.videoMp4 || !!embed);
+  const haVideo = !!ex.videoUrl && (!!ex.videoMp4 || !!embed);
+  const videoVisibile = showVideo && haVideo;
   const blocco = item.blocco_id ? blocchi?.find((b) => b.id === item.blocco_id) : undefined;
   const latoLabel = lato === 'dx' ? 'destro' : 'sinistro';
-  // Parametri dell'esercizio: "3 × 12 · recupero 90"" (per lato, carico, serie extra sul lato debole)
+  // Parametri dell'esercizio su due righe: "3 × 12 per lato · 24 kg" (grande) e "+1 sinistro · recupero 90"" (piccola)
   const parametri = isEmom
     ? `EMOM · ${item.serie} ${item.serie === 1 ? 'giro' : 'giri'} · ${unitaLabel(unita, item.quantita)} al minuto`
-    : [
-      `${item.serie} × ${unitaLabel(unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`,
-      extraLato ? `+1 ${item.lato_extra === 'sx' ? 'sinistro' : 'destro'}` : '',
-      item.carico_kg ? `${item.carico_kg} kg` : '',
-      `recupero ${item.recupero_sec}"`,
-    ].filter(Boolean).join(' · ');
+    : [`${item.serie} × ${unitaLabel(unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`, item.carico_kg ? `${item.carico_kg} kg` : ''].filter(Boolean).join(' · ');
+  const parametriSotto = isEmom ? '' : [extraLato ? `+1 serie a ${item.lato_extra === 'sx' ? 'sinistra' : 'destra'}` : '', `recupero ${fmtSec(item.recupero_sec)}`].filter(Boolean).join(' · ');
   const ctaLabel = isEmom ? 'EMOM finito, vai avanti'
     : isPerLato ? (isExtra || (lato === 'sx' && serieFatte + 1 >= totalSerie) ? 'Esercizio completato' : lato === 'dx' ? 'Lato destro fatto' : 'Lato sinistro fatto')
     : serieFatte + 1 >= totalSerie ? 'Esercizio completato' : 'Serie fatta';
-  const rpeCls = (n: number) => rpe === n
-    ? (n >= 9 ? 'bg-danger border-danger text-white' : n >= 7 ? 'bg-warning border-warning text-app-bg' : 'bg-forest-500 border-forest-500 text-white')
-    : 'bg-surface-2 border-divider text-muted';
-  const toggleDettaglio = () => {
-    const next = !dettaglio;
-    setDettaglio(next);
-    try { localStorage.setItem(RPE_DETTAGLIO_KEY, next ? '1' : '0'); } catch { /* no-op */ }
-  };
   const clearRest = () => { if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null; };
-  const fmtSec = (sec: number) => (sec >= 60 ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}` : `${sec}"`);
+  function fmtSec(sec: number) { return sec >= 60 ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}` : `${sec}"`; }
+  // Slot fisso in fondo: sticky a bottom-0 dentro lo scroller (che NON ha padding in basso: un elemento
+  // sticky non può entrare nel padding del suo contenitore, e prima la CTA galleggiava 72 px più in alto
+  // con il contenuto che finiva dietro la tab bar). La safe-area la mette lo slot stesso.
+  const SLOT = 'mt-auto sticky bottom-0 -mx-4 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-app-bg/92 backdrop-blur';
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="flex flex-col h-full min-h-0">
       {/* Header: progresso item + chiudi */}
       <div className="flex items-center justify-between px-4 py-2">
         <div className="text-caption text-muted font-medium truncate">{titolo} · esercizio {itemIdx + 1}/{items.length}</div>
@@ -336,25 +327,25 @@ export default function TrainingSessionPlayer({
           <X size={20} />
         </button>
       </div>
-      <div className="flex gap-1 px-4 mb-4" aria-hidden>
+      <div className="flex gap-1 px-4 mb-3" aria-hidden>
         {items.map((_, i) => (
           <div key={i} className={`h-1.5 flex-1 rounded-full ${i < itemIdx ? 'bg-accent-glow' : i === itemIdx ? 'bg-accent-glow/50' : 'bg-surface-2'}`} />
         ))}
       </div>
 
-      {/* Corpo scrollabile: la CTA principale è sticky in fondo (mt-auto: in fondo anche se il contenuto è corto) */}
       {isEmom ? (
         <TrainingEmomPlayer key={itemIdx} items={emomGruppo} bloccoNome={blocco ? nomeBloccoAtleta(blocco.nome) : undefined}
           onDone={emomDone} onSkip={() => avanza(emomGruppo.length)} />
       ) : (
-      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4 pb-tabbar">
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4">
         {/* Esercizio corrente */}
-        <Card className="mb-4">
+        <Card className="mb-3">
           {blocco && (
             <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{nomeBloccoAtleta(blocco.nome)}</p>
           )}
           <h2 className="font-display text-title-1 font-bold text-app leading-tight">{ex.nome}</h2>
           <p className="text-body-lg font-semibold tabular-nums text-forest-400 mt-1">{parametri}</p>
+          {parametriSotto && <p className="text-body-sm text-muted tabular-nums">{parametriSotto}</p>}
           {item.nota && (
             <div className="mt-3 flex items-start gap-2">
               <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
@@ -366,16 +357,16 @@ export default function TrainingSessionPlayer({
           {!item.nota && ex.note && (
             <p className="text-body-sm text-muted mt-2 leading-relaxed">{ex.note}</p>
           )}
-          {(ex.descrizione || (ex.videoUrl && !videoVisibile)) && (
+          {(ex.descrizione || haVideo) && (
             <div className="mt-3 flex gap-2 flex-wrap">
               {ex.descrizione && (
-                <Button variant="secondary" size="sm" icon={<Info size={16} />} onClick={() => setShowDesc(!showDesc)}>
+                <Button variant="secondary" size="sm" icon={<Info size={16} />} aria-expanded={showDesc} onClick={() => setShowDesc(!showDesc)}>
                   {showDesc ? 'Nascondi' : 'Come si esegue'}
                 </Button>
               )}
-              {ex.videoUrl && !videoVisibile && (
-                <Button variant="secondary" size="sm" icon={<Play size={16} />} onClick={() => setShowVideo(true)}>
-                  Guarda il video
+              {haVideo && (
+                <Button variant="secondary" size="sm" icon={videoVisibile ? <X size={16} /> : <Play size={16} />} aria-expanded={videoVisibile} onClick={() => setShowVideo(!showVideo)}>
+                  {videoVisibile ? 'Chiudi il video' : 'Guarda il video'}
                 </Button>
               )}
             </div>
@@ -384,24 +375,26 @@ export default function TrainingSessionPlayer({
             <p className="text-body text-muted mt-3 leading-relaxed bg-surface-2 border border-divider rounded-btn px-3.5 py-3">{ex.descrizione}</p>
           )}
           {videoVisibile && (
-            <div className="mt-3">
+            <div className="mt-3 relative rounded-btn overflow-hidden bg-black" style={{ height: 'clamp(220px, 40vh, 360px)' }}>
               {ex.videoMp4 ? (
-                <video src={ex.videoUrl} controls playsInline className="w-full rounded-btn bg-black" style={{ maxHeight: 380 }} />
+                <video src={ex.videoUrl} controls playsInline className="w-full h-full object-contain" />
               ) : (
-                <div className="rounded-btn overflow-hidden" style={{ aspectRatio: '9/14', maxHeight: 380 }}>
-                  <iframe src={embed!} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
-                </div>
+                <iframe src={embed!} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
               )}
+              <button type="button" onClick={() => setShowVideo(false)} aria-label="Chiudi il video"
+                className="absolute top-2 right-2 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center">
+                <X size={20} />
+              </button>
             </div>
           )}
         </Card>
 
         {restLeft !== null ? (
           <>
-            {/* Recupero: timer grande + feedback a 3 scelte */}
+            {/* Recupero: timer grande + feedback della serie */}
             <Card variant="raised" className="text-center">
               <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">Recupero</p>
-              <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">{restLeft}&quot;</p>
+              <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">{fmtSec(restLeft)}</p>
               <p className="text-body text-muted mt-1">{restIsLast ? 'Poi: prossimo esercizio' : `Poi: serie ${serieFatte + 1} di ${totalSerie}`}</p>
             </Card>
 
@@ -411,33 +404,7 @@ export default function TrainingSessionPlayer({
                   <p className="text-label font-semibold text-app">Com&apos;è andata la serie {pending.serie}?</p>
                   {logSaved && <span className="text-caption text-forest-400 font-semibold inline-flex items-center gap-1"><Check size={14} aria-hidden /> salvato</span>}
                 </div>
-                {dettaglio ? (
-                  <>
-                    <div className="grid grid-cols-5 gap-2">
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                        <button key={n} type="button" onClick={() => { setRpe(n); sendLog({ rpe: n }); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}
-                          aria-label={`Difficoltà ${n}`} aria-pressed={rpe === n}
-                          className={`h-12 rounded-btn text-body font-bold border tabular-nums transition-colors ${rpeCls(n)}`}>
-                          {n}
-                        </button>
-                      ))}
-                    </div>
-                    <p className="text-caption text-muted text-center mt-1.5">1-3 facile · 5 impegnativa · 7-8 dura · 10 al limite</p>
-                  </>
-                ) : (
-                  <>
-                    <div className="grid grid-cols-3 gap-2">
-                      {SCELTE_RPE.map(([label, n]) => (
-                        <Button key={label} size="lg" variant={rpe === n ? 'primary' : 'secondary'} aria-pressed={rpe === n}
-                          className="px-2"
-                          onClick={() => { setRpe(n); sendLog({ rpe: n }); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}>
-                          {label}
-                        </Button>
-                      ))}
-                    </div>
-                    <p className="text-caption text-muted text-center mt-1.5">= RPE 3 / 6 / 9</p>
-                  </>
-                )}
+                <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo="serie" ariaPrefix="Serie" />
                 {/* Reps fatte e kg SEMPRE visibili (Ste, 22/9: "se ho fatto fare archer push up 8 reps e uno ne fa 10 facili
                     lo deve considerare per il prossimo"): prefillati col previsto, si cambiano solo se è andata diversa */}
                 <div className="grid grid-cols-2 gap-3 mt-3">
@@ -446,25 +413,14 @@ export default function TrainingSessionPlayer({
                     <Input id="player-fatte" type="text" inputMode="decimal" value={fattoTxt} onChange={(e) => setFattoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
                       onBlur={() => sendLog({})} className="text-center !text-title-2 font-display font-bold tabular-nums" />
                   </div>
-                  {pending.carico !== undefined ? (
+                  {pending.carico !== undefined && (
                     <div>
                       <label htmlFor="player-kg" className="block text-label font-semibold text-app mb-1.5">Carico (kg)</label>
                       <Input id="player-kg" type="text" inputMode="decimal" value={caricoTxt} onChange={(e) => setCaricoTxt(e.target.value.replace(/[^0-9.,]/g, ''))}
                         onBlur={() => sendLog({})} className="text-center !text-title-2 font-display font-bold tabular-nums" />
                     </div>
-                  ) : (
-                    <div className="flex items-end">
-                      <Button variant="ghost" size="sm" className="-ml-3" onClick={toggleDettaglio}>
-                        {dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}
-                      </Button>
-                    </div>
                   )}
                 </div>
-                {pending.carico !== undefined && (
-                  <Button variant="ghost" size="sm" className="-ml-3 mt-1" onClick={toggleDettaglio}>
-                    {dettaglio ? 'Solo tre scelte' : 'Scala 1-10'}
-                  </Button>
-                )}
 
                 {isPerLato && pending.lato === '' && (
                   <div className="mt-4">
@@ -498,14 +454,14 @@ export default function TrainingSessionPlayer({
             )}
 
             {/* Slot fisso in fondo: qui il pollice trova sempre il bottone */}
-            <div className="mt-auto sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] -mx-4 px-4 pt-3 pb-1 bg-app-bg/90 backdrop-blur">
+            <div className={SLOT}>
               <Button variant="secondary" size="lg" fullWidth icon={<Pause size={18} />}
                 onClick={() => { clearRest(); if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}>
                 {restIsLast ? 'Vai al prossimo' : 'Salta il recupero'}
               </Button>
               {restIsLast && (
                 <div className="mt-2 text-center">
-                  <Button variant="secondary" size="sm"
+                  <Button variant="ghost" size="sm"
                     onClick={() => { setRestLeft(null); clearRest(); setRestIsLast(false); restIsLastRef.current = false; setSerieFatte(Math.max(0, serieFatte - 1)); setPending(null); }}>
                     Non era l&apos;ultima: torna alla serie
                   </Button>
@@ -517,12 +473,10 @@ export default function TrainingSessionPlayer({
           <>
             {/* Serie in corso */}
             <div className="text-center">
-              {!isEmom && (
-                <p className="text-body text-muted">
-                  {isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
-                  {isPerLato && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
-                </p>
-              )}
+              <p className="text-body text-muted">
+                {isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
+                {isPerLato && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
+              </p>
               {isTimed && (
                 execLeft !== null ? (
                   <Card variant="raised" className="mt-3 text-center">
@@ -541,13 +495,13 @@ export default function TrainingSessionPlayer({
             </div>
 
             {/* Slot fisso in fondo: la CTA principale sempre nello stesso punto */}
-            <div className="mt-auto sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] -mx-4 px-4 pt-3 pb-1 bg-app-bg/90 backdrop-blur">
-              <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={isEmom ? nextItem : handleSerieDone}>
+            <div className={SLOT}>
+              <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={handleSerieDone}>
                 {ctaLabel}
               </Button>
-              <div className="mt-2 flex items-center justify-between gap-6">
+              <div className="mt-2 grid grid-cols-2 gap-2">
                 {itemIdx > 0 ? (
-                  <Button variant="ghost" size="sm" icon={<ChevronLeft size={16} />} onClick={prevItem} className="-ml-3">Esercizio precedente</Button>
+                  <Button variant="ghost" size="sm" icon={<ChevronLeft size={16} />} onClick={prevItem}>Precedente</Button>
                 ) : <span />}
                 <Button variant="danger" size="sm" iconRight={<ChevronRight size={16} />} onClick={nextItem}>Salta esercizio</Button>
               </div>
