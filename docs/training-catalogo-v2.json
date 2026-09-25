@@ -7319,5 +7319,55 @@
   "qualita_secondaria": null,
   "sottogruppo": "tirata orizzontale",
   "descrizione": "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso il tavolo e scendi controllato. Piedi più vicini = più facile."
+ },
+ {
+  "attrezzatura": "corpo libero",
+  "difficolta": 1,
+  "livello_min": "B",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 25/9/2026, riscaldamento velocità)",
+  "azione": "aggiunto 25/9/2026",
+  "nome_everfit": null,
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "riscaldamento velocità",
+  "finestra_partita": null,
+  "id": "risc-corsa-lenta",
+  "nome": "Corsa lenta",
+  "qualita": "riscaldamento",
+  "unita": "minuti",
+  "tags": [
+   "riscaldamento",
+   "corsa"
+  ],
+  "descrizione": "Corsetta leggera per i minuti indicati: ritmo da chiacchiera, respiro col naso se ci riesci. Serve a scaldare, non ad allenare."
+ },
+ {
+  "attrezzatura": "corpo libero",
+  "difficolta": 1,
+  "livello_min": "B",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 25/9/2026, riscaldamento velocità)",
+  "azione": "aggiunto 25/9/2026",
+  "nome_everfit": null,
+  "note": "Video di riscaldamento da registrare (sul canale non c'è).",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "riscaldamento velocità",
+  "finestra_partita": null,
+  "id": "risc-mobilita-libera",
+  "nome": "Mobilità libera",
+  "qualita": "riscaldamento",
+  "unita": "minuti",
+  "tags": [
+   "riscaldamento",
+   "mobilità"
+  ],
+  "descrizione": "Per i minuti indicati muovi caviglie, anche, bacino e spalle: circonduzioni delle caviglie, slanci della gamba avanti e di lato, affondi camminati con rotazione del busto, ginocchia al petto, cerchi con le braccia. Ampiezza crescente, mai forzata."
  }
 ]

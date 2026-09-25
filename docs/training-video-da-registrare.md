@@ -42,6 +42,8 @@ Totale: 80 esercizi. Rigenerare la lista: vedi sezione in fondo.
 | Palleggi Freestyle - Tecnica | B | 20 | Fascia e tecnica Funzionale A2 | ✍️ |
 | Fascia adhesion tennis ball | B | 17 | Fascia Foundation 2 | ✍️ |
 | Allungo riscaldamento | B | 7 | Metabolico A1 | ✍️ |
+| Mobilità libera (riscaldamento velocità, 25/9: caviglie, anche, bacino, spalle) | B | 1 | Riscaldamento velocità | ✍️ |
+| Corsa lenta (riscaldamento velocità) | B | 1 | Riscaldamento velocità | ✍️ |
 | Fascia Standing Meditation | B | 7 | Fascia Foundation 2 | ✍️ |
 | Calves Foam Roll | B | 1 | Fascia Training - Rolling and fascia adhesion | ✍️ |
 | Hamstring Foam Roll | B | 1 | Fascia Training - Rolling and fascia adhesion | ✍️ |

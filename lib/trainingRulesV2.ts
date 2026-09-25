@@ -83,6 +83,29 @@ export const RSA_BLOCCO = { serie: 4, recuperoBloccoMinSec: 120, recuperoBloccoM
 export const PLIO_INTENSIVA_CONTATTI = { min: 30, max: 100 } as const; // max = livello B (retrocompatibilità)
 export const PLIO_INTENSIVA_CONTATTI_MAX: Record<LivelloMinV2, number> = { B: 100, A: 160, PRO: 200 };
 
+/**
+ * Sprint MASSIMALI per seduta (Ste, 25/9): 6-8, 6 se nella settimana c'è già l'EMOM della parte alta con lo sprint.
+ * Contano Sprint, Sprint 10 m e le sue varianti; NON salto+sprint, sprint con palla, T-sprint, né le Salite Sprint
+ * (blocco metabolico di Ste da 14 salite: non sono sprint piani massimali — da confermare con Ste).
+ */
+export const SPRINT_MAX_SEDUTA = 8;
+export const SPRINT_MAX_CON_EMOM = 6;
+export const SPRINT_MASSIMALI_IDS: ReadonlySet<string> = new Set([
+  'vel-sprint', 'vel-sprint-10-m',
+  'vel-sprint-con-partenza-in-ginocchio', 'vel-piegamento-a-terra-e-sprint', 'vel-giro-180-piegamento-e-sprint',
+  'vel-sprint-con-partenza-in-ginocchio-laterale', 'vel-burpee-e-sprint',
+]);
+/** Sprint massimali in una lista di item: a metri una serie = uno sprint; a reps serie × reps (EMOM: giri × reps). */
+export function contaSprintMassimali(items: { esercizio_id: string; serie: number; quantita: number; unita?: string }[]): number {
+  let n = 0;
+  for (const it of items) {
+    if (!SPRINT_MASSIMALI_IDS.has(it.esercizio_id)) continue;
+    const unita = it.unita ?? esercizioV2ById(it.esercizio_id)?.unita;
+    n += unita === 'metri' ? it.serie : it.serie * Math.max(1, it.quantita);
+  }
+  return n;
+}
+
 // ─── Finestra partita: ultimo giorno utile prima della partita — §3 [STE] ───
 //
 // valore = giorni prima della partita entro cui la qualità è VIETATA (es. 3 →
@@ -307,6 +330,10 @@ export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titol
   const maxContatti = PLIO_INTENSIVA_CONTATTI_MAX[opts.livello ?? 'B'];
   if (contatti > maxContatti && !opts.trusted) // blocchi di Ste: la dose è sua
     errors.push(`seduta "${titolo}": ${contatti} contatti di pliometria intensiva, oltre il massimo ${maxContatti} per il livello ${opts.livello ?? 'B'}`);
+  // Sprint massimali: tetto per seduta (Ste, 25/9) — il planner v2 li lima da solo, qui la rete di sicurezza
+  const sprint = contaSprintMassimali(items.map(({ it }) => it));
+  if (sprint > SPRINT_MAX_SEDUTA)
+    errors.push(`seduta "${titolo}": ${sprint} sprint massimali, oltre il tetto di ${SPRINT_MAX_SEDUTA} a seduta`);
   // Ordine: nessuna qualità metabolica prima di velocità/pliometria
   let maxOrdineVisto = -1;
   for (const { ex } of items) {
