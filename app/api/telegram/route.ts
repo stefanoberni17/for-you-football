@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('user_id, name, safety_review, safety_review_at, current_week')
+      .select('user_id, name, safety_review, safety_review_at, current_week, deleted_at')
       .eq('telegram_id', telegramUserId)
       .single();
 
@@ -184,6 +184,12 @@ export async function POST(request: NextRequest) {
     }
 
     const userId = profile.user_id;
+
+    // Account in cancellazione (migration 028): il bot tace finché non riattiva dall'app
+    if (profile.deleted_at) {
+      await sendTelegramMessage(chatId, 'Il tuo account è in cancellazione. Se ci hai ripensato, apri l\'app e riattivalo: poi torniamo a parlare qui. ⚽');
+      return NextResponse.json({ ok: true });
+    }
 
     // Paywall: il Coach è contenuto a pagamento anche su Telegram (stesso gate di /api/chat).
     if (!(await requirePaidAccess(userId))) {

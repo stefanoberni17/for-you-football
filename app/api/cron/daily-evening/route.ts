@@ -44,7 +44,9 @@ export async function GET(request: NextRequest) {
     .from('profiles')
     .select('user_id, name, telegram_id, current_week, coach_notes, sport')
     // Contenimento safety (migration 014): niente pillole/reminder finché Ste non sblocca
-    .or('safety_review.is.null,safety_review.eq.false');
+    .or('safety_review.is.null,safety_review.eq.false')
+    // Account in cancellazione (migration 028): silenzio finché non riattiva
+    .is('deleted_at', null);
 
   if (testUserId) {
     query = query.eq('user_id', testUserId);
