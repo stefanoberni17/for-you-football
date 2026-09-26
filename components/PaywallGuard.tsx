@@ -24,9 +24,36 @@ export function resetPaywallCache() {
   lastResult = null;
 }
 
+// Account in cancellazione (migration 028): su OGNI pagina dell'app → /riattiva
+const PAGINE_LIBERE = ['/login', '/register', '/reset-password', '/privacy', '/termini', '/genitori', '/riattiva'];
+let deletedCheckedAt = 0;
+let deletedResult: boolean | null = null;
+export function resetDeletedCache() { deletedCheckedAt = 0; deletedResult = null; }
+
 export default function PaywallGuard() {
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!pathname || PAGINE_LIBERE.some((p) => pathname === p || pathname.startsWith(p + '/'))) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        if (Date.now() - deletedCheckedAt < TTL_MS && deletedResult !== null) {
+          if (deletedResult) router.replace('/riattiva');
+          return;
+        }
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+        const { data } = await supabase.from('profiles').select('deleted_at').eq('user_id', session.user.id).maybeSingle();
+        if (cancelled || !data) return;
+        deletedResult = !!data.deleted_at;
+        deletedCheckedAt = Date.now();
+        if (deletedResult) router.replace('/riattiva');
+      } catch { /* fail-open */ }
+    })();
+    return () => { cancelled = true; };
+  }, [pathname, router]);
 
   useEffect(() => {
     if (!pathname || !isPaidRoute(pathname) || pathname === '/chat') return;

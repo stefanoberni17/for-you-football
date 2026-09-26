@@ -309,7 +309,8 @@ export default function ProfiloPage() {
         body: JSON.stringify({ conferma: 'CANCELLA' }),
       });
       if (!res.ok) throw new Error('delete_failed');
-      // Tutto quello che l'app ha lasciato sul telefono (chat, bozze, cache, preferenze) se ne va con l'account
+      // Quello che l'app ha lasciato sul telefono (chat, bozze, cache, preferenze) se ne va subito:
+      // alla riattivazione la memoria vera è sul server
       try { localStorage.clear(); sessionStorage.clear(); } catch { /* ignora */ }
       await supabase.auth.signOut().catch(() => {});
       router.replace('/login?deleted=1');
@@ -505,7 +506,7 @@ export default function ProfiloPage() {
           open={showDelete}
           onClose={deleting ? undefined : () => setShowDelete(false)}
           title="Cancellare l'account?"
-          subtitle="Si cancella tutto, subito, e non si torna indietro."
+          subtitle="L'account si chiude subito. I dati restano 60 giorni, poi spariscono per sempre."
           footer={
             <div className="space-y-2">
               {deleteError && (
@@ -528,14 +529,13 @@ export default function ProfiloPage() {
           }
         >
           <div className="space-y-4 text-body-sm text-muted">
-            <p className="text-app">Cosa sparisce:</p>
+            <p className="text-app">Cosa succede:</p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>il profilo, i giorni fatti, le riflessioni e le risposte ai Gate</li>
-              <li>check-in, azioni, test e allenamenti del Campo</li>
-              <li>tutte le conversazioni col Coach, anche su Telegram (il bot smette di risponderti)</li>
-              <li>l&apos;accesso a Season 1: se stai pagando a rate, le rate si fermano; quanto già pagato non viene rimborsato</li>
+              <li>da subito l&apos;app si chiude: niente percorso, niente Coach (anche su Telegram), niente Campo; se paghi a rate, le rate si fermano</li>
+              <li>per 60 giorni i tuoi dati restano: se ci ripensi, accedi e riattivi tutto com&apos;era, rate comprese</li>
+              <li>dopo 60 giorni profilo, giorni fatti, riflessioni, check-in, allenamenti e conversazioni spariscono per sempre; quanto già pagato non viene rimborsato</li>
             </ul>
-            <p>Se sei minorenne, parlane prima con un genitore. Se vuoi solo una pausa, esci dall&apos;account: i dati restano.</p>
+            <p>Se sei minorenne, parlane prima con un genitore. Se vuoi solo una pausa, esci dall&apos;account: i dati restano e non parte nessun conto alla rovescia.</p>
             <Field label="Per confermare scrivi CANCELLA" htmlFor="delete-confirm">
               <Input
                 id="delete-confirm"

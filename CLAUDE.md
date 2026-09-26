@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 027 (25/9). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 027 (25/9); **la 028 (cancellazione con 60 giorni di grazia) va applicata dopo il merge della PR #113**. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -59,6 +59,7 @@ for-you-football/
 │   ├── strumenti/page.tsx                 # Hub "Palestra": Reset rapido + Palestra per principio (7 capacità; dettaglio = menu esercizi con "Cosa allena"; l'àncora apre la scheda strumento cos'è/quando/pratica) + schede SOS
 │   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
+│   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
 │   ├── termini/page.tsx                   # Termini di servizio — PLACEHOLDER da sostituire col testo legale (poi compilare TERMS_VERSION)
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
@@ -113,6 +114,7 @@ for-you-football/
 │   ├── clientCache.ts                     # Cache sul dispositivo SOLO per i contenuti Notion (settimane, giorno, schede SOS): TTL 30', svuotata al logout, mai stato utente
 │   ├── events.ts                          # logEvent(userId, event, meta) → onboarding_events (server, fire-and-forget) + whitelist CLIENT_EVENTS
 │   ├── consent.ts                         # Consenso legale: getLatestAcceptedVersion + needsReacceptance (server-only)
+│   ├── accountDelete.ts                   # Cancellazione account in tre passi: sospendi (deleted_at, rate in pausa), riattiva, cancella definitivamente (cron, 60 giorni)
 │   ├── activity.ts                        # filterActiveProfiles: esclude dai messaggi proattivi (cron) gli utenti inattivi >30gg (PROACTIVE_INACTIVITY_DAYS) — FAIL-OPEN
 │   └── coach-ai.ts                        # Coach AI: prompt, contesto, Claude API, safety (keywords, alert, SAFETY_REVIEW_MODE)
 │   ├── trainingAccess.ts                  # hasTrainingAccess(userId) — flag profiles.training_access (area riservata)
@@ -738,7 +740,7 @@ La memoria persistente del Coach si basa su:
 
 ### Profilo (`app/profilo/page.tsx`)
 - Visualizzazione/modifica profilo calciatore
-- **Cancella l'account** (25/9): link sotto "Esci", Sheet con cosa sparisce (profilo, percorso, check-in, Campo, conversazioni anche Telegram, accesso a Season 1 senza rimborso), invito a parlarne con un genitore, campo "scrivi CANCELLA" → `POST /api/account/delete` → tutto lo storage locale pulito, logout, `/login?deleted=1` (la login mostra "Account cancellato")
+- **Cancella l'account** (25-26/9): link sotto "Esci", Sheet con cosa succede (l'app si chiude subito, i dati restano 60 giorni per chi ci ripensa, poi spariscono; rate in pausa e riprese alla riattivazione; niente rimborso), invito a parlarne con un genitore, campo "scrivi CANCELLA" → `POST /api/account/delete` → storage locale pulito, logout, `/login?deleted=1`. Pagina `/riattiva` (senza tab bar né rituale) con la data limite e i bottoni "Riattiva l'account" / "Lascia com'è ed esci"
 - **Collegamento Telegram via deep-link (giugno 2026):** bottone "Collega" → `POST /api/telegram/link` genera codice usa-e-getta (32 hex, TTL 15 min, colonne `profiles.telegram_link_code` + `telegram_link_code_expires`, migration `005_telegram_link.sql`) → apre `t.me/foryoufootballcoach_bot?start=<code>` → il webhook gestisce `/start <code>`: valida codice+scadenza, scollega altri profili con lo stesso telegram_id, salva `telegram_id` reale, welcome per nome. `/start` nudo: saluto se già collegato, istruzioni altrimenti. Codice scaduto → messaggio con istruzioni. Lo stato "✅ Collegato" si auto-aggiorna al ritorno dall'app Telegram (refetch su `visibilitychange`). `telegram_id` NON è più nel payload di salvataggio del form profilo (lo scrive solo il bot — evita overwrite stantio). Rimosso il vecchio wizard a 4 step con @userinfobot/ID manuale.
 
 ### Le mie azioni (`app/oggi/page.tsx`)
@@ -919,8 +921,11 @@ Ritorna tutti i check-in degli ultimi N giorni (default 30) ordinati per data cr
 ### `GET /api/cron/cleanup-telegram`
 Cron job Vercel (03:00 UTC). Auth via `CRON_SECRET` (dal 25/9 senza la variabile in env il cron risponde 500: prima "Bearer undefined" autenticava chiunque; vale per tutti e tre i cron). Nel cron del mattino la domenica è il giorno 7 del calendario (prima `getDay()` = 0 non combaciava mai con `match_days`). Elimina `telegram_conversations` > 90 giorni — **escluse le righe `safety_flagged`** (mai cancellate automaticamente).
 
-### `POST /api/account/delete`
-Body `{ conferma: 'CANCELLA' }`, auth. Cancellazione dell'account fatta dall'utente (Profilo → "Cancella l'account", Sheet con la lista di cosa sparisce e la parola da scrivere; poi `localStorage.clear()`, signOut e `/login?deleted=1`). Ordine: Stripe (rate cancellate + customer eliminato, le fatture restano in Stripe per il fisco; fail-soft, Ste avvisato se fallisce) → ultimo messaggio Telegram al ragazzo → `rate_limit_events` per chiave → `auth.admin.deleteUser` (cascade su TUTTE le tabelle con `user_id`, comprese le righe `safety_flagged` e i `consent_events`) → se aveva conversazioni safety, avviso a Ste (l'email dell'alert nella casella va cancellata a mano). **Assunzione da confermare con l'avvocato:** dopo la cancellazione non si conserva niente, nemmeno le righe safety e la prova del consenso; se serve una retention, va scritta la base legale e aggiunta una tabella anonimizzata.
+### `POST /api/account/delete` · `POST /api/account/reactivate` · `GET /api/account/status`
+Cancellazione account in tre passi (`lib/accountDelete.ts`, migration 028, `ACCOUNT_GRACE_DAYS = 60` in `lib/constants.ts`; Ste, 26/9: "manteniamo i dati 60 giorni nel caso si volesse riattivarlo"):
+1. **Sospensione** (`delete`, body `{ conferma: 'CANCELLA' }`, da Profilo → "Cancella l'account"): `profiles.deleted_at = now()` (colonna server-only nel trigger), rate Stripe in pausa (`pause_collection: void`), ultimo Telegram al ragazzo con la data limite. L'app si chiude: `PaywallGuard` manda a `/riattiva` da ogni pagina (tranne login, register, privacy, termini, genitori), `requireWeekAccess`/`requirePaidAccess` rispondono no, i cron saltano `deleted_at IS NOT NULL`, il bot Telegram risponde "apri l'app e riattivalo". Il client pulisce `localStorage`, esce, `/login?deleted=1`.
+2. **Riattivazione** (`/riattiva` → `reactivate`, entro 60 giorni): `deleted_at = NULL`, rate riprese (`pause_collection: ''`), Telegram "bentornato". La login con un profilo in cancellazione porta a `/riattiva`.
+3. **Cancellazione definitiva** (`cancellaDefinitivamente`, dal cron `cleanup-telegram` per gli account con grazia scaduta, max 50 per notte, fail-soft): Stripe (rate cancellate + customer eliminato, le fatture restano per il fisco), ultimo Telegram, `rate_limit_events` per chiave, `auth.admin.deleteUser` (cascade su TUTTE le tabelle con `user_id`, comprese `safety_flagged` e `consent_events`); se aveva conversazioni safety, avviso a Ste (l'email dell'alert nella casella va cancellata a mano). **Assunzione da confermare con l'avvocato:** dopo i 60 giorni non si conserva niente, nemmeno le righe safety e la prova del consenso.
 
 ### `POST /api/stripe/create-checkout`
 Body: `{ plan: 'onetime' | 'installments', payer_email }`. Crea Stripe Checkout Session (payment o subscription), salva `supabase_user_id` in metadata, ritorna `{ url }`. `payer_email` = contraente adulto: il customer Stripe prende quella email (ricevute all'adulto), indirizzo di fatturazione obbligatorio. Bypassa se `is_beta_free` o `season1_access`.
@@ -1083,6 +1088,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `025_training_preferenze.sql` applicata su Supabase (Ste, 17/9)
 - [x] Migration `026_session_feedback.sql` applicata su Supabase (Ste, 24/9)
 - [x] Migration `027_client_boundary.sql` applicata su Supabase (Ste, 25/9)
+- [ ] **Migration `028_account_soft_delete.sql` da applicare su Supabase** dopo il merge della PR #113 (`profiles.deleted_at` + trigger esteso). Senza, "Cancella l'account" risponde errore.
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)

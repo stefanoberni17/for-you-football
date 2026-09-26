@@ -63,6 +63,12 @@ export default function LoginPage() {
         .eq('user_id', data.user.id)
         .single();
 
+      // Account in cancellazione (migration 028): da qui si riattiva, il resto dell'app è chiuso
+      if (profile?.deleted_at) {
+        router.push('/riattiva');
+        return;
+      }
+
       if (profileError || !profile) {
         console.error('❌ Profilo non trovato:', profileError);
         await supabase.auth.signOut();
@@ -114,7 +120,7 @@ export default function LoginPage() {
 
         {deleted && (
           <div className="bg-forest-500/15 border border-forest-500/30 text-app px-4 py-3 rounded-btn text-body-sm mb-5" role="status">
-            Account cancellato. I tuoi dati non ci sono più. Se un giorno vuoi tornare, ti registri da capo.
+            Account in cancellazione. I tuoi dati restano 60 giorni: se ci ripensi, accedi e riattivalo. Dopo, spariscono per sempre.
           </div>
         )}
         <form onSubmit={handleLogin} className="space-y-5">
