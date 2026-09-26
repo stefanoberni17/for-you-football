@@ -738,6 +738,7 @@ La memoria persistente del Coach si basa su:
 
 ### Profilo (`app/profilo/page.tsx`)
 - Visualizzazione/modifica profilo calciatore
+- **Cancella l'account** (25/9): link sotto "Esci", Sheet con cosa sparisce (profilo, percorso, check-in, Campo, conversazioni anche Telegram, accesso a Season 1 senza rimborso), invito a parlarne con un genitore, campo "scrivi CANCELLA" → `POST /api/account/delete` → tutto lo storage locale pulito, logout, `/login?deleted=1` (la login mostra "Account cancellato")
 - **Collegamento Telegram via deep-link (giugno 2026):** bottone "Collega" → `POST /api/telegram/link` genera codice usa-e-getta (32 hex, TTL 15 min, colonne `profiles.telegram_link_code` + `telegram_link_code_expires`, migration `005_telegram_link.sql`) → apre `t.me/foryoufootballcoach_bot?start=<code>` → il webhook gestisce `/start <code>`: valida codice+scadenza, scollega altri profili con lo stesso telegram_id, salva `telegram_id` reale, welcome per nome. `/start` nudo: saluto se già collegato, istruzioni altrimenti. Codice scaduto → messaggio con istruzioni. Lo stato "✅ Collegato" si auto-aggiorna al ritorno dall'app Telegram (refetch su `visibilitychange`). `telegram_id` NON è più nel payload di salvataggio del form profilo (lo scrive solo il bot — evita overwrite stantio). Rimosso il vecchio wizard a 4 step con @userinfobot/ID manuale.
 
 ### Le mie azioni (`app/oggi/page.tsx`)
@@ -917,6 +918,9 @@ Ritorna tutti i check-in degli ultimi N giorni (default 30) ordinati per data cr
 
 ### `GET /api/cron/cleanup-telegram`
 Cron job Vercel (03:00 UTC). Auth via `CRON_SECRET` (dal 25/9 senza la variabile in env il cron risponde 500: prima "Bearer undefined" autenticava chiunque; vale per tutti e tre i cron). Nel cron del mattino la domenica è il giorno 7 del calendario (prima `getDay()` = 0 non combaciava mai con `match_days`). Elimina `telegram_conversations` > 90 giorni — **escluse le righe `safety_flagged`** (mai cancellate automaticamente).
+
+### `POST /api/account/delete`
+Body `{ conferma: 'CANCELLA' }`, auth. Cancellazione dell'account fatta dall'utente (Profilo → "Cancella l'account", Sheet con la lista di cosa sparisce e la parola da scrivere; poi `localStorage.clear()`, signOut e `/login?deleted=1`). Ordine: Stripe (rate cancellate + customer eliminato, le fatture restano in Stripe per il fisco; fail-soft, Ste avvisato se fallisce) → ultimo messaggio Telegram al ragazzo → `rate_limit_events` per chiave → `auth.admin.deleteUser` (cascade su TUTTE le tabelle con `user_id`, comprese le righe `safety_flagged` e i `consent_events`) → se aveva conversazioni safety, avviso a Ste (l'email dell'alert nella casella va cancellata a mano). **Assunzione da confermare con l'avvocato:** dopo la cancellazione non si conserva niente, nemmeno le righe safety e la prova del consenso; se serve una retention, va scritta la base legale e aggiunta una tabella anonimizzata.
 
 ### `POST /api/stripe/create-checkout`
 Body: `{ plan: 'onetime' | 'installments', payer_email }`. Crea Stripe Checkout Session (payment o subscription), salva `supabase_user_id` in metadata, ritorna `{ url }`. `payer_email` = contraente adulto: il customer Stripe prende quella email (ricevute all'adulto), indirizzo di fatturazione obbligatorio. Bypassa se `is_beta_free` o `season1_access`.

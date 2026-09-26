@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Button, Card, Field, Input } from '@/components/ui';
@@ -15,6 +15,11 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [resetSent, setResetSent] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
+  // /login?deleted=1: arrivo dalla cancellazione dell'account (letto dalla URL senza Suspense)
+  const [deleted, setDeleted] = useState(false);
+  useEffect(() => {
+    try { setDeleted(new URLSearchParams(window.location.search).get('deleted') === '1'); } catch { /* ignora */ }
+  }, []);
 
   const handleForgotPassword = async () => {
     if (!email.trim()) {
@@ -107,6 +112,11 @@ export default function LoginPage() {
         <h2 className="font-display text-title-2 font-bold text-app mb-0.5">Bentornato in campo!</h2>
         <p className="text-muted text-body-sm mb-6">Il tuo allenamento mentale ti aspetta.</p>
 
+        {deleted && (
+          <div className="bg-forest-500/15 border border-forest-500/30 text-app px-4 py-3 rounded-btn text-body-sm mb-5" role="status">
+            Account cancellato. I tuoi dati non ci sono più. Se un giorno vuoi tornare, ti registri da capo.
+          </div>
+        )}
         <form onSubmit={handleLogin} className="space-y-5">
           {error && (
             <div className="bg-danger/15 border border-danger/30 text-danger px-4 py-3 rounded-btn text-body-sm" role="alert">

@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-09-26 — Cancellazione account (review 25/9, §3.5)
+- `POST /api/account/delete` + Profilo → "Cancella l'account": Stripe (rate + customer), ultimo messaggio Telegram, rate limit, `auth.admin.deleteUser` con cascade su tutte le tabelle, avviso a Ste se c'erano conversazioni safety. Login con avviso "Account cancellato". Privacy aggiornata. Retention dopo la cancellazione: niente (da confermare con l'avvocato).
+
 ## 2026-09-25 — Sera C: il Campo in sicurezza, poi congelato (review 25/9)
 - **Kg dei blocchi dietro il tetto** (`lib/trainingCarico.ts`): con massimale ≤ `caricoMaxPct` × 1RM, senza massimale ≤ 20 kg (`KG_SENZA_MASSIMALE_MAX`), nota sull'item; rete nel validatore anche per gli item fidati. Prima un quattordicenne con "palestra" e senza test riceveva squat 3×80/90/95.
 - **Livello** ad A per i due blocchi di forza con bilanciere senza codice (`LIVELLO_OVERRIDE`); il gradino sopra non vale per i blocchi con carichi pesanti.

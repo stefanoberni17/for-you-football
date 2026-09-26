@@ -9,8 +9,8 @@ import { supabase } from '@/lib/supabase';
 import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import SubscriptionSection from '@/components/SubscriptionSection';
-import { AppLoader, Badge, Button, Card, Chip, Field, Input, SectionTitle, Select, Textarea } from '@/components/ui';
-import { Bot, Bell, LogOut, Lock, Users, Check } from 'lucide-react';
+import { AppLoader, Badge, Button, Card, Chip, Field, Input, SectionTitle, Select, Sheet, Textarea } from '@/components/ui';
+import { Bot, Bell, LogOut, Lock, Users, Check, Trash2 } from 'lucide-react';
 
 /**
  * /profilo — riordinato (review 16/9): prima Telegram e Push avevano i bottoni più
@@ -293,6 +293,32 @@ export default function ProfiloPage() {
     else setError('Errore durante il logout');
   };
 
+  // ── Cancellazione account (review 25/9): fatta da qui, non via email ──
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteText, setDeleteText] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const handleDeleteAccount = async () => {
+    if (deleteText.trim().toUpperCase() !== 'CANCELLA' || deleting) return;
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      const res = await authFetch('/api/account/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conferma: 'CANCELLA' }),
+      });
+      if (!res.ok) throw new Error('delete_failed');
+      // Tutto quello che l'app ha lasciato sul telefono (chat, bozze, cache, preferenze) se ne va con l'account
+      try { localStorage.clear(); sessionStorage.clear(); } catch { /* ignora */ }
+      await supabase.auth.signOut().catch(() => {});
+      router.replace('/login?deleted=1');
+    } catch {
+      setDeleteError('Non sono riuscito a cancellare l\'account. Riprova tra un minuto, o scrivi a info@foryoufootball.it.');
+      setDeleting(false);
+    }
+  };
+
   /**
    * Deep-link Telegram: genera un codice usa-e-getta e apre la chat col bot.
    * Il bot riceve /start <codice> e salva da solo il telegram_id reale.
@@ -462,6 +488,66 @@ export default function ProfiloPage() {
         >
           Esci dall&apos;account
         </Button>
+
+        {/* ── (e2) Cancella l'account ─────────────────────────────────── */}
+        <div className="text-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => { setDeleteText(''); setDeleteError(''); setShowDelete(true); }}
+            icon={<Trash2 size={16} aria-hidden="true" />}
+            className="text-danger"
+          >
+            Cancella l&apos;account
+          </Button>
+        </div>
+        <Sheet
+          open={showDelete}
+          onClose={deleting ? undefined : () => setShowDelete(false)}
+          title="Cancellare l'account?"
+          subtitle="Si cancella tutto, subito, e non si torna indietro."
+          footer={
+            <div className="space-y-2">
+              {deleteError && (
+                <div className="bg-danger/15 border border-danger/30 text-danger px-4 py-3 rounded-btn text-body-sm" role="alert">{deleteError}</div>
+              )}
+              <Button
+                variant="danger"
+                fullWidth
+                loading={deleting}
+                disabled={deleteText.trim().toUpperCase() !== 'CANCELLA'}
+                onClick={handleDeleteAccount}
+                icon={<Trash2 size={18} aria-hidden="true" />}
+              >
+                Cancella tutto
+              </Button>
+              {!deleting && (
+                <Button variant="ghost" fullWidth onClick={() => setShowDelete(false)}>Tienimi l&apos;account</Button>
+              )}
+            </div>
+          }
+        >
+          <div className="space-y-4 text-body-sm text-muted">
+            <p className="text-app">Cosa sparisce:</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>il profilo, i giorni fatti, le riflessioni e le risposte ai Gate</li>
+              <li>check-in, azioni, test e allenamenti del Campo</li>
+              <li>tutte le conversazioni col Coach, anche su Telegram (il bot smette di risponderti)</li>
+              <li>l&apos;accesso a Season 1: se stai pagando a rate, le rate si fermano; quanto già pagato non viene rimborsato</li>
+            </ul>
+            <p>Se sei minorenne, parlane prima con un genitore. Se vuoi solo una pausa, esci dall&apos;account: i dati restano.</p>
+            <Field label="Per confermare scrivi CANCELLA" htmlFor="delete-confirm">
+              <Input
+                id="delete-confirm"
+                value={deleteText}
+                onChange={(e) => setDeleteText(e.target.value)}
+                placeholder="CANCELLA"
+                autoComplete="off"
+                autoCapitalize="characters"
+              />
+            </Field>
+          </div>
+        </Sheet>
 
         {/* ── (f) Privacy / genitori ────────────────────────────────────── */}
         <div className="flex flex-wrap justify-center gap-2">

@@ -136,7 +136,7 @@ export default function PrivacyPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-forest-500 mt-0.5">•</span>
-                <span>Richiedere la cancellazione del tuo account e di tutti i dati associati</span>
+                <span>Cancellare il tuo account e tutti i dati associati da solo, da Profilo → &quot;Cancella l&apos;account&quot; (subito, senza scriverci); oppure chiedercelo via email</span>
               </li>
             </ul>
             <Card padding="sm" className="bg-info/10 border-info/30">
