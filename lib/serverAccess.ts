@@ -16,7 +16,7 @@ const supabaseAdmin = createClient(
 export async function getBillingProfile(userId: string): Promise<BillingProfile | null> {
   const { data, error } = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, season1_access')
+    .select('is_beta_free, subscription_status, season1_access, deleted_at')
     .eq('user_id', userId)
     .single();
 
@@ -36,6 +36,7 @@ export async function getBillingProfile(userId: string): Promise<BillingProfile 
 export async function requireWeekAccess(userId: string, week: number): Promise<boolean> {
   if (!process.env.STRIPE_SECRET_KEY) return true;
   const profile = await getBillingProfile(userId);
+  if (profile?.deleted_at) return false; // account in cancellazione: si riattiva da /riattiva
   return canAccessWeek(profile, week);
 }
 
@@ -44,5 +45,6 @@ export async function requirePaidAccess(userId: string): Promise<boolean> {
   if (!process.env.STRIPE_SECRET_KEY) return true;
 
   const profile = await getBillingProfile(userId);
+  if (profile?.deleted_at) return false;
   return hasActiveAccess(profile);
 }

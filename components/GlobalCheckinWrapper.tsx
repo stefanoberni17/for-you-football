@@ -15,7 +15,7 @@ export default function GlobalCheckinWrapper({ children }: { children: React.Rea
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinDone, setCheckinDone] = useState(true);
 
-  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete'];
+  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete', '/riattiva'];
   // /allenamento/* è il binario training, separato dal rituale mentale
   const shouldShow = !skipPages.includes(pathname) && !pathname.startsWith('/allenamento');
 

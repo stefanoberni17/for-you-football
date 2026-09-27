@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { accountDaCancellare, cancellaDefinitivamente } from '@/lib/accountDelete';
+import { ACCOUNT_GRACE_DAYS } from '@/lib/constants';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -70,9 +72,23 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // Account in cancellazione da più di ACCOUNT_GRACE_DAYS giorni: cancellazione definitiva
+  // (lib/accountDelete: Stripe, Telegram, auth.admin.deleteUser → cascade). Uno alla volta, fail-soft.
+  let accountCancellati = 0;
+  for (const a of await accountDaCancellare()) {
+    try {
+      await cancellaDefinitivamente(a.user_id, 'grazia_scaduta');
+      accountCancellati++;
+    } catch (err) {
+      console.error(`❌ Cancellazione definitiva ${a.user_id}:`, (err as Error)?.message);
+    }
+  }
+  if (accountCancellati) console.log(`✅ Account cancellati definitivamente (grazia di ${ACCOUNT_GRACE_DAYS} giorni scaduta): ${accountCancellati}`);
+
   return NextResponse.json({
     success: true,
     deleted: count,
+    accountCancellati,
     cutoffDate,
     calendarReset,
     rateLimitDeleted: rateLimitError ? null : rateLimitDeleted,

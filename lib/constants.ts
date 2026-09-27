@@ -56,6 +56,9 @@ export const GIORNATA_ATTESA_ORE = 4;
 // Settimane gratis (deciso da Ste il 13/9): il contenuto G1-G6 della settimana 1 è aperto a chi
 // si registra; il gate di W1, le settimane successive e il Coach si sbloccano con Season 1.
 export const FREE_WEEKS = 1;
+
+/** Cancellazione account (26/9, Ste): i dati restano questi giorni per chi ci ripensa, poi spariscono per sempre. */
+export const ACCOUNT_GRACE_DAYS = 60;
 // Messaggi al Coach (chat in app) inclusi nella settimana gratis; Telegram resta di Season 1.
 export const FREE_COACH_MESSAGES = 10;
 

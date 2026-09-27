@@ -16,7 +16,8 @@ export default function BottomTabBar() {
     pathname === '/privacy' ||
     pathname === '/termini' ||
     pathname === '/genitori' ||
-    pathname === '/pricing'
+    pathname === '/pricing' ||
+    pathname === '/riattiva'
   ) {
     return null;
   }

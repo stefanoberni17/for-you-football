@@ -10,6 +10,7 @@
 import { FREE_WEEKS } from '@/lib/constants';
 
 export type BillingProfile = {
+  deleted_at?: string | null;   // account in cancellazione (migration 028): chiuso finché non riattiva
   is_beta_free?: boolean | null;
   subscription_status?: string | null;
   season1_access?: boolean | null;
