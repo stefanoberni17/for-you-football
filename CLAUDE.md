@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 027 (25/9); **la 028 (cancellazione con 60 giorni di grazia) va applicata dopo il merge della PR #113**. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 028 (27/9). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -1088,7 +1088,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `025_training_preferenze.sql` applicata su Supabase (Ste, 17/9)
 - [x] Migration `026_session_feedback.sql` applicata su Supabase (Ste, 24/9)
 - [x] Migration `027_client_boundary.sql` applicata su Supabase (Ste, 25/9)
-- [ ] **Migration `028_account_soft_delete.sql` da applicare su Supabase** dopo il merge della PR #113 (`profiles.deleted_at` + trigger esteso). Senza, "Cancella l'account" risponde errore.
+- [x] Migration `028_account_soft_delete.sql` applicata su Supabase (Ste, 27/9)
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
