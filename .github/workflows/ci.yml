@@ -1,0 +1,45 @@
+name: CI
+
+# Su ogni PR e su main: typecheck, lint a cricchetto, test sui moduli puri, build.
+# Niente segreti veri: la build di Next e i test usano valori segnaposto.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      ANTHROPIC_API_KEY: placeholder
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Dipendenze
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint (gli errori possono solo scendere)
+        run: npm run lint:ratchet
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

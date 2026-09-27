@@ -1,0 +1,9 @@
+{
+  "errors": 103,
+  "aggiornata": "2026-09-27",
+  "perRule": {
+    "@typescript-eslint/no-explicit-any": 100,
+    "react-hooks/refs": 1,
+    "react-hooks/set-state-in-effect": 2
+  }
+}

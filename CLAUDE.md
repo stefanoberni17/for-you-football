@@ -142,7 +142,11 @@ for-you-football/
 │   ├── build-catalog-v2.py / build-blocks.py   # Rigenerano i .generated.ts dal JSON catalogo e dall'export Everfit
 │   ├── everfit-assign.mjs                 # Lettura/assegnazione allenamenti su Everfit (history/detail/copy/add/update/delete) — SOLO su richiesta di Ste
 │   ├── coach-replay.mts                   # Replay di una chat col Coach contro il prompt VERO (scenari incorporati o --file), senza salvare nulla: `npx tsx scripts/coach-replay.mts` con ANTHROPIC_API_KEY in .env.local
+│   ├── lint-ratchet.mjs / lint-baseline.json   # Lint a cricchetto: gli errori ESLint possono solo scendere rispetto alla base (vedi "CI")
 │   └── youtube-channel-scan.py            # Scansione canale YouTube → docs/youtube-channel.{json,md}
+├── tests/                                 # Test Vitest sui moduli puri di lib/ (time-gate, safety, kg dei blocchi, kettlebell e tecnica) — `npm test`
+├── vitest.config.mts                      # Alias `@`, env segnaposto per i moduli che creano i client all'import
+├── .github/workflows/ci.yml               # CI su ogni PR e su main: typecheck · lint a cricchetto · test · build
 ├── .claude/settings.json                  # Permesso pre-approvato per `node scripts/everfit-assign.mjs` nelle sessioni Claude (tracciato con git add -f: .claude/ è in .gitignore)
 ├── public/                                # SVG di default Next.js
 ├── vercel.json                            # 3 cron Vercel: cleanup-telegram 03:00 UTC · daily-morning 06:00 UTC · daily-evening 16:00 UTC
@@ -1116,10 +1120,22 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 
 ---
 
+## CI (dal 27/9/2026)
+
+`.github/workflows/ci.yml` gira su ogni pull request e su ogni push a `main`, con env segnaposto (niente segreti veri): `npm ci` → `npm run typecheck` → `npm run lint:ratchet` → `npm test` → `npm run build`. Stessa catena in locale con `npm run ci`.
+
+- **Lint a cricchetto** (`scripts/lint-ratchet.mjs`): il repo ha ~100 errori ESLint storici (quasi tutti `any`). La base è in `scripts/lint-baseline.json`: più errori della base = CI rossa; meno = passa e ricorda di abbassarla con `node scripts/lint-ratchet.mjs --update`. I warning non contano. Un `any` nuovo va tipizzato, non aggiunto alla base.
+- **Test** (`tests/*.test.ts`, Vitest): solo moduli puri di `lib/`, niente rete, Supabase o Claude. `vitest.config.mts` mette le env segnaposto perché `lib/coach-ai.ts` e i planner creano i client all'import. Per una regola nuova nei moduli deterministici (time-gate, safety, validatore, memoria dei blocchi) il test va nella stessa PR.
+- Il merge su `main` resta manuale (Ste dice "vai"): la CI dice se la PR è verde, non la unisce.
+
 ## Comandi Utili
 
 ```bash
-npm run dev       # Avvia dev server su http://localhost:3000
-npm run build     # Build produzione
-npm run lint      # Linting ESLint
+npm run dev            # Avvia dev server su http://localhost:3000
+npm run build          # Build produzione
+npm run lint           # Linting ESLint (tutti gli errori, anche quelli storici)
+npm run lint:ratchet   # Lint a cricchetto: fallisce solo se gli errori salgono rispetto alla base
+npm test               # Test Vitest sui moduli puri (npm run test:watch in sviluppo)
+npm run typecheck      # tsc --noEmit
+npm run ci             # Tutta la catena della CI in locale
 ```
