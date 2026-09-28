@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-09-28 — Parte alta: niente addome nell'EMOM, il server impone le sedute sui gradini (Ste)
+- Ste: "dagli EMOM toglierei tutti gli esercizi dell'addome perché non si incastrano bene" → `pa-emom` senza core né dorsali (restano nelle serie).
+- Ste: "ha fatto forza parte alta (più leggero)" → Claude aveva scelto un blocco Everfit al posto delle sedute sui gradini (il prompt lo sconsigliava, nessuna regola lo impediva). Ora `sostituzioniParteAlta` in `expandPiano` sostituisce ogni blocco Everfit "Forza Parte Alta…" con il `pa-*` del formato giusto (serie → EMOM → focus; scarico: EMOM prima; formati già usati saltati; tolto se nella giornata c'è già un `pa-*`), nota nell'hub. `PLANNER_V2_PROMPT_VERSION = 'v2.19-parte-alta-server'`. Test in `tests/trainingParteAlta.test.ts`. Eccezione al congelamento del Campo su richiesta di Ste.
+
 ## 2026-09-27 — CI: typecheck, lint a cricchetto, test, build (review 25/9 §5)
 - `.github/workflows/ci.yml` su ogni PR e su `main`: `npm ci`, `tsc --noEmit`, `scripts/lint-ratchet.mjs` (gli errori ESLint possono solo scendere rispetto a `scripts/lint-baseline.json`, oggi 103), Vitest, `next build` con env segnaposto. In locale `npm run ci`.
 - Primi test in `tests/` (43): time-gate dei giorni e del gate in fuso italiano, `parseWeekDay`; `checkSafety` a due livelli, scadenza del contenimento, nomi W9-W10 e settimane 10-12 nel prompt; kg dei blocchi dietro il tetto (`limaCarichi`, livello dei blocchi con bilanciere, gradino sopra); fasce kettlebell dai log e memoria delle scale di tecnica. Sono gli script di verifica delle PR #109-#112 trasformati in test.
