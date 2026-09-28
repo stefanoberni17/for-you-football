@@ -19,7 +19,7 @@ import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
 import { esercizioById } from './trainingCatalog';
-import { costruisciParteAlta, isParteAlta, ordineFormatiParteAlta, parteAltaTesto, vuoleParteBassa, PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID } from './trainingParteAlta';
+import { costruisciParteAlta, isParteAlta, ordineFormatiParteAlta, parteAltaTesto, vuoleParteBassa, PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_SHORT_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID } from './trainingParteAlta';
 import { squilibriTesto } from './trainingSquilibri';
 import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgressione';
 import { MAX_DURATA_PER_FASE, MAX_SEDUTE_FISICHE_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
@@ -37,7 +37,7 @@ import { calcolaMemoriaTecnica, isMazzo, scalaDi, tecnicaTesto, type MemoriaTecn
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.19-parte-alta-server';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.21-parte-alta-giornata-dedicata';
 /**
  * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
  * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
@@ -258,8 +258,10 @@ export function sostituzioniParteAlta(p: PianoLLM, ctx: ContextV2): Map<number, 
   if (!pa.length) return out;
   const disponibili = new Set(ctx.blocchi.map((b) => b.id));
   const maxDurata = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
+  // Serie piene e serie brevi sono lo stesso formato: usata una, l'altra non conta come "seconda seduta"
+  const gruppo = (id: string) => (id === PA_SERIE_SHORT_ID ? PA_SERIE_ID : id);
   const usati = new Set<string>();
-  for (const s of p.sedute || []) for (const id of Array.isArray(s.blocchi) ? s.blocchi : []) if (isParteAlta(id)) usati.add(id);
+  for (const s of p.sedute || []) for (const id of Array.isArray(s.blocchi) ? s.blocchi : []) if (isParteAlta(id)) usati.add(gruppo(id));
   const ordine = ordineFormatiParteAlta(ctx.base.ciclo.isDeload).map((id) => pa.find((b) => b.id === id)).filter((b): b is Blocco => !!b);
   for (const s of p.sedute || []) {
     const ids = Array.isArray(s.blocchi) ? s.blocchi : [];
@@ -268,14 +270,21 @@ export function sostituzioniParteAlta(p: PianoLLM, ctx: ContextV2): Map<number, 
     if (!everfit.length) continue;
     const mappa = new Map<string, string | null>();
     let haPa = blocchi.some((b) => isParteAlta(b.id));
+    // Il tempo si misura con la sola apertura (Ste, 28/9: "ne dedica una quasi interamente alla parte alta e riduce
+    // il resto"): il formato più pieno che ci sta; gli altri blocchi facoltativi della giornata saltano se non c'è posto
+    const obbligatorio = (x: Blocco) => isApertura(x) || x.id === RISC_VELOCITA_ID;
+    const apertura = blocchi.filter((x) => obbligatorio(x)).reduce((a, x) => a + x.durataMin, 0);
     for (const b of everfit) {
       if (haPa) { mappa.set(b.id, null); continue; }
-      const altri = blocchi.filter((x) => x.id !== b.id && !mappa.has(x.id)).reduce((a, x) => a + x.durataMin, 0);
-      const liberi = ordine.filter((x) => !usati.has(x.id));
-      const scelta = liberi.find((x) => altri + x.durataMin <= maxDurata) ?? liberi[0] ?? ordine.find((x) => altri + x.durataMin <= maxDurata) ?? ordine[0];
+      const liberi = ordine.filter((x) => !usati.has(gruppo(x.id)));
+      const scelta = liberi.find((x) => apertura + x.durataMin <= maxDurata) ?? liberi[0] ?? ordine.find((x) => apertura + x.durataMin <= maxDurata) ?? ordine[0];
       mappa.set(b.id, scelta.id);
-      usati.add(scelta.id);
+      usati.add(gruppo(scelta.id));
       haPa = true;
+      // Giornata dedicata: se con gli altri blocchi si sfora, via i facoltativi (dal più lungo) finché ci sta
+      const facoltativi = blocchi.filter((x) => x.id !== b.id && !obbligatorio(x) && !mappa.has(x.id)).sort((x, y) => y.durataMin - x.durataMin);
+      let totale = apertura + scelta.durataMin + facoltativi.reduce((a, x) => a + x.durataMin, 0);
+      for (const x of facoltativi) { if (totale <= maxDurata) break; mappa.set(x.id, null); totale -= x.durataMin; }
     }
     out.set(Number(s.giorno), mappa);
   }
@@ -290,6 +299,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   let blocchiForza = 0;
   const sedute: PlanSession[] = [];
   const sostParteAlta = sostituzioniParteAlta(p, ctx);
+  const paSettimana = new Set<string>();
   // Sprint: tetto per seduta più basso se nella settimana c'è l'EMOM della parte alta con lo sprint (Ste, 25/9)
   const settimanaConEmom = (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).includes(PA_EMOM_ID))
     || [...sostParteAlta.values()].some((m) => [...m.values()].includes(PA_EMOM_ID));
@@ -327,8 +337,14 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         const paId = sostPa.get(blocchi[i].id);
         const paBlocco = paId ? bloccoDi(ctx, paId) : undefined;
         if (paBlocco && !blocchi.some((b) => b.id === paBlocco.id)) { noteMemoria.set(paBlocco.id, `sui tuoi gradini, al posto di "${nomeBloccoAtleta(blocchi[i].nome)}"`); blocchi[i] = paBlocco; }
-        else blocchi.splice(i, 1);
+        else blocchi.splice(i, 1); // blocco Everfit doppio o facoltativo tolto: giornata dedicata alla parte alta
       }
+    }
+    // Parte alta: ogni formato `pa-*` al massimo UNA volta a settimana (Ste, 28/9: "mi ha messo EMOM 2 volte")
+    for (const b of blocchi) {
+      if (!isParteAlta(b.id)) continue;
+      if (paSettimana.has(b.id)) errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è già nella settimana — ogni formato di parte alta va UNA volta a settimana: per la seconda seduta usa un altro formato (${ordineFormatiParteAlta(ctx.base.ciclo.isDeload).filter((id) => !paSettimana.has(id) && disponibili.has(id)).join(', ') || 'nessuno disponibile: una sola seduta di parte alta'})`);
+      paSettimana.add(b.id);
     }
     // Memoria dei blocchi: un codice diverso da quello deciso dai giudizi viene sostituito (l'LLM propone, i dati dispongono)
     if (!recupero) {
@@ -556,10 +572,11 @@ function parteAltaRegola(ctx: ContextV2): string {
     : `settimana ${sett} del ciclo: la seduta a rotazione è a SERIE (\`${PA_SERIE_ID}\`; con tre sedute di parte alta \`${PA_SERIE_PUSH_ID}\` e \`${PA_SERIE_PULL_ID}\`)`;
   return `23. PARTE ALTA DALLE SCALE (blocchi \`pa-*\`, costruiti dal server sui gradini dell'atleta: preferiscili SEMPRE ai blocchi Everfit di forza-parte-alta, che restano per la palestra o come contorno):
 - ${ha(PA_EMOM_ID) ? `\`${PA_EMOM_ID}\` = skill più esplosività: un esercizio al minuto, 2-3 ripetizioni alla massima intensità (spinta e tirata al gradino SOPRA l'ultimo testato${vuoleParteBassa(ctx.obiettivi) ? ', salti da fermo e uno sprint' : ''}), zero fatica. Con 2 o più sedute di parte alta a settimana ce n'è SEMPRE una EMOM. Va bene anche a 2 giorni dalla partita (i salti e lo sprint qui non stancano), non il giorno prima.` : 'EMOM non disponibile (mancano i test delle scale).'}
-- ${ha(PA_SERIE_ID) ? `\`${PA_SERIE_ID}\` = serie classiche sull'ultimo gradino completato (3-4 serie al 60-70 % del max, recupero 90"): spinta in due varianti + spinta verticale, tirata + rematore, core, dorsali.` : ''}${ha(PA_SERIE_PUSH_ID) ? ` \`${PA_SERIE_PUSH_ID}\` = focus spinta (3-4 spinta, 1 tirata), \`${PA_SERIE_PULL_ID}\` = focus tirata: con TRE sedute di parte alta usa EMOM + focus spinta + focus tirata; se gli squilibri dicono che la tirata è indietro, la seduta focus va sulla tirata (e viceversa).` : ''}
+- ${ha(PA_SERIE_ID) ? `\`${PA_SERIE_ID}\` = serie classiche sull'ultimo gradino completato (3-4 serie al 60-70 % del max, recupero 90"): spinta in due varianti + spinta verticale, tirata + rematore, core, dorsali.` : ''}${ha(PA_SERIE_SHORT_ID) ? ` \`${PA_SERIE_SHORT_ID}\` = le stesse serie in versione breve (una spinta + verticale, una tirata + rematore, core, 3 serie): quando le serie piene non stanno nel tempo massimo usa QUESTA, non un secondo EMOM.` : ''}${ha(PA_SERIE_PUSH_ID) ? ` \`${PA_SERIE_PUSH_ID}\` = focus spinta (3-4 spinta, 1 tirata), \`${PA_SERIE_PULL_ID}\` = focus tirata: con TRE sedute di parte alta usa EMOM + focus spinta + focus tirata; se gli squilibri dicono che la tirata è indietro, la seduta focus va sulla tirata (e viceversa).` : ''}
 - Rotazione sul ciclo di 4 settimane: ${formatoSett}. (Tabata e AMRAP arriveranno: per ora la rotazione è serie/EMOM.)
-- Ogni blocco \`pa-*\` è una seduta intera di parte alta: al massimo uno per giornata, più fascia o tecnica se ci sta nel tempo. Mai due \`pa-*\` nello stesso giorno, mai il giorno prima della partita.
+- Ogni blocco \`pa-*\` è una seduta intera di parte alta: al massimo uno per giornata, più fascia o tecnica se ci sta nel tempo. Mai due \`pa-*\` nello stesso giorno, mai il giorno prima della partita. **Ogni formato UNA sola volta a settimana** (il validatore rifiuta due \`${PA_EMOM_ID}\`): con due sedute di parte alta, una a serie (breve se serve) e una EMOM.
 - Un blocco Everfit di forza-parte-alta al posto di un \`pa-*\` NON passa: il server lo sostituisce con il formato giusto (e lo toglie se nella giornata c'è già un \`pa-*\`). Scegli direttamente i \`pa-*\`.
+- Tempo: la giornata di parte alta è apertura + il \`pa-*\` e basta. Se le serie piene ci stanno con la sola apertura, dedica la giornata a quelle e sposta fascia, tecnica e kettlebell in un altro giorno: meglio una seduta di parte alta intera che due EMOM o un blocco Everfit.
 Composizione: ${pa.map(parteAltaTesto).join(' || ')}`;
 }
 
