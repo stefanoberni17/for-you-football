@@ -37,7 +37,7 @@ import { calcolaMemoriaTecnica, isMazzo, scalaDi, tecnicaTesto, type MemoriaTecn
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.20-parte-alta-una-volta';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.21-parte-alta-giornata-dedicata';
 /**
  * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
  * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
@@ -270,14 +270,21 @@ export function sostituzioniParteAlta(p: PianoLLM, ctx: ContextV2): Map<number, 
     if (!everfit.length) continue;
     const mappa = new Map<string, string | null>();
     let haPa = blocchi.some((b) => isParteAlta(b.id));
+    // Il tempo si misura con la sola apertura (Ste, 28/9: "ne dedica una quasi interamente alla parte alta e riduce
+    // il resto"): il formato più pieno che ci sta; gli altri blocchi facoltativi della giornata saltano se non c'è posto
+    const obbligatorio = (x: Blocco) => isApertura(x) || x.id === RISC_VELOCITA_ID;
+    const apertura = blocchi.filter((x) => obbligatorio(x)).reduce((a, x) => a + x.durataMin, 0);
     for (const b of everfit) {
       if (haPa) { mappa.set(b.id, null); continue; }
-      const altri = blocchi.filter((x) => x.id !== b.id && !mappa.has(x.id)).reduce((a, x) => a + x.durataMin, 0);
       const liberi = ordine.filter((x) => !usati.has(gruppo(x.id)));
-      const scelta = liberi.find((x) => altri + x.durataMin <= maxDurata) ?? liberi[0] ?? ordine.find((x) => altri + x.durataMin <= maxDurata) ?? ordine[0];
+      const scelta = liberi.find((x) => apertura + x.durataMin <= maxDurata) ?? liberi[0] ?? ordine.find((x) => apertura + x.durataMin <= maxDurata) ?? ordine[0];
       mappa.set(b.id, scelta.id);
       usati.add(gruppo(scelta.id));
       haPa = true;
+      // Giornata dedicata: se con gli altri blocchi si sfora, via i facoltativi (dal più lungo) finché ci sta
+      const facoltativi = blocchi.filter((x) => x.id !== b.id && !obbligatorio(x) && !mappa.has(x.id)).sort((x, y) => y.durataMin - x.durataMin);
+      let totale = apertura + scelta.durataMin + facoltativi.reduce((a, x) => a + x.durataMin, 0);
+      for (const x of facoltativi) { if (totale <= maxDurata) break; mappa.set(x.id, null); totale -= x.durataMin; }
     }
     out.set(Number(s.giorno), mappa);
   }
@@ -330,7 +337,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         const paId = sostPa.get(blocchi[i].id);
         const paBlocco = paId ? bloccoDi(ctx, paId) : undefined;
         if (paBlocco && !blocchi.some((b) => b.id === paBlocco.id)) { noteMemoria.set(paBlocco.id, `sui tuoi gradini, al posto di "${nomeBloccoAtleta(blocchi[i].nome)}"`); blocchi[i] = paBlocco; }
-        else blocchi.splice(i, 1);
+        else blocchi.splice(i, 1); // blocco Everfit doppio o facoltativo tolto: giornata dedicata alla parte alta
       }
     }
     // Parte alta: ogni formato `pa-*` al massimo UNA volta a settimana (Ste, 28/9: "mi ha messo EMOM 2 volte")
@@ -569,6 +576,7 @@ function parteAltaRegola(ctx: ContextV2): string {
 - Rotazione sul ciclo di 4 settimane: ${formatoSett}. (Tabata e AMRAP arriveranno: per ora la rotazione è serie/EMOM.)
 - Ogni blocco \`pa-*\` è una seduta intera di parte alta: al massimo uno per giornata, più fascia o tecnica se ci sta nel tempo. Mai due \`pa-*\` nello stesso giorno, mai il giorno prima della partita. **Ogni formato UNA sola volta a settimana** (il validatore rifiuta due \`${PA_EMOM_ID}\`): con due sedute di parte alta, una a serie (breve se serve) e una EMOM.
 - Un blocco Everfit di forza-parte-alta al posto di un \`pa-*\` NON passa: il server lo sostituisce con il formato giusto (e lo toglie se nella giornata c'è già un \`pa-*\`). Scegli direttamente i \`pa-*\`.
+- Tempo: la giornata di parte alta è apertura + il \`pa-*\` e basta. Se le serie piene ci stanno con la sola apertura, dedica la giornata a quelle e sposta fascia, tecnica e kettlebell in un altro giorno: meglio una seduta di parte alta intera che due EMOM o un blocco Everfit.
 Composizione: ${pa.map(parteAltaTesto).join(' || ')}`;
 }
 

@@ -36,6 +36,18 @@ describe('parte alta dalle scale', () => {
     expect(serie.items[0].esercizio_id).toBe('push-3');
   });
 
+  it('spinta e tirata pari nelle serie (Ste, 28/9): gradino + verticale contro gradino + rematore', () => {
+    const spinte = serie.items.filter((it) => (it.esercizio_id ?? '').startsWith('push-') || (it.esercizio_id ?? '').startsWith('fpa-pike') || (it.esercizio_id ?? '').includes('push-up')).length;
+    const tirate = serie.items.filter((it) => (it.esercizio_id ?? '').startsWith('pull-') || (it.esercizio_id ?? '').includes('row') || (it.esercizio_id ?? '').includes('rematore') || (it.esercizio_id ?? '').includes('trazioni')).length;
+    expect(spinte).toBe(2);
+    expect(tirate).toBe(2);
+  });
+
+  it('l\'EMOM dura almeno 20 minuti (Ste, 28/9)', () => {
+    expect(emom.durataMin).toBeGreaterThanOrEqual(20);
+    for (const it of emom.items) expect(it.serie).toBeGreaterThanOrEqual(3);
+  });
+
   it('la versione breve sta in 60 minuti con l\'apertura: spinta + verticale, tirata + rematore, core, 3 serie', () => {
     const short = pa.find((b) => b.id === PA_SERIE_SHORT_ID)!;
     expect(short).toBeTruthy();
@@ -98,7 +110,7 @@ describe('il server sostituisce i blocchi Everfit di parte alta con le sedute su
   });
 
   it('con poco tempo la seduta Everfit diventa la versione breve delle serie, non un secondo EMOM', () => {
-    const poco = { ...ctx, vincoli: { durataMax: 50 } } as ContextV2;
+    const poco = { ...ctx, vincoli: { durataMax: 40 } } as ContextV2;
     const piano = { sedute: [{ giorno: 1, blocchi: [PA_EMOM_ID] }, { giorno: 3, blocchi: ['forza-parte-alta-b1'] }] };
     expect(sostituzioniParteAlta(piano, poco).get(3)?.get('forza-parte-alta-b1')).toBe(PA_SERIE_SHORT_ID);
   });
@@ -106,6 +118,19 @@ describe('il server sostituisce i blocchi Everfit di parte alta con le sedute su
   it('serie piene e brevi sono lo stesso formato: dopo le serie la seconda seduta è l\'EMOM', () => {
     const piano = { sedute: [{ giorno: 1, blocchi: [PA_SERIE_SHORT_ID] }, { giorno: 3, blocchi: ['forza-parte-alta-b1'] }] };
     expect(sostituzioniParteAlta(piano, ctx).get(3)?.get('forza-parte-alta-b1')).toBe(PA_EMOM_ID);
+  });
+
+  it('giornata dedicata: se le serie piene ci stanno con la sola apertura, il blocco facoltativo salta (Ste, 28/9)', () => {
+    const sessanta = { ...ctx, vincoli: { durataMax: 60 } } as ContextV2;
+    const facoltativo = ctx.blocchi.find((b) => b.qualita.startsWith('tecnica') && b.durataMin >= 15)!;
+    expect(facoltativo).toBeTruthy();
+    const piano = { sedute: [{ giorno: 1, blocchi: ['forza-parte-alta-b1', facoltativo.id] }] };
+    const mappa = sostituzioniParteAlta(piano, sessanta).get(1)!;
+    expect(mappa.get('forza-parte-alta-b1')).toBe(PA_SERIE_ID);
+    expect(mappa.get(facoltativo.id)).toBeNull();
+    const { plan, errors } = expandPiano(piano, sessanta);
+    expect(errors).toEqual([]);
+    expect(plan.sedute[0].blocchi!.map((b) => b.id)).toEqual([PA_SERIE_ID]);
   });
 
   it('senza test delle scale non si sostituisce niente', () => {

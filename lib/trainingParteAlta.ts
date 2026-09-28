@@ -9,12 +9,12 @@
  * Formati (per ora quelli che il player sa fare: serie fisse ed EMOM; tabata e AMRAP arrivano
  * col player a round):
  * - `pa-serie`      = serie classiche sull'ULTIMO gradino completato: 3-4 × 60-70 % del max, recupero 90".
- *                     Spinta (gradino + variante + spinta verticale) + tirata (gradino + rematore) + core + dorsali.
+ *                     Spinta (gradino + verticale) e tirata (gradino + rematore) PARI (Ste, 28/9), poi core + dorsali.
  * - `pa-serie-short`= la stessa seduta in 30-40': 3 serie, una spinta + la verticale, una tirata + un rematore, core.
  *                     Per chi ha 60' (Ste, 28/9: con le serie piene fuori tempo Claude metteva due EMOM a settimana).
  * - `pa-serie-push` = focus spinta (3-4 esercizi di spinta, 1 di tirata) — con 3 sedute di parte alta a settimana.
  * - `pa-serie-pull` = focus tirata (3-4 di tirata, 1 di spinta).
- * - `pa-emom`       = skill più esplosività: un esercizio al minuto, 2 reps (3 sui gradini bassi), sprint sempre 1.
+ * - `pa-emom`       = skill più esplosività: un esercizio al minuto per ~20' (Ste, 28/9), 2 reps (3 sui gradini bassi), sprint sempre 1.
  *                     Spinta e tirata al gradino SOPRA; salti e sprint solo se la parte bassa è tra gli obiettivi.
  *                     Niente addome (Ste, 28/9: "non si incastrano bene"): core e dorsali restano nelle sedute a serie.
  *                     Sostituisce l'EMOM Skill del 17/9.
@@ -48,9 +48,9 @@ export const EMOM_REPS_GRADINI_BASSI = 3;
 export const EMOM_GRADINO_BASSO: Record<'spinta' | 'tirata', number> = { spinta: 4, tirata: 6 }; // fino all'arciere / fino alla presa larga
 export const EMOM_SPRINT_REPS = 1;
 export const EMOM_SALTO_REPS = 2;
-export const EMOM_MINUTI_TARGET = 10;
-export const EMOM_GIRI_MIN = 2;
-export const EMOM_GIRI_MAX = 5;
+export const EMOM_MINUTI_TARGET = 20;  // Ste, 28/9: "almeno 20 minuti" (prima 10: due giri erano poca pratica)
+export const EMOM_GIRI_MIN = 3;
+export const EMOM_GIRI_MAX = 10;
 
 /** Variazioni dello sprint (short del canale, 22/9): una diversa ogni settimana */
 export const SPRINT_VARIANTI = [
@@ -250,7 +250,7 @@ function bloccoEmom(sc: Scale, o: OpzioniParteAlta): Blocco | null {
     const it = v2Item(sprint, 0, EMOM_SPRINT_REPS, 0, 'Uno sprint di 10 metri a tutta, poi torni indietro camminando e riposi fino allo scadere del minuto.', { schema: 'emom', emomGruppo: PA_EMOM_ID });
     if (it) stazioni.push(it);
   }
-  const giri = Math.max(EMOM_GIRI_MIN, Math.min(EMOM_GIRI_MAX, Math.round(EMOM_MINUTI_TARGET / stazioni.length)));
+  const giri = Math.max(EMOM_GIRI_MIN, Math.min(EMOM_GIRI_MAX, Math.ceil(EMOM_MINUTI_TARGET / stazioni.length)));
   const items = stazioni.map((s) => ({ ...s, serie: giri }));
   const minuti = items.length * giri;
   const qualitaSet: Blocco['qualitaSet'] = {};
@@ -278,9 +278,11 @@ export function costruisciParteAlta(results: TestResultRow[], o: OpzioniParteAlt
   const haSpinta = p.spinta.length > 0;
   const haTirata = p.tirata.length > 0;
   const scalaTirata = p.tirata.some((it) => it.esercizio_id?.startsWith('pull-')); // scala di tirata testata e sbarra: ha senso un focus tirata
+  // Spinta e tirata PARI (Ste, 28/9): gradino + verticale contro gradino + rematore
+  const dueSpinte = [p.spinta[0], p.spinta[2] ?? p.spinta[1]].filter((it): it is BloccoItem => !!it);
   if (haSpinta && haTirata) {
-    const completa = bloccoSerie(PA_SERIE_ID, 'Parte alta: serie', [...p.spinta.slice(0, 3), ...p.tirata.slice(0, 2), ...p.core, ...p.lombari], o,
-      'Serie classiche sui tuoi gradini: spinta, tirata, core e dorsali. Recupero pieno, si spinge sulle ripetizioni.');
+    const completa = bloccoSerie(PA_SERIE_ID, 'Parte alta: serie', [...dueSpinte, ...p.tirata.slice(0, 2), ...p.core, ...p.lombari], o,
+      'Serie classiche sui tuoi gradini: spinta al gradino e verticale, tirata al gradino e rematore, core e dorsali. Recupero pieno, si spinge sulle ripetizioni.');
     if (completa) out.push(completa);
     // Versione breve: gradino di spinta + verticale, gradino di tirata + rematore, core; sempre 3 serie
     const breve = [p.spinta[0], p.spinta[2] ?? p.spinta[1], p.tirata[0], p.tirata[1], p.core[0]].filter((it): it is BloccoItem => !!it)

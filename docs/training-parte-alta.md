@@ -12,17 +12,17 @@ Claude sceglie solo **quale formato in quale giorno**.
 
 | Formato | Gradino | Dose | A cosa serve |
 |---|---|---|---|
-| **Serie** | ultimo completato | 3-4 serie × 60-70 % del max, min 5 reps, recupero 90" | volume e qualità |
+| **Serie** | ultimo completato | 3-4 serie × 60-70 % del max, min 5 reps, recupero 90"; **spinta e tirata pari** (28/9): gradino + verticale contro gradino + rematore, poi core e dorsali | volume e qualità |
 | **Serie, versione breve** (28/9) | ultimo completato | 3 serie: gradino di spinta + verticale, gradino di tirata + rematore, core; recupero pieno solo sui gradini, 60" sugli accessori (~37') | le serie per chi ha 60': con l'apertura ci sta |
 | **AMRAP** | uno sotto | 12-15', 40 % del max per giro (stessa regola della stazione AMRAP del test) | più volume possibile, vale da mini-test: si contano i giri |
-| **EMOM** | uno sopra (skill) + esplosività | 2 reps (3 sui gradini bassi), sprint sempre 1 | intensità massima, zero fatica |
+| **EMOM** | uno sopra (skill) + esplosività | 2 reps (3 sui gradini bassi), sprint sempre 1; **~20 minuti** (28/9, Ste: "almeno 20": giri = 20 / stazioni, min 3) | intensità massima, zero fatica |
 | **Tabata** | ultimo / uno sotto | 8 round 30-30 sull'ultimo gradino, 40-20 su quello sotto, 2-3 giri, 1-2' tra i giri | volume in circuito completo |
 
 "Gradino completato" = gradino con risultato ≥ soglia nella scala (`ladderForArea`, oggi `amrap`).
 
 ### Serie
-- Spinta: 2 esercizi (gradino + una variante: diamond, larga, inclinata) + 1 spinta verticale + core.
-- Tirata: 2 esercizi (gradino + un rematore orizzontale: australiana, manubrio/kettlebell a un braccio) + dorsali (catena lombari).
+- Spinta: 2 esercizi, gradino + spinta verticale (28/9: la variante diamond/inclinata resta solo nel focus spinta) + core.
+- Tirata: 2 esercizi (gradino + un rematore orizzontale: australiana, manubrio/kettlebell a un braccio) + dorsali (catena lombari). Spinta e tirata PARI (Ste, 28/9).
 - Con 3 sedute di parte alta: una **focus push** (3-4 spinta, 1 tirata) e una **focus pull** (3-4 tirata, 1 spinta).
   Se `trainingSquilibri` segnala push vs pull, la seduta focus va sul lato debole.
 
@@ -31,7 +31,7 @@ Claude sceglie solo **quale formato in quale giorno**.
 - 12-15' (non 20' come il test). In settimana 3 del ciclo fa da mini-test prima del ritest.
 
 ### EMOM — "skill più esplosività"
-Una stazione al minuto, 2 giri = 10-12'. Mai 4 reps nel generatore (il 4 resta solo il tetto del validatore, `emomRepsMax`).
+Una stazione al minuto, ~20' (28/9: prima 2 giri = 10-12', troppo poca pratica; ora giri = 20 / stazioni, minimo 3, massimo 10). Mai 4 reps nel generatore (il 4 resta solo il tetto del validatore, `emomRepsMax`).
 
 | Stazione | Reps | Quando |
 |---|---|---|
@@ -112,6 +112,9 @@ Agganciata al ciclo di 4 settimane (`cicloInfo`):
    viene tolto), nota "sui tuoi gradini, al posto di …" nell'hub; Forza Mix e Full Body restano a Claude. `PLANNER_V2_PROMPT_VERSION = 'v2.19-parte-alta-server'`.
    **28/9, sera**: `pa-serie-short` (le serie piene durano 53-57' e con l'apertura non stanno in 60': Claude ripiegava su due EMOM); ogni `pa-*` una volta a settimana
    (errore in `expandPiano` con i formati liberi nel messaggio); nell'ordine di sostituzione serie e serie brevi sono un solo formato. `PLANNER_V2_PROMPT_VERSION = 'v2.20-parte-alta-una-volta'`.
+   **28/9, Ste**: spinta e tirata pari in `pa-serie` (gradino + verticale / gradino + rematore: 46-51'), EMOM a ~20' (`EMOM_MINUTI_TARGET = 20`, giri 3-10), **giornata dedicata**: nella
+   sostituzione il tempo si misura con la sola apertura, si prende il formato più pieno che ci sta e i blocchi facoltativi della giornata (fascia, tecnica, kettlebell) saltano se
+   non c'è posto (regola 23: "meglio una seduta di parte alta intera che due EMOM"). `PLANNER_V2_PROMPT_VERSION = 'v2.21-parte-alta-giornata-dedicata'`.
 2. **FATTO** prompt: regola 23 riscritta (`parteAltaRegola`), `PLANNER_V2_PROMPT_VERSION = 'v2.12-parte-alta'`; fallback: i `pa-*` prima
    dei blocchi Everfit per l'obiettivo parte alta; `expandPiano` marca gli item a serie dei `pa-*` con `adattamento: 'gradino'` (badge
    "Il tuo gradino", `alGradino` non li tocca, i log SALI/SCENDI sì).
