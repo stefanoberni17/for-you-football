@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-09-28 (sera) — Parte alta: ogni formato una volta a settimana, serie in versione breve (Ste)
+- Ste: "mi ha messo EMOM 2 volte nella stessa settimana". Causa: le serie piene durano 53-57' e con l'apertura non stanno nei 60' del setup, e nessuna regola vietava il doppione. Ora `pa-serie-short` (~37': gradino di spinta + verticale, gradino di tirata + rematore, core, 3 serie) e ogni `pa-*` al massimo una volta a settimana (`expandPiano` rifiuta e indica i formati liberi; regola 23 aggiornata; serie e serie brevi contano come un formato nella sostituzione). `PLANNER_V2_PROMPT_VERSION = 'v2.20-parte-alta-una-volta'`. Test aggiunti.
+
 ## 2026-09-28 — Parte alta: niente addome nell'EMOM, il server impone le sedute sui gradini (Ste)
 - Ste: "dagli EMOM toglierei tutti gli esercizi dell'addome perché non si incastrano bene" → `pa-emom` senza core né dorsali (restano nelle serie).
 - Ste: "ha fatto forza parte alta (più leggero)" → Claude aveva scelto un blocco Everfit al posto delle sedute sui gradini (il prompt lo sconsigliava, nessuna regola lo impediva). Ora `sostituzioniParteAlta` in `expandPiano` sostituisce ogni blocco Everfit "Forza Parte Alta…" con il `pa-*` del formato giusto (serie → EMOM → focus; scarico: EMOM prima; formati già usati saltati; tolto se nella giornata c'è già un `pa-*`), nota nell'hub. `PLANNER_V2_PROMPT_VERSION = 'v2.19-parte-alta-server'`. Test in `tests/trainingParteAlta.test.ts`. Eccezione al congelamento del Campo su richiesta di Ste.

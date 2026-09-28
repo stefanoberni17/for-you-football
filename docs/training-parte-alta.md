@@ -13,6 +13,7 @@ Claude sceglie solo **quale formato in quale giorno**.
 | Formato | Gradino | Dose | A cosa serve |
 |---|---|---|---|
 | **Serie** | ultimo completato | 3-4 serie × 60-70 % del max, min 5 reps, recupero 90" | volume e qualità |
+| **Serie, versione breve** (28/9) | ultimo completato | 3 serie: gradino di spinta + verticale, gradino di tirata + rematore, core; recupero pieno solo sui gradini, 60" sugli accessori (~37') | le serie per chi ha 60': con l'apertura ci sta |
 | **AMRAP** | uno sotto | 12-15', 40 % del max per giro (stessa regola della stazione AMRAP del test) | più volume possibile, vale da mini-test: si contano i giri |
 | **EMOM** | uno sopra (skill) + esplosività | 2 reps (3 sui gradini bassi), sprint sempre 1 | intensità massima, zero fatica |
 | **Tabata** | ultimo / uno sotto | 8 round 30-30 sull'ultimo gradino, 40-20 su quello sotto, 2-3 giri, 1-2' tra i giri | volume in circuito completo |
@@ -73,7 +74,7 @@ Agganciata al ciclo di 4 settimane (`cicloInfo`):
 | 3 | AMRAP (mini-test prima del ritest) |
 | 4 (scarico) | solo EMOM, o serie leggera |
 
-- 2-3 sedute di parte alta a settimana: **sempre 1 EMOM** + le altre a rotazione.
+- 2-3 sedute di parte alta a settimana: **sempre 1 EMOM** + le altre a rotazione. **Ogni formato UNA volta a settimana** (28/9, Ste: "mi ha messo EMOM 2 volte"): il validatore rifiuta il doppione e indica i formati liberi; serie piene e brevi contano come lo stesso formato nella sostituzione.
 - 3 sedute: EMOM + focus push + focus pull.
 - Obiettivi: parte alta tra i primi → 2-3 sedute; assente → il formato entra al massimo una volta.
 
@@ -109,6 +110,8 @@ Agganciata al ciclo di 4 settimane (`cicloInfo`):
    "Forza Parte Alta…" scelto da Claude con il `pa-*` del formato giusto (serie → EMOM → focus spinta → focus tirata; scarico: prima l'EMOM;
    formati già usati nella settimana saltati, preferito quello che sta nel tempo massimo; nella stessa giornata di un `pa-*` il blocco Everfit
    viene tolto), nota "sui tuoi gradini, al posto di …" nell'hub; Forza Mix e Full Body restano a Claude. `PLANNER_V2_PROMPT_VERSION = 'v2.19-parte-alta-server'`.
+   **28/9, sera**: `pa-serie-short` (le serie piene durano 53-57' e con l'apertura non stanno in 60': Claude ripiegava su due EMOM); ogni `pa-*` una volta a settimana
+   (errore in `expandPiano` con i formati liberi nel messaggio); nell'ordine di sostituzione serie e serie brevi sono un solo formato. `PLANNER_V2_PROMPT_VERSION = 'v2.20-parte-alta-una-volta'`.
 2. **FATTO** prompt: regola 23 riscritta (`parteAltaRegola`), `PLANNER_V2_PROMPT_VERSION = 'v2.12-parte-alta'`; fallback: i `pa-*` prima
    dei blocchi Everfit per l'obiettivo parte alta; `expandPiano` marca gli item a serie dei `pa-*` con `adattamento: 'gradino'` (badge
    "Il tuo gradino", `alGradino` non li tocca, i log SALI/SCENDI sì).

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { costruisciParteAlta, PA_EMOM_ID, PA_SERIE_ID } from '@/lib/trainingParteAlta';
+import { costruisciParteAlta, PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_SHORT_ID } from '@/lib/trainingParteAlta';
 import { expandPiano, sostituzioniParteAlta, type ContextV2 } from '@/lib/trainingPlannerV2';
 import { blocchiDisponibili } from '@/lib/trainingBlocks';
 import type { TestResultRow } from '@/lib/trainingEngine';
@@ -34,6 +34,15 @@ describe('parte alta dalle scale', () => {
 
   it('le serie di spinta partono dal gradino chiuso sopra soglia (arciere), non dai piegamenti base', () => {
     expect(serie.items[0].esercizio_id).toBe('push-3');
+  });
+
+  it('la versione breve sta in 60 minuti con l\'apertura: spinta + verticale, tirata + rematore, core, 3 serie', () => {
+    const short = pa.find((b) => b.id === PA_SERIE_SHORT_ID)!;
+    expect(short).toBeTruthy();
+    expect(short.durataMin + 10).toBeLessThanOrEqual(60);
+    expect(short.durataMin).toBeLessThan(serie.durataMin);
+    expect(short.items.map((it) => it.esercizio_id)).toEqual(['push-3', 'fpa-pike-push-up-piedi-rialzati', 'pull-5', 'fpa-gorilla-row', 'core-2']);
+    for (const it of short.items) expect(it.serie).toBe(3);
   });
 });
 
@@ -80,6 +89,23 @@ describe('il server sostituisce i blocchi Everfit di parte alta con le sedute su
     const deload = { ...ctx, base: { ...ctx.base, ciclo: { settimana: 4, isDeload: true, ritestDue: false } } } as ContextV2;
     const piano = { sedute: [{ giorno: 1, blocchi: ['forza-parte-alta-b1'] }] };
     expect(sostituzioniParteAlta(piano, deload).get(1)?.get('forza-parte-alta-b1')).toBe(PA_EMOM_ID);
+  });
+
+  it('due EMOM nella stessa settimana: il validatore rifiuta e indica i formati liberi (Ste, 28/9)', () => {
+    const piano = { sedute: [{ giorno: 1, blocchi: [PA_EMOM_ID] }, { giorno: 3, blocchi: [PA_EMOM_ID] }] };
+    const { errors } = expandPiano(piano, ctx);
+    expect(errors.some((e) => e.includes('UNA volta a settimana') && e.includes(PA_SERIE_SHORT_ID))).toBe(true);
+  });
+
+  it('con poco tempo la seduta Everfit diventa la versione breve delle serie, non un secondo EMOM', () => {
+    const poco = { ...ctx, vincoli: { durataMax: 50 } } as ContextV2;
+    const piano = { sedute: [{ giorno: 1, blocchi: [PA_EMOM_ID] }, { giorno: 3, blocchi: ['forza-parte-alta-b1'] }] };
+    expect(sostituzioniParteAlta(piano, poco).get(3)?.get('forza-parte-alta-b1')).toBe(PA_SERIE_SHORT_ID);
+  });
+
+  it('serie piene e brevi sono lo stesso formato: dopo le serie la seconda seduta è l\'EMOM', () => {
+    const piano = { sedute: [{ giorno: 1, blocchi: [PA_SERIE_SHORT_ID] }, { giorno: 3, blocchi: ['forza-parte-alta-b1'] }] };
+    expect(sostituzioniParteAlta(piano, ctx).get(3)?.get('forza-parte-alta-b1')).toBe(PA_EMOM_ID);
   });
 
   it('senza test delle scale non si sostituisce niente', () => {

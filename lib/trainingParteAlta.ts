@@ -10,6 +10,8 @@
  * col player a round):
  * - `pa-serie`      = serie classiche sull'ULTIMO gradino completato: 3-4 × 60-70 % del max, recupero 90".
  *                     Spinta (gradino + variante + spinta verticale) + tirata (gradino + rematore) + core + dorsali.
+ * - `pa-serie-short`= la stessa seduta in 30-40': 3 serie, una spinta + la verticale, una tirata + un rematore, core.
+ *                     Per chi ha 60' (Ste, 28/9: con le serie piene fuori tempo Claude metteva due EMOM a settimana).
  * - `pa-serie-push` = focus spinta (3-4 esercizi di spinta, 1 di tirata) — con 3 sedute di parte alta a settimana.
  * - `pa-serie-pull` = focus tirata (3-4 di tirata, 1 di spinta).
  * - `pa-emom`       = skill più esplosività: un esercizio al minuto, 2 reps (3 sui gradini bassi), sprint sempre 1.
@@ -26,12 +28,14 @@ export const PA_SERIE_ID = 'pa-serie';
 export const PA_SERIE_PUSH_ID = 'pa-serie-push';
 export const PA_SERIE_PULL_ID = 'pa-serie-pull';
 export const PA_EMOM_ID = 'pa-emom';
-export const PA_IDS = [PA_SERIE_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID, PA_EMOM_ID] as const;
+export const PA_SERIE_SHORT_ID = 'pa-serie-short';
+export const PA_IDS = [PA_SERIE_ID, PA_SERIE_SHORT_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID, PA_EMOM_ID] as const;
 export const isParteAlta = (id: string) => id.startsWith('pa-');
 
 /** Serie classiche: dose dal massimo misurato */
 export const SERIE_DOSE_PCT = 0.65;     // 60-70 % del max
 export const SERIE_RECUPERO_SEC = 90;
+export const SERIE_RECUPERO_BREVE_SEC = 60;  // versione breve: recupero pieno solo sui gradini, 60" sugli accessori
 export const SERIE_MIN_REPS_PUSH = 5;
 export const SERIE_MIN_REPS_PULL = 3;
 export const SERIE_HOLD_PCT = 0.7;      // tenute: 70 % del max, tetto 60"
@@ -278,6 +282,12 @@ export function costruisciParteAlta(results: TestResultRow[], o: OpzioniParteAlt
     const completa = bloccoSerie(PA_SERIE_ID, 'Parte alta: serie', [...p.spinta.slice(0, 3), ...p.tirata.slice(0, 2), ...p.core, ...p.lombari], o,
       'Serie classiche sui tuoi gradini: spinta, tirata, core e dorsali. Recupero pieno, si spinge sulle ripetizioni.');
     if (completa) out.push(completa);
+    // Versione breve: gradino di spinta + verticale, gradino di tirata + rematore, core; sempre 3 serie
+    const breve = [p.spinta[0], p.spinta[2] ?? p.spinta[1], p.tirata[0], p.tirata[1], p.core[0]].filter((it): it is BloccoItem => !!it)
+      .map((it, i) => ({ ...it, serie: Math.min(it.serie, 3), recupero_sec: i === 0 || i === 2 ? it.recupero_sec : SERIE_RECUPERO_BREVE_SEC })); // recupero pieno solo sui due gradini
+    const short = bloccoSerie(PA_SERIE_SHORT_ID, 'Parte alta: serie (versione breve)', breve, o,
+      'Le serie sui tuoi gradini in versione breve: una spinta e la verticale, una tirata e un rematore, core. Per quando il tempo è poco.');
+    if (short) out.push(short);
     if (scalaTirata) {
       const push = bloccoSerie(PA_SERIE_PUSH_ID, 'Parte alta: focus spinta', [...p.spinta.slice(0, 4), ...p.tirata.slice(0, 1), ...p.core], o,
         'Seduta di spinta: 3-4 esercizi di spinta sui tuoi gradini, una tirata per non sbilanciare, core.');
@@ -290,6 +300,10 @@ export function costruisciParteAlta(results: TestResultRow[], o: OpzioniParteAlt
     const push = bloccoSerie(PA_SERIE_ID, 'Parte alta: serie', [...p.spinta.slice(0, 4), ...p.core, ...p.lombari], o,
       'Serie classiche di spinta sui tuoi gradini (senza sbarra né rematori disponibili), core e dorsali.');
     if (push) out.push(push);
+    const breve = [p.spinta[0], p.spinta[2] ?? p.spinta[1], p.core[0], p.lombari[0]].filter((it): it is BloccoItem => !!it)
+      .map((it, i) => ({ ...it, serie: Math.min(it.serie, 3), recupero_sec: i === 0 ? it.recupero_sec : SERIE_RECUPERO_BREVE_SEC }));
+    const short = bloccoSerie(PA_SERIE_SHORT_ID, 'Parte alta: serie (versione breve)', breve, o, 'Le serie di spinta sui tuoi gradini in versione breve, con core e dorsali.');
+    if (short) out.push(short);
   }
   const emom = bloccoEmom(sc, o);
   if (emom) out.push(emom);
@@ -298,11 +312,14 @@ export function costruisciParteAlta(results: TestResultRow[], o: OpzioniParteAlt
 
 /**
  * Ordine dei formati con cui il server sostituisce un blocco Everfit di forza parte alta (Ste, 28/9: "ha fatto
- * forza parte alta (più leggero)" invece delle sedute sui gradini): nello scarico prima l'EMOM, altrimenti serie,
- * EMOM, focus spinta, focus tirata. Il chiamante salta i formati già usati nella settimana.
+ * forza parte alta (più leggero)" invece delle sedute sui gradini): nello scarico prima l'EMOM, altrimenti serie
+ * (la versione breve se le piene non stanno nel tempo), EMOM, focus spinta, focus tirata. Il chiamante salta i
+ * formati già usati nella settimana e preferisce quello che sta nel tempo massimo.
  */
 export function ordineFormatiParteAlta(isDeload: boolean): string[] {
-  return isDeload ? [PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID] : [PA_SERIE_ID, PA_EMOM_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID];
+  return isDeload
+    ? [PA_EMOM_ID, PA_SERIE_SHORT_ID, PA_SERIE_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID]
+    : [PA_SERIE_ID, PA_SERIE_SHORT_ID, PA_EMOM_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID];
 }
 
 /** Riga per il prompt del planner: cosa c'è dentro e da dove viene. */
