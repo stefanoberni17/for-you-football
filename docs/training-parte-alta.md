@@ -36,7 +36,7 @@ Una stazione al minuto, 2 giri = 10-12'. Mai 4 reps nel generatore (il 4 resta s
 |---|---|---|
 | Spinta, gradino sopra | 2 (3 fino all'arciere) | sempre |
 | Tirata, gradino sopra | 2 (3 sui gradini bassi) | con sbarra |
-| Core **a reps** (hollow rocks, dragon flag negativa, arch rocks) | 2-3 | solo se il gradino dell'atleta è già a reps; le tenute NON entrano nell'EMOM, vanno nel contorno |
+| ~~Core a reps~~ | — | **tolto il 28/9** (Ste: "gli esercizi dell'addome non si incastrano bene"): core e dorsali restano nelle sedute a serie |
 | Salto in lungo da fermo | 2 | solo se la parte bassa è tra gli obiettivi |
 | Salto in alto da fermo | 2 | idem |
 | Sprint 10 m, o una variante | **1, sempre** | idem; la variante ruota ogni settimana |
@@ -105,6 +105,10 @@ Agganciata al ciclo di 4 settimane (`cicloInfo`):
    e 3 B sul gradino, 3 sugli accessori; variante = gradino sotto (da quello a terra) o diamond; spinta verticale per livello (palestra →
    overhead press); rematori per attrezzatura (gorilla row → australiane → bilanciere → sotto al tavolo); core e dorsali 3 × 70 % del max.
    EMOM: giri = clamp(10 / stazioni, 2, 5); sprint a rotazione sulla settimana; `Blocco.senzaScarico` → `expandBlocco` non riduce le serie nel deload.
+   **28/9**: niente core né dorsali nell'EMOM; `sostituzioniParteAlta` in `trainingPlannerV2.ts` sostituisce ogni blocco Everfit della famiglia
+   "Forza Parte Alta…" scelto da Claude con il `pa-*` del formato giusto (serie → EMOM → focus spinta → focus tirata; scarico: prima l'EMOM;
+   formati già usati nella settimana saltati, preferito quello che sta nel tempo massimo; nella stessa giornata di un `pa-*` il blocco Everfit
+   viene tolto), nota "sui tuoi gradini, al posto di …" nell'hub; Forza Mix e Full Body restano a Claude. `PLANNER_V2_PROMPT_VERSION = 'v2.19-parte-alta-server'`.
 2. **FATTO** prompt: regola 23 riscritta (`parteAltaRegola`), `PLANNER_V2_PROMPT_VERSION = 'v2.12-parte-alta'`; fallback: i `pa-*` prima
    dei blocchi Everfit per l'obiettivo parte alta; `expandPiano` marca gli item a serie dei `pa-*` con `adattamento: 'gradino'` (badge
    "Il tuo gradino", `alGradino` non li tocca, i log SALI/SCENDI sì).

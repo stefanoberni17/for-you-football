@@ -13,8 +13,9 @@
  * - `pa-serie-push` = focus spinta (3-4 esercizi di spinta, 1 di tirata) — con 3 sedute di parte alta a settimana.
  * - `pa-serie-pull` = focus tirata (3-4 di tirata, 1 di spinta).
  * - `pa-emom`       = skill più esplosività: un esercizio al minuto, 2 reps (3 sui gradini bassi), sprint sempre 1.
- *                     Spinta e tirata al gradino SOPRA; core solo se il gradino sopra è a reps; salti e sprint solo
- *                     se la parte bassa è tra gli obiettivi. Sostituisce l'EMOM Skill del 17/9.
+ *                     Spinta e tirata al gradino SOPRA; salti e sprint solo se la parte bassa è tra gli obiettivi.
+ *                     Niente addome (Ste, 28/9: "non si incastrano bene"): core e dorsali restano nelle sedute a serie.
+ *                     Sostituisce l'EMOM Skill del 17/9.
  */
 import { catenaByArea, esercizioById, type AreaForza, type TrainingExercise } from './trainingCatalog';
 import { LADDER_AREE, ladderForArea, type LadderState, type TestResultRow } from './trainingEngine';
@@ -234,12 +235,7 @@ function bloccoEmom(sc: Scale, o: OpzioniParteAlta): Blocco | null {
     const reps = e.gradino <= EMOM_GRADINO_BASSO[area] ? EMOM_REPS_GRADINI_BASSI : EMOM_REPS;
     stazioni.push(v1Item(e, 0, reps, 'reps', 0, `Gradino ${e.gradino} della scala ${area}: il passo dopo l'ultimo che hai testato. ${reps} ripetizioni pulite, poi riposi fino allo scadere del minuto.`, { schema: 'emom', emomGruppo: PA_EMOM_ID }));
   }
-  for (const area of ['core', 'lombari'] as const) {
-    const l = sc.get(area) ?? null;
-    const e = gradinoSopra(l, area);
-    if (!e || !l || e.unita !== 'reps') continue; // le tenute non entrano nell'EMOM (Ste: sempre a reps)
-    stazioni.push(v1Item(e, 0, EMOM_REPS_GRADINI_BASSI, 'reps', 0, `Gradino ${e.gradino} della scala ${area}, a ripetizioni.`, { schema: 'emom', emomGruppo: PA_EMOM_ID }));
-  }
+  // Niente core né dorsali nell'EMOM (Ste, 28/9: gli esercizi dell'addome non si incastrano nel minuto): restano nelle serie
   if (stazioni.length === 0) return null; // senza scale di spinta/tirata testate non è un EMOM skill
   if (o.parteBassa) {
     for (const id of SALTI) {
@@ -298,6 +294,15 @@ export function costruisciParteAlta(results: TestResultRow[], o: OpzioniParteAlt
   const emom = bloccoEmom(sc, o);
   if (emom) out.push(emom);
   return out;
+}
+
+/**
+ * Ordine dei formati con cui il server sostituisce un blocco Everfit di forza parte alta (Ste, 28/9: "ha fatto
+ * forza parte alta (più leggero)" invece delle sedute sui gradini): nello scarico prima l'EMOM, altrimenti serie,
+ * EMOM, focus spinta, focus tirata. Il chiamante salta i formati già usati nella settimana.
+ */
+export function ordineFormatiParteAlta(isDeload: boolean): string[] {
+  return isDeload ? [PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID] : [PA_SERIE_ID, PA_EMOM_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID];
 }
 
 /** Riga per il prompt del planner: cosa c'è dentro e da dove viene. */

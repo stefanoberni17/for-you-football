@@ -2,8 +2,17 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-09-28 — Parte alta: niente addome nell'EMOM, il server impone le sedute sui gradini (Ste)
+- Ste: "dagli EMOM toglierei tutti gli esercizi dell'addome perché non si incastrano bene" → `pa-emom` senza core né dorsali (restano nelle serie).
+- Ste: "ha fatto forza parte alta (più leggero)" → Claude aveva scelto un blocco Everfit al posto delle sedute sui gradini (il prompt lo sconsigliava, nessuna regola lo impediva). Ora `sostituzioniParteAlta` in `expandPiano` sostituisce ogni blocco Everfit "Forza Parte Alta…" con il `pa-*` del formato giusto (serie → EMOM → focus; scarico: EMOM prima; formati già usati saltati; tolto se nella giornata c'è già un `pa-*`), nota nell'hub. `PLANNER_V2_PROMPT_VERSION = 'v2.19-parte-alta-server'`. Test in `tests/trainingParteAlta.test.ts`. Eccezione al congelamento del Campo su richiesta di Ste.
+
+## 2026-09-27 — CI: typecheck, lint a cricchetto, test, build (review 25/9 §5)
+- `.github/workflows/ci.yml` su ogni PR e su `main`: `npm ci`, `tsc --noEmit`, `scripts/lint-ratchet.mjs` (gli errori ESLint possono solo scendere rispetto a `scripts/lint-baseline.json`, oggi 103), Vitest, `next build` con env segnaposto. In locale `npm run ci`.
+- Primi test in `tests/` (43): time-gate dei giorni e del gate in fuso italiano, `parseWeekDay`; `checkSafety` a due livelli, scadenza del contenimento, nomi W9-W10 e settimane 10-12 nel prompt; kg dei blocchi dietro il tetto (`limaCarichi`, livello dei blocchi con bilanciere, gradino sopra); fasce kettlebell dai log e memoria delle scale di tecnica. Sono gli script di verifica delle PR #109-#112 trasformati in test.
+- `@types/node` da 20 a 22 (Node 22 su Vercel e in CI; richiesto da Vitest 5). Nessun cambiamento all'app.
+
 ## 2026-09-26 — Cancellazione account con 60 giorni di grazia (review 25/9 §3.5 + Ste)
-- **Migration 028** (`profiles.deleted_at`, DA APPLICARE) e `lib/accountDelete.ts` in tre passi: sospensione da Profilo (app chiusa ovunque, rate Stripe in pausa, Telegram avvisato), riattivazione da `/riattiva` entro `ACCOUNT_GRACE_DAYS = 60` (rate riprese), cancellazione definitiva dal cron notturno oltre i 60 giorni (Stripe, rate limit, `auth.admin.deleteUser` con cascade, avviso a Ste se c'erano conversazioni safety). Login e privacy aggiornate. Retention dopo i 60 giorni: niente (da confermare con l'avvocato).
+- **Migration 028** (`profiles.deleted_at`, applicata il 27/9; PR #113) e `lib/accountDelete.ts` in tre passi: sospensione da Profilo (app chiusa ovunque, rate Stripe in pausa, Telegram avvisato), riattivazione da `/riattiva` entro `ACCOUNT_GRACE_DAYS = 60` (rate riprese), cancellazione definitiva dal cron notturno oltre i 60 giorni (Stripe, rate limit, `auth.admin.deleteUser` con cascade, avviso a Ste se c'erano conversazioni safety). Login e privacy aggiornate. Retention dopo i 60 giorni: niente (da confermare con l'avvocato).
 
 ## 2026-09-25 — Sera C: il Campo in sicurezza, poi congelato (review 25/9)
 - **Kg dei blocchi dietro il tetto** (`lib/trainingCarico.ts`): con massimale ≤ `caricoMaxPct` × 1RM, senza massimale ≤ 20 kg (`KG_SENZA_MASSIMALE_MAX`), nota sull'item; rete nel validatore anche per gli item fidati. Prima un quattordicenne con "palestra" e senza test riceveva squat 3×80/90/95.
