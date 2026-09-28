@@ -21,7 +21,7 @@ import {
 import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLogRow } from './trainingAdapt';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
-import { parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
+import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
 import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
 
@@ -73,8 +73,12 @@ export function cicloInfo(riferimento: string | null): CicloInfo {
   const mondayNow = new Date(`${mondayOfThisWeekRome()}T00:00:00`);
   const diffSettimane = Math.round((mondayNow.getTime() - d.getTime()) / (7 * 24 * 3600 * 1000));
   const settimana = Math.max(1, diffSettimane + 1);
-  return { settimana, isDeload: settimana === 4, ritestDue: settimana >= 5 };
+  // 28/9: lo scarico torna OGNI quarta settimana (prima solo alla 4: dalla 5 in poi nessuno scaricava più finché
+  // non rifaceva i test) e il ri-test è la settimana dopo lo scarico (5, 9, 13…), non "per sempre dalla 5".
+  return { settimana, isDeload: settimana % 4 === 0, ritestDue: settimana > 1 && settimana % 4 === 1 };
 }
+/** Settimana 1-4 dentro il ciclo corrente, per l'hub. */
+export const settimanaDelCiclo = (settimana: number): number => ((Math.max(1, settimana) - 1) % 4) + 1;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -95,6 +99,7 @@ export interface PlannerContext {
   livelli: LivelliQualita; // 25/9: livello per qualità dai test di quella qualità (lib/trainingLivelli)
   gradini: Record<string, number>;
   matchDays: number[];
+  matchDaysDaAbitudine: boolean; // partita presa dal giorno abituale del setup (calendario non compilato)
   trainingDays: number[];
   painHold: boolean;
   hasSbarra: boolean;
@@ -182,14 +187,18 @@ export function feedbackSeduteBlock(tutte: FeedbackSeduta[]): string {
   return `\n# FEEDBACK SEDUTE (dall'atleta a fine seduta, dalla più recente; il giudizio per blocco decide il codice della settimana dopo — regola 10)\n${lines.join('\n')}`;
 }
 
-export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
+export async function loadSquadraCompleta(userId: string): Promise<{ squadra: SquadraSettimana; partita: number | null }> {
   const { data, error } = await supabaseAdmin.from('profiles').select('training_squadra').eq('user_id', userId).maybeSingle();
-  if (error || !data) return {};
-  return parseSquadra((data as { training_squadra?: unknown }).training_squadra);
+  if (error || !data) return { squadra: {}, partita: null };
+  const raw = (data as { training_squadra?: unknown }).training_squadra;
+  return { squadra: parseSquadra(raw), partita: parsePartitaAbituale(raw) };
+}
+export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
+  return (await loadSquadraCompleta(userId)).squadra;
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: lastTestSession }, squadra, focusSetup, preferenzeSetup] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -199,10 +208,11 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     supabaseAdmin.from('training_plans').select('plan, richieste')
       .eq('user_id', userId).eq('week_start', mondayOfThisWeekRome())
       .order('created_at', { ascending: false }).limit(1).maybeSingle(),
+    // Ancora del ciclo = PRIMA batteria chiusa (28/9): con l'ultima, un solo test a metà ciclo riportava alla settimana 1
     supabaseAdmin.from('training_test_sessions').select('completed_at')
       .eq('user_id', userId).not('completed_at', 'is', null)
-      .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
-    loadSquadra(userId),
+      .order('completed_at', { ascending: true }).limit(1).maybeSingle(),
+    loadSquadraCompleta(userId),
     loadFocusSetup(userId),
     loadPreferenzeSetup(userId),
   ]);
@@ -214,9 +224,10 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     results = r2.data as typeof results;
   }
 
-  // Ciclo: parte dall'ultima batteria/ri-test chiusa; fallback = ultimo risultato test salvato
-  const cicloRiferimento = lastTestSession?.completed_at
-    || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null);
+  // Ciclo: parte dalla PRIMA batteria chiusa e va avanti a blocchi di 4 (scarico ogni quarta, ri-test la settimana dopo);
+  // fallback = il risultato test più vecchio salvato
+  const cicloRiferimento = primaTestSession?.completed_at
+    || (results && results.length > 0 ? (results[results.length - 1] as { created_at?: string }).created_at ?? null : null);
   const ciclo = cicloInfo(cicloRiferimento);
 
   // Check-in giornalieri (ultimi 7): riposo, recupero, stato fisico/mentale
@@ -267,9 +278,12 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   // Carico squadra stimato (calendario + sforzi descritti): base costante sotto acuto e cronico
   // Calendario vuoto (lunedì mattina, dopo il cron): i giorni squadra vengono dall'abitudine descritta nel setup
   const trainingDays = giorniSquadra(calendar?.training_days || [], squadra);
+  // Partita: dal calendario; se non è compilato, dal giorno abituale del setup (28/9: prima le finestre partita restavano cieche)
+  const matchDays = giorniPartita(calendar?.match_days || [], partitaAbituale);
+  const matchDaysDaAbitudine = !(calendar?.match_days || []).length && matchDays.length > 0;
   const faseSetup: (typeof FASI)[number] = profile?.training_fase && (FASI as readonly string[]).includes(profile.training_fase) ? profile.training_fase : 'in_season';
   const squadraSettimanale = caricoSquadraStimato({
-    trainingDays, matchDays: calendar?.match_days || [],
+    trainingDays, matchDays,
     squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null,
     fase: faseSetup, squadra,
   });
@@ -290,7 +304,8 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     fascia,
     livelli: livelliPerQualita(rows, fascia),
     gradini,
-    matchDays: calendar?.match_days || [],
+    matchDays,
+    matchDaysDaAbitudine,
     trainingDays,
     painHold: profile?.training_pain_hold === true,
     hasSbarra,
@@ -443,7 +458,7 @@ Fascia: ${ctx.fascia}${ctx.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO (niente fisi
 Gradini per catena: ${gradiniTxt}
 Sbarra disponibile: ${ctx.hasSbarra ? 'sì' : 'NO (niente tirata)'}
 Allenamenti squadra: ${ctx.trainingDays.length ? squadraTesto(ctx.trainingDays, ctx.squadra, DAY_NAMES) : 'non indicati'}
-Partite: ${ctx.matchDays.length ? ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
+Partite: ${ctx.matchDays.length ? `${ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ')}${ctx.matchDaysDaAbitudine ? ' (giorno abituale: il calendario della settimana non è compilato)' : ''}` : 'nessuna questa settimana'}
 ${feedbackSeduteBlock(ctx.feedbackRecenti)}
 Settimana del ciclo: ${ctx.ciclo.settimana} di 4${ctx.ciclo.isDeload ? ' — ⚠️ SETTIMANA DELOAD (regola 21)' : ctx.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 22)' : ''}
 ${checkinBlock(ctx)}

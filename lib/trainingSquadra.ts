@@ -49,6 +49,26 @@ export function parseSquadra(raw: unknown): SquadraSettimana {
   return out;
 }
 
+/**
+ * Giorno abituale della partita (28/9): salvato nello stesso JSONB `training_squadra` alla chiave `partita`
+ * (1-7). Il calendario si svuota ogni lunedì e il piano automatico parte prima che il ragazzo lo ricompili:
+ * senza questo le finestre partita non proteggevano niente. `parseSquadra` ignora la chiave (non è un giorno).
+ */
+export function parsePartitaAbituale(raw: unknown): number | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const n = Number((raw as { partita?: unknown }).partita);
+  return Number.isInteger(n) && n >= 1 && n <= 7 ? n : null;
+}
+/** Il JSONB da salvare: giorni squadra + partita abituale. */
+export function squadraConPartita(s: SquadraSettimana, partita: number | null): Record<string, unknown> {
+  return { ...s, ...(partita ? { partita } : {}) };
+}
+/** Giorni partita effettivi: il calendario se compilato, altrimenti l'abitudine. */
+export function giorniPartita(matchDays: number[], partita: number | null): number[] {
+  if (matchDays.length) return matchDays;
+  return partita ? [partita] : [];
+}
+
 export function squadraVuota(s: SquadraSettimana): boolean {
   return Object.keys(s).length === 0;
 }
