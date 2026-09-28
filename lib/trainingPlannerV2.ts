@@ -22,7 +22,7 @@ import { esercizioById } from './trainingCatalog';
 import { costruisciParteAlta, isParteAlta, ordineFormatiParteAlta, parteAltaTesto, vuoleParteBassa, PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_SHORT_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID } from './trainingParteAlta';
 import { squilibriTesto } from './trainingSquilibri';
 import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgressione';
-import { IN_SEASON_SEDUTE_CON_SQUADRA, MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
+import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { limaCarichi } from './trainingCarico';
 import { FINESTRA_PARTITA, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
@@ -112,7 +112,7 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
   const ctx: ContextV2 = {
     base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
-    maxSeduteFisiche: maxSeduteFisiche(setup.fase, base.trainingDays.length), maxSeduteTotali: maxSeduteTotali(setup.fase, base.trainingDays.length), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
+    maxSeduteFisiche: maxSeduteFisiche(setup.fase), maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
     daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup, memoria: {}, noteRegole: [],
     memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null,
   };
@@ -586,7 +586,7 @@ function systemPrompt(ctx: ContextV2): string {
     ? `OFF SEASON (nessuna squadra): fino a ${ctx.maxSeduteFisiche} sedute fisiche a settimana, si può costruire.`
     : fase === 'preparazione_squadra'
       ? 'PREPARAZIONE CON LA SQUADRA: la squadra fa il carico. Da noi SOLO tecnica, fascia e al massimo 1 blocco di forza a settimana (se lo chiede).'
-      : `IN SEASON: massimo ${ctx.maxSeduteFisiche} sedute fisiche a settimana oltre alla squadra (la squadra si allena ${ctx.base.trainingDays.length} volte: app + squadra al massimo ${IN_SEASON_SEDUTE_CON_SQUADRA} sedute fisiche); il resto tecnica e fascia.`;
+      : `IN SEASON: massimo ${ctx.maxSeduteFisiche} sedute fisiche a settimana oltre alla squadra (che si allena ${ctx.base.trainingDays.length || '?'} volte); con la squadra 3 o più volte preferisci 2 fisiche, corte (una parte bassa e una parte alta, anche al mattino), 3 solo se il carico lo permette; il resto tecnica e fascia.`;
   const leggereTxt = ` Oltre alle ${ctx.maxSeduteFisiche} fisiche puoi aggiungere fino a ${ctx.maxSeduteTotali - ctx.maxSeduteFisiche} giornate LEGGERE facoltative (solo fascia/prevenzione, tecnica o mobilità/recupero, nessun blocco di forza/esplosività/velocità/resistenza): il validatore conta le giornate con blocchi fisici. Se in cima agli obiettivi c'è la forza, riempi PRIMA i posti fisici con la forza e metti prevenzione e tecnica nelle giornate leggere, mai al posto di una seduta di forza.`;
   return `Sei il preparatore AI di For You Football. Componi il piano SETTIMANALE di un calciatore IMPILANDO BLOCCHI (workout già pronti del coach Ste), esattamente come fa lui: ogni giornata è una pila di 2-4 blocchi. Un validatore software controlla ogni piano: blocchi non in libreria, giornate troppo lunghe, sedute fisiche vicino alla partita o oltre il tetto vengono RIFIUTATI.
 

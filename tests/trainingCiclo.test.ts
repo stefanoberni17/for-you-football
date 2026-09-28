@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { cicloInfo, settimanaDelCiclo } from '@/lib/trainingPlanner';
-import { maxSeduteFisiche, maxSeduteTotali, IN_SEASON_SEDUTE_CON_SQUADRA } from '@/lib/trainingSetup';
+import { maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraConPartita } from '@/lib/trainingSquadra';
 
 /** Un martedì di N settimane fa (il ciclo conta dal lunedì di quella settimana). */
@@ -44,23 +44,19 @@ describe('ciclo di 4 settimane (28/9: lo scarico torna ogni quarta settimana)', 
   });
 });
 
-describe('sedute fisiche in season in base alla squadra (28/9)', () => {
-  it(`app = ${IN_SEASON_SEDUTE_CON_SQUADRA} − giorni squadra, tra 1 e 3`, () => {
-    expect(maxSeduteFisiche('in_season', 0)).toBe(3);
-    expect(maxSeduteFisiche('in_season', 1)).toBe(3);
-    expect(maxSeduteFisiche('in_season', 2)).toBe(2);
-    expect(maxSeduteFisiche('in_season', 3)).toBe(1);
-    expect(maxSeduteFisiche('in_season', 5)).toBe(1);
+describe('sedute fisiche: il tetto è della fase, non della squadra (Ste, 28/9: "max 2/3 di forza a prescindere")', () => {
+  it('in season 3 con qualunque squadra', () => {
+    expect(maxSeduteFisiche('in_season')).toBe(3);
   });
 
-  it('off season e preparazione non cambiano', () => {
-    expect(maxSeduteFisiche('off_season', 4)).toBe(6);
-    expect(maxSeduteFisiche('preparazione_squadra', 4)).toBe(1);
+  it('off season e preparazione', () => {
+    expect(maxSeduteFisiche('off_season')).toBe(6);
+    expect(maxSeduteFisiche('preparazione_squadra')).toBe(1);
   });
 
-  it('le giornate totali seguono il tetto effettivo (+2 leggere)', () => {
-    expect(maxSeduteTotali('in_season', 3)).toBe(3);
-    expect(maxSeduteTotali('in_season', 0)).toBe(5);
+  it('le giornate totali = fisiche + 2 leggere', () => {
+    expect(maxSeduteTotali('in_season')).toBe(5);
+    expect(maxSeduteTotali('off_season')).toBe(7);
   });
 });
 

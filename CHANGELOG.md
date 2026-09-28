@@ -4,7 +4,7 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 
 ## 2026-09-28 (notte) — Ciclo, sedute in season, partita abituale (seconda valutazione da preparatore, Ste: "vai")
 - **Bug**: lo scarico scattava solo alla settimana 4 del ciclo (ancorato all'ULTIMO test): dalla 5 in poi nessuno scaricava più finché non rifaceva la batteria, e un singolo test a metà ciclo riportava alla settimana 1. Ora `cicloInfo` è ancorato alla PRIMA batteria chiusa, scarico ogni quarta settimana, ri-test la settimana dopo (5, 9, 13…); l'hub mostra la settimana 1-4 a rotazione.
-- **In season app + squadra ≤ 4 sedute fisiche**: `maxSeduteFisiche(fase, giorniSquadra)` = min(3, 4 − giorni squadra), mai sotto 1 (prima tetto fisso 3, anche con la squadra tre volte più la partita). Prompt e maschera seguono.
+- ~~In season app + squadra ≤ 4 sedute fisiche~~ provata e tolta lo stesso giorno (Ste: "terrei sempre max 2/3 di forza a prescindere da quanti allenamenti con squadra"): il tetto resta quello della fase, il prompt dice al planner di preferire 2 fisiche corte con la squadra 3+ volte.
 - **Giorno abituale della partita** nel setup (chips, chiave `partita` nel JSONB `training_squadra`): con il calendario vuoto il planner lo usa come giorno partita, così le finestre partita valgono anche nel piano automatico del lunedì (prima erano cieche finché il ragazzo non ricompilava il calendario).
 - `PLANNER_V2_PROMPT_VERSION = 'v2.22-in-season-squadra-partita'`. Test in `tests/trainingCiclo.test.ts`. Restano per dopo i log: parte bassa sui gradini, carico della seduta dagli esercizi fatti.
 

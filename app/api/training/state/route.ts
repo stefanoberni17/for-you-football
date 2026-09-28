@@ -5,7 +5,7 @@ import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { getConsents } from '@/lib/consent';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
-import { caricoSquadraStimato, giorniSquadra, STATO_LABEL } from '@/lib/trainingLoad';
+import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { giorniPartita } from '@/lib/trainingSquadra';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
@@ -146,7 +146,6 @@ export async function GET(request: NextRequest) {
     // Obiettivi della fase (migration 024): colonna letta a parte, così il setup base non dipende dalla migration
     setup.focus = focusSetup;
     Object.assign(setup, preferenzeSetup);
-    const giorniSquadraEff = giorniSquadra(calendar?.training_days || [], squadra);
     const squadraStimato = caricoSquadraStimato({
       trainingDays: calendar?.training_days || [], matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale),
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
@@ -224,9 +223,8 @@ export async function GET(request: NextRequest) {
       calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
       // Giorno abituale della partita (setup, chiave `partita` in training_squadra): usato dal planner quando il calendario è vuoto
       partitaAbituale,
-      // In season app + squadra ≤ 4 sedute fisiche (28/9): il tetto dipende da quante volte si allena con la squadra
-      maxSeduteFisiche: maxSeduteFisiche(setup.fase, giorniSquadraEff.length),
-      maxSeduteTotali: maxSeduteTotali(setup.fase, giorniSquadraEff.length),
+      maxSeduteFisiche: maxSeduteFisiche(setup.fase),
+      maxSeduteTotali: maxSeduteTotali(setup.fase),
       squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, latoDeboleAlto: squilibri.latoDeboleAlto, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
     });
   } catch (err) {
