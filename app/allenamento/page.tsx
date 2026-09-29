@@ -53,6 +53,7 @@ export interface TrainingState {
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
   partitaAbituale?: number | null; // giorno abituale della partita dal setup (28/9)
+  zoneTese?: { zona: string; volte: number; fastidio: number }[]; // dal rolling (28/9)
   // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
   rigenerazioniRimaste?: number | null;
   // Squilibri calcolati dai dati (dx/sx, push/pull, piede debole): righe già in linguaggio da atleta
@@ -629,6 +630,16 @@ export default function AllenamentoHub() {
                 ))}
               </div>
             </details>
+          )}
+          {/* Zone più tese dal rolling (Ste, 28/9): il piano le usa per fascia e prevenzione */}
+          {(state.zoneTese?.length ?? 0) > 0 && (
+            <Card variant="raised" padding="sm" className="mt-3">
+              <p className="text-body-sm font-semibold text-app mb-1">Dove senti più tensione</p>
+              <ul className="space-y-0.5">
+                {state.zoneTese!.map((z) => <li key={z.zona} className="text-body-sm text-muted leading-snug">· {z.zona}: {z.volte} volte nelle ultime settimane{z.fastidio ? `, ${z.fastidio} con fastidio` : ''}</li>)}
+              </ul>
+              {state.zoneTese!.some((z) => z.fastidio >= 2) && <p className="text-body-sm text-warning mt-1.5 leading-relaxed">Un fastidio che torna: parlane con il preparatore o con un medico. L&apos;app non fa diagnosi.</p>}
+            </Card>
           )}
           {/* Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): il piano ne tiene conto */}
           {state.squilibri && (state.squilibri.righe.length > 0 || state.squilibri.testPerLatoFatti === 0) && (

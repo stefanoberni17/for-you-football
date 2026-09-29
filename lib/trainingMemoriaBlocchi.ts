@@ -26,7 +26,7 @@ export interface FeedbackPerMemoria {
   completed_at: string;
   rpe?: number | null;
   feedback?: string | null;
-  feedback_blocchi?: { id: string; giudizio: Giudizio }[] | null;
+  feedback_blocchi?: { id: string; giudizio?: Giudizio; zone?: string[]; stato?: string }[] | null; // 28/9: i blocchi di rolling hanno zone + stato al posto del giudizio
 }
 
 export type Passo = 'avanti' | 'stesso' | 'indietro' | 'short' | 'full' | 'assaggio' | 'promosso' | 'onda-a' | 'onda-b' | 'ritorno';
@@ -128,7 +128,7 @@ export function calcolaMemoriaBlocchi(
     const settimana = lunediDi(data);
     for (const fb of f.feedback_blocchi!) {
       const b = bloccoById(fb.id);
-      if (!b || isParteAlta(b.id) || FAMIGLIE_ESCLUSE.has(b.qualita)) continue;
+      if (!b || !fb.giudizio || isParteAlta(b.id) || FAMIGLIE_ESCLUSE.has(b.qualita)) continue;
       const giudizioRiga: Giudizio = f.rpe != null && f.rpe >= 8 ? 'duro' : fb.giudizio;
       if (!storicoPerFamiglia.has(b.famiglia)) storicoPerFamiglia.set(b.famiglia, []);
       storicoPerFamiglia.get(b.famiglia)!.push({ blocco: b, giudizio: giudizioRiga, settimana });

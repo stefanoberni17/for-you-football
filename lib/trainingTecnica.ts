@@ -11,6 +11,8 @@
  * Le giornate di tecnica sono leggere e vanno bene anche il giorno prima della partita.
  */
 import { bloccoById, type Blocco } from './trainingBlocks';
+import { esercizioV2ById } from './trainingCatalogV2';
+import type { SetLogRow } from './trainingAdapt';
 import { dataRoma, lunediDi, type FeedbackPerMemoria, type Giudizio, type MemoriaFamiglia } from './trainingMemoriaBlocchi';
 
 export const TECNICA_CICLO_SETTIMANE = 8;
@@ -57,7 +59,7 @@ export function calcolaMemoriaTecnica(feedback: FeedbackPerMemoria[], disponibil
     const data = dataRoma(f.completed_at);
     for (const fb of f.feedback_blocchi!) {
       const b = bloccoById(fb.id);
-      if (!b) continue;
+      if (!b || !fb.giudizio) continue;
       const giudizio: Giudizio = f.rpe != null && f.rpe >= 8 ? 'duro' : fb.giudizio;
       const sc = scalaDi(b.id);
       if (sc) {
@@ -95,6 +97,81 @@ export function calcolaMemoriaTecnica(feedback: FeedbackPerMemoria[], disponibil
     out.scale[sc] = { famiglia: sc, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo, ammessi: [prossimo.id, ...(short ? [short.id] : [])], passo, motivo, ...(serieExtra ? { serieExtra } : {}) };
   }
   return out;
+}
+
+// ─── Ripasso (Ste, 28/9: "gli esercizi che dice difficili li riproporrei nelle sessioni successive di tecnica") ───
+
+export const RIPASSO_VOTO_MIN = 7;       // sulla scala tecnica: 7 = "difficile, tanti errori"
+export const RIPASSO_REPS_PCT = 0.9;     // fatte meno del 90 % delle previste = difficile
+export const RIPASSO_MAX_ITEMS = 2;      // ripassi per seduta di tecnica
+export const RIPASSO_MAX_VOLTE = 3;      // oltre: si segnala, non si ripete all'infinito
+export const RIPASSO_RECUPERO_SEC = 60;
+export const RIPASSO_SERIE_MAX = 3;
+
+export interface Ripasso {
+  esercizio_id: string; nome: string; serie: number; quantita: number; unita: string;
+  volte: number;           // sedute di fila in cui è stato difficile
+  voto: number | null;     // voto medio dell'ultima seduta
+  segnala: boolean;        // difficile da più di RIPASSO_MAX_VOLTE sedute: va detto al planner e a Ste
+}
+
+const isTecnica = (id: string) => !!esercizioV2ById(id)?.qualita?.startsWith('tecnica');
+
+/**
+ * Esercizi di tecnica difficili nell'ULTIMA seduta in cui sono stati fatti (voto medio ≥ 7 o meno del 90 % delle
+ * ripetizioni previste): il server li rimette in coda alle sedute di tecnica successive finché non vengono puliti.
+ */
+export function eserciziDaRipassare(logs: SetLogRow[]): Ripasso[] {
+  const perEsercizio = new Map<string, SetLogRow[]>();
+  for (const l of logs) {
+    if (!isTecnica(l.esercizio_id)) continue;
+    if (!perEsercizio.has(l.esercizio_id)) perEsercizio.set(l.esercizio_id, []);
+    perEsercizio.get(l.esercizio_id)!.push(l);
+  }
+  const out: Ripasso[] = [];
+  for (const [id, righe] of perEsercizio) {
+    // Sedute dal più recente
+    const sedute = new Map<string, SetLogRow[]>();
+    for (const r of [...righe].sort((a, b) => (a.created_at < b.created_at ? 1 : -1))) {
+      if (!sedute.has(r.session_key)) sedute.set(r.session_key, []);
+      sedute.get(r.session_key)!.push(r);
+    }
+    const valuta = (rs: SetLogRow[]) => {
+      const rpes = rs.map((r) => r.rpe).filter((x): x is number => x != null);
+      const voto = rpes.length ? Math.round((rpes.reduce((a, b) => a + b, 0) / rpes.length) * 10) / 10 : null;
+      const conFatte = rs.filter((r) => r.quantita_fatta != null);
+      const prev = conFatte.reduce((a, r) => a + r.quantita_prevista, 0);
+      const fatte = conFatte.reduce((a, r) => a + (r.quantita_fatta ?? 0), 0);
+      const sotto = prev > 0 && fatte / prev < RIPASSO_REPS_PCT;
+      return { voto, difficile: (voto != null && voto >= RIPASSO_VOTO_MIN) || sotto };
+    };
+    let volte = 0; let ultima: { voto: number | null; rs: SetLogRow[] } | null = null;
+    for (const rs of sedute.values()) {
+      const v = valuta(rs);
+      if (!v.difficile) break;
+      if (!ultima) ultima = { voto: v.voto, rs };
+      volte++;
+    }
+    if (!ultima) continue;
+    const ex = esercizioV2ById(id);
+    const serie = Math.min(RIPASSO_SERIE_MAX, new Set(ultima.rs.map((r) => r.serie)).size || 1);
+    out.push({
+      esercizio_id: id, nome: ex?.nome ?? id, serie, quantita: Math.max(...ultima.rs.map((r) => r.quantita_prevista)),
+      unita: ultima.rs[0].unita || ex?.unita || 'reps', volte, voto: ultima.voto, segnala: volte > RIPASSO_MAX_VOLTE,
+    });
+  }
+  return out.sort((a, b) => (b.voto ?? 0) - (a.voto ?? 0));
+}
+
+/** Minuti di un ripasso (lavoro ~40" a serie sulle reps, i secondi se a tempo, più recupero). */
+export const minutiRipasso = (r: Pick<Ripasso, 'serie' | 'quantita'> & { unita?: string }): number =>
+  Math.round((r.serie * ((r.unita === 'secondi' ? r.quantita : r.unita === 'minuti' ? r.quantita * 60 : 40) + RIPASSO_RECUPERO_SEC)) / 60);
+
+export function ripassoTesto(r: Ripasso[]): string {
+  if (!r.length) return '';
+  const attivi = r.filter((x) => !x.segnala);
+  const segnala = r.filter((x) => x.segnala);
+  return `\n# RIPASSO TECNICA (calcolato dai log: esercizi difficili l'ultima volta)${attivi.length ? `\nIl server aggiunge in coda a ogni seduta di tecnica fino a ${RIPASSO_MAX_ITEMS} di questi (non li mettere tu): ${attivi.map((x) => `${x.nome} [${x.esercizio_id}] (voto ${x.voto ?? '—'}, ${x.volte}ª volta)`).join(' · ')}.` : ''}${segnala.length ? `\nDifficili da più di ${RIPASSO_MAX_VOLTE} sedute, NON più ripetuti in automatico: ${segnala.map((x) => `${x.nome} [${x.esercizio_id}]`).join(' · ')} — dillo nel messaggio e consiglia un gradino più facile o di parlarne con il preparatore.` : ''}`;
 }
 
 /** Regola 28 + stato per il prompt. */

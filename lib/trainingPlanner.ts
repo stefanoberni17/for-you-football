@@ -152,7 +152,7 @@ export async function loadFocusSetup(userId: string): Promise<FocusId[]> {
 export interface FeedbackSeduta {
   feedback: string | null; note: string | null; completed_at: string;
   rpe?: number | null;
-  feedback_blocchi?: { id: string; nome?: string; giudizio: 'facile' | 'ok' | 'duro' }[] | null;
+  feedback_blocchi?: { id: string; nome?: string; giudizio?: 'facile' | 'ok' | 'duro'; zone?: string[]; stato?: string }[] | null;
   session_key?: string;
   plan_id?: string | null;
 }
@@ -180,7 +180,7 @@ export function feedbackSeduteBlock(tutte: FeedbackSeduta[]): string {
   const lines = righe.map((f) => {
     const data = f.completed_at.slice(0, 10);
     const voto = f.rpe != null ? `voto ${f.rpe}/10` : (f.feedback ? giud[f.feedback] ?? f.feedback : '—');
-    const blocchi = (f.feedback_blocchi || []).map((b) => `${b.nome || b.id} [${b.id}]: ${giud[b.giudizio] ?? b.giudizio}`).join(' · ');
+    const blocchi = (f.feedback_blocchi || []).map((b) => `${b.nome || b.id} [${b.id}]: ${b.giudizio ? (giud[b.giudizio] ?? b.giudizio) : b.zone?.length ? `${b.stato ?? 'teso'}: ${b.zone.join(', ')}` : (b.stato ?? '—')}`).join(' · ');
     const nota = f.note ? ` · "${sanitize(f.note)}"` : '';
     return `- ${data}: ${voto}${blocchi ? ` · blocchi: ${blocchi}` : ''}${nota}`;
   });

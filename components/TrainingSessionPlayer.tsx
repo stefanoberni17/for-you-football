@@ -8,10 +8,10 @@ import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
+import { senzaVotoPerSerie } from '@/lib/trainingFascia';
 
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero',
-};
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso' };
 
 interface PlanItem {
   esercizio_id: string;
@@ -25,7 +25,7 @@ interface PlanItem {
   per_lato?: boolean;
   unita?: string;            // unità del blocco se diversa dal catalogo (EMOM a tempo, metri…)
   emom_gruppo?: string;      // EMOM a rotazione: gli item consecutivi con lo stesso gruppo girano un minuto ciascuno
-  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero'; // lib/trainingProgressione
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // lib/trainingProgressione + ripasso tecnica (28/9)
   lato_extra?: 'dx' | 'sx';  // una serie in più solo su questo lato (lato più debole)
 }
 
@@ -70,7 +70,7 @@ export default function TrainingSessionPlayer({
   onExit: () => void;
   storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
   initialProgress?: PlayerProgress | null;
-  blocchi?: { id: string; nome: string }[]; // planner v2: nome del blocco di ogni item
+  blocchi?: { id: string; nome: string; qualita?: string }[]; // planner v2: nome (e qualità) del blocco di ogni item
   onSetLog?: (log: SetLogInput) => void;    // feedback per serie durante il recupero (fire-and-forget)
 }) {
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
@@ -301,6 +301,9 @@ export default function TrainingSessionPlayer({
   const haVideo = !!ex.videoUrl && (!!ex.videoMp4 || !!embed);
   const videoVisibile = showVideo && haVideo;
   const blocco = item.blocco_id ? blocchi?.find((b) => b.id === item.blocco_id) : undefined;
+  // Ste, 28/9: niente voto per serie su rolling e fascia (a fine seduta si dice dove si è sentita); sulla tecnica la scala è "quanto ti è riuscito"
+  const senzaVoto = senzaVotoPerSerie(blocco);
+  const isTecnica = !!blocco?.qualita?.startsWith('tecnica');
   const latoLabel = lato === 'dx' ? 'destro' : 'sinistro';
   // Parametri dell'esercizio su due righe: "3 × 12 per lato · 24 kg" (grande) e "+1 sinistro · recupero 90"" (piccola)
   const parametri = isEmom
@@ -398,13 +401,16 @@ export default function TrainingSessionPlayer({
               <p className="text-body text-muted mt-1">{restIsLast ? 'Poi: prossimo esercizio' : `Poi: serie ${serieFatte + 1} di ${totalSerie}`}</p>
             </Card>
 
-            {pending && onSetLog && (
+            {pending && onSetLog && senzaVoto && (
+              <p className="mt-4 text-body-sm text-muted text-center leading-relaxed">Sulla fascia niente voto: a fine seduta dici dove l&apos;hai sentita di più.</p>
+            )}
+            {pending && onSetLog && !senzaVoto && (
               <div className="mt-4">
                 <div className="flex items-baseline justify-between gap-3 mb-2">
-                  <p className="text-label font-semibold text-app">Com&apos;è andata la serie {pending.serie}?</p>
+                  <p className="text-label font-semibold text-app">{isTecnica ? <>Com&apos;è riuscita la serie {pending.serie}?</> : <>Com&apos;è andata la serie {pending.serie}?</>}</p>
                   {logSaved && <span className="text-caption text-forest-400 font-semibold inline-flex items-center gap-1"><Check size={14} aria-hidden /> salvato</span>}
                 </div>
-                <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo="serie" ariaPrefix="Serie" />
+                <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo={isTecnica ? 'tecnica' : 'serie'} ariaPrefix="Serie" />
                 {/* Reps fatte e kg SEMPRE visibili (Ste, 22/9: "se ho fatto fare archer push up 8 reps e uno ne fa 10 facili
                     lo deve considerare per il prossimo"): prefillati col previsto, si cambiano solo se è andata diversa */}
                 <div className="grid grid-cols-2 gap-3 mt-3">

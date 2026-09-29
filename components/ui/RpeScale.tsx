@@ -9,7 +9,7 @@
  * (facile · giusta · al limite) più la frase del numero scelto ("7 · Dura, potevi farne ancora 3").
  * Per le serie la frase parla di ripetizioni in riserva; per la seduta di come si sta alla fine.
  */
-export type RpeTipo = 'serie' | 'seduta' | 'sforzo';
+export type RpeTipo = 'serie' | 'seduta' | 'sforzo' | 'tecnica';
 
 const FRASI: Record<RpeTipo, string[]> = {
   serie: [
@@ -27,6 +27,16 @@ const FRASI: Record<RpeTipo, string[]> = {
     'Medio', 'Impegnativo', 'Duro', 'Molto duro',
     'Al limite', 'Massimo',
   ],
+  // Tecnica (Ste, 28/9): non "quanto è stata dura" ma "quanto ti è riuscito"; 7+ = difficile → ripasso
+  tecnica: [
+    'Pulitissimo', 'Molto pulito', 'Pulito, facile', 'Bene, qualche sbavatura',
+    'Riuscito', 'Riuscito con fatica', 'Difficile, tanti errori', 'Molto difficile',
+    'Quasi non riesce', 'Non mi riesce',
+  ],
+};
+const ANCORE: Record<RpeTipo, [string, string, string, string]> = {
+  serie: ['facile', 'giusta', 'dura', 'al limite'], seduta: ['facile', 'giusta', 'dura', 'al limite'],
+  sforzo: ['leggero', 'medio', 'duro', 'al limite'], tecnica: ['pulito', 'riuscito', 'difficile', 'non riesce'],
 };
 
 /** Zona del numero: 1-3 facile, 4-6 giusta, 7-8 dura, 9-10 al limite. */
@@ -66,7 +76,7 @@ export default function RpeScale({ value, onChange, tipo = 'serie', label, ariaP
         })}
       </div>
       <div className="flex justify-between text-caption text-muted mt-1.5 px-0.5" aria-hidden>
-        <span>facile</span><span>giusta</span><span>dura</span><span>al limite</span>
+        {ANCORE[tipo].map((a) => <span key={a}>{a}</span>)}
       </div>
       <p className="text-body-sm font-semibold text-center mt-1.5 min-h-[21px]" aria-live="polite">
         {value !== null ? <><span className="tabular-nums">{value}</span> · {rpeFrase(value, tipo)}</> : <span className="text-faint font-normal">Tocca un numero</span>}

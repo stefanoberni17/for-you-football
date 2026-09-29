@@ -233,8 +233,9 @@ function SetupPageInner() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <GroupLabel hint={`Massimo ${maxTotali}.`}>Giornate a settimana</GroupLabel>
+                  <GroupLabel hint={`Massimo ${maxTotali}. "Decide lui" = il preparatore sceglie quante, tra i giorni che indichi.`}>Giornate a settimana</GroupLabel>
                   <div className="flex flex-wrap gap-2">
+                    <Chip selected={setupDraft.sedute === null} onClick={() => setSetupDraft({ ...setupDraft, sedute: null })}>Decide lui</Chip>
                     {Array.from({ length: maxTotali }, (_, i) => i + 1).map((n) => (
                       <Chip key={n} selected={setupDraft.sedute === n} showCheck={false} onClick={() => setSetupDraft({ ...setupDraft, sedute: setupDraft.sedute === n ? null : n })}>{n}</Chip>
                     ))}

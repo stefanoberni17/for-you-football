@@ -7,6 +7,7 @@ import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromR
 import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { giorniPartita } from '@/lib/trainingSquadra';
+import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
 import { loadFocusSetup, loadPreferenzeSetup, loadSquadraCompleta } from '@/lib/trainingPlanner';
@@ -223,6 +224,8 @@ export async function GET(request: NextRequest) {
       calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
       // Giorno abituale della partita (setup, chiave `partita` in training_squadra): usato dal planner quando il calendario è vuoto
       partitaAbituale,
+      // Zone più tese dal rolling (28/9), per la card dell'hub
+      zoneTese: zoneTeseRicorrenti(feedbackRecenti),
       maxSeduteFisiche: maxSeduteFisiche(setup.fase),
       maxSeduteTotali: maxSeduteTotali(setup.fase),
       squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, latoDeboleAlto: squilibri.latoDeboleAlto, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },

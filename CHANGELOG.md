@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-09-29 — Fascia senza voto, ripasso tecnica, doppia scelta sulle giornate (Ste, 28/9)
+- **Rolling e fascia**: il player non chiede più il voto per serie; a fine seduta il rolling chiede le zone più tese (polpacci, cosce, adduttori, glutei, schiena, piedi) e uno stato ok/teso/fastidio al posto di facile-giusto-duro. Le zone ricorrenti (≥ 2 volte in 6 settimane) vanno nel prompt del planner e in una card dell'hub; con fastidio ricorrente l'app invita a parlarne con preparatore o medico. Il percorso fascia tiene il giudizio a fine blocco.
+- **Ripasso tecnica**: gli esercizi di tecnica difficili l'ultima volta (voto ≥ 7 o meno del 90 % delle ripetizioni) tornano in coda alle sedute di tecnica successive, fino a 2, con la stessa dose, badge "Ripasso", entro il tempo massimo; dopo 3 sedute di fila difficili si segnala e non si ripete più. Scala 1-10 "quanto ti è riuscito" sugli esercizi di tecnica.
+- **Doppia scelta**: "Decide lui" nel setup e "Decidi tu" nella maschera: il preparatore sceglie quante giornate tra i giorni indicati, guardando squadra, partita, obiettivi e carico, e lo spiega nel messaggio. `PLANNER_V2_PROMPT_VERSION = 'v2.23-ripasso-tecnica-zone'`. Test in `tests/trainingFasciaTecnica.test.ts` (82 in tutto).
+
 ## 2026-09-28 (notte) — Ciclo, sedute in season, partita abituale (seconda valutazione da preparatore, Ste: "vai")
 - **Bug**: lo scarico scattava solo alla settimana 4 del ciclo (ancorato all'ULTIMO test): dalla 5 in poi nessuno scaricava più finché non rifaceva la batteria, e un singolo test a metà ciclo riportava alla settimana 1. Ora `cicloInfo` è ancorato alla PRIMA batteria chiusa, scarico ogni quarta settimana, ri-test la settimana dopo (5, 9, 13…); l'hub mostra la settimana 1-4 a rotazione.
 - ~~In season app + squadra ≤ 4 sedute fisiche~~ provata e tolta lo stesso giorno (Ste: "terrei sempre max 2/3 di forza a prescindere da quanti allenamenti con squadra"): il tetto resta quello della fase, il prompt dice al planner di preferire 2 fisiche corte con la squadra 3+ volte.
