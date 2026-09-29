@@ -14,7 +14,7 @@ import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import { hasActiveAccess } from '@/lib/checkAccess';
-import { ArrowUp, Bot, Calendar, Check, ChevronLeft, ChevronRight, Clock, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
+import { ArrowUp, Calendar, Check, ChevronLeft, ChevronRight, Clock, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
 import { AppLoader, BackButton, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
 export default function GiornoPage() {
@@ -35,8 +35,6 @@ export default function GiornoPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showCheck, setShowCheck] = useState(false);
-  const [savingCheck, setSavingCheck] = useState(false);
   const [settimanaData, setSettimanaData] = useState<any>(null);
   const [giorniData, setGiorniData] = useState<any[]>([]);
   const [nextUnlocked, setNextUnlocked] = useState(false);
@@ -165,15 +163,6 @@ export default function GiornoPage() {
         setHasTelegram(hasActiveAccess(prof) ? !!prof?.telegram_id : null);
       }
 
-      // Mostra check del giorno precedente se non ancora risposto
-      if (
-        data.giorno?.haCheckPrecedente &&
-        data.previousDayCheck === null &&
-        !(weekNumber === 1 && dayNumber === 1)
-      ) {
-        setShowCheck(true);
-      }
-
       setLoading(false);
     };
 
@@ -181,12 +170,11 @@ export default function GiornoPage() {
   }, [weekNumber, dayNumber, router]);
 
   // Costruisci array slide dinamico.
-  // Il check di ieri è la PRIMA slide (review 16/9: prima stava sopra il contenuto di oggi);
-  // sparisce appena risposto. La nota in campo sta in fondo alla slide della pratica.
+  // Il check del giorno prima non c'è più (29/9): la presenza di ieri si chiede nel check-in del mattino.
+  // La nota in campo sta in fondo alla slide della pratica.
   const notaInPratica = !!(giorno?.pratica && giorno?.haNotaCampo && giorno?.notaCampo);
   const slides: { type: string; label: string }[] = [];
   if (giorno) {
-    if (showCheck) slides.push({ type: 'check', label: 'Ieri' });
     if (giorno.apertura) slides.push({ type: 'apertura', label: 'Apertura' });
     if (giorno.domandaPrePratica) slides.push({ type: 'domanda_pre_pratica', label: 'Riflessione' });
     if (giorno.pratica) slides.push({ type: 'pratica', label: 'Pratica' });
@@ -216,7 +204,6 @@ export default function GiornoPage() {
   const isLastSlide = effectiveSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
   const weekTool = WEEK_TOOLS[weekNumber] || undefined;
-  const isCheckSlide = currentSlideData?.type === 'check';
   // Sulla slide della pratica il primario è "Inizia la pratica": "Continua" torna primario
   // solo dopo la pratica guidata (o se il giorno è già fatto).
   const continueIsSecondary = currentSlideData?.type === 'pratica' && hasPracticeTimer && !completed && !practiceDone;
@@ -343,19 +330,6 @@ export default function GiornoPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const saveCheck = async (value: 1 | 2 | 3) => {
-    setSavingCheck(true);
-    try {
-      await authFetch('/api/giorno', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weekNumber, dayNumber, previousDayCheck: value }),
-      });
-    } catch { /* non bloccante */ }
-    setShowCheck(false);
-    setSavingCheck(false);
   };
 
   const handleContinue = () => {
@@ -558,44 +532,6 @@ export default function GiornoPage() {
 
       {/* Content area — pulled up over header */}
       <div className="max-w-xl mx-auto px-4 -mt-6 space-y-4">
-
-        {/* Slide 0 — check del giorno precedente (solo se non ancora risposto) */}
-        {isCheckSlide && (
-          <Card padding="md">
-            <SectionTitle
-              title="Com'è andata l'ultima pratica?"
-              icon={<RotateCcw size={18} />}
-              className="mb-3"
-            />
-            <p className="text-app text-body-lg leading-relaxed mb-5">{giorno.testoCheck}</p>
-            <div className="flex flex-col gap-3">
-              <Button
-                variant="primary"
-                fullWidth
-                icon={<Check size={18} aria-hidden />}
-                onClick={() => saveCheck(1)}
-                loading={savingCheck}
-              >
-                Bene, andiamo avanti
-              </Button>
-              <Button
-                variant="secondary"
-                fullWidth
-                icon={<Bot size={18} aria-hidden />}
-                onClick={() => {
-                  saveCheck(0 as any);
-                  const prompt = encodeURIComponent(
-                    `Non ho capito bene la pratica di ieri: "${giorno.testoCheck}" — puoi aiutarmi a capirla meglio?`
-                  );
-                  router.push(`/chat?prompt=${prompt}`);
-                }}
-                disabled={savingCheck}
-              >
-                Preferisco parlarne col Coach
-              </Button>
-            </div>
-          </Card>
-        )}
 
         {/* Slide content */}
         {currentSlideData?.type === 'apertura' && (
@@ -833,9 +769,8 @@ export default function GiornoPage() {
           </div>
         )}
 
-        {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile.
-            Sulla slide del check i due bottoni sono già la navigazione. */}
-        {!isCheckSlide && (
+        {/* Navigazione slide — gap-4 per evitare doppi-tap accidentali su mobile. */}
+        {(
           <div className="flex gap-4">
             {effectiveSlide > 1 && !jumpToReflection && (
               <Button

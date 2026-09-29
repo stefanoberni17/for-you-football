@@ -50,31 +50,33 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    const { physicalState, sleepHours, recoveryQuality, mentalState } = body;
+    const { physicalState, sleepHours, recoveryQuality, mentalState, presenceYesterday } = body;
 
     // Validazione 0-10 per i campi numerici
-    const numFields = { physicalState, recoveryQuality, mentalState };
+    const numFields = { physicalState, recoveryQuality, mentalState, presenceYesterday };
     for (const [key, val] of Object.entries(numFields)) {
       if (val !== null && val !== undefined && (typeof val !== 'number' || val < 0 || val > 10)) {
         return NextResponse.json({ error: `${key} deve essere un numero tra 0 e 10` }, { status: 400 });
       }
     }
 
-    const { data, error } = await supabaseAdmin
+    const riga = {
+      user_id: userId,
+      date: todayDate(),
+      physical_state: physicalState ?? null,
+      sleep_hours: sleepHours ?? null,
+      recovery_quality: recoveryQuality ?? null,
+      mental_state: mentalState ?? null,
+    };
+    // Presenza di ieri (migration 029): se la colonna non c'è ancora, il check-in si salva lo stesso senza
+    let { data, error } = await supabaseAdmin
       .from('daily_checkin')
-      .upsert(
-        {
-          user_id: userId,
-          date: todayDate(),
-          physical_state: physicalState ?? null,
-          sleep_hours: sleepHours ?? null,
-          recovery_quality: recoveryQuality ?? null,
-          mental_state: mentalState ?? null,
-        },
-        { onConflict: 'user_id,date' }
-      )
+      .upsert({ ...riga, presence_yesterday: presenceYesterday ?? null }, { onConflict: 'user_id,date' })
       .select()
       .single();
+    if (error && /presence_yesterday/.test(error.message)) {
+      ({ data, error } = await supabaseAdmin.from('daily_checkin').upsert(riga, { onConflict: 'user_id,date' }).select().single());
+    }
 
     if (error) throw error;
     logEvent(userId, 'checkin_saved');

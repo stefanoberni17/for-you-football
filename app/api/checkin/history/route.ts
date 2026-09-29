@@ -24,9 +24,10 @@ export async function GET(request: NextRequest) {
 
     const fromDate = daysAgoItaly(days);
 
+    // `*`: così `presence_yesterday` (migration 029) arriva quando c'è, senza rompere prima
     const { data, error } = await supabaseAdmin
       .from('daily_checkin')
-      .select('date, physical_state, sleep_hours, recovery_quality, mental_state')
+      .select('*')
       .eq('user_id', userId)
       .gte('date', fromDate)
       .order('date', { ascending: true });
