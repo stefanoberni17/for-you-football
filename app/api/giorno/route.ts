@@ -45,13 +45,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
 
-    // Calcola giorno precedente per il check
-    const hasPrevDay = !(weekNumber === 1 && dayNumber === 1);
-    const prevWeek = dayNumber === 1 ? weekNumber - 1 : weekNumber;
-    const prevDay  = dayNumber === 1 ? 7 : dayNumber - 1;
-
-    // Fetch contenuto Notion + progresso utente + previous_day_check in parallelo
-    const [dayPages, progressResult, prevProgressResult] = await Promise.all([
+    // Fetch contenuto Notion + progresso utente in parallelo (il check del giorno prima non c'è più, 29/9)
+    const [dayPages, progressResult] = await Promise.all([
       queryDatabase(process.env.NOTION_DATABASE_GIORNI!, {
         filter: {
           and: [
@@ -67,15 +62,6 @@ export async function GET(request: NextRequest) {
             .eq('user_id', userId)
             .eq('week_number', weekNumber)
             .eq('day_number', dayNumber)
-            .maybeSingle()
-        : Promise.resolve({ data: null, error: null }),
-      hasPrevDay && userId
-        ? supabaseAdmin
-            .from('user_day_progress')
-            .select('previous_day_check')
-            .eq('user_id', userId)
-            .eq('week_number', prevWeek)
-            .eq('day_number', prevDay)
             .maybeSingle()
         : Promise.resolve({ data: null, error: null }),
     ]);
@@ -100,7 +86,6 @@ export async function GET(request: NextRequest) {
       prePraticaResponse: progress?.pre_pratica_response ?? null,
       compressed: progress?.compressed ?? false,
       gateAnswers: progress?.gate_answers ?? null,
-      previousDayCheck: (prevProgressResult as any).data?.previous_day_check ?? null,
     });
   } catch (error: any) {
     console.error('❌ GET /api/giorno:', error.message);
@@ -274,63 +259,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('❌ PUT /api/giorno:', error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
-
-// ─── PATCH /api/giorno ────────────────────────────────────────────────────────
-/**
- * Salva il previous_day_check sulla riga del giorno precedente.
- *
- * Body: { userId, weekNumber, dayNumber, previousDayCheck: 1|2|3 }
- * Response: { success: true }
- */
-export async function PATCH(request: NextRequest) {
-  try {
-    const authUserId = await getAuthUser(request);
-    const body = await request.json();
-    const userId = authUserId;
-    if (!userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    const wd = parseWeekDay(body.weekNumber, body.dayNumber);
-    const previousDayCheck = Number(body.previousDayCheck);
-    if (!wd || ![1, 2, 3].includes(previousDayCheck)) {
-      return NextResponse.json(
-        { error: 'weekNumber (1-12), dayNumber (1-7) e previousDayCheck (1-3) richiesti' },
-        { status: 400 }
-      );
-    }
-    const { weekNumber, dayNumber } = wd;
-    if (!(await requireWeekAccess(userId, weekNumber))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
-    }
-
-    if (weekNumber === 1 && dayNumber === 1) {
-      return NextResponse.json({ error: 'Nessun giorno precedente' }, { status: 400 });
-    }
-
-    // Il check si salva sulla riga del giorno PRIMA: quel giorno deve essere davvero fatto
-    // (= questo giorno sbloccato). Solo UPDATE: niente righe create dal check.
-    const unlock = await checkDayUnlocked(supabaseAdmin, userId, weekNumber, dayNumber);
-    if (!unlock.unlocked) {
-      return NextResponse.json({ error: 'day_locked' }, { status: 403 });
-    }
-
-    const prevWeek = dayNumber === 1 ? weekNumber - 1 : weekNumber;
-    const prevDay  = dayNumber === 1 ? GATE_DAY : dayNumber - 1;
-
-    const { error } = await supabaseAdmin
-      .from('user_day_progress')
-      .update({ previous_day_check: previousDayCheck })
-      .eq('user_id', userId)
-      .eq('week_number', prevWeek)
-      .eq('day_number', prevDay);
-
-    if (error) throw error;
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error('❌ PATCH /api/giorno:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

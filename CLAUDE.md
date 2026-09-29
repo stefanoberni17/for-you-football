@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 028 (27/9). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 028 (27/9); la 029 (presenza nel check-in) è da applicare. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -57,7 +57,7 @@ for-you-football/
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
 │   ├── sos/page.tsx                       # "Come affrontare le difficoltà" — schede VIVE a layer da Notion (?card=<id>)
 │   ├── strumenti/page.tsx                 # Hub "Palestra": Reset rapido + Palestra per principio (7 capacità; dettaglio = menu esercizi con "Cosa allena"; l'àncora apre la scheda strumento cos'è/quando/pratica) + schede SOS
-│   ├── carta/page.tsx                     # Carta del Giocatore print-friendly (mantra, mappa, firma, Protocollo)
+│   ├── carta/page.tsx                     # Carta del Giocatore: in cima la Carta a 360° (rombo Mente, Recupero, Corpo, sette punte — lib/carta.ts, GET /api/carta), sotto il documento print-friendly (mantra, mappa, firma, Protocollo)
 │   ├── profilo/page.tsx
 │   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
@@ -492,7 +492,7 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `Contesto` (text) — **COACH-ONLY**: note di regia del giorno (passate al Coach via tool `leggi_percorso`). NON mostrato all'utente e dal 14/9 **non arriva nemmeno al client**: `senzaRegia()` in `lib/notion.ts` lo toglie (insieme a `Coach Contesto`) dalle risposte di `/api/giorno`, `/api/gate`, `/api/settimana`, `/api/settimane`. Da W5 contiene istruzioni dietro le quinte (Regole, "non anticipare", sourcing storie).
 - `Perché Funziona` (text) — **USER-FACING**: alimenta il box "💡 Perché funziona" sulla pagina pratica (giorni 1-6). Conferma scientifica leggibile di ciò che il ragazzo sta facendo (concetti reali, zero anticipazioni). Popolato W5-W8 (G1-G6); W1-W4 NON hanno più il fallback sul `Contesto` (14/9: il box resta vuoto finché Ste non scrive i 24 testi nel campo dedicato). Draft: `docs/content-w5-w8/perche-funziona.md`.
 - `Domanda Pre Pratica` (text) — domanda riflessione mostrata prima della pratica
-- `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente
+- `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente: dal 29/9 NON più letto dall'app (la presenza di ieri si chiede nel check-in del mattino, `daily_checkin.presence_yesterday`)
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)
 - `Durata Espira` (number) — secondi espirazione (default 6 se vuoto)
 - `Audio Pratica` (url) — URL pubblico Supabase Storage del file MP3 registrato (opzionale, fallback al testo se vuoto)
@@ -712,7 +712,7 @@ La memoria persistente del Coach si basa su:
 - **Domanda Pre-Pratica:** slide opzionale prima della pratica (campo testo, max 1000 char, da Notion `Domanda Pre Pratica`)
 - **Pratica:** PracticePopup con timer, animazione respirazione, step numerati
 - **Domanda:** campo testo per riflessione (opzionale, salvata in `day_reflections`)
-- Check giorno precedente (se flag `haCheckPrecedente`)
+- ~~Check giorno precedente~~ tolto il 29/9: la slide "Com'è andata l'ultima pratica?" e `PATCH /api/giorno` non esistono più; la domanda vive nel check-in del mattino ("Quanto sei stato presente ieri durante la giornata?")
 - Flusso completamento → navigazione giorno successivo
 - **Calendario giorno reale:** logica partita usa `new Date().getDay()` (giorno reale della settimana) — non `dayNumber` del percorso. Calcola `isMatchDay` e `isPreMatchDay` correttamente
 
@@ -850,7 +850,7 @@ La memoria persistente del Coach si basa su:
 - On skip → persiste `ritualSkipped = oggi` (sopprime anche il Reset) + `checkinDone = true`
 
 ### `DailyCheckinModal.tsx`
-- **1 sola schermata** (non più 4 step): 4 slider in colonna — fisico (0-10), sonno (4-12h, step 0.5), recupero (0-10), mentale (0-10)
+- **1 sola schermata** (non più 4 step): 5 slider in colonna — fisico (0-10), sonno (4-12h, step 0.5), recupero (0-10), mentale (0-10), **presente ieri** (0-10, dal 29/9: "Quanto sei stato presente ieri durante la giornata?", colonna `presence_yesterday`, migration 029; `/api/checkin` la salva fail-soft se la colonna manca)
 - **Prefill**: fisico 5, sonno 7h, recupero 5, mentale 5 — valore sempre visibile (mai "—")
 - Ogni slider: emoji + label + "N/10 — descrizione" color-coded
 - "Salva e continua →" → POST `/api/checkin` → onComplete (→ fase Reset)
@@ -889,8 +889,8 @@ Fetch giorno da Notion + stato completamento/risposta utente da Supabase.
 ### `POST /api/giorno`
 Marca giorno completato, salva risposta opzionale. Dal 25/9 valida `weekNumber` 1-12 e `dayNumber` 1-7 come interi, taglia risposta (2000), pre-pratica (1000) e domanda (500), rifiuta il giorno 7 e i giorni bloccati dal time-gate (`403 day_locked`), non ricompleta un giorno fatto (`alreadyCompleted: true`, niente scrittura). Se giorno=6 aggiorna `current_week` con UPDATE condizionale atomico (`.lt('current_week', weekNumber)` nel WHERE — niente SELECT→UPDATE). `PUT` (avvio giornata) ha le stesse regole; `PATCH` (check del giorno prima) fa solo UPDATE sulla riga precedente, `previousDayCheck` 1-3.
 
-### `PATCH /api/giorno`
-Salva score check giorno precedente (1/2/3) sulla riga del giorno precedente.
+### `GET /api/carta`
+La Carta del Giocatore a 360° (`docs/carta-360.md`, 29/9): calcola con `lib/carta.ts` (modulo puro, test in `tests/carta.test.ts`) il **rombo Mente** a cinque punte su 4 settimane con la tendenza degli ultimi 7 giorni e la "partenza" (prime 4 settimane) — Presenza (metà media di `presence_yesterday`, metà Reset fatti: 70 % giorni con Reset + 30 % continuità, dagli eventi `reset_completed`), Costanza (giorni del percorso fatti sui giorni dall'inizio), Disciplina (azioni spuntate su quelle segnate), Lucidità (media `mental_state`), Crescita (Gate chiusi sulle 12, corretti col ritmo) — con il livello mentale dal blocco del percorso (W1-4 B, W5-8 A, W9-12 PRO); la **punta Recupero** (sonno 5→8 h su 10, stato fisico, recupero, punta fascia del rombo fisico, meno 0.5 per zona con fastidio ricorrente); il **rombo Corpo** (`buildRombo`/`buildRomboBase`, solo con `training_access`) e la **carta a sette punte** (`rombo360`: Mente, Recupero, Forza massima = push+pull+gambe, Forza esplosiva = esplosività+res. velocità, Resistenza, Velocità, Tecnica). Soglie in `SOGLIE_MENTE` (proposte, da tarare). Niente scritture. `PATCH /api/giorno` (check del giorno prima) è stato tolto il 29/9.
 
 ### `GET /api/gate?week=W&userId=U`
 Fetch giorno 7 (gate) da Notion: 3 domande + risposte esistenti + `missioneSettimana`.
@@ -1096,6 +1096,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `026_session_feedback.sql` applicata su Supabase (Ste, 24/9)
 - [x] Migration `027_client_boundary.sql` applicata su Supabase (Ste, 25/9)
 - [x] Migration `028_account_soft_delete.sql` applicata su Supabase (Ste, 27/9)
+- [ ] Migration `029_checkin_presenza.sql` da applicare su Supabase (colonna `daily_checkin.presence_yesterday`: finché manca il check-in si salva senza e la punta Presenza usa solo il Reset)
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)

@@ -269,6 +269,7 @@ CREATE TABLE daily_checkin (
   sleep_hours      NUMERIC(3,1) CHECK (sleep_hours BETWEEN 0 AND 12),
   recovery_quality INTEGER CHECK (recovery_quality BETWEEN 0 AND 10),
   mental_state     INTEGER CHECK (mental_state BETWEEN 0 AND 10),
+  presence_yesterday SMALLINT CHECK (presence_yesterday BETWEEN 0 AND 10), -- migration 029: "quanto sei stato presente ieri?"
   created_at       TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(user_id, date)
 );

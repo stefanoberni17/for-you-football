@@ -21,6 +21,10 @@ const RECOVERY_LABELS: Record<number, string> = {
 const MENTAL_LABELS: Record<number, string> = {
   0: 'Testa altrove', 3: 'Un po\' giù', 5: 'Normale', 7: 'Concentrato', 10: 'Lucido e carico',
 };
+// Presenza di ieri (Ste, 29/9): al posto del check del giorno prima nella pagina giorno
+const PRESENCE_LABELS: Record<number, string> = {
+  0: 'Mai tornato presente', 3: 'Qualche volta', 5: 'A momenti', 7: 'Spesso', 10: 'Quasi sempre',
+};
 
 function getSliderLabel(value: number, labels: Record<number, string>): string {
   // Trova la label più vicina
@@ -44,6 +48,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
   const [sleepHours, setSleepHours] = useState<number>(7);
   const [recoveryQuality, setRecoveryQuality] = useState<number>(5);
   const [mentalState, setMentalState] = useState<number>(5);
+  const [presenceYesterday, setPresenceYesterday] = useState<number>(5);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
   // Consenso esplicito ai dati sulla salute (migration 021): chi si è registrato prima lo dà qui, una volta
@@ -79,6 +84,7 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           sleepHours,
           recoveryQuality,
           mentalState,
+          presenceYesterday,
         }),
       });
       if (!res.ok) throw new Error('checkin failed');
@@ -199,6 +205,14 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
           getSliderLabel(mentalState, MENTAL_LABELS), getSliderColor(mentalState),
           slider('checkin-mentale', mentalState, setMentalState),
           ['Altrove', 'Normale', 'Lucido'],
+        )}
+
+        {sliderCard(
+          'checkin-presenza', 'Presente ieri',
+          <>{presenceYesterday}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          `Ieri, durante la giornata: ${getSliderLabel(presenceYesterday, PRESENCE_LABELS).toLowerCase()}`, getSliderColor(presenceYesterday),
+          slider('checkin-presenza', presenceYesterday, setPresenceYesterday),
+          ['Mai', 'A momenti', 'Quasi sempre'],
         )}
 
         {needsHealthConsent && (

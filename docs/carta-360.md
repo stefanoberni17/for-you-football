@@ -79,7 +79,7 @@ Le stesse frasi entrano nel contesto del Coach (blocco "Campo": sedute fatte/sal
 del carico, zone con fastidio) e nel prompt del preparatore (stato mentale nel check-in e nel flag di fatica,
 settimana del percorso nel messaggio).
 
-## Cosa va costruito
+## Cosa va costruito (stato al 29/9 notte: 1-4 fatti nella PR della Carta, 5 da fare)
 
 1. **Tracking del Reset** (NUOVO): `POST /api/reset/complete { mode: 'rituale' | 'rapido', durataSec }` scrive
    una riga in `onboarding_events` (`reset_completed`, server-side, niente migration) e aggiorna
