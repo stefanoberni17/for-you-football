@@ -27,8 +27,17 @@ export const FASE_LABEL: Record<(typeof FASI)[number], string> = {
 export const MAX_SEDUTE_FISICHE_PER_FASE: Record<(typeof FASI)[number], number> = { off_season: 6, preparazione_squadra: 1, in_season: 3 };
 /** Giornate LEGGERE in più oltre al tetto fisico (solo fascia/prevenzione, tecnica, mobilità/recupero), facoltative — Ste, 16/9: "3 fisiche + 2". */
 export const MAX_SEDUTE_LEGGERE_EXTRA = 2;
+/**
+ * Tetto delle sedute fisiche: quello della fase, a prescindere da quante volte si allena con la squadra (Ste, 28/9:
+ * "terrei sempre max 2/3 di forza a prescindere": con la squadra 4-5 volte, una parte bassa e due parte alta al
+ * mattino sono gestibili se non lunghe). Il "2 o 3" lo decide il planner guardando il carico squadra (regola 20),
+ * non un tetto.
+ */
+export function maxSeduteFisiche(fase: (typeof FASI)[number]): number {
+  return MAX_SEDUTE_FISICHE_PER_FASE[fase];
+}
 /** Giornate totali richiedibili in una settimana: fisiche della fase + leggere, mai oltre i 7 giorni. */
-export const maxSeduteTotali = (fase: (typeof FASI)[number]): number => Math.min(7, MAX_SEDUTE_FISICHE_PER_FASE[fase] + MAX_SEDUTE_LEGGERE_EXTRA);
+export const maxSeduteTotali = (fase: (typeof FASI)[number]): number => Math.min(7, maxSeduteFisiche(fase) + MAX_SEDUTE_LEGGERE_EXTRA);
 
 /** Durata massima di una giornata (pila di blocchi) per fase: in off season Ste arriva a 90-100' — [test Utente E.] */
 export const MAX_DURATA_PER_FASE: Record<(typeof FASI)[number], number> = { off_season: 120, preparazione_squadra: 75, in_season: 90 };

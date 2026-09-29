@@ -13,7 +13,7 @@ import { Scale } from 'lucide-react';
 import type { TrainingState } from '@/app/allenamento/page';
 
 // Dal /api/training/state (stessa chiamata dell'hub) servono solo setup, calendario, tetti e squadra
-type SetupState = Pick<TrainingState, 'setup' | 'setupDisponibile' | 'calendario' | 'maxSeduteFisiche' | 'maxSeduteTotali' | 'squadra' | 'squilibri'>;
+type SetupState = Pick<TrainingState, 'setup' | 'setupDisponibile' | 'calendario' | 'maxSeduteFisiche' | 'maxSeduteTotali' | 'squadra' | 'partitaAbituale' | 'squilibri'>;
 
 // Etichetta di un gruppo di controlli (chip, Sì/No): label corta + parentetica sotto
 function GroupLabel({ children, hint }: { children: React.ReactNode; hint?: React.ReactNode }) {
@@ -40,6 +40,7 @@ function SetupPageInner() {
   const [loading, setLoading] = useState(true);
   const [setupDraft, setSetupDraft] = useState<TrainingSetup | null>(null);
   const [squadraDraft, setSquadraDraft] = useState<SquadraSettimana>({});
+  const [partitaDraft, setPartitaDraft] = useState<number | null>(null); // giorno abituale della partita (28/9)
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
@@ -58,6 +59,7 @@ function SetupPageInner() {
       const conFascia = searchParams.get('fascia') === '1' && !data.setup.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO);
       setSetupDraft({ ...data.setup, focus: conFascia ? toggleFocus(data.setup.focus, 'fascia') : data.setup.focus });
       setSquadraDraft({ ...(data.squadra || {}) });
+      setPartitaDraft(data.partitaAbituale ?? null);
     }
     setLoading(false);
   }, [router, searchParams]);
@@ -65,7 +67,7 @@ function SetupPageInner() {
   useEffect(() => { load(); }, [load]);
 
   const setupDirty = !!state && !!setupDraft && JSON.stringify(setupDraft) !== JSON.stringify(state.setup);
-  const squadraDirty = !!state && JSON.stringify(squadraDraft) !== JSON.stringify(state.squadra || {});
+  const squadraDirty = !!state && (JSON.stringify(squadraDraft) !== JSON.stringify(state.squadra || {}) || partitaDraft !== (state.partitaAbituale ?? null));
   const dirty = setupDirty || squadraDirty;
 
   const salva = async () => {
@@ -95,7 +97,7 @@ function SetupPageInner() {
       if (squadraDirty && ok) {
         const res = await authFetch('/api/training/setup', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ squadra: squadraDraft }),
+          body: JSON.stringify({ squadra: { ...squadraDraft, partita: partitaDraft } }),
         });
         const d = await res.json().catch(() => ({}));
         if (res.ok && d.squadraSalvata !== false) { /* ok */ }
@@ -271,6 +273,16 @@ function SetupPageInner() {
                   onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ''); setSetupDraft({ ...setupDraft, squadraDurataMin: v === '' ? null : Number(v) }); }}
                   className="tabular-nums" />
               </Field>
+              <div>
+                <p className="text-body-sm text-app font-semibold mb-1">Di solito la partita è di</p>
+                <p className="text-caption text-muted mb-2">Serve al piano del lunedì, quando il calendario della settimana non è ancora compilato: niente gambe pesanti il giorno prima.</p>
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                    <Chip key={d} selected={partitaDraft === d} onClick={() => setPartitaDraft(partitaDraft === d ? null : d)}>{DAY_SHORT_NAMES[d]}</Chip>
+                  ))}
+                  <Chip selected={partitaDraft === null} onClick={() => setPartitaDraft(null)}>Nessuna</Chip>
+                </div>
+              </div>
               {giorniSquadra.length === 0 ? (
                 <p className="text-body-sm text-muted leading-relaxed">
                   Prima imposta i giorni di allenamento con la squadra dal calendario in home: qui poi puoi dire quanto è impegnativo ognuno.

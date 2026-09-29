@@ -52,6 +52,7 @@ export interface TrainingState {
   };
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
+  partitaAbituale?: number | null; // giorno abituale della partita dal setup (28/9)
   // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
   rigenerazioniRimaste?: number | null;
   // Squilibri calcolati dai dati (dx/sx, push/pull, piede debole): righe già in linguaggio da atleta
@@ -677,7 +678,7 @@ export default function AllenamentoHub() {
           </div>
         </div>
         <p className="text-body-sm text-muted mb-4">
-          Livello {state.fascia}{livelliDiversi.length > 0 && <> ({livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')})</>}{!batteriaVuota && <> · Settimana {Math.min(state.ciclo.settimana, 4)}{state.ciclo.ritestDue ? '+' : ''} di 4 del ciclo</>}
+          Livello {state.fascia}{livelliDiversi.length > 0 && <> ({livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')})</>}{!batteriaVuota && <> · Settimana {((Math.max(1, state.ciclo.settimana) - 1) % 4) + 1} di 4 del ciclo</>}
         </p>
 
         {/* Avvisi in cima SOLO quando attivi: dolore, scarico, ri-test */}
@@ -709,7 +710,7 @@ export default function AllenamentoHub() {
           <Card variant="warn" padding="sm" className="mb-4">
             <p className="text-body font-semibold text-warning mb-0.5 flex items-center gap-2"><ClipboardList size={18} aria-hidden /> È ora del ri-test</p>
             <p className="text-body-sm text-muted leading-relaxed mb-3">
-              Sono passate più di 4 settimane dall&apos;ultimo test: da qui passa il salto di livello. Fallo idealmente 2 giorni dopo la partita, da fresco.
+              Ogni quattro settimane, dopo lo scarico, si rifanno i test: da qui passa il salto di livello. Fallo idealmente 2 giorni dopo la partita, da fresco.
               {ritestMiratoTesto && <> <span className="text-app">Da rifare prima: {ritestMiratoTesto}</span> (hai finito i codici del tuo livello in {state.ritestMirato!.flatMap((r) => r.famiglie).join(', ')}).</>}
             </p>
             <Button variant="secondary" size="sm" href="/allenamento/test">Rifai i test</Button>

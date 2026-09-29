@@ -6,9 +6,10 @@ import { getConsents } from '@/lib/consent';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
+import { giorniPartita } from '@/lib/trainingSquadra';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
-import { SETUP_SELECT, mapSetup, MAX_SEDUTE_FISICHE_PER_FASE, maxSeduteTotali } from '@/lib/trainingSetup';
-import { loadFocusSetup, loadPreferenzeSetup, loadSquadra } from '@/lib/trainingPlanner';
+import { SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
+import { loadFocusSetup, loadPreferenzeSetup, loadSquadraCompleta } from '@/lib/trainingPlanner';
 import { PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
-    const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: lastTestSession }] = await Promise.all([
+    const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
         .eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
       supabaseAdmin.from('training_test_sessions').select('completed_at')
         .eq('user_id', userId).not('completed_at', 'is', null)
-        .order('completed_at', { ascending: false }).limit(1).maybeSingle(),
+        .order('completed_at', { ascending: true }).limit(1).maybeSingle(), // ancora del ciclo = prima batteria chiusa (28/9)
     ]);
 
     // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
@@ -131,14 +132,14 @@ export async function GET(request: NextRequest) {
     } : null;
 
     const ciclo = cicloInfo(
-      lastTestSession?.completed_at
-      || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null)
+      primaTestSession?.completed_at
+      || (results && results.length > 0 ? (results[results.length - 1] as { created_at?: string }).created_at ?? null : null)
     );
-    const [{ data: calendar }, consensiSet, squadra, focusSetup, preferenzeSetup] = await Promise.all([
+    const [{ data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup] = await Promise.all([
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
       getConsents(userId),
-      loadSquadra(userId),
+      loadSquadraCompleta(userId),
       loadFocusSetup(userId),
       loadPreferenzeSetup(userId),
     ]);
@@ -146,7 +147,7 @@ export async function GET(request: NextRequest) {
     setup.focus = focusSetup;
     Object.assign(setup, preferenzeSetup);
     const squadraStimato = caricoSquadraStimato({
-      trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [],
+      trainingDays: calendar?.training_days || [], matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale),
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
     });
     // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra
@@ -220,7 +221,9 @@ export async function GET(request: NextRequest) {
       squadra,
       // Settimana squadra caricata dall'utente (per la maschera: si vede prima di scegliere i giorni)
       calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
-      maxSeduteFisiche: MAX_SEDUTE_FISICHE_PER_FASE[setup.fase],
+      // Giorno abituale della partita (setup, chiave `partita` in training_squadra): usato dal planner quando il calendario è vuoto
+      partitaAbituale,
+      maxSeduteFisiche: maxSeduteFisiche(setup.fase),
       maxSeduteTotali: maxSeduteTotali(setup.fase),
       squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, latoDeboleAlto: squilibri.latoDeboleAlto, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
     });

@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { ATTREZZATURA_OPZIONI, FASI, SETUP_SELECT as SELECT, mapSetup, preferenzeValide } from '@/lib/trainingSetup';
-import { parseSquadra } from '@/lib/trainingSquadra';
+import { parsePartitaAbituale, parseSquadra, squadraConPartita } from '@/lib/trainingSquadra';
 import { FOCUS_SETUP_MAX, focusValidi } from '@/lib/trainingRequest';
 
 const supabaseAdmin = createClient(
@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
       update.training_squadra_durata_min = d;
     }
     const squadra = body.squadra !== undefined && body.squadra !== null && typeof body.squadra === 'object' ? parseSquadra(body.squadra) : null;
+    const partita = squadra !== null ? parsePartitaAbituale(body.squadra) : null; // giorno abituale della partita (28/9), stessa colonna
     const focus = Array.isArray(body.focus) ? focusValidi(body.focus, FOCUS_SETUP_MAX) : null;
     // Preferenze (migration 025): giorni con l'app, giornate a settimana, tempo per seduta — update separato fail-soft
     const haPref = body.giorni !== undefined || body.sedute !== undefined || body.durataMin !== undefined;
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     let squadraSalvata: boolean | null = null;
     if (squadra !== null) {
-      const { error: sqErr } = await supabaseAdmin.from('profiles').update({ training_squadra: squadra }).eq('user_id', userId);
+      const { error: sqErr } = await supabaseAdmin.from('profiles').update({ training_squadra: squadraConPartita(squadra, partita) }).eq('user_id', userId);
       squadraSalvata = !sqErr;
       if (sqErr) console.error('training/setup squadra (serve la migration 023?):', sqErr.message);
     }
