@@ -416,6 +416,7 @@ export const REGOLE = {
   scaricoFisicoMax: 4,           // oggi: fisico ≤ 4 → fatica alta, alleggerire la seduta
   scaricoRecuperoMax: 4,         // oggi: recupero ≤ 4 → fatica alta
   scaricoSonnoMinOre: 6,         // oggi: sonno < 6h → fatica alta
+  scaricoMentaleMax: 3,          // oggi: mentale ≤ 3 → testa altrove: seduta semplice, niente massimali né plio intensiva (29/9)
   periodoScaricoRecuperoMedia: 5,   // media 7gg recupero ≤ 5 → periodo di scarso recupero
   periodoScaricoSonnoMediaOre: 6.5, // media 7gg sonno < 6.5h → periodo di scarso recupero
   // AMRAP — 40% del max sull'esercizio scelto dalla scala skill (tenute 70%, cap 30")

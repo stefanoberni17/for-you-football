@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
 import { queryDatabase, fetchPage, mapSettimana, mapGiorno } from '@/lib/notion';
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
+import { loadCampoPerCoach, loadIncroci } from '@/lib/cartaServer';
+import { incrociTesto } from '@/lib/incroci';
 
 export const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -834,13 +836,18 @@ export async function buildUserContext(userId: string): Promise<string> {
   const currentWeek = profile?.current_week || 1;
   const totalCompleted = completedDays?.length || 0;
 
-  // Calendario settimanale (dipende da current_week: parte dopo il profilo)
-  const { data: calendar } = await supabaseAdmin
-    .from('user_weekly_calendar')
-    .select('training_days, match_days')
-    .eq('user_id', userId)
-    .eq('week_number', currentWeek)
-    .maybeSingle();
+  // Calendario settimanale (dipende da current_week: parte dopo il profilo); insieme il Campo e
+  // gli incroci della Carta (29/9: prima il Coach non sapeva niente dell'allenamento nell'app)
+  const [{ data: calendar }, campoBlock, incrociRighe] = await Promise.all([
+    supabaseAdmin
+      .from('user_weekly_calendar')
+      .select('training_days, match_days')
+      .eq('user_id', userId)
+      .eq('week_number', currentWeek)
+      .maybeSingle(),
+    loadCampoPerCoach(userId),
+    loadIncroci(userId),
+  ]);
 
   // Calcola medie check-in ultimi 7 giorni (pre-calcolate fuori dal template)
   let weekCheckinSummary = '';
@@ -997,8 +1004,8 @@ ${todayCheckin ? `**OGGI:**
 - Sonno: ${todayCheckin.sleep_hours !== null ? `${todayCheckin.sleep_hours}h` : 'non registrato'}
 - Recupero muscolare: ${todayCheckin.recovery_quality !== null ? `${todayCheckin.recovery_quality}/10` : 'non registrato'}
 - Stato mentale: ${todayCheckin.mental_state !== null ? `${todayCheckin.mental_state}/10` : 'non registrato'}` : 'Nessun check-in registrato oggi.'}
-${weekCheckinSummary}
-${weeklyActionsSummary}
+${weekCheckinSummary}${incrociTesto(incrociRighe)}
+${weeklyActionsSummary}${campoBlock}
 
 ## Riflessioni dal campo
 ${reflections && reflections.length > 0

@@ -5,9 +5,12 @@ import { dateItaly, todayItaly } from '@/lib/dateItaly';
 import { azioniPerGiorno, puntaRecupero, rombo360, romboMente, type CheckinRow } from '@/lib/carta';
 import { buildRombo, buildRomboBase, fasciaFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
-import { loadFeedbackRecenti } from '@/lib/trainingPlanner';
+import { loadCarico, loadFeedbackRecenti } from '@/lib/trainingPlanner';
+import type { CaricoInfo } from '@/lib/trainingLoad';
 import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
 import { GATE_DAY } from '@/lib/constants';
+import { incroci } from '@/lib/incroci';
+import { seduteDaiFeedback } from '@/lib/cartaServer';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,12 +63,17 @@ export async function GET(request: NextRequest) {
     let corpo: { dettaglio: ReturnType<typeof buildRombo>; base: ReturnType<typeof buildRomboBase>; livello: string; testFatti: number } | null = null;
     let fasciaScore: number | null = null;
     let zoneConFastidio = 0;
+    let sedute: ReturnType<typeof seduteDaiFeedback> = [];
+    let settimaneCarico: CaricoInfo['settimane'] = [];
     if (campo) {
-      const [resultsRes, feedback] = await Promise.all([
+      const [resultsRes, feedback, carico] = await Promise.all([
         supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, dettaglio')
           .eq('user_id', userId).order('created_at', { ascending: false }).limit(400),
-        loadFeedbackRecenti(userId),
+        loadFeedbackRecenti(userId, 80),
+        loadCarico(userId, false).catch(() => null),
       ]);
+      sedute = seduteDaiFeedback(feedback);
+      settimaneCarico = carico?.settimane ?? [];
       let results = resultsRes.data as (TestResultRow & { dettaglio?: Record<string, unknown> | null })[] | null;
       if (resultsRes.error && /dettaglio/.test(resultsRes.error.message)) {
         results = (await supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato')
@@ -81,7 +89,16 @@ export async function GET(request: NextRequest) {
     const recupero = puntaRecupero({ oggi, checkins: (checkins || []) as CheckinRow[], fasciaScore, zoneConFastidio }, inizio);
     const tre60 = rombo360(mente, recupero, corpo ? corpo.dettaglio.map((p) => ({ key: p.key, score: p.score, scoreIniziale: p.scoreIniziale })) : null);
 
-    return NextResponse.json({ nome: profile?.name || null, oggi, inizio, mente, recupero, corpo, tre60 });
+    // Gli incroci (docs/carta-360.md): frasi vere dai suoi dati, al massimo due
+    const righeCheckin = (checkins || []) as CheckinRow[];
+    const incr = incroci({
+      oggi, inizio, checkins: righeCheckin,
+      azioni: inizio ? azioniPerGiorno((tick || []) as { date: string }[], (attive || []).length, inizio, oggi) : [],
+      giorniFatti: fatti.map((p) => dateItaly(p.completed_at as string)),
+      sedute, settimaneCarico,
+    });
+
+    return NextResponse.json({ nome: profile?.name || null, oggi, inizio, mente, recupero, corpo, tre60, incroci: incr });
   } catch (error: unknown) {
     console.error('❌ GET /api/carta:', (error as Error)?.message);
     return NextResponse.json({ error: 'internal' }, { status: 500 });
