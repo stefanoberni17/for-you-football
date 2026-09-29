@@ -94,6 +94,7 @@ export interface Vincoli {
   numSedute?: number;        // esattamente N sedute (clampato al tetto della fase e ai giorni ammessi ancora davanti, da oggi a domenica)
   obiettivi?: FocusId[];     // focus di QUESTA settimana (dalla maschera); assenti = obiettivi del setup
   recuperiFacoltativi?: boolean; // richiesta esplicita dell'atleta: i recuperi non sono più un vincolo
+  modifica?: boolean;        // modo "modifica": i giorni già passati del piano attuale restano e contano nei controlli settimanali (29/9)
 }
 
 const clampDay = (d: unknown): number | null => { const n = Number(d); return Number.isInteger(n) && n >= 1 && n <= 7 ? n : null; };
@@ -158,6 +159,7 @@ export function componiRichiesta(r: RichiestaGuidata, pianoAttuale?: PlanSession
   }
   const m = r.modifica!;
   const giorniPiano = (pianoAttuale || []).map((s) => s.giorno);
+  vincoli.modifica = true;
   righe.push('MODIFICA AL PIANO ATTUALE — cambia SOLO quanto indicato, il resto resta IDENTICO (stessi blocchi negli altri giorni).');
   switch (m.tipo) {
     case 'sposta':

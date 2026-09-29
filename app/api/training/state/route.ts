@@ -4,7 +4,7 @@ import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { getConsents } from '@/lib/consent';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
-import { cicloInfo, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
+import { cicloInfo, conScaricoDalCarico, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
 import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { giorniPartita } from '@/lib/trainingSquadra';
 import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
-    const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }] = await Promise.all([
+    const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession }] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
@@ -46,6 +46,9 @@ export async function GET(request: NextRequest) {
       supabaseAdmin.from('training_test_sessions').select('completed_at')
         .eq('user_id', userId).not('completed_at', 'is', null)
         .order('completed_at', { ascending: true }).limit(1).maybeSingle(), // ancora del ciclo = prima batteria chiusa (28/9)
+      supabaseAdmin.from('training_test_sessions').select('completed_at')
+        .eq('user_id', userId).not('completed_at', 'is', null)
+        .order('completed_at', { ascending: false }).limit(1).maybeSingle(), // ultimo test chiuso: spegne il ri-test dovuto (29/9)
     ]);
 
     // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
@@ -132,9 +135,11 @@ export async function GET(request: NextRequest) {
       mentale: cOggi.mental_state ?? null,
     } : null;
 
-    const ciclo = cicloInfo(
+    let ciclo = cicloInfo(
       primaTestSession?.completed_at
-      || (results && results.length > 0 ? (results[results.length - 1] as { created_at?: string }).created_at ?? null : null)
+      || (results && results.length > 0 ? (results[results.length - 1] as { created_at?: string }).created_at ?? null : null),
+      ultimaTestSession?.completed_at
+      || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null),
     );
     const [{ data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup] = await Promise.all([
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
@@ -152,7 +157,10 @@ export async function GET(request: NextRequest) {
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
     });
     // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra
-    const carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato);
+    let carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato);
+    // Scarico solo con del carico alle spalle (29/9): stessa regola del planner
+    const cicloEffettivo = conScaricoDalCarico(ciclo, carico.settimane);
+    if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, undefined, squadraStimato); }
 
     const rombo = buildRombo(rows);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)

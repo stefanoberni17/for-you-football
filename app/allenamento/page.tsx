@@ -35,7 +35,7 @@ export interface TrainingState {
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
   completions: { session_key: string; feedback: string | null }[];
-  ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean };
+  ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean; scaricoRinviato?: boolean };
   // Livello per qualità (dai test di quella qualità) e ri-test mirato (famiglie che hanno finito i codici del livello)
   livelli?: { qualita: string; label?: string; livello: string }[];
   ritestMirato?: { qualita: string; label: string; famiglie: string[]; tests: { id: string; nome: string }[] }[];
@@ -714,6 +714,14 @@ export default function AllenamentoHub() {
             <p className="text-body-sm text-muted leading-relaxed flex gap-2">
               <BatteryLow size={18} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
               <span><span className="font-semibold text-app">Settimana di scarico.</span> Quarta settimana del ciclo: meno volume per assorbire il lavoro, la tecnica continua. La settimana prossima: ri-test.{ritestMiratoTesto && <> Da rifare prima: {ritestMiratoTesto}.</>}</span>
+            </p>
+          </Card>
+        )}
+        {!batteriaVuota && state.ciclo.scaricoRinviato && (
+          <Card variant="default" padding="sm" className="mb-4">
+            <p className="text-body-sm text-muted leading-relaxed flex gap-2">
+              <BatteryLow size={18} className="text-faint shrink-0 mt-0.5" aria-hidden />
+              <span><span className="font-semibold text-app">Quarta settimana, ma niente scarico.</span> Nelle settimane prima hai fatto poche sedute: lo scarico serve dopo il carico, questa settimana si lavora normale.</span>
             </p>
           </Card>
         )}

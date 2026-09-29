@@ -87,6 +87,7 @@ export default function TrainingSessionPlayer({
   const [fattoTxt, setFattoTxt] = useState('');
   const [caricoTxt, setCaricoTxt] = useState('');
   const [logSaved, setLogSaved] = useState(false);
+  const [votoAperto, setVotoAperto] = useState(false); // accessori: scala 1-10 chiusa finché non la apre
   const [sensazione, setSensazione] = useState<string | null>(null);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
@@ -244,7 +245,7 @@ export default function TrainingSessionPlayer({
     setSerieFatte(next);
     // Serie chiusa → durante il recupero si può dare il feedback (RPE, reps/kg reali)
     setPending({ serie: next, quantita: quantitaLato, unita, carico: item.carico_kg, lato: isExtra ? item.lato_extra! : '' });
-    setRpe(null); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null);
+    setRpe(null); setVotoAperto(false); setFattoTxt(String(quantitaLato)); setCaricoTxt(item.carico_kg ? String(item.carico_kg) : ''); setLogSaved(false); setPiuDuro(null);
     startRest(item.recupero_sec, next >= totalSerie);
   };
   // Tornare all'esercizio precedente (tap sbagliato su "esercizio completato"): si riparte dalla sua prima serie
@@ -304,6 +305,9 @@ export default function TrainingSessionPlayer({
   // Ste, 28/9: niente voto per serie su rolling e fascia (a fine seduta si dice dove si è sentita); sulla tecnica la scala è "quanto ti è riuscito"
   const senzaVoto = senzaVotoPerSerie(blocco);
   const isTecnica = !!blocco?.qualita?.startsWith('tecnica');
+  // 29/9: la scala 1-10 sta aperta solo dove guida davvero la progressione (gradini delle scale, esercizi con i kg,
+  // tecnica); sugli accessori a corpo libero resta "Fatte" (che basta al SALI) e il voto si apre a richiesta
+  const votoRidotto = !senzaVoto && !isTecnica && !isEmom && item.adattamento !== 'gradino' && !item.carico_kg;
   const latoLabel = lato === 'dx' ? 'destro' : 'sinistro';
   // Parametri dell'esercizio su due righe: "3 × 12 per lato · 24 kg" (grande) e "+1 sinistro · recupero 90"" (piccola)
   const parametri = isEmom
@@ -410,7 +414,11 @@ export default function TrainingSessionPlayer({
                   <p className="text-label font-semibold text-app">{isTecnica ? <>Com&apos;è riuscita la serie {pending.serie}?</> : <>Com&apos;è andata la serie {pending.serie}?</>}</p>
                   {logSaved && <span className="text-caption text-forest-400 font-semibold inline-flex items-center gap-1"><Check size={14} aria-hidden /> salvato</span>}
                 </div>
-                <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo={isTecnica ? 'tecnica' : 'serie'} ariaPrefix="Serie" />
+                {votoRidotto && !votoAperto && rpe === null ? (
+                  <Button variant="ghost" size="sm" onClick={() => setVotoAperto(true)}>Vota la serie (facoltativo)</Button>
+                ) : (
+                  <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo={isTecnica ? 'tecnica' : 'serie'} ariaPrefix="Serie" />
+                )}
                 {/* Reps fatte e kg SEMPRE visibili (Ste, 22/9: "se ho fatto fare archer push up 8 reps e uno ne fa 10 facili
                     lo deve considerare per il prossimo"): prefillati col previsto, si cambiano solo se è andata diversa */}
                 <div className="grid grid-cols-2 gap-3 mt-3">

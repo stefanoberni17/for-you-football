@@ -23,7 +23,7 @@ Per ogni famiglia il server guarda l'ULTIMO blocco fatto e il suo giudizio:
 |---|---|
 | facile | il codice successivo (B1 → B2, B2 → A1…); se l'ultimo era short → lo stesso in full |
 | giusto | lo stesso codice |
-| duro, oppure voto seduta ≥ 8, oppure dolore segnalato | lo stesso in short, o il codice precedente se era già short |
+| duro, oppure voto seduta ≥ 9 (era 8 fino al 29/9: nella scala del player 8 è la zona normale di una seduta di forza e faceva ping-pong short/full), oppure dolore segnalato | lo stesso in short, o il codice precedente se era già short |
 | nessun blocco fatto | il primo codice del livello dell'atleta (dal test AMRAP), in short se la seduta è la prima della fase |
 
 Mai saltare un codice. Mai andare oltre il livello dell'atleta + 1 (regola già in `blocchiDisponibili`).

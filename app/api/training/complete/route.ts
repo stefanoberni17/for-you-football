@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { detectPain } from '@/lib/trainingPlanner';
+// Voto 1-10 → le tre scelte storiche (i consumatori vecchi leggono `feedback`): stessa soglia della memoria dei blocchi
+import { feedbackDaRpe } from '@/lib/trainingMemoriaBlocchi';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -12,8 +14,6 @@ const supabaseAdmin = createClient(
 
 const GIUDIZI = ['facile', 'ok', 'duro'] as const;
 type Giudizio = (typeof GIUDIZI)[number];
-/** Voto 1-10 → le tre scelte storiche (i consumatori vecchi leggono `feedback`) */
-const feedbackDaRpe = (rpe: number): Giudizio => (rpe <= 4 ? 'facile' : rpe >= 8 ? 'duro' : 'ok');
 
 /**
  * POST { plan_id, giorno, feedback?, rpe?, blocchi?, note? } → seduta completata.
