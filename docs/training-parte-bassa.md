@@ -85,47 +85,101 @@ un id nuovo) così le due scale non si pestano.
   scale: gradino ≥ 4 su almeno due catene = A, gradino 6-7 = PRO — [proposta].
 - I test di palestra (massimali) restano per chi ha i pesi: la scala vale per tutti, i massimali si aggiungono.
 
-## Formati delle sedute (composte dal server, come `pa-*`)
+## Formati delle sedute (composte dal server, come `pa-*`) — Ste, 29/9: "costruiamo anche questo, dobbiamo alternarle un po' tutte nelle settimane"
 
-| Formato | Gradino | Dose [proposta] | A cosa serve |
-|---|---|---|---|
-| **Serie** `pb-serie` | ultimo completato di ogni catena | 4 catene × 3-4 serie × 60-70 % del max, recupero 90"; per lato | volume e qualità |
-| **Serie, versione breve** `pb-serie-short` | ultimo completato | squat + RDL (o affondi + bridge, a rotazione), 3 serie | i giorni corti / in season |
-| **EMOM** `pb-emom` | gradino SOPRA l'ultimo completato | 1 esercizio al minuto, 3 reps (2 sui gradini alti), ~20'; con i salti (lungo e alto da fermo) se la pliometria è tra gli obiettivi | skill: si impara il gradino dopo |
-| **Isometrie / Fascia Forza** | blocchi di Ste `Fascia Foundation Forza` (B3/A3) | come oggi | forza vera "sul posto", una settimana sì e una no al posto dell'esplosiva |
+| Formato | Chi lo ha | Gradino / carico | Dose [proposta] | A cosa serve |
+|---|---|---|---|---|
+| **Serie** `pb-serie` | tutti | ultimo gradino completato di ogni catena | 4 catene × 3-4 serie × 60-70 % del max, recupero 90", per lato | volume e qualità sui gradini |
+| **Serie brevi** `pb-serie-short` | tutti | ultimo completato | 2 catene a rotazione (squat + RDL, poi affondi + bridge), 3 serie, ~30' | giornate corte, in season |
+| **Forza massima** `pb-fmax` | palestra | massimale stimato | UN esercizio base a rotazione (squat, FY squat, RDL, hip thrust, bulgaro, affondi) 4-5 × 3-5 reps all'80-90 % del 1RM, recupero 2-3'; poi 2 catene dai gradini come accessori (2 × 8-10) | costruire la forza sui base, aumentando il peso (Ste: "solo per questo") |
+| **Isometrie** `Fascia Foundation Forza` B3/A3 | tutti | blocchi di Ste | come oggi (overcoming al muro, bridge bounces, iso lunge runner, skip) | forza "sul posto", la settimana alternata alle serie |
+| **EMOM** `pb-emom` | tutti | gradino SOPRA l'ultimo completato | 1 esercizio al minuto, 3 reps (2 sui gradini alti), ~20'; salto in lungo e in alto da fermo se la pliometria è tra gli obiettivi | skill: si impara il gradino dopo, prepara il test |
+| **Circuito** (tabata / AMRAP sui gradini) | tutti | ultimo completato / uno sotto | 30-30 su 4 catene, 2-3 giri | arriva col player a round, come per la parte alta |
+| **Kettlebell** `kb-*` | kettlebell + obiettivo | fasce base/intermedio/avanzato | come oggi (`lib/trainingKettlebell.ts`) | sezione A PARTE (Ste): non entra nella rotazione delle gambe |
 
-Rotazione sul ciclo [proposta]: settimane 1-3 serie (piene o brevi) + EMOM se ci sono due giornate di
-gambe; settimana 4 (scarico) solo EMOM e isometrie; con la palestra la seduta a serie usa i massimali
-(squat, FY squat, bulgaro, RDL, hip thrust, affondi: gli esercizi già concordati) al posto dei gradini.
+Il gating del carico resta quello di oggi: sotto i 18 anni o senza esperienza in palestra il massimo è il
+60 % del massimale (`caricoMaxPct`), quindi `pb-fmax` esiste solo per chi può stare all'80 %+; per gli altri
+la seduta in palestra è a serie sui base in regime "base" (3-4 × 6-12 al 60-70 %). Senza massimale stimato
+niente kg oltre i 20 (già nel codice).
 
-## Progressione
+### Rotazione tra le settimane [proposta]
 
-- **Dose** sull'esercizio: come oggi, SALI/SCENDI dai log (+1-2 reps fino a +30 %, "8 previste, 10 fatte"), poi
-  il gradino dopo con dose ×0.7 (`gradinoSuccessivo`, già scritto per le catene v1: basta registrare le
-  quattro catene nuove come aree del catalogo v1 o dare loro la stessa struttura).
-- **Gradino**: si sale solo con il test della scala (come la spinta). L'EMOM lavora il gradino sopra e
-  prepara il test; dopo due EMOM "facili" sullo stesso gradino l'app propone il test del gradino
-  (la proposta automatica rimandata dalla review del 28/9 avrebbe qui il suo posto).
-- **Per lato**: si lavora sempre entrambi; una serie in più sul lato debole (`lato_extra`, già nel codice)
-  quando i test per lato dicono che c'è più del 10 % di differenza.
-- **Ritorno**: dopo 8 settimane sulla scala si torna al gradino sotto con una serie in più per due
-  settimane, poi si riprende (stessa regola di tecnica e fascia) — [proposta].
+Nei programmi di Ste il giorno 2 alterna `Forza Esplosiva A1` e `Fascia Foundation A3 Forza` a settimane
+alterne. Stessa idea sul ciclo di 4 settimane, per la giornata principale di gambe:
 
-## Con pliometria e velocità nella stessa settimana [proposta]
+| Settimana del ciclo | Giornata principale | Seconda giornata (se c'è) |
+|---|---|---|
+| 1 | Serie (`pb-serie`; con la palestra: `pb-fmax`) | EMOM |
+| 2 | Isometrie (Fascia Forza) | Serie brevi |
+| 3 | Serie (o Fmax) | EMOM |
+| 4 (scarico) | EMOM | Isometrie brevi |
 
-- Gambe a serie e pliometria intensiva mai lo stesso giorno; gambe a serie il giorno dopo la
-  pliometria solo in versione breve.
-- Con velocità E gambe tra gli obiettivi: la giornata di velocità conta come metà giornata di gambe
-  (gli sprint sono forza); le serie di gambe vanno nell'altra giornata fisica.
-- L'EMOM di gambe può contenere i salti al posto dell'EMOM della parte alta (mai in entrambi nella stessa
-  settimana: i contatti di salto si contano una volta).
+Con la sola giornata di gambe a settimana (in season con la squadra 3+ volte) si fa la prima colonna.
+Il kettlebell, quando è tra gli obiettivi, prende una giornata sua e la parte bassa con pesi va più leggera
+(regola già nel codice). **Chi ha sia palestra che kettlebell: da decidere (Ste, 29/9: "poi vediamo")** —
+intanto vale: Fmax nella settimana 1 e 3, kettlebell nella 2 e 4, mai le due nella stessa settimana.
 
-## Finestre partita [proposta]
+## Progressione — Ste, 29/9: "vediamolo nel dettaglio" [proposta da correggere]
 
-- Giorno prima: niente gambe a serie né EMOM (come oggi, `forza-parte-bassa` = 1). Isometrie brevi sì.
-- Giorno dopo: niente gambe a serie; bridge e RDL a corpo libero in versione breve vanno bene come
-  richiamo leggero (sono i muscoli che hanno giocato: attivazione, non carico); Nordic mai.
-- Nordic e eccentrici (gradini 6-7 di RDL e bridge): almeno 3 giorni dalla partita.
+Tre binari, uno per attrezzatura; la scala a corpo libero è la spina dorsale per tutti, gli altri si aggiungono.
+
+**A. Corpo libero (tutti).** Due livelli: la dose dentro il gradino e il gradino.
+1. Dose: parte al 60-70 % del massimo del test. Dai log SALI = +1-2 reps per serie (già nel codice, tetto
+   +30 % sul programma, "8 previste, 10 fatte → si riparte da 10"); SCENDI = un passo indietro. Sui gradini
+   bassi (soglia 20-25) le reps possono salire fino a 25-30, sui gradini alti (soglia 5-8) al massimo +2.
+2. Gradino: NON sale dai log. Sale solo col test della scala. L'EMOM lavora il gradino sopra a 2-3 reps;
+   dopo **due EMOM "facili"** sullo stesso gradino l'app propone il test di quel gradino (in Campo → Test,
+   "prova il gradino 4 di squat"); superata la soglia, il gradino diventa il nuovo gradino di lavoro con dose
+   ×0.7 (`GRADINO_SCALA`), e la scala prosegue.
+3. Fermo: se la dose è al tetto (+30 %) e i log dicono ancora SALI, ma il test del gradino sopra non è
+   passato, si aggiunge una serie (max 5) invece di reps: prima si "riempie" il gradino.
+4. Ritorno: ogni 8 settimane sulla scala, due settimane al gradino sotto con una serie in più (come tecnica
+   e fascia), poi si riprende.
+
+**B. Palestra (Fmax sui base).** Il gradino qui è il peso.
+1. Il massimale stimato (Brzycki dalla batteria palestra) fissa il carico: 80-85 % nelle settimane 1-3 del
+   primo ciclo, 85-90 % dal secondo ciclo se tutte le serie sono complete.
+2. Passo: +2.5 kg (bilanciere) o +2.5 % quando tutte le serie sono complete con voto ≤ 8 per due sedute
+   (`adattaDose` sui kg, già nel codice: +2.5 % min 1 kg); una serie incompleta o voto 9-10 → stesso peso;
+   due sedute incomplete → −5 %.
+3. Rotazione dell'esercizio base: squat → RDL → hip thrust → bulgaro/affondi, una per settimana Fmax, così
+   ogni base torna ogni 4 settimane Fmax e il ri-test del massimale (ogni ciclo) misura il progresso.
+4. Il resto della seduta (2 catene dai gradini) segue il binario A.
+
+**C. Kettlebell.** Come oggi: fascia (base → intermedio → avanzato) dalle settimane facili, peso a passi di
+4 kg dai log. Resta un obiettivo a sé.
+
+**Livello `forza-parte-bassa`** (per i blocchi di Ste e le dosi): dalle scale (gradino ≥ 4 su due catene = A,
+6-7 = PRO), dai massimali quando ci sono (soglie già in `trainingTestsV2`: squat 1.0/1.3/1.6 del peso
+corporeo…), mediana bassa come oggi.
+
+## Con pliometria e velocità nella stessa settimana — Ste, 29/9: "vanno gestiti insieme, vediamo come" [proposta]
+
+Le tre qualità usano le stesse gambe: si contano insieme.
+
+1. **Budget di giornate "gambe intensive"** a settimana = 2 in season, 3 in off season, 1 in preparazione
+   con la squadra. Contano: gambe a serie o Fmax (1), pliometria intensiva (1), velocità (1), isometrie
+   (0.5), EMOM gambe con i salti (0.5), serie brevi (0.5). Gli obiettivi in ordine decidono chi entra:
+   con gambe + velocità in season → Fmax/serie + velocità, la pliometria entra solo dentro l'EMOM (salti).
+2. **Ordine nella settimana**: velocità e pliometria PRIMA delle gambe pesanti (sistema nervoso fresco), con
+   almeno 48 ore tra pliometria intensiva e Fmax; mai serie/Fmax e pliometria intensiva nello stesso giorno
+   (già vietato per la resistenza, si aggiunge questa coppia in `CONVIVENZE_VIETATE`). Esempio in season con
+   partita la domenica: martedì velocità, giovedì gambe a serie o Fmax, sabato niente.
+3. **Salti una volta sola**: i salti da fermo stanno nell'EMOM di gambe O in quello di parte alta, mai in
+   entrambi nella stessa settimana; i contatti si sommano al tetto di pliometria del livello (B 100).
+4. **Sprint**: la giornata di velocità conta come mezza giornata di gambe per il carico ma NON sostituisce
+   le serie: chi ha "gambe" come primo obiettivo ha sempre almeno una seduta a serie/Fmax/isometrie.
+5. **Scarico**: gambe in EMOM (senza salti) + isometrie brevi, pliometria B short, velocità 6 sprint.
+
+## Finestre partita — Ste, 29/9
+
+- **Giorno prima**: come oggi, niente gambe (né serie, né Fmax, né EMOM, né pliometria, né sprint).
+- **Giorno dopo** (Ste): **isometrie sì**; **palestra sì ma con poco volume e al massimo al 70-80 %** (regime
+  base 2-3 × 6-8, mai Fmax); **corpo libero sì, con poche reps e bassa intensità** (gradini a metà dose,
+  serie ×0.6: variante `pb-richiamo`); **niente salti, pliometria massimale, sprint**. Il server compone
+  `pb-richiamo` da solo quando la giornata è a +1 dalla partita.
+- Nordic ed eccentrici (gradini 6-7 di RDL e bridge): almeno 3 giorni dalla partita [proposta].
+- Fmax: almeno 3 giorni dalla partita (`FINESTRA_FORZA_MAX`, già nel codice).
 
 ## Cosa manca nel catalogo (da aggiungere quando la scala è confermata)
 
