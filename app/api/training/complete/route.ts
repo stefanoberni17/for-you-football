@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { STATI_FASCIA, ZONE_FASCIA, type StatoFascia } from '@/lib/trainingFascia';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
@@ -34,10 +35,20 @@ export async function POST(request: NextRequest) {
     if (body.feedback && !feedback) return NextResponse.json({ error: 'feedback non valido' }, { status: 400 });
     if (!feedback && rpe !== null) feedback = feedbackDaRpe(rpe);
     // Giudizio per blocco: solo righe ben formate, max 8
+    // Giudizio per blocco (facile/giusto/duro) OPPURE, per il rolling (28/9), zone + stato (ok/teso/fastidio)
+    type BloccoIn = { id?: unknown; nome?: unknown; giudizio?: unknown; zone?: unknown; stato?: unknown };
     const blocchi = Array.isArray(body.blocchi)
-      ? body.blocchi.filter((b: unknown) => b && typeof b === 'object' && typeof (b as { id?: unknown }).id === 'string'
-          && (GIUDIZI as readonly string[]).includes(String((b as { giudizio?: unknown }).giudizio)))
-        .slice(0, 8).map((b: { id: string; nome?: unknown; giudizio: Giudizio }) => ({ id: b.id.slice(0, 80), nome: typeof b.nome === 'string' ? b.nome.slice(0, 80) : b.id, giudizio: b.giudizio }))
+      ? (body.blocchi as unknown[]).filter((b): b is BloccoIn => !!b && typeof b === 'object' && typeof (b as BloccoIn).id === 'string')
+        .map((b) => {
+          const id = String(b.id).slice(0, 80);
+          const nome = typeof b.nome === 'string' ? b.nome.slice(0, 80) : id;
+          if ((GIUDIZI as readonly string[]).includes(String(b.giudizio))) return { id, nome, giudizio: b.giudizio as Giudizio };
+          const zone = Array.isArray(b.zone) ? (b.zone as unknown[]).filter((z): z is string => typeof z === 'string' && (ZONE_FASCIA as readonly string[]).includes(z)).slice(0, ZONE_FASCIA.length) : [];
+          const stato = (STATI_FASCIA as readonly string[]).includes(String(b.stato)) ? (b.stato as StatoFascia) : null;
+          if (!zone.length && !stato) return null;
+          return { id, nome, zone, stato: stato ?? 'teso' };
+        })
+        .filter((b): b is NonNullable<typeof b> => b !== null).slice(0, 8)
       : [];
 
     const sessionKey = `${plan_id}#${giorno}`;

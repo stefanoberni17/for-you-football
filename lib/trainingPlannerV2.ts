@@ -13,7 +13,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
-import { isFaticaAlta, isPeriodoScarso, validatePlan, type PlanSession, type WeekPlan } from './trainingEngine';
+import { isFaticaAlta, isPeriodoScarso, validatePlan, type PlanItem, type PlanSession, type WeekPlan } from './trainingEngine';
 import { feedbackSeduteBlock, loadPlannerContext, mondayOfThisWeekRome, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
@@ -31,13 +31,13 @@ import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusE
 import { nomeBloccoAtleta, testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi } from './trainingLivelli';
-import { FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, ROLLING_ID } from './trainingFascia';
+import { FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
 import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
-import { calcolaMemoriaTecnica, isMazzo, scalaDi, tecnicaTesto, type MemoriaTecnica } from './trainingTecnica';
+import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type Ripasso } from './trainingTecnica';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
-import { LIVELLO_ORDINE } from './trainingCatalogV2';
+import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.22-in-season-squadra-partita';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.23-ripasso-tecnica-zone';
 /**
  * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
  * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
@@ -82,6 +82,7 @@ export interface ContextV2 {
   // Note delle regole applicate dal server (pliometria in B, sprint con palla…) per il prompt
   noteRegole: string[];
   memoriaTecnica: MemoriaTecnica;   // scale muro/palleggi e mazzo del quinto giorno (regola 28)
+  ripassoTecnica: Ripasso[];        // esercizi di tecnica difficili l'ultima volta: in coda alle sedute di tecnica (28/9)
   kettlebell: { fascia: FasciaKb; settimaneBase: number; settimaneIntermedio: number } | null; // sezione kettlebell attiva (obiettivo + attrezzo)
 }
 
@@ -114,7 +115,7 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
     maxSeduteFisiche: maxSeduteFisiche(setup.fase), maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
     daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup, memoria: {}, noteRegole: [],
-    memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null,
+    memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null, ripassoTecnica: eserciziDaRipassare(base.logsSerie),
   };
   aggiornaParteAlta(ctx);
   aggiornaKettlebell(ctx);
@@ -443,7 +444,29 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       return leggero ? its.map((it) => ({ ...it, adattamento: 'leggero' as const })) : its;
     });
     // Sprint massimali: oltre il tetto il server toglie serie dalla coda (prima le distanze lunghe)
-    const { items: itemsLimati0, tolti } = limaSprint(items, sprintMax);
+    // Ripasso tecnica (Ste, 28/9): gli esercizi difficili l'ultima volta tornano in coda alla seduta di tecnica,
+    // fino a RIPASSO_MAX_ITEMS, entro il tempo massimo (mai al posto del blocco principale)
+    const bloccoTecnica = blocchi.find((b) => b.qualita.startsWith('tecnica'));
+    const ripassi: PlanItem[] = [];
+    const ripassiScelti: Ripasso[] = []; // stessi ripassi, con l'unità: servono per i minuti
+    if (bloccoTecnica && !recupero && ctx.ripassoTecnica.length) {
+      const presenti = new Set(items.map((it) => it.esercizio_id));
+      for (const r of ctx.ripassoTecnica) {
+        if (r.segnala || presenti.has(r.esercizio_id) || ripassi.length >= RIPASSO_MAX_ITEMS) continue;
+        const unita = (['reps', 'secondi', 'minuti', 'metri'] as const).find((u) => u === r.unita);
+        const catalogo = esercizioV2ById(r.esercizio_id)?.unita;
+        ripassi.push({
+          esercizio_id: r.esercizio_id, serie: r.serie, quantita: r.quantita, recupero_sec: RIPASSO_RECUPERO_SEC, schema: 'fisso',
+          blocco_id: bloccoTecnica.id, adattamento: 'ripasso',
+          nota: `Ripasso: l'ultima volta è stato difficile${r.voto != null ? ` (voto ${r.voto})` : ''}. Si ripete finché viene pulito.`,
+          ...(unita && unita !== catalogo ? { unita } : {}),
+        });
+        ripassiScelti.push(r);
+      }
+      if (ripassi.length) noteMemoria.set(bloccoTecnica.id, `${noteMemoria.has(bloccoTecnica.id) ? `${noteMemoria.get(bloccoTecnica.id)} · ` : ''}con ${ripassi.length === 1 ? 'un ripasso' : `${ripassi.length} ripassi`}`);
+    }
+    let minutiRipassi = ripassiScelti.reduce((a, r) => a + minutiRipasso(r), 0);
+    const { items: itemsLimati0, tolti } = limaSprint([...items, ...ripassi], sprintMax);
     if (tolti > 0) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${tolti} sprint in meno: tetto di ${sprintMax}`); }
     // Kg dei blocchi dietro il tetto dell'atleta (lib/trainingCarico): senza massimale max 20 kg, con massimale caricoMaxPct
     const { items: itemsLimati, limati: carichiLimati } = limaCarichi(itemsLimati0, ctx.v2);
@@ -451,8 +474,16 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       const conKg = blocchi.find((b) => b.items.some((it) => it.carico_kg));
       if (conKg && !noteMemoria.has(conKg.id)) noteMemoria.set(conKg.id, Object.keys(ctx.v2.massimali || {}).length ? 'carichi al tuo massimale' : 'carichi leggeri: prima i test in palestra');
     }
-    const durata = Math.round(blocchi.reduce((a, b) => a + b.durataMin * (leggeri.has(b.id) ? 0.85 : 1), 0) * (scala < 1 ? 0.8 : 1));
+    const durataBlocchi = Math.round(blocchi.reduce((a, b) => a + b.durataMin * (leggeri.has(b.id) ? 0.85 : 1), 0) * (scala < 1 ? 0.8 : 1));
     const maxDurata = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
+    // I ripassi entrano solo se ci stanno: via l'ultimo finché la seduta rientra (il blocco principale non si tocca)
+    let itemsFinali = itemsLimati;
+    while (ripassiScelti.length && durataBlocchi + minutiRipassi > maxDurata) {
+      const via = ripassiScelti.pop()!;
+      minutiRipassi -= minutiRipasso(via);
+      itemsFinali = itemsFinali.filter((it) => !(it.adattamento === 'ripasso' && it.esercizio_id === via.esercizio_id));
+    }
+    const durata = durataBlocchi + minutiRipassi;
     if (durata > maxDurata)
       errors.push(`seduta del giorno ${s.giorno}: ~${durata}' (${blocchi.map((b) => b.nome).join(' + ')}) oltre il massimo di ${maxDurata}' — togli un blocco o usa le varianti short`);
     const giorno = Number(s.giorno);
@@ -462,7 +493,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       errors.push(`seduta di ${DAY_NAMES[giorno] ?? giorno}: giorno da lasciare libero (richiesta dell'atleta)`);
     sedute.push({
       giorno, titolo: testoPerAtleta(s.titolo?.slice(0, 80)) || blocchi.map((b) => b.famiglia).join(' + '),
-      tipo: tipoDaBlocchi(blocchi), durata_min: durata, items: itemsLimati,
+      tipo: tipoDaBlocchi(blocchi), durata_min: durata, items: itemsFinali,
       spiegazione: testoPerAtleta(s.spiegazione?.slice(0, 200)),
       blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin, ...(leggeri.has(b.id) ? { leggero: true } : {}), ...(noteMemoria.has(b.id) ? { nota: noteMemoria.get(b.id) } : {}) })),
       ...(recupero ? { recupero: true } : {}),
@@ -628,9 +659,9 @@ ADATTAMENTO
 21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole nelle GAMBE → la strada per pareggiare è la FASCIA, non le serie in più (Ste, 25/9): se c'è una giornata leggera o spazio, metti un blocco di fascia (marcato [unilaterale]) e tra i blocchi della stessa qualità preferisci quelli [unilaterale]; nel messaggio digli di partire dal lato debole e che la fascia serve a pareggiare (la serie in più su un esercizio la aggiunge il server, al massimo una a seduta). Un lato debole nelle gambe NON dice niente sulla parte alta: non toccare spinta e tirata per quello; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
 ${parteAltaRegola(ctx)}
 ${velocitaPliometriaRegola({ velocitaETecnica: ctx.obiettivi.includes('velocita') && ctx.obiettivi.includes('tecnica') })}
-${fasciaRegola()}
+${fasciaRegola()}${zoneTeseTesto(zoneTeseRicorrenti(ctx.base.feedbackRecenti))}
 ${ctx.kettlebell ? kettlebellTesto(ctx.kettlebell) : '27. KETTLEBELL: non attivo (serve l\'attrezzo e l\'obiettivo "Forza funzionale kettlebell"): non usare esercizi kettlebell sparsi.'}
-${tecnicaTesto(ctx.memoriaTecnica, ctx.blocchi)}
+${tecnicaTesto(ctx.memoriaTecnica, ctx.blocchi)}${ripassoTesto(ctx.ripassoTecnica)}
 
 # LIBRERIA BLOCCHI DISPONIBILI PER QUESTO ATLETA (usa SOLO questi id)
 Marker tra parentesi quadre in fondo alla riga: [unilaterale] = almeno metà degli esercizi una gamba/un braccio alla volta · [push] / [pull] / [push+pull] = spinta, tirata o entrambe (regola 21) · [apertura] / [fascia: percorso] / [fascia forza = FORZA gambe] = i tre ruoli della fascia (regola 26).
@@ -640,7 +671,7 @@ ${libreriaTesto(ctx)}
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"leggeri":["id-blocco-1"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
 "leggeri" è facoltativo (regola 22): solo id già presenti in "blocchi".
 LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
-giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta${notaSettimanaAvviata(ctx) ? `: ne aveva chieste ${ctx.vincoli.numSedute}, ma la settimana è avviata e restano solo ${giorniRimasti(ctx).map((d) => DAY_NAMES[d]).join(', ')}` : ''})${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `Metti ${Math.min(ctx.maxSeduteFisiche, 3)}-${Math.min(ctx.maxSeduteFisiche + 1, 5)} giornate.`}`;
+giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta${notaSettimanaAvviata(ctx) ? `: ne aveva chieste ${ctx.vincoli.numSedute}, ma la settimana è avviata e restano solo ${giorniRimasti(ctx).map((d) => DAY_NAMES[d]).join(', ')}` : ''})${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `SCEGLI TU quante giornate (l'atleta ha lasciato la scelta a te): da 1 a ${ctx.maxSeduteTotali}, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici, guardando gli allenamenti con la squadra, la partita, gli obiettivi e il carico (con la squadra 3 o più volte di solito 2 fisiche corte); nel messaggio di' in una riga perché ne hai messe così.`}`;
 }
 
 /** Giorni in cui una seduta può ancora stare: da oggi in poi, tra quelli ammessi e non vietati. */
@@ -878,6 +909,7 @@ function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
   const righe: string[] = [];
   if (p.giorni.length) righe.push(`- Giorni in cui può allenarsi con l'app: ${p.giorni.map((d) => DAY_NAMES[d]).join(', ')} (SOLO questi).`);
   if (p.sedute) righe.push(`- Giornate a settimana: ESATTAMENTE ${seduteRichieste(ctx) ?? p.sedute}.`);
+  else if (p.giorni.length) righe.push('- Giornate a settimana: decide il preparatore tra i giorni indicati (l\'atleta ha lasciato la scelta a te): motiva la scelta nel messaggio.');
   if (p.durataMin) righe.push(`- Tempo massimo per seduta: ${p.durataMin} minuti.`);
   return `\n# PREFERENZE DEL SETUP (regole dure: il validatore le controlla)\n${righe.join('\n')}`;
 }

@@ -321,7 +321,7 @@ export interface PlanItem {
   emom_gruppo?: string;      // EMOM a rotazione (Ste, 17/9): gli item con lo stesso gruppo si alternano un minuto ciascuno; serie = giri, quantita = reps al minuto, recupero = il resto del minuto
   unita?: 'reps' | 'secondi' | 'minuti' | 'metri'; // SOLO se diversa dal catalogo: in Everfit Ste ha programmato a tempo un esercizio a reps (EMOM 30") o viceversa
   // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
-  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero';
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // ripasso (28/9): esercizio di tecnica difficile l'ultima volta, rimesso in coda
   lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)
 }
 export interface PlanSession {

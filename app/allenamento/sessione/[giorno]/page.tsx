@@ -6,12 +6,13 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_NAMES } from '@/lib/constants';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
+import { STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type StatoFascia } from '@/lib/trainingFascia';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
 
-interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero'; lato_extra?: 'dx' | 'sx'
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; lato_extra?: 'dx' | 'sx'
   per_lato?: boolean;
 }
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[] }
@@ -23,8 +24,7 @@ const TIPO_LABEL: Record<string, string> = {
   fisica: 'Fisica', mix: 'Fisica e tecnica', tecnica: 'Tecnica', skill: 'Tecnica', fascia: 'Fascia e prevenzione', recupero: 'Recupero',
 };
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero',
-};
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso' };
 type Giudizio = 'facile' | 'ok' | 'duro';
 const GIUDIZI: { key: Giudizio; label: string }[] = [{ key: 'facile', label: 'Facile' }, { key: 'ok', label: 'Giusto' }, { key: 'duro', label: 'Duro' }];
 
@@ -48,6 +48,8 @@ export default function SessionePage() {
   const [note, setNote] = useState('');
   const [rpeSeduta, setRpeSeduta] = useState<number | null>(null); // voto 1-10 sulla seduta intera (Ste, 23/9)
   const [giudizi, setGiudizi] = useState<Record<string, Giudizio>>({}); // giudizio per blocco
+  const [zone, setZone] = useState<Record<string, string[]>>({});       // rolling (28/9): dove l'ha sentita di più
+  const [stati, setStati] = useState<Record<string, StatoFascia>>({});  // rolling: ok / teso / fastidio
   const [spiegazioneOpen, setSpiegazioneOpen] = useState(false); // "Leggi tutto" sulla spiegazione del planner
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -91,7 +93,14 @@ export default function SessionePage() {
     if (!planId) return;
     setSending(true);
     try {
-      const blocchi = (sessione?.blocchi || []).filter((b) => giudizi[b.id]).map((b) => ({ id: b.id, nome: nomeBloccoAtleta(b.nome), giudizio: giudizi[b.id] }));
+      type BloccoFeedback = { id: string; nome: string; giudizio: Giudizio } | { id: string; nome: string; zone: string[]; stato: StatoFascia };
+      const blocchi = (sessione?.blocchi || []).flatMap((b): BloccoFeedback[] => {
+        if (tipoFeedbackBlocco(b) === 'zone') {
+          if (!zone[b.id]?.length && !stati[b.id]) return [];
+          return [{ id: b.id, nome: nomeBloccoAtleta(b.nome), zone: zone[b.id] ?? [], stato: stati[b.id] ?? 'teso' }];
+        }
+        return giudizi[b.id] ? [{ id: b.id, nome: nomeBloccoAtleta(b.nome), giudizio: giudizi[b.id] }] : [];
+      });
       await authFetch('/api/training/complete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan_id: planId, giorno, rpe: rpeSeduta ?? undefined, blocchi, note: note.trim() || undefined }),
@@ -195,11 +204,31 @@ export default function SessionePage() {
                     {sessione!.blocchi!.map((b) => (
                       <div key={b.id}>
                         <p className="text-body font-semibold text-app leading-snug mb-1.5">{nomeBloccoAtleta(b.nome)}</p>
-                        <div className="grid grid-cols-3 gap-2">
-                          {GIUDIZI.map((g) => (
-                            <Chip key={g.key} selected={giudizi[b.id] === g.key} className="w-full" onClick={() => setGiudizi((prev) => ({ ...prev, [b.id]: g.key }))}>{g.label}</Chip>
-                          ))}
-                        </div>
+                        {tipoFeedbackBlocco(b) === 'zone' ? (
+                          <>
+                            {/* Rolling (Ste, 28/9): non "quanto è stata dura" ma dove l'ha sentita di più */}
+                            <p className="text-caption text-muted mb-1.5">Dove l&apos;hai sentita di più?</p>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                              {ZONE_FASCIA.map((z) => {
+                                const on = (zone[b.id] ?? []).includes(z);
+                                return <Chip key={z} selected={on} onClick={() => setZone((prev) => ({ ...prev, [b.id]: on ? (prev[b.id] ?? []).filter((x) => x !== z) : [...(prev[b.id] ?? []), z] }))}>{z}</Chip>;
+                              })}
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                              {STATI_FASCIA.map((st) => (
+                                <Chip key={st} selected={stati[b.id] === st} tone={st === 'fastidio' ? 'warn' : 'accent'} className="w-full" onClick={() => setStati((prev) => ({ ...prev, [b.id]: st }))}>
+                                  {st === 'ok' ? 'Tutto ok' : st === 'teso' ? 'Un po\' teso' : 'Fastidio'}
+                                </Chip>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="grid grid-cols-3 gap-2">
+                            {GIUDIZI.map((g) => (
+                              <Chip key={g.key} selected={giudizi[b.id] === g.key} className="w-full" onClick={() => setGiudizi((prev) => ({ ...prev, [b.id]: g.key }))}>{g.label}</Chip>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

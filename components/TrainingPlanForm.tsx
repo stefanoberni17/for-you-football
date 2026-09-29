@@ -140,12 +140,15 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
             )}
           </Card>
 
-          <Label hint={`Vuoto = decide il preparatore. Massimo ${tettoSedute}: ${maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero.`}>Quante giornate a settimana?</Label>
+          {/* Doppia scelta (Ste, 28/9): il ragazzo decide quante, oppure lascia scegliere al preparatore tra i giorni che indica */}
+          <Label hint={`Massimo ${tettoSedute}: ${maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero.`}>Quante giornate a settimana?</Label>
           <div className="flex flex-wrap gap-2 mb-4">
+            <Chip selected={nSedute === null} onClick={() => setNSedute(null)}>Decidi tu</Chip>
             {Array.from({ length: tettoSedute }, (_, i) => i + 1).map((n) => (
               <Chip key={n} selected={nSedute === n} showCheck={false} onClick={() => setNSedute(nSedute === n ? null : n)}>{n}</Chip>
             ))}
           </div>
+          {nSedute === null && <p className="text-body-sm text-muted -mt-2 mb-4 leading-relaxed">Il preparatore sceglie quante giornate tra i giorni che indichi sotto, guardando squadra, partita e obiettivi, e ti dice perché.</p>}
 
           <Label hint="Vuoto = decide il preparatore.">Quando puoi allenarti con l&apos;app?</Label>
           <div className="flex flex-wrap gap-2 mb-4">

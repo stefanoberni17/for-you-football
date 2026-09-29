@@ -21,6 +21,46 @@ export type RuoloFascia = 'apertura' | 'percorso' | 'tecnica' | 'forza';
 export const ROLLING_ID = 'fascia-training-rolling-and-fascia-adhesion';
 /** Blocchi che valgono come apertura di una seduta fisica. */
 export const APERTURA_IDS: ReadonlySet<string> = new Set([ROLLING_ID, 'fascia-foundations-1']);
+/**
+ * Feedback sul rolling (Ste, 28/9: "sul foam rolling non chiederei difficoltà: dove l'ha sentito di più, a fine
+ * blocco"): per i blocchi di apertura la fine seduta chiede le ZONE più tese e uno stato (ok / teso / fastidio)
+ * al posto di facile-giusto-duro; il player non chiede il voto per serie né sul rolling né sugli esercizi di
+ * fascia (il giudizio a fine blocco del percorso fascia resta: guida la progressione).
+ */
+export const ZONE_FASCIA = ['polpacci', 'cosce davanti', 'cosce dietro', 'adduttori', 'glutei', 'schiena', 'piedi'] as const;
+export const STATI_FASCIA = ['ok', 'teso', 'fastidio'] as const;
+export type StatoFascia = (typeof STATI_FASCIA)[number];
+export function tipoFeedbackBlocco(b: { id: string }): 'zone' | 'giudizio' { return APERTURA_IDS.has(b.id) ? 'zone' : 'giudizio'; }
+export const senzaVotoPerSerie = (blocco: { id: string; qualita?: string } | undefined): boolean =>
+  !!blocco && (APERTURA_IDS.has(blocco.id) || blocco.qualita === 'fascia-prevenzione');
+
+export interface ZonaTesa { zona: string; volte: number; fastidio: number }
+export const ZONE_SETTIMANE = 6;
+export const ZONE_VOLTE_MIN = 2;
+/** Zone segnalate almeno 2 volte nelle ultime 6 settimane (dal più ricorrente), con quante volte c'era fastidio. */
+export function zoneTeseRicorrenti(feedback: { completed_at: string; feedback_blocchi?: { id: string; zone?: string[]; stato?: string }[] | null }[], oggi = new Date()): ZonaTesa[] {
+  const limite = new Date(oggi.getTime() - ZONE_SETTIMANE * 7 * 86400000);
+  const conta = new Map<string, ZonaTesa>();
+  for (const f of feedback) {
+    if (new Date(f.completed_at) < limite) continue;
+    for (const fb of f.feedback_blocchi || []) {
+      if (!fb.zone?.length) continue;
+      for (const z of fb.zone) {
+        if (!(ZONE_FASCIA as readonly string[]).includes(z)) continue;
+        const r = conta.get(z) ?? { zona: z, volte: 0, fastidio: 0 };
+        r.volte++; if (fb.stato === 'fastidio') r.fastidio++;
+        conta.set(z, r);
+      }
+    }
+  }
+  return [...conta.values()].filter((r) => r.volte >= ZONE_VOLTE_MIN).sort((a, b) => b.fastidio - a.fastidio || b.volte - a.volte);
+}
+/** Riga per il prompt del planner e della chat. */
+export function zoneTeseTesto(z: ZonaTesa[]): string {
+  if (!z.length) return '';
+  return `\n# ZONE TESE (dal rolling, ultime ${ZONE_SETTIMANE} settimane)\n${z.map((r) => `- ${r.zona}: ${r.volte} volte${r.fastidio ? `, ${r.fastidio} con fastidio` : ''}`).join('\n')}\nUsale per scegliere il percorso fascia e la prevenzione (non per vietare); con un fastidio ricorrente invita a parlarne con il preparatore o un medico.`;
+}
+
 /** Giornate leggere di percorso fascia a settimana (Ste: "1-3 volte a settimana"). */
 export const FASCIA_PERCORSO_MAX_SETTIMANA = 3;
 export const FAMIGLIA_FASCIA_FORZA = 'Fascia Foundation Forza';
