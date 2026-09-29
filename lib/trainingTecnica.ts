@@ -13,7 +13,7 @@
 import { bloccoById, type Blocco } from './trainingBlocks';
 import { esercizioV2ById } from './trainingCatalogV2';
 import type { SetLogRow } from './trainingAdapt';
-import { dataRoma, lunediDi, type FeedbackPerMemoria, type Giudizio, type MemoriaFamiglia } from './trainingMemoriaBlocchi';
+import { dataRoma, lunediDi, VOTO_SEDUTA_DURO, type FeedbackPerMemoria, type Giudizio, type MemoriaFamiglia } from './trainingMemoriaBlocchi';
 
 export const TECNICA_CICLO_SETTIMANE = 8;
 export const SCALA_MURO: readonly string[] = [
@@ -60,7 +60,7 @@ export function calcolaMemoriaTecnica(feedback: FeedbackPerMemoria[], disponibil
     for (const fb of f.feedback_blocchi!) {
       const b = bloccoById(fb.id);
       if (!b || !fb.giudizio) continue;
-      const giudizio: Giudizio = f.rpe != null && f.rpe >= 8 ? 'duro' : fb.giudizio;
+      const giudizio: Giudizio = f.rpe != null && f.rpe >= VOTO_SEDUTA_DURO ? 'duro' : fb.giudizio;
       const sc = scalaDi(b.id);
       if (sc) {
         if (!settimaneScala.has(sc)) settimaneScala.set(sc, new Set());

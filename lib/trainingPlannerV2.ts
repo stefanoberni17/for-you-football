@@ -37,7 +37,7 @@ import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, rip
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.23-ripasso-tecnica-zone';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.24-review-29-9';
 /**
  * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
  * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
@@ -84,6 +84,10 @@ export interface ContextV2 {
   memoriaTecnica: MemoriaTecnica;   // scale muro/palleggi e mazzo del quinto giorno (regola 28)
   ripassoTecnica: Ripasso[];        // esercizi di tecnica difficili l'ultima volta: in coda alle sedute di tecnica (28/9)
   kettlebell: { fascia: FasciaKb; settimaneBase: number; settimaneIntermedio: number } | null; // sezione kettlebell attiva (obiettivo + attrezzo)
+  // Modo "modifica" a settimana avviata (29/9): le sedute del piano attuale nei giorni GIÀ PASSATI. Restano nel piano
+  // unito e contano nei controlli della settimana (obiettivi, un formato di parte alta a settimana, velocità, salite,
+  // kettlebell, fascia): prima il piano nuovo (solo da oggi) veniva rifiutato per "manca la parte alta" fatta lunedì
+  sedutePassate?: PlanSession[];
 }
 
 export async function loadContextV2(userId: string): Promise<ContextV2> {
@@ -262,6 +266,7 @@ export function sostituzioniParteAlta(p: PianoLLM, ctx: ContextV2): Map<number, 
   // Serie piene e serie brevi sono lo stesso formato: usata una, l'altra non conta come "seconda seduta"
   const gruppo = (id: string) => (id === PA_SERIE_SHORT_ID ? PA_SERIE_ID : id);
   const usati = new Set<string>();
+  for (const s of ctx.sedutePassate ?? []) for (const b of s.blocchi ?? []) if (isParteAlta(b.id)) usati.add(gruppo(b.id));
   for (const s of p.sedute || []) for (const id of Array.isArray(s.blocchi) ? s.blocchi : []) if (isParteAlta(id)) usati.add(gruppo(id));
   const ordine = ordineFormatiParteAlta(ctx.base.ciclo.isDeload).map((id) => pa.find((b) => b.id === id)).filter((b): b is Blocco => !!b);
   for (const s of p.sedute || []) {
@@ -301,17 +306,21 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const sedute: PlanSession[] = [];
   const sostParteAlta = sostituzioniParteAlta(p, ctx);
   const paSettimana = new Set<string>();
+  const velocitaVera = (b: Blocco) => !isParteAlta(b.id) && b.id !== RISC_VELOCITA_ID && isVelocita(b);
+  // Modo "modifica": i giorni già passati del piano attuale contano nei tetti settimanali (29/9)
+  const passate = ctx.sedutePassate ?? [];
+  const blocchiPassati = passate.flatMap((s) => (s.blocchi ?? []).map((b) => bloccoDi(ctx, b.id)).filter((b): b is Blocco => !!b));
+  for (const b of blocchiPassati) { if (isParteAlta(b.id)) paSettimana.add(b.id); if (b.qualita === 'forza-parte-bassa' || b.qualita === 'forza-parte-alta') blocchiForza++; }
   // Sprint: tetto per seduta più basso se nella settimana c'è l'EMOM della parte alta con lo sprint (Ste, 25/9)
-  const settimanaConEmom = (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).includes(PA_EMOM_ID))
+  const settimanaConEmom = paSettimana.has(PA_EMOM_ID) || (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).includes(PA_EMOM_ID))
     || [...sostParteAlta.values()].some((m) => [...m.values()].includes(PA_EMOM_ID));
   const sprintMax = settimanaConEmom ? SPRINT_MAX_CON_EMOM : SPRINT_MAX_SEDUTA;
   // Kettlebell attivo nella settimana: la forza parte bassa con pesi va più leggera (Ste, 25/9: "si somma alla parte bassa")
-  const kbSettimana = (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).some((id) => isKettlebell(id)));
-  let blocchiKb = 0;
-  let giornateVelocita = 0;
-  let blocchiSalite = 0;
-  let giornatePercorsoFascia = 0;
-  const velocitaVera = (b: Blocco) => !isParteAlta(b.id) && b.id !== RISC_VELOCITA_ID && isVelocita(b);
+  const kbSettimana = blocchiPassati.some((b) => isKettlebell(b.id)) || (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).some((id) => isKettlebell(id)));
+  let blocchiKb = blocchiPassati.filter((b) => isKettlebell(b.id)).length;
+  let giornateVelocita = passate.filter((s) => (s.blocchi ?? []).some((b) => { const bl = bloccoDi(ctx, b.id); return bl && velocitaVera(bl); })).length;
+  let blocchiSalite = blocchiPassati.filter(isSalite).length;
+  let giornatePercorsoFascia = passate.filter((s) => (s.blocchi ?? []).some((b) => { const bl = bloccoDi(ctx, b.id); return bl && isFasciaPercorso(bl); })).length;
   for (const s of p.sedute || []) {
     const ids = Array.isArray(s.blocchi) ? s.blocchi : [];
     const blocchi: Blocco[] = [];
@@ -519,8 +528,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const nRichieste = seduteRichieste(ctx);
   if (nRichieste !== null && sedute.length !== nRichieste)
     errors.push(`l'atleta ha chiesto ${nRichieste} giornate a settimana: ne hai messe ${sedute.length} — metti esattamente ${nRichieste} giornate`);
+  // Da qui i controlli guardano la SETTIMANA INTERA: in modo "modifica" anche i giorni già passati del piano attuale (29/9)
+  const settimana: PlanSession[] = [...passate, ...sedute];
   // Tetto fisico della fase (Ste, 16/9: 3 fisiche + 2 leggere): oltre, le giornate sono SOLO fascia/tecnica/recupero
-  const fisiche = sedute.filter((s) => s.tipo === 'fisica' || s.tipo === 'mix').length;
+  const fisiche = settimana.filter((s) => s.tipo === 'fisica' || s.tipo === 'mix').length;
   if (fisiche > ctx.maxSeduteFisiche)
     errors.push(`${fisiche} giornate con blocchi fisici: il tetto è ${ctx.maxSeduteFisiche} — le altre giornate devono avere SOLO fascia/prevenzione, tecnica o mobilità/recupero`);
   // Obiettivi (setup o maschera): i primi N devono avere almeno un blocco della loro qualità.
@@ -534,14 +545,14 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   if (primo && primo !== 'kettlebell' && postiFisici >= 3) {
     const qsPrimo = FOCUS_QUALITA[primo];
     const candPrimo = ctx.blocchi.filter((b) => qsPrimo.includes(b.qualita) && !isKettlebell(b.id));
-    const giornatePrimo = sedute.filter((s) => (s.blocchi || []).some((b) => copre(b, qsPrimo))).length;
+    const giornatePrimo = settimana.filter((s) => (s.blocchi || []).some((b) => copre(b, qsPrimo))).length;
     if (candPrimo.length >= 2 && giornatePrimo === 1)
       errors.push(`obiettivo principale "${focusLabel(primo)}": è in una sola giornata — con ${postiFisici} giornate fisiche mettilo in almeno 2 (in una anche in versione short o come secondo blocco, es. ${candPrimo.slice(0, 3).map((b) => b.id).join(', ')})`);
   }
   for (const f of obiettiviDaControllare(ctx, attesi.length)) {
     if (f === 'kettlebell') {
       const kb = ctx.blocchi.filter((b) => isKettlebell(b.id));
-      if (kb.length && !sedute.some((s) => (s.blocchi || []).some((b) => isKettlebell(b.id))))
+      if (kb.length && !settimana.some((s) => (s.blocchi || []).some((b) => isKettlebell(b.id))))
         errors.push(`obiettivo "${focusLabel(f)}": nessun blocco kettlebell in settimana — mettine uno (${kb.map((b) => b.id).join(', ')})`);
       continue;
     }
@@ -549,16 +560,16 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     const cand = ctx.blocchi.filter((b) => qs.includes(b.qualita) && !isKettlebell(b.id));
     if (!cand.length) continue; // nessun blocco di quella qualità per questo atleta: non si può pretendere
     // Un blocco copre l'obiettivo anche come qualità secondaria se pesa almeno un quarto (rapidità e tiro = velocità + tecnica)
-    if (!sedute.some((s) => (s.blocchi || []).some((b) => copre(b, qs))))
+    if (!settimana.some((s) => (s.blocchi || []).some((b) => copre(b, qs))))
       errors.push(`obiettivo "${focusLabel(f)}": nessun blocco ${qs.join('/')} in settimana — mettine almeno uno (es. ${cand.slice(0, 4).map((b) => b.id).join(', ')})`);
   }
   // "Tutto, in equilibrio": niente aspetto obbligatorio, ma la settimana deve coprire aspetti DIVERSI
   // (almeno 2 con 2+ giornate) — lo stesso blocco principale ripetuto non è equilibrio
-  if (ctx.obiettivi[0] === FOCUS_TUTTO && !ctx.base.painHold && sedute.length >= 2) {
+  if (ctx.obiettivi[0] === FOCUS_TUTTO && !ctx.base.painHold && settimana.length >= 2) {
     // la fascia di apertura c'è sempre: non conta come "aspetto" coperto
     const aspetti = FOCUS_BILANCIATO.filter((f) => f !== 'fascia');
-    const coperti = aspetti.filter((f) => sedute.some((s) => (s.blocchi || []).some((b) => FOCUS_QUALITA[f].includes(b.qualita))));
-    const minimi = Math.min(2, sedute.length - attesi.length);
+    const coperti = aspetti.filter((f) => settimana.some((s) => (s.blocchi || []).some((b) => FOCUS_QUALITA[f].includes(b.qualita))));
+    const minimi = Math.min(2, settimana.length - attesi.length);
     if (coperti.length < minimi)
       errors.push(`settimana equilibrata: copri almeno ${minimi} aspetti diversi tra ${aspetti.map(focusLabel).join(', ')} (ora: ${coperti.map(focusLabel).join(', ') || 'nessuno'})`);
   }
@@ -567,7 +578,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // Carico totale: con almeno 2 settimane di storico la settimana pianificata non può superare il tetto
   // (cronico +15%, deload 75%, ACWR a rischio 105%) — session-RPE calibrato sui log dell'atleta
   const c = ctx.base.carico;
-  const previsto = caricoPianificato({ sedute }, c.calibrazione, ctx.base.ciclo.isDeload ? DELOAD_RPE : 1);
+  const previsto = caricoPianificato({ sedute: settimana }, c.calibrazione, ctx.base.ciclo.isDeload ? DELOAD_RPE : 1);
   // Rifiuto solo oltre il tetto DURO (ACWR 1.5 sul totale); il tetto "guida" resta nel prompt (21/9)
   if (c.tettoDuro !== null && previsto > c.tettoDuro)
     errors.push(`carico settimanale previsto ~${previsto} AU: porterebbe il rapporto acuto/cronico oltre 1.5 (tetto ${c.tettoDuro} AU; cronico ${c.cronico}, ACWR ${c.acwr}${ctx.base.ciclo.isDeload ? ', settimana di scarico' : ''}) — togli un blocco principale o usa le varianti short (target ${c.target!.min}-${c.target!.max} AU)`);
@@ -643,8 +654,8 @@ COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
 
 PROGRESSIONE (settimana su settimana)
 10. MEMORIA DEI BLOCCHI (sezione nel messaggio, calcolata dal server): per ogni famiglia già fatta nelle settimane precedenti il codice di questa settimana è GIÀ deciso dal giudizio dell'atleta sull'ultimo blocco ("facile" → codice successivo o da short a full, "giusto" → stesso, "duro" o voto ≥ 8 → short o codice precedente; mai saltare un codice; Fascia Foundation avanza dopo 2 settimane, Pliometria resta in B almeno 4). Se usi quella famiglia, usa SOLO gli id indicati: un id diverso viene sostituito dal server. Puoi sempre scegliere un'altra famiglia. Famiglie mai fatte: parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full).
-11. Settimana 4 del ciclo = DELOAD: scegli varianti short e dillo nel messaggio (il server riduce anche le serie).
-12. Settimana 5+ = ri-test in ritardo: piano leggero e invita a rifare la batteria.
+11. Settimana 4 del ciclo = DELOAD (solo se nel messaggio c'è ⚠️ DELOAD: con poche sedute nelle settimane prima lo scarico è rinviato): scegli varianti short e dillo nel messaggio (il server riduce anche le serie).
+12. Settimana dopo lo scarico con i test non ancora rifatti ("ri-test dovuto" nel messaggio): piano NORMALE, lo scarico è stato la settimana scorsa; nel messaggio invita a rifare i test indicati (idealmente 2 giorni dopo la partita).
 
 ADATTAMENTO
 13. Se esiste già un PIANO ATTUALE e la richiesta è una modifica, PARTI dal piano attuale e cambia SOLO ciò che serve (stessi blocchi negli altri giorni).
@@ -747,7 +758,7 @@ Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~
 Allenamenti squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)}
 Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
 ${feedbackSeduteBlock(b.feedbackRecenti)}
-Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.ritestDue ? ' — ⚠️ RI-TEST IN RITARDO (regola 12)' : ''}
+Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.scaricoRinviato ? ' — scarico RINVIATO (poche sedute nelle settimane prima): settimana normale, niente varianti short per lo scarico' : b.ciclo.ritestDue ? ' — ri-test dovuto (regola 12: piano normale, invita ai test)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
 ${massimali}${memoria}${obiettiviTesto(ctx)}${memoriaBlocchiTesto(ctx.memoria)}${ctx.noteRegole.length ? `\n# REGOLE APPLICATE DAL SERVER\n- ${ctx.noteRegole.join('\n- ')}` : ''}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${caricoTesto(b.carico)}${piano}
 ${preferenzeTesto(ctx, richiesta)}${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
@@ -919,6 +930,8 @@ export async function generateWeekPlanV2(
 ): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[] }> {
   const ctx = await loadContextV2(userId);
   ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
+  // Modifica a settimana avviata: i giorni già passati del piano attuale restano e contano nei controlli (29/9)
+  if (vincoli.modifica && ctx.base.pianoCorrente) ctx.sedutePassate = ctx.base.pianoCorrente.plan.sedute.filter((s) => s.giorno < ctx.base.oggiDow);
   // Giorni ammessi tutti passati (es. domenica con lun/mer/ven): senza allargare ai giorni rimasti nessun piano è possibile
   if (ctx.vincoli.giorniAmmessi?.length && giorniRimasti(ctx).length === 0) ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
   if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; aggiornaParteAlta(ctx); aggiornaKettlebell(ctx); }

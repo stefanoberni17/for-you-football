@@ -15,7 +15,7 @@ Claude sceglie solo **quale formato in quale giorno**.
 | **Serie** | ultimo completato | 3-4 serie × 60-70 % del max, min 5 reps, recupero 90"; **spinta e tirata pari** (28/9): gradino + verticale contro gradino + rematore, poi core e dorsali | volume e qualità |
 | **Serie, versione breve** (28/9) | ultimo completato | 3 serie: gradino di spinta + verticale, gradino di tirata + rematore, core; recupero pieno solo sui gradini, 60" sugli accessori (~37') | le serie per chi ha 60': con l'apertura ci sta |
 | **AMRAP** | uno sotto | 12-15', 40 % del max per giro (stessa regola della stazione AMRAP del test) | più volume possibile, vale da mini-test: si contano i giri |
-| **EMOM** | uno sopra (skill) + esplosività | 2 reps (3 sui gradini bassi), sprint sempre 1; **~20 minuti** (28/9, Ste: "almeno 20": giri = 20 / stazioni, min 3) | intensità massima, zero fatica |
+| **EMOM** | uno sopra l'ultimo **completato** (skill; 29/9: prima era sopra l'ultimo testato, anche se fallito) + esplosività | 2 reps (3 sui gradini bassi), sprint sempre 1; **~20 minuti** (28/9, Ste: "almeno 20": giri = 20 / stazioni, min 3) | intensità massima, zero fatica |
 | **Tabata** | ultimo / uno sotto | 8 round 30-30 sull'ultimo gradino, 40-20 su quello sotto, 2-3 giri, 1-2' tra i giri | volume in circuito completo |
 
 "Gradino completato" = gradino con risultato ≥ soglia nella scala (`ladderForArea`, oggi `amrap`).

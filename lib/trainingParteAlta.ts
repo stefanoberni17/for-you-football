@@ -15,7 +15,7 @@
  * - `pa-serie-push` = focus spinta (3-4 esercizi di spinta, 1 di tirata) — con 3 sedute di parte alta a settimana.
  * - `pa-serie-pull` = focus tirata (3-4 di tirata, 1 di spinta).
  * - `pa-emom`       = skill più esplosività: un esercizio al minuto per ~20' (Ste, 28/9), 2 reps (3 sui gradini bassi), sprint sempre 1.
- *                     Spinta e tirata al gradino SOPRA; salti e sprint solo se la parte bassa è tra gli obiettivi.
+ *                     Spinta e tirata al gradino sopra l'ultimo COMPLETATO (29/9); salti e sprint solo se la parte bassa è tra gli obiettivi.
  *                     Niente addome (Ste, 28/9: "non si incastrano bene"): core e dorsali restano nelle sedute a serie.
  *                     Sostituisce l'EMOM Skill del 17/9.
  */
@@ -100,12 +100,18 @@ function gradinoLavoro(l: LadderState | null): { ex: TrainingExercise; max: numb
   return { ex, max: p.valore, sopraSoglia: !!l.amrap };
 }
 
-/** Esercizio del gradino dopo l'ultimo testato (in cima resta l'ultimo). */
+/**
+ * Gradino dell'EMOM: quello DOPO l'ultimo completato sopra soglia (in cima alla scala resta l'ultimo).
+ * Fino al 29/9 era il gradino dopo l'ultimo TESTATO: se l'ultimo test era quello fallito (3 arcieri su 20 di
+ * soglia), l'EMOM andava un gradino oltre l'arciere, due sopra quello padroneggiato. Senza nessun gradino
+ * completato si lavora sul più basso testato: è quello da costruire.
+ */
 export function gradinoSopra(l: LadderState | null, area: AreaForza): TrainingExercise | null {
-  if (!l) return null;
+  if (!l || !l.points.length) return null;
   const catena = catenaByArea(area);
-  return catena.filter((e) => e.gradino > l.gradinoEsecuzione).sort((a, b) => a.gradino - b.gradino)[0]
-    ?? catena.find((e) => e.gradino === l.gradinoEsecuzione) ?? null;
+  if (!l.amrap) return catena.find((e) => e.id === l.points[0].esercizioId) ?? null;
+  return catena.filter((e) => e.gradino > l.amrap!.gradino).sort((a, b) => a.gradino - b.gradino)[0]
+    ?? catena.find((e) => e.gradino === l.amrap!.gradino) ?? null;
 }
 
 function doseSerie(ex: TrainingExercise, max: number, sopraSoglia: boolean, area: AreaForza): { quantita: number; unita: BloccoItem['unita'] } {
@@ -237,7 +243,7 @@ function bloccoEmom(sc: Scale, o: OpzioniParteAlta): Blocco | null {
     const e = gradinoSopra(l, area);
     if (!e || !l) continue;
     const reps = e.gradino <= EMOM_GRADINO_BASSO[area] ? EMOM_REPS_GRADINI_BASSI : EMOM_REPS;
-    stazioni.push(v1Item(e, 0, reps, 'reps', 0, `Gradino ${e.gradino} della scala ${area}: il passo dopo l'ultimo che hai testato. ${reps} ripetizioni pulite, poi riposi fino allo scadere del minuto.`, { schema: 'emom', emomGruppo: PA_EMOM_ID }));
+    stazioni.push(v1Item(e, 0, reps, 'reps', 0, `Gradino ${e.gradino} della scala ${area}: il passo dopo l'ultimo che hai completato. ${reps} ripetizioni pulite, poi riposi fino allo scadere del minuto.`, { schema: 'emom', emomGruppo: PA_EMOM_ID }));
   }
   // Niente core né dorsali nell'EMOM (Ste, 28/9: gli esercizi dell'addome non si incastrano nel minuto): restano nelle serie
   if (stazioni.length === 0) return null; // senza scale di spinta/tirata testate non è un EMOM skill

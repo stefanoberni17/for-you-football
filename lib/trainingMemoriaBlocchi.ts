@@ -5,7 +5,7 @@
  * il codice della settimana dal giudizio che l'atleta ha dato sul blocco fatto l'ULTIMA volta nelle
  * settimane PRIMA di questa (fine seduta, migration 026):
  *   facile → codice successivo (o da short a full) · giusto → stesso codice ·
- *   duro / voto seduta ≥ 8 → stesso codice in short, o codice precedente se era già short.
+ *   duro / voto seduta ≥ 9 (VOTO_SEDUTA_DURO) → stesso codice in short, o codice precedente se era già short.
  * Mai saltare un codice. Il salto di livello (B → A) solo quando la famiglia non ha altri codici al
  * livello attuale e il blocco sopra è disponibile per l'atleta. Regole per famiglia (Ste, 24/9):
  * Fascia Foundation avanza dopo 2 settimane sullo stesso codice; Pliometria resta in B almeno 4 settimane.
@@ -68,8 +68,13 @@ const REGOLE_FAMIGLIA: { match: RegExp; settimanePerCodice?: number; settimanePe
 export const ONDA_RICHIAMO_DOPO_DURO = 2;
 const FAMIGLIE_ESCLUSE = new Set(['test', 'riscaldamento']);
 
-/** Voto seduta ≥ 8 = seduta dura per Ste, anche se il blocco è stato segnato "giusto". */
-export const feedbackDaRpe = (rpe: number): Giudizio => (rpe <= 4 ? 'facile' : rpe >= 8 ? 'duro' : 'ok');
+/**
+ * Voto seduta da cui la seduta conta "dura" su tutti i blocchi, anche se segnati "giusto".
+ * Era 8 (Ste, 23/9); dal 29/9 è 9: nella scala del player 8 è "molto dura, ne restavano 2", la zona normale
+ * di una seduta di forza, e con la soglia a 8 ogni famiglia tornava short una settimana sì e una no.
+ */
+export const VOTO_SEDUTA_DURO = 9;
+export const feedbackDaRpe = (rpe: number): Giudizio => (rpe <= 4 ? 'facile' : rpe >= VOTO_SEDUTA_DURO ? 'duro' : 'ok');
 
 /** Chiave del codice: la short e la soft sono varianti dello stesso codice. */
 export const chiaveCodice = (id: string) => id.replace(/-short(-\d+)?$/, '').replace(/-soft$/, '');
@@ -129,7 +134,7 @@ export function calcolaMemoriaBlocchi(
     for (const fb of f.feedback_blocchi!) {
       const b = bloccoById(fb.id);
       if (!b || !fb.giudizio || isParteAlta(b.id) || FAMIGLIE_ESCLUSE.has(b.qualita)) continue;
-      const giudizioRiga: Giudizio = f.rpe != null && f.rpe >= 8 ? 'duro' : fb.giudizio;
+      const giudizioRiga: Giudizio = f.rpe != null && f.rpe >= VOTO_SEDUTA_DURO ? 'duro' : fb.giudizio;
       if (!storicoPerFamiglia.has(b.famiglia)) storicoPerFamiglia.set(b.famiglia, []);
       storicoPerFamiglia.get(b.famiglia)!.push({ blocco: b, giudizio: giudizioRiga, settimana });
       const chiave = chiaveCodice(b.id);
@@ -139,7 +144,7 @@ export function calcolaMemoriaBlocchi(
       if (!settimaneLivello.has(kl)) settimaneLivello.set(kl, new Set());
       settimaneLivello.get(kl)!.add(settimana);
       if (!ultimoPerFamiglia.has(b.famiglia)) {
-        const giudizio: Giudizio = f.rpe != null && f.rpe >= 8 ? 'duro' : fb.giudizio;
+        const giudizio: Giudizio = f.rpe != null && f.rpe >= VOTO_SEDUTA_DURO ? 'duro' : fb.giudizio;
         ultimoPerFamiglia.set(b.famiglia, { blocco: b, giudizio, data });
       }
     }
