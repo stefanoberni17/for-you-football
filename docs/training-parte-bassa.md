@@ -43,7 +43,10 @@ Accessori al gradino (non nella scala, il server li sceglie come seconda variant
 
 Test isometrico già in batteria: affondo isometrico dx/sx (`t2-affondo-iso-*`), resta per gli squilibri.
 
-### 3. RDL (catena posteriore, anca: hinge → ischiocrurali)
+### 3. RDL (catena posteriore ALTA: anca, glutei e ischiocrurali vicino al gluteo)
+
+Ste, 29/9: "nordic non è proprio con rdl perché lavora soprattutto la parte flessore vicino al ginocchio,
+mentre rdl la parte più vicina al gluteo". Qui solo hinge.
 
 | Gradino | Esercizio | Id catalogo | Unità | Soglia [proposta] | Livello |
 |---|---|---|---|---|---|
@@ -52,14 +55,9 @@ Test isometrico già in batteria: affondo isometrico dx/sx (`t2-affondo-iso-*`),
 | 3 | Single leg RDL | `fpb-single-leg-rdl` | reps/lato | 10 | B |
 | 4 | Single leg RDL con asciugamano (FY Towel SLRDL) | `fasc-fy-towe-slrdl` (o `fascia-towel-slrdl` v1) | reps/lato | 10 | A |
 | 5 | Single leg RDL ginocchio piegato | `fesp-single-leg-rdl-sing-leg-rdl-ginocchio-piegato-2` | reps/lato | 8 | A |
-| 6 | Nordic (eccentrico controllato) | `fpb-nordic` | reps | 6 | A |
-| 7 | Nordic hamstring completo (sale da solo) | `fpb-nordic-hamstring` | reps | 5 | PRO |
+| 6 | Single leg RDL in deficit (piede d'appoggio su un rialzo, la mano scende sotto il piede) | **NUOVO** | reps/lato | 8 | PRO |
 
-[proposta] I gradini 6-7 sono flessione del ginocchio, non hinge: li ho messi in coda alla catena
-posteriore perché sono il passo dopo per gli ischiocrurali. Se preferisci una scala "hinge pura" e il
-Nordic a parte (come prevenzione), lo spacchiamo. Il Nordic mai a −2 dalla partita (DOMS).
-
-### 4. Bridge (glutei e ischiocrurali dal ponte)
+### 4. Bridge (catena posteriore BASSA: glutei e ischiocrurali vicino al ginocchio, fino al Nordic)
 
 | Gradino | Esercizio | Id catalogo | Unità | Soglia [proposta] | Livello |
 |---|---|---|---|---|---|
@@ -67,11 +65,25 @@ Nordic a parte (come prevenzione), lo spacchiamo. Il Nordic mai a −2 dalla par
 | 2 | Glute bridge a due gambe con pausa 3" in alto | **NUOVO** | reps | 15 | B |
 | 3 | Ponte glutei a una gamba | `lomb-6` (v1) / `fpb-glute-bridge-ad-una-gamba` (a tempo) | reps/lato | 12 | B |
 | 4 | Hip thrust a una gamba con le spalle sul rialzo | **NUOVO** | reps/lato | 10 | A |
-| 5 | Elevated hamstring bridge single leg (tallone sul rialzo) | `fpb-elevated-hamstring-bridge-single-leg` | reps/lato | 10 | A |
-| 6 | Eccentric elevated hamstring single leg | `fpb-eccentric-elevated-hamstring-single-leg` | reps/lato | 6 | PRO |
+| 5 | Elevated hamstring bridge single leg (tallone sul rialzo: il ginocchio lavora) | `fpb-elevated-hamstring-bridge-single-leg` | reps/lato | 10 | A |
+| 6 | Eccentric elevated hamstring single leg | `fpb-eccentric-elevated-hamstring-single-leg` | reps/lato | 6 | A |
+| 7 | Nordic (eccentrico controllato) | `fpb-nordic` | reps | 6 | A |
+| 8 | Nordic hamstring completo (sale da solo) | `fpb-nordic-hamstring` | reps | 5 | PRO |
 
 `lomb-6` oggi è il gradino 6 della catena "lombari" della parte alta: va spostato qui (o duplicato con
-un id nuovo) così le due scale non si pestano.
+un id nuovo) così le due scale non si pestano. Nordic ed eccentrici (gradini 6-8) mai a meno di 3 giorni
+dalla partita.
+
+### Le due catene posteriori sono INTRECCIATE (Ste: "le vedo intrecciate") [proposta]
+
+Stessi muscoli presi dai due capi: non si fanno tutte e due a pieno nella stessa seduta.
+- In `pb-serie` il posto della catena posteriore è UNO e alterna: settimana A → RDL, settimana B → bridge
+  (con squat e affondi sempre). Così la seduta è di tre catene, non quattro, e sta nei 45-50'.
+- Nell'EMOM della stessa settimana entra l'ALTRA catena posteriore al gradino sopra: chi fa RDL a serie fa
+  bridge nell'EMOM, e viceversa. In una settimana si toccano entrambe, una a volume e una a skill.
+- Nella versione breve la catena posteriore è quella della settimana (RDL o bridge), con squat.
+- I gradini alti del bridge (6-8, eccentrici e Nordic) hanno un tetto a parte: al massimo una volta a
+  settimana, mai a ridosso della partita, mai nella settimana di scarico.
 
 ## Test
 
@@ -89,11 +101,11 @@ un id nuovo) così le due scale non si pestano.
 
 | Formato | Chi lo ha | Gradino / carico | Dose [proposta] | A cosa serve |
 |---|---|---|---|---|
-| **Serie** `pb-serie` | tutti | ultimo gradino completato di ogni catena | 4 catene × 3-4 serie × 60-70 % del max, recupero 90", per lato | volume e qualità sui gradini |
-| **Serie brevi** `pb-serie-short` | tutti | ultimo completato | 2 catene a rotazione (squat + RDL, poi affondi + bridge), 3 serie, ~30' | giornate corte, in season |
+| **Serie** `pb-serie` | tutti | ultimo gradino completato di ogni catena | squat + affondi + UNA posteriore (RDL o bridge, alternate a settimane) × 3-4 serie × 60-70 % del max, recupero 90", per lato | volume e qualità sui gradini |
+| **Serie brevi** `pb-serie-short` | tutti | ultimo completato | squat + la posteriore della settimana (RDL o bridge), 3 serie, ~30' | giornate corte, in season |
 | **Forza massima** `pb-fmax` | palestra | massimale stimato | UN esercizio base a rotazione (squat, FY squat, RDL, hip thrust, bulgaro, affondi) 4-5 × 3-5 reps all'80-90 % del 1RM, recupero 2-3'; poi 2 catene dai gradini come accessori (2 × 8-10) | costruire la forza sui base, aumentando il peso (Ste: "solo per questo") |
 | **Isometrie** `Fascia Foundation Forza` B3/A3 | tutti | blocchi di Ste | come oggi (overcoming al muro, bridge bounces, iso lunge runner, skip) | forza "sul posto", la settimana alternata alle serie |
-| **EMOM** `pb-emom` | tutti | gradino SOPRA l'ultimo completato | 1 esercizio al minuto, 3 reps (2 sui gradini alti), ~20'; salto in lungo e in alto da fermo se la pliometria è tra gli obiettivi | skill: si impara il gradino dopo, prepara il test |
+| **EMOM** `pb-emom` | tutti | gradino SOPRA l'ultimo completato | 1 esercizio al minuto, 3 reps (2 sui gradini alti), ~20': squat, affondi e la posteriore NON fatta a serie quella settimana; salto in lungo e in alto da fermo se la pliometria è tra gli obiettivi | skill: si impara il gradino dopo, prepara il test |
 | **Circuito** (tabata / AMRAP sui gradini) | tutti | ultimo completato / uno sotto | 30-30 su 4 catene, 2-3 giri | arriva col player a round, come per la parte alta |
 | **Kettlebell** `kb-*` | kettlebell + obiettivo | fasce base/intermedio/avanzato | come oggi (`lib/trainingKettlebell.ts`) | sezione A PARTE (Ste): non entra nella rotazione delle gambe |
 
@@ -184,8 +196,8 @@ Le tre qualità usano le stesse gambe: si contano insieme.
 ## Cosa manca nel catalogo (da aggiungere quando la scala è confermata)
 
 Squat con pausa 3", box pistol, pistol assistito, pistol su rialzo/zavorra, affondo inverso controllato,
-shrimp squat, RDL a due gambe a corpo libero, RDL kickstand, glute bridge a due gambe, glute bridge con
-pausa, hip thrust a una gamba spalle sul rialzo: 11 esercizi, tutti senza video (da registrare) —
+shrimp squat, RDL a due gambe a corpo libero, RDL kickstand, single leg RDL in deficit, glute bridge a due
+gambe, glute bridge con pausa, hip thrust a una gamba spalle sul rialzo: 12 esercizi, tutti senza video (da registrare) —
 `docs/training-video-da-registrare.md`.
 
 ## Nel codice (dopo la conferma)
