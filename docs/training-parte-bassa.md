@@ -5,8 +5,9 @@ affondi, rdl, bridge e farei tutte le progressioni". Stesso impianto della parte
 (`docs/training-parte-alta.md`): quattro catene a gradini, un test base per catena, poi la scala si
 misura gradino per gradino, e le sedute vengono composte dal server sui gradini dell'atleta.
 
-Tutto quello che segue è una PROPOSTA: le righe marcate **[proposta]** sono mie, da confermare o
-correggere riga per riga. Gli esercizi con l'id sono già nel catalogo v2 (`lib/trainingCatalogV2`);
+Le righe marcate **[proposta]** sono mie. Ste, 29/9: catene, soglie per gradino, test base come massimo di
+ripetizioni sul gradino 1, formati, rotazione, progressione, gestione con pliometria e velocità, finestre e
+skip di chiusura: "ok come proposto" (le soglie restano da tarare sui primi test). Gli esercizi con l'id sono già nel catalogo v2 (`lib/trainingCatalogV2`);
 quelli marcati **NUOVO** vanno aggiunti (nome, descrizione, video da registrare).
 
 ## Le quattro catene
@@ -84,6 +85,21 @@ Stessi muscoli presi dai due capi: non si fanno tutte e due a pieno nella stessa
 - Nella versione breve la catena posteriore è quella della settimana (RDL o bridge), con squat.
 - I gradini alti del bridge (6-8, eccentrici e Nordic) hanno un tetto a parte: al massimo una volta a
   settimana, mai a ridosso della partita, mai nella settimana di scarico.
+
+### Chiusura: gli skip (Ste, 29/9: "aggiungiamo anche i B skip come esercizi finali a completamento")
+
+Ogni seduta di gambe a corpo libero (serie, serie brevi, EMOM, isometrie) si chiude con gli skip: il
+trasferimento dalla forza alla corsa, a bassa intensità, 5-6 minuti.
+
+| Ordine | Esercizio | Id catalogo | Dose [proposta] | Quando |
+|---|---|---|---|---|
+| 1 | A-skip | `plioe-fascia-a-skip` (oggi "Fascia A-Skip", a tempo) | 2 × 20" o 2 × 20 m, recupero 45" | sempre |
+| 2 | B-skip | **NUOVO** (`fpb-b-skip`) | 2-3 × 20" o 20 m, recupero 45" | sempre; dal gradino 3 delle posteriori in poi anche 3 serie |
+| 3 | B-skip in avanzamento / con corsa finale 20 m | **NUOVO** | 2 × 20 m | solo dai gradini alti (RDL ≥ 4 o bridge ≥ 5), mai il giorno dopo la partita |
+
+Regole: gli skip non contano come pliometria né come sprint (ritmo controllato, contatti leggeri); nel
+giorno dopo la partita restano solo A-skip e B-skip sul posto; nella settimana di scarico restano (sono
+tecnica di corsa, non carico); nel player chiudono la seduta senza voto per serie, come la fascia.
 
 ## Test
 
@@ -197,7 +213,8 @@ Le tre qualità usano le stesse gambe: si contano insieme.
 
 Squat con pausa 3", box pistol, pistol assistito, pistol su rialzo/zavorra, affondo inverso controllato,
 shrimp squat, RDL a due gambe a corpo libero, RDL kickstand, single leg RDL in deficit, glute bridge a due
-gambe, glute bridge con pausa, hip thrust a una gamba spalle sul rialzo: 12 esercizi, tutti senza video (da registrare) —
+gambe, glute bridge con pausa, hip thrust a una gamba spalle sul rialzo, B-skip, B-skip in avanzamento con corsa
+finale: 14 esercizi, tutti senza video (da registrare) —
 `docs/training-video-da-registrare.md`.
 
 ## Nel codice (dopo la conferma)
