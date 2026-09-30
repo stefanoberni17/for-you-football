@@ -156,7 +156,8 @@ Esercizi nuovi nel catalogo v1 (`lib/trainingCatalog.ts`), senza video: sono i g
 | Hip thrust a una gamba, spalle sul rialzo | bridge · 4 | `bridge-4` | ✍️ |
 | Hamstring bridge a una gamba, tallone sul rialzo | bridge · 5 | `bridge-5` | ✍️ (il v2 `fpb-elevated-hamstring-bridge-single-leg` non ha video) |
 | Hamstring bridge a una gamba, eccentrico | bridge · 6 | `bridge-6` | ✍️ (idem, v2 senza video) |
-| B-skip / B-skip in avanzamento | chiusura (passo 2) | da creare | arrivano con i formati `pb-*` |
+| B-skip | chiusura | `skip-b` | ✍️ |
+| B-skip in avanzamento con corsa | chiusura (gradini alti) | `skip-b-corsa` | ✍️ |
 
 Squat a corpo libero (`squat-1`) ha solo la nota v2 senza video: se se ne registra uno, vale per il test base.
 

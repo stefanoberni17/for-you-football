@@ -167,6 +167,7 @@ export function stima1RM(peso: number, reps: number): number {
 export const CONVIVENZE_VIETATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
   ['forza-max', 'resistenza-aerobica'],
   ['resistenza-rsa', 'pliometria-intensiva'],
+  ['forza-max', 'pliometria-intensiva'], // scala gambe (29/9): mai Fmax e pliometria intensiva nello stesso giorno
 ];
 
 /** Ordine "neuromuscolare prima del metabolico": indice più basso = prima nella seduta. */

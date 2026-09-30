@@ -217,7 +217,7 @@ gambe, glute bridge con pausa, hip thrust a una gamba spalle sul rialzo, B-skip,
 finale: 14 esercizi, tutti senza video (da registrare) —
 `docs/training-video-da-registrare.md`.
 
-## Nel codice (dopo la conferma) — stato al 30/9: passo 1 fatto, 2 e 3 da fare
+## Nel codice (dopo la conferma) — stato al 30/9: passi 1 e 2 fatti, 3 da fare
 
 Passo 1 (30/9): aree `squat` / `affondi` / `rdl` / `bridge` (`AreaGambe`, `AREE_GAMBE`) con 27 esercizi v1
 (`squat-1..6`, `aff-1..7`, `rdl-1..6`, `bridge-1..8`; `lomb-6` è diventato `bridge` gradino 3), test base
@@ -226,6 +226,20 @@ Passo 1 (30/9): aree `squat` / `affondi` / `rdl` / `bridge` (`AreaGambe`, `AREE_
 bounds per il validatore, i quattro test nella punta Gambe del rombo e nel blocco 1 della pagina test. Il
 valore del test sugli esercizi per lato è il lato peggiore (lo dice l'istruzione del test). Test in
 `tests/scalaGambe.test.ts`.
+
+Passo 2 (30/9, `lib/trainingParteBassa.ts`, `PLANNER_V2_PROMPT_VERSION = 'v2.26-gambe-dalle-scale'`): blocchi virtuali
+`pb-serie` (squat + affondi + la posteriore della settimana, pari RDL / dispari bridge, 3-4 × 65 % del max, recupero 90",
+A-skip + B-skip in chiusura, B-skip con corsa dai gradini alti), `pb-serie-short` (squat + posteriore, 3 serie, A-skip),
+`pb-emom` (gradino sopra su squat, affondi e l'altra posteriore, 3 reps / 2 sui gradini alti, salti da fermo con la
+pliometria tra gli obiettivi, ~20', `senzaScarico`), `pb-fmax` (palestra + massimale + `caricoMaxPct ≥ 80`: un base a
+rotazione 4 × 4 all'85 % del 1RM, `regime: 'max'`, poi due catene dai gradini), `pb-richiamo` (solo il giorno dopo la
+partita: metà dose, 2 serie). Con meno di due catene testate non esiste nessun formato (regola 29: invita ai test). Il
+server sostituisce i blocchi Everfit "Forza Parte Bassa" (non Fascia Forza) come per la parte alta (`sostituzioniParteBassa`);
+serie/breve/Fmax = un posto a settimana, EMOM un altro; mai un `pb-*` il giorno prima o della partita; Nordic ed eccentrici
+(bridge 6-8) a meno di 3 giorni dalla partita diventano il hamstring bridge sul rialzo (`alleggerisciVicinoPartita`) e nello
+scarico il bridge si ferma al gradino 5; `CONVIVENZE_VIETATE` ha Fmax + pliometria intensiva. Non ancora nel codice: il
+budget di giornate "gambe intensive", le isometrie come formato del server (restano i blocchi Fascia Forza di Ste), il
+circuito, la proposta automatica del test dopo due EMOM facili. Test in `tests/trainingParteBassa.test.ts`.
 
 1. Catene nel catalogo v1 (`lib/trainingCatalog.ts`): aree `squat`, `affondi`, `rdl`, `bridge` con gradini e
    soglie (`sogliaGradino`), quattro test base, `LADDER_AREE` estesa; `lomb-6` spostata.
