@@ -42,7 +42,7 @@ export type Distretto = 'gambe' | 'alto';
 const ALTO_RE = /arm|bracci|spall|push|pull|plank|crow|handstand|pike|row|remator|trazion|piegament|dip\b|press/i;
 export function distrettoEsercizio(id: string): Distretto | null {
   const v1 = ESERCIZI.find((e) => e.id === id);
-  if (v1) return ['spinta', 'tirata', 'core'].includes(v1.area) ? 'alto' : ['fascia', 'lombari', 'laterale'].includes(v1.area) ? 'gambe' : null;
+  if (v1) return ['spinta', 'tirata', 'core'].includes(v1.area) ? 'alto' : ['fascia', 'lombari', 'laterale', 'squat', 'affondi', 'rdl', 'bridge'].includes(v1.area) ? 'gambe' : null;
   const v2 = esercizioV2ById(id);
   if (!v2) return null;
   const alto = v2.qualita === 'forza-parte-alta' || v2.qualitaSecondaria === 'forza-parte-alta'
