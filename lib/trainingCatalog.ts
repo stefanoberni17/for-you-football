@@ -39,7 +39,10 @@ export function punteggioLivelli(soglie: { intermedio: number; avanzato: number;
   }
   return Math.round(Math.min(100, Math.max(0, score)) * 10) / 10;
 }
-export type AreaForza = 'spinta' | 'tirata' | 'core' | 'lombari';
+export type AreaForza = 'spinta' | 'tirata' | 'core' | 'lombari' | AreaGambe;
+/** Scala gambe a corpo libero (docs/training-parte-bassa.md, Ste 29/9): quattro catene dal bipodalico al monopodalico. */
+export type AreaGambe = 'squat' | 'affondi' | 'rdl' | 'bridge';
+export const AREE_GAMBE: AreaGambe[] = ['squat', 'affondi', 'rdl', 'bridge'];
 export type AreaTecnica = 'palleggi' | 'muro' | 'conduzione';
 export type Area = AreaForza | AreaTecnica | 'laterale' | 'fascia' | 'mobilita';
 
@@ -95,7 +98,40 @@ export const ESERCIZI: TrainingExercise[] = [
   { id: 'lomb-3', nome: 'Swimmer', area: 'lombari', gradino: 3, unita: 'secondi' , descrizione: "Dal superman, piccoli battiti alternati di braccia e gambe come nuotando. Il busto resta sollevato per tutta la durata." },
   { id: 'lomb-4', nome: 'Arch hold', area: 'lombari', gradino: 4, unita: 'secondi' , descrizione: "A pancia in giù, braccia lungo i fianchi o avanti: massima estensione tenuta, corpo ad arco. Più intensa del superman." },
   { id: 'lomb-5', nome: 'Arch rocks', area: 'lombari', gradino: 5, unita: 'reps' , descrizione: "Dall'arch hold, dondola avanti e indietro tenendo il corpo rigido in estensione. 1 dondolio = 1 rep." },
-  { id: 'lomb-6', nome: 'Ponte glutei a una gamba', area: 'lombari', gradino: 6, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/shorts/FQPEqDy8IBI' , descrizione: "A pancia in su, un piede a terra e l'altra gamba tesa: spingi il bacino in alto col tallone, stringi il gluteo in cima, scendi controllato. Metà reps per gamba." },
+  // lomb-6 (ponte glutei a una gamba) dal 30/9 è il gradino 3 della catena bridge (scala gambe): l'id resta, i risultati salvati seguono l'id.
+  // ─── Scala gambe a corpo libero (docs/training-parte-bassa.md, Ste 29/9: "squat, affondi, rdl, bridge e tutte le progressioni") ───
+  // Le quantità sono PER LATO dove l'esercizio è per lato. Gli esercizi senza video sono da registrare (docs/training-video-da-registrare.md).
+  // Squat (ginocchio): bipodalico → pistol
+  { id: 'squat-1', nome: 'Squat a corpo libero', area: 'squat', gradino: 1, unita: 'reps', descrizione: "Piedi larghi come le spalle, talloni a terra: scendi sotto il parallelo (anca più bassa del ginocchio) con la schiena neutra, poi spingi. Ritmo 2\" giù, 1\" su. Errore comune: talloni che si alzano o ginocchia che cedono in dentro." },
+  { id: 'squat-2', nome: 'Squat con pausa 3" in basso', area: 'squat', gradino: 2, unita: 'reps', descrizione: "Come lo squat, ma in basso ti fermi 3 secondi senza rimbalzare e senza perdere la schiena, poi risali. La pausa toglie l'aiuto dell'elastico dei muscoli: conta solo la forza." },
+  { id: 'squat-3', nome: 'Squat su una gamba alla panca (box pistol)', area: 'squat', gradino: 3, unita: 'reps', perLato: true, descrizione: "Dietro di te una panca o una sedia. Su una gamba, l'altra distesa avanti: siedi controllato, tocca e riparti senza slancio. Il ginocchio resta in linea con il piede. Reps per lato." },
+  { id: 'squat-4', nome: 'Pistol assistito', area: 'squat', gradino: 4, unita: 'reps', perLato: true, descrizione: "Una mano a un palo, alla porta o a un elastico SOLO per l'equilibrio, non per tirarti su. Scendi fino in fondo su una gamba con l'altra distesa avanti, risali spingendo. Reps per lato." },
+  { id: 'squat-5', nome: 'Pistol', area: 'squat', gradino: 5, unita: 'reps', perLato: true, videoUrl: 'https://www.youtube.com/watch?v=sCTHnqLXepk', descrizione: "Squat completo su una gamba, l'altra distesa avanti, braccia avanti per bilanciare. Tallone a terra, discesa controllata, risalita senza appoggi. Reps per lato." },
+  { id: 'squat-6', nome: 'Pistol su rialzo o con zavorra', area: 'squat', gradino: 6, unita: 'reps', perLato: true, descrizione: "Pistol con il tallone su un gradino (la gamba libera scende più in basso del piede d'appoggio) oppure con una zavorra di 8-12 kg tenuta al petto. Solo con il pistol pulito. Reps per lato." },
+  // Affondi (split stance: anca e ginocchio)
+  { id: 'aff-1', nome: 'Affondi sul posto', area: 'affondi', gradino: 1, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/watch?v=ruFaw3pDMGQ', descrizione: "Un passo avanti, scendi finché il ginocchio dietro sfiora terra, busto dritto, poi spingi col tallone davanti e torna in piedi. Reps per lato." },
+  { id: 'aff-2', nome: 'Affondi in camminata', area: 'affondi', gradino: 2, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/watch?v=kAnLd3sRhmA', descrizione: "Come gli affondi, ma avanzi a ogni passo invece di tornare indietro: più equilibrio e più lavoro sull'anca. Reps per lato." },
+  { id: 'aff-3', nome: 'Affondo inverso controllato (2")', area: 'affondi', gradino: 3, unita: 'reps', perLato: true, descrizione: "Passo INDIETRO, scendi in 2 secondi finché il ginocchio sfiora terra, senza appoggiarlo, e risali dalla gamba davanti. Il controllo nella discesa è l'esercizio." },
+  { id: 'aff-4', nome: 'Bulgaro a corpo libero', area: 'affondi', gradino: 4, unita: 'reps', perLato: true, videoUrl: 'https://www.youtube.com/watch?v=YtzdcxjEb8s', descrizione: "Piede dietro su una panca o un rialzo, l'altro avanti: scendi dritto finché la coscia davanti è parallela, poi spingi. Il busto resta verticale. Reps per lato." },
+  { id: 'aff-5', nome: 'ATG split squat', area: 'affondi', gradino: 5, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/watch?v=a0iGmxKW4_0', descrizione: "Affondo profondo: il ginocchio davanti va oltre la punta del piede e il polpaccio tocca la coscia, il tallone resta a terra. Lento, ampiezza completa. Reps per lato." },
+  { id: 'aff-6', nome: 'ATG lunge', area: 'affondi', gradino: 6, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/watch?v=WGePf1hZ7_I', descrizione: "Lo split squat profondo con il passo: a ogni rep parti in piedi, fai il passo, scendi fino in fondo e torni. Reps per lato." },
+  { id: 'aff-7', nome: 'Shrimp squat', area: 'affondi', gradino: 7, unita: 'reps', perLato: true, descrizione: "Su una gamba, l'altra piegata dietro e tenuta con la mano: scendi finché il ginocchio dietro sfiora terra, risali senza appoggi. Il pistol della catena posteriore. Reps per lato." },
+  // RDL (catena posteriore ALTA: anca, glutei, femorali vicino al gluteo) — solo hinge (Ste: il Nordic va con i bridge)
+  { id: 'rdl-1', nome: 'RDL a due gambe a corpo libero', area: 'rdl', gradino: 1, unita: 'reps', descrizione: "In piedi, ginocchia appena piegate: inclina il busto in avanti spingendo il sedere indietro, le mani scendono lungo le cosce, schiena neutra, finché senti tirare dietro le cosce, poi risali spingendo l'anca avanti. Ritmo 2\" giù, 1\" su." },
+  { id: 'rdl-2', nome: 'RDL kickstand', area: 'rdl', gradino: 2, unita: 'reps', perLato: true, descrizione: "Un piede avanti che lavora, la punta dell'altro appoggiata dietro solo per l'equilibrio: fai il hinge caricando la gamba davanti. Reps per lato." },
+  { id: 'rdl-3', nome: 'Single leg RDL', area: 'rdl', gradino: 3, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/watch?v=Do1KR00uAqc', descrizione: "Su una gamba: inclina il busto avanti mentre l'altra gamba sale dietro in linea con la schiena, bacino dritto (non si apre), torna su controllando. Reps per lato." },
+  { id: 'rdl-4', nome: 'Single leg RDL con asciugamano', area: 'rdl', gradino: 4, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/shorts/_0TsEKkUqGw', descrizione: "Single leg RDL con l'avampiede che stringe un asciugamano: il piede lavora per stabilizzare mentre l'anca fa il movimento. Reps per lato." },
+  { id: 'rdl-5', nome: 'Single leg RDL ginocchio piegato', area: 'rdl', gradino: 5, unita: 'reps', perLato: true, descrizione: "Single leg RDL con il ginocchio d'appoggio più piegato: il gluteo lavora di più e l'equilibrio è più difficile. Reps per lato." },
+  { id: 'rdl-6', nome: 'Single leg RDL in deficit', area: 'rdl', gradino: 6, unita: 'reps', perLato: true, descrizione: "Piede d'appoggio su un rialzo: la mano scende sotto il livello del piede, ampiezza completa, schiena sempre neutra. Solo con il single leg RDL pulito. Reps per lato." },
+  // Bridge (catena posteriore BASSA: glutei e femorali vicino al ginocchio, fino al Nordic)
+  { id: 'bridge-1', nome: 'Glute bridge a due gambe', area: 'bridge', gradino: 1, unita: 'reps', descrizione: "A pancia in su, ginocchia piegate e piedi a terra: spingi il bacino in alto con i talloni fino a fare una linea spalle-anca-ginocchia, stringi i glutei in cima, scendi controllato. Ritmo 2\" giù, 1\" su." },
+  { id: 'bridge-2', nome: 'Glute bridge con pausa 3" in alto', area: 'bridge', gradino: 2, unita: 'reps', descrizione: "Come il glute bridge, ma in cima tieni 3 secondi con i glutei strettissimi prima di scendere. Niente iperestensione della schiena." },
+  { id: 'lomb-6', nome: 'Ponte glutei a una gamba', area: 'bridge', gradino: 3, unita: 'reps', perLato: true, videoUrl: 'https://youtube.com/shorts/FQPEqDy8IBI' , descrizione: "A pancia in su, un piede a terra e l'altra gamba tesa: spingi il bacino in alto col tallone, stringi il gluteo in cima, scendi controllato. Reps per lato." },
+  { id: 'bridge-4', nome: 'Hip thrust a una gamba, spalle sul rialzo', area: 'bridge', gradino: 4, unita: 'reps', perLato: true, descrizione: "Spalle appoggiate a una panca o al divano, un piede a terra e l'altra gamba sollevata: spingi il bacino in alto fino alla linea spalle-ginocchio, mento basso, scendi controllato. Reps per lato." },
+  { id: 'bridge-5', nome: 'Hamstring bridge a una gamba, tallone sul rialzo', area: 'bridge', gradino: 5, unita: 'reps', perLato: true, descrizione: "A pancia in su, un tallone su un rialzo (panca, gradino) e la gamba quasi tesa: spingi il bacino in alto col tallone. Il ginocchio lavora: senti il femorale, non la schiena. Reps per lato." },
+  { id: 'bridge-6', nome: 'Hamstring bridge a una gamba, eccentrico', area: 'bridge', gradino: 6, unita: 'reps', perLato: true, note: 'Mai a meno di 3 giorni dalla partita.', descrizione: "Dal hamstring bridge sul rialzo: sali con due gambe, poi SOLO la discesa su una gamba, lenta (4-5 secondi). Costruisce il Nordic. Reps per lato." },
+  { id: 'bridge-7', nome: 'Nordic eccentrico', area: 'bridge', gradino: 7, unita: 'reps', videoUrl: 'https://youtube.com/shorts/Wx_d0y8iGxM', note: 'Mai a meno di 3 giorni dalla partita.', descrizione: "In ginocchio, caviglie bloccate (un compagno o sotto un mobile): scendi in avanti frenando con i femorali il più a lungo possibile, corpo in linea, poi ti fermi con le mani e torni su aiutandoti. Solo la discesa conta." },
+  { id: 'bridge-8', nome: 'Nordic hamstring completo', area: 'bridge', gradino: 8, unita: 'reps', videoUrl: 'https://youtube.com/watch?v=Wx_d0y8iGxM', note: 'Mai a meno di 3 giorni dalla partita.', descrizione: "Il Nordic con la risalita: scendi frenando fino a terra e risali con i soli femorali, senza spinta delle mani. Il vertice della catena posteriore." },
   // Laterale / obliqui — nei circuiti, 1-2 per volta, non in tutte le sedute
   { id: 'lat-1', nome: 'Plank laterale sulle ginocchia', area: 'laterale', gradino: 1, unita: 'secondi', perLato: true , descrizione: "Su un gomito e le ginocchia, corpo in linea: solleva il bacino e tieni. Il fianco lavora. Metà tenuta per lato." },
   { id: 'lat-2', nome: 'Plank laterale', area: 'laterale', gradino: 2, unita: 'secondi', perLato: true, videoUrl: 'https://youtube.com/shorts/MdrinUXALJQ' , descrizione: "Su un gomito e il bordo esterno del piede, corpo in linea dalla testa ai piedi: bacino alto, spalla lontana dall'orecchio. Metà tenuta per lato." },
@@ -218,6 +254,52 @@ export const TESTS: TrainingTest[] = [
     // soglie confermate da Ste (set 2026)
     soglie: { intermedio: 30, avanzato: 60, pro: 90 },
     entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } }, // entry conservativa v0.2
+  // ─── Scala gambe (Ste, 29/9): massimo di ripetizioni pulite sul gradino 1 di ogni catena, ritmo fisso ───
+  // Soglie [proposta, da tarare sui primi test]: intermedio = soglia del gradino 1 (docs/training-parte-bassa.md).
+  { id: 'test-squat', nome: 'Max squat a corpo libero', area: 'squat', unita: 'reps', esercizioId: 'squat-1',
+    protocollo: 'Quanti squat completi fai di fila con un ritmo fisso. È il punto di partenza della scala Squat.',
+    serve: 'Solo il pavimento. Fallo da fresco, dopo un riscaldamento leggero.',
+    passi: [
+      'Piedi larghi come le spalle, talloni a terra, schiena neutra.',
+      'Scendi in 2 secondi sotto il parallelo (anca più bassa del ginocchio), risali in 1 secondo: questa è 1 ripetizione.',
+      'Vai avanti senza fermarti: se i talloni si alzano, la schiena si piega o resti fermo più di 2 secondi, la serie è finita.',
+    ],
+    inserisci: 'Il numero di ripetizioni complete (es. 32).',
+    soglie: { intermedio: 25, avanzato: 40, pro: 60 },
+    entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } },
+  { id: 'test-affondi', nome: 'Max affondi sul posto', area: 'affondi', unita: 'reps', esercizioId: 'aff-1',
+    protocollo: 'Quanti affondi completi fai di fila per lato. È il punto di partenza della scala Affondi.',
+    serve: 'Solo il pavimento. Fallo da fresco.',
+    passi: [
+      'Un passo avanti, busto dritto: scendi finché il ginocchio dietro sfiora terra, poi spingi col tallone davanti e torna in piedi.',
+      'Alterna le gambe: destra, sinistra. Conta le ripetizioni PER LATO.',
+      'Fermati quando il ginocchio non sfiora più terra o il busto si piega.',
+    ],
+    inserisci: 'Le ripetizioni per lato: se un lato ne fa meno, scrivi quello (es. 18).',
+    soglie: { intermedio: 15, avanzato: 25, pro: 35 },
+    entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } },
+  { id: 'test-rdl', nome: 'Max RDL a corpo libero', area: 'rdl', unita: 'reps', esercizioId: 'rdl-1',
+    protocollo: 'Quanti hinge (stacchi rumeni a corpo libero) completi fai di fila con un ritmo fisso. È il punto di partenza della scala RDL.',
+    serve: 'Solo il pavimento. Fallo da fresco.',
+    passi: [
+      'In piedi, ginocchia appena piegate, mani lungo le cosce.',
+      'Spingi il sedere indietro e inclina il busto in 2 secondi, schiena neutra, finché senti tirare dietro le cosce; risali in 1 secondo spingendo l\'anca avanti: 1 ripetizione.',
+      'Fermati quando la schiena si arrotonda o non senti più i femorali lavorare.',
+    ],
+    inserisci: 'Il numero di ripetizioni complete (es. 24).',
+    soglie: { intermedio: 20, avanzato: 30, pro: 45 },
+    entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } },
+  { id: 'test-bridge', nome: 'Max glute bridge', area: 'bridge', unita: 'reps', esercizioId: 'bridge-1',
+    protocollo: 'Quanti ponti glutei completi fai di fila con un ritmo fisso. È il punto di partenza della scala Bridge.',
+    serve: 'Pavimento, meglio un tappetino. Fallo da fresco.',
+    passi: [
+      'A pancia in su, ginocchia piegate, piedi a terra larghi come le anche.',
+      'Spingi il bacino in alto con i talloni fino alla linea spalle-anca-ginocchia, stringi i glutei 1 secondo, scendi in 2 secondi: 1 ripetizione.',
+      'Fermati quando non arrivi più alla linea o senti la schiena al posto dei glutei.',
+    ],
+    inserisci: 'Il numero di ripetizioni complete (es. 35).',
+    soglie: { intermedio: 25, avanzato: 40, pro: 60 },
+    entryMap: { base: 1, intermedio: 2, avanzato: 3, pro: 4 } },
   { id: 'test-pall-forte', nome: 'Palleggi piede forte', area: 'palleggi', unita: 'reps',
     protocollo: 'Palleggi consecutivi col piede forte senza far cadere la palla.',
     serve: 'Una palla e uno spazio piano.',
@@ -385,6 +467,27 @@ export const BOUNDS: Record<AreaForza | 'laterale', Record<FasciaLivello, Bounds
     A: { serieMin: 2, serieMax: 4, repsMin: 30, repsMax: 60, recuperoMinSec: 45 },
     PRO: { serieMin: 3, serieMax: 4, repsMin: 45, repsMax: 90, recuperoMinSec: 60 },
   },
+  // Scala gambe (29/9): reps alte sui gradini bassi, poche in cima
+  squat: {
+    B: { serieMin: 2, serieMax: 4, repsMin: 5, repsMax: 30, recuperoMinSec: 60 },
+    A: { serieMin: 3, serieMax: 5, repsMin: 3, repsMax: 20, recuperoMinSec: 90 },
+    PRO: { serieMin: 3, serieMax: 6, repsMin: 2, repsMax: 15, recuperoMinSec: 120 },
+  },
+  affondi: {
+    B: { serieMin: 2, serieMax: 4, repsMin: 5, repsMax: 25, recuperoMinSec: 60 },
+    A: { serieMin: 3, serieMax: 5, repsMin: 3, repsMax: 15, recuperoMinSec: 90 },
+    PRO: { serieMin: 3, serieMax: 6, repsMin: 2, repsMax: 12, recuperoMinSec: 120 },
+  },
+  rdl: {
+    B: { serieMin: 2, serieMax: 4, repsMin: 5, repsMax: 25, recuperoMinSec: 60 },
+    A: { serieMin: 3, serieMax: 5, repsMin: 3, repsMax: 15, recuperoMinSec: 90 },
+    PRO: { serieMin: 3, serieMax: 6, repsMin: 2, repsMax: 12, recuperoMinSec: 120 },
+  },
+  bridge: {
+    B: { serieMin: 2, serieMax: 4, repsMin: 5, repsMax: 30, recuperoMinSec: 60 },
+    A: { serieMin: 3, serieMax: 5, repsMin: 3, repsMax: 20, recuperoMinSec: 90 },
+    PRO: { serieMin: 3, serieMax: 6, repsMin: 2, repsMax: 12, recuperoMinSec: 120 },
+  },
   laterale: {
     B: { serieMin: 1, serieMax: 3, repsMin: 10, repsMax: 45, recuperoMinSec: 45 },
     A: { serieMin: 1, serieMax: 3, repsMin: 15, repsMax: 60, recuperoMinSec: 45 },
@@ -443,7 +546,7 @@ export const ROMBO_PUNTE: { key: string; label: string; gruppo: string; testIds:
   { key: 'push', label: 'Push', gruppo: 'forza_pa', testIds: ['test-push', 't2-lift-panca', 't2-lift-shoulder-press'] },
   { key: 'pull', label: 'Pull', gruppo: 'forza_pa', testIds: ['test-pull', 't2-lift-pull-up'] },
   { key: 'core', label: 'Core', gruppo: 'forza_pb', testIds: ['test-core', 'test-lombari'] },
-  { key: 'gambe', label: 'Gambe', gruppo: 'forza_pb', testIds: ['t2-wall-sit', 't2-wall-sit-dx', 't2-wall-sit-sx', 't2-affondo-iso-dx', 't2-affondo-iso-sx', 't2-lift-squat', 't2-lift-stacco-rumeno', 't2-lift-hip-thrust', 't2-lift-squat-bulgaro'] },
+  { key: 'gambe', label: 'Gambe', gruppo: 'forza_pb', testIds: ['test-squat', 'test-affondi', 'test-rdl', 'test-bridge', 't2-wall-sit', 't2-wall-sit-dx', 't2-wall-sit-sx', 't2-affondo-iso-dx', 't2-affondo-iso-sx', 't2-lift-squat', 't2-lift-stacco-rumeno', 't2-lift-hip-thrust', 't2-lift-squat-bulgaro'] },
   { key: 'esplosivita', label: 'Esplosività', gruppo: 'forza_pb', testIds: ['t2-broad-jump', 't2-broad-jump-dx', 't2-broad-jump-sx'] },
   { key: 'aerobica', label: 'Aerobica', gruppo: 'resistenza', testIds: ['t2-1km', 't2-3km'] },
   { key: 'res_velocita', label: 'Resist. alla velocità', gruppo: 'resistenza', testIds: ['t2-navetta-30', 't2-ankle-jump', 't2-ankle-jump-dx', 't2-ankle-jump-sx'] },

@@ -10,7 +10,7 @@ import {
   BOUNDS, ESERCIZI, REGOLE, ROMBO_GRUPPI, ROMBO_PUNTE, TESTS,
   TECNICA_ITEM_MAX, TECNICA_ITEM_MIN, TECNICA_RECUPERO_MIN_SEC,
   catenaByArea, esercizioById, punteggioLivelli, testById,
-  type AreaForza, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
+  type AreaForza, type AreaGambe, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
 } from './trainingCatalog';
 
 import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2, livelloPerQualita } from './trainingRulesV2';
@@ -80,10 +80,22 @@ export function isPeriodoScarso(media: { sonno: number; recupero: number; giorni
 // avanzato sopra soglia; il gradino di lavoro non è più stimato, è misurato.
 // Le righe skill sono salvate come test_id = 'skill:<esercizio_id>'.
 
-export const LADDER_AREE: AreaForza[] = ['spinta', 'tirata', 'core', 'lombari'];
+export const LADDER_AREE: AreaForza[] = ['spinta', 'tirata', 'core', 'lombari', 'squat', 'affondi', 'rdl', 'bridge'];
 
 const LADDER_BASE_TEST: Record<AreaForza, string> = {
   spinta: 'test-push', tirata: 'test-pull', core: 'test-core', lombari: 'test-lombari',
+  squat: 'test-squat', affondi: 'test-affondi', rdl: 'test-rdl', bridge: 'test-bridge',
+};
+
+/**
+ * Scala gambe (docs/training-parte-bassa.md, Ste 29/9): soglia PER GRADINO, alta in basso e bassa in cima
+ * (quantità per lato dove l'esercizio è per lato). [proposta, da tarare sui primi test]
+ */
+export const SOGLIE_GAMBE: Record<AreaGambe, number[]> = {
+  squat:   [25, 15, 10, 8, 5, 5],
+  affondi: [15, 15, 12, 12, 10, 8, 5],
+  rdl:     [20, 12, 10, 10, 8, 8],
+  bridge:  [25, 15, 12, 10, 10, 6, 6, 5],
 };
 
 export const LADDER_SOGLIE: Record<AreaForza, number> = {
@@ -91,6 +103,7 @@ export const LADDER_SOGLIE: Record<AreaForza, number> = {
   tirata: REGOLE.ladderMinPullReps,
   core: REGOLE.ladderMinHoldSec,
   lombari: REGOLE.ladderMinHoldSec,
+  squat: SOGLIE_GAMBE.squat[0], affondi: SOGLIE_GAMBE.affondi[0], rdl: SOGLIE_GAMBE.rdl[0], bridge: SOGLIE_GAMBE.bridge[0],
 };
 
 /**
@@ -101,6 +114,10 @@ export const LADDER_SOGLIE: Record<AreaForza, number> = {
 export function sogliaGradino(area: AreaForza, gradino: number): number {
   if (area === 'spinta') return gradino >= 7 ? 5 : gradino >= 5 ? 10 : LADDER_SOGLIE.spinta;
   if (area === 'tirata') return gradino >= 7 ? 5 : LADDER_SOGLIE.tirata;
+  if (area in SOGLIE_GAMBE) {
+    const t = SOGLIE_GAMBE[area as AreaGambe];
+    return t[Math.min(Math.max(gradino, 1), t.length) - 1];
+  }
   return LADDER_SOGLIE[area];
 }
 
@@ -349,7 +366,7 @@ export interface WeekPlan {
 }
 
 const TIPI_FISICI = new Set(['mix', 'fisica', 'skill']);
-const AREE_FORZA = new Set(['spinta', 'tirata', 'core', 'lombari', 'laterale']);
+const AREE_FORZA = new Set(['spinta', 'tirata', 'core', 'lombari', 'laterale', 'squat', 'affondi', 'rdl', 'bridge']);
 
 /**
  * Il guardiano. Ritorna la lista di violazioni (vuota = piano valido).

@@ -217,7 +217,15 @@ gambe, glute bridge con pausa, hip thrust a una gamba spalle sul rialzo, B-skip,
 finale: 14 esercizi, tutti senza video (da registrare) —
 `docs/training-video-da-registrare.md`.
 
-## Nel codice (dopo la conferma)
+## Nel codice (dopo la conferma) — stato al 30/9: passo 1 fatto, 2 e 3 da fare
+
+Passo 1 (30/9): aree `squat` / `affondi` / `rdl` / `bridge` (`AreaGambe`, `AREE_GAMBE`) con 27 esercizi v1
+(`squat-1..6`, `aff-1..7`, `rdl-1..6`, `bridge-1..8`; `lomb-6` è diventato `bridge` gradino 3), test base
+`test-squat` / `test-affondi` / `test-rdl` / `test-bridge` (soglie intermedio = soglia del gradino 1),
+`SOGLIE_GAMBE` per gradino in `sogliaGradino`, `LADDER_AREE` a otto aree (stessa scala skill `skill:<id>`),
+bounds per il validatore, i quattro test nella punta Gambe del rombo e nel blocco 1 della pagina test. Il
+valore del test sugli esercizi per lato è il lato peggiore (lo dice l'istruzione del test). Test in
+`tests/scalaGambe.test.ts`.
 
 1. Catene nel catalogo v1 (`lib/trainingCatalog.ts`): aree `squat`, `affondi`, `rdl`, `bridge` con gradini e
    soglie (`sogliaGradino`), quattro test base, `LADDER_AREE` estesa; `lomb-6` spostata.

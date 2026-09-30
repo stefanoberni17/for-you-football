@@ -52,7 +52,7 @@ export const GRADINO_DOSE_PCT = 0.7;         // al gradino dell'atleta: reps/sec
 export type Adattamento = 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero';
 
 /** Catene v1 con un "gradino dopo" sensato per la forza (le tecniche hanno i loro percorsi). */
-const AREE_CATENA = new Set(['spinta', 'tirata', 'core', 'laterale', 'lombari']);
+const AREE_CATENA = new Set(['spinta', 'tirata', 'core', 'laterale', 'lombari', 'squat', 'affondi', 'rdl', 'bridge']);
 
 export interface ContestoProgressione {
   storico: RiepilogoEsercizio[];

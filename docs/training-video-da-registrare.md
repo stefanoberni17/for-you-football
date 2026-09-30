@@ -135,6 +135,31 @@ Priorità bassa: il planner v2 lavora a blocchi, questi arrivano solo dal planne
 - Tiri in porta dall'angolo - CROSS (tecnica-tiro, B)
 - tiri - tecnica di tiro (tecnica-tiro, B)
 
+## Scala gambe a corpo libero (30/9, dalla specifica `docs/training-parte-bassa.md`) (14)
+
+Esercizi nuovi nel catalogo v1 (`lib/trainingCatalog.ts`), senza video: sono i gradini delle quattro catene squat / affondi / RDL / bridge e gli skip di chiusura. Ordine = dal gradino basso (lo vedono tutti) a quello alto. Hanno tutti la descrizione scritta nell'app (✍️, da rivedere).
+
+| Esercizio | Catena · gradino | Id | Descrizione |
+|---|---|---|---|
+| Squat con pausa 3" in basso | squat · 2 | `squat-2` | ✍️ |
+| Squat su una gamba alla panca (box pistol) | squat · 3 | `squat-3` | ✍️ |
+| Pistol assistito | squat · 4 | `squat-4` | ✍️ |
+| Pistol su rialzo o con zavorra | squat · 6 | `squat-6` | ✍️ |
+| Affondo inverso controllato (2") | affondi · 3 | `aff-3` | ✍️ |
+| Shrimp squat | affondi · 7 | `aff-7` | ✍️ |
+| RDL a due gambe a corpo libero | rdl · 1 | `rdl-1` | ✍️ |
+| RDL kickstand | rdl · 2 | `rdl-2` | ✍️ |
+| Single leg RDL ginocchio piegato | rdl · 5 | `rdl-5` | ✍️ (il video v2 è quello con i salti) |
+| Single leg RDL in deficit | rdl · 6 | `rdl-6` | ✍️ |
+| Glute bridge a due gambe | bridge · 1 | `bridge-1` | ✍️ |
+| Glute bridge con pausa 3" in alto | bridge · 2 | `bridge-2` | ✍️ |
+| Hip thrust a una gamba, spalle sul rialzo | bridge · 4 | `bridge-4` | ✍️ |
+| Hamstring bridge a una gamba, tallone sul rialzo | bridge · 5 | `bridge-5` | ✍️ (il v2 `fpb-elevated-hamstring-bridge-single-leg` non ha video) |
+| Hamstring bridge a una gamba, eccentrico | bridge · 6 | `bridge-6` | ✍️ (idem, v2 senza video) |
+| B-skip / B-skip in avanzamento | chiusura (passo 2) | da creare | arrivano con i formati `pb-*` |
+
+Squat a corpo libero (`squat-1`) ha solo la nota v2 senza video: se se ne registra uno, vale per il test base.
+
 ## Come rigenerare
 
 Script inline: legge `lib/trainingBlocks.generated.ts` e i cataloghi, tiene gli esercizi senza `videoUrl` usati nei blocchi `completo: true`. Quando un video viene caricato: incollare l'URL nel campo `video` di `docs/training-catalogo-v2.json` e rigenerare con `python3 scripts/build-catalog-v2.py && python3 scripts/build-blocks.py`.

@@ -32,7 +32,9 @@ const LIVELLO_LABEL: Record<string, string> = {
 };
 const AREA_LABEL: Record<string, string> = {
   spinta: 'Push', tirata: 'Pull', core: 'Core', lombari: 'Lombari',
+  squat: 'Squat', affondi: 'Affondi', rdl: 'RDL', bridge: 'Bridge',
 };
+const SOGLIE_A_SCALARE = new Set(['spinta', 'tirata', 'squat', 'affondi', 'rdl', 'bridge']);
 const fmtVal = (v: number, unita: string) => `${v}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
 
 /** Input grande per il risultato di un test: numero centrato in Outfit, unità a destra. */
@@ -243,7 +245,7 @@ export default function BatteriaTest() {
   const amrapTest = tests.find((t) => t.id === 'test-amrap');
   const catenaTests = tests.filter((t) => t.id !== 'test-amrap');
   const gruppoV1 = (ids: (id: string) => boolean) => catenaTests.filter((t) => ids(t.id));
-  const forzaV1 = gruppoV1((id) => ['test-push', 'test-pull', 'test-core', 'test-lombari'].includes(id));
+  const forzaV1 = gruppoV1((id) => ['test-push', 'test-pull', 'test-core', 'test-lombari', 'test-squat', 'test-affondi', 'test-rdl', 'test-bridge'].includes(id));
   const tecnicaV1 = gruppoV1((id) => id.startsWith('test-pall') || id === 'test-piramide' || id === 'test-muro');
   const fasciaV1 = gruppoV1((id) => id.startsWith('test-fascia'));
   const altriV1 = catenaTests.filter((t) => !forzaV1.includes(t) && !tecnicaV1.includes(t) && !fasciaV1.includes(t));
@@ -366,7 +368,7 @@ export default function BatteriaTest() {
           </Card>
         )}
 
-        <BloccoTest n={1} titolo="Forza a corpo libero" sottotitolo="Piegamenti, trazioni, plank, lombari: il tuo punto di partenza" fatti={forzaV1.filter((t) => t.done).length} totali={forzaV1.length} open={isOpen(1)} onToggle={() => toggleBlocco(1)}>
+        <BloccoTest n={1} titolo="Forza a corpo libero" sottotitolo="Piegamenti, trazioni, plank, lombari, squat, affondi, RDL, bridge: il tuo punto di partenza" fatti={forzaV1.filter((t) => t.done).length} totali={forzaV1.length} open={isOpen(1)} onToggle={() => toggleBlocco(1)}>
           <div className="divide-y divide-divider">{forzaV1.map(cardV1)}</div>
         </BloccoTest>
         {ladders.length > 0 && (
@@ -376,7 +378,7 @@ export default function BatteriaTest() {
                 <Card key={l.area} padding="sm">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-body font-bold text-app">{AREA_LABEL[l.area] || l.area}</p>
-                    <p className="text-caption text-muted">soglia {fmtVal(l.soglia, l.points[0]?.unita || 'reps')}{l.area === 'spinta' || l.area === 'tirata' ? ', meno sui gradini alti' : ''}</p>
+                    <p className="text-caption text-muted">soglia {fmtVal(l.soglia, l.points[0]?.unita || 'reps')}{SOGLIE_A_SCALARE.has(l.area) ? ', meno sui gradini alti' : ''}</p>
                   </div>
                   <div className="mb-2">
                     {l.points.map((p) => (

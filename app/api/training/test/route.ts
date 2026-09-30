@@ -11,7 +11,7 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
-const AREE_LADDER = new Set(['spinta', 'tirata', 'core', 'lombari']);
+const AREE_LADDER = new Set(['spinta', 'tirata', 'core', 'lombari', 'squat', 'affondi', 'rdl', 'bridge']);
 
 /**
  * POST { test_id, valore }             → salva un risultato test (salvataggio incrementale,
