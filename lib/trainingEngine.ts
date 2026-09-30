@@ -59,6 +59,12 @@ export function isFaticaAlta(c: CheckinSnapshot | null): boolean {
     || (c.sonno !== null && c.sonno < REGOLE.scaricoSonnoMinOre);
 }
 
+/** Oggi la testa è altrove? (check-in: stato mentale ≤ 3 — non è fatica, ma la seduta va semplice) */
+export function isTestaAltrove(c: CheckinSnapshot | null): boolean {
+  if (!c) return false;
+  return c.mentale !== null && c.mentale <= REGOLE.scaricoMentaleMax;
+}
+
 /** Periodo prolungato con poco sonno/recupero? (medie ultimi 7 giorni) */
 export function isPeriodoScarso(media: { sonno: number; recupero: number; giorni: number } | null): boolean {
   if (!media || media.giorni < 3) return false; // servono almeno 3 check-in per parlare di periodo

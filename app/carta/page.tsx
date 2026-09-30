@@ -9,6 +9,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { ArrowDownRight, ArrowUpRight, Download, Minus } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Chip } from '@/components/ui';
 import type { Punta, Punta360, RomboMente } from '@/lib/carta';
+import type { Incrocio } from '@/lib/incroci';
 
 /**
  * La Carta del Giocatore — il documento personale che resta a fine percorso.
@@ -35,6 +36,7 @@ interface Carta360 {
   recupero: Punta;
   corpo: { dettaglio: RomboCorpoPunta[]; base: RomboCorpoPunta[]; livello: string; testFatti: number } | null;
   tre60: Punta360[];
+  incroci?: Incrocio[]; // frasi vere dai suoi dati (max 2), dove testa e corpo si toccano
 }
 
 type Vista = 'mente' | 'corpo' | '360';
@@ -269,6 +271,19 @@ export default function CartaPage() {
             )}
             {c360.mente.punte.some((p) => p.tendenza) && (
               <p className="text-caption text-faint px-1 flex items-center gap-2"><Badge tone="neutral">7 giorni</Badge> le frecce dicono se gli ultimi 7 giorni vanno meglio o peggio delle ultime 4 settimane.</p>
+            )}
+
+            {/* Gli incroci: dove testa e corpo si toccano, solo con abbastanza dati e una differenza netta */}
+            {(c360.incroci?.length ?? 0) > 0 && (
+              <Card variant="accent">
+                <p className="text-overline font-semibold uppercase tracking-wider text-forest-300 mb-2">Cosa dicono i tuoi dati</p>
+                <ul className="space-y-2">
+                  {c360.incroci!.map((x) => (
+                    <li key={x.key} className="text-body text-app leading-relaxed">{x.frase}</li>
+                  ))}
+                </ul>
+                <p className="text-caption text-muted mt-2">Calcolato dai tuoi check-in, azioni, pratiche e sedute delle ultime 8 settimane. Il Coach li conosce.</p>
+              </Card>
             )}
           </section>
         )}

@@ -79,7 +79,7 @@ Le stesse frasi entrano nel contesto del Coach (blocco "Campo": sedute fatte/sal
 del carico, zone con fastidio) e nel prompt del preparatore (stato mentale nel check-in e nel flag di fatica,
 settimana del percorso nel messaggio).
 
-## Cosa va costruito (stato al 29/9 notte: 1-4 fatti nella PR della Carta, 5 da fare)
+## Cosa va costruito (stato al 29/9 notte: 1-4 nella PR #119, 5 nella PR successiva — tutto fatto)
 
 1. **Tracking del Reset** (NUOVO): `POST /api/reset/complete { mode: 'rituale' | 'rapido', durataSec }` scrive
    una riga in `onboarding_events` (`reset_completed`, server-side, niente migration) e aggiorna
@@ -93,4 +93,17 @@ settimana del percorso nel messaggio).
 4. **`lib/carta.ts`** (pura, testabile): `romboMente(input)`, `puntaRecupero(input)`, `rombo360(...)`, con le
    finestre 4 settimane / 7 giorni e la partenza; `GET /api/carta` che carica e calcola; pagina `/carta`
    con le tre viste, i livelli in testa, l'etichetta, e sotto la parte che c'è già (mantra, mappa, firma, Protocollo).
-5. Seconda PR: incroci + blocco Campo nel Coach + mente nel planner.
+5. Seconda PR: `lib/incroci.ts` (puro) + `lib/cartaServer.ts` (`loadIncroci`, `loadCampoPerCoach`) nel contesto del Coach,
+   `isTestaAltrove` + `percorsoMentaleTesto` nei prompt del planner v1/v2 e della chat del preparatore.
+
+## Gli incroci — come sono calcolati (29/9)
+
+Finestra 8 settimane. Ogni incrocio esce solo con abbastanza dati (≥ 5 giorni per lato; ≥ 3 sedute dure; ≥ 2 settimane
+per lato) e solo nel verso che serve al ragazzo: il verso opposto sarebbe rumore. Soglie da tarare sui dati.
+
+| Incrocio | Confronto | Esce se |
+|---|---|---|
+| sonno vs lucidità | mattine con < 6 h contro ≥ 7 h: media dello stato mentale | ≥ 1.5 punti più basso con poco sonno |
+| seduta dura vs azioni | giorno dopo una seduta con voto ≥ 8 contro gli altri giorni: azioni spuntate / segnate | ≥ 20 punti in meno |
+| carico vs pratiche | settimane con carico ≥ 1.15 × mediana contro le altre: pratiche fatte / giorni | ≥ 20 punti in meno |
+| testa vs sedute | giorni con mentale ≥ 7 contro ≤ 5: giorni con una seduta fatta | ≥ 25 punti in più da lucido |
