@@ -217,7 +217,7 @@ gambe, glute bridge con pausa, hip thrust a una gamba spalle sul rialzo, B-skip,
 finale: 14 esercizi, tutti senza video (da registrare) —
 `docs/training-video-da-registrare.md`.
 
-## Nel codice (dopo la conferma) — stato al 30/9: passi 1 e 2 fatti, 3 da fare
+## Nel codice (dopo la conferma) — stato al 30/9: tutti e tre i passi fatti
 
 Passo 1 (30/9): aree `squat` / `affondi` / `rdl` / `bridge` (`AreaGambe`, `AREE_GAMBE`) con 27 esercizi v1
 (`squat-1..6`, `aff-1..7`, `rdl-1..6`, `bridge-1..8`; `lomb-6` è diventato `bridge` gradino 3), test base
@@ -240,6 +240,12 @@ serie/breve/Fmax = un posto a settimana, EMOM un altro; mai un `pb-*` il giorno 
 scarico il bridge si ferma al gradino 5; `CONVIVENZE_VIETATE` ha Fmax + pliometria intensiva. Non ancora nel codice: il
 budget di giornate "gambe intensive", le isometrie come formato del server (restano i blocchi Fascia Forza di Ste), il
 circuito, la proposta automatica del test dopo due EMOM facili. Test in `tests/trainingParteBassa.test.ts`.
+
+Passo 3 (30/9, `lib/trainingLivelli.ts`): `livelloScaleGambe(results)` = per ogni catena l'ultimo gradino completato; con
+almeno `SCALE_GAMBE_MIN_CATENE = 2` catene testate, A se due sono al gradino `SCALE_GAMBE_GRADINO_A = 4` o più, PRO se
+due al `SCALE_GAMBE_GRADINO_PRO = 6` o più, altrimenti B. Entra come UN voto nella mediana bassa di `livelloQualita`
+per `forza-parte-bassa`, accanto ai test base delle gambe (già nella punta Gambe dal passo 1), ai massimali, alle tenute
+e ai salti. Con meno di due catene testate non vota. Test in `tests/scalaGambe.test.ts`.
 
 1. Catene nel catalogo v1 (`lib/trainingCatalog.ts`): aree `squat`, `affondi`, `rdl`, `bridge` con gradini e
    soglie (`sogliaGradino`), quattro test base, `LADDER_AREE` estesa; `lomb-6` spostata.
