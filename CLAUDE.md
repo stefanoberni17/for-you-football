@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 028 (27/9); la 029 (presenza nel check-in) è da applicare. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 029 (30/9). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -855,7 +855,7 @@ La memoria persistente del Coach si basa su:
 - On skip → persiste `ritualSkipped = oggi` (sopprime anche il Reset) + `checkinDone = true`
 
 ### `DailyCheckinModal.tsx`
-- **1 sola schermata** (non più 4 step): 5 slider in colonna — fisico (0-10), sonno (4-12h, step 0.5), recupero (0-10), mentale (0-10), **presente ieri** (0-10, dal 29/9: "Quanto sei stato presente ieri durante la giornata?", colonna `presence_yesterday`, migration 029; `/api/checkin` la salva fail-soft se la colonna manca)
+- **1 sola schermata** (non più 4 step): 5 slider in colonna — fisico (0-10), sonno (4-12h, step 0.5), recupero (0-10), mentale (0-10), **presente ieri** (0-10, dal 29/9: "Quanto sei stato presente ieri durante la giornata?", colonna `presence_yesterday`, migration 029 applicata il 30/9; `/api/checkin` la salva fail-soft se la colonna manca)
 - **Prefill**: fisico 5, sonno 7h, recupero 5, mentale 5 — valore sempre visibile (mai "—")
 - Ogni slider: emoji + label + "N/10 — descrizione" color-coded
 - "Salva e continua →" → POST `/api/checkin` → onComplete (→ fase Reset)
@@ -1106,7 +1106,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `026_session_feedback.sql` applicata su Supabase (Ste, 24/9)
 - [x] Migration `027_client_boundary.sql` applicata su Supabase (Ste, 25/9)
 - [x] Migration `028_account_soft_delete.sql` applicata su Supabase (Ste, 27/9)
-- [ ] Migration `029_checkin_presenza.sql` da applicare su Supabase (colonna `daily_checkin.presence_yesterday`: finché manca il check-in si salva senza e la punta Presenza usa solo il Reset)
+- [x] Migration `029_checkin_presenza.sql` applicata su Supabase (Ste, 30/9): la punta Presenza legge anche "quanto sei stato presente ieri" dal check-in
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
