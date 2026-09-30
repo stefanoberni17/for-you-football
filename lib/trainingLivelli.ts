@@ -12,9 +12,9 @@
  * aprono con un A nei salti anche se alle trazioni sei B), al validatore (dose per livello) e al
  * ri-test mirato (quali test rifare quando una famiglia ha finito i codici del livello).
  */
-import { ROMBO_PUNTE, testById } from './trainingCatalog';
+import { AREE_GAMBE, ROMBO_PUNTE, testById } from './trainingCatalog';
 import { LIVELLO_ORDINE, type LivelloMinV2, type QualitaV2 } from './trainingCatalogV2';
-import type { TestResultRow } from './trainingEngine';
+import { ladderForArea, type TestResultRow } from './trainingEngine';
 import { TESTS_V2 } from './trainingTestsV2';
 
 export type LivelliQualita = Partial<Record<QualitaV2, LivelloMinV2>>;
@@ -53,6 +53,30 @@ export function testIdsPerQualita(q: QualitaV2): string[] {
   return ROMBO_PUNTE.filter((p) => punte.includes(p.key)).flatMap((p) => p.testIds);
 }
 
+/** Scala gambe (docs/training-parte-bassa.md, passo 3): gradino ≥ 4 su almeno due catene = A, ≥ 6 su due = PRO. [proposta] */
+export const SCALE_GAMBE_MIN_CATENE = 2;
+export const SCALE_GAMBE_GRADINO_A = 4;
+export const SCALE_GAMBE_GRADINO_PRO = 6;
+
+/**
+ * Livello delle gambe dalle quattro scale a corpo libero: per ogni catena l'ultimo gradino COMPLETATO
+ * (sopra soglia); con almeno due catene testate, A se due sono al gradino 4 o più, PRO se due sono al 6 o
+ * più, altrimenti B. Con meno di due catene testate non vota (null): decidono massimali, tenute e salti.
+ */
+export function livelloScaleGambe(results: TestResultRow[]): { livello: LivelloMinV2; gradini: Partial<Record<string, number>> } | null {
+  const gradini: Partial<Record<string, number>> = {};
+  for (const area of AREE_GAMBE) {
+    const l = ladderForArea(results, area);
+    if (!l) continue;
+    gradini[area] = l.amrap?.gradino ?? 0; // 0 = testata ma nessun gradino sopra soglia
+  }
+  const testate = Object.keys(gradini).length;
+  if (testate < SCALE_GAMBE_MIN_CATENE) return null;
+  const almeno = (g: number) => Object.values(gradini).filter((x) => (x ?? 0) >= g).length;
+  const livello: LivelloMinV2 = almeno(SCALE_GAMBE_GRADINO_PRO) >= SCALE_GAMBE_MIN_CATENE ? 'PRO' : almeno(SCALE_GAMBE_GRADINO_A) >= SCALE_GAMBE_MIN_CATENE ? 'A' : 'B';
+  return { livello, gradini };
+}
+
 /** Livello di una qualità: mediana bassa degli ultimi risultati dei suoi test; senza test → globale. */
 export function livelloQualita(results: TestResultRow[], q: QualitaV2, globale: LivelloMinV2): LivelloMinV2 {
   const ids = testIdsPerQualita(q);
@@ -64,6 +88,10 @@ export function livelloQualita(results: TestResultRow[], q: QualitaV2, globale: 
     if (l) voti.push(LIVELLO_ORDINE[l]);
   }
   if (q === 'forza-parte-alta') voti.push(LIVELLO_ORDINE[globale]); // l'AMRAP conta come voto (Ste: "AMRAP più scale")
+  if (q === 'forza-parte-bassa') { // le scale delle gambe contano come voto (30/9): gradino ≥ 4 su due catene = A, ≥ 6 = PRO
+    const scale = livelloScaleGambe(results);
+    if (scale) voti.push(LIVELLO_ORDINE[scale.livello]);
+  }
   if (!voti.length) return globale;
   voti.sort((a, b) => a - b);
   // Mediana bassa; con un solo test al massimo un gradino sopra il globale (un ankle stiffness "pro" da solo non fa un PRO)

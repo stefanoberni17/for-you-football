@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { AREE_GAMBE, BOUNDS, catenaByArea, ESERCIZI, esercizioById, ROMBO_PUNTE, TESTS, testById, type AreaForza } from '@/lib/trainingCatalog';
 import { LADDER_AREE, LADDER_SOGLIE, ladderForArea, placementFromResults, SOGLIE_GAMBE, sogliaGradino, type TestResultRow } from '@/lib/trainingEngine';
 import { distrettoEsercizio } from '@/lib/trainingSquilibri';
+import { livelloQualita, livelloScaleGambe } from '@/lib/trainingLivelli';
 
 const r = (test_id: string, valore: number): TestResultRow => ({ test_id, valore, livello_calcolato: 'base', punteggio_calcolato: 0 });
 
@@ -83,5 +84,28 @@ describe('ladderForArea sulle gambe', () => {
     expect(g.bridge).toBe(2); // gradino di lavoro = min(esecuzione, amrap + 1)
     const g2 = placementFromResults([r('test-rdl', 22)]);
     expect(g2.rdl).toBe(2); // solo il test base: entryMap intermedio
+  });
+});
+
+describe('livello gambe dalle scale (passo 3)', () => {
+  const rr = (test_id: string, valore: number, livello_calcolato = 'base'): TestResultRow => ({ test_id, valore, livello_calcolato, punteggio_calcolato: 0 });
+  it('con meno di due catene testate non vota', () => {
+    expect(livelloScaleGambe([rr('test-squat', 30)])).toBeNull();
+  });
+  it('gradino 4 o più su due catene = A, 6 o più su due = PRO, altrimenti B', () => {
+    const b = [rr('skill:squat-2', 18), rr('test-squat', 30), rr('test-affondi', 20)];
+    expect(livelloScaleGambe(b)?.livello).toBe('B');
+    const a = [...b, rr('skill:squat-4', 9), rr('skill:squat-3', 12), rr('skill:aff-4', 13), rr('skill:aff-3', 14), rr('skill:aff-2', 16)];
+    expect(livelloScaleGambe(a)?.livello).toBe('A');
+    expect(livelloScaleGambe(a)?.gradini).toMatchObject({ squat: 4, affondi: 4 });
+    const pro = [...a, rr('skill:squat-6', 6), rr('skill:squat-5', 6), rr('skill:aff-7', 5), rr('skill:aff-6', 9), rr('skill:aff-5', 11)];
+    expect(livelloScaleGambe(pro)?.livello).toBe('PRO');
+  });
+  it('le scale entrano nella mediana del livello gambe insieme ai test della punta', () => {
+    const a = [rr('skill:squat-4', 9), rr('skill:squat-3', 12), rr('skill:squat-2', 18), rr('test-squat', 30, 'intermedio'), rr('skill:aff-4', 13), rr('skill:aff-3', 14), rr('skill:aff-2', 16), rr('test-affondi', 20, 'intermedio')];
+    // due test base "intermedio" (B) + il voto delle scale (A): mediana bassa di [B, B, A] = B; con un massimale A → [B, B, A, A] = B; con due → A
+    expect(livelloQualita(a, 'forza-parte-bassa', 'B')).toBe('B');
+    expect(livelloQualita([...a, rr('t2-lift-squat', 120, 'avanzato'), rr('t2-lift-hip-thrust', 150, 'avanzato')], 'forza-parte-bassa', 'B')).toBe('A');
+    expect(livelloQualita([rr('skill:squat-4', 9), rr('skill:squat-3', 12), rr('skill:squat-2', 18), rr('test-squat', 30, 'avanzato'), rr('skill:aff-4', 13), rr('skill:aff-3', 14), rr('skill:aff-2', 16), rr('test-affondi', 20, 'avanzato')], 'forza-parte-bassa', 'B')).toBe('A');
   });
 });
