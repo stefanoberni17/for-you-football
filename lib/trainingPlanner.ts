@@ -587,7 +587,7 @@ export async function generateWeekPlan(
 export async function updateTrainingMemory(
   userId: string,
   nuovoTesto: string,
-  fonte: 'richiesta piano' | 'chat' | 'segnalazione dolore'
+  fonte: 'richiesta piano' | 'chat' | 'segnalazione dolore' | 'aspetto saltato spesso'
 ): Promise<void> {
   try {
     if (!nuovoTesto.trim()) return;

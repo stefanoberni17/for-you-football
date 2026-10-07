@@ -17,6 +17,8 @@ export const SERVER_EVENTS = [
   'checkout_started',
   'payment_completed',
   'push_enabled',
+  'training_aspetto_tenuto', // strato mese (7/10): "sì, tienilo" a un aspetto sempre saltato (meta.focus)
+  'training_aspetto_tolto',  // "no, toglilo": l'obiettivo esce dal setup (meta.focus)
 ] as const;
 
 /** Eventi che il client può loggare via POST /api/onboarding/event (whitelist). */

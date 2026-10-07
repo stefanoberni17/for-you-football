@@ -13,7 +13,7 @@ import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
-import { statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
+import { FOCUS_OPZIONI, statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Sheet, Textarea } from '@/components/ui';
 
@@ -58,7 +58,11 @@ export interface TrainingState {
   rigenerazioniRimaste?: number | null;
   // Squilibri calcolati dai dati (dx/sx, push/pull, piede debole): righe già in linguaggio da atleta
   squilibri?: { righe: string[]; latoDebole: 'dx' | 'sx' | null; latoDeboleAlto?: 'dx' | 'sx' | null; pushPullDebole: 'push' | 'pull' | null; testPerLatoFatti: number };
+  // Strato mese (7/10): settimane fatte per obiettivo, priorità della settimana, aspetti sempre saltati da chiedere
+  mese?: { settimane: number; righe: string[]; priorita: string[]; riordinato: boolean; daChiedere: { focus: string; label: string; pianificate: number }[] } | null;
 }
+
+const FOCUS_LABEL: Record<string, string> = Object.fromEntries(FOCUS_OPZIONI.map((f) => [f.id, f.label]));
 
 type Vista = 'oggi' | 'settimana' | 'card';
 const VISTE: { id: Vista; label: string }[] = [{ id: 'oggi', label: 'Oggi' }, { id: 'settimana', label: 'Settimana' }, { id: 'card', label: 'Card' }];
@@ -190,6 +194,17 @@ export default function AllenamentoHub() {
     const d = await res.json().catch(() => ({}));
     if (res.ok) { setPosticipoMsg(`Spostata a ${DAY_SHORT_NAMES[d.giorno]}`); await load(); }
     else setPosticipoMsg(d.error || 'Non si può spostare');
+  };
+
+  // Strato mese: "vuoi davvero allenare X?" — "tienilo" tace la domanda per un mese, "toglilo" lo leva dagli obiettivi del setup
+  const [meseBusy, setMeseBusy] = useState<string | null>(null);
+  const [meseMotivo, setMeseMotivo] = useState<Record<string, string>>({});
+  const rispondiMese = async (focus: string, risposta: 'tieni' | 'togli') => {
+    setMeseBusy(focus);
+    try {
+      await authFetch('/api/training/mese', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ focus, risposta, motivo: meseMotivo[focus] || '' }) });
+      await load();
+    } finally { setMeseBusy(null); }
   };
 
   const sbloccaDolore = async () => {
@@ -649,6 +664,32 @@ export default function AllenamentoHub() {
                 {state.zoneTese!.map((z) => <li key={z.zona} className="text-body-sm text-muted leading-snug">· {z.zona}: {z.volte} volte nelle ultime settimane{z.fastidio ? `, ${z.fastidio} con fastidio` : ''}</li>)}
               </ul>
               {state.zoneTese!.some((z) => z.fastidio >= 2) && <p className="text-body-sm text-warning mt-1.5 leading-relaxed">Un fastidio che torna: parlane con il preparatore o con un medico. L&apos;app non fa diagnosi.</p>}
+            </Card>
+          )}
+          {/* Strato mese (7/10): cosa è stato fatto davvero nelle ultime settimane, cosa viene prima questa settimana */}
+          {state.mese && state.mese.righe.length > 0 && (
+            <Card variant="raised" padding="sm" className="mt-3">
+              <p className="text-body-sm font-semibold text-app flex items-center gap-1.5"><CalendarClock size={15} className="text-forest-400" aria-hidden /> Questo mese</p>
+              <ul className="mt-1.5 space-y-1">
+                {state.mese.righe.map((r) => <li key={r} className="text-body-sm text-muted leading-snug">· {r}</li>)}
+              </ul>
+              {state.mese.riordinato && state.mese.priorita.length > 1 && (
+                <p className="text-body-sm text-muted mt-1.5 leading-relaxed">Questa settimana viene prima: {state.mese.priorita.slice(0, 2).map((f) => FOCUS_LABEL[f] ?? f).join(', poi ')}. Il resto si spalma sulle settimane dopo.</p>
+              )}
+              {state.mese.daChiedere.map((d) => (
+                <div key={d.focus} className="mt-2.5 pt-2.5 border-t border-divider">
+                  <p className="text-body-sm text-app leading-snug mb-2">{d.label}: in programma {d.pianificate} settimane, mai fatta. Vuoi davvero allenarla?</p>
+                  <input
+                    type="text" maxLength={300} value={meseMotivo[d.focus] ?? ''} onChange={(e) => setMeseMotivo((m) => ({ ...m, [d.focus]: e.target.value }))}
+                    placeholder="Perché la salti? (facoltativo, lo legge il preparatore)"
+                    className="w-full min-h-[48px] rounded-btn bg-surface-2 border border-divider px-3 text-body text-app placeholder:text-faint mb-2 focus:outline-none focus:border-forest-400"
+                  />
+                  <div className="flex gap-2">
+                    <Button variant="secondary" size="sm" loading={meseBusy === d.focus} onClick={() => rispondiMese(d.focus, 'tieni')}>Sì, tienila</Button>
+                    <Button variant="ghost" size="sm" disabled={meseBusy === d.focus} onClick={() => rispondiMese(d.focus, 'togli')}>No, toglila</Button>
+                  </div>
+                </div>
+              ))}
             </Card>
           )}
           {/* Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): il piano ne tiene conto */}
