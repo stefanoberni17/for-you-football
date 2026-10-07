@@ -112,6 +112,52 @@ describe('riparaPiano: il piano di Claude si aggiusta, non si butta (Ste, 7/10)'
   });
 });
 
+describe('sedute da recuperare (il caso di Ste del 7/10: "manca la seduta da recuperare" → piano base)', () => {
+  const ROLLING = 'fascia-training-rolling-and-fascia-adhesion';
+  const recupero = { titolo: 'Parte alta esplosiva e salti', blocchi: [ROLLING, PA_EMOM_ID, 'pliometria-b1-short'], giorno: 5 };
+
+  it('la giornata di Claude con lo stesso EMOM diventa il recupero completo; l\'altro EMOM prende un altro formato', () => {
+    const ctx = ctxBase({ daRecuperare: [recupero], obiettivi: ['parte_alta'] } as Partial<ContextV2>, { oggiDow: 3 });
+    const p: PianoLLM = { sedute: [{ giorno: 3, blocchi: [ROLLING, PA_EMOM_ID, 'rapidita-velocita-b1-short'] }, { giorno: 7, blocchi: [APERTURA, PA_EMOM_ID] }] };
+    const { piano, riparazioni } = riparaPiano(p, ctx, { nRichieste: null, giorniRimasti: [3, 4, 5, 6, 7] });
+    expect(piano.sedute.map((s) => s.giorno)).toEqual([3, 7]);
+    for (const id of recupero.blocchi) expect(piano.sedute[0].blocchi).toContain(id);
+    expect(piano.sedute[1].blocchi).not.toContain(PA_EMOM_ID); // l'EMOM è del recupero: l'altra giornata prende un altro formato
+    expect(riparazioni.join(' ')).toContain('completata con i blocchi della seduta da recuperare');
+    expect(expandPiano(piano, ctx).errors).toEqual([]);
+  });
+
+  it('se manca del tutto, entra nel primo giorno libero buono', () => {
+    const ctx = ctxBase({ daRecuperare: [recupero] } as Partial<ContextV2>, { oggiDow: 3, matchDays: [6] });
+    const p: PianoLLM = { sedute: [{ giorno: 3, blocchi: [APERTURA, 'forza-parte-bassa-b2'] }] };
+    const { piano, riparazioni } = riparaPiano(p, ctx, { nRichieste: null, giorniRimasti: [3, 4, 5, 6, 7] });
+    expect(piano.sedute.map((s) => s.giorno)).toEqual([3, 4]); // venerdì è il giorno prima della partita, domenica quello dopo
+    expect(piano.sedute[1].blocchi).toEqual(recupero.blocchi);
+    expect(riparazioni.join(' ')).toContain('aggiunta la seduta da recuperare');
+    expect(expandPiano(piano, ctx).errors).toEqual([]);
+  });
+
+  it('una seduta simile (stesso blocco principale) viene completata invece di aggiungerne un\'altra', () => {
+    const ctx = ctxBase({ daRecuperare: [recupero] } as Partial<ContextV2>, { oggiDow: 3 });
+    const p: PianoLLM = { sedute: [{ giorno: 5, blocchi: [APERTURA, 'pliometria-b1-short'] }] };
+    const { piano } = riparaPiano(p, ctx, { nRichieste: null, giorniRimasti: [3, 4, 5, 6, 7] });
+    expect(piano.sedute.length).toBe(1);
+    expect(piano.sedute[0].blocchi).toEqual([APERTURA, 'pliometria-b1-short', ROLLING, PA_EMOM_ID]);
+    expect(expandPiano(piano, ctx).errors).toEqual([]);
+  });
+
+  it('expandPiano: il recupero conta anche con un blocco in più (apertura), e il piano base non ripete il suo formato', () => {
+    const ctx = ctxBase({ daRecuperare: [recupero], obiettivi: ['parte_alta'], maxDurata: 60 } as Partial<ContextV2>, { oggiDow: 3 });
+    const { errors } = expandPiano({ sedute: [{ giorno: 5, blocchi: [APERTURA, ...recupero.blocchi] }] }, ctx);
+    expect(errors.filter((e) => e.includes('manca la seduta da recuperare'))).toEqual([]);
+    const { plan, violazioni } = fallbackPianoBlocchi(ctx);
+    expect(violazioni).toEqual([]);
+    const emom = plan.sedute.filter((s) => (s.blocchi || []).some((b) => b.id === PA_EMOM_ID));
+    expect(emom.length).toBe(1);
+    expect(plan.sedute.some((s) => s.recupero)).toBe(true);
+  });
+});
+
 describe('piano base ibrido: le giornate buone di Claude restano', () => {
   it('giornoDellaViolazione legge "seduta del giorno N" e "seduta di Giovedì"', () => {
     expect(giornoDellaViolazione('seduta del giorno 3: ~99\' oltre il massimo')).toBe(3);

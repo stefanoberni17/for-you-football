@@ -33,8 +33,8 @@ const gruppoParteAlta = (id: string) => (id === PA_SERIE_SHORT_ID ? PA_SERIE_ID 
 const obbligatorio = (b: Blocco) => isApertura(b) || b.id === RISC_VELOCITA_ID;
 
 /**
- * Riparazioni meccaniche sul piano proposto da Claude, nell'ordine: id non in libreria → giorni → formati
- * doppi → numero di giornate → tetto fisico → durata. Ritorna il piano corretto e le righe per l'atleta.
+ * Riparazioni meccaniche sul piano proposto da Claude, nell'ordine: id non in libreria → giorni → sedute da
+ * recuperare → formati doppi → numero di giornate → tetto fisico → durata. Ritorna il piano corretto e le righe per l'atleta.
  */
 export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione): { piano: PianoLLM; riparazioni: string[] } {
   const note: string[] = [];
@@ -44,7 +44,8 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
   const matchDays = ctx.base.matchDays;
   const blocco = (id: string) => disp.get(id)!;
   const isFisica = (s: SedutaLLM) => s.blocchi.some((id) => QUALITA_FISICHE.has(blocco(id).qualita));
-  const isRecupero = (s: SedutaLLM) => { const k = [...s.blocchi].sort().join('|'); return ctx.daRecuperare.some((r) => [...r.blocchi].sort().join('|') === k); };
+  const contiene = (s: SedutaLLM, r: { blocchi: string[] }) => r.blocchi.every((id) => s.blocchi.includes(id));
+  const isRecupero = (s: SedutaLLM) => ctx.daRecuperare.some((r) => contiene(s, r));
   const durata = (s: SedutaLLM) => Math.round(s.blocchi.reduce((a, id) => a + blocco(id).durataMin * (s.leggeri?.includes(id) ? 0.85 : 1), 0) * (isDeload ? 0.8 : 1));
 
   // 1. Id non in libreria (o doppi nella stessa giornata): via; una giornata rimasta vuota sparisce
@@ -77,11 +78,43 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
   }
   sedute = sedute.filter((s) => s.giorno > 0).sort((a, b) => a.giorno - b.giorno);
 
-  // 3. Formati sui gradini (pa-* / pb-*) una volta a settimana: il doppione diventa il prossimo formato libero, o esce
+  // 2b. Sedute da recuperare (piano automatico): la seduta saltata la settimana scorsa va riproposta con tutti i suoi
+  //     blocchi. Se Claude ne ha messa una simile la completa; se manca, entra nel primo giorno libero o al posto della
+  //     giornata leggera più in là (7/10: "manca la seduta da recuperare" per tre volte → piano base)
+  const attesi = ctx.base.painHold || ctx.vincoli.recuperiFacoltativi ? []
+    : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disp.has(id)) && r.blocchi.reduce((a, id) => a + blocco(id).durataMin, 0) <= maxDurata);
+  for (const r of attesi) {
+    if (sedute.some((s) => contiene(s, r))) continue;
+    const fisica = r.blocchi.some((id) => QUALITA_FISICHE.has(blocco(id).qualita));
+    const giornoBuono = (d: number) => ammesso(d) && (!fisica || ((giorniAllaPartita(d, matchDays) ?? 9) > 1 && !dopoPartita.has(d)));
+    // una seduta con almeno un blocco principale in comune, in un giorno buono, si completa se poi sta nel tempo
+    const simile = sedute.find((s) => !isRecupero(s) && giornoBuono(s.giorno) && r.blocchi.some((id) => s.blocchi.includes(id) && !obbligatorio(blocco(id))));
+    if (simile) {
+      const completata = { ...simile, blocchi: [...simile.blocchi, ...r.blocchi.filter((id) => !simile.blocchi.includes(id))] };
+      if (durata(completata) <= maxDurata) { simile.blocchi = completata.blocchi; simile.titolo = r.titolo; note.push(`${giornoNome(simile.giorno)}: completata con i blocchi della seduta da recuperare "${r.titolo}"`); continue; }
+    }
+    const occ = new Set(sedute.map((s) => s.giorno));
+    let giorno = o.giorniRimasti.find((d) => giornoBuono(d) && !occ.has(d));
+    if (giorno === undefined) {
+      const vittima = [...sedute].reverse().find((s) => !isRecupero(s) && !isFisica(s) && giornoBuono(s.giorno))
+        ?? [...sedute].reverse().find((s) => !isRecupero(s) && giornoBuono(s.giorno));
+      if (!vittima) continue; // nessun posto: lo dirà il validatore
+      giorno = vittima.giorno;
+      sedute = sedute.filter((s) => s !== vittima);
+      note.push(`${giornoNome(giorno)}: al posto della giornata proposta c'è la seduta da recuperare "${r.titolo}" (saltata la settimana scorsa)`);
+    } else note.push(`${giornoNome(giorno)}: aggiunta la seduta da recuperare "${r.titolo}" (saltata la settimana scorsa)`);
+    sedute.push({ giorno, titolo: r.titolo, blocchi: [...r.blocchi], spiegazione: 'Recupero della seduta saltata la settimana scorsa.' });
+  }
+  sedute.sort((a, b) => a.giorno - b.giorno);
+
+  // 3. Formati sui gradini (pa-* / pb-*) una volta a settimana: il doppione diventa il prossimo formato libero, o esce.
+  //    I recuperi contano per primi e non si toccano
   const usatiPa = new Set<string>();
   const usatiPb = new Set<string>();
   for (const s of ctx.sedutePassate ?? []) for (const b of s.blocchi ?? []) { if (isParteAlta(b.id)) usatiPa.add(gruppoParteAlta(b.id)); if (isParteBassa(b.id)) usatiPb.add(gruppoParteBassa(b.id)); }
+  for (const s of sedute.filter(isRecupero)) for (const id of s.blocchi) { if (isParteAlta(id)) usatiPa.add(gruppoParteAlta(id)); if (isParteBassa(id)) usatiPb.add(gruppoParteBassa(id)); }
   for (const s of sedute) {
+    if (isRecupero(s)) continue;
     const nuovi: string[] = [];
     for (const id of s.blocchi) {
       const pa = isParteAlta(id); const pb = isParteBassa(id);
@@ -132,7 +165,7 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
 
   // 6. Durata: via i blocchi facoltativi dal più lungo (il principale e l'apertura restano), poi la versione breve del principale
   for (const s of sedute) {
-    if (durata(s) <= maxDurata) continue;
+    if (durata(s) <= maxDurata || isRecupero(s)) continue;
     const principale = s.blocchi.map(blocco).find((b) => !obbligatorio(b));
     const facoltativi = s.blocchi.filter((id) => id !== principale?.id && !obbligatorio(blocco(id))).sort((a, b) => blocco(b).durataMin - blocco(a).durataMin);
     const tolti: string[] = [];

@@ -345,6 +345,7 @@ function sostituzioniFormati(p: PianoLLM, ctx: ContextV2, f: FormatiServer): Map
     const blocchi = ids.map((id) => bloccoDi(ctx, id)).filter((b): b is Blocco => !!b && disponibili.has(b.id));
     const everfit = blocchi.filter(f.isEverfit);
     if (!everfit.length) continue;
+    if (ctx.daRecuperare.some((r) => r.blocchi.every((id) => ids.includes(id)))) continue; // seduta da recuperare: va riproposta uguale
     const mappa = new Map<string, string | null>();
     let haPa = blocchi.some((b) => f.is(b.id));
     // Il tempo si misura con la sola apertura (Ste, 28/9: "ne dedica una quasi interamente alla parte alta e riduce
@@ -354,7 +355,8 @@ function sostituzioniFormati(p: PianoLLM, ctx: ContextV2, f: FormatiServer): Map
     for (const b of everfit) {
       if (haPa) { mappa.set(b.id, null); continue; }
       const liberi = ordine.filter((x) => !usati.has(gruppo(x.id)));
-      const scelta = liberi.find((x) => apertura + x.durataMin <= maxDurata) ?? liberi[0] ?? ordine.find((x) => apertura + x.durataMin <= maxDurata) ?? ordine[0];
+      if (!liberi.length) continue; // tutti i formati già usati nella settimana: il blocco Everfit resta com'è (prima diventava un doppione)
+      const scelta = liberi.find((x) => apertura + x.durataMin <= maxDurata) ?? liberi[0];
       mappa.set(b.id, scelta.id);
       usati.add(gruppo(scelta.id));
       haPa = true;
@@ -409,8 +411,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     }
     if (blocchi.length === 0) { errors.push(`seduta del giorno ${s.giorno}: nessun blocco valido`); continue; }
     // Recupero di una seduta saltata: va riproposta UGUALE, la memoria non la tocca
-    const chiaveBlocchi = blocchi.map((b) => b.id).sort().join('|');
-    const recupero = ctx.daRecuperare.some((r) => [...r.blocchi].sort().join('|') === chiaveBlocchi);
+    // "Uguale" = con TUTTI i blocchi della seduta saltata; un'apertura o un blocco in più non la rendono un'altra seduta (7/10)
+    const recupero = ctx.daRecuperare.some((r) => r.blocchi.every((id) => blocchi.some((b) => b.id === id)));
     const noteMemoria = new Map<string, string>();
     // Parte alta dal server (Ste, 28/9): il blocco Everfit di forza parte alta lascia il posto alla seduta sui gradini
     const sostPa = sostParteAlta.get(Number(s.giorno));
@@ -626,8 +628,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const attesi = ctx.base.painHold || ctx.vincoli.recuperiFacoltativi ? []
     : ctx.daRecuperare.filter(riproponibile).slice(0, Math.min(ctx.maxSeduteFisiche, giorniLiberi.length));
   for (const r of attesi) {
-    const key = [...r.blocchi].sort().join('|');
-    if (!sedute.some((s) => (s.blocchi || []).map((b) => b.id).sort().join('|') === key))
+    if (!sedute.some((s) => r.blocchi.every((id) => (s.blocchi || []).some((b) => b.id === id))))
       errors.push(`manca la seduta da recuperare "${r.titolo}" (blocchi: ${r.blocchi.join(', ')}) — va riproposta uguale`);
   }
   // Sedute richieste dall'atleta (maschera): esattamente N giornate (fisiche + leggere), entro il totale della fase e i giorni ammessi
@@ -953,33 +954,42 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   const fascia = primo(ctx, 'fascia-prevenzione', /Foundations? 1\b/i);
   // Giornate costruite dagli OBIETTIVI (setup o maschera), non da una lista fissa; senza obiettivi la vecchia terna
   const rango = (x: Blocco) => x.livello === ctx.v2.livello ? 0 : x.livello === null ? 1 : 2; // prima i blocchi del livello dell'atleta
+  // Formati sui gradini (pa-*/pb-*) già nella settimana: una volta sola (7/10: il base metteva l'EMOM di parte alta in tre giornate)
+  const gruppoDi = (id: string) => (isParteAlta(id) ? FORMATI_PARTE_ALTA(ctx).gruppo(id) : isParteBassa(id) ? gruppoParteBassa(id) : null);
+  const usatiFormati = new Set<string>();
+  const registra = (ids: string[]) => { for (const id of ids) { const g = gruppoDi(id); if (g) usatiFormati.add(g); } };
+  for (const s of ctx.sedutePassate ?? []) registra((s.blocchi ?? []).map((x) => x.id));
   const perObiettivo = (f: FocusId): Blocco | undefined => {
     const pa = (x: Blocco) => (isParteAlta(x.id) || (isParteBassa(x.id) && x.id !== PB_RICHIAMO_ID) ? 0 : x.id === PB_RICHIAMO_ID ? 2 : 1); // sedute sulle scale prima dei blocchi Everfit; il richiamo mai come principale
-    const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id && ammessoDallaMemoria(ctx.memoria, x)).sort((x, y) =>
+    const libero = (x: Blocco) => { const g = gruppoDi(x.id); return g === null || !usatiFormati.has(g); };
+    const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id && ammessoDallaMemoria(ctx.memoria, x) && libero(x)).sort((x, y) =>
       (pa(x) - pa(y)) || (memoriaRank(ctx, x) - memoriaRank(ctx, y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
     return cand.find((x) => x.durataMin + (fascia?.durataMin ?? 0) <= maxDur) ?? cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
   };
-  const perOrdine = focusEspansi(ctx.obiettivi).map(perObiettivo).filter((x): x is Blocco => !!x);
+  const perOrdine = focusEspansi(ctx.obiettivi).filter((f) => perObiettivo(f));
   // Il primo obiettivo è il filo della settimana: o1, o2, o1, o3, o1, … (con 3 giornate fisiche il primo compare 2 volte)
   const dagliObiettivi = perOrdine.length > 1
     ? Array.from({ length: perOrdine.length * 2 - 1 }, (_, i) => (i % 2 === 0 ? perOrdine[0] : perOrdine[(i + 1) / 2]))
     : perOrdine;
-  const principali: (Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
-    ? [primo(ctx, 'tecnica-palleggi'), primo(ctx, 'tecnica-passaggi')]
-    : dagliObiettivi.length ? dagliObiettivi
-      : [primo(ctx, 'forza-parte-alta', /B1/), primo(ctx, 'pliometria-intensiva', /short/i), primo(ctx, 'velocita', /short/i)];
+  // Il blocco si sceglie al momento di assegnare la giornata, così i formati già usati dai recuperi o dalle giornate prima non tornano
+  const principali: (() => Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
+    ? [() => primo(ctx, 'tecnica-palleggi'), () => primo(ctx, 'tecnica-passaggi')]
+    : dagliObiettivi.length ? dagliObiettivi.map((f) => () => perObiettivo(f))
+      : [() => primo(ctx, 'forza-parte-alta', /B1/), () => primo(ctx, 'pliometria-intensiva', /short/i), () => primo(ctx, 'velocita', /short/i)];
   const disponibili = new Set(ctx.blocchi.map((x) => x.id));
   // Recuperi: solo se tutti i blocchi sono disponibili e la seduta sta nel tempo massimo richiesto
   const recuperi = (b.painHold || ctx.setup.fase === 'preparazione_squadra') ? []
     : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disponibili.has(id))
       && r.blocchi.reduce((a, id) => a + (bloccoDi(ctx, id)?.durataMin ?? 0), 0) <= maxDur).slice(0, ctx.maxSeduteFisiche);
+  for (const r of recuperi) registra(r.blocchi);
   // Richiesta esplicita: prima gli obiettivi, i recuperi negli slot che avanzano; piano automatico: prima i recuperi
   const nObiettivi = ctx.vincoli.recuperiFacoltativi ? Math.min(principali.length, giorni.length) : 0;
   const recuperoPer = (i: number) => ctx.vincoli.recuperiFacoltativi ? (i >= nObiettivi ? recuperi[i - nObiettivi] : undefined) : recuperi[i];
   // Oltre il tetto fisico della fase le giornate sono LEGGERE: fascia + tecnica (o recupero), niente forza
   const leggero = primo(ctx, 'tecnica-palleggi') ?? primo(ctx, 'mobilita-recupero');
   const baseSeduta = (g: number, i: number, fisico: boolean): SedutaLLM => {
-    const p = fisico ? principali[i % Math.max(1, principali.length)] : leggero;
+    const p = fisico ? principali[i % Math.max(1, principali.length)]?.() : leggero;
+    if (p) registra([p.id]);
     const conFascia = fascia && p && p.id !== fascia.id && fascia.durataMin + p.durataMin <= maxDur;
     return {
       giorno: g, titolo: fisico ? 'Seduta base' : 'Giornata leggera', spiegazione: 'Piano base di sicurezza generato automaticamente.',
