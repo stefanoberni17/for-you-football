@@ -25,6 +25,7 @@ import { squilibriTesto } from './trainingSquilibri';
 import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgressione';
 import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { limaCarichi } from './trainingCarico';
+import { riparaPiano } from './trainingRiparazione';
 import { caricoMaxPct, FINESTRA_PARTITA, giorniAllaPartita, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
@@ -38,7 +39,37 @@ import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, rip
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.26-gambe-dalle-scale';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.27-ripara-non-rifiuta';
+/** Tentativi con Claude per piano (ognuno con gli errori del precedente nel messaggio). */
+export const PLANNER_TENTATIVI = 3;
+/** Un nuovo tentativo parte solo entro questo tempo dall'inizio: la route Vercel muore a 60 s e un piano salvato tardi non arriva a nessuno. */
+export const PLANNER_NUOVO_TENTATIVO_ENTRO_MS = 28_000;
+/** Tempo totale concesso alle chiamate a Claude (contesto, riparazione, piano base e salvataggio stanno nel resto dei 60 s). */
+export const PLANNER_TEMPO_MAX_MS = 50_000;
+/** Schema del piano per l'output strutturato: il JSON arriva sempre valido e completo (prima "output non era JSON valido" mandava al piano base). */
+export const PIANO_SCHEMA = {
+  type: 'object',
+  properties: {
+    sedute: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          giorno: { type: 'integer' },
+          titolo: { type: 'string' },
+          blocchi: { type: 'array', items: { type: 'string' } },
+          leggeri: { type: 'array', items: { type: 'string' } },
+          spiegazione: { type: 'string' },
+        },
+        required: ['giorno', 'titolo', 'blocchi', 'leggeri', 'spiegazione'],
+        additionalProperties: false,
+      },
+    },
+    messaggio: { type: 'string' },
+  },
+  required: ['sedute', 'messaggio'],
+  additionalProperties: false,
+} as const;
 /**
  * Modello del planner v2 (25/9, Ste: da Opus 5 a Opus 5.5 — stessa fascia, 20 % in meno per token).
  * Il piano è un problema di vincoli (durate, tetto del carico, obiettivi, finestre partita) dove il
@@ -248,8 +279,8 @@ async function loadDaRecuperare(userId: string): Promise<ContextV2['daRecuperare
 
 // ─── Espansione blocchi → sedute ────────────────────────────────────────────
 
-interface SedutaLLM { giorno: number; titolo?: string; blocchi: string[]; spiegazione?: string; leggeri?: string[] }
-interface PianoLLM { sedute: SedutaLLM[]; messaggio?: string }
+export interface SedutaLLM { giorno: number; titolo?: string; blocchi: string[]; spiegazione?: string; leggeri?: string[] }
+export interface PianoLLM { sedute: SedutaLLM[]; messaggio?: string }
 
 function tipoDaBlocchi(blocchi: Blocco[]): PlanSession['tipo'] {
   const q = new Set(blocchi.map((b) => b.qualita));
@@ -314,6 +345,7 @@ function sostituzioniFormati(p: PianoLLM, ctx: ContextV2, f: FormatiServer): Map
     const blocchi = ids.map((id) => bloccoDi(ctx, id)).filter((b): b is Blocco => !!b && disponibili.has(b.id));
     const everfit = blocchi.filter(f.isEverfit);
     if (!everfit.length) continue;
+    if (ctx.daRecuperare.some((r) => r.blocchi.every((id) => ids.includes(id)))) continue; // seduta da recuperare: va riproposta uguale
     const mappa = new Map<string, string | null>();
     let haPa = blocchi.some((b) => f.is(b.id));
     // Il tempo si misura con la sola apertura (Ste, 28/9: "ne dedica una quasi interamente alla parte alta e riduce
@@ -323,7 +355,8 @@ function sostituzioniFormati(p: PianoLLM, ctx: ContextV2, f: FormatiServer): Map
     for (const b of everfit) {
       if (haPa) { mappa.set(b.id, null); continue; }
       const liberi = ordine.filter((x) => !usati.has(gruppo(x.id)));
-      const scelta = liberi.find((x) => apertura + x.durataMin <= maxDurata) ?? liberi[0] ?? ordine.find((x) => apertura + x.durataMin <= maxDurata) ?? ordine[0];
+      if (!liberi.length) continue; // tutti i formati già usati nella settimana: il blocco Everfit resta com'è (prima diventava un doppione)
+      const scelta = liberi.find((x) => apertura + x.durataMin <= maxDurata) ?? liberi[0];
       mappa.set(b.id, scelta.id);
       usati.add(gruppo(scelta.id));
       haPa = true;
@@ -378,8 +411,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     }
     if (blocchi.length === 0) { errors.push(`seduta del giorno ${s.giorno}: nessun blocco valido`); continue; }
     // Recupero di una seduta saltata: va riproposta UGUALE, la memoria non la tocca
-    const chiaveBlocchi = blocchi.map((b) => b.id).sort().join('|');
-    const recupero = ctx.daRecuperare.some((r) => [...r.blocchi].sort().join('|') === chiaveBlocchi);
+    // "Uguale" = con TUTTI i blocchi della seduta saltata; un'apertura o un blocco in più non la rendono un'altra seduta (7/10)
+    const recupero = ctx.daRecuperare.some((r) => r.blocchi.every((id) => blocchi.some((b) => b.id === id)));
     const noteMemoria = new Map<string, string>();
     // Parte alta dal server (Ste, 28/9): il blocco Everfit di forza parte alta lascia il posto alla seduta sui gradini
     const sostPa = sostParteAlta.get(Number(s.giorno));
@@ -595,8 +628,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const attesi = ctx.base.painHold || ctx.vincoli.recuperiFacoltativi ? []
     : ctx.daRecuperare.filter(riproponibile).slice(0, Math.min(ctx.maxSeduteFisiche, giorniLiberi.length));
   for (const r of attesi) {
-    const key = [...r.blocchi].sort().join('|');
-    if (!sedute.some((s) => (s.blocchi || []).map((b) => b.id).sort().join('|') === key))
+    if (!sedute.some((s) => r.blocchi.every((id) => (s.blocchi || []).some((b) => b.id === id))))
       errors.push(`manca la seduta da recuperare "${r.titolo}" (blocchi: ${r.blocchi.join(', ')}) — va riproposta uguale`);
   }
   // Sedute richieste dall'atleta (maschera): esattamente N giornate (fisiche + leggere), entro il totale della fase e i giorni ammessi
@@ -777,13 +809,13 @@ ${libreriaTesto(ctx)}
 
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"leggeri":["id-blocco-1"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
-"leggeri" è facoltativo (regola 22): solo id già presenti in "blocchi".
+"leggeri" (regola 22): solo id già presenti in "blocchi"; lista vuota [] se nessuno.
 LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
 giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta${notaSettimanaAvviata(ctx) ? `: ne aveva chieste ${ctx.vincoli.numSedute}, ma la settimana è avviata e restano solo ${giorniRimasti(ctx).map((d) => DAY_NAMES[d]).join(', ')}` : ''})${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `SCEGLI TU quante giornate (l'atleta ha lasciato la scelta a te): da 1 a ${ctx.maxSeduteTotali}, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici, guardando gli allenamenti con la squadra, la partita, gli obiettivi e il carico (con la squadra 3 o più volte di solito 2 fisiche corte); nel messaggio di' in una riga perché ne hai messe così.`}`;
 }
 
 /** Giorni in cui una seduta può ancora stare: da oggi in poi, tra quelli ammessi e non vietati. */
-function giorniRimasti(ctx: ContextV2): number[] {
+export function giorniRimasti(ctx: ContextV2): number[] {
   return [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= ctx.base.oggiDow
     && !ctx.vincoli.giorniVietati?.includes(d) && (!ctx.vincoli.giorniAmmessi?.length || ctx.vincoli.giorniAmmessi.includes(d)));
 }
@@ -794,7 +826,7 @@ function giorniRimasti(ctx: ContextV2): number[] {
  * pretendeva 4 → ogni piano di Claude rifiutato → settimana base senza forza. A settimana avviata il numero scende
  * ai giorni rimasti (`notaSettimanaAvviata` lo dice all'atleta); da lunedì si riparte con la settimana intera.
  */
-function seduteRichieste(ctx: ContextV2): number | null {
+export function seduteRichieste(ctx: ContextV2): number | null {
   const n = ctx.vincoli.numSedute;
   if (!n) return null;
   return Math.max(1, Math.min(n, ctx.maxSeduteTotali ?? ctx.maxSeduteFisiche, giorniRimasti(ctx).length));
@@ -895,7 +927,12 @@ function primo(ctx: ContextV2, q: QualitaV2, pref?: RegExp): Blocco | undefined 
   return (pref && cand.find((b) => pref.test(b.nome))) || cand[0];
 }
 
-export function fallbackPianoBlocchi(ctx: ContextV2): { plan: WeekPlan; violazioni: string[] } {
+/**
+ * Piano base. Con un `seme` (il piano di Claude che il validatore ha rifiutato) prima si prova l'IBRIDO: le giornate
+ * di Claude che non hanno errori propri restano, il piano base riempie solo i giorni che mancano (Ste, 7/10:
+ * tre giornate buone su quattro non si buttano). Se neanche quello passa, il base da solo; poi solo giornate leggere.
+ */
+export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; violazioni: string[] }): { plan: WeekPlan; violazioni: string[]; tenute: number[] } {
   const b = ctx.base;
   const vietati = new Set<number>();
   for (const md of b.matchDays) { vietati.add(md); vietati.add(md === 1 ? 7 : md - 1); }
@@ -917,33 +954,42 @@ export function fallbackPianoBlocchi(ctx: ContextV2): { plan: WeekPlan; violazio
   const fascia = primo(ctx, 'fascia-prevenzione', /Foundations? 1\b/i);
   // Giornate costruite dagli OBIETTIVI (setup o maschera), non da una lista fissa; senza obiettivi la vecchia terna
   const rango = (x: Blocco) => x.livello === ctx.v2.livello ? 0 : x.livello === null ? 1 : 2; // prima i blocchi del livello dell'atleta
+  // Formati sui gradini (pa-*/pb-*) già nella settimana: una volta sola (7/10: il base metteva l'EMOM di parte alta in tre giornate)
+  const gruppoDi = (id: string) => (isParteAlta(id) ? FORMATI_PARTE_ALTA(ctx).gruppo(id) : isParteBassa(id) ? gruppoParteBassa(id) : null);
+  const usatiFormati = new Set<string>();
+  const registra = (ids: string[]) => { for (const id of ids) { const g = gruppoDi(id); if (g) usatiFormati.add(g); } };
+  for (const s of ctx.sedutePassate ?? []) registra((s.blocchi ?? []).map((x) => x.id));
   const perObiettivo = (f: FocusId): Blocco | undefined => {
     const pa = (x: Blocco) => (isParteAlta(x.id) || (isParteBassa(x.id) && x.id !== PB_RICHIAMO_ID) ? 0 : x.id === PB_RICHIAMO_ID ? 2 : 1); // sedute sulle scale prima dei blocchi Everfit; il richiamo mai come principale
-    const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id && ammessoDallaMemoria(ctx.memoria, x)).sort((x, y) =>
+    const libero = (x: Blocco) => { const g = gruppoDi(x.id); return g === null || !usatiFormati.has(g); };
+    const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id && ammessoDallaMemoria(ctx.memoria, x) && libero(x)).sort((x, y) =>
       (pa(x) - pa(y)) || (memoriaRank(ctx, x) - memoriaRank(ctx, y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
     return cand.find((x) => x.durataMin + (fascia?.durataMin ?? 0) <= maxDur) ?? cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
   };
-  const perOrdine = focusEspansi(ctx.obiettivi).map(perObiettivo).filter((x): x is Blocco => !!x);
+  const perOrdine = focusEspansi(ctx.obiettivi).filter((f) => perObiettivo(f));
   // Il primo obiettivo è il filo della settimana: o1, o2, o1, o3, o1, … (con 3 giornate fisiche il primo compare 2 volte)
   const dagliObiettivi = perOrdine.length > 1
     ? Array.from({ length: perOrdine.length * 2 - 1 }, (_, i) => (i % 2 === 0 ? perOrdine[0] : perOrdine[(i + 1) / 2]))
     : perOrdine;
-  const principali: (Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
-    ? [primo(ctx, 'tecnica-palleggi'), primo(ctx, 'tecnica-passaggi')]
-    : dagliObiettivi.length ? dagliObiettivi
-      : [primo(ctx, 'forza-parte-alta', /B1/), primo(ctx, 'pliometria-intensiva', /short/i), primo(ctx, 'velocita', /short/i)];
+  // Il blocco si sceglie al momento di assegnare la giornata, così i formati già usati dai recuperi o dalle giornate prima non tornano
+  const principali: (() => Blocco | undefined)[] = b.painHold || ctx.setup.fase === 'preparazione_squadra'
+    ? [() => primo(ctx, 'tecnica-palleggi'), () => primo(ctx, 'tecnica-passaggi')]
+    : dagliObiettivi.length ? dagliObiettivi.map((f) => () => perObiettivo(f))
+      : [() => primo(ctx, 'forza-parte-alta', /B1/), () => primo(ctx, 'pliometria-intensiva', /short/i), () => primo(ctx, 'velocita', /short/i)];
   const disponibili = new Set(ctx.blocchi.map((x) => x.id));
   // Recuperi: solo se tutti i blocchi sono disponibili e la seduta sta nel tempo massimo richiesto
   const recuperi = (b.painHold || ctx.setup.fase === 'preparazione_squadra') ? []
     : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disponibili.has(id))
       && r.blocchi.reduce((a, id) => a + (bloccoDi(ctx, id)?.durataMin ?? 0), 0) <= maxDur).slice(0, ctx.maxSeduteFisiche);
+  for (const r of recuperi) registra(r.blocchi);
   // Richiesta esplicita: prima gli obiettivi, i recuperi negli slot che avanzano; piano automatico: prima i recuperi
   const nObiettivi = ctx.vincoli.recuperiFacoltativi ? Math.min(principali.length, giorni.length) : 0;
   const recuperoPer = (i: number) => ctx.vincoli.recuperiFacoltativi ? (i >= nObiettivi ? recuperi[i - nObiettivi] : undefined) : recuperi[i];
   // Oltre il tetto fisico della fase le giornate sono LEGGERE: fascia + tecnica (o recupero), niente forza
   const leggero = primo(ctx, 'tecnica-palleggi') ?? primo(ctx, 'mobilita-recupero');
   const baseSeduta = (g: number, i: number, fisico: boolean): SedutaLLM => {
-    const p = fisico ? principali[i % Math.max(1, principali.length)] : leggero;
+    const p = fisico ? principali[i % Math.max(1, principali.length)]?.() : leggero;
+    if (p) registra([p.id]);
     const conFascia = fascia && p && p.id !== fascia.id && fascia.durataMin + p.durataMin <= maxDur;
     return {
       giorno: g, titolo: fisico ? 'Seduta base' : 'Giornata leggera', spiegazione: 'Piano base di sicurezza generato automaticamente.',
@@ -967,6 +1013,17 @@ export function fallbackPianoBlocchi(ctx: ContextV2): { plan: WeekPlan; violazio
     const violazioni = [...errors, ...(plan.sedute.length ? validatePlan(plan, vctx) : ['piano vuoto'])];
     return { plan, violazioni };
   };
+  // Ibrido: le giornate del seme senza errori propri ("seduta del giorno N: …") prendono il posto di quelle base
+  const rotti = new Set((seme?.violazioni ?? []).map(giornoDellaViolazione).filter((d): d is number => d !== null));
+  const tenute = (seme?.piano.sedute ?? []).filter((x) => !rotti.has(x.giorno) && x.blocchi.every((id) => disponibili.has(id)));
+  if (tenute.length) {
+    const giorniTenuti = new Set(tenute.map((x) => x.giorno));
+    const nMax = seduteRichieste(ctx) ?? Math.max(sedute.length, tenute.length);
+    const ibrido = [...tenute, ...sedute.filter((x) => !giorniTenuti.has(x.giorno))].sort((x, y) => x.giorno - y.giorno).slice(0, Math.max(nMax, tenute.length));
+    const esitoIbrido = tenta(ibrido, seme?.piano.messaggio || 'La settimana proposta, con qualche giornata sistemata dal preparatore.');
+    if (!esitoIbrido.violazioni.length) return { plan: conProgressioni(esitoIbrido.plan, ctx, vctx), violazioni: [], tenute: tenute.map((x) => x.giorno) };
+    console.error('trainingPlannerV2: anche l\'ibrido viola le regole', esitoIbrido.violazioni);
+  }
   let esito = tenta(sedute, 'Piano base della settimana (generato in modalità sicura).');
   if (esito.violazioni.length) {
     const soloLeggere = giorni.map(({ d }) => baseSeduta(d, 0, false)).filter((x) => x.blocchi.length > 0);
@@ -974,7 +1031,16 @@ export function fallbackPianoBlocchi(ctx: ContextV2): { plan: WeekPlan; violazio
     if (!esito2.violazioni.length) esito = esito2;
     else console.error('trainingPlannerV2: anche il piano base viola le regole', esito.violazioni);
   }
-  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: esito.violazioni };
+  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: esito.violazioni, tenute: [] };
+}
+
+/** Il giorno a cui si riferisce una violazione ("seduta del giorno 3: …", "seduta di Giovedì: …"); null se è della settimana intera. */
+export function giornoDellaViolazione(v: string): number | null {
+  const m = /^seduta (?:del giorno (\d)|di ([A-Za-zì]+))/.exec(v);
+  if (!m) return null;
+  if (m[1]) return Number(m[1]);
+  const i = [1, 2, 3, 4, 5, 6, 7].find((d) => DAY_NAMES[d]?.toLowerCase() === m[2].toLowerCase());
+  return i ?? null;
 }
 
 /**
@@ -1030,6 +1096,7 @@ function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
 export async function generateWeekPlanV2(
   userId: string, richiesta?: string, vincoli: Vincoli = {}
 ): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[] }> {
+  const inizio = Date.now();
   const ctx = await loadContextV2(userId);
   ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
   // Modifica a settimana avviata: i giorni già passati del piano attuale restano e contano nei controlli (29/9)
@@ -1038,37 +1105,62 @@ export async function generateWeekPlanV2(
   if (ctx.vincoli.giorniAmmessi?.length && giorniRimasti(ctx).length === 0) ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
   if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; aggiornaParteAlta(ctx); aggiornaParteBassa(ctx); aggiornaKettlebell(ctx); }
   const nota = notaSettimanaAvviata(ctx);
-  const conNota = (plan: WeekPlan): WeekPlan => (nota ? { ...plan, nota } : plan);
+  const rifinisci = (plan: WeekPlan, aggiustamenti: string[]): WeekPlan => ({ ...plan, ...(nota ? { nota } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}) });
   const validateCtx = validateCtxFor(ctx);
   const system = systemPrompt(ctx);
+  const opzioniRiparazione = () => ({ nRichieste: seduteRichieste(ctx), giorniRimasti: giorniRimasti(ctx) });
   let errori: string[] | undefined;
   let precedente: string | undefined; // JSON del piano rifiutato: al giro dopo Claude CORREGGE invece di ricominciare
-  for (let attempt = 0; attempt < 3; attempt++) {
+  const tuttiErrori: string[] = [];
+  let migliore: { piano: PianoLLM; violazioni: string[]; riparazioni: string[] } | null = null; // il tentativo con meno violazioni: seme dell'ibrido
+  let conFormato = true; // output strutturato; se l'API lo rifiuta (400) si riprova senza, senza consumare un tentativo
+  let tentativi = 0;
+  while (tentativi < PLANNER_TENTATIVI) {
+    const trascorso = Date.now() - inizio;
+    if (tentativi > 0 && trascorso > PLANNER_NUOVO_TENTATIVO_ENTRO_MS) { tuttiErrori.push(`tempo finito dopo ${tentativi} tentativ${tentativi === 1 ? 'o' : 'i'} (${Math.round(trascorso / 1000)} s)`); break; }
+    tentativi++;
+    const partenza = Date.now();
     try {
       const completion = await anthropic.messages.create({
-        model: PLANNER_V2_MODEL, max_tokens: 8000, // thinking + JSON del piano (il pensiero conta nel limite)
-        thinking: { type: 'adaptive' }, output_config: { effort: 'medium' },
+        model: PLANNER_V2_MODEL, max_tokens: 16000, // thinking + JSON del piano (il pensiero conta nel limite: con 8000 il JSON arrivava tagliato)
+        thinking: { type: 'adaptive' },
+        output_config: { effort: 'medium', ...(conFormato ? { format: { type: 'json_schema' as const, schema: PIANO_SCHEMA as unknown as Record<string, unknown> } } : {}) },
         system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userPrompt(ctx, richiesta, errori, precedente) }],
-      });
+      }, { timeout: Math.max(15_000, PLANNER_TEMPO_MAX_MS - trascorso), maxRetries: 0 });
       const u = completion.usage;
-      console.log('trainingPlannerV2: usage', { tentativo: attempt + 1, input: u.input_tokens, cacheScritta: u.cache_creation_input_tokens, cacheLetta: u.cache_read_input_tokens, output: u.output_tokens });
+      console.log('trainingPlannerV2: usage', { tentativo: tentativi, ms: Date.now() - partenza, stop: completion.stop_reason, input: u.input_tokens, cacheScritta: u.cache_creation_input_tokens, cacheLetta: u.cache_read_input_tokens, output: u.output_tokens });
+      if (completion.stop_reason === 'max_tokens') { errori = ['la risposta era troppo lunga ed è stata tagliata prima della fine del JSON: rispondi SOLO con il JSON del piano, spiegazioni corte']; tuttiErrori.push('risposta di Claude tagliata (max_tokens)'); continue; }
       const text = completion.content.filter((x) => x.type === 'text').map((x) => (x as { text: string }).text).join('\n');
       const raw = extractJson(text);
-      if (!raw) { errori = ['output non era JSON valido']; continue; }
-      const { plan, errors } = expandPiano(raw, ctx);
+      if (!raw) { errori = ['output non era JSON valido']; tuttiErrori.push('output non era JSON valido'); continue; }
+      // Riparazioni meccaniche PRIMA del validatore (giorni, durata, formati doppi, numero di giornate, tetto fisico)
+      const { piano, riparazioni } = riparaPiano(raw, ctx, opzioniRiparazione());
+      if (riparazioni.length) console.log('trainingPlannerV2: riparazioni', riparazioni);
+      const { plan, errors } = expandPiano(piano, ctx);
       const violations = [...errors, ...(plan.sedute.length ? validatePlan(plan, validateCtx) : ['piano vuoto'])];
-      if (violations.length === 0) return { plan: conNota(conProgressioni(plan, ctx, validateCtx)), generatoDa: 'llm', ctx };
+      if (violations.length === 0) return { plan: rifinisci(conProgressioni(plan, ctx, validateCtx), riparazioni), generatoDa: 'llm', ctx };
       console.error('trainingPlannerV2: piano rifiutato', violations);
+      if (!migliore || violations.length < migliore.violazioni.length) migliore = { piano, violazioni: violations, riparazioni };
+      tuttiErrori.push(...violations);
       errori = violations.slice(0, 12);
-      precedente = JSON.stringify({ sedute: (raw.sedute || []).map((s) => ({ giorno: s.giorno, blocchi: s.blocchi })) });
+      precedente = JSON.stringify({ sedute: piano.sedute.map((s) => ({ giorno: s.giorno, blocchi: s.blocchi })) });
     } catch (err) {
       const msg = (err as Error)?.message || String(err);
       console.error('trainingPlannerV2: errore Claude', msg);
-      errori = [...(errori ?? []), `il planner AI non ha risposto (${msg.slice(0, 160)})`];
-      break;
+      if (conFormato && err instanceof Anthropic.BadRequestError) { conFormato = false; tentativi--; continue; } // l'API non accetta lo schema: si riprova senza
+      tuttiErrori.push(`il planner AI non ha risposto (${msg.slice(0, 160)})`);
+      if (err instanceof Anthropic.BadRequestError || err instanceof Anthropic.AuthenticationError) break;
+      // Sovraccarico, timeout o rete: un altro giro se c'è tempo (prima qualsiasi errore mandava dritto al piano base)
     }
   }
-  const base = fallbackPianoBlocchi(ctx);
-  return { plan: conNota(base.plan), generatoDa: 'fallback', ctx, violazioni: [...(errori ?? []), ...base.violazioni.map((v) => `piano base: ${v}`)] };
+  // Ibrido: le giornate buone di Claude restano, il piano base riempie i giorni che mancano; se non passa, il base da solo
+  const base = fallbackPianoBlocchi(ctx, migliore ?? undefined);
+  const violazioni = [...new Set([...tuttiErrori, ...base.violazioni.map((v) => `piano base: ${v}`)])];
+  if (base.tenute.length) {
+    const sostituiti = base.plan.sedute.filter((s) => !base.tenute.includes(s.giorno)).map((s) => DAY_NAMES[s.giorno]);
+    const aggiustamenti = [...(migliore?.riparazioni ?? []), ...(sostituiti.length ? [`${sostituiti.join(', ')}: giornat${sostituiti.length === 1 ? 'a' : 'e'} base al posto di quell${sostituiti.length === 1 ? 'a' : 'e'} propost${sostituiti.length === 1 ? 'a' : 'e'} (${(migliore?.violazioni[0] ?? '').slice(0, 120) || 'non rispettava le regole'})`] : [])];
+    return { plan: rifinisci({ ...base.plan, violazioni: violazioni.slice(0, 8) }, aggiustamenti), generatoDa: 'llm', ctx };
+  }
+  return { plan: rifinisci(base.plan, []), generatoDa: 'fallback', ctx, violazioni };
 }

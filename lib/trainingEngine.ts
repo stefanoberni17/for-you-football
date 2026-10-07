@@ -363,6 +363,7 @@ export interface WeekPlan {
   messaggio?: string;
   violazioni?: string[];     // piano di sicurezza: cosa il planner AI non è riuscito a rispettare (per capire e correggere)
   nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
+  aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
 }
 
 const TIPI_FISICI = new Set(['mix', 'fisica', 'skill']);

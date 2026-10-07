@@ -30,7 +30,7 @@ export interface TrainingState {
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; done: boolean }[];
-  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[] }; generato_da: string } | null;
+  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[] }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
@@ -444,6 +444,16 @@ export default function AllenamentoHub() {
                 <CalendarClock size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
                 <span>{state.plan!.plan.nota}</span>
               </p>
+            )}
+            {!!state.plan!.plan.aggiustamenti?.length && (
+              <details className="mb-3">
+                <summary className="text-body-sm text-muted cursor-pointer tap flex items-center">Ho sistemato {state.plan!.plan.aggiustamenti.length === 1 ? 'una cosa' : `${state.plan!.plan.aggiustamenti.length} cose`} nella settimana proposta</summary>
+                <ul className="mt-1 space-y-1">
+                  {state.plan!.plan.aggiustamenti.slice(0, 6).map((a, i) => (
+                    <li key={i} className="text-caption text-muted leading-snug">· {a}</li>
+                  ))}
+                </ul>
+              </details>
             )}
             {state.plan!.generato_da === 'fallback' && (
               <Card variant="warn" padding="sm" className="mb-3">
