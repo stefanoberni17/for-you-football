@@ -284,6 +284,69 @@ export async function loadMese(userId: string, obiettivi: FocusId[], lunediCorre
   }
 }
 
+/** Una settimana del replay del mese: cosa avrebbe detto lo strato mese quel lunedì e il piano generato davvero. */
+export interface SettimanaReplay {
+  lunedi: string;
+  inCorso: boolean;
+  mese: Mese | null;          // calcolato con i dati disponibili QUEL lunedì
+  righe: string[];            // le righe per l'atleta (meseRigheAtleta) di quel lunedì
+  priorita: string[];         // etichette, nell'ordine deciso
+  riordinato: boolean;
+  domande: string[];          // etichette degli aspetti con la domanda aperta
+  piano: {
+    generatoDa: string;
+    nPiani: number;
+    sedute: { giorno: number; titolo: string; qualita: string[]; fatta: boolean; voto: number | null }[];
+    aggiustamenti: string[];
+    violazioni: string[];
+  } | null;
+}
+
+/**
+ * Replay dello strato mese sui dati veri dell'atleta (Ste, 7/10: "capiamo se il deterministico funziona davvero
+ * bene o se serve un agente"): per ogni lunedì delle ultime `nSettimane` ricalcola il mese come lo avrebbe visto
+ * quel giorno e lo mette accanto al piano che è stato generato davvero (giornate, qualità, fatta/saltata, da chi).
+ * Lo usano la pagina /allenamento/mese (per Ste nell'app) e scripts/training-replay.mts. Niente Claude, niente scritture.
+ */
+export async function replayMese(userId: string, nSettimane = 8): Promise<{ obiettivi: FocusId[]; settimane: SettimanaReplay[] }> {
+  const { loadFocusSetup } = await import('./trainingPlanner');
+  const { meseRigheAtleta } = await import('./trainingMese');
+  const { focusLabel } = await import('./trainingRequest');
+  const oggi = mondayOfThisWeekRome();
+  const obiettivi = await loadFocusSetup(userId);
+  const lunedi = Array.from({ length: Math.max(1, Math.min(nSettimane, 16)) }, (_, i) => addDays(oggi, -7 * (nSettimane - 1 - i)));
+  const { data: piani } = await supabaseAdmin.from('training_plans').select('id, week_start, plan, generato_da, created_at')
+    .eq('user_id', userId).in('week_start', lunedi).order('created_at', { ascending: false });
+  const { data: done } = (piani || []).length
+    ? await supabaseAdmin.from('training_session_completions').select('plan_id, session_key, rpe').eq('user_id', userId).in('plan_id', (piani || []).map((p) => p.id))
+    : { data: [] as { plan_id: string; session_key: string; rpe: number | null }[] };
+  const settimane: SettimanaReplay[] = [];
+  for (const W of lunedi) {
+    const mese = await loadMese(userId, obiettivi, W);
+    const suoi = (piani || []).filter((p) => p.week_start === W);
+    const ultimo = suoi[0];
+    let piano: SettimanaReplay['piano'] = null;
+    if (ultimo) {
+      const fatti = new Map((done || []).filter((d) => suoi.some((p) => p.id === d.plan_id)).map((d) => [Number(String(d.session_key).split('#')[1]), d.rpe ?? null]));
+      const plan = ultimo.plan as WeekPlan;
+      piano = {
+        generatoDa: String(ultimo.generato_da), nPiani: suoi.length,
+        sedute: (plan.sedute || []).map((s) => ({ giorno: s.giorno, titolo: s.titolo, qualita: [...new Set((s.blocchi || []).map((b) => b.qualita))], fatta: fatti.has(s.giorno), voto: fatti.get(s.giorno) ?? null })),
+        aggiustamenti: plan.aggiustamenti ?? [], violazioni: plan.violazioni ?? [],
+      };
+    }
+    settimane.push({
+      lunedi: W, inCorso: W === oggi, mese,
+      righe: mese && mese.settimane ? meseRigheAtleta(mese) : [],
+      priorita: mese ? mese.priorita.map((f) => focusLabel(f)) : [],
+      riordinato: !!mese?.riordinato,
+      domande: mese ? mese.daChiedere.map((d) => d.label) : [],
+      piano,
+    });
+  }
+  return { obiettivi, settimane };
+}
+
 async function loadDaRecuperare(userId: string): Promise<ContextV2['daRecuperare']> {
   const lunediStr = mondayOfThisWeekRome();
   const lunedi = new Date(`${lunediStr}T00:00:00`);

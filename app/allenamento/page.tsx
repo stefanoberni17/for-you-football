@@ -676,6 +676,7 @@ export default function AllenamentoHub() {
               {state.mese.riordinato && state.mese.priorita.length > 1 && (
                 <p className="text-body-sm text-muted mt-1.5 leading-relaxed">Questa settimana viene prima: {state.mese.priorita.slice(0, 2).map((f) => FOCUS_LABEL[f] ?? f).join(', poi ')}. Il resto si spalma sulle settimane dopo.</p>
               )}
+              <Link href="/allenamento/mese" className="inline-flex items-center gap-1 text-body-sm text-forest-400 mt-2 tap">Le settimane passate <ChevronRight size={14} aria-hidden /></Link>
               {state.mese.daChiedere.map((d) => (
                 <div key={d.focus} className="mt-2.5 pt-2.5 border-t border-divider">
                   <p className="text-body-sm text-app leading-snug mb-2">{d.label}: in programma {d.pianificate} settimane, mai fatta. Vuoi davvero allenarla?</p>

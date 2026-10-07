@@ -5,7 +5,7 @@
  *   npx tsx scripts/training-replay.mts --user <uuid>              # ultime 8 settimane
  *   npx tsx scripts/training-replay.mts --email ste@…  --settimane 12
  *
- * Per ogni lunedì W della finestra stampa:
+ * Stessa logica della pagina /allenamento/mese nell'app (replayMese in lib/trainingPlannerV2). Per ogni lunedì W stampa:
  *   1. cosa lo strato mese AVREBBE detto quel lunedì (settimane fatte per obiettivo, priorità, domande);
  *   2. il piano che è stato generato davvero quella settimana (giornate, qualità, fatta/saltata, da chi);
  * così si vede riga per riga se le priorità avrebbero avuto senso. Tu dai il voto; se i voti sono bassi,
@@ -41,39 +41,22 @@ if (!userId && opt('email')) {
 }
 if (!userId) { console.error('Serve --user <uuid> o --email <email>.'); process.exit(1); }
 
-const { loadMese } = await import('../lib/trainingPlannerV2');
-const { meseTesto } = await import('../lib/trainingMese');
-const { loadFocusSetup, mondayOfThisWeekRome } = await import('../lib/trainingPlanner');
-const { addDays } = await import('../lib/carta');
+const { replayMese } = await import('../lib/trainingPlannerV2');
 const { DAY_NAMES } = await import('../lib/constants');
 const { focusLabel } = await import('../lib/trainingRequest');
 
-const focus = await loadFocusSetup(userId);
-console.log(`Atleta ${userId}\nObiettivi del setup (oggi): ${focus.length ? focus.map(focusLabel).join(' > ') : 'nessuno'}\n`);
-
-const oggi = mondayOfThisWeekRome();
-const lunedi = Array.from({ length: nSettimane }, (_, i) => addDays(oggi, -7 * (nSettimane - 1 - i)));
-const { data: piani } = await supabase.from('training_plans').select('id, week_start, plan, generato_da, created_at')
-  .eq('user_id', userId).in('week_start', lunedi).order('created_at', { ascending: false });
-const { data: done } = await supabase.from('training_session_completions').select('plan_id, session_key, rpe').eq('user_id', userId).in('plan_id', (piani || []).map((p) => p.id));
-
-for (const W of lunedi) {
-  console.log(`════════ Settimana del ${W} ${W === oggi ? '(in corso)' : ''}`);
-  const mese = await loadMese(userId, focus, W);
-  const testo = meseTesto(mese, focus);
-  console.log(testo ? testo.trim() : '(strato mese: nessuna settimana con un piano prima di questa)');
-  if (mese?.daChiedere.length) console.log(`→ DOMANDA al ragazzo: ${mese.daChiedere.map((d) => `${d.label} (in programma ${d.pianificate} settimane, mai fatta)`).join('; ')}`);
-  const suoi = (piani || []).filter((p) => p.week_start === W);
-  const ultimo = suoi[0];
-  if (!ultimo) { console.log('Piano: nessuno\n'); continue; }
-  const fatti = new Map((done || []).filter((d) => suoi.some((p) => p.id === d.plan_id)).map((d) => [Number(String(d.session_key).split('#')[1]), d.rpe]));
-  const plan = ultimo.plan as { sedute: { giorno: number; titolo: string; blocchi?: { qualita: string; nome: string }[] }[]; messaggio?: string; aggiustamenti?: string[]; violazioni?: string[] };
-  console.log(`Piano generato da ${ultimo.generato_da} (${suoi.length} piani quella settimana):`);
-  for (const s of plan.sedute) {
-    const q = [...new Set((s.blocchi || []).map((b) => b.qualita))].join(', ');
-    console.log(`  ${DAY_NAMES[s.giorno].padEnd(9)} ${fatti.has(s.giorno) ? `FATTA${fatti.get(s.giorno) != null ? ` (voto ${fatti.get(s.giorno)})` : ''}` : 'saltata'.padEnd(5)}  ${s.titolo} [${q}]`);
-  }
-  if (plan.aggiustamenti?.length) console.log(`  Ho sistemato: ${plan.aggiustamenti.join(' · ')}`);
-  if (plan.violazioni?.length) console.log(`  Perché (piano base): ${plan.violazioni.slice(0, 3).join(' · ')}`);
+const { obiettivi, settimane } = await replayMese(userId, nSettimane);
+console.log(`Atleta ${userId}\nObiettivi del setup (oggi): ${obiettivi.length ? obiettivi.map(focusLabel).join(' > ') : 'nessuno'}\n`);
+for (const w of settimane) {
+  console.log(`════════ Settimana del ${w.lunedi} ${w.inCorso ? '(in corso)' : ''}`);
+  if (w.righe.length) { for (const r of w.righe) console.log(`  ${r}`); }
+  else console.log('  (strato mese: nessuna settimana con una seduta fatta prima di questa)');
+  if (w.priorita.length > 1) console.log(`  Priorità: ${w.priorita.join(' > ')}${w.riordinato ? ' (riordinate dal mese)' : ''}`);
+  if (w.domande.length) console.log(`  → DOMANDA al ragazzo: ${w.domande.join(', ')} (vuoi davvero allenarla?)`);
+  if (!w.piano) { console.log('  Piano: nessuno\n'); continue; }
+  console.log(`  Piano generato da ${w.piano.generatoDa}${w.piano.nPiani > 1 ? ` (${w.piano.nPiani} piani quella settimana)` : ''}:`);
+  for (const s of w.piano.sedute) console.log(`    ${DAY_NAMES[s.giorno].padEnd(9)} ${s.fatta ? `FATTA${s.voto != null ? ` (voto ${s.voto})` : ''}` : 'saltata'}  ${s.titolo} [${s.qualita.join(', ')}]`);
+  if (w.piano.aggiustamenti.length) console.log(`    Ho sistemato: ${w.piano.aggiustamenti.join(' · ')}`);
+  if (w.piano.violazioni.length) console.log(`    Perché (piano base): ${w.piano.violazioni.slice(0, 3).join(' · ')}`);
   console.log('');
 }
