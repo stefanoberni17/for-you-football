@@ -31,11 +31,24 @@ describe('strato mese: conta e riordina (Ste, 7/10)', () => {
     expect(meseTesto(m, ['parte_alta', 'gambe', 'velocita'])).toContain('Velocità (indietro nel mese: sale)');
   });
 
-  it('con una sola settimana di dati, o con due obiettivi, l\'ordine non cambia', () => {
+  it('con una sola settimana di dati l\'ordine non cambia; le settimane senza nessuna seduta fatta non contano', () => {
     const m1 = calcolaMese({ obiettivi: ['parte_alta', 'gambe', 'velocita'], settimane: [sett(1, [alta(true)])], lunediCorrente: LUN });
     expect(m1.riordinato).toBe(false);
-    const m2 = calcolaMese({ obiettivi: ['parte_alta', 'gambe'], settimane: [sett(1, [alta(true)]), sett(2, [alta(true)])], lunediCorrente: LUN });
-    expect(m2.priorita).toEqual(['parte_alta', 'gambe']);
+    // vacanza: tre settimane con tutto saltato → niente dati, niente domanda
+    const vuote = calcolaMese({ obiettivi: ['parte_alta', 'velocita'], settimane: [sett(1, [alta(false), vel(false)]), sett(2, [alta(false), vel(false)]), sett(3, [alta(false), vel(false)])], lunediCorrente: LUN });
+    expect(vuote.settimane).toBe(0);
+    expect(vuote.daChiedere).toEqual([]);
+  });
+
+  it('un aspetto con la domanda aperta va in coda alle priorità, non in testa (non insistere vale anche per il validatore)', () => {
+    const settimane = [sett(1, [alta(true), gambe(false), vel(false)]), sett(2, [alta(true), gambe(true), vel(false)]), sett(3, [alta(true), vel(false)])];
+    const m = calcolaMese({ obiettivi: ['parte_alta', 'velocita', 'gambe'], settimane, lunediCorrente: LUN });
+    expect(m.daChiedere.map((d) => d.focus)).toEqual(['velocita']);
+    expect(m.priorita).toEqual(['parte_alta', 'gambe', 'velocita']);
+    expect(meseTesto(m, ['parte_alta', 'velocita', 'gambe'])).toContain('Velocità (domanda aperta: solo se ci sta)');
+    // dopo "tienila" la domanda tace e la velocità torna a salire perché è indietro
+    const tenuta = calcolaMese({ obiettivi: ['parte_alta', 'velocita', 'gambe'], settimane, lunediCorrente: LUN, risposte: [{ focus: 'velocita', risposta: 'tieni', quando: '2026-10-01T10:00:00Z' }] });
+    expect(tenuta.priorita).toEqual(['parte_alta', 'velocita', 'gambe']);
   });
 
   it('la settimana corrente e quelle oltre la finestra non contano', () => {

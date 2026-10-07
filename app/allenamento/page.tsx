@@ -198,10 +198,11 @@ export default function AllenamentoHub() {
 
   // Strato mese: "vuoi davvero allenare X?" — "tienilo" tace la domanda per un mese, "toglilo" lo leva dagli obiettivi del setup
   const [meseBusy, setMeseBusy] = useState<string | null>(null);
+  const [meseMotivo, setMeseMotivo] = useState<Record<string, string>>({});
   const rispondiMese = async (focus: string, risposta: 'tieni' | 'togli') => {
     setMeseBusy(focus);
     try {
-      await authFetch('/api/training/mese', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ focus, risposta }) });
+      await authFetch('/api/training/mese', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ focus, risposta, motivo: meseMotivo[focus] || '' }) });
       await load();
     } finally { setMeseBusy(null); }
   };
@@ -678,6 +679,11 @@ export default function AllenamentoHub() {
               {state.mese.daChiedere.map((d) => (
                 <div key={d.focus} className="mt-2.5 pt-2.5 border-t border-divider">
                   <p className="text-body-sm text-app leading-snug mb-2">{d.label}: in programma {d.pianificate} settimane, mai fatta. Vuoi davvero allenarla?</p>
+                  <input
+                    type="text" maxLength={300} value={meseMotivo[d.focus] ?? ''} onChange={(e) => setMeseMotivo((m) => ({ ...m, [d.focus]: e.target.value }))}
+                    placeholder="Perché la salti? (facoltativo, lo legge il preparatore)"
+                    className="w-full min-h-[48px] rounded-btn bg-surface-2 border border-divider px-3 text-body text-app placeholder:text-faint mb-2 focus:outline-none focus:border-forest-400"
+                  />
                   <div className="flex gap-2">
                     <Button variant="secondary" size="sm" loading={meseBusy === d.focus} onClick={() => rispondiMese(d.focus, 'tieni')}>Sì, tienila</Button>
                     <Button variant="ghost" size="sm" disabled={meseBusy === d.focus} onClick={() => rispondiMese(d.focus, 'togli')}>No, toglila</Button>

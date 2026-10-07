@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { logEvent } from '@/lib/events';
-import { loadFocusSetup } from '@/lib/trainingPlanner';
+import { loadFocusSetup, updateTrainingMemory } from '@/lib/trainingPlanner';
 import { FOCUS_OPZIONI, type FocusId } from '@/lib/trainingRequest';
 
 const supabaseAdmin = createClient(
@@ -12,7 +12,7 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * POST { focus, risposta: 'tieni' | 'togli' } → risposta del ragazzo alla domanda dello strato mese
+ * POST { focus, risposta: 'tieni' | 'togli', motivo? } → risposta del ragazzo alla domanda dello strato mese
  * ("X in programma 3 settimane, mai fatta: vuoi davvero allenarla?", lib/trainingMese).
  * 'tieni' → evento `training_aspetto_tenuto` (la domanda tace per DOMANDA_SOSPESA_SETTIMANE);
  * 'togli' → l'obiettivo esce da profiles.training_focus + evento `training_aspetto_tolto`.
@@ -31,7 +31,10 @@ export async function POST(request: NextRequest) {
       const { error } = await supabaseAdmin.from('profiles').update({ training_focus: attuali.filter((f) => f !== focus) }).eq('user_id', userId);
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    logEvent(userId, risposta === 'tieni' ? 'training_aspetto_tenuto' : 'training_aspetto_tolto', { focus });
+    // Il perché in una riga è il dato che serve davvero al preparatore ("era sempre il giorno dopo la partita"): va nella sua memoria
+    const motivo = typeof body?.motivo === 'string' ? body.motivo.trim().slice(0, 300) : '';
+    logEvent(userId, risposta === 'tieni' ? 'training_aspetto_tenuto' : 'training_aspetto_tolto', { focus, ...(motivo ? { motivo } : {}) });
+    if (motivo) await updateTrainingMemory(userId, `${FOCUS_OPZIONI.find((f) => f.id === focus)!.label}: ${risposta === 'tieni' ? 'la tiene' : 'la toglie'} — "${motivo}"`, 'aspetto saltato spesso');
     return NextResponse.json({ success: true, focus, risposta });
   } catch (err) {
     console.error('training/mese error:', err);

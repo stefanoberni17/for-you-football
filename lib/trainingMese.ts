@@ -16,6 +16,8 @@ import { addDays } from './carta';
 import { isKettlebell } from './trainingKettlebell';
 import { FOCUS_BILANCIATO, FOCUS_QUALITA, FOCUS_TUTTO, focusLabel, type FocusId } from './trainingRequest';
 
+// SOGLIE PROVVISORIE (7/10): scelte a tavolino, non dai dati. Da tarare quando tre atleti avranno un mese di piani
+// (stesso criterio del congelamento del Campo); fino ad allora vanno lette come segnaposto.
 /** Settimane guardate (le ultime complete, senza quella in corso). */
 export const MESE_SETTIMANE = 4;
 /** Pianificato in almeno tante settimane e mai fatto → domanda al ragazzo. */
@@ -47,7 +49,9 @@ export function sedutaCopre(s: SedutaMese, f: FocusId): boolean {
 
 export function calcolaMese(input: { obiettivi: FocusId[]; settimane: SettimanaMese[]; risposte?: RispostaMese[]; lunediCorrente: string }): Mese {
   const { obiettivi, lunediCorrente } = input;
-  const settimane = input.settimane.filter((w) => w.lunedi < lunediCorrente && w.sedute.length > 0).sort((a, b) => a.lunedi.localeCompare(b.lunedi)).slice(-MESE_SETTIMANE);
+  // Contano solo le settimane in cui il ragazzo ha fatto ALMENO una seduta: una settimana vuota (vacanza, dolore,
+  // esami) non dice niente su cosa vuole allenare, e non deve far scattare né domande né riordini
+  const settimane = input.settimane.filter((w) => w.lunedi < lunediCorrente && w.sedute.some((s) => s.fatta)).sort((a, b) => a.lunedi.localeCompare(b.lunedi)).slice(-MESE_SETTIMANE);
   const tutto = obiettivi[0] === FOCUS_TUTTO;
   const aspetti: FocusId[] = tutto ? FOCUS_BILANCIATO : obiettivi;
   const righe: RigaMese[] = aspetti.map((f) => {
@@ -60,19 +64,23 @@ export function calcolaMese(input: { obiettivi: FocusId[]; settimane: SettimanaM
     }
     return { focus: f, label: focusLabel(f), pianificate, fatte, saltate };
   });
-  // Priorità: il primo obiettivo resta il filo; gli altri per settimane fatte (meno = prima), a parità l'ordine del setup
-  let priorita = [...obiettivi];
-  if (!tutto && obiettivi.length > 2 && settimane.length >= MESE_SETTIMANE_MIN) {
-    const fatteDi = (f: FocusId) => righe.find((r) => r.focus === f)?.fatte ?? 0;
-    const resto = obiettivi.slice(1).map((f, i) => ({ f, i })).sort((a, b) => fatteDi(a.f) - fatteDi(b.f) || a.i - b.i).map((x) => x.f);
-    priorita = [obiettivi[0], ...resto];
-  }
-  const riordinato = priorita.some((f, i) => f !== obiettivi[i]);
   // Domanda: pianificato per SALTI_PER_DOMANDA settimane e mai fatto; tace dopo un "tienilo" recente
   const sospesaDa = addDays(lunediCorrente, -7 * DOMANDA_SOSPESA_SETTIMANE);
   const sospesi = new Set((input.risposte ?? []).filter((r) => r.risposta === 'tieni' && r.quando.slice(0, 10) >= sospesaDa).map((r) => r.focus));
   const daChiedere = righe.filter((r) => !tutto && r.pianificate >= SALTI_PER_DOMANDA && r.fatte === 0 && !sospesi.has(r.focus))
     .map((r) => ({ focus: r.focus, label: r.label, pianificate: r.pianificate }));
+  const inDomanda = new Set(daChiedere.map((d) => d.focus));
+  // Priorità: il primo obiettivo resta il filo; gli altri per settimane fatte (meno = prima), a parità l'ordine del
+  // setup. Un aspetto con la domanda aperta va in CODA, non in testa: "non insistere" vale anche per il validatore
+  // (prima saliva al secondo posto proprio perché mai fatto, e il server lo rendeva obbligatorio)
+  let priorita = [...obiettivi];
+  if (!tutto && obiettivi.length > 1 && settimane.length >= MESE_SETTIMANE_MIN) {
+    const fatteDi = (f: FocusId) => righe.find((r) => r.focus === f)?.fatte ?? 0;
+    const resto = obiettivi.slice(1).map((f, i) => ({ f, i }))
+      .sort((a, b) => Number(inDomanda.has(a.f)) - Number(inDomanda.has(b.f)) || fatteDi(a.f) - fatteDi(b.f) || a.i - b.i).map((x) => x.f);
+    priorita = [obiettivi[0], ...resto];
+  }
+  const riordinato = priorita.some((f, i) => f !== obiettivi[i]);
   return { settimane: settimane.length, righe, priorita, riordinato, daChiedere };
 }
 
@@ -82,7 +90,7 @@ export function meseTesto(m: Mese | null, obiettiviSetup: FocusId[]): string {
   const n = m.settimane;
   const righe = m.righe.map((r) => `- ${r.label}: fatta ${r.fatte} su ${n} settiman${n === 1 ? 'a' : 'e'}${r.pianificate > r.fatte ? ` (pianificata ${r.pianificate}, saltata ${r.saltate} volt${r.saltate === 1 ? 'a' : 'e'})` : ''}`);
   const prio = m.priorita.length && obiettiviSetup[0] !== FOCUS_TUTTO
-    ? `\nPriorità di QUESTA settimana: ${m.priorita.map((f, i) => `${i + 1}. ${focusLabel(f)}${i === 0 ? ' (filo della settimana)' : m.riordinato && obiettiviSetup.indexOf(f) > i ? ' (indietro nel mese: sale)' : ''}`).join(' · ')}. Le prime due devono esserci; le altre entrano nei posti che avanzano e il resto si spalma sulle settimane dopo (non forzare tutto in una settimana).`
+    ? `\nPriorità di QUESTA settimana: ${m.priorita.map((f, i) => `${i + 1}. ${focusLabel(f)}${i === 0 ? ' (filo della settimana)' : m.daChiedere.some((d) => d.focus === f) ? ' (domanda aperta: solo se ci sta)' : m.riordinato && obiettiviSetup.indexOf(f) > i ? ' (indietro nel mese: sale)' : ''}`).join(' · ')}. Le prime due devono esserci; le altre entrano nei posti che avanzano e il resto si spalma sulle settimane dopo (non forzare tutto in una settimana).`
     : m.righe.length ? `\nCon "Tutto, in equilibrio": alterna gli aspetti partendo da quelli fatti meno volte nel mese (${[...m.righe].sort((a, b) => a.fatte - b.fatte).slice(0, 3).map((r) => r.label).join(', ')}).` : '';
   const domande = m.daChiedere.length ? `\nAspetti sempre saltati (${m.daChiedere.map((d) => d.label).join(', ')}): l'app sta chiedendo al ragazzo se vuole davvero allenarli; intanto non insistere, mettili solo se ci stanno senza togliere il resto.` : '';
   return `\n# QUESTO MESE (ultime ${n} settiman${n === 1 ? 'a' : 'e'} con un piano)\n${righe.join('\n')}${prio}${domande}`;
