@@ -143,13 +143,15 @@ export async function GET(request: NextRequest) {
       ultimaTestSession?.completed_at
       || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null),
     );
-    const [{ data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup] = await Promise.all([
+    const [{ data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese] = await Promise.all([
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
       getConsents(userId),
       loadSquadraCompleta(userId),
       loadFocusSetup(userId),
       loadPreferenzeSetup(userId),
+      // Strato mese (7/10): settimane pianificate/fatte per obiettivo, priorità, aspetti sempre saltati — in parallelo, non dopo
+      loadFocusSetup(userId).then((f) => loadMese(userId, f)),
     ]);
     // Obiettivi della fase (migration 024): colonna letta a parte, così il setup base non dipende dalla migration
     setup.focus = focusSetup;
@@ -165,8 +167,6 @@ export async function GET(request: NextRequest) {
     if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, undefined, squadraStimato); }
 
     const rombo = buildRombo(rows);
-    // Strato mese (7/10): settimane pianificate/fatte per obiettivo, priorità della settimana, aspetti sempre saltati da chiedere
-    const mese = await loadMese(userId, focusSetup);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
     const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
     // Livello per qualità (25/9) e ri-test mirato: le famiglie che hanno finito i codici del loro livello

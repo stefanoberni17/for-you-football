@@ -63,9 +63,10 @@ export async function POST(request: NextRequest) {
     // Planner v2 a blocchi (workout di Ste); se esplode, il v1 resta come rete di sicurezza
     let plan, generatoDa: 'llm' | 'fallback', promptVersion = PLANNER_V2_PROMPT_VERSION;
     let violazioni: string[] | undefined;
+    let ibrido: boolean | undefined;
     let ctxV2: Awaited<ReturnType<typeof loadContextV2>> | null = null;
     try {
-      ({ plan, generatoDa, violazioni, ctx: ctxV2 } = await generateWeekPlanV2(userId, richiesta, vincoli));
+      ({ plan, generatoDa, violazioni, ctx: ctxV2, ibrido } = await generateWeekPlanV2(userId, richiesta, vincoli));
     } catch (err) {
       console.error('training/plan: planner v2 fallito, uso v1', (err as Error)?.message);
       ({ plan, generatoDa } = await generateWeekPlan(userId, richiesta));
@@ -75,9 +76,9 @@ export async function POST(request: NextRequest) {
     // Modifica a settimana iniziata: i giorni già passati restano come nel piano attuale
     // (fatti o saltati, sono storia: il planner lavora solo da oggi in poi)
     if (guidata?.modo === 'modifica' && pianoAttualeSedute) {
-      // Una modifica che il validatore ha rifiutato NON sostituisce il piano con quello di sicurezza:
-      // si tiene il piano attuale e si spiega il motivo
-      if (generatoDa === 'fallback') {
+      // Una modifica che il validatore ha rifiutato NON sostituisce il piano con quello di sicurezza, nemmeno con
+      // l'ibrido (giornate base al posto di quelle proposte): si tiene il piano attuale e si spiega il motivo
+      if (generatoDa === 'fallback' || ibrido) {
         return NextResponse.json({ error: `Non sono riuscito ad applicare la modifica${violazioni?.[0] ? `: ${violazioni[0]}` : ''}. Il piano resta com'è.` }, { status: 409 });
       }
       const oggi = oggiDowRome();

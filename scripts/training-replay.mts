@@ -31,7 +31,7 @@ process.env.ANTHROPIC_API_KEY ??= 'replay-senza-claude'; // il planner crea il c
 
 const args = process.argv.slice(2);
 const opt = (name: string) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : undefined; };
-const nSettimane = Number(opt('settimane') ?? 8);
+const nSettimane = Math.max(1, Math.min(16, Math.round(Number(opt('settimane') ?? 8)) || 8));
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 let userId = opt('user');

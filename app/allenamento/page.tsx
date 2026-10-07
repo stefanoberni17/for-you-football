@@ -13,7 +13,7 @@ import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
-import { FOCUS_OPZIONI, statoSeduta, puoPosticipare, type RichiestaGuidata } from '@/lib/trainingRequest';
+import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Sheet, Textarea } from '@/components/ui';
 
@@ -61,8 +61,6 @@ export interface TrainingState {
   // Strato mese (7/10): settimane fatte per obiettivo, priorità della settimana, aspetti sempre saltati da chiedere
   mese?: { settimane: number; righe: string[]; priorita: string[]; riordinato: boolean; daChiedere: { focus: string; label: string; pianificate: number }[] } | null;
 }
-
-const FOCUS_LABEL: Record<string, string> = Object.fromEntries(FOCUS_OPZIONI.map((f) => [f.id, f.label]));
 
 type Vista = 'oggi' | 'settimana' | 'card';
 const VISTE: { id: Vista; label: string }[] = [{ id: 'oggi', label: 'Oggi' }, { id: 'settimana', label: 'Settimana' }, { id: 'card', label: 'Card' }];
@@ -674,7 +672,7 @@ export default function AllenamentoHub() {
                 {state.mese.righe.map((r) => <li key={r} className="text-body-sm text-muted leading-snug">· {r}</li>)}
               </ul>
               {state.mese.riordinato && state.mese.priorita.length > 1 && (
-                <p className="text-body-sm text-muted mt-1.5 leading-relaxed">Questa settimana viene prima: {state.mese.priorita.slice(0, 2).map((f) => FOCUS_LABEL[f] ?? f).join(', poi ')}. Il resto si spalma sulle settimane dopo.</p>
+                <p className="text-body-sm text-muted mt-1.5 leading-relaxed">Questa settimana viene prima: {state.mese.priorita.slice(0, 2).map((f) => focusLabel(f as FocusId)).join(', poi ')}. Il resto si spalma sulle settimane dopo.</p>
               )}
               <Link href="/allenamento/mese" className="inline-flex items-center gap-1 text-body-sm text-forest-400 mt-2 tap">Le settimane passate <ChevronRight size={14} aria-hidden /></Link>
               {state.mese.daChiedere.map((d) => (

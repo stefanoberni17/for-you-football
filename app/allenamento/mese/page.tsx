@@ -7,9 +7,7 @@ import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES } from '@/lib/constants';
 import { AppLoader, BackButton, Card } from '@/components/ui';
 import type { SettimanaReplay } from '@/lib/trainingPlannerV2';
-import { FOCUS_OPZIONI } from '@/lib/trainingRequest';
-
-const FOCUS_LABEL: Record<string, string> = Object.fromEntries(FOCUS_OPZIONI.map((f) => [f.id, f.label]));
+import { focusLabel, type FocusId } from '@/lib/trainingRequest';
 const dataIt = (ymd: string) => { const [y, m, d] = ymd.split('-'); return `${d}/${m}/${y.slice(2)}`; };
 
 /**
@@ -46,7 +44,7 @@ export default function MesePage() {
         <BackButton href="/allenamento" label="Campo" className="mb-2" />
         <h1 className="font-display text-title-1 font-bold text-app mb-1">Le settimane passate</h1>
         <p className="text-body text-muted mb-1">Per ogni lunedì: cosa diceva il conto del mese quel giorno, e cosa è stato fatto davvero.</p>
-        <p className="text-body-sm text-muted mb-5">Obiettivi di oggi: {data.obiettivi.length ? data.obiettivi.map((f) => FOCUS_LABEL[f] ?? f).join(' › ') : 'nessuno'}</p>
+        <p className="text-body-sm text-muted mb-5">Obiettivi di oggi: {data.obiettivi.length ? data.obiettivi.map((f) => focusLabel(f as FocusId)).join(' › ') : 'nessuno'}</p>
 
         <div className="space-y-3">
           {settimane.map((w) => (
@@ -81,7 +79,12 @@ export default function MesePage() {
                     ))}
                   </ul>
                   {w.piano.aggiustamenti.length > 0 && <p className="text-caption text-muted mt-1">Sistemato: {w.piano.aggiustamenti.join(' · ')}</p>}
-                  {w.piano.violazioni.length > 0 && <p className="text-caption text-muted mt-1">Perché base: {w.piano.violazioni.slice(0, 2).join(' · ')}</p>}
+                  {w.piano.violazioni.length > 0 && (
+                    <details className="mt-1">
+                      <summary className="text-caption text-muted cursor-pointer tap flex items-center">Perché la settimana base</summary>
+                      <ul className="mt-1 space-y-0.5">{w.piano.violazioni.slice(0, 3).map((v, i) => <li key={i} className="text-caption text-muted leading-snug">· {v}</li>)}</ul>
+                    </details>
+                  )}
                 </>
               ) : (
                 <p className="text-body-sm text-muted mt-1">Nessun piano.</p>
