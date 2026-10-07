@@ -20,6 +20,8 @@ import { livelliPerQualita, nomeTest, QUALITA_LABEL, testIdsPerQualita } from '@
 import { loadFeedbackRecenti } from '@/lib/trainingPlanner';
 import { blocchiDisponibili } from '@/lib/trainingBlocks';
 import { calcolaMemoriaBlocchi, famiglieAlTetto } from '@/lib/trainingMemoriaBlocchi';
+import { loadMese } from '@/lib/trainingPlannerV2';
+import { meseRigheAtleta } from '@/lib/trainingMese';
 import type { QualitaV2 } from '@/lib/trainingCatalogV2';
 
 const supabaseAdmin = createClient(
@@ -163,6 +165,8 @@ export async function GET(request: NextRequest) {
     if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, undefined, squadraStimato); }
 
     const rombo = buildRombo(rows);
+    // Strato mese (7/10): settimane pianificate/fatte per obiettivo, priorità della settimana, aspetti sempre saltati da chiedere
+    const mese = await loadMese(userId, focusSetup);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
     const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
     // Livello per qualità (25/9) e ri-test mirato: le famiglie che hanno finito i codici del loro livello
@@ -237,6 +241,7 @@ export async function GET(request: NextRequest) {
       maxSeduteFisiche: maxSeduteFisiche(setup.fase),
       maxSeduteTotali: maxSeduteTotali(setup.fase),
       squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, latoDeboleAlto: squilibri.latoDeboleAlto, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
+      mese: mese && mese.settimane ? { settimane: mese.settimane, righe: meseRigheAtleta(mese), priorita: mese.priorita, riordinato: mese.riordinato, daChiedere: mese.daChiedere } : null,
     });
   } catch (err) {
     console.error('training/state error:', err);
