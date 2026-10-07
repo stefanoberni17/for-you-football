@@ -14,7 +14,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES } from './constants';
 import { isFaticaAlta, isPeriodoScarso, isTestaAltrove, validatePlan, type PlanItem, type PlanSession, type WeekPlan } from './trainingEngine';
-import { feedbackSeduteBlock, loadPlannerContext, mondayOfThisWeekRome, percorsoMentaleTesto, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
+import { feedbackSeduteBlock, loadFocusSetup, loadPlannerContext, mondayOfThisWeekRome, percorsoMentaleTesto, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
@@ -26,7 +26,7 @@ import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgres
 import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { limaCarichi } from './trainingCarico';
 import { riparaPiano } from './trainingRiparazione';
-import { calcolaMese, MESE_SETTIMANE, meseTesto, type Mese, type RispostaMese, type SettimanaMese } from './trainingMese';
+import { calcolaMese, MESE_SETTIMANE, meseRigheAtleta, meseTesto, type Mese, type RispostaMese, type SettimanaMese } from './trainingMese';
 import { addDays } from './carta';
 import { caricoMaxPct, FINESTRA_PARTITA, giorniAllaPartita, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
@@ -34,7 +34,7 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
 import { nomeBloccoAtleta, testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
-import { livelliTesto, livelloDi } from './trainingLivelli';
+import { livelliTesto, livelloDi, QUALITA_LABEL } from './trainingLivelli';
 import { FAMIGLIA_FASCIA_FORZA, FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
 import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type Ripasso } from './trainingTecnica';
@@ -151,12 +151,13 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
     eta, esperienzaPalestra: setup.esperienzaPalestra, massimali,
   };
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
+  const [daRecuperare, mese] = await Promise.all([loadDaRecuperare(userId), loadMese(userId, base.focusSetup)]);
   const ctx: ContextV2 = {
     base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),
     maxSeduteFisiche: maxSeduteFisiche(setup.fase), maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
-    daRecuperare: await loadDaRecuperare(userId), vincoli: {}, obiettivi: base.focusSetup, memoria: {}, noteRegole: [],
+    daRecuperare, vincoli: {}, obiettivi: base.focusSetup, memoria: {}, noteRegole: [],
     memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null, ripassoTecnica: eserciziDaRipassare(base.logsSerie),
-    mese: await loadMese(userId, base.focusSetup),
+    mese,
   };
   // Priorità del mese nel piano AUTOMATICO: il primo obiettivo resta, tra gli altri sale chi è indietro (una richiesta
   // esplicita con gli obiettivi dalla maschera li sovrascrive in generateWeekPlanV2)
@@ -257,27 +258,47 @@ function aggiornaParteBassa(ctx: ContextV2): void {
  * completamenti letti su tutti i piani di quella settimana) e le risposte del ragazzo alle domande ("tienilo"/"toglilo",
  * eventi `training_aspetto_*`). Fail-soft: senza dati o con un errore → null.
  */
+type PianoRow = { id: string; week_start: string; plan: unknown; generato_da?: string | null };
+type DoneRow = { plan_id: string | null; session_key: string; rpe?: number | null };
+type EventoRow = { event: string; meta: unknown; occurred_at: string };
+
+/** Settimane per lo strato mese: il piano più recente di ogni lunedì, i completamenti letti su TUTTI i piani di quella settimana. */
+function settimaneMeseDa(piani: PianoRow[], done: DoneRow[], lunedi: string[]): SettimanaMese[] {
+  return lunedi.map((l) => {
+    const suoi = piani.filter((p) => p.week_start === l);
+    const ultimo = suoi[0]?.plan as WeekPlan | undefined;
+    if (!ultimo?.sedute?.length) return { lunedi: l, sedute: [] };
+    const fatti = new Set(done.filter((d) => suoi.some((p) => p.id === d.plan_id)).map((d) => Number(String(d.session_key).split('#')[1])));
+    return { lunedi: l, sedute: ultimo.sedute.map((s) => ({ giorno: s.giorno, blocchi: (s.blocchi || []).map((b) => ({ id: b.id, qualita: b.qualita })), fatta: fatti.has(s.giorno) })) };
+  });
+}
+
+function risposteDa(eventi: EventoRow[]): RispostaMese[] {
+  return eventi.map((e) => ({
+    focus: (e.meta as { focus?: FocusId } | null)?.focus as FocusId,
+    risposta: (e.event === 'training_aspetto_tenuto' ? 'tieni' : 'togli') as RispostaMese['risposta'],
+    quando: String(e.occurred_at),
+  })).filter((r) => !!r.focus);
+}
+
+const EVENTI_MESE = ['training_aspetto_tenuto', 'training_aspetto_tolto'];
+
+/**
+ * Strato mese (lib/trainingMese): i piani delle ultime MESE_SETTIMANE settimane (il più recente per settimana, con i
+ * completamenti letti su tutti i piani di quella settimana) e le risposte del ragazzo alle domande ("tienilo"/"toglilo",
+ * eventi `training_aspetto_*`). Fail-soft: senza dati o con un errore → null.
+ */
 export async function loadMese(userId: string, obiettivi: FocusId[], lunediCorrente = mondayOfThisWeekRome()): Promise<Mese | null> {
   try {
     const lunedi = Array.from({ length: MESE_SETTIMANE }, (_, i) => addDays(lunediCorrente, -7 * (i + 1)));
     const [{ data: piani }, { data: eventi }] = await Promise.all([
       supabaseAdmin.from('training_plans').select('id, week_start, plan, created_at').eq('user_id', userId).in('week_start', lunedi).order('created_at', { ascending: false }),
-      supabaseAdmin.from('onboarding_events').select('event, meta, occurred_at').eq('user_id', userId).in('event', ['training_aspetto_tenuto', 'training_aspetto_tolto'])
+      supabaseAdmin.from('onboarding_events').select('event, meta, occurred_at').eq('user_id', userId).in('event', EVENTI_MESE)
         .gte('occurred_at', `${addDays(lunediCorrente, -7 * MESE_SETTIMANE * 2)}T00:00:00Z`),
     ]);
     if (!piani?.length) return calcolaMese({ obiettivi, settimane: [], lunediCorrente });
     const { data: done } = await supabaseAdmin.from('training_session_completions').select('plan_id, session_key').eq('user_id', userId).in('plan_id', piani.map((p) => p.id));
-    const settimane: SettimanaMese[] = lunedi.map((l) => {
-      const suoi = piani.filter((p) => p.week_start === l);
-      const ultimo = suoi[0]?.plan as WeekPlan | undefined;
-      if (!ultimo?.sedute?.length) return { lunedi: l, sedute: [] };
-      const fatti = new Set((done || []).filter((d) => suoi.some((p) => p.id === d.plan_id)).map((d) => Number(String(d.session_key).split('#')[1])));
-      return { lunedi: l, sedute: ultimo.sedute.map((s) => ({ giorno: s.giorno, blocchi: (s.blocchi || []).map((b) => ({ id: b.id, qualita: b.qualita })), fatta: fatti.has(s.giorno) })) };
-    });
-    const risposte: RispostaMese[] = (eventi || []).map((e) => ({
-      focus: (e.meta as { focus?: FocusId } | null)?.focus as FocusId, risposta: (e.event === 'training_aspetto_tenuto' ? 'tieni' : 'togli') as RispostaMese['risposta'], quando: String(e.occurred_at),
-    })).filter((r) => !!r.focus);
-    return calcolaMese({ obiettivi, settimane, risposte, lunediCorrente });
+    return calcolaMese({ obiettivi, settimane: settimaneMeseDa(piani, done || [], lunedi), risposte: risposteDa(eventi || []), lunediCorrente });
   } catch (e) {
     console.error('loadMese:', (e as Error)?.message);
     return null;
@@ -296,33 +317,39 @@ export interface SettimanaReplay {
   piano: {
     generatoDa: string;
     nPiani: number;
-    sedute: { giorno: number; titolo: string; qualita: string[]; fatta: boolean; voto: number | null }[];
+    sedute: { giorno: number; titolo: string; qualita: string[]; fatta: boolean; voto: number | null }[]; // qualità già in etichette per l'atleta
     aggiustamenti: string[];
     violazioni: string[];
   } | null;
 }
 
+export const REPLAY_SETTIMANE_MAX = 16;
+
 /**
  * Replay dello strato mese sui dati veri dell'atleta (Ste, 7/10: "capiamo se il deterministico funziona davvero
  * bene o se serve un agente"): per ogni lunedì delle ultime `nSettimane` ricalcola il mese come lo avrebbe visto
- * quel giorno e lo mette accanto al piano che è stato generato davvero (giornate, qualità, fatta/saltata, da chi).
- * Lo usano la pagina /allenamento/mese (per Ste nell'app) e scripts/training-replay.mts. Niente Claude, niente scritture.
+ * quel giorno (solo le settimane e le risposte PRIMA di quel lunedì) e lo mette accanto al piano generato davvero.
+ * Tre letture in tutto (piani, completamenti, eventi), niente Claude, niente scritture. Lo usano la pagina
+ * /allenamento/mese e scripts/training-replay.mts.
  */
 export async function replayMese(userId: string, nSettimane = 8): Promise<{ obiettivi: FocusId[]; settimane: SettimanaReplay[] }> {
-  const { loadFocusSetup } = await import('./trainingPlanner');
-  const { meseRigheAtleta } = await import('./trainingMese');
-  const { focusLabel } = await import('./trainingRequest');
+  const n = Math.max(1, Math.min(REPLAY_SETTIMANE_MAX, Math.round(nSettimane) || 8));
   const oggi = mondayOfThisWeekRome();
-  const obiettivi = await loadFocusSetup(userId);
-  const lunedi = Array.from({ length: Math.max(1, Math.min(nSettimane, 16)) }, (_, i) => addDays(oggi, -7 * (nSettimane - 1 - i)));
-  const { data: piani } = await supabaseAdmin.from('training_plans').select('id, week_start, plan, generato_da, created_at')
-    .eq('user_id', userId).in('week_start', lunedi).order('created_at', { ascending: false });
+  const lunedi = Array.from({ length: n }, (_, i) => addDays(oggi, -7 * (n - 1 - i)));
+  // Per ricostruire il mese del primo lunedì servono anche le MESE_SETTIMANE settimane prima
+  const tutti = [...Array.from({ length: MESE_SETTIMANE }, (_, i) => addDays(lunedi[0], -7 * (MESE_SETTIMANE - i))), ...lunedi];
+  const [obiettivi, { data: piani }, { data: eventi }] = await Promise.all([
+    loadFocusSetup(userId),
+    supabaseAdmin.from('training_plans').select('id, week_start, plan, generato_da, created_at').eq('user_id', userId).in('week_start', tutti).order('created_at', { ascending: false }),
+    supabaseAdmin.from('onboarding_events').select('event, meta, occurred_at').eq('user_id', userId).in('event', EVENTI_MESE).gte('occurred_at', `${tutti[0]}T00:00:00Z`),
+  ]);
   const { data: done } = (piani || []).length
     ? await supabaseAdmin.from('training_session_completions').select('plan_id, session_key, rpe').eq('user_id', userId).in('plan_id', (piani || []).map((p) => p.id))
-    : { data: [] as { plan_id: string; session_key: string; rpe: number | null }[] };
-  const settimane: SettimanaReplay[] = [];
-  for (const W of lunedi) {
-    const mese = await loadMese(userId, obiettivi, W);
+    : { data: [] as DoneRow[] };
+  const settimaneTutte = settimaneMeseDa(piani || [], done || [], tutti);
+  const risposte = risposteDa(eventi || []);
+  const settimane: SettimanaReplay[] = lunedi.map((W) => {
+    const mese = calcolaMese({ obiettivi, settimane: settimaneTutte, risposte: risposte.filter((r) => r.quando.slice(0, 10) < W), lunediCorrente: W });
     const suoi = (piani || []).filter((p) => p.week_start === W);
     const ultimo = suoi[0];
     let piano: SettimanaReplay['piano'] = null;
@@ -331,19 +358,22 @@ export async function replayMese(userId: string, nSettimane = 8): Promise<{ obie
       const plan = ultimo.plan as WeekPlan;
       piano = {
         generatoDa: String(ultimo.generato_da), nPiani: suoi.length,
-        sedute: (plan.sedute || []).map((s) => ({ giorno: s.giorno, titolo: s.titolo, qualita: [...new Set((s.blocchi || []).map((b) => b.qualita))], fatta: fatti.has(s.giorno), voto: fatti.get(s.giorno) ?? null })),
+        sedute: (plan.sedute || []).map((s) => ({
+          giorno: s.giorno, titolo: s.titolo, fatta: fatti.has(s.giorno), voto: fatti.get(s.giorno) ?? null,
+          qualita: [...new Set((s.blocchi || []).map((b) => QUALITA_LABEL[b.qualita as QualitaV2] ?? b.qualita))],
+        })),
         aggiustamenti: plan.aggiustamenti ?? [], violazioni: plan.violazioni ?? [],
       };
     }
-    settimane.push({
+    return {
       lunedi: W, inCorso: W === oggi, mese,
-      righe: mese && mese.settimane ? meseRigheAtleta(mese) : [],
-      priorita: mese ? mese.priorita.map((f) => focusLabel(f)) : [],
-      riordinato: !!mese?.riordinato,
-      domande: mese ? mese.daChiedere.map((d) => d.label) : [],
+      righe: mese.settimane ? meseRigheAtleta(mese) : [],
+      priorita: mese.priorita.map((f) => focusLabel(f)),
+      riordinato: mese.riordinato,
+      domande: mese.daChiedere.map((d) => d.label),
       piano,
-    });
-  }
+    };
+  });
   return { obiettivi, settimane };
 }
 
@@ -1091,11 +1121,14 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   // Oltre il tetto fisico della fase le giornate sono LEGGERE: fascia + tecnica (o recupero), niente forza
   const leggero = primo(ctx, 'tecnica-palleggi') ?? primo(ctx, 'mobilita-recupero');
   const baseSeduta = (g: number, i: number, fisico: boolean): SedutaLLM => {
-    const p = fisico ? principali[i % Math.max(1, principali.length)]?.() : leggero;
+    // Un posto fisico senza più blocchi liberi (tutti i formati sui gradini già usati, niente Everfit) diventa una
+    // giornata leggera: la sola apertura non è una giornata (review 7/10)
+    const principale = fisico ? principali[i % Math.max(1, principali.length)]?.() : undefined;
+    const p = principale ?? leggero;
     if (p) registra([p.id]);
     const conFascia = fascia && p && p.id !== fascia.id && fascia.durataMin + p.durataMin <= maxDur;
     return {
-      giorno: g, titolo: fisico ? 'Seduta base' : 'Giornata leggera', spiegazione: 'Piano base di sicurezza generato automaticamente.',
+      giorno: g, titolo: principale ? 'Seduta base' : 'Giornata leggera', spiegazione: 'Piano base di sicurezza generato automaticamente.',
       blocchi: [conFascia ? fascia.id : undefined, p?.id ?? fascia?.id].filter((x): x is string => !!x),
     };
   };
@@ -1116,13 +1149,22 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const violazioni = [...errors, ...(plan.sedute.length ? validatePlan(plan, vctx) : ['piano vuoto'])];
     return { plan, violazioni };
   };
-  // Ibrido: le giornate del seme senza errori propri ("seduta del giorno N: …") prendono il posto di quelle base
+  // Ibrido: le giornate del seme senza errori PROPRI restano. Propri = con il giorno nel messaggio di expandPiano
+  // ("seduta del giorno N", "seduta di Giovedì") oppure trovati rivalidando la giornata DA SOLA (il validatore
+  // scrive `seduta "titolo" il giorno N: vietata`, senza prefisso: la review del 7/10 l'aveva trovato)
   const rotti = new Set((seme?.violazioni ?? []).map(giornoDellaViolazione).filter((d): d is number => d !== null));
-  const tenute = (seme?.piano.sedute ?? []).filter((x) => !rotti.has(x.giorno) && x.blocchi.every((id) => disponibili.has(id)));
+  const tenute = (seme?.piano.sedute ?? []).filter((x) => {
+    if (rotti.has(x.giorno) || !x.blocchi.every((id) => disponibili.has(id))) return false;
+    const sola = expandPiano({ sedute: [x] }, ctx);
+    if (sola.errors.some((e) => giornoDellaViolazione(e) === x.giorno) || sola.plan.sedute.length !== 1) return false;
+    return validatePlan(sola.plan, { ...vctx, oggiDow: undefined }).length === 0;
+  });
   if (tenute.length) {
     const giorniTenuti = new Set(tenute.map((x) => x.giorno));
-    const nMax = seduteRichieste(ctx) ?? Math.max(sedute.length, tenute.length);
-    const ibrido = [...tenute, ...sedute.filter((x) => !giorniTenuti.has(x.giorno))].sort((x, y) => x.giorno - y.giorno).slice(0, Math.max(nMax, tenute.length));
+    // Prima TUTTE le giornate buone di Claude, poi le base nei giorni che restano fino al numero chiesto
+    const nMax = Math.max(seduteRichieste(ctx) ?? sedute.length, tenute.length);
+    const riempitivi = sedute.filter((x) => !giorniTenuti.has(x.giorno)).slice(0, Math.max(0, nMax - tenute.length));
+    const ibrido = [...tenute, ...riempitivi].sort((x, y) => x.giorno - y.giorno);
     const esitoIbrido = tenta(ibrido, seme?.piano.messaggio || 'La settimana proposta, con qualche giornata sistemata dal preparatore.');
     if (!esitoIbrido.violazioni.length) return { plan: conProgressioni(esitoIbrido.plan, ctx, vctx), violazioni: [], tenute: tenute.map((x) => x.giorno) };
     console.error('trainingPlannerV2: anche l\'ibrido viola le regole', esitoIbrido.violazioni);
@@ -1198,7 +1240,7 @@ function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
 
 export async function generateWeekPlanV2(
   userId: string, richiesta?: string, vincoli: Vincoli = {}
-): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[] }> {
+): Promise<{ plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[]; ibrido?: boolean }> {
   const inizio = Date.now();
   const ctx = await loadContextV2(userId);
   ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
@@ -1263,7 +1305,7 @@ export async function generateWeekPlanV2(
   if (base.tenute.length) {
     const sostituiti = base.plan.sedute.filter((s) => !base.tenute.includes(s.giorno)).map((s) => DAY_NAMES[s.giorno]);
     const aggiustamenti = [...(migliore?.riparazioni ?? []), ...(sostituiti.length ? [`${sostituiti.join(', ')}: giornat${sostituiti.length === 1 ? 'a' : 'e'} base al posto di quell${sostituiti.length === 1 ? 'a' : 'e'} propost${sostituiti.length === 1 ? 'a' : 'e'} (${(migliore?.violazioni[0] ?? '').slice(0, 120) || 'non rispettava le regole'})`] : [])];
-    return { plan: rifinisci({ ...base.plan, violazioni: violazioni.slice(0, 8) }, aggiustamenti), generatoDa: 'llm', ctx };
+    return { plan: rifinisci({ ...base.plan, violazioni: violazioni.slice(0, 8) }, aggiustamenti), generatoDa: 'llm', ctx, ibrido: true };
   }
   return { plan: rifinisci(base.plan, []), generatoDa: 'fallback', ctx, violazioni };
 }

@@ -14,6 +14,7 @@
  */
 import { addDays } from './carta';
 import { isKettlebell } from './trainingKettlebell';
+import { APERTURA_IDS } from './trainingFascia';
 import { FOCUS_BILANCIATO, FOCUS_QUALITA, FOCUS_TUTTO, focusLabel, type FocusId } from './trainingRequest';
 
 // SOGLIE PROVVISORIE (7/10): scelte a tavolino, non dai dati. Da tarare quando tre atleti avranno un mese di piani
@@ -41,10 +42,14 @@ export interface Mese {
   daChiedere: DomandaMese[];
 }
 
-/** La seduta copre l'obiettivo se un suo blocco è della qualità giusta (il kettlebell solo con i blocchi kb-*). */
+/**
+ * La seduta copre l'obiettivo se un suo blocco è della qualità giusta (il kettlebell solo con i blocchi kb-*).
+ * L'apertura (rolling, Fascia Foundations 1) c'è in testa a ogni seduta fisica e NON conta come fascia: altrimenti
+ * la fascia risultava "fatta" ogni settimana anche senza un blocco del percorso (review 7/10).
+ */
 export function sedutaCopre(s: SedutaMese, f: FocusId): boolean {
   if (f === 'kettlebell') return s.blocchi.some((b) => isKettlebell(b.id));
-  return s.blocchi.some((b) => !isKettlebell(b.id) && FOCUS_QUALITA[f].includes(b.qualita));
+  return s.blocchi.some((b) => !isKettlebell(b.id) && !APERTURA_IDS.has(b.id) && FOCUS_QUALITA[f].includes(b.qualita));
 }
 
 export function calcolaMese(input: { obiettivi: FocusId[]; settimane: SettimanaMese[]; risposte?: RispostaMese[]; lunediCorrente: string }): Mese {

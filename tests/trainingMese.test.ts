@@ -14,6 +14,9 @@ describe('strato mese: conta e riordina (Ste, 7/10)', () => {
     expect(sedutaCopre(alta(true), 'gambe')).toBe(false);
     expect(sedutaCopre(kb(true), 'kettlebell')).toBe(true);
     expect(sedutaCopre(kb(true), 'gambe')).toBe(false); // forza-esplosiva del kb non copre le gambe
+    // l'apertura (in testa a ogni seduta fisica) non è il percorso fascia: non copre l'obiettivo fascia
+    expect(sedutaCopre({ giorno: 1, blocchi: [{ id: 'fascia-foundations-1', qualita: 'fascia-prevenzione' }, { id: 'pa-serie', qualita: 'forza-parte-alta' }], fatta: true }, 'fascia')).toBe(false);
+    expect(sedutaCopre({ giorno: 1, blocchi: [{ id: 'fascia-foundation-2', qualita: 'fascia-prevenzione' }], fatta: true }, 'fascia')).toBe(true);
   });
 
   it('per obiettivo: settimane pianificate, fatte e sedute saltate', () => {

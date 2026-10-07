@@ -176,6 +176,27 @@ describe('piano base ibrido: le giornate buone di Claude restano', () => {
     expect(plan.messaggio).toBe('settimana tosta');
   });
 
+  it('le giornate buone di Claude a fine settimana restano tutte; il base riempie solo i posti che mancano (review 7/10)', () => {
+    const ctx = ctxBase({ obiettivi: ['gambe'], vincoli: { numSedute: 3 } } as Partial<ContextV2>);
+    const seme: PianoLLM = { sedute: [{ giorno: 1, blocchi: [APERTURA, 'forza-parte-bassa-b1', 'pliometria-b2', 'velocita-e-forza-esplosiva-b1'] }, { giorno: 5, titolo: 'Gambe venerdì', blocchi: [APERTURA, 'forza-parte-bassa-b1'] }, { giorno: 7, titolo: 'Salti domenica', blocchi: [APERTURA, 'pliometria-b1'] }] };
+    const { plan, violazioni, tenute } = fallbackPianoBlocchi(ctx, { piano: seme, violazioni: ['seduta del giorno 1: ~140\' oltre il massimo di 90\''] });
+    expect(violazioni).toEqual([]);
+    expect(tenute).toEqual([5, 7]);
+    expect(plan.sedute.length).toBe(3);
+    expect(plan.sedute.map((s) => s.titolo)).toEqual(expect.arrayContaining(['Gambe venerdì', 'Salti domenica']));
+  });
+
+  it('una giornata rotta solo per il validatore (fisica il giorno prima della partita) viene riconosciuta e sostituita', () => {
+    const ctx = ctxBase({ obiettivi: ['gambe'] } as Partial<ContextV2>, { matchDays: [6] });
+    const seme: PianoLLM = { sedute: [{ giorno: 3, titolo: 'Gambe mercoledì', blocchi: [APERTURA, 'forza-parte-bassa-b2'] }, { giorno: 5, titolo: 'Gambe venerdì', blocchi: [APERTURA, 'forza-parte-bassa-b1'] }] };
+    // il messaggio del validatore non ha il prefisso "seduta del giorno N": prima la giornata restava e l'ibrido falliva sempre
+    const { plan, violazioni, tenute } = fallbackPianoBlocchi(ctx, { piano: seme, violazioni: ['seduta fisica "Gambe venerdì" il giorno 5: vietata (partita o giorno prima)'] });
+    expect(violazioni).toEqual([]);
+    expect(tenute).toEqual([3]);
+    expect(plan.sedute.find((s) => s.giorno === 3)?.titolo).toBe('Gambe mercoledì');
+    expect(plan.sedute.some((s) => s.titolo === 'Gambe venerdì')).toBe(false);
+  });
+
   it('senza seme il piano base è quello di prima', () => {
     const ctx = ctxBase({ obiettivi: ['gambe'] } as Partial<ContextV2>);
     const { plan, tenute } = fallbackPianoBlocchi(ctx);
