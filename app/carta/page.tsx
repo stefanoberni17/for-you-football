@@ -173,25 +173,14 @@ export default function CartaPage() {
               </div>
             </div>
 
-            {/* Livelli affiancati: mente dal blocco del percorso, corpo dai test */}
-            <div className="grid grid-cols-2 gap-2">
+            {/* Nessun livello della persona per la mente (regola del metodo, 8/10): resta solo il livello del Corpo, che viene dai test */}
+            {haCorpo && (
               <Card padding="sm">
-                <p className="text-overline uppercase tracking-wider font-semibold text-faint">Mente</p>
-                <p className="font-display text-title-1 font-bold text-app leading-tight">{c360.mente.livello}</p>
-                <p className="text-caption text-muted">{c360.mente.livelloLabel}</p>
+                <p className="text-overline uppercase tracking-wider font-semibold text-faint">Corpo, dai test</p>
+                <p className="font-display text-title-1 font-bold text-app leading-tight">{c360.corpo!.livello}</p>
+                <p className="text-caption text-muted">{LIVELLO_CORPO_LABEL[c360.corpo!.livello] || c360.corpo!.livello}</p>
               </Card>
-              <Card padding="sm">
-                <p className="text-overline uppercase tracking-wider font-semibold text-faint">Corpo</p>
-                {haCorpo ? (
-                  <>
-                    <p className="font-display text-title-1 font-bold text-app leading-tight">{c360.corpo!.livello}</p>
-                    <p className="text-caption text-muted">{LIVELLO_CORPO_LABEL[c360.corpo!.livello] || c360.corpo!.livello}</p>
-                  </>
-                ) : (
-                  <p className="text-body-sm text-muted leading-snug pt-1">{c360.corpo ? 'Fai i test nel Campo' : 'Si apre con il Campo'}</p>
-                )}
-              </Card>
-            </div>
+            )}
 
             {haCorpo && (
               <div className="flex gap-2" role="tablist" aria-label="Vista della Carta">

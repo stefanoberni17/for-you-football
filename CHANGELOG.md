@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-08 — Lancio di novembre, punto 7: correzioni dalla verifica dell'8/10
+- Statistiche: il periodo 7/30/90 filtra per data di calendario, non "gli ultimi N check-in".
+- Carta: via il livello "MENTE PRO" e la punta "Crescita" (nessun livello della persona); resta il livello del Corpo, dai test.
+- Profilo: "Per i genitori" nascosto (prima coorte a 18+).
+- Home: la riflessione di fine giornata è indicata come facoltativa, come nella pagina della giornata.
+
 ## 2026-10-08 — Lancio di novembre, punto 6: registrazione e legale
 - Domanda facoltativa "Chi ti ha consigliato For You Football?" nello step 2 della registrazione → `profiles.referral_source` (migration 030, update separato fail-soft; evento `signup_completed` con `referral: true/false`).
 - Frase "For You Football non è un servizio sanitario né psicologico" nella prima slide dell'onboarding e nei termini.

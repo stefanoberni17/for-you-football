@@ -168,7 +168,8 @@ const DEFINIZIONI: { key: string; label: string; spiegazione: string; unita: Pun
   { key: 'costanza', label: 'Costanza', spiegazione: 'Le pratiche del percorso fatte sui giorni da quando hai iniziato.', unita: '%', soglie: 'costanza', grezzo: costanzaGrezza },
   { key: 'disciplina', label: 'Disciplina', spiegazione: 'Le 5 azioni che ti sei segnato: quante ne spunti davvero.', unita: '%', soglie: 'disciplina', grezzo: disciplinaGrezza },
   { key: 'lucidita', label: 'Lucidità', spiegazione: 'Come sei di testa al mattino, dal check-in.', unita: '/10', soglie: 'lucidita', grezzo: luciditaGrezza },
-  { key: 'crescita', label: 'Crescita', spiegazione: 'Quanto sei avanti nel percorso, al tuo ritmo: le settimane chiuse col Gate.', unita: 'sett', soglie: 'crescita', grezzo: (i) => crescitaGrezza(i) },
+  // 'crescita' (settimane chiuse col Gate) tolta dal rombo l'8/10 (Ste: nessun livello della persona; "5,8 settimane" non si capiva).
+  // crescitaGrezza resta come funzione pura, non entra più nella Carta.
 ];
 
 function tendenzaDi(score: number | null, score7: number | null): Tendenza | null {
@@ -189,9 +190,8 @@ export function romboMente(input: InputMente): RomboMente {
     const soglie = SOGLIE_MENTE[d.soglie];
     const valore = d.grezzo(input, f4);
     const s = score(soglie, valore);
-    const s7 = d.key === 'crescita' ? s : score(soglie, d.grezzo(input, f7));
-    // La crescita alla partenza = il valore che aveva alla fine delle prime 4 settimane
-    const s0 = f0 ? score(soglie, d.key === 'crescita' ? crescitaGrezza({ ...input, gateSettimane: input.gateSettimane.slice(0, 4) }, f0.a) : d.grezzo(input, f0)) : null;
+    const s7 = score(soglie, d.grezzo(input, f7));
+    const s0 = f0 ? score(soglie, d.grezzo(input, f0)) : null;
     return { key: d.key, label: d.label, spiegazione: d.spiegazione, valore, unita: d.unita, score: s, score7: s7, tendenza: tendenzaDi(s, s7), scoreIniziale: s0, delta: s !== null && s0 !== null ? Math.round(s - s0) : null };
   });
   const livello = livelloMente(input.currentWeek);
@@ -257,7 +257,7 @@ const GRUPPI_360: { key: string; label: string; punte: string[]; da: string }[] 
 export function rombo360(mente: RomboMente, recupero: Punta, corpo: PuntaCorpo[] | null): Punta360[] {
   const out: Punta360[] = [];
   const mIni = media(mente.punte.map((p) => p.scoreIniziale).filter((x): x is number => x !== null));
-  out.push({ key: 'mente', label: 'Mente', score: mente.media, scoreIniziale: mente.haPartenza && mIni !== null ? Math.round(mIni) : null, delta: mente.media !== null && mente.haPartenza && mIni !== null ? Math.round(mente.media - mIni) : null, da: 'presenza, costanza, disciplina, lucidità, crescita' });
+  out.push({ key: 'mente', label: 'Mente', score: mente.media, scoreIniziale: mente.haPartenza && mIni !== null ? Math.round(mIni) : null, delta: mente.media !== null && mente.haPartenza && mIni !== null ? Math.round(mente.media - mIni) : null, da: 'presenza, costanza, disciplina, lucidità' });
   out.push({ key: 'recupero', label: 'Recupero', score: recupero.score === null ? null : Math.round(recupero.score), scoreIniziale: recupero.scoreIniziale === null ? null : Math.round(recupero.scoreIniziale), delta: recupero.delta, da: 'check-in e fascia' });
   for (const g of GRUPPI_360) {
     const mie = (corpo ?? []).filter((p) => g.punte.includes(p.key) && p.score !== null);

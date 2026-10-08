@@ -485,7 +485,7 @@ export default function HomePage() {
                 )}
                 {nextDayInCorso && (
                   <p className="text-forest-100 text-body-sm mt-2">
-                    {riflessioneOk ? 'Giornata avviata: manca solo la riflessione, una riga.' : `Vivi la giornata. La riflessione si apre alle ${riflessioneAlle}.`}
+                    {riflessioneOk ? 'Giornata avviata. Se vuoi, chiudila con una riga di riflessione: è facoltativa.' : `Vivi la giornata. Più tardi, se vuoi, una riga di riflessione (dalle ${riflessioneAlle}).`}
                   </p>
                 )}
               </div>
