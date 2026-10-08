@@ -28,7 +28,10 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 // ─── Age gate ────────────────────────────────────────────────────────────────
 // UNICA fonte di verità per la soglia di età. Il parere legale può alzarla a 16:
 // cambiare SOLO questo valore (commit da una riga).
-export const MIN_AGE = 14; // soglia in attesa di conferma legale — può diventare 16
+// Età minima (spec v4, 8/10): 18 per la prima coorte; configurabile con NEXT_PUBLIC_MIN_AGE su Vercel (vale al
+// prossimo deploy) senza toccare il codice. Più avanti scende a 16 con il flusso "chi paga". Chi è già registrato
+// non viene bloccato: il controllo vive solo in /api/register e nel form.
+export const MIN_AGE = Math.max(14, Number(process.env.NEXT_PUBLIC_MIN_AGE) || 18);
 
 // ─── Consenso documenti legali ───────────────────────────────────────────────
 // Versioni correnti di privacy policy e termini (es. '2026-09-01').

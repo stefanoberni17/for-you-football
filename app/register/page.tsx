@@ -101,7 +101,7 @@ function RegisterContent() {
     if (age === null || age < 0 || age > 100) { setError('Data di nascita non valida'); return; }
     if (age < MIN_AGE) {
       // ⚠️ TESTO DA RIVEDERE INSIEME PRIMA DEL DEPLOY — stesso messaggio del server
-      setError(`Per usare For You Football devi avere almeno ${MIN_AGE} anni. Ti aspettiamo!`);
+      setError(`Per ora For You Football è per chi ha almeno ${MIN_AGE} anni. Stiamo lavorando per aprire anche ai più giovani: ti aspettiamo.`);
       return;
     }
     if (!privacyAccepted || !termsAccepted || !healthAccepted) {
@@ -287,7 +287,7 @@ function RegisterContent() {
               <Field
                 label="Data di nascita *"
                 htmlFor="reg-birth"
-                helper={`Obbligatoria: serve per adattare il percorso alla tua età e per requisiti di legge (età minima ${MIN_AGE} anni).`}
+                helper={`Obbligatoria: serve per adattare il percorso alla tua età e per requisiti di legge (per ora l'app è per chi ha almeno ${MIN_AGE} anni).`}
               >
                 <Input id="reg-birth" type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}
                   max={new Date().toISOString().slice(0, 10)}

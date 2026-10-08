@@ -43,7 +43,7 @@ export default function TerminiPage() {
               <Card variant="raised" padding="sm">
                 <p className="font-semibold text-app mb-1">Età minima</p>
                 <p className="text-muted">
-                  Per usare l&apos;app devi avere almeno 14 anni.
+                  Per usare l&apos;app devi avere almeno 18 anni (in questa prima fase).
                 </p>
               </Card>
               <Card variant="raised" padding="sm">

@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
         .then(() => {}, (err) => console.error('age_gate_blocked event error:', err));
       // ⚠️ TESTO DA RIVEDERE INSIEME PRIMA DEL DEPLOY (spec intervento 1.4)
       return NextResponse.json(
-        { error: `Per usare For You Football devi avere almeno ${MIN_AGE} anni. Ti aspettiamo!`, age_gate: true },
+        { error: `Per ora For You Football è per chi ha almeno ${MIN_AGE} anni. Stiamo lavorando per aprire anche ai più giovani: ti aspettiamo.`, age_gate: true },
         { status: 403 }
       );
     }

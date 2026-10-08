@@ -1,5 +1,121 @@
 # Lancio Mentale (9 novembre 2026) e Campo (dicembre): ricognizione e stima
 
+> **Aggiornamento 8 ottobre sera, spec v4 snella.** La parte nuova è la prima: stima a due colonne e note tecniche su prova e webhook. Più sotto resta la ricognizione fatta sulla v3 (i fatti sul codice valgono ancora; le stime v3 no).
+
+## A. Stima v4, due colonne
+
+Tempo mio = sessioni di lavoro, test e CI compresi (un punto medio è una sessione da 20-40 minuti, uno grande da 1-2 ore). Tempo di Ste = decisioni, pannello Stripe, verifiche, telefono, "vai" sulle PR. Il collo di bottiglia è la seconda colonna, più l'attesa di Stripe sull'idoneità.
+
+### Fase 1, Mentale
+
+| # | Punto | Tempo mio | Tempo di Ste | Dipende da |
+|---|---|---|---|---|
+| 1 | Sicurezza (liste per categoria, eccezioni, negazioni, alert a dati minimi, 45 casi di test) | 1,5-2 h (**fatta, PR #129**) | 20' approvare le liste · 15' prova e2e da un account di test (un messaggio grave in chat e su Telegram, poi l'avviso sul telefono) | — |
+| 2 | Età 18 configurabile | 15' (**fatta, PR #129**) | 0 | — |
+| 5 | Coach: Telegram spento in prova, `FREE_COACH_MESSAGES` a 20, ms nel log | 45' | 15' leggere i tempi dai log Vercel dopo qualche giorno | il "in prova" del punto 3 (per Telegram) |
+| 6 | «Chi ti ha consigliato?» + versioni legali + frase "non è un servizio sanitario" | 45' | 1-2 h: documenti dal generatore, URL, poi mi dai le versioni | testi |
+| 7 | Correzioni 7.1-7.4 | 1-1,5 h | 10' decidere "Crescita": spiegare o togliere | — |
+| 8 | Home dei primi 7 giorni + verifica audio W1 | 1,5-2 h | 30' audio sul telefono (voce e ripresa dopo interruzione le giudichi tu) | — |
+| 4 | Managed Payments: versione API, tax code, Price 19/29/39 scelto da configurazione, `allow_promotion_codes` solo sul listino, interruttore iscrizioni + lista d'attesa, prodotti Allenamenti/Completo | 1,5-2 h | 2-3 h: idoneità, Products e Prices, tax code sui Price, promotion code, impostazioni portale (disdetta a fine periodo) e retry pagamenti, env su Vercel | account Stripe di test |
+| 3 | Prova: stato `trialing`, W1 in prova, webhook (`trial_will_end`, fine prova con addebito, fallito con tolleranza, disdetta), doppio checkout, email giorno 6 se serve, test duplicati/fuori ordine/rimborso/3DS | 3-4 h | 1 h: prova con carta di test, disdetta dal portale, lettura del promemoria Stripe | punto 4 |
+| 9 | Collaudo | 1-2 h | 2-3 h: telefono reale, un acquisto vero e il rimborso | tutto |
+| | **Totale** | **~12-16 h** | **~8-11 h** | |
+
+Calendario: con l'account Stripe di test entro il 20 ottobre, il 26 regge. Senza Stripe si fanno comunque 1, 2, 5 (solo il tetto a 20 e i ms), 6, 7, 8.
+
+### Fase 2, Campo (dal 16 novembre)
+
+| # | Punto | Tempo mio | Tempo di Ste |
+|---|---|---|---|
+| 1 | Prescrizione unica (Windmill 12/16 kg) | 2-3 h | 20' verificare su una seduta vera |
+| 2 | Preparatore: regole nel prompt | 45' | 15' |
+| 3 | Lista bianca: aree attive in configurazione, esclusione senza scheda+video, modello scheda su Notion, pagina scheda | 3-4 h | **giorni**: una scheda per esercizio + un video da 30" ciascuno (la lista degli esercizi è nella sezione C) |
+| 4 | Dolore e2e (blocco intero a 4/10, rimozione, avviso a dati minimi) | 1 h | 15' |
+| 5 | Durate: audit per lato sui blocchi | 1 h | 0 |
+| 6 | Accesso: webhook Allenamenti/Completo → `training_access`, Campo in alto, pagina prodotto, upgrade | 1,5-2 h | 1 h: prodotti e prova del cambio prodotto |
+| 7 | Collaudo 3 aree | 1-2 h | 2 h telefono |
+| | **Totale** | **~10-14 h** | **~5 h + schede e video** |
+
+Il vincolo vero della Fase 2 sono le schede e i video: il motore assegna solo esercizi con scheda completa e video, quindi il giorno della vendita lo decide quanti ne hai pronti.
+
+## B. Cosa nella v4 non regge così com'è (prova e webhook)
+
+Cinque punti, tutti risolvibili, ma vanno saputi prima di configurare Stripe.
+
+1. **`trialing` oggi apre tutto, e il DB non lo accetta come stato.** Il webhook mappa `trialing` → `active` e `profiles.subscription_status` ha un vincolo CHECK su `none / active / past_due / canceled` (migration 002). Serve una migration che aggiunga `trialing` e il webhook deve salvarlo com'è. Niente prova con carta in produzione prima di questo: giusto come dice la v4.
+2. **`invoice.paid` oggi conta le rate di Season 1.** Alla prima fattura pagata il handler incrementa `installments_paid` e alla terza accende `season1_access`. Con il Mentale mensile la terza mensilità darebbe l'accesso perpetuo. Il handler deve distinguere il prodotto dalla fattura (price/product id o metadata della sub): per Mentale solo `trialing → active`, le rate restano per i founder esistenti.
+3. **Disdetta in prova "W1 fino alla scadenza originale".** Se il portale cancella subito, Stripe manda `customer.subscription.deleted` e oggi l'app chiude l'accesso nello stesso istante. Due strade: (a) impostare il portale su "cancella a fine periodo" (configurazione, zero codice: la sub resta `trialing` con `cancel_at_period_end`, scade da sola e non addebita), oppure (b) salvare `trial_ends_at` sul profilo e tenere W1 fino a quella data anche da `canceled`. Propongo (a), con (b) solo se il test mostra che Managed Payments non lascia scegliere.
+4. **Pagamento fallito e tolleranza.** Oggi `past_due` blocca subito. Proposta senza codice nuovo: nel pannello Stripe, Smart Retries per 7 giorni e poi "segna come unpaid"; l'app tiene l'accesso su `past_due` e blocca su `unpaid` / `canceled`. È una riga nella mappa del webhook. Il 3D Secure a fine prova (addebito off-session che chiede autenticazione) finisce nello stesso binario: Stripe manda l'email al cliente se è attiva l'impostazione "email per pagamenti che richiedono autenticazione", noi non facciamo niente di speciale.
+5. **Doppio checkout.** `create-checkout` oggi rifiuta solo beta e Season 1 già comprata: una persona con una sub `trialing` o `active` può aprire un secondo checkout e avere due abbonamenti. Un controllo in più nella route (se c'è già una sub viva → portale, non checkout).
+
+Due semplificazioni della v4 che invece reggono:
+- **Prezzo bloccato con tre Price**: giusto. Una sub resta sul suo Price finché vive, nessuna colonna. L'unica riga di codice è la scelta del Price nel checkout. Per evitare il redeploy a ogni cambio propongo una tabella `app_settings` (chiave/valore, scrivibile solo con service role) letta dalla route: `price_mentale_attivo`, `iscrizioni_aperte`, `trial_giorni`. Ste la cambia dal Table editor di Supabase, vale subito. Con le env di Vercel servirebbe un redeploy ogni volta.
+- **Codice Instagram solo sul 39€**: i coupon Stripe si limitano per **prodotto**, non per Price. Se 19, 29 e 39 sono tre Price dello stesso prodotto, il coupon vale su tutti. Due strade: il listino 39€ è un prodotto a sé ("Mentale" vs "Mentale lancio"), oppure `allow_promotion_codes` è vero solo quando il Price attivo è il listino (una riga nella route). Propongo la seconda, perché il "prezzo bloccato" resta leggibile in Stripe come un unico prodotto.
+
+## C. Esercizi che il motore può assegnare nelle tre aree
+
+Elenco in `docs/lancio-2026-11-esercizi-campo.md` (generato dal catalogo e dai blocchi: per ogni esercizio id, nome, qualità, lateralità, se ha già un video, in quali blocchi compare). Serve per partire con le schede.
+
+## D. Sicurezza: casi provati (PR #129)
+
+Il controllo lavora sul testo normalizzato (minuscole, senza accenti, apostrofi uniformati), toglie prima le eccezioni da campo, cerca le frasi BLOCCO per categoria e, se una è preceduta da una negazione ("non voglio…", "non ho mai pensato di…"), la porta ad ALERT: niente contenimento di 48 ore, ma Ste la legge lo stesso. Categorie: suicidio, autolesionismo, violenza verso altri, alimentazione, abusi (fisici, sessuali, online, bullismo), sostanze. Abusi e sostanze sono solo ALERT: chi racconta un abuso deve poter continuare a parlare. L'avviso a Ste (Telegram + email) porta nome, id, canale, livello, categoria e ora: il testo del messaggio non viene più inviato né scritto nei log.
+
+| Testo | Esito | Categoria |
+|---|---|---|
+| **Frasi dirette** | | |
+| voglio farla finita | blocco | suicidio |
+| a volte penso che sarebbe meglio senza di me | blocco | suicidio |
+| non voglio svegliarmi domani | blocco | suicidio |
+| Vorrei morire. | blocco | suicidio |
+| ho pensato di buttarmi di sotto | blocco | suicidio |
+| la mia vita non ha senso | blocco | suicidio |
+| mi sono tagliato ieri sera e non lo sa nessuno | blocco | autolesionismo |
+| vomito apposta dopo cena | blocco | alimentazione |
+| voglio ammazzare quel difensore, lo giuro | blocco | violenza |
+| **Parafrasi (accenti, maiuscole, apostrofi, punteggiatura)** | | |
+| NON VOGLIO PIÙ VIVERE | blocco | suicidio |
+| non vedo via d'uscita | blocco | suicidio |
+| non vedo via d’uscita | blocco | suicidio |
+| sono stanco di vivere così | blocco | suicidio |
+| starebbero tutti meglio senza di me | blocco | suicidio |
+| non ce la faccio più, non ha più senso niente | alert | suicidio |
+| mi faccio schifo dopo quel rigore | alert | autolesionismo |
+| salto i pasti per pesare meno | alert | alimentazione |
+| mi sento grasso anche se il mister dice di no | alert | alimentazione |
+| mio padre mi picchia quando perdo | alert | abusi |
+| il mio allenatore mi ha toccato e non so con chi parlarne | alert | abusi |
+| mi ricatta con le foto | alert | abusi |
+| a scuola mi bullizzano da mesi | alert | abusi |
+| bevo per non pensare alla partita | alert | sostanze |
+| il mister mi vuole picchiare scherzando | alert | violenza |
+| non ce la faccio più a seguire il ritmo in allenamento | niente |  · "a correre" e "a seguire il ritmo" sono eccezioni |
+| **Negazioni: niente contenimento, ma Ste lo sa (alert)** | | |
+| non voglio morire, voglio solo smettere di sbagliare | alert | suicidio |
+| non ho mai pensato di uccidermi | alert | suicidio |
+| non voglio farmi del male, voglio solo capire | alert | autolesionismo |
+| non è che voglio farla finita, sono solo stanco | alert | suicidio |
+| **Falsi positivi da campo e modi di dire → niente** | | |
+| ci hanno ammazzato 4-0 ieri | niente |  |
+| li abbiamo ammazzati nel secondo tempo | niente |  |
+| oggi mi sono tagliato i capelli | niente |  |
+| sono morto dal ridere con i compagni | niente |  |
+| stavo per morire di fame dopo la partita | niente |  |
+| mi tocca andare a scuola anche domani | niente |  |
+| devo picchiare forte di testa sui calci d'angolo | niente |  |
+| il mister dice di uccidere la partita nel finale | niente |  |
+| ho un digiuno da gol di tre partite | niente |  |
+| oggi allenamento duro ma bello | niente |  |
+| ho paura di farmi del male al ginocchio | niente |  |
+| mi hanno ammazzato le gambe con le ripetute | niente |  |
+| sono stanco morto | niente |  |
+| nessuno vuole morire in campo, ma oggi ci siamo andati vicini | niente |  |
+
+Da provare dal vivo (Ste, 15 minuti, account di test): un messaggio BLOCCO in chat → il Coach risponde in contenimento con i numeri utili → avviso su Telegram ed email senza il testo; lo stesso su Telegram; `/sblocca <id>`.
+
+---
+
+## Ricognizione sulla v3 (8 ottobre, pomeriggio)
+
 Risposta al punto 0 della spec «FYF: prezzi, prova, pagamenti e Campo · v3» (8 ottobre 2026). Niente codice scritto: solo fatti letti dal repo (`main` = `cf8ee13`, PR #128) e stime. Dove non ho potuto verificare (Stripe Managed Payments, latenza del Coach) lo dico.
 
 **Due cose da sapere subito**
