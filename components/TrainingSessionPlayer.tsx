@@ -8,7 +8,7 @@ import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
-import { senzaVotoPerSerie } from '@/lib/trainingFascia';
+import { APERTURA_IDS, senzaVotoPerSerie } from '@/lib/trainingFascia';
 
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
   sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso' };
@@ -66,7 +66,7 @@ export default function TrainingSessionPlayer({
 }: {
   items: PlanItem[];
   titolo: string;
-  onComplete: () => void;
+  onComplete: (esito?: { blocchiSaltati: string[] }) => void; // blocchi saltati per intero (l'apertura, 8/10): niente domanda sulle zone a fine seduta
   onExit: () => void;
   storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
   initialProgress?: PlayerProgress | null;
@@ -74,6 +74,7 @@ export default function TrainingSessionPlayer({
   onSetLog?: (log: SetLogInput) => void;    // feedback per serie durante il recupero (fire-and-forget)
 }) {
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
+  const blocchiSaltatiRef = useRef<string[]>([]); // "Salta l'apertura" (8/10): il blocco intero, senza passare dai singoli esercizi
   const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
   // Recupero dopo l'ULTIMA serie: il countdown resta (spazio per il feedback), poi si passa all'esercizio dopo
@@ -215,12 +216,19 @@ export default function TrainingSessionPlayer({
     setShowDesc(false);
     if (itemIdx + step >= items.length) {
       if (storageKey) { try { localStorage.removeItem(storageKey); } catch { /* no-op */ } }
-      onComplete();
+      onComplete({ blocchiSaltati: blocchiSaltatiRef.current });
     } else {
       setItemIdx(itemIdx + step);
     }
   };
   const nextItem = () => avanza(1);
+  // Apertura facoltativa (Ste, 8/10): si salta in blocco, dal primo esercizio del rolling
+  const saltaBlocco = (bloccoId: string) => {
+    let n = 0;
+    while (itemIdx + n < items.length && items[itemIdx + n].blocco_id === bloccoId) n++;
+    if (!blocchiSaltatiRef.current.includes(bloccoId)) blocchiSaltatiRef.current = [...blocchiSaltatiRef.current, bloccoId];
+    avanza(Math.max(1, n));
+  };
   // Fine dell'EMOM: un log per esercizio (serie = giri fatti, stesso RPE per tutto il circuito), poi si salta l'intero gruppo
   const emomDone = (r: number | null, giriFatti: number[]) => {
     if (onSetLog) emomGruppo.forEach((it, i) => {
@@ -304,6 +312,7 @@ export default function TrainingSessionPlayer({
   const blocco = item.blocco_id ? blocchi?.find((b) => b.id === item.blocco_id) : undefined;
   // Ste, 28/9: niente voto per serie su rolling e fascia (a fine seduta si dice dove si è sentita); sulla tecnica la scala è "quanto ti è riuscito"
   const senzaVoto = senzaVotoPerSerie(blocco);
+  const isAperturaBlocco = !!blocco && APERTURA_IDS.has(blocco.id);
   const isTecnica = !!blocco?.qualita?.startsWith('tecnica');
   // 29/9: la scala 1-10 sta aperta solo dove guida davvero la progressione (gradini delle scale, esercizi con i kg,
   // tecnica); sugli accessori a corpo libero resta "Fatte" (che basta al SALI) e il voto si apre a richiesta
@@ -348,7 +357,7 @@ export default function TrainingSessionPlayer({
         {/* Esercizio corrente */}
         <Card className="mb-3">
           {blocco && (
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{nomeBloccoAtleta(blocco.nome)}</p>
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{nomeBloccoAtleta(blocco.nome)}{isAperturaBlocco ? ' · facoltativa' : ''}</p>
           )}
           <h2 className="font-display text-title-1 font-bold text-app leading-tight">{ex.nome}</h2>
           <p className="text-body-lg font-semibold tabular-nums text-forest-400 mt-1">{parametri}</p>
@@ -510,6 +519,11 @@ export default function TrainingSessionPlayer({
 
             {/* Slot fisso in fondo: la CTA principale sempre nello stesso punto */}
             <div className={SLOT}>
+              {isAperturaBlocco && (
+                <Button variant="secondary" size="sm" fullWidth className="mb-2" iconRight={<ChevronRight size={16} />} onClick={() => saltaBlocco(blocco!.id)}>
+                  Salta l&apos;apertura, vai all&apos;allenamento
+                </Button>
+              )}
               <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={handleSerieDone}>
                 {ctaLabel}
               </Button>

@@ -35,13 +35,13 @@ import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusE
 import { nomeBloccoAtleta, testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi, QUALITA_LABEL } from './trainingLivelli';
-import { FAMIGLIA_FASCIA_FORZA, FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
+import { APERTURA_BREVE_MAX, APERTURA_NOTA, aperturaDaSostituire, aperturaPer, bloccoAperturaBreve, FAMIGLIA_FASCIA_FORZA, FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, minutiApertura, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
 import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type Ripasso } from './trainingTecnica';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isSalite, isVelocita, limaSprint, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.28-strato-mese';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.29-apertura-facoltativa';
 /** Tentativi con Claude per piano (ognuno con gli errori del precedente nel messaggio). */
 export const PLANNER_TENTATIVI = 3;
 /** Un nuovo tentativo parte solo entro questo tempo dall'inizio: la route Vercel muore a 60 s e un piano salvato tardi non arriva a nessuno. */
@@ -175,6 +175,8 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
   });
   ctx.blocchi = regole.blocchi; ctx.noteRegole = regole.note;
   if (setup.attrezzatura.includes('campo')) ctx.blocchi.push(bloccoRiscaldamentoVelocita());
+  // Apertura breve (8/10): in libreria se c'è il rullo (stessa attrezzatura del rolling)
+  if (ctx.blocchi.some((b) => b.id === ROLLING_ID)) ctx.blocchi.push(bloccoAperturaBreve());
   ctx.memoria = calcolaMemoriaBlocchi(base.feedbackRecenti, { disponibili: ctx.blocchi, lunediCorrente, livello: v2.livello, livelli: base.livelli, isDeload: base.ciclo.isDeload });
   // Assaggio/promozione del livello sopra: quei blocchi entrano tra i disponibili (Claude li vede in libreria, il validatore li accetta)
   for (const b of blocchiFuoriLivello(ctx.memoria)) if (!ctx.blocchi.some((x) => x.id === b.id)) ctx.blocchi.push(b);
@@ -481,10 +483,11 @@ function sostituzioniFormati(p: PianoLLM, ctx: ContextV2, f: FormatiServer): Map
     if (ctx.daRecuperare.some((r) => r.blocchi.every((id) => ids.includes(id)))) continue; // seduta da recuperare: va riproposta uguale
     const mappa = new Map<string, string | null>();
     let haPa = blocchi.some((b) => f.is(b.id));
-    // Il tempo si misura con la sola apertura (Ste, 28/9: "ne dedica una quasi interamente alla parte alta e riduce
-    // il resto"): il formato più pieno che ci sta; gli altri blocchi facoltativi della giornata saltano se non c'è posto
+    // Il tempo si misura con il solo riscaldamento (Ste, 28/9: "ne dedica una quasi interamente alla parte alta e riduce
+    // il resto"): il formato più pieno che ci sta; gli altri blocchi facoltativi della giornata saltano se non c'è posto.
+    // L'apertura fascia (8/10) non si tocca ma sta fuori dal tempo: conta solo il riscaldamento della velocità
     const obbligatorio = (x: Blocco) => isApertura(x) || x.id === RISC_VELOCITA_ID;
-    const apertura = blocchi.filter((x) => obbligatorio(x)).reduce((a, x) => a + x.durataMin, 0);
+    const apertura = blocchi.filter((x) => x.id === RISC_VELOCITA_ID).reduce((a, x) => a + x.durataMin, 0);
     for (const b of everfit) {
       if (haPa) { mappa.set(b.id, null); continue; }
       const liberi = ordine.filter((x) => !usati.has(gruppo(x.id)));
@@ -642,19 +645,32 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       }
       if (giornateVelocita > 1) errors.push(`seduta del giorno ${s.giorno}: seconda giornata di velocità nella settimana — al massimo UNA (Ste)`);
     }
-    // Fascia a tre ruoli (Ste, 24/9): l'apertura sta in testa a ogni seduta fisica (se manca il server mette il rolling),
-    // mai da sola come giornata; il percorso fascia è una giornata leggera, al massimo 3 a settimana
+    // Fascia a tre ruoli (Ste, 24/9): l'apertura sta in testa a ogni seduta fisica (se manca il server la mette),
+    // mai da sola come giornata; il percorso fascia è una giornata leggera, al massimo 3 a settimana.
+    // Dall'8/10 l'apertura è FACOLTATIVA e fuori dal tempo della seduta: entra sempre (niente controllo sulla durata),
+    // la versione la decide il server dal tempo che c'è (breve fino a 60', rolling sopra, Foundations 1 solo da 75'),
+    // e il ragazzo la può saltare in blocco dal player
     const fisicaOggi = blocchi.some((b) => QUALITA_FISICHE.has(b.qualita));
+    const maxDurataSeduta = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
     if (blocchi.length && blocchi.every(isApertura))
       errors.push(`seduta del giorno ${s.giorno}: solo l'apertura (${blocchi.map((b) => b.nome).join(' + ')}) — l'apertura sta in testa a una seduta, non è una giornata: aggiungi un blocco principale o un blocco del percorso fascia`);
     else if (fisicaOggi && !blocchi.some(isApertura) && !blocchi.some((b) => b.id === RISC_VELOCITA_ID)) {
-      const rolling = bloccoDi(ctx, ROLLING_ID);
-      const maxDurataSeduta = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
-      const durataOra = blocchi.reduce((a, b) => a + b.durataMin, 0);
-      if (rolling && disponibili.has(rolling.id) && durataOra + rolling.durataMin <= maxDurataSeduta) { blocchi.unshift(rolling); noteMemoria.set(rolling.id, 'apertura aggiunta dal server'); }
-    } else if (blocchi[0] && !isApertura(blocchi[0]) && blocchi[0].id !== RISC_VELOCITA_ID) {
-      const idx = blocchi.findIndex(isApertura);
-      if (idx > 0) blocchi.unshift(...blocchi.splice(idx, 1));
+      const apertura = aperturaPer(ctx.blocchi, maxDurataSeduta);
+      if (apertura && disponibili.has(apertura.id)) { blocchi.unshift(apertura); noteMemoria.set(apertura.id, `${APERTURA_NOTA}; aggiunta dal server`); }
+    } else {
+      if (blocchi[0] && !isApertura(blocchi[0]) && blocchi[0].id !== RISC_VELOCITA_ID) {
+        const idx = blocchi.findIndex(isApertura);
+        if (idx > 0) blocchi.unshift(...blocchi.splice(idx, 1));
+      }
+      // L'apertura scelta da Claude non è quella del tempo che c'è → la versione giusta (una sola apertura in testa)
+      if (fisicaOggi && !recupero && blocchi[0] && isApertura(blocchi[0])) {
+        const giusta = aperturaDaSostituire(blocchi[0], ctx.blocchi, maxDurataSeduta);
+        if (giusta && disponibili.has(giusta.id) && !blocchi.some((b) => b.id === giusta.id)) {
+          noteMemoria.set(giusta.id, `${APERTURA_NOTA}; ${maxDurataSeduta <= APERTURA_BREVE_MAX ? 'versione breve: poco tempo' : `al posto di "${nomeBloccoAtleta(blocchi[0].nome)}"`}`);
+          blocchi[0] = giusta;
+        }
+      }
+      for (const b of blocchi) if (isApertura(b) && !noteMemoria.has(b.id)) noteMemoria.set(b.id, APERTURA_NOTA);
     }
     if (blocchi.some(isFasciaPercorso)) {
       giornatePercorsoFascia++;
@@ -724,8 +740,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       const conKg = blocchi.find((b) => b.items.some((it) => it.carico_kg));
       if (conKg && !noteMemoria.has(conKg.id)) noteMemoria.set(conKg.id, Object.keys(ctx.v2.massimali || {}).length ? 'carichi al tuo massimale' : 'carichi leggeri: prima i test in palestra');
     }
-    const durataBlocchi = Math.round(blocchi.reduce((a, b) => a + b.durataMin * (leggeri.has(b.id) ? 0.85 : 1), 0) * (scala < 1 ? 0.8 : 1));
-    const maxDurata = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
+    // L'apertura (8/10) sta fuori dal budget: i suoi minuti vanno in apertura_min ("+N' se hai tempo")
+    const durataBlocchi = Math.round(blocchi.filter((b) => !isApertura(b)).reduce((a, b) => a + b.durataMin * (leggeri.has(b.id) ? 0.85 : 1), 0) * (scala < 1 ? 0.8 : 1));
+    const aperturaMin = minutiApertura(blocchi);
+    const maxDurata = maxDurataSeduta;
     // I ripassi entrano solo se ci stanno: via l'ultimo finché la seduta rientra (il blocco principale non si tocca)
     let itemsFinali = itemsLimati;
     while (ripassiScelti.length && durataBlocchi + minutiRipassi > maxDurata) {
@@ -735,7 +753,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     }
     const durata = durataBlocchi + minutiRipassi;
     if (durata > maxDurata)
-      errors.push(`seduta del giorno ${s.giorno}: ~${durata}' (${blocchi.map((b) => b.nome).join(' + ')}) oltre il massimo di ${maxDurata}' — togli un blocco o usa le varianti short`);
+      errors.push(`seduta del giorno ${s.giorno}: ~${durata}' (${blocchi.filter((b) => !isApertura(b)).map((b) => b.nome).join(' + ')}, apertura esclusa) oltre il massimo di ${maxDurata}' — togli un blocco o usa le varianti short`);
     const giorno = Number(s.giorno);
     if (ctx.vincoli.giorniAmmessi?.length && !ctx.vincoli.giorniAmmessi.includes(giorno))
       errors.push(`seduta di ${DAY_NAMES[giorno] ?? giorno}: l'atleta si allena SOLO nei giorni ${ctx.vincoli.giorniAmmessi.map((d) => DAY_NAMES[d]).join(', ')}`);
@@ -743,7 +761,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       errors.push(`seduta di ${DAY_NAMES[giorno] ?? giorno}: giorno da lasciare libero (richiesta dell'atleta)`);
     sedute.push({
       giorno, titolo: testoPerAtleta(s.titolo?.slice(0, 80)) || blocchi.map((b) => b.famiglia).join(' + '),
-      tipo: tipoDaBlocchi(blocchi), durata_min: durata, items: itemsFinali,
+      tipo: tipoDaBlocchi(blocchi), durata_min: durata, ...(aperturaMin ? { apertura_min: aperturaMin } : {}), items: itemsFinali,
       spiegazione: testoPerAtleta(s.spiegazione?.slice(0, 200)),
       blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin, ...(leggeri.has(b.id) ? { leggero: true } : {}), ...(noteMemoria.has(b.id) ? { nota: noteMemoria.get(b.id) } : {}) })),
       ...(recupero ? { recupero: true } : {}),
@@ -757,7 +775,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // prima gli obiettivi (14/9: un recupero da 79' + "massimo 60'" rendeva impossibile ogni piano → fallback senza forza)
   const maxDurRec = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
   const riproponibile = (r: ContextV2['daRecuperare'][number]) => r.blocchi.every((id) => disponibili.has(id))
-    && r.blocchi.reduce((a, id) => a + (bloccoDi(ctx, id)?.durataMin ?? 0), 0) <= maxDurRec;
+    && r.blocchi.reduce((a, id) => { const b = bloccoDi(ctx, id); return a + (b && !isApertura(b) ? b.durataMin : 0); }, 0) <= maxDurRec;
   const attesi = ctx.base.painHold || ctx.vincoli.recuperiFacoltativi ? []
     : ctx.daRecuperare.filter(riproponibile).slice(0, Math.min(ctx.maxSeduteFisiche, giorniLiberi.length));
   for (const r of attesi) {
@@ -906,10 +924,10 @@ ${finestreTesto()}
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
 
 COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
-5. Apertura: un blocco [apertura] (rolling ~10' o Fascia Foundations 1) o il riscaldamento fisso della velocità — SEMPRE in testa a ogni seduta fisica, mai da sola (regola 26).
+5. Apertura: un blocco [apertura] (rolling, apertura breve, o Fascia Foundations 1 solo con 75' o più) o il riscaldamento fisso della velocità — in testa a ogni seduta fisica, mai da sola (regola 26). Per il ragazzo è FACOLTATIVA e NON conta nel tempo della seduta: se la dimentichi o scegli la versione sbagliata per il tempo, la sistema il server.
 6. Poi 1-2 blocchi principali della giornata (forza parte bassa/alta, pliometria, velocità, resistenza, kettlebell…). Ordine: neuromuscolare (velocità, pliometria, forza) PRIMA del metabolico (resistenza, fartlek).
 7. Tecnica (palleggi, muro, dribbling, tiri, visione) come blocco finale o giornata a sé, se l'atleta ha campo/muro (attrezzatura "campo") e la vuole.
-8. Durata totale della giornata ≤ ${ctx.maxDurata}' (o il tempo massimo chiesto dall'atleta). SOMMA le durate "~N'" dei blocchi PRIMA di scrivere la giornata: apertura (fascia/riscaldamento 15-30') + UN blocco principale che ci stia; un terzo blocco SOLO se la somma resta sotto il massimo. Con 60' non ci sta quasi mai un terzo blocco: scegli la variante short o rinuncia alla tecnica.
+8. Durata totale della giornata ≤ ${ctx.maxDurata}' (o il tempo massimo chiesto dall'atleta), APERTURA ESCLUSA (sta fuori dal budget: il ragazzo la fa se ha tempo). SOMMA le durate "~N'" dei blocchi PRIMA di scrivere la giornata: riscaldamento velocità (15', solo nelle sedute di sprint) + UN blocco principale che ci stia; un secondo blocco SOLO se la somma resta sotto il massimo. Con 60' spesso ci sta un solo blocco principale pieno: scegli la variante short o rinuncia alla tecnica.
 9. Non ripetere lo stesso blocco principale due giorni di fila; forza e pliometria intensiva non nello stesso giorno della resistenza aerobica.
 9b. I blocchi "per portiere" (codice P1) sono nati per i portieri: preferiscili se l'atleta è portiere; per gli altri ruoli usali solo se non c'è un'alternativa B/A.
 
@@ -1084,7 +1102,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     .slice(0, Math.max(0, nSedute - fisici.length)).sort((x, y) => x - y);
   const giorni = [...fisici.map((d) => ({ d, fisico: true })), ...leggeri.map((d) => ({ d, fisico: false }))].sort((x, y) => x.d - y.d);
   const maxDur = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
-  const fascia = primo(ctx, 'fascia-prevenzione', /Foundations? 1\b/i);
+  const fascia = aperturaPer(ctx.blocchi, maxDur); // apertura facoltativa, fuori dal tempo (8/10)
   // Giornate costruite dagli OBIETTIVI (setup o maschera), non da una lista fissa; senza obiettivi la vecchia terna
   const rango = (x: Blocco) => x.livello === ctx.v2.livello ? 0 : x.livello === null ? 1 : 2; // prima i blocchi del livello dell'atleta
   // Formati sui gradini (pa-*/pb-*) già nella settimana: una volta sola (7/10: il base metteva l'EMOM di parte alta in tre giornate)
@@ -1097,7 +1115,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const libero = (x: Blocco) => { const g = gruppoDi(x.id); return g === null || !usatiFormati.has(g); };
     const cand = ctx.blocchi.filter((x) => FOCUS_QUALITA[f].includes(x.qualita) && x.id !== fascia?.id && ammessoDallaMemoria(ctx.memoria, x) && libero(x)).sort((x, y) =>
       (pa(x) - pa(y)) || (memoriaRank(ctx, x) - memoriaRank(ctx, y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)));
-    return cand.find((x) => x.durataMin + (fascia?.durataMin ?? 0) <= maxDur) ?? cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
+    return cand.find((x) => x.durataMin <= maxDur) ?? cand[0];
   };
   const perOrdine = focusEspansi(ctx.obiettivi).filter((f) => perObiettivo(f));
   // Il primo obiettivo è il filo della settimana: o1, o2, o1, o3, o1, … (con 3 giornate fisiche il primo compare 2 volte)
@@ -1113,7 +1131,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   // Recuperi: solo se tutti i blocchi sono disponibili e la seduta sta nel tempo massimo richiesto
   const recuperi = (b.painHold || ctx.setup.fase === 'preparazione_squadra') ? []
     : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disponibili.has(id))
-      && r.blocchi.reduce((a, id) => a + (bloccoDi(ctx, id)?.durataMin ?? 0), 0) <= maxDur).slice(0, ctx.maxSeduteFisiche);
+      && r.blocchi.reduce((a, id) => { const x = bloccoDi(ctx, id); return a + (x && !isApertura(x) ? x.durataMin : 0); }, 0) <= maxDur).slice(0, ctx.maxSeduteFisiche);
   for (const r of recuperi) registra(r.blocchi);
   // Richiesta esplicita: prima gli obiettivi, i recuperi negli slot che avanzano; piano automatico: prima i recuperi
   const nObiettivi = ctx.vincoli.recuperiFacoltativi ? Math.min(principali.length, giorni.length) : 0;
@@ -1126,7 +1144,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const principale = fisico ? principali[i % Math.max(1, principali.length)]?.() : undefined;
     const p = principale ?? leggero;
     if (p) registra([p.id]);
-    const conFascia = fascia && p && p.id !== fascia.id && fascia.durataMin + p.durataMin <= maxDur;
+    const conFascia = fascia && p && p.id !== fascia.id;
     return {
       giorno: g, titolo: principale ? 'Seduta base' : 'Giornata leggera', spiegazione: 'Piano base di sicurezza generato automaticamente.',
       blocchi: [conFascia ? fascia.id : undefined, p?.id ?? fascia?.id].filter((x): x is string => !!x),

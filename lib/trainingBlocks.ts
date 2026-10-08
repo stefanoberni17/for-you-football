@@ -76,7 +76,17 @@ const LIVELLO_OVERRIDE: Record<string, LivelloMinV2> = {
   'forza-parte-bassa-completa-palestra': 'A',
 };
 
-export const BLOCCHI: Blocco[] = (BLOCCHI_GENERATI as Blocco[]).map((b0) => {
+/**
+ * Durata stimata corretta a mano (8/10): `scripts/build-blocks.py` non raddoppia i tempi "per lato" (in Everfit i
+ * due lati sono di solito serie separate), ma nel rolling ogni foam roll è UNA serie per lato da 60-120" e il
+ * player fa destro poi sinistro: 2 × (120+60+120+60+60+60)" = 16' + 3 di margine = 19', non 11.
+ */
+const DURATA_OVERRIDE: Record<string, number> = {
+  'fascia-training-rolling-and-fascia-adhesion': 19,
+};
+
+export const BLOCCHI: Blocco[] = (BLOCCHI_GENERATI as Blocco[]).map((b00) => {
+  const b0 = DURATA_OVERRIDE[b00.id] ? { ...b00, durataMin: DURATA_OVERRIDE[b00.id] } : b00;
   const b = b0.livello === null && LIVELLO_OVERRIDE[b0.id] ? { ...b0, livello: LIVELLO_OVERRIDE[b0.id] } : b0;
   if (b.famiglia !== FAMIGLIA_FASCIA_FORZA) return b;
   const tot = Object.values(b.qualitaSet).reduce((a, n) => a + (n ?? 0), 0);

@@ -12,7 +12,7 @@
  */
 import { DAY_NAMES } from './constants';
 import type { Blocco } from './trainingBlocks';
-import { isApertura } from './trainingFascia';
+import { aperturaPer, isApertura } from './trainingFascia';
 import { isParteAlta, ordineFormatiParteAlta, PA_SERIE_ID, PA_SERIE_SHORT_ID } from './trainingParteAlta';
 import { gruppoParteBassa, isParteBassa, ordineFormatiParteBassa, PB_RICHIAMO_ID, PB_SERIE_ID, PB_SERIE_SHORT_ID } from './trainingParteBassa';
 import { giorniAllaPartita, QUALITA_FISICHE } from './trainingRulesV2';
@@ -46,7 +46,8 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
   const isFisica = (s: SedutaLLM) => s.blocchi.some((id) => QUALITA_FISICHE.has(blocco(id).qualita));
   const contiene = (s: SedutaLLM, r: { blocchi: string[] }) => r.blocchi.every((id) => s.blocchi.includes(id));
   const isRecupero = (s: SedutaLLM) => ctx.daRecuperare.some((r) => contiene(s, r));
-  const durata = (s: SedutaLLM) => Math.round(s.blocchi.reduce((a, id) => a + blocco(id).durataMin * (s.leggeri?.includes(id) ? 0.85 : 1), 0) * (isDeload ? 0.8 : 1));
+  // L'apertura (8/10) sta fuori dal tempo della seduta: non conta nella durata da far rientrare
+  const durata = (s: SedutaLLM) => Math.round(s.blocchi.reduce((a, id) => a + (isApertura(blocco(id)) ? 0 : blocco(id).durataMin * (s.leggeri?.includes(id) ? 0.85 : 1)), 0) * (isDeload ? 0.8 : 1));
 
   // 1. Id non in libreria (o doppi nella stessa giornata): via; una giornata rimasta vuota sparisce
   let sedute: SedutaLLM[] = (p.sedute || []).map((s) => {
@@ -82,7 +83,7 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
   //     blocchi. Se Claude ne ha messa una simile la completa; se manca, entra nel primo giorno libero o al posto della
   //     giornata leggera più in là (7/10: "manca la seduta da recuperare" per tre volte → piano base)
   const attesi = ctx.base.painHold || ctx.vincoli.recuperiFacoltativi ? []
-    : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disp.has(id)) && r.blocchi.reduce((a, id) => a + blocco(id).durataMin, 0) <= maxDurata);
+    : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disp.has(id)) && r.blocchi.reduce((a, id) => a + (isApertura(blocco(id)) ? 0 : blocco(id).durataMin), 0) <= maxDurata);
   for (const r of attesi) {
     if (sedute.some((s) => contiene(s, r))) continue;
     const fisica = r.blocchi.some((id) => QUALITA_FISICHE.has(blocco(id).qualita));
@@ -192,12 +193,12 @@ export function versioneBreve(ctx: ContextV2, b: Blocco): Blocco | undefined {
     && (x.sottovariante ?? '') === (b.sottovariante ?? '') && x.variante === 'short' && x.durataMin < b.durataMin);
 }
 
-/** Giornata leggera come la costruisce il piano base: apertura + tecnica con la palla (o mobilità), entro il tempo. */
+/** Giornata leggera come la costruisce il piano base: apertura (fuori dal tempo) + tecnica con la palla (o mobilità), entro il tempo. */
 export function giornataLeggera(ctx: ContextV2, giorno: number, maxDurata: number, inTesta: string[] = []): SedutaLLM | null {
   const perQualita = (q: string) => ctx.blocchi.filter((b) => b.qualita === q && !isApertura(b)).sort((a, b) => (a.progressione ?? 1) - (b.progressione ?? 1) || a.durataMin - b.durataMin)[0];
-  const apertura = inTesta.length ? undefined : ctx.blocchi.find((b) => b.id === 'fascia-foundations-1') ?? ctx.blocchi.find(isApertura);
+  const apertura = inTesta.length ? undefined : aperturaPer(ctx.blocchi, maxDurata);
   const testa = inTesta.length ? inTesta : apertura ? [apertura.id] : [];
-  const minutiTesta = testa.reduce((a, id) => a + (ctx.blocchi.find((b) => b.id === id)?.durataMin ?? 0), 0);
+  const minutiTesta = testa.reduce((a, id) => { const b = ctx.blocchi.find((x) => x.id === id); return a + (b && !isApertura(b) ? b.durataMin : 0); }, 0);
   const principale = [perQualita('tecnica-palleggi'), perQualita('mobilita-recupero'), perQualita('fascia-prevenzione')]
     .find((b) => b && minutiTesta + b.durataMin <= maxDurata);
   if (!principale) return null; // la sola apertura non è una giornata (regola 26)

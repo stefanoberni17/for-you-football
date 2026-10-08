@@ -19,7 +19,7 @@ import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Shee
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -371,7 +371,7 @@ export default function AllenamentoHub() {
             {stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[oggiDow]}` : `Da recuperare · era ${DAY_NAMES_IT[diOggi.giorno]}`}
           </p>
           <h2 className="font-display text-title-1 font-bold leading-tight mb-1.5">{diOggi.titolo}</h2>
-          <p className="text-body text-forest-50/90">~{durataLabel(diOggi.durata_min)} · {descrizioneSeduta(diOggi)}</p>
+          <p className="text-body text-forest-50/90">~{durataLabel(diOggi.durata_min)}{diOggi.apertura_min ? ` (+${diOggi.apertura_min}' di apertura, se hai tempo)` : ''} · {descrizioneSeduta(diOggi)}</p>
           {(diOggi.recupero || leggera || diOggi.posticipata_da) && (
             <div className="flex flex-wrap gap-1.5 mt-2">
               {diOggi.recupero && <Badge tone="info" className="!bg-white/15 !text-white">Recupero</Badge>}
@@ -445,7 +445,7 @@ export default function AllenamentoHub() {
         {haPiano ? (
           <Card padding="sm" className="mb-5">
             <SectionTitle title="La tua settimana" className="mb-3"
-              subtitle={`${sedute.length} ${sedute.length === 1 ? 'seduta' : 'sedute'} · in tutto ~${durataLabel(sedute.reduce((a, s) => a + (s.durata_min || 0), 0))}`} />
+              subtitle={`${sedute.length} ${sedute.length === 1 ? 'seduta' : 'sedute'} · in tutto ~${durataLabel(sedute.reduce((a, s) => a + (s.durata_min || 0), 0))}${sedute.some((s) => s.apertura_min) ? ` (+${sedute.reduce((a, s) => a + (s.apertura_min || 0), 0)}' di apertura, se hai tempo)` : ''}`} />
             {state.plan!.plan.messaggio && (
               <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
                 <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
