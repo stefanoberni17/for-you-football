@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-08 — Lancio di novembre, punto 8: primo giorno e audio
+- Home dei primi 7 giorni (`primiGiorni` dalla creazione del profilo): una sola azione dominante (la pratica di oggi, "Continua la pratica di oggi" se avviata); nascosti azioni, numeri del check-in e link alle statistiche, banner del lunedì, rimando alla Palestra a giorno bloccato.
+- Audio della pratica: la pausa esterna (telefonata, schermo bloccato) aggiorna lo stato e non tiene in ostaggio il completamento; il play riprende da dove era. Timer già a timestamp. Verifica di voce e testo sul telefono: Ste.
+
 ## 2026-10-08 — Lancio di novembre, punto 7: correzioni dalla verifica dell'8/10
 - Statistiche: il periodo 7/30/90 filtra per data di calendario, non "gli ultimi N check-in".
 - Carta: via il livello "MENTE PRO" e la punta "Crescita" (nessun livello della persona); resta il livello del Corpo, dai test.
