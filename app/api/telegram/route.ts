@@ -4,7 +4,8 @@ import {
   supabaseAdmin,
   buildUserContext,
   callClaude,
-  checkSafety,
+  analizzaSafetyConversazione,
+  safetyAlertMode,
   sendSafetyAlert,
   resolveSafetyReview,
   generateCoachRecap,
@@ -208,13 +209,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // Safety a due livelli: 'blocco' scrive il flag (atteso) e avvisa Ste, 'alert' avvisa soltanto.
-    const livelloSafety = checkSafety(userText);
-    const safetyTriggered = livelloSafety !== null;
-    if (livelloSafety) {
-      await sendSafetyAlert(userId, 'telegram', userText, livelloSafety);
-    }
-
     // Carica ultimi 20 messaggi (sliding window)
     const { data: history } = await supabaseAdmin
       .from('telegram_conversations')
@@ -224,6 +218,17 @@ export async function POST(request: NextRequest) {
       .limit(20);
 
     const conversationHistory = (history || []).reverse();
+
+    // Safety a due livelli: 'blocco' scrive il flag (atteso) e avvisa Ste, 'alert' avvisa soltanto.
+    // Frase divisa in due messaggi (8/10): si guarda anche l'ultimo messaggio utente già salvato
+    const precedente = [...conversationHistory].reverse().find((m) => m.role === 'user')?.content ?? null;
+    const esitoSafety = analizzaSafetyConversazione(userText, precedente);
+    const livelloSafety = esitoSafety.livello;
+    const safetyTriggered = livelloSafety !== null;
+    if (livelloSafety) {
+      await sendSafetyAlert(userId, 'telegram', userText, livelloSafety);
+    }
+
     const isFirstMessage = conversationHistory.length === 0;
     // L'API vuole che il primo messaggio sia dell'utente: il welcome di onboarding e le
     // pillole dei cron sono righe `assistant` e possono trovarsi in testa alla finestra
@@ -241,7 +246,8 @@ export async function POST(request: NextRequest) {
     // Prompt caching come in /api/chat: prefisso stabile cachato, contesto volatile in coda.
     const systemBlocks = [
       { type: 'text', text: (inSafetyReview ? SAFETY_REVIEW_MODE : '') + SYSTEM_PROMPT + TELEGRAM_FORMAT, cache_control: { type: 'ephemeral' as const } },
-      { type: 'text', text: firstMessageNote + '\n\n' + userContext },
+      // Livello ALERT (8/10): niente numeri automatici, il Coach chiede prima come sta (fuori dal blocco cachato)
+      { type: 'text', text: firstMessageNote + '\n\n' + userContext + (livelloSafety === 'alert' && !inSafetyReview ? safetyAlertMode(esitoSafety.categoria) : '') },
     ];
 
     const messages = [

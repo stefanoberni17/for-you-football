@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { analizzaSafety, checkSafety, resolveSafetyReview, SAFETY_CATEGORIE, SAFETY_KEYWORDS_ALERT, SAFETY_KEYWORDS_BLOCCO, SAFETY_REVIEW_HOURS, SYSTEM_PROMPT } from '@/lib/coach-ai';
-import { WEEK_TOOLS } from '@/lib/constants';
+import { analizzaSafety, analizzaSafetyConversazione, checkSafety, resolveSafetyReview, SAFETY_CATEGORIE, SAFETY_KEYWORDS_ALERT, SAFETY_KEYWORDS_BLOCCO, SAFETY_REVIEW_HOURS, SAFETY_REVIEW_MODE, safetyAlertMode, SYSTEM_PROMPT } from '@/lib/coach-ai';
+import { NUMERI_UTILI_RIGA, WEEK_TOOLS } from '@/lib/constants';
 
 describe('checkSafety: due livelli, parafrasi, negazioni e falsi positivi (spec v4, 8/10)', () => {
   // [testo, livello atteso, categoria attesa]. Elenco riportato in docs/lancio-2026-11-ricognizione.md.
@@ -22,7 +22,6 @@ describe('checkSafety: due livelli, parafrasi, negazioni e falsi positivi (spec 
     ['sono stanco di vivere così', 'blocco', 'suicidio'],
     ['starebbero tutti meglio senza di me', 'blocco', 'suicidio'],
     ['non ce la faccio più, non ha più senso niente', 'alert', 'suicidio'],
-    ['mi faccio schifo dopo quel rigore', 'alert', 'autolesionismo'],
     ['salto i pasti per pesare meno', 'alert', 'alimentazione'],
     ['mi sento grasso anche se il mister dice di no', 'alert', 'alimentazione'],
     ['mio padre mi picchia quando perdo', 'alert', 'abusi'],
@@ -52,6 +51,17 @@ describe('checkSafety: due livelli, parafrasi, negazioni e falsi positivi (spec 
     ['mi hanno ammazzato le gambe con le ripetute', null, null],
     ['sono stanco morto', null, null],
     ['nessuno vuole morire in campo, ma oggi ci siamo andati vicini', null, null],
+    ['mi faccio schifo dopo quel rigore', null, null], // linguaggio da spogliatoio (Ste, 8/10)
+    // ── Errori di battitura (doppie) ──
+    ['vogglio morire', 'blocco', 'suicidio'],
+    ['penso di amazzarmi', 'blocco', 'suicidio'],
+    ['non ce la facio piu, non ha piu senso niente', 'alert', 'suicidio'],
+    ['sono stanco di vivvere', 'blocco', 'suicidio'],
+    // ── Emoji e punteggiatura ──
+    ['voglio😭morire', 'blocco', 'suicidio'],
+    ['💀 non voglio più vivere 💀', 'blocco', 'suicidio'],
+    ['😂😂 ci hanno ammazzato 4-0', null, null],
+    ['VOGLIO... FARLA... FINITA!!!', 'blocco', 'suicidio'],
   ];
 
   for (const [testo, atteso, categoria] of casi) {
@@ -62,6 +72,25 @@ describe('checkSafety: due livelli, parafrasi, negazioni e falsi positivi (spec 
       expect(checkSafety(testo)).toBe(atteso);
     });
   }
+
+  it('frase divisa in due messaggi: l\'ultimo da solo non dice niente, con quello prima sì', () => {
+    expect(analizzaSafetyConversazione('morire', 'voglio').livello).toBe('blocco');
+    expect(analizzaSafetyConversazione('finita', 'voglio farla').livello).toBe('blocco');
+    expect(analizzaSafetyConversazione('di fame', 'sto per morire').livello).toBe(null); // eccezione anche sul testo unito
+    expect(analizzaSafetyConversazione('morire', 'non voglio').livello).toBe('alert'); // negazione anche sul testo unito
+    expect(analizzaSafetyConversazione('oggi allenamento duro', 'ieri partita').livello).toBe(null);
+    expect(analizzaSafetyConversazione('voglio morire', null).livello).toBe('blocco');
+  });
+
+  it('il livello ALERT non porta numeri: chiede prima come sta', () => {
+    const m = safetyAlertMode('alimentazione');
+    expect(m).toContain('NON dare numeri');
+    expect(m).toContain('alimentazione');
+    expect(SYSTEM_PROMPT).toContain('02 2327 2327');
+    expect(SYSTEM_PROMPT).toContain('143');
+    expect(SAFETY_REVIEW_MODE).toContain('02 2327 2327');
+    expect(NUMERI_UTILI_RIGA).toContain('112');
+  });
 
   it('le negazioni portano il flag negato', () => {
     expect(analizzaSafety('non voglio morire').negato).toBe(true);

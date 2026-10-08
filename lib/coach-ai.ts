@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
-import { DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
+import { NUMERI_UTILI_RIGA, DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
 import { queryDatabase, fetchPage, mapSettimana, mapGiorno } from '@/lib/notion';
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 import { loadCampoPerCoach, loadIncroci } from '@/lib/cartaServer';
@@ -42,7 +42,7 @@ export const SAFETY_CATEGORIE = {
   },
   autolesionismo: {
     blocco: ['autolesionismo', 'tagliarmi', 'tagliarsi', 'mi taglio', 'farmi del male', 'farmi male apposta', 'mi faccio del male', 'bruciarmi apposta', 'mi sono tagliato', 'mi sono tagliata', 'mi graffio apposta'],
-    alert: ['mi punisco', 'mi merito il dolore', 'mi faccio schifo', 'mi odio'],
+    alert: ['mi punisco', 'mi merito il dolore', 'mi odio'], // "mi faccio schifo" tolto (Ste, 8/10): linguaggio normale da spogliatoio
   },
   // Violenza verso altri: BLOCCO solo quando è intenzione dichiarata; il gergo da campo ("ci hanno ammazzato") è ALERT o niente
   violenza: {
@@ -98,8 +98,11 @@ export const SAFETY_ECCEZIONI = [
 const NEGAZIONE_PRIMA = /(?:^|[^a-z])(?:non|mai|senza|nessuno|neanche|nemmeno)(?:\s+(?:ho|ha|hai|avrei|penso|pensato|voglio|vorrei|mai|piu|di|che|a|e|certo|affatto|proprio|davvero))*\s*$/;
 
 export function normalizzaSafety(text: string): string {
-  return ` ${text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’'`´]/g, ' ').replace(/\s+/g, ' ').trim()} `;
+  // Minuscole, senza accenti; apostrofi, punteggiatura ed EMOJI diventano spazi ("voglio😭morire" → "voglio morire")
+  return ` ${text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()} `;
 }
+/** Errori di battitura più comuni in italiano: doppie mancanti o in più ("amazzarmi", "vogglio morire"). Si confronta anche con le doppie collassate. */
+const collassaDoppie = (t: string) => t.replace(/([a-z])\1+/g, '$1');
 
 /** Tutte le frasi di un livello, unite da tutte le categorie. */
 const frasi = (livello: 'blocco' | 'alert'): string[] => Object.values(SAFETY_CATEGORIE).flatMap((c) => [...c[livello]]);
@@ -224,20 +227,38 @@ export interface EsitoSafety { livello: LivelloSafety | null; categoria: Categor
  * negazione, scende ad ALERT. Le frasi ALERT non guardano la negazione (è già il livello più basso).
  */
 export function analizzaSafety(text: string): EsitoSafety {
-  let t = normalizzaSafety(text);
-  for (const e of SAFETY_ECCEZIONI) t = t.split(e).join(' ');
+  const esatto = analizzaNormalizzato(normalizzaSafety(text), (k) => k);
+  if (esatto.livello) return esatto;
+  // Seconda passata tollerante alle doppie sbagliate: testo e frasi con le doppie collassate
+  return analizzaNormalizzato(collassaDoppie(normalizzaSafety(text)), collassaDoppie);
+}
+
+function analizzaNormalizzato(t0: string, f: (k: string) => string): EsitoSafety {
+  let t = t0;
+  for (const e of SAFETY_ECCEZIONI) t = t.split(f(e)).join(' ');
   let negato = false;
   let alertCategoria: CategoriaSafety | null = null;
   for (const [nome, c] of Object.entries(SAFETY_CATEGORIE) as [CategoriaSafety, { blocco: readonly string[]; alert: readonly string[] }][]) {
-    for (const k of c.blocco) {
+    for (const k0 of c.blocco) {
+      const k = f(k0);
       const i = t.indexOf(k);
       if (i < 0) continue;
       if (NEGAZIONE_PRIMA.test(t.slice(Math.max(0, i - 40), i))) { negato = true; alertCategoria ??= nome; continue; }
       return { livello: 'blocco', categoria: nome, negato: false };
     }
-    if (!alertCategoria && c.alert.some((k) => t.includes(k))) alertCategoria = nome;
+    if (!alertCategoria && c.alert.some((k) => t.includes(f(k)))) alertCategoria = nome;
   }
   return alertCategoria ? { livello: 'alert', categoria: alertCategoria, negato } : { livello: null, categoria: null, negato: false };
+}
+
+/**
+ * Frase divisa in due messaggi ("voglio" / "morire"): il controllo guarda l'ultimo messaggio dell'utente E,
+ * se da solo non dice niente, l'ultimo attaccato a quello prima. Le eccezioni e le negazioni valgono anche sul testo unito.
+ */
+export function analizzaSafetyConversazione(ultimo: string, precedente?: string | null): EsitoSafety {
+  const e = analizzaSafety(ultimo);
+  if (e.livello || !precedente) return e;
+  return analizzaSafety(`${precedente} ${ultimo}`);
 }
 
 /** Livello di rischio del testo: 'blocco' (frasi inequivocabili), 'alert' (ambigue o negate) o null. */
@@ -618,9 +639,9 @@ Descrivi la pratica in 2-3 righe, collegandola esplicitamente a ciò che è emer
 
 # SITUAZIONI A RISCHIO — PROTOCOLLO (priorità assoluta su ogni altra regola)
 
-⚠️ Testo del protocollo in revisione con psicologo dell'età evolutiva — non modificare senza review.
+⚠️ Testo del protocollo approvato da Ste (8/10/2026); numeri verificati sulle pagine ufficiali (vedi NUMERI_UTILI in lib/constants). Non modificare senza review.
 
-Questo protocollo scatta quando emergono, anche in forma indiretta o accennata:
+Questo protocollo scatta quando emergono IN MODO CHIARO (detto, non solo sfiorato):
 - pensieri suicidari o desiderio di non esserci più
 - autolesionismo (tagliarsi, farsi del male)
 - abusi o violenze subite (in famiglia, nello sport, altrove)
@@ -634,15 +655,18 @@ Questo protocollo scatta quando emergono, anche in forma indiretta o accennata:
 3. **Non minimizzare e non indagare.** Riconosci la gravità con calore, senza fare domande di approfondimento sul contenuto: non sei tu a dover capire i dettagli.
 4. **Rimanda a un contatto reale, con chiarezza e per nome:**
    - Un adulto di fiducia, DA SUBITO: un genitore, il mister, un professore, un familiare. Per un ragazzo questo è il primo passo concreto.
-   - **Telefono Amico Italia: 02 2327 2327** (tutti i giorni, dalle 9 alle 24) — anche in chat WhatsApp: **324 011 7252**
-   - **112** se c'è un pericolo immediato, per sé o per altri
+   - **Telefono Amico Italia: 02 2327 2327** (tutti i giorni, 24 ore su 24) — anche in chat WhatsApp: **324 011 7252** (dalle 18 alle 21)
+   - Se è in Svizzera: **143** (Telefono Amico, giorno e notte) oppure **147** (Pro Juventute, per i giovani, gratuito)
+   - **112** se c'è un pericolo immediato, per sé o per altri (in Svizzera anche 144)
    - Uno psicologo/psicoterapeuta per un sostegno vero e continuativo
 5. **Sii più diretto del solito.** In questi casi la delicatezza è la chiarezza: una persona reale, oggi.
 6. **NON fare diagnosi. NON sostituirti a un professionista. NON promettere segretezza** ("resta tra noi" è una promessa che non puoi e non devi fare).
 
 Se nei messaggi successivi l'utente torna sul tema o non ha cercato aiuto, ripeti l'invito con pazienza — non riprendere il percorso come se nulla fosse.
 
-**Esempio di risposta (⚠️ DA RIVEDERE INSIEME PRIMA DEL DEPLOY):** "Mi fermo un attimo, perché quello che hai scritto è più importante di qualsiasi percorso. Non sono la persona giusta per aiutarti su questo — ma una persona giusta esiste, e ti meriti di parlarci oggi: un adulto di cui ti fidi, o Telefono Amico al 02 2327 2327 (tutti i giorni 9-24, anche su WhatsApp al 324 011 7252). Se senti di essere in pericolo adesso, chiama il 112. Io resto qui, ma prima viene questo."
+**Quando è solo sfiorato (una parola pesante dentro una frase normale, gergo da campo, un "non ce la faccio più" dopo una partita):** NON dare numeri e NON far scattare il protocollo. Fai UNA domanda con cura, diretta e calma, per capire come sta davvero ("Aspetta: lo dici per la partita o c'è altro?"). Se conferma di stare male, allora il protocollo sopra. Se era gergo, prosegui normalmente senza farlo pesare.
+
+**Esempio di risposta (⚠️ DA RIVEDERE INSIEME PRIMA DEL DEPLOY):** "Mi fermo un attimo, perché quello che hai scritto è più importante di qualsiasi percorso. Non sono la persona giusta per aiutarti su questo — ma una persona giusta esiste, e ti meriti di parlarci oggi: un adulto di cui ti fidi, o Telefono Amico al 02 2327 2327 (tutti i giorni, 24 ore su 24; dalla Svizzera il 143). Se senti di essere in pericolo adesso, chiama il 112. Io resto qui, ma prima viene questo."
 
 # CONTESTO PERSONALIZZATO
 
@@ -809,10 +833,20 @@ In una conversazione recente questo utente ha toccato un tema grave. Finché una
 
 * Resta nel protocollo SITUAZIONI A RISCHIO: presenza, calore, ascolto. NIENTE coaching, niente pratiche, niente strumenti del percorso, niente agganci al campo.
 * Se l'utente sta bene o chiede di riprendere il percorso, digli con gentilezza che il percorso riprende tra poco: una persona del team sta dando un'occhiata, è una attenzione in più, non un problema. Nel frattempo ci sei, per ascoltare.
-* Ripeti i contatti reali quando è pertinente: un adulto di fiducia, Telefono Amico 02 2327 2327 (tutti i giorni 9-24, anche WhatsApp 324 011 7252), 112 in caso di pericolo immediato.
+* Ripeti i contatti reali quando è pertinente: un adulto di fiducia, ${NUMERI_UTILI_RIGA}.
 * Non usare mai le parole "bloccato", "sospeso" o "segnalato". Non farlo sentire in colpa per ciò che ha scritto.
 
 `;
+
+/**
+ * Livello ALERT (8/10, Ste): nessun numero automatico. Il messaggio contiene una parola che POTREBBE indicare un
+ * disagio, o solo linguaggio da campo: il Coach chiede con cura come sta davvero e dà i contatti solo se la
+ * persona conferma di stare male. L'avviso a Ste parte comunque. Va in coda al contesto (non nel blocco cachato).
+ */
+export function safetyAlertMode(categoria: CategoriaSafety | null): string {
+  const tema = categoria ? ` (tema possibile: ${categoria})` : '';
+  return `\n\n# ⚠️ ATTENZIONE SU QUESTO MESSAGGIO\nL'ultimo messaggio contiene parole che potrebbero indicare un momento difficile${tema}, oppure è solo linguaggio da campo. NON dare numeri di telefono e NON far partire il protocollo adesso. Fai UNA domanda sola, con cura e senza allarmare, per capire come sta davvero. Solo se conferma di stare male passa al protocollo SITUAZIONI A RISCHIO; se era gergo, prosegui normalmente senza farlo pesare.\n`;
+}
 
 export const TELEGRAM_FORMAT = `
 # FORMATO RISPOSTA (Telegram)

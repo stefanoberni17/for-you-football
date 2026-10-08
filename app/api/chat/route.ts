@@ -3,7 +3,8 @@ import { logEvent } from '@/lib/events';
 import {
   buildUserContext,
   callClaude,
-  checkSafety,
+  analizzaSafetyConversazione,
+  safetyAlertMode,
   sendSafetyAlert,
   resolveSafetyReview,
   generateCoachRecap,
@@ -79,8 +80,11 @@ export async function POST(request: NextRequest) {
 
     // Safety a due livelli: 'blocco' scrive il flag (atteso, così il contenimento vale
     // già da questo turno) e avvisa Ste; 'alert' avvisa soltanto.
+    // Frase divisa in due messaggi (8/10): si guarda anche il messaggio utente precedente
     const lastUserMessage = messages[messages.length - 1];
-    const livelloSafety = lastUserMessage?.role === 'user' ? checkSafety(lastUserMessage.content) : null;
+    const precedente = [...messages.slice(0, -1)].reverse().find((m) => m.role === 'user')?.content ?? null;
+    const esitoSafety = lastUserMessage?.role === 'user' ? analizzaSafetyConversazione(lastUserMessage.content, precedente) : null;
+    const livelloSafety = esitoSafety?.livello ?? null;
     if (livelloSafety) {
       await sendSafetyAlert(userId, 'web', lastUserMessage.content, livelloSafety);
     }
@@ -104,7 +108,8 @@ export async function POST(request: NextRequest) {
     // al blocco cachato: cambia solo quando il flag cambia, quindi non rompe la cache.
     const systemBlocks = [
       { type: 'text', text: (inSafetyReview ? SAFETY_REVIEW_MODE : '') + SYSTEM_PROMPT + WEB_FORMAT, cache_control: { type: 'ephemeral' as const } },
-      { type: 'text', text: '\n\n' + userContext },
+      // Livello ALERT (8/10): niente numeri automatici, il Coach chiede prima come sta (fuori dal blocco cachato)
+      { type: 'text', text: '\n\n' + userContext + (livelloSafety === 'alert' && !inSafetyReview ? safetyAlertMode(esitoSafety?.categoria ?? null) : '') },
     ];
 
     const { text, usage } = await callClaude(systemBlocks, messages, 1500, true, { maxWeek: currentWeek });

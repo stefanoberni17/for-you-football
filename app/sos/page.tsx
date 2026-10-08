@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { NUMERI_UTILI_RIGA } from '@/lib/constants';
 import { authFetch } from '@/lib/authFetch';
 import { readCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
@@ -241,6 +242,8 @@ function SosContent() {
           </Button>
         )}
         <div className="h-4" />
+        {/* Una riga sola, discreta (Ste, 8/10): i contatti reali stanno qui, niente banner altrove */}
+        <p className="text-caption text-faint leading-relaxed px-1 pt-2">Se è un momento davvero difficile, parla con una persona reale: {NUMERI_UTILI_RIGA}.</p>
       </div>
     </main>
   );
