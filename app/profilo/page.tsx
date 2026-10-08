@@ -10,7 +10,7 @@ import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import SubscriptionSection from '@/components/SubscriptionSection';
 import { AppLoader, Badge, Button, Card, Chip, Field, Input, SectionTitle, Select, Sheet, Textarea } from '@/components/ui';
-import { Bot, Bell, LogOut, Lock, Users, Check, Trash2 } from 'lucide-react';
+import { Bot, Bell, LogOut, Lock, Check, Trash2 } from 'lucide-react';
 
 /**
  * /profilo — riordinato (review 16/9): prima Telegram e Push avevano i bottoni più
@@ -559,14 +559,7 @@ export default function ProfiloPage() {
           >
             Privacy
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => window.open('/genitori', '_blank', 'noopener,noreferrer')}
-            icon={<Users size={16} aria-hidden="true" />}
-          >
-            Per i genitori
-          </Button>
+          {/* "Per i genitori" nascosto dall'8/10 (prima coorte a 18+): la pagina /genitori resta raggiungibile da privacy e registrazione */}
         </div>
 
         {/* ── Salva sticky: compare solo se qualcosa è cambiato ─────────── */}

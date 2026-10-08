@@ -195,7 +195,9 @@ export default function StatistichePage() {
   }, [router]);
 
   // ─── Check-in: periodo, medie, tendenze ─────────────────────────────────
-  const filtered = checkins.slice(-period);
+  // Filtro per CALENDARIO (8/10): prima `slice(-period)` prendeva gli ultimi N check-in anche se sparsi su un mese
+  const daPeriodo = daysAgoItaly(period);
+  const filtered = checkins.filter((c) => c.date >= daPeriodo);
   const last = checkins[checkins.length - 1];
   const todayCheckin = last?.date === todayItaly() ? last : null;
 

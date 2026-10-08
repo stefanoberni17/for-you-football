@@ -82,7 +82,7 @@ describe('Crescita: settimane chiuse col Gate, al ritmo', () => {
 describe('romboMente: punteggi, tendenza, partenza', () => {
   it('cinque punte, ancorate ai livelli (50 % = 40, 70 % = 60, 85 % = 80)', () => {
     const r = romboMente({ ...base, giorniFatti: giorni('2026-09-02', 14) });
-    expect(r.punte.map((p) => p.key)).toEqual(['presenza', 'costanza', 'disciplina', 'lucidita', 'crescita']);
+    expect(r.punte.map((p) => p.key)).toEqual(['presenza', 'costanza', 'disciplina', 'lucidita']); // niente 'crescita' dall'8/10
     expect(r.punte.find((p) => p.key === 'costanza')?.score).toBe(40);
     expect(r.punte.find((p) => p.key === 'disciplina')?.score).toBeNull();
     expect(r.livello).toBe('B');
