@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
-import { DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
+import { NUMERI_UTILI_RIGA, DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
 import { queryDatabase, fetchPage, mapSettimana, mapGiorno } from '@/lib/notion';
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 import { loadCampoPerCoach, loadIncroci } from '@/lib/cartaServer';
@@ -24,22 +24,90 @@ export const supabaseAdmin = createClient(
 //          il Coach continua a lavorare e legge il contesto da solo (il protocollo SITUAZIONI
 //          A RISCHIO nel prompt vale comunque). Prima un solo livello: un 4-0 metteva il
 //          ragazzo in contenimento senza scadenza.
-export const SAFETY_KEYWORDS_BLOCCO = [
-  'suicidio', 'suicidarmi', 'voglio morire', 'uccidermi', 'togliermi la vita',
-  'farla finita', 'ammazzarmi', 'non voglio più vivere', 'non voglio svegliarmi',
-  'autolesionismo', 'tagliarmi', 'farmi del male',
-  'voglio uccidere',
-  'vorrei sparire', 'vorrei scomparire', 'non merito di vivere', 'meglio se non ci fossi',
-  'sarebbe meglio senza di me', 'voglio che finisca tutto', 'non vedo via d\'uscita',
+// LISTE PER CATEGORIA (8/10, spec v4: "proponi tu liste complete, approva Ste", lo psicologo le rivede dopo).
+// Si confrontano sul testo NORMALIZZATO (`normalizzaSafety`: minuscole, senza accenti, apostrofi uniformati).
+// Scrivere le frasi senza accenti ("perche", "piu", "ne").
+export const SAFETY_CATEGORIE = {
+  // Suicidio e autolesionismo: BLOCCO (contenimento). Qui va il massimo della sensibilità.
+  suicidio: {
+    blocco: [
+      'suicidio', 'suicidarmi', 'suicidarsi', 'voglio morire', 'vorrei morire', 'uccidermi', 'togliermi la vita',
+      'farla finita', 'ammazzarmi', 'non voglio piu vivere', 'non voglio svegliarmi', 'non voglio vivere',
+      'vorrei sparire', 'vorrei scomparire', 'non merito di vivere', 'meglio se non ci fossi', 'meglio se morissi',
+      'meglio senza di me', 'voglio che finisca tutto', 'non vedo via d uscita',
+      'non ha senso vivere', 'vita non ha senso', 'vita non ha piu senso', 'non ce la faccio piu a vivere', 'buttarmi giu', 'buttarmi di sotto',
+      'stanco di vivere', 'stanca di vivere', 'voglio sparire', 'non voglio esserci piu', 'se mi succedesse qualcosa sarebbe meglio',
+    ],
+    alert: ['non ha piu senso', 'non riesco piu ad andare avanti', 'non ce la faccio piu', 'sono un peso', 'sono un fallito', 'sono una fallita', 'odio la mia vita', 'nessuno si accorgerebbe'],
+  },
+  autolesionismo: {
+    blocco: ['autolesionismo', 'tagliarmi', 'tagliarsi', 'mi taglio', 'farmi del male', 'farmi male apposta', 'mi faccio del male', 'bruciarmi apposta', 'mi sono tagliato', 'mi sono tagliata', 'mi graffio apposta'],
+    alert: ['mi punisco', 'mi merito il dolore', 'mi odio'], // "mi faccio schifo" tolto (Ste, 8/10): linguaggio normale da spogliatoio
+  },
+  // Violenza verso altri: BLOCCO solo quando è intenzione dichiarata; il gergo da campo ("ci hanno ammazzato") è ALERT o niente
+  violenza: {
+    blocco: ['voglio uccidere', 'voglio ammazzare', 'lo ammazzo davvero', 'voglio fargli del male', 'voglio farle del male', 'gli faccio del male'],
+    alert: ['uccidere', 'ammazzare', 'fare del male a', 'violenza', 'picchiare', 'aggredire', 'spaccargli la faccia', 'lo picchio', 'mi vendico'],
+  },
+  // Disturbi alimentari: ALERT (il Coach lavora, Ste legge). Le forme esplicite di purging vanno a BLOCCO.
+  alimentazione: {
+    blocco: ['vomito apposta', 'mi faccio vomitare', 'vomitare apposta', 'uso i lassativi per', 'prendo lassativi per dimagrire'],
+    alert: ['smetto di mangiare', 'non mangio piu', 'non mangio da', 'salto i pasti', 'salto la cena', 'salto il pranzo', 'digiuno per', 'sto digiunando',
+      'mi sento grasso', 'mi sento grassa', 'sono grasso', 'sono grassa', 'devo dimagrire a tutti i costi', 'conto le calorie', 'mi abbuffo', 'abbuffata', 'abbuffate',
+      'mi vedo grasso', 'mi vedo grassa', 'non mi guardo allo specchio', 'mangio di nascosto'],
+  },
+  // Abusi (fisici, sessuali, online) e violenza subita in casa: ALERT alto. Non si mette il ragazzo in contenimento
+  // quando racconta un abuso (deve poter continuare a parlare), ma Ste lo sa subito.
+  abusi: {
+    blocco: [] as string[],
+    alert: ['abusato', 'abusata', 'abusa di me', 'abusi su di me', 'violentato', 'violentata', 'stuprato', 'stuprata', 'stupro', 'molestato', 'molestata', 'molestie',
+      'mi ha toccato', 'mi ha toccata', 'mi tocca sotto', 'mi tocca le parti', 'mi tocca dove non', 'toccato le parti intime', 'mi costringe a', 'mi obbliga a fare',
+      'mi picchia', 'mi picchiano a casa', 'mio padre mi picchia', 'mia madre mi picchia', 'il mister mi picchia', 'mi mena', 'mi ha menato',
+      'foto senza vestiti', 'foto nudo', 'foto nuda', 'mi ricatta con le foto', 'mi ricatta', 'mi minaccia', 'mi minacciano',
+      'mi bullizzano', 'bullismo', 'mi prendono in giro tutti', 'mi escludono tutti', 'nessuno mi parla a scuola'],
+  },
+  // Sostanze: ALERT (dopo, se lo psicologo lo chiede, si decide se e cosa portare a BLOCCO)
+  sostanze: {
+    blocco: [] as string[],
+    alert: ['mi drogo', 'mi sono drogato', 'mi sono drogata', 'cocaina', 'pasticche per', 'mi ubriaco', 'bevo per dimenticare', 'bevo per non pensare', 'fumo per non pensare', 'ho preso delle pasticche'],
+  },
+} as const;
+export type CategoriaSafety = keyof typeof SAFETY_CATEGORIE;
+
+/**
+ * FALSI POSITIVI noti: la frase viene tolta dal testo PRIMA del confronto. Gergo da campo e modi di dire
+ * che contengono una parola chiave senza il senso a rischio. ("mi tocca" da solo NON è più una parola
+ * chiave: "mi tocca andare" è italiano di tutti i giorni.)
+ */
+export const SAFETY_ECCEZIONI = [
+  'tagliarmi i capelli', 'tagliarmi la barba', 'tagliarmi le unghie', 'mi sono tagliato i capelli', 'mi sono tagliata i capelli', 'mi sono tagliato con', 'mi sono tagliato il dito', 'mi sono tagliata con',
+  'morire dal ridere', 'morire di fame', 'morire di caldo', 'morire di freddo', 'morire di sonno', 'morire di noia', 'da morire',
+  'ammazzare il tempo', 'ammazzare di risate', 'ci hanno ammazzato', 'ci hanno ammazzati', 'li abbiamo ammazzati', 'ammazzato di fatica', 'ammazzati di fatica', 'mi ha ammazzato le gambe', 'mi hanno ammazzato le gambe',
+  'uccidere la partita', 'ucciso la partita', 'ho ucciso il difensore', 'li abbiamo uccisi', 'ci hanno uccisi',
+  'picchiare la palla', 'picchiare forte', 'picchia forte', 'picchiare di testa', 'picchiare il pallone',
+  'non ce la faccio piu a correre', 'non ce la faccio piu con le gambe', 'non ce la faccio piu a seguire il ritmo', 'non ce la faccio piu a stare in piedi',
+  'violenza del tiro', 'con violenza il pallone', 'mi faccio del male a forza di', 'farmi del male al ginocchio', 'farmi del male alla caviglia',
+  'digiuno da gol', 'digiuno di vittorie', 'a digiuno di',
 ];
-export const SAFETY_KEYWORDS_ALERT = [
-  'uccidere', 'ammazzare', 'fare del male a',
-  'violenza', 'picchiare', 'aggredire',
-  'non ce la faccio più', 'mi faccio schifo', 'non ha più senso', 'non riesco più ad andare avanti',
-  // Disturbi alimentari e abusi: solo alert finché lo psicologo non decide (gap segnalato ad agosto)
-  'smetto di mangiare', 'non mangio più', 'vomito apposta', 'mi tocca', 'abusato',
-];
-/** Compatibilità: tutte le keyword, senza distinzione di livello. */
+
+/**
+ * NEGAZIONI: "non voglio morire", "non ho mai pensato di uccidermi", "non voglio farmi del male". La frase a rischio
+ * negata nelle 1-4 parole prima NON mette in contenimento (sarebbe un falso positivo da 48 ore) ma resta un
+ * ALERT: Ste la legge lo stesso, perché chi scrive "non voglio morire" sta comunque parlando di morire.
+ */
+const NEGAZIONE_PRIMA = /(?:^|[^a-z])(?:non|mai|senza|nessuno|neanche|nemmeno)(?:\s+(?:ho|ha|hai|avrei|penso|pensato|voglio|vorrei|mai|piu|di|che|a|e|certo|affatto|proprio|davvero))*\s*$/;
+
+export function normalizzaSafety(text: string): string {
+  // Minuscole, senza accenti; apostrofi, punteggiatura ed EMOJI diventano spazi ("voglio😭morire" → "voglio morire")
+  return ` ${text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()} `;
+}
+/** Errori di battitura più comuni in italiano: doppie mancanti o in più ("amazzarmi", "vogglio morire"). Si confronta anche con le doppie collassate. */
+const collassaDoppie = (t: string) => t.replace(/([a-z])\1+/g, '$1');
+
+/** Tutte le frasi di un livello, unite da tutte le categorie. */
+const frasi = (livello: 'blocco' | 'alert'): string[] => Object.values(SAFETY_CATEGORIE).flatMap((c) => [...c[livello]]);
+export const SAFETY_KEYWORDS_BLOCCO: string[] = frasi('blocco');
+export const SAFETY_KEYWORDS_ALERT: string[] = frasi('alert');
 export const SAFETY_KEYWORDS = [...SAFETY_KEYWORDS_BLOCCO, ...SAFETY_KEYWORDS_ALERT];
 export type LivelloSafety = 'blocco' | 'alert';
 /** Ore di contenimento automatico senza verifica: poi il Coach riprende e Ste riceve un promemoria. */
@@ -55,14 +123,10 @@ export async function sendSafetyAlert(
   messageContent: string,
   livello: LivelloSafety = 'blocco'
 ): Promise<void> {
-  const preview = messageContent.substring(0, 200);
-  console.error('🚨 SAFETY ALERT', {
-    userId,
-    channel,
-    livello,
-    preview,
-    timestamp: new Date().toISOString(),
-  });
+  // Dati minimi (spec v4, 8/10): chi, quando, canale, livello. Niente testo del messaggio, nemmeno nei log:
+  // Ste legge la conversazione su Supabase. `messageContent` resta nella firma per compatibilità dei chiamanti.
+  const categoria = analizzaSafety(messageContent).categoria;
+  console.error('🚨 SAFETY ALERT', { userId, channel, livello, categoria, lunghezza: messageContent.length, timestamp: new Date().toISOString() });
 
   // Flag di revisione (solo livello BLOCCO): da questo momento il Coach resta in
   // MODALITÀ CONTENIMENTO per questo utente (web + Telegram) finché Ste non verifica
@@ -82,10 +146,12 @@ export async function sendSafetyAlert(
   }
 
   // Le notifiche (Telegram a Ste + email) non bloccano la risposta al ragazzo.
-  notificaSafety(userId, channel, preview, livello).catch((err) => console.error('sendSafetyAlert notify failed:', err));
+  notificaSafety(userId, channel, categoria, livello).catch((err) => console.error('sendSafetyAlert notify failed:', err));
 }
 
-async function notificaSafety(userId: string, channel: 'web' | 'telegram', preview: string, livello: LivelloSafety): Promise<void> {
+const oraItalia = () => new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome', dateStyle: 'short', timeStyle: 'short' });
+
+async function notificaSafety(userId: string, channel: 'web' | 'telegram', categoria: CategoriaSafety | null, livello: LivelloSafety): Promise<void> {
   let userName = 'Unknown';
   try {
     const { data } = await supabaseAdmin
@@ -113,7 +179,7 @@ async function notificaSafety(userId: string, channel: 'web' | 'telegram', previ
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: alertChatId,
-          text: `${titolo} (${channel})\nUtente: ${userName}\nUser ID: ${userId}\n\nMessaggio (primi 200 caratteri):\n"${preview}"\n\n${unlockHint}\n\nDettagli completi su Supabase.`,
+          text: `${titolo} (${channel})\nUtente: ${userName}\nUser ID: ${userId}\nCategoria: ${categoria ?? '—'}\nQuando: ${oraItalia()}\n\n${unlockHint}\n\nLa conversazione è su Supabase (telegram_conversations; per la web chat non viene salvata).`,
         }),
       });
     } catch (error) {
@@ -141,11 +207,10 @@ async function notificaSafety(userId: string, channel: 'web' | 'telegram', previ
           <p><strong>Nome:</strong> ${userName}</p>
           <p><strong>Canale:</strong> ${channel}</p>
           <p><strong>Livello:</strong> ${livello}</p>
-          <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
-          <p><strong>Messaggio (primi 200 caratteri):</strong></p>
-          <blockquote>${preview.replace(/</g, '&lt;')}</blockquote>
+          <p><strong>Categoria:</strong> ${categoria ?? '—'}</p>
+          <p><strong>Quando:</strong> ${oraItalia()} (ora italiana)</p>
           <pre>${unlockHint.replace(/</g, '&lt;')}</pre>
-          <p>Accedi a Supabase per vedere i dettagli completi.</p>
+          <p>Il testo del messaggio non viene inviato: leggi la conversazione su Supabase.</p>
         `,
       }),
     });
@@ -154,12 +219,51 @@ async function notificaSafety(userId: string, channel: 'web' | 'telegram', previ
   }
 }
 
-/** Livello di rischio del testo: 'blocco' (frasi inequivocabili), 'alert' (ambigue) o null. */
+export interface EsitoSafety { livello: LivelloSafety | null; categoria: CategoriaSafety | null; negato: boolean }
+
+/**
+ * Esito completo: livello, categoria e se la frase a rischio era negata ("non voglio morire" → alert, non blocco).
+ * Prima si tolgono le eccezioni (gergo da campo), poi si cercano le frasi BLOCCO e, se una è preceduta da una
+ * negazione, scende ad ALERT. Le frasi ALERT non guardano la negazione (è già il livello più basso).
+ */
+export function analizzaSafety(text: string): EsitoSafety {
+  const esatto = analizzaNormalizzato(normalizzaSafety(text), (k) => k);
+  if (esatto.livello) return esatto;
+  // Seconda passata tollerante alle doppie sbagliate: testo e frasi con le doppie collassate
+  return analizzaNormalizzato(collassaDoppie(normalizzaSafety(text)), collassaDoppie);
+}
+
+function analizzaNormalizzato(t0: string, f: (k: string) => string): EsitoSafety {
+  let t = t0;
+  for (const e of SAFETY_ECCEZIONI) t = t.split(f(e)).join(' ');
+  let negato = false;
+  let alertCategoria: CategoriaSafety | null = null;
+  for (const [nome, c] of Object.entries(SAFETY_CATEGORIE) as [CategoriaSafety, { blocco: readonly string[]; alert: readonly string[] }][]) {
+    for (const k0 of c.blocco) {
+      const k = f(k0);
+      const i = t.indexOf(k);
+      if (i < 0) continue;
+      if (NEGAZIONE_PRIMA.test(t.slice(Math.max(0, i - 40), i))) { negato = true; alertCategoria ??= nome; continue; }
+      return { livello: 'blocco', categoria: nome, negato: false };
+    }
+    if (!alertCategoria && c.alert.some((k) => t.includes(f(k)))) alertCategoria = nome;
+  }
+  return alertCategoria ? { livello: 'alert', categoria: alertCategoria, negato } : { livello: null, categoria: null, negato: false };
+}
+
+/**
+ * Frase divisa in due messaggi ("voglio" / "morire"): il controllo guarda l'ultimo messaggio dell'utente E,
+ * se da solo non dice niente, l'ultimo attaccato a quello prima. Le eccezioni e le negazioni valgono anche sul testo unito.
+ */
+export function analizzaSafetyConversazione(ultimo: string, precedente?: string | null): EsitoSafety {
+  const e = analizzaSafety(ultimo);
+  if (e.livello || !precedente) return e;
+  return analizzaSafety(`${precedente} ${ultimo}`);
+}
+
+/** Livello di rischio del testo: 'blocco' (frasi inequivocabili), 'alert' (ambigue o negate) o null. */
 export function checkSafety(text: string): LivelloSafety | null {
-  const lowerText = text.toLowerCase();
-  if (SAFETY_KEYWORDS_BLOCCO.some((k) => lowerText.includes(k))) return 'blocco';
-  if (SAFETY_KEYWORDS_ALERT.some((k) => lowerText.includes(k))) return 'alert';
-  return null;
+  return analizzaSafety(text).livello;
 }
 
 /** Compatibilità: true se il testo fa scattare un qualsiasi livello. */
@@ -535,9 +639,9 @@ Descrivi la pratica in 2-3 righe, collegandola esplicitamente a ciò che è emer
 
 # SITUAZIONI A RISCHIO — PROTOCOLLO (priorità assoluta su ogni altra regola)
 
-⚠️ Testo del protocollo in revisione con psicologo dell'età evolutiva — non modificare senza review.
+⚠️ Testo del protocollo approvato da Ste (8/10/2026); numeri verificati sulle pagine ufficiali (vedi NUMERI_UTILI in lib/constants). Non modificare senza review.
 
-Questo protocollo scatta quando emergono, anche in forma indiretta o accennata:
+Questo protocollo scatta quando emergono IN MODO CHIARO (detto, non solo sfiorato):
 - pensieri suicidari o desiderio di non esserci più
 - autolesionismo (tagliarsi, farsi del male)
 - abusi o violenze subite (in famiglia, nello sport, altrove)
@@ -551,15 +655,18 @@ Questo protocollo scatta quando emergono, anche in forma indiretta o accennata:
 3. **Non minimizzare e non indagare.** Riconosci la gravità con calore, senza fare domande di approfondimento sul contenuto: non sei tu a dover capire i dettagli.
 4. **Rimanda a un contatto reale, con chiarezza e per nome:**
    - Un adulto di fiducia, DA SUBITO: un genitore, il mister, un professore, un familiare. Per un ragazzo questo è il primo passo concreto.
-   - **Telefono Amico Italia: 02 2327 2327** (tutti i giorni, dalle 9 alle 24) — anche in chat WhatsApp: **324 011 7252**
-   - **112** se c'è un pericolo immediato, per sé o per altri
+   - **Telefono Amico Italia: 02 2327 2327** (tutti i giorni, 24 ore su 24) — anche in chat WhatsApp: **324 011 7252** (dalle 18 alle 21)
+   - Se è in Svizzera: **143** (Telefono Amico, giorno e notte) oppure **147** (Pro Juventute, per i giovani, gratuito)
+   - **112** se c'è un pericolo immediato, per sé o per altri (in Svizzera anche 144)
    - Uno psicologo/psicoterapeuta per un sostegno vero e continuativo
 5. **Sii più diretto del solito.** In questi casi la delicatezza è la chiarezza: una persona reale, oggi.
 6. **NON fare diagnosi. NON sostituirti a un professionista. NON promettere segretezza** ("resta tra noi" è una promessa che non puoi e non devi fare).
 
 Se nei messaggi successivi l'utente torna sul tema o non ha cercato aiuto, ripeti l'invito con pazienza — non riprendere il percorso come se nulla fosse.
 
-**Esempio di risposta (⚠️ DA RIVEDERE INSIEME PRIMA DEL DEPLOY):** "Mi fermo un attimo, perché quello che hai scritto è più importante di qualsiasi percorso. Non sono la persona giusta per aiutarti su questo — ma una persona giusta esiste, e ti meriti di parlarci oggi: un adulto di cui ti fidi, o Telefono Amico al 02 2327 2327 (tutti i giorni 9-24, anche su WhatsApp al 324 011 7252). Se senti di essere in pericolo adesso, chiama il 112. Io resto qui, ma prima viene questo."
+**Quando è solo sfiorato (una parola pesante dentro una frase normale, gergo da campo, un "non ce la faccio più" dopo una partita):** NON dare numeri e NON far scattare il protocollo. Fai UNA domanda con cura, diretta e calma, per capire come sta davvero ("Aspetta: lo dici per la partita o c'è altro?"). Se conferma di stare male, allora il protocollo sopra. Se era gergo, prosegui normalmente senza farlo pesare.
+
+**Esempio di risposta (⚠️ DA RIVEDERE INSIEME PRIMA DEL DEPLOY):** "Mi fermo un attimo, perché quello che hai scritto è più importante di qualsiasi percorso. Non sono la persona giusta per aiutarti su questo — ma una persona giusta esiste, e ti meriti di parlarci oggi: un adulto di cui ti fidi, o Telefono Amico al 02 2327 2327 (tutti i giorni, 24 ore su 24; dalla Svizzera il 143). Se senti di essere in pericolo adesso, chiama il 112. Io resto qui, ma prima viene questo."
 
 # CONTESTO PERSONALIZZATO
 
@@ -726,10 +833,20 @@ In una conversazione recente questo utente ha toccato un tema grave. Finché una
 
 * Resta nel protocollo SITUAZIONI A RISCHIO: presenza, calore, ascolto. NIENTE coaching, niente pratiche, niente strumenti del percorso, niente agganci al campo.
 * Se l'utente sta bene o chiede di riprendere il percorso, digli con gentilezza che il percorso riprende tra poco: una persona del team sta dando un'occhiata, è una attenzione in più, non un problema. Nel frattempo ci sei, per ascoltare.
-* Ripeti i contatti reali quando è pertinente: un adulto di fiducia, Telefono Amico 02 2327 2327 (tutti i giorni 9-24, anche WhatsApp 324 011 7252), 112 in caso di pericolo immediato.
+* Ripeti i contatti reali quando è pertinente: un adulto di fiducia, ${NUMERI_UTILI_RIGA}.
 * Non usare mai le parole "bloccato", "sospeso" o "segnalato". Non farlo sentire in colpa per ciò che ha scritto.
 
 `;
+
+/**
+ * Livello ALERT (8/10, Ste): nessun numero automatico. Il messaggio contiene una parola che POTREBBE indicare un
+ * disagio, o solo linguaggio da campo: il Coach chiede con cura come sta davvero e dà i contatti solo se la
+ * persona conferma di stare male. L'avviso a Ste parte comunque. Va in coda al contesto (non nel blocco cachato).
+ */
+export function safetyAlertMode(categoria: CategoriaSafety | null): string {
+  const tema = categoria ? ` (tema possibile: ${categoria})` : '';
+  return `\n\n# ⚠️ ATTENZIONE SU QUESTO MESSAGGIO\nL'ultimo messaggio contiene parole che potrebbero indicare un momento difficile${tema}, oppure è solo linguaggio da campo. NON dare numeri di telefono e NON far partire il protocollo adesso. Fai UNA domanda sola, con cura e senza allarmare, per capire come sta davvero. Solo se conferma di stare male passa al protocollo SITUAZIONI A RISCHIO; se era gergo, prosegui normalmente senza farlo pesare.\n`;
+}
 
 export const TELEGRAM_FORMAT = `
 # FORMATO RISPOSTA (Telegram)

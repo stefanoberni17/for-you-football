@@ -29,13 +29,13 @@ export default function GenitoriPage() {
 
         <div className="space-y-3">
           <Box title="Cos'è">
-            Un&apos;app di allenamento mentale per chi gioca a calcio, dai 14 anni in su. Un percorso di 12 settimane con esercizi brevi ogni giorno (respiro, attenzione, gestione dell&apos;errore e della pressione) e, per chi lo attiva, un modulo di allenamento fisico con test e sedute. L&apos;ha creata Stefano Berni, preparatore atletico. Non è terapia, non è un servizio medico e non sostituisce mister, medico o psicologo.
+            Un&apos;app di allenamento mentale per chi gioca a calcio, per ora dai 18 anni in su. Un percorso di 12 settimane con esercizi brevi ogni giorno (respiro, attenzione, gestione dell&apos;errore e della pressione) e, per chi lo attiva, un modulo di allenamento fisico con test e sedute. L&apos;ha creata Stefano Berni, preparatore atletico. Non è terapia, non è un servizio medico e non sostituisce mister, medico o psicologo.
           </Box>
           <Box title="Cosa fa l'intelligenza artificiale">
             Nell&apos;app c&apos;è un &quot;Coach&quot; con cui si può scrivere. È un&apos;intelligenza artificiale, lo diciamo sempre in modo chiaro, non è una persona e può sbagliare. Segue regole scritte da noi: parla di calcio e di come si sta in campo, non dà diagnosi, non dà consigli medici, non finge di essere umano. Il piano di allenamento fisico è proposto dall&apos;AI e controllato in automatico da regole fisse del preparatore (carichi, recuperi, giorni vicini alla partita).
           </Box>
           <Box title="Età e consenso">
-            L&apos;app si può usare dai 14 anni: sotto quell&apos;età la registrazione è bloccata. Tra i 14 e i 17 anni la legge italiana permette al ragazzo di dare il consenso da solo, a patto che le informazioni siano chiare: per questo la nostra privacy è scritta in modo semplice. Se preferite leggerla insieme, è <Link href="/privacy" className="text-forest-400 underline">qui</Link>.
+            In questa prima fase l&apos;app si può usare dai 18 anni: sotto quell&apos;età la registrazione è bloccata. Quando apriremo ai più giovani (dai 16 anni, con un adulto che paga), la legge italiana permette al ragazzo di dare il consenso da solo a patto che le informazioni siano chiare: per questo la nostra privacy è scritta in modo semplice. Se preferite leggerla insieme, è <Link href="/privacy" className="text-forest-400 underline">qui</Link>.
           </Box>
           <Box title="Quali dati raccogliamo">
             Nome, email, data di nascita, ruolo e livello nel calcio, le risposte scritte durante il percorso, i messaggi al Coach. Con un consenso a parte anche i dati sulla salute che inserisce lui o lei: come sta, ore di sonno, eventuali dolori, i risultati dei test fisici. Servono solo a regolare percorso e allenamento. Niente pubblicità, niente vendita di dati. Si possono chiedere copia e cancellazione in qualsiasi momento.

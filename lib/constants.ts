@@ -28,7 +28,10 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 // ─── Age gate ────────────────────────────────────────────────────────────────
 // UNICA fonte di verità per la soglia di età. Il parere legale può alzarla a 16:
 // cambiare SOLO questo valore (commit da una riga).
-export const MIN_AGE = 14; // soglia in attesa di conferma legale — può diventare 16
+// Età minima (spec v4, 8/10): 18 per la prima coorte; configurabile con NEXT_PUBLIC_MIN_AGE su Vercel (vale al
+// prossimo deploy) senza toccare il codice. Più avanti scende a 16 con il flusso "chi paga". Chi è già registrato
+// non viene bloccato: il controllo vive solo in /api/register e nel form.
+export const MIN_AGE = Math.max(14, Number(process.env.NEXT_PUBLIC_MIN_AGE) || 18);
 
 // ─── Consenso documenti legali ───────────────────────────────────────────────
 // Versioni correnti di privacy policy e termini (es. '2026-09-01').
@@ -245,3 +248,25 @@ export const DAY_SHORT_NAMES: Record<number, string> = {
   6: 'Sab',
   7: 'Dom',
 };
+
+/**
+ * NUMERI UTILI (verificati l'8/10/2026 sulle pagine ufficiali; da ricontrollare ogni stagione):
+ *  - Telefono Amico Italia 02 2327 2327, tutti i giorni 24 ore su 24; WhatsApp 324 011 72 52 dalle 18 alle 21 (telefonoamico.it)
+ *  - Svizzera: 143 Telefono Amico / La Main Tendue / Die Dargebotene Hand, giorno e notte, anonimo (143.ch);
+ *    147 Pro Juventute per giovani, 24 ore su 24, gratuito, anche WhatsApp (147.ch)
+ *  - 112 emergenze (Italia e Svizzera), 144 ambulanza in Svizzera
+ * Usati dal protocollo del Coach (lib/coach-ai) e dalla riga in fondo alla sezione SOS. Niente banner altrove.
+ */
+export const NUMERI_UTILI = {
+  italia: [
+    { nome: 'Telefono Amico Italia', numero: '02 2327 2327', note: 'tutti i giorni, 24 ore su 24' },
+    { nome: 'Telefono Amico su WhatsApp', numero: '324 011 7252', note: 'tutti i giorni dalle 18 alle 21' },
+  ],
+  svizzera: [
+    { nome: 'Telefono Amico (143)', numero: '143', note: 'giorno e notte, anonimo' },
+    { nome: 'Pro Juventute (147)', numero: '147', note: 'per i giovani, 24 ore su 24, gratuito' },
+  ],
+  emergenza: { numero: '112', note: 'pericolo immediato, Italia e Svizzera (in Svizzera anche 144 per l\'ambulanza)' },
+} as const;
+/** Una riga sola, per la sezione SOS e per il prompt. */
+export const NUMERI_UTILI_RIGA = 'Telefono Amico Italia 02 2327 2327 (24 ore su 24) · in Svizzera 143 (giorno e notte) o 147 Pro Juventute (giovani, gratuito) · 112 se c\'è un pericolo immediato';
