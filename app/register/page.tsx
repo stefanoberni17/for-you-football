@@ -56,6 +56,7 @@ function RegisterContent() {
   const [goals, setGoals] = useState('');
   const [dream, setDream] = useState('');
   const [currentSituation, setCurrentSituation] = useState('');
+  const [referralSource, setReferralSource] = useState(''); // "Chi ti ha consigliato?" (8/10), facoltativa
 
   const SITUAZIONE_RISPOSTE: Record<string, string> = {
     errore:            "Perfetto. Inizieremo proprio da lì — da quel momento dopo l'errore.",
@@ -139,6 +140,7 @@ function RegisterContent() {
           goals: goals.trim() || null,
           dream: dream.trim() || null,
           current_situation: currentSituation.trim() || null,
+          referral_source: referralSource.trim() || null,
           beta_code: betaCode || null,
         }),
       });
@@ -441,6 +443,11 @@ function RegisterContent() {
                 <Textarea id="reg-situation" value={currentSituation} onChange={(e) => setCurrentSituation(e.target.value)}
                   placeholder="Es. Ho perso il posto da titolare e faccio fatica a ritrovare fiducia…"
                   rows={2} maxLength={500} />
+              </Field>
+
+              {/* Passaparola (8/10): facoltativa, serve a Ste per capire da dove arriva la gente */}
+              <Field label="Chi ti ha consigliato For You Football?" htmlFor="reg-referral" optional helper="Un amico, il mister, un post: così sappiamo chi ringraziare.">
+                <Input id="reg-referral" value={referralSource} onChange={(e) => setReferralSource(e.target.value)} placeholder="Es. Marco della squadra" maxLength={120} />
               </Field>
 
               <div className="space-y-3 pt-1">

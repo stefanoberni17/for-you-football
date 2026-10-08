@@ -1327,9 +1327,10 @@ function usageDi(completion: Anthropic.Messages.Message): CoachUsage {
   };
 }
 /** Un log per chiamata: si vede se la cache del prompt lavora (letti > 0) o se si paga solo la scrittura. */
-function logUsage(tag: string, completion: Anthropic.Messages.Message) {
+// `ms` (8/10): tempo della chiamata API, per leggere la latenza del Coach dai log Vercel (Ste: "in alcune decine di secondi")
+function logUsage(tag: string, completion: Anthropic.Messages.Message, ms: number) {
   const u = usageDi(completion);
-  console.log(`coach usage [${tag}]: in ${u.input_tokens} · out ${u.output_tokens} · cache letti ${u.cache_read_input_tokens} · cache scritti ${u.cache_creation_input_tokens} · stop ${completion.stop_reason}`);
+  console.log(`coach usage [${tag}]: ${ms} ms · in ${u.input_tokens} · out ${u.output_tokens} · cache letti ${u.cache_read_input_tokens} · cache scritti ${u.cache_creation_input_tokens} · stop ${completion.stop_reason}`);
 }
 
 export async function callClaude(
@@ -1351,8 +1352,9 @@ export async function callClaude(
     ...(useTools ? { tools: [LEGGI_PERCORSO_TOOL] } : {}),
   };
 
+  const t0 = Date.now();
   const completion = await anthropic.messages.create(createParams);
-  logUsage('coach', completion);
+  logUsage('coach', completion, Date.now() - t0);
 
   // Nessun tool use — percorso normale
   if (completion.stop_reason !== 'tool_use') {
@@ -1397,6 +1399,7 @@ export async function callClaude(
   ];
 
   // Il contenuto della prima risposta (thinking + tool_use) torna indietro intero: lo pretende l'API
+  const t1 = Date.now();
   const completion2 = await anthropic.messages.create({
     model: COACH_MODEL,
     max_tokens: Math.round(maxTokens * THINKING_HEADROOM),
@@ -1407,7 +1410,7 @@ export async function callClaude(
     tools: [LEGGI_PERCORSO_TOOL],
   });
 
-  logUsage('coach+tool', completion2);
+  logUsage('coach+tool', completion2, Date.now() - t1);
   const text = testoDa(completion2);
   const u1 = usageDi(completion), u2 = usageDi(completion2);
   const usage = {

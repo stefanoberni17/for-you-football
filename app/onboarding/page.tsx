@@ -142,6 +142,9 @@ export default function OnboardingPage() {
           <p className="text-muted text-body">
             Strumenti mentali reali, da usare in campo.
           </p>
+          <p className="text-caption text-faint mt-6">
+            For You Football non è un servizio sanitario né psicologico: è allenamento.
+          </p>
         </div>
       ),
     },

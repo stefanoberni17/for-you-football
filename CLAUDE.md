@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 029 (30/9). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 029 (30/9); la 030 (`referral_source`, 8/10) è da applicare. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -213,6 +213,7 @@ difficult_situation      TEXT    -- (legacy — non più usato, mantenuto per co
 goals                    TEXT    -- obiettivi con il percorso (testo libero)
 dream                    TEXT    -- sogno da calciatore (testo libero)
 current_situation        TEXT    -- come sta vivendo il periodo nel calcio (testo libero)
+referral_source          TEXT    -- "Chi ti ha consigliato?" (migration 030, 8/10): facoltativa, scritta una volta da /api/register
 -- Percorso
 current_week             INT DEFAULT 1
 -- Telegram
@@ -392,7 +393,7 @@ L'unica funzione di verità è `hasActiveAccess(profile)` in `lib/checkAccess.ts
 
 **Settimana gratis (14/9):** `canAccessWeek(profile, week)` = pagante OPPURE `week <= FREE_WEEKS`; `isPaidRoute(pathname)` = `/chat`, `/week-complete/*`, `/giorno` e `/settimana` oltre `FREE_WEEKS`.
 **Client-side:** login e home NON rimbalzano più a `/pricing` (solo `?checkout=success` non attivato → `/pricing?checkout=pending`). `PaywallGuard` agisce solo sulle rotte a pagamento (esclusa `/chat`, che mostra il messaggio in pagina). Il gate (`app/gate/[week]`) su 403 mostra la schermata "Hai finito la settimana N" con CTA `/pricing?from=gate`. `ChatBot` su 403 mostra il messaggio del Coach + card "Sblocca Season 1". La card Telegram su "Giorno 1 completato" e il `TelegramRecoveryBanner` compaiono solo a chi ha Season 1 (il Coach è a pagamento).
-**Server-side:** `requireWeekAccess(userId, week)` su `/api/giorno` (GET/POST/PATCH) e `/api/settimana`; `requirePaidAccess(userId)` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/gate`, `/api/telegram`, `/api/telegram/link`. **Coach in chat: `FREE_COACH_MESSAGES = 10` messaggi gratis** (`/api/chat` conta gli eventi `coach_message_sent` con `meta.channel = 'web'` dell'utente non pagante; oltre → 403 con `reason: 'free_limit'` e il testo del Coach; la risposta porta `freeRemaining`, null per chi ha Season 1); `/api/onboarding/coach-welcome` gratis (il benvenuto in home vale anche in W1). Gratis (solo login): `/api/settimane`, `/api/checkin*`, `/api/actions*`, `/api/reflection`, `/api/calendar`, `/api/difficolta`. Soft se `STRIPE_SECRET_KEY` assente.
+**Server-side:** `requireWeekAccess(userId, week)` su `/api/giorno` (GET/POST/PATCH) e `/api/settimana`; `requirePaidAccess(userId)` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/gate`, `/api/telegram`, `/api/telegram/link`. **Coach in chat: `FREE_COACH_MESSAGES = 20` messaggi gratis (dall'8/10, prima 10; solo in app: Telegram resta per chi paga, anche durante la prova)** (`/api/chat` conta gli eventi `coach_message_sent` con `meta.channel = 'web'` dell'utente non pagante; oltre → 403 con `reason: 'free_limit'` e il testo del Coach; la risposta porta `freeRemaining`, null per chi ha Season 1); `/api/onboarding/coach-welcome` gratis (il benvenuto in home vale anche in W1). Gratis (solo login): `/api/settimane`, `/api/checkin*`, `/api/actions*`, `/api/reflection`, `/api/calendar`, `/api/difficolta`. Soft se `STRIPE_SECRET_KEY` assente.
 
 ### Auth API (hardening giugno 2026)
 
@@ -572,7 +573,7 @@ Totale: 15-20 sec. In campo, sempre.
 - `buildUserContext(userId)` — Costruisce contesto personalizzato leggendo da Supabase (include check-in fisico di oggi + media ultimi 7 giorni; dal 29/9 anche gli **incroci** della Carta e, per chi ha il Campo, il blocco **"Il Campo"** da `lib/cartaServer.ts`: il Coach sa cosa sta facendo il ragazzo in allenamento ma non fa programmi, per quello c'è il preparatore)
 - `LEGGI_PERCORSO_TOOL` — Tool Anthropic per leggere contenuto settimane/giorni da Notion in tempo reale
 - `executeLeggiPercorso(input)` — Esegue fetch settimana/giorno da Notion, ritorna testo strutturato
-- `callClaude(systemPrompt, messages, maxTokens, useTools, { maxWeek })` — Chiama `COACH_MODEL` = `claude-sonnet-5` con `thinking: adaptive` + `effort: medium`; il `maxTokens` passato viene moltiplicato per `THINKING_HEADROOM` (2.5) perché su Sonnet 5 il pensiero conta nel limite (se `useTools=true`: gestisce tool_use con doppia chiamata). `maxWeek` = `current_week` dell'utente (chat e Telegram lo passano): `leggi_percorso` rifiuta `week > maxWeek` con un tool result che ricorda la REGOLA ANTICIPAZIONI (14/9: prima "dammi la settimana dopo" passava dal tool). **Dal 25/9:** una risposta vuota o tagliata da `max_tokens` senza testo è un errore (`coach_empty` / `coach_max_tokens`, mai una riga vuota salvata; Telegram risponde "riscrivimi tra un minuto"); ritorna `CoachUsage` con `cache_read_input_tokens` / `cache_creation_input_tokens` e logga `coach usage [tag]` a ogni chiamata (così si vede se la cache del prompt lavora: la scelta su `ttl: '1h'` si prende dopo una settimana di log)
+- `callClaude(systemPrompt, messages, maxTokens, useTools, { maxWeek })` — Chiama `COACH_MODEL` = `claude-sonnet-5` con `thinking: adaptive` + `effort: medium`; il `maxTokens` passato viene moltiplicato per `THINKING_HEADROOM` (2.5) perché su Sonnet 5 il pensiero conta nel limite (se `useTools=true`: gestisce tool_use con doppia chiamata). `maxWeek` = `current_week` dell'utente (chat e Telegram lo passano): `leggi_percorso` rifiuta `week > maxWeek` con un tool result che ricorda la REGOLA ANTICIPAZIONI (14/9: prima "dammi la settimana dopo" passava dal tool). **Dal 25/9:** una risposta vuota o tagliata da `max_tokens` senza testo è un errore (`coach_empty` / `coach_max_tokens`, mai una riga vuota salvata; Telegram risponde "riscrivimi tra un minuto"); ritorna `CoachUsage` con `cache_read_input_tokens` / `cache_creation_input_tokens` e logga `coach usage [tag]` a ogni chiamata, dall'8/10 con i **millisecondi** della chiamata API in testa (`coach usage [coach]: 8421 ms · in … `): la latenza del Coach si legge dai log Vercel, non si misura da qui (così si vede anche se la cache del prompt lavora: la scelta su `ttl: '1h'` si prende dopo una settimana di log)
 - `generateCoachRecap(userId, messages)` — Distilla conversazione in coach_notes (pattern, temi, thread aperti)
 - `checkSafetyKeywords(text)` — Rileva parole chiave a rischio (suicidio, autolesionismo, violenza)
 - `SAFETY_KEYWORDS` — Lista keyword per detection
@@ -688,7 +689,7 @@ La memoria persistente del Coach si basa su:
 
 ### Registrazione (`app/register/page.tsx`)
 - **Step 1:** Email, password, nome, **data di nascita obbligatoria** (age gate: `MIN_AGE` in constants = **18** dall'8/10 per la prima coorte, configurabile con `NEXT_PUBLIC_MIN_AGE` su Vercel senza toccare il codice, mai sotto 14; chi è già registrato non viene bloccato; validazione vera server-side in `/api/register` — sotto soglia → 403 + evento `age_gate_blocked`; testi di `/genitori`, `/privacy`, `/termini` allineati a 18 "in questa prima fase") + **2 checkbox consenso separate non pre-selezionate** (privacy → `/privacy`, termini → `/termini`; al submit 2 righe in `consent_events`)
-- **Step 2:** Profilo calciatore — ruoli (multi-select), livello, paure (multi-select), obiettivi, sogno, situazione attuale → `POST /api/register`
+- **Step 2:** Profilo calciatore — ruoli (multi-select), livello, paure (multi-select), obiettivi, sogno, situazione attuale, **"Chi ti ha consigliato For You Football?"** (facoltativa, testo libero 120 caratteri, dall'8/10: `profiles.referral_source`, migration 030, update separato fail-soft dopo l'upsert del profilo; si legge dal Table editor di Supabase; al posto del referral, rimandato) → `POST /api/register`
 - Gestione errori auth (utente già registrato, password debole)
 - Schermata "Controlla la tua email" con bottone **"Reinvia email"** (`supabase.auth.resend`, cooldown 60s)
 
