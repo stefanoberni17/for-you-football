@@ -58,7 +58,8 @@ function ageFromBirthDate(birthDate: string): number | null {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password, name, birth_date, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code, privacy_accepted, terms_accepted, health_accepted } = body;
+    const { email, password, name, birth_date, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code, privacy_accepted, terms_accepted, health_accepted, referral_source } = body;
+    const referralSource = typeof referral_source === 'string' ? referral_source.trim().slice(0, 120) : '';
 
     // Valida codice invito beta (se presente)
     const isBeta = isValidBetaCode(beta_code);
@@ -203,7 +204,14 @@ export async function POST(req: NextRequest) {
       console.error('❌ Eccezione salvataggio profilo (non bloccante):', profileErr?.message);
     }
 
-    logEvent(userId, 'signup_completed', { sport: sport || 'calcio' });
+    logEvent(userId, 'signup_completed', { sport: sport || 'calcio', referral: referralSource ? true : false });
+
+    // 2b. "Chi ti ha consigliato?" (8/10, migration 030): update separato e fail-soft, così se la colonna
+    //     manca il profilo sopra è già salvato
+    if (referralSource) {
+      const { error: refError } = await supabaseAdmin.from('profiles').update({ referral_source: referralSource }).eq('user_id', userId);
+      if (refError) console.error('⚠️ referral_source non salvato (migration 030?):', refError.message);
+    }
 
     // 3. Snapshot baseline T0 — immutabile, per il confronto W12.
     //    Fire-and-forget, non blocca la registrazione. ON CONFLICT DO NOTHING

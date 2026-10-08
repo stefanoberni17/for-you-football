@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-08 — Lancio di novembre, punto 6: registrazione e legale
+- Domanda facoltativa "Chi ti ha consigliato For You Football?" nello step 2 della registrazione → `profiles.referral_source` (migration 030, update separato fail-soft; evento `signup_completed` con `referral: true/false`).
+- Frase "For You Football non è un servizio sanitario né psicologico" nella prima slide dell'onboarding e nei termini.
+- `PRIVACY_VERSION` / `TERMS_VERSION`: restano vuote finché Ste manda URL e versioni dei documenti dal generatore (una riga ciascuna; compilarle accende da sola la ri-accettazione in `lib/consent.ts` e il `consent_collection` nel checkout).
+
 ## 2026-10-08 — Lancio di novembre, punto 5: Coach in prova
 - `FREE_COACH_MESSAGES` da 10 a 20 (solo in app). Telegram resta per chi paga: lo stato `trialing`, quando arriverà (punto 1), non passa da `hasActiveAccess` (commento nel codice), quindi in prova il bot risponde "si attiva con Season 1" come oggi a chi non paga.
 - `coach usage [tag]` logga i millisecondi della chiamata API: la latenza del Coach si legge dai log Vercel.

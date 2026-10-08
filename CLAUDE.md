@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 029 (30/9). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 029 (30/9); la 030 (`referral_source`, 8/10) è da applicare. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -213,6 +213,7 @@ difficult_situation      TEXT    -- (legacy — non più usato, mantenuto per co
 goals                    TEXT    -- obiettivi con il percorso (testo libero)
 dream                    TEXT    -- sogno da calciatore (testo libero)
 current_situation        TEXT    -- come sta vivendo il periodo nel calcio (testo libero)
+referral_source          TEXT    -- "Chi ti ha consigliato?" (migration 030, 8/10): facoltativa, scritta una volta da /api/register
 -- Percorso
 current_week             INT DEFAULT 1
 -- Telegram
@@ -688,7 +689,7 @@ La memoria persistente del Coach si basa su:
 
 ### Registrazione (`app/register/page.tsx`)
 - **Step 1:** Email, password, nome, **data di nascita obbligatoria** (age gate: `MIN_AGE` in constants = **18** dall'8/10 per la prima coorte, configurabile con `NEXT_PUBLIC_MIN_AGE` su Vercel senza toccare il codice, mai sotto 14; chi è già registrato non viene bloccato; validazione vera server-side in `/api/register` — sotto soglia → 403 + evento `age_gate_blocked`; testi di `/genitori`, `/privacy`, `/termini` allineati a 18 "in questa prima fase") + **2 checkbox consenso separate non pre-selezionate** (privacy → `/privacy`, termini → `/termini`; al submit 2 righe in `consent_events`)
-- **Step 2:** Profilo calciatore — ruoli (multi-select), livello, paure (multi-select), obiettivi, sogno, situazione attuale → `POST /api/register`
+- **Step 2:** Profilo calciatore — ruoli (multi-select), livello, paure (multi-select), obiettivi, sogno, situazione attuale, **"Chi ti ha consigliato For You Football?"** (facoltativa, testo libero 120 caratteri, dall'8/10: `profiles.referral_source`, migration 030, update separato fail-soft dopo l'upsert del profilo; si legge dal Table editor di Supabase; al posto del referral, rimandato) → `POST /api/register`
 - Gestione errori auth (utente già registrato, password debole)
 - Schermata "Controlla la tua email" con bottone **"Reinvia email"** (`supabase.auth.resend`, cooldown 60s)
 

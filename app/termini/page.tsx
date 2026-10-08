@@ -36,8 +36,8 @@ export default function TerminiPage() {
                 <p className="font-semibold text-app mb-1">Cos&apos;è For You Football</p>
                 <p className="text-muted">
                   Un percorso di allenamento mentale per sportivi, con pratiche guidate e un
-                  assistente automatico (il Coach AI). Non è un servizio medico, psicologico o
-                  terapeutico e non lo sostituisce.
+                  assistente automatico (il Coach AI). For You Football non è un servizio sanitario
+                  né psicologico, né terapeutico, e non lo sostituisce.
                 </p>
               </Card>
               <Card variant="raised" padding="sm">
