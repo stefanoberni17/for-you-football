@@ -88,7 +88,8 @@ export const DELOAD_RPE = 0.75;
 
 /** Carico pianificato di una settimana (AU), con la calibrazione dell'atleta e il fattore RPE (scarico). */
 export function caricoPianificato(plan: WeekPlan, calibrazione = 1, fattoreRpe = 1): number {
-  return Math.round(plan.sedute.reduce((a, s) => a + (s.durata_min || 0) * rpeAttesoSeduta(s) * calibrazione * fattoreRpe, 0));
+  // L'apertura (8/10) sta fuori dal tetto di durata ma dentro il carico: era così anche prima, i piani vecchi la contano
+  return Math.round(plan.sedute.reduce((a, s) => a + ((s.durata_min || 0) + (s.apertura_min || 0)) * rpeAttesoSeduta(s) * calibrazione * fattoreRpe, 0));
 }
 
 function romeDate(iso: string): string {
@@ -131,7 +132,7 @@ export function calcolaCarico(input: {
     const giorno = Number(c.session_key.split('#')[1]);
     const plan = c.plan_id ? planById.get(c.plan_id) : undefined;
     const s = plan?.sedute.find((x) => x.giorno === giorno);
-    const durataMin = s?.durata_min && s.durata_min > 0 ? s.durata_min : 45;
+    const durataMin = s?.durata_min && s.durata_min > 0 ? s.durata_min + (s.apertura_min || 0) : 45;
     const logs = rpeBySession.get(c.session_key);
     let rpe: number, rpeFonte: SedutaCarico['rpeFonte'];
     // Il voto 1-10 di fine seduta (Ste, 23/9) vale più della media delle serie: è il giudizio sull'intera seduta

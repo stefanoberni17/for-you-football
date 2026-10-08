@@ -351,7 +351,8 @@ export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom
   titolo: string;
   tipo: 'mix' | 'fisica' | 'tecnica' | 'skill' | 'fascia' | 'recupero';
-  durata_min: number;
+  durata_min: number;        // minuti dei blocchi principali: l'apertura (rolling) sta fuori, in apertura_min
+  apertura_min?: number;     // minuti dell'apertura facoltativa in testa (8/10: "+N' se hai tempo"), fuori dal tetto di durata
   items: PlanItem[];
   spiegazione?: string;
   blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
@@ -419,8 +420,8 @@ export function validatePlan(
         if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
         const blocco = ctx.trustBlocks && it.blocco_id ? bloccoById(it.blocco_id) : undefined;
         const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)]);
-        // Fidato anche il blocco VIRTUALE (parte alta dalle scale, `pa-*`): non è nella libreria ma l'ha dosato il server
-        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-')));
+        // Fidato anche il blocco VIRTUALE (parte alta dalle scale `pa-*`, gambe `pb-*`, kettlebell `kb-*`, apertura breve): non è nella libreria ma l'ha dosato il server
+        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('apertura-')));
         const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });

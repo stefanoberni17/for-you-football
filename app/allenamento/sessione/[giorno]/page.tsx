@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_NAMES } from '@/lib/constants';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
-import { STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type StatoFascia } from '@/lib/trainingFascia';
+import { APERTURA_IDS, STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type StatoFascia } from '@/lib/trainingFascia';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play } from 'lucide-react';
@@ -15,7 +15,7 @@ import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, Sect
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; lato_extra?: 'dx' | 'sx'
   per_lato?: boolean;
 }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number }[] }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[] }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
@@ -50,6 +50,7 @@ export default function SessionePage() {
   const [giudizi, setGiudizi] = useState<Record<string, Giudizio>>({}); // giudizio per blocco
   const [zone, setZone] = useState<Record<string, string[]>>({});       // rolling (28/9): dove l'ha sentita di più
   const [stati, setStati] = useState<Record<string, StatoFascia>>({});  // rolling: ok / teso / fastidio
+  const [blocchiSaltati, setBlocchiSaltati] = useState<string[]>([]);   // apertura saltata dal player (8/10): niente domanda sulle zone
   const [spiegazioneOpen, setSpiegazioneOpen] = useState(false); // "Leggi tutto" sulla spiegazione del planner
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -95,6 +96,7 @@ export default function SessionePage() {
     try {
       type BloccoFeedback = { id: string; nome: string; giudizio: Giudizio } | { id: string; nome: string; zone: string[]; stato: StatoFascia };
       const blocchi = (sessione?.blocchi || []).flatMap((b): BloccoFeedback[] => {
+        if (blocchiSaltati.includes(b.id)) return [];
         if (tipoFeedbackBlocco(b) === 'zone') {
           if (!zone[b.id]?.length && !stati[b.id]) return [];
           return [{ id: b.id, nome: nomeBloccoAtleta(b.nome), zone: zone[b.id] ?? [], stato: stati[b.id] ?? 'teso' }];
@@ -164,7 +166,7 @@ export default function SessionePage() {
               body: JSON.stringify({ plan_id: planId, giorno, ...log }),
             }).catch(() => { /* fire-and-forget: la seduta non si ferma */ });
           }}
-          onComplete={() => { setSavedProgress(null); setResume(false); setPhase('feedback'); }}
+          onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setPhase('feedback'); }}
           onExit={() => {
             // Il progresso resta salvato: al rientro si può riprendere da qui
             if (storageKey) {
@@ -201,7 +203,7 @@ export default function SessionePage() {
                 <div className="text-left mb-5">
                   <p className="text-label font-semibold text-app mb-2">Blocco per blocco</p>
                   <div className="space-y-3">
-                    {sessione!.blocchi!.map((b) => (
+                    {sessione!.blocchi!.filter((b) => !blocchiSaltati.includes(b.id)).map((b) => (
                       <div key={b.id}>
                         <p className="text-body font-semibold text-app leading-snug mb-1.5">{nomeBloccoAtleta(b.nome)}</p>
                         {tipoFeedbackBlocco(b) === 'zone' ? (
@@ -267,7 +269,7 @@ export default function SessionePage() {
         <BackButton onClick={() => router.push('/allenamento')} label="Campo" className="mb-2" />
         <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{DAY_NAMES[giorno]} · {TIPO_LABEL[sessione.tipo] ?? 'Seduta'}</p>
         <h1 className="font-display text-title-1 font-bold text-app mb-1">{sessione.titolo}</h1>
-        <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {nEsercizi} esercizi</p>
+        <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {nEsercizi} esercizi{sessione.apertura_min ? ` · +${sessione.apertura_min}' di apertura, se hai tempo` : ''}</p>
         {sessione.spiegazione && (
           <div className="mb-5">
             <p className={`text-body text-muted leading-relaxed ${spiegazioneOpen ? '' : 'line-clamp-3'}`}>{sessione.spiegazione}</p>
@@ -302,7 +304,7 @@ export default function SessionePage() {
         <div className="space-y-3">
           {gruppi.map((g) => (
             <Card key={`${g.id}-${g.items[0].i}`} padding="sm">
-              <SectionTitle as="h2" title={g.nome} subtitle={`${g.items.length} esercizi${g.durataMin ? ` · ~${g.durataMin}'` : ''}`} className="px-1 mb-1" />
+              <SectionTitle as="h2" title={g.nome} subtitle={`${APERTURA_IDS.has(g.id) ? 'facoltativa, se hai tempo · ' : ''}${g.items.length} esercizi${g.durataMin ? ` · ~${g.durataMin}'` : ''}`} className="px-1 mb-1" />
               <div className="divide-y divide-divider">
                 {g.items.map(({ it, i }) => {
                   const ex = esercizioAny(it.esercizio_id);

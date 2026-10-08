@@ -4,6 +4,7 @@ import { costruisciParteAlta, PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_SHORT_ID } from 
 import { giornataLeggera, riparaPiano, versioneBreve } from '@/lib/trainingRiparazione';
 import { expandPiano, fallbackPianoBlocchi, giornoDellaViolazione, type ContextV2, type PianoLLM } from '@/lib/trainingPlannerV2';
 import type { TestResultRow } from '@/lib/trainingEngine';
+import { ROLLING_ID } from '@/lib/trainingFascia';
 
 const r = (test_id: string, valore: number): TestResultRow => ({ test_id, valore, livello_calcolato: 'intermedio', punteggio_calcolato: 50 });
 const results = [r('test-push', 40), r('skill:push-3', 22), r('test-pull', 12), r('test-core', 90), r('test-lombari', 70)];
@@ -61,7 +62,7 @@ describe('riparaPiano: il piano di Claude si aggiusta, non si butta (Ste, 7/10)'
     const b = riparaPiano(poche, ctx, { nRichieste: 2, giorniRimasti: tutti });
     expect(b.piano.sedute.length).toBe(2);
     expect(b.piano.sedute[1].titolo).toBe('Giornata leggera');
-    expect(b.piano.sedute[1].blocchi[0]).toBe(APERTURA);
+    expect(b.piano.sedute[1].blocchi[0]).toBe(ROLLING_ID); // l'apertura la sceglie il server dal tempo (8/10): con 90' il rolling
     expect(expandPiano(b.piano, ctx).errors).toEqual([]);
   });
 
@@ -79,14 +80,14 @@ describe('riparaPiano: il piano di Claude si aggiusta, non si butta (Ste, 7/10)'
 
   it('seduta troppo lunga: via i blocchi facoltativi dal più lungo, poi la versione breve del principale', () => {
     const ctx = ctxBase({ maxDurata: 60 });
-    // apertura 23' + forza parte bassa B1 43' + pliometria B2 33' = 99'
+    // forza parte bassa B1 43' + pliometria B2 33' = 76' (l'apertura sta fuori dal tempo, 8/10)
     const p: PianoLLM = { sedute: [{ giorno: 1, blocchi: [APERTURA, 'forza-parte-bassa-b1', 'pliometria-b2'] }] };
     const { piano, riparazioni } = riparaPiano(p, ctx, { nRichieste: null, giorniRimasti: tutti });
-    expect(piano.sedute[0].blocchi).toEqual([APERTURA, 'forza-parte-bassa-b1']); // 66' → il validatore dirà ancora la sua, ma il grosso è fatto
+    expect(piano.sedute[0].blocchi).toEqual([APERTURA, 'forza-parte-bassa-b1']); // 43': rientra
     expect(riparazioni[0]).toContain('accorciata');
-    // con la pliometria B1 (24') come principale esiste la short: la seduta rientra
+    // con la pliometria B1 (24') come principale esiste la short (19'): la seduta rientra nei 20'
     const q: PianoLLM = { sedute: [{ giorno: 1, blocchi: [APERTURA, 'pliometria-b1', 'rapidita-velocita-b1-short'] }] };
-    const stretta = ctxBase({ maxDurata: 45 });
+    const stretta = ctxBase({ maxDurata: 20 });
     const esito = riparaPiano(q, stretta, { nRichieste: null, giorniRimasti: tutti });
     expect(esito.piano.sedute[0].blocchi).toEqual([APERTURA, 'pliometria-b1-short']);
     expect(expandPiano(esito.piano, stretta).errors).toEqual([]);
