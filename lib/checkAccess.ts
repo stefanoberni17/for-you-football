@@ -27,6 +27,8 @@ export type BillingProfile = {
  *  5. altrimenti → no access
  */
 export function hasActiveAccess(profile: BillingProfile | null | undefined): boolean {
+  // Prova (spec v4, 8/10): quando lo stato `trialing` verrà salvato com'è (punto 1, migration sul CHECK),
+  // NON deve passare di qui: in prova solo W1 (canAccessWeek, FREE_WEEKS), niente Telegram, niente Gate, niente Campo.
   if (!profile) return false;
   if (profile.is_beta_free) return true;
   if (profile.season1_access) return true;

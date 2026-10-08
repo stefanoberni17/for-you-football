@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-08 — Lancio di novembre, punto 5: Coach in prova
+- `FREE_COACH_MESSAGES` da 10 a 20 (solo in app). Telegram resta per chi paga: lo stato `trialing`, quando arriverà (punto 1), non passa da `hasActiveAccess` (commento nel codice), quindi in prova il bot risponde "si attiva con Season 1" come oggi a chi non paga.
+- `coach usage [tag]` logga i millisecondi della chiamata API: la latenza del Coach si legge dai log Vercel.
+
 ## 2026-10-08 — Lancio di novembre, punti 1 e 2 della spec v4: sicurezza ed età
 - **Sicurezza** (`lib/coach-ai.ts`): liste di parole chiave per categoria (`SAFETY_CATEGORIE`: suicidio, autolesionismo, violenza, alimentazione, abusi, sostanze; abusi e sostanze solo alert), confronto sul testo normalizzato (accenti, apostrofi), eccezioni da campo (`SAFETY_ECCEZIONI`: "ci hanno ammazzato", "tagliarmi i capelli", "mi tocca andare"…), negazioni ("non voglio morire" → alert, niente contenimento di 48 ore). `analizzaSafety` ritorna anche categoria e negazione; `checkSafety` invariato per i chiamanti. L'avviso a Ste (Telegram + email) porta solo nome, id, canale, livello, categoria e ora: niente testo del messaggio, nemmeno nei log. 45 casi in `tests/safety.test.ts`, elenco con esito nel doc di ricognizione.
 - **Correzioni dell'8/10 sera (decisioni di Ste):** "mi faccio schifo" tolto dalle parole chiave; livello ALERT senza numeri automatici (`safetyAlertMode` in coda al contesto: il Coach chiede prima come sta, i contatti solo se conferma); numeri verificati per Italia e Svizzera con la fonte (`NUMERI_UTILI` in `lib/constants.ts`: Telefono Amico 02 2327 2327 24h, WhatsApp 18-21, 143, 147, 112/144) nel protocollo, nel contenimento e in una riga discreta in fondo alla sezione SOS; tolleranza agli errori di battitura (doppie), emoji e punteggiatura; frase divisa in due messaggi (`analizzaSafetyConversazione`, chat e Telegram). 55 casi di test.
