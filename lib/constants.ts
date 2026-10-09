@@ -34,11 +34,12 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 export const MIN_AGE = Math.max(14, Number(process.env.NEXT_PUBLIC_MIN_AGE) || 18);
 
 // ─── Consenso documenti legali ───────────────────────────────────────────────
-// Versioni correnti di privacy policy e termini (es. '2026-09-01').
-// Restano vuote finché i documenti definitivi non esistono; al primo
-// aggiornamento reale, cambiare qui fa scattare il flusso di ri-accettazione.
-export const PRIVACY_VERSION = '';
-export const TERMS_VERSION = '';
+// Versioni correnti di privacy policy e termini = data del testo pubblicato in /privacy e /termini.
+// Cambiare una versione fa scattare la ri-accettazione (`lib/consent.ts` + `ConsentReacceptSheet`):
+// chi ha accettato una versione diversa (o nessuna) vede il foglio alla prima apertura e deve
+// accettare per continuare. Compilate il 9/10/2026 con i testi definitivi scritti in app.
+export const PRIVACY_VERSION = '2026-10-09';
+export const TERMS_VERSION = '2026-10-09';
 
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
 

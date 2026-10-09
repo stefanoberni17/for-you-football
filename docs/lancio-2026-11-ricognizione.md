@@ -167,6 +167,18 @@ Non eseguite (vedi sopra). Quello che so dalla documentazione e che va confermat
 
 **Piano B Paddle.** Sostituisce Checkout, webhook, portale e i 4 file Stripe: stima +12-18 ore rispetto a Managed Payments, con la stessa logica di diritti sul nostro DB (punto 3), che resta identica.
 
+## 0.2b Managed Payments: cosa cambia nel codice (9/10, dalla documentazione Stripe, da confermare sull'account di test)
+
+Ste ha scelto `txcd_10103000` e ha incollato l'esempio di Stripe (`Stripe-Version: 2025-03-31.basil`, `managed_payments[enabled]=true`). Letto `docs.stripe.com/payments/managed-payments/update-checkout`:
+
+**SDK e versione API.** Installato `stripe` 17.7.0, che pinna `2025-02-24.acacia` e NON ha il tipo `managed_payments` (arrivato nell'SDK 22.1.0, aprile 2026). Serve l'aggiornamento a `stripe` 23.0.0 (API `2026-09-30.endive`, 1/10/2026). Tra acacia ed endive cambiano due campi che leggiamo: `invoice.subscription` → `invoice.parent.subscription_details.subscription` (il webhook legge già entrambi) e `subscription.current_period_end` → `subscription.items.data[0].current_period_end` (`/api/stripe/subscription`, da sistemare). La versione dell'endpoint webhook nel dashboard va allineata alla stessa data.
+
+**Parametri da togliere con `managed_payments.enabled`** (Stripe li rifiuta): `automatic_tax` (oggi `{ enabled: false }`: le tasse le calcola Stripe dal tax code del prodotto e dal `tax_behavior` del Price), `customer_update[name]`/`[address]` (oggi `auto`: Managed Payments raccoglie nome e indirizzo da sé e aggiorna il customer), `payment_method_types: ['card']` sul one-time (i metodi li decide Stripe). Non usiamo `tax_id_collection`, `invoice_creation`, `receipt_email`, `statement_descriptor`.
+
+**Parametri che restano ammessi** (non sono nella lista): `customer`, `billing_address_collection`, `consent_collection` (termini nel checkout, con l'URL nel dashboard; nel codice dietro `STRIPE_TERMS_CONSENT=1`), `allow_promotion_codes`, `subscription_data.trial_period_days` e `metadata`, `success_url`/`cancel_url`.
+
+**Conseguenze da provare con la chiave di test:** (1) ricevute e fatture le manda Stripe («handles post-sale actions such as invoicing and confirmation emails»): il punto «ricevute email nel dashboard» si chiude da solo per i nuovi acquisti; (2) le rate di Season 1 usano `subscriptionSchedules.create({ from_subscription })` su una sub nata in Checkout: non è in elenco tra le cose vietate, ma «creare una subscription fuori da Checkout» lo è, quindi va provato prima di accendere Managed Payments sul piano a rate; (3) le sub esistenti non si possono convertire: i founder restano come sono; (4) il portale cliente non è citato come non supportato: da provare la disdetta a fine periodo; (5) il one-time senza `payment_method_types: ['card']` può chiudere la sessione con metodi asincroni (`payment_status: 'unpaid'`): il webhook già controlla `payment_status === 'paid'`, resta da vedere se Stripe propone SEPA in Italia.
+
 ## 0.3 Dove vive oggi il gating
 
 Un'unica funzione di verità per il paywall mentale, due flag separati per il resto:

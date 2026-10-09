@@ -6,6 +6,7 @@ import GlobalCheckinWrapper from "@/components/GlobalCheckinWrapper";
 import GlobalMeditationWrapper from "@/components/GlobalMeditationWrapper";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import PaywallGuard from "@/components/PaywallGuard";
+import ConsentReacceptSheet from "@/components/ConsentReacceptSheet";
 import AppResume from "@/components/AppResume";
 
 // Brand (Notion, "Brief Landing Page → Brand & stile visivo"): Outfit per tutto (700 titoli,
@@ -70,6 +71,7 @@ export default function RootLayout({
       <body>
         <ServiceWorkerRegistration />
         <PaywallGuard />
+        <ConsentReacceptSheet />
         <AppResume />
         <GlobalCheckinWrapper>
           <GlobalMeditationWrapper>
