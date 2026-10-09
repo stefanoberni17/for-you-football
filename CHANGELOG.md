@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-09 — Legale: privacy e termini definitivi, ri-accettazione in app
+- `/privacy` e `/termini` riscritti per intero (Ste: "fai tu"): versione `2026-10-09` in `lib/constants.ts` (`PRIVACY_VERSION`, `TERMS_VERSION`). Privacy in linguaggio piano con titolare, dati per categoria (salute art. 9 a consenso esplicito), AI, sicurezza, fornitori, tempi, cookie tecnici, diritti. Termini con cosa non è, 18+, regole di sicurezza del Campo, prezzi e abbonamenti, recesso 14 giorni con rimborso, cancellazione, uso corretto, responsabilità, legge italiana.
+- Ri-accettazione: `GET/POST /api/consent/reaccept` + `components/ConsentReacceptSheet.tsx` nel root layout (foglio senza X alla prima pagina dell'app, una checkbox per documento cambiato, link in nuova scheda, "Accetto e continuo"). Chi si è registrato prima lo vede una volta.
+- Checkout Stripe: `consent_collection` non dipende più da `TERMS_VERSION` ma da `STRIPE_TERMS_CONSENT=1` (senza l'URL dei termini nel dashboard Stripe rifiutava la sessione).
+- `docs/lancio-2026-11-ricognizione.md` § 0.2b: cosa cambia nel codice con Managed Payments (SDK 17.7 → 23.0, parametri da togliere, cosa resta, cosa provare con la chiave di test). `docs/campo-audit-2026-10-09.md`: forza funzionale = kettlebell se c'è, altrimenti parte bassa a corpo libero (Ste, 9/10).
+
 ## 2026-10-08 — Lancio di novembre, punto 8: primo giorno e audio
 - Home dei primi 7 giorni (`primiGiorni` dalla creazione del profilo): una sola azione dominante (la pratica di oggi, "Continua la pratica di oggi" se avviata); nascosti azioni, numeri del check-in e link alle statistiche, banner del lunedì, rimando alla Palestra a giorno bloccato.
 - Audio della pratica: la pausa esterna (telefonata, schermo bloccato) aggiorna lo stato e non tiene in ostaggio il completamento; il play riprende da dove era. Timer già a timestamp. Verifica di voce e testo sul telefono: Ste.

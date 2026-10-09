@@ -42,7 +42,7 @@
 ```
 for-you-football/
 ├── app/
-│   ├── layout.tsx                         # Root layout: GlobalCheckinWrapper + GlobalMeditationWrapper + BottomTabBar
+│   ├── layout.tsx                         # Root layout: PaywallGuard + ConsentReacceptSheet + GlobalCheckinWrapper + GlobalMeditationWrapper + BottomTabBar
 │   ├── page.tsx                           # Dashboard (home) + mini sparkline statistiche — richiede auth
 │   ├── login/page.tsx
 │   ├── register/page.tsx                  # Registrazione 2-step (account + profilo calciatore)
@@ -61,7 +61,8 @@ for-you-football/
 │   ├── profilo/page.tsx
 │   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
-│   ├── termini/page.tsx                   # Termini di servizio — PLACEHOLDER da sostituire col testo legale (poi compilare TERMS_VERSION)
+│   ├── termini/page.tsx                   # Termini di servizio definitivi (9/10/2026, TERMS_VERSION '2026-10-09'): 14 sezioni, recesso 14 giorni, legge italiana
+│   ├── privacy/page.tsx                   # Privacy Policy definitiva (9/10/2026, PRIVACY_VERSION '2026-10-09'): titolare Stefano Berni, dati per categoria, AI, sicurezza, fornitori, tempi, diritti
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
 │   └── api/
 │       ├── register/route.ts              # POST → signup Supabase + upsert profilo
@@ -88,6 +89,7 @@ for-you-football/
 │           └── daily-evening/route.ts     # GET → reminder serale Coach se pratica non fatta (testo generato Haiku) — SOLO utenti attivi <30gg
 ├── components/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Strumenti / Coach / Profilo
+│   ├── ConsentReacceptSheet.tsx           # Ri-accettazione privacy/termini: Sheet senza X alla prima pagina dell'app se la versione accettata ≠ quella in constants (GET/POST /api/consent/reaccept, fail-open)
 │   ├── BirthdateBanner.tsx                # Banner non bloccante dashboard: raccoglie birth_date dagli utenti pre-age-gate
 │   ├── ActionsCard.tsx                    # Card compatta dashboard "Le tue azioni durante il giorno" (3 varianti)
 │   ├── ActionsSetupSheet.tsx              # Bottom-sheet selezione catalogo + custom (max 5)
@@ -347,14 +349,15 @@ received_at TIMESTAMPTZ DEFAULT NOW()
 id               UUID PRIMARY KEY DEFAULT gen_random_uuid()
 user_id          UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
 document_type    TEXT NOT NULL   -- 'privacy' | 'terms'
-document_version TEXT NOT NULL DEFAULT ''  -- da PRIVACY_VERSION/TERMS_VERSION (vuote finché i documenti legali non esistono)
+document_version TEXT NOT NULL DEFAULT ''  -- da PRIVACY_VERSION/TERMS_VERSION ('2026-10-09' dal 9/10; '' nelle righe scritte prima)
 accepted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 channel          TEXT NOT NULL   -- 'registration' | 'reaccept'
 ```
 - Append-only: mai UPDATE/DELETE — è la prova. NO IP (finché l'avvocato non conferma che serve).
 - RLS owner-read, scrittura solo service role. 2 righe scritte da `/api/register` al submit.
-- Ri-accettazione: `lib/consent.ts` (`needsReacceptance`) — si attiva da sola quando le versioni in `lib/constants.ts` vengono compilate; il banner UI è da costruire a quel punto.
-- Nessun backfill per gli utenti esistenti: alla pubblicazione dei documenti definitivi tutti passano dal flusso di ri-accettazione.
+- Ri-accettazione (9/10/2026): `lib/consent.ts` (`needsReacceptance`: versione corrente ≠ ultima accettata, o mai accettata) → `GET /api/consent/reaccept`; `components/ConsentReacceptSheet.tsx` nel root layout mostra un `Sheet` senza X alla prima pagina dell'app (non su login, register, reset-password, privacy, termini, genitori, riattiva) con una checkbox per documento cambiato e il link che si apre in una nuova scheda; "Accetto e continuo" → `POST /api/consent/reaccept { documents }` → una riga per documento, channel `reaccept`. Una verifica per utente per sessione, fail-open se la API non risponde. Per cambiare un testo in modo sostanziale: aggiornare la pagina E la versione in `lib/constants.ts`.
+- Nessun backfill: chi si è registrato con versione '' vede il foglio una volta e da lì ha la riga con la versione vera.
+- **Testi (9/10, Ste: "fai tu")**: scritti in app, non da un generatore esterno. Privacy: titolare Stefano Berni (indirizzo e codice fiscale/P.IVA da aggiungere quando Ste li manda), dati per categoria con i dati sulla salute art. 9 a consenso esplicito, AI (Anthropic: niente addestramento, cancellazione entro 30 giorni), sicurezza (avviso a Ste senza il testo; righe `safety_flagged` fino alla cancellazione), fornitori (Supabase UE, Vercel, Anthropic, Stripe, Telegram, Resend, Notion), tempi (60 giorni di grazia, Telegram 90, fatture 10 anni), cookie tecnici, diritti e Garante, età 18. Termini: cos'è/cosa non è (non sanitario né psicologico), 18+, regole di sicurezza del Campo, prezzi (settimana gratis, Season 1, rate, abbonamenti con disdetta a fine periodo, codici promo, preavviso 30 giorni sui prezzi), **recesso 14 giorni con rimborso** (quello di legge: nel checkout non chiediamo di rinunciarvi), account e cancellazione, uso corretto, proprietà, disponibilità, responsabilità (dolo/colpa grave), legge italiana e foro del consumatore. Nessuna revisione legale esterna (decisione di Ste).
 
 ---
 
@@ -1119,7 +1122,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
-- [ ] Stripe dashboard: quando i termini definitivi esistono, inserire l'URL di `/termini` in Impostazioni → Checkout, POI compilare `TERMS_VERSION` (accende `consent_collection` nel checkout)
+- [ ] Stripe dashboard: inserire l'URL di `/termini` in Impostazioni → Checkout, POI mettere `STRIPE_TERMS_CONSENT=1` su Vercel (accende `consent_collection` nel checkout; dal 9/10 NON dipende più da `TERMS_VERSION`, perché senza l'URL nel dashboard Stripe rifiuta la sessione)
 - [ ] Notion: `Durata Minuti` di W1-G1 a 2
 - [ ] Prove sera 4 (PR #83): account nuovo → onboarding senza Telegram → home senza check-in né Reset → G1 con "Ho finito ✓" dopo il 60 % → card Telegram su "Giorno 1 completato"; account con G3 fatto → completa il giorno → "Torna alla settimana" → parte il Reset
 - [ ] Prove sera 5 (PR #83): pagamento di prova con l'email di un genitore nel campo → indirizzo richiesto da Stripe → ricevuta al genitore → "Attivazione in corso…" → home sbloccata

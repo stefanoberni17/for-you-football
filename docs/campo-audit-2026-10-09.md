@@ -162,10 +162,10 @@ Il Coach ha già il blocco "Il Campo" nel contesto e la regola "non fa programmi
 6. Dopo qualche giorno: i millisecondi del Coach dai log Vercel.
 
 **Campo**
-7. Ok al formato delle schede (sezione B) e alla sorgente (JSON nel repo, non Notion).
-8. "Forza funzionale calcio": quali qualità comprende (oggi: parte bassa + esplosiva + core + kettlebell).
+7. ~~Ok al formato delle schede~~ → ok (Ste, 9/10).
+8. ~~"Forza funzionale calcio": quali qualità comprende~~ → **deciso (Ste, 9/10): forza con il kettlebell se l'atleta ce l'ha, altrimenti forza parte bassa a corpo libero (le scale di squat, affondi, RDL, bridge e i blocchi `pb-*`)**. La lista bianca per area (C4) parte da qui.
 9. I 12 video candidati della sezione A: quali diventano esercizi.
-10. Token Everfit, solo se vuoi che controlli il campo istruzioni (facoltativo).
+10. ~~Token Everfit~~ → no (Ste, 9/10): le descrizioni le scrivo io.
 11. Ok all'ordine della sezione C e alla data di partenza del codice del Campo (16/11 o prima).
 
 **Dalla lista vecchia di CLAUDE.md, ancora aperte**

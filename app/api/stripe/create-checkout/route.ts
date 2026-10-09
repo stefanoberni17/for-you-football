@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { stripe, getOrCreateStripeCustomer, isStripeEnabled } from '@/lib/stripe';
-import { TERMS_VERSION } from '@/lib/constants';
 import { logEvent } from '@/lib/events';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -94,9 +93,11 @@ async function createCheckout(request: NextRequest) {
     // quando si passa `customer`, altrimenti Stripe rifiuta la raccolta dell'indirizzo).
     billing_address_collection: 'required' as const,
     customer_update: { address: 'auto' as const, name: 'auto' as const },
-    // Accettazione dei Termini nel checkout: si attiva da sola quando TERMS_VERSION è
-    // compilata (richiede l'URL dei termini nelle impostazioni Stripe → Checkout).
-    ...(TERMS_VERSION ? { consent_collection: { terms_of_service: 'required' as const } } : {}),
+    // Accettazione dei Termini nel checkout: Stripe la accetta SOLO se l'URL dei termini è nelle
+    // impostazioni del dashboard (Impostazioni → Checkout), altrimenti la creazione della sessione
+    // fallisce. Per questo NON dipende da TERMS_VERSION (compilata il 9/10) ma dall'env
+    // STRIPE_TERMS_CONSENT=1, da mettere su Vercel DOPO aver inserito l'URL su Stripe.
+    ...(process.env.STRIPE_TERMS_CONSENT === '1' ? { consent_collection: { terms_of_service: 'required' as const } } : {}),
     metadata: {
       supabase_user_id: userId,
       plan,
