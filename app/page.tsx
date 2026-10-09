@@ -300,6 +300,9 @@ export default function HomePage() {
   const daysSinceLastCompletion = lastCompletionTs
     ? Math.floor((Date.now() - lastCompletionTs) / 86_400_000)
     : 0;
+  // Primi 7 giorni (spec v4 punto 8, 8/10): una sola azione dominante, la pratica di oggi. Azioni, numeri,
+  // statistiche e il rimando alla Palestra arrivano dopo. Si conta dalla creazione del profilo.
+  const primiGiorni = !!profile?.created_at && Date.now() - new Date(profile.created_at).getTime() < 7 * 86_400_000;
   const comebackMode =
     streak === 0 &&
     totalCompleted > 0 &&
@@ -317,7 +320,8 @@ export default function HomePage() {
   const weeklyBannerVisible =
     !coachBannerVisible &&
     !!userId &&
-    weeklyBannerWantsToShow(actionsTotal === 0, profile?.last_weekly_actions_dismiss || null);
+    weeklyBannerWantsToShow(actionsTotal === 0, profile?.last_weekly_actions_dismiss || null) &&
+    !primiGiorni;
   const telegramRecoveryCandidate = !!profile && !profile.telegram_id;
 
   const handleCalendarSave = async (trainingDays: number[], matchDays: number[]) => {
@@ -465,18 +469,20 @@ export default function HomePage() {
                 {comebackMode
                   ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
                   : nextDayLocked
-                    ? `Settimana ${nextDay.week}, Giorno ${nextDay.day}. Intanto la Palestra è aperta.`
+                    ? (primiGiorni ? `Settimana ${nextDay.week}, Giorno ${nextDay.day}. Per oggi hai fatto.` : `Settimana ${nextDay.week}, Giorno ${nextDay.day}. Intanto la Palestra è aperta.`)
                     : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
               </p>
 
               <div className="mt-4">
                 {nextDayLocked ? (
-                  <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
-                    Allenati in Palestra
-                  </Button>
+                  primiGiorni ? null : (
+                    <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+                      Allenati in Palestra
+                    </Button>
+                  )
                 ) : nextDayInCorso ? (
                   <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                    {riflessioneOk ? "Com'è andata oggi?" : 'Giornata in corso'}
+                    {riflessioneOk ? "Com'è andata oggi?" : 'Continua la pratica di oggi'}
                   </Button>
                 ) : (
                   <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
@@ -530,14 +536,16 @@ export default function HomePage() {
 
         {totalCompleted < 3 && coachCard}
 
-        {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline */}
-        <ActionsCard
-          total={actionsTotal}
-          todayCount={actionsTodayCount}
-          streak={actionsStreak}
-          actions={actions}
-          onToggle={handleActionToggle}
-        />
+        {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline; non nei primi 7 giorni */}
+        {!primiGiorni && (
+          <ActionsCard
+            total={actionsTotal}
+            todayCount={actionsTodayCount}
+            streak={actionsStreak}
+            actions={actions}
+            onToggle={handleActionToggle}
+          />
+        )}
 
         {/* ─── La tua settimana: calendario (tappabile) + i tuoi numeri, in una card sola ─── */}
         <Card padding="md">
@@ -575,7 +583,7 @@ export default function HomePage() {
             </p>
           )}
 
-          {statRows.length > 0 && (
+          {statRows.length > 0 && !primiGiorni && (
             <div className="mt-4 pt-4 border-t border-divider">
               <div className="grid grid-cols-4 gap-2">
                 {statRows.map(r => {

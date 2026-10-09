@@ -132,12 +132,21 @@ export default function PracticePopup({
     audio.addEventListener('loadedmetadata', onLoaded);
     audio.addEventListener('timeupdate', onTime);
     audio.addEventListener('ended', onEnded);
+    // Interruzione (8/10): una telefonata o il blocco dallo schermo mettono l'audio in pausa SENZA passare dal
+    // bottone. Prima lo stato restava "in riproduzione" e il completamento aspettava un 'ended' che non arrivava.
+    // Ora la pausa esterna libera il completamento (come la pausa manuale) e il tap su play riprende da dove era.
+    const onPause = () => { if (!audio.ended) { setIsAudioPlaying(false); setAudioInProgress(false); } };
+    const onPlay = () => { setIsAudioPlaying(true); setAudioInProgress(true); setAudioFailed(false); };
+    audio.addEventListener('pause', onPause);
+    audio.addEventListener('play', onPlay);
     audio.addEventListener('error', onError);
 
     return () => {
       audio.removeEventListener('loadedmetadata', onLoaded);
       audio.removeEventListener('timeupdate', onTime);
       audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('play', onPlay);
       audio.removeEventListener('error', onError);
     };
   }, [audioUrl]);

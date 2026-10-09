@@ -672,6 +672,7 @@ La memoria persistente del Coach si basa su:
 ## Dettaglio Pagine App
 
 ### Dashboard (`app/page.tsx`)
+- **Primi 7 giorni (8/10, spec v4 punto 8):** `primiGiorni` = profilo creato da meno di 7 giorni → una sola azione dominante (hero: "Inizia il Giorno N" / "Continua la pratica di oggi"); nascosti la card "Le tue 5 azioni", i numeri del check-in con "Tutti i tuoi dati", il banner del lunedì e il rimando alla Palestra a giorno bloccato ("Per oggi hai fatto"). Il calendario resta (serve alla logica partita).
 - **Rituale del mattino:** gestito dai wrapper root (check-in → Reset, non inline nella dashboard)
 - Card settimana corrente con CTA "prossimo giorno" + **streak percorso** "🔥 N giorni di fila" (visibile se ≥2; `pathStreak()` calcolato dai `completed_at` — se oggi non è completato il conteggio parte da ieri)
 - **Bottone "Reset rapido"** (apre MeditationPopup on-demand via `useMeditation().openMeditation`)
@@ -821,7 +822,7 @@ La memoria persistente del Coach si basa su:
 - Step numerati della pratica
 - Nome strumento settimana corrente
 - Callback completamento
-- **Audio guida (opt-in):** prop `audioUrl?` letta da Notion (campo `Audio Pratica`); bottone toggle "🎧 Ascolta versione audio" → mini-player con play/pausa + progress bar (mostrato sia in setup che in practicing); cleanup audio su unmount/complete/skip
+- **Audio guida (opt-in):** prop `audioUrl?` letta da Notion (campo `Audio Pratica`); bottone toggle "🎧 Ascolta versione audio" → mini-player con play/pausa + progress bar (mostrato sia in setup che in practicing); cleanup audio su unmount/complete/skip. **Interruzione (8/10):** listener `pause`/`play` sull'elemento audio: una telefonata o il blocco dallo schermo mettono in pausa senza passare dal bottone, lo stato segue e il completamento non resta in ostaggio (prima aspettava un `ended` che non arrivava); il tap su play riprende da dove era. Il timer è a timestamp e si riallinea al `visibilitychange`.
 - **Completamento "il più lungo":** la fase `done` parte solo quando `timerEnded && !audioInProgress` — se l'utente ha avviato l'audio (audioInProgress=true) e il timer scade prima dell'audio, aspetta la fine dell'audio prima di mostrare "Pratica completata!"; sottotitolo cambia in "🎧 Continua ad ascoltare..." mentre si aspetta. Pause manuale → audioInProgress=false → completamento immediato (l'utente ha scelto di stoppare)
 - **Pulsante chiusura iPhone-safe:** X durante `practicing` è `position: fixed` con `top: max(1rem, env(safe-area-inset-top))` + `z-50` + sfondo `bg-black/40 backdrop-blur` — sempre cliccabile sopra notch/Dynamic Island anche se la card scrolla. Click → `exitToSetup()` ferma audio + reset timer
 
