@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import SchedaEsercizioView from '@/components/SchedaEsercizio';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
@@ -341,16 +342,14 @@ export default function SessionePage() {
                               {sug.suggerimento === 'sali' ? '↑ ' : sug.suggerimento === 'scendi' ? '↓ ' : '→ '}{sug.testo}
                             </p>
                           )}
-                          {ex.descrizione && (
+                          {(ex.scheda || ex.descrizione) && (
                             <div className="-ml-4 mt-0.5">
                               <Button variant="ghost" size="sm" icon={<Info size={16} />} onClick={() => setDescOpen(isOpen ? null : i)}>
                                 {isOpen ? 'Nascondi' : 'Come si esegue'}
                               </Button>
                             </div>
                           )}
-                          {isOpen && ex.descrizione && (
-                            <p className="text-body-sm text-muted leading-relaxed mt-1 pr-1">{ex.descrizione}</p>
-                          )}
+                          {isOpen && <SchedaEsercizioView scheda={ex.scheda} descrizione={ex.descrizione} compact />}
                         </div>
                       </div>
                     </div>

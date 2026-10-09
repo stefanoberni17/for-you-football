@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-09 — Schede esercizi, batch 1: fascia e prevenzione, riscaldamento, mobilità (47)
+- Nuovo campo `scheda` nel catalogo v2 (esecuzione 3-5 passi, errori, più facile/difficile, sicurezza) e `nomeEn`; 37 esercizi rinominati in italiano con l'id congelato (Towel Curls → "Asciugamano con le dita", Calf Foam Roll → "Rullo sui polpacci"…). `components/SchedaEsercizio.tsx` sotto "Come si esegue" nel player, nell'EMOM e nella pagina seduta.
+- `scripts/build-schede-md.py` → `docs/schede/fascia-riscaldamento.md`: il file di revisione per Ste, con 9 "Da confermare" in testa (esercizi di cui non ho il dettaglio del video). `tests/schede.test.ts`.
+- Decisioni di Ste del 9/10 nel doc del Campo: forza funzionale = kettlebell se c'è, altrimenti parte bassa a corpo libero; formato schede ok; niente Everfit. Migration 030 applicata.
+
 ## 2026-10-09 — Legale: privacy e termini definitivi, ri-accettazione in app
 - `/privacy` e `/termini` riscritti per intero (Ste: "fai tu"): versione `2026-10-09` in `lib/constants.ts` (`PRIVACY_VERSION`, `TERMS_VERSION`). Privacy in linguaggio piano con titolare, dati per categoria (salute art. 9 a consenso esplicito), AI, sicurezza, fornitori, tempi, cookie tecnici, diritti. Termini con cosa non è, 18+, regole di sicurezza del Campo, prezzi e abbonamenti, recesso 14 giorni con rimborso, cancellazione, uso corretto, responsabilità, legge italiana.
 - Ri-accettazione: `GET/POST /api/consent/reaccept` + `components/ConsentReacceptSheet.tsx` nel root layout (foglio senza X alla prima pagina dell'app, una checkbox per documento cambiato, link in nuova scheda, "Accetto e continuo"). Chi si è registrato prima lo vede una volta.
