@@ -1968,7 +1968,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Plank Jumps Fascia",
+  "nome": "Plank con salti dei piedi",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1985,7 +1985,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fasc-plank-jumps-fascia",
+  "nome_en": "Plank Jumps Fascia",
+  "scheda": {
+   "esecuzione": [
+    "Plank sugli avambracci o sulle mani, corpo in linea, pancia dentro.",
+    "Salta con i piedi uniti aprendoli e chiudendoli, o avanti e indietro di pochi centimetri.",
+    "Il bacino non si alza e non cade: solo i piedi si muovono.",
+    "Per il tempo indicato."
+   ],
+   "errori": [
+    "Bacino che sale a ogni salto.",
+    "Schiena che cede in basso.",
+    "Spalle che vanno oltre le mani."
+   ],
+   "piu_facile": "Plank fermo, o un piede alla volta senza saltare.",
+   "piu_difficile": "Salti più ampi, o mani su un rialzo.",
+   "sicurezza": "Fastidio ai polsi: sugli avambracci. Zona lombare che cede: fermati.",
+   "da_confermare": "Salti dei piedi apri-chiudi o avanti-indietro? Ho scritto entrambi."
+  }
  },
  {
   "nome": "Pogo Jumps",
@@ -3025,7 +3044,7 @@
   "descrizione": "Sprint in salita sulla distanza indicata: partenza da fermo, spinta massima, busto leggermente avanti. Torna in discesa camminando: il recupero è parte dell'esercizio."
  },
  {
-  "nome": "Circuito Propriocezione",
+  "nome": "Circuito di equilibrio sullo skimmy",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -3044,10 +3063,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione",
-  "solo_livello": false
+  "solo_livello": false,
+  "id": "fasc-circuito-propriocezione",
+  "nome_en": "Circuito Propriocezione",
+  "scheda": {
+   "esecuzione": [
+    "Segui il video: è un circuito guidato di 20 minuti su cuscino instabile (skimmy).",
+    "Equilibrio su una gamba, con gli occhi chiusi, con la palla, con piccoli squat e salti sul posto.",
+    "Ginocchio sempre morbido e in linea con il piede, busto fermo.",
+    "Se non hai lo skimmy, un cuscino spesso o un tappetino arrotolato vanno bene per iniziare."
+   ],
+   "errori": [
+    "Ginocchio che cade verso l'interno.",
+    "Sguardo a terra: guarda avanti.",
+    "Fretta: qui conta il controllo."
+   ],
+   "piu_facile": "A terra senza cuscino, occhi aperti.",
+   "piu_difficile": "Occhi chiusi su ogni stazione, o con il compagno che ti lancia la palla.",
+   "sicurezza": "Fatto in uno spazio libero: se perdi l'equilibrio devi poter mettere il piede. Mai dopo una distorsione recente senza il via libera del fisioterapista."
+  }
  },
  {
-  "nome": "Toes up down",
+  "nome": "Dita su e giù",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -3073,10 +3110,28 @@
    "Tibia",
    "Crampo",
    "Poco o niente"
-  ]
+  ],
+  "id": "fasc-toes-up-down",
+  "nome_en": "Toes up down",
+  "scheda": {
+   "esecuzione": [
+    "In piedi o seduto, piede scalzo a terra, tallone e avampiede appoggiati.",
+    "Solleva tutte le dita da terra tenendo l'avampiede appoggiato, poi spingile a terra senza arricciarle.",
+    "Lento e controllato, per il tempo indicato.",
+    "Cambia piede."
+   ],
+   "errori": [
+    "Sollevare l'avampiede insieme alle dita.",
+    "Arricciare le dita invece di spingerle in giù.",
+    "Fare in fretta."
+   ],
+   "piu_facile": "Seduto, meno peso sul piede.",
+   "piu_difficile": "In piedi su una gamba sola.",
+   "sicurezza": "Crampo sotto al piede: fermati, allunga, riprendi."
+  }
  },
  {
-  "nome": "Toes Up Down 2",
+  "nome": "Alluce e dita separati",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -3095,10 +3150,29 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-toes-up-down-2",
+  "nome_en": "Toes Up Down 2",
+  "scheda": {
+   "esecuzione": [
+    "Piede scalzo a terra, tallone appoggiato.",
+    "Alza solo l'alluce tenendo le altre quattro dita a terra, poi scambia: alluce a terra, le altre quattro su.",
+    "Una ripetizione = le due posizioni. Lento.",
+    "Vale per entrambi i piedi."
+   ],
+   "errori": [
+    "Piegare la caviglia per aiutarsi.",
+    "Alzare il tallone.",
+    "Dita che si muovono tutte insieme: all'inizio è normale, insisti."
+   ],
+   "piu_facile": "Tieni ferme le altre dita con la mano.",
+   "piu_difficile": "In piedi su una gamba.",
+   "sicurezza": "Crampo: fermati e allunga le dita.",
+   "da_confermare": "Ho interpretato lo short come alluce/altre dita separati: è così?"
+  }
  },
  {
-  "nome": "Towel Curls",
+  "nome": "Asciugamano con le dita",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -3124,10 +3198,28 @@
    "Tibia",
    "Crampo",
    "Poco o niente"
-  ]
+  ],
+  "id": "fasc-towel-curls",
+  "nome_en": "Towel Curls",
+  "scheda": {
+   "esecuzione": [
+    "Seduto o in piedi, asciugamano steso a terra, piede scalzo sopra con il tallone a terra.",
+    "Con le dita afferra l'asciugamano e tiralo verso di te, poi rilascia e riprendi.",
+    "Continua per il tempo indicato, tallone sempre a terra.",
+    "Cambia piede."
+   ],
+   "errori": [
+    "Arricciare le dita verso il basso senza tirare l'asciugamano.",
+    "Alzare il tallone da terra.",
+    "Aiutarsi con la caviglia o con la gamba."
+   ],
+   "piu_facile": "Seduto, asciugamano leggero.",
+   "piu_difficile": "In piedi su quella gamba, o con un peso in fondo all'asciugamano.",
+   "sicurezza": "Un crampo sotto al piede è normale le prime volte: fermati, allunga le dita verso l'alto, riprendi."
+  }
  },
  {
-  "nome": "Equilibrio 1 pallina tennis fascia tecnica",
+  "nome": "Equilibrio con pallina 1",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3147,10 +3239,29 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-equilibrio-1-pallina-tennis-fascia-tecnica",
+  "nome_en": "Equilibrio 1 pallina tennis fascia tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, ginocchio morbido, pallina da tennis in mano.",
+    "Falla rimbalzare a terra e riprendila, senza appoggiare l'altro piede.",
+    "Busto dritto, sguardo sulla pallina, per il tempo indicato.",
+    "Cambia gamba."
+   ],
+   "errori": [
+    "Ginocchio d'appoggio bloccato o che cade verso l'interno.",
+    "Sguardo a terra.",
+    "Busto che si piega per compensare."
+   ],
+   "piu_facile": "Senza pallina, solo equilibrio.",
+   "piu_difficile": "Rimbalzo più lontano dal corpo.",
+   "sicurezza": "Se perdi l'equilibrio appoggia e riparti.",
+   "da_confermare": "I tre livelli con la pallina li ho scritti a salire: rimbalzo e presa → passaggio sotto la gamba → lancio e presa con il piede. Correggimi."
+  }
  },
  {
-  "nome": "Equilibrio 2 pallina da tennis fascia tecnica",
+  "nome": "Equilibrio con pallina 2",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3170,10 +3281,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-equilibrio-2-pallina-da-tennis-fascia-tecnica",
+  "nome_en": "Equilibrio 2 pallina da tennis fascia tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, pallina in mano.",
+    "Passala intorno al corpo e sotto la gamba sollevata, lenta, senza appoggiare.",
+    "Busto fermo, ginocchio morbido, per il tempo indicato.",
+    "Cambia gamba."
+   ],
+   "errori": [
+    "Ginocchio d'appoggio bloccato o che cade verso l'interno.",
+    "Sguardo a terra.",
+    "Busto che si piega per compensare."
+   ],
+   "piu_facile": "Solo intorno al corpo, senza passarla sotto la gamba.",
+   "piu_difficile": "Occhi chiusi nel passaggio intorno al corpo.",
+   "sicurezza": "Se perdi l'equilibrio appoggia e riparti."
+  }
  },
  {
-  "nome": "Equilibrio 3 pallina da tennis fascia tecnica",
+  "nome": "Equilibrio con pallina 3",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3193,10 +3322,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-equilibrio-3-pallina-da-tennis-fascia-tecnica",
+  "nome_en": "Equilibrio 3 pallina da tennis fascia tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, pallina in mano.",
+    "Lanciala in alto e riprendila, poi lasciala cadere e toccala con il piede libero prima di riprenderla con la mano.",
+    "Senza appoggiare il piede libero, per il tempo indicato.",
+    "Cambia gamba."
+   ],
+   "errori": [
+    "Ginocchio d'appoggio bloccato o che cade verso l'interno.",
+    "Sguardo a terra.",
+    "Busto che si piega per compensare."
+   ],
+   "piu_facile": "Solo lancio e presa con la mano.",
+   "piu_difficile": "Due tocchi di piede prima della presa, o su un cuscino instabile.",
+   "sicurezza": "Se perdi l'equilibrio appoggia e riparti."
+  }
  },
  {
-  "nome": "Fascia Arms Swing",
+  "nome": "Oscillazione delle braccia su una gamba",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3215,10 +3362,29 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-fascia-arms-swing",
+  "nome_en": "Fascia Arms Swing",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, ginocchio morbido, l'altra sollevata con il ginocchio all'altezza dell'anca.",
+    "Muovi le braccia come nella corsa, ampie e veloci, gomiti a 90°.",
+    "Il busto resta fermo e dritto, il piede a terra lavora per non muoversi.",
+    "Per il tempo indicato, poi cambia gamba."
+   ],
+   "errori": [
+    "Busto che segue le braccia.",
+    "Ginocchio d'appoggio bloccato.",
+    "Braccia molli: devono spingere."
+   ],
+   "piu_facile": "Braccia più lente, piede libero vicino a terra.",
+   "piu_difficile": "Occhi chiusi, o su un cuscino instabile.",
+   "sicurezza": "Se perdi l'equilibrio appoggia il piede e riparti.",
+   "da_confermare": "Ho interpretato: equilibrio su una gamba con le braccia che oscillano come nella corsa. Giusto?"
+  }
  },
  {
-  "nome": "Fascia Iso Lounge Runner",
+  "nome": "Affondo tenuto da corridore",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3245,10 +3411,28 @@
    "Anca",
    "Ginocchio (fastidio)",
    "Poco o niente"
-  ]
+  ],
+  "id": "fasc-fascia-iso-lounge-runner",
+  "nome_en": "Fascia Iso Lounge Runner",
+  "scheda": {
+   "esecuzione": [
+    "Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.",
+    "Busto inclinato in avanti come in partenza di corsa, tallone dietro alto.",
+    "Tieni la posizione per il tempo indicato, ginocchio davanti sopra il piede, respira.",
+    "Cambia gamba."
+   ],
+   "errori": [
+    "Ginocchio davanti che cade verso l'interno.",
+    "Ginocchio dietro appoggiato a terra.",
+    "Schiena curva: busto lungo e dritto."
+   ],
+   "piu_facile": "Ginocchio dietro a terra, mano al muro.",
+   "piu_difficile": "Braccia in posizione di corsa opposte alle gambe, o con un peso al petto.",
+   "sicurezza": "Fastidio davanti al ginocchio: alza un po' la posizione, non scendere così tanto."
+  }
  },
  {
-  "nome": "Fascia Towel figure 8",
+  "nome": "Otto con il piede sull'asciugamano",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3267,10 +3451,29 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-fascia-towel-figure-8",
+  "nome_en": "Fascia Towel figure 8",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, l'altro piede su un asciugamano su pavimento liscio.",
+    "Con il piede disegna un otto a terra, avanti e di lato, senza alzarlo dall'asciugamano.",
+    "Gamba d'appoggio con il ginocchio morbido, busto fermo, per il tempo indicato.",
+    "Cambia gamba."
+   ],
+   "errori": [
+    "Busto che si muove con il piede.",
+    "Ginocchio d'appoggio bloccato.",
+    "Otto piccolo e veloce: più ampio e lento."
+   ],
+   "piu_facile": "Mano al muro.",
+   "piu_difficile": "Occhi chiusi, o otto più ampio con il busto che scende.",
+   "sicurezza": "Se perdi l'equilibrio appoggia il piede e riparti.",
+   "da_confermare": "È il piede libero che disegna l'otto sull'asciugamano? Non ho il dettaglio del video."
+  }
  },
  {
-  "nome": "Fy Towe Slrdl",
+  "nome": "Stacco su una gamba con asciugamano (ripetizioni)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3289,7 +3492,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-fy-towe-slrdl",
+  "nome_en": "FY Towel SLRDL",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piede libero su un asciugamano, pavimento liscio.",
+    "Scendi in uno stacco su una gamba facendo scivolare indietro il piede, schiena dritta, 2-3 secondi.",
+    "Risali tirando l'asciugamano con il piede fino a tornare in piedi.",
+    "Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Piede che si stacca dall'asciugamano.",
+    "Bacino che ruota.",
+    "Risalire di slancio."
+   ],
+   "piu_facile": "Mano al muro.",
+   "piu_difficile": "Peso in mano, o fermati 2 secondi in basso.",
+   "sicurezza": "Fastidio lombare: meno profondità.",
+   "da_confermare": "Vedi la nota sullo stacco con asciugamano: stesso video dei due esercizi sopra."
+  }
  },
  {
   "nome": "Fy Towel 8",
@@ -3334,10 +3556,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-palleggi-con-pallina-da-tennis",
+  "scheda": {
+   "esecuzione": [
+    "Pallina da tennis: palleggia con il piede, basso, un tocco alla volta.",
+    "Occhi sulla pallina, caviglia ferma, tocco con il collo del piede.",
+    "Alterna i piedi quando ci riesci, per il tempo indicato.",
+    "Conta i tocchi di fila: il tuo record è il riferimento."
+   ],
+   "errori": [
+    "Pallina alta: più basso è, più controllo serve.",
+    "Caviglia molle.",
+    "Corpo rigido: ginocchia morbide, braccia aperte."
+   ],
+   "piu_facile": "Lascia rimbalzare la pallina a terra tra un tocco e l'altro.",
+   "piu_difficile": "Solo piede debole, o in equilibrio sull'altra gamba senza appoggiare.",
+   "sicurezza": "Niente."
+  }
  },
  {
-  "nome": "Palleggi Freestyle - Tecnica",
+  "nome": "Palleggi liberi",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -3359,7 +3598,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggi liberi con tutte le superfici: piede, coscia, testa. Tieni la palla in aria senza schemi, cambiando superficie quando vuoi. Serve come attivazione e per il controllo fine: ritmo tranquillo, testa alta."
+  "descrizione": "Palleggi liberi con tutte le superfici: piede, coscia, testa. Tieni la palla in aria senza schemi, cambiando superficie quando vuoi. Serve come attivazione e per il controllo fine: ritmo tranquillo, testa alta.",
+  "id": "fasc-palleggi-freestyle-tecnica",
+  "nome_en": "Palleggi Freestyle - Tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palleggia con tutte le superfici: piede, coscia, testa, interno ed esterno.",
+    "Niente schemi: cambia superficie quando vuoi, tieni la palla in aria.",
+    "Ginocchia morbide, sguardo sulla palla, braccia aperte per l'equilibrio.",
+    "Per il tempo indicato: se cade, riparti subito."
+   ],
+   "errori": [
+    "Sempre lo stesso piede.",
+    "Palla troppo alta.",
+    "Fermarsi a ogni errore."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra un tocco e l'altro.",
+   "piu_difficile": "Sequenze obbligate (destro-sinistro-coscia-testa), o in movimento.",
+   "sicurezza": "Niente."
+  }
  },
  {
   "nome": "Passaggi in equilibrio su 1 piede - visione headball",
@@ -3409,7 +3666,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Plank torsione elastica fascia",
+  "nome": "Plank con torsione e elastico",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3426,7 +3683,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fasc-plank-torsione-elastica-fascia",
+  "nome_en": "Plank torsione elastica fascia",
+  "scheda": {
+   "esecuzione": [
+    "Elastico ancorato di lato all'altezza del pavimento, impugnatura in una mano.",
+    "Plank sull'altra mano, piedi un po' larghi, corpo in linea.",
+    "Porta la mano con l'elastico sotto il petto e poi aprila verso l'alto ruotando il busto, lento.",
+    "Torna e ripeti per il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Bacino che ruota con le spalle: resta fermo.",
+    "Spalla d'appoggio che cede verso l'orecchio.",
+    "Strappare l'elastico."
+   ],
+   "piu_facile": "Senza elastico, solo rotazione; o sulle ginocchia.",
+   "piu_difficile": "Elastico più duro, piedi uniti.",
+   "sicurezza": "Fastidio alla spalla d'appoggio: fermati.",
+   "da_confermare": "Ho interpretato come plank laterale/rotazione con l'elastico tirato da sotto il petto. Se il video fa altro, dimmelo."
+  }
  },
  {
   "nome": "Spinta isometrica al muro frontale",
@@ -3569,7 +3845,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Fascia Single leg runner (towel)",
+  "nome": "Stacco su una gamba con asciugamano",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -3585,7 +3861,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fasc-fascia-single-leg-runner-towel",
+  "nome_en": "Fascia Single leg runner (towel)",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piede libero su un asciugamano (su un pavimento liscio).",
+    "Scendi in uno stacco su una gamba facendo scivolare indietro il piede sull'asciugamano, schiena dritta.",
+    "Risali tirando l'asciugamano verso di te con il piede, senza staccarlo da terra.",
+    "Continua per il tempo indicato, poi cambia gamba."
+   ],
+   "errori": [
+    "Piede che si stacca dall'asciugamano.",
+    "Bacino che si apre.",
+    "Scendere con la schiena curva."
+   ],
+   "piu_facile": "Mano al muro, escursione corta.",
+   "piu_difficile": "Più lento in discesa (3 secondi), o un peso in mano.",
+   "sicurezza": "Fastidio alla zona lombare: meno profondità.",
+   "da_confermare": "Lo short è lo stesso di 'Fascia Single leg RDL' e di 'Fy Towe Slrdl': i tre esercizi sono tre versioni dello stesso movimento (tenuto / con asciugamano in secondi / con asciugamano in ripetizioni)?"
+  }
  },
  {
   "nome": "Iso Runner",
@@ -3610,7 +3905,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Advanced Fascia Progression",
+  "nome": "Fascia avanzata con l'elastico",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3630,7 +3925,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fasc-advanced-fascia-progression",
+  "nome_en": "Advanced Fascia with elastic band",
+  "scheda": {
+   "esecuzione": [
+    "Elastico ancorato in basso (piede del compagno, mobile pesante) e agganciato alla caviglia della gamba libera.",
+    "In piedi sull'altra gamba, ginocchio morbido: porta la gamba con l'elastico avanti, di lato e indietro, lenta, senza appoggiarla.",
+    "Il busto resta fermo, il piede a terra lavora per tenere l'equilibrio.",
+    "Per il tempo indicato, poi cambia gamba."
+   ],
+   "errori": [
+    "Busto che oscilla per compensare.",
+    "Ginocchio d'appoggio che cade verso l'interno.",
+    "Movimenti a strappo."
+   ],
+   "piu_facile": "Elastico più leggero, mano al muro.",
+   "piu_difficile": "Occhi chiusi, o piede d'appoggio su un cuscino instabile.",
+   "sicurezza": "Elastico ben ancorato: se parte ti arriva addosso.",
+   "da_confermare": "Dal video (1:32): elastico alla caviglia e gamba che si muove nelle tre direzioni, in equilibrio sull'altra. Confermi?"
+  }
  },
  {
   "nome": "Crow Pose Progression",
@@ -3660,7 +3974,7 @@
   "nota_livello": "anche A, ma deve essere forte in parte alta e core"
  },
  {
-  "nome": "Fascia Single leg RDL",
+  "nome": "Stacco su una gamba tenuto",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3685,10 +3999,28 @@
    "Gluteo",
    "Lombare (fastidio)",
    "Poco o niente"
-  ]
+  ],
+  "id": "fasc-fascia-single-leg-rdl",
+  "nome_en": "Fascia Single leg RDL",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, ginocchio morbido, l'altra gamba va indietro mentre il busto scende in avanti.",
+    "Schiena dritta, bacino in squadra, braccia verso terra o lungo i fianchi.",
+    "Fermati quando senti tirare dietro la coscia e tieni per il tempo indicato.",
+    "Risali e cambia gamba."
+   ],
+   "errori": [
+    "Bacino che si apre di lato.",
+    "Schiena che si curva.",
+    "Ginocchio d'appoggio bloccato."
+   ],
+   "piu_facile": "Punta del piede libero a terra dietro, o mano al muro.",
+   "piu_difficile": "Peso in mano, o occhi chiusi.",
+   "sicurezza": "Fastidio alla zona lombare: scendi meno e tieni la schiena più dritta."
+  }
  },
  {
-  "nome": "Protezione palla figura 8 - fascia",
+  "nome": "Protezione palla a otto",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3709,10 +4041,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fasc-protezione-palla-figura-8-fascia",
+  "nome_en": "Protezione palla figura 8 - fascia",
+  "scheda": {
+   "esecuzione": [
+    "Due coni a 2-3 metri: conduci la palla disegnando un otto intorno ai coni.",
+    "Il corpo sta sempre tra il cono (il difensore) e la palla: braccio aperto a scudo, ginocchia piegate.",
+    "Cambia piede a ogni giro: la palla sta sul piede lontano dal cono.",
+    "Per il tempo indicato, poi inverti il senso."
+   ],
+   "errori": [
+    "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
+    "Palla lontana dal piede: resta attaccata.",
+    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+   ],
+   "piu_facile": "Coni più lontani, ritmo lento.",
+   "piu_difficile": "Un compagno che segue e prova a toccare la palla.",
+   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena."
+  }
  },
  {
-  "nome": "Protezione palla laterale - palleggi - fascia",
+  "nome": "Protezione palla laterale con palleggi",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3733,10 +4083,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fasc-protezione-palla-laterale-palleggi-fascia",
+  "nome_en": "Protezione palla laterale - palleggi - fascia",
+  "scheda": {
+   "esecuzione": [
+    "Compagno (o cono) di fianco: tu di lato con la palla sul piede lontano.",
+    "Palleggia bassa con quel piede tenendo il corpo tra il compagno e la palla, braccio a scudo.",
+    "Il compagno fa pressione leggera sulla spalla: tu tieni la posizione sulle gambe piegate.",
+    "Per il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
+    "Palla lontana dal piede: resta attaccata.",
+    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+   ],
+   "piu_facile": "Palla ferma sotto la suola invece dei palleggi.",
+   "piu_difficile": "Compagno che spinge di più o che cambia lato.",
+   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena."
+  }
  },
  {
-  "nome": "Protezione palla laterale suola - fascia",
+  "nome": "Protezione palla laterale con la suola",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3757,10 +4125,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": false
+  "solo_livello": false,
+  "id": "fasc-protezione-palla-laterale-suola-fascia",
+  "nome_en": "Protezione palla laterale suola - fascia",
+  "scheda": {
+   "esecuzione": [
+    "Compagno di fianco: tu di lato, palla sotto la suola del piede lontano.",
+    "Rolla la palla avanti e indietro con la suola tenendo il corpo a scudo, braccio aperto, gambe piegate.",
+    "Il compagno fa pressione sulla spalla: tu resti stabile e con la palla.",
+    "Per il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
+    "Palla lontana dal piede: resta attaccata.",
+    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+   ],
+   "piu_facile": "Senza pressione del compagno.",
+   "piu_difficile": "Compagno che cerca la palla con il piede.",
+   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena."
+  }
  },
  {
-  "nome": "Protezione palla schiena - fascia",
+  "nome": "Protezione palla spalle alla porta",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3781,10 +4167,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": false
+  "solo_livello": false,
+  "id": "fasc-protezione-palla-schiena-fascia",
+  "nome_en": "Protezione palla schiena - fascia",
+  "scheda": {
+   "esecuzione": [
+    "Compagno dietro di te, tu di spalle con la palla davanti.",
+    "Gambe larghe e piegate, sedere indietro verso il compagno, braccia aperte a scudo.",
+    "Tieni la palla con la suola o con l'interno, spostala di lato quando lui cambia posizione.",
+    "Per il tempo indicato."
+   ],
+   "errori": [
+    "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
+    "Palla lontana dal piede: resta attaccata.",
+    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+   ],
+   "piu_facile": "Compagno che non spinge, solo presenza.",
+   "piu_difficile": "Compagno che spinge e prova ad anticipare.",
+   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena. Niente spinte alla schiena."
+  }
  },
  {
-  "nome": "Spinta laterale e finta - protezione palla - fascia",
+  "nome": "Spinta laterale e finta",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3805,10 +4209,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fasc-spinta-laterale-e-finta-protezione-palla-fascia",
+  "nome_en": "Spinta laterale e finta - protezione palla - fascia",
+  "scheda": {
+   "esecuzione": [
+    "Compagno di fianco a contatto spalla a spalla, palla sul piede lontano.",
+    "Spingi con la spalla per guadagnare spazio, poi finta di andare da una parte e porta la palla dall'altra.",
+    "Gambe piegate, braccio a scudo, palla sempre attaccata.",
+    "Per il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
+    "Palla lontana dal piede: resta attaccata.",
+    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+   ],
+   "piu_facile": "Senza finta: solo spinta e cambio di direzione lento.",
+   "piu_difficile": "Compagno libero di contrastare.",
+   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena."
+  }
  },
  {
-  "nome": "Spinta laterale suola - protezione palla - fascia",
+  "nome": "Spinta laterale con la suola",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3829,7 +4251,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": false
+  "solo_livello": false,
+  "id": "fasc-spinta-laterale-suola-protezione-palla-fascia",
+  "nome_en": "Spinta laterale suola - protezione palla - fascia",
+  "scheda": {
+   "esecuzione": [
+    "Compagno di fianco a contatto, palla sotto la suola del piede lontano.",
+    "Spingi con la spalla e porta la palla di lato con la suola, un passo alla volta.",
+    "Gambe piegate, baricentro basso, braccio a scudo.",
+    "Per il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
+    "Palla lontana dal piede: resta attaccata.",
+    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+   ],
+   "piu_facile": "Senza contatto, con un cono.",
+   "piu_difficile": "Compagno che spinge e cerca la palla.",
+   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena."
+  }
  },
  {
   "nome": "Palleggi 1 piede alternati interno/esterno - Tecnica",
@@ -5328,7 +5768,7 @@
   "solo_livello": true
  },
  {
-  "nome": "Allungo riscaldamento",
+  "nome": "Allungo di riscaldamento",
   "qualita": "riscaldamento",
   "attrezzatura": "campo",
   "difficolta": 1,
@@ -5347,10 +5787,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Corsa progressiva sulla distanza indicata: parti al 60% e arriva all'80-90% negli ultimi metri, senza mai sprintare al massimo. Torna camminando. Prepara gambe e tendini allo sprint."
+  "descrizione": "Corsa progressiva sulla distanza indicata: parti al 60% e arriva all'80-90% negli ultimi metri, senza mai sprintare al massimo. Torna camminando. Prepara gambe e tendini allo sprint.",
+  "id": "risc-allungo-riscaldamento",
+  "nome_en": "Allungo riscaldamento",
+  "scheda": {
+   "esecuzione": [
+    "Parti al 60 % sulla distanza indicata e aumenta un po' ogni 10 metri.",
+    "Negli ultimi metri arriva all'80-90 %, mai al massimo.",
+    "Corri alto, braccia che spingono, sguardo avanti.",
+    "Torna indietro camminando: è il recupero."
+   ],
+   "errori": [
+    "Sprintare subito: è un allungo, non una prova.",
+    "Frenare di colpo alla fine: rallenta su 10-15 metri.",
+    "Partire a freddo senza la corsa lenta prima."
+   ],
+   "piu_facile": "Fermati al 70 %.",
+   "piu_difficile": "L'ultimo allungo al 90 % con una partenza da fermo.",
+   "sicurezza": "Un posteriore che tira: fermati, niente sprint oggi."
+  }
  },
  {
-  "nome": "Calf Foam Roll",
+  "nome": "Rullo sui polpacci (due gambe)",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -5366,10 +5824,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "risc-calf-foam-roll",
+  "nome_en": "Calf Foam Roll",
+  "scheda": {
+   "esecuzione": [
+    "Seduto a terra, rullo sotto i polpacci, mani dietro a terra.",
+    "Solleva il bacino e rotola lento dal tendine d'Achille fino a sotto il ginocchio, 2-3 secondi per passata.",
+    "Dove tira di più fermati 10-15 secondi e muovi la punta del piede su e giù.",
+    "Gira un po' le gambe in fuori e in dentro per prendere anche i lati."
+   ],
+   "errori": [
+    "Andare veloce avanti e indietro.",
+    "Passare sopra la parte dietro del ginocchio.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Bacino appoggiato a terra, meno peso sul rullo.",
+   "piu_difficile": "Una gamba sopra l'altra, tutto il peso su un polpaccio.",
+   "sicurezza": "Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona."
+  }
  },
  {
-  "nome": "Esercizi Elastici prevenzione e mobilità",
+  "nome": "Elastici: prevenzione e mobilità (video)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -5390,10 +5866,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
-  "finestra_partita": 2
+  "finestra_partita": 2,
+  "id": "fasc-esercizi-elastici-prevenzione-e-mobilita",
+  "nome_en": "Esercizi Elastici prevenzione e mobilità",
+  "scheda": {
+   "esecuzione": [
+    "Sequenza guidata con l'elastico: adduttori, glutei, anche, core.",
+    "Segui il video dall'inizio alla fine: ritmo, respiro e pause sono quelli del video.",
+    "Tappetino, spazio per allungare le gambe, telefono appoggiato dove lo vedi.",
+    "Dove non arrivi, fermati prima: la posizione buona è quella che tieni senza forzare."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà video o salta le posizioni avanzate.",
+   "piu_difficile": "Tieni ogni posizione 10 secondi in più.",
+   "sicurezza": "Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista."
+  }
  },
  {
-  "nome": "Fascia adhesion tennis ball",
+  "nome": "Pallina sotto il piede",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -5421,10 +5915,28 @@
    "Tibia",
    "Crampo",
    "Poco o niente"
-  ]
+  ],
+  "id": "risc-fascia-adhesion-tennis-ball",
+  "nome_en": "Fascia adhesion tennis ball",
+  "scheda": {
+   "esecuzione": [
+    "In piedi o seduto, pallina da tennis sotto la pianta del piede.",
+    "Rotola lento dal tallone alle dita e sui bordi, 3-4 minuti in tutto.",
+    "Fermati 10-20 secondi nei punti sensibili e muovi le dita.",
+    "Cambia piede. Non è allenamento: prepara la fascia."
+   ],
+   "errori": [
+    "Schiacciare forte: la pressione è media.",
+    "Rotolare veloce.",
+    "Saltare i bordi del piede."
+   ],
+   "piu_facile": "Seduto, pallina più morbida.",
+   "piu_difficile": "In piedi su una gamba, pallina più dura.",
+   "sicurezza": "Dolore acuto al tallone o formicolio: fermati."
+  }
  },
  {
-  "nome": "Fascia Standing Meditation",
+  "nome": "In piedi, fermo e presente",
   "qualita": "riscaldamento",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -5441,7 +5953,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "In piedi, piedi larghezza bacino, ginocchia morbide, braccia rilassate. Occhi chiusi o sguardo basso: senti il peso sui piedi e respira col naso per il tempo indicato. Prepara il piede e la postura prima della fascia."
+  "descrizione": "In piedi, piedi larghezza bacino, ginocchia morbide, braccia rilassate. Occhi chiusi o sguardo basso: senti il peso sui piedi e respira col naso per il tempo indicato. Prepara il piede e la postura prima della fascia.",
+  "id": "risc-fascia-standing-meditation",
+  "nome_en": "Fascia Standing Meditation",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi.",
+    "Occhi chiusi o sguardo basso: senti il peso sui piedi, cerca di dividerlo tra tallone, alluce e mignolo.",
+    "Respira con la pancia, lento, per il tempo indicato.",
+    "Nota dove sei teso e lascia andare: spalle, mascella, mani."
+   ],
+   "errori": [
+    "Ginocchia bloccate indietro.",
+    "Peso tutto sui talloni o tutto sulle punte.",
+    "Spalle alte."
+   ],
+   "piu_facile": "Occhi aperti, sguardo su un punto fisso.",
+   "piu_difficile": "Su una gamba, occhi chiusi.",
+   "sicurezza": "Se gira la testa, apri gli occhi e appoggiati."
+  }
  },
  {
   "nome": "Sequenza Yoga - Adduttori e inguine, rinforzo",
@@ -5466,7 +5996,23 @@
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
   "finestra_partita": 2,
-  "id": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo"
+  "id": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo",
+  "scheda": {
+   "esecuzione": [
+    "Sequenza guidata: rinforzo e mobilità di adduttori e inguine.",
+    "Segui il video dall'inizio alla fine: ritmo, respiro e pause sono quelli del video.",
+    "Tappetino, spazio per allungare le gambe, telefono appoggiato dove lo vedi.",
+    "Dove non arrivi, fermati prima: la posizione buona è quella che tieni senza forzare."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà video o salta le posizioni avanzate.",
+   "piu_difficile": "Tieni ogni posizione 10 secondi in più.",
+   "sicurezza": "Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista."
+  }
  },
  {
   "nome": "Sequenza Yoga - Adduttori e inguine, rinforzo avanzato",
@@ -5491,7 +6037,23 @@
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
   "finestra_partita": 2,
-  "id": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo-av"
+  "id": "fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo-av",
+  "scheda": {
+   "esecuzione": [
+    "Versione avanzata della sequenza per adduttori e inguine.",
+    "Segui il video dall'inizio alla fine: ritmo, respiro e pause sono quelli del video.",
+    "Tappetino, spazio per allungare le gambe, telefono appoggiato dove lo vedi.",
+    "Dove non arrivi, fermati prima: la posizione buona è quella che tieni senza forzare."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà video o salta le posizioni avanzate.",
+   "piu_difficile": "Tieni ogni posizione 10 secondi in più.",
+   "sicurezza": "Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista."
+  }
  },
  {
   "nome": "Sequenza Yoga - Recupero e Mobilità",
@@ -5517,7 +6079,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "recupero guidato",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "mob-sequenza-yoga-recupero-e-mobilita",
+  "scheda": {
+   "esecuzione": [
+    "Sequenza guidata di circa 18 minuti per recuperare: segui il video.",
+    "Solo quando sei molto affaticato o nei giorni dopo la partita.",
+    "Posizioni tenute, respiro lento: non è allenamento.",
+    "Tappetino e spazio per allungare le gambe."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà.",
+   "piu_difficile": "Nessuna: è recupero.",
+   "sicurezza": "Mai il giorno prima o il giorno della partita."
+  }
  },
  {
   "nome": "Sequenza Yoga - Rinforzo Quadricipiti e Adduttori avanzato",
@@ -5543,7 +6122,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
-  "finestra_partita": 2
+  "finestra_partita": 2,
+  "id": "fasc-sequenza-yoga-rinforzo-quadricipiti-e-adduttori",
+  "scheda": {
+   "esecuzione": [
+    "Sequenza guidata: quadricipiti e adduttori, versione avanzata.",
+    "Segui il video dall'inizio alla fine: ritmo, respiro e pause sono quelli del video.",
+    "Tappetino, spazio per allungare le gambe, telefono appoggiato dove lo vedi.",
+    "Dove non arrivi, fermati prima: la posizione buona è quella che tieni senza forzare."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà video o salta le posizioni avanzate.",
+   "piu_difficile": "Tieni ogni posizione 10 secondi in più.",
+   "sicurezza": "Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista."
+  }
  },
  {
   "nome": "Yoga prevenzione e forza adduttori",
@@ -5905,7 +6501,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "recupero guidato",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "mob-sessione-recupero-dopo-partita-o-allenamenti-pes",
+  "scheda": {
+   "esecuzione": [
+    "Sessione guidata di circa 30 minuti: segui il video.",
+    "Il giorno dopo la partita, dopo allenamenti pesanti o quando sei molto affaticato.",
+    "Ritmo lento, respiro profondo, nessuna posizione forzata.",
+    "Tappetino, acqua vicino."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà.",
+   "piu_difficile": "Nessuna: è recupero.",
+   "sicurezza": "Mai il giorno prima o il giorno della partita."
+  }
  },
  {
   "nome": "Rinforzo e prevenzione adduttori, abduttori, glutei, core",
@@ -5930,7 +6543,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
-  "finestra_partita": 2
+  "finestra_partita": 2,
+  "id": "fasc-rinforzo-e-prevenzione-adduttori-abduttori-glute",
+  "scheda": {
+   "esecuzione": [
+    "Sequenza guidata di circa 5 minuti: adduttori, abduttori, glutei, core.",
+    "Segui il video dall'inizio alla fine: ritmo, respiro e pause sono quelli del video.",
+    "Tappetino, spazio per allungare le gambe, telefono appoggiato dove lo vedi.",
+    "Dove non arrivi, fermati prima: la posizione buona è quella che tieni senza forzare."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà video o salta le posizioni avanzate.",
+   "piu_difficile": "Tieni ogni posizione 10 secondi in più.",
+   "sicurezza": "Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista."
+  }
  },
  {
   "nome": "Rinforzo e prevenzione rotazione anca e bacino",
@@ -5954,7 +6584,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "prevenzione guidata",
-  "finestra_partita": 2
+  "finestra_partita": 2,
+  "id": "fasc-rinforzo-e-prevenzione-rotazione-anca-e-bacino",
+  "scheda": {
+   "esecuzione": [
+    "Sequenza guidata breve: rotazione dell'anca e controllo del bacino.",
+    "Segui il video dall'inizio alla fine: ritmo, respiro e pause sono quelli del video.",
+    "Tappetino, spazio per allungare le gambe, telefono appoggiato dove lo vedi.",
+    "Dove non arrivi, fermati prima: la posizione buona è quella che tieni senza forzare."
+   ],
+   "errori": [
+    "Saltare l'inizio del video: il riscaldamento è dentro.",
+    "Forzare le posizioni.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Fermati a metà video o salta le posizioni avanzate.",
+   "piu_difficile": "Tieni ogni posizione 10 secondi in più.",
+   "sicurezza": "Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista."
+  }
  },
  {
   "nome": "Circuito addominali e lombari avanzato (guidato)",
@@ -6049,7 +6696,7 @@
   "video_nota": "video Everfit non pubblico (403) — da registrare"
  },
  {
-  "nome": "Hip External Rotation Skip",
+  "nome": "Skip con apertura dell'anca",
   "qualita": "riscaldamento",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -6069,7 +6716,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "attivazione"
+  "sottogruppo": "attivazione",
+  "id": "risc-hip-external-rotation-skip",
+  "nome_en": "Hip External Rotation Skip",
+  "scheda": {
+   "esecuzione": [
+    "Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno.",
+    "Braccia come nella corsa, busto dritto.",
+    "Ritmo medio, piede che atterra sull'avampiede.",
+    "Per il numero di passi indicato, alternando le gambe."
+   ],
+   "errori": [
+    "Busto che si inclina di lato per aprire l'anca.",
+    "Piede piatto sul tallone.",
+    "Ginocchio basso: deve arrivare all'altezza dell'anca."
+   ],
+   "piu_facile": "Sul posto, con la mano al muro.",
+   "piu_difficile": "In avanzamento, più veloce, con la gamba che si apre e si chiude prima di atterrare.",
+   "sicurezza": "Fastidio all'inguine: riduci l'apertura."
+  }
  },
  {
   "nome": "Diamond Push Up",
@@ -6744,7 +7409,7 @@
   "peso_kg": 12
  },
  {
-  "nome": "Foam Roll Plantar Fascia",
+  "nome": "Rullo sotto la pianta del piede",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -6760,10 +7425,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rolling"
+  "sottogruppo": "rolling",
+  "id": "risc-foam-roll-plantar-fascia",
+  "nome_en": "Foam Roll Plantar Fascia",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, un piede sul rullo (o su una pallina), l'altro a terra.",
+    "Rotola lento dal tallone alle dita, 2-3 secondi per passata, con un po' di peso.",
+    "Fermati 10-15 secondi nei punti più sensibili, muovendo le dita.",
+    "Prendi anche i bordi interno ed esterno, poi cambia piede."
+   ],
+   "errori": [
+    "Tutto il peso subito.",
+    "Passate veloci.",
+    "Scarpe addosso: meglio a piedi nudi o con i calzini."
+   ],
+   "piu_facile": "Seduto, meno peso.",
+   "piu_difficile": "In piedi su una gamba sola, pallina più dura.",
+   "sicurezza": "Niente sul tallone se fa male al mattino ai primi passi: parlane con un fisioterapista."
+  }
  },
  {
-  "nome": "Calves Foam Roll",
+  "nome": "Rullo sul polpaccio",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -6780,10 +7463,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "rolling",
-  "descrizione": "Polpaccio sul rullo, gamba tesa, l'altra sopra per aumentare la pressione. Rotola lento dal tendine d'Achille al ginocchio, fermandoti nei punti sensibili. Poi cambia gamba."
+  "descrizione": "Polpaccio sul rullo, gamba tesa, l'altra sopra per aumentare la pressione. Rotola lento dal tendine d'Achille al ginocchio, fermandoti nei punti sensibili. Poi cambia gamba.",
+  "id": "risc-calves-foam-roll",
+  "nome_en": "Calves Foam Roll",
+  "scheda": {
+   "esecuzione": [
+    "Seduto, un polpaccio sul rullo, l'altra gamba incrociata sopra per spingere.",
+    "Mani dietro, solleva il bacino e rotola lento dal tendine d'Achille a sotto il ginocchio.",
+    "Fermati 10-15 secondi dove tira e muovi la caviglia su e giù.",
+    "Ruota un po' la gamba per prendere l'interno e l'esterno, poi cambia gamba."
+   ],
+   "errori": [
+    "Correre con le passate.",
+    "Rullo dietro il ginocchio.",
+    "Irrigidire il piede."
+   ],
+   "piu_facile": "Due gambe insieme sul rullo, bacino a terra.",
+   "piu_difficile": "Rullo più duro o pallina da lacrosse sul punto più teso.",
+   "sicurezza": "Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona."
+  }
  },
  {
-  "nome": "Peroneals Foam Roll",
+  "nome": "Rullo sul lato esterno della gamba",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -6800,10 +7501,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "rolling",
-  "descrizione": "Lato esterno della gamba sul rullo (tra caviglia e ginocchio), di fianco. Rotola lento su tutta la lunghezza, fermandoti dove tira. Poi cambia gamba."
+  "descrizione": "Lato esterno della gamba sul rullo (tra caviglia e ginocchio), di fianco. Rotola lento su tutta la lunghezza, fermandoti dove tira. Poi cambia gamba.",
+  "id": "risc-peroneals-foam-roll",
+  "nome_en": "Peroneals Foam Roll",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato sul fianco, rullo sotto il lato esterno della gamba tra caviglia e ginocchio.",
+    "Appoggia l'avambraccio a terra e l'altro piede davanti per controllare il peso.",
+    "Rotola lento su tutta la lunghezza, 2-3 secondi per passata.",
+    "Fermati dove tira 10-15 secondi, poi cambia lato."
+   ],
+   "errori": [
+    "Rotolare sull'osso della caviglia o sulla testa del perone (sotto il ginocchio, lato esterno).",
+    "Tutto il peso subito: entra piano.",
+    "Passate corte e nervose."
+   ],
+   "piu_facile": "Più peso sul piede d'appoggio davanti.",
+   "piu_difficile": "Gamba sopra l'altra, pallina al posto del rullo.",
+   "sicurezza": "Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona. Qui passa un nervo: se senti scosse verso il piede, sposta il rullo."
+  }
  },
  {
-  "nome": "Hamstring Foam Roll",
+  "nome": "Rullo sui posteriori della coscia",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -6820,10 +7539,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "rolling",
-  "descrizione": "Posteriore della coscia sul rullo, seduto con le mani dietro. Rotola dal ginocchio al gluteo, gamba rilassata, pause nei punti sensibili. Poi cambia gamba."
+  "descrizione": "Posteriore della coscia sul rullo, seduto con le mani dietro. Rotola dal ginocchio al gluteo, gamba rilassata, pause nei punti sensibili. Poi cambia gamba.",
+  "id": "risc-hamstring-foam-roll",
+  "nome_en": "Hamstring Foam Roll",
+  "scheda": {
+   "esecuzione": [
+    "Seduto, rullo sotto la coscia, mani dietro, l'altra gamba appoggiata sopra per aumentare la pressione.",
+    "Gamba rilassata, rotola lento dal ginocchio al gluteo, 2-3 secondi per passata.",
+    "Fermati 10-15 secondi dove tira e piega e stendi il ginocchio.",
+    "Cambia gamba."
+   ],
+   "errori": [
+    "Gamba irrigidita.",
+    "Rotolare sul tendine dietro il ginocchio o sull'osso del bacino.",
+    "Andare veloce."
+   ],
+   "piu_facile": "Due gambe insieme sul rullo.",
+   "piu_difficile": "Punta del piede tirata verso l'alto durante la passata; rullo più duro.",
+   "sicurezza": "Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona."
+  }
  },
  {
-  "nome": "Rhomboids Foam Roll",
+  "nome": "Rullo tra le scapole",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -6840,10 +7577,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "rolling",
-  "descrizione": "Rullo sotto la parte alta della schiena, braccia incrociate al petto per aprire le scapole. Rotola tra le scapole per il tempo indicato, senza scendere sui lombari."
+  "descrizione": "Rullo sotto la parte alta della schiena, braccia incrociate al petto per aprire le scapole. Rotola tra le scapole per il tempo indicato, senza scendere sui lombari.",
+  "id": "risc-rhomboids-foam-roll",
+  "nome_en": "Rhomboids Foam Roll",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato, rullo sotto la parte alta della schiena, ginocchia piegate, piedi a terra.",
+    "Braccia incrociate al petto per aprire le scapole.",
+    "Rotola lento tra le scapole e la base del collo, 2-3 secondi per passata.",
+    "Fermati dove tira e fai un respiro profondo."
+   ],
+   "errori": [
+    "Scendere sulla zona lombare: il rullo resta sopra le costole basse.",
+    "Collo che cade all'indietro: mento verso il petto.",
+    "Fretta."
+   ],
+   "piu_facile": "Fermo su un punto, senza rotolare.",
+   "piu_difficile": "Braccia tese sopra la testa durante la passata.",
+   "sicurezza": "Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona."
+  }
  },
  {
-  "nome": "Quadriceps Foam Roll",
+  "nome": "Rullo sui quadricipiti",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -6860,10 +7615,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "rolling",
-  "descrizione": "A pancia in giù sugli avambracci, quadricipite sul rullo. Rotola dal ginocchio all'anca, gamba rilassata, pause nei punti sensibili. Poi cambia gamba."
+  "descrizione": "A pancia in giù sugli avambracci, quadricipite sul rullo. Rotola dal ginocchio all'anca, gamba rilassata, pause nei punti sensibili. Poi cambia gamba.",
+  "id": "risc-quadriceps-foam-roll",
+  "nome_en": "Quadriceps Foam Roll",
+  "scheda": {
+   "esecuzione": [
+    "A pancia in giù sugli avambracci, rullo sotto una coscia, l'altra gamba di lato a terra.",
+    "Rotola lento dal sopra-ginocchio fino all'anca, 2-3 secondi per passata.",
+    "Fermati 10-15 secondi dove tira e piega il ginocchio portando il tallone verso il gluteo.",
+    "Ruota un po' verso l'interno e l'esterno della coscia, poi cambia gamba."
+   ],
+   "errori": [
+    "Rullo sulla rotula.",
+    "Schiena inarcata: pancia dentro.",
+    "Passate veloci."
+   ],
+   "piu_facile": "Due cosce insieme sul rullo.",
+   "piu_difficile": "Gamba sopra l'altra; rullo più duro.",
+   "sicurezza": "Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona."
+  }
  },
  {
-  "nome": "Piriformis Foam Roll",
+  "nome": "Rullo sul gluteo profondo",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -6880,7 +7653,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "rolling",
-  "descrizione": "Seduto sul rullo, caviglia sul ginocchio opposto, peso spostato sul gluteo della gamba incrociata. Piccoli movimenti sul punto profondo del gluteo. Poi cambia lato."
+  "descrizione": "Seduto sul rullo, caviglia sul ginocchio opposto, peso spostato sul gluteo della gamba incrociata. Piccoli movimenti sul punto profondo del gluteo. Poi cambia lato.",
+  "id": "risc-piriformis-foam-roll",
+  "nome_en": "Piriformis Foam Roll",
+  "scheda": {
+   "esecuzione": [
+    "Seduto sul rullo, caviglia destra sul ginocchio sinistro.",
+    "Sposta il peso sul gluteo destro, mano destra a terra dietro.",
+    "Piccoli movimenti avanti-indietro e di lato sul punto profondo del gluteo, 20-30 secondi.",
+    "Respira, lascia andare, poi cambia lato."
+   ],
+   "errori": [
+    "Rotolare sull'osso del bacino o sul coccige.",
+    "Movimenti ampi: qui servono corti.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Senza incrociare la gamba, seduto sul rullo con i piedi a terra.",
+   "piu_difficile": "Pallina da lacrosse al posto del rullo.",
+   "sicurezza": "Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona. Se senti una scossa che scende lungo la gamba, togli il peso."
+  }
  },
  {
   "nome": "Sprint 10 m",
@@ -7118,7 +7909,7 @@
   "sottogruppo": "velocità con tiro"
  },
  {
-  "nome": "Ankle stiffness con manubri",
+  "nome": "In punta di piedi con i manubri",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "manubri",
   "difficolta": 3,
@@ -7133,12 +7924,30 @@
    "caviglia"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Ankle stiffness con manubri",
   "note": "Non sono salti: equilibrio in punta di piedi con i manubri. Polpacci, fascia del piede e caviglia.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "fascia e piede"
+  "sottogruppo": "fascia e piede",
+  "id": "fasc-ankle-stiffness-con-manubri",
+  "nome_en": "Ankle stiffness con manubri",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, un manubrio per mano lungo i fianchi.",
+    "Sali in punta di piedi e resta su: caviglie dritte, peso sull'alluce, ginocchia tese ma non bloccate.",
+    "Tieni per il tempo indicato senza oscillare. Non sono salti.",
+    "Scendi lento."
+   ],
+   "errori": [
+    "Caviglie che cedono verso l'esterno.",
+    "Dondolare.",
+    "Piegare le ginocchia per aiutarsi."
+   ],
+   "piu_facile": "Senza manubri, o con la mano al muro.",
+   "piu_difficile": "Su una gamba sola, o manubri più pesanti.",
+   "sicurezza": "Fastidio al tendine d'Achille: senza peso."
+  }
  },
  {
   "nome": "Eccentric elevated hamstring single leg",
@@ -7369,7 +8178,23 @@
    "riscaldamento",
    "corsa"
   ],
-  "descrizione": "Corsetta leggera per i minuti indicati: ritmo da chiacchiera, respiro col naso se ci riesci. Serve a scaldare, non ad allenare."
+  "descrizione": "Corsetta leggera per i minuti indicati: ritmo da chiacchiera, respiro col naso se ci riesci. Serve a scaldare, non ad allenare.",
+  "scheda": {
+   "esecuzione": [
+    "Corsetta leggera per i minuti indicati: ritmo da chiacchiera.",
+    "Respira col naso se ci riesci, passo corto e rilassato.",
+    "Negli ultimi 30 secondi alza un po' il ritmo.",
+    "Serve a scaldare, non ad allenare."
+   ],
+   "errori": [
+    "Partire forte.",
+    "Passo lungo e pesante sui talloni.",
+    "Fermarsi di colpo: cammina 30 secondi."
+   ],
+   "piu_facile": "Alterna 1 minuto di corsa e 30 secondi di cammino.",
+   "piu_difficile": "Ultimo minuto con 3 cambi di ritmo da 10 secondi.",
+   "sicurezza": "Fastidio che aumenta correndo: fermati e segnala il dolore nell'app."
+  }
  },
  {
   "attrezzatura": "corpo libero",
@@ -7394,7 +8219,23 @@
    "riscaldamento",
    "mobilità"
   ],
-  "descrizione": "Per i minuti indicati muovi caviglie, anche, bacino e spalle: circonduzioni delle caviglie, slanci della gamba avanti e di lato, affondi camminati con rotazione del busto, ginocchia al petto, cerchi con le braccia. Ampiezza crescente, mai forzata."
+  "descrizione": "Per i minuti indicati muovi caviglie, anche, bacino e spalle: circonduzioni delle caviglie, slanci della gamba avanti e di lato, affondi camminati con rotazione del busto, ginocchia al petto, cerchi con le braccia. Ampiezza crescente, mai forzata.",
+  "scheda": {
+   "esecuzione": [
+    "Caviglie: 10 cerchi per lato, poi affondo con il ginocchio che spinge avanti oltre la punta del piede.",
+    "Anche: 10 slanci della gamba avanti-indietro e 10 di lato, mano al muro.",
+    "Bacino e schiena: 8 affondi camminati con rotazione del busto verso la gamba davanti.",
+    "Spalle: 10 cerchi delle braccia avanti e indietro, poi 5 squat con le braccia in alto."
+   ],
+   "errori": [
+    "Fermi e statici: qui tutto è in movimento.",
+    "Forzare l'ampiezza con strappi.",
+    "Saltare le caviglie."
+   ],
+   "piu_facile": "Metà ripetizioni, senza gli slanci.",
+   "piu_difficile": "Aggiungi 5 skip alti e 5 calciate per gamba.",
+   "sicurezza": "Niente rimbalzi sul dolore."
+  }
  },
  {
   "id": "fpb-goblet-squat",

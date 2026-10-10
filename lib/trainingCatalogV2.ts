@@ -25,9 +25,23 @@ export type AttrezzaturaV2 =
 
 export type LivelloMinV2 = 'B' | 'A' | 'PRO';
 
+/**
+ * Scheda di esecuzione (9/10/2026, docs/campo-audit-2026-10-09.md §B): scritta nel JSON del catalogo,
+ * rivista da Ste in docs/schede/*.md. Il player mostra `esecuzione` al posto della vecchia `descrizione`.
+ */
+export interface SchedaEsercizio {
+  esecuzione: string[];   // 3-5 passi, imperativo, una riga ciascuno
+  errori: string[];       // 2-3 errori comuni
+  piuFacile?: string;     // la versione sotto
+  piuDifficile?: string;  // la versione sopra
+  sicurezza?: string;     // quando non farlo, quando fermarsi
+}
+
 export interface ExerciseV2 {
   id: string;
   nome: string;
+  nomeEn?: string;               // nome inglese originale (Everfit/libreria), secondario: per cercare, non per il ragazzo
+  scheda?: SchedaEsercizio;
   qualita: QualitaV2;
   sottogruppo?: string;          // etichetta di Ste più fine della qualità (es. "rapidità funzionale", "fascia e forza")
   qualitaSecondaria?: QualitaV2; // es. spinte isometriche al muro: fascia + forza parte alta

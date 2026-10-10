@@ -4,7 +4,7 @@
  * Client-safe (nessun import server).
  */
 import { esercizioById } from './trainingCatalog';
-import { esercizioV2ById } from './trainingCatalogV2';
+import { esercizioV2ById, type SchedaEsercizio } from './trainingCatalogV2';
 
 export interface EsercizioView {
   id: string;
@@ -15,6 +15,7 @@ export interface EsercizioView {
   videoUrl?: string;
   videoMp4: boolean;      // true = file .mp4 diretto (libreria Everfit), non YouTube
   descrizione?: string;
+  scheda?: SchedaEsercizio; // scheda di esecuzione (9/10): quando c'è, il player la mostra al posto di descrizione
   note?: string;
   v2: boolean;
 }
@@ -27,7 +28,7 @@ export function esercizioAny(id: string): EsercizioView | undefined {
   const v2 = esercizioV2ById(id);
   if (v2) {
     const mp4 = !!v2.videoUrl && /\.mp4(\?|$)/i.test(v2.videoUrl);
-    return { id: v2.id, nome: v2.nome, unita: v2.unita, perLato: v2.perLato === true, videoUrl: v2.videoUrl, videoMp4: mp4, descrizione: v2.descrizione ?? v2.note, note: v2.descrizione ? v2.note : undefined, sensazioni: v2.sensazioni, v2: true };
+    return { id: v2.id, nome: v2.nome, unita: v2.unita, perLato: v2.perLato === true, videoUrl: v2.videoUrl, videoMp4: mp4, descrizione: v2.descrizione ?? v2.note, scheda: v2.scheda, note: v2.descrizione ? v2.note : undefined, sensazioni: v2.sensazioni, v2: true };
   }
   return undefined;
 }

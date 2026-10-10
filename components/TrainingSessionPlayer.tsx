@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import SchedaEsercizioView from './SchedaEsercizio';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
@@ -373,9 +374,9 @@ export default function TrainingSessionPlayer({
           {!item.nota && ex.note && (
             <p className="text-body-sm text-muted mt-2 leading-relaxed">{ex.note}</p>
           )}
-          {(ex.descrizione || haVideo) && (
+          {(ex.scheda || ex.descrizione || haVideo) && (
             <div className="mt-3 flex gap-2 flex-wrap">
-              {ex.descrizione && (
+              {(ex.scheda || ex.descrizione) && (
                 <Button variant="secondary" size="sm" icon={<Info size={16} />} aria-expanded={showDesc} onClick={() => setShowDesc(!showDesc)}>
                   {showDesc ? 'Nascondi' : 'Come si esegue'}
                 </Button>
@@ -387,9 +388,7 @@ export default function TrainingSessionPlayer({
               )}
             </div>
           )}
-          {showDesc && ex.descrizione && (
-            <p className="text-body text-muted mt-3 leading-relaxed bg-surface-2 border border-divider rounded-btn px-3.5 py-3">{ex.descrizione}</p>
-          )}
+          {showDesc && <SchedaEsercizioView scheda={ex.scheda} descrizione={ex.descrizione} />}
           {videoVisibile && (
             <div className="mt-3 relative rounded-btn overflow-hidden bg-black" style={{ height: 'clamp(220px, 40vh, 360px)' }}>
               {ex.videoMp4 ? (
