@@ -73,7 +73,7 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `forza-prevenzione-a1` | Forza Prevenzione A1 | forza-parte-bassa | A | 1 | full | 54 | palestra, sbarra | ✓ |  |
 | `forza-prevenzione-a2` | Forza Prevenzione A2 | forza-parte-bassa | A | 2 | full | 43 | palestra | ✓ |  |
 | `hiit-base-1-corpo-libero` | HIIT BASE 1 corpo libero | forza-parte-bassa | — | — | full | 21 | — | ✓ |  |
-| `kettlebell-dynamic-power-a1` | kettlebell dynamic power A1 | forza-esplosiva | A | 1 | full | 20 | kettlebell, palestra | ✓ |  |
+| `kettlebell-dynamic-power-a1` | kettlebell dynamic power A1 | forza-esplosiva | A | 1 | full | 20 | kettlebell | ✓ |  |
 | `kettlebell-movimento-fluido-a1` | Kettlebell movimento fluido A1 | forza-esplosiva | A | 1 | full | 17 | kettlebell | ✓ |  |
 | `metabolico-a1` | Metabolico A1 | resistenza-metabolico | A | 1 | full | 42 | campo | ✓ |  |
 | `metabolico-a1-soft` | Metabolico A1 - SOFT | resistenza-metabolico | A | 1 | short | 21 | campo | ✓ |  |

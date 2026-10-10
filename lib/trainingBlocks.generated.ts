@@ -1386,7 +1386,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 2,
     "quantita": 90.0,
@@ -1463,7 +1463,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -1691,7 +1691,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -1700,7 +1700,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-runner-towel",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg runner (towel)",
     "serie": 2,
     "quantita": 60.0,
@@ -1804,7 +1804,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-runner-towel",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg runner (towel)",
     "serie": 2,
     "quantita": 90.0,
@@ -1925,7 +1925,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2152,7 +2152,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2229,7 +2229,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2307,7 +2307,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2391,7 +2391,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2538,7 +2538,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2631,7 +2631,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2744,7 +2744,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Single leg Fascia RDL",
     "serie": 2,
     "quantita": 90.0,
@@ -2823,7 +2823,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Single leg Fascia RDL",
     "serie": 2,
     "quantita": 90.0,
@@ -2841,7 +2841,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-runner-towel",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg runner (towel)",
     "serie": 2,
     "quantita": 60.0,
@@ -2912,7 +2912,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Single leg Fascia RDL",
     "serie": 1,
     "quantita": 90.0,
@@ -2930,7 +2930,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-runner-towel",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg runner (towel)",
     "serie": 1,
     "quantita": 60.0,
@@ -3027,7 +3027,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-rdl",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Single leg Fascia RDL",
     "serie": 1,
     "quantita": 60.0,
@@ -3045,7 +3045,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "fasc-fascia-single-leg-runner-towel",
+    "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg runner (towel)",
     "serie": 1,
     "quantita": 60.0,
@@ -6462,8 +6462,7 @@ export const BLOCCHI: Blocco[] = [
   "variante": "full",
   "durataMin": 20,
   "attrezzatura": [
-   "kettlebell",
-   "palestra"
+   "kettlebell"
   ],
   "inCoppia": false,
   "items": [

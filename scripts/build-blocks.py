@@ -43,7 +43,7 @@ ALIAS = {
     "band assisted pull up": "pull-4", "inverted row": "pull-2", "chin-up": "fpa-chin-up",
     "dips - chest version": "fpa-dips", "barbell bench press": "fpa-panca-piana-con-bilanciere",
     "barbell squat": "fpb-squat", "barbell stiff leg romanian deadlift": "fpb-stacco-rumeno",
-    "calves raises": "fpb-calf-raises", "single leg fascia rdl": "fasc-fascia-single-leg-rdl",
+    "calves raises": "fpb-calf-raises", "single leg fascia rdl": "fasc-fy-towe-slrdl", "fascia single leg rdl": "fasc-fy-towe-slrdl", "fascia single leg runner (towel)": "fasc-fy-towe-slrdl",
     "hollow hold": "core-6", "plank": "core-2", "alternating 2 point plank": "core-4",
     "hanging knee raise": "core2-hanging-knee-raises", "jump squat": "plioi-squat-jump",
     "box dribbling": "cond-6", "palleggi solo testa - tecnica": "pall-7", "allungo": "risc-allungo-riscaldamento",

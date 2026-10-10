@@ -87,6 +87,17 @@ for r in rows:
         fields.append(f"finestraPartita: {int(r['finestra_partita'])}")
     if r.get("nome_everfit") and r["nome_everfit"] != r["nome"]:
         fields.append(f"nomeEverfit: {ts_str(r['nome_everfit'])}")
+    # Schede (9/10/2026, docs/campo-audit-2026-10-09.md §B): nome inglese secondario + scheda di esecuzione.
+    # `da_confermare` resta nel JSON e nel file di review (docs/schede/*.md), non arriva all'app.
+    if r.get("nome_en") and r["nome_en"] != r["nome"]:
+        fields.append(f"nomeEn: {ts_str(r['nome_en'])}")
+    if r.get("scheda"):
+        sc = r["scheda"]
+        parts = [f"esecuzione: {ts_str(sc.get('esecuzione', []))}", f"errori: {ts_str(sc.get('errori', []))}"]
+        for k_json, k_ts in (("piu_facile", "piuFacile"), ("piu_difficile", "piuDifficile"), ("sicurezza", "sicurezza")):
+            if sc.get(k_json):
+                parts.append(f"{k_ts}: {ts_str(sc[k_json])}")
+        fields.append("scheda: { " + ", ".join(parts) + " }")
     v1 = v1_id(r["nome"]) if r["azione"] == "già in v1" else None
     if v1:
         fields.append(f"v1Id: {ts_str(v1)}")

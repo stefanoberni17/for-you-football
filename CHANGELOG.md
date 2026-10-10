@@ -2,6 +2,21 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-10 — Schede batch 1: le correzioni di Ste
+- Ste ha rivisto tutte le 47 righe del file di correzione: 25 schede riscritte dalle sue parole (plank con saltelli = mani e piedi che si staccano; dita su e giù / alluce e dita alternati erano scambiate tra loro e con i video; le tre pallina da tennis sono equilibrio con la pallina sul piede; oscillazione delle braccia con i piedi a terra, non per lato; l'esercizio con l'asciugamano non è uno stacco ma un'oscillazione della gamba in equilibrio; le sei di protezione palla con il muro o il compagno come sostegno; passetti sull'avampiede con i manubri; mobilità libera con esempi). Nessun "da confermare" rimasto.
+- `Fascia Single leg RDL` e `Fascia Single leg runner (towel)` disattivati e uniti a `fasc-fy-towe-slrdl` (stesso video, stesso esercizio: Ste "teniamone uno"): alias in `scripts/build-blocks.py`, i 144 blocchi restano 135 completi. Catalogo v2: 302 attivi.
+
+## 2026-10-10 — Schede: file di correzione per Ste
+- Ste: "ce ne sono molti sbagliati". I video di YouTube non si scaricano da questa sessione (403 e controllo anti-bot): si vedono solo miniatura e storyboard. `scripts/build-schede-correzioni.py` → `docs/schede/fascia-riscaldamento-correzioni.md`: un blocco numerato per esercizio con la mia esecuzione in breve e una riga `Correzione:` da riempire (su GitHub o in chat). Le correzioni le riporto nel JSON e rigenero.
+
+## 2026-10-10 — Nota: accesso con Google
+- Segnato in CLAUDE.md ("Da fare") come lo faremo: provider Google di Supabase Auth, bottone su login e registrazione, schermata "Completa il profilo" al primo accesso per data di nascita, profilo e consensi. Richiesta di Ste del 10/10.
+
+## 2026-10-09 — Schede esercizi, batch 1: fascia e prevenzione, riscaldamento, mobilità (47)
+- Nuovo campo `scheda` nel catalogo v2 (esecuzione 3-5 passi, errori, più facile/difficile, sicurezza) e `nomeEn`; 37 esercizi rinominati in italiano con l'id congelato (Towel Curls → "Asciugamano con le dita", Calf Foam Roll → "Rullo sui polpacci"…). `components/SchedaEsercizio.tsx` sotto "Come si esegue" nel player, nell'EMOM e nella pagina seduta.
+- `scripts/build-schede-md.py` → `docs/schede/fascia-riscaldamento.md`: il file di revisione per Ste, con 9 "Da confermare" in testa (esercizi di cui non ho il dettaglio del video). `tests/schede.test.ts`.
+- Decisioni di Ste del 9/10 nel doc del Campo: forza funzionale = kettlebell se c'è, altrimenti parte bassa a corpo libero; formato schede ok; niente Everfit. Migration 030 applicata.
+
 ## 2026-10-09 — Legale: privacy e termini definitivi, ri-accettazione in app
 - `/privacy` e `/termini` riscritti per intero (Ste: "fai tu"): versione `2026-10-09` in `lib/constants.ts` (`PRIVACY_VERSION`, `TERMS_VERSION`). Privacy in linguaggio piano con titolare, dati per categoria (salute art. 9 a consenso esplicito), AI, sicurezza, fornitori, tempi, cookie tecnici, diritti. Termini con cosa non è, 18+, regole di sicurezza del Campo, prezzi e abbonamenti, recesso 14 giorni con rimborso, cancellazione, uso corretto, responsabilità, legge italiana.
 - Ri-accettazione: `GET/POST /api/consent/reaccept` + `components/ConsentReacceptSheet.tsx` nel root layout (foglio senza X alla prima pagina dell'app, una checkbox per documento cambiato, link in nuova scheda, "Accetto e continuo"). Chi si è registrato prima lo vede una volta.
