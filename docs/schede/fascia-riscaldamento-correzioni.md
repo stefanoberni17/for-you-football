@@ -168,7 +168,7 @@ Correzione:
 ## 24. Rullo sui polpacci (due gambe)
 inglese: Calf Foam Roll · bilaterale · minuti · video: https://www.youtube.com/watch?v=-KJiVXocFHM
 
-Come l'ho scritto io: Seduto a terra, rullo sotto i polpacci, mani dietro a terra. Solleva il bacino e rotola lento dal tendine d'Achille fino a sotto il ginocchio, 2-3 secondi per passata. Dove tira di più fermati 10-15 secondi e muovi la punta del piede su e giù. Gira un po' le gambe in fuori e in dentro per prendere anche i lati.
+Come l'ho scritto io: Seduto a terra, rullo sotto i polpacci, mani dietro a terra. Solleva il bacino e rotola lento dal tendine d'Achille fino a sotto il ginocchio, 2-3 secondi per passata. Dove tira di più fermati 10-15 secondi e muovi la punta del piede su e giù. Ruota leggermente le gambe verso l'esterno e verso l'interno per raggiungere anche i lati del polpaccio.
 
 Correzione: 
 
@@ -245,7 +245,7 @@ Correzione:
 ## 35. Skip con apertura dell'anca
 inglese: Hip External Rotation Skip · bilaterale · reps · video: https://youtu.be/-bNvML_9Z1w
 
-Come l'ho scritto io: Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno. Con la mano opposta tocca il piede della gamba aperta, poi riporta la gamba a terra. Busto dritto, braccia sciolte, appoggio sull'avampiede. Per il numero di passi indicato, alternando le gambe. Ottimo nel riscaldamento.
+Come l'ho scritto io: Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno. Con la mano opposta tocca il piede della gamba aperta, poi riporta la gamba a terra. Busto dritto, braccia sciolte, appoggio sull'avampiede. Per il numero di passi indicato, alternando le gambe.
 
 Correzione: 
 
@@ -308,7 +308,7 @@ Correzione:
 ## 44. Corsa lenta
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: Corsetta leggera per i minuti indicati: ritmo da chiacchiera. Respira col naso se ci riesci, passo rilassato e naturale. Negli ultimi 30 secondi alza un po' il ritmo. Serve a scaldare, non ad allenare.
+Come l'ho scritto io: Corsetta leggera per i minuti indicati: a un ritmo che ti permette di parlare. Respira col naso se ci riesci, passo rilassato e naturale. Negli ultimi 30 secondi alza un po' il ritmo. Serve a scaldare, non ad allenare.
 
 Correzione: 
 

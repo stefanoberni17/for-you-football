@@ -30,7 +30,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Sguardo a terra: guarda avanti. Fretta: qui conta il controllo.
 **Più facile:** A terra senza cuscino, occhi aperti.
 **Più difficile:** Occhi chiusi su ogni stazione, o con il compagno che ti lancia la palla.
-**Sicurezza:** Fatto in uno spazio libero: se perdi l'equilibrio devi poter mettere il piede. Mai dopo una distorsione recente senza il via libera del fisioterapista.
+**Sicurezza:** Esegui il circuito in uno spazio libero: se perdi l'equilibrio devi poter mettere il piede. Mai dopo una distorsione recente senza il via libera del fisioterapista.
 
 ### Alluce e dita alternati
 `fasc-toes-up-down` · inglese: Toes up down · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/JctaRd1xxng)
@@ -128,7 +128,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Braccia rigide e corte: l'oscillazione è ampia. Spalle che salgono verso le orecchie. Busto che si irrigidisce o ruota insieme alle braccia.
 **Più facile:** Più lento.
 **Più difficile:** Più veloce, o in equilibrio su una gamba.
-**Sicurezza:** Niente.
+**Sicurezza:** Nessuna precauzione particolare.
 
 ### Affondo tenuto da corridore
 `fasc-fascia-iso-lounge-runner` · inglese: Fascia Iso Lounge Runner · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=nvENLHoWSR4)
@@ -184,7 +184,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Pallina alta: più basso è, più controllo serve. Caviglia molle. Corpo rigido: ginocchia morbide, braccia aperte.
 **Più facile:** Lascia rimbalzare la pallina a terra tra un tocco e l'altro.
 **Più difficile:** Solo piede debole, o in equilibrio sull'altra gamba senza appoggiare.
-**Sicurezza:** Niente.
+**Sicurezza:** Nessuna precauzione particolare.
 
 ### Palleggi liberi
 `fasc-palleggi-freestyle-tecnica` · inglese: Palleggi Freestyle - Tecnica · bilaterale · secondi · corpo libero · senza video
@@ -198,7 +198,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Fermarsi a ogni errore. Usare sempre e solo il piede forte. Palla troppo alta: il controllo nasce dai tocchi bassi.
 **Più facile:** Un rimbalzo a terra tra un tocco e l'altro.
 **Più difficile:** In movimento, o con una pallina più piccola.
-**Sicurezza:** Niente.
+**Sicurezza:** Nessuna precauzione particolare.
 
 ### Plank con torsione e elastico
 `fasc-plank-torsione-elastica-fascia` · inglese: Plank torsione elastica fascia · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=itq-E8EcZEQ)
@@ -226,7 +226,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Busto che oscilla per compensare. Ginocchio d'appoggio che cade verso l'interno. Movimenti a strappo.
 **Più facile:** Elastico più leggero, mano al muro.
 **Più difficile:** Occhi chiusi, o piede d'appoggio su un cuscino instabile.
-**Sicurezza:** Elastico ben ancorato: se parte ti arriva addosso.
+**Sicurezza:** Controlla l'ancoraggio dell'elastico prima di iniziare: se si sgancia può colpirti.
 
 ### Protezione palla a otto
 `fasc-protezione-palla-figura-8-fascia` · inglese: Protezione palla figura 8 - fascia · per lato · secondi · campo · [video](https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1)
@@ -237,7 +237,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
-**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
+**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto rigido e alto: le ginocchia restano piegate e il baricentro basso.
 **Più facile:** Con il muro, ritmo lento.
 **Più difficile:** Compagno che spinge e prova a toccare la palla.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
@@ -251,7 +251,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
-**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
+**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto rigido e alto: le ginocchia restano piegate e il baricentro basso.
 **Più facile:** Palla ferma sotto la suola invece dei palleggi.
 **Più difficile:** Compagno che spinge di più.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
@@ -265,7 +265,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
-**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
+**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto rigido e alto: le ginocchia restano piegate e il baricentro basso.
 **Più facile:** Senza pressione del compagno.
 **Più difficile:** Compagno che cerca la palla con il piede.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
@@ -279,10 +279,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Tieni la palla con la suola o con l'interno del piede e spostala di lato quando il compagno cambia posizione.
 4. Per il tempo indicato.
 
-**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
+**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto rigido e alto: le ginocchia restano piegate e il baricentro basso.
 **Più facile:** Compagno che non spinge, solo presenza.
 **Più difficile:** Compagno che spinge e prova ad anticipare.
-**Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena. Niente spinte alla schiena.
+**Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
 
 ### Spinta laterale e finta
 `fasc-spinta-laterale-e-finta-protezione-palla-fascia` · inglese: Spinta laterale e finta - protezione palla - fascia · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=nnSMkB7saNY?si=8Mg8VGvWQ4icDV8R)
@@ -293,7 +293,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Alterna i lati: una finta e un giro a destra, poi a sinistra.
 4. Gambe piegate, braccio a scudo, palla sempre vicina al piede. Per il tempo indicato.
 
-**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
+**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto rigido e alto: le ginocchia restano piegate e il baricentro basso.
 **Più facile:** Senza finta: solo spinta e cambio di direzione lento.
 **Più difficile:** Compagno libero di contrastare.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
@@ -307,7 +307,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Gambe piegate, baricentro basso, braccio a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
-**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
+**Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto rigido e alto: le ginocchia restano piegate e il baricentro basso.
 **Più facile:** Senza contatto, con un cono.
 **Più difficile:** Compagno che spinge e cerca la palla.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
@@ -433,7 +433,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 1. Seduto a terra, rullo sotto i polpacci, mani dietro a terra.
 2. Solleva il bacino e rotola lento dal tendine d'Achille fino a sotto il ginocchio, 2-3 secondi per passata.
 3. Dove tira di più fermati 10-15 secondi e muovi la punta del piede su e giù.
-4. Gira un po' le gambe in fuori e in dentro per prendere anche i lati.
+4. Ruota leggermente le gambe verso l'esterno e verso l'interno per raggiungere anche i lati del polpaccio.
 
 **Errori comuni:** Andare veloce avanti e indietro. Passare sopra la parte dietro del ginocchio. Trattenere il respiro.
 **Più facile:** Bacino appoggiato a terra, meno peso sul rullo.
@@ -475,7 +475,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 1. Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno.
 2. Con la mano opposta tocca il piede della gamba aperta, poi riporta la gamba a terra.
 3. Busto dritto, braccia sciolte, appoggio sull'avampiede.
-4. Per il numero di passi indicato, alternando le gambe. Ottimo nel riscaldamento.
+4. Per il numero di passi indicato, alternando le gambe.
 
 **Errori comuni:** Busto che si inclina per arrivare al piede. Piede piatto sul tallone. Ginocchio basso: deve arrivare all'altezza dell'anca.
 **Più facile:** Sul posto, con la mano al muro.
@@ -491,7 +491,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Fermati 10-15 secondi nei punti più sensibili, muovendo le dita.
 4. Prendi anche i bordi interno ed esterno, poi cambia piede.
 
-**Errori comuni:** Tutto il peso subito. Passate veloci. Scarpe addosso: meglio a piedi nudi o con i calzini.
+**Errori comuni:** Tutto il peso subito. Passate veloci. Con le scarpe: si esegue a piedi nudi o con i calzini.
 **Più facile:** Seduto, meno peso.
 **Più difficile:** In piedi su una gamba sola, pallina più dura.
 **Sicurezza:** Niente sul tallone se fa male al mattino ai primi passi: parlane con un fisioterapista.
@@ -505,7 +505,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Fermati 10-15 secondi dove tira e muovi la caviglia su e giù.
 4. Ruota un po' la gamba per prendere l'interno e l'esterno, poi cambia gamba.
 
-**Errori comuni:** Correre con le passate. Rullo dietro il ginocchio. Irrigidire il piede.
+**Errori comuni:** Passate veloci. Rullo dietro il ginocchio. Irrigidire il piede.
 **Più facile:** Due gambe insieme sul rullo, bacino a terra.
 **Più difficile:** Rullo più duro o pallina da lacrosse sul punto più teso.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona.
@@ -547,7 +547,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Rotola lento tra le scapole e la base del collo, 2-3 secondi per passata.
 4. Fermati dove tira e fai un respiro profondo.
 
-**Errori comuni:** Scendere sulla zona lombare: il rullo resta sopra le costole basse. Collo che cade all'indietro: mento verso il petto. Fretta.
+**Errori comuni:** Scendere sulla zona lombare: il rullo resta sopra le costole basse. Collo che cade all'indietro: mento verso il petto. Fretta: ogni passata è lenta.
 **Più facile:** Fermo su un punto, senza rotolare.
 **Più difficile:** Braccia tese sopra la testa durante la passata.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona.
@@ -584,7 +584,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `risc-corsa-lenta` · bilaterale · minuti · corpo libero · senza video
 
 **Esecuzione**
-1. Corsetta leggera per i minuti indicati: ritmo da chiacchiera.
+1. Corsetta leggera per i minuti indicati: a un ritmo che ti permette di parlare.
 2. Respira col naso se ci riesci, passo rilassato e naturale.
 3. Negli ultimi 30 secondi alza un po' il ritmo.
 4. Serve a scaldare, non ad allenare.

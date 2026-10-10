@@ -3077,7 +3077,7 @@
    ],
    "piu_facile": "A terra senza cuscino, occhi aperti.",
    "piu_difficile": "Occhi chiusi su ogni stazione, o con il compagno che ti lancia la palla.",
-   "sicurezza": "Fatto in uno spazio libero: se perdi l'equilibrio devi poter mettere il piede. Mai dopo una distorsione recente senza il via libera del fisioterapista."
+   "sicurezza": "Esegui il circuito in uno spazio libero: se perdi l'equilibrio devi poter mettere il piede. Mai dopo una distorsione recente senza il via libera del fisioterapista."
   }
  },
  {
@@ -3374,7 +3374,7 @@
    ],
    "piu_facile": "Più lento.",
    "piu_difficile": "Più veloce, o in equilibrio su una gamba.",
-   "sicurezza": "Niente."
+   "sicurezza": "Nessuna precauzione particolare."
   }
  },
  {
@@ -3564,7 +3564,7 @@
    ],
    "piu_facile": "Lascia rimbalzare la pallina a terra tra un tocco e l'altro.",
    "piu_difficile": "Solo piede debole, o in equilibrio sull'altra gamba senza appoggiare.",
-   "sicurezza": "Niente."
+   "sicurezza": "Nessuna precauzione particolare."
   }
  },
  {
@@ -3607,7 +3607,7 @@
    ],
    "piu_facile": "Un rimbalzo a terra tra un tocco e l'altro.",
    "piu_difficile": "In movimento, o con una pallina più piccola.",
-   "sicurezza": "Niente."
+   "sicurezza": "Nessuna precauzione particolare."
   }
  },
  {
@@ -3932,7 +3932,7 @@
    ],
    "piu_facile": "Elastico più leggero, mano al muro.",
    "piu_difficile": "Occhi chiusi, o piede d'appoggio su un cuscino instabile.",
-   "sicurezza": "Elastico ben ancorato: se parte ti arriva addosso."
+   "sicurezza": "Controlla l'ancoraggio dell'elastico prima di iniziare: se si sgancia può colpirti."
   }
  },
  {
@@ -4043,7 +4043,7 @@
    "errori": [
     "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
     "Palla lontana dal piede: resta attaccata.",
-    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+    "Busto rigido e alto: le ginocchia restano piegate e il baricentro basso."
    ],
    "piu_facile": "Con il muro, ritmo lento.",
    "piu_difficile": "Compagno che spinge e prova a toccare la palla.",
@@ -4085,7 +4085,7 @@
    "errori": [
     "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
     "Palla lontana dal piede: resta attaccata.",
-    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+    "Busto rigido e alto: le ginocchia restano piegate e il baricentro basso."
    ],
    "piu_facile": "Palla ferma sotto la suola invece dei palleggi.",
    "piu_difficile": "Compagno che spinge di più.",
@@ -4127,7 +4127,7 @@
    "errori": [
     "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
     "Palla lontana dal piede: resta attaccata.",
-    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+    "Busto rigido e alto: le ginocchia restano piegate e il baricentro basso."
    ],
    "piu_facile": "Senza pressione del compagno.",
    "piu_difficile": "Compagno che cerca la palla con il piede.",
@@ -4169,11 +4169,11 @@
    "errori": [
     "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
     "Palla lontana dal piede: resta attaccata.",
-    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+    "Busto rigido e alto: le ginocchia restano piegate e il baricentro basso."
    ],
    "piu_facile": "Compagno che non spinge, solo presenza.",
    "piu_difficile": "Compagno che spinge e prova ad anticipare.",
-   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena. Niente spinte alla schiena."
+   "sicurezza": "Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena."
   }
  },
  {
@@ -4211,7 +4211,7 @@
    "errori": [
     "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
     "Palla lontana dal piede: resta attaccata.",
-    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+    "Busto rigido e alto: le ginocchia restano piegate e il baricentro basso."
    ],
    "piu_facile": "Senza finta: solo spinta e cambio di direzione lento.",
    "piu_difficile": "Compagno libero di contrastare.",
@@ -4253,7 +4253,7 @@
    "errori": [
     "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
     "Palla lontana dal piede: resta attaccata.",
-    "Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso."
+    "Busto rigido e alto: le ginocchia restano piegate e il baricentro basso."
    ],
    "piu_facile": "Senza contatto, con un cono.",
    "piu_difficile": "Compagno che spinge e cerca la palla.",
@@ -5821,7 +5821,7 @@
     "Seduto a terra, rullo sotto i polpacci, mani dietro a terra.",
     "Solleva il bacino e rotola lento dal tendine d'Achille fino a sotto il ginocchio, 2-3 secondi per passata.",
     "Dove tira di più fermati 10-15 secondi e muovi la punta del piede su e giù.",
-    "Gira un po' le gambe in fuori e in dentro per prendere anche i lati."
+    "Ruota leggermente le gambe verso l'esterno e verso l'interno per raggiungere anche i lati del polpaccio."
    ],
    "errori": [
     "Andare veloce avanti e indietro.",
@@ -6713,7 +6713,7 @@
     "Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno.",
     "Con la mano opposta tocca il piede della gamba aperta, poi riporta la gamba a terra.",
     "Busto dritto, braccia sciolte, appoggio sull'avampiede.",
-    "Per il numero di passi indicato, alternando le gambe. Ottimo nel riscaldamento."
+    "Per il numero di passi indicato, alternando le gambe."
    ],
    "errori": [
     "Busto che si inclina per arrivare al piede.",
@@ -7427,7 +7427,7 @@
    "errori": [
     "Tutto il peso subito.",
     "Passate veloci.",
-    "Scarpe addosso: meglio a piedi nudi o con i calzini."
+    "Con le scarpe: si esegue a piedi nudi o con i calzini."
    ],
    "piu_facile": "Seduto, meno peso.",
    "piu_difficile": "In piedi su una gamba sola, pallina più dura.",
@@ -7463,7 +7463,7 @@
     "Ruota un po' la gamba per prendere l'interno e l'esterno, poi cambia gamba."
    ],
    "errori": [
-    "Correre con le passate.",
+    "Passate veloci.",
     "Rullo dietro il ginocchio.",
     "Irrigidire il piede."
    ],
@@ -7579,7 +7579,7 @@
    "errori": [
     "Scendere sulla zona lombare: il rullo resta sopra le costole basse.",
     "Collo che cade all'indietro: mento verso il petto.",
-    "Fretta."
+    "Fretta: ogni passata è lenta."
    ],
    "piu_facile": "Fermo su un punto, senza rotolare.",
    "piu_difficile": "Braccia tese sopra la testa durante la passata.",
@@ -8170,7 +8170,7 @@
   "descrizione": "Corsetta leggera per i minuti indicati: ritmo da chiacchiera, respiro col naso se ci riesci. Serve a scaldare, non ad allenare.",
   "scheda": {
    "esecuzione": [
-    "Corsetta leggera per i minuti indicati: ritmo da chiacchiera.",
+    "Corsetta leggera per i minuti indicati: a un ritmo che ti permette di parlare.",
     "Respira col naso se ci riesci, passo rilassato e naturale.",
     "Negli ultimi 30 secondi alza un po' il ritmo.",
     "Serve a scaldare, non ad allenare."
