@@ -1990,19 +1990,19 @@
   "nome_en": "Plank Jumps Fascia",
   "scheda": {
    "esecuzione": [
-    "Posizione di plank sulle mani, corpo in linea, pancia dentro.",
-    "Esegui dei saltelli sul posto staccando mani e piedi da terra nello stesso momento.",
-    "Inarca leggermente la schiena per darti la spinta elastica: sono piccoli saltelli, non salti alti.",
-    "Ritmo regolare, per il tempo indicato."
+    "Parti in plank sulle mani: mani sotto le spalle, corpo in linea dalla testa ai talloni, addome attivo.",
+    "Stacca mani e piedi da terra nello stesso istante con un piccolo saltello e riatterra nella stessa posizione.",
+    "Lascia che la schiena si inarchi leggermente: è quel rimbalzo elastico a darti la spinta per il saltello successivo.",
+    "Saltelli piccoli e ritmici, come una molla, per il tempo indicato."
    ],
    "errori": [
-    "Staccare solo i piedi: si alzano anche le mani.",
-    "Saltare alto e atterrare pesante: piccoli e elastici.",
-    "Spalle che vanno oltre le mani."
+    "Staccare solo i piedi: mani e piedi si sollevano insieme.",
+    "Saltare alto e atterrare pesante: il saltello è corto ed elastico.",
+    "Spalle che scivolano oltre le mani."
    ],
-   "piu_facile": "Plank fermo, poi stacca solo i piedi per qualche saltello.",
-   "piu_difficile": "Saltelli più rapidi, o in avanzamento.",
-   "sicurezza": "Fastidio ai polsi: fermati. Zona lombare che cede: meno inarcamento."
+   "piu_facile": "Plank fermo, poi solo i piedi che saltellano.",
+   "piu_difficile": "Ritmo più alto, o saltelli in avanzamento.",
+   "sicurezza": "Dolore ai polsi: fermati. Zona lombare che cede: riduci l'inarcamento e il tempo."
   }
  },
  {
@@ -3112,19 +3112,19 @@
   "nome_en": "Toes up down",
   "scheda": {
    "esecuzione": [
-    "Appoggia l'avampiede su una pallina o a terra, tallone appoggiato.",
-    "Spingi con l'alluce e solleva le altre dita.",
-    "Poi scambia: spingi con le altre dita e solleva l'alluce.",
-    "Alterna lento e controllato per il tempo indicato, poi cambia piede."
+    "In piedi o seduto, piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.",
+    "Spingi l'alluce verso il basso e intanto solleva le altre quattro dita.",
+    "Inverti: spingi le quattro dita verso il basso e solleva l'alluce.",
+    "Alterna le due posizioni in modo lento e controllato per il tempo indicato, poi cambia piede."
    ],
    "errori": [
-    "Sollevare l'avampiede insieme alle dita.",
-    "Dita che si muovono tutte insieme: all'inizio è normale, insisti.",
-    "Fare in fretta."
+    "Sollevare l'avampiede o muovere la caviglia per aiutarsi.",
+    "Dita che si muovono tutte insieme: all'inizio è normale, con la pratica si separano.",
+    "Fretta: il movimento è lento."
    ],
    "piu_facile": "Seduto, a terra senza pallina.",
    "piu_difficile": "In piedi su una gamba sola.",
-   "sicurezza": "Crampo sotto al piede: fermati, allunga, riprendi."
+   "sicurezza": "Crampo sotto il piede: fermati, allunga le dita, riprendi."
   }
  },
  {
@@ -3152,14 +3152,14 @@
   "nome_en": "Toes Up Down 2",
   "scheda": {
    "esecuzione": [
-    "Appoggia l'avampiede su una pallina o a terra, tallone appoggiato.",
-    "Solleva tutte le dita, poi spingile tutte in giù senza arricciarle.",
-    "Una ripetizione = su e giù. Lento.",
-    "Vale per entrambi i piedi."
+    "Piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.",
+    "Solleva tutte le dita insieme tenendo l'avampiede appoggiato.",
+    "Spingile tutte verso il basso, distese, senza arricciarle.",
+    "Una ripetizione = sollevamento e spinta. Lento, per le ripetizioni indicate, su entrambi i piedi."
    ],
    "errori": [
+    "Arricciare le dita invece di spingerle distese.",
     "Sollevare l'avampiede insieme alle dita.",
-    "Arricciare le dita invece di spingerle in giù.",
     "Alzare il tallone."
    ],
    "piu_facile": "Seduto, a terra senza pallina.",
@@ -3240,19 +3240,19 @@
   "nome_en": "Equilibrio 1 pallina tennis fascia tecnica",
   "scheda": {
    "esecuzione": [
-    "In piedi in equilibrio su un piede, ginocchio morbido.",
-    "Attiva bene la pianta del piede d'appoggio: senti tallone, alluce e mignolo a terra.",
-    "Tieni la pallina da tennis in equilibrio sul piede libero, senza farla cadere.",
-    "Per il tempo indicato, poi cambia piede."
+    "In piedi in equilibrio su una gamba, ginocchio morbido, busto dritto.",
+    "Attiva la pianta del piede d'appoggio: senti tallone, alluce e mignolo che premono a terra.",
+    "Appoggia una pallina da tennis sul collo del piede libero e tienila in equilibrio senza farla cadere.",
+    "Mantieni per il tempo indicato, poi cambia gamba."
    ],
    "errori": [
-    "Piede d'appoggio molle: la pianta deve lavorare.",
-    "Busto che si piega per compensare.",
-    "Sguardo a terra: guarda la pallina con gli occhi, non con tutta la testa."
+    "Pianta del piede passiva: è lei che tiene l'equilibrio.",
+    "Busto che si inclina per compensare.",
+    "Piede libero rigido: caviglia morbida, la pallina si tiene con piccoli aggiustamenti."
    ],
    "piu_facile": "Mano al muro.",
-   "piu_difficile": "Occhi chiusi, o su un cuscino instabile.",
-   "sicurezza": "Se perdi l'equilibrio appoggia e riparti."
+   "piu_difficile": "Occhi chiusi, o piede d'appoggio su un cuscino instabile.",
+   "sicurezza": "Se perdi l'equilibrio appoggia il piede e riparti."
   }
  },
  {
@@ -3281,19 +3281,19 @@
   "nome_en": "Equilibrio 2 pallina da tennis fascia tecnica",
   "scheda": {
    "esecuzione": [
-    "In piedi in equilibrio su un piede, pallina da tennis a terra davanti al piede libero.",
-    "Tira su la pallina con il piede libero e tienila in equilibrio sul piede.",
-    "Appoggiala a terra e riparti tirandola su, senza appoggiare il piede.",
-    "Per il tempo indicato, poi cambia piede."
+    "In piedi in equilibrio su una gamba, pallina da tennis a terra davanti al piede libero.",
+    "Con il piede libero raccogli la pallina da terra e portala in equilibrio sul collo del piede.",
+    "Riappoggiala a terra con controllo e ripeti, senza mai appoggiare il piede libero.",
+    "Per il tempo indicato, poi cambia gamba."
    ],
    "errori": [
     "Appoggiare il piede libero tra una ripetizione e l'altra.",
-    "Busto che si piega per compensare.",
-    "Fretta: conta il controllo."
+    "Busto che si inclina per compensare.",
+    "Movimenti bruschi: ogni passaggio è lento."
    ],
    "piu_facile": "Mano al muro.",
-   "piu_difficile": "Occhi chiusi quando la pallina è ferma sul piede.",
-   "sicurezza": "Se perdi l'equilibrio appoggia e riparti."
+   "piu_difficile": "Ferma la pallina sul piede per 3 secondi a ogni ripetizione, o occhi chiusi nella tenuta.",
+   "sicurezza": "Se perdi l'equilibrio appoggia il piede e riparti."
   }
  },
  {
@@ -3322,19 +3322,19 @@
   "nome_en": "Equilibrio 3 pallina da tennis fascia tecnica",
   "scheda": {
    "esecuzione": [
-    "In piedi in equilibrio su un piede, pallina da tennis in equilibrio sul piede libero.",
-    "Falla cadere a terra, lascia fare un rimbalzo e riprendila in equilibrio sul piede.",
-    "Senza appoggiare il piede libero, per il tempo indicato.",
-    "Cambia piede."
+    "In piedi in equilibrio su una gamba, pallina da tennis in equilibrio sul collo del piede libero.",
+    "Lascia cadere la pallina a terra e falle fare un rimbalzo.",
+    "Riprendila al volo con il piede e riportala in equilibrio sul collo del piede.",
+    "Ripeti senza appoggiare il piede libero per il tempo indicato, poi cambia gamba."
    ],
    "errori": [
-    "Appoggiare il piede libero per riprenderla.",
-    "Busto che si piega per compensare.",
-    "Piede d'appoggio molle: la pianta deve lavorare."
+    "Appoggiare il piede libero per recuperare la pallina.",
+    "Busto che si inclina per compensare.",
+    "Pianta del piede d'appoggio passiva."
    ],
    "piu_facile": "Due rimbalzi prima di riprenderla, o mano al muro.",
-   "piu_difficile": "Su un cuscino instabile.",
-   "sicurezza": "Se perdi l'equilibrio appoggia e riparti."
+   "piu_difficile": "Piede d'appoggio su un cuscino instabile.",
+   "sicurezza": "Se perdi l'equilibrio appoggia il piede e riparti."
   }
  },
  {
@@ -3362,15 +3362,15 @@
   "nome_en": "Fascia Arms Swing",
   "scheda": {
    "esecuzione": [
-    "In piedi con i piedi a terra, ginocchia morbide.",
-    "Oscilla le braccia come se stessi correndo, gomiti piegati.",
-    "Movimento ampio e sciolto: non essere rigido.",
+    "In piedi, piedi a terra alla larghezza del bacino, ginocchia morbide.",
+    "Oscilla le braccia come nella corsa: gomiti piegati, un braccio avanti e l'altro indietro.",
+    "Movimento ampio e sciolto, spalle basse: nessuna rigidità.",
     "Per il tempo indicato."
    ],
    "errori": [
-    "Braccia rigide e corte: il movimento deve essere ampio.",
-    "Spalle alte.",
-    "Busto che si irrigidisce."
+    "Braccia rigide e corte: l'oscillazione è ampia.",
+    "Spalle che salgono verso le orecchie.",
+    "Busto che si irrigidisce o ruota insieme alle braccia."
    ],
    "piu_facile": "Più lento.",
    "piu_difficile": "Più veloce, o in equilibrio su una gamba.",
@@ -3411,13 +3411,13 @@
   "scheda": {
    "esecuzione": [
     "Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.",
-    "Tallone dietro sollevato: il peso è sull'avampiede.",
-    "Busto dritto: non troppo piegato in avanti, nemmeno troppo indietro.",
-    "Tieni la posizione per il tempo indicato, ginocchio davanti sopra il piede, respira. Cambia gamba."
+    "Tallone della gamba dietro sollevato: il peso è sull'avampiede.",
+    "Busto dritto, né piegato in avanti né inclinato indietro, sguardo avanti.",
+    "Tieni la posizione per il tempo indicato con il ginocchio davanti sopra il piede, respira. Cambia gamba."
    ],
    "errori": [
     "Busto che si piega in avanti o si inclina indietro.",
-    "Ginocchio dietro appoggiato a terra.",
+    "Ginocchio dietro che si appoggia a terra.",
     "Ginocchio davanti che cade verso l'interno."
    ],
    "piu_facile": "Ginocchio dietro a terra, mano al muro.",
@@ -3451,18 +3451,18 @@
   "scheda": {
    "esecuzione": [
     "In piedi su una gamba, un asciugamano a terra davanti a te.",
-    "Afferra l'asciugamano con le dita del piede libero.",
-    "Con il piede che tiene l'asciugamano disegna un otto, lento e ampio, senza lasciarlo.",
+    "Afferra l'asciugamano con le dita del piede libero e sollevalo da terra.",
+    "Con il piede che stringe l'asciugamano disegna un otto nell'aria: lento, ampio, senza allentare la presa.",
     "Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede."
    ],
    "errori": [
-    "Lasciare l'asciugamano: le dita stringono per tutto l'esercizio.",
-    "Busto che si muove con il piede.",
+    "Allentare la presa a metà otto.",
+    "Busto che segue il piede.",
     "Otto piccolo e veloce: più ampio e lento."
    ],
    "piu_facile": "Mano al muro.",
    "piu_difficile": "Occhi chiusi.",
-   "sicurezza": "Crampo sotto al piede: lascia, allunga, riprendi."
+   "sicurezza": "Crampo sotto il piede: lascia l'asciugamano, allunga le dita, riprendi."
   }
  },
  {
@@ -3490,15 +3490,15 @@
   "nome_en": "FY Towel SLRDL",
   "scheda": {
    "esecuzione": [
-    "In piedi in equilibrio su un piede, l'altro piede appoggiato su un asciugamano su pavimento liscio.",
-    "Oscilla la gamba libera avanti e indietro facendo scivolare l'asciugamano, restando in equilibrio.",
-    "Busto eretto, ginocchio d'appoggio morbido.",
-    "Movimento lento e controllato, per le ripetizioni o il tempo indicati, poi cambia gamba."
+    "In piedi in equilibrio su una gamba, l'altro piede appoggiato su un asciugamano, su un pavimento liscio.",
+    "Fai scivolare l'asciugamano avanti e indietro con il piede libero, oscillando la gamba senza perdere l'equilibrio.",
+    "Busto eretto per tutto il movimento, ginocchio d'appoggio morbido, pianta del piede attiva.",
+    "Lento e controllato, per le ripetizioni o il tempo indicati, poi cambia gamba."
    ],
    "errori": [
     "Piegare il busto in avanti: non è uno stacco.",
-    "Movimento veloce e di slancio.",
-    "Piede d'appoggio molle: la pianta deve lavorare."
+    "Oscillazione veloce, di slancio.",
+    "Pianta del piede d'appoggio passiva."
    ],
    "piu_facile": "Mano al muro, oscillazione corta.",
    "piu_difficile": "Oscillazione più ampia, o occhi chiusi.",
@@ -3590,20 +3590,20 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggi liberi con la parte del corpo che vuoi: tricks, creatività, senza pensieri. Se cade, riparti.",
+  "descrizione": "Palleggi in libertà con qualsiasi parte del corpo: tricks, creatività, nessuno schema. Se la palla cade, riparti.",
   "id": "fasc-palleggi-freestyle-tecnica",
   "nome_en": "Palleggi Freestyle - Tecnica",
   "scheda": {
    "esecuzione": [
-    "Palleggi liberi: con la parte del corpo che vuoi, piede, coscia, testa, spalla.",
-    "Sii libero di fare tricks o quello che ti senti, senza pensieri.",
-    "Dai sfogo alla creatività: niente schemi, niente conteggio.",
-    "Per il tempo indicato: se cade, riparti subito."
+    "Palleggia in libertà con qualsiasi parte del corpo: piedi, cosce, testa, spalle.",
+    "Nessuno schema e nessun conteggio: inserisci i tricks che ti vengono, prova quello che senti.",
+    "È il momento della creatività: testa leggera, ginocchia morbide, sguardo sulla palla.",
+    "Per il tempo indicato: se la palla cade, raccoglila e riparti subito."
    ],
    "errori": [
     "Fermarsi a ogni errore.",
-    "Pensare troppo: qui si gioca.",
-    "Sempre lo stesso piede."
+    "Usare sempre e solo il piede forte.",
+    "Palla troppo alta: il controllo nasce dai tocchi bassi."
    ],
    "piu_facile": "Un rimbalzo a terra tra un tocco e l'altro.",
    "piu_difficile": "In movimento, o con una pallina più piccola.",
@@ -3680,17 +3680,17 @@
   "nome_en": "Plank torsione elastica fascia",
   "scheda": {
    "esecuzione": [
-    "Guarda bene il video: è difficile da spiegare a parole.",
-    "Plank con l'elastico, come nell'altro plank con l'elastico, ma appoggiato su un piede solo.",
-    "Fai una torsione con la gamba libera, poi cambia piede d'appoggio e ripeti dall'altra parte, alternando.",
-    "Il core resta stabile nella torsione, il movimento è controllato. Per il tempo indicato."
+    "Plank sulle mani con l'elastico in tensione, come mostrato nel video: mani sotto le spalle, corpo in linea.",
+    "Solleva un piede e resta in appoggio su un piede solo.",
+    "Porta la gamba libera in torsione sotto il corpo, verso il lato opposto, poi riportala indietro e cambia gamba: alterna i lati.",
+    "Il core resta stabile e il bacino non crolla: la torsione la fa la gamba, con controllo. Per il tempo indicato."
    ],
    "errori": [
-    "Bacino che crolla o ruota senza controllo.",
-    "Movimento di slancio.",
+    "Bacino che ruota o cede durante la torsione.",
+    "Movimento di slancio: ogni torsione è controllata.",
     "Spalla d'appoggio che cede verso l'orecchio."
    ],
-   "piu_facile": "Senza elastico, o con i due piedi a terra.",
+   "piu_facile": "Senza elastico, o con entrambi i piedi a terra.",
    "piu_difficile": "Elastico più duro, torsione più lenta.",
    "sicurezza": "Fastidio alla spalla o alla zona lombare: fermati."
   }
@@ -4035,9 +4035,9 @@
   "nome_en": "Protezione palla figura 8 - fascia",
   "scheda": {
    "esecuzione": [
-    "Usa come sostegno un muro o un compagno: appoggiati con la spalla come se stessi proteggendo la palla.",
-    "Due cinesini a terra: intanto conduci la palla a otto intorno ai due cinesini.",
-    "Il corpo sta sempre tra il sostegno e la palla, braccio a scudo, ginocchia piegate.",
+    "Appoggiati con la spalla a un muro o a un compagno, come se stessi proteggendo la palla da un avversario: il corpo sta tra il sostegno e la palla.",
+    "Due cinesini a terra davanti a te: conduci la palla disegnando un otto intorno ai cinesini, con il piede lontano dal sostegno.",
+    "Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.",
     "Per il tempo indicato, poi cambia lato."
    ],
    "errori": [
@@ -4077,9 +4077,9 @@
   "nome_en": "Protezione palla laterale - palleggi - fascia",
   "scheda": {
    "esecuzione": [
-    "Come la protezione palla a otto: appoggiato di lato a un muro o a un compagno, come se stessi proteggendo la palla.",
-    "Intanto fai palleggi con il piede lontano dal sostegno invece della conduzione.",
-    "Corpo tra il sostegno e la palla, braccio a scudo, ginocchia piegate.",
+    "Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.",
+    "Palleggia con il piede lontano dal sostegno, tocchi bassi, tenendo la spinta sulla spalla.",
+    "Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.",
     "Per il tempo indicato, poi cambia lato."
    ],
    "errori": [
@@ -4119,9 +4119,9 @@
   "nome_en": "Protezione palla laterale suola - fascia",
   "scheda": {
    "esecuzione": [
-    "Come sopra: appoggiato di lato a un muro o a un compagno.",
-    "Tieni la palla con la suola e gira su te stesso proteggendola, con il corpo sempre tra il sostegno e la palla.",
-    "Braccio a scudo, ginocchia piegate, baricentro basso.",
+    "Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.",
+    "Blocca la palla sotto la suola del piede lontano e gira su te stesso attorno alla palla proteggendola: il corpo resta sempre tra il sostegno e la palla.",
+    "Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.",
     "Per il tempo indicato, poi cambia lato."
    ],
    "errori": [
@@ -4161,9 +4161,9 @@
   "nome_en": "Protezione palla schiena - fascia",
   "scheda": {
    "esecuzione": [
-    "Come sopra, ma di spalle: compagno (o muro) dietro di te, palla davanti.",
-    "Proteggi con la spalla: gambe larghe e piegate, sedere indietro verso il compagno, braccia aperte a scudo.",
-    "Tieni la palla con la suola o con l'interno e spostala di lato quando lui cambia posizione.",
+    "Compagno (o muro) dietro di te: sei di spalle, palla davanti ai piedi.",
+    "Proteggi con la schiena e la spalla: gambe larghe e piegate, bacino indietro verso il compagno, braccia aperte a scudo.",
+    "Tieni la palla con la suola o con l'interno del piede e spostala di lato quando il compagno cambia posizione.",
     "Per il tempo indicato."
    ],
    "errori": [
@@ -4203,10 +4203,10 @@
   "nome_en": "Spinta laterale e finta - protezione palla - fascia",
   "scheda": {
    "esecuzione": [
-    "Come sopra: a contatto di spalla con il compagno, palla sul piede lontano.",
-    "Mentre proteggi fai una finta e ti giri dall'altra parte portando via la palla.",
-    "Alterna i lati: una finta a destra, una a sinistra.",
-    "Gambe piegate, braccio a scudo, palla sempre attaccata. Per il tempo indicato."
+    "Di lato al compagno, a contatto spalla a spalla, palla sul piede lontano.",
+    "Spingi con la spalla per tenere lo spazio, poi fai una finta di corpo e girati dall'altra parte portando via la palla.",
+    "Alterna i lati: una finta e un giro a destra, poi a sinistra.",
+    "Gambe piegate, braccio a scudo, palla sempre vicina al piede. Per il tempo indicato."
    ],
    "errori": [
     "Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge.",
@@ -4245,8 +4245,8 @@
   "nome_en": "Spinta laterale suola - protezione palla - fascia",
   "scheda": {
    "esecuzione": [
-    "Come sopra: a contatto di spalla con il compagno.",
-    "Spingi con la spalla e mantieni la palla in controllo con la suola, un passo alla volta.",
+    "Di lato al compagno, a contatto spalla a spalla.",
+    "Spingi con la spalla per guadagnare spazio e sposta la palla con la suola, un passo alla volta, tenendola sempre sotto controllo.",
     "Gambe piegate, baricentro basso, braccio a scudo.",
     "Per il tempo indicato, poi cambia lato."
    ],
@@ -5948,13 +5948,13 @@
   "scheda": {
    "esecuzione": [
     "In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi.",
-    "Occhi chiusi o sguardo basso: senti il peso sui piedi, diviso tra tallone, alluce e mignolo.",
-    "Concentrati sul respiro e sulle sensazioni del corpo, quelle interne e quelle esterne.",
-    "Resta presente, non farti trasportare dalla mente: quando i pensieri ti distolgono l'attenzione, torna al respiro e al corpo. Per il tempo indicato."
+    "Occhi chiusi o sguardo basso: senti il peso diviso tra tallone, alluce e mignolo.",
+    "Porta l'attenzione al respiro e alle sensazioni del corpo: quelle interne (il battito, le tensioni) e quelle esterne (il pavimento, l'aria, i suoni).",
+    "Resta presente. Quando un pensiero si porta via l'attenzione, accorgitene e torna al respiro e al corpo. Per il tempo indicato."
    ],
    "errori": [
     "Ginocchia bloccate indietro.",
-    "Seguire i pensieri invece di tornare: capita, è normale, si torna.",
+    "Inseguire i pensieri invece di tornare: capita, si torna.",
     "Spalle alte."
    ],
    "piu_facile": "Occhi aperti, sguardo su un punto fisso.",
@@ -6073,7 +6073,7 @@
   "scheda": {
    "esecuzione": [
     "Sequenza guidata di circa 18 minuti per recuperare: segui il video.",
-    "Consigliata in generale dopo la partita, e quando sei molto affaticato.",
+    "Consigliata nei giorni dopo la partita e quando sei molto affaticato.",
     "Posizioni tenute, respiro lento: non è allenamento.",
     "Tappetino e spazio per allungare le gambe."
    ],
@@ -6711,12 +6711,12 @@
   "scheda": {
    "esecuzione": [
     "Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno.",
-    "Tocca il piede con la mano opposta quando la gamba è aperta.",
-    "Braccia sciolte, busto dritto, piede che atterra sull'avampiede.",
-    "Per il numero di passi indicato, alternando le gambe. Ottimo come riscaldamento."
+    "Con la mano opposta tocca il piede della gamba aperta, poi riporta la gamba a terra.",
+    "Busto dritto, braccia sciolte, appoggio sull'avampiede.",
+    "Per il numero di passi indicato, alternando le gambe. Ottimo nel riscaldamento."
    ],
    "errori": [
-    "Busto che si inclina di lato per aprire l'anca.",
+    "Busto che si inclina per arrivare al piede.",
     "Piede piatto sul tallone.",
     "Ginocchio basso: deve arrivare all'altezza dell'anca."
    ],
@@ -7923,15 +7923,15 @@
   "nome_en": "Ankle stiffness con manubri",
   "scheda": {
    "esecuzione": [
-    "In piedi, un manubrio per mano lungo i fianchi, peso sull'avampiede.",
-    "Sul posto, fai dei piccoli passetti rapidi restando in equilibrio sull'avampiede: i talloni non toccano mai terra.",
-    "Caviglie dritte e rigide, ginocchia quasi tese, busto fermo.",
+    "In piedi, un manubrio per mano lungo i fianchi, peso sugli avampiedi, talloni sollevati.",
+    "Sul posto, esegui passetti piccoli e rapidi restando sugli avampiedi: i talloni non toccano mai terra.",
+    "Caviglie rigide e in asse, ginocchia quasi distese, busto fermo: la molla è la caviglia.",
     "Per il tempo indicato."
    ],
    "errori": [
     "Talloni che toccano terra.",
     "Caviglie che cedono verso l'esterno.",
-    "Piegare le ginocchia per aiutarsi."
+    "Ginocchia che si piegano per aiutarsi."
    ],
    "piu_facile": "Senza manubri.",
    "piu_difficile": "Manubri più pesanti, o passetti più rapidi.",
@@ -8171,7 +8171,7 @@
   "scheda": {
    "esecuzione": [
     "Corsetta leggera per i minuti indicati: ritmo da chiacchiera.",
-    "Respira col naso se ci riesci, passo rilassato.",
+    "Respira col naso se ci riesci, passo rilassato e naturale.",
     "Negli ultimi 30 secondi alza un po' il ritmo.",
     "Serve a scaldare, non ad allenare."
    ],
@@ -8211,15 +8211,15 @@
   "descrizione": "Per i minuti indicati muovi caviglie, anche, bacino e spalle: circonduzioni delle caviglie, slanci della gamba avanti e di lato, affondi camminati con rotazione del busto, ginocchia al petto, cerchi con le braccia. Ampiezza crescente, mai forzata.",
   "scheda": {
    "esecuzione": [
-    "Mobilità libera: per i minuti indicati muovi le articolazioni come senti, senza schema fisso. Qualche esempio:",
-    "Anche: aperture e chiusure del ginocchio verso l'esterno e l'interno, oscillazioni della gamba avanti e indietro e di lato.",
-    "Caviglie: cerchi in entrambi i sensi, affondo con il ginocchio che spinge avanti oltre la punta.",
-    "Bacino, schiena e spalle: affondi camminati con rotazione del busto, cerchi con le braccia, qualche squat con le braccia in alto."
+    "Per i minuti indicati muovi le articolazioni in libertà, senza uno schema fisso: scegli tu l'ordine e le ripetizioni.",
+    "Anche: aperture e chiusure del ginocchio verso l'esterno e verso l'interno, oscillazioni della gamba avanti e indietro e di lato.",
+    "Caviglie: cerchi nei due sensi, affondo con il ginocchio che avanza oltre la punta del piede.",
+    "Bacino, schiena e spalle: affondi camminati con rotazione del busto, cerchi delle braccia, qualche squat con le braccia in alto. Ampiezza crescente, mai forzata."
    ],
    "errori": [
     "Fermi e statici: qui tutto è in movimento.",
     "Forzare l'ampiezza con strappi.",
-    "Fare sempre e solo le stesse due cose: cambia."
+    "Ripetere sempre gli stessi due movimenti: varia."
    ],
    "piu_facile": "Meno ampiezza, senza gli slanci.",
    "piu_difficile": "Ampiezza crescente, aggiungi skip alti e calciate.",

@@ -9,15 +9,15 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-plank-jumps-fascia` · inglese: Plank Jumps Fascia · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=FPZkcfY-2Yo)
 
 **Esecuzione**
-1. Posizione di plank sulle mani, corpo in linea, pancia dentro.
-2. Esegui dei saltelli sul posto staccando mani e piedi da terra nello stesso momento.
-3. Inarca leggermente la schiena per darti la spinta elastica: sono piccoli saltelli, non salti alti.
-4. Ritmo regolare, per il tempo indicato.
+1. Parti in plank sulle mani: mani sotto le spalle, corpo in linea dalla testa ai talloni, addome attivo.
+2. Stacca mani e piedi da terra nello stesso istante con un piccolo saltello e riatterra nella stessa posizione.
+3. Lascia che la schiena si inarchi leggermente: è quel rimbalzo elastico a darti la spinta per il saltello successivo.
+4. Saltelli piccoli e ritmici, come una molla, per il tempo indicato.
 
-**Errori comuni:** Staccare solo i piedi: si alzano anche le mani. Saltare alto e atterrare pesante: piccoli e elastici. Spalle che vanno oltre le mani.
-**Più facile:** Plank fermo, poi stacca solo i piedi per qualche saltello.
-**Più difficile:** Saltelli più rapidi, o in avanzamento.
-**Sicurezza:** Fastidio ai polsi: fermati. Zona lombare che cede: meno inarcamento.
+**Errori comuni:** Staccare solo i piedi: mani e piedi si sollevano insieme. Saltare alto e atterrare pesante: il saltello è corto ed elastico. Spalle che scivolano oltre le mani.
+**Più facile:** Plank fermo, poi solo i piedi che saltellano.
+**Più difficile:** Ritmo più alto, o saltelli in avanzamento.
+**Sicurezza:** Dolore ai polsi: fermati. Zona lombare che cede: riduci l'inarcamento e il tempo.
 
 ### Circuito di equilibrio sullo skimmy
 `fasc-circuito-propriocezione` · inglese: Circuito Propriocezione · bilaterale · secondi · corpo libero · [video](https://www.youtube.com/watch?v=SCjwTWXzrTM&list=PL6Dh3F0reiim9WhyG-t4iAYOk8Mbrvbcq&index=3&ab_channel=ForYouFunctionalYogaFootball)
@@ -36,26 +36,26 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-toes-up-down` · inglese: Toes up down · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/JctaRd1xxng)
 
 **Esecuzione**
-1. Appoggia l'avampiede su una pallina o a terra, tallone appoggiato.
-2. Spingi con l'alluce e solleva le altre dita.
-3. Poi scambia: spingi con le altre dita e solleva l'alluce.
-4. Alterna lento e controllato per il tempo indicato, poi cambia piede.
+1. In piedi o seduto, piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.
+2. Spingi l'alluce verso il basso e intanto solleva le altre quattro dita.
+3. Inverti: spingi le quattro dita verso il basso e solleva l'alluce.
+4. Alterna le due posizioni in modo lento e controllato per il tempo indicato, poi cambia piede.
 
-**Errori comuni:** Sollevare l'avampiede insieme alle dita. Dita che si muovono tutte insieme: all'inizio è normale, insisti. Fare in fretta.
+**Errori comuni:** Sollevare l'avampiede o muovere la caviglia per aiutarsi. Dita che si muovono tutte insieme: all'inizio è normale, con la pratica si separano. Fretta: il movimento è lento.
 **Più facile:** Seduto, a terra senza pallina.
 **Più difficile:** In piedi su una gamba sola.
-**Sicurezza:** Crampo sotto al piede: fermati, allunga, riprendi.
+**Sicurezza:** Crampo sotto il piede: fermati, allunga le dita, riprendi.
 
 ### Dita su e giù
 `fasc-toes-up-down-2` · inglese: Toes Up Down 2 · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=1_TtKlvDeqk)
 
 **Esecuzione**
-1. Appoggia l'avampiede su una pallina o a terra, tallone appoggiato.
-2. Solleva tutte le dita, poi spingile tutte in giù senza arricciarle.
-3. Una ripetizione = su e giù. Lento.
-4. Vale per entrambi i piedi.
+1. Piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.
+2. Solleva tutte le dita insieme tenendo l'avampiede appoggiato.
+3. Spingile tutte verso il basso, distese, senza arricciarle.
+4. Una ripetizione = sollevamento e spinta. Lento, per le ripetizioni indicate, su entrambi i piedi.
 
-**Errori comuni:** Sollevare l'avampiede insieme alle dita. Arricciare le dita invece di spingerle in giù. Alzare il tallone.
+**Errori comuni:** Arricciare le dita invece di spingerle distese. Sollevare l'avampiede insieme alle dita. Alzare il tallone.
 **Più facile:** Seduto, a terra senza pallina.
 **Più difficile:** In piedi su una gamba sola.
 **Sicurezza:** Crampo: fermati e allunga le dita.
@@ -78,54 +78,54 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-equilibrio-1-pallina-tennis-fascia-tecnica` · inglese: Equilibrio 1 pallina tennis fascia tecnica · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=CfVvAUj_Fv4)
 
 **Esecuzione**
-1. In piedi in equilibrio su un piede, ginocchio morbido.
-2. Attiva bene la pianta del piede d'appoggio: senti tallone, alluce e mignolo a terra.
-3. Tieni la pallina da tennis in equilibrio sul piede libero, senza farla cadere.
-4. Per il tempo indicato, poi cambia piede.
+1. In piedi in equilibrio su una gamba, ginocchio morbido, busto dritto.
+2. Attiva la pianta del piede d'appoggio: senti tallone, alluce e mignolo che premono a terra.
+3. Appoggia una pallina da tennis sul collo del piede libero e tienila in equilibrio senza farla cadere.
+4. Mantieni per il tempo indicato, poi cambia gamba.
 
-**Errori comuni:** Piede d'appoggio molle: la pianta deve lavorare. Busto che si piega per compensare. Sguardo a terra: guarda la pallina con gli occhi, non con tutta la testa.
+**Errori comuni:** Pianta del piede passiva: è lei che tiene l'equilibrio. Busto che si inclina per compensare. Piede libero rigido: caviglia morbida, la pallina si tiene con piccoli aggiustamenti.
 **Più facile:** Mano al muro.
-**Più difficile:** Occhi chiusi, o su un cuscino instabile.
-**Sicurezza:** Se perdi l'equilibrio appoggia e riparti.
+**Più difficile:** Occhi chiusi, o piede d'appoggio su un cuscino instabile.
+**Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
 
 ### Equilibrio con pallina 2
 `fasc-equilibrio-2-pallina-da-tennis-fascia-tecnica` · inglese: Equilibrio 2 pallina da tennis fascia tecnica · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=DRoBrKDueh4)
 
 **Esecuzione**
-1. In piedi in equilibrio su un piede, pallina da tennis a terra davanti al piede libero.
-2. Tira su la pallina con il piede libero e tienila in equilibrio sul piede.
-3. Appoggiala a terra e riparti tirandola su, senza appoggiare il piede.
-4. Per il tempo indicato, poi cambia piede.
+1. In piedi in equilibrio su una gamba, pallina da tennis a terra davanti al piede libero.
+2. Con il piede libero raccogli la pallina da terra e portala in equilibrio sul collo del piede.
+3. Riappoggiala a terra con controllo e ripeti, senza mai appoggiare il piede libero.
+4. Per il tempo indicato, poi cambia gamba.
 
-**Errori comuni:** Appoggiare il piede libero tra una ripetizione e l'altra. Busto che si piega per compensare. Fretta: conta il controllo.
+**Errori comuni:** Appoggiare il piede libero tra una ripetizione e l'altra. Busto che si inclina per compensare. Movimenti bruschi: ogni passaggio è lento.
 **Più facile:** Mano al muro.
-**Più difficile:** Occhi chiusi quando la pallina è ferma sul piede.
-**Sicurezza:** Se perdi l'equilibrio appoggia e riparti.
+**Più difficile:** Ferma la pallina sul piede per 3 secondi a ogni ripetizione, o occhi chiusi nella tenuta.
+**Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
 
 ### Equilibrio con pallina 3
 `fasc-equilibrio-3-pallina-da-tennis-fascia-tecnica` · inglese: Equilibrio 3 pallina da tennis fascia tecnica · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=8NhZcJNOma4)
 
 **Esecuzione**
-1. In piedi in equilibrio su un piede, pallina da tennis in equilibrio sul piede libero.
-2. Falla cadere a terra, lascia fare un rimbalzo e riprendila in equilibrio sul piede.
-3. Senza appoggiare il piede libero, per il tempo indicato.
-4. Cambia piede.
+1. In piedi in equilibrio su una gamba, pallina da tennis in equilibrio sul collo del piede libero.
+2. Lascia cadere la pallina a terra e falle fare un rimbalzo.
+3. Riprendila al volo con il piede e riportala in equilibrio sul collo del piede.
+4. Ripeti senza appoggiare il piede libero per il tempo indicato, poi cambia gamba.
 
-**Errori comuni:** Appoggiare il piede libero per riprenderla. Busto che si piega per compensare. Piede d'appoggio molle: la pianta deve lavorare.
+**Errori comuni:** Appoggiare il piede libero per recuperare la pallina. Busto che si inclina per compensare. Pianta del piede d'appoggio passiva.
 **Più facile:** Due rimbalzi prima di riprenderla, o mano al muro.
-**Più difficile:** Su un cuscino instabile.
-**Sicurezza:** Se perdi l'equilibrio appoggia e riparti.
+**Più difficile:** Piede d'appoggio su un cuscino instabile.
+**Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
 
 ### Oscillazione delle braccia
 `fasc-fascia-arms-swing` · inglese: Fascia Arms Swing · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=Wt0Dpkzk8E0)
 
 **Esecuzione**
-1. In piedi con i piedi a terra, ginocchia morbide.
-2. Oscilla le braccia come se stessi correndo, gomiti piegati.
-3. Movimento ampio e sciolto: non essere rigido.
+1. In piedi, piedi a terra alla larghezza del bacino, ginocchia morbide.
+2. Oscilla le braccia come nella corsa: gomiti piegati, un braccio avanti e l'altro indietro.
+3. Movimento ampio e sciolto, spalle basse: nessuna rigidità.
 4. Per il tempo indicato.
 
-**Errori comuni:** Braccia rigide e corte: il movimento deve essere ampio. Spalle alte. Busto che si irrigidisce.
+**Errori comuni:** Braccia rigide e corte: l'oscillazione è ampia. Spalle che salgono verso le orecchie. Busto che si irrigidisce o ruota insieme alle braccia.
 **Più facile:** Più lento.
 **Più difficile:** Più veloce, o in equilibrio su una gamba.
 **Sicurezza:** Niente.
@@ -135,11 +135,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.
-2. Tallone dietro sollevato: il peso è sull'avampiede.
-3. Busto dritto: non troppo piegato in avanti, nemmeno troppo indietro.
-4. Tieni la posizione per il tempo indicato, ginocchio davanti sopra il piede, respira. Cambia gamba.
+2. Tallone della gamba dietro sollevato: il peso è sull'avampiede.
+3. Busto dritto, né piegato in avanti né inclinato indietro, sguardo avanti.
+4. Tieni la posizione per il tempo indicato con il ginocchio davanti sopra il piede, respira. Cambia gamba.
 
-**Errori comuni:** Busto che si piega in avanti o si inclina indietro. Ginocchio dietro appoggiato a terra. Ginocchio davanti che cade verso l'interno.
+**Errori comuni:** Busto che si piega in avanti o si inclina indietro. Ginocchio dietro che si appoggia a terra. Ginocchio davanti che cade verso l'interno.
 **Più facile:** Ginocchio dietro a terra, mano al muro.
 **Più difficile:** Braccia in posizione di corsa opposte alle gambe, o con un peso al petto.
 **Sicurezza:** Fastidio davanti al ginocchio: alza un po' la posizione, non scendere così tanto.
@@ -149,25 +149,25 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. In piedi su una gamba, un asciugamano a terra davanti a te.
-2. Afferra l'asciugamano con le dita del piede libero.
-3. Con il piede che tiene l'asciugamano disegna un otto, lento e ampio, senza lasciarlo.
+2. Afferra l'asciugamano con le dita del piede libero e sollevalo da terra.
+3. Con il piede che stringe l'asciugamano disegna un otto nell'aria: lento, ampio, senza allentare la presa.
 4. Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede.
 
-**Errori comuni:** Lasciare l'asciugamano: le dita stringono per tutto l'esercizio. Busto che si muove con il piede. Otto piccolo e veloce: più ampio e lento.
+**Errori comuni:** Allentare la presa a metà otto. Busto che segue il piede. Otto piccolo e veloce: più ampio e lento.
 **Più facile:** Mano al muro.
 **Più difficile:** Occhi chiusi.
-**Sicurezza:** Crampo sotto al piede: lascia, allunga, riprendi.
+**Sicurezza:** Crampo sotto il piede: lascia l'asciugamano, allunga le dita, riprendi.
 
 ### Oscillazione della gamba con asciugamano
 `fasc-fy-towe-slrdl` · inglese: FY Towel SLRDL · per lato · reps · corpo libero · [video](https://youtube.com/shorts/_0TsEKkUqGw?feature=share)
 
 **Esecuzione**
-1. In piedi in equilibrio su un piede, l'altro piede appoggiato su un asciugamano su pavimento liscio.
-2. Oscilla la gamba libera avanti e indietro facendo scivolare l'asciugamano, restando in equilibrio.
-3. Busto eretto, ginocchio d'appoggio morbido.
-4. Movimento lento e controllato, per le ripetizioni o il tempo indicati, poi cambia gamba.
+1. In piedi in equilibrio su una gamba, l'altro piede appoggiato su un asciugamano, su un pavimento liscio.
+2. Fai scivolare l'asciugamano avanti e indietro con il piede libero, oscillando la gamba senza perdere l'equilibrio.
+3. Busto eretto per tutto il movimento, ginocchio d'appoggio morbido, pianta del piede attiva.
+4. Lento e controllato, per le ripetizioni o il tempo indicati, poi cambia gamba.
 
-**Errori comuni:** Piegare il busto in avanti: non è uno stacco. Movimento veloce e di slancio. Piede d'appoggio molle: la pianta deve lavorare.
+**Errori comuni:** Piegare il busto in avanti: non è uno stacco. Oscillazione veloce, di slancio. Pianta del piede d'appoggio passiva.
 **Più facile:** Mano al muro, oscillazione corta.
 **Più difficile:** Oscillazione più ampia, o occhi chiusi.
 **Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
@@ -190,12 +190,12 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-palleggi-freestyle-tecnica` · inglese: Palleggi Freestyle - Tecnica · bilaterale · secondi · corpo libero · senza video
 
 **Esecuzione**
-1. Palleggi liberi: con la parte del corpo che vuoi, piede, coscia, testa, spalla.
-2. Sii libero di fare tricks o quello che ti senti, senza pensieri.
-3. Dai sfogo alla creatività: niente schemi, niente conteggio.
-4. Per il tempo indicato: se cade, riparti subito.
+1. Palleggia in libertà con qualsiasi parte del corpo: piedi, cosce, testa, spalle.
+2. Nessuno schema e nessun conteggio: inserisci i tricks che ti vengono, prova quello che senti.
+3. È il momento della creatività: testa leggera, ginocchia morbide, sguardo sulla palla.
+4. Per il tempo indicato: se la palla cade, raccoglila e riparti subito.
 
-**Errori comuni:** Fermarsi a ogni errore. Pensare troppo: qui si gioca. Sempre lo stesso piede.
+**Errori comuni:** Fermarsi a ogni errore. Usare sempre e solo il piede forte. Palla troppo alta: il controllo nasce dai tocchi bassi.
 **Più facile:** Un rimbalzo a terra tra un tocco e l'altro.
 **Più difficile:** In movimento, o con una pallina più piccola.
 **Sicurezza:** Niente.
@@ -204,13 +204,13 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-plank-torsione-elastica-fascia` · inglese: Plank torsione elastica fascia · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=itq-E8EcZEQ)
 
 **Esecuzione**
-1. Guarda bene il video: è difficile da spiegare a parole.
-2. Plank con l'elastico, come nell'altro plank con l'elastico, ma appoggiato su un piede solo.
-3. Fai una torsione con la gamba libera, poi cambia piede d'appoggio e ripeti dall'altra parte, alternando.
-4. Il core resta stabile nella torsione, il movimento è controllato. Per il tempo indicato.
+1. Plank sulle mani con l'elastico in tensione, come mostrato nel video: mani sotto le spalle, corpo in linea.
+2. Solleva un piede e resta in appoggio su un piede solo.
+3. Porta la gamba libera in torsione sotto il corpo, verso il lato opposto, poi riportala indietro e cambia gamba: alterna i lati.
+4. Il core resta stabile e il bacino non crolla: la torsione la fa la gamba, con controllo. Per il tempo indicato.
 
-**Errori comuni:** Bacino che crolla o ruota senza controllo. Movimento di slancio. Spalla d'appoggio che cede verso l'orecchio.
-**Più facile:** Senza elastico, o con i due piedi a terra.
+**Errori comuni:** Bacino che ruota o cede durante la torsione. Movimento di slancio: ogni torsione è controllata. Spalla d'appoggio che cede verso l'orecchio.
+**Più facile:** Senza elastico, o con entrambi i piedi a terra.
 **Più difficile:** Elastico più duro, torsione più lenta.
 **Sicurezza:** Fastidio alla spalla o alla zona lombare: fermati.
 
@@ -232,9 +232,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-protezione-palla-figura-8-fascia` · inglese: Protezione palla figura 8 - fascia · per lato · secondi · campo · [video](https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1)
 
 **Esecuzione**
-1. Usa come sostegno un muro o un compagno: appoggiati con la spalla come se stessi proteggendo la palla.
-2. Due cinesini a terra: intanto conduci la palla a otto intorno ai due cinesini.
-3. Il corpo sta sempre tra il sostegno e la palla, braccio a scudo, ginocchia piegate.
+1. Appoggiati con la spalla a un muro o a un compagno, come se stessi proteggendo la palla da un avversario: il corpo sta tra il sostegno e la palla.
+2. Due cinesini a terra davanti a te: conduci la palla disegnando un otto intorno ai cinesini, con il piede lontano dal sostegno.
+3. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
 **Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
@@ -246,9 +246,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-protezione-palla-laterale-palleggi-fascia` · inglese: Protezione palla laterale - palleggi - fascia · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=K55Sm0yGxME?si=m9CBgVvShKA_T1Gk)
 
 **Esecuzione**
-1. Come la protezione palla a otto: appoggiato di lato a un muro o a un compagno, come se stessi proteggendo la palla.
-2. Intanto fai palleggi con il piede lontano dal sostegno invece della conduzione.
-3. Corpo tra il sostegno e la palla, braccio a scudo, ginocchia piegate.
+1. Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.
+2. Palleggia con il piede lontano dal sostegno, tocchi bassi, tenendo la spinta sulla spalla.
+3. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
 **Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
@@ -260,9 +260,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-protezione-palla-laterale-suola-fascia` · inglese: Protezione palla laterale suola - fascia · bilaterale · secondi · campo · [video](https://www.youtube.com/watch?v=XdDmJ6p3qfE)
 
 **Esecuzione**
-1. Come sopra: appoggiato di lato a un muro o a un compagno.
-2. Tieni la palla con la suola e gira su te stesso proteggendola, con il corpo sempre tra il sostegno e la palla.
-3. Braccio a scudo, ginocchia piegate, baricentro basso.
+1. Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.
+2. Blocca la palla sotto la suola del piede lontano e gira su te stesso attorno alla palla proteggendola: il corpo resta sempre tra il sostegno e la palla.
+3. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
 **Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
@@ -274,9 +274,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-protezione-palla-schiena-fascia` · inglese: Protezione palla schiena - fascia · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=fjhKOlmaYhM?si=tWoZPtPeMCInFzTu)
 
 **Esecuzione**
-1. Come sopra, ma di spalle: compagno (o muro) dietro di te, palla davanti.
-2. Proteggi con la spalla: gambe larghe e piegate, sedere indietro verso il compagno, braccia aperte a scudo.
-3. Tieni la palla con la suola o con l'interno e spostala di lato quando lui cambia posizione.
+1. Compagno (o muro) dietro di te: sei di spalle, palla davanti ai piedi.
+2. Proteggi con la schiena e la spalla: gambe larghe e piegate, bacino indietro verso il compagno, braccia aperte a scudo.
+3. Tieni la palla con la suola o con l'interno del piede e spostala di lato quando il compagno cambia posizione.
 4. Per il tempo indicato.
 
 **Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
@@ -288,10 +288,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-spinta-laterale-e-finta-protezione-palla-fascia` · inglese: Spinta laterale e finta - protezione palla - fascia · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=nnSMkB7saNY?si=8Mg8VGvWQ4icDV8R)
 
 **Esecuzione**
-1. Come sopra: a contatto di spalla con il compagno, palla sul piede lontano.
-2. Mentre proteggi fai una finta e ti giri dall'altra parte portando via la palla.
-3. Alterna i lati: una finta a destra, una a sinistra.
-4. Gambe piegate, braccio a scudo, palla sempre attaccata. Per il tempo indicato.
+1. Di lato al compagno, a contatto spalla a spalla, palla sul piede lontano.
+2. Spingi con la spalla per tenere lo spazio, poi fai una finta di corpo e girati dall'altra parte portando via la palla.
+3. Alterna i lati: una finta e un giro a destra, poi a sinistra.
+4. Gambe piegate, braccio a scudo, palla sempre vicina al piede. Per il tempo indicato.
 
 **Errori comuni:** Braccio che spinge invece di fare da scudo: il gomito è aperto, non spinge. Palla lontana dal piede: resta attaccata. Busto dritto come un palo: le ginocchia sono piegate, il baricentro basso.
 **Più facile:** Senza finta: solo spinta e cambio di direzione lento.
@@ -302,8 +302,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-spinta-laterale-suola-protezione-palla-fascia` · inglese: Spinta laterale suola - protezione palla - fascia · per lato · secondi · campo · [video](https://youtube.com/watch?v=9HcNXIItrps?si=xU-NdxHMAh1wBAeG)
 
 **Esecuzione**
-1. Come sopra: a contatto di spalla con il compagno.
-2. Spingi con la spalla e mantieni la palla in controllo con la suola, un passo alla volta.
+1. Di lato al compagno, a contatto spalla a spalla.
+2. Spingi con la spalla per guadagnare spazio e sposta la palla con la suola, un passo alla volta, tenendola sempre sotto controllo.
 3. Gambe piegate, baricentro basso, braccio a scudo.
 4. Per il tempo indicato, poi cambia lato.
 
@@ -400,12 +400,12 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-ankle-stiffness-con-manubri` · inglese: Ankle stiffness con manubri · bilaterale · secondi · manubri · [video](https://youtube.com/shorts/eczdqr2oU7w)
 
 **Esecuzione**
-1. In piedi, un manubrio per mano lungo i fianchi, peso sull'avampiede.
-2. Sul posto, fai dei piccoli passetti rapidi restando in equilibrio sull'avampiede: i talloni non toccano mai terra.
-3. Caviglie dritte e rigide, ginocchia quasi tese, busto fermo.
+1. In piedi, un manubrio per mano lungo i fianchi, peso sugli avampiedi, talloni sollevati.
+2. Sul posto, esegui passetti piccoli e rapidi restando sugli avampiedi: i talloni non toccano mai terra.
+3. Caviglie rigide e in asse, ginocchia quasi distese, busto fermo: la molla è la caviglia.
 4. Per il tempo indicato.
 
-**Errori comuni:** Talloni che toccano terra. Caviglie che cedono verso l'esterno. Piegare le ginocchia per aiutarsi.
+**Errori comuni:** Talloni che toccano terra. Caviglie che cedono verso l'esterno. Ginocchia che si piegano per aiutarsi.
 **Più facile:** Senza manubri.
 **Più difficile:** Manubri più pesanti, o passetti più rapidi.
 **Sicurezza:** Fastidio al tendine d'Achille: senza peso, o fermati.
@@ -459,11 +459,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi.
-2. Occhi chiusi o sguardo basso: senti il peso sui piedi, diviso tra tallone, alluce e mignolo.
-3. Concentrati sul respiro e sulle sensazioni del corpo, quelle interne e quelle esterne.
-4. Resta presente, non farti trasportare dalla mente: quando i pensieri ti distolgono l'attenzione, torna al respiro e al corpo. Per il tempo indicato.
+2. Occhi chiusi o sguardo basso: senti il peso diviso tra tallone, alluce e mignolo.
+3. Porta l'attenzione al respiro e alle sensazioni del corpo: quelle interne (il battito, le tensioni) e quelle esterne (il pavimento, l'aria, i suoni).
+4. Resta presente. Quando un pensiero si porta via l'attenzione, accorgitene e torna al respiro e al corpo. Per il tempo indicato.
 
-**Errori comuni:** Ginocchia bloccate indietro. Seguire i pensieri invece di tornare: capita, è normale, si torna. Spalle alte.
+**Errori comuni:** Ginocchia bloccate indietro. Inseguire i pensieri invece di tornare: capita, si torna. Spalle alte.
 **Più facile:** Occhi aperti, sguardo su un punto fisso.
 **Più difficile:** Su una gamba, occhi chiusi.
 **Sicurezza:** Se gira la testa, apri gli occhi e appoggiati.
@@ -473,11 +473,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno.
-2. Tocca il piede con la mano opposta quando la gamba è aperta.
-3. Braccia sciolte, busto dritto, piede che atterra sull'avampiede.
-4. Per il numero di passi indicato, alternando le gambe. Ottimo come riscaldamento.
+2. Con la mano opposta tocca il piede della gamba aperta, poi riporta la gamba a terra.
+3. Busto dritto, braccia sciolte, appoggio sull'avampiede.
+4. Per il numero di passi indicato, alternando le gambe. Ottimo nel riscaldamento.
 
-**Errori comuni:** Busto che si inclina di lato per aprire l'anca. Piede piatto sul tallone. Ginocchio basso: deve arrivare all'altezza dell'anca.
+**Errori comuni:** Busto che si inclina per arrivare al piede. Piede piatto sul tallone. Ginocchio basso: deve arrivare all'altezza dell'anca.
 **Più facile:** Sul posto, con la mano al muro.
 **Più difficile:** In avanzamento, più veloce, con la gamba che si apre e si chiude prima di atterrare.
 **Sicurezza:** Fastidio all'inguine: riduci l'apertura.
@@ -585,7 +585,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Corsetta leggera per i minuti indicati: ritmo da chiacchiera.
-2. Respira col naso se ci riesci, passo rilassato.
+2. Respira col naso se ci riesci, passo rilassato e naturale.
 3. Negli ultimi 30 secondi alza un po' il ritmo.
 4. Serve a scaldare, non ad allenare.
 
@@ -598,12 +598,12 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `risc-mobilita-libera` · bilaterale · minuti · corpo libero · senza video
 
 **Esecuzione**
-1. Mobilità libera: per i minuti indicati muovi le articolazioni come senti, senza schema fisso. Qualche esempio:
-2. Anche: aperture e chiusure del ginocchio verso l'esterno e l'interno, oscillazioni della gamba avanti e indietro e di lato.
-3. Caviglie: cerchi in entrambi i sensi, affondo con il ginocchio che spinge avanti oltre la punta.
-4. Bacino, schiena e spalle: affondi camminati con rotazione del busto, cerchi con le braccia, qualche squat con le braccia in alto.
+1. Per i minuti indicati muovi le articolazioni in libertà, senza uno schema fisso: scegli tu l'ordine e le ripetizioni.
+2. Anche: aperture e chiusure del ginocchio verso l'esterno e verso l'interno, oscillazioni della gamba avanti e indietro e di lato.
+3. Caviglie: cerchi nei due sensi, affondo con il ginocchio che avanza oltre la punta del piede.
+4. Bacino, schiena e spalle: affondi camminati con rotazione del busto, cerchi delle braccia, qualche squat con le braccia in alto. Ampiezza crescente, mai forzata.
 
-**Errori comuni:** Fermi e statici: qui tutto è in movimento. Forzare l'ampiezza con strappi. Fare sempre e solo le stesse due cose: cambia.
+**Errori comuni:** Fermi e statici: qui tutto è in movimento. Forzare l'ampiezza con strappi. Ripetere sempre gli stessi due movimenti: varia.
 **Più facile:** Meno ampiezza, senza gli slanci.
 **Più difficile:** Ampiezza crescente, aggiungi skip alti e calciate.
 **Sicurezza:** Niente rimbalzi sul dolore.
@@ -615,7 +615,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Sequenza guidata di circa 18 minuti per recuperare: segui il video.
-2. Consigliata in generale dopo la partita, e quando sei molto affaticato.
+2. Consigliata nei giorni dopo la partita e quando sei molto affaticato.
 3. Posizioni tenute, respiro lento: non è allenamento.
 4. Tappetino e spazio per allungare le gambe.
 

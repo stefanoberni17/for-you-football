@@ -7,7 +7,7 @@ Puoi farne anche solo una parte: io riporto nel JSON quello che trovo scritto.
 ## 1. Plank con saltelli
 inglese: Plank Jumps Fascia · bilaterale · secondi · video: https://youtube.com/watch?v=FPZkcfY-2Yo
 
-Come l'ho scritto io: Posizione di plank sulle mani, corpo in linea, pancia dentro. Esegui dei saltelli sul posto staccando mani e piedi da terra nello stesso momento. Inarca leggermente la schiena per darti la spinta elastica: sono piccoli saltelli, non salti alti. Ritmo regolare, per il tempo indicato.
+Come l'ho scritto io: Parti in plank sulle mani: mani sotto le spalle, corpo in linea dalla testa ai talloni, addome attivo. Stacca mani e piedi da terra nello stesso istante con un piccolo saltello e riatterra nella stessa posizione. Lascia che la schiena si inarchi leggermente: è quel rimbalzo elastico a darti la spinta per il saltello successivo. Saltelli piccoli e ritmici, come una molla, per il tempo indicato.
 
 Correzione: 
 
@@ -21,14 +21,14 @@ Correzione:
 ## 3. Alluce e dita alternati
 inglese: Toes up down · per lato · secondi · video: https://youtube.com/shorts/JctaRd1xxng
 
-Come l'ho scritto io: Appoggia l'avampiede su una pallina o a terra, tallone appoggiato. Spingi con l'alluce e solleva le altre dita. Poi scambia: spingi con le altre dita e solleva l'alluce. Alterna lento e controllato per il tempo indicato, poi cambia piede.
+Come l'ho scritto io: In piedi o seduto, piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra. Spingi l'alluce verso il basso e intanto solleva le altre quattro dita. Inverti: spingi le quattro dita verso il basso e solleva l'alluce. Alterna le due posizioni in modo lento e controllato per il tempo indicato, poi cambia piede.
 
 Correzione: 
 
 ## 4. Dita su e giù
 inglese: Toes Up Down 2 · bilaterale · reps · video: https://www.youtube.com/watch?v=1_TtKlvDeqk
 
-Come l'ho scritto io: Appoggia l'avampiede su una pallina o a terra, tallone appoggiato. Solleva tutte le dita, poi spingile tutte in giù senza arricciarle. Una ripetizione = su e giù. Lento. Vale per entrambi i piedi.
+Come l'ho scritto io: Piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra. Solleva tutte le dita insieme tenendo l'avampiede appoggiato. Spingile tutte verso il basso, distese, senza arricciarle. Una ripetizione = sollevamento e spinta. Lento, per le ripetizioni indicate, su entrambi i piedi.
 
 Correzione: 
 
@@ -42,49 +42,49 @@ Correzione:
 ## 6. Equilibrio con pallina 1
 inglese: Equilibrio 1 pallina tennis fascia tecnica · per lato · secondi · video: https://www.youtube.com/watch?v=CfVvAUj_Fv4
 
-Come l'ho scritto io: In piedi in equilibrio su un piede, ginocchio morbido. Attiva bene la pianta del piede d'appoggio: senti tallone, alluce e mignolo a terra. Tieni la pallina da tennis in equilibrio sul piede libero, senza farla cadere. Per il tempo indicato, poi cambia piede.
+Come l'ho scritto io: In piedi in equilibrio su una gamba, ginocchio morbido, busto dritto. Attiva la pianta del piede d'appoggio: senti tallone, alluce e mignolo che premono a terra. Appoggia una pallina da tennis sul collo del piede libero e tienila in equilibrio senza farla cadere. Mantieni per il tempo indicato, poi cambia gamba.
 
 Correzione: 
 
 ## 7. Equilibrio con pallina 2
 inglese: Equilibrio 2 pallina da tennis fascia tecnica · per lato · secondi · video: https://www.youtube.com/watch?v=DRoBrKDueh4
 
-Come l'ho scritto io: In piedi in equilibrio su un piede, pallina da tennis a terra davanti al piede libero. Tira su la pallina con il piede libero e tienila in equilibrio sul piede. Appoggiala a terra e riparti tirandola su, senza appoggiare il piede. Per il tempo indicato, poi cambia piede.
+Come l'ho scritto io: In piedi in equilibrio su una gamba, pallina da tennis a terra davanti al piede libero. Con il piede libero raccogli la pallina da terra e portala in equilibrio sul collo del piede. Riappoggiala a terra con controllo e ripeti, senza mai appoggiare il piede libero. Per il tempo indicato, poi cambia gamba.
 
 Correzione: 
 
 ## 8. Equilibrio con pallina 3
 inglese: Equilibrio 3 pallina da tennis fascia tecnica · per lato · secondi · video: https://www.youtube.com/watch?v=8NhZcJNOma4
 
-Come l'ho scritto io: In piedi in equilibrio su un piede, pallina da tennis in equilibrio sul piede libero. Falla cadere a terra, lascia fare un rimbalzo e riprendila in equilibrio sul piede. Senza appoggiare il piede libero, per il tempo indicato. Cambia piede.
+Come l'ho scritto io: In piedi in equilibrio su una gamba, pallina da tennis in equilibrio sul collo del piede libero. Lascia cadere la pallina a terra e falle fare un rimbalzo. Riprendila al volo con il piede e riportala in equilibrio sul collo del piede. Ripeti senza appoggiare il piede libero per il tempo indicato, poi cambia gamba.
 
 Correzione: 
 
 ## 9. Oscillazione delle braccia
 inglese: Fascia Arms Swing · bilaterale · secondi · video: https://youtube.com/watch?v=Wt0Dpkzk8E0
 
-Come l'ho scritto io: In piedi con i piedi a terra, ginocchia morbide. Oscilla le braccia come se stessi correndo, gomiti piegati. Movimento ampio e sciolto: non essere rigido. Per il tempo indicato.
+Come l'ho scritto io: In piedi, piedi a terra alla larghezza del bacino, ginocchia morbide. Oscilla le braccia come nella corsa: gomiti piegati, un braccio avanti e l'altro indietro. Movimento ampio e sciolto, spalle basse: nessuna rigidità. Per il tempo indicato.
 
 Correzione: 
 
 ## 10. Affondo tenuto da corridore
 inglese: Fascia Iso Lounge Runner · per lato · secondi · video: https://youtube.com/watch?v=nvENLHoWSR4
 
-Come l'ho scritto io: Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno. Tallone dietro sollevato: il peso è sull'avampiede. Busto dritto: non troppo piegato in avanti, nemmeno troppo indietro. Tieni la posizione per il tempo indicato, ginocchio davanti sopra il piede, respira. Cambia gamba.
+Come l'ho scritto io: Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno. Tallone della gamba dietro sollevato: il peso è sull'avampiede. Busto dritto, né piegato in avanti né inclinato indietro, sguardo avanti. Tieni la posizione per il tempo indicato con il ginocchio davanti sopra il piede, respira. Cambia gamba.
 
 Correzione: 
 
 ## 11. Otto con il piede sull'asciugamano
 inglese: Fascia Towel figure 8 · per lato · secondi · video: https://youtube.com/watch?v=V805vZi3rLs
 
-Come l'ho scritto io: In piedi su una gamba, un asciugamano a terra davanti a te. Afferra l'asciugamano con le dita del piede libero. Con il piede che tiene l'asciugamano disegna un otto, lento e ampio, senza lasciarlo. Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede.
+Come l'ho scritto io: In piedi su una gamba, un asciugamano a terra davanti a te. Afferra l'asciugamano con le dita del piede libero e sollevalo da terra. Con il piede che stringe l'asciugamano disegna un otto nell'aria: lento, ampio, senza allentare la presa. Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede.
 
 Correzione: 
 
 ## 12. Oscillazione della gamba con asciugamano
 inglese: FY Towel SLRDL · per lato · reps · video: https://youtube.com/shorts/_0TsEKkUqGw?feature=share
 
-Come l'ho scritto io: In piedi in equilibrio su un piede, l'altro piede appoggiato su un asciugamano su pavimento liscio. Oscilla la gamba libera avanti e indietro facendo scivolare l'asciugamano, restando in equilibrio. Busto eretto, ginocchio d'appoggio morbido. Movimento lento e controllato, per le ripetizioni o il tempo indicati, poi cambia gamba.
+Come l'ho scritto io: In piedi in equilibrio su una gamba, l'altro piede appoggiato su un asciugamano, su un pavimento liscio. Fai scivolare l'asciugamano avanti e indietro con il piede libero, oscillando la gamba senza perdere l'equilibrio. Busto eretto per tutto il movimento, ginocchio d'appoggio morbido, pianta del piede attiva. Lento e controllato, per le ripetizioni o il tempo indicati, poi cambia gamba.
 
 Correzione: 
 
@@ -98,14 +98,14 @@ Correzione:
 ## 14. Palleggi liberi
 inglese: Palleggi Freestyle - Tecnica · bilaterale · secondi · senza video
 
-Come l'ho scritto io: Palleggi liberi: con la parte del corpo che vuoi, piede, coscia, testa, spalla. Sii libero di fare tricks o quello che ti senti, senza pensieri. Dai sfogo alla creatività: niente schemi, niente conteggio. Per il tempo indicato: se cade, riparti subito.
+Come l'ho scritto io: Palleggia in libertà con qualsiasi parte del corpo: piedi, cosce, testa, spalle. Nessuno schema e nessun conteggio: inserisci i tricks che ti vengono, prova quello che senti. È il momento della creatività: testa leggera, ginocchia morbide, sguardo sulla palla. Per il tempo indicato: se la palla cade, raccoglila e riparti subito.
 
 Correzione: 
 
 ## 15. Plank con torsione e elastico
 inglese: Plank torsione elastica fascia · bilaterale · secondi · video: https://youtube.com/watch?v=itq-E8EcZEQ
 
-Come l'ho scritto io: Guarda bene il video: è difficile da spiegare a parole. Plank con l'elastico, come nell'altro plank con l'elastico, ma appoggiato su un piede solo. Fai una torsione con la gamba libera, poi cambia piede d'appoggio e ripeti dall'altra parte, alternando. Il core resta stabile nella torsione, il movimento è controllato. Per il tempo indicato.
+Come l'ho scritto io: Plank sulle mani con l'elastico in tensione, come mostrato nel video: mani sotto le spalle, corpo in linea. Solleva un piede e resta in appoggio su un piede solo. Porta la gamba libera in torsione sotto il corpo, verso il lato opposto, poi riportala indietro e cambia gamba: alterna i lati. Il core resta stabile e il bacino non crolla: la torsione la fa la gamba, con controllo. Per il tempo indicato.
 
 Correzione: 
 
@@ -119,42 +119,42 @@ Correzione:
 ## 17. Protezione palla a otto
 inglese: Protezione palla figura 8 - fascia · per lato · secondi · video: https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1
 
-Come l'ho scritto io: Usa come sostegno un muro o un compagno: appoggiati con la spalla come se stessi proteggendo la palla. Due cinesini a terra: intanto conduci la palla a otto intorno ai due cinesini. Il corpo sta sempre tra il sostegno e la palla, braccio a scudo, ginocchia piegate. Per il tempo indicato, poi cambia lato.
+Come l'ho scritto io: Appoggiati con la spalla a un muro o a un compagno, come se stessi proteggendo la palla da un avversario: il corpo sta tra il sostegno e la palla. Due cinesini a terra davanti a te: conduci la palla disegnando un otto intorno ai cinesini, con il piede lontano dal sostegno. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo. Per il tempo indicato, poi cambia lato.
 
 Correzione: 
 
 ## 18. Protezione palla laterale con palleggi
 inglese: Protezione palla laterale - palleggi - fascia · bilaterale · secondi · video: https://youtube.com/watch?v=K55Sm0yGxME?si=m9CBgVvShKA_T1Gk
 
-Come l'ho scritto io: Come la protezione palla a otto: appoggiato di lato a un muro o a un compagno, come se stessi proteggendo la palla. Intanto fai palleggi con il piede lontano dal sostegno invece della conduzione. Corpo tra il sostegno e la palla, braccio a scudo, ginocchia piegate. Per il tempo indicato, poi cambia lato.
+Come l'ho scritto io: Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario. Palleggia con il piede lontano dal sostegno, tocchi bassi, tenendo la spinta sulla spalla. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo. Per il tempo indicato, poi cambia lato.
 
 Correzione: 
 
 ## 19. Protezione palla laterale con la suola
 inglese: Protezione palla laterale suola - fascia · bilaterale · secondi · video: https://www.youtube.com/watch?v=XdDmJ6p3qfE
 
-Come l'ho scritto io: Come sopra: appoggiato di lato a un muro o a un compagno. Tieni la palla con la suola e gira su te stesso proteggendola, con il corpo sempre tra il sostegno e la palla. Braccio a scudo, ginocchia piegate, baricentro basso. Per il tempo indicato, poi cambia lato.
+Come l'ho scritto io: Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario. Blocca la palla sotto la suola del piede lontano e gira su te stesso attorno alla palla proteggendola: il corpo resta sempre tra il sostegno e la palla. Ginocchia piegate, baricentro basso, braccio verso il sostegno aperto a scudo. Per il tempo indicato, poi cambia lato.
 
 Correzione: 
 
 ## 20. Protezione palla spalle alla porta
 inglese: Protezione palla schiena - fascia · bilaterale · secondi · video: https://youtube.com/watch?v=fjhKOlmaYhM?si=tWoZPtPeMCInFzTu
 
-Come l'ho scritto io: Come sopra, ma di spalle: compagno (o muro) dietro di te, palla davanti. Proteggi con la spalla: gambe larghe e piegate, sedere indietro verso il compagno, braccia aperte a scudo. Tieni la palla con la suola o con l'interno e spostala di lato quando lui cambia posizione. Per il tempo indicato.
+Come l'ho scritto io: Compagno (o muro) dietro di te: sei di spalle, palla davanti ai piedi. Proteggi con la schiena e la spalla: gambe larghe e piegate, bacino indietro verso il compagno, braccia aperte a scudo. Tieni la palla con la suola o con l'interno del piede e spostala di lato quando il compagno cambia posizione. Per il tempo indicato.
 
 Correzione: 
 
 ## 21. Spinta laterale e finta
 inglese: Spinta laterale e finta - protezione palla - fascia · bilaterale · secondi · video: https://youtube.com/watch?v=nnSMkB7saNY?si=8Mg8VGvWQ4icDV8R
 
-Come l'ho scritto io: Come sopra: a contatto di spalla con il compagno, palla sul piede lontano. Mentre proteggi fai una finta e ti giri dall'altra parte portando via la palla. Alterna i lati: una finta a destra, una a sinistra. Gambe piegate, braccio a scudo, palla sempre attaccata. Per il tempo indicato.
+Come l'ho scritto io: Di lato al compagno, a contatto spalla a spalla, palla sul piede lontano. Spingi con la spalla per tenere lo spazio, poi fai una finta di corpo e girati dall'altra parte portando via la palla. Alterna i lati: una finta e un giro a destra, poi a sinistra. Gambe piegate, braccio a scudo, palla sempre vicina al piede. Per il tempo indicato.
 
 Correzione: 
 
 ## 22. Spinta laterale con la suola
 inglese: Spinta laterale suola - protezione palla - fascia · per lato · secondi · video: https://youtube.com/watch?v=9HcNXIItrps?si=xU-NdxHMAh1wBAeG
 
-Come l'ho scritto io: Come sopra: a contatto di spalla con il compagno. Spingi con la spalla e mantieni la palla in controllo con la suola, un passo alla volta. Gambe piegate, baricentro basso, braccio a scudo. Per il tempo indicato, poi cambia lato.
+Come l'ho scritto io: Di lato al compagno, a contatto spalla a spalla. Spingi con la spalla per guadagnare spazio e sposta la palla con la suola, un passo alla volta, tenendola sempre sotto controllo. Gambe piegate, baricentro basso, braccio a scudo. Per il tempo indicato, poi cambia lato.
 
 Correzione: 
 
@@ -189,7 +189,7 @@ Correzione:
 ## 27. In piedi, fermo e presente
 inglese: Fascia Standing Meditation · bilaterale · minuti · senza video
 
-Come l'ho scritto io: In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi. Occhi chiusi o sguardo basso: senti il peso sui piedi, diviso tra tallone, alluce e mignolo. Concentrati sul respiro e sulle sensazioni del corpo, quelle interne e quelle esterne. Resta presente, non farti trasportare dalla mente: quando i pensieri ti distolgono l'attenzione, torna al respiro e al corpo. Per il tempo indicato.
+Come l'ho scritto io: In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi. Occhi chiusi o sguardo basso: senti il peso diviso tra tallone, alluce e mignolo. Porta l'attenzione al respiro e alle sensazioni del corpo: quelle interne (il battito, le tensioni) e quelle esterne (il pavimento, l'aria, i suoni). Resta presente. Quando un pensiero si porta via l'attenzione, accorgitene e torna al respiro e al corpo. Per il tempo indicato.
 
 Correzione: 
 
@@ -210,7 +210,7 @@ Correzione:
 ## 30. Sequenza Yoga - Recupero e Mobilità
 bilaterale · minuti · video: https://youtu.be/iXgtmz6QnzA
 
-Come l'ho scritto io: Sequenza guidata di circa 18 minuti per recuperare: segui il video. Consigliata in generale dopo la partita, e quando sei molto affaticato. Posizioni tenute, respiro lento: non è allenamento. Tappetino e spazio per allungare le gambe.
+Come l'ho scritto io: Sequenza guidata di circa 18 minuti per recuperare: segui il video. Consigliata nei giorni dopo la partita e quando sei molto affaticato. Posizioni tenute, respiro lento: non è allenamento. Tappetino e spazio per allungare le gambe.
 
 Correzione: 
 
@@ -245,7 +245,7 @@ Correzione:
 ## 35. Skip con apertura dell'anca
 inglese: Hip External Rotation Skip · bilaterale · reps · video: https://youtu.be/-bNvML_9Z1w
 
-Come l'ho scritto io: Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno. Tocca il piede con la mano opposta quando la gamba è aperta. Braccia sciolte, busto dritto, piede che atterra sull'avampiede. Per il numero di passi indicato, alternando le gambe. Ottimo come riscaldamento.
+Come l'ho scritto io: Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno. Con la mano opposta tocca il piede della gamba aperta, poi riporta la gamba a terra. Busto dritto, braccia sciolte, appoggio sull'avampiede. Per il numero di passi indicato, alternando le gambe. Ottimo nel riscaldamento.
 
 Correzione: 
 
@@ -301,20 +301,20 @@ Correzione:
 ## 43. Passetti sull'avampiede con i manubri
 inglese: Ankle stiffness con manubri · bilaterale · secondi · video: https://youtube.com/shorts/eczdqr2oU7w
 
-Come l'ho scritto io: In piedi, un manubrio per mano lungo i fianchi, peso sull'avampiede. Sul posto, fai dei piccoli passetti rapidi restando in equilibrio sull'avampiede: i talloni non toccano mai terra. Caviglie dritte e rigide, ginocchia quasi tese, busto fermo. Per il tempo indicato.
+Come l'ho scritto io: In piedi, un manubrio per mano lungo i fianchi, peso sugli avampiedi, talloni sollevati. Sul posto, esegui passetti piccoli e rapidi restando sugli avampiedi: i talloni non toccano mai terra. Caviglie rigide e in asse, ginocchia quasi distese, busto fermo: la molla è la caviglia. Per il tempo indicato.
 
 Correzione: 
 
 ## 44. Corsa lenta
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: Corsetta leggera per i minuti indicati: ritmo da chiacchiera. Respira col naso se ci riesci, passo rilassato. Negli ultimi 30 secondi alza un po' il ritmo. Serve a scaldare, non ad allenare.
+Come l'ho scritto io: Corsetta leggera per i minuti indicati: ritmo da chiacchiera. Respira col naso se ci riesci, passo rilassato e naturale. Negli ultimi 30 secondi alza un po' il ritmo. Serve a scaldare, non ad allenare.
 
 Correzione: 
 
 ## 45. Mobilità libera
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: Mobilità libera: per i minuti indicati muovi le articolazioni come senti, senza schema fisso. Qualche esempio: Anche: aperture e chiusure del ginocchio verso l'esterno e l'interno, oscillazioni della gamba avanti e indietro e di lato. Caviglie: cerchi in entrambi i sensi, affondo con il ginocchio che spinge avanti oltre la punta. Bacino, schiena e spalle: affondi camminati con rotazione del busto, cerchi con le braccia, qualche squat con le braccia in alto.
+Come l'ho scritto io: Per i minuti indicati muovi le articolazioni in libertà, senza uno schema fisso: scegli tu l'ordine e le ripetizioni. Anche: aperture e chiusure del ginocchio verso l'esterno e verso l'interno, oscillazioni della gamba avanti e indietro e di lato. Caviglie: cerchi nei due sensi, affondo con il ginocchio che avanza oltre la punta del piede. Bacino, schiena e spalle: affondi camminati con rotazione del busto, cerchi delle braccia, qualche squat con le braccia in alto. Ampiezza crescente, mai forzata.
 
 Correzione: 
