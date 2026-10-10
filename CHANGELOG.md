@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-10 — Schede: file di correzione per Ste
+- Ste: "ce ne sono molti sbagliati". I video di YouTube non si scaricano da questa sessione (403 e controllo anti-bot): si vedono solo miniatura e storyboard. `scripts/build-schede-correzioni.py` → `docs/schede/fascia-riscaldamento-correzioni.md`: un blocco numerato per esercizio con la mia esecuzione in breve e una riga `Correzione:` da riempire (su GitHub o in chat). Le correzioni le riporto nel JSON e rigenero.
+
 ## 2026-10-10 — Nota: accesso con Google
 - Segnato in CLAUDE.md ("Da fare") come lo faremo: provider Google di Supabase Auth, bottone su login e registrazione, schermata "Completa il profilo" al primo accesso per data di nascita, profilo e consensi. Richiesta di Ste del 10/10.
 
