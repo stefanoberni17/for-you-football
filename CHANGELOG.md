@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-10 — Nota: accesso con Google
+- Segnato in CLAUDE.md ("Da fare") come lo faremo: provider Google di Supabase Auth, bottone su login e registrazione, schermata "Completa il profilo" al primo accesso per data di nascita, profilo e consensi. Richiesta di Ste del 10/10.
+
 ## 2026-10-09 — Schede esercizi, batch 1: fascia e prevenzione, riscaldamento, mobilità (47)
 - Nuovo campo `scheda` nel catalogo v2 (esecuzione 3-5 passi, errori, più facile/difficile, sicurezza) e `nomeEn`; 37 esercizi rinominati in italiano con l'id congelato (Towel Curls → "Asciugamano con le dita", Calf Foam Roll → "Rullo sui polpacci"…). `components/SchedaEsercizio.tsx` sotto "Come si esegue" nel player, nell'EMOM e nella pagina seduta.
 - `scripts/build-schede-md.py` → `docs/schede/fascia-riscaldamento.md`: il file di revisione per Ste, con 9 "Da confermare" in testa (esercizi di cui non ho il dettaglio del video). `tests/schede.test.ts`.
