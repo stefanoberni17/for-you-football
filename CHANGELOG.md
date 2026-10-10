@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-10 — Schede batch 1: le correzioni di Ste
+- Ste ha rivisto tutte le 47 righe del file di correzione: 25 schede riscritte dalle sue parole (plank con saltelli = mani e piedi che si staccano; dita su e giù / alluce e dita alternati erano scambiate tra loro e con i video; le tre pallina da tennis sono equilibrio con la pallina sul piede; oscillazione delle braccia con i piedi a terra, non per lato; l'esercizio con l'asciugamano non è uno stacco ma un'oscillazione della gamba in equilibrio; le sei di protezione palla con il muro o il compagno come sostegno; passetti sull'avampiede con i manubri; mobilità libera con esempi). Nessun "da confermare" rimasto.
+- `Fascia Single leg RDL` e `Fascia Single leg runner (towel)` disattivati e uniti a `fasc-fy-towe-slrdl` (stesso video, stesso esercizio: Ste "teniamone uno"): alias in `scripts/build-blocks.py`, i 144 blocchi restano 135 completi. Catalogo v2: 302 attivi.
+
 ## 2026-10-10 — Schede: file di correzione per Ste
 - Ste: "ce ne sono molti sbagliati". I video di YouTube non si scaricano da questa sessione (403 e controllo anti-bot): si vedono solo miniatura e storyboard. `scripts/build-schede-correzioni.py` → `docs/schede/fascia-riscaldamento-correzioni.md`: un blocco numerato per esercizio con la mia esecuzione in breve e una riga `Correzione:` da riempire (su GitHub o in chat). Le correzioni le riporto nel JSON e rigenero.
 
