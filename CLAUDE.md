@@ -869,7 +869,7 @@ La memoria persistente del Coach si basa su:
 ### `DailyCheckinModal.tsx`
 - **1 sola schermata** (non più 4 step): 5 slider in colonna — fisico (0-10), sonno (4-12h, step 0.5), recupero (0-10), mentale (0-10), **presente ieri** (0-10, dal 29/9: "Quanto sei stato presente ieri durante la giornata?", colonna `presence_yesterday`, migration 029 applicata il 30/9; `/api/checkin` la salva fail-soft se la colonna manca)
 - **Prefill**: fisico 5, sonno 7h, recupero 5, mentale 5 — valore sempre visibile (mai "—")
-- Ogni slider: emoji + label + "N/10 — descrizione" color-coded
+- Ogni slider in una card bassa (12/10, Ste: "fai i box più piccoli, che stiano tutti nella pagina senza scrollare"): UNA riga con nome, descrizione del valore e numero color-coded, poi lo slider (44 px di tap, ma entra nel padding della card con `-my-1.5`); la riga con gli estremi è stata tolta. Misurato con l'harness: a 390×844 il foglio è 677 px su 776 disponibili, niente scroll; su un iPhone SE (667) il quinto box resta sotto la piega
 - "Salva e continua →" → POST `/api/checkin` → onComplete (→ fase Reset)
 - "Salta per oggi" → onSkip (persistito dal wrapper)
 - Nessuna X per chiudere (incentivo a completare)
