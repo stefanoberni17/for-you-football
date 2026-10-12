@@ -23,7 +23,7 @@ const MENTAL_LABELS: Record<number, string> = {
 };
 // Presenza di ieri (Ste, 29/9): al posto del check del giorno prima nella pagina giorno
 const PRESENCE_LABELS: Record<number, string> = {
-  0: 'Mai tornato presente', 3: 'Qualche volta', 5: 'A momenti', 7: 'Spesso', 10: 'Quasi sempre',
+  0: 'Mai', 3: 'Qualche volta', 5: 'A momenti', 7: 'Spesso', 10: 'Quasi sempre',
 };
 
 function getSliderLabel(value: number, labels: Record<number, string>): string {
@@ -97,7 +97,8 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
     }
   };
 
-  // Ogni cursore in una card sollevata: nome, valore grande a destra, descrizione, slider
+  // Ogni cursore in una card bassa (Ste, 12/10: i cinque box devono stare in una schermata senza scrollare):
+  // UNA riga con nome, descrizione e valore, poi lo slider. Niente riga con gli estremi: la descrizione dice già dove sei.
   const sliderCard = (
     id: string,
     title: string,
@@ -105,20 +106,15 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
     description: string,
     valueColor: string,
     input: React.ReactNode,
-    edges: [string, string, string],
   ) => (
-    <Card variant="raised" padding="sm">
-      <div className="flex items-start justify-between gap-3">
-        <label htmlFor={id} className="text-label font-semibold text-muted uppercase tracking-wide pt-1.5">{title}</label>
-        <span className={`font-display text-title-1 font-bold tabular-nums ${valueColor}`}>{display}</span>
+    <Card variant="raised" padding="none" className="px-4 py-2">
+      <div className="flex items-baseline gap-2">
+        <label htmlFor={id} className="text-label font-semibold text-muted uppercase tracking-wide shrink-0">{title}</label>
+        <span className="text-body-sm text-app truncate flex-1 min-w-0">{description}</span>
+        <span className={`font-display text-title-3 font-bold tabular-nums shrink-0 ${valueColor}`}>{display}</span>
       </div>
-      <p className="text-body-sm text-app mb-2">{description}</p>
-      {input}
-      <div className="flex justify-between text-caption text-faint mt-1">
-        <span>{edges[0]}</span>
-        <span>{edges[1]}</span>
-        <span>{edges[2]}</span>
-      </div>
+      {/* lo slider resta alto 44 px (tap), ma entra nel padding della card: la card è più bassa */}
+      <div className="-my-1.5">{input}</div>
     </Card>
   );
 
@@ -164,18 +160,17 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
         </>
       }
     >
-      <div className="space-y-3 pt-1">
+      <div className="space-y-2">
         {sliderCard(
           'checkin-fisico', 'Fisico',
-          <>{physicalState}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          <>{physicalState}<span className="text-caption font-semibold text-muted">/10</span></>,
           getSliderLabel(physicalState, PHYSICAL_LABELS), getSliderColor(physicalState),
           slider('checkin-fisico', physicalState, setPhysicalState),
-          ['Esausto', 'Nella media', 'Perfetto'],
         )}
 
         {sliderCard(
           'checkin-sonno', 'Sonno',
-          <>{sleepHours}<span className="text-body-sm font-semibold text-muted">h</span></>,
+          <>{sleepHours}<span className="text-caption font-semibold text-muted">h</span></>,
           sleepHours < 6 ? 'Poco' : sleepHours >= 8 ? 'Ottimo' : 'Nella norma',
           sleepHours < 6 ? 'text-warning' : sleepHours >= 8 ? 'text-accent-glow' : 'text-forest-400',
           <input
@@ -188,31 +183,27 @@ export default function DailyCheckinModal({ userId, onComplete, onSkip }: DailyC
             onChange={e => setSleepHours(parseFloat(e.target.value))}
             className="w-full cursor-pointer"
           />,
-          ['4h', '8h', '12h'],
         )}
 
         {sliderCard(
           'checkin-recupero', 'Recupero',
-          <>{recoveryQuality}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          <>{recoveryQuality}<span className="text-caption font-semibold text-muted">/10</span></>,
           getSliderLabel(recoveryQuality, RECOVERY_LABELS), getSliderColor(recoveryQuality),
           slider('checkin-recupero', recoveryQuality, setRecoveryQuality),
-          ['Esausto', 'Normale', 'Fresco'],
         )}
 
         {sliderCard(
           'checkin-mentale', 'Testa',
-          <>{mentalState}<span className="text-body-sm font-semibold text-muted">/10</span></>,
+          <>{mentalState}<span className="text-caption font-semibold text-muted">/10</span></>,
           getSliderLabel(mentalState, MENTAL_LABELS), getSliderColor(mentalState),
           slider('checkin-mentale', mentalState, setMentalState),
-          ['Altrove', 'Normale', 'Lucido'],
         )}
 
         {sliderCard(
           'checkin-presenza', 'Presente ieri',
-          <>{presenceYesterday}<span className="text-body-sm font-semibold text-muted">/10</span></>,
-          `Ieri, durante la giornata: ${getSliderLabel(presenceYesterday, PRESENCE_LABELS).toLowerCase()}`, getSliderColor(presenceYesterday),
+          <>{presenceYesterday}<span className="text-caption font-semibold text-muted">/10</span></>,
+          getSliderLabel(presenceYesterday, PRESENCE_LABELS), getSliderColor(presenceYesterday),
           slider('checkin-presenza', presenceYesterday, setPresenceYesterday),
-          ['Mai', 'A momenti', 'Quasi sempre'],
         )}
 
         {needsHealthConsent && (
