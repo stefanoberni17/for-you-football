@@ -44,6 +44,8 @@ ALIAS = {
     # "Pull-Up" di Everfit = il gradino 5 della scala di tirata (v1), NON l'esercizio v2 fpa-trazioni: dal 12/10 il v2
     # si chiama "Pull-Up" e senza alias vincerebbe lui (e il blocco B1 chiederebbe la sbarra come attrezzatura)
     "pull-up": "pull-5",
+    "panca inclinata con manubri (flyes)": "fpa-bench-flyes-fy",  # doppione tolto da Ste il 12/10: stesso video
+    "incline bench dumbbell flyes": "fpa-bench-flyes-fy",
     "dips - chest version": "fpa-dips", "barbell bench press": "fpa-panca-piana-con-bilanciere",
     "barbell squat": "fpb-squat", "barbell stiff leg romanian deadlift": "fpb-stacco-rumeno",
     "calves raises": "fpb-calf-raises", "single leg fascia rdl": "fasc-fy-towe-slrdl", "fascia single leg rdl": "fasc-fy-towe-slrdl", "fascia single leg runner (towel)": "fasc-fy-towe-slrdl",

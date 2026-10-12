@@ -1280,7 +1280,7 @@
   }
  },
  {
-  "nome": "Incline Dumbbell Flyes (FY)",
+  "nome": "Incline Dumbbell Fly to Press (FY)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 4,
@@ -1305,19 +1305,19 @@
   "scheda": {
    "esecuzione": [
     "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
-    "Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.",
-    "Chiudi con lo stesso arco contraendo il petto, senza battere i manubri in alto.",
+    "Apri le braccia in un arco ampio e lento, come nelle aperture, fino a sentire allungare il petto.",
+    "In basso piega i gomiti e porta i manubri all'altezza del petto, come in una distensione.",
+    "Spingi verso l'alto fino alle braccia distese e riparti con la discesa ad arco.",
     "Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate."
    ],
    "errori": [
-    "Piegare troppo i gomiti: diventa una distensione.",
-    "Scendere oltre il livello delle spalle con carico alto.",
-    "Inarcare la schiena."
+    "Scendere di colpo: la discesa ad arco è la parte che allena.",
+    "Piegare i gomiti già in discesa: diventa solo una distensione.",
+    "Inarcare la schiena nella spinta."
    ],
-   "piu_facile": "Manubri più leggeri, escursione ridotta.",
-   "piu_difficile": "Pausa di 2 secondi in apertura.",
-   "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto.",
-   "da_confermare": "Stesso video di 'Incline Bench Dumbbell Flyes' e c'è anche 'Incline Dumbbell Flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?"
+   "piu_facile": "Manubri più leggeri, arco meno profondo.",
+   "piu_difficile": "Discesa in 4 secondi, pausa di 1 secondo in basso.",
+   "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto."
   }
  },
  {
@@ -1398,7 +1398,7 @@
   }
  },
  {
-  "nome": "Incline Dumbbell Flyes",
+  "nome": "Incline Dumbbell Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1422,19 +1422,19 @@
   "id": "fpa-incline-dumbbell-flyes",
   "scheda": {
    "esecuzione": [
-    "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
-    "Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.",
-    "Chiudi con lo stesso arco contraendo il petto.",
+    "Sdraiato su una panca inclinata, un manubrio per mano all'altezza del petto, gomiti sotto i polsi.",
+    "Spingi i manubri verso l'alto fino alle braccia distese, avvicinandoli in cima senza farli toccare.",
+    "Scendi in controllo fino ai manubri all'altezza del petto, gomiti a circa 45° dal busto.",
     "Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate."
    ],
    "errori": [
-    "Piegare troppo i gomiti: diventa una distensione.",
-    "Scendere troppo con carico alto.",
-    "Inarcare la schiena."
+    "Gomiti che si aprono troppo di lato.",
+    "Inarcare la schiena per spingere.",
+    "Non arrivare alla distensione completa."
    ],
-   "piu_facile": "Manubri più leggeri, escursione ridotta.",
-   "piu_difficile": "Pausa di 2 secondi in apertura.",
-   "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto."
+   "piu_facile": "Manubri più leggeri, panca meno inclinata.",
+   "piu_difficile": "Più carico, o discesa in 3 secondi.",
+   "sicurezza": "Fastidio alla spalla: riduci il carico o l'inclinazione."
   }
  },
  {
@@ -1600,9 +1600,9 @@
   "tags": [],
   "azione": "importa",
   "nome_everfit": "Panca Inclinata Con Manubri (Flyes)",
-  "note": null,
+  "note": "[12/10: doppione di fpa-bench-flyes-fy (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-panca-inclinata-con-manubri-flyes",
@@ -1994,7 +1994,8 @@
     "In piedi, bilanciere in mano con presa prona, ginocchia piegate, busto inclinato in avanti a circa 45° con la schiena neutra.",
     "Tira il bilanciere verso l'addome portando i gomiti indietro e vicino al corpo.",
     "Pausa di 1 secondo con le scapole unite, poi scendi in controllo.",
-    "Il busto resta fermo. Fai le ripetizioni indicate."
+    "Il busto resta fermo. Fai le ripetizioni indicate.",
+    "Si fa anche con i manubri, uno per mano, con la stessa meccanica."
    ],
    "errori": [
     "Busto che si alza e si abbassa per aiutare.",
@@ -2118,12 +2119,11 @@
    ],
    "piu_facile": "Mano su un rialzo.",
    "piu_difficile": "Piedi più vicini, o mano a terra in deficit.",
-   "sicurezza": "Solo con parte alta e core forti. Fastidio al polso o al gomito: fermati.",
-   "da_confermare": "Esiste anche 'One-Arm Push-Up (Basic)' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto."
+   "sicurezza": "Solo con parte alta e core forti. Fastidio al polso o al gomito: fermati."
   }
  },
  {
-  "nome": "One-Arm Deficit Push-Up (PRO)",
+  "nome": "One-Arm Deep Push-Up (PRO)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -2147,19 +2147,20 @@
   "id": "fpa-one-arm-push-up-deep-pro",
   "scheda": {
    "esecuzione": [
-    "Plank alto su una mano appoggiata su un rialzo basso (disco o parallettes), piedi larghi, mano libera dietro la schiena.",
-    "Scendi in controllo oltre il livello della mano, finché il petto scende sotto l'appoggio.",
-    "Spingi fino al braccio disteso, busto parallelo al pavimento.",
+    "Due modi: mano d'appoggio su un rialzo basso (disco o parallettes) e piedi a terra, oppure mano a terra e piedi sollevati su una sedia o una panca.",
+    "Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.",
+    "Scendi in controllo fino a toccare l'appoggio con il petto: il petto va sotto il livello della mano.",
+    "Spingi fino al braccio disteso, busto che non ruota.",
     "Fai le ripetizioni indicate, poi cambia braccio."
    ],
    "errori": [
     "Busto che ruota.",
     "Bacino che cede o che sale: il corpo resta in linea.",
-    "Scendere di colpo."
+    "Fermarsi a metà: la profondità è il senso dell'esercizio."
    ],
-   "piu_facile": "Piegamenti a un braccio senza deficit.",
-   "piu_difficile": "Piedi più vicini, o deficit più alto.",
-   "sicurezza": "Solo dopo i piegamenti a un braccio puliti. Fastidio alla spalla in basso: riduci il deficit."
+   "piu_facile": "Piegamenti a un braccio a terra, senza deficit.",
+   "piu_difficile": "Piedi più vicini, o rialzo più alto.",
+   "sicurezza": "Solo dopo i piegamenti a un braccio puliti. Fastidio alla spalla in basso: riduci la profondità."
   }
  },
  {
@@ -2226,14 +2227,14 @@
   "scheda": {
    "esecuzione": [
     "Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.",
-    "Scendi in controllo piegando il gomito vicino al corpo, busto che resta quasi parallelo al pavimento.",
-    "Spingi fino al braccio disteso.",
-    "Fai le ripetizioni indicate, poi cambia braccio."
+    "Scendi in controllo piegando il gomito, busto che resta quasi parallelo al pavimento.",
+    "Il gomito può stare vicino al corpo o più largo: largo lavora di più il petto, stretto lavora di più il braccio.",
+    "Spingi fino al braccio disteso. Fai le ripetizioni indicate, poi cambia braccio."
    ],
    "errori": [
     "Busto che ruota verso l'alto.",
     "Bacino che cede o che sale: il corpo resta in linea.",
-    "Gomito che si apre di lato."
+    "Scendere di colpo."
    ],
    "piu_facile": "Mano su un rialzo.",
    "piu_difficile": "Piedi più vicini.",
@@ -4830,24 +4831,23 @@
   "id": "fpa-spinta-isometrica-al-muro-frontale",
   "scheda": {
    "esecuzione": [
-    "Di fronte a un muro, mani appoggiate all'altezza delle spalle, corpo inclinato in avanti in linea, un piede avanti e uno indietro come nella spinta dello sprint.",
-    "Spingi il muro con tutta la forza, come se volessi spostarlo, tenendo il corpo rigido dai talloni alla testa.",
-    "Respira con regolarità, addome e glutei contratti.",
-    "Tieni per il tempo indicato, poi cambia la gamba davanti."
+    "Di fronte a un muro, mani appoggiate all'altezza delle spalle, corpo inclinato in avanti in linea dai talloni alla testa.",
+    "Un piede solo a terra, dietro; l'altra gamba sollevata con il ginocchio avanti e alto, come nella spinta dello sprint.",
+    "Spingi il muro con tutto il corpo, come se volessi spostarlo: la spinta parte dal piede a terra e passa per glutei, addome e braccia.",
+    "Respira con regolarità, corpo rigido. Tieni per il tempo indicato, poi cambia gamba."
    ],
    "errori": [
     "Bacino che cede o che sale: il corpo resta in linea.",
-    "Trattenere il respiro.",
-    "Spingere solo con le braccia: la spinta parte dai piedi."
+    "Spingere solo con le braccia: la spinta parte dal piede.",
+    "Ginocchio che scende: resta alto come nello sprint."
    ],
-   "piu_facile": "Inclinazione minore, tempo più corto.",
-   "piu_difficile": "Inclinazione maggiore, o su una gamba sola.",
-   "sicurezza": "Niente dolore alle spalle durante la spinta: se compare, fermati.",
-   "da_confermare": "Dalla miniatura: inclinato in avanti con le mani sulla porta, un piede avanti. Confermi? La spinta è con tutto il corpo?"
+   "piu_facile": "Entrambi i piedi a terra, inclinazione minore.",
+   "piu_difficile": "Inclinazione maggiore, tempo più lungo.",
+   "sicurezza": "Fastidio alle spalle durante la spinta: fermati."
   }
  },
  {
-  "nome": "Isometric Wall Push (Lateral, Outside Arm)",
+  "nome": "Isometric Wall Push (Lateral, Outer Leg)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4872,24 +4872,23 @@
   "id": "fpa-spinta-isometrica-al-muro-laterale-esterno",
   "scheda": {
    "esecuzione": [
-    "Di lato a un muro, in posizione di corsa: gamba vicina al muro sollevata con il ginocchio alto, piede lontano a terra.",
-    "Il braccio lontano dal muro passa davanti al corpo e spinge il muro con il pugno o l'avambraccio, come nell'oscillazione della corsa.",
-    "Spingi forte tenendo il busto fermo e il piede a terra ben piantato: il lavoro è del core e della spalla.",
-    "Tieni per il tempo indicato, poi cambia lato."
+    "Di lato a un muro, il gomito e l'avambraccio del braccio vicino appoggiati al muro all'altezza della spalla.",
+    "Gamba vicina al muro sollevata con il ginocchio alto; a terra resta solo il piede lontano dal muro.",
+    "Spingi il muro di lato con tutto il corpo: la spinta parte dal piede a terra, passa per anca e addome e arriva al gomito.",
+    "Busto fermo, respiro regolare. Tieni per il tempo indicato, poi cambia lato."
    ],
    "errori": [
-    "Busto che ruota verso il muro.",
+    "Appoggiarsi al muro invece di spingerlo.",
     "Piede d'appoggio che perde la presa.",
-    "Trattenere il respiro."
+    "Ginocchio che scende."
    ],
    "piu_facile": "Entrambi i piedi a terra, tempo più corto.",
    "piu_difficile": "Ginocchio più alto, spinta più forte.",
-   "sicurezza": "Fastidio alla spalla: riduci la spinta.",
-   "da_confermare": "Dalla miniatura: posizione di corsa, braccio che spinge il muro passando davanti al corpo. Ho scritto 'esterno' = braccio lontano dal muro. Correggimi se è il contrario."
+   "sicurezza": "Fastidio alla spalla: riduci la spinta."
   }
  },
  {
-  "nome": "Isometric Wall Push (Lateral, Inside Arm)",
+  "nome": "Isometric Wall Push (Lateral, Inner Leg)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4914,20 +4913,19 @@
   "id": "fpa-spinta-isometrica-al-muro-laterale-interno",
   "scheda": {
    "esecuzione": [
-    "Di lato a un muro, in posizione di corsa: gamba lontana dal muro sollevata con il ginocchio alto, piede vicino a terra.",
-    "Il braccio vicino al muro spinge con il gomito o l'avambraccio, piegato come nell'oscillazione della corsa.",
-    "Spingi forte tenendo il busto fermo e il piede a terra ben piantato.",
-    "Tieni per il tempo indicato, poi cambia lato."
+    "Di lato a un muro, il gomito e l'avambraccio del braccio vicino appoggiati al muro all'altezza della spalla.",
+    "Gamba lontana dal muro sollevata con il ginocchio alto; a terra resta solo il piede vicino al muro.",
+    "Spingi il muro di lato con tutto il corpo: la spinta parte dal piede vicino al muro, passa per anca e addome e arriva al gomito.",
+    "Busto fermo, respiro regolare. Tieni per il tempo indicato, poi cambia lato."
    ],
    "errori": [
-    "Busto che si appoggia al muro invece di spingere.",
+    "Appoggiarsi al muro invece di spingerlo.",
     "Piede d'appoggio che perde la presa.",
-    "Trattenere il respiro."
+    "Ginocchio che scende."
    ],
    "piu_facile": "Entrambi i piedi a terra, tempo più corto.",
    "piu_difficile": "Ginocchio più alto, spinta più forte.",
-   "sicurezza": "Fastidio alla spalla: riduci la spinta.",
-   "da_confermare": "Dalla miniatura: braccio vicino al muro che spinge con il gomito, gamba lontana sollevata. Confermi?"
+   "sicurezza": "Fastidio alla spalla: riduci la spinta."
   }
  },
  {

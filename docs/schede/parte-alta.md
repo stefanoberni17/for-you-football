@@ -1,17 +1,9 @@
 # Schede esercizi: Forza parte alta
 
-Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 46 schede su 46 esercizi attivi del gruppo.
+Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 45 schede su 45 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## Da confermare (5)
-
-- **Incline Dumbbell Flyes (FY)**: Stesso video di 'Incline Bench Dumbbell Flyes' e c'è anche 'Incline Dumbbell Flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?
-- **One-Arm Push-Up**: Esiste anche 'One-Arm Push-Up (Basic)' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto.
-- **Isometric Wall Push (Front)**: Dalla miniatura: inclinato in avanti con le mani sulla porta, un piede avanti. Confermi? La spinta è con tutto il corpo?
-- **Isometric Wall Push (Lateral, Outside Arm)**: Dalla miniatura: posizione di corsa, braccio che spinge il muro passando davanti al corpo. Ho scritto 'esterno' = braccio lontano dal muro. Correggimi se è il contrario.
-- **Isometric Wall Push (Lateral, Inside Arm)**: Dalla miniatura: braccio vicino al muro che spinge con il gomito, gamba lontana sollevata. Confermi?
-
-## forza-parte-alta (46)
+## forza-parte-alta (45)
 
 ### Knee Raises on Dip Bars
 `fpa-knee-raises-con-barra-dip` · bilaterale · reps · sbarra · senza video
@@ -41,20 +33,20 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi, più carico, o discesa in 3 secondi.
 **Sicurezza:** Fastidio alla spalla nella rotazione: riduci il carico o l'escursione.
 
-### Incline Dumbbell Flyes (FY)
+### Incline Dumbbell Fly to Press (FY)
 `fpa-bench-flyes-fy` · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=8QW9vvVUFWE)
 
 **Esecuzione**
 1. Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.
-2. Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.
-3. Chiudi con lo stesso arco contraendo il petto, senza battere i manubri in alto.
-4. Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate.
+2. Apri le braccia in un arco ampio e lento, come nelle aperture, fino a sentire allungare il petto.
+3. In basso piega i gomiti e porta i manubri all'altezza del petto, come in una distensione.
+4. Spingi verso l'alto fino alle braccia distese e riparti con la discesa ad arco.
+5. Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate.
 
-**Errori comuni:** Piegare troppo i gomiti: diventa una distensione. Scendere oltre il livello delle spalle con carico alto. Inarcare la schiena.
-**Più facile:** Manubri più leggeri, escursione ridotta.
-**Più difficile:** Pausa di 2 secondi in apertura.
+**Errori comuni:** Scendere di colpo: la discesa ad arco è la parte che allena. Piegare i gomiti già in discesa: diventa solo una distensione. Inarcare la schiena nella spinta.
+**Più facile:** Manubri più leggeri, arco meno profondo.
+**Più difficile:** Discesa in 4 secondi, pausa di 1 secondo in basso.
 **Sicurezza:** Fastidio alla spalla in apertura: ferma l'arco più in alto.
-**DA CONFERMARE:** Stesso video di 'Incline Bench Dumbbell Flyes' e c'è anche 'Incline Dumbbell Flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?
 
 ### Cuban Press
 `fpa-cuban-press` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=OeD5pWAeRFo)
@@ -84,19 +76,19 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Dip zavorrati, o discesa in 3 secondi.
 **Sicurezza:** Dolore alla spalla in basso: riduci la profondità o fermati.
 
-### Incline Dumbbell Flyes
+### Incline Dumbbell Press
 `fpa-incline-dumbbell-flyes` · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=31e9p6cq070)
 
 **Esecuzione**
-1. Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.
-2. Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.
-3. Chiudi con lo stesso arco contraendo il petto.
+1. Sdraiato su una panca inclinata, un manubrio per mano all'altezza del petto, gomiti sotto i polsi.
+2. Spingi i manubri verso l'alto fino alle braccia distese, avvicinandoli in cima senza farli toccare.
+3. Scendi in controllo fino ai manubri all'altezza del petto, gomiti a circa 45° dal busto.
 4. Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate.
 
-**Errori comuni:** Piegare troppo i gomiti: diventa una distensione. Scendere troppo con carico alto. Inarcare la schiena.
-**Più facile:** Manubri più leggeri, escursione ridotta.
-**Più difficile:** Pausa di 2 secondi in apertura.
-**Sicurezza:** Fastidio alla spalla in apertura: ferma l'arco più in alto.
+**Errori comuni:** Gomiti che si aprono troppo di lato. Inarcare la schiena per spingere. Non arrivare alla distensione completa.
+**Più facile:** Manubri più leggeri, panca meno inclinata.
+**Più difficile:** Più carico, o discesa in 3 secondi.
+**Sicurezza:** Fastidio alla spalla: riduci il carico o l'inclinazione.
 
 ### Kettlebell Clean and Press
 `fpa-kettlebell-clean-to-push` · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=i3Z3LcUUYLk&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=9)
@@ -153,20 +145,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Manubri più leggeri, o seduto.
 **Più difficile:** Più carico, o un manubrio alla volta.
 **Sicurezza:** Fastidio lombare: seduto. Fastidio alla spalla: riduci il carico.
-
-### Incline Bench Dumbbell Flyes
-`fpa-panca-inclinata-con-manubri-flyes` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/8QW9vvVUFWE?feature=share)
-
-**Esecuzione**
-1. Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.
-2. Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.
-3. Chiudi con lo stesso arco contraendo il petto.
-4. Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate.
-
-**Errori comuni:** Piegare troppo i gomiti: diventa una distensione. Scendere troppo con carico alto. Inarcare la schiena.
-**Più facile:** Manubri più leggeri, escursione ridotta.
-**Più difficile:** Pausa di 2 secondi in apertura.
-**Sicurezza:** Fastidio alla spalla in apertura: ferma l'arco più in alto.
 
 ### Barbell Bench Press (Legs Raised)
 `fpa-panca-piana-con-bulanciere-gambe-in-aria` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/Bnjs6o0og3I?feature=share)
@@ -288,6 +266,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 2. Tira il bilanciere verso l'addome portando i gomiti indietro e vicino al corpo.
 3. Pausa di 1 secondo con le scapole unite, poi scendi in controllo.
 4. Il busto resta fermo. Fai le ripetizioni indicate.
+5. Si fa anche con i manubri, uno per mano, con la stessa meccanica.
 
 **Errori comuni:** Busto che si alza e si abbassa per aiutare. Schiena che si curva. Tirare con le braccia invece che con la schiena: pensa ai gomiti.
 **Più facile:** Meno carico, busto meno inclinato.
@@ -335,21 +314,21 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Mano su un rialzo.
 **Più difficile:** Piedi più vicini, o mano a terra in deficit.
 **Sicurezza:** Solo con parte alta e core forti. Fastidio al polso o al gomito: fermati.
-**DA CONFERMARE:** Esiste anche 'One-Arm Push-Up (Basic)' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto.
 
-### One-Arm Deficit Push-Up (PRO)
+### One-Arm Deep Push-Up (PRO)
 `fpa-one-arm-push-up-deep-pro` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
-1. Plank alto su una mano appoggiata su un rialzo basso (disco o parallettes), piedi larghi, mano libera dietro la schiena.
-2. Scendi in controllo oltre il livello della mano, finché il petto scende sotto l'appoggio.
-3. Spingi fino al braccio disteso, busto parallelo al pavimento.
-4. Fai le ripetizioni indicate, poi cambia braccio.
+1. Due modi: mano d'appoggio su un rialzo basso (disco o parallettes) e piedi a terra, oppure mano a terra e piedi sollevati su una sedia o una panca.
+2. Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.
+3. Scendi in controllo fino a toccare l'appoggio con il petto: il petto va sotto il livello della mano.
+4. Spingi fino al braccio disteso, busto che non ruota.
+5. Fai le ripetizioni indicate, poi cambia braccio.
 
-**Errori comuni:** Busto che ruota. Bacino che cede o che sale: il corpo resta in linea. Scendere di colpo.
-**Più facile:** Piegamenti a un braccio senza deficit.
-**Più difficile:** Piedi più vicini, o deficit più alto.
-**Sicurezza:** Solo dopo i piegamenti a un braccio puliti. Fastidio alla spalla in basso: riduci il deficit.
+**Errori comuni:** Busto che ruota. Bacino che cede o che sale: il corpo resta in linea. Fermarsi a metà: la profondità è il senso dell'esercizio.
+**Più facile:** Piegamenti a un braccio a terra, senza deficit.
+**Più difficile:** Piedi più vicini, o rialzo più alto.
+**Sicurezza:** Solo dopo i piegamenti a un braccio puliti. Fastidio alla spalla in basso: riduci la profondità.
 
 ### One-Arm Incline Push-Up
 `fpa-one-arm-push-up-incline` · per lato · reps · corpo libero · senza video
@@ -370,11 +349,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.
-2. Scendi in controllo piegando il gomito vicino al corpo, busto che resta quasi parallelo al pavimento.
-3. Spingi fino al braccio disteso.
-4. Fai le ripetizioni indicate, poi cambia braccio.
+2. Scendi in controllo piegando il gomito, busto che resta quasi parallelo al pavimento.
+3. Il gomito può stare vicino al corpo o più largo: largo lavora di più il petto, stretto lavora di più il braccio.
+4. Spingi fino al braccio disteso. Fai le ripetizioni indicate, poi cambia braccio.
 
-**Errori comuni:** Busto che ruota verso l'alto. Bacino che cede o che sale: il corpo resta in linea. Gomito che si apre di lato.
+**Errori comuni:** Busto che ruota verso l'alto. Bacino che cede o che sale: il corpo resta in linea. Scendere di colpo.
 **Più facile:** Mano su un rialzo.
 **Più difficile:** Piedi più vicini.
 **Sicurezza:** Fastidio al polso o al gomito: fermati.
@@ -397,46 +376,43 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fpa-spinta-isometrica-al-muro-frontale` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=_mkVRSQ9_Qw)
 
 **Esecuzione**
-1. Di fronte a un muro, mani appoggiate all'altezza delle spalle, corpo inclinato in avanti in linea, un piede avanti e uno indietro come nella spinta dello sprint.
-2. Spingi il muro con tutta la forza, come se volessi spostarlo, tenendo il corpo rigido dai talloni alla testa.
-3. Respira con regolarità, addome e glutei contratti.
-4. Tieni per il tempo indicato, poi cambia la gamba davanti.
+1. Di fronte a un muro, mani appoggiate all'altezza delle spalle, corpo inclinato in avanti in linea dai talloni alla testa.
+2. Un piede solo a terra, dietro; l'altra gamba sollevata con il ginocchio avanti e alto, come nella spinta dello sprint.
+3. Spingi il muro con tutto il corpo, come se volessi spostarlo: la spinta parte dal piede a terra e passa per glutei, addome e braccia.
+4. Respira con regolarità, corpo rigido. Tieni per il tempo indicato, poi cambia gamba.
 
-**Errori comuni:** Bacino che cede o che sale: il corpo resta in linea. Trattenere il respiro. Spingere solo con le braccia: la spinta parte dai piedi.
-**Più facile:** Inclinazione minore, tempo più corto.
-**Più difficile:** Inclinazione maggiore, o su una gamba sola.
-**Sicurezza:** Niente dolore alle spalle durante la spinta: se compare, fermati.
-**DA CONFERMARE:** Dalla miniatura: inclinato in avanti con le mani sulla porta, un piede avanti. Confermi? La spinta è con tutto il corpo?
+**Errori comuni:** Bacino che cede o che sale: il corpo resta in linea. Spingere solo con le braccia: la spinta parte dal piede. Ginocchio che scende: resta alto come nello sprint.
+**Più facile:** Entrambi i piedi a terra, inclinazione minore.
+**Più difficile:** Inclinazione maggiore, tempo più lungo.
+**Sicurezza:** Fastidio alle spalle durante la spinta: fermati.
 
-### Isometric Wall Push (Lateral, Outside Arm)
+### Isometric Wall Push (Lateral, Outer Leg)
 `fpa-spinta-isometrica-al-muro-laterale-esterno` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=pNlUIME0BEY)
 
 **Esecuzione**
-1. Di lato a un muro, in posizione di corsa: gamba vicina al muro sollevata con il ginocchio alto, piede lontano a terra.
-2. Il braccio lontano dal muro passa davanti al corpo e spinge il muro con il pugno o l'avambraccio, come nell'oscillazione della corsa.
-3. Spingi forte tenendo il busto fermo e il piede a terra ben piantato: il lavoro è del core e della spalla.
-4. Tieni per il tempo indicato, poi cambia lato.
+1. Di lato a un muro, il gomito e l'avambraccio del braccio vicino appoggiati al muro all'altezza della spalla.
+2. Gamba vicina al muro sollevata con il ginocchio alto; a terra resta solo il piede lontano dal muro.
+3. Spingi il muro di lato con tutto il corpo: la spinta parte dal piede a terra, passa per anca e addome e arriva al gomito.
+4. Busto fermo, respiro regolare. Tieni per il tempo indicato, poi cambia lato.
 
-**Errori comuni:** Busto che ruota verso il muro. Piede d'appoggio che perde la presa. Trattenere il respiro.
+**Errori comuni:** Appoggiarsi al muro invece di spingerlo. Piede d'appoggio che perde la presa. Ginocchio che scende.
 **Più facile:** Entrambi i piedi a terra, tempo più corto.
 **Più difficile:** Ginocchio più alto, spinta più forte.
 **Sicurezza:** Fastidio alla spalla: riduci la spinta.
-**DA CONFERMARE:** Dalla miniatura: posizione di corsa, braccio che spinge il muro passando davanti al corpo. Ho scritto 'esterno' = braccio lontano dal muro. Correggimi se è il contrario.
 
-### Isometric Wall Push (Lateral, Inside Arm)
+### Isometric Wall Push (Lateral, Inner Leg)
 `fpa-spinta-isometrica-al-muro-laterale-interno` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=fTr5Gj6KgUc)
 
 **Esecuzione**
-1. Di lato a un muro, in posizione di corsa: gamba lontana dal muro sollevata con il ginocchio alto, piede vicino a terra.
-2. Il braccio vicino al muro spinge con il gomito o l'avambraccio, piegato come nell'oscillazione della corsa.
-3. Spingi forte tenendo il busto fermo e il piede a terra ben piantato.
-4. Tieni per il tempo indicato, poi cambia lato.
+1. Di lato a un muro, il gomito e l'avambraccio del braccio vicino appoggiati al muro all'altezza della spalla.
+2. Gamba lontana dal muro sollevata con il ginocchio alto; a terra resta solo il piede vicino al muro.
+3. Spingi il muro di lato con tutto il corpo: la spinta parte dal piede vicino al muro, passa per anca e addome e arriva al gomito.
+4. Busto fermo, respiro regolare. Tieni per il tempo indicato, poi cambia lato.
 
-**Errori comuni:** Busto che si appoggia al muro invece di spingere. Piede d'appoggio che perde la presa. Trattenere il respiro.
+**Errori comuni:** Appoggiarsi al muro invece di spingerlo. Piede d'appoggio che perde la presa. Ginocchio che scende.
 **Più facile:** Entrambi i piedi a terra, tempo più corto.
 **Più difficile:** Ginocchio più alto, spinta più forte.
 **Sicurezza:** Fastidio alla spalla: riduci la spinta.
-**DA CONFERMARE:** Dalla miniatura: braccio vicino al muro che spinge con il gomito, gamba lontana sollevata. Confermi?
 
 ### Crow Pose Progression
 `fpa-crow-pose-progression` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=ckQ2c9TSbc4)
