@@ -1,6 +1,6 @@
 [
  {
-  "nome": "Affondi in camminata",
+  "nome": "Walking Lunge",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -38,7 +38,7 @@
   }
  },
  {
-  "nome": "Affondi sul posto",
+  "nome": "Lunge in Place",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -74,7 +74,7 @@
   }
  },
  {
-  "nome": "Estensione del ginocchio con elastico",
+  "nome": "Band Knee Extension (FY)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -96,7 +96,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-fy-knee-extension",
-  "nome_en": "FY Knee Extension",
   "scheda": {
    "esecuzione": [
     "Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.",
@@ -115,7 +114,7 @@
   }
  },
  {
-  "nome": "Estensione del ginocchio",
+  "nome": "Knee Extension",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -138,7 +137,6 @@
   "sottogruppo": null,
   "video_nota": null,
   "id": "fpb-knee-extension",
-  "nome_en": "Knee Extension",
   "scheda": {
    "esecuzione": [
     "Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.",
@@ -157,7 +155,7 @@
   }
  },
  {
-  "nome": "Affondo isometrico",
+  "nome": "Isometric Lunge Hold",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -200,7 +198,7 @@
   }
  },
  {
-  "nome": "Affondo isometrico con tallone sollevato",
+  "nome": "Isometric Lunge Hold (Heel Raised)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -227,7 +225,6 @@
    "Poco o niente"
   ],
   "id": "fpb-affondo-isometrico-con-tallone-sollevato",
-  "nome_en": "Affondo Isometrico Con Tallone Sollevato",
   "scheda": {
    "esecuzione": [
     "Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.",
@@ -246,7 +243,7 @@
   }
  },
  {
-  "nome": "Affondo profondo (ATG)",
+  "nome": "ATG Lunge",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -273,7 +270,6 @@
    "Poco o niente"
   ],
   "id": "fpb-atg-lunge",
-  "nome_en": "ATG Lunge",
   "scheda": {
    "esecuzione": [
     "Passo lungo in avanti, piede davanti ben piantato.",
@@ -292,7 +288,7 @@
   }
  },
  {
-  "nome": "Split squat profondo (ATG)",
+  "nome": "ATG Split Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -322,7 +318,6 @@
    "Poco o niente"
   ],
   "id": "fpb-atg-split-squat",
-  "nome_en": "atg split squat",
   "scheda": {
    "esecuzione": [
     "Piedi in posizione di affondo lungo. Mano a un appoggio se serve.",
@@ -341,7 +336,7 @@
   }
  },
  {
-  "nome": "Sollevamenti sui polpacci",
+  "nome": "Calf Raise",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -366,7 +361,6 @@
    "Poco o niente"
   ],
   "id": "fpb-calf-raises",
-  "nome_en": "Calf raises",
   "scheda": {
    "esecuzione": [
     "In piedi con l'avampiede sul bordo di un gradino, tallone nel vuoto, una mano a un appoggio.",
@@ -385,7 +379,7 @@
   }
  },
  {
-  "nome": "Camminata del contadino (farmer's walk)",
+  "nome": "Farmer's Walk",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -406,7 +400,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-farmers-walk",
-  "nome_en": "Farmers Walk",
   "scheda": {
    "esecuzione": [
     "Un manubrio o kettlebell pesante per mano, lungo i fianchi, presa salda.",
@@ -425,7 +418,7 @@
   }
  },
  {
-  "nome": "Front squat con bilanciere",
+  "nome": "Barbell Front Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 4,
@@ -445,7 +438,6 @@
   "solo_livello": false,
   "nota_livello": "anche B ma forte parte bassa in palestra con squat almeno 1.4 bw",
   "id": "fpb-front-squat",
-  "nome_en": "front squat",
   "scheda": {
    "esecuzione": [
     "Bilanciere appoggiato davanti sulle spalle, gomiti alti, mani che lo tengono fermo.",
@@ -464,7 +456,7 @@
   }
  },
  {
-  "nome": "Step laterale sulla panca",
+  "nome": "Lateral Step-Up on Bench (FY)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -487,7 +479,6 @@
   "sottogruppo": null,
   "solo_livello": false,
   "id": "fpb-fy-lateral-step-up",
-  "nome_en": "FY Lateral Step Up",
   "scheda": {
    "esecuzione": [
     "Di fianco a una panca o un gradino alto, il piede più vicino appoggiato sopra con tutto il piede.",
@@ -506,7 +497,7 @@
   }
  },
  {
-  "nome": "Squat lento con pausa",
+  "nome": "Paused Tempo Squat (FY)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -525,7 +516,6 @@
   "sottogruppo": null,
   "descrizione": "Squat a corpo libero in versione For You: scendi lento (3\") fino in fondo, pausa 1\" in basso con talloni a terra, risali deciso. Braccia avanti per l'equilibrio.",
   "id": "fpb-fy-squat",
-  "nome_en": "FY Squat",
   "scheda": {
    "esecuzione": [
     "Piedi alla larghezza delle spalle, punte leggermente in fuori, braccia avanti per l'equilibrio.",
@@ -544,7 +534,7 @@
   }
  },
  {
-  "nome": "Hip thrust",
+  "nome": "Hip Thrust",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -565,7 +555,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-hip-thrust",
-  "nome_en": "Hip Thrust",
   "scheda": {
    "esecuzione": [
     "Spalle appoggiate sul bordo di una panca, piedi a terra alla larghezza del bacino, bilanciere (o disco) sul bacino.",
@@ -584,7 +573,7 @@
   }
  },
  {
-  "nome": "Squat a 90° con carico",
+  "nome": "Loaded Squat to 90°",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -602,7 +591,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-max-squat-90gradi",
-  "nome_en": "Max Squat 90gradi",
   "scheda": {
    "esecuzione": [
     "Bilanciere sulle spalle, piedi alla larghezza delle spalle, punte leggermente in fuori.",
@@ -621,7 +609,7 @@
   }
  },
  {
-  "nome": "Step di Patrick (discesa dal gradino)",
+  "nome": "Patrick Step-Down",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -639,7 +627,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-patrick-step-up",
-  "nome_en": "Patrick step up",
   "scheda": {
    "esecuzione": [
     "In piedi su un gradino basso o un disco, un piede sul bordo, l'altro nel vuoto davanti.",
@@ -658,7 +645,7 @@
   }
  },
  {
-  "nome": "Step di Poliquin (tallone rialzato)",
+  "nome": "Poliquin Step-Up",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -678,7 +665,6 @@
   "solo_livello": false,
   "nota_livello": "anche B ma deve essere in grado di fare 30 patrik step up",
   "id": "fpb-poliquin-step-up",
-  "nome_en": "Poliquin step up",
   "scheda": {
    "esecuzione": [
     "In piedi su un gradino basso, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa.",
@@ -697,7 +683,7 @@
   }
  },
  {
-  "nome": "Sissy squat",
+  "nome": "Sissy Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -724,7 +710,6 @@
    "Poco o niente"
   ],
   "id": "fpb-sissy-squat",
-  "nome_en": "sissy squat",
   "scheda": {
    "esecuzione": [
     "In piedi, piedi alla larghezza del bacino, mani a un appoggio leggero o libere.",
@@ -743,7 +728,7 @@
   }
  },
  {
-  "nome": "Sissy squat con appoggio",
+  "nome": "Supported Sissy Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -765,7 +750,6 @@
   "solo_livello": false,
   "nota_livello": "anche B con poche reps",
   "id": "fpb-sissy-squat-slide",
-  "nome_en": "Sissy Squat Slide",
   "scheda": {
    "esecuzione": [
     "In piedi con la schiena vicina a un palo o a una struttura, mani al petto o leggere sull'appoggio.",
@@ -784,7 +768,7 @@
   }
  },
  {
-  "nome": "Squat con bilanciere",
+  "nome": "Barbell Back Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -806,7 +790,6 @@
   "sottogruppo": null,
   "descrizione": "Piedi larghezza spalle, punte leggermente in fuori. Scendi portando il bacino indietro e giù fino a cosce parallele (o più giù se controlli), ginocchia in linea con i piedi, schiena neutra. Spingi dai talloni.",
   "id": "fpb-squat",
-  "nome_en": "Squat",
   "scheda": {
    "esecuzione": [
     "Bilanciere sulle spalle (sui trapezi, non sul collo), piedi alla larghezza delle spalle, punte leggermente in fuori.",
@@ -825,7 +808,7 @@
   }
  },
  {
-  "nome": "Squat bulgaro",
+  "nome": "Bulgarian Split Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -846,7 +829,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-squat-bulgaro",
-  "nome_en": "Squat Bulgaro",
   "scheda": {
    "esecuzione": [
     "Piede dietro appoggiato su una panca con il collo del piede, piede davanti a un passo lungo dalla panca.",
@@ -865,7 +847,7 @@
   }
  },
  {
-  "nome": "Stacco rumeno",
+  "nome": "Romanian Deadlift",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -886,7 +868,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-stacco-rumeno",
-  "nome_en": "Stacco Rumeno",
   "scheda": {
    "esecuzione": [
     "In piedi con il bilanciere (o i manubri) davanti alle cosce, piedi alla larghezza del bacino, ginocchia appena piegate.",
@@ -928,7 +909,7 @@
   "video_nota": null
  },
  {
-  "nome": "Seduta al muro",
+  "nome": "Wall Sit",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -953,7 +934,6 @@
    "Poco o niente"
   ],
   "id": "fpb-wall-sit",
-  "nome_en": "Wall sit",
   "scheda": {
    "esecuzione": [
     "Schiena contro il muro, piedi avanti alla larghezza del bacino.",
@@ -972,7 +952,7 @@
   }
  },
  {
-  "nome": "Nordic hamstring (discesa)",
+  "nome": "Nordic Hamstring (Eccentric)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -993,7 +973,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-nordic",
-  "nome_en": "Nordic",
   "scheda": {
    "esecuzione": [
     "In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.",
@@ -1012,7 +991,7 @@
   }
  },
  {
-  "nome": "Nordic hamstring curl",
+  "nome": "Nordic Hamstring Curl",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1038,7 +1017,6 @@
    "Poco o niente"
   ],
   "id": "fpb-nordic-hamstring",
-  "nome_en": "nordic hamstring",
   "scheda": {
    "esecuzione": [
     "In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.",
@@ -1057,7 +1035,7 @@
   }
  },
  {
-  "nome": "Nordic inverso",
+  "nome": "Reverse Nordic",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1087,7 +1065,6 @@
    "Poco o niente"
   ],
   "id": "fpb-reverse-nordic",
-  "nome_en": "reverse nordic",
   "scheda": {
    "esecuzione": [
     "In ginocchio sul tappetino, piedi distesi dietro, corpo dritto dalle ginocchia alla testa, glutei contratti.",
@@ -1106,7 +1083,7 @@
   }
  },
  {
-  "nome": "Ponte a una gamba",
+  "nome": "Single-Leg Glute Bridge",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1132,7 +1109,6 @@
    "Poco o niente"
   ],
   "id": "fpb-glute-bridge-ad-una-gamba",
-  "nome_en": "Glute bridge ad una gamba",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, un piede a terra vicino al gluteo, l'altra gamba sollevata, braccia lungo il corpo.",
@@ -1151,7 +1127,7 @@
   }
  },
  {
-  "nome": "Stacco rumeno su una gamba con salti e stacco di testa",
+  "nome": "Single-Leg RDL with Jumps and Header",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1170,7 +1146,6 @@
   "sottogruppo": null,
   "solo_livello": false,
   "id": "fpb-rdl-progression",
-  "nome_en": "Rdl Progression",
   "scheda": {
    "esecuzione": [
     "In piedi su una gamba, manubrio nella mano dello stesso lato del piede d'appoggio.",
@@ -1189,7 +1164,7 @@
   }
  },
  {
-  "nome": "Stacco rumeno su una gamba esplosivo",
+  "nome": "Explosive Single-Leg RDL",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1215,7 +1190,6 @@
    "Poco o niente"
   ],
   "id": "fpb-single-leg-rdl",
-  "nome_en": "single leg rdl",
   "scheda": {
    "esecuzione": [
     "In piedi su una gamba, ginocchio appena piegato, peso nella mano dello stesso lato del piede d'appoggio.",
@@ -2267,7 +2241,7 @@
   }
  },
  {
-  "nome": "Sollevamento delle ginocchia alla sbarra",
+  "nome": "Hanging Knee Raise",
   "qualita": "core",
   "attrezzatura": "sbarra",
   "difficolta": 2,
@@ -2286,7 +2260,6 @@
   "sottogruppo": null,
   "descrizione": "Appeso alla sbarra, braccia tese: porta le ginocchia al petto arrotolando il bacino, scendi lento senza dondolare. Spalle attive.",
   "id": "core2-hanging-knee-raises",
-  "nome_en": "Hanging Knee Raises",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con le braccia tese, spalle attive, corpo fermo.",
@@ -2305,7 +2278,7 @@
   }
  },
  {
-  "nome": "Plank di Copenhagen",
+  "nome": "Copenhagen Plank",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2331,7 +2304,6 @@
    "Poco o niente"
   ],
   "id": "core2-copenaghen-plank",
-  "nome_en": "copenaghen plank",
   "scheda": {
    "esecuzione": [
     "Sdraiato sul fianco, avambraccio a terra sotto la spalla, piede della gamba sopra appoggiato su una panca o un rialzo.",
@@ -2350,7 +2322,7 @@
   }
  },
  {
-  "nome": "Hollow hold",
+  "nome": "Hollow Hold",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -2368,7 +2340,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-holllow-hold",
-  "nome_en": "Holllow Hold",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, braccia distese dietro la testa, gambe distese.",
@@ -2440,7 +2411,7 @@
   ]
  },
  {
-  "nome": "Plank sulla palla",
+  "nome": "Plank on Ball",
   "qualita": "core",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -2458,7 +2429,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-plank-su-palla",
-  "nome_en": "Plank Su Palla",
   "scheda": {
    "esecuzione": [
     "Plank sugli avambracci con gli avambracci appoggiati su un pallone, piedi a terra alla larghezza del bacino.",
@@ -2496,7 +2466,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Plank laterale",
+  "nome": "Side Plank",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -2514,7 +2484,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-side-plank",
-  "nome_en": "Side Plank",
   "scheda": {
    "esecuzione": [
     "Sdraiato sul fianco, avambraccio a terra sotto la spalla, piedi uno sull'altro o uno davanti all'altro.",
@@ -2533,7 +2502,7 @@
   }
  },
  {
-  "nome": "Spinta alternata ai cavi",
+  "nome": "Alternating Cable Press (Core)",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2557,7 +2526,6 @@
   "solo_livello": false,
   "nota_livello": "riduci peso e ripetizioni",
   "id": "core2-spinta-alternata-cavi-core",
-  "nome_en": "Spinta alternata Cavi - Core",
   "scheda": {
    "esecuzione": [
     "Di fronte alla macchina a cavi, una maniglia per mano all'altezza del petto, gambe una davanti all'altra in posizione di spinta.",
@@ -2576,7 +2544,7 @@
   }
  },
  {
-  "nome": "Piedi alla sbarra",
+  "nome": "Toes to Bar",
   "qualita": "core",
   "attrezzatura": "sbarra",
   "difficolta": 2,
@@ -2597,7 +2565,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-toes-to-bar",
-  "nome_en": "Toes to Bar",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con le braccia tese, spalle attive, corpo fermo.",
@@ -2635,7 +2602,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Dragon flag raccolto",
+  "nome": "Tuck Dragon Flag",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2654,7 +2621,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "core2-dragon-flag-tuck",
-  "nome_en": "Dragon Flag Tuck",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena su una panca o a terra, mani che afferrano un appoggio dietro la testa.",
@@ -2673,7 +2639,7 @@
   }
  },
  {
-  "nome": "Dragon flag raccolto con discesa lenta",
+  "nome": "Tuck Dragon Flag (Slow Eccentric)",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2692,7 +2658,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "core2-dragon-flag-tuck-ecc",
-  "nome_en": "Dragon Flag Tuck + Ecc",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, mani che afferrano un appoggio dietro la testa, ginocchia raccolte al petto.",
@@ -2778,7 +2743,7 @@
   "solo_livello": true
  },
  {
-  "nome": "Split squat esplosivo con bilanciere",
+  "nome": "Explosive Barbell Split Squat (FY)",
   "qualita": "forza-esplosiva",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -2799,7 +2764,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fesp-fy-split-squat",
-  "nome_en": "FY Split Squat",
   "scheda": {
    "esecuzione": [
     "Bilanciere sulle spalle, un piede leggermente avanti e l'altro leggermente indietro, come nella posizione di partenza dello sprint.",
@@ -3111,7 +3075,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Plank con saltelli",
+  "nome": "Plank Jumps",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3130,7 +3094,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fasc-plank-jumps-fascia",
-  "nome_en": "Plank Jumps Fascia",
   "scheda": {
    "esecuzione": [
     "Parti in plank sulle mani: mani sotto le spalle, corpo in linea dalla testa ai talloni, addome attivo.",
@@ -4186,7 +4149,7 @@
   "descrizione": "Sprint in salita sulla distanza indicata: partenza da fermo, spinta massima, busto leggermente avanti. Torna in discesa camminando: il recupero è parte dell'esercizio."
  },
  {
-  "nome": "Circuito di equilibrio sullo skimmy",
+  "nome": "Balance Circuit on Skimmy",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -4207,7 +4170,6 @@
   "sottogruppo": "prevenzione",
   "solo_livello": false,
   "id": "fasc-circuito-propriocezione",
-  "nome_en": "Circuito Propriocezione",
   "scheda": {
    "esecuzione": [
     "Segui il video: è un circuito guidato di 20 minuti su cuscino instabile (skimmy).",
@@ -4224,7 +4186,7 @@
   }
  },
  {
-  "nome": "Alluce e dita alternati",
+  "nome": "Big Toe and Toes Alternating",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -4252,7 +4214,6 @@
    "Poco o niente"
   ],
   "id": "fasc-toes-up-down",
-  "nome_en": "Toes up down",
   "scheda": {
    "esecuzione": [
     "In piedi o seduto, piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.",
@@ -4271,7 +4232,7 @@
   }
  },
  {
-  "nome": "Dita su e giù",
+  "nome": "Toes Up and Down",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -4292,7 +4253,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fasc-toes-up-down-2",
-  "nome_en": "Toes Up Down 2",
   "scheda": {
    "esecuzione": [
     "Piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.",
@@ -4311,7 +4271,7 @@
   }
  },
  {
-  "nome": "Asciugamano con le dita",
+  "nome": "Towel Curls",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -4339,7 +4299,6 @@
    "Poco o niente"
   ],
   "id": "fasc-towel-curls",
-  "nome_en": "Towel Curls",
   "scheda": {
    "esecuzione": [
     "Seduto o in piedi, asciugamano steso a terra, piede scalzo sopra con il tallone a terra.",
@@ -4358,7 +4317,7 @@
   }
  },
  {
-  "nome": "Equilibrio con pallina 1",
+  "nome": "Tennis Ball Balance 1",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4380,7 +4339,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fasc-equilibrio-1-pallina-tennis-fascia-tecnica",
-  "nome_en": "Equilibrio 1 pallina tennis fascia tecnica",
   "scheda": {
    "esecuzione": [
     "In piedi in equilibrio su una gamba, ginocchio morbido, busto dritto.",
@@ -4399,7 +4357,7 @@
   }
  },
  {
-  "nome": "Equilibrio con pallina 2",
+  "nome": "Tennis Ball Balance 2",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4421,7 +4379,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fasc-equilibrio-2-pallina-da-tennis-fascia-tecnica",
-  "nome_en": "Equilibrio 2 pallina da tennis fascia tecnica",
   "scheda": {
    "esecuzione": [
     "In piedi in equilibrio su una gamba, pallina da tennis a terra davanti al piede libero.",
@@ -4440,7 +4397,7 @@
   }
  },
  {
-  "nome": "Equilibrio con pallina 3",
+  "nome": "Tennis Ball Balance 3",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4462,7 +4419,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fasc-equilibrio-3-pallina-da-tennis-fascia-tecnica",
-  "nome_en": "Equilibrio 3 pallina da tennis fascia tecnica",
   "scheda": {
    "esecuzione": [
     "In piedi in equilibrio su una gamba, pallina da tennis in equilibrio sul collo del piede libero.",
@@ -4481,7 +4437,7 @@
   }
  },
  {
-  "nome": "Oscillazione delle braccia",
+  "nome": "Arm Swings",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4502,7 +4458,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fasc-fascia-arms-swing",
-  "nome_en": "Fascia Arms Swing",
   "scheda": {
    "esecuzione": [
     "In piedi, piedi a terra alla larghezza del bacino, ginocchia morbide.",
@@ -4521,7 +4476,7 @@
   }
  },
  {
-  "nome": "Affondo tenuto da corridore",
+  "nome": "Isometric Runner's Lunge",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4550,7 +4505,6 @@
    "Poco o niente"
   ],
   "id": "fasc-fascia-iso-lounge-runner",
-  "nome_en": "Fascia Iso Lounge Runner",
   "scheda": {
    "esecuzione": [
     "Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.",
@@ -4569,7 +4523,7 @@
   }
  },
  {
-  "nome": "Otto con il piede sull'asciugamano",
+  "nome": "Towel Figure 8 with the Foot",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4590,7 +4544,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fasc-fascia-towel-figure-8",
-  "nome_en": "Fascia Towel figure 8",
   "scheda": {
    "esecuzione": [
     "In piedi su una gamba, un asciugamano a terra davanti a te.",
@@ -4609,7 +4562,7 @@
   }
  },
  {
-  "nome": "Oscillazione della gamba con asciugamano",
+  "nome": "Towel Leg Swing (Single-Leg Balance)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4630,7 +4583,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fasc-fy-towe-slrdl",
-  "nome_en": "FY Towel SLRDL",
   "scheda": {
    "esecuzione": [
     "In piedi in equilibrio su una gamba, l'altro piede appoggiato su un asciugamano, su un pavimento liscio.",
@@ -4671,7 +4623,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Palleggi con pallina da tennis",
+  "nome": "Tennis Ball Juggling",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -4711,7 +4663,7 @@
   }
  },
  {
-  "nome": "Palleggi liberi",
+  "nome": "Freestyle Juggling",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -4735,7 +4687,6 @@
   "sottogruppo": null,
   "descrizione": "Palleggi in libertà con qualsiasi parte del corpo: tricks, creatività, nessuno schema. Se la palla cade, riparti.",
   "id": "fasc-palleggi-freestyle-tecnica",
-  "nome_en": "Palleggi Freestyle - Tecnica",
   "scheda": {
    "esecuzione": [
     "Palleggia in libertà con qualsiasi parte del corpo: piedi, cosce, testa, spalle.",
@@ -4818,7 +4769,7 @@
   }
  },
  {
-  "nome": "Plank con torsione e elastico",
+  "nome": "Plank with Band Rotation",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -4837,7 +4788,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fasc-plank-torsione-elastica-fascia",
-  "nome_en": "Plank torsione elastica fascia",
   "scheda": {
    "esecuzione": [
     "Plank sulle mani con l'elastico in tensione, come mostrato nel video: mani sotto le spalle, corpo in linea.",
@@ -4981,7 +4931,7 @@
   }
  },
  {
-  "nome": "Sollevamento delle punte (tibiale)",
+  "nome": "Tibialis Raise",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -5002,7 +4952,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-tibialis-raise",
-  "nome_en": "Tibialis Raise",
   "scheda": {
    "esecuzione": [
     "Schiena al muro, piedi un passo avanti, talloni a terra.",
@@ -5021,7 +4970,7 @@
   }
  },
  {
-  "nome": "Sollevamento delle punte (tibiale), versione test",
+  "nome": "Tibialis Raise (Test Version)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -5046,7 +4995,6 @@
    "Poco o niente"
   ],
   "id": "fpb-tibialis-raises",
-  "nome_en": "Tibialis raises",
   "scheda": {
    "esecuzione": [
     "Schiena al muro, piedi un passo avanti, talloni a terra.",
@@ -5145,7 +5093,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Fascia avanzata con l'elastico",
+  "nome": "Advanced Fascia with Elastic Band",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -5167,7 +5115,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fasc-advanced-fascia-progression",
-  "nome_en": "Advanced Fascia with elastic band",
   "scheda": {
    "esecuzione": [
     "Elastico ancorato in basso (piede del compagno, mobile pesante) e agganciato alla caviglia della gamba libera.",
@@ -5276,7 +5223,7 @@
   }
  },
  {
-  "nome": "Protezione palla a otto",
+  "nome": "Ball Shielding Figure 8",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5299,7 +5246,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fasc-protezione-palla-figura-8-fascia",
-  "nome_en": "Protezione palla figura 8 - fascia",
   "scheda": {
    "esecuzione": [
     "Appoggiati con la spalla a un muro o a un compagno, come se stessi proteggendo la palla da un avversario: il corpo sta tra il sostegno e la palla.",
@@ -5318,7 +5264,7 @@
   }
  },
  {
-  "nome": "Protezione palla laterale con palleggi",
+  "nome": "Lateral Ball Shielding with Juggling",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5341,7 +5287,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fasc-protezione-palla-laterale-palleggi-fascia",
-  "nome_en": "Protezione palla laterale - palleggi - fascia",
   "scheda": {
    "esecuzione": [
     "Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.",
@@ -5360,7 +5305,7 @@
   }
  },
  {
-  "nome": "Protezione palla laterale con la suola",
+  "nome": "Lateral Ball Shielding with the Sole",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5383,7 +5328,6 @@
   "sottogruppo": null,
   "solo_livello": false,
   "id": "fasc-protezione-palla-laterale-suola-fascia",
-  "nome_en": "Protezione palla laterale suola - fascia",
   "scheda": {
    "esecuzione": [
     "Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.",
@@ -5402,7 +5346,7 @@
   }
  },
  {
-  "nome": "Protezione palla spalle alla porta",
+  "nome": "Ball Shielding, Back to Goal",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5425,7 +5369,6 @@
   "sottogruppo": null,
   "solo_livello": false,
   "id": "fasc-protezione-palla-schiena-fascia",
-  "nome_en": "Protezione palla schiena - fascia",
   "scheda": {
    "esecuzione": [
     "Compagno (o muro) dietro di te: sei di spalle, palla davanti ai piedi.",
@@ -5444,7 +5387,7 @@
   }
  },
  {
-  "nome": "Spinta laterale e finta",
+  "nome": "Lateral Push and Feint (Ball Shielding)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5467,7 +5410,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fasc-spinta-laterale-e-finta-protezione-palla-fascia",
-  "nome_en": "Spinta laterale e finta - protezione palla - fascia",
   "scheda": {
    "esecuzione": [
     "Di lato al compagno, a contatto spalla a spalla, palla sul piede lontano.",
@@ -5486,7 +5428,7 @@
   }
  },
  {
-  "nome": "Spinta laterale con la suola",
+  "nome": "Lateral Push with the Sole (Ball Shielding)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5509,7 +5451,6 @@
   "sottogruppo": null,
   "solo_livello": false,
   "id": "fasc-spinta-laterale-suola-protezione-palla-fascia",
-  "nome_en": "Spinta laterale suola - protezione palla - fascia",
   "scheda": {
    "esecuzione": [
     "Di lato al compagno, a contatto spalla a spalla.",
@@ -7024,7 +6965,7 @@
   "solo_livello": true
  },
  {
-  "nome": "Allungo di riscaldamento",
+  "nome": "Warm-Up Stride",
   "qualita": "riscaldamento",
   "attrezzatura": "campo",
   "difficolta": 1,
@@ -7045,7 +6986,6 @@
   "sottogruppo": null,
   "descrizione": "Corsa progressiva sulla distanza indicata: parti al 60% e arriva all'80-90% negli ultimi metri, senza mai sprintare al massimo. Torna camminando. Prepara gambe e tendini allo sprint.",
   "id": "risc-allungo-riscaldamento",
-  "nome_en": "Allungo riscaldamento",
   "scheda": {
    "esecuzione": [
     "Parti al 60 % sulla distanza indicata e aumenta un po' ogni 10 metri.",
@@ -7064,7 +7004,7 @@
   }
  },
  {
-  "nome": "Rullo sui polpacci (due gambe)",
+  "nome": "Calf Foam Roll (Both Legs)",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -7082,7 +7022,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "risc-calf-foam-roll",
-  "nome_en": "Calf Foam Roll",
   "scheda": {
    "esecuzione": [
     "Seduto a terra, rullo sotto i polpacci, mani dietro a terra.",
@@ -7101,7 +7040,7 @@
   }
  },
  {
-  "nome": "Elastici: prevenzione e mobilità (video)",
+  "nome": "Band Exercises: Prevention and Mobility (Video)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -7124,7 +7063,6 @@
   "sottogruppo": "prevenzione guidata",
   "finestra_partita": 2,
   "id": "fasc-esercizi-elastici-prevenzione-e-mobilita",
-  "nome_en": "Esercizi Elastici prevenzione e mobilità",
   "scheda": {
    "esecuzione": [
     "Sequenza guidata con l'elastico: adduttori, glutei, anche, core.",
@@ -7143,7 +7081,7 @@
   }
  },
  {
-  "nome": "Pallina sotto il piede",
+  "nome": "Tennis Ball Under the Foot",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -7173,7 +7111,6 @@
    "Poco o niente"
   ],
   "id": "risc-fascia-adhesion-tennis-ball",
-  "nome_en": "Fascia adhesion tennis ball",
   "scheda": {
    "esecuzione": [
     "In piedi o seduto, pallina da tennis sotto la pianta del piede.",
@@ -7192,7 +7129,7 @@
   }
  },
  {
-  "nome": "In piedi, fermo e presente",
+  "nome": "Standing Stillness (Fascia)",
   "qualita": "riscaldamento",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -7211,7 +7148,6 @@
   "sottogruppo": null,
   "descrizione": "In piedi, piedi larghezza bacino, ginocchia morbide, braccia rilassate. Occhi chiusi o sguardo basso: senti il peso sui piedi e respira col naso per il tempo indicato. Prepara il piede e la postura prima della fascia.",
   "id": "risc-fascia-standing-meditation",
-  "nome_en": "Fascia Standing Meditation",
   "scheda": {
    "esecuzione": [
     "In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi.",
@@ -7230,7 +7166,7 @@
   }
  },
  {
-  "nome": "Sequenza Yoga - Adduttori e inguine, rinforzo",
+  "nome": "Yoga Sequence - Adductors and Groin Strengthening",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -7271,7 +7207,7 @@
   }
  },
  {
-  "nome": "Sequenza Yoga - Adduttori e inguine, rinforzo avanzato",
+  "nome": "Yoga Sequence - Adductors and Groin Strengthening (Advanced)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -7312,7 +7248,7 @@
   }
  },
  {
-  "nome": "Sequenza Yoga - Recupero e Mobilità",
+  "nome": "Yoga Sequence - Recovery and Mobility",
   "qualita": "mobilita-recupero",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -7355,7 +7291,7 @@
   }
  },
  {
-  "nome": "Sequenza Yoga - Rinforzo Quadricipiti e Adduttori avanzato",
+  "nome": "Yoga Sequence - Quadriceps and Adductors Strengthening (Advanced)",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -7736,7 +7672,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Sessione recupero dopo partita o allenamenti pesanti",
+  "nome": "Recovery Session after Match or Heavy Training",
   "qualita": "mobilita-recupero",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -7751,7 +7687,7 @@
    "yoga"
   ],
   "azione": "importa",
-  "nome_everfit": null,
+  "nome_everfit": "Sessione recupero dopo partita o allenamenti pesanti",
   "note": "Sessione guidata di recupero (video, ~30'): il giorno dopo la partita o dopo allenamenti pesanti, o quando sei molto affaticato. Mai il giorno prima o il giorno della partita.",
   "in_coppia": false,
   "attivo": true,
@@ -7777,7 +7713,7 @@
   }
  },
  {
-  "nome": "Rinforzo e prevenzione adduttori, abduttori, glutei, core",
+  "nome": "Strengthening and Prevention: Adductors, Abductors, Glutes, Core",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7793,7 +7729,7 @@
    "core"
   ],
   "azione": "importa",
-  "nome_everfit": null,
+  "nome_everfit": "Rinforzo e prevenzione adduttori, abduttori, glutei, core",
   "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
   "in_coppia": false,
   "attivo": true,
@@ -7819,7 +7755,7 @@
   }
  },
  {
-  "nome": "Rinforzo e prevenzione rotazione anca e bacino",
+  "nome": "Strengthening and Prevention: Hip and Pelvis Rotation",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7834,7 +7770,7 @@
    "bacino"
   ],
   "azione": "importa",
-  "nome_everfit": null,
+  "nome_everfit": "Rinforzo e prevenzione rotazione anca e bacino",
   "note": "Sequenza guidata di prevenzione (video): da fare ad almeno 3 giorni dalla partita, mai più vicino.",
   "in_coppia": false,
   "attivo": true,
@@ -7860,7 +7796,7 @@
   }
  },
  {
-  "nome": "Circuito addominali e lombari avanzato (guidato)",
+  "nome": "Advanced Abs and Lower Back Circuit (Guided)",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -7875,7 +7811,7 @@
    "guidato"
   ],
   "azione": "importa",
-  "nome_everfit": null,
+  "nome_everfit": "Circuito addominali e lombari avanzato (guidato)",
   "note": "Circuito guidato dal video (~31'): segui il video dall'inizio alla fine. Avanzato: solo con hollow e plank consolidati.",
   "in_coppia": false,
   "attivo": true,
@@ -7901,7 +7837,7 @@
   }
  },
  {
-  "nome": "Camminata dell'orso in avanti",
+  "nome": "Bear Crawl (Forward)",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7923,7 +7859,6 @@
   "sottogruppo": "bear crawl",
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-bear-crawl-linear",
-  "nome_en": "Bear Crawl Linear",
   "scheda": {
    "esecuzione": [
     "A quattro zampe: mani sotto le spalle, ginocchia sotto le anche sollevate di pochi centimetri da terra.",
@@ -7942,7 +7877,7 @@
   }
  },
  {
-  "nome": "Camminata dell'orso laterale",
+  "nome": "Bear Crawl (Lateral)",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7964,7 +7899,6 @@
   "sottogruppo": "bear crawl",
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-bear-crawl-lateral",
-  "nome_en": "Bear Crawl Lateral",
   "scheda": {
    "esecuzione": [
     "A quattro zampe: mani sotto le spalle, ginocchia sollevate di pochi centimetri da terra.",
@@ -7983,7 +7917,7 @@
   }
  },
  {
-  "nome": "Posizione dell'orso tenuta",
+  "nome": "Isometric Bear Hold",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8004,7 +7938,6 @@
   "sottogruppo": "bear crawl",
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-isometric-bear-crawl",
-  "nome_en": "Isometric Bear Crawl",
   "scheda": {
    "esecuzione": [
     "A quattro zampe: mani sotto le spalle, ginocchia sotto le anche.",
@@ -8023,7 +7956,7 @@
   }
  },
  {
-  "nome": "Skip con apertura dell'anca",
+  "nome": "Hip External Rotation Skip",
   "qualita": "riscaldamento",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -8045,7 +7978,6 @@
   "qualita_secondaria": null,
   "sottogruppo": "attivazione",
   "id": "risc-hip-external-rotation-skip",
-  "nome_en": "Hip External Rotation Skip",
   "scheda": {
    "esecuzione": [
     "Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno.",
@@ -8318,7 +8250,7 @@
   }
  },
  {
-  "nome": "Stacco da terra con bilanciere",
+  "nome": "Barbell Deadlift",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 5,
@@ -8357,7 +8289,7 @@
   }
  },
  {
-  "nome": "Leg press",
+  "nome": "Leg Press",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -8376,7 +8308,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "fpb-leg-press",
-  "nome_en": "Leg Press",
   "scheda": {
    "esecuzione": [
     "Seduto sulla macchina, schiena e bacino bene appoggiati, piedi sulla pedana alla larghezza delle spalle.",
@@ -8432,7 +8363,7 @@
   }
  },
  {
-  "nome": "Squat a corpo libero",
+  "nome": "Bodyweight Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -8451,7 +8382,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "fpb-bodyweight-squat",
-  "nome_en": "Bodyweight Squat",
   "scheda": {
    "esecuzione": [
     "Piedi alla larghezza delle spalle, punte leggermente in fuori, braccia avanti.",
@@ -8470,7 +8400,7 @@
   }
  },
  {
-  "nome": "Squat bulgaro a corpo libero",
+  "nome": "Bodyweight Bulgarian Split Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -8488,7 +8418,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-body-weight-bulgarian-split-squat",
-  "nome_en": "Body Weight Bulgarian Split Squat",
   "scheda": {
    "esecuzione": [
     "Piede dietro appoggiato su una panca o una sedia con il collo del piede, piede davanti a un passo lungo.",
@@ -8507,7 +8436,7 @@
   }
  },
  {
-  "nome": "Pistol squat",
+  "nome": "Pistol Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -8525,7 +8454,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpb-body-weight-pistol-squat",
-  "nome_en": "Body Weight Pistol Squat",
   "scheda": {
    "esecuzione": [
     "In piedi su una gamba, l'altra distesa avanti, braccia avanti per l'equilibrio.",
@@ -8582,7 +8510,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Plank laterale con rotazione",
+  "nome": "Side Plank with Twist",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -8600,7 +8528,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-plank-with-twist",
-  "nome_en": "Plank with Twist",
   "scheda": {
    "esecuzione": [
     "Plank laterale sulla mano o sull'avambraccio, corpo in linea, braccio libero in alto.",
@@ -8619,7 +8546,7 @@
   }
  },
  {
-  "nome": "Jackknife laterale",
+  "nome": "Side Jackknife",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -8637,7 +8564,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-side-jackknife",
-  "nome_en": "Side Jackknife",
   "scheda": {
    "esecuzione": [
     "Sdraiato sul fianco, gambe distese una sull'altra, mano sotto la testa e l'altra a terra davanti.",
@@ -8656,7 +8582,7 @@
   }
  },
  {
-  "nome": "Crunch bicicletta a gambe tese",
+  "nome": "Straight-Leg Bicycle Crunch",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8675,7 +8601,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-bicycle-crunch-straight-leg",
-  "nome_en": "Bicycle Crunch Straight Leg",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, mani alle tempie, gambe distese sollevate da terra.",
@@ -8694,7 +8619,7 @@
   }
  },
  {
-  "nome": "Crunch inverso ai cavi",
+  "nome": "Cable Reverse Crunch",
   "qualita": "core",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -8713,7 +8638,6 @@
   "sottogruppo": null,
   "descrizione": "Ai cavi bassi con la cavigliera (o elastico): da supino, ginocchia piegate, porta il bacino verso il petto contro la resistenza e torna controllando. Spinta con l'addome, non con le gambe.",
   "id": "core2-cable-reverse-crunch",
-  "nome_en": "Cable Reverse Crunch",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena con la testa verso il cavo basso, cavigliera agganciata (o elastico alle caviglie), ginocchia piegate.",
@@ -8732,7 +8656,7 @@
   }
  },
  {
-  "nome": "Sollevamento obliquo delle ginocchia alla sbarra",
+  "nome": "Hanging Oblique Knee Raise",
   "qualita": "core",
   "attrezzatura": "sbarra",
   "difficolta": 4,
@@ -8750,7 +8674,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-hanging-oblique-knee-raise",
-  "nome_en": "Hanging Oblique Knee Raise",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra, braccia tese, spalle attive.",
@@ -8769,7 +8692,7 @@
   }
  },
  {
-  "nome": "Crunch inverso",
+  "nome": "Reverse Crunch",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8788,7 +8711,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-reverse-crunch",
-  "nome_en": "Reverse Crunch",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, braccia lungo il corpo, ginocchia piegate e gambe sollevate.",
@@ -8807,7 +8729,7 @@
   }
  },
  {
-  "nome": "Cerchi con le gambe",
+  "nome": "Leg Circles (Full Moon Abs)",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -8826,7 +8748,6 @@
   "sottogruppo": null,
   "descrizione": "Da supino, gambe tese unite sollevate: disegna un cerchio ampio con i piedi (una luna piena) mantenendo la zona lombare a terra. Un giro in un senso, il successivo nell'altro.",
   "id": "core2-full-moon-abs",
-  "nome_en": "Full Moon Abs",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, braccia lungo il corpo, gambe tese e unite sollevate da terra.",
@@ -8845,7 +8766,7 @@
   }
  },
  {
-  "nome": "Sit-up",
+  "nome": "Sit-Up",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -8863,7 +8784,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "core2-sit-up",
-  "nome_en": "Sit-Up",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, ginocchia piegate, piedi a terra, braccia incrociate al petto o mani alle tempie.",
@@ -8882,7 +8802,7 @@
   }
  },
  {
-  "nome": "Battute delle gambe",
+  "nome": "Flutter Kicks",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8901,7 +8821,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-flutter-kick-abs-low",
-  "nome_en": "Flutter Kick Abs Low",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, mani sotto il bacino, gambe tese sollevate di 15-20 cm.",
@@ -8920,7 +8839,7 @@
   }
  },
  {
-  "nome": "Dal plank alto al plank sugli avambracci",
+  "nome": "High Plank to Forearm Plank",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8939,7 +8858,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-arm-climb-high-to-forearm-plank",
-  "nome_en": "Arm Climb (High to Forearm Plank)",
   "scheda": {
    "esecuzione": [
     "Plank sulle mani, corpo in linea, piedi alla larghezza del bacino.",
@@ -8958,7 +8876,7 @@
   }
  },
  {
-  "nome": "Mountain climber incrociato",
+  "nome": "Cross-Body Mountain Climber",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8977,7 +8895,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-cross-body-mountain-climbers",
-  "nome_en": "Cross Body Mountain Climbers",
   "scheda": {
    "esecuzione": [
     "Plank sulle mani, corpo in linea.",
@@ -8996,7 +8913,7 @@
   }
  },
  {
-  "nome": "Mountain climber con le mani sul rialzo",
+  "nome": "Incline Mountain Climber",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -9015,7 +8932,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-incline-mountain-climbers",
-  "nome_en": "Incline Mountain Climbers",
   "scheda": {
    "esecuzione": [
     "Mani su una panca o un rialzo, corpo in linea, piedi a terra.",
@@ -9034,7 +8950,7 @@
   }
  },
  {
-  "nome": "Estensioni lombari a terra",
+  "nome": "Lower Back Curl",
   "qualita": "core",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -9053,7 +8969,6 @@
   "sottogruppo": null,
   "descrizione": "A pancia in giù, mani alle tempie o lungo i fianchi: solleva il busto da terra contraendo i lombari, pausa in alto, scendi lento. Sguardo a terra, collo neutro.",
   "id": "core2-lower-back-curl",
-  "nome_en": "Lower Back Curl",
   "scheda": {
    "esecuzione": [
     "A pancia in giù, mani alle tempie o lungo i fianchi, sguardo a terra.",
@@ -9072,7 +8987,7 @@
   }
  },
  {
-  "nome": "Russian twist con palla medica",
+  "nome": "Medicine Ball Russian Twist",
   "qualita": "core",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 3,
@@ -9091,7 +9006,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "core2-medicine-ball-russian-twist",
-  "nome_en": "Medicine Ball Russian Twist",
   "scheda": {
    "esecuzione": [
     "Seduto a terra, ginocchia piegate, busto inclinato indietro di circa 45°, palla medica tenuta davanti al petto.",
@@ -9205,7 +9119,7 @@
   }
  },
  {
-  "nome": "Otto con il kettlebell tra le gambe",
+  "nome": "Kettlebell Figure 8",
   "qualita": "core",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -9225,7 +9139,6 @@
   "fascia_kb": "base",
   "peso_kg": 12,
   "id": "core2-kettlebell-figure-8",
-  "nome_en": "Kettlebell Figure 8",
   "scheda": {
    "esecuzione": [
     "In piedi, piedi più larghi delle spalle, ginocchia piegate e busto inclinato in avanti con la schiena neutra, kettlebell in una mano.",
@@ -9265,7 +9178,7 @@
   "peso_kg": 12
  },
  {
-  "nome": "Rullo sotto la pianta del piede",
+  "nome": "Plantar Fascia Foam Roll",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -9283,7 +9196,6 @@
   "qualita_secondaria": null,
   "sottogruppo": "rolling",
   "id": "risc-foam-roll-plantar-fascia",
-  "nome_en": "Foam Roll Plantar Fascia",
   "scheda": {
    "esecuzione": [
     "In piedi, un piede sul rullo (o su una pallina), l'altro a terra.",
@@ -9302,7 +9214,7 @@
   }
  },
  {
-  "nome": "Rullo sul polpaccio",
+  "nome": "Calf Foam Roll",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -9321,7 +9233,6 @@
   "sottogruppo": "rolling",
   "descrizione": "Polpaccio sul rullo, gamba tesa, l'altra sopra per aumentare la pressione. Rotola lento dal tendine d'Achille al ginocchio, fermandoti nei punti sensibili. Poi cambia gamba.",
   "id": "risc-calves-foam-roll",
-  "nome_en": "Calves Foam Roll",
   "scheda": {
    "esecuzione": [
     "Seduto, un polpaccio sul rullo, l'altra gamba incrociata sopra per spingere.",
@@ -9340,7 +9251,7 @@
   }
  },
  {
-  "nome": "Rullo sul lato esterno della gamba",
+  "nome": "Peroneals Foam Roll",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -9359,7 +9270,6 @@
   "sottogruppo": "rolling",
   "descrizione": "Lato esterno della gamba sul rullo (tra caviglia e ginocchio), di fianco. Rotola lento su tutta la lunghezza, fermandoti dove tira. Poi cambia gamba.",
   "id": "risc-peroneals-foam-roll",
-  "nome_en": "Peroneals Foam Roll",
   "scheda": {
    "esecuzione": [
     "Sdraiato sul fianco, rullo sotto il lato esterno della gamba tra caviglia e ginocchio.",
@@ -9378,7 +9288,7 @@
   }
  },
  {
-  "nome": "Rullo sui posteriori della coscia",
+  "nome": "Hamstring Foam Roll",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -9397,7 +9307,6 @@
   "sottogruppo": "rolling",
   "descrizione": "Posteriore della coscia sul rullo, seduto con le mani dietro. Rotola dal ginocchio al gluteo, gamba rilassata, pause nei punti sensibili. Poi cambia gamba.",
   "id": "risc-hamstring-foam-roll",
-  "nome_en": "Hamstring Foam Roll",
   "scheda": {
    "esecuzione": [
     "Seduto, rullo sotto la coscia, mani dietro, l'altra gamba appoggiata sopra per aumentare la pressione.",
@@ -9416,7 +9325,7 @@
   }
  },
  {
-  "nome": "Rullo tra le scapole",
+  "nome": "Rhomboids Foam Roll",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -9435,7 +9344,6 @@
   "sottogruppo": "rolling",
   "descrizione": "Rullo sotto la parte alta della schiena, braccia incrociate al petto per aprire le scapole. Rotola tra le scapole per il tempo indicato, senza scendere sui lombari.",
   "id": "risc-rhomboids-foam-roll",
-  "nome_en": "Rhomboids Foam Roll",
   "scheda": {
    "esecuzione": [
     "Sdraiato, rullo sotto la parte alta della schiena, ginocchia piegate, piedi a terra.",
@@ -9454,7 +9362,7 @@
   }
  },
  {
-  "nome": "Rullo sui quadricipiti",
+  "nome": "Quadriceps Foam Roll",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -9473,7 +9381,6 @@
   "sottogruppo": "rolling",
   "descrizione": "A pancia in giù sugli avambracci, quadricipite sul rullo. Rotola dal ginocchio all'anca, gamba rilassata, pause nei punti sensibili. Poi cambia gamba.",
   "id": "risc-quadriceps-foam-roll",
-  "nome_en": "Quadriceps Foam Roll",
   "scheda": {
    "esecuzione": [
     "A pancia in giù sugli avambracci, rullo sotto una coscia, l'altra gamba di lato a terra.",
@@ -9492,7 +9399,7 @@
   }
  },
  {
-  "nome": "Rullo sul gluteo profondo",
+  "nome": "Piriformis Foam Roll",
   "qualita": "riscaldamento",
   "attrezzatura": "piccoli attrezzi",
   "difficolta": 1,
@@ -9511,7 +9418,6 @@
   "sottogruppo": "rolling",
   "descrizione": "Seduto sul rullo, caviglia sul ginocchio opposto, peso spostato sul gluteo della gamba incrociata. Piccoli movimenti sul punto profondo del gluteo. Poi cambia lato.",
   "id": "risc-piriformis-foam-roll",
-  "nome_en": "Piriformis Foam Roll",
   "scheda": {
    "esecuzione": [
     "Seduto sul rullo, caviglia destra sul ginocchio sinistro.",
@@ -9765,7 +9671,7 @@
   "sottogruppo": "velocità con tiro"
  },
  {
-  "nome": "Passetti sull'avampiede con i manubri",
+  "nome": "Ankle Stiffness Steps with Dumbbells",
   "qualita": "fascia-prevenzione",
   "attrezzatura": "manubri",
   "difficolta": 3,
@@ -9787,7 +9693,6 @@
   "qualita_secondaria": null,
   "sottogruppo": "fascia e piede",
   "id": "fasc-ankle-stiffness-con-manubri",
-  "nome_en": "Ankle stiffness con manubri",
   "scheda": {
    "esecuzione": [
     "In piedi, un manubrio per mano lungo i fianchi, peso sugli avampiedi, talloni sollevati.",
@@ -9806,7 +9711,7 @@
   }
  },
  {
-  "nome": "Ponte dei femorali su rialzo, frenata a una gamba",
+  "nome": "Single-Leg Eccentric Elevated Hamstring Bridge",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -9827,7 +9732,6 @@
   "qualita_secondaria": "core",
   "sottogruppo": "catena posteriore",
   "id": "fpb-eccentric-elevated-hamstring-single-leg",
-  "nome_en": "Eccentric elevated hamstring single leg",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, talloni su un box o una panca bassa, gambe leggermente flesse, braccia a terra.",
@@ -9846,7 +9750,7 @@
   }
  },
  {
-  "nome": "Ponte dei femorali su rialzo a una gamba",
+  "nome": "Single-Leg Elevated Hamstring Bridge",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9867,7 +9771,6 @@
   "qualita_secondaria": "core",
   "sottogruppo": "catena posteriore",
   "id": "fpb-elevated-hamstring-bridge-single-leg",
-  "nome_en": "Elevated hamstring bridge single leg",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, un tallone su un box o una panca bassa con il ginocchio piegato, l'altra gamba sollevata.",
@@ -9886,7 +9789,7 @@
   }
  },
  {
-  "nome": "Ponte sui talloni con palla al ginocchio",
+  "nome": "Heel Bridge with Ball at the Knee",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9908,7 +9811,6 @@
   "qualita_secondaria": "core",
   "sottogruppo": "catena posteriore",
   "id": "fpb-core-hamstrings-running",
-  "nome_en": "Core hamstrings running",
   "scheda": {
    "esecuzione": [
     "Sdraiato con le spalle a terra e i talloni su un rialzo, una palla tenuta con due mani a braccia tese sopra la testa.",
@@ -9927,7 +9829,7 @@
   }
  },
  {
-  "nome": "Plank di Copenhagen con crunch",
+  "nome": "Copenhagen Plank with Crunch (FY)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -9948,7 +9850,6 @@
   "qualita_secondaria": "core",
   "sottogruppo": "catena posteriore",
   "id": "fpb-copenhagen-plank-fy",
-  "nome_en": "Copenhagen plank FY",
   "scheda": {
    "esecuzione": [
     "Sdraiato sul fianco, avambraccio a terra sotto la spalla, piede della gamba sopra appoggiato su una panca.",
@@ -10176,7 +10077,7 @@
   "video": null,
   "fonte": "Ste (chat 25/9/2026, riscaldamento velocità)",
   "azione": "aggiunto 25/9/2026",
-  "nome_everfit": null,
+  "nome_everfit": "Corsa lenta",
   "note": null,
   "in_coppia": false,
   "attivo": true,
@@ -10184,7 +10085,7 @@
   "sottogruppo": "riscaldamento velocità",
   "finestra_partita": null,
   "id": "risc-corsa-lenta",
-  "nome": "Corsa lenta",
+  "nome": "Easy Jog",
   "qualita": "riscaldamento",
   "unita": "minuti",
   "tags": [
@@ -10217,7 +10118,7 @@
   "video": null,
   "fonte": "Ste (chat 25/9/2026, riscaldamento velocità)",
   "azione": "aggiunto 25/9/2026",
-  "nome_everfit": null,
+  "nome_everfit": "Mobilità libera",
   "note": "Video di riscaldamento da registrare (sul canale non c'è).",
   "in_coppia": false,
   "attivo": true,
@@ -10225,7 +10126,7 @@
   "sottogruppo": "riscaldamento velocità",
   "finestra_partita": null,
   "id": "risc-mobilita-libera",
-  "nome": "Mobilità libera",
+  "nome": "Free Mobility",
   "qualita": "riscaldamento",
   "unita": "minuti",
   "tags": [
@@ -10252,7 +10153,7 @@
  },
  {
   "id": "fpb-goblet-squat",
-  "nome": "Goblet squat",
+  "nome": "Goblet Squat",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "kettlebell",
   "difficolta": 2,
@@ -10266,7 +10167,7 @@
    "squat"
   ],
   "azione": "importa",
-  "nome_everfit": null,
+  "nome_everfit": "Goblet squat",
   "note": null,
   "in_coppia": false,
   "attivo": true,

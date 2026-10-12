@@ -5,8 +5,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 ## fascia-prevenzione (29)
 
-### Plank con saltelli
-`fasc-plank-jumps-fascia` · inglese: Plank Jumps Fascia · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=FPZkcfY-2Yo)
+### Plank Jumps
+`fasc-plank-jumps-fascia` · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=FPZkcfY-2Yo)
 
 **Esecuzione**
 1. Parti in plank sulle mani: mani sotto le spalle, corpo in linea dalla testa ai talloni, addome attivo.
@@ -19,8 +19,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Ritmo più alto, o saltelli in avanzamento.
 **Sicurezza:** Dolore ai polsi: fermati. Zona lombare che cede: riduci l'inarcamento e il tempo.
 
-### Circuito di equilibrio sullo skimmy
-`fasc-circuito-propriocezione` · inglese: Circuito Propriocezione · bilaterale · secondi · corpo libero · [video](https://www.youtube.com/watch?v=SCjwTWXzrTM&list=PL6Dh3F0reiim9WhyG-t4iAYOk8Mbrvbcq&index=3&ab_channel=ForYouFunctionalYogaFootball)
+### Balance Circuit on Skimmy
+`fasc-circuito-propriocezione` · bilaterale · secondi · corpo libero · [video](https://www.youtube.com/watch?v=SCjwTWXzrTM&list=PL6Dh3F0reiim9WhyG-t4iAYOk8Mbrvbcq&index=3&ab_channel=ForYouFunctionalYogaFootball)
 
 **Esecuzione**
 1. Segui il video: è un circuito guidato di 20 minuti su cuscino instabile (skimmy).
@@ -32,8 +32,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Occhi chiusi su ogni stazione, o con il compagno che ti lancia la palla.
 **Sicurezza:** Esegui il circuito in uno spazio libero: se perdi l'equilibrio devi poter mettere il piede. Mai dopo una distorsione recente senza il via libera del fisioterapista.
 
-### Alluce e dita alternati
-`fasc-toes-up-down` · inglese: Toes up down · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/JctaRd1xxng)
+### Big Toe and Toes Alternating
+`fasc-toes-up-down` · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/JctaRd1xxng)
 
 **Esecuzione**
 1. In piedi o seduto, piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.
@@ -46,8 +46,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi su una gamba sola.
 **Sicurezza:** Crampo sotto il piede: fermati, allunga le dita, riprendi.
 
-### Dita su e giù
-`fasc-toes-up-down-2` · inglese: Toes Up Down 2 · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=1_TtKlvDeqk)
+### Toes Up and Down
+`fasc-toes-up-down-2` · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=1_TtKlvDeqk)
 
 **Esecuzione**
 1. Piede scalzo: avampiede appoggiato su una pallina da tennis o a terra, tallone a terra.
@@ -60,8 +60,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi su una gamba sola.
 **Sicurezza:** Crampo: fermati e allunga le dita.
 
-### Asciugamano con le dita
-`fasc-towel-curls` · inglese: Towel Curls · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=qW8YXLmdke0)
+### Towel Curls
+`fasc-towel-curls` · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=qW8YXLmdke0)
 
 **Esecuzione**
 1. Seduto o in piedi, asciugamano steso a terra, piede scalzo sopra con il tallone a terra.
@@ -74,8 +74,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi su quella gamba, o con un peso in fondo all'asciugamano.
 **Sicurezza:** Un crampo sotto al piede è normale le prime volte: fermati, allunga le dita verso l'alto, riprendi.
 
-### Equilibrio con pallina 1
-`fasc-equilibrio-1-pallina-tennis-fascia-tecnica` · inglese: Equilibrio 1 pallina tennis fascia tecnica · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=CfVvAUj_Fv4)
+### Tennis Ball Balance 1
+`fasc-equilibrio-1-pallina-tennis-fascia-tecnica` · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=CfVvAUj_Fv4)
 
 **Esecuzione**
 1. In piedi in equilibrio su una gamba, ginocchio morbido, busto dritto.
@@ -88,8 +88,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Occhi chiusi, o piede d'appoggio su un cuscino instabile.
 **Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
 
-### Equilibrio con pallina 2
-`fasc-equilibrio-2-pallina-da-tennis-fascia-tecnica` · inglese: Equilibrio 2 pallina da tennis fascia tecnica · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=DRoBrKDueh4)
+### Tennis Ball Balance 2
+`fasc-equilibrio-2-pallina-da-tennis-fascia-tecnica` · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=DRoBrKDueh4)
 
 **Esecuzione**
 1. In piedi in equilibrio su una gamba, pallina da tennis a terra davanti al piede libero.
@@ -102,8 +102,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Ferma la pallina sul piede per 3 secondi a ogni ripetizione, o occhi chiusi nella tenuta.
 **Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
 
-### Equilibrio con pallina 3
-`fasc-equilibrio-3-pallina-da-tennis-fascia-tecnica` · inglese: Equilibrio 3 pallina da tennis fascia tecnica · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=8NhZcJNOma4)
+### Tennis Ball Balance 3
+`fasc-equilibrio-3-pallina-da-tennis-fascia-tecnica` · per lato · secondi · corpo libero · [video](https://www.youtube.com/watch?v=8NhZcJNOma4)
 
 **Esecuzione**
 1. In piedi in equilibrio su una gamba, pallina da tennis in equilibrio sul collo del piede libero.
@@ -116,8 +116,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piede d'appoggio su un cuscino instabile.
 **Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
 
-### Oscillazione delle braccia
-`fasc-fascia-arms-swing` · inglese: Fascia Arms Swing · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=Wt0Dpkzk8E0)
+### Arm Swings
+`fasc-fascia-arms-swing` · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=Wt0Dpkzk8E0)
 
 **Esecuzione**
 1. In piedi, piedi a terra alla larghezza del bacino, ginocchia morbide.
@@ -130,8 +130,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più veloce, o in equilibrio su una gamba.
 **Sicurezza:** Nessuna precauzione particolare.
 
-### Affondo tenuto da corridore
-`fasc-fascia-iso-lounge-runner` · inglese: Fascia Iso Lounge Runner · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=nvENLHoWSR4)
+### Isometric Runner's Lunge
+`fasc-fascia-iso-lounge-runner` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=nvENLHoWSR4)
 
 **Esecuzione**
 1. Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.
@@ -144,8 +144,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Braccia in posizione di corsa opposte alle gambe, o con un peso al petto.
 **Sicurezza:** Fastidio davanti al ginocchio: alza un po' la posizione, non scendere così tanto.
 
-### Otto con il piede sull'asciugamano
-`fasc-fascia-towel-figure-8` · inglese: Fascia Towel figure 8 · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=V805vZi3rLs)
+### Towel Figure 8 with the Foot
+`fasc-fascia-towel-figure-8` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=V805vZi3rLs)
 
 **Esecuzione**
 1. In piedi su una gamba, un asciugamano a terra davanti a te.
@@ -158,8 +158,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Occhi chiusi.
 **Sicurezza:** Crampo sotto il piede: lascia l'asciugamano, allunga le dita, riprendi.
 
-### Oscillazione della gamba con asciugamano
-`fasc-fy-towe-slrdl` · inglese: FY Towel SLRDL · per lato · reps · corpo libero · [video](https://youtube.com/shorts/_0TsEKkUqGw?feature=share)
+### Towel Leg Swing (Single-Leg Balance)
+`fasc-fy-towe-slrdl` · per lato · reps · corpo libero · [video](https://youtube.com/shorts/_0TsEKkUqGw?feature=share)
 
 **Esecuzione**
 1. In piedi in equilibrio su una gamba, l'altro piede appoggiato su un asciugamano, su un pavimento liscio.
@@ -172,7 +172,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Oscillazione più ampia, o occhi chiusi.
 **Sicurezza:** Se perdi l'equilibrio appoggia il piede e riparti.
 
-### Palleggi con pallina da tennis
+### Tennis Ball Juggling
 `fasc-palleggi-con-pallina-da-tennis` · bilaterale · secondi · corpo libero · [video](https://youtu.be/vE5L562syyg?si=EDedVcAGWUH-j2Ru)
 
 **Esecuzione**
@@ -186,8 +186,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Solo piede debole, o in equilibrio sull'altra gamba senza appoggiare.
 **Sicurezza:** Nessuna precauzione particolare.
 
-### Palleggi liberi
-`fasc-palleggi-freestyle-tecnica` · inglese: Palleggi Freestyle - Tecnica · bilaterale · secondi · corpo libero · senza video
+### Freestyle Juggling
+`fasc-palleggi-freestyle-tecnica` · bilaterale · secondi · corpo libero · senza video
 
 **Esecuzione**
 1. Palleggia in libertà con qualsiasi parte del corpo: piedi, cosce, testa, spalle.
@@ -200,8 +200,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In movimento, o con una pallina più piccola.
 **Sicurezza:** Nessuna precauzione particolare.
 
-### Plank con torsione e elastico
-`fasc-plank-torsione-elastica-fascia` · inglese: Plank torsione elastica fascia · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=itq-E8EcZEQ)
+### Plank with Band Rotation
+`fasc-plank-torsione-elastica-fascia` · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=itq-E8EcZEQ)
 
 **Esecuzione**
 1. Plank sulle mani con l'elastico in tensione, come mostrato nel video: mani sotto le spalle, corpo in linea.
@@ -214,8 +214,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Elastico più duro, torsione più lenta.
 **Sicurezza:** Fastidio alla spalla o alla zona lombare: fermati.
 
-### Fascia avanzata con l'elastico
-`fasc-advanced-fascia-progression` · inglese: Advanced Fascia with elastic band · per lato · secondi · corpo libero · [video](https://youtu.be/o8MDW9RPZhQ)
+### Advanced Fascia with Elastic Band
+`fasc-advanced-fascia-progression` · per lato · secondi · corpo libero · [video](https://youtu.be/o8MDW9RPZhQ)
 
 **Esecuzione**
 1. Elastico ancorato in basso (piede del compagno, mobile pesante) e agganciato alla caviglia della gamba libera.
@@ -228,8 +228,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Occhi chiusi, o piede d'appoggio su un cuscino instabile.
 **Sicurezza:** Controlla l'ancoraggio dell'elastico prima di iniziare: se si sgancia può colpirti.
 
-### Protezione palla a otto
-`fasc-protezione-palla-figura-8-fascia` · inglese: Protezione palla figura 8 - fascia · per lato · secondi · campo · [video](https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1)
+### Ball Shielding Figure 8
+`fasc-protezione-palla-figura-8-fascia` · per lato · secondi · campo · [video](https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1)
 
 **Esecuzione**
 1. Appoggiati con la spalla a un muro o a un compagno, come se stessi proteggendo la palla da un avversario: il corpo sta tra il sostegno e la palla.
@@ -242,8 +242,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Compagno che spinge e prova a toccare la palla.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
 
-### Protezione palla laterale con palleggi
-`fasc-protezione-palla-laterale-palleggi-fascia` · inglese: Protezione palla laterale - palleggi - fascia · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=K55Sm0yGxME?si=m9CBgVvShKA_T1Gk)
+### Lateral Ball Shielding with Juggling
+`fasc-protezione-palla-laterale-palleggi-fascia` · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=K55Sm0yGxME?si=m9CBgVvShKA_T1Gk)
 
 **Esecuzione**
 1. Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.
@@ -256,8 +256,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Compagno che spinge di più.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
 
-### Protezione palla laterale con la suola
-`fasc-protezione-palla-laterale-suola-fascia` · inglese: Protezione palla laterale suola - fascia · bilaterale · secondi · campo · [video](https://www.youtube.com/watch?v=XdDmJ6p3qfE)
+### Lateral Ball Shielding with the Sole
+`fasc-protezione-palla-laterale-suola-fascia` · bilaterale · secondi · campo · [video](https://www.youtube.com/watch?v=XdDmJ6p3qfE)
 
 **Esecuzione**
 1. Di lato a un muro o a un compagno, spalla in appoggio, come se stessi proteggendo la palla da un avversario.
@@ -270,8 +270,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Compagno che cerca la palla con il piede.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
 
-### Protezione palla spalle alla porta
-`fasc-protezione-palla-schiena-fascia` · inglese: Protezione palla schiena - fascia · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=fjhKOlmaYhM?si=tWoZPtPeMCInFzTu)
+### Ball Shielding, Back to Goal
+`fasc-protezione-palla-schiena-fascia` · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=fjhKOlmaYhM?si=tWoZPtPeMCInFzTu)
 
 **Esecuzione**
 1. Compagno (o muro) dietro di te: sei di spalle, palla davanti ai piedi.
@@ -284,8 +284,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Compagno che spinge e prova ad anticipare.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
 
-### Spinta laterale e finta
-`fasc-spinta-laterale-e-finta-protezione-palla-fascia` · inglese: Spinta laterale e finta - protezione palla - fascia · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=nnSMkB7saNY?si=8Mg8VGvWQ4icDV8R)
+### Lateral Push and Feint (Ball Shielding)
+`fasc-spinta-laterale-e-finta-protezione-palla-fascia` · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=nnSMkB7saNY?si=8Mg8VGvWQ4icDV8R)
 
 **Esecuzione**
 1. Di lato al compagno, a contatto spalla a spalla, palla sul piede lontano.
@@ -298,8 +298,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Compagno libero di contrastare.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
 
-### Spinta laterale con la suola
-`fasc-spinta-laterale-suola-protezione-palla-fascia` · inglese: Spinta laterale suola - protezione palla - fascia · per lato · secondi · campo · [video](https://youtube.com/watch?v=9HcNXIItrps?si=xU-NdxHMAh1wBAeG)
+### Lateral Push with the Sole (Ball Shielding)
+`fasc-spinta-laterale-suola-protezione-palla-fascia` · per lato · secondi · campo · [video](https://youtube.com/watch?v=9HcNXIItrps?si=xU-NdxHMAh1wBAeG)
 
 **Esecuzione**
 1. Di lato al compagno, a contatto spalla a spalla.
@@ -312,8 +312,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Compagno che spinge e cerca la palla.
 **Sicurezza:** Con il compagno: contatto spalla a spalla, mai gomiti alti o spinte alla schiena.
 
-### Elastici: prevenzione e mobilità (video)
-`fasc-esercizi-elastici-prevenzione-e-mobilita` · inglese: Esercizi Elastici prevenzione e mobilità · bilaterale · minuti · piccoli attrezzi · [video](https://youtu.be/fX8KVJDoovY)
+### Band Exercises: Prevention and Mobility (Video)
+`fasc-esercizi-elastici-prevenzione-e-mobilita` · bilaterale · minuti · piccoli attrezzi · [video](https://youtu.be/fX8KVJDoovY)
 
 **Esecuzione**
 1. Sequenza guidata con l'elastico: adduttori, glutei, anche, core.
@@ -326,7 +326,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tieni ogni posizione 10 secondi in più.
 **Sicurezza:** Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista.
 
-### Sequenza Yoga - Adduttori e inguine, rinforzo
+### Yoga Sequence - Adductors and Groin Strengthening
 `fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo` · bilaterale · minuti · corpo libero · [video](https://youtu.be/n3VjhSqo4EM)
 
 **Esecuzione**
@@ -340,7 +340,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tieni ogni posizione 10 secondi in più.
 **Sicurezza:** Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista.
 
-### Sequenza Yoga - Adduttori e inguine, rinforzo avanzato
+### Yoga Sequence - Adductors and Groin Strengthening (Advanced)
 `fasc-sequenza-yoga-prevenzione-pubalgia-e-rinforzo-av` · bilaterale · minuti · corpo libero · [video](https://youtu.be/3LK-pgWd5F8)
 
 **Esecuzione**
@@ -354,7 +354,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tieni ogni posizione 10 secondi in più.
 **Sicurezza:** Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista.
 
-### Sequenza Yoga - Rinforzo Quadricipiti e Adduttori avanzato
+### Yoga Sequence - Quadriceps and Adductors Strengthening (Advanced)
 `fasc-sequenza-yoga-rinforzo-quadricipiti-e-adduttori` · bilaterale · minuti · corpo libero · [video](https://youtu.be/MGTU2b00s5w)
 
 **Esecuzione**
@@ -368,7 +368,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tieni ogni posizione 10 secondi in più.
 **Sicurezza:** Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista.
 
-### Rinforzo e prevenzione adduttori, abduttori, glutei, core
+### Strengthening and Prevention: Adductors, Abductors, Glutes, Core
 `fasc-rinforzo-e-prevenzione-adduttori-abduttori-glute` · bilaterale · minuti · corpo libero · [video](https://www.youtube.com/watch?v=-MYGiPYInbs)
 
 **Esecuzione**
@@ -382,7 +382,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tieni ogni posizione 10 secondi in più.
 **Sicurezza:** Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista.
 
-### Rinforzo e prevenzione rotazione anca e bacino
+### Strengthening and Prevention: Hip and Pelvis Rotation
 `fasc-rinforzo-e-prevenzione-rotazione-anca-e-bacino` · bilaterale · minuti · corpo libero · [video](https://www.youtube.com/watch?v=tVO19Euz5uY)
 
 **Esecuzione**
@@ -396,8 +396,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tieni ogni posizione 10 secondi in più.
 **Sicurezza:** Da fare ad almeno 3 giorni dalla partita, mai più vicino. Dolore all'inguine che resta dopo: parlane con un fisioterapista.
 
-### Passetti sull'avampiede con i manubri
-`fasc-ankle-stiffness-con-manubri` · inglese: Ankle stiffness con manubri · bilaterale · secondi · manubri · [video](https://youtube.com/shorts/eczdqr2oU7w)
+### Ankle Stiffness Steps with Dumbbells
+`fasc-ankle-stiffness-con-manubri` · bilaterale · secondi · manubri · [video](https://youtube.com/shorts/eczdqr2oU7w)
 
 **Esecuzione**
 1. In piedi, un manubrio per mano lungo i fianchi, peso sugli avampiedi, talloni sollevati.
@@ -412,8 +412,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 ## riscaldamento (14)
 
-### Allungo di riscaldamento
-`risc-allungo-riscaldamento` · inglese: Allungo riscaldamento · bilaterale · secondi · campo · senza video
+### Warm-Up Stride
+`risc-allungo-riscaldamento` · bilaterale · secondi · campo · senza video
 
 **Esecuzione**
 1. Parti al 60 % sulla distanza indicata e aumenta un po' ogni 10 metri.
@@ -426,8 +426,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** L'ultimo allungo al 90 % con una partenza da fermo.
 **Sicurezza:** Un posteriore che tira: fermati, niente sprint oggi.
 
-### Rullo sui polpacci (due gambe)
-`risc-calf-foam-roll` · inglese: Calf Foam Roll · bilaterale · minuti · piccoli attrezzi · [video](https://www.youtube.com/watch?v=-KJiVXocFHM)
+### Calf Foam Roll (Both Legs)
+`risc-calf-foam-roll` · bilaterale · minuti · piccoli attrezzi · [video](https://www.youtube.com/watch?v=-KJiVXocFHM)
 
 **Esecuzione**
 1. Seduto a terra, rullo sotto i polpacci, mani dietro a terra.
@@ -440,8 +440,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Una gamba sopra l'altra, tutto il peso su un polpaccio.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona.
 
-### Pallina sotto il piede
-`risc-fascia-adhesion-tennis-ball` · inglese: Fascia adhesion tennis ball · bilaterale · minuti · piccoli attrezzi · senza video
+### Tennis Ball Under the Foot
+`risc-fascia-adhesion-tennis-ball` · bilaterale · minuti · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. In piedi o seduto, pallina da tennis sotto la pianta del piede.
@@ -454,8 +454,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi su una gamba, pallina più dura.
 **Sicurezza:** Dolore acuto al tallone o formicolio: fermati.
 
-### In piedi, fermo e presente
-`risc-fascia-standing-meditation` · inglese: Fascia Standing Meditation · bilaterale · minuti · corpo libero · senza video
+### Standing Stillness (Fascia)
+`risc-fascia-standing-meditation` · bilaterale · minuti · corpo libero · senza video
 
 **Esecuzione**
 1. In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi.
@@ -468,8 +468,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Su una gamba, occhi chiusi.
 **Sicurezza:** Se gira la testa, apri gli occhi e appoggiati.
 
-### Skip con apertura dell'anca
-`risc-hip-external-rotation-skip` · inglese: Hip External Rotation Skip · bilaterale · reps · corpo libero · [video](https://youtu.be/-bNvML_9Z1w)
+### Hip External Rotation Skip
+`risc-hip-external-rotation-skip` · bilaterale · reps · corpo libero · [video](https://youtu.be/-bNvML_9Z1w)
 
 **Esecuzione**
 1. Skip sul posto o in avanzamento lento: a ogni passo il ginocchio sale e si apre verso l'esterno.
@@ -482,8 +482,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In avanzamento, più veloce, con la gamba che si apre e si chiude prima di atterrare.
 **Sicurezza:** Fastidio all'inguine: riduci l'apertura.
 
-### Rullo sotto la pianta del piede
-`risc-foam-roll-plantar-fascia` · inglese: Foam Roll Plantar Fascia · per lato · secondi · piccoli attrezzi · [video](https://www.youtube.com/watch?v=BZEgqilQ044)
+### Plantar Fascia Foam Roll
+`risc-foam-roll-plantar-fascia` · per lato · secondi · piccoli attrezzi · [video](https://www.youtube.com/watch?v=BZEgqilQ044)
 
 **Esecuzione**
 1. In piedi, un piede sul rullo (o su una pallina), l'altro a terra.
@@ -496,8 +496,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi su una gamba sola, pallina più dura.
 **Sicurezza:** Niente sul tallone se fa male al mattino ai primi passi: parlane con un fisioterapista.
 
-### Rullo sul polpaccio
-`risc-calves-foam-roll` · inglese: Calves Foam Roll · per lato · secondi · piccoli attrezzi · senza video
+### Calf Foam Roll
+`risc-calves-foam-roll` · per lato · secondi · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. Seduto, un polpaccio sul rullo, l'altra gamba incrociata sopra per spingere.
@@ -510,8 +510,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Rullo più duro o pallina da lacrosse sul punto più teso.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona.
 
-### Rullo sul lato esterno della gamba
-`risc-peroneals-foam-roll` · inglese: Peroneals Foam Roll · per lato · secondi · piccoli attrezzi · senza video
+### Peroneals Foam Roll
+`risc-peroneals-foam-roll` · per lato · secondi · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. Sdraiato sul fianco, rullo sotto il lato esterno della gamba tra caviglia e ginocchio.
@@ -524,8 +524,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gamba sopra l'altra, pallina al posto del rullo.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona. Qui passa un nervo: se senti scosse verso il piede, sposta il rullo.
 
-### Rullo sui posteriori della coscia
-`risc-hamstring-foam-roll` · inglese: Hamstring Foam Roll · per lato · secondi · piccoli attrezzi · senza video
+### Hamstring Foam Roll
+`risc-hamstring-foam-roll` · per lato · secondi · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. Seduto, rullo sotto la coscia, mani dietro, l'altra gamba appoggiata sopra per aumentare la pressione.
@@ -538,8 +538,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Punta del piede tirata verso l'alto durante la passata; rullo più duro.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona.
 
-### Rullo tra le scapole
-`risc-rhomboids-foam-roll` · inglese: Rhomboids Foam Roll · per lato · secondi · piccoli attrezzi · senza video
+### Rhomboids Foam Roll
+`risc-rhomboids-foam-roll` · per lato · secondi · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. Sdraiato, rullo sotto la parte alta della schiena, ginocchia piegate, piedi a terra.
@@ -552,8 +552,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Braccia tese sopra la testa durante la passata.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona.
 
-### Rullo sui quadricipiti
-`risc-quadriceps-foam-roll` · inglese: Quadriceps Foam Roll · per lato · secondi · piccoli attrezzi · senza video
+### Quadriceps Foam Roll
+`risc-quadriceps-foam-roll` · per lato · secondi · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. A pancia in giù sugli avambracci, rullo sotto una coscia, l'altra gamba di lato a terra.
@@ -566,8 +566,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gamba sopra l'altra; rullo più duro.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona.
 
-### Rullo sul gluteo profondo
-`risc-piriformis-foam-roll` · inglese: Piriformis Foam Roll · per lato · secondi · piccoli attrezzi · senza video
+### Piriformis Foam Roll
+`risc-piriformis-foam-roll` · per lato · secondi · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. Seduto sul rullo, caviglia destra sul ginocchio sinistro.
@@ -580,7 +580,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pallina da lacrosse al posto del rullo.
 **Sicurezza:** Fermati sul punto che tira, non sull'osso. Dolore acuto, formicolio o un livido: salta la zona. Se senti una scossa che scende lungo la gamba, togli il peso.
 
-### Corsa lenta
+### Easy Jog
 `risc-corsa-lenta` · bilaterale · minuti · corpo libero · senza video
 
 **Esecuzione**
@@ -594,7 +594,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Ultimo minuto con 3 cambi di ritmo da 10 secondi.
 **Sicurezza:** Fastidio che aumenta correndo: fermati e segnala il dolore nell'app.
 
-### Mobilità libera
+### Free Mobility
 `risc-mobilita-libera` · bilaterale · minuti · corpo libero · senza video
 
 **Esecuzione**
@@ -610,7 +610,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 ## mobilita-recupero (2)
 
-### Sequenza Yoga - Recupero e Mobilità
+### Yoga Sequence - Recovery and Mobility
 `mob-sequenza-yoga-recupero-e-mobilita` · bilaterale · minuti · corpo libero · [video](https://youtu.be/iXgtmz6QnzA)
 
 **Esecuzione**
@@ -624,7 +624,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Nessuna: è recupero.
 **Sicurezza:** Mai il giorno prima o il giorno della partita.
 
-### Sessione recupero dopo partita o allenamenti pesanti
+### Recovery Session after Match or Heavy Training
 `mob-sessione-recupero-dopo-partita-o-allenamenti-pes` · bilaterale · minuti · corpo libero · [video](https://www.youtube.com/watch?v=bpkpnZW9QD0)
 
 **Esecuzione**

@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-12 — Tutti i nomi degli esercizi con scheda in inglese
+- Ste: "tutto in inglese i nomi". Anche i 115 esercizi dei batch 1 e 2 (fascia, riscaldamento, mobilità, parte bassa, core, più lo split squat esplosivo) passano dall'italiano all'inglese corretto: Walking Lunge, Romanian Deadlift, Bulgarian Split Squat, Nordic Hamstring Curl, Towel Curls, Calf Foam Roll, Hanging Knee Raise, Copenhagen Plank…; gli esercizi di calcio della fascia in inglese piano (Ball Shielding Figure 8, Tennis Ball Juggling, Towel Leg Swing). Id congelati, `nome_everfit` per i blocchi (identici: 144, 135 completi), `nome_en` tolto. File di revisione e di correzione rigenerati con i nomi nuovi (quelli dei batch 1-2 erano già vuoti: le correzioni di Ste sono nel JSON).
+
 ## 2026-10-12 — Schede esercizi, batch 3: forza parte alta (46)
 - 46 schede nuove. Nomi in inglese corretto (Ste: "rinomina gli esercizi con i nomi corretti in inglese non italiano"): Pull-Up, Barbell Bench Press, Hindu Push-Up, Isometric Wall Push…; l'id resta congelato e `nome_everfit` tiene il nome Everfit originale (anche quello italiano, es. Trazioni) per l'abbinamento dei blocchi, che restano 135 completi. Nessun `nome_en` in questo batch: il nome è già inglese. 5 "da confermare" in testa a `docs/schede/parte-alta.md`: tre aperture su panca inclinata con lo stesso video, One Arm Push Up contro One Arm Pushup, le tre spinte isometriche al muro lette dalla miniatura. File di correzione `docs/schede/parte-alta-correzioni.md`. Test: batch 3 completo. Catalogo: 161 schede su 302 attivi.
 
