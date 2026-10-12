@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-12 — Schede esercizi, batch 3: forza parte alta (46)
+- 46 schede nuove, 38 esercizi rinominati in italiano con l'id congelato e il nome inglese in `nome_en`/`nome_everfit` (i blocchi Everfit restano 135 completi). 5 "da confermare" in testa a `docs/schede/parte-alta.md`: tre aperture su panca inclinata con lo stesso video, One Arm Push Up contro One Arm Pushup, le tre spinte isometriche al muro lette dalla miniatura. File di correzione `docs/schede/parte-alta-correzioni.md`. Test: batch 3 completo. Catalogo: 161 schede su 302 attivi.
+
 ## 2026-10-12 — Check-in del mattino: i cinque box in una schermata
 - Ste: "fai i box più piccoli in modo che stiano tutti nella pagina senza scrollare". `components/DailyCheckinModal.tsx`: ogni cursore è una card bassa con una sola riga (nome, descrizione, valore) e lo slider sotto, senza la riga degli estremi; lo slider tiene i 44 px di tap ma entra nel padding della card. Da ~140 a ~72 px per box: a 390×844 il foglio passa da ~1010 a 677 px e non scrolla più (harness `scratchpad/ui/shoot-checkin.mjs`, fuori repo).
 

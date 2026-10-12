@@ -1234,7 +1234,7 @@
   }
  },
  {
-  "nome": "Knee Raises (Con Barra Dip)",
+  "nome": "Sollevamento delle ginocchia alle parallele",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 1,
@@ -1250,10 +1250,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-knee-raises-con-barra-dip",
+  "nome_en": "Knee Raises (Con Barra Dip)",
+  "scheda": {
+   "esecuzione": [
+    "Alle parallele, braccia tese e spalle basse, corpo fermo.",
+    "Porta le ginocchia al petto arrotolando il bacino verso l'alto, senza slancio.",
+    "Pausa di 1 secondo in alto, scendi in controllo fino alle gambe distese.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Dondolare per prendere slancio.",
+    "Sollevare solo le gambe senza arrotolare il bacino.",
+    "Spalle che salgono verso le orecchie."
+   ],
+   "piu_facile": "Ginocchia a 90°, escursione ridotta.",
+   "piu_difficile": "Gambe tese, o pausa di 3 secondi in alto.",
+   "sicurezza": "Fastidio alle spalle in appoggio: fermati."
+  }
  },
  {
-  "nome": "Arnold Press Con Manubri",
+  "nome": "Arnold press con manubri",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1269,10 +1287,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-arnold-press-con-manubri",
+  "nome_en": "Arnold Press Con Manubri",
+  "scheda": {
+   "esecuzione": [
+    "Seduto o in piedi, un manubrio per mano davanti alle spalle, palmi rivolti verso di te.",
+    "Spingi verso l'alto ruotando i polsi: a braccia distese i palmi guardano avanti.",
+    "Scendi in controllo invertendo la rotazione, fino ai manubri davanti alle spalle.",
+    "Addome attivo, schiena neutra. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Inarcare la zona lombare per spingere.",
+    "Manubri che si allontanano dal corpo nella rotazione.",
+    "Bloccare i gomiti in alto."
+   ],
+   "piu_facile": "Manubri più leggeri, seduto con lo schienale.",
+   "piu_difficile": "In piedi, più carico, o discesa in 3 secondi.",
+   "sicurezza": "Fastidio alla spalla nella rotazione: riduci il carico o l'escursione."
+  }
  },
  {
-  "nome": "Bench Flyes FY",
+  "nome": "Aperture su panca inclinata (FY)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 4,
@@ -1292,10 +1328,29 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fpa-bench-flyes-fy",
+  "nome_en": "Bench Flyes FY",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
+    "Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.",
+    "Chiudi con lo stesso arco contraendo il petto, senza battere i manubri in alto.",
+    "Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Piegare troppo i gomiti: diventa una distensione.",
+    "Scendere oltre il livello delle spalle con carico alto.",
+    "Inarcare la schiena."
+   ],
+   "piu_facile": "Manubri più leggeri, escursione ridotta.",
+   "piu_difficile": "Pausa di 2 secondi in apertura.",
+   "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto.",
+   "da_confermare": "Stesso video della 'Panca inclinata con manubri (flyes)' e c'è anche 'Incline dumbbell flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?"
+  }
  },
  {
-  "nome": "cuban press",
+  "nome": "Cuban press con manubri",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1316,10 +1371,28 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "Anche B ma peso basso"
+  "nota_livello": "Anche B ma peso basso",
+  "id": "fpa-cuban-press",
+  "nome_en": "cuban press",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, manubri leggeri, gomiti alti all'altezza delle spalle e piegati a 90°, avambracci che puntano in basso.",
+    "Ruota le spalle portando gli avambracci in alto, fino ai manubri sopra i gomiti.",
+    "Da lì spingi i manubri sopra la testa, poi torna con lo stesso percorso: giù gli avambracci, poi la rotazione in avanti.",
+    "Lento e controllato. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Carico troppo alto: è un esercizio da manubri leggeri.",
+    "Gomiti che scendono durante la rotazione.",
+    "Inarcare la schiena nella spinta."
+   ],
+   "piu_facile": "Solo la rotazione, senza la spinta sopra la testa.",
+   "piu_difficile": "Pausa di 2 secondi in ogni posizione.",
+   "sicurezza": "Fastidio alla spalla nella rotazione: riduci il carico o fermati."
+  }
  },
  {
-  "nome": "Dips",
+  "nome": "Dip alle parallele",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -1335,10 +1408,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-dips",
+  "nome_en": "Dips",
+  "scheda": {
+   "esecuzione": [
+    "Alle parallele, braccia tese, spalle basse, busto leggermente inclinato in avanti.",
+    "Scendi piegando i gomiti finché le spalle arrivano all'altezza dei gomiti.",
+    "Spingi fino alle braccia distese, senza bloccare i gomiti di colpo.",
+    "Gambe ferme, addome attivo. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Spalle che salgono verso le orecchie.",
+    "Scendere di colpo.",
+    "Dondolare con le gambe."
+   ],
+   "piu_facile": "Dip su una panca con i piedi a terra, o con l'elastico sotto le ginocchia.",
+   "piu_difficile": "Dip zavorrati, o discesa in 3 secondi.",
+   "sicurezza": "Dolore alla spalla in basso: riduci la profondità o fermati."
+  }
  },
  {
-  "nome": "Incline dumbbell flyes",
+  "nome": "Aperture con manubri su panca inclinata",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1358,10 +1449,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-incline-dumbbell-flyes",
+  "nome_en": "Incline dumbbell flyes",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
+    "Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.",
+    "Chiudi con lo stesso arco contraendo il petto.",
+    "Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Piegare troppo i gomiti: diventa una distensione.",
+    "Scendere troppo con carico alto.",
+    "Inarcare la schiena."
+   ],
+   "piu_facile": "Manubri più leggeri, escursione ridotta.",
+   "piu_difficile": "Pausa di 2 secondi in apertura.",
+   "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto."
+  }
  },
  {
-  "nome": "kettlebell clean to push",
+  "nome": "Clean e press con kettlebell",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 4,
@@ -1381,10 +1490,28 @@
   "solo_livello": false,
   "nota_livello": "Anche B ma peso basso",
   "fascia_kb": "avanzato",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fpa-kettlebell-clean-to-push",
+  "nome_en": "kettlebell clean to push",
+  "scheda": {
+   "esecuzione": [
+    "Kettlebell a terra tra i piedi, piedi alla larghezza delle spalle, schiena neutra.",
+    "Clean: tira il kettlebell lungo il corpo con una spinta delle anche e portalo in appoggio sull'avambraccio davanti alla spalla, gomito al fianco.",
+    "Press: spingi il kettlebell sopra la testa fino al braccio disteso, addome attivo.",
+    "Riporta il kettlebell alla spalla e poi tra le gambe. Fai le ripetizioni indicate, poi cambia braccio."
+   ],
+   "errori": [
+    "Kettlebell che sbatte sull'avambraccio nel clean: il percorso è vicino al corpo.",
+    "Inarcare la schiena nella spinta.",
+    "Tirare con il braccio invece che con le anche."
+   ],
+   "piu_facile": "Kettlebell leggero, solo il clean.",
+   "piu_difficile": "Kettlebell più pesante, o press in 3 secondi.",
+   "sicurezza": "Polso dritto nel press. Fastidio alla spalla: riduci il carico."
+  }
  },
  {
-  "nome": "kettlebell swing high pull",
+  "nome": "Swing con tirata alta (kettlebell)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -1402,10 +1529,28 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "fascia_kb": "intermedio",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fpa-kettlebell-swing-high-pull",
+  "nome_en": "kettlebell swing high pull",
+  "scheda": {
+   "esecuzione": [
+    "Piedi più larghi delle spalle, kettlebell con due mani, schiena neutra.",
+    "Porta il kettlebell tra le gambe e spingi con le anche: lo swing sale fino al petto.",
+    "In cima tira i gomiti indietro e in alto, portando il kettlebell vicino al petto, poi lascialo tornare nello swing.",
+    "Fai le ripetizioni indicate con ritmo continuo."
+   ],
+   "errori": [
+    "Spingere con le braccia invece che con le anche.",
+    "Schiena che si curva nel passaggio tra le gambe.",
+    "Spalle che salgono verso le orecchie."
+   ],
+   "piu_facile": "Solo lo swing, senza la tirata.",
+   "piu_difficile": "Kettlebell più pesante.",
+   "sicurezza": "Presa salda. Fastidio lombare: fermati."
+  }
  },
  {
-  "nome": "Overhead Press Con Manubri",
+  "nome": "Spinte sopra la testa con manubri (seduto)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1421,10 +1566,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-overhead-press-con-manubri",
+  "nome_en": "Overhead Press Con Manubri",
+  "scheda": {
+   "esecuzione": [
+    "Seduto con lo schienale, un manubrio per mano all'altezza delle spalle, palmi avanti.",
+    "Spingi i manubri verso l'alto fino alle braccia distese, senza farli toccare.",
+    "Scendi in controllo fino ai manubri all'altezza delle orecchie.",
+    "Addome attivo, schiena appoggiata. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Inarcare la zona lombare.",
+    "Bloccare i gomiti in alto.",
+    "Scendere troppo con carico alto."
+   ],
+   "piu_facile": "Manubri più leggeri.",
+   "piu_difficile": "Più carico, o discesa in 3 secondi.",
+   "sicurezza": "Fastidio alla spalla: riduci il carico o l'escursione."
+  }
  },
  {
-  "nome": "Overhead Press Con Manubri In Piedi",
+  "nome": "Spinte sopra la testa con manubri in piedi",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1440,10 +1603,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-overhead-press-con-manubri-in-piedi",
+  "nome_en": "Overhead Press Con Manubri In Piedi",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piedi alla larghezza del bacino, un manubrio per mano all'altezza delle spalle, palmi avanti.",
+    "Spingi i manubri verso l'alto fino alle braccia distese, senza inarcare la schiena.",
+    "Scendi in controllo fino ai manubri all'altezza delle orecchie.",
+    "Addome e glutei contratti. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Inarcare la zona lombare per spingere.",
+    "Bloccare i gomiti in alto.",
+    "Oscillare con le gambe."
+   ],
+   "piu_facile": "Manubri più leggeri, o seduto.",
+   "piu_difficile": "Più carico, o un manubrio alla volta.",
+   "sicurezza": "Fastidio lombare: seduto. Fastidio alla spalla: riduci il carico."
+  }
  },
  {
-  "nome": "Panca Inclinata Con Manubri (Flyes)",
+  "nome": "Aperture su panca inclinata con manubri",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -1459,10 +1640,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-panca-inclinata-con-manubri-flyes",
+  "nome_en": "Panca Inclinata Con Manubri (Flyes)",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
+    "Apri le braccia in un arco ampio fino a sentire allungare il petto, gomiti sempre leggermente piegati.",
+    "Chiudi con lo stesso arco contraendo il petto.",
+    "Piedi a terra, scapole appoggiate. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Piegare troppo i gomiti: diventa una distensione.",
+    "Scendere troppo con carico alto.",
+    "Inarcare la schiena."
+   ],
+   "piu_facile": "Manubri più leggeri, escursione ridotta.",
+   "piu_difficile": "Pausa di 2 secondi in apertura.",
+   "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto."
+  }
  },
  {
-  "nome": "Panca Piana Con Bulanciere (Gambe In Aria)",
+  "nome": "Panca piana con bilanciere, gambe sollevate",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1478,7 +1677,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-panca-piana-con-bulanciere-gambe-in-aria",
+  "nome_en": "Panca Piana Con Bulanciere (Gambe In Aria)",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato sulla panca piana con le gambe sollevate, ginocchia piegate a 90°: la schiena resta tutta appoggiata.",
+    "Afferra il bilanciere poco più largo delle spalle, scapole unite e basse.",
+    "Scendi in controllo fino a sfiorare il petto, gomiti a circa 45° dal busto.",
+    "Spingi fino alle braccia distese. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Inarcare la schiena: con le gambe sollevate non deve succedere.",
+    "Gomiti che si aprono troppo: restano a circa 45° dal busto.",
+    "Far rimbalzare il bilanciere sul petto."
+   ],
+   "piu_facile": "Bilanciere scarico o manubri.",
+   "piu_difficile": "Pausa di 2 secondi sul petto.",
+   "sicurezza": "Fermi di sicurezza o compagno: senza l'appoggio delle gambe il carico è più basso del solito."
+  }
  },
  {
   "nome": "Piegamenti",
@@ -1519,7 +1736,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Plank To Pushup",
+  "nome": "Dal plank sugli avambracci al plank alto",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -1535,10 +1752,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-plank-to-pushup",
+  "nome_en": "Plank To Pushup",
+  "scheda": {
+   "esecuzione": [
+    "Plank sugli avambracci, corpo in linea, piedi alla larghezza del bacino.",
+    "Appoggia una mano e poi l'altra e sali in plank alto a braccia distese.",
+    "Scendi un avambraccio alla volta e torna in basso, cambiando il braccio di partenza a ogni giro.",
+    "Bacino fermo per tutto il movimento. Per il tempo indicato."
+   ],
+   "errori": [
+    "Bacino che ruota a ogni cambio.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Fretta."
+   ],
+   "piu_facile": "Ginocchia a terra.",
+   "piu_difficile": "Piedi uniti, o più lento.",
+   "sicurezza": "Fastidio ai polsi o alle spalle: fermati."
+  }
  },
  {
-  "nome": "Pull Up Around The World",
+  "nome": "Trazioni in cerchio (around the world)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 4,
@@ -1555,10 +1790,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fpa-pull-up-around-the-world",
+  "nome_en": "Pull Up Around The World",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra con presa larga, spalle attive.",
+    "Tira verso una mano fino al mento sopra la sbarra, poi spostati lungo la sbarra verso l'altra mano restando in alto.",
+    "Scendi in controllo dall'altro lato: il percorso disegna un cerchio.",
+    "Fai le ripetizioni indicate (un cerchio = una ripetizione), poi inverti il senso."
+   ],
+   "errori": [
+    "Scendere a metà percorso invece di restare alto.",
+    "Slancio con le gambe.",
+    "Spalle che salgono verso le orecchie."
+   ],
+   "piu_facile": "Trazioni ad arciere.",
+   "piu_difficile": "Cerchio più lento, o zavorra leggera.",
+   "sicurezza": "Solo con almeno 10 trazioni pulite. Fastidio al gomito: fermati."
+  }
  },
  {
-  "nome": "Trazioni",
+  "nome": "Trazioni alla sbarra",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 3,
@@ -1574,10 +1827,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-trazioni",
+  "nome_en": "Trazioni",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra con presa prona poco più larga delle spalle, braccia tese, spalle attive.",
+    "Tira portando il petto verso la sbarra, gomiti verso il basso, fino al mento sopra la sbarra.",
+    "Scendi in controllo fino alle braccia distese.",
+    "Corpo fermo, addome attivo. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Slancio con le gambe (kipping).",
+    "Scendere a metà: le braccia arrivano distese.",
+    "Spalle che salgono verso le orecchie."
+   ],
+   "piu_facile": "Con l'elastico sotto i piedi, o trazioni australiane.",
+   "piu_difficile": "Zavorra, o discesa in 3 secondi.",
+   "sicurezza": "Fastidio al gomito o alla spalla: fermati."
+  }
  },
  {
-  "nome": "Trazioni Australiane",
+  "nome": "Trazioni australiane",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 2,
@@ -1593,10 +1864,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-trazioni-australiane",
+  "nome_en": "Trazioni Australiane",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato sotto una sbarra bassa, afferrala con le mani larghe quanto le spalle, talloni a terra, corpo in linea.",
+    "Tira il petto verso la sbarra tenendo il corpo rigido, gomiti vicino al busto.",
+    "Scendi in controllo fino alle braccia distese.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Collo che spinge in avanti: resta in linea.",
+    "Scendere di colpo."
+   ],
+   "piu_facile": "Sbarra più alta, o ginocchia piegate con i piedi a terra.",
+   "piu_difficile": "Piedi su un rialzo, o pausa di 2 secondi in alto.",
+   "sicurezza": "Sbarra stabile. Fastidio alla spalla: riduci l'escursione."
+  }
  },
  {
-  "nome": "Overhead Press Con Bilanciere",
+  "nome": "Military press con bilanciere",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -1612,10 +1901,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-overhead-press-con-bilanciere",
+  "nome_en": "Overhead Press Con Bilanciere",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, bilanciere sulle clavicole, presa poco più larga delle spalle, gomiti leggermente avanti.",
+    "Spingi il bilanciere sopra la testa portando la testa leggermente indietro per farlo passare, poi avanti sotto il bilanciere.",
+    "Braccia distese in cima, bilanciere sopra il centro del piede.",
+    "Scendi in controllo sulle clavicole. Glutei e addome contratti. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Inarcare la zona lombare.",
+    "Bilanciere che passa lontano dal viso.",
+    "Spingere con le gambe: è una spinta di spalle."
+   ],
+   "piu_facile": "Bilanciere scarico o manubri.",
+   "piu_difficile": "Più carico, o pausa in cima.",
+   "sicurezza": "Fastidio lombare: riduci il carico e contrai di più i glutei."
+  }
  },
  {
-  "nome": "Panca Inclinata Con Bilanciere",
+  "nome": "Panca inclinata con bilanciere",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1631,10 +1938,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-panca-inclinata-con-bilanciere",
+  "nome_en": "Panca Inclinata Con Bilanciere",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato sulla panca inclinata, piedi a terra, scapole unite e basse, presa poco più larga delle spalle.",
+    "Scendi in controllo fino a sfiorare la parte alta del petto, gomiti a circa 45° dal busto.",
+    "Spingi fino alle braccia distese sopra le spalle.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Gomiti che si aprono troppo: restano a circa 45° dal busto.",
+    "Far rimbalzare il bilanciere sul petto.",
+    "Bacino che si stacca dalla panca."
+   ],
+   "piu_facile": "Bilanciere scarico o manubri.",
+   "piu_difficile": "Pausa di 2 secondi sul petto.",
+   "sicurezza": "Fermi di sicurezza o compagno con carichi alti."
+  }
  },
  {
-  "nome": "Panca Piana Con Bilanciere",
+  "nome": "Panca piana con bilanciere",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1651,7 +1976,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "video_nota": null
+  "video_nota": null,
+  "id": "fpa-panca-piana-con-bilanciere",
+  "nome_en": "Panca Piana Con Bilanciere",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato sulla panca, piedi a terra, scapole unite e basse, presa poco più larga delle spalle.",
+    "Scendi in controllo fino a sfiorare il petto, gomiti a circa 45° dal busto.",
+    "Spingi fino alle braccia distese sopra le spalle.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Gomiti che si aprono troppo: restano a circa 45° dal busto.",
+    "Far rimbalzare il bilanciere sul petto.",
+    "Bacino che si stacca dalla panca."
+   ],
+   "piu_facile": "Bilanciere scarico o manubri.",
+   "piu_difficile": "Pausa di 2 secondi sul petto, o più carico.",
+   "sicurezza": "Fermi di sicurezza o compagno con carichi alti."
+  }
  },
  {
   "nome": "Piegamenti Declinati",
@@ -1673,7 +2016,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Rematore Con Bilanciere",
+  "nome": "Rematore con bilanciere",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -1689,10 +2032,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-rematore-con-bilanciere",
+  "nome_en": "Rematore Con Bilanciere",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, bilanciere in mano con presa prona, ginocchia piegate, busto inclinato in avanti a circa 45° con la schiena neutra.",
+    "Tira il bilanciere verso l'addome portando i gomiti indietro e vicino al corpo.",
+    "Pausa di 1 secondo con le scapole unite, poi scendi in controllo.",
+    "Il busto resta fermo. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Busto che si alza e si abbassa per aiutare.",
+    "Schiena che si curva.",
+    "Tirare con le braccia invece che con la schiena: pensa ai gomiti."
+   ],
+   "piu_facile": "Meno carico, busto meno inclinato.",
+   "piu_difficile": "Più carico, o pausa di 2 secondi in alto.",
+   "sicurezza": "Fastidio lombare: riduci il carico e controlla la schiena neutra."
+  }
  },
  {
-  "nome": "Archer Pullup",
+  "nome": "Trazioni ad arciere",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1709,10 +2070,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": false
+  "solo_livello": false,
+  "id": "fpa-archer-pullup",
+  "nome_en": "Archer Pullup",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra con presa larga, spalle attive.",
+    "Tira verso una mano fino al mento sopra la sbarra: l'altro braccio resta quasi disteso di lato, come un arco.",
+    "Scendi in controllo e ripeti dall'altro lato.",
+    "Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Braccio di sostegno che si piega troppo.",
+    "Slancio con le gambe.",
+    "Scendere a metà."
+   ],
+   "piu_facile": "Elastico sotto i piedi, o braccio di sostegno più piegato.",
+   "piu_difficile": "Braccio di sostegno completamente disteso, o zavorra leggera.",
+   "sicurezza": "Solo con almeno 8 trazioni pulite. Fastidio al gomito: fermati."
+  }
  },
  {
-  "nome": "Archer Pushup",
+  "nome": "Piegamenti ad arciere",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1730,10 +2109,28 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "descrizione": "Piegamento con le mani più larghe delle spalle: scendi spostando il peso su un braccio, l'altro resta quasi teso di lato (come un arco). Risali e alterna il lato alla ripetizione successiva. Corpo in linea."
+  "descrizione": "Piegamento con le mani più larghe delle spalle: scendi spostando il peso su un braccio, l'altro resta quasi teso di lato (come un arco). Risali e alterna il lato alla ripetizione successiva. Corpo in linea.",
+  "id": "fpa-archer-pushup",
+  "nome_en": "Archer Pushup",
+  "scheda": {
+   "esecuzione": [
+    "Plank alto con le mani molto più larghe delle spalle, corpo in linea.",
+    "Scendi spostando il peso su un braccio: l'altro resta quasi disteso di lato, come un arco.",
+    "Spingi per risalire e ripeti dall'altro lato.",
+    "Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Braccio di sostegno che si piega troppo.",
+    "Busto che ruota."
+   ],
+   "piu_facile": "Mani meno larghe, o ginocchia a terra.",
+   "piu_difficile": "Braccio di sostegno completamente disteso, o piedi su un rialzo.",
+   "sicurezza": "Fastidio ai polsi: fermati."
+  }
  },
  {
-  "nome": "One Arm Push Up",
+  "nome": "Piegamenti a un braccio",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -1753,10 +2150,29 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core",
+  "id": "fpa-one-arm-push-up",
+  "nome_en": "One Arm Push Up",
+  "scheda": {
+   "esecuzione": [
+    "Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.",
+    "Scendi in controllo piegando il gomito vicino al corpo, con il busto che resta quasi parallelo al pavimento.",
+    "Spingi fino al braccio disteso.",
+    "Fai le ripetizioni indicate, poi cambia braccio."
+   ],
+   "errori": [
+    "Busto che ruota verso l'alto: resta parallelo al pavimento.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Gomito che si apre di lato."
+   ],
+   "piu_facile": "Mano su un rialzo.",
+   "piu_difficile": "Piedi più vicini, o mano a terra in deficit.",
+   "sicurezza": "Solo con parte alta e core forti. Fastidio al polso o al gomito: fermati.",
+   "da_confermare": "Esiste anche 'One Arm Pushup' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto."
+  }
  },
  {
-  "nome": "One Arm Push Up Deep PRO",
+  "nome": "Piegamenti a un braccio in deficit",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -1776,10 +2192,28 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core",
+  "id": "fpa-one-arm-push-up-deep-pro",
+  "nome_en": "One Arm Push Up Deep PRO",
+  "scheda": {
+   "esecuzione": [
+    "Plank alto su una mano appoggiata su un rialzo basso (disco o parallettes), piedi larghi, mano libera dietro la schiena.",
+    "Scendi in controllo oltre il livello della mano, finché il petto scende sotto l'appoggio.",
+    "Spingi fino al braccio disteso, busto parallelo al pavimento.",
+    "Fai le ripetizioni indicate, poi cambia braccio."
+   ],
+   "errori": [
+    "Busto che ruota.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Scendere di colpo."
+   ],
+   "piu_facile": "Piegamenti a un braccio senza deficit.",
+   "piu_difficile": "Piedi più vicini, o deficit più alto.",
+   "sicurezza": "Solo dopo i piegamenti a un braccio puliti. Fastidio alla spalla in basso: riduci il deficit."
+  }
  },
  {
-  "nome": "One Arm Push Up Incline",
+  "nome": "Piegamenti a un braccio con mano sul rialzo",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -1800,10 +2234,28 @@
   "sottogruppo": null,
   "solo_livello": false,
   "nota_livello": "anche A, ma deve essere forte in parte alta e core",
-  "descrizione": "Piegamento a un braccio con la mano d'appoggio su un rialzo (panca, gradino). Piedi larghi, mano libera dietro la schiena, corpo rigido. Scendi controllato e spingi. Alterna i lati come indicato."
+  "descrizione": "Piegamento a un braccio con la mano d'appoggio su un rialzo (panca, gradino). Piedi larghi, mano libera dietro la schiena, corpo rigido. Scendi controllato e spingi. Alterna i lati come indicato.",
+  "id": "fpa-one-arm-push-up-incline",
+  "nome_en": "One Arm Push Up Incline",
+  "scheda": {
+   "esecuzione": [
+    "Mano d'appoggio su una panca o un gradino, piedi larghi, mano libera dietro la schiena, corpo rigido.",
+    "Scendi in controllo piegando il gomito vicino al corpo, busto che non ruota.",
+    "Spingi fino al braccio disteso.",
+    "Fai le ripetizioni indicate, poi cambia braccio."
+   ],
+   "errori": [
+    "Busto che ruota verso l'alto.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Gomito che si apre di lato."
+   ],
+   "piu_facile": "Rialzo più alto, piedi più larghi.",
+   "piu_difficile": "Rialzo più basso, fino a terra.",
+   "sicurezza": "Rialzo stabile. Fastidio al polso o al gomito: fermati."
+  }
  },
  {
-  "nome": "One Arm Pushup",
+  "nome": "Piegamenti a un braccio (base)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1820,7 +2272,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fpa-one-arm-pushup",
+  "nome_en": "One Arm Pushup",
+  "scheda": {
+   "esecuzione": [
+    "Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.",
+    "Scendi in controllo piegando il gomito vicino al corpo, busto che resta quasi parallelo al pavimento.",
+    "Spingi fino al braccio disteso.",
+    "Fai le ripetizioni indicate, poi cambia braccio."
+   ],
+   "errori": [
+    "Busto che ruota verso l'alto.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Gomito che si apre di lato."
+   ],
+   "piu_facile": "Mano su un rialzo.",
+   "piu_difficile": "Piedi più vicini.",
+   "sicurezza": "Fastidio al polso o al gomito: fermati."
+  }
  },
  {
   "nome": "Sollevamento delle ginocchia alla sbarra",
@@ -4354,7 +4824,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-piegamenti-hindu",
+  "scheda": {
+   "esecuzione": [
+    "Parti a V rovesciata: mani e piedi a terra, bacino alto, braccia e gambe distese.",
+    "Scendi in avanti con un movimento a onda: la testa passa bassa tra le mani, poi il petto, fino ad arrivare con le braccia distese e il bacino vicino a terra, sguardo in alto.",
+    "Torna indietro alla V rovesciata spingendo il bacino in alto.",
+    "Movimento fluido e continuo. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Spezzare il movimento in due parti: è un'onda unica.",
+    "Zona lombare che si comprime in fondo: il bacino resta attivo.",
+    "Fretta."
+   ],
+   "piu_facile": "Ginocchia a terra, onda più corta.",
+   "piu_difficile": "Più lento, o pausa in fondo.",
+   "sicurezza": "Fastidio lombare in fondo: meno estensione, o fermati."
+  }
  },
  {
   "nome": "Plank con torsione e elastico",
@@ -4415,7 +4902,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "forza-parte-bassa",
-  "sottogruppo": "overcoming isometrics"
+  "sottogruppo": "overcoming isometrics",
+  "id": "fpa-spinta-isometrica-al-muro-frontale",
+  "scheda": {
+   "esecuzione": [
+    "Di fronte a un muro, mani appoggiate all'altezza delle spalle, corpo inclinato in avanti in linea, un piede avanti e uno indietro come nella spinta dello sprint.",
+    "Spingi il muro con tutta la forza, come se volessi spostarlo, tenendo il corpo rigido dai talloni alla testa.",
+    "Respira con regolarità, addome e glutei contratti.",
+    "Tieni per il tempo indicato, poi cambia la gamba davanti."
+   ],
+   "errori": [
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Trattenere il respiro.",
+    "Spingere solo con le braccia: la spinta parte dai piedi."
+   ],
+   "piu_facile": "Inclinazione minore, tempo più corto.",
+   "piu_difficile": "Inclinazione maggiore, o su una gamba sola.",
+   "sicurezza": "Niente dolore alle spalle durante la spinta: se compare, fermati.",
+   "da_confermare": "Dalla miniatura: inclinato in avanti con le mani sulla porta, un piede avanti. Confermi? La spinta è con tutto il corpo?"
+  }
  },
  {
   "nome": "Spinta isometrica al muro laterale esterno",
@@ -4439,7 +4944,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "forza-parte-bassa",
-  "sottogruppo": "overcoming isometrics"
+  "sottogruppo": "overcoming isometrics",
+  "id": "fpa-spinta-isometrica-al-muro-laterale-esterno",
+  "scheda": {
+   "esecuzione": [
+    "Di lato a un muro, in posizione di corsa: gamba vicina al muro sollevata con il ginocchio alto, piede lontano a terra.",
+    "Il braccio lontano dal muro passa davanti al corpo e spinge il muro con il pugno o l'avambraccio, come nell'oscillazione della corsa.",
+    "Spingi forte tenendo il busto fermo e il piede a terra ben piantato: il lavoro è del core e della spalla.",
+    "Tieni per il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Busto che ruota verso il muro.",
+    "Piede d'appoggio che perde la presa.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Entrambi i piedi a terra, tempo più corto.",
+   "piu_difficile": "Ginocchio più alto, spinta più forte.",
+   "sicurezza": "Fastidio alla spalla: riduci la spinta.",
+   "da_confermare": "Dalla miniatura: posizione di corsa, braccio che spinge il muro passando davanti al corpo. Ho scritto 'esterno' = braccio lontano dal muro. Correggimi se è il contrario."
+  }
  },
  {
   "nome": "Spinta isometrica al muro laterale interno",
@@ -4463,7 +4986,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "forza-parte-bassa",
-  "sottogruppo": "overcoming isometrics"
+  "sottogruppo": "overcoming isometrics",
+  "id": "fpa-spinta-isometrica-al-muro-laterale-interno",
+  "scheda": {
+   "esecuzione": [
+    "Di lato a un muro, in posizione di corsa: gamba lontana dal muro sollevata con il ginocchio alto, piede vicino a terra.",
+    "Il braccio vicino al muro spinge con il gomito o l'avambraccio, piegato come nell'oscillazione della corsa.",
+    "Spingi forte tenendo il busto fermo e il piede a terra ben piantato.",
+    "Tieni per il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Busto che si appoggia al muro invece di spingere.",
+    "Piede d'appoggio che perde la presa.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Entrambi i piedi a terra, tempo più corto.",
+   "piu_difficile": "Ginocchio più alto, spinta più forte.",
+   "sicurezza": "Fastidio alla spalla: riduci la spinta.",
+   "da_confermare": "Dalla miniatura: braccio vicino al muro che spinge con il gomito, gamba lontana sollevata. Confermi?"
+  }
  },
  {
   "nome": "Sollevamento delle punte (tibiale)",
@@ -4671,7 +5212,7 @@
   }
  },
  {
-  "nome": "Crow Pose Progression",
+  "nome": "Posizione del corvo (progressione)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -4695,7 +5236,25 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche A, ma deve essere forte in parte alta e core"
+  "nota_livello": "anche A, ma deve essere forte in parte alta e core",
+  "id": "fpa-crow-pose-progression",
+  "nome_en": "Crow Pose Progression",
+  "scheda": {
+   "esecuzione": [
+    "Accovacciato, mani a terra alla larghezza delle spalle, dita aperte, ginocchia appoggiate sulla parte alta delle braccia.",
+    "Sposta il peso in avanti sulle mani finché un piede, poi l'altro, si staccano da terra.",
+    "Sguardo avanti, gomiti leggermente piegati, addome contratto: tieni l'equilibrio.",
+    "Appoggia i piedi in controllo e ripeti. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Sguardo verso i piedi: la testa cade e il corpo rotola in avanti.",
+    "Ginocchia che scivolano dalle braccia.",
+    "Dita delle mani chiuse: aperte e attive."
+   ],
+   "piu_facile": "Un piede alla volta, o un cuscino davanti alle mani.",
+   "piu_difficile": "Tenuta più lunga, o braccia più distese.",
+   "sicurezza": "Cuscino davanti al viso le prime volte. Fastidio ai polsi: fermati."
+  }
  },
  {
   "nome": "Stacco su una gamba tenuto",
@@ -7532,7 +8091,7 @@
   }
  },
  {
-  "nome": "Diamond Push Up",
+  "nome": "Piegamenti a diamante",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -7549,10 +8108,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "video_nota": "video Everfit non pubblico (403) — da registrare"
+  "video_nota": "video Everfit non pubblico (403) — da registrare",
+  "id": "fpa-diamond-push-up",
+  "nome_en": "Diamond Push Up",
+  "scheda": {
+   "esecuzione": [
+    "Plank alto con le mani unite sotto il petto, pollici e indici che formano un diamante.",
+    "Scendi con i gomiti vicino al corpo finché il petto sfiora le mani.",
+    "Spingi fino alle braccia distese.",
+    "Corpo in linea, addome attivo. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Gomiti che si aprono di lato.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Scendere a metà."
+   ],
+   "piu_facile": "Mani su un rialzo, o ginocchia a terra.",
+   "piu_difficile": "Piedi su un rialzo, o discesa in 3 secondi.",
+   "sicurezza": "Fastidio ai polsi o ai gomiti: mani un po' più larghe."
+  }
  },
  {
-  "nome": "Type Writer Push Up",
+  "nome": "Piegamenti a macchina da scrivere",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -7568,10 +8145,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-type-writer-push-up",
+  "nome_en": "Type Writer Push Up",
+  "scheda": {
+   "esecuzione": [
+    "Plank alto con le mani molto più larghe delle spalle, corpo in linea.",
+    "Scendi verso una mano, con l'altro braccio quasi disteso.",
+    "Resta in basso e scorri verso l'altra mano, passando con il petto vicino a terra.",
+    "Risali dall'altro lato. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Risalire a metà scorrimento: il petto resta basso.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Busto che ruota."
+   ],
+   "piu_facile": "Piegamenti ad arciere.",
+   "piu_difficile": "Scorrimento più lento, o piedi su un rialzo.",
+   "sicurezza": "Fastidio ai polsi o alla spalla: fermati."
+  }
  },
  {
-  "nome": "Eccentric Handstand Push Up",
+  "nome": "Handstand push-up eccentrico",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -7587,10 +8182,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-eccentric-handstand-push-up",
+  "nome_en": "Eccentric Handstand Push Up",
+  "scheda": {
+   "esecuzione": [
+    "In verticale con i piedi appoggiati al muro, mani a terra poco più larghe delle spalle, corpo in linea.",
+    "Scendi il più lento possibile, in 4-5 secondi, finché la testa sfiora il pavimento.",
+    "Appoggia la testa, esci dalla verticale e risali al muro per la ripetizione successiva.",
+    "Addome contratto, niente inarcamento. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Discesa veloce.",
+    "Schiena che si inarca.",
+    "Testa che scende davanti alle mani invece che tra le mani."
+   ],
+   "piu_facile": "Pike push-up con i piedi rialzati.",
+   "piu_difficile": "Discesa in 6-8 secondi, o handstand push-up completo.",
+   "sicurezza": "Cuscino sotto la testa e muro stabile. Fastidio al collo o ai polsi: fermati."
+  }
  },
  {
-  "nome": "Muscle Up",
+  "nome": "Muscle up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 5,
@@ -7606,10 +8219,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-muscle-up",
+  "nome_en": "Muscle Up",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra con presa falsa o prona, spalle attive, corpo leggermente oscillante.",
+    "Tira esplosivo portando il petto sopra la sbarra, poi ruota i polsi e porta i gomiti sopra.",
+    "Spingi come in un dip fino alle braccia distese sopra la sbarra.",
+    "Scendi in controllo con il percorso inverso. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Tirata lenta: senza esplosività non si passa sopra.",
+    "Gomiti che non passano insieme: un braccio alla volta.",
+    "Scendere di colpo."
+   ],
+   "piu_facile": "Trazioni esplosive al petto e dip alla sbarra separati.",
+   "piu_difficile": "Senza oscillazione, o zavorra leggera.",
+   "sicurezza": "Solo con 10 trazioni e 10 dip puliti. Fastidio ai polsi o alle spalle: fermati."
+  }
  },
  {
-  "nome": "90 Chin Up Iso Hold",
+  "nome": "Tenuta alla sbarra a 90°",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 3,
@@ -7625,10 +8256,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-90-chin-up-iso-hold",
+  "nome_en": "90 Chin Up Iso Hold",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra con presa supina, tira fino ad avere i gomiti piegati a 90°.",
+    "Tieni la posizione ferma: spalle basse, corpo fermo, respiro regolare.",
+    "Per il tempo indicato.",
+    "Scendi in controllo."
+   ],
+   "errori": [
+    "Scendere piano piano durante la tenuta: i gomiti restano a 90°.",
+    "Spalle che salgono verso le orecchie.",
+    "Trattenere il respiro."
+   ],
+   "piu_facile": "Piedi su una sedia per aiutare, o tempo più corto.",
+   "piu_difficile": "Zavorra, o tenuta con il mento sopra la sbarra.",
+   "sicurezza": "Fastidio al gomito: fermati."
+  }
  },
  {
-  "nome": "Weighted Dips (From Bars)",
+  "nome": "Dip zavorrati alle parallele",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 4,
@@ -7644,10 +8293,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fpa-weighted-dips-from-bars",
+  "nome_en": "Weighted Dips (From Bars)",
+  "scheda": {
+   "esecuzione": [
+    "Alle parallele con la zavorra alla cintura o tra le gambe, braccia tese, spalle basse, busto leggermente inclinato in avanti.",
+    "Scendi piegando i gomiti finché le spalle arrivano all'altezza dei gomiti.",
+    "Spingi fino alle braccia distese, senza bloccare i gomiti di colpo.",
+    "Gambe ferme. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Spalle che salgono verso le orecchie.",
+    "Scendere di colpo con il carico.",
+    "Oscillare con la zavorra."
+   ],
+   "piu_facile": "Dip senza zavorra.",
+   "piu_difficile": "Più carico, o discesa in 3 secondi.",
+   "sicurezza": "Zavorra ben fissata. Dolore alla spalla in basso: riduci la profondità."
+  }
  },
  {
-  "nome": "Chin-Up",
+  "nome": "Trazioni presa supina (chin-up)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 3,
@@ -7664,7 +8331,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "video_nota": "video Everfit non pubblico (403) — da registrare"
+  "video_nota": "video Everfit non pubblico (403) — da registrare",
+  "id": "fpa-chin-up",
+  "nome_en": "Chin-Up",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra con presa supina alla larghezza delle spalle, braccia tese, spalle attive.",
+    "Tira fino al mento sopra la sbarra, gomiti verso il basso e vicino al corpo.",
+    "Scendi in controllo fino alle braccia distese.",
+    "Corpo fermo. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Slancio con le gambe.",
+    "Scendere a metà.",
+    "Spalle che salgono verso le orecchie."
+   ],
+   "piu_facile": "Elastico sotto i piedi.",
+   "piu_difficile": "Zavorra, o discesa in 3 secondi.",
+   "sicurezza": "Fastidio al gomito: fermati."
+  }
  },
  {
   "nome": "Stacco da terra con bilanciere",
@@ -7744,7 +8429,7 @@
   }
  },
  {
-  "nome": "Dumbbell Lateral Raise",
+  "nome": "Alzate laterali con manubri",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -7761,7 +8446,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "video_nota": "video Everfit non pubblico (403) — da registrare"
+  "video_nota": "video Everfit non pubblico (403) — da registrare",
+  "id": "fpa-dumbbell-lateral-raise",
+  "nome_en": "Dumbbell Lateral Raise",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, un manubrio per mano lungo i fianchi, gomiti leggermente piegati.",
+    "Solleva le braccia di lato fino all'altezza delle spalle, con i gomiti che guidano il movimento.",
+    "Pausa di 1 secondo, scendi in controllo.",
+    "Busto fermo. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Slancio con il busto.",
+    "Spalle che salgono verso le orecchie.",
+    "Salire oltre l'altezza delle spalle."
+   ],
+   "piu_facile": "Manubri più leggeri, un braccio alla volta.",
+   "piu_difficile": "Discesa in 3 secondi, o pausa di 2 secondi in alto.",
+   "sicurezza": "Fastidio alla spalla: riduci il carico."
+  }
  },
  {
   "nome": "Squat a corpo libero",
@@ -8461,7 +9164,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Kettlebell Advanced Windmill",
+  "nome": "Windmill avanzato con kettlebell",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 4,
@@ -8479,10 +9182,28 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "fascia_kb": "avanzato",
-  "peso_kg": 8
+  "peso_kg": 8,
+  "id": "fpa-kettlebell-advanced-windmill",
+  "nome_en": "Kettlebell Advanced Windmill",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piedi più larghi delle spalle, kettlebell sopra la testa con un braccio disteso, piedi ruotati verso il lato opposto.",
+    "Spingi il bacino verso il lato del kettlebell e scendi con il busto di lato, la mano libera che scende lungo la gamba fino a terra.",
+    "Sguardo sempre sul kettlebell, braccio in alto disteso e verticale.",
+    "Risali con lo stesso percorso. Fai le ripetizioni indicate, poi cambia lato."
+   ],
+   "errori": [
+    "Braccio in alto che si piega o si inclina.",
+    "Piegare il ginocchio della gamba sotto il kettlebell: resta distesa.",
+    "Sguardo che lascia il kettlebell."
+   ],
+   "piu_facile": "Kettlebell leggero, discesa parziale.",
+   "piu_difficile": "Kettlebell più pesante, o un secondo kettlebell nella mano bassa.",
+   "sicurezza": "Fastidio alla spalla o alla schiena: riduci il carico o l'escursione."
+  }
  },
  {
-  "nome": "Kettlebell Bent Over Row with Rotation",
+  "nome": "Rematore con kettlebell e rotazione",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -8500,7 +9221,25 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "fascia_kb": "base",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fpa-kettlebell-bent-over-row-with-rotation",
+  "nome_en": "Kettlebell Bent Over Row with Rotation",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, kettlebell in una mano, ginocchia piegate e busto inclinato in avanti con la schiena neutra, mano libera appoggiata sulla coscia o libera.",
+    "Tira il kettlebell verso il fianco e, in cima, ruota il busto dal lato del kettlebell aprendo la spalla.",
+    "Torna in controllo invertendo la rotazione, fino al braccio disteso.",
+    "Fai le ripetizioni indicate, poi cambia lato."
+   ],
+   "errori": [
+    "Schiena che si curva.",
+    "Rotazione dal bacino invece che dal busto.",
+    "Slancio con il busto."
+   ],
+   "piu_facile": "Kettlebell più leggero, senza rotazione.",
+   "piu_difficile": "Kettlebell più pesante, o pausa in rotazione.",
+   "sicurezza": "Fastidio lombare: riduci il carico e la rotazione."
+  }
  },
  {
   "nome": "Otto con il kettlebell tra le gambe",
@@ -9285,10 +10024,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "spinta verticale",
-  "descrizione": "A V rovesciata, mani a terra poco più larghe delle spalle, bacino alto: piega i gomiti portando la testa verso il pavimento davanti alle mani, poi spingi. Le spalle lavorano come in una spinta sopra la testa."
+  "descrizione": "A V rovesciata, mani a terra poco più larghe delle spalle, bacino alto: piega i gomiti portando la testa verso il pavimento davanti alle mani, poi spingi. Le spalle lavorano come in una spinta sopra la testa.",
+  "id": "fpa-pike-push-up",
+  "scheda": {
+   "esecuzione": [
+    "A V rovesciata: mani a terra poco più larghe delle spalle, bacino alto, gambe quasi distese.",
+    "Piega i gomiti e porta la testa verso il pavimento davanti alle mani, gomiti a circa 45°.",
+    "Spingi fino alle braccia distese: le spalle lavorano come in una spinta sopra la testa.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Bacino che scende: resta alto.",
+    "Testa che va tra le mani invece che davanti.",
+    "Gomiti che si aprono."
+   ],
+   "piu_facile": "Mani su un rialzo.",
+   "piu_difficile": "Piedi su un rialzo.",
+   "sicurezza": "Fastidio ai polsi: fermati."
+  }
  },
  {
-  "nome": "Pike push-up piedi rialzati",
+  "nome": "Pike push-up con i piedi rialzati",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9302,13 +10058,31 @@
    "spinta verticale"
   ],
   "azione": "aggiunto 22/9/2026",
-  "nome_everfit": null,
+  "nome_everfit": "Pike push-up piedi rialzati",
   "note": null,
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "spinta verticale",
-  "descrizione": "Come il pike push-up ma con i piedi su una panca o un gradino: il busto è quasi verticale e il carico sulle spalle cresce. Testa che scende tra le mani, gomiti a 45°."
+  "descrizione": "Come il pike push-up ma con i piedi su una panca o un gradino: il busto è quasi verticale e il carico sulle spalle cresce. Testa che scende tra le mani, gomiti a 45°.",
+  "id": "fpa-pike-push-up-piedi-rialzati",
+  "nome_en": "Pike push-up piedi rialzati",
+  "scheda": {
+   "esecuzione": [
+    "Piedi su una panca o un gradino, mani a terra poco più larghe delle spalle, bacino alto: il busto è quasi verticale.",
+    "Piega i gomiti e porta la testa verso il pavimento tra le mani, gomiti a circa 45°.",
+    "Spingi fino alle braccia distese.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Bacino che scende.",
+    "Gomiti che si aprono.",
+    "Scendere di colpo."
+   ],
+   "piu_facile": "Pike push-up con i piedi a terra.",
+   "piu_difficile": "Rialzo più alto, o handstand push-up eccentrico.",
+   "sicurezza": "Rialzo stabile. Fastidio ai polsi: fermati."
+  }
  },
  {
   "nome": "Handstand push-up",
@@ -9331,7 +10105,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "spinta verticale",
-  "descrizione": "In verticale con i piedi appoggiati al muro: scendi finché la testa sfiora il pavimento e risali a braccia distese. Corpo in linea, addome duro, niente inarcamento. Solo con l'eccentrico pulito."
+  "descrizione": "In verticale con i piedi appoggiati al muro: scendi finché la testa sfiora il pavimento e risali a braccia distese. Corpo in linea, addome duro, niente inarcamento. Solo con l'eccentrico pulito.",
+  "id": "fpa-handstand-push-up",
+  "scheda": {
+   "esecuzione": [
+    "In verticale con i piedi appoggiati al muro, mani a terra poco più larghe delle spalle, corpo in linea.",
+    "Scendi in controllo finché la testa sfiora il pavimento.",
+    "Spingi fino alle braccia distese.",
+    "Addome contratto, niente inarcamento. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Schiena che si inarca.",
+    "Testa che scende davanti alle mani.",
+    "Scendere di colpo."
+   ],
+   "piu_facile": "Handstand push-up eccentrico, o pike push-up con i piedi rialzati.",
+   "piu_difficile": "Senza muro, o in deficit sulle parallettes.",
+   "sicurezza": "Solo con l'eccentrico pulito. Cuscino sotto la testa. Fastidio al collo o ai polsi: fermati."
+  }
  },
  {
   "nome": "Gorilla row",
@@ -9356,7 +10147,24 @@
   "sottogruppo": "tirata orizzontale",
   "descrizione": "Due kettlebell a terra tra i piedi, gambe piegate e schiena piatta come in un rematore: tira un kettlebell al fianco mentre l'altra mano resta appoggiata sull'altro, poi cambia. Il gomito passa vicino al corpo, il busto non ruota.",
   "fascia_kb": "base",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fpa-gorilla-row",
+  "scheda": {
+   "esecuzione": [
+    "Due kettlebell a terra tra i piedi, gambe piegate e schiena piatta come in un rematore, una mano su ogni kettlebell.",
+    "Tira un kettlebell al fianco mentre l'altra mano resta appoggiata sull'altro kettlebell a terra.",
+    "Scendi in controllo e cambia lato.",
+    "Gomito vicino al corpo, busto che non ruota. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Schiena che si curva.",
+    "Busto che ruota nella tirata.",
+    "Slancio."
+   ],
+   "piu_facile": "Kettlebell più leggeri.",
+   "piu_difficile": "Kettlebell più pesanti, o pausa di 2 secondi in alto.",
+   "sicurezza": "Fastidio lombare: riduci il carico."
+  }
  },
  {
   "nome": "Rematore sotto al tavolo",
@@ -9379,7 +10187,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "tirata orizzontale",
-  "descrizione": "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso il tavolo e scendi controllato. Piedi più vicini = più facile."
+  "descrizione": "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso il tavolo e scendi controllato. Piedi più vicini = più facile.",
+  "id": "fpa-rematore-sotto-al-tavolo",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa.",
+    "Tira il petto verso il tavolo tenendo il corpo rigido, gomiti vicino al busto.",
+    "Scendi in controllo fino alle braccia distese.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Collo che spinge in avanti.",
+    "Scendere di colpo."
+   ],
+   "piu_facile": "Piedi più vicini, o ginocchia piegate.",
+   "piu_difficile": "Piedi su un rialzo, o pausa di 2 secondi in alto.",
+   "sicurezza": "Tavolo stabile e pesante: prova la tenuta prima di iniziare."
+  }
  },
  {
   "attrezzatura": "corpo libero",
