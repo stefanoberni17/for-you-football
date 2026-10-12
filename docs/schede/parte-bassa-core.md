@@ -5,7 +5,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 ## forza-parte-bassa (41)
 
-### Affondi in camminata
+### Walking Lunge
 `fpb-affondi-in-camminata` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=kAnLd3sRhmA)
 
 **Esecuzione**
@@ -19,7 +19,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Manubri in mano, o pausa di 2 secondi in basso.
 **Sicurezza:** Fastidio davanti al ginocchio: scendi meno.
 
-### Affondi sul posto
+### Lunge in Place
 `fpb-affondi-sul-posto` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=ruFaw3pDMGQ)
 
 **Esecuzione**
@@ -33,8 +33,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Manubri in mano, o pausa di 2 secondi in basso.
 **Sicurezza:** Fastidio davanti al ginocchio: scendi meno.
 
-### Estensione del ginocchio con elastico
-`fpb-fy-knee-extension` · inglese: FY Knee Extension · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=XUSLWFnVF-c)
+### Band Knee Extension (FY)
+`fpb-fy-knee-extension` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=XUSLWFnVF-c)
 
 **Esecuzione**
 1. Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.
@@ -47,8 +47,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Elastico più duro, entrambe le gambe insieme con pausa di 3 secondi.
 **Sicurezza:** Dolore dietro la rotula: elastico più leggero o fermati.
 
-### Estensione del ginocchio
-`fpb-knee-extension` · inglese: Knee Extension · bilaterale · reps · corpo libero · senza video
+### Knee Extension
+`fpb-knee-extension` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.
@@ -61,7 +61,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Elastico più duro, entrambe le gambe insieme con pausa di 3 secondi.
 **Sicurezza:** Dolore dietro la rotula: elastico più leggero o fermati.
 
-### Affondo isometrico
+### Isometric Lunge Hold
 `fpb-affondo-isometrico` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=nvENLHoWSR4)
 
 **Esecuzione**
@@ -75,8 +75,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Peso al petto, o tallone dietro sollevato.
 **Sicurezza:** Fastidio davanti al ginocchio: alza un po' la posizione.
 
-### Affondo isometrico con tallone sollevato
-`fpb-affondo-isometrico-con-tallone-sollevato` · inglese: Affondo Isometrico Con Tallone Sollevato · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/nvENLHoWSR4?feature=share)
+### Isometric Lunge Hold (Heel Raised)
+`fpb-affondo-isometrico-con-tallone-sollevato` · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/nvENLHoWSR4?feature=share)
 
 **Esecuzione**
 1. Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.
@@ -89,8 +89,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Peso al petto.
 **Sicurezza:** Fastidio davanti al ginocchio: alza un po' la posizione.
 
-### Affondo profondo (ATG)
-`fpb-atg-lunge` · inglese: ATG Lunge · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=WGePf1hZ7_I)
+### ATG Lunge
+`fpb-atg-lunge` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=WGePf1hZ7_I)
 
 **Esecuzione**
 1. Passo lungo in avanti, piede davanti ben piantato.
@@ -103,8 +103,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Manubri in mano, o salita lenta in 3 secondi.
 **Sicurezza:** Si fa solo dopo settimane di split squat profondo. Dolore al ginocchio, non semplice tensione: fermati.
 
-### Split squat profondo (ATG)
-`fpb-atg-split-squat` · inglese: atg split squat · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=a0iGmxKW4_0)
+### ATG Split Squat
+`fpb-atg-split-squat` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=a0iGmxKW4_0)
 
 **Esecuzione**
 1. Piedi in posizione di affondo lungo. Mano a un appoggio se serve.
@@ -117,8 +117,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Manubri in mano, o pausa di 3 secondi in basso.
 **Sicurezza:** Fastidio al ginocchio che aumenta durante le ripetizioni: fermati e riduci la profondità la volta dopo.
 
-### Sollevamenti sui polpacci
-`fpb-calf-raises` · inglese: Calf raises · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=De9Dl-RHKD0)
+### Calf Raise
+`fpb-calf-raises` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=De9Dl-RHKD0)
 
 **Esecuzione**
 1. In piedi con l'avampiede sul bordo di un gradino, tallone nel vuoto, una mano a un appoggio.
@@ -131,8 +131,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Manubrio in mano, o salita in 3 secondi.
 **Sicurezza:** Fastidio al tendine d'Achille: senza carico, escursione ridotta.
 
-### Camminata del contadino (farmer's walk)
-`fpb-farmers-walk` · inglese: Farmers Walk · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=T2YWZbGhN2M)
+### Farmer's Walk
+`fpb-farmers-walk` · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=T2YWZbGhN2M)
 
 **Esecuzione**
 1. Un manubrio o kettlebell pesante per mano, lungo i fianchi, presa salda.
@@ -145,8 +145,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Un peso solo (in una mano), o pesi più pesanti.
 **Sicurezza:** Presa che molla: appoggia e riprendi, non lasciare cadere.
 
-### Front squat con bilanciere
-`fpb-front-squat` · inglese: front squat · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=2-fkHNhdW4I)
+### Barbell Front Squat
+`fpb-front-squat` · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=2-fkHNhdW4I)
 
 **Esecuzione**
 1. Bilanciere appoggiato davanti sulle spalle, gomiti alti, mani che lo tengono fermo.
@@ -159,8 +159,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in basso.
 **Sicurezza:** Solo con uno squat con bilanciere già solido (almeno 1.4 volte il peso corporeo). Mai al cedimento senza i fermi del rack.
 
-### Step laterale sulla panca
-`fpb-fy-lateral-step-up` · inglese: FY Lateral Step Up · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=qMur94X9Tp0)
+### Lateral Step-Up on Bench (FY)
+`fpb-fy-lateral-step-up` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=qMur94X9Tp0)
 
 **Esecuzione**
 1. Di fianco a una panca o un gradino alto, il piede più vicino appoggiato sopra con tutto il piede.
@@ -173,8 +173,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Senza aiuto della gamba a terra, o con un manubrio.
 **Sicurezza:** Esercizio avanzato: la discesa con il ginocchio verso l'interno mette sotto stress l'articolazione del ginocchio e l'adduttore. Solo con il controllo pieno del movimento; dolore al ginocchio o all'inguine: fermati.
 
-### Squat lento con pausa
-`fpb-fy-squat` · inglese: FY Squat · bilaterale · reps · palestra · senza video
+### Paused Tempo Squat (FY)
+`fpb-fy-squat` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. Piedi alla larghezza delle spalle, punte leggermente in fuori, braccia avanti per l'equilibrio.
@@ -187,8 +187,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 3 secondi, o con un peso al petto.
 **Sicurezza:** Fastidio al ginocchio in fondo: riduci la profondità.
 
-### Hip thrust
-`fpb-hip-thrust` · inglese: Hip Thrust · bilaterale · reps · palestra · [video](https://youtube.com/shorts/C6Y0yEh4Ed4?feature=share)
+### Hip Thrust
+`fpb-hip-thrust` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/C6Y0yEh4Ed4?feature=share)
 
 **Esecuzione**
 1. Spalle appoggiate sul bordo di una panca, piedi a terra alla larghezza del bacino, bilanciere (o disco) sul bacino.
@@ -201,8 +201,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, pausa di 3 secondi in alto, o a una gamba.
 **Sicurezza:** Cuscinetto sotto il bilanciere. Fastidio lombare: meno carico e meno estensione.
 
-### Squat a 90° con carico
-`fpb-max-squat-90gradi` · inglese: Max Squat 90gradi · bilaterale · reps · palestra · senza video
+### Loaded Squat to 90°
+`fpb-max-squat-90gradi` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. Bilanciere sulle spalle, piedi alla larghezza delle spalle, punte leggermente in fuori.
@@ -215,8 +215,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, salita esplosiva.
 **Sicurezza:** Con carichi alti sempre i fermi del rack o un compagno.
 
-### Step di Patrick (discesa dal gradino)
-`fpb-patrick-step-up` · inglese: Patrick step up · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=RDCTvQKcmv0)
+### Patrick Step-Down
+`fpb-patrick-step-up` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=RDCTvQKcmv0)
 
 **Esecuzione**
 1. In piedi su un gradino basso o un disco, un piede sul bordo, l'altro nel vuoto davanti.
@@ -229,8 +229,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gradino più alto, o un peso in mano.
 **Sicurezza:** Fastidio al ginocchio che aumenta: riduci l'altezza.
 
-### Step di Poliquin (tallone rialzato)
-`fpb-poliquin-step-up` · inglese: Poliquin step up · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=2ABf__3KZP4)
+### Poliquin Step-Up
+`fpb-poliquin-step-up` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=2ABf__3KZP4)
 
 **Esecuzione**
 1. In piedi su un gradino basso, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa.
@@ -243,8 +243,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Un peso in mano, o discesa in 4 secondi.
 **Sicurezza:** Si fa dopo aver raggiunto 30 step di Patrick puliti. Fastidio al ginocchio che aumenta: riduci l'altezza.
 
-### Sissy squat
-`fpb-sissy-squat` · inglese: sissy squat · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=Cu2THH1IQDA)
+### Sissy Squat
+`fpb-sissy-squat` · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=Cu2THH1IQDA)
 
 **Esecuzione**
 1. In piedi, piedi alla larghezza del bacino, mani a un appoggio leggero o libere.
@@ -257,8 +257,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Mani libere, discesa in 4 secondi, o un peso al petto.
 **Sicurezza:** Si fa solo dopo la versione assistita. Dolore al ginocchio: fermati.
 
-### Sissy squat con appoggio
-`fpb-sissy-squat-slide` · inglese: Sissy Squat Slide · bilaterale · reps · corpo libero · [video](https://youtu.be/o5YLyFdueBg)
+### Supported Sissy Squat
+`fpb-sissy-squat-slide` · bilaterale · reps · corpo libero · [video](https://youtu.be/o5YLyFdueBg)
 
 **Esecuzione**
 1. In piedi con la schiena vicina a un palo o a una struttura, mani al petto o leggere sull'appoggio.
@@ -271,8 +271,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Meno appoggio, fino al sissy squat libero.
 **Sicurezza:** Dolore al ginocchio, non semplice tensione sul quadricipite: fermati.
 
-### Squat con bilanciere
-`fpb-squat` · inglese: Squat · bilaterale · reps · palestra · senza video
+### Barbell Back Squat
+`fpb-squat` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. Bilanciere sulle spalle (sui trapezi, non sul collo), piedi alla larghezza delle spalle, punte leggermente in fuori.
@@ -285,8 +285,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in basso, o più carico.
 **Sicurezza:** Fermi del rack alla giusta altezza. Fastidio lombare: meno carico, controlla la schiena neutra.
 
-### Squat bulgaro
-`fpb-squat-bulgaro` · inglese: Squat Bulgaro · per lato · reps · palestra · [video](https://youtube.com/shorts/9_fCiuYPd1o?feature=share)
+### Bulgarian Split Squat
+`fpb-squat-bulgaro` · per lato · reps · palestra · [video](https://youtube.com/shorts/9_fCiuYPd1o?feature=share)
 
 **Esecuzione**
 1. Piede dietro appoggiato su una panca con il collo del piede, piede davanti a un passo lungo dalla panca.
@@ -299,8 +299,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Manubri in mano, o pausa di 2 secondi in basso.
 **Sicurezza:** Fastidio davanti al ginocchio: allontana un po' il piede davanti.
 
-### Stacco rumeno
-`fpb-stacco-rumeno` · inglese: Stacco Rumeno · bilaterale · reps · palestra · [video](https://youtube.com/shorts/Xr7iEK_5HNQ?feature=share)
+### Romanian Deadlift
+`fpb-stacco-rumeno` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/Xr7iEK_5HNQ?feature=share)
 
 **Esecuzione**
 1. In piedi con il bilanciere (o i manubri) davanti alle cosce, piedi alla larghezza del bacino, ginocchia appena piegate.
@@ -313,8 +313,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o discesa in 4 secondi.
 **Sicurezza:** Fastidio lombare: ferma la discesa più in alto e controlla la schiena neutra.
 
-### Seduta al muro
-`fpb-wall-sit` · inglese: Wall sit · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=EuGsglumupM)
+### Wall Sit
+`fpb-wall-sit` · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=EuGsglumupM)
 
 **Esecuzione**
 1. Schiena contro il muro, piedi avanti alla larghezza del bacino.
@@ -327,8 +327,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Un peso sulle cosce, o a una gamba sola.
 **Sicurezza:** Fastidio davanti al ginocchio: posizione più alta.
 
-### Nordic hamstring (discesa)
-`fpb-nordic` · inglese: Nordic · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/Wx_d0y8iGxM?feature=share     )
+### Nordic Hamstring (Eccentric)
+`fpb-nordic` · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/Wx_d0y8iGxM?feature=share     )
 
 **Esecuzione**
 1. In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.
@@ -341,8 +341,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Nordic hamstring curl: la risalita dal punto più basso senza mani.
 **Sicurezza:** Mai a meno di 3 giorni dalla partita. Dolore acuto dietro la coscia: fermati.
 
-### Nordic hamstring curl
-`fpb-nordic-hamstring` · inglese: nordic hamstring · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=Wx_d0y8iGxM)
+### Nordic Hamstring Curl
+`fpb-nordic-hamstring` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=Wx_d0y8iGxM)
 
 **Esecuzione**
 1. In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.
@@ -355,8 +355,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Un peso al petto, o discesa più profonda.
 **Sicurezza:** Mai a meno di 3 giorni dalla partita. Volume basso all'inizio: i dolori del giorno dopo sono normali, il dolore acuto no.
 
-### Nordic inverso
-`fpb-reverse-nordic` · inglese: reverse nordic · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=VMULf9rZ4TE)
+### Reverse Nordic
+`fpb-reverse-nordic` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=VMULf9rZ4TE)
 
 **Esecuzione**
 1. In ginocchio sul tappetino, piedi distesi dietro, corpo dritto dalle ginocchia alla testa, glutei contratti.
@@ -369,8 +369,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Discesa più profonda, in 4 secondi, o un peso al petto.
 **Sicurezza:** Prima la tenuta isometrica di 30 secondi, poi le ripetizioni. Dolore al ginocchio: fermati.
 
-### Ponte a una gamba
-`fpb-glute-bridge-ad-una-gamba` · inglese: Glute bridge ad una gamba · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=FQPEqDy8IBI)
+### Single-Leg Glute Bridge
+`fpb-glute-bridge-ad-una-gamba` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=FQPEqDy8IBI)
 
 **Esecuzione**
 1. Sdraiato sulla schiena, un piede a terra vicino al gluteo, l'altra gamba sollevata, braccia lungo il corpo.
@@ -383,8 +383,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piede su un rialzo, o un peso sul bacino.
 **Sicurezza:** Crampo dietro la coscia: scendi, allunga, riprendi con il piede un po' più lontano.
 
-### Stacco rumeno su una gamba con salti e stacco di testa
-`fpb-rdl-progression` · inglese: Rdl Progression · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/1vfkHZS5BUg?feature=share)
+### Single-Leg RDL with Jumps and Header
+`fpb-rdl-progression` · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/1vfkHZS5BUg?feature=share)
 
 **Esecuzione**
 1. In piedi su una gamba, manubrio nella mano dello stesso lato del piede d'appoggio.
@@ -397,8 +397,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Manubrio più pesante, salti più lunghi.
 **Sicurezza:** Spazio libero davanti a te per i salti. Fastidio lombare: scendi meno nello stacco.
 
-### Stacco rumeno su una gamba esplosivo
-`fpb-single-leg-rdl` · inglese: single leg rdl · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=Do1KR00uAqc)
+### Explosive Single-Leg RDL
+`fpb-single-leg-rdl` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=Do1KR00uAqc)
 
 **Esecuzione**
 1. In piedi su una gamba, ginocchio appena piegato, peso nella mano dello stesso lato del piede d'appoggio.
@@ -411,8 +411,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Peso più pesante, o un saltello sulla gamba d'appoggio in cima.
 **Sicurezza:** Fastidio lombare: scendi meno e tieni la schiena neutra.
 
-### Sollevamento delle punte (tibiale)
-`fpb-tibialis-raise` · inglese: Tibialis Raise · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/P4H0NE-HCsE?feature=share)
+### Tibialis Raise
+`fpb-tibialis-raise` · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/P4H0NE-HCsE?feature=share)
 
 **Esecuzione**
 1. Schiena al muro, piedi un passo avanti, talloni a terra.
@@ -425,8 +425,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi più lontani, o a una gamba.
 **Sicurezza:** Bruciore davanti alla tibia: normale. Dolore sull'osso: fermati.
 
-### Sollevamento delle punte (tibiale), versione test
-`fpb-tibialis-raises` · inglese: Tibialis raises · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=P4H0NE-HCsE)
+### Tibialis Raise (Test Version)
+`fpb-tibialis-raises` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=P4H0NE-HCsE)
 
 **Esecuzione**
 1. Schiena al muro, piedi un passo avanti, talloni a terra.
@@ -439,7 +439,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi più lontani, o a una gamba.
 **Sicurezza:** Bruciore davanti alla tibia: normale. Dolore sull'osso: fermati.
 
-### Stacco da terra con bilanciere
+### Barbell Deadlift
 `fpb-stacco-da-terra-con-bilanciere` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
@@ -453,8 +453,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o pausa sotto il ginocchio.
 **Sicurezza:** Solo con la tecnica già imparata e mai come primo esercizio con il bilanciere. Fastidio lombare: fermati.
 
-### Leg press
-`fpb-leg-press` · inglese: Leg Press · bilaterale · reps · palestra · senza video
+### Leg Press
+`fpb-leg-press` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. Seduto sulla macchina, schiena e bacino bene appoggiati, piedi sulla pedana alla larghezza delle spalle.
@@ -467,8 +467,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, a una gamba, o discesa in 4 secondi.
 **Sicurezza:** Fermi di sicurezza sempre inseriti. Fastidio lombare: scendi meno.
 
-### Squat a corpo libero
-`fpb-bodyweight-squat` · inglese: Bodyweight Squat · bilaterale · reps · corpo libero · senza video
+### Bodyweight Squat
+`fpb-bodyweight-squat` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Piedi alla larghezza delle spalle, punte leggermente in fuori, braccia avanti.
@@ -481,8 +481,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 3 secondi in basso, o salita esplosiva.
 **Sicurezza:** Fastidio al ginocchio in fondo: riduci la profondità.
 
-### Squat bulgaro a corpo libero
-`fpb-body-weight-bulgarian-split-squat` · inglese: Body Weight Bulgarian Split Squat · per lato · reps · corpo libero · [video](https://www.youtube.com/watch?v=YtzdcxjEb8s)
+### Bodyweight Bulgarian Split Squat
+`fpb-body-weight-bulgarian-split-squat` · per lato · reps · corpo libero · [video](https://www.youtube.com/watch?v=YtzdcxjEb8s)
 
 **Esecuzione**
 1. Piede dietro appoggiato su una panca o una sedia con il collo del piede, piede davanti a un passo lungo.
@@ -495,8 +495,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in basso, o manubri.
 **Sicurezza:** Fastidio davanti al ginocchio: allontana un po' il piede davanti.
 
-### Pistol squat
-`fpb-body-weight-pistol-squat` · inglese: Body Weight Pistol Squat · per lato · reps · corpo libero · [video](https://www.youtube.com/watch?v=sCTHnqLXepk)
+### Pistol Squat
+`fpb-body-weight-pistol-squat` · per lato · reps · corpo libero · [video](https://www.youtube.com/watch?v=sCTHnqLXepk)
 
 **Esecuzione**
 1. In piedi su una gamba, l'altra distesa avanti, braccia avanti per l'equilibrio.
@@ -509,8 +509,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in basso, o un peso al petto.
 **Sicurezza:** Fastidio al ginocchio: torna alla versione assistita.
 
-### Ponte dei femorali su rialzo, frenata a una gamba
-`fpb-eccentric-elevated-hamstring-single-leg` · inglese: Eccentric elevated hamstring single leg · per lato · reps · corpo libero · [video](https://youtube.com/shorts/pvz1imwG2hM)
+### Single-Leg Eccentric Elevated Hamstring Bridge
+`fpb-eccentric-elevated-hamstring-single-leg` · per lato · reps · corpo libero · [video](https://youtube.com/shorts/pvz1imwG2hM)
 
 **Esecuzione**
 1. Sdraiato sulla schiena, talloni su un box o una panca bassa, gambe leggermente flesse, braccia a terra.
@@ -523,8 +523,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Frenata più in basso, o pausa di 3 secondi nel punto di blocco.
 **Sicurezza:** Crampo dietro la coscia: fermati, allunga, riprendi con un'escursione più corta.
 
-### Ponte dei femorali su rialzo a una gamba
-`fpb-elevated-hamstring-bridge-single-leg` · inglese: Elevated hamstring bridge single leg · per lato · reps · corpo libero · [video](https://youtube.com/shorts/1Mb78dXSxso)
+### Single-Leg Elevated Hamstring Bridge
+`fpb-elevated-hamstring-bridge-single-leg` · per lato · reps · corpo libero · [video](https://youtube.com/shorts/1Mb78dXSxso)
 
 **Esecuzione**
 1. Sdraiato sulla schiena, un tallone su un box o una panca bassa con il ginocchio piegato, l'altra gamba sollevata.
@@ -537,8 +537,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Versione esplosiva: salita rapida del bacino e discesa controllata. Oppure tallone più lontano e pausa di 3 secondi in alto.
 **Sicurezza:** Crampo dietro la coscia: fermati, allunga, riprendi.
 
-### Ponte sui talloni con palla al ginocchio
-`fpb-core-hamstrings-running` · inglese: Core hamstrings running · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/Szavvv-yaE8)
+### Heel Bridge with Ball at the Knee
+`fpb-core-hamstrings-running` · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/Szavvv-yaE8)
 
 **Esecuzione**
 1. Sdraiato con le spalle a terra e i talloni su un rialzo, una palla tenuta con due mani a braccia tese sopra la testa.
@@ -551,8 +551,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Palla più pesante, o pausa di 2 secondi con la palla al ginocchio.
 **Sicurezza:** Crampo dietro la coscia: scendi, allunga, riprendi.
 
-### Plank di Copenhagen con crunch
-`fpb-copenhagen-plank-fy` · inglese: Copenhagen plank FY · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/ctzBaTKX5qE)
+### Copenhagen Plank with Crunch (FY)
+`fpb-copenhagen-plank-fy` · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/ctzBaTKX5qE)
 
 **Esecuzione**
 1. Sdraiato sul fianco, avambraccio a terra sotto la spalla, piede della gamba sopra appoggiato su una panca.
@@ -565,7 +565,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Crunch più lenti, o pausa di 2 secondi a gomito e ginocchio uniti.
 **Sicurezza:** Fastidio all'inguine, non semplice fatica: fermati. Mai nelle 48 ore prima della partita.
 
-### Goblet squat
+### Goblet Squat
 `fpb-goblet-squat` · bilaterale · reps · kettlebell · senza video
 
 **Esecuzione**
@@ -581,8 +581,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 ## core (28)
 
-### Sollevamento delle ginocchia alla sbarra
-`core2-hanging-knee-raises` · inglese: Hanging Knee Raises · bilaterale · reps · sbarra · senza video
+### Hanging Knee Raise
+`core2-hanging-knee-raises` · bilaterale · reps · sbarra · senza video
 
 **Esecuzione**
 1. Appeso alla sbarra con le braccia tese, spalle attive, corpo fermo.
@@ -595,8 +595,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gambe tese, o pausa di 3 secondi in alto.
 **Sicurezza:** Presa che molla: scendi e riprendi.
 
-### Plank di Copenhagen
-`core2-copenaghen-plank` · inglese: copenaghen plank · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=9pLQwT8RuUc)
+### Copenhagen Plank
+`core2-copenaghen-plank` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=9pLQwT8RuUc)
 
 **Esecuzione**
 1. Sdraiato sul fianco, avambraccio a terra sotto la spalla, piede della gamba sopra appoggiato su una panca o un rialzo.
@@ -609,8 +609,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gamba sotto che sale e scende durante la tenuta.
 **Sicurezza:** Fastidio all'inguine, non semplice fatica: fermati. Mai nelle 48 ore prima della partita.
 
-### Hollow hold
-`core2-holllow-hold` · inglese: Holllow Hold · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/zTiwvx20mYc?feature=share)
+### Hollow Hold
+`core2-holllow-hold` · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/zTiwvx20mYc?feature=share)
 
 **Esecuzione**
 1. Sdraiato sulla schiena, braccia distese dietro la testa, gambe distese.
@@ -623,8 +623,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gambe e braccia più vicine a terra, o piccole oscillazioni.
 **Sicurezza:** Fastidio lombare: alza le gambe o fermati.
 
-### Plank sulla palla
-`core2-plank-su-palla` · inglese: Plank Su Palla · bilaterale · secondi · campo · senza video
+### Plank on Ball
+`core2-plank-su-palla` · bilaterale · secondi · campo · senza video
 
 **Esecuzione**
 1. Plank sugli avambracci con gli avambracci appoggiati su un pallone, piedi a terra alla larghezza del bacino.
@@ -637,8 +637,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi uniti, o piccoli cerchi con la palla.
 **Sicurezza:** Fastidio lombare: fermati.
 
-### Plank laterale
-`core2-side-plank` · inglese: Side Plank · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/MdrinUXALJQ?feature=share)
+### Side Plank
+`core2-side-plank` · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/MdrinUXALJQ?feature=share)
 
 **Esecuzione**
 1. Sdraiato sul fianco, avambraccio a terra sotto la spalla, piedi uno sull'altro o uno davanti all'altro.
@@ -651,8 +651,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gamba sopra sollevata, o piede sopra su un rialzo.
 **Sicurezza:** Fastidio alla spalla d'appoggio: fermati.
 
-### Spinta alternata ai cavi
-`core2-spinta-alternata-cavi-core` · inglese: Spinta alternata Cavi - Core · bilaterale · reps · corpo libero · [video](https://youtu.be/-j_js9OIwBY)
+### Alternating Cable Press (Core)
+`core2-spinta-alternata-cavi-core` · bilaterale · reps · corpo libero · [video](https://youtu.be/-j_js9OIwBY)
 
 **Esecuzione**
 1. Di fronte alla macchina a cavi, una maniglia per mano all'altezza del petto, gambe una davanti all'altra in posizione di spinta.
@@ -665,8 +665,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o passo più stretto.
 **Sicurezza:** Fastidio alla spalla o alla zona lombare: riduci il carico.
 
-### Piedi alla sbarra
-`core2-toes-to-bar` · inglese: Toes to Bar · bilaterale · reps · sbarra · [video](https://www.youtube.com/watch?v=jMUJ1KTZIeE&ab_channel=TestosteroneNation)
+### Toes to Bar
+`core2-toes-to-bar` · bilaterale · reps · sbarra · [video](https://www.youtube.com/watch?v=jMUJ1KTZIeE&ab_channel=TestosteroneNation)
 
 **Esecuzione**
 1. Appeso alla sbarra con le braccia tese, spalle attive, corpo fermo.
@@ -679,8 +679,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in alto, o discesa in 4 secondi.
 **Sicurezza:** Presa che molla: scendi e riprendi. Fastidio lombare: torna alle ginocchia.
 
-### Dragon flag raccolto
-`core2-dragon-flag-tuck` · inglese: Dragon Flag Tuck · bilaterale · reps · corpo libero · senza video
+### Tuck Dragon Flag
+`core2-dragon-flag-tuck` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Sdraiato sulla schiena su una panca o a terra, mani che afferrano un appoggio dietro la testa.
@@ -693,8 +693,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Dragon flag raccolto con discesa lenta.
 **Sicurezza:** Fastidio al collo o alla zona lombare: fermati.
 
-### Dragon flag raccolto con discesa lenta
-`core2-dragon-flag-tuck-ecc` · inglese: Dragon Flag Tuck + Ecc · bilaterale · reps · corpo libero · senza video
+### Tuck Dragon Flag (Slow Eccentric)
+`core2-dragon-flag-tuck-ecc` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Sdraiato sulla schiena, mani che afferrano un appoggio dietro la testa, ginocchia raccolte al petto.
@@ -707,7 +707,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gambe meno raccolte durante la discesa.
 **Sicurezza:** Fastidio al collo o alla zona lombare: fermati.
 
-### Circuito addominali e lombari avanzato (guidato)
+### Advanced Abs and Lower Back Circuit (Guided)
 `core2-circuito-addominali-e-lombari-avanzato-guidato` · bilaterale · minuti · corpo libero · [video](https://www.youtube.com/watch?v=-Jcm417dMl8)
 
 **Esecuzione**
@@ -721,8 +721,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Un giro in più.
 **Sicurezza:** Fastidio lombare che aumenta: fermati.
 
-### Camminata dell'orso in avanti
-`core2-bear-crawl-linear` · inglese: Bear Crawl Linear · bilaterale · reps · corpo libero · senza video
+### Bear Crawl (Forward)
+`core2-bear-crawl-linear` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. A quattro zampe: mani sotto le spalle, ginocchia sotto le anche sollevate di pochi centimetri da terra.
@@ -735,8 +735,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Passi più lenti, o all'indietro.
 **Sicurezza:** Fastidio ai polsi: pugni chiusi.
 
-### Camminata dell'orso laterale
-`core2-bear-crawl-lateral` · inglese: Bear Crawl Lateral · bilaterale · reps · corpo libero · senza video
+### Bear Crawl (Lateral)
+`core2-bear-crawl-lateral` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. A quattro zampe: mani sotto le spalle, ginocchia sollevate di pochi centimetri da terra.
@@ -749,8 +749,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Passi più lenti.
 **Sicurezza:** Fastidio ai polsi: pugni chiusi.
 
-### Posizione dell'orso tenuta
-`core2-isometric-bear-crawl` · inglese: Isometric Bear Crawl · bilaterale · secondi · corpo libero · senza video
+### Isometric Bear Hold
+`core2-isometric-bear-crawl` · bilaterale · secondi · corpo libero · senza video
 
 **Esecuzione**
 1. A quattro zampe: mani sotto le spalle, ginocchia sotto le anche.
@@ -763,8 +763,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Solleva una mano o un piede alternando.
 **Sicurezza:** Fastidio ai polsi: pugni chiusi.
 
-### Plank laterale con rotazione
-`core2-plank-with-twist` · inglese: Plank with Twist · per lato · reps · corpo libero · [video](https://youtu.be/fdpbyd8l93g)
+### Side Plank with Twist
+`core2-plank-with-twist` · per lato · reps · corpo libero · [video](https://youtu.be/fdpbyd8l93g)
 
 **Esecuzione**
 1. Plank laterale sulla mano o sull'avambraccio, corpo in linea, braccio libero in alto.
@@ -777,8 +777,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Un peso leggero nella mano che ruota.
 **Sicurezza:** Fastidio alla spalla d'appoggio: fermati.
 
-### Jackknife laterale
-`core2-side-jackknife` · inglese: Side Jackknife · per lato · reps · corpo libero · [video](https://youtu.be/X66Xz-ltSyU)
+### Side Jackknife
+`core2-side-jackknife` · per lato · reps · corpo libero · [video](https://youtu.be/X66Xz-ltSyU)
 
 **Esecuzione**
 1. Sdraiato sul fianco, gambe distese una sull'altra, mano sotto la testa e l'altra a terra davanti.
@@ -791,8 +791,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 3 secondi in alto.
 **Sicurezza:** Fastidio lombare: fermati.
 
-### Crunch bicicletta a gambe tese
-`core2-bicycle-crunch-straight-leg` · inglese: Bicycle Crunch Straight Leg · bilaterale · reps · corpo libero · senza video
+### Straight-Leg Bicycle Crunch
+`core2-bicycle-crunch-straight-leg` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Sdraiato sulla schiena, mani alle tempie, gambe distese sollevate da terra.
@@ -805,8 +805,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gamba tesa più vicina a terra, o pausa a ogni rotazione.
 **Sicurezza:** Fastidio al collo o alla zona lombare: fermati.
 
-### Crunch inverso ai cavi
-`core2-cable-reverse-crunch` · inglese: Cable Reverse Crunch · bilaterale · reps · palestra · senza video
+### Cable Reverse Crunch
+`core2-cable-reverse-crunch` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. Sdraiato sulla schiena con la testa verso il cavo basso, cavigliera agganciata (o elastico alle caviglie), ginocchia piegate.
@@ -819,8 +819,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, pausa di 2 secondi in alto.
 **Sicurezza:** Fastidio lombare: fermati.
 
-### Sollevamento obliquo delle ginocchia alla sbarra
-`core2-hanging-oblique-knee-raise` · inglese: Hanging Oblique Knee Raise · per lato · reps · sbarra · [video](https://www.youtube.com/watch?v=eAmP-e59Xo4)
+### Hanging Oblique Knee Raise
+`core2-hanging-oblique-knee-raise` · per lato · reps · sbarra · [video](https://www.youtube.com/watch?v=eAmP-e59Xo4)
 
 **Esecuzione**
 1. Appeso alla sbarra, braccia tese, spalle attive.
@@ -833,8 +833,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gambe tese, o pausa di 3 secondi.
 **Sicurezza:** Presa che molla: scendi e riprendi.
 
-### Crunch inverso
-`core2-reverse-crunch` · inglese: Reverse Crunch · bilaterale · reps · corpo libero · senza video
+### Reverse Crunch
+`core2-reverse-crunch` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Sdraiato sulla schiena, braccia lungo il corpo, ginocchia piegate e gambe sollevate.
@@ -847,8 +847,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gambe tese, o pausa di 2 secondi in alto.
 **Sicurezza:** Fastidio lombare: fermati.
 
-### Cerchi con le gambe
-`core2-full-moon-abs` · inglese: Full Moon Abs · bilaterale · reps · corpo libero · senza video
+### Leg Circles (Full Moon Abs)
+`core2-full-moon-abs` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Sdraiato sulla schiena, braccia lungo il corpo, gambe tese e unite sollevate da terra.
@@ -861,8 +861,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Cerchio più ampio e più basso.
 **Sicurezza:** Fastidio lombare: cerchio più alto, o fermati.
 
-### Sit-up
-`core2-sit-up` · inglese: Sit-Up · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=EbWuGUru3Jo)
+### Sit-Up
+`core2-sit-up` · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=EbWuGUru3Jo)
 
 **Esecuzione**
 1. Sdraiato sulla schiena, ginocchia piegate, piedi a terra, braccia incrociate al petto o mani alle tempie.
@@ -875,8 +875,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Mani dietro la testa, o un peso al petto.
 **Sicurezza:** Fastidio al collo: braccia al petto. Fastidio lombare: crunch.
 
-### Battute delle gambe
-`core2-flutter-kick-abs-low` · inglese: Flutter Kick Abs Low · bilaterale · secondi · corpo libero · senza video
+### Flutter Kicks
+`core2-flutter-kick-abs-low` · bilaterale · secondi · corpo libero · senza video
 
 **Esecuzione**
 1. Sdraiato sulla schiena, mani sotto il bacino, gambe tese sollevate di 15-20 cm.
@@ -889,8 +889,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gambe più basse, mani fuori da sotto il bacino.
 **Sicurezza:** Fastidio lombare: fermati.
 
-### Dal plank alto al plank sugli avambracci
-`core2-arm-climb-high-to-forearm-plank` · inglese: Arm Climb (High to Forearm Plank) · bilaterale · reps · corpo libero · senza video
+### High Plank to Forearm Plank
+`core2-arm-climb-high-to-forearm-plank` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Plank sulle mani, corpo in linea, piedi alla larghezza del bacino.
@@ -903,8 +903,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi uniti, o più lento.
 **Sicurezza:** Fastidio ai polsi o alle spalle: fermati.
 
-### Mountain climber incrociato
-`core2-cross-body-mountain-climbers` · inglese: Cross Body Mountain Climbers · bilaterale · reps · corpo libero · senza video
+### Cross-Body Mountain Climber
+`core2-cross-body-mountain-climbers` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Plank sulle mani, corpo in linea.
@@ -917,8 +917,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più veloce, o pausa di 1 secondo con il ginocchio al gomito.
 **Sicurezza:** Fastidio ai polsi: fermati.
 
-### Mountain climber con le mani sul rialzo
-`core2-incline-mountain-climbers` · inglese: Incline Mountain Climbers · bilaterale · reps · corpo libero · senza video
+### Incline Mountain Climber
+`core2-incline-mountain-climbers` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Mani su una panca o un rialzo, corpo in linea, piedi a terra.
@@ -931,8 +931,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Mani a terra, o più veloce.
 **Sicurezza:** Rialzo stabile. Fastidio ai polsi: fermati.
 
-### Estensioni lombari a terra
-`core2-lower-back-curl` · inglese: Lower Back Curl · bilaterale · reps · corpo libero · senza video
+### Lower Back Curl
+`core2-lower-back-curl` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. A pancia in giù, mani alle tempie o lungo i fianchi, sguardo a terra.
@@ -945,8 +945,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Braccia distese avanti, o pausa di 3 secondi.
 **Sicurezza:** Fastidio lombare, non semplice fatica: fermati.
 
-### Russian twist con palla medica
-`core2-medicine-ball-russian-twist` · inglese: Medicine Ball Russian Twist · bilaterale · reps · piccoli attrezzi · senza video
+### Medicine Ball Russian Twist
+`core2-medicine-ball-russian-twist` · bilaterale · reps · piccoli attrezzi · senza video
 
 **Esecuzione**
 1. Seduto a terra, ginocchia piegate, busto inclinato indietro di circa 45°, palla medica tenuta davanti al petto.
@@ -959,8 +959,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi sollevati, palla più pesante, o tocco a terra.
 **Sicurezza:** Fastidio lombare: piedi a terra, meno inclinazione.
 
-### Otto con il kettlebell tra le gambe
-`core2-kettlebell-figure-8` · inglese: Kettlebell Figure 8 · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=n4e5ZU58Snk)
+### Kettlebell Figure 8
+`core2-kettlebell-figure-8` · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=n4e5ZU58Snk)
 
 **Esecuzione**
 1. In piedi, piedi più larghi delle spalle, ginocchia piegate e busto inclinato in avanti con la schiena neutra, kettlebell in una mano.

@@ -5,8 +5,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 ## forza-esplosiva (1)
 
-### Split squat esplosivo con bilanciere
-`fesp-fy-split-squat` · inglese: FY Split Squat · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=7G-7pvahAoM)
+### Explosive Barbell Split Squat (FY)
+`fesp-fy-split-squat` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=7G-7pvahAoM)
 
 **Esecuzione**
 1. Bilanciere sulle spalle, un piede leggermente avanti e l'altro leggermente indietro, come nella posizione di partenza dello sprint.
