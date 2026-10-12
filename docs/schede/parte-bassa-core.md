@@ -3,18 +3,6 @@
 Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 69 schede su 69 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## Da confermare (9)
-
-- **Estensione del ginocchio**: Esiste anche 'FY Knee Extension' (con elastico, video). Sono due esercizi diversi o uno dei due va tolto?
-- **Affondo isometrico**: Stesso video dell''Affondo tenuto da corridore' (batch 1) e dell''Affondo isometrico con tallone sollevato': la differenza tra i tre è il tallone? Dimmi se uno va tolto.
-- **Affondo isometrico con tallone sollevato**: Tallone sollevato: quello davanti o quello dietro? Ho scritto davanti (è la differenza con l'affondo isometrico).
-- **Squat a 90° con carico**: È lo squat con bilanciere fermato a 90° per il carico massimale? Dimmi se è un test o un esercizio, e se ha senso tenerlo separato da 'Squat'.
-- **Nordic hamstring (base)**: Esiste anche 'nordic hamstring' (stesso video, livello A). È lo stesso esercizio? Dimmi se uno va tolto o cosa li distingue.
-- **Plank di Copenhagen**: Esiste anche 'Copenhagen plank FY' (forza parte bassa, short). Sono lo stesso esercizio?
-- **Plank sulla palla**: Senza video: ho interpretato come plank con gli avambracci sul pallone. È così?
-- **Sollevamento delle punte (tibiale)**: Esiste anche 'Tibialis raises' (stesso video, con le sensazioni per i test). Uno dei due va tolto?
-- **Corsa da sdraiato con la palla**: Dalla miniatura: sdraiato con la palla tra le mani e una gamba piegata in aria. È la corsa alternata delle gambe con la palla? Correggimi.
-
 ## forza-parte-bassa (41)
 
 ### Affondi in camminata
@@ -49,30 +37,29 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fpb-fy-knee-extension` · inglese: FY Knee Extension · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=XUSLWFnVF-c)
 
 **Esecuzione**
-1. Elastico ancorato in basso davanti a te e passato dietro il ginocchio, appena sopra il polpaccio: in tensione anche a gamba distesa.
-2. In piedi su quella gamba, con una mano a un appoggio, parti con il ginocchio leggermente piegato.
-3. Distendi il ginocchio contro la resistenza dell'elastico contraendo il quadricipite, fino alla gamba dritta.
-4. Tieni 1-2 secondi, torna piegando piano, ripeti. Fai le ripetizioni indicate, poi cambia gamba.
+1. Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.
+2. In piedi con le mani a un appoggio, parti con le ginocchia leggermente piegate.
+3. Distendi un ginocchio contro la resistenza contraendo il quadricipite, fino alla gamba dritta, poi l'altro: alterna le gambe. In alternativa distendi entrambe le ginocchia insieme.
+4. Tieni 1-2 secondi a gamba distesa, torna piegando piano. Fai le ripetizioni indicate.
 
 **Errori comuni:** Bloccare il ginocchio indietro oltre la posizione dritta. Aiutarsi con il busto o con l'anca. Elastico lento: deve tirare per tutto il movimento.
-**Più facile:** Elastico più leggero, seduto con il piede a terra.
-**Più difficile:** Elastico più duro, pausa di 3 secondi a gamba distesa.
+**Più facile:** Elastico più leggero, una gamba alla volta.
+**Più difficile:** Elastico più duro, entrambe le gambe insieme con pausa di 3 secondi.
 **Sicurezza:** Dolore dietro la rotula: elastico più leggero o fermati.
 
 ### Estensione del ginocchio
 `fpb-knee-extension` · inglese: Knee Extension · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
-1. Seduto su una panca o una sedia alta, con le ginocchia a 90° e le cosce appoggiate.
-2. Distendi un ginocchio portando il piede in avanti e in alto, fino alla gamba dritta.
-3. Tieni 1-2 secondi con il quadricipite contratto, poi scendi piano.
-4. Fai le ripetizioni indicate, alternando le gambe o una gamba alla volta.
+1. Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.
+2. In piedi con le mani a un appoggio, parti con le ginocchia leggermente piegate.
+3. Distendi un ginocchio contro la resistenza contraendo il quadricipite, fino alla gamba dritta, poi l'altro: alterna le gambe. In alternativa distendi entrambe le ginocchia insieme.
+4. Tieni 1-2 secondi a gamba distesa, torna piegando piano. Fai le ripetizioni indicate.
 
-**Errori comuni:** Slancio con il busto. Scendere di colpo. Bloccare il ginocchio indietro oltre la posizione dritta.
-**Più facile:** Metà escursione.
-**Più difficile:** Cavigliera o elastico alla caviglia, pausa di 3 secondi in alto.
-**Sicurezza:** Dolore dietro la rotula: riduci l'escursione o fermati.
-**DA CONFERMARE:** Esiste anche 'FY Knee Extension' (con elastico, video). Sono due esercizi diversi o uno dei due va tolto?
+**Errori comuni:** Bloccare il ginocchio indietro oltre la posizione dritta. Aiutarsi con il busto o con l'anca. Elastico lento: deve tirare per tutto il movimento.
+**Più facile:** Elastico più leggero, una gamba alla volta.
+**Più difficile:** Elastico più duro, entrambe le gambe insieme con pausa di 3 secondi.
+**Sicurezza:** Dolore dietro la rotula: elastico più leggero o fermati.
 
 ### Affondo isometrico
 `fpb-affondo-isometrico` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=nvENLHoWSR4)
@@ -87,7 +74,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Ginocchio dietro a terra, mano al muro.
 **Più difficile:** Peso al petto, o tallone dietro sollevato.
 **Sicurezza:** Fastidio davanti al ginocchio: alza un po' la posizione.
-**DA CONFERMARE:** Stesso video dell''Affondo tenuto da corridore' (batch 1) e dell''Affondo isometrico con tallone sollevato': la differenza tra i tre è il tallone? Dimmi se uno va tolto.
 
 ### Affondo isometrico con tallone sollevato
 `fpb-affondo-isometrico-con-tallone-sollevato` · inglese: Affondo Isometrico Con Tallone Sollevato · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/nvENLHoWSR4?feature=share)
@@ -102,18 +88,17 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Meno tempo, mano al muro.
 **Più difficile:** Peso al petto.
 **Sicurezza:** Fastidio davanti al ginocchio: alza un po' la posizione.
-**DA CONFERMARE:** Tallone sollevato: quello davanti o quello dietro? Ho scritto davanti (è la differenza con l'affondo isometrico).
 
 ### Affondo profondo (ATG)
 `fpb-atg-lunge` · inglese: ATG Lunge · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=WGePf1hZ7_I)
 
 **Esecuzione**
 1. Passo lungo in avanti, piede davanti ben piantato.
-2. Scendi fino in fondo portando il ginocchio davanti molto oltre la punta del piede, con il tallone a terra: il polpaccio tocca la coscia.
+2. Scendi fino in fondo portando il ginocchio davanti molto oltre la punta del piede: il polpaccio tocca la coscia. Il tallone può sollevarsi mentre il ginocchio avanza.
 3. Il ginocchio dietro sfiora terra, il busto resta dritto.
 4. Risali spingendo sul piede davanti. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Tallone davanti che si alza: segno che manca mobilità alla caviglia. Ginocchio che cede verso l'interno. Busto che crolla in avanti.
+**Errori comuni:** Ginocchio che cede verso l'interno. Busto che crolla in avanti. Scendere di colpo invece che in controllo.
 **Più facile:** Mano a un appoggio, meno profondità.
 **Più difficile:** Manubri in mano, o salita lenta in 3 secondi.
 **Sicurezza:** Si fa solo dopo settimane di split squat profondo. Dolore al ginocchio, non semplice tensione: fermati.
@@ -122,12 +107,12 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fpb-atg-split-squat` · inglese: atg split squat · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=a0iGmxKW4_0)
 
 **Esecuzione**
-1. Piedi in posizione di affondo lungo, tallone davanti a terra. Mano a un appoggio se serve.
-2. Scendi lento portando il ginocchio davanti molto oltre la punta del piede, fino a toccare il polpaccio con la coscia.
-3. Tallone sempre a terra, busto dritto, ginocchio dietro che sfiora terra.
+1. Piedi in posizione di affondo lungo. Mano a un appoggio se serve.
+2. Scendi lento portando il ginocchio davanti molto oltre la punta del piede, fino a toccare il polpaccio con la coscia: il tallone può sollevarsi mentre il ginocchio avanza.
+3. Busto dritto, ginocchio dietro che sfiora terra.
 4. Risali in controllo. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Tallone davanti che si alza. Ginocchio che cede verso l'interno. Scendere di colpo invece che in 3 secondi.
+**Errori comuni:** Ginocchio che cede verso l'interno. Scendere di colpo invece che in 3 secondi. Busto che crolla in avanti.
 **Più facile:** Mano a un appoggio, meno profondità, poche ripetizioni.
 **Più difficile:** Manubri in mano, o pausa di 3 secondi in basso.
 **Sicurezza:** Fastidio al ginocchio che aumenta durante le ripetizioni: fermati e riduci la profondità la volta dopo.
@@ -178,15 +163,15 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fpb-fy-lateral-step-up` · inglese: FY Lateral Step Up · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=qMur94X9Tp0)
 
 **Esecuzione**
-1. Di fianco a una panca o un gradino alto, il piede più vicino appoggiato sopra, tutto il piede.
+1. Di fianco a una panca o un gradino alto, il piede più vicino appoggiato sopra con tutto il piede.
 2. Spingi con la gamba sulla panca e sali fino a distenderla, portando l'altra gamba a lato: all'inizio aiutati anche con la gamba a terra.
-3. Scendi in controllo riportando il piede libero a terra, 2-3 secondi.
+3. In discesa porta il ginocchio della gamba sulla panca verso l'interno, in modo controllato, attivando bene l'adduttore, e riappoggia il piede libero a terra in 2-3 secondi.
 4. Fai le ripetizioni indicate, poi cambia lato.
 
-**Errori comuni:** Slancio con la gamba a terra per tutto il movimento: deve aiutare sempre meno. Ginocchio che cede verso l'interno. Busto che si piega verso la panca.
-**Più facile:** Panca più bassa, più aiuto dalla gamba a terra.
+**Errori comuni:** Discesa veloce e senza controllo: la chiusura del ginocchio verso l'interno è lenta e voluta. Slancio con la gamba a terra per tutto il movimento: deve aiutare sempre meno. Busto che si piega verso la panca.
+**Più facile:** Panca più bassa, più aiuto dalla gamba a terra, ginocchio in linea con il piede.
 **Più difficile:** Senza aiuto della gamba a terra, o con un manubrio.
-**Sicurezza:** Panca stabile e che non scivola.
+**Sicurezza:** Esercizio avanzato: la discesa con il ginocchio verso l'interno mette sotto stress l'articolazione del ginocchio e l'adduttore. Solo con il controllo pieno del movimento; dolore al ginocchio o all'inguine: fermati.
 
 ### Squat lento con pausa
 `fpb-fy-squat` · inglese: FY Squat · bilaterale · reps · palestra · senza video
@@ -229,7 +214,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Meno carico, o un box dietro come riferimento.
 **Più difficile:** Più carico, salita esplosiva.
 **Sicurezza:** Con carichi alti sempre i fermi del rack o un compagno.
-**DA CONFERMARE:** È lo squat con bilanciere fermato a 90° per il carico massimale? Dimmi se è un test o un esercizio, e se ha senso tenerlo separato da 'Squat'.
 
 ### Step di Patrick (discesa dal gradino)
 `fpb-patrick-step-up` · inglese: Patrick step up · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=RDCTvQKcmv0)
@@ -255,7 +239,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 4. Lento e controllato. Fai le ripetizioni indicate, poi cambia gamba.
 
 **Errori comuni:** Perdere l'appoggio del tallone sul rialzo. Ginocchio che cede verso l'interno. Spingere con il piede libero in basso.
-**Più facile:** Rialzo più basso, mano a un appoggio.
+**Più facile:** Rialzo più basso, mano a un appoggio. Si può fare anche senza rialzo, lasciando sollevare il tallone durante la discesa.
 **Più difficile:** Un peso in mano, o discesa in 4 secondi.
 **Sicurezza:** Si fa dopo aver raggiunto 30 step di Patrick puliti. Fastidio al ginocchio che aumenta: riduci l'altezza.
 
@@ -294,7 +278,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 1. Bilanciere sulle spalle (sui trapezi, non sul collo), piedi alla larghezza delle spalle, punte leggermente in fuori.
 2. Scendi portando il bacino indietro e in basso, ginocchia in linea con i piedi, schiena neutra.
 3. Arriva almeno alle cosce parallele, più in basso se lo controlli.
-4. Risali spingendo tutto il piede nel pavimento, petto alto. Fai le ripetizioni indicate.
+4. Risali spingendo con l'avampiede, petto alto. Fai le ripetizioni indicate.
 
 **Errori comuni:** Ginocchio che cede verso l'interno. Talloni che si alzano. Busto che crolla in avanti con il carico.
 **Più facile:** Bilanciere scarico, o goblet squat.
@@ -343,20 +327,19 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Un peso sulle cosce, o a una gamba sola.
 **Sicurezza:** Fastidio davanti al ginocchio: posizione più alta.
 
-### Nordic hamstring (base)
+### Nordic hamstring (discesa)
 `fpb-nordic` · inglese: Nordic · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/Wx_d0y8iGxM?feature=share     )
 
 **Esecuzione**
 1. In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.
-2. Scendi in avanti il più lento possibile frenando con i muscoli dietro la coscia, bacino in avanti.
+2. Scendi in avanti il più lento possibile frenando con i muscoli dietro la coscia, bacino in avanti e busto in linea.
 3. Quando non riesci più a frenare, ammortizza con le mani a terra.
-4. Torna in posizione aiutandoti con una spinta delle mani. Fai le ripetizioni indicate.
+4. Torna in posizione con una spinta delle mani. Fai le ripetizioni indicate.
 
 **Errori comuni:** Piegarsi all'anca: il corpo resta dritto. Cadere di colpo invece di frenare. Tirare su con la schiena.
 **Più facile:** Escursione corta: scendi di 20-30°.
-**Più difficile:** Nordic completo, con risalita senza mani.
+**Più difficile:** Nordic hamstring curl: la risalita dal punto più basso senza mani.
 **Sicurezza:** Mai a meno di 3 giorni dalla partita. Dolore acuto dietro la coscia: fermati.
-**DA CONFERMARE:** Esiste anche 'nordic hamstring' (stesso video, livello A). È lo stesso esercizio? Dimmi se uno va tolto o cosa li distingue.
 
 ### Nordic hamstring curl
 `fpb-nordic-hamstring` · inglese: nordic hamstring · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=Wx_d0y8iGxM)
@@ -364,12 +347,12 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Esecuzione**
 1. In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.
 2. Scendi in avanti il più lento possibile frenando con i muscoli dietro la coscia, bacino in avanti e busto in linea.
-3. Ammortizza con le mani a terra solo quando non riesci più a frenare.
-4. Risali con la sola forza delle gambe, o con una spinta minima delle mani. Fai le ripetizioni indicate.
+3. Dal punto più basso che riesci a tenere, risali con la sola forza dei muscoli dietro la coscia, senza aiuto delle mani.
+4. Fai le ripetizioni indicate.
 
-**Errori comuni:** Piegarsi all'anca. Cadere di colpo invece di frenare. Tirare su con la schiena.
-**Più facile:** Escursione corta, più aiuto delle mani nella risalita.
-**Più difficile:** Risalita senza mani, o con un peso al petto.
+**Errori comuni:** Piegarsi all'anca. Cadere di colpo invece di frenare. Tirare su con la schiena o spingere con le mani.
+**Più facile:** Nordic hamstring (solo discesa), con le mani che aiutano la risalita.
+**Più difficile:** Un peso al petto, o discesa più profonda.
 **Sicurezza:** Mai a meno di 3 giorni dalla partita. Volume basso all'inizio: i dolori del giorno dopo sono normali, il dolore acuto no.
 
 ### Nordic inverso
@@ -391,41 +374,41 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Sdraiato sulla schiena, un piede a terra vicino al gluteo, l'altra gamba sollevata, braccia lungo il corpo.
-2. Spingi con il tallone a terra e solleva il bacino finché coscia e busto sono allineati.
-3. Tieni la posizione per il tempo indicato: bacino in squadra, non ruota, gluteo contratto.
-4. Scendi in controllo e cambia gamba.
+2. Spingi con il tallone a terra e solleva il bacino finché coscia e busto sono allineati, gluteo contratto.
+3. Scendi in controllo fino a sfiorare terra con il bacino e risali subito: movimento continuo, bacino in squadra.
+4. Per il tempo o le ripetizioni indicati, poi cambia gamba.
 
-**Errori comuni:** Bacino che ruota verso il lato della gamba libera. Inarcare la zona lombare. Spingere con la punta del piede.
-**Più facile:** Ponte a due gambe, o tenuta più corta.
+**Errori comuni:** Bacino che ruota verso il lato della gamba libera. Inarcare la zona lombare in alto. Spingere con la punta del piede.
+**Più facile:** Ponte a due gambe.
 **Più difficile:** Piede su un rialzo, o un peso sul bacino.
 **Sicurezza:** Crampo dietro la coscia: scendi, allunga, riprendi con il piede un po' più lontano.
 
-### Stacco rumeno su una gamba con manubrio e ginocchio alto
+### Stacco rumeno su una gamba con salti e stacco di testa
 `fpb-rdl-progression` · inglese: Rdl Progression · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/1vfkHZS5BUg?feature=share)
 
 **Esecuzione**
-1. In piedi su una gamba, manubrio nella mano opposta, ginocchio della gamba libera alto davanti.
-2. Scendi inclinando il busto in avanti e portando la gamba libera indietro distesa, schiena neutra: il manubrio scende lungo la gamba d'appoggio.
-3. Fermati con il busto quasi parallelo al pavimento, bacino in squadra.
-4. Risali e riporta il ginocchio alto davanti. Fai le ripetizioni indicate, poi cambia gamba.
+1. In piedi su una gamba, manubrio nella mano dello stesso lato del piede d'appoggio.
+2. Fai 3 stacchi rumeni su una gamba: scendi lento con il busto in avanti e la gamba libera indietro, schiena neutra, poi risali esplosivo alzando il ginocchio opposto.
+3. Appoggia il manubrio a terra e, sulla stessa gamba, fai 2 salti in avanti a un piede.
+4. Chiudi con uno stacco di testa a due piedi: salto verticale con il colpo di testa in alto, atterraggio morbido. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Bacino che si apre di lato. Schiena che si curva. Ginocchio d'appoggio bloccato.
-**Più facile:** Senza manubrio, o punta del piede libero a terra.
-**Più difficile:** Manubrio più pesante, o pausa in basso.
-**Sicurezza:** Fastidio lombare: scendi meno e tieni la schiena neutra.
+**Errori comuni:** Bacino che si apre di lato nello stacco. Schiena che si curva. Atterraggio pesante nei salti: ginocchio morbido e in linea.
+**Più facile:** Senza manubrio, salti più corti.
+**Più difficile:** Manubrio più pesante, salti più lunghi.
+**Sicurezza:** Spazio libero davanti a te per i salti. Fastidio lombare: scendi meno nello stacco.
 
-### Stacco rumeno su una gamba
+### Stacco rumeno su una gamba esplosivo
 `fpb-single-leg-rdl` · inglese: single leg rdl · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=Do1KR00uAqc)
 
 **Esecuzione**
-1. In piedi su una gamba, ginocchio appena piegato, peso leggero nella mano opposta o mani libere.
-2. Scendi inclinando il busto in avanti e portando la gamba libera indietro distesa, in un'unica linea con il busto.
-3. Schiena neutra, bacino in squadra, fermati quando senti tirare dietro la coscia.
-4. Risali contraendo il gluteo. Fai le ripetizioni indicate, poi cambia gamba.
+1. In piedi su una gamba, ginocchio appena piegato, peso nella mano dello stesso lato del piede d'appoggio.
+2. Scendi lento inclinando il busto in avanti e portando la gamba libera indietro distesa, in un'unica linea con il busto, schiena neutra.
+3. Risali esplosivo e alza il ginocchio opposto davanti, come nella spinta della corsa.
+4. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Bacino che si apre di lato. Schiena che si curva. Ginocchio d'appoggio bloccato.
-**Più facile:** Punta del piede libero a terra, mano al muro.
-**Più difficile:** Peso più pesante, o discesa in 4 secondi.
+**Errori comuni:** Bacino che si apre di lato. Schiena che si curva. Risalita lenta: la discesa è lenta, la salita è esplosiva.
+**Più facile:** Senza peso, mano al muro, risalita controllata.
+**Più difficile:** Peso più pesante, o un saltello sulla gamba d'appoggio in cima.
 **Sicurezza:** Fastidio lombare: scendi meno e tieni la schiena neutra.
 
 ### Sollevamento delle punte (tibiale)
@@ -441,7 +424,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Piedi più vicini al muro.
 **Più difficile:** Piedi più lontani, o a una gamba.
 **Sicurezza:** Bruciore davanti alla tibia: normale. Dolore sull'osso: fermati.
-**DA CONFERMARE:** Esiste anche 'Tibialis raises' (stesso video, con le sensazioni per i test). Uno dei due va tolto?
 
 ### Sollevamento delle punte (tibiale), versione test
 `fpb-tibialis-raises` · inglese: Tibialis raises · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=P4H0NE-HCsE)
@@ -527,18 +509,18 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in basso, o un peso al petto.
 **Sicurezza:** Fastidio al ginocchio: torna alla versione assistita.
 
-### Ponte dei femorali su rialzo, discesa lenta a una gamba
+### Ponte dei femorali su rialzo, frenata a una gamba
 `fpb-eccentric-elevated-hamstring-single-leg` · inglese: Eccentric elevated hamstring single leg · per lato · reps · corpo libero · [video](https://youtube.com/shorts/pvz1imwG2hM)
 
 **Esecuzione**
-1. Sdraiato sulla schiena, talloni su un box o una panca bassa, ginocchia piegate, braccia a terra.
+1. Sdraiato sulla schiena, talloni su un box o una panca bassa, gambe leggermente flesse, braccia a terra.
 2. Solleva il bacino con entrambe le gambe fino ad allineare cosce e busto.
-3. Stacca una gamba e scendi in 4-5 secondi con la sola gamba d'appoggio, bacino in squadra.
-4. Riappoggia il piede, risali con due gambe, ripeti. Fai le ripetizioni indicate, poi cambia gamba.
+3. Stacca una gamba e lascia scendere leggermente il bacino verso terra, poi bloccalo con forza con la sola gamba d'appoggio: è la frenata che allena i muscoli dietro la coscia.
+4. Riappoggia il piede, risali e ripeti. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Bacino che ruota nella discesa. Discesa veloce: sono 4-5 secondi. Inarcare la zona lombare.
+**Errori comuni:** Lasciar cadere il bacino fino a terra: la frenata arriva dopo pochi centimetri. Bacino che ruota verso la gamba libera. Inarcare la zona lombare.
 **Più facile:** Discesa più corta, o con due gambe.
-**Più difficile:** Sali e scendi con una gamba sola.
+**Più difficile:** Frenata più in basso, o pausa di 3 secondi nel punto di blocco.
 **Sicurezza:** Crampo dietro la coscia: fermati, allunga, riprendi con un'escursione più corta.
 
 ### Ponte dei femorali su rialzo a una gamba
@@ -552,36 +534,35 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Errori comuni:** Bacino che ruota. Inarcare la zona lombare per salire di più. Spingere con la punta del piede.
 **Più facile:** Con due gambe sul rialzo.
-**Più difficile:** Tallone più lontano (gamba più distesa), o pausa di 3 secondi.
+**Più difficile:** Versione esplosiva: salita rapida del bacino e discesa controllata. Oppure tallone più lontano e pausa di 3 secondi in alto.
 **Sicurezza:** Crampo dietro la coscia: fermati, allunga, riprendi.
 
-### Corsa da sdraiato con la palla
+### Ponte sui talloni con palla al ginocchio
 `fpb-core-hamstrings-running` · inglese: Core hamstrings running · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/Szavvv-yaE8)
 
 **Esecuzione**
-1. Sdraiato sulla schiena, una palla tenuta con le due mani sopra il petto, zona lombare a terra.
-2. Solleva le gambe e muovile come nella corsa: un ginocchio sale verso la palla mentre l'altra gamba si distende senza toccare terra.
-3. Alterna le gambe con ritmo regolare, addome attivo e schiena che non si inarca.
-4. Per il tempo indicato.
+1. Sdraiato con le spalle a terra e i talloni su un rialzo, una palla tenuta con due mani a braccia tese sopra la testa.
+2. Solleva il bacino in ponte, cosce e busto allineati, e tienilo per tutto l'esercizio.
+3. Solleva una gamba e porta la palla a toccare il ginocchio, con le braccia tese.
+4. Riporta gamba e palla in posizione e ripeti con l'altra gamba. Per il tempo indicato.
 
-**Errori comuni:** Zona lombare che si stacca da terra. Gamba distesa che tocca terra. Trattenere il respiro.
-**Più facile:** Gamba distesa più alta, ritmo più lento.
-**Più difficile:** Gamba distesa più vicina a terra, o con le mani che portano la palla verso il ginocchio opposto.
-**Sicurezza:** Fastidio lombare: alza le gambe o fermati.
-**DA CONFERMARE:** Dalla miniatura: sdraiato con la palla tra le mani e una gamba piegata in aria. È la corsa alternata delle gambe con la palla? Correggimi.
+**Errori comuni:** Bacino che scende o ruota quando la gamba si solleva. Braccia piegate: la palla arriva al ginocchio con le braccia tese. Trattenere il respiro.
+**Più facile:** Ponte tenuto con la sola gamba che si solleva, senza palla.
+**Più difficile:** Palla più pesante, o pausa di 2 secondi con la palla al ginocchio.
+**Sicurezza:** Crampo dietro la coscia: scendi, allunga, riprendi.
 
-### Plank di Copenhagen sulla panca
+### Plank di Copenhagen con crunch
 `fpb-copenhagen-plank-fy` · inglese: Copenhagen plank FY · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/ctzBaTKX5qE)
 
 **Esecuzione**
 1. Sdraiato sul fianco, avambraccio a terra sotto la spalla, piede della gamba sopra appoggiato su una panca.
-2. Solleva il bacino portando il corpo in linea, con la gamba sotto piegata e libera sotto la panca.
-3. Stringi la panca con la gamba sopra: il lavoro è degli adduttori. Braccio libero in alto.
-4. Tieni per il tempo indicato, poi cambia lato.
+2. Solleva il bacino in plank di Copenhagen: corpo in linea, gamba sotto e braccio libero sospesi.
+3. Porta il gomito del braccio libero e il ginocchio della gamba libera a toccarsi davanti al corpo, come in un crunch, poi riapri.
+4. Ripeti senza perdere la linea del bacino, per il tempo indicato. Cambia lato.
 
-**Errori comuni:** Bacino che cade indietro o in basso. Spalla d'appoggio che cede verso l'orecchio. Trattenere il respiro.
-**Più facile:** Appoggia il ginocchio sulla panca invece del piede.
-**Più difficile:** Gamba sotto che sale e scende durante la tenuta.
+**Errori comuni:** Bacino che cade mentre gomito e ginocchio si avvicinano. Spalla d'appoggio che cede verso l'orecchio. Crunch veloce e sporco: controllato.
+**Più facile:** Plank di Copenhagen tenuto, senza crunch.
+**Più difficile:** Crunch più lenti, o pausa di 2 secondi a gomito e ginocchio uniti.
 **Sicurezza:** Fastidio all'inguine, non semplice fatica: fermati. Mai nelle 48 ore prima della partita.
 
 ### Goblet squat
@@ -627,7 +608,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Ginocchio sul rialzo invece del piede, tempo ridotto.
 **Più difficile:** Gamba sotto che sale e scende durante la tenuta.
 **Sicurezza:** Fastidio all'inguine, non semplice fatica: fermati. Mai nelle 48 ore prima della partita.
-**DA CONFERMARE:** Esiste anche 'Copenhagen plank FY' (forza parte bassa, short). Sono lo stesso esercizio?
 
 ### Hollow hold
 `core2-holllow-hold` · inglese: Holllow Hold · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/zTiwvx20mYc?feature=share)
@@ -656,7 +636,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Plank a terra.
 **Più difficile:** Piedi uniti, o piccoli cerchi con la palla.
 **Sicurezza:** Fastidio lombare: fermati.
-**DA CONFERMARE:** Senza video: ho interpretato come plank con gli avambracci sul pallone. È così?
 
 ### Plank laterale
 `core2-side-plank` · inglese: Side Plank · per lato · secondi · corpo libero · [video](https://youtube.com/shorts/MdrinUXALJQ?feature=share)
@@ -676,15 +655,15 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `core2-spinta-alternata-cavi-core` · inglese: Spinta alternata Cavi - Core · bilaterale · reps · corpo libero · [video](https://youtu.be/-j_js9OIwBY)
 
 **Esecuzione**
-1. Di fronte alla macchina a cavi, una maniglia per mano all'altezza del petto, piedi in posizione di passo o alla larghezza delle spalle.
-2. Spingi una maniglia in avanti fino a distendere il braccio, mentre l'altra resta al petto.
-3. Torna e spingi con l'altro braccio: il busto resta fermo e non ruota, addome attivo.
-4. Fai le ripetizioni indicate, alternando.
+1. Di fronte alla macchina a cavi, una maniglia per mano all'altezza del petto, gambe una davanti all'altra in posizione di spinta.
+2. Spingi una maniglia in avanti fino a distendere il braccio, ruotando il busto nella direzione della spinta, mentre l'altra mano resta al petto.
+3. Torna e spingi con l'altro braccio ruotando dall'altra parte: addome attivo, bacino stabile sulle gambe.
+4. Fai le ripetizioni indicate alternando, poi cambia la gamba davanti.
 
-**Errori comuni:** Busto che ruota con la spinta. Bacino che si sposta indietro. Carico troppo alto: il lavoro è del core, non delle spalle.
+**Errori comuni:** Bacino che si sposta indietro invece di restare sulle gambe. Rotazione solo delle braccia: ruota il busto. Carico troppo alto: il lavoro è del core, non delle spalle.
 **Più facile:** Meno carico, piedi più larghi.
-**Più difficile:** Più carico, piedi uniti, o in ginocchio.
-**Sicurezza:** Fastidio alla spalla: riduci il carico.
+**Più difficile:** Più carico, o passo più stretto.
+**Sicurezza:** Fastidio alla spalla o alla zona lombare: riduci il carico.
 
 ### Piedi alla sbarra
 `core2-toes-to-bar` · inglese: Toes to Bar · bilaterale · reps · sbarra · [video](https://www.youtube.com/watch?v=jMUJ1KTZIeE&ab_channel=TestosteroneNation)
@@ -817,11 +796,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Sdraiato sulla schiena, mani alle tempie, gambe distese sollevate da terra.
-2. Porta il gomito destro verso il ginocchio sinistro piegandolo, mentre la gamba destra resta tesa e sollevata.
+2. Porta il gomito destro verso il ginocchio sinistro piegandolo, mentre la gamba destra tesa si solleva verso l'alto.
 3. Alterna lento, con il busto che ruota e la zona lombare a terra.
 4. Fai le ripetizioni indicate (totale, alternando).
 
-**Errori comuni:** Tirare la testa con le mani. Gamba tesa che tocca terra. Zona lombare che si inarca.
+**Errori comuni:** Tirare la testa con le mani. Gamba tesa ferma o che tocca terra: si solleva a ogni rotazione. Zona lombare che si inarca.
 **Più facile:** Gamba tesa più alta.
 **Più difficile:** Gamba tesa più vicina a terra, o pausa a ogni rotazione.
 **Sicurezza:** Fastidio al collo o alla zona lombare: fermati.
@@ -985,11 +964,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. In piedi, piedi più larghi delle spalle, ginocchia piegate e busto inclinato in avanti con la schiena neutra, kettlebell in una mano.
-2. Passa il kettlebell tra le gambe e afferralo con l'altra mano dietro, poi portalo intorno alla gamba e di nuovo in mezzo.
-3. Disegna un otto continuo, con il busto fermo e lo sguardo avanti.
+2. Passa il kettlebell dall'esterno della gamba verso l'interno, sotto le gambe, e afferralo con l'altra mano dietro.
+3. Quando lo porti su, fai uno swing leggero a un braccio davanti a te, poi ripassalo sotto le gambe dall'altro lato: il percorso disegna un otto.
 4. Fai le ripetizioni indicate (un otto = una ripetizione), poi inverti il senso.
 
-**Errori comuni:** Schiena che si curva. Busto che si alza e si abbassa. Kettlebell che oscilla lontano dal corpo.
-**Più facile:** Kettlebell più leggero, ritmo lento.
-**Più difficile:** Kettlebell più pesante, o posizione più bassa.
+**Errori comuni:** Schiena che si curva. Swing alto o con le braccia: lo swing è leggero e parte dalle anche. Kettlebell che oscilla lontano dal corpo nel passaggio.
+**Più facile:** Kettlebell più leggero, senza swing.
+**Più difficile:** Kettlebell più pesante, o ritmo più alto.
 **Sicurezza:** Presa salda: se scivola, lascialo cadere lontano dai piedi.

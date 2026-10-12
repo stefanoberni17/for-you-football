@@ -99,18 +99,18 @@
   "nome_en": "FY Knee Extension",
   "scheda": {
    "esecuzione": [
-    "Elastico ancorato in basso davanti a te e passato dietro il ginocchio, appena sopra il polpaccio: in tensione anche a gamba distesa.",
-    "In piedi su quella gamba, con una mano a un appoggio, parti con il ginocchio leggermente piegato.",
-    "Distendi il ginocchio contro la resistenza dell'elastico contraendo il quadricipite, fino alla gamba dritta.",
-    "Tieni 1-2 secondi, torna piegando piano, ripeti. Fai le ripetizioni indicate, poi cambia gamba."
+    "Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.",
+    "In piedi con le mani a un appoggio, parti con le ginocchia leggermente piegate.",
+    "Distendi un ginocchio contro la resistenza contraendo il quadricipite, fino alla gamba dritta, poi l'altro: alterna le gambe. In alternativa distendi entrambe le ginocchia insieme.",
+    "Tieni 1-2 secondi a gamba distesa, torna piegando piano. Fai le ripetizioni indicate."
    ],
    "errori": [
     "Bloccare il ginocchio indietro oltre la posizione dritta.",
     "Aiutarsi con il busto o con l'anca.",
     "Elastico lento: deve tirare per tutto il movimento."
    ],
-   "piu_facile": "Elastico più leggero, seduto con il piede a terra.",
-   "piu_difficile": "Elastico più duro, pausa di 3 secondi a gamba distesa.",
+   "piu_facile": "Elastico più leggero, una gamba alla volta.",
+   "piu_difficile": "Elastico più duro, entrambe le gambe insieme con pausa di 3 secondi.",
    "sicurezza": "Dolore dietro la rotula: elastico più leggero o fermati."
   }
  },
@@ -141,20 +141,19 @@
   "nome_en": "Knee Extension",
   "scheda": {
    "esecuzione": [
-    "Seduto su una panca o una sedia alta, con le ginocchia a 90° e le cosce appoggiate.",
-    "Distendi un ginocchio portando il piede in avanti e in alto, fino alla gamba dritta.",
-    "Tieni 1-2 secondi con il quadricipite contratto, poi scendi piano.",
-    "Fai le ripetizioni indicate, alternando le gambe o una gamba alla volta."
+    "Elastico ancorato in basso davanti a te e passato dietro le ginocchia, appena sopra i polpacci: in tensione anche a gambe distese.",
+    "In piedi con le mani a un appoggio, parti con le ginocchia leggermente piegate.",
+    "Distendi un ginocchio contro la resistenza contraendo il quadricipite, fino alla gamba dritta, poi l'altro: alterna le gambe. In alternativa distendi entrambe le ginocchia insieme.",
+    "Tieni 1-2 secondi a gamba distesa, torna piegando piano. Fai le ripetizioni indicate."
    ],
    "errori": [
-    "Slancio con il busto.",
-    "Scendere di colpo.",
-    "Bloccare il ginocchio indietro oltre la posizione dritta."
+    "Bloccare il ginocchio indietro oltre la posizione dritta.",
+    "Aiutarsi con il busto o con l'anca.",
+    "Elastico lento: deve tirare per tutto il movimento."
    ],
-   "piu_facile": "Metà escursione.",
-   "piu_difficile": "Cavigliera o elastico alla caviglia, pausa di 3 secondi in alto.",
-   "sicurezza": "Dolore dietro la rotula: riduci l'escursione o fermati.",
-   "da_confermare": "Esiste anche 'FY Knee Extension' (con elastico, video). Sono due esercizi diversi o uno dei due va tolto?"
+   "piu_facile": "Elastico più leggero, una gamba alla volta.",
+   "piu_difficile": "Elastico più duro, entrambe le gambe insieme con pausa di 3 secondi.",
+   "sicurezza": "Dolore dietro la rotula: elastico più leggero o fermati."
   }
  },
  {
@@ -197,8 +196,7 @@
    ],
    "piu_facile": "Ginocchio dietro a terra, mano al muro.",
    "piu_difficile": "Peso al petto, o tallone dietro sollevato.",
-   "sicurezza": "Fastidio davanti al ginocchio: alza un po' la posizione.",
-   "da_confermare": "Stesso video dell''Affondo tenuto da corridore' (batch 1) e dell''Affondo isometrico con tallone sollevato': la differenza tra i tre è il tallone? Dimmi se uno va tolto."
+   "sicurezza": "Fastidio davanti al ginocchio: alza un po' la posizione."
   }
  },
  {
@@ -244,8 +242,7 @@
    ],
    "piu_facile": "Meno tempo, mano al muro.",
    "piu_difficile": "Peso al petto.",
-   "sicurezza": "Fastidio davanti al ginocchio: alza un po' la posizione.",
-   "da_confermare": "Tallone sollevato: quello davanti o quello dietro? Ho scritto davanti (è la differenza con l'affondo isometrico)."
+   "sicurezza": "Fastidio davanti al ginocchio: alza un po' la posizione."
   }
  },
  {
@@ -280,14 +277,14 @@
   "scheda": {
    "esecuzione": [
     "Passo lungo in avanti, piede davanti ben piantato.",
-    "Scendi fino in fondo portando il ginocchio davanti molto oltre la punta del piede, con il tallone a terra: il polpaccio tocca la coscia.",
+    "Scendi fino in fondo portando il ginocchio davanti molto oltre la punta del piede: il polpaccio tocca la coscia. Il tallone può sollevarsi mentre il ginocchio avanza.",
     "Il ginocchio dietro sfiora terra, il busto resta dritto.",
     "Risali spingendo sul piede davanti. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
-    "Tallone davanti che si alza: segno che manca mobilità alla caviglia.",
     "Ginocchio che cede verso l'interno.",
-    "Busto che crolla in avanti."
+    "Busto che crolla in avanti.",
+    "Scendere di colpo invece che in controllo."
    ],
    "piu_facile": "Mano a un appoggio, meno profondità.",
    "piu_difficile": "Manubri in mano, o salita lenta in 3 secondi.",
@@ -328,15 +325,15 @@
   "nome_en": "atg split squat",
   "scheda": {
    "esecuzione": [
-    "Piedi in posizione di affondo lungo, tallone davanti a terra. Mano a un appoggio se serve.",
-    "Scendi lento portando il ginocchio davanti molto oltre la punta del piede, fino a toccare il polpaccio con la coscia.",
-    "Tallone sempre a terra, busto dritto, ginocchio dietro che sfiora terra.",
+    "Piedi in posizione di affondo lungo. Mano a un appoggio se serve.",
+    "Scendi lento portando il ginocchio davanti molto oltre la punta del piede, fino a toccare il polpaccio con la coscia: il tallone può sollevarsi mentre il ginocchio avanza.",
+    "Busto dritto, ginocchio dietro che sfiora terra.",
     "Risali in controllo. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
-    "Tallone davanti che si alza.",
     "Ginocchio che cede verso l'interno.",
-    "Scendere di colpo invece che in 3 secondi."
+    "Scendere di colpo invece che in 3 secondi.",
+    "Busto che crolla in avanti."
    ],
    "piu_facile": "Mano a un appoggio, meno profondità, poche ripetizioni.",
    "piu_difficile": "Manubri in mano, o pausa di 3 secondi in basso.",
@@ -493,19 +490,19 @@
   "nome_en": "FY Lateral Step Up",
   "scheda": {
    "esecuzione": [
-    "Di fianco a una panca o un gradino alto, il piede più vicino appoggiato sopra, tutto il piede.",
+    "Di fianco a una panca o un gradino alto, il piede più vicino appoggiato sopra con tutto il piede.",
     "Spingi con la gamba sulla panca e sali fino a distenderla, portando l'altra gamba a lato: all'inizio aiutati anche con la gamba a terra.",
-    "Scendi in controllo riportando il piede libero a terra, 2-3 secondi.",
+    "In discesa porta il ginocchio della gamba sulla panca verso l'interno, in modo controllato, attivando bene l'adduttore, e riappoggia il piede libero a terra in 2-3 secondi.",
     "Fai le ripetizioni indicate, poi cambia lato."
    ],
    "errori": [
+    "Discesa veloce e senza controllo: la chiusura del ginocchio verso l'interno è lenta e voluta.",
     "Slancio con la gamba a terra per tutto il movimento: deve aiutare sempre meno.",
-    "Ginocchio che cede verso l'interno.",
     "Busto che si piega verso la panca."
    ],
-   "piu_facile": "Panca più bassa, più aiuto dalla gamba a terra.",
+   "piu_facile": "Panca più bassa, più aiuto dalla gamba a terra, ginocchio in linea con il piede.",
    "piu_difficile": "Senza aiuto della gamba a terra, o con un manubrio.",
-   "sicurezza": "Panca stabile e che non scivola."
+   "sicurezza": "Esercizio avanzato: la discesa con il ginocchio verso l'interno mette sotto stress l'articolazione del ginocchio e l'adduttore. Solo con il controllo pieno del movimento; dolore al ginocchio o all'inguine: fermati."
   }
  },
  {
@@ -620,8 +617,7 @@
    ],
    "piu_facile": "Meno carico, o un box dietro come riferimento.",
    "piu_difficile": "Più carico, salita esplosiva.",
-   "sicurezza": "Con carichi alti sempre i fermi del rack o un compagno.",
-   "da_confermare": "È lo squat con bilanciere fermato a 90° per il carico massimale? Dimmi se è un test o un esercizio, e se ha senso tenerlo separato da 'Squat'."
+   "sicurezza": "Con carichi alti sempre i fermi del rack o un compagno."
   }
  },
  {
@@ -695,7 +691,7 @@
     "Ginocchio che cede verso l'interno.",
     "Spingere con il piede libero in basso."
    ],
-   "piu_facile": "Rialzo più basso, mano a un appoggio.",
+   "piu_facile": "Rialzo più basso, mano a un appoggio. Si può fare anche senza rialzo, lasciando sollevare il tallone durante la discesa.",
    "piu_difficile": "Un peso in mano, o discesa in 4 secondi.",
    "sicurezza": "Si fa dopo aver raggiunto 30 step di Patrick puliti. Fastidio al ginocchio che aumenta: riduci l'altezza."
   }
@@ -816,7 +812,7 @@
     "Bilanciere sulle spalle (sui trapezi, non sul collo), piedi alla larghezza delle spalle, punte leggermente in fuori.",
     "Scendi portando il bacino indietro e in basso, ginocchia in linea con i piedi, schiena neutra.",
     "Arriva almeno alle cosce parallele, più in basso se lo controlli.",
-    "Risali spingendo tutto il piede nel pavimento, petto alto. Fai le ripetizioni indicate."
+    "Risali spingendo con l'avampiede, petto alto. Fai le ripetizioni indicate."
    ],
    "errori": [
     "Ginocchio che cede verso l'interno.",
@@ -976,7 +972,7 @@
   }
  },
  {
-  "nome": "Nordic hamstring (base)",
+  "nome": "Nordic hamstring (discesa)",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -1001,9 +997,9 @@
   "scheda": {
    "esecuzione": [
     "In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.",
-    "Scendi in avanti il più lento possibile frenando con i muscoli dietro la coscia, bacino in avanti.",
+    "Scendi in avanti il più lento possibile frenando con i muscoli dietro la coscia, bacino in avanti e busto in linea.",
     "Quando non riesci più a frenare, ammortizza con le mani a terra.",
-    "Torna in posizione aiutandoti con una spinta delle mani. Fai le ripetizioni indicate."
+    "Torna in posizione con una spinta delle mani. Fai le ripetizioni indicate."
    ],
    "errori": [
     "Piegarsi all'anca: il corpo resta dritto.",
@@ -1011,9 +1007,8 @@
     "Tirare su con la schiena."
    ],
    "piu_facile": "Escursione corta: scendi di 20-30°.",
-   "piu_difficile": "Nordic completo, con risalita senza mani.",
-   "sicurezza": "Mai a meno di 3 giorni dalla partita. Dolore acuto dietro la coscia: fermati.",
-   "da_confermare": "Esiste anche 'nordic hamstring' (stesso video, livello A). È lo stesso esercizio? Dimmi se uno va tolto o cosa li distingue."
+   "piu_difficile": "Nordic hamstring curl: la risalita dal punto più basso senza mani.",
+   "sicurezza": "Mai a meno di 3 giorni dalla partita. Dolore acuto dietro la coscia: fermati."
   }
  },
  {
@@ -1048,16 +1043,16 @@
    "esecuzione": [
     "In ginocchio, caviglie bloccate da un compagno o sotto un appoggio stabile, corpo dritto dalle ginocchia alla testa.",
     "Scendi in avanti il più lento possibile frenando con i muscoli dietro la coscia, bacino in avanti e busto in linea.",
-    "Ammortizza con le mani a terra solo quando non riesci più a frenare.",
-    "Risali con la sola forza delle gambe, o con una spinta minima delle mani. Fai le ripetizioni indicate."
+    "Dal punto più basso che riesci a tenere, risali con la sola forza dei muscoli dietro la coscia, senza aiuto delle mani.",
+    "Fai le ripetizioni indicate."
    ],
    "errori": [
     "Piegarsi all'anca.",
     "Cadere di colpo invece di frenare.",
-    "Tirare su con la schiena."
+    "Tirare su con la schiena o spingere con le mani."
    ],
-   "piu_facile": "Escursione corta, più aiuto delle mani nella risalita.",
-   "piu_difficile": "Risalita senza mani, o con un peso al petto.",
+   "piu_facile": "Nordic hamstring (solo discesa), con le mani che aiutano la risalita.",
+   "piu_difficile": "Un peso al petto, o discesa più profonda.",
    "sicurezza": "Mai a meno di 3 giorni dalla partita. Volume basso all'inizio: i dolori del giorno dopo sono normali, il dolore acuto no."
   }
  },
@@ -1141,22 +1136,22 @@
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, un piede a terra vicino al gluteo, l'altra gamba sollevata, braccia lungo il corpo.",
-    "Spingi con il tallone a terra e solleva il bacino finché coscia e busto sono allineati.",
-    "Tieni la posizione per il tempo indicato: bacino in squadra, non ruota, gluteo contratto.",
-    "Scendi in controllo e cambia gamba."
+    "Spingi con il tallone a terra e solleva il bacino finché coscia e busto sono allineati, gluteo contratto.",
+    "Scendi in controllo fino a sfiorare terra con il bacino e risali subito: movimento continuo, bacino in squadra.",
+    "Per il tempo o le ripetizioni indicati, poi cambia gamba."
    ],
    "errori": [
     "Bacino che ruota verso il lato della gamba libera.",
-    "Inarcare la zona lombare.",
+    "Inarcare la zona lombare in alto.",
     "Spingere con la punta del piede."
    ],
-   "piu_facile": "Ponte a due gambe, o tenuta più corta.",
+   "piu_facile": "Ponte a due gambe.",
    "piu_difficile": "Piede su un rialzo, o un peso sul bacino.",
    "sicurezza": "Crampo dietro la coscia: scendi, allunga, riprendi con il piede un po' più lontano."
   }
  },
  {
-  "nome": "Stacco rumeno su una gamba con manubrio e ginocchio alto",
+  "nome": "Stacco rumeno su una gamba con salti e stacco di testa",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1178,23 +1173,23 @@
   "nome_en": "Rdl Progression",
   "scheda": {
    "esecuzione": [
-    "In piedi su una gamba, manubrio nella mano opposta, ginocchio della gamba libera alto davanti.",
-    "Scendi inclinando il busto in avanti e portando la gamba libera indietro distesa, schiena neutra: il manubrio scende lungo la gamba d'appoggio.",
-    "Fermati con il busto quasi parallelo al pavimento, bacino in squadra.",
-    "Risali e riporta il ginocchio alto davanti. Fai le ripetizioni indicate, poi cambia gamba."
+    "In piedi su una gamba, manubrio nella mano dello stesso lato del piede d'appoggio.",
+    "Fai 3 stacchi rumeni su una gamba: scendi lento con il busto in avanti e la gamba libera indietro, schiena neutra, poi risali esplosivo alzando il ginocchio opposto.",
+    "Appoggia il manubrio a terra e, sulla stessa gamba, fai 2 salti in avanti a un piede.",
+    "Chiudi con uno stacco di testa a due piedi: salto verticale con il colpo di testa in alto, atterraggio morbido. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
-    "Bacino che si apre di lato.",
+    "Bacino che si apre di lato nello stacco.",
     "Schiena che si curva.",
-    "Ginocchio d'appoggio bloccato."
+    "Atterraggio pesante nei salti: ginocchio morbido e in linea."
    ],
-   "piu_facile": "Senza manubrio, o punta del piede libero a terra.",
-   "piu_difficile": "Manubrio più pesante, o pausa in basso.",
-   "sicurezza": "Fastidio lombare: scendi meno e tieni la schiena neutra."
+   "piu_facile": "Senza manubrio, salti più corti.",
+   "piu_difficile": "Manubrio più pesante, salti più lunghi.",
+   "sicurezza": "Spazio libero davanti a te per i salti. Fastidio lombare: scendi meno nello stacco."
   }
  },
  {
-  "nome": "Stacco rumeno su una gamba",
+  "nome": "Stacco rumeno su una gamba esplosivo",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1223,18 +1218,18 @@
   "nome_en": "single leg rdl",
   "scheda": {
    "esecuzione": [
-    "In piedi su una gamba, ginocchio appena piegato, peso leggero nella mano opposta o mani libere.",
-    "Scendi inclinando il busto in avanti e portando la gamba libera indietro distesa, in un'unica linea con il busto.",
-    "Schiena neutra, bacino in squadra, fermati quando senti tirare dietro la coscia.",
-    "Risali contraendo il gluteo. Fai le ripetizioni indicate, poi cambia gamba."
+    "In piedi su una gamba, ginocchio appena piegato, peso nella mano dello stesso lato del piede d'appoggio.",
+    "Scendi lento inclinando il busto in avanti e portando la gamba libera indietro distesa, in un'unica linea con il busto, schiena neutra.",
+    "Risali esplosivo e alza il ginocchio opposto davanti, come nella spinta della corsa.",
+    "Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
     "Bacino che si apre di lato.",
     "Schiena che si curva.",
-    "Ginocchio d'appoggio bloccato."
+    "Risalita lenta: la discesa è lenta, la salita è esplosiva."
    ],
-   "piu_facile": "Punta del piede libero a terra, mano al muro.",
-   "piu_difficile": "Peso più pesante, o discesa in 4 secondi.",
+   "piu_facile": "Senza peso, mano al muro, risalita controllata.",
+   "piu_difficile": "Peso più pesante, o un saltello sulla gamba d'appoggio in cima.",
    "sicurezza": "Fastidio lombare: scendi meno e tieni la schiena neutra."
   }
  },
@@ -1907,8 +1902,7 @@
    ],
    "piu_facile": "Ginocchio sul rialzo invece del piede, tempo ridotto.",
    "piu_difficile": "Gamba sotto che sale e scende durante la tenuta.",
-   "sicurezza": "Fastidio all'inguine, non semplice fatica: fermati. Mai nelle 48 ore prima della partita.",
-   "da_confermare": "Esiste anche 'Copenhagen plank FY' (forza parte bassa, short). Sono lo stesso esercizio?"
+   "sicurezza": "Fastidio all'inguine, non semplice fatica: fermati. Mai nelle 48 ore prima della partita."
   }
  },
  {
@@ -2035,8 +2029,7 @@
    ],
    "piu_facile": "Plank a terra.",
    "piu_difficile": "Piedi uniti, o piccoli cerchi con la palla.",
-   "sicurezza": "Fastidio lombare: fermati.",
-   "da_confermare": "Senza video: ho interpretato come plank con gli avambracci sul pallone. È così?"
+   "sicurezza": "Fastidio lombare: fermati."
   }
  },
  {
@@ -2123,19 +2116,19 @@
   "nome_en": "Spinta alternata Cavi - Core",
   "scheda": {
    "esecuzione": [
-    "Di fronte alla macchina a cavi, una maniglia per mano all'altezza del petto, piedi in posizione di passo o alla larghezza delle spalle.",
-    "Spingi una maniglia in avanti fino a distendere il braccio, mentre l'altra resta al petto.",
-    "Torna e spingi con l'altro braccio: il busto resta fermo e non ruota, addome attivo.",
-    "Fai le ripetizioni indicate, alternando."
+    "Di fronte alla macchina a cavi, una maniglia per mano all'altezza del petto, gambe una davanti all'altra in posizione di spinta.",
+    "Spingi una maniglia in avanti fino a distendere il braccio, ruotando il busto nella direzione della spinta, mentre l'altra mano resta al petto.",
+    "Torna e spingi con l'altro braccio ruotando dall'altra parte: addome attivo, bacino stabile sulle gambe.",
+    "Fai le ripetizioni indicate alternando, poi cambia la gamba davanti."
    ],
    "errori": [
-    "Busto che ruota con la spinta.",
-    "Bacino che si sposta indietro.",
+    "Bacino che si sposta indietro invece di restare sulle gambe.",
+    "Rotazione solo delle braccia: ruota il busto.",
     "Carico troppo alto: il lavoro è del core, non delle spalle."
    ],
    "piu_facile": "Meno carico, piedi più larghi.",
-   "piu_difficile": "Più carico, piedi uniti, o in ginocchio.",
-   "sicurezza": "Fastidio alla spalla: riduci il carico."
+   "piu_difficile": "Più carico, o passo più stretto.",
+   "sicurezza": "Fastidio alla spalla o alla zona lombare: riduci il carico."
   }
  },
  {
@@ -2341,7 +2334,7 @@
   "solo_livello": true
  },
  {
-  "nome": "FY Split Squat",
+  "nome": "Split squat esplosivo con bilanciere",
   "qualita": "forza-esplosiva",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -2360,7 +2353,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fesp-fy-split-squat",
+  "nome_en": "FY Split Squat",
+  "scheda": {
+   "esecuzione": [
+    "Bilanciere sulle spalle, un piede leggermente avanti e l'altro leggermente indietro, come nella posizione di partenza dello sprint.",
+    "Scendi poco: una piccola flessione delle ginocchia, busto compatto e leggermente inclinato in avanti.",
+    "Risali esplosivo spingendo con entrambe le gambe, come nella prima spinta dello sprint.",
+    "Fai le ripetizioni indicate, poi cambia la gamba davanti."
+   ],
+   "errori": [
+    "Scendere troppo: non è un affondo, è una spinta.",
+    "Risalita lenta.",
+    "Ginocchio che cede verso l'interno."
+   ],
+   "piu_facile": "Bilanciere scarico, o a corpo libero.",
+   "piu_difficile": "Più carico, o un piccolo stacco dei piedi da terra in cima.",
+   "sicurezza": "Carichi alti solo con i fermi del rack. Fastidio al ginocchio davanti: riduci la profondità."
+  }
  },
  {
   "nome": "kettlebell dead clean",
@@ -4491,8 +4502,7 @@
    ],
    "piu_facile": "Piedi più vicini al muro.",
    "piu_difficile": "Piedi più lontani, o a una gamba.",
-   "sicurezza": "Bruciore davanti alla tibia: normale. Dolore sull'osso: fermati.",
-   "da_confermare": "Esiste anche 'Tibialis raises' (stesso video, con le sensazioni per i test). Uno dei due va tolto?"
+   "sicurezza": "Bruciore davanti alla tibia: normale. Dolore sull'osso: fermati."
   }
  },
  {
@@ -8001,13 +8011,13 @@
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, mani alle tempie, gambe distese sollevate da terra.",
-    "Porta il gomito destro verso il ginocchio sinistro piegandolo, mentre la gamba destra resta tesa e sollevata.",
+    "Porta il gomito destro verso il ginocchio sinistro piegandolo, mentre la gamba destra tesa si solleva verso l'alto.",
     "Alterna lento, con il busto che ruota e la zona lombare a terra.",
     "Fai le ripetizioni indicate (totale, alternando)."
    ],
    "errori": [
     "Tirare la testa con le mani.",
-    "Gamba tesa che tocca terra.",
+    "Gamba tesa ferma o che tocca terra: si solleva a ogni rotazione.",
     "Zona lombare che si inarca."
    ],
    "piu_facile": "Gamba tesa più alta.",
@@ -8517,17 +8527,17 @@
   "scheda": {
    "esecuzione": [
     "In piedi, piedi più larghi delle spalle, ginocchia piegate e busto inclinato in avanti con la schiena neutra, kettlebell in una mano.",
-    "Passa il kettlebell tra le gambe e afferralo con l'altra mano dietro, poi portalo intorno alla gamba e di nuovo in mezzo.",
-    "Disegna un otto continuo, con il busto fermo e lo sguardo avanti.",
+    "Passa il kettlebell dall'esterno della gamba verso l'interno, sotto le gambe, e afferralo con l'altra mano dietro.",
+    "Quando lo porti su, fai uno swing leggero a un braccio davanti a te, poi ripassalo sotto le gambe dall'altro lato: il percorso disegna un otto.",
     "Fai le ripetizioni indicate (un otto = una ripetizione), poi inverti il senso."
    ],
    "errori": [
     "Schiena che si curva.",
-    "Busto che si alza e si abbassa.",
-    "Kettlebell che oscilla lontano dal corpo."
+    "Swing alto o con le braccia: lo swing è leggero e parte dalle anche.",
+    "Kettlebell che oscilla lontano dal corpo nel passaggio."
    ],
-   "piu_facile": "Kettlebell più leggero, ritmo lento.",
-   "piu_difficile": "Kettlebell più pesante, o posizione più bassa.",
+   "piu_facile": "Kettlebell più leggero, senza swing.",
+   "piu_difficile": "Kettlebell più pesante, o ritmo più alto.",
    "sicurezza": "Presa salda: se scivola, lascialo cadere lontano dai piedi."
   }
  },
@@ -9094,7 +9104,7 @@
   }
  },
  {
-  "nome": "Ponte dei femorali su rialzo, discesa lenta a una gamba",
+  "nome": "Ponte dei femorali su rialzo, frenata a una gamba",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -9118,18 +9128,18 @@
   "nome_en": "Eccentric elevated hamstring single leg",
   "scheda": {
    "esecuzione": [
-    "Sdraiato sulla schiena, talloni su un box o una panca bassa, ginocchia piegate, braccia a terra.",
+    "Sdraiato sulla schiena, talloni su un box o una panca bassa, gambe leggermente flesse, braccia a terra.",
     "Solleva il bacino con entrambe le gambe fino ad allineare cosce e busto.",
-    "Stacca una gamba e scendi in 4-5 secondi con la sola gamba d'appoggio, bacino in squadra.",
-    "Riappoggia il piede, risali con due gambe, ripeti. Fai le ripetizioni indicate, poi cambia gamba."
+    "Stacca una gamba e lascia scendere leggermente il bacino verso terra, poi bloccalo con forza con la sola gamba d'appoggio: è la frenata che allena i muscoli dietro la coscia.",
+    "Riappoggia il piede, risali e ripeti. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
-    "Bacino che ruota nella discesa.",
-    "Discesa veloce: sono 4-5 secondi.",
+    "Lasciar cadere il bacino fino a terra: la frenata arriva dopo pochi centimetri.",
+    "Bacino che ruota verso la gamba libera.",
     "Inarcare la zona lombare."
    ],
    "piu_facile": "Discesa più corta, o con due gambe.",
-   "piu_difficile": "Sali e scendi con una gamba sola.",
+   "piu_difficile": "Frenata più in basso, o pausa di 3 secondi nel punto di blocco.",
    "sicurezza": "Crampo dietro la coscia: fermati, allunga, riprendi con un'escursione più corta."
   }
  },
@@ -9169,12 +9179,12 @@
     "Spingere con la punta del piede."
    ],
    "piu_facile": "Con due gambe sul rialzo.",
-   "piu_difficile": "Tallone più lontano (gamba più distesa), o pausa di 3 secondi.",
+   "piu_difficile": "Versione esplosiva: salita rapida del bacino e discesa controllata. Oppure tallone più lontano e pausa di 3 secondi in alto.",
    "sicurezza": "Crampo dietro la coscia: fermati, allunga, riprendi."
   }
  },
  {
-  "nome": "Corsa da sdraiato con la palla",
+  "nome": "Ponte sui talloni con palla al ginocchio",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9190,7 +9200,7 @@
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
   "nome_everfit": "Core hamstrings running",
-  "note": null,
+  "note": "Ste, 12/10: ottimo per core e catena posteriore, da proporre spesso.",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "core",
@@ -9199,24 +9209,23 @@
   "nome_en": "Core hamstrings running",
   "scheda": {
    "esecuzione": [
-    "Sdraiato sulla schiena, una palla tenuta con le due mani sopra il petto, zona lombare a terra.",
-    "Solleva le gambe e muovile come nella corsa: un ginocchio sale verso la palla mentre l'altra gamba si distende senza toccare terra.",
-    "Alterna le gambe con ritmo regolare, addome attivo e schiena che non si inarca.",
-    "Per il tempo indicato."
+    "Sdraiato con le spalle a terra e i talloni su un rialzo, una palla tenuta con due mani a braccia tese sopra la testa.",
+    "Solleva il bacino in ponte, cosce e busto allineati, e tienilo per tutto l'esercizio.",
+    "Solleva una gamba e porta la palla a toccare il ginocchio, con le braccia tese.",
+    "Riporta gamba e palla in posizione e ripeti con l'altra gamba. Per il tempo indicato."
    ],
    "errori": [
-    "Zona lombare che si stacca da terra.",
-    "Gamba distesa che tocca terra.",
+    "Bacino che scende o ruota quando la gamba si solleva.",
+    "Braccia piegate: la palla arriva al ginocchio con le braccia tese.",
     "Trattenere il respiro."
    ],
-   "piu_facile": "Gamba distesa più alta, ritmo più lento.",
-   "piu_difficile": "Gamba distesa più vicina a terra, o con le mani che portano la palla verso il ginocchio opposto.",
-   "sicurezza": "Fastidio lombare: alza le gambe o fermati.",
-   "da_confermare": "Dalla miniatura: sdraiato con la palla tra le mani e una gamba piegata in aria. È la corsa alternata delle gambe con la palla? Correggimi."
+   "piu_facile": "Ponte tenuto con la sola gamba che si solleva, senza palla.",
+   "piu_difficile": "Palla più pesante, o pausa di 2 secondi con la palla al ginocchio.",
+   "sicurezza": "Crampo dietro la coscia: scendi, allunga, riprendi."
   }
  },
  {
-  "nome": "Plank di Copenhagen sulla panca",
+  "nome": "Plank di Copenhagen con crunch",
   "qualita": "forza-parte-bassa",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -9241,17 +9250,17 @@
   "scheda": {
    "esecuzione": [
     "Sdraiato sul fianco, avambraccio a terra sotto la spalla, piede della gamba sopra appoggiato su una panca.",
-    "Solleva il bacino portando il corpo in linea, con la gamba sotto piegata e libera sotto la panca.",
-    "Stringi la panca con la gamba sopra: il lavoro è degli adduttori. Braccio libero in alto.",
-    "Tieni per il tempo indicato, poi cambia lato."
+    "Solleva il bacino in plank di Copenhagen: corpo in linea, gamba sotto e braccio libero sospesi.",
+    "Porta il gomito del braccio libero e il ginocchio della gamba libera a toccarsi davanti al corpo, come in un crunch, poi riapri.",
+    "Ripeti senza perdere la linea del bacino, per il tempo indicato. Cambia lato."
    ],
    "errori": [
-    "Bacino che cade indietro o in basso.",
+    "Bacino che cade mentre gomito e ginocchio si avvicinano.",
     "Spalla d'appoggio che cede verso l'orecchio.",
-    "Trattenere il respiro."
+    "Crunch veloce e sporco: controllato."
    ],
-   "piu_facile": "Appoggia il ginocchio sulla panca invece del piede.",
-   "piu_difficile": "Gamba sotto che sale e scende durante la tenuta.",
+   "piu_facile": "Plank di Copenhagen tenuto, senza crunch.",
+   "piu_difficile": "Crunch più lenti, o pausa di 2 secondi a gomito e ginocchio uniti.",
    "sicurezza": "Fastidio all'inguine, non semplice fatica: fermati. Mai nelle 48 ore prima della partita."
   }
  },
