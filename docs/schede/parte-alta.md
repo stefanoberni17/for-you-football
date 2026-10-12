@@ -5,16 +5,16 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 ## Da confermare (5)
 
-- **Aperture su panca inclinata (FY)**: Stesso video della 'Panca inclinata con manubri (flyes)' e c'è anche 'Incline dumbbell flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?
-- **Piegamenti a un braccio**: Esiste anche 'One Arm Pushup' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto.
-- **Spinta isometrica al muro frontale**: Dalla miniatura: inclinato in avanti con le mani sulla porta, un piede avanti. Confermi? La spinta è con tutto il corpo?
-- **Spinta isometrica al muro laterale esterno**: Dalla miniatura: posizione di corsa, braccio che spinge il muro passando davanti al corpo. Ho scritto 'esterno' = braccio lontano dal muro. Correggimi se è il contrario.
-- **Spinta isometrica al muro laterale interno**: Dalla miniatura: braccio vicino al muro che spinge con il gomito, gamba lontana sollevata. Confermi?
+- **Incline Dumbbell Flyes (FY)**: Stesso video di 'Incline Bench Dumbbell Flyes' e c'è anche 'Incline Dumbbell Flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?
+- **One-Arm Push-Up**: Esiste anche 'One-Arm Push-Up (Basic)' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto.
+- **Isometric Wall Push (Front)**: Dalla miniatura: inclinato in avanti con le mani sulla porta, un piede avanti. Confermi? La spinta è con tutto il corpo?
+- **Isometric Wall Push (Lateral, Outside Arm)**: Dalla miniatura: posizione di corsa, braccio che spinge il muro passando davanti al corpo. Ho scritto 'esterno' = braccio lontano dal muro. Correggimi se è il contrario.
+- **Isometric Wall Push (Lateral, Inside Arm)**: Dalla miniatura: braccio vicino al muro che spinge con il gomito, gamba lontana sollevata. Confermi?
 
 ## forza-parte-alta (46)
 
-### Sollevamento delle ginocchia alle parallele
-`fpa-knee-raises-con-barra-dip` · inglese: Knee Raises (Con Barra Dip) · bilaterale · reps · sbarra · senza video
+### Knee Raises on Dip Bars
+`fpa-knee-raises-con-barra-dip` · bilaterale · reps · sbarra · senza video
 
 **Esecuzione**
 1. Alle parallele, braccia tese e spalle basse, corpo fermo.
@@ -27,8 +27,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Gambe tese, o pausa di 3 secondi in alto.
 **Sicurezza:** Fastidio alle spalle in appoggio: fermati.
 
-### Arnold press con manubri
-`fpa-arnold-press-con-manubri` · inglese: Arnold Press Con Manubri · bilaterale · reps · palestra · [video](https://youtube.com/shorts/yQkgT7OryWU?feature=share)
+### Dumbbell Arnold Press
+`fpa-arnold-press-con-manubri` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/yQkgT7OryWU?feature=share)
 
 **Esecuzione**
 1. Seduto o in piedi, un manubrio per mano davanti alle spalle, palmi rivolti verso di te.
@@ -41,8 +41,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi, più carico, o discesa in 3 secondi.
 **Sicurezza:** Fastidio alla spalla nella rotazione: riduci il carico o l'escursione.
 
-### Aperture su panca inclinata (FY)
-`fpa-bench-flyes-fy` · inglese: Bench Flyes FY · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=8QW9vvVUFWE)
+### Incline Dumbbell Flyes (FY)
+`fpa-bench-flyes-fy` · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=8QW9vvVUFWE)
 
 **Esecuzione**
 1. Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.
@@ -54,10 +54,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Manubri più leggeri, escursione ridotta.
 **Più difficile:** Pausa di 2 secondi in apertura.
 **Sicurezza:** Fastidio alla spalla in apertura: ferma l'arco più in alto.
-**DA CONFERMARE:** Stesso video della 'Panca inclinata con manubri (flyes)' e c'è anche 'Incline dumbbell flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?
+**DA CONFERMARE:** Stesso video di 'Incline Bench Dumbbell Flyes' e c'è anche 'Incline Dumbbell Flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?
 
-### Cuban press con manubri
-`fpa-cuban-press` · inglese: cuban press · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=OeD5pWAeRFo)
+### Cuban Press
+`fpa-cuban-press` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=OeD5pWAeRFo)
 
 **Esecuzione**
 1. In piedi, manubri leggeri, gomiti alti all'altezza delle spalle e piegati a 90°, avambracci che puntano in basso.
@@ -70,8 +70,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in ogni posizione.
 **Sicurezza:** Fastidio alla spalla nella rotazione: riduci il carico o fermati.
 
-### Dip alle parallele
-`fpa-dips` · inglese: Dips · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/XULlPKIbmco?feature=share)
+### Dips
+`fpa-dips` · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/XULlPKIbmco?feature=share)
 
 **Esecuzione**
 1. Alle parallele, braccia tese, spalle basse, busto leggermente inclinato in avanti.
@@ -84,8 +84,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Dip zavorrati, o discesa in 3 secondi.
 **Sicurezza:** Dolore alla spalla in basso: riduci la profondità o fermati.
 
-### Aperture con manubri su panca inclinata
-`fpa-incline-dumbbell-flyes` · inglese: Incline dumbbell flyes · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=31e9p6cq070)
+### Incline Dumbbell Flyes
+`fpa-incline-dumbbell-flyes` · bilaterale · reps · palestra · [video](https://youtube.com/watch?v=31e9p6cq070)
 
 **Esecuzione**
 1. Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.
@@ -98,8 +98,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in apertura.
 **Sicurezza:** Fastidio alla spalla in apertura: ferma l'arco più in alto.
 
-### Clean e press con kettlebell
-`fpa-kettlebell-clean-to-push` · inglese: kettlebell clean to push · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=i3Z3LcUUYLk&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=9)
+### Kettlebell Clean and Press
+`fpa-kettlebell-clean-to-push` · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=i3Z3LcUUYLk&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=9)
 
 **Esecuzione**
 1. Kettlebell a terra tra i piedi, piedi alla larghezza delle spalle, schiena neutra.
@@ -112,8 +112,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesante, o press in 3 secondi.
 **Sicurezza:** Polso dritto nel press. Fastidio alla spalla: riduci il carico.
 
-### Swing con tirata alta (kettlebell)
-`fpa-kettlebell-swing-high-pull` · inglese: kettlebell swing high pull · bilaterale · reps · kettlebell · [video](https://www.youtube.com/watch?v=MFE_XiLM30s&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=8)
+### Kettlebell Swing High Pull
+`fpa-kettlebell-swing-high-pull` · bilaterale · reps · kettlebell · [video](https://www.youtube.com/watch?v=MFE_XiLM30s&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=8)
 
 **Esecuzione**
 1. Piedi più larghi delle spalle, kettlebell con due mani, schiena neutra.
@@ -126,8 +126,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesante.
 **Sicurezza:** Presa salda. Fastidio lombare: fermati.
 
-### Spinte sopra la testa con manubri (seduto)
-`fpa-overhead-press-con-manubri` · inglese: Overhead Press Con Manubri · bilaterale · reps · palestra · [video](https://youtube.com/shorts/Cvm6NLHLLN8?feature=share)
+### Seated Dumbbell Overhead Press
+`fpa-overhead-press-con-manubri` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/Cvm6NLHLLN8?feature=share)
 
 **Esecuzione**
 1. Seduto con lo schienale, un manubrio per mano all'altezza delle spalle, palmi avanti.
@@ -140,8 +140,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o discesa in 3 secondi.
 **Sicurezza:** Fastidio alla spalla: riduci il carico o l'escursione.
 
-### Spinte sopra la testa con manubri in piedi
-`fpa-overhead-press-con-manubri-in-piedi` · inglese: Overhead Press Con Manubri In Piedi · bilaterale · reps · palestra · senza video
+### Standing Dumbbell Overhead Press
+`fpa-overhead-press-con-manubri-in-piedi` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. In piedi, piedi alla larghezza del bacino, un manubrio per mano all'altezza delle spalle, palmi avanti.
@@ -154,8 +154,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o un manubrio alla volta.
 **Sicurezza:** Fastidio lombare: seduto. Fastidio alla spalla: riduci il carico.
 
-### Aperture su panca inclinata con manubri
-`fpa-panca-inclinata-con-manubri-flyes` · inglese: Panca Inclinata Con Manubri (Flyes) · bilaterale · reps · palestra · [video](https://youtube.com/shorts/8QW9vvVUFWE?feature=share)
+### Incline Bench Dumbbell Flyes
+`fpa-panca-inclinata-con-manubri-flyes` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/8QW9vvVUFWE?feature=share)
 
 **Esecuzione**
 1. Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.
@@ -168,8 +168,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi in apertura.
 **Sicurezza:** Fastidio alla spalla in apertura: ferma l'arco più in alto.
 
-### Panca piana con bilanciere, gambe sollevate
-`fpa-panca-piana-con-bulanciere-gambe-in-aria` · inglese: Panca Piana Con Bulanciere (Gambe In Aria) · bilaterale · reps · palestra · [video](https://youtube.com/shorts/Bnjs6o0og3I?feature=share)
+### Barbell Bench Press (Legs Raised)
+`fpa-panca-piana-con-bulanciere-gambe-in-aria` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/Bnjs6o0og3I?feature=share)
 
 **Esecuzione**
 1. Sdraiato sulla panca piana con le gambe sollevate, ginocchia piegate a 90°: la schiena resta tutta appoggiata.
@@ -182,8 +182,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi sul petto.
 **Sicurezza:** Fermi di sicurezza o compagno: senza l'appoggio delle gambe il carico è più basso del solito.
 
-### Dal plank sugli avambracci al plank alto
-`fpa-plank-to-pushup` · inglese: Plank To Pushup · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/h-ii38OBuwk?feature=share)
+### Plank to Push-Up
+`fpa-plank-to-pushup` · bilaterale · secondi · corpo libero · [video](https://youtube.com/shorts/h-ii38OBuwk?feature=share)
 
 **Esecuzione**
 1. Plank sugli avambracci, corpo in linea, piedi alla larghezza del bacino.
@@ -196,8 +196,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi uniti, o più lento.
 **Sicurezza:** Fastidio ai polsi o alle spalle: fermati.
 
-### Trazioni in cerchio (around the world)
-`fpa-pull-up-around-the-world` · inglese: Pull Up Around The World · per lato · reps · sbarra · [video](https://www.youtube.com/watch?v=9YZqQFtfcKo)
+### Around the World Pull-Up
+`fpa-pull-up-around-the-world` · per lato · reps · sbarra · [video](https://www.youtube.com/watch?v=9YZqQFtfcKo)
 
 **Esecuzione**
 1. Appeso alla sbarra con presa larga, spalle attive.
@@ -210,8 +210,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Cerchio più lento, o zavorra leggera.
 **Sicurezza:** Solo con almeno 10 trazioni pulite. Fastidio al gomito: fermati.
 
-### Trazioni alla sbarra
-`fpa-trazioni` · inglese: Trazioni · bilaterale · reps · sbarra · [video](https://youtube.com/shorts/SupJzuKhp54?feature=share)
+### Pull-Up
+`fpa-trazioni` · bilaterale · reps · sbarra · [video](https://youtube.com/shorts/SupJzuKhp54?feature=share)
 
 **Esecuzione**
 1. Appeso alla sbarra con presa prona poco più larga delle spalle, braccia tese, spalle attive.
@@ -224,8 +224,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Zavorra, o discesa in 3 secondi.
 **Sicurezza:** Fastidio al gomito o alla spalla: fermati.
 
-### Trazioni australiane
-`fpa-trazioni-australiane` · inglese: Trazioni Australiane · bilaterale · reps · sbarra · senza video
+### Australian Pull-Up
+`fpa-trazioni-australiane` · bilaterale · reps · sbarra · senza video
 
 **Esecuzione**
 1. Sdraiato sotto una sbarra bassa, afferrala con le mani larghe quanto le spalle, talloni a terra, corpo in linea.
@@ -238,8 +238,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi su un rialzo, o pausa di 2 secondi in alto.
 **Sicurezza:** Sbarra stabile. Fastidio alla spalla: riduci l'escursione.
 
-### Military press con bilanciere
-`fpa-overhead-press-con-bilanciere` · inglese: Overhead Press Con Bilanciere · bilaterale · reps · palestra · [video](https://youtube.com/shorts/PlxbyVU9fcg?feature=share)
+### Barbell Overhead Press
+`fpa-overhead-press-con-bilanciere` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/PlxbyVU9fcg?feature=share)
 
 **Esecuzione**
 1. In piedi, bilanciere sulle clavicole, presa poco più larga delle spalle, gomiti leggermente avanti.
@@ -252,8 +252,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o pausa in cima.
 **Sicurezza:** Fastidio lombare: riduci il carico e contrai di più i glutei.
 
-### Panca inclinata con bilanciere
-`fpa-panca-inclinata-con-bilanciere` · inglese: Panca Inclinata Con Bilanciere · bilaterale · reps · palestra · senza video
+### Incline Barbell Bench Press
+`fpa-panca-inclinata-con-bilanciere` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. Sdraiato sulla panca inclinata, piedi a terra, scapole unite e basse, presa poco più larga delle spalle.
@@ -266,8 +266,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi sul petto.
 **Sicurezza:** Fermi di sicurezza o compagno con carichi alti.
 
-### Panca piana con bilanciere
-`fpa-panca-piana-con-bilanciere` · inglese: Panca Piana Con Bilanciere · bilaterale · reps · palestra · senza video
+### Barbell Bench Press
+`fpa-panca-piana-con-bilanciere` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. Sdraiato sulla panca, piedi a terra, scapole unite e basse, presa poco più larga delle spalle.
@@ -280,8 +280,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Pausa di 2 secondi sul petto, o più carico.
 **Sicurezza:** Fermi di sicurezza o compagno con carichi alti.
 
-### Rematore con bilanciere
-`fpa-rematore-con-bilanciere` · inglese: Rematore Con Bilanciere · bilaterale · reps · palestra · [video](https://youtube.com/shorts/W3nXzeqQ5Mk?feature=share)
+### Barbell Row
+`fpa-rematore-con-bilanciere` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/W3nXzeqQ5Mk?feature=share)
 
 **Esecuzione**
 1. In piedi, bilanciere in mano con presa prona, ginocchia piegate, busto inclinato in avanti a circa 45° con la schiena neutra.
@@ -294,8 +294,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o pausa di 2 secondi in alto.
 **Sicurezza:** Fastidio lombare: riduci il carico e controlla la schiena neutra.
 
-### Trazioni ad arciere
-`fpa-archer-pullup` · inglese: Archer Pullup · per lato · reps · corpo libero · senza video
+### Archer Pull-Up
+`fpa-archer-pullup` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Appeso alla sbarra con presa larga, spalle attive.
@@ -308,8 +308,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Braccio di sostegno completamente disteso, o zavorra leggera.
 **Sicurezza:** Solo con almeno 8 trazioni pulite. Fastidio al gomito: fermati.
 
-### Piegamenti ad arciere
-`fpa-archer-pushup` · inglese: Archer Pushup · per lato · reps · corpo libero · senza video
+### Archer Push-Up
+`fpa-archer-pushup` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Plank alto con le mani molto più larghe delle spalle, corpo in linea.
@@ -322,8 +322,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Braccio di sostegno completamente disteso, o piedi su un rialzo.
 **Sicurezza:** Fastidio ai polsi: fermati.
 
-### Piegamenti a un braccio
-`fpa-one-arm-push-up` · inglese: One Arm Push Up · per lato · reps · corpo libero · senza video
+### One-Arm Push-Up
+`fpa-one-arm-push-up` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.
@@ -335,10 +335,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Mano su un rialzo.
 **Più difficile:** Piedi più vicini, o mano a terra in deficit.
 **Sicurezza:** Solo con parte alta e core forti. Fastidio al polso o al gomito: fermati.
-**DA CONFERMARE:** Esiste anche 'One Arm Pushup' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto.
+**DA CONFERMARE:** Esiste anche 'One-Arm Push-Up (Basic)' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto.
 
-### Piegamenti a un braccio in deficit
-`fpa-one-arm-push-up-deep-pro` · inglese: One Arm Push Up Deep PRO · per lato · reps · corpo libero · senza video
+### One-Arm Deficit Push-Up (PRO)
+`fpa-one-arm-push-up-deep-pro` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Plank alto su una mano appoggiata su un rialzo basso (disco o parallettes), piedi larghi, mano libera dietro la schiena.
@@ -351,8 +351,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi più vicini, o deficit più alto.
 **Sicurezza:** Solo dopo i piegamenti a un braccio puliti. Fastidio alla spalla in basso: riduci il deficit.
 
-### Piegamenti a un braccio con mano sul rialzo
-`fpa-one-arm-push-up-incline` · inglese: One Arm Push Up Incline · per lato · reps · corpo libero · senza video
+### One-Arm Incline Push-Up
+`fpa-one-arm-push-up-incline` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Mano d'appoggio su una panca o un gradino, piedi larghi, mano libera dietro la schiena, corpo rigido.
@@ -365,8 +365,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Rialzo più basso, fino a terra.
 **Sicurezza:** Rialzo stabile. Fastidio al polso o al gomito: fermati.
 
-### Piegamenti a un braccio (base)
-`fpa-one-arm-pushup` · inglese: One Arm Pushup · per lato · reps · corpo libero · senza video
+### One-Arm Push-Up (Basic)
+`fpa-one-arm-pushup` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.
@@ -379,7 +379,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi più vicini.
 **Sicurezza:** Fastidio al polso o al gomito: fermati.
 
-### Piegamenti Hindu
+### Hindu Push-Up
 `fpa-piegamenti-hindu` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=S5JwmhB-rHc)
 
 **Esecuzione**
@@ -393,7 +393,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più lento, o pausa in fondo.
 **Sicurezza:** Fastidio lombare in fondo: meno estensione, o fermati.
 
-### Spinta isometrica al muro frontale
+### Isometric Wall Push (Front)
 `fpa-spinta-isometrica-al-muro-frontale` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=_mkVRSQ9_Qw)
 
 **Esecuzione**
@@ -408,7 +408,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Sicurezza:** Niente dolore alle spalle durante la spinta: se compare, fermati.
 **DA CONFERMARE:** Dalla miniatura: inclinato in avanti con le mani sulla porta, un piede avanti. Confermi? La spinta è con tutto il corpo?
 
-### Spinta isometrica al muro laterale esterno
+### Isometric Wall Push (Lateral, Outside Arm)
 `fpa-spinta-isometrica-al-muro-laterale-esterno` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=pNlUIME0BEY)
 
 **Esecuzione**
@@ -423,7 +423,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Sicurezza:** Fastidio alla spalla: riduci la spinta.
 **DA CONFERMARE:** Dalla miniatura: posizione di corsa, braccio che spinge il muro passando davanti al corpo. Ho scritto 'esterno' = braccio lontano dal muro. Correggimi se è il contrario.
 
-### Spinta isometrica al muro laterale interno
+### Isometric Wall Push (Lateral, Inside Arm)
 `fpa-spinta-isometrica-al-muro-laterale-interno` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=fTr5Gj6KgUc)
 
 **Esecuzione**
@@ -438,8 +438,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Sicurezza:** Fastidio alla spalla: riduci la spinta.
 **DA CONFERMARE:** Dalla miniatura: braccio vicino al muro che spinge con il gomito, gamba lontana sollevata. Confermi?
 
-### Posizione del corvo (progressione)
-`fpa-crow-pose-progression` · inglese: Crow Pose Progression · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=ckQ2c9TSbc4)
+### Crow Pose Progression
+`fpa-crow-pose-progression` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=ckQ2c9TSbc4)
 
 **Esecuzione**
 1. Accovacciato, mani a terra alla larghezza delle spalle, dita aperte, ginocchia appoggiate sulla parte alta delle braccia.
@@ -452,8 +452,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tenuta più lunga, o braccia più distese.
 **Sicurezza:** Cuscino davanti al viso le prime volte. Fastidio ai polsi: fermati.
 
-### Piegamenti a diamante
-`fpa-diamond-push-up` · inglese: Diamond Push Up · bilaterale · reps · corpo libero · senza video
+### Diamond Push-Up
+`fpa-diamond-push-up` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Plank alto con le mani unite sotto il petto, pollici e indici che formano un diamante.
@@ -466,8 +466,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi su un rialzo, o discesa in 3 secondi.
 **Sicurezza:** Fastidio ai polsi o ai gomiti: mani un po' più larghe.
 
-### Piegamenti a macchina da scrivere
-`fpa-type-writer-push-up` · inglese: Type Writer Push Up · per lato · reps · corpo libero · [video](https://youtu.be/DA3VjdUgeQM)
+### Typewriter Push-Up
+`fpa-type-writer-push-up` · per lato · reps · corpo libero · [video](https://youtu.be/DA3VjdUgeQM)
 
 **Esecuzione**
 1. Plank alto con le mani molto più larghe delle spalle, corpo in linea.
@@ -480,8 +480,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Scorrimento più lento, o piedi su un rialzo.
 **Sicurezza:** Fastidio ai polsi o alla spalla: fermati.
 
-### Handstand push-up eccentrico
-`fpa-eccentric-handstand-push-up` · inglese: Eccentric Handstand Push Up · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=yVNHVnhyjF0)
+### Eccentric Handstand Push-Up
+`fpa-eccentric-handstand-push-up` · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=yVNHVnhyjF0)
 
 **Esecuzione**
 1. In verticale con i piedi appoggiati al muro, mani a terra poco più larghe delle spalle, corpo in linea.
@@ -494,8 +494,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Discesa in 6-8 secondi, o handstand push-up completo.
 **Sicurezza:** Cuscino sotto la testa e muro stabile. Fastidio al collo o ai polsi: fermati.
 
-### Muscle up
-`fpa-muscle-up` · inglese: Muscle Up · bilaterale · reps · sbarra · [video](https://www.youtube.com/watch?v=21mAbr_o1p8)
+### Muscle-Up
+`fpa-muscle-up` · bilaterale · reps · sbarra · [video](https://www.youtube.com/watch?v=21mAbr_o1p8)
 
 **Esecuzione**
 1. Appeso alla sbarra con presa falsa o prona, spalle attive, corpo leggermente oscillante.
@@ -508,8 +508,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Senza oscillazione, o zavorra leggera.
 **Sicurezza:** Solo con 10 trazioni e 10 dip puliti. Fastidio ai polsi o alle spalle: fermati.
 
-### Tenuta alla sbarra a 90°
-`fpa-90-chin-up-iso-hold` · inglese: 90 Chin Up Iso Hold · bilaterale · secondi · sbarra · [video](https://www.youtube.com/watch?v=K7vG5om7bms)
+### 90° Chin-Up Isometric Hold
+`fpa-90-chin-up-iso-hold` · bilaterale · secondi · sbarra · [video](https://www.youtube.com/watch?v=K7vG5om7bms)
 
 **Esecuzione**
 1. Appeso alla sbarra con presa supina, tira fino ad avere i gomiti piegati a 90°.
@@ -522,8 +522,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Zavorra, o tenuta con il mento sopra la sbarra.
 **Sicurezza:** Fastidio al gomito: fermati.
 
-### Dip zavorrati alle parallele
-`fpa-weighted-dips-from-bars` · inglese: Weighted Dips (From Bars) · bilaterale · reps · palestra · [video](https://www.youtube.com/watch?v=qEmCuapE3M0)
+### Weighted Dips
+`fpa-weighted-dips-from-bars` · bilaterale · reps · palestra · [video](https://www.youtube.com/watch?v=qEmCuapE3M0)
 
 **Esecuzione**
 1. Alle parallele con la zavorra alla cintura o tra le gambe, braccia tese, spalle basse, busto leggermente inclinato in avanti.
@@ -536,8 +536,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Più carico, o discesa in 3 secondi.
 **Sicurezza:** Zavorra ben fissata. Dolore alla spalla in basso: riduci la profondità.
 
-### Trazioni presa supina (chin-up)
-`fpa-chin-up` · inglese: Chin-Up · bilaterale · reps · sbarra · senza video
+### Chin-Up
+`fpa-chin-up` · bilaterale · reps · sbarra · senza video
 
 **Esecuzione**
 1. Appeso alla sbarra con presa supina alla larghezza delle spalle, braccia tese, spalle attive.
@@ -550,8 +550,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Zavorra, o discesa in 3 secondi.
 **Sicurezza:** Fastidio al gomito: fermati.
 
-### Alzate laterali con manubri
-`fpa-dumbbell-lateral-raise` · inglese: Dumbbell Lateral Raise · bilaterale · reps · palestra · senza video
+### Dumbbell Lateral Raise
+`fpa-dumbbell-lateral-raise` · bilaterale · reps · palestra · senza video
 
 **Esecuzione**
 1. In piedi, un manubrio per mano lungo i fianchi, gomiti leggermente piegati.
@@ -564,8 +564,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Discesa in 3 secondi, o pausa di 2 secondi in alto.
 **Sicurezza:** Fastidio alla spalla: riduci il carico.
 
-### Windmill avanzato con kettlebell
-`fpa-kettlebell-advanced-windmill` · inglese: Kettlebell Advanced Windmill · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=b6ILY1c95C4)
+### Kettlebell Windmill (Advanced)
+`fpa-kettlebell-advanced-windmill` · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=b6ILY1c95C4)
 
 **Esecuzione**
 1. In piedi, piedi più larghi delle spalle, kettlebell sopra la testa con un braccio disteso, piedi ruotati verso il lato opposto.
@@ -578,8 +578,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesante, o un secondo kettlebell nella mano bassa.
 **Sicurezza:** Fastidio alla spalla o alla schiena: riduci il carico o l'escursione.
 
-### Rematore con kettlebell e rotazione
-`fpa-kettlebell-bent-over-row-with-rotation` · inglese: Kettlebell Bent Over Row with Rotation · per lato · reps · kettlebell · [video](https://youtu.be/52rtCEWNbPc)
+### Kettlebell Bent-Over Row with Rotation
+`fpa-kettlebell-bent-over-row-with-rotation` · per lato · reps · kettlebell · [video](https://youtu.be/52rtCEWNbPc)
 
 **Esecuzione**
 1. In piedi, kettlebell in una mano, ginocchia piegate e busto inclinato in avanti con la schiena neutra, mano libera appoggiata sulla coscia o libera.
@@ -592,7 +592,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesante, o pausa in rotazione.
 **Sicurezza:** Fastidio lombare: riduci il carico e la rotazione.
 
-### Pike push-up
+### Pike Push-Up
 `fpa-pike-push-up` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
@@ -606,8 +606,8 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Piedi su un rialzo.
 **Sicurezza:** Fastidio ai polsi: fermati.
 
-### Pike push-up con i piedi rialzati
-`fpa-pike-push-up-piedi-rialzati` · inglese: Pike push-up piedi rialzati · bilaterale · reps · corpo libero · senza video
+### Feet-Elevated Pike Push-Up
+`fpa-pike-push-up-piedi-rialzati` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
 1. Piedi su una panca o un gradino, mani a terra poco più larghe delle spalle, bacino alto: il busto è quasi verticale.
@@ -620,7 +620,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Rialzo più alto, o handstand push-up eccentrico.
 **Sicurezza:** Rialzo stabile. Fastidio ai polsi: fermati.
 
-### Handstand push-up
+### Handstand Push-Up
 `fpa-handstand-push-up` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
@@ -634,7 +634,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Senza muro, o in deficit sulle parallettes.
 **Sicurezza:** Solo con l'eccentrico pulito. Cuscino sotto la testa. Fastidio al collo o ai polsi: fermati.
 
-### Gorilla row
+### Gorilla Row
 `fpa-gorilla-row` · per lato · reps · kettlebell · senza video
 
 **Esecuzione**
@@ -648,7 +648,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesanti, o pausa di 2 secondi in alto.
 **Sicurezza:** Fastidio lombare: riduci il carico.
 
-### Rematore sotto al tavolo
+### Inverted Row (Under a Table)
 `fpa-rematore-sotto-al-tavolo` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**

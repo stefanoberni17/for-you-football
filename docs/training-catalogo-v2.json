@@ -1234,7 +1234,7 @@
   }
  },
  {
-  "nome": "Sollevamento delle ginocchia alle parallele",
+  "nome": "Knee Raises on Dip Bars",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 1,
@@ -1252,7 +1252,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-knee-raises-con-barra-dip",
-  "nome_en": "Knee Raises (Con Barra Dip)",
   "scheda": {
    "esecuzione": [
     "Alle parallele, braccia tese e spalle basse, corpo fermo.",
@@ -1271,7 +1270,7 @@
   }
  },
  {
-  "nome": "Arnold press con manubri",
+  "nome": "Dumbbell Arnold Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1289,7 +1288,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-arnold-press-con-manubri",
-  "nome_en": "Arnold Press Con Manubri",
   "scheda": {
    "esecuzione": [
     "Seduto o in piedi, un manubrio per mano davanti alle spalle, palmi rivolti verso di te.",
@@ -1308,7 +1306,7 @@
   }
  },
  {
-  "nome": "Aperture su panca inclinata (FY)",
+  "nome": "Incline Dumbbell Flyes (FY)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 4,
@@ -1330,7 +1328,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fpa-bench-flyes-fy",
-  "nome_en": "Bench Flyes FY",
   "scheda": {
    "esecuzione": [
     "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
@@ -1346,11 +1343,11 @@
    "piu_facile": "Manubri più leggeri, escursione ridotta.",
    "piu_difficile": "Pausa di 2 secondi in apertura.",
    "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto.",
-   "da_confermare": "Stesso video della 'Panca inclinata con manubri (flyes)' e c'è anche 'Incline dumbbell flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?"
+   "da_confermare": "Stesso video di 'Incline Bench Dumbbell Flyes' e c'è anche 'Incline Dumbbell Flyes': tre esercizi per le aperture su panca inclinata. Li tieni tutti?"
   }
  },
  {
-  "nome": "Cuban press con manubri",
+  "nome": "Cuban Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -1373,7 +1370,6 @@
   "solo_livello": false,
   "nota_livello": "Anche B ma peso basso",
   "id": "fpa-cuban-press",
-  "nome_en": "cuban press",
   "scheda": {
    "esecuzione": [
     "In piedi, manubri leggeri, gomiti alti all'altezza delle spalle e piegati a 90°, avambracci che puntano in basso.",
@@ -1392,7 +1388,7 @@
   }
  },
  {
-  "nome": "Dip alle parallele",
+  "nome": "Dips",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -1410,7 +1406,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-dips",
-  "nome_en": "Dips",
   "scheda": {
    "esecuzione": [
     "Alle parallele, braccia tese, spalle basse, busto leggermente inclinato in avanti.",
@@ -1429,7 +1424,7 @@
   }
  },
  {
-  "nome": "Aperture con manubri su panca inclinata",
+  "nome": "Incline Dumbbell Flyes",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1451,7 +1446,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-incline-dumbbell-flyes",
-  "nome_en": "Incline dumbbell flyes",
   "scheda": {
    "esecuzione": [
     "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
@@ -1470,7 +1464,7 @@
   }
  },
  {
-  "nome": "Clean e press con kettlebell",
+  "nome": "Kettlebell Clean and Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 4,
@@ -1492,7 +1486,6 @@
   "fascia_kb": "avanzato",
   "peso_kg": 12,
   "id": "fpa-kettlebell-clean-to-push",
-  "nome_en": "kettlebell clean to push",
   "scheda": {
    "esecuzione": [
     "Kettlebell a terra tra i piedi, piedi alla larghezza delle spalle, schiena neutra.",
@@ -1511,7 +1504,7 @@
   }
  },
  {
-  "nome": "Swing con tirata alta (kettlebell)",
+  "nome": "Kettlebell Swing High Pull",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -1531,7 +1524,6 @@
   "fascia_kb": "intermedio",
   "peso_kg": 12,
   "id": "fpa-kettlebell-swing-high-pull",
-  "nome_en": "kettlebell swing high pull",
   "scheda": {
    "esecuzione": [
     "Piedi più larghi delle spalle, kettlebell con due mani, schiena neutra.",
@@ -1550,7 +1542,7 @@
   }
  },
  {
-  "nome": "Spinte sopra la testa con manubri (seduto)",
+  "nome": "Seated Dumbbell Overhead Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1568,7 +1560,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-overhead-press-con-manubri",
-  "nome_en": "Overhead Press Con Manubri",
   "scheda": {
    "esecuzione": [
     "Seduto con lo schienale, un manubrio per mano all'altezza delle spalle, palmi avanti.",
@@ -1587,7 +1578,7 @@
   }
  },
  {
-  "nome": "Spinte sopra la testa con manubri in piedi",
+  "nome": "Standing Dumbbell Overhead Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1605,7 +1596,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-overhead-press-con-manubri-in-piedi",
-  "nome_en": "Overhead Press Con Manubri In Piedi",
   "scheda": {
    "esecuzione": [
     "In piedi, piedi alla larghezza del bacino, un manubrio per mano all'altezza delle spalle, palmi avanti.",
@@ -1624,7 +1614,7 @@
   }
  },
  {
-  "nome": "Aperture su panca inclinata con manubri",
+  "nome": "Incline Bench Dumbbell Flyes",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -1642,7 +1632,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-panca-inclinata-con-manubri-flyes",
-  "nome_en": "Panca Inclinata Con Manubri (Flyes)",
   "scheda": {
    "esecuzione": [
     "Sdraiato su una panca inclinata, un manubrio per mano sopra il petto, gomiti leggermente piegati.",
@@ -1661,7 +1650,7 @@
   }
  },
  {
-  "nome": "Panca piana con bilanciere, gambe sollevate",
+  "nome": "Barbell Bench Press (Legs Raised)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1679,7 +1668,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-panca-piana-con-bulanciere-gambe-in-aria",
-  "nome_en": "Panca Piana Con Bulanciere (Gambe In Aria)",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla panca piana con le gambe sollevate, ginocchia piegate a 90°: la schiena resta tutta appoggiata.",
@@ -1736,7 +1724,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Dal plank sugli avambracci al plank alto",
+  "nome": "Plank to Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -1754,7 +1742,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-plank-to-pushup",
-  "nome_en": "Plank To Pushup",
   "scheda": {
    "esecuzione": [
     "Plank sugli avambracci, corpo in linea, piedi alla larghezza del bacino.",
@@ -1773,7 +1760,7 @@
   }
  },
  {
-  "nome": "Trazioni in cerchio (around the world)",
+  "nome": "Around the World Pull-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 4,
@@ -1792,7 +1779,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fpa-pull-up-around-the-world",
-  "nome_en": "Pull Up Around The World",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con presa larga, spalle attive.",
@@ -1811,7 +1797,7 @@
   }
  },
  {
-  "nome": "Trazioni alla sbarra",
+  "nome": "Pull-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 3,
@@ -1829,7 +1815,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-trazioni",
-  "nome_en": "Trazioni",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con presa prona poco più larga delle spalle, braccia tese, spalle attive.",
@@ -1848,7 +1833,7 @@
   }
  },
  {
-  "nome": "Trazioni australiane",
+  "nome": "Australian Pull-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 2,
@@ -1866,7 +1851,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-trazioni-australiane",
-  "nome_en": "Trazioni Australiane",
   "scheda": {
    "esecuzione": [
     "Sdraiato sotto una sbarra bassa, afferrala con le mani larghe quanto le spalle, talloni a terra, corpo in linea.",
@@ -1885,7 +1869,7 @@
   }
  },
  {
-  "nome": "Military press con bilanciere",
+  "nome": "Barbell Overhead Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -1903,7 +1887,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-overhead-press-con-bilanciere",
-  "nome_en": "Overhead Press Con Bilanciere",
   "scheda": {
    "esecuzione": [
     "In piedi, bilanciere sulle clavicole, presa poco più larga delle spalle, gomiti leggermente avanti.",
@@ -1922,7 +1905,7 @@
   }
  },
  {
-  "nome": "Panca inclinata con bilanciere",
+  "nome": "Incline Barbell Bench Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1940,7 +1923,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-panca-inclinata-con-bilanciere",
-  "nome_en": "Panca Inclinata Con Bilanciere",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla panca inclinata, piedi a terra, scapole unite e basse, presa poco più larga delle spalle.",
@@ -1959,7 +1941,7 @@
   }
  },
  {
-  "nome": "Panca piana con bilanciere",
+  "nome": "Barbell Bench Press",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -1978,7 +1960,6 @@
   "sottogruppo": null,
   "video_nota": null,
   "id": "fpa-panca-piana-con-bilanciere",
-  "nome_en": "Panca Piana Con Bilanciere",
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla panca, piedi a terra, scapole unite e basse, presa poco più larga delle spalle.",
@@ -2016,7 +1997,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Rematore con bilanciere",
+  "nome": "Barbell Row",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 3,
@@ -2034,7 +2015,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-rematore-con-bilanciere",
-  "nome_en": "Rematore Con Bilanciere",
   "scheda": {
    "esecuzione": [
     "In piedi, bilanciere in mano con presa prona, ginocchia piegate, busto inclinato in avanti a circa 45° con la schiena neutra.",
@@ -2053,7 +2033,7 @@
   }
  },
  {
-  "nome": "Trazioni ad arciere",
+  "nome": "Archer Pull-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2072,7 +2052,6 @@
   "sottogruppo": null,
   "solo_livello": false,
   "id": "fpa-archer-pullup",
-  "nome_en": "Archer Pullup",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con presa larga, spalle attive.",
@@ -2091,7 +2070,7 @@
   }
  },
  {
-  "nome": "Piegamenti ad arciere",
+  "nome": "Archer Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2111,7 +2090,6 @@
   "solo_livello": false,
   "descrizione": "Piegamento con le mani più larghe delle spalle: scendi spostando il peso su un braccio, l'altro resta quasi teso di lato (come un arco). Risali e alterna il lato alla ripetizione successiva. Corpo in linea.",
   "id": "fpa-archer-pushup",
-  "nome_en": "Archer Pushup",
   "scheda": {
    "esecuzione": [
     "Plank alto con le mani molto più larghe delle spalle, corpo in linea.",
@@ -2130,7 +2108,7 @@
   }
  },
  {
-  "nome": "Piegamenti a un braccio",
+  "nome": "One-Arm Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -2152,7 +2130,6 @@
   "solo_livello": false,
   "nota_livello": "anche A, ma deve essere forte in parte alta e core",
   "id": "fpa-one-arm-push-up",
-  "nome_en": "One Arm Push Up",
   "scheda": {
    "esecuzione": [
     "Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.",
@@ -2168,11 +2145,11 @@
    "piu_facile": "Mano su un rialzo.",
    "piu_difficile": "Piedi più vicini, o mano a terra in deficit.",
    "sicurezza": "Solo con parte alta e core forti. Fastidio al polso o al gomito: fermati.",
-   "da_confermare": "Esiste anche 'One Arm Pushup' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto."
+   "da_confermare": "Esiste anche 'One-Arm Push-Up (Basic)' (livello A, solo-livello). È lo stesso esercizio? Dimmi se uno va tolto."
   }
  },
  {
-  "nome": "Piegamenti a un braccio in deficit",
+  "nome": "One-Arm Deficit Push-Up (PRO)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -2194,7 +2171,6 @@
   "solo_livello": false,
   "nota_livello": "anche A, ma deve essere forte in parte alta e core",
   "id": "fpa-one-arm-push-up-deep-pro",
-  "nome_en": "One Arm Push Up Deep PRO",
   "scheda": {
    "esecuzione": [
     "Plank alto su una mano appoggiata su un rialzo basso (disco o parallettes), piedi larghi, mano libera dietro la schiena.",
@@ -2213,7 +2189,7 @@
   }
  },
  {
-  "nome": "Piegamenti a un braccio con mano sul rialzo",
+  "nome": "One-Arm Incline Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -2236,7 +2212,6 @@
   "nota_livello": "anche A, ma deve essere forte in parte alta e core",
   "descrizione": "Piegamento a un braccio con la mano d'appoggio su un rialzo (panca, gradino). Piedi larghi, mano libera dietro la schiena, corpo rigido. Scendi controllato e spingi. Alterna i lati come indicato.",
   "id": "fpa-one-arm-push-up-incline",
-  "nome_en": "One Arm Push Up Incline",
   "scheda": {
    "esecuzione": [
     "Mano d'appoggio su una panca o un gradino, piedi larghi, mano libera dietro la schiena, corpo rigido.",
@@ -2255,7 +2230,7 @@
   }
  },
  {
-  "nome": "Piegamenti a un braccio (base)",
+  "nome": "One-Arm Push-Up (Basic)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2274,7 +2249,6 @@
   "sottogruppo": null,
   "solo_livello": true,
   "id": "fpa-one-arm-pushup",
-  "nome_en": "One Arm Pushup",
   "scheda": {
    "esecuzione": [
     "Plank alto su una mano, piedi larghi, mano libera dietro la schiena, corpo rigido.",
@@ -4802,7 +4776,7 @@
   "sottogruppo": "headball"
  },
  {
-  "nome": "Piegamenti Hindu",
+  "nome": "Hindu Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4882,7 +4856,7 @@
   }
  },
  {
-  "nome": "Spinta isometrica al muro frontale",
+  "nome": "Isometric Wall Push (Front)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4923,7 +4897,7 @@
   }
  },
  {
-  "nome": "Spinta isometrica al muro laterale esterno",
+  "nome": "Isometric Wall Push (Lateral, Outside Arm)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4965,7 +4939,7 @@
   }
  },
  {
-  "nome": "Spinta isometrica al muro laterale interno",
+  "nome": "Isometric Wall Push (Lateral, Inside Arm)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -5212,7 +5186,7 @@
   }
  },
  {
-  "nome": "Posizione del corvo (progressione)",
+  "nome": "Crow Pose Progression",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -5238,7 +5212,6 @@
   "solo_livello": false,
   "nota_livello": "anche A, ma deve essere forte in parte alta e core",
   "id": "fpa-crow-pose-progression",
-  "nome_en": "Crow Pose Progression",
   "scheda": {
    "esecuzione": [
     "Accovacciato, mani a terra alla larghezza delle spalle, dita aperte, ginocchia appoggiate sulla parte alta delle braccia.",
@@ -8091,7 +8064,7 @@
   }
  },
  {
-  "nome": "Piegamenti a diamante",
+  "nome": "Diamond Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -8110,7 +8083,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "fpa-diamond-push-up",
-  "nome_en": "Diamond Push Up",
   "scheda": {
    "esecuzione": [
     "Plank alto con le mani unite sotto il petto, pollici e indici che formano un diamante.",
@@ -8129,7 +8101,7 @@
   }
  },
  {
-  "nome": "Piegamenti a macchina da scrivere",
+  "nome": "Typewriter Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -8147,7 +8119,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-type-writer-push-up",
-  "nome_en": "Type Writer Push Up",
   "scheda": {
    "esecuzione": [
     "Plank alto con le mani molto più larghe delle spalle, corpo in linea.",
@@ -8166,7 +8137,7 @@
   }
  },
  {
-  "nome": "Handstand push-up eccentrico",
+  "nome": "Eccentric Handstand Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -8184,7 +8155,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-eccentric-handstand-push-up",
-  "nome_en": "Eccentric Handstand Push Up",
   "scheda": {
    "esecuzione": [
     "In verticale con i piedi appoggiati al muro, mani a terra poco più larghe delle spalle, corpo in linea.",
@@ -8203,7 +8173,7 @@
   }
  },
  {
-  "nome": "Muscle up",
+  "nome": "Muscle-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 5,
@@ -8221,7 +8191,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-muscle-up",
-  "nome_en": "Muscle Up",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con presa falsa o prona, spalle attive, corpo leggermente oscillante.",
@@ -8240,7 +8209,7 @@
   }
  },
  {
-  "nome": "Tenuta alla sbarra a 90°",
+  "nome": "90° Chin-Up Isometric Hold",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 3,
@@ -8258,7 +8227,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-90-chin-up-iso-hold",
-  "nome_en": "90 Chin Up Iso Hold",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con presa supina, tira fino ad avere i gomiti piegati a 90°.",
@@ -8277,7 +8245,7 @@
   }
  },
  {
-  "nome": "Dip zavorrati alle parallele",
+  "nome": "Weighted Dips",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 4,
@@ -8295,7 +8263,6 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "id": "fpa-weighted-dips-from-bars",
-  "nome_en": "Weighted Dips (From Bars)",
   "scheda": {
    "esecuzione": [
     "Alle parallele con la zavorra alla cintura o tra le gambe, braccia tese, spalle basse, busto leggermente inclinato in avanti.",
@@ -8314,7 +8281,7 @@
   }
  },
  {
-  "nome": "Trazioni presa supina (chin-up)",
+  "nome": "Chin-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "sbarra",
   "difficolta": 3,
@@ -8333,7 +8300,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "fpa-chin-up",
-  "nome_en": "Chin-Up",
   "scheda": {
    "esecuzione": [
     "Appeso alla sbarra con presa supina alla larghezza delle spalle, braccia tese, spalle attive.",
@@ -8429,7 +8395,7 @@
   }
  },
  {
-  "nome": "Alzate laterali con manubri",
+  "nome": "Dumbbell Lateral Raise",
   "qualita": "forza-parte-alta",
   "attrezzatura": "palestra",
   "difficolta": 2,
@@ -8448,7 +8414,6 @@
   "sottogruppo": null,
   "video_nota": "video Everfit non pubblico (403) — da registrare",
   "id": "fpa-dumbbell-lateral-raise",
-  "nome_en": "Dumbbell Lateral Raise",
   "scheda": {
    "esecuzione": [
     "In piedi, un manubrio per mano lungo i fianchi, gomiti leggermente piegati.",
@@ -9164,7 +9129,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Windmill avanzato con kettlebell",
+  "nome": "Kettlebell Windmill (Advanced)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 4,
@@ -9184,7 +9149,6 @@
   "fascia_kb": "avanzato",
   "peso_kg": 8,
   "id": "fpa-kettlebell-advanced-windmill",
-  "nome_en": "Kettlebell Advanced Windmill",
   "scheda": {
    "esecuzione": [
     "In piedi, piedi più larghi delle spalle, kettlebell sopra la testa con un braccio disteso, piedi ruotati verso il lato opposto.",
@@ -9203,7 +9167,7 @@
   }
  },
  {
-  "nome": "Rematore con kettlebell e rotazione",
+  "nome": "Kettlebell Bent-Over Row with Rotation",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -9223,7 +9187,6 @@
   "fascia_kb": "base",
   "peso_kg": 12,
   "id": "fpa-kettlebell-bent-over-row-with-rotation",
-  "nome_en": "Kettlebell Bent Over Row with Rotation",
   "scheda": {
    "esecuzione": [
     "In piedi, kettlebell in una mano, ginocchia piegate e busto inclinato in avanti con la schiena neutra, mano libera appoggiata sulla coscia o libera.",
@@ -10004,7 +9967,7 @@
   }
  },
  {
-  "nome": "Pike push-up",
+  "nome": "Pike Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -10018,7 +9981,7 @@
    "spinta verticale"
   ],
   "azione": "aggiunto 22/9/2026",
-  "nome_everfit": null,
+  "nome_everfit": "Pike push-up",
   "note": null,
   "in_coppia": false,
   "attivo": true,
@@ -10044,7 +10007,7 @@
   }
  },
  {
-  "nome": "Pike push-up con i piedi rialzati",
+  "nome": "Feet-Elevated Pike Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -10066,7 +10029,6 @@
   "sottogruppo": "spinta verticale",
   "descrizione": "Come il pike push-up ma con i piedi su una panca o un gradino: il busto è quasi verticale e il carico sulle spalle cresce. Testa che scende tra le mani, gomiti a 45°.",
   "id": "fpa-pike-push-up-piedi-rialzati",
-  "nome_en": "Pike push-up piedi rialzati",
   "scheda": {
    "esecuzione": [
     "Piedi su una panca o un gradino, mani a terra poco più larghe delle spalle, bacino alto: il busto è quasi verticale.",
@@ -10085,7 +10047,7 @@
   }
  },
  {
-  "nome": "Handstand push-up",
+  "nome": "Handstand Push-Up",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 5,
@@ -10099,7 +10061,7 @@
    "spinta verticale"
   ],
   "azione": "aggiunto 22/9/2026",
-  "nome_everfit": null,
+  "nome_everfit": "Handstand push-up",
   "note": "Il gradino dopo Eccentric Handstand Push Up.",
   "in_coppia": false,
   "attivo": true,
@@ -10125,7 +10087,7 @@
   }
  },
  {
-  "nome": "Gorilla row",
+  "nome": "Gorilla Row",
   "qualita": "forza-parte-alta",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -10139,7 +10101,7 @@
    "tirata orizzontale"
   ],
   "azione": "aggiunto 22/9/2026",
-  "nome_everfit": null,
+  "nome_everfit": "Gorilla row",
   "note": null,
   "in_coppia": false,
   "attivo": true,
@@ -10167,7 +10129,7 @@
   }
  },
  {
-  "nome": "Rematore sotto al tavolo",
+  "nome": "Inverted Row (Under a Table)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -10181,7 +10143,7 @@
    "tirata orizzontale"
   ],
   "azione": "aggiunto 22/9/2026",
-  "nome_everfit": null,
+  "nome_everfit": "Rematore sotto al tavolo",
   "note": "La tirata orizzontale di chi non ha sbarra né kettlebell.",
   "in_coppia": false,
   "attivo": true,
