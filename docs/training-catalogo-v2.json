@@ -4148,7 +4148,7 @@
   }
  },
  {
-  "nome": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
+  "nome": "Quickness, Technique, Shooting and Decision-Speed Circuit",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4169,10 +4169,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-allenamento-rapidita-tecnica-tiro-in-porta-e-vel",
+  "scheda": {
+   "esecuzione": [
+    "Circuito guidato dal video: stazioni di rapidità di piedi tra i cinesini, tocchi di palla, conduzione e tiro in porta, con una scelta da fare in corsa (dove tirare o dove andare).",
+    "Fai ogni stazione a tutta per il tempo indicato, poi recupera camminando prima della successiva.",
+    "Nei tratti con la palla conta la pulizia del tocco, non solo la velocità: se la palla scappa, rallenta un passo.",
+    "Il tiro arriva a fine stazione: colpisci di interno o collo pieno, mai di punta."
+   ],
+   "errori": [
+    "Guardare la palla invece dello spazio nei tratti di conduzione.",
+    "Tirare da fermo: il tiro parte in corsa.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Meno stazioni, tratti più corti, nessun tiro.",
+   "piu_difficile": "Tempi più lunghi, un tocco in meno prima del tiro.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "La sequenza esatta degli esercizi e i tempi sono nel video: ho scritto solo la struttura e come si fa bene. Serve una porta: lo confermi?"
+  }
  },
  {
-  "nome": "Allenamento Tecnica - Resistenza - Velocità - Forza Esplosiva",
+  "nome": "Technique, Endurance, Speed and Explosive Strength Session",
   "qualita": "resistenza-aerobica",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4192,10 +4210,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "resistenza e tecnica"
+  "sottogruppo": "resistenza e tecnica",
+  "id": "aer-allenamento-tecnica-resistenza-velocita-forza-es",
+  "scheda": {
+   "esecuzione": [
+    "Seduta completa guidata dal video: blocchi di tecnica con la palla, tratti di corsa, sprint navetta senza e con palla (esercizio 2 del video), salti.",
+    "Segui l'ordine e i tempi del video; tra un blocco e l'altro recupera camminando.",
+    "Nei tratti di corsa tieni un ritmo che ti permette di arrivare in fondo; negli sprint vai a tutta.",
+    "Nei blocchi con la palla la tecnica resta pulita anche da stanco: se la perdi, rallenta."
+   ],
+   "errori": [
+    "Partire troppo forte nei tratti di corsa.",
+    "Tecnica sporca da stanco: meglio un tocco in meno.",
+    "Saltare il recupero tra i blocchi."
+   ],
+   "piu_facile": "Meno giri, tratti più corti.",
+   "piu_difficile": "Più giri, meno recupero.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati.",
+   "da_confermare": "La sequenza esatta degli esercizi e i tempi sono nel video: ho scritto solo la struttura e come si fa bene. Stesso video di \"Speed-Endurance Drills\": sono lo stesso esercizio? Ne tolgo uno?"
+  }
  },
  {
-  "nome": "BOX rapidità e Tiro",
+  "nome": "Quickness Box and Shot",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4216,10 +4252,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità e tecnica"
+  "sottogruppo": "rapidità e tecnica",
+  "id": "vel-box-rapidita-e-tiro",
+  "scheda": {
+   "esecuzione": [
+    "Quattro cinesini a formare un quadrato di 3-4 metri, palla sul primo, porta a 10-15 metri.",
+    "Conduci la palla intorno al quadrato con dribbling di interno e di esterno (il video dice: dribbling all'interno e all'esterno), cambi di direzione secchi su ogni cinesino.",
+    "All'ultimo cinesino esci dal quadrato e tira in porta con il piede indicato.",
+    "Fai le ripetizioni indicate per lato: una volta girando a destra, poi a sinistra."
+   ],
+   "errori": [
+    "Palla lontana dal piede negli angoli: tocchi corti, palla sotto il corpo.",
+    "Rallentare per preparare il tiro: il tiro esce dall'ultimo tocco.",
+    "Testa bassa per tutto il giro: alza lo sguardo prima del tiro."
+   ],
+   "piu_facile": "Quadrato più grande, tiro da fermo.",
+   "piu_difficile": "Quadrato più piccolo, tiro con il piede debole.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "Dalla miniatura: cinesini e tiro verso la porta. Il giro è sempre lo stesso o cambia di ripetizione in ripetizione?"
+  }
  },
  {
-  "nome": "Esercizio Tecnica + Resistenza Funzionale Calcio",
+  "nome": "Technique and Functional Endurance Drill",
   "qualita": "resistenza-aerobica",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4239,10 +4293,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "resistenza e tecnica"
+  "sottogruppo": "resistenza e tecnica",
+  "id": "aer-esercizio-tecnica-resistenza-funzionale-calcio",
+  "scheda": {
+   "esecuzione": [
+    "Esercizio guidato dal video: conduzione e tocchi di palla alternati a tratti di corsa, per il tempo indicato.",
+    "Ritmo continuo: non ti fermi mai del tutto, ma la palla resta sotto controllo.",
+    "Nei tratti senza palla corri a ritmo sostenuto, non in sprint.",
+    "Fai i giri o il tempo indicati, poi recupero camminando."
+   ],
+   "errori": [
+    "Fermarsi a ogni errore con la palla: riprendila e continua.",
+    "Correre troppo forte nei tratti liberi e arrivare senza fiato alla palla.",
+    "Testa bassa tutto il tempo."
+   ],
+   "piu_facile": "Tempo più corto, corsa più lenta.",
+   "piu_difficile": "Tempo più lungo, piede debole nei tocchi.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati.",
+   "da_confermare": "Miniatura solo con il titolo, non vedo l'esercizio. Stesso video di \"Endurance and Functional Technique Drill\": è lo stesso? Ne tolgo uno?"
+  }
  },
  {
-  "nome": "navette laterali con pallina da tennis",
+  "nome": "Lateral Shuttles with Tennis Ball",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4262,7 +4334,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità"
+  "sottogruppo": "rapidità",
+  "id": "vel-navette-laterali-con-pallina-da-tennis",
+  "scheda": {
+   "esecuzione": [
+    "Due riferimenti a 3-5 metri. Parti in mezzo, in posizione di attesa: gambe piegate, peso sugli avampiedi.",
+    "Un compagno (o tu stesso, lanciandola contro il muro) lancia la pallina da tennis da un lato: scatta di lato, prendila e rilanciala.",
+    "Torna subito al centro a passi laterali, pronto per il lancio successivo dall'altro lato.",
+    "Fai il tempo indicato senza fermarti; se sei da solo, lancia la pallina al muro e scatta a prenderla dove rimbalza."
+   ],
+   "errori": [
+    "Incrociare le gambe nei passi laterali: si resta frontali, passo laterale.",
+    "Alzarsi tra un lancio e l'altro: si resta bassi.",
+    "Guardare i piedi: gli occhi sulla pallina."
+   ],
+   "piu_facile": "Riferimenti più vicini, lanci più lenti.",
+   "piu_difficile": "Riferimenti più lontani, lanci a sorpresa, una mano sola.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "Dalla miniatura si vede uno sprint e una pallina: la pallina la lancia un compagno o si usa il muro?"
+  }
  },
  {
   "nome": "Passaggi al muro - VISIONE",
@@ -4289,7 +4379,7 @@
   "sottogruppo": "tecnica e visione"
  },
  {
-  "nome": "Postura + Velocità Difensori",
+  "nome": "Defender Stance and Speed Drill",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4309,10 +4399,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità funzionale"
+  "sottogruppo": "rapidità funzionale",
+  "id": "vel-postura-velocita-difensori",
+  "scheda": {
+   "esecuzione": [
+    "Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti, braccia pronte.",
+    "Piccoli passi rapidi sul posto per il tempo indicato, poi scatto di 3-5 metri nella direzione indicata (avanti, di lato o all'indietro).",
+    "Torna in posizione con passi laterali, senza girare le spalle alla \"palla\".",
+    "Fai le ripetizioni indicate alternando le direzioni."
+   ],
+   "errori": [
+    "Gambe tese nell'attesa: se sei alto, parti in ritardo.",
+    "Incrociare le gambe nei passi laterali.",
+    "Girare le spalle per tornare: si torna guardando avanti."
+   ],
+   "piu_facile": "Meno ripetizioni, scatti più corti.",
+   "piu_difficile": "Direzione a sorpresa chiamata da un compagno.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "Dalla miniatura: posizione bassa a piedi nudi sull'erba. Le direzioni degli scatti sono fisse o le decide un compagno?"
+  }
  },
  {
-  "nome": "Rapidità movimenti attaccanti",
+  "nome": "Striker Quick-Feet Drill",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4331,7 +4439,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità funzionale"
+  "sottogruppo": "rapidità funzionale",
+  "id": "vel-rapidita-movimenti-attaccanti",
+  "scheda": {
+   "esecuzione": [
+    "Tre o quattro cinesini in linea o a zig-zag davanti a te.",
+    "Piedi rapidi tra i cinesini (un appoggio per spazio, poi due), busto basso, braccia che accompagnano.",
+    "All'ultimo cinesino: finta di corpo e scatto di 5 metri nella direzione opposta, come per staccarsi dal marcatore.",
+    "Fai le ripetizioni indicate, alternando il lato della finta."
+   ],
+   "errori": [
+    "Appoggi pesanti sui talloni: si sta sull'avampiede.",
+    "Finta solo con il piede: la finta è di busto e spalle.",
+    "Scatto molle dopo la finta: è la parte che conta."
+   ],
+   "piu_facile": "Senza finta, solo piedi rapidi e scatto.",
+   "piu_difficile": "Finta doppia, scatto più lungo.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "Dalla miniatura: cinesini in fila sull'erba. Lo schema dei piedi tra i cinesini è quello del video o va bene qualsiasi?"
+  }
  },
  {
   "nome": "Half-Lunge Switch Hops",
@@ -4473,10 +4599,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Scatto massimale sulla distanza indicata, partenza da fermo o lanciata come indicato. Recupero completo tra una ripetizione e l'altra: la qualità dello sprint conta più della quantità."
+  "descrizione": "Scatto massimale sulla distanza indicata, partenza da fermo o lanciata come indicato. Recupero completo tra una ripetizione e l'altra: la qualità dello sprint conta più della quantità.",
+  "id": "vel-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Dopo il riscaldamento di velocità, partenza da fermo o lanciata come indicato, sulla distanza indicata.",
+    "Primi passi corti e potenti con il busto in avanti, poi ti alzi e allunghi la falcata.",
+    "Corri a tutta fino a due metri oltre la linea, poi rallenta in 10-15 metri.",
+    "Recupero completo tra una ripetizione e l'altra (2-3 minuti): cammina, non sederti."
+   ],
+   "errori": [
+    "Busto che si piega in avanti o si inarca: resta inclinato in avanti nei primi passi, poi dritto.",
+    "Rallentare prima della linea: si corre a tutta fino a due metri oltre.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Distanza più corta, partenza lanciata.",
+   "piu_difficile": "Partenza da terra o da posizione scomoda.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint con palla da fermo",
+  "nome": "Standing-Start Sprint with Ball",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4496,10 +4639,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-sprint-con-palla-da-fermo",
+  "scheda": {
+   "esecuzione": [
+    "Palla ferma davanti al piede, posizione di partenza come per lo sprint.",
+    "Primo tocco lungo in avanti con l'esterno o il collo del piede, e parti a tutta dietro la palla.",
+    "Uno o due tocchi al massimo sulla distanza indicata: la palla corre con te, non davanti a te.",
+    "Recupero completo tra le ripetizioni."
+   ],
+   "errori": [
+    "Primo tocco troppo corto: devi rallentare per riprenderla.",
+    "Primo tocco troppo lungo: la palla ti scappa.",
+    "Guardare la palla per tutto lo sprint: un'occhiata e poi avanti."
+   ],
+   "piu_facile": "Distanza più corta, primo tocco più morbido.",
+   "piu_difficile": "Piede debole.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint e Salite - Forza esplosiva",
+  "nome": "Hill Sprints for Explosive Strength",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4518,10 +4678,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-sprint-e-salite-forza-esplosiva",
+  "scheda": {
+   "esecuzione": [
+    "Salita ripida di 20-40 metri. Partenza da fermo in basso.",
+    "Sprint in salita a tutta: busto in avanti, ginocchia alte, spinta decisa dell'avampiede.",
+    "Fermati in cima e torna giù camminando: la discesa è il recupero, non si corre in discesa.",
+    "Fai le ripetizioni indicate con recupero completo."
+   ],
+   "errori": [
+    "Correre in discesa: carica tendini e ginocchia.",
+    "Passi lunghi in salita: in salita i passi sono corti e frequenti.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Salita più dolce o più corta.",
+   "piu_difficile": "Salita più ripida, partenza da terra.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito. In season pochissimo: sono pesanti."
+  }
  },
  {
-  "nome": "T sprint",
+  "nome": "T-Sprint",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4540,10 +4717,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-t-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Quattro cinesini a T: uno alla partenza, uno a 10 metri davanti, due a 5 metri a destra e a sinistra di quello.",
+    "Sprint avanti fino al cinesino centrale e toccalo, passi laterali fino al cinesino di destra e toccalo, passi laterali fino a quello di sinistra e toccalo, torna al centro e corri all'indietro fino alla partenza.",
+    "Non incrociare mai i piedi nei tratti laterali, non girare le spalle nel tratto all'indietro.",
+    "Fai le ripetizioni indicate con recupero completo; nella versione test si cronometra."
+   ],
+   "errori": [
+    "Incrociare le gambe nei tratti laterali.",
+    "Girarsi per correre all'indietro.",
+    "Toccare i cinesini con lo sguardo a terra: si guarda avanti."
+   ],
+   "piu_facile": "Distanze più corte.",
+   "piu_difficile": "Cronometro e tentativo di battere il tempo.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Salto triplo a 1 gamba e sprint",
+  "nome": "Single-Leg Triple Jump to Sprint",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -4564,10 +4758,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "vel-salto-triplo-a-1-gamba-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba dietro una linea, ginocchio dell'altra gamba alto.",
+    "Tre balzi consecutivi in avanti sulla stessa gamba, spingendo con tutta l'anca e usando le braccia.",
+    "All'atterraggio del terzo balzo parti subito in sprint per la distanza indicata.",
+    "Recupero completo, poi cambia gamba. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Atterraggio sul tallone: si atterra sull'avampiede, ginocchio che assorbe.",
+    "Fermarsi tra il terzo balzo e lo sprint: è un unico movimento.",
+    "Ginocchio che cede verso l'interno all'atterraggio."
+   ],
+   "piu_facile": "Due balzi, sprint più corto.",
+   "piu_difficile": "Balzi più lunghi, sprint più lungo.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito. Serve una base di pliometria: non è per la prima settimana."
+  }
  },
  {
-  "nome": "Salto triplo e sprint",
+  "nome": "Triple Jump to Sprint",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -4590,10 +4801,27 @@
   "sottogruppo": null,
   "solo_livello": false,
   "nota_livello": "anche B ma deve avere gia una base di pliometria e velocità",
-  "descrizione": "Da fermo, tre balzi consecutivi in avanti a due piedi (o come indicato), poi all'atterraggio del terzo scatta subito per la distanza indicata. Atterraggi morbidi, spinta massima, recupero completo."
+  "descrizione": "Da fermo, tre balzi consecutivi in avanti a due piedi (o come indicato), poi all'atterraggio del terzo scatta subito per la distanza indicata. Atterraggi morbidi, spinta massima, recupero completo.",
+  "id": "vel-salto-triplo-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Da fermo, piedi uniti dietro una linea.",
+    "Tre balzi consecutivi in avanti a due piedi (o come indicato), braccia che accompagnano, atterraggi morbidi.",
+    "All'atterraggio del terzo balzo scatta subito per la distanza indicata.",
+    "Recupero completo tra le ripetizioni."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni.",
+    "Fermarsi tra l'ultimo balzo e lo sprint.",
+    "Spinta solo di gambe: le braccia danno metà del salto."
+   ],
+   "piu_facile": "Due balzi, sprint più corto.",
+   "piu_difficile": "Balzi più lunghi.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Esercizio resistenza e tecnica funzionale",
+  "nome": "Endurance and Functional Technique Drill",
   "qualita": "resistenza-aerobica",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4613,7 +4841,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "aer-esercizio-resistenza-e-tecnica-funzionale",
+  "scheda": {
+   "esecuzione": [
+    "Esercizio guidato dal video: tratti di corsa a ritmo medio alternati a esercizi tecnici con la palla, per i minuti indicati.",
+    "Non ti fermi mai del tutto: la palla serve a tenere la testa accesa mentre il fiato sale.",
+    "Nei tratti di corsa tieni un ritmo che ti permette di parlare a fatica, non lo sprint.",
+    "A fine tempo, 2-3 minuti di corsa leggera."
+   ],
+   "errori": [
+    "Partire troppo forte.",
+    "Tecnica sporca da stanco.",
+    "Fermarsi tra una parte e l'altra."
+   ],
+   "piu_facile": "Meno minuti.",
+   "piu_difficile": "Più minuti, tratti di corsa più forti.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati.",
+   "da_confermare": "Miniatura solo con il titolo. Stesso video di \"Technique and Functional Endurance Drill\" (stesso id video): doppione? Ne tengo uno?"
+  }
  },
  {
   "nome": "Fartlek",
@@ -4635,10 +4881,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Corsa a ritmo variato: alterna tratti veloci e tratti lenti secondo i tempi indicati nelle serie (es. 1' forte / 1' piano). Nei tratti forti resta sotto lo sprint, nei tratti piano non fermarti."
+  "descrizione": "Corsa a ritmo variato: alterna tratti veloci e tratti lenti secondo i tempi indicati nelle serie (es. 1' forte / 1' piano). Nei tratti forti resta sotto lo sprint, nei tratti piano non fermarti.",
+  "id": "aer-fartlek",
+  "scheda": {
+   "esecuzione": [
+    "Corsa a ritmo variato sul percorso che vuoi: strada, parco, campo.",
+    "Alterna tratti veloci e tratti lenti secondo i tempi indicati nelle serie (es. 1' forte / 1' piano).",
+    "Nei tratti forti resta sotto lo sprint: un ritmo che reggi per tutto il tratto. Nei tratti piano non fermarti: corsa leggera.",
+    "Totale come indicato, poi 3-5 minuti di corsa leggera."
+   ],
+   "errori": [
+    "Tratti forti a tutta: poi i tratti piano diventano una camminata.",
+    "Tratti piano troppo piano: si continua a correre.",
+    "Partire senza riscaldamento."
+   ],
+   "piu_facile": "Tratti forti più corti, piano più lunghi.",
+   "piu_difficile": "Tratti forti più lunghi o in leggera salita.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Ripetute",
+  "nome": "Running Intervals",
   "qualita": "resistenza-aerobica",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4657,10 +4920,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Corsa a ritmo forte sulla distanza o il tempo indicato, poi recupero come indicato. Ritmo uniforme dall'inizio alla fine della ripetuta, non uno sprint."
+  "descrizione": "Corsa a ritmo forte sulla distanza o il tempo indicato, poi recupero come indicato. Ritmo uniforme dall'inizio alla fine della ripetuta, non uno sprint.",
+  "id": "aer-ripetute",
+  "scheda": {
+   "esecuzione": [
+    "Dopo il riscaldamento, corsa a ritmo forte sulla distanza o il tempo indicato.",
+    "Ritmo uniforme dall'inizio alla fine della ripetuta: non uno sprint, ma un ritmo che reggi per tutta la ripetuta e per tutte le ripetute.",
+    "Recupero come indicato (corsa leggera o cammino), poi la successiva.",
+    "L'ultima ripetuta deve avere lo stesso tempo della prima: se crolla, le prime erano troppo forti."
+   ],
+   "errori": [
+    "Prima ripetuta troppo forte.",
+    "Fermarsi del tutto nel recupero quando è indicato corsa leggera.",
+    "Falcata che si accorcia sul finale: tieni il ritmo con le braccia."
+   ],
+   "piu_facile": "Ripetute più corte, recupero più lungo.",
+   "piu_difficile": "Recupero più corto.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Allungo",
+  "nome": "Stride-Out (Build-Up Run)",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4679,10 +4959,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "met-allungo",
+  "scheda": {
+   "esecuzione": [
+    "Tratto di 60-100 metri in piano.",
+    "Parti in corsa leggera e aumenta la velocità in modo progressivo: ogni 20 metri un po' più forte.",
+    "Negli ultimi 20-30 metri sei vicino al massimo ma rilassato: spalle basse, viso sciolto, falcata ampia.",
+    "Torna camminando. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Partire già forte: l'allungo è progressivo.",
+    "Irrigidirsi nel tratto finale: si cerca la velocità rilassata.",
+    "Frenare di colpo: si decelera in 20 metri."
+   ],
+   "piu_facile": "Tratto più corto, massimo più basso.",
+   "piu_difficile": "Tratto più lungo.",
+   "sicurezza": "Dopo il riscaldamento. Fastidio dietro la coscia: fermati."
+  }
  },
  {
-  "nome": "Circuito Resistenza, Velocità, Tecnica x Esterno",
+  "nome": "Winger Circuit: Endurance, Speed, Technique",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4703,10 +5000,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "met-circuito-resistenza-velocita-tecnica-x-esterno",
+  "scheda": {
+   "esecuzione": [
+    "Circuito per esterni guidato dal video: conduzione lungo la fascia, cambio di direzione sul cinesino, sprint e cross o tiro.",
+    "Fai ogni giro al ritmo indicato: i tratti di conduzione sostenuti, lo sprint finale a tutta.",
+    "Recupero come indicato tra i giri, camminando per tornare al punto di partenza.",
+    "Alterna il lato (fascia destra e sinistra) se indicato."
+   ],
+   "errori": [
+    "Tocchi lunghi che fanno perdere la palla sul cambio di direzione.",
+    "Cross o tiro svogliato a fine giro: è il gesto che conta.",
+    "Saltare il recupero."
+   ],
+   "piu_facile": "Meno giri, senza cross.",
+   "piu_difficile": "Più giri, piede debole sul cross.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati.",
+   "da_confermare": "Dalla miniatura: cinesino e palla, vicino ai piedi. Il circuito finisce con cross o con tiro?"
+  }
  },
  {
-  "nome": "Esercizi Resistenza alla Velocità",
+  "nome": "Speed-Endurance Drills",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4726,10 +5041,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "met-esercizi-resistenza-alla-velocita",
+  "scheda": {
+   "esecuzione": [
+    "Esercizi guidati dal video: sprint navetta senza palla e con palla (esercizio 2 del video) e tratti ripetuti ad alta intensità con recupero incompleto.",
+    "Ogni tratto quasi a tutta, recupero corto come indicato: la fatica si accumula, è voluto.",
+    "Nei tratti con la palla il tocco resta pulito anche da stanco.",
+    "Fai le serie indicate; tra le serie recupero completo."
+   ],
+   "errori": [
+    "Prima ripetizione a tutta e le altre a metà: parti al 90 %.",
+    "Palla che scappa da stanco: un tocco in meno.",
+    "Recupero più lungo di quello indicato: perde il senso."
+   ],
+   "piu_facile": "Meno ripetizioni, recupero più lungo.",
+   "piu_difficile": "Più ripetizioni, recupero più corto.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati. Non nei 3 giorni prima della partita.",
+   "da_confermare": "Stesso video di \"Technique, Endurance, Speed and Explosive Strength Session\" (stesso id video): doppione? Ne tengo uno?"
+  }
  },
  {
-  "nome": "Salite allungo",
+  "nome": "Hill Stride-Outs",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4749,10 +5082,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Allungo in salita: corsa progressiva sulla distanza indicata, senza arrivare allo sprint. Torna in discesa camminando."
+  "descrizione": "Allungo in salita: corsa progressiva sulla distanza indicata, senza arrivare allo sprint. Torna in discesa camminando.",
+  "id": "met-salite-allungo",
+  "scheda": {
+   "esecuzione": [
+    "Salita dolce di 40-80 metri.",
+    "Allungo in salita: corsa progressiva sulla distanza indicata, senza arrivare allo sprint.",
+    "Ginocchia alte, spinta decisa dell'avampiede, busto leggermente avanti, braccia attive.",
+    "Torna in discesa camminando. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Correre in discesa.",
+    "Arrivare allo sprint: resta progressivo.",
+    "Busto piegato: lo sguardo verso la cima."
+   ],
+   "piu_facile": "Salita più dolce o più corta.",
+   "piu_difficile": "Salita più lunga.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Salite Sprint",
+  "nome": "Hill Sprints",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4772,7 +5122,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Sprint in salita sulla distanza indicata: partenza da fermo, spinta massima, busto leggermente avanti. Torna in discesa camminando: il recupero è parte dell'esercizio."
+  "descrizione": "Sprint in salita sulla distanza indicata: partenza da fermo, spinta massima, busto leggermente avanti. Torna in discesa camminando: il recupero è parte dell'esercizio.",
+  "id": "vel-salite-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Salita di 30-50 metri. Partenza da fermo in basso.",
+    "Sprint in salita sulla distanza indicata: spinta massima, busto leggermente avanti.",
+    "Torna in discesa camminando: il recupero è parte dell'esercizio.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Correre in discesa.",
+    "Busto troppo piegato: lo sguardo guarda la cima, non i piedi.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Salita più corta.",
+   "piu_difficile": "Salita più ripida.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito. In season pochissimo: sono pesanti.",
+   "da_confermare": "Doppione di \"Hill Sprints for Explosive Strength\" (stessa cosa, un video sì e uno no)? Ne tengo uno?"
+  }
  },
  {
   "nome": "Balance Circuit on Skimmy",
@@ -7978,7 +8346,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Palleggi altezza testa - Tecnica",
+  "nome": "Juggling Test: Head-Height",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7998,10 +8366,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-altezza-testa-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e inizia a palleggiare con i piedi.",
+    "Ogni palleggio porta la palla all'altezza della testa: tocchi di collo piede, non di punta.",
+    "Conta i palleggi consecutivi senza che la palla tocchi terra, per il tempo indicato o fino all'errore.",
+    "Alterna i piedi quando puoi; il risultato è il numero di tocchi."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Palla troppo bassa: non vale come palleggio alto.",
+    "Corpo rigido: ginocchia morbide, peso sull'avampiede."
+   ],
+   "piu_facile": "Palla più bassa, un piede solo.",
+   "piu_difficile": "Solo piede debole.",
+   "da_confermare": "Il risultato è il numero di tocchi consecutivi o i tocchi in un tempo fisso?"
+  }
  },
  {
-  "nome": "Palleggi liberi coscia e testa",
+  "nome": "Juggling Test: Thigh and Head",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -8017,10 +8402,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-liberi-coscia-e-testa",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere sulla coscia e inizia a palleggiare.",
+    "Alterna cosce e testa come vuoi: coscia, coscia, testa, coscia… senza usare i piedi.",
+    "Conta i tocchi consecutivi senza che la palla tocchi terra.",
+    "Ginocchia morbide, occhi sempre sulla palla."
+   ],
+   "errori": [
+    "Coscia troppo alta o troppo bassa: parallela a terra al tocco.",
+    "Testa che colpisce con la fronte piegata: fronte dritta, occhi aperti.",
+    "Fermarsi al primo errore invece di riprendere: il test conta la serie più lunga."
+   ],
+   "piu_facile": "Solo cosce.",
+   "piu_difficile": "Sequenza fissa coscia-testa-coscia-testa.",
+   "da_confermare": "Il risultato è la serie più lunga di tocchi consecutivi?"
+  }
  },
  {
-  "nome": "Palleggi liberi piedi coscia spalla testa",
+  "nome": "Juggling Test: Feet, Thigh, Shoulder, Head",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -8036,10 +8438,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-liberi-piedi-coscia-spalla-testa",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia usando tutte le superfici: piedi, cosce, spalle, testa.",
+    "Varia le superfici come vuoi: il test premia il controllo su tutto il corpo.",
+    "Conta i tocchi consecutivi senza che la palla tocchi terra.",
+    "Ginocchia morbide, sguardo sulla palla, respiro regolare."
+   ],
+   "errori": [
+    "Usare solo i piedi: vanno usate tutte le superfici.",
+    "Tocchi di spalla con la spalla ferma: la spalla sale incontro alla palla.",
+    "Corpo rigido."
+   ],
+   "piu_facile": "Piedi e cosce.",
+   "piu_difficile": "Sequenza fissa piede-coscia-spalla-testa.",
+   "da_confermare": "Il risultato è la serie più lunga? Serve un minimo di superfici diverse per contare?"
+  }
  },
  {
-  "nome": "palleggi piedi coscia testa",
+  "nome": "Juggling Test: Feet, Thigh, Head",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -8058,7 +8477,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-piedi-coscia-testa",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia con piedi, cosce e testa.",
+    "Varia le superfici: almeno un tocco per ognuna nella serie.",
+    "Conta i tocchi consecutivi senza che la palla tocchi terra.",
+    "Ginocchia morbide, occhi sulla palla."
+   ],
+   "errori": [
+    "Usare solo i piedi.",
+    "Tocchi di punta.",
+    "Fermarsi al primo errore."
+   ],
+   "piu_facile": "Piedi e cosce.",
+   "piu_difficile": "Sequenza fissa piede-coscia-testa.",
+   "da_confermare": "Senza video. Il risultato è la serie più lunga di tocchi consecutivi?"
+  }
  },
  {
   "nome": "Palleggi solo testa - Tecnica",
@@ -8080,7 +8516,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Rapidità Ankle Stiffness - Test",
+  "nome": "Ankle Stiffness Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -8108,10 +8544,27 @@
    "Caviglia",
    "Tibia",
    "Poco o niente"
-  ]
+  ],
+  "id": "test2-rapidita-ankle-stiffness-test",
+  "scheda": {
+   "esecuzione": [
+    "Piedi uniti sotto le anche, ginocchia quasi tese, un riferimento a terra (una linea o un cinesino).",
+    "Si salta solo di caviglia, atterrando sull'avampiede senza appoggiare il tallone.",
+    "Percorso: salto avanti, indietro, di lato, avanti, indietro, di lato tornando al punto di partenza. Il percorso completo vale 1.",
+    "Avvia i 20 secondi e ripeti il percorso il più veloce possibile: conta quanti ne completi. Nella versione per lato, sulla sola gamba indicata."
+   ],
+   "errori": [
+    "Ginocchia che si piegano: il rimbalzo viene dalla caviglia.",
+    "Tallone che tocca terra.",
+    "Percorso a metà contato come intero."
+   ],
+   "piu_facile": "A due gambe, senza cronometro.",
+   "piu_difficile": "Su una gamba sola.",
+   "sicurezza": "Pavimento non scivoloso. Fastidio al tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Test Max Pull up",
+  "nome": "Max Pull-Up Test",
   "qualita": "test",
   "attrezzatura": "sbarra",
   "difficolta": 2,
@@ -8127,10 +8580,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-max-pull-up",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra, presa prona poco più larga delle spalle, braccia distese, piedi staccati da terra.",
+    "Tirati su fino a portare il mento sopra la sbarra, senza slancio delle gambe.",
+    "Scendi in controllo fino alle braccia completamente distese: solo così la ripetizione vale.",
+    "Massimo di ripetizioni pulite senza pausa in basso. Il risultato è il numero."
+   ],
+   "errori": [
+    "Mento che non supera la sbarra.",
+    "Slancio delle gambe (kipping).",
+    "Braccia non distese in basso."
+   ],
+   "piu_facile": "Presa neutra o chin-up se indicato.",
+   "piu_difficile": "Zavorra.",
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta."
+  }
  },
  {
-  "nome": "Test Max push up",
+  "nome": "Max Push-Up Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8146,10 +8616,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-max-push-up",
+  "scheda": {
+   "esecuzione": [
+    "Mani poco più larghe delle spalle, corpo in linea dai talloni alla testa, addome attivo.",
+    "Scendi con il petto a un pugno da terra, gomiti a circa 45° dal busto.",
+    "Risali fino alle braccia distese: solo così la ripetizione vale.",
+    "Massimo di ripetizioni pulite a ritmo costante, senza fermarti in alto a riposare. Il risultato è il numero."
+   ],
+   "errori": [
+    "Bacino che cade o che sale.",
+    "Scendere a metà.",
+    "Fermarsi in alto con le braccia bloccate per riposare."
+   ],
+   "piu_facile": "Mani su un rialzo.",
+   "piu_difficile": "Piedi su un rialzo.",
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta."
+  }
  },
  {
-  "nome": "TEST NAVETTA 10mt - 30''",
+  "nome": "10 m Shuttle Test (30 s)",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -8167,10 +8654,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-navetta-10mt-30",
+  "scheda": {
+   "esecuzione": [
+    "Due linee (o due cinesini) a 10 metri e un timer da 30 secondi.",
+    "Parti da una linea, corri all'altra e toccala con il piede, torna e tocca anche quella: andata e ritorno = 1 navetta.",
+    "Cambia direzione il più veloce possibile: frenate e ripartenze sono il test.",
+    "Allo scadere dei 30 secondi fermati e conta le navette complete (un'andata senza ritorno non vale)."
+   ],
+   "errori": [
+    "Non toccare la linea con il piede.",
+    "Curve larghe sul cambio di direzione: si frena e si riparte secchi.",
+    "Partire prima del timer."
+   ],
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta. Scarpe adatte al terreno: i cambi di direzione a tutta scivolano sul bagnato."
+  }
  },
  {
-  "nome": "TEST RESISTENZA 1km",
+  "nome": "1 km Run Test",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -8188,10 +8690,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-resistenza-1km",
+  "scheda": {
+   "esecuzione": [
+    "Pista o percorso misurato (va bene un'app GPS) e un cronometro.",
+    "Riscaldamento: 10 minuti di corsa leggera e 2-3 allunghi.",
+    "Parti e tieni il ritmo più alto che riesci a reggere fino alla fine, senza partire troppo forte.",
+    "Ferma il cronometro al chilometro esatto. Il risultato è il tempo in secondi."
+   ],
+   "errori": [
+    "Partire a tutta e crollare dopo 400 metri.",
+    "Percorso non misurato.",
+    "Senza riscaldamento."
+   ],
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "TEST RESISTENZA 3KM",
+  "nome": "3 km Run Test",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -8209,10 +8726,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-resistenza-3km",
+  "scheda": {
+   "esecuzione": [
+    "Pista o percorso misurato (va bene un'app GPS) e un cronometro.",
+    "Riscaldamento: 10 minuti di corsa leggera e 2-3 allunghi.",
+    "Parti a un ritmo che senti di poter tenere per tutti i 3 km e aumenta nell'ultimo chilometro se ne hai.",
+    "Ferma il cronometro ai 3 km esatti. Il risultato è il tempo in secondi."
+   ],
+   "errori": [
+    "Partire troppo forte.",
+    "Percorso non misurato.",
+    "Senza riscaldamento."
+   ],
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Test Salto in lungo - broad jump",
+  "nome": "Standing Broad Jump Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8231,10 +8763,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-salto-in-lungo-broad-jump",
+  "scheda": {
+   "esecuzione": [
+    "Piedi uniti dietro una linea, braccia libere.",
+    "Caricamento con le braccia indietro e le gambe piegate, poi salto in avanti a due piedi, braccia che vanno in alto e avanti.",
+    "Atterraggio a due piedi, restando in piedi: se cadi indietro o appoggi le mani, il tentativo non vale.",
+    "Misura dalla linea al tallone più vicino. 3-4 tentativi con recupero completo: il risultato è il migliore, in centimetri."
+   ],
+   "errori": [
+    "Saltare in alto invece che in avanti.",
+    "Atterrare rigidi sulle gambe tese: ginocchia che assorbono.",
+    "Un piede davanti alla linea alla partenza."
+   ],
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta. Superficie non scivolosa."
+  }
  },
  {
-  "nome": "TEST VELOCITA' 100M",
+  "nome": "100 m Sprint Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8252,10 +8799,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-velocita-100m",
+  "scheda": {
+   "esecuzione": [
+    "Rettilineo misurato di 100 metri e un cronometro (meglio se lo tiene un compagno).",
+    "Riscaldamento di velocità completo: corsa leggera, mobilità, 3 allunghi progressivi.",
+    "Partenza da fermo in piedi; il cronometro parte al primo movimento.",
+    "Corri a tutta fino a oltre la linea. 2 tentativi con 4-5 minuti di recupero: il risultato è il migliore, in secondi."
+   ],
+   "errori": [
+    "Partire senza riscaldamento.",
+    "Rallentare prima della linea.",
+    "Secondo tentativo senza recupero completo."
+   ],
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "La batteria dell'app ha i 50 metri, non i 100: lo teniamo come esercizio o lo colleghiamo a un test nuovo?"
+  }
  },
  {
-  "nome": "TEST VELOCITA' 50M",
+  "nome": "50 m Sprint Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -8273,10 +8836,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-velocita-50m",
+  "scheda": {
+   "esecuzione": [
+    "Rettilineo misurato di 50 metri e un cronometro (meglio se lo tiene un compagno).",
+    "Riscaldamento di velocità completo: corsa leggera, mobilità, 2-3 allunghi progressivi.",
+    "Partenza da fermo in piedi, senza rincorsa; il cronometro parte al primo movimento.",
+    "Corri a tutta fino a oltre la linea. 3 tentativi con 2 minuti di recupero: il risultato è il migliore, in secondi."
+   ],
+   "errori": [
+    "Partire senza riscaldamento.",
+    "Rallentare prima della linea.",
+    "Rincorsa prima della linea."
+   ],
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "TEST EQUILIBRIO 1 GAMBA",
+  "nome": "Single-Leg Balance Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -8292,7 +8870,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-equilibrio-1-gamba",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, l'altro piede sollevato dietro, mani sui fianchi.",
+    "Chiudi gli occhi (se indicato) e avvia il cronometro.",
+    "Il test finisce quando il piede libero tocca terra, le mani lasciano i fianchi o salti per non cadere.",
+    "Fai entrambe le gambe. Il risultato è il tempo in secondi per lato."
+   ],
+   "errori": [
+    "Aprire gli occhi di nascosto.",
+    "Piede d'appoggio che saltella: va tenuto fermo.",
+    "Mani che si staccano dai fianchi."
+   ],
+   "piu_facile": "Occhi aperti.",
+   "piu_difficile": "Occhi chiusi su una superficie morbida.",
+   "da_confermare": "Il test si fa a occhi chiusi come il test di equilibrio della batteria?"
+  }
  },
  {
   "nome": "Recovery Session after Match or Heavy Training",
@@ -10127,7 +10722,7 @@
   }
  },
  {
-  "nome": "Sprint 10 m",
+  "nome": "10 m Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -10140,17 +10735,34 @@
    "sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint 10 m",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "Partenza in piedi, 10 metri a tutta. Uno solo, poi cammina indietro e recupera del tutto: conta la qualità, non la fatica.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-sprint-10-m",
+  "scheda": {
+   "esecuzione": [
+    "Partenza in piedi dietro una linea, piede forte avanti, busto inclinato.",
+    "Dieci metri a tutta: passi corti e potenti, braccia che spingono.",
+    "Uno solo, poi cammina indietro e recupera del tutto: conta la qualità, non la fatica.",
+    "Nell'EMOM: un solo sprint al minuto, il resto è recupero."
+   ],
+   "errori": [
+    "Busto che si piega in avanti o si inarca: resta inclinato in avanti nei primi passi, poi dritto.",
+    "Partire con un saltello: il primo appoggio spinge, non salta.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza lanciata.",
+   "piu_difficile": "Partenza da terra.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Giro 180° piegamento e sprint",
+  "nome": "180° Turn, Push-Up and Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -10164,17 +10776,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Giro 180° piegamento e sprint",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "Di spalle alla direzione di corsa: giro di 180°, un piegamento a terra, ti rialzi e parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-giro-180-piegamento-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Di spalle alla direzione di corsa.",
+    "Al via: giro di 180°, scendi a terra, un piegamento completo, ti rialzi e parti in sprint per 10 metri.",
+    "Il piegamento è vero (petto vicino a terra), ma il tempo a terra è il minimo.",
+    "Una ripetizione, poi recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Giro lento e appoggio lungo a terra.",
+    "Rialzarsi e aggiustarsi prima di partire: si parte dal primo appoggio.",
+    "Busto che si piega in avanti o si inarca: resta inclinato in avanti nei primi passi, poi dritto."
+   ],
+   "piu_facile": "Senza piegamento, solo giro e sprint.",
+   "piu_difficile": "Due piegamenti.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Burpee e sprint",
+  "nome": "Burpee to Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -10188,17 +10817,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Burpee e sprint",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "Un burpee completo (a terra, salto) e appena atterri parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-burpee-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, fronte alla direzione di corsa.",
+    "Un burpee completo: mani a terra, piedi indietro, petto a terra, piedi avanti, salto.",
+    "Appena atterri dal salto parti in sprint per 10 metri.",
+    "Una ripetizione, poi recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Salto alto e atterraggio pesante: il salto è corto, serve a ripartire.",
+    "Fermarsi dopo l'atterraggio.",
+    "Busto che si piega in avanti o si inarca: resta inclinato in avanti nei primi passi, poi dritto."
+   ],
+   "piu_facile": "Senza salto.",
+   "piu_difficile": "Due burpee.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Piegamento a terra e sprint",
+  "nome": "Prone Push-Up to Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -10212,17 +10858,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Piegamento a terra e sprint",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "Partenza da sdraiato a pancia in giù: un piegamento, ti rialzi e parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-piegamento-a-terra-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Partenza sdraiato a pancia in giù, mani sotto le spalle, testa verso la direzione di corsa.",
+    "Al via: un piegamento, porti un piede sotto il corpo e parti in sprint per 10 metri.",
+    "I primi tre passi sono bassi e potenti, poi ti alzi.",
+    "Una ripetizione, poi recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Alzarsi tutto in piedi prima di partire: si parte dalla posizione bassa.",
+    "Piegamento a metà.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza in ginocchio.",
+   "piu_difficile": "Due piegamenti.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint con partenza in ginocchio laterale",
+  "nome": "Side-Kneeling Start Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -10236,17 +10899,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint con partenza in ginocchio laterale",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "In ginocchio di fianco alla direzione di corsa: ti alzi ruotando e parti in sprint per 10 metri. Una partenza per lato.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-sprint-con-partenza-in-ginocchio-laterale",
+  "scheda": {
+   "esecuzione": [
+    "In ginocchio di fianco alla direzione di corsa, busto dritto, mani libere.",
+    "Al via: ti alzi ruotando verso la direzione di corsa e parti in sprint per 10 metri.",
+    "Il primo appoggio è il piede più lontano dalla direzione di corsa: così ruoti e spingi insieme.",
+    "Una partenza per lato, recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Appoggiare le mani a terra per alzarsi.",
+    "Alzarsi tutto dritto e poi partire: alzata e primo passo sono un movimento solo.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza in ginocchio frontale.",
+   "piu_difficile": "Partenza seduto di fianco.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint con partenza in ginocchio",
+  "nome": "Kneeling Start Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -10260,14 +10940,31 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint con partenza in ginocchio",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "In ginocchio, di fronte alla direzione di corsa: ti alzi senza appoggiare le mani e parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-sprint-con-partenza-in-ginocchio",
+  "scheda": {
+   "esecuzione": [
+    "In ginocchio di fronte alla direzione di corsa, busto dritto, braccia pronte.",
+    "Al via: porta un piede avanti e spingi, senza appoggiare le mani a terra, e parti in sprint per 10 metri.",
+    "Busto inclinato in avanti nei primi passi.",
+    "Una ripetizione, poi recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Mani a terra per alzarsi.",
+    "Primo passo troppo lungo: corto e potente.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza in piedi.",
+   "piu_difficile": "Partenza seduto.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
   "nome": "Standing Broad Jump",
@@ -10352,7 +11049,7 @@
   }
  },
  {
-  "nome": "Palleggio, sprint e tiro in porta",
+  "nome": "Juggle, Sprint and Shot",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -10366,15 +11063,33 @@
    "tiro"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Palleggio, sprint e tiro in porta",
   "note": null,
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "tecnica-tiro",
-  "sottogruppo": "velocità con tiro"
+  "sottogruppo": "velocità con tiro",
+  "id": "vel-palleggio-sprint-e-tiro-in-porta",
+  "scheda": {
+   "esecuzione": [
+    "Palla al piede, porta a 20-30 metri.",
+    "Palleggia, poi lancia la palla alta dietro di te (il video dice: palleggia e lancia la palla dietro di te).",
+    "Giro e sprint a tutta dietro la palla, la controlli al volo o al primo rimbalzo e tiri in porta.",
+    "Fai le ripetizioni indicate con recupero completo."
+   ],
+   "errori": [
+    "Lancio troppo alto o troppo corto: la palla deve cadere dove arrivi in sprint.",
+    "Fermare la palla prima del tiro: un tocco e tiro.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Lancio più corto, tiro da fermo.",
+   "piu_difficile": "Tiro al volo senza controllo, piede debole.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "Dal video: palleggio, palla lanciata dietro, sprint. Il tiro è al volo o dopo un controllo?"
+  }
  },
  {
-  "nome": "Sprint e tiro in porta",
+  "nome": "Sprint and Shot",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -10388,12 +11103,29 @@
    "tiro"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint e tiro in porta",
   "note": null,
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "tecnica-tiro",
-  "sottogruppo": "velocità con tiro"
+  "sottogruppo": "velocità con tiro",
+  "id": "vel-sprint-e-tiro-in-porta",
+  "scheda": {
+   "esecuzione": [
+    "Palla ferma, porta a 20-30 metri.",
+    "Parti da fermo con un passaggio in avanti (il video dice: parti da fermo ed esegui un passaggio in avanti).",
+    "Sprint dietro la palla e tiro in corsa con il piede indicato.",
+    "Fai le ripetizioni indicate con recupero completo."
+   ],
+   "errori": [
+    "Passaggio troppo lungo: arrivi sulla palla senza velocità.",
+    "Rallentare prima di tirare.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Passaggio più corto.",
+   "piu_difficile": "Piede debole, tiro di prima.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
   "nome": "Ankle Stiffness Steps with Dumbbells",

@@ -114,6 +114,6 @@ Ritmo: a 15 ore a settimana sono 9-12 settimane; la fase 6 deve partire entro me
 
 Fuori dal codice, per Ste, nell'ordine in cui servono: correzioni dei batch 4-6; i video (80 esercizi, prima le scale gambe e i test); le cose già in CLAUDE.md (Stripe: URL dei termini e `STRIPE_TERMS_CONSENT=1`, ricevute, controllo dei Price; i 24 "Perché funziona"; gli audio W1-G2 e G3; Durata Minuti W1-G1); i prezzi di Mentale, Fisico e Completo.
 
-Decisioni prese il 13/10: soglia di M5 confermata (voto ≤ 4 su tutte le serie e niente sotto il previsto); resistenza 3-4 solo senza allenamenti né partite con la squadra, con la conferma nella maschera. Ancora aperta: M9, pausa totale sopra 4/10 sì (opzione A, con la zona ridotta per due settimane al rientro) o no (opzione B, solo riduzione per zona).
+Decisioni prese il 13/10: soglia di M5 confermata (voto ≤ 4 su tutte le serie e niente sotto il previsto); resistenza 3-4 solo senza allenamenti né partite con la squadra, con la conferma nella maschera. M9: opzione A per ora (Ste, 13/10): sopra 4/10 resta la pausa totale delle sedute fisiche, con il consiglio di fisioterapista o medico, lo sblocco con presa di responsabilità e la zona ridotta per due settimane al rientro.
 
 Prima di vendere resta vero quanto scritto il 12/10: tre atleti per quattro settimane sul Campo.
