@@ -95,19 +95,25 @@ Quando un obiettivo ha raggiunto il tetto, le giornate rimaste vanno ai compleme
 13. **Storico in sola lettura dopo la scadenza.** Stato `archivio` accanto ad attivo e nessun accesso: letture aperte (`state`, test, storico, mese), scritture chiuse (`plan`, `complete`, `set-log`, `pain`, `chat`), hub in modalità archivio con il rimando a riattivare. Ore: 6-8, incl. test sulle funzioni di accesso.
 14. **Piano annuale.** Un price ricorrente annuale in più per Fisico e Completo, lo stesso handler del punto 11, il portale Stripe per passare da mensile ad annuale c'è già. Ore: 4-5 dopo i punti 11 e 12.
 
-## Totale e ordine proposto
+## Ordine di lavoro (rifatto con Ste il 13/10)
 
-| Gruppo | Ore |
-|---|---|
-| Metodo M5, M8, M9, M11, M12 | 36-47 |
-| Controlli 2-3 | 7-9 |
-| Setup 4-5 | 9-12 |
-| Storico 6-8 | 17-22 |
-| Pacchetti 9 | 8-10 |
-| Struttura 10-12 | 39-50 |
-| Dopo 13-14 | 10-13 |
-| **Totale** | **126-163** |
+Sei fasi, un blocco per PR, merge su `main` solo al "vai". Le ore sono quelle dei punti sopra; "Ste" segna le cose fuori dal codice che corrono in parallelo.
 
-Ordine che proporrei, un blocco per PR: 2 e 3 (coerenza, piccoli e subito utili) → M8 (il problema più grave per chi paga) → M5 → M9 e 4 insieme (dolore e limitazioni) → 5 → 8 e 7 → 6 → M11 → 9 → 10 → 11 e 12 → M12 → 13 e 14. Le schede 5 e 6 e i video restano fuori da questa lista: sono contenuto, non codice.
+| Fase | Cosa | Ore | Perché in questo ordine |
+|---|---|---|---|
+| 0. Adesso | Merge di PR #138 (batch 4 + lista); correzioni batch 4 (Ste); schede batch 5 e 6 (io scrivo, Ste corregge) | 10-14 per i batch | Sono contenuto: non bloccano nulla e vanno avanti mentre si fa il resto |
+| 1. Il motore dice una cosa sola | 2 dose unica (4-5) · 3 preparatore con il contesto del planner (3-4) · 15 testo sugli obiettivi (1) · 16 tetti per qualità e complementi (6-8) · M5 aumenti in settimana (6-8) | 20-26 | Piccoli, deterministici, testabili; sistemano le incoerenze che un tester noterebbe il primo giorno (Windmill, obiettivo solo con 4 giornate) |
+| 2. Il piano segue la realtà | M8 calendario che cambia (10-14) · 5 fattibilità nel setup (4-6) · 7 date programmata ed effettiva (2-3) · 8 durata reale (3) | 19-26 | Il problema più grave per chi paga: la settimana che non si adatta |
+| 3. Dolore e sicurezza | M9 dolore per zona e testi (8-10) · 4 limitazioni e infortuni nel setup (5-6) | 13-16 | Prima di dare il Campo a chi non conosciamo |
+| 4. Beta chiusa (Ste) | Flag `training_access` a 3-5 ragazzi, 4 settimane di log. Parte APPENA finita la fase 3, mentre io faccio le fasi 5-6 | 0 | Il Campo è congelato finché tre atleti non hanno un mese di log: le quattro settimane corrono in parallelo al codice |
+| 5. Vedere i progressi | 6 storico completo (12-16) · M11 scarico e ri-test dai dati (8-10) · M12 Reset prima della seduta (4-5) | 24-31 | Servono ai tester della fase 4 per dare feedback con i dati davanti |
+| 6. Vendita | 9 pacchetti e limiti (8-10) · 10 due sezioni, un account (24-32) · 11 webhook e upgrade (10-12) · 12 prezzi e fondatori (5-6) · 14 annuale (4-5) · 13 sola lettura (6-8) · accesso con Google (2-3, da CLAUDE.md) | 59-76 | Si vende quando la beta ha confermato il motore |
+| **Totale codice** | | **135-175** | |
 
-Prima di vendere resta vero quanto scritto il 12/10: tre atleti per quattro settimane sul Campo, perché è congelato e nessuno oltre Ste l'ha usato un mese intero.
+Ritmo: a 15 ore a settimana sono 9-12 settimane; la fase 6 deve partire entro metà novembre per vendere a dicembre, quindi la beta della fase 4 va aperta entro fine ottobre.
+
+Fuori dal codice, per Ste, nell'ordine in cui servono: correzioni dei batch 4-6; i video (80 esercizi, prima le scale gambe e i test); le cose già in CLAUDE.md (Stripe: URL dei termini e `STRIPE_TERMS_CONSENT=1`, ricevute, controllo dei Price; i 24 "Perché funziona"; gli audio W1-G2 e G3; Durata Minuti W1-G1); i prezzi di Mentale, Fisico e Completo.
+
+Decisioni ancora aperte prima di partire: la soglia di M5 (proposta sotto M12: voto ≤ 4 su tutte le serie); M9 sopra 4/10 pausa totale sì o no; resistenza "senza allenamenti squadra" = fase off season e nessun giorno squadra (calendario e abitudine).
+
+Prima di vendere resta vero quanto scritto il 12/10: tre atleti per quattro settimane sul Campo.
