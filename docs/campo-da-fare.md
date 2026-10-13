@@ -88,7 +88,7 @@ Lettura: il costo lo fanno i piani, non la chat. Un pacchetto base da 3 $ di cos
 | Kettlebell | 3 (oggi il codice ne ammette UNO: regola 27 del 25/9 e l'errore in `expandPiano` vanno aggiornati, e con due o più kb la parte bassa con pesi resta "più leggera") | |
 | Tecnica, fascia | nessun tetto | |
 
-Quando un obiettivo ha raggiunto il tetto, le giornate rimaste vanno ai complementi nell'ordine. Entra nel prompt (regola nuova con i tetti e i complementi), nel validatore (errore oltre il tetto) e nel piano base (ciclo sui complementi invece dello stesso obiettivo). Ore: 6-8, incl. test sul piano base e sul validatore (un caso per riga della tabella: velocità sola con 4 giornate, parte alta sola, resistenza in season contro off season senza squadra, tre kettlebell).
+Quando un obiettivo ha raggiunto il tetto, le giornate rimaste vanno ai complementi nell'ordine. "Senza allenamenti con la squadra" (Ste, 13/10) = niente allenamenti E niente partite: fase off season, nessun giorno squadra e nessuna partita nel calendario né nell'abitudine del setup. Nella maschera "Rifai da capo" una riga di conferma prefillata dal setup, "Questa settimana ti alleni con la squadra? Sei in season o fuori?", così il tetto alto della resistenza vale solo con la risposta data quel giorno (ore comprese nelle 6-8). Entra nel prompt (regola nuova con i tetti e i complementi), nel validatore (errore oltre il tetto) e nel piano base (ciclo sui complementi invece dello stesso obiettivo). Ore: 6-8, incl. test sul piano base e sul validatore (un caso per riga della tabella: velocità sola con 4 giornate, parte alta sola, resistenza in season contro off season senza squadra, tre kettlebell).
 
 ## Dopo
 
@@ -114,6 +114,6 @@ Ritmo: a 15 ore a settimana sono 9-12 settimane; la fase 6 deve partire entro me
 
 Fuori dal codice, per Ste, nell'ordine in cui servono: correzioni dei batch 4-6; i video (80 esercizi, prima le scale gambe e i test); le cose già in CLAUDE.md (Stripe: URL dei termini e `STRIPE_TERMS_CONSENT=1`, ricevute, controllo dei Price; i 24 "Perché funziona"; gli audio W1-G2 e G3; Durata Minuti W1-G1); i prezzi di Mentale, Fisico e Completo.
 
-Decisioni ancora aperte prima di partire: la soglia di M5 (proposta sotto M12: voto ≤ 4 su tutte le serie); M9 sopra 4/10 pausa totale sì o no; resistenza "senza allenamenti squadra" = fase off season e nessun giorno squadra (calendario e abitudine).
+Decisioni prese il 13/10: soglia di M5 confermata (voto ≤ 4 su tutte le serie e niente sotto il previsto); resistenza 3-4 solo senza allenamenti né partite con la squadra, con la conferma nella maschera. Ancora aperta: M9, pausa totale sopra 4/10 sì (opzione A, con la zona ridotta per due settimane al rientro) o no (opzione B, solo riduzione per zona).
 
 Prima di vendere resta vero quanto scritto il 12/10: tre atleti per quattro settimane sul Campo.
