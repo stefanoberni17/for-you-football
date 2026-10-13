@@ -624,16 +624,16 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesanti, o pausa di 2 secondi in alto.
 **Sicurezza:** Fastidio lombare: riduci il carico.
 
-### Inverted Row (Under a Table)
+### Inverted Row (Table or Low Bar)
 `fpa-rematore-sotto-al-tavolo` · bilaterale · reps · corpo libero · senza video
 
 **Esecuzione**
-1. Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa.
-2. Tira il petto verso il tavolo tenendo il corpo rigido, gomiti vicino al busto.
+1. Sdraiato sotto un tavolo robusto o sotto una sbarra bassa (va bene anche una sbarra da trazioni con i piedi su un rialzo): afferra il bordo o la sbarra con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa.
+2. Tira il petto verso il tavolo o la sbarra tenendo il corpo rigido, gomiti vicino al busto.
 3. Scendi in controllo fino alle braccia distese.
 4. Fai le ripetizioni indicate.
 
 **Errori comuni:** Bacino che cede o che sale: il corpo resta in linea. Collo che spinge in avanti. Scendere di colpo.
-**Più facile:** Piedi più vicini, o ginocchia piegate.
-**Più difficile:** Piedi su un rialzo, o pausa di 2 secondi in alto.
-**Sicurezza:** Tavolo stabile e pesante: prova la tenuta prima di iniziare.
+**Più facile:** Piedi più vicini, o ginocchia piegate. Con la sbarra: sbarra più alta.
+**Più difficile:** Piedi su un rialzo, o pausa di 2 secondi in alto. Con la sbarra: sbarra più bassa.
+**Sicurezza:** Tavolo stabile e pesante, o sbarra ben fissata: prova la tenuta prima di iniziare.

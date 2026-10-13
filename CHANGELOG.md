@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-13 — Inverted Row: tavolo o sbarra bassa
+- `fpa-rematore-sotto-al-tavolo` si chiama "Inverted Row (Table or Low Bar)" (Ste, 13/10: "può essere fatto anche con sbarra"): descrizione e scheda dicono tavolo robusto o sbarra bassa (anche una sbarra da trazioni con i piedi su un rialzo), con le varianti più facile/più difficile per entrambi. Attrezzatura resta "corpo libero" (chi ha la sbarra lo fa lo stesso), id invariato, blocchi invariati.
+
 ## 2026-10-12 — Campo: lista delle cose da fare prima della vendita (`docs/campo-da-fare.md`)
 - Dopo l'analisi del posizionamento "Il tuo staff in un'app" (verificata nel codice punto per punto) e il confronto con PerformanceAI Athlete, Ste ha fissato 12 regole di metodo (M1-M12: obiettivi tutti selezionabili, esercizi anche senza video, kettlebell a passi di 4 kg, aumenti in settimana solo se molto leggero, rapporto 1,5 come limite, forza e velocità insieme permesse, adattamento del piano al cambio calendario su richiesta, dolore senza diagnosi con riduzione per zona, livelli globale e per area, scarico e ri-test dai dati, Reset prima della seduta per chi ha il Mentale) e 14 punti con le stime in ore (coerenza della dose, contesto del preparatore, limitazioni e fattibilità nel setup, storico completo, pacchetti con limiti parametrici e costo AI, app in due sezioni, webhook e prezzi, storico in sola lettura, annuale). Solo documentazione: nessun punto è iniziato.
 

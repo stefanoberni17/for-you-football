@@ -312,9 +312,9 @@ Come l'ho scritto io: Due kettlebell a terra tra i piedi, gambe piegate e schien
 
 Correzione: 
 
-## 45. Inverted Row (Under a Table)
+## 45. Inverted Row (Table or Low Bar)
 bilaterale · reps · senza video
 
-Come l'ho scritto io: Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa. Tira il petto verso il tavolo tenendo il corpo rigido, gomiti vicino al busto. Scendi in controllo fino alle braccia distese. Fai le ripetizioni indicate.
+Come l'ho scritto io: Sdraiato sotto un tavolo robusto o sotto una sbarra bassa (va bene anche una sbarra da trazioni con i piedi su un rialzo): afferra il bordo o la sbarra con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa. Tira il petto verso il tavolo o la sbarra tenendo il corpo rigido, gomiti vicino al busto. Scendi in controllo fino alle braccia distese. Fai le ripetizioni indicate.
 
 Correzione: 

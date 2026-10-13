@@ -10755,7 +10755,7 @@
   }
  },
  {
-  "nome": "Inverted Row (Under a Table)",
+  "nome": "Inverted Row (Table or Low Bar)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -10770,17 +10770,17 @@
   ],
   "azione": "aggiunto 22/9/2026",
   "nome_everfit": "Rematore sotto al tavolo",
-  "note": "La tirata orizzontale di chi non ha sbarra né kettlebell.",
+  "note": "La tirata orizzontale di chi non ha kettlebell: sotto un tavolo robusto o sotto una sbarra bassa (anche la sbarra di un rack o una sbarra da trazioni con un rialzo per i piedi).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "tirata orizzontale",
-  "descrizione": "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso il tavolo e scendi controllato. Piedi più vicini = più facile.",
+  "descrizione": "Sdraiato sotto un tavolo robusto o sotto una sbarra bassa, afferra il bordo o la sbarra con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso l'appoggio e scendi controllato. Piedi più vicini = più facile.",
   "id": "fpa-rematore-sotto-al-tavolo",
   "scheda": {
    "esecuzione": [
-    "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa.",
-    "Tira il petto verso il tavolo tenendo il corpo rigido, gomiti vicino al busto.",
+    "Sdraiato sotto un tavolo robusto o sotto una sbarra bassa (va bene anche una sbarra da trazioni con i piedi su un rialzo): afferra il bordo o la sbarra con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa.",
+    "Tira il petto verso il tavolo o la sbarra tenendo il corpo rigido, gomiti vicino al busto.",
     "Scendi in controllo fino alle braccia distese.",
     "Fai le ripetizioni indicate."
    ],
@@ -10789,9 +10789,9 @@
     "Collo che spinge in avanti.",
     "Scendere di colpo."
    ],
-   "piu_facile": "Piedi più vicini, o ginocchia piegate.",
-   "piu_difficile": "Piedi su un rialzo, o pausa di 2 secondi in alto.",
-   "sicurezza": "Tavolo stabile e pesante: prova la tenuta prima di iniziare."
+   "piu_facile": "Piedi più vicini, o ginocchia piegate. Con la sbarra: sbarra più alta.",
+   "piu_difficile": "Piedi su un rialzo, o pausa di 2 secondi in alto. Con la sbarra: sbarra più bassa.",
+   "sicurezza": "Tavolo stabile e pesante, o sbarra ben fissata: prova la tenuta prima di iniziare."
   }
  },
  {
