@@ -4355,7 +4355,7 @@
   }
  },
  {
-  "nome": "Passaggi al muro - VISIONE",
+  "nome": "Wall Passes with Vision",
   "qualita": "tecnica-visione",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4376,7 +4376,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "tecnica e visione"
+  "sottogruppo": "tecnica e visione",
+  "id": "tvis-passaggi-al-muro-visione",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, con un segnale che cambia (un compagno che mostra numeri o colori, oppure cinesini intorno a te).",
+    "Passaggio al muro; mentre la palla torna alzi la testa e leggi il segnale, poi controlli e rigiochi come dice il segnale (al muro, su un cinesino, con un piede o con l'altro).",
+    "La testa sale a ogni passaggio, non ogni tanto.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Testa bassa: l'esercizio è alzare lo sguardo.",
+    "Guardare il segnale e sbagliare il controllo: prima la palla, poi la decisione.",
+    "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+   ],
+   "piu_facile": "Segnale fisso.",
+   "piu_difficile": "Segnale che cambia a ogni passaggio.",
+   "da_confermare": "Dalla miniatura: cinesini e palla al muro. Il segnale lo dà un compagno o sono i cinesini?"
+  }
  },
  {
   "nome": "Defender Stance and Speed Drill",
@@ -6460,7 +6477,7 @@
   }
  },
  {
-  "nome": "Palleggi 1 piede alternati interno/esterno - Tecnica",
+  "nome": "One-Foot Juggling: Inside/Outside Alternating",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -6481,10 +6498,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "tpal-palleggi-1-piede-alternati-interno-esterno-tecni",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia con un solo piede.",
+    "Alterna un tocco di interno e uno di esterno con lo stesso piede: la caviglia ruota, il ginocchio resta morbido.",
+    "Palla bassa, mai sopra il ginocchio: il controllo conta più dell'altezza.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Palla alta: diventa un palleggio normale, non un esercizio di caviglia.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra un tocco e l'altro.",
+   "piu_difficile": "Occhi su un punto davanti a te, non sulla palla."
+  }
  },
  {
-  "nome": "Palleggi 1 piede interno/collo/esterno - Tecnica",
+  "nome": "One-Foot Juggling: Inside, Laces, Outside",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -6505,10 +6538,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "tpal-palleggi-1-piede-interno-collo-esterno-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia con un solo piede.",
+    "Sequenza fissa: interno, collo, esterno, poi di nuovo interno. Tre superfici dello stesso piede, una dopo l'altra.",
+    "Palla bassa, caviglia che ruota tra un tocco e l'altro, ginocchio morbido.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Saltare una superficie quando è scomoda: la sequenza è l'esercizio.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Due giri di sequenza senza guardare la palla."
+  }
  },
  {
-  "nome": "Palleggi al muro 1 tocco libero",
+  "nome": "Wall Volleys: One Touch, Any Surface",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6528,10 +6577,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Rigioca al muro di prima con la superficie che preferisci (interno, collo, esterno). Un tocco solo, palla viva, entrambi i piedi."
+  "descrizione": "Rigioca al muro di prima con la superficie che preferisci (interno, collo, esterno). Un tocco solo, palla viva, entrambi i piedi.",
+  "id": "tpal-palleggi-al-muro-1-tocco-libero",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla in mano o al piede.",
+    "Gioca la palla al muro a mezz'aria e rigiocala di prima al ritorno con la superficie che vuoi: interno, collo, esterno.",
+    "Un tocco solo, palla sempre viva, entrambi i piedi.",
+    "Ritmo continuo per il tempo indicato."
+   ],
+   "errori": [
+    "Fermare la palla prima di rigiocare: un tocco.",
+    "Usare sempre lo stesso piede.",
+    "Tiri forti che tornano imprendibili: la forza serve a tornare al piede, non di più."
+   ],
+   "piu_facile": "Più vicino al muro, palla più lenta.",
+   "piu_difficile": "Più lontano, o solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro 1 tocco solo interno",
+  "nome": "Wall Volleys: One Touch, Inside Only",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6551,10 +6617,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Rigioca al muro di prima d'interno, palla che resta bassa, senza controllo. Ritmo continuo per il tempo indicato; alterna i piedi."
+  "descrizione": "Rigioca al muro di prima d'interno, palla che resta bassa, senza controllo. Ritmo continuo per il tempo indicato; alterna i piedi.",
+  "id": "tpal-palleggi-al-muro-1-tocco-solo-interno",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Rigioca la palla al muro di prima d'interno, palla che resta bassa, senza controllo.",
+    "Piede che ruota verso l'esterno al contatto, caviglia bloccata, piede d'appoggio accanto alla palla.",
+    "Ritmo continuo per il tempo indicato; alterna i piedi."
+   ],
+   "errori": [
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.",
+    "Caviglia molle: la palla torna storta.",
+    "Fermare la palla."
+   ],
+   "piu_facile": "Più vicino, palla più lenta.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro 2 tocchi",
+  "nome": "Wall Volleys: Two Touches",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6574,10 +6657,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Contro il muro a 2-3 metri: al ritorno un tocco di controllo e uno di rimando, tenendo la palla in aria. Libera scelta di superficie; alterna i piedi."
+  "descrizione": "Contro il muro a 2-3 metri: al ritorno un tocco di controllo e uno di rimando, tenendo la palla in aria. Libera scelta di superficie; alterna i piedi.",
+  "id": "tpal-palleggi-al-muro-2-tocchi",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Gioca la palla al muro a mezz'aria; al ritorno un tocco di controllo e uno di rimando, tenendo la palla in aria.",
+    "Libera scelta di superficie, alterna i piedi.",
+    "Ritmo continuo per il tempo indicato."
+   ],
+   "errori": [
+    "Controllo che manda la palla a terra: resta in aria.",
+    "Secondo tocco troppo forte.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra ammesso.",
+   "piu_difficile": "Controllo e rimando con piedi diversi.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
+  "nome": "Wall Volleys: Outside Control, Laces Pass",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -6599,10 +6699,27 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": true,
-  "descrizione": "Contro il muro a 2-3 metri: controlla di esterno con il primo tocco e rimanda di collo con il secondo, palla sempre in aria. Cambia piede a metà tempo."
+  "descrizione": "Contro il muro a 2-3 metri: controlla di esterno con il primo tocco e rimanda di collo con il secondo, palla sempre in aria. Cambia piede a metà tempo.",
+  "id": "tpal-palleggi-al-muro-2-tocchi-controllo-esterno-pass",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Al ritorno dal muro controlla di esterno con il primo tocco e rimanda di collo con il secondo, palla sempre in aria.",
+    "Il controllo di esterno porta la palla leggermente di lato: il collo la rimanda dritta.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Controllo di esterno che manda la palla troppo lontana.",
+    "Rimando di punta invece che di collo.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra controllo e rimando.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+  "nome": "Wall Volleys: Inside Control, Laces Pass",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6623,10 +6740,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Contro il muro a 2-3 metri: al ritorno controlla la palla d'interno con un tocco, poi rimandala al muro di collo con il secondo tocco. Ritmo costante, palla sempre in aria. Cambia piede a metà tempo."
+  "descrizione": "Contro il muro a 2-3 metri: al ritorno controlla la palla d'interno con un tocco, poi rimandala al muro di collo con il secondo tocco. Ritmo costante, palla sempre in aria. Cambia piede a metà tempo.",
+  "id": "tpal-palleggi-al-muro-2-tocchi-controllo-interno-pass",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Al ritorno dal muro controlla la palla d'interno con un tocco, poi rimandala al muro di collo con il secondo tocco.",
+    "Ritmo costante, palla sempre in aria.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Controllo che manda la palla a terra.",
+    "Rimando di punta.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra ammesso.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro liberi freestyle",
+  "nome": "Wall Volleys: Freestyle",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6647,10 +6781,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Davanti a un muro a 1-2 metri: calcia la palla contro il muro e controllala al ritorno come preferisci (di prima, con stop, di collo o d'interno). Nessuno schema: varia tocco e piede, tieni la palla viva."
+  "descrizione": "Davanti a un muro a 1-2 metri: calcia la palla contro il muro e controllala al ritorno come preferisci (di prima, con stop, di collo o d'interno). Nessuno schema: varia tocco e piede, tieni la palla viva.",
+  "id": "tpal-palleggi-al-muro-liberi-freestyle",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 1-2 metri.",
+    "Calcia la palla contro il muro e controllala al ritorno come preferisci: di prima, con uno stop, di collo o d'interno.",
+    "Nessuno schema: varia tocco e piede, tieni la palla viva.",
+    "Ritmo continuo per il tempo indicato."
+   ],
+   "errori": [
+    "Fare sempre lo stesso tocco: il senso è variare.",
+    "Usare sempre il piede forte.",
+    "Palla sempre a terra: alterna basso e mezz'aria."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo mezz'aria, solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi coscia e collo",
+  "nome": "Thigh and Laces Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6670,10 +6821,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia alternando un tocco di coscia e uno di collo, con lo stesso lato e poi con l'altro. Coscia parallela a terra al contatto, palla bassa."
+  "descrizione": "Palleggia alternando un tocco di coscia e uno di collo, con lo stesso lato e poi con l'altro. Coscia parallela a terra al contatto, palla bassa.",
+  "id": "tpal-palleggi-coscia-e-collo",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere sulla coscia.",
+    "Alterna un tocco di coscia e uno di collo con lo stesso lato: coscia, collo, coscia, collo.",
+    "Coscia parallela a terra al contatto, palla bassa, ginocchio morbido sul tocco di collo.",
+    "Metà tempo a destra, metà a sinistra."
+   ],
+   "errori": [
+    "Coscia troppo alta: la palla schizza avanti.",
+    "Tocchi di punta: la palla va dove vuole.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Due tocchi di coscia e due di collo alternati."
+  }
  },
  {
-  "nome": "Palleggi Freestyle 3 conetti",
+  "nome": "Freestyle Juggling Between Three Cones",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6689,10 +6856,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-palleggi-freestyle-3-conetti",
+  "scheda": {
+   "esecuzione": [
+    "Tre cinesini in fila a un metro l'uno dall'altro. Parti dietro il primo.",
+    "Palleggia liberamente (piedi, cosce, testa) spostandoti in avanti e tra i cinesini, senza far cadere la palla.",
+    "Arrivato all'ultimo cinesino, torna indietro palleggiando. Il percorso vale solo se la palla non tocca terra.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Palleggiare fermo: ci si muove tra i cinesini.",
+    "Palla troppo alta: perdi il controllo dello spostamento.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Cinesini più vicini, un rimbalzo ammesso.",
+   "piu_difficile": "Solo piedi, o cinesini più lontani.",
+   "da_confermare": "Dalla miniatura: tre cinesini e palleggio con la testa. Il percorso tra i cinesini è avanti e indietro o a slalom?"
+  }
  },
  {
-  "nome": "Palleggi liberi + calcio alto - Tecnica",
+  "nome": "Free Juggling with High Kick",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6709,10 +6893,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggi liberi; ogni 5-6 tocchi calcia la palla alta (3-4 metri) e riprendi il palleggio al ritorno con un controllo morbido. Allena il controllo della palla che scende."
+  "descrizione": "Palleggi liberi; ogni 5-6 tocchi calcia la palla alta (3-4 metri) e riprendi il palleggio al ritorno con un controllo morbido. Allena il controllo della palla che scende.",
+  "id": "tpal-palleggi-liberi-calcio-alto-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palleggi liberi, con la superficie che preferisci.",
+    "Ogni 5-6 tocchi calcia la palla alta, 3-4 metri sopra la testa.",
+    "Riprendi il palleggio al ritorno con un controllo morbido: il piede accompagna la palla verso il basso, non la colpisce.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Controllo rigido sulla palla che scende: la palla rimbalza via.",
+    "Calcio alto storto che ti fa correre.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Calcio meno alto.",
+   "piu_difficile": "Riprendere la palla con la coscia o il petto, poi i piedi."
+  }
  },
  {
-  "nome": "Palleggi solo Collo",
+  "nome": "Laces-Only Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6732,10 +6932,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia solo di collo pieno, alternando i piedi liberamente. Palla bassa e ritmica, punta del piede leggermente verso l'alto. Se cade, riprendi da terra senza fermare il tempo."
+  "descrizione": "Palleggia solo di collo pieno, alternando i piedi liberamente. Palla bassa e ritmica, punta del piede leggermente verso l'alto. Se cade, riprendi da terra senza fermare il tempo.",
+  "id": "tpal-palleggi-solo-collo",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia solo di collo pieno.",
+    "Alterna i piedi liberamente. Palla bassa e ritmica, punta del piede leggermente verso l'alto.",
+    "Ginocchio morbido, busto sopra la palla.",
+    "Fai il tempo indicato. Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Palla troppo alta.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Solo piede debole."
+  }
  },
  {
-  "nome": "Palleggi solo collo 3 tocchi alternati - TECNICA",
+  "nome": "Laces-Only Juggling: 3 Touches Each Foot",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6755,10 +6971,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia solo di collo pieno alternando i piedi ogni 3 tocchi (3 destro, 3 sinistro). Palla bassa, caviglia ferma, ginocchio leggermente piegato. Se cade, riprendi subito."
+  "descrizione": "Palleggia solo di collo pieno alternando i piedi ogni 3 tocchi (3 destro, 3 sinistro). Palla bassa, caviglia ferma, ginocchio leggermente piegato. Se cade, riprendi subito.",
+  "id": "tpal-palleggi-solo-collo-3-tocchi-alternati-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia solo di collo pieno.",
+    "Tre tocchi con il destro, tre con il sinistro, e avanti così.",
+    "Palla bassa, caviglia ferma, ginocchio leggermente piegato.",
+    "Fai il tempo indicato. Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Perdere il conto e restare sul piede forte: il conto è l'esercizio.",
+    "Tocchi di punta: la palla va dove vuole.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Due tocchi per piede.",
+   "piu_difficile": "Cinque tocchi per piede."
+  }
  },
  {
-  "nome": "Palleggi solo interno - Tecnica",
+  "nome": "Inside-Only Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6779,10 +7011,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia solo con l'interno del piede, alternando i piedi. Il piede ruota verso l'esterno al contatto; tieni la palla bassa e vicina."
+  "descrizione": "Palleggia solo con l'interno del piede, alternando i piedi. Il piede ruota verso l'esterno al contatto; tieni la palla bassa e vicina.",
+  "id": "tpal-palleggi-solo-interno-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia solo con l'interno del piede.",
+    "Il piede ruota verso l'esterno al contatto, come per un passaggio corto; alterna i piedi.",
+    "Palla bassa e vicina al corpo.",
+    "Fai il tempo indicato. Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Palla che si allontana: l'interno la tiene sotto il corpo.",
+    "Anca rigida: la rotazione viene dall'anca.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Solo piede debole."
+  }
  },
  {
-  "nome": "Palleggi solo interno 3 tocchi alternati - TECNICA",
+  "nome": "Inside-Only Juggling: 3 Touches Each Foot",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6801,10 +7049,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-palleggi-solo-interno-3-tocchi-alternati-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia solo con l'interno del piede.",
+    "Tre tocchi con il destro, tre con il sinistro, e avanti così.",
+    "Palla bassa e vicina, piede che ruota verso l'esterno al contatto.",
+    "Fai il tempo indicato. Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Perdere il conto e restare sul piede forte.",
+    "Palla che si allontana.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Due tocchi per piede.",
+   "piu_difficile": "Cinque tocchi per piede."
+  }
  },
  {
-  "nome": "Palleggi solo un piede - Tecnica",
+  "nome": "One-Foot Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6825,10 +7089,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia con un solo piede (collo pieno) per il tempo indicato, poi cambia piede. L'altro piede resta a terra, ginocchio morbido, busto sopra la palla."
+  "descrizione": "Palleggia con un solo piede (collo pieno) per il tempo indicato, poi cambia piede. L'altro piede resta a terra, ginocchio morbido, busto sopra la palla.",
+  "id": "tpal-palleggi-solo-un-piede-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia con un solo piede, di collo pieno.",
+    "L'altro piede resta a terra, ginocchio morbido, busto sopra la palla.",
+    "Palla bassa e ritmica: lo stesso piede torna a terra tra un tocco e l'altro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Saltellare sul piede d'appoggio: resta piantato.",
+    "Tocchi di punta: la palla va dove vuole.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Palla più bassa, ritmo più veloce."
+  }
  },
  {
-  "nome": "Palleggi sotto al ginocchio - Tecnica",
+  "nome": "Below-the-Knee Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6848,10 +7128,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-palleggi-sotto-al-ginocchio-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla in mano. Lasciala cadere e palleggia tenendo la palla sempre sotto l'altezza del ginocchio.",
+    "Tocchi rapidi e corti di collo, caviglia ferma, ginocchio che si piega poco.",
+    "Alterna i piedi; il ritmo è alto perché la palla sale poco.",
+    "Fai il tempo indicato, poi la versione per lato se indicata."
+   ],
+   "errori": [
+    "Palla che sale sopra il ginocchio: ricomincia dal basso.",
+    "Tocchi lenti: sotto il ginocchio si va veloci.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Un rimbalzo a terra ogni due tocchi.",
+   "piu_difficile": "Solo un piede."
+  }
  },
  {
-  "nome": "Tecnica a 2 - Palleggio con 2 palle",
+  "nome": "Pairs Technique: Juggling with Two Balls",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6872,10 +7168,27 @@
   "in_coppia": true,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-tecnica-a-2-palleggio-con-2-palle",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 3-5 metri, una palla ciascuno.",
+    "Palleggiate insieme e scambiatevi le palle a mezz'aria nello stesso momento: ognuno rimanda la sua e riceve l'altra.",
+    "Obiettivi del video: andare a ritmo con il compagno, regolare la velocità e l'altezza del passaggio.",
+    "Fai il tempo indicato; se una palla cade, riprendetela e ripartite insieme."
+   ],
+   "errori": [
+    "Passaggi a altezze diverse: le due palle devono viaggiare uguali.",
+    "Uno dei due che anticipa: si va a ritmo.",
+    "Passaggi troppo forti."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i passaggi.",
+   "piu_difficile": "Distanza maggiore, un tocco solo.",
+   "da_confermare": "Solo in coppia (già segnato). Le due palle si scambiano insieme, come ho capito dalla miniatura?"
+  }
  },
  {
-  "nome": "Passaggi al muro ravvicinati interno esterno - tecnica di base",
+  "nome": "Close Wall Passes: Inside and Outside",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 1,
@@ -6891,10 +7204,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-ravvicinati-interno-esterno-tec",
+  "scheda": {
+   "esecuzione": [
+    "A un metro dal muro, palla a terra.",
+    "Passaggi rapidi e corti al muro alternando interno ed esterno dello stesso piede: interno, esterno, interno.",
+    "Tocchi secchi, palla rasoterra, busto sopra la palla, piede d'appoggio stabile.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla che si alza.",
+    "Tocchi lenti: a un metro si va veloci.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Un po' più lontano, ritmo più basso.",
+   "piu_difficile": "Più vicino, ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro ravvicinati solo collo - tecnica di base",
+  "nome": "Close Wall Passes: Laces Only",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6910,10 +7240,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-ravvicinati-solo-collo-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "A un metro dal muro, palla a terra.",
+    "Passaggi rapidi e corti al muro solo di collo pieno con lo stesso piede: il piede resta sotto il corpo, caviglia bloccata.",
+    "Palla rasoterra, ritmo alto, busto sopra la palla.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla che si alza: colpisci al centro, caviglia ferma.",
+    "Tocchi di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Un po' più lontano.",
+   "piu_difficile": "Più vicino, ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Box dribbling + passaggio",
+  "nome": "Box Dribbling and Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6935,10 +7282,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Quattro coni a quadrato (3-4 m). Conduci la palla attorno al box con tocchi corti, a ogni lato cambia superficie (interno, esterno, suola). All'uscita dal box passaggio preciso al muro o al compagno, riprendi e riparti."
+  "descrizione": "Quattro coni a quadrato (3-4 m). Conduci la palla attorno al box con tocchi corti, a ogni lato cambia superficie (interno, esterno, suola). All'uscita dal box passaggio preciso al muro o al compagno, riprendi e riparti.",
+  "id": "tpas-box-dribbling-passaggio",
+  "scheda": {
+   "esecuzione": [
+    "Quattro cinesini a quadrato di 3-4 metri, muro (o compagno) a 5-8 metri dall'uscita.",
+    "Conduci la palla intorno al box con tocchi corti; a ogni lato cambia superficie: interno, esterno, suola.",
+    "All'uscita dal box passaggio preciso al muro o al compagno, riprendi la palla e riparti.",
+    "Fai il tempo indicato; metà giri in un verso, metà nell'altro."
+   ],
+   "errori": [
+    "Palla lontana negli angoli: tocchi corti.",
+    "Passaggio svogliato dopo il giro: è il gesto che conta.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Box più grande, passaggio più corto.",
+   "piu_difficile": "Box più piccolo, passaggio di prima al ritorno.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi a 10mt alternati, primo tocco suola - Tecnica",
+  "nome": "10 m Passes with Sole First Touch",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6959,10 +7323,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggi rasoterra a 10 metri (muro o compagno): al ritorno primo tocco con la suola per fermare e orientare, poi passaggio. Alterna il piede a ogni ripetizione."
+  "descrizione": "Passaggi rasoterra a 10 metri (muro o compagno): al ritorno primo tocco con la suola per fermare e orientare, poi passaggio. Alterna il piede a ogni ripetizione.",
+  "id": "tpas-passaggi-a-10mt-alternati-primo-tocco-suola-tecn",
+  "scheda": {
+   "esecuzione": [
+    "Muro o compagno a 10 metri, palla a terra.",
+    "Passaggio rasoterra deciso; al ritorno primo tocco con la suola per fermare e orientare la palla, poi passaggio.",
+    "Alterna il piede a ogni ripetizione: suola e passaggio con il destro, poi con il sinistro.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Suola che schiaccia la palla ferma senza orientarla: la suola la sposta già verso il passaggio.",
+    "Passaggio molle: a 10 metri la palla deve arrivare tesa.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza 6-7 metri.",
+   "piu_difficile": "Un tocco solo al ritorno.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo alzando palla",
+  "nome": "Wall Passes: Lift Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6978,10 +7359,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-alzando-palla",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla a terra.",
+    "Passaggio rasoterra al muro; al ritorno controlla alzando la palla con un tocco sotto (punta o collo che entra sotto la palla) e rigiocala a mezz'aria o dopo un rimbalzo.",
+    "Il controllo è morbido: la palla sale a altezza ginocchio, non di più.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla alzata troppo: perdi il ritmo.",
+    "Rigiocare di punta.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo in più ammesso.",
+   "piu_difficile": "Rigiocare di prima al volo.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.",
+   "da_confermare": "Dalla miniatura: palla alzata al ritorno dal muro. Il rimando è al volo o dopo un rimbalzo?"
+  }
  },
  {
-  "nome": "Passaggi al muro - Controllo interno, turn 180 - TECNICA",
+  "nome": "Wall Passes: Inside Control and 180° Turn",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7001,10 +7400,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-interno-turn-180-tecn",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno che gira la palla di 180°, come per voltarsi verso la porta.",
+    "Con la palla girata fai due tocchi, torni di fronte al muro e ripeti.",
+    "Alterna il piede del controllo."
+   ],
+   "errori": [
+    "Controllo che ferma la palla invece di girarla.",
+    "Girare con la palla lontana: resta sotto il corpo.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Controllo e giro in due tocchi.",
+   "piu_difficile": "Un tocco solo per girare, solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo orientato con finta esterno",
+  "nome": "Wall Passes: Oriented Control with Outside Feint",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7020,10 +7436,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-orientato-con-finta-e",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; prima che la palla arrivi fai una finta di corpo verso l'esterno, poi controlla orientando la palla dalla parte opposta.",
+    "Due tocchi e rigioca al muro.",
+    "Fai il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Finta solo con il piede: la finta è con le spalle.",
+    "Controllo che ferma la palla.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Senza finta, solo controllo orientato.",
+   "piu_difficile": "Finta doppia.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo orientato esterno",
+  "nome": "Wall Passes: Outside Oriented Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7039,10 +7472,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-orientato-esterno",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo di esterno che porta la palla di lato, aperta verso lo spazio.",
+    "Un tocco di conduzione e rigioca al muro.",
+    "Alterna i piedi."
+   ],
+   "errori": [
+    "Controllo che ferma la palla sotto il corpo: deve andare nello spazio.",
+    "Esterno rigido: la palla rimbalza via.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo orientato interno",
+  "nome": "Wall Passes: Inside Oriented Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7058,10 +7508,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-orientato-interno",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno che porta la palla di lato, aperta verso lo spazio.",
+    "Un tocco di conduzione e rigioca al muro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Controllo che ferma la palla.",
+    "Palla lontana dopo il controllo: un tocco e la ritrovi.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo sombrero",
+  "nome": "Wall Passes: Sombrero Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7077,10 +7544,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-sombrero",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla a terra.",
+    "Passaggio al muro; al ritorno alza la palla con un tocco sotto e falla passare sopra la testa (sombrero), girandoti per riprenderla dietro.",
+    "Controlla la palla che scende e rigioca al muro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla alzata troppo o troppo poco: deve passare appena sopra la testa.",
+    "Girarsi tardi.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Alzare la palla all'altezza del petto senza farla passare sopra.",
+   "piu_difficile": "Rigiocare di prima dopo il sombrero.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - Controllo suola, sposto palla",
+  "nome": "Wall Passes: Sole Control and Shift",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7101,10 +7585,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare. Alterna i lati e i piedi."
+  "descrizione": "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare. Alterna i lati e i piedi.",
+  "id": "tpas-passaggi-al-muro-controllo-suola-sposto-palla",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla a terra.",
+    "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare.",
+    "Alterna i lati e i piedi.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Suola che schiaccia la palla senza spostarla.",
+    "Spostamento lungo: un piede, non due.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Spostamento e passaggio in un tocco.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 1 tocco collo - Tecnica",
+  "nome": "Wall Passes: One Touch, Laces",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7125,10 +7626,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio al muro e rigiocata di prima di collo, senza controllo. Palla bassa e tesa, caviglia bloccata. Cambia piede a metà tempo."
+  "descrizione": "Passaggio al muro e rigiocata di prima di collo, senza controllo. Palla bassa e tesa, caviglia bloccata. Cambia piede a metà tempo.",
+  "id": "tpas-passaggi-al-muro-1-tocco-collo-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro e rigiocata di prima di collo, senza controllo.",
+    "Palla bassa e tesa, caviglia bloccata, piede d'appoggio accanto alla palla.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Palla che si alza.",
+    "Fermare la palla prima di rigiocare.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino, palla più lenta.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 1 tocco interno - Tecnica",
+  "nome": "Wall Passes: One Touch, Inside",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7149,10 +7667,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio rasoterra al muro e rigiocata di prima d'interno, senza controllo. Distanza 2-4 metri, piede d'appoggio accanto alla palla. Cambia piede a metà tempo."
+  "descrizione": "Passaggio rasoterra al muro e rigiocata di prima d'interno, senza controllo. Distanza 2-4 metri, piede d'appoggio accanto alla palla. Cambia piede a metà tempo.",
+  "id": "tpas-passaggi-al-muro-1-tocco-interno-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-4 metri, palla a terra.",
+    "Passaggio rasoterra al muro e rigiocata di prima d'interno, senza controllo.",
+    "Piede d'appoggio accanto alla palla, caviglia bloccata, piede che ruota verso l'esterno.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Fermare la palla.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.",
+    "Caviglia molle."
+   ],
+   "piu_facile": "Più vicino, palla più lenta.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - Controllo di interno a chiudere",
+  "nome": "Wall Passes: Two Touches, Inside Control Closing",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7173,10 +7708,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-2-tocchi-controllo-di-interno-a",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno che chiude la palla verso l'interno del corpo, poi passaggio con l'altro piede (il video dice: interno con due piedi).",
+    "Controllo con il destro, passaggio con il sinistro, poi il contrario.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Controllo che manda la palla troppo in là.",
+    "Usare lo stesso piede per controllo e passaggio.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - controllo di interno ad aprire",
+  "nome": "Wall Passes: Two Touches, Inside Control Opening",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7197,10 +7749,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-2-tocchi-controllo-di-interno-a-2",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno che apre la palla verso l'esterno, poi passaggio con lo stesso piede (il video dice: interno con un piede solo).",
+    "Metà tempo con il destro, metà con il sinistro.",
+    "Ritmo costante."
+   ],
+   "errori": [
+    "Controllo che ferma la palla sotto il corpo.",
+    "Passaggio di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - controllo esterno, passaggio interno",
+  "nome": "Wall Passes: Outside Control, Inside Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7221,10 +7790,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-2-tocchi-controllo-esterno-pass",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo di esterno (primo tocco) e passaggio d'interno con lo stesso piede (secondo tocco).",
+    "Il controllo di esterno apre la palla di lato, l'interno la riporta al muro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Controllo di esterno troppo lungo.",
+    "Passaggio di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica",
+  "nome": "Wall Passes: Outside Stop, Laces Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7245,10 +7831,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio rasoterra al muro; al ritorno stop di esterno (primo tocco), poi rigioca di collo (secondo tocco). Cambia piede a metà tempo."
+  "descrizione": "Passaggio rasoterra al muro; al ritorno stop di esterno (primo tocco), poi rigioca di collo (secondo tocco). Cambia piede a metà tempo.",
+  "id": "tpas-passaggi-al-muro-2-tocchi-stop-di-esterno-passag",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio rasoterra al muro; al ritorno stop di esterno (primo tocco), poi rigioca di collo (secondo tocco).",
+    "Stop che tiene la palla vicina, passaggio basso e teso.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Stop che lascia la palla lontana.",
+    "Passaggio di collo che si alza.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 5-10mt alto-basso",
+  "nome": "Wall Passes 5-10 m: High and Low",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7270,10 +7873,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "A 5-10 metri dal muro: alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria). Controlla il ritorno con un tocco orientato e rigioca. Entrambi i piedi."
+  "descrizione": "A 5-10 metri dal muro: alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria). Controlla il ritorno con un tocco orientato e rigioca. Entrambi i piedi.",
+  "id": "tpas-passaggi-al-muro-5-10mt-alto-basso",
+  "scheda": {
+   "esecuzione": [
+    "A 5-10 metri dal muro, palla a terra.",
+    "Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria).",
+    "Controlla il ritorno con un tocco orientato e rigioca.",
+    "Entrambi i piedi, per il tempo indicato."
+   ],
+   "errori": [
+    "Palla alta troppo forte: torna imprendibile.",
+    "Controllo rigido sulla palla che scende.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Distanza 5 metri.",
+   "piu_difficile": "Un tocco solo al ritorno.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro controllo 180gradi - TECNICA",
+  "nome": "Wall Passes: 180° Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7292,10 +7912,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-180gradi-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno un controllo che gira la palla di 180° (interno o esterno) e ti porta di spalle al muro.",
+    "Due tocchi, giro completo e rigioca al muro.",
+    "Alterna il piede e il verso del giro."
+   ],
+   "errori": [
+    "Controllo che ferma la palla.",
+    "Giro largo: la palla resta sotto il corpo.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Giro in due tocchi.",
+   "piu_difficile": "Giro in un tocco.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro in difficoltà",
+  "nome": "Wall Passes Under Pressure",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7316,7 +7953,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggi al muro con un vincolo che disturba: distanza corta, palla veloce, muro irregolare o un solo tocco. Lo scopo è reagire a ritorni imprevedibili: accetta gli errori e resta in controllo."
+  "descrizione": "Passaggi al muro con un vincolo che disturba: distanza corta, palla veloce, muro irregolare o un solo tocco. Lo scopo è reagire a ritorni imprevedibili: accetta gli errori e resta in controllo.",
+  "id": "tpas-passaggi-al-muro-in-difficolta",
+  "scheda": {
+   "esecuzione": [
+    "Passaggi al muro con un vincolo che disturba: distanza corta, palla veloce, muro irregolare o un solo tocco.",
+    "Lo scopo è reagire a ritorni imprevedibili: accetta gli errori e resta in controllo.",
+    "Cambia il vincolo ogni minuto se puoi.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Rallentare la palla per non sbagliare: si sbaglia e si continua.",
+    "Fermarsi a ogni errore.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un vincolo solo.",
+   "piu_difficile": "Due vincoli insieme.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
   "nome": "Passaggi collo - visione headball",
@@ -7451,7 +8105,7 @@
   "sottogruppo": "headball"
  },
  {
-  "nome": "Passaggi liberi al muro - Tecnica",
+  "nome": "Free Wall Passes",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7472,7 +8126,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggi contro il muro a distanza libera (3-8 m), rasoterra, con controllo e rimando. Varia piede, superficie e distanza senza schema: è la base di tocco."
+  "descrizione": "Passaggi contro il muro a distanza libera (3-8 m), rasoterra, con controllo e rimando. Varia piede, superficie e distanza senza schema: è la base di tocco.",
+  "id": "tpas-passaggi-liberi-al-muro-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Passaggi contro il muro a distanza libera (3-8 metri), rasoterra.",
+    "Controllo e rimando, variando piede, superficie e distanza senza schema.",
+    "È la base di tocco: palla sempre sotto controllo, mai fermarsi.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Usare sempre lo stesso piede.",
+    "Passaggi molli.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Distanza fissa.",
+   "piu_difficile": "Un tocco solo.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
   "nome": "Passaggi sinistra/avanti/destra con video - visione headball",
@@ -7541,7 +8212,7 @@
   "sottogruppo": "headball"
  },
  {
-  "nome": "Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno",
+  "nome": "Pairs Technique: Inside Stop, Outside Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7562,10 +8233,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-tecnica-a-2-passaggi-rasoterra-stop-interno-pass",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, una palla.",
+    "Passaggi rasoterra: chi riceve controlla d'interno (primo tocco) e rigioca di esterno con lo stesso piede (secondo tocco).",
+    "Palla tesa, ritmo costante, piede d'appoggio accanto alla palla.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Passaggio di esterno che si alza.",
+    "Controllo lontano dal corpo.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza minore.",
+   "piu_difficile": "Un tocco solo.",
+   "da_confermare": "Il video è lo stesso per le tre varianti \"Tecnica a 2 passaggi rasoterra\": è una sequenza con i tre esercizi dentro? Li lascio separati?"
+  }
  },
  {
-  "nome": "Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno",
+  "nome": "Pairs Technique: Outside Stop, Inside Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7586,10 +8274,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-tecnica-a-2-passaggi-rasoterra-stop-esterno-pass",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, una palla.",
+    "Passaggi rasoterra: chi riceve controlla di esterno (primo tocco) e rigioca d'interno con lo stesso piede (secondo tocco).",
+    "Palla tesa, ritmo costante.",
+    "Fai il tempo indicato alternando i piedi."
+   ],
+   "errori": [
+    "Controllo di esterno troppo lungo.",
+    "Passaggio molle.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza minore.",
+   "piu_difficile": "Un tocco solo."
+  }
  },
  {
-  "nome": "Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno",
+  "nome": "Pairs Technique: Inside Stop, Inside Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7610,7 +8314,23 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-tecnica-a-2-passaggi-rasoterra-stop-interno-pass-2",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, una palla.",
+    "Passaggi rasoterra: chi riceve controlla d'interno con un piede e passa d'interno con l'altro (il video dice: controllo interno destro, passaggio interno sinistro).",
+    "Palla tesa, ritmo costante.",
+    "Fai il tempo indicato, poi inverti i piedi."
+   ],
+   "errori": [
+    "Controllo e passaggio con lo stesso piede.",
+    "Passaggio molle.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza minore.",
+   "piu_difficile": "Un tocco solo."
+  }
  },
  {
   "nome": "1vs1 - difesa da fermo",
@@ -7660,7 +8380,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Tecnica a 2 - Palla bassa e palla alta",
+  "nome": "Pairs Technique: Low Ball and High Ball",
   "qualita": "tecnica-conduzione",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7681,10 +8401,27 @@
   "in_coppia": true,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tcon-tecnica-a-2-palla-bassa-e-palla-alta",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, due palle.",
+    "Regole del video: una palla deve sempre andare rasoterra, l'altra deve sempre fare un rimbalzo, obbligo di un tocco.",
+    "Vi scambiate le due palle insieme: chi ha quella bassa la passa rasoterra, chi ha quella alta la rimanda con un rimbalzo.",
+    "Fai il tempo indicato; a metà tempo invertite le palle."
+   ],
+   "errori": [
+    "Due tocchi: è obbligo uno.",
+    "Palla alta troppo forte.",
+    "Non guardare il compagno: il ritmo è a due."
+   ],
+   "piu_facile": "Due tocchi ammessi.",
+   "piu_difficile": "Distanza maggiore.",
+   "da_confermare": "Solo in coppia (già segnato)."
+  }
  },
  {
-  "nome": "Calcio in alto e tiro in porta",
+  "nome": "High Kick and Shot",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7705,10 +8442,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Calcia la palla in alto davanti a te, lasciala rimbalzare (o di prima, se indicato) e calcia in porta al volo o dopo il rimbalzo. Alterna i piedi. Cura il contatto pulito con la palla più della potenza."
+  "descrizione": "Calcia la palla in alto davanti a te, lasciala rimbalzare (o di prima, se indicato) e calcia in porta al volo o dopo il rimbalzo. Alterna i piedi. Cura il contatto pulito con la palla più della potenza.",
+  "id": "ttir-calcio-in-alto-e-tiro-in-porta",
+  "scheda": {
+   "esecuzione": [
+    "Palla al piede, porta a 15-20 metri.",
+    "Calcia la palla in alto davanti a te, lasciala rimbalzare (o di prima, se indicato) e calcia in porta al volo o dopo il rimbalzo.",
+    "Contatto pulito con la palla più della potenza: collo pieno, caviglia bloccata, busto sopra la palla.",
+    "Alterna i piedi. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Busto all'indietro: la palla vola alta.",
+    "Tirare di punta.",
+    "Calcio in alto storto che ti fa rincorrere la palla."
+   ],
+   "piu_facile": "Dopo un rimbalzo, da più vicino.",
+   "piu_difficile": "Al volo, piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "tiri - rigore al palo",
+  "nome": "Penalty at the Post",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7728,10 +8482,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Dal dischetto (o 11 m), mira al palo: tiro d'interno o di collo con l'obiettivo di colpire il palo o passargli vicino. Alterna palo destro e sinistro e i piedi."
+  "descrizione": "Dal dischetto (o 11 m), mira al palo: tiro d'interno o di collo con l'obiettivo di colpire il palo o passargli vicino. Alterna palo destro e sinistro e i piedi.",
+  "id": "ttir-tiri-rigore-al-palo",
+  "scheda": {
+   "esecuzione": [
+    "Dal dischetto (11 metri), palla ferma.",
+    "Mira al palo: tiro d'interno o di collo con l'obiettivo di colpire il palo o passargli vicino.",
+    "Piede d'appoggio accanto alla palla, puntato verso il bersaglio, sguardo sulla palla al momento del contatto.",
+    "Alterna palo destro e sinistro e i piedi. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Guardare il palo invece della palla al contatto.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.",
+    "Tirare forte e largo: prima la precisione."
+   ],
+   "piu_facile": "Da più vicino.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "Tiri - rigore alla traversa",
+  "nome": "Penalty at the Crossbar",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7752,10 +8523,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Dal dischetto (o 11 m), mira alla traversa: tiro di collo con palla che sale. Cerca il contatto pulito sotto la palla. Alterna i piedi."
+  "descrizione": "Dal dischetto (o 11 m), mira alla traversa: tiro di collo con palla che sale. Cerca il contatto pulito sotto la palla. Alterna i piedi.",
+  "id": "ttir-tiri-rigore-alla-traversa",
+  "scheda": {
+   "esecuzione": [
+    "Dal dischetto (11 metri), palla ferma.",
+    "Mira alla traversa: tiro di collo con palla che sale.",
+    "Contatto pulito sotto la palla, caviglia bloccata, busto leggermente indietro.",
+    "Alterna i piedi. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Palla alta e fuori: sotto la palla ma al centro.",
+    "Tirare di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Da più vicino.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "tiri - tecnica di tiro",
+  "nome": "Shooting Technique",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7775,10 +8563,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "ttir-tiri-tecnica-di-tiro",
+  "scheda": {
+   "esecuzione": [
+    "Palla ferma a 15-20 metri dalla porta.",
+    "Due passi di rincorsa in diagonale, piede d'appoggio accanto alla palla puntato verso il bersaglio.",
+    "Colpisci con il collo pieno, caviglia bloccata, ginocchio sopra la palla, busto in avanti.",
+    "Accompagna con la gamba dopo il contatto. Fai le ripetizioni indicate alternando i piedi."
+   ],
+   "errori": [
+    "Busto all'indietro: la palla vola alta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Da più vicino, senza rincorsa.",
+   "piu_difficile": "In corsa dopo un tocco.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.",
+   "da_confermare": "Senza video né descrizione: ho scritto il tiro di collo pieno da fermo. È questo?"
+  }
  },
  {
-  "nome": "Tiri in porta dall'angolo - CROSS",
+  "nome": "Shots from the Corner: Cross",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7794,10 +8600,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "ttir-tiri-in-porta-dall-angolo-cross",
+  "scheda": {
+   "esecuzione": [
+    "Palla sulla bandierina o all'angolo dell'area, bersaglio in area (un compagno, un cinesino, il secondo palo).",
+    "Rincorsa in diagonale, piede d'appoggio accanto alla palla, cross con l'interno o il collo che alza la palla.",
+    "La palla deve arrivare a mezz'altezza nel punto scelto, non altissima.",
+    "Fai le ripetizioni indicate da entrambi i lati, con il piede del lato."
+   ],
+   "errori": [
+    "Cross troppo alto che finisce fuori.",
+    "Piede d'appoggio lontano.",
+    "Guardare l'area invece della palla al contatto."
+   ],
+   "piu_facile": "Da più vicino all'area.",
+   "piu_difficile": "Cross di prima su palla in movimento.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.",
+   "da_confermare": "Senza video né descrizione: è un cross da fermo dall'angolo verso l'area, come ho scritto?"
+  }
  },
  {
-  "nome": "Tiri in porta e VISIONE",
+  "nome": "Shots on Goal with Vision",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7818,10 +8642,28 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "ttir-tiri-in-porta-e-visione",
+  "scheda": {
+   "esecuzione": [
+    "Palla al piede a 15-20 metri dalla porta, un compagno o un riferimento visivo (colore, numero, cinesino) che cambia.",
+    "Conduci verso la porta; poco prima del tiro guardi il segnale e tiri dove ti dice (angolo basso destro, alto sinistro…).",
+    "Testa su prima del tiro, poi occhi sulla palla al contatto.",
+    "Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Decidere l'angolo prima di guardare il segnale.",
+    "Tirare di punta.",
+    "Testa bassa per tutta la conduzione."
+   ],
+   "piu_facile": "Segnale mostrato prima di partire.",
+   "piu_difficile": "Segnale mostrato all'ultimo passo.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.",
+   "da_confermare": "Stesso video di \"Quickness, Technique, Shooting and Decision-Speed Circuit\": è lo stesso esercizio? Ne tolgo uno?"
+  }
  },
  {
-  "nome": "Progressione tiri in porta - Tecnica di tiro",
+  "nome": "Shooting Progression",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7841,10 +8683,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "ttir-progressione-tiri-in-porta-tecnica-di-tiro",
+  "scheda": {
+   "esecuzione": [
+    "Progressione guidata dal video: dal tiro da fermo al tiro in corsa, poi dopo un controllo, poi di prima.",
+    "In ogni passo la tecnica resta la stessa: piede d'appoggio accanto alla palla, collo pieno, caviglia bloccata, busto in avanti.",
+    "Passi al passo successivo solo quando quello prima esce pulito.",
+    "Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Saltare i passi della progressione.",
+    "Busto all'indietro.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Fermati ai primi due passi.",
+   "piu_difficile": "Tutta la progressione con il piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.",
+   "da_confermare": "Dalla miniatura: palla fermata di suola davanti alla porta. I passi della progressione sono quelli che ho scritto?"
+  }
  },
  {
-  "nome": "Dribbling visione e reattività - Base",
+  "nome": "Dribbling with Vision and Reaction: Basic",
   "qualita": "tecnica-visione",
   "attrezzatura": "campo",
   "difficolta": 1,
@@ -7863,10 +8723,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tvis-dribbling-visione-e-reattivita-base",
+  "scheda": {
+   "esecuzione": [
+    "Cinesini a 1-2 metri l'uno dall'altro, palla al piede.",
+    "Conduci tra i cinesini con tocchi corti; a un segnale (voce, colore, numero di dita) cambi direzione o esci verso il cinesino chiamato.",
+    "Testa su tra un tocco e l'altro: la palla si sente con il piede, lo spazio si guarda.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Testa bassa.",
+    "Palla lontana dal piede al cambio di direzione.",
+    "Reagire al segnale con un tocco in più: la reazione è immediata."
+   ],
+   "piu_facile": "Segnale annunciato prima.",
+   "piu_difficile": "Due segnali diversi insieme.",
+   "da_confermare": "Stesso video della versione avanzata: cosa cambia tra base e avanzato?"
+  }
  },
  {
-  "nome": "Videocorso Visione - Esercizi Base",
+  "nome": "Vision Course: Basic Drills",
   "qualita": "tecnica-visione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -7885,7 +8762,23 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tvis-videocorso-visione-esercizi-base",
+  "scheda": {
+   "esecuzione": [
+    "Esercizi di visione guidati dal video, senza palla o con la palla ferma: si allena a leggere quello che succede ai lati mentre lo sguardo resta davanti.",
+    "Segui il video esercizio per esercizio: segnali ai lati del campo visivo (dita, colori, oggetti) da riconoscere senza girare la testa.",
+    "Occhi fermi sul punto davanti, testa ferma: contano solo gli occhi.",
+    "Fai i minuti indicati."
+   ],
+   "errori": [
+    "Girare la testa verso il segnale.",
+    "Andare di fretta: prima la precisione.",
+    "Farlo stanco: la visione si allena fresco."
+   ],
+   "piu_difficile": "Stessi esercizi con il palleggio.",
+   "da_confermare": "Dalla miniatura: esercizio in casa con le dita (\"questo per esempio è 1\"). Ho scritto la struttura: confermi?"
+  }
  },
  {
   "nome": "Box Dribbling - headball",
@@ -7911,7 +8804,7 @@
   "sottogruppo": "headball"
  },
  {
-  "nome": "Videocorso Visione - Esercizi Intermedi",
+  "nome": "Vision Course: Intermediate Drills",
   "qualita": "tecnica-visione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -7930,10 +8823,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tvis-videocorso-visione-esercizi-intermedi",
+  "scheda": {
+   "esecuzione": [
+    "Esercizi di visione guidati dal video, con la palla in movimento: palleggio o conduzione mentre leggi i segnali ai lati.",
+    "Segui il video esercizio per esercizio: la palla resta sotto controllo e gli occhi leggono i segnali senza abbassarsi.",
+    "Testa ferma, occhi che lavorano.",
+    "Fai i minuti indicati."
+   ],
+   "errori": [
+    "Guardare la palla a ogni tocco.",
+    "Perdere la palla per leggere il segnale: prima la palla.",
+    "Girare la testa."
+   ],
+   "piu_facile": "Gli esercizi base.",
+   "piu_difficile": "Segnali da entrambi i lati insieme.",
+   "da_confermare": "Dalla miniatura: esercizio con un'asta o una corda ai lati. Ho scritto la struttura: confermi?"
+  }
  },
  {
-  "nome": "Dribbling visione e reattività - Avanzato",
+  "nome": "Dribbling with Vision and Reaction: Advanced",
   "qualita": "tecnica-visione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -7953,7 +8863,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "tvis-dribbling-visione-e-reattivita-avanzato",
+  "scheda": {
+   "esecuzione": [
+    "Cinesini a 1-2 metri, palla al piede, un compagno che dà i segnali.",
+    "Conduci tra i cinesini con tocchi corti; i segnali arrivano senza preavviso e possono essere doppi (colore più direzione).",
+    "Reagisci con il primo tocco utile, senza fermare la palla; testa su tra i tocchi.",
+    "Fai le ripetizioni indicate con il piede debole dove indicato."
+   ],
+   "errori": [
+    "Testa bassa.",
+    "Fermare la palla per reagire.",
+    "Tocchi lunghi."
+   ],
+   "piu_facile": "Segnali singoli.",
+   "piu_difficile": "Segnali doppi, piede debole.",
+   "da_confermare": "Stesso video della versione base: cosa cambia tra base e avanzato?"
+  }
  },
  {
   "nome": "Warm-Up Stride",

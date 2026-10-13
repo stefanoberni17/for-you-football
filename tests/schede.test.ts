@@ -38,6 +38,17 @@ describe('schede esercizi', () => {
     expect(senza).toEqual([]);
   });
 
+  it('il batch 6 (tecnica) ha la scheda su tutti gli esercizi attivi', () => {
+    const gruppo = ESERCIZI_V2.filter((e) => e.attivo && e.qualita.startsWith('tecnica-'));
+    const senza = gruppo.filter((e) => !e.scheda).map((e) => e.id);
+    expect(senza).toEqual([]);
+  });
+
+  it('ogni esercizio attivo del catalogo ha la scheda', () => {
+    const senza = ESERCIZI_V2.filter((e) => e.attivo && !e.scheda).map((e) => e.id);
+    expect(senza).toEqual([]);
+  });
+
   it('ogni scheda ha 3-5 passi e 2-3 errori, tutti non vuoti', () => {
     expect(conScheda.length).toBeGreaterThan(0);
     for (const e of conScheda) {

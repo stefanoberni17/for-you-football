@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-13 — Schede esercizi, batch 6: tecnica (55). Catalogo completo
+- 55 schede nuove in inglese per palleggi, passaggi al muro, tecnica a due, tiro e visione (One-Foot Juggling, Wall Volleys, Wall Passes con i vari controlli, Pairs Technique, Penalty at the Post/Crossbar, Shooting Progression, Vision Course…). Con questo batch tutti i 301 esercizi attivi hanno la scheda, e il test lo pretende. 12 dubbi in testa a `docs/schede/tecnica.md`; file per le correzioni `docs/schede/tecnica-correzioni.md`. Id e blocchi invariati (144/135).
+
 ## 2026-10-13 — Schede esercizi, batch 5: velocità, resistenza e test (43)
 - 43 schede nuove in inglese (Sprint, 10 m Sprint, Hill Sprints, T-Sprint, Triple Jump to Sprint, le cinque partenze dell'EMOM, Juggle/Sprint and Shot, Fartlek, Running Intervals, Stride-Out, i circuiti guidati dal video, i test di palleggi, pull-up, push-up, navetta, 1 e 3 km, broad jump, 50 e 100 m, equilibrio) per gli esercizi di velocità, resistenza aerobica e metabolica e per gli esercizi di tipo test. Catalogo: 246 schede su 301 attivi. 18 dubbi in testa a `docs/schede/velocita-resistenza-test.md` (tre coppie con lo stesso video, i circuiti di cui ho scritto solo la struttura, il risultato dei test di palleggi, i 100 m senza test in batteria). File per le correzioni `docs/schede/velocita-resistenza-test-correzioni.md`. Il nome del test navetta è "10 m Shuttle Test (30 s)" senza virgolette: una virgoletta nel nome rompeva l'abbinamento dei blocchi in `build-blocks.py` (due blocchi sarebbero diventati incompleti). Blocchi invariati (144/135). Test di completezza del batch 5.
 
