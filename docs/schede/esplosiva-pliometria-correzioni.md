@@ -156,35 +156,35 @@ bilaterale · reps · video: https://youtube.com/watch?v=0vrnKZpOtPI
 Come l'ho scritto io: Parti dai pogo jumps sul posto: ginocchia quasi tese, salti dalle caviglie, contatto breve sull'avampiede. Passa ai pogo in avanzamento, poi a quelli con cambio di direzione, mantenendo la stessa rigidità della caviglia. Ogni livello si aggiunge solo quando il precedente è pulito e silenzioso. Fai le ripetizioni indicate per livello.
 Il mio dubbio: Doppione di 'Pogo Jumps Progression (Ankle Stiffness)' (stesso video). Da togliere?
 
-Correzione: 
+Correzione: togli
 
 ## 22. Single-Leg Pogo Jumps
 per lato · reps · video: https://youtube.com/shorts/V5SVWUH1_50?feature=share
 
 Come l'ho scritto io: In piedi su una gamba, ginocchio quasi teso, mani sui fianchi. Salta usando solo la caviglia: il ginocchio resta quasi fermo, come una molla. Atterra sull'avampiede e riparti subito, tallone che non tocca terra. Fai le ripetizioni indicate, poi cambia gamba.
 
-Correzione: 
+Correzione: ok 
 
 ## 23. Two-Leg Jump, One-Leg Landing
 bilaterale · reps · senza video
 
 Come l'ho scritto io: In piedi, piedi alla larghezza delle anche. Carica piegando le ginocchia e salta in alto a due piedi, braccia che accompagnano. Atterra su una gamba sola, morbido, ginocchio sopra il piede, e tieni l'equilibrio per 2 secondi. Alterna la gamba di atterraggio. Fai le ripetizioni indicate contando i salti totali.
 
-Correzione: 
+Correzione: ok questo lo metterei come prevenzione
 
 ## 24. Squat Jump
 bilaterale · reps · senza video
 
 Come l'ho scritto io: Piedi alla larghezza delle spalle, scendi in uno squat a metà altezza, braccia indietro. Salta in alto il più possibile, braccia che accompagnano verso l'alto. Atterra morbido sull'avampiede, ginocchia che assorbono, e torna nello squat. Fai le ripetizioni indicate.
 
-Correzione: 
+Correzione: ok
 
 ## 25. Drop Jump
 bilaterale · reps · video: https://www.youtube.com/watch?v=rwYPvd_iVDk
 
 Come l'ho scritto io: In piedi su un box o un gradino di 30-50 cm. Lasciati cadere in avanti, senza saltare giù, e atterra sull'avampiede con le ginocchia morbide. Appena tocchi terra salta in alto il più possibile: il contatto a terra è il più breve possibile. Atterra morbido e torna sul box con calma. Fai le ripetizioni indicate.
 
-Correzione: 
+Correzione: ok
 
 ## 26. Knee Jump to Box Jump Progression
 bilaterale · reps · video: https://youtube.com/watch?v=ZdXn3VZVRRQ
@@ -192,7 +192,7 @@ bilaterale · reps · video: https://youtube.com/watch?v=ZdXn3VZVRRQ
 Come l'ho scritto io: In ginocchio su un tappetino, glutei sui talloni, braccia indietro. Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat sull'avampiede. Nella progressione, dalla posizione in piedi salta subito su un box basso davanti a te. Scendi dal box con calma e ripeti. Fai le ripetizioni indicate.
 Il mio dubbio: Stesso video di 'Knee Jumps Progression (+ Box Jump)': sono lo stesso esercizio? Ne tolgo uno?
 
-Correzione: 
+Correzione: ci sono 3 varianti: 1- classico knee jump e atterro su 2 piedi, 2. knee jump e atterro su 1 piede. 3 quello che hai descritto tu atterrando su 1 piede nel box. sono in progressione di difficoltà da 1 a 3
 
 ## 27. Knee Jumps Progression (+ Box Jump)
 bilaterale · reps · video: https://youtube.com/shorts/ZdXn3VZVRRQ?feature=share
@@ -200,7 +200,7 @@ bilaterale · reps · video: https://youtube.com/shorts/ZdXn3VZVRRQ?feature=shar
 Come l'ho scritto io: In ginocchio su un tappetino, glutei sui talloni, braccia indietro. Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat sull'avampiede. Nella progressione, dalla posizione in piedi salta subito su un box basso davanti a te. Scendi dal box con calma e ripeti. Fai le ripetizioni indicate.
 Il mio dubbio: Doppione di 'Knee Jump to Box Jump Progression' (stesso video). Da togliere?
 
-Correzione: 
+Correzione: come sopra. nel video fa knee jump atterro su 2 piedi. knee jump atterro con sx , atterro con dx e infine knee jump + box
 
 ## 28. Reverse Drop Jump
 bilaterale · reps · video: https://www.youtube.com/watch?v=Mb_vKJ2ODCU
@@ -216,35 +216,35 @@ per lato · reps · video: https://youtube.com/watch?v=5M85J6mWKz4
 Come l'ho scritto io: In piedi su una gamba, scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera indietro, schiena neutra. Risali e porta il ginocchio libero in alto con decisione, trasformando la risalita in un salto sulla gamba d'appoggio. Atterra sulla stessa gamba, morbido, e scendi subito nello stacco successivo. Fai le ripetizioni indicate, poi cambia gamba.
 Il mio dubbio: Stesso video di 'Sl Rdl - Sl Knee Jump Progression Advanced': sono lo stesso esercizio? Ne tolgo uno?
 
-Correzione: 
+Correzione: no questo è diverso, fai un rdl con manubrio a dx e concludi con snatch, poi knee jump con partenza solo su un singolo ginocchio, infine salto in alto con partenza da rdl. entrambi i lati. questo è avanzato ed è una progressione. da fare poche reps esplosive
 
 ## 30. Single-Leg Drop with Inside Push-Off
 per lato · reps · video: https://www.youtube.com/watch?v=CLJr7cgOp60
 
 Come l'ho scritto io: In piedi su un box o un gradino basso, su una gamba sola. Lasciati cadere a terra e atterra sulla stessa gamba, morbido, sull'avampiede. Appena tocchi terra rimbalza in avanti spingendo con l'interno del piede, come in un cambio di direzione. Atterra su due piedi e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba.
 
-Correzione: 
+Correzione: si ma quando atterri spingi lateralmente sulla gamba che appoggia spingaendo con interno a terra incrociando con altra gamba
 
 ## 31. Single-Leg Drop with Lateral Push-Off
 per lato · reps · video: https://www.youtube.com/watch?v=DB8HS4sJP-Y
 
 Come l'ho scritto io: In piedi su un box o un gradino basso, su una gamba sola. Lasciati cadere a terra e atterra sulla stessa gamba, morbido, sull'avampiede. Appena tocchi terra rimbalza di lato il più rapidamente possibile, spingendo con l'esterno del piede. Atterra sull'altra gamba o su due piedi e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba.
 
-Correzione: 
+Correzione: ok
 
 ## 32. Single-Leg Lateral Drop Jump
 per lato · reps · video: https://www.youtube.com/watch?v=-b3h-iylZ1s
 
 Come l'ho scritto io: In piedi su un box o un gradino basso, di lato rispetto alla direzione di caduta, su una gamba sola. Lasciati cadere di lato e atterra sulla stessa gamba, morbido, ginocchio sopra il piede. Appena tocchi terra salta di nuovo in alto o di lato, contatto breve. Atterra e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba.
 
-Correzione: 
+Correzione: ok
 
 ## 33. Single-Leg Reverse Lateral Drop (Progression)
 per lato · reps · video: https://www.youtube.com/watch?v=NqUjlWxJYdE
 
 Come l'ho scritto io: In piedi su un box o un gradino basso, su una gamba sola, spalle rivolte alla direzione di caduta. Lasciati cadere all'indietro ruotando il corpo in aria di un quarto di giro. Atterra sulla stessa gamba, morbido, e trova subito l'equilibrio dopo la rotazione. Tieni 2 secondi fermo, risali con calma. Fai le ripetizioni indicate, poi cambia gamba.
 
-Correzione: 
+Correzione: ok ma ruoti 180gradi cadendo, atterri su un piede e spingi lateralmente nella direzione opposta (con esterno del piede)
 
 ## 34. Single-Leg RDL to Single-Leg Knee Jump (Advanced) 2
 per lato · reps · video: https://youtube.com/shorts/5M85J6mWKz4?feature=share
@@ -252,74 +252,74 @@ per lato · reps · video: https://youtube.com/shorts/5M85J6mWKz4?feature=share
 Come l'ho scritto io: In piedi su una gamba, scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera indietro, schiena neutra. Risali e porta il ginocchio libero in alto con decisione, trasformando la risalita in un salto sulla gamba d'appoggio. Atterra sulla stessa gamba, morbido, e scendi subito nello stacco successivo. Fai le ripetizioni indicate, poi cambia gamba.
 Il mio dubbio: Doppione di 'Single-Leg RDL to Single-Leg Knee Jump (Advanced)' (stesso video). Da togliere?
 
-Correzione: 
+Correzione: togli
 
 ## 35. Half-Lunge Switch Hops
 per lato · secondi · video: https://www.youtube.com/watch?v=r_Dwebm0UQk
 
 Come l'ho scritto io: In mezzo affondo: una gamba avanti e una indietro, ginocchia poco piegate, busto leggermente inclinato in avanti come alla partenza di uno sprint. Con saltelli rapidi sull'avampiede cambia la gamba davanti a ogni salto, senza alzarti. Braccia che accompagnano come nella corsa, busto fermo. Tieni per il tempo indicato.
 
-Correzione: 
+Correzione: cambia ogni 2 saltelli 
 
 ## 36. Squat Hops
 bilaterale · secondi · video: https://www.youtube.com/watch?v=IhDBeFEdBz4
 
 Come l'ho scritto io: In mezzo squat, piedi alla larghezza delle spalle, busto inclinato in avanti, mani davanti. Fai saltelli rapidi e bassi sull'avampiede restando in mezzo squat, senza alzarti. Il contatto a terra è breve, le ginocchia restano sopra i piedi. Tieni per il tempo indicato.
 
-Correzione: 
+Correzione: ok
 
 ## 37. Diagonal Squat Hops
 bilaterale · secondi · video: https://www.youtube.com/watch?v=KW7j7v8reag
 
 Come l'ho scritto io: In mezzo squat, piedi alla larghezza delle spalle, busto inclinato in avanti. Fai saltelli rapidi e bassi in diagonale: avanti a destra, indietro al centro, avanti a sinistra, sempre in mezzo squat. Il contatto a terra è breve, le ginocchia restano sopra i piedi. Tieni per il tempo indicato.
 
-Correzione: 
+Correzione: ok
 
 ## 38. Kneeling Jump to Broad Jump
 bilaterale · reps · video: https://youtu.be/rcWU-9wtkEo
 
 Come l'ho scritto io: In ginocchio su un tappetino, glutei sui talloni, braccia indietro. Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat. Senza fermarti, carica e salta in lungo il più lontano possibile. Atterra a due piedi, morbido, e tieni l'equilibrio. Fai le ripetizioni indicate.
 
-Correzione: 
+Correzione: ok
 
 ## 39. Reverse Burpee
 bilaterale · reps · video: https://youtu.be/FAYtTojm8hE
 
 Come l'ho scritto io: In piedi, scendi in squat e rotola indietro sulla schiena portando le ginocchia al petto. Rotola in avanti con slancio fino a tornare in squat con i piedi a terra. Dallo squat salta in alto con forza, braccia verso l'alto. Atterra morbido e ripeti. Fai le ripetizioni indicate.
 
-Correzione: 
+Correzione: ok
 
 ## 40. Medicine Ball Lateral Throw
 per lato · reps · video: https://youtu.be/iL5osFN8-JI
 
 Come l'ho scritto io: Di lato a un muro, a circa 2 metri, piedi alla larghezza delle spalle, palla medica a due mani all'altezza dell'anca lontana dal muro. Carica ruotando il busto lontano dal muro, peso sulla gamba esterna. Ruota con forza verso il muro partendo da piedi e anche e lancia la palla contro il muro. Raccogli la palla e ripeti. Fai le ripetizioni indicate, poi cambia lato.
 
-Correzione: 
+Correzione: ok
 
 ## 41. Kettlebell Cross Chop
 per lato · reps · video: https://youtu.be/8H_jU34BKhQ
 
 Come l'ho scritto io: In piedi, piedi più larghi delle anche, kettlebell a due mani sopra una spalla. Porta il kettlebell in diagonale verso il ginocchio opposto, ruotando busto e anche e piegando le ginocchia. Risali lungo la stessa diagonale fino sopra la spalla, controllando il movimento. Fai le ripetizioni indicate, poi cambia lato.
 
-Correzione: 
+Correzione: ok
 
 ## 42. Standing Broad Jump
 bilaterale · reps · senza video
 
 Come l'ho scritto io: Piedi paralleli alla larghezza delle anche, dietro una linea. Carica piegando le ginocchia e portando le braccia indietro. Salta in avanti il più lontano possibile, braccia che accompagnano in avanti e in alto. Atterra a due piedi, morbido, ginocchia piegate, e tieni l'equilibrio. Fai le ripetizioni indicate.
 
-Correzione: 
+Correzione: ok
 
 ## 43. Standing Vertical Jump
 bilaterale · reps · senza video
 
 Come l'ho scritto io: Piedi paralleli alla larghezza delle anche. Carica piegando le ginocchia e portando le braccia indietro. Salta in alto il più possibile, braccia che accompagnano verso l'alto. Atterra morbido sull'avampiede, ginocchia che assorbono. Fai le ripetizioni indicate.
 
-Correzione: 
+Correzione: ok
 
 ## 44. One-Arm Kettlebell Swing
 per lato · reps · senza video
 
 Come l'ho scritto io: Piedi poco più larghi delle anche, kettlebell a terra davanti, afferralo con una mano e portalo indietro tra le gambe. Spingi le anche in avanti con forza stringendo i glutei: il kettlebell sale fino all'altezza del petto. Le spalle restano in linea, il busto non ruota. Lascialo tornare tra le gambe piegando le anche. Fai le ripetizioni indicate, poi cambia mano.
 
-Correzione: 
+Correzione: ok
