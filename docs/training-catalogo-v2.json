@@ -2699,19 +2699,20 @@
   "id": "fesp-kettlebell-kneeling-snatch",
   "scheda": {
    "esecuzione": [
-    "In ginocchio su un tappetino, ginocchia alla larghezza delle anche, kettlebell a terra davanti a te.",
-    "Afferra la maniglia con una mano, busto in avanti con la schiena neutra, anca piegata.",
-    "Spingi le anche in avanti con forza e porta il kettlebell in alto in un'unica linea vicino al corpo, fino al braccio disteso sopra la testa.",
-    "Riportalo giù in controllo, prima al petto poi a terra. Fai le ripetizioni indicate, poi cambia mano."
+    "Su un ginocchio (mezzo inginocchiato): ginocchio a terra sul tappetino, l'altro piede avanti con il ginocchio a 90°, busto dritto.",
+    "Il kettlebell è a terra tra le gambe, dal lato del ginocchio a terra. Afferra la maniglia con la mano di quel lato.",
+    "Porta il kettlebell indietro facendolo passare all'interno, vicino alla gamba, poi spingi il bacino in avanti con forza: è il bacino che accompagna il kettlebell in salita.",
+    "Il kettlebell sale vicino al corpo in un'unica linea fino al braccio disteso sopra la testa, con il polso dritto.",
+    "Riportalo giù in controllo, prima al petto poi tra le gambe. Fai le ripetizioni indicate, poi cambia lato e ginocchio. Guarda bene il video prima di farlo."
    ],
    "errori": [
-    "Tirare con il braccio: la spinta viene dalle anche.",
-    "Kettlebell che fa un arco largo lontano dal corpo.",
-    "Schiena che si curva: il movimento parte dalle anche."
+    "Tirare con il braccio: la salita viene dalla spinta del bacino.",
+    "Kettlebell che fa un arco largo lontano dal corpo invece di passare all'interno.",
+    "Busto che si piega di lato o schiena che si curva."
    ],
-   "piu_facile": "Kettlebell più leggero, fermata al petto prima di salire.",
+   "piu_facile": "Kettlebell più leggero, fermata al petto prima di salire (come un clean).",
    "piu_difficile": "Kettlebell più pesante.",
-   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+   "sicurezza": "Spazio libero intorno. Tappetino sotto il ginocchio. Fastidio alla schiena bassa: fermati e riduci il peso."
   }
  },
  {
@@ -2757,11 +2758,11 @@
  {
   "nome": "Single-Leg RDL to Jump (FY)",
   "qualita": "forza-esplosiva",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "kettlebell",
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtu.be/2eA0GIE31wU",
   "fonte": "Everfit",
   "tags": [
@@ -2779,20 +2780,19 @@
   "id": "fesp-fy-rdl-con-sviluppo-plio",
   "scheda": {
    "esecuzione": [
-    "In piedi su una gamba davanti a un gradino o uno step basso.",
-    "Scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera che va indietro, schiena neutra.",
-    "Risali e, senza fermarti, trasforma la risalita in un salto esplosivo in avanti sul gradino, atterrando morbido.",
-    "Scendi dal gradino con calma e ripeti. Fai le ripetizioni indicate, poi cambia gamba."
+    "Prima parte, con il kettlebell: in piedi su una gamba, kettlebell nella mano opposta. Scendi in uno stacco rumeno a una gamba (busto in avanti, gamba libera indietro, schiena neutra) e risali. Fai le ripetizioni indicate.",
+    "Seconda parte, senza kettlebell: appoggia il peso, mettiti davanti a un ostacolo basso e saltalo con un salto esplosivo, atterrando morbido.",
+    "Subito dopo salta su un box o un gradino davanti a te, atterrando in squat sull'avampiede. Scendi con calma.",
+    "Ripeti ostacolo più box per le volte indicate, poi rifai tutto con l'altra gamba nello stacco."
    ],
    "errori": [
-    "Schiena che si curva: il movimento parte dalle anche.",
+    "Schiena che si curva nello stacco: il movimento parte dalle anche.",
     "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
-    "Fermarsi tra lo stacco e il salto: il movimento è unico."
+    "Riposare troppo tra lo stacco e i salti: i salti si fanno con le gambe appena caricate."
    ],
-   "piu_facile": "Senza gradino, salto sul posto.",
-   "piu_difficile": "Gradino più alto, o atterraggio sulla stessa gamba.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.",
-   "da_confermare": "Dalla miniatura: salto in avanti su uno step dopo lo stacco a una gamba. Il salto è sulla stessa gamba o a due piedi? Il catalogo lo dà bilaterale."
+   "piu_facile": "Kettlebell più leggero, ostacolo più basso, box basso.",
+   "piu_difficile": "Kettlebell più pesante, box più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
   }
  },
  {
@@ -2896,17 +2896,17 @@
   "id": "fesp-kettlebell-rotational-clean",
   "scheda": {
    "esecuzione": [
-    "In piedi, kettlebell a terra di lato all'anca, piedi poco più larghi delle anche.",
-    "Ruota il busto verso il kettlebell, afferralo e, spingendo con le anche e ruotando in avanti, portalo in rack al petto.",
-    "Il piede del lato del kettlebell ruota sull'avampiede per accompagnare la rotazione.",
-    "Riportalo a terra di lato in controllo. Fai le ripetizioni indicate, poi cambia lato."
+    "Parti con il kettlebell in posizione rack (appoggiato sull'avambraccio, al petto). Il piede del lato del kettlebell è avanti, l'altro leggermente indietro e di lato.",
+    "Fai scendere il kettlebell lungo il corpo e portalo indietro, di lato alla gamba dietro, ruotando il busto verso quel lato. Anca piegata, schiena neutra.",
+    "Dal punto più indietro fai oscillare il kettlebell in avanti spingendo con le anche e ruotando il busto, e riportalo in posizione rack senza farlo sbattere.",
+    "Fai le ripetizioni indicate con ritmo continuo, poi cambia mano e posizione dei piedi."
    ],
    "errori": [
-    "Schiena che si curva: il movimento parte dalle anche.",
-    "Ruotare solo con le braccia: la rotazione parte da piedi e anche.",
-    "Kettlebell che sbatte sull'avambraccio."
+    "Schiena che si curva nella discesa: la rotazione è del busto, non della schiena bassa.",
+    "Alzare il kettlebell con il braccio: torna in rack per la spinta delle anche.",
+    "Kettlebell che sbatte sull'avambraccio in rack."
    ],
-   "piu_facile": "Kettlebell più leggero, rotazione minore.",
+   "piu_facile": "Kettlebell più leggero, oscillazione più corta.",
    "piu_difficile": "Kettlebell più pesante.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
   }
@@ -2930,23 +2930,24 @@
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
   "solo_livello": true,
-  "descrizione": "Si fa ALTERNANDO destra e sinistra a ogni ripetizione, non un lato alla volta: le ripetizioni indicate sono il totale (12 reps = 6 a destra e 6 a sinistra, alternate). Kettlebell tra le gambe, swing con rotazione del busto verso un lato, torna al centro e vai dall'altro.",
+  "descrizione": "Si fa ALTERNANDO destra e sinistra a ogni ripetizione: le ripetizioni indicate sono il totale (12 reps = 6 a destra e 6 a sinistra). A ogni swing il kettlebell si carica di lato a una gamba mentre la gamba opposta va indietro in mezzo affondo, poi le gambe si riallineano nella spinta.",
   "fascia_kb": "avanzato",
   "peso_kg": 12,
   "id": "fesp-kettlebell-rotational-swing",
   "scheda": {
    "esecuzione": [
-    "Piedi più larghi delle anche, kettlebell a due mani davanti.",
-    "Carica tra le gambe come nello swing, poi spingi con le anche e lascia salire il kettlebell ruotando il busto verso un lato.",
-    "Riportalo tra le gambe e sali verso l'altro lato: si alterna destra e sinistra a ogni ripetizione.",
+    "In piedi, kettlebell a due mani davanti a te, piedi alla larghezza delle anche.",
+    "Carica il kettlebell indietro di lato a una gamba: nello stesso momento la gamba opposta va indietro, come in un mezzo affondo, e il busto ruota verso il kettlebell.",
+    "Spingi con le anche ed esegui lo swing in avanti fino all'altezza del petto, riallineando le gambe mentre il kettlebell sale.",
+    "Alla discesa successiva carica dall'altro lato: l'altra gamba va indietro. A ogni swing la gamba opposta al kettlebell va indietro e poi torna.",
     "Fai le ripetizioni indicate contando il totale, non per lato."
    ],
    "errori": [
     "Schiena che si curva: il movimento parte dalle anche.",
     "Alzare con le braccia: il kettlebell sale per la spinta delle anche.",
-    "Perdere l'equilibrio nella rotazione: i piedi restano piantati."
+    "Gamba che non torna in linea nello swing: in alto i piedi sono di nuovo pari."
    ],
-   "piu_facile": "Kettlebell più leggero, rotazione minore.",
+   "piu_facile": "Kettlebell più leggero, mezzo affondo più corto.",
    "piu_difficile": "Kettlebell più pesante.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
   }
@@ -3014,6 +3015,7 @@
    "esecuzione": [
     "Piedi poco più larghi delle anche, kettlebell a terra davanti, afferralo a due mani e portalo indietro tra le gambe.",
     "Spingi le anche in avanti con forza stringendo i glutei: il kettlebell sale da solo fino all'altezza del petto.",
+    "Nella fase di spinta finisci con il peso sugli avampiedi, corpo disteso in linea.",
     "Lascialo tornare tra le gambe piegando le anche, non le ginocchia, schiena sempre neutra.",
     "Fai le ripetizioni indicate con ritmo continuo."
    ],
@@ -3166,8 +3168,7 @@
    ],
    "piu_facile": "Senza manubri, salti più bassi.",
    "piu_difficile": "Manubri più pesanti, salti più alti.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.",
-   "da_confermare": "Dalla miniatura ci sono i manubri in mano: sono previsti o facoltativi? Il catalogo dice corpo libero."
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
   }
  },
  {
@@ -3237,19 +3238,18 @@
   "scheda": {
    "esecuzione": [
     "Sdraiato sulla schiena, un piede a terra con il tallone vicino al gluteo, l'altra gamba sollevata.",
-    "Solleva il bacino in un ponte a una gamba spingendo sul tallone.",
+    "Solleva il bacino in un ponte a una gamba con il peso sull'avampiede: il tallone resta sollevato da terra per tutto l'esercizio.",
     "Dalla posizione alta fai piccoli rimbalzi rapidi del bacino: scende poco e risale subito, senza mai appoggiarsi a terra.",
     "Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
     "Bacino che tocca terra tra un rimbalzo e l'altro.",
-    "Spingere sulle punte: il tallone resta piantato.",
+    "Tallone che si appoggia: si spinge sull'avampiede.",
     "Schiena che si inarca in alto."
    ],
    "piu_facile": "Ponte a due gambe con rimbalzi.",
    "piu_difficile": "Piede su un rialzo, o rimbalzi più alti.",
-   "sicurezza": "Fastidio ai posteriori della coscia (crampo): fermati.",
-   "da_confermare": "Non ho la miniatura del video. L'ho scritto come ponte a una gamba con rimbalzi del bacino: confermi?"
+   "sicurezza": "Fastidio ai posteriori della coscia (crampo) o al polpaccio: fermati."
   }
  },
  {
@@ -3278,17 +3278,17 @@
   "id": "plioe-fascia-front-jumps-pliometria",
   "scheda": {
    "esecuzione": [
-    "In piedi davanti a una linea o un ostacolo basso, piedi uniti, ginocchia morbide.",
-    "Salta avanti e indietro oltre la linea con saltelli rapidi a due piedi, restando sull'avampiede.",
+    "In piedi davanti a un ostacolo basso, come una palla, piedi uniti, ginocchia morbide.",
+    "Salta avanti e indietro oltre l'ostacolo con saltelli rapidi a due piedi, restando sull'avampiede.",
     "Il contatto a terra è breve: rimbalzi, non ti fermi.",
     "Braccia rilassate. Tieni per il tempo indicato."
    ],
    "errori": [
     "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
-    "Saltare troppo in alto: contano i contatti rapidi.",
+    "Saltare troppo in alto: contano i contatti rapidi, quanto basta per superare la palla.",
     "Piedi che si allargano."
    ],
-   "piu_facile": "Più lento, senza ostacolo.",
+   "piu_facile": "Più lento, con una linea a terra invece dell'ostacolo.",
    "piu_difficile": "Ostacolo più alto, o su una gamba.",
    "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
   }
@@ -3413,8 +3413,7 @@
    ],
    "piu_facile": "Salti più bassi, ritmo più lento.",
    "piu_difficile": "Salti più alti, o su una gamba.",
-   "sicurezza": "Caviglie e polpacci riscaldati. Fastidio al tendine d'Achille: fermati.",
-   "da_confermare": "Nel catalogo è segnato per lato: è la versione a una gamba? L'ho scritto a due gambe."
+   "sicurezza": "Caviglie e polpacci riscaldati. Fastidio al tendine d'Achille: fermati."
   }
  },
  {
@@ -3525,24 +3524,23 @@
   "id": "plioe-ankle-stiffness-pogo-jumps-progression",
   "scheda": {
    "esecuzione": [
-    "Parti dai pogo jumps sul posto: ginocchia quasi tese, salti dalle caviglie, contatto breve sull'avampiede.",
-    "Passa ai pogo in avanzamento, poi a quelli con cambio di direzione, mantenendo la stessa rigidità della caviglia.",
-    "Ogni livello si aggiunge solo quando il precedente è pulito e silenzioso.",
-    "Fai le ripetizioni indicate per livello."
+    "Primo passo: calf raises in piedi con un manubrio per mano. Sali sulle punte in controllo e scendi. Fai le ripetizioni indicate.",
+    "Secondo passo: prendi manubri più leggeri e fai saltelli sul posto dalle caviglie (pogo jumps): ginocchia quasi tese, contatto breve sull'avampiede, tallone che non tocca terra. Fai le ripetizioni indicate.",
+    "Terzo passo: appoggia i manubri e fai gli stessi saltelli a corpo libero, cercando il contatto più breve e il rimbalzo più alto. Fai le ripetizioni indicate.",
+    "I tre passi si fanno di fila, senza fermarsi."
    ],
    "errori": [
-    "Piegare le ginocchia per saltare.",
-    "Appoggiare i talloni.",
-    "Contatti lunghi a terra."
+    "Piegare le ginocchia per saltare: il salto viene dalle caviglie.",
+    "Appoggiare i talloni tra un saltello e l'altro.",
+    "Manubri troppo pesanti nei saltelli: devono essere più leggeri di quelli dei calf raises."
    ],
-   "piu_facile": "Solo il primo livello sul posto.",
-   "piu_difficile": "Livelli avanzati, o su una gamba.",
-   "sicurezza": "Fastidio al tendine d'Achille: fermati.",
-   "da_confermare": "Stesso video di 'Pogo Jumps progression (Ankle Stiffness)': sono lo stesso esercizio? Ne tolgo uno?"
+   "piu_facile": "Senza manubri nei saltelli, solo nei calf raises.",
+   "piu_difficile": "Manubri più pesanti, o saltelli su una gamba.",
+   "sicurezza": "Fastidio al tendine d'Achille o al polpaccio: fermati."
   }
  },
  {
-  "nome": "Single-Leg Toe Bounces",
+  "nome": "Single-Leg Toe Bounces (On the Spot)",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3572,7 +3570,7 @@
   "scheda": {
    "esecuzione": [
     "In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata.",
-    "Fai piccoli rimbalzi rapidi sull'avampiede usando solo la caviglia.",
+    "Fai piccoli rimbalzi rapidi sul posto sull'avampiede, usando solo la caviglia.",
     "Il tallone non tocca mai terra, il contatto è il più breve possibile.",
     "Tieni per il tempo indicato, poi cambia gamba."
    ],
@@ -3582,9 +3580,8 @@
     "Busto che si piega per tenere l'equilibrio."
    ],
    "piu_facile": "Rimbalzi più bassi, o a due gambe.",
-   "piu_difficile": "Rimbalzi più alti, o in avanzamento.",
-   "sicurezza": "Fastidio al tendine d'Achille: fermati.",
-   "da_confermare": "Stesso video di 'Single Leg Pogo Jumps': sono lo stesso esercizio? Ne tolgo uno?"
+   "piu_difficile": "Rimbalzi più alti, o la versione con spostamento (Single-Leg Pogo Jumps).",
+   "sicurezza": "Fastidio al tendine d'Achille: fermati."
   }
  },
  {
@@ -3604,9 +3601,9 @@
   ],
   "azione": "importa",
   "nome_everfit": "Pogo Jumps progression (Ankle Stiffness )",
-  "note": null,
+  "note": "[14/10: doppione di plioe-ankle-stiffness-pogo-jumps-progression (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
@@ -3631,7 +3628,7 @@
   }
  },
  {
-  "nome": "Single-Leg Pogo Jumps",
+  "nome": "Single-Leg Pogo Jumps (Forward-Back and Lateral)",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3661,23 +3658,23 @@
   "scheda": {
    "esecuzione": [
     "In piedi su una gamba, ginocchio quasi teso, mani sui fianchi.",
-    "Salta usando solo la caviglia: il ginocchio resta quasi fermo, come una molla.",
-    "Atterra sull'avampiede e riparti subito, tallone che non tocca terra.",
+    "Salta usando solo la caviglia, come una molla, spostandoti: prima avanti e indietro, poi a destra e a sinistra.",
+    "Atterra sull'avampiede e riparti subito, tallone che non tocca terra, ginocchio che resta quasi fermo.",
     "Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
     "Piegare il ginocchio per saltare.",
     "Tallone che tocca terra.",
-    "Ginocchia che cedono verso l'interno all'atterraggio."
+    "Ginocchio che cede verso l'interno negli spostamenti laterali."
    ],
-   "piu_facile": "Pogo a due gambe.",
-   "piu_difficile": "Salti più alti, o in avanzamento.",
+   "piu_facile": "Rimbalzi sul posto (Single-Leg Toe Bounces), o a due gambe.",
+   "piu_difficile": "Spostamenti più lunghi, o salti più alti.",
    "sicurezza": "Caviglie riscaldate. Fastidio al tendine d'Achille: fermati."
   }
  },
  {
   "nome": "Two-Leg Jump, One-Leg Landing",
-  "qualita": "pliometria-intensiva",
+  "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "A",
@@ -3685,10 +3682,13 @@
   "per_lato": false,
   "video": null,
   "fonte": "File_DB",
-  "tags": [],
+  "tags": [
+   "atterraggio",
+   "prevenzione"
+  ],
   "azione": "importa",
   "nome_everfit": "Jump 2 Up 1 Down",
-  "note": null,
+  "note": "[14/10: spostato in fascia-prevenzione da Ste: lavoro di atterraggio controllato]",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
@@ -3700,17 +3700,17 @@
    "esecuzione": [
     "In piedi, piedi alla larghezza delle anche.",
     "Carica piegando le ginocchia e salta in alto a due piedi, braccia che accompagnano.",
-    "Atterra su una gamba sola, morbido, ginocchio sopra il piede, e tieni l'equilibrio per 2 secondi.",
+    "Atterra su una gamba sola, morbido, ginocchio sopra il piede e in linea con l'anca, e tieni l'equilibrio per 2 secondi.",
     "Alterna la gamba di atterraggio. Fai le ripetizioni indicate contando i salti totali."
    ],
    "errori": [
-    "Ginocchia che cedono verso l'interno all'atterraggio.",
-    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Ginocchio che cede verso l'interno all'atterraggio: è il punto dell'esercizio.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchio che assorbe.",
     "Atterrare e muoversi subito: la tenuta in equilibrio è parte dell'esercizio."
    ],
    "piu_facile": "Salti più bassi.",
    "piu_difficile": "Salti più alti, o atterraggio su un rialzo basso.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+   "sicurezza": "È un lavoro di prevenzione sull'atterraggio: salti bassi e controllati, non massimali. Fastidio al ginocchio: fermati."
   }
  },
  {
@@ -3815,19 +3815,19 @@
   "scheda": {
    "esecuzione": [
     "In ginocchio su un tappetino, glutei sui talloni, braccia indietro.",
-    "Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat sull'avampiede.",
-    "Nella progressione, dalla posizione in piedi salta subito su un box basso davanti a te.",
-    "Scendi dal box con calma e ripeti. Fai le ripetizioni indicate."
+    "Variante 1: oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando a due piedi in squat sull'avampiede.",
+    "Variante 2: stesso salto, ma atterri su un piede solo (prima il sinistro, poi il destro), morbido, e tieni l'equilibrio.",
+    "Variante 3: salto in piedi e, senza fermarti, salto su un box davanti a te atterrando su un piede solo.",
+    "Le tre varianti sono in progressione di difficoltà: passa alla successiva solo quando la precedente è pulita. Fai le ripetizioni indicate della variante del giorno."
    ],
    "errori": [
     "Aiutarsi con le mani a terra.",
     "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
-    "Box troppo alto: si sale con il salto, non con le ginocchia al petto."
+    "Box troppo alto nella variante 3: si sale con il salto, non con le ginocchia al petto."
    ],
-   "piu_facile": "Solo il salto in piedi, senza box.",
-   "piu_difficile": "Box più alto.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia.",
-   "da_confermare": "Stesso video di 'Knee Jumps Progression (+ Box Jump)': sono lo stesso esercizio? Ne tolgo uno?"
+   "piu_facile": "Solo la variante 1, a due piedi.",
+   "piu_difficile": "Variante 3 con il box più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia."
   }
  },
  {
@@ -3853,19 +3853,19 @@
   "scheda": {
    "esecuzione": [
     "In ginocchio su un tappetino, glutei sui talloni, braccia indietro.",
-    "Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat sull'avampiede.",
-    "Nella progressione, dalla posizione in piedi salta subito su un box basso davanti a te.",
-    "Scendi dal box con calma e ripeti. Fai le ripetizioni indicate."
+    "Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando a due piedi in squat sull'avampiede.",
+    "Poi la stessa partenza atterrando su un piede solo: prima il sinistro, poi il destro, morbido e in equilibrio.",
+    "Infine salto in piedi e subito salto sul box davanti a te.",
+    "Come nel video: due piedi, sinistro, destro, poi con il box. Sono quattro passi in progressione di difficoltà. Fai le ripetizioni indicate per passo."
    ],
    "errori": [
     "Aiutarsi con le mani a terra.",
     "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
-    "Box troppo alto."
+    "Box troppo alto nella variante 3: si sale con il salto, non con le ginocchia al petto."
    ],
-   "piu_facile": "Solo il salto in piedi, senza box.",
-   "piu_difficile": "Box più alto.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia.",
-   "da_confermare": "Doppione di 'Knee Jump to Box Jump Progression' (stesso video). Da togliere?"
+   "piu_facile": "Solo il salto in piedi a due piedi.",
+   "piu_difficile": "Box più alto, o atterraggio su un piede anche nel box.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia."
   }
  },
  {
@@ -3935,20 +3935,19 @@
   "id": "plioi-singl-leg-rdl-sl-knee-jump-progression-advanced",
   "scheda": {
    "esecuzione": [
-    "In piedi su una gamba, scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera indietro, schiena neutra.",
-    "Risali e porta il ginocchio libero in alto con decisione, trasformando la risalita in un salto sulla gamba d'appoggio.",
-    "Atterra sulla stessa gamba, morbido, e scendi subito nello stacco successivo.",
-    "Fai le ripetizioni indicate, poi cambia gamba."
+    "Primo passo: in piedi sulla gamba sinistra, manubrio nella mano destra. Scendi in uno stacco rumeno a una gamba e risali con forza concludendo con uno snatch: il manubrio sale in un'unica linea fino al braccio disteso sopra la testa.",
+    "Secondo passo: su un ginocchio solo (l'altro piede avanti), oscilla le braccia e spingi con le anche per saltare in piedi, atterrando morbido.",
+    "Terzo passo: in piedi su una gamba, scendi nello stacco rumeno e trasforma la risalita in un salto in alto, atterrando sulla stessa gamba.",
+    "Fai le ripetizioni indicate di ogni passo, poi cambia lato. È una progressione avanzata: poche ripetizioni, tutte esplosive."
    ],
    "errori": [
-    "Schiena che si curva: il movimento parte dalle anche.",
-    "Ginocchia che cedono verso l'interno all'atterraggio.",
-    "Fermarsi tra lo stacco e il salto: il movimento è unico."
+    "Schiena che si curva nello stacco: il movimento parte dalle anche.",
+    "Snatch tirato con il braccio: il manubrio sale per la spinta delle anche.",
+    "Ginocchio che cede verso l'interno all'atterraggio."
    ],
-   "piu_facile": "Stacco e salto separati da una pausa, salto più basso.",
-   "piu_difficile": "Salto più alto, o con un manubrio leggero.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.",
-   "da_confermare": "Stesso video di 'Sl Rdl - Sl Knee Jump Progression Advanced': sono lo stesso esercizio? Ne tolgo uno?"
+   "piu_facile": "Senza snatch e senza salto: stacco a una gamba e knee jump separati.",
+   "piu_difficile": "Manubrio più pesante, salto più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Solo dopo stacchi a una gamba e knee jump già puliti. Tappetino sotto il ginocchio."
   }
  },
  {
@@ -3977,13 +3976,13 @@
    "esecuzione": [
     "In piedi su un box o un gradino basso, su una gamba sola.",
     "Lasciati cadere a terra e atterra sulla stessa gamba, morbido, sull'avampiede.",
-    "Appena tocchi terra rimbalza in avanti spingendo con l'interno del piede, come in un cambio di direzione.",
-    "Atterra su due piedi e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba."
+    "Appena tocchi terra spingi di lato con l'interno del piede della gamba d'appoggio, incrociando con l'altra gamba davanti, come in un cambio di direzione.",
+    "Atterra sull'altra gamba e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
-    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Ginocchio che cede verso l'interno all'atterraggio.",
     "Contatto lungo a terra prima della spinta.",
-    "Spingere con tutto il piede invece che con l'interno."
+    "Spingere con tutto il piede invece che con l'interno, o spingere in avanti invece che di lato."
    ],
    "piu_facile": "Gradino più basso, pausa prima della spinta.",
    "piu_difficile": "Gradino più alto, spinta più lunga.",
@@ -4095,17 +4094,17 @@
   "scheda": {
    "esecuzione": [
     "In piedi su un box o un gradino basso, su una gamba sola, spalle rivolte alla direzione di caduta.",
-    "Lasciati cadere all'indietro ruotando il corpo in aria di un quarto di giro.",
-    "Atterra sulla stessa gamba, morbido, e trova subito l'equilibrio dopo la rotazione.",
-    "Tieni 2 secondi fermo, risali con calma. Fai le ripetizioni indicate, poi cambia gamba."
+    "Lasciati cadere all'indietro ruotando il corpo in aria di mezzo giro (180°).",
+    "Atterra su un piede solo, morbido, e spingi subito di lato nella direzione opposta con l'esterno del piede, come in un cambio di direzione.",
+    "Atterra sull'altra gamba e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
-    "Ginocchia che cedono verso l'interno all'atterraggio.",
-    "Atterrare e barcollare: cerca la stabilità immediata.",
-    "Guardare in basso."
+    "Ginocchio che cede verso l'interno all'atterraggio.",
+    "Rotazione incompleta: in aria si gira di mezzo giro.",
+    "Spinta in avanti invece che di lato."
    ],
-   "piu_facile": "Gradino più basso, rotazione minore.",
-   "piu_difficile": "Gradino più alto, o salto subito dopo l'atterraggio.",
+   "piu_facile": "Gradino più basso, rotazione di un quarto di giro.",
+   "piu_difficile": "Gradino più alto, spinta più lunga.",
    "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te."
   }
  },
@@ -4122,9 +4121,9 @@
   "tags": [],
   "azione": "importa",
   "nome_everfit": "Sl Rdl - Sl Knee Jump Progression Advanced",
-  "note": null,
+  "note": "[14/10: doppione di plioi-singl-leg-rdl-sl-knee-jump-progression-advanced (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": true,
@@ -4502,14 +4501,14 @@
   "scheda": {
    "esecuzione": [
     "In mezzo affondo: una gamba avanti e una indietro, ginocchia poco piegate, busto leggermente inclinato in avanti come alla partenza di uno sprint.",
-    "Con saltelli rapidi sull'avampiede cambia la gamba davanti a ogni salto, senza alzarti.",
+    "Fai saltelli rapidi sull'avampiede senza alzarti: due saltelli, poi cambi la gamba davanti, altri due saltelli, poi cambi di nuovo.",
     "Braccia che accompagnano come nella corsa, busto fermo.",
     "Tieni per il tempo indicato."
    ],
    "errori": [
     "Alzarsi in piedi tra un saltello e l'altro.",
     "Appoggiare i talloni.",
-    "Busto che si raddrizza o che oscilla."
+    "Cambiare a ogni saltello: il cambio è ogni due."
    ],
    "piu_facile": "Ritmo più lento, affondo meno profondo.",
    "piu_difficile": "Ritmo più veloce, affondo più profondo.",

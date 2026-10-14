@@ -7485,7 +7485,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "plioe-pogo-jumps-progression-ankle-stiffness",
+    "esercizio_id": "plioe-ankle-stiffness-pogo-jumps-progression",
     "nomeEverfit": "Pogo Jumps progression (Ankle Stiffness )",
     "serie": 2,
     "quantita": 2.0,
@@ -7589,7 +7589,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "plioe-pogo-jumps-progression-ankle-stiffness",
+    "esercizio_id": "plioe-ankle-stiffness-pogo-jumps-progression",
     "nomeEverfit": "Pogo Jumps progression (Ankle Stiffness )",
     "serie": 2,
     "quantita": 2.0,
@@ -7728,7 +7728,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "plioe-pogo-jumps-progression-ankle-stiffness",
+    "esercizio_id": "plioe-ankle-stiffness-pogo-jumps-progression",
     "nomeEverfit": "Pogo Jumps progression (Ankle Stiffness )",
     "serie": 2,
     "quantita": 2.0,
@@ -7908,7 +7908,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "plioe-pogo-jumps-progression-ankle-stiffness",
+    "esercizio_id": "plioe-ankle-stiffness-pogo-jumps-progression",
     "nomeEverfit": "Pogo Jumps progression (Ankle Stiffness )",
     "serie": 1,
     "quantita": 2.0,

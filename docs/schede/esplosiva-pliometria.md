@@ -1,22 +1,11 @@
 # Schede esercizi: Forza esplosiva e pliometria
 
-Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 44 schede su 44 esercizi attivi del gruppo.
+Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 41 schede su 41 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## Da confermare (12)
+## Da confermare (1)
 
-- **Single-Leg RDL to Jump (FY)**: Dalla miniatura: salto in avanti su uno step dopo lo stacco a una gamba. Il salto è sulla stessa gamba o a due piedi? Il catalogo lo dà bilaterale.
-- **Single-Leg RDL Series with Two Single-Leg Jumps**: Dalla miniatura ci sono i manubri in mano: sono previsti o facoltativi? Il catalogo dice corpo libero.
-- **Bridge Bounces**: Non ho la miniatura del video. L'ho scritto come ponte a una gamba con rimbalzi del bacino: confermi?
-- **Pogo Jumps**: Nel catalogo è segnato per lato: è la versione a una gamba? L'ho scritto a due gambe.
-- **Pogo Jumps Progression (Ankle Stiffness)**: Stesso video di 'Pogo Jumps progression (Ankle Stiffness)': sono lo stesso esercizio? Ne tolgo uno?
-- **Single-Leg Toe Bounces**: Stesso video di 'Single Leg Pogo Jumps': sono lo stesso esercizio? Ne tolgo uno?
-- **Pogo Jumps Progression (Ankle Stiffness) 2**: Doppione di 'Pogo Jumps Progression (Ankle Stiffness)' (stesso video). Da togliere?
-- **Knee Jump to Box Jump Progression**: Stesso video di 'Knee Jumps Progression (+ Box Jump)': sono lo stesso esercizio? Ne tolgo uno?
-- **Knee Jumps Progression (+ Box Jump)**: Doppione di 'Knee Jump to Box Jump Progression' (stesso video). Da togliere?
 - **Reverse Drop Jump**: L'ho scritto come caduta all'indietro dal box e salto subito. Confermi?
-- **Single-Leg RDL to Single-Leg Knee Jump (Advanced)**: Stesso video di 'Sl Rdl - Sl Knee Jump Progression Advanced': sono lo stesso esercizio? Ne tolgo uno?
-- **Single-Leg RDL to Single-Leg Knee Jump (Advanced) 2**: Doppione di 'Single-Leg RDL to Single-Leg Knee Jump (Advanced)' (stesso video). Da togliere?
 
 ## forza-esplosiva (19)
 
@@ -24,15 +13,16 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fesp-kettlebell-kneeling-snatch` · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=j-0iYgFI6pM&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=21)
 
 **Esecuzione**
-1. In ginocchio su un tappetino, ginocchia alla larghezza delle anche, kettlebell a terra davanti a te.
-2. Afferra la maniglia con una mano, busto in avanti con la schiena neutra, anca piegata.
-3. Spingi le anche in avanti con forza e porta il kettlebell in alto in un'unica linea vicino al corpo, fino al braccio disteso sopra la testa.
-4. Riportalo giù in controllo, prima al petto poi a terra. Fai le ripetizioni indicate, poi cambia mano.
+1. Su un ginocchio (mezzo inginocchiato): ginocchio a terra sul tappetino, l'altro piede avanti con il ginocchio a 90°, busto dritto.
+2. Il kettlebell è a terra tra le gambe, dal lato del ginocchio a terra. Afferra la maniglia con la mano di quel lato.
+3. Porta il kettlebell indietro facendolo passare all'interno, vicino alla gamba, poi spingi il bacino in avanti con forza: è il bacino che accompagna il kettlebell in salita.
+4. Il kettlebell sale vicino al corpo in un'unica linea fino al braccio disteso sopra la testa, con il polso dritto.
+5. Riportalo giù in controllo, prima al petto poi tra le gambe. Fai le ripetizioni indicate, poi cambia lato e ginocchio. Guarda bene il video prima di farlo.
 
-**Errori comuni:** Tirare con il braccio: la spinta viene dalle anche. Kettlebell che fa un arco largo lontano dal corpo. Schiena che si curva: il movimento parte dalle anche.
-**Più facile:** Kettlebell più leggero, fermata al petto prima di salire.
+**Errori comuni:** Tirare con il braccio: la salita viene dalla spinta del bacino. Kettlebell che fa un arco largo lontano dal corpo invece di passare all'interno. Busto che si piega di lato o schiena che si curva.
+**Più facile:** Kettlebell più leggero, fermata al petto prima di salire (come un clean).
 **Più difficile:** Kettlebell più pesante.
-**Sicurezza:** Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso.
+**Sicurezza:** Spazio libero intorno. Tappetino sotto il ginocchio. Fastidio alla schiena bassa: fermati e riduci il peso.
 
 ### Jump Technique: One-Leg and Two-Leg Take-Off
 `fesp-forza-esplosiva-tecnica-salto-1-piede-e-2-piedi` · per lato · reps · corpo libero · [video](https://youtu.be/jEXxxbQsqNw)
@@ -49,19 +39,18 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
 
 ### Single-Leg RDL to Jump (FY)
-`fesp-fy-rdl-con-sviluppo-plio` · bilaterale · reps · corpo libero · [video](https://youtu.be/2eA0GIE31wU)
+`fesp-fy-rdl-con-sviluppo-plio` · per lato · reps · kettlebell · [video](https://youtu.be/2eA0GIE31wU)
 
 **Esecuzione**
-1. In piedi su una gamba davanti a un gradino o uno step basso.
-2. Scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera che va indietro, schiena neutra.
-3. Risali e, senza fermarti, trasforma la risalita in un salto esplosivo in avanti sul gradino, atterrando morbido.
-4. Scendi dal gradino con calma e ripeti. Fai le ripetizioni indicate, poi cambia gamba.
+1. Prima parte, con il kettlebell: in piedi su una gamba, kettlebell nella mano opposta. Scendi in uno stacco rumeno a una gamba (busto in avanti, gamba libera indietro, schiena neutra) e risali. Fai le ripetizioni indicate.
+2. Seconda parte, senza kettlebell: appoggia il peso, mettiti davanti a un ostacolo basso e saltalo con un salto esplosivo, atterrando morbido.
+3. Subito dopo salta su un box o un gradino davanti a te, atterrando in squat sull'avampiede. Scendi con calma.
+4. Ripeti ostacolo più box per le volte indicate, poi rifai tutto con l'altra gamba nello stacco.
 
-**Errori comuni:** Schiena che si curva: il movimento parte dalle anche. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Fermarsi tra lo stacco e il salto: il movimento è unico.
-**Più facile:** Senza gradino, salto sul posto.
-**Più difficile:** Gradino più alto, o atterraggio sulla stessa gamba.
+**Errori comuni:** Schiena che si curva nello stacco: il movimento parte dalle anche. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Riposare troppo tra lo stacco e i salti: i salti si fanno con le gambe appena caricate.
+**Più facile:** Kettlebell più leggero, ostacolo più basso, box basso.
+**Più difficile:** Kettlebell più pesante, box più alto.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
-**DA CONFERMARE:** Dalla miniatura: salto in avanti su uno step dopo lo stacco a una gamba. Il salto è sulla stessa gamba o a due piedi? Il catalogo lo dà bilaterale.
 
 ### Explosive Barbell Split Squat (FY)
 `fesp-fy-split-squat` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=7G-7pvahAoM)
@@ -95,13 +84,13 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fesp-kettlebell-rotational-clean` · per lato · reps · kettlebell · [video](https://www.youtube.com/watch?v=mQ0S_nhGzS4)
 
 **Esecuzione**
-1. In piedi, kettlebell a terra di lato all'anca, piedi poco più larghi delle anche.
-2. Ruota il busto verso il kettlebell, afferralo e, spingendo con le anche e ruotando in avanti, portalo in rack al petto.
-3. Il piede del lato del kettlebell ruota sull'avampiede per accompagnare la rotazione.
-4. Riportalo a terra di lato in controllo. Fai le ripetizioni indicate, poi cambia lato.
+1. Parti con il kettlebell in posizione rack (appoggiato sull'avambraccio, al petto). Il piede del lato del kettlebell è avanti, l'altro leggermente indietro e di lato.
+2. Fai scendere il kettlebell lungo il corpo e portalo indietro, di lato alla gamba dietro, ruotando il busto verso quel lato. Anca piegata, schiena neutra.
+3. Dal punto più indietro fai oscillare il kettlebell in avanti spingendo con le anche e ruotando il busto, e riportalo in posizione rack senza farlo sbattere.
+4. Fai le ripetizioni indicate con ritmo continuo, poi cambia mano e posizione dei piedi.
 
-**Errori comuni:** Schiena che si curva: il movimento parte dalle anche. Ruotare solo con le braccia: la rotazione parte da piedi e anche. Kettlebell che sbatte sull'avambraccio.
-**Più facile:** Kettlebell più leggero, rotazione minore.
+**Errori comuni:** Schiena che si curva nella discesa: la rotazione è del busto, non della schiena bassa. Alzare il kettlebell con il braccio: torna in rack per la spinta delle anche. Kettlebell che sbatte sull'avambraccio in rack.
+**Più facile:** Kettlebell più leggero, oscillazione più corta.
 **Più difficile:** Kettlebell più pesante.
 **Sicurezza:** Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso.
 
@@ -109,13 +98,14 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fesp-kettlebell-rotational-swing` · bilaterale · reps · kettlebell · [video](https://www.youtube.com/watch?v=TywyOJ9BYUs)
 
 **Esecuzione**
-1. Piedi più larghi delle anche, kettlebell a due mani davanti.
-2. Carica tra le gambe come nello swing, poi spingi con le anche e lascia salire il kettlebell ruotando il busto verso un lato.
-3. Riportalo tra le gambe e sali verso l'altro lato: si alterna destra e sinistra a ogni ripetizione.
-4. Fai le ripetizioni indicate contando il totale, non per lato.
+1. In piedi, kettlebell a due mani davanti a te, piedi alla larghezza delle anche.
+2. Carica il kettlebell indietro di lato a una gamba: nello stesso momento la gamba opposta va indietro, come in un mezzo affondo, e il busto ruota verso il kettlebell.
+3. Spingi con le anche ed esegui lo swing in avanti fino all'altezza del petto, riallineando le gambe mentre il kettlebell sale.
+4. Alla discesa successiva carica dall'altro lato: l'altra gamba va indietro. A ogni swing la gamba opposta al kettlebell va indietro e poi torna.
+5. Fai le ripetizioni indicate contando il totale, non per lato.
 
-**Errori comuni:** Schiena che si curva: il movimento parte dalle anche. Alzare con le braccia: il kettlebell sale per la spinta delle anche. Perdere l'equilibrio nella rotazione: i piedi restano piantati.
-**Più facile:** Kettlebell più leggero, rotazione minore.
+**Errori comuni:** Schiena che si curva: il movimento parte dalle anche. Alzare con le braccia: il kettlebell sale per la spinta delle anche. Gamba che non torna in linea nello swing: in alto i piedi sono di nuovo pari.
+**Più facile:** Kettlebell più leggero, mezzo affondo più corto.
 **Più difficile:** Kettlebell più pesante.
 **Sicurezza:** Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso.
 
@@ -139,8 +129,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Esecuzione**
 1. Piedi poco più larghi delle anche, kettlebell a terra davanti, afferralo a due mani e portalo indietro tra le gambe.
 2. Spingi le anche in avanti con forza stringendo i glutei: il kettlebell sale da solo fino all'altezza del petto.
-3. Lascialo tornare tra le gambe piegando le anche, non le ginocchia, schiena sempre neutra.
-4. Fai le ripetizioni indicate con ritmo continuo.
+3. Nella fase di spinta finisci con il peso sugli avampiedi, corpo disteso in linea.
+4. Lascialo tornare tra le gambe piegando le anche, non le ginocchia, schiena sempre neutra.
+5. Fai le ripetizioni indicate con ritmo continuo.
 
 **Errori comuni:** Schiena che si curva: il movimento parte dalle anche. Fare uno squat invece di un movimento d'anca. Alzare il kettlebell con le braccia.
 **Più facile:** Kettlebell più leggero.
@@ -189,7 +180,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Senza manubri, salti più bassi.
 **Più difficile:** Manubri più pesanti, salti più alti.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
-**DA CONFERMARE:** Dalla miniatura ci sono i manubri in mano: sono previsti o facoltativi? Il catalogo dice corpo libero.
 
 ### Kneeling Jump to Broad Jump
 `fesp-kneeling-jump-to-broad-jump` · bilaterale · reps · corpo libero · [video](https://youtu.be/rcWU-9wtkEo)
@@ -289,7 +279,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesante, o cambio mano in aria.
 **Sicurezza:** Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso.
 
-## pliometria-estensiva (12)
+## pliometria-estensiva (11)
 
 ### A-Skip
 `plioe-fascia-a-skip` · bilaterale · secondi · corpo libero · [video](https://www.youtube.com/watch?v=08abU7xxYEw)
@@ -310,27 +300,26 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Sdraiato sulla schiena, un piede a terra con il tallone vicino al gluteo, l'altra gamba sollevata.
-2. Solleva il bacino in un ponte a una gamba spingendo sul tallone.
+2. Solleva il bacino in un ponte a una gamba con il peso sull'avampiede: il tallone resta sollevato da terra per tutto l'esercizio.
 3. Dalla posizione alta fai piccoli rimbalzi rapidi del bacino: scende poco e risale subito, senza mai appoggiarsi a terra.
 4. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Bacino che tocca terra tra un rimbalzo e l'altro. Spingere sulle punte: il tallone resta piantato. Schiena che si inarca in alto.
+**Errori comuni:** Bacino che tocca terra tra un rimbalzo e l'altro. Tallone che si appoggia: si spinge sull'avampiede. Schiena che si inarca in alto.
 **Più facile:** Ponte a due gambe con rimbalzi.
 **Più difficile:** Piede su un rialzo, o rimbalzi più alti.
-**Sicurezza:** Fastidio ai posteriori della coscia (crampo): fermati.
-**DA CONFERMARE:** Non ho la miniatura del video. L'ho scritto come ponte a una gamba con rimbalzi del bacino: confermi?
+**Sicurezza:** Fastidio ai posteriori della coscia (crampo) o al polpaccio: fermati.
 
 ### Front Line Jumps
 `plioe-fascia-front-jumps-pliometria` · bilaterale · secondi · corpo libero · [video](https://www.youtube.com/watch?v=JqkG0gvTKls)
 
 **Esecuzione**
-1. In piedi davanti a una linea o un ostacolo basso, piedi uniti, ginocchia morbide.
-2. Salta avanti e indietro oltre la linea con saltelli rapidi a due piedi, restando sull'avampiede.
+1. In piedi davanti a un ostacolo basso, come una palla, piedi uniti, ginocchia morbide.
+2. Salta avanti e indietro oltre l'ostacolo con saltelli rapidi a due piedi, restando sull'avampiede.
 3. Il contatto a terra è breve: rimbalzi, non ti fermi.
 4. Braccia rilassate. Tieni per il tempo indicato.
 
-**Errori comuni:** Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Saltare troppo in alto: contano i contatti rapidi. Piedi che si allargano.
-**Più facile:** Più lento, senza ostacolo.
+**Errori comuni:** Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Saltare troppo in alto: contano i contatti rapidi, quanto basta per superare la palla. Piedi che si allargano.
+**Più facile:** Più lento, con una linea a terra invece dell'ostacolo.
 **Più difficile:** Ostacolo più alto, o su una gamba.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
 
@@ -361,65 +350,47 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Salti più bassi, ritmo più lento.
 **Più difficile:** Salti più alti, o su una gamba.
 **Sicurezza:** Caviglie e polpacci riscaldati. Fastidio al tendine d'Achille: fermati.
-**DA CONFERMARE:** Nel catalogo è segnato per lato: è la versione a una gamba? L'ho scritto a due gambe.
 
 ### Pogo Jumps Progression (Ankle Stiffness)
 `plioe-ankle-stiffness-pogo-jumps-progression` · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/0vrnKZpOtPI?feature=share)
 
 **Esecuzione**
-1. Parti dai pogo jumps sul posto: ginocchia quasi tese, salti dalle caviglie, contatto breve sull'avampiede.
-2. Passa ai pogo in avanzamento, poi a quelli con cambio di direzione, mantenendo la stessa rigidità della caviglia.
-3. Ogni livello si aggiunge solo quando il precedente è pulito e silenzioso.
-4. Fai le ripetizioni indicate per livello.
+1. Primo passo: calf raises in piedi con un manubrio per mano. Sali sulle punte in controllo e scendi. Fai le ripetizioni indicate.
+2. Secondo passo: prendi manubri più leggeri e fai saltelli sul posto dalle caviglie (pogo jumps): ginocchia quasi tese, contatto breve sull'avampiede, tallone che non tocca terra. Fai le ripetizioni indicate.
+3. Terzo passo: appoggia i manubri e fai gli stessi saltelli a corpo libero, cercando il contatto più breve e il rimbalzo più alto. Fai le ripetizioni indicate.
+4. I tre passi si fanno di fila, senza fermarsi.
 
-**Errori comuni:** Piegare le ginocchia per saltare. Appoggiare i talloni. Contatti lunghi a terra.
-**Più facile:** Solo il primo livello sul posto.
-**Più difficile:** Livelli avanzati, o su una gamba.
-**Sicurezza:** Fastidio al tendine d'Achille: fermati.
-**DA CONFERMARE:** Stesso video di 'Pogo Jumps progression (Ankle Stiffness)': sono lo stesso esercizio? Ne tolgo uno?
+**Errori comuni:** Piegare le ginocchia per saltare: il salto viene dalle caviglie. Appoggiare i talloni tra un saltello e l'altro. Manubri troppo pesanti nei saltelli: devono essere più leggeri di quelli dei calf raises.
+**Più facile:** Senza manubri nei saltelli, solo nei calf raises.
+**Più difficile:** Manubri più pesanti, o saltelli su una gamba.
+**Sicurezza:** Fastidio al tendine d'Achille o al polpaccio: fermati.
 
-### Single-Leg Toe Bounces
+### Single-Leg Toe Bounces (On the Spot)
 `plioe-fascia-toe-bounces-single-leg-pogo-jumps` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=V5SVWUH1_50)
 
 **Esecuzione**
 1. In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata.
-2. Fai piccoli rimbalzi rapidi sull'avampiede usando solo la caviglia.
+2. Fai piccoli rimbalzi rapidi sul posto sull'avampiede, usando solo la caviglia.
 3. Il tallone non tocca mai terra, il contatto è il più breve possibile.
 4. Tieni per il tempo indicato, poi cambia gamba.
 
 **Errori comuni:** Piegare il ginocchio per saltare. Tallone che tocca terra. Busto che si piega per tenere l'equilibrio.
 **Più facile:** Rimbalzi più bassi, o a due gambe.
-**Più difficile:** Rimbalzi più alti, o in avanzamento.
+**Più difficile:** Rimbalzi più alti, o la versione con spostamento (Single-Leg Pogo Jumps).
 **Sicurezza:** Fastidio al tendine d'Achille: fermati.
-**DA CONFERMARE:** Stesso video di 'Single Leg Pogo Jumps': sono lo stesso esercizio? Ne tolgo uno?
 
-### Pogo Jumps Progression (Ankle Stiffness) 2
-`plioe-pogo-jumps-progression-ankle-stiffness` · bilaterale · reps · corpo libero · [video](https://youtube.com/watch?v=0vrnKZpOtPI)
-
-**Esecuzione**
-1. Parti dai pogo jumps sul posto: ginocchia quasi tese, salti dalle caviglie, contatto breve sull'avampiede.
-2. Passa ai pogo in avanzamento, poi a quelli con cambio di direzione, mantenendo la stessa rigidità della caviglia.
-3. Ogni livello si aggiunge solo quando il precedente è pulito e silenzioso.
-4. Fai le ripetizioni indicate per livello.
-
-**Errori comuni:** Piegare le ginocchia per saltare. Appoggiare i talloni. Contatti lunghi a terra.
-**Più facile:** Solo il primo livello sul posto.
-**Più difficile:** Livelli avanzati, o su una gamba.
-**Sicurezza:** Fastidio al tendine d'Achille: fermati.
-**DA CONFERMARE:** Doppione di 'Pogo Jumps Progression (Ankle Stiffness)' (stesso video). Da togliere?
-
-### Single-Leg Pogo Jumps
+### Single-Leg Pogo Jumps (Forward-Back and Lateral)
 `plioe-single-leg-pogo-jumps` · per lato · reps · corpo libero · [video](https://youtube.com/shorts/V5SVWUH1_50?feature=share)
 
 **Esecuzione**
 1. In piedi su una gamba, ginocchio quasi teso, mani sui fianchi.
-2. Salta usando solo la caviglia: il ginocchio resta quasi fermo, come una molla.
-3. Atterra sull'avampiede e riparti subito, tallone che non tocca terra.
+2. Salta usando solo la caviglia, come una molla, spostandoti: prima avanti e indietro, poi a destra e a sinistra.
+3. Atterra sull'avampiede e riparti subito, tallone che non tocca terra, ginocchio che resta quasi fermo.
 4. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Piegare il ginocchio per saltare. Tallone che tocca terra. Ginocchia che cedono verso l'interno all'atterraggio.
-**Più facile:** Pogo a due gambe.
-**Più difficile:** Salti più alti, o in avanzamento.
+**Errori comuni:** Piegare il ginocchio per saltare. Tallone che tocca terra. Ginocchio che cede verso l'interno negli spostamenti laterali.
+**Più facile:** Rimbalzi sul posto (Single-Leg Toe Bounces), o a due gambe.
+**Più difficile:** Spostamenti più lunghi, o salti più alti.
 **Sicurezza:** Caviglie riscaldate. Fastidio al tendine d'Achille: fermati.
 
 ### Half-Lunge Switch Hops
@@ -427,11 +398,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. In mezzo affondo: una gamba avanti e una indietro, ginocchia poco piegate, busto leggermente inclinato in avanti come alla partenza di uno sprint.
-2. Con saltelli rapidi sull'avampiede cambia la gamba davanti a ogni salto, senza alzarti.
+2. Fai saltelli rapidi sull'avampiede senza alzarti: due saltelli, poi cambi la gamba davanti, altri due saltelli, poi cambi di nuovo.
 3. Braccia che accompagnano come nella corsa, busto fermo.
 4. Tieni per il tempo indicato.
 
-**Errori comuni:** Alzarsi in piedi tra un saltello e l'altro. Appoggiare i talloni. Busto che si raddrizza o che oscilla.
+**Errori comuni:** Alzarsi in piedi tra un saltello e l'altro. Appoggiare i talloni. Cambiare a ogni saltello: il cambio è ogni due.
 **Più facile:** Ritmo più lento, affondo meno profondo.
 **Più difficile:** Ritmo più veloce, affondo più profondo.
 **Sicurezza:** Caviglie e polpacci riscaldati.
@@ -464,7 +435,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Ritmo più veloce, spostamenti più lunghi.
 **Sicurezza:** Caviglie e ginocchia riscaldate.
 
-## pliometria-intensiva (13)
+## pliometria-intensiva (11)
 
 ### Wall Drive Skip
 `plioi-spinta-frontale-corsa-skip-fascia` · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=DUfENQ6h8NI?si=uZQcXfFCQICbVhwM)
@@ -479,20 +450,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Ritmo più lento, inclinazione minore.
 **Più difficile:** Ritmo più veloce, inclinazione maggiore.
 **Sicurezza:** Caviglie e polpacci riscaldati.
-
-### Two-Leg Jump, One-Leg Landing
-`plioi-jump-2-up-1-down` · bilaterale · reps · corpo libero · senza video
-
-**Esecuzione**
-1. In piedi, piedi alla larghezza delle anche.
-2. Carica piegando le ginocchia e salta in alto a due piedi, braccia che accompagnano.
-3. Atterra su una gamba sola, morbido, ginocchio sopra il piede, e tieni l'equilibrio per 2 secondi.
-4. Alterna la gamba di atterraggio. Fai le ripetizioni indicate contando i salti totali.
-
-**Errori comuni:** Ginocchia che cedono verso l'interno all'atterraggio. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Atterrare e muoversi subito: la tenuta in equilibrio è parte dell'esercizio.
-**Più facile:** Salti più bassi.
-**Più difficile:** Salti più alti, o atterraggio su un rialzo basso.
-**Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
 
 ### Squat Jump
 `plioi-squat-jump` · bilaterale · reps · corpo libero · senza video
@@ -527,30 +484,30 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. In ginocchio su un tappetino, glutei sui talloni, braccia indietro.
-2. Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat sull'avampiede.
-3. Nella progressione, dalla posizione in piedi salta subito su un box basso davanti a te.
-4. Scendi dal box con calma e ripeti. Fai le ripetizioni indicate.
+2. Variante 1: oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando a due piedi in squat sull'avampiede.
+3. Variante 2: stesso salto, ma atterri su un piede solo (prima il sinistro, poi il destro), morbido, e tieni l'equilibrio.
+4. Variante 3: salto in piedi e, senza fermarti, salto su un box davanti a te atterrando su un piede solo.
+5. Le tre varianti sono in progressione di difficoltà: passa alla successiva solo quando la precedente è pulita. Fai le ripetizioni indicate della variante del giorno.
 
-**Errori comuni:** Aiutarsi con le mani a terra. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Box troppo alto: si sale con il salto, non con le ginocchia al petto.
-**Più facile:** Solo il salto in piedi, senza box.
-**Più difficile:** Box più alto.
+**Errori comuni:** Aiutarsi con le mani a terra. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Box troppo alto nella variante 3: si sale con il salto, non con le ginocchia al petto.
+**Più facile:** Solo la variante 1, a due piedi.
+**Più difficile:** Variante 3 con il box più alto.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia.
-**DA CONFERMARE:** Stesso video di 'Knee Jumps Progression (+ Box Jump)': sono lo stesso esercizio? Ne tolgo uno?
 
 ### Knee Jumps Progression (+ Box Jump)
 `plioi-knee-jumps-progression-box-jump` · bilaterale · reps · palestra · [video](https://youtube.com/shorts/ZdXn3VZVRRQ?feature=share)
 
 **Esecuzione**
 1. In ginocchio su un tappetino, glutei sui talloni, braccia indietro.
-2. Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat sull'avampiede.
-3. Nella progressione, dalla posizione in piedi salta subito su un box basso davanti a te.
-4. Scendi dal box con calma e ripeti. Fai le ripetizioni indicate.
+2. Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando a due piedi in squat sull'avampiede.
+3. Poi la stessa partenza atterrando su un piede solo: prima il sinistro, poi il destro, morbido e in equilibrio.
+4. Infine salto in piedi e subito salto sul box davanti a te.
+5. Come nel video: due piedi, sinistro, destro, poi con il box. Sono quattro passi in progressione di difficoltà. Fai le ripetizioni indicate per passo.
 
-**Errori comuni:** Aiutarsi con le mani a terra. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Box troppo alto.
-**Più facile:** Solo il salto in piedi, senza box.
-**Più difficile:** Box più alto.
+**Errori comuni:** Aiutarsi con le mani a terra. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono. Box troppo alto nella variante 3: si sale con il salto, non con le ginocchia al petto.
+**Più facile:** Solo il salto in piedi a due piedi.
+**Più difficile:** Box più alto, o atterraggio su un piede anche nel box.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia.
-**DA CONFERMARE:** Doppione di 'Knee Jump to Box Jump Progression' (stesso video). Da togliere?
 
 ### Reverse Drop Jump
 `plioi-reverse-drop-jumps` · bilaterale · reps · corpo libero · [video](https://www.youtube.com/watch?v=Mb_vKJ2ODCU)
@@ -571,16 +528,15 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `plioi-singl-leg-rdl-sl-knee-jump-progression-advanced` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=5M85J6mWKz4)
 
 **Esecuzione**
-1. In piedi su una gamba, scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera indietro, schiena neutra.
-2. Risali e porta il ginocchio libero in alto con decisione, trasformando la risalita in un salto sulla gamba d'appoggio.
-3. Atterra sulla stessa gamba, morbido, e scendi subito nello stacco successivo.
-4. Fai le ripetizioni indicate, poi cambia gamba.
+1. Primo passo: in piedi sulla gamba sinistra, manubrio nella mano destra. Scendi in uno stacco rumeno a una gamba e risali con forza concludendo con uno snatch: il manubrio sale in un'unica linea fino al braccio disteso sopra la testa.
+2. Secondo passo: su un ginocchio solo (l'altro piede avanti), oscilla le braccia e spingi con le anche per saltare in piedi, atterrando morbido.
+3. Terzo passo: in piedi su una gamba, scendi nello stacco rumeno e trasforma la risalita in un salto in alto, atterrando sulla stessa gamba.
+4. Fai le ripetizioni indicate di ogni passo, poi cambia lato. È una progressione avanzata: poche ripetizioni, tutte esplosive.
 
-**Errori comuni:** Schiena che si curva: il movimento parte dalle anche. Ginocchia che cedono verso l'interno all'atterraggio. Fermarsi tra lo stacco e il salto: il movimento è unico.
-**Più facile:** Stacco e salto separati da una pausa, salto più basso.
-**Più difficile:** Salto più alto, o con un manubrio leggero.
-**Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
-**DA CONFERMARE:** Stesso video di 'Sl Rdl - Sl Knee Jump Progression Advanced': sono lo stesso esercizio? Ne tolgo uno?
+**Errori comuni:** Schiena che si curva nello stacco: il movimento parte dalle anche. Snatch tirato con il braccio: il manubrio sale per la spinta delle anche. Ginocchio che cede verso l'interno all'atterraggio.
+**Più facile:** Senza snatch e senza salto: stacco a una gamba e knee jump separati.
+**Più difficile:** Manubrio più pesante, salto più alto.
+**Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Solo dopo stacchi a una gamba e knee jump già puliti. Tappetino sotto il ginocchio.
 
 ### Single-Leg Drop with Inside Push-Off
 `plioi-single-leg-drop-e-spinta-interna` · per lato · reps · corpo libero · [video](https://www.youtube.com/watch?v=CLJr7cgOp60)
@@ -588,10 +544,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Esecuzione**
 1. In piedi su un box o un gradino basso, su una gamba sola.
 2. Lasciati cadere a terra e atterra sulla stessa gamba, morbido, sull'avampiede.
-3. Appena tocchi terra rimbalza in avanti spingendo con l'interno del piede, come in un cambio di direzione.
-4. Atterra su due piedi e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba.
+3. Appena tocchi terra spingi di lato con l'interno del piede della gamba d'appoggio, incrociando con l'altra gamba davanti, come in un cambio di direzione.
+4. Atterra sull'altra gamba e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Ginocchia che cedono verso l'interno all'atterraggio. Contatto lungo a terra prima della spinta. Spingere con tutto il piede invece che con l'interno.
+**Errori comuni:** Ginocchio che cede verso l'interno all'atterraggio. Contatto lungo a terra prima della spinta. Spingere con tutto il piede invece che con l'interno, o spingere in avanti invece che di lato.
 **Più facile:** Gradino più basso, pausa prima della spinta.
 **Più difficile:** Gradino più alto, spinta più lunga.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
@@ -629,26 +585,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. In piedi su un box o un gradino basso, su una gamba sola, spalle rivolte alla direzione di caduta.
-2. Lasciati cadere all'indietro ruotando il corpo in aria di un quarto di giro.
-3. Atterra sulla stessa gamba, morbido, e trova subito l'equilibrio dopo la rotazione.
-4. Tieni 2 secondi fermo, risali con calma. Fai le ripetizioni indicate, poi cambia gamba.
+2. Lasciati cadere all'indietro ruotando il corpo in aria di mezzo giro (180°).
+3. Atterra su un piede solo, morbido, e spingi subito di lato nella direzione opposta con l'esterno del piede, come in un cambio di direzione.
+4. Atterra sull'altra gamba e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba.
 
-**Errori comuni:** Ginocchia che cedono verso l'interno all'atterraggio. Atterrare e barcollare: cerca la stabilità immediata. Guardare in basso.
-**Più facile:** Gradino più basso, rotazione minore.
-**Più difficile:** Gradino più alto, o salto subito dopo l'atterraggio.
+**Errori comuni:** Ginocchio che cede verso l'interno all'atterraggio. Rotazione incompleta: in aria si gira di mezzo giro. Spinta in avanti invece che di lato.
+**Più facile:** Gradino più basso, rotazione di un quarto di giro.
+**Più difficile:** Gradino più alto, spinta più lunga.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te.
-
-### Single-Leg RDL to Single-Leg Knee Jump (Advanced) 2
-`plioi-sl-rdl-sl-knee-jump-progression-advanced` · per lato · reps · corpo libero · [video](https://youtube.com/shorts/5M85J6mWKz4?feature=share)
-
-**Esecuzione**
-1. In piedi su una gamba, scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera indietro, schiena neutra.
-2. Risali e porta il ginocchio libero in alto con decisione, trasformando la risalita in un salto sulla gamba d'appoggio.
-3. Atterra sulla stessa gamba, morbido, e scendi subito nello stacco successivo.
-4. Fai le ripetizioni indicate, poi cambia gamba.
-
-**Errori comuni:** Schiena che si curva: il movimento parte dalle anche. Ginocchia che cedono verso l'interno all'atterraggio. Fermarsi tra lo stacco e il salto.
-**Più facile:** Stacco e salto separati da una pausa.
-**Più difficile:** Salto più alto.
-**Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.
-**DA CONFERMARE:** Doppione di 'Single-Leg RDL to Single-Leg Knee Jump (Advanced)' (stesso video). Da togliere?

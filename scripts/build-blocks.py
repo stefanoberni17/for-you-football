@@ -46,6 +46,7 @@ ALIAS = {
     "pull-up": "pull-5",
     "panca inclinata con manubri (flyes)": "fpa-bench-flyes-fy",  # doppione tolto da Ste il 12/10: stesso video
     "incline bench dumbbell flyes": "fpa-bench-flyes-fy",
+    "pogo jumps progression (ankle stiffness )": "plioe-ankle-stiffness-pogo-jumps-progression",  # doppione tolto da Ste il 14/10: stesso video
     "dips - chest version": "fpa-dips", "barbell bench press": "fpa-panca-piana-con-bilanciere",
     "barbell squat": "fpb-squat", "barbell stiff leg romanian deadlift": "fpb-stacco-rumeno",
     "calves raises": "fpb-calf-raises", "single leg fascia rdl": "fasc-fy-towe-slrdl", "fascia single leg rdl": "fasc-fy-towe-slrdl", "fascia single leg runner (towel)": "fasc-fy-towe-slrdl",
