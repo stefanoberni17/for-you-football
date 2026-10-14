@@ -1,6 +1,6 @@
 # Campo: cose da fare prima della vendita
 
-Lista decisa con Ste il 12/10/2026 dopo l'analisi del posizionamento ("Il tuo staff in un'app"). Nessun punto è iniziato: si parte quando Ste lo dice, un blocco per PR.
+Lista decisa con Ste il 12/10/2026 dopo l'analisi del posizionamento ("Il tuo staff in un'app"), integrata il 13/10 (obiettivi e tetti) e il 14/10 (resoconto dopo squadra e partita, dalla chiamata col gruppo). Nessun punto è iniziato: si parte quando Ste lo dice, un blocco per PR.
 
 Le stime sono ore di lavoro mie. "Incl. test" = comprende i test Vitest sui moduli puri e la verifica con l'harness delle schermate; NON comprende la prova sul campo di Ste, che resta a parte per ogni blocco. Dove la stima non include i test lo dico.
 
@@ -90,6 +90,58 @@ Lettura: il costo lo fanno i piani, non la chat. Un pacchetto base da 3 $ di cos
 
 Quando un obiettivo ha raggiunto il tetto, le giornate rimaste vanno ai complementi nell'ordine. "Senza allenamenti con la squadra" (Ste, 13/10) = niente allenamenti E niente partite: fase off season, nessun giorno squadra e nessuna partita nel calendario né nell'abitudine del setup. Nella maschera "Rifai da capo" una riga di conferma prefillata dal setup, "Questa settimana ti alleni con la squadra? Sei in season o fuori?", così il tetto alto della resistenza vale solo con la risposta data quel giorno (ore comprese nelle 6-8). Entra nel prompt (regola nuova con i tetti e i complementi), nel validatore (errore oltre il tetto) e nel piano base (ciclo sui complementi invece dello stesso obiettivo). Ore: 6-8, incl. test sul piano base e sul validatore (un caso per riga della tabella: velocità sola con 4 giornate, parte alta sola, resistenza in season contro off season senza squadra, tre kettlebell).
 
+## Resoconto dopo l'allenamento con la squadra e dopo la partita (dalla chiamata col gruppo del 14/10, regole decise da Ste)
+
+17. **Resoconto serale che fa adattare le sedute successive.** (Nel messaggio di Ste è il punto 15; qui è il 17 perché 15 e 16 erano già presi dagli obiettivi.) Oggi l'app conosce la squadra solo come abitudine (`profiles.training_squadra`: sforzo stimato e qualità per giorno della settimana) e la partita come 90' × 9 fissi in `caricoSquadraStimato`: il carico reale di quel giorno non entra mai. Il resoconto porta il dato vero, e da lì le serie facoltative nelle sedute successive.
+
+**Quando.** La sera di ogni giorno segnato come allenamento con la squadra o partita (`user_weekly_calendar`, oppure l'abitudine del setup se il calendario è vuoto). Due strade che portano allo stesso foglio: la push serale (`lib/pushNotification.ts` e `push_subscriptions` esistono già; il cron `daily-evening` delle 16:00 UTC oggi fa solo il reminder Telegram del Coach: aggiunge una push "Com'è andata con la squadra?" per chi ha il Campo e un giorno squadra o partita oggi) e, per chi la push non ce l'ha, un riquadro al primo accesso al Campo dal giorno dopo ("Ieri allenamento con la squadra: com'è andata?"), che resta fino alla risposta o a "Salta". Facoltativo: senza risposta resta il dato previsto.
+
+**Struttura del foglio (`Sheet`, componente `ResocontoSquadraSheet`).** Parte obbligatoria breve, poi dettagli espandibili con `<details>`.
+- Allenamento con la squadra, obbligatoria: fatica reale 1-10 (`RpeScale` tipo "sforzo", già usata nel setup), cosa si è fatto (chips a scelta multipla: resistenza, forza, velocità e sprint, tecnica e tattica, partitella; le stesse `SQUADRA_QUALITA` con "rapidità" rinominata), durata (chips 60 / 75 / 90 / 105 / 120'), fastidio sì/no e se sì la zona (le stesse zone di M9).
+- Partita, obbligatoria: minuti giocati (campo numerico 0-120, chips rapide 0 / 15 / 30 / 45 / 60 / 90), fatica 1-10, fastidio sì/no e zona, stanchezza generale (tre scelte: fresco / normale / cotto).
+- Dettagli espandibili, facoltativi, per tutti e due:
+  - Testa: "Com'è andata di testa?" (bene / alti e bassi / fatica) più una riga libera (200 caratteri). Va al Coach come contesto: `buildUserContext` in `lib/coach-ai.ts` legge gli ultimi 3 resoconti nel blocco "Il Campo" ("sabato partita: di testa alti e bassi, 'dopo il gol sbagliato mi sono spento'").
+  - Tecnica: "Tecnicamente come sei andato?" voto 1-10; aprendo, voto su passaggio, stop, lancio, tiro.
+  - Fisico: "Fisicamente come sei andato?" voto 1-10; aprendo, voto su velocità, forza, resistenza.
+
+**Tabella `training_resoconti` (migration 031).**
+
+| Colonna | Tipo | Note |
+|---|---|---|
+| `id` | uuid PK | |
+| `user_id` | uuid → auth.users, cascade | RLS owner-only in lettura, scrittura solo service role (come le altre tabelle del Campo) |
+| `data` | date | il giorno dell'allenamento o della partita; `UNIQUE (user_id, data, tipo)` |
+| `tipo` | text | `squadra` \| `partita` |
+| `rpe` | smallint 1-10 | fatica reale |
+| `durata_min` | smallint | allenamento: durata; partita: minuti giocati |
+| `qualita` | text[] | solo squadra: cosa si è fatto (`SquadraQualitaId[]`) |
+| `stanchezza` | text | solo partita: `fresco` \| `normale` \| `cotto` |
+| `fastidio_zona` | text | null se nessun fastidio; zona come M9 |
+| `testa` | text | `bene` \| `alti_bassi` \| `fatica`, null se non risposto |
+| `testa_nota` | text | 200 caratteri |
+| `voti` | jsonb | `{ tecnica: { generale, passaggio, stop, lancio, tiro }, fisico: { generale, velocita, forza, resistenza } }`, tutti facoltativi |
+| `rpe_previsto` | smallint | lo sforzo dell'abitudine (o 9 per la partita) al momento della risposta: serve al confronto e ai grafici senza ricalcoli |
+| `created_at` | timestamptz | |
+
+API: `GET /api/training/resoconto?da=` (i propri, per hub e storico) e `POST /api/training/resoconto` (upsert su utente, data, tipo; validazione dei campi; evento `training_resoconto_salvato`). `/api/training/state` ritorna `resocontoDaChiedere: { data, tipo } | null` (ieri o oggi senza riga e non saltato: lo "Salta" si segna in `localStorage` per data).
+
+**Collegamenti con lo storico (punti 6-8).** Il resoconto entra nella pagina `/allenamento/storico` come riga tra le sedute (icona diversa) e nei grafici: fatica reale contro prevista per giorno, minuti giocati per partita, voti tecnica e fisico nel tempo. `calcolaCarico` riceve, accanto a `squadraSettimanale` stimato, i resoconti della finestra e per ogni giorno usa `rpe × durata_min` reale quando esiste al posto della stima (`caricoSquadraStimato` diventa `caricoSquadra(stima, resoconti)`); nella card carico la frase dice "squadra: 3 giorni misurati, 1 stimato".
+
+**Serie facoltative (meccanismo nuovo).** `PlanItem.facoltativo?: 'togli' | 'aggiungi'` più `facoltativo_motivo?: string`; `PlanSession.proposte?: { tipo, motivo }[]` per il messaggio in testa alla seduta. Pagina seduta: gli item "da togliere" sono mostrati con il badge "Facoltativo: puoi saltarlo" e il motivo; gli "da aggiungere" sono in una sezione a parte "Se te la senti" con il bottone "Aggiungi" per ognuno (o "Aggiungi tutti"). Player: gli item facoltativi da togliere hanno "Salta (facoltativo)" come azione principale accanto a "Fai"; quelli da aggiungere entrano solo se scelti. Nel log per serie si salva quello che è stato fatto davvero (`training_set_logs` già registra solo le serie fatte; in più `training_session_completions.facoltativi` jsonb: `{ tolti: [id], aggiunti: [id] }`). Il validatore non conta gli item "da aggiungere" nei tetti (li conta il tetto duro 1,5 a scelta fatta: se aggiungerli tutti sfora, la proposta si ferma prima).
+
+**Regole di adattamento (`lib/trainingResoconto.ts`, modulo puro con i test).** Il programma propone, non cambia da solo (M8): ogni regola produce proposte sulla PRIMA seduta dell'app successiva al resoconto, applicate alla lettura dello state (come M5), mai alle sedute già fatte.
+- Fatica reale ≥ previsto + 2, oppure la squadra ha lavorato una qualità che la seduta successiva ha tra i suoi blocchi (mappa `SQUADRA_QUALITA` → qualità di libreria: resistenza → resistenza-*, forza → forza-parte-bassa/forza-parte-alta, velocità e sprint → velocita/pliometria-*, tecnica e tattica → tecnica-*, partitella → resistenza-metabolico): nella seduta successiva le serie di quella qualità diventano facoltative da togliere, con il messaggio "Ieri la squadra ha già fatto resistenza (fatica 8): le serie di resistenza oggi sono facoltative". Gli item di apertura e fascia non si toccano.
+- Fatica reale ≤ previsto − 2: l'app chiede "Vuoi aggiungere qualche serie nel prossimo allenamento?" e propone serie facoltative da aggiungere: prima una serie in più sugli esercizi principali della seduta (stessa dose), poi, se la qualità mancata dalla squadra (previsto dall'abitudine, non fatto) non è nella seduta, un blocco breve di quella qualità dai `blocchiDisponibili` (anche esercizi più pesanti se servono a completarla, nel rispetto di livello e finestre partita). M5 non si applica (sceglie il giocatore); resta il tetto duro 1,5 di M6 sul carico pianificato con le aggiunte.
+- Fastidio con zona: regola M9 (riduzione sul distretto della zona nelle sedute successive, consiglio di farsi vedere, nessuna diagnosi).
+- Partita giocata poco (minuti < `partita_minuti_soglia`): nessuna seduta di compenso. Se il giorno dopo c'è una seduta dell'app, proposta di serie facoltative da aggiungere con il messaggio "Hai giocato poco: oggi puoi spingere di più". Se non c'è, niente. La regola "il giorno dopo la partita niente gambe" (regola 3 del prompt) resta per le sedute pianificate; le aggiunte proposte sono parte alta, core, tecnica, mai gambe pesanti.
+- Due resoconti in conflitto (allenamento e partita lo stesso giorno) si sommano nel carico e la regola più prudente vince (togliere batte aggiungere).
+
+**Parametri (`app_settings`, migration 031).** Tabella `app_settings (chiave text PK, valore jsonb, aggiornato_il timestamptz)`, lettura con service role e cache in memoria 5 minuti, scrittura solo dal SQL editor: `partita_minuti_soglia` (Ste decide il valore; nel codice il default è un segnaposto che vale solo se la riga manca), `resoconto_delta_fatica` (2), `resoconto_push_ora` (ora locale della push). È la prima tabella di parametri dell'app: i limiti dei pacchetti del punto 9 possono stare qui invece che in `lib/pacchetti.ts`, da decidere quando si fa il punto 9.
+
+**Schermate.** (1) Push serale e riquadro nell'hub "Oggi" del Campo con "Rispondi" e "Salta"; (2) il foglio in due varianti (squadra / partita), obbligatorie sopra, tre `<details>` sotto, "Salva" sticky; (3) la pagina seduta con il messaggio in testa ("Ieri con la squadra… oggi puoi togliere / aggiungere") e le serie marcate; (4) il player con "Salta (facoltativo)" e la sezione "Se te la senti"; (5) nello storico le righe dei resoconti e i tre grafici; (6) nella card carico la frase "misurato / stimato"; (7) nel Coach il contesto "di testa".
+
+**Ore.** Tabella, API, foglio e riquadro: 8-10 · serie facoltative in piano, pagina seduta, player e log: 8-10 · regole di adattamento con i test (un caso per regola: sopra, sotto, qualità già fatta, fastidio, partita corta, conflitto): 6-8 · carico reale in `calcolaCarico` con test: 3 · storico e grafici (sopra il punto 6): 4-5 · contesto del Coach: 1 · `app_settings`: 2. **Totale 32-39, incl. test e verifica harness**; la prova sul campo di Ste resta a parte. Dipende dal punto 6 per lo storico e da M9 per il fastidio; il resto si può fare prima. Senza push (solo riquadro al primo accesso) si risparmiano 2 ore.
+
 ## Dopo
 
 13. **Storico in sola lettura dopo la scadenza.** Stato `archivio` accanto ad attivo e nessun accesso: letture aperte (`state`, test, storico, mese), scritture chiuse (`plan`, `complete`, `set-log`, `pain`, `chat`), hub in modalità archivio con il rimando a riattivare. Ore: 6-8, incl. test sulle funzioni di accesso.
@@ -106,11 +158,11 @@ Sei fasi, un blocco per PR, merge su `main` solo al "vai". Le ore sono quelle de
 | 2. Il piano segue la realtà | M8 calendario che cambia (10-14) · 5 fattibilità nel setup (4-6) · 7 date programmata ed effettiva (2-3) · 8 durata reale (3) | 19-26 | Il problema più grave per chi paga: la settimana che non si adatta |
 | 3. Dolore e sicurezza | M9 dolore per zona e testi (8-10) · 4 limitazioni e infortuni nel setup (5-6) | 13-16 | Prima di dare il Campo a chi non conosciamo |
 | 4. Beta chiusa (Ste) | Flag `training_access` a 3-5 ragazzi, 4 settimane di log. Parte APPENA finita la fase 3, mentre io faccio le fasi 5-6 | 0 | Il Campo è congelato finché tre atleti non hanno un mese di log: le quattro settimane corrono in parallelo al codice |
-| 5. Vedere i progressi | 6 storico completo (12-16) · M11 scarico e ri-test dai dati (8-10) · M12 Reset prima della seduta (4-5) | 24-31 | Servono ai tester della fase 4 per dare feedback con i dati davanti |
+| 5. Vedere i progressi | 6 storico completo (12-16) · M11 scarico e ri-test dai dati (8-10) · M12 Reset prima della seduta (4-5) · 17 resoconto dopo squadra e partita, serie facoltative (32-39; la parte tabella + foglio + regole può anticipare in fase 2 se Ste vuole il dato reale già dai tester) | 56-70 | Servono ai tester della fase 4 per dare feedback con i dati davanti; il resoconto è il modo in cui la squadra entra nel carico con numeri veri |
 | 6. Vendita | 9 pacchetti e limiti (8-10) · 10 due sezioni, un account (24-32) · 11 webhook e upgrade (10-12) · 12 prezzi e fondatori (5-6) · 14 annuale (4-5) · 13 sola lettura (6-8) · accesso con Google (2-3, da CLAUDE.md) | 59-76 | Si vende quando la beta ha confermato il motore |
-| **Totale codice** | | **135-175** | |
+| **Totale codice** | | **167-214** | |
 
-Ritmo: a 15 ore a settimana sono 9-12 settimane; la fase 6 deve partire entro metà novembre per vendere a dicembre, quindi la beta della fase 4 va aperta entro fine ottobre.
+Ritmo: a 15 ore a settimana sono 11-14 settimane (9-12 senza il resoconto del punto 17); la fase 6 deve partire entro metà novembre per vendere a dicembre, quindi la beta della fase 4 va aperta entro fine ottobre e il punto 17 va fatto a pezzi (prima tabella, foglio e carico reale; serie facoltative e grafici dopo).
 
 Fuori dal codice, per Ste, nell'ordine in cui servono: correzioni dei batch 4-6; i video (80 esercizi, prima le scale gambe e i test); le cose già in CLAUDE.md (Stripe: URL dei termini e `STRIPE_TERMS_CONSENT=1`, ricevute, controllo dei Price; i 24 "Perché funziona"; gli audio W1-G2 e G3; Durata Minuti W1-G1); i prezzi di Mentale, Fisico e Completo.
 
