@@ -454,7 +454,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `test2-palleggi-altezza-testa-tecnica` · bilaterale · secondi · campo · [video](Palleggi di collo altezza testa - tecnica di base #tutorial #football https://youtube.com/watch?v=POmnAoqSD3w)
 
 **Esecuzione**
-1. In piedi, palla in mano. Lasciala cadere e inizia a palleggiare con i piedi.
+1. Palla a terra: alzala con il piede e inizia a palleggiare con i piedi.
 2. Ogni palleggio porta la palla all'altezza della testa: tocchi di collo piede, non di punta.
 3. Conta i palleggi consecutivi senza che la palla tocchi terra, per il tempo indicato o fino all'errore.
 4. Alterna i piedi quando puoi; il risultato è il numero di tocchi.
@@ -468,7 +468,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `test2-palleggi-liberi-coscia-e-testa` · bilaterale · secondi · campo · [video](Palleggi solo coscia e testa - tecnica di base #tutorial #football https://youtube.com/watch?v=Fcf7r_xfbBw)
 
 **Esecuzione**
-1. In piedi, palla in mano. Lasciala cadere sulla coscia e inizia a palleggiare.
+1. Palla a terra: alzala con il piede e lasciala cadere sulla coscia e inizia a palleggiare.
 2. Alterna cosce e testa come vuoi: coscia, coscia, testa, coscia… senza usare i piedi.
 3. Conta i tocchi consecutivi senza che la palla tocchi terra.
 4. Ginocchia morbide, occhi sempre sulla palla.
@@ -482,7 +482,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `test2-palleggi-liberi-piedi-coscia-spalla-testa` · bilaterale · secondi · campo · [video](Palleggi piedi coscia spalla testa - tecnica di base #tutorial #football https://youtube.com/watch?v=T4NG0_P-AT4)
 
 **Esecuzione**
-1. In piedi, palla in mano. Lasciala cadere e palleggia usando tutte le superfici: piedi, cosce, spalle, testa.
+1. Palla a terra: alzala con il piede e palleggia usando tutte le superfici: piedi, cosce, spalle, testa.
 2. Varia le superfici come vuoi: il test premia il controllo su tutto il corpo.
 3. Conta i tocchi consecutivi senza che la palla tocchi terra.
 4. Ginocchia morbide, sguardo sulla palla, respiro regolare.
@@ -496,7 +496,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `test2-palleggi-piedi-coscia-testa` · bilaterale · secondi · campo · senza video
 
 **Esecuzione**
-1. In piedi, palla in mano. Lasciala cadere e palleggia con piedi, cosce e testa.
+1. Palla a terra: alzala con il piede e palleggia con piedi, cosce e testa.
 2. Varia le superfici: almeno un tocco per ognuna nella serie.
 3. Conta i tocchi consecutivi senza che la palla tocchi terra.
 4. Ginocchia morbide, occhi sulla palla.

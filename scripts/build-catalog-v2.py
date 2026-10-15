@@ -73,6 +73,8 @@ for r in rows:
         fields.append("inCoppia: true")
     if r.get("video"):
         fields.append(f"videoUrl: {ts_str(r['video'])}")
+    if r.get("video_schermo"):
+        fields.append(f"videoSchermoUrl: {ts_str(r['video_schermo'])}")  # video dei segnali da mettere sul telefono durante l'esercizio (Ste, 15/10)
     if r.get("note"):
         fields.append(f"note: {ts_str(r['note'])}")
     if r.get("solo_livello"):
