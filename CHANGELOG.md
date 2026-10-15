@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-15 — Campo da fare: la seduta di resistenza come la fa Ste (punto 19)
+- Regola di Ste in `docs/campo-da-fare.md`, solo documentazione: serie da 4-6 minuti, 2-3 minuti di recupero, 4-6 serie in base al livello, con dentro fartlek, metabolico o esercizi in campo con la palla. Proposta: blocco virtuale `re-serie` composto dal server (B 4×4', A 5×5', PRO 6×6', contenuto a rotazione), preferito ai blocchi Everfit come per la parte alta; recupero minimo dei bounds a 2'. Cinque domande aperte per le regole di metabolico, resistenza alla velocità, progressione, corsa continua e salite. 5-7 ore incl. test, fase 1. Totale 177-228.
+
 ## 2026-10-15 — Campo da fare: voto all'esecuzione tecnica (punto 18)
 - Decisioni di Ste in `docs/campo-da-fare.md`, solo documentazione: su ogni esercizio, a fine esercizio, espandibile, default "ok" con i bottoni "Faccio fatica" e "Non riesco" (colonna `esecuzione` in `training_set_logs`); prima si abbassa (kg, oppure tempo o ripetizioni, oppure un gradino sotto) con il SALI bloccato, poi la seduta dedicata a poche ripetizioni (EMOM, `kb-base`, tecnica), e il preparatore lo dice nel messaggio della settimana; niente al Coach mentale. 5-7 ore incl. test, in fase 1. Totale della lista 172-221 ore.
 
