@@ -7976,8 +7976,8 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Rapidità E Tiro",
   "qualita": "velocita",
   "qualitaSet": {
-   "velocita": 7,
-   "tecnica-tiro": 4
+   "velocita": 4,
+   "tecnica-tiro": 7
   },
   "livello": null,
   "progressione": null,
@@ -7998,7 +7998,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "vel-allenamento-rapidita-tecnica-tiro-in-porta-e-vel",
+    "esercizio_id": "ttir-tiri-in-porta-e-visione",
     "nomeEverfit": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
     "serie": 3,
     "quantita": 120.0,
@@ -8279,7 +8279,9 @@ export const BLOCCHI: Blocco[] = [
   "progressione": 1,
   "variante": "full",
   "durataMin": 31,
-  "attrezzatura": [],
+  "attrezzatura": [
+   "campo"
+  ],
   "inCoppia": false,
   "items": [
    {
@@ -8308,7 +8310,9 @@ export const BLOCCHI: Blocco[] = [
   "progressione": 1,
   "variante": "full",
   "durataMin": 27,
-  "attrezzatura": [],
+  "attrezzatura": [
+   "campo"
+  ],
   "inCoppia": false,
   "items": [
    {
