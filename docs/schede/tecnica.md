@@ -3,10 +3,9 @@
 Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 55 schede su 55 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## Da confermare (2)
+## Da confermare (1)
 
-- **Wall Passes with Vision**: Il video dei segnali da mettere sul telefono sta nella descrizione YouTube, che da qui non riesco a leggere: incollami il link e lo metto in `video_schermo`.
-- **Shots on Goal with Vision**: Serve il link del video dei segnali da mettere sul telefono (è lo stesso del dribbling con visione?).
+- **Shots from the Corner: Cross**: Su Everfit le istruzioni dicono: palla sul calcio d'angolo, TIRI A GIRO cercando di far entrare la palla in porta senza che tocchi terra; poi dall'incrocio tra area e linea di fondo, poi dall'angolo dell'area; da entrambi i lati, di interno col piede opposto (da sinistra col destro), rientrando verso la porta. La correzione del 15/10 dice invece cross in corsa su primo palo, secondo palo, dischetto. Quale vale? Oppure sono due esercizi?
 
 ## tecnica-palleggi (18)
 
@@ -124,14 +123,14 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `tpal-palleggi-coscia-e-collo` · bilaterale · minuti · campo · senza video
 
 **Esecuzione**
-1. In piedi, palla a terra: alzala con il piede sulla coscia.
-2. Alterna un tocco di coscia e uno di collo con lo stesso lato: coscia, collo, coscia, collo.
+1. Palla a terra: alzala con il piede e palleggia di collo.
+2. Circa 10 palleggi di collo, poi 10 di coscia, poi di nuovo di collo, e avanti così, con entrambe le gambe.
 3. Coscia parallela a terra al contatto, palla bassa, ginocchio morbido sul tocco di collo.
-4. Metà tempo a destra, metà a sinistra.
+4. Fai il tempo indicato. A piedi nudi, se vuoi, per la sensibilità.
 
 **Errori comuni:** Coscia troppo alta: la palla schizza avanti. Tocchi di punta: la palla va dove vuole. Se la palla cade, riprendila da terra e continua senza fermare il tempo.
 **Più facile:** Un rimbalzo a terra tra i tocchi.
-**Più difficile:** Due tocchi di coscia e due di collo alternati.
+**Più difficile:** Blocchi da 5 invece che da 10, o un piede solo.
 
 ### Freestyle Juggling Between Three Cones
 `tpal-palleggi-freestyle-3-conetti` · bilaterale · minuti · campo · [video](https://youtube.com/watch?v=B0bLp0sq_OU)
@@ -150,10 +149,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `tpal-palleggi-liberi-calcio-alto-tecnica` · bilaterale · minuti · campo · senza video
 
 **Esecuzione**
-1. Palleggi liberi, con la superficie che preferisci.
-2. Ogni 5-6 tocchi calcia la palla alta, 3-4 metri sopra la testa.
-3. Riprendi il palleggio al ritorno con un controllo morbido: il piede accompagna la palla verso il basso, non la colpisce.
-4. Fai il tempo indicato.
+1. Palleggi liberi, circa 10, con la superficie che preferisci.
+2. Calcia la palla in alto sopra di te, controllala al ritorno e continua a palleggiare senza farla cadere.
+3. Per il controllo usa solo il piede: accompagna la palla verso il basso, non colpirla.
+4. Fai il tempo indicato. Più alto calci, più è difficile.
 
 **Errori comuni:** Controllo rigido sulla palla che scende: la palla rimbalza via. Calcio alto storto che ti fa correre. Se la palla cade, riprendila da terra e continua senza fermare il tempo.
 **Più facile:** Calcio meno alto.
@@ -327,11 +326,11 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Davanti a un muro a 3-4 metri, palla a terra.
-2. Passaggio al muro; al ritorno controllo d'interno (primo tocco).
-3. Con il secondo tocco, libero (interno, esterno o suola), giri la palla di 180° come per voltarti verso la porta.
+2. Passaggio al muro; mentre la palla torna, un'occhiata dietro di te (scan), poi controllo d'interno (primo tocco).
+3. Con il secondo tocco, libero (di solito l'esterno, ma anche interno o suola), giri la palla di 180° come per voltarti verso la porta.
 4. Torna di fronte al muro con la palla e ripeti. Alterna il piede del controllo.
 
-**Errori comuni:** Giro con la palla lontana: resta sotto il corpo. Secondo tocco sempre uguale: è libero, varialo. Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su.
+**Errori comuni:** Ricevere senza aver guardato dietro: lo scan è parte dell'esercizio. Giro con la palla lontana: resta sotto il corpo. Secondo tocco sempre uguale: è libero, varialo.
 **Più facile:** Controllo, pausa, poi il giro.
 **Più difficile:** Controllo e giro in un tocco solo, solo piede debole.
 **Sicurezza:** Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.
@@ -397,9 +396,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Davanti a un muro a 2-3 metri, palla a terra.
-2. Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare.
-3. Alterna i lati e i piedi.
-4. Fai il tempo indicato.
+2. Passaggio al muro; al ritorno ferma la palla con la suola davanti a te, fai una finta di corpo e spostala di lato con lo stesso piede, poi rigioca al muro.
+3. Simula la situazione in cui un avversario arriva in pressione da davanti ma non è ancora abbastanza vicino per saltarlo con il controllo orientato.
+4. Alterna i lati e i piedi. Fai il tempo indicato.
 
 **Errori comuni:** Suola che schiaccia la palla senza spostarla. Spostamento lungo: un piede, non due. Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.
 **Più facile:** Più vicino al muro.
@@ -494,9 +493,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `tpas-passaggi-al-muro-5-10mt-alto-basso` · bilaterale · minuti · campo · senza video
 
 **Esecuzione**
-1. A 5-10 metri dal muro, palla a terra.
-2. Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria).
-3. Controlla il ritorno con un tocco orientato e rigioca.
+1. A 5-10 metri dal muro, palla a terra: durante l'esercizio ti muovi avanti e indietro per cambiare la distanza.
+2. Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria), e varia anche la forza del passaggio.
+3. Controlla il ritorno con un tocco orientato e rigioca: il focus è il controllo della palla, non il passaggio.
 4. Entrambi i piedi, per il tempo indicato.
 
 **Errori comuni:** Palla alta troppo forte: torna imprendibile. Controllo rigido sulla palla che scende. Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su.
@@ -509,9 +508,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Davanti a un muro a 3-4 metri, palla a terra.
-2. Passaggio al muro; al ritorno un controllo che gira la palla di 180° (interno o esterno) e ti porta di spalle al muro.
-3. Due tocchi, giro completo e rigioca al muro.
-4. Alterna il piede e il verso del giro.
+2. Passaggio al muro; al ritorno un controllo che gira la palla di 180°, girandoti su te stesso: d'interno, di esterno, di suola o lasciando scorrere la palla.
+3. Giro completo, torna in posizione di fronte al muro e rigioca.
+4. Alterna il piede, il verso del giro e il tipo di controllo.
 
 **Errori comuni:** Controllo che ferma la palla. Giro largo: la palla resta sotto il corpo. Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su.
 **Più facile:** Giro in due tocchi.
@@ -648,10 +647,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `ttir-tiri-tecnica-di-tiro` · bilaterale · reps · campo · senza video
 
 **Esecuzione**
-1. Palla al limite dell'area, porta libera.
-2. Tira in porta controllando solo la tecnica: come colpisci la palla e dove metti il piede d'appoggio, non dove va il tiro.
+1. Porta libera. Parti a 5 metri dalla porta e, dopo le ripetizioni indicate, arretra di 3 metri: 5, 8, 11, 15 metri (il limite dell'area).
+2. A ogni distanza tira controllando solo la tecnica: come colpisci la palla, il punto di impatto e dove metti il piede d'appoggio, non dove va il tiro.
 3. Alterna i tre modi di colpire: tiro a giro d'interno, interno-collo, collo pieno. Caviglia bloccata, ginocchio sopra la palla, busto in avanti.
-4. Fai le ripetizioni indicate alternando i piedi.
+4. Fai le ripetizioni indicate a ogni distanza, alternando i piedi.
 
 **Errori comuni:** Guardare la porta e dimenticare il contatto: qui conta come colpisci. Piede d'appoggio lontano dalla palla: va accanto, punta verso la porta. Tirare di punta o con la caviglia molle.
 **Più facile:** Da più vicino, palla ferma, un solo modo di colpire.
@@ -671,6 +670,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Da più vicino all'area, palla quasi ferma.
 **Più difficile:** Cross di prima dopo un tocco lungo, piede debole.
 **Sicurezza:** Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.
+**DA CONFERMARE:** Su Everfit le istruzioni dicono: palla sul calcio d'angolo, TIRI A GIRO cercando di far entrare la palla in porta senza che tocchi terra; poi dall'incrocio tra area e linea di fondo, poi dall'angolo dell'area; da entrambi i lati, di interno col piede opposto (da sinistra col destro), rientrando verso la porta. La correzione del 15/10 dice invece cross in corsa su primo palo, secondo palo, dischetto. Quale vale? Oppure sono due esercizi?
 
 ### Shots on Goal with Vision
 `ttir-tiri-in-porta-e-visione` · bilaterale · reps · campo · [video](https://youtu.be/CPR99KAUm-4?si=alsjAoz5R5j9ESf_)
@@ -685,7 +685,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Segnale letto prima di partire, quadrato più grande.
 **Più difficile:** Palla calciata più bassa (meno tempo per leggere), piede debole al tiro.
 **Sicurezza:** Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.
-**DA CONFERMARE:** Serve il link del video dei segnali da mettere sul telefono (è lo stesso del dribbling con visione?).
 
 ### Shooting Progression
 `ttir-progressione-tiri-in-porta-tecnica-di-tiro` · per lato · reps · campo · [video](https://youtu.be/YGTHUBKF5hM?si=acfz7OnSl73G1BES)
@@ -716,16 +715,15 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Segnale fisso, senza video.
 **Più difficile:** Due segnali insieme (colore e piede).
 **Sicurezza:** Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.
-**DA CONFERMARE:** Il video dei segnali da mettere sul telefono sta nella descrizione YouTube, che da qui non riesco a leggere: incollami il link e lo metto in `video_schermo`.
 
 ### Dribbling with Vision and Reaction: Basic
 `tvis-dribbling-visione-e-reattivita-base` · bilaterale · reps · campo · [video](https://youtube.com/watch?v=2mbmxURlV0g?si=6lSWNXdf3RnUKSYD)
 
 **Esecuzione**
-1. Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali che parte insieme all'esercizio.
-2. Conduci tra i cinesini con tocchi corti guardando lo schermo: in base a quello che compare nel video esegui il dribbling oppure fermati.
+1. Tre cinesini a triangolo, a 5 metri dal punto di partenza; il telefono appoggiato sul vertice del triangolo con il video dei segnali, che parte insieme all'esercizio.
+2. Parti in conduzione verso il triangolo guardando lo schermo: freccia a destra o a sinistra = dribbling da quel lato; triangolo di stop = fermati sul posto dentro al triangolo e fai delle finte finché non compare la freccia.
 3. Testa su tra un tocco e l'altro: la palla si sente con il piede, lo schermo si guarda.
-4. Fai le ripetizioni indicate.
+4. Torna al via e ripeti. Fai le ripetizioni indicate.
 
 **Errori comuni:** Testa bassa: ti perdi il segnale. Palla lontana dal piede al cambio di direzione. Reagire con un tocco in più: la reazione è immediata.
 **Più facile:** Schermo più vicino, conduzione più lenta.
@@ -760,10 +758,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `tvis-dribbling-visione-e-reattivita-avanzato` · bilaterale · reps · campo · [video](https://youtube.com/watch?v=2mbmxURlV0g?si=6lSWNXdf3RnUKSYD)
 
 **Esecuzione**
-1. Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali della versione avanzata, che parte insieme all'esercizio.
-2. Conduci tra i cinesini con tocchi corti guardando lo schermo: i segnali arrivano più in fretta e senza preavviso; in base a quello che compare esegui il dribbling oppure fermati.
+1. Tre cinesini a triangolo, a 5 metri dal punto di partenza; il telefono appoggiato sul vertice del triangolo con il video dei segnali della versione avanzata, che parte insieme all'esercizio.
+2. Parti in conduzione verso il triangolo guardando lo schermo: freccia a destra o a sinistra = dribbling da quel lato; triangolo di stop = fermati dentro al triangolo e fai delle finte finché non compare la freccia. I segnali arrivano più in fretta e senza preavviso.
 3. Reagisci con il primo tocco utile, senza fermare la palla; testa su tra i tocchi.
-4. Fai le ripetizioni indicate, con il piede debole dove indicato.
+4. Torna al via e ripeti. Fai le ripetizioni indicate, con il piede debole dove indicato.
 
 **Errori comuni:** Testa bassa. Fermare la palla per reagire. Tocchi lunghi.
 **Più facile:** La versione base (altro video).

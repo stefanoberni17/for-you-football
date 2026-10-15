@@ -148,10 +148,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-fascia-iso-lounge-runner` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=nvENLHoWSR4)
 
 **Esecuzione**
-1. Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.
-2. Tallone della gamba dietro sollevato: il peso è sull'avampiede.
-3. Busto dritto, né piegato in avanti né inclinato indietro, sguardo avanti.
-4. Tieni la posizione per il tempo indicato con il ginocchio davanti sopra il piede, respira. Cambia gamba.
+1. Mezzo affondo: gamba davanti piegata, ginocchio dietro sollevato da terra di un pugno, tallone della gamba dietro sollevato.
+2. Concentrati sul contrarre e attivare la pianta del piede davanti, come se stringessi qualcosa sotto al piede.
+3. Busto dritto, sguardo avanti. Tieni la posizione per il tempo indicato respirando: se senti lavorare il gluteo della gamba davanti è il segno che il sistema fasciale sta facendo il suo.
+4. Cambia gamba.
 
 **Errori comuni:** Busto che si piega in avanti o si inclina indietro. Ginocchio dietro che si appoggia a terra. Ginocchio davanti che cade verso l'interno.
 **Più facile:** Ginocchio dietro a terra, mano al muro.
@@ -162,7 +162,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fasc-fascia-towel-figure-8` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=V805vZi3rLs)
 
 **Esecuzione**
-1. In piedi su una gamba, un asciugamano a terra davanti a te.
+1. In piedi su una gamba, un asciugamano a terra davanti a te. Attiva la pianta del piede d'appoggio contraendola, e tienila così per tutto l'esercizio.
 2. Afferra l'asciugamano con le dita del piede libero e sollevalo da terra.
 3. Con il piede che stringe l'asciugamano disegna un otto nell'aria: lento, ampio, senza allentare la presa.
 4. Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede.
@@ -431,13 +431,13 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Parti al 60 % sulla distanza indicata e aumenta un po' ogni 10 metri.
-2. Negli ultimi metri arriva all'80-90 %, mai al massimo.
+2. Ogni allungo un po' più forte del precedente: l'ultimo arriva quasi al massimo (90-100 %).
 3. Corri alto, braccia che spingono, sguardo avanti.
 4. Torna indietro camminando: è il recupero.
 
-**Errori comuni:** Sprintare subito: è un allungo, non una prova. Frenare di colpo alla fine: rallenta su 10-15 metri. Partire a freddo senza la corsa lenta prima.
-**Più facile:** Fermati al 70 %.
-**Più difficile:** L'ultimo allungo al 90 % con una partenza da fermo.
+**Errori comuni:** Sprintare subito: si sale gradualmente. Frenare di colpo alla fine: rallenta su 10-15 metri. Partire a freddo senza la corsa lenta prima.
+**Più facile:** Fermati al 70-80 %.
+**Più difficile:** L'ultimo allungo con una partenza da fermo.
 **Sicurezza:** Un posteriore che tira: fermati, niente sprint oggi.
 
 ### Calf Foam Roll (Both Legs)
@@ -468,17 +468,17 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** In piedi su una gamba, pallina più dura.
 **Sicurezza:** Dolore acuto al tallone o formicolio: fermati.
 
-### Standing Stillness (Fascia)
+### Fascia Standing Meditation
 `risc-fascia-standing-meditation` · bilaterale · minuti · corpo libero · senza video
 
 **Esecuzione**
-1. In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi.
-2. Occhi chiusi o sguardo basso: senti il peso diviso tra tallone, alluce e mignolo.
-3. Porta l'attenzione al respiro e alle sensazioni del corpo: quelle interne (il battito, le tensioni) e quelle esterne (il pavimento, l'aria, i suoni).
-4. Resta presente. Quando un pensiero si porta via l'attenzione, accorgitene e torna al respiro e al corpo. Per il tempo indicato.
+1. In piedi a piedi nudi, postura neutra, gambe leggermente piegate, peso un po' sull'avampiede (non sul tallone), braccia sciolte e parte alta del corpo rilassata.
+2. Concentrati nel contrarre la pianta del piede, come se dovessi stringere qualcosa sotto al piede: non con le dita, con tutta la pianta. Tienila attiva per tutto il tempo.
+3. Respira lentamente con il diaframma. Nel primo minuto dividi il respiro in quattro fasi uguali: inspira dal naso, trattieni, espira dalla bocca come se alitassi su un vetro, trattieni a polmoni vuoti (per esempio 4 secondi ciascuna).
+4. Nei minuti successivi togli le pause e fai durare l'espirazione circa il doppio dell'inspirazione. Per il tempo indicato.
 
-**Errori comuni:** Ginocchia bloccate indietro. Inseguire i pensieri invece di tornare: capita, si torna. Spalle alte.
-**Più facile:** Occhi aperti, sguardo su un punto fisso.
+**Errori comuni:** Peso sui talloni: resta un po' in avanti. Stringere con le dita invece che con la pianta del piede. Respiro corto e veloce: lento, dal diaframma.
+**Più facile:** Senza le pause del respiro, solo inspira-espira lenti.
 **Più difficile:** Su una gamba, occhi chiusi.
 **Sicurezza:** Se gira la testa, apri gli occhi e appoggiati.
 

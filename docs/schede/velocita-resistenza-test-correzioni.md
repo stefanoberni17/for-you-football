@@ -21,15 +21,14 @@ Correzione:
 ## 3. Lateral Shuttles with Tennis Ball
 bilaterale · secondi · video: https://www.youtube.com/watch?v=C4U8ip3peiY
 
-Come l'ho scritto io: Una pallina da tennis in mano, posizione di attesa: gambe piegate, peso sugli avampiedi. Non servono riferimenti a terra. Lancia la pallina a terra davanti a te mentre parti: corsa laterale di qualche metro e ritorno al punto di partenza a passi laterali, riprendendo la pallina. Riparti subito dall'altro lato con un nuovo lancio. Fai il tempo indicato senza fermarti.
+Come l'ho scritto io: Una pallina da tennis in mano, posizione di attesa: gambe piegate, peso sugli avampiedi. Non servono riferimenti a terra. Lancia la pallina a terra mentre parti: due spostamenti laterali rapidi e ritorno, riprendendo la pallina al volo il prima possibile. Riparti subito dall'altro lato con un nuovo lancio. Fai il tempo indicato senza fermarti.
 
 Correzione: 
 
 ## 4. Defender Stance and Speed Drill
 bilaterale · reps · video: https://youtu.be/kWcCAKPMbdM
 
-Come l'ho scritto io: Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti. Il telefono davanti a te con il video dei colori. Piccoli passi rapidi sul posto. A ogni colore che compare cambi posizione: bianco ti sposti verso sinistra, nero verso destra, a passi laterali senza incrociare. Quando compare il colore dello sprint parti a tutta per 3-5 metri, in avanti o all'indietro come indicato, poi torna in posizione. Fai le ripetizioni indicate (una ripetizione = un giro del video).
-Il mio dubbio: Serve il link del video dei colori da mettere sul telefono (Ste: 'non riesco a trovarlo ora'), e quale colore è lo sprint in avanti e quale all'indietro (nel testo c'è due volte il nero).
+Come l'ho scritto io: Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti. Il telefono davanti a te con il video dei colori, che parte insieme all'esercizio. Piccoli passi rapidi sul posto. A ogni colore che compare cambi posizione: bianco ti sposti verso sinistra, nero verso destra, a passi laterali senza incrociare. Quando compare il colore dello sprint (il rosso) parti a tutta per 3-5 metri, in avanti o all'indietro come mostra il video, poi torna in posizione. Fai le ripetizioni indicate (una ripetizione = un giro del video).
 
 Correzione: 
 
@@ -99,7 +98,7 @@ Correzione:
 ## 14. Running Intervals
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: Dopo il riscaldamento, corsa a ritmo forte sulla distanza o il tempo indicato. Ritmo uniforme dall'inizio alla fine della ripetuta: non uno sprint, ma un ritmo che reggi per tutta la ripetuta e per tutte le ripetute. Recupero come indicato (corsa leggera o cammino), poi la successiva. L'ultima ripetuta deve avere lo stesso tempo della prima: se crolla, le prime erano troppo forti.
+Come l'ho scritto io: Dopo il riscaldamento, corsa sostenuta cercando di restare nel tempo indicato per ogni ripetuta. La velocità giusta ti fa arrivare in fondo molto stanco ma in grado di farne un'altra dopo il recupero: non uno sprint, un ritmo che reggi per tutte le ripetute. Recupero come indicato (corsa leggera o cammino), poi la successiva. Se non riesci a stare nei tempi, allunga un po' il recupero; se ci stai comodo, alza un po' la velocità.
 
 Correzione: 
 
@@ -113,7 +112,7 @@ Correzione:
 ## 16. Winger Circuit: Endurance, Speed, Technique
 bilaterale · secondi · video: https://www.youtube.com/watch?v=DLkmPVQgdFE
 
-Come l'ho scritto io: Circuito per esterni guidato dal video: conduzione lungo la fascia, cambio di direzione sul cinesino, sprint e cross o tiro. Fai ogni giro al ritmo indicato: i tratti di conduzione sostenuti, lo sprint finale a tutta. Recupero come indicato tra i giri, camminando per tornare al punto di partenza. Alterna il lato (fascia destra e sinistra) se indicato.
+Come l'ho scritto io: Navetta sui 30 metri (30 + 30) lungo la fascia. Contromovimento per allargarti, prendi la palla, punta il cinesino e concludi in porta. Torna sull'esterno, contromovimento per tagliare dentro, prendi la palla, piccolo slalom e concludi in porta. Torna al punto di partenza e ricomincia. Guarda il video per la disposizione. Recupero come indicato tra i giri.
 
 Correzione: 
 
@@ -155,7 +154,7 @@ Correzione:
 ## 22. Juggling Test: Feet, Thigh, Head
 bilaterale · secondi · senza video
 
-Come l'ho scritto io: Palla a terra: alzala come vuoi e palleggia con piedi, cosce e testa. Un giro = un tocco di piede, uno di coscia e uno di testa, in qualsiasi ordine. Conta i giri completi senza che la palla tocchi terra. Se cade, riparti da zero. Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, occhi sulla palla.
+Come l'ho scritto io: Palla a terra: alzala come vuoi e palleggia con i piedi. Un giro = 10 palleggi con i piedi, poi 10 con le cosce, poi 10 di testa, senza che la palla tocchi terra. Finito il giro si riparte dai piedi. Conta i giri completi. Se la palla cade, riparti da zero. Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, occhi sulla palla. A piedi nudi, se vuoi, per la sensibilità.
 
 Correzione: 
 
@@ -225,7 +224,7 @@ Correzione:
 ## 32. Single-Leg Balance Test
 per lato · secondi · senza video
 
-Come l'ho scritto io: In piedi su una gamba, l'altro piede sollevato dietro, mani sui fianchi. Chiudi gli occhi (se indicato) e avvia il cronometro. Il test finisce quando il piede libero tocca terra o le mani lasciano i fianchi. Un piccolo saltello per non cadere è ammesso, se non esageri; saltelli continui chiudono il test. Fai entrambe le gambe. Il risultato è il tempo in secondi per lato.
+Come l'ho scritto io: A piedi nudi. In piedi su una gamba, l'altro piede sollevato, mani sui fianchi. Chiudi gli occhi e avvia il cronometro. Il test finisce quando il piede libero tocca terra, il piede d'appoggio si sposta o le mani lasciano i fianchi. Un piccolo saltello per non cadere è ammesso, se non esageri; saltelli continui chiudono il test. Fai entrambe le gambe. Il risultato è il tempo in secondi per lato.
 
 Correzione: 
 

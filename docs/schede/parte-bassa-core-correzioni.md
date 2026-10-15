@@ -112,14 +112,14 @@ Correzione:
 ## 16. Patrick Step-Down
 per lato · reps · video: https://youtube.com/watch?v=RDCTvQKcmv0
 
-Come l'ho scritto io: In piedi su un gradino basso o un disco, un piede sul bordo, l'altro nel vuoto davanti. Piega il ginocchio della gamba sul gradino portandolo in avanti oltre la punta del piede, tallone a terra, e scendi finché il tallone libero tocca il pavimento davanti. Risali spingendo sulla gamba sul gradino, senza aiutarti con il piede libero. Lento e controllato. Fai le ripetizioni indicate, poi cambia gamba.
+Come l'ho scritto io: In piedi su un gradino di 20-30 cm, un piede sul bordo, l'altro nel vuoto davanti. Tallone del piede sul gradino a terra. Scendi piegando il ginocchio in avanti oltre la punta del piede, con il peso in avanti sull'avampiede, finché il tallone libero tocca il pavimento davanti: il movimento è quello di scendere le scale, non di sedersi su una sedia. Appena tocchi, spingi forte sulla gamba sul gradino per risalire, senza aiutarti con il piede libero. Lento in discesa, deciso in salita. Fai le ripetizioni indicate, poi cambia gamba.
 
 Correzione: 
 
 ## 17. Poliquin Step-Up
 per lato · reps · video: https://youtube.com/watch?v=2ABf__3KZP4
 
-Come l'ho scritto io: In piedi su un gradino basso, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa. Scendi piegando il ginocchio in avanti oltre la punta del piede, finché il tallone del piede libero tocca il pavimento. Risali spingendo sulla gamba d'appoggio, senza aiuto dal piede libero. Lento e controllato. Fai le ripetizioni indicate, poi cambia gamba.
+Come l'ho scritto io: In piedi su un gradino di 20-30 cm, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa; senza rialzo, lascia che il tallone si sollevi durante la discesa. Scendi piegando il ginocchio in avanti oltre la punta del piede, peso in avanti sull'avampiede, finché il tallone del piede libero tocca il pavimento: come scendere le scale. Appena tocchi, spingi forte sulla gamba d'appoggio per risalire, senza aiuto dal piede libero. Puoi tenere una mano a un sostegno per l'equilibrio. Lento in discesa, deciso in salita. Fai le ripetizioni indicate, poi cambia gamba.
 
 Correzione: 
 

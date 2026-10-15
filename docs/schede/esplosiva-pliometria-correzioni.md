@@ -140,7 +140,7 @@ Correzione:
 ## 20. Single-Leg Toe Bounces (On the Spot)
 per lato · secondi · video: https://youtube.com/watch?v=V5SVWUH1_50
 
-Come l'ho scritto io: In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata. Fai piccoli rimbalzi rapidi sul posto sull'avampiede, usando solo la caviglia. Il tallone non tocca mai terra, il contatto è il più breve possibile. Tieni per il tempo indicato, poi cambia gamba.
+Come l'ho scritto io: In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata. Attiva la pianta del piede contraendola. Fai piccoli rimbalzi rapidi sul posto, circa due al secondo, usando solo la caviglia: l'appoggio è solo sull'avampiede, idealmente alla base di alluce e indice. Il tallone non tocca mai terra, il contatto è il più breve possibile. Non conta l'altezza del salto: rilassa la parte alta del corpo e tieni attiva la pianta del piede. Tieni per il tempo indicato, poi cambia gamba.
 
 Correzione: 
 
