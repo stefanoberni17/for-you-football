@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-15 — Campo da fare: voto all'esecuzione tecnica (punto 18)
+- Decisioni di Ste in `docs/campo-da-fare.md`, solo documentazione: su ogni esercizio, a fine esercizio, espandibile, default "ok" con i bottoni "Faccio fatica" e "Non riesco" (colonna `esecuzione` in `training_set_logs`); prima si abbassa (kg, oppure tempo o ripetizioni, oppure un gradino sotto) con il SALI bloccato, poi la seduta dedicata a poche ripetizioni (EMOM, `kb-base`, tecnica), e il preparatore lo dice nel messaggio della settimana; niente al Coach mentale. 5-7 ore incl. test, in fase 1. Totale della lista 172-221 ore.
+
 ## 2026-10-14 — Campo da fare: il resoconto dopo squadra e partita (punto 17)
 - Dalla chiamata col gruppo del 14/10, regole decise da Ste, solo documentazione in `docs/campo-da-fare.md`: resoconto serale facoltativo nei giorni di squadra e partita (push dal cron serale o riquadro al primo accesso; parte obbligatoria breve: fatica reale, cosa si è fatto, durata o minuti giocati, fastidio con zona, stanchezza; dettagli espandibili su testa, tecnica e fisico), tabella `training_resoconti` e `app_settings` per la soglia dei minuti (migration 031 proposta), carico reale al posto della stima in `calcolaCarico`, serie facoltative "da togliere" e "da aggiungere" (`PlanItem.facoltativo`) con le regole di adattamento (fatica ±2 sul previsto, qualità già fatta dalla squadra, fastidio → M9, partita giocata poco → aggiunte il giorno dopo, mai gambe pesanti), contesto "di testa" al Coach, schermate e 32-39 ore incl. test. Totale della lista 167-214 ore. Niente è iniziato.
 
