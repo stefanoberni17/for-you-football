@@ -39,6 +39,10 @@ V1_QUALITA = {  # area v1 → qualità v2 equivalente (per il peso delle qualit�
 
 # ── Alias: nome Everfit (libreria standard) → id catalogo ─────────────────────
 ALIAS = {
+    # 15/10: nei workout di Ste "Test Salto in lungo - broad jump" è usato come ESERCIZIO (Forza Esplosiva A1, Pliometria
+    # Rapidità Velocità B1/B2, Forza Mix P1, Forza funzionale e pliometria PRO1): il validatore rifiuta gli esercizi di
+    # categoria test nel piano, quindi quei blocchi non passavano mai. Nel piano è lo Standing Broad Jump.
+    "test salto in lungo - broad jump": "fesp-salto-in-lungo-da-fermo",
     "push-up": "push-2", "modified push up": "push-1", "archer push up": "fpa-archer-pushup",
     "band assisted pull up": "pull-4", "inverted row": "pull-2", "chin-up": "fpa-chin-up",
     # "Pull-Up" di Everfit = il gradino 5 della scala di tirata (v1), NON l'esercizio v2 fpa-trazioni: dal 12/10 il v2

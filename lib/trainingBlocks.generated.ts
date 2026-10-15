@@ -3241,8 +3241,7 @@ export const BLOCCHI: Blocco[] = [
   "qualitaSet": {
    "forza-parte-bassa": 8,
    "core": 2,
-   "forza-esplosiva": 6,
-   "test": 3,
+   "forza-esplosiva": 9,
    "pliometria-intensiva": 5,
    "pliometria-estensiva": 6
   },
@@ -3345,7 +3344,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 2,
     "quantita": 2.0,
@@ -3353,7 +3352,7 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 60
    },
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 1,
     "quantita": 2.0,
@@ -3867,9 +3866,8 @@ export const BLOCCHI: Blocco[] = [
   "qualita": "pliometria-intensiva",
   "qualitaSet": {
    "forza-parte-bassa": 2,
-   "forza-esplosiva": 1,
+   "forza-esplosiva": 5,
    "pliometria-intensiva": 16,
-   "test": 4,
    "velocita": 8
   },
   "livello": "PRO",
@@ -3906,7 +3904,7 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 60
    },
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 4,
     "quantita": 2.0,
@@ -4095,7 +4093,7 @@ export const BLOCCHI: Blocco[] = [
   "qualitaSet": {
    "forza-parte-alta": 5,
    "forza-parte-bassa": 1,
-   "test": 2,
+   "forza-esplosiva": 2,
    "core": 2
   },
   "livello": null,
@@ -4154,7 +4152,7 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 60
    },
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 2,
     "quantita": 2.0,
@@ -7677,9 +7675,9 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Pliometria Rapidità Velocità",
   "qualita": "pliometria-intensiva",
   "qualitaSet": {
-   "forza-esplosiva": 3,
-   "test": 5,
+   "forza-esplosiva": 5,
    "pliometria-intensiva": 2,
+   "test": 3,
    "pliometria-estensiva": 2,
    "velocita": 11
   },
@@ -7702,7 +7700,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 2,
     "quantita": 2.0,
@@ -7772,9 +7770,9 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Pliometria Rapidità Velocità",
   "qualita": "pliometria-intensiva",
   "qualitaSet": {
-   "forza-esplosiva": 2,
-   "test": 6,
+   "forza-esplosiva": 5,
    "pliometria-intensiva": 1,
+   "test": 3,
    "velocita": 8
   },
   "livello": "B",
@@ -7796,7 +7794,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 3,
     "quantita": 2.0,
@@ -7857,9 +7855,9 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Pliometria Rapidità Velocità",
   "qualita": "pliometria-intensiva",
   "qualitaSet": {
-   "forza-esplosiva": 2,
-   "test": 6,
+   "forza-esplosiva": 5,
    "pliometria-intensiva": 2,
+   "test": 3,
    "pliometria-estensiva": 1,
    "velocita": 12
   },
@@ -7882,7 +7880,7 @@ export const BLOCCHI: Blocco[] = [
     "perLato": true
    },
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 3,
     "quantita": 2.0,
@@ -11041,7 +11039,8 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Test Forza Parte Bassa",
   "qualita": "test",
   "qualitaSet": {
-   "test": 7,
+   "forza-esplosiva": 4,
+   "test": 3,
    "forza-parte-bassa": 2,
    "fascia-prevenzione": 1
   },
@@ -11053,7 +11052,7 @@ export const BLOCCHI: Blocco[] = [
   "inCoppia": false,
   "items": [
    {
-    "esercizio_id": "test2-test-salto-in-lungo-broad-jump",
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
     "nomeEverfit": "Test Salto in lungo - broad jump",
     "serie": 4,
     "quantita": 1.0,
