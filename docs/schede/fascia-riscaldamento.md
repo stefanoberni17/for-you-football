@@ -1,9 +1,9 @@
 # Schede esercizi: Fascia e prevenzione, riscaldamento, mobilità e recupero
 
-Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 45 schede su 45 esercizi attivi del gruppo.
+Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 46 schede su 46 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## fascia-prevenzione (29)
+## fascia-prevenzione (30)
 
 ### Plank Jumps
 `fasc-plank-jumps-fascia` · bilaterale · secondi · corpo libero · [video](https://youtube.com/watch?v=FPZkcfY-2Yo)
@@ -18,6 +18,20 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Plank fermo, poi solo i piedi che saltellano.
 **Più difficile:** Ritmo più alto, o saltelli in avanzamento.
 **Sicurezza:** Dolore ai polsi: fermati. Zona lombare che cede: riduci l'inarcamento e il tempo.
+
+### Two-Leg Jump, One-Leg Landing
+`plioi-jump-2-up-1-down` · bilaterale · reps · corpo libero · senza video
+
+**Esecuzione**
+1. In piedi, piedi alla larghezza delle anche.
+2. Carica piegando le ginocchia e salta in alto a due piedi, braccia che accompagnano.
+3. Atterra su una gamba sola, morbido, ginocchio sopra il piede e in linea con l'anca, e tieni l'equilibrio per 2 secondi.
+4. Alterna la gamba di atterraggio. Fai le ripetizioni indicate contando i salti totali.
+
+**Errori comuni:** Ginocchio che cede verso l'interno all'atterraggio: è il punto dell'esercizio. Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchio che assorbe. Atterrare e muoversi subito: la tenuta in equilibrio è parte dell'esercizio.
+**Più facile:** Salti più bassi.
+**Più difficile:** Salti più alti, o atterraggio su un rialzo basso.
+**Sicurezza:** È un lavoro di prevenzione sull'atterraggio: salti bassi e controllati, non massimali. Fastidio al ginocchio: fermati.
 
 ### Balance Circuit on Skimmy
 `fasc-circuito-propriocezione` · bilaterale · secondi · corpo libero · [video](https://www.youtube.com/watch?v=SCjwTWXzrTM&list=PL6Dh3F0reiim9WhyG-t4iAYOk8Mbrvbcq&index=3&ab_channel=ForYouFunctionalYogaFootball)

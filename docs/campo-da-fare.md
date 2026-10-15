@@ -1,0 +1,189 @@
+# Campo: cose da fare prima della vendita
+
+Lista decisa con Ste il 12/10/2026 dopo l'analisi del posizionamento ("Il tuo staff in un'app"), integrata il 13/10 (obiettivi e tetti) e il 14/10 (resoconto dopo squadra e partita, dalla chiamata col gruppo) e il 15/10 (esecuzione tecnica degli esercizi; seduta di resistenza a serie). Nessun punto è iniziato: si parte quando Ste lo dice, un blocco per PR.
+
+Le stime sono ore di lavoro mie. "Incl. test" = comprende i test Vitest sui moduli puri e la verifica con l'harness delle schermate; NON comprende la prova sul campo di Ste, che resta a parte per ogni blocco. Dove la stima non include i test lo dico.
+
+## Regole di metodo (decise da Ste, non si cambiano senza chiedere)
+
+| | Regola | Cosa cambia nel codice | Ore |
+|---|---|---|---|
+| M1 | Gli obiettivi selezionabili restano tutti, mobilità e resistenza comprese | Niente: `FOCUS_OPZIONI` in `lib/trainingRequest.ts` resta com'è. Il catalogo di mobilità (2 esercizi più le sequenze yoga nei blocchi) va allargato con contenuti, non con codice | 0 |
+| M2 | Si possono assegnare anche esercizi senza video | Niente: oggi nessun filtro esclude gli esercizi senza video. Resta la regola di non promettere "video su ogni esercizio" | 0 |
+| M3 | Progressione kettlebell: il salto a multipli di 4 kg resta | Niente in `adattaDose` (`lib/trainingProgressione.ts`, `KB_PASSO_KG`). Cambia solo chi lo racconta (punto 2) | 0 |
+| M4 | Il voto per serie e per seduta misura fatica e difficoltà: va bene com'è | Niente in `RpeScale`, set-log, complete | 0 |
+| M5 | Aumenti anche nella settimana in corso, ma solo se gli esercizi sono stati molto leggeri; altrimenti dalla settimana dopo | Vedi "Soglia proposta per M5" sotto. `adattaPiano` applicato anche alle sedute future del piano corrente alla lettura dello state, con la soglia stretta; la soglia larga (quella di oggi) resta per la generazione del lunedì | 6-8, incl. test |
+| M6 | Il rapporto carico recente / carico abituale sopra 1,5 resta come limite prudenziale | Niente: `ACWR_SOGLIE.alto` e `tettoDuro` in `lib/trainingLoad.ts` restano | 0 |
+| M7 | Forza pesante e velocità nella stessa seduta: permesse, nessun nuovo divieto | Niente: `CONVIVENZE_VIETATE` in `lib/trainingRulesV2.ts` resta a tre coppie | 0 |
+| M8 | Se cambia il calendario e ci sono sedute già programmate, l'app chiede se adattarle; l'adattamento tocca solo ciò che non è più compatibile; le sedute fatte e i loro log restano intatti; stesso controllo all'apertura di una seduta e dopo "sposta a domani" | Funzione pura `sedutePiùCompatibili(plan, calendario)` che elenca i conflitti (seduta fisica il giorno partita o il giorno prima, finestre per qualità, giorno non più disponibile); `riparaPiano` riusato sulle sole sedute in conflitto, con le fatte bloccate; foglio "Il calendario è cambiato: adatto la settimana?" nell'hub, nella pagina seduta e dopo il posticipo; il piano adattato viene salvato come nuovo piano (append-only) senza contare nel tetto delle rigenerazioni, zero chiamate a Claude | 10-14, incl. test |
+| M9 | Dolore: FYF non fa diagnosi. Alla segnalazione l'app consiglia una valutazione da fisioterapista o medico. Lo sblocco è una presa di responsabilità del giocatore (testo chiaro, non un via libera medico). Con la zona indicata si riduce il carico sugli esercizi che la coinvolgono (`distrettoEsercizio`). Testi del flusso dolore da rivedere | Campo zona nel foglio dolore (`ZONE_FASCIA` più schiena, spalla, ginocchio, caviglia, anca); `profiles.training_pain_zone` (migration); `adattaPiano` riduce serie ×0,7 e kg −20 % sugli esercizi del distretto della zona per le sedute successive finché il giocatore non toglie la segnalazione; testi nuovi in hub, pagina seduta, player e chat del preparatore; sblocco con checkbox "Riparto sotto la mia responsabilità, ho letto il consiglio di farmi vedere". Da decidere con Ste: sopra la soglia 4/10 la pausa totale resta (proposta: sì, con la riduzione per zona che vale al rientro per 2 settimane) | 8-10, incl. test |
+| M10 | Card: restano sia il livello globale sia i livelli per area | Niente: `livelli` e `fascia` in `/api/training/state` restano | 0 |
+| M11 | Scarico e ri-test in base a come sta andando (carico, voti, feedback), non a data fissa ogni quattro settimane | `cicloInfo` sostituito da `scaricoDaiDati(carico, feedback)` e `ritestDaiDati(memoria, ultimoTest)`. Proposta: scarico quando per 2 settimane di fila il rapporto acuto/cronico è sopra 1,3, oppure la media dei voti seduta è ≥ 8, oppure una famiglia ha avuto "duro" due volte di fila; ri-test quando una famiglia è a fine codici (`famiglieAlTetto`, già calcolato) o dopo 8 settimane senza test; mai due scarichi a meno di 3 settimane. L'hub mostra il motivo ("scarico: tre settimane di carico alto") | 8-10, incl. test |
+| M12 | Solo per chi ha anche il Mentale: un momento breve prima della seduta (Reset) e, nei recuperi tra le serie, un promemoria leggero "se la testa vaga, un Reset". Mai durante gli esercizi | Pagina seduta: card "Arriva presente" con `openMeditation()` (già nel context) prima di "Inizia la seduta", solo se `hasActiveAccess` del Mentale; player: una riga discreta nel recupero, mai nella fase di esecuzione né nell'EMOM; `localStorage` per non ripeterla a ogni serie | 4-5, incl. verifica harness |
+
+### Soglia proposta per M5 (da confermare)
+
+Oggi `riepilogoEsercizi` in `lib/trainingAdapt.ts` dice "sali" con voto medio ≤ 6 nelle ultime 2 sedute e quantità fatta ≥ prevista: questa resta la regola per la settimana successiva.
+
+Per l'aumento dentro la settimana in corso propongo una soglia più stretta, su una sola seduta: **tutte le serie dell'esercizio con voto ≤ 4 e nessuna serie sotto il previsto** (e il voto della seduta intera ≤ 5 se c'è). In quel caso la seduta successiva della stessa settimana porta già un passo in più (+1-2 ripetizioni, +5-10 secondi, +2,5 % kg, kettlebell +4 kg), con la nota "l'ultima volta era molto leggero". Tra 5 e 6 si aspetta la settimana dopo come oggi. Sopra 6 niente.
+
+## Controlli e coerenza
+
+1. **Numeri dell'analisi riconciliati.** Nella tabella mancava la riga degli esercizi di tipo `test` del catalogo v2: 14 esercizi, 5 con video. 287 + 14 = 301 attivi; 192 + 5 = 197 con video. I test veri sono a parte: 21 nella batteria v1 (`TESTS` in `lib/trainingCatalog.ts`, nessun video) e 27 nella v2 (`TESTS_V2` in `lib/trainingTestsV2.ts`, 4 con video, tutti ankle stiffness). Ore: 0.
+2. **Una sola funzione per la dose successiva.** `prossimaDose(esercizio, ultimaSeduta, programma)` in un modulo puro nuovo (`lib/trainingDose.ts`) che ritorna `{ dose, motivo, condizioni }` (es. "16 kg: le ultime due sedute a 12 kg erano facili; kettlebell sale di 4 kg; vale se le serie restano ≤ 6"). Usata da `adattaDose` (piano), `riepilogoUi` (hint "Ultima volta" nel player) e `riepilogoTesto` (prompt del planner e della chat), così il caso Windmill 12/16 kg sparisce; la regola kettlebell entra nel prompt della chat. Ore: 4-5, incl. test (il caso Windmill come test).
+3. **Preparatore con lo stesso contesto del planner.** `trainingChat` in `lib/trainingPlanner.ts` riceve anche `feedbackSeduteBlock`, i giudizi per blocco, `zoneTeseTesto`, `livelliTesto` per qualità, la memoria dei blocchi e `meseTesto`. Il contesto comune va in una funzione sola (`contestoCondiviso(ctx)`) usata da planner v2 e chat. Ore: 3-4, incl. una prova con `scripts/coach-replay.mts` adattato al preparatore (nessun test unitario: è un prompt).
+
+## Setup
+
+4. **Limitazioni e infortuni passati nel setup.** Campo "Infortuni o limitazioni" (testo libero 300 caratteri più chips per zona, stesse zone di M9) in `/allenamento/setup`, colonna `profiles.training_limitazioni` (migration), nel prompt del planner e della chat, e collegato alla riduzione di carico per zona di M9 (stessa funzione, con il flag "cronica" che non scade). Ore: 5-6, incl. test sulla riduzione (il resto è UI).
+5. **Controllo "con questo tempo e questi attrezzi posso darti X" prima di generare.** Funzione pura `fattibilitaSetup(setup, obiettivi)` che simula `blocchiDisponibili` più i blocchi virtuali e il tempo per seduta: per ogni obiettivo dice se c'è almeno un blocco che ci sta, e se no cosa manca (attrezzo o minuti). Banner nel setup e nella maschera "Rifai da capo" prima del bottone. Ore: 4-6, incl. test.
+
+## Storico e dati
+
+6. **Storico completo.** Pagina `/allenamento/storico`: archivio delle sedute fatte (data, titolo, blocchi, voto, nota), i log per esercizio, i risultati dei test con data (oggi la pagina test mostra solo l'ultimo valore), grafici dell'andamento per test e per esercizio (kg, ripetizioni, tempi) con Recharts senza animazione come in `/statistiche`. API `GET /api/training/storico` (sola lettura, solo i propri dati). Ore: 12-16, incl. verifica harness; i grafici usano dati già salvati (`training_set_logs`, `training_test_results`, `training_session_completions`).
+7. **Data programmata ed effettiva della seduta.** `training_session_completions.data_programmata` (dal piano) e `data_effettiva` (`completed_at` esiste già: va esposto e mostrato), con "fatta il giorno dopo" nello storico e nel prompt. Migration. Ore: 2-3, incl. test sul calcolo.
+8. **Durata reale della seduta salvata.** Il player tiene `startedAt` (già in `localStorage` per la ripresa) e manda `durata_reale_sec` a `/api/training/complete`; colonna nuova; usata nel carico al posto della durata del piano quando c'è, e mostrata nello storico. Ore: 3, incl. test sul carico.
+
+## Pacchetti e costo AI
+
+9. **Limiti configurabili per pacchetto.** Modulo puro `lib/pacchetti.ts`: per ogni pacchetto (`base`, `completo`, più `beta`) i parametri `areeMax`, `seduteSettimanaMax`, `pianiSettimana`, `adattamentiSettimana`, `messaggiPreparatoreMese`, `storicoCompleto`. `profiles.training_pacchetto` scritto solo dal server (webhook o SQL). I punti del codice che oggi hanno costanti fisse (`PIANI_MAX_SETTIMANA`, `FOCUS_SETUP_MAX`, `maxSeduteTotali`, il rate limit della chat) leggono dal pacchetto dell'utente; i valori di default riproducono il comportamento di oggi, così finché i pacchetti non esistono non cambia niente. L'hub mostra il limite raggiunto con il rimando all'upgrade. Ore: 8-10, incl. test (i limiti sono funzioni pure).
+
+**Costo AI medio per utente al mese.** Prezzi di listino (12/10/2026): planner v2 su Opus 5.5 a 4 $ per milione di token in ingresso e 20 $ in uscita (cache letta 0,20 $), chat del preparatore e memoria su Sonnet 5 a 2 $ e 10 $. Stima per chiamata, da confermare sui log `trainingPlannerV2: usage` e `coach usage` di Vercel (il valore 0,25-0,45 $ a piano scritto in CLAUDE.md è precedente al passaggio a Opus 5.5):
+
+| Voce | Costo stimato |
+|---|---|
+| Un piano (fino a 3 tentativi, prompt in cache) | 0,15-0,40 $, media 0,30 $ |
+| Un messaggio al preparatore (Sonnet 5, effort basso) | 0,02-0,04 $ |
+| Un recap di memoria (Sonnet 5) | 0,02 $ |
+| Adattamenti di M5, M8, M9, M11 | 0 $: sono tutti deterministici, nessuna chiamata |
+
+| Profilo d'uso | Piani al mese | Messaggi al mese | Costo al mese |
+|---|---|---|---|
+| Base con limiti (1 piano automatico a settimana + 1 rifacimento, 10 messaggi) | 9 | 10 | ~3 $ |
+| Uso tipico senza limiti (1-2 piani a settimana, 20 messaggi) | 6-9 | 20 | 2,5-3,5 $ |
+| Completo, utente pesante (6 piani a settimana, il tetto di oggi, 100 messaggi) | 26 | 100 | 10-12 $ |
+| Tetto tecnico senza alcun limite (6 piani a settimana, chat al limite di 60 all'ora) | 26 | migliaia | fuori scala: serve il tetto mensile sui messaggi del punto 9 |
+
+Lettura: il costo lo fanno i piani, non la chat. Un pacchetto base da 3 $ di costo regge un prezzo da 9-10 $ al mese; il completo va venduto sopra i 15 $ o con il tetto dei 6 piani a settimana mantenuto.
+
+## Struttura e vendita
+
+10. **App in due sezioni allo stesso livello, Mentale e Fisico, un account solo.** Modalità per account (`profiles.sezioni`: mentale, fisico, entrambe, derivata dagli accessi); home diversa per modalità (chi ha solo il Fisico atterra su "Oggi" del Campo), tab bar con le tab della sezione più lo switch, onboarding per sezione, rituale del mattino comune (il check-in serve a entrambe e alimenta il carico), `PaywallGuard` che conosce le due sezioni. È il blocco più grosso: tocca layout, home, tab bar, onboarding e i redirect. Ore: 24-32, incl. verifica harness su tutte le schermate; niente test unitari oltre a `canAccess*`.
+11. **Accesso al Fisico dai webhook dei prodotti fisici e del Completo, upgrade dal Mentale.** Nel webhook Stripe (`app/api/stripe/webhook/route.ts`) il ramo subscription distingue per `metadata.plan` (oggi aggancia lo schedule a 3 rate a ogni checkout in abbonamento): `fisico_mensile`, `fisico_annuale`, `completo` → `training_access` acceso e `training_pacchetto` dal prodotto, spento su cancellazione o mancato pagamento; `hasTrainingAccess` legge anche lo stato; tabella `stripe_events` già pronta per l'idempotenza. Upgrade dal Mentale: checkout del solo Fisico dal profilo e dalla card "Campo" in `/strumenti`. Ore: 10-12, incl. test sulle funzioni di accesso e una prova con `stripe listen` in locale.
+12. **Prezzi configurabili, prezzo bloccato per i fondatori.** Price Stripe separati per prodotto e fase, come oggi per il Mentale (`STRIPE_PRICE_ID_*` in env, importi in `lib/constants.ts` per la UI): per gli abbonamenti il prezzo fondatore resta bloccato da solo (Stripe tiene il price della sottoscrizione finché non si cambia), per la una tantum si cambiano le env a data fissa. Pagina prezzi a tre colonne (Mentale, Fisico, Completo) con "invece di". Ore: 5-6 dopo il punto 11, incl. verifica harness della pagina.
+
+## Obiettivi: copertura e tetti per qualità (Ste, 13/10)
+
+15. **Testo nel setup e nella maschera.** Sotto "Su cosa vuoi lavorare": "Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell'ordine in cui li hai messi. Per avere più focus scegline pochi." Stessa riga nella maschera "Rifai da capo". Ore: 1, incl. verifica harness.
+16. **Tetto di giornate a settimana per qualità, con i complementi.** Oggi nel codice esistono solo: velocità massimo 1 giornata (errore del validatore in `expandPiano`), salite massimo 1, kettlebell massimo 1, percorso fascia massimo 3, ogni formato di parte alta una volta (ma i formati sono quattro: serie o breve, EMOM, focus spinta, focus tirata, più i blocchi Everfit "Forza Mix" e "Full Body": nessun tetto sulle giornate di parte alta). Pliometria e gambe non hanno un tetto di giornate (solo contatti per seduta e onda B/A). Con un obiettivo solo e 4 giornate: Claude riceve la regola 2c ("il primo obiettivo in almeno 2 giornate, gli altri nei posti che avanzano") ma nessuna indicazione su come riempire le giornate rimaste, quindi decide da solo; il piano base (`fallbackPianoBlocchi`) mette lo STESSO obiettivo in tutte le giornate fisiche: parte alta → quattro formati diversi, velocità → due giornate di velocità → rifiutata dal validatore → settimana di sole giornate leggere, senza velocità. Da fare: tabella `SEDUTE_MAX_PER_QUALITA` e tabella dei **complementi** per obiettivo, decise da Ste il 13/10:
+
+| Qualità | Tetto giornate a settimana | Complementi nell'ordine |
+|---|---|---|
+| Velocità | 1-2 | pliometria, gambe |
+| Salite | 1 (già nel codice) | |
+| Pliometria intensiva | 2 | pliometria estensiva, velocità, gambe |
+| Forza parte alta | 3 | core, fascia, pliometria |
+| Forza gambe | 3 | pliometria, velocità, core, fascia |
+| Resistenza | 2; 3-4 SOLO in off season e senza allenamenti con la squadra (`fase === 'off_season'` e nessun giorno squadra nel calendario né nell'abitudine) | tecnica, fascia |
+| Kettlebell | 3 (oggi il codice ne ammette UNO: regola 27 del 25/9 e l'errore in `expandPiano` vanno aggiornati, e con due o più kb la parte bassa con pesi resta "più leggera") | |
+| Tecnica, fascia | nessun tetto | |
+
+Quando un obiettivo ha raggiunto il tetto, le giornate rimaste vanno ai complementi nell'ordine. "Senza allenamenti con la squadra" (Ste, 13/10) = niente allenamenti E niente partite: fase off season, nessun giorno squadra e nessuna partita nel calendario né nell'abitudine del setup. Nella maschera "Rifai da capo" una riga di conferma prefillata dal setup, "Questa settimana ti alleni con la squadra? Sei in season o fuori?", così il tetto alto della resistenza vale solo con la risposta data quel giorno (ore comprese nelle 6-8). Entra nel prompt (regola nuova con i tetti e i complementi), nel validatore (errore oltre il tetto) e nel piano base (ciclo sui complementi invece dello stesso obiettivo). Ore: 6-8, incl. test sul piano base e sul validatore (un caso per riga della tabella: velocità sola con 4 giornate, parte alta sola, resistenza in season contro off season senza squadra, tre kettlebell).
+
+## Resoconto dopo l'allenamento con la squadra e dopo la partita (dalla chiamata col gruppo del 14/10, regole decise da Ste)
+
+17. **Resoconto serale che fa adattare le sedute successive.** (Nel messaggio di Ste è il punto 15; qui è il 17 perché 15 e 16 erano già presi dagli obiettivi.) Oggi l'app conosce la squadra solo come abitudine (`profiles.training_squadra`: sforzo stimato e qualità per giorno della settimana) e la partita come 90' × 9 fissi in `caricoSquadraStimato`: il carico reale di quel giorno non entra mai. Il resoconto porta il dato vero, e da lì le serie facoltative nelle sedute successive.
+
+**Quando.** La sera di ogni giorno segnato come allenamento con la squadra o partita (`user_weekly_calendar`, oppure l'abitudine del setup se il calendario è vuoto). Due strade che portano allo stesso foglio: la push serale (`lib/pushNotification.ts` e `push_subscriptions` esistono già; il cron `daily-evening` delle 16:00 UTC oggi fa solo il reminder Telegram del Coach: aggiunge una push "Com'è andata con la squadra?" per chi ha il Campo e un giorno squadra o partita oggi) e, per chi la push non ce l'ha, un riquadro al primo accesso al Campo dal giorno dopo ("Ieri allenamento con la squadra: com'è andata?"), che resta fino alla risposta o a "Salta". Facoltativo: senza risposta resta il dato previsto.
+
+**Struttura del foglio (`Sheet`, componente `ResocontoSquadraSheet`).** Parte obbligatoria breve, poi dettagli espandibili con `<details>`.
+- Allenamento con la squadra, obbligatoria: fatica reale 1-10 (`RpeScale` tipo "sforzo", già usata nel setup), cosa si è fatto (chips a scelta multipla: resistenza, forza, velocità e sprint, tecnica e tattica, partitella; le stesse `SQUADRA_QUALITA` con "rapidità" rinominata), durata (chips 60 / 75 / 90 / 105 / 120'), fastidio sì/no e se sì la zona (le stesse zone di M9).
+- Partita, obbligatoria: minuti giocati (campo numerico 0-120, chips rapide 0 / 15 / 30 / 45 / 60 / 90), fatica 1-10, fastidio sì/no e zona, stanchezza generale (tre scelte: fresco / normale / cotto).
+- Dettagli espandibili, facoltativi, per tutti e due:
+  - Testa: "Com'è andata di testa?" (bene / alti e bassi / fatica) più una riga libera (200 caratteri). Va al Coach come contesto: `buildUserContext` in `lib/coach-ai.ts` legge gli ultimi 3 resoconti nel blocco "Il Campo" ("sabato partita: di testa alti e bassi, 'dopo il gol sbagliato mi sono spento'").
+  - Tecnica: "Tecnicamente come sei andato?" voto 1-10; aprendo, voto su passaggio, stop, lancio, tiro.
+  - Fisico: "Fisicamente come sei andato?" voto 1-10; aprendo, voto su velocità, forza, resistenza.
+
+**Tabella `training_resoconti` (migration 031).**
+
+| Colonna | Tipo | Note |
+|---|---|---|
+| `id` | uuid PK | |
+| `user_id` | uuid → auth.users, cascade | RLS owner-only in lettura, scrittura solo service role (come le altre tabelle del Campo) |
+| `data` | date | il giorno dell'allenamento o della partita; `UNIQUE (user_id, data, tipo)` |
+| `tipo` | text | `squadra` \| `partita` |
+| `rpe` | smallint 1-10 | fatica reale |
+| `durata_min` | smallint | allenamento: durata; partita: minuti giocati |
+| `qualita` | text[] | solo squadra: cosa si è fatto (`SquadraQualitaId[]`) |
+| `stanchezza` | text | solo partita: `fresco` \| `normale` \| `cotto` |
+| `fastidio_zona` | text | null se nessun fastidio; zona come M9 |
+| `testa` | text | `bene` \| `alti_bassi` \| `fatica`, null se non risposto |
+| `testa_nota` | text | 200 caratteri |
+| `voti` | jsonb | `{ tecnica: { generale, passaggio, stop, lancio, tiro }, fisico: { generale, velocita, forza, resistenza } }`, tutti facoltativi |
+| `rpe_previsto` | smallint | lo sforzo dell'abitudine (o 9 per la partita) al momento della risposta: serve al confronto e ai grafici senza ricalcoli |
+| `created_at` | timestamptz | |
+
+API: `GET /api/training/resoconto?da=` (i propri, per hub e storico) e `POST /api/training/resoconto` (upsert su utente, data, tipo; validazione dei campi; evento `training_resoconto_salvato`). `/api/training/state` ritorna `resocontoDaChiedere: { data, tipo } | null` (ieri o oggi senza riga e non saltato: lo "Salta" si segna in `localStorage` per data).
+
+**Collegamenti con lo storico (punti 6-8).** Il resoconto entra nella pagina `/allenamento/storico` come riga tra le sedute (icona diversa) e nei grafici: fatica reale contro prevista per giorno, minuti giocati per partita, voti tecnica e fisico nel tempo. `calcolaCarico` riceve, accanto a `squadraSettimanale` stimato, i resoconti della finestra e per ogni giorno usa `rpe × durata_min` reale quando esiste al posto della stima (`caricoSquadraStimato` diventa `caricoSquadra(stima, resoconti)`); nella card carico la frase dice "squadra: 3 giorni misurati, 1 stimato".
+
+**Serie facoltative (meccanismo nuovo).** `PlanItem.facoltativo?: 'togli' | 'aggiungi'` più `facoltativo_motivo?: string`; `PlanSession.proposte?: { tipo, motivo }[]` per il messaggio in testa alla seduta. Pagina seduta: gli item "da togliere" sono mostrati con il badge "Facoltativo: puoi saltarlo" e il motivo; gli "da aggiungere" sono in una sezione a parte "Se te la senti" con il bottone "Aggiungi" per ognuno (o "Aggiungi tutti"). Player: gli item facoltativi da togliere hanno "Salta (facoltativo)" come azione principale accanto a "Fai"; quelli da aggiungere entrano solo se scelti. Nel log per serie si salva quello che è stato fatto davvero (`training_set_logs` già registra solo le serie fatte; in più `training_session_completions.facoltativi` jsonb: `{ tolti: [id], aggiunti: [id] }`). Il validatore non conta gli item "da aggiungere" nei tetti (li conta il tetto duro 1,5 a scelta fatta: se aggiungerli tutti sfora, la proposta si ferma prima).
+
+**Regole di adattamento (`lib/trainingResoconto.ts`, modulo puro con i test).** Il programma propone, non cambia da solo (M8): ogni regola produce proposte sulla PRIMA seduta dell'app successiva al resoconto, applicate alla lettura dello state (come M5), mai alle sedute già fatte.
+- Fatica reale ≥ previsto + 2, oppure la squadra ha lavorato una qualità che la seduta successiva ha tra i suoi blocchi (mappa `SQUADRA_QUALITA` → qualità di libreria: resistenza → resistenza-*, forza → forza-parte-bassa/forza-parte-alta, velocità e sprint → velocita/pliometria-*, tecnica e tattica → tecnica-*, partitella → resistenza-metabolico): nella seduta successiva le serie di quella qualità diventano facoltative da togliere, con il messaggio "Ieri la squadra ha già fatto resistenza (fatica 8): le serie di resistenza oggi sono facoltative". Gli item di apertura e fascia non si toccano.
+- Fatica reale ≤ previsto − 2: l'app chiede "Vuoi aggiungere qualche serie nel prossimo allenamento?" e propone serie facoltative da aggiungere: prima una serie in più sugli esercizi principali della seduta (stessa dose), poi, se la qualità mancata dalla squadra (previsto dall'abitudine, non fatto) non è nella seduta, un blocco breve di quella qualità dai `blocchiDisponibili` (anche esercizi più pesanti se servono a completarla, nel rispetto di livello e finestre partita). M5 non si applica (sceglie il giocatore); resta il tetto duro 1,5 di M6 sul carico pianificato con le aggiunte.
+- Fastidio con zona: regola M9 (riduzione sul distretto della zona nelle sedute successive, consiglio di farsi vedere, nessuna diagnosi).
+- Partita giocata poco (minuti < `partita_minuti_soglia`): nessuna seduta di compenso. Se il giorno dopo c'è una seduta dell'app, proposta di serie facoltative da aggiungere con il messaggio "Hai giocato poco: oggi puoi spingere di più". Se non c'è, niente. La regola "il giorno dopo la partita niente gambe" (regola 3 del prompt) resta per le sedute pianificate; le aggiunte proposte sono parte alta, core, tecnica, mai gambe pesanti.
+- Due resoconti in conflitto (allenamento e partita lo stesso giorno) si sommano nel carico e la regola più prudente vince (togliere batte aggiungere).
+
+**Parametri (`app_settings`, migration 031).** Tabella `app_settings (chiave text PK, valore jsonb, aggiornato_il timestamptz)`, lettura con service role e cache in memoria 5 minuti, scrittura solo dal SQL editor: `partita_minuti_soglia` (Ste decide il valore; nel codice il default è un segnaposto che vale solo se la riga manca), `resoconto_delta_fatica` (2), `resoconto_push_ora` (ora locale della push). È la prima tabella di parametri dell'app: i limiti dei pacchetti del punto 9 possono stare qui invece che in `lib/pacchetti.ts`, da decidere quando si fa il punto 9.
+
+**Schermate.** (1) Push serale e riquadro nell'hub "Oggi" del Campo con "Rispondi" e "Salta"; (2) il foglio in due varianti (squadra / partita), obbligatorie sopra, tre `<details>` sotto, "Salva" sticky; (3) la pagina seduta con il messaggio in testa ("Ieri con la squadra… oggi puoi togliere / aggiungere") e le serie marcate; (4) il player con "Salta (facoltativo)" e la sezione "Se te la senti"; (5) nello storico le righe dei resoconti e i tre grafici; (6) nella card carico la frase "misurato / stimato"; (7) nel Coach il contesto "di testa".
+
+**Ore.** Tabella, API, foglio e riquadro: 8-10 · serie facoltative in piano, pagina seduta, player e log: 8-10 · regole di adattamento con i test (un caso per regola: sopra, sotto, qualità già fatta, fastidio, partita corta, conflitto): 6-8 · carico reale in `calcolaCarico` con test: 3 · storico e grafici (sopra il punto 6): 4-5 · contesto del Coach: 1 · `app_settings`: 2. **Totale 32-39, incl. test e verifica harness**; la prova sul campo di Ste resta a parte. Dipende dal punto 6 per lo storico e da M9 per il fastidio; il resto si può fare prima. Senza push (solo riquadro al primo accesso) si risparmiano 2 ore.
+
+## Esecuzione tecnica degli esercizi (Ste, 15/10)
+
+18. **Voto all'esecuzione, non solo alla fatica.** Oggi il player chiede solo quanto è stata dura; la scala "tecnica" (pulito · riuscito · difficile · non riesce) vale solo sui blocchi con la palla e il ripasso automatico solo per quelli. Decisioni di Ste (15/10): su **ogni esercizio**, a fine esercizio, **espandibile**: il default è "ok" e non si tocca niente; chi vuole apre "Com'è venuto?" e ha due bottoni, **"Faccio fatica"** e **"Non riesco"**. Niente flag "complesso" nel catalogo e niente lista da spuntare. Colonna `esecuzione` in `training_set_logs` (migration: `ok` \| `fatica` \| `non_riesco`, default `ok`) sull'ultima serie dell'esercizio. Al Coach mentale non arriva (è materia del preparatore).
+   Regole deterministiche in `lib/trainingEsecuzione.ts` (puro, con i test), nell'ordine deciso da Ste:
+   1. **Prima si abbassa.** "Non riesco" una volta, o "Faccio fatica" due sedute di fila sullo stesso esercizio → nella seduta successiva lo stesso esercizio con meno: kg −10-20 % se ha i pesi, altrimenti −20 % di tempo o di ripetizioni (minimo 3 reps / 10"), e sulle scale skill un gradino sotto o la variante `piu_facile` della scheda. Il SALI della dose (punto 2, `prossimaDose`) resta bloccato finché l'esecuzione non è "ok" per due sedute, anche con la fatica bassa: la M5 non scavalca l'esecuzione.
+   2. **Poi la seduta dedicata.** Se dopo il passo indietro è ancora "Faccio fatica" o "Non riesco" → l'esercizio esce dalle sedute di forza (al suo posto il gradino sotto o la variante facile) ed entra in una seduta a poche ripetizioni e recupero pieno: l'EMOM di parte alta o gambe (`pa-emom` / `pb-emom`, esistono già), `kb-base` per il kettlebell, un blocco di tecnica per gli esercizi con la palla. Torna nelle sedute di forza dopo due EMOM con esecuzione "ok".
+   3. **Il preparatore lo dice.** Sezione "# ESECUZIONE" nel prompt del planner v2 e della chat (dentro il contesto condiviso del punto 3) con gli esercizi in difficoltà e il passo deciso dal server; nel messaggio della settimana una riga tipo "Il pistol ti viene ancora sporco: questa settimana lo alleni nell'EMOM con poche ripetizioni, nella seduta di forza fai il box pistol". Nel player la nota sull'item ("meno peso: l'ultima volta hai detto 'faccio fatica'").
+   Nello storico (punto 6) l'esecuzione sta accanto a kg e reps. Ore: 5-7, incl. test (un caso per regola: fatica una volta → niente; due volte → meno; non riesco → meno; ancora difficile → EMOM; due ok → rientra; SALI bloccato) e verifica harness del player.
+
+## Resistenza, metabolico, resistenza alla velocità (Ste, 15/10)
+
+19. **La seduta di resistenza come la fa Ste.** Regola data il 15/10: **serie da 4-5-6 minuti, 2-3 minuti di recupero, 4-6 serie in base al livello**; il contenuto delle serie può essere fartlek, lavoro metabolico o esercizi in campo con la palla (es. il video "Endurance and Functional Technique Drill", `aer-esercizio-resistenza-e-tecnica-funzionale`, lo stesso video di `aer-esercizio-tecnica-resistenza-funzionale-calcio`: coppia tra i "da confermare" del batch 5). Cosa c'è già nel codice: i bounds di `resistenza-aerobica` in `lib/trainingRulesV2.ts` (3-6 serie da 3-6', recupero 2'30-4') sono vicini alla regola ma il recupero minimo va a 2'; le famiglie di blocchi Everfit Fartlek (4 codici), Ripetute, Metabolico (4), Resistenza alla velocità (2), Resistenza e tecnica funzionale (2), Salite resistenza/metabolico; i bounds di metabolico (4-19 serie da 15-70", recupero 20-90") e RSA (6-12 da 20-30", recupero 40-60") vengono dai DATI dell'export, non da una regola di Ste. Da fare, come per `pa-*` e `pb-*`: blocco virtuale **`re-serie`** composto dal server (`lib/trainingResistenza.ts`, puro, con i test): numero e durata delle serie dal livello della qualità resistenza (proposta da confermare: **B 4 × 4'**, **A 5 × 5'**, **PRO 6 × 6'**, recupero 3' in B e 2' da A), contenuto a rotazione sulle settimane tra fartlek, metabolico e palla (la palla solo con il campo tra gli attrezzi; il metabolico dentro una serie = intermittente 15-30" / 15-30" per i minuti della serie), entro il tempo massimo della seduta e la finestra partita (oggi 4 giorni per tutte le qualità di resistenza: `FINESTRA_PARTITA`); il planner lo preferisce ai blocchi Everfit di resistenza come per la parte alta (`sostituzioniFormati`), i blocchi di Ste restano come alternativa; tetto giornate e complementi dal punto 16 (2 a settimana; 3-4 solo off season senza squadra né partite); convivenze già nel codice (forza massima + aerobica, RSA + pliometria intensiva). Regola nel prompt con i numeri di Ste. Ore: 5-7, incl. test (serie per livello, rotazione, tempo massimo, finestra partita).
+   **Da chiarire con Ste prima di scrivere le regole** (segnato qui, si decide quando si arriva al punto): (a) il **metabolico** come seduta a sé: formato (intermittente 15"/15", 30"/30", 4-19 serie come nei dati?), quante volte a settimana, da quanti giorni dalla partita; (b) la **resistenza alla velocità**: 6-12 ripetizioni da 20-30" con 40-60" di recupero vanno bene, e con la palla o senza?; (c) quando una seduta di resistenza è "dura" o "facile" per la memoria dei blocchi: si sale di serie, di minuti o di contenuto?; (d) la corsa continua (Fartlek A1 nei dati è 40') resta nel catalogo o la seduta è sempre a serie?; (e) le salite di resistenza contano nel tetto delle salite (una a settimana, in season una ogni 4) o a parte?
+
+## Video dei segnali sul telefono (Ste, 15/10)
+
+20. **Il video dei segnali parte con l'esercizio.** Per gli esercizi di visione e reattività (dribbling base e avanzato, passaggi al muro con visione, tiri con visione) Ste ha un secondo video, da mettere sul telefono davanti ai cinesini: i segnali (colori, dribbling o stop) compaiono sullo schermo e il ragazzo reagisce. Dal 15/10 il link sta in `video_schermo` nel catalogo (`ExerciseV2.videoSchermoUrl`; mancano ancora quelli di Wall Passes with Vision e Shots on Goal with Vision). Da fare nel player: quando parte un item con `videoSchermoUrl`, al posto del video tutorial si apre a schermo intero il video dei segnali in autoplay (YouTube embed con `autoplay=1`, come oggi per il tutorial ma senza controlli), con il timer dell'item che parte insieme; "Rifai da capo" riavvia il video; sotto, il bottone "Guarda come si fa" apre il tutorial. Senza il link il player si comporta come oggi. Ore: 2-3, incl. verifica harness (nessun test unitario: è UI).
+
+## Dopo
+
+13. **Storico in sola lettura dopo la scadenza.** Stato `archivio` accanto ad attivo e nessun accesso: letture aperte (`state`, test, storico, mese), scritture chiuse (`plan`, `complete`, `set-log`, `pain`, `chat`), hub in modalità archivio con il rimando a riattivare. Ore: 6-8, incl. test sulle funzioni di accesso.
+14. **Piano annuale.** Un price ricorrente annuale in più per Fisico e Completo, lo stesso handler del punto 11, il portale Stripe per passare da mensile ad annuale c'è già. Ore: 4-5 dopo i punti 11 e 12.
+
+## Ordine di lavoro (rifatto con Ste il 13/10)
+
+Sei fasi, un blocco per PR, merge su `main` solo al "vai". Le ore sono quelle dei punti sopra; "Ste" segna le cose fuori dal codice che corrono in parallelo.
+
+| Fase | Cosa | Ore | Perché in questo ordine |
+|---|---|---|---|
+| 0. Adesso | Merge di PR #138 (batch 4 + lista); correzioni batch 4 (Ste); schede batch 5 e 6 (io scrivo, Ste corregge) | 10-14 per i batch | Sono contenuto: non bloccano nulla e vanno avanti mentre si fa il resto |
+| 1. Il motore dice una cosa sola | 2 dose unica (4-5) · 3 preparatore con il contesto del planner (3-4) · 15 testo sugli obiettivi (1) · 16 tetti per qualità e complementi (6-8) · M5 aumenti in settimana (6-8) · 18 esecuzione tecnica (5-7) · 19 seduta di resistenza a serie (5-7, dopo le risposte di Ste) · 20 video dei segnali nel player (2-3) | 32-43 | Piccoli, deterministici, testabili; sistemano le incoerenze che un tester noterebbe il primo giorno (Windmill, obiettivo solo con 4 giornate) |
+| 2. Il piano segue la realtà | M8 calendario che cambia (10-14) · 5 fattibilità nel setup (4-6) · 7 date programmata ed effettiva (2-3) · 8 durata reale (3) | 19-26 | Il problema più grave per chi paga: la settimana che non si adatta |
+| 3. Dolore e sicurezza | M9 dolore per zona e testi (8-10) · 4 limitazioni e infortuni nel setup (5-6) | 13-16 | Prima di dare il Campo a chi non conosciamo |
+| 4. Beta chiusa (Ste) | Flag `training_access` a 3-5 ragazzi, 4 settimane di log. Parte APPENA finita la fase 3, mentre io faccio le fasi 5-6 | 0 | Il Campo è congelato finché tre atleti non hanno un mese di log: le quattro settimane corrono in parallelo al codice |
+| 5. Vedere i progressi | 6 storico completo (12-16) · M11 scarico e ri-test dai dati (8-10) · M12 Reset prima della seduta (4-5) · 17 resoconto dopo squadra e partita, serie facoltative (32-39; la parte tabella + foglio + regole può anticipare in fase 2 se Ste vuole il dato reale già dai tester) | 56-70 | Servono ai tester della fase 4 per dare feedback con i dati davanti; il resoconto è il modo in cui la squadra entra nel carico con numeri veri |
+| 6. Vendita | 9 pacchetti e limiti (8-10) · 10 due sezioni, un account (24-32) · 11 webhook e upgrade (10-12) · 12 prezzi e fondatori (5-6) · 14 annuale (4-5) · 13 sola lettura (6-8) · accesso con Google (2-3, da CLAUDE.md) | 59-76 | Si vende quando la beta ha confermato il motore |
+| **Totale codice** | | **179-231** | |
+
+Ritmo: a 15 ore a settimana sono 11-14 settimane (9-12 senza il resoconto del punto 17); la fase 6 deve partire entro metà novembre per vendere a dicembre, quindi la beta della fase 4 va aperta entro fine ottobre e il punto 17 va fatto a pezzi (prima tabella, foglio e carico reale; serie facoltative e grafici dopo).
+
+Fuori dal codice, per Ste, nell'ordine in cui servono: correzioni dei batch 4-6; i video (80 esercizi, prima le scale gambe e i test); le cose già in CLAUDE.md (Stripe: URL dei termini e `STRIPE_TERMS_CONSENT=1`, ricevute, controllo dei Price; i 24 "Perché funziona"; gli audio W1-G2 e G3; Durata Minuti W1-G1); i prezzi di Mentale, Fisico e Completo.
+
+Decisioni prese il 13/10: soglia di M5 confermata (voto ≤ 4 su tutte le serie e niente sotto il previsto); resistenza 3-4 solo senza allenamenti né partite con la squadra, con la conferma nella maschera. M9: opzione A per ora (Ste, 13/10): sopra 4/10 resta la pausa totale delle sedute fisiche, con il consiglio di fisioterapista o medico, lo sblocco con presa di responsabilità e la zona ridotta per due settimane al rientro.
+
+Prima di vendere resta vero quanto scritto il 12/10: tre atleti per quattro settimane sul Campo.

@@ -2677,7 +2677,7 @@
   }
  },
  {
-  "nome": "kettlebell kneeling snatch",
+  "nome": "Kettlebell Kneeling Snatch",
   "qualita": "forza-esplosiva",
   "attrezzatura": "kettlebell",
   "difficolta": 1,
@@ -2695,10 +2695,28 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "fascia_kb": "intermedio",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fesp-kettlebell-kneeling-snatch",
+  "scheda": {
+   "esecuzione": [
+    "Su un ginocchio (mezzo inginocchiato): ginocchio a terra sul tappetino, l'altro piede avanti con il ginocchio a 90°, busto dritto.",
+    "Il kettlebell è a terra tra le gambe, dal lato del ginocchio a terra. Afferra la maniglia con la mano di quel lato.",
+    "Porta il kettlebell indietro facendolo passare all'interno, vicino alla gamba, poi spingi il bacino in avanti con forza: è il bacino che accompagna il kettlebell in salita.",
+    "Il kettlebell sale vicino al corpo in un'unica linea fino al braccio disteso sopra la testa, con il polso dritto.",
+    "Riportalo giù in controllo, prima al petto poi tra le gambe. Fai le ripetizioni indicate, poi cambia lato e ginocchio. Guarda bene il video prima di farlo."
+   ],
+   "errori": [
+    "Tirare con il braccio: la salita viene dalla spinta del bacino.",
+    "Kettlebell che fa un arco largo lontano dal corpo invece di passare all'interno.",
+    "Busto che si piega di lato o schiena che si curva."
+   ],
+   "piu_facile": "Kettlebell più leggero, fermata al petto prima di salire (come un clean).",
+   "piu_difficile": "Kettlebell più pesante.",
+   "sicurezza": "Spazio libero intorno. Tappetino sotto il ginocchio. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  },
  {
-  "nome": "Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi",
+  "nome": "Jump Technique: One-Leg and Two-Leg Take-Off",
   "qualita": "forza-esplosiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -2718,16 +2736,33 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fesp-forza-esplosiva-tecnica-salto-1-piede-e-2-piedi",
+  "scheda": {
+   "esecuzione": [
+    "Dalla posizione eretta fai due passi di avvicinamento e stacca su un piede, braccia che accompagnano verso l'alto.",
+    "Atterra su entrambi i piedi, morbido, ginocchia piegate, e fermati un istante in equilibrio.",
+    "Ripeti staccando a due piedi da fermo: carica piegando le ginocchia, braccia indietro, salta in alto.",
+    "Alterna le due tecniche di stacco. Fai le ripetizioni indicate per gamba sul salto a un piede."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Guardare i piedi: lo sguardo resta avanti.",
+    "Braccia ferme: devono accompagnare il salto."
+   ],
+   "piu_facile": "Salti più bassi, pausa tra una ripetizione e l'altra.",
+   "piu_difficile": "Stacco da una rincorsa più lunga, o verso un bersaglio in alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "FY RDL con sviluppo Plio",
+  "nome": "Single-Leg RDL to Jump (FY)",
   "qualita": "forza-esplosiva",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "kettlebell",
   "difficolta": 4,
   "livello_min": "A",
   "unita": "reps",
-  "per_lato": false,
+  "per_lato": true,
   "video": "https://youtu.be/2eA0GIE31wU",
   "fonte": "Everfit",
   "tags": [
@@ -2741,7 +2776,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "fesp-fy-rdl-con-sviluppo-plio",
+  "scheda": {
+   "esecuzione": [
+    "Prima parte, con il kettlebell: in piedi su una gamba, kettlebell nella mano opposta. Scendi in uno stacco rumeno a una gamba (busto in avanti, gamba libera indietro, schiena neutra) e risali. Fai le ripetizioni indicate.",
+    "Seconda parte, senza kettlebell: appoggia il peso, mettiti davanti a un ostacolo basso e saltalo con un salto esplosivo, atterrando morbido.",
+    "Subito dopo salta su un box o un gradino davanti a te, atterrando in squat sull'avampiede. Scendi con calma.",
+    "Ripeti ostacolo più box per le volte indicate, poi rifai tutto con l'altra gamba nello stacco."
+   ],
+   "errori": [
+    "Schiena che si curva nello stacco: il movimento parte dalle anche.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Riposare troppo tra lo stacco e i salti: i salti si fanno con le gambe appena caricate."
+   ],
+   "piu_facile": "Kettlebell più leggero, ostacolo più basso, box basso.",
+   "piu_difficile": "Kettlebell più pesante, box più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
   "nome": "Explosive Barbell Split Squat (FY)",
@@ -2783,7 +2835,7 @@
   }
  },
  {
-  "nome": "kettlebell dead clean",
+  "nome": "Kettlebell Dead Clean",
   "qualita": "forza-esplosiva",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -2801,10 +2853,27 @@
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
   "fascia_kb": "intermedio",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fesp-kettlebell-dead-clean",
+  "scheda": {
+   "esecuzione": [
+    "Kettlebell a terra tra i piedi, piedi poco più larghi delle anche, una mano sulla maniglia, schiena neutra.",
+    "Spingi le anche in avanti e tira il kettlebell su vicino al corpo, gomito che si piega mentre sale.",
+    "Ricevilo al petto in posizione di rack: avambraccio verticale, kettlebell appoggiato sul braccio, polso dritto.",
+    "Riportalo a terra in controllo e ripeti da fermo. Fai le ripetizioni indicate, poi cambia mano."
+   ],
+   "errori": [
+    "Kettlebell che sbatte sull'avambraccio: si ruota la mano intorno alla maniglia.",
+    "Tirare con il braccio invece che spingere con le anche.",
+    "Schiena che si curva: il movimento parte dalle anche."
+   ],
+   "piu_facile": "Kettlebell più leggero.",
+   "piu_difficile": "Kettlebell più pesante, o senza appoggiarlo a terra tra una ripetizione e l'altra.",
+   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  },
  {
-  "nome": "kettlebell rotational clean",
+  "nome": "Kettlebell Rotational Clean",
   "qualita": "forza-esplosiva",
   "attrezzatura": "kettlebell",
   "difficolta": 4,
@@ -2823,10 +2892,27 @@
   "sottogruppo": "forza funzionale",
   "solo_livello": true,
   "fascia_kb": "avanzato",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fesp-kettlebell-rotational-clean",
+  "scheda": {
+   "esecuzione": [
+    "Parti con il kettlebell in posizione rack (appoggiato sull'avambraccio, al petto). Il piede del lato del kettlebell è avanti, l'altro leggermente indietro e di lato.",
+    "Fai scendere il kettlebell lungo il corpo e portalo indietro, di lato alla gamba dietro, ruotando il busto verso quel lato. Anca piegata, schiena neutra.",
+    "Dal punto più indietro fai oscillare il kettlebell in avanti spingendo con le anche e ruotando il busto, e riportalo in posizione rack senza farlo sbattere.",
+    "Fai le ripetizioni indicate con ritmo continuo, poi cambia mano e posizione dei piedi."
+   ],
+   "errori": [
+    "Schiena che si curva nella discesa: la rotazione è del busto, non della schiena bassa.",
+    "Alzare il kettlebell con il braccio: torna in rack per la spinta delle anche.",
+    "Kettlebell che sbatte sull'avambraccio in rack."
+   ],
+   "piu_facile": "Kettlebell più leggero, oscillazione più corta.",
+   "piu_difficile": "Kettlebell più pesante.",
+   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  },
  {
-  "nome": "kettlebell rotational swing",
+  "nome": "Kettlebell Rotational Swing",
   "qualita": "forza-esplosiva",
   "attrezzatura": "kettlebell",
   "difficolta": 4,
@@ -2844,12 +2930,30 @@
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
   "solo_livello": true,
-  "descrizione": "Si fa ALTERNANDO destra e sinistra a ogni ripetizione, non un lato alla volta: le ripetizioni indicate sono il totale (12 reps = 6 a destra e 6 a sinistra, alternate). Kettlebell tra le gambe, swing con rotazione del busto verso un lato, torna al centro e vai dall'altro.",
+  "descrizione": "Si fa ALTERNANDO destra e sinistra a ogni ripetizione: le ripetizioni indicate sono il totale (12 reps = 6 a destra e 6 a sinistra). A ogni swing il kettlebell si carica di lato a una gamba mentre la gamba opposta va indietro in mezzo affondo, poi le gambe si riallineano nella spinta.",
   "fascia_kb": "avanzato",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fesp-kettlebell-rotational-swing",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, kettlebell a due mani davanti a te, piedi alla larghezza delle anche.",
+    "Carica il kettlebell indietro di lato a una gamba: nello stesso momento la gamba opposta va indietro, come in un mezzo affondo, e il busto ruota verso il kettlebell.",
+    "Spingi con le anche ed esegui lo swing in avanti fino all'altezza del petto, riallineando le gambe mentre il kettlebell sale.",
+    "Alla discesa successiva carica dall'altro lato: l'altra gamba va indietro. A ogni swing la gamba opposta al kettlebell va indietro e poi torna.",
+    "Fai le ripetizioni indicate contando il totale, non per lato."
+   ],
+   "errori": [
+    "Schiena che si curva: il movimento parte dalle anche.",
+    "Alzare con le braccia: il kettlebell sale per la spinta delle anche.",
+    "Gamba che non torna in linea nello swing: in alto i piedi sono di nuovo pari."
+   ],
+   "piu_facile": "Kettlebell più leggero, mezzo affondo più corto.",
+   "piu_difficile": "Kettlebell più pesante.",
+   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  },
  {
-  "nome": "Kettlebell snatch",
+  "nome": "Kettlebell Snatch",
   "qualita": "forza-esplosiva",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -2867,10 +2971,27 @@
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
   "fascia_kb": "intermedio",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fesp-kettlebell-snatch",
+  "scheda": {
+   "esecuzione": [
+    "Piedi poco più larghi delle anche, kettlebell tra i piedi, una mano sulla maniglia, schiena neutra.",
+    "Carica il kettlebell tra le gambe e spingi le anche in avanti con forza: il kettlebell sale vicino al corpo.",
+    "Mentre passa all'altezza del petto, infila la mano sotto e ricevilo sopra la testa a braccio disteso, polso dritto.",
+    "Riportalo giù tra le gambe in un unico movimento e ripeti. Fai le ripetizioni indicate, poi cambia mano."
+   ],
+   "errori": [
+    "Kettlebell che sbatte sull'avambraccio in alto.",
+    "Tirare con il braccio: la spinta è delle anche.",
+    "Schiena che si curva: il movimento parte dalle anche."
+   ],
+   "piu_facile": "Kettlebell più leggero, pausa al petto prima di salire.",
+   "piu_difficile": "Kettlebell più pesante.",
+   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  },
  {
-  "nome": "Kettlebell swing",
+  "nome": "Kettlebell Swing",
   "qualita": "forza-esplosiva",
   "attrezzatura": "kettlebell",
   "difficolta": 2,
@@ -2888,7 +3009,25 @@
   "qualita_secondaria": null,
   "sottogruppo": "forza funzionale",
   "fascia_kb": "base",
-  "peso_kg": 16
+  "peso_kg": 16,
+  "id": "fesp-kettlebell-swing",
+  "scheda": {
+   "esecuzione": [
+    "Piedi poco più larghi delle anche, kettlebell a terra davanti, afferralo a due mani e portalo indietro tra le gambe.",
+    "Spingi le anche in avanti con forza stringendo i glutei: il kettlebell sale da solo fino all'altezza del petto.",
+    "Nella fase di spinta finisci con il peso sugli avampiedi, corpo disteso in linea.",
+    "Lascialo tornare tra le gambe piegando le anche, non le ginocchia, schiena sempre neutra.",
+    "Fai le ripetizioni indicate con ritmo continuo."
+   ],
+   "errori": [
+    "Schiena che si curva: il movimento parte dalle anche.",
+    "Fare uno squat invece di un movimento d'anca.",
+    "Alzare il kettlebell con le braccia."
+   ],
+   "piu_facile": "Kettlebell più leggero.",
+   "piu_difficile": "Kettlebell più pesante, o a una mano.",
+   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  },
  {
   "nome": "piegamenti con battito",
@@ -2913,7 +3052,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "piegamenti plyo",
+  "nome": "Plyo Push-Up",
   "qualita": "forza-esplosiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -2932,7 +3071,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fesp-piegamenti-plyo",
+  "scheda": {
+   "esecuzione": [
+    "Plank alto, mani sotto le spalle, corpo rigido.",
+    "Scendi in controllo con il petto verso terra.",
+    "Spingi con forza esplosiva fino a staccare le mani da terra.",
+    "Atterra con i gomiti morbidi e scendi subito nella ripetizione successiva. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Atterrare a braccia tese.",
+    "Scendere a metà: il petto arriva vicino a terra."
+   ],
+   "piu_facile": "Mani su un rialzo, o piegamenti veloci senza stacco.",
+   "piu_difficile": "Battito di mani in aria, o mani su due rialzi.",
+   "sicurezza": "Polsi e spalle riscaldati. Fastidio al polso: mani su un rialzo o fermati."
+  }
  },
  {
   "nome": "Skater Jump",
@@ -2954,10 +3110,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fesp-skater-jump",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, ginocchio leggermente piegato.",
+    "Spingi di lato e salta sull'altra gamba, braccia che accompagnano come un pattinatore.",
+    "Atterra morbido sull'avampiede, ginocchio sopra il piede, e tieni un istante l'equilibrio.",
+    "Salta subito verso l'altro lato. Fai le ripetizioni indicate contando i salti totali."
+   ],
+   "errori": [
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Salti corti e frettolosi: cerca distanza e controllo."
+   ],
+   "piu_facile": "Salti più corti, pausa tra i salti.",
+   "piu_difficile": "Salti più lunghi, o toccando terra con la mano opposta.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Single leg RDL - Sing leg RDL ginocchio piegato - 2 single leg jump",
+  "nome": "Single-Leg RDL Series with Two Single-Leg Jumps",
   "qualita": "forza-esplosiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -2978,10 +3151,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": false
+  "solo_livello": false,
+  "id": "fesp-single-leg-rdl-sing-leg-rdl-ginocchio-piegato-2",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, un manubrio per mano se previsto.",
+    "Primo movimento: stacco rumeno a una gamba a gamba quasi tesa, busto in avanti e gamba libera indietro, schiena neutra.",
+    "Secondo movimento: stacco rumeno a una gamba con il ginocchio d'appoggio più piegato.",
+    "Terzo movimento: due salti sulla stessa gamba, atterraggio morbido.",
+    "La sequenza intera è una ripetizione. Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Schiena che si curva: il movimento parte dalle anche.",
+    "Anca che si apre verso l'esterno nello stacco.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono."
+   ],
+   "piu_facile": "Senza manubri, salti più bassi.",
+   "piu_difficile": "Manubri più pesanti, salti più alti.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Fascia A-Skip",
+  "nome": "A-Skip",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3003,10 +3194,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "plioe-fascia-a-skip",
+  "scheda": {
+   "esecuzione": [
+    "Sul posto o in leggero avanzamento, porta un ginocchio in alto fino all'altezza dell'anca, piede flesso sotto il ginocchio.",
+    "Mentre il ginocchio sale, l'altro piede fa un piccolo saltello sull'avampiede.",
+    "Riporta il piede a terra con decisione sotto il corpo e cambia gamba: il ritmo è un saltello per gamba.",
+    "Braccia come nella corsa, busto alto. Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Appoggiare i talloni: si resta sull'avampiede.",
+    "Busto che si piega in avanti.",
+    "Ginocchio che non arriva all'altezza dell'anca."
+   ],
+   "piu_facile": "Sul posto, più lento.",
+   "piu_difficile": "In avanzamento, più veloce, o con il piede che spinge più forte a terra.",
+   "sicurezza": "Caviglie e polpacci riscaldati."
+  }
  },
  {
-  "nome": "Fascia Bridge Bounces",
+  "nome": "Bridge Bounces",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3025,10 +3233,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "plioe-fascia-bridge-bounces",
+  "scheda": {
+   "esecuzione": [
+    "Sdraiato sulla schiena, un piede a terra con il tallone vicino al gluteo, l'altra gamba sollevata.",
+    "Solleva il bacino in un ponte a una gamba con il peso sull'avampiede: il tallone resta sollevato da terra per tutto l'esercizio.",
+    "Dalla posizione alta fai piccoli rimbalzi rapidi del bacino: scende poco e risale subito, senza mai appoggiarsi a terra.",
+    "Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Bacino che tocca terra tra un rimbalzo e l'altro.",
+    "Tallone che si appoggia: si spinge sull'avampiede.",
+    "Schiena che si inarca in alto."
+   ],
+   "piu_facile": "Ponte a due gambe con rimbalzi.",
+   "piu_difficile": "Piede su un rialzo, o rimbalzi più alti.",
+   "sicurezza": "Fastidio ai posteriori della coscia (crampo) o al polpaccio: fermati."
+  }
  },
  {
-  "nome": "Fascia Front Jumps - Pliometria",
+  "nome": "Front Line Jumps",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -3049,10 +3274,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "plioe-fascia-front-jumps-pliometria",
+  "scheda": {
+   "esecuzione": [
+    "In piedi davanti a un ostacolo basso, come una palla, piedi uniti, ginocchia morbide.",
+    "Salta avanti e indietro oltre l'ostacolo con saltelli rapidi a due piedi, restando sull'avampiede.",
+    "Il contatto a terra è breve: rimbalzi, non ti fermi.",
+    "Braccia rilassate. Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Saltare troppo in alto: contano i contatti rapidi, quanto basta per superare la palla.",
+    "Piedi che si allargano."
+   ],
+   "piu_facile": "Più lento, con una linea a terra invece dell'ostacolo.",
+   "piu_difficile": "Ostacolo più alto, o su una gamba.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Fascia Lateral Jumps - Pliometria",
+  "nome": "Lateral Line Jumps",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -3073,7 +3315,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "plioe-fascia-lateral-jumps-pliometria",
+  "scheda": {
+   "esecuzione": [
+    "In piedi di lato a una linea o un ostacolo basso, piedi uniti, ginocchia morbide.",
+    "Salta di lato oltre la linea e torna, con saltelli rapidi a due piedi sull'avampiede.",
+    "Il contatto a terra è breve: rimbalzi, non ti fermi.",
+    "Busto fermo e alto. Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Busto che oscilla di lato."
+   ],
+   "piu_facile": "Più lento, senza ostacolo.",
+   "piu_difficile": "Ostacolo più alto, o su una gamba.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
   "nome": "Plank Jumps",
@@ -3138,10 +3397,27 @@
    "Caviglia",
    "Tibia",
    "Poco o niente"
-  ]
+  ],
+  "id": "plioe-pogo-jumps",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piedi alla larghezza delle anche, ginocchia quasi tese, mani sui fianchi o braccia lungo il corpo.",
+    "Salta usando solo le caviglie: le ginocchia restano quasi ferme, come una molla.",
+    "Atterra sull'avampiede e riparti subito: il contatto a terra è il più breve possibile.",
+    "Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Piegare le ginocchia per saltare: il lavoro è delle caviglie.",
+    "Appoggiare i talloni.",
+    "Contatti lunghi a terra."
+   ],
+   "piu_facile": "Salti più bassi, ritmo più lento.",
+   "piu_difficile": "Salti più alti, o su una gamba.",
+   "sicurezza": "Caviglie e polpacci riscaldati. Fastidio al tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Spinta frontale corsa - skip - fascia",
+  "nome": "Wall Drive Skip",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3162,7 +3438,24 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B"
+  "nota_livello": "anche B",
+  "id": "plioi-spinta-frontale-corsa-skip-fascia",
+  "scheda": {
+   "esecuzione": [
+    "Mani al muro all'altezza delle spalle, corpo inclinato in avanti in linea dai talloni alla testa, sull'avampiede.",
+    "Porta un ginocchio in alto con decisione, come nella spinta dello sprint, e riporta il piede a terra sotto il corpo.",
+    "Cambia gamba con un ritmo rapido, spingendo il muro con le braccia e il corpo rigido.",
+    "Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Bacino che cede: il corpo resta in linea.",
+    "Appoggiare i talloni.",
+    "Ginocchio basso: deve arrivare all'altezza dell'anca."
+   ],
+   "piu_facile": "Ritmo più lento, inclinazione minore.",
+   "piu_difficile": "Ritmo più veloce, inclinazione maggiore.",
+   "sicurezza": "Caviglie e polpacci riscaldati."
+  }
  },
  {
   "nome": "Toe Bounces",
@@ -3209,7 +3502,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Ankle Stiffness - Pogo Jumps Progression",
+  "nome": "Pogo Jumps Progression (Ankle Stiffness)",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3227,10 +3520,27 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche",
+  "id": "plioe-ankle-stiffness-pogo-jumps-progression",
+  "scheda": {
+   "esecuzione": [
+    "Primo passo: calf raises in piedi con un manubrio per mano. Sali sulle punte in controllo e scendi. Fai le ripetizioni indicate.",
+    "Secondo passo: prendi manubri più leggeri e fai saltelli sul posto dalle caviglie (pogo jumps): ginocchia quasi tese, contatto breve sull'avampiede, tallone che non tocca terra. Fai le ripetizioni indicate.",
+    "Terzo passo: appoggia i manubri e fai gli stessi saltelli a corpo libero, cercando il contatto più breve e il rimbalzo più alto. Fai le ripetizioni indicate.",
+    "I tre passi si fanno di fila, senza fermarsi."
+   ],
+   "errori": [
+    "Piegare le ginocchia per saltare: il salto viene dalle caviglie.",
+    "Appoggiare i talloni tra un saltello e l'altro.",
+    "Manubri troppo pesanti nei saltelli: devono essere più leggeri di quelli dei calf raises."
+   ],
+   "piu_facile": "Senza manubri nei saltelli, solo nei calf raises.",
+   "piu_difficile": "Manubri più pesanti, o saltelli su una gamba.",
+   "sicurezza": "Fastidio al tendine d'Achille o al polpaccio: fermati."
+  }
  },
  {
-  "nome": "Fascia Toe Bounces Single Leg - Pogo Jumps",
+  "nome": "Single-Leg Toe Bounces (On the Spot)",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3255,10 +3565,27 @@
    "Caviglia",
    "Tibia",
    "Poco o niente"
-  ]
+  ],
+  "id": "plioe-fascia-toe-bounces-single-leg-pogo-jumps",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata.",
+    "Fai piccoli rimbalzi rapidi sul posto sull'avampiede, usando solo la caviglia.",
+    "Il tallone non tocca mai terra, il contatto è il più breve possibile.",
+    "Tieni per il tempo indicato, poi cambia gamba."
+   ],
+   "errori": [
+    "Piegare il ginocchio per saltare.",
+    "Tallone che tocca terra.",
+    "Busto che si piega per tenere l'equilibrio."
+   ],
+   "piu_facile": "Rimbalzi più bassi, o a due gambe.",
+   "piu_difficile": "Rimbalzi più alti, o la versione con spostamento (Single-Leg Pogo Jumps).",
+   "sicurezza": "Fastidio al tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Pogo Jumps progression (Ankle Stiffness )",
+  "nome": "Pogo Jumps Progression (Ankle Stiffness) 2",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3274,16 +3601,34 @@
   ],
   "azione": "importa",
   "nome_everfit": "Pogo Jumps progression (Ankle Stiffness )",
-  "note": null,
+  "note": "[14/10: doppione di plioe-ankle-stiffness-pogo-jumps-progression (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche",
+  "id": "plioe-pogo-jumps-progression-ankle-stiffness",
+  "scheda": {
+   "esecuzione": [
+    "Parti dai pogo jumps sul posto: ginocchia quasi tese, salti dalle caviglie, contatto breve sull'avampiede.",
+    "Passa ai pogo in avanzamento, poi a quelli con cambio di direzione, mantenendo la stessa rigidità della caviglia.",
+    "Ogni livello si aggiunge solo quando il precedente è pulito e silenzioso.",
+    "Fai le ripetizioni indicate per livello."
+   ],
+   "errori": [
+    "Piegare le ginocchia per saltare.",
+    "Appoggiare i talloni.",
+    "Contatti lunghi a terra."
+   ],
+   "piu_facile": "Solo il primo livello sul posto.",
+   "piu_difficile": "Livelli avanzati, o su una gamba.",
+   "sicurezza": "Fastidio al tendine d'Achille: fermati.",
+   "da_confermare": "Doppione di 'Pogo Jumps Progression (Ankle Stiffness)' (stesso video). Da togliere?"
+  }
  },
  {
-  "nome": "Single Leg Pogo Jumps",
+  "nome": "Single-Leg Pogo Jumps (Forward-Back and Lateral)",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3308,11 +3653,28 @@
    "Caviglia",
    "Tibia",
    "Poco o niente"
-  ]
+  ],
+  "id": "plioe-single-leg-pogo-jumps",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, ginocchio quasi teso, mani sui fianchi.",
+    "Salta usando solo la caviglia, come una molla, spostandoti: prima avanti e indietro, poi a destra e a sinistra.",
+    "Atterra sull'avampiede e riparti subito, tallone che non tocca terra, ginocchio che resta quasi fermo.",
+    "Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Piegare il ginocchio per saltare.",
+    "Tallone che tocca terra.",
+    "Ginocchio che cede verso l'interno negli spostamenti laterali."
+   ],
+   "piu_facile": "Rimbalzi sul posto (Single-Leg Toe Bounces), o a due gambe.",
+   "piu_difficile": "Spostamenti più lunghi, o salti più alti.",
+   "sicurezza": "Caviglie riscaldate. Fastidio al tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Jump 2 Up 1 Down",
-  "qualita": "pliometria-intensiva",
+  "nome": "Two-Leg Jump, One-Leg Landing",
+  "qualita": "fascia-prevenzione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
   "livello_min": "A",
@@ -3320,16 +3682,36 @@
   "per_lato": false,
   "video": null,
   "fonte": "File_DB",
-  "tags": [],
+  "tags": [
+   "atterraggio",
+   "prevenzione"
+  ],
   "azione": "importa",
   "nome_everfit": "Jump 2 Up 1 Down",
-  "note": null,
+  "note": "[14/10: spostato in fascia-prevenzione da Ste: lavoro di atterraggio controllato]",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche",
+  "id": "plioi-jump-2-up-1-down",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piedi alla larghezza delle anche.",
+    "Carica piegando le ginocchia e salta in alto a due piedi, braccia che accompagnano.",
+    "Atterra su una gamba sola, morbido, ginocchio sopra il piede e in linea con l'anca, e tieni l'equilibrio per 2 secondi.",
+    "Alterna la gamba di atterraggio. Fai le ripetizioni indicate contando i salti totali."
+   ],
+   "errori": [
+    "Ginocchio che cede verso l'interno all'atterraggio: è il punto dell'esercizio.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchio che assorbe.",
+    "Atterrare e muoversi subito: la tenuta in equilibrio è parte dell'esercizio."
+   ],
+   "piu_facile": "Salti più bassi.",
+   "piu_difficile": "Salti più alti, o atterraggio su un rialzo basso.",
+   "sicurezza": "È un lavoro di prevenzione sull'atterraggio: salti bassi e controllati, non massimali. Fastidio al ginocchio: fermati."
+  }
  },
  {
   "nome": "Squat Jump",
@@ -3351,7 +3733,24 @@
   "sottogruppo": null,
   "solo_livello": false,
   "nota_livello": "anche B",
-  "descrizione": "Dallo squat a metà altezza salta il più in alto possibile, braccia che accompagnano. Atterra morbido sugli avampiedi assorbendo con le ginocchia, riprendi la posizione e ripeti."
+  "descrizione": "Dallo squat a metà altezza salta il più in alto possibile, braccia che accompagnano. Atterra morbido sugli avampiedi assorbendo con le ginocchia, riprendi la posizione e ripeti.",
+  "id": "plioi-squat-jump",
+  "scheda": {
+   "esecuzione": [
+    "Piedi alla larghezza delle spalle, scendi in uno squat a metà altezza, braccia indietro.",
+    "Salta in alto il più possibile, braccia che accompagnano verso l'alto.",
+    "Atterra morbido sull'avampiede, ginocchia che assorbono, e torna nello squat.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Scendere troppo poco o troppo: metà altezza."
+   ],
+   "piu_facile": "Salti più bassi, pausa tra le ripetizioni.",
+   "piu_difficile": "Salti più alti, o con un leggero carico.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
   "nome": "Drop Jump",
@@ -3374,10 +3773,27 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "altezza bassa"
+  "nota_livello": "altezza bassa",
+  "id": "plioi-drop-jump",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su un box o un gradino di 30-50 cm.",
+    "Lasciati cadere in avanti, senza saltare giù, e atterra sull'avampiede con le ginocchia morbide.",
+    "Appena tocchi terra salta in alto il più possibile: il contatto a terra è il più breve possibile.",
+    "Atterra morbido e torna sul box con calma. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Saltare giù dal box invece di lasciarsi cadere.",
+    "Contatto lungo a terra, o scendere in squat prima del salto.",
+    "Ginocchia che cedono verso l'interno all'atterraggio."
+   ],
+   "piu_facile": "Box più basso, pausa a terra prima del salto.",
+   "piu_difficile": "Box più alto, o atterraggio su una gamba.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Box basso finché l'atterraggio non è silenzioso."
+  }
  },
  {
-  "nome": "Knee Jump Progression ( Box Jump)",
+  "nome": "Knee Jump to Box Jump Progression",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "palestra",
   "difficolta": 4,
@@ -3394,7 +3810,25 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "plioi-knee-jump-progression-box-jump",
+  "scheda": {
+   "esecuzione": [
+    "In ginocchio su un tappetino, glutei sui talloni, braccia indietro.",
+    "Variante 1: oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando a due piedi in squat sull'avampiede.",
+    "Variante 2: stesso salto, ma atterri su un piede solo (prima il sinistro, poi il destro), morbido, e tieni l'equilibrio.",
+    "Variante 3: salto in piedi e, senza fermarti, salto su un box davanti a te atterrando su un piede solo.",
+    "Le tre varianti sono in progressione di difficoltà: passa alla successiva solo quando la precedente è pulita. Fai le ripetizioni indicate della variante del giorno."
+   ],
+   "errori": [
+    "Aiutarsi con le mani a terra.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Box troppo alto nella variante 3: si sale con il salto, non con le ginocchia al petto."
+   ],
+   "piu_facile": "Solo la variante 1, a due piedi.",
+   "piu_difficile": "Variante 3 con il box più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia."
+  }
  },
  {
   "nome": "Knee Jumps Progression (+ Box Jump)",
@@ -3414,10 +3848,28 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "plioi-knee-jumps-progression-box-jump",
+  "scheda": {
+   "esecuzione": [
+    "In ginocchio su un tappetino, glutei sui talloni, braccia indietro.",
+    "Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando a due piedi in squat sull'avampiede.",
+    "Poi la stessa partenza atterrando su un piede solo: prima il sinistro, poi il destro, morbido e in equilibrio.",
+    "Infine salto in piedi e subito salto sul box davanti a te.",
+    "Come nel video: due piedi, sinistro, destro, poi con il box. Sono quattro passi in progressione di difficoltà. Fai le ripetizioni indicate per passo."
+   ],
+   "errori": [
+    "Aiutarsi con le mani a terra.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Box troppo alto nella variante 3: si sale con il salto, non con le ginocchia al petto."
+   ],
+   "piu_facile": "Solo il salto in piedi a due piedi.",
+   "piu_difficile": "Box più alto, o atterraggio su un piede anche nel box.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia."
+  }
  },
  {
-  "nome": "Reverse drop jumps",
+  "nome": "Reverse Drop Jump",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -3437,10 +3889,28 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche"
+  "nota_livello": "anche b ma dopo aver fatto gia altre sessioni pliometriche",
+  "id": "plioi-reverse-drop-jumps",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su un box o un gradino basso, spalle rivolte al lato da cui scenderai.",
+    "Lasciati cadere all'indietro senza saltare e atterra a due piedi sull'avampiede, ginocchia morbide.",
+    "Appena tocchi terra salta in alto il più possibile, contatto breve.",
+    "Atterra morbido e risali sul box con calma. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Saltare giù invece di lasciarsi cadere.",
+    "Guardare in basso: lo sguardo resta avanti.",
+    "Ginocchia che cedono verso l'interno all'atterraggio."
+   ],
+   "piu_facile": "Box più basso, pausa a terra prima del salto.",
+   "piu_difficile": "Box più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te prima di scendere.",
+   "da_confermare": "L'ho scritto come caduta all'indietro dal box e salto subito. Confermi?"
+  }
  },
  {
-  "nome": "Singl Leg RDL - SL Knee Jump Progression Advanced",
+  "nome": "Single-Leg RDL to Single-Leg Knee Jump (Advanced)",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3461,10 +3931,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "plioi-singl-leg-rdl-sl-knee-jump-progression-advanced",
+  "scheda": {
+   "esecuzione": [
+    "Primo passo: in piedi sulla gamba sinistra, manubrio nella mano destra. Scendi in uno stacco rumeno a una gamba e risali con forza concludendo con uno snatch: il manubrio sale in un'unica linea fino al braccio disteso sopra la testa.",
+    "Secondo passo: su un ginocchio solo (l'altro piede avanti), oscilla le braccia e spingi con le anche per saltare in piedi, atterrando morbido.",
+    "Terzo passo: in piedi su una gamba, scendi nello stacco rumeno e trasforma la risalita in un salto in alto, atterrando sulla stessa gamba.",
+    "Fai le ripetizioni indicate di ogni passo, poi cambia lato. È una progressione avanzata: poche ripetizioni, tutte esplosive."
+   ],
+   "errori": [
+    "Schiena che si curva nello stacco: il movimento parte dalle anche.",
+    "Snatch tirato con il braccio: il manubrio sale per la spinta delle anche.",
+    "Ginocchio che cede verso l'interno all'atterraggio."
+   ],
+   "piu_facile": "Senza snatch e senza salto: stacco a una gamba e knee jump separati.",
+   "piu_difficile": "Manubrio più pesante, salto più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Solo dopo stacchi a una gamba e knee jump già puliti. Tappetino sotto il ginocchio."
+  }
  },
  {
-  "nome": "Single leg drop e spinta interna",
+  "nome": "Single-Leg Drop with Inside Push-Off",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3483,10 +3970,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "plioi-single-leg-drop-e-spinta-interna",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su un box o un gradino basso, su una gamba sola.",
+    "Lasciati cadere a terra e atterra sulla stessa gamba, morbido, sull'avampiede.",
+    "Appena tocchi terra spingi di lato con l'interno del piede della gamba d'appoggio, incrociando con l'altra gamba davanti, come in un cambio di direzione.",
+    "Atterra sull'altra gamba e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Ginocchio che cede verso l'interno all'atterraggio.",
+    "Contatto lungo a terra prima della spinta.",
+    "Spingere con tutto il piede invece che con l'interno, o spingere in avanti invece che di lato."
+   ],
+   "piu_facile": "Gradino più basso, pausa prima della spinta.",
+   "piu_difficile": "Gradino più alto, spinta più lunga.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Single Leg Drop e spinta laterale",
+  "nome": "Single-Leg Drop with Lateral Push-Off",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3506,10 +4010,27 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B ma solo dopo tante progressioni pliometriche fatte, raramente"
+  "nota_livello": "anche B ma solo dopo tante progressioni pliometriche fatte, raramente",
+  "id": "plioi-single-leg-drop-e-spinta-laterale",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su un box o un gradino basso, su una gamba sola.",
+    "Lasciati cadere a terra e atterra sulla stessa gamba, morbido, sull'avampiede.",
+    "Appena tocchi terra rimbalza di lato il più rapidamente possibile, spingendo con l'esterno del piede.",
+    "Atterra sull'altra gamba o su due piedi e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Contatto lungo a terra prima della spinta.",
+    "Busto che si piega di lato."
+   ],
+   "piu_facile": "Gradino più basso, pausa prima della spinta.",
+   "piu_difficile": "Gradino più alto, spinta più lunga.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Single leg lateral drop jump",
+  "nome": "Single-Leg Lateral Drop Jump",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3529,10 +4050,27 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": false,
-  "nota_livello": "anche B ma solo dopo tante progressioni pliometriche fatte, raramente"
+  "nota_livello": "anche B ma solo dopo tante progressioni pliometriche fatte, raramente",
+  "id": "plioi-single-leg-lateral-drop-jump",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su un box o un gradino basso, di lato rispetto alla direzione di caduta, su una gamba sola.",
+    "Lasciati cadere di lato e atterra sulla stessa gamba, morbido, ginocchio sopra il piede.",
+    "Appena tocchi terra salta di nuovo in alto o di lato, contatto breve.",
+    "Atterra e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Busto che si piega verso l'esterno."
+   ],
+   "piu_facile": "Gradino più basso, pausa prima del salto.",
+   "piu_difficile": "Gradino più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "single leg Reverse lateral drop progression",
+  "nome": "Single-Leg Reverse Lateral Drop (Progression)",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3551,10 +4089,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "plioi-single-leg-reverse-lateral-drop-progression",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su un box o un gradino basso, su una gamba sola, spalle rivolte alla direzione di caduta.",
+    "Lasciati cadere all'indietro ruotando il corpo in aria di mezzo giro (180°).",
+    "Atterra su un piede solo, morbido, e spingi subito di lato nella direzione opposta con l'esterno del piede, come in un cambio di direzione.",
+    "Atterra sull'altra gamba e tieni l'equilibrio. Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Ginocchio che cede verso l'interno all'atterraggio.",
+    "Rotazione incompleta: in aria si gira di mezzo giro.",
+    "Spinta in avanti invece che di lato."
+   ],
+   "piu_facile": "Gradino più basso, rotazione di un quarto di giro.",
+   "piu_difficile": "Gradino più alto, spinta più lunga.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te."
+  }
  },
  {
-  "nome": "Sl Rdl - Sl Knee Jump Progression Advanced",
+  "nome": "Single-Leg RDL to Single-Leg Knee Jump (Advanced) 2",
   "qualita": "pliometria-intensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 4,
@@ -3566,15 +4121,33 @@
   "tags": [],
   "azione": "importa",
   "nome_everfit": "Sl Rdl - Sl Knee Jump Progression Advanced",
-  "note": null,
+  "note": "[14/10: doppione di plioi-singl-leg-rdl-sl-knee-jump-progression-advanced (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "plioi-sl-rdl-sl-knee-jump-progression-advanced",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, scendi in uno stacco rumeno a una gamba: busto in avanti, gamba libera indietro, schiena neutra.",
+    "Risali e porta il ginocchio libero in alto con decisione, trasformando la risalita in un salto sulla gamba d'appoggio.",
+    "Atterra sulla stessa gamba, morbido, e scendi subito nello stacco successivo.",
+    "Fai le ripetizioni indicate, poi cambia gamba."
+   ],
+   "errori": [
+    "Schiena che si curva: il movimento parte dalle anche.",
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Fermarsi tra lo stacco e il salto."
+   ],
+   "piu_facile": "Stacco e salto separati da una pausa.",
+   "piu_difficile": "Salto più alto.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati.",
+   "da_confermare": "Doppione di 'Single-Leg RDL to Single-Leg Knee Jump (Advanced)' (stesso video). Da togliere?"
+  }
  },
  {
-  "nome": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
+  "nome": "Quickness, Technique, Shooting and Decision-Speed Circuit",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3591,14 +4164,31 @@
   ],
   "azione": "importa",
   "nome_everfit": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
-  "note": null,
+  "note": "[15/10: doppione di ttir-tiri-in-porta-e-visione (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-allenamento-rapidita-tecnica-tiro-in-porta-e-vel",
+  "scheda": {
+   "esecuzione": [
+    "Circuito guidato dal video: stazioni di rapidità di piedi tra i cinesini, tocchi di palla, conduzione e tiro in porta, con una scelta da fare in corsa (dove tirare o dove andare).",
+    "Fai ogni stazione a tutta per il tempo indicato, poi recupera camminando prima della successiva.",
+    "Nei tratti con la palla conta la pulizia del tocco, non solo la velocità: se la palla scappa, rallenta un passo.",
+    "Il tiro arriva a fine stazione: colpisci di interno o collo pieno, mai di punta."
+   ],
+   "errori": [
+    "Guardare la palla invece dello spazio nei tratti di conduzione.",
+    "Tirare da fermo: il tiro parte in corsa.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Meno stazioni, tratti più corti, nessun tiro.",
+   "piu_difficile": "Tempi più lunghi, un tocco in meno prima del tiro.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Allenamento Tecnica - Resistenza - Velocità - Forza Esplosiva",
+  "nome": "Speed-Endurance with Ball: 3 Drills",
   "qualita": "resistenza-aerobica",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3618,10 +4208,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "resistenza e tecnica"
+  "sottogruppo": "resistenza e tecnica",
+  "id": "aer-allenamento-tecnica-resistenza-velocita-forza-es",
+  "scheda": {
+   "esecuzione": [
+    "Tre esercizi diversi di resistenza alla velocità con la palla, come nel video: lavoro funzionale al calcio, con sprint, cambi di direzione e gesti tecnici in affanno.",
+    "Per ogni esercizio 4 serie: a livello base 20\" di lavoro e 1' di recupero, intermedio 30\" e 1', avanzato 40\" e 1'.",
+    "Nel tempo di lavoro vai forte dall'inizio alla fine; nel recupero cammina e respira.",
+    "È una seduta molto pesante: al massimo una volta a settimana, soprattutto in preparazione o per chi vuole migliorare resistenza e resistenza alla velocità."
+   ],
+   "errori": [
+    "Partire piano per arrivare in fondo: il tempo di lavoro è corto, si va forte.",
+    "Recupero accorciato: il minuto serve tutto.",
+    "Farlo due volte a settimana o vicino alla partita."
+   ],
+   "piu_facile": "Livello base: 20\" di lavoro, 4 serie per esercizio.",
+   "piu_difficile": "Livello avanzato: 40\" di lavoro.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito. Mai due volte nella stessa settimana."
+  }
  },
  {
-  "nome": "BOX rapidità e Tiro",
+  "nome": "Quickness Box and Shot",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3642,10 +4249,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità e tecnica"
+  "sottogruppo": "rapidità e tecnica",
+  "id": "vel-box-rapidita-e-tiro",
+  "scheda": {
+   "esecuzione": [
+    "Quattro cinesini a quadrato di 3-4 metri, una palla fuori dal quadrato, porta a 10-15 metri.",
+    "Senza palla: dal centro vai a toccare un angolo e torna al centro, poi l'angolo opposto, poi gli altri due: una croce su tutti e quattro gli angoli, appoggi rapidi e busto basso.",
+    "Appena finita la croce vai a prendere la palla: conduzione veloce, un dribbling e tiro in porta.",
+    "Torna di passo al quadrato e recupera bene: esecuzione rapida, dura poco, recupero alto. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Croce lenta o con appoggi pesanti: è il pezzo di rapidità.",
+    "Rallentare per preparare il tiro: il tiro esce dall'ultimo tocco.",
+    "Ripartire senza recupero: l'esercizio vale solo se sei fresco."
+   ],
+   "piu_facile": "Quadrato più grande, tiro da fermo.",
+   "piu_difficile": "Quadrato più piccolo, tiro con il piede debole.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Esercizio Tecnica + Resistenza Funzionale Calcio",
+  "nome": "Technique and Functional Endurance Drill",
   "qualita": "resistenza-aerobica",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3661,14 +4285,31 @@
   ],
   "azione": "importa",
   "nome_everfit": "Esercizio Tecnica + Resistenza Funzionale Calcio",
-  "note": null,
+  "note": "[15/10: doppione di aer-esercizio-resistenza-e-tecnica-funzionale (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
-  "sottogruppo": "resistenza e tecnica"
+  "sottogruppo": "resistenza e tecnica",
+  "id": "aer-esercizio-tecnica-resistenza-funzionale-calcio",
+  "scheda": {
+   "esecuzione": [
+    "Esercizio guidato dal video: conduzione e tocchi di palla alternati a tratti di corsa, per il tempo indicato.",
+    "Ritmo continuo: non ti fermi mai del tutto, ma la palla resta sotto controllo.",
+    "Nei tratti senza palla corri a ritmo sostenuto, non in sprint.",
+    "Fai i giri o il tempo indicati, poi recupero camminando."
+   ],
+   "errori": [
+    "Fermarsi a ogni errore con la palla: riprendila e continua.",
+    "Correre troppo forte nei tratti liberi e arrivare senza fiato alla palla.",
+    "Testa bassa tutto il tempo."
+   ],
+   "piu_facile": "Tempo più corto, corsa più lenta.",
+   "piu_difficile": "Tempo più lungo, piede debole nei tocchi.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "navette laterali con pallina da tennis",
+  "nome": "Lateral Shuttles with Tennis Ball",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3688,10 +4329,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità"
+  "sottogruppo": "rapidità",
+  "id": "vel-navette-laterali-con-pallina-da-tennis",
+  "scheda": {
+   "esecuzione": [
+    "Una pallina da tennis in mano, posizione di attesa: gambe piegate, peso sugli avampiedi. Non servono riferimenti a terra.",
+    "Lancia la pallina a terra davanti a te mentre parti: corsa laterale di qualche metro e ritorno al punto di partenza a passi laterali, riprendendo la pallina.",
+    "Riparti subito dall'altro lato con un nuovo lancio.",
+    "Fai il tempo indicato senza fermarti."
+   ],
+   "errori": [
+    "Incrociare le gambe nei passi laterali: si resta frontali, passo laterale.",
+    "Alzarsi tra un lancio e l'altro: si resta bassi.",
+    "Guardare i piedi: gli occhi sulla pallina."
+   ],
+   "piu_facile": "Tratti più corti, lanci più lenti.",
+   "piu_difficile": "Tratti più lunghi, pallina lanciata più forte.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Passaggi al muro - VISIONE",
+  "nome": "Wall Passes with Vision",
   "qualita": "tecnica-visione",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3712,10 +4370,29 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "tecnica e visione"
+  "sottogruppo": "tecnica e visione",
+  "id": "tvis-passaggi-al-muro-visione",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, cinesini di colori diversi intorno a te e il telefono appoggiato dove lo vedi, con il video dei segnali che parte insieme all'esercizio.",
+    "Passaggio al muro; mentre la palla torna alzi la testa e leggi sullo schermo il segnale (colore o numero), poi controlli e giochi come dice il segnale: sul cinesino di quel colore, con il piede indicato, o di nuovo al muro.",
+    "La testa sale a ogni passaggio, non ogni tanto.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Testa bassa: l'esercizio è alzare lo sguardo.",
+    "Guardare lo schermo e sbagliare il controllo: prima la palla, poi la decisione.",
+    "Decidere prima di aver letto il segnale."
+   ],
+   "piu_facile": "Segnale fisso, senza video.",
+   "piu_difficile": "Due segnali insieme (colore e piede).",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.",
+   "da_confermare": "Il video dei segnali da mettere sul telefono sta nella descrizione YouTube, che da qui non riesco a leggere: incollami il link e lo metto in `video_schermo`."
+  },
+  "video_schermo": null
  },
  {
-  "nome": "Postura + Velocità Difensori",
+  "nome": "Defender Stance and Speed Drill",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3735,10 +4412,29 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità funzionale"
+  "sottogruppo": "rapidità funzionale",
+  "id": "vel-postura-velocita-difensori",
+  "scheda": {
+   "esecuzione": [
+    "Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti. Il telefono davanti a te con il video dei colori.",
+    "Piccoli passi rapidi sul posto. A ogni colore che compare cambi posizione: bianco ti sposti verso sinistra, nero verso destra, a passi laterali senza incrociare.",
+    "Quando compare il colore dello sprint parti a tutta per 3-5 metri, in avanti o all'indietro come indicato, poi torna in posizione.",
+    "Fai le ripetizioni indicate (una ripetizione = un giro del video)."
+   ],
+   "errori": [
+    "Gambe tese nell'attesa: se sei alto, parti in ritardo.",
+    "Incrociare le gambe nei passi laterali.",
+    "Girare le spalle per tornare: si torna guardando avanti."
+   ],
+   "piu_facile": "Video più lento, scatti più corti.",
+   "piu_difficile": "Scatti più lunghi, posizione più bassa.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
+   "da_confermare": "Serve il link del video dei colori da mettere sul telefono (Ste: 'non riesco a trovarlo ora'), e quale colore è lo sprint in avanti e quale all'indietro (nel testo c'è due volte il nero)."
+  },
+  "video_schermo": null
  },
  {
-  "nome": "Rapidità movimenti attaccanti",
+  "nome": "Striker Quick-Feet Drill",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3757,10 +4453,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": "rapidità funzionale"
+  "sottogruppo": "rapidità funzionale",
+  "id": "vel-rapidita-movimenti-attaccanti",
+  "scheda": {
+   "esecuzione": [
+    "Tre cinesini a triangolo, come nel video, a 1-2 metri l'uno dall'altro.",
+    "Piedi rapidi tra i cinesini seguendo lo schema del video: appoggi corti sull'avampiede, busto basso, braccia che accompagnano.",
+    "All'ultimo cinesino: finta di corpo e scatto di 5 metri nella direzione opposta, come per staccarsi dal marcatore.",
+    "Fai le ripetizioni indicate, alternando il lato della finta."
+   ],
+   "errori": [
+    "Appoggi pesanti sui talloni: si sta sull'avampiede.",
+    "Finta solo con il piede: la finta è di busto e spalle.",
+    "Scatto molle dopo la finta: è la parte che conta."
+   ],
+   "piu_facile": "Senza finta, solo piedi rapidi e scatto.",
+   "piu_difficile": "Finta doppia, scatto più lungo.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Saltelli in mezzo affondo con switch",
+  "nome": "Half-Lunge Switch Hops",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3780,10 +4493,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "plioe-saltelli-in-mezzo-affondo-con-switch",
+  "scheda": {
+   "esecuzione": [
+    "In mezzo affondo: una gamba avanti e una indietro, ginocchia poco piegate, busto leggermente inclinato in avanti come alla partenza di uno sprint.",
+    "Fai saltelli rapidi sull'avampiede senza alzarti: due saltelli, poi cambi la gamba davanti, altri due saltelli, poi cambi di nuovo.",
+    "Braccia che accompagnano come nella corsa, busto fermo.",
+    "Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Alzarsi in piedi tra un saltello e l'altro.",
+    "Appoggiare i talloni.",
+    "Cambiare a ogni saltello: il cambio è ogni due."
+   ],
+   "piu_facile": "Ritmo più lento, affondo meno profondo.",
+   "piu_difficile": "Ritmo più veloce, affondo più profondo.",
+   "sicurezza": "Caviglie e polpacci riscaldati."
+  }
  },
  {
-  "nome": "saltelli in squat",
+  "nome": "Squat Hops",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3803,10 +4533,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "plioe-saltelli-in-squat",
+  "scheda": {
+   "esecuzione": [
+    "In mezzo squat, piedi alla larghezza delle spalle, busto inclinato in avanti, mani davanti.",
+    "Fai saltelli rapidi e bassi sull'avampiede restando in mezzo squat, senza alzarti.",
+    "Il contatto a terra è breve, le ginocchia restano sopra i piedi.",
+    "Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Alzarsi tra un saltello e l'altro.",
+    "Appoggiare i talloni.",
+    "Ginocchia che cedono verso l'interno all'atterraggio."
+   ],
+   "piu_facile": "Ritmo più lento, squat meno profondo.",
+   "piu_difficile": "Ritmo più veloce, o in avanzamento.",
+   "sicurezza": "Caviglie e ginocchia riscaldate."
+  }
  },
  {
-  "nome": "saltelli in squat diagonale",
+  "nome": "Diagonal Squat Hops",
   "qualita": "pliometria-estensiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -3826,7 +4573,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "plioe-saltelli-in-squat-diagonale",
+  "scheda": {
+   "esecuzione": [
+    "In mezzo squat, piedi alla larghezza delle spalle, busto inclinato in avanti.",
+    "Fai saltelli rapidi e bassi in diagonale: avanti a destra, indietro al centro, avanti a sinistra, sempre in mezzo squat.",
+    "Il contatto a terra è breve, le ginocchia restano sopra i piedi.",
+    "Tieni per il tempo indicato."
+   ],
+   "errori": [
+    "Alzarsi tra un saltello e l'altro.",
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Busto che oscilla."
+   ],
+   "piu_facile": "Ritmo più lento, spostamenti più corti.",
+   "piu_difficile": "Ritmo più veloce, spostamenti più lunghi.",
+   "sicurezza": "Caviglie e ginocchia riscaldate."
+  }
  },
  {
   "nome": "Sprint",
@@ -3848,10 +4612,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Scatto massimale sulla distanza indicata, partenza da fermo o lanciata come indicato. Recupero completo tra una ripetizione e l'altra: la qualità dello sprint conta più della quantità."
+  "descrizione": "Scatto massimale sulla distanza indicata, partenza da fermo o lanciata come indicato. Recupero completo tra una ripetizione e l'altra: la qualità dello sprint conta più della quantità.",
+  "id": "vel-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Dopo il riscaldamento di velocità, partenza da fermo o lanciata come indicato, sulla distanza indicata.",
+    "Primi passi corti e potenti con il busto in avanti, poi ti alzi e allunghi la falcata.",
+    "Corri a tutta fino a due metri oltre la linea, poi rallenta in 10-15 metri.",
+    "Recupero completo tra una ripetizione e l'altra (2-3 minuti): cammina, non sederti."
+   ],
+   "errori": [
+    "Busto che si piega in avanti o si inarca: resta inclinato in avanti nei primi passi, poi dritto.",
+    "Rallentare prima della linea: si corre a tutta fino a due metri oltre.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Distanza più corta, partenza lanciata.",
+   "piu_difficile": "Partenza da terra o da posizione scomoda.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint con palla da fermo",
+  "nome": "Standing-Start Sprint with Ball",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3871,10 +4652,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-sprint-con-palla-da-fermo",
+  "scheda": {
+   "esecuzione": [
+    "Palla ferma davanti al piede, posizione di partenza come per lo sprint.",
+    "Primo tocco lungo in avanti con l'esterno o il collo del piede, e parti a tutta dietro la palla.",
+    "Uno o due tocchi al massimo sulla distanza indicata: la palla corre con te, non davanti a te.",
+    "Recupero completo tra le ripetizioni."
+   ],
+   "errori": [
+    "Primo tocco troppo corto: devi rallentare per riprenderla.",
+    "Primo tocco troppo lungo: la palla ti scappa.",
+    "Guardare la palla per tutto lo sprint: un'occhiata e poi avanti."
+   ],
+   "piu_facile": "Distanza più corta, primo tocco più morbido.",
+   "piu_difficile": "Piede debole.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint e Salite - Forza esplosiva",
+  "nome": "Hill Sprints for Explosive Strength",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3893,10 +4691,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-sprint-e-salite-forza-esplosiva",
+  "scheda": {
+   "esecuzione": [
+    "Salita di almeno 50 metri. Partenza da fermo in basso.",
+    "Sprint in salita a tutta: busto in avanti, ginocchia alte, spinta decisa dell'avampiede, passi corti e frequenti.",
+    "Fermati in cima e torna giù camminando: la discesa è il recupero, non si corre in discesa. Recupero completo prima di ripartire.",
+    "Fai le ripetizioni indicate. Per la resistenza la salita si fa diversa: distanza più lunga, in allungo e non in sprint, recupero più corto (è l'esercizio Hill Stride-Outs)."
+   ],
+   "errori": [
+    "Correre in discesa: carica tendini e ginocchia.",
+    "Passi lunghi in salita: in salita i passi sono corti e frequenti.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Salita più dolce.",
+   "piu_difficile": "Salita più ripida, partenza da terra.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito. In season pochissimo: sono pesanti."
+  }
  },
  {
-  "nome": "T sprint",
+  "nome": "T-Sprint",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -3915,10 +4730,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "vel-t-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Quattro cinesini a T: uno alla partenza, uno a 10 metri davanti, due a 5 metri a destra e a sinistra di quello.",
+    "Sprint avanti fino al cinesino centrale e toccalo, poi al cinesino di destra e toccalo, poi a quello di sinistra e toccalo, torna al centro e corri fino alla partenza.",
+    "Un giro dura 10-12 secondi: vai a tutta su ogni tratto, lo sguardo avanti.",
+    "Recupero di circa 50 secondi tra una ripetizione e l'altra. Fai le ripetizioni indicate; nella versione test si cronometra."
+   ],
+   "errori": [
+    "Toccare i cinesini con lo sguardo a terra: si guarda avanti.",
+    "Rallentare prima dell'ultimo cinesino.",
+    "Recupero accorciato: con 50 secondi ogni giro è a tutta."
+   ],
+   "piu_facile": "Distanze più corte.",
+   "piu_difficile": "Cronometro e tentativo di battere il tempo.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Salto triplo a 1 gamba e sprint",
+  "nome": "Single-Leg Triple Jump to Sprint",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3939,10 +4771,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "vel-salto-triplo-a-1-gamba-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba dietro una linea, ginocchio dell'altra gamba alto.",
+    "Tre balzi consecutivi in avanti sulla stessa gamba, spingendo con tutta l'anca e usando le braccia.",
+    "All'atterraggio del terzo balzo parti subito in sprint per la distanza indicata.",
+    "Recupero completo, poi cambia gamba. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Atterraggio sul tallone: si atterra sull'avampiede, ginocchio che assorbe.",
+    "Fermarsi tra il terzo balzo e lo sprint: è un unico movimento.",
+    "Ginocchio che cede verso l'interno all'atterraggio."
+   ],
+   "piu_facile": "Due balzi, sprint più corto.",
+   "piu_difficile": "Balzi più lunghi, sprint più lungo.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito. Serve una base di pliometria: non è per la prima settimana."
+  }
  },
  {
-  "nome": "Salto triplo e sprint",
+  "nome": "Triple Jump to Sprint",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -3965,12 +4814,29 @@
   "sottogruppo": null,
   "solo_livello": false,
   "nota_livello": "anche B ma deve avere gia una base di pliometria e velocità",
-  "descrizione": "Da fermo, tre balzi consecutivi in avanti a due piedi (o come indicato), poi all'atterraggio del terzo scatta subito per la distanza indicata. Atterraggi morbidi, spinta massima, recupero completo."
+  "descrizione": "Da fermo, tre balzi consecutivi in avanti a due piedi (o come indicato), poi all'atterraggio del terzo scatta subito per la distanza indicata. Atterraggi morbidi, spinta massima, recupero completo.",
+  "id": "vel-salto-triplo-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Da fermo, piedi uniti dietro una linea.",
+    "Tre balzi consecutivi in avanti a due piedi (o come indicato), braccia che accompagnano, atterraggi morbidi.",
+    "All'atterraggio del terzo balzo scatta subito per la distanza indicata.",
+    "Recupero completo tra le ripetizioni."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni.",
+    "Fermarsi tra l'ultimo balzo e lo sprint.",
+    "Spinta solo di gambe: le braccia danno metà del salto."
+   ],
+   "piu_facile": "Due balzi, sprint più corto.",
+   "piu_difficile": "Balzi più lunghi.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Esercizio resistenza e tecnica funzionale",
+  "nome": "Endurance and Functional Technique Drill",
   "qualita": "resistenza-aerobica",
-  "attrezzatura": "corpo libero",
+  "attrezzatura": "campo",
   "difficolta": 2,
   "livello_min": "B",
   "unita": "minuti",
@@ -3988,7 +4854,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "aer-esercizio-resistenza-e-tecnica-funzionale",
+  "scheda": {
+   "esecuzione": [
+    "Esercizio continuo con e senza palla, come nel video: tratti di corsa con variazioni di velocità, sprint e cambi di direzione con la palla al piede.",
+    "Lavora 4 minuti di fila senza fermarti, poi 3 minuti di recupero camminando o in corsa leggera.",
+    "Si fa per 4 ripetizioni, oppure dentro una seduta di resistenza insieme a fartlek o lavoro metabolico (una serie ciascuno).",
+    "Allena tutti gli aspetti in modo funzionale al calcio ed è faticoso: resta sotto lo sprint pieno nei tratti lunghi, vai forte in quelli corti."
+   ],
+   "errori": [
+    "Palla lontana nei cambi di direzione: tocchi corti anche quando sei stanco.",
+    "Fermarsi dentro i 4 minuti: si rallenta, non ci si ferma.",
+    "Recupero troppo corto: i 3 minuti servono tutti."
+   ],
+   "piu_facile": "Serie da 3 minuti, recupero 3.",
+   "piu_difficile": "Serie da 5-6 minuti, recupero 2.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
   "nome": "Fartlek",
@@ -4010,10 +4893,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Corsa a ritmo variato: alterna tratti veloci e tratti lenti secondo i tempi indicati nelle serie (es. 1' forte / 1' piano). Nei tratti forti resta sotto lo sprint, nei tratti piano non fermarti."
+  "descrizione": "Corsa a ritmo variato: alterna tratti veloci e tratti lenti secondo i tempi indicati nelle serie (es. 1' forte / 1' piano). Nei tratti forti resta sotto lo sprint, nei tratti piano non fermarti.",
+  "id": "aer-fartlek",
+  "scheda": {
+   "esecuzione": [
+    "Corsa a ritmo variato sul percorso che vuoi: strada, parco, campo.",
+    "Alterna tratti veloci e tratti lenti secondo i tempi indicati nelle serie (es. 1' forte / 1' piano).",
+    "Nei tratti forti resta sotto lo sprint: un ritmo che reggi per tutto il tratto. Nei tratti piano non fermarti: corsa leggera.",
+    "Fai il totale indicato. La corsa leggera di scarico, se c'è, è un esercizio a parte alla fine della seduta."
+   ],
+   "errori": [
+    "Tratti forti a tutta: poi i tratti piano diventano una camminata.",
+    "Tratti piano troppo piano: si continua a correre.",
+    "Partire senza riscaldamento."
+   ],
+   "piu_facile": "Tratti forti più corti, piano più lunghi.",
+   "piu_difficile": "Tratti forti più lunghi o in leggera salita.",
+   "sicurezza": "Riscaldamento prima. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Ripetute",
+  "nome": "Running Intervals",
   "qualita": "resistenza-aerobica",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4032,10 +4932,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Corsa a ritmo forte sulla distanza o il tempo indicato, poi recupero come indicato. Ritmo uniforme dall'inizio alla fine della ripetuta, non uno sprint."
+  "descrizione": "Corsa a ritmo forte sulla distanza o il tempo indicato, poi recupero come indicato. Ritmo uniforme dall'inizio alla fine della ripetuta, non uno sprint.",
+  "id": "aer-ripetute",
+  "scheda": {
+   "esecuzione": [
+    "Dopo il riscaldamento, corsa a ritmo forte sulla distanza o il tempo indicato.",
+    "Ritmo uniforme dall'inizio alla fine della ripetuta: non uno sprint, ma un ritmo che reggi per tutta la ripetuta e per tutte le ripetute.",
+    "Recupero come indicato (corsa leggera o cammino), poi la successiva.",
+    "L'ultima ripetuta deve avere lo stesso tempo della prima: se crolla, le prime erano troppo forti."
+   ],
+   "errori": [
+    "Prima ripetuta troppo forte.",
+    "Fermarsi del tutto nel recupero quando è indicato corsa leggera.",
+    "Falcata che si accorcia sul finale: tieni il ritmo con le braccia."
+   ],
+   "piu_facile": "Ripetute più corte, recupero più lungo.",
+   "piu_difficile": "Recupero più corto.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Allungo",
+  "nome": "Stride-Out (Build-Up Run)",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4054,10 +4971,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "met-allungo",
+  "scheda": {
+   "esecuzione": [
+    "Tratto di 60-100 metri in piano.",
+    "Parti in corsa leggera e aumenta la velocità in modo progressivo: ogni 20 metri un po' più forte.",
+    "Negli ultimi 20-30 metri arrivi all'80-90 % della tua velocità, rilassato: spalle basse, viso sciolto, falcata ampia. Non è uno sprint.",
+    "Torna camminando. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Partire già forte: l'allungo è progressivo.",
+    "Arrivare a tutta: ci si ferma all'80-90 %.",
+    "Frenare di colpo: si decelera in 20 metri."
+   ],
+   "piu_facile": "Tratto più corto, massimo più basso.",
+   "piu_difficile": "Tratto più lungo.",
+   "sicurezza": "Dopo il riscaldamento. Fastidio dietro la coscia: fermati."
+  }
  },
  {
-  "nome": "Circuito Resistenza, Velocità, Tecnica x Esterno",
+  "nome": "Winger Circuit: Endurance, Speed, Technique",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4078,10 +5012,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "met-circuito-resistenza-velocita-tecnica-x-esterno",
+  "scheda": {
+   "esecuzione": [
+    "Circuito per esterni guidato dal video: conduzione lungo la fascia, cambio di direzione sul cinesino, sprint e cross o tiro.",
+    "Fai ogni giro al ritmo indicato: i tratti di conduzione sostenuti, lo sprint finale a tutta.",
+    "Recupero come indicato tra i giri, camminando per tornare al punto di partenza.",
+    "Alterna il lato (fascia destra e sinistra) se indicato."
+   ],
+   "errori": [
+    "Tocchi lunghi che fanno perdere la palla sul cambio di direzione.",
+    "Cross o tiro svogliato a fine giro: è il gesto che conta.",
+    "Saltare il recupero."
+   ],
+   "piu_facile": "Meno giri, senza cross.",
+   "piu_difficile": "Più giri, piede debole sul cross.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Esercizi Resistenza alla Velocità",
+  "nome": "Speed-Endurance Drills",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -4097,14 +5048,31 @@
   ],
   "azione": "importa",
   "nome_everfit": "Esercizi Resistenza alla Velocità",
-  "note": null,
+  "note": "[15/10: doppione di aer-allenamento-tecnica-resistenza-velocita-forza-es (stesso video), tolto da Ste]",
   "in_coppia": false,
-  "attivo": true,
+  "attivo": false,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "met-esercizi-resistenza-alla-velocita",
+  "scheda": {
+   "esecuzione": [
+    "Esercizi guidati dal video: sprint navetta senza palla e con palla (esercizio 2 del video) e tratti ripetuti ad alta intensità con recupero incompleto.",
+    "Ogni tratto quasi a tutta, recupero corto come indicato: la fatica si accumula, è voluto.",
+    "Nei tratti con la palla il tocco resta pulito anche da stanco.",
+    "Fai le serie indicate; tra le serie recupero completo."
+   ],
+   "errori": [
+    "Prima ripetizione a tutta e le altre a metà: parti al 90 %.",
+    "Palla che scappa da stanco: un tocco in meno.",
+    "Recupero più lungo di quello indicato: perde il senso."
+   ],
+   "piu_facile": "Meno ripetizioni, recupero più lungo.",
+   "piu_difficile": "Più ripetizioni, recupero più corto.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati. Non nei 3 giorni prima della partita."
+  }
  },
  {
-  "nome": "Salite allungo",
+  "nome": "Hill Stride-Outs",
   "qualita": "resistenza-metabolico",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4124,10 +5092,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Allungo in salita: corsa progressiva sulla distanza indicata, senza arrivare allo sprint. Torna in discesa camminando."
+  "descrizione": "Allungo in salita: corsa progressiva sulla distanza indicata, senza arrivare allo sprint. Torna in discesa camminando.",
+  "id": "met-salite-allungo",
+  "scheda": {
+   "esecuzione": [
+    "Salita dolce di 40-80 metri.",
+    "Allungo in salita: corsa progressiva sulla distanza indicata, senza arrivare allo sprint.",
+    "Ginocchia alte, spinta decisa dell'avampiede, busto leggermente avanti, braccia attive.",
+    "Torna in discesa camminando. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Correre in discesa.",
+    "Arrivare allo sprint: resta progressivo.",
+    "Busto piegato: lo sguardo verso la cima."
+   ],
+   "piu_facile": "Salita più dolce o più corta.",
+   "piu_difficile": "Salita più lunga.",
+   "sicurezza": "Riscaldamento prima e qualche minuto di corsa leggera dopo. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Salite Sprint",
+  "nome": "Hill Sprints",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -4147,7 +5132,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Sprint in salita sulla distanza indicata: partenza da fermo, spinta massima, busto leggermente avanti. Torna in discesa camminando: il recupero è parte dell'esercizio."
+  "descrizione": "Sprint in salita sulla distanza indicata: partenza da fermo, spinta massima, busto leggermente avanti. Torna in discesa camminando: il recupero è parte dell'esercizio.",
+  "id": "vel-salite-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Salita di 30-50 metri (la distanza è quella indicata nella serie). Partenza da fermo in basso.",
+    "Sprint in salita a tutta: busto in avanti, ginocchia alte, spinta decisa dell'avampiede, passi corti e frequenti.",
+    "Torna in discesa camminando: il recupero è parte dell'esercizio. Recupero completo prima di ripartire.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Correre in discesa.",
+    "Busto troppo piegato: lo sguardo guarda la cima, non i piedi.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Salita più corta.",
+   "piu_difficile": "Salita più ripida.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito. In season pochissimo: sono pesanti."
+  }
  },
  {
   "nome": "Balance Circuit on Skimmy",
@@ -5467,7 +6469,7 @@
   }
  },
  {
-  "nome": "Palleggi 1 piede alternati interno/esterno - Tecnica",
+  "nome": "One-Foot Juggling: Inside/Outside Alternating",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5488,10 +6490,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "tpal-palleggi-1-piede-alternati-interno-esterno-tecni",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia con un solo piede.",
+    "Alterna un tocco di interno e uno di esterno con lo stesso piede: la caviglia ruota, il ginocchio resta morbido.",
+    "Palla bassa, mai sopra il ginocchio: il controllo conta più dell'altezza.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Palla alta: diventa un palleggio normale, non un esercizio di caviglia.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra un tocco e l'altro.",
+   "piu_difficile": "Occhi su un punto davanti a te, non sulla palla."
+  }
  },
  {
-  "nome": "Palleggi 1 piede interno/collo/esterno - Tecnica",
+  "nome": "One-Foot Juggling: Inside, Laces, Outside",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5512,10 +6530,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "tpal-palleggi-1-piede-interno-collo-esterno-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia con un solo piede.",
+    "Sequenza fissa: interno, collo, esterno, poi di nuovo interno. Tre superfici dello stesso piede, una dopo l'altra.",
+    "Palla bassa, caviglia che ruota tra un tocco e l'altro, ginocchio morbido.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Saltare una superficie quando è scomoda: la sequenza è l'esercizio.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Due giri di sequenza senza guardare la palla."
+  }
  },
  {
-  "nome": "Palleggi al muro 1 tocco libero",
+  "nome": "Wall Volleys: One Touch, Any Surface",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5535,10 +6569,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Rigioca al muro di prima con la superficie che preferisci (interno, collo, esterno). Un tocco solo, palla viva, entrambi i piedi."
+  "descrizione": "Rigioca al muro di prima con la superficie che preferisci (interno, collo, esterno). Un tocco solo, palla viva, entrambi i piedi.",
+  "id": "tpal-palleggi-al-muro-1-tocco-libero",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla in mano o al piede.",
+    "Gioca la palla al muro a mezz'aria e rigiocala di prima al ritorno con la superficie che vuoi: interno, collo, esterno.",
+    "Un tocco solo, palla sempre viva, entrambi i piedi.",
+    "Ritmo continuo per il tempo indicato."
+   ],
+   "errori": [
+    "Fermare la palla prima di rigiocare: un tocco.",
+    "Usare sempre lo stesso piede.",
+    "Tiri forti che tornano imprendibili: la forza serve a tornare al piede, non di più."
+   ],
+   "piu_facile": "Più vicino al muro, palla più lenta.",
+   "piu_difficile": "Più lontano, o solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro 1 tocco solo interno",
+  "nome": "Wall Volleys: One Touch, Inside Only",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -5558,10 +6609,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Rigioca al muro di prima d'interno, palla che resta bassa, senza controllo. Ritmo continuo per il tempo indicato; alterna i piedi."
+  "descrizione": "Rigioca al muro di prima d'interno, palla che resta bassa, senza controllo. Ritmo continuo per il tempo indicato; alterna i piedi.",
+  "id": "tpal-palleggi-al-muro-1-tocco-solo-interno",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Rigioca la palla al muro di prima d'interno, palla che resta bassa, senza controllo.",
+    "Piede che ruota verso l'esterno al contatto, caviglia bloccata, piede d'appoggio accanto alla palla.",
+    "Ritmo continuo per il tempo indicato; alterna i piedi."
+   ],
+   "errori": [
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.",
+    "Caviglia molle: la palla torna storta.",
+    "Fermare la palla."
+   ],
+   "piu_facile": "Più vicino, palla più lenta.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro 2 tocchi",
+  "nome": "Wall Volleys: Two Touches",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -5581,10 +6649,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Contro il muro a 2-3 metri: al ritorno un tocco di controllo e uno di rimando, tenendo la palla in aria. Libera scelta di superficie; alterna i piedi."
+  "descrizione": "Contro il muro a 2-3 metri: al ritorno un tocco di controllo e uno di rimando, tenendo la palla in aria. Libera scelta di superficie; alterna i piedi.",
+  "id": "tpal-palleggi-al-muro-2-tocchi",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Gioca la palla al muro a mezz'aria; al ritorno un tocco di controllo e uno di rimando, tenendo la palla in aria.",
+    "Libera scelta di superficie, alterna i piedi.",
+    "Ritmo continuo per il tempo indicato."
+   ],
+   "errori": [
+    "Controllo che manda la palla a terra: resta in aria.",
+    "Secondo tocco troppo forte.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra ammesso.",
+   "piu_difficile": "Controllo e rimando con piedi diversi.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
+  "nome": "Wall Volleys: Outside Control, Laces Pass",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -5606,10 +6691,27 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "solo_livello": true,
-  "descrizione": "Contro il muro a 2-3 metri: controlla di esterno con il primo tocco e rimanda di collo con il secondo, palla sempre in aria. Cambia piede a metà tempo."
+  "descrizione": "Contro il muro a 2-3 metri: controlla di esterno con il primo tocco e rimanda di collo con il secondo, palla sempre in aria. Cambia piede a metà tempo.",
+  "id": "tpal-palleggi-al-muro-2-tocchi-controllo-esterno-pass",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Al ritorno dal muro controlla di esterno con il primo tocco e rimanda di collo con il secondo, palla sempre in aria.",
+    "Il controllo di esterno porta la palla leggermente di lato: il collo la rimanda dritta.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Controllo di esterno che manda la palla troppo lontana.",
+    "Rimando di punta invece che di collo.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra controllo e rimando.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+  "nome": "Wall Volleys: Inside Control, Laces Pass",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -5630,10 +6732,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Contro il muro a 2-3 metri: al ritorno controlla la palla d'interno con un tocco, poi rimandala al muro di collo con il secondo tocco. Ritmo costante, palla sempre in aria. Cambia piede a metà tempo."
+  "descrizione": "Contro il muro a 2-3 metri: al ritorno controlla la palla d'interno con un tocco, poi rimandala al muro di collo con il secondo tocco. Ritmo costante, palla sempre in aria. Cambia piede a metà tempo.",
+  "id": "tpal-palleggi-al-muro-2-tocchi-controllo-interno-pass",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri.",
+    "Al ritorno dal muro controlla la palla d'interno con un tocco, poi rimandala al muro di collo con il secondo tocco.",
+    "Ritmo costante, palla sempre in aria.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Controllo che manda la palla a terra.",
+    "Rimando di punta.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra ammesso.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi al muro liberi freestyle",
+  "nome": "Wall Volleys: Freestyle",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5654,10 +6773,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Davanti a un muro a 1-2 metri: calcia la palla contro il muro e controllala al ritorno come preferisci (di prima, con stop, di collo o d'interno). Nessuno schema: varia tocco e piede, tieni la palla viva."
+  "descrizione": "Davanti a un muro, variando la distanza (1-6 m): calcia la palla contro il muro e controllala al ritorno come preferisci. Nessuno schema: varia tocco, piede e distanza, e ogni tanto calcia forte o in modo scomodo per avere ritorni difficili da controllare.",
+  "id": "tpal-palleggi-al-muro-liberi-freestyle",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro, a una distanza che cambi durante l'esercizio: da 1 a 5-6 metri.",
+    "Calcia la palla contro il muro e controllala al ritorno come preferisci: di prima, con uno stop, di collo o d'interno.",
+    "Nessuno schema: varia tocco, piede e distanza, e ogni tanto calcia forte o in modo scomodo, così il ritorno è difficile da controllare.",
+    "Ritmo continuo per il tempo indicato."
+   ],
+   "errori": [
+    "Fare sempre lo stesso tocco dalla stessa distanza: il senso è variare.",
+    "Usare sempre il piede forte.",
+    "Calciare sempre piano per non sbagliare: i ritorni scomodi sono l'esercizio."
+   ],
+   "piu_facile": "Più vicino al muro, palla piano.",
+   "piu_difficile": "Solo mezz'aria, solo piede debole, passaggi forti.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Palleggi coscia e collo",
+  "nome": "Thigh and Laces Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -5677,10 +6813,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia alternando un tocco di coscia e uno di collo, con lo stesso lato e poi con l'altro. Coscia parallela a terra al contatto, palla bassa."
+  "descrizione": "Palleggia alternando un tocco di coscia e uno di collo, con lo stesso lato e poi con l'altro. Coscia parallela a terra al contatto, palla bassa.",
+  "id": "tpal-palleggi-coscia-e-collo",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, palla a terra: alzala con il piede sulla coscia.",
+    "Alterna un tocco di coscia e uno di collo con lo stesso lato: coscia, collo, coscia, collo.",
+    "Coscia parallela a terra al contatto, palla bassa, ginocchio morbido sul tocco di collo.",
+    "Metà tempo a destra, metà a sinistra."
+   ],
+   "errori": [
+    "Coscia troppo alta: la palla schizza avanti.",
+    "Tocchi di punta: la palla va dove vuole.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Due tocchi di coscia e due di collo alternati."
+  }
  },
  {
-  "nome": "Palleggi Freestyle 3 conetti",
+  "nome": "Freestyle Juggling Between Three Cones",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -5696,10 +6848,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-palleggi-freestyle-3-conetti",
+  "scheda": {
+   "esecuzione": [
+    "Tre cinesini a terra a qualche metro l'uno dall'altro (volendo con una pallina da tennis appoggiata sopra ognuno).",
+    "Palleggia liberamente e avvicinati al primo cinesino. Calcia la palla in alto, raccogli il cinesino (oppure appoggiaci sopra una pallina da tennis) e riprendi il palleggio senza far cadere la palla.",
+    "Vai avanti palleggiando verso il secondo cinesino: calcia in alto, riappoggia il cinesino (o raccogli la pallina) e continua. Stessa cosa al terzo.",
+    "Il palleggio non si interrompe mai: la palla resta in aria mentre le mani lavorano. Fai il tempo indicato."
+   ],
+   "errori": [
+    "Calciare la palla troppo in alto o storta: deve ricadere dove sei.",
+    "Fermare il palleggio per chinarsi: ci si china mentre la palla è in aria.",
+    "Se la palla cade, riprendila con il piede e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Palla calciata più alta per avere più tempo, cinesini più vicini.",
+   "piu_difficile": "Solo piedi, o la pallina da tennis su ogni cinesino."
+  }
  },
  {
-  "nome": "Palleggi liberi + calcio alto - Tecnica",
+  "nome": "Free Juggling with High Kick",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -5716,10 +6884,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggi liberi; ogni 5-6 tocchi calcia la palla alta (3-4 metri) e riprendi il palleggio al ritorno con un controllo morbido. Allena il controllo della palla che scende."
+  "descrizione": "Palleggi liberi; ogni 5-6 tocchi calcia la palla alta (3-4 metri) e riprendi il palleggio al ritorno con un controllo morbido. Allena il controllo della palla che scende.",
+  "id": "tpal-palleggi-liberi-calcio-alto-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palleggi liberi, con la superficie che preferisci.",
+    "Ogni 5-6 tocchi calcia la palla alta, 3-4 metri sopra la testa.",
+    "Riprendi il palleggio al ritorno con un controllo morbido: il piede accompagna la palla verso il basso, non la colpisce.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Controllo rigido sulla palla che scende: la palla rimbalza via.",
+    "Calcio alto storto che ti fa correre.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Calcio meno alto.",
+   "piu_difficile": "Riprendere la palla con la coscia o il petto, poi i piedi."
+  }
  },
  {
-  "nome": "Palleggi solo Collo",
+  "nome": "Laces-Only Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5739,10 +6923,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia solo di collo pieno, alternando i piedi liberamente. Palla bassa e ritmica, punta del piede leggermente verso l'alto. Se cade, riprendi da terra senza fermare il tempo."
+  "descrizione": "Palleggia solo di collo pieno, alternando i piedi liberamente. Palla bassa e ritmica, caviglia ferma al contatto. Se cade, riprendi con il piede senza fermare il tempo.",
+  "id": "tpal-palleggi-solo-collo",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia solo di collo pieno.",
+    "Alterna i piedi liberamente. Palla bassa e ritmica, caviglia ferma al contatto.",
+    "Ginocchio morbido, busto sopra la palla.",
+    "Fai il tempo indicato. Se la palla cade, riprendila con il piede e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Palla troppo alta.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Solo piede debole."
+  }
  },
  {
-  "nome": "Palleggi solo collo 3 tocchi alternati - TECNICA",
+  "nome": "Laces-Only Juggling: 3 Touches Each Foot",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5762,10 +6962,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia solo di collo pieno alternando i piedi ogni 3 tocchi (3 destro, 3 sinistro). Palla bassa, caviglia ferma, ginocchio leggermente piegato. Se cade, riprendi subito."
+  "descrizione": "Palleggia solo di collo pieno alternando i piedi ogni 3 tocchi (3 destro, 3 sinistro). Palla bassa, caviglia ferma, ginocchio leggermente piegato. Se cade, riprendi subito.",
+  "id": "tpal-palleggi-solo-collo-3-tocchi-alternati-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia solo di collo pieno.",
+    "Tre tocchi con il destro, tre con il sinistro, e avanti così.",
+    "Palla bassa, caviglia ferma, ginocchio leggermente piegato.",
+    "Fai il tempo indicato. Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Perdere il conto e restare sul piede forte: il conto è l'esercizio.",
+    "Tocchi di punta: la palla va dove vuole.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Due tocchi per piede.",
+   "piu_difficile": "Cinque tocchi per piede."
+  }
  },
  {
-  "nome": "Palleggi solo interno - Tecnica",
+  "nome": "Inside-Only Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5786,10 +7002,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia solo con l'interno del piede, alternando i piedi. Il piede ruota verso l'esterno al contatto; tieni la palla bassa e vicina."
+  "descrizione": "Palleggia solo con l'interno del piede, alternando i piedi. Il piede ruota verso l'esterno al contatto; tieni la palla bassa e vicina.",
+  "id": "tpal-palleggi-solo-interno-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia solo con l'interno del piede.",
+    "Il piede ruota verso l'esterno al contatto, come per un passaggio corto; alterna i piedi.",
+    "Palla bassa e vicina al corpo.",
+    "Fai il tempo indicato. Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Palla che si allontana: l'interno la tiene sotto il corpo.",
+    "Anca rigida: la rotazione viene dall'anca.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Solo piede debole."
+  }
  },
  {
-  "nome": "Palleggi solo interno 3 tocchi alternati - TECNICA",
+  "nome": "Inside-Only Juggling: 3 Touches Each Foot",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5808,10 +7040,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-palleggi-solo-interno-3-tocchi-alternati-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia solo con l'interno del piede.",
+    "Tre tocchi con il destro, tre con il sinistro, e avanti così.",
+    "Palla bassa e vicina, piede che ruota verso l'esterno al contatto.",
+    "Fai il tempo indicato. Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "errori": [
+    "Perdere il conto e restare sul piede forte.",
+    "Palla che si allontana.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Due tocchi per piede.",
+   "piu_difficile": "Cinque tocchi per piede."
+  }
  },
  {
-  "nome": "Palleggi solo un piede - Tecnica",
+  "nome": "One-Foot Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5832,10 +7080,26 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Palleggia con un solo piede (collo pieno) per il tempo indicato, poi cambia piede. L'altro piede resta a terra, ginocchio morbido, busto sopra la palla."
+  "descrizione": "Palleggia con un solo piede (collo pieno) per il tempo indicato, poi cambia piede. L'altro piede resta a terra, ginocchio morbido, busto sopra la palla.",
+  "id": "tpal-palleggi-solo-un-piede-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia con un solo piede, di collo pieno.",
+    "L'altro piede resta a terra, ginocchio morbido, busto sopra la palla.",
+    "Palla bassa e ritmica: lo stesso piede torna a terra tra un tocco e l'altro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Saltellare sul piede d'appoggio: resta piantato.",
+    "Tocchi di punta: la palla va dove vuole.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i tocchi.",
+   "piu_difficile": "Palla più bassa, ritmo più veloce."
+  }
  },
  {
-  "nome": "Palleggi sotto al ginocchio - Tecnica",
+  "nome": "Below-the-Knee Juggling",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5855,10 +7119,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-palleggi-sotto-al-ginocchio-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala con il piede e palleggia tenendo la palla sempre sotto l'altezza del ginocchio.",
+    "Tocchi rapidi e corti di collo, caviglia ferma, ginocchio che si piega poco.",
+    "Alterna i piedi; il ritmo è alto perché la palla sale poco.",
+    "Fai il tempo indicato, poi la versione per lato se indicata."
+   ],
+   "errori": [
+    "Palla che sale sopra il ginocchio: ricomincia dal basso.",
+    "Tocchi lenti: sotto il ginocchio si va veloci.",
+    "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
+   ],
+   "piu_facile": "Un rimbalzo a terra ogni due tocchi.",
+   "piu_difficile": "Solo un piede."
+  }
  },
  {
-  "nome": "Tecnica a 2 - Palleggio con 2 palle",
+  "nome": "Pairs Technique: Juggling with Two Balls",
   "qualita": "tecnica-palleggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5879,10 +7159,26 @@
   "in_coppia": true,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpal-tecnica-a-2-palleggio-con-2-palle",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 3-5 metri, una palla ciascuno.",
+    "Palleggiate insieme e scambiatevi le palle a mezz'aria nello stesso momento: ognuno rimanda la sua e riceve l'altra.",
+    "Obiettivi del video: andare a ritmo con il compagno, regolare la velocità e l'altezza del passaggio.",
+    "Fai il tempo indicato; se una palla cade, riprendetela e ripartite insieme."
+   ],
+   "errori": [
+    "Passaggi a altezze diverse: le due palle devono viaggiare uguali.",
+    "Uno dei due che anticipa: si va a ritmo.",
+    "Passaggi troppo forti."
+   ],
+   "piu_facile": "Un rimbalzo a terra tra i passaggi.",
+   "piu_difficile": "Distanza maggiore, un tocco solo."
+  }
  },
  {
-  "nome": "Passaggi al muro ravvicinati interno esterno - tecnica di base",
+  "nome": "Close Wall Passes: Inside and Outside",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 1,
@@ -5898,10 +7194,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-ravvicinati-interno-esterno-tec",
+  "scheda": {
+   "esecuzione": [
+    "A un metro dal muro, palla a terra.",
+    "Passaggi rapidi e corti al muro alternando interno ed esterno dello stesso piede: interno, esterno, interno.",
+    "Tocchi secchi, palla rasoterra, busto sopra la palla, piede d'appoggio stabile.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla che si alza.",
+    "Tocchi lenti: a un metro si va veloci.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Un po' più lontano, ritmo più basso.",
+   "piu_difficile": "Più vicino, ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro ravvicinati solo collo - tecnica di base",
+  "nome": "Close Wall Passes: Laces Only",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5917,10 +7230,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-ravvicinati-solo-collo-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "A un metro dal muro, palla a terra.",
+    "Passaggi rapidi e corti al muro solo di collo pieno con lo stesso piede: il piede resta sotto il corpo, caviglia bloccata.",
+    "Palla rasoterra, ritmo alto, busto sopra la palla.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla che si alza: colpisci al centro, caviglia ferma.",
+    "Tocchi di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Un po' più lontano.",
+   "piu_difficile": "Più vicino, ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Box dribbling + passaggio",
+  "nome": "Box Dribbling and Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5942,10 +7272,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Quattro coni a quadrato (3-4 m). Conduci la palla attorno al box con tocchi corti, a ogni lato cambia superficie (interno, esterno, suola). All'uscita dal box passaggio preciso al muro o al compagno, riprendi e riparti."
+  "descrizione": "Quattro cinesini a quadrato (3-4 m). Dentro al box controlla la palla con tanti tocchi corti muovendoti nel quadrato, con controlli liberi, finte di corpo e skills; poi esci, passaggio preciso al muro (o al compagno), riprendi la palla e rientra.",
+  "id": "tpas-box-dribbling-passaggio",
+  "scheda": {
+   "esecuzione": [
+    "Quattro cinesini a quadrato di 3-4 metri, muro (o compagno) a 5-8 metri dal box.",
+    "Dentro al box controlla la palla con tanti tocchi corti muovendoti in tutto il quadrato: controlli liberi, interno, esterno, suola, con finte di corpo e skills.",
+    "Dopo qualche secondo esci dal box ed esegui un passaggio preciso al muro (o al compagno), riprendi la palla e rientra nel box.",
+    "Fai il tempo indicato alternando il piede del passaggio."
+   ],
+   "errori": [
+    "Palla lontana dal piede: tocchi corti, sempre sotto il corpo.",
+    "Passaggio svogliato dopo i tocchi: è il gesto che conta.",
+    "Sempre le stesse due superfici: varia, con finte e skills."
+   ],
+   "piu_facile": "Box più grande, passaggio più corto.",
+   "piu_difficile": "Box più piccolo, passaggio di prima al ritorno, solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi a 10mt alternati, primo tocco suola - Tecnica",
+  "nome": "10 m Passes with Sole First Touch",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -5966,10 +7313,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggi rasoterra a 10 metri (muro o compagno): al ritorno primo tocco con la suola per fermare e orientare, poi passaggio. Alterna il piede a ogni ripetizione."
+  "descrizione": "Passaggi rasoterra a 10 metri (muro o compagno): al ritorno primo tocco con la suola per fermare e orientare, poi passaggio. Alterna il piede a ogni ripetizione.",
+  "id": "tpas-passaggi-a-10mt-alternati-primo-tocco-suola-tecn",
+  "scheda": {
+   "esecuzione": [
+    "Muro o compagno a 10 metri, palla a terra.",
+    "Passaggio rasoterra deciso; al ritorno primo tocco con la suola per fermare e orientare la palla, poi passaggio.",
+    "Alterna il piede a ogni ripetizione: suola e passaggio con il destro, poi con il sinistro.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Suola che schiaccia la palla ferma senza orientarla: la suola la sposta già verso il passaggio.",
+    "Passaggio molle: a 10 metri la palla deve arrivare tesa.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza 6-7 metri.",
+   "piu_difficile": "Un tocco solo al ritorno.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo alzando palla",
+  "nome": "Wall Passes: Lift Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -5985,10 +7349,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-alzando-palla",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla a terra.",
+    "Passaggio rasoterra al muro; al ritorno controlla alzando la palla con un tocco sotto (punta o collo che entra sotto la palla) e rigiocala a mezz'aria o dopo un rimbalzo.",
+    "Il controllo è morbido: la palla sale a altezza ginocchio, non di più.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla alzata troppo: perdi il ritmo.",
+    "Rigiocare di punta.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Un rimbalzo in più ammesso.",
+   "piu_difficile": "Rigiocare di prima al volo.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - Controllo interno, turn 180 - TECNICA",
+  "nome": "Wall Passes: Inside Control and 180° Turn",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6008,10 +7389,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-interno-turn-180-tecn",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno (primo tocco).",
+    "Con il secondo tocco, libero (interno, esterno o suola), giri la palla di 180° come per voltarti verso la porta.",
+    "Torna di fronte al muro con la palla e ripeti. Alterna il piede del controllo."
+   ],
+   "errori": [
+    "Giro con la palla lontana: resta sotto il corpo.",
+    "Secondo tocco sempre uguale: è libero, varialo.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Controllo, pausa, poi il giro.",
+   "piu_difficile": "Controllo e giro in un tocco solo, solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo orientato con finta esterno",
+  "nome": "Wall Passes: Oriented Control with Outside Feint",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6027,10 +7425,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-orientato-con-finta-e",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; prima che la palla arrivi fai una finta di corpo, poi controlla orientando la palla verso l'esterno, come per andare via sulla fascia.",
+    "Due tocchi e rigioca al muro.",
+    "Fai il tempo indicato, poi cambia lato."
+   ],
+   "errori": [
+    "Finta solo con il piede: la finta è con le spalle.",
+    "Controllo che ferma la palla invece di portarla fuori.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Senza finta, solo controllo orientato verso l'esterno.",
+   "piu_difficile": "Finta doppia.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo orientato esterno",
+  "nome": "Wall Passes: Outside Oriented Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6046,10 +7461,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-orientato-esterno",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo di esterno che porta la palla di lato, aperta verso lo spazio.",
+    "Un tocco di conduzione e rigioca al muro.",
+    "Alterna i piedi."
+   ],
+   "errori": [
+    "Controllo che ferma la palla sotto il corpo: deve andare nello spazio.",
+    "Esterno rigido: la palla rimbalza via.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo orientato interno",
+  "nome": "Wall Passes: Inside Oriented Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6065,10 +7497,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-orientato-interno",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno che porta la palla di lato, aperta verso lo spazio.",
+    "Un tocco di conduzione e rigioca al muro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Controllo che ferma la palla.",
+    "Palla lontana dopo il controllo: un tocco e la ritrovi.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - controllo sombrero",
+  "nome": "Wall Passes: Sombrero Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6084,10 +7533,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-sombrero",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla a terra.",
+    "Passaggio al muro; al ritorno alza la palla in avanti con un tocco sotto, come per scavalcare un avversario davanti a te.",
+    "Segui la palla, controllala quando scende e rigioca al muro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Palla alzata troppo o troppo poco: deve passare all'altezza della testa e ricadere pochi metri avanti.",
+    "Alzarla all'indietro: il sombrero qui va in avanti.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Alzare la palla all'altezza del petto e controllarla.",
+   "piu_difficile": "Rigiocare di prima dopo il sombrero.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro - Controllo suola, sposto palla",
+  "nome": "Wall Passes: Sole Control and Shift",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6108,10 +7574,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare. Alterna i lati e i piedi."
+  "descrizione": "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare. Alterna i lati e i piedi.",
+  "id": "tpas-passaggi-al-muro-controllo-suola-sposto-palla",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-3 metri, palla a terra.",
+    "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare.",
+    "Alterna i lati e i piedi.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Suola che schiaccia la palla senza spostarla.",
+    "Spostamento lungo: un piede, non due.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Spostamento e passaggio in un tocco.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 1 tocco collo - Tecnica",
+  "nome": "Wall Passes: One Touch, Laces",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6132,10 +7615,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio al muro e rigiocata di prima di collo, senza controllo. Palla bassa e tesa, caviglia bloccata. Cambia piede a metà tempo."
+  "descrizione": "Passaggio al muro e rigiocata di prima di collo, senza controllo. Palla bassa e tesa, caviglia bloccata. Cambia piede a metà tempo.",
+  "id": "tpas-passaggi-al-muro-1-tocco-collo-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro e rigiocata di prima di collo, senza controllo.",
+    "Palla bassa e tesa, caviglia bloccata, piede d'appoggio accanto alla palla.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Palla che si alza.",
+    "Fermare la palla prima di rigiocare.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino, palla più lenta.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 1 tocco interno - Tecnica",
+  "nome": "Wall Passes: One Touch, Inside",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6156,10 +7656,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio rasoterra al muro e rigiocata di prima d'interno, senza controllo. Distanza 2-4 metri, piede d'appoggio accanto alla palla. Cambia piede a metà tempo."
+  "descrizione": "Passaggio rasoterra al muro e rigiocata di prima d'interno, senza controllo. Distanza 2-4 metri, piede d'appoggio accanto alla palla. Cambia piede a metà tempo.",
+  "id": "tpas-passaggi-al-muro-1-tocco-interno-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 2-4 metri, palla a terra.",
+    "Passaggio rasoterra al muro e rigiocata di prima d'interno, senza controllo.",
+    "Piede d'appoggio accanto alla palla, caviglia bloccata, piede che ruota verso l'esterno.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Fermare la palla.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.",
+    "Caviglia molle."
+   ],
+   "piu_facile": "Più vicino, palla più lenta.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - Controllo di interno a chiudere",
+  "nome": "Wall Passes: Two Touches, Inside Control Closing",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6180,10 +7697,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-2-tocchi-controllo-di-interno-a",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno che chiude la palla verso l'interno del corpo, poi passaggio con l'altro piede (il video dice: interno con due piedi).",
+    "Controllo con il destro, passaggio con il sinistro, poi il contrario.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Controllo che manda la palla troppo in là.",
+    "Usare lo stesso piede per controllo e passaggio.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - controllo di interno ad aprire",
+  "nome": "Wall Passes: Two Touches, Inside Control Opening",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6204,10 +7738,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-2-tocchi-controllo-di-interno-a-2",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo d'interno che apre la palla verso l'esterno, poi passaggio con lo stesso piede (il video dice: interno con un piede solo).",
+    "Metà tempo con il destro, metà con il sinistro.",
+    "Ritmo costante."
+   ],
+   "errori": [
+    "Controllo che ferma la palla sotto il corpo.",
+    "Passaggio di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - controllo esterno, passaggio interno",
+  "nome": "Wall Passes: Outside Control, Inside Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6228,10 +7779,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-2-tocchi-controllo-esterno-pass",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno controllo di esterno (primo tocco) e passaggio d'interno con lo stesso piede (secondo tocco).",
+    "Il controllo di esterno apre la palla di lato, l'interno la riporta al muro.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Controllo di esterno troppo lungo.",
+    "Passaggio di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Ritmo più alto.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica",
+  "nome": "Wall Passes: Outside Stop, Laces Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6252,10 +7820,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggio rasoterra al muro; al ritorno stop di esterno (primo tocco), poi rigioca di collo (secondo tocco). Cambia piede a metà tempo."
+  "descrizione": "Passaggio rasoterra al muro; al ritorno stop di esterno (primo tocco), poi rigioca di collo (secondo tocco). Cambia piede a metà tempo.",
+  "id": "tpas-passaggi-al-muro-2-tocchi-stop-di-esterno-passag",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio rasoterra al muro; al ritorno stop di esterno (primo tocco), poi rigioca di collo (secondo tocco).",
+    "Stop che tiene la palla vicina, passaggio basso e teso.",
+    "Cambia piede a metà tempo."
+   ],
+   "errori": [
+    "Stop che lascia la palla lontana.",
+    "Passaggio di collo che si alza.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Più vicino al muro.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro 5-10mt alto-basso",
+  "nome": "Wall Passes 5-10 m: High and Low",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6277,10 +7862,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "A 5-10 metri dal muro: alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria). Controlla il ritorno con un tocco orientato e rigioca. Entrambi i piedi."
+  "descrizione": "A 5-10 metri dal muro: alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria). Controlla il ritorno con un tocco orientato e rigioca. Entrambi i piedi.",
+  "id": "tpas-passaggi-al-muro-5-10mt-alto-basso",
+  "scheda": {
+   "esecuzione": [
+    "A 5-10 metri dal muro, palla a terra.",
+    "Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria).",
+    "Controlla il ritorno con un tocco orientato e rigioca.",
+    "Entrambi i piedi, per il tempo indicato."
+   ],
+   "errori": [
+    "Palla alta troppo forte: torna imprendibile.",
+    "Controllo rigido sulla palla che scende.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Distanza 5 metri.",
+   "piu_difficile": "Un tocco solo al ritorno.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro controllo 180gradi - TECNICA",
+  "nome": "Wall Passes: 180° Control",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6299,10 +7901,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-passaggi-al-muro-controllo-180gradi-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Davanti a un muro a 3-4 metri, palla a terra.",
+    "Passaggio al muro; al ritorno un controllo che gira la palla di 180° (interno o esterno) e ti porta di spalle al muro.",
+    "Due tocchi, giro completo e rigioca al muro.",
+    "Alterna il piede e il verso del giro."
+   ],
+   "errori": [
+    "Controllo che ferma la palla.",
+    "Giro largo: la palla resta sotto il corpo.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Giro in due tocchi.",
+   "piu_difficile": "Giro in un tocco.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
-  "nome": "Passaggi al muro in difficoltà",
+  "nome": "Wall Passes Under Pressure",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6323,7 +7942,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggi al muro con un vincolo che disturba: distanza corta, palla veloce, muro irregolare o un solo tocco. Lo scopo è reagire a ritorni imprevedibili: accetta gli errori e resta in controllo."
+  "descrizione": "Passaggi al muro con ritorni difficili: alterna passaggi forti, alti, di collo, di esterno, scomodi da controllare. Lo scopo è reagire a ritorni imprevedibili: controlla come viene e rigioca subito, accettando gli errori.",
+  "id": "tpas-passaggi-al-muro-in-difficolta",
+  "scheda": {
+   "esecuzione": [
+    "Passaggi al muro con ritorni difficili: alterna passaggi forti, alti, di collo, di esterno, scomodi da controllare.",
+    "Lo scopo è reagire a ritorni imprevedibili: controlla come viene e rigioca subito, accettando gli errori.",
+    "Cambia tipo di passaggio ogni pochi colpi, e ogni tanto anche la distanza dal muro.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Rallentare la palla per non sbagliare: si sbaglia e si continua.",
+    "Fermarsi a ogni errore.",
+    "Ginocchia morbide, peso sull'avampiede: da rigido si perde la palla."
+   ],
+   "piu_facile": "Solo passaggi forti rasoterra.",
+   "piu_difficile": "Un tocco solo, solo piede debole.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
   "nome": "Passaggi collo - visione headball",
@@ -6458,7 +8094,7 @@
   "sottogruppo": "headball"
  },
  {
-  "nome": "Passaggi liberi al muro - Tecnica",
+  "nome": "Free Wall Passes",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6479,7 +8115,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Passaggi contro il muro a distanza libera (3-8 m), rasoterra, con controllo e rimando. Varia piede, superficie e distanza senza schema: è la base di tocco."
+  "descrizione": "Passaggi contro il muro a distanza libera (3-8 m), rasoterra, con controllo e rimando. Varia piede, superficie e distanza senza schema: è la base di tocco.",
+  "id": "tpas-passaggi-liberi-al-muro-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Passaggi contro il muro a distanza libera (3-8 metri), rasoterra.",
+    "Controllo e rimando, variando piede, superficie e distanza senza schema.",
+    "È la base di tocco: palla sempre sotto controllo, mai fermarsi.",
+    "Fai il tempo indicato."
+   ],
+   "errori": [
+    "Usare sempre lo stesso piede.",
+    "Passaggi molli.",
+    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+   ],
+   "piu_facile": "Distanza fissa.",
+   "piu_difficile": "Un tocco solo.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
+  }
  },
  {
   "nome": "Passaggi sinistra/avanti/destra con video - visione headball",
@@ -6548,7 +8201,7 @@
   "sottogruppo": "headball"
  },
  {
-  "nome": "Tecnica a 2  - passaggi rasoterra - stop interno passaggio esterno",
+  "nome": "Pairs Technique: Free Control and Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6569,10 +8222,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-tecnica-a-2-passaggi-rasoterra-stop-interno-pass",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, una palla.",
+    "Passaggi rasoterra: chi riceve controlla con la superficie che vuole (interno, esterno, suola) e rigioca come vuole, di prima o in due tocchi.",
+    "Palla tesa, ritmo costante, piede d'appoggio accanto alla palla; varia superfici e piede a ogni ricezione.",
+    "Fai il tempo indicato, poi cambia piede."
+   ],
+   "errori": [
+    "Fare sempre lo stesso controllo: il senso è variare.",
+    "Controllo lontano dal corpo.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza minore, sempre due tocchi.",
+   "piu_difficile": "Un tocco solo, solo piede debole."
+  }
  },
  {
-  "nome": "Tecnica a 2 - passaggi rasoterra - Stop esterno passaggio interno",
+  "nome": "Pairs Technique: Outside Stop, Inside Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6593,10 +8262,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-tecnica-a-2-passaggi-rasoterra-stop-esterno-pass",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, una palla.",
+    "Passaggi rasoterra: chi riceve controlla di esterno (primo tocco) e rigioca d'interno con lo stesso piede (secondo tocco).",
+    "Palla tesa, ritmo costante.",
+    "Fai il tempo indicato alternando i piedi."
+   ],
+   "errori": [
+    "Controllo di esterno troppo lungo.",
+    "Passaggio molle.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza minore.",
+   "piu_difficile": "Un tocco solo."
+  }
  },
  {
-  "nome": "Tecnica a 2 - Passaggi rasoterra - stop interno passaggio interno",
+  "nome": "Pairs Technique: Inside Stop, Inside Pass",
   "qualita": "tecnica-passaggi",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6617,7 +8302,23 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tpas-tecnica-a-2-passaggi-rasoterra-stop-interno-pass-2",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, una palla.",
+    "Passaggi rasoterra: chi riceve controlla d'interno con un piede e passa d'interno con l'altro (il video dice: controllo interno destro, passaggio interno sinistro).",
+    "Palla tesa, ritmo costante.",
+    "Fai il tempo indicato, poi inverti i piedi."
+   ],
+   "errori": [
+    "Controllo e passaggio con lo stesso piede.",
+    "Passaggio molle.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Distanza minore.",
+   "piu_difficile": "Un tocco solo."
+  }
  },
  {
   "nome": "1vs1 - difesa da fermo",
@@ -6667,7 +8368,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Tecnica a 2 - Palla bassa e palla alta",
+  "nome": "Pairs Technique: Low Ball and High Ball",
   "qualita": "tecnica-conduzione",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6688,10 +8389,26 @@
   "in_coppia": true,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tcon-tecnica-a-2-palla-bassa-e-palla-alta",
+  "scheda": {
+   "esecuzione": [
+    "In coppia, a 5-8 metri, due palle.",
+    "Regole del video: una palla deve sempre andare rasoterra, l'altra deve sempre fare un rimbalzo, obbligo di un tocco.",
+    "Vi scambiate le due palle insieme: chi ha quella bassa la passa rasoterra, chi ha quella alta la rimanda con un rimbalzo.",
+    "Fai il tempo indicato; a metà tempo invertite le palle."
+   ],
+   "errori": [
+    "Due tocchi: è obbligo uno.",
+    "Palla alta troppo forte.",
+    "Non guardare il compagno: il ritmo è a due."
+   ],
+   "piu_facile": "Due tocchi ammessi.",
+   "piu_difficile": "Distanza maggiore."
+  }
  },
  {
-  "nome": "Calcio in alto e tiro in porta",
+  "nome": "High Kick and Shot",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6712,10 +8429,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Calcia la palla in alto davanti a te, lasciala rimbalzare (o di prima, se indicato) e calcia in porta al volo o dopo il rimbalzo. Alterna i piedi. Cura il contatto pulito con la palla più della potenza."
+  "descrizione": "Calcia la palla in alto davanti a te, controllala con un tocco solo e con il tocco dopo calcia in porta. L'obiettivo è il controllo: deve lasciarti la palla nel punto giusto per calciare bene. Alterna i piedi.",
+  "id": "ttir-calcio-in-alto-e-tiro-in-porta",
+  "scheda": {
+   "esecuzione": [
+    "Palla al piede a 15-20 metri dalla porta.",
+    "Calcia la palla in alto davanti a te, controllala con un tocco solo mentre scende e con il tocco dopo calcia in porta.",
+    "L'obiettivo è il controllo: deve lasciarti la palla nel punto giusto per calciare bene, piede d'appoggio accanto alla palla, collo pieno, caviglia bloccata, busto sopra la palla.",
+    "Alterna i piedi. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Controllo lontano dal corpo che ti costringe a rincorrere la palla.",
+    "Busto all'indietro al tiro: la palla vola alta.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Lascia rimbalzare la palla prima del controllo, da più vicino.",
+   "piu_difficile": "Controllo al volo e tiro di prima, piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "tiri - rigore al palo",
+  "nome": "Penalty at the Post",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6735,10 +8469,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Dal dischetto (o 11 m), mira al palo: tiro d'interno o di collo con l'obiettivo di colpire il palo o passargli vicino. Alterna palo destro e sinistro e i piedi."
+  "descrizione": "Dal dischetto (o 11 m), mira al palo: tiro d'interno o di collo con l'obiettivo di colpire il palo o passargli vicino. Alterna palo destro e sinistro e i piedi.",
+  "id": "ttir-tiri-rigore-al-palo",
+  "scheda": {
+   "esecuzione": [
+    "Dal dischetto (11 metri), palla ferma.",
+    "Mira al palo: tiro d'interno o di collo con l'obiettivo di colpire il palo o passargli vicino.",
+    "Piede d'appoggio accanto alla palla, puntato verso il bersaglio, sguardo sulla palla al momento del contatto.",
+    "Alterna palo destro e sinistro e i piedi. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Guardare il palo invece della palla al contatto.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio.",
+    "Tirare forte e largo: prima la precisione."
+   ],
+   "piu_facile": "Da più vicino.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "Tiri - rigore alla traversa",
+  "nome": "Penalty at the Crossbar",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6759,10 +8510,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "descrizione": "Dal dischetto (o 11 m), mira alla traversa: tiro di collo con palla che sale. Cerca il contatto pulito sotto la palla. Alterna i piedi."
+  "descrizione": "Dal dischetto (o 11 m), mira alla traversa: tiro di collo con palla che sale. Cerca il contatto pulito sotto la palla. Alterna i piedi.",
+  "id": "ttir-tiri-rigore-alla-traversa",
+  "scheda": {
+   "esecuzione": [
+    "Dal dischetto (11 metri), palla ferma.",
+    "Mira alla traversa: tiro di collo con palla che sale.",
+    "Contatto pulito sotto la palla, caviglia bloccata, busto leggermente indietro.",
+    "Alterna i piedi. Fai le ripetizioni indicate per lato."
+   ],
+   "errori": [
+    "Palla alta e fuori: sotto la palla ma al centro.",
+    "Tirare di punta.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso il bersaglio."
+   ],
+   "piu_facile": "Da più vicino.",
+   "piu_difficile": "Solo piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "tiri - tecnica di tiro",
+  "nome": "Shooting Technique",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6782,10 +8550,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "ttir-tiri-tecnica-di-tiro",
+  "scheda": {
+   "esecuzione": [
+    "Palla al limite dell'area, porta libera.",
+    "Tira in porta controllando solo la tecnica: come colpisci la palla e dove metti il piede d'appoggio, non dove va il tiro.",
+    "Alterna i tre modi di colpire: tiro a giro d'interno, interno-collo, collo pieno. Caviglia bloccata, ginocchio sopra la palla, busto in avanti.",
+    "Fai le ripetizioni indicate alternando i piedi."
+   ],
+   "errori": [
+    "Guardare la porta e dimenticare il contatto: qui conta come colpisci.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso la porta.",
+    "Tirare di punta o con la caviglia molle."
+   ],
+   "piu_facile": "Da più vicino, palla ferma, un solo modo di colpire.",
+   "piu_difficile": "Dopo un tocco in corsa, piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "Tiri in porta dall'angolo - CROSS",
+  "nome": "Shots from the Corner: Cross",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -6801,16 +8586,33 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "ttir-tiri-in-porta-dall-angolo-cross",
+  "scheda": {
+   "esecuzione": [
+    "Palla vicino alla bandierina, un bersaglio in area (cinesini o un compagno) sul primo palo, sul secondo palo e in zona dischetto.",
+    "Muovi la palla in avanti lateralmente all'area con uno o due tocchi, poi esegui il cross in corsa.",
+    "Alterna il bersaglio: primo palo, secondo palo, zona dischetto. Palla a mezz'altezza, non altissima.",
+    "Fai le ripetizioni indicate da entrambi i lati, con il piede del lato."
+   ],
+   "errori": [
+    "Cross troppo alto che finisce fuori.",
+    "Crossare da fermo: la palla si muove prima.",
+    "Guardare l'area invece della palla al contatto."
+   ],
+   "piu_facile": "Da più vicino all'area, palla quasi ferma.",
+   "piu_difficile": "Cross di prima dopo un tocco lungo, piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "Tiri in porta e VISIONE",
+  "nome": "Shots on Goal with Vision",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 3,
   "livello_min": "B",
-  "unita": "secondi",
-  "per_lato": true,
+  "unita": "reps",
+  "per_lato": false,
   "video": "https://youtu.be/CPR99KAUm-4?si=alsjAoz5R5j9ESf_",
   "fonte": "Everfit",
   "tags": [
@@ -6825,10 +8627,29 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "ttir-tiri-in-porta-e-visione",
+  "scheda": {
+   "esecuzione": [
+    "Un quadrato di cinesini di colori diversi, lato circa 3 metri, fuori dall'area; un ostacolo basso e una palla tra il quadrato e la porta; il telefono con il video dei segnali dove lo vedi.",
+    "Al centro del quadrato palleggia; ogni 5 palleggi calcia la palla in alto e guarda lo schermo: in base al colore vai ad attaccare il cinesino corrispondente, torna a prendere la palla e riparti con il palleggio.",
+    "Dopo 5 ripetizioni prendi la palla, esegui uno slalom tra i cinesini, salta l'ostacolo e calcia in porta.",
+    "Torna al quadrato e recupera almeno 1 minuto. Una ripetizione = tutta la sequenza. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Decidere il cinesino prima di guardare lo schermo.",
+    "Palleggio che si ferma per guardare: prima la palla in aria, poi gli occhi.",
+    "Tiro frettoloso dopo l'ostacolo: atterra, un tocco, poi calcia."
+   ],
+   "piu_facile": "Segnale letto prima di partire, quadrato più grande.",
+   "piu_difficile": "Palla calciata più bassa (meno tempo per leggere), piede debole al tiro.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.",
+   "da_confermare": "Serve il link del video dei segnali da mettere sul telefono (è lo stesso del dribbling con visione?)."
+  },
+  "video_schermo": null
  },
  {
-  "nome": "Progressione tiri in porta - Tecnica di tiro",
+  "nome": "Shooting Progression",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -6848,10 +8669,27 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "ttir-progressione-tiri-in-porta-tecnica-di-tiro",
+  "scheda": {
+   "esecuzione": [
+    "Guarda prima il video: spiega come migliorare la tecnica di tiro, come imprimere l'effetto e dare la direzione. È una seduta dedicata alla tecnica di tiro, in quattro esercizi.",
+    "Esercizio 1: da vicino, al limite dell'area piccola, tiri controllando il contatto.",
+    "Esercizio 2: dal dischetto del rigore, scegli prima la zona (altezza e angolo) e calcia lì. Esercizio 3: dal dischetto, cerca di colpire la traversa.",
+    "Esercizio 4: da fuori area. In tutti e quattro l'obiettivo è mantenere l'effetto che vuoi imprimere alla palla. Fai le ripetizioni indicate per esercizio, alternando i piedi dove riesci."
+   ],
+   "errori": [
+    "Cambiare modo di colpire da un tiro all'altro: l'effetto scelto si mantiene.",
+    "Busto all'indietro.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Solo gli esercizi 1 e 2.",
+   "piu_difficile": "Tutti e quattro con il piede debole.",
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+  }
  },
  {
-  "nome": "Dribbling visione e reattività - Base",
+  "nome": "Dribbling with Vision and Reaction: Basic",
   "qualita": "tecnica-visione",
   "attrezzatura": "campo",
   "difficolta": 1,
@@ -6870,10 +8708,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tvis-dribbling-visione-e-reattivita-base",
+  "scheda": {
+   "esecuzione": [
+    "Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali che parte insieme all'esercizio.",
+    "Conduci tra i cinesini con tocchi corti guardando lo schermo: in base a quello che compare nel video esegui il dribbling oppure fermati.",
+    "Testa su tra un tocco e l'altro: la palla si sente con il piede, lo schermo si guarda.",
+    "Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Testa bassa: ti perdi il segnale.",
+    "Palla lontana dal piede al cambio di direzione.",
+    "Reagire con un tocco in più: la reazione è immediata."
+   ],
+   "piu_facile": "Schermo più vicino, conduzione più lenta.",
+   "piu_difficile": "La versione avanzata (altro video)."
+  },
+  "video_schermo": "https://youtu.be/aS7CmLiC0nQ"
  },
  {
-  "nome": "Videocorso Visione - Esercizi Base",
+  "nome": "Vision Course: Basic Drills",
   "qualita": "tecnica-visione",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -6892,7 +8747,22 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tvis-videocorso-visione-esercizi-base",
+  "scheda": {
+   "esecuzione": [
+    "Segui il video: sono esercizi diversi per migliorare la visione periferica, l'occhio debole e la coordinazione, con palleggi, passaggi e altro.",
+    "Fai un esercizio alla volta come lo mostra il video, con la palla sotto controllo e gli occhi che lavorano senza girare la testa.",
+    "Precisione prima della velocità: la visione si allena fresco, non stanco.",
+    "Fai i minuti indicati."
+   ],
+   "errori": [
+    "Girare la testa verso il segnale invece di usare gli occhi.",
+    "Guardare la palla a ogni tocco.",
+    "Andare di fretta."
+   ],
+   "piu_difficile": "Stessi esercizi con il piede o l'occhio debole."
+  }
  },
  {
   "nome": "Box Dribbling - headball",
@@ -6918,7 +8788,7 @@
   "sottogruppo": "headball"
  },
  {
-  "nome": "Videocorso Visione - Esercizi Intermedi",
+  "nome": "Vision Course: Intermediate Drills",
   "qualita": "tecnica-visione",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -6933,14 +8803,30 @@
   ],
   "azione": "importa",
   "nome_everfit": "Videocorso Visione - Esercizi Intermedi",
-  "note": null,
+  "note": "[15/10: in sospeso (Ste: il video è quasi promozionale, ci sono vari esercizi); esercizi da registrare uno per uno. Resta attivo perché un blocco lo usa]",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "tvis-videocorso-visione-esercizi-intermedi",
+  "scheda": {
+   "esecuzione": [
+    "Esercizi di visione guidati dal video, con la palla in movimento: palleggio o conduzione mentre leggi i segnali ai lati.",
+    "Segui il video esercizio per esercizio: la palla resta sotto controllo e gli occhi leggono i segnali senza abbassarsi.",
+    "Testa ferma, occhi che lavorano.",
+    "Fai i minuti indicati."
+   ],
+   "errori": [
+    "Guardare la palla a ogni tocco.",
+    "Perdere la palla per leggere il segnale: prima la palla.",
+    "Girare la testa."
+   ],
+   "piu_facile": "Gli esercizi base.",
+   "piu_difficile": "Segnali da entrambi i lati insieme."
+  }
  },
  {
-  "nome": "Dribbling visione e reattività - Avanzato",
+  "nome": "Dribbling with Vision and Reaction: Advanced",
   "qualita": "tecnica-visione",
   "attrezzatura": "campo",
   "difficolta": 4,
@@ -6960,7 +8846,24 @@
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
-  "solo_livello": true
+  "solo_livello": true,
+  "id": "tvis-dribbling-visione-e-reattivita-avanzato",
+  "scheda": {
+   "esecuzione": [
+    "Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali della versione avanzata, che parte insieme all'esercizio.",
+    "Conduci tra i cinesini con tocchi corti guardando lo schermo: i segnali arrivano più in fretta e senza preavviso; in base a quello che compare esegui il dribbling oppure fermati.",
+    "Reagisci con il primo tocco utile, senza fermare la palla; testa su tra i tocchi.",
+    "Fai le ripetizioni indicate, con il piede debole dove indicato."
+   ],
+   "errori": [
+    "Testa bassa.",
+    "Fermare la palla per reagire.",
+    "Tocchi lunghi."
+   ],
+   "piu_facile": "La versione base (altro video).",
+   "piu_difficile": "Piede debole, schermo più lontano."
+  },
+  "video_schermo": "https://youtu.be/IPbeSEfeE2c"
  },
  {
   "nome": "Warm-Up Stride",
@@ -7353,7 +9256,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Palleggi altezza testa - Tecnica",
+  "nome": "Juggling Test: Head-Height",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7373,10 +9276,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-altezza-testa-tecnica",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala come vuoi e inizia a palleggiare con i piedi.",
+    "Ogni palleggio porta la palla all'altezza della testa: tocchi di collo piede, non di punta.",
+    "Conta i palleggi consecutivi senza che la palla tocchi terra. Se cade, riparti da zero.",
+    "Il risultato è la serie più lunga di tocchi consecutivi. Alterna i piedi quando puoi."
+   ],
+   "errori": [
+    "Tocchi di punta: la palla va dove vuole.",
+    "Palla troppo bassa: non vale come palleggio alto.",
+    "Corpo rigido: ginocchia morbide, peso sull'avampiede."
+   ],
+   "piu_facile": "Palla più bassa, un piede solo.",
+   "piu_difficile": "Solo piede debole."
+  }
  },
  {
-  "nome": "Palleggi liberi coscia e testa",
+  "nome": "Juggling Test: Thigh and Head",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7392,10 +9311,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-liberi-coscia-e-testa",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala come vuoi e portala sulla coscia.",
+    "Alterna cosce e testa come vuoi: coscia, coscia, testa, coscia… senza usare i piedi.",
+    "Conta i tocchi consecutivi senza che la palla tocchi terra. Se cade, riparti da zero.",
+    "Il risultato è la serie più lunga di tocchi consecutivi. Ginocchia morbide, occhi sempre sulla palla."
+   ],
+   "errori": [
+    "Coscia troppo alta o troppo bassa: parallela a terra al tocco.",
+    "Testa che colpisce con la fronte piegata: fronte dritta, occhi aperti.",
+    "Usare i piedi per salvare la palla: la serie finisce."
+   ],
+   "piu_facile": "Solo cosce.",
+   "piu_difficile": "Sequenza fissa coscia-testa-coscia-testa."
+  }
  },
  {
-  "nome": "Palleggi liberi piedi coscia spalla testa",
+  "nome": "Juggling Test: Feet, Thigh, Shoulder, Head",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7411,10 +9346,26 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-liberi-piedi-coscia-spalla-testa",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala come vuoi e palleggia usando tutte le superfici: piedi, cosce, spalle, testa.",
+    "Un giro = un tocco di piede, uno di coscia, uno di spalla e uno di testa, in qualsiasi ordine.",
+    "Conta i giri completi senza che la palla tocchi terra. Se cade, riparti da zero.",
+    "Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, sguardo sulla palla."
+   ],
+   "errori": [
+    "Saltare una superficie: il giro vale solo con tutte e quattro.",
+    "Tocchi di spalla con la spalla ferma: la spalla sale incontro alla palla.",
+    "Corpo rigido."
+   ],
+   "piu_facile": "Giri con piedi e cosce.",
+   "piu_difficile": "Sequenza fissa piede-coscia-spalla-testa."
+  }
  },
  {
-  "nome": "palleggi piedi coscia testa",
+  "nome": "Juggling Test: Feet, Thigh, Head",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -7433,7 +9384,23 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-palleggi-piedi-coscia-testa",
+  "scheda": {
+   "esecuzione": [
+    "Palla a terra: alzala come vuoi e palleggia con piedi, cosce e testa.",
+    "Un giro = un tocco di piede, uno di coscia e uno di testa, in qualsiasi ordine.",
+    "Conta i giri completi senza che la palla tocchi terra. Se cade, riparti da zero.",
+    "Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, occhi sulla palla."
+   ],
+   "errori": [
+    "Saltare una superficie: il giro vale solo con tutte e tre.",
+    "Tocchi di punta.",
+    "Corpo rigido."
+   ],
+   "piu_facile": "Giri con piedi e cosce.",
+   "piu_difficile": "Sequenza fissa piede-coscia-testa."
+  }
  },
  {
   "nome": "Palleggi solo testa - Tecnica",
@@ -7455,7 +9422,7 @@
   "sottogruppo": null
  },
  {
-  "nome": "Rapidità Ankle Stiffness - Test",
+  "nome": "Ankle Stiffness Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -7483,10 +9450,27 @@
    "Caviglia",
    "Tibia",
    "Poco o niente"
-  ]
+  ],
+  "id": "test2-rapidita-ankle-stiffness-test",
+  "scheda": {
+   "esecuzione": [
+    "Piedi uniti sotto le anche, ginocchia quasi tese, un riferimento a terra (una linea o un cinesino).",
+    "Si salta solo di caviglia, atterrando sull'avampiede senza appoggiare il tallone.",
+    "Percorso: salto avanti, indietro, di lato, avanti, indietro, di lato tornando al punto di partenza. Il percorso completo vale 1.",
+    "Avvia i 20 secondi e ripeti il percorso il più veloce possibile: conta quanti ne completi. Nella versione per lato, sulla sola gamba indicata."
+   ],
+   "errori": [
+    "Ginocchia che si piegano: il rimbalzo viene dalla caviglia.",
+    "Tallone che tocca terra.",
+    "Percorso a metà contato come intero."
+   ],
+   "piu_facile": "A due gambe, senza cronometro.",
+   "piu_difficile": "Su una gamba sola.",
+   "sicurezza": "Pavimento non scivoloso. Fastidio al tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Test Max Pull up",
+  "nome": "Max Pull-Up Test",
   "qualita": "test",
   "attrezzatura": "sbarra",
   "difficolta": 2,
@@ -7502,10 +9486,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-max-pull-up",
+  "scheda": {
+   "esecuzione": [
+    "Appeso alla sbarra, presa prona poco più larga delle spalle, braccia distese, piedi staccati da terra.",
+    "Tirati su fino a portare il mento sopra la sbarra, senza slancio delle gambe.",
+    "Scendi in controllo fino alle braccia completamente distese: solo così la ripetizione vale.",
+    "Massimo di ripetizioni pulite senza pausa in basso. Il risultato è il numero."
+   ],
+   "errori": [
+    "Mento che non supera la sbarra.",
+    "Slancio delle gambe (kipping).",
+    "Braccia non distese in basso."
+   ],
+   "piu_facile": "Presa neutra o chin-up se indicato.",
+   "piu_difficile": "Zavorra.",
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta."
+  }
  },
  {
-  "nome": "Test Max push up",
+  "nome": "Max Push-Up Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7521,10 +9522,27 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-max-push-up",
+  "scheda": {
+   "esecuzione": [
+    "Mani poco più larghe delle spalle, corpo in linea dai talloni alla testa, addome attivo.",
+    "Scendi con il petto a un pugno da terra, gomiti a circa 45° dal busto.",
+    "Risali fino alle braccia distese: solo così la ripetizione vale.",
+    "Massimo di ripetizioni pulite a ritmo costante, senza fermarti in alto a riposare. Il risultato è il numero."
+   ],
+   "errori": [
+    "Bacino che cade o che sale.",
+    "Scendere a metà.",
+    "Fermarsi in alto con le braccia bloccate per riposare."
+   ],
+   "piu_facile": "Mani su un rialzo.",
+   "piu_difficile": "Piedi su un rialzo.",
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta."
+  }
  },
  {
-  "nome": "TEST NAVETTA 10mt - 30''",
+  "nome": "10 m Shuttle Test (30 s)",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7542,10 +9560,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-navetta-10mt-30",
+  "scheda": {
+   "esecuzione": [
+    "Due linee (o due cinesini) a 10 metri e un timer da 30 secondi.",
+    "Parti da una linea, corri all'altra e toccala con il piede, torna e tocca anche quella: andata e ritorno = 1 navetta.",
+    "Cambia direzione il più veloce possibile: frenate e ripartenze sono il test.",
+    "Allo scadere dei 30 secondi fermati e conta le navette complete (un'andata senza ritorno non vale)."
+   ],
+   "errori": [
+    "Non toccare la linea con il piede.",
+    "Curve larghe sul cambio di direzione: si frena e si riparte secchi.",
+    "Partire prima del timer."
+   ],
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta. Scarpe adatte al terreno: i cambi di direzione a tutta scivolano sul bagnato."
+  }
  },
  {
-  "nome": "TEST RESISTENZA 1km",
+  "nome": "1 km Run Test",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7563,10 +9596,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-resistenza-1km",
+  "scheda": {
+   "esecuzione": [
+    "Pista o percorso misurato (va bene un'app GPS) e un cronometro. Il riscaldamento è un esercizio a parte, prima del test.",
+    "Parti e tieni il ritmo più alto che riesci a reggere fino alla fine, senza partire troppo forte.",
+    "Ferma il cronometro al chilometro esatto. Il risultato è il tempo in secondi."
+   ],
+   "errori": [
+    "Partire a tutta e crollare dopo 400 metri.",
+    "Percorso non misurato.",
+    "Partire senza aver fatto il riscaldamento."
+   ],
+   "sicurezza": "Dopo il riscaldamento. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "TEST RESISTENZA 3KM",
+  "nome": "3 km Run Test",
   "qualita": "test",
   "attrezzatura": "campo",
   "difficolta": 2,
@@ -7584,10 +9631,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-resistenza-3km",
+  "scheda": {
+   "esecuzione": [
+    "Pista o percorso misurato (va bene un'app GPS) e un cronometro. Il riscaldamento è un esercizio a parte, prima del test.",
+    "Parti a un ritmo che senti di poter tenere per tutti i 3 km e aumenta nell'ultimo chilometro se ne hai.",
+    "Ferma il cronometro ai 3 km esatti. Il risultato è il tempo in secondi."
+   ],
+   "errori": [
+    "Partire troppo forte.",
+    "Percorso non misurato.",
+    "Partire senza aver fatto il riscaldamento."
+   ],
+   "sicurezza": "Dopo il riscaldamento. Fiato corto che non passa, dolore al petto o giramenti: fermati."
+  }
  },
  {
-  "nome": "Test Salto in lungo - broad jump",
+  "nome": "Standing Broad Jump Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7606,10 +9667,25 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-salto-in-lungo-broad-jump",
+  "scheda": {
+   "esecuzione": [
+    "Piedi uniti dietro una linea, braccia libere.",
+    "Caricamento con le braccia indietro e le gambe piegate, poi salto in avanti a due piedi, braccia che vanno in alto e avanti.",
+    "Atterraggio a due piedi, restando in piedi: se cadi indietro o appoggi le mani, il tentativo non vale.",
+    "Misura dalla linea al tallone più vicino. 3-4 tentativi con recupero completo: il risultato è il migliore, in centimetri."
+   ],
+   "errori": [
+    "Saltare in alto invece che in avanti.",
+    "Atterrare rigidi sulle gambe tese: ginocchia che assorbono.",
+    "Un piede davanti alla linea alla partenza."
+   ],
+   "sicurezza": "Riscaldati bene prima. Un test si fa fresco, non a fine seduta. Superficie non scivolosa."
+  }
  },
  {
-  "nome": "TEST VELOCITA' 100M",
+  "nome": "100 m Sprint Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7627,10 +9703,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-velocita-100m",
+  "scheda": {
+   "esecuzione": [
+    "Rettilineo misurato di 100 metri e un cronometro (meglio se lo tiene un compagno). Il riscaldamento di velocità è un esercizio a parte, prima del test.",
+    "Partenza da fermo in piedi; il cronometro parte al primo movimento.",
+    "Corri a tutta fino a oltre la linea. 2 tentativi con 4-5 minuti di recupero: il risultato è il migliore, in secondi."
+   ],
+   "errori": [
+    "Rallentare prima della linea.",
+    "Secondo tentativo senza recupero completo.",
+    "Partire senza aver fatto il riscaldamento di velocità."
+   ],
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "TEST VELOCITA' 50M",
+  "nome": "50 m Sprint Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -7648,10 +9738,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-velocita-50m",
+  "scheda": {
+   "esecuzione": [
+    "Rettilineo misurato di 50 metri e un cronometro (meglio se lo tiene un compagno). Il riscaldamento di velocità è un esercizio a parte, prima del test.",
+    "Partenza da fermo in piedi, senza rincorsa; il cronometro parte al primo movimento.",
+    "Corri a tutta fino a oltre la linea. 3 tentativi con 2 minuti di recupero: il risultato è il migliore, in secondi."
+   ],
+   "errori": [
+    "Rallentare prima della linea.",
+    "Rincorsa prima della linea.",
+    "Partire senza aver fatto il riscaldamento di velocità."
+   ],
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "TEST EQUILIBRIO 1 GAMBA",
+  "nome": "Single-Leg Balance Test",
   "qualita": "test",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -7667,7 +9771,23 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "test2-test-equilibrio-1-gamba",
+  "scheda": {
+   "esecuzione": [
+    "In piedi su una gamba, l'altro piede sollevato dietro, mani sui fianchi.",
+    "Chiudi gli occhi (se indicato) e avvia il cronometro.",
+    "Il test finisce quando il piede libero tocca terra o le mani lasciano i fianchi. Un piccolo saltello per non cadere è ammesso, se non esageri; saltelli continui chiudono il test.",
+    "Fai entrambe le gambe. Il risultato è il tempo in secondi per lato."
+   ],
+   "errori": [
+    "Aprire gli occhi di nascosto.",
+    "Saltellare di continuo sul piede d'appoggio: un aggiustamento sì, una serie no.",
+    "Mani che si staccano dai fianchi."
+   ],
+   "piu_facile": "Occhi aperti.",
+   "piu_difficile": "Occhi chiusi su una superficie morbida."
+  }
  },
  {
   "nome": "Recovery Session after Match or Heavy Training",
@@ -8486,7 +10606,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fesp-kneeling-jump-to-broad-jump",
+  "scheda": {
+   "esecuzione": [
+    "In ginocchio su un tappetino, glutei sui talloni, braccia indietro.",
+    "Oscilla le braccia in avanti e spingi con le anche per saltare in piedi, atterrando in squat.",
+    "Senza fermarti, carica e salta in lungo il più lontano possibile.",
+    "Atterra a due piedi, morbido, e tieni l'equilibrio. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Aiutarsi con le mani a terra.",
+    "Fermarsi tra i due salti: il movimento è continuo.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono."
+   ],
+   "piu_facile": "Solo il salto in piedi, poi il salto in lungo da fermo.",
+   "piu_difficile": "Salto in lungo più lungo.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Tappetino sotto le ginocchia."
+  }
  },
  {
   "nome": "Reverse Burpee",
@@ -8505,7 +10642,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fesp-reverse-burpee",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, scendi in squat e rotola indietro sulla schiena portando le ginocchia al petto.",
+    "Rotola in avanti con slancio fino a tornare in squat con i piedi a terra.",
+    "Dallo squat salta in alto con forza, braccia verso l'alto.",
+    "Atterra morbido e ripeti. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Aiutarsi con le mani a terra per rialzarsi.",
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Rotolare di lato invece che sulla linea della schiena."
+   ],
+   "piu_facile": "Senza salto finale, o con le mani d'aiuto.",
+   "piu_difficile": "Salto più alto, o con un battito di mani.",
+   "sicurezza": "Tappetino sotto la schiena."
+  }
  },
  {
   "nome": "Side Plank with Twist",
@@ -9038,7 +11192,24 @@
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
-  "sottogruppo": null
+  "sottogruppo": null,
+  "id": "fesp-medicine-ball-lateral-throw",
+  "scheda": {
+   "esecuzione": [
+    "Di lato a un muro, a circa 2 metri, piedi alla larghezza delle spalle, palla medica a due mani all'altezza dell'anca lontana dal muro.",
+    "Carica ruotando il busto lontano dal muro, peso sulla gamba esterna.",
+    "Ruota con forza verso il muro partendo da piedi e anche e lancia la palla contro il muro.",
+    "Raccogli la palla e ripeti. Fai le ripetizioni indicate, poi cambia lato."
+   ],
+   "errori": [
+    "Lanciare solo con le braccia: la forza viene dalla rotazione delle anche.",
+    "Piedi fermi: il piede esterno ruota.",
+    "Schiena che si curva."
+   ],
+   "piu_facile": "Palla più leggera, più vicino al muro.",
+   "piu_difficile": "Palla più pesante, lancio più forte.",
+   "sicurezza": "Muro solido, niente vetri."
+  }
  },
  {
   "nome": "Kettlebell Windmill (Advanced)",
@@ -9173,7 +11344,24 @@
   "qualita_secondaria": null,
   "sottogruppo": null,
   "fascia_kb": "intermedio",
-  "peso_kg": 12
+  "peso_kg": 12,
+  "id": "fesp-kettlebell-cross-chop",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, piedi più larghi delle anche, kettlebell a due mani sopra una spalla.",
+    "Porta il kettlebell in diagonale verso il ginocchio opposto, ruotando busto e anche e piegando le ginocchia.",
+    "Risali lungo la stessa diagonale fino sopra la spalla, controllando il movimento.",
+    "Fai le ripetizioni indicate, poi cambia lato."
+   ],
+   "errori": [
+    "Ruotare solo con le braccia.",
+    "Schiena che si curva in basso.",
+    "Kettlebell troppo lontano dal corpo."
+   ],
+   "piu_facile": "Kettlebell più leggero, movimento più lento.",
+   "piu_difficile": "Kettlebell più pesante, discesa più veloce.",
+   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  },
  {
   "nome": "Plantar Fascia Foam Roll",
@@ -9434,7 +11622,7 @@
   }
  },
  {
-  "nome": "Sprint 10 m",
+  "nome": "10 m Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -9447,17 +11635,34 @@
    "sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint 10 m",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "Partenza in piedi, 10 metri a tutta. Uno solo, poi cammina indietro e recupera del tutto: conta la qualità, non la fatica.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-sprint-10-m",
+  "scheda": {
+   "esecuzione": [
+    "Partenza in piedi dietro una linea, piede forte avanti, busto inclinato.",
+    "Dieci metri a tutta: passi corti e potenti, braccia che spingono.",
+    "Uno solo, poi cammina indietro e recupera del tutto: conta la qualità, non la fatica.",
+    "Nell'EMOM: un solo sprint al minuto, il resto è recupero."
+   ],
+   "errori": [
+    "Busto che si piega in avanti o si inarca: resta inclinato in avanti nei primi passi, poi dritto.",
+    "Partire con un saltello: il primo appoggio spinge, non salta.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza lanciata.",
+   "piu_difficile": "Partenza da terra.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Giro 180° piegamento e sprint",
+  "nome": "180° Turn, Push-Up and Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9471,17 +11676,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Giro 180° piegamento e sprint",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "Di spalle alla direzione di corsa: giro di 180°, un piegamento a terra, ti rialzi e parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "descrizione": "In linea con la direzione di corsa: giro di 180°, un piegamento a terra, ti rialzi, ti giri (alternando il lato a ogni ripetizione) e parti in sprint per 10 metri.",
+  "finestra_partita": 1,
+  "id": "vel-giro-180-piegamento-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, in linea con la direzione di corsa, di fronte alla pista.",
+    "Al via: giro di 180° (ti trovi di spalle), scendi a terra e fai un piegamento completo.",
+    "Ti rialzi, ti giri di nuovo verso la direzione di corsa girando da un lato e parti in sprint per 10 metri.",
+    "Alla ripetizione dopo giri dall'altro lato. Una ripetizione, poi recupero completo; nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Giro lento e appoggio lungo a terra.",
+    "Rialzarsi e aggiustarsi prima di partire: si parte dal primo appoggio.",
+    "Girare sempre dallo stesso lato: si alterna."
+   ],
+   "piu_facile": "Senza piegamento, solo giri e sprint.",
+   "piu_difficile": "Due piegamenti.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Burpee e sprint",
+  "nome": "Burpee to Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9495,17 +11717,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Burpee e sprint",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "Un burpee completo (a terra, salto) e appena atterri parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-burpee-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "In piedi, fronte alla direzione di corsa.",
+    "Un burpee completo: mani a terra, piedi indietro, petto a terra, piedi avanti, salto.",
+    "Appena atterri dal salto parti in sprint per 10 metri.",
+    "Una ripetizione, poi recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Salto alto e atterraggio pesante: il salto è corto, serve a ripartire.",
+    "Fermarsi dopo l'atterraggio.",
+    "Busto che si piega in avanti o si inarca: resta inclinato in avanti nei primi passi, poi dritto."
+   ],
+   "piu_facile": "Senza salto.",
+   "piu_difficile": "Due burpee.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Piegamento a terra e sprint",
+  "nome": "Prone Push-Up to Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9519,17 +11758,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Piegamento a terra e sprint",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
   "descrizione": "Partenza da sdraiato a pancia in giù: un piegamento, ti rialzi e parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "vel-piegamento-a-terra-e-sprint",
+  "scheda": {
+   "esecuzione": [
+    "Partenza sdraiato a pancia in giù, mani sotto le spalle, testa verso la direzione di corsa.",
+    "Al via: un piegamento, porti un piede sotto il corpo e parti in sprint per 10 metri.",
+    "I primi tre passi sono bassi e potenti, poi ti alzi.",
+    "Una ripetizione, poi recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Alzarsi tutto in piedi prima di partire: si parte dalla posizione bassa.",
+    "Piegamento a metà.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza in ginocchio.",
+   "piu_difficile": "Due piegamenti.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint con partenza in ginocchio laterale",
+  "nome": "Side-Kneeling Start Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9543,17 +11799,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint con partenza in ginocchio laterale",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "In ginocchio di fianco alla direzione di corsa: ti alzi ruotando e parti in sprint per 10 metri. Una partenza per lato.",
-  "finestra_partita": 1
+  "descrizione": "In ginocchio di fianco alla direzione di corsa: salto dalle ginocchia, atterri sui piedi e parti in sprint laterale per 10 metri. Una partenza per lato.",
+  "finestra_partita": 1,
+  "id": "vel-sprint-con-partenza-in-ginocchio-laterale",
+  "scheda": {
+   "esecuzione": [
+    "In ginocchio, di fianco alla direzione di corsa, busto dritto, braccia pronte.",
+    "Al via: con una spinta delle anche salti dalle ginocchia e atterri sui piedi (come in un knee jump).",
+    "Appena atterrato parti in sprint laterale per 10 metri, nella direzione indicata.",
+    "Una partenza per lato, recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Appoggiare le mani a terra per alzarsi: si salta.",
+    "Atterrare e aggiustarsi prima di partire: atterraggio e primo passo sono un movimento solo.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza in ginocchio frontale.",
+   "piu_difficile": "Sprint più lungo.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint con partenza in ginocchio",
+  "nome": "Kneeling Start Sprint",
   "qualita": "velocita",
   "attrezzatura": "corpo libero",
   "difficolta": 3,
@@ -9567,17 +11840,34 @@
    "variante-sprint"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint con partenza in ginocchio",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "sprint",
-  "descrizione": "In ginocchio, di fronte alla direzione di corsa: ti alzi senza appoggiare le mani e parti in sprint per 10 metri.",
-  "finestra_partita": 1
+  "descrizione": "In ginocchio di fronte alla direzione di corsa: salto dalle ginocchia, atterri sui piedi e parti in sprint dritto per 10 metri.",
+  "finestra_partita": 1,
+  "id": "vel-sprint-con-partenza-in-ginocchio",
+  "scheda": {
+   "esecuzione": [
+    "In ginocchio, di fronte alla direzione di corsa, busto dritto, braccia pronte.",
+    "Al via: con una spinta delle anche salti dalle ginocchia e atterri sui piedi (come in un knee jump), senza appoggiare le mani.",
+    "Appena atterrato parti in sprint dritto per 10 metri, busto inclinato in avanti nei primi passi.",
+    "Una ripetizione, poi recupero completo. Nell'EMOM una al minuto."
+   ],
+   "errori": [
+    "Mani a terra per alzarsi: si salta.",
+    "Atterrare e aggiustarsi prima di partire: atterraggio e primo passo sono un movimento solo.",
+    "Ripartire senza recupero completo: lo sprint vale solo se sei fresco."
+   ],
+   "piu_facile": "Partenza in piedi.",
+   "piu_difficile": "Partenza seduto.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Salto in lungo da fermo",
+  "nome": "Standing Broad Jump",
   "qualita": "forza-esplosiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -9591,17 +11881,34 @@
    "esplosivita"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Salto in lungo da fermo",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
   "descrizione": "Piedi paralleli, carica con le braccia e salta in avanti il più lontano possibile, atterraggio a due piedi ammortizzato. Poche reps, ogni salto a tutta.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "fesp-salto-in-lungo-da-fermo",
+  "scheda": {
+   "esecuzione": [
+    "Piedi paralleli alla larghezza delle anche, dietro una linea.",
+    "Carica piegando le ginocchia e portando le braccia indietro.",
+    "Salta in avanti il più lontano possibile, braccia che accompagnano in avanti e in alto.",
+    "Atterra a due piedi, morbido, ginocchia piegate, e tieni l'equilibrio. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Cadere indietro all'atterraggio: il busto va avanti.",
+    "Caricare troppo a lungo: la carica è rapida."
+   ],
+   "piu_facile": "Salti più corti.",
+   "piu_difficile": "Salti consecutivi senza pausa.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Salto in alto da fermo",
+  "nome": "Standing Vertical Jump",
   "qualita": "forza-esplosiva",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -9615,17 +11922,34 @@
    "esplosivita"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Salto in alto da fermo",
   "note": "Nell'EMOM (poche reps, zero fatica) va bene anche a 2 giorni dalla partita, non il giorno prima (Ste, 22/9).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": null,
   "descrizione": "Piedi paralleli, carica con le braccia e salta in alto il più possibile, atterraggio morbido sull'avampiede. Poche reps, ogni salto a tutta.",
-  "finestra_partita": 1
+  "finestra_partita": 1,
+  "id": "fesp-salto-in-alto-da-fermo",
+  "scheda": {
+   "esecuzione": [
+    "Piedi paralleli alla larghezza delle anche.",
+    "Carica piegando le ginocchia e portando le braccia indietro.",
+    "Salta in alto il più possibile, braccia che accompagnano verso l'alto.",
+    "Atterra morbido sull'avampiede, ginocchia che assorbono. Fai le ripetizioni indicate."
+   ],
+   "errori": [
+    "Atterraggio rumoroso o sui talloni: si atterra morbido sull'avampiede, ginocchia che assorbono.",
+    "Ginocchia che cedono verso l'interno all'atterraggio.",
+    "Caricare troppo a lungo: la carica è rapida."
+   ],
+   "piu_facile": "Salti più bassi.",
+   "piu_difficile": "Verso un bersaglio in alto, o salti consecutivi.",
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
+  }
  },
  {
-  "nome": "Palleggio, sprint e tiro in porta",
+  "nome": "Juggle, Sprint and Shot",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -9639,15 +11963,32 @@
    "tiro"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Palleggio, sprint e tiro in porta",
   "note": null,
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "tecnica-tiro",
-  "sottogruppo": "velocità con tiro"
+  "sottogruppo": "velocità con tiro",
+  "id": "vel-palleggio-sprint-e-tiro-in-porta",
+  "scheda": {
+   "esecuzione": [
+    "Palla al piede, di spalle alla porta, a 20-30 metri.",
+    "Palleggia, poi calcia la palla in alto dietro di te, verso la porta.",
+    "Giro e sprint a tutta dietro la palla: la stoppi e tiri in porta.",
+    "Torna al punto di partenza in sprint. Fai le ripetizioni indicate con recupero completo."
+   ],
+   "errori": [
+    "Calcio troppo alto o troppo corto: la palla deve cadere dove arrivi in sprint.",
+    "Rallentare prima dello stop: si arriva a tutta.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Calcio più corto, ritorno di corsa leggera.",
+   "piu_difficile": "Tiro di prima senza stop, piede debole.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
-  "nome": "Sprint e tiro in porta",
+  "nome": "Sprint and Shot",
   "qualita": "velocita",
   "attrezzatura": "campo",
   "difficolta": 3,
@@ -9661,12 +12002,29 @@
    "tiro"
   ],
   "azione": "aggiunto 22/9/2026 (Ste, chat)",
-  "nome_everfit": null,
+  "nome_everfit": "Sprint e tiro in porta",
   "note": null,
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": "tecnica-tiro",
-  "sottogruppo": "velocità con tiro"
+  "sottogruppo": "velocità con tiro",
+  "id": "vel-sprint-e-tiro-in-porta",
+  "scheda": {
+   "esecuzione": [
+    "Palla ferma, porta a 20-30 metri.",
+    "Parti da fermo con un passaggio in avanti verso la porta.",
+    "Sprint dietro la palla e tiro in corsa con il piede indicato.",
+    "Torna di corsa al punto di partenza. Fai le ripetizioni indicate con recupero completo."
+   ],
+   "errori": [
+    "Passaggio troppo lungo: arrivi sulla palla senza velocità.",
+    "Rallentare prima di tirare.",
+    "Tirare di punta."
+   ],
+   "piu_facile": "Passaggio più corto.",
+   "piu_difficile": "Piede debole, tiro di prima.",
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
+  }
  },
  {
   "nome": "Ankle Stiffness Steps with Dumbbells",
@@ -10028,7 +12386,7 @@
   }
  },
  {
-  "nome": "Inverted Row (Under a Table)",
+  "nome": "Inverted Row (Table or Low Bar)",
   "qualita": "forza-parte-alta",
   "attrezzatura": "corpo libero",
   "difficolta": 2,
@@ -10043,17 +12401,17 @@
   ],
   "azione": "aggiunto 22/9/2026",
   "nome_everfit": "Rematore sotto al tavolo",
-  "note": "La tirata orizzontale di chi non ha sbarra né kettlebell.",
+  "note": "La tirata orizzontale di chi non ha kettlebell: sotto un tavolo robusto o sotto una sbarra bassa (anche la sbarra di un rack o una sbarra da trazioni con un rialzo per i piedi).",
   "in_coppia": false,
   "attivo": true,
   "qualita_secondaria": null,
   "sottogruppo": "tirata orizzontale",
-  "descrizione": "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso il tavolo e scendi controllato. Piedi più vicini = più facile.",
+  "descrizione": "Sdraiato sotto un tavolo robusto o sotto una sbarra bassa, afferra il bordo o la sbarra con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa: tira il petto verso l'appoggio e scendi controllato. Piedi più vicini = più facile.",
   "id": "fpa-rematore-sotto-al-tavolo",
   "scheda": {
    "esecuzione": [
-    "Sdraiato sotto un tavolo robusto, afferra il bordo con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa.",
-    "Tira il petto verso il tavolo tenendo il corpo rigido, gomiti vicino al busto.",
+    "Sdraiato sotto un tavolo robusto o sotto una sbarra bassa (va bene anche una sbarra da trazioni con i piedi su un rialzo): afferra il bordo o la sbarra con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa.",
+    "Tira il petto verso il tavolo o la sbarra tenendo il corpo rigido, gomiti vicino al busto.",
     "Scendi in controllo fino alle braccia distese.",
     "Fai le ripetizioni indicate."
    ],
@@ -10062,9 +12420,9 @@
     "Collo che spinge in avanti.",
     "Scendere di colpo."
    ],
-   "piu_facile": "Piedi più vicini, o ginocchia piegate.",
-   "piu_difficile": "Piedi su un rialzo, o pausa di 2 secondi in alto.",
-   "sicurezza": "Tavolo stabile e pesante: prova la tenuta prima di iniziare."
+   "piu_facile": "Piedi più vicini, o ginocchia piegate. Con la sbarra: sbarra più alta.",
+   "piu_difficile": "Piedi su un rialzo, o pausa di 2 secondi in alto. Con la sbarra: sbarra più bassa.",
+   "sicurezza": "Tavolo stabile e pesante, o sbarra ben fissata: prova la tenuta prima di iniziare."
   }
  },
  {
@@ -10194,7 +12552,7 @@
  },
  {
   "id": "fesp-kettlebell-swing-una-mano",
-  "nome": "Kettlebell swing a una mano",
+  "nome": "One-Arm Kettlebell Swing",
   "qualita": "forza-esplosiva",
   "attrezzatura": "kettlebell",
   "difficolta": 3,
@@ -10208,7 +12566,7 @@
    "swing"
   ],
   "azione": "importa",
-  "nome_everfit": null,
+  "nome_everfit": "Kettlebell swing a una mano",
   "note": null,
   "in_coppia": false,
   "attivo": true,
@@ -10217,6 +12575,22 @@
   "solo_livello": false,
   "fascia_kb": "intermedio",
   "peso_kg": 12,
-  "descrizione": "Come lo swing a due mani ma con una sola: il kettlebell parte tra le ginocchia, le anche sparano in avanti e il braccio è solo un cavo. Spalla ferma, busto che non ruota. Errore comune: tirare col braccio."
+  "descrizione": "Come lo swing a due mani ma con una sola: il kettlebell parte tra le ginocchia, le anche sparano in avanti e il braccio è solo un cavo. Spalla ferma, busto che non ruota. Errore comune: tirare col braccio.",
+  "scheda": {
+   "esecuzione": [
+    "Piedi poco più larghi delle anche, kettlebell a terra davanti, afferralo con una mano e portalo indietro tra le gambe.",
+    "Spingi le anche in avanti con forza stringendo i glutei: il kettlebell sale fino all'altezza del petto.",
+    "Le spalle restano in linea, il busto non ruota. Lascialo tornare tra le gambe piegando le anche.",
+    "Fai le ripetizioni indicate, poi cambia mano."
+   ],
+   "errori": [
+    "Schiena che si curva: il movimento parte dalle anche.",
+    "Spalla che ruota in avanti seguendo il kettlebell.",
+    "Alzare il kettlebell con il braccio."
+   ],
+   "piu_facile": "Swing a due mani.",
+   "piu_difficile": "Kettlebell più pesante, o cambio mano in aria.",
+   "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
  }
 ]

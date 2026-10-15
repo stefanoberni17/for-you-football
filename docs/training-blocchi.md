@@ -94,8 +94,8 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `rapidita-velocita-b1-short` | Rapidità Velocità B1 - short | velocita | B | 1 | short | 14 | campo | ✓ |  |
 | `resistenza-alla-velocita-a1` | Resistenza alla Velocità A1 | resistenza-rsa | A | 1 | full | 28 | campo | ✓ |  |
 | `resistenza-alla-velocita-b1` | Resistenza alla Velocità B1 | resistenza-rsa | B | 1 | full | 27 | campo | ✓ |  |
-| `resistenza-e-tecnica-funzionale-a1` | Resistenza e Tecnica funzionale A1 | tecnica-palleggi | A | 1 | full | 31 | — | ✓ |  |
-| `resistenza-e-tecnica-funzionale-b1` | Resistenza e Tecnica funzionale B1 | tecnica-palleggi | B | 1 | full | 27 | — | ✓ |  |
+| `resistenza-e-tecnica-funzionale-a1` | Resistenza e Tecnica funzionale A1 | tecnica-palleggi | A | 1 | full | 31 | campo | ✓ |  |
+| `resistenza-e-tecnica-funzionale-b1` | Resistenza e Tecnica funzionale B1 | tecnica-palleggi | B | 1 | full | 27 | campo | ✓ |  |
 | `ripetute-a1` | Ripetute A1 | resistenza-aerobica | A | 1 | full | 33 | campo | ✓ |  |
 | `riscaldamento-sprint` | Riscaldamento Sprint | riscaldamento | — | — | full | 9 | campo | ✓ |  |
 | `riscaldamento-sprint-velocita` | Riscaldamento Sprint Velocità | riscaldamento | — | — | full | 11 | campo | ✓ |  |

@@ -52,6 +52,7 @@ export interface ExerciseV2 {
   perLato?: boolean;
   inCoppia?: boolean;            // serve un compagno
   videoUrl?: string;
+  videoSchermoUrl?: string;  // video dei segnali da mettere sul telefono mentre si fa l'esercizio (visione e reattività; Ste, 15/10)
   note?: string;                 // note di Ste (esecuzione, quando usarlo, cautele)
   finestraPartita?: number;      // override della finestra partita della qualità (giorni vietati prima della partita)
   soloLivello?: boolean;         // true = sotto livelloMin è ESCLUSO (default: ammesso a dose ridotta)
