@@ -88,7 +88,7 @@ describe('modifica a metà settimana: i giorni passati contano (29/9)', () => {
   const pianoAttuale = [seduta(1, 'forza-parte-bassa-b1', 'forza-parte-bassa'), seduta(3, PA_SERIE_ID, 'forza-parte-alta'), seduta(5, 'forza-parte-bassa-b1', 'forza-parte-bassa')];
   const { vincoli } = componiRichiesta({ modo: 'modifica', modifica: { tipo: 'sposta', giorno: 5, a: 6 } }, pianoAttuale);
   const base = {
-    base: { ciclo: { settimana: 2, isDeload: false, ritestDue: false }, painHold: false, oggiDow: 4, matchDays: [7], trainingDays: [2, 4], feedbackRecenti: [], carico: { acuto: 0, cronico: 0, stato: 'poco', calibrazione: 1, target: null, tetto: null, tettoDuro: null, squadra: 0 } },
+    base: { ciclo: { settimana: 2, isDeload: false, ritestDue: false }, painHold: false, oggiDow: 4, matchDays: [], trainingDays: [2, 4], feedbackRecenti: [], carico: { acuto: 0, cronico: 0, stato: 'poco', calibrazione: 1, target: null, tetto: null, tettoDuro: null, squadra: 0 } },
     setup: { fase: 'in_season', attrezzatura: v2.attrezzatura },
     v2, blocchi: [...blocchiDisponibili(v2), ...pa],
     maxSeduteFisiche: 3, maxSeduteTotali: 5, maxDurata: 90,
@@ -99,9 +99,10 @@ describe('modifica a metà settimana: i giorni passati contano (29/9)', () => {
   it('la maschera marca la richiesta come modifica', () => {
     expect(vincoli.modifica).toBe(true);
   });
-  it('senza i giorni passati il piano da sabato viene rifiutato per gli obiettivi', () => {
-    const { errors } = expandPiano(nuovo, base as unknown as ContextV2);
-    expect(errors.some((e) => e.includes('obiettivo'))).toBe(true);
+  it('senza i giorni passati resta un solo posto fisico (sabato): si pretende il primo obiettivo, non il secondo (15/10)', () => {
+    const soloParteAlta = { sedute: [{ giorno: 6, blocchi: ['fascia-training-rolling-and-fascia-adhesion', PA_SERIE_ID] }] };
+    expect(expandPiano(soloParteAlta, base as unknown as ContextV2).errors.some((e) => e.includes('obiettivo "Forza gambe"'))).toBe(true);
+    expect(expandPiano(nuovo, base as unknown as ContextV2).errors.some((e) => e.includes('obiettivo'))).toBe(false);
   });
   it('con i giorni passati (lunedì gambe, mercoledì parte alta) passa', () => {
     const ctx = { ...base, sedutePassate: pianoAttuale.filter((s) => s.giorno < 4) } as unknown as ContextV2;

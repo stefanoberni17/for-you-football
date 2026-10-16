@@ -604,7 +604,7 @@
     "Busto che si piega in avanti con il carico."
    ],
    "piu_facile": "Meno carico, o un box dietro come riferimento.",
-   "piu_difficile": "Più carico, salita esplosiva.",
+   "piu_difficile": "Versione test: cerca il peso massimo con cui fai 3 ripetizioni pulite. Parti da un peso sicuro, 3 ripetizioni, e aggiungi 10 kg a ogni serie finché non trovi il limite.",
    "sicurezza": "Con carichi alti sempre i fermi del rack o un compagno."
   }
  },
@@ -629,10 +629,10 @@
   "id": "fpb-patrick-step-up",
   "scheda": {
    "esecuzione": [
-    "In piedi su un gradino basso o un disco, un piede sul bordo, l'altro nel vuoto davanti.",
-    "Piega il ginocchio della gamba sul gradino portandolo in avanti oltre la punta del piede, tallone a terra, e scendi finché il tallone libero tocca il pavimento davanti.",
-    "Risali spingendo sulla gamba sul gradino, senza aiutarti con il piede libero.",
-    "Lento e controllato. Fai le ripetizioni indicate, poi cambia gamba."
+    "In piedi su un gradino di 20-30 cm, un piede sul bordo, l'altro nel vuoto davanti. Tallone del piede sul gradino a terra.",
+    "Scendi piegando il ginocchio in avanti oltre la punta del piede, con il peso in avanti sull'avampiede, finché il tallone libero tocca il pavimento davanti: il movimento è quello di scendere le scale, non di sedersi su una sedia.",
+    "Appena tocchi, spingi forte sulla gamba sul gradino per risalire, senza aiutarti con il piede libero.",
+    "Lento in discesa, deciso in salita. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
     "Tallone del piede sul gradino che si alza.",
@@ -667,10 +667,10 @@
   "id": "fpb-poliquin-step-up",
   "scheda": {
    "esecuzione": [
-    "In piedi su un gradino basso, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa.",
-    "Scendi piegando il ginocchio in avanti oltre la punta del piede, finché il tallone del piede libero tocca il pavimento.",
-    "Risali spingendo sulla gamba d'appoggio, senza aiuto dal piede libero.",
-    "Lento e controllato. Fai le ripetizioni indicate, poi cambia gamba."
+    "In piedi su un gradino di 20-30 cm, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa; senza rialzo, lascia che il tallone si sollevi durante la discesa.",
+    "Scendi piegando il ginocchio in avanti oltre la punta del piede, peso in avanti sull'avampiede, finché il tallone del piede libero tocca il pavimento: come scendere le scale.",
+    "Appena tocchi, spingi forte sulla gamba d'appoggio per risalire, senza aiuto dal piede libero. Puoi tenere una mano a un sostegno per l'equilibrio.",
+    "Lento in discesa, deciso in salita. Fai le ripetizioni indicate, poi cambia gamba."
    ],
    "errori": [
     "Perdere l'appoggio del tallone sul rialzo.",
@@ -1501,9 +1501,9 @@
   "scheda": {
    "esecuzione": [
     "Piedi più larghi delle spalle, kettlebell con due mani, schiena neutra.",
-    "Porta il kettlebell tra le gambe e spingi con le anche: lo swing sale fino al petto.",
-    "In cima tira i gomiti indietro e in alto, portando il kettlebell vicino al petto, poi lascialo tornare nello swing.",
-    "Fai le ripetizioni indicate con ritmo continuo."
+    "Porta il kettlebell tra le gambe e spingi con le anche: lo swing sale vicino al corpo.",
+    "In cima tira i gomiti indietro e in alto portando il kettlebell vicino al petto, e nella fase finale spingi con gli avampiedi per salire ancora un po'.",
+    "Lascialo tornare nello swing. Fai le ripetizioni indicate con ritmo continuo."
    ],
    "errori": [
     "Spingere con le braccia invece che con le anche.",
@@ -1755,10 +1755,10 @@
   "id": "fpa-pull-up-around-the-world",
   "scheda": {
    "esecuzione": [
-    "Appeso alla sbarra con presa larga, spalle attive.",
-    "Tira verso una mano fino al mento sopra la sbarra, poi spostati lungo la sbarra verso l'altra mano restando in alto.",
-    "Scendi in controllo dall'altro lato: il percorso disegna un cerchio.",
-    "Fai le ripetizioni indicate (un cerchio = una ripetizione), poi inverti il senso."
+    "Appeso alla sbarra con presa larga, ben oltre le spalle, spalle attive.",
+    "Invece di tirarti su dritto, contrai i dorsali e sali verso una mano, poi spostati lungo la sbarra verso il centro: il mento incontra la sbarra nel punto più alto.",
+    "Continua il cerchio scendendo in controllo dall'altro lato fino alle braccia distese.",
+    "Un cerchio = una ripetizione. Una serie in senso orario e la successiva in senso antiorario."
    ],
    "errori": [
     "Scendere a metà percorso invece di restare alto.",
@@ -2185,13 +2185,13 @@
   "sottogruppo": null,
   "solo_livello": false,
   "nota_livello": "anche A, ma deve essere forte in parte alta e core",
-  "descrizione": "Piegamento a un braccio con la mano d'appoggio su un rialzo (panca, gradino). Piedi larghi, mano libera dietro la schiena, corpo rigido. Scendi controllato e spingi. Alterna i lati come indicato.",
+  "descrizione": "Piegamento a un braccio con i PIEDI su un rialzo e la mano a terra: più duro del piegamento a terra. Piedi larghi, mano libera dietro la schiena, corpo rigido. Alterna i lati come indicato.",
   "id": "fpa-one-arm-push-up-incline",
   "scheda": {
    "esecuzione": [
-    "Mano d'appoggio su una panca o un gradino, piedi larghi, mano libera dietro la schiena, corpo rigido.",
-    "Scendi in controllo piegando il gomito vicino al corpo, busto che non ruota.",
-    "Spingi fino al braccio disteso.",
+    "Piedi su un rialzo (panca, gradino) e mano d'appoggio a terra: il corpo è in obliquo con la testa più in basso, quindi il carico sul braccio è maggiore del piegamento a terra.",
+    "Piedi larghi, mano libera dietro la schiena, corpo rigido dalla testa ai talloni.",
+    "Scendi in controllo piegando il gomito vicino al corpo, busto che non ruota, poi spingi fino al braccio disteso.",
     "Fai le ripetizioni indicate, poi cambia braccio."
    ],
    "errori": [
@@ -2199,9 +2199,9 @@
     "Bacino che cede o che sale: il corpo resta in linea.",
     "Gomito che si apre di lato."
    ],
-   "piu_facile": "Rialzo più alto, piedi più larghi.",
-   "piu_difficile": "Rialzo più basso, fino a terra.",
-   "sicurezza": "Rialzo stabile. Fastidio al polso o al gomito: fermati."
+   "piu_facile": "Rialzo più basso, fino ai piedi a terra (One-Arm Push-Up).",
+   "piu_difficile": "Rialzo più alto, o discesa in 3 secondi.",
+   "sicurezza": "Solo dopo il piegamento a un braccio a terra pulito. Fastidio al polso o al gomito: fermati."
   }
  },
  {
@@ -3412,7 +3412,7 @@
     "Contatti lunghi a terra."
    ],
    "piu_facile": "Salti più bassi, ritmo più lento.",
-   "piu_difficile": "Salti più alti, o su una gamba.",
+   "piu_difficile": "Versione intermedia: saltelli laterali e avanti-indietro. Versione avanzata: saltelli in tutte le direzioni, o su una gamba.",
    "sicurezza": "Caviglie e polpacci riscaldati. Fastidio al tendine d'Achille: fermati."
   }
  },
@@ -3569,9 +3569,9 @@
   "id": "plioe-fascia-toe-bounces-single-leg-pogo-jumps",
   "scheda": {
    "esecuzione": [
-    "In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata.",
-    "Fai piccoli rimbalzi rapidi sul posto sull'avampiede, usando solo la caviglia.",
-    "Il tallone non tocca mai terra, il contatto è il più breve possibile.",
+    "In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata. Attiva la pianta del piede contraendola.",
+    "Fai piccoli rimbalzi rapidi sul posto, circa due al secondo, usando solo la caviglia: l'appoggio è solo sull'avampiede, idealmente alla base di alluce e indice.",
+    "Il tallone non tocca mai terra, il contatto è il più breve possibile. Non conta l'altezza del salto: rilassa la parte alta del corpo e tieni attiva la pianta del piede.",
     "Tieni per il tempo indicato, poi cambia gamba."
    ],
    "errori": [
@@ -3784,8 +3784,8 @@
    ],
    "errori": [
     "Saltare giù dal box invece di lasciarsi cadere.",
-    "Contatto lungo a terra, o scendere in squat prima del salto.",
-    "Ginocchia che cedono verso l'interno all'atterraggio."
+    "Contatto lungo a terra, o scendere in squat prima del salto: conta la reattività, non l'altezza.",
+    "Talloni che toccano terra all'atterraggio."
    ],
    "piu_facile": "Box più basso, pausa a terra prima del salto.",
    "piu_difficile": "Box più alto, o atterraggio su una gamba.",
@@ -4334,7 +4334,7 @@
   "scheda": {
    "esecuzione": [
     "Una pallina da tennis in mano, posizione di attesa: gambe piegate, peso sugli avampiedi. Non servono riferimenti a terra.",
-    "Lancia la pallina a terra davanti a te mentre parti: corsa laterale di qualche metro e ritorno al punto di partenza a passi laterali, riprendendo la pallina.",
+    "Lancia la pallina a terra mentre parti: due spostamenti laterali rapidi e ritorno, riprendendo la pallina al volo il prima possibile.",
     "Riparti subito dall'altro lato con un nuovo lancio.",
     "Fai il tempo indicato senza fermarti."
    ],
@@ -4386,10 +4386,9 @@
    ],
    "piu_facile": "Segnale fisso, senza video.",
    "piu_difficile": "Due segnali insieme (colore e piede).",
-   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.",
-   "da_confermare": "Il video dei segnali da mettere sul telefono sta nella descrizione YouTube, che da qui non riesco a leggere: incollami il link e lo metto in `video_schermo`."
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada."
   },
-  "video_schermo": null
+  "video_schermo": "https://www.youtube.com/watch?v=LqRXesBqaZc"
  },
  {
   "nome": "Defender Stance and Speed Drill",
@@ -4416,9 +4415,9 @@
   "id": "vel-postura-velocita-difensori",
   "scheda": {
    "esecuzione": [
-    "Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti. Il telefono davanti a te con il video dei colori.",
+    "Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti. Il telefono davanti a te con il video dei colori, che parte insieme all'esercizio.",
     "Piccoli passi rapidi sul posto. A ogni colore che compare cambi posizione: bianco ti sposti verso sinistra, nero verso destra, a passi laterali senza incrociare.",
-    "Quando compare il colore dello sprint parti a tutta per 3-5 metri, in avanti o all'indietro come indicato, poi torna in posizione.",
+    "Quando compare il colore dello sprint (il rosso) parti a tutta per 3-5 metri, in avanti o all'indietro come mostra il video, poi torna in posizione.",
     "Fai le ripetizioni indicate (una ripetizione = un giro del video)."
    ],
    "errori": [
@@ -4428,10 +4427,9 @@
    ],
    "piu_facile": "Video più lento, scatti più corti.",
    "piu_difficile": "Scatti più lunghi, posizione più bassa.",
-   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.",
-   "da_confermare": "Serve il link del video dei colori da mettere sul telefono (Ste: 'non riesco a trovarlo ora'), e quale colore è lo sprint in avanti e quale all'indietro (nel testo c'è due volte il nero)."
+   "sicurezza": "Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito."
   },
-  "video_schermo": null
+  "video_schermo": "https://youtu.be/c42oiIHdrwc"
  },
  {
   "nome": "Striker Quick-Feet Drill",
@@ -4936,10 +4934,10 @@
   "id": "aer-ripetute",
   "scheda": {
    "esecuzione": [
-    "Dopo il riscaldamento, corsa a ritmo forte sulla distanza o il tempo indicato.",
-    "Ritmo uniforme dall'inizio alla fine della ripetuta: non uno sprint, ma un ritmo che reggi per tutta la ripetuta e per tutte le ripetute.",
+    "Dopo il riscaldamento, corsa sostenuta cercando di restare nel tempo indicato per ogni ripetuta.",
+    "La velocità giusta ti fa arrivare in fondo molto stanco ma in grado di farne un'altra dopo il recupero: non uno sprint, un ritmo che reggi per tutte le ripetute.",
     "Recupero come indicato (corsa leggera o cammino), poi la successiva.",
-    "L'ultima ripetuta deve avere lo stesso tempo della prima: se crolla, le prime erano troppo forti."
+    "Se non riesci a stare nei tempi, allunga un po' il recupero; se ci stai comodo, alza un po' la velocità."
    ],
    "errori": [
     "Prima ripetuta troppo forte.",
@@ -5016,10 +5014,10 @@
   "id": "met-circuito-resistenza-velocita-tecnica-x-esterno",
   "scheda": {
    "esecuzione": [
-    "Circuito per esterni guidato dal video: conduzione lungo la fascia, cambio di direzione sul cinesino, sprint e cross o tiro.",
-    "Fai ogni giro al ritmo indicato: i tratti di conduzione sostenuti, lo sprint finale a tutta.",
-    "Recupero come indicato tra i giri, camminando per tornare al punto di partenza.",
-    "Alterna il lato (fascia destra e sinistra) se indicato."
+    "Navetta sui 30 metri (30 + 30) lungo la fascia.",
+    "Contromovimento per allargarti, prendi la palla, punta il cinesino e concludi in porta.",
+    "Torna sull'esterno, contromovimento per tagliare dentro, prendi la palla, piccolo slalom e concludi in porta.",
+    "Torna al punto di partenza e ricomincia. Guarda il video per la disposizione. Recupero come indicato tra i giri."
    ],
    "errori": [
     "Tocchi lunghi che fanno perdere la palla sul cambio di direzione.",
@@ -5510,10 +5508,10 @@
   "id": "fasc-fascia-iso-lounge-runner",
   "scheda": {
    "esecuzione": [
-    "Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno.",
-    "Tallone della gamba dietro sollevato: il peso è sull'avampiede.",
-    "Busto dritto, né piegato in avanti né inclinato indietro, sguardo avanti.",
-    "Tieni la posizione per il tempo indicato con il ginocchio davanti sopra il piede, respira. Cambia gamba."
+    "Mezzo affondo: gamba davanti piegata, ginocchio dietro sollevato da terra di un pugno, tallone della gamba dietro sollevato.",
+    "Concentrati sul contrarre e attivare la pianta del piede davanti, come se stringessi qualcosa sotto al piede.",
+    "Busto dritto, sguardo avanti. Tieni la posizione per il tempo indicato respirando: se senti lavorare il gluteo della gamba davanti è il segno che il sistema fasciale sta facendo il suo.",
+    "Cambia gamba."
    ],
    "errori": [
     "Busto che si piega in avanti o si inclina indietro.",
@@ -5549,7 +5547,7 @@
   "id": "fasc-fascia-towel-figure-8",
   "scheda": {
    "esecuzione": [
-    "In piedi su una gamba, un asciugamano a terra davanti a te.",
+    "In piedi su una gamba, un asciugamano a terra davanti a te. Attiva la pianta del piede d'appoggio contraendola, e tienila così per tutto l'esercizio.",
     "Afferra l'asciugamano con le dita del piede libero e sollevalo da terra.",
     "Con il piede che stringe l'asciugamano disegna un otto nell'aria: lento, ampio, senza allentare la presa.",
     "Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede."
@@ -6817,10 +6815,10 @@
   "id": "tpal-palleggi-coscia-e-collo",
   "scheda": {
    "esecuzione": [
-    "In piedi, palla a terra: alzala con il piede sulla coscia.",
-    "Alterna un tocco di coscia e uno di collo con lo stesso lato: coscia, collo, coscia, collo.",
+    "Palla a terra: alzala con il piede e palleggia di collo.",
+    "Circa 10 palleggi di collo, poi 10 di coscia, poi di nuovo di collo, e avanti così, con entrambe le gambe.",
     "Coscia parallela a terra al contatto, palla bassa, ginocchio morbido sul tocco di collo.",
-    "Metà tempo a destra, metà a sinistra."
+    "Fai il tempo indicato. A piedi nudi, se vuoi, per la sensibilità."
    ],
    "errori": [
     "Coscia troppo alta: la palla schizza avanti.",
@@ -6828,7 +6826,7 @@
     "Se la palla cade, riprendila da terra e continua senza fermare il tempo."
    ],
    "piu_facile": "Un rimbalzo a terra tra i tocchi.",
-   "piu_difficile": "Due tocchi di coscia e due di collo alternati."
+   "piu_difficile": "Blocchi da 5 invece che da 10, o un piede solo."
   }
  },
  {
@@ -6888,10 +6886,10 @@
   "id": "tpal-palleggi-liberi-calcio-alto-tecnica",
   "scheda": {
    "esecuzione": [
-    "Palleggi liberi, con la superficie che preferisci.",
-    "Ogni 5-6 tocchi calcia la palla alta, 3-4 metri sopra la testa.",
-    "Riprendi il palleggio al ritorno con un controllo morbido: il piede accompagna la palla verso il basso, non la colpisce.",
-    "Fai il tempo indicato."
+    "Palleggi liberi, circa 10, con la superficie che preferisci.",
+    "Calcia la palla in alto sopra di te, controllala al ritorno e continua a palleggiare senza farla cadere.",
+    "Per il controllo usa solo il piede: accompagna la palla verso il basso, non colpirla.",
+    "Fai il tempo indicato. Più alto calci, più è difficile."
    ],
    "errori": [
     "Controllo rigido sulla palla che scende: la palla rimbalza via.",
@@ -7394,14 +7392,14 @@
   "scheda": {
    "esecuzione": [
     "Davanti a un muro a 3-4 metri, palla a terra.",
-    "Passaggio al muro; al ritorno controllo d'interno (primo tocco).",
-    "Con il secondo tocco, libero (interno, esterno o suola), giri la palla di 180° come per voltarti verso la porta.",
+    "Passaggio al muro; mentre la palla torna, un'occhiata dietro di te (scan), poi controllo d'interno (primo tocco).",
+    "Con il secondo tocco, libero (di solito l'esterno, ma anche interno o suola), giri la palla di 180° come per voltarti verso la porta.",
     "Torna di fronte al muro con la palla e ripeti. Alterna il piede del controllo."
    ],
    "errori": [
+    "Ricevere senza aver guardato dietro: lo scan è parte dell'esercizio.",
     "Giro con la palla lontana: resta sotto il corpo.",
-    "Secondo tocco sempre uguale: è libero, varialo.",
-    "Sguardo che resta sulla palla dopo il controllo: un'occhiata e poi la testa su."
+    "Secondo tocco sempre uguale: è libero, varialo."
    ],
    "piu_facile": "Controllo, pausa, poi il giro.",
    "piu_difficile": "Controllo e giro in un tocco solo, solo piede debole.",
@@ -7579,9 +7577,9 @@
   "scheda": {
    "esecuzione": [
     "Davanti a un muro a 2-3 metri, palla a terra.",
-    "Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare.",
-    "Alterna i lati e i piedi.",
-    "Fai il tempo indicato."
+    "Passaggio al muro; al ritorno ferma la palla con la suola davanti a te, fai una finta di corpo e spostala di lato con lo stesso piede, poi rigioca al muro.",
+    "Simula la situazione in cui un avversario arriva in pressione da davanti ma non è ancora abbastanza vicino per saltarlo con il controllo orientato.",
+    "Alterna i lati e i piedi. Fai il tempo indicato."
    ],
    "errori": [
     "Suola che schiaccia la palla senza spostarla.",
@@ -7866,9 +7864,9 @@
   "id": "tpas-passaggi-al-muro-5-10mt-alto-basso",
   "scheda": {
    "esecuzione": [
-    "A 5-10 metri dal muro, palla a terra.",
-    "Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria).",
-    "Controlla il ritorno con un tocco orientato e rigioca.",
+    "A 5-10 metri dal muro, palla a terra: durante l'esercizio ti muovi avanti e indietro per cambiare la distanza.",
+    "Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria), e varia anche la forza del passaggio.",
+    "Controlla il ritorno con un tocco orientato e rigioca: il focus è il controllo della palla, non il passaggio.",
     "Entrambi i piedi, per il tempo indicato."
    ],
    "errori": [
@@ -7906,9 +7904,9 @@
   "scheda": {
    "esecuzione": [
     "Davanti a un muro a 3-4 metri, palla a terra.",
-    "Passaggio al muro; al ritorno un controllo che gira la palla di 180° (interno o esterno) e ti porta di spalle al muro.",
-    "Due tocchi, giro completo e rigioca al muro.",
-    "Alterna il piede e il verso del giro."
+    "Passaggio al muro; al ritorno un controllo che gira la palla di 180°, girandoti su te stesso: d'interno, di esterno, di suola o lasciando scorrere la palla.",
+    "Giro completo, torna in posizione di fronte al muro e rigioca.",
+    "Alterna il piede, il verso del giro e il tipo di controllo."
    ],
    "errori": [
     "Controllo che ferma la palla.",
@@ -8554,10 +8552,10 @@
   "id": "ttir-tiri-tecnica-di-tiro",
   "scheda": {
    "esecuzione": [
-    "Palla al limite dell'area, porta libera.",
-    "Tira in porta controllando solo la tecnica: come colpisci la palla e dove metti il piede d'appoggio, non dove va il tiro.",
+    "Porta libera. Parti a 5 metri dalla porta e, dopo le ripetizioni indicate, arretra di 3 metri: 5, 8, 11, 15 metri (il limite dell'area).",
+    "A ogni distanza tira controllando solo la tecnica: come colpisci la palla, il punto di impatto e dove metti il piede d'appoggio, non dove va il tiro.",
     "Alterna i tre modi di colpire: tiro a giro d'interno, interno-collo, collo pieno. Caviglia bloccata, ginocchio sopra la palla, busto in avanti.",
-    "Fai le ripetizioni indicate alternando i piedi."
+    "Fai le ripetizioni indicate a ogni distanza, alternando i piedi."
    ],
    "errori": [
     "Guardare la porta e dimenticare il contatto: qui conta come colpisci.",
@@ -8602,7 +8600,8 @@
    ],
    "piu_facile": "Da più vicino all'area, palla quasi ferma.",
    "piu_difficile": "Cross di prima dopo un tocco lungo, piede debole.",
-   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.",
+   "da_confermare": "Su Everfit le istruzioni dicono: palla sul calcio d'angolo, TIRI A GIRO cercando di far entrare la palla in porta senza che tocchi terra; poi dall'incrocio tra area e linea di fondo, poi dall'angolo dell'area; da entrambi i lati, di interno col piede opposto (da sinistra col destro), rientrando verso la porta. La correzione del 15/10 dice invece cross in corsa su primo palo, secondo palo, dischetto. Quale vale? Oppure sono due esercizi?"
   }
  },
  {
@@ -8643,10 +8642,9 @@
    ],
    "piu_facile": "Segnale letto prima di partire, quadrato più grande.",
    "piu_difficile": "Palla calciata più bassa (meno tempo per leggere), piede debole al tiro.",
-   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.",
-   "da_confermare": "Serve il link del video dei segnali da mettere sul telefono (è lo stesso del dribbling con visione?)."
+   "sicurezza": "Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati."
   },
-  "video_schermo": null
+  "video_schermo": "https://www.youtube.com/watch?v=LqRXesBqaZc"
  },
  {
   "nome": "Shooting Progression",
@@ -8712,10 +8710,10 @@
   "id": "tvis-dribbling-visione-e-reattivita-base",
   "scheda": {
    "esecuzione": [
-    "Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali che parte insieme all'esercizio.",
-    "Conduci tra i cinesini con tocchi corti guardando lo schermo: in base a quello che compare nel video esegui il dribbling oppure fermati.",
+    "Tre cinesini a triangolo, a 5 metri dal punto di partenza; il telefono appoggiato sul vertice del triangolo con il video dei segnali, che parte insieme all'esercizio.",
+    "Parti in conduzione verso il triangolo guardando lo schermo: freccia a destra o a sinistra = dribbling da quel lato; triangolo di stop = fermati sul posto dentro al triangolo e fai delle finte finché non compare la freccia.",
     "Testa su tra un tocco e l'altro: la palla si sente con il piede, lo schermo si guarda.",
-    "Fai le ripetizioni indicate."
+    "Torna al via e ripeti. Fai le ripetizioni indicate."
    ],
    "errori": [
     "Testa bassa: ti perdi il segnale.",
@@ -8850,10 +8848,10 @@
   "id": "tvis-dribbling-visione-e-reattivita-avanzato",
   "scheda": {
    "esecuzione": [
-    "Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali della versione avanzata, che parte insieme all'esercizio.",
-    "Conduci tra i cinesini con tocchi corti guardando lo schermo: i segnali arrivano più in fretta e senza preavviso; in base a quello che compare esegui il dribbling oppure fermati.",
+    "Tre cinesini a triangolo, a 5 metri dal punto di partenza; il telefono appoggiato sul vertice del triangolo con il video dei segnali della versione avanzata, che parte insieme all'esercizio.",
+    "Parti in conduzione verso il triangolo guardando lo schermo: freccia a destra o a sinistra = dribbling da quel lato; triangolo di stop = fermati dentro al triangolo e fai delle finte finché non compare la freccia. I segnali arrivano più in fretta e senza preavviso.",
     "Reagisci con il primo tocco utile, senza fermare la palla; testa su tra i tocchi.",
-    "Fai le ripetizioni indicate, con il piede debole dove indicato."
+    "Torna al via e ripeti. Fai le ripetizioni indicate, con il piede debole dove indicato."
    ],
    "errori": [
     "Testa bassa.",
@@ -8890,17 +8888,17 @@
   "scheda": {
    "esecuzione": [
     "Parti al 60 % sulla distanza indicata e aumenta un po' ogni 10 metri.",
-    "Negli ultimi metri arriva all'80-90 %, mai al massimo.",
+    "Ogni allungo un po' più forte del precedente: l'ultimo arriva quasi al massimo (90-100 %).",
     "Corri alto, braccia che spingono, sguardo avanti.",
     "Torna indietro camminando: è il recupero."
    ],
    "errori": [
-    "Sprintare subito: è un allungo, non una prova.",
+    "Sprintare subito: si sale gradualmente.",
     "Frenare di colpo alla fine: rallenta su 10-15 metri.",
     "Partire a freddo senza la corsa lenta prima."
    ],
-   "piu_facile": "Fermati al 70 %.",
-   "piu_difficile": "L'ultimo allungo al 90 % con una partenza da fermo.",
+   "piu_facile": "Fermati al 70-80 %.",
+   "piu_difficile": "L'ultimo allungo con una partenza da fermo.",
    "sicurezza": "Un posteriore che tira: fermati, niente sprint oggi."
   }
  },
@@ -9030,7 +9028,7 @@
   }
  },
  {
-  "nome": "Standing Stillness (Fascia)",
+  "nome": "Fascia Standing Meditation",
   "qualita": "riscaldamento",
   "attrezzatura": "corpo libero",
   "difficolta": 1,
@@ -9051,17 +9049,17 @@
   "id": "risc-fascia-standing-meditation",
   "scheda": {
    "esecuzione": [
-    "In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi.",
-    "Occhi chiusi o sguardo basso: senti il peso diviso tra tallone, alluce e mignolo.",
-    "Porta l'attenzione al respiro e alle sensazioni del corpo: quelle interne (il battito, le tensioni) e quelle esterne (il pavimento, l'aria, i suoni).",
-    "Resta presente. Quando un pensiero si porta via l'attenzione, accorgitene e torna al respiro e al corpo. Per il tempo indicato."
+    "In piedi a piedi nudi, postura neutra, gambe leggermente piegate, peso un po' sull'avampiede (non sul tallone), braccia sciolte e parte alta del corpo rilassata.",
+    "Concentrati nel contrarre la pianta del piede, come se dovessi stringere qualcosa sotto al piede: non con le dita, con tutta la pianta. Tienila attiva per tutto il tempo.",
+    "Respira lentamente con il diaframma. Nel primo minuto dividi il respiro in quattro fasi uguali: inspira dal naso, trattieni, espira dalla bocca come se alitassi su un vetro, trattieni a polmoni vuoti (per esempio 4 secondi ciascuna).",
+    "Nei minuti successivi togli le pause e fai durare l'espirazione circa il doppio dell'inspirazione. Per il tempo indicato."
    ],
    "errori": [
-    "Ginocchia bloccate indietro.",
-    "Inseguire i pensieri invece di tornare: capita, si torna.",
-    "Spalle alte."
+    "Peso sui talloni: resta un po' in avanti.",
+    "Stringere con le dita invece che con la pianta del piede.",
+    "Respiro corto e veloce: lento, dal diaframma."
    ],
-   "piu_facile": "Occhi aperti, sguardo su un punto fisso.",
+   "piu_facile": "Senza le pause del respiro, solo inspira-espira lenti.",
    "piu_difficile": "Su una gamba, occhi chiusi.",
    "sicurezza": "Se gira la testa, apri gli occhi e appoggiati."
   }
@@ -9388,18 +9386,18 @@
   "id": "test2-palleggi-piedi-coscia-testa",
   "scheda": {
    "esecuzione": [
-    "Palla a terra: alzala come vuoi e palleggia con piedi, cosce e testa.",
-    "Un giro = un tocco di piede, uno di coscia e uno di testa, in qualsiasi ordine.",
-    "Conta i giri completi senza che la palla tocchi terra. Se cade, riparti da zero.",
-    "Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, occhi sulla palla."
+    "Palla a terra: alzala come vuoi e palleggia con i piedi.",
+    "Un giro = 10 palleggi con i piedi, poi 10 con le cosce, poi 10 di testa, senza che la palla tocchi terra. Finito il giro si riparte dai piedi.",
+    "Conta i giri completi. Se la palla cade, riparti da zero.",
+    "Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, occhi sulla palla. A piedi nudi, se vuoi, per la sensibilità."
    ],
    "errori": [
-    "Saltare una superficie: il giro vale solo con tutte e tre.",
+    "Saltare una superficie o fare meno di 10 tocchi: il giro vale solo completo.",
     "Tocchi di punta.",
     "Corpo rigido."
    ],
-   "piu_facile": "Giri con piedi e cosce.",
-   "piu_difficile": "Sequenza fissa piede-coscia-testa."
+   "piu_facile": "Giri da 5 tocchi per superficie.",
+   "piu_difficile": "Giri da 15 tocchi per superficie."
   }
  },
  {
@@ -9775,9 +9773,9 @@
   "id": "test2-test-equilibrio-1-gamba",
   "scheda": {
    "esecuzione": [
-    "In piedi su una gamba, l'altro piede sollevato dietro, mani sui fianchi.",
-    "Chiudi gli occhi (se indicato) e avvia il cronometro.",
-    "Il test finisce quando il piede libero tocca terra o le mani lasciano i fianchi. Un piccolo saltello per non cadere è ammesso, se non esageri; saltelli continui chiudono il test.",
+    "A piedi nudi. In piedi su una gamba, l'altro piede sollevato, mani sui fianchi.",
+    "Chiudi gli occhi e avvia il cronometro.",
+    "Il test finisce quando il piede libero tocca terra, il piede d'appoggio si sposta o le mani lasciano i fianchi. Un piccolo saltello per non cadere è ammesso, se non esageri; saltelli continui chiudono il test.",
     "Fai entrambe le gambe. Il risultato è il tempo in secondi per lato."
    ],
    "errori": [
@@ -12591,6 +12589,47 @@
    "piu_facile": "Swing a due mani.",
    "piu_difficile": "Kettlebell più pesante, o cambio mano in aria.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
+  }
+ },
+ {
+  "nome": "One-Arm Decline Push-Up",
+  "qualita": "forza-parte-alta",
+  "attrezzatura": "corpo libero",
+  "difficolta": 4,
+  "livello_min": "A",
+  "unita": "reps",
+  "per_lato": true,
+  "video": null,
+  "fonte": "Everfit",
+  "tags": [
+   "forza parte alta"
+  ],
+  "azione": "importa",
+  "nome_everfit": "One Arm Push Up Decline",
+  "note": "[15/10: su Everfit dal 15/9, mani sul rialzo = passo prima del piegamento a un braccio a terra]",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": null,
+  "solo_livello": false,
+  "nota_livello": "il passo prima del piegamento a un braccio a terra",
+  "descrizione": "Piegamento a un braccio con le MANI su un rialzo (panca, gradino, muretto a 60-80 cm) e i piedi a terra: il rialzo riduce il carico. Piedi larghi, mano libera dietro la schiena, corpo rigido. Alterna i lati.",
+  "id": "fpa-one-arm-push-up-decline",
+  "scheda": {
+   "esecuzione": [
+    "Mano d'appoggio su un rialzo di 60-80 cm (panca, gradino, muretto) e piedi a terra: il rialzo sotto la mano riduce il carico, è il passo prima del piegamento a un braccio a terra.",
+    "Piedi larghi, mano sotto la spalla, l'altro braccio dietro la schiena. Corpo rigido dalla testa ai talloni, addome attivo.",
+    "Scendi in controllo fino a sfiorare il rialzo con il petto, senza ruotare il busto, poi spingi fino al braccio disteso. Spalla lontana dall'orecchio.",
+    "Alterna: una ripetizione a destra, una a sinistra. Quando escono pulite, abbassa il rialzo."
+   ],
+   "errori": [
+    "Busto che ruota verso l'alto.",
+    "Bacino che cede o che sale: il corpo resta in linea.",
+    "Rialzo troppo basso troppo presto: si scende un gradino alla volta."
+   ],
+   "piu_facile": "Rialzo più alto, piedi più larghi.",
+   "piu_difficile": "Rialzo più basso, fino a terra (One-Arm Push-Up).",
+   "sicurezza": "Rialzo stabile. Fastidio al polso o al gomito: fermati."
   }
  }
 ]

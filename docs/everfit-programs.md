@@ -3780,7 +3780,7 @@ _
     - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
   - **regular**
     - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
-- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra**
   - **regular**
     - Tibialis raises — 2× 15 reps · rec 60"
   - **regular**
@@ -4009,7 +4009,7 @@ _
     - Passaggi liberi al muro - Tecnica — 1× 6'00" · rec 120"
   - **regular**
     - Box dribbling + passaggio — 2'00" · rec 60" / 2'30" · rec 120" / 3'00" · rec 120" (nota: Bassa intensità)
-- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra**
   - **regular**
     - Tibialis raises — 2× 20 reps · rec 60"
   - **regular**
@@ -4218,7 +4218,7 @@ _
     - Towel Curls — 3'00" · rec 60" / 3'00" · rec 0" (per lato)
   - ** ** _(regular)_
     - Single leg Fascia RDL — 2× 1'30" · rec 30" (per lato)
-- **Giorno 2 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+- **Giorno 2 — Forza Parte Bassa Completa - Palestra**
   - **regular**
     - Tibialis raises — 2× 15 reps · rec 60"
   - **regular**
@@ -4455,7 +4455,7 @@ _
     - Fascia Standing Meditation — 1× 5'00"
   - **regular**
     - Pogo Jumps — 2× 2'00" · rec 60" · cadence 2
-- **Giorno 2 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+- **Giorno 2 — Forza Parte Bassa Completa - Palestra**
   - **regular**
     - Tibialis raises — 2× 15 reps · rec 60"
   - **regular**
@@ -4721,7 +4721,7 @@ _
     - Spinta isometrica al muro laterale esterno — 2× 20" · rec 40" (per lato)
   - **regular**
     - Spinta frontale corsa - skip - fascia — 3× 30" · rec 60"
-- **Giorno 2 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+- **Giorno 2 — Forza Parte Bassa Completa - Palestra**
   - **regular**
     - Tibialis raises — 2× 15 reps · rec 60"
   - **regular**
@@ -5379,7 +5379,7 @@ _
     - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
   - **regular**
     - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
-- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra**
   - **regular**
     - Tibialis raises — 2× 15 reps · rec 60"
   - **regular**
@@ -5605,7 +5605,7 @@ _
     - Palleggi al muro liberi freestyle — 1× 6'00" · rec 60"
   - **regular**
     - Palleggi Freestyle - Tecnica — 1× 6'00" · rec 60"
-- **Giorno 1 — Forza Parte Bassa Completa - Palestra - Sergi Marzo**
+- **Giorno 1 — Forza Parte Bassa Completa - Palestra**
   - **regular**
     - Tibialis raises — 2× 15 reps · rec 60"
   - **regular**

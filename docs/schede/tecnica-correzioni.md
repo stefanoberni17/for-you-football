@@ -8,7 +8,6 @@ Puoi farne anche solo una parte: io riporto nel JSON quello che trovo scritto.
 bilaterale · secondi · video: https://youtu.be/SSezNOH7eP8
 
 Come l'ho scritto io: Davanti a un muro a 3-4 metri, cinesini di colori diversi intorno a te e il telefono appoggiato dove lo vedi, con il video dei segnali che parte insieme all'esercizio. Passaggio al muro; mentre la palla torna alzi la testa e leggi sullo schermo il segnale (colore o numero), poi controlli e giochi come dice il segnale: sul cinesino di quel colore, con il piede indicato, o di nuovo al muro. La testa sale a ogni passaggio, non ogni tanto. Fai il tempo indicato.
-Il mio dubbio: Il video dei segnali da mettere sul telefono sta nella descrizione YouTube, che da qui non riesco a leggere: incollami il link e lo metto in `video_schermo`.
 
 Correzione: 
 
@@ -71,7 +70,7 @@ Correzione:
 ## 10. Thigh and Laces Juggling
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: In piedi, palla a terra: alzala con il piede sulla coscia. Alterna un tocco di coscia e uno di collo con lo stesso lato: coscia, collo, coscia, collo. Coscia parallela a terra al contatto, palla bassa, ginocchio morbido sul tocco di collo. Metà tempo a destra, metà a sinistra.
+Come l'ho scritto io: Palla a terra: alzala con il piede e palleggia di collo. Circa 10 palleggi di collo, poi 10 di coscia, poi di nuovo di collo, e avanti così, con entrambe le gambe. Coscia parallela a terra al contatto, palla bassa, ginocchio morbido sul tocco di collo. Fai il tempo indicato. A piedi nudi, se vuoi, per la sensibilità.
 
 Correzione: 
 
@@ -85,7 +84,7 @@ Correzione:
 ## 12. Free Juggling with High Kick
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: Palleggi liberi, con la superficie che preferisci. Ogni 5-6 tocchi calcia la palla alta, 3-4 metri sopra la testa. Riprendi il palleggio al ritorno con un controllo morbido: il piede accompagna la palla verso il basso, non la colpisce. Fai il tempo indicato.
+Come l'ho scritto io: Palleggi liberi, circa 10, con la superficie che preferisci. Calcia la palla in alto sopra di te, controllala al ritorno e continua a palleggiare senza farla cadere. Per il controllo usa solo il piede: accompagna la palla verso il basso, non colpirla. Fai il tempo indicato. Più alto calci, più è difficile.
 
 Correzione: 
 
@@ -176,7 +175,7 @@ Correzione:
 ## 25. Wall Passes: Inside Control and 180° Turn
 bilaterale · minuti · video: Passaggio controllo di interno e turn 180 - tecnica di base #tutorial #football https://youtube.com/watch?v=Ivh_aOY4Y48
 
-Come l'ho scritto io: Davanti a un muro a 3-4 metri, palla a terra. Passaggio al muro; al ritorno controllo d'interno (primo tocco). Con il secondo tocco, libero (interno, esterno o suola), giri la palla di 180° come per voltarti verso la porta. Torna di fronte al muro con la palla e ripeti. Alterna il piede del controllo.
+Come l'ho scritto io: Davanti a un muro a 3-4 metri, palla a terra. Passaggio al muro; mentre la palla torna, un'occhiata dietro di te (scan), poi controllo d'interno (primo tocco). Con il secondo tocco, libero (di solito l'esterno, ma anche interno o suola), giri la palla di 180° come per voltarti verso la porta. Torna di fronte al muro con la palla e ripeti. Alterna il piede del controllo.
 
 Correzione: 
 
@@ -211,7 +210,7 @@ Correzione:
 ## 30. Wall Passes: Sole Control and Shift
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: Davanti a un muro a 2-3 metri, palla a terra. Passaggio al muro; al ritorno ferma la palla con la suola e spostala di lato con lo stesso piede prima di rigiocare. Alterna i lati e i piedi. Fai il tempo indicato.
+Come l'ho scritto io: Davanti a un muro a 2-3 metri, palla a terra. Passaggio al muro; al ritorno ferma la palla con la suola davanti a te, fai una finta di corpo e spostala di lato con lo stesso piede, poi rigioca al muro. Simula la situazione in cui un avversario arriva in pressione da davanti ma non è ancora abbastanza vicino per saltarlo con il controllo orientato. Alterna i lati e i piedi. Fai il tempo indicato.
 
 Correzione: 
 
@@ -260,14 +259,14 @@ Correzione:
 ## 37. Wall Passes 5-10 m: High and Low
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: A 5-10 metri dal muro, palla a terra. Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria). Controlla il ritorno con un tocco orientato e rigioca. Entrambi i piedi, per il tempo indicato.
+Come l'ho scritto io: A 5-10 metri dal muro, palla a terra: durante l'esercizio ti muovi avanti e indietro per cambiare la distanza. Alterna un passaggio rasoterra e uno alto (palla che torna a mezz'aria), e varia anche la forza del passaggio. Controlla il ritorno con un tocco orientato e rigioca: il focus è il controllo della palla, non il passaggio. Entrambi i piedi, per il tempo indicato.
 
 Correzione: 
 
 ## 38. Wall Passes: 180° Control
 bilaterale · minuti · video: Passaggio e controllo a 180 - tecnica di base calcio #tutorial #football https://youtube.com/watch?v=OMnwTSqZbNY
 
-Come l'ho scritto io: Davanti a un muro a 3-4 metri, palla a terra. Passaggio al muro; al ritorno un controllo che gira la palla di 180° (interno o esterno) e ti porta di spalle al muro. Due tocchi, giro completo e rigioca al muro. Alterna il piede e il verso del giro.
+Come l'ho scritto io: Davanti a un muro a 3-4 metri, palla a terra. Passaggio al muro; al ritorno un controllo che gira la palla di 180°, girandoti su te stesso: d'interno, di esterno, di suola o lasciando scorrere la palla. Giro completo, torna in posizione di fronte al muro e rigioca. Alterna il piede, il verso del giro e il tipo di controllo.
 
 Correzione: 
 
@@ -337,7 +336,7 @@ Correzione:
 ## 48. Shooting Technique
 bilaterale · reps · senza video
 
-Come l'ho scritto io: Palla al limite dell'area, porta libera. Tira in porta controllando solo la tecnica: come colpisci la palla e dove metti il piede d'appoggio, non dove va il tiro. Alterna i tre modi di colpire: tiro a giro d'interno, interno-collo, collo pieno. Caviglia bloccata, ginocchio sopra la palla, busto in avanti. Fai le ripetizioni indicate alternando i piedi.
+Come l'ho scritto io: Porta libera. Parti a 5 metri dalla porta e, dopo le ripetizioni indicate, arretra di 3 metri: 5, 8, 11, 15 metri (il limite dell'area). A ogni distanza tira controllando solo la tecnica: come colpisci la palla, il punto di impatto e dove metti il piede d'appoggio, non dove va il tiro. Alterna i tre modi di colpire: tiro a giro d'interno, interno-collo, collo pieno. Caviglia bloccata, ginocchio sopra la palla, busto in avanti. Fai le ripetizioni indicate a ogni distanza, alternando i piedi.
 
 Correzione: 
 
@@ -345,6 +344,7 @@ Correzione:
 bilaterale · reps · senza video
 
 Come l'ho scritto io: Palla vicino alla bandierina, un bersaglio in area (cinesini o un compagno) sul primo palo, sul secondo palo e in zona dischetto. Muovi la palla in avanti lateralmente all'area con uno o due tocchi, poi esegui il cross in corsa. Alterna il bersaglio: primo palo, secondo palo, zona dischetto. Palla a mezz'altezza, non altissima. Fai le ripetizioni indicate da entrambi i lati, con il piede del lato.
+Il mio dubbio: Su Everfit le istruzioni dicono: palla sul calcio d'angolo, TIRI A GIRO cercando di far entrare la palla in porta senza che tocchi terra; poi dall'incrocio tra area e linea di fondo, poi dall'angolo dell'area; da entrambi i lati, di interno col piede opposto (da sinistra col destro), rientrando verso la porta. La correzione del 15/10 dice invece cross in corsa su primo palo, secondo palo, dischetto. Quale vale? Oppure sono due esercizi?
 
 Correzione: 
 
@@ -352,7 +352,6 @@ Correzione:
 bilaterale · reps · video: https://youtu.be/CPR99KAUm-4?si=alsjAoz5R5j9ESf_
 
 Come l'ho scritto io: Un quadrato di cinesini di colori diversi, lato circa 3 metri, fuori dall'area; un ostacolo basso e una palla tra il quadrato e la porta; il telefono con il video dei segnali dove lo vedi. Al centro del quadrato palleggia; ogni 5 palleggi calcia la palla in alto e guarda lo schermo: in base al colore vai ad attaccare il cinesino corrispondente, torna a prendere la palla e riparti con il palleggio. Dopo 5 ripetizioni prendi la palla, esegui uno slalom tra i cinesini, salta l'ostacolo e calcia in porta. Torna al quadrato e recupera almeno 1 minuto. Una ripetizione = tutta la sequenza. Fai le ripetizioni indicate.
-Il mio dubbio: Serve il link del video dei segnali da mettere sul telefono (è lo stesso del dribbling con visione?).
 
 Correzione: 
 
@@ -366,7 +365,7 @@ Correzione:
 ## 52. Dribbling with Vision and Reaction: Basic
 bilaterale · reps · video: https://youtube.com/watch?v=2mbmxURlV0g?si=6lSWNXdf3RnUKSYD
 
-Come l'ho scritto io: Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali che parte insieme all'esercizio. Conduci tra i cinesini con tocchi corti guardando lo schermo: in base a quello che compare nel video esegui il dribbling oppure fermati. Testa su tra un tocco e l'altro: la palla si sente con il piede, lo schermo si guarda. Fai le ripetizioni indicate.
+Come l'ho scritto io: Tre cinesini a triangolo, a 5 metri dal punto di partenza; il telefono appoggiato sul vertice del triangolo con il video dei segnali, che parte insieme all'esercizio. Parti in conduzione verso il triangolo guardando lo schermo: freccia a destra o a sinistra = dribbling da quel lato; triangolo di stop = fermati sul posto dentro al triangolo e fai delle finte finché non compare la freccia. Testa su tra un tocco e l'altro: la palla si sente con il piede, lo schermo si guarda. Torna al via e ripeti. Fai le ripetizioni indicate.
 
 Correzione: 
 
@@ -387,6 +386,6 @@ Correzione:
 ## 55. Dribbling with Vision and Reaction: Advanced
 bilaterale · reps · video: https://youtube.com/watch?v=2mbmxURlV0g?si=6lSWNXdf3RnUKSYD
 
-Come l'ho scritto io: Cinesini a 1-2 metri l'uno dall'altro, palla al piede, il telefono appoggiato di fronte ai cinesini con il video dei segnali della versione avanzata, che parte insieme all'esercizio. Conduci tra i cinesini con tocchi corti guardando lo schermo: i segnali arrivano più in fretta e senza preavviso; in base a quello che compare esegui il dribbling oppure fermati. Reagisci con il primo tocco utile, senza fermare la palla; testa su tra i tocchi. Fai le ripetizioni indicate, con il piede debole dove indicato.
+Come l'ho scritto io: Tre cinesini a triangolo, a 5 metri dal punto di partenza; il telefono appoggiato sul vertice del triangolo con il video dei segnali della versione avanzata, che parte insieme all'esercizio. Parti in conduzione verso il triangolo guardando lo schermo: freccia a destra o a sinistra = dribbling da quel lato; triangolo di stop = fermati dentro al triangolo e fai delle finte finché non compare la freccia. I segnali arrivano più in fretta e senza preavviso. Reagisci con il primo tocco utile, senza fermare la palla; testa su tra i tocchi. Torna al via e ripeti. Fai le ripetizioni indicate, con il piede debole dove indicato.
 
 Correzione: 

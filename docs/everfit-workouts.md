@@ -1302,7 +1302,7 @@ _Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione 
 - **regular**
   - Glute bridge ad una gamba — 3× 30" · rec 60" (per lato)
 
-## Forza Parte Bassa Completa - Palestra - Sergi Marzo
+## Forza Parte Bassa Completa - Palestra
 _Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione ed esercizi funzionali_
 - **regular**
   - Tibialis raises — 2× 15 reps · rec 60"
@@ -1321,7 +1321,7 @@ _Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione 
 - **regular**
   - Toes to Bar — 1× 12 reps · rec 60"
 
-## Forza Parte Bassa Completa - Palestra - Sergi Marzo
+## Forza Parte Bassa Completa - Palestra
 _Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione ed esercizi funzionali_
 - **regular**
   - Tibialis raises — 2× 15 reps · rec 60"
@@ -1340,7 +1340,7 @@ _Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione 
 - **regular**
   - Toes to Bar — 1× 12 reps · rec 60"
 
-## Forza Parte Bassa Completa - Palestra - Sergi Marzo
+## Forza Parte Bassa Completa - Palestra
 _Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione ed esercizi funzionali_
 - **regular**
   - Tibialis raises — 2× 15 reps · rec 60"

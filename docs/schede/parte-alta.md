@@ -1,9 +1,9 @@
 # Schede esercizi: Forza parte alta
 
-Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 45 schede su 45 esercizi attivi del gruppo.
+Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 46 schede su 46 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## forza-parte-alta (45)
+## forza-parte-alta (46)
 
 ### Knee Raises on Dip Bars
 `fpa-knee-raises-con-barra-dip` · bilaterale · reps · sbarra · senza video
@@ -109,9 +109,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Piedi più larghi delle spalle, kettlebell con due mani, schiena neutra.
-2. Porta il kettlebell tra le gambe e spingi con le anche: lo swing sale fino al petto.
-3. In cima tira i gomiti indietro e in alto, portando il kettlebell vicino al petto, poi lascialo tornare nello swing.
-4. Fai le ripetizioni indicate con ritmo continuo.
+2. Porta il kettlebell tra le gambe e spingi con le anche: lo swing sale vicino al corpo.
+3. In cima tira i gomiti indietro e in alto portando il kettlebell vicino al petto, e nella fase finale spingi con gli avampiedi per salire ancora un po'.
+4. Lascialo tornare nello swing. Fai le ripetizioni indicate con ritmo continuo.
 
 **Errori comuni:** Spingere con le braccia invece che con le anche. Schiena che si curva nel passaggio tra le gambe. Spalle che salgono verso le orecchie.
 **Più facile:** Solo lo swing, senza la tirata.
@@ -178,10 +178,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fpa-pull-up-around-the-world` · per lato · reps · sbarra · [video](https://www.youtube.com/watch?v=9YZqQFtfcKo)
 
 **Esecuzione**
-1. Appeso alla sbarra con presa larga, spalle attive.
-2. Tira verso una mano fino al mento sopra la sbarra, poi spostati lungo la sbarra verso l'altra mano restando in alto.
-3. Scendi in controllo dall'altro lato: il percorso disegna un cerchio.
-4. Fai le ripetizioni indicate (un cerchio = una ripetizione), poi inverti il senso.
+1. Appeso alla sbarra con presa larga, ben oltre le spalle, spalle attive.
+2. Invece di tirarti su dritto, contrai i dorsali e sali verso una mano, poi spostati lungo la sbarra verso il centro: il mento incontra la sbarra nel punto più alto.
+3. Continua il cerchio scendendo in controllo dall'altro lato fino alle braccia distese.
+4. Un cerchio = una ripetizione. Una serie in senso orario e la successiva in senso antiorario.
 
 **Errori comuni:** Scendere a metà percorso invece di restare alto. Slancio con le gambe. Spalle che salgono verso le orecchie.
 **Più facile:** Trazioni ad arciere.
@@ -334,15 +334,15 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fpa-one-arm-push-up-incline` · per lato · reps · corpo libero · senza video
 
 **Esecuzione**
-1. Mano d'appoggio su una panca o un gradino, piedi larghi, mano libera dietro la schiena, corpo rigido.
-2. Scendi in controllo piegando il gomito vicino al corpo, busto che non ruota.
-3. Spingi fino al braccio disteso.
+1. Piedi su un rialzo (panca, gradino) e mano d'appoggio a terra: il corpo è in obliquo con la testa più in basso, quindi il carico sul braccio è maggiore del piegamento a terra.
+2. Piedi larghi, mano libera dietro la schiena, corpo rigido dalla testa ai talloni.
+3. Scendi in controllo piegando il gomito vicino al corpo, busto che non ruota, poi spingi fino al braccio disteso.
 4. Fai le ripetizioni indicate, poi cambia braccio.
 
 **Errori comuni:** Busto che ruota verso l'alto. Bacino che cede o che sale: il corpo resta in linea. Gomito che si apre di lato.
-**Più facile:** Rialzo più alto, piedi più larghi.
-**Più difficile:** Rialzo più basso, fino a terra.
-**Sicurezza:** Rialzo stabile. Fastidio al polso o al gomito: fermati.
+**Più facile:** Rialzo più basso, fino ai piedi a terra (One-Arm Push-Up).
+**Più difficile:** Rialzo più alto, o discesa in 3 secondi.
+**Sicurezza:** Solo dopo il piegamento a un braccio a terra pulito. Fastidio al polso o al gomito: fermati.
 
 ### One-Arm Push-Up (Basic)
 `fpa-one-arm-pushup` · per lato · reps · corpo libero · senza video
@@ -637,3 +637,17 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Piedi più vicini, o ginocchia piegate. Con la sbarra: sbarra più alta.
 **Più difficile:** Piedi su un rialzo, o pausa di 2 secondi in alto. Con la sbarra: sbarra più bassa.
 **Sicurezza:** Tavolo stabile e pesante, o sbarra ben fissata: prova la tenuta prima di iniziare.
+
+### One-Arm Decline Push-Up
+`fpa-one-arm-push-up-decline` · per lato · reps · corpo libero · senza video
+
+**Esecuzione**
+1. Mano d'appoggio su un rialzo di 60-80 cm (panca, gradino, muretto) e piedi a terra: il rialzo sotto la mano riduce il carico, è il passo prima del piegamento a un braccio a terra.
+2. Piedi larghi, mano sotto la spalla, l'altro braccio dietro la schiena. Corpo rigido dalla testa ai talloni, addome attivo.
+3. Scendi in controllo fino a sfiorare il rialzo con il petto, senza ruotare il busto, poi spingi fino al braccio disteso. Spalla lontana dall'orecchio.
+4. Alterna: una ripetizione a destra, una a sinistra. Quando escono pulite, abbassa il rialzo.
+
+**Errori comuni:** Busto che ruota verso l'alto. Bacino che cede o che sale: il corpo resta in linea. Rialzo troppo basso troppo presto: si scende un gradino alla volta.
+**Più facile:** Rialzo più alto, piedi più larghi.
+**Più difficile:** Rialzo più basso, fino a terra (One-Arm Push-Up).
+**Sicurezza:** Rialzo stabile. Fastidio al polso o al gomito: fermati.

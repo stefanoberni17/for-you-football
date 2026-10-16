@@ -1,0 +1,4942 @@
+[
+ {
+  "everfit_id": "665c2691162f3b00253fedfa",
+  "titolo": "Fartlek A1b",
+  "descrizione": "Fartlek:\n4' 1/1\n6' 40/40\n5' 30/30\n4' 15/15\n4' x 2",
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "1/1",
+    "esercizi": [
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "180",
+        "duration": "60"
+       }
+      ],
+      "nota": "Fartlek 1/1"
+     },
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "40",
+        "duration": "40"
+       },
+       {
+        "rest": "40",
+        "duration": "40"
+       },
+       {
+        "rest": "40",
+        "duration": "40"
+       },
+       {
+        "rest": "180",
+        "duration": "40"
+       }
+      ],
+      "nota": "Fartlek 40/40"
+     },
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "30"
+       },
+       {
+        "rest": "30",
+        "duration": "30"
+       },
+       {
+        "rest": "30",
+        "duration": "30"
+       },
+       {
+        "rest": "30",
+        "duration": "30"
+       },
+       {
+        "rest": "180",
+        "duration": "30"
+       }
+      ]
+     },
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "180",
+        "duration": "15"
+       }
+      ]
+     },
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "240",
+        "duration": "240"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "669ce87aeb5ead0026125f54",
+  "titolo": "Fartlek B1",
+  "descrizione": "Fartlek:\n4' 1/1\n6' 40/40\n5' 30/30\n4' 15/15\n4' x 2",
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "1/1",
+    "esercizi": [
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "180",
+        "duration": "60"
+       }
+      ],
+      "nota": "Fartlek 1/1"
+     },
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "40",
+        "duration": "40"
+       },
+       {
+        "rest": "40",
+        "duration": "40"
+       },
+       {
+        "rest": "40",
+        "duration": "40"
+       },
+       {
+        "rest": "180",
+        "duration": "40"
+       }
+      ],
+      "nota": "Fartlek 40/40"
+     },
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "30"
+       },
+       {
+        "rest": "30",
+        "duration": "30"
+       },
+       {
+        "rest": "30",
+        "duration": "30"
+       },
+       {
+        "rest": "180",
+        "duration": "30"
+       }
+      ]
+     },
+     {
+      "esercizio": "Fartlek",
+      "serie": [
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "15",
+        "duration": "15"
+       },
+       {
+        "rest": "180",
+        "duration": "15"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "669d1b35baea0e002585154d",
+  "titolo": "Fascia e tecnica Funzionale A1 (short)",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Protezione palla figura 8 - fascia",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=Ev-KPrVbsPA?si=tF0zxNeLgLc0Eqy1"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Protezione palla schiena - fascia",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=fjhKOlmaYhM?si=tWoZPtPeMCInFzTu"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Protezione palla laterale suola - fascia",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=XdDmJ6p3qfE"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Spinta laterale suola - protezione palla - fascia",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9HcNXIItrps?si=xU-NdxHMAh1wBAeG"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Spinta laterale e finta - protezione palla - fascia",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=nnSMkB7saNY?si=8Mg8VGvWQ4icDV8R"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Protezione palla laterale - palleggi - fascia",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=K55Sm0yGxME?si=m9CBgVvShKA_T1Gk"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a9eb8c84c41758c849729ad",
+  "titolo": "Forza full body HIIT corpo libero - B3 +",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza full body HIIT 5min - corpo libero - B3",
+    "esercizi": [
+     {
+      "esercizio": "Piegamenti Hindu",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share"
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Arm Climb (High to Forearm Plank)",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Cross Body Mountain Climbers",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza full body HIIT 5min - corpo libero - B3",
+    "esercizi": [
+     {
+      "esercizio": "Piegamenti Hindu",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share"
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Arm Climb (High to Forearm Plank)",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Cross Body Mountain Climbers",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza full body HIIT 5min - corpo libero - B3 SHORT",
+    "esercizi": [
+     {
+      "esercizio": "Piegamenti Hindu",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share"
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Arm Climb (High to Forearm Plank)",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Cross Body Mountain Climbers",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza full body HIIT 5min - corpo libero - B3 SHORT",
+    "esercizi": [
+     {
+      "esercizio": "Piegamenti Hindu",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share"
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Arm Climb (High to Forearm Plank)",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     },
+     {
+      "esercizio": "Side Jackknife",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ],
+      "video": "https://youtu.be/X66Xz-ltSyU"
+     },
+     {
+      "esercizio": "Cross Body Mountain Climbers",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "40"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a5d050b568dbeb4b9207fca",
+  "titolo": "Forza max parte bassa PRO1B",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "single leg rdl",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "6",
+        "weight": "20"
+       },
+       {
+        "rest": "90",
+        "reps": "4",
+        "weight": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=Do1KR00uAqc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "nordic hamstring",
+      "serie": [
+       {
+        "rest": "150",
+        "reps": "3"
+       },
+       {
+        "rest": "150",
+        "reps": "3"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=Wx_d0y8iGxM?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Barbell Deadlift",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "6",
+        "weight": "80"
+       },
+       {
+        "rest": "180",
+        "reps": "3",
+        "weight": "120"
+       },
+       {
+        "rest": "180",
+        "reps": "1",
+        "weight": "150"
+       },
+       {
+        "rest": "180",
+        "reps": "3",
+        "weight": "120"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Drop Jump",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "4"
+       },
+       {
+        "rest": "120",
+        "reps": "4"
+       },
+       {
+        "rest": "120",
+        "reps": "4"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=rwYPvd_iVDk"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "FY Split Squat",
+      "serie": [
+       {
+        "rest": "150",
+        "reps": "6",
+        "weight": "100"
+       },
+       {
+        "rest": "150",
+        "reps": "4",
+        "weight": "120"
+       },
+       {
+        "rest": "150",
+        "reps": "2",
+        "weight": "130"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=7G-7pvahAoM?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6845ba22d43dffc0b6077895",
+  "titolo": "Forza Parte alta B4",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Archer Push Up",
+      "serie": [
+       {
+        "rest": "150",
+        "reps": "12"
+       },
+       {
+        "rest": "150",
+        "reps": "12"
+       },
+       {
+        "rest": "150",
+        "reps": "12"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtu.be/Wbgwx1lpYfo"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Bicycle Crunch Straight Leg",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "25"
+       },
+       {
+        "rest": "60",
+        "reps": "25"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Pull Up Around The World",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "5"
+       },
+       {
+        "rest": "120",
+        "reps": "5"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=9YZqQFtfcKo"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Piegamenti Hindu",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "10"
+       },
+       {
+        "rest": "120",
+        "reps": "10"
+       },
+       {
+        "rest": "120",
+        "reps": "10"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "hollow hold",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "100"
+       },
+       {
+        "rest": "60",
+        "duration": "100"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=zTiwvx20mYc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Chin-Up",
+      "serie": [
+       {
+        "rest": "150",
+        "reps": "12"
+       },
+       {
+        "rest": "150",
+        "reps": "12"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Test Max push up",
+      "serie": [
+       {
+        "rest": "120"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Plank Climb",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6aa99c46156037bc914f1e9b",
+  "titolo": "Forza Parte Alta EMOM B5",
+  "descrizione": "EMOM 16': ogni minuto parte un esercizio. Negli esercizi a ripetizioni fai le 2 ripetizioni pulite (alternando destra e sinistra dove indicato) e il resto del minuto è recupero; la crow pose è una tenuta di 30 secondi con 30 di recupero. 4 giri.",
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza Parte Alta EMOM B5",
+    "esercizi": [
+     {
+      "esercizio": "One Arm Push Up Decline",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "Mani sul rialzo, piedi a terra. 4 ripetizioni pulite alternando destra e sinistra, poi fermo fino alla fine del minuto."
+     },
+     {
+      "esercizio": "Body Weight Pistol Squat",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "4 ripetizioni alternando le gambe, poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=sCTHnqLXepk"
+     },
+     {
+      "esercizio": "Eccentric Handstand Push Up",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "2"
+       }
+      ],
+      "nota": "2 discese lente (4-5 secondi), poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=yVNHVnhyjF0"
+     },
+     {
+      "esercizio": "Crow Pose Progression",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "30"
+       }
+      ],
+      "nota": "Tenuta di 30 secondi, poi 30 di recupero.",
+      "video": "https://youtube.com/watch?v=ckQ2c9TSbc4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza Parte Alta EMOM B5",
+    "esercizi": [
+     {
+      "esercizio": "One Arm Push Up Decline",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "Mani sul rialzo, piedi a terra. 4 ripetizioni pulite alternando destra e sinistra, poi fermo fino alla fine del minuto."
+     },
+     {
+      "esercizio": "Body Weight Pistol Squat",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "4 ripetizioni alternando le gambe, poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=sCTHnqLXepk"
+     },
+     {
+      "esercizio": "Eccentric Handstand Push Up",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "2"
+       }
+      ],
+      "nota": "2 discese lente (4-5 secondi), poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=yVNHVnhyjF0"
+     },
+     {
+      "esercizio": "Crow Pose Progression",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "30"
+       }
+      ],
+      "nota": "Tenuta di 30 secondi, poi 30 di recupero.",
+      "video": "https://youtube.com/watch?v=ckQ2c9TSbc4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza Parte Alta EMOM B5",
+    "esercizi": [
+     {
+      "esercizio": "One Arm Push Up Decline",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "Mani sul rialzo, piedi a terra. 4 ripetizioni pulite alternando destra e sinistra, poi fermo fino alla fine del minuto."
+     },
+     {
+      "esercizio": "Body Weight Pistol Squat",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "4 ripetizioni alternando le gambe, poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=sCTHnqLXepk"
+     },
+     {
+      "esercizio": "Eccentric Handstand Push Up",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "2"
+       }
+      ],
+      "nota": "2 discese lente (4-5 secondi), poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=yVNHVnhyjF0"
+     },
+     {
+      "esercizio": "Crow Pose Progression",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "30"
+       }
+      ],
+      "nota": "Tenuta di 30 secondi, poi 30 di recupero.",
+      "video": "https://youtube.com/watch?v=ckQ2c9TSbc4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza Parte Alta EMOM B5",
+    "esercizi": [
+     {
+      "esercizio": "One Arm Push Up Decline",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "Mani sul rialzo, piedi a terra. 4 ripetizioni pulite alternando destra e sinistra, poi fermo fino alla fine del minuto."
+     },
+     {
+      "esercizio": "Body Weight Pistol Squat",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "4 ripetizioni alternando le gambe, poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=sCTHnqLXepk"
+     },
+     {
+      "esercizio": "Eccentric Handstand Push Up",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "2"
+       }
+      ],
+      "nota": "2 discese lente (4-5 secondi), poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=yVNHVnhyjF0"
+     },
+     {
+      "esercizio": "Crow Pose Progression",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "30"
+       }
+      ],
+      "nota": "Tenuta di 30 secondi, poi 30 di recupero.",
+      "video": "https://youtube.com/watch?v=ckQ2c9TSbc4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Forza Parte Alta EMOM B5",
+    "esercizi": [
+     {
+      "esercizio": "One Arm Push Up Decline",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "Mani sul rialzo, piedi a terra. 4 ripetizioni pulite alternando destra e sinistra, poi fermo fino alla fine del minuto."
+     },
+     {
+      "esercizio": "Body Weight Pistol Squat",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "4"
+       }
+      ],
+      "nota": "4 ripetizioni alternando le gambe, poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=sCTHnqLXepk"
+     },
+     {
+      "esercizio": "Eccentric Handstand Push Up",
+      "serie": [
+       {
+        "rest": "0",
+        "duration": "60",
+        "reps": "2"
+       }
+      ],
+      "nota": "2 discese lente (4-5 secondi), poi fermo fino alla fine del minuto.",
+      "video": "https://www.youtube.com/watch?v=yVNHVnhyjF0"
+     },
+     {
+      "esercizio": "Crow Pose Progression",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "30"
+       }
+      ],
+      "nota": "Tenuta di 30 secondi, poi 30 di recupero.",
+      "video": "https://youtube.com/watch?v=ckQ2c9TSbc4?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "68f231c824ab8648ab2d158a",
+  "titolo": "Forza parte alta Pro A3 - in season",
+  "descrizione": "Allenamento Forza massima parte Alta PRO",
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Crow Pose Progression",
+      "serie": [
+       {
+        "rest": "180",
+        "reps": "5"
+       },
+       {
+        "rest": "180",
+        "reps": "5"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=ckQ2c9TSbc4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "One Arm Push Up Incline",
+      "serie": [
+       {
+        "rest": "150",
+        "reps": "8",
+        "weight": "10"
+       },
+       {
+        "rest": "150",
+        "reps": "8",
+        "weight": "10"
+       }
+      ],
+      "per_lato": true
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Muscle Up",
+      "serie": [
+       {
+        "rest": "180",
+        "reps": "3",
+        "weight": "10"
+       }
+      ],
+      "nota": "piu diminuisce il peso, più cerca di essere veloce nel movimento",
+      "video": "https://www.youtube.com/watch?v=21mAbr_o1p8"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Weighted Dips (From Bars)",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "8",
+        "weight": "20"
+       },
+       {
+        "rest": "120",
+        "reps": "8",
+        "weight": "20"
+       }
+      ],
+      "nota": "piu diminuisce il peso, più cerca di essere veloce nel movimento",
+      "video": "https://www.youtube.com/watch?v=qEmCuapE3M0"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Cable Reverse Crunch",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "10",
+        "weight": "25"
+       },
+       {
+        "rest": "90",
+        "reps": "20",
+        "weight": "15"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Hanging Oblique Knee Raise",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=eAmP-e59Xo4"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Medicine Ball Lateral Throw",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "8",
+        "weight": "5"
+       },
+       {
+        "rest": "60",
+        "reps": "8",
+        "weight": "5"
+       },
+       {
+        "rest": "60",
+        "reps": "8",
+        "weight": "5"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtu.be/iL5osFN8-JI?feature=shared"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Plank Jumps Fascia",
+      "serie": [
+       {
+        "rest": "40",
+        "duration": "20"
+       },
+       {
+        "rest": "40",
+        "duration": "20"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=FPZkcfY-2Yo?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Plank torsione elastica fascia",
+      "serie": [
+       {
+        "rest": "40",
+        "duration": "20"
+       },
+       {
+        "rest": "40",
+        "duration": "20"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=itq-E8EcZEQ?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a6f3e7f5453e0358292463f",
+  "titolo": "Forza Parte alta Push B1",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Push-Up",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "20"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Barbell Bench Press",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "4",
+        "weight": "30"
+       },
+       {
+        "rest": "80",
+        "reps": "2",
+        "weight": "35"
+       },
+       {
+        "rest": "80",
+        "reps": "6",
+        "weight": "25"
+       },
+       {
+        "rest": "80",
+        "reps": "8",
+        "weight": "20"
+       },
+       {
+        "rest": "180",
+        "reps": "12",
+        "weight": "15"
+       }
+      ],
+      "nota": "imposta il peso per arrivare alle ripetizioni"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "cuban press",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10",
+        "weight": "6"
+       },
+       {
+        "rest": "60",
+        "reps": "10",
+        "weight": "6"
+       },
+       {
+        "rest": "120",
+        "reps": "10",
+        "weight": "6"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=OeD5pWAeRFo?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Dips - Chest Version",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "6"
+       },
+       {
+        "rest": "120",
+        "reps": "6"
+       },
+       {
+        "rest": "120",
+        "reps": "6"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Isometric Bear Crawl",
+      "serie": [
+       {
+        "rest": "45",
+        "duration": "60"
+       },
+       {
+        "rest": "45",
+        "duration": "60"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Bear Crawl Linear",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Bear Crawl Lateral",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a9eb8cc4c41758c84972d7c",
+  "titolo": "Forza Parte alta Push corpo libero B3 +",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Cross Body Mountain Climbers",
+      "serie": [
+       {
+        "rest": "20"
+       },
+       {
+        "rest": "20"
+       },
+       {
+        "rest": "20"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Alternating 2 Point Plank",
+      "serie": [
+       {
+        "rest": "30"
+       },
+       {
+        "rest": "30"
+       },
+       {
+        "rest": "45"
+       }
+      ],
+      "video": "https://youtu.be/XjzBtCcPZeY"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Bear Crawl Linear",
+      "serie": [
+       {
+        "rest": "30",
+        "reps": "14"
+       },
+       {
+        "rest": "30",
+        "reps": "14"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Bear Crawl Lateral",
+      "serie": [
+       {
+        "rest": "30",
+        "reps": "14"
+       },
+       {
+        "rest": "45",
+        "reps": "14"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Push-Up",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "22"
+       },
+       {
+        "rest": "60",
+        "reps": "22"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Full Moon Abs",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "18"
+       },
+       {
+        "rest": "60",
+        "reps": "18"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Piegamenti Hindu",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "14"
+       },
+       {
+        "rest": "60",
+        "reps": "14"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a9d9f2203e95f8f55d88386",
+  "titolo": "Forza Parte alta Push P2 - corpo libero",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Push-Up",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "22"
+       },
+       {
+        "rest": "60",
+        "reps": "22"
+       },
+       {
+        "rest": "60",
+        "reps": "22"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Piegamenti Hindu",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "9"
+       },
+       {
+        "rest": "60",
+        "reps": "9"
+       },
+       {
+        "rest": "60",
+        "reps": "9"
+       }
+      ],
+      "nota": "se non riesci ad arrivare alle ripetizioni, fai quelle che riesci",
+      "video": "https://youtube.com/watch?v=S5JwmhB-rHc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "cuban press",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10",
+        "weight": "4"
+       },
+       {
+        "rest": "60",
+        "reps": "10",
+        "weight": "4"
+       },
+       {
+        "rest": "120",
+        "reps": "10",
+        "weight": "4"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=OeD5pWAeRFo?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Dips - Chest Version",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "5"
+       },
+       {
+        "rest": "120",
+        "reps": "5"
+       },
+       {
+        "rest": "120",
+        "reps": "5"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Isometric Bear Crawl",
+      "serie": [
+       {
+        "rest": "45",
+        "duration": "70"
+       },
+       {
+        "rest": "45",
+        "duration": "70"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "piegamenti plyo",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "12"
+       },
+       {
+        "rest": "60",
+        "reps": "12"
+       },
+       {
+        "rest": "60",
+        "reps": "12"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=C-c4opf8G3w?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Bear Crawl Linear",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Bear Crawl Lateral",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a94875dbe6cc81c2fbc98ad",
+  "titolo": "Forza Parte Bassa B3",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Wall sit",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=EuGsglumupM?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Fascia Iso Lounge Runner",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=nvENLHoWSR4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Tibialis raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "20"
+       },
+       {
+        "rest": "60",
+        "reps": "20"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=P4H0NE-HCsE?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Calf raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "25"
+       },
+       {
+        "rest": "60",
+        "reps": "25"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=De9Dl-RHKD0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "copenaghen plank",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Glute bridge ad una gamba",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=FQPEqDy8IBI?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "atg split squat",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "6"
+       },
+       {
+        "rest": "60",
+        "reps": "6"
+       }
+      ],
+      "per_lato": true,
+      "nota": "a corpo libero movimento controllato",
+      "video": "https://youtube.com/watch?v=a0iGmxKW4_0?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a9d9f1fc53cbbdf56da0547",
+  "titolo": "Forza Parte Bassa B4",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Wall sit",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "70"
+       },
+       {
+        "rest": "60",
+        "duration": "70"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=EuGsglumupM?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Fascia Iso Lounge Runner",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "70"
+       },
+       {
+        "rest": "60",
+        "duration": "70"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=nvENLHoWSR4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Tibialis raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "22"
+       },
+       {
+        "rest": "60",
+        "reps": "22"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=P4H0NE-HCsE?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Calf raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "28"
+       },
+       {
+        "rest": "60",
+        "reps": "28"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=De9Dl-RHKD0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "copenaghen plank",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "35"
+       },
+       {
+        "rest": "60",
+        "duration": "35"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Glute bridge ad una gamba",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "35"
+       },
+       {
+        "rest": "60",
+        "duration": "35"
+       },
+       {
+        "rest": "60",
+        "duration": "35"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=FQPEqDy8IBI?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "atg split squat",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "8"
+       },
+       {
+        "rest": "60",
+        "reps": "8"
+       }
+      ],
+      "per_lato": true,
+      "nota": "a corpo libero movimento controllato",
+      "video": "https://youtube.com/watch?v=a0iGmxKW4_0?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a3418aee9d84c0795094737",
+  "titolo": "Forza Parte Bassa Completa - Offseason PRO1",
+  "descrizione": "Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione ed esercizi funzionali",
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Tibialis raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "15"
+       },
+       {
+        "rest": "60",
+        "reps": "15"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=P4H0NE-HCsE?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Calf raises",
+      "serie": [
+       {
+        "rest": "30",
+        "reps": "20"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=De9Dl-RHKD0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "atg split squat",
+      "serie": [
+       {
+        "reps": "5"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=a0iGmxKW4_0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Barbell Squat",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "85"
+       },
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "80"
+       },
+       {
+        "rest": "120",
+        "reps": "6",
+        "weight": "75"
+       }
+      ],
+      "nota": "Esegui lo squat con i talloni leggermente sollevati"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Kettlebell swing",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "12",
+        "weight": "28"
+       },
+       {
+        "rest": "90",
+        "reps": "12",
+        "weight": "28"
+       },
+       {
+        "rest": "90",
+        "reps": "12",
+        "weight": "28"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=E87gS0QjGOw?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "nordic hamstring",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "3"
+       },
+       {
+        "rest": "120",
+        "reps": "3",
+        "weight": "5"
+       },
+       {
+        "rest": "120",
+        "reps": "3"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=Wx_d0y8iGxM?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "copenaghen plank",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "60"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Toes to Bar",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "12"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=jMUJ1KTZIeE&ab_channel=TestosteroneNation"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "66536a0626b6740026c9bb30",
+  "titolo": "Forza Parte Bassa Completa - Palestra",
+  "descrizione": "Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione ed esercizi funzionali",
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Tibialis raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "15"
+       },
+       {
+        "rest": "60",
+        "reps": "15"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=P4H0NE-HCsE?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Calf raises",
+      "serie": [
+       {
+        "rest": "30",
+        "reps": "20"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=De9Dl-RHKD0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "atg split squat",
+      "serie": [
+       {
+        "reps": "5"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=a0iGmxKW4_0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Barbell Squat",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "85"
+       },
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "80"
+       },
+       {
+        "rest": "120",
+        "reps": "6",
+        "weight": "75"
+       }
+      ],
+      "nota": "Esegui lo squat con i talloni leggermente sollevati"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Kettlebell swing",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "15",
+        "weight": "20"
+       },
+       {
+        "rest": "90",
+        "reps": "13",
+        "weight": "24"
+       },
+       {
+        "rest": "90",
+        "reps": "10",
+        "weight": "28"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=E87gS0QjGOw?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "nordic hamstring",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "5"
+       },
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "5"
+       },
+       {
+        "rest": "120",
+        "reps": "5"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=Wx_d0y8iGxM?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "copenaghen plank",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "60"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Toes to Bar",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "12"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=jMUJ1KTZIeE&ab_channel=TestosteroneNation"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "68f250d28fa7ea3cd74db5ba",
+  "titolo": "Forza Parte Bassa Completa - Palestra in season",
+  "descrizione": "Forza per tutte le parti del corpo della parte bassa, focus forza, prevenzione ed esercizi funzionali",
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "atg split squat",
+      "serie": [
+       {
+        "reps": "5"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=a0iGmxKW4_0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Barbell Squat",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "85"
+       },
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "80"
+       },
+       {
+        "rest": "120",
+        "reps": "5",
+        "weight": "80"
+       }
+      ],
+      "nota": "Esegui lo squat con i talloni leggermente sollevati"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Kettlebell swing",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "15",
+        "weight": "20"
+       },
+       {
+        "rest": "90",
+        "reps": "13",
+        "weight": "24"
+       },
+       {
+        "rest": "90",
+        "reps": "10",
+        "weight": "28"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=E87gS0QjGOw?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "nordic hamstring",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "3"
+       },
+       {
+        "rest": "120",
+        "reps": "3"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=Wx_d0y8iGxM?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "copenaghen plank",
+      "serie": [
+       {
+        "rest": "30",
+        "duration": "60"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Rapidità Ankle Stiffness - Test",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "20"
+       },
+       {
+        "rest": "60",
+        "duration": "20"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=YAF8Zi6HLi8?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Kneeling Jump to Broad Jump",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "3"
+       },
+       {
+        "rest": "60",
+        "reps": "3"
+       }
+      ],
+      "video": "https://youtu.be/rcWU-9wtkEo"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "690af21e0ed01c47cf187945",
+  "titolo": "Forza Parte Bassa P1",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Wall sit",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=EuGsglumupM?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Fascia Iso Lounge Runner",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=nvENLHoWSR4?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Tibialis raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "20"
+       },
+       {
+        "rest": "60",
+        "reps": "20"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=P4H0NE-HCsE?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Leg Press",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "10",
+        "weight": "80"
+       },
+       {
+        "rest": "90",
+        "reps": "10",
+        "weight": "80"
+       },
+       {
+        "rest": "90",
+        "reps": "10",
+        "weight": "80"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Calf raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "12"
+       },
+       {
+        "rest": "60",
+        "reps": "12"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=De9Dl-RHKD0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "copenaghen plank",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Glute bridge ad una gamba",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       },
+       {
+        "rest": "60",
+        "duration": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=FQPEqDy8IBI?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "68f23098e95e1fc7c8695e7d",
+  "titolo": "Forza Prevenzione A1 - in season",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Tibialis raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "30",
+        "weight": "5"
+       },
+       {
+        "rest": "60",
+        "reps": "30",
+        "weight": "5"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=P4H0NE-HCsE?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Calf raises",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "25",
+        "weight": "5"
+       },
+       {
+        "rest": "60",
+        "reps": "20",
+        "weight": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "30"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=De9Dl-RHKD0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "atg split squat",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "10",
+        "weight": "20"
+       },
+       {
+        "rest": "120",
+        "reps": "10",
+        "weight": "20"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=a0iGmxKW4_0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "sissy squat",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "8"
+       },
+       {
+        "rest": "60",
+        "reps": "8"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=Cu2THH1IQDA"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "FY Squat",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "6",
+        "weight": "60"
+       },
+       {
+        "rest": "120",
+        "reps": "6",
+        "weight": "60"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Kettlebell swing",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "16",
+        "weight": "20"
+       },
+       {
+        "rest": "120",
+        "reps": "16",
+        "weight": "20"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=E87gS0QjGOw?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Fascia Bridge Bounces",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "20"
+       },
+       {
+        "rest": "60",
+        "reps": "20"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=v4c7YJR85D0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "copenaghen plank",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "90"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=9pLQwT8RuUc?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a341970e6544d963599f138",
+  "titolo": "pliometria A1 - Short",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Drop Jump",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "4"
+       },
+       {
+        "rest": "90",
+        "reps": "4"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=rwYPvd_iVDk"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Reverse drop jumps",
+      "serie": [
+       {
+        "rest": "120",
+        "reps": "20"
+       },
+       {
+        "rest": "120",
+        "reps": "20"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=Mb_vKJ2ODCU"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single Leg Drop e spinta laterale",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "2"
+       },
+       {
+        "rest": "90",
+        "reps": "2"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=DB8HS4sJP-Y"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single leg drop e spinta interna",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "2"
+       },
+       {
+        "rest": "90",
+        "reps": "2"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=CLJr7cgOp60"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single leg lateral drop jump",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "10"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=-b3h-iylZ1s"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "single leg Reverse lateral drop progression",
+      "serie": [
+       {
+        "rest": "45",
+        "reps": "1"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=NqUjlWxJYdE"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a9d9f2203e95f8f55d88387",
+  "titolo": "Pliometria B1 +",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Pogo Jumps",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=rleHrcL6teA?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Fascia Toe Bounces Single Leg - Pogo Jumps",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=V5SVWUH1_50?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Drop Jump",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "4"
+       },
+       {
+        "rest": "90",
+        "reps": "4"
+       },
+       {
+        "rest": "90",
+        "reps": "4"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=rwYPvd_iVDk"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Reverse drop jumps",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "14"
+       },
+       {
+        "rest": "90",
+        "reps": "14"
+       },
+       {
+        "rest": "90",
+        "reps": "14"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=Mb_vKJ2ODCU"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single Leg Drop e spinta laterale",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "2"
+       },
+       {
+        "rest": "60",
+        "reps": "2"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=DB8HS4sJP-Y"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single leg lateral drop jump",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=-b3h-iylZ1s"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "67ea8a675caa995925751b2d",
+  "titolo": "Pliometria Rapidità Velocità C1 - short",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "4"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtu.be/jEXxxbQsqNw"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Test Salto in lungo - broad jump",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "2"
+       }
+      ],
+      "video": "https://youtu.be/Lfnm4BZ5cY0?si=_3D7ijuXrIfL0kqh"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single leg lateral drop jump",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=-b3h-iylZ1s"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Rapidità Ankle Stiffness - Test",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "20"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=YAF8Zi6HLi8?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint",
+      "serie": [
+       {
+        "rest": "50",
+        "duration": "3",
+        "distance_short": "10"
+       },
+       {
+        "rest": "50",
+        "duration": "3",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "duration": "5",
+        "distance_short": "20"
+       },
+       {
+        "rest": "60",
+        "duration": "5",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "duration": "8",
+        "distance_short": "50"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "684eb8f6038899a321edac4e",
+  "titolo": "Pliometria Velocità A1 - PRO",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "4"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtu.be/jEXxxbQsqNw"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Test Salto in lungo - broad jump",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "2"
+       },
+       {
+        "rest": "90",
+        "reps": "2"
+       },
+       {
+        "rest": "90",
+        "reps": "2"
+       }
+      ],
+      "video": "https://youtu.be/Lfnm4BZ5cY0?si=_3D7ijuXrIfL0kqh"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single leg lateral drop jump",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "10"
+       },
+       {
+        "rest": "60",
+        "reps": "10"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=-b3h-iylZ1s"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Reverse drop jumps",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=Mb_vKJ2ODCU"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Single leg drop e spinta interna",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "4"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=CLJr7cgOp60"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "single leg Reverse lateral drop progression",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "4"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=NqUjlWxJYdE"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Rapidità Ankle Stiffness - Test",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "20"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=YAF8Zi6HLi8?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint",
+      "serie": [
+       {
+        "rest": "110",
+        "duration": "3",
+        "distance_short": "10"
+       },
+       {
+        "rest": "110",
+        "duration": "3",
+        "distance_short": "10"
+       },
+       {
+        "rest": "110",
+        "duration": "3",
+        "distance_short": "10"
+       },
+       {
+        "rest": "120",
+        "duration": "5",
+        "distance_short": "20"
+       },
+       {
+        "rest": "120",
+        "duration": "5",
+        "distance_short": "20"
+       },
+       {
+        "rest": "120",
+        "duration": "5",
+        "distance_short": "20"
+       },
+       {
+        "rest": "150",
+        "duration": "8",
+        "distance_short": "50"
+       },
+       {
+        "rest": "150",
+        "duration": "8",
+        "distance_short": "50"
+       },
+       {
+        "rest": "150",
+        "duration": "8",
+        "distance_short": "50"
+       },
+       {
+        "rest": "150",
+        "duration": "8",
+        "distance_short": "50"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "68f253812874871f71c40a89",
+  "titolo": "rapidità, velocità e Tiro - pre partita",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "BOX rapidità e Tiro",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "2"
+       },
+       {
+        "rest": "60",
+        "reps": "2"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtu.be/VTWEiS8eRJk?si=7IxiP0k7W_-KD_Yp"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Allenamento rapidità, tecnica, tiro in porta e velocità di pensiero per il calcio",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "video": "https://youtu.be/CPR99KAUm-4"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Calcio in alto e tiro in porta",
+      "serie": [
+       {
+        "rest": "30",
+        "reps": "2"
+       },
+       {
+        "rest": "30",
+        "reps": "2"
+       },
+       {
+        "rest": "30",
+        "reps": "2"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Salto triplo e sprint",
+      "serie": [
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Salto triplo a 1 gamba e sprint",
+      "serie": [
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=IeXJA-028nA"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint con palla da fermo",
+      "serie": [
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=aH5O95mInLM"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "68fe311a4550944e62f37b82",
+  "titolo": "Riscaldamento Pliometria P1",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Saltelli in mezzo affondo con switch",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "10"
+       },
+       {
+        "rest": "20",
+        "duration": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=r_Dwebm0UQk"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "navette laterali con pallina da tennis",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "10"
+       },
+       {
+        "rest": "20",
+        "duration": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=C4U8ip3peiY"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Rapidità Ankle Stiffness - Test",
+      "serie": [
+       {
+        "rest": "20",
+        "duration": "10"
+       },
+       {
+        "rest": "20",
+        "duration": "10"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=YAF8Zi6HLi8?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "67d807943459ed365f7a3061",
+  "titolo": "Salite Sprint B1",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "interval",
+    "tipo": "workout",
+    "title": "Salite Sprint A1",
+    "esercizi": [
+     {
+      "esercizio": "Salite Sprint",
+      "serie": [
+       {
+        "rest": "50",
+        "duration": "15",
+        "distance_short": "50"
+       },
+       {
+        "rest": "50",
+        "duration": "10",
+        "distance_short": "29.999999999999996"
+       },
+       {
+        "rest": "50",
+        "duration": "8",
+        "distance_short": "20"
+       },
+       {
+        "rest": "30",
+        "duration": "4",
+        "distance_short": "10"
+       },
+       {
+        "rest": "120",
+        "duration": "4",
+        "distance_short": "10"
+       },
+       {
+        "rest": "50",
+        "duration": "7",
+        "distance_short": "20"
+       },
+       {
+        "rest": "50",
+        "duration": "7",
+        "distance_short": "20"
+       },
+       {
+        "rest": "30",
+        "duration": "4",
+        "distance_short": "10"
+       },
+       {
+        "rest": "30",
+        "duration": "4",
+        "distance_short": "10"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "675734ca26abb7b33b2fc9a8",
+  "titolo": "Tecnica A3 Muro 2 tocchi - short",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 2 tocchi - controllo di interno ad aprire",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       }
+      ],
+      "video": "Passaggi al muro 2 tocchi interno solo 1 piede - tecnica di base #tutorial #football https://youtube.com/watch?v=onV2Bm2FhX0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 2 tocchi - Controllo di interno a chiudere",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       }
+      ],
+      "video": "Passaggi al muro 2 tocchi interno 2 piedi - tecnica di base #tutorial #football  https://youtube.com/watch?v=LlkI17npYvA?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 5-10mt alto-basso",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "180"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro in difficoltà",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "240"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Box dribbling + passaggio",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       },
+       {
+        "rest": "120",
+        "duration": "150"
+       },
+       {
+        "rest": "120",
+        "duration": "180"
+       }
+      ],
+      "nota": "Bassa intensità"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "673afe83afe575cd0ef6fb14",
+  "titolo": "Tecnica A3 Muro 2 tocchi e dribbling",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi al muro 2 tocchi",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "240"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "180"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 2 tocchi - stop di esterno, passaggio collo - Tecnica",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "180"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 2 tocchi - controllo di interno ad aprire",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "240"
+       }
+      ],
+      "video": "Passaggi al muro 2 tocchi interno solo 1 piede - tecnica di base #tutorial #football https://youtube.com/watch?v=onV2Bm2FhX0?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 2 tocchi - Controllo di interno a chiudere",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "240"
+       }
+      ],
+      "video": "Passaggi al muro 2 tocchi interno 2 piedi - tecnica di base #tutorial #football  https://youtube.com/watch?v=LlkI17npYvA?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro 5-10mt alto-basso",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "240"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Passaggi al muro in difficoltà",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "240"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Box dribbling + passaggio",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       },
+       {
+        "rest": "120",
+        "duration": "150"
+       }
+      ],
+      "nota": "Bassa intensità"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Dribbling visione e reattività - Base",
+      "serie": [
+       {
+        "rest": "60",
+        "reps": "4"
+       },
+       {
+        "rest": "60",
+        "reps": "4"
+       },
+       {
+        "rest": "60",
+        "reps": "4"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=2mbmxURlV0g?si=6lSWNXdf3RnUKSYD"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "68f25426257e720324f27095",
+  "titolo": "Tecnica Freestyle A1 - short",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi al muro liberi freestyle",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "600"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi Freestyle 3 conetti",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "60"
+       },
+       {
+        "rest": "60",
+        "duration": "60"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=B0bLp0sq_OU?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi Freestyle - Tecnica",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "600"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "673afe2c1c887163cdc1f91e",
+  "titolo": "Tecnica Palleggi A3 - short",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi al muro 2 tocchi",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "180"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "180"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "180"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi al muro liberi freestyle",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "240"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi Freestyle - Tecnica",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "240"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi solo collo 3 tocchi alternati - TECNICA",
+      "serie": [
+       {
+        "duration": "120"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi 1 piede interno/collo/esterno - Tecnica",
+      "serie": [
+       {
+        "duration": "120"
+       }
+      ],
+      "per_lato": true,
+      "video": "Palleggi collo interno esteno - tecnica di base #tutorial #football https://youtube.com/watch?v=C3gNbAoRXzI?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Palleggi Freestyle 3 conetti",
+      "serie": [
+       {
+        "duration": "180"
+       }
+      ],
+      "video": "https://youtube.com/watch?v=B0bLp0sq_OU?feature=share"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6832ce52a3ea4f15a10da3c1",
+  "titolo": "Tiri e Visione",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Tiri in porta e VISIONE",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "120"
+       },
+       {
+        "rest": "120",
+        "duration": "120"
+       }
+      ],
+      "per_lato": true,
+      "nota": "ESEGUI L'ESERCIZIO A RITMO BASSO",
+      "video": "https://youtu.be/CPR99KAUm-4?si=alsjAoz5R5j9ESf_"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "678e0dc11df01b0dfeebf7e6",
+  "titolo": "VELOCITA' B1",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "TEST VELOCITA' 50M",
+      "serie": [
+       {
+        "rest": "120",
+        "distance_short": "50"
+       },
+       {
+        "rest": "120",
+        "distance_short": "50"
+       },
+       {
+        "rest": "120",
+        "distance_short": "50"
+       },
+       {
+        "rest": "120",
+        "distance_short": "50"
+       }
+      ],
+      "nota": "PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "TEST VELOCITA' 100M",
+      "serie": [
+       {
+        "rest": "180",
+        "distance_short": "100"
+       },
+       {
+        "rest": "180",
+        "distance_short": "100"
+       },
+       {
+        "rest": "180",
+        "distance_short": "100"
+       },
+       {
+        "rest": "180",
+        "distance_short": "100"
+       }
+      ],
+      "nota": "PRENDI IL TEMPO MIGLIORE"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "T sprint",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "1"
+       },
+       {
+        "rest": "90",
+        "reps": "1"
+       },
+       {
+        "rest": "90",
+        "reps": "1"
+       },
+       {
+        "rest": "150",
+        "reps": "1"
+       },
+       {
+        "rest": "90",
+        "reps": "1"
+       },
+       {
+        "rest": "90",
+        "reps": "1"
+       }
+      ],
+      "nota": "ESEGUI SENZA PALLA E PRENDI IL TEMPO MIGLIORE",
+      "video": "https://youtu.be/rHL5XtEQe4w?si=VQZq2McfxcNEW7u8"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6a9d9f23c53cbbdf56da068a",
+  "titolo": "Velocità B1 - short +",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint",
+      "serie": [
+       {
+        "rest": "90",
+        "duration": "2",
+        "distance_short": "10"
+       },
+       {
+        "rest": "90",
+        "duration": "2",
+        "distance_short": "10"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "30"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "30"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "30"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "30"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Salto triplo a 1 gamba e sprint",
+      "serie": [
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "90",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "distance_short": "20"
+       },
+       {
+        "rest": "120",
+        "distance_short": "50"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=IeXJA-028nA"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint con palla da fermo",
+      "serie": [
+       {
+        "rest": "40",
+        "distance_short": "20"
+       },
+       {
+        "rest": "40",
+        "distance_short": "20"
+       },
+       {
+        "rest": "30",
+        "distance_short": "10"
+       },
+       {
+        "rest": "30",
+        "distance_short": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=aH5O95mInLM"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "T sprint",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "1"
+       },
+       {
+        "rest": "90",
+        "reps": "1"
+       }
+      ],
+      "video": "https://youtu.be/rHL5XtEQe4w?si=VQZq2McfxcNEW7u8"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "67a9a81fe54b83f97fe18d38",
+  "titolo": "Velocità C1 - short",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint",
+      "serie": [
+       {
+        "rest": "90",
+        "duration": "2",
+        "distance_short": "10"
+       },
+       {
+        "rest": "90",
+        "duration": "2",
+        "distance_short": "10"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "30"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "30"
+       },
+       {
+        "rest": "90",
+        "duration": "4",
+        "distance_short": "30"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Salto triplo a 1 gamba e sprint",
+      "serie": [
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "90",
+        "distance_short": "20"
+       },
+       {
+        "rest": "120",
+        "distance_short": "50"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=IeXJA-028nA"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint con palla da fermo",
+      "serie": [
+       {
+        "rest": "40",
+        "distance_short": "20"
+       },
+       {
+        "rest": "40",
+        "distance_short": "20"
+       },
+       {
+        "rest": "30",
+        "distance_short": "10"
+       },
+       {
+        "rest": "30",
+        "distance_short": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=aH5O95mInLM"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "T sprint",
+      "serie": [
+       {
+        "rest": "90",
+        "reps": "1"
+       },
+       {
+        "rest": "90",
+        "reps": "1"
+       }
+      ],
+      "video": "https://youtu.be/rHL5XtEQe4w?si=VQZq2McfxcNEW7u8"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "everfit_id": "6832ca11926bfc639b6334b3",
+  "titolo": "Velocità e forza esplosiva A1 - PRO",
+  "descrizione": null,
+  "tags": [],
+  "sezioni": [
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Pogo Jumps",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "120"
+       },
+       {
+        "rest": "120",
+        "duration": "120"
+       }
+      ],
+      "nota": "a 2 piedi",
+      "video": "https://youtube.com/watch?v=rleHrcL6teA?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Rapidità Ankle Stiffness - Test",
+      "serie": [
+       {
+        "rest": "60",
+        "duration": "20"
+       },
+       {
+        "rest": "60",
+        "duration": "20"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://youtube.com/watch?v=YAF8Zi6HLi8?feature=share"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Salto triplo e sprint",
+      "serie": [
+       {
+        "rest": "40",
+        "distance_short": "10"
+       },
+       {
+        "rest": "40",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "20"
+       },
+       {
+        "rest": "60",
+        "distance_short": "20"
+       },
+       {
+        "rest": "120",
+        "distance_short": "50"
+       },
+       {
+        "rest": "120",
+        "distance_short": "50"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Salto triplo a 1 gamba e sprint",
+      "serie": [
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "60",
+        "distance_short": "10"
+       },
+       {
+        "rest": "90",
+        "distance_short": "20"
+       },
+       {
+        "rest": "90",
+        "distance_short": "20"
+       },
+       {
+        "rest": "150",
+        "distance_short": "50"
+       }
+      ],
+      "per_lato": true,
+      "video": "https://www.youtube.com/watch?v=IeXJA-028nA"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Sprint con palla da fermo",
+      "serie": [
+       {
+        "rest": "60",
+        "distance_short": "20"
+       },
+       {
+        "rest": "60",
+        "distance_short": "20"
+       },
+       {
+        "rest": "80",
+        "distance_short": "30"
+       },
+       {
+        "rest": "80",
+        "distance_short": "30"
+       },
+       {
+        "rest": "50",
+        "distance_short": "10"
+       },
+       {
+        "rest": "50",
+        "distance_short": "10"
+       }
+      ],
+      "video": "https://www.youtube.com/watch?v=aH5O95mInLM"
+     }
+    ]
+   },
+   {
+    "formato": "regular",
+    "tipo": "hidden",
+    "esercizi": [
+     {
+      "esercizio": "Postura + Velocità Difensori",
+      "serie": [
+       {
+        "rest": "120",
+        "duration": "60"
+       },
+       {
+        "rest": "120",
+        "duration": "60"
+       },
+       {
+        "rest": "120",
+        "duration": "60"
+       }
+      ],
+      "video": "https://youtu.be/kWcCAKPMbdM"
+     }
+    ]
+   }
+  ]
+ }
+]

@@ -77,14 +77,14 @@ Correzione:
 ## 11. Isometric Runner's Lunge
 per lato · secondi · video: https://youtube.com/watch?v=nvENLHoWSR4
 
-Come l'ho scritto io: Affondo lungo: gamba davanti piegata a 90°, ginocchio dietro sollevato da terra di un pugno. Tallone della gamba dietro sollevato: il peso è sull'avampiede. Busto dritto, né piegato in avanti né inclinato indietro, sguardo avanti. Tieni la posizione per il tempo indicato con il ginocchio davanti sopra il piede, respira. Cambia gamba.
+Come l'ho scritto io: Mezzo affondo: gamba davanti piegata, ginocchio dietro sollevato da terra di un pugno, tallone della gamba dietro sollevato. Concentrati sul contrarre e attivare la pianta del piede davanti, come se stringessi qualcosa sotto al piede. Busto dritto, sguardo avanti. Tieni la posizione per il tempo indicato respirando: se senti lavorare il gluteo della gamba davanti è il segno che il sistema fasciale sta facendo il suo. Cambia gamba.
 
 Correzione: 
 
 ## 12. Towel Figure 8 with the Foot
 per lato · secondi · video: https://youtube.com/watch?v=V805vZi3rLs
 
-Come l'ho scritto io: In piedi su una gamba, un asciugamano a terra davanti a te. Afferra l'asciugamano con le dita del piede libero e sollevalo da terra. Con il piede che stringe l'asciugamano disegna un otto nell'aria: lento, ampio, senza allentare la presa. Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede.
+Come l'ho scritto io: In piedi su una gamba, un asciugamano a terra davanti a te. Attiva la pianta del piede d'appoggio contraendola, e tienila così per tutto l'esercizio. Afferra l'asciugamano con le dita del piede libero e sollevalo da terra. Con il piede che stringe l'asciugamano disegna un otto nell'aria: lento, ampio, senza allentare la presa. Gamba d'appoggio con il ginocchio morbido, busto fermo. Per il tempo indicato, poi cambia piede.
 
 Correzione: 
 
@@ -168,7 +168,7 @@ Correzione:
 ## 24. Warm-Up Stride
 bilaterale · secondi · senza video
 
-Come l'ho scritto io: Parti al 60 % sulla distanza indicata e aumenta un po' ogni 10 metri. Negli ultimi metri arriva all'80-90 %, mai al massimo. Corri alto, braccia che spingono, sguardo avanti. Torna indietro camminando: è il recupero.
+Come l'ho scritto io: Parti al 60 % sulla distanza indicata e aumenta un po' ogni 10 metri. Ogni allungo un po' più forte del precedente: l'ultimo arriva quasi al massimo (90-100 %). Corri alto, braccia che spingono, sguardo avanti. Torna indietro camminando: è il recupero.
 
 Correzione: 
 
@@ -193,10 +193,10 @@ Come l'ho scritto io: In piedi o seduto, pallina da tennis sotto la pianta del p
 
 Correzione: 
 
-## 28. Standing Stillness (Fascia)
+## 28. Fascia Standing Meditation
 bilaterale · minuti · senza video
 
-Come l'ho scritto io: In piedi, piedi larghi come il bacino, ginocchia morbide, braccia rilassate lungo i fianchi. Occhi chiusi o sguardo basso: senti il peso diviso tra tallone, alluce e mignolo. Porta l'attenzione al respiro e alle sensazioni del corpo: quelle interne (il battito, le tensioni) e quelle esterne (il pavimento, l'aria, i suoni). Resta presente. Quando un pensiero si porta via l'attenzione, accorgitene e torna al respiro e al corpo. Per il tempo indicato.
+Come l'ho scritto io: In piedi a piedi nudi, postura neutra, gambe leggermente piegate, peso un po' sull'avampiede (non sul tallone), braccia sciolte e parte alta del corpo rilassata. Concentrati nel contrarre la pianta del piede, come se dovessi stringere qualcosa sotto al piede: non con le dita, con tutta la pianta. Tienila attiva per tutto il tempo. Respira lentamente con il diaframma. Nel primo minuto dividi il respiro in quattro fasi uguali: inspira dal naso, trattieni, espira dalla bocca come se alitassi su un vetro, trattieni a polmoni vuoti (per esempio 4 secondi ciascuna). Nei minuti successivi togli le pause e fai durare l'espirazione circa il doppio dell'inspirazione. Per il tempo indicato.
 
 Correzione: 
 
