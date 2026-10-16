@@ -187,3 +187,146 @@ risposte del 16/10.
 
 Si fa una cosa alla volta, su "vai" di Ste. Ordine proposto: 3 (finestre), poi 5 (pliometria dai test), poi 4 + 8 +
 10 insieme (sono tutti in `build-blocks.py` / `blocchiDisponibili`, un solo rigenera della libreria), poi 6 (prompt).
+
+## D. Le considerazioni di Ste del 16/10 (sera) e il mio ragionamento
+
+Ste: "ti do un po' di considerazioni, poi dobbiamo collegare tutto e voglio che ci ragioni bene anche tu prendendo
+spunto da tutto il contesto e dalle nostre regole". Per ogni punto: cosa c'è oggi, cosa propongo, dove si lega agli
+altri. Il punto 12 è arrivato vuoto. Nessun codice toccato.
+
+### D1. Fisico dopo la partita, con il feedback della partita
+- **Oggi:** la partita è un giorno del calendario (o l'abitudine del setup); nessun feedback su quanto ha giocato.
+  Il giorno dopo: niente gambe (forza gambe, pliometria, velocità, resistenza), sì parte alta short, fascia, tecnica,
+  recupero, richiamo gambe. A +2 e +3 nessuna regola.
+- **Ste:** se ha giocato tanto con molta fatica, niente forza il giorno dopo (al massimo poco volume e poca
+  intensità, "cosa da pro"); senza feedback si assume che abbia giocato tutta la partita → al massimo forza leggera;
+  nei 2-3 giorni dopo mai velocità pura se ha giocato molto.
+- **Proposta:** un **feedback partita** (quanto hai giocato: niente / meno di metà / più di metà / tutta; fatica
+  1-10 con la `RpeScale` tipo "sforzo") chiesto dall'hub il giorno dopo la partita (card "Com'è andata la partita?",
+  una riga, saltabile) e salvato in una tabella nuova `training_match_feedback` (migration). **Senza feedback =
+  partita intera, fatica alta** (precauzionale, come dice Ste). Regole collegate, tutte lato validatore/server:
+  - +1: come oggi se ha giocato ≥ metà o non ha risposto; se ha giocato meno di metà la giornata fisica normale è
+    ammessa (solo il richiamo o la parte alta short restano i consigli del prompt);
+  - +2 e +3 con partita intera (o senza feedback): **niente velocità pura** (sprint ≥ 30 m, salite; vedi D7 per la
+    classificazione), ammesse rapidità corta e pliometria di richiamo; con "meno di metà" nessun vincolo;
+  - la resistenza/metabolico entra da +2 (risposta 3 del pomeriggio: "da 2 giorni dopo la partita").
+  Con la partita la domenica e questi vincoli la settimana in season viene: lun recupero/parte alta short, mar-gio
+  resistenza (mercoledì preferito), gio-ven velocità (−3/−2), sab il blocco pre partita. Tutto coerente con le
+  finestre PRIMA della partita della risposta 3.
+
+### D2. Forza massima + pliometria intensiva
+- **Oggi:** vietata nello stesso giorno (`CONVIVENZE_VIETATE`, validatore).
+- **Ste:** non vietato, non consigliato.
+- **Proposta:** via dal validatore, resta nel prompt come "sconsigliato" e il piano base non lo fa mai.
+
+### D3. "I workout sono ancora quelli di Everfit?"
+- **Risposta onesta: in parte sì.** Il server COMPONE dal catalogo sui gradini dell'atleta solo la parte alta
+  (`pa-*`), le gambe (`pb-*`), il kettlebell (`kb-*`), l'apertura breve e il riscaldamento velocità. Velocità,
+  pliometria, resistenza, tecnica, fascia, forza esplosiva, full body, mix e P1 sono ancora i workout di Ste presi
+  interi dalla libreria (193 blocchi): le regole per qualità (finestre, tetti, memoria dei codici, onda B/A, tetto
+  sprint, salite, scale di tecnica) sono il TELAIO attorno ai blocchi, e dentro i blocchi il server adatta le dosi
+  dai log, lima kg e sprint, sostituisce i Nordic vicino alla partita. La scelta del 25/9 era proprio questa: "il
+  blocco di Ste vince sull'esercizio, il server lo adatta".
+- **Cosa si può fare:** comporre dal catalogo anche le altre qualità, come per `pa`/`pb`. È un lavoro grande per
+  ognuna (parte alta e gambe sono costate ~2 giorni l'una) e il Campo è congelato. Proposta a gradi:
+  (a) **velocità**: la più facile da comporre (riscaldamento fisso + 6-8 sprint scelti per distanza e livello + 1-2
+  esercizi di rapidità), e serve per D7 (rapidità vs velocità pura, volume settimanale);
+  (b) **pliometria, resistenza, tecnica**: restano blocchi (le progressioni B1→A2, i fartlek, le scale di tecnica
+  sono disegni di Ste difficili da ricomporre), con la progressione per esercizio di D4 dentro;
+  (c) la colonna `successivo` del catalogo (già in lista) per far salire di gradino anche gli esercizi dentro i
+  blocchi Everfit, non solo le catene v1.
+  **Da decidere con Ste**: componiamo la velocità, o restano i blocchi per tutto?
+
+### D4. Si sale su un esercizio dopo 2 sedute facili di fila
+- **Oggi:** la dose sale dopo UNA seduta se metà delle serie sono sopra il previsto con voto ≤ 7 (Ste, 22/9: "8
+  previste, 10 fatte → riparte da lì"), oppure dopo 2 sedute con voto medio ≤ 6 e tutto fatto. La memoria dei
+  blocchi sale di codice dopo UN "facile". Il gradino successivo delle catene v1 scatta quando la dose è al tetto e
+  i log dicono ancora SALI.
+- **Ste:** livello / peso / difficoltà / tempo salgono su un esercizio se facile per 2 sessioni di fila.
+- **Proposta:** le reps FATTE restano la base da subito (è una misura, non una sensazione: regola del 22/9); il
+  **passo in su** (kg +2.5 %, +5-10", gradino successivo, difficoltà) solo con 2 sedute di fila facili (voto ≤ 6 e
+  tutto fatto). Per coerenza anche la **memoria dei blocchi** passa al codice successivo dopo 2 "facile" di fila
+  (oggi 1; Fascia Foundation è già a 2 settimane), in linea con la risposta 1 ("normalmente ogni 4 settimane, se
+  facile sale prima"). E lo stesso "2 di fila" vale per l'assaggio del livello sopra (già 2) e per l'ingresso
+  pliometria di D8. **Da confermare**: anche la memoria dei blocchi a 2, o solo gli esercizi?
+
+### D5. Gambe: ok, resta com'è.
+
+### D6. Parte alta nello scarico (settimana 4)
+- **Oggi:** nello scarico solo `pa-emom`; ogni formato una volta a settimana.
+- **Ste:** settimana 4 anche EMOM + un altro formato se c'è una seconda seduta.
+- **Proposta:** nello scarico EMOM + serie BREVI (`pa-serie-short`, già ×0.6 dal deload) quando ci sono due sedute
+  di parte alta; prompt e `sostituzioniFormati` in deload: prima l'EMOM, poi la breve.
+
+### D7. Velocità: una in season, due off season senza fatica, +1 di rapidità in season
+- **Oggi:** una sola giornata di velocità a settimana (errore del validatore), 6-8 sprint massimali per seduta,
+  nessuna distinzione tra sprint corti e lunghi (i 10 m contano come gli altri).
+- **Ste:** in season 1; off season anche 2 se è l'obiettivo principale, ma senza fatica (volume totale basso); in
+  season 1 di velocità + eventualmente 1 di rapidità e pliometria con qualche scatto corto, non sul lungo.
+- **Proposta:** (1) una **classificazione** nel catalogo/regole: `rapidità` = sprint ≤ 20 m, cambi di direzione,
+  partenze, pliometria rapida; `velocità pura` = sprint ≥ 30 m, salite, resistenza alla velocità. (2) **Off season
+  con velocità primo obiettivo**: 2 giornate ammesse, mai consecutive, **tetto settimanale di sprint massimali**
+  (es. 12 in tutto, 6 per seduta) così il volume resta basso; altrimenti 1. (3) **In season**: 1 giornata di
+  velocità + 1 facoltativa di rapidità/pliometria con al massimo 3-4 scatti ≤ 20 m. La stessa classificazione serve
+  a D1 (niente velocità pura a +2/+3) e al blocco pre partita a −1 (solo rapidità corta). I blocchi "Pliometria
+  Rapidità Velocità" di Ste sono già la giornata di rapidità.
+
+### D8. Salti: un avanzato ai test sale prima
+- **Oggi:** 4 settimane in B per tutti, poi onda B → A → B.
+- **Ste:** se nei test di pliometria è avanzato e le prime 2 settimane sono semplici, si alza la difficoltà e poi
+  piano piano il volume.
+- **Proposta:** l'ingresso resta in B per tutti (anche l'avanzato parte dal basso), ma con livello A/PRO dai test
+  dei salti bastano **2 settimane facili** (coerente con D4) per salire al codice A; chi è B o senza test resta a 4.
+  Dopo il salto di livello: prima la difficoltà (codice A, versione short), poi il volume (full, poi il "+"), che è
+  già l'ordine della scala (short → full → +). L'onda B/A resta per le settimane dopo.
+
+### D9. Resistenza: mai nello stesso giorno della velocità
+- **Oggi:** la resistenza è vietata lo stesso giorno di forza massima (aerobica) e pliometria intensiva (RSA);
+  con la velocità è ammessa dopo (ordine neuromuscolare → metabolico).
+- **Proposta:** `CONVIVENZE_VIETATE` + [velocità, resistenza aerobica/metabolico/RSA] (validatore) e via la frase
+  sull'ordine per questa coppia.
+
+### D10. Tecnica: pochi vincoli, focus sulle parti deboli dei test
+- **Oggi:** scala muro (giornata 1), scala palleggi (3), mazzo (5); il piede debole dei test porta a palleggi e
+  passaggi (regola 21). Nessun legame tra i test di tecnica (palleggi, passaggi, tiri, conduzione) e la scelta.
+- **Proposta:** dai test di tecnica il punteggio più basso tra palleggi / passaggi / tiro / conduzione diventa la
+  **priorità della tecnica** per le settimane fino al ri-test: la scala di quella qualità va per prima, il mazzo
+  pesca prima i blocchi di quella qualità; il piede debole resta come oggi. Il server lo calcola (niente modello).
+
+### D11. Kettlebell: anche 2-3 a settimana, dentro il conteggio della forza gambe
+- **Oggi:** un `kb-*` a settimana, copre solo l'obiettivo kettlebell, le gambe con pesi nella stessa settimana
+  vanno ×0.7.
+- **Ste:** anche 2 o 3 a settimana, ma nel conteggio della forza gambe (anche se attiva tutto il corpo); in season
+  ci potrebbe stare 1 forza gambe + 1 kb + 1-2 parte alta.
+- **Proposta:** il kb entra nel **budget gambe** (`gruppoParteBassa`: serie/breve/Fmax/kb condividono i posti,
+  l'EMOM gambe a parte), fino a 3 a settimana in off season, mai due giorni di fila con `pb-serie`/Fmax; copre
+  l'obiettivo gambe oltre a quello kettlebell. **Conflitto da sciogliere:** in season il tetto è 3 sedute fisiche
+  (Ste, 28/9: "max 2/3 di forza"), e "1 gambe + 1 kb + 2 parte alta" fa 4. Due strade: (a) l'EMOM di parte alta
+  (~20', "zero fatica" per le parole di Ste) non conta nel tetto fisico → 1 pb + 1 kb + 1 pa-serie + 1 pa-emom;
+  (b) tetto in season a 4 quando una delle sedute è un kb. Propongo la (a): resta vero che le sedute "pesanti" sono
+  al massimo 3.
+
+### D12. (vuoto nel messaggio di Ste)
+
+### Come si collega tutto (il filo)
+1. **Un solo asse "partita"**: giorni PRIMA (finestre: forza 1, velocità 2 ma a −2 qualcosa in più, resistenza 2,
+   pre partita a −1) e giorni DOPO (feedback: +1 forza leggera, +2/+3 niente velocità pura, resistenza da +2),
+   con il feedback partita come unica fonte e il default precauzionale. Oggi il validatore guarda solo PRIMA.
+2. **Una sola classificazione rapidità / velocità pura** usata da D1, D7 e dal blocco pre partita.
+3. **Una sola regola di progressione "2 facili di fila"**: dose per esercizio (D4), codice dei blocchi (D4),
+   ingresso pliometria per gli avanzati (D8), assaggio del livello sopra (già così), kettlebell (fasce a 4/6
+   settimane: restano).
+4. **Un solo budget di sedute fisiche** con dentro gambe + kettlebell (D11) e parte alta, l'EMOM fuori dal tetto.
+5. **Vietato vs sconsigliato**: Fmax + plio intensiva diventa sconsigliato (D2), velocità + resistenza diventa
+   vietato (D9); il resto com'è.
+
+### Ordine proposto (una PR per riga, piccola)
+A. Finestre partita complete, lato PRIMA: resistenza 2, velocità ok a −2, pre partita a −1, Fmax+plio
+   sconsigliato, velocità+resistenza vietato, mercoledì preferito nel base (risposta 3 + D2 + D9). Niente DB.
+B. Feedback partita (migration + card hub + default) e le regole DOPO la partita (D1).
+C. Progressione "2 facili di fila": dose per esercizio, memoria dei blocchi, ingresso pliometria dai test (D4, D8).
+D. Rapidità vs velocità pura, 2 giornate off season con tetto settimanale, +1 rapidità in season (D7).
+E. Kettlebell nel budget gambe, EMOM fuori dal tetto, scarico EMOM + breve (D11, D6).
+F. Libreria: C = PRO, "in season" = short, P1 solo portieri (risposte 4, 8, 10).
+G. Tecnica: priorità dal test più debole (D10).
+H. Da decidere: comporre la velocità dal catalogo (D3).
