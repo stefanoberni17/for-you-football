@@ -181,7 +181,7 @@ def meta_from_title(t):
     if re.search(r"(push|pull)\s?p\d\b", tl):
         ruolo = "portiere"
     else:
-        m2 = re.search(r"\b(\d)[a-d]?\b", tl)
+        m2 = re.search(r"\b(\d)[a-e]?\b", tl)
         if m2 and "fascia" in tl:
             prog = int(m2.group(1))
     variante = "short" if "short" in tl or "soft" in tl else "full"
@@ -191,13 +191,13 @@ def meta_from_title(t):
             qual = q
             break
     sotto = None
-    ms = re.search(r"\b\d([A-D])\b|\s-([A-D])\b", t)
+    ms = re.search(r"\b\d([A-E])\b|\s-([A-E])\b", t)
     if ms:
         sotto = (ms.group(1) or ms.group(2))
     fam = re.sub(r"\s*-\s*(short|soft)( \d)?", "", t, flags=re.I)
-    fam = re.sub(r"\b(PRO|B|A|P)\s?\d[A-D]?\b", "", fam, flags=re.I)
-    fam = re.sub(r"\b\d[A-D]?\b", "", fam)
-    fam = re.sub(r"\s-[A-D]\b", "", fam)
+    fam = re.sub(r"\b(PRO|B|A|P)\s?\d[A-E]?\b", "", fam, flags=re.I)
+    fam = re.sub(r"\b\d[A-E]?\b", "", fam)
+    fam = re.sub(r"\s-[A-E]\b", "", fam)
     fam = re.sub(r"\s*-\s*$", "", fam)
     fam = re.sub(r"\s{2,}", " ", fam).strip(" -")
     fam = re.sub(r"foundations?", "Foundation", fam, flags=re.I)
@@ -272,10 +272,18 @@ def durata_min(items, amrap_sec):
 
 # ── Build ────────────────────────────────────────────────────────────────────
 by_title = {}
-for w in WORKOUTS:
+# 16/10: oltre alla libreria, i workout DENTRO i programmi di Ste (docs/everfit-programs.json): 20 titoli stavano solo lì
+# (Fascia Foundations 1C/1E/2B, Forza Prevenzione B1, Salite Resistenza B1, EMOM B3, HIIT B2, Push corpo libero B1/B2,
+# Tecnica Palleggi A1/A4, Tecnica Freestyle…) e lasciavano buchi nelle scale per codice. Stesso formato normalizzato.
+PROGRAMMI = json.load(open("docs/everfit-programs.json", encoding="utf-8"))
+DAI_PROGRAMMI = [wo for p in PROGRAMMI for w in p.get("calendario", []) for d in w.get("giorni", []) for wo in d.get("workouts", [])]
+# Codici da chiarire con Ste prima di metterli in libreria: "C1" non è B/A/PRO
+SALTA_TITOLI = {"pliometria rapidità velocità c1 - short"}
+# Titoli senza codice che nel programma di Ste sono la settimana 1 della famiglia ("forza corpo libero avanzato w1")
+CODICE_FORZATO = {"forza parte alta push corpo libero": ("B", 1)}
+for w in WORKOUTS + DAI_PROGRAMMI:
     t = (w.get("titolo") or "").strip()
-    t = re.sub(r"\s*-\s*Sergi Marzo$", "", t)  # nessun nome cliente nella libreria
-    if not t:
+    if not t or t.lower() in SALTA_TITOLI:
         continue
     n_items = sum(len(s.get("esercizi", [])) for s in w.get("sezioni", []))
     if t not in by_title or n_items > by_title[t][0]:
@@ -320,6 +328,8 @@ for t, (_, w) in sorted(by_title.items(), key=lambda x: x[0].lower()):
             registra(its, info, ex.get("esercizio", "?"))
         i += 1
     livello, prog, variante, qual_kw, fam, sotto, ruolo = meta_from_title(t)
+    if t.lower() in CODICE_FORZATO:
+        livello, prog = CODICE_FORZATO[t.lower()]
     qual = qual_kw or (quali.most_common(1)[0][0] if quali else "da-classificare")
     base = slug(t)
     sid, k = base, 2

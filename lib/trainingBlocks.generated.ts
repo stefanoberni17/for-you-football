@@ -1,13 +1,43 @@
 /**
  * FYF Training — libreria BLOCCHI GENERATA (non modificare a mano).
  *
- * Sorgente: docs/everfit-workouts.json (203 workout Everfit, 144 titoli
+ * Sorgente: docs/everfit-workouts.json (203 workout Everfit, 162 titoli
  * distinti) → scripts/build-blocks.py. Alias ed euristiche nello script.
- * Blocchi completi: 135 · incompleti (esercizi non mappati): 9.
+ * Blocchi completi: 150 · incompleti (esercizi non mappati): 12.
  */
 import type { Blocco } from './trainingBlocks';
 
 export const BLOCCHI: Blocco[] = [
+ {
+  "id": "1vs1-difesa-attacco",
+  "nome": "1vs1 difesa attacco",
+  "nomeEverfit": "1vs1 difesa attacco",
+  "famiglia": "1vs1 Difesa Attacco",
+  "qualita": "da-classificare",
+  "qualitaSet": {},
+  "livello": null,
+  "progressione": null,
+  "variante": "full",
+  "durataMin": 11,
+  "attrezzatura": [],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": null,
+    "nomeEverfit": "1vs1 - difesa da fermo",
+    "serie": 3,
+    "quantita": 10.0,
+    "unita": "reps",
+    "recupero_sec": 120,
+    "nota": "10 azioni a testa per ogni set"
+   }
+  ],
+  "completo": false,
+  "mancanti": [
+   "1vs1 - difesa da fermo"
+  ],
+  "tags": []
+ },
  {
   "id": "circuito-addominali-b1",
   "nome": "Circuito addominali B1",
@@ -1424,13 +1454,13 @@ export const BLOCCHI: Blocco[] = [
   "qualita": "fascia-prevenzione",
   "qualitaSet": {
    "riscaldamento": 2,
-   "fascia-prevenzione": 6,
-   "pliometria-estensiva": 6
+   "fascia-prevenzione": 11,
+   "pliometria-estensiva": 5
   },
   "livello": "A",
   "progressione": 3,
   "variante": "full",
-  "durataMin": 37,
+  "durataMin": 50,
   "attrezzatura": [
    "piccoli attrezzi"
   ],
@@ -1445,12 +1475,30 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 0
    },
    {
+    "esercizio_id": "fasc-toes-up-down",
+    "nomeEverfit": "Toes up down",
+    "serie": 1,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 45,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-toes-up-down",
+    "nomeEverfit": "Toes up down",
+    "serie": 1,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
     "esercizio_id": "fasc-towel-curls",
     "nomeEverfit": "Towel Curls",
     "serie": 1,
     "quantita": 180.0,
     "unita": "secondi",
-    "recupero_sec": 30,
+    "recupero_sec": 60,
     "perLato": true
    },
    {
@@ -1465,7 +1513,7 @@ export const BLOCCHI: Blocco[] = [
    {
     "esercizio_id": "fasc-fy-towe-slrdl",
     "nomeEverfit": "Fascia Single leg RDL",
-    "serie": 1,
+    "serie": 2,
     "quantita": 90.0,
     "unita": "secondi",
     "recupero_sec": 30,
@@ -1480,37 +1528,37 @@ export const BLOCCHI: Blocco[] = [
     "recupero_sec": 0
    },
    {
-    "esercizio_id": "fasc-fascia-iso-lounge-runner",
-    "nomeEverfit": "Fascia Iso Lounge Runner",
-    "serie": 1,
+    "esercizio_id": "plioe-pogo-jumps",
+    "nomeEverfit": "Pogo Jumps",
+    "serie": 2,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fasc-fascia-arms-swing",
+    "nomeEverfit": "Fascia Arms Swing",
+    "serie": 3,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-advanced-fascia-progression",
+    "nomeEverfit": "Advanced Fascia Progression",
+    "serie": 2,
     "quantita": 120.0,
     "unita": "secondi",
     "recupero_sec": 60,
     "perLato": true
    },
    {
-    "esercizio_id": "plioe-pogo-jumps",
-    "nomeEverfit": "Pogo Jumps",
-    "serie": 4,
-    "quantita": 60.0,
-    "unita": "secondi",
-    "recupero_sec": 60
-   },
-   {
-    "esercizio_id": "plioe-fascia-toe-bounces-single-leg-pogo-jumps",
-    "nomeEverfit": "Fascia Toe Bounces Single Leg - Pogo Jumps",
-    "serie": 2,
-    "quantita": 30.0,
-    "unita": "secondi",
-    "recupero_sec": 30,
-    "perLato": true
-   },
-   {
-    "esercizio_id": "fasc-fascia-arms-swing",
-    "nomeEverfit": "Fascia Arms Swing",
-    "serie": 2,
-    "quantita": 60.0,
-    "unita": "secondi",
+    "esercizio_id": "plioe-fascia-bridge-bounces",
+    "nomeEverfit": "Fascia Bridge Bounces",
+    "serie": 3,
+    "quantita": 10.0,
+    "unita": "reps",
     "recupero_sec": 60,
     "perLato": true
    }
@@ -2097,6 +2145,113 @@ export const BLOCCHI: Blocco[] = [
     "esercizio_id": "plioi-spinta-frontale-corsa-skip-fascia",
     "nomeEverfit": "Spinta frontale corsa - skip - fascia",
     "serie": 2,
+    "quantita": 20.0,
+    "unita": "secondi",
+    "recupero_sec": 60
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "fascia-foundation-b3-forza-short",
+  "nome": "Fascia Foundation B3 Forza - short",
+  "nomeEverfit": "Fascia Foundation B3 Forza - short",
+  "famiglia": "Fascia Foundation Forza",
+  "qualita": "fascia-prevenzione",
+  "qualitaSet": {
+   "riscaldamento": 1,
+   "fascia-prevenzione": 2,
+   "pliometria-estensiva": 2,
+   "forza-parte-alta": 3,
+   "pliometria-intensiva": 1
+  },
+  "livello": "B",
+  "progressione": 3,
+  "variante": "short",
+  "durataMin": 18,
+  "attrezzatura": [
+   "campo",
+   "piccoli attrezzi"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "risc-foam-roll-plantar-fascia",
+    "nomeEverfit": "Foam Roll Plantar Fascia",
+    "serie": 1,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fascia-iso-lounge-runner",
+    "nomeEverfit": "Fascia Iso Lounge Runner",
+    "serie": 1,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "plioe-fascia-toe-bounces-single-leg-pogo-jumps",
+    "nomeEverfit": "Fascia Toe Bounces Single Leg - Pogo Jumps",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fascia-arms-swing",
+    "nomeEverfit": "Fascia Arms Swing",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "plioe-fascia-bridge-bounces",
+    "nomeEverfit": "Fascia Bridge Bounces",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "reps",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fpa-spinta-isometrica-al-muro-frontale",
+    "nomeEverfit": "Spinta isometrica al muro frontale",
+    "serie": 1,
+    "quantita": 15.0,
+    "unita": "secondi",
+    "recupero_sec": 45,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fpa-spinta-isometrica-al-muro-laterale-interno",
+    "nomeEverfit": "Spinta isometrica al muro laterale interno",
+    "serie": 1,
+    "quantita": 15.0,
+    "unita": "secondi",
+    "recupero_sec": 45,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fpa-spinta-isometrica-al-muro-laterale-esterno",
+    "nomeEverfit": "Spinta isometrica al muro laterale esterno",
+    "serie": 1,
+    "quantita": 15.0,
+    "unita": "secondi",
+    "recupero_sec": 45,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "plioi-spinta-frontale-corsa-skip-fascia",
+    "nomeEverfit": "Spinta frontale corsa - skip - fascia",
+    "serie": 1,
     "quantita": 20.0,
     "unita": "secondi",
     "recupero_sec": 60
@@ -2856,6 +3011,112 @@ export const BLOCCHI: Blocco[] = [
   "tags": []
  },
  {
+  "id": "fascia-foundations-1c",
+  "nome": "Fascia Foundations 1C",
+  "nomeEverfit": "Fascia Foundations 1C",
+  "famiglia": "Fascia Foundation",
+  "qualita": "fascia-prevenzione",
+  "qualitaSet": {
+   "riscaldamento": 1,
+   "fascia-prevenzione": 8,
+   "pliometria-estensiva": 2
+  },
+  "livello": null,
+  "progressione": 1,
+  "variante": "full",
+  "sottovariante": "C",
+  "durataMin": 29,
+  "attrezzatura": [
+   "piccoli attrezzi"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "risc-fascia-adhesion-tennis-ball",
+    "nomeEverfit": "Fascia adhesion tennis ball",
+    "serie": 1,
+    "quantita": 4.0,
+    "unita": "minuti",
+    "recupero_sec": 0
+   },
+   {
+    "esercizio_id": "fasc-toes-up-down",
+    "nomeEverfit": "Toes up down",
+    "serie": 1,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-towel-curls",
+    "nomeEverfit": "Towel Curls",
+    "serie": 1,
+    "quantita": 180.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-towel-curls",
+    "nomeEverfit": "Towel Curls",
+    "serie": 1,
+    "quantita": 180.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fy-towe-slrdl",
+    "nomeEverfit": "Single leg Fascia RDL",
+    "serie": 1,
+    "quantita": 90.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fascia-iso-lounge-runner",
+    "nomeEverfit": "Fascia Iso Lounge Runner",
+    "serie": 2,
+    "quantita": 90.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fy-towe-slrdl",
+    "nomeEverfit": "Fascia Single leg runner (towel)",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fascia-towel-figure-8",
+    "nomeEverfit": "Fascia Towel figure 8",
+    "serie": 1,
+    "quantita": 90.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "plioe-pogo-jumps",
+    "nomeEverfit": "Pogo Jumps",
+    "serie": 2,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 30
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "descrizione": "Esercizi per costruire una base solida bel sistema fasciale",
+  "tags": []
+ },
+ {
   "id": "fascia-foundations-1d",
   "nome": "Fascia Foundations 1D",
   "nomeEverfit": "Fascia Foundations 1D",
@@ -2971,6 +3232,121 @@ export const BLOCCHI: Blocco[] = [
   "tags": []
  },
  {
+  "id": "fascia-foundations-1e",
+  "nome": "Fascia Foundations 1E",
+  "nomeEverfit": "Fascia Foundations 1E",
+  "famiglia": "Fascia Foundation",
+  "qualita": "fascia-prevenzione",
+  "qualitaSet": {
+   "riscaldamento": 1,
+   "fascia-prevenzione": 7,
+   "pliometria-estensiva": 6
+  },
+  "livello": null,
+  "progressione": 1,
+  "variante": "full",
+  "sottovariante": "E",
+  "durataMin": 33,
+  "attrezzatura": [
+   "piccoli attrezzi"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "risc-fascia-adhesion-tennis-ball",
+    "nomeEverfit": "Fascia adhesion tennis ball",
+    "serie": 1,
+    "quantita": 4.0,
+    "unita": "minuti",
+    "recupero_sec": 0
+   },
+   {
+    "esercizio_id": "fasc-toes-up-down",
+    "nomeEverfit": "Toes up down",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-towel-curls",
+    "nomeEverfit": "Towel Curls",
+    "serie": 1,
+    "quantita": 180.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-towel-curls",
+    "nomeEverfit": "Towel Curls",
+    "serie": 1,
+    "quantita": 180.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fy-towe-slrdl",
+    "nomeEverfit": "Single leg Fascia RDL",
+    "serie": 1,
+    "quantita": 90.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fascia-iso-lounge-runner",
+    "nomeEverfit": "Fascia Iso Lounge Runner",
+    "serie": 1,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fy-towe-slrdl",
+    "nomeEverfit": "Fascia Single leg runner (towel)",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fascia-towel-figure-8",
+    "nomeEverfit": "Fascia Towel figure 8",
+    "serie": 1,
+    "quantita": 90.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "plioe-pogo-jumps",
+    "nomeEverfit": "Pogo Jumps",
+    "serie": 3,
+    "quantita": 90.0,
+    "unita": "secondi",
+    "recupero_sec": 30
+   },
+   {
+    "esercizio_id": "plioe-fascia-toe-bounces-single-leg-pogo-jumps",
+    "nomeEverfit": "Fascia Toe Bounces Single Leg - Pogo Jumps",
+    "serie": 3,
+    "quantita": 45.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "descrizione": "Esercizi per costruire una base solida bel sistema fasciale",
+  "tags": []
+ },
+ {
   "id": "fascia-foundations-2a",
   "nome": "Fascia Foundations 2A",
   "nomeEverfit": "Fascia Foundations 2A",
@@ -3066,6 +3442,103 @@ export const BLOCCHI: Blocco[] = [
     "nomeEverfit": "Fascia Toe Bounces Single Leg - Pogo Jumps",
     "serie": 2,
     "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "descrizione": "Esercizi per costruire una base solida bel sistema fasciale",
+  "tags": []
+ },
+ {
+  "id": "fascia-foundations-2b",
+  "nome": "Fascia Foundations 2B",
+  "nomeEverfit": "Fascia Foundations 2B",
+  "famiglia": "Fascia Foundation",
+  "qualita": "fascia-prevenzione",
+  "qualitaSet": {
+   "riscaldamento": 1,
+   "fascia-prevenzione": 5,
+   "pliometria-estensiva": 4
+  },
+  "livello": null,
+  "progressione": 2,
+  "variante": "full",
+  "sottovariante": "B",
+  "durataMin": 29,
+  "attrezzatura": [
+   "piccoli attrezzi"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "risc-fascia-adhesion-tennis-ball",
+    "nomeEverfit": "Fascia adhesion tennis ball",
+    "serie": 1,
+    "quantita": 4.0,
+    "unita": "minuti",
+    "recupero_sec": 0
+   },
+   {
+    "esercizio_id": "fasc-toes-up-down",
+    "nomeEverfit": "Toes up down",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-towel-curls",
+    "nomeEverfit": "Towel Curls",
+    "serie": 1,
+    "quantita": 180.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-towel-curls",
+    "nomeEverfit": "Towel Curls",
+    "serie": 1,
+    "quantita": 180.0,
+    "unita": "secondi",
+    "recupero_sec": 0,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fy-towe-slrdl",
+    "nomeEverfit": "Single leg Fascia RDL",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fasc-fascia-iso-lounge-runner",
+    "nomeEverfit": "Fascia Iso Lounge Runner",
+    "serie": 1,
+    "quantita": 120.0,
+    "unita": "secondi",
+    "recupero_sec": 30,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "plioe-pogo-jumps",
+    "nomeEverfit": "Pogo Jumps",
+    "serie": 2,
+    "quantita": 150.0,
+    "unita": "secondi",
+    "recupero_sec": 30
+   },
+   {
+    "esercizio_id": "plioe-fascia-toe-bounces-single-leg-pogo-jumps",
+    "nomeEverfit": "Fascia Toe Bounces Single Leg - Pogo Jumps",
+    "serie": 2,
+    "quantita": 90.0,
     "unita": "secondi",
     "recupero_sec": 30,
     "perLato": true
@@ -3634,6 +4107,231 @@ export const BLOCCHI: Blocco[] = [
   ],
   "completo": true,
   "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "forza-full-body-hiit-corpo-libero-b2",
+  "nome": "Forza full body HIIT corpo libero - B2",
+  "nomeEverfit": "Forza full body HIIT corpo libero - B2",
+  "famiglia": "Forza Full Body Hiit Corpo Libero",
+  "qualita": "forza-parte-alta",
+  "qualitaSet": {
+   "forza-parte-alta": 8,
+   "pliometria-intensiva": 4,
+   "core": 4
+  },
+  "livello": "B",
+  "progressione": 2,
+  "variante": "full",
+  "durataMin": 23,
+  "attrezzatura": [],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "fpa-archer-pushup",
+    "nomeEverfit": "Archer Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "plioi-squat-jump",
+    "nomeEverfit": "Jump Squat",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "fpa-diamond-push-up",
+    "nomeEverfit": "Diamond Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "core2-flutter-kick-abs-low",
+    "nomeEverfit": "Flutter Kicks",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": null,
+    "nomeEverfit": "Burpee",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "fpa-archer-pushup",
+    "nomeEverfit": "Archer Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "plioi-squat-jump",
+    "nomeEverfit": "Jump Squat",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "fpa-diamond-push-up",
+    "nomeEverfit": "Diamond Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "core2-flutter-kick-abs-low",
+    "nomeEverfit": "Flutter Kicks",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": null,
+    "nomeEverfit": "Burpee",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "fpa-archer-pushup",
+    "nomeEverfit": "Archer Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "plioi-squat-jump",
+    "nomeEverfit": "Jump Squat",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "fpa-diamond-push-up",
+    "nomeEverfit": "Diamond Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "core2-flutter-kick-abs-low",
+    "nomeEverfit": "Flutter Kicks",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": null,
+    "nomeEverfit": "Burpee",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "fpa-archer-pushup",
+    "nomeEverfit": "Archer Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "plioi-squat-jump",
+    "nomeEverfit": "Jump Squat",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "fpa-diamond-push-up",
+    "nomeEverfit": "Diamond Push Up",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": "core2-flutter-kick-abs-low",
+    "nomeEverfit": "Flutter Kicks",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   },
+   {
+    "esercizio_id": null,
+    "nomeEverfit": "Burpee",
+    "serie": 1,
+    "quantita": 40.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "interval",
+    "sezione": "Forza full body HIIT 5min - corpo libero - B2"
+   }
+  ],
+  "completo": false,
+  "mancanti": [
+   "Burpee"
+  ],
   "tags": []
  },
  {
@@ -4562,6 +5260,74 @@ export const BLOCCHI: Blocco[] = [
   "tags": []
  },
  {
+  "id": "forza-parte-alta-emom-b3",
+  "nome": "Forza Parte Alta EMOM B3",
+  "nomeEverfit": "Forza Parte Alta EMOM B3",
+  "famiglia": "Forza Parte Alta Emom",
+  "qualita": "forza-parte-alta",
+  "qualitaSet": {
+   "forza-parte-alta": 6,
+   "forza-parte-bassa": 3
+  },
+  "livello": "B",
+  "progressione": 3,
+  "variante": "full",
+  "durataMin": 15,
+  "attrezzatura": [],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "fpa-diamond-push-up",
+    "nomeEverfit": "Diamond Push Up",
+    "serie": 3,
+    "quantita": 3,
+    "unita": "reps",
+    "recupero_sec": 0,
+    "schema": "emom",
+    "emomGruppo": "forza-full-body-emom-b3",
+    "sezione": "Forza Full Body EMOM B3"
+   },
+   {
+    "esercizio_id": "fpb-body-weight-pistol-squat",
+    "nomeEverfit": "Body Weight Pistol Squat",
+    "serie": 3,
+    "quantita": 3,
+    "unita": "reps",
+    "recupero_sec": 0,
+    "schema": "emom",
+    "emomGruppo": "forza-full-body-emom-b3",
+    "sezione": "Forza Full Body EMOM B3"
+   },
+   {
+    "esercizio_id": null,
+    "nomeEverfit": "Decline Push Up",
+    "serie": 3,
+    "quantita": 3,
+    "unita": "reps",
+    "recupero_sec": 0,
+    "schema": "emom",
+    "emomGruppo": "forza-full-body-emom-b3",
+    "sezione": "Forza Full Body EMOM B3"
+   },
+   {
+    "esercizio_id": "fpa-crow-pose-progression",
+    "nomeEverfit": "Crow Pose Progression",
+    "serie": 3,
+    "quantita": 3,
+    "unita": "reps",
+    "recupero_sec": 0,
+    "schema": "emom",
+    "emomGruppo": "forza-full-body-emom-b3",
+    "sezione": "Forza Full Body EMOM B3"
+   }
+  ],
+  "completo": false,
+  "mancanti": [
+   "Decline Push Up"
+  ],
+  "tags": []
+ },
+ {
   "id": "forza-parte-alta-emom-b4",
   "nome": "Forza Parte Alta EMOM B4",
   "nomeEverfit": "Forza Parte Alta EMOM B4",
@@ -5215,6 +5981,171 @@ export const BLOCCHI: Blocco[] = [
     "unita": "reps",
     "recupero_sec": 60,
     "carico_kg": 5.0
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "forza-parte-alta-push-corpo-libero",
+  "nome": "Forza Parte alta Push corpo libero",
+  "nomeEverfit": "Forza Parte alta Push corpo libero",
+  "famiglia": "Forza Parte Alta Push Corpo Libero",
+  "qualita": "forza-parte-alta",
+  "qualitaSet": {
+   "core": 14,
+   "forza-parte-alta": 5
+  },
+  "livello": "B",
+  "progressione": 1,
+  "variante": "full",
+  "durataMin": 37,
+  "attrezzatura": [],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "core2-sit-up",
+    "nomeEverfit": "Sit-Up",
+    "serie": 4,
+    "quantita": 20.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "core2-plank-with-twist",
+    "nomeEverfit": "Plank with Twist",
+    "serie": 3,
+    "quantita": 10.0,
+    "unita": "reps",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "core2-isometric-bear-crawl",
+    "nomeEverfit": "Isometric Bear Crawl",
+    "serie": 3,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 45
+   },
+   {
+    "esercizio_id": "core2-bear-crawl-linear",
+    "nomeEverfit": "Bear Crawl Linear",
+    "serie": 2,
+    "quantita": 10.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "core2-bear-crawl-lateral",
+    "nomeEverfit": "Bear Crawl Lateral",
+    "serie": 2,
+    "quantita": 10.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "push-2",
+    "nomeEverfit": "Push-Up",
+    "serie": 5,
+    "quantita": 20.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "forza-parte-alta-push-corpo-libero-b2",
+  "nome": "Forza Parte alta Push corpo libero B2",
+  "nomeEverfit": "Forza Parte alta Push corpo libero B2",
+  "famiglia": "Forza Parte Alta Push Corpo Libero",
+  "qualita": "forza-parte-alta",
+  "qualitaSet": {
+   "core": 10,
+   "forza-parte-alta": 6
+  },
+  "livello": "B",
+  "progressione": 2,
+  "variante": "full",
+  "durataMin": 27,
+  "attrezzatura": [],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "core2-flutter-kick-abs-low",
+    "nomeEverfit": "Flutter Kick Abs Low",
+    "serie": 3,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 20
+   },
+   {
+    "esercizio_id": "core2-isometric-bear-crawl",
+    "nomeEverfit": "Isometric Bear Crawl",
+    "serie": 2,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 30
+   },
+   {
+    "esercizio_id": "core2-isometric-bear-crawl",
+    "nomeEverfit": "Isometric Bear Crawl",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 45
+   },
+   {
+    "esercizio_id": "core2-bear-crawl-linear",
+    "nomeEverfit": "Bear Crawl Linear",
+    "serie": 2,
+    "quantita": 12.0,
+    "unita": "reps",
+    "recupero_sec": 30
+   },
+   {
+    "esercizio_id": "core2-bear-crawl-lateral",
+    "nomeEverfit": "Bear Crawl Lateral",
+    "serie": 1,
+    "quantita": 12.0,
+    "unita": "reps",
+    "recupero_sec": 30
+   },
+   {
+    "esercizio_id": "core2-bear-crawl-lateral",
+    "nomeEverfit": "Bear Crawl Lateral",
+    "serie": 1,
+    "quantita": 12.0,
+    "unita": "reps",
+    "recupero_sec": 45
+   },
+   {
+    "esercizio_id": "push-2",
+    "nomeEverfit": "Push-Up",
+    "serie": 2,
+    "quantita": 20.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fpa-diamond-push-up",
+    "nomeEverfit": "Diamond Push Up",
+    "serie": 2,
+    "quantita": 15.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fpa-piegamenti-hindu",
+    "nomeEverfit": "Piegamenti Hindu",
+    "serie": 2,
+    "quantita": 12.0,
+    "unita": "reps",
+    "recupero_sec": 60
    }
   ],
   "completo": true,
@@ -6263,6 +7194,124 @@ export const BLOCCHI: Blocco[] = [
     "unita": "secondi",
     "recupero_sec": 60,
     "perLato": true
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "forza-prevenzione-b1",
+  "nome": "Forza Prevenzione B1",
+  "nomeEverfit": "Forza Prevenzione B1",
+  "famiglia": "Forza Prevenzione",
+  "qualita": "forza-parte-bassa",
+  "qualitaSet": {
+   "forza-parte-bassa": 12,
+   "forza-esplosiva": 2,
+   "core": 2
+  },
+  "livello": "B",
+  "progressione": 1,
+  "variante": "full",
+  "durataMin": 38,
+  "attrezzatura": [
+   "kettlebell",
+   "palestra",
+   "sbarra"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "fpb-tibialis-raises",
+    "nomeEverfit": "Tibialis raises",
+    "serie": 2,
+    "quantita": 20.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fpb-calf-raises",
+    "nomeEverfit": "Calf raises",
+    "serie": 2,
+    "quantita": 20.0,
+    "unita": "reps",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fpb-atg-split-squat",
+    "nomeEverfit": "atg split squat",
+    "serie": 2,
+    "quantita": 5.0,
+    "unita": "reps",
+    "recupero_sec": 120,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fpb-sissy-squat",
+    "nomeEverfit": "sissy squat",
+    "serie": 2,
+    "quantita": 8.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fpb-fy-squat",
+    "nomeEverfit": "FY Squat",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "reps",
+    "recupero_sec": 120
+   },
+   {
+    "esercizio_id": "fpb-fy-squat",
+    "nomeEverfit": "FY Squat",
+    "serie": 1,
+    "quantita": 7.0,
+    "unita": "reps",
+    "recupero_sec": 120
+   },
+   {
+    "esercizio_id": "fesp-kettlebell-swing",
+    "nomeEverfit": "Kettlebell swing",
+    "serie": 1,
+    "quantita": 12.0,
+    "unita": "reps",
+    "recupero_sec": 120
+   },
+   {
+    "esercizio_id": "fesp-kettlebell-swing",
+    "nomeEverfit": "Kettlebell swing",
+    "serie": 1,
+    "quantita": 16.0,
+    "unita": "reps",
+    "recupero_sec": 120
+   },
+   {
+    "esercizio_id": "fpb-nordic-hamstring",
+    "nomeEverfit": "nordic hamstring",
+    "serie": 2,
+    "quantita": 5.0,
+    "unita": "reps",
+    "recupero_sec": 180
+   },
+   {
+    "esercizio_id": "core2-copenaghen-plank",
+    "nomeEverfit": "copenaghen plank",
+    "serie": 1,
+    "quantita": 60.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "core2-toes-to-bar",
+    "nomeEverfit": "Toes to Bar",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "reps",
+    "recupero_sec": 60
    }
   ],
   "completo": true,
@@ -7669,6 +8718,99 @@ export const BLOCCHI: Blocco[] = [
   "tags": []
  },
  {
+  "id": "pliometria-rapidita-velocita-a2-short",
+  "nome": "Pliometria rapidità velocità A2 - short",
+  "nomeEverfit": "Pliometria rapidità velocità A2 - short",
+  "famiglia": "Pliometria Rapidità Velocità",
+  "qualita": "pliometria-intensiva",
+  "qualitaSet": {
+   "test": 1,
+   "velocita": 7
+  },
+  "livello": "A",
+  "progressione": 2,
+  "variante": "short",
+  "durataMin": 13,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "test2-rapidita-ankle-stiffness-test",
+    "nomeEverfit": "Rapidità Ankle Stiffness - Test",
+    "serie": 1,
+    "quantita": 20.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-e-sprint",
+    "nomeEverfit": "Salto triplo e sprint",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "metri",
+    "recupero_sec": 30
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-e-sprint",
+    "nomeEverfit": "Salto triplo e sprint",
+    "serie": 1,
+    "quantita": 20.0,
+    "unita": "metri",
+    "recupero_sec": 40
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-e-sprint",
+    "nomeEverfit": "Salto triplo e sprint",
+    "serie": 1,
+    "quantita": 50.0,
+    "unita": "metri",
+    "recupero_sec": 120
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-a-1-gamba-e-sprint",
+    "nomeEverfit": "Salto triplo a 1 gamba e sprint",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "metri",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-a-1-gamba-e-sprint",
+    "nomeEverfit": "Salto triplo a 1 gamba e sprint",
+    "serie": 1,
+    "quantita": 20.0,
+    "unita": "metri",
+    "recupero_sec": 90,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-a-1-gamba-e-sprint",
+    "nomeEverfit": "Salto triplo a 1 gamba e sprint",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "metri",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-a-1-gamba-e-sprint",
+    "nomeEverfit": "Salto triplo a 1 gamba e sprint",
+    "serie": 1,
+    "quantita": 20.0,
+    "unita": "metri",
+    "recupero_sec": 90,
+    "perLato": true
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
   "id": "pliometria-rapidita-velocita-b1",
   "nome": "Pliometria Rapidità Velocità B1",
   "nomeEverfit": "Pliometria Rapidità Velocità B1",
@@ -8616,6 +9758,77 @@ export const BLOCCHI: Blocco[] = [
   "tags": []
  },
  {
+  "id": "riscaldamento-sprint-velocita-2b",
+  "nome": "Riscaldamento Sprint Velocità 2B",
+  "nomeEverfit": "Riscaldamento Sprint Velocità 2B",
+  "famiglia": "Riscaldamento Sprint Velocità",
+  "qualita": "riscaldamento",
+  "qualitaSet": {
+   "pliometria-estensiva": 6,
+   "velocita": 3,
+   "test": 1,
+   "riscaldamento": 3
+  },
+  "livello": null,
+  "progressione": null,
+  "variante": "full",
+  "sottovariante": "B",
+  "durataMin": 9,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "plioe-fascia-a-skip",
+    "nomeEverfit": "Fascia A-Skip",
+    "serie": 4,
+    "quantita": 10.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "attivazione"
+   },
+   {
+    "esercizio_id": "plioe-saltelli-in-mezzo-affondo-con-switch",
+    "nomeEverfit": "Saltelli in mezzo affondo con switch",
+    "serie": 2,
+    "quantita": 10.0,
+    "unita": "secondi",
+    "recupero_sec": 20
+   },
+   {
+    "esercizio_id": "vel-navette-laterali-con-pallina-da-tennis",
+    "nomeEverfit": "navette laterali con pallina da tennis",
+    "serie": 3,
+    "quantita": 10.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "schema": "attivazione"
+   },
+   {
+    "esercizio_id": "test2-rapidita-ankle-stiffness-test",
+    "nomeEverfit": "Rapidità Ankle Stiffness - Test",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "secondi",
+    "recupero_sec": 20,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "risc-allungo-riscaldamento",
+    "nomeEverfit": "Allungo",
+    "serie": 3,
+    "quantita": 50.0,
+    "unita": "metri",
+    "recupero_sec": 20,
+    "schema": "attivazione"
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
   "id": "salite-metabolico-a1",
   "nome": "Salite Metabolico A1",
   "nomeEverfit": "Salite Metabolico A1",
@@ -8749,6 +9962,74 @@ export const BLOCCHI: Blocco[] = [
    "velocita": 5
   },
   "livello": "A",
+  "progressione": 1,
+  "variante": "full",
+  "durataMin": 11,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "vel-sprint-e-salite-forza-esplosiva",
+    "nomeEverfit": "Sprint e Salite - Forza esplosiva",
+    "serie": 1,
+    "quantita": 200.0,
+    "unita": "metri",
+    "recupero_sec": 120,
+    "nota": "esegui le salita in progressione, arrivando circa all 80% della velocità"
+   },
+   {
+    "esercizio_id": "vel-sprint-e-salite-forza-esplosiva",
+    "nomeEverfit": "Sprint e Salite - Forza esplosiva",
+    "serie": 1,
+    "quantita": 150.0,
+    "unita": "metri",
+    "recupero_sec": 90,
+    "nota": "esegui le salita in progressione, arrivando circa all 80% della velocità"
+   },
+   {
+    "esercizio_id": "vel-sprint-e-salite-forza-esplosiva",
+    "nomeEverfit": "Sprint e Salite - Forza esplosiva",
+    "serie": 1,
+    "quantita": 100.0,
+    "unita": "metri",
+    "recupero_sec": 60,
+    "nota": "esegui le salita in progressione, arrivando circa all 80% della velocità"
+   },
+   {
+    "esercizio_id": "vel-sprint-e-salite-forza-esplosiva",
+    "nomeEverfit": "Sprint e Salite - Forza esplosiva",
+    "serie": 1,
+    "quantita": 50.0,
+    "unita": "metri",
+    "recupero_sec": 40,
+    "nota": "esegui le salita in progressione, arrivando circa all 80% della velocità"
+   },
+   {
+    "esercizio_id": "vel-box-rapidita-e-tiro",
+    "nomeEverfit": "BOX rapidità e Tiro",
+    "serie": 1,
+    "quantita": 4.0,
+    "unita": "reps",
+    "recupero_sec": 60,
+    "nota": "ESEGUI NON A MASSIMA VELOCITA', circa a 70/80%"
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "salite-resistenza-b1",
+  "nome": "Salite Resistenza B1",
+  "nomeEverfit": "Salite Resistenza B1",
+  "famiglia": "Salite Resistenza",
+  "qualita": "resistenza-aerobica",
+  "qualitaSet": {
+   "velocita": 5
+  },
+  "livello": "B",
   "progressione": 1,
   "variante": "full",
   "durataMin": 11,
@@ -9640,6 +10921,102 @@ export const BLOCCHI: Blocco[] = [
   "tags": []
  },
  {
+  "id": "tecnica-freestyle",
+  "nome": "Tecnica Freestyle",
+  "nomeEverfit": "Tecnica Freestyle",
+  "famiglia": "Tecnica Freestyle",
+  "qualita": "tecnica-palleggi",
+  "qualitaSet": {
+   "tecnica-palleggi": 4,
+   "fascia-prevenzione": 2
+  },
+  "livello": null,
+  "progressione": null,
+  "variante": "full",
+  "durataMin": 47,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-liberi-freestyle",
+    "nomeEverfit": "Palleggi al muro liberi freestyle",
+    "serie": 2,
+    "quantita": 6.0,
+    "unita": "minuti",
+    "recupero_sec": 120
+   },
+   {
+    "esercizio_id": "tpal-palleggi-freestyle-3-conetti",
+    "nomeEverfit": "Palleggi Freestyle 3 conetti",
+    "serie": 2,
+    "quantita": 3.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fasc-palleggi-freestyle-tecnica",
+    "nomeEverfit": "Palleggi Freestyle - Tecnica",
+    "serie": 2,
+    "quantita": 480.0,
+    "unita": "secondi",
+    "recupero_sec": 120
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "tecnica-freestyle-short",
+  "nome": "Tecnica Freestyle (short)",
+  "nomeEverfit": "Tecnica Freestyle (short)",
+  "famiglia": "Tecnica Freestyle (short)",
+  "qualita": "tecnica-palleggi",
+  "qualitaSet": {
+   "tecnica-palleggi": 2,
+   "fascia-prevenzione": 1
+  },
+  "livello": null,
+  "progressione": null,
+  "variante": "short",
+  "durataMin": 20,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-liberi-freestyle",
+    "nomeEverfit": "Palleggi al muro liberi freestyle",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 120
+   },
+   {
+    "esercizio_id": "tpal-palleggi-freestyle-3-conetti",
+    "nomeEverfit": "Palleggi Freestyle 3 conetti",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "reps",
+    "recupero_sec": 180
+   },
+   {
+    "esercizio_id": "fasc-palleggi-freestyle-tecnica",
+    "nomeEverfit": "Palleggi Freestyle - Tecnica",
+    "serie": 1,
+    "quantita": 300.0,
+    "unita": "secondi",
+    "recupero_sec": 120
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
   "id": "tecnica-freestyle-dribbling",
   "nome": "Tecnica Freestyle - dribbling",
   "nomeEverfit": "Tecnica Freestyle - dribbling",
@@ -10169,6 +11546,78 @@ export const BLOCCHI: Blocco[] = [
   "tags": []
  },
  {
+  "id": "tecnica-palleggi-a1-tecnica-di-base",
+  "nome": "Tecnica Palleggi A1 - Tecnica di base",
+  "nomeEverfit": "Tecnica Palleggi A1 - Tecnica di base",
+  "famiglia": "Tecnica Palleggi - Tecnica Di Base",
+  "qualita": "tecnica-palleggi",
+  "qualitaSet": {
+   "tecnica-palleggi": 7,
+   "fascia-prevenzione": 2
+  },
+  "livello": "A",
+  "progressione": 1,
+  "variante": "full",
+  "durataMin": 55,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-2-tocchi-controllo-interno-pass",
+    "nomeEverfit": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-solo-collo",
+    "nomeEverfit": "Palleggi solo Collo",
+    "serie": 2,
+    "quantita": 4.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-solo-collo-3-tocchi-alternati-tecnica",
+    "nomeEverfit": "Palleggi solo collo 3 tocchi alternati - TECNICA",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-1-piede-interno-collo-esterno-tecnica",
+    "nomeEverfit": "Palleggi 1 piede interno/collo/esterno - Tecnica",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-liberi-freestyle",
+    "nomeEverfit": "Palleggi al muro liberi freestyle",
+    "serie": 2,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fasc-palleggi-freestyle-tecnica",
+    "nomeEverfit": "Palleggi Freestyle - Tecnica",
+    "serie": 2,
+    "quantita": 300.0,
+    "unita": "secondi",
+    "recupero_sec": 60
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
   "id": "tecnica-palleggi-a2",
   "nome": "Tecnica palleggi A2",
   "nomeEverfit": "Tecnica palleggi A2",
@@ -10508,6 +11957,112 @@ export const BLOCCHI: Blocco[] = [
     "quantita": 5.0,
     "unita": "minuti",
     "recupero_sec": 0
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "tecnica-palleggi-a4-tecnica-di-base",
+  "nome": "Tecnica Palleggi A4 - Tecnica di base",
+  "nomeEverfit": "Tecnica Palleggi A4 - Tecnica di base",
+  "famiglia": "Tecnica Palleggi - Tecnica Di Base",
+  "qualita": "tecnica-palleggi",
+  "qualitaSet": {
+   "tecnica-palleggi": 9,
+   "test": 1,
+   "fascia-prevenzione": 1
+  },
+  "livello": "A",
+  "progressione": 4,
+  "variante": "full",
+  "durataMin": 65,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-2-tocchi",
+    "nomeEverfit": "Palleggi al muro 2 tocchi",
+    "serie": 1,
+    "quantita": 4.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-2-tocchi-controllo-interno-pass",
+    "nomeEverfit": "palleggi al muro 2 tocchi - controllo interno, passaggio collo",
+    "serie": 1,
+    "quantita": 3.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-2-tocchi-controllo-esterno-pass",
+    "nomeEverfit": "Palleggi al muro 2 tocchi - controllo esterno, passaggio collo",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-al-muro-liberi-freestyle",
+    "nomeEverfit": "Palleggi al muro liberi freestyle",
+    "serie": 1,
+    "quantita": 6.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-solo-collo-3-tocchi-alternati-tecnica",
+    "nomeEverfit": "Palleggi solo collo 3 tocchi alternati - TECNICA",
+    "serie": 1,
+    "quantita": 4.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-1-piede-interno-collo-esterno-tecnica",
+    "nomeEverfit": "Palleggi 1 piede interno/collo/esterno - Tecnica",
+    "serie": 1,
+    "quantita": 3.0,
+    "unita": "minuti",
+    "recupero_sec": 120,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "tpal-palleggi-freestyle-3-conetti",
+    "nomeEverfit": "Palleggi Freestyle 3 conetti",
+    "serie": 1,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 0
+   },
+   {
+    "esercizio_id": "test2-palleggi-piedi-coscia-testa",
+    "nomeEverfit": "palleggi piedi coscia testa",
+    "serie": 1,
+    "quantita": 300.0,
+    "unita": "secondi",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "tpal-palleggi-liberi-calcio-alto-tecnica",
+    "nomeEverfit": "Palleggi liberi + calcio alto - Tecnica",
+    "serie": 2,
+    "quantita": 5.0,
+    "unita": "minuti",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "fasc-palleggi-freestyle-tecnica",
+    "nomeEverfit": "Palleggi Freestyle - Tecnica",
+    "serie": 1,
+    "quantita": 360.0,
+    "unita": "secondi",
+    "recupero_sec": 60
    }
   ],
   "completo": true,
@@ -11217,6 +12772,57 @@ export const BLOCCHI: Blocco[] = [
  },
  {
   "id": "test-velocita",
+  "nome": "TEST VELOCITA'",
+  "nomeEverfit": "TEST VELOCITA'",
+  "famiglia": "Test Velocita'",
+  "qualita": "test",
+  "qualitaSet": {
+   "test": 6,
+   "velocita": 3
+  },
+  "livello": null,
+  "progressione": null,
+  "variante": "full",
+  "durataMin": 24,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "test2-test-velocita-100m",
+    "nomeEverfit": "TEST VELOCITA' 100M",
+    "serie": 3,
+    "quantita": 100.0,
+    "unita": "metri",
+    "recupero_sec": 180,
+    "nota": "PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI"
+   },
+   {
+    "esercizio_id": "test2-test-velocita-50m",
+    "nomeEverfit": "TEST VELOCITA' 50M",
+    "serie": 3,
+    "quantita": 50.0,
+    "unita": "metri",
+    "recupero_sec": 120,
+    "nota": "PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI"
+   },
+   {
+    "esercizio_id": "vel-t-sprint",
+    "nomeEverfit": "T sprint",
+    "serie": 3,
+    "quantita": 1.0,
+    "unita": "reps",
+    "recupero_sec": 90,
+    "nota": "ESEGUI SENZA PALLA E PRENDI IL TEMPO MIGLIORE IN 3 TENTATIVI"
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "test-velocita-2",
   "nome": "TEST VELOCITÀ",
   "nomeEverfit": "TEST VELOCITÀ",
   "famiglia": "Test Velocità",

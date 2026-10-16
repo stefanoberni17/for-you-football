@@ -6,18 +6,18 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Marco, 19 anni, difensore. B, in season, difensore, squadra mar/gio (sforzo 7 e 6), partita sabato. Sbarra, campo, rullo. Test base fatti, nessun massimale.
 **Richiesta:** piano automatico del lunedì (nessuna richiesta: valgono le preferenze del setup)
-**Contesto:** livello B; 95 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
-**Prompt:** system 32.7k caratteri (~9100 token), user 2.3k caratteri (~600 token)
-**Piano:** piano base (senza Claude) in 28 ms
+**Contesto:** livello B; 102 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
+**Prompt:** system 33.6k caratteri (~9300 token), user 2.3k caratteri (~600 token)
+**Piano:** piano base (senza Claude) in 23 ms
 - **Lunedì** · Seduta base · fisica · 33' (+9' apertura) — 8 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
   - Gambe: serie (forza-parte-bassa, 33')
 - **Mercoledì** · Seduta base · fisica · 39' (+9' apertura) — 9 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
   - Parte alta: serie (forza-parte-alta, 39')
-- **Venerdì** · Giornata leggera · tecnica · 59' (+9' apertura) — 6 esercizi
+- **Venerdì** · Giornata leggera · tecnica · 20' (+9' apertura) — 6 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
-  - Tecnica Freestyle A1 (tecnica-palleggi, 59')
+  - Tecnica Freestyle (short) (tecnica-palleggi, 20')
 - messaggio: Piano base della settimana (generato in modalità sicura).
 
 **Controlli:**
@@ -26,7 +26,7 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 - ✅ sedute fisiche: 2 (tetto 3)
 - ✅ partita Sabato: libero; niente fisica il giorno prima
 - ✅ giorni: Lunedì, Mercoledì, Venerdì (ammessi Lunedì/Mercoledì/Venerdì)
-- ✅ durata: 33', 39', 59' (massimo 60')
+- ✅ durata: 33', 39', 20' (massimo 60')
 - ✅ obiettivi: Forza gambe ✓, Forza parte alta ✓ (pretesi: 2)
 
 **Cosa mi aspettavo:** 3 giornate su lun/mer/ven, al massimo 3 fisiche, ognuna entro 60' (apertura esclusa); gambe e parte alta coperte (pb-* e pa-* dalle scale); niente fisica venerdì (il giorno prima della partita del sabato).
@@ -35,9 +35,9 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Luca, 22 anni, attaccante. A (AMRAP 9), off season senza squadra, attaccante. Solo campo e rullo. Test di velocità e salti al livello A, parte alta A.
 **Richiesta:** NUOVA SETTIMANA (richiesta esplicita dell'atleta: gli obiettivi vengono prima dei recuperi). Giorni disponibili per allenarsi con l'app: Lunedì, Martedì, Mercoledì, Giovedì, Venerdì, Sabato (SOLO questi). Sedute fisiche richieste: ESATTAMENTE 5 a settimana (se il tetto della fase lo permette). Tempo massimo per seduta: 75 minuti. Obiettivi di questa settimana, in ordine di priorità: 1. Velocità, 2. Esplosività / salti, 3. Forza gambe (i primi 2 devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni).
-**Contesto:** livello A (velocita PRO, resistenza-aerobica PRO, resistenza-metabolico PRO, resistenza-rsa PRO); 118 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom); tetto 6 fisiche + leggere fino a 7, 120'; carico insufficiente; regole: PLIOMETRIA: l'atleta ha 0 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B. · VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
-**Prompt:** system 35.5k caratteri (~9900 token), user 2.8k caratteri (~800 token)
-**Piano:** piano base (senza Claude) in 23 ms
+**Contesto:** livello A (velocita PRO, resistenza-aerobica PRO, resistenza-metabolico PRO, resistenza-rsa PRO); 130 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom); tetto 6 fisiche + leggere fino a 7, 120'; carico insufficiente; regole: PLIOMETRIA: l'atleta ha 0 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B. · VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
+**Prompt:** system 37.0k caratteri (~10300 token), user 2.8k caratteri (~800 token)
+**Piano:** piano base (senza Claude) in 22 ms
 - **Lunedì** · Seduta base · fisica · 43' (+19' apertura) — 15 esercizi
   - Riscaldamento velocità (riscaldamento, 15') · _aggiunto dal server_
   - Fascia Training - Rolling and fascia adhesion (fascia-prevenzione, 19') · _facoltativa, se hai tempo_
@@ -70,18 +70,18 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Davide, 24 anni, centrocampista. PRO (AMRAP 11), 80 kg, palestra + kettlebell + sbarra + campo, massimali (squat 1,6×, panca 1,0×, pull up 1,5×). In season, squadra lun/mer/ven, partita domenica.
 **Richiesta:** NUOVA SETTIMANA (richiesta esplicita dell'atleta: gli obiettivi vengono prima dei recuperi). Giorni disponibili per allenarsi con l'app: Martedì, Giovedì, Sabato (SOLO questi). Sedute fisiche richieste: ESATTAMENTE 3 a settimana (se il tetto della fase lo permette). Tempo massimo per seduta: 90 minuti. Obiettivi di questa settimana, in ordine di priorità: 1. Forza funzionale kettlebell, 2. Forza gambe, 3. Forza parte alta (i primi 2 devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni).
-**Contesto:** livello PRO; 135 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-fmax, pb-emom, kb-base); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: PLIOMETRIA: l'atleta ha 0 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B. · VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
-**Prompt:** system 38.8k caratteri (~10800 token), user 3.1k caratteri (~900 token)
-**Piano:** piano base (senza Claude) in 20 ms
+**Contesto:** livello PRO; 148 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-fmax, pb-emom, kb-base); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: PLIOMETRIA: l'atleta ha 0 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B. · VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
+**Prompt:** system 40.4k caratteri (~11200 token), user 3.1k caratteri (~900 token)
+**Piano:** piano base (senza Claude) in 13 ms
 - **Martedì** · Seduta base · fisica · 24' (+19' apertura) — 10 esercizi
   - Fascia Training - Rolling and fascia adhesion (fascia-prevenzione, 19') · _facoltativa, se hai tempo_
   - Kettlebell: base (forza-esplosiva, 24')
 - **Giovedì** · Seduta base · fisica · 51' (+19' apertura) — 11 esercizi
   - Fascia Training - Rolling and fascia adhesion (fascia-prevenzione, 19') · _facoltativa, se hai tempo_
   - Gambe: serie (forza-parte-bassa, 51')
-- **Sabato** · Giornata leggera · tecnica · 35' (+19' apertura) — 12 esercizi
+- **Sabato** · Giornata leggera · tecnica · 20' (+19' apertura) — 9 esercizi
   - Fascia Training - Rolling and fascia adhesion (fascia-prevenzione, 19') · _facoltativa, se hai tempo_
-  - Tecnica Palleggi A1 (tecnica-palleggi, 35')
+  - Tecnica Freestyle (short) (tecnica-palleggi, 20')
 - messaggio: Piano base della settimana (generato in modalità sicura).
 
 **Controlli:**
@@ -90,7 +90,7 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 - ✅ sedute fisiche: 2 (tetto 3)
 - ✅ partita Domenica: libero; niente fisica il giorno prima
 - ✅ giorni: Martedì, Giovedì, Sabato (ammessi Martedì/Giovedì/Sabato)
-- ✅ durata: 24', 51', 35' (massimo 90')
+- ✅ durata: 24', 51', 20' (massimo 90')
 - ✅ obiettivi: Forza funzionale kettlebell ✓, Forza gambe ✓, Forza parte alta ✓ (pretesi: 2)
 
 **Cosa mi aspettavo:** il sabato (giorno prima della partita) NON può essere una seduta fisica: 2 fisiche + 1 leggera, o 3 giornate con il sabato leggero; un blocco kb-* (kettlebell base: nessun log); Fmax possibile (massimali + esperienza palestra), kg sotto il tetto; parte alta dalle scale al livello PRO.
@@ -99,24 +99,24 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Andrea, 17 anni, centrocampista. B, preparazione con la squadra (lun-ven, sforzo 8), partita sabato. Solo campo e rullo. Vuole resistenza e tecnica.
 **Richiesta:** NUOVA SETTIMANA (richiesta esplicita dell'atleta: gli obiettivi vengono prima dei recuperi). Giorni disponibili per allenarsi con l'app: Martedì, Giovedì (SOLO questi). Tempo massimo per seduta: 45 minuti. Obiettivi di questa settimana, in ordine di priorità: 1. Resistenza, 2. Tecnica palla (i primi 2 devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni).
-**Contesto:** livello B (resistenza-aerobica A); 92 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-emom, pb-serie, pb-emom); tetto 1 fisiche + leggere fino a 3, 75'; carico insufficiente
-**Prompt:** system 31.0k caratteri (~8600 token), user 2.5k caratteri (~700 token)
-**Piano:** piano base (senza Claude) in 5 ms
-- **Martedì** · Giornata leggera · tecnica · 27' (+9' apertura) — 4 esercizi
+**Contesto:** livello B (resistenza-aerobica A); 100 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-emom, pb-serie, pb-emom); tetto 1 fisiche + leggere fino a 3, 75'; carico insufficiente
+**Prompt:** system 32.0k caratteri (~8900 token), user 2.5k caratteri (~700 token)
+**Piano:** piano base (senza Claude) in 6 ms
+- **Martedì** · Seduta base · fisica · 25' (+9' apertura) — 9 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
-  - Resistenza e Tecnica funzionale B1 (tecnica-palleggi, 27')
-- **Giovedì** · Giornata leggera · tecnica · 38' (+9' apertura) — 8 esercizi
+  - Metabolico B1 (resistenza-metabolico, 25')
+- **Giovedì** · Giornata leggera · tecnica · 20' (+9' apertura) — 6 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
-  - Tecnica Freestyle - dribbling passaggio - short (tecnica-passaggi, 38')
+  - Tecnica Freestyle (short) (tecnica-palleggi, 20')
 - messaggio: Piano base della settimana (generato in modalità sicura).
 
 **Controlli:**
 - ✅ validatore: nessuna violazione
 - ✅ giornate: 2 (decide il planner, massimo 3)
-- ✅ sedute fisiche: 0 (tetto 1)
+- ✅ sedute fisiche: 1 (tetto 1)
 - ✅ partita Sabato: libero; niente fisica il giorno prima
 - ✅ giorni: Martedì, Giovedì (ammessi Martedì/Giovedì)
-- ✅ durata: 27', 38' (massimo 45')
+- ✅ durata: 25', 20' (massimo 45')
 - ✅ obiettivi: Resistenza ✓, Tecnica palla ✓ (pretesi: 1)
 
 **Cosa mi aspettavo:** al massimo 1 fisica + 2 leggere (tetto della preparazione), tutte entro 45'; la squadra fa già resistenza forte (8/10 lun e gio): il planner non la raddoppia, mette tecnica; niente blocchi A (atleta B).
@@ -125,15 +125,15 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Simone, 18 anni, portiere. B, in season, portiere, allenamenti in PAUSA PER DOLORE (training_pain_hold). Squadra mar/gio, partita domenica. Setup: fascia e tecnica, lun/mer, 2 giornate da 45'.
 **Richiesta:** piano automatico del lunedì (nessuna richiesta: valgono le preferenze del setup)
-**Contesto:** livello B; 90 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente
-**Prompt:** system 29.4k caratteri (~8200 token), user 2.1k caratteri (~600 token)
+**Contesto:** livello B; 97 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente
+**Prompt:** system 30.4k caratteri (~8400 token), user 2.1k caratteri (~600 token)
 **Piano:** piano base (senza Claude) in 5 ms
-- **Lunedì** · Giornata leggera · tecnica · 27' (+9' apertura) — 4 esercizi
+- **Lunedì** · Giornata leggera · tecnica · 20' (+9' apertura) — 6 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
-  - Resistenza e Tecnica funzionale B1 (tecnica-palleggi, 27')
-- **Mercoledì** · Giornata leggera · tecnica · 27' (+9' apertura) — 4 esercizi
+  - Tecnica Freestyle (short) (tecnica-palleggi, 20')
+- **Mercoledì** · Giornata leggera · tecnica · 20' (+9' apertura) — 6 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
-  - Resistenza e Tecnica funzionale B1 (tecnica-palleggi, 27')
+  - Tecnica Freestyle (short) (tecnica-palleggi, 20')
 - messaggio: Piano base della settimana (generato in modalità sicura).
 
 **Controlli:**
@@ -142,7 +142,7 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 - ✅ sedute fisiche: 0 (tetto 0, pausa dolore)
 - ✅ partita Domenica: libero; niente fisica il giorno prima
 - ✅ giorni: Lunedì, Mercoledì (ammessi Lunedì/Mercoledì)
-- ✅ durata: 27', 27' (massimo 45')
+- ✅ durata: 20', 20' (massimo 45')
 - ✅ obiettivi: Prevenzione / fascia ✓, Tecnica palla ✓ (pretesi: 2)
 
 **Cosa mi aspettavo:** nessuna seduta fisica/mix; 2 giornate su lun/mer entro 45'; solo fascia, mobilità o tecnica leggera.
@@ -151,9 +151,9 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Giulia, 20 anni, portiere. B, in season, portiere, squadra mar/gio, partita sabato. Setup "Tutto, in equilibrio", lun/mar/gio/ven, 4 giornate da 60'. Sbarra, campo, rullo.
 **Richiesta:** piano automatico del lunedì (nessuna richiesta: valgono le preferenze del setup)
-**Contesto:** livello B (forza-esplosiva A, pliometria-intensiva A, pliometria-estensiva A); 98 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: PLIOMETRIA: l'atleta ha 0 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B.
-**Prompt:** system 33.1k caratteri (~9200 token), user 2.0k caratteri (~600 token)
-**Piano:** piano base (senza Claude) in 18 ms
+**Contesto:** livello B (forza-esplosiva A, pliometria-intensiva A, pliometria-estensiva A); 105 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: PLIOMETRIA: l'atleta ha 0 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B.
+**Prompt:** system 34.0k caratteri (~9500 token), user 2.0k caratteri (~600 token)
+**Piano:** piano base (senza Claude) in 15 ms
 - **Lunedì** · Seduta base · fisica · 41' (+9' apertura) — 9 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
   - Parte alta: serie (forza-parte-alta, 41')
@@ -163,9 +163,9 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 - **Giovedì** · Seduta base · fisica · 25' (+9' apertura) — 9 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
   - Metabolico B1 (resistenza-metabolico, 25')
-- **Venerdì** · Giornata leggera · tecnica · 59' (+9' apertura) — 6 esercizi
+- **Venerdì** · Giornata leggera · tecnica · 20' (+9' apertura) — 6 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
-  - Tecnica Freestyle A1 (tecnica-palleggi, 59')
+  - Tecnica Freestyle (short) (tecnica-palleggi, 20')
 - messaggio: Piano base della settimana (generato in modalità sicura).
 
 **Controlli:**
@@ -174,7 +174,7 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 - ✅ sedute fisiche: 3 (tetto 3)
 - ✅ partita Sabato: libero; niente fisica il giorno prima
 - ✅ giorni: Lunedì, Martedì, Giovedì, Venerdì (ammessi Lunedì/Martedì/Giovedì/Venerdì)
-- ✅ durata: 41', 33', 25', 59' (massimo 60')
+- ✅ durata: 41', 33', 25', 20' (massimo 60')
 - ✅ "Tutto": aspetti coperti Forza parte alta, Forza gambe, Resistenza, Tecnica palla, Prevenzione / fascia
 
 **Cosa mi aspettavo:** 4 giornate su lun/mar/gio/ven, al massimo 3 fisiche; almeno 2 aspetti diversi tra parte alta, gambe, salti, velocità, resistenza, tecnica; P1 (blocchi per il portiere) preferiti dove esistono; venerdì (giorno prima della partita) leggero.
@@ -183,9 +183,9 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Luca, 22 anni, attaccante. A (AMRAP 9), off season senza squadra, attaccante. Solo campo e rullo. Test di velocità e salti al livello A, parte alta A. QUARTA settimana del ciclo (scarico) con tre settimane di sedute fatte: pliometria A1 facile ×3, velocità A1 giusta, forza prevenzione A1 dura.
 **Richiesta:** piano automatico del lunedì (nessuna richiesta: valgono le preferenze del setup)
-**Contesto:** livello A (velocita PRO, resistenza-aerobica PRO, resistenza-metabolico PRO, resistenza-rsa PRO); 115 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 6 fisiche + leggere fino a 7, 120'; carico ok, tetto duro 1302 AU; SCARICO; regole: SALITE: settimana di scarico, i blocchi in salita non sono disponibili (pesanti). · PLIOMETRIA: l'atleta ha 3 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B. · VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 3): i blocchi con sprint con palla non sono disponibili.
-**Prompt:** system 35.4k caratteri (~9800 token), user 3.3k caratteri (~900 token)
-**Piano:** piano base (senza Claude) in 7 ms
+**Contesto:** livello A (velocita PRO, resistenza-aerobica PRO, resistenza-metabolico PRO, resistenza-rsa PRO); 126 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 6 fisiche + leggere fino a 7, 120'; carico ok, tetto duro 1302 AU; SCARICO; regole: SALITE: settimana di scarico, i blocchi in salita non sono disponibili (pesanti). · PLIOMETRIA: l'atleta ha 3 settimane di pliometria alle spalle (minimo 4 in B prima dell'intensiva A): solo blocchi B. · VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 3): i blocchi con sprint con palla non sono disponibili.
+**Prompt:** system 36.8k caratteri (~10200 token), user 3.3k caratteri (~900 token)
+**Piano:** piano base (senza Claude) in 9 ms
 - **Lunedì** · Seduta base · fisica · 34' (+19' apertura) — 15 esercizi
   - Riscaldamento velocità (riscaldamento, 15') · _aggiunto dal server_
   - Fascia Training - Rolling and fascia adhesion (fascia-prevenzione, 19') · _facoltativa, se hai tempo_
@@ -212,15 +212,15 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Marco, 19 anni, difensore. B, in season, difensore, squadra mar/gio (sforzo 7 e 6), partita sabato. Sbarra, campo, rullo. Test base fatti, nessun massimale.
 **Richiesta:** MODIFICA AL PIANO ATTUALE — cambia SOLO quanto indicato, il resto resta IDENTICO (stessi blocchi negli altri giorni). Sposta la seduta di Mercoledì a Giovedì (stessi blocchi). — oggi è Mercoledì
-**Contesto:** livello B; 95 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
-**Prompt:** system 32.9k caratteri (~9100 token), user 2.6k caratteri (~700 token)
-**Piano:** piano base (senza Claude) in 7 ms
+**Contesto:** livello B; 102 blocchi in libreria (dal server: pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom, risc-velocita, apertura-breve); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
+**Prompt:** system 33.9k caratteri (~9400 token), user 2.6k caratteri (~700 token)
+**Piano:** piano base (senza Claude) in 6 ms
 - **Giovedì** · Seduta base · fisica · 39' (+19' apertura) — 12 esercizi
   - Fascia Training - Rolling and fascia adhesion (fascia-prevenzione, 19') · _facoltativa, se hai tempo_
   - Parte alta: serie (forza-parte-alta, 39')
-- **Venerdì** · Giornata leggera · tecnica · 59' (+19' apertura) — 9 esercizi
+- **Venerdì** · Giornata leggera · tecnica · 20' (+19' apertura) — 9 esercizi
   - Fascia Training - Rolling and fascia adhesion (fascia-prevenzione, 19') · _facoltativa, se hai tempo_
-  - Tecnica Freestyle A1 (tecnica-palleggi, 59')
+  - Tecnica Freestyle (short) (tecnica-palleggi, 20')
 - messaggio: Piano base della settimana (generato in modalità sicura).
 
 **Controlli:**
@@ -229,7 +229,7 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 - ✅ sedute fisiche: 1 (tetto 3)
 - ✅ partita Sabato: libero; niente fisica il giorno prima
 - ✅ giorni: Giovedì, Venerdì (ammessi Lunedì/Venerdì/Giovedì)
-- ✅ durata: 39', 59' (massimo 90')
+- ✅ durata: 39', 20' (massimo 90')
 - ✅ obiettivi: Forza gambe ✓, Forza parte alta ✓ (pretesi: 2)
 
 **Cosa mi aspettavo:** il piano di lunedì resta (seduta passata) e conta nei controlli della settimana; la seduta di mercoledì va a giovedì (giorno squadra: ammesso, in versione più corta se il carico lo chiede); niente fisica venerdì.
@@ -238,9 +238,9 @@ Prompt v2.30-simulazione, 9 scenari. Lo script: `scripts/planner-sim.mts`. Atlet
 
 **Atleta:** Marco, 19 anni, difensore. B, in season, difensore, squadra mar/gio (sforzo 7 e 6), partita sabato. Sbarra, campo, rullo. Test base fatti, nessun massimale.
 **Richiesta:** NUOVA SETTIMANA (richiesta esplicita dell'atleta: gli obiettivi vengono prima dei recuperi). Giorni disponibili per allenarsi con l'app: Lunedì, Mercoledì, Venerdì (SOLO questi). Sedute fisiche richieste: ESATTAMENTE 3 a settimana (se il tetto della fase lo permette). Tempo massimo per seduta: 60 minuti. Obiettivi di questa settimana, in ordine di priorità: 1. Forza gambe, 2. Forza parte alta (i primi 2 devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni). — oggi è Domenica
-**Contesto:** livello B; 95 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
-**Prompt:** system 32.8k caratteri (~9100 token), user 2.7k caratteri (~700 token)
-**Piano:** piano base (senza Claude) in 5 ms
+**Contesto:** livello B; 102 blocchi in libreria (dal server: risc-velocita, apertura-breve, pa-serie, pa-serie-short, pa-serie-push, pa-serie-pull, pa-emom, pb-serie, pb-serie-short, pb-richiamo, pb-emom); tetto 3 fisiche + leggere fino a 5, 90'; carico insufficiente; regole: VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla 5ª settimana di allenamento (ora 0): i blocchi con sprint con palla non sono disponibili.
+**Prompt:** system 33.7k caratteri (~9400 token), user 2.7k caratteri (~700 token)
+**Piano:** piano base (senza Claude) in 8 ms
 - **Domenica** · Seduta base · fisica · 14' (+9' apertura) — 6 esercizi
   - Apertura breve (fascia-prevenzione, 9') · _facoltativa, se hai tempo_
   - Gambe: richiamo (giorno dopo la partita) (forza-parte-bassa, 14')

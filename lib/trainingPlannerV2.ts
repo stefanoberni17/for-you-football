@@ -1188,7 +1188,11 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   const dagliObiettivi = perOrdine.length > 1
     ? Array.from({ length: perOrdine.length * 2 - 1 }, (_, i) => (i % 2 === 0 ? perOrdine[0] : perOrdine[(i + 1) / 2]))
     : perOrdine;
-  const soloLeggere = b.painHold || ctx.setup.fase === 'preparazione_squadra';
+  // Pausa dolore: solo giornate leggere. In preparazione con la squadra il tetto è 1 fisica (il validatore lo controlla):
+  // il posto fisico resta (16/10: prima il base in preparazione non metteva mai un blocco fisico e un obiettivo come
+  // "resistenza" restava scoperto); i recuperi invece non si ripropongono in preparazione
+  const soloLeggere = b.painHold;
+  const senzaRecuperi = b.painHold || ctx.setup.fase === 'preparazione_squadra';
   const dopoPartita = (g: number) => b.matchDays.includes(g === 1 ? 7 : g - 1);
   // Giornata FISICA: l'obiettivo del turno, poi gli altri obiettivi (se il primo non può entrare: velocità già messa,
   // finestra partita, tetto di carico…); senza obiettivi la vecchia terna. Il giorno dopo la partita niente gambe
@@ -1215,7 +1219,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   };
   const disponibili = new Set(ctx.blocchi.map((x) => x.id));
   // Recuperi: solo se tutti i blocchi sono disponibili e la seduta sta nel tempo massimo richiesto
-  const recuperi = soloLeggere ? []
+  const recuperi = senzaRecuperi ? []
     : ctx.daRecuperare.filter((r) => r.blocchi.every((id) => disponibili.has(id))
       && r.blocchi.reduce((a, id) => { const x = bloccoDi(ctx, id); return a + (x && !isApertura(x) ? x.durataMin : 0); }, 0) <= maxDur).slice(0, ctx.maxSeduteFisiche);
   for (const r of recuperi) registra(r.blocchi);

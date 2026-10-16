@@ -100,7 +100,7 @@ describe('riparaPiano: il piano di Claude si aggiusta, non si butta (Ste, 7/10)'
     expect(versioneBreve(ctx, b('forza-parte-alta-b1'))?.id).toBe('forza-parte-alta-b1-short');
     expect(versioneBreve(ctx, b('forza-parte-alta-b1-short'))).toBeUndefined();
     expect(giornataLeggera(ctx, 2, 60)?.blocchi.length).toBe(2);
-    expect(giornataLeggera(ctx, 2, 20)).toBeNull(); // niente che ci stia: nessuna giornata di sola apertura
+    expect(giornataLeggera(ctx, 2, 10)).toBeNull(); // niente che ci stia: nessuna giornata di sola apertura
   });
 
   it('un piano già giusto resta uguale, senza note', () => {
