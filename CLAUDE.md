@@ -165,6 +165,7 @@ for-you-football/
 ├── vercel.json                            # 3 cron Vercel: cleanup-telegram 03:00 UTC · daily-morning 06:00 UTC · daily-evening 16:00 UTC
 └── docs/
     └── supabase-schema.sql                # Schema completo: 6 tabelle + RLS + indexes + trigger
+    └── training-logiche-costruzione.md    # L'elenco delle logiche di costruzione degli allenamenti (telaio + per obiettivo) preso dal codice il 16/10, con dove vive ogni regola e cosa cambierebbe con le dieci risposte di Ste (§C): si legge PRIMA di toccare il planner
     └── campo-da-fare.md                   # Lista decisa il 12/10 per il Campo prima della vendita: regole di metodo M1-M12 di Ste, 14 punti con stime ore, costo AI per pacchetto. Niente è iniziato: si parte quando Ste lo dice
 ```
 

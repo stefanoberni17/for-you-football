@@ -205,3 +205,27 @@ Incompleto: Forza Parte alta B4 ("Plank Climb" non in catalogo).
 14. **Il portiere** ha i suoi blocchi P1 per tutto (parte bassa, push, pull, mix, riscaldamento pliometria): l'app li
     ha come "preferiti per il portiere"; A.D. non ha mai avuto altro. Va bene così o anche al portiere si cambia?
 
+
+## 6. Le risposte di Ste (16/10, in chat)
+
+Le dieci domande mandate in chat (1 progressione · 2 scarico · 3 finestre partita · 4 codice C · 5 pliometria A
+presto · 6 pliometria due volte · 7 pile lunghe · 8 "in season" · 9 "+" · 10 P1) e le risposte:
+
+1. "Normalmente ogni 4 settimane, se facile può salire prima. Però noi abbiamo una logica diversa non solo su
+   workout ma su singoli esercizi, quindi è ancora meglio la nostra" → si tiene la memoria dei blocchi + le dosi.
+2. "Teniamola" → scarico come oggi.
+3. "Rapidità velocità e tiro ok prima della partita ma distanze brevi e poche reps. 2 giorni prima si può fare
+   qualcosa in più. Metabolico-resistenza va bene da 2 giorni dopo partita fino a 3 giorni prima della partita, es.
+   con partita domenica va bene da martedì a giovedì. Il top sarebbe mercoledì".
+4. "Variante sopra ad avanzato" (C1).
+5. "Soprattutto per chi parte da zero, quindi vediamo in base ai test anche" (pliometria A presto).
+6. "Ok anche 2 volte" (pliometria a settimana).
+7. "Ok anche alzarlo ma solo per i PRO, ma molto difficile: teniamo circa 120 se si riesce".
+8. "Variante più corta" ("in season").
+9. "Come gradino" ("+").
+10. "Per ora teniamolo solo per portiere, è da sviluppare" (P1).
+
+Ste, 16/10: "ovviamente dobbiamo mantenere tutte le logiche di costruzione allenamenti che ci eravamo dati;
+eventualmente discutiamo se vogliamo modificare qualcosa". L'elenco completo delle logiche, con cosa cambierebbe
+per ogni risposta, è in `docs/training-logiche-costruzione.md` (§C). Nessuna modifica al codice finché Ste non
+sceglie da cosa partire.
