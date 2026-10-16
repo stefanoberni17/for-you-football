@@ -1047,7 +1047,7 @@ function obiettiviDaControllare(ctx: ContextV2, recuperiAttesi = 0): FocusId[] {
 
 /**
  * Un obiettivo che non può entrare nei giorni rimasti per la finestra partita delle sue qualità (es. resistenza:
- * vietata entro 4 giorni dalla partita; con la partita il sabato e solo mar/gio disponibili non c'è un giorno buono).
+ * vietata entro 3 giorni dalla partita; con la partita il sabato e solo gio/ven disponibili non c'è un giorno buono).
  * Non si pretende e il prompt lo dice (15/10, simulazione: prima ogni piano veniva rifiutato per un obiettivo impossibile).
  */
 export function obiettivoFuoriFinestra(ctx: ContextV2, f: FocusId): { finestra: number } | null {

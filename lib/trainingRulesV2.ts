@@ -116,7 +116,9 @@ export const FINESTRA_PARTITA: Record<QualitaV2, number> = {
   'forza-esplosiva': 2, 'velocita': 2,
   'pliometria-estensiva': 1,
   'pliometria-intensiva': 2, // a −1 solo con reps minime (vedi PLIO_INTENSIVA_MENO1)
-  'resistenza-aerobica': 4, 'resistenza-metabolico': 4, 'resistenza-rsa': 4,
+  // 16/10, Ste: "partita al sabato e martedì disponibile: al martedì si potrebbe resistenza". Vietata a 3, 2, 1 e 0 giorni
+  // dalla partita, ammessa da 4 in su (prima 4: con la partita il sabato entrava solo il lunedì)
+  'resistenza-aerobica': 3, 'resistenza-metabolico': 3, 'resistenza-rsa': 3,
   'fascia-prevenzione': 0, 'tecnica-palleggi': 0, 'tecnica-passaggi': 0, 'tecnica-conduzione': 0,
   'tecnica-tiro': 0, 'tecnica-visione': 0, 'riscaldamento': 0,
   'mobilita-recupero': 1, // yoga/recupero guidato: mai il giorno prima o il giorno della partita — [STE]

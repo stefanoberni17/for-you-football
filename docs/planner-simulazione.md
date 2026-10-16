@@ -38,7 +38,7 @@ Rapporto completo in `docs/planner-sim-2026-10-15.md`.
    Standing Broad Jump (`fesp-salto-in-lungo-da-fermo`). Blocchi sempre 144/135.
 2. **Il piano base non guardava le regole della settimana.** Metteva la velocità tre volte su cinque giornate (regola
    "una sola giornata di velocità"), un blocco di tecnica con dentro un esercizio aerobico il giorno prima della partita
-   (vietato entro 4 giorni), le gambe piene il giorno dopo la partita, Forza Esplosiva A1 al posto del kettlebell quando
+   (vietato entro 3 giorni, allora 4), le gambe piene il giorno dopo la partita, Forza Esplosiva A1 al posto del kettlebell quando
    l'obiettivo era il kettlebell. Ora le giornate si costruiscono UNA ALLA VOLTA e ogni candidato passa dal validatore con
    la settimana fin lì: se introduce un errore si prova il candidato dopo (fino a 16 per giornata). Il giorno dopo la
    partita niente gambe/esplosività/pliometria/velocità/resistenza, il richiamo (`pb-richiamo`) va per primo; il
@@ -51,9 +51,9 @@ Rapporto completo in `docs/planner-sim-2026-10-15.md`.
 4. **Due regole in contraddizione.** Con la velocità come primo obiettivo il validatore chiedeva "velocità in almeno 2
    giornate" e insieme "al massimo UNA giornata di velocità": nessun piano poteva passare. La regola del filo della
    settimana ora salta la velocità (come già il kettlebell).
-5. **Obiettivo impossibile per la finestra partita.** Resistenza (vietata entro 4 giorni dalla partita) con la partita
-   il sabato e solo martedì e giovedì disponibili: nessun giorno buono, eppure il validatore la pretendeva e ogni piano
-   veniva rifiutato. `obiettivoFuoriFinestra` lo toglie dai pretesi e il prompt lo dice a Claude ("NON ENTRA questa
+5. **Obiettivo impossibile per la finestra partita.** Resistenza (allora vietata entro 4 giorni dalla partita) con la
+   partita il sabato e solo martedì e giovedì disponibili: nessun giorno buono, eppure il validatore la pretendeva e ogni
+   piano veniva rifiutato. `obiettivoFuoriFinestra` lo toglie dai pretesi e il prompt lo dice a Claude ("NON ENTRA questa
    settimana: … dillo nel messaggio").
 6. **Refactor senza cambi di comportamento**, necessario per simulare: `loadContextV2` = letture DB + `costruisciContextV2`
    (puro); `generateWeekPlanV2` = `loadContextV2` + `generaPianoV2(ctx, richiesta, vincoli)`; `preparaContextV2` e
@@ -61,9 +61,10 @@ Rapporto completo in `docs/planner-sim-2026-10-15.md`.
 
 ### Cosa resta da guardare (domande per Ste)
 
-- **Finestra della resistenza = 4** vuol dire "vietata a 4, 3, 2, 1 e 0 giorni dalla partita": ammessa solo da 5 giorni
-  in su. In season con la partita il sabato la resistenza entra SOLO il lunedì (la domenica è il giorno dopo la
-  partita). È voluto, o "4 giorni" voleva dire "dal quarto giorno prima si può"?
+- ~~Finestra della resistenza = 4~~ **Risposto da Ste il 16/10** ("partita al sabato e martedì disponibile: al martedì si
+  potrebbe resistenza, perché no?"): la finestra di resistenza aerobica, metabolico e RSA è passata a **3** (vietata a
+  3, 2, 1 e 0 giorni dalla partita, ammessa da 4 in su). Con la partita il sabato: lunedì e martedì sì, da mercoledì no.
+  Nello scenario Andrea la resistenza ora entra il martedì.
 - **"Drbbling A2"** (titolo Everfit con il refuso) è classificato velocità ed è l'unico blocco di velocità che resta a
   un atleta A nelle prime 4 settimane: Velocità A1 e Velocità e Forza Esplosiva hanno sprint con palla, esclusi fino
   alla 5ª settimana senza la tecnica tra gli obiettivi. Il piano base di Luca fa velocità con un blocco di dribbling.

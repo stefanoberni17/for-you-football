@@ -2,7 +2,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { contextFinto, SCENARI, type Scenario } from '@/lib/trainingSimulazione';
 import { generaPianoV2, obiettivoFuoriFinestra, postiFisici, validateCtxFor, type EsitoPianoV2 } from '@/lib/trainingPlannerV2';
 import { validatePlan } from '@/lib/trainingEngine';
-import { componiRichiesta } from '@/lib/trainingRequest';
+import { componiRichiesta, FOCUS_QUALITA } from '@/lib/trainingRequest';
+import { bloccoCopre } from '@/lib/trainingVelocita';
 import { PB_RICHIAMO_ID } from '@/lib/trainingParteBassa';
 
 /** Il piano BASE dello scenario (senza Claude): quello che l'atleta vede quando Claude non passa il validatore. */
@@ -54,11 +55,16 @@ describe('simulazione del planner (15/10): le regole viste negli scenari', () =>
     // Forza Esplosiva A1 ha il broad jump come esercizio, non come test: il blocco è di nuovo utilizzabile
     expect(e.ctx.blocchi.find((b) => b.id === 'forza-esplosiva-a1')?.items.some((it) => it.esercizio_id === 'fesp-salto-in-lungo-da-fermo')).toBe(true);
   });
-  it('Andrea (preparazione, partita sabato, solo mar/gio): la resistenza non entra nella finestra e non viene pretesa', async () => {
+  it('Andrea (preparazione, partita sabato, solo mar/gio): la resistenza entra il martedì (4 giorni prima: Ste, 16/10), non il giovedì', async () => {
     const e = await pianoBase(scenario('andrea'));
-    expect(obiettivoFuoriFinestra(e.ctx, 'resistenza')).toEqual({ finestra: 4 });
+    expect(obiettivoFuoriFinestra(e.ctx, 'resistenza')).toBeNull();
     expect(obiettivoFuoriFinestra(e.ctx, 'tecnica')).toBeNull();
-    expect(e.plan.sedute.every((s) => s.tipo !== 'fisica' && s.tipo !== 'mix')).toBe(true);
+    const copreResistenza = (id: string) => { const bl = e.ctx.blocchi.find((x) => x.id === id); return !!bl && bloccoCopre(bl, FOCUS_QUALITA.resistenza); };
+    const conResistenza = e.plan.sedute.filter((s) => (s.blocchi ?? []).some((b) => copreResistenza(b.id)));
+    expect(conResistenza.map((s) => s.giorno)).toEqual([2]);
+    // con solo giovedì e venerdì davanti alla partita del sabato non c'è un giorno buono
+    const ctx2 = { ...e.ctx, vincoli: { ...e.ctx.vincoli, giorniAmmessi: [4, 5] } };
+    expect(obiettivoFuoriFinestra(ctx2, 'resistenza')).toEqual({ finestra: 3 });
   });
   it('Marco di domenica (giorno dopo la partita): solo il richiamo, niente gambe piene', async () => {
     const e = await pianoBase(scenario('marco-domenica'));
