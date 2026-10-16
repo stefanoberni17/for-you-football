@@ -3,11 +3,11 @@
 Ste: "fai un giro completo anche su tutti gli allenamenti fatti con i ragazzi per vedere quello che avevo fatto.
 riguarda i workout e i programmi. ricontrolla bene tutto".
 
-Questa è la prima metà del giro: i **18 programmi** esportati il 1/9 (`docs/everfit-programs.json`, 2 personali di
-clienti anonimizzati, demo escluse), giornata per giornata, confrontati con la libreria dei blocchi e con le regole del
-planner. La seconda metà, i **calendari dei ragazzi** (le assegnazioni vere, settimana per settimana), richiede il token
-di Everfit: quello del 15/10 risponde 401 "Please log in again" da oggi. Appena arriva, `scripts/everfit-assign.mjs
-history <cliente> <da> <a>` legge le assegnazioni e si fa lo stesso confronto sui ragazzi veri (fuori dal repo).
+Due metà. La prima: i **18 programmi** esportati il 1/9 (`docs/everfit-programs.json`, 2 personali di clienti
+anonimizzati, demo escluse), giornata per giornata, confrontati con la libreria dei blocchi e con le regole del planner
+(§1-4). La seconda (§5): i **calendari dei 26 ragazzi** (3109 assegnazioni dal febbraio 2024 al novembre 2026, lette il
+16/10 con il token nuovo di Ste: `/api/client-management/client-list` + `/api/workout/v2/assignments/history` a finestre
+di sei mesi; i file stanno in `docs/everfit-export/clienti/`, gitignored; qui solo iniziali e numeri).
 
 ## 1. Venti workout stavano solo dentro i programmi: ora sono blocchi
 
@@ -126,3 +126,82 @@ sedute uguali a settimana. "Settimana 1 programma corpo libero" è la stessa w1 
   "ritorno" (2A per la base).
 - Catalogo: Decline Push-Up e Burpee (due schede).
 - Decidere "C1".
+
+## 5. I calendari dei ragazzi (seconda metà, 16/10 sera)
+
+### Chi si è allenato davvero
+
+| Atleta | Periodo | Settimane | Giornate/sett. | Assegnate | Fatte |
+|---|---|---|---|---|---|
+| S.N. (PRO, palestra) | mag 2024 → lug 2026 | 62 | 4,2 | 963 | 793 (82 %) |
+| R.C. (attivo) | feb 2026 → nov 2026 | 40 | 5,0 | 199 | 177 (89 %) |
+| G.P. (in stagione) | ott 2024 → nov 2025 | 40 | 2,2 | 219 | 159 (73 %) |
+| J.G. | lug 2024 → mar 2025 | 18 | 1,9 | 110 | 86 (78 %) |
+| G.T. (estate 2024) | giu → lug 2024 | 6 | 4,3 | 86 | 76 (88 %) |
+| A.D. (portiere) | ott 2025 → ago 2026 | 37 | 4,8 | 328 | 101 (31 %) |
+| D.M., E.C. (agosto 2026) | ago → set 2026 | 3-4 | 3-5 | 44-55 | 56-68 % |
+| 8 ragazzi dell'estate 2025 e 2026 | giu → ago | 8 | 4,0 | 121 ciascuno | 0-17 % |
+| altri 8 (2024, prove brevi) | | 1-8 | 1-3 | 2-42 | 0-50 % |
+
+Il programma estivo assegnato in blocco a otto ragazzi (121 assegnazioni in 8 settimane, 4 giornate da 3-5 workout)
+non l'ha fatto quasi nessuno: 0 % in sei casi, 9 % e 17 % negli altri due. Chi aveva un piano su misura ha fatto il
+73-89 %. È il dato più forte di tutto il giro: la settimana "piena" da programma non regge, quella costruita sul ragazzo
+sì. L'app fa esattamente la seconda.
+
+### Come programma Ste in stagione (i tre atleti veri)
+
+**S.N., in stagione 2024-25 e 2025-26, 29 settimane uguali** (è lui "Forza Parte Bassa Completa - Palestra in
+season"): lunedì Forza Prevenzione A1 *in season* (+ a volte la parte alta), martedì Forza parte alta PRO A3 *in
+season*, mercoledì o giovedì Forza Parte Bassa Completa Palestra *in season*, venerdì o sabato **"rapidità, velocità e
+Tiro - pre partita"** (20 minuti, il giorno prima della partita). Quattro giornate, la stessa settimana per sette mesi,
+con le versioni "in season" dei blocchi: più corte dell'originale. In estate la preparazione completa (fartlek A1 → A4
+lunedì/mercoledì, salite, metabolico, pliometria RV A1 → A2, tecnica tutti i giorni, 1vs1, yoga la domenica).
+
+**G.P., in stagione 2024-25, due giornate (lunedì e giovedì) per 40 settimane**: lunedì fascia + Forza parte alta B1 +
+Forza Prevenzione A1/A2 + tecnica; giovedì resistenza (fartlek A1/A2, metabolico A1/A2, resistenza alla velocità) o
+pliometria RV, con fascia forza. Forza parte alta **B1 per 16 settimane** (ottobre → febbraio), poi B1 short, B2
+(marzo → maggio), B3 (giugno); prevenzione A1 → A2 → **B1** (giù, a marzo); pliometria RV A1/A2 in autunno, poi B1/B2
+da gennaio (giù); velocità da febbraio (B1 short, C1 short, A1, B1 short 2); test velocità e parte alta a marzo e
+aprile; una settimana di solo yoga + rolling a fine gennaio (l'unico "scarico" visto nei calendari). Da maggio tre
+giornate: parte alta B2/B3, parte bassa B1/B2, addominali, salite, rapidità.
+
+**R.C., attivo, 5 giornate ogni settimana da febbraio**: il programma "forza corpo libero avanzato" (lun-mer-ven Full
+body HIIT, mar EMOM, gio Push corpo libero) con i codici che salgono a blocchi: **B1 per 4 settimane, B2 per 7, B3
+per 20**, poi da settembre le versioni "B3 +" e EMOM B5. Fatto il 89 %: il ragazzo che segue tutto.
+
+**A.D., portiere**: lo stesso template di 5 giornate (Forza Parte Bassa P1 + plio B1 short + Riscaldamento Pliometria
+P1, Push P1, addominali + plio, Pull P1, Mix P1) per sei mesi senza cambiare un codice, fatto a tratti (31 %); a maggio
+passato al corpo libero B1, a giugno B3.
+
+### Quattro cose nuove per la libreria (già dentro)
+
+`scripts/everfit-normalize-assegnazioni.py` tira fuori dai calendari i workout che non stanno né in libreria né nei
+programmi (una assegnazione per titolo, 34 workout, nomi dei clienti tolti) in `docs/everfit-workouts-assegnati.json`;
+`build-blocks.py` li legge come terza sorgente: **193 blocchi (180 completi)**. Tra questi: le versioni **"in
+season"** di Forza Prevenzione A1, Forza parte alta PRO A3 e Forza Parte Bassa Completa Palestra; il blocco **pre
+partita** (`rapidita-velocita-e-tiro-pre-partita`, 20'); Forza Parte Bassa B3/B4 e P1, Forza parte alta B4 e Push B1,
+EMOM B5, Fartlek B1 e A1b, Salite Sprint B1, Riscaldamento Pliometria P1, Pliometria Velocità A1 PRO, Velocità e forza
+esplosiva A1 PRO, VELOCITA' B1 (con i test da 50 e 100 m usati come sprint: alias), le versioni **"+"** (B3 +, Pliometria
+B1 +, Velocità B1 short +: stesso codice, più dure, id con `-plus`, sottovariante "+"), Tecnica A3 muro short e con
+dribbling, Tecnica Palleggi A3 short, Tecnica Freestyle A1 short, Tiri e Visione, Forza max parte bassa PRO1B. Fuori:
+"Velocità C1 - short" (stesso "C" da chiarire), le demo di Everfit, "Squat, Press, …" (template di Everfit).
+Incompleto: Forza Parte alta B4 ("Plank Climb" non in catalogo).
+
+### Cosa dicono i calendari al planner (si aggiunge al §3)
+
+9. **La progressione va a blocchi di settimane, non a settimana.** R.C.: B1 ×4, B2 ×7, B3 ×20. G.P.: parte alta B1
+   ×16. A.D.: niente per 6 mesi. Nei programmi di libreria Ste sale ogni settimana, sui ragazzi veri ogni mese o più.
+   La memoria dei blocchi (sale solo su "facile") è più vicina ai calendari che ai programmi.
+10. **Il giorno prima della partita c'è un blocco apposta**: "rapidità, velocità e Tiro - pre partita", 20', per 29
+    settimane. Oggi il validatore vieta la velocità a 2 giorni dalla partita: il blocco pre partita va ammesso il
+    giorno prima (finestra 0 per quel blocco) e proposto come giornata leggera del −1.
+11. **"In season" = versione corta dello stesso blocco**, non un blocco diverso: Prevenzione A1, PRO A3, Parte Bassa
+    Palestra. Come lo short: da trattare come variante nella memoria (stesso codice).
+12. **Resistenza anche a 2-3 giorni dalla partita**, in stagione: G.P. faceva fartlek/metabolico il giovedì (partita
+    la domenica: 3 giorni; se il sabato: 2). Con la finestra a 3 il giovedì resta vietato. Ste: in stagione la
+    resistenza il giovedì va bene?
+13. **Scarico**: una sola settimana di solo yoga + rolling in 40 settimane di G.P., nessuna negli altri. Conferma la
+    domanda 2.
+14. **Il portiere** ha i suoi blocchi P1 per tutto (parte bassa, push, pull, mix, riscaldamento pliometria): l'app li
+    ha come "preferiti per il portiere"; A.D. non ha mai avuto altro. Va bene così o anche al portiere si cambia?
+

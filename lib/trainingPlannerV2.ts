@@ -42,8 +42,10 @@ import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isP
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
 export const PLANNER_V2_PROMPT_VERSION = 'v2.30-simulazione';
-/** Piano base: candidati provati per giornata (ognuno passa dal validatore con la settimana fin lì). */
-const FALLBACK_CANDIDATI_MAX = 16;
+/** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
+const FALLBACK_CANDIDATI_MAX = 18;
+const FALLBACK_PER_OBIETTIVO = 3;
+const FALLBACK_LEGGERI_MAX = 6;
 /** Il giorno dopo la partita niente gambe (regola 3 del prompt): qualità escluse dal piano base in quel giorno. */
 const GAMBE_DOPO_PARTITA = new Set<string>(['forza-parte-bassa', 'forza-esplosiva', 'pliometria-intensiva', 'pliometria-estensiva', 'velocita', 'resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa']);
 /** Tentativi con Claude per piano (ognuno con gli errori del precedente nel messaggio). */
@@ -1206,9 +1208,11 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     // Prima gli obiettivi ancora scoperti (in modo "modifica" la parte alta mancava e il base rimetteva le gambe), poi il turno
     const ordine = dagliObiettivi.length ? [...perOrdine.filter((f) => !coperti.has(f)), dagliObiettivi[k % dagliObiettivi.length], ...perOrdine] : [];
     const visti = new Set<string>();
-    let cands = ordine.flatMap(candidatiPerObiettivo).filter((x) => !visti.has(x.id) && !!visti.add(x.id));
-    if (!cands.length) cands = [primo(ctx, 'forza-parte-alta', /B1/), primo(ctx, 'pliometria-intensiva', /short/i), primo(ctx, 'velocita', /short/i)].filter((x): x is Blocco => !!x);
-    if (dopoPartita(g)) cands = [...cands.filter((x) => x.id === PB_RICHIAMO_ID), ...cands.filter((x) => x.id !== PB_RICHIAMO_ID && !GAMBE_DOPO_PARTITA.has(x.qualita))];
+    // Il giorno dopo la partita si filtra PRIMA del tetto per obiettivo: il richiamo (ultimo nel rango) resta il primo candidato per le gambe
+    const dopo = (c: Blocco[]) => (dopoPartita(g) ? [...c.filter((x) => x.id === PB_RICHIAMO_ID), ...c.filter((x) => x.id !== PB_RICHIAMO_ID && !GAMBE_DOPO_PARTITA.has(x.qualita))] : c);
+    // Al massimo FALLBACK_PER_OBIETTIVO blocchi per obiettivo, così gli obiettivi in coda arrivano comunque tra i candidati
+    let cands = ordine.flatMap((f) => dopo(candidatiPerObiettivo(f)).slice(0, FALLBACK_PER_OBIETTIVO)).filter((x) => !visti.has(x.id) && !!visti.add(x.id));
+    if (!cands.length) cands = dopo([primo(ctx, 'forza-parte-alta', /B1/), primo(ctx, 'pliometria-intensiva', /short/i), primo(ctx, 'velocita', /short/i)].filter((x): x is Blocco => !!x));
     return cands;
   };
   // Giornata LEGGERA (oltre il tetto fisico, pausa dolore, preparazione): tecnica, poi mobilità/recupero
@@ -1249,7 +1253,9 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     }
     // Un posto fisico senza più blocchi liberi (tutti i formati sui gradini già usati, niente Everfit) diventa una
     // giornata leggera: la sola apertura non è una giornata (review 7/10)
-    const cands = [...(fisico ? candidatiFisici(k, g) : []).map((x) => ({ blocco: x, principale: true })), ...candidatiLeggeri().map((x) => ({ blocco: x, principale: false }))].slice(0, FALLBACK_CANDIDATI_MAX);
+    // Fisici fino al tetto, poi SEMPRE qualche leggero in coda: se nessun blocco fisico può stare in quel giorno (es. giovedì
+    // con la partita il sabato: pliometria, velocità e resistenza tutte fuori finestra) la giornata diventa leggera
+    const cands = [...(fisico ? candidatiFisici(k, g) : []).slice(0, FALLBACK_CANDIDATI_MAX).map((x) => ({ blocco: x, principale: true })), ...candidatiLeggeri().slice(0, FALLBACK_LEGGERI_MAX).map((x) => ({ blocco: x, principale: false }))];
     const prima = tenta(sedute).violazioni;
     const scelta = cands.find((c) => nuovi(tenta([...sedute, seduta(g, c.blocco, c.principale)]).violazioni, prima).length === 0) ?? cands[0];
     const s = seduta(g, scelta?.blocco, !!scelta?.principale);

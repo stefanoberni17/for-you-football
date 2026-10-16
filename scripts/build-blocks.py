@@ -7,6 +7,7 @@ generato: cambia questo script (alias, euristiche) o il catalogo e rilancia.
 Uso: python3 scripts/build-blocks.py
 """
 import json
+import os
 import re
 import unicodedata
 from collections import Counter
@@ -43,6 +44,8 @@ ALIAS = {
     # Rapidità Velocità B1/B2, Forza Mix P1, Forza funzionale e pliometria PRO1): il validatore rifiuta gli esercizi di
     # categoria test nel piano, quindi quei blocchi non passavano mai. Nel piano è lo Standing Broad Jump.
     "test salto in lungo - broad jump": "fesp-salto-in-lungo-da-fermo",
+    # idem per gli sprint: in "VELOCITA' B1" (calendari) i test da 50 e 100 m sono gli sprint della seduta
+    "test velocita' 50m": "vel-sprint", "test velocita' 100m": "vel-sprint",
     "push-up": "push-2", "modified push up": "push-1", "archer push up": "fpa-archer-pushup",
     "band assisted pull up": "pull-4", "inverted row": "pull-2", "chin-up": "fpa-chin-up",
     # "Pull-Up" di Everfit = il gradino 5 della scala di tirata (v1), NON l'esercizio v2 fpa-trazioni: dal 12/10 il v2
@@ -158,7 +161,7 @@ KEYWORDS = [
     ("palleggi", "tecnica-palleggi"), ("muro", "tecnica-passaggi"), ("passaggi", "tecnica-passaggi"),
     ("dribbling", "tecnica-conduzione"), ("freestyle", "tecnica-palleggi"), ("tiri", "tecnica-tiro"),
     ("tecnica", "tecnica-palleggi"), ("pliometria", "pliometria-intensiva"),
-    ("resistenza alla velocità", "resistenza-rsa"), ("rapidità", "velocita"), ("velocità", "velocita"),
+    ("resistenza alla velocità", "resistenza-rsa"), ("rapidità", "velocita"), ("velocità", "velocita"), ("velocita'", "velocita"),
     ("fartlek", "resistenza-aerobica"), ("ripetute", "resistenza-aerobica"), ("resistenza", "resistenza-aerobica"),
     ("metabolico", "resistenza-metabolico"), ("salite", "resistenza-metabolico"),
     ("forza parte alta", "forza-parte-alta"), ("forza parte bassa", "forza-parte-bassa"),
@@ -194,7 +197,10 @@ def meta_from_title(t):
     ms = re.search(r"\b\d([A-E])\b|\s-([A-E])\b", t)
     if ms:
         sotto = (ms.group(1) or ms.group(2))
-    fam = re.sub(r"\s*-\s*(short|soft)( \d)?", "", t, flags=re.I)
+    if t.rstrip().endswith("+"):
+        sotto = "+"  # "B3 +" = versione più dura dello stesso codice (calendari 2026)
+    fam = re.sub(r"\s*\+\s*$", "", t)
+    fam = re.sub(r"\s*-\s*(short|soft)( \d)?", "", fam, flags=re.I)
     fam = re.sub(r"\b(PRO|B|A|P)\s?\d[A-E]?\b", "", fam, flags=re.I)
     fam = re.sub(r"\b\d[A-E]?\b", "", fam)
     fam = re.sub(r"\s-[A-E]\b", "", fam)
@@ -278,10 +284,12 @@ by_title = {}
 PROGRAMMI = json.load(open("docs/everfit-programs.json", encoding="utf-8"))
 DAI_PROGRAMMI = [wo for p in PROGRAMMI for w in p.get("calendario", []) for d in w.get("giorni", []) for wo in d.get("workouts", [])]
 # Codici da chiarire con Ste prima di metterli in libreria: "C1" non è B/A/PRO
-SALTA_TITOLI = {"pliometria rapidità velocità c1 - short"}
+SALTA_TITOLI = {"pliometria rapidità velocità c1 - short", "velocità c1 - short"}
+# 16/10: i workout che esistono SOLO sui calendari dei ragazzi (scripts/everfit-normalize-assegnazioni.py, nomi tolti)
+ASSEGNATI = json.load(open("docs/everfit-workouts-assegnati.json", encoding="utf-8")) if os.path.exists("docs/everfit-workouts-assegnati.json") else []
 # Titoli senza codice che nel programma di Ste sono la settimana 1 della famiglia ("forza corpo libero avanzato w1")
 CODICE_FORZATO = {"forza parte alta push corpo libero": ("B", 1)}
-for w in WORKOUTS + DAI_PROGRAMMI:
+for w in WORKOUTS + DAI_PROGRAMMI + ASSEGNATI:
     t = (w.get("titolo") or "").strip()
     if not t or t.lower() in SALTA_TITOLI:
         continue
@@ -331,7 +339,7 @@ for t, (_, w) in sorted(by_title.items(), key=lambda x: x[0].lower()):
     if t.lower() in CODICE_FORZATO:
         livello, prog = CODICE_FORZATO[t.lower()]
     qual = qual_kw or (quali.most_common(1)[0][0] if quali else "da-classificare")
-    base = slug(t)
+    base = slug(t) + ("-plus" if t.rstrip().endswith("+") else "")
     sid, k = base, 2
     while sid in seen:
         sid = f"{base}-{k}"
