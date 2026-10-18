@@ -105,7 +105,7 @@ export function qualitaTettoDellaGiornata(blocchi: readonly Blocco[]): Set<Quali
  * `velocitaVera` è il predicato del planner (blocco con sprint, esclusi parte alta, riscaldamento e pre partita).
  */
 export function isGiornataRapidita(blocchi: readonly Blocco[], velocitaVera: (b: Blocco) => boolean): boolean {
-  return blocchi.some(velocitaVera) && !blocchi.some((b) => velocitaVera(b) && (b.qualita === 'velocita' || isSalite(b)));
+  return blocchi.some(velocitaVera) && !blocchi.some((b) => isSalite(b) || (velocitaVera(b) && b.qualita === 'velocita'));
 }
 
 /** Due giorni della settimana sono consecutivi (1 = lunedì … 7 = domenica, la settimana non gira). */

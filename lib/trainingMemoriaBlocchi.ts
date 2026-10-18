@@ -107,7 +107,10 @@ export function scalaFamiglia(famiglia: string): Gradino[] {
     if (b.ruolo) continue;
     const chiave = chiaveCodice(b.id);
     const g = by.get(chiave) ?? { chiave, livello: LIVELLO_ORDINE[b.livello ?? 'B'], progressione: b.progressione ?? 0 };
-    if (b.variante === 'short') g.short = g.short ?? b; else g.full = g.full ?? b;
+    // Due varianti short dello stesso codice ("-short" e "-in-season", 18/10): vince quella con "-short" nell'id, la
+    // "in season" resta la versione breve solo quando è l'unica (review 18/10: prima vinceva la prima in ordine alfabetico)
+    if (b.variante === 'short') g.short = !g.short || (/-in-season$/.test(g.short.id) && !/-in-season$/.test(b.id)) ? b : g.short;
+    else g.full = g.full ?? b;
     by.set(chiave, g);
   }
   return [...by.values()].sort((a, b) => (a.livello - b.livello) || (a.progressione - b.progressione)

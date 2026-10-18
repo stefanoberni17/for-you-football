@@ -575,7 +575,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const giornataVelocita = (bl: readonly Blocco[]) => bl.some(velocitaVera) && !isGiornataRapidita(bl, velocitaVera);
   const giorniVelocita = passate.filter((ps) => giornataVelocita(blocchiDiSeduta(ps))).map((ps) => ps.giorno);
   let giornateRapidita = passate.filter((ps) => isGiornataRapidita(blocchiDiSeduta(ps), velocitaVera)).length;
-  let sprintSettimana = passate.reduce((a, ps) => a + contaSprintMassimali(ps.items), 0);
+  // Lo sprint da 10 m dell'EMOM di parte alta non entra nel budget settimanale: pesa già come SPRINT_MAX_CON_EMOM (8 → 6 a seduta; review 18/10)
+  const sprintContati = (items: readonly PlanItem[]) => contaSprintMassimali(items.filter((it) => it.blocco_id !== PA_EMOM_ID));
+  let sprintSettimana = passate.reduce((a, ps) => a + sprintContati(ps.items), 0);
   const giorniPerQualita = new Map<QualitaTetto, number[]>();
   for (const ps of passate) for (const q of qualitaTettoDellaGiornata(blocchiDiSeduta(ps))) giorniPerQualita.set(q, [...(giorniPerQualita.get(q) ?? []), ps.giorno]);
   let blocchiSalite = blocchiPassati.filter(isSalite).length;
@@ -842,10 +844,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         && (it.unita ?? esercizioV2ById(it.esercizio_id)?.unita) === 'metri' && it.quantita > VELOCITA_PURA_METRI;
       const prima = itemsPre.length;
       itemsPre = itemsPre.filter((it) => !sprintLungo(it));
-      if (itemsPre.length < prima) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `giornata di rapidità: via gli sprint oltre ${VELOCITA_PURA_METRI} m (${prima - itemsPre.length})`); }
+      if (itemsPre.length < prima) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${noteMemoria.has(vel.id) ? `${noteMemoria.get(vel.id)} · ` : ''}giornata di rapidità: via gli sprint oltre ${VELOCITA_PURA_METRI} m (${prima - itemsPre.length})`); }
     }
     const { items: itemsLimati0, tolti } = limaSprint(itemsPre, sprintMaxSeduta);
-    sprintSettimana += contaSprintMassimali(itemsLimati0);
+    sprintSettimana += sprintContati(itemsLimati0);
     if (tolti > 0) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${noteMemoria.has(vel.id) ? `${noteMemoria.get(vel.id)} · ` : ''}${tolti} sprint in meno: tetto di ${sprintMaxSeduta}${perche}`); }
     // Kg dei blocchi dietro il tetto dell'atleta (lib/trainingCarico): senza massimale max 20 kg, con massimale caricoMaxPct
     const { items: itemsLimati, limati: carichiLimati } = limaCarichi(itemsLimati0, ctx.v2);
@@ -1306,9 +1308,11 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const giornate = settimanaFinQui(sed).filter((bl) => (q === 'velocita' ? bl.some(velocitaVera) && !isGiornataRapidita(bl, velocitaVera) : qualitaTettoDellaGiornata(bl).has(q))).length;
     return giornate >= tettoGiornate(q, tetti);
   };
+  // I complementi nell'ORDINE di Ste (prima la pliometria, poi le gambe…): qualità per qualità, fino a FALLBACK_PER_OBIETTIVO
+  // candidati ciascuna (review 18/10: ordinati tutti insieme con rankBlocco, i pb-* passavano davanti alla pliometria)
   const candidatiPerQualita = (qs: readonly QualitaV2[]): Blocco[] => {
     const libero = (x: Blocco) => { const g = gruppoDi(x.id); return g === null || !usatiFormati.has(g); };
-    return nelTempoPrima(ctx.blocchi.filter((x) => qs.includes(x.qualita) && !isKettlebell(x.id) && x.id !== fascia?.id && !isApertura(x) && ammessoDallaMemoria(ctx.memoria, x) && libero(x)).sort(rankBlocco));
+    return qs.flatMap((q) => nelTempoPrima(ctx.blocchi.filter((x) => x.qualita === q && !isKettlebell(x.id) && x.id !== fascia?.id && !isApertura(x) && ammessoDallaMemoria(ctx.memoria, x) && libero(x)).sort(rankBlocco)).slice(0, FALLBACK_PER_OBIETTIVO));
   };
   const candidatiFisici = (k: number, g: number, sed: SedutaLLM[]): Blocco[] => {
     if (soloLeggere) return [];
@@ -1324,7 +1328,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
       return (gd !== null && gd >= 2 && gd <= VELOCITA_PURA_DOPO_PARTITA_GIORNI) || gpG === 2 ? c1.filter((x) => !isVelocitaPura(x)) : c1;
     };
     // Al massimo FALLBACK_PER_OBIETTIVO blocchi per obiettivo, così gli obiettivi in coda arrivano comunque tra i candidati
-    let cands = ordine.flatMap((f) => dopo(alTetto(f, sed) ? candidatiPerQualita(COMPLEMENTI[FOCUS_TETTO[f]!]) : candidatiPerObiettivo(f)).slice(0, FALLBACK_PER_OBIETTIVO)).filter((x) => !visti.has(x.id) && !!visti.add(x.id));
+    // `dopo` (giorno dopo la partita: richiamo per primo, niente gambe) PRIMA del taglio a 3, altrimenti il richiamo resta fuori
+    let cands = ordine.flatMap((f) => (alTetto(f, sed) ? dopo(candidatiPerQualita(COMPLEMENTI[FOCUS_TETTO[f]!])) : dopo(candidatiPerObiettivo(f)).slice(0, FALLBACK_PER_OBIETTIVO))).filter((x) => !visti.has(x.id) && !!visti.add(x.id));
     if (!cands.length) cands = dopo([primo(ctx, 'forza-parte-alta', /B1/), primo(ctx, 'pliometria-intensiva', /short/i), primo(ctx, 'velocita', /short/i)].filter((x): x is Blocco => !!x));
     // Un blocco già messo nella settimana resta possibile (è l'unico di velocità per un A nelle prime settimane) ma per ultimo
     cands = [...cands.filter((x) => !usatiBlocchi.has(x.id)), ...cands.filter((x) => usatiBlocchi.has(x.id))];

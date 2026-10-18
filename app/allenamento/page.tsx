@@ -854,6 +854,7 @@ export default function AllenamentoHub() {
           maxSeduteFisiche={state.maxSeduteFisiche}
           focusSetup={state.setup.focus}
           fase={state.setup.fase}
+          conSquadraDefault={!!((state.calendario?.trainingDays.length ?? 0) || (state.calendario?.matchDays.length ?? 0) || state.partitaAbituale || Object.keys(state.squadra ?? {}).length)}
           preferenzeSetup={{ giorni: state.setup.giorni ?? [], sedute: state.setup.sedute ?? null, durataMin: state.setup.durataMin ?? null }}
           generating={generating}
           onSubmit={generaPiano}

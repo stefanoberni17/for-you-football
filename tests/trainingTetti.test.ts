@@ -135,6 +135,31 @@ describe('tetti di giornate per qualità (Ste, 13/10)', () => {
     expect(fb.violazioni).toEqual([]);
   });
 
+  it('review 18/10: i complementi nell\'ordine di Ste (prima la pliometria), l\'EMOM non consuma il budget di sprint, salite = velocità', async () => {
+    // 1. Luca con la sola velocità: le giornate oltre il tetto vanno PRIMA alla pliometria (primo complemento), non ai pb-*
+    const c = contextFinto({ ...luca(), focusSetup: ['velocita'], preferenze: { giorni: [1, 2, 3, 4, 5], sedute: 5, durataMin: 90 } });
+    const e = await generaPianoV2(c, undefined, {}, { senzaClaude: true });
+    expect(e.plan.sedute.some((s) => (s.blocchi ?? []).some((b) => b.qualita.startsWith('pliometria')))).toBe(true);
+    // 2. Marco: pa-emom lunedì (sprint da 10 m al minuto) + rapidità mercoledì: la rapidità tiene i suoi 4 scatti
+    const m = contextFinto(MARCO);
+    const plioRap = m.blocchi.find((b) => b.id === 'pliometria-rapidita-velocita-b1')!;
+    if (m.blocchi.some((b) => b.id === 'pa-emom')) {
+      const rap = expandPiano({ sedute: [{ giorno: 1, blocchi: ['pa-emom'] }, { giorno: 3, blocchi: [plioRap.id] }] }, m);
+      const mer = rap.plan.sedute.find((s) => s.giorno === 3)!;
+      expect(contaSprintMassimali(mer.items)).toBe(SCATTI_RAPIDITA_MAX);
+    }
+    // 3. pliometria con sprint + salite nello stesso giorno = giornata di VELOCITÀ, non di rapidità
+    const salite = bloccoById('salite-sprint-b1')!;
+    const velocitaVera = (b: typeof salite) => isVelocita(b);
+    expect(isGiornataRapidita([plioRap, salite], velocitaVera)).toBe(false);
+    expect(isGiornataRapidita([plioRap], velocitaVera)).toBe(true);
+    // 4. due short dello stesso codice: la scala tiene "-short", non la "in season"
+    const scala = scalaFamiglia('Forza Parte Alta Pro');
+    const a3 = scala.find((g) => g.chiave === 'forza-parte-alta-pro-a3')!;
+    expect(a3.short?.id).toBe('forza-parte-alta-pro-a3-short');
+    expect(a3.full?.id).toBe('forza-parte-alta-pro-a3');
+  });
+
   it('il prompt ha la regola 2d con i tetti dell\'atleta', () => {
     const c = contextFinto(luca());
     const { system } = promptsV2(c);

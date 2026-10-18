@@ -23,7 +23,7 @@ function Label({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
  * libero, salvo una nota corta. Va montata solo quando è aperta (lo stato parte dai
  * valori del setup ogni volta).
  */
-export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, fase, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, fase, conSquadraDefault, generating, onSubmit, onClose }: {
   open?: boolean;
   hasPlan: boolean;
   errorMsg?: string | null;  // errore del server all'ultimo tentativo (si vede nel footer, sotto la CTA)
@@ -35,6 +35,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   focusSetup?: FocusId[];    // obiettivi della fase dal setup: chip già selezionati, un cambio vale solo per questa settimana
   preferenzeSetup?: { giorni: number[]; sedute: number | null; durataMin: number | null }; // dal setup (migration 025): già compilati, un cambio vale per questa settimana
   fase?: string;             // fase della stagione dal setup: in off season si conferma se questa settimana c'è la squadra (tetto della resistenza, 18/10)
+  conSquadraDefault?: boolean; // prefill della conferma: calendario della settimana OPPURE l'abitudine del setup (giorni squadra, partita abituale), come fa il planner
   generating: boolean;
   onSubmit: (r: RichiestaGuidata) => void;
   onClose?: () => void;
@@ -46,7 +47,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   const [focus, setFocus] = useState<FocusId[]>(focusSetup ?? []);
   const [note, setNote] = useState('');
   // Off season (campo-da-fare 16, Ste 13/10): "Questa settimana ti alleni con la squadra?" prefillato dal calendario; senza squadra né partita la resistenza può salire a 4 giornate
-  const [conSquadra, setConSquadra] = useState<boolean>(!!(calendario && (calendario.trainingDays.length || calendario.matchDays.length)));
+  const [conSquadra, setConSquadra] = useState<boolean>(conSquadraDefault ?? !!(calendario && (calendario.trainingDays.length || calendario.matchDays.length)));
   const [tipo, setTipo] = useState<ModificaTipo>('sposta');
   const modificabili = sedute.filter((s) => s.modificabile);
   const [mGiorno, setMGiorno] = useState<number | null>(modificabili[0]?.giorno ?? null);
