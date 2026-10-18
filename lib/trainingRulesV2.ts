@@ -49,7 +49,7 @@ export const BOUNDS_QUALITA: Partial<Record<QualitaV2, BoundsV2>> = {
   // velocità: sprint 3-10" con recupero ≥ 1:10 — [DATI: 9-11 × 3" rec 50"]
   'velocita':          { serieMin: 2, serieMax: 12, repsMin: 1, repsMax: 6, secMin: 3, secMax: 30, recuperoMinSec: 40 }, // T sprint 2 serie — [STE]
   // aerobica: blocchi ~4' (3-5'), 12-20' effettivi, rec 3' — [STE]
-  'resistenza-aerobica': { serieMin: 3, serieMax: 6, minMin: 3, minMax: 6, secMin: 180, secMax: 360, recuperoMinSec: 150, recuperoMaxSec: 240 }, // Fartlek a 5 blocchi fino a 6' — [STE]
+  'resistenza-aerobica': { serieMin: 4, serieMax: 6, minMin: 4, minMax: 6, secMin: 240, secMax: 360, recuperoMinSec: 120, recuperoMaxSec: 240 }, // Ste, 15/10: serie da 4-5-6', recupero 2-3', 4-6 serie per livello (i blocchi Everfit sono fidati: qui passano solo gli item composti) — [STE]
   // metabolico: 15-70" intermittenti, 4-19 serie, rec 20-90" — [DATI]
   'resistenza-metabolico': { serieMin: 4, serieMax: 19, secMin: 15, secMax: 70, repsMin: 1, repsMax: 4, recuperoMinSec: 20, recuperoMaxSec: 90 },
   // RSA: 20-30" massimali, 6-12 serie a blocchi da 4, rec 40-60" — [STE]
@@ -230,6 +230,7 @@ export interface ContestoV2 {
   livelloPerQualita?: Partial<Record<QualitaV2, LivelloMinV2>>; // 25/9: livello dai test di ogni qualità (lib/trainingLivelli)
   attrezzatura: AttrezzaturaV2[]; // cosa ha a disposizione (corpo libero sempre incluso)
   inCoppia: boolean;              // può allenarsi con un compagno
+  ruoli?: readonly string[];      // dal profilo (portiere, difensore…): i blocchi P1 solo per i portieri (18/10)
   eta: number | null;
   esperienzaPalestra: boolean;
   massimali?: Record<string, number>; // 1RM stimati per esercizio (id v2) — necessari per regime max/esplosiva

@@ -120,8 +120,11 @@ risposte del 16/10.
 - Senza test delle scale: blocchi Everfit del livello (fascia dall'AMRAP) e invito ai test.
 
 ### Velocità (`velocita`)
-- Una sola giornata di velocità a settimana (errore del validatore); per questo non vale la regola "primo
-  obiettivo in 2 giornate".
+- Giornate di velocità a settimana dal tetto (18/10, `lib/trainingTetti.ts`): UNA; DUE in off season se la velocità è
+  il primo obiettivo, mai in giorni consecutivi, con al massimo 12 sprint massimali in tutta la settimana (6 per
+  seduta). In più UNA giornata di rapidità (sprint solo da blocchi di pliometria/esplosività: il server toglie gli
+  sprint oltre 30 m e lima a 4 scatti; non conta come velocità). Per la velocità non vale la regola "primo obiettivo
+  in 2 giornate".
 - Riscaldamento fisso `risc-velocita` (~15') in testa a ogni seduta con sprint o salite: il server lo aggiunge.
 - Sprint massimali 6-8 per seduta (6 se nella settimana c'è l'EMOM di parte alta con lo sprint); il server lima
   dalla coda; oltre 8 il validatore rifiuta. Contano Sprint e varianti a 10 m, non salto+sprint, con palla, T-sprint.
@@ -183,8 +186,16 @@ risposte del 16/10.
   meno nel mese.
 
 ### Portiere (ruolo, non obiettivo)
-- I blocchi P1 (parte bassa, push, pull, mix, riscaldamento pliometria) sono preferiti per i portieri e disponibili
-  agli altri solo senza alternativa B/A (regola 9b).
+- I blocchi P1 (parte bassa, push, pull, mix, riscaldamento pliometria) sono SOLO per i portieri (18/10:
+  `blocchiDisponibili({ ruoli })` li toglie agli altri; prima erano preferiti ma disponibili a tutti, regola 9b).
+
+### Tetti di giornate per qualità e complementi (18/10, campo-da-fare punto 16, `lib/trainingTetti.ts`)
+- Velocità 1 (2 off season con la velocità prima) → poi pliometria, gambe · pliometria intensiva 2, in giorni non
+  consecutivi → estensiva, velocità, gambe · parte alta 3 → core, fascia, pliometria · gambe 3 → pliometria, velocità,
+  core, fascia · resistenza 2, 4 in off season senza squadra né partite (calendario/abitudine vuoti o la conferma
+  nella maschera) → tecnica, fascia · salite 1 · kettlebell 1 (Ste, 18/10: "lascia così") · tecnica e fascia senza tetto.
+- Validatore: "Nª giornata di X — al massimo N: le giornate in più vanno ai complementi". Piano base: un obiettivo al
+  tetto lascia il posto ai suoi complementi. Prompt: regola 2d con i tetti di quell'atleta.
 
 ## C. Le dieci risposte di Ste (16/10) e cosa cambierebbe
 
@@ -193,13 +204,13 @@ risposte del 16/10.
 | 1 | Progressione per settimana o per 4? | "Normalmente ogni 4 settimane, se facile sale prima; la nostra logica per esercizio è ancora meglio" | Memoria dei blocchi (A.10) + dosi per esercizio (A.16) | **Niente**: si tiene com'è |
 | 2 | Scarico | "Teniamola" | A.12 | **Niente** |
 | 3 | Finestre partita | Pre partita ok a −1 (distanze brevi, poche reps), a −2 "qualcosa in più"; resistenza/metabolico da +2 dopo la partita a −3 prima (domenica → mar-gio), il top mercoledì | Velocità vietata a −1 e −2; resistenza vietata a −3; niente gambe a +1 | (a) il blocco `rapidita-velocita-e-tiro-pre-partita` ammesso a −1 (finestra propria 0); (b) velocità ammessa a −2 (finestra 2 → 1); (c) resistenza finestra 3 → 2, vietata anche a +1 (già) e a +0; (d) base e prompt preferiscono il giorno a metà tra le due partite |
-| 4 | Il codice "C" | "Variante sopra ad avanzato" | I 2 blocchi C1 sono saltati da `build-blocks.py` | C → livello PRO; i 2 blocchi entrano in libreria (Pliometria RV C1 short, Velocità C1 short) |
+| 4 | Il codice "C" | "Variante sopra ad avanzato" | **Fatto 18/10**: C → PRO, i 2 blocchi C1 short in libreria | — |
 | 5 | Pliometria A dalla 2ª settimana | "Soprattutto per chi parte da zero, vediamo in base ai test" | 4 settimane in B per tutti | Le 4 settimane in B valgono solo se il livello della qualità "salti" dai test è B (o senza test); un A/PRO ai test entra subito nell'onda |
-| 6 | Pliometria due volte a settimana | "Ok anche 2 volte" | Nessun tetto | **Niente** nel validatore; una riga nel prompt ("anche due volte, in giorni non consecutivi, dentro i contatti") |
+| 6 | Pliometria due volte a settimana | "Ok anche 2 volte" | **Fatto 18/10**: tetto 2 in giorni non consecutivi (validatore) + riga nella regola 25 | — |
 | 7 | Pile da 110-170' in off season | "Alzarlo solo per i PRO, ma teniamo circa 120 se si riesce" | 120' off season | **Niente** (120' resta) |
-| 8 | "In season" = cosa? | "Variante più corta" | Famiglia a sé ("Forza Parte Alta Pro - In Season") | `build-blocks.py`: "- in season" = variante short dello stesso codice (come "- short"), così la memoria la usa come versione breve |
+| 8 | "In season" = cosa? | "Variante più corta" | **Fatto 18/10**: "- in season" = variante short dello stesso codice (`build-blocks.py`, `chiaveCodice`) | — |
 | 9 | "+" = ? | "Come gradino" | Già un gradino della scala (B1 → B1+ → B2, A.10) | **Niente** |
-| 10 | P1 | "Per ora solo per portiere, è da sviluppare" | Preferiti per i portieri, disponibili agli altri senza alternativa | `blocchiDisponibili`: P1 SOLO per i portieri |
+| 10 | P1 | "Per ora solo per portiere, è da sviluppare" | **Fatto 18/10**: `blocchiDisponibili({ ruoli })`, P1 solo per i portieri | — |
 
 Si fa una cosa alla volta, su "vai" di Ste. Ordine proposto: 3 (finestre), poi 5 (pliometria dai test), poi 4 + 8 +
 10 insieme (sono tutti in `build-blocks.py` / `blocchiDisponibili`, un solo rigenera della libreria), poi 6 (prompt).
@@ -231,7 +242,7 @@ altri. Il punto 12 è arrivato vuoto. Nessun codice toccato.
   finestre PRIMA della partita della risposta 3.
 
 ### D2. Forza massima + pliometria intensiva
-- **Oggi:** vietata nello stesso giorno (`CONVIVENZE_VIETATE`, validatore).
+- **Oggi (dal 18/10 sera):** ammessa (`CONVIVENZE_SCONSIGLIATE` vuoto; regola 9: la forza prima, pochi contatti dopo). Prima: vietata.
 - **Ste:** non vietato, non consigliato.
 - **Proposta:** via dal validatore, resta nel prompt come "sconsigliato" e il piano base non lo fa mai.
 
@@ -269,13 +280,18 @@ altri. Il punto 12 è arrivato vuoto. Nessun codice toccato.
 ### D5. Gambe: ok, resta com'è.
 
 ### D6. Parte alta nello scarico (settimana 4)
-- **Oggi:** nello scarico solo `pa-emom`; ogni formato una volta a settimana.
+- **Fatto 18/10**: regola 23 in deload = EMOM, e con una seconda seduta `pa-serie-short` (`ordineFormatiParteAlta(true)` era già EMOM → breve).
+- **Prima:** nello scarico solo `pa-emom`; ogni formato una volta a settimana.
 - **Ste:** settimana 4 anche EMOM + un altro formato se c'è una seconda seduta.
 - **Proposta:** nello scarico EMOM + serie BREVI (`pa-serie-short`, già ×0.6 dal deload) quando ci sono due sedute
   di parte alta; prompt e `sostituzioniFormati` in deload: prima l'EMOM, poi la breve.
 
 ### D7. Velocità: una in season, due off season senza fatica, +1 di rapidità in season
-- **Oggi:** una sola giornata di velocità a settimana (errore del validatore), 6-8 sprint massimali per seduta,
+- **Fatto 18/10** (`lib/trainingTetti.ts`, Ste: "7 ok da fare"): velocità 1, 2 in off season con la velocità primo
+  obiettivo, mai consecutive, `SPRINT_MAX_SETTIMANA = 12` (6 per seduta con due giornate); una giornata di rapidità in
+  più (`isGiornataRapidita`: sprint solo da blocchi di pliometria/esplosività; sprint oltre 30 m tolti, `SCATTI_RAPIDITA_MAX = 4`).
+  I numeri 12 e 4 sono a tavolino, da tarare.
+- **Prima:** una sola giornata di velocità a settimana (errore del validatore), 6-8 sprint massimali per seduta,
   nessuna distinzione tra sprint corti e lunghi (i 10 m contano come gli altri).
 - **Ste:** in season 1; off season anche 2 se è l'obiettivo principale, ma senza fatica (volume totale basso); in
   season 1 di velocità + eventualmente 1 di rapidità e pliometria con qualche scatto corto, non sul lungo.
@@ -303,7 +319,11 @@ altri. Il punto 12 è arrivato vuoto. Nessun codice toccato.
   sull'ordine per questa coppia.
 
 ### D10. Tecnica: pochi vincoli, focus sulle parti deboli dei test
-- **Oggi:** scala muro (giornata 1), scala palleggi (3), mazzo (5); il piede debole dei test porta a palleggi e
+- **Fatto 18/10** (`prioritaTecnica` in `lib/trainingTecnica.ts`): dai test (il più recente per test) il punteggio medio
+  di palleggi, passaggi e muro, tiro; la parte più bassa, se sta almeno 10 punti sotto la migliore, è la priorità fino
+  al ri-test: riga "PRIORITÀ DAI TEST" nella sezione TECNICA del prompt (scala per prima, mazzo pesca lì) e nel piano
+  base le giornate leggere partono da quella qualità. Nessun vincolo del validatore.
+- **Prima:** scala muro (giornata 1), scala palleggi (3), mazzo (5); il piede debole dei test porta a palleggi e
   passaggi (regola 21). Nessun legame tra i test di tecnica (palleggi, passaggi, tiri, conduzione) e la scelta.
 - **Proposta:** dai test di tecnica il punteggio più basso tra palleggi / passaggi / tiro / conduzione diventa la
   **priorità della tecnica** per le settimane fino al ri-test: la scala di quella qualità va per prima, il mazzo
@@ -403,13 +423,29 @@ seduta che vale come il test, la memoria dei blocchi a 2 "facile" di fila (A.10)
 per gli avanzati ai test (B salti). Trovato per strada: i blocchi P1 del portiere stavano dentro la scala delle
 famiglie (tra B1 e B2) e nessuna famiglia con un P1 avanzava mai di codice. 9 test in `tests/trainingDueFacili.test.ts`.
 
-### E4. Cosa resta in sospeso (dopo A e C)
-Ordine: **B** resoconto (tabella + foglio + carico reale + regole E2) · **C** progressione "2 facili di fila" + E3 +
-pliometria dai test (2 settimane per gli avanzati) · **D** velocità: rapidità vs velocità pura (già in A la
-classificazione), 2 giornate off season con tetto settimanale, +1 rapidità in season, scarico parte alta EMOM + breve ·
-**F** libreria: C = PRO, "in season" = short, P1 solo portieri · **G** tecnica dal test più debole · poi, con le regole
-di Ste, la **composizione** di velocità, pliometria e tecnica dal catalogo (D3), e più avanti resistenza (punto 19 di
-campo-da-fare) e il resto. L'11 resta com'è (kettlebell uno a settimana, EMOM nel tetto). Le altre cose pendenti
+### E5. Fatto il 18/10 (sera), senza domande aperte: D, F, G, il punto 16 e il 15
+Ste: "fai tutto quello che puoi fare tu senza mio controllo o risposte". Un agente ha riletto i documenti e Notion
+(niente di più recente sul metodo) e ha elencato le regole decise ma non in codice: fatte quelle che non aspettano
+risposte. **F** libreria (C = PRO, "in season" = short, P1 solo portieri, +2 blocchi: 195, 182 completi) · **D** velocità
+1/2 + rapidità + scarico parte alta EMOM + breve · **punto 16** tetti per qualità e complementi (validatore, piano base,
+regola 2d, conferma squadra nella maschera in off season) · **G** priorità tecnica dai test · **punto 15** testo nel
+setup e nella maschera · regola 25 pliometria due volte · bounds `resistenza-aerobica` come li fa Ste (4-6 serie da
+4-6', recupero 2-3', punto 19) · scala palleggi con A1/A4 "tecnica di base". `PLANNER_V2_PROMPT_VERSION =
+'v2.33-tetti-per-qualita'`, 14 test in `tests/trainingTetti.test.ts`. I numeri a tavolino (12 sprint a settimana, 4
+scatti nella giornata di rapidità, 10 punti di differenza per la priorità tecnica) sono costanti, da tarare.
+
+### E4. Cosa resta in sospeso (dopo A, C, D, F, G, 15, 16)
+Ordine: **B** resoconto (tabella + foglio + carico reale + regole E2, da confermare) · poi, con le regole di Ste, la
+**composizione** di velocità, pliometria e tecnica dal catalogo (D3), e più avanti resistenza (punto 19 di
+campo-da-fare: `re-serie`, dopo le risposte a-e) e il resto. L'11 resta com'è (kettlebell uno a settimana, EMOM nel
+tetto). Dalla rilettura dei documenti del 18/10 restano anche: M5 (aumenti nella settimana in corso, da coordinare con
+CONFERMA/SALI), dose unica (`prossimaDose`), tabata/AMRAP della parte alta, budget "gambe intensive" e test proposto
+dopo due EMOM facili (assorbiti in parte dal punto 16?), i punti 17-20 e M8/M9/M11/M12. Domande aperte per Ste:
+Wall Drive Skip (pliometria intensiva: blocca Rapidità Velocità B1 short a −2); plio intensiva vietata a −2 ma
+ammessa a −1 con 2×2 (`PLIO_INTENSIVA_MENO1`): voluto?; scale di tecnica a 1 facile o a 2 come le famiglie?; scarico
+fisso alla settimana 4 (risposta 2) o dai dati (M11)?; il giorno dopo la partita tornano isometrie e palestra leggera
+(29/9) o resta solo `pb-richiamo`?; "Drbbling A2" classificato velocità; volumi aerobici (formalizzazione 12-16'/16-20'
+contro 4×4'/5×5'/6×6'). Le altre cose pendenti
 dell'app, fuori da queste: `docs/campo-da-fare.md` (fasi 1-6: dose unica, tetti per qualità e complementi, esecuzione
 tecnica, calendario che cambia, dolore per zona, storico, pacchetti e vendita, accesso con Google) e la lista "Da
 fare — Ste" in `CLAUDE.md` (Stripe, i 24 "Perché funziona", gli audio W1, le prove sul campo).

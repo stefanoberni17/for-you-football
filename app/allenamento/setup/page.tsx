@@ -190,7 +190,7 @@ function SetupPageInner() {
 
           {/* Su cosa vuoi lavorare */}
           <Card padding="sm">
-            <SectionTitle title="Su cosa vuoi lavorare" subtitle="In questa fase, nell'ordine in cui li scegli. Oppure &quot;Tutto&quot;." className="mb-3" />
+            <SectionTitle title="Su cosa vuoi lavorare" subtitle="Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure &quot;Tutto&quot;." className="mb-3" />
             {state.squilibri?.latoDebole && !setupDraft.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) && (
               <Banner tone="accent" icon={<Scale size={20} />} title={`Gamba ${state.squilibri.latoDebole === 'sx' ? 'sinistra' : 'destra'} più debole nei test`} className="mb-3"
                 action={{ label: 'Aggiungi la fascia', onClick: () => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, 'fascia') }) }}>

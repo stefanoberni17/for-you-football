@@ -1,6 +1,6 @@
 # Libreria blocchi — report generazione
 
-203 workout Everfit → 193 blocchi (titoli distinti). Completi: 180 · incompleti: 13.
+203 workout Everfit → 195 blocchi (titoli distinti). Completi: 182 · incompleti: 13.
 
 Rigenerare: `python3 scripts/build-catalog-v2.py && python3 scripts/build-blocks.py`.
 
@@ -74,7 +74,7 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `forza-parte-alta-emom-b5` | Forza Parte Alta EMOM B5 | forza-parte-alta | B | 5 | full | 23 | — | ✓ |  |
 | `forza-parte-alta-pro-a2` | Forza parte alta Pro A2 | forza-parte-alta | A | 2 | full | 46 | palestra, piccoli attrezzi, sbarra | ✓ |  |
 | `forza-parte-alta-pro-a3` | Forza parte alta Pro A3 | forza-parte-alta | A | 3 | full | 54 | palestra, piccoli attrezzi, sbarra | ✓ |  |
-| `forza-parte-alta-pro-a3-in-season` | Forza parte alta Pro A3 - in season | forza-parte-alta | A | 3 | full | 37 | palestra, piccoli attrezzi, sbarra | ✓ |  |
+| `forza-parte-alta-pro-a3-in-season` | Forza parte alta Pro A3 - in season | forza-parte-alta | A | 3 | short | 37 | palestra, piccoli attrezzi, sbarra | ✓ |  |
 | `forza-parte-alta-pro-a3-short` | Forza parte alta Pro A3 - short | forza-parte-alta | A | 3 | short | 38 | palestra, piccoli attrezzi, sbarra | ✓ |  |
 | `forza-parte-alta-pro1` | Forza Parte Alta PRO1 | forza-parte-alta | PRO | 1 | full | 27 | palestra, sbarra | ✓ |  |
 | `forza-parte-alta-pullp1` | Forza Parte alta PullP1 | forza-parte-alta | — | — | full | 35 | palestra, sbarra | ✓ |  |
@@ -93,10 +93,10 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `forza-parte-bassa-b4` | Forza Parte Bassa B4 | forza-parte-bassa | B | 4 | full | 31 | — | ✓ |  |
 | `forza-parte-bassa-completa-offseason-pro1` | Forza Parte Bassa Completa - Offseason PRO1 | forza-parte-bassa | PRO | 1 | full | 31 | kettlebell, palestra, sbarra | ✓ |  |
 | `forza-parte-bassa-completa-palestra` | Forza Parte Bassa Completa - Palestra | forza-parte-bassa | — | — | full | 31 | kettlebell, palestra, sbarra | ✓ |  |
-| `forza-parte-bassa-completa-palestra-in-season` | Forza Parte Bassa Completa - Palestra in season | forza-parte-bassa | — | — | full | 27 | kettlebell, palestra | ✓ |  |
+| `forza-parte-bassa-completa-palestra-in-season` | Forza Parte Bassa Completa - Palestra in season | forza-parte-bassa | — | — | short | 27 | kettlebell, palestra | ✓ |  |
 | `forza-parte-bassa-p1` | Forza Parte Bassa P1 | forza-parte-bassa | — | 1 | full | 32 | palestra | ✓ |  |
 | `forza-prevenzione-a1` | Forza Prevenzione A1 | forza-parte-bassa | A | 1 | full | 54 | palestra, sbarra | ✓ |  |
-| `forza-prevenzione-a1-in-season` | Forza Prevenzione A1 - in season | forza-parte-bassa | A | 1 | full | 39 | kettlebell, palestra | ✓ |  |
+| `forza-prevenzione-a1-in-season` | Forza Prevenzione A1 - in season | forza-parte-bassa | A | 1 | short | 39 | kettlebell, palestra | ✓ |  |
 | `forza-prevenzione-a2` | Forza Prevenzione A2 | forza-parte-bassa | A | 2 | full | 43 | palestra | ✓ |  |
 | `forza-prevenzione-b1` | Forza Prevenzione B1 | forza-parte-bassa | B | 1 | full | 38 | kettlebell, palestra, sbarra | ✓ |  |
 | `hiit-base-1-corpo-libero` | HIIT BASE 1 corpo libero | forza-parte-bassa | — | — | full | 21 | — | ✓ |  |
@@ -120,6 +120,7 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `pliometria-rapidita-velocita-b1` | Pliometria Rapidità Velocità B1 | pliometria-intensiva | B | 1 | full | 31 | campo | ✓ |  |
 | `pliometria-rapidita-velocita-b1-short` | Pliometria Rapidità Velocità B1 - short | pliometria-intensiva | B | 1 | short | 23 | campo | ✓ |  |
 | `pliometria-rapidita-velocita-b2` | Pliometria Rapidità Velocità B2 | pliometria-intensiva | B | 2 | full | 39 | campo | ✓ |  |
+| `pliometria-rapidita-velocita-c1-short` | Pliometria Rapidità Velocità C1 - short | pliometria-intensiva | PRO | 1 | short | 14 | campo | ✓ |  |
 | `pliometria-velocita-a1-pro` | Pliometria Velocità A1 - PRO | pliometria-intensiva | A | 1 | full | 41 | campo | ✓ |  |
 | `rapidita-e-tiro` | rapidità e Tiro | velocita | — | — | full | 22 | campo | ✓ |  |
 | `rapidita-velocita-b1-short` | Rapidità Velocità B1 - short | velocita | B | 1 | short | 14 | campo | ✓ |  |
@@ -190,6 +191,7 @@ Passaggi collo - visione headball (7) · Passaggi in equilibrio su 1 piede - vis
 | `velocita-b1-short` | Velocità B1 - short | velocita | B | 1 | short | 26 | campo | ✓ |  |
 | `velocita-b1-short-plus` | Velocità B1 - short + | velocita | B | 1 | short | 32 | campo | ✓ |  |
 | `velocita-b1-short-2` | Velocità B1 - short 2 | velocita | B | 1 | short | 19 | campo | ✓ |  |
+| `velocita-c1-short` | Velocità C1 - short | velocita | PRO | 1 | short | 26 | campo | ✓ |  |
 | `velocita-e-forza-esplosiva-a1` | Velocità e forza esplosiva A1 | velocita | A | 1 | full | 47 | campo | ✓ |  |
 | `velocita-e-forza-esplosiva-a1-pro` | Velocità e forza esplosiva A1 - PRO | velocita | A | 1 | full | 45 | campo | ✓ |  |
 | `velocita-e-forza-esplosiva-b1` | velocità e forza esplosiva B1 | velocita | B | 1 | full | 42 | campo | ✓ |  |

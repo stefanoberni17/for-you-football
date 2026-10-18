@@ -77,3 +77,11 @@ Rapporto completo in `docs/planner-sim-2026-10-15.md`.
 
 `npx tsx scripts/planner-sim.mts --live --out docs/planner-sim-<data>-live.md` con `ANTHROPIC_API_KEY`: nove piani di
 Claude, ~3 $, e si vede quante volte passa al primo tentativo, cosa ripara il server e dove finisce ibrido o base.
+
+### Aggiornamento 18/10 (tetti per qualità)
+
+Con `lib/trainingTetti.ts` il piano base di Luca (off season, velocità primo obiettivo) mette la velocità in DUE giornate
+non consecutive (lunedì e venerdì), con lo stesso "Drbbling A2" (resta l'unico blocco di velocità per un A nelle prime
+settimane: i blocchi già usati vanno in coda tra i candidati, non spariscono); le altre giornate fisiche sono i
+complementi (pliometria in B, gambe dalle scale). Gli altri otto scenari non cambiano. I nove piani base passano ancora
+dal validatore (`tests/trainingSimulazione.test.ts`).

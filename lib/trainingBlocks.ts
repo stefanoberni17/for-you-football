@@ -47,7 +47,7 @@ export interface Blocco {
   progressione: number | null;   // dal codice (1/2/3…)
   variante: Variante;
   sottovariante?: string;        // lettera del sotto-codice (Fascia Foundations 1B, 1D, 2A…)
-  ruolo?: 'portiere';            // blocco nato per un ruolo (codice P1): preferito per quel ruolo, non esclusivo
+  ruolo?: 'portiere';            // blocco nato per un ruolo (codice P1): SOLO per quel ruolo (Ste, 16/10: "per ora teniamolo solo per portiere"; prima era preferito, non esclusivo)
   durataMin: number;             // stima
   attrezzatura: string[];        // oltre al corpo libero
   inCoppia: boolean;
@@ -74,6 +74,7 @@ export interface Blocco {
 const LIVELLO_OVERRIDE: Record<string, LivelloMinV2> = {
   'forza-parte-bassa-forza-max': 'A',
   'forza-parte-bassa-completa-palestra': 'A',
+  'forza-parte-bassa-completa-palestra-in-season': 'A', // la versione in stagione (short dello stesso codice, 16/10) ha gli stessi carichi
 };
 
 /**
@@ -107,12 +108,16 @@ export function bloccoHaSoloLivelloSopra(b: Blocco, livello: LivelloMinV2): bool
 /** Il blocco prescrive carichi oltre il tetto senza massimale (bilanciere, sovraccarichi pesanti)? */
 export const bloccoHaCarichiPesanti = (b: Blocco) => b.items.some((it) => (it.carico_kg ?? 0) > KG_SENZA_MASSIMALE_MAX);
 
+/** Il blocco è nato per un ruolo (P1 = portiere) e l'atleta non lo ha: fuori dalla libreria (Ste, 16/10). */
+export const bloccoPerAltroRuolo = (b: Blocco, ruoli: readonly string[] | undefined) => !!b.ruolo && !(ruoli ?? []).includes(b.ruolo);
+
 /**
  * Blocchi proponibili per un atleta: completi, livello ≤ atleta (o non indicato), attrezzatura disponibile.
  * `livelloPerQualita` (25/9): il livello della qualità del blocco, se i test di quella qualità lo danno
  * (un A nei salti apre i blocchi A di pliometria anche se l'AMRAP dice B); altrimenti `livello`.
+ * `ruoli` (18/10): i blocchi con `ruolo` (P1 del portiere) solo se l'atleta ha quel ruolo; senza `ruoli` restano fuori.
  */
-export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: string[]; inCoppia: boolean; livelloPerQualita?: Partial<Record<QualitaV2, LivelloMinV2>> }): Blocco[] {
+export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: string[]; inCoppia: boolean; livelloPerQualita?: Partial<Record<QualitaV2, LivelloMinV2>>; ruoli?: readonly string[] }): Blocco[] {
   const disp = new Set(['corpo libero', ...ctx.attrezzatura]);
   const livDi = (b: Blocco) => LIVELLO_ORDINE[ctx.livelloPerQualita?.[b.qualita] ?? ctx.livello];
   // Famiglie senza varianti al livello dell'atleta (es. Fartlek: solo A1-A4): ammesso il
@@ -132,7 +137,8 @@ export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: s
         // Il gradino sopra MAI per i blocchi con carichi pesanti (bilanciere): un B non riceve "Forza Max" (review 25/9)
         || (LIVELLO_ORDINE[b.livello] === liv + 1 && !famigliaHaLivello.get(b.famiglia) && !bloccoHaCarichiPesanti(b) && !bloccoHaSoloLivelloSopra(b, ctx.livelloPerQualita?.[b.qualita] ?? ctx.livello)))
       && b.attrezzatura.every((a) => disp.has(a))
-      && (!b.inCoppia || ctx.inCoppia);
+      && (!b.inCoppia || ctx.inCoppia)
+      && !bloccoPerAltroRuolo(b, ctx.ruoli);
   });
 }
 

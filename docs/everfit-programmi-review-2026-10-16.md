@@ -227,5 +227,6 @@ presto · 6 pliometria due volte · 7 pile lunghe · 8 "in season" · 9 "+" · 1
 
 Ste, 16/10: "ovviamente dobbiamo mantenere tutte le logiche di costruzione allenamenti che ci eravamo dati;
 eventualmente discutiamo se vogliamo modificare qualcosa". L'elenco completo delle logiche, con cosa cambierebbe
-per ogni risposta, è in `docs/training-logiche-costruzione.md` (§C). Nessuna modifica al codice finché Ste non
-sceglie da cosa partire.
+per ogni risposta, è in `docs/training-logiche-costruzione.md` (§C). Stato al 18/10: 3 (asse partita), 4 (C = PRO),
+5 (pliometria dai test), 6 (pliometria due volte), 8 ("in season" = short), 10 (P1 solo portieri) sono nel codice;
+1, 2, 7, 9 non cambiavano niente.

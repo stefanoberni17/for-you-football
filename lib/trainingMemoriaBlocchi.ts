@@ -81,7 +81,8 @@ export const VOTO_SEDUTA_DURO = 9;
 export const feedbackDaRpe = (rpe: number): Giudizio => (rpe <= 4 ? 'facile' : rpe >= VOTO_SEDUTA_DURO ? 'duro' : 'ok');
 
 /** Chiave del codice: la short e la soft sono varianti dello stesso codice. */
-export const chiaveCodice = (id: string) => id.replace(/-short(-\d+)?$/, '').replace(/-soft$/, '');
+/** "-short", "-soft" e "-in-season" (Ste, 16/10: la versione in stagione è la variante più corta dello stesso codice) sono lo stesso codice. */
+export const chiaveCodice = (id: string) => id.replace(/-short(-\d+)?$/, '').replace(/-soft$/, '').replace(/-in-season$/, '');
 
 /** Data (YYYY-MM-DD) in fuso italiano e lunedì della sua settimana. */
 export function dataRoma(iso: string): string {

@@ -1,9 +1,9 @@
 /**
  * FYF Training — libreria BLOCCHI GENERATA (non modificare a mano).
  *
- * Sorgente: docs/everfit-workouts.json (203 workout Everfit, 193 titoli
+ * Sorgente: docs/everfit-workouts.json (203 workout Everfit, 195 titoli
  * distinti) → scripts/build-blocks.py. Alias ed euristiche nello script.
- * Blocchi completi: 180 · incompleti (esercizi non mappati): 13.
+ * Blocchi completi: 182 · incompleti (esercizi non mappati): 13.
  */
 import type { Blocco } from './trainingBlocks';
 
@@ -6480,7 +6480,7 @@ export const BLOCCHI: Blocco[] = [
   "id": "forza-parte-alta-pro-a3-in-season",
   "nome": "Forza parte alta Pro A3 - in season",
   "nomeEverfit": "Forza parte alta Pro A3 - in season",
-  "famiglia": "Forza Parte Alta Pro - In Season",
+  "famiglia": "Forza Parte Alta Pro",
   "qualita": "forza-parte-alta",
   "qualitaSet": {
    "forza-parte-alta": 7,
@@ -6490,7 +6490,7 @@ export const BLOCCHI: Blocco[] = [
   },
   "livello": "A",
   "progressione": 3,
-  "variante": "full",
+  "variante": "short",
   "durataMin": 37,
   "attrezzatura": [
    "palestra",
@@ -8503,7 +8503,7 @@ export const BLOCCHI: Blocco[] = [
   "id": "forza-parte-bassa-completa-palestra-in-season",
   "nome": "Forza Parte Bassa Completa - Palestra in season",
   "nomeEverfit": "Forza Parte Bassa Completa - Palestra in season",
-  "famiglia": "Forza Parte Bassa Completa - Palestra In Season",
+  "famiglia": "Forza Parte Bassa Completa - Palestra",
   "qualita": "forza-parte-bassa",
   "qualitaSet": {
    "forza-parte-bassa": 6,
@@ -8513,7 +8513,7 @@ export const BLOCCHI: Blocco[] = [
   },
   "livello": null,
   "progressione": null,
-  "variante": "full",
+  "variante": "short",
   "durataMin": 27,
   "attrezzatura": [
    "kettlebell",
@@ -8848,7 +8848,7 @@ export const BLOCCHI: Blocco[] = [
   "id": "forza-prevenzione-a1-in-season",
   "nome": "Forza Prevenzione A1 - in season",
   "nomeEverfit": "Forza Prevenzione A1 - in season",
-  "famiglia": "Forza Prevenzione - In Season",
+  "famiglia": "Forza Prevenzione",
   "qualita": "forza-parte-bassa",
   "qualitaSet": {
    "forza-parte-bassa": 11,
@@ -8858,7 +8858,7 @@ export const BLOCCHI: Blocco[] = [
   },
   "livello": "A",
   "progressione": 1,
-  "variante": "full",
+  "variante": "short",
   "durataMin": 39,
   "attrezzatura": [
    "kettlebell",
@@ -11138,6 +11138,91 @@ export const BLOCCHI: Blocco[] = [
     "quantita": 50.0,
     "unita": "metri",
     "recupero_sec": 180
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "pliometria-rapidita-velocita-c1-short",
+  "nome": "Pliometria Rapidità Velocità C1 - short",
+  "nomeEverfit": "Pliometria Rapidità Velocità C1 - short",
+  "famiglia": "Pliometria Rapidità Velocità",
+  "qualita": "pliometria-intensiva",
+  "qualitaSet": {
+   "forza-esplosiva": 2,
+   "pliometria-intensiva": 1,
+   "test": 1,
+   "velocita": 5
+  },
+  "livello": "PRO",
+  "progressione": 1,
+  "variante": "short",
+  "durataMin": 14,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "fesp-forza-esplosiva-tecnica-salto-1-piede-e-2-piedi",
+    "nomeEverfit": "Forza Esplosiva - Tecnica Salto 1 piede e 2 piedi",
+    "serie": 1,
+    "quantita": 4.0,
+    "unita": "reps",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "fesp-salto-in-lungo-da-fermo",
+    "nomeEverfit": "Test Salto in lungo - broad jump",
+    "serie": 1,
+    "quantita": 2.0,
+    "unita": "reps",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "plioi-single-leg-lateral-drop-jump",
+    "nomeEverfit": "Single leg lateral drop jump",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "reps",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "test2-rapidita-ankle-stiffness-test",
+    "nomeEverfit": "Rapidità Ankle Stiffness - Test",
+    "serie": 1,
+    "quantita": 20.0,
+    "unita": "secondi",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-sprint",
+    "nomeEverfit": "Sprint",
+    "serie": 2,
+    "quantita": 10.0,
+    "unita": "metri",
+    "recupero_sec": 50
+   },
+   {
+    "esercizio_id": "vel-sprint",
+    "nomeEverfit": "Sprint",
+    "serie": 2,
+    "quantita": 20.0,
+    "unita": "metri",
+    "recupero_sec": 60
+   },
+   {
+    "esercizio_id": "vel-sprint",
+    "nomeEverfit": "Sprint",
+    "serie": 1,
+    "quantita": 50.0,
+    "unita": "metri",
+    "recupero_sec": 90
    }
   ],
   "completo": true,
@@ -16443,6 +16528,104 @@ export const BLOCCHI: Blocco[] = [
     "quantita": 20.0,
     "unita": "metri",
     "recupero_sec": 90,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-sprint-con-palla-da-fermo",
+    "nomeEverfit": "Sprint con palla da fermo",
+    "serie": 2,
+    "quantita": 20.0,
+    "unita": "metri",
+    "recupero_sec": 40
+   },
+   {
+    "esercizio_id": "vel-sprint-con-palla-da-fermo",
+    "nomeEverfit": "Sprint con palla da fermo",
+    "serie": 2,
+    "quantita": 10.0,
+    "unita": "metri",
+    "recupero_sec": 30
+   },
+   {
+    "esercizio_id": "vel-t-sprint",
+    "nomeEverfit": "T sprint",
+    "serie": 2,
+    "quantita": 1.0,
+    "unita": "reps",
+    "recupero_sec": 90
+   }
+  ],
+  "completo": true,
+  "mancanti": [],
+  "tags": []
+ },
+ {
+  "id": "velocita-c1-short",
+  "nome": "Velocità C1 - short",
+  "nomeEverfit": "Velocità C1 - short",
+  "famiglia": "Velocità",
+  "qualita": "velocita",
+  "qualitaSet": {
+   "velocita": 17
+  },
+  "livello": "PRO",
+  "progressione": 1,
+  "variante": "short",
+  "durataMin": 26,
+  "attrezzatura": [
+   "campo"
+  ],
+  "inCoppia": false,
+  "items": [
+   {
+    "esercizio_id": "vel-sprint",
+    "nomeEverfit": "Sprint",
+    "serie": 2,
+    "quantita": 10.0,
+    "unita": "metri",
+    "recupero_sec": 90
+   },
+   {
+    "esercizio_id": "vel-sprint",
+    "nomeEverfit": "Sprint",
+    "serie": 3,
+    "quantita": 20.0,
+    "unita": "metri",
+    "recupero_sec": 90
+   },
+   {
+    "esercizio_id": "vel-sprint",
+    "nomeEverfit": "Sprint",
+    "serie": 3,
+    "quantita": 30.0,
+    "unita": "metri",
+    "recupero_sec": 90
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-a-1-gamba-e-sprint",
+    "nomeEverfit": "Salto triplo a 1 gamba e sprint",
+    "serie": 1,
+    "quantita": 10.0,
+    "unita": "metri",
+    "recupero_sec": 60,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-a-1-gamba-e-sprint",
+    "nomeEverfit": "Salto triplo a 1 gamba e sprint",
+    "serie": 1,
+    "quantita": 20.0,
+    "unita": "metri",
+    "recupero_sec": 90,
+    "perLato": true
+   },
+   {
+    "esercizio_id": "vel-salto-triplo-a-1-gamba-e-sprint",
+    "nomeEverfit": "Salto triplo a 1 gamba e sprint",
+    "serie": 1,
+    "quantita": 50.0,
+    "unita": "metri",
+    "recupero_sec": 120,
     "perLato": true
    },
    {

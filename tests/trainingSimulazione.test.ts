@@ -40,10 +40,13 @@ describe('simulazione del planner (15/10): le regole viste negli scenari', () =>
     expect(ven.tipo).not.toMatch(/fisica|mix/);
     expect(e.plan.sedute.filter((s) => s.tipo === 'fisica' || s.tipo === 'mix')).toHaveLength(2);
   });
-  it('Luca (5 giornate, velocità prima): una sola giornata di velocità, pliometria solo in B', async () => {
+  it('Luca (off season, velocità prima): fino a due giornate di velocità, mai consecutive, pliometria solo in B', async () => {
     const e = await pianoBase(scenario('luca'));
     const velocita = e.plan.sedute.filter((s) => (s.blocchi ?? []).some((b) => b.qualita === 'velocita'));
-    expect(velocita).toHaveLength(1);
+    // 18/10 (D7): off season con la velocità primo obiettivo il tetto è 2 (prima 1)
+    expect(velocita.length).toBeGreaterThanOrEqual(1);
+    expect(velocita.length).toBeLessThanOrEqual(2);
+    if (velocita.length === 2) expect(Math.abs(velocita[0].giorno - velocita[1].giorno)).toBeGreaterThan(1);
     const plio = e.plan.sedute.flatMap((s) => (s.blocchi ?? []).filter((b) => b.qualita.startsWith('pliometria')));
     expect(plio.length).toBeGreaterThan(0);
     for (const b of plio) expect(e.ctx.blocchi.find((x) => x.id === b.id)?.livello).toBe('B');

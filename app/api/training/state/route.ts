@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
     const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession }] = await Promise.all([
-      supabaseAdmin.from('profiles').select('training_pain_hold, name').eq('user_id', userId).maybeSingle(),
+      supabaseAdmin.from('profiles').select('training_pain_hold, name, role').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
         .eq('user_id', userId).order('created_at', { ascending: false }).limit(400),
@@ -175,7 +175,8 @@ export async function GET(request: NextRequest) {
     const livelli = livelliPerQualita(rows, fascia);
     const feedbackRecenti = await loadFeedbackRecenti(userId);
     const memoria = calcolaMemoriaBlocchi(feedbackRecenti, {
-      disponibili: blocchiDisponibili({ livello: fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, livelloPerQualita: livelli }),
+      // i ruoli come nel planner (18/10): i blocchi P1 solo per i portieri, così la memoria e il ri-test mirato vedono la stessa libreria
+      disponibili: blocchiDisponibili({ livello: fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, livelloPerQualita: livelli, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) }),
       lunediCorrente: mondayOfThisWeekRome(), livello: fascia, livelli,
     });
     const perQualita = new Map<QualitaV2, string[]>();

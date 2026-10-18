@@ -171,13 +171,14 @@ KEYWORDS = [
 
 def meta_from_title(t):
     tl = t.lower()
-    m = re.search(r"\b(pro|b|a|p)\s?(\d)\b", tl)
+    # "C" = variante sopra ad avanzato (Ste, 16/10) → livello PRO (prima i due "C1 - short" erano saltati)
+    m = re.search(r"\b(pro|b|a|c|p)\s?(\d)\b", tl)
     livello = None
     prog = None
     ruolo = None
     if m:
         code = m.group(1)
-        livello = {"b": "B", "a": "A", "pro": "PRO", "p": None}[code]
+        livello = {"b": "B", "a": "A", "c": "PRO", "pro": "PRO", "p": None}[code]
         prog = int(m.group(2))
         if code == "p":
             ruolo = "portiere"  # "P1" = blocco nato per il portiere [STE] — riusato anche per gli altri, quindi non escluso
@@ -187,7 +188,9 @@ def meta_from_title(t):
         m2 = re.search(r"\b(\d)[a-e]?\b", tl)
         if m2 and "fascia" in tl:
             prog = int(m2.group(1))
-    variante = "short" if "short" in tl or "soft" in tl else "full"
+    # "- in season" = variante più corta dello stesso codice (Ste, 16/10: Forza Prevenzione A1, Parte alta PRO A3,
+    # Parte Bassa Completa Palestra): stessa famiglia e stessa chiave di codice del blocco pieno, come "- short"
+    variante = "short" if "short" in tl or "soft" in tl or "in season" in tl else "full"
     qual = None
     for kw, q in KEYWORDS:
         if kw in tl:
@@ -200,8 +203,9 @@ def meta_from_title(t):
     if t.rstrip().endswith("+"):
         sotto = "+"  # "B3 +" = versione più dura dello stesso codice (calendari 2026)
     fam = re.sub(r"\s*\+\s*$", "", t)
+    fam = re.sub(r"\s*-?\s*in season\s*$", "", fam, flags=re.I)
     fam = re.sub(r"\s*-\s*(short|soft)( \d)?", "", fam, flags=re.I)
-    fam = re.sub(r"\b(PRO|B|A|P)\s?\d[A-E]?\b", "", fam, flags=re.I)
+    fam = re.sub(r"\b(PRO|B|A|C|P)\s?\d[A-E]?\b", "", fam, flags=re.I)
     fam = re.sub(r"\b\d[A-E]?\b", "", fam)
     fam = re.sub(r"\s-[A-E]\b", "", fam)
     fam = re.sub(r"\s*-\s*$", "", fam)
@@ -283,8 +287,8 @@ by_title = {}
 # Tecnica Palleggi A1/A4, Tecnica Freestyle…) e lasciavano buchi nelle scale per codice. Stesso formato normalizzato.
 PROGRAMMI = json.load(open("docs/everfit-programs.json", encoding="utf-8"))
 DAI_PROGRAMMI = [wo for p in PROGRAMMI for w in p.get("calendario", []) for d in w.get("giorni", []) for wo in d.get("workouts", [])]
-# Codici da chiarire con Ste prima di metterli in libreria: "C1" non è B/A/PRO
-SALTA_TITOLI = {"pliometria rapidità velocità c1 - short", "velocità c1 - short"}
+# Titoli da tenere fuori dalla libreria (16/10 i due "C1 - short" stavano qui: "C" = variante sopra ad avanzato → PRO, dal 18/10 entrano)
+SALTA_TITOLI = set()
 # 16/10: i workout che esistono SOLO sui calendari dei ragazzi (scripts/everfit-normalize-assegnazioni.py, nomi tolti)
 ASSEGNATI = json.load(open("docs/everfit-workouts-assegnati.json", encoding="utf-8")) if os.path.exists("docs/everfit-workouts-assegnati.json") else []
 # Titoli senza codice che nel programma di Ste sono la settimana 1 della famiglia ("forza corpo libero avanzato w1")

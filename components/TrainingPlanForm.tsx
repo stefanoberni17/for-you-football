@@ -23,7 +23,7 @@ function Label({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
  * libero, salvo una nota corta. Va montata solo quando è aperta (lo stato parte dai
  * valori del setup ogni volta).
  */
-export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, fase, generating, onSubmit, onClose }: {
   open?: boolean;
   hasPlan: boolean;
   errorMsg?: string | null;  // errore del server all'ultimo tentativo (si vede nel footer, sotto la CTA)
@@ -34,6 +34,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   maxSeduteFisiche?: number; // di cui con blocchi fisici (tetto della fase)
   focusSetup?: FocusId[];    // obiettivi della fase dal setup: chip già selezionati, un cambio vale solo per questa settimana
   preferenzeSetup?: { giorni: number[]; sedute: number | null; durataMin: number | null }; // dal setup (migration 025): già compilati, un cambio vale per questa settimana
+  fase?: string;             // fase della stagione dal setup: in off season si conferma se questa settimana c'è la squadra (tetto della resistenza, 18/10)
   generating: boolean;
   onSubmit: (r: RichiestaGuidata) => void;
   onClose?: () => void;
@@ -44,6 +45,8 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   const [durata, setDurata] = useState<number | null>(preferenzeSetup?.durataMin ?? null);
   const [focus, setFocus] = useState<FocusId[]>(focusSetup ?? []);
   const [note, setNote] = useState('');
+  // Off season (campo-da-fare 16, Ste 13/10): "Questa settimana ti alleni con la squadra?" prefillato dal calendario; senza squadra né partita la resistenza può salire a 4 giornate
+  const [conSquadra, setConSquadra] = useState<boolean>(!!(calendario && (calendario.trainingDays.length || calendario.matchDays.length)));
   const [tipo, setTipo] = useState<ModificaTipo>('sposta');
   const modificabili = sedute.filter((s) => s.modificabile);
   const [mGiorno, setMGiorno] = useState<number | null>(modificabili[0]?.giorno ?? null);
@@ -82,7 +85,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   const submit = () => {
     if (errore) return;
     if (modo === 'nuova') {
-      onSubmit({ modo, giorni: giorni.length ? giorni : undefined, sedute: nSedute ?? undefined, durataMax: durata ?? undefined, focus: focus.length ? focus : undefined, note: note.trim() || undefined });
+      onSubmit({ modo, giorni: giorni.length ? giorni : undefined, sedute: nSedute ?? undefined, durataMax: durata ?? undefined, focus: focus.length ? focus : undefined, note: note.trim() || undefined, ...(fase === 'off_season' ? { conSquadra } : {}) });
       return;
     }
     const modifica: NonNullable<RichiestaGuidata['modifica']> = { tipo };
@@ -140,6 +143,16 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
             )}
           </Card>
 
+          {fase === 'off_season' && (
+            <>
+              <Label hint="Senza squadra né partite la resistenza può salire fino a 4 giornate; con la squadra resta a 2.">Questa settimana ti alleni con la squadra o hai una partita?</Label>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <Chip selected={conSquadra} onClick={() => setConSquadra(true)}>Sì, squadra o partita</Chip>
+                <Chip selected={!conSquadra} onClick={() => setConSquadra(false)}>No, solo con l&apos;app</Chip>
+              </div>
+            </>
+          )}
+
           {/* Doppia scelta (Ste, 28/9): il ragazzo decide quante, oppure lascia scegliere al preparatore tra i giorni che indica */}
           <Label hint={`Massimo ${tettoSedute}: ${maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero.`}>Quante giornate a settimana?</Label>
           <div className="flex flex-wrap gap-2 mb-4">
@@ -162,7 +175,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
               <Chip key={d} selected={durata === d} showCheck={false} onClick={() => setDurata(durata === d ? null : d)}>{d}&apos;</Chip>
             ))}
           </div>
-          <Label hint={`Nell'ordine in cui li scegli, oppure "Tutto".${focusSetup?.length ? ' Già impostati dal tuo setup: cambiali solo per questa settimana.' : ''}`}>Su cosa vuoi lavorare questa settimana?</Label>
+          <Label hint={`Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".${focusSetup?.length ? ' Già impostati dal tuo setup: cambiali solo per questa settimana.' : ''}`}>Su cosa vuoi lavorare questa settimana?</Label>
           <div className="flex flex-wrap gap-2 mb-4">
             {FOCUS_OPZIONI.map((f) => {
               const idx = focus.indexOf(f.id);
