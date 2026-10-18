@@ -28,7 +28,7 @@ import { limaCarichi } from './trainingCarico';
 import { riparaPiano } from './trainingRiparazione';
 import { calcolaMese, MESE_SETTIMANE, meseRigheAtleta, meseTesto, type Mese, type RispostaMese, type SettimanaMese } from './trainingMese';
 import { addDays } from './carta';
-import { caricoMaxPct, CONVIVENZE_BLOCCHI_VIETATE, CONVIVENZE_SCONSIGLIATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, QUALITA_FISICHE, type ContestoV2 } from './trainingRulesV2';
+import { caricoMaxPct, CONVIVENZE_BLOCCHI_VIETATE, CONVIVENZE_SCONSIGLIATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, QUALITA_FISICHE, SPRINT_MAX_VICINO_PARTITA, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
@@ -612,7 +612,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         if (gd === 1 && b.id !== PB_RICHIAMO_ID && GAMBE_DOPO_PARTITA.has(b.qualita))
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" il giorno DOPO la partita — niente gambe, velocità né resistenza (si assume che abbia giocato tutta): al massimo parte alta short, ${PB_RICHIAMO_ID}, fascia, tecnica leggera`);
         if (gd !== null && gd >= 2 && gd <= VELOCITA_PURA_DOPO_PARTITA_GIORNI && isVelocitaPura(b))
-          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è velocità pura (sprint da ${VELOCITA_PURA_METRI} m o salite) a ${gd} giorni dalla partita giocata — fino a +${VELOCITA_PURA_DOPO_PARTITA_GIORNI} solo rapidità corta o pliometria`);
+          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m o salite) a ${gd} giorni dalla partita giocata — fino a +${VELOCITA_PURA_DOPO_PARTITA_GIORNI} solo rapidità corta o pliometria`);
+        // Ste, 18/10 sera: a 2 giorni dalla partita la velocità va bene "ma non con distanze lunghe e non molto volume (max 20/30 m)"
+        if (gp === 2 && isVelocitaPura(b))
+          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" a 2 giorni dalla partita — qui solo velocità corta (sprint fino a ${VELOCITA_PURA_METRI} m, es. ${ctx.blocchi.filter((x) => x.qualita === 'velocita' && !isVelocitaPura(x) && !isPrePartita(x)).map((x) => x.id).slice(0, 3).join(', ') || 'rapidità'}) e con poco volume`);
       }
       for (const [qa, qbs] of CONVIVENZE_BLOCCHI_VIETATE) {
         const a = blocchi.find((b) => b.qualita === qa && !isPrePartita(b));
@@ -780,8 +783,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       if (ripassi.length) noteMemoria.set(bloccoTecnica.id, `${noteMemoria.has(bloccoTecnica.id) ? `${noteMemoria.get(bloccoTecnica.id)} · ` : ''}con ${ripassi.length === 1 ? 'un ripasso' : `${ripassi.length} ripassi`}`);
     }
     let minutiRipassi = ripassiScelti.reduce((a, r) => a + minutiRipasso(r), 0);
-    const { items: itemsLimati0, tolti } = limaSprint([...items, ...ripassi], sprintMax);
-    if (tolti > 0) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${tolti} sprint in meno: tetto di ${sprintMax}`); }
+    // A 2 giorni dalla partita poco volume (Ste, 18/10): tetto di sprint più basso
+    const sprintMaxSeduta = giorniAllaPartita(Number(s.giorno), ctx.base.matchDays) === 2 ? Math.min(sprintMax, SPRINT_MAX_VICINO_PARTITA) : sprintMax;
+    const { items: itemsLimati0, tolti } = limaSprint([...items, ...ripassi], sprintMaxSeduta);
+    if (tolti > 0) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${tolti} sprint in meno: tetto di ${sprintMaxSeduta}${sprintMaxSeduta < sprintMax ? ' a 2 giorni dalla partita' : ''}`); }
     // Kg dei blocchi dietro il tetto dell'atleta (lib/trainingCarico): senza massimale max 20 kg, con massimale caricoMaxPct
     const { items: itemsLimati, limati: carichiLimati } = limaCarichi(itemsLimati0, ctx.v2);
     if (carichiLimati > 0) {
@@ -970,8 +975,8 @@ SICUREZZA
 2c. Il PRIMO obiettivo è il filo della settimana: con 3 o più giornate fisiche compare in ALMENO 2 (in una come blocco principale, nell'altra anche in versione short o come secondo blocco); il secondo obiettivo almeno una volta, anche come secondo blocco nella stessa giornata del primo se il tempo lo permette; gli altri nei posti che avanzano o nelle giornate leggere. Il primo obiettivo va nelle PRIME giornate fisiche disponibili della settimana (lunedì e mercoledì, non mercoledì e domenica): se poi qualcosa salta, il lavoro principale è già fatto. Esempio con forza parte alta primo e gambe secondo, 3 fisiche + 1 leggera: lunedì parte alta + gambe, mercoledì parte alta + esplosività, venerdì fascia + tecnica, domenica parte alta short + prevenzione.
 3. L'ASSE PARTITA (le regole le fa rispettare il validatore, ma tu progetta già bene). PRIMA della partita:
 ${finestreTesto()}
-   Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps: non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità normale va bene. Mai yoga di recupero il giorno prima o il giorno della partita.
-   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta): il giorno DOPO niente gambe, velocità né resistenza — al massimo forza leggera: parte alta short, \`${PB_RICHIAMO_ID}\`, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint da ${VELOCITA_PURA_METRI} m, salite): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
+   Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps: non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
+   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta): il giorno DOPO niente gambe, velocità né resistenza — al massimo forza leggera: parte alta short, \`${PB_RICHIAMO_ID}\`, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m, salite): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
    RESISTENZA: nel giorno più lontano da tutte e due le partite (con la partita la domenica: martedì-giovedì, il top è mercoledì).
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
 
@@ -980,7 +985,7 @@ COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
 6. Poi 1-2 blocchi principali della giornata (forza parte bassa/alta, pliometria, velocità, resistenza, kettlebell…). Ordine: neuromuscolare (velocità, pliometria, forza) PRIMA del metabolico (resistenza, fartlek).
 7. Tecnica (palleggi, muro, dribbling, tiri, visione) come blocco finale o giornata a sé, se l'atleta ha campo/muro (attrezzatura "campo") e la vuole.
 8. Durata totale della giornata ≤ ${ctx.maxDurata}' (o il tempo massimo chiesto dall'atleta), APERTURA ESCLUSA (sta fuori dal budget: il ragazzo la fa se ha tempo). SOMMA le durate "~N'" dei blocchi PRIMA di scrivere la giornata: riscaldamento velocità (15', solo nelle sedute di sprint) + UN blocco principale che ci stia; un secondo blocco SOLO se la somma resta sotto il massimo. Con 60' spesso ci sta un solo blocco principale pieno: scegli la variante short o rinuncia alla tecnica.
-9. Non ripetere lo stesso blocco principale due giorni di fila. VIETATO nello stesso giorno: velocità e resistenza (anche metabolico, RSA); forza massima e resistenza aerobica; RSA e pliometria intensiva. SCONSIGLIATO (non vietato): ${CONVIVENZE_SCONSIGLIATE.map(([a, b]) => `${a} e ${b}`).join(', ')}.
+9. Non ripetere lo stesso blocco principale due giorni di fila. VIETATO nello stesso giorno: velocità e resistenza (anche metabolico, RSA); forza massima e resistenza aerobica; RSA e pliometria intensiva. Forza massima seguita da pliometria NON pesante nello stesso giorno va bene (Ste: è sviluppo — la forza prima, pochi contatti dopo).${CONVIVENZE_SCONSIGLIATE.length ? ` SCONSIGLIATO (non vietato): ${CONVIVENZE_SCONSIGLIATE.map(([a, b]) => `${a} e ${b}`).join(', ')}.` : ''}
 9b. I blocchi "per portiere" (codice P1) sono nati per i portieri: preferiscili se l'atleta è portiere; per gli altri ruoli usali solo se non c'è un'alternativa B/A.
 
 PROGRESSIONE (settimana su settimana)
@@ -1238,7 +1243,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const gd = giorniDallaPartita(g, b.matchDays);
     const dopo = (c: Blocco[]) => {
       const c1 = dopoPartita(g) ? [...c.filter((x) => x.id === PB_RICHIAMO_ID), ...c.filter((x) => x.id !== PB_RICHIAMO_ID && !GAMBE_DOPO_PARTITA.has(x.qualita))] : c;
-      return gd !== null && gd >= 2 && gd <= VELOCITA_PURA_DOPO_PARTITA_GIORNI ? c1.filter((x) => !isVelocitaPura(x)) : c1;
+      const gpG = giorniAllaPartita(g, b.matchDays);
+      return (gd !== null && gd >= 2 && gd <= VELOCITA_PURA_DOPO_PARTITA_GIORNI) || gpG === 2 ? c1.filter((x) => !isVelocitaPura(x)) : c1;
     };
     // Al massimo FALLBACK_PER_OBIETTIVO blocchi per obiettivo, così gli obiettivi in coda arrivano comunque tra i candidati
     let cands = ordine.flatMap((f) => dopo(candidatiPerObiettivo(f)).slice(0, FALLBACK_PER_OBIETTIVO)).filter((x) => !visti.has(x.id) && !!visti.add(x.id));

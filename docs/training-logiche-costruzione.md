@@ -25,7 +25,8 @@ risposte del 16/10.
    alta short, fascia, tecnica leggera, recupero); +2 e +3 niente velocità pura (sprint da 30 m, salite; rapidità corta
    e pliometria sì); la resistenza da +2. Il resoconto (PR B) rilasserà le regole per chi ha giocato poco.
 4. **Finestre partita per qualità** (`FINESTRA_PARTITA`, validatore; giorni PRIMA della partita in cui la qualità
-   è vietata, dal 18/10): forza gambe/parte alta/core 1 · velocità 1 (ammessa a −2) · forza esplosiva 2 · pliometria
+   è vietata, dal 18/10): forza gambe/parte alta/core 1 · velocità 1 (ammessa a −2 solo CORTA: sprint fino a 30 m,
+   niente salite, al massimo 6 sprint) · forza esplosiva 2 · pliometria
    estensiva 1 · pliometria intensiva 2 (a −1 solo con 2×2) · resistenza aerobica/metabolico/RSA 2 (ammessa a −3:
    con la partita la domenica martedì-giovedì, mercoledì preferito) · mobilità/recupero 1 · forza massima (regime
    max) 3 · Nordic ed eccentrici 3 · fascia, tecnica, riscaldamento 0 (sempre).
@@ -36,7 +37,9 @@ risposte del 16/10.
    neuromuscolare (velocità, pliometria, forza) prima del metabolico (resistenza, fartlek); tecnica in coda o in una
    giornata a sé. Mai lo stesso blocco principale due giorni di fila. Convivenze VIETATE nello stesso giorno: velocità +
    resistenza (dal 18/10, a livello di blocco), forza massima + resistenza aerobica, RSA + pliometria intensiva.
-   SCONSIGLIATA (solo nel prompt, dal 18/10): forza massima + pliometria intensiva.
+   Forza massima seguita da pliometria non pesante nello stesso giorno: AMMESSA (Ste, 18/10 sera: "come sviluppo";
+   prima era vietata). I test usati come esercizi nei blocchi di Ste (ankle stiffness, navetta, palleggi) passano dal
+   18/10: prima facevano fallire sempre quei blocchi.
 7. **Tempo** (server + validatore, regola 8): la somma dei blocchi deve stare nel tempo massimo, apertura esclusa;
    se non ci sta il server toglie i facoltativi dal più lungo e poi passa alla versione breve del principale.
 8. **Obiettivi** (regola 2b-2c, validatore): i primi 2 obiettivi devono avere almeno un blocco principale nella
@@ -120,8 +123,8 @@ risposte del 16/10.
   dalla coda; oltre 8 il validatore rifiuta. Contano Sprint e varianti a 10 m, non salto+sprint, con palla, T-sprint.
 - Sprint con palla: subito se tecnica tra gli obiettivi o in season/preparazione, altrimenti dalla 5ª settimana.
 - Salite: al massimo un blocco a settimana, in season una volta ogni 4 settimane, mai nello scarico.
-- Finestra partita 1 (ammessa a −2, dal 18/10); a −1 solo il blocco pre partita; niente velocità il giorno dopo la
-  partita e niente velocità pura a +2 e +3 (senza resoconto).
+- Finestra partita 1 (dal 18/10): a −2 solo corta (sprint fino a 30 m, niente salite, tetto 6 sprint); a −1 solo il
+  blocco pre partita; niente velocità il giorno dopo la partita e niente velocità pura (oltre 30 m, salite) a +2 e +3.
 - Velocità + tecnica tra gli obiettivi: i blocchi sprint-e-palla coprono entrambi.
 
 ### Esplosività / salti (`pliometria` → pliometria-intensiva, pliometria-estensiva)
@@ -350,10 +353,11 @@ dopo dice difficile, il coach ricalcola per l'esercizio che sono state fatte rep
 "Per ora farei le cose sopra e i feedback".
 
 ### E1. Fatto il 18/10: PR A, l'asse partita prima e dopo (senza DB)
-Vedi A.3, A.3b, A.4, A.6 e il CHANGELOG. In una riga: velocità ok a −2, resistenza fino a −3 (mercoledì preferito nel
-base), il blocco pre partita a −1 come giornata leggera, a +1 niente gambe (ora anche nel validatore), a +2/+3 niente
-velocità pura, velocità + resistenza vietato, Fmax + plio sconsigliato. Tutto con il default precauzionale "partita
-intera": il resoconto (E2) potrà solo rilassare.
+Vedi A.3, A.3b, A.4, A.6 e il CHANGELOG. In una riga: velocità ok a −2 ma corta e con poco volume (correzione di Ste
+della sera), resistenza fino a −3 (mercoledì preferito nel base), il blocco pre partita a −1 come giornata leggera, a
++1 niente gambe (ora anche nel validatore), a +2/+3 niente velocità pura, velocità + resistenza vietato, Fmax + plio
+non pesante ammesso ("come sviluppo"). Tutto con il default precauzionale "partita intera": il resoconto (E2) potrà
+solo rilassare. Trovato per strada: i test usati come esercizi nei blocchi di Ste bloccavano 20 blocchi; ora passano.
 
 ### E2. La regola di riprogrammazione dal feedback (proposta, da confermare prima della PR B)
 Il resoconto (allenamento con la squadra o partita: fatica 1-10, minuti/durata, cosa si è fatto; spec del 14/10 al
@@ -377,13 +381,16 @@ Claude), applicati dal server alla lettura dello state come le riparazioni, con 
 Il carico (ACWR) usa la fatica e la durata REALI del resoconto al posto della stima (punto 17). Lo storico (punto 6)
 mostra previsto contro reale. Da decidere con Ste: le soglie (+2 / −2, 8, metà partita) sono a tavolino.
 
-### E3. Risposta alla domanda del punto 4 (reps in più e poi "difficile")
-Sì, ma in due tempi. Le reps FATTE diventano subito la base del prossimo programma (10 fatte su 8 previste → 10: è una
-misura, regola del 22/9); il voto "difficile" (≥ 8) su quella seduta blocca il passo in su, quindi resta a 10. Il
-gradino o il peso salgono solo quando ci sono 2 sedute di fila facili (voto ≤ 6) con tutto fatto. In più, proposta:
-se nelle 2 sedute facili le reps fatte raggiungono la soglia del gradino (es. 20 push-up sul gradino attuale), il
-server propone il gradino dopo con la dose ×0.7 anche senza rifare il test della scala (oggi il gradino viene solo dal
-test). Entra nella PR C.
+### E3. Risposta alla domanda del punto 4 (reps in più: contano per il gradino dopo?)
+Ste (18/10 sera): "metti che con 12 reps sarebbe passato al gradino dopo: se uno ne fa 12 su una programmazione da 8,
+lo conta per poi passare al gradino dopo?". **Oggi no**: il gradino viene solo dal test della scala (`alGradino`), e
+il "gradino successivo" dai log scatta solo quando la dose è già al tetto del +30 %. **Proposta (PR C): sì, conta
+come un test passato.** Se in una seduta le reps fatte su quel gradino raggiungono la soglia del gradino (12 nel suo
+esempio, cioè la stessa soglia che il test chiederebbe) in almeno metà delle serie e il voto della seduta non è
+"difficile" (≤ 7), il server registra il gradino come completato e la seduta dopo propone il gradino successivo con la
+dose ×0.7, senza aspettare il ri-test e senza aspettare la seconda seduta facile: raggiungere la soglia È il test. Se
+invece ne fa 12 ma dice "difficile" (≥ 8): resta sul gradino, con 12 come base. Sotto la soglia vale la regola delle
+2 sedute facili di fila per kg, tempo e dose. Da confermare da Ste prima della PR C.
 
 ### E4. Cosa resta in sospeso (dopo A)
 Ordine: **B** resoconto (tabella + foglio + carico reale + regole E2) · **C** progressione "2 facili di fila" + E3 +

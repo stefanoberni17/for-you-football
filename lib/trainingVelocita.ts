@@ -75,7 +75,7 @@ export const isVelocita = (b: Blocco) => b.qualita === 'velocita' || b.items.som
  */
 export { PRE_PARTITA_ID };
 export const isPrePartita = (b: Blocco | string) => (typeof b === 'string' ? b : b.id) === PRE_PARTITA_ID;
-/** Uno sprint da questa distanza in su è "velocità pura"; sotto è rapidità (10-20 m, partenze, cambi di direzione). Soglia a tavolino, da tarare con Ste. */
+/** Sprint fino a questa distanza = corti (rapidità: Ste, 18/10, "max 20/30 metri" a 2 giorni dalla partita); OLTRE = velocità pura. */
 export const VELOCITA_PURA_METRI = 30;
 /** Nei giorni +1, +2 e +3 dopo la partita niente velocità pura (Ste: "nei 2-3 giorni dopo la partita non si fa mai velocità pura se uno ha giocato molto"; senza resoconto si assume che abbia giocato tutta). */
 export const VELOCITA_PURA_DOPO_PARTITA_GIORNI = 3;
@@ -84,10 +84,11 @@ export const SALTO_SPRINT_IDS: ReadonlySet<string> = new Set(['vel-salto-triplo-
 /** Lo sprint più lungo (in metri) tra gli sprint del blocco (massimali, con palla, salto+sprint, salite); 0 se non ha sprint a metri. */
 export const maxSprintMetri = (b: Blocco) => Math.max(0, ...b.items.filter((it) => it.esercizio_id && (isSprint(it.esercizio_id) || SPRINT_CON_PALLA_IDS.has(it.esercizio_id) || SALTO_SPRINT_IDS.has(it.esercizio_id) || SALITE_IDS.has(it.esercizio_id)) && it.unita === 'metri').map((it) => it.quantita));
 /**
- * Velocità PURA = un blocco di velocità con sprint da VELOCITA_PURA_METRI in su, o le salite. Rapidità (sprint corti, box,
+ * Velocità PURA = un blocco di velocità con sprint OLTRE VELOCITA_PURA_METRI, o le salite. Rapidità (sprint corti, box,
  * partenze, il blocco pre partita) e i blocchi di pliometria con qualche scatto non lo sono: sono la giornata "rapidità e plio".
+ * Vale a −2 (solo corta) e a +2/+3 dopo la partita (niente pura).
  */
-export const isVelocitaPura = (b: Blocco) => !isPrePartita(b) && (isSalite(b) || (b.qualita === 'velocita' && maxSprintMetri(b) >= VELOCITA_PURA_METRI));
+export const isVelocitaPura = (b: Blocco) => !isPrePartita(b) && (isSalite(b) || (b.qualita === 'velocita' && maxSprintMetri(b) > VELOCITA_PURA_METRI));
 export const haConPalla = (b: Blocco) => b.items.some((it) => it.esercizio_id && SPRINT_CON_PALLA_IDS.has(it.esercizio_id));
 export const isSalite = (b: Blocco) => b.items.some((it) => it.esercizio_id && SALITE_IDS.has(it.esercizio_id));
 export const isPliometria = (b: Blocco) => b.qualita === 'pliometria-intensiva' || b.qualita === 'pliometria-estensiva';

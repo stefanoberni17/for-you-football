@@ -90,6 +90,8 @@ export const PLIO_INTENSIVA_CONTATTI_MAX: Record<LivelloMinV2, number> = { B: 10
  */
 export const SPRINT_MAX_SEDUTA = 8;
 export const SPRINT_MAX_CON_EMOM = 6;
+/** A 2 giorni dalla partita (Ste, 18/10: "non molto volume"): tetto di sprint per seduta più basso. Valore a tavolino. */
+export const SPRINT_MAX_VICINO_PARTITA = 6;
 export const SPRINT_MASSIMALI_IDS: ReadonlySet<string> = new Set([
   'vel-sprint', 'vel-sprint-10-m',
   'vel-sprint-con-partenza-in-ginocchio', 'vel-piegamento-a-terra-e-sprint', 'vel-giro-180-piegamento-e-sprint',
@@ -117,7 +119,7 @@ export const FINESTRA_PARTITA: Record<QualitaV2, number> = {
   // 18/10, Ste (risposta 3): "rapidità, velocità e tiro ok prima della partita ma distanze brevi e poche reps; 2 giorni prima si
   // può fare qualcosa in più" → velocità ammessa a −2 (prima vietata), a −1 solo il blocco pre partita (PRE_PARTITA_ID in
   // trainingVelocita, saltato dal validatore a −1)
-  'velocita': 1,
+  'velocita': 1, // a −2 solo corta (sprint fino a VELOCITA_PURA_METRI) e con poco volume (SPRINT_MAX_VICINO_PARTITA): expandPiano
   'pliometria-estensiva': 1,
   'pliometria-intensiva': 2, // a −1 solo con reps minime (vedi PLIO_INTENSIVA_MENO1)
   // 18/10, Ste: "metabolico-resistenza va bene da 2 giorni dopo la partita fino a 3 giorni prima: con la partita la domenica
@@ -190,10 +192,12 @@ export const CONVIVENZE_VIETATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
   ['forza-max', 'resistenza-aerobica'],
   ['resistenza-rsa', 'pliometria-intensiva'],
 ];
-/** Nello stesso giorno: non vietato, sconsigliato (Ste, 18/10: "Fmax e plio intensiva non vietato, ma non consigliato"; fino al 17/10 era vietato). Solo nel prompt, il piano base non lo fa. */
-export const CONVIVENZE_SCONSIGLIATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
-  ['forza-max', 'pliometria-intensiva'],
-];
+/**
+ * Nello stesso giorno: non vietato, sconsigliato (solo nel prompt, il piano base non lo fa). Vuoto dal 18/10 sera: Ste,
+ * "pliometria non troppo pesante può essere anche buona dopo Fmax, come sviluppo" (il 18/10 mattina era "sconsigliato",
+ * fino al 17/10 vietato). Resta la struttura per coppie future.
+ */
+export const CONVIVENZE_SCONSIGLIATE: [QualitaV2 | 'forza-max', QualitaV2][] = [];
 /**
  * Convivenze vietate a livello di BLOCCO (qualità dominante di due blocchi diversi nella stessa seduta): velocità e
  * resistenza mai lo stesso giorno (Ste, 18/10: "mai anche con velocità"). A livello di esercizio non si può: i blocchi
@@ -296,7 +300,11 @@ export function validateItemV2(
   const disp = new Set<AttrezzaturaV2>(['corpo libero', ...ctx.attrezzatura]);
   if (!disp.has(ex.attrezzatura)) errors.push(`${n}: serve ${ex.attrezzatura}, non disponibile`);
   if (ex.inCoppia && !ctx.inCoppia) errors.push(`${n}: serve un compagno`);
-  if (ex.qualita === 'test') errors.push(`${n}: i test non vanno nel piano (batteria dedicata)`);
+  // Un esercizio di categoria "test" non va nel piano (batteria dedicata)… salvo dentro un blocco FIDATO di Ste (18/10): nei
+  // suoi workout "Rapidità Ankle Stiffness - Test" (16 blocchi), "TEST NAVETTA" e i palleggi dei test sono usati come
+  // esercizi, e quei blocchi non passavano mai (stesso caso del broad jump del 15/10, risolto allora con un alias)
+  const testComeEsercizio = ex.qualita === 'test' && !!opts.skipBounds;
+  if (ex.qualita === 'test' && !testComeEsercizio) errors.push(`${n}: i test non vanno nel piano (batteria dedicata)`);
 
   // Bounds
   const b = opts.skipBounds ? null : boundsPerItem(ex, it);
@@ -347,8 +355,8 @@ export function validateItemV2(
       errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${KG_SENZA_MASSIMALE_MAX} kg finché non fa i test in palestra)`);
   }
 
-  // Finestra partita per qualità
-  if (giorniPartita !== null) {
+  // Finestra partita per qualità (un test usato come esercizio in un blocco di Ste segue il blocco, non la finestra "test")
+  if (giorniPartita !== null && !testComeEsercizio) {
     const regimeMax = forzaConCarico && it.regime === 'max';
     const finestra = regimeMax ? FINESTRA_FORZA_MAX : (ex.finestraPartita ?? FINESTRA_PARTITA[ex.qualita]);
     if (giorniPartita <= finestra) {
