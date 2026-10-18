@@ -17,20 +17,26 @@ risposte del 16/10.
    preferisce 2 fisiche corte.
 2. **Giornate e giorni** (validatore, regola 19): il numero di giornate chiesto (o "decide lui"), i giorni ammessi,
    il tempo per seduta sono vincoli duri. A settimana avviata si pianificano solo i giorni da oggi a domenica.
-3. **Partita** (validatore + server): nessuna seduta fisica il giorno della partita né il giorno prima. Il giorno
-   DOPO: niente gambe (forza parte bassa, pliometria, velocità, resistenza); vanno bene parte alta short, fascia,
-   tecnica leggera, recupero, il richiamo gambe `pb-richiamo`. Senza calendario vale la partita abituale del setup.
+3. **Partita, PRIMA** (validatore + server): nessuna seduta fisica il giorno della partita né il giorno prima; il
+   giorno prima è ammesso solo il blocco di Ste `rapidita-velocita-e-tiro-pre-partita` (20', distanze brevi, poche
+   reps: giornata leggera, non conta come velocità) oppure tecnica/fascia. Senza calendario vale la partita abituale.
+3b. **Partita, DOPO** (dal 18/10, validatore + base; `giorniDallaPartita`): finché non c'è il resoconto della partita
+   si assume che abbia giocato tutta → +1 niente gambe, velocità né resistenza (restano richiamo `pb-richiamo`, parte
+   alta short, fascia, tecnica leggera, recupero); +2 e +3 niente velocità pura (sprint da 30 m, salite; rapidità corta
+   e pliometria sì); la resistenza da +2. Il resoconto (PR B) rilasserà le regole per chi ha giocato poco.
 4. **Finestre partita per qualità** (`FINESTRA_PARTITA`, validatore; giorni PRIMA della partita in cui la qualità
-   è vietata): forza gambe/parte alta/core 1 · forza esplosiva e velocità 2 · pliometria estensiva 1 · pliometria
-   intensiva 2 (a −1 solo con 2×2) · resistenza aerobica/metabolico/RSA 3 (dal 16/10; prima 4) · mobilità/recupero 1
-   · forza massima (regime max) 3 · Nordic ed eccentrici 3 · fascia, tecnica, riscaldamento 0 (sempre).
+   è vietata, dal 18/10): forza gambe/parte alta/core 1 · velocità 1 (ammessa a −2) · forza esplosiva 2 · pliometria
+   estensiva 1 · pliometria intensiva 2 (a −1 solo con 2×2) · resistenza aerobica/metabolico/RSA 2 (ammessa a −3:
+   con la partita la domenica martedì-giovedì, mercoledì preferito) · mobilità/recupero 1 · forza massima (regime
+   max) 3 · Nordic ed eccentrici 3 · fascia, tecnica, riscaldamento 0 (sempre).
 5. **Apertura** (server, regola 5 e 26): un blocco di apertura in testa a ogni seduta fisica (rolling ~19' sopra i
    60', apertura breve ~9' fino a 60', Foundations 1 solo da 75'); facoltativa per il ragazzo, fuori dal tempo della
    seduta; nelle sedute di velocità basta il riscaldamento fisso. Mai una giornata fatta solo di apertura.
 6. **Composizione della giornata** (prompt 6-9, validatore): apertura + 1-2 blocchi principali; ordine
    neuromuscolare (velocità, pliometria, forza) prima del metabolico (resistenza, fartlek); tecnica in coda o in una
-   giornata a sé. Mai lo stesso blocco principale due giorni di fila. Convivenze vietate nello stesso giorno: forza
-   massima + resistenza aerobica, RSA + pliometria intensiva, forza massima + pliometria intensiva.
+   giornata a sé. Mai lo stesso blocco principale due giorni di fila. Convivenze VIETATE nello stesso giorno: velocità +
+   resistenza (dal 18/10, a livello di blocco), forza massima + resistenza aerobica, RSA + pliometria intensiva.
+   SCONSIGLIATA (solo nel prompt, dal 18/10): forza massima + pliometria intensiva.
 7. **Tempo** (server + validatore, regola 8): la somma dei blocchi deve stare nel tempo massimo, apertura esclusa;
    se non ci sta il server toglie i facoltativi dal più lungo e poi passa alla versione breve del principale.
 8. **Obiettivi** (regola 2b-2c, validatore): i primi 2 obiettivi devono avere almeno un blocco principale nella
@@ -114,7 +120,8 @@ risposte del 16/10.
   dalla coda; oltre 8 il validatore rifiuta. Contano Sprint e varianti a 10 m, non salto+sprint, con palla, T-sprint.
 - Sprint con palla: subito se tecnica tra gli obiettivi o in season/preparazione, altrimenti dalla 5ª settimana.
 - Salite: al massimo un blocco a settimana, in season una volta ogni 4 settimane, mai nello scarico.
-- Finestra partita 2 (vietata a −1 e −2); niente velocità il giorno dopo la partita.
+- Finestra partita 1 (ammessa a −2, dal 18/10); a −1 solo il blocco pre partita; niente velocità il giorno dopo la
+  partita e niente velocità pura a +2 e +3 (senza resoconto).
 - Velocità + tecnica tra gli obiettivi: i blocchi sprint-e-palla coprono entrambi.
 
 ### Esplosività / salti (`pliometria` → pliometria-intensiva, pliometria-estensiva)
@@ -127,9 +134,10 @@ risposte del 16/10.
 - Nessun tetto a "quante volte a settimana" (solo "non lo stesso blocco due giorni di fila").
 
 ### Resistenza (`resistenza` → aerobica, metabolico, RSA)
-- Finestra 3 (vietata a −1, −2, −3; ammessa da −4): con la partita il sabato entrano lunedì e martedì.
-- Dopo il neuromuscolare nella seduta; mai con forza massima (aerobica) o pliometria intensiva (RSA) lo stesso
-  giorno; niente il giorno dopo la partita. Aerobica fino a 6×6'.
+- Finestra 2 (vietata a −1 e −2; ammessa da −3, dal 18/10): con la partita la domenica martedì-giovedì; il piano
+  base la mette nel giorno più lontano dalle due partite (mercoledì).
+- Mai lo stesso giorno della velocità (dal 18/10), della forza massima (aerobica) o della pliometria intensiva (RSA);
+  niente il giorno dopo la partita, entra da +2. Aerobica fino a 6×6'.
 - Se la finestra non lascia nessun giorno utile l'obiettivo non è preteso e il prompt lo dice.
 
 ### Tecnica palla (`tecnica` → palleggi, passaggi, conduzione, tiro, visione)
@@ -330,3 +338,60 @@ E. Kettlebell nel budget gambe, EMOM fuori dal tetto, scarico EMOM + breve (D11,
 F. Libreria: C = PRO, "in season" = short, P1 solo portieri (risposte 4, 8, 10).
 G. Tecnica: priorità dal test più debole (D10).
 H. Da decidere: comporre la velocità dal catalogo (D3).
+
+## E. Le risposte di Ste del 18/10 e lo stato dei lavori
+
+Ste, 18/10, sul §D: (1) il feedback va fatto sia per gli allenamenti che per la partita, si risponde il giorno stesso o al
+massimo il giorno dopo, e "dobbiamo mettere in chiaro la regola che decide se il coach deve riprogrammare qualcosa in
+base al feedback"; (3) "almeno velocità, pliometria e tecnica li farei con regole che compongono e scelta dei singoli
+esercizi; alla lunga vorrei farli tutti" ("devo darti regole"); (4) ok, con la domanda: "se uno fa tante reps in più e
+dopo dice difficile, il coach ricalcola per l'esercizio che sono state fatte reps in più e magari alza gradino o peso?";
+(7) ok, da fare; (11) "lascia così, l'EMOM conta comunque; l'EMOM va fatto soprattutto quando non si è molto affaticati".
+"Per ora farei le cose sopra e i feedback".
+
+### E1. Fatto il 18/10: PR A, l'asse partita prima e dopo (senza DB)
+Vedi A.3, A.3b, A.4, A.6 e il CHANGELOG. In una riga: velocità ok a −2, resistenza fino a −3 (mercoledì preferito nel
+base), il blocco pre partita a −1 come giornata leggera, a +1 niente gambe (ora anche nel validatore), a +2/+3 niente
+velocità pura, velocità + resistenza vietato, Fmax + plio sconsigliato. Tutto con il default precauzionale "partita
+intera": il resoconto (E2) potrà solo rilassare.
+
+### E2. La regola di riprogrammazione dal feedback (proposta, da confermare prima della PR B)
+Il resoconto (allenamento con la squadra o partita: fatica 1-10, minuti/durata, cosa si è fatto; spec del 14/10 al
+punto 17 di `docs/campo-da-fare.md`, tabella `training_resoconti`) si può dare il giorno stesso o il giorno dopo; dopo,
+vale il default (partita intera; per la squadra lo sforzo abituale del setup) e non si torna indietro. Il feedback
+tocca SOLO le sedute non ancora fatte, da oggi in poi. Quattro livelli, tutti deterministici (nessuna chiamata a
+Claude), applicati dal server alla lettura dello state come le riparazioni, con la riga "Ho sistemato…" nell'hub:
+- **Livello 0, niente**: fatica entro ±1 dal previsto; partita giocata meno di metà → le regole DOPO di A.3b si
+  rilassano (il giorno dopo può essere una giornata fisica normale, a +2/+3 anche la velocità pura).
+- **Livello 1, proposta (M8: il programma propone, non cambia da solo)**: fatica ≥ previsto + 2, o la squadra ha
+  lavorato una qualità che la prossima seduta ha → quelle serie diventano facoltative "da togliere"; fatica ≤ previsto
+  − 2 o partita corta → serie facoltative "da aggiungere" (mai gambe pesanti il giorno dopo la partita).
+- **Livello 2, vincolo**: partita ≥ metà o senza risposta → le regole di A.3b come sono; fatica ≥ 8 con la squadra →
+  la seduta fisica dell'app nel giorno dopo diventa "più leggera" (×0.7, `leggeri`) e se era gambe/velocità/resistenza
+  viene sostituita con parte alta short o fascia (`sostituzioniFormati`); due giorni di fila ≥ 8, o voto seduta ≥ 9 più
+  fatica alta nel check-in → la prossima seduta fisica slitta di un giorno se c'è un giorno libero (il posticipo di
+  oggi), altrimenti più leggera.
+- **Livello 3, rigenera con Claude**: solo su richiesta del ragazzo (costa una delle 6 rigenerazioni) o quando il
+  server non trova una sostituzione valida; l'hub lo propone con il motivo.
+- Dolore/fastidio: la strada M9 che c'è già (pausa), non questa.
+Il carico (ACWR) usa la fatica e la durata REALI del resoconto al posto della stima (punto 17). Lo storico (punto 6)
+mostra previsto contro reale. Da decidere con Ste: le soglie (+2 / −2, 8, metà partita) sono a tavolino.
+
+### E3. Risposta alla domanda del punto 4 (reps in più e poi "difficile")
+Sì, ma in due tempi. Le reps FATTE diventano subito la base del prossimo programma (10 fatte su 8 previste → 10: è una
+misura, regola del 22/9); il voto "difficile" (≥ 8) su quella seduta blocca il passo in su, quindi resta a 10. Il
+gradino o il peso salgono solo quando ci sono 2 sedute di fila facili (voto ≤ 6) con tutto fatto. In più, proposta:
+se nelle 2 sedute facili le reps fatte raggiungono la soglia del gradino (es. 20 push-up sul gradino attuale), il
+server propone il gradino dopo con la dose ×0.7 anche senza rifare il test della scala (oggi il gradino viene solo dal
+test). Entra nella PR C.
+
+### E4. Cosa resta in sospeso (dopo A)
+Ordine: **B** resoconto (tabella + foglio + carico reale + regole E2) · **C** progressione "2 facili di fila" + E3 +
+pliometria dai test (2 settimane per gli avanzati) · **D** velocità: rapidità vs velocità pura (già in A la
+classificazione), 2 giornate off season con tetto settimanale, +1 rapidità in season, scarico parte alta EMOM + breve ·
+**F** libreria: C = PRO, "in season" = short, P1 solo portieri · **G** tecnica dal test più debole · poi, con le regole
+di Ste, la **composizione** di velocità, pliometria e tecnica dal catalogo (D3), e più avanti resistenza (punto 19 di
+campo-da-fare) e il resto. L'11 resta com'è (kettlebell uno a settimana, EMOM nel tetto). Le altre cose pendenti
+dell'app, fuori da queste: `docs/campo-da-fare.md` (fasi 1-6: dose unica, tetti per qualità e complementi, esecuzione
+tecnica, calendario che cambia, dolore per zona, storico, pacchetti e vendita, accesso con Google) e la lista "Da
+fare — Ste" in `CLAUDE.md` (Stripe, i 24 "Perché funziona", gli audio W1, le prove sul campo).

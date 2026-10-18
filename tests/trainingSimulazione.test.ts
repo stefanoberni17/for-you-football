@@ -64,7 +64,7 @@ describe('simulazione del planner (15/10): le regole viste negli scenari', () =>
     expect(conResistenza.map((s) => s.giorno)).toEqual([2]);
     // con solo giovedì e venerdì davanti alla partita del sabato non c'è un giorno buono
     const ctx2 = { ...e.ctx, vincoli: { ...e.ctx.vincoli, giorniAmmessi: [4, 5] } };
-    expect(obiettivoFuoriFinestra(ctx2, 'resistenza')).toEqual({ finestra: 3 });
+    expect(obiettivoFuoriFinestra(ctx2, 'resistenza')).toEqual({ finestra: 2 }); // 18/10: resistenza fino a 3 giorni prima (vietata entro 2)
   });
   it('Marco di domenica (giorno dopo la partita): solo il richiamo, niente gambe piene', async () => {
     const e = await pianoBase(scenario('marco-domenica'));

@@ -16,7 +16,7 @@ import { aperturaPer, isApertura } from './trainingFascia';
 import { isParteAlta, ordineFormatiParteAlta, PA_SERIE_ID, PA_SERIE_SHORT_ID } from './trainingParteAlta';
 import { gruppoParteBassa, isParteBassa, ordineFormatiParteBassa, PB_RICHIAMO_ID, PB_SERIE_ID, PB_SERIE_SHORT_ID } from './trainingParteBassa';
 import { giorniAllaPartita, QUALITA_FISICHE } from './trainingRulesV2';
-import { RISC_VELOCITA_ID } from './trainingVelocita';
+import { isPrePartita, RISC_VELOCITA_ID } from './trainingVelocita';
 import type { ContextV2, PianoLLM, SedutaLLM } from './trainingPlannerV2';
 
 export interface OpzioniRiparazione {
@@ -43,7 +43,7 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
   const maxDurata = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
   const matchDays = ctx.base.matchDays;
   const blocco = (id: string) => disp.get(id)!;
-  const isFisica = (s: SedutaLLM) => s.blocchi.some((id) => QUALITA_FISICHE.has(blocco(id).qualita));
+  const isFisica = (s: SedutaLLM) => s.blocchi.some((id) => QUALITA_FISICHE.has(blocco(id).qualita) && !isPrePartita(id)); // il blocco pre partita è una giornata leggera (18/10)
   const contiene = (s: SedutaLLM, r: { blocchi: string[] }) => r.blocchi.every((id) => s.blocchi.includes(id));
   const isRecupero = (s: SedutaLLM) => ctx.daRecuperare.some((r) => contiene(s, r));
   // L'apertura (8/10) sta fuori dal tempo della seduta: non conta nella durata da far rientrare

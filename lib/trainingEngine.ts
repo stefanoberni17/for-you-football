@@ -13,7 +13,7 @@ import {
   type AreaForza, type AreaGambe, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
 } from './trainingCatalog';
 
-import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2, livelloPerQualita } from './trainingRulesV2';
+import { giorniAllaPartita, PRE_PARTITA_ID, validateItemV2, validateSessionV2, type ContestoV2, livelloPerQualita } from './trainingRulesV2';
 import { testV2ById } from './trainingTestsV2';
 import { LIVELLO_ORDINE, type ExerciseV2 } from './trainingCatalogV2';
 import { bloccoById } from './trainingBlocks';
@@ -413,6 +413,7 @@ export function validatePlan(
     if (!Array.isArray(s.items) || s.items.length === 0) { errors.push(`seduta "${s.titolo}": senza esercizi`); continue; }
 
     const itemsV2: { it: PlanItem; ex: ExerciseV2 }[] = [];
+    const gpSeduta = giorniAllaPartita(s.giorno, ctx.matchDays);
     for (const it of s.items) {
       const ex = esercizioById(it.esercizio_id);
       if (!ex) {
@@ -422,7 +423,9 @@ export function validatePlan(
         const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)]);
         // Fidato anche il blocco VIRTUALE (parte alta dalle scale `pa-*`, gambe `pb-*`, kettlebell `kb-*`, apertura breve): non è nella libreria ma l'ha dosato il server
         const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('apertura-')));
-        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
+        // Il blocco pre partita di Ste (18/10) vive il giorno prima della partita: lì la finestra della velocità non vale per i suoi item
+        const gpItem = it.blocco_id === PRE_PARTITA_ID && gpSeduta === 1 ? null : gpSeduta;
+        const r = validateItemV2(it, ctx.v2, gpItem, { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });
         continue;

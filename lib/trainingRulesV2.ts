@@ -113,21 +113,41 @@ export function contaSprintMassimali(items: { esercizio_id: string; serie: numbe
 
 export const FINESTRA_PARTITA: Record<QualitaV2, number> = {
   'forza-parte-bassa': 1, 'forza-parte-alta': 1, 'core': 1, // fisica: giorno partita e −1 (regola v1)
-  'forza-esplosiva': 2, 'velocita': 2,
+  'forza-esplosiva': 2,
+  // 18/10, Ste (risposta 3): "rapidità, velocità e tiro ok prima della partita ma distanze brevi e poche reps; 2 giorni prima si
+  // può fare qualcosa in più" → velocità ammessa a −2 (prima vietata), a −1 solo il blocco pre partita (PRE_PARTITA_ID in
+  // trainingVelocita, saltato dal validatore a −1)
+  'velocita': 1,
   'pliometria-estensiva': 1,
   'pliometria-intensiva': 2, // a −1 solo con reps minime (vedi PLIO_INTENSIVA_MENO1)
-  // 16/10, Ste: "partita al sabato e martedì disponibile: al martedì si potrebbe resistenza". Vietata a 3, 2, 1 e 0 giorni
-  // dalla partita, ammessa da 4 in su (prima 4: con la partita il sabato entrava solo il lunedì)
-  'resistenza-aerobica': 3, 'resistenza-metabolico': 3, 'resistenza-rsa': 3,
+  // 18/10, Ste: "metabolico-resistenza va bene da 2 giorni dopo la partita fino a 3 giorni prima: con la partita la domenica
+  // da martedì a giovedì, il top sarebbe mercoledì" → vietata a 2, 1 e 0 giorni dalla partita, ammessa da 3 (16/10 era 3, prima 4)
+  'resistenza-aerobica': 2, 'resistenza-metabolico': 2, 'resistenza-rsa': 2,
   'fascia-prevenzione': 0, 'tecnica-palleggi': 0, 'tecnica-passaggi': 0, 'tecnica-conduzione': 0,
   'tecnica-tiro': 0, 'tecnica-visione': 0, 'riscaldamento': 0,
   'mobilita-recupero': 1, // yoga/recupero guidato: mai il giorno prima o il giorno della partita — [STE]
   'test': 2, 'da-classificare': 4,
 };
+/** Il blocco di Ste per il giorno PRIMA della partita (18/10): l'unico di velocità ammesso a −1 (il validatore salta la finestra per i suoi item quel giorno). */
+export const PRE_PARTITA_ID = 'rapidita-velocita-e-tiro-pre-partita';
 /** Regime forza massima: −3 giorni dalla partita — [STE] */
 export const FINESTRA_FORZA_MAX = 3;
 /** Pliometria intensiva ammessa a −1 solo ridotta al minimo — [STE] */
 export const PLIO_INTENSIVA_MENO1 = { serieMax: 2, repsMax: 2 } as const;
+
+/**
+ * Giorni passati dall'ULTIMA partita (0 = giorno partita, 1 = il giorno dopo…), con la settimana che gira: con la partita la
+ * domenica il martedì è +2. null se nessuna partita. Serve all'asse "dopo la partita" (18/10): senza il resoconto si assume
+ * che abbia giocato tutta la partita (precauzionale, Ste).
+ */
+export function giorniDallaPartita(giorno: number, matchDays: number[]): number | null {
+  let best: number | null = null;
+  for (const md of matchDays) {
+    const d = giorno >= md ? giorno - md : giorno + 7 - md;
+    if (best === null || d < best) best = d;
+  }
+  return best;
+}
 
 /** Giorni tra il giorno `giorno` (1=Lun…7=Dom) e la prossima partita nella settimana (0 = giorno partita). null se nessuna partita dopo. */
 export function giorniAllaPartita(giorno: number, matchDays: number[]): number | null {
@@ -169,7 +189,18 @@ export function stima1RM(peso: number, reps: number): number {
 export const CONVIVENZE_VIETATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
   ['forza-max', 'resistenza-aerobica'],
   ['resistenza-rsa', 'pliometria-intensiva'],
-  ['forza-max', 'pliometria-intensiva'], // scala gambe (29/9): mai Fmax e pliometria intensiva nello stesso giorno
+];
+/** Nello stesso giorno: non vietato, sconsigliato (Ste, 18/10: "Fmax e plio intensiva non vietato, ma non consigliato"; fino al 17/10 era vietato). Solo nel prompt, il piano base non lo fa. */
+export const CONVIVENZE_SCONSIGLIATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
+  ['forza-max', 'pliometria-intensiva'],
+];
+/**
+ * Convivenze vietate a livello di BLOCCO (qualità dominante di due blocchi diversi nella stessa seduta): velocità e
+ * resistenza mai lo stesso giorno (Ste, 18/10: "mai anche con velocità"). A livello di esercizio non si può: i blocchi
+ * "Resistenza alla velocità" e "Salite metabolico" di Ste hanno dentro sia sprint che resistenza.
+ */
+export const CONVIVENZE_BLOCCHI_VIETATE: [QualitaV2, QualitaV2[]][] = [
+  ['velocita', ['resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa']],
 ];
 
 /** Ordine "neuromuscolare prima del metabolico": indice più basso = prima nella seduta. */
