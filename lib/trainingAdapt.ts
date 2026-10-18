@@ -9,7 +9,8 @@
  *
  * Regole (proposte a Ste, set 2026):
  * - RPE = quanto è stata dura la serie, 1-10 (10 = non ne facevo un'altra).
- * - SALI: nelle ultime 2 sedute RPE medio ≤ 6 e quantità fatta ≥ prevista.
+ * - SALI: le ultime 2 sedute DI FILA facili (tutto fatto, RPE medio ≤ FACILE_RPE_MAX) — Ste, 18/10.
+ * - CONFERMA: una sola seduta con più del previsto (non difficile): la dose riparte da quanto fatto, senza passo.
  *   Con carico: +2.5-5% · corpo libero: +1-2 reps/serie o gradino successivo.
  * - SCENDI: nell'ultima seduta RPE medio ≥ 9.5 oppure quantità fatta < prevista
  *   in almeno metà delle serie. Con carico: −5-10% · corpo libero: −1-2 reps o
@@ -34,7 +35,14 @@ export interface SetLogRow {
   created_at: string;
 }
 
-export type Suggerimento = 'sali' | 'tieni' | 'scendi';
+/** 'conferma' (18/10): ha fatto più del previsto una volta sola → la dose riparte da quanto ha fatto, senza un passo in più. */
+export type Suggerimento = 'sali' | 'tieni' | 'scendi' | 'conferma';
+/** Una seduta è "facile" se tutte le serie sono state fatte e il voto medio è entro questo (RpeScale: 4-6 = giusta, 7-8 dura). Valore a tavolino. */
+export const FACILE_RPE_MAX = 6;
+/** Si sale (passo in più su reps, secondi, kg; gradino successivo) solo con questo numero di sedute facili di fila (Ste, 18/10: "se facile per 2 sessioni di fila"). */
+export const SEDUTE_FACILI_PER_SALIRE = 2;
+/** Da qui in su la seduta è "difficile": le reps in più non contano per il gradino (Ste, 18/10). */
+export const DIFFICILE_RPE_MIN = 8;
 
 export interface RiepilogoEsercizio {
   esercizioId: string;
@@ -46,6 +54,7 @@ export interface RiepilogoEsercizio {
     unita: string;                // unità dei log (reps/secondi…): può differire dal catalogo se il blocco era a tempo
     quantitaPrevista: number;     // media
     quantitaFatta: number;        // media (fallback: prevista)
+    fatteSerie: number[];         // quantità fatta serie per serie (per la soglia del gradino, 18/10)
     caricoKg: number | null;      // carico usato (media)
     rpeMedio: number | null;
   };
@@ -84,11 +93,19 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
 
     const lastRpe = rpes(last);
     const lastCarico = carichi(last);
+    // Seduta "facile" (18/10): tutte le serie fatte e voto medio ≤ FACILE_RPE_MAX; senza voto, basta metà delle serie sopra il previsto
+    const facile = (sess: SetLogRow[]) => {
+      const rp = rpes(sess);
+      const tutteFatte = sess.every((r) => (r.quantita_fatta ?? r.quantita_prevista) >= r.quantita_prevista);
+      const sopra = sess.filter((r) => r.quantita_fatta != null && r.quantita_fatta > r.quantita_prevista).length >= Math.ceil(sess.length / 2);
+      return tutteFatte && (rp.length ? media(rp) <= FACILE_RPE_MAX : sopra);
+    };
     const ultimaSeduta = {
       serie: new Set(last.map((r) => r.serie)).size, // le righe per lato (dx, sx) contano come una serie
       unita: last[0].unita || 'reps',
       quantitaPrevista: media(previste(last)),
       quantitaFatta: media(fatte(last)),
+      fatteSerie: fatte(last),
       caricoKg: lastCarico.length ? media(lastCarico) : null,
       rpeMedio: lastRpe.length ? media(lastRpe) : null,
     };
@@ -122,18 +139,14 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
       motivo = metaSerieSotto
         ? `ultima seduta: ${sottoPrevista}/${last.length} serie sotto il previsto`
         : `ultima seduta RPE ${ultimaSeduta.rpeMedio}: al limite`;
-    } else if (metaSerieSopra && (ultimaSeduta.rpeMedio == null || ultimaSeduta.rpeMedio <= 7)) {
-      // Basta UNA seduta: la dose fatta è un dato misurato, non una sensazione
+    } else if (sessions.length >= SEDUTE_FACILI_PER_SALIRE && sessions.slice(0, SEDUTE_FACILI_PER_SALIRE).every(facile)) {
+      // Ste, 18/10: si sale (passo in più) solo con 2 sedute facili DI FILA
       suggerimento = 'sali';
-      motivo = `ultima seduta: fatte ${fmtQ(ultimaSeduta.quantitaFatta, ultimaSeduta.unita)} su ${fmtQ(ultimaSeduta.quantitaPrevista, ultimaSeduta.unita)} previste${ultimaSeduta.rpeMedio != null ? ` con RPE ${ultimaSeduta.rpeMedio}` : ''}: si riparte da lì`;
-    } else if (sessions.length >= 2 && rpeMedio2Sedute != null && rpeMedio2Sedute <= 6) {
-      const tutteFatte = sessions.slice(0, 2).flat().every((r) => (r.quantita_fatta ?? r.quantita_prevista) >= r.quantita_prevista);
-      if (tutteFatte) {
-        suggerimento = 'sali';
-        motivo = `2 sedute con RPE medio ${rpeMedio2Sedute} e tutto fatto: c'è margine`;
-      } else {
-        motivo = `RPE basso (${rpeMedio2Sedute}) ma non tutte le serie complete: mantieni`;
-      }
+      motivo = `${SEDUTE_FACILI_PER_SALIRE} sedute di fila facili${rpeMedio2Sedute != null ? ` (RPE medio ${rpeMedio2Sedute})` : ''} con tutto fatto: si sale`;
+    } else if (metaSerieSopra && (ultimaSeduta.rpeMedio == null || ultimaSeduta.rpeMedio < DIFFICILE_RPE_MIN)) {
+      // Ha fatto più del previsto UNA volta: la dose fatta è una misura e diventa la base, ma il passo in più aspetta la seconda seduta facile (Ste, 18/10)
+      suggerimento = 'conferma';
+      motivo = `ultima seduta: fatte ${fmtQ(ultimaSeduta.quantitaFatta, ultimaSeduta.unita)} su ${fmtQ(ultimaSeduta.quantitaPrevista, ultimaSeduta.unita)} previste${ultimaSeduta.rpeMedio != null ? ` con RPE ${ultimaSeduta.rpeMedio}` : ''}: si riparte da lì, il passo in più dopo ${SEDUTE_FACILI_PER_SALIRE} sedute facili di fila`;
     } else if (ultimaSeduta.rpeMedio != null) {
       motivo = `ultima seduta RPE ${ultimaSeduta.rpeMedio}: giusto così`;
     }
@@ -160,7 +173,7 @@ export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unitaCatalog
     ? (u.caricoKg ? 'SALI +2.5-5%' : 'SALI +1-2 reps/serie o gradino successivo')
     : r.suggerimento === 'scendi'
       ? (u.caricoKg ? 'SCENDI −5-10%' : 'SCENDI −1-2 reps/serie o gradino precedente')
-      : 'TIENI';
+      : r.suggerimento === 'conferma' ? 'CONFERMA: riparti da quanto fatto, senza passo in più' : 'TIENI';
   const sens = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, n]) => `${k}${n > 1 ? ` ×${n}` : ''}`).join(', ');
   const sensTxt = sens ? ` · sentito: ${sens}${r.fastidio ? ` ⚠️ ${r.fastidio.toUpperCase()} ricorrente` : ''}` : '';
   return `${nome} [${r.esercizioId}]: ${r.ultimaData} ${u.serie}×${fmtQ(u.quantitaFatta, unita)} (previsto ${fmtQ(u.quantitaPrevista, unita)})${carico}${rpe} · ${r.sedute} sedute → ${azione} (${r.motivo})${sensTxt}`;
@@ -173,7 +186,7 @@ export function riepilogoUi(r: RiepilogoEsercizio, unitaCatalogo: string): { tes
   const parti = [`${u.serie}×${fmtQ(u.quantitaFatta, unita)}`];
   if (u.caricoKg) parti.push(`${u.caricoKg} kg`);
   if (u.rpeMedio != null) parti.push(`RPE ${u.rpeMedio}`);
-  const hint = r.suggerimento === 'sali' ? 'oggi prova a salire un po\'' : r.suggerimento === 'scendi' ? 'oggi vai più leggero' : 'tieni così';
+  const hint = r.suggerimento === 'sali' ? 'oggi prova a salire un po\'' : r.suggerimento === 'scendi' ? 'oggi vai più leggero' : r.suggerimento === 'conferma' ? 'riparti da quanto hai fatto' : 'tieni così';
   const top = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1])[0];
   if (top) parti.push(`sentito: ${top[0]}`);
   return { testo: `Ultima volta: ${parti.join(' · ')} → ${hint}`, suggerimento: r.suggerimento };

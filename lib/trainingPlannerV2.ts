@@ -41,7 +41,7 @@ import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, rip
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.31-asse-partita';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.32-due-facili-di-fila';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -197,6 +197,7 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
     settimaneAllenamento: settimaneAllenamento(base.feedbackRecenti), settimanePlio: settimanePliometria(base.feedbackRecenti, bloccoById),
     tecnicaTraGliObiettivi: ctx.obiettivi.includes('tecnica') || ctx.obiettivi.includes(FOCUS_TUTTO), inSeasonOPreparazione: setup.fase !== 'off_season',
     inSeason: setup.fase === 'in_season', isDeload: base.ciclo.isDeload, settimaneDalleSalite: settimaneDalleSalite(base.feedbackRecenti, bloccoById, lunediCorrente),
+    livelloSalti: base.livelli['pliometria-intensiva'],
   });
   ctx.blocchi = regole.blocchi; ctx.noteRegole = regole.note;
   if (setup.attrezzatura.includes('campo')) ctx.blocchi.push(bloccoRiscaldamentoVelocita());
@@ -989,7 +990,7 @@ COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
 9b. I blocchi "per portiere" (codice P1) sono nati per i portieri: preferiscili se l'atleta è portiere; per gli altri ruoli usali solo se non c'è un'alternativa B/A.
 
 PROGRESSIONE (settimana su settimana)
-10. MEMORIA DEI BLOCCHI (sezione nel messaggio, calcolata dal server): per ogni famiglia già fatta nelle settimane precedenti il codice di questa settimana è GIÀ deciso dal giudizio dell'atleta sull'ultimo blocco ("facile" → codice successivo o da short a full, "giusto" → stesso, "duro" o voto ≥ 8 → short o codice precedente; mai saltare un codice; Fascia Foundation avanza dopo 2 settimane, Pliometria resta in B almeno 4). Se usi quella famiglia, usa SOLO gli id indicati: un id diverso viene sostituito dal server. Puoi sempre scegliere un'altra famiglia. Famiglie mai fatte: parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full).
+10. MEMORIA DEI BLOCCHI (sezione nel messaggio, calcolata dal server): per ogni famiglia già fatta nelle settimane precedenti il codice di questa settimana è GIÀ deciso dai giudizi dell'atleta ("facile" 2 volte di fila sullo stesso codice → codice successivo o da short a full; "facile" una volta o "giusto" → stesso; "duro" o voto ≥ 9 → short o codice precedente; mai saltare un codice; Fascia Foundation avanza dopo 2 settimane, Pliometria resta in B almeno 4, 2 se ai test dei salti è avanzato). Se usi quella famiglia, usa SOLO gli id indicati: un id diverso viene sostituito dal server. Puoi sempre scegliere un'altra famiglia. Famiglie mai fatte: parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full).
 11. Settimana 4 del ciclo = DELOAD (solo se nel messaggio c'è ⚠️ DELOAD: con poche sedute nelle settimane prima lo scarico è rinviato): scegli varianti short e dillo nel messaggio (il server riduce anche le serie).
 12. Settimana dopo lo scarico con i test non ancora rifatti ("ri-test dovuto" nel messaggio): piano NORMALE, lo scarico è stato la settimana scorsa; nel messaggio invita a rifare i test indicati (idealmente 2 giorni dopo la partita).
 

@@ -32,13 +32,13 @@
  * ricontrollano: se una seduta adattata non passa, resta quella base.
  */
 import type { PlanItem, PlanSession, WeekPlan } from './trainingEngine';
-import type { RiepilogoEsercizio } from './trainingAdapt';
+import { DIFFICILE_RPE_MIN, type RiepilogoEsercizio } from './trainingAdapt';
 import { distrettoEsercizio, type Squilibri, type Lato } from './trainingSquilibri';
 import { isEsercizioKettlebell, KB_PASSO_KG } from './trainingKettlebell';
 import { catenaByArea, esercizioById, type AreaForza } from './trainingCatalog';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { ACCESSORI_CORPO_LIBERO_REPS_MAX } from './trainingRulesV2';
-import { LADDER_AREE, ladderForArea, type LadderState, type TestResultRow } from './trainingEngine';
+import { LADDER_AREE, ladderForArea, sogliaGradino, type LadderState, type TestResultRow } from './trainingEngine';
 
 export const PROGRESSIONE_MAX_DRIFT = 0.3;   // dose massima oltre il programma di Ste (+30 %)
 export const PASSO_KG_PCT = 0.025;           // +2.5 % kg (SALI) — SCENDI: −5 %
@@ -86,7 +86,9 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   const unita = it.unita ?? unitaDi(it.esercizio_id);
   if (!unita) return null;
   if (r.ultimaSeduta.unita && r.ultimaSeduta.unita !== unita) return null; // log in un'altra unità (blocco a tempo vs a reps): non si confrontano
-  const verso: 1 | -1 = r.suggerimento === 'sali' ? 1 : -1;
+  // 'conferma' (18/10): riparte da quanto ha fatto, SENZA il passo in più (quello arriva dopo 2 sedute facili di fila)
+  const conferma = r.suggerimento === 'conferma';
+  const verso: 1 | -1 = r.suggerimento === 'scendi' ? -1 : 1;
   const base = it.quantita;                                  // programma di Ste
   const ultima = r.ultimaSeduta;
   const out: PlanItem = { ...it };
@@ -97,7 +99,7 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
     const da = ultima.caricoKg && ultima.caricoKg > 0 ? ultima.caricoKg : it.carico_kg;
     // Kettlebell (Ste, 25/9): il passo è discreto, 4 kg (8 → 12 → 16 → 20 …), in su e in giù
     const kb = isEsercizioKettlebell(it.esercizio_id);
-    const delta = kb ? verso * KB_PASSO_KG : verso === 1 ? Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT) : -Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT * 2);
+    const delta = conferma ? 0 : kb ? verso * KB_PASSO_KG : verso === 1 ? Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT) : -Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT * 2);
     const grezzo = Math.min(it.carico_kg * (1 + PROGRESSIONE_MAX_DRIFT) + (kb ? KB_PASSO_KG / 2 : 0), Math.max(it.carico_kg * 0.7, da + delta));
     const nuovo = kb ? Math.max(KB_PASSO_KG, Math.round(grezzo / KB_PASSO_KG) * KB_PASSO_KG) : round05(grezzo);
     if (nuovo !== it.carico_kg) { out.carico_kg = nuovo; cambiato = true; }
@@ -109,11 +111,11 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
       ? ultima.quantitaPrevista : base;
     const fatta = ultima.quantitaFatta > 0 && ultima.quantitaFatta <= base * 2 ? ultima.quantitaFatta : prevista;
     const da = verso === 1 ? Math.max(prevista, fatta) : Math.min(prevista, fatta);
-    const dimostrata = verso === 1 && fatta > prevista ? Math.round(fatta + passo(fatta, unita, 1)) : 0;
+    const dimostrata = verso === 1 && fatta > prevista ? Math.round(conferma ? fatta : fatta + passo(fatta, unita, 1)) : 0;
     const capUnita = unita === 'reps' ? ACCESSORI_CORPO_LIBERO_REPS_MAX : SECONDI_MAX;
     const tetto = Math.min(capUnita, Math.max(Math.round(base * (1 + PROGRESSIONE_MAX_DRIFT)), dimostrata));
     const pavimento = Math.max(unita === 'reps' ? 1 : 5, Math.round(base * 0.7));
-    const nuovo = Math.min(tetto, Math.max(pavimento, Math.round(da + passo(da, unita, verso))));
+    const nuovo = Math.min(tetto, Math.max(pavimento, Math.round(conferma ? da : da + passo(da, unita, verso))));
     if (nuovo !== it.quantita) { out.quantita = nuovo; cambiato = true; }
   }
   if (!cambiato) return null;
@@ -121,26 +123,50 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   const cosa = out.carico_kg !== it.carico_kg ? `${out.carico_kg} kg (programma ${it.carico_kg})` : `${out.quantita}${unita === 'secondi' ? '"' : ''} (programma ${base})`;
   const piuDelPrevisto = verso === 1 && !out.carico_kg && ultima.quantitaFatta > ultima.quantitaPrevista;
   out.nota = verso === 1
-    ? (piuDelPrevisto ? `↑ ${cosa}: l'ultima volta ne hai fatte ${ultima.quantitaFatta}${unita === 'secondi' ? '"' : ''} su ${ultima.quantitaPrevista}` : `↑ ${cosa}: le ultime volte ti era facile`)
+    ? (piuDelPrevisto ? `↑ ${cosa}: l'ultima volta ne hai fatte ${ultima.quantitaFatta}${unita === 'secondi' ? '"' : ''} su ${ultima.quantitaPrevista}${conferma ? ', si riparte da lì' : ''}` : `↑ ${cosa}: le ultime due volte ti era facile`)
     : `↓ ${cosa}: l'ultima volta era al limite`;
   return out;
 }
 
-/** Gradino successivo sulle catene v1 quando la dose è già al tetto e i log dicono ancora SALI. */
+/**
+ * La soglia del gradino raggiunta IN SEDUTA (Ste, 18/10: "con 12 reps sarebbe passato al gradino dopo: se ne fa 12 su una
+ * programmazione da 8, lo conta"): almeno metà delle serie dell'ultima seduta alla soglia del gradino (la stessa del test)
+ * e seduta non "difficile" → vale come il test passato. Ritorna la soglia, o null.
+ */
+function sogliaRaggiuntaInSeduta(ex: { area: string; gradino: number; unita: string }, r: RiepilogoEsercizio): number | null {
+  if (!(LADDER_AREE as string[]).includes(ex.area)) return null;
+  const soglia = sogliaGradino(ex.area as AreaForza, ex.gradino);
+  if (!soglia || !Number.isFinite(soglia)) return null;
+  const u = r.ultimaSeduta;
+  if (u.unita && u.unita !== ex.unita) return null;
+  const f = u.fatteSerie ?? [];
+  if (!f.length) return null;
+  if (u.rpeMedio != null && u.rpeMedio >= DIFFICILE_RPE_MIN) return null;
+  return f.filter((q) => q >= soglia).length >= Math.ceil(f.length / 2) ? soglia : null;
+}
+
+/** Gradino successivo sulle catene v1: soglia del gradino raggiunta in seduta (18/10), oppure dose già al tetto e i log dicono ancora SALI. */
 function gradinoSuccessivo(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
-  if (r.suggerimento !== 'sali') return null;
   if (it.schema && it.schema !== 'fisso') return null;
   const ex = esercizioById(it.esercizio_id);
   if (!ex || !AREE_CATENA.has(ex.area)) return null;
   if (it.unita && it.unita !== ex.unita) return null; // dose in un'altra unità: il gradino della catena non si applica
-  const tetto = Math.round(it.quantita * (1 + PROGRESSIONE_MAX_DRIFT));
-  if (r.ultimaSeduta.quantitaPrevista < tetto) return null;     // prima si sale di dose
+  const soglia = sogliaRaggiuntaInSeduta(ex, r);
+  if (soglia === null) {
+    if (r.suggerimento !== 'sali') return null;
+    const tetto = Math.round(it.quantita * (1 + PROGRESSIONE_MAX_DRIFT));
+    if (r.ultimaSeduta.quantitaPrevista < tetto) return null;     // prima si sale di dose
+  }
   const catena = catenaByArea(ex.area);
   const next = catena.find((e) => e.gradino === ex.gradino + 1);
   if (!next || next.unita !== ex.unita) return null;
+  const u = ex.unita === 'secondi' ? '"' : ' reps';
   const out: PlanItem = {
     ...it, esercizio_id: next.id, quantita: Math.max(ex.unita === 'reps' ? 3 : 10, Math.round(it.quantita * GRADINO_SCALA)),
-    adattamento: 'gradino', nota: `Nuovo gradino: ${next.nome}. ${ex.nome} ti era diventato facile.`,
+    adattamento: 'gradino',
+    nota: soglia !== null
+      ? `Nuovo gradino: ${next.nome}. Su ${ex.nome} hai raggiunto la soglia del gradino (${soglia}${u}) in seduta: vale come il test.`
+      : `Nuovo gradino: ${next.nome}. ${ex.nome} ti era diventato facile.`,
   };
   if (next.perLato) out.per_lato = it.per_lato; // la quantità resta "per lato" solo se già lo era
   return out;
@@ -240,5 +266,5 @@ export function adattaPiano(plan: WeekPlan, ctx: ContestoProgressione, valida: (
 
 /** Righe per il prompt: cosa il server applica da solo (così Claude non lo ripete a modo suo). */
 export function progressioniTesto(): string {
-  return `Le PROGRESSIONI sui singoli esercizi le applica il server dopo la tua scelta. Gli esercizi di catena a corpo libero (push, pull, core, lombari) dentro un blocco passano da soli al gradino dell'atleta letto dalla scala skill (es. Push-Up → Piegamenti arciere, Pull-Up → Archer pull-up), con la dose dal suo massimo misurato: un blocco B con Push-Up va bene anche a un atleta avanzato. Dai log dell'atleta: SALI = +1-2 reps, +5-10" o +2.5 % kg rispetto all'ultima volta (fino a +${Math.round(PROGRESSIONE_MAX_DRIFT * 100)} % del programma; oltre, sulle catene a corpo libero passa al gradino successivo), SCENDI = un passo indietro. Tu NON cambi le dosi: scegli i blocchi e il codice di progressione.`;
+  return `Le PROGRESSIONI sui singoli esercizi le applica il server dopo la tua scelta. Gli esercizi di catena a corpo libero (push, pull, core, lombari) dentro un blocco passano da soli al gradino dell'atleta letto dalla scala skill (es. Push-Up → Piegamenti arciere, Pull-Up → Archer pull-up), con la dose dal suo massimo misurato: un blocco B con Push-Up va bene anche a un atleta avanzato. Dai log dell'atleta (Ste, 18/10): le reps fatte oltre il previsto diventano subito la nuova base (CONFERMA); SALI = +1-2 reps, +5-10" o +2.5 % kg solo dopo 2 sedute facili di fila (fino a +${Math.round(PROGRESSIONE_MAX_DRIFT * 100)} % del programma; oltre, sulle catene a corpo libero passa al gradino successivo); la soglia del gradino raggiunta in seduta vale come il test: gradino successivo a dose ridotta; SCENDI = un passo indietro. Tu NON cambi le dosi: scegli i blocchi e il codice di progressione.`;
 }

@@ -20,6 +20,10 @@ import { LIVELLO_ORDINE, type LivelloMinV2, type QualitaV2 } from './trainingCat
 import { isParteAlta } from './trainingParteAlta';
 
 export type Giudizio = 'facile' | 'ok' | 'duro';
+/** Il codice successivo (o da short a full) solo dopo N "facile" DI FILA sullo stesso codice (Ste, 18/10: "se facile per 2 sessioni di fila"; prima bastava uno). */
+export const FACILI_DI_FILA = 2;
+/** Pliometria per chi è avanzato ai test dei salti (Ste, 18/10: "se nei test è avanzato e le prime 2 settimane risultano semplici si può aumentare"): settimane minime in B / al livello prima di salire. */
+export const SETTIMANE_PER_LIVELLO_AVANZATI = 2;
 
 /** Riga di feedback come la legge il planner (training_session_completions + blocchi ricavati dal piano). */
 export interface FeedbackPerMemoria {
@@ -97,6 +101,9 @@ export function scalaFamiglia(famiglia: string): Gradino[] {
   const by = new Map<string, Gradino>();
   for (const b of BLOCCHI) {
     if (b.famiglia !== famiglia || !b.completo) continue;
+    // I blocchi del portiere (P1) non sono un gradino della scala: stavano tra B1 e B2 e "il codice successivo" di B1 era
+    // P1, non disponibile → la famiglia non avanzava mai (trovato il 18/10 con i test della regola "2 facili di fila")
+    if (b.ruolo) continue;
     const chiave = chiaveCodice(b.id);
     const g = by.get(chiave) ?? { chiave, livello: LIVELLO_ORDINE[b.livello ?? 'B'], progressione: b.progressione ?? 0 };
     if (b.variante === 'short') g.short = g.short ?? b; else g.full = g.full ?? b;
@@ -171,7 +178,9 @@ export function calcolaMemoriaBlocchi(
       prossimo = b; passo = 'ritorno'; serieExtra = true; motivo = perche;
     };
     // ONDA (pliometria): con blocchi B e A disponibili si alterna intensiva (A) e richiamo (B)
-    const onda = regola?.onda ? calcolaOnda(u, scala, storicoPerFamiglia.get(famiglia) ?? [], settimaneLivello.get(`${famiglia}|B`)?.size ?? 0, regola.settimanePerLivello ?? 0, disponibile, opt.lunediCorrente, !!opt.isDeload) : null;
+    // Settimane minime al livello prima di salire: per chi è già avanzato ai test della qualità bastano SETTIMANE_PER_LIVELLO_AVANZATI (18/10)
+    const perLivello = regola?.settimanePerLivello ? (livAtleta(u.blocco.qualita) > LIVELLO_ORDINE.B ? Math.min(regola.settimanePerLivello, SETTIMANE_PER_LIVELLO_AVANZATI) : regola.settimanePerLivello) : 0;
+    const onda = regola?.onda ? calcolaOnda(u, scala, storicoPerFamiglia.get(famiglia) ?? [], settimaneLivello.get(`${famiglia}|B`)?.size ?? 0, perLivello, disponibile, opt.lunediCorrente, !!opt.isDeload) : null;
     if (onda) {
       const gp = scala.find((x) => x.chiave === chiaveCodice(onda.prossimo.id))!;
       const ammessiOnda = onda.passo === 'onda-b' && opt.isDeload ? [onda.prossimo.id] : [gp.full, gp.short].filter((b): b is Blocco => disponibile(b)).map((b) => b.id);
@@ -197,8 +206,13 @@ export function calcolaMemoriaBlocchi(
       memoria[famiglia] = { famiglia, ultimo: u.blocco, data: u.data, giudizio: u.giudizio, prossimo, ammessi: [prossimo.id], passo, motivo, fuoriLivello, leggero };
       continue;
     }
-    if (u.giudizio === 'facile') {
-      if (u.blocco.variante === 'short' && disponibile(g.full)) { prossimo = g.full; passo = 'full'; motivo = 'la versione breve è stata facile: versione completa'; }
+    // "Facile" DI FILA (18/10): la seduta prima della stessa famiglia, sullo stesso codice, era facile anch'essa
+    const storicoF = storicoPerFamiglia.get(famiglia) ?? [];
+    const facileDiFila = storicoF.length >= FACILI_DI_FILA && storicoF.slice(0, FACILI_DI_FILA).every((x) => x.giudizio === 'facile' && chiaveCodice(x.blocco.id) === chiave);
+    if (u.giudizio === 'facile' && !facileDiFila && !regola?.settimanePerCodice) {
+      stesso(`facile una volta: si sale dopo ${FACILI_DI_FILA} sedute facili di fila sullo stesso codice`);
+    } else if (u.giudizio === 'facile') {
+      if (u.blocco.variante === 'short' && disponibile(g.full)) { prossimo = g.full; passo = 'full'; motivo = 'la versione breve è stata facile due volte: versione completa'; }
       else if (regola?.settimanePerCodice && nSettCodice < regola.settimanePerCodice)
         stesso(`facile, ma questa famiglia avanza dopo ${regola.settimanePerCodice} settimane sullo stesso codice (fatte ${nSettCodice})`);
       else {
@@ -207,8 +221,8 @@ export function calcolaMemoriaBlocchi(
         const nextBlocco = next?.full ?? next?.short;
         if (regola?.ritorno && (!next || next.livello > livAtleta(u.blocco.qualita))) ritorno('finita la scala della fascia: si riparte dal primo codice con una serie in più');
         else if (!next) stesso('facile, ma è l\'ultimo codice della famiglia');
-        else if (next.livello > g.livello && regola?.settimanePerLivello && nSettLivello < regola.settimanePerLivello)
-          stesso(`facile, ma prima del livello sopra servono ${regola.settimanePerLivello} settimane a questo livello (fatte ${nSettLivello})`);
+        else if (next.livello > g.livello && perLivello && nSettLivello < perLivello)
+          stesso(`facile, ma prima del livello sopra servono ${perLivello} settimane a questo livello (fatte ${nSettLivello})`);
         else if (!disponibile(next.full) && !disponibile(next.short)) {
           // Codice sopra il livello della qualità: ASSAGGIO a serie ×0.7 dopo 2 settimane facile, se il blocco non ha esercizi "solo livello"
           const livQ = livNome(u.blocco.qualita);
@@ -218,7 +232,7 @@ export function calcolaMemoriaBlocchi(
             motivo = `facile per ${nSettCodice} settimane all'ultimo codice del livello ${livQ}: prova del livello sopra a dose ridotta`;
           } else stesso(nSettCodice < ASSAGGIO_SETTIMANE ? `facile, ma è l'ultimo codice del livello: dopo ${ASSAGGIO_SETTIMANE} settimane facile si prova il livello sopra` : 'facile, ma il codice successivo non è disponibile per il tuo livello/attrezzatura');
         }
-        else { prossimo = disponibile(next.full) ? next.full : next.short; passo = 'avanti'; motivo = 'l\'ultima volta è stato facile: codice successivo'; }
+        else { prossimo = disponibile(next.full) ? next.full : next.short; passo = 'avanti'; motivo = `facile ${FACILI_DI_FILA} volte di fila: codice successivo`; }
       }
     } else if (u.giudizio === 'duro') {
       if (u.blocco.variante === 'full' && disponibile(g.short)) { prossimo = g.short; passo = 'short'; motivo = 'l\'ultima volta è stato duro: stesso codice in versione breve'; }

@@ -51,9 +51,10 @@ risposte del 16/10.
 9. **Strato mese** (`lib/trainingMese.ts`, solo nel piano automatico): il primo obiettivo resta; tra gli altri sale
    chi ha meno settimane fatte nelle ultime 4; un aspetto pianificato 3 settimane e mai fatto finisce in coda e l'hub
    chiede "vuoi davvero allenarlo?".
-10. **Memoria dei blocchi** (server, regola 10): per ogni famiglia il codice della settimana lo decide il server dal
-    giudizio sull'ultimo blocco fatto: facile → codice successivo (short → full), giusto → stesso, duro o voto ≥ 9 →
-    short o codice precedente; mai saltare un codice; la settimana in corso non conta. Famiglia mai fatta: il codice
+10. **Memoria dei blocchi** (server, regola 10): per ogni famiglia il codice della settimana lo decide il server dai
+    giudizi: facile 2 volte DI FILA sullo stesso codice → codice successivo (short → full) (dal 18/10, prima bastava
+    uno), facile una volta o giusto → stesso, duro o voto ≥ 9 → short o codice precedente; mai saltare un codice; la
+    settimana in corso non conta. I blocchi P1 del portiere non sono gradini della scala. Famiglia mai fatta: il codice
     più basso del livello. Scala per codice: livello, progressione, sottocodice (B1 → B1+ → B2: il "+" è già un
     gradino della scala).
 11. **Livello per qualità** (`lib/trainingLivelli.ts`): B/A/PRO per qualità dai SUOI test (mediana bassa; senza test
@@ -73,9 +74,12 @@ risposte del 16/10.
     giorno, una volta sola, ripassando dal validatore.
 15. **Squadra**: bilancia, non vieta (regola 20): le qualità che la squadra fa già forte (sforzo ≥ 7) non si
     raddoppiano salvo focus scelto; il giorno dopo una giornata squadra da 8+ si lavora su altro o in short.
-16. **Dosi dai log** (`lib/trainingProgressione.ts`, dopo il validatore): SALI/TIENI/SCENDI per esercizio, base =
-    quantità fatta, tetto +30 % sul programma; gradino successivo sulle catene v1; serie extra su un esercizio di
-    gambe per il lato debole (max 1 a seduta); "più leggero" per blocco ×0.7; al gradino delle scale per push/pull/core.
+16. **Dosi dai log** (`lib/trainingProgressione.ts`, dopo il validatore, dal 18/10): le reps fatte oltre il previsto
+    diventano subito la base (CONFERMA, senza passo in più); SALI (+1-2 reps, +5-10", +2.5 % kg) solo dopo 2 sedute
+    facili di fila (tutto fatto, voto ≤ 6); SCENDI dopo una seduta al limite; tetto +30 % sul programma; la soglia
+    del gradino raggiunta in seduta (es. 25 squat sul gradino 1) vale come il test → gradino successivo a dose ×0.7,
+    se la seduta non era "difficile" (voto ≥ 8); serie extra su un esercizio di gambe per il lato debole (max 1 a
+    seduta); "più leggero" per blocco ×0.7; al gradino delle scale per push/pull/core.
 17. **Squilibri** (regola 21): servono a SCEGLIERE tra blocchi equivalenti; lato debole nelle gambe → fascia
     unilaterale nelle giornate leggere, non serie in più; tirata indietro → blocchi pull.
 18. **Testa e check-in** (regola 14): fatica alta → seduta di oggi più leggera; stato mentale ≤ 3 → blocchi che
@@ -128,7 +132,8 @@ risposte del 16/10.
 - Velocità + tecnica tra gli obiettivi: i blocchi sprint-e-palla coprono entrambi.
 
 ### Esplosività / salti (`pliometria` → pliometria-intensiva, pliometria-estensiva)
-- Chi inizia resta sui blocchi B per 4 settimane (la libreria mostra solo quelli), a prescindere dai test.
+- Chi inizia resta sui blocchi B per 4 settimane (la libreria mostra solo quelli); chi è A/PRO ai test dei salti
+  per 2 (dal 18/10), poi prima la difficoltà (codice A breve) e poi il volume.
 - Poi onda B → A → B → A nella memoria: dopo un A il B più alto; dopo un B l'A successivo se era facile; un "duro"
   sull'A riporta in B per 2 settimane. Scarico: B short.
 - Contatti plio intensiva per seduta: B 100 · A 160 · PRO 200 (livello della qualità "salti").
@@ -392,7 +397,13 @@ dose ×0.7, senza aspettare il ri-test e senza aspettare la seconda seduta facil
 invece ne fa 12 ma dice "difficile" (≥ 8): resta sul gradino, con 12 come base. Sotto la soglia vale la regola delle
 2 sedute facili di fila per kg, tempo e dose. Da confermare da Ste prima della PR C.
 
-### E4. Cosa resta in sospeso (dopo A)
+### E3b. Fatto il 18/10: PR C, la progressione "2 facili di fila"
+Ste: "4 giusto così come proponi". Nel codice: CONFERMA/SALI/SCENDI per esercizio (A.16), la soglia del gradino in
+seduta che vale come il test, la memoria dei blocchi a 2 "facile" di fila (A.10), la pliometria A dopo 2 settimane
+per gli avanzati ai test (B salti). Trovato per strada: i blocchi P1 del portiere stavano dentro la scala delle
+famiglie (tra B1 e B2) e nessuna famiglia con un P1 avanzava mai di codice. 9 test in `tests/trainingDueFacili.test.ts`.
+
+### E4. Cosa resta in sospeso (dopo A e C)
 Ordine: **B** resoconto (tabella + foglio + carico reale + regole E2) · **C** progressione "2 facili di fila" + E3 +
 pliometria dai test (2 settimane per gli avanzati) · **D** velocità: rapidità vs velocità pura (già in A la
 classificazione), 2 giornate off season con tetto settimanale, +1 rapidità in season, scarico parte alta EMOM + breve ·
