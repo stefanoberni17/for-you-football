@@ -1,4 +1,4 @@
-# Correzioni schede: parte-alta (45 esercizi)
+# Correzioni schede: parte-alta (46 esercizi)
 
 Come si usa: sotto ogni esercizio c'è la riga `Correzione:`. Scrivi lì, in libertà, cos'è davvero l'esercizio
 e come si fa (anche due righe). Se la scheda è giusta lascia `Correzione: ok`. Se non la vuoi guardare ora, lascia vuoto.
@@ -56,7 +56,7 @@ Correzione:
 ## 8. Kettlebell Swing High Pull
 bilaterale · reps · video: https://www.youtube.com/watch?v=MFE_XiLM30s&list=PLSgoNQKJMucKqD1C-F1_q0LjNJtKVmRWt&index=8
 
-Come l'ho scritto io: Piedi più larghi delle spalle, kettlebell con due mani, schiena neutra. Porta il kettlebell tra le gambe e spingi con le anche: lo swing sale fino al petto. In cima tira i gomiti indietro e in alto, portando il kettlebell vicino al petto, poi lascialo tornare nello swing. Fai le ripetizioni indicate con ritmo continuo.
+Come l'ho scritto io: Piedi più larghi delle spalle, kettlebell con due mani, schiena neutra. Porta il kettlebell tra le gambe e spingi con le anche: lo swing sale vicino al corpo. In cima tira i gomiti indietro e in alto portando il kettlebell vicino al petto, e nella fase finale spingi con gli avampiedi per salire ancora un po'. Lascialo tornare nello swing. Fai le ripetizioni indicate con ritmo continuo.
 
 Correzione: 
 
@@ -91,7 +91,7 @@ Correzione:
 ## 13. Around the World Pull-Up
 per lato · reps · video: https://www.youtube.com/watch?v=9YZqQFtfcKo
 
-Come l'ho scritto io: Appeso alla sbarra con presa larga, spalle attive. Tira verso una mano fino al mento sopra la sbarra, poi spostati lungo la sbarra verso l'altra mano restando in alto. Scendi in controllo dall'altro lato: il percorso disegna un cerchio. Fai le ripetizioni indicate (un cerchio = una ripetizione), poi inverti il senso.
+Come l'ho scritto io: Appeso alla sbarra con presa larga, ben oltre le spalle, spalle attive. Invece di tirarti su dritto, contrai i dorsali e sali verso una mano, poi spostati lungo la sbarra verso il centro: il mento incontra la sbarra nel punto più alto. Continua il cerchio scendendo in controllo dall'altro lato fino alle braccia distese. Un cerchio = una ripetizione. Una serie in senso orario e la successiva in senso antiorario.
 
 Correzione: 
 
@@ -168,7 +168,7 @@ Correzione:
 ## 24. One-Arm Incline Push-Up
 per lato · reps · senza video
 
-Come l'ho scritto io: Mano d'appoggio su una panca o un gradino, piedi larghi, mano libera dietro la schiena, corpo rigido. Scendi in controllo piegando il gomito vicino al corpo, busto che non ruota. Spingi fino al braccio disteso. Fai le ripetizioni indicate, poi cambia braccio.
+Come l'ho scritto io: Piedi su un rialzo (panca, gradino) e mano d'appoggio a terra: il corpo è in obliquo con la testa più in basso, quindi il carico sul braccio è maggiore del piegamento a terra. Piedi larghi, mano libera dietro la schiena, corpo rigido dalla testa ai talloni. Scendi in controllo piegando il gomito vicino al corpo, busto che non ruota, poi spingi fino al braccio disteso. Fai le ripetizioni indicate, poi cambia braccio.
 
 Correzione: 
 
@@ -316,5 +316,12 @@ Correzione:
 bilaterale · reps · senza video
 
 Come l'ho scritto io: Sdraiato sotto un tavolo robusto o sotto una sbarra bassa (va bene anche una sbarra da trazioni con i piedi su un rialzo): afferra il bordo o la sbarra con le mani larghe quanto le spalle, corpo in linea dai talloni alla testa. Tira il petto verso il tavolo o la sbarra tenendo il corpo rigido, gomiti vicino al busto. Scendi in controllo fino alle braccia distese. Fai le ripetizioni indicate.
+
+Correzione: 
+
+## 46. One-Arm Decline Push-Up
+per lato · reps · senza video
+
+Come l'ho scritto io: Mano d'appoggio su un rialzo di 60-80 cm (panca, gradino, muretto) e piedi a terra: il rialzo sotto la mano riduce il carico, è il passo prima del piegamento a un braccio a terra. Piedi larghi, mano sotto la spalla, l'altro braccio dietro la schiena. Corpo rigido dalla testa ai talloni, addome attivo. Scendi in controllo fino a sfiorare il rialzo con il petto, senza ruotare il busto, poi spingi fino al braccio disteso. Spalla lontana dall'orecchio. Alterna: una ripetizione a destra, una a sinistra. Quando escono pulite, abbassa il rialzo.
 
 Correzione: 

@@ -190,7 +190,7 @@ Le tre qualità usano le stesse gambe: si contano insieme.
    (0.5), EMOM gambe con i salti (0.5), serie brevi (0.5). Gli obiettivi in ordine decidono chi entra:
    con gambe + velocità in season → Fmax/serie + velocità, la pliometria entra solo dentro l'EMOM (salti).
 2. **Ordine nella settimana**: velocità e pliometria PRIMA delle gambe pesanti (sistema nervoso fresco), con
-   almeno 48 ore tra pliometria intensiva e Fmax; mai serie/Fmax e pliometria intensiva nello stesso giorno
+   almeno 48 ore tra pliometria intensiva e Fmax; ~~mai serie/Fmax e pliometria intensiva nello stesso giorno~~ (superato il 18/10: Ste, "pliometria non troppo pesante può essere anche buona dopo Fmax", ammesso con la forza prima e pochi contatti dopo)
    (già vietato per la resistenza, si aggiunge questa coppia in `CONVIVENZE_VIETATE`). Esempio in season con
    partita la domenica: martedì velocità, giovedì gambe a serie o Fmax, sabato niente.
 3. **Salti una volta sola**: i salti da fermo stanno nell'EMOM di gambe O in quello di parte alta, mai in
@@ -237,7 +237,7 @@ partita: metà dose, 2 serie). Con meno di due catene testate non esiste nessun 
 server sostituisce i blocchi Everfit "Forza Parte Bassa" (non Fascia Forza) come per la parte alta (`sostituzioniParteBassa`);
 serie/breve/Fmax = un posto a settimana, EMOM un altro; mai un `pb-*` il giorno prima o della partita; Nordic ed eccentrici
 (bridge 6-8) a meno di 3 giorni dalla partita diventano il hamstring bridge sul rialzo (`alleggerisciVicinoPartita`) e nello
-scarico il bridge si ferma al gradino 5; `CONVIVENZE_VIETATE` ha Fmax + pliometria intensiva. Non ancora nel codice: il
+scarico il bridge si ferma al gradino 5; `CONVIVENZE_VIETATE` aveva Fmax + pliometria intensiva (dal 18/10 ammesso: forza prima, pochi contatti dopo). Non ancora nel codice: il
 budget di giornate "gambe intensive", le isometrie come formato del server (restano i blocchi Fascia Forza di Ste), il
 circuito, la proposta automatica del test dopo due EMOM facili. Test in `tests/trainingParteBassa.test.ts`.
 

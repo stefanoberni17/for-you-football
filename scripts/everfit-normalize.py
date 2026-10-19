@@ -13,16 +13,25 @@ Regole: demo Everfit escluse; programmi intitolati a clienti anonimizzati
 (ANON); nessun dato cliente nei file di output.
 """
 import glob
+import re
 import json
 import os
 import sys
 
 D = sys.argv[1] if len(sys.argv) > 1 else "docs/everfit-export"
 
-ANON = {
-    "GIUSEPPE PARADISO FORZA": "Programma personale — cliente A (4 sett. forza)",
-    "Nani Sergi Marzo 2024": "Programma personale — cliente B (4 sett.)",
-}
+# Titoli dei programmi personali → etichetta anonima. La mappa con i nomi veri sta in
+# docs/everfit-export/anon.json (cartella gitignored): {"programmi": {"<titolo Everfit>": "Programma personale — cliente A"},
+# "clienti": ["<Nome Cognome>"]} — i nomi in "clienti" vengono tolti dalla coda dei titoli dei workout.
+_ANON_PATH = os.path.join(D, "anon.json")
+_ANON = json.load(open(_ANON_PATH, encoding="utf-8")) if os.path.exists(_ANON_PATH) else {}
+ANON = _ANON.get("programmi", {})
+
+def senza_cliente(t):
+    for c in CLIENTI:
+        t = re.sub(r"\s*-\s*" + re.escape(c) + r"\s*$", "", t or "")
+    return t
+CLIENTI = _ANON.get("clienti", [])
 
 
 def v(x):

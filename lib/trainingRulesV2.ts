@@ -49,7 +49,7 @@ export const BOUNDS_QUALITA: Partial<Record<QualitaV2, BoundsV2>> = {
   // velocità: sprint 3-10" con recupero ≥ 1:10 — [DATI: 9-11 × 3" rec 50"]
   'velocita':          { serieMin: 2, serieMax: 12, repsMin: 1, repsMax: 6, secMin: 3, secMax: 30, recuperoMinSec: 40 }, // T sprint 2 serie — [STE]
   // aerobica: blocchi ~4' (3-5'), 12-20' effettivi, rec 3' — [STE]
-  'resistenza-aerobica': { serieMin: 3, serieMax: 6, minMin: 3, minMax: 6, secMin: 180, secMax: 360, recuperoMinSec: 150, recuperoMaxSec: 240 }, // Fartlek a 5 blocchi fino a 6' — [STE]
+  'resistenza-aerobica': { serieMin: 4, serieMax: 6, minMin: 4, minMax: 6, secMin: 240, secMax: 360, recuperoMinSec: 120, recuperoMaxSec: 240 }, // Ste, 15/10: serie da 4-5-6', recupero 2-3', 4-6 serie per livello (i blocchi Everfit sono fidati: qui passano solo gli item composti) — [STE]
   // metabolico: 15-70" intermittenti, 4-19 serie, rec 20-90" — [DATI]
   'resistenza-metabolico': { serieMin: 4, serieMax: 19, secMin: 15, secMax: 70, repsMin: 1, repsMax: 4, recuperoMinSec: 20, recuperoMaxSec: 90 },
   // RSA: 20-30" massimali, 6-12 serie a blocchi da 4, rec 40-60" — [STE]
@@ -90,6 +90,8 @@ export const PLIO_INTENSIVA_CONTATTI_MAX: Record<LivelloMinV2, number> = { B: 10
  */
 export const SPRINT_MAX_SEDUTA = 8;
 export const SPRINT_MAX_CON_EMOM = 6;
+/** A 2 giorni dalla partita (Ste, 18/10: "non molto volume"): tetto di sprint per seduta più basso. Valore a tavolino. */
+export const SPRINT_MAX_VICINO_PARTITA = 6;
 export const SPRINT_MASSIMALI_IDS: ReadonlySet<string> = new Set([
   'vel-sprint', 'vel-sprint-10-m',
   'vel-sprint-con-partenza-in-ginocchio', 'vel-piegamento-a-terra-e-sprint', 'vel-giro-180-piegamento-e-sprint',
@@ -113,19 +115,41 @@ export function contaSprintMassimali(items: { esercizio_id: string; serie: numbe
 
 export const FINESTRA_PARTITA: Record<QualitaV2, number> = {
   'forza-parte-bassa': 1, 'forza-parte-alta': 1, 'core': 1, // fisica: giorno partita e −1 (regola v1)
-  'forza-esplosiva': 2, 'velocita': 2,
+  'forza-esplosiva': 2,
+  // 18/10, Ste (risposta 3): "rapidità, velocità e tiro ok prima della partita ma distanze brevi e poche reps; 2 giorni prima si
+  // può fare qualcosa in più" → velocità ammessa a −2 (prima vietata), a −1 solo il blocco pre partita (PRE_PARTITA_ID in
+  // trainingVelocita, saltato dal validatore a −1)
+  'velocita': 1, // a −2 solo corta (sprint fino a VELOCITA_PURA_METRI) e con poco volume (SPRINT_MAX_VICINO_PARTITA): expandPiano
   'pliometria-estensiva': 1,
   'pliometria-intensiva': 2, // a −1 solo con reps minime (vedi PLIO_INTENSIVA_MENO1)
-  'resistenza-aerobica': 4, 'resistenza-metabolico': 4, 'resistenza-rsa': 4,
+  // 18/10, Ste: "metabolico-resistenza va bene da 2 giorni dopo la partita fino a 3 giorni prima: con la partita la domenica
+  // da martedì a giovedì, il top sarebbe mercoledì" → vietata a 2, 1 e 0 giorni dalla partita, ammessa da 3 (16/10 era 3, prima 4)
+  'resistenza-aerobica': 2, 'resistenza-metabolico': 2, 'resistenza-rsa': 2,
   'fascia-prevenzione': 0, 'tecnica-palleggi': 0, 'tecnica-passaggi': 0, 'tecnica-conduzione': 0,
   'tecnica-tiro': 0, 'tecnica-visione': 0, 'riscaldamento': 0,
   'mobilita-recupero': 1, // yoga/recupero guidato: mai il giorno prima o il giorno della partita — [STE]
   'test': 2, 'da-classificare': 4,
 };
+/** Il blocco di Ste per il giorno PRIMA della partita (18/10): l'unico di velocità ammesso a −1 (il validatore salta la finestra per i suoi item quel giorno). */
+export const PRE_PARTITA_ID = 'rapidita-velocita-e-tiro-pre-partita';
 /** Regime forza massima: −3 giorni dalla partita — [STE] */
 export const FINESTRA_FORZA_MAX = 3;
 /** Pliometria intensiva ammessa a −1 solo ridotta al minimo — [STE] */
 export const PLIO_INTENSIVA_MENO1 = { serieMax: 2, repsMax: 2 } as const;
+
+/**
+ * Giorni passati dall'ULTIMA partita (0 = giorno partita, 1 = il giorno dopo…), con la settimana che gira: con la partita la
+ * domenica il martedì è +2. null se nessuna partita. Serve all'asse "dopo la partita" (18/10): senza il resoconto si assume
+ * che abbia giocato tutta la partita (precauzionale, Ste).
+ */
+export function giorniDallaPartita(giorno: number, matchDays: number[]): number | null {
+  let best: number | null = null;
+  for (const md of matchDays) {
+    const d = giorno >= md ? giorno - md : giorno + 7 - md;
+    if (best === null || d < best) best = d;
+  }
+  return best;
+}
 
 /** Giorni tra il giorno `giorno` (1=Lun…7=Dom) e la prossima partita nella settimana (0 = giorno partita). null se nessuna partita dopo. */
 export function giorniAllaPartita(giorno: number, matchDays: number[]): number | null {
@@ -167,7 +191,20 @@ export function stima1RM(peso: number, reps: number): number {
 export const CONVIVENZE_VIETATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
   ['forza-max', 'resistenza-aerobica'],
   ['resistenza-rsa', 'pliometria-intensiva'],
-  ['forza-max', 'pliometria-intensiva'], // scala gambe (29/9): mai Fmax e pliometria intensiva nello stesso giorno
+];
+/**
+ * Nello stesso giorno: non vietato, sconsigliato (solo nel prompt, il piano base non lo fa). Vuoto dal 18/10 sera: Ste,
+ * "pliometria non troppo pesante può essere anche buona dopo Fmax, come sviluppo" (il 18/10 mattina era "sconsigliato",
+ * fino al 17/10 vietato). Resta la struttura per coppie future.
+ */
+export const CONVIVENZE_SCONSIGLIATE: [QualitaV2 | 'forza-max', QualitaV2][] = [];
+/**
+ * Convivenze vietate a livello di BLOCCO (qualità dominante di due blocchi diversi nella stessa seduta): velocità e
+ * resistenza mai lo stesso giorno (Ste, 18/10: "mai anche con velocità"). A livello di esercizio non si può: i blocchi
+ * "Resistenza alla velocità" e "Salite metabolico" di Ste hanno dentro sia sprint che resistenza.
+ */
+export const CONVIVENZE_BLOCCHI_VIETATE: [QualitaV2, QualitaV2[]][] = [
+  ['velocita', ['resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa']],
 ];
 
 /** Ordine "neuromuscolare prima del metabolico": indice più basso = prima nella seduta. */
@@ -193,6 +230,7 @@ export interface ContestoV2 {
   livelloPerQualita?: Partial<Record<QualitaV2, LivelloMinV2>>; // 25/9: livello dai test di ogni qualità (lib/trainingLivelli)
   attrezzatura: AttrezzaturaV2[]; // cosa ha a disposizione (corpo libero sempre incluso)
   inCoppia: boolean;              // può allenarsi con un compagno
+  ruoli?: readonly string[];      // dal profilo (portiere, difensore…): i blocchi P1 solo per i portieri (18/10)
   eta: number | null;
   esperienzaPalestra: boolean;
   massimali?: Record<string, number>; // 1RM stimati per esercizio (id v2) — necessari per regime max/esplosiva
@@ -263,7 +301,11 @@ export function validateItemV2(
   const disp = new Set<AttrezzaturaV2>(['corpo libero', ...ctx.attrezzatura]);
   if (!disp.has(ex.attrezzatura)) errors.push(`${n}: serve ${ex.attrezzatura}, non disponibile`);
   if (ex.inCoppia && !ctx.inCoppia) errors.push(`${n}: serve un compagno`);
-  if (ex.qualita === 'test') errors.push(`${n}: i test non vanno nel piano (batteria dedicata)`);
+  // Un esercizio di categoria "test" non va nel piano (batteria dedicata)… salvo dentro un blocco FIDATO di Ste (18/10): nei
+  // suoi workout "Rapidità Ankle Stiffness - Test" (16 blocchi), "TEST NAVETTA" e i palleggi dei test sono usati come
+  // esercizi, e quei blocchi non passavano mai (stesso caso del broad jump del 15/10, risolto allora con un alias)
+  const testComeEsercizio = ex.qualita === 'test' && !!opts.skipBounds;
+  if (ex.qualita === 'test' && !testComeEsercizio) errors.push(`${n}: i test non vanno nel piano (batteria dedicata)`);
 
   // Bounds
   const b = opts.skipBounds ? null : boundsPerItem(ex, it);
@@ -314,8 +356,8 @@ export function validateItemV2(
       errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${KG_SENZA_MASSIMALE_MAX} kg finché non fa i test in palestra)`);
   }
 
-  // Finestra partita per qualità
-  if (giorniPartita !== null) {
+  // Finestra partita per qualità (un test usato come esercizio in un blocco di Ste segue il blocco, non la finestra "test")
+  if (giorniPartita !== null && !testComeEsercizio) {
     const regimeMax = forzaConCarico && it.regime === 'max';
     const finestra = regimeMax ? FINESTRA_FORZA_MAX : (ex.finestraPartita ?? FINESTRA_PARTITA[ex.qualita]);
     if (giorniPartita <= finestra) {

@@ -83,6 +83,7 @@ export interface RichiestaGuidata {
   durataMax?: number;       // minuti per seduta
   focus?: FocusId[];        // fino a FOCUS_MAX, in ordine di priorità
   note?: string;            // max 160 caratteri, opzionale
+  conSquadra?: boolean;     // off season: questa settimana si allena con la squadra o ha una partita (18/10: decide il tetto della resistenza)
   // modifica del piano attuale (una sola)
   modifica?: { tipo: ModificaTipo; giorno?: number; a?: number; focus?: FocusId; durataMax?: number };
 }
@@ -95,6 +96,7 @@ export interface Vincoli {
   obiettivi?: FocusId[];     // focus di QUESTA settimana (dalla maschera); assenti = obiettivi del setup
   recuperiFacoltativi?: boolean; // richiesta esplicita dell'atleta: i recuperi non sono più un vincolo
   modifica?: boolean;        // modo "modifica": i giorni già passati del piano attuale restano e contano nei controlli settimanali (29/9)
+  conSquadra?: boolean;      // conferma della maschera (off season): con la squadra/partita questa settimana → resistenza al massimo 2 giornate; senza → fino a 4 (lib/trainingTetti)
 }
 
 const clampDay = (d: unknown): number | null => { const n = Number(d); return Number.isInteger(n) && n >= 1 && n <= 7 ? n : null; };
@@ -124,6 +126,7 @@ export function parseRichiesta(body: unknown): RichiestaGuidata | null {
   const ns = Number(b.sedute); if (Number.isInteger(ns) && ns >= 1 && ns <= SEDUTE_MAX) r.sedute = ns;
   const f = focusValidi(b.focus); if (f.length) r.focus = f;
   const note = pulisci(b.note, 160); if (note) r.note = note;
+  if (typeof b.conSquadra === 'boolean') r.conSquadra = b.conSquadra;
   if (r.modo === 'modifica' && b.modifica && typeof b.modifica === 'object') {
     const m = b.modifica as Record<string, unknown>;
     if (MODIFICA_TIPI.some((t) => t.id === m.tipo)) {
@@ -154,6 +157,7 @@ export function componiRichiesta(r: RichiestaGuidata, pianoAttuale?: PlanSession
         ? 'Obiettivo di questa settimana: programma EQUILIBRATO su tutti gli aspetti (forza parte alta e gambe, esplosività, velocità, resistenza, tecnica, fascia) secondo la fase: nessun aspetto due volte prima che gli altri siano coperti.'
         : `Obiettivi di questa settimana, in ordine di priorità: ${r.focus.map((f, i) => `${i + 1}. ${focusLabel(f)}`).join(', ')} (i primi ${Math.min(FOCUS_OBBLIGATORI, r.focus.length)} devono avere almeno un blocco: lo controlla il validatore; gli altri dove c'è spazio, senza saltare le progressioni).`);
     }
+    if (r.conSquadra !== undefined) { vincoli.conSquadra = r.conSquadra; righe.push(r.conSquadra ? 'Questa settimana si allena anche con la squadra o ha una partita.' : 'Questa settimana NESSUN allenamento con la squadra e nessuna partita (resistenza fino a 4 giornate, regola 2d).'); }
     if (r.note) righe.push(`Nota dell'atleta: "${r.note}"`);
     return { richiesta: righe.join('\n'), vincoli };
   }

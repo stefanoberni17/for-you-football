@@ -5,6 +5,8 @@
  * risponde, il Coach lavora senza.
  */
 import { createClient } from '@supabase/supabase-js';
+import { loadResoconti } from './trainingResocontoServer';
+import { resocontiPerCoach, squadraMisurata } from './trainingResoconto';
 import { dateItaly, todayItaly } from './dateItaly';
 import { azioniPerGiorno, addDays } from './carta';
 import { incroci, INCROCI_FINESTRA_GIORNI, type Incrocio, type SedutaFatta } from './incroci';
@@ -29,11 +31,12 @@ export function seduteDaiFeedback(feedback: FeedbackSeduta[]): SedutaFatta[] {
 
 /** Carico del Campo come lo vede l'hub: con la squadra stimata dal calendario e dal setup. */
 async function loadCaricoConSquadra(userId: string): Promise<CaricoInfo> {
-  const [{ data: profile }, { data: calendar }, { squadra, partita }] = await Promise.all([
+  const [{ data: profile }, { data: calendar }, { squadra, partita }, resoconti] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
       .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
     loadSquadraCompleta(userId),
+    loadResoconti(userId),
   ]);
   const squadraSettimanale = caricoSquadraStimato({
     trainingDays: giorniSquadra(calendar?.training_days || [], squadra),
@@ -42,7 +45,7 @@ async function loadCaricoConSquadra(userId: string): Promise<CaricoInfo> {
     fase: profile?.training_fase || 'in_season',
     squadra,
   });
-  return loadCarico(userId, false, undefined, squadraSettimanale);
+  return loadCarico(userId, false, undefined, squadraSettimanale, squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min ?? null, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partita) } }));
 }
 
 /**
@@ -86,11 +89,12 @@ export async function loadCampoPerCoach(userId: string): Promise<string> {
   try {
     if (!(await hasTrainingAccess(userId))) return '';
     const lunedi = mondayOfThisWeekRome();
-    const [{ data: profile }, { data: piani }, feedback, carico] = await Promise.all([
+    const [{ data: profile }, { data: piani }, feedback, carico, resoconti] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_plans').select('id, plan, created_at').eq('user_id', userId).eq('week_start', lunedi).order('created_at', { ascending: false }),
       loadFeedbackRecenti(userId, 40),
       loadCaricoConSquadra(userId),
+      loadResoconti(userId, 14),
     ]);
     const righe: string[] = [];
 
@@ -117,6 +121,9 @@ export async function loadCampoPerCoach(userId: string): Promise<string> {
     }
     if (carico.stato !== 'insufficiente') righe.push(`- Carico delle ultime settimane: ${carico.stato} (${STATO_LABEL[carico.stato]})`);
     if (profile?.training_pain_hold) righe.push('- ⚠️ ALLENAMENTI IN PAUSA PER UN DOLORE: ha segnalato un fastidio e le sedute fisiche sono ferme finché non dice che è passato. Chiedi come sta, invitalo a parlarne con un adulto o con fisio/preparatore; non dare consigli di allenamento.');
+    // Resoconti dopo squadra e partita (19/10): com'è andata, anche di testa — materia del Coach
+    const righeResoconti = resocontiPerCoach(resoconti);
+    if (righeResoconti.length) righe.push(`- Ultimi resoconti dopo la squadra e la partita (li ha scritti lui la sera):\n${righeResoconti.map((r) => `  ${r}`).join('\n')}`);
     const zone = zoneTeseRicorrenti(feedback);
     if (zone.length) righe.push(`- Zone tese ricorrenti dopo le sedute: ${zone.map((z) => `${z.zona}${z.fastidio >= 2 ? ' (con fastidio)' : ''}`).join(', ')}`);
 

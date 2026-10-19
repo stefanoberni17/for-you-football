@@ -39,6 +39,8 @@ export interface SettimanaCarico { lunedi: string; carico: number; sedute: numbe
 export type StatoCarico = 'insufficiente' | 'poco' | 'ok' | 'alto' | 'rischio';
 
 export interface CaricoInfo {
+  squadraMisurati?: number;  // giorni squadra/partita degli ultimi 7 con il resoconto (dato vero)
+  squadraAcuto?: number;     // S della settimana acuta con i giorni misurati al posto della stima
   sedute: SedutaCarico[];            // ultime 4 settimane, più recente prima
   settimane: SettimanaCarico[];      // 4 settimane (la corrente per ultima)
   acuto: number;                     // max(ultimi 7 giorni, ultima settimana completa)
@@ -112,9 +114,17 @@ export function calcolaCarico(input: {
   oggi: string; lunedi: string; isDeload?: boolean;
   /** Carico squadra stimato a settimana (AU): entra come base costante in acuto e cronico. */
   squadraSettimanale?: number;
+  /** Resoconti (19/10, lib/trainingResoconto): per i giorni con il dato vero, fatica × minuti al posto della stima — corregge l'acuto */
+  squadraMisurata?: { data: string; reale: number; stima: number }[];
 }): CaricoInfo {
   const { oggi, lunedi } = input;
   const S = Math.max(0, Math.round(input.squadraSettimanale ?? 0));
+  // Squadra misurata (resoconti degli ultimi 7 giorni): l'acuto usa il dato vero al posto della stima di quel giorno;
+  // il cronico resta sulla stima (la base costante): "squadra: 3 giorni misurati, 1 stimato"
+  // Con S = 0 (off season: la squadra non entra nel rapporto) niente correzione, altrimenti l'ACWR si gonfierebbe (review 19/10)
+  const misurati = S > 0 ? (input.squadraMisurata ?? []).filter((m) => m.data >= addDays(oggi, -6) && m.data <= oggi) : [];
+  const correzioneAcuto = misurati.reduce((a, m) => a + (m.reale - m.stima), 0);
+  const sAcuto = Math.max(0, Math.round(S + correzioneAcuto));
   const da = addDays(oggi, -27); // finestra di 28 giorni (oggi incluso)
   const planById = new Map(input.plans.map((p) => [p.id, p.plan]));
   const rpeBySession = new Map<string, number[]>();
@@ -166,7 +176,7 @@ export function calcolaCarico(input: {
   // ACWR sul carico TOTALE (app + squadra): per chi si allena con la squadra il carico dell'app è una
   // frazione; misurato da solo dava "alto/rischio" a ogni settimana normale (14/9: cronico app 439 AU,
   // squadra ~2400 AU → il tetto bloccava qualsiasi settimana da 3 sedute)
-  const acwr = cronico > 0 ? round1((acuto + S) / (cronico + S)) : null;
+  const acwr = cronico > 0 ? round1((acuto + sAcuto) / (cronico + S)) : null;
   const stato: StatoCarico = acwr === null ? 'insufficiente'
     : acwr < ACWR_SOGLIE.poco ? 'poco' : acwr <= ACWR_SOGLIE.ok ? 'ok' : acwr <= ACWR_SOGLIE.alto ? 'alto' : 'rischio';
   // Pavimento 0.4 (21/9, era 0.7): chi valuta le sedute "Facile" pesa quasi la metà della stima per qualità;
@@ -191,7 +201,7 @@ export function calcolaCarico(input: {
     else { target = { min: app(tot * 0.9), max: app(tot * 1.1) }; tetto = app(tot * 1.15); }
     tettoDuro = app(tot * ACWR_SOGLIE.alto);
   }
-  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S };
+  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S, squadraMisurati: misurati.length, squadraAcuto: sAcuto };
 }
 
 /**

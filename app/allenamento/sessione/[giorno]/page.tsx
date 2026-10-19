@@ -13,10 +13,10 @@ import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
 
-interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; lato_extra?: 'dx' | 'sx'
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
   per_lato?: boolean;
 }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[] }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[] }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
@@ -271,6 +271,14 @@ export default function SessionePage() {
         <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{DAY_NAMES[giorno]} · {TIPO_LABEL[sessione.tipo] ?? 'Seduta'}</p>
         <h1 className="font-display text-title-1 font-bold text-app mb-1">{sessione.titolo}</h1>
         <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {nEsercizi} esercizi{sessione.apertura_min ? ` · +${sessione.apertura_min}' di apertura, se hai tempo` : ''}</p>
+        {!!sessione.proposte?.length && (
+          <Card variant="accent" padding="sm" className="mb-4">
+            <p className="text-label font-semibold text-forest-300 mb-1">Dal tuo resoconto</p>
+            <ul className="space-y-1">
+              {sessione.proposte.map((p, i) => <li key={i} className="text-body-sm text-app leading-snug">{p.motivo}</li>)}
+            </ul>
+          </Card>
+        )}
         {sessione.spiegazione && (
           <div className="mb-5">
             <p className={`text-body text-muted leading-relaxed ${spiegazioneOpen ? '' : 'line-clamp-3'}`}>{sessione.spiegazione}</p>
@@ -329,6 +337,12 @@ export default function SessionePage() {
                                   {' · recupero '}<span className={num}>{it.recupero_sec}&quot;</span>
                                 </>}
                           </p>
+                          {it.facoltativo && (
+                            <div className="mt-1.5 flex items-start gap-2">
+                              <Badge tone={it.facoltativo === 'togli' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">{it.facoltativo === 'togli' ? 'Facoltativo' : 'Serie in più'}</Badge>
+                              <p className="text-body-sm text-app leading-snug">{it.facoltativo === 'togli' ? 'Puoi saltarlo' : 'Se te la senti, una serie in più'}{it.facoltativo_motivo ? ` (${it.facoltativo_motivo})` : ''}.</p>
+                            </div>
+                          )}
                           {it.nota && (
                             <div className="mt-1.5 flex items-start gap-2">
                               <Badge tone={it.adattamento === 'scendi' || it.adattamento === 'leggero' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">

@@ -7,6 +7,7 @@ generato: cambia questo script (alias, euristiche) o il catalogo e rilancia.
 Uso: python3 scripts/build-blocks.py
 """
 import json
+import os
 import re
 import unicodedata
 from collections import Counter
@@ -39,6 +40,12 @@ V1_QUALITA = {  # area v1 → qualità v2 equivalente (per il peso delle qualit�
 
 # ── Alias: nome Everfit (libreria standard) → id catalogo ─────────────────────
 ALIAS = {
+    # 15/10: nei workout di Ste "Test Salto in lungo - broad jump" è usato come ESERCIZIO (Forza Esplosiva A1, Pliometria
+    # Rapidità Velocità B1/B2, Forza Mix P1, Forza funzionale e pliometria PRO1): il validatore rifiuta gli esercizi di
+    # categoria test nel piano, quindi quei blocchi non passavano mai. Nel piano è lo Standing Broad Jump.
+    "test salto in lungo - broad jump": "fesp-salto-in-lungo-da-fermo",
+    # idem per gli sprint: in "VELOCITA' B1" (calendari) i test da 50 e 100 m sono gli sprint della seduta
+    "test velocita' 50m": "vel-sprint", "test velocita' 100m": "vel-sprint",
     "push-up": "push-2", "modified push up": "push-1", "archer push up": "fpa-archer-pushup",
     "band assisted pull up": "pull-4", "inverted row": "pull-2", "chin-up": "fpa-chin-up",
     # "Pull-Up" di Everfit = il gradino 5 della scala di tirata (v1), NON l'esercizio v2 fpa-trazioni: dal 12/10 il v2
@@ -154,7 +161,7 @@ KEYWORDS = [
     ("palleggi", "tecnica-palleggi"), ("muro", "tecnica-passaggi"), ("passaggi", "tecnica-passaggi"),
     ("dribbling", "tecnica-conduzione"), ("freestyle", "tecnica-palleggi"), ("tiri", "tecnica-tiro"),
     ("tecnica", "tecnica-palleggi"), ("pliometria", "pliometria-intensiva"),
-    ("resistenza alla velocità", "resistenza-rsa"), ("rapidità", "velocita"), ("velocità", "velocita"),
+    ("resistenza alla velocità", "resistenza-rsa"), ("rapidità", "velocita"), ("velocità", "velocita"), ("velocita'", "velocita"),
     ("fartlek", "resistenza-aerobica"), ("ripetute", "resistenza-aerobica"), ("resistenza", "resistenza-aerobica"),
     ("metabolico", "resistenza-metabolico"), ("salite", "resistenza-metabolico"),
     ("forza parte alta", "forza-parte-alta"), ("forza parte bassa", "forza-parte-bassa"),
@@ -164,36 +171,43 @@ KEYWORDS = [
 
 def meta_from_title(t):
     tl = t.lower()
-    m = re.search(r"\b(pro|b|a|p)\s?(\d)\b", tl)
+    # "C" = variante sopra ad avanzato (Ste, 16/10) → livello PRO (prima i due "C1 - short" erano saltati)
+    m = re.search(r"\b(pro|b|a|c|p)\s?(\d)\b", tl)
     livello = None
     prog = None
     ruolo = None
     if m:
         code = m.group(1)
-        livello = {"b": "B", "a": "A", "pro": "PRO", "p": None}[code]
+        livello = {"b": "B", "a": "A", "c": "PRO", "pro": "PRO", "p": None}[code]
         prog = int(m.group(2))
         if code == "p":
             ruolo = "portiere"  # "P1" = blocco nato per il portiere [STE] — riusato anche per gli altri, quindi non escluso
     if re.search(r"(push|pull)\s?p\d\b", tl):
         ruolo = "portiere"
     else:
-        m2 = re.search(r"\b(\d)[a-d]?\b", tl)
+        m2 = re.search(r"\b(\d)[a-e]?\b", tl)
         if m2 and "fascia" in tl:
             prog = int(m2.group(1))
-    variante = "short" if "short" in tl or "soft" in tl else "full"
+    # "- in season" = variante più corta dello stesso codice (Ste, 16/10: Forza Prevenzione A1, Parte alta PRO A3,
+    # Parte Bassa Completa Palestra): stessa famiglia e stessa chiave di codice del blocco pieno, come "- short"
+    variante = "short" if "short" in tl or "soft" in tl or "in season" in tl else "full"
     qual = None
     for kw, q in KEYWORDS:
         if kw in tl:
             qual = q
             break
     sotto = None
-    ms = re.search(r"\b\d([A-D])\b|\s-([A-D])\b", t)
+    ms = re.search(r"\b\d([A-E])\b|\s-([A-E])\b", t)
     if ms:
         sotto = (ms.group(1) or ms.group(2))
-    fam = re.sub(r"\s*-\s*(short|soft)( \d)?", "", t, flags=re.I)
-    fam = re.sub(r"\b(PRO|B|A|P)\s?\d[A-D]?\b", "", fam, flags=re.I)
-    fam = re.sub(r"\b\d[A-D]?\b", "", fam)
-    fam = re.sub(r"\s-[A-D]\b", "", fam)
+    if t.rstrip().endswith("+"):
+        sotto = "+"  # "B3 +" = versione più dura dello stesso codice (calendari 2026)
+    fam = re.sub(r"\s*\+\s*$", "", t)
+    fam = re.sub(r"\s*-?\s*in season\s*$", "", fam, flags=re.I)
+    fam = re.sub(r"\s*-\s*(short|soft)( \d)?", "", fam, flags=re.I)
+    fam = re.sub(r"\b(PRO|B|A|C|P)\s?\d[A-E]?\b", "", fam, flags=re.I)
+    fam = re.sub(r"\b\d[A-E]?\b", "", fam)
+    fam = re.sub(r"\s-[A-E]\b", "", fam)
     fam = re.sub(r"\s*-\s*$", "", fam)
     fam = re.sub(r"\s{2,}", " ", fam).strip(" -")
     fam = re.sub(r"foundations?", "Foundation", fam, flags=re.I)
@@ -268,10 +282,20 @@ def durata_min(items, amrap_sec):
 
 # ── Build ────────────────────────────────────────────────────────────────────
 by_title = {}
-for w in WORKOUTS:
+# 16/10: oltre alla libreria, i workout DENTRO i programmi di Ste (docs/everfit-programs.json): 20 titoli stavano solo lì
+# (Fascia Foundations 1C/1E/2B, Forza Prevenzione B1, Salite Resistenza B1, EMOM B3, HIIT B2, Push corpo libero B1/B2,
+# Tecnica Palleggi A1/A4, Tecnica Freestyle…) e lasciavano buchi nelle scale per codice. Stesso formato normalizzato.
+PROGRAMMI = json.load(open("docs/everfit-programs.json", encoding="utf-8"))
+DAI_PROGRAMMI = [wo for p in PROGRAMMI for w in p.get("calendario", []) for d in w.get("giorni", []) for wo in d.get("workouts", [])]
+# Titoli da tenere fuori dalla libreria (16/10 i due "C1 - short" stavano qui: "C" = variante sopra ad avanzato → PRO, dal 18/10 entrano)
+SALTA_TITOLI = set()
+# 16/10: i workout che esistono SOLO sui calendari dei ragazzi (scripts/everfit-normalize-assegnazioni.py, nomi tolti)
+ASSEGNATI = json.load(open("docs/everfit-workouts-assegnati.json", encoding="utf-8")) if os.path.exists("docs/everfit-workouts-assegnati.json") else []
+# Titoli senza codice che nel programma di Ste sono la settimana 1 della famiglia ("forza corpo libero avanzato w1")
+CODICE_FORZATO = {"forza parte alta push corpo libero": ("B", 1)}
+for w in WORKOUTS + DAI_PROGRAMMI + ASSEGNATI:
     t = (w.get("titolo") or "").strip()
-    t = re.sub(r"\s*-\s*Sergi Marzo$", "", t)  # nessun nome cliente nella libreria
-    if not t:
+    if not t or t.lower() in SALTA_TITOLI:
         continue
     n_items = sum(len(s.get("esercizi", [])) for s in w.get("sezioni", []))
     if t not in by_title or n_items > by_title[t][0]:
@@ -316,8 +340,10 @@ for t, (_, w) in sorted(by_title.items(), key=lambda x: x[0].lower()):
             registra(its, info, ex.get("esercizio", "?"))
         i += 1
     livello, prog, variante, qual_kw, fam, sotto, ruolo = meta_from_title(t)
+    if t.lower() in CODICE_FORZATO:
+        livello, prog = CODICE_FORZATO[t.lower()]
     qual = qual_kw or (quali.most_common(1)[0][0] if quali else "da-classificare")
-    base = slug(t)
+    base = slug(t) + ("-plus" if t.rstrip().endswith("+") else "")
     sid, k = base, 2
     while sid in seen:
         sid = f"{base}-{k}"

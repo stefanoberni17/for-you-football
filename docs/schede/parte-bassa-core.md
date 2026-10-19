@@ -212,17 +212,17 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Errori comuni:** Scendere sotto il parallelo: qui l'escursione è fissa. Ginocchio che cede verso l'interno. Busto che si piega in avanti con il carico.
 **Più facile:** Meno carico, o un box dietro come riferimento.
-**Più difficile:** Più carico, salita esplosiva.
+**Più difficile:** Versione test: cerca il peso massimo con cui fai 3 ripetizioni pulite. Parti da un peso sicuro, 3 ripetizioni, e aggiungi 10 kg a ogni serie finché non trovi il limite.
 **Sicurezza:** Con carichi alti sempre i fermi del rack o un compagno.
 
 ### Patrick Step-Down
 `fpb-patrick-step-up` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=RDCTvQKcmv0)
 
 **Esecuzione**
-1. In piedi su un gradino basso o un disco, un piede sul bordo, l'altro nel vuoto davanti.
-2. Piega il ginocchio della gamba sul gradino portandolo in avanti oltre la punta del piede, tallone a terra, e scendi finché il tallone libero tocca il pavimento davanti.
-3. Risali spingendo sulla gamba sul gradino, senza aiutarti con il piede libero.
-4. Lento e controllato. Fai le ripetizioni indicate, poi cambia gamba.
+1. In piedi su un gradino di 20-30 cm, un piede sul bordo, l'altro nel vuoto davanti. Tallone del piede sul gradino a terra.
+2. Scendi piegando il ginocchio in avanti oltre la punta del piede, con il peso in avanti sull'avampiede, finché il tallone libero tocca il pavimento davanti: il movimento è quello di scendere le scale, non di sedersi su una sedia.
+3. Appena tocchi, spingi forte sulla gamba sul gradino per risalire, senza aiutarti con il piede libero.
+4. Lento in discesa, deciso in salita. Fai le ripetizioni indicate, poi cambia gamba.
 
 **Errori comuni:** Tallone del piede sul gradino che si alza. Ginocchio che cede verso l'interno. Appoggiare il peso sul piede libero in basso: deve solo sfiorare.
 **Più facile:** Gradino più basso, mano a un appoggio.
@@ -233,10 +233,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `fpb-poliquin-step-up` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=2ABf__3KZP4)
 
 **Esecuzione**
-1. In piedi su un gradino basso, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa.
-2. Scendi piegando il ginocchio in avanti oltre la punta del piede, finché il tallone del piede libero tocca il pavimento.
-3. Risali spingendo sulla gamba d'appoggio, senza aiuto dal piede libero.
-4. Lento e controllato. Fai le ripetizioni indicate, poi cambia gamba.
+1. In piedi su un gradino di 20-30 cm, con il tallone del piede d'appoggio su un rialzo (disco o cuneo) e la punta più bassa; senza rialzo, lascia che il tallone si sollevi durante la discesa.
+2. Scendi piegando il ginocchio in avanti oltre la punta del piede, peso in avanti sull'avampiede, finché il tallone del piede libero tocca il pavimento: come scendere le scale.
+3. Appena tocchi, spingi forte sulla gamba d'appoggio per risalire, senza aiuto dal piede libero. Puoi tenere una mano a un sostegno per l'equilibrio.
+4. Lento in discesa, deciso in salita. Fai le ripetizioni indicate, poi cambia gamba.
 
 **Errori comuni:** Perdere l'appoggio del tallone sul rialzo. Ginocchio che cede verso l'interno. Spingere con il piede libero in basso.
 **Più facile:** Rialzo più basso, mano a un appoggio. Si può fare anche senza rialzo, lasciando sollevare il tallone durante la discesa.

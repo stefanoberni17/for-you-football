@@ -348,7 +348,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Errori comuni:** Piegare le ginocchia per saltare: il lavoro è delle caviglie. Appoggiare i talloni. Contatti lunghi a terra.
 **Più facile:** Salti più bassi, ritmo più lento.
-**Più difficile:** Salti più alti, o su una gamba.
+**Più difficile:** Versione intermedia: saltelli laterali e avanti-indietro. Versione avanzata: saltelli in tutte le direzioni, o su una gamba.
 **Sicurezza:** Caviglie e polpacci riscaldati. Fastidio al tendine d'Achille: fermati.
 
 ### Pogo Jumps Progression (Ankle Stiffness)
@@ -369,9 +369,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `plioe-fascia-toe-bounces-single-leg-pogo-jumps` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=V5SVWUH1_50)
 
 **Esecuzione**
-1. In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata.
-2. Fai piccoli rimbalzi rapidi sul posto sull'avampiede, usando solo la caviglia.
-3. Il tallone non tocca mai terra, il contatto è il più breve possibile.
+1. In piedi su una gamba, ginocchio quasi teso, l'altra gamba leggermente sollevata. Attiva la pianta del piede contraendola.
+2. Fai piccoli rimbalzi rapidi sul posto, circa due al secondo, usando solo la caviglia: l'appoggio è solo sull'avampiede, idealmente alla base di alluce e indice.
+3. Il tallone non tocca mai terra, il contatto è il più breve possibile. Non conta l'altezza del salto: rilassa la parte alta del corpo e tieni attiva la pianta del piede.
 4. Tieni per il tempo indicato, poi cambia gamba.
 
 **Errori comuni:** Piegare il ginocchio per saltare. Tallone che tocca terra. Busto che si piega per tenere l'equilibrio.
@@ -474,7 +474,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 3. Appena tocchi terra salta in alto il più possibile: il contatto a terra è il più breve possibile.
 4. Atterra morbido e torna sul box con calma. Fai le ripetizioni indicate.
 
-**Errori comuni:** Saltare giù dal box invece di lasciarsi cadere. Contatto lungo a terra, o scendere in squat prima del salto. Ginocchia che cedono verso l'interno all'atterraggio.
+**Errori comuni:** Saltare giù dal box invece di lasciarsi cadere. Contatto lungo a terra, o scendere in squat prima del salto: conta la reattività, non l'altezza. Talloni che toccano terra all'atterraggio.
 **Più facile:** Box più basso, pausa a terra prima del salto.
 **Più difficile:** Box più alto, o atterraggio su una gamba.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Box basso finché l'atterraggio non è silenzioso.

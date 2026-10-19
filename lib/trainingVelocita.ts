@@ -10,7 +10,9 @@
  *    della parte alta con lo sprint (`SPRINT_MAX_CON_EMOM`). Si contano Sprint, Sprint 10 m e le sue
  *    varianti; NON salto+sprint, sprint con palla, T-sprint (tecnica ed esplosività) né le Salite Sprint
  *    (metabolico). Sopra il tetto il server toglie sprint dalla coda (prima le distanze lunghe).
- *  - una sola giornata di velocità a settimana; sprint con palla solo dalla 5ª settimana di allenamento.
+ *  - giornate di velocità a settimana dal tetto (lib/trainingTetti, 18/10: una; due off season con la velocità primo
+ *    obiettivo, mai consecutive, 12 sprint in tutta la settimana) più una giornata di rapidità con pochi scatti corti;
+ *    sprint con palla solo dalla 5ª settimana di allenamento.
  *  - SALITE (Ste, 25/9: "ci sta farle, ma in season pochissimo perché sono pesanti"): non contano nel tetto
  *    degli sprint massimali, ma al massimo UN blocco di salite a settimana, in season uno ogni
  *    `SALITE_IN_SEASON_OGNI_SETTIMANE` settimane, mai nello scarico; riscaldamento fisso in testa come per gli sprint.
@@ -23,14 +25,16 @@
 import type { Blocco, BloccoItem } from './trainingBlocks';
 import { LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { PlanItem } from './trainingEngine';
-import { dataRoma, lunediDi, type FeedbackPerMemoria } from './trainingMemoriaBlocchi';
-import { contaSprintMassimali, SPRINT_MASSIMALI_IDS, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA } from './trainingRulesV2';
+import { dataRoma, lunediDi, SETTIMANE_PER_LIVELLO_AVANZATI, type FeedbackPerMemoria } from './trainingMemoriaBlocchi';
+import { contaSprintMassimali, PRE_PARTITA_ID, SPRINT_MASSIMALI_IDS, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA } from './trainingRulesV2';
 
 export { SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA };
 export const RISC_VELOCITA_ID = 'risc-velocita';
 export const SPRINT_MIN_SEDUTA = 6;
 export const CON_PALLA_DALLA_SETTIMANA = 5;
 export const PLIO_SETTIMANE_B_MIN = 4;
+/** Chi è A/PRO ai test dei salti resta in B solo SETTIMANE_PER_LIVELLO_AVANZATI settimane (Ste, 18/10: "soprattutto per chi parte da zero: vediamo in base ai test"). */
+export const PLIO_SETTIMANE_B_MIN_AVANZATI = SETTIMANE_PER_LIVELLO_AVANZATI;
 /** Salite in season: un blocco ogni N settimane (Ste, 25/9: "pesanti"). Off season e preparazione: al massimo uno a settimana. */
 export const SALITE_IN_SEASON_OGNI_SETTIMANE = 4;
 /** Esercizi in salita (Salite Sprint, Salite Metabolico, Salite Resistenza): pesanti, fuori dal conteggio degli sprint massimali. */
@@ -66,6 +70,29 @@ export function bloccoRiscaldamentoVelocita(): Blocco {
 
 export const isSprint = (id: string) => SPRINT_IDS.has(id);
 export const isVelocita = (b: Blocco) => b.qualita === 'velocita' || b.items.some((it) => it.esercizio_id && isSprint(it.esercizio_id));
+
+// ─── L'asse partita, dopo (18/10, Ste) ──────────────────────────────────────
+/**
+ * Il blocco di Ste per il giorno PRIMA della partita (20', distanze brevi e poche reps: assegnato a 29 ragazzi sui calendari).
+ * È l'unico blocco di velocità ammesso a −1, non conta come giornata di velocità, non è una seduta fisica (va nel tetto
+ * delle giornate leggere) e non chiede il riscaldamento fisso.
+ */
+export { PRE_PARTITA_ID };
+export const isPrePartita = (b: Blocco | string) => (typeof b === 'string' ? b : b.id) === PRE_PARTITA_ID;
+/** Sprint fino a questa distanza = corti (rapidità: Ste, 18/10, "max 20/30 metri" a 2 giorni dalla partita); OLTRE = velocità pura. */
+export const VELOCITA_PURA_METRI = 30;
+/** Nei giorni +1, +2 e +3 dopo la partita niente velocità pura (Ste: "nei 2-3 giorni dopo la partita non si fa mai velocità pura se uno ha giocato molto"; senza resoconto si assume che abbia giocato tutta). */
+export const VELOCITA_PURA_DOPO_PARTITA_GIORNI = 3;
+/** Salto + sprint: non contano nel tetto degli sprint massimali, ma la distanza conta per dire se è velocità pura. */
+export const SALTO_SPRINT_IDS: ReadonlySet<string> = new Set(['vel-salto-triplo-e-sprint', 'vel-salto-triplo-a-1-gamba-e-sprint']);
+/** Lo sprint più lungo (in metri) tra gli sprint del blocco (massimali, con palla, salto+sprint, salite); 0 se non ha sprint a metri. */
+export const maxSprintMetri = (b: Blocco) => Math.max(0, ...b.items.filter((it) => it.esercizio_id && (isSprint(it.esercizio_id) || SPRINT_CON_PALLA_IDS.has(it.esercizio_id) || SALTO_SPRINT_IDS.has(it.esercizio_id) || SALITE_IDS.has(it.esercizio_id)) && it.unita === 'metri').map((it) => it.quantita));
+/**
+ * Velocità PURA = un blocco di velocità con sprint OLTRE VELOCITA_PURA_METRI, o le salite. Rapidità (sprint corti, box,
+ * partenze, il blocco pre partita) e i blocchi di pliometria con qualche scatto non lo sono: sono la giornata "rapidità e plio".
+ * Vale a −2 (solo corta) e a +2/+3 dopo la partita (niente pura).
+ */
+export const isVelocitaPura = (b: Blocco) => !isPrePartita(b) && (isSalite(b) || (b.qualita === 'velocita' && maxSprintMetri(b) > VELOCITA_PURA_METRI));
 export const haConPalla = (b: Blocco) => b.items.some((it) => it.esercizio_id && SPRINT_CON_PALLA_IDS.has(it.esercizio_id));
 export const isSalite = (b: Blocco) => b.items.some((it) => it.esercizio_id && SALITE_IDS.has(it.esercizio_id));
 export const isPliometria = (b: Blocco) => b.qualita === 'pliometria-intensiva' || b.qualita === 'pliometria-estensiva';
@@ -135,6 +162,8 @@ export function filtraVelocitaPliometria(
   blocchi: Blocco[], opt: {
     settimaneAllenamento: number; settimanePlio: number; tecnicaTraGliObiettivi: boolean; inSeasonOPreparazione: boolean;
     inSeason?: boolean; isDeload?: boolean; settimaneDalleSalite?: number;
+    /** Livello dai test dei salti (lib/trainingLivelli): A/PRO → ingresso in B più corto (18/10). */
+    livelloSalti?: 'B' | 'A' | 'PRO';
   },
 ): { blocchi: Blocco[]; note: string[] } {
   const note: string[] = [];
@@ -150,16 +179,18 @@ export function filtraVelocitaPliometria(
       note.push(`SALITE: in season al massimo una volta ogni ${SALITE_IN_SEASON_OGNI_SETTIMANE} settimane (l'ultima ${daSalite === 0 ? 'questa settimana' : daSalite === 1 ? 'la settimana scorsa' : `${daSalite} settimane fa`}): i blocchi in salita non sono disponibili.`);
     }
   }
-  const plioIngresso = opt.settimanePlio < PLIO_SETTIMANE_B_MIN;
+  const avanzatoSalti = !!opt.livelloSalti && LIVELLO_ORDINE[opt.livelloSalti] > LIVELLO_ORDINE.B;
+  const plioMinimoB = avanzatoSalti ? PLIO_SETTIMANE_B_MIN_AVANZATI : PLIO_SETTIMANE_B_MIN;
+  const plioIngresso = opt.settimanePlio < plioMinimoB;
   if (plioIngresso && out.some((b) => isPliometria(b) && b.livello !== null && LIVELLO_ORDINE[b.livello] > LIVELLO_ORDINE.B)) {
     out = out.filter((b) => !isPliometria(b) || b.livello === null || LIVELLO_ORDINE[b.livello] <= LIVELLO_ORDINE.B);
-    note.push(`PLIOMETRIA: l'atleta ha ${opt.settimanePlio} settimane di pliometria alle spalle (minimo ${PLIO_SETTIMANE_B_MIN} in B prima dell'intensiva A): solo blocchi B.`);
+    note.push(`PLIOMETRIA: l'atleta ha ${opt.settimanePlio} settimane di pliometria alle spalle (minimo ${plioMinimoB} in B prima dell'intensiva A${avanzatoSalti ? ', ridotto perché ai test dei salti è ' + opt.livelloSalti : ''}): solo blocchi B.`);
   }
   // Con palla: subito se la tecnica è tra gli obiettivi (Ste, 25/9: chi fa sprint E tecnica sfrutta i blocchi con velocità e tiri),
   // altrimenti dalla 5ª settimana in season/preparazione
   const conPallaOk = opt.tecnicaTraGliObiettivi || (opt.settimaneAllenamento >= CON_PALLA_DALLA_SETTIMANA && opt.inSeasonOPreparazione);
-  if (!conPallaOk && out.some(haConPalla)) {
-    out = out.filter((b) => !haConPalla(b));
+  if (!conPallaOk && out.some((b) => haConPalla(b) && !isPrePartita(b))) {
+    out = out.filter((b) => !haConPalla(b) || isPrePartita(b)); // il blocco pre partita di Ste resta sempre (18/10)
     note.push(opt.settimaneAllenamento < CON_PALLA_DALLA_SETTIMANA
       ? `VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana di allenamento (ora ${opt.settimaneAllenamento}): i blocchi con sprint con palla non sono disponibili.`
       : 'VELOCITÀ CON PALLA: solo con la tecnica tra gli obiettivi o in season/preparazione: i blocchi con sprint con palla non sono disponibili.');
@@ -181,6 +212,6 @@ export function velocitaPliometriaRegola(opt: { velocitaETecnica: boolean }): st
   const combo = opt.velocitaETecnica
     ? ` VELOCITÀ + TECNICA tra gli obiettivi: sfrutta i blocchi che uniscono sprint e palla (rapidità e tiro, velocità con sprint con palla, palleggio-sprint-tiro): coprono due obiettivi in una seduta e contano per entrambi.`
     : '';
-  return `24. VELOCITÀ (Ste, 25/9): al massimo UNA giornata di velocità a settimana.${combo} Ogni seduta con un blocco di velocità o sprint apre con \`${RISC_VELOCITA_ID}\` (corsetta 4', mobilità 4', 6 allunghi progressivi: ~15', contalo nel budget di tempo); se non lo metti, il server lo aggiunge in testa. Sprint massimali per seduta: ${SPRINT_MIN_SEDUTA}-${SPRINT_MAX_SEDUTA} (${SPRINT_MAX_CON_EMOM} se nella settimana c'è anche l'EMOM della parte alta con lo sprint): contano Sprint e le varianti a 10 m, non salto+sprint, sprint con palla, T-sprint e salite; oltre, il server toglie sprint dalla coda. SALITE (Salite Sprint, Salite Metabolico, Salite Resistenza): pesanti — al massimo UN blocco a settimana, in season una volta ogni ${SALITE_IN_SEASON_OGNI_SETTIMANE} settimane e mai nello scarico (la libreria le mostra solo quando sono ammesse); anche loro aprono con \`${RISC_VELOCITA_ID}\`. Gli sprint con palla: subito se la tecnica è tra gli obiettivi, altrimenti dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana (la libreria li mostra solo quando sono ammessi).
-25. PLIOMETRIA (Ste, 24/9): chi inizia resta sui blocchi B per almeno ${PLIO_SETTIMANE_B_MIN} settimane (la libreria mostra solo quelli); dopo, la memoria dei blocchi alterna una settimana intensiva (A) e una di richiamo (B); un "duro" sull'intensiva riporta al richiamo per 2 settimane; nella settimana di scarico la pliometria resta in B, versione short.`;
+  return `24. VELOCITÀ (Ste, 25/9 e 16/10): le giornate di velocità a settimana sono quelle della regola 2d (una; due solo in off season con la velocità primo obiettivo, mai consecutive e con al massimo 12 sprint massimali in tutta la settimana); il blocco pre partita \`${PRE_PARTITA_ID}\`, solo il giorno prima della partita, non conta. In più UNA giornata di RAPIDITÀ: un blocco di pliometria o esplosività con qualche scatto corto (il server lo lima a pochi sprint, nessuno oltre i 30 m), senza blocchi di qualità velocità né salite: non conta come giornata di velocità.${combo} Ogni seduta con un blocco di velocità o sprint apre con \`${RISC_VELOCITA_ID}\` (corsetta 4', mobilità 4', 6 allunghi progressivi: ~15', contalo nel budget di tempo); se non lo metti, il server lo aggiunge in testa. Sprint massimali per seduta: ${SPRINT_MIN_SEDUTA}-${SPRINT_MAX_SEDUTA} (${SPRINT_MAX_CON_EMOM} se nella settimana c'è anche l'EMOM della parte alta con lo sprint): contano Sprint e le varianti a 10 m, non salto+sprint, sprint con palla, T-sprint e salite; oltre, il server toglie sprint dalla coda. SALITE (Salite Sprint, Salite Metabolico, Salite Resistenza): pesanti — al massimo UN blocco a settimana, in season una volta ogni ${SALITE_IN_SEASON_OGNI_SETTIMANE} settimane e mai nello scarico (la libreria le mostra solo quando sono ammesse); anche loro aprono con \`${RISC_VELOCITA_ID}\`. Gli sprint con palla: subito se la tecnica è tra gli obiettivi, altrimenti dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana (la libreria li mostra solo quando sono ammessi).
+25. PLIOMETRIA (Ste, 24/9): chi inizia resta sui blocchi B per almeno ${PLIO_SETTIMANE_B_MIN} settimane (${PLIO_SETTIMANE_B_MIN_AVANZATI} se ai test dei salti è già avanzato: prima la difficoltà, cioè il codice A in versione breve, poi il volume; la libreria mostra solo i blocchi ammessi); dopo, la memoria dei blocchi alterna una settimana intensiva (A) e una di richiamo (B); un "duro" sull'intensiva riporta al richiamo per 2 settimane; nella settimana di scarico la pliometria resta in B, versione short. La pliometria intensiva può stare anche in DUE giornate a settimana (Ste, 16/10), in giorni NON consecutivi e dentro il tetto di contatti per seduta; oltre due il validatore rifiuta.`;
 }

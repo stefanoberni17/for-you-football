@@ -13,7 +13,7 @@ import {
   type AreaForza, type AreaGambe, type FasciaLivello, type TestLivello, type TrainingExercise, type TrainingTest,
 } from './trainingCatalog';
 
-import { giorniAllaPartita, validateItemV2, validateSessionV2, type ContestoV2, livelloPerQualita } from './trainingRulesV2';
+import { giorniAllaPartita, PRE_PARTITA_ID, validateItemV2, validateSessionV2, type ContestoV2, livelloPerQualita } from './trainingRulesV2';
 import { testV2ById } from './trainingTestsV2';
 import { LIVELLO_ORDINE, type ExerciseV2 } from './trainingCatalogV2';
 import { bloccoById } from './trainingBlocks';
@@ -346,6 +346,10 @@ export interface PlanItem {
   // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
   adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // ripasso (28/9): esercizio di tecnica difficile l'ultima volta, rimesso in coda
   lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)
+  // Resoconto dopo squadra/partita (19/10, lib/trainingResoconto): 'togli' = l'esercizio si può saltare; 'aggiungi' = una serie in più se se la sente
+  facoltativo?: 'togli' | 'aggiungi';
+  facoltativo_motivo?: string;
+  resoconto?: 'leggero' | 'ridotto'; // cosa ha fatto il resoconto su questo item (serie ×0.7 / reps ×0.8), separato da `adattamento` che resta della progressione
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom
@@ -358,6 +362,7 @@ export interface PlanSession {
   blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
+  proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; // dal resoconto (19/10): il programma propone, il ragazzo sceglie
 }
 export interface WeekPlan {
   sedute: PlanSession[];
@@ -413,6 +418,7 @@ export function validatePlan(
     if (!Array.isArray(s.items) || s.items.length === 0) { errors.push(`seduta "${s.titolo}": senza esercizi`); continue; }
 
     const itemsV2: { it: PlanItem; ex: ExerciseV2 }[] = [];
+    const gpSeduta = giorniAllaPartita(s.giorno, ctx.matchDays);
     for (const it of s.items) {
       const ex = esercizioById(it.esercizio_id);
       if (!ex) {
@@ -422,7 +428,9 @@ export function validatePlan(
         const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)]);
         // Fidato anche il blocco VIRTUALE (parte alta dalle scale `pa-*`, gambe `pb-*`, kettlebell `kb-*`, apertura breve): non è nella libreria ma l'ha dosato il server
         const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('apertura-')));
-        const r = validateItemV2(it, ctx.v2, giorniAllaPartita(s.giorno, ctx.matchDays), { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
+        // Il blocco pre partita di Ste (18/10) vive il giorno prima della partita: lì la finestra della velocità non vale per i suoi item
+        const gpItem = it.blocco_id === PRE_PARTITA_ID && gpSeduta === 1 ? null : gpSeduta;
+        const r = validateItemV2(it, ctx.v2, gpItem, { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });
         continue;

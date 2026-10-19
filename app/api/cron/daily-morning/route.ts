@@ -5,6 +5,11 @@ import { queryDatabase, richText, titleText } from '@/lib/notion';
 import { WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
 import { sendPushToUser } from '@/lib/pushNotification';
 import { filterActiveProfiles } from '@/lib/activity';
+import { loadResoconti } from '@/lib/trainingResocontoServer';
+import { addDays, resocontiDaChiedere } from '@/lib/trainingResoconto';
+import { loadSquadraCompleta, todayRome } from '@/lib/trainingPlanner';
+import { giorniPartita } from '@/lib/trainingSquadra';
+import { giorniSquadra } from '@/lib/trainingLoad';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -283,6 +288,32 @@ Seleziona la frase e aggiungi la riflessione.`;
     }
   }
 
-  console.log(`✅ Daily morning: ${sent}/${users.length} messages sent (${skippedInactive} inattivi >30gg esclusi)`);
-  return NextResponse.json({ success: true, sent, total: users.length, skippedInactive });
+  // Resoconto dopo la squadra e la partita (19/10, campo-da-fare 17): a chi ha il Campo e IERI un giorno squadra o
+  // partita (calendario o abitudine) senza resoconto, una push "Com'è andata ieri?" che apre l'hub. Al mattino (08:00
+  // Roma) perché il cron serale delle 16 UTC parte PRIMA dell'allenamento tipico (review 19/10); si risponde fino al giorno dopo. Fail-soft per utente.
+  let resocontiPush = 0;
+  try {
+    const { data: campo } = await supabaseAdmin.from('profiles').select('user_id')
+      .eq('training_access', true).or('safety_review.is.null,safety_review.eq.false').is('deleted_at', null).limit(500);
+    const oggi = todayRome();
+    const ieri = addDays(oggi, -1);
+    for (const u of campo || []) {
+      try {
+        if (testUserId && u.user_id !== testUserId) continue;
+        const [{ data: calendar }, { squadra, partita }, resoconti] = await Promise.all([
+          supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days').eq('user_id', u.user_id).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+          loadSquadraCompleta(u.user_id),
+          loadResoconti(u.user_id, 3),
+        ]);
+        const da = resocontiDaChiedere({ oggi, trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partita), resoconti })
+          .find((x) => x.data === ieri);
+        if (!da) continue;
+        const pushed = await sendPushToUser(u.user_id, 'Campo', da.tipo === 'partita' ? 'Com\'è andata la partita di ieri? Dimmelo in 30 secondi: la settimana si adatta.' : 'Com\'è andata ieri con la squadra? Dimmelo in 30 secondi: la settimana si adatta.', '/allenamento').catch(() => false);
+        if (pushed) resocontiPush++;
+      } catch (e) { console.error(`resoconto push failed for ${u.user_id}:`, e); }
+    }
+  } catch (e) { console.error('resoconto push: errore', e); }
+
+  console.log(`✅ Daily morning: ${sent}/${users.length} messages sent (${skippedInactive} inattivi >30gg esclusi); resoconto push: ${resocontiPush}`);
+  return NextResponse.json({ success: true, sent, total: users.length, skippedInactive, resocontiPush });
 }

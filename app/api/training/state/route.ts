@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { loadResoconti } from '@/lib/trainingResocontoServer';
+import { applicaResoconti, resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
+import { giorniSquadra } from '@/lib/trainingLoad';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
@@ -36,7 +39,7 @@ export async function GET(request: NextRequest) {
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
     const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession }] = await Promise.all([
-      supabaseAdmin.from('profiles').select('training_pain_hold, name').eq('user_id', userId).maybeSingle(),
+      supabaseAdmin.from('profiles').select('training_pain_hold, name, role').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
         .eq('user_id', userId).order('created_at', { ascending: false }).limit(400),
@@ -143,7 +146,7 @@ export async function GET(request: NextRequest) {
       ultimaTestSession?.completed_at
       || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null),
     );
-    const [{ data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese] = await Promise.all([
+    const [{ data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti] = await Promise.all([
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
       getConsents(userId),
@@ -152,6 +155,8 @@ export async function GET(request: NextRequest) {
       loadPreferenzeSetup(userId),
       // Strato mese (7/10): settimane pianificate/fatte per obiettivo, priorità, aspetti sempre saltati — in parallelo, non dopo
       loadFocusSetup(userId).then((f) => loadMese(userId, f)),
+      // Resoconti squadra/partita degli ultimi 28 giorni (19/10): carico reale, sedute adattate, "com'è andata?"
+      loadResoconti(userId),
     ]);
     // Obiettivi della fase (migration 024): colonna letta a parte, così il setup base non dipende dalla migration
     setup.focus = focusSetup;
@@ -160,11 +165,21 @@ export async function GET(request: NextRequest) {
       trainingDays: calendar?.training_days || [], matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale),
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
     });
-    // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra
-    let carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato);
+    // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra; i giorni con il resoconto pesano il dato vero
+    const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: setup.squadraDurataMin, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale) } });
+    let carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato, misurata);
     // Scarico solo con del carico alle spalle (29/9): stessa regola del planner
     const cicloEffettivo = conScaricoDalCarico(ciclo, carico.settimane);
-    if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, undefined, squadraStimato); }
+    if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, undefined, squadraStimato, misurata); }
+    // Il piano della settimana con i resoconti applicati (serie facoltative, giorni più leggeri): il piano salvato non cambia
+    const oggi = todayRome();
+    const matchDaysEff = giorniPartita(calendar?.match_days || [], partitaAbituale);
+    const trainingDaysEff = giorniSquadra(calendar?.training_days || [], squadra);
+    const fattiGiorni = new Set((completions || []).map((c: { session_key: string }) => Number(String(c.session_key).split('#')[1])).filter((n: number) => Number.isInteger(n)));
+    const planAdattato = lastPlan && lastPlan.plan && lastPlan.week_start >= mondayOfThisWeekRome()
+      ? { ...lastPlan, plan: applicaResoconti(lastPlan.plan, { weekStart: lastPlan.week_start, oggi, resoconti, squadra, fatteGiorni: fattiGiorni }).plan }
+      : lastPlan;
+    const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti });
 
     const rombo = buildRombo(rows);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
@@ -175,7 +190,8 @@ export async function GET(request: NextRequest) {
     const livelli = livelliPerQualita(rows, fascia);
     const feedbackRecenti = await loadFeedbackRecenti(userId);
     const memoria = calcolaMemoriaBlocchi(feedbackRecenti, {
-      disponibili: blocchiDisponibili({ livello: fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, livelloPerQualita: livelli }),
+      // i ruoli come nel planner (18/10): i blocchi P1 solo per i portieri, così la memoria e il ri-test mirato vedono la stessa libreria
+      disponibili: blocchiDisponibili({ livello: fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, livelloPerQualita: livelli, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) }),
       lunediCorrente: mondayOfThisWeekRome(), livello: fascia, livelli,
     });
     const perQualita = new Map<QualitaV2, string[]>();
@@ -211,7 +227,7 @@ export async function GET(request: NextRequest) {
       massimali,
       ladders: LADDER_AREE.map((a) => ladderForArea(rows, a)).filter((l) => l !== null),
       openTestSession: openSession || null,
-      plan: lastPlan || null,
+      plan: planAdattato || null,
       // Settimana: giorno di oggi (1=Lun) e se il piano è di una settimana passata (→ l'hub ne prepara uno nuovo)
       oggiDow: oggiDowRome(),
       lunedi: mondayOfThisWeekRome(),
@@ -236,6 +252,9 @@ export async function GET(request: NextRequest) {
       calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
       // Giorno abituale della partita (setup, chiave `partita` in training_squadra): usato dal planner quando il calendario è vuoto
       partitaAbituale,
+      // Resoconto dopo squadra/partita (19/10): oggi e ieri senza risposta (l'hub chiede il primo; "Salta" vive in localStorage), gli ultimi dati
+      resocontiDaChiedere: daChiedere,
+      resoconti: resoconti.slice(0, 10),
       // Zone più tese dal rolling (28/9), per la card dell'hub
       zoneTese: zoneTeseRicorrenti(feedbackRecenti),
       maxSeduteFisiche: maxSeduteFisiche(setup.fase),

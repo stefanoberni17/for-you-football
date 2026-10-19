@@ -3,10 +3,6 @@
 Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 40 schede su 40 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## Da confermare (1)
-
-- **Defender Stance and Speed Drill**: Serve il link del video dei colori da mettere sul telefono (Ste: 'non riesco a trovarlo ora'), e quale colore è lo sprint in avanti e quale all'indietro (nel testo c'è due volte il nero).
-
 ## velocita (19)
 
 ### Quickness Box and Shot
@@ -28,7 +24,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Esecuzione**
 1. Una pallina da tennis in mano, posizione di attesa: gambe piegate, peso sugli avampiedi. Non servono riferimenti a terra.
-2. Lancia la pallina a terra davanti a te mentre parti: corsa laterale di qualche metro e ritorno al punto di partenza a passi laterali, riprendendo la pallina.
+2. Lancia la pallina a terra mentre parti: due spostamenti laterali rapidi e ritorno, riprendendo la pallina al volo il prima possibile.
 3. Riparti subito dall'altro lato con un nuovo lancio.
 4. Fai il tempo indicato senza fermarti.
 
@@ -41,16 +37,15 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `vel-postura-velocita-difensori` · bilaterale · reps · corpo libero · [video](https://youtu.be/kWcCAKPMbdM)
 
 **Esecuzione**
-1. Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti. Il telefono davanti a te con il video dei colori.
+1. Posizione di attesa del difensore: gambe piegate, piedi larghi come le spalle, peso sugli avampiedi, busto leggermente avanti. Il telefono davanti a te con il video dei colori, che parte insieme all'esercizio.
 2. Piccoli passi rapidi sul posto. A ogni colore che compare cambi posizione: bianco ti sposti verso sinistra, nero verso destra, a passi laterali senza incrociare.
-3. Quando compare il colore dello sprint parti a tutta per 3-5 metri, in avanti o all'indietro come indicato, poi torna in posizione.
+3. Quando compare il colore dello sprint (il rosso) parti a tutta per 3-5 metri, in avanti o all'indietro come mostra il video, poi torna in posizione.
 4. Fai le ripetizioni indicate (una ripetizione = un giro del video).
 
 **Errori comuni:** Gambe tese nell'attesa: se sei alto, parti in ritardo. Incrociare le gambe nei passi laterali. Girare le spalle per tornare: si torna guardando avanti.
 **Più facile:** Video più lento, scatti più corti.
 **Più difficile:** Scatti più lunghi, posizione più bassa.
 **Sicurezza:** Solo dopo il riscaldamento di velocità (corsa lenta, mobilità, allunghi). Mai nei 2 giorni prima della partita. Fastidio dietro la coscia o al polpaccio: fermati subito.
-**DA CONFERMARE:** Serve il link del video dei colori da mettere sul telefono (Ste: 'non riesco a trovarlo ora'), e quale colore è lo sprint in avanti e quale all'indietro (nel testo c'è due volte il nero).
 
 ### Striker Quick-Feet Drill
 `vel-rapidita-movimenti-attaccanti` · bilaterale · reps · corpo libero · [video](https://youtu.be/TfM9TJymxy8)
@@ -324,10 +319,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `aer-ripetute` · bilaterale · minuti · campo · senza video
 
 **Esecuzione**
-1. Dopo il riscaldamento, corsa a ritmo forte sulla distanza o il tempo indicato.
-2. Ritmo uniforme dall'inizio alla fine della ripetuta: non uno sprint, ma un ritmo che reggi per tutta la ripetuta e per tutte le ripetute.
+1. Dopo il riscaldamento, corsa sostenuta cercando di restare nel tempo indicato per ogni ripetuta.
+2. La velocità giusta ti fa arrivare in fondo molto stanco ma in grado di farne un'altra dopo il recupero: non uno sprint, un ritmo che reggi per tutte le ripetute.
 3. Recupero come indicato (corsa leggera o cammino), poi la successiva.
-4. L'ultima ripetuta deve avere lo stesso tempo della prima: se crolla, le prime erano troppo forti.
+4. Se non riesci a stare nei tempi, allunga un po' il recupero; se ci stai comodo, alza un po' la velocità.
 
 **Errori comuni:** Prima ripetuta troppo forte. Fermarsi del tutto nel recupero quando è indicato corsa leggera. Falcata che si accorcia sul finale: tieni il ritmo con le braccia.
 **Più facile:** Ripetute più corte, recupero più lungo.
@@ -354,10 +349,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `met-circuito-resistenza-velocita-tecnica-x-esterno` · bilaterale · secondi · campo · [video](https://www.youtube.com/watch?v=DLkmPVQgdFE)
 
 **Esecuzione**
-1. Circuito per esterni guidato dal video: conduzione lungo la fascia, cambio di direzione sul cinesino, sprint e cross o tiro.
-2. Fai ogni giro al ritmo indicato: i tratti di conduzione sostenuti, lo sprint finale a tutta.
-3. Recupero come indicato tra i giri, camminando per tornare al punto di partenza.
-4. Alterna il lato (fascia destra e sinistra) se indicato.
+1. Navetta sui 30 metri (30 + 30) lungo la fascia.
+2. Contromovimento per allargarti, prendi la palla, punta il cinesino e concludi in porta.
+3. Torna sull'esterno, contromovimento per tagliare dentro, prendi la palla, piccolo slalom e concludi in porta.
+4. Torna al punto di partenza e ricomincia. Guarda il video per la disposizione. Recupero come indicato tra i giri.
 
 **Errori comuni:** Tocchi lunghi che fanno perdere la palla sul cambio di direzione. Cross o tiro svogliato a fine giro: è il gesto che conta. Saltare il recupero.
 **Più facile:** Meno giri, senza cross.
@@ -423,14 +418,14 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `test2-palleggi-piedi-coscia-testa` · bilaterale · secondi · campo · senza video
 
 **Esecuzione**
-1. Palla a terra: alzala come vuoi e palleggia con piedi, cosce e testa.
-2. Un giro = un tocco di piede, uno di coscia e uno di testa, in qualsiasi ordine.
-3. Conta i giri completi senza che la palla tocchi terra. Se cade, riparti da zero.
-4. Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, occhi sulla palla.
+1. Palla a terra: alzala come vuoi e palleggia con i piedi.
+2. Un giro = 10 palleggi con i piedi, poi 10 con le cosce, poi 10 di testa, senza che la palla tocchi terra. Finito il giro si riparte dai piedi.
+3. Conta i giri completi. Se la palla cade, riparti da zero.
+4. Il risultato è il numero di giri della serie più lunga. Ginocchia morbide, occhi sulla palla. A piedi nudi, se vuoi, per la sensibilità.
 
-**Errori comuni:** Saltare una superficie: il giro vale solo con tutte e tre. Tocchi di punta. Corpo rigido.
-**Più facile:** Giri con piedi e cosce.
-**Più difficile:** Sequenza fissa piede-coscia-testa.
+**Errori comuni:** Saltare una superficie o fare meno di 10 tocchi: il giro vale solo completo. Tocchi di punta. Corpo rigido.
+**Più facile:** Giri da 5 tocchi per superficie.
+**Più difficile:** Giri da 15 tocchi per superficie.
 
 ### Ankle Stiffness Test
 `test2-rapidita-ankle-stiffness-test` · per lato · secondi · corpo libero · [video](https://youtube.com/watch?v=YAF8Zi6HLi8)
@@ -546,9 +541,9 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 `test2-test-equilibrio-1-gamba` · per lato · secondi · corpo libero · senza video
 
 **Esecuzione**
-1. In piedi su una gamba, l'altro piede sollevato dietro, mani sui fianchi.
-2. Chiudi gli occhi (se indicato) e avvia il cronometro.
-3. Il test finisce quando il piede libero tocca terra o le mani lasciano i fianchi. Un piccolo saltello per non cadere è ammesso, se non esageri; saltelli continui chiudono il test.
+1. A piedi nudi. In piedi su una gamba, l'altro piede sollevato, mani sui fianchi.
+2. Chiudi gli occhi e avvia il cronometro.
+3. Il test finisce quando il piede libero tocca terra, il piede d'appoggio si sposta o le mani lasciano i fianchi. Un piccolo saltello per non cadere è ammesso, se non esageri; saltelli continui chiudono il test.
 4. Fai entrambe le gambe. Il risultato è il tempo in secondi per lato.
 
 **Errori comuni:** Aprire gli occhi di nascosto. Saltellare di continuo sul piede d'appoggio: un aggiustamento sì, una serie no. Mani che si staccano dai fianchi.
