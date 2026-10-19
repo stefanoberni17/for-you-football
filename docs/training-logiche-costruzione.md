@@ -393,7 +393,12 @@ alla lettura dello state): ±2 niente · ±3 serie facoltative da togliere/aggiu
 ≤ 20' o fatica < 4 = quasi non giocato → le regole del dopo partita non valgono (`partitaPocoGiocata` nel planner) ·
 fatica ≥ 9 (la zona "al limite": assoluta, perché con la partita il previsto è già 9) o fastidio → i 2 giorni dopo
 serie ×0.7 + proposta yoga di recupero · due giorni di fila alti → reps ×0.8 e facoltativi, due bassi → serie in più ·
-nessuna rigenerazione con Claude. Il carico usa fatica × minuti reali nell'acuto. Sotto, la proposta com'era (18/10).
+nessuna rigenerazione con Claude. Il carico usa fatica × minuti reali nell'acuto. **La partita, seconda nota di Ste
+(19/10):** intera con 7-9 e dolori vari = normale (valgono le regole del dopo partita, niente altro); fatica ≤ 6 = meno
+affaticato anche sulla partita intera (terza nota: "il voto è soggettivo, ma lo sforzo dei 90' l'ha fatto": niente in più,
+pesa meno nel carico, le regole del dopo restano); con meno di 75' cade anche il divieto di velocità pura a +2/+3; ≤ 20' o < 4 = quasi non giocato (tutto il dopo non vale); 10 = il giorno dopo SOLO recupero
+(corsettina 5', rolling, yoga di recupero al posto della seduta) e il secondo più leggero. La partita non dà mai
+serie in più. Sotto, la proposta com'era (18/10).
 
 #### La proposta del 18/10 (storico)
 Il resoconto (allenamento con la squadra o partita: fatica 1-10, minuti/durata, cosa si è fatto; spec del 14/10 al

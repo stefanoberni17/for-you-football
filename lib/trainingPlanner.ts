@@ -336,7 +336,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     fase: faseSetup, squadra,
   });
   // Resoconti (19/10): per i giorni con il dato vero, fatica × minuti al posto della stima nell'acuto
-  const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null });
+  const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null, giorni: { trainingDays, matchDays } });
   let carico = await loadCarico(userId, ciclo.isDeload, setRpe, squadraSettimanale, misurata);
   // Scarico solo con del carico alle spalle (29/9): se le settimane precedenti sono vuote, la settimana è normale
   const cicloEffettivo = conScaricoDalCarico(ciclo, carico.settimane);

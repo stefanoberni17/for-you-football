@@ -319,7 +319,9 @@ export default function AllenamentoHub() {
   // Resoconto dopo squadra/partita (19/10): il primo da chiedere non saltato ("Salta" resta sul dispositivo, per data e tipo)
   const oggiData = dataDiGiorno(state.lunedi, oggiDow);
   const resocontoSaltato = (r: { data: string; tipo: string }) => { try { return localStorage.getItem(`resoconto.saltato:${r.data}:${r.tipo}`) === '1'; } catch { return false; } };
-  const resocontoDaChiedere = (state.resocontiDaChiedere ?? []).find((r) => !resocontoSaltato(r)) ?? null;
+  // La card del giorno stesso solo dalla sera (dalle 18 a Roma: prima dell'allenamento non ha senso); quella di ieri sempre (review 19/10)
+  const oraRoma = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Rome', hour: '2-digit', hour12: false }).format(new Date()));
+  const resocontoDaChiedere = (state.resocontiDaChiedere ?? []).find((r) => !resocontoSaltato(r) && (r.data !== oggiData || oraRoma >= 18)) ?? null;
   const saltaResoconto = () => {
     if (!resocontoDaChiedere) return;
     try { localStorage.setItem(`resoconto.saltato:${resocontoDaChiedere.data}:${resocontoDaChiedere.tipo}`, '1'); } catch { /* private mode */ }

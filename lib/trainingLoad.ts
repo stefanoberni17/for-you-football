@@ -121,7 +121,8 @@ export function calcolaCarico(input: {
   const S = Math.max(0, Math.round(input.squadraSettimanale ?? 0));
   // Squadra misurata (resoconti degli ultimi 7 giorni): l'acuto usa il dato vero al posto della stima di quel giorno;
   // il cronico resta sulla stima (la base costante): "squadra: 3 giorni misurati, 1 stimato"
-  const misurati = (input.squadraMisurata ?? []).filter((m) => m.data >= addDays(oggi, -6) && m.data <= oggi);
+  // Con S = 0 (off season: la squadra non entra nel rapporto) niente correzione, altrimenti l'ACWR si gonfierebbe (review 19/10)
+  const misurati = S > 0 ? (input.squadraMisurata ?? []).filter((m) => m.data >= addDays(oggi, -6) && m.data <= oggi) : [];
   const correzioneAcuto = misurati.reduce((a, m) => a + (m.reale - m.stima), 0);
   const sAcuto = Math.max(0, Math.round(S + correzioneAcuto));
   const da = addDays(oggi, -27); // finestra di 28 giorni (oggi incluso)

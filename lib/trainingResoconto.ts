@@ -9,9 +9,15 @@
  *    serie in più "da aggiungere" (fatica sotto). Il programma propone, il ragazzo sceglie (regola M8).
  *  - livello 2, vincolo: partita con al massimo PARTITA_POCO_MINUTI (20) minuti o fatica sotto PARTITA_POCO_RPE (4)
  *    = "come se non avesse quasi giocato": le regole del DOPO partita (niente gambe a +1, niente velocità pura a
- *    +2/+3) non valgono per quella partita. Fatica molto alta (≥ RESOCONTO_FATICA_ALTA, 9: la zona "al limite") o un fastidio → i
- *    RESOCONTO_GIORNI_RIDOTTI (2) giorni dopo le sedute dell'app sono più leggere (serie ×0.7) e si propone lo
- *    yoga di recupero al posto della seduta.
+ *    +2/+3) non valgono per quella partita. Squadra: fatica molto alta (≥ RESOCONTO_FATICA_ALTA, 9: la zona "al
+ *    limite") o un fastidio → i RESOCONTO_GIORNI_RIDOTTI (2) giorni dopo le sedute dell'app sono più leggere (serie
+ *    ×0.7) e si propone lo yoga di recupero.
+ *  - LA PARTITA (Ste, 19/10, seconda nota): giocata tutta con fatica 7-9 e qualche dolore è NORMALE (il previsto è 9,
+ *    i dolori vari non fanno scattare niente); fatica 6 con la partita intera resta in linea; fatica ≤ 6 con meno
+ *    di PARTITA_INTERA_MINUTI (75) = "meno affaticato": niente serie in più, ma nel carico pesa il dato vero e le
+ *    regole di +2/+3 (niente velocità pura) non valgono ("può fare qualcosa in più se serve"); fatica 10 → il
+ *    giorno dopo SOLO recupero: la seduta dell'app diventa una sessione di recupero (corsettina 5', rolling, yoga di
+ *    recupero) e il secondo giorno resta più leggero. La partita non dà mai serie "da aggiungere".
  *  - livello 3, due giorni di fila: fatica alta (scarto ≥ +3 o ≥ 9) in due resoconti di giorni consecutivi → la
  *    seduta dopo ha le ripetizioni ridotte (×RESOCONTO_REPS_RIDOTTE) e le serie facoltative; fatica bassa (scarto
  *    ≤ −3) due giorni di fila → serie facoltative in più. Niente rigenerazione con Claude.
@@ -24,6 +30,7 @@ import type { PlanItem, PlanSession, WeekPlan } from './trainingEngine';
 import { RPE_PARTITA, RPE_SQUADRA } from './trainingLoad';
 import { type SquadraQualitaId, type SquadraSettimana } from './trainingSquadra';
 import { DAY_NAMES } from './constants';
+import { bloccoById, expandBlocco } from './trainingBlocks';
 
 export type TipoResoconto = 'squadra' | 'partita';
 export const STANCHEZZE = ['fresco', 'normale', 'cotto'] as const;
@@ -53,7 +60,11 @@ export const RESOCONTO_NIENTE_DELTA = 2;     // |fatica − previsto| ≤ 2: nie
 export const RESOCONTO_PROPOSTA_DELTA = 3;   // ≥ 3: serie facoltative (livello 1)
 export const PARTITA_POCO_MINUTI = 20;       // partita: fino a 20' = quasi non giocato
 export const PARTITA_POCO_RPE = 4;           // partita: fatica sotto 4 = quasi non giocato
-export const RESOCONTO_FATICA_ALTA = 9;      // "molto alta" = la zona "al limite" della scala (9-10, assoluta: con la partita il previsto è già 9): due giorni più leggeri + yoga di recupero
+export const RESOCONTO_FATICA_ALTA = 9;      // squadra: "molto alta" = la zona "al limite" della scala (9-10): due giorni più leggeri + yoga di recupero
+export const PARTITA_RECUPERO_RPE = 10;      // partita: con 10 il giorno dopo solo recupero (rolling, yoga, corsettina), il secondo più leggero
+export const PARTITA_INTERA_MINUTI = 75;     // partita: sotto i 75' il "meno affaticato" toglie anche il divieto di velocità pura a +2/+3
+export const PARTITA_MENO_RPE = 6;           // partita: fatica ≤ 6 = meno affaticato (anche intera: il voto è soggettivo, lo sforzo dei 90' c'è stato)
+export const RECUPERO_CORSETTINA_MIN = 5;    // la corsettina lenta della sessione di recupero
 export const RESOCONTO_GIORNI_RIDOTTI = 2;   // i giorni dopo una fatica molto alta o un fastidio
 export const RESOCONTO_GIORNI_DI_FILA = 2;   // livello 3: due giorni consecutivi
 export const RESOCONTO_REPS_RIDOTTE = 0.8;   // livello 3 con fatica alta: ripetizioni/secondi ×0.8
@@ -91,18 +102,28 @@ export function previstoPer(tipo: TipoResoconto, data: string, squadra?: Squadra
 export interface ValutazioneResoconto {
   delta: number;                 // fatica − previsto
   livello: 0 | 1 | 2;            // 0 niente · 1 proposta · 2 vincolo (il livello 3 nasce da due resoconti di fila)
-  verso: 'piu' | 'meno' | null;  // livello 1: serie da togliere (più stanco del previsto) o da aggiungere
+  verso: 'piu' | 'meno' | null;  // livello 1: serie da togliere (più stanco del previsto) o da aggiungere (solo squadra)
   pocoGiocato: boolean;          // partita ≤ 20' o fatica < 4: le regole del dopo partita non valgono
-  faticaAlta: boolean;           // fatica ≥ 8 o fastidio: due giorni più leggeri + yoga di recupero
+  menoAffaticato: boolean;       // partita con fatica ≤ 6: niente in più, pesa meno nel carico; con meno di 75' a +2/+3 può fare qualcosa in più se serve
+  faticaAlta: boolean;           // squadra: fatica ≥ 9 o fastidio → due giorni più leggeri + yoga; partita: fatica 10 → il giorno dopo solo recupero
+  recuperoDopo: boolean;         // partita con fatica 10: la seduta del giorno dopo diventa una sessione di recupero
 }
 
 export function valutaResoconto(r: Resoconto, previsto = r.rpe_previsto ?? previstoPer(r.tipo, r.data)): ValutazioneResoconto {
   const delta = r.rpe - previsto;
-  const pocoGiocato = r.tipo === 'partita' && ((r.durata_min != null && r.durata_min <= PARTITA_POCO_MINUTI) || r.rpe < PARTITA_POCO_RPE);
+  if (r.tipo === 'partita') {
+    const pocoGiocato = (r.durata_min != null && r.durata_min <= PARTITA_POCO_MINUTI) || r.rpe < PARTITA_POCO_RPE;
+    // Ste, 19/10 (terza nota): 6 anche sulla partita intera è "meno affaticato" (il voto è soggettivo, ma lo sforzo dei 90' l'ha fatto:
+    // le regole del dopo partita restano; con meno di 75' cade anche il divieto di velocità pura a +2/+3)
+    const menoAffaticato = !pocoGiocato && r.rpe <= PARTITA_MENO_RPE;
+    const recuperoDopo = !pocoGiocato && r.rpe >= PARTITA_RECUPERO_RPE;
+    // Partita intera con 6-9 e qualche dolore = normale: niente serie in più, niente riduzioni oltre le regole del dopo partita
+    return { delta, livello: pocoGiocato || menoAffaticato || recuperoDopo ? 2 : 0, verso: null, pocoGiocato, menoAffaticato, faticaAlta: recuperoDopo, recuperoDopo };
+  }
   const faticaAlta = r.rpe >= RESOCONTO_FATICA_ALTA || !!r.fastidio_zona;
-  const livello: 0 | 1 | 2 = pocoGiocato || faticaAlta ? 2 : Math.abs(delta) >= RESOCONTO_PROPOSTA_DELTA ? 1 : 0;
+  const livello: 0 | 1 | 2 = faticaAlta ? 2 : Math.abs(delta) >= RESOCONTO_PROPOSTA_DELTA ? 1 : 0;
   const verso = Math.abs(delta) >= RESOCONTO_PROPOSTA_DELTA ? (delta > 0 ? 'piu' : 'meno') : null;
-  return { delta, livello, verso, pocoGiocato, faticaAlta };
+  return { delta, livello, verso, pocoGiocato: false, menoAffaticato: false, faticaAlta, recuperoDopo: false };
 }
 
 /** Il resoconto si può ancora dare? Il giorno stesso o il giorno dopo (Ste: "al massimo il giorno dopo"). */
@@ -129,6 +150,36 @@ export function partitaPocoGiocata(resoconti: readonly Resoconto[], squadra?: Sq
   return valutaResoconto(ultima, ultima.rpe_previsto ?? previstoPer('partita', ultima.data, squadra)).pocoGiocato ? ultima : null;
 }
 
+/** Quanto ha giocato la partita di quel giorno, dal resoconto: 'poco' (tutto il dopo partita non vale), 'meno' (solo +2/+3 non vale), null = intera o senza resoconto. */
+export function quantoGiocata(resoconti: readonly Resoconto[], dataPartita: string, squadra?: SquadraSettimana | null): 'poco' | 'meno' | null {
+  const r = resocontoDel(resoconti, dataPartita, 'partita');
+  if (!r) return null;
+  const v = valutaResoconto(r, r.rpe_previsto ?? previstoPer('partita', r.data, squadra));
+  // 'meno' (cade il divieto di velocità pura a +2/+3) solo con meno di 75': sulla partita intera lo sforzo dei 90' l'ha fatto
+  return v.pocoGiocato ? 'poco' : v.menoAffaticato && r.durata_min != null && r.durata_min < PARTITA_INTERA_MINUTI ? 'meno' : null;
+}
+
+/** La sessione di recupero del giorno dopo una partita da 10 (Ste, 19/10): corsettina 5', rolling, yoga di recupero. */
+export function sessioneRecuperoDopoPartita(giorno: number, alPostoDi?: string): PlanSession {
+  const rolling = bloccoById('fascia-training-rolling-and-fascia-adhesion');
+  const yoga = bloccoById('yoga-recupero');
+  const items: PlanItem[] = [
+    { esercizio_id: 'risc-corsa-lenta', serie: 1, quantita: RECUPERO_CORSETTINA_MIN, recupero_sec: 0, schema: 'fisso', unita: 'minuti', blocco_id: 'recupero-partita', nota: 'Corsettina lenta: giusto per muoverti.' },
+    ...(rolling ? expandBlocco(rolling) : []),
+    ...(yoga ? expandBlocco(yoga) : []),
+  ];
+  const blocchi = [
+    { id: 'recupero-partita', nome: 'Corsettina lenta', qualita: 'riscaldamento', durataMin: RECUPERO_CORSETTINA_MIN },
+    ...(rolling ? [{ id: rolling.id, nome: rolling.nome, qualita: rolling.qualita, durataMin: 19 }] : []),
+    ...(yoga ? [{ id: yoga.id, nome: yoga.nome, qualita: yoga.qualita, durataMin: yoga.durataMin }] : []),
+  ];
+  return {
+    giorno, titolo: 'Recupero dopo la partita', tipo: 'recupero', durata_min: blocchi.reduce((a, b) => a + b.durataMin, 0), items, blocchi,
+    spiegazione: `Partita da 10 di fatica: oggi solo recupero. Corsettina lenta, rolling, yoga di recupero; se vuoi qualche esercizio leggero a corpo libero con recupero completo tra uno e l'altro.${alPostoDi ? ` Al posto di "${alPostoDi}".` : ''}`,
+    proposte: [{ tipo: 'yoga-recupero', motivo: `Partita da 10 di fatica: il giorno dopo solo recupero (corsettina 5', rolling, yoga).${alPostoDi ? ` Al posto di "${alPostoDi}".` : ''}` }],
+  };
+}
+
 /** Il resoconto per la data (partita prima della squadra): per il planner, "la partita di sabato è stata giocata poco?". */
 export const resocontoDel = (resoconti: readonly Resoconto[], data: string, tipo?: TipoResoconto) =>
   resoconti.find((r) => r.data === data && (!tipo || r.tipo === tipo)) ?? null;
@@ -136,9 +187,11 @@ export const resocontoDel = (resoconti: readonly Resoconto[], data: string, tipo
 // ─── Carico reale ───────────────────────────────────────────────────────────
 export interface SquadraMisurata { data: string; tipo: TipoResoconto; reale: number; stima: number }
 /** Fatica × minuti reali contro la stima dello stesso giorno (abitudine × durata del setup; partita 90' × 9). */
-export function squadraMisurata(resoconti: readonly Resoconto[], opt: { squadra?: SquadraSettimana | null; squadraDurataMin: number | null }): SquadraMisurata[] {
+export function squadraMisurata(resoconti: readonly Resoconto[], opt: { squadra?: SquadraSettimana | null; squadraDurataMin: number | null; giorni?: { trainingDays: readonly number[]; matchDays: readonly number[] } }): SquadraMisurata[] {
   const durata = opt.squadraDurataMin && opt.squadraDurataMin > 0 ? opt.squadraDurataMin : 90;
-  return resoconti.map((r) => {
+  // Solo i giorni che la stima S conta davvero (review 19/10): un resoconto in un giorno fuori dal calendario non ha una stima da correggere
+  const contato = (r: Resoconto) => !opt.giorni || (r.tipo === 'partita' ? opt.giorni.matchDays.includes(dowDi(r.data)) : opt.giorni.trainingDays.includes(dowDi(r.data)));
+  return resoconti.filter(contato).map((r) => {
     const stima = r.tipo === 'partita' ? 90 * RPE_PARTITA : durata * (opt.squadra?.[dowDi(r.data)]?.rpe ?? RPE_SQUADRA);
     const minuti = r.durata_min ?? (r.tipo === 'partita' ? 90 : durata);
     return { data: r.data, tipo: r.tipo, reale: Math.round(minuti * r.rpe), stima: Math.round(stima) };
@@ -148,7 +201,10 @@ export function squadraMisurata(resoconti: readonly Resoconto[], opt: { squadra?
 // ─── Adattamento delle sedute dell'app ──────────────────────────────────────
 export interface PropostaSeduta { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }
 
-const isPrincipale = (it: PlanItem) => it.schema !== 'emom' && !!it.esercizio_id && !/^(risc-|fasc-|mob-)/.test(it.esercizio_id) && !it.blocco_id?.startsWith('apertura') && !it.blocco_id?.includes('rolling');
+/** Apertura (rolling, apertura breve, Foundations 1) e riscaldamento velocità stanno fuori: per blocco (review 19/10: `fasc-*` è la Fascia Foundation, anche la Forza). */
+const BLOCCHI_FUORI: ReadonlySet<string> = new Set(['fascia-training-rolling-and-fascia-adhesion', 'fascia-foundations-1', 'apertura-breve', 'risc-velocita']);
+const isPrincipale = (it: PlanItem) => it.schema !== 'emom' && !!it.esercizio_id && !/^risc-/.test(it.esercizio_id) && !(it.blocco_id && BLOCCHI_FUORI.has(it.blocco_id));
+const notaAccodata = (it: PlanItem, testo: string) => (it.nota ? `${it.nota} ${testo}` : testo);
 const dataBreve = (ymd: string) => `${DAY_NAMES[dowDi(ymd)] ?? ymd}`;
 
 /**
@@ -173,19 +229,34 @@ export function applicaResoconti(plan: WeekPlan, opt: {
     const v = valutaResoconto(r, r.rpe_previsto ?? previstoPer(r.tipo, r.data, opt.squadra));
     const dopo = sedute.filter((s) => daFare(s) && dataS(s) > r.data && fisica(s)).sort((a, b) => a.giorno - b.giorno);
     const cosa = r.tipo === 'partita' ? `partita di ${dataBreve(r.data)}` : `squadra di ${dataBreve(r.data)}`;
-    // Livello 2: fatica molto alta o fastidio → i due giorni dopo più leggeri + yoga di recupero
+    // Partita da 10 (Ste, 19/10): il giorno dopo SOLO recupero → la seduta dell'app di +1 diventa la sessione di recupero
+    if (v.recuperoDopo) {
+      const idx = sedute.findIndex((s) => daFare(s) && diffGiorni(dataS(s), r.data) === 1);
+      if (idx >= 0 && sedute[idx].tipo !== 'recupero') {
+        const vecchia = sedute[idx];
+        sedute[idx] = sessioneRecuperoDopoPartita(vecchia.giorno, vecchia.titolo);
+        segna(sedute[idx], `${DAY_NAMES[vecchia.giorno]}: sessione di recupero (corsettina, rolling, yoga) al posto di "${vecchia.titolo}" dopo la ${cosa} con fatica 10`);
+      }
+    }
+    // Livello 2: fatica molto alta o fastidio (squadra), partita da 10 → i due giorni dopo più leggeri + yoga di recupero
     if (v.faticaAlta) {
       for (const s of dopo) {
         const d = diffGiorni(dataS(s), r.data);
         if (d < 1 || d > RESOCONTO_GIORNI_RIDOTTI) continue;
-        if (s.proposte?.some((p) => p.tipo === 'leggera')) continue;
-        for (const it of s.items) if (isPrincipale(it) && it.serie > 1) { it.serie = Math.max(1, Math.round(it.serie * RESOCONTO_LEGGERO_SCALA)); it.adattamento = 'leggero'; it.nota = `Più leggera: ${cosa} ${r.fastidio_zona ? `con un fastidio (${r.fastidio_zona})` : `fatica ${r.rpe}/10`}.`; }
+        if (s.tipo === 'recupero' || s.proposte?.some((p) => p.tipo === 'leggera')) continue;
+        for (const it of s.items) if (isPrincipale(it) && it.serie > 1) { it.serie = Math.max(1, Math.round(it.serie * RESOCONTO_LEGGERO_SCALA)); it.resoconto = 'leggero'; if (!it.adattamento) it.adattamento = 'leggero'; it.nota = notaAccodata(it, `Più leggera: ${cosa} ${r.fastidio_zona ? `con un fastidio (${r.fastidio_zona})` : `fatica ${r.rpe}/10`}.`); }
         if (s.blocchi) for (const b of s.blocchi) if (!/apertura|rolling|risc-/.test(b.id)) b.leggero = true;
         s.proposte = [...(s.proposte ?? []), { tipo: 'leggera', motivo: `${cosa}: ${r.fastidio_zona ? `fastidio a ${r.fastidio_zona}` : `fatica ${r.rpe}/10`} → serie ridotte` }, { tipo: 'yoga-recupero', motivo: `Se sei ancora stanco, al posto di questa seduta va bene lo yoga di recupero (Palestra → mobilità e recupero).` }];
         segna(s, `${DAY_NAMES[s.giorno]}: seduta più leggera dopo la ${cosa} (${r.fastidio_zona ? `fastidio a ${r.fastidio_zona}` : `fatica ${r.rpe}/10`}), con lo yoga di recupero come alternativa`);
       }
     }
-    // Livello 1: scarto ≥ 3 → la PRIMA seduta dopo: serie facoltative da togliere (più stanco) o da aggiungere (più fresco)
+  }
+  // Livello 1: scarto ≥ 3 → la PRIMA seduta dopo: serie facoltative da togliere (più stanco) o da aggiungere (più fresco).
+  // Dal resoconto più RECENTE: se due resoconti puntano alla stessa seduta vince il dato più fresco (review 19/10)
+  for (const r of [...resoconti].reverse()) {
+    const v = valutaResoconto(r, r.rpe_previsto ?? previstoPer(r.tipo, r.data, opt.squadra));
+    const dopo = sedute.filter((s) => daFare(s) && dataS(s) > r.data && fisica(s)).sort((a, b) => a.giorno - b.giorno);
+    const cosa = r.tipo === 'partita' ? `partita di ${dataBreve(r.data)}` : `squadra di ${dataBreve(r.data)}`;
     if (v.verso && !v.faticaAlta) {
       const s = dopo[0];
       if (s && !s.items.some((it) => it.facoltativo)) {
@@ -218,13 +289,15 @@ export function applicaResoconti(plan: WeekPlan, opt: {
     if (!s) continue;
     if (alta(va, a) && alta(vb, b)) {
       if (s.proposte?.some((p) => p.tipo === 'leggera' && /due giorni/.test(p.motivo))) continue;
+      // Una sola riduzione per seduta (review 19/10): se il livello 2 (o il "più leggero" di Claude) l'ha già alleggerita, qui solo i facoltativi
+      const giaRidotta = s.items.some((it) => it.resoconto === 'leggero' || it.adattamento === 'leggero');
       for (const it of s.items) if (isPrincipale(it)) {
-        if (it.schema !== 'emom') it.quantita = Math.max(1, Math.round(it.quantita * RESOCONTO_REPS_RIDOTTE));
-        it.adattamento = 'scendi'; it.facoltativo = it.facoltativo ?? 'togli'; it.facoltativo_motivo = `due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10)`;
-        it.nota = `Ripetizioni ridotte e serie facoltative: due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10).`;
+        if (!giaRidotta && it.schema !== 'emom') { it.quantita = Math.max(1, Math.round(it.quantita * RESOCONTO_REPS_RIDOTTE)); it.resoconto = 'ridotto'; if (!it.adattamento) it.adattamento = 'scendi'; }
+        it.facoltativo = it.facoltativo ?? 'togli'; it.facoltativo_motivo = `due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10)`;
+        it.nota = notaAccodata(it, `${giaRidotta ? 'Serie facoltative' : 'Ripetizioni ridotte e serie facoltative'}: due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10).`);
       }
-      s.proposte = [...(s.proposte ?? []), { tipo: 'leggera', motivo: `Due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10): ripetizioni ridotte, serie facoltative.` }];
-      segna(s, `${DAY_NAMES[s.giorno]}: ripetizioni ridotte e serie facoltative dopo due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10)`);
+      s.proposte = [...(s.proposte ?? []), { tipo: 'leggera', motivo: `Due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10): ${giaRidotta ? 'serie facoltative' : 'ripetizioni ridotte, serie facoltative'}.` }];
+      segna(s, `${DAY_NAMES[s.giorno]}: ${giaRidotta ? 'serie facoltative' : 'ripetizioni ridotte e serie facoltative'} dopo due giorni di fila con fatica alta (${a.rpe} e ${b.rpe}/10)`);
     } else if (bassa(va) && bassa(vb)) {
       if (s.proposte?.some((p) => p.tipo === 'aggiungi')) continue;
       for (const it of s.items) if (isPrincipale(it)) { it.facoltativo = 'aggiungi'; it.facoltativo_motivo = `due giorni di fila con poca fatica (${a.rpe} e ${b.rpe}/10)`; }
@@ -246,7 +319,7 @@ export function resocontiTesto(resoconti: readonly Resoconto[], squadra?: Squadr
       r.tipo === 'partita' ? `${r.durata_min ?? '?'}' giocati` : `${r.durata_min ?? '?'}'${r.qualita?.length ? `, ${r.qualita.join('/')}` : ''}`,
       r.stanchezza ? r.stanchezza : null, r.fastidio_zona ? `fastidio a ${r.fastidio_zona}` : null, r.testa ? `testa: ${r.testa.replace('_', ' e ')}` : null,
     ].filter(Boolean).join(', ');
-    const lettura = v.pocoGiocato ? 'quasi non giocato: le regole del dopo partita non valgono' : v.faticaAlta ? 'fatica molto alta: i due giorni dopo più leggeri' : v.verso === 'piu' ? 'più fatica del previsto: serie facoltative nella seduta dopo' : v.verso === 'meno' ? 'meno fatica del previsto: serie in più facoltative' : 'come previsto';
+    const lettura = v.pocoGiocato ? 'quasi non giocato: le regole del dopo partita non valgono' : v.recuperoDopo ? 'partita da 10: il giorno dopo solo recupero, il secondo più leggero' : v.menoAffaticato ? 'meno affaticato (meno di 75\' e poca fatica): niente in più, ma a +2/+3 può fare qualcosa in più se serve' : v.faticaAlta ? 'fatica molto alta: i due giorni dopo più leggeri' : v.verso === 'piu' ? 'più fatica del previsto: serie facoltative nella seduta dopo' : v.verso === 'meno' ? 'meno fatica del previsto: serie in più facoltative' : r.tipo === 'partita' ? 'partita normale (le regole del dopo partita valgono)' : 'come previsto';
     return `- ${r.data} ${r.tipo}: fatica ${r.rpe}/10 (previsto ${prev}), ${extra} → ${lettura}`;
   });
   return `\n# RESOCONTI SQUADRA E PARTITA (dati veri del ragazzo; le regole le applica il server alle sedute: tu tienine conto per bilanciare)\n${righe.join('\n')}`;

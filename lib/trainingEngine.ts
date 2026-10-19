@@ -349,6 +349,7 @@ export interface PlanItem {
   // Resoconto dopo squadra/partita (19/10, lib/trainingResoconto): 'togli' = l'esercizio si può saltare; 'aggiungi' = una serie in più se se la sente
   facoltativo?: 'togli' | 'aggiungi';
   facoltativo_motivo?: string;
+  resoconto?: 'leggero' | 'ridotto'; // cosa ha fatto il resoconto su questo item (serie ×0.7 / reps ×0.8), separato da `adattamento` che resta della progressione
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom

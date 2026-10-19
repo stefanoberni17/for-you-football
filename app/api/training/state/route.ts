@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
     });
     // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra; i giorni con il resoconto pesano il dato vero
-    const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: setup.squadraDurataMin });
+    const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: setup.squadraDurataMin, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale) } });
     let carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato, misurata);
     // Scarico solo con del carico alle spalle (29/9): stessa regola del planner
     const cicloEffettivo = conScaricoDalCarico(ciclo, carico.settimane);

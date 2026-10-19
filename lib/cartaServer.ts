@@ -45,7 +45,7 @@ async function loadCaricoConSquadra(userId: string): Promise<CaricoInfo> {
     fase: profile?.training_fase || 'in_season',
     squadra,
   });
-  return loadCarico(userId, false, undefined, squadraSettimanale, squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min ?? null }));
+  return loadCarico(userId, false, undefined, squadraSettimanale, squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min ?? null, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partita) } }));
 }
 
 /**
