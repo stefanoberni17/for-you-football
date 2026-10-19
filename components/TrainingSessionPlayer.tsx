@@ -7,7 +7,7 @@ import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
-import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X, Plus } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
 import { APERTURA_IDS, senzaVotoPerSerie } from '@/lib/trainingFascia';
 
@@ -79,6 +79,8 @@ export default function TrainingSessionPlayer({
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
   const blocchiSaltatiRef = useRef<string[]>([]); // "Salta l'apertura" (8/10): il blocco intero, senza passare dai singoli esercizi
   const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
+  // Serie in più facoltativa dal resoconto (19/10, seconda parte): la sceglie lui durante l'ultimo recupero, una sola
+  const [serieExtra, setSerieExtra] = useState(0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
   // Recupero dopo l'ULTIMA serie: il countdown resta (spazio per il feedback), poi si passa all'esercizio dopo
   const [restIsLast, setRestIsLast] = useState(false);
@@ -138,8 +140,10 @@ export default function TrainingSessionPlayer({
   const isPerLato = !isEmom && (item?.per_lato === true || ex?.perLato === true);
   // Serie extra sul lato più debole (lib/trainingProgressione): è l'ultima, solo su quel lato
   const extraLato = isPerLato && item?.lato_extra ? 1 : 0;
-  const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato; // EMOM: serie = minuti
-  const isExtra = extraLato > 0 && serieFatte >= (item?.serie ?? 0);
+  const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato + serieExtra; // EMOM: serie = minuti
+  const isExtra = extraLato > 0 && serieFatte === (item?.serie ?? 0);
+  const isSerieFacoltativa = !isEmom && serieExtra > 0 && serieFatte >= (item?.serie ?? 0) + extraLato;
+  const puoAggiungereSerie = !isEmom && item?.facoltativo === 'aggiungi' && serieExtra === 0;
   const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
   const isTimed = !isEmom && (unita === 'secondi' || unita === 'minuti');
   const execSeconds = unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
@@ -213,7 +217,7 @@ export default function TrainingSessionPlayer({
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
     setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
-    setSerieFatte(0);
+    setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false);
     setShowDesc(false);
@@ -267,7 +271,7 @@ export default function TrainingSessionPlayer({
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
     setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
-    setSerieFatte(0);
+    setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false); setShowDesc(false);
     setItemIdx(itemIdx - 1);
@@ -483,6 +487,12 @@ export default function TrainingSessionPlayer({
                 onClick={() => { clearRest(); if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}>
                 {restIsLast ? 'Vai al prossimo' : 'Salta il recupero'}
               </Button>
+              {restIsLast && puoAggiungereSerie && (
+                <Button variant="secondary" size="sm" fullWidth className="mt-2" icon={<Plus size={16} />}
+                  onClick={() => { setRestLeft(null); clearRest(); setRestIsLast(false); restIsLastRef.current = false; setSerieExtra(1); setPending(null); }}>
+                  Una serie in più (facoltativa)
+                </Button>
+              )}
               {restIsLast && (
                 <div className="mt-2 text-center">
                   <Button variant="ghost" size="sm"
@@ -498,7 +508,7 @@ export default function TrainingSessionPlayer({
             {/* Serie in corso */}
             <div className="text-center">
               <p className="text-body text-muted">
-                {isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
+                {isSerieFacoltativa ? 'Serie in più, facoltativa' : isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
                 {isPerLato && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
               </p>
               {isTimed && (

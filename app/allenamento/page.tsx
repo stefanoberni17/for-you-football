@@ -7,14 +7,14 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
 } from 'recharts';
-import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2 } from 'lucide-react';
+import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2, Users } from 'lucide-react';
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import ResocontoSheet from '@/components/ResocontoSheet';
-import { dataDiGiorno, type TipoResoconto } from '@/lib/trainingResoconto';
+import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Sheet, Textarea } from '@/components/ui';
@@ -57,7 +57,7 @@ export interface TrainingState {
   partitaAbituale?: number | null; // giorno abituale della partita dal setup (28/9)
   // Resoconto dopo squadra/partita (19/10): oggi e ieri senza risposta, e gli ultimi dati
   resocontiDaChiedere?: { data: string; tipo: TipoResoconto }[];
-  resoconti?: { data: string; tipo: TipoResoconto; rpe: number; durata_min: number | null }[];
+  resoconti?: Resoconto[]; // ultime 4 settimane, con previsto e voti (storico nella Card)
   zoneTese?: { zona: string; volte: number; fastidio: number }[]; // dal rolling (28/9)
   // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
   rigenerazioniRimaste?: number | null;
@@ -619,6 +619,7 @@ export default function AllenamentoHub() {
   // ── Vista CARD ──────────────────────────────────────────────────────────────
   const vistaCard = () => {
     if (batteriaVuota) return <>{cardTest}{cardPreparatore}</>;
+    const storico = state.resoconti?.length ? riassuntoResoconti(state.resoconti, state.squadra) : null;
     return (
       <>
         <Card padding="sm" className="mb-5">
@@ -697,6 +698,26 @@ export default function AllenamentoHub() {
                 {state.zoneTese!.map((z) => <li key={z.zona} className="text-body-sm text-muted leading-snug">· {z.zona}: {z.volte} volte nelle ultime settimane{z.fastidio ? `, ${z.fastidio} con fastidio` : ''}</li>)}
               </ul>
               {state.zoneTese!.some((z) => z.fastidio >= 2) && <p className="text-body-sm text-warning mt-1.5 leading-relaxed">Un fastidio che torna: parlane con il preparatore o con un medico. L&apos;app non fa diagnosi.</p>}
+            </Card>
+          )}
+          {/* Storico dei resoconti (19/10, seconda parte): fatica vera contro prevista, partite, voti nel tempo */}
+          {storico && storico.punti.length > 0 && (
+            <Card variant="raised" padding="sm" className="mt-3">
+              <p className="text-body-sm font-semibold text-app flex items-center gap-1.5"><Users size={15} className="text-forest-400" aria-hidden /> Squadra e partita, le ultime settimane</p>
+              <p className="text-caption text-muted mt-0.5">grigio = fatica prevista · verde = quella vera · ⚽ = partita</p>
+              <div style={{ width: '100%', height: 140 }} className="mt-1">
+                <ResponsiveContainer>
+                  <BarChart data={storico.punti.map((p) => ({ label: `${p.tipo === 'partita' ? '⚽' : ''}${p.data.slice(8, 10)}/${p.data.slice(5, 7)}`, previsto: p.previsto, reale: p.reale }))} barGap={1} barCategoryGap="30%" margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="label" tick={{ fill: 'var(--color-text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} interval={0} />
+                    <YAxis domain={[0, 10]} hide />
+                    <Bar dataKey="previsto" fill="var(--color-text-faint)" radius={[3, 3, 0, 0]} isAnimationActive={false} />
+                    <Bar dataKey="reale" fill="var(--color-forest-400)" radius={[3, 3, 0, 0]} isAnimationActive={false} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <ul className="mt-1.5 space-y-1">
+                {storico.righe.map((r) => <li key={r} className="text-body-sm text-muted leading-snug">· {r}</li>)}
+              </ul>
             </Card>
           )}
           {/* Strato mese (7/10): cosa è stato fatto davvero nelle ultime settimane, cosa viene prima questa settimana */}
