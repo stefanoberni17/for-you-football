@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 030 (`referral_source`, applicata da Ste il 9/10). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 031 (`training_resoconti`, applicata da Ste il 19/10). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -1157,7 +1157,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `027_client_boundary.sql` applicata su Supabase (Ste, 25/9)
 - [x] Migration `028_account_soft_delete.sql` applicata su Supabase (Ste, 27/9)
 - [x] Migration `029_checkin_presenza.sql` applicata su Supabase (Ste, 30/9): la punta Presenza legge anche "quanto sei stato presente ieri" dal check-in
-- [ ] **Migration `031_training_resoconti.sql` da applicare su Supabase** (19/10): senza, il resoconto risponde `skipped: 'migration_031'` e la card lo segna come saltato
+- [x] Migration `031_training_resoconti.sql` applicata su Supabase (Ste, 19/10): il resoconto dopo squadra e partita si salva davvero
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
