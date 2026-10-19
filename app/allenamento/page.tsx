@@ -13,13 +13,15 @@ import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
+import ResocontoSheet from '@/components/ResocontoSheet';
+import { dataDiGiorno, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Sheet, Textarea } from '@/components/ui';
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[] }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -53,6 +55,9 @@ export interface TrainingState {
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
   partitaAbituale?: number | null; // giorno abituale della partita dal setup (28/9)
+  // Resoconto dopo squadra/partita (19/10): oggi e ieri senza risposta, e gli ultimi dati
+  resocontiDaChiedere?: { data: string; tipo: TipoResoconto }[];
+  resoconti?: { data: string; tipo: TipoResoconto; rpe: number; durata_min: number | null }[];
   zoneTese?: { zona: string; volte: number; fastidio: number }[]; // dal rolling (28/9)
   // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
   rigenerazioniRimaste?: number | null;
@@ -128,6 +133,8 @@ export default function AllenamentoHub() {
   const [posticipoMsg, setPosticipoMsg] = useState<string | null>(null);
   // Sheet "Hai un dolore?"
   const [showPain, setShowPain] = useState(false);
+  const [showResoconto, setShowResoconto] = useState(false);
+  const [, setResocontoTick] = useState(0); // rilegge localStorage dopo "Salta"
   const [painInt, setPainInt] = useState(5);
   const [painDesc, setPainDesc] = useState('');
   const [painDurante, setPainDurante] = useState<boolean | null>(null);
@@ -309,6 +316,28 @@ export default function AllenamentoHub() {
 
   const apriMaschera = () => { setGenError(null); setShowRigenera(true); };
 
+  // Resoconto dopo squadra/partita (19/10): il primo da chiedere non saltato ("Salta" resta sul dispositivo, per data e tipo)
+  const oggiData = dataDiGiorno(state.lunedi, oggiDow);
+  const resocontoSaltato = (r: { data: string; tipo: string }) => { try { return localStorage.getItem(`resoconto.saltato:${r.data}:${r.tipo}`) === '1'; } catch { return false; } };
+  const resocontoDaChiedere = (state.resocontiDaChiedere ?? []).find((r) => !resocontoSaltato(r)) ?? null;
+  const saltaResoconto = () => {
+    if (!resocontoDaChiedere) return;
+    try { localStorage.setItem(`resoconto.saltato:${resocontoDaChiedere.data}:${resocontoDaChiedere.tipo}`, '1'); } catch { /* private mode */ }
+    setShowResoconto(false); setResocontoTick((t) => t + 1);
+  };
+  const cardResoconto = resocontoDaChiedere ? (
+    <Card variant="accent" padding="sm" className="mb-3" onClick={() => setShowResoconto(true)} aria-label="Com'è andata?">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0"><MessageCircle size={18} className="text-forest-400" aria-hidden /></div>
+        <div className="flex-1">
+          <p className="text-body font-semibold text-app">{resocontoDaChiedere.tipo === 'partita' ? `Com'è andata la partita${resocontoDaChiedere.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${resocontoDaChiedere.data === oggiData ? '' : ' ieri'}?`}</p>
+          <p className="text-body-sm text-muted">30 secondi: fatica vera, minuti, fastidi. La settimana si adatta.</p>
+        </div>
+        <ChevronRight size={18} className="text-muted" aria-hidden />
+      </div>
+    </Card>
+  ) : null;
+
   // ── Pezzi riusati da più viste ─────────────────────────────────────────────
   const cardTest = (
     <Card variant="hero" className="mb-5">
@@ -359,6 +388,7 @@ export default function AllenamentoHub() {
   const vistaOggi = () => {
     if (batteriaVuota) return <>{cardTest}{cardPreparatore}</>;
     let hero: React.ReactNode;
+    const proposteOggi = diOggi?.proposte ?? [];
     if (!haPiano) {
       hero = cardSenzaPiano;
     } else if (diOggi) {
@@ -372,10 +402,12 @@ export default function AllenamentoHub() {
           </p>
           <h2 className="font-display text-title-1 font-bold leading-tight mb-1.5">{diOggi.titolo}</h2>
           <p className="text-body text-forest-50/90">~{durataLabel(diOggi.durata_min)}{diOggi.apertura_min ? ` (+${diOggi.apertura_min}' di apertura, se hai tempo)` : ''} · {descrizioneSeduta(diOggi)}</p>
-          {(diOggi.recupero || leggera || diOggi.posticipata_da) && (
+          {(diOggi.recupero || leggera || diOggi.posticipata_da || proposteOggi.length > 0) && (
             <div className="flex flex-wrap gap-1.5 mt-2">
               {diOggi.recupero && <Badge tone="info" className="!bg-white/15 !text-white">Recupero</Badge>}
               {leggera && <Badge tone="info" className="!bg-white/15 !text-white">Più leggera</Badge>}
+              {proposteOggi.some((p) => p.tipo === 'togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
+              {proposteOggi.some((p) => p.tipo === 'aggiungi') && <Badge tone="info" className="!bg-white/15 !text-white">Serie in più, se vuoi</Badge>}
               {diOggi.posticipata_da && <Badge tone="info" className="!bg-white/15 !text-white">Spostata da {DAY_SHORT_NAMES[diOggi.posticipata_da]}</Badge>}
             </div>
           )}
@@ -416,6 +448,7 @@ export default function AllenamentoHub() {
     }
     return (
       <>
+        {cardResoconto}
         {hero}
         {posticipoMsg && <p className="text-body-sm text-warning mb-3">{posticipoMsg}</p>}
         {carico && (
@@ -840,6 +873,14 @@ export default function AllenamentoHub() {
           </p>
         </div>
       </Sheet>
+
+      {/* Resoconto dopo squadra/partita (19/10): montato solo quando è aperto, così riparte vuoto */}
+      {showResoconto && resocontoDaChiedere && (
+        <ResocontoSheet open data={resocontoDaChiedere.data} tipo={resocontoDaChiedere.tipo}
+          onClose={() => setShowResoconto(false)}
+          onSaved={() => { setShowResoconto(false); load(); }}
+          onSkip={saltaResoconto} />
+      )}
 
       {/* Maschera guidata (niente testo libero) in uno Sheet: montata solo quando è aperta, così riparte dal setup */}
       {showRigenera && (

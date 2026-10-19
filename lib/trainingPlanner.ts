@@ -21,6 +21,8 @@ import {
 import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLogRow } from './trainingAdapt';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
+import { squadraMisurata, type Resoconto, type SquadraMisurata } from './trainingResoconto';
+import { loadResoconti } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
 import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
@@ -138,6 +140,7 @@ export interface PlannerContext {
   gradini: Record<string, number>;
   matchDays: number[];
   matchDaysDaAbitudine: boolean; // partita presa dal giorno abituale del setup (calendario non compilato)
+  resoconti: Resoconto[];        // resoconti squadra/partita degli ultimi 28 giorni (19/10, lib/trainingResoconto)
   trainingDays: number[];
   painHold: boolean;
   hasSbarra: boolean;
@@ -236,7 +239,7 @@ export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -257,6 +260,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     loadSquadraCompleta(userId),
     loadFocusSetup(userId),
     loadPreferenzeSetup(userId),
+    loadResoconti(userId),
   ]);
   // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
   let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
@@ -331,10 +335,12 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null,
     fase: faseSetup, squadra,
   });
-  let carico = await loadCarico(userId, ciclo.isDeload, setRpe, squadraSettimanale);
+  // Resoconti (19/10): per i giorni con il dato vero, fatica × minuti al posto della stima nell'acuto
+  const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null });
+  let carico = await loadCarico(userId, ciclo.isDeload, setRpe, squadraSettimanale, misurata);
   // Scarico solo con del carico alle spalle (29/9): se le settimane precedenti sono vuote, la settimana è normale
   const cicloEffettivo = conScaricoDalCarico(ciclo, carico.settimane);
-  if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, setRpe, squadraSettimanale); }
+  if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, setRpe, squadraSettimanale, misurata); }
 
   const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }) => ({
     test_id: r.test_id, valore: Number(r.valore),
@@ -353,6 +359,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     gradini,
     matchDays,
     matchDaysDaAbitudine,
+    resoconti,
     trainingDays,
     painHold: profile?.training_pain_hold === true,
     hasSbarra,
@@ -380,7 +387,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
  * Carico totale delle ultime 4 settimane: sedute completate × durata (dal piano) × RPE
  * (media dei log per serie, altrimenti feedback). `setRpe` può essere passato se già caricato.
  */
-export async function loadCarico(userId: string, isDeload: boolean, setRpe?: SetRpeRow[], squadraSettimanale = 0): Promise<CaricoInfo> {
+export async function loadCarico(userId: string, isDeload: boolean, setRpe?: SetRpeRow[], squadraSettimanale = 0, squadraMisurata?: SquadraMisurata[]): Promise<CaricoInfo> {
   const since = new Date(Date.now() - 35 * 24 * 3600 * 1000).toISOString();
   const selCompletions = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60);
@@ -402,7 +409,7 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
   }
   return calcolaCarico({
     completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[],
-    oggi: todayRome(), lunedi: mondayOfThisWeekRome(), isDeload, squadraSettimanale,
+    oggi: todayRome(), lunedi: mondayOfThisWeekRome(), isDeload, squadraSettimanale, squadraMisurata,
   });
 }
 

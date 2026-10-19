@@ -28,6 +28,8 @@ interface PlanItem {
   emom_gruppo?: string;      // EMOM a rotazione: gli item consecutivi con lo stesso gruppo girano un minuto ciascuno
   adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // lib/trainingProgressione + ripasso tecnica (28/9)
   lato_extra?: 'dx' | 'sx';  // una serie in più solo su questo lato (lato più debole)
+  facoltativo?: 'togli' | 'aggiungi'; // dal resoconto squadra/partita (19/10): si può saltare / una serie in più se se la sente
+  facoltativo_motivo?: string;
 }
 
 /** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
@@ -358,7 +360,7 @@ export default function TrainingSessionPlayer({
         {/* Esercizio corrente */}
         <Card className="mb-3">
           {blocco && (
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{nomeBloccoAtleta(blocco.nome)}{isAperturaBlocco ? ' · facoltativa' : ''}</p>
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{nomeBloccoAtleta(blocco.nome)}{isAperturaBlocco ? ' · facoltativa' : item.facoltativo === 'togli' ? ' · esercizio facoltativo' : item.facoltativo === 'aggiungi' ? ' · una serie in più se te la senti' : ''}</p>
           )}
           <h2 className="font-display text-title-1 font-bold text-app leading-tight">{ex.nome}</h2>
           <p className="text-body-lg font-semibold tabular-nums text-forest-400 mt-1">{parametri}</p>
@@ -530,7 +532,7 @@ export default function TrainingSessionPlayer({
                 {itemIdx > 0 ? (
                   <Button variant="ghost" size="sm" icon={<ChevronLeft size={16} />} onClick={prevItem}>Precedente</Button>
                 ) : <span />}
-                <Button variant="danger" size="sm" iconRight={<ChevronRight size={16} />} onClick={nextItem}>Salta esercizio</Button>
+                <Button variant={item.facoltativo === 'togli' ? 'secondary' : 'danger'} size="sm" iconRight={<ChevronRight size={16} />} onClick={nextItem}>{item.facoltativo === 'togli' ? 'Salta (facoltativo)' : 'Salta esercizio'}</Button>
               </div>
             </div>
           </>

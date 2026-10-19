@@ -346,6 +346,9 @@ export interface PlanItem {
   // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
   adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // ripasso (28/9): esercizio di tecnica difficile l'ultima volta, rimesso in coda
   lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)
+  // Resoconto dopo squadra/partita (19/10, lib/trainingResoconto): 'togli' = l'esercizio si può saltare; 'aggiungi' = una serie in più se se la sente
+  facoltativo?: 'togli' | 'aggiungi';
+  facoltativo_motivo?: string;
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom
@@ -358,6 +361,7 @@ export interface PlanSession {
   blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
+  proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; // dal resoconto (19/10): il programma propone, il ragazzo sceglie
 }
 export interface WeekPlan {
   sedute: PlanSession[];

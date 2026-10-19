@@ -75,6 +75,7 @@ for-you-football/
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
 │       ├── telegram/route.ts              # POST → webhook bot Telegram (+ handler /start deep-link)
 │       ├── telegram/link/route.ts         # POST → genera codice deep-link collegamento (auth)
+│       ├── training/resoconto/route.ts    # GET ?da= / POST → resoconto dopo squadra o partita (migration 031, upsert su utente+data+tipo, il giorno stesso o quello dopo)
 │       ├── checkin/
 │       │   ├── route.ts                   # GET ?userId= (oggi) / POST upsert check-in
 │       │   └── history/route.ts           # GET ?userId=&days=N → storico ultimi N giorni
@@ -102,7 +103,8 @@ for-you-football/
 │   ├── WeeklyCalendarPopup.tsx            # Picker giorni allenamento/partita (7-day grid)
 │   ├── GlobalMeditationWrapper.tsx        # Rituale del mattino step 2: Il Reset (auto post check-in + on-demand)
 │   ├── MeditationContext.tsx              # Context: { openMeditation, mantra, weekName }
-│   └── MeditationPopup.tsx               # Popup "Il Reset" verde brand: timer, respiro 4s/6s, audio, skip per data
+│   ├── MeditationPopup.tsx               # Popup "Il Reset" verde brand: timer, respiro 4s/6s, audio, skip per data
+│   └── ResocontoSheet.tsx                 # "Com'è andata?" dopo squadra/partita (19/10): fatica (RpeScale), minuti, cosa si è fatto o stanchezza, fastidio + zona, dettagli (testa per il Coach, voti tecnica/fisico); "Salta" in localStorage per data e tipo
 ├── lib/
 │   ├── supabase.ts                        # Client Supabase pubblico (browser)
 │   ├── constants.ts                       # IDs Notion, costanti percorso — UNICA fonte di verità
@@ -144,6 +146,7 @@ for-you-football/
 │   ├── trainingRiparazione.ts             # Il piano di Claude si aggiusta, non si butta (7/10): id ignoti, giorni, formati doppi, giornate chieste, tetto fisico, durata → corretti dal server PRIMA del validatore, con le righe "Ho sistemato…" per l'hub
 │   ├── trainingVelocita.ts                # Velocità e pliometria (regole 2-3): riscaldamento fisso `risc-velocita`, tetto sprint 6-8 limato dal server, con palla dalla 5ª settimana, pliometria in B nelle prime 4 settimane; dal 18/10 il blocco pre partita (`isPrePartita`) e la velocità pura (`isVelocitaPura`: sprint oltre 30 m o salite) per l'asse partita
 │   ├── trainingTetti.ts                   # Tetti di giornate a settimana per qualità + complementi (18/10, campo-da-fare 16): velocità 1 (2 off season con la velocità primo obiettivo, mai consecutive, 12 sprint a settimana) + 1 giornata di rapidità, pliometria 2, parte alta 3, gambe 3, resistenza 2 (4 off season senza squadra né partite); validatore, piano base (complementi), regola 2d del prompt
+│   ├── trainingResoconto.ts / Server.ts   # Resoconto dopo squadra e partita (19/10, campo-da-fare 17): soglie di Ste (±2 niente, ±3 serie facoltative, partita ≤20' o fatica <4 = quasi non giocato, fatica ≥9 o fastidio = 2 giorni più leggeri + yoga, 2 giorni di fila), `applicaResoconti` alla lettura dello state, carico reale (`squadraMisurata`), testi per planner e Coach; il loader DB in `trainingResocontoServer.ts`
 │   ├── trainingLivelli.ts                 # Livello per qualità dai test di quella qualità (mediana bassa; senza test = AMRAP) → blocchi disponibili, validatore, ri-test mirato
 │   ├── trainingMemoriaBlocchi.ts          # Memoria dei blocchi: per famiglia il codice della settimana deciso dal giudizio di fine seduta (facile → successivo, giusto → stesso, duro → short/precedente); il server sostituisce un codice diverso
 │   └── trainingExercise.ts                # esercizioAny(id): vista unificata v1/v2 per player e API
@@ -342,6 +345,29 @@ UNIQUE(action_id, date)
 
 ### Viste analytics (migration 022 + 027)
 `v_attivita_utente`, `v_ultima_attivita`, `v_funnel_primo_giorno`, `v_funnel_primo_giorno_settimane`, `v_coorti_d7_d28`: dal 25/9 con `security_invoker = true` e `REVOKE ALL FROM anon, authenticated` — prima erano leggibili da chiunque con la anon key (nome, iscrizione, stato pagamento di tutti). Si interrogano SOLO dal SQL editor o con service role.
+
+### `training_resoconti` (migration 031 — resoconto dopo squadra e partita, 19/10)
+```sql
+id             UUID PRIMARY KEY
+user_id        UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
+data           DATE NOT NULL          -- il giorno dell'allenamento o della partita; UNIQUE (user_id, data, tipo)
+tipo           TEXT NOT NULL          -- 'squadra' | 'partita'
+rpe            SMALLINT NOT NULL      -- fatica reale 1-10
+durata_min     SMALLINT               -- allenamento: durata; partita: minuti giocati
+qualita        TEXT[]                 -- solo squadra: cosa si è fatto (SQUADRA_QUALITA)
+stanchezza     TEXT                   -- solo partita: fresco | normale | cotto
+fastidio_zona  TEXT                   -- null se nessun fastidio; zona come il rolling (ZONE_FASCIA)
+testa          TEXT                   -- bene | alti_bassi | fatica (per il Coach)
+testa_nota     TEXT                   -- max 200
+voti           JSONB                  -- { tecnica: { generale, … }, fisico: { generale, … } }
+rpe_previsto   SMALLINT               -- lo sforzo dell'abitudine (o 9 per la partita) al momento della risposta
+created_at     TIMESTAMPTZ
+```
+- RLS owner-read, scrittura solo service role (`POST /api/training/resoconto`, upsert; si accetta solo il giorno stesso o quello dopo; senza la migration risponde `skipped: 'migration_031'`). Lettura `loadResoconti(userId, giorni)` in `lib/trainingResocontoServer.ts` (fail-soft: `[]`).
+- **Regole (`lib/trainingResoconto.ts`, puro, 10 test in `tests/trainingResoconto.test.ts`; soglie di Ste del 19/10):** previsto = sforzo dell'abitudine (`profiles.training_squadra`, o 6) per la squadra, 9 per la partita. `valutaResoconto`: |fatica − previsto| ≤ `RESOCONTO_NIENTE_DELTA` (2) → niente; ≥ `RESOCONTO_PROPOSTA_DELTA` (3) → livello 1; partita con ≤ `PARTITA_POCO_MINUTI` (20) minuti o fatica < `PARTITA_POCO_RPE` (4) → "quasi non giocato"; fatica ≥ `RESOCONTO_FATICA_ALTA` (9, la zona "al limite" della scala, assoluta perché con la partita il previsto è già 9) o un fastidio → "fatica alta". `applicaResoconti(plan, { weekStart, oggi, resoconti, squadra, fatteGiorni })` lavora su una COPIA del piano (il piano salvato non cambia) e tocca solo le sedute fisiche non fatte, da oggi in poi, DOPO la data del resoconto: livello 1 → nella prima seduta `PlanItem.facoltativo = 'togli'` (più stanco: prima gli item della qualità che la squadra ha già lavorato, `SQUADRA_QUALITA_LIBRERIA`; altrimenti tutti i principali) o `'aggiungi'` (più fresco: una serie in più se se la sente), con `facoltativo_motivo` e `PlanSession.proposte`; livello 2 "fatica alta" → le sedute nei `RESOCONTO_GIORNI_RIDOTTI` (2) giorni dopo hanno le serie ×`RESOCONTO_LEGGERO_SCALA` (0.7, `adattamento: 'leggero'`, blocchi `leggero`) e la proposta `yoga-recupero`; livello 3 → due resoconti di giorni consecutivi entrambi alti (scarto ≥ 3 o fatica ≥ 9) → la seduta dopo con ripetizioni ×`RESOCONTO_REPS_RIDOTTE` (0.8) e facoltativi, entrambi bassi (scarto ≤ −3) → serie in più facoltative. "Quasi non giocato" non tocca il piano: in `lib/trainingPlannerV2.ts` `partitaPocoGiocata(ctx, giorno, gd)` spegne le regole del DOPO partita (niente gambe a +1, niente velocità pura a +2/+3) per quella partita, nel validatore e nel piano base. Le righe "Ho sistemato…" entrano in `plan.aggiustamenti` (l'hub le mostra già). `/api/training/state` ritorna il piano adattato (`plan`), `resocontiDaChiedere` (oggi e ieri con squadra o partita senza riga: calendario o abitudine) e gli ultimi `resoconti`.
+- **Carico reale:** `squadraMisurata(resoconti, { squadra, squadraDurataMin })` = fatica × minuti reali contro la stima dello stesso giorno (abitudine × durata del setup; partita 90 × 9); `calcolaCarico({ squadraMisurata })` corregge l'ACUTO con i giorni misurati degli ultimi 7 (`squadraAcuto`, `squadraMisurati`), il cronico resta sulla stima (base costante). Usato da state, planner (`loadPlannerContext` → `PlannerContext.resoconti`) e Coach (`loadCaricoConSquadra`).
+- **Dove si vede:** hub, card "Com'è andata la partita / con la squadra?" sopra la seduta di oggi (`ResocontoSheet`; "Salta per questa volta" in `localStorage['resoconto.saltato:<data>:<tipo>']`); badge "Serie facoltative" / "Serie in più, se vuoi" sulla seduta di oggi; pagina seduta: box "Dal tuo resoconto" con le proposte e il badge "Facoltativo: puoi saltarlo" / "Serie in più" per item; player: "Salta (facoltativo)" al posto di "Salta esercizio" e la riga sotto il nome del blocco. Push serale dal cron `daily-evening` ("Com'è andata con la squadra/la partita?", url `/allenamento`) a chi ha il Campo e oggi un giorno squadra o partita senza resoconto. Prompt del planner v2: sezione "# RESOCONTI SQUADRA E PARTITA" (`resocontiTesto`) e la regola 3 dice quando il dopo partita non vale; Coach: "Ultimi resoconti" nel blocco "Il Campo" (`resocontiPerCoach`: fatica, minuti, fastidio, testa e nota).
+- **Non ancora:** lo storico (punto 6: previsto contro reale nei grafici), i voti tecnica/fisico nel tempo, l'uso dei voti da parte del planner, "Aggiungi" come serie extra nel player (oggi l'item 'aggiungi' porta il badge: la serie in più si fa con "Non era l'ultima: torna alla serie").
 
 ### `stripe_events` (idempotenza webhook)
 ```sql
@@ -1131,6 +1157,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `027_client_boundary.sql` applicata su Supabase (Ste, 25/9)
 - [x] Migration `028_account_soft_delete.sql` applicata su Supabase (Ste, 27/9)
 - [x] Migration `029_checkin_presenza.sql` applicata su Supabase (Ste, 30/9): la punta Presenza legge anche "quanto sei stato presente ieri" dal check-in
+- [ ] **Migration `031_training_resoconti.sql` da applicare su Supabase** (19/10): senza, il resoconto risponde `skipped: 'migration_031'` e la card lo segna come saltato
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)

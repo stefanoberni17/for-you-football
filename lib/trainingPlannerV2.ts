@@ -38,6 +38,7 @@ import { livelliTesto, livelloDi, QUALITA_LABEL } from './trainingLivelli';
 import { APERTURA_BREVE_MAX, APERTURA_NOTA, aperturaDaSostituire, aperturaPer, bloccoAperturaBreve, FAMIGLIA_FASCIA_FORZA, FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, minutiApertura, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
 import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, prioritaTecnica, QUALITA_PRIORITA, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type PrioritaTecnicaInfo, type Ripasso } from './trainingTecnica';
+import { dataDiGiorno, addDays as addGiorni, resocontiTesto, resocontoDel, valutaResoconto, previstoPer } from './trainingResoconto';
 import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
@@ -493,6 +494,17 @@ export function tettiDi(ctx: ContextV2): ContestoTetti {
   };
 }
 
+/**
+ * La partita a `gd` giorni prima del giorno `giorno` è stata "quasi non giocata" (resoconto: ≤ 20' o fatica < 4)?
+ * Allora le regole del DOPO partita (niente gambe a +1, niente velocità pura a +2/+3) non valgono (Ste, 19/10).
+ */
+export function partitaPocoGiocata(ctx: ContextV2, giorno: number, gd: number | null): boolean {
+  if (gd === null || !ctx.base.resoconti?.length) return false;
+  const dataPartita = addGiorni(dataDiGiorno(mondayOfThisWeekRome(), giorno), -gd);
+  const r = resocontoDel(ctx.base.resoconti, dataPartita, 'partita');
+  return !!r && valutaResoconto(r, r.rpe_previsto ?? previstoPer('partita', r.data, ctx.base.squadra)).pocoGiocato;
+}
+
 export function sostituzioniParteAlta(p: PianoLLM, ctx: ContextV2): Map<number, Map<string, string | null>> {
   return sostituzioniFormati(p, ctx, FORMATI_PARTE_ALTA(ctx));
 }
@@ -629,7 +641,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     {
       const giornoS = Number(s.giorno);
       const gp = giorniAllaPartita(giornoS, ctx.base.matchDays);
-      const gd = giorniDallaPartita(giornoS, ctx.base.matchDays);
+      // Resoconto della partita (19/10): giocata poco → il "dopo" non vale
+      const gd0 = giorniDallaPartita(giornoS, ctx.base.matchDays);
+      const gd = partitaPocoGiocata(ctx, giornoS, gd0) ? null : gd0;
       for (const b of blocchi) {
         if (isPrePartita(b) && gp !== 1)
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è il blocco del giorno PRIMA della partita${gp === null ? ' (questa settimana non c\'è partita)' : ` (la partita è tra ${gp} giorni)`} — negli altri giorni usa un blocco di velocità normale`);
@@ -1039,7 +1053,7 @@ ${tettiTesto(tettiDi(ctx))}
 3. L'ASSE PARTITA (le regole le fa rispettare il validatore, ma tu progetta già bene). PRIMA della partita:
 ${finestreTesto()}
    Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps: non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
-   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta): il giorno DOPO niente gambe, velocità né resistenza — al massimo forza leggera: parte alta short, \`${PB_RICHIAMO_ID}\`, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m, salite): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
+   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta; con il resoconto "quasi non giocato", al massimo 20' o fatica sotto 4, queste regole non valgono per quella partita): il giorno DOPO niente gambe, velocità né resistenza — al massimo forza leggera: parte alta short, \`${PB_RICHIAMO_ID}\`, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m, salite): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
    RESISTENZA: nel giorno più lontano da tutte e due le partite (con la partita la domenica: martedì-giovedì, il top è mercoledì).
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
 
@@ -1196,7 +1210,7 @@ ${feedbackSeduteBlock(b.feedbackRecenti)}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.scaricoRinviato ? ' — scarico RINVIATO (poche sedute nelle settimane prima): settimana normale, niente varianti short per lo scarico' : b.ciclo.ritestDue ? ' — ri-test dovuto (regola 12: piano normale, invita ai test)' : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
 ${percorsoMentaleTesto(b.weekOfPath)}
-${massimali}${memoria}${obiettiviTesto(ctx)}${ctx.vincoli.obiettivi?.length ? '' : meseTesto(ctx.mese, ctx.base.focusSetup)}${memoriaBlocchiTesto(ctx.memoria)}${ctx.noteRegole.length ? `\n# REGOLE APPLICATE DAL SERVER\n- ${ctx.noteRegole.join('\n- ')}` : ''}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${caricoTesto(b.carico)}${piano}
+${massimali}${memoria}${obiettiviTesto(ctx)}${ctx.vincoli.obiettivi?.length ? '' : meseTesto(ctx.mese, ctx.base.focusSetup)}${memoriaBlocchiTesto(ctx.memoria)}${ctx.noteRegole.length ? `\n# REGOLE APPLICATE DAL SERVER\n- ${ctx.noteRegole.join('\n- ')}` : ''}${recuperiTesto(ctx)}${storicoSerieBlock(b)}${squilibriTesto(b.squilibri)}${resocontiTesto(b.resoconti ?? [], b.squadra)}${caricoTesto(b.carico)}${piano}
 ${preferenzeTesto(ctx, richiesta)}${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}${precedente ? `\nPiano rifiutato (parti da questo e cambia SOLO ciò che serve, es. togli un blocco o passa alla variante short): ${precedente}` : ''}` : ''}
 
@@ -1321,9 +1335,11 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const visti = new Set<string>();
     // Il giorno dopo la partita si filtra PRIMA del tetto per obiettivo: il richiamo (ultimo nel rango) resta il primo candidato per le gambe;
     // a +2 e +3 niente velocità pura (18/10: senza resoconto si assume la partita intera)
-    const gd = giorniDallaPartita(g, b.matchDays);
+    const gd0 = giorniDallaPartita(g, b.matchDays);
+    const pocoGiocata = partitaPocoGiocata(ctx, g, gd0);
+    const gd = pocoGiocata ? null : gd0;
     const dopo = (c: Blocco[]) => {
-      const c1 = dopoPartita(g) ? [...c.filter((x) => x.id === PB_RICHIAMO_ID), ...c.filter((x) => x.id !== PB_RICHIAMO_ID && !GAMBE_DOPO_PARTITA.has(x.qualita))] : c;
+      const c1 = dopoPartita(g) && !pocoGiocata ? [...c.filter((x) => x.id === PB_RICHIAMO_ID), ...c.filter((x) => x.id !== PB_RICHIAMO_ID && !GAMBE_DOPO_PARTITA.has(x.qualita))] : c;
       const gpG = giorniAllaPartita(g, b.matchDays);
       return (gd !== null && gd >= 2 && gd <= VELOCITA_PURA_DOPO_PARTITA_GIORNI) || gpG === 2 ? c1.filter((x) => !isVelocitaPura(x)) : c1;
     };

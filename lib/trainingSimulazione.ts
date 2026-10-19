@@ -5,6 +5,7 @@
  * Niente di quello che c'è qui finisce nell'app: è una palestra per il planner.
  */
 import { costruisciContextV2, type ContextV2 } from './trainingPlannerV2';
+import type { Resoconto } from './trainingResoconto';
 import { mondayOfThisWeekRome, todayRome, type CicloInfo, type FeedbackSeduta, type PlannerContext } from './trainingPlanner';
 import { fasciaFromResults, livelloFromValore, placementFromResults, type CheckinSnapshot, type TestResultRow, type WeekPlan } from './trainingEngine';
 import { testById } from './trainingCatalog';
@@ -38,6 +39,7 @@ export interface Atleta {
   focusSetup: FocusId[];
   preferenze?: PreferenzeSetup;
   painHold?: boolean;
+  resoconti?: Resoconto[];       // resoconti squadra/partita (19/10): per provare le regole del dopo partita con il dato vero
   oggiDow?: number;              // 1=Lun … 7=Dom (default lunedì: il piano automatico)
   ciclo?: CicloInfo;
   feedback?: FeedbackSeduta[];
@@ -199,7 +201,7 @@ export function baseFinta(a: Atleta): PlannerContext {
   const logs = a.logs ?? [];
   return {
     fascia, livelli: livelliPerQualita(a.results, fascia), gradini: placementFromResults(a.results),
-    matchDays: a.matchDays, matchDaysDaAbitudine: false, trainingDays: a.trainingDays,
+    matchDays: a.matchDays, matchDaysDaAbitudine: false, trainingDays: a.trainingDays, resoconti: a.resoconti ?? [],
     painHold: !!a.painHold, hasSbarra: a.results.some((x) => x.test_id === 'test-pull'), results: a.results,
     feedbackRecenti: a.feedback ?? [], weekOfPath: 3, oggiDow: a.oggiDow ?? 1,
     obiettivi: null, note: null,

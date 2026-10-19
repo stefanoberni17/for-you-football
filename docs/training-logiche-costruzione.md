@@ -384,7 +384,18 @@ della sera), resistenza fino a −3 (mercoledì preferito nel base), il blocco p
 non pesante ammesso ("come sviluppo"). Tutto con il default precauzionale "partita intera": il resoconto (E2) potrà
 solo rilassare. Trovato per strada: i test usati come esercizi nei blocchi di Ste bloccavano 20 blocchi; ora passano.
 
-### E2. La regola di riprogrammazione dal feedback (proposta, da confermare prima della PR B)
+### E2. La regola di riprogrammazione dal feedback — DECISA da Ste il 19/10 e nel codice (PR B, prima parte)
+Ste, 19/10: "livello 0: ±2 pt; livello 1: ±3; livello 2: se giocato poco o fatica molto bassa considera come se non avesse
+quasi giocato (max 20' e fatica meno di 4); se invece molto alta o fatica o dolori diminuisce i 2 giorni successivi e
+propone yoga recupero; livello 3: più che rigenerare se non trova soluzione: se fatica alta per 2 giorni diminuisce
+reps / esercizi facoltativi, se bassa aumenta con facoltativi". Nel codice (`lib/trainingResoconto.ts`, `applicaResoconti`
+alla lettura dello state): ±2 niente · ±3 serie facoltative da togliere/aggiungere nella prima seduta dopo · partita
+≤ 20' o fatica < 4 = quasi non giocato → le regole del dopo partita non valgono (`partitaPocoGiocata` nel planner) ·
+fatica ≥ 9 (la zona "al limite": assoluta, perché con la partita il previsto è già 9) o fastidio → i 2 giorni dopo
+serie ×0.7 + proposta yoga di recupero · due giorni di fila alti → reps ×0.8 e facoltativi, due bassi → serie in più ·
+nessuna rigenerazione con Claude. Il carico usa fatica × minuti reali nell'acuto. Sotto, la proposta com'era (18/10).
+
+#### La proposta del 18/10 (storico)
 Il resoconto (allenamento con la squadra o partita: fatica 1-10, minuti/durata, cosa si è fatto; spec del 14/10 al
 punto 17 di `docs/campo-da-fare.md`, tabella `training_resoconti`) si può dare il giorno stesso o il giorno dopo; dopo,
 vale il default (partita intera; per la squadra lo sforzo abituale del setup) e non si torna indietro. Il feedback
@@ -434,8 +445,9 @@ setup e nella maschera · regola 25 pliometria due volte · bounds `resistenza-a
 'v2.33-tetti-per-qualita'`, 14 test in `tests/trainingTetti.test.ts`. I numeri a tavolino (12 sprint a settimana, 4
 scatti nella giornata di rapidità, 10 punti di differenza per la priorità tecnica) sono costanti, da tarare.
 
-### E4. Cosa resta in sospeso (dopo A, C, D, F, G, 15, 16)
-Ordine: **B** resoconto (tabella + foglio + carico reale + regole E2, da confermare) · poi, con le regole di Ste, la
+### E4. Cosa resta in sospeso (dopo A, B prima parte, C, D, F, G, 15, 16)
+Ordine: **B, seconda parte** (storico previsto contro reale e voti nel tempo, la serie extra "aggiungi" nel player, i voti
+tecnica/fisico letti dal planner) · poi, con le regole di Ste, la
 **composizione** di velocità, pliometria e tecnica dal catalogo (D3), e più avanti resistenza (punto 19 di
 campo-da-fare: `re-serie`, dopo le risposte a-e) e il resto. L'11 resta com'è (kettlebell uno a settimana, EMOM nel
 tetto). Dalla rilettura dei documenti del 18/10 restano anche: M5 (aumenti nella settimana in corso, da coordinare con
