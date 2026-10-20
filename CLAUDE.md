@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 031 (`training_resoconti`, applicata da Ste il 19/10). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 032 (`training_session_completions.data_programmata` e `durata_reale_sec`, applicata da Ste il 20/10). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -1184,7 +1184,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `028_account_soft_delete.sql` applicata su Supabase (Ste, 27/9)
 - [x] Migration `029_checkin_presenza.sql` applicata su Supabase (Ste, 30/9): la punta Presenza legge anche "quanto sei stato presente ieri" dal check-in
 - [x] Migration `031_training_resoconti.sql` applicata su Supabase (Ste, 19/10): il resoconto dopo squadra e partita si salva davvero
-- [ ] **Migration `032_session_data_durata.sql` da applicare su Supabase** (20/10): `training_session_completions.data_programmata` e `durata_reale_sec`; senza, il completamento salva come prima (`skipped: 'migration_032'`), il carico usa la durata del piano e lo storico non dice "fatta il giorno dopo"
+- [x] Migration `032_session_data_durata.sql` applicata su Supabase (Ste, 20/10): data programmata e durata reale delle sedute si salvano, il carico usa i minuti reali
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)
