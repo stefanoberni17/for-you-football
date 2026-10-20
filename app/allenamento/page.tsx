@@ -17,6 +17,7 @@ import ResocontoSheet from '@/components/ResocontoSheet';
 import PalestraSwitch, { salvaParte } from '@/components/PalestraSwitch';
 import FisicoBloccato from '@/components/FisicoBloccato';
 import { primoDaChiedere, resocontoRimandato, rimandaResoconto, saltaResoconto as saltaResocontoLocale, scriviPendenti } from '@/lib/resocontoPendente';
+import type { CampoOggi } from '@/lib/trainingOggi';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
@@ -112,7 +113,7 @@ const descrizioneSeduta = (s: PlanSession) =>
 export default function AllenamentoHub() {
   const router = useRouter();
   const [state, setState] = useState<TrainingState | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [oggiLight, setOggiLight] = useState<CampoOggi | null>(null); // "Oggi" dalla lettura leggera: la pagina compare prima dello stato completo (20/10)
   const [noAccess, setNoAccess] = useState(false); // senza il flag del Campo: pagina di assaggio (20/10)
   const [generating, setGenerating] = useState(false);
   const [vista, setVista] = useState<Vista>('oggi');
@@ -160,15 +161,25 @@ export default function AllenamentoHub() {
   const load = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
+    // Due tempi (20/10, Ste: "caricherei oggi che è quello più veloce"): la lettura leggera arriva prima e la pagina
+    // compare con la seduta di oggi e il resoconto; lo stato completo (rombo, carico, mese…) riempie il resto dopo.
+    const leggera = authFetch('/api/training/oggi').then(async (r) => {
+      if (!r.ok) return;
+      const o = await r.json() as CampoOggi;
+      if (!o.accesso) return;
+      setOggiLight(o);
+      salvaParte('fisico'); // la tab Palestra riapre qui
+      scriviPendenti(o.resocontiDaChiedere ?? []); // il pallino sulla tab legge da qui
+    }).catch(() => {});
     const res = await authFetch('/api/training/state');
-    if (res.status === 403) { setNoAccess(true); setLoading(false); return; }
+    if (res.status === 403) { setNoAccess(true); return; }
     if (res.ok) {
       const st = await res.json() as TrainingState;
       setState(st);
-      salvaParte('fisico'); // la tab Palestra riapre qui
-      scriviPendenti(st.resocontiDaChiedere ?? []); // il pallino sulla tab legge da qui
+      salvaParte('fisico');
+      scriviPendenti(st.resocontiDaChiedere ?? []);
     }
-    setLoading(false);
+    await leggera;
   }, [router]);
 
   useEffect(() => { load(); }, [load]);
@@ -176,11 +187,12 @@ export default function AllenamentoHub() {
   // Resoconto in evidenza (20/10): con un resoconto da dare il foglio si apre da solo, come il check-in del mattino.
   // "Non adesso" (X) lo tiene chiuso finché l'app non viene riaperta; "Salta per questa volta" per sempre, per quel giorno.
   useEffect(() => {
-    if (!state) return;
-    const oggi = dataDiGiorno(state.lunedi, state.oggiDow || 1);
-    const r = primoDaChiedere(state.resocontiDaChiedere ?? [], oggi);
+    const src = state ?? oggiLight;
+    if (!src) return;
+    const oggi = dataDiGiorno(src.lunedi, src.oggiDow || 1);
+    const r = primoDaChiedere(src.resocontiDaChiedere ?? [], oggi);
     if (r && !resocontoRimandato(r)) setShowResoconto(true);
-  }, [state]);
+  }, [state, oggiLight]);
 
   // Senza richiesta = piano AUTOMATICO: preferenze del setup applicate, recuperi obbligatori
   // (21/9: `{ modo: 'nuova' }` lo faceva passare per una richiesta esplicita → preferenze ignorate)
@@ -259,9 +271,89 @@ export default function AllenamentoHub() {
     } finally { setPainSending(false); }
   };
 
+  const cardPreparatoreLight = (
+    <Card href="/allenamento/chat" padding="sm" aria-label="Parla col preparatore">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0">
+          <MessageCircle size={18} className="text-forest-400" aria-hidden />
+        </div>
+        <div className="flex-1">
+          <p className="text-body font-semibold text-app">Parla col preparatore</p>
+          <p className="text-body-sm text-muted">Domande su esercizi, esecuzione, programma</p>
+        </div>
+        <ChevronRight size={18} className="text-muted" aria-hidden />
+      </div>
+    </Card>
+  );
+
   if (noAccess) return <FisicoBloccato />;
-  if (loading || !state) {
-    return <AppLoader />;
+  if (!state) {
+    if (!oggiLight) return <AppLoader />;
+    // ── Primo tempo: la pagina con "Oggi" dalla lettura leggera, il resto arriva ──
+    const o = oggiLight;
+    const dow = o.oggiDow || 1;
+    const oggiData = dataDiGiorno(o.lunedi, dow);
+    const rLight = primoDaChiedere(o.resocontiDaChiedere ?? [], oggiData);
+    const s = o.seduta;
+    const salta = () => { if (rLight) { saltaResocontoLocale(rLight); setShowResoconto(false); setResocontoTick((t) => t + 1); } };
+    return (
+      <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
+        <div className="max-w-md mx-auto">
+          <PalestraSwitch parte="fisico" className="mb-4" />
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="font-display text-title-1 font-bold text-app">Campo</h1>
+            <Link href="/allenamento/setup" aria-label="Il tuo setup" className="w-11 h-11 -mr-2 rounded-full flex items-center justify-center text-muted hover:text-app hover:bg-surface-2 transition-colors"><Settings2 size={22} aria-hidden /></Link>
+          </div>
+          <p className="text-body-sm text-muted mb-4 flex items-center gap-2"><RefreshCw size={14} className="animate-spin shrink-0" aria-hidden /> Carico il resto…</p>
+          {rLight && (
+            <Card variant="accent" padding="sm" className="mb-3" onClick={() => setShowResoconto(true)} aria-label="Com'è andata?">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0"><MessageCircle size={18} className="text-forest-400" aria-hidden /></div>
+                <div className="flex-1">
+                  <p className="text-body font-semibold text-app">{rLight.tipo === 'partita' ? `Com'è andata la partita${rLight.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${rLight.data === oggiData ? '' : ' ieri'}?`}</p>
+                  <p className="text-body-sm text-muted">30 secondi: fatica vera, minuti, fastidi. La settimana si adatta.</p>
+                </div>
+                <ChevronRight size={18} className="text-muted" aria-hidden />
+              </div>
+            </Card>
+          )}
+          {o.painHold ? (
+            <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. Un attimo e trovi il bottone per riprendere.</p></Card>
+          ) : s ? (
+            <Card variant="hero" className="mb-3">
+              <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">
+                {s.stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[dow]}` : `Da recuperare · era ${DAY_NAMES_IT[s.giorno]}`}
+              </p>
+              <h2 className="font-display text-title-1 font-bold leading-tight mb-1.5">{s.titolo}</h2>
+              <p className="text-body text-forest-50/90">~{durataLabel(s.durataMin)}{s.aperturaMin ? ` (+${s.aperturaMin}' di apertura, se hai tempo)` : ''} · {s.descrizione}</p>
+              {(s.recupero || s.proposte.length > 0) && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {s.recupero && <Badge tone="info" className="!bg-white/15 !text-white">Recupero</Badge>}
+                  {s.proposte.includes('togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
+                  {s.proposte.includes('aggiungi') && <Badge tone="info" className="!bg-white/15 !text-white">Serie in più, se vuoi</Badge>}
+                </div>
+              )}
+              <Button variant="inverse" size="lg" fullWidth href={`/allenamento/sessione/${s.giorno}`} className="mt-4">
+                {s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+              </Button>
+            </Card>
+          ) : o.haPiano ? (
+            <Card variant="accent" className="mb-3">
+              <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">Oggi · {DAY_NAMES_IT[dow]}</p>
+              <h2 className="font-display text-title-2 font-bold text-app mb-1">{o.prossima ? 'Oggi riposo.' : 'Per questa settimana hai finito.'}</h2>
+              <p className="text-body text-muted">{o.prossima ? <>La prossima è {DAY_NAMES_IT[o.prossima.giorno].toLowerCase()}: <span className="text-app font-semibold">{o.prossima.titolo}</span> · ~{durataLabel(o.prossima.durataMin)}</> : 'Lunedì arriva la prossima settimana.'}</p>
+            </Card>
+          ) : null}
+          {cardPreparatoreLight}
+        </div>
+        {showResoconto && rLight && (
+          <ResocontoSheet open data={rLight.data} tipo={rLight.tipo}
+            onClose={() => { rimandaResoconto(rLight); setShowResoconto(false); }}
+            onSaved={() => { setShowResoconto(false); load(); }}
+            onSkip={salta} />
+        )}
+      </main>
+    );
   }
 
   // Ingresso nel Campo: prima seduta/test solo dopo l'autodichiarazione di idoneità (+ consenso salute se manca)

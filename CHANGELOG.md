@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-20 (notte, 3) — Il Fisico in due tempi
+- Ste: "caricherei oggi che è quello più veloce. È un po' più veloce ma se riesci meglio fare così". L'hub chiede insieme la lettura leggera (`/api/training/oggi`) e lo stato completo: con la prima compare subito la seduta di oggi, il resoconto da dare e il preparatore, con "Carico il resto…"; con la seconda arriva tutto il resto. Niente test (UI).
+
 ## 2026-10-20 (notte, 2) — Fisico più veloce, la Carta completa raggiungibile
 - Ste: "ci mette molto a caricare il Fisico, è normale? poi non abbiamo fatto la card completa con testa, dove la mettiamo?".
 - **Velocità**: `/api/training/state` faceva sette giri di letture in fila (test → log → completamenti → setup → check-in → calendario e altro → feedback); ora partono tutte insieme, in sequenza restano solo i completamenti della settimana e il carico. La route logga `training/state: N ms`. Il lunedì il piano automatico (Opus) è a parte.
