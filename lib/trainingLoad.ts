@@ -20,7 +20,27 @@ import type { QualitaV2 } from './trainingCatalogV2';
 import type { WeekPlan, PlanSession } from './trainingEngine';
 import type { SquadraSettimana } from './trainingSquadra';
 
-export interface CompletionRow { session_key: string; plan_id: string | null; feedback: string | null; completed_at: string; rpe?: number | null }
+export interface CompletionRow {
+  session_key: string; plan_id: string | null; feedback: string | null; completed_at: string; rpe?: number | null;
+  data_programmata?: string | null;   // migration 032 (20/10): il giorno nel piano; completed_at è la data effettiva
+  durata_reale_sec?: number | null;   // migration 032: durata vera dal player
+}
+/** Durata reale accettata nel carico: tra 10' e 4 ore (fuori = ha lasciato il player aperto o l'ha chiuso subito: vale il piano). */
+export const DURATA_REALE_MIN_SEC = 10 * 60;
+export const DURATA_REALE_MAX_SEC = 4 * 3600;
+/** Minuti reali della seduta se il dato è credibile, altrimenti null. */
+export function durataRealeMin(c: Pick<CompletionRow, 'durata_reale_sec'>): number | null {
+  const sec = c.durata_reale_sec;
+  if (sec == null || !Number.isFinite(sec) || sec < DURATA_REALE_MIN_SEC || sec > DURATA_REALE_MAX_SEC) return null;
+  return Math.round(sec / 60);
+}
+/** Giorni tra la data programmata e quella effettiva (0 = lo stesso giorno, 1 = il giorno dopo, −1 = in anticipo); null senza data programmata. */
+export function giorniDiRitardo(c: Pick<CompletionRow, 'data_programmata' | 'completed_at'>): number | null {
+  if (!c.data_programmata) return null;
+  const eff = romeDate(c.completed_at);
+  const prog = String(c.data_programmata).slice(0, 10);
+  return Math.round((Date.UTC(+eff.slice(0, 4), +eff.slice(5, 7) - 1, +eff.slice(8, 10)) - Date.UTC(+prog.slice(0, 4), +prog.slice(5, 7) - 1, +prog.slice(8, 10))) / 86400000);
+}
 export interface SetRpeRow { session_key: string; rpe: number | null }
 export interface PlanRow { id: string; plan: WeekPlan }
 
@@ -31,6 +51,7 @@ export interface SedutaCarico {
   durataMin: number;
   rpe: number;             // percepito (voto di fine seduta / log serie / feedback / default)
   rpeFonte: 'seduta' | 'serie' | 'feedback' | 'default';
+  durataFonte: 'reale' | 'piano' | 'default'; // migration 032: la durata vera dal player quando c'è
   carico: number;          // AU = durata × rpe
 }
 
@@ -142,7 +163,9 @@ export function calcolaCarico(input: {
     const giorno = Number(c.session_key.split('#')[1]);
     const plan = c.plan_id ? planById.get(c.plan_id) : undefined;
     const s = plan?.sedute.find((x) => x.giorno === giorno);
-    const durataMin = s?.durata_min && s.durata_min > 0 ? s.durata_min + (s.apertura_min || 0) : 45;
+    const reale = durataRealeMin(c);
+    const durataMin = reale ?? (s?.durata_min && s.durata_min > 0 ? s.durata_min + (s.apertura_min || 0) : 45);
+    const durataFonte: SedutaCarico['durataFonte'] = reale != null ? 'reale' : s?.durata_min ? 'piano' : 'default';
     const logs = rpeBySession.get(c.session_key);
     let rpe: number, rpeFonte: SedutaCarico['rpeFonte'];
     // Il voto 1-10 di fine seduta (Ste, 23/9) vale più della media delle serie: è il giudizio sull'intera seduta
@@ -151,7 +174,7 @@ export function calcolaCarico(input: {
     else if (c.feedback && RPE_FEEDBACK[c.feedback]) { rpe = RPE_FEEDBACK[c.feedback]; rpeFonte = 'feedback'; }
     else { rpe = 6; rpeFonte = 'default'; }
     if ((rpeFonte === 'serie' || rpeFonte === 'seduta') && s) { sommaReale += rpe * durataMin; sommaAttesa += rpeAttesoSeduta(s) * durataMin; }
-    sedute.push({ data, sessionKey: c.session_key, titolo: s?.titolo || 'Seduta', durataMin, rpe: round1(rpe), rpeFonte, carico: Math.round(durataMin * rpe) });
+    sedute.push({ data, sessionKey: c.session_key, titolo: s?.titolo || 'Seduta', durataMin, rpe: round1(rpe), rpeFonte, durataFonte, carico: Math.round(durataMin * rpe) });
   }
   sedute.sort((a, b) => b.data.localeCompare(a.data));
 

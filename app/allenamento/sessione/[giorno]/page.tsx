@@ -51,7 +51,8 @@ export default function SessionePage() {
   const [giudizi, setGiudizi] = useState<Record<string, Giudizio>>({}); // giudizio per blocco
   const [zone, setZone] = useState<Record<string, string[]>>({});       // rolling (28/9): dove l'ha sentita di più
   const [stati, setStati] = useState<Record<string, StatoFascia>>({});  // rolling: ok / teso / fastidio
-  const [blocchiSaltati, setBlocchiSaltati] = useState<string[]>([]);   // apertura saltata dal player (8/10): niente domanda sulle zone
+  const [blocchiSaltati, setBlocchiSaltati] = useState<string[]>([]);
+  const [durataSec, setDurataSec] = useState<number | null>(null);          // durata reale dal player (20/10, migration 032)   // apertura saltata dal player (8/10): niente domanda sulle zone
   const [spiegazioneOpen, setSpiegazioneOpen] = useState(false); // "Leggi tutto" sulla spiegazione del planner
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -106,7 +107,7 @@ export default function SessionePage() {
       });
       await authFetch('/api/training/complete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan_id: planId, giorno, rpe: rpeSeduta ?? undefined, blocchi, note: note.trim() || undefined }),
+        body: JSON.stringify({ plan_id: planId, giorno, rpe: rpeSeduta ?? undefined, blocchi, note: note.trim() || undefined, durata_reale_sec: durataSec ?? undefined }),
       });
       setPhase('done');
     } finally { setSending(false); }
@@ -167,7 +168,7 @@ export default function SessionePage() {
               body: JSON.stringify({ plan_id: planId, giorno, ...log }),
             }).catch(() => { /* fire-and-forget: la seduta non si ferma */ });
           }}
-          onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setPhase('feedback'); }}
+          onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setDurataSec(esito?.durataSec ?? null); setPhase('feedback'); }}
           onExit={() => {
             // Il progresso resta salvato: al rientro si può riprendere da qui
             if (storageKey) {

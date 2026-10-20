@@ -44,7 +44,7 @@ function youtubeEmbedUrl(url?: string): string | null {
  * recupero automatico tra le serie, video dimostrativo, note. Schermo sempre
  * acceso (wake lock). Al termine: feedback 3-tap gestito dal parent.
  */
-export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx' }
+export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx'; startedAt?: number } // startedAt (20/10): l'inizio vero, per la durata reale
 /** Log di una serie (compilato durante il recupero): quanto è stata dura + eventuali reps/kg diversi dal proposto. */
 export interface SetLogInput {
   esercizio_id: string; serie: number; lato: '' | 'dx' | 'sx'; unita: string;
@@ -69,7 +69,7 @@ export default function TrainingSessionPlayer({
 }: {
   items: PlanItem[];
   titolo: string;
-  onComplete: (esito?: { blocchiSaltati: string[] }) => void; // blocchi saltati per intero (l'apertura, 8/10): niente domanda sulle zone a fine seduta
+  onComplete: (esito?: { blocchiSaltati: string[]; durataSec: number }) => void; // blocchi saltati per intero (l'apertura, 8/10): niente domanda sulle zone a fine seduta; durataSec (20/10): dall'inizio vero al completamento
   onExit: () => void;
   storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
   initialProgress?: PlayerProgress | null;
@@ -78,6 +78,7 @@ export default function TrainingSessionPlayer({
 }) {
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
   const blocchiSaltatiRef = useRef<string[]>([]); // "Salta l'apertura" (8/10): il blocco intero, senza passare dai singoli esercizi
+  const startedAtRef = useRef<number>(initialProgress?.startedAt ?? nowMs()); // l'inizio vero (anche dopo una ripresa)
   const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
   // Serie in più facoltativa dal resoconto (19/10, seconda parte): la sceglie lui durante l'ultimo recupero, una sola
   const [serieExtra, setSerieExtra] = useState(0);
@@ -122,7 +123,7 @@ export default function TrainingSessionPlayer({
   useEffect(() => {
     if (!storageKey) return;
     try {
-      localStorage.setItem(storageKey, JSON.stringify({ itemIdx, serieFatte, lato, savedAt: Date.now() }));
+      localStorage.setItem(storageKey, JSON.stringify({ itemIdx, serieFatte, lato, startedAt: startedAtRef.current, savedAt: Date.now() }));
     } catch { /* no-op */ }
   }, [storageKey, itemIdx, serieFatte, lato]);
 
@@ -223,7 +224,7 @@ export default function TrainingSessionPlayer({
     setShowDesc(false);
     if (itemIdx + step >= items.length) {
       if (storageKey) { try { localStorage.removeItem(storageKey); } catch { /* no-op */ } }
-      onComplete({ blocchiSaltati: blocchiSaltatiRef.current });
+      onComplete({ blocchiSaltati: blocchiSaltatiRef.current, durataSec: Math.max(1, Math.round((nowMs() - startedAtRef.current) / 1000)) });
     } else {
       setItemIdx(itemIdx + step);
     }

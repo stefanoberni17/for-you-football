@@ -6,6 +6,7 @@ import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { detectPain } from '@/lib/trainingPlanner';
 // Voto 1-10 → le tre scelte storiche (i consumatori vecchi leggono `feedback`): stessa soglia della memoria dei blocchi
 import { feedbackDaRpe } from '@/lib/trainingMemoriaBlocchi';
+import { dataDiGiorno } from '@/lib/trainingResoconto';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -51,14 +52,31 @@ export async function POST(request: NextRequest) {
         .filter((b): b is NonNullable<typeof b> => b !== null).slice(0, 8)
       : [];
 
+    // Migration 032 (20/10): durata reale dal player (secondi, 1'-4h) e giorno programmato dal piano (week_start + giorno − 1)
+    const durataSec = body.durata_reale_sec == null ? null : Math.round(Number(body.durata_reale_sec));
+    const durataReale = durataSec != null && Number.isFinite(durataSec) && durataSec >= 60 && durataSec <= 14400 ? durataSec : null;
+    let dataProgrammata: string | null = null;
+    try {
+      const { data: planRow } = await supabaseAdmin.from('training_plans').select('week_start').eq('id', plan_id).eq('user_id', userId).maybeSingle();
+      const ws = (planRow as { week_start?: string } | null)?.week_start;
+      const g = Number(giorno);
+      if (ws && Number.isInteger(g) && g >= 1 && g <= 7) dataProgrammata = dataDiGiorno(String(ws).slice(0, 10), g);
+    } catch { /* fail-soft: senza data programmata */ }
+
     const sessionKey = `${plan_id}#${giorno}`;
     const base = {
       user_id: userId, plan_id, session_key: sessionKey, feedback,
       note: typeof note === 'string' ? note.slice(0, 500) : null,
     };
     let skipped: string | undefined;
+    const con026 = { ...base, rpe, feedback_blocchi: blocchi.length ? blocchi : null };
     let { error } = await supabaseAdmin.from('training_session_completions')
-      .upsert({ ...base, rpe, feedback_blocchi: blocchi.length ? blocchi : null }, { onConflict: 'user_id,session_key' });
+      .upsert({ ...con026, data_programmata: dataProgrammata, durata_reale_sec: durataReale }, { onConflict: 'user_id,session_key' });
+    if (error && /data_programmata|durata_reale_sec/i.test(error.message)) {
+      // Migration 032 non applicata: si salva senza data programmata e durata reale
+      skipped = 'migration_032';
+      ({ error } = await supabaseAdmin.from('training_session_completions').upsert(con026, { onConflict: 'user_id,session_key' }));
+    }
     if (error && /rpe|feedback_blocchi|column/i.test(error.message)) {
       // Migration 026 non applicata: si salva come prima
       skipped = 'migration_026';

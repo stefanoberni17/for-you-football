@@ -19,7 +19,7 @@ import {
 } from './trainingEngine';
 import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLogRow } from './trainingAdapt';
 import { esercizioV2ById } from './trainingCatalogV2';
-import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
+import { calcolaCarico, caricoSquadraStimato, caricoTesto, durataRealeMin, giorniDiRitardo, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { squadraMisurata, type Resoconto, type SquadraMisurata } from './trainingResoconto';
 import { loadResoconti } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
@@ -195,6 +195,8 @@ export interface FeedbackSeduta {
   feedback_blocchi?: { id: string; nome?: string; giudizio?: 'facile' | 'ok' | 'duro'; zone?: string[]; stato?: string }[] | null;
   session_key?: string;
   plan_id?: string | null;
+  data_programmata?: string | null;   // migration 032: "fatta il giorno dopo"
+  durata_reale_sec?: number | null;   // migration 032: durata vera dal player
 }
 
 /**
@@ -204,6 +206,8 @@ export interface FeedbackSeduta {
 export async function loadFeedbackRecenti(userId: string, limit = 40): Promise<FeedbackSeduta[]> {
   const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).order('completed_at', { ascending: false }).limit(limit);
+  const con032 = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key, plan_id, data_programmata, durata_reale_sec');
+  if (!con032.error) return (con032.data || []) as unknown as FeedbackSeduta[];
   const full = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key, plan_id');
   if (!full.error) return (full.data || []) as unknown as FeedbackSeduta[];
   const base = await q('feedback, note, completed_at, session_key, plan_id');
@@ -222,7 +226,10 @@ export function feedbackSeduteBlock(tutte: FeedbackSeduta[]): string {
     const voto = f.rpe != null ? `voto ${f.rpe}/10` : (f.feedback ? giud[f.feedback] ?? f.feedback : '—');
     const blocchi = (f.feedback_blocchi || []).map((b) => `${b.nome || b.id} [${b.id}]: ${b.giudizio ? (giud[b.giudizio] ?? b.giudizio) : b.zone?.length ? `${b.stato ?? 'teso'}: ${b.zone.join(', ')}` : (b.stato ?? '—')}`).join(' · ');
     const nota = f.note ? ` · "${sanitize(f.note)}"` : '';
-    return `- ${data}: ${voto}${blocchi ? ` · blocchi: ${blocchi}` : ''}${nota}`;
+    const ritardo = giorniDiRitardo(f);
+    const quando = ritardo == null || ritardo === 0 ? '' : ritardo === 1 ? ' (fatta il giorno dopo)' : ritardo > 1 ? ` (fatta ${ritardo} giorni dopo)` : ' (fatta in anticipo)';
+    const durata = durataRealeMin(f);
+    return `- ${data}${quando}: ${voto}${durata != null ? ` · ${durata}' reali` : ''}${blocchi ? ` · blocchi: ${blocchi}` : ''}${nota}`;
   });
   return `\n# FEEDBACK SEDUTE (dall'atleta a fine seduta, dalla più recente; il giudizio per blocco decide il codice della settimana dopo — regola 10)\n${lines.join('\n')}`;
 }
@@ -391,13 +398,16 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
   const selCompletions = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60);
   const [complRes, { data: plans }] = await Promise.all([
-    selCompletions('session_key, plan_id, feedback, completed_at, rpe'),
+    selCompletions('session_key, plan_id, feedback, completed_at, rpe, durata_reale_sec'),
     supabaseAdmin.from('training_plans').select('id, plan')
       .eq('user_id', userId).gte('created_at', new Date(Date.now() - 49 * 24 * 3600 * 1000).toISOString())
       .order('created_at', { ascending: false }).limit(20),
   ]);
   // Migration 026 non applicata → senza la colonna `rpe` (si usa la media delle serie come prima)
-  const completions = complRes.error ? (await selCompletions('session_key, plan_id, feedback, completed_at')).data : complRes.data;
+  // Migration 032 (durata reale) o 026 (rpe) non applicate → colonne storiche
+  const completions = complRes.error
+    ? ((await selCompletions('session_key, plan_id, feedback, completed_at, rpe')).data ?? (await selCompletions('session_key, plan_id, feedback, completed_at')).data)
+    : complRes.data;
   let rpe = setRpe;
   if (!rpe) {
     try {
