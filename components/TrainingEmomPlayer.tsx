@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import SchedaEsercizioView from './SchedaEsercizio';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
-import { Check, Info, Play, Square, X } from 'lucide-react';
+import { Check, ChevronLeft, Info, Pause, Play, Square, X } from 'lucide-react';
 import { Button, Card, RpeScale } from '@/components/ui';
 
 /**
@@ -12,6 +12,8 @@ import { Button, Card, RpeScale } from '@/components/ui';
  * Gli item arrivano dal blocco con serie = giri e quantità = reps al minuto; il giro è
  * item 1, 2, 3… e poi si ricomincia. Il tempo è a timestamp (iOS sospende gli interval
  * in background): al ritorno il minuto giusto si ricalcola da solo.
+ * Pausa e "minuto precedente" (Ste, 20/10): la pausa congela l'orologio spostando in avanti la partenza
+ * di quanto è durata; il minuto precedente riporta la partenza all'inizio di quel minuto, con i suoi 60".
  */
 export interface EmomItem {
   esercizio_id: string;
@@ -51,6 +53,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   const [minuto, setMinuto] = useState(0);           // indice del minuto in corso (0-based)
   const [left, setLeft] = useState(60);              // secondi che restano nel minuto
   const [running, setRunning] = useState(false);
+  const [inPausa, setInPausa] = useState(false);
   const [finito, setFinito] = useState(false);
   const [rpe, setRpe] = useState<number | null>(null);
   const [showDesc, setShowDesc] = useState(false);
@@ -58,11 +61,12 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   const startRef = useRef<number | null>(null);      // timestamp di partenza del circuito
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const minutoRef = useRef(0);
+  const pausaRef = useRef<number | null>(null);        // timestamp dell'inizio della pausa
 
   const stop = () => { if (tickRef.current) clearInterval(tickRef.current); tickRef.current = null; };
 
   const tick = () => {
-    if (startRef.current === null) return;
+    if (startRef.current === null || pausaRef.current !== null) return;
     const trascorsi = nowMs() - startRef.current;
     const m = Math.floor(trascorsi / MINUTO_MS);
     if (m >= totale) {
@@ -85,8 +89,8 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   }, []);
 
   const parti = () => {
-    startRef.current = nowMs(); minutoRef.current = 0;
-    setMinuto(0); setLeft(60); setRunning(true);
+    startRef.current = nowMs(); minutoRef.current = 0; pausaRef.current = null;
+    setMinuto(0); setLeft(60); setRunning(true); setInPausa(false);
     try { navigator.vibrate?.(60); } catch { /* no-op */ }
     stop(); tickRef.current = setInterval(tick, 500);
   };
@@ -97,7 +101,28 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
     startRef.current -= MINUTO_MS - (trascorsi % MINUTO_MS);
     tick();
   };
-  const fermaQui = () => { stop(); setRunning(false); setFinito(true); };
+  /** Pausa: l'orologio si ferma qui; alla ripresa la partenza slitta avanti di quanto è durata la pausa. */
+  const pausa = () => {
+    if (!running || pausaRef.current !== null) return;
+    pausaRef.current = nowMs(); setInPausa(true); stop();
+  };
+  const riprendi = () => {
+    if (startRef.current === null || pausaRef.current === null) return;
+    startRef.current += nowMs() - pausaRef.current;
+    pausaRef.current = null; setInPausa(false);
+    try { navigator.vibrate?.(60); } catch { /* no-op */ }
+    stop(); tickRef.current = setInterval(tick, 500); tick();
+  };
+  /** Torna all'inizio del minuto precedente (tap sbagliato su "Fatto"): quel minuto riparte da 60". Funziona anche in pausa. */
+  const minutoPrima = () => {
+    if (startRef.current === null || minutoRef.current === 0) return;
+    const m = minutoRef.current - 1;
+    const adesso = pausaRef.current ?? nowMs();
+    startRef.current = adesso - m * MINUTO_MS;
+    minutoRef.current = m; setMinuto(m); setLeft(60); setShowDesc(false); setShowVideo(false);
+    if (pausaRef.current === null) tick();
+  };
+  const fermaQui = () => { stop(); pausaRef.current = null; setInPausa(false); setRunning(false); setFinito(true); };
 
   const giriFatti = () => {
     const fatti = finito && left === 0 && minuto >= totale - 1 ? totale : minuto; // "Ferma qui" a metà: il minuto in corso non conta
@@ -126,7 +151,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
       {/* Il minuto: grande, sempre in cima */}
       <Card variant="raised" className="text-center mb-4">
         <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">
-          {finito ? 'EMOM finito' : running ? `Minuto ${minuto + 1} di ${totale}` : `EMOM · ${totale} minuti`}
+          {finito ? 'EMOM finito' : running ? `Minuto ${minuto + 1} di ${totale}${inPausa ? ' · in pausa' : ''}` : `EMOM · ${totale} minuti`}
         </p>
         <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">
           {finito ? <Check size={40} className="inline text-forest-400" aria-hidden /> : `0:${String(left).padStart(2, '0')}`}
@@ -191,9 +216,17 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
           <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={() => onDone(rpe, giriFatti())}>Vai avanti</Button>
         ) : running ? (
           <>
-            <Button variant="secondary" size="lg" fullWidth onClick={minutoDopo}>Fatto, passa al minuto dopo</Button>
-            <div className="mt-2 flex items-center justify-end">
-              <Button variant="danger" size="sm" icon={<Square size={14} />} onClick={fermaQui}>Ferma qui</Button>
+            {inPausa ? (
+              <Button variant="hero" size="lg" fullWidth icon={<Play size={20} />} onClick={riprendi}>Riprendi</Button>
+            ) : (
+              <Button variant="secondary" size="lg" fullWidth onClick={minutoDopo}>Fatto, passa al minuto dopo</Button>
+            )}
+            <div className="mt-2 flex items-center justify-between gap-2">
+              <Button variant="ghost" size="sm" icon={<ChevronLeft size={16} />} onClick={minutoPrima} disabled={minuto === 0} className="-ml-4">Minuto precedente</Button>
+              <div className="flex items-center gap-1">
+                {!inPausa && <Button variant="ghost" size="sm" icon={<Pause size={16} />} onClick={pausa}>Pausa</Button>}
+                <Button variant="danger" size="sm" icon={<Square size={14} />} onClick={fermaQui} className="-mr-2">Ferma qui</Button>
+              </div>
             </div>
           </>
         ) : (
