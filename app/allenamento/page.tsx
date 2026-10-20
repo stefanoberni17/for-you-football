@@ -14,6 +14,9 @@ import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import ResocontoSheet from '@/components/ResocontoSheet';
+import PalestraSwitch, { salvaParte } from '@/components/PalestraSwitch';
+import FisicoBloccato from '@/components/FisicoBloccato';
+import { primoDaChiedere, resocontoRimandato, rimandaResoconto, saltaResoconto as saltaResocontoLocale, scriviPendenti } from '@/lib/resocontoPendente';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
@@ -110,6 +113,7 @@ export default function AllenamentoHub() {
   const router = useRouter();
   const [state, setState] = useState<TrainingState | null>(null);
   const [loading, setLoading] = useState(true);
+  const [noAccess, setNoAccess] = useState(false); // senza il flag del Campo: pagina di assaggio (20/10)
   const [generating, setGenerating] = useState(false);
   const [vista, setVista] = useState<Vista>('oggi');
   const [vistaRombo, setVistaRombo] = useState<'base' | 'dettaglio'>('base');
@@ -157,12 +161,26 @@ export default function AllenamentoHub() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
     const res = await authFetch('/api/training/state');
-    if (res.status === 403) { router.push('/strumenti'); return; }
-    if (res.ok) setState(await res.json());
+    if (res.status === 403) { setNoAccess(true); setLoading(false); return; }
+    if (res.ok) {
+      const st = await res.json() as TrainingState;
+      setState(st);
+      salvaParte('fisico'); // la tab Palestra riapre qui
+      scriviPendenti(st.resocontiDaChiedere ?? []); // il pallino sulla tab legge da qui
+    }
     setLoading(false);
   }, [router]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Resoconto in evidenza (20/10): con un resoconto da dare il foglio si apre da solo, come il check-in del mattino.
+  // "Non adesso" (X) lo tiene chiuso finché l'app non viene riaperta; "Salta per questa volta" per sempre, per quel giorno.
+  useEffect(() => {
+    if (!state) return;
+    const oggi = dataDiGiorno(state.lunedi, state.oggiDow || 1);
+    const r = primoDaChiedere(state.resocontiDaChiedere ?? [], oggi);
+    if (r && !resocontoRimandato(r)) setShowResoconto(true);
+  }, [state]);
 
   // Senza richiesta = piano AUTOMATICO: preferenze del setup applicate, recuperi obbligatori
   // (21/9: `{ modo: 'nuova' }` lo faceva passare per una richiesta esplicita → preferenze ignorate)
@@ -241,6 +259,7 @@ export default function AllenamentoHub() {
     } finally { setPainSending(false); }
   };
 
+  if (noAccess) return <FisicoBloccato />;
   if (loading || !state) {
     return <AppLoader />;
   }
@@ -254,6 +273,7 @@ export default function AllenamentoHub() {
     return (
       <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
         <div className="max-w-md mx-auto">
+          <PalestraSwitch parte="fisico" className="mb-4" />
           <h1 className="font-display text-title-1 font-bold text-app mb-1">Campo</h1>
           <p className="text-body text-muted mb-5">Prima di iniziare, due cose. Le chiediamo una volta sola.</p>
           <Card padding="sm" className="space-y-4">
@@ -318,13 +338,11 @@ export default function AllenamentoHub() {
 
   // Resoconto dopo squadra/partita (19/10): il primo da chiedere non saltato ("Salta" resta sul dispositivo, per data e tipo)
   const oggiData = dataDiGiorno(state.lunedi, oggiDow);
-  const resocontoSaltato = (r: { data: string; tipo: string }) => { try { return localStorage.getItem(`resoconto.saltato:${r.data}:${r.tipo}`) === '1'; } catch { return false; } };
   // La card del giorno stesso solo dalla sera (dalle 18 a Roma: prima dell'allenamento non ha senso); quella di ieri sempre (review 19/10)
-  const oraRoma = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Rome', hour: '2-digit', hour12: false }).format(new Date()));
-  const resocontoDaChiedere = (state.resocontiDaChiedere ?? []).find((r) => !resocontoSaltato(r) && (r.data !== oggiData || oraRoma >= 18)) ?? null;
+  const resocontoDaChiedere = primoDaChiedere(state.resocontiDaChiedere ?? [], oggiData);
   const saltaResoconto = () => {
     if (!resocontoDaChiedere) return;
-    try { localStorage.setItem(`resoconto.saltato:${resocontoDaChiedere.data}:${resocontoDaChiedere.tipo}`, '1'); } catch { /* private mode */ }
+    saltaResocontoLocale(resocontoDaChiedere);
     setShowResoconto(false); setResocontoTick((t) => t + 1);
   };
   const cardResoconto = resocontoDaChiedere ? (
@@ -450,7 +468,6 @@ export default function AllenamentoHub() {
     }
     return (
       <>
-        {cardResoconto}
         {hero}
         {posticipoMsg && <p className="text-body-sm text-warning mb-3">{posticipoMsg}</p>}
         {carico && (
@@ -779,6 +796,7 @@ export default function AllenamentoHub() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
+        <PalestraSwitch parte="fisico" className="mb-4" />
         {/* Header compatto: titolo + dolore + setup */}
         <div className="flex items-center justify-between gap-3">
           <h1 className="font-display text-title-1 font-bold text-app">Campo</h1>
@@ -843,6 +861,9 @@ export default function AllenamentoHub() {
           </Card>
         )}
 
+        {/* Resoconto dopo squadra/partita: sopra le viste, finché non rispondi (20/10) */}
+        {cardResoconto}
+
         {/* Segmented control: Oggi · Settimana · Card */}
         <div className="flex gap-2 mb-4" role="tablist" aria-label="Vista del Campo">
           {VISTE.map((v) => (
@@ -901,7 +922,7 @@ export default function AllenamentoHub() {
       {/* Resoconto dopo squadra/partita (19/10): montato solo quando è aperto, così riparte vuoto */}
       {showResoconto && resocontoDaChiedere && (
         <ResocontoSheet open data={resocontoDaChiedere.data} tipo={resocontoDaChiedere.tipo}
-          onClose={() => setShowResoconto(false)}
+          onClose={() => { rimandaResoconto(resocontoDaChiedere); setShowResoconto(false); }}
           onSaved={() => { setShowResoconto(false); load(); }}
           onSkip={saltaResoconto} />
       )}

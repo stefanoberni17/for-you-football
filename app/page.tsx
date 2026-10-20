@@ -13,8 +13,11 @@ import {
   riflessioneAperta,
   riflessioneApreAlle,
 } from '@/lib/dayUnlockLogic';
-import { oraItaly } from '@/lib/dateItaly';
-import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
+import { oraItaly, todayItaly, dateItaly } from '@/lib/dateItaly';
+import type { CampoOggi } from '@/lib/trainingOggi';
+import { primoDaChiedere, scriviPendenti } from '@/lib/resocontoPendente';
+import { durataLabel } from '@/lib/trainingLabels';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
 import { shouldRedirectToPaywall, hasActiveAccess } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
@@ -24,16 +27,8 @@ import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
 import BirthdateBanner from '@/components/BirthdateBanner';
-import { Activity, Moon, Zap, Brain, Calendar, Flame, Target, Bot, Play, Dumbbell, Trophy, Check, Key, ChevronRight, Sun } from 'lucide-react';
+import { Calendar, Flame, Target, Bot, Play, Dumbbell, Trophy, Check, ChevronRight, Sun, Lock, MessageCircle, Pause } from 'lucide-react';
 import { AppLoader, Badge, Banner, Button, Card, SectionTitle } from '@/components/ui';
-
-interface CheckinData {
-  date: string;
-  physical_state: number | null;
-  sleep_hours: number | null;
-  recovery_quality: number | null;
-  mental_state: number | null;
-}
 
 /**
  * Streak percorso: giorni di calendario consecutivi con almeno un giorno
@@ -55,18 +50,15 @@ function pathStreak(days: DayProgress[]): number {
   return streak;
 }
 
-function miniAvg(arr: number[]): number {
-  if (!arr.length) return 0;
-  return Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10;
+/** Giorno della settimana 1=Lun … 7=Dom di una data YYYY-MM-DD. */
+function dowDi(data: string): number {
+  const d = new Date(`${data}T12:00:00`);
+  return ((d.getDay() + 6) % 7) + 1;
 }
-
-function miniTrend(values: number[]): 'up' | 'down' | 'stable' {
-  if (values.length < 3) return 'stable';
-  const half = Math.floor(values.length / 2);
-  const diff = miniAvg(values.slice(half)) - miniAvg(values.slice(0, half));
-  if (diff > 0.3) return 'up';
-  if (diff < -0.3) return 'down';
-  return 'stable';
+function addDays(data: string, n: number): string {
+  const d = new Date(`${data}T12:00:00`);
+  d.setDate(d.getDate() + n);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 export default function HomePage() {
@@ -83,7 +75,7 @@ export default function HomePage() {
   const [coachMessageDismissed, setCoachMessageDismissed] = useState(false);
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [checkins, setCheckins] = useState<CheckinData[]>([]);
+  const [campo, setCampo] = useState<CampoOggi | null>(null); // il Campo oggi, in piccolo (20/10)
   const [actionsTotal, setActionsTotal] = useState(0);
   const [actionsTodayCount, setActionsTodayCount] = useState(0);
   const [actionsStreak, setActionsStreak] = useState(0);
@@ -162,7 +154,7 @@ export default function HomePage() {
       const uid = session.user.id;
       const currentWeek = profileData?.current_week || 1;
       const soft = (p: Promise<Response>): Promise<Response | null> => p.catch(() => null);
-      const [progressRes, startedRes, weekJson, checkinRes, gateRes, calRes, aRes, hRes] = await Promise.all([
+      const [progressRes, startedRes, weekJson, campoRes, gateRes, calRes, aRes, hRes] = await Promise.all([
         supabase
           .from('user_day_progress')
           .select('week_number, day_number, completed, completed_at, compressed, created_at')
@@ -176,7 +168,8 @@ export default function HomePage() {
           .eq('user_id', uid)
           .eq('completed', false),
         cachedJson<unknown>(`settimana:${currentWeek}`, () => authFetch(`/api/settimana?week=${currentWeek}`)),
-        soft(authFetch(`/api/checkin/history?userId=${uid}&days=7`)),
+        // Il Campo oggi (seduta, settimana, resoconto da dare): per tutti, risponde `accesso: false` senza il flag
+        soft(authFetch('/api/training/oggi')),
         // Missione della settimana: vive sul G7 della settimana precedente,
         // mostrata solo se quel gate è stato superato
         currentWeek >= 2 ? soft(authFetch(`/api/gate?week=${currentWeek - 1}`)) : Promise.resolve(null),
@@ -199,9 +192,10 @@ export default function HomePage() {
       setWeekData(weekJson);
 
       try {
-        if (checkinRes?.ok) {
-          const checkinJson = await checkinRes.json();
-          setCheckins(checkinJson.checkins || []);
+        if (campoRes?.ok) {
+          const c = (await campoRes.json()) as CampoOggi;
+          setCampo(c);
+          scriviPendenti(c.resocontiDaChiedere ?? []); // il pallino sulla tab Palestra
         }
       } catch {}
 
@@ -283,13 +277,22 @@ export default function HomePage() {
     : undefined;
   const todayTitle: string | undefined = todayGiorno?.titolo?.replace(/^W\d+-G\d+ — /, '');
   const todayMinutes: number | undefined = todayGiorno?.durataMinuti || undefined;
-  // I tuoi numeri (ultimi 7 check-in): 4 medie con tendenza, senza sparkline
-  const statRows = checkins.length >= 2 ? [
-    { Icon: Activity, label: 'Fisico', values: checkins.filter(c => c.physical_state !== null).map(c => c.physical_state as number), unit: '/10', color: 'var(--color-accent-glow)' },
-    { Icon: Moon, label: 'Sonno', values: checkins.filter(c => c.sleep_hours !== null).map(c => c.sleep_hours as number), unit: 'h', color: 'var(--color-info)' },
-    { Icon: Zap, label: 'Recupero', values: checkins.filter(c => c.recovery_quality !== null).map(c => c.recovery_quality as number), unit: '/10', color: 'var(--color-warning)' },
-    { Icon: Brain, label: 'Mentale', values: checkins.filter(c => c.mental_state !== null).map(c => c.mental_state as number), unit: '/10', color: '#a78bfa' },
-  ].map(r => ({ ...r, avg: miniAvg(r.values) })).filter(r => r.values.length >= 2) : [];
+  // ── La settimana di calendario (lunedì-domenica, fuso italiano): giorni del percorso fatti, sedute del Campo, squadra, partita ──
+  const oggiIt = todayItaly();
+  const oggiDow = dowDi(oggiIt);
+  const lunedi = addDays(oggiIt, 1 - oggiDow);
+  const domenica = addDays(lunedi, 6);
+  const pathDows = new Set(
+    completedDays.filter(d => d.completedAt).map(d => dateItaly(d.completedAt as string)).filter(x => x >= lunedi && x <= domenica).map(dowDi)
+  );
+  const campoAttivo = !!campo?.accesso;
+  const trainingDaysEff = campoAttivo ? campo!.trainingDays : (calendarData?.trainingDays ?? []);
+  const matchDaysEff = campoAttivo ? campo!.matchDays : (calendarData?.matchDays ?? []);
+  const seduteFatte = (campo?.sedute ?? []).filter(s => s.stato === 'fatta').length;
+  const seduteTot = campo?.sedute.length ?? 0;
+  const resocontoDaChiedere = campoAttivo ? primoDaChiedere(campo!.resocontiDaChiedere ?? [], oggiIt) : null;
+  const oggiSquadra = trainingDaysEff.includes(oggiDow);
+  const oggiPartita = matchDaysEff.includes(oggiDow);
 
   // Rientro dopo assenza: streak a zero e ultimo giorno completato ≥3 giorni fa
   // → l'hero accoglie invece di mostrare solo lo streak perso.
@@ -401,6 +404,99 @@ export default function HomePage() {
     </Banner>
   ) : null;
 
+  // ── Allenamento di oggi (20/10): la seconda card della home. Un resoconto da dare passa davanti alla seduta. ──
+  const seduta = campo?.seduta ?? null;
+  const cardAllenamento = (() => {
+    if (!campo) return null;
+    if (!campoAttivo) {
+      if (primiGiorni) return null;
+      return (
+        <Card padding="sm" href="/allenamento" aria-label="Fisico: scopri il Campo">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">Fisico</span>
+              <span className="block text-body-sm text-muted">Allenamento fisico e tecnico, settimana per settimana. Scopri cos&apos;è.</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      );
+    }
+    if (resocontoDaChiedere) {
+      const ieri = resocontoDaChiedere.data !== oggiIt;
+      return (
+        <Card variant="accent" padding="sm" href="/allenamento" aria-label="Com'è andata?">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-btn bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><MessageCircle size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">{resocontoDaChiedere.tipo === 'partita' ? `Com'è andata la partita${ieri ? ' di ieri' : ''}?` : `Com'è andata con la squadra${ieri ? ' ieri' : ''}?`}</span>
+              <span className="block text-body-sm text-muted">30 secondi: fatica vera, minuti, fastidi. La settimana si adatta.</span>
+            </span>
+            <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />
+          </div>
+        </Card>
+      );
+    }
+    if (campo.painHold) {
+      return (
+        <Card padding="sm" href="/allenamento" aria-label="Allenamenti in pausa">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-danger/15 text-danger flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">Allenamenti fisici in pausa</span>
+              <span className="block text-body-sm text-muted">Hai segnalato un dolore. Quando è passato, riprendi dal Campo.</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      );
+    }
+    if (seduta && seduta.stato !== 'fatta') {
+      return (
+        <Card variant="accent" padding="md" aria-label="Allenamento di oggi">
+          <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1">
+            {seduta.stato === 'recuperabile' ? `Da recuperare · era ${DAY_SHORT_NAMES[seduta.giorno]}` : 'Allenamento di oggi'}
+          </p>
+          <h2 className="font-display text-title-2 font-bold text-app leading-tight">{seduta.titolo}</h2>
+          <p className="text-body-sm text-muted mt-1">~{durataLabel(seduta.durataMin)}{seduta.aperturaMin ? ` (+${seduta.aperturaMin}' di apertura, se hai tempo)` : ''} · {seduta.descrizione}</p>
+          {(seduta.recupero || seduta.proposte.length > 0) && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {seduta.recupero && <Badge tone="info">Recupero</Badge>}
+              {seduta.proposte.includes('togli') && <Badge tone="info">Serie facoltative</Badge>}
+              {seduta.proposte.includes('aggiungi') && <Badge tone="info">Serie in più, se vuoi</Badge>}
+            </div>
+          )}
+          <Button size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href={`/allenamento/sessione/${seduta.giorno}`} className="mt-4">
+            {seduta.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+          </Button>
+        </Card>
+      );
+    }
+    const fattaOggi = (campo.sedute ?? []).find(s => s.giorno === oggiDow && s.stato === 'fatta');
+    const riga = (titolo: string, sub: string, icona: React.ReactNode, tone: 'done' | 'neutral' = 'neutral') => (
+      <Card padding="sm" href="/allenamento" aria-label={titolo}>
+        <div className="flex items-center gap-3 min-h-[44px]">
+          <span className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${tone === 'done' ? 'bg-forest-500/15 text-forest-400' : 'bg-surface-2 text-muted'}`} aria-hidden>{icona}</span>
+          <span className="flex-1 min-w-0">
+            <span className="block text-body font-semibold text-app">{titolo}</span>
+            <span className="block text-body-sm text-muted">{sub}</span>
+          </span>
+          <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+        </div>
+      </Card>
+    );
+    if (fattaOggi) return riga('Allenamento di oggi: fatto', fattaOggi.titolo, <Check size={18} strokeWidth={3} />, 'done');
+    if (oggiPartita) return riga('Oggi partita', 'In bocca al lupo. Stasera, o domani, dimmi com\'è andata.', <Trophy size={18} />);
+    if (oggiSquadra) return riga('Oggi con la squadra', campo.prossima ? `Con l'app: ${DAY_SHORT_NAMES[campo.prossima.giorno]}, ${campo.prossima.titolo}` : 'Stasera, o domani, dimmi com\'è andata.', <Dumbbell size={18} />);
+    if (!campo.haPiano) return riga('La tua settimana non c\'è ancora', 'Apri il Campo: il preparatore la compone sui tuoi giorni.', <Dumbbell size={18} />);
+    if (campo.prossima) return riga('Oggi riposo', `La prossima è ${DAY_SHORT_NAMES[campo.prossima.giorno]}: ${campo.prossima.titolo} · ~${durataLabel(campo.prossima.durataMin)}`, <Dumbbell size={18} />);
+    return riga('Per questa settimana hai finito', 'Lunedì arriva la prossima settimana.', <Check size={18} strokeWidth={3} />, 'done');
+  })();
+
+  // Pratica di oggi già fatta (il prossimo giorno si apre domattina): una riga con la spunta, non più l'hero
+  const praticaFatta = !allDone && nextDayLocked;
+
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       {/* Header: saluto in una riga + streak; il mantra della settimana sotto, nel font delle citazioni */}
@@ -437,91 +533,69 @@ export default function HomePage() {
           </Card>
         )}
 
-        {/* ─── Il giorno di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina. ─── */}
-        <Card variant="hero" padding="md">
-          {allDone ? (
-            <>
-              <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
-              <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta</h2>
-              <p className="text-forest-100 text-body-sm mt-1 mb-4">
-                Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
-              </p>
-              <div className="space-y-2">
-                <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
-                  Allenati in Palestra
+        {/* ─── 1. La pratica mentale di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina.
+                Fatta → una riga con la spunta (20/10). ─── */}
+        {allDone ? (
+          <Card variant="hero" padding="md">
+            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
+            <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta</h2>
+            <p className="text-forest-100 text-body-sm mt-1 mb-4">
+              Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
+            </p>
+            <div className="space-y-2">
+              <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+                Allenati in Palestra
+              </Button>
+              <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
+                Rivedi il traguardo
+              </Button>
+            </div>
+          </Card>
+        ) : praticaFatta ? (
+          <Card padding="sm" href={`/settimana/${currentWeek}`} aria-label="Pratica di oggi: fatta">
+            <div className="flex items-center gap-3 min-h-[44px]">
+              <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Check size={18} strokeWidth={3} /></span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-body font-semibold text-app">Pratica di oggi: fatta</span>
+                <span className="block text-body-sm text-muted">Settimana {nextDay.week}, Giorno {nextDay.day} si apre domattina.{primiGiorni ? '' : ' Intanto la Palestra è aperta.'}</span>
+              </span>
+              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+            </div>
+          </Card>
+        ) : (
+          <Card variant="hero" padding="md">
+            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
+              {comebackMode ? 'Bentornato' : `Settimana ${currentWeek} · ${WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || ''}`}
+            </p>
+            <h2 className="font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
+              {todayTitle || `Giorno ${nextDay.day}`}
+            </h2>
+            <p className="text-forest-100 text-body-sm mt-1.5">
+              {comebackMode
+                ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
+                : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
+            </p>
+            <div className="mt-4">
+              {nextDayInCorso ? (
+                <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+                  {riflessioneOk ? "Com'è andata oggi?" : 'Continua la pratica di oggi'}
                 </Button>
-                <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
-                  Rivedi il traguardo
+              ) : (
+                <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+                  {totalCompleted === 0 ? 'Inizia il Giorno 1' : `Inizia il Giorno ${nextDay.day}`}
                 </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
-                {comebackMode ? 'Bentornato' : `Settimana ${currentWeek} · ${WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || ''}`}
-              </p>
-              <h2 className="font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
-                {nextDayLocked
-                  ? 'Il prossimo giorno si apre domattina'
-                  : todayTitle || `Giorno ${nextDay.day}`}
-              </h2>
-              <p className="text-forest-100 text-body-sm mt-1.5">
-                {comebackMode
-                  ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
-                  : nextDayLocked
-                    ? (primiGiorni ? `Settimana ${nextDay.week}, Giorno ${nextDay.day}. Per oggi hai fatto.` : `Settimana ${nextDay.week}, Giorno ${nextDay.day}. Intanto la Palestra è aperta.`)
-                    : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
-              </p>
+              )}
+              {nextDayInCorso && (
+                <p className="text-forest-100 text-body-sm mt-2">
+                  {riflessioneOk ? 'Giornata avviata. Se vuoi, chiudila con una riga di riflessione: è facoltativa.' : `Vivi la giornata. Più tardi, se vuoi, una riga di riflessione (dalle ${riflessioneAlle}).`}
+                </p>
+              )}
+            </div>
+          </Card>
+        )}
 
-              <div className="mt-4">
-                {nextDayLocked ? (
-                  primiGiorni ? null : (
-                    <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
-                      Allenati in Palestra
-                    </Button>
-                  )
-                ) : nextDayInCorso ? (
-                  <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                    {riflessioneOk ? "Com'è andata oggi?" : 'Continua la pratica di oggi'}
-                  </Button>
-                ) : (
-                  <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                    {totalCompleted === 0 ? 'Inizia il Giorno 1' : `Inizia il Giorno ${nextDay.day}`}
-                  </Button>
-                )}
-                {nextDayInCorso && (
-                  <p className="text-forest-100 text-body-sm mt-2">
-                    {riflessioneOk ? 'Giornata avviata. Se vuoi, chiudila con una riga di riflessione: è facoltativa.' : `Vivi la giornata. Più tardi, se vuoi, una riga di riflessione (dalle ${riflessioneAlle}).`}
-                  </p>
-                )}
-              </div>
-
-              {/* Progresso della settimana: una volta sola, qui */}
-              <div className="mt-5 pt-4 border-t border-white/15">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex gap-1.5 flex-1" aria-label={`${weekProgress} giorni su ${DAYS_PER_WEEK} fatti`}>
-                    {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map(day => {
-                      const done = completedDays.some(d => d.weekNumber === currentWeek && d.dayNumber === day && d.completed);
-                      const isGate = day === GATE_DAY;
-                      const isNext = !done && nextDay.week === currentWeek && nextDay.day === day;
-                      return (
-                        <div key={day} aria-hidden
-                          className={`flex-1 h-7 rounded-md flex items-center justify-center text-caption font-bold tabular-nums ${
-                            done ? 'bg-white text-forest-700' : isNext ? 'bg-white/25 text-white ring-1 ring-white/60' : 'bg-white/10 text-forest-100/80'
-                          }`}>
-                          {done ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : isGate ? <Key className="w-3.5 h-3.5" /> : day}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <Button variant="ghost" size="sm" className="text-forest-100 -mr-3" iconRight={<ChevronRight size={16} aria-hidden />} href={`/settimana/${currentWeek}`}>
-                    Settimana
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
-        </Card>
+        {/* ─── 2. L'allenamento di oggi (Campo); senza il Campo, la riga col lucchetto ─── */}
+        {cardAllenamento}
 
         {/* Missione della settimana — dal gate appena superato */}
         {weeklyMission && !allDone && (
@@ -536,7 +610,7 @@ export default function HomePage() {
 
         {totalCompleted < 3 && coachCard}
 
-        {/* Card "Le tue azioni durante il giorno" — checklist collassabile inline; non nei primi 7 giorni */}
+        {/* ─── 3. Le tue 5 azioni — checklist collassabile inline; non nei primi 7 giorni ─── */}
         {!primiGiorni && (
           <ActionsCard
             total={actionsTotal}
@@ -547,7 +621,7 @@ export default function HomePage() {
           />
         )}
 
-        {/* ─── La tua settimana: calendario (tappabile) + i tuoi numeri, in una card sola ─── */}
+        {/* ─── 4. La tua settimana: una riga di 7 giorni che dice tutto (percorso, sedute dell'app, squadra, partita) ─── */}
         <Card padding="md">
           <SectionTitle
             title="La tua settimana"
@@ -559,53 +633,41 @@ export default function HomePage() {
             }
             className="mb-3"
           />
-          {calendarData ? (
-            <button type="button" onClick={() => setShowCalendar(true)} aria-label="Modifica i giorni di allenamento e partita"
-              className="w-full grid grid-cols-7 gap-1.5 rounded-btn -mx-1 px-1 py-1 hover:bg-surface-2 transition-colors">
-              {[1, 2, 3, 4, 5, 6, 7].map((day) => {
-                const isTraining = calendarData.trainingDays.includes(day);
-                const isMatch = calendarData.matchDays.includes(day);
-                return (
-                  <span key={day} className="text-center">
-                    <span className="block text-overline uppercase text-faint mb-1">{DAY_SHORT_NAMES[day]}</span>
-                    <span className={`h-10 rounded-btn flex items-center justify-center text-caption font-bold ${
-                      isMatch ? 'bg-warning/20 text-warning' : isTraining ? 'bg-forest-500/20 text-forest-300' : 'bg-surface-2 text-faint'
-                    }`} aria-hidden>
-                      {isMatch ? <Trophy className="w-4 h-4" /> : isTraining ? <Dumbbell className="w-4 h-4" /> : '·'}
-                    </span>
+          <button type="button" onClick={() => setShowCalendar(true)} aria-label="Modifica i giorni di allenamento e partita"
+            className="w-full grid grid-cols-7 gap-1.5 rounded-btn -mx-1 px-1 py-1 hover:bg-surface-2 transition-colors">
+            {[1, 2, 3, 4, 5, 6, 7].map((day) => {
+              const isTraining = trainingDaysEff.includes(day);
+              const isMatch = matchDaysEff.includes(day);
+              const sed = campoAttivo ? (campo!.sedute ?? []).find(s => s.giorno === day) : undefined;
+              const pratica = pathDows.has(day);
+              const isToday = day === oggiDow;
+              return (
+                <span key={day} className="text-center">
+                  <span className={`block text-overline uppercase mb-1 ${isToday ? 'text-forest-300 font-bold' : 'text-faint'}`}>{DAY_SHORT_NAMES[day]}</span>
+                  <span className={`h-10 rounded-btn flex items-center justify-center text-caption font-bold ${
+                    isMatch ? 'bg-warning/20 text-warning'
+                      : sed?.stato === 'fatta' ? 'bg-forest-500 text-white'
+                        : sed ? (sed.stato === 'saltata' ? 'bg-surface-2 text-faint line-through' : 'bg-forest-500/20 text-forest-300')
+                          : isTraining ? 'bg-surface-3 text-muted' : 'bg-surface-2 text-faint'
+                  } ${isToday ? 'ring-1 ring-forest-400/70' : ''}`} aria-hidden>
+                    {isMatch ? <Trophy className="w-4 h-4" /> : sed?.stato === 'fatta' ? <Check className="w-4 h-4" strokeWidth={3} /> : sed ? <Dumbbell className="w-4 h-4" /> : isTraining ? 'S' : '·'}
                   </span>
-                );
-              })}
-            </button>
-          ) : (
-            <p className="text-body-sm text-muted">
-              Segna allenamenti e partita: il percorso si adatta ai tuoi giorni.
+                  <span className="block h-2 mt-1 flex items-center justify-center" aria-hidden>
+                    {pratica && <span className="w-1.5 h-1.5 rounded-full bg-forest-400" />}
+                  </span>
+                </span>
+              );
+            })}
+          </button>
+          <div className="flex items-center justify-between gap-3 mt-2">
+            <p className="text-body-sm text-muted tabular-nums">
+              Percorso {weekProgress} di {DAYS_PER_WEEK}{campoAttivo && seduteTot > 0 ? ` · Sedute ${seduteFatte} di ${seduteTot}` : ''}{trainingDaysEff.length || matchDaysEff.length ? '' : ' · segna squadra e partita'}
             </p>
-          )}
-
-          {statRows.length > 0 && !primiGiorni && (
-            <div className="mt-4 pt-4 border-t border-divider">
-              <div className="grid grid-cols-4 gap-2">
-                {statRows.map(r => {
-                  const t = miniTrend(r.values);
-                  const Icon = r.Icon;
-                  return (
-                    <div key={r.label} className="rounded-btn bg-surface-2 px-2 py-2.5 text-center">
-                      <Icon className="w-4 h-4 mx-auto mb-1" style={{ color: r.color }} aria-hidden="true" />
-                      <p className="font-display text-title-3 font-bold text-app tabular-nums leading-none">
-                        {r.avg}<span className="text-caption text-muted font-normal">{r.unit}</span>
-                        <span className={`text-caption ml-0.5 ${t === 'up' ? 'text-success' : t === 'down' ? 'text-danger' : 'text-faint'}`}>{t === 'up' ? '↑' : t === 'down' ? '↓' : ''}</span>
-                      </p>
-                      <p className="text-overline uppercase tracking-wider text-muted mt-1">{r.label}</p>
-                    </div>
-                  );
-                })}
-              </div>
-              <Button variant="ghost" size="sm" fullWidth className="mt-2" iconRight={<ChevronRight size={16} aria-hidden />} href="/statistiche">
-                Tutti i tuoi dati
-              </Button>
-            </div>
-          )}
+            <Button variant="ghost" size="sm" className="-mr-3 shrink-0" iconRight={<ChevronRight size={16} aria-hidden />} href={`/settimana/${currentWeek}`}>
+              Settimana
+            </Button>
+          </div>
+          <p className="text-caption text-faint mt-1">Pallino = pratica del percorso fatta · S = squadra · manubrio = seduta con l&apos;app</p>
         </Card>
 
         {/* Popup calendario */}
