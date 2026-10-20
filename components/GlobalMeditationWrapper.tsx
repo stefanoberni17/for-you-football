@@ -19,15 +19,18 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
   const [manualOpen, setManualOpen] = useState(false);
 
   // Skip popup su pagine pre-app e paywall
-  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete', '/riattiva', '/completa-profilo', '/auth'];
-  // /allenamento/* è il binario training, separato dal rituale mentale
-  const shouldShowPopup = !skipPages.includes(pathname) && !pathname.startsWith('/allenamento');
+  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete', '/riattiva', '/completa-profilo'];
+  const skipPage = skipPages.includes(pathname) || pathname.startsWith('/auth/');
+  // /allenamento/* è il binario training, separato dal rituale mentale: niente Reset automatico, ma il Reset a richiesta
+  // ("Arriva presente" prima della seduta, M12 20/10) deve funzionare → il popup si carica anche lì e si apre solo a mano
+  const shouldShowPopup = !skipPage && !pathname.startsWith('/allenamento');
+  const soloManuale = !skipPage && pathname.startsWith('/allenamento');
 
   useEffect(() => {
     const init = async () => {
       if (mantra) return; // già caricato — niente fetch Notion a ogni cambio rotta
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session || !shouldShowPopup) return;
+      if (!session || (!shouldShowPopup && !soloManuale)) return;
 
       setUserId(session.user.id);
 
@@ -62,14 +65,14 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
     };
 
     init();
-  }, [pathname, shouldShowPopup]);
+  }, [pathname, shouldShowPopup, soloManuale]);
 
   const openMeditation = () => setManualOpen(true);
   const handleClose = () => setManualOpen(false);
 
   return (
     <MeditationContext.Provider value={{ openMeditation, mantra, weekName }}>
-      {shouldShowPopup && userId && mantra && checkinDone && (
+      {userId && mantra && ((shouldShowPopup && checkinDone) || (soloManuale && manualOpen)) && (
         <MeditationPopup
           mantra={mantra}
           weekName={weekName}

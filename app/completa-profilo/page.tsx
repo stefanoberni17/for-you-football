@@ -47,9 +47,9 @@ export default function CompletaProfiloPage() {
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace('/login'); return; }
-      const { data: prof } = await supabase.from('profiles').select('birth_date').eq('user_id', session.user.id).maybeSingle();
+      const { data: prof } = await supabase.from('profiles').select('user_id').eq('user_id', session.user.id).maybeSingle();
       if (!vivo) return;
-      if (prof?.birth_date) { router.replace('/'); return; } // già completo
+      if (prof) { router.replace('/'); return; } // il profilo c'è già: niente da completare qui
       const meta = (session.user.user_metadata ?? {}) as Record<string, unknown>;
       const nomeGoogle = typeof meta.given_name === 'string' ? meta.given_name : typeof meta.full_name === 'string' ? meta.full_name.split(' ')[0] : typeof meta.name === 'string' ? meta.name.split(' ')[0] : '';
       setNome(nomeGoogle);
@@ -62,6 +62,8 @@ export default function CompletaProfiloPage() {
   const clientAge = (bd: string): number | null => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(bd)) return null;
     const [y, m, d] = bd.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null; // 2010-02-31 non esiste
     const now = new Date();
     let age = now.getFullYear() - y;
     if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) age -= 1;

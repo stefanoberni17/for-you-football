@@ -167,7 +167,7 @@ export default function TrainingSessionPlayer({
   };
 
   const startRest = (sec: number, last = false) => {
-    if (conMentale && resetHintItem === null) setResetHintItem(itemIdx); // M12: la riga compare solo nel primo recupero della seduta
+    if (conMentale && resetHintItem === null && !last) setResetHintItem(itemIdx); // M12: la riga compare solo nel primo recupero vero della seduta (non dopo l'ultima serie: lì non si mostra)
     setRestIsLast(last); restIsLastRef.current = last;
     setRestLeft(Math.max(sec, last ? 20 : sec)); // dopo l'ultima serie: almeno 20" per il feedback
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;

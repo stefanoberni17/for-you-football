@@ -164,6 +164,7 @@ export default function LoginPage() {
         {/* Accesso con Google (Ste, 10/10; lato app 20/10): il provider va acceso su Supabase */}
         <div className="flex items-center gap-3 my-4" aria-hidden><span className="h-px flex-1 bg-divider" /><span className="text-caption text-faint">oppure</span><span className="h-px flex-1 bg-divider" /></div>
         <GoogleButton />
+        <p className="text-caption text-muted text-center mt-2">Se ti eri registrato con email e password, usa l&apos;account Google con la stessa email: ritrovi tutto.</p>
 
         {/* Password dimenticata */}
         <div className="mt-3 text-center">

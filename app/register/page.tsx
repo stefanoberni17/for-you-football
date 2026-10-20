@@ -85,6 +85,8 @@ function RegisterContent() {
   const clientAge = (bd: string): number | null => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(bd)) return null;
     const [y, m, d] = bd.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null; // 2010-02-31 non esiste
     const now = new Date();
     let age = now.getFullYear() - y;
     if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) age -= 1;

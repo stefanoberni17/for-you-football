@@ -30,7 +30,8 @@ export function ageFromBirthDate(birthDate: string): number | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) return null;
   const [y, m, d] = birthDate.split('-').map(Number);
   const bd = new Date(Date.UTC(y, m - 1, d));
-  if (Number.isNaN(bd.getTime())) return null;
+  // Rifiuta le date "normalizzate" da JS (2010-02-31 → 3 marzo): la validazione che conta è questa
+  if (Number.isNaN(bd.getTime()) || bd.getUTCFullYear() !== y || bd.getUTCMonth() !== m - 1 || bd.getUTCDate() !== d) return null;
   const now = new Date();
   let age = now.getUTCFullYear() - y;
   if (now.getUTCMonth() + 1 < m || (now.getUTCMonth() + 1 === m && now.getUTCDate() < d)) age -= 1;

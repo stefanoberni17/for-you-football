@@ -13,7 +13,7 @@ const supabaseAdmin = createClient(
  * POST → "Completa il profilo" per chi è entrato con Google (20/10): l'utente auth esiste già (email verificata da
  * Google), mancano data di nascita, profilo calciatore, i tre consensi e il codice beta. Stesse regole di
  * /api/register (age gate server-side, consensi obbligatori), stessa scrittura (`salvaProfiloRegistrazione`).
- * Se il profilo esiste già con la data di nascita, risponde `already: true` senza riscrivere.
+ * Se la riga in profiles esiste già, risponde `already: true` senza riscrivere niente.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -21,8 +21,10 @@ export async function POST(request: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
 
-    const { data: esistente } = await supabaseAdmin.from('profiles').select('birth_date').eq('user_id', userId).maybeSingle();
-    if (esistente?.birth_date) return NextResponse.json({ success: true, already: true });
+    // Il caso Google è "nessuna riga in profiles": con una riga già esistente (anche senza birth_date, utenti pre-age-gate)
+    // non si riscrive niente (is_beta_free, onboarding_completed, consensi): la data di nascita la raccoglie il BirthdateBanner
+    const { data: esistente } = await supabaseAdmin.from('profiles').select('user_id').eq('user_id', userId).maybeSingle();
+    if (esistente) return NextResponse.json({ success: true, already: true });
 
     const eta = controllaEta(body.birth_date);
     if (!eta.ok) return NextResponse.json({ error: eta.error, ...(eta.age_gate ? { age_gate: true } : {}) }, { status: eta.status });

@@ -36,10 +36,10 @@ export async function POST(request: NextRequest) {
     const ctx = costruisciContextV2({ base, profilo: row, daRecuperare: [], mese: null });
     const focus = body.focus !== undefined ? focusValidi(body.focus, FOCUS_SETUP_MAX) : null;
     if (focus?.length) preparaContextV2(ctx, undefined, { obiettivi: focus });
-    const durataBody = body.durataMin == null ? undefined : Number(body.durataMin);
-    const durataMin = durataBody != null && (DURATE as readonly number[]).includes(durataBody) ? durataBody
-      : durataBody === null ? null
-        : (row.training_durata_min != null ? Number(row.training_durata_min) : null);
+    // null nel body = "nessun limite di tempo" (chip deselezionato); assente = il tempo salvato nel setup
+    const durataMin: number | null = body.durataMin === null ? null
+      : body.durataMin === undefined ? (row.training_durata_min != null ? Number(row.training_durata_min) : null)
+        : ((DURATE as readonly number[]).includes(Number(body.durataMin)) ? Number(body.durataMin) : null);
     const esito = fattibilitaSetup({ blocchi: ctx.blocchi, libreria: BLOCCHI, obiettivi: ctx.obiettivi, durataMin, attrezzatura: ctx.setup.attrezzatura });
     return NextResponse.json(esito);
   } catch (err) {
