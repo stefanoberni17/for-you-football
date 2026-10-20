@@ -625,6 +625,7 @@ export default function AllenamentoHub() {
         <Card padding="sm" className="mb-5">
           <SectionTitle title="La tua Card" icon={<Activity size={18} />} className="mb-1"
             action={<Button variant="ghost" size="sm" href="/allenamento/test">{testsFatti < testsTotali ? `Completa i test (${testsFatti}/${testsTotali})` : 'Ri-test'}</Button>} />
+          <Link href="/allenamento/storico" className="inline-flex items-center gap-1 text-body-sm text-forest-400 mb-2 tap">Lo storico: sedute, esercizi, test <ChevronRight size={14} aria-hidden /></Link>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             {(['base', 'dettaglio'] as const).map((v) => (
               <Chip key={v} selected={vistaRombo === v} onClick={() => setVistaRombo(v)}>

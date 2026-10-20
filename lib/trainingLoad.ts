@@ -115,7 +115,7 @@ export function caricoPianificato(plan: WeekPlan, calibrazione = 1, fattoreRpe =
   return Math.round(plan.sedute.reduce((a, s) => a + ((s.durata_min || 0) + (s.apertura_min || 0)) * rpeAttesoSeduta(s) * calibrazione * fattoreRpe, 0));
 }
 
-function romeDate(iso: string): string {
+export function romeDate(iso: string): string {
   const d = new Date(new Date(iso).toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
