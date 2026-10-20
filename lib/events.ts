@@ -31,6 +31,7 @@ export const CLIENT_EVENTS = [
   'reset_completed',
   'pricing_view',
   'app_open',
+  'campo_interesse', // "Mi interessa" sulla pagina del Fisico bloccato (20/10): chi vuole il Campo prima che sia in vendita
 ] as const;
 
 export type ServerEvent = (typeof SERVER_EVENTS)[number];

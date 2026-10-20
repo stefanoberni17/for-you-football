@@ -10,6 +10,7 @@ import { ArrowDownRight, ArrowUpRight, Download, Minus } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Chip } from '@/components/ui';
 import type { Punta, Punta360, RomboMente } from '@/lib/carta';
 import type { Incrocio } from '@/lib/incroci';
+import StatoRecente from '@/components/StatoRecente';
 
 /**
  * La Carta del Giocatore — il documento personale che resta a fine percorso.
@@ -339,6 +340,9 @@ export default function CartaPage() {
             </p>
           </div>
         </div>
+
+        {/* Il tuo stato (ultimi 7 check-in): dalla home alla Carta (20/10), qui con tutti gli altri dati */}
+        <StatoRecente className="no-print" />
 
         <p className="no-print text-body-sm text-muted text-center leading-relaxed px-4">
           Stampala e mettila nell&apos;armadietto. I campi vuoti si riempiono andando avanti nel percorso — o a penna.

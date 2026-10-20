@@ -2,10 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Home, LayoutDashboard, Dumbbell, MessageCircle, User } from 'lucide-react';
+import { EVENTO as EVENTO_RESOCONTI, leggiPendenti } from '@/lib/resocontoPendente';
 
 export default function BottomTabBar() {
   const pathname = usePathname();
+  // Pallino su "Palestra" con un resoconto squadra/partita da dare (20/10): letto dal dispositivo, nessuna richiesta
+  const [pendente, setPendente] = useState(false);
+  useEffect(() => {
+    const aggiorna = () => setPendente(leggiPendenti().length > 0);
+    aggiorna();
+    window.addEventListener(EVENTO_RESOCONTI, aggiorna);
+    window.addEventListener('storage', aggiorna);
+    return () => { window.removeEventListener(EVENTO_RESOCONTI, aggiorna); window.removeEventListener('storage', aggiorna); };
+  }, [pathname]);
 
   // Non mostrare tab bar su login/register/onboarding
   if (
@@ -42,10 +53,11 @@ export default function BottomTabBar() {
         <div className="flex justify-around items-stretch h-16 gap-1 px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-            // /sos e /allenamento/* fanno parte dell'hub Strumenti: tab accesa anche lì
+            // /sos, /carta e /allenamento/* fanno parte della Palestra (Testa | Fisico): tab accesa anche lì
             const isActive =
               pathname === tab.href ||
-              (tab.href === '/strumenti' && (pathname === '/sos' || pathname.startsWith('/allenamento')));
+              (tab.href === '/strumenti' && (pathname === '/sos' || pathname === '/carta' || pathname.startsWith('/allenamento')));
+            const conPallino = tab.href === '/strumenti' && pendente;
 
             return (
               <Link
@@ -57,11 +69,16 @@ export default function BottomTabBar() {
                   isActive ? 'text-accent-glow' : 'text-muted hover:text-app'
                 }`}
               >
-                <Icon
-                  aria-hidden="true"
-                  className="w-6 h-6"
-                  strokeWidth={isActive ? 2.5 : 2}
-                />
+                <span className="relative">
+                  <Icon
+                    aria-hidden="true"
+                    className="w-6 h-6"
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                  {conPallino && (
+                    <span aria-label="Hai un resoconto da dare" className="absolute -top-0.5 -right-1 w-2.5 h-2.5 rounded-full bg-accent-glow shadow-glow ring-2 ring-surface" />
+                  )}
+                </span>
                 <span className={`text-overline mt-0.5 ${isActive ? 'font-semibold' : 'font-medium'}`}>
                   {tab.label}
                 </span>

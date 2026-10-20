@@ -14,8 +14,11 @@ import {
 import { authFetch } from '@/lib/authFetch';
 import { readCache, writeCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
+import PalestraSwitch, { leggiParte, salvaParte } from '@/components/PalestraSwitch';
+import { EVENTO as EVENTO_RESOCONTI, leggiPendenti } from '@/lib/resocontoPendente';
+import { hasActiveAccess } from '@/lib/checkAccess';
 import PracticePopup from '@/components/PracticePopup';
-import { ChevronRight, ChevronDown, Play, Wind, IdCard, Goal, Clock, Target, Wrench, MessageCircle } from 'lucide-react';
+import { ChevronRight, ChevronDown, Play, Wind, IdCard, Lock, Clock, Target, Wrench, MessageCircle } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
 
 interface DiffCard {
@@ -148,9 +151,25 @@ export default function StrumentiPage() {
   const [lockedOpen, setLockedOpen] = useState(false);
   const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
   const [trainingAccess, setTrainingAccess] = useState(false);
+  const [mentaleAttivo, setMentaleAttivo] = useState(true); // settimana gratis o Season 1: altrimenti la card "Sblocca Season 1"
+  const [resocontoPendente, setResocontoPendente] = useState(false); // pallino su "Fisico" nel selettore
+
+  // Il pallino sul selettore segue il resoconto da dare scritto da home e hub (lib/resocontoPendente)
+  useEffect(() => {
+    const aggiorna = () => setResocontoPendente(leggiPendenti().length > 0);
+    aggiorna();
+    window.addEventListener(EVENTO_RESOCONTI, aggiorna);
+    return () => window.removeEventListener(EVENTO_RESOCONTI, aggiorna);
+  }, []);
 
   useEffect(() => {
     const load = async () => {
+      // Testa | Fisico (20/10): la tab Palestra riapre l'ultima parte usata. Prima di qualsiasi richiesta,
+      // così chi vive nel Campo non vede il loader della Testa. `?parte=testa` è la scelta esplicita dal selettore.
+      try {
+        const esplicita = new URLSearchParams(window.location.search).get('parte');
+        if (esplicita !== 'testa' && leggiParte() === 'fisico') { router.replace('/allenamento'); return; }
+      } catch { /* no-op */ }
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
@@ -163,7 +182,7 @@ export default function StrumentiPage() {
       const [{ data: profile }, res] = await Promise.all([
         supabase
           .from('profiles')
-          .select('current_week, training_access')
+          .select('current_week, training_access, is_beta_free, season1_access, subscription_status')
           .eq('user_id', session.user.id)
           .single(),
         cached ? Promise.resolve(null) : authFetch('/api/difficolta').catch(() => null),
@@ -171,6 +190,8 @@ export default function StrumentiPage() {
       const week = profile?.current_week || 1;
       setCurrentWeek(week);
       setTrainingAccess((profile as { training_access?: boolean } | null)?.training_access === true);
+      setMentaleAttivo(hasActiveAccess(profile));
+      salvaParte('testa');
       setLastId(readLast());
       try {
         if (cached && cached.week === week) {
@@ -409,9 +430,7 @@ export default function StrumentiPage() {
     <main className="min-h-screen bg-app pb-tabbar-lg">
       <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
         <div className="max-w-xl mx-auto">
-          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-2">
-            Palestra
-          </p>
+          <PalestraSwitch parte="testa" tone="light" fisicoBloccato={!trainingAccess} pendente={resocontoPendente} className="mb-5" />
           <h1 className="font-display text-display font-bold text-white mb-2">Allena la testa</h1>
           <p className="text-forest-100 text-body-sm tabular-nums">
             {unlocked.length} su {CAPACITA.length} capacità · {totalEsercizi} esercizi pronti
@@ -521,7 +540,7 @@ export default function StrumentiPage() {
           </section>
         )}
 
-        {/* ── In fondo: Carta del Giocatore e, se attivo, il Campo ── */}
+        {/* ── In fondo: Carta del Giocatore e, per chi non ha Season 1, la parte bloccata della Testa ── */}
         <section className="space-y-3" aria-label="Altro">
           <Card padding="sm" href="/carta" aria-label="Carta del Giocatore">
             <Row
@@ -530,12 +549,13 @@ export default function StrumentiPage() {
               sub="Il tuo gioco mentale, scritto da te"
             />
           </Card>
-          {trainingAccess && (
-            <Card variant="accent" padding="sm" href="/allenamento" aria-label="Campo">
+          {!mentaleAttivo && (
+            <Card variant="accent" padding="sm" href="/pricing" aria-label="Sblocca Season 1">
               <Row
-                lead={<IconCircle tone="accent"><Goal size={18} /></IconCircle>}
-                title="Campo"
-                sub="Test, card giocatore e programma della settimana"
+                lead={<IconCircle tone="accent"><Lock size={18} /></IconCircle>}
+                title="Season 1: il percorso completo"
+                sub="12 settimane, il Coach sempre con te, le difficoltà che crescono con te"
+                badge={<Badge tone="accent">Sblocca</Badge>}
               />
             </Card>
           )}
