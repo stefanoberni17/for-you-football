@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-20 (notte) — EMOM: pausa e minuto precedente
+- Ste: "nell'EMOM come allenamento ci sia la possibilità di mettere in pausa e ripartire o tornare all'esercizio precedente (se uno per errore va avanti)". `components/TrainingEmomPlayer.tsx`: "Pausa" ferma l'orologio (la partenza a timestamp slitta avanti di quanto dura la pausa, così il minuto riprende da dove era anche dopo il blocco dello schermo), "Riprendi" al posto di "Fatto" finché è in pausa, "Minuto precedente" riporta all'inizio del minuto prima con i suoi 60" (anche in pausa; spento sul primo minuto). Niente test unitari (UI a timer).
+
 ## 2026-10-20 (sera) — Testa | Fisico, resoconto in evidenza, home a quattro card (PR dopo la #140)
 - Ste: "il feedback partita o allenamento lo metterei più in evidenza tipo un banner"; "pensiamo a come ristrutturare l'app per rendere più evidenti le 2 parti fisica e mentale… mettendo sotto Palestra le 2 sezioni testa e fisico"; "deve andare bene anche per chi non ha una parte… farla bloccata per chi non ce l'ha potrebbe invogliare"; la home: "pratica mentale di oggi, allenamento di oggi, azioni da fare, la tua settimana".
 - **Resoconto in evidenza:** entrando nel Campo con un resoconto da dare il foglio si apre da solo (X = non adesso, per questa apertura dell'app; "Salta per questa volta" per quel giorno); la card sta sopra le viste Oggi/Settimana/Card finché non si risponde; pallino verde sulla tab Palestra e sul selettore (`lib/resocontoPendente.ts`: home e hub scrivono la lista sul dispositivo, nessuna richiesta in più). La regola delle 18 per il giorno stesso resta.
