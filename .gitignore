@@ -50,3 +50,7 @@ public/audio/*.ogg
 
 # Export Everfit (può contenere dati di clienti reali — mai in git)
 docs/everfit-export/
+
+# Note di ricerca delle sessioni Claude (il report finale va in docs/)
+research_notes/
+reports/

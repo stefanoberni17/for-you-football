@@ -13,6 +13,7 @@ import { giorniPartita } from './trainingSquadra';
 import { statoSeduta, type StatoSeduta } from './trainingRequest';
 import { nomeBloccoAtleta } from './trainingLabels';
 import type { PlanSession } from './trainingEngine';
+import { getConsents } from './consent';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -33,6 +34,7 @@ export interface SedutaOggi {
 
 export interface CampoOggi {
   accesso: boolean;           // profiles.training_access
+  consensiMancanti: boolean;  // "Prima di iniziare" (idoneità, dati salute) non ancora accettato: la seduta si apre solo dall'hub
   painHold: boolean;
   oggiDow: number;            // 1=Lun … 7=Dom
   lunedi: string;             // YYYY-MM-DD
@@ -46,7 +48,7 @@ export interface CampoOggi {
 }
 
 const VUOTO = (oggiDow: number, lunedi: string): CampoOggi => ({
-  accesso: false, painHold: false, oggiDow, lunedi, haPiano: false, seduta: null, prossima: null, sedute: [],
+  accesso: false, consensiMancanti: false, painHold: false, oggiDow, lunedi, haPiano: false, seduta: null, prossima: null, sedute: [],
   trainingDays: [], matchDays: [], resocontiDaChiedere: [],
 });
 
@@ -60,11 +62,12 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
   const { data: prof } = await supabaseAdmin.from('profiles').select('training_access, training_pain_hold').eq('user_id', userId).maybeSingle();
   if (prof?.training_access !== true) return VUOTO(oggiDow, lunedi);
 
-  const [{ data: lastPlan }, { data: calendar }, { squadra, partita }, resoconti] = await Promise.all([
+  const [{ data: lastPlan }, { data: calendar }, { squadra, partita }, resoconti, consensi] = await Promise.all([
     supabaseAdmin.from('training_plans').select('id, week_start, plan').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days').eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
     loadSquadraCompleta(userId),
     loadResoconti(userId), // finestra intera: i livelli 2-3 del resoconto guardano i giorni dopo e i giorni consecutivi
+    getConsents(userId).catch(() => null),
   ]);
 
   // Completamenti su TUTTI i piani della settimana (rigenera/modifica salvano una riga nuova)
@@ -96,6 +99,7 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
   const matchDays = giorniPartita(calendar?.match_days || [], partita);
   return {
     accesso: true,
+    consensiMancanti: !!consensi && !(consensi.has('training_idoneita') && consensi.has('health_data')),
     painHold: prof?.training_pain_hold === true,
     oggiDow, lunedi, haPiano, seduta, prossima, sedute,
     trainingDays, matchDays,
