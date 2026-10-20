@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-20 (notte, 2) — Fisico più veloce, la Carta completa raggiungibile
+- Ste: "ci mette molto a caricare il Fisico, è normale? poi non abbiamo fatto la card completa con testa, dove la mettiamo?".
+- **Velocità**: `/api/training/state` faceva sette giri di letture in fila (test → log → completamenti → setup → check-in → calendario e altro → feedback); ora partono tutte insieme, in sequenza restano solo i completamenti della settimana e il carico. La route logga `training/state: N ms`. Il lunedì il piano automatico (Opus) è a parte.
+- **Carta completa**: `/carta` esisteva già (Mente, Corpo, A 360° e il documento) ma si arrivava solo dalla Testa e si apriva su Mente. Ora: riga "La tua Carta completa" in cima alla vista Card del Fisico, riga "Carta del Giocatore" nel Profilo, e la vista iniziale dipende da cosa hai: A 360° con tutte e due le parti, Mente con la sola Testa, Corpo con il solo Fisico.
+
 ## 2026-10-20 (notte) — EMOM: pausa e minuto precedente
 - Ste: "nell'EMOM come allenamento ci sia la possibilità di mettere in pausa e ripartire o tornare all'esercizio precedente (se uno per errore va avanti)". `components/TrainingEmomPlayer.tsx`: "Pausa" ferma l'orologio (la partenza a timestamp slitta avanti di quanto dura la pausa, così il minuto riprende da dove era anche dopo il blocco dello schermo), "Riprendi" al posto di "Fatto" finché è in pausa, "Minuto precedente" riporta all'inizio del minuto prima con i suoi 60" (anche in pausa; spento sul primo minuto). Niente test unitari (UI a timer).
 
