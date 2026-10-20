@@ -38,7 +38,16 @@ export async function GET(request: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
 
-    const [{ data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession }] = await Promise.all([
+    const t0 = Date.now();
+    // Tutte le letture che non dipendono l'una dall'altra partono INSIEME (20/10, Ste: "ci mette molto a caricare il
+    // Fisico"): prima erano sette giri in fila (test → log → completamenti → setup → check-in → calendario… → feedback).
+    // Dipendono da altro solo i completamenti della settimana (dal piano) e il carico (dal ciclo e dalla squadra).
+    const since28 = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString();
+    const [
+      { data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession },
+      logsRes, { data: setupRow, error: setupErr }, { data: cOggi },
+      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti,
+    ] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name, role').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
         .select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
@@ -54,6 +63,26 @@ export async function GET(request: NextRequest) {
       supabaseAdmin.from('training_test_sessions').select('completed_at')
         .eq('user_id', userId).not('completed_at', 'is', null)
         .order('completed_at', { ascending: false }).limit(1).maybeSingle(), // ultimo test chiuso: spegne il ri-test dovuto (29/9)
+      // Storico serie (log durante il recupero, ultime 4 settimane); migration 019 assente → errore, nessuno storico
+      supabaseAdmin.from('training_set_logs')
+        .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
+        .eq('user_id', userId).gte('created_at', since28).order('created_at', { ascending: false }).limit(400),
+      // "Il tuo setup" (migration 017) — se le colonne non esistono ancora, setup = default
+      supabaseAdmin.from('profiles').select(SETUP_SELECT).eq('user_id', userId).maybeSingle(),
+      // Check-in di oggi → flag fatica alta (la seduta del giorno propone lo scarico)
+      supabaseAdmin.from('daily_checkin').select('physical_state, sleep_hours, recovery_quality, mental_state')
+        .eq('user_id', userId).eq('date', todayRome()).maybeSingle(),
+      supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
+        .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+      getConsents(userId),
+      loadSquadraCompleta(userId),
+      loadFocusSetup(userId),
+      loadPreferenzeSetup(userId),
+      // Strato mese (7/10): settimane pianificate/fatte per obiettivo, priorità, aspetti sempre saltati — in parallelo, non dopo
+      loadFocusSetup(userId).then((f) => loadMese(userId, f)),
+      // Resoconti squadra/partita degli ultimi 28 giorni (19/10): carico reale, sedute adattate, "com'è andata?"
+      loadResoconti(userId),
+      loadFeedbackRecenti(userId),
     ]);
 
     // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
@@ -95,20 +124,16 @@ export async function GET(request: NextRequest) {
       const r = rawByTest.get(t.id);
       if (t.lift && r) massimali[t.lift.esercizioV2Id] = Number(r.valore);
     }
-    // Storico serie (log durante il recupero, ultime 4 settimane) → "ultima volta" per esercizio
+    // Storico serie → "ultima volta" per esercizio
     const storicoSerie: Record<string, { testo: string; suggerimento: string }> = {};
     let logsSerie: SetLogRow[] = [];
-    try {
-      const since = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString();
-      const { data: logs } = await supabaseAdmin.from('training_set_logs')
-        .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
-        .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400);
-      logsSerie = ((logs || []) as SetLogRow[]).map((l) => ({ ...l, quantita_prevista: Number(l.quantita_prevista), quantita_fatta: l.quantita_fatta == null ? null : Number(l.quantita_fatta), carico_previsto_kg: l.carico_previsto_kg == null ? null : Number(l.carico_previsto_kg), carico_fatto_kg: l.carico_fatto_kg == null ? null : Number(l.carico_fatto_kg) }));
+    if (!logsRes.error) {
+      logsSerie = ((logsRes.data || []) as SetLogRow[]).map((l) => ({ ...l, quantita_prevista: Number(l.quantita_prevista), quantita_fatta: l.quantita_fatta == null ? null : Number(l.quantita_fatta), carico_previsto_kg: l.carico_previsto_kg == null ? null : Number(l.carico_previsto_kg), carico_fatto_kg: l.carico_fatto_kg == null ? null : Number(l.carico_fatto_kg) }));
       for (const r of riepilogoEsercizi(logsSerie)) {
         const unita = esercizioById(r.esercizioId)?.unita ?? esercizioV2ById(r.esercizioId)?.unita ?? 'reps';
         storicoSerie[r.esercizioId] = riepilogoUi(r, unita);
       }
-    } catch { /* migration 019 non applicata: nessuno storico */ }
+    }
 
     // Completamenti della settimana del piano corrente: su TUTTI i piani di quella settimana
     // (rigenera/modifica salvano una riga nuova, le sedute già fatte restano segnate per giorno)
@@ -124,15 +149,8 @@ export async function GET(request: NextRequest) {
       completions = data || [];
     }
 
-    // "Il tuo setup" (migration 017) — se le colonne non esistono ancora, setup = default
-    const { data: setupRow, error: setupErr } = await supabaseAdmin.from('profiles').select(SETUP_SELECT).eq('user_id', userId).maybeSingle();
     const setup = mapSetup(setupErr ? null : setupRow);
     const setupDisponibile = !setupErr;
-
-    // Check-in di oggi → flag fatica alta (la seduta del giorno propone lo scarico)
-    const { data: cOggi } = await supabaseAdmin.from('daily_checkin')
-      .select('physical_state, sleep_hours, recovery_quality, mental_state')
-      .eq('user_id', userId).eq('date', todayRome()).maybeSingle();
     const checkinOggi = cOggi ? {
       fisico: cOggi.physical_state ?? null,
       sonno: cOggi.sleep_hours != null ? Number(cOggi.sleep_hours) : null,
@@ -146,18 +164,6 @@ export async function GET(request: NextRequest) {
       ultimaTestSession?.completed_at
       || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null),
     );
-    const [{ data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti] = await Promise.all([
-      supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
-        .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
-      getConsents(userId),
-      loadSquadraCompleta(userId),
-      loadFocusSetup(userId),
-      loadPreferenzeSetup(userId),
-      // Strato mese (7/10): settimane pianificate/fatte per obiettivo, priorità, aspetti sempre saltati — in parallelo, non dopo
-      loadFocusSetup(userId).then((f) => loadMese(userId, f)),
-      // Resoconti squadra/partita degli ultimi 28 giorni (19/10): carico reale, sedute adattate, "com'è andata?"
-      loadResoconti(userId),
-    ]);
     // Obiettivi della fase (migration 024): colonna letta a parte, così il setup base non dipende dalla migration
     setup.focus = focusSetup;
     Object.assign(setup, preferenzeSetup);
@@ -188,7 +194,6 @@ export async function GET(request: NextRequest) {
     // (o sono in prova del livello sopra) dicono quali test rifare, non tutta la batteria
     const fascia = fasciaFromResults(rows);
     const livelli = livelliPerQualita(rows, fascia);
-    const feedbackRecenti = await loadFeedbackRecenti(userId);
     const memoria = calcolaMemoriaBlocchi(feedbackRecenti, {
       // i ruoli come nel planner (18/10): i blocchi P1 solo per i portieri, così la memoria e il ri-test mirato vedono la stessa libreria
       disponibili: blocchiDisponibili({ livello: fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, livelloPerQualita: livelli, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) }),
@@ -204,6 +209,7 @@ export async function GET(request: NextRequest) {
       qualita: q, label: QUALITA_LABEL[q] ?? q, famiglie,
       tests: testIdsPerQualita(q).filter((id) => !/-dx$|-sx$/.test(id)).map((id) => ({ id, nome: nomeTest(id) })),
     }));
+    console.log(`training/state: ${Date.now() - t0} ms`);
     return NextResponse.json({
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,

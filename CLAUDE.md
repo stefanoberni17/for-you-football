@@ -59,7 +59,7 @@ for-you-football/
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
 │   ├── sos/page.tsx                       # "Come affrontare le difficoltà" — schede VIVE a layer da Notion (?card=<id>)
 │   ├── strumenti/page.tsx                 # Palestra, parte TESTA (selettore Testa | Fisico in cima, dal 20/10): Reset rapido + Palestra per principio (7 capacità; dettaglio = menu esercizi con "Cosa allena"; l'àncora apre la scheda strumento cos'è/quando/pratica) + schede SOS
-│   ├── carta/page.tsx                     # Carta del Giocatore: in cima la Carta a 360° (rombo Mente, Recupero, Corpo, sette punte — lib/carta.ts, GET /api/carta), sotto il documento print-friendly (mantra, mappa, firma, Protocollo)
+│   ├── carta/page.tsx                     # Carta del Giocatore: in cima la Carta a 360° (rombo Mente, Recupero, Corpo, sette punte — lib/carta.ts, GET /api/carta), sotto il documento print-friendly (mantra, mappa, firma, Protocollo); si apre su A 360° con tutte e due le parti, Mente con la sola Testa, Corpo con il solo Fisico; link dalla Testa, dalla vista Card del Fisico e dal Profilo (20/10)
 │   ├── profilo/page.tsx
 │   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
@@ -1014,6 +1014,9 @@ Ritorna `{ subscription_status, is_beta_free, next_billing_date, cancel_at_perio
 ## FYF Training — modulo allenamento tecnico/fisico (area riservata)
 
 Binario separato dalla parte mentale, dietro `profiles.training_access` (default FALSE, attivazione solo via SQL, migration 015). Route `/allenamento/*` (hub, `/test`, `/sessione/[giorno]`, `/chat`, `/mese`, `/storico` dal 20/10: quattro schede Sedute · Esercizi · Test · Squadra, link dalla vista Card dell'hub; grafici Recharts senza animazione per esercizio (reps/secondi fatte contro previste, o kg) e per test, a comparsa toccando la riga), API `/api/training/{state,setup,test,plan,complete,pain,chat,set-log}` (auth + flag). Card d'ingresso "Campo" in `/strumenti` solo con flag. Metodologia sorgente: `docs/training-recap-progressioni.md`, formalizzazione v2: `docs/training-formalizzazione-v2.md`.
+
+### Tempo di caricamento dell'hub (20/10, Ste: "ci mette molto a caricare il Fisico")
+`GET /api/training/state` fa tutte le letture che non dipendono l'una dall'altra in UN solo `Promise.all` (profilo, test, sessioni, ultimo piano, log per serie, setup, check-in, calendario, consensi, squadra, obiettivi, preferenze, mese, resoconti, feedback): prima erano sette giri in fila. Restano in sequenza solo i completamenti della settimana (servono gli id dei piani) e il carico (serve il ciclo). La route logga `training/state: N ms` nei log Vercel: la latenza si legge da lì. Il lunedì si aggiunge il piano automatico (Opus, fino a 50 s), che è un'altra cosa.
 
 ### Campo CONGELATO (25/9, Sera C)
 Dopo la review del 25/9 e le regole 1-5 di `docs/training-regole-costruzione.md`, il modulo è **congelato**: nessuna regola nuova, nessun blocco nuovo, finché **tre atleti non hanno quattro settimane di log**. Si toccano solo bug di sicurezza e regressioni. Chi chiede una regola nuova va prima ricordato di questo.

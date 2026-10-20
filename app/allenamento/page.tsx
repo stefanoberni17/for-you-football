@@ -9,7 +9,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
 } from 'recharts';
-import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2, Users } from 'lucide-react';
+import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, Users } from 'lucide-react';
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
@@ -639,6 +639,17 @@ export default function AllenamentoHub() {
     const storico = state.resoconti?.length ? riassuntoResoconti(state.resoconti, state.squadra) : null;
     return (
       <>
+        {/* La Carta completa, testa e corpo (20/10, Ste: "la card completa con testa, dove la mettiamo?"): da qui e dalla Testa */}
+        <Card variant="accent" padding="sm" href="/carta" aria-label="La tua Carta completa" className="mb-3">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><IdCard size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">La tua Carta completa</span>
+              <span className="block text-body-sm text-muted">Testa e corpo insieme, a 360°. Si stampa.</span>
+            </span>
+            <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />
+          </div>
+        </Card>
         <Card padding="sm" className="mb-5">
           <SectionTitle title="La tua Card" icon={<Activity size={18} />} className="mb-1"
             action={<Button variant="ghost" size="sm" href="/allenamento/test">{testsFatti < testsTotali ? `Completa i test (${testsFatti}/${testsTotali})` : 'Ri-test'}</Button>} />

@@ -11,6 +11,7 @@ import { AppLoader, BackButton, Badge, Button, Card, Chip } from '@/components/u
 import type { Punta, Punta360, RomboMente } from '@/lib/carta';
 import type { Incrocio } from '@/lib/incroci';
 import StatoRecente from '@/components/StatoRecente';
+import { hasActiveAccess } from '@/lib/checkAccess';
 
 /**
  * La Carta del Giocatore — il documento personale che resta a fine percorso.
@@ -95,7 +96,7 @@ export default function CartaPage() {
       const [{ data: profile }, { data: progress }, r360] = await Promise.all([
         supabase
           .from('profiles')
-          .select('name, sport, role')
+          .select('name, sport, role, is_beta_free, season1_access, subscription_status')
           .eq('user_id', uid)
           .single(),
         supabase
@@ -105,6 +106,9 @@ export default function CartaPage() {
         authFetch('/api/carta').then((r) => (r.ok ? r.json() : null)).catch(() => null),
       ]);
 
+      // Vista iniziale (20/10): A 360° con tutte e due le parti, Mente con la sola Testa, Corpo con il solo Fisico
+      const corpoCeLa = !!r360?.corpo && (r360.corpo.testFatti ?? 0) > 0;
+      setVista(corpoCeLa ? (hasActiveAccess(profile) ? '360' : 'corpo') : 'mente');
       const roleOptions = SPORT_ROLES[profile?.sport || 'calcio'] || PLAYER_ROLES;
       const ruoli = (profile?.role || '')
         .split(',')
@@ -124,11 +128,7 @@ export default function CartaPage() {
         cinqueCose: day(8, 6)?.response || null,
         giorniCompletati: (progress || []).filter(p => p.completed).length,
       });
-      if (r360 && r360.mente) {
-        setC360(r360 as Carta360);
-        // Chi ha il Campo con i test parte dalla vista completa
-        if ((r360 as Carta360).corpo && (r360 as Carta360).corpo!.testFatti > 0) setVista('360');
-      }
+      if (r360 && r360.mente) setC360(r360 as Carta360);
       setLoading(false);
     };
     load();
