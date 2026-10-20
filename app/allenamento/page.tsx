@@ -113,7 +113,8 @@ const descrizioneSeduta = (s: PlanSession) =>
 export default function AllenamentoHub() {
   const router = useRouter();
   const [state, setState] = useState<TrainingState | null>(null);
-  const [oggiLight, setOggiLight] = useState<CampoOggi | null>(null); // "Oggi" dalla lettura leggera: la pagina compare prima dello stato completo (20/10)
+  const [oggiLight, setOggiLight] = useState<CampoOggi | null>(null);
+  const [stateErr, setStateErr] = useState(false); // lo stato completo non è arrivato: il primo tempo lo dice, con "Riprova" // "Oggi" dalla lettura leggera: la pagina compare prima dello stato completo (20/10)
   const [noAccess, setNoAccess] = useState(false); // senza il flag del Campo: pagina di assaggio (20/10)
   const [generating, setGenerating] = useState(false);
   const [vista, setVista] = useState<Vista>('oggi');
@@ -171,14 +172,15 @@ export default function AllenamentoHub() {
       salvaParte('fisico'); // la tab Palestra riapre qui
       scriviPendenti(o.resocontiDaChiedere ?? []); // il pallino sulla tab legge da qui
     }).catch(() => {});
-    const res = await authFetch('/api/training/state');
-    if (res.status === 403) { setNoAccess(true); return; }
-    if (res.ok) {
+    setStateErr(false);
+    const res = await authFetch('/api/training/state').catch(() => null);
+    if (res?.status === 403) { setNoAccess(true); return; }
+    if (res?.ok) {
       const st = await res.json() as TrainingState;
       setState(st);
       salvaParte('fisico');
       scriviPendenti(st.resocontiDaChiedere ?? []);
-    }
+    } else setStateErr(true);
     await leggera;
   }, [router]);
 
@@ -304,7 +306,11 @@ export default function AllenamentoHub() {
             <h1 className="font-display text-title-1 font-bold text-app">Campo</h1>
             <Link href="/allenamento/setup" aria-label="Il tuo setup" className="w-11 h-11 -mr-2 rounded-full flex items-center justify-center text-muted hover:text-app hover:bg-surface-2 transition-colors"><Settings2 size={22} aria-hidden /></Link>
           </div>
-          <p className="text-body-sm text-muted mb-4 flex items-center gap-2"><RefreshCw size={14} className="animate-spin shrink-0" aria-hidden /> Carico il resto…</p>
+          {stateErr ? (
+            <p className="text-body-sm text-warning mb-4 flex items-center gap-2 flex-wrap">Non sono riuscito a caricare il resto. <Button variant="ghost" size="sm" onClick={() => load()} className="-my-2">Riprova</Button></p>
+          ) : (
+            <p className="text-body-sm text-muted mb-4 flex items-center gap-2"><RefreshCw size={14} className="animate-spin shrink-0" aria-hidden /> Carico il resto…</p>
+          )}
           {rLight && (
             <Card variant="accent" padding="sm" className="mb-3" onClick={() => setShowResoconto(true)} aria-label="Com'è andata?">
               <div className="flex items-center gap-3">
@@ -319,7 +325,7 @@ export default function AllenamentoHub() {
           )}
           {o.painHold ? (
             <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. Un attimo e trovi il bottone per riprendere.</p></Card>
-          ) : s ? (
+          ) : o.consensiMancanti ? null /* "Prima di iniziare" arriva con lo stato completo: niente seduta prima di quello */ : s ? (
             <Card variant="hero" className="mb-3">
               <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">
                 {s.stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[dow]}` : `Da recuperare · era ${DAY_NAMES_IT[s.giorno]}`}
@@ -349,7 +355,7 @@ export default function AllenamentoHub() {
         {showResoconto && rLight && (
           <ResocontoSheet open data={rLight.data} tipo={rLight.tipo}
             onClose={() => { rimandaResoconto(rLight); setShowResoconto(false); }}
-            onSaved={() => { setShowResoconto(false); load(); }}
+            onSaved={() => { rimandaResoconto(rLight); setShowResoconto(false); load(); }}
             onSkip={salta} />
         )}
       </main>
@@ -1026,7 +1032,7 @@ export default function AllenamentoHub() {
       {showResoconto && resocontoDaChiedere && (
         <ResocontoSheet open data={resocontoDaChiedere.data} tipo={resocontoDaChiedere.tipo}
           onClose={() => { rimandaResoconto(resocontoDaChiedere); setShowResoconto(false); }}
-          onSaved={() => { setShowResoconto(false); load(); }}
+          onSaved={() => { rimandaResoconto(resocontoDaChiedere); setShowResoconto(false); load(); }} /* non si riapre vuoto mentre lo state vecchio aspetta quello nuovo (review 20/10) */
           onSkip={saltaResoconto} />
       )}
 

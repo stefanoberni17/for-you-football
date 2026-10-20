@@ -467,8 +467,8 @@ export default function HomePage() {
               {seduta.proposte.includes('aggiungi') && <Badge tone="info">Serie in più, se vuoi</Badge>}
             </div>
           )}
-          <Button size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href={`/allenamento/sessione/${seduta.giorno}`} className="mt-4">
-            {seduta.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+          <Button size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href={campo.consensiMancanti ? '/allenamento' : `/allenamento/sessione/${seduta.giorno}`} className="mt-4">
+            {campo.consensiMancanti ? 'Apri il Campo' : seduta.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
           </Button>
         </Card>
       );

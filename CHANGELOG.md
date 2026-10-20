@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-20 (notte, 4) — Revisione di tutto il lavoro di oggi (agente), tre correzioni
+- Ste: "fai una revisione dopo per vedere che tutto funzioni bene". Agente di review sul diff delle cinque PR di oggi, tsc e 323 test verdi. Un bug corretto: dopo "Salva" del resoconto il foglio si riapriva vuoto per un attimo (la lettura leggera arrivava prima dello stato nuovo e l'effetto rileggeva lo stato vecchio): ora il salvataggio segna il resoconto come "non adesso" per quella apertura. Due regressioni chiuse: la seduta di oggi nel primo tempo dell'hub e nella home aggirava la schermata "Prima di iniziare" (idoneità e dati salute): `GET /api/training/oggi` ritorna `consensiMancanti` e in quel caso il primo tempo non mostra la seduta e la home manda all'hub ("Apri il Campo"); se lo stato completo non arriva, il primo tempo lo dice con "Riprova" invece di far girare "Carico il resto…" per sempre.
+
 ## 2026-10-20 (notte, 3) — Il Fisico in due tempi
 - Ste: "caricherei oggi che è quello più veloce. È un po' più veloce ma se riesci meglio fare così". L'hub chiede insieme la lettura leggera (`/api/training/oggi`) e lo stato completo: con la prima compare subito la seduta di oggi, il resoconto da dare e il preparatore, con "Carico il resto…"; con la seconda arriva tutto il resto. Niente test (UI).
 
