@@ -3,7 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
-import { trainingChat, detectPain, updateTrainingMemory } from '@/lib/trainingPlanner';
+import { detectPain, updateTrainingMemory } from '@/lib/trainingPlanner';
+import { trainingChat } from '@/lib/trainingChat';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
