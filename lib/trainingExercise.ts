@@ -14,6 +14,7 @@ export interface EsercizioView {
   sensazioni?: string[];  // opzioni "dove l'hai sentito?" a fine esercizio
   videoUrl?: string;
   videoMp4: boolean;      // true = file .mp4 diretto (libreria Everfit), non YouTube
+  videoSchermoUrl?: string; // video dei segnali da mettere sul telefono davanti ai cinesini (visione e reattività; punto 20, 20/10)
   descrizione?: string;
   scheda?: SchedaEsercizio; // scheda di esecuzione (9/10): quando c'è, il player la mostra al posto di descrizione
   note?: string;
@@ -28,7 +29,7 @@ export function esercizioAny(id: string): EsercizioView | undefined {
   const v2 = esercizioV2ById(id);
   if (v2) {
     const mp4 = !!v2.videoUrl && /\.mp4(\?|$)/i.test(v2.videoUrl);
-    return { id: v2.id, nome: v2.nome, unita: v2.unita, perLato: v2.perLato === true, videoUrl: v2.videoUrl, videoMp4: mp4, descrizione: v2.descrizione ?? v2.note, scheda: v2.scheda, note: v2.descrizione ? v2.note : undefined, sensazioni: v2.sensazioni, v2: true };
+    return { id: v2.id, nome: v2.nome, unita: v2.unita, perLato: v2.perLato === true, videoUrl: v2.videoUrl, videoMp4: mp4, videoSchermoUrl: v2.videoSchermoUrl, descrizione: v2.descrizione ?? v2.note, scheda: v2.scheda, note: v2.descrizione ? v2.note : undefined, sensazioni: v2.sensazioni, v2: true };
   }
   return undefined;
 }

@@ -61,6 +61,7 @@ export default function TrainingSessionPlayer({
   items,
   titolo,
   onComplete,
+  conMentale = false,
   onExit,
   storageKey,
   initialProgress,
@@ -69,6 +70,7 @@ export default function TrainingSessionPlayer({
 }: {
   items: PlanItem[];
   titolo: string;
+  conMentale?: boolean;       // M12 (20/10): solo chi ha anche il Mentale vede il promemoria "se la testa vaga, un Reset" nel recupero
   onComplete: (esito?: { blocchiSaltati: string[]; durataSec: number }) => void; // blocchi saltati per intero (l'apertura, 8/10): niente domanda sulle zone a fine seduta; durataSec (20/10): dall'inizio vero al completamento
   onExit: () => void;
   storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
@@ -99,6 +101,10 @@ export default function TrainingSessionPlayer({
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
+  // Video dei segnali (punto 20, 20/10): per gli esercizi di visione parte da solo con l'item, "Rifai da capo" lo riavvia
+  const [schermoOn, setSchermoOn] = useState(true);
+  const [schermoKey, setSchermoKey] = useState(0);
+  const [resetHintItem, setResetHintItem] = useState<number | null>(null); // M12: il promemoria del Reset una volta per seduta (sull'esercizio del primo recupero)
   const [showDesc, setShowDesc] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const execRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -161,6 +167,7 @@ export default function TrainingSessionPlayer({
   };
 
   const startRest = (sec: number, last = false) => {
+    if (conMentale && resetHintItem === null) setResetHintItem(itemIdx); // M12: la riga compare solo nel primo recupero della seduta
     setRestIsLast(last); restIsLastRef.current = last;
     setRestLeft(Math.max(sec, last ? 20 : sec)); // dopo l'ultima serie: almeno 20" per il feedback
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
@@ -220,7 +227,7 @@ export default function TrainingSessionPlayer({
     setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
     setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
-    setShowVideo(false);
+    setShowVideo(false); setSchermoOn(true); setSchermoKey(0);
     setShowDesc(false);
     if (itemIdx + step >= items.length) {
       if (storageKey) { try { localStorage.removeItem(storageKey); } catch { /* no-op */ } }
@@ -274,7 +281,7 @@ export default function TrainingSessionPlayer({
     setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
     setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
-    setShowVideo(false); setShowDesc(false);
+    setShowVideo(false); setShowDesc(false); setSchermoOn(true); setSchermoKey(0);
     setItemIdx(itemIdx - 1);
   };
   const nextItemRef = useRef(nextItem);
@@ -317,6 +324,10 @@ export default function TrainingSessionPlayer({
   const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);
   const haVideo = !!ex.videoUrl && (!!ex.videoMp4 || !!embed);
   const videoVisibile = showVideo && haVideo;
+  // Video dei segnali: YouTube in autoplay senza controlli (muto: i segnali sono visivi, e così l'autoplay parte anche su iPhone)
+  const embedSchermo = youtubeEmbedUrl(ex.videoSchermoUrl);
+  const schermoVisibile = !!embedSchermo && schermoOn && restLeft === null && !isEmom;
+  const mostraResetHint = conMentale && restLeft !== null && resetHintItem === itemIdx;
   const blocco = item.blocco_id ? blocchi?.find((b) => b.id === item.blocco_id) : undefined;
   // Ste, 28/9: niente voto per serie su rolling e fascia (a fine seduta si dice dove si è sentita); sulla tecnica la scala è "quanto ti è riuscito"
   const senzaVoto = senzaVotoPerSerie(blocco);
@@ -390,9 +401,24 @@ export default function TrainingSessionPlayer({
               )}
               {haVideo && (
                 <Button variant="secondary" size="sm" icon={videoVisibile ? <X size={16} /> : <Play size={16} />} aria-expanded={videoVisibile} onClick={() => setShowVideo(!showVideo)}>
-                  {videoVisibile ? 'Chiudi il video' : 'Guarda il video'}
+                  {videoVisibile ? 'Chiudi il video' : embedSchermo ? 'Guarda come si fa' : 'Guarda il video'}
                 </Button>
               )}
+              {!!embedSchermo && !schermoVisibile && restLeft === null && !isEmom && (
+                <Button variant="secondary" size="sm" icon={<Play size={16} />} onClick={() => { setSchermoOn(true); setSchermoKey((k) => k + 1); }}>I segnali</Button>
+              )}
+            </div>
+          )}
+          {schermoVisibile && (
+            <div className="mt-3">
+              <p className="text-caption text-muted mb-1">Metti il telefono davanti ai cinesini: i segnali partono da soli.</p>
+              <div className="relative rounded-btn overflow-hidden bg-black" style={{ height: 'clamp(260px, 55vh, 480px)' }}>
+                <iframe key={schermoKey} src={`${embedSchermo}?autoplay=1&mute=1&controls=0&rel=0&playsinline=1`} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={`Segnali: ${ex.nome}`} />
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <Button variant="secondary" size="sm" onClick={() => setSchermoKey((k) => k + 1)}>Rifai da capo</Button>
+                <Button variant="ghost" size="sm" onClick={() => setSchermoOn(false)}>Chiudi i segnali</Button>
+              </div>
             </div>
           )}
           {showDesc && <SchedaEsercizioView scheda={ex.scheda} descrizione={ex.descrizione} />}
@@ -482,6 +508,10 @@ export default function TrainingSessionPlayer({
               </div>
             )}
 
+            {/* M12 (20/10): solo con il Mentale, nel recupero (mai durante l'esercizio né nell'EMOM), una volta per seduta */}
+            {conMentale && !restIsLast && mostraResetHint && (
+              <p className="text-caption text-muted text-center mt-2">Se la testa vaga: un respiro di Reset, poi la prossima serie.</p>
+            )}
             {/* Slot fisso in fondo: qui il pollice trova sempre il bottone */}
             <div className={SLOT}>
               <Button variant="secondary" size="lg" fullWidth icon={<Pause size={18} />}
