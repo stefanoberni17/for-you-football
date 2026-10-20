@@ -23,7 +23,7 @@ export default function PalestraSwitch({ parte, fisicoBloccato = false, pendente
   parte: PartePalestra; fisicoBloccato?: boolean; pendente?: boolean; tone?: 'light' | 'dark'; className?: string;
 }) {
   const voci: { id: PartePalestra; label: string; href: string; bloccata: boolean }[] = [
-    { id: 'testa', label: 'Testa', href: '/strumenti?parte=testa', bloccata: false },
+    { id: 'testa', label: 'Testa', href: '/strumenti', bloccata: false },
     { id: 'fisico', label: 'Fisico', href: '/allenamento', bloccata: fisicoBloccato },
   ];
   const base = tone === 'light' ? 'bg-white/15' : 'bg-surface-2 border border-divider';

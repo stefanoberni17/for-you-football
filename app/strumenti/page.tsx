@@ -14,8 +14,8 @@ import {
 import { authFetch } from '@/lib/authFetch';
 import { readCache, writeCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
-import PalestraSwitch, { leggiParte, salvaParte } from '@/components/PalestraSwitch';
-import { EVENTO as EVENTO_RESOCONTI, leggiPendenti } from '@/lib/resocontoPendente';
+import PalestraSwitch, { salvaParte } from '@/components/PalestraSwitch';
+import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
 import { hasActiveAccess } from '@/lib/checkAccess';
 import PracticePopup from '@/components/PracticePopup';
 import { ChevronRight, ChevronDown, Play, Wind, IdCard, Lock, Clock, Target, Wrench, MessageCircle } from 'lucide-react';
@@ -156,7 +156,7 @@ export default function StrumentiPage() {
 
   // Il pallino sul selettore segue il resoconto da dare scritto da home e hub (lib/resocontoPendente)
   useEffect(() => {
-    const aggiorna = () => setResocontoPendente(leggiPendenti().length > 0);
+    const aggiorna = () => setResocontoPendente(pendenteAdesso());
     aggiorna();
     window.addEventListener(EVENTO_RESOCONTI, aggiorna);
     return () => window.removeEventListener(EVENTO_RESOCONTI, aggiorna);
@@ -164,12 +164,7 @@ export default function StrumentiPage() {
 
   useEffect(() => {
     const load = async () => {
-      // Testa | Fisico (20/10): la tab Palestra riapre l'ultima parte usata. Prima di qualsiasi richiesta,
-      // così chi vive nel Campo non vede il loader della Testa. `?parte=testa` è la scelta esplicita dal selettore.
-      try {
-        const esplicita = new URLSearchParams(window.location.search).get('parte');
-        if (esplicita !== 'testa' && leggiParte() === 'fisico') { router.replace('/allenamento'); return; }
-      } catch { /* no-op */ }
+      // Testa | Fisico (20/10): è la tab bar a riaprire l'ultima parte usata; qui si arriva sempre alla Testa
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');

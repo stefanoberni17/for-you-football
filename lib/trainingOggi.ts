@@ -7,7 +7,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { loadSquadraCompleta, mondayOfThisWeekRome, oggiDowRome, todayRome } from './trainingPlanner';
 import { loadResoconti } from './trainingResocontoServer';
-import { resocontiDaChiedere, type TipoResoconto } from './trainingResoconto';
+import { applicaResoconti, resocontiDaChiedere, type TipoResoconto } from './trainingResoconto';
 import { giorniSquadra } from './trainingLoad';
 import { giorniPartita } from './trainingSquadra';
 import { statoSeduta, type StatoSeduta } from './trainingRequest';
@@ -64,7 +64,7 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
     supabaseAdmin.from('training_plans').select('id, week_start, plan').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days').eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
     loadSquadraCompleta(userId),
-    loadResoconti(userId, 3),
+    loadResoconti(userId), // finestra intera: i livelli 2-3 del resoconto guardano i giorni dopo e i giorni consecutivi
   ]);
 
   // Completamenti su TUTTI i piani della settimana (rigenera/modifica salvano una riga nuova)
@@ -79,8 +79,11 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
       if (Number.isInteger(g)) fatti.add(g);
     }
   }
-  const sedute: SedutaOggi[] = haPiano
-    ? ([...((lastPlan!.plan as { sedute?: PlanSession[] }).sedute || [])].sort((a, b) => a.giorno - b.giorno)).map((s) => ({
+  // Il piano con i resoconti applicati (serie facoltative, giorni più leggeri): le `proposte` nascono qui, il piano salvato non le ha
+  const oggi = todayRome();
+  const planAdattato = haPiano ? applicaResoconti(lastPlan!.plan as Parameters<typeof applicaResoconti>[0], { weekStart: String(lastPlan!.week_start), oggi, resoconti, squadra, fatteGiorni: fatti }).plan : null;
+  const sedute: SedutaOggi[] = planAdattato
+    ? ([...((planAdattato as { sedute?: PlanSession[] }).sedute || [])].sort((a, b) => a.giorno - b.giorno)).map((s) => ({
       giorno: s.giorno, titolo: s.titolo, tipo: s.tipo, durataMin: s.durata_min, aperturaMin: s.apertura_min ?? 0,
       descrizione: descrizioneSeduta(s), stato: statoSeduta(s.giorno, oggiDow, fatti.has(s.giorno)),
       recupero: !!s.recupero, proposte: (s.proposte ?? []).map((p) => p.tipo),
@@ -96,6 +99,6 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
     painHold: prof?.training_pain_hold === true,
     oggiDow, lunedi, haPiano, seduta, prossima, sedute,
     trainingDays, matchDays,
-    resocontiDaChiedere: resocontiDaChiedere({ oggi: todayRome(), trainingDays, matchDays, resoconti }),
+    resocontiDaChiedere: resocontiDaChiedere({ oggi, trainingDays, matchDays, resoconti }),
   };
 }

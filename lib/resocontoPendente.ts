@@ -36,6 +36,12 @@ function validi(): Set<string> {
   return new Set([oggi, f.format(d)]);
 }
 
+/** C'è qualcosa da chiedere ADESSO (regola delle 18 compresa)? Per il pallino sulla tab e sul selettore. */
+export function pendenteAdesso(): boolean {
+  const oggi = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Rome' }).format(new Date());
+  return !!primoDaChiedere(leggiPendenti(), oggi);
+}
+
 export function leggiPendenti(): ResocontoPendente[] {
   try {
     const raw = localStorage.getItem(KEY);
@@ -54,6 +60,6 @@ export function scriviPendenti(list: ResocontoPendente[]): void {
 
 /** Il primo da chiedere, tolti i saltati; quelli di oggi solo dalle 18 a Roma (prima dell'allenamento non ha senso). */
 export function primoDaChiedere(list: ResocontoPendente[], oggi: string): ResocontoPendente | null {
-  const ora = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Rome', hour: '2-digit', hour12: false }).format(new Date()));
+  const ora = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Rome', hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
   return list.find((r) => !resocontoSaltato(r) && (r.data !== oggi || ora >= 18)) ?? null;
 }

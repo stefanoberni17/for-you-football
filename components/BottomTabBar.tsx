@@ -4,14 +4,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Home, LayoutDashboard, Dumbbell, MessageCircle, User } from 'lucide-react';
-import { EVENTO as EVENTO_RESOCONTI, leggiPendenti } from '@/lib/resocontoPendente';
+import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
+import { leggiParte } from '@/components/PalestraSwitch';
 
 export default function BottomTabBar() {
   const pathname = usePathname();
   // Pallino su "Palestra" con un resoconto squadra/partita da dare (20/10): letto dal dispositivo, nessuna richiesta
   const [pendente, setPendente] = useState(false);
+  // La tab Palestra riapre l'ultima parte usata (Testa | Fisico): deciso QUI, non in /strumenti, così i link
+  // "Palestra" dalle altre pagine (SOS, giorno, settimana) portano sempre alla Testa (review 20/10)
+  const [palestraHref, setPalestraHref] = useState('/strumenti');
   useEffect(() => {
-    const aggiorna = () => setPendente(leggiPendenti().length > 0);
+    const aggiorna = () => { setPendente(pendenteAdesso()); setPalestraHref(leggiParte() === 'fisico' ? '/allenamento' : '/strumenti'); };
     aggiorna();
     window.addEventListener(EVENTO_RESOCONTI, aggiorna);
     window.addEventListener('storage', aggiorna);
@@ -38,7 +42,7 @@ export default function BottomTabBar() {
   const tabs = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/settimane', label: 'Percorso', icon: LayoutDashboard },
-    { href: '/strumenti', label: 'Palestra', icon: Dumbbell },
+    { href: '/strumenti', label: 'Palestra', icon: Dumbbell, to: palestraHref },
     { href: '/chat', label: 'Coach', icon: MessageCircle },
     { href: '/profilo', label: 'Profilo', icon: User },
   ];
@@ -62,7 +66,7 @@ export default function BottomTabBar() {
             return (
               <Link
                 key={tab.href}
-                href={tab.href}
+                href={tab.to ?? tab.href}
                 aria-label={tab.label}
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex flex-col items-center justify-center flex-1 h-full rounded-btn transition-colors relative ${
