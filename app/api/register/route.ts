@@ -1,13 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-import { logEvent } from '@/lib/events';
-import { MIN_AGE, PRIVACY_VERSION, TERMS_VERSION } from '@/lib/constants';
-
-// Admin client — per upsert profilo (bypassa RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
-);
+import { isValidBetaCode } from '@/lib/betaCode';
+import { campiDalBody, controllaEta, salvaProfiloRegistrazione } from '@/lib/registrazione';
 
 // Client standard — per signUp (invia email di conferma automaticamente)
 const supabaseAuth = createClient(
@@ -16,50 +10,14 @@ const supabaseAuth = createClient(
 );
 
 /**
- * Verifica un codice invito beta contro la env var BETA_INVITE_CODES.
- * - CSV: più codici separati da virgola
- * - Case-insensitive
- * - Whitespace trimmato
- *
- * Esempio env: BETA_INVITE_CODES=BETA2_2026,PARTNER_FYF
- * Esempi validi: "BETA2_2026", "beta2_2026", "  Beta2_2026  " → tutti true
+ * Registrazione con email e password: age gate e consensi (la validazione che conta è QUESTA, il client è solo UX),
+ * signUp Supabase, poi profilo + referral + snapshot T0 + prova del consenso in `salvaProfiloRegistrazione`
+ * (lib/registrazione.ts, condivisa dal 20/10 con /api/register/complete per chi entra con Google).
  */
-function isValidBetaCode(input: string | null | undefined): boolean {
-  if (!input || typeof input !== 'string') return false;
-  const allowed = (process.env.BETA_INVITE_CODES || '')
-    .split(',')
-    .map((s) => s.trim().toUpperCase())
-    .filter(Boolean);
-  if (allowed.length === 0) return false;
-  return allowed.includes(input.trim().toUpperCase());
-}
-
-/**
- * Età compiuta oggi a partire da una data di nascita 'YYYY-MM-DD'.
- * Ritorna null se la stringa è malformata o non è una data reale.
- */
-function ageFromBirthDate(birthDate: string): number | null {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) return null;
-  const [y, m, d] = birthDate.split('-').map(Number);
-  const date = new Date(Date.UTC(y, m - 1, d));
-  // Rifiuta date "normalizzate" da JS (es. 2010-02-31 → 3 marzo)
-  if (date.getUTCFullYear() !== y || date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d) {
-    return null;
-  }
-  const now = new Date();
-  let age = now.getUTCFullYear() - y;
-  const birthdayPassed =
-    now.getUTCMonth() > m - 1 ||
-    (now.getUTCMonth() === m - 1 && now.getUTCDate() >= d);
-  if (!birthdayPassed) age -= 1;
-  return age;
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { email, password, name, birth_date, sport, role, level, biggest_fear, goals, dream, current_situation, beta_code, privacy_accepted, terms_accepted, health_accepted, referral_source } = body;
-    const referralSource = typeof referral_source === 'string' ? referral_source.trim().slice(0, 120) : '';
 
     // Valida codice invito beta (se presente)
     const isBeta = isValidBetaCode(beta_code);
@@ -79,26 +37,9 @@ export async function POST(req: NextRequest) {
     }
 
     // ── AGE GATE — la validazione che conta è QUESTA (il client è solo UX) ──
-    if (!birth_date || typeof birth_date !== 'string') {
-      return NextResponse.json({ error: 'La data di nascita è obbligatoria' }, { status: 400 });
-    }
-    const computedAge = ageFromBirthDate(birth_date);
-    if (computedAge === null || computedAge < 0 || computedAge > 100) {
-      // Malformata, data futura o implausibile (>100 anni)
-      return NextResponse.json({ error: 'Data di nascita non valida' }, { status: 400 });
-    }
-    if (computedAge < MIN_AGE) {
-      // Misura i respinti: evento senza dati personali (user_id NULL, solo età)
-      supabaseAdmin
-        .from('onboarding_events')
-        .insert({ user_id: null, event: 'age_gate_blocked', meta: { age: computedAge } })
-        .then(() => {}, (err) => console.error('age_gate_blocked event error:', err));
-      // ⚠️ TESTO DA RIVEDERE INSIEME PRIMA DEL DEPLOY (spec intervento 1.4)
-      return NextResponse.json(
-        { error: `Per ora For You Football è per chi ha almeno ${MIN_AGE} anni. Stiamo lavorando per aprire anche ai più giovani: ti aspettiamo.`, age_gate: true },
-        { status: 403 }
-      );
-    }
+    const eta = controllaEta(birth_date);
+    if (!eta.ok) return NextResponse.json({ error: eta.error, ...(eta.age_gate ? { age_gate: true } : {}) }, { status: eta.status });
+    const computedAge = eta.age;
 
     // ── CONSENSO — entrambe le accettazioni obbligatorie (prova in DB dopo il signUp) ──
     if (privacy_accepted !== true || terms_accepted !== true) {
@@ -172,91 +113,8 @@ export async function POST(req: NextRequest) {
 
     const userId = userData.user.id;
 
-    // 2. Upsert profilo — isolato in try-catch separato
-    //    Anche se fallisce (tabella mancante, colonne errate, ecc.)
-    //    NON deve bloccare la registrazione — l'utente è già creato
-    try {
-      const { error: profileError } = await supabaseAdmin
-        .from('profiles')
-        .upsert({
-          user_id: userId,
-          name: name || null,
-          birth_date,
-          age: computedAge, // derivata da birth_date — mantenuta per compatibilità (Coach, snapshot)
-          sport: sport || 'calcio',
-          role: role || null,
-          level: level || null,
-          biggest_fear: biggest_fear || null,
-          goals: goals || null,
-          dream: dream || null,
-          current_situation: current_situation || null,
-          onboarding_completed: false,
-          is_beta_free: isBeta,
-        }, { onConflict: 'user_id' });
-
-      if (profileError) {
-        console.error('❌ Errore salvataggio profilo (non bloccante):', profileError);
-      } else {
-        console.log('✅ Profilo salvato per userId:', userId);
-      }
-    } catch (profileErr: any) {
-      // Eccezione dal client Supabase (es. tabella non esistente, rete) — ignoriamo
-      console.error('❌ Eccezione salvataggio profilo (non bloccante):', profileErr?.message);
-    }
-
-    logEvent(userId, 'signup_completed', { sport: sport || 'calcio', referral: referralSource ? true : false });
-
-    // 2b. "Chi ti ha consigliato?" (8/10, migration 030): update separato e fail-soft, così se la colonna
-    //     manca il profilo sopra è già salvato
-    if (referralSource) {
-      const { error: refError } = await supabaseAdmin.from('profiles').update({ referral_source: referralSource }).eq('user_id', userId);
-      if (refError) console.error('⚠️ referral_source non salvato (migration 030?):', refError.message);
-    }
-
-    // 3. Snapshot baseline T0 — immutabile, per il confronto W12.
-    //    Fire-and-forget, non blocca la registrazione. ON CONFLICT DO NOTHING
-    //    garantisce che un re-tentativo non sovrascriva i valori originali.
-    try {
-      const { error: snapshotError } = await supabaseAdmin
-        .from('profile_snapshots')
-        .insert({
-          user_id: userId,
-          name: name || null,
-          age: computedAge,
-          sport: sport || 'calcio',
-          role: role || null,
-          level: level || null,
-          biggest_fear: biggest_fear || null,
-          goals: goals || null,
-          dream: dream || null,
-          current_situation: current_situation || null,
-        });
-      if (snapshotError && snapshotError.code !== '23505') {
-        // 23505 = unique violation (snapshot già esistente per questo user_id) — atteso, no log
-        console.error('❌ Errore snapshot baseline (non bloccante):', snapshotError);
-      }
-    } catch (snapshotErr: any) {
-      console.error('❌ Eccezione snapshot baseline (non bloccante):', snapshotErr?.message);
-    }
-
-    // 4. Prova del consenso — una riga per documento (channel: registration).
-    //    Se l'insert fallisce NON blocchiamo (l'utente auth esiste già), ma il
-    //    log è volutamente rumoroso: senza queste righe non c'è prova in DB.
-    try {
-      const { error: consentError } = await supabaseAdmin.from('consent_events').insert([
-        { user_id: userId, document_type: 'privacy', document_version: PRIVACY_VERSION, channel: 'registration' },
-        { user_id: userId, document_type: 'terms', document_version: TERMS_VERSION, channel: 'registration' },
-      ]);
-      if (consentError) {
-        console.error('🚨 CONSENT NON REGISTRATO per userId', userId, ':', consentError);
-      }
-      // Riga separata: se la migration 021 non è applicata fallisce solo questa, non privacy/terms
-      const { error: healthErr } = await supabaseAdmin.from('consent_events').insert(
-        { user_id: userId, document_type: 'health_data', document_version: PRIVACY_VERSION, channel: 'registration' });
-      if (healthErr) console.error('🚨 CONSENT health_data NON REGISTRATO per userId', userId, ':', healthErr.message);
-    } catch (consentErr) {
-      console.error('🚨 CONSENT NON REGISTRATO (eccezione) per userId', userId, ':', (consentErr as Error)?.message);
-    }
+    // 2-4. Profilo, referral, snapshot T0, consensi (lib/registrazione.ts): niente blocca, l'utente auth esiste già
+    await salvaProfiloRegistrazione(userId, { ...campiDalBody({ name, sport, role, level, biggest_fear, goals, dream, current_situation, referral_source }), birth_date }, computedAge, { isBeta, via: 'password' });
 
     return NextResponse.json({ success: true, beta_accepted: isBeta });
 

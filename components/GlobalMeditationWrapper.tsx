@@ -19,7 +19,7 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
   const [manualOpen, setManualOpen] = useState(false);
 
   // Skip popup su pagine pre-app e paywall
-  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete', '/riattiva'];
+  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete', '/riattiva', '/completa-profilo', '/auth'];
   // /allenamento/* è il binario training, separato dal rituale mentale
   const shouldShowPopup = !skipPages.includes(pathname) && !pathname.startsWith('/allenamento');
 

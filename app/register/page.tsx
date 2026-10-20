@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { MIN_AGE, PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 import { Check, ChevronLeft, ChevronRight, Mail, Ticket } from 'lucide-react';
 import { AppLoader, Button, Card, Chip, Field, Input, Select, Textarea } from '@/components/ui';
+import GoogleButton from '@/components/GoogleButton';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -340,6 +341,9 @@ function RegisterContent() {
               <Button type="submit" variant="primary" size="lg" fullWidth iconRight={<ChevronRight size={20} aria-hidden />}>
                 Continua
               </Button>
+              <div className="flex items-center gap-3" aria-hidden><span className="h-px flex-1 bg-divider" /><span className="text-caption text-faint">oppure</span><span className="h-px flex-1 bg-divider" /></div>
+              <GoogleButton betaCode={betaCode || undefined} label="Registrati con Google" />
+              <p className="text-caption text-muted text-center">Con Google salti email e password: data di nascita, profilo e consensi te li chiediamo subito dopo.</p>
             </form>
           )}
 

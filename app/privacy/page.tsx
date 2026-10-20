@@ -153,6 +153,7 @@ export default function PrivacyPage() {
           <Sez n="6" title="Chi vede i tuoi dati">
             <p>Nessuno li compra e nessuno li riceve per farci pubblicità. Li trattano per noi, con contratti che li vincolano, questi fornitori:</p>
             <Riga title="Supabase (database e accesso)">Dove vivono i tuoi dati, su server nell’Unione Europea.</Riga>
+            <Riga title="Google (accesso, facoltativo)">Se scegli &ldquo;Continua con Google&rdquo;, Google ci conferma la tua email e il nome: non riceviamo altro e non scriviamo niente sul tuo account Google.</Riga>
             <Riga title="Vercel (hosting dell’app)">Fa girare l’app e tiene i log tecnici. Società statunitense, con le garanzie europee per il trasferimento dei dati (clausole contrattuali standard e Data Privacy Framework).</Riga>
             <Riga title="Anthropic (intelligenza artificiale)">Genera le risposte del Coach e del preparatore (sezione 4). Società statunitense, stesse garanzie.</Riga>
             <Riga title="Stripe (pagamenti)">Gestisce carte, ricevute e fatture. Stripe Payments Europe, Irlanda.</Riga>
