@@ -10,6 +10,8 @@ export default function BottomTabBar() {
   // Non mostrare tab bar su login/register/onboarding
   if (
     pathname === '/login' ||
+    pathname === '/completa-profilo' ||
+    pathname.startsWith('/auth/') ||
     pathname === '/register' ||
     pathname === '/reset-password' ||
     pathname === '/onboarding' ||

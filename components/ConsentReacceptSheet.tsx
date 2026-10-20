@@ -14,7 +14,7 @@ import { Button, Sheet } from '@/components/ui';
  * fail-open: se la API non risponde non si blocca nessuno (la prova del consenso resta quella
  * che c'è). Niente foglio sulle pagine pubbliche, dove i documenti si leggono.
  */
-const PAGINE_LIBERE = ['/login', '/register', '/reset-password', '/privacy', '/termini', '/genitori', '/riattiva'];
+const PAGINE_LIBERE = ['/login', '/register', '/reset-password', '/privacy', '/termini', '/genitori', '/riattiva', '/completa-profilo', '/auth'];
 let verificatoPer = ''; // user id già controllato in questa sessione della pagina
 
 type Doc = 'privacy' | 'terms';

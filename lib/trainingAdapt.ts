@@ -19,6 +19,7 @@
  * - e1RM con carico: Brzycki su reps + RIR, dove RIR = 10 − RPE (cap 4).
  */
 import { stima1RM } from './trainingRulesV2';
+import { doseTesto, fmtDose, programmaDaiLog, prossimaDose } from './trainingDose';
 
 export interface SetLogRow {
   session_key: string;
@@ -56,6 +57,7 @@ export interface RiepilogoEsercizio {
     quantitaFatta: number;        // media (fallback: prevista)
     fatteSerie: number[];         // quantità fatta serie per serie (per la soglia del gradino, 18/10)
     caricoKg: number | null;      // carico usato (media)
+    caricoPrevistoKg: number | null; // carico prescritto (media): il "programma" per la dose quando l'item del piano non c'è
     rpeMedio: number | null;
   };
   rpeMedio2Sedute: number | null; // media RPE sulle ultime 2 sedute
@@ -93,6 +95,7 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
 
     const lastRpe = rpes(last);
     const lastCarico = carichi(last);
+    const lastCaricoPrevisto = last.map((r) => r.carico_previsto_kg).filter((x): x is number => x != null);
     // Seduta "facile" (18/10): tutte le serie fatte e voto medio ≤ FACILE_RPE_MAX; senza voto, basta metà delle serie sopra il previsto
     const facile = (sess: SetLogRow[]) => {
       const rp = rpes(sess);
@@ -107,6 +110,7 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
       quantitaFatta: media(fatte(last)),
       fatteSerie: fatte(last),
       caricoKg: lastCarico.length ? media(lastCarico) : null,
+      caricoPrevistoKg: lastCaricoPrevisto.length ? media(lastCaricoPrevisto) : null,
       rpeMedio: lastRpe.length ? media(lastRpe) : null,
     };
     const rpe2 = rpes(sessions.slice(0, 2).flat());
@@ -163,30 +167,27 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
   return out.sort((a, b) => b.ultimaData.localeCompare(a.ultimaData));
 }
 
-/** Riga compatta per il prompt del planner/preparatore. */
+/** Riga compatta per il prompt del planner/preparatore: la dose la dice `prossimaDose` (una sola lettura dei log, 20/10). */
 export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unitaCatalogo: string): string {
   const unita = r.ultimaSeduta.unita || unitaCatalogo;
   const u = r.ultimaSeduta;
   const carico = u.caricoKg ? ` @ ${u.caricoKg} kg${r.e1rmKg ? ` (e1RM ~${r.e1rmKg} kg)` : ''}` : '';
   const rpe = u.rpeMedio != null ? ` RPE ${u.rpeMedio}` : '';
-  const azione = r.suggerimento === 'sali'
-    ? (u.caricoKg ? 'SALI +2.5-5%' : 'SALI +1-2 reps/serie o gradino successivo')
-    : r.suggerimento === 'scendi'
-      ? (u.caricoKg ? 'SCENDI −5-10%' : 'SCENDI −1-2 reps/serie o gradino precedente')
-      : r.suggerimento === 'conferma' ? 'CONFERMA: riparti da quanto fatto, senza passo in più' : 'TIENI';
+  const azione = doseTesto(prossimaDose(programmaDaiLog(r), r));
   const sens = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, n]) => `${k}${n > 1 ? ` ×${n}` : ''}`).join(', ');
   const sensTxt = sens ? ` · sentito: ${sens}${r.fastidio ? ` ⚠️ ${r.fastidio.toUpperCase()} ricorrente` : ''}` : '';
-  return `${nome} [${r.esercizioId}]: ${r.ultimaData} ${u.serie}×${fmtQ(u.quantitaFatta, unita)} (previsto ${fmtQ(u.quantitaPrevista, unita)})${carico}${rpe} · ${r.sedute} sedute → ${azione} (${r.motivo})${sensTxt}`;
+  return `${nome} [${r.esercizioId}]: ${r.ultimaData} ${u.serie}×${fmtDose(u.quantitaFatta, unita)} (previsto ${fmtDose(u.quantitaPrevista, unita)})${carico}${rpe} · ${r.sedute} sedute → ${azione}${sensTxt}`;
 }
 
-/** Suggerimento breve per la UI della seduta ("Ultima volta: …"). */
+/** Suggerimento breve per la UI della seduta ("Ultima volta: … → oggi 16 kg: …"): la stessa dose che mette il piano. */
 export function riepilogoUi(r: RiepilogoEsercizio, unitaCatalogo: string): { testo: string; suggerimento: Suggerimento } {
   const u = r.ultimaSeduta;
   const unita = u.unita || unitaCatalogo;
-  const parti = [`${u.serie}×${fmtQ(u.quantitaFatta, unita)}`];
+  const parti = [`${u.serie}×${fmtDose(u.quantitaFatta, unita)}`];
   if (u.caricoKg) parti.push(`${u.caricoKg} kg`);
   if (u.rpeMedio != null) parti.push(`RPE ${u.rpeMedio}`);
-  const hint = r.suggerimento === 'sali' ? 'oggi prova a salire un po\'' : r.suggerimento === 'scendi' ? 'oggi vai più leggero' : r.suggerimento === 'conferma' ? 'riparti da quanto hai fatto' : 'tieni così';
+  const d = prossimaDose(programmaDaiLog(r), r);
+  const hint = d.cambiata ? `oggi ${d.motivo}` : r.suggerimento === 'conferma' ? 'riparti da quanto hai fatto' : r.suggerimento === 'sali' ? 'sei già al tetto: tieni così' : 'tieni così';
   const top = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1])[0];
   if (top) parti.push(`sentito: ${top[0]}`);
   return { testo: `Ultima volta: ${parti.join(' · ')} → ${hint}`, suggerimento: r.suggerimento };

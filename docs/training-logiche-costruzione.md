@@ -422,6 +422,12 @@ Claude), applicati dal server alla lettura dello state come le riparazioni, con 
 Il carico (ACWR) usa la fatica e la durata REALI del resoconto al posto della stima (punto 17). Lo storico (punto 6)
 mostra previsto contro reale. Da decidere con Ste: le soglie (+2 / −2, 8, metà partita) sono a tavolino.
 
+**Seconda parte (19/10 pomeriggio, fatta):** lo storico previsto contro reale e i voti nel tempo stanno nella Card
+dell'hub (`riassuntoResoconti`), i voti tecnica/fisico entrano nel prompt del planner (righe, medie, punti deboli
+ricorrenti: voce con ≥ 2 voti e media ≤ 5) con la regola "giudizio del ragazzo, non un test: scelta tra blocchi
+equivalenti, mai contro regole, tetti o obiettivi" — nessun vincolo nel validatore — e nel contesto del Coach; la serie
+in più facoltativa si fa dentro il player (una per esercizio, nei log come serie N+1).
+
 ### E3. Risposta alla domanda del punto 4 (reps in più: contano per il gradino dopo?)
 Ste (18/10 sera): "metti che con 12 reps sarebbe passato al gradino dopo: se uno ne fa 12 su una programmazione da 8,
 lo conta per poi passare al gradino dopo?". **Oggi no**: il gradino viene solo dal test della scala (`alGradino`), e

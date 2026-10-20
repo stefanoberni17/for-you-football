@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applicaResoconti, partitaPocoGiocata, previstoPer, quantoGiocata, resocontiDaChiedere, resocontiTesto, sessioneRecuperoDopoPartita, squadraMisurata, valutaResoconto, RESOCONTO_LEGGERO_SCALA, RESOCONTO_REPS_RIDOTTE, type Resoconto } from '@/lib/trainingResoconto';
+import { applicaResoconti, partitaPocoGiocata, previstoPer, quantoGiocata, resocontiDaChiedere, resocontiPerCoach, resocontiTesto, riassuntoResoconti, sessioneRecuperoDopoPartita, squadraMisurata, valutaResoconto, votiRiga, votiTesto, RESOCONTO_LEGGERO_SCALA, RESOCONTO_REPS_RIDOTTE, STORICO_PUNTI_MAX, type Resoconto } from '@/lib/trainingResoconto';
 import { calcolaCarico } from '@/lib/trainingLoad';
 import { contextFinto, MARCO } from '@/lib/trainingSimulazione';
 import { expandPiano, partitaGiocata, partitaPocoGiocata as partitaPocoGiocataCtx, promptsV2, validateCtxFor, type ContextV2 } from '@/lib/trainingPlannerV2';
@@ -202,5 +202,51 @@ describe('carico reale e planner', () => {
     const { user } = promptsV2(c);
     expect(user).toMatch(/RESOCONTI SQUADRA E PARTITA/);
     expect(resocontiTesto(c.base.resoconti, c.base.squadra)).toMatch(/quasi non giocato/);
+  });
+});
+
+describe('storico e voti (seconda parte, 19/10)', () => {
+  const conVoti: Resoconto[] = [
+    r('2026-10-13', 'squadra', 9, { rpe_previsto: 7, voti: { tecnica: { generale: 6, tiro: 4, passaggio: 7 }, fisico: { generale: 7, resistenza: 5 } } }),
+    r('2026-10-15', 'squadra', 5, { rpe_previsto: 6, fastidio_zona: 'polpacci' }),
+    r('2026-10-17', 'partita', 8, { durata_min: 90, rpe_previsto: 9, voti: { tecnica: { generale: 5, tiro: 5 }, fisico: { generale: 6, resistenza: 4, velocita: 8 } } }),
+    r('2026-10-11', 'partita', 6, { durata_min: 60, rpe_previsto: 9, fastidio_zona: 'adduttori' }),
+  ];
+  it('riassuntoResoconti: previsto contro reale, partite, voti medi e punti deboli ricorrenti', () => {
+    const s = riassuntoResoconti(conVoti);
+    expect(s.punti.map((p) => p.data)).toEqual(['2026-10-11', '2026-10-13', '2026-10-15', '2026-10-17']); // dal più vecchio
+    expect(s.n).toEqual({ squadra: 2, partita: 2 });
+    expect(s.scartoMedioSquadra).toBe(0.5);       // (+2 −1) / 2
+    expect(s.faticaMediaPartita).toBe(7);
+    expect(s.minutiMediPartita).toBe(75);
+    expect(s.voti).toMatchObject({ tecnica: 5.5, fisico: 6.5, conVoti: 2 });
+    // tiro 4 e 5 (media 4.5) e resistenza 5 e 4 (4.5) sono ricorrenti e bassi; passaggio e velocità no (una volta sola, o alti)
+    expect(s.voti.deboli.map((d) => d.voce).sort()).toEqual(['resistenza', 'tiro']);
+    expect(s.righe.join(' ')).toMatch(/fatica in linea/);
+    expect(s.righe.join(' ')).toMatch(/Partite: 2, fatica media 7\/10, 75' giocati/);
+    expect(s.righe.join(' ')).toMatch(/fastidio in 2 resoconti/);
+    expect(s.righe.join(' ')).toMatch(/Dove ti dai meno: resistenza 4.5, tiro 4.5|tiro 4.5, resistenza 4.5/);
+    // senza voti né resoconti: niente righe sui voti, punti vuoti
+    expect(riassuntoResoconti([]).righe).toEqual([]);
+    const senzaVoti = riassuntoResoconti([r('2026-10-13', 'squadra', 7, { rpe_previsto: 7 })]);
+    expect(senzaVoti.voti).toMatchObject({ tecnica: null, fisico: null, conVoti: 0, deboli: [] });
+    expect(senzaVoti.righe.some((x) => /voti/.test(x))).toBe(false);
+    // il grafico tiene al massimo STORICO_PUNTI_MAX punti, i più recenti
+    const tanti = Array.from({ length: 20 }, (_, i) => r(`2026-09-${String(i + 1).padStart(2, '0')}`, 'squadra', 6, { rpe_previsto: 6 }));
+    expect(riassuntoResoconti(tanti).punti.length).toBe(STORICO_PUNTI_MAX);
+    expect(riassuntoResoconti(tanti).punti.at(-1)?.data).toBe('2026-09-20');
+  });
+  it('votiRiga e votiTesto: i voti nel prompt del planner e nel contesto del Coach', () => {
+    expect(votiRiga(conVoti[0].voti)).toBe('tecnica 6/10 (tiro 4), fisico 7/10 (resistenza 5)');
+    expect(votiRiga(conVoti[0].voti, true)).toBe('tecnica 6/10, fisico 7/10'); // il Coach: solo i generali
+    expect(votiRiga(null)).toBe('');
+    expect(votiRiga({ tecnica: { tiro: 3 } })).toBe(''); // senza il generale non si dice niente
+    const testo = resocontiTesto(conVoti);
+    expect(testo).toMatch(/2026-10-13 squadra: .*; voti: tecnica 6\/10 \(tiro 4\)/);
+    expect(testo).toMatch(/Voti che si è dato il ragazzo \(media di 2 resoconti\): tecnica 5.5, fisico 6.5/);
+    expect(testo).toMatch(/Punti deboli ricorrenti .*: (resistenza 4.5, tiro 4.5|tiro 4.5, resistenza 4.5)/);
+    expect(testo).toMatch(/mai per violare le regole/);
+    expect(votiTesto([conVoti[1]])).toBe(''); // senza voti la coda non c'è
+    expect(resocontiPerCoach(conVoti)[0]).toMatch(/si è dato tecnica 5\/10, fisico 6\/10/);
   });
 });

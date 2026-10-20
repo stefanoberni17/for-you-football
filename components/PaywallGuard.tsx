@@ -25,7 +25,7 @@ export function resetPaywallCache() {
 }
 
 // Account in cancellazione (migration 028): su OGNI pagina dell'app → /riattiva
-const PAGINE_LIBERE = ['/login', '/register', '/reset-password', '/privacy', '/termini', '/genitori', '/riattiva'];
+const PAGINE_LIBERE = ['/login', '/register', '/reset-password', '/privacy', '/termini', '/genitori', '/riattiva', '/completa-profilo', '/auth'];
 let deletedCheckedAt = 0;
 let deletedResult: boolean | null = null;
 export function resetDeletedCache() { deletedCheckedAt = 0; deletedResult = null; }
@@ -45,8 +45,10 @@ export default function PaywallGuard() {
         }
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return;
-        const { data } = await supabase.from('profiles').select('deleted_at').eq('user_id', session.user.id).maybeSingle();
-        if (cancelled || !data) return;
+        const { data, error } = await supabase.from('profiles').select('deleted_at').eq('user_id', session.user.id).maybeSingle();
+        if (cancelled || error) return;
+        // Entrato con Google senza aver completato il profilo (20/10): nessuna riga in profiles → "Completa il profilo"
+        if (!data) { router.replace('/completa-profilo'); return; }
         deletedResult = !!data.deleted_at;
         deletedCheckedAt = Date.now();
         if (deletedResult) router.replace('/riattiva');

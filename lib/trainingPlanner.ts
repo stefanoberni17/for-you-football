@@ -7,20 +7,19 @@
  * prompt → fallback deterministico. Mai generazione live durante la seduta.
  */
 import Anthropic from '@anthropic-ai/sdk';
-import { preferenzeValide, FASE_LABEL, FASI, MAX_SEDUTE_FISICHE_PER_FASE, MAX_SEDUTE_LEGGERE_EXTRA, type PreferenzeSetup } from './trainingSetup';
-import { KG_SENZA_MASSIMALE_MAX } from './trainingRulesV2';
+import { preferenzeValide, FASI, type PreferenzeSetup } from './trainingSetup';
 import { calcolaSquilibri, squilibriTesto, type Squilibri } from './trainingSquilibri';
 import { createClient } from '@supabase/supabase-js';
 import { DAY_NAMES, WEEK_TOOLS } from './constants';
 import { ESERCIZI, REGOLE, TESTS, type FasciaLivello } from './trainingCatalog';
 import {
-  buildRombo, fallbackWeekPlan, fasciaFromResults, isFaticaAlta, isTestaAltrove, isPeriodoScarso,
+  fallbackWeekPlan, fasciaFromResults, isFaticaAlta, isTestaAltrove, isPeriodoScarso,
   placementFromResults, validatePlan,
   type CheckinSnapshot, type TestResultRow, type WeekPlan,
 } from './trainingEngine';
 import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLogRow } from './trainingAdapt';
 import { esercizioV2ById } from './trainingCatalogV2';
-import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
+import { calcolaCarico, caricoSquadraStimato, caricoTesto, durataRealeMin, giorniDiRitardo, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { squadraMisurata, type Resoconto, type SquadraMisurata } from './trainingResoconto';
 import { loadResoconti } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
@@ -196,6 +195,8 @@ export interface FeedbackSeduta {
   feedback_blocchi?: { id: string; nome?: string; giudizio?: 'facile' | 'ok' | 'duro'; zone?: string[]; stato?: string }[] | null;
   session_key?: string;
   plan_id?: string | null;
+  data_programmata?: string | null;   // migration 032: "fatta il giorno dopo"
+  durata_reale_sec?: number | null;   // migration 032: durata vera dal player
 }
 
 /**
@@ -205,6 +206,8 @@ export interface FeedbackSeduta {
 export async function loadFeedbackRecenti(userId: string, limit = 40): Promise<FeedbackSeduta[]> {
   const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).order('completed_at', { ascending: false }).limit(limit);
+  const con032 = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key, plan_id, data_programmata, durata_reale_sec');
+  if (!con032.error) return (con032.data || []) as unknown as FeedbackSeduta[];
   const full = await q('feedback, note, completed_at, rpe, feedback_blocchi, session_key, plan_id');
   if (!full.error) return (full.data || []) as unknown as FeedbackSeduta[];
   const base = await q('feedback, note, completed_at, session_key, plan_id');
@@ -223,7 +226,10 @@ export function feedbackSeduteBlock(tutte: FeedbackSeduta[]): string {
     const voto = f.rpe != null ? `voto ${f.rpe}/10` : (f.feedback ? giud[f.feedback] ?? f.feedback : '—');
     const blocchi = (f.feedback_blocchi || []).map((b) => `${b.nome || b.id} [${b.id}]: ${b.giudizio ? (giud[b.giudizio] ?? b.giudizio) : b.zone?.length ? `${b.stato ?? 'teso'}: ${b.zone.join(', ')}` : (b.stato ?? '—')}`).join(' · ');
     const nota = f.note ? ` · "${sanitize(f.note)}"` : '';
-    return `- ${data}: ${voto}${blocchi ? ` · blocchi: ${blocchi}` : ''}${nota}`;
+    const ritardo = giorniDiRitardo(f);
+    const quando = ritardo == null || ritardo === 0 ? '' : ritardo === 1 ? ' (fatta il giorno dopo)' : ritardo > 1 ? ` (fatta ${ritardo} giorni dopo)` : ' (fatta in anticipo)';
+    const durata = durataRealeMin(f);
+    return `- ${data}${quando}: ${voto}${durata != null ? ` · ${durata}' reali` : ''}${blocchi ? ` · blocchi: ${blocchi}` : ''}${nota}`;
   });
   return `\n# FEEDBACK SEDUTE (dall'atleta a fine seduta, dalla più recente; il giudizio per blocco decide il codice della settimana dopo — regola 10)\n${lines.join('\n')}`;
 }
@@ -392,13 +398,16 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
   const selCompletions = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60);
   const [complRes, { data: plans }] = await Promise.all([
-    selCompletions('session_key, plan_id, feedback, completed_at, rpe'),
+    selCompletions('session_key, plan_id, feedback, completed_at, rpe, durata_reale_sec'),
     supabaseAdmin.from('training_plans').select('id, plan')
       .eq('user_id', userId).gte('created_at', new Date(Date.now() - 49 * 24 * 3600 * 1000).toISOString())
       .order('created_at', { ascending: false }).limit(20),
   ]);
   // Migration 026 non applicata → senza la colonna `rpe` (si usa la media delle serie come prima)
-  const completions = complRes.error ? (await selCompletions('session_key, plan_id, feedback, completed_at')).data : complRes.data;
+  // Migration 032 (durata reale) o 026 (rpe) non applicate → colonne storiche
+  const completions = complRes.error
+    ? ((await selCompletions('session_key, plan_id, feedback, completed_at, rpe')).data ?? (await selCompletions('session_key, plan_id, feedback, completed_at')).data)
+    : complRes.data;
   let rpe = setRpe;
   if (!rpe) {
     try {
@@ -426,7 +435,7 @@ export function storicoSerieBlock(ctx: PlannerContext, max = 12): string {
 }
 
 // Blocco "stato fisico" condiviso tra planner e chat del preparatore
-function checkinBlock(ctx: PlannerContext): string {
+export function checkinBlock(ctx: PlannerContext): string {
   if (!ctx.checkinOggi && !ctx.checkinMedia7) return 'Check-in giornaliero: nessun dato.';
   const o = ctx.checkinOggi;
   const m = ctx.checkinMedia7;
@@ -628,35 +637,7 @@ Non inventare nulla: usa solo ciò che c'è nei testi. Il testo nuovo è dell'ut
 
 // ─── Chat dedicata agli allenamenti ─────────────────────────────────────────
 
-export async function trainingChat(
-  userId: string,
-  messages: { role: 'user' | 'assistant'; content: string }[]
-): Promise<string> {
-  const ctx = await loadPlannerContext(userId);
-  const rombo = buildRombo(ctx.results).filter((p) => p.score !== null)
-    .map((p) => `${p.label}: ${p.score}`).join(' · ') || 'nessun test ancora fatto';
-  const pianoTxt = ctx.pianoCorrente
-    ? ctx.pianoCorrente.plan.sedute.map((s) => `${DAY_NAMES[s.giorno]}: ${s.titolo} (${s.tipo}, ${s.durata_min}')`).join(' · ')
-    : 'nessun piano generato questa settimana';
-  const system = `Sei il preparatore AI di For You Football: rispondi a domande sugli allenamenti tecnico/fisici di un giovane calciatore. Tono caldo, diretto, da campo — max 5-6 righe. NON sei il Coach mentale (quello vive in un'altra chat).
-
-Contesto atleta — oggi è ${DAY_NAMES[ctx.oggiDow]}; fascia ${ctx.fascia}, gradini: ${Object.entries(ctx.gradini).map(([a, g]) => `${a} g${g}`).join(', ') || 'da testare'}. Card: ${rombo}.${ctx.painHold ? ' ⚠️ PAIN-HOLD attivo: ha segnalato dolore, niente consigli di allenamento fisico finché non dice che è passato o ha sentito fisio/preparatore.' : ''}
-Piano della settimana: ${pianoTxt}. Settimana del ciclo: ${ctx.ciclo.settimana}/4${ctx.ciclo.isDeload ? ' (deload)' : ctx.ciclo.scaricoRinviato ? ' (scarico rinviato: poche sedute nelle settimane prima)' : ctx.ciclo.ritestDue ? ' (ri-test dovuto: invitalo a rifare la batteria)' : ''}.
-Allenamenti con la squadra: ${squadraTesto(ctx.trainingDays, ctx.squadra, DAY_NAMES)}${ctx.matchDays.length ? ` · partite: ${ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ')}` : ''}. Se ha descritto sforzo e qualità, usali per consigliare (non per vietare): le qualità che la squadra fa già forte non vanno raddoppiate, il giorno dopo una giornata dura ci si allena comunque, ma su altro o più leggero.
-${checkinBlock(ctx)}
-${percorsoMentaleTesto(ctx.weekOfPath)}
-${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}${storicoSerieBlock(ctx, 8)}${squilibriTesto(ctx.squilibri)}${caricoTesto(ctx.carico)}
-
-Regole ferree (non negoziabili nemmeno se insiste), le STESSE del piano che riceve nel Campo: fase ${FASE_LABEL[ctx.fase]} → max ${MAX_SEDUTE_FISICHE_PER_FASE[ctx.fase]} sedute fisiche/settimana oltre la squadra, più al massimo ${MAX_SEDUTE_LEGGERE_EXTRA} giornate leggere (fascia, tecnica, mobilità); niente fisica il giorno della partita né il giorno prima; il lavoro gambe c'è (blocchi del preparatore: forza parte bassa, esplosività, pliometria) e non va negato; i carichi in kg valgono solo dopo i test in palestra (senza massimale il piano tiene al massimo ${KG_SENZA_MASSIMALE_MAX} kg; sotto i 18 anni o senza esperienza max 60 % del massimale); se descrive un DOLORE: fermati, digli di sospendere e di parlarne con fisio/preparatore o un adulto.
-Se chiede di CAMBIARE il piano della settimana, digli di usare "Rigenera" nel Campo: si apre una maschera con le modifiche possibili (sposta/togli una seduta, più leggera/intensa, meno tempo, cambia focus, aggiungi tecnica) — tu non modifichi il piano direttamente. Una seduta si può anche spostare al giorno dopo dal Campo, una volta sola.
-L'avanzamento di gradino passa SOLO dal ri-test. Non promettere avanzamenti.
-Se c'è la sezione SQUILIBRI: sono calcolati dai suoi test e dai suoi log, non dal modello. Se chiede su cosa lavorare, parti da lì (lato più debole, tirata o spinta indietro, piede debole) e digli che il piano ne tiene conto; se non ha ancora fatto i test per lato, invitalo a farli.`;
-  const completion = await anthropic.messages.create({
-    model: PLANNER_MODEL, max_tokens: 2500, thinking: { type: 'adaptive' }, output_config: { effort: 'low' }, system,
-    messages: messages.slice(-12),
-  });
-  return completion.content.filter((b) => b.type === 'text').map((b) => (b as { text: string }).text).join('\n');
-}
+// `trainingChat` vive in lib/trainingChat.ts dal 20/10 (punto 3): usa il contesto v2 condiviso con il planner.
 
 // Detection semplice dolore nel testo utente → pain-hold.
 // ⚠️ Confini di parola obbligatori: la v1 (/male al|alla|alle|ai /) matchava

@@ -34,16 +34,13 @@
 import type { PlanItem, PlanSession, WeekPlan } from './trainingEngine';
 import { DIFFICILE_RPE_MIN, type RiepilogoEsercizio } from './trainingAdapt';
 import { distrettoEsercizio, type Squilibri, type Lato } from './trainingSquilibri';
-import { isEsercizioKettlebell, KB_PASSO_KG } from './trainingKettlebell';
 import { catenaByArea, esercizioById, type AreaForza } from './trainingCatalog';
 import { esercizioV2ById } from './trainingCatalogV2';
-import { ACCESSORI_CORPO_LIBERO_REPS_MAX } from './trainingRulesV2';
 import { LADDER_AREE, ladderForArea, sogliaGradino, type LadderState, type TestResultRow } from './trainingEngine';
 
-export const PROGRESSIONE_MAX_DRIFT = 0.3;   // dose massima oltre il programma di Ste (+30 %)
-export const PASSO_KG_PCT = 0.025;           // +2.5 % kg (SALI) — SCENDI: −5 %
-export const PASSO_KG_MIN = 1;               // almeno 1 kg, arrotondato a 0.5
-export const SECONDI_MAX = 120;              // tenute: mai oltre 2'
+// Le costanti della dose (tetto +30 %, passi kg/reps/secondi, kettlebell) vivono in lib/trainingDose.ts (punto 2, 20/10)
+import { PROGRESSIONE_MAX_DRIFT, prossimaDose } from './trainingDose';
+export { PROGRESSIONE_MAX_DRIFT, PASSO_KG_PCT, PASSO_KG_MIN, SECONDI_MAX } from './trainingDose';
 export const GRADINO_SCALA = 0.7;            // dose del nuovo gradino rispetto alla base del blocco
 export const LATO_EXTRA_MAX_ITEMS = 1;       // serie extra sul lato debole: al massimo 1 esercizio per seduta (Ste, 25/9: "piuttosto che aumentare molto le serie, la fascia")
 export const LEGGERO_SCALA = 0.7;            // "più leggero" scelto da Claude per blocco
@@ -61,70 +58,23 @@ export interface ContestoProgressione {
   results?: TestResultRow[];
 }
 
-const round05 = (x: number) => Math.round(x * 2) / 2;
 
-function unitaDi(id: string): string | null {
-  return esercizioById(id)?.unita ?? esercizioV2ById(id)?.unita ?? null;
-}
 function isPerLato(it: PlanItem): boolean {
   return it.per_lato === true || esercizioById(it.esercizio_id)?.perLato === true || esercizioV2ById(it.esercizio_id)?.perLato === true;
 }
 /** Solo gambe, piede e fascia: la serie extra sul lato debole segue il distretto dei test (mai la parte alta). */
 const isGambe = (id: string): boolean => distrettoEsercizio(id) === 'gambe';
 
-/** Passo in su/giù per una quantità (reps o secondi). */
-function passo(quantita: number, unita: string, verso: 1 | -1): number {
-  if (unita === 'secondi') return verso * (quantita <= 30 ? 5 : 10);
-  if (unita === 'reps') return verso * (quantita <= 10 ? 1 : 2);
-  return 0; // minuti / metri: dose fissa
-}
-
-/** Adatta la dose di un item ai log (SALI/SCENDI), con tetto sul programma di Ste. */
+/** Adatta la dose di un item ai log (SALI/SCENDI/CONFERMA): i conti li fa `prossimaDose` (lib/trainingDose.ts), qui si applica all'item. */
 function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
-  if (it.schema && it.schema !== 'fisso') return null;      // EMOM/AMRAP/interval: dose del blocco
-  if (r.suggerimento === 'tieni') return null;
-  const unita = it.unita ?? unitaDi(it.esercizio_id);
-  if (!unita) return null;
-  if (r.ultimaSeduta.unita && r.ultimaSeduta.unita !== unita) return null; // log in un'altra unità (blocco a tempo vs a reps): non si confrontano
-  // 'conferma' (18/10): riparte da quanto ha fatto, SENZA il passo in più (quello arriva dopo 2 sedute facili di fila)
-  const conferma = r.suggerimento === 'conferma';
-  const verso: 1 | -1 = r.suggerimento === 'scendi' ? -1 : 1;
-  const base = it.quantita;                                  // programma di Ste
-  const ultima = r.ultimaSeduta;
+  const d = prossimaDose(it, r);
+  if (!d.cambiata) return null;
   const out: PlanItem = { ...it };
-  let cambiato = false;
-
-  // Carico: kg dall'ultima volta ±%, tetto +30 % sul blocco, mai sotto il 70 %
-  if (it.carico_kg && it.carico_kg > 0) {
-    const da = ultima.caricoKg && ultima.caricoKg > 0 ? ultima.caricoKg : it.carico_kg;
-    // Kettlebell (Ste, 25/9): il passo è discreto, 4 kg (8 → 12 → 16 → 20 …), in su e in giù
-    const kb = isEsercizioKettlebell(it.esercizio_id);
-    const delta = conferma ? 0 : kb ? verso * KB_PASSO_KG : verso === 1 ? Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT) : -Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT * 2);
-    const grezzo = Math.min(it.carico_kg * (1 + PROGRESSIONE_MAX_DRIFT) + (kb ? KB_PASSO_KG / 2 : 0), Math.max(it.carico_kg * 0.7, da + delta));
-    const nuovo = kb ? Math.max(KB_PASSO_KG, Math.round(grezzo / KB_PASSO_KG) * KB_PASSO_KG) : round05(grezzo);
-    if (nuovo !== it.carico_kg) { out.carico_kg = nuovo; cambiato = true; }
-  } else if (unita === 'reps' || unita === 'secondi') {
-    // Corpo libero / tenute: dalla dose dell'ultima volta (stessa unità) ± un passo.
-    // Se ha FATTO più del previsto (Ste, 22/9: "8 previste, 10 facili"), si riparte da quanto ha fatto davvero:
-    // il tetto sul programma (+30 %) non può stare sotto una dose già dimostrata più un passo
-    const prevista = ultima.quantitaPrevista > 0 && Math.abs(ultima.quantitaPrevista - base) <= base * (PROGRESSIONE_MAX_DRIFT + 0.05)
-      ? ultima.quantitaPrevista : base;
-    const fatta = ultima.quantitaFatta > 0 && ultima.quantitaFatta <= base * 2 ? ultima.quantitaFatta : prevista;
-    const da = verso === 1 ? Math.max(prevista, fatta) : Math.min(prevista, fatta);
-    const dimostrata = verso === 1 && fatta > prevista ? Math.round(conferma ? fatta : fatta + passo(fatta, unita, 1)) : 0;
-    const capUnita = unita === 'reps' ? ACCESSORI_CORPO_LIBERO_REPS_MAX : SECONDI_MAX;
-    const tetto = Math.min(capUnita, Math.max(Math.round(base * (1 + PROGRESSIONE_MAX_DRIFT)), dimostrata));
-    const pavimento = Math.max(unita === 'reps' ? 1 : 5, Math.round(base * 0.7));
-    const nuovo = Math.min(tetto, Math.max(pavimento, Math.round(conferma ? da : da + passo(da, unita, verso))));
-    if (nuovo !== it.quantita) { out.quantita = nuovo; cambiato = true; }
-  }
-  if (!cambiato) return null;
-  out.adattamento = verso === 1 ? 'sali' : 'scendi';
-  const cosa = out.carico_kg !== it.carico_kg ? `${out.carico_kg} kg (programma ${it.carico_kg})` : `${out.quantita}${unita === 'secondi' ? '"' : ''} (programma ${base})`;
-  const piuDelPrevisto = verso === 1 && !out.carico_kg && ultima.quantitaFatta > ultima.quantitaPrevista;
-  out.nota = verso === 1
-    ? (piuDelPrevisto ? `↑ ${cosa}: l'ultima volta ne hai fatte ${ultima.quantitaFatta}${unita === 'secondi' ? '"' : ''} su ${ultima.quantitaPrevista}${conferma ? ', si riparte da lì' : ''}` : `↑ ${cosa}: le ultime due volte ti era facile`)
-    : `↓ ${cosa}: l'ultima volta era al limite`;
+  if (d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null)) out.carico_kg = d.caricoKg;
+  if (d.quantita !== it.quantita) out.quantita = d.quantita;
+  out.adattamento = d.verso === 'scendi' ? 'scendi' : 'sali';
+  const programma = out.carico_kg !== it.carico_kg ? `programma ${it.carico_kg} kg` : `programma ${it.quantita}${d.unita === 'secondi' ? '"' : ''}`;
+  out.nota = `${d.verso === 'scendi' ? '↓' : '↑'} ${d.motivo} (${programma})`;
   return out;
 }
 

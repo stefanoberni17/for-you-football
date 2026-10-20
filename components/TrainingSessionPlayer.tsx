@@ -7,7 +7,7 @@ import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
-import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X, Plus } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
 import { APERTURA_IDS, senzaVotoPerSerie } from '@/lib/trainingFascia';
 
@@ -44,7 +44,7 @@ function youtubeEmbedUrl(url?: string): string | null {
  * recupero automatico tra le serie, video dimostrativo, note. Schermo sempre
  * acceso (wake lock). Al termine: feedback 3-tap gestito dal parent.
  */
-export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx' }
+export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx'; startedAt?: number } // startedAt (20/10): l'inizio vero, per la durata reale
 /** Log di una serie (compilato durante il recupero): quanto è stata dura + eventuali reps/kg diversi dal proposto. */
 export interface SetLogInput {
   esercizio_id: string; serie: number; lato: '' | 'dx' | 'sx'; unita: string;
@@ -61,6 +61,7 @@ export default function TrainingSessionPlayer({
   items,
   titolo,
   onComplete,
+  conMentale = false,
   onExit,
   storageKey,
   initialProgress,
@@ -69,7 +70,8 @@ export default function TrainingSessionPlayer({
 }: {
   items: PlanItem[];
   titolo: string;
-  onComplete: (esito?: { blocchiSaltati: string[] }) => void; // blocchi saltati per intero (l'apertura, 8/10): niente domanda sulle zone a fine seduta
+  conMentale?: boolean;       // M12 (20/10): solo chi ha anche il Mentale vede il promemoria "se la testa vaga, un Reset" nel recupero
+  onComplete: (esito?: { blocchiSaltati: string[]; durataSec: number }) => void; // blocchi saltati per intero (l'apertura, 8/10): niente domanda sulle zone a fine seduta; durataSec (20/10): dall'inizio vero al completamento
   onExit: () => void;
   storageKey?: string;        // se presente: progresso persistito (riprendi dopo un'uscita)
   initialProgress?: PlayerProgress | null;
@@ -78,7 +80,10 @@ export default function TrainingSessionPlayer({
 }) {
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
   const blocchiSaltatiRef = useRef<string[]>([]); // "Salta l'apertura" (8/10): il blocco intero, senza passare dai singoli esercizi
+  const startedAtRef = useRef<number>(initialProgress?.startedAt ?? nowMs()); // l'inizio vero (anche dopo una ripresa)
   const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
+  // Serie in più facoltativa dal resoconto (19/10, seconda parte): la sceglie lui durante l'ultimo recupero, una sola
+  const [serieExtra, setSerieExtra] = useState(0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
   // Recupero dopo l'ULTIMA serie: il countdown resta (spazio per il feedback), poi si passa all'esercizio dopo
   const [restIsLast, setRestIsLast] = useState(false);
@@ -96,6 +101,10 @@ export default function TrainingSessionPlayer({
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
+  // Video dei segnali (punto 20, 20/10): per gli esercizi di visione parte da solo con l'item, "Rifai da capo" lo riavvia
+  const [schermoOn, setSchermoOn] = useState(true);
+  const [schermoKey, setSchermoKey] = useState(0);
+  const [resetHintItem, setResetHintItem] = useState<number | null>(null); // M12: il promemoria del Reset una volta per seduta (sull'esercizio del primo recupero)
   const [showDesc, setShowDesc] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const execRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -120,7 +129,7 @@ export default function TrainingSessionPlayer({
   useEffect(() => {
     if (!storageKey) return;
     try {
-      localStorage.setItem(storageKey, JSON.stringify({ itemIdx, serieFatte, lato, savedAt: Date.now() }));
+      localStorage.setItem(storageKey, JSON.stringify({ itemIdx, serieFatte, lato, startedAt: startedAtRef.current, savedAt: Date.now() }));
     } catch { /* no-op */ }
   }, [storageKey, itemIdx, serieFatte, lato]);
 
@@ -138,8 +147,10 @@ export default function TrainingSessionPlayer({
   const isPerLato = !isEmom && (item?.per_lato === true || ex?.perLato === true);
   // Serie extra sul lato più debole (lib/trainingProgressione): è l'ultima, solo su quel lato
   const extraLato = isPerLato && item?.lato_extra ? 1 : 0;
-  const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato; // EMOM: serie = minuti
-  const isExtra = extraLato > 0 && serieFatte >= (item?.serie ?? 0);
+  const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato + serieExtra; // EMOM: serie = minuti
+  const isExtra = extraLato > 0 && serieFatte === (item?.serie ?? 0);
+  const isSerieFacoltativa = !isEmom && serieExtra > 0 && serieFatte >= (item?.serie ?? 0) + extraLato;
+  const puoAggiungereSerie = !isEmom && item?.facoltativo === 'aggiungi' && serieExtra === 0;
   const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
   const isTimed = !isEmom && (unita === 'secondi' || unita === 'minuti');
   const execSeconds = unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
@@ -156,6 +167,7 @@ export default function TrainingSessionPlayer({
   };
 
   const startRest = (sec: number, last = false) => {
+    if (conMentale && resetHintItem === null && !last) setResetHintItem(itemIdx); // M12: la riga compare solo nel primo recupero vero della seduta (non dopo l'ultima serie: lì non si mostra)
     setRestIsLast(last); restIsLastRef.current = last;
     setRestLeft(Math.max(sec, last ? 20 : sec)); // dopo l'ultima serie: almeno 20" per il feedback
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
@@ -213,13 +225,13 @@ export default function TrainingSessionPlayer({
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
     setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
-    setSerieFatte(0);
+    setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
-    setShowVideo(false);
+    setShowVideo(false); setSchermoOn(true); setSchermoKey(0);
     setShowDesc(false);
     if (itemIdx + step >= items.length) {
       if (storageKey) { try { localStorage.removeItem(storageKey); } catch { /* no-op */ } }
-      onComplete({ blocchiSaltati: blocchiSaltatiRef.current });
+      onComplete({ blocchiSaltati: blocchiSaltatiRef.current, durataSec: Math.max(1, Math.round((nowMs() - startedAtRef.current) / 1000)) });
     } else {
       setItemIdx(itemIdx + step);
     }
@@ -267,9 +279,9 @@ export default function TrainingSessionPlayer({
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
     setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
-    setSerieFatte(0);
+    setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
-    setShowVideo(false); setShowDesc(false);
+    setShowVideo(false); setShowDesc(false); setSchermoOn(true); setSchermoKey(0);
     setItemIdx(itemIdx - 1);
   };
   const nextItemRef = useRef(nextItem);
@@ -312,6 +324,10 @@ export default function TrainingSessionPlayer({
   const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);
   const haVideo = !!ex.videoUrl && (!!ex.videoMp4 || !!embed);
   const videoVisibile = showVideo && haVideo;
+  // Video dei segnali: YouTube in autoplay senza controlli (muto: i segnali sono visivi, e così l'autoplay parte anche su iPhone)
+  const embedSchermo = youtubeEmbedUrl(ex.videoSchermoUrl);
+  const schermoVisibile = !!embedSchermo && schermoOn && restLeft === null && !isEmom;
+  const mostraResetHint = conMentale && restLeft !== null && resetHintItem === itemIdx;
   const blocco = item.blocco_id ? blocchi?.find((b) => b.id === item.blocco_id) : undefined;
   // Ste, 28/9: niente voto per serie su rolling e fascia (a fine seduta si dice dove si è sentita); sulla tecnica la scala è "quanto ti è riuscito"
   const senzaVoto = senzaVotoPerSerie(blocco);
@@ -385,9 +401,24 @@ export default function TrainingSessionPlayer({
               )}
               {haVideo && (
                 <Button variant="secondary" size="sm" icon={videoVisibile ? <X size={16} /> : <Play size={16} />} aria-expanded={videoVisibile} onClick={() => setShowVideo(!showVideo)}>
-                  {videoVisibile ? 'Chiudi il video' : 'Guarda il video'}
+                  {videoVisibile ? 'Chiudi il video' : embedSchermo ? 'Guarda come si fa' : 'Guarda il video'}
                 </Button>
               )}
+              {!!embedSchermo && !schermoVisibile && restLeft === null && !isEmom && (
+                <Button variant="secondary" size="sm" icon={<Play size={16} />} onClick={() => { setSchermoOn(true); setSchermoKey((k) => k + 1); }}>I segnali</Button>
+              )}
+            </div>
+          )}
+          {schermoVisibile && (
+            <div className="mt-3">
+              <p className="text-caption text-muted mb-1">Metti il telefono davanti ai cinesini: i segnali partono da soli.</p>
+              <div className="relative rounded-btn overflow-hidden bg-black" style={{ height: 'clamp(260px, 55vh, 480px)' }}>
+                <iframe key={schermoKey} src={`${embedSchermo}?autoplay=1&mute=1&controls=0&rel=0&playsinline=1`} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={`Segnali: ${ex.nome}`} />
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <Button variant="secondary" size="sm" onClick={() => setSchermoKey((k) => k + 1)}>Rifai da capo</Button>
+                <Button variant="ghost" size="sm" onClick={() => setSchermoOn(false)}>Chiudi i segnali</Button>
+              </div>
             </div>
           )}
           {showDesc && <SchedaEsercizioView scheda={ex.scheda} descrizione={ex.descrizione} />}
@@ -477,12 +508,22 @@ export default function TrainingSessionPlayer({
               </div>
             )}
 
+            {/* M12 (20/10): solo con il Mentale, nel recupero (mai durante l'esercizio né nell'EMOM), una volta per seduta */}
+            {conMentale && !restIsLast && mostraResetHint && (
+              <p className="text-caption text-muted text-center mt-2">Se la testa vaga: un respiro di Reset, poi la prossima serie.</p>
+            )}
             {/* Slot fisso in fondo: qui il pollice trova sempre il bottone */}
             <div className={SLOT}>
               <Button variant="secondary" size="lg" fullWidth icon={<Pause size={18} />}
                 onClick={() => { clearRest(); if (restIsLastRef.current) nextItem(); else setRestLeft(null); }}>
                 {restIsLast ? 'Vai al prossimo' : 'Salta il recupero'}
               </Button>
+              {restIsLast && puoAggiungereSerie && (
+                <Button variant="secondary" size="sm" fullWidth className="mt-2" icon={<Plus size={16} />}
+                  onClick={() => { setRestLeft(null); clearRest(); setRestIsLast(false); restIsLastRef.current = false; setSerieExtra(1); setPending(null); }}>
+                  Una serie in più (facoltativa)
+                </Button>
+              )}
               {restIsLast && (
                 <div className="mt-2 text-center">
                   <Button variant="ghost" size="sm"
@@ -498,7 +539,7 @@ export default function TrainingSessionPlayer({
             {/* Serie in corso */}
             <div className="text-center">
               <p className="text-body text-muted">
-                {isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
+                {isSerieFacoltativa ? 'Serie in più, facoltativa' : isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
                 {isPerLato && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
               </p>
               {isTimed && (

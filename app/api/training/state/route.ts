@@ -254,7 +254,7 @@ export async function GET(request: NextRequest) {
       partitaAbituale,
       // Resoconto dopo squadra/partita (19/10): oggi e ieri senza risposta (l'hub chiede il primo; "Salta" vive in localStorage), gli ultimi dati
       resocontiDaChiedere: daChiedere,
-      resoconti: resoconti.slice(0, 10),
+      resoconti, // ultime 4 settimane: lo storico nella Card (fatica vera contro prevista, voti)
       // Zone più tese dal rolling (28/9), per la card dell'hub
       zoneTese: zoneTeseRicorrenti(feedbackRecenti),
       maxSeduteFisiche: maxSeduteFisiche(setup.fase),

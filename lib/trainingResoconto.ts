@@ -320,15 +320,106 @@ export function resocontiTesto(resoconti: readonly Resoconto[], squadra?: Squadr
       r.stanchezza ? r.stanchezza : null, r.fastidio_zona ? `fastidio a ${r.fastidio_zona}` : null, r.testa ? `testa: ${r.testa.replace('_', ' e ')}` : null,
     ].filter(Boolean).join(', ');
     const lettura = v.pocoGiocato ? 'quasi non giocato: le regole del dopo partita non valgono' : v.recuperoDopo ? 'partita da 10: il giorno dopo solo recupero, il secondo più leggero' : v.menoAffaticato ? 'meno affaticato (meno di 75\' e poca fatica): niente in più, ma a +2/+3 può fare qualcosa in più se serve' : v.faticaAlta ? 'fatica molto alta: i due giorni dopo più leggeri' : v.verso === 'piu' ? 'più fatica del previsto: serie facoltative nella seduta dopo' : v.verso === 'meno' ? 'meno fatica del previsto: serie in più facoltative' : r.tipo === 'partita' ? 'partita normale (le regole del dopo partita valgono)' : 'come previsto';
-    return `- ${r.data} ${r.tipo}: fatica ${r.rpe}/10 (previsto ${prev}), ${extra} → ${lettura}`;
+    const voti = votiRiga(r.voti);
+    return `- ${r.data} ${r.tipo}: fatica ${r.rpe}/10 (previsto ${prev}), ${extra} → ${lettura}${voti ? `; voti: ${voti}` : ''}`;
   });
-  return `\n# RESOCONTI SQUADRA E PARTITA (dati veri del ragazzo; le regole le applica il server alle sedute: tu tienine conto per bilanciare)\n${righe.join('\n')}`;
+  return `\n# RESOCONTI SQUADRA E PARTITA (dati veri del ragazzo; le regole le applica il server alle sedute: tu tienine conto per bilanciare)\n${righe.join('\n')}${votiTesto(resoconti)}`;
 }
 
 /** Righe per il Coach (contesto "Il Campo"): com'è andata, anche di testa. */
 export function resocontiPerCoach(resoconti: readonly Resoconto[], max = 3): string[] {
   return [...resoconti].sort((a, b) => b.data.localeCompare(a.data)).slice(0, max).map((r) => {
     const testa = r.testa ? `di testa ${r.testa === 'bene' ? 'bene' : r.testa === 'alti_bassi' ? 'alti e bassi' : 'fatica'}${r.testa_nota ? `, "${String(r.testa_nota).replace(/[<>]/g, '').slice(0, 120)}"` : ''}` : 'niente sulla testa';
-    return `- ${r.data}, ${r.tipo === 'partita' ? `partita (${r.durata_min ?? '?'}' giocati)` : 'allenamento con la squadra'}: fatica ${r.rpe}/10${r.fastidio_zona ? `, fastidio a ${r.fastidio_zona}` : ''}; ${testa}`;
+    const voti = votiRiga(r.voti, true);
+    return `- ${r.data}, ${r.tipo === 'partita' ? `partita (${r.durata_min ?? '?'}' giocati)` : 'allenamento con la squadra'}: fatica ${r.rpe}/10${r.fastidio_zona ? `, fastidio a ${r.fastidio_zona}` : ''}; ${testa}${voti ? `; si è dato ${voti}` : ''}`;
   });
+}
+
+// ─── Voti e storico (seconda parte, 19/10) ──────────────────────────────────
+// I voti tecnica/fisico sono il giudizio del ragazzo, non un test: servono a scegliere tra blocchi equivalenti e
+// a dargli uno storico, mai a violare regole o obiettivi.
+
+export const VOTO_DEBOLE_MAX = 5;   // un voto ≤ 5 è "basso"
+export const VOTO_DEBOLE_MIN_N = 2; // una voce è un punto debole ricorrente da 2 voti bassi in media
+export const STORICO_PUNTI_MAX = 12; // quanti resoconti entrano nel grafico dell'hub
+
+export const VOTI_ETICHETTE: Record<string, string> = {
+  tecnica: 'tecnica', passaggio: 'passaggio', stop: 'stop', lancio: 'lancio', tiro: 'tiro',
+  fisico: 'fisico', velocita: 'velocità', forza: 'forza', resistenza: 'resistenza',
+};
+const VOCI_TECNICA = ['passaggio', 'stop', 'lancio', 'tiro'] as const;
+const VOCI_FISICO = ['velocita', 'forza', 'resistenza'] as const;
+
+const votoValido = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 1 && v <= 10;
+const media1 = (xs: readonly number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);
+
+/** "tecnica 6 (tiro 4), fisico 7 (resistenza 5)": per le righe del prompt e del Coach (breve = solo i generali). */
+export function votiRiga(voti: VotiResoconto | null | undefined, breve = false): string {
+  if (!voti) return '';
+  const parte = (gen: number | undefined, voci: readonly string[], sub: Record<string, number | undefined> | undefined, nome: string) => {
+    if (!votoValido(gen)) return null;
+    const bassi = breve ? [] : voci.filter((k) => votoValido(sub?.[k]) && (sub![k] as number) <= VOTO_DEBOLE_MAX).map((k) => `${VOTI_ETICHETTE[k]} ${sub![k]}`);
+    return `${nome} ${gen}/10${bassi.length ? ` (${bassi.join(', ')})` : ''}`;
+  };
+  return [parte(voti.tecnica?.generale, VOCI_TECNICA, voti.tecnica as Record<string, number | undefined> | undefined, 'tecnica'), parte(voti.fisico?.generale, VOCI_FISICO, voti.fisico as Record<string, number | undefined> | undefined, 'fisico')].filter(Boolean).join(', ');
+}
+
+export interface VotoDebole { voce: string; media: number; n: number }
+export interface PuntoStorico { data: string; tipo: TipoResoconto; previsto: number; reale: number; minuti: number | null; tecnica: number | null; fisico: number | null; fastidio: boolean }
+export interface RiassuntoResoconti {
+  punti: PuntoStorico[];                // dal più vecchio al più recente, al massimo STORICO_PUNTI_MAX
+  n: { squadra: number; partita: number };
+  scartoMedioSquadra: number | null;    // media (reale − previsto) sugli allenamenti con la squadra
+  faticaMediaPartita: number | null;
+  minutiMediPartita: number | null;
+  voti: { tecnica: number | null; fisico: number | null; conVoti: number; deboli: VotoDebole[] };
+  righe: string[];                      // in linguaggio da atleta (hub)
+}
+
+/** Lo storico di squadra e partita (ultime 4 settimane): previsto contro reale, minuti, voti e i punti deboli ricorrenti. */
+export function riassuntoResoconti(resoconti: readonly Resoconto[], squadra?: SquadraSettimana | null): RiassuntoResoconti {
+  const ord = [...resoconti].sort((a, b) => a.data.localeCompare(b.data));
+  const punti: PuntoStorico[] = ord.map((r) => ({
+    data: r.data, tipo: r.tipo, previsto: r.rpe_previsto ?? previstoPer(r.tipo, r.data, squadra), reale: r.rpe, minuti: r.durata_min ?? null,
+    tecnica: votoValido(r.voti?.tecnica?.generale) ? r.voti!.tecnica!.generale! : null,
+    fisico: votoValido(r.voti?.fisico?.generale) ? r.voti!.fisico!.generale! : null,
+    fastidio: !!r.fastidio_zona,
+  }));
+  const sq = punti.filter((p) => p.tipo === 'squadra');
+  const pa = punti.filter((p) => p.tipo === 'partita');
+  const scartoMedioSquadra = media1(sq.map((p) => p.reale - p.previsto));
+  const faticaMediaPartita = media1(pa.map((p) => p.reale));
+  const minutiMediPartita = media1(pa.filter((p) => p.minuti != null).map((p) => p.minuti as number));
+  const tecnica = media1(punti.filter((p) => p.tecnica != null).map((p) => p.tecnica as number));
+  const fisico = media1(punti.filter((p) => p.fisico != null).map((p) => p.fisico as number));
+  const conVoti = punti.filter((p) => p.tecnica != null || p.fisico != null).length;
+  // Punti deboli ricorrenti: una voce con almeno 2 voti e media ≤ 5
+  const perVoce = new Map<string, number[]>();
+  for (const r of ord) {
+    for (const k of VOCI_TECNICA) { const v = r.voti?.tecnica?.[k]; if (votoValido(v)) perVoce.set(k, [...(perVoce.get(k) ?? []), v]); }
+    for (const k of VOCI_FISICO) { const v = r.voti?.fisico?.[k]; if (votoValido(v)) perVoce.set(k, [...(perVoce.get(k) ?? []), v]); }
+  }
+  const deboli: VotoDebole[] = [...perVoce.entries()]
+    .map(([voce, xs]) => ({ voce, media: media1(xs) as number, n: xs.length }))
+    .filter((d) => d.n >= VOTO_DEBOLE_MIN_N && d.media <= VOTO_DEBOLE_MAX)
+    .sort((a, b) => a.media - b.media);
+  const righe: string[] = [];
+  if (sq.length) {
+    const s = scartoMedioSquadra as number;
+    righe.push(`Con la squadra: ${sq.length} ${sq.length === 1 ? 'allenamento' : 'allenamenti'}, ${Math.abs(s) < 1 ? 'fatica in linea con il previsto' : s > 0 ? `in media ${s} punti più dura del previsto` : `in media ${Math.abs(s)} punti più leggera del previsto`}.`);
+  }
+  if (pa.length) righe.push(`Partite: ${pa.length}, fatica media ${faticaMediaPartita}/10${minutiMediPartita != null ? `, ${Math.round(minutiMediPartita)}' giocati in media` : ''}.`);
+  const fastidi = punti.filter((p) => p.fastidio).length;
+  if (fastidi >= 2) righe.push(`Un fastidio in ${fastidi} resoconti: se torna, parlane con il preparatore o con un medico.`);
+  if (conVoti) righe.push(`I tuoi voti: tecnica ${tecnica ?? '—'}, fisico ${fisico ?? '—'} (media di ${conVoti} ${conVoti === 1 ? 'resoconto' : 'resoconti'}).`);
+  if (deboli.length) righe.push(`Dove ti dai meno: ${deboli.map((d) => `${VOTI_ETICHETTE[d.voce]} ${d.media}`).join(', ')}. Il piano lo sa.`);
+  return { punti: punti.slice(-STORICO_PUNTI_MAX), n: { squadra: sq.length, partita: pa.length }, scartoMedioSquadra, faticaMediaPartita, minutiMediPartita, voti: { tecnica, fisico, conVoti, deboli }, righe };
+}
+
+/** Coda della sezione resoconti nel prompt: i voti medi e i punti deboli ricorrenti, con la regola d'uso. */
+export function votiTesto(resoconti: readonly Resoconto[]): string {
+  const r = riassuntoResoconti(resoconti);
+  if (!r.voti.conVoti) return '';
+  const deboli = r.voti.deboli.length ? ` Punti deboli ricorrenti (≤ ${VOTO_DEBOLE_MAX} su almeno ${VOTO_DEBOLE_MIN_N} resoconti): ${r.voti.deboli.map((d) => `${VOTI_ETICHETTE[d.voce]} ${d.media}`).join(', ')}.` : '';
+  return `\nVoti che si è dato il ragazzo (media di ${r.voti.conVoti} resoconti): tecnica ${r.voti.tecnica ?? '—'}, fisico ${r.voti.fisico ?? '—'}.${deboli} Sono il SUO giudizio, non un test: usali per scegliere tra blocchi equivalenti (un tiro basso → il mazzo di tecnica pesca i tiri; resistenza bassa → la resistenza nella giornata libera; velocità bassa → rapidità nei complementi), mai per violare le regole, i tetti o gli obiettivi; se un punto debole è ricorrente, dillo nel messaggio e invita al test di quella qualità.`;
 }

@@ -10,7 +10,9 @@ import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { APERTURA_IDS, STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type StatoFascia } from '@/lib/trainingFascia';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
-import { AlertTriangle, Calendar, Check, Info, Pause, Play } from 'lucide-react';
+import { AlertTriangle, Calendar, Check, Info, Pause, Play, Wind } from 'lucide-react';
+import { useMeditation } from '@/components/MeditationContext';
+import { hasActiveAccess } from '@/lib/checkAccess';
 import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
 
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
@@ -51,7 +53,10 @@ export default function SessionePage() {
   const [giudizi, setGiudizi] = useState<Record<string, Giudizio>>({}); // giudizio per blocco
   const [zone, setZone] = useState<Record<string, string[]>>({});       // rolling (28/9): dove l'ha sentita di più
   const [stati, setStati] = useState<Record<string, StatoFascia>>({});  // rolling: ok / teso / fastidio
-  const [blocchiSaltati, setBlocchiSaltati] = useState<string[]>([]);   // apertura saltata dal player (8/10): niente domanda sulle zone
+  const [blocchiSaltati, setBlocchiSaltati] = useState<string[]>([]);
+  const [durataSec, setDurataSec] = useState<number | null>(null);
+  const [conMentale, setConMentale] = useState(false);   // M12 (20/10): Reset prima della seduta e promemoria nel recupero solo con il Mentale
+  const { openMeditation } = useMeditation();          // durata reale dal player (20/10, migration 032)   // apertura saltata dal player (8/10): niente domanda sulle zone
   const [spiegazioneOpen, setSpiegazioneOpen] = useState(false); // "Leggi tutto" sulla spiegazione del planner
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -59,6 +64,9 @@ export default function SessionePage() {
   const load = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
+    // M12: chi ha anche il Mentale (accesso attivo) vede il Reset prima della seduta
+    supabase.from('profiles').select('is_beta_free, season1_access, subscription_status').eq('user_id', session.user.id).maybeSingle()
+      .then(({ data: prof }) => setConMentale(hasActiveAccess(prof as Parameters<typeof hasActiveAccess>[0])));
     const res = await authFetch('/api/training/state');
     if (res.status === 403) { router.push('/strumenti'); return; }
     if (res.ok) {
@@ -106,7 +114,7 @@ export default function SessionePage() {
       });
       await authFetch('/api/training/complete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan_id: planId, giorno, rpe: rpeSeduta ?? undefined, blocchi, note: note.trim() || undefined }),
+        body: JSON.stringify({ plan_id: planId, giorno, rpe: rpeSeduta ?? undefined, blocchi, note: note.trim() || undefined, durata_reale_sec: durataSec ?? undefined }),
       });
       setPhase('done');
     } finally { setSending(false); }
@@ -160,6 +168,7 @@ export default function SessionePage() {
           storageKey={storageKey}
           initialProgress={resume ? savedProgress : null}
           blocchi={sessione.blocchi}
+          conMentale={conMentale}
           onSetLog={(log: SetLogInput) => {
             if (!planId) return;
             authFetch('/api/training/set-log', {
@@ -167,7 +176,7 @@ export default function SessionePage() {
               body: JSON.stringify({ plan_id: planId, giorno, ...log }),
             }).catch(() => { /* fire-and-forget: la seduta non si ferma */ });
           }}
-          onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setPhase('feedback'); }}
+          onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setDurataSec(esito?.durataSec ?? null); setPhase('feedback'); }}
           onExit={() => {
             // Il progresso resta salvato: al rientro si può riprendere da qui
             if (storageKey) {
@@ -400,10 +409,23 @@ export default function SessionePage() {
               </Button>
             </div>
           ) : (
-            <Button variant="hero" size="lg" fullWidth icon={<Play size={20} />} disabled={bloccata}
-              onClick={() => { setResume(false); setPhase('playing'); }}>
-              Inizia la seduta
-            </Button>
+            <>
+              {conMentale && !bloccata && (
+                <Card variant="accent" padding="sm" className="mb-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-body-sm font-semibold text-app flex items-center gap-1.5"><Wind size={15} className="text-forest-400" aria-hidden /> Arriva presente</p>
+                      <p className="text-body-sm text-muted leading-snug">Un minuto di Reset prima di iniziare: il corpo lavora meglio con la testa qui.</p>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={openMeditation}>Fai il Reset</Button>
+                  </div>
+                </Card>
+              )}
+              <Button variant="hero" size="lg" fullWidth icon={<Play size={20} />} disabled={bloccata}
+                onClick={() => { setResume(false); setPhase('playing'); }}>
+                Inizia la seduta
+              </Button>
+            </>
           )}
           {isFisica && (
             <p className="text-caption text-muted text-center mt-2">Se un esercizio fa male, fermati: il dolore non si allena.</p>
