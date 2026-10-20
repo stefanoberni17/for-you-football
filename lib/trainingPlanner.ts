@@ -19,6 +19,7 @@ import {
   type CheckinSnapshot, type TestResultRow, type WeekPlan,
 } from './trainingEngine';
 import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLogRow } from './trainingAdapt';
+import { doseRegoleTesto } from './trainingDose';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoSquadraStimato, caricoTesto, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { squadraMisurata, type Resoconto, type SquadraMisurata } from './trainingResoconto';
@@ -645,7 +646,7 @@ Piano della settimana: ${pianoTxt}. Settimana del ciclo: ${ctx.ciclo.settimana}/
 Allenamenti con la squadra: ${squadraTesto(ctx.trainingDays, ctx.squadra, DAY_NAMES)}${ctx.matchDays.length ? ` · partite: ${ctx.matchDays.map((d) => DAY_NAMES[d]).join(', ')}` : ''}. Se ha descritto sforzo e qualità, usali per consigliare (non per vietare): le qualità che la squadra fa già forte non vanno raddoppiate, il giorno dopo una giornata dura ci si allena comunque, ma su altro o più leggero.
 ${checkinBlock(ctx)}
 ${percorsoMentaleTesto(ctx.weekOfPath)}
-${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}${storicoSerieBlock(ctx, 8)}${squilibriTesto(ctx.squilibri)}${caricoTesto(ctx.carico)}
+${ctx.obiettivi ? `Obiettivi dell'atleta: ${ctx.obiettivi}\n` : ''}${ctx.note ? `Note recenti: ${ctx.note}\n` : ''}${storicoSerieBlock(ctx, 8)}${ctx.storicoSerie.length ? `\n${doseRegoleTesto()}` : ''}${squilibriTesto(ctx.squilibri)}${caricoTesto(ctx.carico)}
 
 Regole ferree (non negoziabili nemmeno se insiste), le STESSE del piano che riceve nel Campo: fase ${FASE_LABEL[ctx.fase]} → max ${MAX_SEDUTE_FISICHE_PER_FASE[ctx.fase]} sedute fisiche/settimana oltre la squadra, più al massimo ${MAX_SEDUTE_LEGGERE_EXTRA} giornate leggere (fascia, tecnica, mobilità); niente fisica il giorno della partita né il giorno prima; il lavoro gambe c'è (blocchi del preparatore: forza parte bassa, esplosività, pliometria) e non va negato; i carichi in kg valgono solo dopo i test in palestra (senza massimale il piano tiene al massimo ${KG_SENZA_MASSIMALE_MAX} kg; sotto i 18 anni o senza esperienza max 60 % del massimale); se descrive un DOLORE: fermati, digli di sospendere e di parlarne con fisio/preparatore o un adulto.
 Se chiede di CAMBIARE il piano della settimana, digli di usare "Rigenera" nel Campo: si apre una maschera con le modifiche possibili (sposta/togli una seduta, più leggera/intensa, meno tempo, cambia focus, aggiungi tecnica) — tu non modifichi il piano direttamente. Una seduta si può anche spostare al giorno dopo dal Campo, una volta sola.

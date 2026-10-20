@@ -21,10 +21,9 @@ export const FASCE_KB: FasciaKb[] = ['base', 'intermedio', 'avanzato'];
 export const KB_SETTIMANE_BASE = 4;
 export const KB_SETTIMANE_INTERMEDIO = 6;
 export const KB_RPE_FACILE = 6;
-export const KB_PASSO_KG = 4;
+export { KB_PASSO_KG, isEsercizioKettlebell } from './trainingDose'; // il passo di 4 kg sta con le altre regole della dose (20/10)
 export const KB_IDS: readonly string[] = ['kb-base', 'kb-intermedio', 'kb-avanzato'];
 export const isKettlebell = (id: string) => id.startsWith('kb-');
-export const isEsercizioKettlebell = (id: string) => esercizioV2ById(id)?.attrezzatura === 'kettlebell';
 
 /** Composizione delle tre sedute (Ste, 25/9: swing = il pilastro; i pesi sono quelli di partenza del catalogo). */
 const SEDUTE: Record<FasciaKb, { id: string; nome: string; descrizione: string; items: [string, number, number, number][] }> = {
