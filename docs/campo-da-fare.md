@@ -36,7 +36,7 @@ Per l'aumento dentro la settimana in corso propongo una soglia più stretta, su 
 ## Setup
 
 4. **Limitazioni e infortuni passati nel setup.** Campo "Infortuni o limitazioni" (testo libero 300 caratteri più chips per zona, stesse zone di M9) in `/allenamento/setup`, colonna `profiles.training_limitazioni` (migration), nel prompt del planner e della chat, e collegato alla riduzione di carico per zona di M9 (stessa funzione, con il flag "cronica" che non scade). Ore: 5-6, incl. test sulla riduzione (il resto è UI).
-5. **Controllo "con questo tempo e questi attrezzi posso darti X" prima di generare.** Funzione pura `fattibilitaSetup(setup, obiettivi)` che simula `blocchiDisponibili` più i blocchi virtuali e il tempo per seduta: per ogni obiettivo dice se c'è almeno un blocco che ci sta, e se no cosa manca (attrezzo o minuti). Banner nel setup e nella maschera "Rifai da capo" prima del bottone. Ore: 4-6, incl. test.
+5. ✅ **Fatto il 20/10** (`lib/trainingFattibilita.ts`, `POST /api/training/fattibilita`, banner nel setup e nella maschera). **Controllo "con questo tempo e questi attrezzi posso darti X" prima di generare.** Funzione pura `fattibilitaSetup(setup, obiettivi)` che simula `blocchiDisponibili` più i blocchi virtuali e il tempo per seduta: per ogni obiettivo dice se c'è almeno un blocco che ci sta, e se no cosa manca (attrezzo o minuti). Banner nel setup e nella maschera "Rifai da capo" prima del bottone. Ore: 4-6, incl. test.
 
 ## Storico e dati
 
