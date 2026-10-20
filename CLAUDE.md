@@ -187,6 +187,7 @@ for-you-football/
     └── supabase-schema.sql                # Schema completo: 6 tabelle + RLS + indexes + trigger
     └── training-logiche-costruzione.md    # L'elenco delle logiche di costruzione degli allenamenti (telaio + per obiettivo) preso dal codice il 16/10, con dove vive ogni regola e cosa cambierebbe con le dieci risposte di Ste (§C): si legge PRIMA di toccare il planner
     └── campo-da-fare.md                   # Lista decisa il 12/10 per il Campo prima della vendita: regole di metodo M1-M12 di Ste, 14 punti con stime ore, costo AI per pacchetto. Niente è iniziato: si parte quando Ste lo dice
+    └── ricerca-metodo-2026-10.md          # Il metodo FYF contro la letteratura 2019-2026 (20/10, 12 agenti): per ogni area evidenza con i numeri, cosa fa FYF, verdetto (coerente / più permissivo / a tavolino), proposte con priorità e costo; tabella di 42 regole, i 10 cambiamenti che valgono di più, le lacune da colmare con i dati. Le note per area in docs/ricerca-metodo-2026-10/note/ (00 = il metodo estratto dal codice). Si legge PRIMA di cambiare una soglia del Campo
 ```
 
 ---
