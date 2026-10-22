@@ -10,6 +10,7 @@ import { oraItaly } from '@/lib/dateItaly';
 import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
+import RisposteChiaveBox from '@/components/RisposteChiaveBox';
 import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
@@ -585,6 +586,9 @@ export default function GiornoPage() {
               {giorno.pratica}
             </p>
 
+            {/* Le risposte chiave richiamate dal testo ("le trovi qui sotto"): solo nei giorni di W11 (lib/risposteChiave.ts) */}
+            <RisposteChiaveBox week={weekNumber} day={dayNumber} className="mt-4" />
+
             {/* Giornata: si parte con un Reset breve (3 respiri) o senza; in entrambi i casi la giornata è avviata */}
             {giorno.tipoPratica === 'giornata' && !completed && !started && (
               <div className="mt-5 flex flex-col gap-3">
@@ -699,6 +703,7 @@ export default function GiornoPage() {
               subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domanda}</span>}
               className="mb-4"
             />
+            <RisposteChiaveBox week={weekNumber} day={dayNumber} className="mb-4" />
             <Field
               label="La tua risposta"
               htmlFor="riflessione"

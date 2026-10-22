@@ -10,7 +10,7 @@ import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import SubscriptionSection from '@/components/SubscriptionSection';
 import { AppLoader, Badge, Button, Card, Chip, Field, Input, SectionTitle, Select, Sheet, Textarea } from '@/components/ui';
-import { Bot, Bell, LogOut, Lock, Check, Trash2, IdCard, ChevronRight } from 'lucide-react';
+import { Bot, Bell, LogOut, Lock, Check, Trash2, IdCard, ChevronRight, BookOpen } from 'lucide-react';
 
 /**
  * /profilo — riordinato (review 16/9): prima Telegram e Push avevano i bottoni più
@@ -484,6 +484,18 @@ export default function ProfiloPage() {
             <span className="flex-1 min-w-0">
               <span className="block text-body font-semibold text-app">Carta del Giocatore</span>
               <span className="block text-body-sm text-muted">Testa e corpo a 360°, e il documento da stampare</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+
+        {/* ── Le tue risposte (22/10): tutto quello che ha scritto nei giorni e nei Gate ── */}
+        <Card padding="sm" href="/risposte" aria-label="Le tue risposte">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-surface-2 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><BookOpen size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">Le tue risposte</span>
+              <span className="block text-body-sm text-muted">Quello che hai scritto nei giorni e nei Gate, settimana per settimana</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
           </div>

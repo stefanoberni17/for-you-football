@@ -60,7 +60,8 @@ export default function BottomTabBar() {
             // /sos, /carta e /allenamento/* fanno parte della Palestra (Testa | Fisico): tab accesa anche lì
             const isActive =
               pathname === tab.href ||
-              (tab.href === '/strumenti' && (pathname === '/sos' || pathname === '/carta' || pathname.startsWith('/allenamento')));
+              (tab.href === '/strumenti' && (pathname === '/sos' || pathname === '/carta' || pathname.startsWith('/allenamento'))) ||
+              (tab.href === '/profilo' && pathname === '/risposte');
             const conPallino = tab.href === '/strumenti' && pendente;
 
             return (
