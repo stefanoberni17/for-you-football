@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY } from '@/lib/constants';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
+import RisposteChiaveBox from '@/components/RisposteChiaveBox';
 import { Check, Key, PenLine, Target } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
@@ -232,6 +233,8 @@ export default function GatePage() {
             <p className="text-app text-body leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
+            {/* Le risposte chiave richiamate dalle domande (W11: Protocollo For You, risposte pronte) */}
+            <RisposteChiaveBox week={weekNumber} day={GATE_DAY} className="mt-3" />
           </Card>
         )}
 

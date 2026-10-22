@@ -61,6 +61,7 @@ for-you-football/
 │   ├── strumenti/page.tsx                 # Palestra, parte TESTA (selettore Testa | Fisico in cima, dal 20/10): Reset rapido + Palestra per principio (7 capacità; dettaglio = menu esercizi con "Cosa allena"; l'àncora apre la scheda strumento cos'è/quando/pratica) + schede SOS
 │   ├── carta/page.tsx                     # Carta del Giocatore: in cima la Carta a 360° (rombo Mente, Recupero, Corpo, sette punte — lib/carta.ts, GET /api/carta), sotto il documento print-friendly (mantra, mappa, firma, Protocollo); si apre su A 360° con tutte e due le parti, Mente con la sola Testa, Corpo con il solo Fisico; link dalla Testa, dalla vista Card del Fisico e dal Profilo (20/10)
 │   ├── profilo/page.tsx
+│   ├── risposte/page.tsx                  # "Le tue risposte" (22/10): tutto quello che ha scritto nei giorni e nei Gate, per settimana, con le risposte chiave in evidenza; dal Profilo e dai giorni di W11
 │   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
 │   ├── termini/page.tsx                   # Termini di servizio definitivi (9/10/2026, TERMS_VERSION '2026-10-09'): 14 sezioni, recesso 14 giorni, legge italiana
@@ -75,6 +76,7 @@ for-you-football/
 │       ├── gate/route.ts                  # GET ?week=&userId= / POST risposte gate
 │       ├── calendar/route.ts              # GET ?userId=&week= / POST training_days + match_days
 │       ├── reflection/route.ts            # GET/POST riflessioni post-giorno
+│       ├── risposte/route.ts              # GET → le risposte scritte nel percorso (giorni + Gate), ?chiavi=1 solo le chiave (lib/risposteServer.ts)
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
 │       ├── telegram/route.ts              # POST → webhook bot Telegram (+ handler /start deep-link)
 │       ├── telegram/link/route.ts         # POST → genera codice deep-link collegamento (auth)
@@ -98,6 +100,7 @@ for-you-football/
 │   ├── PalestraSwitch.tsx                 # Testa | Fisico (20/10): le due parti dell'app, sempre tutte e due; la parte che non hai ha il lucchetto; `palestra.parte` in localStorage
 │   ├── FisicoBloccato.tsx                 # Il Fisico per chi non ha il Campo: cos'è, settimana finta, "Mi interessa" (evento campo_interesse)
 │   ├── StatoRecente.tsx                   # "Il tuo stato" (medie dei check-in a 7 giorni), dalla home alla Carta (20/10)
+│   ├── RisposteChiaveBox.tsx              # "Le tue risposte" dentro un giorno di W11 (22/10): le risposte chiave che il testo richiama, chiuse di default, link a /risposte
 │   ├── ConsentReacceptSheet.tsx           # Ri-accettazione privacy/termini: Sheet senza X alla prima pagina dell'app se la versione accettata ≠ quella in constants (GET/POST /api/consent/reaccept, fail-open)
 │   ├── BirthdateBanner.tsx                # Banner non bloccante dashboard: raccoglie birth_date dagli utenti pre-age-gate
 │   ├── ActionsCard.tsx                    # Card compatta dashboard "Le tue azioni durante il giorno" (3 varianti)
@@ -122,6 +125,7 @@ for-you-football/
 │   ├── actionsCatalog.ts                  # Catalogo 20 azioni "act as if" + helper filtro per settimana
 │   ├── sosCards.ts                        # 4 schede SOS statiche — ora FALLBACK di /api/difficolta se Notion non risponde
 │   ├── toolsCatalog.ts                    # Cassetta: 8 strumenti W1-8 (riferimento cos'è/quando/pratica) — riusati come àncora dalla Palestra
+│   ├── risposteChiave.ts / risposteServer.ts  # Le risposte chiave del percorso (22/10, puro + loader): QUALI risposte sono chiave (W4-G6 Protocollo Pressione, W9-G4 routine, W10-G6 condizioni, W11-G2 risposte pronte, W11-G4 Protocollo For You) e in QUALE giorno di W11 si mostrano (`DA_MOSTRARE`); `risposteChiaveTesto` = blocco per il Coach
 │   ├── carta.ts / incroci.ts              # Carta a 360° (puri, test): rombo Mente, Recupero, sette punte; incroci = frasi vere dai dati (sonno vs lucidità, seduta dura vs azioni, carico vs pratiche, testa vs sedute), max 2
 │   ├── cartaServer.ts                     # loadIncroci (per /api/carta e il Coach) + loadCampoPerCoach: blocco "Il Campo" nel contesto del Coach (sedute della settimana, ultima seduta col voto, carico, pausa dolore, zone tese)
 │   ├── palestraCatalog.ts                 # Palestra per principio: 7 capacità × esercizi base ("Cosa allena" + step), àncora dai tool, unlock per principio/esercizio
@@ -699,6 +703,7 @@ Entrambi i canali (web + Telegram) usano `buildUserContext(userId)` che legge:
 - **Coach notes:** recap distillati dalle conversazioni Telegram
 - **Check-in fisico:** stato fisico + sonno + recupero + stato mentale di oggi; media ultimi 7 giorni (stato fisico, ore sonno, stato mentale prevalente)
 - **Incroci della Carta (29/9):** al massimo due frasi vere dai suoi dati (`lib/incroci.ts`), es. "con meno di 6 ore di sonno la tua lucidità è 4 su 10; con 7 o più sale a 7"
+- **Le sue risposte chiave (22/10, review W11):** blocco "## Le sue risposte chiave" con le parole sue (Protocollo Pressione W4-G6, routine W9-G4, condizioni W10-G6, risposte pronte W11-G2, Protocollo For You W11-G4; `lib/risposteChiave.ts` + `loadRisposteChiave` in `lib/risposteServer.ts`, fail-soft): le ultime 5 riflessioni non bastavano, in W11 il Coach deve richiamare cose scritte in W4. Istruzione nel blocco: citare le SUE parole, non riscriverle; nell'app stanno in "Le tue risposte" (Profilo)
 - **Il Campo (solo con `training_access`):** sedute della settimana fatte/saltate/da recuperare e la prossima, ultima seduta con voto e nota, stato del carico, allenamenti in pausa per dolore (con l'istruzione di chiedere come sta e non dare consigli di allenamento), zone tese ricorrenti
 
 ### Memoria cross-sessione
@@ -776,6 +781,7 @@ La memoria persistente del Coach si basa su:
 - **Domanda Pre-Pratica:** slide opzionale prima della pratica (campo testo, max 1000 char, da Notion `Domanda Pre Pratica`)
 - **Pratica:** PracticePopup con timer, animazione respirazione, step numerati
 - **Domanda:** campo testo per riflessione (opzionale, salvata in `day_reflections`)
+- **Le tue risposte (22/10, review W11):** `components/RisposteChiaveBox.tsx` sotto il testo della pratica e sopra la domanda, SOLO nei giorni elencati in `DA_MOSTRARE` (`lib/risposteChiave.ts`): W11-G2 il Protocollo Pressione (W4-G6); W11-G3 solo il link; W11-G4 routine (W9-G4), Protocollo Pressione, condizioni (W10-G6), risposte pronte (W11-G2); W11-G6 il Protocollo For You (W11-G4); il Gate W11 Protocollo For You e risposte pronte. Righe chiuse di default (`details`), "Non l'hai ancora scritta" se manca, link "Tutte le tue risposte" → `/risposte` (pagina per settimana: risposta del giorno con la domanda, intenzione pre-pratica, le tre risposte del Gate, le chiave con la stella; riga nel Profilo dopo la Carta; tab Profilo accesa). I testi di Notion W11 dicono "le trovi qui sotto": prima nessuna pagina mostrava le risposte passate e il Coach vedeva solo le ultime 5 riflessioni.
 - ~~Check giorno precedente~~ tolto il 29/9: la slide "Com'è andata l'ultima pratica?" e `PATCH /api/giorno` non esistono più; la domanda vive nel check-in del mattino ("Quanto sei stato presente ieri durante la giornata?")
 - Flusso completamento → navigazione giorno successivo
 - **Calendario giorno reale:** logica partita usa `new Date().getDay()` (giorno reale della settimana) — non `dayNumber` del percorso. Calcola `isMatchDay` e `isPreMatchDay` correttamente
@@ -808,6 +814,7 @@ La memoria persistente del Coach si basa su:
 
 ### Profilo (`app/profilo/page.tsx`)
 - Visualizzazione/modifica profilo calciatore
+- Righe "Carta del Giocatore" → `/carta` (20/10) e "Le tue risposte" → `/risposte` (22/10)
 - **Cancella l'account** (25-26/9): link sotto "Esci", Sheet con cosa succede (l'app si chiude subito, i dati restano 60 giorni per chi ci ripensa, poi spariscono; rate in pausa e riprese alla riattivazione; niente rimborso), invito a parlarne con un genitore, campo "scrivi CANCELLA" → `POST /api/account/delete` → storage locale pulito, logout, `/login?deleted=1`. Pagina `/riattiva` (senza tab bar né rituale) con la data limite e i bottoni "Riattiva l'account" / "Lascia com'è ed esci"
 - **"Per i genitori" nascosto dall'8/10** (prima coorte a 18+): la pagina `/genitori` resta raggiungibile da privacy e registrazione.
 - **Collegamento Telegram via deep-link (giugno 2026):** bottone "Collega" → `POST /api/telegram/link` genera codice usa-e-getta (32 hex, TTL 15 min, colonne `profiles.telegram_link_code` + `telegram_link_code_expires`, migration `005_telegram_link.sql`) → apre `t.me/foryoufootballcoach_bot?start=<code>` → il webhook gestisce `/start <code>`: valida codice+scadenza, scollega altri profili con lo stesso telegram_id, salva `telegram_id` reale, welcome per nome. `/start` nudo: saluto se già collegato, istruzioni altrimenti. Codice scaduto → messaggio con istruzioni. Lo stato "✅ Collegato" si auto-aggiorna al ritorno dall'app Telegram (refetch su `visibilitychange`). `telegram_id` NON è più nel payload di salvataggio del form profilo (lo scrive solo il bot — evita overwrite stantio). Rimosso il vecchio wizard a 4 step con @userinfobot/ID manuale.
