@@ -1,11 +1,15 @@
-[softly] [slowly] Dei tre tipi di pensiero, il giudizio è quello che fa meno rumore.
+[sincere]
+Dei tre tipi di pensiero, il giudizio è quello che fa meno rumore.
 [SILENZIO 2]
 Non arriva sempre come una frase chiara. A volte è solo una sensazione addosso, di quelle che non sapresti nemmeno spiegare.
 [SILENZIO 2]
+[relaxed]
 Il mio, per anni, è stato questo: non me lo merito. Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo niente.
 [SILENZIO 2]
+[sincere]
 Oggi non ti dico cosa cercare. Ti chiedo solo di portare qui quello che c'è già.
 [SILENZIO 3]
+[meditative]
 Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.
 [SILENZIO 2]
 Reset.
@@ -29,7 +33,7 @@ Espira, e lascia andare.
 Rilascia.
 [SILENZIO 3]
 Se prima della pratica hai scritto un pensiero o un giudizio, riprendilo adesso. Tienilo in mente, senza fare niente. Trenta secondi.
-Se non hai scritto niente, resta in ascolto dopo il Reset. Non cercare niente. Guarda quali pensieri arrivano da soli.
+Se non hai scritto niente, resta in ascolto. Non cercare niente. Guarda quali pensieri arrivano da soli.
 [SILENZIO 30]
 Adesso guardalo con l'Observer.
 [SILENZIO 2]
@@ -49,6 +53,8 @@ Ancora mezzo minuto. Solo guardare.
 [SILENZIO 27]
 Bene. Torna qui.
 [SILENZIO 2]
+[sincere]
 Riconoscere il pensiero è già il primo passo. Non per eliminarlo, ma per smettere di lasciare che guidi lui.
 [SILENZIO 2]
+[relaxed]
 Metti in pausa e scrivi nell'app: sei riuscito a guardarlo un po' da fuori, come una cosa che passa? Oppure è rimasto uguale? O è uscito qualcos'altro? Qualsiasi risposta va bene, se è vera.

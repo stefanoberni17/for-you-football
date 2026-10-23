@@ -1,14 +1,19 @@
-[softly] [slowly] Hai il Reset. Da oggi ci aggiungiamo gli occhi.
+[sincere]
+Hai il Reset. Da oggi ci aggiungiamo gli occhi.
 [SILENZIO 2]
-Ti racconto una cosa mia. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione.
-Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva. E se non mi arriva, non posso sbagliarla.
+[relaxed]
+Ti faccio un esempio mio. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione. Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva, e se la palla non mi arriva non posso sbagliarla.
+[SILENZIO 1]
+Un piano perfetto, a parte un dettaglio: così la palla non la tocchi mai. E il calcio senza palla si chiama corsa campestre.
 [SILENZIO 2]
-Quel giorno l'ho visto mentre lo stavo facendo. E da lì ho cominciato ad accorgermene sempre più spesso.
+Quel giorno l'ho visto mentre lo stavo facendo. E da lì ho cominciato ad accorgermene sempre più spesso, e piano piano ho smesso di nascondermi.
 [SILENZIO 2]
+[sincere]
 Il punto non è avere pensieri, quelli li abbiamo tutti. È che ci credi senza nemmeno accorgerti che stanno passando.
 [SILENZIO 2]
 Oggi il Reset lo usi per arrivare qui. Poi resti fermo, e guardi.
 [SILENZIO 3]
+[meditative]
 Siediti. Occhi aperti, trova il tuo punto fisso davanti a te. Attenzione al punto sotto lo sterno.
 [SILENZIO 3]
 Reset completo: respiro, gesto, mantra. Tre respiri.
@@ -36,12 +41,14 @@ I pensieri arriveranno. Non fermarli. Prova solo a dare un nome a ognuno, con un
 Passato: ho sbagliato quel tiro ieri. Futuro: e se domenica gioco male. Giudizio: sono scarso, il mister non mi stima.
 Lo nomini. Poi lo lasci andare, e torni al respiro.
 [SILENZIO 40]
-Un pensiero arriva. Gli dai il nome. Torni al respiro.
+Un pensiero arriva. Gli dai il nome. Torni al respiro. Se non sai che nome dargli, va bene «pensiero».
 [SILENZIO 40]
 Se il pensiero resta, va bene lo stesso. Non deve sparire. L'hai visto, gli hai dato un nome, e torni al respiro.
 [SILENZIO 34]
 Bene. Torna qui.
 [SILENZIO 2]
+[sincere]
 Non doveva sparire niente. Dovevi solo vederlo.
 [SILENZIO 2]
+[relaxed]
 Adesso metti in pausa e scrivi nell'app: quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio. Se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.

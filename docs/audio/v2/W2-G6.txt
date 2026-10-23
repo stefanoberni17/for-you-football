@@ -1,9 +1,11 @@
-[softly] [slowly] Nessuno strumento nuovo oggi.
+[sincere]
+Nessuno strumento nuovo oggi.
 [SILENZIO 2]
 Questa settimana hai provato a vedere i pensieri senza seguirli, e a dare un nome ai giudizi senza crederci subito. Qualche volta ti sarà riuscito, altre volte no. È normale.
 [SILENZIO 2]
 Oggi ti fermi un attimo e guardi cosa hai messo insieme.
 [SILENZIO 3]
+[meditative]
 Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.
 [SILENZIO 2]
 Reset.
@@ -28,14 +30,16 @@ Rilascia.
 [SILENZIO 3]
 Adesso rimani due minuti in silenzio.
 Se arriva un pensiero negativo, nominalo. Se se ne va, bene. Se resta, va bene lo stesso.
-Se arriva un pensiero tipo dovrei avere meno pensieri negativi, nominalo anche quello. È giudizio.
+Se arriva un pensiero tipo «dovrei avere meno pensieri negativi», nominalo anche quello. È giudizio.
 [SILENZIO 40]
 L'Observer è neutro. Non valuta. Non corregge. Solo osserva.
 [SILENZIO 40]
-Se ti stai giudicando per quello che vedi, è un altro pensiero. Dagli il nome, e torna al respiro.
+Sì, anche giudicarti perché ti giudichi è giudizio. La testa è furba, ma dopo un po' la riconosci. Dagli il nome, e torna al respiro.
 [SILENZIO 34]
 Bene. Torna qui.
 [SILENZIO 2]
+[sincere]
 Più pensieri vedi, più l'Observer sta lavorando. Non stai peggiorando. Stai guardando meglio.
 [SILENZIO 2]
+[relaxed]
 Metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre osservavi i tuoi pensieri, questa settimana? Succede a tutti, e anche accorgersene è Observer.
