@@ -174,8 +174,63 @@ Ordinate per peso. Le prime tre toccano il canone dello strumento, le altre sono
 11. **W12-G4** dice «nella settimana 9» mentre ovunque altrove si scrive «nona settimana». Dettaglio.
 12. **W11-G7, 12 minuti.** Gli altri gate sono a 5-6. Se è voluto (più domande per il metodo) va bene, altrimenti è un refuso.
 
+## Palestra: strumenti, esercizi e schede SOS
+
+Stesso criterio del percorso: audio dove la voce fa il lavoro (tempi, scena, richiami, zone del corpo), niente audio dove si legge e si fa in venti secondi o si ragiona a parole. Differenza rispetto al percorso: qui le pratiche sono statiche nel codice (`lib/toolsCatalog.ts`, `lib/palestraCatalog.ts`), non su Notion, e oggi la Palestra **non passa nessun audio** al popup della pratica: `PracticePopup` lo accetta già (`audioUrl`), manca solo il campo nei due cataloghi e il passaggio in `app/strumenti/page.tsx`. Una PR piccola, la faccio io insieme agli MP3. Le schede SOS non usano il popup: si leggono, e il bottone "Fai il Reset ora" apre il Reset.
+
+### Gli 8 strumenti (àncora di ogni capacità)
+
+| Strumento | W | Min | Audio | Motivo |
+|---|---|---|---|---|
+| Il Reset | 1 | 3 | **SÌ** | respiri 4/6 col gesto al terzo: è l'audio base, lo stesso file serve anche come "arrivo" del percorso e dal bottone SOS |
+| L'Observer | 2 | 3 | **SÌ** | seduto, mente libera, richiami ogni 30-40": «Passato, futuro o giudizio? Solo l'etichetta, torna al respiro» |
+| Il Body Check | 3 | 2 | **SÌ** | quattro zone in sequenza lenta, due giri: la voce dà il ritmo |
+| Il Protocollo Pressione | 4 | 3 | **SÌ, breve** | 3-4 sequenze SENTI → NOMINA → TORNA scandite, ~20" l'una; senza voce si corre |
+| Lo Stacco | 5 | 3 | **SÌ** | scena dell'errore, punto d'ingresso, Reset, prossima azione: visualizzazione guidata |
+| Fatto vs Storia | 6 | 3 | **NO** | si ragiona a parole su un giudizio proprio: meglio leggere, con i propri tempi |
+| L'Anticipo | 7 | 3 | **SÌ** | scena (fallo non dato, provocazione) + SENTI / NOMINA / TORNA / SCEGLI: come il W7 del percorso |
+| Il Rilascio | 8 | 3 | **SÌ** | lo zaino, l'espiro lungo, il corpo che si apre: visualizzazione |
+
+### Gli esercizi della Palestra
+
+| Capacità | Esercizio | Min | Audio | Motivo |
+|---|---|---|---|---|
+| Presenza | Il respiro che spegne | 3 | **SÌ** | due inspiri + espiro lungo: cadenza da dettare (il cerchio del popup fa 4/6, non il doppio inspiro) |
+| Presenza | Il conteggio | 3 | **NO** | si conta in silenzio, la voce disturba; basta il timer |
+| Presenza | 5-4-3-2-1 | 1 | **NO** | un minuto, cinque righe, si guarda intorno: si legge |
+| Osservazione | Le foglie sul ruscello | 4 | **SÌ** | visualizzazione classica, con richiami «se sei dentro un pensiero, rimettilo su una foglia» |
+| Osservazione | «Sto avendo il pensiero che…» | 1 | **NO** | una formula da dire dentro, dieci secondi |
+| Ascolto | Attenzione divisa | 3 | **SÌ** | in piedi e poi camminando: col telefono in tasca la voce porta i tre passaggi |
+| Ascolto | Scansione del corpo | 5 | **SÌ** | il body scan è l'audio guidato per definizione |
+| Ascolto | Dove senti il respiro | 2 | **SÌ, breve** | 20" di ingresso, un richiamo a metà, chiusura; il resto è silenzio |
+| Sotto pressione | L'Ancora | 2 | **NO** | mossa da campo in tre tempi, si impara leggendo e si fa in 20" |
+| Accettazione | Fare spazio | 2 | **SÌ** | respirare dentro una sensazione, con pause: come il layer Body Check delle schede |
+| Perdono | Cavalca l'impulso | 2 | **SÌ** | l'onda che sale, arriva in cima, scende: è un tempo da dettare (vedi correzione 4) |
+| Lasciare andare | Tensione-rilascio | 4 | **SÌ** | «5 secondi… molla»: senza voce si guarda l'orologio |
+| Lasciare andare | La visualizzazione dello zaino | 5 | **SÌ** | visualizzazione lunga |
+
+**Totale Palestra:** 16 audio (7 strumenti + 9 esercizi, di cui 2 brevi), 5 senza audio. Durate corte: stimo 3-4 dollari di crediti. Il file del Reset da 3 minuti è uno solo e vale per Palestra, arrivo del percorso e, se vuoi, come versione guidata dentro il Reset rapido.
+
+### Le schede SOS (24 layer su Notion, 4 difficoltà × 6)
+
+**Audio: NO su tutte.** Sono schede da leggere nel momento in cui servono (spogliatoio, macchina, letto), tre o quattro passi secchi; l'unica parte guidata è il Reset, che ha già il suo bottone. Se un giorno vuoi una voce lì, il candidato è il layer "Il Rilascio" (lo zaino prima del fischio), ma userebbe lo stesso audio del Rilascio della Palestra.
+
+### Correzioni e cose da decidere (Palestra e SOS)
+
+1. **Occhi chiusi o aperti.** Il canone del percorso è «occhi aperti, punto fisso» (W1-G1, Reset, Protocollo, Stacco, Anticipo, Rilascio). Sei esercizi della Palestra dicono «occhi chiusi»: Il conteggio, Le foglie sul ruscello, Scansione del corpo, Dove senti il respiro, Tensione-rilascio, Zaino. A casa, seduti, ha senso; ma è una regola diversa da quella che il ragazzo ha imparato. Da decidere: o si lascia (sono esercizi da casa, non da campo) o si scrive ovunque «occhi chiusi, o aperti su un punto fisso: come preferisci». Io andrei sulla seconda, così la voce dell'audio dice la stessa cosa dappertutto.
+2. **«Sto avendo il pensiero che…», formula incoerente.** Il nome e il "Cosa allena" dicono «sto avendo il pensiero che sono scarso»; lo step 2 dice «Mi sto accorgendo di avere il pensiero che non ci riesco». Allineare lo step al nome.
+3. **Il respiro che spegne, cerchio del popup.** Il tipo è `respirazione`, quindi il popup mostra il cerchio 4" naso / 6" bocca, ma l'esercizio è doppio inspiro + espiro lungo. Con l'audio il problema sparisce (la voce detta il ritmo); senza, meglio tipo `riflessione` (niente cerchio) o un cerchio dedicato.
+4. **Cavalca l'impulso, manca la scena.** Il testo parte con «Quando senti l'impulso a reagire, fermati»: è un'istruzione da campo, ma nella Palestra lo fai seduto a casa senza nessun impulso. Serve una riga d'ingresso come in W7 del percorso: «Richiama un momento in cui hai sentito l'impulso di reagire: un fallo non dato, una provocazione. Rivivilo finché senti l'onda salire». Da lì il resto funziona.
+5. **Tensione-rilascio, 4 minuti ma il testo dura uno e mezzo.** Quattro gruppi da «5 secondi… molla» più la chiusura fanno ~90". O si scende a 2 minuti, o l'audio fa due giri completi con una pausa di ascolto del corpo tra l'uno e l'altro (proposta: due giri, resta 4).
+6. **Dettaglio strumento senza tipo pratica (bug piccolo).** Da "Cassetta → strumento → Fai la pratica ora" il popup parte senza `tipoPratica`, quindi mostra il cerchio del respiro 4/6 anche per Observer, Body Check, Fatto vs Storia, Anticipo e Rilascio. Dalla Palestra (capacità → àncora) il tipo arriva giusto. Una riga da sistemare nella stessa PR dell'audio.
+7. **Scheda SOS "Ansia", layer Adesso: «Reset lungo, 5-10 minuti, dal bottone qui sotto».** Il bottone apre il Reset con 1, 2, 3 o 5 minuti: scrivere «5 minuti». Nella stessa riga c'è «respirazione diaframmatica», unico termine tecnico in tutte le schede: toglierei la parentesi, il ragazzo ha già «gonfiando la pancia».
+8. **Fallback delle schede SOS nel codice (`lib/sosCards.ts`) vecchio.** Se Notion non risponde l'app mostra le 4 schede statiche, scritte prima della revisione. Due anticipano strumenti futuri dentro il layer di settimana 1: "Panchina" dice «Separa il fatto dalla storia» e "Errore grave" dice «Il fatto è piccolo. La storia è grande. Tieni il fatto» (Fatto vs Storia è W6). Su Notion li hai già riscritti («Guarda cosa è successo e cosa ti stai raccontando»). Da riallineare il fallback ai layer "Adesso" di Notion: lo faccio io, copia e incolla.
+9. **Sigle da psicologo nel "Cosa allena".** «(ACT)» compare tre volte (foglie, Ancora, Fare spazio), più «MBSR», «Stanford», «nervo vago». La Voce dice niente vocabolario nuovo: terrei il concetto («dalla psicologia dell'accettazione») e toglierei le sigle. Non blocca niente.
+10. **Trattini lunghi.** Strumenti, Palestra e schede Notion usano il trattino lungo (—) in decine di punti; nei copioni audio lo tolgo comunque. In app è una scelta di stile: lo segnalo solo perché le pratiche del percorso su Notion ormai usano quasi sempre i due punti.
+11. **La Palestra si ferma alla settimana 8.** Le capacità sono sette (Presenza → Lasciare andare); la routine (W9), i due secondi per tornare presente (W10) e il Protocollo For You (W11) non hanno né àncora né esercizi. Può essere voluto (W9-12 ricompongono quello che c'è già): da confermare, altrimenti manca un'ottava capacità «Ritornare al centro».
+
 ## Cosa resta da fare dopo la tua revisione
 
 1. Tu correggi su Notion quello che decidi di correggere (o mi dici cosa e lo faccio io con il tool Notion).
 2. Io rileggo le pratiche cambiate, aggiorno i copioni v2 (W2 già pronti, da riallineare) e scrivo quelli nuovi per i giorni con audio SÌ, con i tag per registro: `[relaxed]` racconto, `[sincere]` apertura e riflessione, `[meditative]` parte guidata.
-3. Genero con la voce Stef su v4, monto con i silenzi esatti, carico su Supabase e scrivo gli URL su Notion. Stima: 44 audio (40 pieni e 4 brevi) più l'arrivo comune, circa 15-18 dollari di crediti in tutto; i 2 facoltativi li decidi tu.
+3. Genero con la voce Stef su v4, monto con i silenzi esatti, carico su Supabase e scrivo gli URL su Notion. Stima: 44 audio del percorso (40 pieni e 4 brevi) più 16 della Palestra (il Reset da 3 minuti è uno e vale per tutti e due), circa 18-22 dollari di crediti in tutto; i 2 facoltativi li decidi tu. Nella stessa PR: campo `audioUrl` nei due cataloghi della Palestra, fallback SOS riallineato a Notion, tipo pratica nel dettaglio strumento.
