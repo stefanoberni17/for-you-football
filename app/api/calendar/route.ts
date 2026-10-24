@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { loadSquadraCompleta } from '@/lib/trainingPlanner';
+import { parsePartitaAbituale, parseSquadra } from '@/lib/trainingSquadra';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,7 +73,10 @@ export async function GET(request: NextRequest) {
     // decidere se il calendario c'è non cambia comportamento.
     let abitudine: { trainingDays: number[]; matchDays: number[] } | null = null;
     try {
-      const { squadra, partita } = await loadSquadraCompleta(userId);
+      const { data: prof } = await supabaseAdmin.from('profiles').select('training_squadra').eq('user_id', userId).maybeSingle();
+      const raw = (prof as { training_squadra?: unknown } | null)?.training_squadra;
+      const squadra = parseSquadra(raw);
+      const partita = parsePartitaAbituale(raw);
       const giorni = Object.keys(squadra).map(Number).filter((g) => g >= 1 && g <= 7).sort((a, b) => a - b);
       if (giorni.length || partita) abitudine = { trainingDays: giorni, matchDays: partita ? [partita] : [] };
     } catch { /* senza colonna o profilo: nessuna abitudine */ }

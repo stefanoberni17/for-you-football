@@ -118,18 +118,31 @@ export async function salvaRisposta(userId: string, week: number, day: number, t
   if (!pulito) return { ok: false, status: 400, error: 'vuota' };
   const { data: riga, error: e0 } = await supabaseAdmin
     .from('user_day_progress')
-    .select('id')
+    .select('id, response, completed_at')
     .eq('user_id', userId)
     .eq('week_number', week)
     .eq('day_number', day)
     .maybeSingle();
   if (e0) throw e0;
   if (!riga) return { ok: false, status: 409, error: 'giorno_non_aperto' };
+  const prima = riga as { id: string; response: string | null; completed_at: string | null };
+
+  // Una risposta scritta PRIMA della migration 033 non ha la sua prima versione: la si mette in
+  // storico adesso (con la data del completamento), così la modifica non la cancella.
+  const vecchia = (prima.response || '').trim();
+  if (vecchia && vecchia !== pulito) {
+    const { count } = await supabaseAdmin
+      .from('user_answer_versions')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId).eq('week_number', week).eq('day_number', day)
+      .then((r) => r, () => ({ count: null }));
+    if (count === 0) await registraVersione(userId, week, day, vecchia, prima.completed_at);
+  }
 
   const { error: e1 } = await supabaseAdmin
     .from('user_day_progress')
     .update({ response: pulito })
-    .eq('id', (riga as { id: string }).id);
+    .eq('id', prima.id);
   if (e1) throw e1;
   await supabaseAdmin
     .from('day_reflections')
@@ -139,11 +152,11 @@ export async function salvaRisposta(userId: string, week: number, day: number, t
 }
 
 /** Una riga in user_answer_versions. Fail-soft: senza la migration 033 ritorna 'migration_033'. */
-export async function registraVersione(userId: string, week: number, day: number, testo: string): Promise<string | null> {
+export async function registraVersione(userId: string, week: number, day: number, testo: string, createdAt?: string | null): Promise<string | null> {
   try {
     const { error } = await supabaseAdmin
       .from('user_answer_versions')
-      .insert({ user_id: userId, week_number: week, day_number: day, testo });
+      .insert({ user_id: userId, week_number: week, day_number: day, testo, ...(createdAt ? { created_at: createdAt } : {}) });
     if (error) {
       console.warn('registraVersione:', error.message);
       return 'migration_033';
