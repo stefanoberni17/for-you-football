@@ -11,6 +11,8 @@ import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
+import RispostaGuidata from '@/components/RispostaGuidata';
+import { guidaPer } from '@/lib/risposteGuidate';
 import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
@@ -23,6 +25,8 @@ export default function GiornoPage() {
   const router = useRouter();
   const weekNumber = parseInt(params.week as string);
   const dayNumber = parseInt(params.day as string);
+  // Risposta guidata (23/10): in W4-G6 il Protocollo Pressione si scrive in tre parti, non nel testo libero
+  const guida = guidaPer(weekNumber, dayNumber);
 
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState('');
@@ -704,22 +708,26 @@ export default function GiornoPage() {
               className="mb-4"
             />
             <RisposteChiaveBox week={weekNumber} day={dayNumber} className="mb-4" />
-            <Field
-              label="La tua risposta"
-              htmlFor="riflessione"
-              optional
-              counter={!completed && response.length > 0 ? { value: response.length, max: 2000 } : undefined}
-            >
-              <Textarea
-                id="riflessione"
-                value={response}
-                onChange={(e) => setResponse(e.target.value)}
-                disabled={completed}
-                rows={4}
-                maxLength={2000}
-                placeholder="Scrivi qui, se vuoi..."
-              />
-            </Field>
+            {guida ? (
+              <RispostaGuidata guida={guida} value={response} onChange={setResponse} disabled={completed} />
+            ) : (
+              <Field
+                label="La tua risposta"
+                htmlFor="riflessione"
+                optional
+                counter={!completed && response.length > 0 ? { value: response.length, max: 2000 } : undefined}
+              >
+                <Textarea
+                  id="riflessione"
+                  value={response}
+                  onChange={(e) => setResponse(e.target.value)}
+                  disabled={completed}
+                  rows={4}
+                  maxLength={2000}
+                  placeholder="Scrivi qui, se vuoi..."
+                />
+              </Field>
+            )}
             {/* Escape hatch (giornata al rientro): sotto il contenuto, non in cima */}
             {jumpToReflection && (
               <Button
