@@ -65,7 +65,7 @@ export default function MeditationPopup({
   // Audio di sottofondo (24/10): i file stanno in public/audio (prima mancavano: il 404 faceva
   // fallire il play e si tornava su mute). La scelta si ricorda (localStorage) e il play parte
   // DAL TOCCO (iPhone Safari rifiuta un play() che non nasce da un gesto dell'utente).
-  const [audioMode, setAudioMode] = useState<AudioMode>('mute');
+  const [audioMode, setAudioMode] = useState<AudioMode>(leggiAudioPref);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
   useWakeLock(phase === 'meditating');
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -185,7 +185,6 @@ export default function MeditationPopup({
   }, [showPopup, phase]);
 
   // La scelta dell'audio si ricorda sul dispositivo
-  useEffect(() => { setAudioMode(leggiAudioPref()); }, []);
   useEffect(() => {
     try { localStorage.setItem(AUDIO_PREF_KEY, audioMode); } catch { /* storage non disponibile */ }
   }, [audioMode]);
