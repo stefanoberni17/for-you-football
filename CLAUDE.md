@@ -995,7 +995,7 @@ Fetch giorno 7 (gate) da Notion: 3 domande + risposte esistenti + `missioneSetti
 Salva risposte gate JSONB (`q1..q3` non vuote, max 1500 caratteri), marca giorno 7 completato, avanza `current_week` a W+1 con UPDATE condizionale atomico (`.lte('current_week', weekNumber)` nel WHERE). Dal 25/9: `403 day_locked` se i giorni 1-6 non sono tutti fatti o il 6 è di oggi; gate già passato → `alreadyCompleted: true`.
 
 ### `GET /api/calendar?week=W`
-Fetch `training_days` + `match_days` per la settimana, più `abitudine: { trainingDays, matchDays } | null` dal setup del Campo (`profiles.training_squadra`: giorni squadra e partita abituale, via `loadSquadraCompleta`) per quando il calendario della settimana non c'è (24/10).
+Fetch `training_days` + `match_days` per la settimana, più `abitudine: { trainingDays, matchDays } | null` dal setup del Campo (`profiles.training_squadra`: giorni squadra e partita abituale, letti dal profilo con i parser puri di `lib/trainingSquadra.ts`) per quando il calendario della settimana non c'è (24/10).
 
 ### `POST /api/calendar`
 Salva calendario settimanale (training_days obbligatori, match_days opzionali).
