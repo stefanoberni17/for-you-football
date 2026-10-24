@@ -47,6 +47,9 @@ next-env.d.ts
 public/audio/*.mp3
 public/audio/*.wav
 public/audio/*.ogg
+# I due loop del Reset (Natura, Focus) sono piccoli (~470 KB) e devono arrivare su Vercel: eccezione esplicita (24/10)
+!public/audio/nature-meditation.mp3
+!public/audio/focus-meditation.mp3
 
 # Export Everfit (può contenere dati di clienti reali — mai in git)
 docs/everfit-export/

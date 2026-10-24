@@ -7,7 +7,8 @@ import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { GATE_DAY } from '@/lib/constants';
 import { rispostaChiaveInfo, type RispostaRow } from '@/lib/risposteChiave';
-import { BookOpen, ChevronRight, Key, Star } from 'lucide-react';
+import { BookOpen, ChevronRight, Key, PenLine, Star } from 'lucide-react';
+import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
 
 interface Settimana { weekNumber: number; titolo: string; strumento?: string }
@@ -24,6 +25,7 @@ export default function RispostePage() {
   const [rows, setRows] = useState<RispostaRow[]>([]);
   const [errore, setErrore] = useState(false);
   const [settimane, setSettimane] = useState<Record<number, Settimana>>({});
+  const [modifica, setModifica] = useState<RispostaRow | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -145,11 +147,17 @@ export default function RispostePage() {
                         ))}
                       </ol>
                     )}
-                    {!isGate && (
-                      <Button variant="ghost" size="sm" className="mt-2 -ml-3" href={`/giorno/${r.week}/${r.day}`} icon={<ChevronRight size={16} aria-hidden />}>
-                        Apri il giorno
-                      </Button>
-                    )}
+                    {r.aggiornataIl && <p className="text-caption text-faint mt-2">Aggiornata il {new Date(r.aggiornataIl).toLocaleDateString('it-IT')}{r.versioni ? ` · ${r.versioni} versioni` : ''}</p>}
+                    <div className="flex flex-wrap gap-1 mt-2 -ml-3">
+                      {chiave && !isGate && (
+                        <Button variant="ghost" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(r)}>Modifica</Button>
+                      )}
+                      {!isGate && (
+                        <Button variant="ghost" size="sm" href={`/giorno/${r.week}/${r.day}`} icon={<ChevronRight size={16} aria-hidden />}>
+                          Apri il giorno
+                        </Button>
+                      )}
+                    </div>
                   </Card>
                 );
               })}
@@ -157,6 +165,16 @@ export default function RispostePage() {
           );
         })}
       </div>
+      {modifica && (
+        <ModificaRispostaSheet
+          week={modifica.week}
+          day={modifica.day}
+          testoIniziale={modifica.risposta || ''}
+          open
+          onClose={() => setModifica(null)}
+          onSalvata={(t) => setRows((prev) => prev.map((r) => (r.week === modifica.week && r.day === modifica.day ? { ...r, risposta: t, versioni: (r.versioni || 0) + 1, aggiornataIl: new Date().toISOString() } : r)))}
+        />
+      )}
     </main>
   );
 }

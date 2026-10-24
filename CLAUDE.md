@@ -74,9 +74,9 @@ for-you-football/
 │       ├── settimana/route.ts             # GET ?week=N → dettaglio settimana + 7 giorni
 │       ├── giorno/route.ts                # GET ?week=&day=&userId= / POST completamento / PATCH check
 │       ├── gate/route.ts                  # GET ?week=&userId= / POST risposte gate
-│       ├── calendar/route.ts              # GET ?userId=&week= / POST training_days + match_days
+│       ├── calendar/route.ts              # GET ?week= → calendario della settimana + `abitudine` (giorni squadra e partita abituale dal setup del Campo, 24/10) / POST training_days + match_days
 │       ├── reflection/route.ts            # GET/POST riflessioni post-giorno
-│       ├── risposte/route.ts              # GET → le risposte scritte nel percorso (giorni + Gate), ?chiavi=1 solo le chiave (lib/risposteServer.ts)
+│       ├── risposte/route.ts              # GET → le risposte scritte nel percorso (giorni + Gate), ?chiavi=1 solo le chiave; POST { week, day, testo } → modifica una risposta chiave con versione datata (24/10; lib/risposteServer.ts)
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
 │       ├── telegram/route.ts              # POST → webhook bot Telegram (+ handler /start deep-link)
 │       ├── telegram/link/route.ts         # POST → genera codice deep-link collegamento (auth)
@@ -101,7 +101,8 @@ for-you-football/
 │   ├── FisicoBloccato.tsx                 # Il Fisico per chi non ha il Campo: cos'è, settimana finta, "Mi interessa" (evento campo_interesse)
 │   ├── StatoRecente.tsx                   # "Il tuo stato" (medie dei check-in a 7 giorni), dalla home alla Carta (20/10)
 │   ├── RisposteChiaveBox.tsx              # "Le tue risposte" dentro un giorno di W11 (22/10): le risposte chiave che il testo richiama, chiuse di default, link a /risposte
-│   ├── RispostaGuidata.tsx                # Risposta guidata (23/10): chip + campo libero per parte, aiuti "avevi scritto" dai giorni prima; il valore che esce è il testo composto
+│   ├── RispostaGuidata.tsx                # Risposta guidata (23/10): chip + campo libero per parte (o solo testo, `tipo: 'testo'`, dal 24/10), aiuti "avevi scritto" dai giorni prima; il valore che esce è il testo composto
+│   ├── ModificaRispostaSheet.tsx          # "Modifica" / "Scrivilo adesso" di una risposta chiave (24/10): Sheet con la guida del giorno (o Textarea), POST /api/risposte; usato da RisposteChiaveBox (W11, Gate 11) e da /risposte
 │   ├── ConsentReacceptSheet.tsx           # Ri-accettazione privacy/termini: Sheet senza X alla prima pagina dell'app se la versione accettata ≠ quella in constants (GET/POST /api/consent/reaccept, fail-open)
 │   ├── BirthdateBanner.tsx                # Banner non bloccante dashboard: raccoglie birth_date dagli utenti pre-age-gate
 │   ├── ActionsCard.tsx                    # Card compatta dashboard "Le tue azioni durante il giorno" (3 varianti)
@@ -126,7 +127,8 @@ for-you-football/
 │   ├── actionsCatalog.ts                  # Catalogo 20 azioni "act as if" + helper filtro per settimana
 │   ├── sosCards.ts                        # 4 schede SOS statiche — ora FALLBACK di /api/difficolta se Notion non risponde
 │   ├── toolsCatalog.ts                    # Cassetta: 8 strumenti W1-8 (riferimento cos'è/quando/pratica) — riusati come àncora dalla Palestra
-│   ├── risposteGuidate.ts                 # Risposte guidate (23/10, puro, test): W4-G6 = Protocollo Pressione in tre parti (segnale nel corpo, pensiero che torna, mantra) con chip e nota; `componiRisposta` ("ETICHETTA: scelta — nota" per riga) e `leggiRisposta` fanno andata e ritorno sul testo salvato in `user_day_progress.response`
+│   ├── prossimoEvento.ts                  # Il prossimo evento della settimana (24/10, puro, test): `prossimoEvento` (allenamento o partita più vicino, 1-7 lun-dom, con il giro della settimana), `preferenzaDallaNota` (la nota campo parla di partita o di allenamento?), `fraseProssimoEvento`, `statoPartita` (oggi giochi / domani giochi) per la pagina giorno
+│   ├── risposteGuidate.ts                 # Risposte guidate (23/10, puro, test): W4-G6 = Protocollo Pressione in tre parti (segnale nel corpo, pensiero che torna, mantra) con chip e nota; W11-G4 = Protocollo For You in cinque parti di solo testo (prima, durante, dopo, quando non funziona, fuori dal campo; 24/10, lettura a blocchi: le righe dopo un'etichetta appartengono a quella parte); `componiRisposta` ("ETICHETTA: scelta — nota" per riga) e `leggiRisposta` fanno andata e ritorno sul testo salvato in `user_day_progress.response`
 │   ├── risposteChiave.ts / risposteServer.ts  # Le risposte chiave del percorso (22/10, puro + loader): QUALI risposte sono chiave (W4-G6 Protocollo Pressione, W9-G4 routine, W10-G6 condizioni, W11-G2 risposte pronte, W11-G4 Protocollo For You) e in QUALE giorno di W11 si mostrano (`DA_MOSTRARE`); `risposteChiaveTesto` = blocco per il Coach
 │   ├── carta.ts / incroci.ts              # Carta a 360° (puri, test): rombo Mente, Recupero, sette punte; incroci = frasi vere dai dati (sonno vs lucidità, seduta dura vs azioni, carico vs pratiche, testa vs sedute), max 2
 │   ├── cartaServer.ts                     # loadIncroci (per /api/carta e il Coach) + loadCampoPerCoach: blocco "Il Campo" nel contesto del Coach (sedute della settimana, ultima seduta col voto, carico, pausa dolore, zone tese)
@@ -333,6 +335,17 @@ UNIQUE(user_id, date)
 - RLS abilitata (SELECT/INSERT/UPDATE per l'utente proprietario)
 - Indice: `idx_daily_checkin_user_date ON (user_id, date DESC)`
 - Il check-in viene gestito da `GlobalCheckinWrapper` come step 1 del "rituale del mattino" (una volta al giorno su tutte le pagine); "Salta per oggi" è persistito in `localStorage.ritualSkipped = YYYY-MM-DD` → non riappare fino a domani e sopprime anche il Reset
+
+### `user_answer_versions` (migration 033 — le versioni delle risposte chiave, 24/10)
+```sql
+id           UUID PRIMARY KEY
+user_id      UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
+week_number  SMALLINT NOT NULL CHECK (1-12)
+day_number   SMALLINT NOT NULL CHECK (1-7)
+testo        TEXT NOT NULL
+created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+```
+- `user_day_progress.response` resta l'ULTIMA versione (la leggono Carta, "Le tue risposte", il Coach, il box di W11 e il Gate); qui ogni versione con la data: la prima quando il giorno viene completato con una risposta su un giorno chiave (`/api/giorno`, `registraVersione` fire-and-forget), le altre a ogni "Modifica" (`POST /api/risposte` → `salvaRisposta` in `lib/risposteServer.ts`: solo giorni in `isRispostaChiave`, max `RISPOSTA_MAX` 4000 caratteri, serve la riga del giorno in `user_day_progress` altrimenti `409 giorno_non_aperto`; aggiorna `response`, upsert di `day_reflections`, inserisce la versione). RLS owner-read, scrittura solo service role. Senza la migration tutto funziona ma senza storico (`skipped: 'migration_033'`). `loadRisposte` legge il conteggio per giorno → `versioni` e `aggiornataIl` sulle righe ("Aggiornata il … · N versioni" nel box e in `/risposte`).
 
 ### `user_actions` — "Le tue azioni durante il giorno" (max 5 attive)
 ```sql
@@ -543,6 +556,8 @@ ID: `941ff642-d437-4ab0-bc87-c6bbb601475b`
 - `Messaggio Chiusura` (text)
 - `Coach Contesto` (text) — usato nel system prompt Coach
 - `Stato` (select: Beta/Attiva/In arrivo)
+- `Pratica Pre Partita` (text) — mostrata nella pagina giorno il giorno PRIMA della partita ("Domani giochi — pratica della sera prima")
+- `Pratica Giorno Partita` (text, dal 24/10) — mostrata nella pagina giorno il GIORNO della partita ("Oggi giochi"); vuota → nessun box. Da scrivere per le 12 settimane (Ste)
 
 ### Database Giorni (`NOTION_DATABASE_GIORNI`)
 ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
@@ -783,11 +798,14 @@ La memoria persistente del Coach si basa su:
 - **Domanda Pre-Pratica:** slide opzionale prima della pratica (campo testo, max 1000 char, da Notion `Domanda Pre Pratica`)
 - **Pratica:** PracticePopup con timer, animazione respirazione, step numerati
 - **Domanda:** campo testo per riflessione (opzionale, salvata in `day_reflections`)
-- **Risposta guidata (23/10, Ste: "fare in modo che lo possa scrivere anche in maniera guidata, magari nel W4"):** nei giorni in `RISPOSTE_GUIDATE` (`lib/risposteGuidate.ts`; oggi solo W4-G6, il Protocollo Pressione) al posto del Textarea c'è `components/RispostaGuidata.tsx`: tre parti con i chip (segnale: piedi/stomaco/petto/spalle + "un segnale in più"; pensiero: Passato/Futuro/Giudizio + "com'è, con le tue parole"; mantra: Reset/Riparto qui/Sono qui + "una parola tutta mia") e sotto ogni parte l'aiuto "nella N settimana avevi scritto: «…»" preso da `/api/risposte` (W3-G2, W2-G4, W1-G3). Il testo salvato resta UNA stringa ("IL MIO SEGNALE NEL CORPO: Stomaco — e la mascella" per riga): Carta, "Le tue risposte" e il Coach la leggono come prima; un testo scritto a mano prima della guida si rilegge nella prima parte senza perdersi. La domanda di W4-G6 su Notion dice di scriverlo lì (prima chiedeva solo "suona tuo?" e il Protocollo poteva non finire da nessuna parte).
+- **Risposta guidata (23/10, Ste: "fare in modo che lo possa scrivere anche in maniera guidata, magari nel W4"):** nei giorni in `RISPOSTE_GUIDATE` (`lib/risposteGuidate.ts`; oggi solo W4-G6, il Protocollo Pressione) al posto del Textarea c'è `components/RispostaGuidata.tsx`: tre parti con i chip (segnale: piedi/stomaco/petto/spalle + "un segnale in più"; pensiero: Passato/Futuro/Giudizio + "com'è, con le tue parole"; mantra: Reset/Riparto qui/Sono qui + "una parola tutta mia") e sotto ogni parte l'aiuto "nella N settimana avevi scritto: «…»" preso da `/api/risposte` (W3-G2, W2-G4, W1-G3). Il testo salvato resta UNA stringa ("IL MIO SEGNALE NEL CORPO: Stomaco — e la mascella" per riga): Carta, "Le tue risposte" e il Coach la leggono come prima; un testo scritto a mano prima della guida si rilegge nella prima parte senza perdersi. La domanda di W4-G6 su Notion dice di scriverlo lì (prima chiedeva solo "suona tuo?" e il Protocollo poteva non finire da nessuna parte). **Dal 24/10 anche W11-G4, il Protocollo For You**: cinque parti di solo testo (PRIMA / DURANTE / DOPO / QUANDO NON FUNZIONA / FUORI DAL CAMPO, `tipo: 'testo'`), con la lettura a blocchi così gli a-capo dentro una parte non si perdono.
+- **Modifica delle risposte chiave (24/10, Ste: "in G6 e nel Gate G7 il Protocollo si deve poter modificare direttamente lì"):** nel box "Le tue risposte" (W11 e Gate 11) e in `/risposte` ogni risposta chiave ha "Modifica" (pre-compilata con la guida del giorno, se esiste) o "Scrivilo adesso" se manca (il caso vero di Ste: G4 chiuso senza compilare la domanda, che è facoltativa, e dopo il completamento il campo è bloccato) → `components/ModificaRispostaSheet.tsx` → `POST /api/risposte`: `user_day_progress.response` diventa l'ultima versione (così Carta, Coach, Gate e "Le tue risposte" la leggono subito) e ogni salvataggio lascia una riga datata in `user_answer_versions` (migration 033). Sotto la risposta: "Aggiornata il … · N versioni".
 - **Le tue risposte (22/10, review W11):** `components/RisposteChiaveBox.tsx` sotto il testo della pratica e sopra la domanda, SOLO nei giorni elencati in `DA_MOSTRARE` (`lib/risposteChiave.ts`): W11-G2 il Protocollo Pressione (W4-G6); W11-G3 solo il link; W11-G4 routine (W9-G4), Protocollo Pressione, condizioni (W10-G6), risposte pronte (W11-G2); W11-G6 il Protocollo For You (W11-G4); il Gate W11 Protocollo For You e risposte pronte. Righe chiuse di default (`details`), "Non l'hai ancora scritta" se manca, link "Tutte le tue risposte" → `/risposte` (pagina per settimana: risposta del giorno con la domanda, intenzione pre-pratica, le tre risposte del Gate, le chiave con la stella; riga nel Profilo dopo la Carta; tab Profilo accesa). I testi di Notion W11 dicono "le trovi qui sotto": prima nessuna pagina mostrava le risposte passate e il Coach vedeva solo le ultime 5 riflessioni.
 - ~~Check giorno precedente~~ tolto il 29/9: la slide "Com'è andata l'ultima pratica?" e `PATCH /api/giorno` non esistono più; la domanda vive nel check-in del mattino ("Quanto sei stato presente ieri durante la giornata?")
 - Flusso completamento → navigazione giorno successivo
-- **Calendario giorno reale:** logica partita usa `new Date().getDay()` (giorno reale della settimana) — non `dayNumber` del percorso. Calcola `isMatchDay` e `isPreMatchDay` correttamente
+- **Calendario giorno reale:** logica partita usa `new Date().getDay()` (giorno reale della settimana) — non `dayNumber` del percorso. Senza il calendario della settimana vale l'**abitudine del setup del Campo** (giorni squadra + partita abituale, `abitudine` da `GET /api/calendar`); senza nemmeno quella, nessuna riga e nessun box.
+- **Nota campo e prossimo evento (24/10, Ste in W11: "Il tuo prossimo allenamento è Lunedì" ma la nota parlava della partita):** sotto la nota campo la riga è il PRIMO evento in arrivo tra allenamento e partita (`lib/prossimoEvento.ts`): se il testo della nota nomina la partita si cerca la prossima partita, se nomina l'allenamento il prossimo allenamento, altrimenti il più vicino dei due (a parità vince la partita); oggi stesso → "Oggi giochi" / "Oggi è giorno di allenamento"; la settimana gira (sabato → lunedì).
+- **Pratica pre-partita in due tempi (24/10):** `statoPartita` dice se oggi è partita o se la partita è domani (se sono vere tutte e due, due partite vicine, vince OGGI). Giorno prima → `praticaPrePartita` della settimana con l'etichetta "Domani giochi — pratica della sera prima"; giorno della partita → `praticaGiornoPartita` (property Notion `Pratica Giorno Partita`, DB Settimane) con "Oggi giochi"; campo vuoto → nessun box. Partita la domenica → il sabato mostra la sera prima, la domenica il giorno partita.
 
 ### Gate (`app/gate/[week]/page.tsx`)
 - 3 domande da Notion (`domandeGate`)
@@ -900,6 +918,7 @@ La memoria persistente del Coach si basa su:
 - Rebrand verde brand (no più viola/🧘): titolo "Il Reset", copy campo ("Naso, poi bocca — come in campo")
 - Setup: scelta durata (1/2/3/5 min) + mantra settimana
 - Fase Reset: cerchio animato con **respiro asimmetrico 4s inspira / 6s espira** (setTimeout ricorsivo, `INHALE_MS`/`EXHALE_MS`), countdown, toggle audio (nature/focus/mute)
+- **Suoni Natura e Focus (24/10, Ste: "non funzionano"):** la causa erano due cose insieme: i file `public/audio/*-meditation.mp3` non erano mai arrivati su Vercel (`.gitignore` escludeva tutti gli mp3 di `public/audio/` "troppo grandi per git", il 404 finiva nel fallback "muto" del codice) e `play()` partiva da un `useEffect`, non dal tocco (iPhone lo blocca). Ora i due loop (60", ~470 KB l'uno, generati con ffmpeg: rumore filtrato per Natura, toni bassi con tremolo per Focus) sono eccezioni esplicite nel `.gitignore`; `avviaAudio(mode)` è chiamata DENTRO l'onClick del chip e di "Inizia" (iPhone: play nel gesto), `loop`, volume 0.3, si ferma al cambio su muto, a "Salta", alla chiusura e a fine Reset; la scelta resta in `localStorage['reset.audio']`; se il browser rifiuta comunque il play si torna a muto. Elemento `<audio>` HTML (non WebAudio): su iPhone con l'interruttore suoneria su silenzioso dovrebbe suonare lo stesso, da confermare sul telefono.
 - **Auto-show solo a giorno del percorso completato oggi e mai prima di W1-G3** (sera 4, review 13/9: prima proponeva il Reset ogni mattina di W1 prima che il percorso lo costruisse): query `user_day_progress` completed → serve `W1-G3` fatto E una riga con `completed_at` di oggi (fuso italiano, `dateItaly`). Soppresso anche se `localStorage.ritualSkipped === oggi` o `last_meditation_completed === oggi`. La pagina giorno lascia `sessionStorage.fyfDayCompletedPending` (`DAY_COMPLETED_KEY`) al completamento: al primo cambio pagina fuori da `/giorno/*` il controllo si ripete e il Reset viene proposto subito, senza aspettare il prossimo avvio
 - "Salta per oggi" (solo auto-mode) → persiste `ritualSkipped = oggi`
 - Aggiornamento `last_meditation_completed` su profilo al completamento
@@ -975,11 +994,14 @@ Fetch giorno 7 (gate) da Notion: 3 domande + risposte esistenti + `missioneSetti
 ### `POST /api/gate`
 Salva risposte gate JSONB (`q1..q3` non vuote, max 1500 caratteri), marca giorno 7 completato, avanza `current_week` a W+1 con UPDATE condizionale atomico (`.lte('current_week', weekNumber)` nel WHERE). Dal 25/9: `403 day_locked` se i giorni 1-6 non sono tutti fatti o il 6 è di oggi; gate già passato → `alreadyCompleted: true`.
 
-### `GET /api/calendar?userId=U&week=W`
-Fetch `training_days` + `match_days` per la settimana.
+### `GET /api/calendar?week=W`
+Fetch `training_days` + `match_days` per la settimana, più `abitudine: { trainingDays, matchDays } | null` dal setup del Campo (`profiles.training_squadra`: giorni squadra e partita abituale, letti dal profilo con i parser puri di `lib/trainingSquadra.ts`) per quando il calendario della settimana non c'è (24/10).
 
 ### `POST /api/calendar`
 Salva calendario settimanale (training_days obbligatori, match_days opzionali).
+
+### `GET/POST /api/risposte`
+GET → le risposte scritte nel percorso (giorni + Gate), `?chiavi=1` solo le chiave, con `versioni` e `aggiornataIl`. POST `{ week, day, testo }` (24/10) → modifica una risposta chiave: `400` (giorno non chiave, vuota, oltre 4000), `409 giorno_non_aperto`, `{ success, skipped }`.
 
 ### `GET/POST /api/reflection`
 Fetch/salva riflessione post-giorno (max 500 caratteri + domanda).
@@ -1199,6 +1221,9 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `029_checkin_presenza.sql` applicata su Supabase (Ste, 30/9): la punta Presenza legge anche "quanto sei stato presente ieri" dal check-in
 - [x] Migration `031_training_resoconti.sql` applicata su Supabase (Ste, 19/10): il resoconto dopo squadra e partita si salva davvero
 - [x] Migration `032_session_data_durata.sql` applicata su Supabase (Ste, 20/10): data programmata e durata reale delle sedute si salvano, il carico usa i minuti reali
+- [ ] Migration `033_risposte_versioni.sql` da applicare su Supabase: senza, "Modifica" funziona ma non resta lo storico delle versioni
+- [ ] Notion, DB Settimane: scrivere `Pratica Giorno Partita` per le 12 settimane (finché è vuota il giorno della partita non mostra nessun box)
+- [ ] Provare i suoni del Reset su iPhone (Safari e PWA): Natura e Focus partono al tocco, girano in loop, si fermano chiudendo; con l'interruttore suoneria su silenzioso e no
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
 - [ ] Verificare i Price Stripe in env Vercel (`STRIPE_PRICE_ID_SEASON_*`): se sono 99/39, aggiornare `SEASON_PRICE_*` in `lib/constants.ts`
 - [ ] Stripe dashboard: attivare l'invio delle ricevute email per i pagamenti riusciti (altrimenti il genitore non riceve niente)

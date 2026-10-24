@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
+import { parsePartitaAbituale, parseSquadra } from '@/lib/trainingSquadra';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,10 +68,24 @@ export async function GET(request: NextRequest) {
       data.training_days.length > 0 &&
       new Date(data.created_at) >= weekStart;
 
+    // L'abitudine del setup del Campo (24/10): giorni squadra e partita abituale, per chi non ha
+    // compilato il calendario della settimana. A parte, così chi usa trainingDays/matchDays per
+    // decidere se il calendario c'è non cambia comportamento.
+    let abitudine: { trainingDays: number[]; matchDays: number[] } | null = null;
+    try {
+      const { data: prof } = await supabaseAdmin.from('profiles').select('training_squadra').eq('user_id', userId).maybeSingle();
+      const raw = (prof as { training_squadra?: unknown } | null)?.training_squadra;
+      const squadra = parseSquadra(raw);
+      const partita = parsePartitaAbituale(raw);
+      const giorni = Object.keys(squadra).map(Number).filter((g) => g >= 1 && g <= 7).sort((a, b) => a - b);
+      if (giorni.length || partita) abitudine = { trainingDays: giorni, matchDays: partita ? [partita] : [] };
+    } catch { /* senza colonna o profilo: nessuna abitudine */ }
+
     return NextResponse.json({
       trainingDays: isFresh ? data!.training_days : [],
       matchDays: isFresh ? (data!.match_days || []) : [],
       createdAt: isFresh ? data!.created_at : null,
+      abitudine,
     });
   } catch (error: any) {
     console.error('❌ GET /api/calendar:', error.message);

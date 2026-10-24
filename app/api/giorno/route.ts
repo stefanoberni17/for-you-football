@@ -3,6 +3,8 @@ import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { getAuthUser } from '@/lib/auth';
+import { isRispostaChiave } from '@/lib/risposteChiave';
+import { registraVersione } from '@/lib/risposteServer';
 import { requireWeekAccess } from '@/lib/serverAccess';
 import { checkDayUnlocked, parseWeekDay } from '@/lib/serverUnlock';
 import { GATE_DAY } from '@/lib/constants';
@@ -159,6 +161,9 @@ export async function POST(request: NextRequest) {
 
     if (upsertError) throw upsertError;
     logEvent(userId, 'day_completed', { week: weekNumber, day: dayNumber });
+
+    // Prima versione della risposta chiave (migration 033, fail-soft): lo storico parte da qui
+    if (response && isRispostaChiave(weekNumber, dayNumber)) void registraVersione(userId, weekNumber, dayNumber, response);
 
     // Salva riflessione in day_reflections (se c'è una risposta alla domanda)
     if (response) {

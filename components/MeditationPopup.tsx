@@ -21,6 +21,19 @@ const DURATION_OPTIONS = [
 const INHALE_MS = 4000;
 const EXHALE_MS = 6000;
 
+type AudioMode = 'nature' | 'focus' | 'mute';
+const AUDIO_PREF_KEY = 'reset.audio';
+const AUDIO_SRC: Record<Exclude<AudioMode, 'mute'>, string> = {
+  nature: '/audio/nature-meditation.mp3',
+  focus: '/audio/focus-meditation.mp3',
+};
+function leggiAudioPref(): AudioMode {
+  try {
+    const v = localStorage.getItem(AUDIO_PREF_KEY);
+    return v === 'nature' || v === 'focus' || v === 'mute' ? v : 'mute';
+  } catch { return 'mute'; }
+}
+
 const RITUAL_SKIP_KEY = 'ritualSkipped';
 /** Marker lasciato dalla pagina giorno al completamento (sessionStorage). */
 export const DAY_COMPLETED_KEY = 'fyfDayCompletedPending';
@@ -49,9 +62,10 @@ export default function MeditationPopup({
   const [selectedDuration, setSelectedDuration] = useState(60);
   const [timeLeft, setTimeLeft] = useState(60);
   const [isTimerComplete, setIsTimerComplete] = useState(false);
-  // Default mute: i file ambient non sono ancora in produzione. Se l'utente
-  // sceglie un audio e il play fallisce (404), si torna a mute visibilmente.
-  const [audioMode, setAudioMode] = useState<'nature' | 'focus' | 'mute'>('mute');
+  // Audio di sottofondo (24/10): i file stanno in public/audio (prima mancavano: il 404 faceva
+  // fallire il play e si tornava su mute). La scelta si ricorda (localStorage) e il play parte
+  // DAL TOCCO (iPhone Safari rifiuta un play() che non nasce da un gesto dell'utente).
+  const [audioMode, setAudioMode] = useState<AudioMode>(leggiAudioPref);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
   useWakeLock(phase === 'meditating');
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -170,32 +184,35 @@ export default function MeditationPopup({
     };
   }, [showPopup, phase]);
 
-  // Audio — solo durante il Reset
+  // La scelta dell'audio si ricorda sul dispositivo
+  useEffect(() => {
+    try { localStorage.setItem(AUDIO_PREF_KEY, audioMode); } catch { /* storage non disponibile */ }
+  }, [audioMode]);
+
+  /**
+   * Fa partire il suono scelto, in loop. Va chiamata DENTRO il gestore del tocco (chip o "Inizia"):
+   * su iPhone Safari un play() fuori da un gesto viene rifiutato. File mancante o play rifiutato →
+   * il toggle non deve mentire: torna su mute così l'utente vede lo stato reale.
+   */
+  const avviaAudio = (mode: AudioMode) => {
+    const el = audioRef.current;
+    if (!el) return;
+    if (mode === 'mute') { el.pause(); return; }
+    const src = AUDIO_SRC[mode];
+    if (!el.src.endsWith(src)) { el.src = src; el.load(); }
+    el.loop = true;
+    el.volume = 0.3;
+    el.play().catch(() => setAudioMode('mute'));
+  };
+
+  // Audio — solo durante il Reset: fuori dal Reset si ferma; dentro, se la scelta cambia, segue
   useEffect(() => {
     if (!showPopup || phase !== 'meditating') return;
-
-    if (audioMode === 'mute') {
-      audioRef.current?.pause();
-      return;
-    }
-
-    const audioSrc =
-      audioMode === 'nature'
-        ? '/audio/nature-meditation.mp3'
-        : '/audio/focus-meditation.mp3';
-
-    if (audioRef.current) {
-      audioRef.current.src = audioSrc;
-      audioRef.current.volume = 0.3;
-      audioRef.current.loop = true;
-      // File mancante o autoplay bloccato → il toggle non deve mentire:
-      // torna su mute così l'utente vede lo stato reale.
-      audioRef.current.play().catch(() => setAudioMode('mute'));
-    }
-
-    return () => {
-      audioRef.current?.pause();
-    };
+    const el = audioRef.current;
+    if (!el) return;
+    if (audioMode === 'mute') { el.pause(); return; }
+    if (el.paused) avviaAudio(audioMode);
+    return () => { el.pause(); };
   }, [showPopup, phase, audioMode]);
 
   const startMeditation = () => {
@@ -203,6 +220,8 @@ export default function MeditationPopup({
     setTimeLeft(selectedDuration);
     setIsTimerComplete(false);
     setPhase('meditating');
+    // Il suono scelto la volta scorsa parte da QUESTO tocco (iPhone: niente play fuori dal gesto)
+    if (audioMode !== 'mute') avviaAudio(audioMode);
   };
 
   const handleSkip = () => {
@@ -243,7 +262,7 @@ export default function MeditationPopup({
   return (
     <>
       {/* L'elemento audio vive fuori dagli Sheet: resta montato tra una fase e l'altra */}
-      <audio ref={audioRef} />
+      <audio ref={audioRef} preload="none" playsInline />
 
       {/* ── FASE SETUP ── */}
       <Sheet
@@ -349,15 +368,15 @@ export default function MeditationPopup({
 
           {/* Audio di sottofondo: tre chip piccole in fondo */}
           <div className="flex gap-2" role="group" aria-label="Audio di sottofondo">
-            <Chip selected={audioMode === 'nature'} onClick={() => setAudioMode('nature')} showCheck={false}
+            <Chip selected={audioMode === 'nature'} onClick={() => { setAudioMode('nature'); avviaAudio('nature'); }} showCheck={false}
               icon={<Leaf size={16} aria-hidden />} ariaLabel="Suoni della natura">
               Natura
             </Chip>
-            <Chip selected={audioMode === 'focus'} onClick={() => setAudioMode('focus')} showCheck={false}
+            <Chip selected={audioMode === 'focus'} onClick={() => { setAudioMode('focus'); avviaAudio('focus'); }} showCheck={false}
               icon={<Waves size={16} aria-hidden />} ariaLabel="Audio focus">
               Focus
             </Chip>
-            <Chip selected={audioMode === 'mute'} onClick={() => setAudioMode('mute')} showCheck={false} tone="neutral"
+            <Chip selected={audioMode === 'mute'} onClick={() => { setAudioMode('mute'); avviaAudio('mute'); }} showCheck={false} tone="neutral"
               icon={<VolumeX size={16} aria-hidden />} ariaLabel="Senza audio">
               Muto
             </Chip>

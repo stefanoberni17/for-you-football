@@ -72,6 +72,10 @@ export interface RispostaRow {
   /** Le tre risposte del Gate (solo giorno 7) */
   gate: string[] | null;
   completedAt: string | null;
+  /** Quante versioni salvate (migration 033; 0 senza tabella) */
+  versioni?: number;
+  /** Data dell'ultima modifica, se la risposta è stata aggiornata dopo la prima volta */
+  aggiornataIl?: string | null;
 }
 
 /** Il testo "pieno" di una riga: risposta del giorno, o le risposte del gate una sotto l'altra. */
