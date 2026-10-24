@@ -7,7 +7,8 @@ describe('risposta guidata W4-G6 (23/10)', () => {
   it('solo W4-G6 è guidato', () => {
     expect(guida.parti.map((p) => p.key)).toEqual(['segnale', 'pensiero', 'mantra']);
     expect(guidaPer(4, 5)).toBeNull();
-    expect(guidaPer(11, 4)).toBeNull();
+    expect(guidaPer(11, 4)?.parti.map((p) => p.key)).toEqual(['prima', 'durante', 'dopo', 'non_funziona', 'fuori']);
+    expect(guidaPer(11, 5)).toBeNull();
   });
 
   it('compone una riga per parte, con la nota dopo il trattino', () => {
@@ -42,5 +43,29 @@ describe('risposta guidata W4-G6 (23/10)', () => {
     expect(letti.segnale).toEqual({ altro: 'stomaco, futuro, Reset' });
     expect(componiRisposta(guida, letti)).toBe('IL MIO SEGNALE NEL CORPO: stomaco, futuro, Reset');
     expect(leggiRisposta(guida, '')).toEqual({});
+  });
+});
+
+describe('risposta guidata W11-G4: il Protocollo For You in cinque parti', () => {
+  const g = guidaPer(11, 4)!;
+  it('cinque parti di testo, andata e ritorno con gli a-capo dentro le parti', () => {
+    expect(g.parti.map((p) => p.key)).toEqual(['prima', 'durante', 'dopo', 'non_funziona', 'fuori']);
+    const valori = {
+      prima: { scelta: ALTRO_SCELTA, altro: 'Spogliatoio: 3 Reset.\nPiede in campo: due secondi.' },
+      durante: { scelta: ALTRO_SCELTA, altro: 'Errore: respiro e prossima giocata.' },
+      non_funziona: { scelta: ALTRO_SCELTA, altro: 'Se salto: un Reset solo.' },
+    };
+    const testo = componiRisposta(g, valori);
+    expect(testo.startsWith('PRIMA: Spogliatoio: 3 Reset.\nPiede in campo: due secondi.\nDURANTE: ')).toBe(true);
+    const letti = leggiRisposta(g, testo);
+    expect(letti.prima?.altro).toBe('Spogliatoio: 3 Reset.\nPiede in campo: due secondi.');
+    expect(letti.durante?.altro).toBe('Errore: respiro e prossima giocata.');
+    expect(letti.dopo).toBeUndefined();
+    expect(letti.non_funziona?.altro).toBe('Se salto: un Reset solo.');
+    expect(partiCompilate(g, letti)).toBe(3);
+  });
+  it('un Protocollo scritto a mano prima della guida finisce in PRIMA senza perdersi', () => {
+    const letti = leggiRisposta(g, 'La mia pagina.\nTutta libera.');
+    expect(letti.prima?.altro).toBe('La mia pagina.\nTutta libera.');
   });
 });

@@ -1,9 +1,8 @@
 {
-  "errors": 98,
-  "aggiornata": "2026-10-20",
+  "errors": 97,
+  "aggiornata": "2026-10-24",
   "perRule": {
     "@typescript-eslint/no-explicit-any": 95,
-    "react-hooks/refs": 1,
     "react-hooks/set-state-in-effect": 2
   }
 }

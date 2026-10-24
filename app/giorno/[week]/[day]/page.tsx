@@ -7,12 +7,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, riflessioneAperta, riflessioneApreAlle, DayProgress } from '@/lib/dayUnlockLogic';
 import { oraItaly } from '@/lib/dateItaly';
-import { GATE_DAY, WEEK_TOOLS, DAY_NAMES } from '@/lib/constants';
+import { GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
 import RispostaGuidata from '@/components/RispostaGuidata';
 import { guidaPer } from '@/lib/risposteGuidate';
+import { fraseProssimoEvento, preferenzaDallaNota, prossimoEvento, statoPartita } from '@/lib/prossimoEvento';
 import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
@@ -125,6 +126,9 @@ export default function GiornoPage() {
         const calData = calendarRes ? await calendarRes.json() : {};
         if (calData.trainingDays && calData.trainingDays.length > 0) {
           setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
+        } else if (calData.abitudine && (calData.abitudine.trainingDays?.length || calData.abitudine.matchDays?.length)) {
+          // Senza il calendario della settimana vale l'abitudine del setup (giorni squadra, partita abituale)
+          setCalendarData({ trainingDays: calData.abitudine.trainingDays || [], matchDays: calData.abitudine.matchDays || [] });
         }
       } catch { /* calendario non configurato — ignora */ }
 
@@ -216,25 +220,13 @@ export default function GiornoPage() {
   // Usa il giorno REALE della settimana (1=Lun, 7=Dom), non il dayNumber del percorso
   const jsDay = new Date().getDay();
   const todayWeekday = jsDay === 0 ? 7 : jsDay;
-  const isMatchDay = calendarData?.matchDays?.includes(todayWeekday) ?? false;
-  const isPreMatchDay = calendarData?.matchDays?.some(
-    (matchDay: number) => (matchDay === 1 ? 7 : matchDay - 1) === todayWeekday
-  ) ?? false;
+  // Partita: oggi o domani (il giorno della partita vince; lib/prossimoEvento.ts)
+  const { oggi: isMatchDay, domani: isPreMatchDay } = statoPartita(calendarData, todayWeekday);
 
-  // Calcola il prossimo allenamento basato sul giorno della settimana corrente
-  const getNextTrainingMessage = (): string | null => {
-    if (!calendarData || calendarData.trainingDays.length === 0) return null;
-    // JS: 0=Dom, 1=Lun, ..., 6=Sab → converti a 1=Lun, 7=Dom
-    const jsDay = new Date().getDay();
-    const today = jsDay === 0 ? 7 : jsDay;
-    const sorted = [...calendarData.trainingDays].sort((a, b) => a - b);
-    // Trova il prossimo giorno di allenamento (oggi incluso o successivo)
-    const next = sorted.find(d => d >= today) || sorted[0];
-    if (next === today) {
-      return 'Oggi è giorno di allenamento. Prova questo in campo!';
-    }
-    return `Il tuo prossimo allenamento è ${DAY_NAMES[next]}. Prova questo in campo!`;
-  };
+  // La riga sotto la nota in campo (24/10): il PRIMO evento in arrivo, allenamento o partita;
+  // se la nota nomina la partita (o l'allenamento) si guarda solo quello. Senza calendario, niente riga.
+  const getNextTrainingMessage = (): string | null =>
+    fraseProssimoEvento(prossimoEvento(calendarData, todayWeekday, preferenzaDallaNota(giorno?.notaCampo)));
 
   // Autosave bozza (debounce 600 ms), stesso pattern del gate
   useEffect(() => {
@@ -755,18 +747,19 @@ export default function GiornoPage() {
           </Card>
         )}
 
-        {/* Pratica pre-partita: oggi è giorno partita OPPURE domani è giorno partita (dopo il contenuto) */}
-        {isLastSlide && isMatchDay && settimanaData?.praticaPrePartita && (
+        {/* Partita (24/10): il GIORNO della partita il testo "Pratica Giorno Partita" (se vuoto, niente);
+            il giorno PRIMA il testo "Pratica Pre Partita", scritto per la sera prima */}
+        {isLastSlide && isMatchDay && settimanaData?.praticaGiornoPartita && (
           <Card variant="accent" padding="md">
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Oggi giochi — pratica pre-partita</p>
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Oggi giochi</p>
             <p className="text-app text-body-sm leading-relaxed whitespace-pre-line">
-              {settimanaData.praticaPrePartita}
+              {settimanaData.praticaGiornoPartita}
             </p>
           </Card>
         )}
-        {isLastSlide && !isMatchDay && isPreMatchDay && settimanaData?.praticaPrePartita && (
+        {isLastSlide && isPreMatchDay && settimanaData?.praticaPrePartita && (
           <Card variant="accent" padding="md">
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Domani giochi — pratica pre-partita</p>
+            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-2">Domani giochi — pratica della sera prima</p>
             <p className="text-app text-body-sm leading-relaxed whitespace-pre-line">
               {settimanaData.praticaPrePartita}
             </p>

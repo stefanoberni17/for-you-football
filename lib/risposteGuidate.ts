@@ -10,11 +10,15 @@
 
 export interface ParteGuidata {
   key: string;
+  /** 'scelta' (default) = chip + campo; 'testo' = solo un campo libero su più righe (il Protocollo For You) */
+  tipo?: 'scelta' | 'testo';
   /** Etichetta mostrata e scritta nel testo salvato (maiuscola) */
   label: string;
   /** Una riga sotto l'etichetta */
   aiuto?: string;
   opzioni: string[];
+  /** Solo per tipo 'testo': quante righe mostra il campo */
+  righe?: number;
   /** 'scelta' = l'opzione "altro" sostituisce la scelta con un testo suo (il mantra); 'nota' = un testo libero accanto alla scelta */
   altro: 'scelta' | 'nota';
   altroLabel: string;
@@ -72,6 +76,18 @@ export const RISPOSTE_GUIDATE: Record<string, RispostaGuidata> = {
   },
 };
 
+/** Il Protocollo For You (W11-G4): cinque parti di testo libero, come la pratica di Notion. */
+RISPOSTE_GUIDATE['11-4'] = {
+  titolo: 'Il tuo Protocollo For You',
+  parti: [
+    { key: 'prima', tipo: 'testo', label: 'Prima', aiuto: 'Come entri in campo: la tua routine nelle tre versioni (spogliatoio, i due secondi col piede in campo, allenamento) e le tue condizioni.', opzioni: [], righe: 5, altro: 'scelta', altroLabel: 'Prima', altroPlaceholder: 'La routine, le condizioni…' },
+    { key: 'durante', tipo: 'testo', label: 'Durante', aiuto: 'A gioco fermo i due secondi presente; le tre risposte pronte (errore, pressione, rabbia) scritte con i gesti; il Protocollo Pressione nelle due versioni.', opzioni: [], righe: 6, altro: 'scelta', altroLabel: 'Durante', altroPlaceholder: 'Errore: … Pressione: … Rabbia: …' },
+    { key: 'dopo', tipo: 'testo', label: 'Dopo', aiuto: 'Il Rilascio sulla linea e la rilettura in due minuti: cosa tengo, cosa tolgo.', opzioni: [], righe: 3, altro: 'scelta', altroLabel: 'Dopo', altroPlaceholder: 'Sulla linea… poi…' },
+    { key: 'non_funziona', tipo: 'testo', label: 'Quando non funziona', aiuto: 'Il giorno che salti tutto: il gesto più piccolo che ti rimette in moto. Il giorno che lo fai e non ti aiuta: cosa rivedi e cosa chiarisci con il Coach.', opzioni: [], righe: 4, altro: 'scelta', altroLabel: 'Quando non funziona', altroPlaceholder: 'Se salto: … Se non aiuta: …' },
+    { key: 'fuori', tipo: 'testo', label: 'Fuori dal campo', aiuto: 'Una riga, se ti viene. Se non ti viene, lascia vuoto.', opzioni: [], righe: 2, altro: 'scelta', altroLabel: 'Fuori dal campo', altroPlaceholder: 'Dove altro ti serve…' },
+  ],
+};
+
 export type ValoriGuidati = Record<string, { scelta?: string; altro?: string }>;
 
 export function guidaPer(week: number, day: number): RispostaGuidata | null {
@@ -88,7 +104,9 @@ export function componiRisposta(guida: RispostaGuidata, valori: ValoriGuidati): 
     const scelta = (v.scelta || '').trim();
     const altro = (v.altro || '').trim();
     let testo = '';
-    if (p.altro === 'scelta') {
+    if (p.tipo === 'testo') {
+      testo = altro;
+    } else if (p.altro === 'scelta') {
       testo = scelta === ALTRO_SCELTA ? altro : scelta;
     } else {
       testo = [scelta, altro].filter(Boolean).join(SEP);
@@ -98,18 +116,40 @@ export function componiRisposta(guida: RispostaGuidata, valori: ValoriGuidati): 
   return righe.join('\n');
 }
 
-/** Dal testo salvato ai valori dei campi. Un testo scritto a mano (non nel formato) finisce tutto nella prima parte come nota. */
+/**
+ * Dal testo salvato ai valori dei campi. Il testo è a blocchi: una riga "ETICHETTA: …" apre una
+ * parte, le righe dopo senza etichetta le appartengono (il Protocollo For You va a capo).
+ * Un testo scritto a mano (senza etichette) finisce tutto nella prima parte, senza perdersi.
+ */
 export function leggiRisposta(guida: RispostaGuidata, testo: string | null | undefined): ValoriGuidati {
   const out: ValoriGuidati = {};
   if (!testo || !testo.trim()) return out;
   const righe = testo.split('\n');
-  let riconosciute = 0;
+  const blocchi = new Map<string, string[]>();
+  let corrente: string | null = null;
+  for (const riga of righe) {
+    const t = riga.trim();
+    const parte = guida.parti.find((p) => t.toUpperCase().startsWith(`${p.label.toUpperCase()}:`));
+    if (parte) {
+      corrente = parte.key;
+      blocchi.set(corrente, [t.slice(parte.label.length + 1).trim()]);
+    } else if (corrente) {
+      blocchi.get(corrente)!.push(riga.replace(/\s+$/, ''));
+    }
+  }
+  if (blocchi.size === 0) {
+    const prima = guida.parti[0];
+    out[prima.key] = prima.tipo === 'testo' || prima.altro === 'scelta' ? { scelta: ALTRO_SCELTA, altro: testo.trim() } : { altro: testo.trim() };
+    return out;
+  }
   for (const p of guida.parti) {
-    const prefix = `${p.label.toUpperCase()}:`;
-    const riga = righe.find((r) => r.trim().toUpperCase().startsWith(prefix));
-    if (!riga) continue;
-    riconosciute++;
-    const resto = riga.trim().slice(prefix.length).trim();
+    const b = blocchi.get(p.key);
+    if (!b) continue;
+    const resto = b.join('\n').trim();
+    if (p.tipo === 'testo') {
+      out[p.key] = { scelta: ALTRO_SCELTA, altro: resto };
+      continue;
+    }
     const i = resto.indexOf(SEP);
     const testa = i >= 0 ? resto.slice(0, i).trim() : resto;
     const coda = i >= 0 ? resto.slice(i + SEP.length).trim() : '';
@@ -120,10 +160,6 @@ export function leggiRisposta(guida: RispostaGuidata, testo: string | null | und
       out[p.key] = opzione ? { scelta: opzione, altro: coda || undefined } : { altro: resto };
     }
   }
-  if (riconosciute === 0) {
-    const prima = guida.parti[0];
-    out[prima.key] = prima.altro === 'scelta' ? { scelta: ALTRO_SCELTA, altro: testo.trim() } : { altro: testo.trim() };
-  }
   return out;
 }
 
@@ -131,6 +167,7 @@ export function leggiRisposta(guida: RispostaGuidata, testo: string | null | und
 export function partiCompilate(guida: RispostaGuidata, valori: ValoriGuidati): number {
   return guida.parti.filter((p) => {
     const v = valori[p.key] || {};
+    if (p.tipo === 'testo') return !!(v.altro || '').trim();
     if (p.altro === 'scelta') return v.scelta === ALTRO_SCELTA ? !!(v.altro || '').trim() : !!(v.scelta || '').trim();
     return !!(v.scelta || '').trim() || !!(v.altro || '').trim();
   }).length;

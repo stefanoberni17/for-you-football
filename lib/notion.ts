@@ -188,7 +188,8 @@ export function mapSettimana(page: any) {
     coachContesto: richText(p['Coach Contesto']),
     stato: select(p['Stato']),
     mantraDashboard: richText(p['Mantra Dashboard']),
-    praticaPrePartita: richText(p['Pratica Pre Partita']),
+    praticaPrePartita: richText(p['Pratica Pre Partita']),       // la sera PRIMA della partita
+    praticaGiornoPartita: richText(p['Pratica Giorno Partita']), // il GIORNO della partita (24/10; vuota = niente riquadro)
     fraseSettimana: richText(p['Frase Settimana']),
     filoRosso: richText(p['Filo Rosso']), // "Hai imparato a …" — mostrato a fine settimana
   };

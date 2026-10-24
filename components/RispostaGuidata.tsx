@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
-import { Chip, Field, Input } from '@/components/ui';
+import { Chip, Field, Input, Textarea } from '@/components/ui';
 import {
   ALTRO_SCELTA, componiRisposta, leggiRisposta, partiCompilate,
   type RispostaGuidata as Guida, type ValoriGuidati,
@@ -62,6 +62,24 @@ export default function RispostaGuidata({ guida, value, onChange, disabled = fal
       {guida.parti.map((p, i) => {
         const v = valori[p.key] || {};
         const altroAttivo = p.altro === 'scelta' ? v.scelta === ALTRO_SCELTA : true;
+        if (p.tipo === 'testo') {
+          return (
+            <div key={p.key} className="space-y-2">
+              <p className="text-body font-semibold text-app">{i + 1}. {p.label}</p>
+              {p.aiuto && <p className="text-body-sm text-muted">{p.aiuto}</p>}
+              <Textarea
+                id={`guida-${p.key}`}
+                aria-label={p.label}
+                value={v.altro || ''}
+                onChange={(e) => aggiorna(p.key, { scelta: ALTRO_SCELTA, altro: e.target.value })}
+                disabled={disabled}
+                rows={p.righe ?? 4}
+                maxLength={1500}
+                placeholder={p.altroPlaceholder}
+              />
+            </div>
+          );
+        }
         return (
           <div key={p.key} className="space-y-2">
             <p className="text-body font-semibold text-app">{i + 1}. {p.label}</p>

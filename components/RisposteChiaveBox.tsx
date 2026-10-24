@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, ChevronRight } from 'lucide-react';
+import { BookOpen, ChevronRight, PenLine } from 'lucide-react';
 import { authFetch } from '@/lib/authFetch';
+import { Button } from '@/components/ui';
+import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
 import { chiaviPerGiorno, testoRisposta, type RispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
 
 /**
@@ -17,6 +19,7 @@ export default function RisposteChiaveBox({ week, day, className = '' }: { week:
   const chiavi = chiaviPerGiorno(week, day);
   const [rows, setRows] = useState<RispostaRow[] | null>(null);
   const [errore, setErrore] = useState(false);
+  const [modifica, setModifica] = useState<RispostaChiave | null>(null);
 
   useEffect(() => {
     if (!chiavi || chiavi.length === 0) return;
@@ -68,19 +71,40 @@ export default function RisposteChiaveBox({ week, day, className = '' }: { week:
               </span>
               <ChevronRight size={18} className="text-muted shrink-0 transition-transform group-open:rotate-90" aria-hidden />
             </summary>
-            <div className="pb-3">
+            <div className="pb-3 space-y-2">
               {testo ? (
                 <p className="text-body text-app leading-relaxed whitespace-pre-line">{testo}</p>
               ) : (
                 <p className="text-body-sm text-muted leading-relaxed">
-                  Quel giorno non hai scritto la risposta. Puoi scriverla adesso a parte, con le tue parole: vale lo stesso.
+                  Quel giorno non hai scritto la risposta. Puoi scriverla adesso: vale lo stesso.
                 </p>
               )}
+              {row?.aggiornataIl && <p className="text-caption text-faint">Aggiornata il {new Date(row.aggiornataIl).toLocaleDateString('it-IT')}{row.versioni ? ` · ${row.versioni} versioni` : ''}</p>}
+              <Button variant="secondary" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(c)}>
+                {testo ? 'Modifica' : 'Scrivilo adesso'}
+              </Button>
             </div>
           </details>
         );
       })}
       {link}
+      {modifica && (
+        <ModificaRispostaSheet
+          week={modifica.week}
+          day={modifica.day}
+          testoIniziale={(rows || []).find((r) => r.week === modifica.week && r.day === modifica.day)?.risposta || ''}
+          open
+          onClose={() => setModifica(null)}
+          onSalvata={(t) => setRows((prev) => {
+            const lista = prev ? [...prev] : [];
+            const i = lista.findIndex((r) => r.week === modifica.week && r.day === modifica.day);
+            const base: RispostaRow = i >= 0 ? lista[i] : { week: modifica.week, day: modifica.day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null };
+            const nuova = { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
+            if (i >= 0) lista[i] = nuova; else lista.push(nuova);
+            return lista;
+          })}
+        />
+      )}
     </div>
   );
 }
