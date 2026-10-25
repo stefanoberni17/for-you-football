@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-25 — Decisioni di Ste sulle regole del Campo (sera)
+- Wall Drive Skip → pliometria estensiva (catalogo e blocchi rigenerati). Reverse Drop Jump: scheda confermata, via dai "da confermare".
+- Pliometria intensiva a 2 giorni dalla partita in dose piccola, massimo 4×2 (`PLIO_INTENSIVA_MENO2`); a −1 resta 2×2.
+- Sprint con palla: tutti i blocchi di velocità dalla prima settimana (Ste: "sono esercizi sia di tecnica che di velocità"); il filtro della 5ª settimana non c'è più. "Drbbling A2" resta velocità.
+- Giorno dopo la partita: oltre al richiamo gambe e alla parte alta breve passano le isometrie di Fascia Forza ("ok anche iso e palestra leggera").
+- Le risposte sulla resistenza (serie per livello 4'/5'/6', da 2-3 a 4 serie, in season solo su richiesta con avviso, metabolico, resistenza alla velocità a serie di 4, salite) sono scritte nel punto 19 di `docs/campo-da-fare.md` e in `docs/training-logiche-costruzione.md` §E6: entrano nel codice con il blocco `re-serie`.
+- Test: `tests/trainingCiclo.test.ts` e `tests/trainingReview29.test.ts` calcolavano "oggi" con l'ora locale del processo mentre la libreria usa il giorno di Roma: tra le 23 e le 24 UTC fallivano. Ora usano `dataRoma`.
+- `PLANNER_V2_PROMPT_VERSION = 'v2.36-decisioni-25-10'`.
+
 ## 2026-10-25 — I voti 1-10 dicono la stessa cosa ovunque
 - Ste: "ho visto che i voti da 1-10 in qualcosa non sono coerenti… tipo voto 7 ne avevi ancora 3 reps". Ricontrollati tutti i punti che chiedono o leggono un voto. Tre usi sbagliati della scala: le tenute a tempo dicevano "ne restavano 3" (ora `tipo: 'tempo'`, "potevi tenere ancora un po'"); l'EMOM usava le frasi delle serie (ora quelle della seduta); i voti tecnica e fisico del resoconto usavano la scala dello sforzo con "1 male, 10 benissimo" nell'etichetta, così un 10 era "Massimo" in rosso (ora `tipo: 'giudizio'`, rovesciata, verde in alto). Le soglie che interpretano un voto stavano in cinque moduli con cinque numeri diversi: ora `lib/rpeScala.ts` le tiene in un posto solo e le zone colorate della scala sono le stesse che legge il codice. Serie: facile 1-4 (la soglia di M5), giusta 5-6, dura 7-8, al limite 9-10; seduta: facile 1-5 (Ste: "soglia facile a ≤5"), giusta 6, dura 7-8, al limite 9-10. Cambiano: la progressione del singolo esercizio e le settimane "facili" del kettlebell salgono con due sedute a ≤ 4 (prima ≤ 6: si saliva anche con "impegnativa"); "difficile" da 7 (prima 8); il giudizio di una seduta per la memoria dei blocchi è "facile" fino a 5 (prima 4); l'incrocio "seduta dura vs azioni" conta da 7 (prima 8). Restano: "duro" per la memoria dei blocchi da 9, le soglie del resoconto, SCENDI da 9.5. Test aggiornati e `tests/rpeScala.test.ts`.
 

@@ -176,7 +176,7 @@ describe('carico reale e planner', () => {
     const meno: ContextV2 = contextFinto({ ...MARCO, resoconti: [r(sabato, 'partita', 6, { durata_min: 60 })] });
     expect(partitaGiocata(meno, 7, 1)).toBe('meno');
     expect(partitaPocoGiocataCtx(meno, 7, 1)).toBe(false);
-    const gambe = c.blocchi.find((b) => b.qualita === 'forza-parte-bassa' && !b.id.startsWith('pb-'))!;
+    const gambe = c.blocchi.find((b) => b.qualita === 'forza-parte-bassa' && !b.id.startsWith('pb-') && b.famiglia !== 'Fascia Foundation Forza')!; // le isometrie passano anche a +1 (25/10)
     const errs = (ctx: ContextV2) => { const { plan, errors } = expandPiano({ sedute: [{ giorno: 7, blocchi: [gambe.id] }] }, ctx); return [...errors, ...validatePlan(plan, validateCtxFor(ctx))].filter((e) => /DOPO la partita/.test(e)); };
     expect(errs(c)).toEqual([]);
     expect(errs(contextFinto(MARCO)).length).toBe(1);

@@ -31,6 +31,7 @@ import { contaSprintMassimali, PRE_PARTITA_ID, SPRINT_MASSIMALI_IDS, SPRINT_MAX_
 export { SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA };
 export const RISC_VELOCITA_ID = 'risc-velocita';
 export const SPRINT_MIN_SEDUTA = 6;
+/** @deprecated dal 25/10 gli sprint con palla non hanno più un'attesa: resta solo per i documenti. */
 export const CON_PALLA_DALLA_SETTIMANA = 5;
 export const PLIO_SETTIMANE_B_MIN = 4;
 /** Chi è A/PRO ai test dei salti resta in B solo SETTIMANE_PER_LIVELLO_AVANZATI settimane (Ste, 18/10: "soprattutto per chi parte da zero: vediamo in base ai test"). */
@@ -186,15 +187,8 @@ export function filtraVelocitaPliometria(
     out = out.filter((b) => !isPliometria(b) || b.livello === null || LIVELLO_ORDINE[b.livello] <= LIVELLO_ORDINE.B);
     note.push(`PLIOMETRIA: l'atleta ha ${opt.settimanePlio} settimane di pliometria alle spalle (minimo ${plioMinimoB} in B prima dell'intensiva A${avanzatoSalti ? ', ridotto perché ai test dei salti è ' + opt.livelloSalti : ''}): solo blocchi B.`);
   }
-  // Con palla: subito se la tecnica è tra gli obiettivi (Ste, 25/9: chi fa sprint E tecnica sfrutta i blocchi con velocità e tiri),
-  // altrimenti dalla 5ª settimana in season/preparazione
-  const conPallaOk = opt.tecnicaTraGliObiettivi || (opt.settimaneAllenamento >= CON_PALLA_DALLA_SETTIMANA && opt.inSeasonOPreparazione);
-  if (!conPallaOk && out.some((b) => haConPalla(b) && !isPrePartita(b))) {
-    out = out.filter((b) => !haConPalla(b) || isPrePartita(b)); // il blocco pre partita di Ste resta sempre (18/10)
-    note.push(opt.settimaneAllenamento < CON_PALLA_DALLA_SETTIMANA
-      ? `VELOCITÀ CON PALLA: senza la tecnica tra gli obiettivi arriva dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana di allenamento (ora ${opt.settimaneAllenamento}): i blocchi con sprint con palla non sono disponibili.`
-      : 'VELOCITÀ CON PALLA: solo con la tecnica tra gli obiettivi o in season/preparazione: i blocchi con sprint con palla non sono disponibili.');
-  }
+  // Sprint con palla: dal 25/10 nessun filtro (Ste: "si possono fare tutti gli sprint che abbiamo messo come velocità:
+  // sono esercizi sia di tecnica che di velocità"). Fino al 25/10 arrivavano dalla 5ª settimana senza la tecnica tra gli obiettivi.
   return { blocchi: out, note };
 }
 
@@ -212,6 +206,6 @@ export function velocitaPliometriaRegola(opt: { velocitaETecnica: boolean }): st
   const combo = opt.velocitaETecnica
     ? ` VELOCITÀ + TECNICA tra gli obiettivi: sfrutta i blocchi che uniscono sprint e palla (rapidità e tiro, velocità con sprint con palla, palleggio-sprint-tiro): coprono due obiettivi in una seduta e contano per entrambi.`
     : '';
-  return `24. VELOCITÀ (Ste, 25/9 e 16/10): le giornate di velocità a settimana sono quelle della regola 2d (una; due solo in off season con la velocità primo obiettivo, mai consecutive e con al massimo 12 sprint massimali in tutta la settimana); il blocco pre partita \`${PRE_PARTITA_ID}\`, solo il giorno prima della partita, non conta. In più UNA giornata di RAPIDITÀ: un blocco di pliometria o esplosività con qualche scatto corto (il server lo lima a pochi sprint, nessuno oltre i 30 m), senza blocchi di qualità velocità né salite: non conta come giornata di velocità.${combo} Ogni seduta con un blocco di velocità o sprint apre con \`${RISC_VELOCITA_ID}\` (corsetta 4', mobilità 4', 6 allunghi progressivi: ~15', contalo nel budget di tempo); se non lo metti, il server lo aggiunge in testa. Sprint massimali per seduta: ${SPRINT_MIN_SEDUTA}-${SPRINT_MAX_SEDUTA} (${SPRINT_MAX_CON_EMOM} se nella settimana c'è anche l'EMOM della parte alta con lo sprint): contano Sprint e le varianti a 10 m, non salto+sprint, sprint con palla, T-sprint e salite; oltre, il server toglie sprint dalla coda. SALITE (Salite Sprint, Salite Metabolico, Salite Resistenza): pesanti — al massimo UN blocco a settimana, in season una volta ogni ${SALITE_IN_SEASON_OGNI_SETTIMANE} settimane e mai nello scarico (la libreria le mostra solo quando sono ammesse); anche loro aprono con \`${RISC_VELOCITA_ID}\`. Gli sprint con palla: subito se la tecnica è tra gli obiettivi, altrimenti dalla ${CON_PALLA_DALLA_SETTIMANA}ª settimana (la libreria li mostra solo quando sono ammessi).
+  return `24. VELOCITÀ (Ste, 25/9 e 16/10): le giornate di velocità a settimana sono quelle della regola 2d (una; due solo in off season con la velocità primo obiettivo, mai consecutive e con al massimo 12 sprint massimali in tutta la settimana); il blocco pre partita \`${PRE_PARTITA_ID}\`, solo il giorno prima della partita, non conta. In più UNA giornata di RAPIDITÀ: un blocco di pliometria o esplosività con qualche scatto corto (il server lo lima a pochi sprint, nessuno oltre i 30 m), senza blocchi di qualità velocità né salite: non conta come giornata di velocità.${combo} Ogni seduta con un blocco di velocità o sprint apre con \`${RISC_VELOCITA_ID}\` (corsetta 4', mobilità 4', 6 allunghi progressivi: ~15', contalo nel budget di tempo); se non lo metti, il server lo aggiunge in testa. Sprint massimali per seduta: ${SPRINT_MIN_SEDUTA}-${SPRINT_MAX_SEDUTA} (${SPRINT_MAX_CON_EMOM} se nella settimana c'è anche l'EMOM della parte alta con lo sprint): contano Sprint e le varianti a 10 m, non salto+sprint, sprint con palla, T-sprint e salite; oltre, il server toglie sprint dalla coda. SALITE (Salite Sprint, Salite Metabolico, Salite Resistenza): pesanti — al massimo UN blocco a settimana, in season una volta ogni ${SALITE_IN_SEASON_OGNI_SETTIMANE} settimane e mai nello scarico (la libreria le mostra solo quando sono ammesse); anche loro aprono con \`${RISC_VELOCITA_ID}\`. Gli sprint con palla valgono come velocità dalla prima settimana (Ste, 25/10: sono esercizi di tecnica E di velocità).
 25. PLIOMETRIA (Ste, 24/9): chi inizia resta sui blocchi B per almeno ${PLIO_SETTIMANE_B_MIN} settimane (${PLIO_SETTIMANE_B_MIN_AVANZATI} se ai test dei salti è già avanzato: prima la difficoltà, cioè il codice A in versione breve, poi il volume; la libreria mostra solo i blocchi ammessi); dopo, la memoria dei blocchi alterna una settimana intensiva (A) e una di richiamo (B); un "duro" sull'intensiva riporta al richiamo per 2 settimane; nella settimana di scarico la pliometria resta in B, versione short. La pliometria intensiva può stare anche in DUE giornate a settimana (Ste, 16/10), in giorni NON consecutivi e dentro il tetto di contatti per seduta; oltre due il validatore rifiuta.`;
 }

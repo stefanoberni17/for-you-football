@@ -1,19 +1,19 @@
 import { describe, expect, it } from 'vitest';
+import { addDays } from '@/lib/carta';
 import { cicloInfo, conScaricoDalCarico } from '@/lib/trainingPlanner';
 import { costruisciParteAlta, gradinoSopra, PA_EMOM_ID, PA_SERIE_ID } from '@/lib/trainingParteAlta';
 import { expandPiano, type ContextV2 } from '@/lib/trainingPlannerV2';
 import { blocchiDisponibili, bloccoById } from '@/lib/trainingBlocks';
 import { componiRichiesta } from '@/lib/trainingRequest';
-import { calcolaMemoriaBlocchi, feedbackDaRpe, VOTO_SEDUTA_DURO } from '@/lib/trainingMemoriaBlocchi';
+import { calcolaMemoriaBlocchi, dataRoma, feedbackDaRpe, lunediDi, VOTO_SEDUTA_DURO } from '@/lib/trainingMemoriaBlocchi';
 import { ladderForArea, type PlanSession, type TestResultRow } from '@/lib/trainingEngine';
 
 /** Un martedì di N settimane fa. */
 const settimaneFa = (n: number, giornoOffset = 0): string => {
-  const d = new Date();
-  const dow = d.getDay() === 0 ? 7 : d.getDay();
-  d.setDate(d.getDate() - (dow - 2) - n * 7 + giornoOffset);
-  d.setHours(12, 0, 0, 0);
-  return d.toISOString();
+  // Il giorno di OGGI è quello di Roma, come nella libreria (25/10: tra le 23 e le 24 UTC il test leggeva ancora ieri)
+  const oggi = addDays(dataRoma(new Date().toISOString()), 0);
+  const dow = new Date(`${oggi}T12:00:00Z`).getUTCDay() || 7;
+  return `${addDays(oggi, -(dow - 2) - n * 7 + giornoOffset)}T12:00:00Z`;
 };
 
 describe('ri-test dovuto (29/9): si spegne quando i test sono stati rifatti', () => {
@@ -53,8 +53,8 @@ describe('voto seduta: "duro" su tutti i blocchi solo da 9 (29/9)', () => {
     const disponibili = ['pliometria-rapidita-velocita-b1', 'pliometria-rapidita-velocita-b1-short'].map(bloccoById).filter((b): b is NonNullable<typeof b> => !!b);
     expect(disponibili).toHaveLength(2);
     const fb = (rpe: number) => [{ completed_at: settimaneFa(1), rpe, feedback_blocchi: [{ id: 'pliometria-rapidita-velocita-b1', giudizio: 'ok' as const }] }];
-    const lunedi = new Date(); const dow = lunedi.getDay() === 0 ? 7 : lunedi.getDay(); lunedi.setDate(lunedi.getDate() - (dow - 1));
-    const lun = lunedi.toISOString().slice(0, 10);
+    const lunediCorrenteRoma = lunediDi(dataRoma(new Date().toISOString())); // giorno di Roma, come la libreria
+    const lun = lunediCorrenteRoma;
     const m8 = calcolaMemoriaBlocchi(fb(8), { disponibili, lunediCorrente: lun, livello: 'B' });
     const m9 = calcolaMemoriaBlocchi(fb(9), { disponibili, lunediCorrente: lun, livello: 'B' });
     expect(m8['Pliometria Rapidità Velocità']?.prossimo.id).toBe('pliometria-rapidita-velocita-b1');

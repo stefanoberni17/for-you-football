@@ -3,7 +3,7 @@ import { contextFinto, MARCO } from '@/lib/trainingSimulazione';
 import { expandPiano, generaPianoV2, promptsV2, validateCtxFor, type ContextV2 } from '@/lib/trainingPlannerV2';
 import { validatePlan } from '@/lib/trainingEngine';
 import { contaSprintMassimali, CONVIVENZE_SCONSIGLIATE, CONVIVENZE_VIETATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, PRE_PARTITA_ID, SPRINT_MAX_VICINO_PARTITA, validateItemV2, validateSessionV2, type ContestoV2 } from '@/lib/trainingRulesV2';
-import { isPrePartita, isVelocitaPura, VELOCITA_PURA_METRI } from '@/lib/trainingVelocita';
+import { filtraVelocitaPliometria, isPrePartita, isVelocitaPura, VELOCITA_PURA_METRI } from '@/lib/trainingVelocita';
 import { esercizioV2ById } from '@/lib/trainingCatalogV2';
 import { PB_RICHIAMO_ID } from '@/lib/trainingParteBassa';
 import { bloccoById } from '@/lib/trainingBlocks';
@@ -153,5 +153,32 @@ describe('il prompt', () => {
     expect(system).toContain('niente velocità pura');
     expect(system).toContain('Forza massima seguita da pliometria NON pesante nello stesso giorno va bene');
     expect(system).toContain('CORTA (sprint fino a 30 m');
+  });
+});
+
+/** Le decisioni di Ste del 25/10 sull'asse partita e sugli sprint con palla. */
+describe('decisioni del 25/10', () => {
+  const v2: ContestoV2 = { livello: 'A', attrezzatura: ['campo'], inCoppia: false, eta: 19, esperienzaPalestra: false } as unknown as ContestoV2;
+  const plio = (serie: number, reps: number) => ({ esercizio_id: 'plioi-drop-jump', serie, quantita: reps, recupero_sec: 90, schema: 'fisso' as const });
+  const partita = (errs: string[]) => errs.filter((e) => /partita/.test(e));
+  it('pliometria intensiva a −2 in dose piccola: 4×2 passa, 5×2 e 4×3 no; a −1 resta 2×2', () => {
+    expect(partita(validateItemV2(plio(4, 2), v2, 2, { skipBounds: true }).errors)).toEqual([]);
+    expect(partita(validateItemV2(plio(5, 2), v2, 2, { skipBounds: true }).errors)).toHaveLength(1);
+    expect(partita(validateItemV2(plio(4, 3), v2, 2, { skipBounds: true }).errors)).toHaveLength(1);
+    expect(partita(validateItemV2(plio(2, 2), v2, 1, { skipBounds: true }).errors)).toEqual([]);
+    expect(partita(validateItemV2(plio(4, 2), v2, 1, { skipBounds: true }).errors)).toHaveLength(1);
+    expect(partita(validateItemV2(plio(4, 2), v2, 3, { skipBounds: true }).errors)).toEqual([]);
+  });
+  it('il giorno dopo la partita passano le isometrie di Fascia Forza, non le gambe', () => {
+    const c = { ...ctx(), base: { ...ctx().base, oggiDow: 7 } };
+    expect(con(errori(c, [{ giorno: 7, blocchi: ['fascia-foundation-b3-forza'] }]), /giorno DOPO la partita/)).toEqual([]);
+    expect(con(errori(c, [{ giorno: 7, blocchi: ['forza-parte-bassa-b1'] }]), /giorno DOPO la partita/)).toHaveLength(1);
+  });
+  it('gli sprint con palla non aspettano più la quinta settimana', () => {
+    const conPalla = ['velocita-a1', 'velocita-e-forza-esplosiva-a1'].map(bloccoById).filter((b): b is NonNullable<typeof b> => !!b);
+    expect(conPalla.length).toBeGreaterThan(0);
+    const { blocchi, note } = filtraVelocitaPliometria(conPalla, { settimaneAllenamento: 1, settimanePlio: 10, tecnicaTraGliObiettivi: false, inSeasonOPreparazione: true, livelloSalti: 'A' });
+    expect(blocchi.map((b) => b.id)).toEqual(conPalla.map((b) => b.id));
+    expect(note.some((n) => /CON PALLA/.test(n))).toBe(false);
   });
 });
