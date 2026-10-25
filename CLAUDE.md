@@ -145,6 +145,7 @@ for-you-football/
 │   ├── trainingLivelli.ts                 # Livello per qualità dai test di quella qualità (mediana bassa; senza test = AMRAP) → blocchi disponibili, validatore, ri-test mirato
 │   ├── trainingMemoriaBlocchi.ts          # Memoria dei blocchi: per famiglia il codice della settimana deciso dal giudizio di fine seduta (facile → successivo, giusto → stesso, duro → short/precedente); il server sostituisce un codice diverso
 │   └── trainingExercise.ts                # esercizioAny(id): vista unificata v1/v2 per player e API
+├── content/audio-scripts/                 # Audio delle pratiche (dal 25/10): copioni per giorno con i registri della voce, pipeline ElevenLabs (voce Stef, eleven_v4) → ffmpeg → Supabase `practice-audio` → campo `Audio Pratica` su Notion. Il README è il documento di passaggio con decisioni e stato: leggerlo prima di toccare gli audio
 ├── scripts/
 │   ├── build-catalog-v2.py / build-blocks.py   # Rigenerano i .generated.ts dal JSON catalogo e dall'export Everfit
 │   ├── build-schede-md.py                 # docs/schede/<gruppo>.md dalle schede del JSON: il file che Ste rivede su GitHub (un gruppo per batch)
