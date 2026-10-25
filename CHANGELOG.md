@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-25 — Migration 033 applicata, Google acceso
+- Ste ha applicato la migration 033 (`user_answer_versions`) e acceso il provider Google su Supabase: l'accesso con Google è attivo in produzione. Annunciato: ri-registrerà tutti gli audio delle pratiche. Solo documentazione.
+
 ## 2026-10-24 — I quattro problemi di Ste in W11 (screenshot)
 - Ste, con quattro screenshot della W11: per ognuno la causa, la correzione, la verifica.
 - **1. Il Protocollo For You si modifica dove lo leggi.** Causa: il box "Le tue risposte" era in sola lettura per scelta del 22/10, e "Non l'hai ancora scritta" in G6 voleva dire che per W11-G4 non c'era testo (la domanda è facoltativa, G4 era stato chiuso senza compilarla, e dopo il completamento il campo è bloccato). Ora nel box di W11 e del Gate 11 e in `/risposte` ogni risposta chiave ha "Modifica" (pre-compilata) o "Scrivilo adesso" (`components/ModificaRispostaSheet.tsx` → `POST /api/risposte`); W11-G4 ha la guida in cinque parti (PRIMA / DURANTE / DOPO / QUANDO NON FUNZIONA / FUORI DAL CAMPO) come il Protocollo Pressione di W4; ogni salvataggio aggiorna `user_day_progress.response` (l'ultima versione, letta da Carta, Coach, Gate e "Le tue risposte") e lascia una riga datata in `user_answer_versions` (migration 033, da applicare; senza, funziona ma senza storico). Test: `tests/risposteGuidate.test.ts`.
