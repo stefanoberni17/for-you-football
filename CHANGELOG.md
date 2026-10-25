@@ -2,8 +2,8 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
-## 2026-10-25 — Migration 033 applicata, Google acceso, Natura rifatta come pioggia
-- Ste: "l'audio natura sembra una strada trafficata". Il rumore marrone filtrato aveva troppe basse. Il loop Natura è rigenerato come pioggia: niente sotto i 500 Hz, sibilo rosa 500-5000 Hz con raffiche lente, un velo bianco 2.5-9 kHz; stessa durata (60") e dimensione. Da ascoltare sul telefono; se non convince, l'alternativa è un suono generato da ElevenLabs (credito di Ste) o un file registrato.
+## 2026-10-25 — Migration 033 applicata, Google acceso, Natura è un bosco con uccelli (ElevenLabs)
+- Ste: "l'audio natura sembra una strada trafficata", poi "natura uccelli bosco, con ElevenLabs, fallo lungo così dura di più". Il loop Natura (`public/audio/nature-meditation.mp3`) è ora un bosco con uccelli generato con ElevenLabs (sound effects, quattro prese da 30" in modalità loop) e montato con ffmpeg in un loop di 1'48": dissolvenze incrociate di 3" tra una presa e l'altra, la fine riattacca sullo stesso punto della prima presa (nessuno stacco), mono 64 kbps, ~845 KB. La pioggia sintetica provata nel pomeriggio è stata scartata. Focus resta quello di ffmpeg: da rifare allo stesso modo se Ste lo trova finto.
 - Ste ha applicato la migration 033 (`user_answer_versions`) e acceso il provider Google su Supabase: l'accesso con Google è attivo in produzione. Annunciato: ri-registrerà tutti gli audio delle pratiche. Solo documentazione.
 
 ## 2026-10-24 — I quattro problemi di Ste in W11 (screenshot)
