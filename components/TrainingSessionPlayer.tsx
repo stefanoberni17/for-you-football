@@ -458,7 +458,7 @@ export default function TrainingSessionPlayer({
                 {votoRidotto && !votoAperto && rpe === null ? (
                   <Button variant="ghost" size="sm" onClick={() => setVotoAperto(true)}>Vota la serie (facoltativo)</Button>
                 ) : (
-                  <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo={isTecnica ? 'tecnica' : 'serie'} ariaPrefix="Serie" />
+                  <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo={isTecnica ? 'tecnica' : isTimed ? 'tempo' : 'serie'} ariaPrefix="Serie" />
                 )}
                 {/* Reps fatte e kg SEMPRE visibili (Ste, 22/9: "se ho fatto fare archer push up 8 reps e uno ne fa 10 facili
                     lo deve considerare per il prossimo"): prefillati col previsto, si cambiano solo se è andata diversa */}

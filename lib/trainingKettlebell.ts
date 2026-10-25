@@ -12,6 +12,7 @@
  *    (lib/trainingPlannerV2: serie ×0.7 sui blocchi con carichi, "kettlebell attivo").
  */
 import { ESERCIZI_V2, esercizioV2ById, type ExerciseV2 } from './trainingCatalogV2';
+import { SERIE_FACILE_MAX } from './rpeScala';
 import type { Blocco, BloccoItem } from './trainingBlocks';
 import type { SetLogRow } from './trainingAdapt';
 import { dataRoma, lunediDi } from './trainingMemoriaBlocchi';
@@ -20,7 +21,7 @@ export type FasciaKb = 'base' | 'intermedio' | 'avanzato';
 export const FASCE_KB: FasciaKb[] = ['base', 'intermedio', 'avanzato'];
 export const KB_SETTIMANE_BASE = 4;
 export const KB_SETTIMANE_INTERMEDIO = 6;
-export const KB_RPE_FACILE = 6;
+export const KB_RPE_FACILE = SERIE_FACILE_MAX; // settimana "facile" = voto medio nella zona facile delle serie (25/10: 4; prima 6)
 export { KB_PASSO_KG, isEsercizioKettlebell } from './trainingDose'; // il passo di 4 kg sta con le altre regole della dose (20/10)
 export const KB_IDS: readonly string[] = ['kb-base', 'kb-intermedio', 'kb-avanzato'];
 export const isKettlebell = (id: string) => id.startsWith('kb-');

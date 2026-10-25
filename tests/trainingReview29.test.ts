@@ -46,6 +46,8 @@ describe('voto seduta: "duro" su tutti i blocchi solo da 9 (29/9)', () => {
     expect(VOTO_SEDUTA_DURO).toBe(9);
     expect(feedbackDaRpe(8)).toBe('ok');
     expect(feedbackDaRpe(9)).toBe('duro');
+    expect(feedbackDaRpe(5)).toBe('facile'); // 25/10: seduta facile fino a 5
+    expect(feedbackDaRpe(6)).toBe('ok');
   });
   it('memoria dei blocchi: con voto 8 e giudizio "giusto" il codice resta; con 9 va in versione breve', () => {
     const disponibili = ['pliometria-rapidita-velocita-b1', 'pliometria-rapidita-velocita-b1-short'].map(bloccoById).filter((b): b is NonNullable<typeof b> => !!b);

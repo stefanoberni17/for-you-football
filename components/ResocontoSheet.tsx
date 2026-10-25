@@ -124,8 +124,8 @@ export default function ResocontoSheet({ open, data, tipo, onClose, onSaved, onS
             {TESTE.map((t) => <Chip key={t.id} selected={testa === t.id} onClick={() => setTesta(testa === t.id ? null : t.id)}>{t.label}</Chip>)}
           </div>
           <Textarea value={testaNota} onChange={(e) => setTestaNota(e.target.value.slice(0, 200))} placeholder="Una riga, se vuoi (la legge il Coach)" rows={2} className="mb-4" />
-          <RpeScale value={votoTecnica} onChange={setVotoTecnica} tipo="sforzo" label="Tecnicamente come sei andato? (1 male, 10 benissimo)" ariaPrefix="Tecnica" className="mb-4" />
-          <RpeScale value={votoFisico} onChange={setVotoFisico} tipo="sforzo" label="Fisicamente come sei andato? (1 male, 10 benissimo)" ariaPrefix="Fisico" />
+          <RpeScale value={votoTecnica} onChange={setVotoTecnica} tipo="giudizio" label="Tecnicamente come sei andato?" ariaPrefix="Tecnica" className="mb-4" />
+          <RpeScale value={votoFisico} onChange={setVotoFisico} tipo="giudizio" label="Fisicamente come sei andato?" ariaPrefix="Fisico" />
         </div>
       </details>
     </Sheet>

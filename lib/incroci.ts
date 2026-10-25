@@ -13,6 +13,7 @@
  * confonderebbe. Le soglie sono una proposta (29/9), da tarare sui dati.
  */
 import { addDays, type AzioniGiorno, type CheckinRow } from './carta';
+import { DURA_MIN } from './rpeScala';
 
 export const INCROCI_FINESTRA_GIORNI = 56;   // 8 settimane: servono più dati del rombo (4)
 export const INCROCI_MAX = 2;
@@ -21,7 +22,7 @@ export const INCROCI_MIN_SEDUTE_DURE = 3;
 export const INCROCI_MIN_SETTIMANE = 2;      // per lato (pesanti / altre)
 export const SONNO_POCO_ORE = 6;
 export const SONNO_OK_ORE = 7;
-export const VOTO_SEDUTA_DURA_INCROCI = 8;   // "seduta dura" per gli incroci (la memoria dei blocchi usa 9)
+export const VOTO_SEDUTA_DURA_INCROCI = DURA_MIN;   // "seduta dura" = la zona dura della scala (25/10: 7; prima 8; la memoria dei blocchi manda in short solo da 9)
 export const MENTALE_ALTO = 7;
 export const MENTALE_BASSO = 5;
 export const CARICO_PESANTE_FATTORE = 1.15;  // settimana pesante = carico ≥ 1.15 × mediana delle settimane con sedute

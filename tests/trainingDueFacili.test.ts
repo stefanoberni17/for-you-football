@@ -26,15 +26,23 @@ describe('dose per esercizio: conferma dopo una seduta, sali dopo due facili di 
   });
   it('due sedute di fila facili (tutto fatto, RPE ≤ FACILE_RPE_MAX) → SALI di un passo', () => {
     expect(SEDUTE_FACILI_PER_SALIRE).toBe(2);
-    const logs = [...seduta('s2', 3, 'fpa-diamond-push-up', 8, [10, 10, 10], FACILE_RPE_MAX), ...seduta('s1', 10, 'fpa-diamond-push-up', 8, [9, 9, 9], 5)];
+    expect(FACILE_RPE_MAX).toBe(4); // 25/10: la zona facile delle serie, non più 6
+    const logs = [...seduta('s2', 3, 'fpa-diamond-push-up', 8, [10, 10, 10], FACILE_RPE_MAX), ...seduta('s1', 10, 'fpa-diamond-push-up', 8, [9, 9, 9], 4)];
     const r = riepilogoEsercizi(logs)[0];
     expect(r.suggerimento).toBe('sali');
     const [out] = adattaItems([item('fpa-diamond-push-up', 8)], { storico: [r], squilibri: null });
     expect(out.quantita).toBe(11); // da 10 fatte + 1
   });
   it('una seduta facile e una dura prima: niente passo', () => {
-    const logs = [...seduta('s2', 3, 'fpa-diamond-push-up', 8, [8, 8, 8], 5), ...seduta('s1', 10, 'fpa-diamond-push-up', 8, [8, 8, 7], 8)];
+    const logs = [...seduta('s2', 3, 'fpa-diamond-push-up', 8, [8, 8, 8], 4), ...seduta('s1', 10, 'fpa-diamond-push-up', 8, [8, 8, 7], 8)];
     expect(riepilogoEsercizi(logs)[0].suggerimento).toBe('tieni');
+  });
+  it('due sedute a voto 5 (zona "giusta" delle serie, 25/10): niente passo', () => {
+    const logs = [...seduta('s2', 3, 'fpa-diamond-push-up', 8, [8, 8, 8], 5), ...seduta('s1', 10, 'fpa-diamond-push-up', 8, [8, 8, 8], 5)];
+    expect(riepilogoEsercizi(logs)[0].suggerimento).toBe('tieni');
+  });
+  it('più del previsto con voto 7 (zona "dura", 25/10): tieni, non conferma', () => {
+    expect(riepilogoEsercizi(seduta('s1', 3, 'fpa-diamond-push-up', 8, [10, 10, 10], 7))[0].suggerimento).toBe('tieni');
   });
   it('più del previsto ma "difficile" (RPE 8): tieni', () => {
     expect(riepilogoEsercizi(seduta('s1', 3, 'fpa-diamond-push-up', 8, [10, 10, 10], 8))[0].suggerimento).toBe('tieni');

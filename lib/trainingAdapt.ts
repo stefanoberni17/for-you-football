@@ -19,6 +19,7 @@
  * - e1RM con carico: Brzycki su reps + RIR, dove RIR = 10 − RPE (cap 4).
  */
 import { stima1RM } from './trainingRulesV2';
+import { DURA_MIN, SERIE_FACILE_MAX } from './rpeScala';
 import { doseTesto, fmtDose, programmaDaiLog, prossimaDose } from './trainingDose';
 
 export interface SetLogRow {
@@ -38,12 +39,12 @@ export interface SetLogRow {
 
 /** 'conferma' (18/10): ha fatto più del previsto una volta sola → la dose riparte da quanto ha fatto, senza un passo in più. */
 export type Suggerimento = 'sali' | 'tieni' | 'scendi' | 'conferma';
-/** Una seduta è "facile" se tutte le serie sono state fatte e il voto medio è entro questo (RpeScale: 4-6 = giusta, 7-8 dura). Valore a tavolino. */
-export const FACILE_RPE_MAX = 6;
+/** Una seduta è "facile" se tutte le serie sono state fatte e il voto medio è entro questo: la zona "facile" della scala delle serie (`lib/rpeScala.ts`, 25/10: 4; prima 6, che sulla scala è "impegnativa"). */
+export const FACILE_RPE_MAX = SERIE_FACILE_MAX;
 /** Si sale (passo in più su reps, secondi, kg; gradino successivo) solo con questo numero di sedute facili di fila (Ste, 18/10: "se facile per 2 sessioni di fila"). */
 export const SEDUTE_FACILI_PER_SALIRE = 2;
-/** Da qui in su la seduta è "difficile": le reps in più non contano per il gradino (Ste, 18/10). */
-export const DIFFICILE_RPE_MIN = 8;
+/** Da qui in su la seduta è "difficile": le reps in più non contano per il gradino (Ste, 18/10). È l'inizio della zona "dura" (25/10: 7; prima 8). */
+export const DIFFICILE_RPE_MIN = DURA_MIN;
 
 export interface RiepilogoEsercizio {
   esercizioId: string;

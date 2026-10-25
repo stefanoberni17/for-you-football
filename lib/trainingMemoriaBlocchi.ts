@@ -15,6 +15,7 @@
  * contano: il codice si decide dalle settimane precedenti, così un "Modifica" a metà settimana non lo cambia.
  */
 import type { Blocco } from './trainingBlocks';
+import { SEDUTA_FACILE_MAX } from './rpeScala';
 import { BLOCCHI, bloccoById, bloccoHaSoloLivelloSopra } from './trainingBlocks';
 import { LIVELLO_ORDINE, type LivelloMinV2, type QualitaV2 } from './trainingCatalogV2';
 import { isParteAlta } from './trainingParteAlta';
@@ -78,7 +79,8 @@ const FAMIGLIE_ESCLUSE = new Set(['test', 'riscaldamento']);
  * di una seduta di forza, e con la soglia a 8 ogni famiglia tornava short una settimana sì e una no.
  */
 export const VOTO_SEDUTA_DURO = 9;
-export const feedbackDaRpe = (rpe: number): Giudizio => (rpe <= 4 ? 'facile' : rpe >= VOTO_SEDUTA_DURO ? 'duro' : 'ok');
+/** Giudizio dal voto della seduta: "facile" fino a SEDUTA_FACILE_MAX (Ste, 25/10: 5; prima 4), "duro" da VOTO_SEDUTA_DURO. */
+export const feedbackDaRpe = (rpe: number): Giudizio => (rpe <= SEDUTA_FACILE_MAX ? 'facile' : rpe >= VOTO_SEDUTA_DURO ? 'duro' : 'ok');
 
 /** Chiave del codice: la short e la soft sono varianti dello stesso codice. */
 /** "-short", "-soft" e "-in-season" (Ste, 16/10: la versione in stagione è la variante più corta dello stesso codice) sono lo stesso codice. */
