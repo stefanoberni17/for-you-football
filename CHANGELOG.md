@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Audio delle pratiche: W4 scritto, generato e online
+- Ste: "vai con w4". Cinque copioni (W4 G1 G2 G3 G4 G5; G6 e G7 senza audio) in `content/audio-scripts/_build/b1.py` dai testi Notion: le domande fuori/dentro di G1, le tre domande del segnale di G2, Senti / Nota / Torna di G3, i cinque passi del Protocollo Pressione detti a voce in G4 (le parti facoltative restano scritte nell'app, l'avviso di sicurezza una volta sola prima di iniziare), le due domande di G5. 81 segmenti ElevenLabs (~11.000 crediti, 2,40 dollari), 10 dalla cache; montati, -17 LUFS, caricati nel bucket `practice-audio` come `W4-G<n>.mp3` e collegati nel campo `Audio Pratica`. `Durata Minuti`: G1 7, G2 6→5, G3 6→8, G4 10→9, G5 7. Ste deve ancora ascoltare W2, W3 e W4.
+
 ## 2026-10-26 — Audio delle pratiche: W3 scritto, generato e online
 - Ste: "vai con w3". Cinque copioni nuovi in `content/audio-scripts/_build/b1.py` (W3 G1 G2 G3 G4 G6 breve) presi dai testi Notion del DB Giorni: il Body Check guidato zona per zona (piedi → stomaco → petto → spalle, 8-10" di silenzio per zona, helper `bodycheck()`), W3-G2 scena 30" + Body Check + Reset + Body Check, W3-G3 la firma del gioco libero, W3-G4 le tre fasi (2+4+6 minuti) con la sequenza ripetuta tre volte (`giro_g4()`), W3-G6 breve. 89 segmenti generati con ElevenLabs (~10.500 crediti, 2,30 dollari), 10 dalla cache; montati, normalizzati a -17 LUFS, caricati nel bucket `practice-audio` come `W3-G<n>.mp3` e collegati nel campo `Audio Pratica`. `Durata Minuti` allineata all'audio: G1 5, G2 6→7, G3 6→8, G4 14→16 (15:43: le fasi sono rispettate, apertura e passaggi fanno il resto), G6 4. Ste deve ancora ascoltare W2 e W3.
 
