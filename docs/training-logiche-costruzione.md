@@ -547,3 +547,86 @@ partita oltre alle isometrie~~ → decisa il 26/10 (§E7).
    `training_session_completions.rpe` (select con fallback senza la colonna). Non passa dal validatore (come
    `applicaResoconti`): il passo è dentro i tetti di `prossimaDose`.
 
+### E8. Il ri-test integrato negli allenamenti (Ste, 26/10): studio, non ancora codice
+
+**Cosa dice Ste.** "Nel giorno dei ri-test non può proporti così. Dovremmo farlo quasi integrato negli allenamenti, non
+si può ritestare tutto lo stesso giorno. Io farei ogni 4 settimane quelli di forza, eventualmente anche quelli di
+tecnica, ma facendo fare solo gli esercizi che selezioniamo che erano nell'ultimo gradino per salire. Resistenza e
+velocità devono proprio essere fatti lontano, nei periodi di pausa o in off season, oppure chiesti esplicitamente:
+deve stare bene fisicamente e non avere più di 3 allenamenti in settimana."
+
+**Com'è oggi.**
+- `cicloInfo` (`lib/trainingPlanner.ts`): scarico ogni quarta settimana, ri-test "dovuto" la settimana dopo (5, 9,
+  13…) finché non viene chiusa una batteria (`training_test_sessions.completed_at`). L'hub mostra la card "È ora del
+  ri-test" con il bottone verso `/allenamento/test`, che propone TUTTA la batteria: 21 test v1 (8 catene a corpo libero,
+  4 di palleggi/muro, 7 di fascia, l'AMRAP) e 27 v2 (1 km, 3 km, navetta, ankle jump ×3, wall sit ×3, affondo iso ×2,
+  50 m, T-sprint, broad jump ×3, tiri e passaggi ×4, 7 massimali in palestra). La regola 12 del prompt invita a rifarli
+  "idealmente 2 giorni dopo la partita".
+- Il ri-test MIRATO (25/9, `ritestMirato` nello state): per le famiglie di blocchi a fine codici del proprio livello
+  (`famiglieAlTetto`) l'hub dice "Da rifare prima: …" con i test di quella qualità (`testIdsPerQualita`). È solo un
+  suggerimento, i test si fanno a mano dalla pagina.
+- Nessun test entra nelle sedute. Però dal 18/10 esiste `sogliaRaggiuntaInSeduta` (`lib/trainingProgressione.ts`): se
+  in seduta almeno metà delle serie di un esercizio di catena arriva alla soglia del gradino, il piano dopo passa al
+  gradino successivo "come se il test fosse passato". Non scrive un risultato in `training_test_results`: la scala
+  (`ladderForArea`) e la Card non lo vedono.
+- Le scale skill (`ladderForArea`): per ogni catena il gradino più alto sopra soglia (`amrap`) e il prossimo esercizio
+  da testare (`next`, con la SUA soglia: spinta 20 → 10 → 5, tirata 10 → 5, tenute 60", gambe le `SOGLIE_GAMBE`). Il
+  test di un gradino è "massimo di ripetizioni pulite" (o secondi) su quell'esercizio: `POST /api/training/test
+  { skill_esercizio_id, valore }`.
+
+**Proposta (deterministica, zero Claude).**
+1. **Tre gruppi di test, tre regole diverse.**
+   - **Forza, in seduta** (catene v1: spinta, tirata, core, lombari, squat, affondi, RDL, bridge; test da campo a corpo
+     libero: wall sit, affondo isometrico, broad jump, ankle jump). Ogni 4 settimane, nella settimana dopo lo scarico
+     (quella che oggi è "ri-test dovuto"), il server mette nelle sedute fisiche normali una **serie test** sul solo
+     esercizio del gradino da sbloccare: per ogni catena il `next` di `ladderForArea` (il gradino sopra l'`amrap`) se
+     l'atleta nelle ultime settimane ha tenuto la dose al tetto (+30 %) o `sogliaRaggiuntaInSeduta` ha già detto che ci
+     è arrivato; se la scala non ha un `next` (completa) o non è mai stata testata, niente. La serie test è il PRIMO
+     item della parte di quella catena nella seduta: `schema: 'max_reps'`, una serie, "massimo di ripetizioni pulite,
+     poi recupero pieno", il player chiede il numero e lo salva come risultato (`skill:<id>`, aprendo e chiudendo una
+     sessione test "in seduta" così `cicloInfo` vede il test fatto); le serie programmate di quell'esercizio restano
+     (eventualmente una in meno). **Al massimo 2 serie test per seduta** e mai nelle sedute a ±1 giorno dalla partita;
+     se ci sono più catene da testare si spalmano sulle sedute della settimana (e sulla successiva, se non bastano). I
+     test da campo (wall sit, affondo iso, broad jump, ankle jump) entrano con la stessa logica SOLO per le qualità
+     delle famiglie a fine codici (`ritestMirato`), 1 per seduta, come item test in coda al riscaldamento. I massimali
+     in palestra (7 lift) restano a mano dalla pagina test, solo con `palestra` tra gli attrezzi.
+   - **Tecnica, in seduta, se Ste vuole** ("eventualmente"): nelle stesse settimane, dentro la giornata di tecnica, i
+     test di palleggi (forte, debole, testa, piramide) e muro come item test, 2 per seduta; tiri alla traversa e
+     passaggi al palo solo con il campo. Oppure restano a mano: da decidere.
+   - **Resistenza e velocità, mai in automatico in season** (1 km, 3 km, navetta 30", 50 m, T-sprint). Proposti dal
+     server SOLO (a) in off season, o (b) in "pausa": nessuna partita nel calendario della settimana né nell'abitudine
+     (`matchDays` vuoti) e nessun giorno squadra (`trainingDays` vuoti) per questa settimana e la prossima. In season si
+     possono fare SOLO su richiesta esplicita dalla pagina test, e anche lì con i **guardrail** di Ste: check-in di
+     oggi con fisico ≥ 7 e recupero ≥ 7 (soglie a tavolino), al massimo 3 giornate squadra nella settimana (calendario
+     o abitudine), almeno 2 giorni dopo la partita e 3 prima (le finestre della resistenza), non nella settimana di
+     scarico, non in pausa dolore. Sotto i guardrail la pagina test mostra quei test con il lucchetto e il motivo ("hai
+     4 allenamenti con la squadra questa settimana", "la partita è tra 2 giorni", "oggi il recupero è 4"). Il livello di
+     resistenza e velocità resta quello dell'ultimo test fatto, senza scadenza; la regola 12 e `ritestDue` non li
+     chiedono più.
+2. **Cosa cambia nell'hub e nella pagina test.** La card "È ora del ri-test" diventa "Questa settimana i test sono dentro
+   le sedute" con l'elenco (es. "mercoledì: Piegamenti arciere, Wall sit; venerdì: Trazioni"), più il link alla
+   pagina test per chi vuole farli a mano; `ritestDue` si spegne quando le serie test della settimana sono fatte (o
+   saltate due volte: poi si ripropongono la settimana dopo). La pagina `/allenamento/test` resta per i test manuali,
+   con i blocchi di resistenza e velocità sotto i guardrail, e un blocco in testa "Da fare in seduta questa settimana".
+3. **Cosa NON cambia.** Il ciclo di 4 settimane con lo scarico alla quarta (M11 "scarico dai dati" resta un punto a
+   parte), il ri-test mirato per le famiglie a fine codici (diventa la lista delle serie test), `sogliaRaggiuntaInSeduta`
+   (che ora, in più, scriverebbe il risultato).
+4. **Dove vive.** `lib/trainingRitest.ts` (puro, con i test): `serieTestDellaSettimana(ctx)` → per catena l'esercizio
+   da testare e in quale seduta; `guardrailResistenzaVelocita(checkin, calendario, fase, ciclo, pain)` → ok o il
+   motivo; `expandPiano` inserisce gli item test (trustBlocks, fuori dai bounds); il player gestisce `max_reps` (oggi fa
+   solo serie fisse ed EMOM: è la parte UI); `POST /api/training/test` accetta `{ skill_esercizio_id, valore, in_seduta:
+   true }`; lo state ritorna `ritest.inSeduta[]` e `ritest.bloccati[]`. Ore: 10-14, incl. test.
+
+**Domande per Ste (si parte dopo).**
+1. "Solo gli esercizi che erano nell'ultimo gradino per salire": vale la mia lettura (il gradino SOPRA l'ultimo passato,
+   quando negli allenamenti ha tenuto la dose al tetto o ha già toccato la soglia in seduta), oppure vuoi ri-testare
+   anche il gradino attuale per confermare il livello?
+2. Quante serie test per seduta: 2 (la mia proposta) o 1?
+3. La serie test al posto della prima serie programmata di quell'esercizio, o in più (seduta ~3-5' più lunga)?
+4. Tecnica: dentro la giornata di tecnica ogni 4 settimane, o resta a mano dalla pagina test?
+5. Guardrail per resistenza e velocità su richiesta: fisico e recupero del check-in ≥ 7 va bene? "non più di 3
+   allenamenti in settimana" = giornate squadra (calendario o abitudine), le sedute dell'app non contano?
+6. In off season i test di resistenza e velocità li propone il server (una settimana sì, con la 1 km o la 3 km in una
+   giornata e 50 m + T-sprint in un'altra, mai nello stesso giorno), o anche lì solo su richiesta?
+7. Massimali in palestra: a mano dalla pagina test, mai in seduta (la mia proposta)?
+
