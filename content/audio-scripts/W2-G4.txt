@@ -1,0 +1,58 @@
+[sincere]
+Hai iniziato a dare un nome ai pensieri. Ieri hai guardato da vicino il tuo giudizio.
+[SILENZIO 2]
+Oggi li guardi mentre si muovono, e provi a lasciarli passare, uno per uno. Se qualcuno resta, va bene lo stesso.
+[SILENZIO 2]
+[relaxed]
+È il giorno più importante della settimana. Detto così sembra una finale. In realtà sono dieci minuti seduto e tre righe da scrivere.
+[SILENZIO 3]
+[meditative]
+Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.
+[SILENZIO 2]
+Reset.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Adesso cinque minuti di Observer puro. Lascia arrivare i pensieri, e dai loro un nome senza fretta.
+Ogni volta che arriva un pensiero, qualsiasi tipo, usa il ciclo completo.
+Inspira: osservi il pensiero. Nomini: Passato, Futuro o Giudizio. Espiri: immagina che esca, come una nuvola che passa.
+[SILENZIO 3]
+Il ciclo è un appoggio, non una regola. Se i pensieri arrivano più veloci, nominali e torna al respiro quando puoi.
+[SILENZIO 2]
+Se un pensiero non se ne va, va bene. Non deve sparire. Se torna, lo nomini di nuovo, e resti sul respiro.
+[SILENZIO 2]
+Vai.
+[SILENZIO 48]
+Inspira, osservi. Nomini. Espiri, e lo lasci uscire.
+[SILENZIO 45]
+Se è arrivato qualcosa di simile al giudizio che hai scritto ieri, guardalo con la stessa attenzione. Non devi risolverlo. Solo vederlo, e lasciarlo andare.
+[SILENZIO 48]
+Non c'è fretta. Un pensiero, un nome, un'espirazione.
+[SILENZIO 45]
+Se la testa è andata via, va bene. Te ne sei accorto: è già Observer. Torna al respiro.
+[SILENZIO 48]
+Ultimo minuto. Solo guardare.
+[SILENZIO 43]
+Bene. Torna qui.
+[SILENZIO 2]
+Senti come stai adesso, dopo cinque minuti a guardare.
+[SILENZIO 5]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app i tre pensieri che sono tornati più spesso. Per ognuno: che tipo era, e in quale momento del gioco ti arriva di solito.
+Se sono meno di tre, scrivi quelli che hai. Non giudicarli. Solo mettili in fila.
