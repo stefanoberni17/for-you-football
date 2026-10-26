@@ -6,17 +6,19 @@ import { BookOpen, ChevronRight, PenLine } from 'lucide-react';
 import { authFetch } from '@/lib/authFetch';
 import { Button } from '@/components/ui';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
-import { chiaviPerGiorno, testoRisposta, type RispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
+import { chiaviPerGiorno, testoChiave, type RispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
 
 /**
  * "Le tue risposte" dentro un giorno del percorso (22/10, review W11): nei giorni elencati in
  * `DA_MOSTRARE` mostra le risposte chiave che il testo di Notion richiama ("le trovi qui sotto"),
  * una per riga, chiuse di default, con il link alla pagina /risposte. Se una risposta manca
  * (giorno saltato o risposta non scritta) lo dice, senza bloccare niente.
- * Fuori dai giorni elencati non rende nulla.
+ * Dal 26/10 (Carta modificabile) anche i riquadri della Carta che Notion chiede con "Mostra Carta" (`mostraCarta`),
+ * con il titolo "Questo è quello che avevi scritto". Fuori dai giorni elencati non rende nulla.
  */
-export default function RisposteChiaveBox({ week, day, className = '' }: { week: number; day: number; className?: string }) {
-  const chiavi = chiaviPerGiorno(week, day);
+export default function RisposteChiaveBox({ week, day, mostraCarta, className = '' }: { week: number; day: number; mostraCarta?: string[] | null; className?: string }) {
+  const chiavi = chiaviPerGiorno(week, day, mostraCarta);
+  const daNotion = !!mostraCarta?.length;
   const [rows, setRows] = useState<RispostaRow[] | null>(null);
   const [errore, setErrore] = useState(false);
   const [modifica, setModifica] = useState<RispostaChiave | null>(null);
@@ -36,9 +38,9 @@ export default function RisposteChiaveBox({ week, day, className = '' }: { week:
       }
     })();
     return () => { vivo = false; };
-    // chiavi dipende solo da week e day
+    // chiavi dipende solo da week, day e dalla lista di Notion
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [week, day]);
+  }, [week, day, (mostraCarta ?? []).join(',')]);
 
   if (!chiavi) return null;
 
@@ -56,12 +58,12 @@ export default function RisposteChiaveBox({ week, day, className = '' }: { week:
 
   return (
     <div className={`border-t border-divider pt-3 ${className}`}>
-      <p className="text-overline uppercase tracking-wider font-bold text-muted mb-1">Le tue risposte</p>
+      <p className="text-overline uppercase tracking-wider font-bold text-muted mb-1">{daNotion ? 'Questo è quello che avevi scritto' : 'Le tue risposte'}</p>
       {errore && <p className="text-body-sm text-muted">Non sono riuscito a caricarle. Le trovi nel Profilo, in «Le tue risposte».</p>}
       {!errore && rows === null && <p className="text-body-sm text-faint">Carico le tue risposte…</p>}
       {!errore && rows !== null && chiavi.map((c: RispostaChiave) => {
         const row = rows.find((r) => r.week === c.week && r.day === c.day);
-        const testo = row ? testoRisposta(row) : null;
+        const testo = testoChiave(row, c);
         return (
           <details key={`${c.week}-${c.day}`} className="group border-b border-divider last:border-b-0">
             <summary className="min-h-[48px] flex items-center gap-2 cursor-pointer list-none select-none">
@@ -92,14 +94,16 @@ export default function RisposteChiaveBox({ week, day, className = '' }: { week:
         <ModificaRispostaSheet
           week={modifica.week}
           day={modifica.day}
-          testoIniziale={(rows || []).find((r) => r.week === modifica.week && r.day === modifica.day)?.risposta || ''}
+          testoIniziale={testoChiave((rows || []).find((r) => r.week === modifica.week && r.day === modifica.day), modifica) || ''}
           open
           onClose={() => setModifica(null)}
           onSalvata={(t) => setRows((prev) => {
             const lista = prev ? [...prev] : [];
             const i = lista.findIndex((r) => r.week === modifica.week && r.day === modifica.day);
             const base: RispostaRow = i >= 0 ? lista[i] : { week: modifica.week, day: modifica.day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null };
-            const nuova = { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
+            const nuova: RispostaRow = modifica.gateQ
+              ? { ...base, gateQ: { q1: null, q2: null, q3: null, ...(base.gateQ ?? {}), [modifica.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
+              : { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
             if (i >= 0) lista[i] = nuova; else lista.push(nuova);
             return lista;
           })}

@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { GATE_DAY } from '@/lib/constants';
 import { checkDayUnlocked, parseWeekDay, settimanaProntaPerIlGate } from '@/lib/serverUnlock';
+import { rispostaChiaveInfo } from '@/lib/risposteChiave';
+import { registraVersione } from '@/lib/risposteServer';
 
 export const maxDuration = 60;
 
@@ -138,6 +140,9 @@ export async function POST(request: NextRequest) {
 
     if (upsertError) throw upsertError;
     logEvent(userId, 'gate_completed', { week: weekNumber });
+    // Carta modificabile (26/10): una risposta del Gate che è un riquadro della Carta (la mappa, Gate 3 q1) ha la sua prima versione
+    const chiaveGate = rispostaChiaveInfo(weekNumber, GATE_DAY);
+    if (chiaveGate?.gateQ && answers[chiaveGate.gateQ]) void registraVersione(userId, weekNumber, GATE_DAY, answers[chiaveGate.gateQ]);
 
     // Avanza current_week nel profilo (se non già oltre).
     // Modello subscription-based: l'accesso ai contenuti è gestito da /login e / (dashboard).

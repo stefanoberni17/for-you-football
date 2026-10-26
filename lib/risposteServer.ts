@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { GATE_DAY } from '@/lib/constants';
-import { RISPOSTE_CHIAVE, isRispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
+import { RISPOSTE_CHIAVE, rispostaChiaveInfo, type RispostaRow, type VersionePrecedente } from '@/lib/risposteChiave';
 
 /**
  * Le risposte scritte durante il percorso, lette dal server (per /api/risposte e per il Coach).
@@ -29,6 +29,12 @@ function gateList(g: Record<string, unknown> | null): string[] | null {
     .map((k) => (typeof g[k] === 'string' ? (g[k] as string) : ''))
     .filter((s) => s.trim());
   return out.length ? out : null;
+}
+
+function gateQ(g: Record<string, unknown> | null): RispostaRow['gateQ'] {
+  if (!g) return null;
+  const q = (k: string) => (typeof g[k] === 'string' && (g[k] as string).trim() ? (g[k] as string) : null);
+  return { q1: q('q1'), q2: q('q2'), q3: q('q3') };
 }
 
 /**
@@ -89,6 +95,7 @@ export async function loadRisposte(userId: string, filtro?: Array<[number, numbe
       risposta,
       prePratica,
       gate,
+      gateQ: p.day_number === GATE_DAY ? gateQ(p.gate_answers) : null,
       completedAt: p.completed_at,
     });
   }
@@ -105,48 +112,97 @@ export async function loadRisposteChiave(userId: string): Promise<RispostaRow[]>
   }
 }
 
+export const VERSIONI_PRECEDENTI_MAX = 2;
+
+/**
+ * Le versioni PRECEDENTI di ogni risposta chiave (26/10, per il Coach): per ogni giorno chiave le ultime
+ * `max` righe di `user_answer_versions` dopo la più recente (che è il testo attuale). Fail-soft: [].
+ */
+export async function loadVersioniPrecedenti(userId: string, max = VERSIONI_PRECEDENTI_MAX): Promise<VersionePrecedente[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('user_answer_versions')
+      .select('week_number, day_number, testo, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(200);
+    if (error || !data) return [];
+    const viste = new Map<string, number>();
+    const out: VersionePrecedente[] = [];
+    for (const v of data as Array<{ week_number: number; day_number: number; testo: string; created_at: string }>) {
+      if (!rispostaChiaveInfo(v.week_number, v.day_number)) continue;
+      const k = `${v.week_number}-${v.day_number}`;
+      const n = (viste.get(k) ?? 0) + 1;
+      viste.set(k, n);
+      if (n === 1) continue; // la più recente è il testo attuale
+      if (n > max + 1) continue;
+      out.push({ week: v.week_number, day: v.day_number, testo: v.testo, createdAt: v.created_at });
+    }
+    return out;
+  } catch { return []; }
+}
+
 export const RISPOSTA_MAX = 4000;
 
 /**
  * Aggiorna una risposta chiave (24/10): nuova versione in `user_answer_versions` (fail-soft) e
  * l'ultima in `user_day_progress.response` + `day_reflections.reflection_text`, dove la leggono
- * tutti. Solo per i giorni chiave già aperti (una riga in user_day_progress).
+ * tutti. Dal 26/10: per la mappa (Gate 3, q1) aggiorna `gate_answers.q1`; per un riquadro della
+ * Carta mai aperto ("Scrivi" a posteriori) crea la riga del giorno senza completarlo. Il Gate va
+ * comunque passato prima (409 `giorno_non_aperto`).
  */
 export async function salvaRisposta(userId: string, week: number, day: number, testo: string): Promise<{ ok: true; skipped?: string } | { ok: false; status: number; error: string }> {
-  if (!isRispostaChiave(week, day)) return { ok: false, status: 400, error: 'non_chiave' };
+  const chiave = rispostaChiaveInfo(week, day);
+  if (!chiave) return { ok: false, status: 400, error: 'non_chiave' };
   const pulito = testo.trim().slice(0, RISPOSTA_MAX);
   if (!pulito) return { ok: false, status: 400, error: 'vuota' };
   const { data: riga, error: e0 } = await supabaseAdmin
     .from('user_day_progress')
-    .select('id, response, completed_at')
+    .select('id, response, gate_answers, completed_at')
     .eq('user_id', userId)
     .eq('week_number', week)
     .eq('day_number', day)
     .maybeSingle();
   if (e0) throw e0;
-  if (!riga) return { ok: false, status: 409, error: 'giorno_non_aperto' };
-  const prima = riga as { id: string; response: string | null; completed_at: string | null };
+  const prima = riga as { id: string; response: string | null; gate_answers: Record<string, unknown> | null; completed_at: string | null } | null;
+  if (!prima && (chiave.gateQ || !chiave.carta)) return { ok: false, status: 409, error: 'giorno_non_aperto' };
 
   // Una risposta scritta PRIMA della migration 033 non ha la sua prima versione: la si mette in
   // storico adesso (con la data del completamento), così la modifica non la cancella.
-  const vecchia = (prima.response || '').trim();
+  const vecchia = (chiave.gateQ ? (typeof prima?.gate_answers?.[chiave.gateQ] === 'string' ? (prima!.gate_answers![chiave.gateQ] as string) : '') : prima?.response || '').trim();
   if (vecchia && vecchia !== pulito) {
     const { count } = await supabaseAdmin
       .from('user_answer_versions')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId).eq('week_number', week).eq('day_number', day)
       .then((r) => r, () => ({ count: null }));
-    if (count === 0) await registraVersione(userId, week, day, vecchia, prima.completed_at);
+    if (count === 0) await registraVersione(userId, week, day, vecchia, prima?.completed_at);
   }
 
-  const { error: e1 } = await supabaseAdmin
-    .from('user_day_progress')
-    .update({ response: pulito })
-    .eq('id', prima.id);
-  if (e1) throw e1;
-  await supabaseAdmin
-    .from('day_reflections')
-    .upsert({ user_id: userId, week_number: week, day_number: day, reflection_text: pulito, updated_at: new Date().toISOString() }, { onConflict: 'user_id,week_number,day_number' });
+  if (chiave.gateQ) {
+    const { error: e1 } = await supabaseAdmin
+      .from('user_day_progress')
+      .update({ gate_answers: { ...(prima!.gate_answers ?? {}), [chiave.gateQ]: pulito } })
+      .eq('id', prima!.id);
+    if (e1) throw e1;
+  } else if (prima) {
+    const { error: e1 } = await supabaseAdmin
+      .from('user_day_progress')
+      .update({ response: pulito })
+      .eq('id', prima.id);
+    if (e1) throw e1;
+  } else {
+    // "Scrivi" su un riquadro della Carta di un giorno mai aperto: la riga nasce qui, non completata
+    const { error: e1 } = await supabaseAdmin
+      .from('user_day_progress')
+      .upsert({ user_id: userId, week_number: week, day_number: day, response: pulito, completed: false }, { onConflict: 'user_id,week_number,day_number' });
+    if (e1) throw e1;
+  }
+  if (!chiave.gateQ) {
+    await supabaseAdmin
+      .from('day_reflections')
+      .upsert({ user_id: userId, week_number: week, day_number: day, reflection_text: pulito, updated_at: new Date().toISOString() }, { onConflict: 'user_id,week_number,day_number' });
+  }
   const skipped = await registraVersione(userId, week, day, pulito);
   return skipped ? { ok: true, skipped } : { ok: true };
 }
