@@ -5,6 +5,8 @@ import { aumentiNellaSettimana } from '@/lib/trainingAumenti';
 import { giorniAllaPartita, giorniDallaPartita } from '@/lib/trainingRulesV2';
 import { candidatiCampo, candidatiForza, candidatiPalestra, GRUPPI_LONTANO, guardrailResistenzaVelocita, inserisciSerieTest, propostaOffSeason, settimanaDiRitest, type Guardrail, type GruppoLontano, type RisultatoConData } from '@/lib/trainingRitest';
 import { giorniSquadra } from '@/lib/trainingLoad';
+import { calendarioHash, conflittiCalendario, conflittoRiga } from '@/lib/trainingCalendario';
+import { validatePlan } from '@/lib/trainingEngine';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
@@ -151,9 +153,10 @@ export async function GET(request: NextRequest) {
     let completions: { session_key: string; feedback: string | null; rpe?: number | null }[] = [];
     let pianiQuestaSettimana = 0;
     if (lastPlan?.id) {
-      const { data: piani } = await supabaseAdmin.from('training_plans').select('id')
+      const { data: piani } = await supabaseAdmin.from('training_plans').select('id, plan')
         .eq('user_id', userId).eq('week_start', lastPlan.week_start);
-      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).length;
+      // M8: i piani salvati dall'adattamento al calendario (zero Claude) non contano nel tetto delle rigenerazioni
+      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).filter((p: { plan?: { adattato_calendario?: string } }) => !p.plan?.adattato_calendario).length;
       const ids = (piani || []).map((p: { id: string }) => p.id);
       // Con il voto della seduta (migration 026): serve a M5 (aumenti in settimana); se la colonna manca, senza
       const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols).eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
@@ -248,6 +251,7 @@ export async function GET(request: NextRequest) {
       planAdattato = { ...planAdattato, plan: ritestInSeduta.plan };
     }
     const dowOggi = oggiDowRome();
+    const planStaleFlag = !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome();
     const lontano = Object.fromEntries(GRUPPI_LONTANO.map((gruppo) => [gruppo, guardrailResistenzaVelocita({
       gruppo, obiettivi: focusSetup,
       fase: setup.fase, checkin: checkinOggi ? { fisico: checkinOggi.fisico, recupero: checkinOggi.recupero } : null,
@@ -261,8 +265,24 @@ export async function GET(request: NextRequest) {
       lontano, // resistenza, velocità e navetta su richiesta: per gruppo, ok o i motivi del lucchetto
       proposte: propostaOffSeason({ fase: setup.fase, settimanaDelCiclo: ciclo.settimana, sedute: planAdattato?.plan?.sedute ?? [], oggiDow: dowOggi, results: rowsConData, oggi, campo }),
     };
+    // M8 (26/10): il calendario è cambiato? Le sedute del piano (non fatte, non passate) che non ci stanno più con la
+    // partita e i giorni di adesso; l'hub chiede "adatto la settimana?" e POST /api/training/plan/adatta le sposta.
+    // I giorni del setup contano solo per il piano automatico (senza richiesta dalla maschera)
+    let calendarioConflitti: { righe: string[]; giorni: number[]; hash: string } | null = null;
+    if (planAdattato?.plan?.sedute?.length && !planStaleFlag) {
+      const validateCtx = {
+        fascia, matchDays: matchDaysEff, trainingDays: trainingDaysEff, painHold: profile?.training_pain_hold === true,
+        hasSbarra: setup.attrezzatura.includes('sbarra') || rows.some((r) => r.test_id === 'test-pull'),
+        v2: { livello: fascia, livelloPerQualita: livelli, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, eta: null, esperienzaPalestra: setup.esperienzaPalestra, massimali, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) },
+        maxSeduteFisiche: maxSeduteFisiche(setup.fase), trustBlocks: true, oggiDow: undefined,
+      };
+      const cal = { matchDays: matchDaysEff, trainingDays: trainingDaysEff, giorniAmmessi: !lastPlan?.richieste && preferenzeSetup?.giorni?.length ? preferenzeSetup.giorni : null };
+      const conflitti = conflittiCalendario(planAdattato.plan, cal, { fatteGiorni: fattiGiorni, oggiDow: dowOggi, validaSeduta: (s) => validatePlan({ sedute: [s] }, validateCtx) });
+      if (conflitti.length) calendarioConflitti = { righe: conflitti.map(conflittoRiga), giorni: conflitti.map((c) => c.giorno), hash: calendarioHash(cal) };
+    }
     console.log(`training/state: ${Date.now() - t0} ms`);
     return NextResponse.json({
+      calendarioConflitti,
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
       fascia,

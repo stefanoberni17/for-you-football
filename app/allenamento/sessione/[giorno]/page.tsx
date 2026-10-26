@@ -44,6 +44,8 @@ export default function SessionePage() {
   const [scarico, setScarico] = useState(false); // alleggerisci: −1 serie sugli esercizi
   const [alreadyDone, setAlreadyDone] = useState(false);
   const [saltata, setSaltata] = useState(false); // passata da 2+ giorni senza farla: il calendario è andato avanti
+  const [conflittoCal, setConflittoCal] = useState<string | null>(null); // M8: questa seduta non ci sta più con il calendario di adesso
+  const [adattaBusy, setAdattaBusy] = useState(false);
   const [phase, setPhase] = useState<Phase>('preview');
   const [descOpen, setDescOpen] = useState<number | null>(null); // indice item con descrizione aperta
   const [savedProgress, setSavedProgress] = useState<PlayerProgress | null>(null); // seduta interrotta
@@ -79,6 +81,9 @@ export default function SessionePage() {
       setSessione(s || null);
       setPlanId(data.plan?.id || null);
       setStorico(data.storicoSerie || {});
+      const cc = data.calendarioConflitti as { righe: string[]; giorni: number[] } | null | undefined;
+      const idx = cc?.giorni.indexOf(giorno) ?? -1;
+      setConflittoCal(idx >= 0 ? cc!.righe[idx] : null);
       const fatta = (data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno);
       setAlreadyDone(fatta);
       setSaltata(!fatta && typeof data.oggiDow === 'number' && giorno < data.oggiDow - 1);
@@ -308,6 +313,24 @@ export default function SessionePage() {
         {alreadyDone && (
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-body-sm font-semibold text-forest-300 flex items-center gap-2"><Check size={16} aria-hidden /> Già fatta. Puoi rifarla: sul piano resta segnata.</p>
+          </Card>
+        )}
+        {conflittoCal && !alreadyDone && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body-sm text-warning flex gap-2">
+              <Calendar size={16} className="shrink-0 mt-0.5" aria-hidden />
+              <span>Il calendario è cambiato: {conflittoCal}. Posso spostare solo le sedute che non ci stanno più; quelle fatte restano.</span>
+            </p>
+            <div className="mt-2">
+              <Button variant="secondary" size="sm" loading={adattaBusy} onClick={async () => {
+                if (!planId) return;
+                setAdattaBusy(true);
+                try {
+                  const r = await authFetch('/api/training/plan/adatta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan_id: planId }) });
+                  router.push(r.ok ? '/allenamento' : '/allenamento?adatta=1');
+                } finally { setAdattaBusy(false); }
+              }}>Adatta la settimana</Button>
+            </div>
           </Card>
         )}
         {bloccata && (

@@ -375,6 +375,7 @@ export interface PlanSession {
   spiegazione?: string;
   blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
+  spostata_da?: number;      // M8 (26/10, lib/trainingCalendario): il server l'ha spostata perché il calendario è cambiato (giorno di prima)
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
   proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; // dal resoconto (19/10): il programma propone, il ragazzo sceglie
 }
@@ -384,6 +385,7 @@ export interface WeekPlan {
   violazioni?: string[];     // piano di sicurezza: cosa il planner AI non è riuscito a rispettare (per capire e correggere)
   nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
   aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
+  adattato_calendario?: string; // M8 (26/10): piano salvato dall'adattamento al calendario cambiato (data ISO); non conta nel tetto delle rigenerazioni
 }
 
 const TIPI_FISICI = new Set(['mix', 'fisica', 'skill']);

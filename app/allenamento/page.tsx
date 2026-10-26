@@ -25,7 +25,7 @@ import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Shee
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[] }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[] }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -50,6 +50,8 @@ export interface TrainingState {
   setup: TrainingSetup;
   setupDisponibile: boolean;
   calendario?: { trainingDays: number[]; matchDays: number[] };
+  // M8 (26/10): sedute del piano che con il calendario di adesso non ci stanno più (righe per l'atleta, giorni, impronta del calendario)
+  calendarioConflitti?: { righe: string[]; giorni: number[]; hash: string } | null;
   maxSeduteFisiche?: number;
   maxSeduteTotali?: number;  // fisiche + giornate leggere (fascia/tecnica/recupero)
   carico?: {
@@ -142,6 +144,10 @@ export default function AllenamentoHub() {
   // Sheet "Hai un dolore?"
   const [showPain, setShowPain] = useState(false);
   const [showResoconto, setShowResoconto] = useState(false);
+  // M8: "Il calendario è cambiato: adatto la settimana?" (si apre da solo con un conflitto; "Lascia così" lo tace per quel calendario)
+  const [showAdatta, setShowAdatta] = useState(false);
+  const [adattaBusy, setAdattaBusy] = useState(false);
+  const [adattaMsg, setAdattaMsg] = useState<string | null>(null);
   const [, setResocontoTick] = useState(0); // rilegge localStorage dopo "Salta"
   const [painInt, setPainInt] = useState(5);
   const [painDesc, setPainDesc] = useState('');
@@ -187,6 +193,31 @@ export default function AllenamentoHub() {
   }, [router]);
 
   useEffect(() => { load(); }, [load]);
+
+  // M8: con un conflitto tra piano e calendario il foglio si apre da solo (o da ?adatta=1 dalla pagina seduta)
+  useEffect(() => {
+    const c = state?.calendarioConflitti;
+    if (!c?.righe.length || !state?.plan) return;
+    let forzato = false;
+    try { forzato = new URLSearchParams(window.location.search).get('adatta') === '1'; } catch { /* no-op */ }
+    let ignorato = false;
+    try { ignorato = sessionStorage.getItem(`calendario.ignora:${state.plan.id}:${c.hash}`) === '1'; } catch { /* no-op */ }
+    if (forzato || !ignorato) setShowAdatta(true);
+  }, [state]);
+  const ignoraAdatta = () => {
+    try { if (state?.plan && state.calendarioConflitti) sessionStorage.setItem(`calendario.ignora:${state.plan.id}:${state.calendarioConflitti.hash}`, '1'); } catch { /* no-op */ }
+    setShowAdatta(false);
+  };
+  const adattaSettimana = async () => {
+    if (!state?.plan) return;
+    setAdattaBusy(true); setAdattaMsg(null);
+    try {
+      const res = await authFetch('/api/training/plan/adatta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan_id: state.plan.id }) });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) { setShowAdatta(false); setPosticipoMsg(d.righe?.length ? `Settimana adattata: ${d.righe.join('; ')}` : 'Settimana già a posto'); await load(); }
+      else setAdattaMsg(d.error || 'Non sono riuscito ad adattarla');
+    } finally { setAdattaBusy(false); }
+  };
 
   // Resoconto in evidenza (20/10): con un resoconto da dare il foglio si apre da solo, come il check-in del mattino.
   // "Non adesso" (X) lo tiene chiuso finché l'app non viene riaperta; "Salta per questa volta" per sempre, per quel giorno.
@@ -529,6 +560,7 @@ export default function AllenamentoHub() {
               {proposteOggi.some((p) => p.tipo === 'togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
               {proposteOggi.some((p) => p.tipo === 'aggiungi') && <Badge tone="info" className="!bg-white/15 !text-white">Serie in più, se vuoi</Badge>}
               {diOggi.posticipata_da && <Badge tone="info" className="!bg-white/15 !text-white">Spostata da {DAY_SHORT_NAMES[diOggi.posticipata_da]}</Badge>}
+              {diOggi.spostata_da && <Badge tone="info" className="!bg-white/15 !text-white">Spostata da {DAY_SHORT_NAMES[diOggi.spostata_da]}: calendario cambiato</Badge>}
             </div>
           )}
           {state.painHold ? (
@@ -1006,6 +1038,22 @@ export default function AllenamentoHub() {
       </div>
 
       {/* Sheet "Hai un dolore?" — segnalazione strutturata (≥4/10 → pausa fisica) */}
+      {/* M8 (26/10): il calendario è cambiato: adatto la settimana? Solo le sedute in conflitto si spostano, quelle fatte restano */}
+      <Sheet open={showAdatta} onClose={ignoraAdatta} title="Il calendario è cambiato" subtitle="Alcune sedute non ci stanno più. Adatto la settimana?"
+        footer={
+          <div className="space-y-2">
+            <Button size="lg" fullWidth onClick={adattaSettimana} loading={adattaBusy}>Adatta la settimana</Button>
+            <Button variant="ghost" size="sm" fullWidth onClick={ignoraAdatta}>Lascia così</Button>
+          </div>
+        }>
+        <div className="space-y-3 pt-1">
+          <ul className="space-y-1">
+            {(state?.calendarioConflitti?.righe ?? []).map((r, i) => <li key={i} className="text-body-sm text-app leading-snug">· {r}</li>)}
+          </ul>
+          <p className="text-body-sm text-muted leading-relaxed">Sposto solo queste nel giorno libero più vicino. Le sedute già fatte e le altre restano dove sono. Non conta come rigenerazione.</p>
+          {adattaMsg && <p className="text-body-sm text-warning">{adattaMsg}</p>}
+        </div>
+      </Sheet>
       <Sheet open={showPain} onClose={() => setShowPain(false)} title="Hai un dolore?" subtitle="Segnalalo qui: decidiamo insieme se fermarci."
         footer={
           <Button size="lg" fullWidth onClick={segnalaDolore} loading={painSending} disabled={!painDesc.trim() || painDurante === null}>

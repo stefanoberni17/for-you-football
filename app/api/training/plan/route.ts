@@ -29,9 +29,11 @@ export async function POST(request: NextRequest) {
 
     // Tetto alle rigenerazioni: ogni piano è una chiamata al modello (fino a 3 tentativi). Spento finché testa solo Ste (PIANI_LIMITE_ATTIVO).
     if (PIANI_LIMITE_ATTIVO) {
-      const { count: pianiSettimana } = await supabaseAdmin.from('training_plans').select('id', { count: 'exact', head: true })
+      // M8: i piani salvati dall'adattamento al calendario (zero Claude) non contano
+      const { data: pianiRows } = await supabaseAdmin.from('training_plans').select('id, plan')
         .eq('user_id', userId).eq('week_start', mondayOfThisWeekRome());
-      if ((pianiSettimana ?? 0) >= PIANI_MAX_SETTIMANA) {
+      const pianiSettimana = (pianiRows || []).filter((p: { plan?: { adattato_calendario?: string } }) => !p.plan?.adattato_calendario).length;
+      if (pianiSettimana >= PIANI_MAX_SETTIMANA) {
         return NextResponse.json({
           error: `Hai già rifatto il piano ${PIANI_MAX_SETTIMANA} volte questa settimana. Il conto riparte lunedì: intanto segui la settimana che hai, o parlane col preparatore in chat.`,
           reason: 'limite_settimanale', limite: PIANI_MAX_SETTIMANA,
