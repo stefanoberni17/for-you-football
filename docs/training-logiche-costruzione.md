@@ -498,6 +498,40 @@ massimo 3 prima; resistenza alla velocità a serie di 4 ripetizioni (B 20" lavor
 3' tra le serie, solo off season e una volta a settimana; si sale prima col ritmo ("spingi di più" nelle serie a tempo),
 poi con le serie; salite di resistenza mai in season salvo richiesta esplicita.
 
-Restano aperte: il richiamo dei codici base di tecnica ogni 4 settimane (sì/no); "palestra leggera" il giorno dopo la
-partita oltre alle isometrie (gambe con le serie al 60 %?).
+Restano aperte: il richiamo dei codici base di tecnica ogni 4 settimane (sì/no). ~~"Palestra leggera" il giorno dopo la
+partita oltre alle isometrie~~ → decisa il 26/10 (§E7).
+
+### E7. Le risposte di Ste del 26/10 (mattina) e cosa è entrato nel codice
+
+1. **Tecnica composta dal catalogo, non dai workout pronti.** Ste: "Tecnica dobbiamo fare in modo di costruirla senza
+   prendere i workout già pronti". È la (b) di D3 ribaltata: come per `pa-*`, `pb-*` e `kb-*`, le sedute di tecnica
+   vanno COMPOSTE dal server dagli esercizi del catalogo (`tecnica-palleggi`, `tecnica-passaggi`, `tecnica-conduzione`,
+   `tecnica-tiro`, `tecnica-visione`), con le scale di muro e palleggi di `lib/trainingTecnica.ts` come progressione e
+   il mazzo del quinto giorno come varietà, e i blocchi Everfit di tecnica solo come alternativa. Niente nel codice
+   oggi: è il punto 21 di `docs/campo-da-fare.md` (stima e disegno lì). Domanda aperta di E6 sul richiamo dei codici
+   base ogni 4 settimane: con la composizione dal catalogo diventa "ogni 4 settimane una seduta sui fondamentali".
+2. **Gambe il giorno dopo la partita, da quanto ha giocato.** Ste: "40 % conservativi se giocato tutta la partita; 50 %
+   se partita con fatica più bassa e meno di 90 minuti; 60 % se giocato meno di 45; anche 70/80 % se ha giocato meno
+   di 15 min; se non ha giocato e non è entrato, o giocato poco e pochissima fatica, no vincoli (controlla se nel
+   feedback partita c'è)". Nel feedback c'è tutto (minuti giocati `durata_min` e fatica `rpe`). Nel codice lo stesso
+   giorno (`PLANNER_V2_PROMPT_VERSION = 'v2.37-gambe-dopo-partita'`, test "gambe il giorno dopo la partita" in
+   `tests/trainingPartita.test.ts`):
+   - `gambeDopoPartita(resoconto)` in `lib/trainingResoconto.ts` → fattore sulle serie: intera o senza resoconto 0.4,
+     meno di 90' con fatica ≤ 6 0.5, sotto i 45' 0.6, sotto i 15' 0.75, non entrato / poco con pochissima fatica 1.
+     Sotto i 90' con fatica alta resta 0.4 ("conservativi").
+   - "Quasi non giocato" ora vuol dire **non entrato, oppure ≤ 20' E fatica < 4** (prima bastava una delle due:
+     10' con fatica 5 era libero, ora è uno spezzone al 75 %; 90' con fatica 3 era libero, ora è una partita intera
+     "leggera" al 40 %; per la velocità pura a +2/+3 quella partita è "meno affaticato" e il divieto cade).
+   - A +1 `expandPiano` non rifiuta più la forza parte bassa a corpo libero o leggera (`pb-serie`, `pb-serie-short`,
+     Forza Parte Bassa senza carichi pesanti): la mette "leggera" con le serie × fattore, dose piena salvata
+     nell'item (`dopo_partita.serie_piene`) e la nota "Giorno dopo la partita: serie al 40 % (…)". Restano vietati a
+     +1 velocità, pliometria, resistenza, `pb-fmax` e `pb-emom` (è senza scarico: le serie non scendono). Il richiamo
+     `pb-richiamo` e le isometrie di Fascia Forza passano come prima, a dose loro.
+   - Se il resoconto arriva DOPO il piano (il lunedì l'hub genera la settimana alla prima apertura, e il foglio del
+     resoconto si apre nello stesso momento) `applicaResoconti` ricalcola le serie dalla dose piena alla lettura dello
+     state, in tutti e due i versi, con la riga negli aggiustamenti dell'hub. Il piano salvato non cambia.
+   - Prompt: regola 3 riscritta con le percentuali, la sezione RESOCONTI dice "gambe il giorno dopo al 50 % delle
+     serie (70' con fatica 6)". Il piano base non cambia: a +1 mette il richiamo per primo, come prima.
+   - Da tarare con i dati: le percentuali sono di Ste, le soglie dei minuti (15, 45, 90) e "fatica ≤ 6" pure; la
+     scelta di NON scalare i blocchi con carichi pesanti e l'EMOM è mia (prudenziale).
 

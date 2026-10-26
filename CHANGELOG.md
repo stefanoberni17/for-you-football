@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Gambe il giorno dopo la partita, da quanto ha giocato (Ste)
+- Ste: "40 % conservativi se giocato tutta la partita, 50 % se partita con fatica più bassa e meno di 90 minuti, 60 % se giocato meno di 45, anche 70/80 % se ha giocato meno di 15 min; se non ha giocato e non è entrato, o giocato poco e pochissima fatica, no vincoli". Il resoconto della partita ha già minuti giocati e fatica. Ora `gambeDopoPartita` (`lib/trainingResoconto.ts`) dà il fattore (0.4 / 0.5 / 0.6 / 0.75 / 1) e a +1 `expandPiano` non rifiuta più la forza parte bassa a corpo libero o leggera (`pb-serie`, `pb-serie-short`, Forza Parte Bassa senza carichi pesanti): la mette "leggera" con le serie × fattore, la dose piena nell'item (`dopo_partita.serie_piene`) e la nota "Giorno dopo la partita: serie al 40 % (…)". Velocità, pliometria, resistenza, `pb-fmax` e `pb-emom` restano fuori; richiamo e isometrie come prima.
+- Se il resoconto arriva dopo il piano (lunedì mattina) `applicaResoconti` ricalcola le serie dalla dose piena, anche fino a dose piena se non è entrato, con la riga negli aggiustamenti dell'hub.
+- "Quasi non giocato" ora vuol dire non entrato, oppure al massimo 20' E fatica sotto 4 (prima bastava una delle due): 10' con fatica 5 è uno spezzone al 75 %, non "libero".
+- Decisione registrata, da fare: la tecnica si compone dal catalogo come la parte alta e le gambe, non dai workout Everfit pronti (punto 21 di `docs/campo-da-fare.md`, §E7 di `docs/training-logiche-costruzione.md`).
+- Prompt: regola 3 con le percentuali, la sezione RESOCONTI dice la percentuale della settimana. `PLANNER_V2_PROMPT_VERSION = 'v2.37-gambe-dopo-partita'`. Test nuovi in `tests/trainingPartita.test.ts` e aggiornati in `tests/trainingResoconto.test.ts`.
+
 ## 2026-10-25 — Decisioni di Ste sulle regole del Campo (sera)
 - Wall Drive Skip → pliometria estensiva (catalogo e blocchi rigenerati). Reverse Drop Jump: scheda confermata, via dai "da confermare".
 - Pliometria intensiva a 2 giorni dalla partita in dose piccola, massimo 4×2 (`PLIO_INTENSIVA_MENO2`); a −1 resta 2×2.

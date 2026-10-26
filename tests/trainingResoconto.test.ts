@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applicaResoconti, partitaPocoGiocata, previstoPer, quantoGiocata, resocontiDaChiedere, resocontiPerCoach, resocontiTesto, riassuntoResoconti, sessioneRecuperoDopoPartita, squadraMisurata, valutaResoconto, votiRiga, votiTesto, RESOCONTO_LEGGERO_SCALA, RESOCONTO_REPS_RIDOTTE, STORICO_PUNTI_MAX, type Resoconto } from '@/lib/trainingResoconto';
+import { applicaResoconti, gambeDopoPartita, partitaPocoGiocata, previstoPer, quantoGiocata, resocontiDaChiedere, resocontiPerCoach, resocontiTesto, riassuntoResoconti, sessioneRecuperoDopoPartita, squadraMisurata, valutaResoconto, votiRiga, votiTesto, RESOCONTO_LEGGERO_SCALA, RESOCONTO_REPS_RIDOTTE, STORICO_PUNTI_MAX, type Resoconto } from '@/lib/trainingResoconto';
 import { calcolaCarico } from '@/lib/trainingLoad';
 import { contextFinto, MARCO } from '@/lib/trainingSimulazione';
 import { expandPiano, partitaGiocata, partitaPocoGiocata as partitaPocoGiocataCtx, promptsV2, validateCtxFor, type ContextV2 } from '@/lib/trainingPlannerV2';
@@ -9,7 +9,8 @@ import type { WeekPlan } from '@/lib/trainingEngine';
 
 /**
  * Resoconto dopo squadra e partita (19/10): le soglie di Ste. Livello 0 ±2 niente · livello 1 ±3 serie facoltative ·
- * livello 2: partita ≤ 20' o fatica < 4 = quasi non giocato (il dopo partita non vale); fatica ≥ 8 o fastidio → due giorni
+ * livello 2: partita non giocata, o ≤ 20' CON fatica < 4 (26/10; prima bastava una delle due) = quasi non giocato (il dopo
+ * partita non vale), altrimenti le gambe del giorno dopo al 40/50/60/75 % (`gambeDopoPartita`); fatica ≥ 8 o fastidio → due giorni
  * più leggeri + yoga di recupero · livello 3: due giorni di fila alti → reps ridotte e facoltativi; bassi → serie in più.
  */
 const r = (data: string, tipo: Resoconto['tipo'], rpe: number, extra: Partial<Resoconto> = {}): Resoconto => ({ data, tipo, rpe, durata_min: tipo === 'partita' ? 90 : 90, ...extra });
@@ -25,16 +26,20 @@ describe('valutaResoconto: le soglie di Ste', () => {
     expect(valutaResoconto(r('2026-10-13', 'squadra', 9), 7)).toMatchObject({ livello: 2, delta: 2, faticaAlta: true }); // 9 = "al limite": molto alta a prescindere
     expect(valutaResoconto(r('2026-10-13', 'squadra', 7), 4)).toMatchObject({ livello: 1, delta: 3, verso: 'piu', faticaAlta: false });
     expect(valutaResoconto(r('2026-10-13', 'squadra', 4), 7)).toMatchObject({ livello: 1, delta: -3, verso: 'meno', faticaAlta: false });
-    // La partita (Ste, 19/10): intera con 7-9 e dolori vari = normale; 6 intera = in linea; < 75' con ≤ 6 = meno affaticato; ≤ 20' o < 4 = quasi non giocato; 10 = recupero
-    expect(valutaResoconto(r('2026-10-17', 'partita', 7, { durata_min: 15 }), 9)).toMatchObject({ livello: 2, pocoGiocato: true });
-    expect(valutaResoconto(r('2026-10-17', 'partita', 3, { durata_min: 90 }), 9)).toMatchObject({ livello: 2, pocoGiocato: true });
+    // La partita (Ste, 19/10): intera con 7-9 e dolori vari = normale; 6 intera = in linea; < 75' con ≤ 6 = meno affaticato; 10 = recupero.
+    // Quasi non giocato (26/10): non entrato, o ≤ 20' CON fatica < 4 (15' con fatica 7 è uno spezzone, 90' con fatica 3 è una partita intera "leggera")
+    expect(valutaResoconto(r('2026-10-17', 'partita', 7, { durata_min: 15 }), 9)).toMatchObject({ pocoGiocato: false, menoAffaticato: false });
+    expect(valutaResoconto(r('2026-10-17', 'partita', 3, { durata_min: 15 }), 9)).toMatchObject({ livello: 2, pocoGiocato: true });
+    expect(valutaResoconto(r('2026-10-17', 'partita', 6, { durata_min: 0 }), 9)).toMatchObject({ livello: 2, pocoGiocato: true });
+    expect(valutaResoconto(r('2026-10-17', 'partita', 3, { durata_min: 90 }), 9)).toMatchObject({ pocoGiocato: false, menoAffaticato: true });
     expect(valutaResoconto(r('2026-10-17', 'partita', 9, { durata_min: 90, fastidio_zona: 'cosce dietro' }), 9)).toMatchObject({ livello: 0, faticaAlta: false, recuperoDopo: false, menoAffaticato: false });
     expect(valutaResoconto(r('2026-10-17', 'partita', 6, { durata_min: 90 }), 9)).toMatchObject({ livello: 2, menoAffaticato: true, verso: null }); // 6 anche intera = meno affaticato, ma lo sforzo dei 90' c'è stato
     expect(quantoGiocata([r('2026-10-17', 'partita', 6, { durata_min: 90 })], '2026-10-17')).toBeNull(); // le regole del dopo restano
     expect(valutaResoconto(r('2026-10-17', 'partita', 6, { durata_min: 60 }), 9)).toMatchObject({ livello: 2, menoAffaticato: true, pocoGiocato: false });
     expect(valutaResoconto(r('2026-10-17', 'partita', 10, { durata_min: 90 }), 9)).toMatchObject({ livello: 2, recuperoDopo: true, faticaAlta: true });
     expect(quantoGiocata([r('2026-10-17', 'partita', 6, { durata_min: 60 })], '2026-10-17')).toBe('meno');
-    expect(quantoGiocata([r('2026-10-17', 'partita', 5, { durata_min: 10 })], '2026-10-17')).toBe('poco');
+    expect(quantoGiocata([r('2026-10-17', 'partita', 5, { durata_min: 10 })], '2026-10-17')).toBe('meno'); // 26/10: con fatica 5 non è "quasi non giocato"
+    expect(quantoGiocata([r('2026-10-17', 'partita', 3, { durata_min: 10 })], '2026-10-17')).toBe('poco');
     expect(quantoGiocata([r('2026-10-17', 'partita', 8, { durata_min: 90 })], '2026-10-17')).toBeNull();
   });
   it('resocontiDaChiedere: oggi e ieri con squadra o partita senza riga', () => {
@@ -169,18 +174,24 @@ describe('carico reale e planner', () => {
     const lunedi = mondayOfThisWeekRome();
     const d = new Date(`${lunedi}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + 5);
     const sabato = d.toISOString().slice(0, 10);
-    const c: ContextV2 = contextFinto({ ...MARCO, resoconti: [r(sabato, 'partita', 5, { durata_min: 10 })] });
+    const c: ContextV2 = contextFinto({ ...MARCO, resoconti: [r(sabato, 'partita', 3, { durata_min: 10 })] }); // 10' con fatica 3 (26/10: serve anche la fatica bassa)
     expect(partitaPocoGiocata(c.base.resoconti, c.base.squadra)?.data).toBe(sabato);
     expect(partitaPocoGiocataCtx(c, 7, 1)).toBe(true);
-    // "meno affaticato" (60', fatica 6): il giorno dopo resta vietato alle gambe, a +2 la velocità pura è ammessa
+    // "meno affaticato" (60', fatica 6): il giorno dopo le gambe passano al 50 % (26/10), a +2 la velocità pura è ammessa
     const meno: ContextV2 = contextFinto({ ...MARCO, resoconti: [r(sabato, 'partita', 6, { durata_min: 60 })] });
     expect(partitaGiocata(meno, 7, 1)).toBe('meno');
     expect(partitaPocoGiocataCtx(meno, 7, 1)).toBe(false);
     const gambe = c.blocchi.find((b) => b.qualita === 'forza-parte-bassa' && !b.id.startsWith('pb-') && b.famiglia !== 'Fascia Foundation Forza')!; // le isometrie passano anche a +1 (25/10)
-    const errs = (ctx: ContextV2) => { const { plan, errors } = expandPiano({ sedute: [{ giorno: 7, blocchi: [gambe.id] }] }, ctx); return [...errors, ...validatePlan(plan, validateCtxFor(ctx))].filter((e) => /DOPO la partita/.test(e)); };
-    expect(errs(c)).toEqual([]);
-    expect(errs(contextFinto(MARCO)).length).toBe(1);
-    expect(errs(meno).length).toBe(1);
+    const esp = (ctx: ContextV2) => { const { plan, errors } = expandPiano({ sedute: [{ giorno: 7, blocchi: [gambe.id] }] }, ctx); return { plan, errs: [...errors, ...validatePlan(plan, validateCtxFor(ctx))].filter((e) => /DOPO la partita/.test(e)) }; };
+    const serie = (plan: WeekPlan) => plan.sedute[0].items.map((it) => it.serie);
+    expect(esp(c).errs).toEqual([]);
+    const itemsGambe = (plan: WeekPlan) => plan.sedute[0].items.filter((it) => it.blocco_id === gambe.id); // senza l'apertura in testa
+    expect(itemsGambe(esp(c).plan).every((it) => !it.dopo_partita)).toBe(true); // libero: dose piena
+    expect(esp(contextFinto(MARCO)).errs).toEqual([]);                           // senza resoconto: passa al 40 %
+    expect(itemsGambe(esp(contextFinto(MARCO)).plan).every((it) => it.dopo_partita?.scala === 0.4)).toBe(true);
+    expect(esp(meno).errs).toEqual([]);
+    expect(itemsGambe(esp(meno).plan).every((it) => it.dopo_partita?.scala === 0.5)).toBe(true);
+    expect(Math.max(...serie(esp(meno).plan))).toBeLessThan(Math.max(...serie(esp(c).plan)));
     const pura = c.blocchi.find((b) => b.id === 'velocita-b1');
     if (pura) {
       // lunedì = +2 dalla partita di SABATO SCORSO (lunedì − 2): il resoconto va su quella data
