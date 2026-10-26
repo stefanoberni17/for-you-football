@@ -55,7 +55,7 @@ describe('il blocco pre partita di Ste', () => {
     expect(pre?.id).toBe(PRE_PARTITA_ID);
     expect(isVelocitaPura(pre!)).toBe(false);
     expect(isVelocitaPura(bloccoById('velocita-b1')!)).toBe(true);
-    expect(isVelocitaPura(bloccoById('salite-sprint-b1')!)).toBe(true);
+    expect(isVelocitaPura(bloccoById('salite-sprint-b1')!)).toBe(false); // 26/10, Ste: le salite sono forza esplosiva, non velocità pura
     expect(isVelocitaPura(bloccoById('rapidita-velocita-b1-short')!)).toBe(false); // sprint fino a 20 m: rapidità
     expect(isVelocitaPura(bloccoById('velocita-b1-short-2')!)).toBe(false); // sprint fino a 30 m: ancora corta (Ste: "max 20/30 metri")
     expect(VELOCITA_PURA_METRI).toBe(30);
@@ -103,7 +103,7 @@ describe('dopo la partita, senza resoconto (si assume la partita intera)', () =>
   it('+2 e +3: niente velocità pura, sì rapidità corta e pliometria; da +4 tutto', () => {
     const c = ctx();
     expect(con(errori(c, [{ giorno: 1, blocchi: ['velocita-b1'] }]), /velocità pura/)).toHaveLength(1);
-    expect(con(errori(c, [{ giorno: 2, blocchi: ['salite-sprint-b1'] }]), /velocità pura/)).toHaveLength(1);
+    expect(con(errori(c, [{ giorno: 2, blocchi: ['salite-sprint-b1'] }]), /velocità pura/)).toEqual([]); // 26/10: le salite non sono velocità pura (forza esplosiva), a +3 passano
     expect(con(errori(c, [{ giorno: 1, blocchi: ['rapidita-velocita-b1-short'] }]), /velocità pura/)).toEqual([]);
     expect(con(errori(c, [{ giorno: 1, blocchi: ['pliometria-rapidita-velocita-b1'] }]), /velocità pura/)).toEqual([]);
     expect(con(errori(c, [{ giorno: 3, blocchi: ['velocita-b1'] }]), /velocità pura|partita/)).toEqual([]); // mercoledì: +4 e −3, anche i 100 m

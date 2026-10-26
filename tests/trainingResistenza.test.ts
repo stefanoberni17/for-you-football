@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   AVVISO_RESISTENZA_IN_SEASON, contenutiSerie, costruisciResistenza, EX_CORSA_LENTA, EX_FARTLEK, EX_METABOLICO, EX_PALLA, EX_RSA_NAVETTA, EX_RSA_PALLA, filtraResistenza,
-  RE_METABOLICO_ID, RE_MINUTI_SERIE, RE_RECUPERO_SEC, RE_RSA_ID, RE_SERIE_ID, RE_SERIE_MAX, RE_SERIE_START, reIdPer, resistenzaRegola, RSA_LAVORO_SEC, RSA_RECUPERO_SEC, RSA_REPS, RSA_SERIE_MAX, RSA_SERIE_START, statoResistenza,
+  contenutiDisponibili, EX_PAUSA, RE_METABOLICO_ID, RE_MINUTI_SERIE, RE_RECUPERO_SEC, RE_RSA_ID, RE_SERIE_ID, RE_SERIE_MAX, RE_SERIE_START, reIdPer, resistenzaRegola, RSA_LAVORO_SEC, RSA_RECUPERO_SEC, RSA_REPS, RSA_SERIE_MAX, RSA_SERIE_START, RSA_TRA_SERIE_SEC, statoResistenza,
   type OpzioniResistenza, type StatoResistenza,
 } from '@/lib/trainingResistenza';
 import { RESISTENZA_GIORNATE_IN_SEASON } from '@/lib/trainingTetti';
@@ -63,7 +63,13 @@ describe('costruisciResistenza: i numeri di Ste per livello', () => {
     expect(met.qualita).toBe('resistenza-metabolico');
     const rsa = re.find((b) => b.id === RE_RSA_ID)!;
     expect(rsa.qualita).toBe('resistenza-rsa');
-    const serie = rsa.items.slice(1);
+    const serie = rsa.items.slice(1).filter((it) => it.esercizio_id !== EX_PAUSA);
+    // 26/10 (Ste: "metti item riposo"): tra una serie e l'altra un item di pausa di 3', mai dopo l'ultima; i 3' stanno nella durata
+    const pause = rsa.items.filter((it) => it.esercizio_id === EX_PAUSA);
+    expect(pause).toHaveLength(serie.length - 1);
+    expect(pause.every((it) => it.serie === 1 && it.quantita === RSA_TRA_SERIE_SEC && it.unita === 'secondi' && it.recupero_sec === 0)).toBe(true);
+    expect(rsa.items[rsa.items.length - 1].esercizio_id).not.toBe(EX_PAUSA);
+    expect(rsa.qualitaSet['mobilita-recupero']).toBe(pause.length);
     expect(serie.map((it) => it.esercizio_id)).toEqual([EX_RSA_NAVETTA, EX_RSA_PALLA]);
     for (const it of serie) { expect(it.serie).toBe(RSA_REPS); expect(it.quantita).toBe(RSA_LAVORO_SEC.PRO); expect(it.recupero_sec).toBe(RSA_RECUPERO_SEC.PRO); }
     expect(RSA_LAVORO_SEC).toEqual({ B: 20, A: 20, PRO: 30 });
@@ -72,8 +78,17 @@ describe('costruisciResistenza: i numeri di Ste per livello', () => {
     expect(costruisciResistenza({ ...base, fase: 'in_season' }).some((b) => b.id === RE_RSA_ID)).toBe(false);
     expect(costruisciResistenza({ ...base, fase: 'preparazione_squadra' }).some((b) => b.id === RE_RSA_ID)).toBe(false);
   });
-  it('senza il campo niente `re-*`; le serie che non stanno nel tempo escono (mai sotto 2)', () => {
-    expect(costruisciResistenza({ ...base, attrezzatura: ['sbarra'] })).toEqual([]);
+  it('senza il campo (Ste, 26/10: "basta anche correre fuori dal campo") sola corsa: niente palla, niente RSA; le serie che non stanno nel tempo escono (mai sotto 2)', () => {
+    const strada = costruisciResistenza({ ...base, attrezzatura: ['sbarra'], statoSerie: stato(4) });
+    expect(strada.map((b) => b.id).sort()).toEqual([RE_METABOLICO_ID, RE_SERIE_ID]);
+    const serieStrada = strada.find((b) => b.id === RE_SERIE_ID)!;
+    expect(serieStrada.attrezzatura).toEqual([]);
+    expect(serieStrada.items.some((it) => it.esercizio_id === EX_PALLA)).toBe(false);
+    expect(serieStrada.items.slice(1).map((it) => it.esercizio_id)).toEqual([EX_FARTLEK, EX_METABOLICO, EX_FARTLEK, EX_METABOLICO]); // settimana 0: fartlek, metabolico, a rotazione sui due
+    expect(serieStrada.items.slice(1).reduce((a, it) => a + it.serie, 0)).toBe(4);
+    expect(serieStrada.descrizione).toMatch(/strada o al parco/);
+    expect(contenutiDisponibili(false)).toEqual(['fartlek', 'metabolico']);
+    expect(contenutiDisponibili(true)).toEqual(['fartlek', 'palla', 'metabolico']);
     const corto = costruisciResistenza({ ...base, livello: 'PRO', statoSerie: stato(5), maxDurata: 30 });
     const serie = corto.find((b) => b.id === RE_SERIE_ID)!;
     expect(serie.items.slice(1).reduce((a, it) => a + it.serie, 0)).toBe(3); // 5 + 3×6 + 2×2 = 27' ≤ 30

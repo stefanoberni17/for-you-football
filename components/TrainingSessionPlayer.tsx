@@ -11,6 +11,7 @@ import type { Esecuzione } from '@/lib/trainingEsecuzione';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X, Plus } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
 import { APERTURA_IDS, senzaVotoPerSerie } from '@/lib/trainingFascia';
+import { isPausaTraSerie } from '@/lib/trainingResistenza';
 
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
   sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante', limitazione: 'Zona da proteggere' };
@@ -170,6 +171,8 @@ export default function TrainingSessionPlayer({
   const puoAggiungereSerie = !isEmom && item?.facoltativo === 'aggiungi' && serieExtra === 0;
   const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
   const isTimed = !isEmom && (unita === 'secondi' || unita === 'minuti');
+  // 26/10: la pausa tra le serie (RSA) è solo un timer: niente voto, niente "Com'è venuto?", niente log
+  const isPausa = isPausaTraSerie(item?.esercizio_id);
   // Serie test: con la preparatoria la serie 1 è di avvicinamento e la 2 è il massimo; senza, è subito il massimo
   const testInfo = item?.test_in_seduta;
   const isTestSerie = !!testInfo && (testInfo.prep == null || serieFatte >= 1);
@@ -282,6 +285,8 @@ export default function TrainingSessionPlayer({
   const handleSerieDone = () => {
     try { navigator.vibrate?.(30); } catch { /* no-op */ }
     stopExec();
+    // Pausa tra le serie (26/10, RSA): finito il timer si va avanti, niente voto né log
+    if (isPausa) { avanza(1); return; }
     // Serie test al massimo (26/10): niente recupero, si chiede il risultato e si salva come test
     if (isTestSerie && testInfo) {
       setSerieFatte(serieFatte + 1);
@@ -378,6 +383,7 @@ export default function TrainingSessionPlayer({
     : [`${item.serie} × ${unitaLabel(unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`, item.carico_kg ? `${item.carico_kg} kg` : ''].filter(Boolean).join(' · ');
   const parametriSotto = isEmom ? '' : [extraLato ? `+1 serie a ${item.lato_extra === 'sx' ? 'sinistra' : 'destra'}` : '', `recupero ${fmtSec(item.recupero_sec)}`].filter(Boolean).join(' · ');
   const ctaLabel = isEmom ? 'EMOM finito, vai avanti'
+    : isPausa ? 'Pausa finita, vai avanti'
     : isTestSerie ? (isTimed ? 'Ho mollato: scrivo il risultato' : 'Fatta: scrivo il risultato')
     : isPerLato ? (isExtra || (lato === 'sx' && serieFatte + 1 >= totalSerie) ? 'Esercizio completato' : lato === 'dx' ? 'Lato destro fatto' : 'Lato sinistro fatto')
     : serieFatte + 1 >= totalSerie ? 'Esercizio completato' : 'Serie fatta';

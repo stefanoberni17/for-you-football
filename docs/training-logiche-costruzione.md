@@ -813,6 +813,10 @@ intensiva + RSA vietate), `lib/trainingEngine.ts` (i `re-*` fidati), `lib/traini
   sono solo i primi `FOCUS_OBBLIGATORI` (con "Tutto" tutti): prima il terzo obiettivo rubava il secondo giorno del
   primo e il base usciva con "primo obiettivo in una sola giornata" anche senza resistenza.
 
-Scelte mie da confermare: intermittente 30"/30" e 15"/15" per il metabolico; RSA partenza 2, max 3; Salite Sprint
-fuori dal filtro in season; `re-*` solo con il campo; niente item di riposo tra le serie RSA (3' nella nota e nei
-minuti). Non fatto: la card delle quote nell'hub (come per la tecnica), la RSA su richiesta in season.
+Risposte di Ste del 26/10 sera (PR dopo la #164): intermittente 30"/30" e 15"/15" ok; RSA 2 → 3 serie ok;
+**pausa a timer tra le serie RSA** (`rec-pausa-tra-serie`, 3', nel player niente voto né log); **resistenza anche senza
+il campo** (sola corsa: fartlek e intermittente, niente palla, niente RSA); **Salite Sprint = forza esplosiva, non
+velocità pura** (passano a −2 e a +2/+3; finestra del blocco 2 giorni) e in season `limaSaliteInSeason`: 6-12 sprint
+da 20-30 m, recupero ≥ 90", nota nell'hub; off season i blocchi di Ste restano come sono. Resta da confermare: il
+limite di una volta ogni 4 settimane in season per le salite. Non fatto: la card delle quote nell'hub (come per la
+tecnica), la RSA su richiesta in season.

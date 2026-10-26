@@ -48,10 +48,10 @@ import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione 
 import { conflittiCalendario, ricollocaSedute, sedutaBloccata, type CalendarioSettimana, type ConflittoCalendario } from './trainingCalendario';
 import { esercizioAny } from './trainingExercise';
 import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
-import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
+import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.43-resistenza-a-serie';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.44-salite-in-season-resistenza-senza-campo';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -860,7 +860,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     // L'asse partita (18/10, Ste). PRIMA: il giorno prima solo il blocco pre partita o una giornata leggera. DOPO: senza il
     // resoconto della partita si assume che abbia giocato tutta → +1 niente velocità né resistenza e le GAMBE con le serie
     // ridotte da quanto ha giocato (26/10: 40 % intera, 50 % meno di 90' con poca fatica, 60 % sotto i 45', 75 % sotto i 15';
-    // non entrato = libero), +2 e +3 niente velocità pura (sprint da 30 m, salite).
+    // non entrato = libero), +2 e +3 niente velocità pura (sprint oltre 30 m; le Salite Sprint dal 26/10 sono forza esplosiva, non velocità pura).
     // Velocità e resistenza mai nello stesso giorno (a livello di blocco: i blocchi di Ste "resistenza alla velocità" restano)
     const gambePartita = new Map<string, GambeDopoPartita>(); // blocchi di gambe del giorno dopo la partita → fattore sulle serie
     {
@@ -881,7 +881,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
           else errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" il giorno DOPO la partita — niente velocità, pliometria, resistenza, forza massima né EMOM gambe (${g.motivo}): le gambe passano solo a corpo libero o leggere, con le serie al ${Math.round(g.scala * 100)} %; altrimenti parte alta short, ${PB_RICHIAMO_ID}, le isometrie di Fascia Forza, fascia, tecnica leggera`);
         }
         if (gdPura !== null && gdPura >= 2 && gdPura <= VELOCITA_PURA_DOPO_PARTITA_GIORNI && isVelocitaPura(b))
-          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m o salite) a ${gd} giorni dalla partita giocata — fino a +${VELOCITA_PURA_DOPO_PARTITA_GIORNI} solo rapidità corta o pliometria`);
+          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m) a ${gd} giorni dalla partita giocata — fino a +${VELOCITA_PURA_DOPO_PARTITA_GIORNI} solo rapidità corta o pliometria`);
         // Resistenza a serie (Ste, 25/10): al massimo 3 giorni prima della partita (a −2 e −1 niente; il +1 è già vietato sopra)
         if (isResistenzaComposta(b.id) && gp !== null && gp < RE_FINESTRA_PRIMA)
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" a ${gp} giorni dalla partita — la resistenza a serie al massimo ${RE_FINESTRA_PRIMA} giorni prima (Ste): spostala nel giorno più lontano dalle partite`);
@@ -1099,9 +1099,16 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       itemsPre = itemsPre.filter((it) => !sprintLungo(it));
       if (itemsPre.length < prima) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${noteMemoria.has(vel.id) ? `${noteMemoria.get(vel.id)} · ` : ''}giornata di rapidità: via gli sprint oltre ${VELOCITA_PURA_METRI} m (${prima - itemsPre.length})`); }
     }
-    const { items: itemsLimati0, tolti } = limaSprint(itemsPre, sprintMaxSeduta);
-    sprintSettimana += sprintContati(itemsLimati0);
+    const { items: itemsLimati0a, tolti } = limaSprint(itemsPre, sprintMaxSeduta);
+    sprintSettimana += sprintContati(itemsLimati0a);
     if (tolti > 0) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${noteMemoria.has(vel.id) ? `${noteMemoria.get(vel.id)} · ` : ''}${tolti} sprint in meno: tetto di ${sprintMaxSeduta}${perche}`); }
+    // Salite Sprint in season (Ste, 26/10): 6-12 sprint da 20-30 m con recupero completo; off season i blocchi di Ste restano come sono
+    let itemsLimati0 = itemsLimati0a;
+    if (ctx.setup.fase === 'in_season' && blocchi.some(isSalite)) {
+      const r = limaSaliteInSeason(itemsLimati0a);
+      itemsLimati0 = r.items;
+      if (r.nota) { const sal = blocchi.find(isSalite)!; noteMemoria.set(sal.id, `${noteMemoria.has(sal.id) ? `${noteMemoria.get(sal.id)} · ` : ''}${r.nota}`); }
+    }
     // Kg dei blocchi dietro il tetto dell'atleta (lib/trainingCarico): senza massimale max 20 kg, con massimale caricoMaxPct
     const { items: itemsLimati, limati: carichiLimati } = limaCarichi(itemsLimati0, ctx.v2);
     if (carichiLimati > 0) {
@@ -1310,7 +1317,7 @@ ${tettiTesto(tettiDi(ctx))}
 3. L'ASSE PARTITA (le regole le fa rispettare il validatore, ma tu progetta già bene). PRIMA della partita:
 ${finestreTesto()}
    Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps: non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
-   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta; con il resoconto "quasi non giocato", cioè non entrato o al massimo 20' CON fatica sotto 4, queste regole non valgono per quella partita; "meno affaticato", meno di 75' con fatica fino a 6, toglie il divieto di velocità pura a +2/+3; partita intera con fatica 7-9 e qualche dolore è normale; con fatica 10 il giorno dopo è solo recupero): il giorno DOPO niente velocità, pliometria, resistenza, forza massima né EMOM gambe; le GAMBE a corpo libero o leggere (pb-serie, pb-serie-short, Forza Parte Bassa senza carichi) passano con le serie RIDOTTE dal server in base a quanto ha giocato (Ste, 26/10: ${Math.round(GAMBE_SCALA.intera * 100)} % con la partita intera o senza resoconto, ${Math.round(GAMBE_SCALA.meno * 100)} % con meno di 90' e fatica fino a 6, ${Math.round(GAMBE_SCALA.meta * 100)} % sotto i 45', ${Math.round(GAMBE_SCALA.spezzone * 100)} % sotto i 15'; la sezione RESOCONTI dice la percentuale di questa settimana) — preferisci comunque \`${PB_RICHIAMO_ID}\`, la parte alta short, le isometrie di Fascia Forza, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m, salite): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
+   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta; con il resoconto "quasi non giocato", cioè non entrato o al massimo 20' CON fatica sotto 4, queste regole non valgono per quella partita; "meno affaticato", meno di 75' con fatica fino a 6, toglie il divieto di velocità pura a +2/+3; partita intera con fatica 7-9 e qualche dolore è normale; con fatica 10 il giorno dopo è solo recupero): il giorno DOPO niente velocità, pliometria, resistenza, forza massima né EMOM gambe; le GAMBE a corpo libero o leggere (pb-serie, pb-serie-short, Forza Parte Bassa senza carichi) passano con le serie RIDOTTE dal server in base a quanto ha giocato (Ste, 26/10: ${Math.round(GAMBE_SCALA.intera * 100)} % con la partita intera o senza resoconto, ${Math.round(GAMBE_SCALA.meno * 100)} % con meno di 90' e fatica fino a 6, ${Math.round(GAMBE_SCALA.meta * 100)} % sotto i 45', ${Math.round(GAMBE_SCALA.spezzone * 100)} % sotto i 15'; la sezione RESOCONTI dice la percentuale di questa settimana) — preferisci comunque \`${PB_RICHIAMO_ID}\`, la parte alta short, le isometrie di Fascia Forza, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m; le Salite Sprint sono forza esplosiva, non velocità pura): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
    RESISTENZA: nel giorno più lontano da tutte e due le partite (con la partita la domenica: martedì-giovedì, il top è mercoledì).
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
 

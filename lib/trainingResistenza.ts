@@ -8,12 +8,14 @@
  *
  * - `re-serie`      = serie da 4' (B) / 5' (A) / 6' (PRO), recupero 3' in B e 2' da A; si parte da 2 serie (B) o 3 (A/PRO),
  *                     si sale a 4, massimo 5 per gli avanzati. Contenuto MIXATO a rotazione sulle settimane: fartlek,
- *                     esercizio con la palla (se ha il campo: qui c'è sempre, la resistenza vuole il campo), metabolico
- *                     (intermittente dentro la serie). Corsa lenta 5' in testa.
- * - `re-metabolico` = stesso formato (serie da 4-6' di intermittente 30"/30" e 15"/15"), stesse serie.
+ *                     esercizio con la palla (solo con il campo tra gli attrezzi), metabolico (intermittente dentro la
+ *                     serie). Corsa lenta 5' in testa. SENZA il campo (Ste, 26/10: "basta anche correre fuori dal campo")
+ *                     le serie sono di sola corsa: fartlek e intermittente, su strada o al parco, niente palla.
  * - `re-rsa`        = resistenza alla velocità: serie di 4 ripetizioni (B 20" lavoro / 1' recupero, A 20"/40", PRO 30"/1'),
- *                     3' tra le serie; 12 ripetizioni (3 serie) sono già molto pesanti → 2 serie, massimo 3. SOLO off season,
- *                     una volta a settimana (tetto 1: `tettoGiornate`).
+ *                     con un item di PAUSA di 3' tra le serie (`rec-pausa-tra-serie`: nel player è un timer, senza voto);
+ *                     12 ripetizioni (3 serie) sono già molto pesanti → 2 serie, massimo 3. SOLO off season e solo con il
+ *                     campo (navetta e circuito con la palla), una volta a settimana (tetto 1: `tettoGiornate`).
+ * - `re-metabolico` = stesso formato (serie da 4-6' di intermittente 30"/30" e 15"/15"), stesse serie.
  *
  * Progressione (Ste: "si sale prima col ritmo, poi con le serie"): dai giudizi di fine seduta sui blocchi `re-*`.
  * Un "facile" → la prossima volta la nota dice "spingi di più" (`ritmo`); due "facile" di fila → una serie in più;
@@ -73,6 +75,9 @@ export const EX_PALLA = 'aer-esercizio-resistenza-e-tecnica-funzionale';
 export const EX_METABOLICO = 'met-allungo';
 export const EX_RSA_NAVETTA = 'test2-test-navetta-10mt-30';
 export const EX_RSA_PALLA = 'aer-allenamento-tecnica-resistenza-velocita-forza-es';
+/** La pausa tra le serie RSA (26/10, Ste: "metti item riposo"): esercizio del catalogo di qualità mobilità/recupero, nel player un timer senza voto. */
+export const EX_PAUSA = 'rec-pausa-tra-serie';
+export const isPausaTraSerie = (id: string | null | undefined) => id === EX_PAUSA;
 
 export type ContenutoSerie = 'fartlek' | 'palla' | 'metabolico';
 export const CONTENUTI: readonly ContenutoSerie[] = ['fartlek', 'palla', 'metabolico'];
@@ -136,10 +141,13 @@ const item = (id: string, serie: number, quantita: number, unita: BloccoItem['un
   return { esercizio_id: ex.id, nomeEverfit: ex.nome, serie, quantita, unita, recupero_sec: recupero, nota, ...extra };
 };
 
+/** I contenuti possibili: con il campo tutti e tre, senza il campo solo la corsa (fartlek e intermittente; Ste, 26/10). */
+export const contenutiDisponibili = (campo: boolean): readonly ContenutoSerie[] => (campo ? CONTENUTI : CONTENUTI.filter((c) => c !== 'palla'));
+
 /** I contenuti delle serie, mixati e a rotazione sulle settimane (Ste: "va bene anche mixato"). */
-export function contenutiSerie(n: number, settimana: number): ContenutoSerie[] {
-  const start = ((settimana % CONTENUTI.length) + CONTENUTI.length) % CONTENUTI.length;
-  return Array.from({ length: n }, (_, i) => CONTENUTI[(start + i) % CONTENUTI.length]);
+export function contenutiSerie(n: number, settimana: number, disponibili: readonly ContenutoSerie[] = CONTENUTI): ContenutoSerie[] {
+  const start = ((settimana % disponibili.length) + disponibili.length) % disponibili.length;
+  return Array.from({ length: n }, (_, i) => disponibili[(start + i) % disponibili.length]);
 }
 
 function durata(items: readonly BloccoItem[]): number {
@@ -151,13 +159,13 @@ function blocco(id: string, nome: string, qualita: QualitaV2, items: BloccoItem[
   const qualitaSet: Blocco['qualitaSet'] = {};
   for (const it of items) {
     const ex = esercizioV2ById(it.esercizio_id ?? '');
-    const q: QualitaV2 = ex?.qualita === 'riscaldamento' ? 'riscaldamento' : qualita;
+    const q: QualitaV2 = ex?.qualita === 'riscaldamento' || ex?.qualita === 'mobilita-recupero' ? ex.qualita : qualita;
     qualitaSet[q] = (qualitaSet[q] ?? 0) + it.serie;
   }
   return {
     id, nome, nomeEverfit: nome, famiglia: FAMIGLIA_RESISTENZA, qualita, qualitaSet,
     livello: o.livello, progressione: null, variante: 'full', durataMin: durata(items),
-    attrezzatura: ['campo'], inCoppia: false, items, completo: true, mancanti: [], tags: ['resistenza', 'serie'],
+    attrezzatura: o.attrezzatura.includes('campo') ? ['campo'] : [], inCoppia: false, items, completo: true, mancanti: [], tags: ['resistenza', 'serie'],
     descrizione, ...extra,
   };
 }
@@ -173,17 +181,18 @@ function serieNelTempo(serie: number, minuti: number, recupero: number, maxDurat
 
 // ─── Costruzione ─────────────────────────────────────────────────────────────
 
-/** I blocchi `re-*` per l'atleta: niente senza il campo; la RSA solo off season. */
+/** I blocchi `re-*` per l'atleta: senza il campo sola corsa (niente palla, niente RSA); la RSA solo off season. */
 export function costruisciResistenza(o: OpzioniResistenza): Blocco[] {
-  if (!o.attrezzatura.includes('campo')) return [];
+  const campo = o.attrezzatura.includes('campo');
   const out: Blocco[] = [];
   const minuti = RE_MINUTI_SERIE[o.livello];
   const recupero = RE_RECUPERO_SEC[o.livello];
-  const risc = item(EX_CORSA_LENTA, 1, RE_RISCALDAMENTO_MIN, 'minuti', 60, 'Corsetta leggera per scaldare: ritmo da chiacchiera, gli ultimi 30 secondi un po\' più forte.');
+  const dove = campo ? '' : ' Va bene anche fuori dal campo: strada, parco, pista.';
+  const risc = item(EX_CORSA_LENTA, 1, RE_RISCALDAMENTO_MIN, 'minuti', 60, `Corsetta leggera per scaldare: ritmo da chiacchiera, gli ultimi 30 secondi un po' più forte.${dove}`);
   const nSerie = serieNelTempo(o.statoSerie.serie, minuti, recupero, o.maxDurata);
 
   // re-serie: contenuto mixato a rotazione
-  const contenuti = contenutiSerie(nSerie, o.settimana);
+  const contenuti = contenutiSerie(nSerie, o.settimana, contenutiDisponibili(campo));
   const serieItems: BloccoItem[] = [];
   const notaSerie = (c: ContenutoSerie, k: number) => {
     const base = c === 'fartlek'
@@ -203,7 +212,7 @@ export function costruisciResistenza(o: OpzioniResistenza): Blocco[] {
   }
   if (risc && serieItems.length) {
     out.push(blocco(RE_SERIE_ID, `Resistenza: ${nSerie} serie da ${minuti}'`, 'resistenza-aerobica', [risc, ...serieItems], o,
-      `Resistenza a serie, come la fa Ste: ${nSerie} serie da ${minuti}' con ${recupero / 60}' di recupero, contenuto mixato (${[...new Set(contenuti)].map((c) => CONTENUTO_LABEL[c]).join(', ')}; ruota ogni settimana). Niente corsa continua: si sale prima col ritmo, poi con le serie. ${o.statoSerie.motivo}.`));
+      `Resistenza a serie, come la fa Ste: ${nSerie} serie da ${minuti}' con ${recupero / 60}' di recupero, contenuto mixato (${[...new Set(contenuti)].map((c) => CONTENUTO_LABEL[c]).join(', ')}; ruota ogni settimana).${campo ? '' : ' Senza il campo: sola corsa, anche su strada o al parco.'} Niente corsa continua: si sale prima col ritmo, poi con le serie. ${o.statoSerie.motivo}.`));
   }
 
   // re-metabolico: stesso formato, serie tutte di intermittente (30"/30" e 15"/15" alternate)
@@ -212,11 +221,11 @@ export function costruisciResistenza(o: OpzioniResistenza): Blocco[] {
     { schema: 'interval' });
   if (risc && met) {
     out.push(blocco(RE_METABOLICO_ID, `Metabolico: ${nSerie} serie da ${minuti}'`, 'resistenza-metabolico', [risc, met], o,
-      `Metabolico a serie (stesso formato della resistenza, Ste 25/10): ${nSerie} serie da ${minuti}' di intermittente con ${recupero / 60}' di recupero. Almeno 2 giorni dopo la partita e al massimo 3 prima. ${o.statoSerie.motivo}.`));
+      `Metabolico a serie (stesso formato della resistenza, Ste 25/10): ${nSerie} serie da ${minuti}' di intermittente con ${recupero / 60}' di recupero.${campo ? '' : ' Anche fuori dal campo.'} Almeno 2 giorni dopo la partita e al massimo 3 prima. ${o.statoSerie.motivo}.`));
   }
 
-  // re-rsa: solo off season, serie di 4 ripetizioni, 3' tra le serie, 2 serie (max 3)
-  if (o.fase === 'off_season') {
+  // re-rsa: solo off season e solo con il campo; serie di 4 ripetizioni, un item di PAUSA di 3' tra le serie, 2 serie (max 3)
+  if (o.fase === 'off_season' && campo) {
     const lavoro = RSA_LAVORO_SEC[o.livello];
     const rec = RSA_RECUPERO_SEC[o.livello];
     const n = Math.min(RSA_SERIE_MAX, Math.max(RSA_SERIE_START, o.statoRsa.serie));
@@ -224,15 +233,19 @@ export function costruisciResistenza(o: OpzioniResistenza): Blocco[] {
     for (let i = 0; i < n; i++) {
       const id = i % 2 === 0 ? EX_RSA_NAVETTA : EX_RSA_PALLA;
       const it = item(id, RSA_REPS, lavoro, 'secondi', rec,
-        `Serie ${i + 1} di ${n}: ${RSA_REPS} ripetizioni da ${lavoro}" a tutta${id === EX_RSA_NAVETTA ? ' sulla navetta di 10 m (cambi di direzione secchi)' : ' con la palla, come nel video'}, ${rec}" di recupero tra una e l'altra. Dopo la quarta fermati ${RSA_TRA_SERIE_SEC / 60}' (cammina) prima della serie dopo.${ritmoNota(o.statoRsa)}`,
+        `Serie ${i + 1} di ${n}: ${RSA_REPS} ripetizioni da ${lavoro}" a tutta${id === EX_RSA_NAVETTA ? ' sulla navetta di 10 m (cambi di direzione secchi)' : ' con la palla, come nel video'}, ${rec}" di recupero tra una e l'altra.${i < n - 1 ? ` Poi la pausa di ${RSA_TRA_SERIE_SEC / 60}' prima della serie dopo.` : ''}${ritmoNota(o.statoRsa)}`,
         { schema: 'interval' });
       if (it) rsaItems.push(it);
+      if (i < n - 1) {
+        const pausa = item(EX_PAUSA, 1, RSA_TRA_SERIE_SEC, 'secondi', 0, `Pausa di ${RSA_TRA_SERIE_SEC / 60}' tra la serie ${i + 1} e la ${i + 2}: cammina, respira, riparti da fresco.`);
+        if (pausa) rsaItems.push(pausa);
+      }
     }
     if (risc && rsaItems.length) {
       const items = [risc, ...rsaItems];
       out.push(blocco(RE_RSA_ID, `Resistenza alla velocità: ${n} serie da ${RSA_REPS}`, 'resistenza-rsa', items, o,
-        `Resistenza alla velocità a serie (Ste, 25/10): ${n} serie di ${RSA_REPS} ripetizioni da ${lavoro}" con ${rec}" di recupero, ${RSA_TRA_SERIE_SEC / 60}' tra le serie; navetta e palla a serie alterne. ${RSA_SERIE_MAX * RSA_REPS} ripetizioni sono già molto pesanti: solo off season, una volta a settimana. ${o.statoRsa.motivo}.`,
-        { durataMin: durata(items) + (n - 1) * (RSA_TRA_SERIE_SEC / 60), tags: ['resistenza', 'rsa', 'serie'] }));
+        `Resistenza alla velocità a serie (Ste, 25/10): ${n} serie di ${RSA_REPS} ripetizioni da ${lavoro}" con ${rec}" di recupero, ${RSA_TRA_SERIE_SEC / 60}' di pausa tra le serie (nel player è un timer); navetta e palla a serie alterne. ${RSA_SERIE_MAX * RSA_REPS} ripetizioni sono già molto pesanti: solo off season, una volta a settimana. ${o.statoRsa.motivo}.`,
+        { tags: ['resistenza', 'rsa', 'serie'] }));
     }
   }
   return out;
@@ -286,11 +299,12 @@ export function resistenzaCompostaTesto(b: Blocco): string {
 export function resistenzaRegola(o: { blocchi: readonly Blocco[]; livello: LivelloMinV2; fase: FaseStagione; statoSerie: StatoResistenza; statoRsa: StatoResistenza; esplicita: boolean }): string {
   const re = o.blocchi.filter((b) => isResistenzaComposta(b.id));
   const minuti = RE_MINUTI_SERIE[o.livello];
-  const testa = `30. RESISTENZA A SERIE (Ste, 25/10; blocchi \`re-*\` composti dal server, da preferire ai Fartlek/Ripetute/Metabolico/Resistenza alla velocità Everfit, che il server sostituisce comunque; le salite restano di Ste): serie da ${minuti}' (${RE_MINUTI_SERIE.B}' in B, ${RE_MINUTI_SERIE.A}' in A, ${RE_MINUTI_SERIE.PRO}' in PRO), recupero ${RE_RECUPERO_SEC[o.livello] / 60}'; si parte da ${RE_SERIE_START[o.livello]} serie, si sale a 4, massimo ${RE_SERIE_MAX[o.livello]}; contenuto mixato (fartlek, palla, metabolico) a rotazione; niente corsa continua. Si sale PRIMA col ritmo (un "facile" → "spingi di più"), POI con le serie (due "facile" di fila): lo decide il server dai giudizi, tu non cambiare le serie. Asse partita: almeno ${RE_DOPO_PARTITA} giorni DOPO e al massimo ${RE_FINESTRA_PRIMA} PRIMA (a −2 e −1 niente \`re-*\`; il giorno più lontano dalle due partite). Metabolico (\`${RE_METABOLICO_ID}\`) con lo stesso formato e la stessa finestra. Resistenza alla velocità (\`${RE_RSA_ID}\`): serie di ${RSA_REPS} ripetizioni, ${RSA_TRA_SERIE_SEC / 60}' tra le serie, SOLO off season e una volta a settimana.`;
+  const testa = `30. RESISTENZA A SERIE (Ste, 25/10; blocchi \`re-*\` composti dal server, da preferire ai Fartlek/Ripetute/Metabolico/Resistenza alla velocità Everfit, che il server sostituisce comunque; le salite restano di Ste; anche senza il campo, di sola corsa): serie da ${minuti}' (${RE_MINUTI_SERIE.B}' in B, ${RE_MINUTI_SERIE.A}' in A, ${RE_MINUTI_SERIE.PRO}' in PRO), recupero ${RE_RECUPERO_SEC[o.livello] / 60}'; si parte da ${RE_SERIE_START[o.livello]} serie, si sale a 4, massimo ${RE_SERIE_MAX[o.livello]}; contenuto mixato (fartlek, palla, metabolico) a rotazione; niente corsa continua. Si sale PRIMA col ritmo (un "facile" → "spingi di più"), POI con le serie (due "facile" di fila): lo decide il server dai giudizi, tu non cambiare le serie. Asse partita: almeno ${RE_DOPO_PARTITA} giorni DOPO e al massimo ${RE_FINESTRA_PRIMA} PRIMA (a −2 e −1 niente \`re-*\`; il giorno più lontano dalle due partite). Metabolico (\`${RE_METABOLICO_ID}\`) con lo stesso formato e la stessa finestra. Resistenza alla velocità (\`${RE_RSA_ID}\`): serie di ${RSA_REPS} ripetizioni, ${RSA_TRA_SERIE_SEC / 60}' tra le serie, SOLO off season e una volta a settimana.`;
   const fase = o.fase === 'in_season'
     ? ` IN SEASON: niente resistenza, metabolico né RSA${o.esplicita ? ` — qui l'atleta l'ha scelta come obiettivo: al massimo ${RESISTENZA_GIORNATE_IN_SEASON} giornata a settimana, e dillo nel messaggio (rischio di sovraccarico con la squadra)` : ' (la squadra la fa già; entra solo come obiettivo esplicito): la libreria non ne ha'}; salite di resistenza mai in season.`
     : '';
-  const stato = re.length ? ` Questa settimana: serie ${o.statoSerie.motivo}${re.some((b) => b.id === RE_RSA_ID) ? `; RSA ${o.statoRsa.motivo}` : ''}.` : ' Senza il campo tra gli attrezzi i `re-*` non esistono: usa i blocchi della libreria.';
+  const senzaCampo = re.length && !re.some((b) => b.attrezzatura.includes('campo')) ? ' Senza il campo tra gli attrezzi le serie sono di sola corsa (fartlek e intermittente, anche su strada o al parco), niente palla e niente RSA.' : '';
+  const stato = re.length ? ` Questa settimana: serie ${o.statoSerie.motivo}${re.some((b) => b.id === RE_RSA_ID) ? `; RSA ${o.statoRsa.motivo}` : ''}.${senzaCampo}` : ' Nessun `re-*` in libreria questa settimana (fase o obiettivi): usa i blocchi della libreria, se ci sono.';
   const comp = re.length ? `\nComposizione: ${re.map(resistenzaCompostaTesto).join(' || ')}` : '';
   return `${testa}${fase}${stato}${comp}`;
 }
