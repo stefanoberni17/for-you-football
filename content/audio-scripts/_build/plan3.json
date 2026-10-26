@@ -9507,5 +9507,1636 @@
    "key": "[relaxed] Adesso metti in pausa e scrivi nell'app, due domande, una riga ciascuna. Uno: questa settimana ti sei accorto della tua reazione dopo un errore? Mentre partiva, solo dopo, o non ancora? Due: hai provato lo Stacco? Quale passaggio ti è venuto, e quale è rimasto poco chiaro? Se non hai avuto occasione, scrivi quello.",
    "id": "f25a6789f470"
   }
+ ],
+ "W6-G1": [
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "La settimana scorsa hai lavorato sull'errore. Questa guardiamo la pressione.",
+   "key": "[sincere] La settimana scorsa hai lavorato sull'errore. Questa guardiamo la pressione.",
+   "id": "d233d11cd7fd"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Ne abbiamo già parlato nella quarta settimana, quando hai costruito il Protocollo. Adesso ci andiamo più a fondo.",
+   "key": "[sincere] Ne abbiamo già parlato nella quarta settimana, quando hai costruito il Protocollo. Adesso ci andiamo più a fondo.",
+   "id": "fcf78ce90cb9"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "C'è la pressione che arriva da fuori: il mister che ti osserva, la gente in tribuna, il risultato che conta. Quella c'è, è reale, e spesso non dipende da te.",
+   "key": "[sincere] C'è la pressione che arriva da fuori: il mister che ti osserva, la gente in tribuna, il risultato che conta. Quella c'è, è reale, e spesso non dipende da te.",
+   "id": "660caf2650f4"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "E c'è quella che aggiungi tu, dentro. Spesso è la più pesante delle due. E su quella hai un margine.",
+   "key": "[sincere] E c'è quella che aggiungi tu, dentro. Spesso è la più pesante delle due. E su quella hai un margine.",
+   "id": "5e771986f5ef"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Un esempio? Tu sei convinto che tutta la tribuna stia guardando te. Spesso metà sta guardando il telefono, e l'altra metà discute col vicino.",
+   "key": "[relaxed] Un esempio? Tu sei convinto che tutta la tribuna stia guardando te. Spesso metà sta guardando il telefono, e l'altra metà discute col vicino.",
+   "id": "9c86749f9724"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Oggi impariamo a separarle. Prima un minuto per arrivare qui davvero, poi guardiamo.",
+   "key": "[sincere] Oggi impariamo a separarle. Prima un minuto per arrivare qui davvero, poi guardiamo.",
+   "id": "08f834f0dca8"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "key": "[meditative] Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "id": "2934173515cf"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Prima di tutto, un minuto solo presente. Senti i piedi che appoggiano, i suoni intorno, il punto sotto lo sterno che si gonfia e si sgonfia.",
+   "key": "[meditative] Prima di tutto, un minuto solo presente. Senti i piedi che appoggiano, i suoni intorno, il punto sotto lo sterno che si gonfia e si sgonfia.",
+   "id": "7d1c02f0cd7a"
+  },
+  {
+   "type": "sil",
+   "sec": 30.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Non devi fare niente, sei qui ed è già abbastanza.",
+   "key": "[meditative] Non devi fare niente, sei qui ed è già abbastanza.",
+   "id": "ae508d714ece"
+  },
+  {
+   "type": "sil",
+   "sec": 25.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Quando sei pronto, torna a un momento recente di pressione in campo: un rigore, un derby, il mister che ti fissava.",
+   "key": "[meditative] Quando sei pronto, torna a un momento recente di pressione in campo: un rigore, un derby, il mister che ti fissava.",
+   "id": "f4f0d1e2655d"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rivedilo una volta, cinque secondi.",
+   "key": "[meditative] Rivedilo una volta, cinque secondi.",
+   "id": "9a06bf6e83eb"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Poi lascialo lì. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un momento più leggero. Va bene lo stesso.",
+   "key": "[meditative] Poi lascialo lì. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un momento più leggero. Va bene lo stesso.",
+   "id": "c4e037fbdd18"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E adesso separa, con due domande.",
+   "key": "[meditative] E adesso separa, con due domande.",
+   "id": "58841144554c"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Cosa è successo? Il mister, la gente, il punteggio: quello che vedrebbe anche una telecamera. Quello è il fatto.",
+   "key": "[meditative] Cosa è successo? Il mister, la gente, il punteggio: quello che vedrebbe anche una telecamera. Quello è il fatto.",
+   "id": "a04d2f606e06"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E cosa ne hai concluso, se hai concluso qualcosa? «Se sbaglio è finita», «mi stanno giudicando tutti». Quella è la storia.",
+   "key": "[meditative] E cosa ne hai concluso, se hai concluso qualcosa? «Se sbaglio è finita», «mi stanno giudicando tutti». Quella è la storia.",
+   "id": "008cb693a0b7"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Una storia può essere giusta, sbagliata o incerta: chiamarla storia non vuol dire che sia una bugia.",
+   "key": "[meditative] Una storia può essere giusta, sbagliata o incerta: chiamarla storia non vuol dire che sia una bugia.",
+   "id": "01d65abafdb0"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Nota la differenza, e di chi è ciascuna parte. Quello che fanno e dicono gli altri, il risultato, lo sguardo del mister: quello non lo decidi tu.",
+   "key": "[meditative] Nota la differenza, e di chi è ciascuna parte. Quello che fanno e dicono gli altri, il risultato, lo sguardo del mister: quello non lo decidi tu.",
+   "id": "c4dd902ff853"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E anche le storie spesso arrivano da sole, non le scegli. Il margine che hai è accorgertene, e riguardarle. Una storia che vedi, un giorno la puoi raccontare in un altro modo. Oggi basta vederla.",
+   "key": "[meditative] E anche le storie spesso arrivano da sole, non le scegli. Il margine che hai è accorgertene, e riguardarle. Una storia che vedi, un giorno la puoi raccontare in un altro modo. Oggi basta vederla.",
+   "id": "3f97af4005aa"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E se ti accorgi che quella volta era quasi tutta da fuori, un mister ingiusto, un ambiente pesante, va bene così: non tutta la pressione la costruisci tu.",
+   "key": "[meditative] E se ti accorgi che quella volta era quasi tutta da fuori, un mister ingiusto, un ambiente pesante, va bene così: non tutta la pressione la costruisci tu.",
+   "id": "753c17e335d8"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Se non riesci a separare bene le due cose, è normale. Nella quarta settimana la pressione l'hai sentita nel corpo; oggi guardi cosa ne concludi, ed è un passo in più. Lo vedrai meglio la prossima volta che senti la pressione dal vivo.",
+   "key": "[sincere] Se non riesci a separare bene le due cose, è normale. Nella quarta settimana la pressione l'hai sentita nel corpo; oggi guardi cosa ne concludi, ed è un passo in più. Lo vedrai meglio la prossima volta che senti la pressione dal vivo.",
+   "id": "4a89dfd6d139"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Da oggi, la tua àncora della settimana: ogni volta che senti uno sguardo addosso, in campo o in allenamento, alla prima pausa fai un Reset breve. Mentre il gioco va, solo la prossima giocata.",
+   "key": "[sincere] Da oggi, la tua àncora della settimana: ogni volta che senti uno sguardo addosso, in campo o in allenamento, alla prima pausa fai un Reset breve. Mentre il gioco va, solo la prossima giocata.",
+   "id": "55bc1f2e5c40"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Se quella scena ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.",
+   "key": "[sincere] Se quella scena ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.",
+   "id": "d08c451b2bcd"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: di quel momento di pressione, un fatto, cosa è successo, e una frase che ti sei detto, cosa ne hai concluso. Se c'era solo il fatto, scrivi quello. Anche «non lo so ancora» va bene.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: di quel momento di pressione, un fatto, cosa è successo, e una frase che ti sei detto, cosa ne hai concluso. Se c'era solo il fatto, scrivi quello. Anche «non lo so ancora» va bene.",
+   "id": "b058cdc749c0"
+  }
+ ],
+ "W6-G2": [
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Il primo giorno del percorso te l'ho accennato: prima delle partite io vomitavo. Adesso ti racconto il resto.",
+   "key": "[relaxed] Il primo giorno del percorso te l'ho accennato: prima delle partite io vomitavo. Adesso ti racconto il resto.",
+   "id": "f8d81f8b3dc9"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Oltre al vomito avevo un dolore allo stomaco lancinante, che non passava. All'epoca non riuscivo a capire da dove arrivasse. Probabilmente non ero ancora in grado di vedere tutti i pensieri che mi passavano per la testa.",
+   "key": "[relaxed] Oltre al vomito avevo un dolore allo stomaco lancinante, che non passava. All'epoca non riuscivo a capire da dove arrivasse. Probabilmente non ero ancora in grado di vedere tutti i pensieri che mi passavano per la testa.",
+   "id": "4e3f10e8740b"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Col tempo ho capito che era legato al giudizio degli altri: di mio padre, degli amici, di chi mi guardava.",
+   "key": "[relaxed] Col tempo ho capito che era legato al giudizio degli altri: di mio padre, degli amici, di chi mi guardava.",
+   "id": "2048124201a7"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "E quando ho iniziato a lavorarci, sul mio giudizio e su quello degli altri, quel problema è sparito. Il vomito e il dolore, tutti e due.",
+   "key": "[relaxed] E quando ho iniziato a lavorarci, sul mio giudizio e su quello degli altri, quel problema è sparito. Il vomito e il dolore, tutti e due.",
+   "id": "8bba1ab80ed8"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Magari a te non succede niente di così forte. Ma la sera prima della partita che conta, lo stomaco chiuso, il sonno che non arriva, la testa che gioca già la partita mentre sei ancora a letto. A tanti succede.",
+   "key": "[sincere] Magari a te non succede niente di così forte. Ma la sera prima della partita che conta, lo stomaco chiuso, il sonno che non arriva, la testa che gioca già la partita mentre sei ancora a letto. A tanti succede.",
+   "id": "2185014bfdbb"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "È pressione costruita in anticipo. E dietro, spesso, c'è uno sguardo che ti pesa più degli altri. Oggi proviamo a vedere il tuo.",
+   "key": "[sincere] È pressione costruita in anticipo. E dietro, spesso, c'è uno sguardo che ti pesa più degli altri. Oggi proviamo a vedere il tuo.",
+   "id": "119f84b3daaf"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "key": "[meditative] Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "id": "2934173515cf"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Torna a una sera prima di una partita che contava. Una sera precisa, se la trovi. Se non ti viene, prendi il pre-partita: lo spogliatoio, il riscaldamento, il momento prima di entrare.",
+   "key": "[meditative] Torna a una sera prima di una partita che contava. Una sera precisa, se la trovi. Se non ti viene, prendi il pre-partita: lo spogliatoio, il riscaldamento, il momento prima di entrare.",
+   "id": "ba39886fed5e"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rivedilo una volta, qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole. Va bene lo stesso.",
+   "key": "[meditative] Rivedilo una volta, qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole. Va bene lo stesso.",
+   "id": "70020e88ac42"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Che frase ti girava in testa? Non in generale: le parole. «Non sei da titolare», «domani sbagli», «li deludi». Spesso sono frasi che tornano uguali.",
+   "key": "[meditative] Che frase ti girava in testa? Non in generale: le parole. «Non sei da titolare», «domani sbagli», «li deludi». Spesso sono frasi che tornano uguali.",
+   "id": "476b39f16139"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se parole non ce ne sono, va bene: passa al corpo.",
+   "key": "[meditative] Se parole non ce ne sono, va bene: passa al corpo.",
+   "id": "9efa6f2daf84"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Adesso, mentre la ricordi, cosa senti nel corpo? La stretta nello stomaco, il petto che si chiude, il respiro corto. Sentila un attimo, senza mandarla via.",
+   "key": "[meditative] Adesso, mentre la ricordi, cosa senti nel corpo? La stretta nello stomaco, il petto che si chiude, il respiro corto. Sentila un attimo, senza mandarla via.",
+   "id": "ec8215d962d6"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se non senti niente di chiaro, va bene così.",
+   "key": "[meditative] Se non senti niente di chiaro, va bene così.",
+   "id": "66a6e3675024"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E se quella pressione avesse un volto? Può essere una persona, un gruppo, «la gente». Oppure qualcosa di figurato: un'immagine, un peso, un'ombra. Ognuno la vede a modo suo.",
+   "key": "[meditative] E se quella pressione avesse un volto? Può essere una persona, un gruppo, «la gente». Oppure qualcosa di figurato: un'immagine, un peso, un'ombra. Ognuno la vede a modo suo.",
+   "id": "6d07d8aca744"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se ti viene, notala e basta. Trovarla non vuol dire accusare qualcuno: quello che senti è come quello sguardo ti arriva e ti resta addosso. A volte è davvero pesante, o ingiusto, e va riconosciuto così.",
+   "key": "[meditative] Se ti viene, notala e basta. Trovarla non vuol dire accusare qualcuno: quello che senti è come quello sguardo ti arriva e ti resta addosso. A volte è davvero pesante, o ingiusto, e va riconosciuto così.",
+   "id": "b464ee7d0c59"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se non ti viene niente, va bene lo stesso: a volte dietro c'è la paura di sbagliare, la stanchezza, il posto in squadra.",
+   "key": "[meditative] Se non ti viene niente, va bene lo stesso: a volte dietro c'è la paura di sbagliare, la stanchezza, il posto in squadra.",
+   "id": "cb0bb0630121"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E adesso una cosa importante. Quella sensazione, da sola, non ti sta dicendo che andrà male. Non è una previsione.",
+   "key": "[meditative] E adesso una cosa importante. Quella sensazione, da sola, non ti sta dicendo che andrà male. Non è una previsione.",
+   "id": "aa0fa5650a27"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Può voler dire cose diverse: che ci tieni, che hai paura di sbagliare, che sei stanco, che quello sguardo pesa davvero. Non devi decidere adesso quale sia. Oggi basta vederla.",
+   "key": "[meditative] Può voler dire cose diverse: che ci tieni, che hai paura di sbagliare, che sei stanco, che quello sguardo pesa davvero. Non devi decidere adesso quale sia. Oggi basta vederla.",
+   "id": "0c6f16cfc193"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Chiudi con un Reset: respiro completo, gesto, mantra.",
+   "key": "[meditative] Chiudi con un Reset: respiro completo, gesto, mantra.",
+   "id": "fddc7b2247b7"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso, gonfia la pancia, e unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso, gonfia la pancia, e unisci pollice e indice.",
+   "id": "9f4ea2603f38"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te il tuo mantra.",
+   "id": "06f1408bdcde"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Tieni questo per la prossima sera prima di una partita: quando la testa parte a giocarla in anticipo, ricordati che quella sensazione non è una previsione. Un Reset, e la partita la lasci a domani, dove sta.",
+   "key": "[sincere] Tieni questo per la prossima sera prima di una partita: quando la testa parte a giocarla in anticipo, ricordati che quella sensazione non è una previsione. Un Reset, e la partita la lasci a domani, dove sta.",
+   "id": "b8fe79a35dee"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "E al prossimo allenamento, quando senti uno sguardo addosso, il mister che ti fissa, un compagno che ti valuta: mentre il gioco va, solo la prossima giocata. Alla prima pausa, un Body Check di dieci secondi: piedi, stomaco, petto, spalle. Dove senti la pressione nel corpo? Solo notare, non cambiare niente. Due volte basta.",
+   "key": "[sincere] E al prossimo allenamento, quando senti uno sguardo addosso, il mister che ti fissa, un compagno che ti valuta: mentre il gioco va, solo la prossima giocata. Alla prima pausa, un Body Check di dieci secondi: piedi, stomaco, petto, spalle. Dove senti la pressione nel corpo? Solo notare, non cambiare niente. Due volte basta.",
+   "id": "2aa8ca465250"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Se questo ricordo ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.",
+   "key": "[sincere] Se questo ricordo ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.",
+   "id": "b1dfda3f47b6"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app cosa hai notato: che frase tornava, dove la sentivi nel corpo, e se la pressione aveva un volto, una persona o un'immagine. Una riga basta. Anche «niente di chiaro» va bene.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app cosa hai notato: che frase tornava, dove la sentivi nel corpo, e se la pressione aveva un volto, una persona o un'immagine. Una riga basta. Anche «niente di chiaro» va bene.",
+   "id": "a3f1dd09aeee"
+  }
+ ],
+ "W6-G3": [
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Quando ero più giovane non pensavo di essere forte. Magari fuori lo facevo vedere, ma dentro non ci credevo. E ogni volta che succedeva qualcosa, lo leggevo in modo da confermare quello che pensavo già.",
+   "key": "[relaxed] Quando ero più giovane non pensavo di essere forte. Magari fuori lo facevo vedere, ma dentro non ci credevo. E ogni volta che succedeva qualcosa, lo leggevo in modo da confermare quello che pensavo già.",
+   "id": "3cacea76aa6b"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "In Serie D, una domenica il mister mi fa partire titolare, e al sessantesimo mi toglie. Io ho pensato che fosse finita: ha capito che non sono abbastanza forte, e mi ha tolto per non farmi più giocare. E infatti la partita dopo sono partito dalla panchina.",
+   "key": "[relaxed] In Serie D, una domenica il mister mi fa partire titolare, e al sessantesimo mi toglie. Io ho pensato che fosse finita: ha capito che non sono abbastanza forte, e mi ha tolto per non farmi più giocare. E infatti la partita dopo sono partito dalla panchina.",
+   "id": "c4bdef4053f6"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Ero distrutto dentro. Settimane e mesi durissimi, mi giudicavo, mi sentivo un fallito.",
+   "key": "[relaxed] Ero distrutto dentro. Settimane e mesi durissimi, mi giudicavo, mi sentivo un fallito.",
+   "id": "2fdefcc39569"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "In realtà il mister aveva quattro attaccanti forti e ci faceva girare. Gli piacevo moltissimo, e pur di tenermi in campo col tempo mi ha spostato più indietro, a centrocampo e poi terzino. Ed è lì che sono diventato davvero forte.",
+   "key": "[relaxed] In realtà il mister aveva quattro attaccanti forti e ci faceva girare. Gli piacevo moltissimo, e pur di tenermi in campo col tempo mi ha spostato più indietro, a centrocampo e poi terzino. Ed è lì che sono diventato davvero forte.",
+   "id": "b496abc93dad"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Il fatto era piccolo: mi aveva tolto al sessantesimo. La storia l'avevo scritta tutta io, e non era vera.",
+   "key": "[sincere] Il fatto era piccolo: mi aveva tolto al sessantesimo. La storia l'avevo scritta tutta io, e non era vera.",
+   "id": "8011726a6da8"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "key": "[meditative] Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "id": "2934173515cf"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tieni davanti il momento che hai scritto prima di iniziare.",
+   "key": "[meditative] Tieni davanti il momento che hai scritto prima di iniziare.",
+   "id": "24e79a694e34"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E prendi la differenza da un esempio, con due domande. Cosa è successo? «Il mister mi ha sostituito»: è un fatto, l'hai visto. Cosa ne ho concluso? «Ha smesso di credere in me»: è una storia, l'hai aggiunta tu per spiegarti il fatto.",
+   "key": "[meditative] E prendi la differenza da un esempio, con due domande. Cosa è successo? «Il mister mi ha sostituito»: è un fatto, l'hai visto. Cosa ne ho concluso? «Ha smesso di credere in me»: è una storia, l'hai aggiunta tu per spiegarti il fatto.",
+   "id": "21ca506cbdd9"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Una storia può essere giusta, sbagliata o incerta: chiamarla storia non vuol dire che sia una bugia. Vuol dire che non l'hai vista, l'hai dedotta.",
+   "key": "[meditative] Una storia può essere giusta, sbagliata o incerta: chiamarla storia non vuol dire che sia una bugia. Vuol dire che non l'hai vista, l'hai dedotta.",
+   "id": "4c0b6e243791"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Adesso parti dal tuo momento, quello che hai scritto. Rivedilo una volta.",
+   "key": "[meditative] Adesso parti dal tuo momento, quello che hai scritto. Rivedilo una volta.",
+   "id": "f22ef1896bb5"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Cosa è successo, quello che hai visto o sentito davvero?",
+   "key": "[meditative] Cosa è successo, quello che hai visto o sentito davvero?",
+   "id": "c07f3c9d45fa"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E cosa ne hai concluso?",
+   "key": "[meditative] E cosa ne hai concluso?",
+   "id": "68c78bb537de"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se hai tempo e ti va, fai lo stesso con una o due altre situazioni tue in cui ti sei sentito giudicato. Ma una basta.",
+   "key": "[meditative] Se hai tempo e ti va, fai lo stesso con una o due altre situazioni tue in cui ti sei sentito giudicato. Ma una basta.",
+   "id": "67ee63e0423d"
+  },
+  {
+   "type": "sil",
+   "sec": 15.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se ti va, guarda anche questo: a volte un giudizio brucia di più perché tocca qualcosa che già ti dici da solo. Se è così, saperlo ti aiuta.",
+   "key": "[meditative] Se ti va, guarda anche questo: a volte un giudizio brucia di più perché tocca qualcosa che già ti dici da solo. Se è così, saperlo ti aiuta.",
+   "id": "019c33c3cd6b"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ma a volte no: a volte un giudizio è solo ingiusto. E lì la risposta giusta non è darti la colpa, è mettere un confine. Per esempio parlarne a freddo con chi te l'ha detto, o chiedere aiuto a qualcuno di cui ti fidi se ti senti trattato male. Non tutto quello che ti ferisce è tuo.",
+   "key": "[meditative] Ma a volte no: a volte un giudizio è solo ingiusto. E lì la risposta giusta non è darti la colpa, è mettere un confine. Per esempio parlarne a freddo con chi te l'ha detto, o chiedere aiuto a qualcuno di cui ti fidi se ti senti trattato male. Non tutto quello che ti ferisce è tuo.",
+   "id": "9783dda44d36"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Ricorda l'àncora: ogni volta che senti uno sguardo addosso, alla prima pausa un Reset breve. Mentre il gioco va, solo la prossima giocata.",
+   "key": "[sincere] Ricorda l'àncora: ogni volta che senti uno sguardo addosso, alla prima pausa un Reset breve. Mentre il gioco va, solo la prossima giocata.",
+   "id": "ea316b994704"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Se questo momento ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.",
+   "key": "[sincere] Se questo momento ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.",
+   "id": "cd6c990fad0e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: il momento che hai scritto, cosa è successo, e cosa ne hai concluso? Una riga va bene.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: il momento che hai scritto, cosa è successo, e cosa ne hai concluso? Una riga va bene.",
+   "id": "7f408d1f6653"
+  }
+ ],
+ "W6-G4": [
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Ogni giocatore ha i suoi momenti di giudizio. Rientrare in campo dopo un errore, il mister che ti richiama davanti a tutti, la tribuna che mormora. Oppure la sera prima della partita che conta, per chi la pressione se la costruisce in anticipo.",
+   "key": "[sincere] Ogni giocatore ha i suoi momenti di giudizio. Rientrare in campo dopo un errore, il mister che ti richiama davanti a tutti, la tribuna che mormora. Oppure la sera prima della partita che conta, per chi la pressione se la costruisce in anticipo.",
+   "id": "b4ca967f9e8e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Oggi ne rivivi uno apposta, scelto da te, e ci entri con tutto quello che hai imparato finora.",
+   "key": "[sincere] Oggi ne rivivi uno apposta, scelto da te, e ci entri con tutto quello che hai imparato finora.",
+   "id": "00caa074b512"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "È il giorno più lungo della settimana: dodici minuti. Prenditi il tempo che serve.",
+   "key": "[sincere] È il giorno più lungo della settimana: dodici minuti. Prenditi il tempo che serve.",
+   "id": "49ae9ededaab"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Trova un posto tranquillo. Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.",
+   "key": "[meditative] Trova un posto tranquillo. Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.",
+   "id": "2f06a9a16972"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tre Reset per arrivare qui: naso, pancia, bocca.",
+   "key": "[meditative] Tre Reset per arrivare qui: naso, pancia, bocca.",
+   "id": "82945591f639"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Scegli una tua situazione di giudizio. Una vera, che ti capita. Non serve la più pesante: parti da una che riesci a gestire, e decidi tu quanto starci. La vivi due volte.",
+   "key": "[sincere] Scegli una tua situazione di giudizio. Una vera, che ti capita. Non serve la più pesante: parti da una che riesci a gestire, e decidi tu quanto starci. La vivi due volte.",
+   "id": "e65cf36d7737"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Prima di entrare: se in qualunque momento qualcosa pesa più del previsto, fermati. Un Reset, i piedi a terra, i suoni intorno. E se ti va parlane con il Coach: qui non c'è niente da dimostrare.",
+   "key": "[sincere] Prima di entrare: se in qualunque momento qualcosa pesa più del previsto, fermati. Un Reset, i piedi a terra, i suoni intorno. E se ti va parlane con il Coach: qui non c'è niente da dimostrare.",
+   "id": "05e65a8672a8"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "La prima volta.",
+   "key": "[meditative] La prima volta.",
+   "id": "4b844deb18ce"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Uno. Entra nella scena. Rivivila una volta, cinque secondi: lo sguardo addosso, il mormorio, la stretta che parte.",
+   "key": "[meditative] Uno. Entra nella scena. Rivivila una volta, cinque secondi: lo sguardo addosso, il mormorio, la stretta che parte.",
+   "id": "aaeda4459867"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "key": "[meditative] Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "id": "a619ead99e52"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Due. Body Check. Dove la senti la pressione? Solo trovala, non cambiarla.",
+   "key": "[meditative] Due. Body Check. Dove la senti la pressione? Solo trovala, non cambiarla.",
+   "id": "cc7a0fe92aa5"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Piedi.",
+   "key": "[meditative] Piedi.",
+   "id": "2795593389b0"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se non senti niente di chiaro, va bene: «niente di chiaro» è una risposta.",
+   "key": "[meditative] Se non senti niente di chiaro, va bene: «niente di chiaro» è una risposta.",
+   "id": "eefe070542fc"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tre. Ascolta la frase che arriva.",
+   "key": "[meditative] Tre. Ascolta la frase che arriva.",
+   "id": "689bf8bcbf18"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Poi dalle un nome: se riguarda cosa pensano gli altri di te, giudizio; se è altro, pensiero. Non mandarla via e non seguirla, solo l'etichetta.",
+   "key": "[meditative] Poi dalle un nome: se riguarda cosa pensano gli altri di te, giudizio; se è altro, pensiero. Non mandarla via e non seguirla, solo l'etichetta.",
+   "id": "23223c9b17b1"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Quattro. Fatto o storia. Cosa è successo davvero, nell'episodio?",
+   "key": "[meditative] Quattro. Fatto o storia. Cosa è successo davvero, nell'episodio?",
+   "id": "f777569da6c7"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E cosa ne stai concludendo tu?",
+   "key": "[meditative] E cosa ne stai concludendo tu?",
+   "id": "49a86d104484"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tieni il fatto.",
+   "key": "[meditative] Tieni il fatto.",
+   "id": "4d15c00c4768"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Cinque. Reset. Respiro completo, gesto, mantra.",
+   "key": "[meditative] Cinque. Reset. Respiro completo, gesto, mantra.",
+   "id": "2786399f77e9"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso, gonfia la pancia, e unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso, gonfia la pancia, e unisci pollice e indice.",
+   "id": "9f4ea2603f38"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te il tuo mantra.",
+   "id": "06f1408bdcde"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E immagina la prima azione dopo: ricevi palla, alzi la testa, sei in partita.",
+   "key": "[meditative] E immagina la prima azione dopo: ricevi palla, alzi la testa, sei in partita.",
+   "id": "e93540f4404d"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stacca un momento. Piedi a terra, i suoni intorno.",
+   "key": "[meditative] Stacca un momento. Piedi a terra, i suoni intorno.",
+   "id": "ae2a98a66391"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E se senti che per oggi basta così, fermati: una volta fatta bene vale più di due tirate via.",
+   "key": "[meditative] E se senti che per oggi basta così, fermati: una volta fatta bene vale più di due tirate via.",
+   "id": "6f11ad12c35d"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "La seconda volta. Stessa scena, stessa intensità, non serve renderla più pesante. Cambia una cosa sola: appena riconosci un segnale, la stretta o la frase, fai partire la sequenza. Body Check, il nome al pensiero, fatto o storia, Reset, la prima azione. Non devi misurare se sei stato più veloce.",
+   "key": "[meditative] La seconda volta. Stessa scena, stessa intensità, non serve renderla più pesante. Cambia una cosa sola: appena riconosci un segnale, la stretta o la frase, fai partire la sequenza. Body Check, il nome al pensiero, fatto o storia, Reset, la prima azione. Non devi misurare se sei stato più veloce.",
+   "id": "edad059d5c29"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Entra nella scena.",
+   "key": "[meditative] Entra nella scena.",
+   "id": "50ab28640ef8"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Il segnale. Appena lo riconosci, parti.",
+   "key": "[meditative] Il segnale. Appena lo riconosci, parti.",
+   "id": "88dfff604f50"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Body Check.",
+   "key": "[meditative] Body Check.",
+   "id": "319b0be132c7"
+  },
+  {
+   "type": "sil",
+   "sec": 15.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Il nome al pensiero.",
+   "key": "[meditative] Il nome al pensiero.",
+   "id": "2502030c2196"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Fatto o storia.",
+   "key": "[meditative] Fatto o storia.",
+   "id": "779dbf556274"
+  },
+  {
+   "type": "sil",
+   "sec": 15.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset, un respiro intero.",
+   "key": "[meditative] Reset, un respiro intero.",
+   "id": "b8b436dcbee5"
+  },
+  {
+   "type": "sil",
+   "sec": 14.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "La prima azione.",
+   "key": "[meditative] La prima azione.",
+   "id": "cc3e7594f410"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Prima di chiudere, nota se qualcosa è cambiato tra le due volte. Magari lo sguardo pesa un po' meno. Magari pesa uguale, e va bene lo stesso: sono dati tutti e due.",
+   "key": "[meditative] Prima di chiudere, nota se qualcosa è cambiato tra le due volte. Magari lo sguardo pesa un po' meno. Magari pesa uguale, e va bene lo stesso: sono dati tutti e due.",
+   "id": "5a5c3f844cca"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "In campo la sequenza intera non la fai. Mentre il gioco va, solo la prossima giocata. Alla prima pausa in cui hai il tempo, il Protocollo Pressione breve: senti il tuo segnale nel corpo, dai un nome al pensiero, un respiro con gesto e mantra. Fatto o storia lo guardi dopo, a freddo.",
+   "key": "[sincere] In campo la sequenza intera non la fai. Mentre il gioco va, solo la prossima giocata. Alla prima pausa in cui hai il tempo, il Protocollo Pressione breve: senti il tuo segnale nel corpo, dai un nome al pensiero, un respiro con gesto e mantra. Fatto o storia lo guardi dopo, a freddo.",
+   "id": "e984adb916f3"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: nella scena che hai scelto, qual era il fatto, e quale la storia che la mente aggiungeva sopra? Una riga. E se lì era quasi tutto fatto, scrivi anche quello.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: nella scena che hai scelto, qual era il fatto, e quale la storia che la mente aggiungeva sopra? Una riga. E se lì era quasi tutto fatto, scrivi anche quello.",
+   "id": "d6262164bbde"
+  }
  ]
 }

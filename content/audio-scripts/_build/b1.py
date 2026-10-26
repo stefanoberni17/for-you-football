@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1-W5. Formato:
+# Copioni v3 (registri per riga) per W1-W6. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -1225,6 +1225,238 @@ E sii onesto con te stesso: a volte va ancora come sempre. È normale, sono pass
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app, due domande, una riga ciascuna. Uno: questa settimana ti sei accorto della tua reazione dopo un errore? Mentre partiva, solo dopo, o non ancora? Due: hai provato lo Stacco? Quale passaggio ti è venuto, e quale è rimasto poco chiaro? Se non hai avuto occasione, scrivi quello.
+"""
+
+# ---------- W6: la pressione, Fatto vs Storia ----------
+F["W6-G1"] = f"""[sincere]
+La settimana scorsa hai lavorato sull'errore. Questa guardiamo la pressione.
+[SILENZIO 1]
+Ne abbiamo già parlato nella quarta settimana, quando hai costruito il Protocollo. Adesso ci andiamo più a fondo.
+[SILENZIO 2]
+C'è la pressione che arriva da fuori: il mister che ti osserva, la gente in tribuna, il risultato che conta. Quella c'è, è reale, e spesso non dipende da te.
+[SILENZIO 2]
+E c'è quella che aggiungi tu, dentro. Spesso è la più pesante delle due. E su quella hai un margine.
+[SILENZIO 1]
+[relaxed]
+Un esempio? Tu sei convinto che tutta la tribuna stia guardando te. Spesso metà sta guardando il telefono, e l'altra metà discute col vicino.
+[SILENZIO 2]
+[sincere]
+Oggi impariamo a separarle. Prima un minuto per arrivare qui davvero, poi guardiamo.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Prima di tutto, un minuto solo presente. Senti i piedi che appoggiano, i suoni intorno, il punto sotto lo sterno che si gonfia e si sgonfia.
+[SILENZIO 30]
+Non devi fare niente, sei qui ed è già abbastanza.
+[SILENZIO 25]
+Quando sei pronto, torna a un momento recente di pressione in campo: un rigore, un derby, il mister che ti fissava.
+[SILENZIO 8]
+Rivedilo una volta, cinque secondi.
+[SILENZIO 6]
+Poi lascialo lì. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un momento più leggero. Va bene lo stesso.
+[SILENZIO 4]
+E adesso separa, con due domande.
+[SILENZIO 1]
+Cosa è successo? Il mister, la gente, il punteggio: quello che vedrebbe anche una telecamera. Quello è il fatto.
+[SILENZIO 10]
+E cosa ne hai concluso, se hai concluso qualcosa? «Se sbaglio è finita», «mi stanno giudicando tutti». Quella è la storia.
+[SILENZIO 10]
+Una storia può essere giusta, sbagliata o incerta: chiamarla storia non vuol dire che sia una bugia.
+[SILENZIO 3]
+Nota la differenza, e di chi è ciascuna parte. Quello che fanno e dicono gli altri, il risultato, lo sguardo del mister: quello non lo decidi tu.
+[SILENZIO 3]
+E anche le storie spesso arrivano da sole, non le scegli. Il margine che hai è accorgertene, e riguardarle. Una storia che vedi, un giorno la puoi raccontare in un altro modo. Oggi basta vederla.
+[SILENZIO 6]
+E se ti accorgi che quella volta era quasi tutta da fuori, un mister ingiusto, un ambiente pesante, va bene così: non tutta la pressione la costruisci tu.
+[SILENZIO 4]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Se non riesci a separare bene le due cose, è normale. Nella quarta settimana la pressione l'hai sentita nel corpo; oggi guardi cosa ne concludi, ed è un passo in più. Lo vedrai meglio la prossima volta che senti la pressione dal vivo.
+[SILENZIO 2]
+Da oggi, la tua àncora della settimana: ogni volta che senti uno sguardo addosso, in campo o in allenamento, alla prima pausa fai un Reset breve. Mentre il gioco va, solo la prossima giocata.
+[SILENZIO 2]
+Se quella scena ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: di quel momento di pressione, un fatto, cosa è successo, e una frase che ti sei detto, cosa ne hai concluso. Se c'era solo il fatto, scrivi quello. Anche «non lo so ancora» va bene.
+"""
+
+F["W6-G2"] = f"""[relaxed]
+Il primo giorno del percorso te l'ho accennato: prima delle partite io vomitavo. Adesso ti racconto il resto.
+[SILENZIO 2]
+Oltre al vomito avevo un dolore allo stomaco lancinante, che non passava. All'epoca non riuscivo a capire da dove arrivasse. Probabilmente non ero ancora in grado di vedere tutti i pensieri che mi passavano per la testa.
+[SILENZIO 1]
+Col tempo ho capito che era legato al giudizio degli altri: di mio padre, degli amici, di chi mi guardava.
+[SILENZIO 2]
+E quando ho iniziato a lavorarci, sul mio giudizio e su quello degli altri, quel problema è sparito. Il vomito e il dolore, tutti e due.
+[SILENZIO 2]
+[sincere]
+Magari a te non succede niente di così forte. Ma la sera prima della partita che conta, lo stomaco chiuso, il sonno che non arriva, la testa che gioca già la partita mentre sei ancora a letto. A tanti succede.
+[SILENZIO 2]
+È pressione costruita in anticipo. E dietro, spesso, c'è uno sguardo che ti pesa più degli altri. Oggi proviamo a vedere il tuo.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Torna a una sera prima di una partita che contava. Una sera precisa, se la trovi. Se non ti viene, prendi il pre-partita: lo spogliatoio, il riscaldamento, il momento prima di entrare.
+[SILENZIO 8]
+Rivedilo una volta, qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole. Va bene lo stesso.
+[SILENZIO 8]
+Che frase ti girava in testa? Non in generale: le parole. «Non sei da titolare», «domani sbagli», «li deludi». Spesso sono frasi che tornano uguali.
+[SILENZIO 10]
+Se parole non ce ne sono, va bene: passa al corpo.
+[SILENZIO 2]
+Adesso, mentre la ricordi, cosa senti nel corpo? La stretta nello stomaco, il petto che si chiude, il respiro corto. Sentila un attimo, senza mandarla via.
+[SILENZIO 10]
+Se non senti niente di chiaro, va bene così.
+[SILENZIO 2]
+E se quella pressione avesse un volto? Può essere una persona, un gruppo, «la gente». Oppure qualcosa di figurato: un'immagine, un peso, un'ombra. Ognuno la vede a modo suo.
+[SILENZIO 10]
+Se ti viene, notala e basta. Trovarla non vuol dire accusare qualcuno: quello che senti è come quello sguardo ti arriva e ti resta addosso. A volte è davvero pesante, o ingiusto, e va riconosciuto così.
+[SILENZIO 4]
+Se non ti viene niente, va bene lo stesso: a volte dietro c'è la paura di sbagliare, la stanchezza, il posto in squadra.
+[SILENZIO 4]
+E adesso una cosa importante. Quella sensazione, da sola, non ti sta dicendo che andrà male. Non è una previsione.
+[SILENZIO 2]
+Può voler dire cose diverse: che ci tieni, che hai paura di sbagliare, che sei stanco, che quello sguardo pesa davvero. Non devi decidere adesso quale sia. Oggi basta vederla.
+[SILENZIO 5]
+Chiudi con un Reset: respiro completo, gesto, mantra.
+[SILENZIO 1]
+{RESET1}
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Tieni questo per la prossima sera prima di una partita: quando la testa parte a giocarla in anticipo, ricordati che quella sensazione non è una previsione. Un Reset, e la partita la lasci a domani, dove sta.
+[SILENZIO 2]
+E al prossimo allenamento, quando senti uno sguardo addosso, il mister che ti fissa, un compagno che ti valuta: mentre il gioco va, solo la prossima giocata. Alla prima pausa, un Body Check di dieci secondi: piedi, stomaco, petto, spalle. Dove senti la pressione nel corpo? Solo notare, non cambiare niente. Due volte basta.
+[SILENZIO 2]
+Se questo ricordo ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app cosa hai notato: che frase tornava, dove la sentivi nel corpo, e se la pressione aveva un volto, una persona o un'immagine. Una riga basta. Anche «niente di chiaro» va bene.
+"""
+
+F["W6-G3"] = f"""[relaxed]
+Quando ero più giovane non pensavo di essere forte. Magari fuori lo facevo vedere, ma dentro non ci credevo. E ogni volta che succedeva qualcosa, lo leggevo in modo da confermare quello che pensavo già.
+[SILENZIO 2]
+In Serie D, una domenica il mister mi fa partire titolare, e al sessantesimo mi toglie. Io ho pensato che fosse finita: ha capito che non sono abbastanza forte, e mi ha tolto per non farmi più giocare. E infatti la partita dopo sono partito dalla panchina.
+[SILENZIO 2]
+Ero distrutto dentro. Settimane e mesi durissimi, mi giudicavo, mi sentivo un fallito.
+[SILENZIO 2]
+In realtà il mister aveva quattro attaccanti forti e ci faceva girare. Gli piacevo moltissimo, e pur di tenermi in campo col tempo mi ha spostato più indietro, a centrocampo e poi terzino. Ed è lì che sono diventato davvero forte.
+[SILENZIO 2]
+[sincere]
+Il fatto era piccolo: mi aveva tolto al sessantesimo. La storia l'avevo scritta tutta io, e non era vera.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Tieni davanti il momento che hai scritto prima di iniziare.
+[SILENZIO 3]
+E prendi la differenza da un esempio, con due domande. Cosa è successo? «Il mister mi ha sostituito»: è un fatto, l'hai visto. Cosa ne ho concluso? «Ha smesso di credere in me»: è una storia, l'hai aggiunta tu per spiegarti il fatto.
+[SILENZIO 3]
+Una storia può essere giusta, sbagliata o incerta: chiamarla storia non vuol dire che sia una bugia. Vuol dire che non l'hai vista, l'hai dedotta.
+[SILENZIO 4]
+Adesso parti dal tuo momento, quello che hai scritto. Rivedilo una volta.
+[SILENZIO 8]
+Cosa è successo, quello che hai visto o sentito davvero?
+[SILENZIO 10]
+E cosa ne hai concluso?
+[SILENZIO 10]
+Se hai tempo e ti va, fai lo stesso con una o due altre situazioni tue in cui ti sei sentito giudicato. Ma una basta.
+[SILENZIO 15]
+Se ti va, guarda anche questo: a volte un giudizio brucia di più perché tocca qualcosa che già ti dici da solo. Se è così, saperlo ti aiuta.
+[SILENZIO 8]
+Ma a volte no: a volte un giudizio è solo ingiusto. E lì la risposta giusta non è darti la colpa, è mettere un confine. Per esempio parlarne a freddo con chi te l'ha detto, o chiedere aiuto a qualcuno di cui ti fidi se ti senti trattato male. Non tutto quello che ti ferisce è tuo.
+[SILENZIO 6]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Ricorda l'àncora: ogni volta che senti uno sguardo addosso, alla prima pausa un Reset breve. Mentre il gioco va, solo la prossima giocata.
+[SILENZIO 2]
+Se questo momento ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: il momento che hai scritto, cosa è successo, e cosa ne hai concluso? Una riga va bene.
+"""
+
+F["W6-G4"] = f"""[sincere]
+Ogni giocatore ha i suoi momenti di giudizio. Rientrare in campo dopo un errore, il mister che ti richiama davanti a tutti, la tribuna che mormora. Oppure la sera prima della partita che conta, per chi la pressione se la costruisce in anticipo.
+[SILENZIO 2]
+Oggi ne rivivi uno apposta, scelto da te, e ci entri con tutto quello che hai imparato finora.
+[SILENZIO 2]
+È il giorno più lungo della settimana: dodici minuti. Prenditi il tempo che serve.
+[SILENZIO 3]
+[meditative]
+Trova un posto tranquillo. Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Tre Reset per arrivare qui: naso, pancia, bocca.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+[sincere]
+Scegli una tua situazione di giudizio. Una vera, che ti capita. Non serve la più pesante: parti da una che riesci a gestire, e decidi tu quanto starci. La vivi due volte.
+[SILENZIO 2]
+Prima di entrare: se in qualunque momento qualcosa pesa più del previsto, fermati. Un Reset, i piedi a terra, i suoni intorno. E se ti va parlane con il Coach: qui non c'è niente da dimostrare.
+[SILENZIO 3]
+[meditative]
+La prima volta.
+[SILENZIO 2]
+Uno. Entra nella scena. Rivivila una volta, cinque secondi: lo sguardo addosso, il mormorio, la stretta che parte.
+[SILENZIO 8]
+Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 4]
+Due. Body Check. Dove la senti la pressione? Solo trovala, non cambiarla.
+[SILENZIO 1]
+{bodycheck(6)}
+Se non senti niente di chiaro, va bene: «niente di chiaro» è una risposta.
+[SILENZIO 3]
+Tre. Ascolta la frase che arriva.
+[SILENZIO 8]
+Poi dalle un nome: se riguarda cosa pensano gli altri di te, giudizio; se è altro, pensiero. Non mandarla via e non seguirla, solo l'etichetta.
+[SILENZIO 8]
+Quattro. Fatto o storia. Cosa è successo davvero, nell'episodio?
+[SILENZIO 8]
+E cosa ne stai concludendo tu?
+[SILENZIO 8]
+Tieni il fatto.
+[SILENZIO 3]
+Cinque. Reset. Respiro completo, gesto, mantra.
+[SILENZIO 1]
+{RESET1}
+E immagina la prima azione dopo: ricevi palla, alzi la testa, sei in partita.
+[SILENZIO 8]
+Stacca un momento. Piedi a terra, i suoni intorno.
+[SILENZIO 10]
+E se senti che per oggi basta così, fermati: una volta fatta bene vale più di due tirate via.
+[SILENZIO 5]
+La seconda volta. Stessa scena, stessa intensità, non serve renderla più pesante. Cambia una cosa sola: appena riconosci un segnale, la stretta o la frase, fai partire la sequenza. Body Check, il nome al pensiero, fatto o storia, Reset, la prima azione. Non devi misurare se sei stato più veloce.
+[SILENZIO 3]
+Entra nella scena.
+[SILENZIO 10]
+Il segnale. Appena lo riconosci, parti.
+[SILENZIO 4]
+Body Check.
+[SILENZIO 15]
+Il nome al pensiero.
+[SILENZIO 10]
+Fatto o storia.
+[SILENZIO 15]
+Reset, un respiro intero.
+[SILENZIO 14]
+La prima azione.
+[SILENZIO 10]
+Prima di chiudere, nota se qualcosa è cambiato tra le due volte. Magari lo sguardo pesa un po' meno. Magari pesa uguale, e va bene lo stesso: sono dati tutti e due.
+[SILENZIO 10]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+In campo la sequenza intera non la fai. Mentre il gioco va, solo la prossima giocata. Alla prima pausa in cui hai il tempo, il Protocollo Pressione breve: senti il tuo segnale nel corpo, dai un nome al pensiero, un respiro con gesto e mantra. Fatto o storia lo guardi dopo, a freddo.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: nella scena che hai scelto, qual era il fatto, e quale la storia che la mente aggiungeva sopra? Una riga. E se lì era quasi tutto fatto, scrivi anche quello.
 """
 
 for k,v in F.items():
