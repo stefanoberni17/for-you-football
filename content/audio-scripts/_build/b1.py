@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1-W6. Formato:
+# Copioni v3 (registri per riga) per W1-W7. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -1457,6 +1457,175 @@ In campo la sequenza intera non la fai. Mentre il gioco va, solo la prossima gio
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app: nella scena che hai scelto, qual era il fatto, e quale la storia che la mente aggiungeva sopra? Una riga. E se lì era quasi tutto fatto, scrivi anche quello.
+"""
+
+# ---------- W7: la rabbia, l'Anticipo (audio solo G3, G4, G6 breve) ----------
+F["W7-G3"] = f"""[sincere]
+Ieri hai visto la scala. Oggi vediamo cosa si fa quando te ne accorgi, con la tensione che è già salita.
+[SILENZIO 2]
+I due modi che conosci già sono questi. Il primo è esplodere: comanda lei, e poi paghi tu. L'ammonizione, la parola che non dovevi dire, la giocata buttata via.
+[SILENZIO 2]
+Il secondo è ingoiare: stringi i denti, fai finta di niente e vai avanti. Sembra la scelta matura, ma spesso quella roba resta lì, si accumula, e magari ti torna la sera mentre provi a dormire.
+[SILENZIO 1]
+[relaxed]
+O esplode dopo: è quello che è successo a me nella partita del rosso. Più la trattenevo, più si accumulava.
+[SILENZIO 2]
+[sincere]
+Attenzione: ingoiare non vuol dire stare zitto. Puoi anche decidere di non dire niente adesso e parlarne dopo. Ingoiare è far finta di non sentirla.
+[SILENZIO 2]
+Ce n'è un terzo, e non è «trasforma la rabbia in energia», che è una di quelle frasi che stanno bene su Instagram e in campo non servono a niente.
+[SILENZIO 2]
+È più semplice: la rabbia può anche restare. Il punto è accorgertene, e che non sia lei a scegliere la prossima cosa che fai.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Torna a un momento di rabbia in campo. Rivedilo una volta sola, cinque secondi, poi lascialo andare.
+[SILENZIO 8]
+Tieni solo l'inizio: il punto in cui comincia a salire. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 6]
+Senti il gradino. Dove sei sulla scala? Cosa dice il corpo, mascella, mani, calore? Non provare a spegnerlo. Solo sentilo.
+[SILENZIO 10]
+Nomina. Una parola, dentro: «rabbia». Non la mandi via e non la segui, la chiami per nome e basta. Spesso già questo la rallenta.
+[SILENZIO 6]
+Reset. Respiro, gesto, mantra. Non per cancellare quello che senti, ma per tornare tu a decidere.
+[SILENZIO 1]
+{RESET1}
+Poi scegli la prossima azione, lucido come riesci. Non serve esserlo del tutto. Cosa faccio adesso? Torno in posizione, chiedo palla, dico una cosa al compagno con la voce giusta.
+[SILENZIO 8]
+E a volte la scelta utile è semplicemente non protestare, o rimandare una risposta: anche quella è una scelta.
+[SILENZIO 4]
+Se un po' di carica resta, a volte finisce da sola nel gioco: nella corsa, nel pressing, nel duello. Non devi farcela andare tu. L'importante è restare presente: così sei tu a scegliere cosa fai, non lei.
+[SILENZIO 5]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Questo è il terzo modo. Da seduti lo fai intero, come oggi. Se ti accorgi che eri ancora al gradino uno, spesso basta un Reset.
+[SILENZIO 2]
+In campo, che sale te ne puoi accorgere anche mentre giochi: succede da solo. Ma se il gioco va avanti, niente mossa: solo la prossima giocata. Alla prima pausa fai la mossa in versione campo: un Reset breve, un respiro con gesto e mantra, e scegli la prossima azione.
+[SILENZIO 2]
+Àncora della settimana: ogni volta che qualcosa ti dà fastidio, un Reset. In campo, alla prima pausa.
+[SILENZIO 2]
+Se rivivere quel momento ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: dei due modi vecchi, esplodere o ingoiare, qual è più il tuo? Una parola va bene. Anche «dipende», «nessuno dei due» o «non lo so» vanno bene.
+"""
+
+F["W7-G4"] = f"""[relaxed]
+Qualche anno dopo quel rosso mi è ricapitata una cosa simile. Partita tesa, e prendo una gomitata. La rabbia parte, e sto già per andare.
+[SILENZIO 2]
+Solo che quella volta me ne sono accorto. Ho sentito proprio il calore che saliva nel corpo e mi stava arrivando in testa. E mi sono fermato. Ho respirato. Non l'ho ingoiata: l'ho sentita, e ho scelto io cosa farci.
+[SILENZIO 2]
+Non è che sia sparita, sia chiaro. È rimasta lì per tutta la partita. Solo che invece di scaricarla addosso a qualcuno ci ho messo dentro più determinazione, restando dentro ai limiti. E alla fine abbiamo vinto.
+[SILENZIO 2]
+[sincere]
+Cosa è cambiato tra le due volte? Non avevo imparato una tecnica particolare. È che la seconda volta l'ho sentita salire. Tutto lì.
+[SILENZIO 2]
+Ecco perché oggi ci alleniamo a freddo. Un pompiere non appicca un incendio per allenarsi a spegnerlo: ripete i gesti tante volte quando non c'è niente che brucia, così quando l'incendio arriva davvero le mani partono più facilmente. In partita non hai tempo di ragionare: più la mossa è pronta, più è facile che parta.
+[SILENZIO 3]
+[meditative]
+Trova un posto tranquillo. Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Tre Reset per arrivare qui: naso, pancia, bocca.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+[sincere]
+Una cosa prima di iniziare. Oggi alleni l'Anticipo: senti la rabbia salire un secondo prima, e scegli tu invece di subirla. Il bersaglio è il segnale più piccolo, l'ingresso al gradino uno, non il fuoco.
+[SILENZIO 2]
+Se in qualunque momento qualcosa pesa più del previsto, fermati. Un Reset, i piedi a terra, i suoni intorno. E se senti il bisogno, parlane con il Coach: qui non c'è niente da dimostrare a nessuno.
+[SILENZIO 3]
+[meditative]
+Prima costruisci la tua frase, in chiaro. Il tuo «quando, allora».
+[SILENZIO 2]
+Quando sento il tuo segnale del gradino uno, mascella, mani, calore, respiro, allora alla prima pausa faccio un Reset breve, un respiro con gesto e mantra, e scelgo la prossima azione.
+[SILENZIO 3]
+Una frase sola, con parole tue. Dilla dentro di te adesso.
+[SILENZIO 12]
+Se non sai ancora qual è il tuo segnale, prendine uno provvisorio: lo correggi quando lo vedi dal vivo. La prossima azione non devi deciderla adesso: dipende da cosa succede in campo. Quello che prepari è il Reset.
+[SILENZIO 4]
+In campo funziona così. Che sta salendo te ne puoi accorgere anche mentre giochi: succede da solo, non è una cosa da fare. Ma finché il gioco va, niente mossa: solo la prossima giocata. La mossa, il Reset breve e la prossima azione, la fai alla prima pausa.
+[SILENZIO 4]
+Adesso prendi un fastidio piccolo e recente. Non un'esplosione: un fastidio. Un fallo non dato, un compagno che brontola, un'indicazione che ti ha dato sui nervi. Roba da gradino uno, che è esattamente il materiale giusto.
+[SILENZIO 8]
+Rimettilo per un attimo, leggero.
+[SILENZIO 6]
+Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un fastidio ancora più piccolo. Va bene lo stesso. E se durante il ricordo non senti nessun segnale, non forzarti a sentirlo: usa quello provvisorio.
+[SILENZIO 4]
+Poi fai la mossa nello stesso ordine della tua frase. Quando: appena senti il tuo segnale, lo riconosci.
+[SILENZIO 6]
+Allora: un Reset breve.
+[SILENZIO 1]
+{RESET1}
+E scegli cosa fai adesso. La cosa resta lì e torni tu.
+[SILENZIO 8]
+Se hai tempo e ti va, stacca e rifallo con un altro fastidio piccolo, diverso. Sempre la stessa sequenza.
+[SILENZIO 3]
+Il secondo fastidio. Rimettilo un attimo, leggero.
+[SILENZIO 10]
+Quando: il segnale.
+[SILENZIO 6]
+Allora: un Reset breve, un respiro con gesto e mantra.
+[SILENZIO 14]
+E la prossima azione.
+[SILENZIO 8]
+E poi un terzo, se ti va. Rimettilo un attimo.
+[SILENZIO 10]
+Quando: il segnale.
+[SILENZIO 6]
+Allora: il Reset breve.
+[SILENZIO 14]
+E la prossima azione.
+[SILENZIO 8]
+Ma uno fatto bene basta.
+[SILENZIO 3]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Non stai rivivendo la rabbia. Stai ripetendo la mossa a freddo, come un movimento che provi in allenamento, così che in partita ti venga più facile. E quando becchi il gradino uno, spesso in cima non ci arrivi.
+[SILENZIO 2]
+Da oggi l'Anticipo è tuo.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app la tua mossa, in una frase tua: «quando sento», il tuo segnale del gradino uno, «allora alla prima pausa un Reset breve e la prossima azione». È quella che ti porti in campo. Se il segnale è ancora provvisorio, va bene.
+"""
+
+F["W7-G6"] = f"""[sincere]
+Dietro la frustrazione, spesso, c'è qualcosa che ti importa. Spesso non ti arrabbi per una cosa che non conta niente. Ti arrabbi perché ci tieni. Se non ti interessasse niente del calcio, un errore te lo lasceresti scivolare addosso e fine.
+[SILENZIO 2]
+E poi c'è la rabbia più difficile di tutte, che è quella verso te stesso. Il replay degli errori dopo la partita, la sera, in loop, che non se ne va. La conosci anche tu, immagino.
+[SILENZIO 2]
+Oggi non devi togliertela di dosso e non devi sistemare niente. Provare rabbia è normale: quando arriva sei carico. Il lavoro è accorgertene prima, e ci stai lavorando da sei giorni, comunque sia andata.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Ripensa alla tua scala di questi giorni: fastidio, tensione, fuoco.
+[SILENZIO 6]
+Adesso prendi un episodio leggero di questi giorni. Un fastidio, una tensione, niente di più. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio ancora più leggero. Va bene lo stesso.
+[SILENZIO 10]
+E separa due cose.
+[SILENZIO 1]
+Cosa hai sentito. Quello che è successo dentro di te: un'emozione, come il fastidio o la rabbia. Una sensazione nel corpo, come il calore. Un impulso, come la voglia di rispondere.
+[SILENZIO 10]
+Cosa hai fatto. Il comportamento: hai risposto, hai stretto i denti, sei stato zitto, hai continuato a giocare, hai fatto un fallo.
+[SILENZIO 10]
+Sono due cose diverse. Quello che senti arriva, non lo scegli. Quello che fai, un po' alla volta, sì.
+[SILENZIO 4]
+E adesso una cosa importante: provare rabbia è normale. Di quello che hai fatto si può parlare, è un altro discorso. Ma quello che hai sentito è arrivato, e basta. Non devi per forza trovarci un lato buono.
+[SILENZIO 5]
+Resta un momento qui. Non devi concludere niente e non devi sistemare niente. Oggi basta sapere che quel fuoco è tuo, e che si può imparare a starci vicino senza farsi portare via.
+[SILENZIO 8]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Àncora della settimana: ogni volta che qualcosa ti dà fastidio, un Reset. In campo, alla prima pausa.
+[SILENZIO 2]
+Se ti smuove più del previsto, fermati e fai un Reset. E se ti va, parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app, nel tuo episodio: cosa hai sentito, e cosa hai fatto? Una riga per ciascuno. Se non riesci a separarli, o se oggi è solo «non lo so», va bene quello.
 """
 
 for k,v in F.items():
