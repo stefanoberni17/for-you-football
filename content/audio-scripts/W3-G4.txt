@@ -1,0 +1,227 @@
+[sincere]
+Una cosa importante: non tutta la tensione è nemica.
+[SILENZIO 2]
+[relaxed]
+A tensione zero sei quello che al riscaldamento sbadiglia. Al massimo sei quello che il primo pallone lo calcia in tribuna. Di solito si gioca meglio in mezzo: acceso, ma lucido.
+[SILENZIO 2]
+[sincere]
+Il Body Check non ti sposta da nessuna parte: legge. Ti dice dove sei rispetto al tuo livello, quello che ieri hai trovato nella tua firma del gioco libero. Poi, se serve, agisci: con il Reset.
+[SILENZIO 2]
+Prima leggi, poi agisci. Oggi lo metti alla prova, in tre fasi.
+[SILENZIO 2]
+Una cosa prima di partire: se durante la fase due qualcosa pesa più del previsto, fermati, fai un Reset, e riparti quando vuoi.
+[SILENZIO 3]
+[meditative]
+Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Fase uno: come stai adesso. Due minuti.
+[SILENZIO 2]
+Tre Reset: naso, pancia, bocca.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Poi il Body Check. Com'è il corpo adesso, a riposo?
+[SILENZIO 2]
+Piedi.
+[SILENZIO 10]
+Stomaco.
+[SILENZIO 10]
+Petto.
+[SILENZIO 10]
+Spalle.
+[SILENZIO 10]
+Bene. Questo è il tuo punto di partenza.
+[SILENZIO 3]
+Fase due: sotto pressione. Quattro minuti.
+[SILENZIO 2]
+Pensa a una situazione che ti mette sotto pressione in campo. Non per forza la peggiore: una vera, tua, che riesci a guardare. Decidi tu quanto forte, e quanto restarci, fino a un minuto.
+[SILENZIO 30]
+Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 25]
+Poi il Body Check: cosa è cambiato rispetto a prima? Dove? Solo guardare, senza sistemare niente.
+[SILENZIO 2]
+Piedi.
+[SILENZIO 8]
+Stomaco.
+[SILENZIO 8]
+Petto.
+[SILENZIO 8]
+Spalle.
+[SILENZIO 8]
+Ora un Reset completo.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+E di nuovo il Body Check: confrontalo con quello di prima del Reset. Cosa è cambiato, e cosa è rimasto uguale?
+[SILENZIO 2]
+Piedi.
+[SILENZIO 8]
+Stomaco.
+[SILENZIO 8]
+Petto.
+[SILENZIO 8]
+Spalle.
+[SILENZIO 8]
+Fase tre: la sequenza. Sei minuti.
+[SILENZIO 2]
+Ripeti tre volte: torni un attimo sulla scena, Body Check per leggere dove sei, un Reset, di nuovo Body Check. Ogni volta nota se cambia qualcosa, o se resta uguale. Tutte e due le cose sono informazioni.
+[SILENZIO 3]
+Primo giro. Torna un attimo sulla scena.
+[SILENZIO 12]
+Body Check, per leggere dove sei. Piedi.
+[SILENZIO 5]
+Stomaco.
+[SILENZIO 5]
+Petto.
+[SILENZIO 5]
+Spalle.
+[SILENZIO 5]
+Reset.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Di nuovo il Body Check. Piedi.
+[SILENZIO 5]
+Stomaco.
+[SILENZIO 5]
+Petto.
+[SILENZIO 5]
+Spalle.
+[SILENZIO 5]
+È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.
+[SILENZIO 3]
+Secondo giro. Torna un attimo sulla scena.
+[SILENZIO 12]
+Body Check, per leggere dove sei. Piedi.
+[SILENZIO 5]
+Stomaco.
+[SILENZIO 5]
+Petto.
+[SILENZIO 5]
+Spalle.
+[SILENZIO 5]
+Reset.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Di nuovo il Body Check. Piedi.
+[SILENZIO 5]
+Stomaco.
+[SILENZIO 5]
+Petto.
+[SILENZIO 5]
+Spalle.
+[SILENZIO 5]
+È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.
+[SILENZIO 3]
+Terzo giro. Torna un attimo sulla scena.
+[SILENZIO 12]
+Body Check, per leggere dove sei. Piedi.
+[SILENZIO 5]
+Stomaco.
+[SILENZIO 5]
+Petto.
+[SILENZIO 5]
+Spalle.
+[SILENZIO 5]
+Reset.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Di nuovo il Body Check. Piedi.
+[SILENZIO 5]
+Stomaco.
+[SILENZIO 5]
+Petto.
+[SILENZIO 5]
+Spalle.
+[SILENZIO 5]
+È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.
+[SILENZIO 3]
+Bene. Torna qui.
+[SILENZIO 3]
+[sincere]
+Se in un Body Check non hai sentito niente di chiaro, va bene: scrivi «niente di chiaro». Se ti dice che sei spento, scarico, è un dato anche quello: scrivilo. E se ti capita spesso, parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: confronta il Body Check prima e dopo il Reset, cosa hai notato? Cosa è cambiato e cosa è rimasto uguale? Se non è cambiato niente, scrivilo così: è un dato utile, non un errore.

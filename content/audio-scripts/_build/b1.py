@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1 e W2. Formato:
+# Copioni v3 (registri per riga) per W1, W2 e W3. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -486,6 +486,255 @@ Non devi decidere se hai pensato bene o male. Dai il nome, e torni al respiro.
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre stavi osservando i tuoi pensieri, questa settimana? Succede spesso, e anche accorgersene è Observer.
+"""
+
+# ---------- W3: il Body Check ----------
+# Body Check guidato, zona per zona (canone: piedi, stomaco, petto, spalle)
+def bodycheck(sec=8, intro=None):
+    righe = []
+    zone = ["Piedi.", "Stomaco.", "Petto.", "Spalle."]
+    if intro:
+        zone[0] = intro + " Piedi."
+    for z in zone:
+        righe.append(z)
+        righe.append(f"[SILENZIO {sec}]")
+    return "\n".join(righe)
+
+def giro_g4(nome):
+    return f"""{nome}. Torna un attimo sulla scena.
+[SILENZIO 12]
+{bodycheck(5, "Body Check, per leggere dove sei.")}
+Reset.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 2]
+{bodycheck(5, "Di nuovo il Body Check.")}
+È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.
+[SILENZIO 3]"""
+
+F["W3-G1"] = f"""[sincere]
+Il crampo di solito non arriva di sorpresa: spesso il polpaccio tirava già da dieci minuti. Solo che non ci stavi facendo caso.
+[SILENZIO 2]
+Con la tensione succede spesso la stessa cosa. Lo stomaco si chiude, le spalle salgono, le gambe si fanno pesanti. E a volte succede prima che tu esploda o ti spenga. Il corpo spesso ti avvisa in anticipo. Solo che facciamo come con i messaggi nel gruppo della squadra: arrivano, li vediamo, e non li apriamo.
+[SILENZIO 2]
+Di solito ce ne accorgiamo tardi, quando quella sensazione è già diventata un pensiero, tipo «non ce la faccio» o «oggi va male».
+[SILENZIO 2]
+Questa settimana provi a sentirla prima, quando è ancora solo una sensazione nel corpo e non ti ha ancora portato da nessuna parte.
+[SILENZIO 3]
+[meditative]
+Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Tre Reset per arrivare qui: naso, pancia, bocca.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+Prima di iniziare, due cose. Non devi cambiare niente: né la postura, né il respiro. E se in un punto non senti niente di chiaro, va bene: scrivi «niente di chiaro».
+[SILENZIO 3]
+Poi porta l'attenzione nel corpo, lentamente, un pezzo alla volta. Resta qualche secondo su ognuno.
+[SILENZIO 3]
+I piedi. Senti il contatto con il pavimento? Per esempio: piantati, leggeri, niente di particolare.
+[SILENZIO 10]
+Lo stomaco. Noti qualche sensazione? Per esempio: aperto, chiuso, stretto, niente.
+[SILENZIO 10]
+Il petto. Com'è il respiro? Per esempio: ampio, corto, in alto.
+[SILENZIO 10]
+Le spalle. Come sono? Per esempio: su e tese, giù e morbide.
+[SILENZIO 10]
+Gli esempi sono solo esempi: puoi sentire altro.
+[SILENZIO 2]
+Guarda solo com'è, adesso.
+[SILENZIO 8]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Questo è il Body Check. Quattro posti, una parola per ognuno. Da oggi è il tuo terzo strumento.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: quale zona del corpo ti ha colpito di più? C'era qualcosa che non ti aspettavi di trovare? Se non hai notato niente di particolare, scrivilo: è un dato anche quello.
+"""
+
+F["W3-G2"] = f"""[relaxed]
+Finale di playoff contro la Reggiana. Stadio pieno, migliaia di persone.
+[SILENZIO 1]
+Io pensavo di essere tranquillo, sereno. Poi arrivo allo stadio e sento un vuoto allo stomaco, e un brivido che mi passa dappertutto. Solo lì ho capito che l'adrenalina, la paura e l'energia stavano arrivando tutte insieme. La testa diceva «tutto a posto», il corpo sapeva già tutto.
+[SILENZIO 2]
+Quella volta me ne sono accorto, e ho lasciato che ci fosse invece di fare finta di niente. Abbiamo vinto quattro a uno, e ho fatto una delle mie partite migliori.
+[SILENZIO 2]
+[sincere]
+Molti giocatori hanno un posto dove la tensione arriva per prima. Io la portavo nello stomaco, nelle spalle e nelle gambe. Non è uguale per tutti: è la tua mappa personale, e oggi la cerchi.
+[SILENZIO 2]
+Anche Buffon ha raccontato di aver passato periodi di ansia forte, quando era già uno dei portieri più forti al mondo. Non capita solo a te.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Adesso pensa a una situazione in campo che ti mette spesso sotto pressione. Un errore sotto gli occhi del mister, un momento in cui senti di aver deluso la squadra, la partita che conta. Non la peggiore: una che riesci a guardare.
+[SILENZIO 5]
+Tienila in testa trenta secondi.
+[SILENZIO 30]
+Adesso il Body Check, con una domanda sola: mentre ricordi la scena, dove senti qualcosa nel corpo?
+[SILENZIO 2]
+{bodycheck(8)}
+Adesso un Reset.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+E rifai il Body Check: è cambiato qualcosa, o è rimasto uguale? Va bene in tutti e due i casi.
+[SILENZIO 2]
+{bodycheck(8)}
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Se oggi non hai sentito niente di chiaro, va bene lo stesso: è una prima osservazione, e la mappa la trovi meglio dal vivo, la prossima volta che senti la pressione in campo.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: dove hai sentito qualcosa nel corpo, ricordando la scena? Pensa ai quattro punti del Body Check: piedi, stomaco, petto, spalle. Se per te conta anche un segnale personale in più, mascella, mani, gambe, scrivi anche quello. Se non hai trovato una zona, scrivi «non ho trovato una zona»: la verifichi in campo.
+"""
+
+F["W3-G3"] = f"""[sincere]
+Noi calciatori passiamo un sacco di tempo ad analizzare quando stiamo male. Ma quasi nessuno si ferma a guardare com'è quando gioca bene.
+[SILENZIO 2]
+Eppure quella sensazione è la cosa più concreta che hai per tornarci, le volte che te ne sei allontanato.
+[SILENZIO 2]
+[relaxed]
+Ti dico com'era la mia. Respiro profondo. Gambe leggere ma forti. Spalle alte, ma non rigide. La testa libera, concentrata, e con dentro un po' di tensione. C'era anche un misto di paura. Solo che la ascoltavo, e diventava coraggio. Spensierato e libero, ma focalizzato.
+[SILENZIO 2]
+[sincere]
+Quella è la mia firma del gioco libero. Oggi cerchi la tua.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Adesso scegli un momento in cui hai giocato bene. Una partita, un allenamento, anche solo una giocata riuscita, in cui tutto andava da sé. Non serve la partita della vita: va bene anche una cosa piccola. Prenditi qualche secondo per sceglierlo.
+[SILENZIO 8]
+Torna lì. Prenditi una trentina di secondi per entrarci, con calma.
+[SILENZIO 2]
+Dove sei: lo stadio, il campetto, l'erba, la luce.
+[SILENZIO 10]
+Cosa senti intorno: i compagni, il mister, il pubblico, il pallone.
+[SILENZIO 10]
+Cosa stai facendo: la giocata, il momento preciso.
+[SILENZIO 10]
+Non serve vedere tutto. Basta esserci un po'.
+[SILENZIO 3]
+Ora, dentro quella scena, guarda il tuo corpo, un pezzo alla volta. Resta su ognuno una decina di secondi, senza fretta.
+[SILENZIO 2]
+I piedi: com'erano? Piantati, leggeri, veloci?
+[SILENZIO 10]
+Lo stomaco: aperto, chiuso, tranquillo, acceso?
+[SILENZIO 10]
+Il petto e il respiro: ampio, corto, profondo?
+[SILENZIO 10]
+Le spalle: alte, basse, sciolte, pronte?
+[SILENZIO 10]
+E poi le gambe, la testa, qualsiasi altra cosa che ti viene.
+[SILENZIO 10]
+Non deve essere tranquilla per forza. Se c'era un po' di tensione, o anche di paura, fa parte anche quella.
+[SILENZIO 3]
+Se non riesci a vedere la scena, raccontatela a parole. E se di un punto non ti ricordi niente, va bene: lascialo vuoto.
+[SILENZIO 3]
+Resta ancora qualche secondo nella scena, tutta intera.
+[SILENZIO 8]
+Poi lasciala andare.
+[SILENZIO 4]
+Questa è la tua firma del gioco libero: com'era il tuo corpo quando giocavi bene. È una prima versione: la puoi correggere ogni volta che in campo ti capita di nuovo.
+[SILENZIO 3]
+Chiudi con un Reset.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: com'era fisicamente il tuo corpo quando giocavi bene? Descrivi la sensazione, non il pensiero. Se ti vengono solo due o tre cose, va benissimo: non stai compilando la scheda di un giocatore della Play.
+"""
+
+F["W3-G4"] = f"""[sincere]
+Una cosa importante: non tutta la tensione è nemica.
+[SILENZIO 2]
+[relaxed]
+A tensione zero sei quello che al riscaldamento sbadiglia. Al massimo sei quello che il primo pallone lo calcia in tribuna. Di solito si gioca meglio in mezzo: acceso, ma lucido.
+[SILENZIO 2]
+[sincere]
+Il Body Check non ti sposta da nessuna parte: legge. Ti dice dove sei rispetto al tuo livello, quello che ieri hai trovato nella tua firma del gioco libero. Poi, se serve, agisci: con il Reset.
+[SILENZIO 2]
+Prima leggi, poi agisci. Oggi lo metti alla prova, in tre fasi.
+[SILENZIO 2]
+Una cosa prima di partire: se durante la fase due qualcosa pesa più del previsto, fermati, fai un Reset, e riparti quando vuoi.
+[SILENZIO 3]
+[meditative]
+Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Fase uno: come stai adesso. Due minuti.
+[SILENZIO 2]
+Tre Reset: naso, pancia, bocca.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+Poi il Body Check. Com'è il corpo adesso, a riposo?
+[SILENZIO 2]
+{bodycheck(10)}
+Bene. Questo è il tuo punto di partenza.
+[SILENZIO 3]
+Fase due: sotto pressione. Quattro minuti.
+[SILENZIO 2]
+Pensa a una situazione che ti mette sotto pressione in campo. Non per forza la peggiore: una vera, tua, che riesci a guardare. Decidi tu quanto forte, e quanto restarci, fino a un minuto.
+[SILENZIO 30]
+Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 25]
+Poi il Body Check: cosa è cambiato rispetto a prima? Dove? Solo guardare, senza sistemare niente.
+[SILENZIO 2]
+{bodycheck(8)}
+Ora un Reset completo.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+E di nuovo il Body Check: confrontalo con quello di prima del Reset. Cosa è cambiato, e cosa è rimasto uguale?
+[SILENZIO 2]
+{bodycheck(8)}
+Fase tre: la sequenza. Sei minuti.
+[SILENZIO 2]
+Ripeti tre volte: torni un attimo sulla scena, Body Check per leggere dove sei, un Reset, di nuovo Body Check. Ogni volta nota se cambia qualcosa, o se resta uguale. Tutte e due le cose sono informazioni.
+[SILENZIO 3]
+{giro_g4("Primo giro")}
+{giro_g4("Secondo giro")}
+{giro_g4("Terzo giro")}
+Bene. Torna qui.
+[SILENZIO 3]
+[sincere]
+Se in un Body Check non hai sentito niente di chiaro, va bene: scrivi «niente di chiaro». Se ti dice che sei spento, scarico, è un dato anche quello: scrivilo. E se ti capita spesso, parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: confronta il Body Check prima e dopo il Reset, cosa hai notato? Cosa è cambiato e cosa è rimasto uguale? Se non è cambiato niente, scrivilo così: è un dato utile, non un errore.
+"""
+
+F["W3-G6"] = f"""[relaxed]
+Io la tensione la ignoravo. Spesso era lì per nascondere la paura e l'ansia, e io facevo finta di niente.
+[SILENZIO 2]
+Solo che quella roba non spariva. Mi tornava addosso comunque: in campo mi venivano i crampi presto, il dolore allo stomaco, a volte il vomito. E in testa ero meno lucido.
+[SILENZIO 2]
+Ignorarla non la mandava via. La bloccava dentro.
+[SILENZIO 2]
+[sincere]
+Il corpo ti parla spesso, anche quando non lo ascolti. Ma ascoltarlo non vuol dire nemmeno fare tutto quello che ti dice. Le gambe pesanti non sono per forza stanchezza: a volte sono ansia. Lo stomaco chiuso non è per forza un pericolo: a volte è solo attesa.
+[SILENZIO 2]
+Oggi nessuno strumento nuovo. Solo questa differenza da portarti dietro: ascoltare il corpo, senza ignorarlo e senza obbedirgli.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Poi il Body Check. Qualunque cosa trovi, tensione, leggerezza, stanchezza, energia, oggi devi solo descriverla. Non capire perché c'è, e non darle un voto.
+[SILENZIO 2]
+{bodycheck(10)}
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Il corpo non ti sta dicendo cosa devi fare. Ti sta solo dicendo com'è adesso.
+[SILENZIO 2]
+Non obbedirgli vuol dire non trasformare una sensazione in una previsione sulla partita: le gambe pesanti non vogliono dire per forza «oggi va male». Se invece senti dolore o stanchezza vera, quella si ascolta e si rispetta.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: c'è una sensazione del corpo che tendi a ignorare o a respingere quando sei in campo? Quale?
 """
 
 for k,v in F.items():

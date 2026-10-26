@@ -2926,5 +2926,2712 @@
    "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre stavi osservando i tuoi pensieri, questa settimana? Succede spesso, e anche accorgersene è Observer.",
    "id": "8757f8e75d66"
   }
+ ],
+ "W3-G1": [
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Il crampo di solito non arriva di sorpresa: spesso il polpaccio tirava già da dieci minuti. Solo che non ci stavi facendo caso.",
+   "key": "[sincere] Il crampo di solito non arriva di sorpresa: spesso il polpaccio tirava già da dieci minuti. Solo che non ci stavi facendo caso.",
+   "id": "09eed9c046a7"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Con la tensione succede spesso la stessa cosa. Lo stomaco si chiude, le spalle salgono, le gambe si fanno pesanti. E a volte succede prima che tu esploda o ti spenga. Il corpo spesso ti avvisa in anticipo. Solo che facciamo come con i messaggi nel gruppo della squadra: arrivano, li vediamo, e non li apriamo.",
+   "key": "[sincere] Con la tensione succede spesso la stessa cosa. Lo stomaco si chiude, le spalle salgono, le gambe si fanno pesanti. E a volte succede prima che tu esploda o ti spenga. Il corpo spesso ti avvisa in anticipo. Solo che facciamo come con i messaggi nel gruppo della squadra: arrivano, li vediamo, e non li apriamo.",
+   "id": "f4a54bced862"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Di solito ce ne accorgiamo tardi, quando quella sensazione è già diventata un pensiero, tipo «non ce la faccio» o «oggi va male».",
+   "key": "[sincere] Di solito ce ne accorgiamo tardi, quando quella sensazione è già diventata un pensiero, tipo «non ce la faccio» o «oggi va male».",
+   "id": "a192c7136b41"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Questa settimana provi a sentirla prima, quando è ancora solo una sensazione nel corpo e non ti ha ancora portato da nessuna parte.",
+   "key": "[sincere] Questa settimana provi a sentirla prima, quando è ancora solo una sensazione nel corpo e non ti ha ancora portato da nessuna parte.",
+   "id": "e00e58676732"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.",
+   "key": "[meditative] Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.",
+   "id": "b76c08a56663"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tre Reset per arrivare qui: naso, pancia, bocca.",
+   "key": "[meditative] Tre Reset per arrivare qui: naso, pancia, bocca.",
+   "id": "82945591f639"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Prima di iniziare, due cose. Non devi cambiare niente: né la postura, né il respiro. E se in un punto non senti niente di chiaro, va bene: scrivi «niente di chiaro».",
+   "key": "[meditative] Prima di iniziare, due cose. Non devi cambiare niente: né la postura, né il respiro. E se in un punto non senti niente di chiaro, va bene: scrivi «niente di chiaro».",
+   "id": "55f2f48cad4f"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Poi porta l'attenzione nel corpo, lentamente, un pezzo alla volta. Resta qualche secondo su ognuno.",
+   "key": "[meditative] Poi porta l'attenzione nel corpo, lentamente, un pezzo alla volta. Resta qualche secondo su ognuno.",
+   "id": "dca1c390e77e"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "I piedi. Senti il contatto con il pavimento? Per esempio: piantati, leggeri, niente di particolare.",
+   "key": "[meditative] I piedi. Senti il contatto con il pavimento? Per esempio: piantati, leggeri, niente di particolare.",
+   "id": "c24b78117615"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Lo stomaco. Noti qualche sensazione? Per esempio: aperto, chiuso, stretto, niente.",
+   "key": "[meditative] Lo stomaco. Noti qualche sensazione? Per esempio: aperto, chiuso, stretto, niente.",
+   "id": "2b862ed1e605"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Il petto. Com'è il respiro? Per esempio: ampio, corto, in alto.",
+   "key": "[meditative] Il petto. Com'è il respiro? Per esempio: ampio, corto, in alto.",
+   "id": "9c797ab271e8"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Le spalle. Come sono? Per esempio: su e tese, giù e morbide.",
+   "key": "[meditative] Le spalle. Come sono? Per esempio: su e tese, giù e morbide.",
+   "id": "cc6175139515"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Gli esempi sono solo esempi: puoi sentire altro.",
+   "key": "[meditative] Gli esempi sono solo esempi: puoi sentire altro.",
+   "id": "6a4517f3fc31"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Guarda solo com'è, adesso.",
+   "key": "[meditative] Guarda solo com'è, adesso.",
+   "id": "89dd7851a37d"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Questo è il Body Check. Quattro posti, una parola per ognuno. Da oggi è il tuo terzo strumento.",
+   "key": "[sincere] Questo è il Body Check. Quattro posti, una parola per ognuno. Da oggi è il tuo terzo strumento.",
+   "id": "6ab6f0a18f69"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: quale zona del corpo ti ha colpito di più? C'era qualcosa che non ti aspettavi di trovare? Se non hai notato niente di particolare, scrivilo: è un dato anche quello.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: quale zona del corpo ti ha colpito di più? C'era qualcosa che non ti aspettavi di trovare? Se non hai notato niente di particolare, scrivilo: è un dato anche quello.",
+   "id": "1e80dcddc7d5"
+  }
+ ],
+ "W3-G2": [
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Finale di playoff contro la Reggiana. Stadio pieno, migliaia di persone.",
+   "key": "[relaxed] Finale di playoff contro la Reggiana. Stadio pieno, migliaia di persone.",
+   "id": "ccbe59ebe16b"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Io pensavo di essere tranquillo, sereno. Poi arrivo allo stadio e sento un vuoto allo stomaco, e un brivido che mi passa dappertutto. Solo lì ho capito che l'adrenalina, la paura e l'energia stavano arrivando tutte insieme. La testa diceva «tutto a posto», il corpo sapeva già tutto.",
+   "key": "[relaxed] Io pensavo di essere tranquillo, sereno. Poi arrivo allo stadio e sento un vuoto allo stomaco, e un brivido che mi passa dappertutto. Solo lì ho capito che l'adrenalina, la paura e l'energia stavano arrivando tutte insieme. La testa diceva «tutto a posto», il corpo sapeva già tutto.",
+   "id": "0b3141822e88"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Quella volta me ne sono accorto, e ho lasciato che ci fosse invece di fare finta di niente. Abbiamo vinto quattro a uno, e ho fatto una delle mie partite migliori.",
+   "key": "[relaxed] Quella volta me ne sono accorto, e ho lasciato che ci fosse invece di fare finta di niente. Abbiamo vinto quattro a uno, e ho fatto una delle mie partite migliori.",
+   "id": "1f98f2934a1c"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Molti giocatori hanno un posto dove la tensione arriva per prima. Io la portavo nello stomaco, nelle spalle e nelle gambe. Non è uguale per tutti: è la tua mappa personale, e oggi la cerchi.",
+   "key": "[sincere] Molti giocatori hanno un posto dove la tensione arriva per prima. Io la portavo nello stomaco, nelle spalle e nelle gambe. Non è uguale per tutti: è la tua mappa personale, e oggi la cerchi.",
+   "id": "88c4ee92f0cc"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Anche Buffon ha raccontato di aver passato periodi di ansia forte, quando era già uno dei portieri più forti al mondo. Non capita solo a te.",
+   "key": "[sincere] Anche Buffon ha raccontato di aver passato periodi di ansia forte, quando era già uno dei portieri più forti al mondo. Non capita solo a te.",
+   "id": "baf60bae1d03"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "key": "[meditative] Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "id": "2934173515cf"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Adesso pensa a una situazione in campo che ti mette spesso sotto pressione. Un errore sotto gli occhi del mister, un momento in cui senti di aver deluso la squadra, la partita che conta. Non la peggiore: una che riesci a guardare.",
+   "key": "[meditative] Adesso pensa a una situazione in campo che ti mette spesso sotto pressione. Un errore sotto gli occhi del mister, un momento in cui senti di aver deluso la squadra, la partita che conta. Non la peggiore: una che riesci a guardare.",
+   "id": "16d3b262a6c5"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tienila in testa trenta secondi.",
+   "key": "[meditative] Tienila in testa trenta secondi.",
+   "id": "e3bf911c2e12"
+  },
+  {
+   "type": "sil",
+   "sec": 30.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Adesso il Body Check, con una domanda sola: mentre ricordi la scena, dove senti qualcosa nel corpo?",
+   "key": "[meditative] Adesso il Body Check, con una domanda sola: mentre ricordi la scena, dove senti qualcosa nel corpo?",
+   "id": "1fa2df8b3209"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Piedi.",
+   "key": "[meditative] Piedi.",
+   "id": "2795593389b0"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Adesso un Reset.",
+   "key": "[meditative] Adesso un Reset.",
+   "id": "a041aa4aee20"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E rifai il Body Check: è cambiato qualcosa, o è rimasto uguale? Va bene in tutti e due i casi.",
+   "key": "[meditative] E rifai il Body Check: è cambiato qualcosa, o è rimasto uguale? Va bene in tutti e due i casi.",
+   "id": "172bd5a6e7a2"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Piedi.",
+   "key": "[meditative] Piedi.",
+   "id": "2795593389b0"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Se oggi non hai sentito niente di chiaro, va bene lo stesso: è una prima osservazione, e la mappa la trovi meglio dal vivo, la prossima volta che senti la pressione in campo.",
+   "key": "[sincere] Se oggi non hai sentito niente di chiaro, va bene lo stesso: è una prima osservazione, e la mappa la trovi meglio dal vivo, la prossima volta che senti la pressione in campo.",
+   "id": "f2359418bc4a"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: dove hai sentito qualcosa nel corpo, ricordando la scena? Pensa ai quattro punti del Body Check: piedi, stomaco, petto, spalle. Se per te conta anche un segnale personale in più, mascella, mani, gambe, scrivi anche quello. Se non hai trovato una zona, scrivi «non ho trovato una zona»: la verifichi in campo.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: dove hai sentito qualcosa nel corpo, ricordando la scena? Pensa ai quattro punti del Body Check: piedi, stomaco, petto, spalle. Se per te conta anche un segnale personale in più, mascella, mani, gambe, scrivi anche quello. Se non hai trovato una zona, scrivi «non ho trovato una zona»: la verifichi in campo.",
+   "id": "1884956e94a1"
+  }
+ ],
+ "W3-G3": [
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Noi calciatori passiamo un sacco di tempo ad analizzare quando stiamo male. Ma quasi nessuno si ferma a guardare com'è quando gioca bene.",
+   "key": "[sincere] Noi calciatori passiamo un sacco di tempo ad analizzare quando stiamo male. Ma quasi nessuno si ferma a guardare com'è quando gioca bene.",
+   "id": "51a82d2ece8e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Eppure quella sensazione è la cosa più concreta che hai per tornarci, le volte che te ne sei allontanato.",
+   "key": "[sincere] Eppure quella sensazione è la cosa più concreta che hai per tornarci, le volte che te ne sei allontanato.",
+   "id": "cf1f7898516e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Ti dico com'era la mia. Respiro profondo. Gambe leggere ma forti. Spalle alte, ma non rigide. La testa libera, concentrata, e con dentro un po' di tensione. C'era anche un misto di paura. Solo che la ascoltavo, e diventava coraggio. Spensierato e libero, ma focalizzato.",
+   "key": "[relaxed] Ti dico com'era la mia. Respiro profondo. Gambe leggere ma forti. Spalle alte, ma non rigide. La testa libera, concentrata, e con dentro un po' di tensione. C'era anche un misto di paura. Solo che la ascoltavo, e diventava coraggio. Spensierato e libero, ma focalizzato.",
+   "id": "eb098e34848c"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Quella è la mia firma del gioco libero. Oggi cerchi la tua.",
+   "key": "[sincere] Quella è la mia firma del gioco libero. Oggi cerchi la tua.",
+   "id": "d454bde48cd1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "key": "[meditative] Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "id": "2934173515cf"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Adesso scegli un momento in cui hai giocato bene. Una partita, un allenamento, anche solo una giocata riuscita, in cui tutto andava da sé. Non serve la partita della vita: va bene anche una cosa piccola. Prenditi qualche secondo per sceglierlo.",
+   "key": "[meditative] Adesso scegli un momento in cui hai giocato bene. Una partita, un allenamento, anche solo una giocata riuscita, in cui tutto andava da sé. Non serve la partita della vita: va bene anche una cosa piccola. Prenditi qualche secondo per sceglierlo.",
+   "id": "888995150a0d"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Torna lì. Prenditi una trentina di secondi per entrarci, con calma.",
+   "key": "[meditative] Torna lì. Prenditi una trentina di secondi per entrarci, con calma.",
+   "id": "e752215f2380"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Dove sei: lo stadio, il campetto, l'erba, la luce.",
+   "key": "[meditative] Dove sei: lo stadio, il campetto, l'erba, la luce.",
+   "id": "2165c673e555"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Cosa senti intorno: i compagni, il mister, il pubblico, il pallone.",
+   "key": "[meditative] Cosa senti intorno: i compagni, il mister, il pubblico, il pallone.",
+   "id": "038ad2058282"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Cosa stai facendo: la giocata, il momento preciso.",
+   "key": "[meditative] Cosa stai facendo: la giocata, il momento preciso.",
+   "id": "6bcd971367b1"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Non serve vedere tutto. Basta esserci un po'.",
+   "key": "[meditative] Non serve vedere tutto. Basta esserci un po'.",
+   "id": "d80007a05a3d"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ora, dentro quella scena, guarda il tuo corpo, un pezzo alla volta. Resta su ognuno una decina di secondi, senza fretta.",
+   "key": "[meditative] Ora, dentro quella scena, guarda il tuo corpo, un pezzo alla volta. Resta su ognuno una decina di secondi, senza fretta.",
+   "id": "925cdd650032"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "I piedi: com'erano? Piantati, leggeri, veloci?",
+   "key": "[meditative] I piedi: com'erano? Piantati, leggeri, veloci?",
+   "id": "a0487925aac7"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Lo stomaco: aperto, chiuso, tranquillo, acceso?",
+   "key": "[meditative] Lo stomaco: aperto, chiuso, tranquillo, acceso?",
+   "id": "e699e3a0992f"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Il petto e il respiro: ampio, corto, profondo?",
+   "key": "[meditative] Il petto e il respiro: ampio, corto, profondo?",
+   "id": "0ab612ce7927"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Le spalle: alte, basse, sciolte, pronte?",
+   "key": "[meditative] Le spalle: alte, basse, sciolte, pronte?",
+   "id": "b0e27677af74"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E poi le gambe, la testa, qualsiasi altra cosa che ti viene.",
+   "key": "[meditative] E poi le gambe, la testa, qualsiasi altra cosa che ti viene.",
+   "id": "458750fa8ef4"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Non deve essere tranquilla per forza. Se c'era un po' di tensione, o anche di paura, fa parte anche quella.",
+   "key": "[meditative] Non deve essere tranquilla per forza. Se c'era un po' di tensione, o anche di paura, fa parte anche quella.",
+   "id": "0051aae6f70c"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se non riesci a vedere la scena, raccontatela a parole. E se di un punto non ti ricordi niente, va bene: lascialo vuoto.",
+   "key": "[meditative] Se non riesci a vedere la scena, raccontatela a parole. E se di un punto non ti ricordi niente, va bene: lascialo vuoto.",
+   "id": "c03d66b221ee"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Resta ancora qualche secondo nella scena, tutta intera.",
+   "key": "[meditative] Resta ancora qualche secondo nella scena, tutta intera.",
+   "id": "406b8298093f"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Poi lasciala andare.",
+   "key": "[meditative] Poi lasciala andare.",
+   "id": "9009022ffc2b"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Questa è la tua firma del gioco libero: com'era il tuo corpo quando giocavi bene. È una prima versione: la puoi correggere ogni volta che in campo ti capita di nuovo.",
+   "key": "[meditative] Questa è la tua firma del gioco libero: com'era il tuo corpo quando giocavi bene. È una prima versione: la puoi correggere ogni volta che in campo ti capita di nuovo.",
+   "id": "1b229fe946b2"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Chiudi con un Reset.",
+   "key": "[meditative] Chiudi con un Reset.",
+   "id": "456478e7e2c9"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: com'era fisicamente il tuo corpo quando giocavi bene? Descrivi la sensazione, non il pensiero. Se ti vengono solo due o tre cose, va benissimo: non stai compilando la scheda di un giocatore della Play.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: com'era fisicamente il tuo corpo quando giocavi bene? Descrivi la sensazione, non il pensiero. Se ti vengono solo due o tre cose, va benissimo: non stai compilando la scheda di un giocatore della Play.",
+   "id": "ccd65785ed5f"
+  }
+ ],
+ "W3-G4": [
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Una cosa importante: non tutta la tensione è nemica.",
+   "key": "[sincere] Una cosa importante: non tutta la tensione è nemica.",
+   "id": "f6c998008727"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "A tensione zero sei quello che al riscaldamento sbadiglia. Al massimo sei quello che il primo pallone lo calcia in tribuna. Di solito si gioca meglio in mezzo: acceso, ma lucido.",
+   "key": "[relaxed] A tensione zero sei quello che al riscaldamento sbadiglia. Al massimo sei quello che il primo pallone lo calcia in tribuna. Di solito si gioca meglio in mezzo: acceso, ma lucido.",
+   "id": "e0d76741870f"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Il Body Check non ti sposta da nessuna parte: legge. Ti dice dove sei rispetto al tuo livello, quello che ieri hai trovato nella tua firma del gioco libero. Poi, se serve, agisci: con il Reset.",
+   "key": "[sincere] Il Body Check non ti sposta da nessuna parte: legge. Ti dice dove sei rispetto al tuo livello, quello che ieri hai trovato nella tua firma del gioco libero. Poi, se serve, agisci: con il Reset.",
+   "id": "3f2d8223c0d3"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Prima leggi, poi agisci. Oggi lo metti alla prova, in tre fasi.",
+   "key": "[sincere] Prima leggi, poi agisci. Oggi lo metti alla prova, in tre fasi.",
+   "id": "8866dc277d0f"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Una cosa prima di partire: se durante la fase due qualcosa pesa più del previsto, fermati, fai un Reset, e riparti quando vuoi.",
+   "key": "[sincere] Una cosa prima di partire: se durante la fase due qualcosa pesa più del previsto, fermati, fai un Reset, e riparti quando vuoi.",
+   "id": "b90c1888f7ed"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.",
+   "key": "[meditative] Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.",
+   "id": "b76c08a56663"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Fase uno: come stai adesso. Due minuti.",
+   "key": "[meditative] Fase uno: come stai adesso. Due minuti.",
+   "id": "1911bf4088c6"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tre Reset: naso, pancia, bocca.",
+   "key": "[meditative] Tre Reset: naso, pancia, bocca.",
+   "id": "3d9d3b9b2c86"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Poi il Body Check. Com'è il corpo adesso, a riposo?",
+   "key": "[meditative] Poi il Body Check. Com'è il corpo adesso, a riposo?",
+   "id": "f6da339bf43c"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Piedi.",
+   "key": "[meditative] Piedi.",
+   "id": "2795593389b0"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Questo è il tuo punto di partenza.",
+   "key": "[meditative] Bene. Questo è il tuo punto di partenza.",
+   "id": "bdd7cdcfb408"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Fase due: sotto pressione. Quattro minuti.",
+   "key": "[meditative] Fase due: sotto pressione. Quattro minuti.",
+   "id": "da0a02f9e1c4"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Pensa a una situazione che ti mette sotto pressione in campo. Non per forza la peggiore: una vera, tua, che riesci a guardare. Decidi tu quanto forte, e quanto restarci, fino a un minuto.",
+   "key": "[meditative] Pensa a una situazione che ti mette sotto pressione in campo. Non per forza la peggiore: una vera, tua, che riesci a guardare. Decidi tu quanto forte, e quanto restarci, fino a un minuto.",
+   "id": "aa204424093f"
+  },
+  {
+   "type": "sil",
+   "sec": 30.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "key": "[meditative] Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "id": "a619ead99e52"
+  },
+  {
+   "type": "sil",
+   "sec": 25.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Poi il Body Check: cosa è cambiato rispetto a prima? Dove? Solo guardare, senza sistemare niente.",
+   "key": "[meditative] Poi il Body Check: cosa è cambiato rispetto a prima? Dove? Solo guardare, senza sistemare niente.",
+   "id": "14d3a35f4599"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Piedi.",
+   "key": "[meditative] Piedi.",
+   "id": "2795593389b0"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ora un Reset completo.",
+   "key": "[meditative] Ora un Reset completo.",
+   "id": "00e86eec0116"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "E di nuovo il Body Check: confrontalo con quello di prima del Reset. Cosa è cambiato, e cosa è rimasto uguale?",
+   "key": "[meditative] E di nuovo il Body Check: confrontalo con quello di prima del Reset. Cosa è cambiato, e cosa è rimasto uguale?",
+   "id": "05d18e749d5d"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Piedi.",
+   "key": "[meditative] Piedi.",
+   "id": "2795593389b0"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 8.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Fase tre: la sequenza. Sei minuti.",
+   "key": "[meditative] Fase tre: la sequenza. Sei minuti.",
+   "id": "495570d0a3ca"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ripeti tre volte: torni un attimo sulla scena, Body Check per leggere dove sei, un Reset, di nuovo Body Check. Ogni volta nota se cambia qualcosa, o se resta uguale. Tutte e due le cose sono informazioni.",
+   "key": "[meditative] Ripeti tre volte: torni un attimo sulla scena, Body Check per leggere dove sei, un Reset, di nuovo Body Check. Ogni volta nota se cambia qualcosa, o se resta uguale. Tutte e due le cose sono informazioni.",
+   "id": "7fd9a9971c1e"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Primo giro. Torna un attimo sulla scena.",
+   "key": "[meditative] Primo giro. Torna un attimo sulla scena.",
+   "id": "9acb49e28d00"
+  },
+  {
+   "type": "sil",
+   "sec": 12.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Body Check, per leggere dove sei. Piedi.",
+   "key": "[meditative] Body Check, per leggere dove sei. Piedi.",
+   "id": "731b3c5d457d"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Di nuovo il Body Check. Piedi.",
+   "key": "[meditative] Di nuovo il Body Check. Piedi.",
+   "id": "6b258cc3fbaa"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.",
+   "key": "[meditative] È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.",
+   "id": "bc92ddf051a7"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Secondo giro. Torna un attimo sulla scena.",
+   "key": "[meditative] Secondo giro. Torna un attimo sulla scena.",
+   "id": "b25303fe266f"
+  },
+  {
+   "type": "sil",
+   "sec": 12.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Body Check, per leggere dove sei. Piedi.",
+   "key": "[meditative] Body Check, per leggere dove sei. Piedi.",
+   "id": "731b3c5d457d"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Di nuovo il Body Check. Piedi.",
+   "key": "[meditative] Di nuovo il Body Check. Piedi.",
+   "id": "6b258cc3fbaa"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.",
+   "key": "[meditative] È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.",
+   "id": "bc92ddf051a7"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Terzo giro. Torna un attimo sulla scena.",
+   "key": "[meditative] Terzo giro. Torna un attimo sulla scena.",
+   "id": "39c48e597f13"
+  },
+  {
+   "type": "sil",
+   "sec": 12.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Body Check, per leggere dove sei. Piedi.",
+   "key": "[meditative] Body Check, per leggere dove sei. Piedi.",
+   "id": "731b3c5d457d"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Di nuovo il Body Check. Piedi.",
+   "key": "[meditative] Di nuovo il Body Check. Piedi.",
+   "id": "6b258cc3fbaa"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.",
+   "key": "[meditative] È cambiato qualcosa, o è rimasto uguale? Tutte e due le cose sono informazioni.",
+   "id": "bc92ddf051a7"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Se in un Body Check non hai sentito niente di chiaro, va bene: scrivi «niente di chiaro». Se ti dice che sei spento, scarico, è un dato anche quello: scrivilo. E se ti capita spesso, parlane con il Coach.",
+   "key": "[sincere] Se in un Body Check non hai sentito niente di chiaro, va bene: scrivi «niente di chiaro». Se ti dice che sei spento, scarico, è un dato anche quello: scrivilo. E se ti capita spesso, parlane con il Coach.",
+   "id": "f4392b7645b1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: confronta il Body Check prima e dopo il Reset, cosa hai notato? Cosa è cambiato e cosa è rimasto uguale? Se non è cambiato niente, scrivilo così: è un dato utile, non un errore.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: confronta il Body Check prima e dopo il Reset, cosa hai notato? Cosa è cambiato e cosa è rimasto uguale? Se non è cambiato niente, scrivilo così: è un dato utile, non un errore.",
+   "id": "282940bf1d83"
+  }
+ ],
+ "W3-G6": [
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Io la tensione la ignoravo. Spesso era lì per nascondere la paura e l'ansia, e io facevo finta di niente.",
+   "key": "[relaxed] Io la tensione la ignoravo. Spesso era lì per nascondere la paura e l'ansia, e io facevo finta di niente.",
+   "id": "3b6d75fbfaf6"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Solo che quella roba non spariva. Mi tornava addosso comunque: in campo mi venivano i crampi presto, il dolore allo stomaco, a volte il vomito. E in testa ero meno lucido.",
+   "key": "[relaxed] Solo che quella roba non spariva. Mi tornava addosso comunque: in campo mi venivano i crampi presto, il dolore allo stomaco, a volte il vomito. E in testa ero meno lucido.",
+   "id": "29bafddccf1f"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Ignorarla non la mandava via. La bloccava dentro.",
+   "key": "[relaxed] Ignorarla non la mandava via. La bloccava dentro.",
+   "id": "3ba575546e9b"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Il corpo ti parla spesso, anche quando non lo ascolti. Ma ascoltarlo non vuol dire nemmeno fare tutto quello che ti dice. Le gambe pesanti non sono per forza stanchezza: a volte sono ansia. Lo stomaco chiuso non è per forza un pericolo: a volte è solo attesa.",
+   "key": "[sincere] Il corpo ti parla spesso, anche quando non lo ascolti. Ma ascoltarlo non vuol dire nemmeno fare tutto quello che ti dice. Le gambe pesanti non sono per forza stanchezza: a volte sono ansia. Lo stomaco chiuso non è per forza un pericolo: a volte è solo attesa.",
+   "id": "d00913ca9c1d"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Oggi nessuno strumento nuovo. Solo questa differenza da portarti dietro: ascoltare il corpo, senza ignorarlo e senza obbedirgli.",
+   "key": "[sincere] Oggi nessuno strumento nuovo. Solo questa differenza da portarti dietro: ascoltare il corpo, senza ignorarlo e senza obbedirgli.",
+   "id": "0431d84e9f71"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "key": "[meditative] Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.",
+   "id": "2934173515cf"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Reset.",
+   "key": "[meditative] Reset.",
+   "id": "0c0b509d855e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "key": "[meditative] Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.",
+   "id": "9d35ea1e8cf3"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
+   "id": "9fa4d943b47f"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ancora. Inspira, gesto.",
+   "key": "[meditative] Ancora. Inspira, gesto.",
+   "id": "9f5aa06c6e6d"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira piano, mantra dentro di te.",
+   "key": "[meditative] Espira piano, mantra dentro di te.",
+   "id": "67cbe78abd52"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Ultimo respiro. Inspira, gesto.",
+   "key": "[meditative] Ultimo respiro. Inspira, gesto.",
+   "id": "a9a2e3987a78"
+  },
+  {
+   "type": "sil",
+   "sec": 4.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Espira, e lascia andare.",
+   "key": "[meditative] Espira, e lascia andare.",
+   "id": "7fcd74b341a9"
+  },
+  {
+   "type": "sil",
+   "sec": 6.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Rilascia.",
+   "key": "[meditative] Rilascia.",
+   "id": "db1d36175be1"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Poi il Body Check. Qualunque cosa trovi, tensione, leggerezza, stanchezza, energia, oggi devi solo descriverla. Non capire perché c'è, e non darle un voto.",
+   "key": "[meditative] Poi il Body Check. Qualunque cosa trovi, tensione, leggerezza, stanchezza, energia, oggi devi solo descriverla. Non capire perché c'è, e non darle un voto.",
+   "id": "3491467921a7"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Piedi.",
+   "key": "[meditative] Piedi.",
+   "id": "2795593389b0"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Stomaco.",
+   "key": "[meditative] Stomaco.",
+   "id": "947948b5e2fd"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Petto.",
+   "key": "[meditative] Petto.",
+   "id": "79e922147728"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Spalle.",
+   "key": "[meditative] Spalle.",
+   "id": "5b781797a536"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Il corpo non ti sta dicendo cosa devi fare. Ti sta solo dicendo com'è adesso.",
+   "key": "[sincere] Il corpo non ti sta dicendo cosa devi fare. Ti sta solo dicendo com'è adesso.",
+   "id": "8e4dd79b0c85"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Non obbedirgli vuol dire non trasformare una sensazione in una previsione sulla partita: le gambe pesanti non vogliono dire per forza «oggi va male». Se invece senti dolore o stanchezza vera, quella si ascolta e si rispetta.",
+   "key": "[sincere] Non obbedirgli vuol dire non trasformare una sensazione in una previsione sulla partita: le gambe pesanti non vogliono dire per forza «oggi va male». Se invece senti dolore o stanchezza vera, quella si ascolta e si rispetta.",
+   "id": "09effdec83bb"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Adesso metti in pausa e scrivi nell'app: c'è una sensazione del corpo che tendi a ignorare o a respingere quando sei in campo? Quale?",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: c'è una sensazione del corpo che tendi a ignorare o a respingere quando sei in campo? Quale?",
+   "id": "e53489ccbede"
+  }
  ]
 }
