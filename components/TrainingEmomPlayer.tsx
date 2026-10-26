@@ -22,7 +22,6 @@ export interface EmomItem {
   quantita: number;    // reps al minuto (o secondi di lavoro per le tenute)
   unita?: string;
   nota?: string;
-  carico_kg?: number | null; // es. il kettlebell nell'EMOM delle gambe in seduta dedicata (26/10 sera)
 }
 
 const MINUTO_MS = 60_000;
@@ -143,7 +142,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   const prossimoEx = prossimo ? esercizioAny(prossimo.esercizio_id) : undefined;
   const cosaFare = (it: EmomItem, u: string, perLato: boolean) => (u === 'secondi' || u === 'minuti')
     ? `${unitaLabel(u, it.quantita)} di tenuta${perLato ? ' per lato' : ''}, poi riposa fino allo scadere del minuto`
-    : `${it.quantita} ${it.quantita === 1 ? 'ripetizione' : 'ripetizioni'} fatte bene${it.carico_kg ? ` con ${it.carico_kg} kg` : ''}${perLato ? ', alternando destra e sinistra' : ''}, poi riposa fino allo scadere del minuto`;
+    : `${it.quantita} ${it.quantita === 1 ? 'ripetizione' : 'ripetizioni'} fatte bene${perLato ? ', alternando destra e sinistra' : ''}, poi riposa fino allo scadere del minuto`;
 
   if (!item || !ex) return null;
   const embed = ex.videoMp4 ? null : youtubeEmbedUrl(ex.videoUrl);

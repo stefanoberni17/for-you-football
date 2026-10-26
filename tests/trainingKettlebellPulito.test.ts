@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calcolaEsecuzione, dosePerEsecuzione, esecuzioneTesto, KB_PESO_MIN, kbComponenteEmom } from '@/lib/trainingEsecuzione';
+import { calcolaEsecuzione, dosePerEsecuzione, esecuzioneTesto, KB_PESO_MIN } from '@/lib/trainingEsecuzione';
 import { riepilogoEsercizi, type SetLogRow } from '@/lib/trainingAdapt';
 import { KB_PASSO_KG, prossimaDose } from '@/lib/trainingDose';
 import { adattaItems } from '@/lib/trainingProgressione';
@@ -8,8 +8,7 @@ import type { PlanItem, TestResultRow } from '@/lib/trainingEngine';
 
 /**
  * Kettlebell che non viene pulito (Ste, 26/10 sera): "si inserisce in sessione con meno peso e meno reps per allenare
- * la tecnica finché non esce bene, poi si tornerà ad aumentare"; "nell'EMOM se necessario, considerando che l'EMOM
- * allena più componenti" → swing, clean e snatch al posto della stazione della catena posteriore, uno solo.
+ * la tecnica finché non esce bene, poi si tornerà ad aumentare"; "non overcomplichiamo per ora": niente EMOM.
  */
 const giorniFa = (n: number) => { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString(); };
 const seduta = (key: string, giorni: number, ex: string, prevista: number, rpe: number, esecuzione: SetLogRow['esecuzione'], kg: number): SetLogRow[] =>
@@ -58,7 +57,7 @@ describe('nella seduta kettlebell: un kettlebell sotto e meno ripetizioni', () =
   });
 });
 
-describe('nell\'EMOM delle gambe, se necessario: al posto della stessa componente', () => {
+describe('niente EMOM per il kettlebell (Ste: "non overcomplichiamo")', () => {
   const r = (test_id: string, valore: number): TestResultRow => ({ test_id, valore, livello_calcolato: 'intermedio', punteggio_calcolato: 50 });
   const results = [
     r('skill:squat-2', 18), r('test-squat', 30), r('skill:aff-2', 16), r('test-affondi', 20),
@@ -67,35 +66,18 @@ describe('nell\'EMOM delle gambe, se necessario: al posto della stessa component
   const base: OpzioniParteBassa = { livello: 'A', attrezzatura: ['campo', 'kettlebell'], settimana: 4, pliometria: false, massimali: {}, maxPct: 70, isDeload: false };
   const dedicata = (id: string) => calcolaEsecuzione(id, ['fatica', 'non_riesco']);
 
-  it('quali entrano: i balistici d\'anca e il goblet squat; rematori, spinte, windmill e core no', () => {
-    expect(kbComponenteEmom('fesp-kettlebell-swing')).toBe('anca');
-    expect(kbComponenteEmom('fesp-kettlebell-snatch')).toBe('anca');
-    expect(kbComponenteEmom('fpb-goblet-squat')).toBe('squat');
-    for (const id of ['fpa-kettlebell-clean-to-push', 'fpa-kettlebell-bent-over-row-with-rotation', 'fpa-kettlebell-advanced-windmill', 'core2-kettlebell-figure-8', 'fesp-kettlebell-cross-chop']) expect(kbComponenteEmom(id)).toBeNull();
-  });
-  it('lo swing prende il posto della catena posteriore: stesse stazioni, 3 ripetizioni con il kettlebell sotto quello di partenza', () => {
-    const senza = costruisciParteBassa(results, base).find((b) => b.id === PB_EMOM_ID)!;
-    const con = costruisciParteBassa(results, { ...base, inDifficolta: [dedicata('fesp-kettlebell-swing')] }).find((b) => b.id === PB_EMOM_ID)!;
-    const stazioni = (b: typeof con) => b.items.filter((it) => it.schema === 'emom');
-    expect(stazioni(con).length).toBe(stazioni(senza).length); // l'EMOM resta lo stesso circuito: una componente cambia esercizio
-    const kb = con.items.find((it) => it.esercizio_id === 'fesp-kettlebell-swing')!;
-    expect(kb).toMatchObject({ quantita: 3, carico_kg: 12, schema: 'emom', emomGruppo: PB_EMOM_ID });
-    expect(kb.nota).toMatch(/al posto della stazione della catena posteriore/);
-    const posterioreSenza = stazioni(senza).map((it) => it.esercizio_id).filter((id) => /^(rdl|bridge|lomb)-/.test(id ?? ''));
-    const posterioreCon = stazioni(con).map((it) => it.esercizio_id).filter((id) => /^(rdl|bridge|lomb)-/.test(id ?? ''));
-    expect(posterioreCon.length).toBe(posterioreSenza.length - 1);
-    expect(con.attrezzatura).toContain('kettlebell');
-  });
-  it('il goblet squat prende il posto dello squat; un esercizio kettlebell che non c\'entra resta fuori', () => {
-    const con = costruisciParteBassa(results, { ...base, inDifficolta: [dedicata('fpb-goblet-squat')] }).find((b) => b.id === PB_EMOM_ID)!;
-    expect(con.items.some((it) => it.esercizio_id === 'fpb-goblet-squat')).toBe(true);
-    expect(con.items.some((it) => /^squat-/.test(it.esercizio_id ?? '') && it.schema === 'emom')).toBe(false);
-    const row = costruisciParteBassa(results, { ...base, inDifficolta: [dedicata('fpa-kettlebell-bent-over-row-with-rotation')] }).find((b) => b.id === PB_EMOM_ID)!;
-    expect(row.items.some((it) => it.esercizio_id === 'fpa-kettlebell-bent-over-row-with-rotation')).toBe(false);
+  it('lo swing in seduta dedicata non entra nell\'EMOM delle gambe: resta nella seduta kettlebell, più leggero', () => {
+    const emom = costruisciParteBassa(results, { ...base, inDifficolta: [dedicata('fesp-kettlebell-swing')] }).find((b) => b.id === PB_EMOM_ID)!;
+    expect(emom.items.some((it) => it.esercizio_id === 'fesp-kettlebell-swing')).toBe(false);
+    const logs = [...seduta('s2', 1, 'fesp-kettlebell-swing', 15, 6, 'fatica', 16), ...seduta('s1', 8, 'fesp-kettlebell-swing', 15, 6, 'non_riesco', 16)];
+    const rr = riepilogoEsercizi(logs)[0];
+    expect(rr.esecuzione?.passo).toBe('dedicata');
+    const [out] = adattaItems([item('fesp-kettlebell-swing', 15, { carico_kg: 16 })], { storico: [rr], squilibri: null });
+    expect(out).toMatchObject({ adattamento: 'esecuzione', carico_kg: 12, quantita: 11 });
+    expect(out.nota).not.toMatch(/EMOM/);
   });
   it('il preparatore lo racconta così', () => {
-    const t = esecuzioneTesto([dedicata('fesp-kettlebell-swing'), dedicata('fpa-kettlebell-advanced-windmill')], (id) => id, (id) => id.includes('kettlebell'));
-    expect(t).toMatch(/fesp-kettlebell-swing.*KETTLEBELL PIÙ LEGGERO.*dentro l'EMOM delle gambe \(pb-emom\) al posto della stazione della catena posteriore/);
-    expect(t).toMatch(/fpa-kettlebell-advanced-windmill.*KETTLEBELL PIÙ LEGGERO: un kettlebell sotto e meno ripetizioni nella seduta kettlebell finché non viene pulito, poi si risale\n/);
+    const t = esecuzioneTesto([dedicata('fesp-kettlebell-swing')], (id) => id, (id) => id.includes('kettlebell'));
+    expect(t).toMatch(/fesp-kettlebell-swing.*KETTLEBELL PIÙ LEGGERO: un kettlebell sotto e meno ripetizioni nella seduta kettlebell finché non viene pulito, poi si risale \(niente EMOM\)/);
   });
 });

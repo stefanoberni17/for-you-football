@@ -17,13 +17,9 @@
  *    seduta a poche ripetizioni e recupero pieno: l'EMOM di parte alta o gambe (`pa-emom` / `pb-emom`, con
  *    l'esercizio in difficoltà come stazione), `kb-base` per il kettlebell, il ripasso di tecnica per la palla.
  *    Torna nelle sedute di forza dopo EMOM_OK_PER_RIENTRO (2) sedute con esecuzione "ok".
- *    KETTLEBELL (Ste, 26/10 sera): "si inserisce in sessione con meno peso e meno reps per allenare la tecnica finché
- *    non esce bene, poi si torna ad aumentare" → al passo "meno" (e nella seduta kettlebell anche in "dedicata") un
- *    kettlebell sotto (−4 kg, mai sotto KB_PESO_MIN) E ripetizioni ×ESECUZIONE_KB_REPS_SCALA; "se necessario
- *    nell'EMOM, considerando che l'EMOM allena più componenti" → in "dedicata" gli esercizi balistici d'anca (swing,
- *    clean, snatch) entrano nell'EMOM delle gambe AL POSTO della stazione della catena posteriore (stessa componente:
- *    l'anca), il goblet squat al posto di quella dello squat; uno solo per EMOM, con il kettlebell più leggero e 3
- *    ripetizioni. Gli altri (spinta, rematori, windmill, core) restano nella seduta kettlebell, più leggeri.
+ *    KETTLEBELL (Ste, 26/10 sera: "non overcomplichiamo per ora, se uno fa fatica diminuiamo peso e reps"): al passo
+ *    "meno" e in "dedicata" l'esercizio resta nella seduta kettlebell con un kettlebell sotto (−4 kg, mai sotto
+ *    KB_PESO_MIN) E ripetizioni ×ESECUZIONE_KB_REPS_SCALA, finché non viene pulito; poi si torna a salire. Niente EMOM.
  * 3. IL PREPARATORE LO DICE: sezione "# ESECUZIONE" nel prompt del planner e della chat (`esecuzioneTesto`), la nota
  *    sull'item nel player ("meno peso: l'ultima volta hai detto 'faccio fatica'"), la riga negli aggiustamenti.
  *
@@ -57,13 +53,6 @@ export const EMOM_DIFFICOLTA_MAX = 2;
 /** Kettlebell: nel passo indietro anche meno ripetizioni (Ste, 26/10 sera), e mai sotto il kettlebell più leggero. */
 export const ESECUZIONE_KB_REPS_SCALA = 0.7;
 export const KB_PESO_MIN = 4;
-/** Kettlebell nell'EMOM delle gambe, in seduta dedicata: la componente che prende il posto della stazione dell'EMOM. */
-export const KB_EMOM_COMPONENTE: Readonly<Record<string, 'anca' | 'squat'>> = {
-  'fesp-kettlebell-swing': 'anca', 'fesp-kettlebell-swing-una-mano': 'anca', 'fesp-kettlebell-dead-clean': 'anca',
-  'fesp-kettlebell-snatch': 'anca', 'fesp-kettlebell-kneeling-snatch': 'anca', 'fesp-kettlebell-rotational-swing': 'anca',
-  'fesp-kettlebell-rotational-clean': 'anca', 'fpb-goblet-squat': 'squat',
-};
-export const kbComponenteEmom = (id: string): 'anca' | 'squat' | null => KB_EMOM_COMPONENTE[id] ?? null;
 
 export type PassoEsecuzione = 'normale' | 'meno' | 'dedicata';
 
@@ -201,7 +190,7 @@ export function esecuzioneTesto(stati: readonly StatoEsecuzione[], nome: (id: st
     const storia = s.sedute.slice(0, 4).map((e) => ESECUZIONE_LABEL[e]).join(' ← ');
     const kb = !!kettlebell?.(s.esercizioId);
     const passo = kb && s.passo !== 'normale'
-      ? `KETTLEBELL PIÙ LEGGERO: un kettlebell sotto e meno ripetizioni nella seduta kettlebell finché non viene pulito, poi si risale${s.passo === 'dedicata' && kbComponenteEmom(s.esercizioId) ? `; in più è dentro l'EMOM delle gambe (pb-emom) al posto della stazione ${kbComponenteEmom(s.esercizioId) === 'anca' ? 'della catena posteriore' : 'dello squat'}, 3 ripetizioni con il kettlebell più leggero` : ''}`
+      ? 'KETTLEBELL PIÙ LEGGERO: un kettlebell sotto e meno ripetizioni nella seduta kettlebell finché non viene pulito, poi si risale (niente EMOM)'
       : s.passo === 'meno' ? 'MENO nella prossima seduta (kg −15 % o −20 % di reps/tempo; sulle scale un gradino sotto)'
       : s.passo === 'dedicata' ? `SEDUTA DEDICATA: fuori dalle sedute di forza (al suo posto il gradino sotto o la variante facile), dentro l'EMOM di parte alta/gambe (o il ripasso di tecnica) con poche ripetizioni pulite; rientra dopo ${EMOM_OK_PER_RIENTRO} EMOM "ok"`
       : `dose ferma: SALI bloccato finché non è "ok" per ${OK_PER_SBLOCCARE_SALI} sedute (${s.okDiFila} finora)`;

@@ -40,7 +40,7 @@ import { LADDER_AREE, ladderForArea, sogliaGradino, type LadderState, type TestR
 
 // Le costanti della dose (tetto +30 %, passi kg/reps/secondi, kettlebell) vivono in lib/trainingDose.ts (punto 2, 20/10)
 import { isEsercizioKettlebell, PROGRESSIONE_MAX_DRIFT, prossimaDose } from './trainingDose';
-import { ESECUZIONE_LABEL, kbComponenteEmom } from './trainingEsecuzione';
+import { ESECUZIONE_LABEL } from './trainingEsecuzione';
 export { PROGRESSIONE_MAX_DRIFT, PASSO_KG_PCT, PASSO_KG_MIN, SECONDI_MAX } from './trainingDose';
 export const GRADINO_SCALA = 0.7;            // dose del nuovo gradino rispetto alla base del blocco
 export const LATO_EXTRA_MAX_ITEMS = 1;       // serie extra sul lato debole: al massimo 1 esercizio per seduta (Ste, 25/9: "piuttosto che aumentare molto le serie, la fascia")
@@ -135,9 +135,9 @@ function perEsecuzione(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   if (it.schema && it.schema !== 'fisso') return null;
   const perche = `l'ultima volta hai detto "${ESECUZIONE_LABEL[es.ultima]}"`;
   const kb = isEsercizioKettlebell(it.esercizio_id);
-  // Kettlebell (Ste, 26/10 sera): resta nella sua seduta più leggero; solo swing, clean, snatch e goblet entrano anche nell'EMOM delle gambe
+  // Kettlebell (Ste, 26/10 sera: "se uno fa fatica diminuiamo peso e reps"): resta nella sua seduta, più leggero, niente EMOM
   const dedicata = es.passo !== 'dedicata' ? ''
-    : kb ? (kbComponenteEmom(it.esercizio_id) ? ' In più lo alleni nell\'EMOM delle gambe con 3 ripetizioni e il kettlebell più leggero.' : ' Resti più leggero finché non viene pulito, poi si torna a salire.')
+    : kb ? ' Resti più leggero finché non viene pulito, poi si torna a salire.'
     : ' Lo alleni pulito nell\'EMOM con poche ripetizioni: torna qui dopo due EMOM "ok".';
   const ex = esercizioById(it.esercizio_id);
   if (ex && AREE_CATENA.has(ex.area) && (!it.unita || it.unita === ex.unita)) {

@@ -107,7 +107,9 @@ describe('nel planner', () => {
     const m = tecnicaDelMese(c, scelta, { tecnicaObiettivo: true, mix: sceltaMix(scelta, 60) })!;
     expect(m.sedute).toBe(8);
     expect(m.temi.find((t) => t.tema === 'palleggi')).toMatchObject({ fattoPct: 0, quotaPct: 25, volte: '0', indietro: true });
-    expect(m.temi.find((t) => t.tema === 'tiro')).toMatchObject({ fattoPct: 25, quotaPct: 10, volte: '2', indietro: false });
+    // le due sedute di tiri contano metà tiri ciascuna (sono combinate con passaggi e dribbling)
+    expect(m.temi.find((t) => t.tema === 'tiro')).toMatchObject({ fattoPct: 13, quotaPct: 10, volte: '1', indietro: false });
+    expect(m.temi.find((t) => t.tema === 'dribbling')).toMatchObject({ volte: '2,5' });
     expect(m.prossimo).toBe('palleggi');
     expect(m.combinata).toBe('palleggi e un po\' di controllo e passaggi');
     expect(tecnicaDelMese(contaTemi([], mondayOfThisWeekRome()), temaProssimo(vuoti(), { ammessi: TEMI }), { tecnicaObiettivo: false })).toBeNull();

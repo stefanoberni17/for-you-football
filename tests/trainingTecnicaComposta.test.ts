@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  adattaAlTempo, asseTecnica, contaTemi, costruisciTecnica, durataTecnica, QUOTE_TECNICA, RISCALDAMENTO_TRAVERSA_ID, TE_LEGGERA_ID, teId, temaDiBlocco, temaProssimo, TEMI, TIRI_MAX_GIORNO_PRIMA, ultimoTemaTecnica,
+  adattaAlTempo, asseTecnica, contaTemi, costruisciTecnica, durataTecnica, QUOTE_TECNICA, RISCALDAMENTO_TRAVERSA_ID, TE_LEGGERA_ID, teId, temaDiBlocco, temaProssimo, TEMI, TIRI_DOPO_TRAVERSA_MAX, TIRI_MAX_GIORNO_PRIMA, ultimoTemaTecnica,
   type Conteggi, type OpzioniTecnica,
 } from '@/lib/trainingTecnicaComposta';
 import { esercizioAny } from '@/lib/trainingExercise';
@@ -32,10 +32,16 @@ describe('costruisciTecnica: un blocco per tema, al livello e sul codice della s
         expect(b.attrezzatura).toContain('campo');
       }
       const tiro = te.find((b) => b.id === teId('tiro'))!;
-      // Ste: apertura con passaggi, un po' di dribbling, poi i tiri progressivi partendo dal riscaldamento alla traversa
-      expect(tiro.items.slice(0, 3).map((it) => it.esercizio_id)).toEqual(['tpas-passaggi-liberi-al-muro-tecnica', 'tpas-box-dribbling-passaggio', RISCALDAMENTO_TRAVERSA_ID]);
-      expect(tiro.items[2]).toMatchObject({ serie: 1, quantita: 10, perLato: true });
-      expect(tiro.items.slice(3).every((it) => esercizioAny(it.esercizio_id ?? '')?.id.startsWith('ttir-'))).toBe(true);
+      // Ste (26/10 sera): seduta combinata, passaggi e stop, dribbling, riscaldamento alla traversa e pochi tiri in fondo
+      const ids = tiro.items.map((it) => it.esercizio_id ?? '');
+      const iTrav = ids.indexOf(RISCALDAMENTO_TRAVERSA_ID);
+      expect(iTrav).toBeGreaterThan(1);
+      expect(ids.slice(0, iTrav).some((id) => id.startsWith('tpas-'))).toBe(true);
+      expect(ids.slice(0, iTrav).some((id) => id.startsWith('cond-'))).toBe(true);
+      expect(tiro.items[iTrav]).toMatchObject({ serie: 1, quantita: 10, perLato: true });
+      expect(ids.slice(iTrav + 1).length).toBeGreaterThan(0);
+      expect(ids.slice(iTrav + 1).every((id) => id.startsWith('ttir-'))).toBe(true);
+      expect(tiro.items.slice(iTrav + 1).reduce((a, it) => a + it.serie * it.quantita, 0)).toBeLessThanOrEqual(TIRI_DOPO_TRAVERSA_MAX);
       // gli altri temi: analitici prima, freestyle in chiusura
       const pall = te.find((b) => b.id === teId('palleggi'))!;
       expect(pall.items[pall.items.length - 1].esercizio_id).toMatch(/freestyle/);
@@ -44,9 +50,15 @@ describe('costruisciTecnica: un blocco per tema, al livello e sul codice della s
       expect(vis.items.some((it) => /Leggero/.test(it.nota ?? ''))).toBe(true); // Ste: leggeri, mai in affanno
     }
   });
-  it('senza il livello A niente tiri con visione; con PRO la progressione dei tiri', () => {
+  it('senza il livello PRO niente tiri con visione; con poco tempo escono prima passaggi e dribbling, i tiri restano; senza muro la seduta di tiri resta', () => {
     expect(costruisciTecnica({ ...base, livello: 'B' }).find((b) => b.id === teId('tiro'))!.items.some((it) => it.esercizio_id === 'ttir-tiri-in-porta-e-visione')).toBe(false);
-    expect(costruisciTecnica({ ...base, livello: 'PRO' }).find((b) => b.id === teId('tiro'))!.items.some((it) => it.esercizio_id === 'ttir-progressione-tiri-in-porta-tecnica-di-tiro')).toBe(true);
+    expect(costruisciTecnica({ ...base, livello: 'PRO' }).find((b) => b.id === teId('tiro'))!.items.some((it) => it.esercizio_id === 'ttir-tiri-in-porta-e-visione')).toBe(true);
+    const corta = costruisciTecnica({ ...base, minuti: 20 }).find((b) => b.id === teId('tiro'))!;
+    expect(corta.items.some((it) => it.esercizio_id === 'ttir-tiri-tecnica-di-tiro')).toBe(true);
+    expect(corta.items.some((it) => it.esercizio_id === RISCALDAMENTO_TRAVERSA_ID)).toBe(true);
+    const senzaMuro = costruisciTecnica({ ...base, attrezzatura: ['campo'] }).find((b) => b.id === teId('tiro'))!;
+    expect(senzaMuro.items.some((it) => (it.esercizio_id ?? '').startsWith('tpas-'))).toBe(true);
+    expect(senzaMuro.attrezzatura).toEqual(['campo']);
   });
   it('il codice della scala decide gli analitici: B1 solo collo, A4 piedi-coscia-testa; muro base contro A3 due tocchi', () => {
     const b1 = costruisciTecnica({ ...base, livello: 'B', posPalleggi: 0 }).find((b) => b.id === teId('palleggi'))!;
@@ -104,7 +116,8 @@ describe('quote mensili e tema della prossima seduta', () => {
     const lun = '2026-10-26';
     const f = (d: string, ids: string[]) => ({ completed_at: `${d}T18:00:00Z`, feedback_blocchi: ids.map((id) => ({ id })) });
     const feedback = [f('2026-10-20', [teId('tiro')]), f('2026-10-13', ['tecnica-a1-muro', 'fascia-foundations-1']), f('2026-10-06', [teId('palleggi')]), f('2026-09-01', [teId('palleggi')]), f('2026-10-22', ['pb-serie'])];
-    expect(contaTemi(feedback, lun)).toEqual({ ...vuoti(), tiro: 1, passaggi: 1, palleggi: 1 });
+    // la seduta di tiri conta metà tiri, un quarto passaggi e un quarto dribbling (Ste, 26/10 sera: è combinata)
+    expect(contaTemi(feedback, lun)).toEqual({ ...vuoti(), tiro: 0.5, passaggi: 1.25, dribbling: 0.25, palleggi: 1 });
     expect(ultimoTemaTecnica(feedback)).toBe('tiro');
   });
   it('il tema più indietro sulla quota; i faticosi mai sopra quota; non si ripete l\'ultimo; la richiesta vince', () => {

@@ -15,8 +15,11 @@
  *    controllo; il giorno prima "proprio poca roba" (`te-leggera`: al massimo 10 tiri, un dribbling corto, palleggi e
  *    passaggi, ~20'; facoltativa, si aggiunge al blocco pre partita se la tecnica è tra gli obiettivi); da 2 giorni prima
  *    tutto, anche tiro, dribbling e freestyle; dopo una partita con fatica leggera ("meno" o "poco" dal resoconto) tutto.
- *  - STRUTTURA: tiri = apertura con passaggi per scaldarsi → qualche dribbling → tiri progressivi, prima il riscaldamento
- *    "10 di destro e 10 di sinistro dal limite alla traversa" (`ttir-riscaldamento-traversa`) poi i tiri del livello;
+ *  - STRUTTURA: tiri = seduta COMBINATA (Ste, 26/10 sera: "apertura passaggi e stop, dribbling e finale con tiri; una
+ *    sessione dedicata solo ai tiri è lunga, i tiri sono faticosi alla lunga per i muscoli"): due esercizi di passaggi e
+ *    stop sul codice della scala muro, due di dribbling, il riscaldamento "10 di destro e 10 di sinistro dal limite alla
+ *    traversa" (`ttir-riscaldamento-traversa`) e in fondo al massimo TIRI_DOPO_TRAVERSA_MAX tiri del livello; conta metà
+ *    seduta per i tiri e un quarto ciascuno per passaggi e dribbling;
  *    gli altri temi = esercizi analitici prima, in chiusura qualcosa di freestyle.
  *  - Gli esercizi durano qualche minuto e si ADATTANO al tempo della seduta (`adattaAlTempo`).
  *  - VISIONE (Ste): dribbling e passaggi al muro con il video dei segnali vanno fatti LEGGERI, concentrati sulla tecnica,
@@ -64,17 +67,25 @@ export function temiDiId(id: string): TemaTecnica[] {
 }
 /** Il tema PRINCIPALE di un blocco `te-*` (per la seduta combinata il primo). */
 export const temaDiId = (id: string): TemaTecnica | null => temiDiId(id)[0] ?? null;
-/** Quanto pesa ogni tema di un blocco nel conteggio delle quote: 1 per un tema, 2/3 e 1/3 per la seduta combinata. */
+/**
+ * Quanto pesa ogni tema di un blocco nel conteggio delle quote: 1 per un tema, 2/3 e 1/3 per la seduta combinata,
+ * e la seduta di tiri metà tiri, un quarto passaggi e un quarto dribbling (dentro c'è tutto e tre).
+ */
 export function pesiDiId(id: string): [TemaTecnica, number][] {
   const t = temiDiId(id);
+  if (t.length === 1 && t[0] === 'tiro') return PESI_TIRO.map(([x, w]) => [x, w]);
   return t.length === 2 ? [[t[0], 1 - MIX_PESO_SECONDO], [t[1], MIX_PESO_SECONDO]] : t.map((x) => [x, 1]);
 }
 export const RISCALDAMENTO_TRAVERSA_ID = 'ttir-riscaldamento-traversa';
 export const TIRI_MAX_GIORNO_PRIMA = 10;          // Ste: "se giorno prima partita proprio poca roba, max 10 tiri"
+/** Nella seduta di tiri, dopo il riscaldamento alla traversa (Ste, 26/10 sera: "i tiri sono faticosi alla lunga per i muscoli"). */
+export const TIRI_DOPO_TRAVERSA_MAX = 20;
+/** La seduta di tiri è combinata: come conta nelle quote del mese. */
+export const PESI_TIRO: readonly [TemaTecnica, number][] = [['tiro', 0.5], ['passaggi', 0.25], ['dribbling', 0.25]];
 export const LEGGERA_MINUTI = 22;
 export const ESERCIZIO_MIN_SEC = 120;             // "qualche minuto": mai sotto i 2'
 export const ESERCIZIO_MAX_SEC = 480;             // mai oltre gli 8'
-/** Tecnica combinata (Ste, 26/10 sera): solo questi temi si combinano; tiri e freestyle hanno già dentro gli altri. */
+/** Tecnica combinata (Ste, 26/10 sera): questi temi si combinano tra loro; la seduta di tiri è già combinata (passaggi, dribbling, tiri), il freestyle è la chiusura delle altre. */
 export const TEMI_COMBINABILI: readonly TemaTecnica[] = ['palleggi', 'passaggi', 'visione', 'dribbling'];
 export const MIX_PREFIX = 'te-mix-';
 /** Il secondo tema conta un terzo di seduta, il primo due terzi. */
@@ -280,14 +291,18 @@ function pezziDribbling(livello: LivelloMinV2): Pezzo[] {
   return livello === 'PRO' ? [...base, reps('tvis-dribbling-visione-e-reattivita-avanzato', 4, 8, { r: 90, ruolo: 'chiusura', nota: NOTA_VISIONE })] : base;
 }
 
-/** Tiri (Ste): passaggi per scaldarsi → qualche dribbling → riscaldamento alla traversa → i tiri del livello, poco volume. */
-function pezziTiro(livello: LivelloMinV2): Pezzo[] {
-  const apertura: Pezzo[] = [min('tpas-passaggi-liberi-al-muro-tecnica', 5, { ruolo: 'apertura', muro: true }), min('tpas-box-dribbling-passaggio', 3, { ruolo: 'apertura', muro: true })];
-  const risc: Pezzo = reps(RISCALDAMENTO_TRAVERSA_ID, 1, 10, { r: 60, ruolo: 'apertura', nota: 'Progressivo: parti piano e sali tiro dopo tiro. 10 di destro, 10 di sinistro.' });
-  if (livello === 'B') return [...apertura, risc, reps('ttir-tiri-tecnica-di-tiro', 3, 8, { r: 90 }), reps('ttir-calcio-in-alto-e-tiro-in-porta', 2, 10, { r: 90 }), reps('ttir-tiri-rigore-al-palo', 2, 10, { r: 90, ruolo: 'chiusura' })];
-  if (livello === 'A') return [...apertura, risc, reps('ttir-tiri-tecnica-di-tiro', 3, 8, { r: 90 }), reps('ttir-tiri-in-porta-dall-angolo-cross', 2, 10, { r: 90 }), reps('ttir-tiri-rigore-alla-traversa', 2, 10, { r: 90 }), { id: 'ttir-tiri-in-porta-e-visione', serie: 2, q: 120, u: 'secondi', r: 120, ruolo: 'chiusura', nota: 'Impegnativo: poche serie, recupero pieno.' }];
-  return [...apertura, risc, reps('ttir-progressione-tiri-in-porta-tecnica-di-tiro', 1, 3, { r: 120 }), { id: 'ttir-tiri-in-porta-e-visione', serie: 3, q: 120, u: 'secondi', r: 120, ruolo: 'chiusura', nota: 'Impegnativo: poche serie, recupero pieno.' }];
+/**
+ * I tiri del livello, in fondo alla seduta di tiri (ruolo 'chiusura': se il tempo stringe escono prima passaggi e
+ * dribbling, i tiri restano). Al massimo TIRI_DOPO_TRAVERSA_MAX tiri: B 2 × 8, A 2 × 6 + 1 × 8 dall'angolo, PRO 2 × 6 +
+ * 1 × 8 con visione.
+ */
+function tiriFinali(livello: LivelloMinV2): Pezzo[] {
+  const tecnica = reps('ttir-tiri-tecnica-di-tiro', 2, livello === 'B' ? 8 : 6, { r: 90, ruolo: 'chiusura' });
+  if (livello === 'B') return [tecnica];
+  if (livello === 'A') return [tecnica, reps('ttir-tiri-in-porta-dall-angolo-cross', 1, 8, { r: 90, ruolo: 'chiusura' })];
+  return [tecnica, reps('ttir-tiri-in-porta-e-visione', 1, 8, { r: 120, ruolo: 'chiusura', nota: 'Impegnativo: recupero pieno, niente affanno.' })];
 }
+const RISC_TRAVERSA: Pezzo = reps(RISCALDAMENTO_TRAVERSA_ID, 1, 10, { r: 60, ruolo: 'apertura', nota: 'Progressivo: parti piano e sali tiro dopo tiro. 10 di destro, 10 di sinistro.' });
 
 /** Il giorno prima della partita: palleggi, passaggi, un dribbling corto, al massimo 10 tiri (~20'). */
 function pezziLeggera(): Pezzo[] {
@@ -416,6 +431,22 @@ function bloccoMix(primo: TemaTecnica, secondo: TemaTecnica, pezziDi: (t: TemaTe
   return b && b.items.some((it) => dalSecondo.some((p) => p.id === it.esercizio_id)) ? b : null;
 }
 
+/**
+ * La seduta di tiri è COMBINATA (Ste, 26/10 sera: "apertura passaggi e stop, dribbling e finale con tiri; una sessione
+ * dedicata solo ai tiri è lunga, i tiri sono faticosi alla lunga per i muscoli"): due esercizi di passaggi e stop sul
+ * codice della scala muro (o in coppia / a 10 m senza muro), due di dribbling, il riscaldamento alla traversa e in fondo
+ * pochi tiri. Se il tempo stringe escono prima il secondo esercizio di passaggi e quello di dribbling.
+ */
+function bloccoTiri(pezziDi: (t: TemaTecnica) => Pezzo[], livello: LivelloMinV2, o: OpzioniTecnica, minuti: number): Blocco | null {
+  const due = (t: TemaTecnica) => adattaMuro(t, pezziDi(t), o).filter((p) => p.ruolo === 'analitico' || p.ruolo === 'principale').slice(0, 2)
+    .map((p, i) => ({ ...p, ruolo: (i === 0 ? 'apertura' : 'analitico') as Ruolo }));
+  const pezzi = [...due('passaggi'), ...due('dribbling'), RISC_TRAVERSA, ...tiriFinali(livello)];
+  const muro = o.attrezzatura.includes('muro');
+  return blocco(teId('tiro'), 'Tecnica: passaggi, dribbling e tiri', 'tiro', pezzi, o,
+    `Passaggi e stop per scaldarti, un po' di dribbling, il riscaldamento alla traversa e in fondo pochi tiri (al massimo ${TIRI_DOPO_TRAVERSA_MAX}): alla lunga i tiri stancano i muscoli.`, minuti,
+    { inCoppia: !muro && o.inCoppia }, true);
+}
+
 const posDefault = (livello: LivelloMinV2, scala: 'palleggi' | 'muro') => (livello === 'B' ? 0 : scala === 'palleggi' ? 3 : 1);
 
 /** I blocchi `te-*` per questo atleta: uno per tema (al suo livello e sul suo codice di scala) più `te-leggera` se chiesta. */
@@ -426,14 +457,14 @@ export function costruisciTecnica(o: OpzioniTecnica): Blocco[] {
   const posP = o.posPalleggi ?? posDefault(liv, 'palleggi');
   const posM = o.posMuro ?? posDefault(liv, 'muro');
   const pezziDi = (t: TemaTecnica): Pezzo[] => t === 'palleggi' ? pezziPalleggi(posP) : t === 'passaggi' ? pezziPassaggi(posM) : t === 'freestyle' ? pezziFreestyle(liv)
-    : t === 'visione' ? pezziVisione(liv) : t === 'dribbling' ? pezziDribbling(liv) : pezziTiro(liv);
+    : t === 'visione' ? pezziVisione(liv) : t === 'dribbling' ? pezziDribbling(liv) : [...tiriFinali(liv)];
   const out: (Blocco | null)[] = [
     blocco(teId('palleggi'), 'Tecnica: palleggi', 'palleggi', pezziPalleggi(posP), o, `Palleggi sul tuo codice della scala (${posP + 1}ª tappa): esercizi analitici, poi freestyle in chiusura.`, minuti),
     blocco(teId('passaggi'), 'Tecnica: controllo e passaggi', 'passaggi', pezziPassaggi(posM), o, `Controllo e passaggi sul tuo codice della scala muro (${posM + 1}ª tappa): analitici, poi libero in chiusura.`, minuti),
     blocco(teId('freestyle'), 'Tecnica: freestyle', 'freestyle', pezziFreestyle(liv), o, 'Freestyle: palla libera al muro, tra i coni e in palleggio.', minuti),
     blocco(teId('visione'), 'Tecnica: visione', 'visione', pezziVisione(liv), o, 'Visione e reattività con il video dei segnali: leggero, sulla tecnica, mai in affanno.', minuti),
     blocco(teId('dribbling'), 'Tecnica: dribbling', 'dribbling', pezziDribbling(liv), o, 'Dribbling: slalom e cambi di direzione, box dribbling in chiusura.', minuti),
-    blocco(teId('tiro'), 'Tecnica: tiri', 'tiro', pezziTiro(liv), o, 'Tiri: passaggi per scaldarsi, un po\' di dribbling, riscaldamento alla traversa e poi i tiri. Poco volume.', minuti),
+    bloccoTiri(pezziDi, liv, o, minuti),
     ...(o.mix && o.mix.primo !== o.mix.secondo && TEMI_COMBINABILI.includes(o.mix.primo) && TEMI_COMBINABILI.includes(o.mix.secondo) ? [bloccoMix(o.mix.primo, o.mix.secondo, pezziDi, o, minuti)] : []),
     ...(o.leggera ? [blocco(TE_LEGGERA_ID, 'Tecnica leggera (il giorno prima della partita)', 'leggera', pezziLeggera(), o, `Il giorno prima della partita: palleggi, passaggi, un dribbling corto e al massimo ${TIRI_MAX_GIORNO_PRIMA} tiri. Facoltativa.`, Math.min(minuti, LEGGERA_MINUTI), { tags: ['tecnica', 'composta', 'leggera', 'facoltativa'] })] : []),
   ];
