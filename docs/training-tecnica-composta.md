@@ -53,11 +53,24 @@ qui sotto restano come **serbatoio di esercizi per qualità e per livello**, non
 | Dribbling | 10 % | `tecnica-conduzione` + la scala conduzione v1 (`cond-*`) |
 | Tiri | 10 % | `tecnica-tiro` |
 
-(Nel messaggio c'è "115 % visione": letto come 15 %, così la somma fa 100.) Con una sola giornata di tecnica a
-settimana la quota si applica a quella seduta; con due o più il server distribuisce sulla settimana (una seduta può
-essere 40 % palleggi, l'altra 0 %), così ogni seduta ha un tema senza perdere il bilanciamento. Tiri e dribbling sono
-le parti faticose: non salgono sopra la quota se non è una richiesta esplicita, e scendono prima delle altre quando la
-fatica (resoconto squadra/partita, check-in) o il calendario (squadra, partita) lo dicono.
+(Nel messaggio c'è "115 % visione": letto come 15 %, così la somma fa 100.) **Le quote sono circa mensili** (Ste,
+seconda nota: "focalizzerei la seduta su una cosa in particolare, non farei mix su tutto"): ogni seduta ha UN tema,
+e il bilanciamento si fa sulle ultime 4 settimane, come lo strato mese (`lib/trainingMese.ts`): il server conta i
+minuti di tecnica fatti per qualità nelle ultime 4 settimane (dai log, o dal piano per le sedute fatte senza log),
+li confronta con le quote e dà alla prossima seduta il tema più indietro; tiri e dribbling non superano la loro quota
+mensile se non su richiesta esplicita e scendono per primi quando la fatica (resoconto squadra/partita, check-in) o
+il calendario (squadra, partita) lo dicono.
+
+### La struttura di una seduta (Ste, seconda nota)
+
+| Tema | Struttura | Esempio a 45' |
+|---|---|---|
+| **Tiri** | apertura con **passaggi** per scaldarsi → **qualche dribbling** → **tiri progressivi**: prima il riscaldamento al tiro ("10 palle di destro e 10 di sinistro dal limite dell'area cercando di colpire la traversa", lo stesso gesto del test `t2-tiri-traversa-*`, qui come esercizio), poi gli esercizi di tiro del livello | passaggi al muro 8' → box dribbling 5' → 10 + 10 alla traversa → Shooting Technique 3 × 8 → High Kick and Shot 2 × 10 |
+| **Palleggi**, **passaggi/controllo**, **dribbling**, **visione** | prima gli esercizi **analitici** (superfici singole, un tocco, controlli orientati, slalom), poi in **chiusura qualcosa di freestyle** (muro libero, tre coni, palleggi freestyle) | palleggi: solo collo 4' → sotto al ginocchio 2 × 2' → un piede 2 × 2' per piede → 3 tocchi alternati 5' → chiusura freestyle al muro 6' |
+| **Freestyle** | è la chiusura delle altre sedute; una seduta tutta freestyle solo quando è il tema più indietro | i tre esercizi freestyle (tabella 6) |
+
+Il riscaldamento al tiro ("10 di destro e 10 di sinistro alla traversa dal limite") va aggiunto al catalogo come
+esercizio (**NUOVO**, `ttir-riscaldamento-traversa`, 2 × 10, piede forte e debole), distinto dal test.
 
 ### L'asse partita per la tecnica [come l'ho letto, da confermare]
 
@@ -71,10 +84,10 @@ fatica (resoconto squadra/partita, check-in) o il calendario (squadra, partita) 
 
 ### Priorità e rotazione
 
-- Il **tema** della seduta ruota (palleggi → passaggi → freestyle/visione → dribbling/tiri), con priorità a un aspetto
-  quando c'è un motivo: la parte più debole ai test (`prioritaTecnica`), i voti bassi del resoconto (tiro 4/10 → il
-  tema pesca i tiri, entro la quota), un obiettivo esplicito dal setup o dalla maschera, il ripasso degli esercizi
-  difficili.
+- Il **tema** della seduta lo decide la quota mensile più indietro (sopra); a parità o con un motivo pesa la priorità:
+  la parte più debole ai test (`prioritaTecnica`), i voti bassi del resoconto (tiro 4/10 → i tiri prima, entro la
+  quota), un obiettivo esplicito dal setup o dalla maschera, il ripasso degli esercizi difficili. Mai lo stesso tema
+  due sedute di fila se un altro è indietro.
 - Gli esercizi durano "qualche minuto" (2-5') e **si adattano al tempo**: con 30' la seduta ha 5-6 esercizi da 3-4',
   con 60' 8-10 esercizi da 4-6' o due serie; la quota resta in percentuale, i minuti cambiano.
 - Le **scale** restano: dentro la quota palleggi gli esercizi vengono dal codice corrente della scala palleggi
@@ -249,16 +262,16 @@ Pass 2 × 1'.
 
 ## Regole che vanno nel codice [proposta, riscritta sulle regole di Ste]
 
-1. **Composizione a budget**: `costruisciTecnica(ctx, { giorno, minuti })` → UN blocco virtuale `te-<giorno>` per
-   giornata di tecnica: dai minuti della seduta e dalle quote (25/25/15/15/10/10, ricalcolate sulla settimana se le
-   giornate sono più di una) ricava i minuti per qualità, applica il filtro dell'asse partita (tabella sopra) e della
-   fatica (resoconto: fatica alta o 2 giorni leggeri → tiri e dribbling a zero), poi pesca gli esercizi dal serbatoio
-   per livello e dal codice della scala; gli esercizi durano 2-5' e si allungano o accorciano per far tornare i minuti.
-   Entra in `ctx.blocchi` accanto ai workout Everfit, come `aggiornaParteAlta` / `aggiornaParteBassa`.
-2. **Tema e priorità**: la seduta ha un tema a rotazione (memoria tecnica: mai lo stesso due settimane di fila); con un
-   motivo (parte debole ai test, voto basso ricorrente nel resoconto, obiettivo esplicito, ripasso) il tema va lì e
-   quella quota può salire fino al doppio, le altre scendono in proporzione; tiri e dribbling salgono sopra la quota
-   solo su richiesta esplicita.
+1. **Un tema per seduta, quote mensili**: `temaTecnica(storico4Settimane, quote, asse, priorita)` (puro) sceglie il
+   tema della prossima seduta = la qualità più indietro rispetto alla sua quota sui minuti fatti nelle ultime 4
+   settimane (log per serie; per le sedute senza log, il piano), escluse le qualità vietate quel giorno dall'asse
+   partita e dalla fatica (resoconto: fatica alta o 2 giorni leggeri → niente tiri né dribbling); tiri e dribbling non
+   superano la quota mensile se non su richiesta.
+2. **Composizione**: `costruisciTecnica(ctx, { giorno, minuti, tema })` → UN blocco virtuale `te-<tema>` con la struttura
+   della tabella: tiri = passaggi (riscaldamento) → un dribbling → riscaldamento alla traversa → tiri del livello;
+   gli altri temi = analitici dal serbatoio per livello e dal codice della scala → chiusura freestyle. Gli esercizi
+   durano 2-5' e si allungano o accorciano per far tornare i minuti della seduta. Entra in `ctx.blocchi` accanto ai
+   workout Everfit, come `aggiornaParteAlta` / `aggiornaParteBassa`.
 3. **Sostituzione**: `sostituzioniFormati` rimpiazza un workout Everfit di tecnica scelto da Claude con il `te-*` di
    quel giorno (nota "composta sui tuoi gradini, al posto di …"); i workout restano in libreria e nel prompt.
 4. **Asse partita**: +1 dopo una partita giocata molto → solo palleggi, passaggi vicini, controllo; −1 → al massimo 10
@@ -276,7 +289,7 @@ Pass 2 × 1'.
 1. L'asse partita come l'ho letto (tabella sopra) è giusto? In particolare: a −1 la tecnica leggera si AGGIUNGE al blocco
    pre partita o lo sostituisce? E "subito dopo partita giocata molto" vale solo a +1 o anche a +2 quando la fatica
    del resoconto è alta?
-2. Le quote 25/25/15/15/10/10 valgono sulla settimana (con due giornate una può essere tutta palleggi) o su ogni seduta?
+2. ~~Le quote valgono sulla settimana o su ogni seduta?~~ Risposto: circa mensili, una seduta = un tema.
 3. Il serbatoio di esercizi per livello (tabelle 1, 2, 4, 5, 6) va bene? Dove mettere i sei esercizi oggi fuori da ogni
    scala (interno 3 tocchi, coscia e collo, un piede alternato, i ravvicinati, i controlli orientati, il sombrero)?
 4. Serve un livello PRO sui palleggi o il PRO fa A4 e il mazzo?
