@@ -201,7 +201,8 @@ export function eserciziDaRipassare(logs: SetLogRow[]): Ripasso[] {
       const prev = conFatte.reduce((a, r) => a + r.quantita_prevista, 0);
       const fatte = conFatte.reduce((a, r) => a + (r.quantita_fatta ?? 0), 0);
       const sotto = prev > 0 && fatte / prev < RIPASSO_REPS_PCT;
-      return { voto, difficile: (voto != null && voto >= RIPASSO_VOTO_MIN) || sotto };
+      const esecuzione = rs.some((r) => r.esecuzione && r.esecuzione !== 'ok'); // punto 18: "faccio fatica" / "non riesco" sulla palla = ripasso
+      return { voto, difficile: (voto != null && voto >= RIPASSO_VOTO_MIN) || sotto || esecuzione };
     };
     let volte = 0; let ultima: { voto: number | null; rs: SetLogRow[] } | null = null;
     for (const rs of sedute.values()) {

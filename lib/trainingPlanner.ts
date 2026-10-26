@@ -316,8 +316,12 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   try {
     const since = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString();
     const cols = 'session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at';
-    let logs: SetLogRow[] | null = (await supabaseAdmin.from('training_set_logs').select(`${cols}, sensazione`)
+    let logs: SetLogRow[] | null = (await supabaseAdmin.from('training_set_logs').select(`${cols}, sensazione, esecuzione`)
       .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400)).data as SetLogRow[] | null;
+    if (!logs) { // migration 034 (esecuzione) non applicata → senza la colonna
+      logs = (await supabaseAdmin.from('training_set_logs').select(`${cols}, sensazione`)
+        .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400)).data as SetLogRow[] | null;
+    }
     if (!logs) { // migration 020 (sensazione) non applicata → senza la colonna
       logs = (await supabaseAdmin.from('training_set_logs').select(cols)
         .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400)).data as SetLogRow[] | null;

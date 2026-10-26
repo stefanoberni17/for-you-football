@@ -10,6 +10,9 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { Storico, StoricoEsercizio, StoricoTest } from '@/lib/trainingStorico';
 import { durataLabel } from '@/lib/trainingLabels';
 
+/** Punto 18: l'esecuzione detta a fine esercizio, accanto a kg e ripetizioni ("ok" non si scrive). */
+const esecuzioneTxt = (e?: string | null) => (e === 'fatica' ? ' · faccio fatica' : e === 'non_riesco' ? ' · non riesco' : '');
+
 const dataIt = (ymd: string) => `${ymd.slice(8, 10)}/${ymd.slice(5, 7)}`;
 const fmtQ = (q: number, unita: string) => `${q}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : unita === 'metri' ? ' m' : unita === 'cm' ? ' cm' : unita === 'kg' ? ' kg' : ''}`;
 const TICK = { fill: 'var(--color-text-muted)', fontSize: 11 };
@@ -134,7 +137,7 @@ export default function StoricoPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="text-body font-semibold text-app leading-snug">{e.nome}</p>
-                        <p className="text-caption text-muted mt-0.5">{dataIt(u.data)}: {u.serie}×{fmtQ(u.quantita, u.unita)}{u.kg != null ? ` · ${u.kg} kg` : ''}{u.rpe != null ? ` · voto ${u.rpe}` : ''} · {e.sedute.length} {e.sedute.length === 1 ? 'seduta' : 'sedute'}</p>
+                        <p className="text-caption text-muted mt-0.5">{dataIt(u.data)}: {u.serie}×{fmtQ(u.quantita, u.unita)}{u.kg != null ? ` · ${u.kg} kg` : ''}{u.rpe != null ? ` · voto ${u.rpe}` : ''}{esecuzioneTxt(u.esecuzione)} · {e.sedute.length} {e.sedute.length === 1 ? 'seduta' : 'sedute'}</p>
                       </div>
                       {open ? <ChevronUp size={16} className="text-muted shrink-0" aria-hidden /> : <ChevronDown size={16} className="text-muted shrink-0" aria-hidden />}
                     </div>
@@ -147,7 +150,7 @@ export default function StoricoPage() {
                           </>
                         ) : <p className="text-body-sm text-muted">Una seduta sola: il grafico arriva dalla seconda.</p>}
                         <ul className="mt-1 space-y-0.5">
-                          {[...e.sedute].reverse().slice(0, 8).map((p) => <li key={p.data} className="text-body-sm text-muted leading-snug">· {dataIt(p.data)}: {p.serie}×{fmtQ(p.quantita, p.unita)}{p.quantita !== p.prevista ? ` (previste ${fmtQ(p.prevista, p.unita)})` : ''}{p.kg != null ? ` · ${p.kg} kg` : ''}{p.rpe != null ? ` · voto ${p.rpe}` : ''}</li>)}
+                          {[...e.sedute].reverse().slice(0, 8).map((p) => <li key={p.data} className="text-body-sm text-muted leading-snug">· {dataIt(p.data)}: {p.serie}×{fmtQ(p.quantita, p.unita)}{p.quantita !== p.prevista ? ` (previste ${fmtQ(p.prevista, p.unita)})` : ''}{p.kg != null ? ` · ${p.kg} kg` : ''}{p.rpe != null ? ` · voto ${p.rpe}` : ''}{esecuzioneTxt(p.esecuzione)}</li>)}
                         </ul>
                       </div>
                     )}

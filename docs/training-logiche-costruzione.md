@@ -679,3 +679,25 @@ ogni test con il motivo del suo gruppo.
    giornata e 50 m + T-sprint in un'altra, mai nello stesso giorno), o anche lì solo su richiesta?
 7. Massimali in palestra: a mano dalla pagina test, mai in seduta (la mia proposta)?
 
+### E9. Voto all'esecuzione (26/10 sera, punto 18 di campo-da-fare, decisioni di Ste del 15/10): nel codice
+
+Dove vive: `lib/trainingEsecuzione.ts` (puro, 21 test in `tests/trainingEsecuzione.test.ts`), colonna
+`training_set_logs.esecuzione` (migration 034). Il player chiede "Com'è venuto?" solo se l'atleta apre (default ok).
+
+1. **Prima si abbassa.** `calcolaEsecuzione` cammina sulle sedute dell'esercizio dalla più vecchia: un "non riesco", o
+   "faccio fatica" 2 di fila → `passo: 'meno'`. `prossimaDose` lo applica PRIMA della fatica (kg ×0.85, reps/tempo ×0.8,
+   minimi 3 reps / 10"); `perEsecuzione` nelle progressioni mette un gradino sotto sulle catene v1 (stessa dose), fuori
+   dalle scale la dose ridotta più il consiglio `scheda.piuFacile`. `saliBloccato` finché non ci sono 2 "ok" di fila:
+   blocca SALI, CONFERMA, gradino successivo e la M5 (`moltoLeggera` rifiuta la seduta con un'esecuzione non ok).
+2. **Poi la seduta dedicata.** Ancora difficile dopo il passo indietro → `passo: 'dedicata'`: le sedute di forza tengono
+   il gradino sotto, l'esercizio vero entra nell'EMOM del suo distretto (`inDifficolta` in `costruisciParteAlta` /
+   `costruisciParteBassa`: al posto del gradino sopra della sua scala, o stazione in più per gli esercizi v2, max 2, mai
+   il kettlebell; 3 ripetizioni pulite, 10" se a tempo). Quell'EMOM va per primo tra i formati (sostituzioni e piano
+   base). Si rientra dopo 2 EMOM "ok"; una difficoltà azzera. Sulla palla l'esecuzione non ok vale come ripasso.
+3. **Il preparatore lo dice.** `ContextV2.esecuzione` → sezione "# ESECUZIONE" (planner e chat), riga negli
+   aggiustamenti dell'hub, nota sull'item, hint del player, storico.
+
+Scelte mie da confermare: le percentuali (−15 % kg, −20 % reps/tempo) dentro il "−10-20 %" di Ste; l'EMOM con 3
+ripetizioni (Ste: "poche"); il kettlebell in difficoltà NON entra in `kb-base` (resta nella seduta kettlebell con i kg
+−15 %); "Com'è venuto?" non si chiede sulla tecnica (ha già la scala pulito/riuscito/difficile) né sulla fascia.
+

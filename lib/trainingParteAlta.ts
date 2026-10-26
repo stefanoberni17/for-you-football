@@ -23,6 +23,8 @@ import { catenaByArea, esercizioById, type AreaForza, type TrainingExercise } fr
 import { LADDER_AREE, ladderForArea, type LadderState, type TestResultRow } from './trainingEngine';
 import { esercizioV2ById, type LivelloMinV2, LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { Blocco, BloccoItem } from './trainingBlocks';
+import { distrettoEsercizio } from './trainingSquilibri';
+import { doseEmomDifficolta, EMOM_DIFFICOLTA_MAX, ESECUZIONE_LABEL, type StatoEsecuzione } from './trainingEsecuzione';
 
 export const PA_SERIE_ID = 'pa-serie';
 export const PA_SERIE_PUSH_ID = 'pa-serie-push';
@@ -81,6 +83,8 @@ export interface OpzioniParteAlta {
   hasSbarra: boolean;
   parteBassa: boolean;      // salti e sprint nell'EMOM solo se la parte bassa è tra gli obiettivi
   settimana: number;        // indice per la rotazione della variante di sprint
+  /** Punto 18: esercizi in SEDUTA DEDICATA (ancora difficili dopo il passo indietro): entrano nell'EMOM con poche ripetizioni pulite */
+  inDifficolta?: StatoEsecuzione[];
 }
 
 type Scale = Map<AreaForza, LadderState | null>;
@@ -237,13 +241,30 @@ function bloccoSerie(id: string, nome: string, items: BloccoItem[], o: OpzioniPa
 function bloccoEmom(sc: Scale, o: OpzioniParteAlta): Blocco | null {
   const stazioni: BloccoItem[] = [];
   const conSbarra = o.hasSbarra || o.attrezzatura.includes('sbarra');
+  const difficili = o.inDifficolta ?? [];
+  const notaDifficolta = (s: StatoEsecuzione) => `Seduta dedicata: l'ultima volta hai detto "${ESECUZIONE_LABEL[s.ultima]}". Qui poche ripetizioni pulite e recupero pieno: dopo due EMOM "ok" torna nelle serie.`;
   for (const area of ['spinta', 'tirata'] as const) {
     if (area === 'tirata' && !conSbarra) continue;
     const l = sc.get(area) ?? null;
+    // Punto 18: l'esercizio in difficoltà di questa scala prende il posto del gradino sopra
+    const diff = difficili.map((s) => ({ s, ex: esercizioById(s.esercizioId) })).find((x) => x.ex?.area === area);
+    if (diff?.ex) {
+      stazioni.push(v1Item(diff.ex, 0, doseEmomDifficolta(diff.ex.unita), diff.ex.unita === 'secondi' ? 'secondi' : 'reps', 0, notaDifficolta(diff.s), { schema: 'emom', emomGruppo: PA_EMOM_ID }));
+      continue;
+    }
     const e = gradinoSopra(l, area);
     if (!e || !l) continue;
     const reps = e.gradino <= EMOM_GRADINO_BASSO[area] ? EMOM_REPS_GRADINI_BASSI : EMOM_REPS;
     stazioni.push(v1Item(e, 0, reps, 'reps', 0, `Gradino ${e.gradino} della scala ${area}: il passo dopo l'ultimo che hai completato. ${reps} ripetizioni pulite, poi riposi fino allo scadere del minuto.`, { schema: 'emom', emomGruppo: PA_EMOM_ID }));
+  }
+  // Punto 18: gli altri esercizi della parte alta in seduta dedicata (fuori dalle scale) come stazioni in più
+  let extra = 0;
+  for (const s of difficili) {
+    if (extra >= EMOM_DIFFICOLTA_MAX || stazioni.some((it) => it.esercizio_id === s.esercizioId) || esercizioById(s.esercizioId)) continue;
+    const ex = esercizioV2ById(s.esercizioId);
+    if (!ex || distrettoEsercizio(s.esercizioId) !== 'alto' || ex.attrezzatura === 'kettlebell') continue;
+    const it = v2Item(s.esercizioId, 0, doseEmomDifficolta(ex.unita), 0, notaDifficolta(s), { schema: 'emom', emomGruppo: PA_EMOM_ID });
+    if (it) { stazioni.push(it); extra++; }
   }
   // Niente core né dorsali nell'EMOM (Ste, 28/9: gli esercizi dell'addome non si incastrano nel minuto): restano nelle serie
   if (stazioni.length === 0) return null; // senza scale di spinta/tirata testate non è un EMOM skill
@@ -324,7 +345,8 @@ export function costruisciParteAlta(results: TestResultRow[], o: OpzioniParteAlt
  * (la versione breve se le piene non stanno nel tempo), EMOM, focus spinta, focus tirata. Il chiamante salta i
  * formati già usati nella settimana e preferisce quello che sta nel tempo massimo.
  */
-export function ordineFormatiParteAlta(isDeload: boolean): string[] {
+export function ordineFormatiParteAlta(isDeload: boolean, emomPrima = false): string[] {
+  if (emomPrima) return [PA_EMOM_ID, ...ordineFormatiParteAlta(isDeload).filter((id) => id !== PA_EMOM_ID)]; // punto 18: un esercizio in seduta dedicata
   return isDeload
     ? [PA_EMOM_ID, PA_SERIE_SHORT_ID, PA_SERIE_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID]
     : [PA_SERIE_ID, PA_SERIE_SHORT_ID, PA_EMOM_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID];

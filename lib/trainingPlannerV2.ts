@@ -42,11 +42,13 @@ import { dataDiGiorno, addDays as addGiorni, GAMBE_DOPO_PARTITA as GAMBE_SCALA, 
 import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
 import { posizioneScala } from './trainingTecnica';
 import { doseRegoleTesto } from './trainingDose';
+import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione } from './trainingEsecuzione';
+import { esercizioAny } from './trainingExercise';
 import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.38-tecnica-composta';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.39-esecuzione';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -142,6 +144,8 @@ export interface ContextV2 {
   mese: Mese | null;
   // Tecnica composta dal catalogo (26/10, docs/training-tecnica-composta.md): quote mensili, tema della prossima seduta, blocchi `te-*` in libreria
   tecnica: StatoTecnica | null;
+  // Voto all'esecuzione (26/10, punto 18, lib/trainingEsecuzione): gli esercizi con qualcosa da dire (meno / seduta dedicata / SALI bloccato)
+  esecuzione: StatoEsecuzione[];
 }
 
 /** Quello che il contesto v2 legge dal DB: il resto (`costruisciContextV2`) è deterministico, e la simulazione del planner lo riempie a mano. */
@@ -196,6 +200,7 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
     daRecuperare, vincoli: {}, obiettivi: base.focusSetup, memoria: {}, noteRegole: [],
     memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null, ripassoTecnica: eserciziDaRipassare(base.logsSerie),
     prioritaTecnica: prioritaTecnica(base.results), mese, tecnica: null,
+    esecuzione: base.storicoSerie.map((r) => r.esecuzione).filter(conQualcosaDaDire),
   };
   // Priorità del mese nel piano AUTOMATICO: il primo obiettivo resta, tra gli altri sale chi è indietro (una richiesta
   // esplicita con gli obiettivi dalla maschera li sovrascrive in generateWeekPlanV2)
@@ -270,7 +275,7 @@ function indiceSettimana(): number {
 export function aggiornaParteAlta(ctx: ContextV2): void {
   const pa = costruisciParteAlta(ctx.base.results, {
     livello: livelloDi(ctx.base.livelli, 'forza-parte-alta', ctx.v2.livello), attrezzatura: ctx.setup.attrezzatura, hasSbarra: ctx.base.hasSbarra || ctx.setup.attrezzatura.includes('sbarra'),
-    parteBassa: vuoleParteBassa(ctx.obiettivi), settimana: indiceSettimana(),
+    parteBassa: vuoleParteBassa(ctx.obiettivi), settimana: indiceSettimana(), inDifficolta: inDifficolta(ctx.esecuzione),
   });
   ctx.blocchi = [...ctx.blocchi.filter((b) => !isParteAlta(b.id)), ...pa];
 }
@@ -285,7 +290,7 @@ function aggiornaParteBassa(ctx: ContextV2): void {
     livello: livelloDi(ctx.base.livelli, 'forza-parte-bassa', ctx.v2.livello), attrezzatura: ctx.setup.attrezzatura, settimana: indiceSettimana(),
     pliometria: !ctx.obiettivi.length || ctx.obiettivi.includes('pliometria') || ctx.obiettivi.includes('tutto'),
     massimali: ctx.v2.massimali ?? {}, maxPct: caricoMaxPct({ eta: ctx.eta, esperienzaPalestra: ctx.setup.esperienzaPalestra, livello: ctx.v2.livello }),
-    isDeload: ctx.base.ciclo.isDeload,
+    isDeload: ctx.base.ciclo.isDeload, inDifficolta: inDifficolta(ctx.esecuzione),
   });
   ctx.blocchi = [...ctx.blocchi.filter((b) => !isParteBassa(b.id)), ...pb];
 }
@@ -526,12 +531,18 @@ const isForzaAltaEverfit = (b: Blocco) => b.qualita === 'forza-parte-alta' && /p
 const isForzaBassaEverfit = (b: Blocco) => b.qualita === 'forza-parte-bassa' && /parte bassa/i.test(b.famiglia) && b.famiglia !== FAMIGLIA_FASCIA_FORZA && !isParteBassa(b.id) && !isKettlebell(b.id);
 
 interface FormatiServer { is: (id: string) => boolean; isEverfit: (b: Blocco) => boolean; ordine: string[]; gruppo: (id: string) => string; esclusi?: string[] }
+/** Punto 18: con un esercizio in seduta dedicata nel distretto, l'EMOM di quel distretto va per primo tra i formati. */
+function emomDedicato(ctx: ContextV2, distretto: 'alto' | 'gambe'): boolean {
+  const id = distretto === 'alto' ? PA_EMOM_ID : PB_EMOM_ID;
+  const emom = ctx.blocchi.find((b) => b.id === id);
+  return !!emom && inDifficolta(ctx.esecuzione).some((s) => emom.items.some((it) => it.esercizio_id === s.esercizioId));
+}
 const FORMATI_PARTE_ALTA = (ctx: ContextV2): FormatiServer => ({
-  is: isParteAlta, isEverfit: isForzaAltaEverfit, ordine: ordineFormatiParteAlta(ctx.base.ciclo.isDeload),
+  is: isParteAlta, isEverfit: isForzaAltaEverfit, ordine: ordineFormatiParteAlta(ctx.base.ciclo.isDeload, emomDedicato(ctx, 'alto')),
   gruppo: (id) => (id === PA_SERIE_SHORT_ID ? PA_SERIE_ID : id),
 });
 const FORMATI_PARTE_BASSA = (ctx: ContextV2): FormatiServer => ({
-  is: isParteBassa, isEverfit: isForzaBassaEverfit, ordine: ordineFormatiParteBassa(ctx.base.ciclo.isDeload), gruppo: gruppoParteBassa, esclusi: [PB_RICHIAMO_ID],
+  is: isParteBassa, isEverfit: isForzaBassaEverfit, ordine: ordineFormatiParteBassa(ctx.base.ciclo.isDeload, emomDedicato(ctx, 'gambe')), gruppo: gruppoParteBassa, esclusi: [PB_RICHIAMO_ID],
 });
 
 /**
@@ -1346,7 +1357,7 @@ export function contestoDati(ctx: ContextV2): string {
   const b = ctx.base;
   const memoria = (b.obiettivi || b.note) ? `\n# MEMORIA ATLETA\nObiettivi: ${b.obiettivi || '—'}\nNote recenti: ${b.note || '—'}` : '';
   const dose = b.storicoSerie.length ? `\n${doseRegoleTesto()}` : '';
-  return `${memoria}${obiettiviTesto(ctx)}${ctx.vincoli.obiettivi?.length ? '' : meseTesto(ctx.mese, ctx.base.focusSetup)}${memoriaBlocchiTesto(ctx.memoria)}${storicoSerieBlock(b)}${dose}${squilibriTesto(b.squilibri)}${resocontiTesto(b.resoconti ?? [], b.squadra)}${caricoTesto(b.carico)}`;
+  return `${memoria}${obiettiviTesto(ctx)}${ctx.vincoli.obiettivi?.length ? '' : meseTesto(ctx.mese, ctx.base.focusSetup)}${memoriaBlocchiTesto(ctx.memoria)}${storicoSerieBlock(b)}${dose}${squilibriTesto(b.squilibri)}${esecuzioneTesto(ctx.esecuzione ?? [], (id) => esercizioAny(id)?.nome ?? id)}${resocontiTesto(b.resoconti ?? [], b.squadra)}${caricoTesto(b.carico)}`;
 }
 export function contestoTecnica(ctx: ContextV2): string {
   return `${tecnicaTesto(ctx.memoriaTecnica, ctx.blocchi, ctx.prioritaTecnica)}${tecnicaCompostaRegola(ctx)}${ripassoTesto(ctx.ripassoTecnica)}`;
@@ -1473,7 +1484,10 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   // il kettlebell (un blocco kb copre SOLO quell'obiettivo: 15/10, il base metteva Forza Esplosiva A1 al posto del kb)
   // Sedute sulle scale e tecnica composta prima dei blocchi Everfit; il richiamo mai come principale. La tecnica composta nell'ordine dei temi per deficit (il preferito per primo)
   const teRank = (x: Blocco) => { const t = temaDiId(x.id); const i = t && ctx.tecnica ? ctx.tecnica.scelta.ordine.indexOf(t) : -1; return i >= 0 ? i / 10 : 0; };
-  const pa = (x: Blocco) => (isParteAlta(x.id) || (isParteBassa(x.id) && x.id !== PB_RICHIAMO_ID) ? 0 : isTecnicaComposta(x.id) ? teRank(x) : x.id === PB_RICHIAMO_ID ? 2 : 1);
+  // Punto 18: l'EMOM che contiene un esercizio in seduta dedicata va per primo (è la seduta dedicata)
+  const dedicati = new Set(inDifficolta(ctx.esecuzione).map((s) => s.esercizioId));
+  const emomDed = (x: Blocco) => (x.id === PA_EMOM_ID || x.id === PB_EMOM_ID) && x.items.some((it) => !!it.esercizio_id && dedicati.has(it.esercizio_id));
+  const pa = (x: Blocco) => (emomDed(x) ? -1 : isParteAlta(x.id) || (isParteBassa(x.id) && x.id !== PB_RICHIAMO_ID) ? 0 : isTecnicaComposta(x.id) ? teRank(x) : x.id === PB_RICHIAMO_ID ? 2 : 1);
   const rankBlocco = (x: Blocco, y: Blocco) => (pa(x) - pa(y)) || (memoriaRank(ctx, x) - memoriaRank(ctx, y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1));
   const nelTempoPrima = (cand: Blocco[]) => [...cand.filter((x) => x.durataMin <= maxDur), ...cand.filter((x) => x.durataMin > maxDur)];
   const candidatiPerObiettivo = (f: FocusId): Blocco[] => {
@@ -1654,7 +1668,29 @@ export function giornoDellaViolazione(v: string): number | null {
 export function conProgressioni(plan: WeekPlan, ctx: ContextV2, validateCtx: Parameters<typeof validatePlan>[1]): WeekPlan {
   const { plan: adattato } = adattaPiano(plan, { storico: ctx.base.storicoSerie, squilibri: ctx.base.squilibri, results: ctx.base.results },
     (s) => validatePlan({ ...plan, sedute: [s] }, { ...validateCtx, oggiDow: undefined }));
-  return adattato;
+  const righe = aggiustamentiEsecuzione(adattato, ctx);
+  return righe.length ? { ...adattato, aggiustamenti: [...(adattato.aggiustamenti ?? []), ...righe] } : adattato;
+}
+
+/**
+ * Punto 18: una riga per l'atleta negli aggiustamenti dell'hub per ogni esercizio toccato dall'esecuzione
+ * ("Pistol squat: nell'EMOM con poche ripetizioni, nella seduta di forza fai Box pistol").
+ */
+export function aggiustamentiEsecuzione(plan: WeekPlan, ctx: ContextV2): string[] {
+  const nome = (id: string) => esercizioAny(id)?.nome ?? id;
+  const out: string[] = [];
+  for (const s of ctx.esecuzione ?? []) { // i test costruiscono ContextV2 senza il campo
+    if (s.passo === 'normale') continue;
+    const nellEmom = plan.sedute.some((x) => x.items?.some((it) => it.esercizio_id === s.esercizioId && it.schema === 'emom'));
+    const sostituto = plan.sedute.flatMap((x) => x.items ?? []).find((it) => it.adattamento === 'esecuzione' && it.nota?.includes(`al posto di ${nome(s.esercizioId)}`));
+    const ridotto = plan.sedute.some((x) => x.items?.some((it) => it.esercizio_id === s.esercizioId && it.adattamento === 'esecuzione'));
+    if (!nellEmom && !sostituto && !ridotto) continue;
+    const forza = sostituto ? `nella seduta di forza fai ${nome(sostituto.esercizio_id)}` : ridotto ? 'nella seduta di forza con meno' : '';
+    out.push(s.passo === 'dedicata'
+      ? `${nome(s.esercizioId)}: ti viene ancora sporco${nellEmom ? ', questa settimana lo alleni nell\'EMOM con poche ripetizioni' : ''}${forza ? `, ${forza}` : ''}`
+      : `${nome(s.esercizioId)}: ${s.motivo.replace(/^meno: /, '')}${sostituto ? `, fai ${nome(sostituto.esercizio_id)}` : ', con meno'}`);
+  }
+  return out;
 }
 
 // ─── Generazione ────────────────────────────────────────────────────────────

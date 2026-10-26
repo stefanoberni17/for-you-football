@@ -37,6 +37,7 @@ const giornoDi = (sessionKey: string) => { const g = Number(String(sessionKey).s
 export function moltoLeggera(serie: readonly SetLogRow[], votoSeduta?: number | null): boolean {
   if (!serie.length) return false;
   if (!serie.every((r) => r.rpe != null && r.rpe <= AUMENTO_SETTIMANA_RPE_MAX)) return false;
+  if (serie.some((r) => r.esecuzione && r.esecuzione !== 'ok')) return false; // punto 18: la M5 non scavalca l'esecuzione
   if (serie.some((r) => r.quantita_fatta != null && r.quantita_fatta < r.quantita_prevista)) return false;
   if (votoSeduta != null && votoSeduta > AUMENTO_SETTIMANA_SEDUTA_MAX) return false;
   return true;

@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import SchedaEsercizioView from './SchedaEsercizio';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { Check, ChevronLeft, Info, Pause, Play, Square, X } from 'lucide-react';
-import { Button, Card, RpeScale } from '@/components/ui';
+import { Button, Card, Chip, RpeScale } from '@/components/ui';
+import { ESECUZIONE_LABEL, type Esecuzione } from '@/lib/trainingEsecuzione';
 
 /**
  * EMOM a rotazione (Ste, 17/9/2026): ogni minuto parte un esercizio diverso, poche
@@ -44,8 +45,8 @@ function programma(items: EmomItem[]): number[] {
 export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }: {
   items: EmomItem[];
   bloccoNome?: string;
-  /** Fine (naturale o "Ferma qui"): RPE scelto (null = non dato) e giri fatti per ogni item, nello stesso ordine. */
-  onDone: (rpe: number | null, giriFatti: number[]) => void;
+  /** Fine (naturale o "Ferma qui"): RPE scelto (null = non dato), giri fatti per ogni item e, per chi risponde, "com'è venuto?" (punto 18), nello stesso ordine. */
+  onDone: (rpe: number | null, giriFatti: number[], esecuzioni: (Esecuzione | null)[]) => void;
   onSkip: () => void;
 }) {
   const sequenza = programma(items);
@@ -56,6 +57,9 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
   const [inPausa, setInPausa] = useState(false);
   const [finito, setFinito] = useState(false);
   const [rpe, setRpe] = useState<number | null>(null);
+  // Punto 18: a fine circuito, per esercizio, "com'è venuto?" espandibile (default ok)
+  const [esecuzioni, setEsecuzioni] = useState<(Esecuzione | null)[]>(() => items.map(() => null));
+  const [esecuzioneAperta, setEsecuzioneAperta] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const startRef = useRef<number | null>(null);      // timestamp di partenza del circuito
@@ -207,13 +211,38 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
       ) : (
         <Card className="mb-4">
           <RpeScale value={rpe} onChange={setRpe} tipo="seduta" ariaPrefix="EMOM" label="Com'è andato l'EMOM?" />
+          {/* Punto 18: "Com'è venuto?" per esercizio, espandibile: chi non apre lascia tutto "ok" */}
+          <div className="mt-4">
+            {!esecuzioneAperta ? (
+              <Button variant="ghost" size="sm" onClick={() => setEsecuzioneAperta(true)}>Com&apos;è venuto? (se qualcosa non era pulito)</Button>
+            ) : (
+              <div className="space-y-3">
+                {items.map((it, i) => {
+                  const ex = esercizioAny(it.esercizio_id);
+                  return (
+                    <div key={`${it.esercizio_id}-${i}`}>
+                      <p className="text-label font-semibold text-app mb-1.5">{ex?.nome ?? it.esercizio_id}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {(['ok', 'fatica', 'non_riesco'] as const).map((k) => (
+                          <Chip key={k} selected={(esecuzioni[i] ?? 'ok') === k} tone={k === 'ok' ? 'accent' : 'warn'}
+                            onClick={() => setEsecuzioni((prev) => prev.map((x, j) => (j === i ? k : x)))}>
+                            {k === 'ok' ? 'Tutto ok' : ESECUZIONE_LABEL[k].replace(/^./, (c) => c.toUpperCase())}
+                          </Chip>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </Card>
       )}
 
       {/* Slot fisso in fondo */}
       <div className={SLOT}>
         {finito ? (
-          <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={() => onDone(rpe, giriFatti())}>Vai avanti</Button>
+          <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />} onClick={() => onDone(rpe, giriFatti(), esecuzioni)}>Vai avanti</Button>
         ) : running ? (
           <>
             {inPausa ? (

@@ -26,6 +26,8 @@ import { ladderForArea, type LadderState, type TestResultRow, type PlanItem } fr
 import { esercizioV2ById, type LivelloMinV2 } from './trainingCatalogV2';
 import type { Blocco, BloccoItem } from './trainingBlocks';
 import { gradinoSopra } from './trainingParteAlta';
+import { distrettoEsercizio } from './trainingSquilibri';
+import { doseEmomDifficolta, EMOM_DIFFICOLTA_MAX, ESECUZIONE_LABEL, type StatoEsecuzione } from './trainingEsecuzione';
 
 export const PB_SERIE_ID = 'pb-serie';
 export const PB_SERIE_SHORT_ID = 'pb-serie-short';
@@ -80,6 +82,8 @@ export interface OpzioniParteBassa {
   massimali: Record<string, number>; // 1RM stimati per id v2 (dai test palestra)
   maxPct: number;                    // caricoMaxPct dell'atleta: Fmax solo da 80 in su
   isDeload: boolean;
+  /** Punto 18: esercizi in SEDUTA DEDICATA (ancora difficili dopo il passo indietro): entrano nell'EMOM con poche ripetizioni pulite */
+  inDifficolta?: StatoEsecuzione[];
 }
 
 export type Posteriore = 'rdl' | 'bridge';
@@ -239,9 +243,18 @@ export function costruisciParteBassa(results: TestResultRow[], o: OpzioniParteBa
 
   // EMOM: gradino sopra su squat, affondi e la posteriore NON fatta a serie; salti se la pliometria è tra gli obiettivi
   const stazioni: BloccoItem[] = [];
+  const difficili = o.inDifficolta ?? [];
+  const notaDifficolta = (s: StatoEsecuzione) => `Seduta dedicata: l'ultima volta hai detto "${ESECUZIONE_LABEL[s.ultima]}". Qui poche ripetizioni pulite e recupero pieno: dopo due EMOM "ok" torna nelle serie.`;
   const emomAree: AreaGambe[] = ['squat', 'affondi', altraPosteriore(postUsata)];
+  // Punto 18: una catena con un esercizio in difficoltà entra nell'EMOM anche se non era tra le tre (la posteriore a serie)
+  for (const s of difficili) { const a = esercizioById(s.esercizioId)?.area as AreaGambe | undefined; if (a && (['squat', 'affondi', 'rdl', 'bridge'] as string[]).includes(a) && !emomAree.includes(a)) emomAree.push(a); }
   for (const area of emomAree) {
     const l = sc.get(area) ?? null;
+    const diff = difficili.map((x) => ({ s: x, ex: esercizioById(x.esercizioId) })).find((x) => x.ex?.area === area);
+    if (diff?.ex) {
+      stazioni.push(v1Item(diff.ex, 0, doseEmomDifficolta(diff.ex.unita), diff.ex.unita === 'secondi' ? 'secondi' : 'reps', 0, notaDifficolta(diff.s), { schema: 'emom', emomGruppo: PB_EMOM_ID }));
+      continue;
+    }
     let e = gradinoSopra(l, area);
     if (!e) continue;
     if (o.isDeload && area === 'bridge' && e.gradino > BRIDGE_MAX_GRADINO_SCARICO) {
@@ -249,6 +262,15 @@ export function costruisciParteBassa(results: TestResultRow[], o: OpzioniParteBa
     }
     const reps = e.gradino >= PB_EMOM_GRADINO_ALTO[area] ? PB_EMOM_REPS_ALTI : PB_EMOM_REPS;
     stazioni.push(v1Item(e, 0, reps, 'reps', 0, `Gradino ${e.gradino} della scala ${LABEL[area]}: il passo dopo l'ultimo che hai completato. ${reps} ripetizioni pulite${e.perLato ? ' per lato' : ''}, poi riposi fino allo scadere del minuto.`, { schema: 'emom', emomGruppo: PB_EMOM_ID }));
+  }
+  // Punto 18: gli altri esercizi di gambe in seduta dedicata (fuori dalle scale) come stazioni in più
+  let extra = 0;
+  for (const s of difficili) {
+    if (extra >= EMOM_DIFFICOLTA_MAX || stazioni.some((it) => it.esercizio_id === s.esercizioId) || esercizioById(s.esercizioId)) continue;
+    const ex = esercizioV2ById(s.esercizioId);
+    if (!ex || distrettoEsercizio(s.esercizioId) !== 'gambe' || ex.attrezzatura === 'kettlebell') continue;
+    const it = v2Item(s.esercizioId, 0, doseEmomDifficolta(ex.unita), 0, notaDifficolta(s), { schema: 'emom', emomGruppo: PB_EMOM_ID });
+    if (it) { stazioni.push(it); extra++; }
   }
   if (stazioni.length >= 2) {
     if (o.pliometria) {
@@ -273,7 +295,8 @@ export function costruisciParteBassa(results: TestResultRow[], o: OpzioniParteBa
  * scarico prima l'EMOM (non fa fatica), poi la versione breve; altrimenti Fmax (se esiste), serie, breve, EMOM.
  * Il richiamo non entra: è solo per il giorno dopo la partita.
  */
-export function ordineFormatiParteBassa(isDeload: boolean): string[] {
+export function ordineFormatiParteBassa(isDeload: boolean, emomPrima = false): string[] {
+  if (emomPrima) return [PB_EMOM_ID, ...ordineFormatiParteBassa(isDeload).filter((id) => id !== PB_EMOM_ID)]; // punto 18: un esercizio in seduta dedicata
   return isDeload ? [PB_EMOM_ID, PB_SERIE_SHORT_ID, PB_SERIE_ID, PB_FMAX_ID] : [PB_FMAX_ID, PB_SERIE_ID, PB_SERIE_SHORT_ID, PB_EMOM_ID];
 }
 

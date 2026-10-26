@@ -35,6 +35,14 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
+const LOG_COLS = 'session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at';
+/** Log per serie con l'esecuzione (migration 034, punto 18); senza la colonna si rilegge senza. */
+async function selectLogs(userId: string, since: string): Promise<{ data: unknown[] | null; error: { message: string } | null }> {
+  const q = (cols: string) => supabaseAdmin.from('training_set_logs').select(cols).eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400);
+  const r = await q(`${LOG_COLS}, esecuzione`);
+  return r.error && /esecuzione/.test(r.error.message) ? q(LOG_COLS) : r;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
@@ -67,9 +75,7 @@ export async function GET(request: NextRequest) {
         .eq('user_id', userId).not('completed_at', 'is', null)
         .order('completed_at', { ascending: false }).limit(1).maybeSingle(), // ultimo test chiuso: spegne il ri-test dovuto (29/9)
       // Storico serie (log durante il recupero, ultime 4 settimane); migration 019 assente → errore, nessuno storico
-      supabaseAdmin.from('training_set_logs')
-        .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
-        .eq('user_id', userId).gte('created_at', since28).order('created_at', { ascending: false }).limit(400),
+      selectLogs(userId, since28),
       // "Il tuo setup" (migration 017) — se le colonne non esistono ancora, setup = default
       supabaseAdmin.from('profiles').select(SETUP_SELECT).eq('user_id', userId).maybeSingle(),
       // Check-in di oggi → flag fatica alta (la seduta del giorno propone lo scarico)
