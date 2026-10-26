@@ -16,7 +16,7 @@ const item = (esercizio_id: string, quantita: number, carico_kg?: number, unita?
 
 describe('prossimaDose: una lettura sola dei log', () => {
   it('Windmill 12 → 16 kg: piano, hint e prompt dicono la stessa cosa (kettlebell +4 kg, non +2.5 %)', () => {
-    const logs = [...seduta('s2', 3, WINDMILL, 5, [5, 5], 5, { previsto: 12 }), ...seduta('s1', 10, WINDMILL, 5, [5, 5], 6, { previsto: 12 })];
+    const logs = [...seduta('s2', 3, WINDMILL, 5, [5, 5], 4, { previsto: 12 }), ...seduta('s1', 10, WINDMILL, 5, [5, 5], 4, { previsto: 12 })];
     const r = riepilogoEsercizi(logs)[0];
     expect(r.suggerimento).toBe('sali');
     expect(r.ultimaSeduta.caricoPrevistoKg).toBe(12);
@@ -42,7 +42,7 @@ describe('prossimaDose: una lettura sola dei log', () => {
     expect(duro.suggerimento).toBe('scendi');
     expect(prossimaDose(item(WINDMILL, 5, 16), duro).caricoKg).toBe(12);
     // al tetto: programma 12, già a 16 (12 × 1.3 = 15.6 + 2 = 17.6 → 16): non sale a 20
-    const facili = riepilogoEsercizi([...seduta('s2', 3, WINDMILL, 5, [5, 5], 5, { previsto: 16 }), ...seduta('s1', 10, WINDMILL, 5, [5, 5], 5, { previsto: 16 })])[0];
+    const facili = riepilogoEsercizi([...seduta('s2', 3, WINDMILL, 5, [5, 5], 4, { previsto: 16 }), ...seduta('s1', 10, WINDMILL, 5, [5, 5], 4, { previsto: 16 })])[0];
     const d = prossimaDose(item(WINDMILL, 5, 12), facili);
     expect(d.caricoKg).toBe(16);
     expect(d.cambiata).toBe(true); // 16 ≠ programma 12

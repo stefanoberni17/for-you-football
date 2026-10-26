@@ -54,9 +54,9 @@ describe('seduta dura vs azioni del giorno dopo', () => {
     expect(x!.a).toMatchObject({ valore: 20, n: 4 });
     expect(x!.b).toMatchObject({ valore: 80, n: 24 });
   });
-  it('le sedute con voto 7 non contano come dure; senza azioni segnate niente', () => {
+  it('le sedute con voto 6 non contano come dure (25/10: dura da 7); senza azioni segnate niente', () => {
     const date = giorni(addDays(OGGI, -27), 28);
-    const sedute = [3, 10, 17, 24].map((i) => ({ date: date[i], rpe: 7 }));
+    const sedute = [3, 10, 17, 24].map((i) => ({ date: date[i], rpe: 6 }));
     const azioni = azioniPerGiorno(date.map((d) => ({ date: d })), 5, date[0], OGGI);
     expect(incrocioSedutaDuraAzioni({ ...vuoto, azioni, sedute })).toBeNull();
     expect(incrocioSedutaDuraAzioni({ ...vuoto, azioni: [], sedute: sedute.map((s) => ({ ...s, rpe: 9 })) })).toBeNull();

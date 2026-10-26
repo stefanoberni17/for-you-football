@@ -27,7 +27,7 @@ risposte del 16/10.
 4. **Finestre partita per qualità** (`FINESTRA_PARTITA`, validatore; giorni PRIMA della partita in cui la qualità
    è vietata, dal 18/10): forza gambe/parte alta/core 1 · velocità 1 (ammessa a −2 solo CORTA: sprint fino a 30 m,
    niente salite, al massimo 6 sprint) · forza esplosiva 2 · pliometria
-   estensiva 1 · pliometria intensiva 2 (a −1 solo con 2×2) · resistenza aerobica/metabolico/RSA 2 (ammessa a −3:
+   estensiva 1 · pliometria intensiva 2 (a −2 in dose piccola fino a 4×2 dal 25/10, a −1 solo con 2×2) · resistenza aerobica/metabolico/RSA 2 (ammessa a −3:
    con la partita la domenica martedì-giovedì, mercoledì preferito) · mobilità/recupero 1 · forza massima (regime
    max) 3 · Nordic ed eccentrici 3 · fascia, tecnica, riscaldamento 0 (sempre).
 5. **Apertura** (server, regola 5 e 26): un blocco di apertura in testa a ogni seduta fisica (rolling ~19' sopra i
@@ -128,7 +128,7 @@ risposte del 16/10.
 - Riscaldamento fisso `risc-velocita` (~15') in testa a ogni seduta con sprint o salite: il server lo aggiunge.
 - Sprint massimali 6-8 per seduta (6 se nella settimana c'è l'EMOM di parte alta con lo sprint); il server lima
   dalla coda; oltre 8 il validatore rifiuta. Contano Sprint e varianti a 10 m, non salto+sprint, con palla, T-sprint.
-- Sprint con palla: subito se tecnica tra gli obiettivi o in season/preparazione, altrimenti dalla 5ª settimana.
+- Sprint con palla: dal 25/10 nessuna attesa (Ste: "si possono fare tutti gli sprint che abbiamo messo come velocità"); fino al 25/10 subito solo con la tecnica tra gli obiettivi o in season/preparazione, altrimenti dalla 5ª settimana.
 - Salite: al massimo un blocco a settimana, in season una volta ogni 4 settimane, mai nello scarico.
 - Finestra partita 1 (dal 18/10): a −2 solo corta (sprint fino a 30 m, niente salite, tetto 6 sprint); a −1 solo il
   blocco pre partita; niente velocità il giorno dopo la partita e niente velocità pura (oltre 30 m, salite) a +2 e +3.
@@ -140,7 +140,7 @@ risposte del 16/10.
 - Poi onda B → A → B → A nella memoria: dopo un A il B più alto; dopo un B l'A successivo se era facile; un "duro"
   sull'A riporta in B per 2 settimane. Scarico: B short.
 - Contatti plio intensiva per seduta: B 100 · A 160 · PRO 200 (livello della qualità "salti").
-- Finestra: intensiva 2 (a −1 solo 2×2), estensiva 1; mai con RSA o forza massima nello stesso giorno; niente il
+- Finestra: intensiva 2 (a −2 fino a 4×2 dal 25/10, a −1 solo 2×2), estensiva 1; mai con RSA o forza massima nello stesso giorno; niente il
   giorno dopo la partita. Ingresso dal livello della qualità: un A nei salti apre i blocchi A.
 - Nessun tetto a "quante volte a settimana" (solo "non lo stesso blocco due giorni di fila").
 
@@ -472,3 +472,66 @@ contro 4×4'/5×5'/6×6'). Le altre cose pendenti
 dell'app, fuori da queste: `docs/campo-da-fare.md` (fasi 1-6: dose unica, tetti per qualità e complementi, esecuzione
 tecnica, calendario che cambia, dolore per zona, storico, pacchetti e vendita, accesso con Google) e la lista "Da
 fare — Ste" in `CLAUDE.md` (Stripe, i 24 "Perché funziona", gli audio W1, le prove sul campo).
+
+### E6. Le risposte di Ste del 25/10 (sera) e cosa è entrato nel codice
+
+Nel codice lo stesso giorno (`PLANNER_V2_PROMPT_VERSION = 'v2.36-decisioni-25-10'`, test in `tests/trainingPartita.test.ts`
+"decisioni del 25/10"):
+- **Wall Drive Skip** → pliometria estensiva (catalogo JSON rigenerato: i blocchi che lo contengono non sono più "intensivi"
+  per quel solo esercizio).
+- **Pliometria intensiva a −2** ammessa in dose piccola, al massimo 4×2 (`PLIO_INTENSIVA_MENO2`); a −1 resta 2×2.
+- **Sprint con palla**: tutti i blocchi classificati velocità si possono usare dalla prima settimana ("sono esercizi sia di
+  tecnica che di velocità"). "Drbbling A2" resta velocità. Il filtro della 5ª settimana non c'è più.
+- **Giorno dopo la partita**: oltre al richiamo gambe (`pb-richiamo`) e alla parte alta breve passano le isometrie di
+  Fascia Forza ("ok anche iso e palestra leggera"); velocità, resistenza e gli altri blocchi di gambe restano vietati.
+- **Reverse Drop Jump**: scheda confermata (caduta all'indietro dal box e salto immediato), tolta dai "da confermare".
+- Le scale di tecnica avanzano con UN "facile" (confermato). Ste: "i base sono importanti e tornano anche andando avanti":
+  oggi c'è il ritorno a fine scala o dopo 8 settimane; proposta aperta: un richiamo su un codice base ogni 4 settimane.
+- I 29 blocchi senza livello restano per tutti. Tabata e AMRAP della parte alta: nella fase vendita.
+
+Decisi, da scrivere nel punto 19 di `docs/campo-da-fare.md` (resistenza): serie da 4' in B, 5' in A, 6' in PRO; si parte
+da 2-3 serie, si sale a 4, massimo 5 per gli avanzati; contenuto delle serie anche mixato (fartlek, metabolico, palla);
+i blocchi Fartlek Everfit lunghi (43-49' di fila) sono "sbagliati": la resistenza è sempre a serie; in season niente
+resistenza, metabolico né resistenza alla velocità salvo obiettivo esplicito, con un avviso sul rischio di sovraccarico e
+al massimo una a settimana; metabolico con lo stesso formato (3-4 serie da 4-6'), almeno 2 giorni dopo la partita e al
+massimo 3 prima; resistenza alla velocità a serie di 4 ripetizioni (B 20" lavoro / 1' recupero, A 20"/40", PRO 30"/1'),
+3' tra le serie, solo off season e una volta a settimana; si sale prima col ritmo ("spingi di più" nelle serie a tempo),
+poi con le serie; salite di resistenza mai in season salvo richiesta esplicita.
+
+Restano aperte: il richiamo dei codici base di tecnica ogni 4 settimane (sì/no). ~~"Palestra leggera" il giorno dopo la
+partita oltre alle isometrie~~ → decisa il 26/10 (§E7).
+
+### E7. Le risposte di Ste del 26/10 (mattina) e cosa è entrato nel codice
+
+1. **Tecnica composta dal catalogo, non dai workout pronti.** Ste: "Tecnica dobbiamo fare in modo di costruirla senza
+   prendere i workout già pronti". È la (b) di D3 ribaltata: come per `pa-*`, `pb-*` e `kb-*`, le sedute di tecnica
+   vanno COMPOSTE dal server dagli esercizi del catalogo (`tecnica-palleggi`, `tecnica-passaggi`, `tecnica-conduzione`,
+   `tecnica-tiro`, `tecnica-visione`), con le scale di muro e palleggi di `lib/trainingTecnica.ts` come progressione e
+   il mazzo del quinto giorno come varietà, e i blocchi Everfit di tecnica solo come alternativa. Niente nel codice
+   oggi: è il punto 21 di `docs/campo-da-fare.md` (stima e disegno lì). Domanda aperta di E6 sul richiamo dei codici
+   base ogni 4 settimane: con la composizione dal catalogo diventa "ogni 4 settimane una seduta sui fondamentali".
+2. **Gambe il giorno dopo la partita, da quanto ha giocato.** Ste: "40 % conservativi se giocato tutta la partita; 50 %
+   se partita con fatica più bassa e meno di 90 minuti; 60 % se giocato meno di 45; anche 70/80 % se ha giocato meno
+   di 15 min; se non ha giocato e non è entrato, o giocato poco e pochissima fatica, no vincoli (controlla se nel
+   feedback partita c'è)". Nel feedback c'è tutto (minuti giocati `durata_min` e fatica `rpe`). Nel codice lo stesso
+   giorno (`PLANNER_V2_PROMPT_VERSION = 'v2.37-gambe-dopo-partita'`, test "gambe il giorno dopo la partita" in
+   `tests/trainingPartita.test.ts`):
+   - `gambeDopoPartita(resoconto)` in `lib/trainingResoconto.ts` → fattore sulle serie: intera o senza resoconto 0.4,
+     meno di 90' con fatica ≤ 6 0.5, sotto i 45' 0.6, sotto i 15' 0.75, non entrato / poco con pochissima fatica 1.
+     Sotto i 90' con fatica alta resta 0.4 ("conservativi").
+   - "Quasi non giocato" ora vuol dire **non entrato, oppure ≤ 20' E fatica < 4** (prima bastava una delle due:
+     10' con fatica 5 era libero, ora è uno spezzone al 75 %; 90' con fatica 3 era libero, ora è una partita intera
+     "leggera" al 40 %; per la velocità pura a +2/+3 quella partita è "meno affaticato" e il divieto cade).
+   - A +1 `expandPiano` non rifiuta più la forza parte bassa a corpo libero o leggera (`pb-serie`, `pb-serie-short`,
+     Forza Parte Bassa senza carichi pesanti): la mette "leggera" con le serie × fattore, dose piena salvata
+     nell'item (`dopo_partita.serie_piene`) e la nota "Giorno dopo la partita: serie al 40 % (…)". Restano vietati a
+     +1 velocità, pliometria, resistenza, `pb-fmax` e `pb-emom` (è senza scarico: le serie non scendono). Il richiamo
+     `pb-richiamo` e le isometrie di Fascia Forza passano come prima, a dose loro.
+   - Se il resoconto arriva DOPO il piano (il lunedì l'hub genera la settimana alla prima apertura, e il foglio del
+     resoconto si apre nello stesso momento) `applicaResoconti` ricalcola le serie dalla dose piena alla lettura dello
+     state, in tutti e due i versi, con la riga negli aggiustamenti dell'hub. Il piano salvato non cambia.
+   - Prompt: regola 3 riscritta con le percentuali, la sezione RESOCONTI dice "gambe il giorno dopo al 50 % delle
+     serie (70' con fatica 6)". Il piano base non cambia: a +1 mette il richiamo per primo, come prima.
+   - Da tarare con i dati: le percentuali sono di Ste, le soglie dei minuti (15, 45, 90) e "fatica ≤ 6" pure; la
+     scelta di NON scalare i blocchi con carichi pesanti e l'EMOM è mia (prudenziale).
+

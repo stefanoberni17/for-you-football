@@ -3418,7 +3418,7 @@
  },
  {
   "nome": "Wall Drive Skip",
-  "qualita": "pliometria-intensiva",
+  "qualita": "pliometria-estensiva",
   "attrezzatura": "campo",
   "difficolta": 4,
   "livello_min": "A",
@@ -3905,8 +3905,7 @@
    ],
    "piu_facile": "Box più basso, pausa a terra prima del salto.",
    "piu_difficile": "Box più alto.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te prima di scendere.",
-   "da_confermare": "L'ho scritto come caduta all'indietro dal box e salto subito. Confermi?"
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te prima di scendere."
   }
  },
  {

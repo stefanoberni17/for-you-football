@@ -206,7 +206,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
         </Card>
       ) : (
         <Card className="mb-4">
-          <RpeScale value={rpe} onChange={setRpe} tipo="serie" ariaPrefix="EMOM" label="Com'è andato l'EMOM?" />
+          <RpeScale value={rpe} onChange={setRpe} tipo="seduta" ariaPrefix="EMOM" label="Com'è andato l'EMOM?" />
         </Card>
       )}
 

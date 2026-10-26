@@ -28,16 +28,16 @@ describe('kettlebell: fasce dai log', () => {
   });
 
   it(`intermedio dopo ${KB_SETTIMANE_BASE} settimane facili, non prima e non se dure`, () => {
-    expect(fasciaKettlebell(settimane(KB_SETTIMANE_BASE - 1, 'fesp-kettlebell-swing', 5)).fascia).toBe('base');
-    expect(fasciaKettlebell(settimane(KB_SETTIMANE_BASE, 'fesp-kettlebell-swing', 5)).fascia).toBe('intermedio');
+    expect(fasciaKettlebell(settimane(KB_SETTIMANE_BASE - 1, 'fesp-kettlebell-swing', 4)).fascia).toBe('base');
+    expect(fasciaKettlebell(settimane(KB_SETTIMANE_BASE, 'fesp-kettlebell-swing', 4)).fascia).toBe('intermedio');
     expect(fasciaKettlebell(settimane(KB_SETTIMANE_BASE, 'fesp-kettlebell-swing', 8)).fascia).toBe('base');
   });
 
   it(`avanzato dopo ${KB_SETTIMANE_INTERMEDIO} settimane facili di intermedio`, () => {
-    const base = settimane(KB_SETTIMANE_BASE, 'fesp-kettlebell-swing', 5);
-    expect(fasciaKettlebell([...base, ...settimane(KB_SETTIMANE_INTERMEDIO, 'fesp-kettlebell-dead-clean', 6, '2026-08-03')]).fascia).toBe('avanzato');
-    expect(fasciaKettlebell([...base, ...settimane(KB_SETTIMANE_INTERMEDIO - 1, 'fesp-kettlebell-dead-clean', 6, '2026-08-03')]).fascia).toBe('intermedio');
-    expect(costruisciKettlebell([...base, ...settimane(KB_SETTIMANE_INTERMEDIO, 'fesp-kettlebell-dead-clean', 6, '2026-08-03')]).blocchi.map((b) => b.id))
+    const base = settimane(KB_SETTIMANE_BASE, 'fesp-kettlebell-swing', 4);
+    expect(fasciaKettlebell([...base, ...settimane(KB_SETTIMANE_INTERMEDIO, 'fesp-kettlebell-dead-clean', 4, '2026-08-03')]).fascia).toBe('avanzato');
+    expect(fasciaKettlebell([...base, ...settimane(KB_SETTIMANE_INTERMEDIO - 1, 'fesp-kettlebell-dead-clean', 4, '2026-08-03')]).fascia).toBe('intermedio');
+    expect(costruisciKettlebell([...base, ...settimane(KB_SETTIMANE_INTERMEDIO, 'fesp-kettlebell-dead-clean', 4, '2026-08-03')]).blocchi.map((b) => b.id))
       .toEqual(['kb-base', 'kb-intermedio', 'kb-avanzato']);
   });
 });

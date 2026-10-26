@@ -17,7 +17,7 @@ import { isFaticaAlta, isPeriodoScarso, isTestaAltrove, validatePlan, type PlanI
 import { feedbackSeduteBlock, loadFocusSetup, loadPlannerContext, mondayOfThisWeekRome, percorsoMentaleTesto, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
-import { blocchiDisponibili, bloccoById, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
+import { blocchiDisponibili, bloccoById, bloccoHaCarichiPesanti, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
 import { esercizioById } from './trainingCatalog';
 import { costruisciParteAlta, isParteAlta, ordineFormatiParteAlta, parteAltaTesto, vuoleParteBassa, PA_EMOM_ID, PA_SERIE_ID, PA_SERIE_SHORT_ID, PA_SERIE_PUSH_ID, PA_SERIE_PULL_ID } from './trainingParteAlta';
 import { alleggerisciVicinoPartita, costruisciParteBassa, gruppoParteBassa, isParteBassa, ordineFormatiParteBassa, posterioreDellaSettimana, PB_EMOM_ID, PB_FMAX_ID, PB_RICHIAMO_ID, PB_SERIE_ID, PB_SERIE_SHORT_ID } from './trainingParteBassa';
@@ -38,18 +38,22 @@ import { livelliTesto, livelloDi, QUALITA_LABEL } from './trainingLivelli';
 import { APERTURA_BREVE_MAX, APERTURA_NOTA, aperturaDaSostituire, aperturaPer, bloccoAperturaBreve, FAMIGLIA_FASCIA_FORZA, FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, minutiApertura, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
 import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, prioritaTecnica, QUALITA_PRIORITA, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type PrioritaTecnicaInfo, type Ripasso } from './trainingTecnica';
-import { dataDiGiorno, addDays as addGiorni, quantoGiocata, resocontiTesto } from './trainingResoconto';
+import { dataDiGiorno, addDays as addGiorni, GAMBE_DOPO_PARTITA as GAMBE_SCALA, gambeDopoPartitaDel, notaGambeDopoPartita, quantoGiocata, resocontiTesto, type GambeDopoPartita } from './trainingResoconto';
 import { doseRegoleTesto } from './trainingDose';
 import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.35-contesto-condiviso';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.37-gambe-dopo-partita';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
 const FALLBACK_LEGGERI_MAX = 6;
 /** Il giorno dopo la partita niente gambe (regola 3 del prompt): qualità escluse dal piano base in quel giorno. */
+/** Il giorno DOPO la partita, tra i blocchi di gambe, passano solo il richiamo e le isometrie di Fascia Forza (Ste, 25/10: "ok anche iso e palestra leggera"). */
+const ammessoDopoPartita = (b: Blocco) => b.id === PB_RICHIAMO_ID || b.famiglia === FAMIGLIA_FASCIA_FORZA;
+/** Gambe il giorno dopo la partita (Ste, 26/10): la forza parte bassa passa con le serie ridotte; non la Fmax, l'EMOM (senza scarico) né i blocchi con carichi pesanti. */
+const gambeScalabileDopoPartita = (b: Blocco) => b.qualita === 'forza-parte-bassa' && !b.senzaScarico && b.id !== PB_FMAX_ID && !bloccoHaCarichiPesanti(b);
 const GAMBE_DOPO_PARTITA = new Set<string>(['forza-parte-bassa', 'forza-esplosiva', 'pliometria-intensiva', 'pliometria-estensiva', 'velocita', 'resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa']);
 /** Tentativi con Claude per piano (ognuno con gli errori del precedente nel messaggio). */
 export const PLANNER_TENTATIVI = 3;
@@ -507,6 +511,10 @@ export function partitaGiocata(ctx: ContextV2, giorno: number, gd: number | null
   if (gd === null || !ctx.base.resoconti?.length) return null;
   return quantoGiocata(ctx.base.resoconti, addGiorni(dataDiGiorno(mondayOfThisWeekRome(), giorno), -gd), ctx.base.squadra);
 }
+/** Quanto resta delle serie di gambe nel giorno `giorno` = il giorno dopo la partita (Ste, 26/10): dal resoconto di ieri, o 40 % senza. */
+export function gambeDopoPartitaCtx(ctx: ContextV2, giorno: number): GambeDopoPartita {
+  return gambeDopoPartitaDel(ctx.base.resoconti ?? [], addGiorni(dataDiGiorno(mondayOfThisWeekRome(), giorno), -1), ctx.base.squadra);
+}
 
 export function sostituzioniParteAlta(p: PianoLLM, ctx: ContextV2): Map<number, Map<string, string | null>> {
   return sostituzioniFormati(p, ctx, FORMATI_PARTE_ALTA(ctx));
@@ -638,9 +646,11 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       }
     }
     // L'asse partita (18/10, Ste). PRIMA: il giorno prima solo il blocco pre partita o una giornata leggera. DOPO: senza il
-    // resoconto della partita si assume che abbia giocato tutta → +1 niente gambe, velocità né resistenza (al massimo forza
-    // leggera: parte alta short, richiamo, fascia, tecnica), +2 e +3 niente velocità pura (sprint da 30 m, salite).
+    // resoconto della partita si assume che abbia giocato tutta → +1 niente velocità né resistenza e le GAMBE con le serie
+    // ridotte da quanto ha giocato (26/10: 40 % intera, 50 % meno di 90' con poca fatica, 60 % sotto i 45', 75 % sotto i 15';
+    // non entrato = libero), +2 e +3 niente velocità pura (sprint da 30 m, salite).
     // Velocità e resistenza mai nello stesso giorno (a livello di blocco: i blocchi di Ste "resistenza alla velocità" restano)
+    const gambePartita = new Map<string, GambeDopoPartita>(); // blocchi di gambe del giorno dopo la partita → fattore sulle serie
     {
       const giornoS = Number(s.giorno);
       const gp = giorniAllaPartita(giornoS, ctx.base.matchDays);
@@ -652,8 +662,12 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       for (const b of blocchi) {
         if (isPrePartita(b) && gp !== 1)
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è il blocco del giorno PRIMA della partita${gp === null ? ' (questa settimana non c\'è partita)' : ` (la partita è tra ${gp} giorni)`} — negli altri giorni usa un blocco di velocità normale`);
-        if (gd === 1 && b.id !== PB_RICHIAMO_ID && GAMBE_DOPO_PARTITA.has(b.qualita))
-          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" il giorno DOPO la partita — niente gambe, velocità né resistenza (si assume che abbia giocato tutta): al massimo parte alta short, ${PB_RICHIAMO_ID}, fascia, tecnica leggera`);
+        if (gd === 1 && !ammessoDopoPartita(b) && GAMBE_DOPO_PARTITA.has(b.qualita)) {
+          const g = gambeDopoPartitaCtx(ctx, giornoS);
+          if (gambeScalabileDopoPartita(b) && g.scala < 1) gambePartita.set(b.id, g);
+          else if (g.scala >= 1) { /* non entrato, o giocato poco con pochissima fatica: nessun vincolo (non dovrebbe succedere: gd è null) */ }
+          else errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" il giorno DOPO la partita — niente velocità, pliometria, resistenza, forza massima né EMOM gambe (${g.motivo}): le gambe passano solo a corpo libero o leggere, con le serie al ${Math.round(g.scala * 100)} %; altrimenti parte alta short, ${PB_RICHIAMO_ID}, le isometrie di Fascia Forza, fascia, tecnica leggera`);
+        }
         if (gdPura !== null && gdPura >= 2 && gdPura <= VELOCITA_PURA_DOPO_PARTITA_GIORNI && isVelocitaPura(b))
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m o salite) a ${gd} giorni dalla partita giocata — fino a +${VELOCITA_PURA_DOPO_PARTITA_GIORNI} solo rapidità corta o pliometria`);
         // Ste, 18/10 sera: a 2 giorni dalla partita la velocità va bene "ma non con distanze lunghe e non molto volume (max 20/30 m)"
@@ -786,6 +800,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     const leggeri = new Set((Array.isArray(s.leggeri) ? s.leggeri : []).filter((id) => blocchi.some((b) => b.id === id && QUALITA_FISICHE.has(b.qualita))));
     // Assaggio del livello sopra (memoria): serie ×0.7 forzate dal server, qualunque cosa abbia scelto Claude
     if (!recupero) for (const b of blocchi) if (ctx.memoria[b.famiglia]?.leggero && ctx.memoria[b.famiglia].prossimo.id === b.id) leggeri.add(b.id);
+    // Gambe il giorno dopo la partita (26/10): "leggere" per l'hub e la durata, ma la scala è quella del resoconto (0.4-0.75), non 0.7
+    for (const [id, g] of gambePartita) { leggeri.add(id); noteMemoria.set(id, [noteMemoria.get(id), notaGambeDopoPartita(g)].filter(Boolean).join(' · ')); }
     // Kettlebell (Ste, 25/9): uno a settimana; nella stessa settimana la parte bassa con pesi va più leggera (×0.7)
     const kbOggi = blocchi.filter((b) => isKettlebell(b.id)).length;
     blocchiKb += kbOggi;
@@ -809,7 +825,10 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       const sc = scalaDi(b.id);
       const ritorno = !recupero && ((ctx.memoria[b.famiglia]?.serieExtra && ctx.memoria[b.famiglia].prossimo.id === b.id)
         || (sc && ctx.memoriaTecnica.scale[sc]?.serieExtra && ctx.memoriaTecnica.scale[sc]!.prossimo.id === b.id));
-      const its00 = expandBlocco(b, { scala: leggero ? Math.min(scala, LEGGERO_SCALA) : scala });
+      const gp = gambePartita.get(b.id);
+      // Dose "piena" = quella senza la partita (deload compreso): serve ad applicaResoconti per ricalcolare se il resoconto arriva dopo
+      const itsPiene = expandBlocco(b, { scala: leggero && !gp ? Math.min(scala, LEGGERO_SCALA) : scala });
+      const its00 = gp ? itsPiene.map((it) => ({ ...it, serie: Math.max(1, Math.round(it.serie * gp.scala)), dopo_partita: { scala: gp.scala, serie_piene: it.serie }, nota: [it.nota, notaGambeDopoPartita(gp)].filter(Boolean).join(' ') })) : itsPiene;
       // Ritorno a inizio scala (fascia): una serie in più su ogni esercizio a serie fisse
       const its0 = ritorno ? its00.map((it) => (!it.schema || it.schema === 'fisso' ? { ...it, serie: it.serie + 1 } : it)) : its00;
       // Parte alta dalle scale: gli esercizi delle catene v1 sono GIÀ al gradino dell'atleta (lib/trainingParteAlta) —
@@ -1031,7 +1050,7 @@ function parteBassaRegola(ctx: ContextV2): string {
 - ${ha(PB_SERIE_ID) ? `\`${PB_SERIE_ID}\` = serie classiche sull'ultimo gradino completato: squat, affondi e UNA catena posteriore (questa settimana ${post === 'rdl' ? 'RDL' : 'bridge'}: le due posteriori si alternano a settimane), poi A-skip e B-skip in chiusura.` : ''}${ha(PB_SERIE_SHORT_ID) ? ` \`${PB_SERIE_SHORT_ID}\` = squat + posteriore, 3 serie, A-skip: quando le serie piene non stanno nel tempo.` : ''}
 - ${ha(PB_EMOM_ID) ? `\`${PB_EMOM_ID}\` = skill: un esercizio al minuto sul gradino SOPRA l'ultimo completato (squat, affondi e la posteriore non fatta a serie), 2-3 ripetizioni${pb.find((b) => b.id === PB_EMOM_ID)?.items.some((it) => it.esercizio_id?.startsWith('fesp-')) ? ', più i salti da fermo' : ''}. Prepara il test del gradino. Resta uguale nello scarico; va bene a 2 giorni dalla partita, non il giorno prima.` : 'EMOM gambe non disponibile.'}
 - ${ha(PB_FMAX_ID) ? `\`${PB_FMAX_ID}\` = forza massima in palestra: un esercizio base a rotazione (4 × 4 all'85 % del massimale), poi due catene dai gradini. Almeno 3 giorni dalla partita, mai con la pliometria intensiva nello stesso giorno.` : 'Fmax in palestra non disponibile (servono i massimali dai test in palestra e l\'80 % ammesso dall\'età/esperienza).'}
-- ${ha(PB_RICHIAMO_ID) ? `\`${PB_RICHIAMO_ID}\` = SOLO il giorno dopo la partita: squat e posteriore a metà dose, A-skip.` : ''}
+- ${ha(PB_RICHIAMO_ID) ? `\`${PB_RICHIAMO_ID}\` = SOLO il giorno dopo la partita: squat e posteriore a metà dose, A-skip. Gli altri blocchi di gambe a corpo libero (pb-serie, pb-serie-short, Forza Parte Bassa senza carichi pesanti) il giorno dopo passano con le serie ridotte dal server in base a quanto ha giocato (regola 3).` : ''}
 - Un posto a settimana per serie/breve/Fmax e uno per l'EMOM (il validatore rifiuta il doppio); mai un \`pb-*\` il giorno prima o il giorno della partita; con la squadra 3+ volte una sola seduta di gambe (la prima colonna). ${rotazione}.
 - Con "gambe" come primo obiettivo c'è sempre almeno una seduta a serie, Fmax o isometrie: l'EMOM da solo non basta. Gli skip di chiusura non sono pliometria né sprint: non li contare.
 Composizione: ${pb.map(parteAltaTesto).join(' || ')}`;
@@ -1058,7 +1077,7 @@ ${tettiTesto(tettiDi(ctx))}
 3. L'ASSE PARTITA (le regole le fa rispettare il validatore, ma tu progetta già bene). PRIMA della partita:
 ${finestreTesto()}
    Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps: non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
-   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta; con il resoconto "quasi non giocato", al massimo 20' o fatica sotto 4, queste regole non valgono per quella partita; "meno affaticato", meno di 75' con fatica fino a 6, toglie solo il divieto di velocità pura a +2/+3; partita intera con fatica 7-9 e qualche dolore è normale; con fatica 10 il giorno dopo è solo recupero): il giorno DOPO niente gambe, velocità né resistenza — al massimo forza leggera: parte alta short, \`${PB_RICHIAMO_ID}\`, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m, salite): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
+   DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta; con il resoconto "quasi non giocato", cioè non entrato o al massimo 20' CON fatica sotto 4, queste regole non valgono per quella partita; "meno affaticato", meno di 75' con fatica fino a 6, toglie il divieto di velocità pura a +2/+3; partita intera con fatica 7-9 e qualche dolore è normale; con fatica 10 il giorno dopo è solo recupero): il giorno DOPO niente velocità, pliometria, resistenza, forza massima né EMOM gambe; le GAMBE a corpo libero o leggere (pb-serie, pb-serie-short, Forza Parte Bassa senza carichi) passano con le serie RIDOTTE dal server in base a quanto ha giocato (Ste, 26/10: ${Math.round(GAMBE_SCALA.intera * 100)} % con la partita intera o senza resoconto, ${Math.round(GAMBE_SCALA.meno * 100)} % con meno di 90' e fatica fino a 6, ${Math.round(GAMBE_SCALA.meta * 100)} % sotto i 45', ${Math.round(GAMBE_SCALA.spezzone * 100)} % sotto i 15'; la sezione RESOCONTI dice la percentuale di questa settimana) — preferisci comunque \`${PB_RICHIAMO_ID}\`, la parte alta short, le isometrie di Fascia Forza, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m, salite): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
    RESISTENZA: nel giorno più lontano da tutte e due le partite (con la partita la domenica: martedì-giovedì, il top è mercoledì).
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
 
@@ -1364,7 +1383,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const pocoGiocata = giocata === 'poco';
     const gd = giocata ? null : gd0; // 'poco' e 'meno': niente divieto di velocità pura a +2/+3
     const dopo = (c: Blocco[]) => {
-      const c1 = dopoPartita(g) && !pocoGiocata ? [...c.filter((x) => x.id === PB_RICHIAMO_ID), ...c.filter((x) => x.id !== PB_RICHIAMO_ID && !GAMBE_DOPO_PARTITA.has(x.qualita))] : c;
+      const c1 = dopoPartita(g) && !pocoGiocata ? [...c.filter((x) => x.id === PB_RICHIAMO_ID), ...c.filter((x) => x.id !== PB_RICHIAMO_ID && (ammessoDopoPartita(x) || !GAMBE_DOPO_PARTITA.has(x.qualita)))] : c;
       const gpG = giorniAllaPartita(g, b.matchDays);
       return (gd !== null && gd >= 2 && gd <= VELOCITA_PURA_DOPO_PARTITA_GIORNI) || gpG === 2 ? c1.filter((x) => !isVelocitaPura(x)) : c1;
     };

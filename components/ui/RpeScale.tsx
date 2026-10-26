@@ -5,17 +5,26 @@
  * chiaro da capire a che livello corrisponde il singolo numero"). Unica per tutta l'app:
  * serie nel player, EMOM, voto della seduta, sforzo con la squadra nel setup.
  *
- * Ogni numero ha un colore per zona (verde → giallo → rosso) e, sotto la riga, tre ancore fisse
- * (facile · giusta · al limite) più la frase del numero scelto ("7 · Dura, potevi farne ancora 3").
- * Per le serie la frase parla di ripetizioni in riserva; per la seduta di come si sta alla fine.
+ * Ogni numero ha un colore per zona (verde → giallo → rosso) e, sotto la riga, quattro ancore fisse
+ * più la frase del numero scelto ("7 · Dura, ne restavano 3").
+ * Per le serie la frase parla di ripetizioni in riserva; per le tenute a tempo di quanto potevi tenere ancora;
+ * per la seduta di come si sta alla fine; per il giudizio (voti tecnica e fisico del resoconto) 1 è male e 10
+ * benissimo, con i colori rovesciati. Zone e soglie stanno in `lib/rpeScala.ts` (25/10): le stesse che legge il codice.
  */
-export type RpeTipo = 'serie' | 'seduta' | 'sforzo' | 'tecnica';
+import { zonaVoto, type RpeTipo, type ZonaVoto } from '@/lib/rpeScala';
+export type { RpeTipo } from '@/lib/rpeScala';
 
 const FRASI: Record<RpeTipo, string[]> = {
   serie: [
     'Facilissima, come niente', 'Molto facile', 'Facile, potevi farne il doppio', 'Tranquilla, ne restavano tante',
     'Giusta, ne restavano 5', 'Impegnativa, ne restavano 4', 'Dura, ne restavano 3', 'Molto dura, ne restavano 2',
     'Al limite, ne restava 1', 'Massimo: non ne avevi un\'altra',
+  ],
+  // Tenute e lavori a tempo (25/10): "ne restavano 3" su un plank non vuol dire niente
+  tempo: [
+    'Facilissima, come niente', 'Molto facile', 'Facile, potevi tenere il doppio', 'Tranquilla, tanto margine',
+    'Giusta, un bel margine', 'Impegnativa, un po\' di margine', 'Dura, potevi tenere ancora un po\'', 'Molto dura, quasi al limite',
+    'Al limite, ultimi secondi', 'Massimo: non un secondo di più',
   ],
   seduta: [
     'Una passeggiata', 'Molto leggera', 'Leggera', 'Tranquilla',
@@ -33,15 +42,21 @@ const FRASI: Record<RpeTipo, string[]> = {
     'Riuscito', 'Riuscito con fatica', 'Difficile, tanti errori', 'Molto difficile',
     'Quasi non riesce', 'Non mi riesce',
   ],
+  // Giudizio (25/10): voti tecnica e fisico del resoconto, 1 male → 10 benissimo
+  giudizio: [
+    'Malissimo', 'Molto male', 'Male', 'Così così',
+    'Discreto', 'Bene', 'Buono', 'Molto bene',
+    'Ottimo', 'Perfetto',
+  ],
 };
 const ANCORE: Record<RpeTipo, [string, string, string, string]> = {
-  serie: ['facile', 'giusta', 'dura', 'al limite'], seduta: ['facile', 'giusta', 'dura', 'al limite'],
+  serie: ['facile', 'giusta', 'dura', 'al limite'], tempo: ['facile', 'giusta', 'dura', 'al limite'],
+  seduta: ['facile', 'giusta', 'dura', 'al limite'],
   sforzo: ['leggero', 'medio', 'duro', 'al limite'], tecnica: ['pulito', 'riuscito', 'difficile', 'non riesce'],
+  giudizio: ['male', 'così così', 'bene', 'benissimo'],
 };
 
-/** Zona del numero: 1-3 facile, 4-6 giusta, 7-8 dura, 9-10 al limite. */
-const zona = (n: number) => (n <= 3 ? 'facile' : n <= 6 ? 'giusta' : n <= 8 ? 'dura' : 'limite');
-const CLS: Record<ReturnType<typeof zona>, { on: string; off: string }> = {
+const CLS: Record<ZonaVoto, { on: string; off: string }> = {
   facile: { on: 'bg-success border-success text-white', off: 'bg-success/12 border-success/25 text-app' },
   giusta: { on: 'bg-forest-500 border-forest-500 text-white', off: 'bg-forest-500/15 border-forest-500/30 text-app' },
   dura:   { on: 'bg-warning border-warning text-app-bg', off: 'bg-warning/15 border-warning/30 text-app' },
@@ -65,7 +80,7 @@ export default function RpeScale({ value, onChange, tipo = 'serie', label, ariaP
       {label && <p className="text-label font-semibold text-app mb-2">{label}</p>}
       <div className="grid grid-cols-10 gap-1" role="radiogroup" aria-label={label ?? 'Scala da 1 a 10'}>
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
-          const z = zona(n); const on = value === n;
+          const z = zonaVoto(n, tipo); const on = value === n;
           return (
             <button key={n} type="button" role="radio" aria-checked={on} aria-label={`${ariaPrefix} ${n}: ${rpeFrase(n, tipo)}`}
               onClick={() => { onChange(n); try { navigator.vibrate?.(15); } catch { /* no-op */ } }}

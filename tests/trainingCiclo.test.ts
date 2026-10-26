@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
+import { addDays } from '@/lib/carta';
+import { dataRoma } from '@/lib/trainingMemoriaBlocchi';
 import { cicloInfo, settimanaDelCiclo } from '@/lib/trainingPlanner';
 import { maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraConPartita } from '@/lib/trainingSquadra';
 
 /** Un martedì di N settimane fa (il ciclo conta dal lunedì di quella settimana). */
 const settimaneFa = (n: number): string => {
-  const d = new Date();
-  const dow = d.getDay() === 0 ? 7 : d.getDay();
-  d.setDate(d.getDate() - (dow - 2) - n * 7);
-  d.setHours(12, 0, 0, 0);
-  return d.toISOString();
+  // Il giorno di OGGI è quello di Roma, come nella libreria (25/10: tra le 23 e le 24 UTC il test leggeva ancora ieri)
+  const oggi = addDays(dataRoma(new Date().toISOString()), 0);
+  const dow = new Date(`${oggi}T12:00:00Z`).getUTCDay() || 7;
+  return `${addDays(oggi, -(dow - 2) - n * 7)}T12:00:00Z`;
 };
 
 describe('ciclo di 4 settimane (28/9: lo scarico torna ogni quarta settimana)', () => {
