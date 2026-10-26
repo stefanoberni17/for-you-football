@@ -24,20 +24,62 @@ il codice (`lib/trainingTecnicaComposta.ts`, puro, con i test). Niente parte fin
 - Il **ripasso** degli esercizi difficili (voto ≥ 7 o meno del 90 % delle ripetizioni) entra in coda come oggi, fino
   a 2 per seduta.
 
-## I formati [proposta]
+## Le regole di Ste (26/10 sera) — queste comandano
 
-| Formato | Quando | Cosa c'è dentro | Durata |
-|---|---|---|---|
-| **`te-base`** | la prima giornata di tecnica della settimana; ogni 4 settimane anche per chi è avanti (richiamo) | palleggi al gradino della scala + passaggi al muro al gradino + un esercizio di conduzione, **3 serie** | ~30-40' (la breve ~25') |
-| **`te-palleggi`** | quando la scala che va per prima è quella dei palleggi (priorità dai test) | la seduta del codice della scala palleggi, composta dalla tabella 1 | 40-60' secondo il tempo del setup |
-| **`te-muro`** | quando la scala che va per prima è quella del muro | la seduta del codice della scala muro, composta dalla tabella 2 | 40-60' |
-| **`te-tiro`** / **`te-dribbling`** / **`te-visione`** / **`te-freestyle`** | il quinto giorno: il mazzo, a rotazione, prima il tema della parte debole | tabelle 3-6, per livello e attrezzatura | 20-45' |
+Ste, dopo la prima bozza: "in generale come tecnica andrebbero proposti questi esercizi in questa logica: subito dopo
+partita giocata molto: palleggi, passaggi vicino, controllo. 2 giorni prima della partita anche tiro, dribbling,
+freestyle. Se giorno prima partita proprio poca roba: max 10 tiri, poco dribbling e un po' palleggi e passaggi. Se dopo
+partita fatica leggera allora hai tutto sbloccato. In generale si cerca di fare tiri nella fase centrale/finale della
+settimana ma senza troppo volume, eventualmente se richiesto si possono creare sessioni dedicate, ma sempre almeno 2
+giorni prima partita. Il resto a rotazione, cercando magari di fare sedute che danno priorità a qualche
+aspetto/obiettivo. Gli esercizi possiamo farli durare qualche minuto ma adattabili in base al tempo disponibile.
+Abbiamo molta libertà su questo. In generale io cerco di bilanciare così: 25 % palleggi, 25 % controllo/passaggi, 15 %
+freestyle, 15 % visione, 10 % dribbling, 10 % tiri; ovviamente si possono adattare ma tiri e dribbling in parte sono
+quelli un po' più faticosi fisicamente quindi non troppo alti se non espressamente richiesto e soprattutto da
+monitorare fatica e allenamenti/partite."
 
-Regola della dose, uguale per tutti: con un tempo per seduta sotto i 45' si tiene la versione breve (metà delle
-serie o metà dei minuti, mai sotto 2' per esercizio); l'ordine dentro la seduta è fisso: prima il lavoro "pulito" (un
-tocco, superfici singole), poi il combinato (due tocchi, controllo orientato), poi il libero (freestyle, in
-difficoltà), per ultimo la conduzione o il tiro. Il recupero è 60" tra gli esercizi, 120" prima dell'ultimo blocco
-(come nei workout di Ste).
+Quindi NON sedute a formato fisso (`te-base`, `te-tiro`…) ma **una seduta di tecnica composta ogni volta da un budget
+di minuti per qualità**, filtrato dall'asse partita e dalla fatica, con una priorità per settimana. Le tabelle 1-6
+qui sotto restano come **serbatoio di esercizi per qualità e per livello**, non come sedute pronte.
+
+### Il bilanciamento (sulla settimana, non per forza su ogni seduta)
+
+| Qualità | Quota | Nel catalogo |
+|---|---|---|
+| Palleggi | 25 % | `tecnica-palleggi` (scala palleggi) |
+| Controllo e passaggi | 25 % | `tecnica-passaggi` (scala muro) |
+| Freestyle | 15 % | i tre esercizi freestyle (tabella 6) |
+| Visione | 15 % | `tecnica-visione` (con o senza il video dei segnali) |
+| Dribbling | 10 % | `tecnica-conduzione` + la scala conduzione v1 (`cond-*`) |
+| Tiri | 10 % | `tecnica-tiro` |
+
+(Nel messaggio c'è "115 % visione": letto come 15 %, così la somma fa 100.) Con una sola giornata di tecnica a
+settimana la quota si applica a quella seduta; con due o più il server distribuisce sulla settimana (una seduta può
+essere 40 % palleggi, l'altra 0 %), così ogni seduta ha un tema senza perdere il bilanciamento. Tiri e dribbling sono
+le parti faticose: non salgono sopra la quota se non è una richiesta esplicita, e scendono prima delle altre quando la
+fatica (resoconto squadra/partita, check-in) o il calendario (squadra, partita) lo dicono.
+
+### L'asse partita per la tecnica [come l'ho letto, da confermare]
+
+| Giorno | Cosa si fa | Cosa NO |
+|---|---|---|
+| **+1, partita giocata molto** (intera o senza resoconto, come per le gambe) | palleggi, passaggi vicini (`tpas-passaggi-al-muro-ravvicinati-*`, muro a 1-2 tocchi), controllo | tiri, dribbling, freestyle, visione con sprint |
+| **+1, partita con fatica leggera** (`menoAffaticato`, `quantoGiocata` 'meno' o 'quasi non giocato' del resoconto) | tutto sbloccato, quote normali | — |
+| **−1 (il giorno prima)** | "proprio poca roba": al massimo 10 tiri, poco dribbling (un esercizio corto), un po' di palleggi e passaggi, ~20-25' in tutto | volume; oggi −1 c'è solo il blocco pre partita: qui la tecnica leggera si può aggiungere o restare al blocco di Ste (**[da decidere]**) |
+| **−2** | tutto, anche tiro, dribbling e freestyle | — |
+| **centro e fine settimana** (da +2 a −2) | i tiri vanno qui, poco volume (la quota del 10 %); una seduta DEDICATA ai tiri solo su richiesta ("aggiungi tecnica" / chat del preparatore) e sempre ≥ 2 giorni prima della partita | tiri subito dopo la partita o il giorno prima oltre i 10 |
+
+### Priorità e rotazione
+
+- Il **tema** della seduta ruota (palleggi → passaggi → freestyle/visione → dribbling/tiri), con priorità a un aspetto
+  quando c'è un motivo: la parte più debole ai test (`prioritaTecnica`), i voti bassi del resoconto (tiro 4/10 → il
+  tema pesca i tiri, entro la quota), un obiettivo esplicito dal setup o dalla maschera, il ripasso degli esercizi
+  difficili.
+- Gli esercizi durano "qualche minuto" (2-5') e **si adattano al tempo**: con 30' la seduta ha 5-6 esercizi da 3-4',
+  con 60' 8-10 esercizi da 4-6' o due serie; la quota resta in percentuale, i minuti cambiano.
+- Le **scale** restano: dentro la quota palleggi gli esercizi vengono dal codice corrente della scala palleggi
+  (tabella 1), dentro la quota passaggi dal codice della scala muro (tabella 2); il giudizio di fine seduta fa avanzare
+  il codice come oggi.
 
 ## Tabella 1 — Palleggi per gradino della scala [proposta, dosi lette dai workout B1-B3 e A1-A4]
 
@@ -149,9 +191,9 @@ esterno / con finta / alzando palla / sombrero (`tpas-passaggi-al-muro-controllo
 `-sombrero`, stesso workout). Proposta: diventano il codice **"orientato A1"** tra "passaggi e controllo A1" e "A1
 muro", così la scala muro ha sei gradini e i controlli orientati non restano fuori.
 
-## Tabella 3 — `te-base` per livello [proposta]
+## Tabella 3 — i fondamentali per livello [proposta: era `te-base`, ora è il serbatoio per le quote palleggi + passaggi + conduzione nella settimana di scarico e nei richiami]
 
-Tre serie, ~35'. È la seduta di default quando c'è una sola giornata di tecnica e il richiamo ogni 4 settimane.
+Con le regole di Ste non è più una seduta fissa: è l'elenco "minimo" per livello da cui il server pesca quando la seduta è corta (30') o nella settimana di scarico.
 
 | Livello | Palleggi (scala) | Passaggi (scala) | Conduzione | Serie |
 |---|---|---|---|---|
@@ -205,31 +247,38 @@ basta così, si compone adesso.
 PRO i minuti al muro salgono a 10 (A1/A2/PRO1 di Ste) e il PRO chiude con `cond-6` 4 × 1' e Box Dribbling and
 Pass 2 × 1'.
 
-## Regole che vanno nel codice [proposta]
+## Regole che vanno nel codice [proposta, riscritta sulle regole di Ste]
 
-1. **Composizione**: `costruisciTecnica(ctx)` → blocchi virtuali `te-*` in `ctx.blocchi` accanto ai workout Everfit,
-   come `aggiornaParteAlta` / `aggiornaParteBassa`; livello per qualità da `livelloPerQualita('tecnica-*')`, scala
-   dalla memoria tecnica (`calcolaMemoriaTecnica`), attrezzatura dal setup (campo; compagno per le varianti a 2;
-   `muro` se Ste vuole l'attrezzo nuovo), video dei segnali solo per gli esercizi che ce l'hanno.
-2. **Sostituzione**: `sostituzioniFormati` rimpiazza un workout Everfit di tecnica scelto da Claude con il `te-*`
-   dello stesso tipo (palleggi → `te-palleggi`, muro → `te-muro`, tiro → `te-tiro`, …), con la nota "sui tuoi
-   gradini, al posto di …" nell'hub, come per la parte alta. I codici della scala restano quelli della memoria.
-3. **Richiamo**: ogni 4 settimane (la settimana di scarico, `isDeload`) la giornata di tecnica è `te-base`, anche per
-   chi è in A3/A4 ("i base tornano": sì, come richiamo).
-4. **Priorità dai test**: `prioritaTecnica` decide la scala che va per prima (già così) E dentro `te-base` raddoppia
-   le serie della parte debole (palleggi 4 serie e passaggi 2, o il contrario).
-5. **Ripasso**: come oggi, in coda, fino a 2 esercizi, dentro il tempo massimo.
-6. **Durata**: dentro il tempo per seduta del setup, con la versione breve sotto i 45'.
-7. **Piano base e prompt**: il piano base mette i `te-*` prima dei workout Everfit per l'obiettivo tecnica; la
-   libreria nel prompt li elenca con i loro esercizi e la regola 28 dice a Claude di preferirli.
+1. **Composizione a budget**: `costruisciTecnica(ctx, { giorno, minuti })` → UN blocco virtuale `te-<giorno>` per
+   giornata di tecnica: dai minuti della seduta e dalle quote (25/25/15/15/10/10, ricalcolate sulla settimana se le
+   giornate sono più di una) ricava i minuti per qualità, applica il filtro dell'asse partita (tabella sopra) e della
+   fatica (resoconto: fatica alta o 2 giorni leggeri → tiri e dribbling a zero), poi pesca gli esercizi dal serbatoio
+   per livello e dal codice della scala; gli esercizi durano 2-5' e si allungano o accorciano per far tornare i minuti.
+   Entra in `ctx.blocchi` accanto ai workout Everfit, come `aggiornaParteAlta` / `aggiornaParteBassa`.
+2. **Tema e priorità**: la seduta ha un tema a rotazione (memoria tecnica: mai lo stesso due settimane di fila); con un
+   motivo (parte debole ai test, voto basso ricorrente nel resoconto, obiettivo esplicito, ripasso) il tema va lì e
+   quella quota può salire fino al doppio, le altre scendono in proporzione; tiri e dribbling salgono sopra la quota
+   solo su richiesta esplicita.
+3. **Sostituzione**: `sostituzioniFormati` rimpiazza un workout Everfit di tecnica scelto da Claude con il `te-*` di
+   quel giorno (nota "composta sui tuoi gradini, al posto di …"); i workout restano in libreria e nel prompt.
+4. **Asse partita**: +1 dopo una partita giocata molto → solo palleggi, passaggi vicini, controllo; −1 → al massimo 10
+   tiri, un esercizio di dribbling, palleggi e passaggi, ~20-25'; da −2 tutto; dopo una partita con fatica leggera
+   tutto. Una seduta dedicata ai tiri solo su richiesta e mai a meno di 2 giorni dalla partita (errore di `expandPiano`).
+5. **Ripasso**: come oggi, in coda, fino a 2 esercizi, dentro il tempo.
+6. **Durata**: dentro il tempo per seduta del setup; la tecnica resta giornata leggera (tipo `tecnica`).
+7. **Prompt e piano base**: la regola 28 dice a Claude che la tecnica è composta dal server (sceglie solo il giorno e,
+   se vuole, il tema); il piano base mette i `te-*` prima dei workout Everfit per l'obiettivo tecnica.
+8. **Monitoraggio**: le quote di tiri e dribbling fatte davvero (dai log) entrano nel prompt della settimana dopo, così
+   "da monitorare fatica e allenamenti/partite" ha un numero.
 
 ## Domande per Ste (si parte dopo)
 
-1. Le tabelle 1 e 2: dosi e ordine vanno bene? Dove mettere i sei esercizi che oggi non sono in nessuna scala
-   (palleggi interno 3 tocchi, palleggi coscia e collo, un piede alternati interno/esterno, i ravvicinati, i
-   controlli orientati, il sombrero)?
-2. Serve un livello PRO sui palleggi o il PRO fa A4 e il mazzo?
-3. `te-base` (tabella 3): va bene "palleggi + passaggi + conduzione in 3 serie", e gli esercizi proposti per livello?
-4. Serve l'attrezzo "muro" nel setup, o diamo per scontato che chi ha il campo ha un muro?
-5. La visione si compone adesso con i video che ci sono, o si aspetta?
-6. Il richiamo `te-base` ogni 4 settimane va nella settimana di scarico o in quella dopo?
+1. L'asse partita come l'ho letto (tabella sopra) è giusto? In particolare: a −1 la tecnica leggera si AGGIUNGE al blocco
+   pre partita o lo sostituisce? E "subito dopo partita giocata molto" vale solo a +1 o anche a +2 quando la fatica
+   del resoconto è alta?
+2. Le quote 25/25/15/15/10/10 valgono sulla settimana (con due giornate una può essere tutta palleggi) o su ogni seduta?
+3. Il serbatoio di esercizi per livello (tabelle 1, 2, 4, 5, 6) va bene? Dove mettere i sei esercizi oggi fuori da ogni
+   scala (interno 3 tocchi, coscia e collo, un piede alternato, i ravvicinati, i controlli orientati, il sombrero)?
+4. Serve un livello PRO sui palleggi o il PRO fa A4 e il mazzo?
+5. Serve l'attrezzo "muro" nel setup, o chi ha il campo ha un muro?
+6. La visione si compone adesso con i video che ci sono, o si aspetta?
