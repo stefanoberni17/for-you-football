@@ -102,7 +102,7 @@ export default function RisposteChiaveBox({ week, day, mostraCarta, className = 
             const i = lista.findIndex((r) => r.week === modifica.week && r.day === modifica.day);
             const base: RispostaRow = i >= 0 ? lista[i] : { week: modifica.week, day: modifica.day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null };
             const nuova: RispostaRow = modifica.gateQ
-              ? { ...base, gateQ: { q1: null, q2: null, q3: null, ...(base.gateQ ?? {}), [modifica.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
+              ? { ...base, gateQ: { ...(base.gateQ ?? {}), [modifica.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
               : { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
             if (i >= 0) lista[i] = nuova; else lista.push(nuova);
             return lista;

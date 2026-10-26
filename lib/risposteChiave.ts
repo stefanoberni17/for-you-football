@@ -12,6 +12,67 @@
  * mostra le chiave nel giorno (quelle di `DA_MOSTRARE` più quelle della property Notion "Mostra Carta").
  */
 
+/**
+ * Le risposte del Gate (`user_day_progress.gate_answers`): un oggetto q1..qN. Fino al 26/10 il server
+ * ne teneva solo tre e la quarta domanda dei Gate W6-W9 andava persa al salvataggio; ora valgono tutte
+ * quelle che la pagina manda (le domande vengono da Notion, una per riga), da `GATE_DOMANDE_MIN` a
+ * `GATE_DOMANDE_MAX`.
+ */
+export type GateChiave = `q${number}`;
+export type GateRisposte = Record<string, string | null>;
+export const GATE_DOMANDE_MIN = 3;
+export const GATE_DOMANDE_MAX = 8;
+export const GATE_RISPOSTA_MAX = 1500;
+
+/** Le chiavi q1..qN di un oggetto risposte del Gate, in ordine numerico. */
+export function chiaviGate(g: Record<string, unknown> | null | undefined): string[] {
+  if (!g) return [];
+  return Object.keys(g)
+    .filter((k) => /^q[1-9]\d*$/.test(k))
+    .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+}
+
+/** Le risposte del Gate per chiave (testo o null se vuota), almeno q1..q3. */
+export function gateRisposte(g: Record<string, unknown> | null | undefined): GateRisposte | null {
+  if (!g) return null;
+  const out: GateRisposte = { q1: null, q2: null, q3: null };
+  for (const k of chiaviGate(g)) {
+    const v = g[k];
+    out[k] = typeof v === 'string' && v.trim() ? v : null;
+  }
+  return out;
+}
+
+/** Le risposte del Gate in ordine, senza le vuote (null se non ce n'è nessuna). */
+export function gateLista(g: Record<string, unknown> | null | undefined): string[] | null {
+  const out = chiaviGate(g)
+    .map((k) => g![k])
+    .filter((v): v is string => typeof v === 'string' && v.trim() !== '');
+  return out.length ? out : null;
+}
+
+/**
+ * Le risposte del Gate come arrivano dalla pagina, validate per il salvataggio, tagliate a
+ * `GATE_RISPOSTA_MAX`. Con `domande` (quante sono su Notion) servono esattamente q1..qN, tutte con
+ * del testo, e le chiavi in più si ignorano (una bozza vecchia ne può avere). Senza (Notion non
+ * risponde): q1, q2, … consecutive fino alla prima che manca, almeno `GATE_DOMANDE_MIN`, al massimo
+ * `GATE_DOMANDE_MAX`. Null se non vanno.
+ */
+export function gateRisposteValide(raw: unknown, domande?: number): Record<string, string> | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const r = raw as Record<string, unknown>;
+  const n = domande && domande > 0 ? Math.min(domande, GATE_DOMANDE_MAX) : null;
+  const out: Record<string, string> = {};
+  for (let i = 1; i <= (n ?? GATE_DOMANDE_MAX); i++) {
+    const v = r[`q${i}`];
+    if (v === undefined && n === null) break;
+    if (typeof v !== 'string' || !v.trim()) return null;
+    out[`q${i}`] = v.trim().slice(0, GATE_RISPOSTA_MAX);
+  }
+  if (n === null && Object.keys(out).length < GATE_DOMANDE_MIN) return null;
+  return out;
+}
+
 /** I riquadri della Carta del Giocatore. */
 export type CampoCarta = 'mantra' | 'mappa' | 'firma' | 'protocollo' | 'cose' | 'protocolloForYou';
 export const CAMPI_CARTA: CampoCarta[] = ['mantra', 'mappa', 'firma', 'protocollo', 'cose', 'protocolloForYou'];
@@ -30,8 +91,8 @@ export interface RispostaChiave {
   quando: string;
   /** Il riquadro della Carta che la mostra (se è un campo della Carta). */
   carta?: CampoCarta;
-  /** Per le risposte del Gate: QUALE delle tre (la mappa è la prima del Gate 3). */
-  gateQ?: 'q1' | 'q2' | 'q3';
+  /** Per le risposte del Gate: QUALE (la mappa è la prima del Gate 3). */
+  gateQ?: GateChiave;
 }
 
 /** Le risposte che il percorso richiama più avanti. L'ordine è quello del percorso. */
@@ -111,10 +172,10 @@ export interface RispostaRow {
   risposta: string | null;
   /** L'intenzione scritta prima della pratica, se c'è */
   prePratica: string | null;
-  /** Le tre risposte del Gate (solo giorno 7), senza le vuote */
+  /** Le risposte del Gate (solo giorno 7), in ordine e senza le vuote */
   gate: string[] | null;
-  /** Le tre risposte del Gate per chiave (26/10: la mappa è la q1 del Gate 3) */
-  gateQ?: { q1: string | null; q2: string | null; q3: string | null } | null;
+  /** Le risposte del Gate per chiave q1..qN (26/10: la mappa è la q1 del Gate 3; da W6 i Gate hanno quattro domande) */
+  gateQ?: GateRisposte | null;
   completedAt: string | null;
   /** Quante versioni salvate (migration 033; 0 senza tabella) */
   versioni?: number;

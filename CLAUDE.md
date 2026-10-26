@@ -53,7 +53,7 @@ for-you-football/
 │   ├── settimane/page.tsx                 # Lista 12 settimane con lock/unlock
 │   ├── settimana/[id]/page.tsx            # Dettaglio settimana + timeline 7 giorni + WeeklyCalendarPopup
 │   ├── giorno/[week]/[day]/page.tsx       # Contenuto giornaliero (Apertura + Pratica + Domanda)
-│   ├── gate/[week]/page.tsx               # Gate giorno 7 (3 domande obbligatorie)
+│   ├── gate/[week]/page.tsx               # Gate giorno 7 (tutte le domande obbligatorie: 3, da W6 4)
 │   ├── calendar/page.tsx                  # Redirect a / (8 righe): il calendario si imposta dalla home e dalla settimana
 │   ├── week-complete/[week]/page.tsx      # Schermata completamento settimana
 │   ├── oggi/page.tsx                      # "Le tue azioni durante il giorno" — checklist giornaliera + setup
@@ -292,11 +292,11 @@ day_number       INTEGER NOT NULL   -- 1-7
 completed        BOOLEAN DEFAULT FALSE
 completed_at     TIMESTAMP
 response         TEXT               -- risposta domanda giornaliera
-gate_answers     JSONB              -- risposte gate giorno 7 { q1: str, q2: str, q3: str }
+gate_answers     JSONB              -- risposte gate giorno 7 { q1: str, q2: str, q3: str, q4?: str } (una per domanda su Notion)
 compressed       BOOLEAN DEFAULT FALSE  -- letto dalle pagine, MAI scritto (la compressione non è implementata)
 created_at       TIMESTAMP DEFAULT NOW()
 ```
-- Il client solo LEGGE (migration 027 ha tolto le policy insert/update): ogni scrittura passa da `/api/giorno` e `/api/gate` (service role), che dal 25/9 applicano il **time-gate lato server** (`lib/serverUnlock.ts`: giorno prima fatto e fatto prima di oggi in fuso italiano, week 1-12 e day 1-7 interi, gate solo con i giorni 1-6 fatti e tre risposte non vuote, niente ricompletamento → risposta `alreadyCompleted: true`, giorno bloccato → `403 day_locked`).
+- Il client solo LEGGE (migration 027 ha tolto le policy insert/update): ogni scrittura passa da `/api/giorno` e `/api/gate` (service role), che dal 25/9 applicano il **time-gate lato server** (`lib/serverUnlock.ts`: giorno prima fatto e fatto prima di oggi in fuso italiano, week 1-12 e day 1-7 interi, gate solo con i giorni 1-6 fatti e una risposta non vuota per ogni domanda, niente ricompletamento → risposta `alreadyCompleted: true`, giorno bloccato → `403 day_locked`).
 
 ### `user_weekly_calendar`
 ```sql
@@ -580,7 +580,7 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `Domanda` (text) — domanda finale (mai obbligatoria)
 - `È Gate` (checkbox) — true per giorno 7
 - `È Esercizio Principale` (checkbox) — true per giorno 4
-- `Domande Gate` (text — newline separated) — solo per giorno 7
+- `Domande Gate` (text) — solo per giorno 7. **Ogni domanda comincia con il suo numero a inizio riga** ("1. ", "2. "); le righe che seguono senza numero (un elenco puntato, una nota tra parentesi) vanno a capo DENTRO la stessa domanda, le righe vuote tra le domande non contano (`domandeGateDa` in `lib/gateDomande.ts`, 26/10; prima ogni riga era una domanda e l'elenco puntato della prima domanda del Gate 4 diventava cinque campi). Senza numeri si torna a una domanda per riga
 - `Tipo Giorno` (select)
 - `Contesto` (text) — **COACH-ONLY**: note di regia del giorno (passate al Coach via tool `leggi_percorso`). NON mostrato all'utente e dal 14/9 **non arriva nemmeno al client**: `senzaRegia()` in `lib/notion.ts` lo toglie (insieme a `Coach Contesto`) dalle risposte di `/api/giorno`, `/api/gate`, `/api/settimana`, `/api/settimane`. Da W5 contiene istruzioni dietro le quinte (Regole, "non anticipare", sourcing storie).
 - `Perché Funziona` (text) — **USER-FACING**: alimenta il box "💡 Perché funziona" sulla pagina pratica (giorni 1-6). Conferma scientifica leggibile di ciò che il ragazzo sta facendo (concetti reali, zero anticipazioni). Popolato W5-W8 (G1-G6); W1-W4 NON hanno più il fallback sul `Contesto` (14/9: il box resta vuoto finché Ste non scrive i 24 testi nel campo dedicato). Draft: `docs/content-w5-w8/perche-funziona.md`.
@@ -623,7 +623,7 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 | 4 | ⭐ Esercizio principale (8-15 min) |
 | 5 | Applicazione in contesto diverso |
 | 6 | Riflessione |
-| 7 | 🔑 Gate — 3 domande → sblocca settimana successiva |
+| 7 | 🔑 Gate — 3 domande (da W6 4) → sblocca settimana successiva |
 
 ---
 
@@ -820,7 +820,7 @@ La memoria persistente del Coach si basa su:
 - **Pratica pre-partita in due tempi (24/10):** `statoPartita` dice se oggi è partita o se la partita è domani (se sono vere tutte e due, due partite vicine, vince OGGI). Giorno prima → `praticaPrePartita` della settimana con l'etichetta "Domani giochi — pratica della sera prima"; giorno della partita → `praticaGiornoPartita` (property Notion `Pratica Giorno Partita`, DB Settimane) con "Oggi giochi"; campo vuoto → nessun box. Partita la domenica → il sabato mostra la sera prima, la domenica il giorno partita.
 
 ### Gate (`app/gate/[week]/page.tsx`)
-- 3 domande da Notion (`domandeGate`)
+- Le domande da Notion (`domandeGate`: 3, da W6 4), con gli a capo dentro la domanda (`whitespace-pre-line`); la pagina manda solo le risposte alle domande di adesso (una bozza vecchia può avere chiavi in più)
 - Tutti i campi obbligatori per procedere
 - **Bozza autosalvata** in `localStorage.gateDraft-w{N}` (debounce 600ms, ripristino al mount, clear al submit)
 - Completamento → `current_week` incrementato → schermata celebrazione (con missione settimana se presente)
@@ -1001,10 +1001,10 @@ La Carta del Giocatore a 360° (`docs/carta-360.md`, 29/9): calcola con `lib/car
 **Gli incroci** (`lib/incroci.ts`, puro, test in `tests/incroci.test.ts`; risposta `incroci[]`, card "Cosa dicono i tuoi dati" nella pagina): frasi vere dai dati dello stesso ragazzo sulle ultime 8 settimane (`INCROCI_FINESTRA_GIORNI = 56`), al massimo `INCROCI_MAX = 2`, solo con abbastanza dati (≥ 5 giorni per lato, ≥ 3 sedute dure, ≥ 2 settimane per lato) e una differenza netta, e solo nel verso che serve al ragazzo: **sonno vs lucidità** (mattine < 6 h contro ≥ 7 h, stato mentale ≥ 1.5 punti più basso), **seduta dura vs azioni** (il giorno dopo una seduta del Campo con voto ≥ 7, la zona "dura" della scala (dal 25/10; prima 8), azioni spuntate ≥ 20 punti in meno), **carico vs pratiche** (settimane con carico ≥ 1.15 × mediana, pratiche del percorso ≥ 20 punti in meno), **testa vs sedute** (giorni con mentale ≥ 7 contro ≤ 5, seduta fatta ≥ 25 punti più spesso). Le stesse frasi entrano nel contesto del Coach (`loadIncroci` in `lib/cartaServer.ts`).
 
 ### `GET /api/gate?week=W&userId=U`
-Fetch giorno 7 (gate) da Notion: 3 domande + risposte esistenti + `missioneSettimana`.
+Fetch giorno 7 (gate) da Notion: le domande + risposte esistenti + `missioneSettimana`.
 
 ### `POST /api/gate`
-Salva risposte gate JSONB (`q1..q3` non vuote, max 1500 caratteri), marca giorno 7 completato, avanza `current_week` a W+1 con UPDATE condizionale atomico (`.lte('current_week', weekNumber)` nel WHERE). Dal 25/9: `403 day_locked` se i giorni 1-6 non sono tutti fatti o il 6 è di oggi; gate già passato → `alreadyCompleted: true`.
+Salva risposte gate JSONB (`q1..qN` non vuote, N = quante domande ha il Gate su Notion, letto in cache; se Notion non risponde q1..qN consecutive con almeno tre; max 1500 caratteri; `gateRisposteValide` in `lib/risposteChiave.ts`; fino al 26/10 teneva solo le prime tre e la quarta domanda dei Gate W6-W9 andava persa), marca giorno 7 completato, avanza `current_week` a W+1 con UPDATE condizionale atomico (`.lte('current_week', weekNumber)` nel WHERE). Dal 25/9: `403 day_locked` se i giorni 1-6 non sono tutti fatti o il 6 è di oggi; gate già passato → `alreadyCompleted: true`.
 
 ### `GET /api/calendar?week=W`
 Fetch `training_days` + `match_days` per la settimana, più `abitudine: { trainingDays, matchDays } | null` dal setup del Campo (`profiles.training_squadra`: giorni squadra e partita abituale, letti dal profilo con i parser puri di `lib/trainingSquadra.ts`) per quando il calendario della settimana non c'è (24/10).

@@ -1290,7 +1290,8 @@ async function executeLeggiPercorso(input: { week: number; day?: number }, maxWe
         result += `\nDomanda Pre-Pratica: ${giorno.domandaPrePratica}`;
       }
       if (giorno.isGate && giorno.domandeGate.length > 0) {
-        result += `\nDomande Gate:\n${giorno.domandeGate.map((q: string, i: number) => `${i + 1}. ${q}`).join('\n')}`;
+        // Le domande portano già il loro numero ("1. …") da Notion
+        result += `\nDomande Gate:\n${giorno.domandeGate.join('\n')}`;
       }
     }
   }

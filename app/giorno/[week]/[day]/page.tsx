@@ -545,7 +545,7 @@ export default function GiornoPage() {
             <SectionTitle
               title="Prima di iniziare"
               icon={<PenLine size={18} />}
-              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domandaPrePratica}</span>}
+              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1 whitespace-pre-line">{giorno.domandaPrePratica}</span>}
               className="mb-4"
             />
             <Field
@@ -696,7 +696,7 @@ export default function GiornoPage() {
             <SectionTitle
               title={jumpToReflection ? "Com'è andata oggi?" : 'La tua riflessione'}
               icon={jumpToReflection ? <Sun size={18} /> : <PenLine size={18} />}
-              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domanda}</span>}
+              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1 whitespace-pre-line">{giorno.domanda}</span>}
               className="mb-4"
             />
             <RisposteChiaveBox week={weekNumber} day={dayNumber} mostraCarta={giorno.mostraCarta} className="mb-4" />
