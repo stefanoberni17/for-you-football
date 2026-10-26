@@ -41,7 +41,7 @@ export interface TrainingState {
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
   completions: { session_key: string; feedback: string | null }[];
-  ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean; scaricoRinviato?: boolean };
+  ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean; scaricoRinviato?: boolean; motivoScarico?: string | null; ritestSettimana?: boolean; motivoRitest?: string | null };
   // Livello per qualità (dai test di quella qualità) e ri-test mirato (famiglie che hanno finito i codici del livello)
   livelli?: { qualita: string; label?: string; livello: string }[];
   ritestMirato?: { qualita: string; label: string; famiglie: string[]; tests: { id: string; nome: string }[] }[];
@@ -59,6 +59,7 @@ export interface TrainingState {
     acuto: number; cronico: number; acwr: number | null;
     stato: 'insufficiente' | 'poco' | 'ok' | 'alto' | 'rischio'; statoLabel: string;
     target: { min: number; max: number } | null; squadraStimato: number;
+    condizioneRiga?: string | null; // tetto personale (26/10): "Sei stanco: il tuo tetto scende del 15 % (…)"
   };
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
@@ -734,6 +735,8 @@ export default function AllenamentoHub() {
               <SectionTitle title="Carico" className="mb-2"
                 action={<span className="inline-flex items-center h-11 pr-2"><Badge tone={CARICO_TONE[carico.stato]}>{carico.statoLabel}</Badge></span>} />
               <p className="text-body text-app leading-relaxed">{CARICO_FRASE[carico.stato]}</p>
+              {/* Tetto personale (Ste, 26/10): stanco → tetto giù, fresco → tetto su; la riga dice il perché */}
+              {carico.condizioneRiga && <p className="text-body-sm text-muted leading-relaxed mt-1">{carico.condizioneRiga}</p>}
               <details className="mt-2 group">
                 <summary className="min-h-[48px] flex items-center gap-1 text-body-sm font-semibold text-forest-400 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
                   <ChevronRight size={16} className="transition-transform group-open:rotate-90" aria-hidden /> Vedi i numeri
@@ -981,7 +984,7 @@ export default function AllenamentoHub() {
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-body-sm text-muted leading-relaxed flex gap-2">
               <BatteryLow size={18} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-              <span><span className="font-semibold text-app">Settimana di scarico.</span> Quarta settimana del ciclo: meno volume per assorbire il lavoro, la tecnica continua. La settimana prossima: ri-test.{ritestMiratoTesto && <> Da rifare prima: {ritestMiratoTesto}.</>}</span>
+              <span><span className="font-semibold text-app">Settimana di scarico.</span> {state.ciclo.motivoScarico ? <>Perché: {state.ciclo.motivoScarico}. </> : 'Quarta settimana del ciclo: '}Meno volume per assorbire il lavoro, la tecnica continua. La settimana prossima: ri-test.{ritestMiratoTesto && <> Da rifare prima: {ritestMiratoTesto}.</>}</span>
             </p>
           </Card>
         )}
@@ -989,7 +992,7 @@ export default function AllenamentoHub() {
           <Card variant="default" padding="sm" className="mb-4">
             <p className="text-body-sm text-muted leading-relaxed flex gap-2">
               <BatteryLow size={18} className="text-faint shrink-0 mt-0.5" aria-hidden />
-              <span><span className="font-semibold text-app">Quarta settimana, ma niente scarico.</span> Nelle settimane prima hai fatto poche sedute: lo scarico serve dopo il carico, questa settimana si lavora normale.</span>
+              <span><span className="font-semibold text-app">Niente scarico questa settimana.</span> {state.ciclo.motivoScarico ?? 'Nelle settimane prima hai fatto poche sedute: lo scarico serve dopo il carico'}. Si lavora normale.</span>
             </p>
           </Card>
         )}
@@ -1015,7 +1018,7 @@ export default function AllenamentoHub() {
           <Card variant="warn" padding="sm" className="mb-4">
             <p className="text-body font-semibold text-warning mb-0.5 flex items-center gap-2"><ClipboardList size={18} aria-hidden /> È ora del ri-test</p>
             <p className="text-body-sm text-muted leading-relaxed mb-3">
-              Ogni quattro settimane, dopo lo scarico, si rifanno i test: da qui passa il salto di livello.
+              {state.ciclo.motivoRitest ? <>{state.ciclo.motivoRitest[0].toUpperCase() + state.ciclo.motivoRitest.slice(1)}: da qui passa il salto di livello.</> : 'Dopo lo scarico si rifanno i test: da qui passa il salto di livello.'}
               {ritestMiratoTesto && <> <span className="text-app">Da rifare prima: {ritestMiratoTesto}</span> (hai finito i codici del tuo livello in {state.ritestMirato!.flatMap((r) => r.famiglie).join(', ')}).</>}
             </p>
             <Button variant="secondary" size="sm" href="/allenamento/test">Vedi la batteria</Button>

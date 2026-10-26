@@ -268,8 +268,9 @@ export function guardrailResistenzaVelocita(opt: {
 
 export interface PropostaLontano { giorno: number; tests: { id: string; nome: string }[]; gruppo: 'velocita' | 'resistenza' | 'res_velocita' }
 /** Off season (6): nelle settimane di ri-test il server PROPONE velocità, resistenza e resistenza alla velocità in giorni separati. */
-export function propostaOffSeason(opt: { fase: string; settimanaDelCiclo: number; sedute: readonly Pick<PlanSession, 'giorno' | 'tipo'>[]; oggiDow: number; results: readonly RisultatoConData[]; oggi: string; campo: boolean }): PropostaLontano[] {
-  if (opt.fase !== 'off_season' || !settimanaDiRitest(opt.settimanaDelCiclo) || !opt.campo) return [];
+export function propostaOffSeason(opt: { fase: string; settimanaDelCiclo: number; settimanaRitest?: boolean; sedute: readonly Pick<PlanSession, 'giorno' | 'tipo'>[]; oggiDow: number; results: readonly RisultatoConData[]; oggi: string; campo: boolean }): PropostaLontano[] {
+  // M11 (26/10): la settimana di ri-test la decidono i dati (`settimanaRitest`); senza, il calendario
+  if (opt.fase !== 'off_season' || !(opt.settimanaRitest ?? settimanaDiRitest(opt.settimanaDelCiclo)) || !opt.campo) return [];
   const tutti: { gruppo: PropostaLontano['gruppo']; ids: readonly string[] }[] = [
     { gruppo: 'velocita', ids: TEST_VELOCITA_IDS }, { gruppo: 'resistenza', ids: TEST_RESISTENZA_IDS }, { gruppo: 'res_velocita', ids: TEST_RES_VELOCITA_IDS },
   ];

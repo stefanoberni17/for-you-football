@@ -21,6 +21,8 @@ import { riepilogoEsercizi, riepilogoTesto, type RiepilogoEsercizio, type SetLog
 import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoSquadraStimato, caricoTesto, durataRealeMin, giorniDiRitardo, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { squadraMisurata, type Resoconto, type SquadraMisurata } from './trainingResoconto';
+import { cicloDaiDati, condizioneAtleta, type CicloEsito } from './trainingCondizione';
+import { bloccoById } from './trainingBlocks';
 import { loadResoconti } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
@@ -61,12 +63,9 @@ export function mondayOfThisWeekRome(): string {
 // le skill continuano) · settimana dopo lo scarico = ri-test (piano NORMALE,
 // l'app invita a rifare i test finché non li rifà).
 
-export interface CicloInfo {
-  settimana: number;
-  isDeload: boolean;
-  ritestDue: boolean;
-  scaricoRinviato?: boolean; // quarta settimana ma senza abbastanza sedute alle spalle: settimana normale (29/9)
-}
+// Dal 26/10 (M11) il ciclo lo decidono i dati (`cicloDaiDati` in lib/trainingCondizione): `cicloInfo` resta il calendario
+// (settimana dalla prima batteria, la quarta come rete), con il motivo dello scarico e del ri-test in più.
+export type CicloInfo = CicloEsito;
 
 /** Lunedì (YYYY-MM-DD, fuso Italia) della settimana di una data ISO; null se non valida. */
 function lunediDiIso(iso: string): Date | null {
@@ -284,10 +283,11 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     || (results && results.length > 0 ? (results[0] as { created_at?: string }).created_at ?? null : null);
   let ciclo = cicloInfo(cicloRiferimento, ultimoTest);
 
-  // Check-in giornalieri (ultimi 7): riposo, recupero, stato fisico/mentale
-  const { data: checkins } = await supabaseAdmin.from('daily_checkin')
+  // Check-in giornalieri: gli ultimi 14 per la condizione (M11, tetto personale), i primi 7 per la media del prompt
+  const { data: checkins14 } = await supabaseAdmin.from('daily_checkin')
     .select('date, physical_state, sleep_hours, recovery_quality, mental_state')
-    .eq('user_id', userId).order('date', { ascending: false }).limit(7);
+    .eq('user_id', userId).order('date', { ascending: false }).limit(14);
+  const checkins = (checkins14 || []).slice(0, 7);
   const oggi = todayRome();
   const cOggiRow = (checkins || []).find((c: { date: string }) => c.date === oggi);
   const checkinOggi: CheckinSnapshot | null = cOggiRow ? {
@@ -347,10 +347,16 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   });
   // Resoconti (19/10): per i giorni con il dato vero, fatica × minuti al posto della stima nell'acuto
   const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null, giorni: { trainingDays, matchDays } });
-  let carico = await loadCarico(userId, ciclo.isDeload, setRpe, squadraSettimanale, misurata);
-  // Scarico solo con del carico alle spalle (29/9): se le settimane precedenti sono vuote, la settimana è normale
-  const cicloEffettivo = conScaricoDalCarico(ciclo, carico.settimane);
-  if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, setRpe, squadraSettimanale, misurata); }
+  // M11 (26/10): scarico, ri-test e tetto dai dati. Prima il carico senza scarico (settimane e ultimo scarico), poi la
+  // condizione dell'atleta (ultime 2 settimane), poi il ciclo; il carico finale porta il tetto personale e lo scarico
+  const inputCarico = await loadCaricoInput(userId, setRpe);
+  const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale, squadraMisurata: misurata });
+  const condizione = condizioneAtleta({ checkins: checkins14 || [], sedute: completions, resoconti, oggi });
+  ciclo = cicloDaiDati(ciclo, {
+    carico: carico0, sedute: completions, lunedi: mondayOfThisWeekRome(), condizione, famiglia: famigliaBlocco,
+    scaricoInCorso: pianoRow?.plan?.scarico === true, ultimoTest,
+  });
+  const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale, squadraMisurata: misurata, condizione });
 
   const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }) => ({
     test_id: r.test_id, valore: Number(r.valore),
@@ -398,12 +404,21 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
  * (media dei log per serie, altrimenti feedback). `setRpe` può essere passato se già caricato.
  */
 export async function loadCarico(userId: string, isDeload: boolean, setRpe?: SetRpeRow[], squadraSettimanale = 0, squadraMisurata?: SquadraMisurata[]): Promise<CaricoInfo> {
+  const input = await loadCaricoInput(userId, setRpe);
+  return calcolaCarico({ ...input, oggi: todayRome(), lunedi: mondayOfThisWeekRome(), isDeload, squadraSettimanale, squadraMisurata });
+}
+
+/** La famiglia di un blocco per la memoria dello scarico (M11): i blocchi virtuali (pa-*, pb-*, te-*, kb-*) fanno famiglia a sé. */
+export const famigliaBlocco = (id: string): string | null => bloccoById(id)?.famiglia ?? null;
+
+/** Le letture del carico (completamenti 35 giorni, piani 49 giorni con `week_start`, log per serie): `calcolaCarico` poi gira quante volte serve. */
+export async function loadCaricoInput(userId: string, setRpe?: SetRpeRow[]): Promise<{ completions: CompletionRow[]; setRpe: SetRpeRow[]; plans: PlanRow[] }> {
   const since = new Date(Date.now() - 35 * 24 * 3600 * 1000).toISOString();
   const selCompletions = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60);
   const [complRes, { data: plans }] = await Promise.all([
     selCompletions('session_key, plan_id, feedback, completed_at, rpe, durata_reale_sec'),
-    supabaseAdmin.from('training_plans').select('id, plan')
+    supabaseAdmin.from('training_plans').select('id, plan, week_start')
       .eq('user_id', userId).gte('created_at', new Date(Date.now() - 49 * 24 * 3600 * 1000).toISOString())
       .order('created_at', { ascending: false }).limit(20),
   ]);
@@ -420,10 +435,7 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
       rpe = (logs || []) as SetRpeRow[];
     } catch { rpe = []; }
   }
-  return calcolaCarico({
-    completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[],
-    oggi: todayRome(), lunedi: mondayOfThisWeekRome(), isDeload, squadraSettimanale, squadraMisurata,
-  });
+  return { completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[] };
 }
 
 // Blocco "storico serie" condiviso tra planner v1/v2 e chat: una riga per esercizio con suggerimento
