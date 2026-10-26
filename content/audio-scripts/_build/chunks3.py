@@ -1,5 +1,5 @@
 import re, json, os, hashlib, shutil, sys
-OUT="/mnt/user-data/outputs/audio/v2"
+OUT=os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))
 SIL=re.compile(r"^\[SILENZIO (\d+(?:\.\d)?)\]$"); REG=re.compile(r"^\[(sincere|relaxed|meditative)\]$")
 names=sys.argv[1:]
 plan=json.load(open('plan3.json')) if os.path.exists('plan3.json') else {}

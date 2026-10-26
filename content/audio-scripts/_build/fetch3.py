@@ -1,5 +1,6 @@
 import json, glob, os, subprocess, hashlib, re, sys
-D='/root/.claude/projects/-home-user-for-you-football/e135f029-491d-5eee-986b-9c04ec6e7cc9/tool-results/'
+import glob as _g
+D=sorted(_g.glob('/root/.claude/projects/-home-user-for-you-football/*/tool-results/'))[-1] if not os.environ.get('TOOL_RESULTS_DIR') else os.environ['TOOL_RESULTS_DIR']
 files=sorted(glob.glob(D+'mcp-Eleven_labs_completo-creative_get_flow_run_status-*.txt'))
 todo=json.load(open('todo.json'))
 bykey={v:k for k,v in todo.items()}

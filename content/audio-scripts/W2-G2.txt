@@ -1,10 +1,11 @@
 [relaxed]
-Finale di Coppa Italia di Serie D, contro il Monopoli. Primo tempo, sbaglio un passaggio semplice.
+Finale di Coppa Italia di Serie D, contro il Monopoli.
+[SILENZIO 1]
+Primo tempo, sbaglio un passaggio semplice. Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo, non mi lasciavo più andare: facevo solo giocate semplici, quelle sicure.
 [SILENZIO 2]
-Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo: facevo solo giocate semplici, quelle sicure.
 Finché prendiamo gol, perché mi ero perso l'inserimento di un esterno. Partita persa.
 [SILENZIO 2]
-Tutto era partito da quel passaggio sbagliato nel primo tempo. E io non me ne ero nemmeno accorto.
+Tutto era partito da quel passaggio sbagliato nel primo tempo, e io non me ne ero nemmeno accorto.
 [SILENZIO 2]
 [sincere]
 Il pilota automatico spesso funziona così: sbagli un passaggio, parte «sono scarso», le gambe si fanno pesanti, e il pallone dopo è già compromesso. Tutto in pochi secondi, senza che tu decida niente.
@@ -36,17 +37,19 @@ Espira, e lascia andare.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 3]
-Adesso porta alla mente un momento recente in cui hai perso la testa in campo. Non il peggiore. Uno recente, che riesci a guardare.
+Adesso porta alla mente un momento recente in cui sei rimasto attaccato a un pensiero e hai seguito meno il gioco. Non il peggiore: uno recente, che riesci a guardare.
 [SILENZIO 5]
-Rivivi quella scena. Il campo davanti a te, le voci intorno, quello che stavi pensando. Trenta secondi. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+Rivivi quella scena per trenta secondi. Il campo davanti a te, le voci intorno, quello che stavi pensando. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
 [SILENZIO 30]
-Fermati. E osserva.
+Adesso smetti di immaginare, e rispondi. Una domanda alla volta.
 [SILENZIO 2]
-Che tipo di pensiero era? Passato, Futuro o Giudizio?
+Cosa ti ricordi di esserti detto?
+[SILENZIO 10]
+Che nome gli dai? Passato, Futuro o Giudizio. Se non sei sicuro, «pensiero».
 [SILENZIO 10]
 Lo sapevi che stava succedendo, in quel momento?
 [SILENZIO 10]
-Adesso Reset. Torna qui.
+Ora fai il Reset. Torna qui.
 [SILENZIO 2]
 Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
 [SILENZIO 4]
@@ -66,7 +69,7 @@ Espira, e lascia andare.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 3]
-Sei qui. Non in quella partita.
+Bene. Torna qui.
 [SILENZIO 2]
 [relaxed]
-Metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?
+Adesso metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?

@@ -1,7 +1,7 @@
 import json, subprocess, os, sys
 names=sys.argv[1:]
 plan=json.load(open('plan3.json'))
-OUT='/mnt/user-data/outputs/audio/mp3'; WAV='wav3'; os.makedirs(OUT,exist_ok=True); os.makedirs(WAV,exist_ok=True)
+OUT='raw3'; WAV='wav3'; os.makedirs(OUT,exist_ok=True); os.makedirs(WAV,exist_ok=True)
 TRIM='silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.15,areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.15,areverse'
 def run(c): subprocess.run(c,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 def wav_of(uid):

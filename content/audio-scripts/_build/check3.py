@@ -1,5 +1,5 @@
 import re, os, sys, json
-OUT = "/mnt/user-data/outputs/audio/v2"
+OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))
 DECL = json.loads(sys.argv[1])  # {"W1-G1":3,...}
 SIL = re.compile(r"^\[SILENZIO (\d+(?:\.\d)?)\]$"); REG=re.compile(r"^\[(sincere|relaxed|meditative)\]$")
 rows=[]; ok=True

@@ -1489,9 +1489,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Ti faccio un esempio mio. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione. Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva, e se la palla non mi arriva non posso sbagliarla.",
-   "key": "[relaxed] Ti faccio un esempio mio. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione. Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva, e se la palla non mi arriva non posso sbagliarla.",
-   "id": "4fad870cf572"
+   "text": "Ti faccio un esempio mio, così capisci di cosa parliamo. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione. Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva, e se la palla non mi arriva non posso sbagliarla.",
+   "key": "[relaxed] Ti faccio un esempio mio, così capisci di cosa parliamo. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione. Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva, e se la palla non mi arriva non posso sbagliarla.",
+   "id": "00fa4d880ab1"
   },
   {
    "type": "sil",
@@ -1511,9 +1511,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Quel giorno l'ho visto mentre lo stavo facendo. E da lì ho cominciato ad accorgermene sempre più spesso, e piano piano ho smesso di nascondermi.",
-   "key": "[relaxed] Quel giorno l'ho visto mentre lo stavo facendo. E da lì ho cominciato ad accorgermene sempre più spesso, e piano piano ho smesso di nascondermi.",
-   "id": "30ec5082c324"
+   "text": "Quel giorno l'ho visto mentre lo stavo facendo. Ed è stato l'inizio di tutto: da lì ho cominciato ad accorgermene sempre più spesso, e piano piano ho smesso di nascondermi.",
+   "key": "[relaxed] Quel giorno l'ho visto mentre lo stavo facendo. Ed è stato l'inizio di tutto: da lì ho cominciato ad accorgermene sempre più spesso, e piano piano ho smesso di nascondermi.",
+   "id": "f791dd587305"
   },
   {
    "type": "sil",
@@ -1665,9 +1665,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso resta fermo. Due minuti. Non fare niente. I pensieri arriveranno. Non fermarli. Prova solo a dare un nome a ognuno, con una parola sola. Passato: ho sbagliato quel tiro ieri. Futuro: e se domenica gioco male. Giudizio: sono scarso, il mister non mi stima. Lo nomini. Poi lo lasci andare, e torni al respiro.",
-   "key": "[meditative] Adesso resta fermo. Due minuti. Non fare niente. I pensieri arriveranno. Non fermarli. Prova solo a dare un nome a ognuno, con una parola sola. Passato: ho sbagliato quel tiro ieri. Futuro: e se domenica gioco male. Giudizio: sono scarso, il mister non mi stima. Lo nomini. Poi lo lasci andare, e torni al respiro.",
-   "id": "047c7f898af9"
+   "text": "Adesso resta seduto due minuti. In questi due minuti fai una cosa sola: quando ti accorgi di un pensiero, gli dai un nome e torni al respiro. I pensieri arriveranno. Non fermarli. I nomi sono tre. Passato: ho sbagliato quel tiro ieri. Futuro: e se domenica gioco male. Giudizio: sono scarso, il mister non mi stima. Una parola sola, e torni al respiro.",
+   "key": "[meditative] Adesso resta seduto due minuti. In questi due minuti fai una cosa sola: quando ti accorgi di un pensiero, gli dai un nome e torni al respiro. I pensieri arriveranno. Non fermarli. I nomi sono tre. Passato: ho sbagliato quel tiro ieri. Futuro: e se domenica gioco male. Giudizio: sono scarso, il mister non mi stima. Una parola sola, e torni al respiro.",
+   "id": "ff56a19a3d5e"
   },
   {
    "type": "sil",
@@ -1676,9 +1676,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Un pensiero arriva. Gli dai il nome. Torni al respiro. Se non sai che nome dargli, va bene «pensiero».",
-   "key": "[meditative] Un pensiero arriva. Gli dai il nome. Torni al respiro. Se non sai che nome dargli, va bene «pensiero».",
-   "id": "66ad39052b7d"
+   "text": "Se non sai che nome dargli, va bene «pensiero». Non è un quiz.",
+   "key": "[meditative] Se non sai che nome dargli, va bene «pensiero». Non è un quiz.",
+   "id": "c0868e745053"
   },
   {
    "type": "sil",
@@ -1687,9 +1687,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Se il pensiero resta, va bene lo stesso. Non deve sparire. L'hai visto, gli hai dato un nome, e torni al respiro.",
-   "key": "[meditative] Se il pensiero resta, va bene lo stesso. Non deve sparire. L'hai visto, gli hai dato un nome, e torni al respiro.",
-   "id": "36d389469544"
+   "text": "Se il pensiero resta, va bene lo stesso. Non deve sparire: l'hai visto, gli hai dato un nome, e torni al respiro.",
+   "key": "[meditative] Se il pensiero resta, va bene lo stesso. Non deve sparire: l'hai visto, gli hai dato un nome, e torni al respiro.",
+   "id": "aafd83308921"
   },
   {
    "type": "sil",
@@ -1720,18 +1720,29 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Adesso metti in pausa e scrivi nell'app: quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio. Se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.",
-   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio. Se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.",
-   "id": "42437cdbd894"
+   "text": "Adesso metti in pausa e scrivi nell'app: durante i due minuti di Observer, quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio. Se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: durante i due minuti di Observer, quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio. Se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.",
+   "id": "415d1fc7f849"
   }
  ],
  "W2-G2": [
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Finale di Coppa Italia di Serie D, contro il Monopoli. Primo tempo, sbaglio un passaggio semplice.",
-   "key": "[relaxed] Finale di Coppa Italia di Serie D, contro il Monopoli. Primo tempo, sbaglio un passaggio semplice.",
-   "id": "62210c2d04b6"
+   "text": "Finale di Coppa Italia di Serie D, contro il Monopoli.",
+   "key": "[relaxed] Finale di Coppa Italia di Serie D, contro il Monopoli.",
+   "id": "e7ba89574c85"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Primo tempo, sbaglio un passaggio semplice. Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo, non mi lasciavo più andare: facevo solo giocate semplici, quelle sicure.",
+   "key": "[relaxed] Primo tempo, sbaglio un passaggio semplice. Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo, non mi lasciavo più andare: facevo solo giocate semplici, quelle sicure.",
+   "id": "7284e9a49bba"
   },
   {
    "type": "sil",
@@ -1740,9 +1751,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo: facevo solo giocate semplici, quelle sicure. Finché prendiamo gol, perché mi ero perso l'inserimento di un esterno. Partita persa.",
-   "key": "[relaxed] Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo: facevo solo giocate semplici, quelle sicure. Finché prendiamo gol, perché mi ero perso l'inserimento di un esterno. Partita persa.",
-   "id": "dc1526d577bc"
+   "text": "Finché prendiamo gol, perché mi ero perso l'inserimento di un esterno. Partita persa.",
+   "key": "[relaxed] Finché prendiamo gol, perché mi ero perso l'inserimento di un esterno. Partita persa.",
+   "id": "cfde4cffd7aa"
   },
   {
    "type": "sil",
@@ -1751,9 +1762,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Tutto era partito da quel passaggio sbagliato nel primo tempo. E io non me ne ero nemmeno accorto.",
-   "key": "[relaxed] Tutto era partito da quel passaggio sbagliato nel primo tempo. E io non me ne ero nemmeno accorto.",
-   "id": "62a5e08226fb"
+   "text": "Tutto era partito da quel passaggio sbagliato nel primo tempo, e io non me ne ero nemmeno accorto.",
+   "key": "[relaxed] Tutto era partito da quel passaggio sbagliato nel primo tempo, e io non me ne ero nemmeno accorto.",
+   "id": "72a2916a31c0"
   },
   {
    "type": "sil",
@@ -1916,9 +1927,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso porta alla mente un momento recente in cui hai perso la testa in campo. Non il peggiore. Uno recente, che riesci a guardare.",
-   "key": "[meditative] Adesso porta alla mente un momento recente in cui hai perso la testa in campo. Non il peggiore. Uno recente, che riesci a guardare.",
-   "id": "a738324a1517"
+   "text": "Adesso porta alla mente un momento recente in cui sei rimasto attaccato a un pensiero e hai seguito meno il gioco. Non il peggiore: uno recente, che riesci a guardare.",
+   "key": "[meditative] Adesso porta alla mente un momento recente in cui sei rimasto attaccato a un pensiero e hai seguito meno il gioco. Non il peggiore: uno recente, che riesci a guardare.",
+   "id": "bcad47d4db66"
   },
   {
    "type": "sil",
@@ -1927,9 +1938,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Rivivi quella scena. Il campo davanti a te, le voci intorno, quello che stavi pensando. Trenta secondi. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
-   "key": "[meditative] Rivivi quella scena. Il campo davanti a te, le voci intorno, quello che stavi pensando. Trenta secondi. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
-   "id": "364db9283550"
+   "text": "Rivivi quella scena per trenta secondi. Il campo davanti a te, le voci intorno, quello che stavi pensando. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "key": "[meditative] Rivivi quella scena per trenta secondi. Il campo davanti a te, le voci intorno, quello che stavi pensando. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "id": "1268d2aa6212"
   },
   {
    "type": "sil",
@@ -1938,9 +1949,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Fermati. E osserva.",
-   "key": "[meditative] Fermati. E osserva.",
-   "id": "56d010f1e32a"
+   "text": "Adesso smetti di immaginare, e rispondi. Una domanda alla volta.",
+   "key": "[meditative] Adesso smetti di immaginare, e rispondi. Una domanda alla volta.",
+   "id": "66b6e2221675"
   },
   {
    "type": "sil",
@@ -1949,9 +1960,20 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Che tipo di pensiero era? Passato, Futuro o Giudizio?",
-   "key": "[meditative] Che tipo di pensiero era? Passato, Futuro o Giudizio?",
-   "id": "052a7f8688a9"
+   "text": "Cosa ti ricordi di esserti detto?",
+   "key": "[meditative] Cosa ti ricordi di esserti detto?",
+   "id": "64f5154f5060"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Che nome gli dai? Passato, Futuro o Giudizio. Se non sei sicuro, «pensiero».",
+   "key": "[meditative] Che nome gli dai? Passato, Futuro o Giudizio. Se non sei sicuro, «pensiero».",
+   "id": "b3dc56a14484"
   },
   {
    "type": "sil",
@@ -1971,9 +1993,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso Reset. Torna qui.",
-   "key": "[meditative] Adesso Reset. Torna qui.",
-   "id": "22d9826cc28d"
+   "text": "Ora fai il Reset. Torna qui.",
+   "key": "[meditative] Ora fai il Reset. Torna qui.",
+   "id": "66b75b1e31c2"
   },
   {
    "type": "sil",
@@ -2081,9 +2103,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Sei qui. Non in quella partita.",
-   "key": "[meditative] Sei qui. Non in quella partita.",
-   "id": "5525e977b76b"
+   "text": "Bene. Torna qui.",
+   "key": "[meditative] Bene. Torna qui.",
+   "id": "17bf48408620"
   },
   {
    "type": "sil",
@@ -2092,9 +2114,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?",
-   "key": "[relaxed] Metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?",
-   "id": "9549be69e110"
+   "text": "Adesso metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?",
+   "id": "9915f4553c2f"
   }
  ],
  "W2-G3": [
@@ -2123,9 +2145,20 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Il mio, per anni, è stato questo: non me lo merito. Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo niente.",
-   "key": "[relaxed] Il mio, per anni, è stato questo: non me lo merito. Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo niente.",
-   "id": "19269bffddb3"
+   "text": "Il mio, per anni, è stato questo: non me lo merito.",
+   "key": "[relaxed] Il mio, per anni, è stato questo: non me lo merito.",
+   "id": "7bb0c484024e"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo niente.",
+   "key": "[relaxed] Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo niente.",
+   "id": "8afc7f9acd35"
   },
   {
    "type": "sil",
@@ -2137,6 +2170,17 @@
    "text": "Oggi non ti dico cosa cercare. Ti chiedo solo di portare qui quello che c'è già.",
    "key": "[sincere] Oggi non ti dico cosa cercare. Ti chiedo solo di portare qui quello che c'è già.",
    "id": "2dcb7c2bb135"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Prima di iniziare, una cosa sola. Se prima della pratica hai scritto una frase, oggi lavori su quella. Se non hai scritto niente, lavori su quello che arriva da solo.",
+   "key": "[sincere] Prima di iniziare, una cosa sola. Se prima della pratica hai scritto una frase, oggi lavori su quella. Se non hai scritto niente, lavori su quello che arriva da solo.",
+   "id": "994531e14344"
   },
   {
    "type": "sil",
@@ -2266,9 +2310,20 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Se prima della pratica hai scritto un pensiero o un giudizio, riprendilo adesso. Tienilo in mente, senza fare niente. Trenta secondi. Se non hai scritto niente, resta in ascolto. Non cercare niente. Guarda quali pensieri arrivano da soli.",
-   "key": "[meditative] Se prima della pratica hai scritto un pensiero o un giudizio, riprendilo adesso. Tienilo in mente, senza fare niente. Trenta secondi. Se non hai scritto niente, resta in ascolto. Non cercare niente. Guarda quali pensieri arrivano da soli.",
-   "id": "ab657e9eac09"
+   "text": "Adesso riprendi la tua frase, oppure aspetta il primo pensiero che arriva.",
+   "key": "[meditative] Adesso riprendi la tua frase, oppure aspetta il primo pensiero che arriva.",
+   "id": "0b3d0d0b5096"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tienilo presente per trenta secondi, senza discuterlo. Non devi capire se è vero o falso.",
+   "key": "[meditative] Tienilo presente per trenta secondi, senza discuterlo. Non devi capire se è vero o falso.",
+   "id": "9ebb9ed8b612"
   },
   {
    "type": "sil",
@@ -2277,42 +2332,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso guardalo con l'Observer.",
-   "key": "[meditative] Adesso guardalo con l'Observer.",
-   "id": "99e12e2da1f4"
-  },
-  {
-   "type": "sil",
-   "sec": 2.0
-  },
-  {
-   "type": "text",
-   "tag": "meditative",
-   "text": "È un giudizio su di te? Su qualcun altro? Sulla situazione?",
-   "key": "[meditative] È un giudizio su di te? Su qualcun altro? Sulla situazione?",
-   "id": "88827e307a82"
-  },
-  {
-   "type": "sil",
-   "sec": 10.0
-  },
-  {
-   "type": "text",
-   "tag": "meditative",
-   "text": "Si sente come un fatto, o come un pensiero?",
-   "key": "[meditative] Si sente come un fatto, o come un pensiero?",
-   "id": "19570a95365f"
-  },
-  {
-   "type": "sil",
-   "sec": 10.0
-  },
-  {
-   "type": "text",
-   "tag": "meditative",
-   "text": "Se sono arrivati altri pensieri, dai un nome a ognuno. Passato, Futuro, o Giudizio.",
-   "key": "[meditative] Se sono arrivati altri pensieri, dai un nome a ognuno. Passato, Futuro, o Giudizio.",
-   "id": "5f82d9faafe0"
+   "text": "Dagli un nome. Se è un giudizio, «giudizio». Se è un altro tipo, il suo nome. Se non sei sicuro, «pensiero».",
+   "key": "[meditative] Dagli un nome. Se è un giudizio, «giudizio». Se è un altro tipo, il suo nome. Se non sei sicuro, «pensiero».",
+   "id": "60e3c231486e"
   },
   {
    "type": "sil",
@@ -2321,9 +2343,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira lentamente. Immagina che esca, come una nuvola che passa.",
-   "key": "[meditative] Espira lentamente. Immagina che esca, come una nuvola che passa.",
-   "id": "679390010091"
+   "text": "E torna al respiro.",
+   "key": "[meditative] E torna al respiro.",
+   "id": "60ef9f74c6b5"
   },
   {
    "type": "sil",
@@ -2332,9 +2354,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Se resta lì, va bene lo stesso. Non deve sparire. L'hai visto, e oggi basta questo.",
-   "key": "[meditative] Se resta lì, va bene lo stesso. Non deve sparire. L'hai visto, e oggi basta questo.",
-   "id": "9b5e155c5bd3"
+   "text": "Se resta lì, va bene lo stesso: non deve sparire. L'hai visto, e oggi basta questo.",
+   "key": "[meditative] Se resta lì, va bene lo stesso: non deve sparire. L'hai visto, e oggi basta questo.",
+   "id": "2ff1e274d9b8"
   },
   {
    "type": "sil",
@@ -2343,9 +2365,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso rimani ancora un minuto in silenzio. Se arriva qualcosa, gli dai il nome e lo lasci passare.",
-   "key": "[meditative] Adesso rimani ancora un minuto in silenzio. Se arriva qualcosa, gli dai il nome e lo lasci passare.",
-   "id": "9067e46d44e1"
+   "text": "Adesso rimani ancora un minuto in silenzio. Se arriva qualcosa, gli dai il nome e torni al respiro.",
+   "key": "[meditative] Adesso rimani ancora un minuto in silenzio. Se arriva qualcosa, gli dai il nome e torni al respiro.",
+   "id": "8dfc135c8983"
   },
   {
    "type": "sil",
@@ -2387,9 +2409,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Metti in pausa e scrivi nell'app: sei riuscito a guardarlo un po' da fuori, come una cosa che passa? Oppure è rimasto uguale? O è uscito qualcos'altro? Qualsiasi risposta va bene, se è vera.",
-   "key": "[relaxed] Metti in pausa e scrivi nell'app: sei riuscito a guardarlo un po' da fuori, come una cosa che passa? Oppure è rimasto uguale? O è uscito qualcos'altro? Qualsiasi risposta va bene, se è vera.",
-   "id": "14c25dfd0777"
+   "text": "Adesso metti in pausa e scrivi nell'app: com'è stato? Cosa hai notato mentre lo tenevi presente? Per esempio: l'hai guardato un po' da fuori, è rimasto pesante uguale, o è venuto fuori qualcos'altro. Qualsiasi risposta va bene, se è vera.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: com'è stato? Cosa hai notato mentre lo tenevi presente? Per esempio: l'hai guardato un po' da fuori, è rimasto pesante uguale, o è venuto fuori qualcos'altro. Qualsiasi risposta va bene, se è vera.",
+   "id": "06647cfa688b"
   }
  ],
  "W2-G4": [
@@ -2550,20 +2572,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso cinque minuti di Observer puro. Lascia arrivare i pensieri, e dai loro un nome senza fretta. Ogni volta che arriva un pensiero, qualsiasi tipo, usa il ciclo completo. Inspira: osservi il pensiero. Nomini: Passato, Futuro o Giudizio. Espiri: immagina che esca, come una nuvola che passa.",
-   "key": "[meditative] Adesso cinque minuti di Observer puro. Lascia arrivare i pensieri, e dai loro un nome senza fretta. Ogni volta che arriva un pensiero, qualsiasi tipo, usa il ciclo completo. Inspira: osservi il pensiero. Nomini: Passato, Futuro o Giudizio. Espiri: immagina che esca, come una nuvola che passa.",
-   "id": "be1a09ed9d46"
-  },
-  {
-   "type": "sil",
-   "sec": 3.0
-  },
-  {
-   "type": "text",
-   "tag": "meditative",
-   "text": "Il ciclo è un appoggio, non una regola. Se i pensieri arrivano più veloci, nominali e torna al respiro quando puoi.",
-   "key": "[meditative] Il ciclo è un appoggio, non una regola. Se i pensieri arrivano più veloci, nominali e torna al respiro quando puoi.",
-   "id": "5eeb9c319113"
+   "text": "Adesso cinque minuti di Observer. Respira normale, al tuo ritmo: il respiro va per conto suo, non devi farlo coincidere con i pensieri.",
+   "key": "[meditative] Adesso cinque minuti di Observer. Respira normale, al tuo ritmo: il respiro va per conto suo, non devi farlo coincidere con i pensieri.",
+   "id": "317cc4b973b1"
   },
   {
    "type": "sil",
@@ -2572,9 +2583,31 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Se un pensiero non se ne va, va bene. Non deve sparire. Se torna, lo nomini di nuovo, e resti sul respiro.",
-   "key": "[meditative] Se un pensiero non se ne va, va bene. Non deve sparire. Se torna, lo nomini di nuovo, e resti sul respiro.",
-   "id": "8d4f262c0b28"
+   "text": "Quando ti accorgi di un pensiero, di qualsiasi tipo, gli dai un nome: Passato, Futuro o Giudizio. O «pensiero», se non sei sicuro. E torni al respiro.",
+   "key": "[meditative] Quando ti accorgi di un pensiero, di qualsiasi tipo, gli dai un nome: Passato, Futuro o Giudizio. O «pensiero», se non sei sicuro. E torni al respiro.",
+   "id": "c145e6f4e5e7"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se ti aiuta, puoi immaginare che passi come una nuvola. Non è obbligatorio.",
+   "key": "[meditative] Se ti aiuta, puoi immaginare che passi come una nuvola. Non è obbligatorio.",
+   "id": "bff26bc8d519"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Se un pensiero non se ne va, va bene: non deve sparire. Se torna, lo nomini di nuovo, e torni al respiro.",
+   "key": "[meditative] Se un pensiero non se ne va, va bene: non deve sparire. Se torna, lo nomini di nuovo, e torni al respiro.",
+   "id": "7235e565d6e8"
   },
   {
    "type": "sil",
@@ -2594,9 +2627,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Inspira, osservi. Nomini. Espiri, e lo lasci uscire.",
-   "key": "[meditative] Inspira, osservi. Nomini. Espiri, e lo lasci uscire.",
-   "id": "e0ea2977682c"
+   "text": "Un pensiero, un nome. E torni al respiro.",
+   "key": "[meditative] Un pensiero, un nome. E torni al respiro.",
+   "id": "567cd26eb7fa"
   },
   {
    "type": "sil",
@@ -2605,9 +2638,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Se è arrivato qualcosa di simile al giudizio che hai scritto ieri, guardalo con la stessa attenzione. Non devi risolverlo. Solo vederlo, e lasciarlo andare.",
-   "key": "[meditative] Se è arrivato qualcosa di simile al giudizio che hai scritto ieri, guardalo con la stessa attenzione. Non devi risolverlo. Solo vederlo, e lasciarlo andare.",
-   "id": "8ab8b00f1bb6"
+   "text": "Se ieri hai scritto un giudizio ed emerge qualcosa di simile, fai lo stesso: il nome, e torni al respiro. Non devi risolverlo.",
+   "key": "[meditative] Se ieri hai scritto un giudizio ed emerge qualcosa di simile, fai lo stesso: il nome, e torni al respiro. Non devi risolverlo.",
+   "id": "626d8140bab9"
   },
   {
    "type": "sil",
@@ -2616,9 +2649,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Non c'è fretta. Un pensiero, un nome, un'espirazione.",
-   "key": "[meditative] Non c'è fretta. Un pensiero, un nome, un'espirazione.",
-   "id": "3e2342e83603"
+   "text": "Non c'è fretta. Il respiro va per conto suo.",
+   "key": "[meditative] Non c'è fretta. Il respiro va per conto suo.",
+   "id": "7dceaa6426b0"
   },
   {
    "type": "sil",
@@ -2671,9 +2704,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Adesso metti in pausa e scrivi nell'app i tre pensieri che sono tornati più spesso. Per ognuno: che tipo era, e in quale momento del gioco ti arriva di solito. Se sono meno di tre, scrivi quelli che hai. Non giudicarli. Solo mettili in fila.",
-   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app i tre pensieri che sono tornati più spesso. Per ognuno: che tipo era, e in quale momento del gioco ti arriva di solito. Se sono meno di tre, scrivi quelli che hai. Non giudicarli. Solo mettili in fila.",
-   "id": "354616d5d0ed"
+   "text": "Adesso metti in pausa e scrivi nell'app fino a tre pensieri che ricordi di questi cinque minuti, ognuno con il suo nome: Passato, Futuro, Giudizio, o «pensiero». Se lo sai, aggiungi in quale momento del gioco ti arrivano di solito. Se ne ricordi meno di tre, o nessuno, scrivi quello che c'è. Non giudicarli: mettili solo in fila.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app fino a tre pensieri che ricordi di questi cinque minuti, ognuno con il suo nome: Passato, Futuro, Giudizio, o «pensiero». Se lo sai, aggiungi in quale momento del gioco ti arrivano di solito. Se ne ricordi meno di tre, o nessuno, scrivi quello che c'è. Non giudicarli: mettili solo in fila.",
+   "id": "37c0c6c9e9c4"
   }
  ],
  "W2-G6": [
@@ -2834,9 +2867,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso rimani due minuti in silenzio. Se arriva un pensiero negativo, nominalo. Se se ne va, bene. Se resta, va bene lo stesso. Se arriva un pensiero tipo «dovrei avere meno pensieri negativi», nominalo anche quello. È giudizio.",
-   "key": "[meditative] Adesso rimani due minuti in silenzio. Se arriva un pensiero negativo, nominalo. Se se ne va, bene. Se resta, va bene lo stesso. Se arriva un pensiero tipo «dovrei avere meno pensieri negativi», nominalo anche quello. È giudizio.",
-   "id": "84767b6c1eb4"
+   "text": "Adesso rimani due minuti in silenzio. Se noti un pensiero, gli dai un nome e torni al respiro. Se se ne va, bene. Se resta, va bene lo stesso.",
+   "key": "[meditative] Adesso rimani due minuti in silenzio. Se noti un pensiero, gli dai un nome e torni al respiro. Se se ne va, bene. Se resta, va bene lo stesso.",
+   "id": "e506100cce15"
   },
   {
    "type": "sil",
@@ -2845,9 +2878,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "L'Observer è neutro. Non valuta. Non corregge. Solo osserva.",
-   "key": "[meditative] L'Observer è neutro. Non valuta. Non corregge. Solo osserva.",
-   "id": "c6c9abea4872"
+   "text": "Se arriva un pensiero tipo «dovrei avere meno pensieri negativi», nominalo anche quello. È giudizio.",
+   "key": "[meditative] Se arriva un pensiero tipo «dovrei avere meno pensieri negativi», nominalo anche quello. È giudizio.",
+   "id": "6ec93519a220"
   },
   {
    "type": "sil",
@@ -2878,9 +2911,9 @@
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Più pensieri vedi, più l'Observer sta lavorando. Non stai peggiorando. Stai guardando meglio.",
-   "key": "[sincere] Più pensieri vedi, più l'Observer sta lavorando. Non stai peggiorando. Stai guardando meglio.",
-   "id": "081ea9c04e9c"
+   "text": "Non devi decidere se hai pensato bene o male. Dai il nome, e torni al respiro.",
+   "key": "[sincere] Non devi decidere se hai pensato bene o male. Dai il nome, e torni al respiro.",
+   "id": "27b90a1cac8e"
   },
   {
    "type": "sil",
@@ -2889,9 +2922,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre osservavi i tuoi pensieri, questa settimana? Succede a tutti, e anche accorgersene è Observer.",
-   "key": "[relaxed] Metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre osservavi i tuoi pensieri, questa settimana? Succede a tutti, e anche accorgersene è Observer.",
-   "id": "e89f70bd50a7"
+   "text": "Adesso metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre stavi osservando i tuoi pensieri, questa settimana? Succede spesso, e anche accorgersene è Observer.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre stavi osservando i tuoi pensieri, questa settimana? Succede spesso, e anche accorgersene è Observer.",
+   "id": "8757f8e75d66"
   }
  ]
 }

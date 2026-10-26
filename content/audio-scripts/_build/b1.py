@@ -3,7 +3,7 @@
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
 import os
-OUT="/mnt/user-data/outputs/audio/v2"
+OUT=os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))
 
 RESET3 = """Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
 [SILENZIO 4]
@@ -305,11 +305,11 @@ F["W2-G1"] = f"""[sincere]
 Hai il Reset. Da oggi ci aggiungiamo gli occhi.
 [SILENZIO 2]
 [relaxed]
-Ti faccio un esempio mio. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione. Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva, e se la palla non mi arriva non posso sbagliarla.
+Ti faccio un esempio mio, così capisci di cosa parliamo. Giocando, una volta mi sono accorto di una cosa proprio mentre stava succedendo: evitavo di muovermi per mettermi a disposizione. Non era stanchezza, era paura di sbagliare. Se non mi muovo, la palla non mi arriva, e se la palla non mi arriva non posso sbagliarla.
 [SILENZIO 1]
 Un piano perfetto, a parte un dettaglio: così la palla non la tocchi mai. E il calcio senza palla si chiama corsa campestre.
 [SILENZIO 2]
-Quel giorno l'ho visto mentre lo stavo facendo. E da lì ho cominciato ad accorgermene sempre più spesso, e piano piano ho smesso di nascondermi.
+Quel giorno l'ho visto mentre lo stavo facendo. Ed è stato l'inizio di tutto: da lì ho cominciato ad accorgermene sempre più spesso, e piano piano ho smesso di nascondermi.
 [SILENZIO 2]
 [sincere]
 Il punto non è avere pensieri, quelli li abbiamo tutti. È che ci credi senza nemmeno accorgerti che stanno passando.
@@ -323,14 +323,14 @@ Reset completo: respiro, gesto, mantra. Tre respiri.
 [SILENZIO 2]
 {RESET3}
 [SILENZIO 3]
-Adesso resta fermo. Due minuti. Non fare niente.
-I pensieri arriveranno. Non fermarli. Prova solo a dare un nome a ognuno, con una parola sola.
+Adesso resta seduto due minuti. In questi due minuti fai una cosa sola: quando ti accorgi di un pensiero, gli dai un nome e torni al respiro.
+I pensieri arriveranno. Non fermarli. I nomi sono tre.
 Passato: ho sbagliato quel tiro ieri. Futuro: e se domenica gioco male. Giudizio: sono scarso, il mister non mi stima.
-Lo nomini. Poi lo lasci andare, e torni al respiro.
+Una parola sola, e torni al respiro.
 [SILENZIO 40]
-Un pensiero arriva. Gli dai il nome. Torni al respiro. Se non sai che nome dargli, va bene «pensiero».
+Se non sai che nome dargli, va bene «pensiero». Non è un quiz.
 [SILENZIO 40]
-Se il pensiero resta, va bene lo stesso. Non deve sparire. L'hai visto, gli hai dato un nome, e torni al respiro.
+Se il pensiero resta, va bene lo stesso. Non deve sparire: l'hai visto, gli hai dato un nome, e torni al respiro.
 [SILENZIO 34]
 Bene. Torna qui.
 [SILENZIO 2]
@@ -338,16 +338,17 @@ Bene. Torna qui.
 Non doveva sparire niente. Dovevi solo vederlo.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app: quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio. Se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.
+Adesso metti in pausa e scrivi nell'app: durante i due minuti di Observer, quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio. Se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.
 """
 
 F["W2-G2"] = f"""[relaxed]
-Finale di Coppa Italia di Serie D, contro il Monopoli. Primo tempo, sbaglio un passaggio semplice.
+Finale di Coppa Italia di Serie D, contro il Monopoli.
+[SILENZIO 1]
+Primo tempo, sbaglio un passaggio semplice. Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo, non mi lasciavo più andare: facevo solo giocate semplici, quelle sicure.
 [SILENZIO 2]
-Da lì ho iniziato a rimuginarci sopra, e praticamente sono sparito dalla partita. Non ero più lucido, avevo paura di sbagliare di nuovo: facevo solo giocate semplici, quelle sicure.
 Finché prendiamo gol, perché mi ero perso l'inserimento di un esterno. Partita persa.
 [SILENZIO 2]
-Tutto era partito da quel passaggio sbagliato nel primo tempo. E io non me ne ero nemmeno accorto.
+Tutto era partito da quel passaggio sbagliato nel primo tempo, e io non me ne ero nemmeno accorto.
 [SILENZIO 2]
 [sincere]
 Il pilota automatico spesso funziona così: sbagli un passaggio, parte «sono scarso», le gambe si fanno pesanti, e il pallone dopo è già compromesso. Tutto in pochi secondi, senza che tu decida niente.
@@ -359,24 +360,26 @@ Oggi torni in un momento in cui sei andato in automatico, e ci metti gli occhi.
 [meditative]
 {ARRIVO}
 [SILENZIO 3]
-Adesso porta alla mente un momento recente in cui hai perso la testa in campo. Non il peggiore. Uno recente, che riesci a guardare.
+Adesso porta alla mente un momento recente in cui sei rimasto attaccato a un pensiero e hai seguito meno il gioco. Non il peggiore: uno recente, che riesci a guardare.
 [SILENZIO 5]
-Rivivi quella scena. Il campo davanti a te, le voci intorno, quello che stavi pensando. Trenta secondi. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+Rivivi quella scena per trenta secondi. Il campo davanti a te, le voci intorno, quello che stavi pensando. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
 [SILENZIO 30]
-Fermati. E osserva.
+Adesso smetti di immaginare, e rispondi. Una domanda alla volta.
 [SILENZIO 2]
-Che tipo di pensiero era? Passato, Futuro o Giudizio?
+Cosa ti ricordi di esserti detto?
+[SILENZIO 10]
+Che nome gli dai? Passato, Futuro o Giudizio. Se non sei sicuro, «pensiero».
 [SILENZIO 10]
 Lo sapevi che stava succedendo, in quel momento?
 [SILENZIO 10]
-Adesso Reset. Torna qui.
+Ora fai il Reset. Torna qui.
 [SILENZIO 2]
 {RESET3}
 [SILENZIO 3]
-Sei qui. Non in quella partita.
+Bene. Torna qui.
 [SILENZIO 2]
 [relaxed]
-Metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?
+Adesso metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?
 """
 
 F["W2-G3"] = f"""[sincere]
@@ -385,30 +388,29 @@ Dei tre tipi di pensiero, il giudizio è quello che fa meno rumore.
 Non arriva sempre come una frase chiara. A volte è solo una sensazione addosso, di quelle che non sapresti nemmeno spiegare.
 [SILENZIO 2]
 [relaxed]
-Il mio, per anni, è stato questo: non me lo merito. Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo niente.
+Il mio, per anni, è stato questo: non me lo merito.
+[SILENZIO 2]
+Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo niente.
 [SILENZIO 2]
 [sincere]
 Oggi non ti dico cosa cercare. Ti chiedo solo di portare qui quello che c'è già.
+[SILENZIO 2]
+Prima di iniziare, una cosa sola. Se prima della pratica hai scritto una frase, oggi lavori su quella. Se non hai scritto niente, lavori su quello che arriva da solo.
 [SILENZIO 3]
 [meditative]
 {ARRIVO}
 [SILENZIO 3]
-Se prima della pratica hai scritto un pensiero o un giudizio, riprendilo adesso. Tienilo in mente, senza fare niente. Trenta secondi.
-Se non hai scritto niente, resta in ascolto. Non cercare niente. Guarda quali pensieri arrivano da soli.
+Adesso riprendi la tua frase, oppure aspetta il primo pensiero che arriva.
+[SILENZIO 5]
+Tienilo presente per trenta secondi, senza discuterlo. Non devi capire se è vero o falso.
 [SILENZIO 30]
-Adesso guardalo con l'Observer.
-[SILENZIO 2]
-È un giudizio su di te? Su qualcun altro? Sulla situazione?
-[SILENZIO 10]
-Si sente come un fatto, o come un pensiero?
-[SILENZIO 10]
-Se sono arrivati altri pensieri, dai un nome a ognuno. Passato, Futuro, o Giudizio.
+Dagli un nome. Se è un giudizio, «giudizio». Se è un altro tipo, il suo nome. Se non sei sicuro, «pensiero».
 [SILENZIO 8]
-Espira lentamente. Immagina che esca, come una nuvola che passa.
+E torna al respiro.
 [SILENZIO 6]
-Se resta lì, va bene lo stesso. Non deve sparire. L'hai visto, e oggi basta questo.
+Se resta lì, va bene lo stesso: non deve sparire. L'hai visto, e oggi basta questo.
 [SILENZIO 3]
-Adesso rimani ancora un minuto in silenzio. Se arriva qualcosa, gli dai il nome e lo lasci passare.
+Adesso rimani ancora un minuto in silenzio. Se arriva qualcosa, gli dai il nome e torni al respiro.
 [SILENZIO 30]
 Ancora mezzo minuto. Solo guardare.
 [SILENZIO 27]
@@ -418,7 +420,7 @@ Bene. Torna qui.
 Riconoscere il pensiero è già il primo passo. Non per eliminarlo, ma per smettere di lasciare che guidi lui.
 [SILENZIO 2]
 [relaxed]
-Metti in pausa e scrivi nell'app: sei riuscito a guardarlo un po' da fuori, come una cosa che passa? Oppure è rimasto uguale? O è uscito qualcos'altro? Qualsiasi risposta va bene, se è vera.
+Adesso metti in pausa e scrivi nell'app: com'è stato? Cosa hai notato mentre lo tenevi presente? Per esempio: l'hai guardato un po' da fuori, è rimasto pesante uguale, o è venuto fuori qualcos'altro. Qualsiasi risposta va bene, se è vera.
 """
 
 F["W2-G4"] = f"""[sincere]
@@ -432,21 +434,21 @@ Oggi li guardi mentre si muovono, e provi a lasciarli passare, uno per uno. Se q
 [meditative]
 {ARRIVO}
 [SILENZIO 3]
-Adesso cinque minuti di Observer puro. Lascia arrivare i pensieri, e dai loro un nome senza fretta.
-Ogni volta che arriva un pensiero, qualsiasi tipo, usa il ciclo completo.
-Inspira: osservi il pensiero. Nomini: Passato, Futuro o Giudizio. Espiri: immagina che esca, come una nuvola che passa.
-[SILENZIO 3]
-Il ciclo è un appoggio, non una regola. Se i pensieri arrivano più veloci, nominali e torna al respiro quando puoi.
+Adesso cinque minuti di Observer. Respira normale, al tuo ritmo: il respiro va per conto suo, non devi farlo coincidere con i pensieri.
 [SILENZIO 2]
-Se un pensiero non se ne va, va bene. Non deve sparire. Se torna, lo nomini di nuovo, e resti sul respiro.
+Quando ti accorgi di un pensiero, di qualsiasi tipo, gli dai un nome: Passato, Futuro o Giudizio. O «pensiero», se non sei sicuro. E torni al respiro.
+[SILENZIO 2]
+Se ti aiuta, puoi immaginare che passi come una nuvola. Non è obbligatorio.
+[SILENZIO 2]
+Se un pensiero non se ne va, va bene: non deve sparire. Se torna, lo nomini di nuovo, e torni al respiro.
 [SILENZIO 2]
 Vai.
 [SILENZIO 48]
-Inspira, osservi. Nomini. Espiri, e lo lasci uscire.
+Un pensiero, un nome. E torni al respiro.
 [SILENZIO 45]
-Se è arrivato qualcosa di simile al giudizio che hai scritto ieri, guardalo con la stessa attenzione. Non devi risolverlo. Solo vederlo, e lasciarlo andare.
+Se ieri hai scritto un giudizio ed emerge qualcosa di simile, fai lo stesso: il nome, e torni al respiro. Non devi risolverlo.
 [SILENZIO 48]
-Non c'è fretta. Un pensiero, un nome, un'espirazione.
+Non c'è fretta. Il respiro va per conto suo.
 [SILENZIO 45]
 Se la testa è andata via, va bene. Te ne sei accorto: è già Observer. Torna al respiro.
 [SILENZIO 48]
@@ -457,8 +459,7 @@ Bene. Torna qui.
 Senti come stai adesso, dopo cinque minuti a guardare.
 [SILENZIO 5]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app i tre pensieri che sono tornati più spesso. Per ognuno: che tipo era, e in quale momento del gioco ti arriva di solito.
-Se sono meno di tre, scrivi quelli che hai. Non giudicarli. Solo mettili in fila.
+Adesso metti in pausa e scrivi nell'app fino a tre pensieri che ricordi di questi cinque minuti, ognuno con il suo nome: Passato, Futuro, Giudizio, o «pensiero». Se lo sai, aggiungi in quale momento del gioco ti arrivano di solito. Se ne ricordi meno di tre, o nessuno, scrivi quello che c'è. Non giudicarli: mettili solo in fila.
 """
 
 F["W2-G6"] = f"""[sincere]
@@ -472,20 +473,19 @@ Oggi ti fermi un attimo e guardi cosa hai messo insieme.
 {ARRIVO}
 [SILENZIO 3]
 Adesso rimani due minuti in silenzio.
-Se arriva un pensiero negativo, nominalo. Se se ne va, bene. Se resta, va bene lo stesso.
-Se arriva un pensiero tipo «dovrei avere meno pensieri negativi», nominalo anche quello. È giudizio.
+Se noti un pensiero, gli dai un nome e torni al respiro. Se se ne va, bene. Se resta, va bene lo stesso.
 [SILENZIO 40]
-L'Observer è neutro. Non valuta. Non corregge. Solo osserva.
+Se arriva un pensiero tipo «dovrei avere meno pensieri negativi», nominalo anche quello. È giudizio.
 [SILENZIO 40]
 Sì, anche giudicarti perché ti giudichi è giudizio. La testa è furba, ma dopo un po' la riconosci. Dagli il nome, e torna al respiro.
 [SILENZIO 34]
 Bene. Torna qui.
 [SILENZIO 2]
 [sincere]
-Più pensieri vedi, più l'Observer sta lavorando. Non stai peggiorando. Stai guardando meglio.
+Non devi decidere se hai pensato bene o male. Dai il nome, e torni al respiro.
 [SILENZIO 2]
 [relaxed]
-Metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre osservavi i tuoi pensieri, questa settimana? Succede a tutti, e anche accorgersene è Observer.
+Adesso metti in pausa e scrivi nell'app: ti è capitato di giudicarti mentre stavi osservando i tuoi pensieri, questa settimana? Succede spesso, e anche accorgersene è Observer.
 """
 
 for k,v in F.items():

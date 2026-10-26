@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Audio delle pratiche: W1 online, W2 generato e online
+- Ste: "carica W1 su Supabase, poi settimana 2". I cinque MP3 di W1 montati il 25/10 (voce ElevenLabs "Stef", `eleven_v4`, tre registri, silenzi esatti; branch `claude/funny-ptolemy-9djoc8`, ora fuso qui) sono nel bucket `practice-audio` come `W1-G<n>-v2.mp3` e collegati nel campo `Audio Pratica` di W1 G1 G2 G3 G4 G6; `Durata Minuti` di W1-G1 da 3 a 4 (l'audio dura 3:25). I vecchi `W1-G<n>.mp3` (voce vecchia, "Chin Mudra") restano nello storage ma non sono più usati.
+- W2: i copioni del 23/10 sono stati riscritti sui testi che Ste ha rivisto il 25/10 (G1 G2 G3 G4 G6: domande una alla volta in G2, "lavori sulla frase che hai scritto" in G3, via il ciclo inspira-nomina-espira in G4, "non devi decidere se hai pensato bene o male" in G6), 62 segmenti generati (~7.700 crediti, 1,70 dollari) più 14 dalla cache, montati con `assemble3.py`, normalizzati a -17 LUFS, caricati e collegati; `Durata Minuti` allineata all'audio (G1 6, G2 6, G3 6, G4 9, G6 5). Ste deve ancora ascoltarli.
+- Pipeline: percorsi relativi al repo (`b1.py`, `chunks3.py`, `check3.py`, `assemble3.py`), `fetch3.py` trova da solo i risultati di stato della sessione, `upload_supabase.py` firma per la regione `us-east-1` (quella del progetto: con `eu-central-1` Supabase rifiuta). Gli MP3 definitivi non stanno più in git. Il README di `content/audio-scripts/` è aggiornato con lo stato al 26/10.
+
 ## 2026-10-25 — Focus rifatto con ElevenLabs
 - Ste: "rifai anche il focus". Il loop Focus (`public/audio/focus-meditation.mp3`) è un drone ambient profondo e calmo generato con ElevenLabs (quattro prese da 30" in modalità loop) e montato con ffmpeg come il bosco: loop di 1'44", dissolvenze di 4", la fine riattacca sullo stesso punto della prima presa, mono 64 kbps, ~830 KB, volume allineato a Natura. Via i toni con tremolo di ffmpeg. Nessuna modifica al codice.
 

@@ -15,7 +15,7 @@ import requests
 PROJECT = "njmgkatdpberwhltgbmd"
 BUCKET = "practice-audio"
 HOST = f"{PROJECT}.supabase.co"
-REGION = "eu-central-1"
+REGION = "us-east-1"
 PUBLIC = f"https://{HOST}/storage/v1/object/public/{BUCKET}/"
 
 def exists(name: str) -> bool:

@@ -29,21 +29,21 @@ Espira, e lascia andare.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 3]
-Adesso cinque minuti di Observer puro. Lascia arrivare i pensieri, e dai loro un nome senza fretta.
-Ogni volta che arriva un pensiero, qualsiasi tipo, usa il ciclo completo.
-Inspira: osservi il pensiero. Nomini: Passato, Futuro o Giudizio. Espiri: immagina che esca, come una nuvola che passa.
-[SILENZIO 3]
-Il ciclo è un appoggio, non una regola. Se i pensieri arrivano più veloci, nominali e torna al respiro quando puoi.
+Adesso cinque minuti di Observer. Respira normale, al tuo ritmo: il respiro va per conto suo, non devi farlo coincidere con i pensieri.
 [SILENZIO 2]
-Se un pensiero non se ne va, va bene. Non deve sparire. Se torna, lo nomini di nuovo, e resti sul respiro.
+Quando ti accorgi di un pensiero, di qualsiasi tipo, gli dai un nome: Passato, Futuro o Giudizio. O «pensiero», se non sei sicuro. E torni al respiro.
+[SILENZIO 2]
+Se ti aiuta, puoi immaginare che passi come una nuvola. Non è obbligatorio.
+[SILENZIO 2]
+Se un pensiero non se ne va, va bene: non deve sparire. Se torna, lo nomini di nuovo, e torni al respiro.
 [SILENZIO 2]
 Vai.
 [SILENZIO 48]
-Inspira, osservi. Nomini. Espiri, e lo lasci uscire.
+Un pensiero, un nome. E torni al respiro.
 [SILENZIO 45]
-Se è arrivato qualcosa di simile al giudizio che hai scritto ieri, guardalo con la stessa attenzione. Non devi risolverlo. Solo vederlo, e lasciarlo andare.
+Se ieri hai scritto un giudizio ed emerge qualcosa di simile, fai lo stesso: il nome, e torni al respiro. Non devi risolverlo.
 [SILENZIO 48]
-Non c'è fretta. Un pensiero, un nome, un'espirazione.
+Non c'è fretta. Il respiro va per conto suo.
 [SILENZIO 45]
 Se la testa è andata via, va bene. Te ne sei accorto: è già Observer. Torna al respiro.
 [SILENZIO 48]
@@ -54,5 +54,4 @@ Bene. Torna qui.
 Senti come stai adesso, dopo cinque minuti a guardare.
 [SILENZIO 5]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app i tre pensieri che sono tornati più spesso. Per ognuno: che tipo era, e in quale momento del gioco ti arriva di solito.
-Se sono meno di tre, scrivi quelli che hai. Non giudicarli. Solo mettili in fila.
+Adesso metti in pausa e scrivi nell'app fino a tre pensieri che ricordi di questi cinque minuti, ognuno con il suo nome: Passato, Futuro, Giudizio, o «pensiero». Se lo sai, aggiungi in quale momento del gioco ti arrivano di solito. Se ne ricordi meno di tre, o nessuno, scrivi quello che c'è. Non giudicarli: mettili solo in fila.
