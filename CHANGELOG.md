@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Audio delle pratiche: W8 scritto, generato e online
+- Ste: "vai w8". Quattro copioni (W8 G1 G2 G3 G4; G5 giornata, G6 e G7 senza audio come da revisione) in `content/audio-scripts/_build/b1.py` dai testi Notion: il termometro del dopo partita in G1, la storia di Kobe Bryant e il fatto e la storia su quanto vali in G2, la porta di casa nei due sensi in G3, il Rilascio in cinque passi in G4. 81 segmenti ElevenLabs (~12.100 crediti, 2,65 dollari); montati, -17 LUFS, caricati nel bucket `practice-audio` come `W8-G<n>.mp3` e collegati nel campo `Audio Pratica`. `Durata Minuti`: G1 5→6, G2 5→7, G3 5, G4 12→10. Ste deve ancora ascoltare W2-W8.
+
 ## 2026-10-26 — Audio delle pratiche: W7 scritto, generato e online
 - Ste: "vai w7". Tre copioni (W7 G3 G4 G6 breve; G1 G2 G5 senza audio come da revisione, G7 è il Gate) in `content/audio-scripts/_build/b1.py` dai testi Notion: i due modi vecchi e il terzo modo con la scena di rabbia, Senti / Nomina / Reset / prossima azione in G3; l'Anticipo in G4 con la storia della gomitata, il pompiere, la frase «quando, allora» e tre fastidi piccoli (il primo guidato, gli altri con i soli richiami); in G6 la rabbia verso se stessi e la differenza tra cosa hai sentito e cosa hai fatto. 62 segmenti ElevenLabs (~9.300 crediti, 2 dollari); montati, -17 LUFS, caricati nel bucket `practice-audio` come `W7-G<n>.mp3` e collegati nel campo `Audio Pratica`. `Durata Minuti`: G3 6→7, G4 12→9, G6 6→5. Ste deve ancora ascoltare W2-W7.
 

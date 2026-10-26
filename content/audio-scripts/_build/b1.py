@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1-W7. Formato:
+# Copioni v3 (registri per riga) per W1-W8. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -1626,6 +1626,217 @@ Se ti smuove più del previsto, fermati e fai un Reset. E se ti va, parlane con 
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app, nel tuo episodio: cosa hai sentito, e cosa hai fatto? Una riga per ciascuno. Se non riesci a separarli, o se oggi è solo «non lo so», va bene quello.
+"""
+
+# ---------- W8: il dopo partita, il Rilascio (audio G1, G2 breve, G3, G4) ----------
+F["W8-G1"] = f"""[sincere]
+Lunedì dopo una vittoria: cammini diverso, parli con tutti, il mondo va bene. Lunedì dopo una sconfitta: muso lungo, non ti va niente, rispondi male a casa.
+[SILENZIO 2]
+Stesso te, due lunedì.
+[SILENZIO 2]
+[relaxed]
+Ci sono passato anch'io. Quando una partita andava male me la prendevo tantissimo, e quella rabbia restava anche nei giorni dopo.
+[SILENZIO 1]
+E attenzione, non c'è niente di male: non devi essere contento di perdere. Il problema è un altro, e ci ho messo un po' a capirlo.
+[SILENZIO 1]
+Quando una sconfitta mi portava a rispondere male a mia mamma, a sparire, a non voler uscire, a passare una serata senza parlare con la mia ragazza, allora stavo portando nella mia vita una cosa che doveva restare in campo.
+[SILENZIO 2]
+[sincere]
+Oggi non devi cambiare niente. Solo guardare quanto dura, e fin dove arriva.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Prima un minuto di presenza pura, niente da capire. Senti i piedi appoggiati, i suoni intorno, il punto sotto lo sterno che si muove col respiro.
+[SILENZIO 30]
+Solo essere qui.
+[SILENZIO 25]
+Adesso il termometro. Torna all'ultima partita andata male, o all'ultimo allenamento in cui non ti veniva niente. Non alla partita: a quello che è venuto dopo.
+[SILENZIO 8]
+Quanto è durato? Un'ora, una serata, tre giorni?
+[SILENZIO 10]
+E adesso guarda fin dove è arrivato. Solo il viaggio di ritorno, o anche la cena a casa? Il sonno? Il giorno dopo, il lunedì al lavoro?
+[SILENZIO 8]
+L'uscita con gli amici a cui non avevi più voglia di andare, il tempo con la tua famiglia? Magari qualcuno se n'è accorto e te l'ha detto.
+[SILENZIO 10]
+Non c'è niente da rimproverarsi: succede a tanti che ci tengono davvero. Serve solo per vedere una cosa: quanto una partita si allarga su tutto il resto della tua settimana.
+[SILENZIO 5]
+Non cambiare niente, non sistemare niente. Oggi lo guardi e basta.
+[SILENZIO 6]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Da questa settimana l'àncora è questa: quando ti accorgi che sei rimasto incastrato nella partita, il replay che gira o un giudizio su di te, fai un Reset. Se sei in campo e si sta giocando, aspetta la prima pausa. E nota cosa ti stai dicendo su di te. Se è solo un ricordo che passa, lascialo passare.
+[SILENZIO 2]
+Se guardare quanto dipendi dal risultato ti smuove più del previsto, va bene. Fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: cosa hai notato? In una riga, fin dove è arrivata l'ultima partita storta: la serata, il sonno, il lavoro, le persone. Va bene anche «non è arrivata da nessuna parte».
+"""
+
+F["W8-G2"] = f"""[relaxed]
+A diciotto anni, al primo anno in NBA, Kobe Bryant in una partita di playoff tirò quattro palloni, nel finale e ai supplementari, che non sfiorarono nemmeno il ferro. La sua squadra venne eliminata. Cosa fece? Tornò in palestra a tirare.
+[SILENZIO 2]
+E lui odiava perdere. Il senso di una cosa che diceva era più o meno questo: se vinci, bene. Se perdi, fa schifo. Ma in tutti e due i casi il giorno dopo ti svegli e devi rifare tutto il lavoro da capo.
+[SILENZIO 2]
+Quel modo di vedere mi ha fatto capire una cosa che da solo non vedevo. Che tenermi addosso la sconfitta per giorni mi faceva male due volte.
+[SILENZIO 1]
+La prima: rovinavo serate e giornate intere, e rischiavo di rovinare i rapporti con le persone a cui volevo bene. Gente che con quella partita non c'entrava niente.
+[SILENZIO 1]
+La seconda, ed è quella che da calciatore mi ha colpito di più: scaricavo la rabbia della partita su cose e persone che non c'entravano. Invece di portarla dove mi serviva davvero, cioè nel prossimo allenamento: tenermi la lezione e ripresentarmi con la testa libera.
+[SILENZIO 2]
+Ti dico anche la cosa che mi bloccava, perché forse la senti anche tu. Avevo paura di passare per quello a cui non gliene frega niente, davanti ai compagni. E allora restavo di muso lungo per giorni, quasi a dimostrare che ci tenevo.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Torna alla tua ultima partita storta. Se non ne hai una recente, prendi un allenamento andato male.
+[SILENZIO 10]
+Il fatto e la storia li conosci dalla sesta settimana. Oggi cambia l'oggetto: non il giudizio degli altri, ma quello che ti dici tu su quanto vali.
+[SILENZIO 2]
+Il fatto, il risultato. Cosa è successo davvero? Il punteggio, l'errore, la panchina, e, se qualcuno te l'ha detto, il posto che rischi. Sono cose vere, e a volte hanno conseguenze vere. Non serve far finta di no.
+[SILENZIO 10]
+La storia, il giudizio su di te. Cosa ti sei detto su quanto vali? «Non sono capace», «non valgo niente», «non sono da questa categoria». Se non ti sei detto niente del genere, va bene lo stesso.
+[SILENZIO 10]
+Guardali uno accanto all'altro, senza commentare.
+[SILENZIO 6]
+Una partita può cambiare tante cose: la classifica, il tuo posto, la tua settimana. Chiediti solo se ha cambiato anche quanto vali come persona.
+[SILENZIO 10]
+Un esempio: «ho giocato male» è un fatto, e posso guardare cosa migliorare. Ma questo non dice quanto valgo come persona.
+[SILENZIO 3]
+Quanto ci tieni non si misura da quante ore resti arrabbiato. Si misura da come ti ripresenti all'allenamento dopo.
+[SILENZIO 4]
+Poi fai un respiro e stacca lo sguardo dal punto.
+[SILENZIO 8]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Ricorda l'àncora: quando ti accorgi che sei rimasto incastrato nella partita, il replay che gira o un giudizio su di te, fai un Reset. E nota cosa ti stai dicendo su di te.
+[SILENZIO 2]
+Alla prossima partita o allenamento, prima di entrare: un Reset, e una frase dentro di te. «Qualunque cosa succeda oggi, io sono più del risultato di oggi.» Una volta sola. Poi gioca.
+[SILENZIO 2]
+Se guardare cosa ti raccontavi su quanto vali ti smuove più del previsto, va bene. Fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: cosa hai notato? Da una parte il risultato, con le sue conseguenze vere. Dall'altra cosa ti sei detto su quanto vali. Una riga. Va bene anche «per me sono ancora la stessa cosa».
+"""
+
+F["W8-G3"] = f"""[sincere]
+C'è una porta che attraversi ogni volta che vai al campo, e ogni volta che torni.
+[SILENZIO 2]
+Esci e vai al campo. Torni dal campo ed entri in casa.
+[SILENZIO 2]
+Sembra che le due cose restino separate, ognuna per conto suo. Non è così, e oggi lo vedi da vicino.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Due giorni fa hai guardato fin dove arrivava il dopo partita. Oggi guardi anche l'altro senso: cosa porti da casa al campo.
+[SILENZIO 3]
+Prima, la porta verso casa. Torna all'ultima volta che sei rientrato dopo una partita andata storta. Non serve ricostruire tutto: prendi quello che ti viene.
+[SILENZIO 6]
+Con chi hai parlato, o con chi non hai parlato. Cosa hai fatto, o cosa non ti è più andato di fare. Qualcosa che avevi in programma e hai rimandato.
+[SILENZIO 10]
+Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 4]
+Resta lì un attimo. Di quello che avevi addosso in quel momento, cosa riconosci come legato alla partita? Magari tanto, magari poco, magari niente.
+[SILENZIO 10]
+Adesso la stessa porta, nell'altro senso. Una volta in cui sei uscito già storto, magari dopo una discussione, una giornata storta al lavoro, un brutto voto, un pensiero che ti girava, e sei arrivato al campo con quello addosso.
+[SILENZIO 6]
+Anche qui, prendi quello che ti viene: com'era il riscaldamento, il primo pallone, come parlavi coi compagni. Se non ti viene niente, va bene.
+[SILENZIO 10]
+Guarda le due scene vicine.
+[SILENZIO 6]
+Cambia la direzione, ma chi attraversa la porta è uno solo, e porta con sé quello che ha. Quello che succede in novanta minuti può tingere una serata, ma riguarda una parte di te, non tutto.
+[SILENZIO 5]
+Oggi niente da cambiare. Solo guardarlo.
+[SILENZIO 6]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Ricorda l'àncora: quando ti accorgi che sei rimasto incastrato nella partita, il replay che gira o un giudizio su di te, fai un Reset. E nota cosa ti stai dicendo su di te.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: quale passaggio hai riconosciuto? Dal campo a casa, da casa al campo, tutti e due, o nessuno? Una riga.
+"""
+
+F["W8-G4"] = f"""[sincere]
+Due modi di scendere in campo. Uno: ti porti dietro l'ultima partita, l'errore, la sconfitta, il giudizio, come uno zaino sulle spalle. L'altro: lasci quel peso fuori dalle linee, ed entri leggero.
+[SILENZIO 2]
+Oggi impari a posarlo. È il tuo strumento nuovo, e si chiama Il Rilascio. Lo userai dopo ogni partita, e prima della successiva.
+[SILENZIO 2]
+Oggi, in circa dieci minuti, cinque passi. Arrivare. Un peso vero, se c'è. Il Body Check. Il Rilascio, due volte. E cosa c'è adesso, prima di entrare in campo.
+[SILENZIO 3]
+[meditative]
+Uno. Arrivare.
+[SILENZIO 1]
+Trova un posto tranquillo, dove nessuno ti interrompe per una decina di minuti. Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.
+[SILENZIO 2]
+Reset.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+Poi un minuto solo presente: i piedi che appoggiano, i suoni intorno, il respiro che va e viene.
+[SILENZIO 30]
+Niente da fare. Oggi impari l'ultimo strumento di questo blocco, e conviene arrivarci con calma.
+[SILENZIO 25]
+Se in qualunque momento qualcosa pesa più del previsto, fermati, fai un Reset, appoggia i piedi a terra, e se ti va parlane con il Coach.
+[SILENZIO 3]
+Due. Un peso vero, se c'è.
+[SILENZIO 1]
+Immagina di stare per entrare in campo. Guarda se ti porti dietro qualcosa: l'ultima partita andata male, un errore, quello che ti hanno detto dopo, una giornata storta.
+[SILENZIO 10]
+Se c'è, tienilo un attimo.
+[SILENZIO 6]
+Se non c'è niente, va bene: oggi provi solo il gesto, così quando servirà lo conosci già. Se la scena non ti viene, raccontala a te stesso a parole.
+[SILENZIO 4]
+Tre. Body Check. Come stai? Non aggiustare niente, guarda solo cosa c'è.
+[SILENZIO 2]
+{bodycheck(6)}
+Se non senti niente di chiaro, va bene: «niente di chiaro» è una risposta.
+[SILENZIO 3]
+Quattro. Il Rilascio.
+[SILENZIO 1]
+Fermati sul bordo del campo, prima della linea. Immagina quel peso come uno zaino sulle spalle, con dentro quello che c'è davvero: l'errore, il risultato, la frase che ti è rimasta.
+[SILENZIO 6]
+Lo zaino è immaginato: non devi sentire le bretelle. Se l'immagine non ti viene, basta dirti dentro «lo poso qui».
+[SILENZIO 3]
+Adesso il gesto, imparalo bene.
+[SILENZIO 2]
+Inspira dal naso, piano, riempiendo la pancia.
+[SILENZIO 4]
+Poi espira dalla bocca, comoda, un po' più lunga dell'inspirazione. Senza forzare. E mentre l'aria esce, lascia scendere le spalle e posa lo zaino a terra, appena fuori dalla linea.
+[SILENZIO 7]
+Non lo butti, non lo nascondi: lo posi. Resta lì, dove lo puoi ritrovare.
+[SILENZIO 4]
+Fallo ancora una volta. Inspira dal naso.
+[SILENZIO 4]
+Espira dalla bocca, con calma, spalle che scendono, zaino che si posa.
+[SILENZIO 7]
+E una cosa importante: quello che quella partita ti ha insegnato, invece, lo tieni. È tuo, e non pesa. Posi il peso, non la lezione.
+[SILENZIO 4]
+Cinque. Cosa c'è adesso.
+[SILENZIO 1]
+Rifai il Body Check, con calma.
+[SILENZIO 2]
+{bodycheck(6)}
+Non cercare di sentirti in un certo modo. Le spalle le hai abbassate tu, quindi guarda anche l'altra cosa: il peso che sentivi, com'è adesso?
+[SILENZIO 8]
+Uguale, meno, diverso, non sai: va bene tutto, è un dato.
+[SILENZIO 3]
+Poi entra in campo. Immagina il primo pallone: lo ricevi, alzi la testa, giochi.
+[SILENZIO 10]
+Nota com'è.
+[SILENZIO 6]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Questo è il Rilascio: un respiro lungo, le spalle che scendono, il peso posato oltre la linea. Da oggi è tuo.
+[SILENZIO 2]
+E da oggi cambia anche la tua àncora. Prima di entrare in campo, allenamento o partita, fermati un attimo sulla linea. Guarda se hai qualcosa sulle spalle: l'ultima partita, una giornata storta, un pensiero che ti sei portato da casa. Se c'è, un respiro lungo e lo posi lì fuori. Se non c'è niente, entri e basta.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: dopo il Rilascio, cosa hai notato? Nel corpo, spalle e respiro, e nel peso che sentivi: possono essere diversi. Una riga. Anche «uguale» o «non so» vanno bene.
 """
 
 for k,v in F.items():
