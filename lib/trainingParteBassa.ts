@@ -27,7 +27,8 @@ import { esercizioV2ById, type LivelloMinV2 } from './trainingCatalogV2';
 import type { Blocco, BloccoItem } from './trainingBlocks';
 import { gradinoSopra } from './trainingParteAlta';
 import { distrettoEsercizio } from './trainingSquilibri';
-import { doseEmomDifficolta, EMOM_DIFFICOLTA_MAX, ESECUZIONE_LABEL, type StatoEsecuzione } from './trainingEsecuzione';
+import { doseEmomDifficolta, EMOM_DIFFICOLTA_MAX, EMOM_DIFFICOLTA_REPS, ESECUZIONE_LABEL, KB_PESO_MIN, kbComponenteEmom, type StatoEsecuzione } from './trainingEsecuzione';
+import { isEsercizioKettlebell, KB_PASSO_KG } from './trainingDose';
 
 export const PB_SERIE_ID = 'pb-serie';
 export const PB_SERIE_SHORT_ID = 'pb-serie-short';
@@ -167,7 +168,7 @@ function blocco(id: string, nome: string, items: BloccoItem[], o: OpzioniParteBa
     const q: keyof Blocco['qualitaSet'] = eid === A_SKIP_ID || eid.startsWith('skip-') ? 'fascia-prevenzione'
       : eid.startsWith('fesp-') ? 'forza-esplosiva' : 'forza-parte-bassa';
     qualitaSet[q] = (qualitaSet[q] ?? 0) + it.serie;
-    if (it.carico_kg) attrezzatura.add('palestra');
+    if (it.carico_kg) attrezzatura.add(isEsercizioKettlebell(eid) ? 'kettlebell' : 'palestra');
   }
   return {
     id, nome, nomeEverfit: nome, famiglia: FAMIGLIA_PARTE_BASSA, qualita: 'forza-parte-bassa', qualitaSet,
@@ -248,12 +249,30 @@ export function costruisciParteBassa(results: TestResultRow[], o: OpzioniParteBa
   const emomAree: AreaGambe[] = ['squat', 'affondi', altraPosteriore(postUsata)];
   // Punto 18: una catena con un esercizio in difficoltà entra nell'EMOM anche se non era tra le tre (la posteriore a serie)
   for (const s of difficili) { const a = esercizioById(s.esercizioId)?.area as AreaGambe | undefined; if (a && (['squat', 'affondi', 'rdl', 'bridge'] as string[]).includes(a) && !emomAree.includes(a)) emomAree.push(a); }
+  // Kettlebell in seduta dedicata (Ste, 26/10 sera: "nell'EMOM se necessario, considerando che l'EMOM allena più
+  // componenti"): swing, clean e snatch prendono il posto della stazione della catena posteriore (stessa componente,
+  // l'anca), il goblet squat quello dello squat; uno solo, 3 ripetizioni, un kettlebell sotto quello di partenza.
+  const kbDiff = difficili.find((x) => kbComponenteEmom(x.esercizioId));
+  const kbArea: AreaGambe | null = kbDiff ? (kbComponenteEmom(kbDiff.esercizioId) === 'squat' ? 'squat' : altraPosteriore(postUsata)) : null;
+  let kbMesso = false;
+  const kbItem = (s: StatoEsecuzione): BloccoItem | null => {
+    const ex = esercizioV2ById(s.esercizioId);
+    const kg = Math.max(KB_PESO_MIN, (ex?.pesoKg ?? 12) - KB_PASSO_KG);
+    const componente = kbComponenteEmom(s.esercizioId) === 'squat' ? 'dello squat' : 'della catena posteriore: allena la stessa cosa, l\'anca';
+    return v2Item(s.esercizioId, 0, EMOM_DIFFICOLTA_REPS, 0,
+      `Kettlebell, seduta dedicata: l'ultima volta hai detto "${ESECUZIONE_LABEL[s.ultima]}". ${EMOM_DIFFICOLTA_REPS} ripetizioni pulite con il kettlebell da ${kg} kg, al posto della stazione ${componente}. Poi riposi fino allo scadere del minuto: dopo due EMOM "ok" si torna a salire.`,
+      { schema: 'emom', emomGruppo: PB_EMOM_ID, carico_kg: kg });
+  };
   for (const area of emomAree) {
     const l = sc.get(area) ?? null;
     const diff = difficili.map((x) => ({ s: x, ex: esercizioById(x.esercizioId) })).find((x) => x.ex?.area === area);
     if (diff?.ex) {
       stazioni.push(v1Item(diff.ex, 0, doseEmomDifficolta(diff.ex.unita), diff.ex.unita === 'secondi' ? 'secondi' : 'reps', 0, notaDifficolta(diff.s), { schema: 'emom', emomGruppo: PB_EMOM_ID }));
       continue;
+    }
+    if (kbDiff && area === kbArea && !kbMesso) {
+      const it = kbItem(kbDiff);
+      if (it) { stazioni.push(it); kbMesso = true; continue; }
     }
     let e = gradinoSopra(l, area);
     if (!e) continue;
@@ -272,6 +291,8 @@ export function costruisciParteBassa(results: TestResultRow[], o: OpzioniParteBa
     const it = v2Item(s.esercizioId, 0, doseEmomDifficolta(ex.unita), 0, notaDifficolta(s), { schema: 'emom', emomGruppo: PB_EMOM_ID });
     if (it) { stazioni.push(it); extra++; }
   }
+  // Il posto della sua componente era già preso da un esercizio in difficoltà delle scale: il kettlebell come stazione in più
+  if (kbDiff && !kbMesso && extra < EMOM_DIFFICOLTA_MAX) { const it = kbItem(kbDiff); if (it) { stazioni.push(it); extra++; kbMesso = true; } }
   if (stazioni.length >= 2) {
     if (o.pliometria) {
       for (const id of SALTI_PB) {

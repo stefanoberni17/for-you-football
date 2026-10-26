@@ -4,8 +4,12 @@
  *
  * "Tecnica dobbiamo fare in modo di costruirla senza prendere i workout già pronti." Le regole di Ste:
  *  - QUOTE circa MENSILI: 25 % palleggi, 25 % controllo/passaggi, 15 % freestyle, 15 % visione, 10 % dribbling, 10 % tiri.
- *    Una seduta = UN tema ("focalizzerei la seduta su una cosa in particolare, non farei mix"): il server conta le
- *    sedute di tecnica per tema nelle ultime QUOTE_SETTIMANE (4) e dà alla prossima il tema più indietro sulla sua quota.
+ *    Una seduta = un tema ("focalizzerei la seduta su una cosa in particolare, non farei mix su tutto"): il server conta
+ *    le sedute di tecnica per tema nelle ultime QUOTE_SETTIMANE (4) e dà alla prossima il tema più indietro sulla quota.
+ *    A VOLTE due temi si combinano (Ste, 26/10 sera: "non è obbligatorio un tema per seduta, si possono combinare anche
+ *    un po' a volte"): quando due temi tra palleggi, passaggi, visione e dribbling sono indietro insieme e la seduta ha
+ *    tempo, il server costruisce `te-mix-<primo>-<secondo>` (soprattutto il primo, poi un po' del secondo) che conta
+ *    due terzi di seduta per il primo e un terzo per il secondo.
  *    Tiri e dribbling sono le parti faticose: non superano la quota se non su richiesta e scendono per primi con la fatica.
  *  - ASSE PARTITA: subito dopo una partita giocata molto (+1; anche +2 con fatica alta) solo palleggi, passaggi vicini e
  *    controllo; il giorno prima "proprio poca roba" (`te-leggera`: al massimo 10 tiri, un dribbling corto, palleggi e
@@ -48,12 +52,40 @@ export const TE_PREFIX = 'te-';
 export const TE_LEGGERA_ID = 'te-leggera';        // il giorno prima della partita: poca roba, facoltativa
 export const teId = (t: TemaTecnica) => `${TE_PREFIX}${t}`;
 export const isTecnicaComposta = (id: string) => id.startsWith(TE_PREFIX);
-export const temaDiId = (id: string): TemaTecnica | null => (TEMI as readonly string[]).includes(id.slice(TE_PREFIX.length)) && isTecnicaComposta(id) ? (id.slice(TE_PREFIX.length) as TemaTecnica) : null;
+/** I temi di un blocco `te-*`: uno per `te-<tema>`, due per `te-mix-<primo>-<secondo>` (il primo per primo); [] altrimenti. */
+export function temiDiId(id: string): TemaTecnica[] {
+  if (!isTecnicaComposta(id)) return [];
+  if (isTecnicaMix(id)) {
+    const [a, b] = id.slice(MIX_PREFIX.length).split('-') as TemaTecnica[];
+    return (TEMI as readonly string[]).includes(a) && (TEMI as readonly string[]).includes(b) && a !== b ? [a, b] : [];
+  }
+  const t = id.slice(TE_PREFIX.length);
+  return (TEMI as readonly string[]).includes(t) ? [t as TemaTecnica] : [];
+}
+/** Il tema PRINCIPALE di un blocco `te-*` (per la seduta combinata il primo). */
+export const temaDiId = (id: string): TemaTecnica | null => temiDiId(id)[0] ?? null;
+/** Quanto pesa ogni tema di un blocco nel conteggio delle quote: 1 per un tema, 2/3 e 1/3 per la seduta combinata. */
+export function pesiDiId(id: string): [TemaTecnica, number][] {
+  const t = temiDiId(id);
+  return t.length === 2 ? [[t[0], 1 - MIX_PESO_SECONDO], [t[1], MIX_PESO_SECONDO]] : t.map((x) => [x, 1]);
+}
 export const RISCALDAMENTO_TRAVERSA_ID = 'ttir-riscaldamento-traversa';
 export const TIRI_MAX_GIORNO_PRIMA = 10;          // Ste: "se giorno prima partita proprio poca roba, max 10 tiri"
 export const LEGGERA_MINUTI = 22;
 export const ESERCIZIO_MIN_SEC = 120;             // "qualche minuto": mai sotto i 2'
 export const ESERCIZIO_MAX_SEC = 480;             // mai oltre gli 8'
+/** Tecnica combinata (Ste, 26/10 sera): solo questi temi si combinano; tiri e freestyle hanno già dentro gli altri. */
+export const TEMI_COMBINABILI: readonly TemaTecnica[] = ['palleggi', 'passaggi', 'visione', 'dribbling'];
+export const MIX_PREFIX = 'te-mix-';
+/** Il secondo tema conta un terzo di seduta, il primo due terzi. */
+export const MIX_PESO_SECONDO = 1 / 3;
+/** Si combina solo con almeno 40' di seduta e con il secondo tema indietro di almeno mezza seduta sulla quota. */
+export const MIX_MINUTI_MIN = 40;
+export const MIX_DEFICIT_MIN = 0.5;
+/** Esercizi del secondo tema dentro la seduta combinata ("un po'"). */
+export const MIX_PEZZI_SECONDO = 2;
+export const mixId = (primo: TemaTecnica, secondo: TemaTecnica) => `${MIX_PREFIX}${primo}-${secondo}`;
+export const isTecnicaMix = (id: string) => id.startsWith(MIX_PREFIX);
 export const NOTA_VISIONE = 'Leggero: concentrati sulla tecnica, cambi di ritmo a scelta tua ma mai in affanno. Pochi minuti e recupera bene.';
 
 /** Il tema di un blocco: `te-*` dall\'id, un workout Everfit dalla famiglia (freestyle) o dalla qualità. */
@@ -79,7 +111,8 @@ const conteggiVuoti = (): Conteggi => ({ palleggi: 0, passaggi: 0, freestyle: 0,
 
 /**
  * Sedute di tecnica per tema nelle ultime `settimane` settimane (fino a oggi, compresa quella in corso): ogni seduta
- * conta una volta per ogni tema dei suoi blocchi (un `te-*` = un tema; un workout Everfit misto conta i suoi).
+ * conta una volta per ogni tema dei suoi blocchi (un `te-*` = un tema; un workout Everfit misto conta i suoi); la seduta
+ * combinata `te-mix-*` conta 2/3 per il primo tema e 1/3 per il secondo (i conteggi possono avere i decimali).
  */
 export function contaTemi(feedback: readonly FeedbackPerMemoria[], lunediCorrente: string, settimane = QUOTE_SETTIMANE, lookup: (id: string) => Pick<Blocco, 'id' | 'qualita' | 'famiglia'> | undefined = (id) => bloccoById(id)): Conteggi {
   const da = new Date(`${lunediCorrente}T00:00:00Z`); da.setUTCDate(da.getUTCDate() - 7 * (settimane - 1));
@@ -87,12 +120,13 @@ export function contaTemi(feedback: readonly FeedbackPerMemoria[], lunediCorrent
   const out = conteggiVuoti();
   for (const f of feedback) {
     if (!f.feedback_blocchi?.length || dataRoma(f.completed_at) < daYmd) continue;
-    const temi = new Set<TemaTecnica>();
+    const temi = new Map<TemaTecnica, number>();
     for (const fb of f.feedback_blocchi) {
-      const t = temaDiId(fb.id) ?? (fb.id === TE_LEGGERA_ID ? null : (() => { const b = lookup(fb.id); return b ? temaDiBlocco(b) : null; })());
-      if (t) temi.add(t);
+      const pesi: [TemaTecnica, number][] = isTecnicaComposta(fb.id) ? pesiDiId(fb.id)
+        : fb.id === TE_LEGGERA_ID ? [] : (() => { const b = lookup(fb.id); const t = b ? temaDiBlocco(b) : null; return t ? [[t, 1] as [TemaTecnica, number]] : []; })();
+      for (const [t, w] of pesi) temi.set(t, Math.max(temi.get(t) ?? 0, w));
     }
-    for (const t of temi) out[t]++;
+    for (const [t, w] of temi) out[t] = Math.round((out[t] + w) * 100) / 100;
   }
   return out;
 }
@@ -146,8 +180,20 @@ export function temaProssimo(conteggi: Conteggi, o: { ammessi: readonly TemaTecn
   if (!candidati.length) return { tema: null, deficit, ordine, motivo: 'nessun tema ammesso' };
   let tema = candidati[0];
   if (tema === o.ultimo) { const altro = candidati.find((t) => t !== o.ultimo && deficit[t] > 0); if (altro) tema = altro; }
-  const motivo = deficit[tema] > 0 ? `${TEMA_LABEL[tema]}: la parte più indietro sulla quota del mese (${Math.round(QUOTE_TECNICA[tema] * 100)} %, fatta ${conteggi[tema]} volte su ${totale - 1} sedute)` : `${TEMA_LABEL[tema]}: a rotazione`;
+  const motivo = deficit[tema] > 0 ? `${TEMA_LABEL[tema]}: la parte più indietro sulla quota del mese (${Math.round(QUOTE_TECNICA[tema] * 100)} %, fatta ${fmtVolte(conteggi[tema])} volte su ${fmtVolte(totale - 1)} sedute)` : `${TEMA_LABEL[tema]}: a rotazione`;
   return { tema, deficit, ordine, motivo };
+}
+
+/**
+ * A volte due temi si combinano (Ste, 26/10 sera): il primo è il tema scelto (se combinabile), il secondo il prossimo
+ * combinabile nell'ordine per deficit, indietro di almeno MIX_DEFICIT_MIN sedute; serve una seduta di almeno
+ * MIX_MINUTI_MIN minuti. Altrimenti null: la seduta resta su un tema solo.
+ */
+export function sceltaMix(scelta: SceltaTema, minuti: number): { primo: TemaTecnica; secondo: TemaTecnica } | null {
+  if (minuti < MIX_MINUTI_MIN || !scelta.tema || !TEMI_COMBINABILI.includes(scelta.tema)) return null;
+  const primo = scelta.tema;
+  const secondo = scelta.ordine.find((t) => t !== primo && TEMI_COMBINABILI.includes(t) && scelta.deficit[t] >= MIX_DEFICIT_MIN);
+  return secondo ? { primo, secondo } : null;
 }
 
 // ─── Composizione ────────────────────────────────────────────────────────────
@@ -160,9 +206,11 @@ export interface OpzioniTecnica {
   posPalleggi?: number;          // posizione nella scala palleggi (0 = B1 … 6 = A4); senza: dal livello
   posMuro?: number;              // posizione nella scala muro (0 = base … 5 = A3 due tocchi); senza: dal livello
   leggera?: boolean;             // costruire anche `te-leggera` (tecnica tra gli obiettivi)
+  mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null; // la seduta combinata di questa settimana (`sceltaMix`)
 }
 
-type Ruolo = 'apertura' | 'analitico' | 'principale' | 'chiusura';
+/** 'secondo' = gli esercizi del secondo tema nella seduta combinata: `adattaAlTempo` non li toglie. */
+type Ruolo = 'apertura' | 'analitico' | 'principale' | 'chiusura' | 'secondo';
 interface Pezzo { id: string; serie?: number; q: number; u?: BloccoItem['unita']; r?: number; ruolo?: Ruolo; nota?: string; muro?: boolean }
 
 const min = (id: string, q: number, extra: Partial<Pezzo> = {}): Pezzo => ({ id, q, u: 'minuti', r: 60, ruolo: 'analitico', ...extra });
@@ -303,21 +351,32 @@ export function adattaAlTempo(items: BloccoItem[], ruoli: Ruolo[], minuti: numbe
   return out;
 }
 
-function blocco(id: string, nome: string, tema: TemaTecnica | 'leggera', pezzi: Pezzo[], o: OpzioniTecnica, descrizione: string, minuti: number, extra: Partial<Blocco> = {}): Blocco | null {
+/** Senza muro: i passaggi in coppia o a 10 m, gli esercizi al muro con la loro alternativa (o fuori). */
+function adattaMuro(tema: TemaTecnica | 'leggera', pezzi: Pezzo[], o: OpzioniTecnica): Pezzo[] {
   const muro = o.attrezzatura.includes('muro');
-  const coppia = o.inCoppia;
-  let lista = pezzi;
-  if (!muro && tema === 'passaggi') lista = coppia ? PASSAGGI_COPPIA : PASSAGGI_SENZA_MURO;
-  const adattati: Pezzo[] = [];
+  const lista = !muro && tema === 'passaggi' ? (o.inCoppia ? PASSAGGI_COPPIA : PASSAGGI_SENZA_MURO) : pezzi;
+  const out: Pezzo[] = [];
   for (const p of lista) {
-    if (p.muro && !muro) { const alt = SENZA_MURO[p.id]; if (!alt) continue; adattati.push({ ...p, id: alt, muro: false }); }
-    else adattati.push(p);
+    if (p.muro && !muro) { const alt = SENZA_MURO[p.id]; if (!alt) continue; out.push({ ...p, id: alt, muro: false }); }
+    else out.push(p);
   }
-  // Senza muro due pezzi possono finire sullo stesso esercizio: resta il primo, con i minuti di tutti e due
+  return out;
+}
+
+/** Due pezzi sullo stesso esercizio: resta il primo, con i minuti di tutti e due. */
+function senzaDoppioni(lista: Pezzo[]): Pezzo[] {
+  const adattati = [...lista];
   for (let i = adattati.length - 1; i > 0; i--) {
     const j = adattati.findIndex((x, k) => k < i && x.id === adattati[i].id);
     if (j >= 0) { if (adattati[j].u !== 'reps' && adattati[i].u !== 'reps') adattati[j] = { ...adattati[j], q: adattati[j].q + adattati[i].q }; adattati.splice(i, 1); }
   }
+  return adattati;
+}
+
+function blocco(id: string, nome: string, tema: TemaTecnica | 'leggera', pezzi: Pezzo[], o: OpzioniTecnica, descrizione: string, minuti: number, extra: Partial<Blocco> = {}, giaAdattati = false): Blocco | null {
+  const muro = o.attrezzatura.includes('muro');
+  const coppia = o.inCoppia;
+  const adattati = senzaDoppioni(giaAdattati ? pezzi : adattaMuro(tema, pezzi, o));
   const items: BloccoItem[] = []; const ruoli: Ruolo[] = [];
   for (const p of adattati) { const it = item(p); if (it) { items.push(it); ruoli.push(p.ruolo ?? 'analitico'); } }
   if (items.length < 2) return null;
@@ -333,6 +392,30 @@ function blocco(id: string, nome: string, tema: TemaTecnica | 'leggera', pezzi: 
   };
 }
 
+/**
+ * La seduta combinata (Ste, 26/10 sera: "si possono combinare anche un po' a volte"): soprattutto il primo tema (i suoi
+ * primi esercizi, circa tre quinti), poi MIX_PEZZI_SECONDO esercizi del secondo, in chiusura la chiusura del primo.
+ * Gli esercizi del secondo tema restano anche quando il tempo stringe (`adattaAlTempo` toglie prima quelli del primo).
+ */
+function bloccoMix(primo: TemaTecnica, secondo: TemaTecnica, pezziDi: (t: TemaTecnica) => Pezzo[], o: OpzioniTecnica, minuti: number): Blocco | null {
+  const p1 = adattaMuro(primo, pezziDi(primo), o);
+  const corpo = p1.filter((p) => p.ruolo !== 'chiusura');
+  const tenuti = corpo.filter((p) => p.ruolo === 'apertura');
+  const analitici = corpo.filter((p) => p.ruolo !== 'apertura');
+  const n = Math.max(2, Math.ceil(analitici.length * 0.6));
+  const ids = new Set([...tenuti, ...analitici.slice(0, n)].map((p) => p.id));
+  const dalSecondo = adattaMuro(secondo, pezziDi(secondo), o)
+    .filter((p) => (p.ruolo === 'analitico' || p.ruolo === 'principale') && !ids.has(p.id))
+    .slice(0, MIX_PEZZI_SECONDO).map((p) => ({ ...p, ruolo: 'secondo' as const }));
+  if (!dalSecondo.length) return null;
+  const pezzi = [...tenuti, ...analitici.slice(0, n), ...dalSecondo, ...p1.filter((p) => p.ruolo === 'chiusura')];
+  const muro = o.attrezzatura.includes('muro');
+  const b = blocco(mixId(primo, secondo), `Tecnica: ${TEMA_LABEL[primo]} e un po' di ${TEMA_LABEL[secondo]}`, primo, pezzi, o,
+    `Soprattutto ${TEMA_LABEL[primo]}, poi un po' di ${TEMA_LABEL[secondo]}: questo mese sono indietro tutte e due.`, minuti,
+    { qualita: QUALITA_TEMA[primo], tags: ['tecnica', 'composta', 'mix', primo, secondo], inCoppia: !muro && o.inCoppia && (primo === 'passaggi' || secondo === 'passaggi') }, true);
+  return b && b.items.some((it) => dalSecondo.some((p) => p.id === it.esercizio_id)) ? b : null;
+}
+
 const posDefault = (livello: LivelloMinV2, scala: 'palleggi' | 'muro') => (livello === 'B' ? 0 : scala === 'palleggi' ? 3 : 1);
 
 /** I blocchi `te-*` per questo atleta: uno per tema (al suo livello e sul suo codice di scala) più `te-leggera` se chiesta. */
@@ -342,6 +425,8 @@ export function costruisciTecnica(o: OpzioniTecnica): Blocco[] {
   const minuti = Math.max(20, o.minuti);
   const posP = o.posPalleggi ?? posDefault(liv, 'palleggi');
   const posM = o.posMuro ?? posDefault(liv, 'muro');
+  const pezziDi = (t: TemaTecnica): Pezzo[] => t === 'palleggi' ? pezziPalleggi(posP) : t === 'passaggi' ? pezziPassaggi(posM) : t === 'freestyle' ? pezziFreestyle(liv)
+    : t === 'visione' ? pezziVisione(liv) : t === 'dribbling' ? pezziDribbling(liv) : pezziTiro(liv);
   const out: (Blocco | null)[] = [
     blocco(teId('palleggi'), 'Tecnica: palleggi', 'palleggi', pezziPalleggi(posP), o, `Palleggi sul tuo codice della scala (${posP + 1}ª tappa): esercizi analitici, poi freestyle in chiusura.`, minuti),
     blocco(teId('passaggi'), 'Tecnica: controllo e passaggi', 'passaggi', pezziPassaggi(posM), o, `Controllo e passaggi sul tuo codice della scala muro (${posM + 1}ª tappa): analitici, poi libero in chiusura.`, minuti),
@@ -349,6 +434,7 @@ export function costruisciTecnica(o: OpzioniTecnica): Blocco[] {
     blocco(teId('visione'), 'Tecnica: visione', 'visione', pezziVisione(liv), o, 'Visione e reattività con il video dei segnali: leggero, sulla tecnica, mai in affanno.', minuti),
     blocco(teId('dribbling'), 'Tecnica: dribbling', 'dribbling', pezziDribbling(liv), o, 'Dribbling: slalom e cambi di direzione, box dribbling in chiusura.', minuti),
     blocco(teId('tiro'), 'Tecnica: tiri', 'tiro', pezziTiro(liv), o, 'Tiri: passaggi per scaldarsi, un po\' di dribbling, riscaldamento alla traversa e poi i tiri. Poco volume.', minuti),
+    ...(o.mix && o.mix.primo !== o.mix.secondo && TEMI_COMBINABILI.includes(o.mix.primo) && TEMI_COMBINABILI.includes(o.mix.secondo) ? [bloccoMix(o.mix.primo, o.mix.secondo, pezziDi, o, minuti)] : []),
     ...(o.leggera ? [blocco(TE_LEGGERA_ID, 'Tecnica leggera (il giorno prima della partita)', 'leggera', pezziLeggera(), o, `Il giorno prima della partita: palleggi, passaggi, un dribbling corto e al massimo ${TIRI_MAX_GIORNO_PRIMA} tiri. Facoltativa.`, Math.min(minuti, LEGGERA_MINUTI), { tags: ['tecnica', 'composta', 'leggera', 'facoltativa'] })] : []),
   ];
   return out.filter((b): b is Blocco => !!b);
@@ -361,8 +447,38 @@ export function tecnicaCompostaTesto(b: Blocco): string {
 }
 
 /** Stato per il prompt e l'hub: conteggi, deficit, ordine e tema preferito. */
-export interface StatoTecnica { conteggi: Conteggi; scelta: SceltaTema; temaPreferito: TemaTecnica | null }
+export interface StatoTecnica { conteggi: Conteggi; scelta: SceltaTema; temaPreferito: TemaTecnica | null; mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null }
+/** Un conteggio con i decimali delle sedute combinate: "2", "1,7". */
+export const fmtVolte = (n: number) => (Math.round(n * 10) / 10).toString().replace('.', ',');
 export function statoTecnicaTesto(st: StatoTecnica): string {
-  const righe = TEMI.map((t) => `${TEMA_LABEL[t]} ${Math.round(QUOTE_TECNICA[t] * 100)} % (fatta ${st.conteggi[t]} volte nelle ultime ${QUOTE_SETTIMANE} settimane${st.scelta.deficit[t] > 0 ? ', indietro' : ''})`);
-  return `Quote mensili (Ste): ${righe.join(' · ')}. Tema della prossima seduta: ${st.temaPreferito ? `\`${teId(st.temaPreferito)}\` (${st.scelta.motivo})` : 'nessuno'}; ordine dei temi per deficit: ${st.scelta.ordine.map((t) => `\`${teId(t)}\``).join(' → ')}.`;
+  const righe = TEMI.map((t) => `${TEMA_LABEL[t]} ${Math.round(QUOTE_TECNICA[t] * 100)} % (fatta ${fmtVolte(st.conteggi[t])} volte nelle ultime ${QUOTE_SETTIMANE} settimane${st.scelta.deficit[t] > 0 ? ', indietro' : ''})`);
+  const mix = st.mix ? ` Questa settimana c'è anche la seduta COMBINATA \`${mixId(st.mix.primo, st.mix.secondo)}\` (soprattutto ${TEMA_LABEL[st.mix.primo]}, poi un po' di ${TEMA_LABEL[st.mix.secondo]}: sono indietro tutte e due): usala al posto di \`${teId(st.mix.primo)}\` se il giorno ammette tutte e due i temi.` : '';
+  return `Quote mensili (Ste): ${righe.join(' · ')}. Tema della prossima seduta: ${st.temaPreferito ? `\`${teId(st.temaPreferito)}\` (${st.scelta.motivo})` : 'nessuno'}; ordine dei temi per deficit: ${st.scelta.ordine.map((t) => `\`${teId(t)}\``).join(' → ')}.${mix}`;
+}
+
+/**
+ * La card "La tecnica del mese" dell'hub: per tema quanto è stato fatto sul totale delle sedute di tecnica delle ultime
+ * 4 settimane contro la quota di Ste, e il tema della prossima seduta. Null se non c'è niente da dire (nessuna seduta
+ * e la tecnica non è tra gli obiettivi).
+ */
+export interface TecnicaMese {
+  sedute: number;
+  temi: { tema: TemaTecnica; label: string; quotaPct: number; fattoPct: number; volte: string; indietro: boolean }[];
+  prossimo: string | null;
+  motivo: string;
+  combinata: string | null;
+}
+export function tecnicaDelMese(conteggi: Conteggi, scelta: SceltaTema, o: { tecnicaObiettivo: boolean; mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null }): TecnicaMese | null {
+  const totale = TEMI.reduce((a, t) => a + conteggi[t], 0);
+  if (!totale && !o.tecnicaObiettivo) return null;
+  return {
+    sedute: Math.round(totale * 10) / 10,
+    temi: TEMI.map((t) => ({
+      tema: t, label: TEMA_LABEL[t], quotaPct: Math.round(QUOTE_TECNICA[t] * 100),
+      fattoPct: totale ? Math.round((conteggi[t] / totale) * 100) : 0, volte: fmtVolte(conteggi[t]), indietro: scelta.deficit[t] > 0,
+    })),
+    prossimo: scelta.tema ? TEMA_LABEL[scelta.tema] : null,
+    motivo: scelta.tema && scelta.deficit[scelta.tema] > 0 ? 'è la parte più indietro sulla quota del mese' : 'a rotazione',
+    combinata: o.mix ? `${TEMA_LABEL[o.mix.primo]} e un po' di ${TEMA_LABEL[o.mix.secondo]}` : null,
+  };
 }

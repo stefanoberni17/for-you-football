@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Tecnica a volte combinata, card della tecnica del mese, kettlebell più pulito
+- **Tecnica combinata** (Ste: "non è obbligatorio un tema per seduta, si possono combinare anche un po' a volte"): quando due temi tra palleggi, passaggi, visione e dribbling sono indietro insieme e la seduta ha almeno 40', il server costruisce `te-mix-<primo>-<secondo>` (soprattutto il primo, poi due esercizi del secondo, la chiusura del primo). Conta 2/3 e 1/3 nelle quote, segna i due temi nella settimana, va per prima nei giorni che li ammettono. Tiri e freestyle non si combinano: hanno già dentro gli altri.
+- **Card "La tecnica del mese"** nella vista Card dell'hub: per tema la parte fatta sulle sedute di tecnica delle ultime 4 settimane contro la quota di Ste, i temi indietro, la prossima seduta e la combinata possibile (`tecnicaDelMese`, `tecnicaMese` nello state).
+- **Kettlebell che non viene pulito** (Ste: "meno peso e meno reps per allenare la tecnica finché non esce bene, poi si torna ad aumentare; nell'EMOM se necessario"): nel passo indietro un kettlebell sotto e ripetizioni ×0,7; in seduta dedicata swing, clean, snatch (e goblet squat) entrano anche nell'EMOM delle gambe al posto della stazione della stessa componente, con 3 ripetizioni e il kettlebell più leggero. Gli altri esercizi kettlebell restano nella loro seduta, più leggeri.
+- Test: `tests/trainingTecnicaCombinata.test.ts` (8), `tests/trainingKettlebellPulito.test.ts` (9); due test di `tests/trainingEsecuzione.test.ts` usano il front squat al posto del goblet squat (che ora segue la regola del kettlebell). Prompt `v2.45-tecnica-combinata-kettlebell-pulito`.
+
 ## 2026-10-26 — Salite in season, pausa tra le serie RSA, resistenza senza il campo (risposte di Ste alla #164)
 - **Salite Sprint**: non sono più "velocità pura" (Ste: più forza esplosiva), quindi passano a −2 e a +2/+3 dalla partita con la finestra del blocco; in season il server le lima a 6-12 sprint da 20-30 m con recupero completo (≥ 90"), nota nell'hub e sugli item (`limaSaliteInSeason`, `tests/trainingSalite.test.ts`); off season i blocchi di Ste restano come sono.
 - **Pausa tra le serie RSA**: esercizio nuovo `rec-pausa-tra-serie` (catalogo 336/299) da 3' tra una serie e l'altra di `re-rsa`; nel player è un timer senza voto né log.

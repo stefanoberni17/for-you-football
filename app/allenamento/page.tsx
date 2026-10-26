@@ -9,7 +9,8 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
 } from 'recharts';
-import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
+import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, CircleDot, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
+import type { TecnicaMese } from '@/lib/trainingTecnicaComposta';
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
@@ -78,6 +79,8 @@ export interface TrainingState {
   squilibri?: { righe: string[]; latoDebole: 'dx' | 'sx' | null; latoDeboleAlto?: 'dx' | 'sx' | null; pushPullDebole: 'push' | 'pull' | null; testPerLatoFatti: number };
   // Strato mese (7/10): settimane fatte per obiettivo, priorità della settimana, aspetti sempre saltati da chiedere
   mese?: { settimane: number; righe: string[]; priorita: string[]; riordinato: boolean; daChiedere: { focus: string; label: string; pianificate: number }[] } | null;
+  // La tecnica del mese (26/10 sera): quote di Ste contro le sedute di tecnica delle ultime 4 settimane
+  tecnicaMese?: TecnicaMese | null;
 }
 
 type Vista = 'oggi' | 'settimana' | 'card';
@@ -929,6 +932,35 @@ export default function AllenamentoHub() {
                   </div>
                 </div>
               ))}
+            </Card>
+          )}
+          {/* La tecnica del mese (26/10 sera): quanto è stato fatto per tema contro la quota di Ste, e cosa viene dopo */}
+          {state.tecnicaMese && (
+            <Card variant="raised" padding="sm" className="mt-3">
+              <p className="text-body-sm font-semibold text-app flex items-center gap-1.5"><CircleDot size={15} className="text-forest-400" aria-hidden /> La tecnica del mese</p>
+              <p className="text-caption text-muted mt-0.5">
+                {state.tecnicaMese.sedute > 0 ? `${String(state.tecnicaMese.sedute).replace('.', ',')} sedute di tecnica nelle ultime 4 settimane` : 'Ancora nessuna seduta di tecnica nelle ultime 4 settimane'} · la tacca è la quota del mese
+              </p>
+              <ul className="mt-2 space-y-2">
+                {state.tecnicaMese.temi.map((t) => (
+                  <li key={t.tema}>
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-body-sm text-app">{t.label.charAt(0).toUpperCase() + t.label.slice(1)}</span>
+                      <span className={`text-caption ${t.indietro ? 'text-warning' : 'text-muted'}`}>{t.volte === '0' ? 'mai' : `${t.volte} ${t.volte === '1' ? 'volta' : 'volte'}`} · quota {t.quotaPct} %</span>
+                    </div>
+                    <div className="relative h-2 mt-1 rounded-full bg-surface-2 overflow-hidden" aria-hidden>
+                      <div className="absolute inset-y-0 left-0 rounded-full bg-forest-400" style={{ width: `${Math.min(100, t.fattoPct)}%` }} />
+                      <div className="absolute inset-y-0 w-0.5 bg-text-app" style={{ left: `${t.quotaPct}%` }} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {state.tecnicaMese.prossimo && (
+                <p className="text-body-sm text-muted mt-2.5 leading-relaxed">
+                  La prossima seduta di tecnica: <span className="font-semibold text-forest-300">{state.tecnicaMese.prossimo}</span>, {state.tecnicaMese.motivo}.
+                  {state.tecnicaMese.combinata && <> Ogni tanto due parti si combinano: questa settimana può capitare {state.tecnicaMese.combinata}.</>}
+                </p>
+              )}
             </Card>
           )}
           {/* Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): il piano ne tiene conto */}

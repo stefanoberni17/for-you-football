@@ -176,7 +176,7 @@ describe('nel planner: libreria, sostituzione, asse partita, piano base', () => 
     expect(leggera.errors.filter(diTecnica)).toEqual([]);
     expect(leggera.plan.sedute[0].blocchi?.[0].nota).toMatch(/facoltativa/);
     expect(errori(c, [{ giorno: 3, blocchi: [TE_LEGGERA_ID] }]).errors.some((e) => /solo per il giorno PRIMA/.test(e))).toBe(true);
-    expect(errori(c, [{ giorno: 3, blocchi: [teId('palleggi'), teId('tiro')] }]).errors.some((e) => /UN tema/.test(e))).toBe(true);
+    expect(errori(c, [{ giorno: 3, blocchi: [teId('palleggi'), teId('tiro')] }]).errors.some((e) => /un solo blocco te-\*/.test(e))).toBe(true);
     expect(errori(c, [{ giorno: 1, blocchi: [teId('freestyle')] }, { giorno: 3, blocchi: [teId('freestyle')] }]).errors.some((e) => /già nella settimana/.test(e))).toBe(true);
   });
   it('con il resoconto di una partita giocata poco il giorno dopo è tutto sbloccato', () => {
