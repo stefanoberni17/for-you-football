@@ -100,6 +100,7 @@ for-you-football/
 │   ├── PalestraSwitch.tsx                 # Testa | Fisico (20/10): le due parti dell'app, sempre tutte e due; la parte che non hai ha il lucchetto; `palestra.parte` in localStorage
 │   ├── FisicoBloccato.tsx                 # Il Fisico per chi non ha il Campo: cos'è, settimana finta, "Mi interessa" (evento campo_interesse)
 │   ├── StatoRecente.tsx                   # "Il tuo stato" (medie dei check-in a 7 giorni), dalla home alla Carta (20/10)
+│   ├── AperturaAudio.tsx                  # L'apertura del giorno in voce (26/10): "Ascolta l'apertura" + mini-player sulla schermata dell'apertura, dal campo Notion `Audio Apertura`; la pratica resta nel PracticePopup (`Audio Pratica`)
 │   ├── RisposteChiaveBox.tsx              # "Le tue risposte" dentro un giorno di W11 (22/10): le risposte chiave che il testo richiama, chiuse di default, link a /risposte
 │   ├── RispostaGuidata.tsx                # Risposta guidata (23/10): chip + campo libero per parte (o solo testo, `tipo: 'testo'`, dal 24/10), aiuti "avevi scritto" dai giorni prima; il valore che esce è il testo composto
 │   ├── ModificaRispostaSheet.tsx          # "Modifica" / "Scrivilo adesso" di una risposta chiave (24/10): Sheet con la guida del giorno (o Textarea), POST /api/risposte; usato da RisposteChiaveBox (W11, Gate 11) e da /risposte
@@ -579,7 +580,8 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente: dal 29/9 NON più letto dall'app (la presenza di ieri si chiede nel check-in del mattino, `daily_checkin.presence_yesterday`)
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)
 - `Durata Espira` (number) — secondi espirazione (default 6 se vuoto)
-- `Audio Pratica` (url) — URL pubblico Supabase Storage del file MP3 registrato (opzionale, fallback al testo se vuoto)
+- `Audio Pratica` (url) — URL pubblico Supabase Storage del file MP3 della PRATICA (opzionale, fallback al testo se vuoto); suona nel PracticePopup. `Durata Minuti` = la sua durata arrotondata per eccesso
+- `Audio Apertura` (url, dal 26/10) — MP3 della sola apertura, suona sulla schermata dell'apertura (`components/AperturaAudio.tsx`, `mapGiorno.audioAperturaUrl`). Vuoto → nessun player. Ste, 26/10: chi legge l'apertura non deve riascoltarla nella pratica
 - `Missione Settimana` (text) — solo giorno 7: missione per la settimana successiva (mostrata post-gate, in week-complete e come banner dashboard)
 
 ### IDs Record Settimane (centralizzati in `lib/constants.ts`)
@@ -795,7 +797,7 @@ La memoria persistente del Coach si basa su:
 - Link → `/giorno/[week]/[day]`
 
 ### Contenuto Giornaliero (`app/giorno/[week]/[day]/page.tsx`)
-- **Apertura:** testo introduttivo (2-3 righe da Notion)
+- **Apertura:** testo introduttivo (2-3 righe da Notion); con `Audio Apertura` sotto il testo c'è "Ascolta l'apertura" (26/10), e l'audio della pratica comincia dal "Siediti"
 - **Domanda Pre-Pratica:** slide opzionale prima della pratica (campo testo, max 1000 char, da Notion `Domanda Pre Pratica`)
 - **Pratica:** PracticePopup con timer, animazione respirazione, step numerati
 - **Domanda:** campo testo per riflessione (opzionale, salvata in `day_reflections`)
@@ -1234,7 +1236,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [ ] Prove sera 5 (PR #83): pagamento di prova con l'email di un genitore nel campo → indirizzo richiesto da Stripe → ricevuta al genitore → "Attivazione in corso…" → home sbloccata
 - [ ] Prove sera 1: bot da un account appena collegato; `/sblocca` con id sbagliato; Vercel logs "Telegram webhook error"
 - [ ] Scrivere i 24 "Perché funziona" di W1-W4 su Notion nel campo dedicato (dal 14/9 il box in W1-W4 è vuoto: il fallback sul Contesto è stato tolto)
-- [ ] Audio delle pratiche con ElevenLabs (voce Stef, v4; `content/audio-scripts/README.md`): **W1-W8 online e collegati dal 26/10** (W1 con il canone nuovo: gesto sull'inspiro, mantra Reset / Riparto qui / Sono qui; W3 con il Body Check guidato zona per zona; W4 con i cinque passi del Protocollo Pressione detti a voce; W5 con lo Stacco sui tre errori; W6 con fatto o storia nelle due volte sotto gli occhi di tutti; W7 con l'Anticipo e la frase «quando, allora»; W8 con il Rilascio). Gli MP3 stanno su Supabase Storage, Notion ha solo il link. Ste deve ascoltare W2-W8. Poi W9-W12 una settimana alla volta (copioni → dry-run → ok → generazione → upload → Notion). Cancellare dal Dashboard i vecchi `W1-G1.mp3`…`W1-G6.mp3` quando vuole
+- [ ] Audio delle pratiche con ElevenLabs (voce Stef, v4; `content/audio-scripts/README.md`): **W1-W8 online e collegati dal 26/10** (W1 con il canone nuovo: gesto sull'inspiro, mantra Reset / Riparto qui / Sono qui; W3 con il Body Check guidato zona per zona; W4 con i cinque passi del Protocollo Pressione detti a voce; W5 con lo Stacco sui tre errori; W6 con fatto o storia nelle due volte sotto gli occhi di tutti; W7 con l'Anticipo e la frase «quando, allora»; W8 con il Rilascio). Gli MP3 stanno su Supabase Storage, Notion ha solo il link. **Dal 26/10 due audio per giorno** (apertura e pratica, `W<w>-G<g>-apertura.mp3` / `-pratica.mp3`, campi `Audio Apertura` / `Audio Pratica`): codice e pipeline pronti, i file si rifanno da W1 quando Ste finisce i ritocchi ai testi (controllo `content/audio-scripts/_build/check_notion.py`), poi si collegano su Notion DOPO il merge del codice. Ste deve ascoltare W2-W8. Poi W9-W12 una settimana alla volta (copioni → dry-run → ok → generazione → upload → Notion). Cancellare dal Dashboard i vecchi `W1-G1.mp3`…`W1-G6.mp3` quando vuole
 - [ ] Prova settimana gratis: account nuovo senza pagare → login → onboarding → home con il benvenuto del Coach → G1-G6 → al giorno 7 la schermata "Hai finito la settimana 1" → /pricing con il banner del Gate; chat Coach → "ti restano 9 messaggi", all'11° il messaggio di chiusura + "Sblocca Season 1"; chiudi e riapri l'app → la chat è ancora lì
 - [ ] Decidere se il Reset automatico deve tornare al mattino dal G4 (oggi: solo dopo il giorno completato, lettura letterale della review)
 

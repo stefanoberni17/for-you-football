@@ -11,6 +11,7 @@ import { GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
+import AperturaAudio from '@/components/AperturaAudio';
 import RispostaGuidata from '@/components/RispostaGuidata';
 import { guidaPer } from '@/lib/risposteGuidate';
 import { fraseProssimoEvento, preferenzaDallaNota, prossimoEvento, statoPartita } from '@/lib/prossimoEvento';
@@ -537,6 +538,8 @@ export default function GiornoPage() {
             <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
               {giorno.apertura}
             </p>
+            {/* L'apertura in voce (26/10): file a sé, così chi l'ha letta non la riascolta nella pratica */}
+            {giorno.audioAperturaUrl && <AperturaAudio url={giorno.audioAperturaUrl} className="mt-5" />}
           </Card>
         )}
 

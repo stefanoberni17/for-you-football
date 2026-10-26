@@ -223,6 +223,7 @@ export function mapGiorno(page: any) {
     durataEspira: num(p['Durata Espira']),
     tipoPratica: select(p['Tipo Pratica']), // respirazione | visualizzazione | riflessione | giornata
     audioUrl: urlField(p['Audio Pratica']), // URL pubblico Supabase Storage MP3 (opzionale)
+    audioAperturaUrl: urlField(p['Audio Apertura']), // dal 26/10: l'apertura in voce, suona sulla schermata dell'apertura (Audio Pratica = solo la pratica)
   };
 }
 

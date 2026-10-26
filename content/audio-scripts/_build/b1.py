@@ -132,6 +132,7 @@ Oggi inizi anche tu. E non ti chiedo di pensare: ti chiedo solo di respirare.
 [relaxed]
 Lo so, detta così sembra la cosa più inutile del mondo: respiri da quando sei nato, e finora non ti ha mai fatto segnare un gol. Dammi tre minuti lo stesso.
 [SILENZIO 2]
+[TAGLIO]
 [sincere]
 Una cosa prima di partire. La differenza in campo non la senti domani, e non ti posso dire quando arriva: per qualcuno prima, per qualcuno dopo. Adesso stai costruendo uno strumento, e conta esserci, un giorno alla volta.
 [SILENZIO 3]
@@ -161,6 +162,7 @@ Il mio gesto è nato proprio da quel problema lì. Prima delle partite vomitavo,
 [SILENZIO 2]
 Però in campo la mano sullo stomaco non la puoi tenere, no? Allora col tempo l'abbiamo cambiato, finché è diventato un gesto piccolo che potevo fare ovunque, senza che nessuno se ne accorgesse.
 [SILENZIO 2]
+[TAGLIO]
 [sincere]
 Il motivo per cui funziona è semplice: il corpo si ricorda prima della testa. A forza di ripeterlo, a un certo punto basta fare il gesto e il corpo sa già dove andare.
 [SILENZIO 3]
@@ -395,6 +397,7 @@ Arrivava dopo un errore, ma a volte anche prima, quando ancora non era successo 
 [sincere]
 Oggi non ti dico cosa cercare. Ti chiedo solo di portare qui quello che c'è già.
 [SILENZIO 2]
+[TAGLIO]
 Prima di iniziare, una cosa sola. Se prima della pratica hai scritto una frase, oggi lavori su quella. Se non hai scritto niente, lavori su quello che arriva da solo.
 [SILENZIO 3]
 [meditative]
@@ -660,6 +663,7 @@ Il Body Check non ti sposta da nessuna parte: legge. Ti dice dove sei rispetto a
 [SILENZIO 2]
 Prima leggi, poi agisci. Oggi lo metti alla prova, in tre fasi.
 [SILENZIO 2]
+[TAGLIO]
 Una cosa prima di partire: se durante la fase due qualcosa pesa più del previsto, fermati, fai un Reset, e riparti quando vuoi.
 [SILENZIO 3]
 [meditative]
@@ -936,6 +940,7 @@ La pressione che arriva da fuori c'è davvero. A volte è pesante, a volte anche
 [SILENZIO 2]
 L'Observer ti fa vedere la differenza. Il Protocollo ti aiuta a non dare il volante alla seconda, anche quando resta lì. E tu torni a giocare.
 [SILENZIO 3]
+[TAGLIO]
 [relaxed]
 Il primo giorno della settimana hai guardato una scena già passata. Oggi prendi una situazione nuova, diversa da quella. E se oggi ti capita una pressione dal vivo, in allenamento, al lavoro, a casa, puoi usare quella.
 [SILENZIO 3]
@@ -1765,6 +1770,7 @@ Due modi di scendere in campo. Uno: ti porti dietro l'ultima partita, l'errore, 
 [SILENZIO 2]
 Oggi impari a posarlo. È il tuo strumento nuovo, e si chiama Il Rilascio. Lo userai dopo ogni partita, e prima della successiva.
 [SILENZIO 2]
+[TAGLIO]
 Oggi, in circa dieci minuti, cinque passi. Arrivare. Un peso vero, se c'è. Il Body Check. Il Rilascio, due volte. E cosa c'è adesso, prima di entrare in campo.
 [SILENZIO 3]
 [meditative]
@@ -1839,6 +1845,26 @@ E da oggi cambia anche la tua àncora. Prima di entrare in campo, allenamento o 
 Adesso metti in pausa e scrivi nell'app: dopo il Rilascio, cosa hai notato? Nel corpo, spalle e respiro, e nel peso che sentivi: possono essere diversi. Una riga. Anche «uguale» o «non so» vanno bene.
 """
 
+# Dal 26/10 ogni giorno ha DUE audio: l'apertura (schermata Apertura, campo Notion "Audio Apertura")
+# e la pratica (PracticePopup, campo "Audio Pratica"). Il taglio è la riga [TAGLIO] se c'è,
+# altrimenti prima del primo [meditative]. La pratica riparte con il registro attivo al taglio;
+# i silenzi a cavallo del taglio si tolgono (ogni file comincia e finisce con la voce).
+import re as _re
+TAG = _re.compile(r"^\[(sincere|relaxed|meditative)\]$")
+SIL = _re.compile(r"^\[SILENZIO [\d.]+\]$")
+def dividi(testo):
+    righe = [l for l in testo.split("\n") if l != ""]
+    if "[TAGLIO]" in righe:
+        c = righe.index("[TAGLIO]"); ap, pr = righe[:c], righe[c+1:]
+    else:
+        c = righe.index("[meditative]"); ap, pr = righe[:c], righe[c:]
+    tag = next((l for l in reversed(ap) if TAG.match(l)), None)
+    if pr and not TAG.match(pr[0]) and tag: pr = [tag] + pr
+    while ap and (SIL.match(ap[-1]) or TAG.match(ap[-1])): ap.pop()
+    while len(pr) > 1 and SIL.match(pr[1]): pr.pop(1)
+    return "\n".join(ap) + "\n", "\n".join(pr) + "\n"
 for k,v in F.items():
-    open(f"{OUT}/{k}.txt","w",encoding="utf-8").write(v.replace("\n\n","\n"))
+    ap, pr = dividi(v.replace("\n\n","\n"))
+    open(f"{OUT}/{k}-apertura.txt","w",encoding="utf-8").write(ap)
+    open(f"{OUT}/{k}-pratica.txt","w",encoding="utf-8").write(pr)
 print("scritti", list(F))

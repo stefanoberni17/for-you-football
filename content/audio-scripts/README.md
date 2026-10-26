@@ -6,7 +6,7 @@ Documento di passaggio: una sessione nuova deve poter ripartire da qui senza alt
 
 - **Voce** ElevenLabs **"Stef"** (`5BFc1AtZZpddsxaGhkfC`, PVC registrata il 22/10), modello **`eleven_v4`**. Non "Stefano 2", non v3.
 - **Tre registri**, uno per segmento, come tag iniziale del prompt: `[sincere]` apertura e riflessioni, `[relaxed]` racconto in prima persona, battute e la chiusura "metti in pausa e scrivi nell'app", `[meditative]` tutta la parte guidata (Siediti, respiri, richiami, "Bene. Torna qui."). Niente altri tag.
-- **Apertura dentro l'audio**: la storia di Ste si legge in voce, poi la pratica. Le parti in cui il ragazzo scrive nell'app restano fuori ("metti in pausa e scrivi nell'app").
+- **Apertura in voce, in un file a sé (dal 26/10)**: la storia di Ste si legge in voce, ma in un audio separato. Ste: "uno se la legge in app e poi deve riascoltarla di nuovo"; scelta tra "due audio" e "pulsante salta introduzione": due audio. Ogni giorno ha `W<w>-G<g>-apertura.mp3` (campo Notion `Audio Apertura`, suona nella schermata dell'apertura, `components/AperturaAudio.tsx`) e `W<w>-G<g>-pratica.mp3` (campo `Audio Pratica`, suona nel PracticePopup). `Durata Minuti` = durata dell'audio della PRATICA arrotondata per eccesso. Le parti in cui il ragazzo scrive nell'app restano fuori ("metti in pausa e scrivi nell'app", nell'audio della pratica).
 - **Testi**: il copione dice ESATTAMENTE la pratica del campo `Pratica` di Notion di OGGI (stessi passi, numeri, minuti), più l'`Apertura`. Prima di ogni settimana si rileggono i testi dal DB Giorni (`collection://03a29261-ad11-4758-a657-c34b4aab56f2`): Ste li sta ancora rivedendo. Se nel testo c'è qualcosa che in audio non si può dire, non si cambia: si segnala a Ste.
 - **Silenzi** (esatti, inseriti in montaggio): dopo "Inspira…" 4 s, dopo "Espira…" 6 s, dopo "Rilascia." 2 s; tra due istruzioni 2-3 s; dopo una domanda di osservazione 8-12 s; scene e silenzi dichiarati = la durata dichiarata, spezzata da un richiamo breve ogni 30-45 s con il totale uguale; W10 con la palla: solo il ritmo (via, stop, pause).
 - **Canone del Reset**: gesto pollice-indice unito sull'inspirazione e tenuto per tutto il respiro, mantra sull'espirazione, rilascio a fine espirazione; occhi aperti su un punto fisso. Protocollo breve: "senti il tuo segnale nel corpo, dai un nome al pensiero, un respiro con gesto e mantra".
@@ -35,7 +35,12 @@ Il tempo di una settimana, misurato su W2: copioni e dry-run 20 minuti, generazi
 
 ## Come si lavora
 
-### 1. Copioni (`W<w>-G<g>.txt`)
+### 1. Copioni (`W<w>-G<g>-apertura.txt` e `-pratica.txt`)
+
+Dal 26/10 `b1.py` scrive due file per giorno. Il taglio è la riga `[TAGLIO]` nel copione, se c'è, altrimenti prima del primo `[meditative]`. Serve il `[TAGLIO]` quando prima del "Siediti" si legge una riga che su Notion sta nella Pratica (oggi W1-G1, W1-G2, W2-G3, W3-G4, W4-G5, W8-G4). L'audio della pratica riparte con il registro attivo al taglio; i silenzi a cavallo del taglio si tolgono.
+
+**Controllo contro Notion (obbligatorio prima di generare):** si salva il DB Giorni con una query MCP grande (`SELECT url, "Numero Settimana", "Numero Giorno", "Apertura", "Pratica", "Domanda", "Nota Campo", "Ha Nota Campo", "Domanda Pre Pratica", "Durata Minuti", "Audio Pratica", "Tipo Pratica" … WHERE "Numero Settimana" <= 12`: il risultato supera il limite e il sistema lo salva su file) e lo si copia in `_build/notion_snapshot.json` (chiave `W<w>-G<g>`). Poi `python3 _build/check_notion.py [W8-G1 …]`: stampa ogni frase di Notion (Apertura, Pratica, Domanda, Nota Campo) che non trova nel copione, con la frase più vicina, e le righe fuori posto rispetto al taglio (nel file dell'apertura solo frasi dell'Apertura, nel file della pratica nessuna). La formula d'arrivo ("Fai 3 Reset… naso, pancia, bocca") e i riepiloghi dei passi sono esclusi (`IGNORA`): nei copioni sono il Reset guidato e i "Uno. …". La nota campo resta scritta nell'app; in voce solo dove la pratica la richiama. `python3 _build/find_cut.py` dice dove finisce l'apertura nei copioni ancora interi.
+
 
 Formato: `[sincere]` / `[relaxed]` / `[meditative]` su una riga da sola = registro da lì in poi; `[SILENZIO N]` = silenzio di N secondi; ogni altra riga è letta; righe consecutive senza silenzio in mezzo = un solo segmento. Niente trattini lunghi, niente puntini, niente markdown, niente righe vuote. Si generano da `_build/b1.py` (W1-W2; per le settimane dopo copiarne la struttura; dal 26/10 scrive in `content/audio-scripts/`, non più in `/mnt/user-data`) e si controllano con `_build/check3.py '{"W1-G1":4,…,"W2-G6":5}'` (minuti dichiarati, TUTTI i giorni con audio: il manifest viene riscritto da zero a ogni corsa).
 
@@ -80,6 +85,6 @@ Per la Palestra (dopo il percorso) serve un campo `audioUrl` in `lib/toolsCatalo
 
 ## Cartelle
 
-- `W<w>-G<g>.txt`: i copioni. `manifest_*.tsv`: durate stimate.
+- `W<w>-G<g>-apertura.txt` e `-pratica.txt`: i copioni, scritti da `_build/b1.py` (dal 26/10; prima un file solo `W<w>-G<g>.txt`). `manifest_*.tsv`: durate stimate.
 - `_out/`: MP3 definitivi in attesa di upload (fuori da git dal 26/10: restano solo nella sessione che li ha montati; quello che conta è online e in `cache/`).
 - `_build/`: `cache/` (segmenti di voce), `plan3.json`, `todo.json`, `sessions3.tsv`, gli script `b1.py` `check3.py` `chunks3.py` `fetch3.py` `assemble3.py` `upload_supabase.py`. Temporanea: quando tutto è online si sposta fuori dal repo.
