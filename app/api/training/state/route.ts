@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadResoconti } from '@/lib/trainingResocontoServer';
 import { applicaResoconti, resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
+import { aumentiNellaSettimana } from '@/lib/trainingAumenti';
 import { giorniSquadra } from '@/lib/trainingLoad';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
@@ -137,16 +138,18 @@ export async function GET(request: NextRequest) {
 
     // Completamenti della settimana del piano corrente: su TUTTI i piani di quella settimana
     // (rigenera/modifica salvano una riga nuova, le sedute già fatte restano segnate per giorno)
-    let completions: { session_key: string; feedback: string | null }[] = [];
+    let completions: { session_key: string; feedback: string | null; rpe?: number | null }[] = [];
     let pianiQuestaSettimana = 0;
     if (lastPlan?.id) {
       const { data: piani } = await supabaseAdmin.from('training_plans').select('id')
         .eq('user_id', userId).eq('week_start', lastPlan.week_start);
       if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).length;
       const ids = (piani || []).map((p: { id: string }) => p.id);
-      const { data } = await supabaseAdmin.from('training_session_completions')
-        .select('session_key, feedback').eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
-      completions = data || [];
+      // Con il voto della seduta (migration 026): serve a M5 (aumenti in settimana); se la colonna manca, senza
+      const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols).eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
+      let res = await q('session_key, feedback, rpe');
+      if (res.error) res = await q('session_key, feedback');
+      completions = (res.data || []) as unknown as typeof completions;
     }
 
     const setup = mapSetup(setupErr ? null : setupRow);
@@ -182,8 +185,14 @@ export async function GET(request: NextRequest) {
     const matchDaysEff = giorniPartita(calendar?.match_days || [], partitaAbituale);
     const trainingDaysEff = giorniSquadra(calendar?.training_days || [], squadra);
     const fattiGiorni = new Set((completions || []).map((c: { session_key: string }) => Number(String(c.session_key).split('#')[1])).filter((n: number) => Number.isInteger(n)));
+    // M5 (26/10): gli esercizi molto leggeri in una seduta già fatta salgono di un passo nelle sedute successive della settimana
+    const votiSedute = new Map<number, number | null>();
+    for (const c of completions) { const g = Number(String(c.session_key).split('#')[1]); if (Number.isInteger(g)) votiSedute.set(g, c.rpe ?? null); }
     const planAdattato = lastPlan && lastPlan.plan && lastPlan.week_start >= mondayOfThisWeekRome()
-      ? { ...lastPlan, plan: applicaResoconti(lastPlan.plan, { weekStart: lastPlan.week_start, oggi, resoconti, squadra, fatteGiorni: fattiGiorni }).plan }
+      ? { ...lastPlan, plan: aumentiNellaSettimana(
+        applicaResoconti(lastPlan.plan, { weekStart: lastPlan.week_start, oggi, resoconti, squadra, fatteGiorni: fattiGiorni }).plan,
+        { weekStart: lastPlan.week_start, oggi, logs: logsSerie, fatteGiorni: fattiGiorni, votiSedute },
+      ).plan }
       : lastPlan;
     const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti });
 

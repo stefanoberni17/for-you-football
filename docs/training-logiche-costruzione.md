@@ -534,4 +534,16 @@ partita oltre alle isometrie~~ → decisa il 26/10 (§E7).
      serie (70' con fatica 6)". Il piano base non cambia: a +1 mette il richiamo per primo, come prima.
    - Da tarare con i dati: le percentuali sono di Ste, le soglie dei minuti (15, 45, 90) e "fatica ≤ 6" pure; la
      scelta di NON scalare i blocchi con carichi pesanti e l'EMOM è mia (prudenziale).
+3. **M5, aumenti nella settimana in corso (dopo il "vai" sulla PR #153).** `lib/trainingAumenti.ts`
+   (`aumentiNellaSettimana`, puro, 7 test): nell'ultima seduta della settimana in cui un esercizio è stato fatto, se
+   TUTTE le serie hanno un voto ≤ 4, nessuna è sotto il previsto e la seduta intera è ≤ 5 (se votata), le sedute
+   successive della stessa settimana non ancora fatte portano già un passo in più sullo stesso esercizio (`prossimaDose`
+   con SALI: +1-2 ripetizioni, +5-10", +2.5 % kg, kettlebell +4 kg, tetto +30 % sul programma; se ha fatto più del
+   previsto si riparte da quanto fatto). Applicato alla lettura dello state su una copia del piano, dopo
+   `applicaResoconti`; item con `aumento_settimana` (idempotente), `adattamento: 'sali'`, nota "↑ 9: Lunedì era molto
+   leggero (…), programma 8.", riga tra gli aggiustamenti dell'hub. Fuori: tecnica (il voto dice quanto è riuscito),
+   EMOM/AMRAP/intervalli, sedute di recupero, sedute fatte, item facoltativi "da togliere". La regola larga del lunedì
+   (2 sedute facili di fila, `lib/trainingAdapt`) non cambia. Il voto della seduta viene da
+   `training_session_completions.rpe` (select con fallback senza la colonna). Non passa dal validatore (come
+   `applicaResoconti`): il passo è dentro i tetti di `prossimaDose`.
 
