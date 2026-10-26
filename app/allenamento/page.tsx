@@ -21,6 +21,7 @@ import type { CampoOggi } from '@/lib/trainingOggi';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
+import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
 import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Sheet, Textarea } from '@/components/ui';
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
@@ -29,6 +30,8 @@ export interface PlanSession { giorno: number; titolo: string; tipo: string; dur
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
+  // Dolore per zona (M9, 26/10): zona segnalata, da quando, fino a quando resta ridotta, la riga per l'atleta
+  dolore?: { zona: string; da?: string | null; fino?: string | null; riga: string | null } | null;
   consensi?: { health_data: boolean; training_idoneita: boolean };
   fascia: string;
   gradini: Record<string, number>;
@@ -155,6 +158,8 @@ export default function AllenamentoHub() {
   const [painDurante, setPainDurante] = useState<boolean | null>(null);
   const [painSending, setPainSending] = useState(false);
   const [painMsg, setPainMsg] = useState<string | null>(null);
+  const [painZona, setPainZona] = useState<string | null>(null); // M9: dove fa male
+  const [responsabilita, setResponsabilita] = useState(false); // M9: presa di responsabilità per riprendere dalla pausa
 
   // La vista scelta resta sul dispositivo (localStorage: solo comodità, mai stato)
   useEffect(() => {
@@ -279,29 +284,43 @@ export default function AllenamentoHub() {
   };
 
   const sbloccaDolore = async () => {
+    if (!responsabilita) return;
     await authFetch('/api/training/pain', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ resolved: true }),
+      body: JSON.stringify({ resolved: true, responsabilita: true }),
+    });
+    setResponsabilita(false);
+    await load();
+  };
+  // M9: "è passato" sulla zona ridotta → via la riduzione
+  const passatoDolore = async () => {
+    await authFetch('/api/training/pain', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ zonaPassata: true }),
     });
     await load();
   };
 
   const segnalaDolore = async () => {
-    if (!painDesc.trim() || painDurante === null) return;
+    if (!painDesc.trim() || painDurante === null || !painZona) return;
     setPainSending(true);
     try {
       const res = await authFetch('/api/training/pain', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ intensita: painInt, descrizione: painDesc.trim(), duranteAllenamento: painDurante }),
+        body: JSON.stringify({ intensita: painInt, descrizione: painDesc.trim(), duranteAllenamento: painDurante, zona: painZona }),
       });
       if (res.ok) {
         const data = await res.json();
-        setPainDesc(''); setPainDurante(null); setPainInt(5);
+        const zonaRidotta = data.zona && data.zona !== 'altro';
+        setPainDesc(''); setPainDurante(null); setPainInt(5); setPainZona(null);
         if (data.painHold) {
           setShowPain(false); setPainMsg(null);
           await load(); // il banner rosso prende il posto del form
         } else {
-          setPainMsg('Registrato — sotto soglia: puoi allenarti, ma fermati subito se peggiora e riparla qui se continua.');
+          setPainMsg(zonaRidotta
+            ? 'Registrato: puoi allenarti, con le serie ridotte sugli esercizi che toccano quella zona finché non dici che è passato. Fermati subito se peggiora; se dura da giorni, fatti vedere.'
+            : 'Registrato — sotto soglia: puoi allenarti, ma fermati subito se peggiora e riparla qui se continua.');
+          await load();
         }
       }
     } finally { setPainSending(false); }
@@ -358,7 +377,7 @@ export default function AllenamentoHub() {
             </Card>
           )}
           {o.painHold ? (
-            <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. Un attimo e trovi il bottone per riprendere.</p></Card>
+            <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. {CONSIGLIO_VISITA} Un attimo e trovi il bottone per riprendere.</p></Card>
           ) : o.consensiMancanti ? null /* "Prima di iniziare" arriva con lo stato completo: niente seduta prima di quello */ : s ? (
             <Card variant="hero" className="mb-3">
               <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">
@@ -971,11 +990,31 @@ export default function AllenamentoHub() {
               <div>
                 <p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p>
                 <p className="text-body-sm text-muted leading-relaxed mt-0.5">
-                  Hai segnalato un dolore. Riprendiamo quando è passato o dopo che ne hai parlato con fisio/preparatore.
+                  Hai segnalato un dolore{state.dolore?.zona ? ` (${state.dolore.zona})` : ''}. {CONSIGLIO_VISITA}
                 </p>
-                <Button variant="secondary" size="sm" onClick={sbloccaDolore} className="mt-3">
-                  È passato: riprendi
+                <label className="flex items-start gap-3 mt-3 min-h-[44px] cursor-pointer">
+                  <input type="checkbox" checked={responsabilita} onChange={(e) => setResponsabilita(e.target.checked)} className="mt-1 h-5 w-5 accent-[#2dd17a]" />
+                  <span className="text-body-sm text-app leading-relaxed">{PRESA_RESPONSABILITA}</span>
+                </label>
+                {state.dolore?.zona && state.dolore.zona !== 'altro' && (
+                  <p className="text-caption text-muted mt-1">Quando riparti, per due settimane gli esercizi che toccano quella zona restano più leggeri.</p>
+                )}
+                <Button variant="secondary" size="sm" onClick={sbloccaDolore} disabled={!responsabilita} className="mt-3">
+                  Riparto
                 </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+        {/* M9: zona dolorante segnalata sotto soglia (o al rientro dalla pausa): si allena, con quella zona più leggera */}
+        {!state.painHold && state.dolore?.riga && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" aria-hidden />
+              <div>
+                <p className="text-body font-semibold text-warning">Zona da tenere d&apos;occhio</p>
+                <p className="text-body-sm text-muted leading-relaxed mt-0.5">{state.dolore.riga} Se un esercizio fa male, fermati. {CONSIGLIO_VISITA}</p>
+                <Button variant="secondary" size="sm" onClick={passatoDolore} className="mt-3">È passato</Button>
               </div>
             </div>
           </Card>
@@ -1059,7 +1098,7 @@ export default function AllenamentoHub() {
       </Sheet>
       <Sheet open={showPain} onClose={() => setShowPain(false)} title="Hai un dolore?" subtitle="Segnalalo qui: decidiamo insieme se fermarci."
         footer={
-          <Button size="lg" fullWidth onClick={segnalaDolore} loading={painSending} disabled={!painDesc.trim() || painDurante === null}>
+          <Button size="lg" fullWidth onClick={segnalaDolore} loading={painSending} disabled={!painDesc.trim() || painDurante === null || !painZona}>
             Segnala
           </Button>
         }>
@@ -1079,6 +1118,14 @@ export default function AllenamentoHub() {
               placeholder="Dove, quando lo senti — es. ginocchio destro quando calcio" />
           </Field>
           <div>
+            <GroupLabel>Dove?</GroupLabel>
+            <div className="flex flex-wrap gap-2">
+              {ZONE_DOLORE.map((z) => (
+                <Chip key={z} selected={painZona === z} onClick={() => setPainZona(z)}>{z}</Chip>
+              ))}
+            </div>
+          </div>
+          <div>
             <GroupLabel>Lo senti durante l&apos;allenamento?</GroupLabel>
             <div className="grid grid-cols-2 gap-2">
               {siNo.map((v) => (
@@ -1094,7 +1141,7 @@ export default function AllenamentoHub() {
             </Card>
           )}
           <p className="text-body-sm text-warning leading-relaxed">
-            Da 4/10 in su le sedute fisiche vanno in pausa finché non dici che è passato o ne hai parlato con fisio/preparatore. L&apos;app non fa diagnosi: con un dolore forte, o che dura da giorni, vai da un medico.
+            Da 4/10 in su le sedute fisiche vanno in pausa: riparti tu, quando è passato, con una presa di responsabilità. Sotto, ti alleni con le serie ridotte sugli esercizi che toccano quella zona. {CONSIGLIO_VISITA}
           </p>
         </div>
       </Sheet>

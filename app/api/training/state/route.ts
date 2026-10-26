@@ -5,6 +5,8 @@ import { aumentiNellaSettimana } from '@/lib/trainingAumenti';
 import { giorniAllaPartita, giorniDallaPartita } from '@/lib/trainingRulesV2';
 import { candidatiCampo, candidatiForza, candidatiPalestra, GRUPPI_LONTANO, guardrailResistenzaVelocita, inserisciSerieTest, propostaOffSeason, type Guardrail, type GruppoLontano, type RisultatoConData } from '@/lib/trainingRitest';
 import { cicloDaiDati, condizioneAtleta, condizioneRiga } from '@/lib/trainingCondizione';
+import { doloreRiga, riduciPerDolore } from '@/lib/trainingDolore';
+import { loadDolore } from '@/lib/trainingDoloreServer';
 import { giorniSquadra } from '@/lib/trainingLoad';
 import { calendarioHash, conflittiCalendario, conflittoRiga } from '@/lib/trainingCalendario';
 import { validatePlan } from '@/lib/trainingEngine';
@@ -60,7 +62,7 @@ export async function GET(request: NextRequest) {
     const [
       { data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession },
       logsRes, { data: setupRow, error: setupErr }, { data: cOggi }, { data: checkins14 },
-      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti,
+      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti, dolore,
     ] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name, role').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
@@ -98,6 +100,8 @@ export async function GET(request: NextRequest) {
       // Resoconti squadra/partita degli ultimi 28 giorni (19/10): carico reale, sedute adattate, "com'è andata?"
       loadResoconti(userId),
       loadFeedbackRecenti(userId),
+      // Dolore per zona (M9, migration 035): la zona segnalata, da quando, fino a quando resta ridotta
+      loadDolore(userId),
     ]);
 
     // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
@@ -264,6 +268,12 @@ export async function GET(request: NextRequest) {
     }
     const dowOggi = oggiDowRome();
     const planStaleFlag = !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome();
+    // M9 (26/10): con una zona dolorante segnalata, serie ×0,7 e kg −20 % sugli esercizi che la coinvolgono nelle sedute
+    // non fatte da oggi in poi (sul piano letto, non su quello salvato: quando dice che è passato tornano piene)
+    if (planAdattato?.plan && !planStaleFlag) {
+      const r = riduciPerDolore(planAdattato.plan, { dolore, oggi, oggiDow: dowOggi, fatteGiorni: fattiGiorni });
+      if (r.ridotti) planAdattato = { ...planAdattato, plan: r.plan };
+    }
     const lontano = Object.fromEntries(GRUPPI_LONTANO.map((gruppo) => [gruppo, guardrailResistenzaVelocita({
       gruppo, obiettivi: focusSetup,
       fase: setup.fase, checkin: checkinOggi ? { fisico: checkinOggi.fisico, recupero: checkinOggi.recupero } : null,
@@ -297,6 +307,8 @@ export async function GET(request: NextRequest) {
       calendarioConflitti,
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
+      // Dolore per zona (M9): zona, date e la riga per l'hub (null senza segnalazione o a riduzione scaduta)
+      dolore: dolore ? { ...dolore, riga: doloreRiga(dolore, oggi) } : null,
       fascia,
       // Livello per qualità (solo quelle con test propri) e test da rifare prima del ri-test
       livelli: (Object.keys(QUALITA_LABEL) as QualitaV2[]).map((q) => ({ qualita: q, label: QUALITA_LABEL[q], livello: livelli[q] ?? fascia })),

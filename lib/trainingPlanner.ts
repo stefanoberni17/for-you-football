@@ -22,6 +22,8 @@ import { esercizioV2ById } from './trainingCatalogV2';
 import { calcolaCarico, caricoSquadraStimato, caricoTesto, durataRealeMin, giorniDiRitardo, giorniSquadra, type CaricoInfo, type CompletionRow, type PlanRow, type SetRpeRow } from './trainingLoad';
 import { squadraMisurata, type Resoconto, type SquadraMisurata } from './trainingResoconto';
 import { cicloDaiDati, condizioneAtleta, type CicloEsito } from './trainingCondizione';
+import type { Dolore } from './trainingDolore';
+import { loadDolore } from './trainingDoloreServer';
 import { bloccoById } from './trainingBlocks';
 import { loadResoconti } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
@@ -141,6 +143,7 @@ export interface PlannerContext {
   resoconti: Resoconto[];        // resoconti squadra/partita degli ultimi 28 giorni (19/10, lib/trainingResoconto)
   trainingDays: number[];
   painHold: boolean;
+  dolore?: Dolore | null;       // M9 (26/10, lib/trainingDolore): zona segnalata e finestra della riduzione; i prompt la raccontano, lo state riduce il piano
   hasSbarra: boolean;
   results: TestResultRow[];
   feedbackRecenti: FeedbackSeduta[];
@@ -244,7 +247,7 @@ export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
 }
 
 export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
-  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti, dolore] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -266,6 +269,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     loadFocusSetup(userId),
     loadPreferenzeSetup(userId),
     loadResoconti(userId),
+    loadDolore(userId),
   ]);
   // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
   let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
@@ -378,6 +382,7 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
     resoconti,
     trainingDays,
     painHold: profile?.training_pain_hold === true,
+    dolore,
     hasSbarra,
     results: rows,
     feedbackRecenti: completions || [],

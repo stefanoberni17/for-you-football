@@ -344,7 +344,7 @@ export interface PlanItem {
   emom_gruppo?: string;      // EMOM a rotazione (Ste, 17/9): gli item con lo stesso gruppo si alternano un minuto ciascuno; serie = giri, quantita = reps al minuto, recupero = il resto del minuto
   unita?: 'reps' | 'secondi' | 'minuti' | 'metri'; // SOLO se diversa dal catalogo: in Everfit Ste ha programmato a tempo un esercizio a reps (EMOM 30") o viceversa
   // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
-  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione'; // ripasso (28/9): esercizio di tecnica difficile l'ultima volta, rimesso in coda; esecuzione (punto 18): gradino sotto / meno dopo "faccio fatica" o "non riesco"
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore'; // dolore (M9, 26/10, lib/trainingDolore): serie ×0.7 e kg ×0.8 sugli esercizi della zona segnalata // ripasso (28/9): esercizio di tecnica difficile l'ultima volta, rimesso in coda; esecuzione (punto 18): gradino sotto / meno dopo "faccio fatica" o "non riesco"
   lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)
   // Resoconto dopo squadra/partita (19/10, lib/trainingResoconto): 'togli' = l'esercizio si può saltare; 'aggiungi' = una serie in più se se la sente
   facoltativo?: 'togli' | 'aggiungi';
