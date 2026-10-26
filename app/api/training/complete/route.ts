@@ -7,6 +7,8 @@ import { detectPain } from '@/lib/trainingPlanner';
 // Voto 1-10 → le tre scelte storiche (i consumatori vecchi leggono `feedback`): stessa soglia della memoria dei blocchi
 import { feedbackDaRpe } from '@/lib/trainingMemoriaBlocchi';
 import { dataDiGiorno } from '@/lib/trainingResoconto';
+import { risultatiDallaSeduta, type RisultatoConData } from '@/lib/trainingRitest';
+import type { SetLogRow } from '@/lib/trainingAdapt';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -84,6 +86,10 @@ export async function POST(request: NextRequest) {
     }
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+    // "La scala si aggiorna anche durante le settimane" (Ste, 26/10): dai log della seduta, le serie alla soglia del gradino
+    // diventano un risultato skill vero (fire-and-forget, fail-soft: la seduta è già salvata)
+    aggiornaScaleDaiLog(userId, sessionKey, rpe).catch((e) => console.error('training/complete: scale dai log', e));
+
     // Regola dolore: nota che segnala dolore → pain-hold finché l'utente non sblocca
     let painHold = false;
     if (typeof note === 'string' && detectPain(note)) {
@@ -96,4 +102,28 @@ export async function POST(request: NextRequest) {
     console.error('training/complete error:', err);
     return NextResponse.json({ error: 'internal' }, { status: 500 });
   }
+}
+
+/** Legge i log per serie della seduta e i risultati salvati; i gradini raggiunti in seduta diventano righe `skill:<id>`. */
+async function aggiornaScaleDaiLog(userId: string, sessionKey: string, votoSeduta: number | null): Promise<void> {
+  const [{ data: logs, error: eLogs }, { data: results }] = await Promise.all([
+    supabaseAdmin.from('training_set_logs').select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
+      .eq('user_id', userId).eq('session_key', sessionKey).limit(200),
+    supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at')
+      .eq('user_id', userId).order('created_at', { ascending: false }).limit(400),
+  ]);
+  if (eLogs || !logs?.length) return;
+  const rows = (logs as SetLogRow[]).map((l) => ({ ...l, quantita_prevista: Number(l.quantita_prevista), quantita_fatta: l.quantita_fatta == null ? null : Number(l.quantita_fatta) }));
+  const nuovi = risultatiDallaSeduta(rows, ((results || []) as RisultatoConData[]).map((r) => ({ ...r, valore: Number(r.valore) })), votoSeduta);
+  if (!nuovi.length) return;
+  // Sessione test aperta o nuova (come /api/training/test): i risultati in seduta non la chiudono
+  let { data: session } = await supabaseAdmin.from('training_test_sessions').select('id').eq('user_id', userId).is('completed_at', null).order('started_at', { ascending: false }).limit(1).maybeSingle();
+  if (!session) {
+    const { data: created } = await supabaseAdmin.from('training_test_sessions').insert({ user_id: userId, tipo: 'ritest' }).select('id').single();
+    session = created;
+  }
+  if (!session) return;
+  await supabaseAdmin.from('training_test_results').insert(nuovi.map((n) => ({
+    user_id: userId, test_session_id: session!.id, test_id: `skill:${n.skill_esercizio_id}`, valore: n.valore, livello_calcolato: 'skill', punteggio_calcolato: 0,
+  })));
 }

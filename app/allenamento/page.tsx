@@ -45,6 +45,8 @@ export interface TrainingState {
   // Livello per qualità (dai test di quella qualità) e ri-test mirato (famiglie che hanno finito i codici del livello)
   livelli?: { qualita: string; label?: string; livello: string }[];
   ritestMirato?: { qualita: string; label: string; famiglie: string[]; tests: { id: string; nome: string }[] }[];
+  // Ri-test integrato (26/10): le serie test dentro le sedute della settimana, quelle in attesa, resistenza e velocità (guardrail), proposte off season
+  ritest?: { settimanaRitest: boolean; inSeduta: { giorno: number; id: string; nome: string; gruppo: string; tipo: string }[]; inAttesa: { id: string; nome: string; gruppo: string }[]; lontano: Record<string, { ok: boolean; motivi: string[] }>; proposte: { giorno: number; gruppo: string; tests: { id: string; nome: string }[] }[] };
   setup: TrainingSetup;
   setupDisponibile: boolean;
   calendario?: { trainingDays: number[]; matchDays: number[] };
@@ -959,14 +961,32 @@ export default function AllenamentoHub() {
             </p>
           </Card>
         )}
-        {!batteriaVuota && state.ciclo.ritestDue && (
+        {/* Ri-test integrato (26/10): i test stanno dentro le sedute, una serie test per seduta; resistenza e velocità a parte */}
+        {!batteriaVuota && state.ritest?.settimanaRitest && (state.ritest.inSeduta.length > 0 || state.ritest.inAttesa.length > 0 || state.ritest.proposte.length > 0) && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body font-semibold text-warning mb-0.5 flex items-center gap-2"><ClipboardList size={18} aria-hidden /> Settimana di ri-test: i test sono dentro le sedute</p>
+            <div className="text-body-sm text-muted leading-relaxed mb-3">
+              {state.ritest.inSeduta.length > 0 ? (
+                <ul className="list-disc pl-5">
+                  {state.ritest.inSeduta.map((t) => <li key={t.id}><span className="text-app">{DAY_NAMES_IT[t.giorno]}</span>: serie test su {t.nome}{t.tipo === 'skill' ? ' (il gradino da sbloccare)' : t.tipo === 'lift' ? ' (massimale)' : ''}</li>)}
+                </ul>
+              ) : <p>Niente da testare nelle sedute che restano questa settimana.</p>}
+              {state.ritest.inAttesa.length > 0 && <p className="mt-1">Aspettano una seduta libera: {state.ritest.inAttesa.map((t) => t.nome).join(', ')}.</p>}
+              {state.ritest.proposte.length > 0 && (
+                <p className="mt-1">Off season, da fare in giorni separati: {state.ritest.proposte.map((p) => `${DAY_NAMES_IT[p.giorno]} ${p.tests.map((t) => t.nome).join(' e ')}`).join(' · ')}.</p>
+              )}
+            </div>
+            <Button variant="secondary" size="sm" href="/allenamento/test">Vedi la batteria</Button>
+          </Card>
+        )}
+        {!batteriaVuota && state.ciclo.ritestDue && !state.ritest?.settimanaRitest && (
           <Card variant="warn" padding="sm" className="mb-4">
             <p className="text-body font-semibold text-warning mb-0.5 flex items-center gap-2"><ClipboardList size={18} aria-hidden /> È ora del ri-test</p>
             <p className="text-body-sm text-muted leading-relaxed mb-3">
-              Ogni quattro settimane, dopo lo scarico, si rifanno i test: da qui passa il salto di livello. Fallo idealmente 2 giorni dopo la partita, da fresco.
+              Ogni quattro settimane, dopo lo scarico, si rifanno i test: da qui passa il salto di livello.
               {ritestMiratoTesto && <> <span className="text-app">Da rifare prima: {ritestMiratoTesto}</span> (hai finito i codici del tuo livello in {state.ritestMirato!.flatMap((r) => r.famiglie).join(', ')}).</>}
             </p>
-            <Button variant="secondary" size="sm" href="/allenamento/test">Rifai i test</Button>
+            <Button variant="secondary" size="sm" href="/allenamento/test">Vedi la batteria</Button>
           </Card>
         )}
 

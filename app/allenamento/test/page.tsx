@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { useWakeLock } from '@/lib/useWakeLock';
-import { AlertTriangle, Check, ChevronDown, ChevronRight, Plus, Timer, TrendingUp } from 'lucide-react';
+import { AlertTriangle, Check, ChevronDown, ChevronRight, Lock, Plus, Timer, TrendingUp } from 'lucide-react';
+import { DAY_NAMES } from '@/lib/constants';
+import { gruppoLontano } from '@/lib/trainingRitest';
 import TestIstruzioni from '@/components/TestIstruzioni';
 import { AppLoader, BackButton, Badge, Button, Card, Chip, Input } from '@/components/ui';
 
@@ -95,6 +97,8 @@ export default function BatteriaTest() {
   const [amrapCircuit, setAmrapCircuit] = useState<AmrapStation[]>([]);
   const [ladders, setLadders] = useState<LadderInfo[]>([]);
   const [testsV2, setTestsV2] = useState<TestV2Info[]>([]);
+  // Ri-test integrato (26/10): cosa sta dentro le sedute questa settimana, e perché resistenza e velocità sono chiuse
+  const [ritest, setRitest] = useState<{ settimanaRitest: boolean; inSeduta: { giorno: number; id: string; nome: string; tipo: string }[]; inAttesa: { id: string; nome: string }[]; lontano: Record<string, { ok: boolean; motivi: string[] }>; proposte: { giorno: number; tests: { id: string; nome: string }[] }[] } | null>(null);
   const [pesoCorporeo, setPesoCorporeo] = useState<number | null>(null);
   const [v2Current, setV2Current] = useState<string | null>(null); // test v2 aperto
   const [liftPeso, setLiftPeso] = useState('');
@@ -124,6 +128,7 @@ export default function BatteriaTest() {
       setAmrapCircuit(data.amrapCircuit || []);
       setLadders(data.ladders || []);
       setTestsV2(data.testsV2 || []);
+      setRitest(data.ritest ?? null);
       setPesoCorporeo(data.setup?.pesoKg ?? null);
       romboBaseRef.current = data.romboBase || [];
     }
@@ -354,6 +359,17 @@ export default function BatteriaTest() {
           </div>
         </div>
 
+        {/* Ri-test integrato (26/10): le serie test della settimana stanno dentro le sedute */}
+        {ritest?.settimanaRitest && (ritest.inSeduta.length > 0 || ritest.proposte.length > 0) && (
+          <Card variant="accent" padding="sm" className="mb-4">
+            <p className="text-body font-semibold text-forest-300 mb-1">Questa settimana, dentro le sedute</p>
+            <ul className="text-body-sm text-muted list-disc pl-5 leading-relaxed">
+              {ritest.inSeduta.map((t) => <li key={t.id}><span className="text-app">{DAY_NAMES[t.giorno]}</span>: {t.nome}</li>)}
+              {ritest.proposte.map((p) => <li key={p.giorno}><span className="text-app">{DAY_NAMES[p.giorno]}</span>: {p.tests.map((t) => t.nome).join(' e ')} (off season, a parte)</li>)}
+            </ul>
+            {ritest.inAttesa.length > 0 && <p className="text-caption text-muted mt-1">In attesa di una seduta libera: {ritest.inAttesa.map((t) => t.nome).join(', ')}.</p>}
+          </Card>
+        )}
         {savedMsg && (
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-body-sm font-semibold text-forest-300 flex items-center gap-2"><Check size={16} className="shrink-0" aria-hidden /> {savedMsg}</p>
@@ -456,10 +472,19 @@ export default function BatteriaTest() {
                       const valoreTxt = t.done
                         ? `${t.lift ? `${t.lastValue} kg` : fmtVal(t.lastValue!, t.unita)}${t.lastLevel && !(t.lift && t.dettaglio?.senza_peso_corporeo) ? ` · ${LIVELLO_LABEL[t.lastLevel] || t.lastLevel}` : ''}`
                         : undefined;
+                      // Resistenza e velocità (26/10): mai a caso in season. Sotto i guardrail il test è chiuso, con il perché
+                      const gruppo = gruppoLontano(t.id);
+                      const guardrail = gruppo && ritest ? ritest.lontano[gruppo] : null;
+                      const chiuso = !!guardrail && !guardrail.ok;
                       return (
                         <div key={t.id}>
                           <RigaTest nome={t.nome} done={t.done} valore={valoreTxt} open={aperto} onClick={() => (aperto ? setV2Current(null) : apriV2(t))} />
-                          {aperto && (
+                          {aperto && chiuso && (
+                            <div className="pb-3 pt-1">
+                              <p className="text-body-sm text-muted leading-relaxed flex gap-2"><Lock size={16} className="text-faint shrink-0 mt-0.5" aria-hidden /><span>Questo test si fa solo da fresco, lontano dalla partita e se alleni questa qualità. Oggi no: {guardrail!.motivi.join('; ')}.</span></p>
+                            </div>
+                          )}
+                          {aperto && !chiuso && (
                             <div className="pb-3 pt-2">
                               <TestIstruzioni t={t} />
                               {t.lift ? (

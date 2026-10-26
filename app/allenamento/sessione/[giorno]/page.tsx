@@ -17,6 +17,7 @@ import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, Sect
 
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
   per_lato?: boolean;
+  test_in_seduta?: { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }; // ri-test in seduta (26/10)
 }
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[] }
 
@@ -175,6 +176,14 @@ export default function SessionePage() {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ plan_id: planId, giorno, ...log }),
             }).catch(() => { /* fire-and-forget: la seduta non si ferma */ });
+          }}
+          onTestResult={(r) => {
+            // Ri-test in seduta (26/10): skill → punto della scala, test → batteria, lift → massimale (peso × reps)
+            const body = r.test.tipo === 'skill' ? { skill_esercizio_id: r.test.id, valore: r.valore, in_seduta: true }
+              : r.test.tipo === 'lift' ? { test_id: r.test.id, peso: r.peso, reps: r.reps, in_seduta: true }
+              : { test_id: r.test.id, valore: r.valore, in_seduta: true };
+            authFetch('/api/training/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+              .catch(() => { /* fire-and-forget: la seduta non si ferma */ });
           }}
           onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setDurataSec(esito?.durataSec ?? null); setPhase('feedback'); }}
           onExit={() => {
@@ -337,7 +346,9 @@ export default function SessionePage() {
                         <div className="flex-1 min-w-0">
                           <p className="text-body font-semibold text-app leading-snug">{ex.nome}</p>
                           <p className="text-body-sm text-muted tabular-nums">
-                            {it.schema === 'emom'
+                            {it.test_in_seduta
+                              ? <><span className={num}>Serie test</span>{it.test_in_seduta.prep != null ? <> · prima <span className={num}>{unitaLabel(unita, it.test_in_seduta.prep)}</span> di avvicinamento</> : null}{it.carico_kg ? <> · <span className={num}>{it.carico_kg} kg</span></> : null}</>
+                              : it.schema === 'emom'
                               ? <>EMOM · <span className={num}>{it.serie}</span> {it.serie === 1 ? 'giro' : 'giri'} · <span className={num}>{unitaLabel(unita, it.quantita)}</span> al minuto, poi riposo fino allo scadere</>
                               : <>
                                   <span className={num}>{it.serie} × {unitaLabel(unita, it.quantita)}</span>
@@ -355,7 +366,7 @@ export default function SessionePage() {
                           {it.nota && (
                             <div className="mt-1.5 flex items-start gap-2">
                               <Badge tone={it.adattamento === 'scendi' || it.adattamento === 'leggero' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
-                                {it.adattamento ? ADATTAMENTO_LABEL[it.adattamento] : 'Nota'}
+                                {it.test_in_seduta ? 'Serie test' : it.adattamento ? ADATTAMENTO_LABEL[it.adattamento] : 'Nota'}
                               </Badge>
                               <p className="text-body-sm text-app leading-snug">{it.nota}</p>
                             </div>
