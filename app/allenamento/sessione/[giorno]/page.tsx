@@ -10,12 +10,12 @@ import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { APERTURA_IDS, STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type StatoFascia } from '@/lib/trainingFascia';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
-import { AlertTriangle, Calendar, Check, Info, Pause, Play, Wind } from 'lucide-react';
+import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
 import { hasActiveAccess } from '@/lib/checkAccess';
 import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
 
-interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
   per_lato?: boolean;
   test_in_seduta?: { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }; // ri-test in seduta (26/10)
 }
@@ -28,7 +28,7 @@ const TIPO_LABEL: Record<string, string> = {
   fisica: 'Fisica', mix: 'Fisica e tecnica', tecnica: 'Tecnica', skill: 'Tecnica', fascia: 'Fascia e prevenzione', recupero: 'Recupero',
 };
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante' };
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante', limitazione: 'Zona da proteggere' };
 type Giudizio = 'facile' | 'ok' | 'duro';
 const GIUDIZI: { key: Giudizio; label: string }[] = [{ key: 'facile', label: 'Facile' }, { key: 'ok', label: 'Giusto' }, { key: 'duro', label: 'Duro' }];
 
@@ -349,6 +349,15 @@ export default function SessionePage() {
             </p>
           </Card>
         )}
+        {/* Punto 4 (26/10): le limitazioni del setup riducono allo stesso modo, sempre */}
+        {!bloccata && sessione.items.some((it) => it.adattamento === 'limitazione') && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body-sm text-app flex gap-2">
+              <ShieldAlert size={16} className="shrink-0 mt-0.5 text-warning" aria-hidden />
+              <span>Per le limitazioni che hai scritto nel setup: serie ridotte e kg più bassi sugli esercizi che le coinvolgono (badge &quot;Zona da proteggere&quot;). Se un esercizio fa male, saltalo.</span>
+            </p>
+          </Card>
+        )}
         {faticaAlta && isFisica && !alreadyDone && !painHold && (
           <Card variant="warn" padding="sm" className="mb-4">
             <p className="text-body-sm text-app leading-relaxed mb-3">Dal check-in di oggi sei scarico. Più leggera = una serie in meno per esercizio.</p>
@@ -396,7 +405,7 @@ export default function SessionePage() {
                           )}
                           {it.nota && (
                             <div className="mt-1.5 flex items-start gap-2">
-                              <Badge tone={it.adattamento === 'scendi' || it.adattamento === 'leggero' || it.adattamento === 'esecuzione' || it.adattamento === 'dolore' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
+                              <Badge tone={it.adattamento === 'scendi' || it.adattamento === 'leggero' || it.adattamento === 'esecuzione' || it.adattamento === 'dolore' || it.adattamento === 'limitazione' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
                                 {it.test_in_seduta ? 'Serie test' : it.adattamento ? ADATTAMENTO_LABEL[it.adattamento] : 'Nota'}
                               </Badge>
                               <p className="text-body-sm text-app leading-snug">{it.nota}</p>

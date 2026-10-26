@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { distrettiZona, doloreAttivo, doloreRiga, doloreTesto, DOLORE_KG_SCALA, DOLORE_SERIE_SCALA, finoAlRientro, isZonaDolore, riduciPerDolore, ZONE_DOLORE } from '@/lib/trainingDolore';
+import { distrettiZona, doloreAttivo, doloreRiga, doloreTesto, DOLORE_KG_SCALA, DOLORE_SERIE_SCALA, finoAlRientro, isZonaDolore, LIMITAZIONI_NOTA_MAX, limitazioniPerCoach, limitazioniRiga, limitazioniTesto, limitazioniVuote, parseLimitazioni, riduciPerDolore, ZONE_DOLORE } from '@/lib/trainingDolore';
 import type { PlanItem, WeekPlan } from '@/lib/trainingEngine';
 
 const OGGI = '2026-10-28'; // mercoledì
@@ -92,5 +92,58 @@ describe('dolore per zona (M9): i testi', () => {
     expect(doloreTesto({ zona: 'spalla' }, OGGI, true)).toMatch(/IN PAUSA/);
     expect(doloreTesto(null, OGGI, true)).toMatch(/zona non indicata/);
     expect(doloreTesto(null, OGGI, false)).toBe('');
+  });
+});
+
+describe('limitazioni del setup (punto 4, 26/10): riduzione cronica', () => {
+  it('parseLimitazioni: zone valide senza doppioni (max 4), nota ripulita e tagliata; vuote = niente', () => {
+    const l = parseLimitazioni({ zone: ['ginocchio', 'ginocchio', 'testa', 'caviglia', 'anca', 'spalla', 'polpacci'], nota: '  <b>rottura</b>  del crociato  2024  ' });
+    expect(l.zone).toEqual(['ginocchio', 'caviglia', 'anca', 'spalla']);
+    expect(l.nota).toBe('brottura/b del crociato 2024');
+    expect(parseLimitazioni({ nota: 'x'.repeat(400) }).nota).toHaveLength(LIMITAZIONI_NOTA_MAX);
+    expect(parseLimitazioni(null)).toEqual({ zone: [], nota: '' });
+    expect(limitazioniVuote(parseLimitazioni({}))).toBe(true);
+    expect(limitazioniVuote({ zone: [], nota: 'menisco' })).toBe(false);
+  });
+  it('una zona nel setup riduce come il dolore, senza scadenza, con il suo badge', () => {
+    const { plan, ridotti, righe } = riduciPerDolore(piano(), { dolore: null, limitazioni: { zone: ['ginocchio'], nota: '' }, oggi: OGGI, oggiDow: 1 });
+    expect(ridotti).toBe(3); // squat lun, squat mer, rdl ven
+    expect(plan.sedute[0].items[0].serie).toBe(3);
+    expect(plan.sedute[0].items[0].adattamento).toBe('limitazione');
+    expect(plan.sedute[0].items[0].nota).toMatch(/^Limitazione \(ginocchio\): serie 4 → 3 \(dal tuo setup/);
+    expect(plan.sedute[0].items[1].adattamento).toBeUndefined(); // parte alta intatta
+    expect(righe).toHaveLength(1);
+    expect(righe[0]).toMatch(/^Ginocchio \(limitazione dal setup\): .*Lunedì, Mercoledì, Venerdì.*finché la tieni/);
+  });
+  it('dolore e limitazione insieme: ogni esercizio si riduce una volta sola; sulla stessa zona vince il dolore (ha la finestra)', () => {
+    const r = riduciPerDolore(piano(), { dolore: { zona: 'spalla', fino: '2026-11-05' }, limitazioni: { zone: ['ginocchio', 'spalla'], nota: '' }, oggi: OGGI, oggiDow: 1 });
+    const lun = r.plan.sedute[0];
+    expect(lun.items[0].adattamento).toBe('limitazione'); // squat: dal setup
+    expect(lun.items[1].adattamento).toBe('dolore');      // push: la spalla segnalata, con la finestra
+    expect(lun.items[1].nota).toMatch(/fino al 05\/11/);
+    expect(r.righe).toHaveLength(2);
+    expect(r.righe[0]).toMatch(/^Spalla:/);
+    expect(r.righe[1]).toMatch(/^Ginocchio \(limitazione dal setup\)/);
+    expect(riduciPerDolore(r.plan, { dolore: { zona: 'spalla' }, limitazioni: { zone: ['ginocchio'], nota: '' }, oggi: OGGI, oggiDow: 1 }).ridotti).toBe(0); // idempotente
+  });
+  it('"altro" e la sola nota non riducono niente; le sedute fatte restano intere', () => {
+    expect(riduciPerDolore(piano(), { dolore: null, limitazioni: { zone: ['altro'], nota: 'ernia' }, oggi: OGGI, oggiDow: 1 }).ridotti).toBe(0);
+    const r = riduciPerDolore(piano(), { dolore: null, limitazioni: { zone: ['ginocchio'], nota: '' }, oggi: OGGI, oggiDow: 3, fatteGiorni: new Set([1]) });
+    expect(r.plan.sedute[0].items[0].serie).toBe(4);
+    expect(r.ridotti).toBe(2);
+  });
+  it('i testi: hub, prompt, Coach', () => {
+    expect(limitazioniRiga(null)).toBeNull();
+    expect(limitazioniRiga({ zone: ['ginocchio', 'caviglia'], nota: '' })).toMatch(/^Limitazioni dal setup \(ginocchio, caviglia\): serie ridotte/);
+    expect(limitazioniRiga({ zone: ['altro'], nota: 'x' })).toMatch(/non riduce niente da sola/);
+    expect(limitazioniRiga({ zone: [], nota: 'ernia' })).toMatch(/il preparatore ne tiene conto/);
+    const t = limitazioniTesto({ zone: ['ginocchio', 'spalla'], nota: 'crociato nel 2024, ok adesso' });
+    expect(t).toMatch(/# LIMITAZIONI E INFORTUNI PASSATI/);
+    expect(t).toMatch(/Zone: ginocchio, spalla\. Nota sua: "crociato nel 2024, ok adesso"/);
+    expect(t).toMatch(/gambe, piede e fascia e parte alta, sempre/);
+    expect(t).toMatch(/non fa diagnosi/);
+    expect(limitazioniTesto({ zone: [], nota: '' })).toBe('');
+    expect(limitazioniPerCoach({ zone: ['anca'], nota: 'operato' })).toMatch(/^- Nel setup del Campo ha scritto infortuni o limitazioni \(anca\): "operato"/);
+    expect(limitazioniPerCoach(null)).toBeNull();
   });
 });

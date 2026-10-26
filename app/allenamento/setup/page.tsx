@@ -8,7 +8,8 @@ import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
-import { AppLoader, BackButton, Banner, Button, Card, Chip, Field, Input, SectionTitle, RpeScale } from '@/components/ui';
+import { AppLoader, BackButton, Banner, Button, Card, Chip, Field, Input, SectionTitle, RpeScale, Textarea } from '@/components/ui';
+import { LIMITAZIONI_NOTA_MAX, LIMITAZIONI_ZONE_MAX, ZONE_DOLORE, type ZonaDolore } from '@/lib/trainingDolore';
 import FattibilitaBanner from '@/components/FattibilitaBanner';
 import { Scale } from 'lucide-react';
 import type { TrainingState } from '@/app/allenamento/page';
@@ -46,7 +47,7 @@ function SetupPageInner() {
   const [saved, setSaved] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
   // Parti che dipendono da colonne non ancora presenti (migration mancante): si dice solo "non ancora attiva"
-  const [nonAttive, setNonAttive] = useState<{ setup?: boolean; obiettivi?: boolean; quando?: boolean; squadra?: boolean }>({});
+  const [nonAttive, setNonAttive] = useState<{ setup?: boolean; obiettivi?: boolean; quando?: boolean; squadra?: boolean; limitazioni?: boolean }>({});
 
   const load = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -86,11 +87,13 @@ function SetupPageInner() {
         if (res.ok) {
           if (d.focusSalvato === false) avvisi.obiettivi = true;
           if (d.preferenzeSalvate === false) avvisi.quando = true;
+          if (d.limitazioniSalvate === false) avvisi.limitazioni = true;
         } else {
           const msg: string = d.error || '';
           // "manca la migration 024/025" → quella parte non è ancora attiva (il resto del setup è passato)
           if (/migration 024/.test(msg)) avvisi.obiettivi = true;
           else if (/migration 025/.test(msg)) avvisi.quando = true;
+          else if (/migration 036/.test(msg)) avvisi.limitazioni = true;
           else if (/migration/.test(msg)) avvisi.setup = true;
           else { ok = false; setErrore(msg || 'Non sono riuscito a salvare. Riprova.'); }
         }
@@ -266,6 +269,34 @@ function SetupPageInner() {
                 onChange={(e) => { const v = e.target.value.replace(',', '.').replace(/[^0-9.]/g, ''); setSetupDraft({ ...setupDraft, pesoKg: v === '' ? null : Number(v) }); }}
                 className="tabular-nums" />
             </Field>
+          </Card>
+
+          {/* Infortuni e limitazioni (punto 4, 26/10) */}
+          <Card padding="sm">
+            <SectionTitle title="Infortuni e limitazioni" subtitle="Zone da proteggere e cose che il preparatore deve sapere. L'app non fa diagnosi: con un dolore nuovo usa &quot;Hai un dolore?&quot; nel Campo." className="mb-3" />
+            <div className="space-y-4">
+              <div>
+                <GroupLabel hint={`Fino a ${LIMITAZIONI_ZONE_MAX}. Sugli esercizi che le coinvolgono le serie sono ridotte e i kg più bassi, finché restano qui.`}>Zone da proteggere</GroupLabel>
+                <div className="flex flex-wrap gap-2">
+                  {ZONE_DOLORE.map((z) => {
+                    const on = setupDraft.limitazioni.zone.includes(z);
+                    const piene = !on && setupDraft.limitazioni.zone.length >= LIMITAZIONI_ZONE_MAX;
+                    return (
+                      <Chip key={z} selected={on} disabled={piene}
+                        onClick={() => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, zone: on ? setupDraft.limitazioni.zone.filter((x) => x !== z) : [...setupDraft.limitazioni.zone, z as ZonaDolore] } })}>
+                        {z}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </div>
+              <Field label="Infortuni passati, operazioni, cose da sapere" htmlFor="setup-limitazioni-nota" optional counter={{ value: setupDraft.limitazioni.nota.length, max: LIMITAZIONI_NOTA_MAX }} helper="Lo legge il preparatore AI, non il Coach mentale. Niente dati medici che non vuoi condividere.">
+                <Textarea id="setup-limitazioni-nota" rows={3} maxLength={LIMITAZIONI_NOTA_MAX} value={setupDraft.limitazioni.nota}
+                  placeholder="es. crociato sinistro operato nel 2024, ok adesso; mi fa male la schiena con gli stacchi pesanti"
+                  onChange={(e) => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, nota: e.target.value.slice(0, LIMITAZIONI_NOTA_MAX) } })} />
+              </Field>
+              {nonAttive.limitazioni && <p className="text-body-sm text-warning">{NON_ATTIVA}</p>}
+            </div>
           </Card>
 
           {/* Con la squadra */}

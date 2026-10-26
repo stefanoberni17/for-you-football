@@ -14,8 +14,8 @@ import { hasTrainingAccess } from './trainingAccess';
 import { loadCarico, loadFeedbackRecenti, loadSquadraCompleta, mondayOfThisWeekRome, oggiDowRome, type FeedbackSeduta } from './trainingPlanner';
 import { caricoSquadraStimato, giorniSquadra, STATO_LABEL, type CaricoInfo } from './trainingLoad';
 import { giorniPartita } from './trainingSquadra';
-import { loadDolore } from './trainingDoloreServer';
-import { doloreAttivo } from './trainingDolore';
+import { loadDolore, loadLimitazioni } from './trainingDoloreServer';
+import { doloreAttivo, limitazioniPerCoach } from './trainingDolore';
 import { zoneTeseRicorrenti } from './trainingFascia';
 import { statoSeduta } from './trainingRequest';
 import type { WeekPlan } from './trainingEngine';
@@ -91,13 +91,14 @@ export async function loadCampoPerCoach(userId: string): Promise<string> {
   try {
     if (!(await hasTrainingAccess(userId))) return '';
     const lunedi = mondayOfThisWeekRome();
-    const [{ data: profile }, { data: piani }, feedback, carico, resoconti, dolore] = await Promise.all([
+    const [{ data: profile }, { data: piani }, feedback, carico, resoconti, dolore, limitazioni] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_plans').select('id, plan, created_at').eq('user_id', userId).eq('week_start', lunedi).order('created_at', { ascending: false }),
       loadFeedbackRecenti(userId, 40),
       loadCaricoConSquadra(userId),
       loadResoconti(userId, 14),
       loadDolore(userId),
+      loadLimitazioni(userId),
     ]);
     const righe: string[] = [];
 
@@ -125,6 +126,8 @@ export async function loadCampoPerCoach(userId: string): Promise<string> {
     if (carico.stato !== 'insufficiente') righe.push(`- Carico delle ultime settimane: ${carico.stato} (${STATO_LABEL[carico.stato]})`);
     if (profile?.training_pain_hold) righe.push(`- ⚠️ ALLENAMENTI IN PAUSA PER UN DOLORE${dolore?.zona ? ` (${dolore.zona})` : ''}: ha segnalato un fastidio e le sedute fisiche sono ferme finché non riparte lui. L'app gli ha consigliato un fisioterapista o un medico. Chiedi come sta, invitalo a farsi vedere e a parlarne con un adulto; non dare consigli di allenamento, niente diagnosi.`);
     else if (doloreAttivo(dolore, todayItaly())) righe.push(`- Ha segnalato un dolore leggero (${dolore.zona}${dolore.da ? `, dal ${dolore.da}` : ''}): si allena con quella zona alleggerita. Se ne parla, chiedi come va e, se dura, invitalo a farsi vedere da un fisioterapista o un medico; niente diagnosi.`);
+    const rigaLim = limitazioniPerCoach(limitazioni);
+    if (rigaLim) righe.push(rigaLim);
     // Resoconti dopo squadra e partita (19/10): com'è andata, anche di testa — materia del Coach
     const righeResoconti = resocontiPerCoach(resoconti);
     if (righeResoconti.length) righe.push(`- Ultimi resoconti dopo la squadra e la partita (li ha scritti lui la sera):\n${righeResoconti.map((r) => `  ${r}`).join('\n')}`);

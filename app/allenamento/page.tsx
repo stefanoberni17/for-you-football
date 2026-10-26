@@ -9,7 +9,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
 } from 'recharts';
-import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, Users } from 'lucide-react';
+import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
@@ -32,6 +32,7 @@ export interface TrainingState {
   painHold: boolean;
   // Dolore per zona (M9, 26/10): zona segnalata, da quando, fino a quando resta ridotta, la riga per l'atleta
   dolore?: { zona: string; da?: string | null; fino?: string | null; riga: string | null } | null;
+  limitazioni?: { zone: string[]; nota: string; riga: string | null } | null; // punto 4 (26/10): infortuni e limitazioni dal setup
   consensi?: { health_data: boolean; training_idoneita: boolean };
   fascia: string;
   gradini: Record<string, number>;
@@ -1015,6 +1016,19 @@ export default function AllenamentoHub() {
                 <p className="text-body font-semibold text-warning">Zona da tenere d&apos;occhio</p>
                 <p className="text-body-sm text-muted leading-relaxed mt-0.5">{state.dolore.riga} Se un esercizio fa male, fermati. {CONSIGLIO_VISITA}</p>
                 <Button variant="secondary" size="sm" onClick={passatoDolore} className="mt-3">È passato</Button>
+              </div>
+            </div>
+          </Card>
+        )}
+        {/* Punto 4 (26/10): infortuni e limitazioni scritti nel setup, riduzione cronica sulle zone */}
+        {!state.painHold && state.limitazioni?.riga && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <div className="flex items-start gap-2.5">
+              <ShieldAlert size={18} className="text-warning shrink-0 mt-0.5" aria-hidden />
+              <div className="min-w-0">
+                <p className="text-body font-semibold text-warning">Zone da proteggere</p>
+                <p className="text-body-sm text-muted leading-relaxed mt-0.5">{state.limitazioni.riga}</p>
+                <Link href="/allenamento/setup" className="inline-flex items-center gap-1 min-h-[44px] text-body-sm font-semibold text-forest-300">Cambia nel setup <ChevronRight size={16} aria-hidden /></Link>
               </div>
             </div>
           </Card>
