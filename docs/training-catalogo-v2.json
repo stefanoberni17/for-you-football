@@ -8527,6 +8527,47 @@
   }
  },
  {
+  "nome": "Shooting Warm-Up: 10 + 10 at the Crossbar",
+  "qualita": "tecnica-tiro",
+  "attrezzatura": "campo",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": true,
+  "video": null,
+  "fonte": "Ste (26/10/2026, tecnica composta)",
+  "tags": [
+   "tecnica",
+   "tiro",
+   "riscaldamento"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": "Riscaldamento al tiro prima degli esercizi di tiro (Ste, 26/10): 10 palle di destro e 10 di sinistro dal limite dell'area cercando di colpire la traversa, tirando in maniera progressiva. Stesso gesto del test dei tiri alla traversa, qui come esercizio.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": null,
+  "descrizione": "Dal limite dell'area, palla ferma: 10 tiri di destro e 10 di sinistro cercando la traversa. Si parte piano e si sale di intensità tiro dopo tiro: è il riscaldamento prima di tirare forte.",
+  "id": "ttir-riscaldamento-traversa",
+  "scheda": {
+   "esecuzione": [
+    "Palla ferma sul limite dell'area, porta vuota.",
+    "Primi tiri al 60 %: conta il contatto pulito, non la forza. Sali di intensità tiro dopo tiro.",
+    "Mira alla traversa: tiro di collo con palla che sale, caviglia bloccata, busto leggermente indietro.",
+    "10 di destro, poi 10 di sinistro (o il contrario). Recupera la palla camminando: è anche il recupero."
+   ],
+   "errori": [
+    "Tirare forte dal primo tiro: è un riscaldamento, la forza arriva dopo.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso la porta.",
+    "Saltare il piede debole: i 10 col debole si fanno sempre."
+   ],
+   "piu_facile": "Da più vicino, o 6 + 6.",
+   "piu_difficile": "Palla in movimento: un tocco in avanti e tiro.",
+   "sicurezza": "Mai senza riscaldamento generale prima (passaggi, qualche conduzione). Fastidio all'inguine o al flessore: fermati."
+  }
+ },
+ {
   "nome": "Shooting Technique",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",

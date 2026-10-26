@@ -284,7 +284,38 @@ Pass 2 × 1'.
 8. **Monitoraggio**: le quote di tiri e dribbling fatte davvero (dai log) entrano nel prompt della settimana dopo, così
    "da monitorare fatica e allenamenti/partite" ha un numero.
 
-## Domande per Ste (si parte dopo)
+## Le risposte di Ste (26/10 sera) e cosa c'è nel codice
+
+1. **Asse partita**: a −1 la tecnica leggera **si aggiunge come facoltativa** al blocco pre partita se la tecnica è tra
+   gli obiettivi (nel piano base: venerdì = blocco pre partita + `te-leggera`); il "dopo partita giocata molto" vale a
+   +1 sempre e a +2 solo con fatica ≥ 9 o fastidio nel resoconto (la mia lettura, confermata con "ok").
+2. **I sei esercizi fuori scala**: ok la proposta → la scala muro ha il codice **"orientato A1"** (il workout "passaggi e
+   palleggi A1": ravvicinati, controlli orientati, alzando palla, sombrero) in terza posizione; palleggi interno 3 tocchi
+   in B2, coscia e collo in B1, un piede alternato in A3.
+3. **PRO sui palleggi**: non esiste una scala PRO, il PRO fa gli esercizi dell'A (magari meglio) → `te-palleggi` per un
+   PRO è l'A4 con gli stessi esercizi.
+4. **Attrezzo "muro"**: sì → chip "Un muro per passaggi e palleggi" nel setup (`ATTREZZATURA_OPZIONI`); chi ce l'ha lo
+   spunta; senza muro i passaggi diventano in coppia (con il compagno) o a 10 m contro un cinesino, i palleggi al muro
+   diventano palleggi a terra.
+5. **Visione**: si compone adesso con dribbling base/avanzato e passaggi al muro con i segnali, ma **leggera**: "se
+   fatti ad alta intensità sono molto pesanti, quindi va fatto leggero concentrandosi sulla tecnica, magari alternando
+   cambi di ritmo a scelta propria ma senza andare mai in affanno; durata non troppo lunga (qualche minuto) e recupero
+   bene" → nota `NOTA_VISIONE` sugli esercizi, serie da 2' con 90" di recupero; il tiro con visione "è abbastanza
+   impegnativo" → solo dal livello A, 2 serie, recupero 2'; la Defender Stance "ha anche degli sprint" → resta nella
+   velocità, fuori dalla tecnica. Sul canale YouTube non ci sono video nuovi dal 22/9 (riscansione del 26/10): i due di
+   visione non ancora in catalogo sono "Video colori bianco nero" (`bCEnWPJzp_8`) e "Visione periferica e tecnica"
+   (`Bj07bevdQ5A`); gli altri Ste deve ancora caricarli.
+
+**Nel codice (26/10 sera):** `lib/trainingTecnicaComposta.ts` (puro, 15 test in `tests/trainingTecnicaComposta.test.ts`):
+`costruisciTecnica` (un `te-<tema>` per tema + `te-leggera`, al livello e sul codice delle scale, con `adattaAlTempo`),
+`contaTemi` / `ultimoTemaTecnica` / `temaProssimo` (quote mensili, un tema per seduta), `asseTecnica`, l'esercizio nuovo
+`ttir-riscaldamento-traversa`; nel planner `aggiornaTecnica`, `asseTecnicaDi`, `tecnicaPerGiorno`, `sostituzioniTecnica`,
+i controlli in `expandPiano`, il piano base e la regola 28b (`PLANNER_V2_PROMPT_VERSION = 'v2.38-tecnica-composta'`);
+il validatore fida i `te-*`. I dettagli in CLAUDE.md ("Tecnica composta dal catalogo"). Non ancora: la card delle quote
+nell'hub, la seduta dedicata ai tiri su richiesta dalla maschera (oggi dalla chat del preparatore o dalla nota della
+richiesta), gli altri video di visione.
+
+## Domande per Ste (risposte il 26/10 sera, vedi sopra)
 
 1. L'asse partita come l'ho letto (tabella sopra) è giusto? In particolare: a −1 la tecnica leggera si AGGIUNGE al blocco
    pre partita o lo sostituisce? E "subito dopo partita giocata molto" vale solo a +1 o anche a +2 quando la fatica
