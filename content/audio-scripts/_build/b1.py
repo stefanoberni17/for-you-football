@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1-W4. Formato:
+# Copioni v3 (registri per riga) per W1-W5. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -968,6 +968,263 @@ Questa pressione che ti costruisci spesso funziona uguale in campo e fuori. E lo
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app: la pressione che ti costruisci dentro, la riconosci solo in campo, o anche fuori? In quali situazioni?
+"""
+
+# ---------- W5: l'errore, lo Stacco ----------
+# Un Reset solo (un respiro), canone: gesto sull'inspiro tenuto, mantra sull'espiro, rilascio
+RESET1 = """Inspira dal naso, gonfia la pancia, e unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]"""
+
+F["W5-G1"] = f"""[relaxed]
+Ti racconto il mio esordio in Serie C, con la Reggiana.
+[SILENZIO 1]
+Entro in campo carico, ma anche con una paura addosso che non ti dico. Paura di fare male. Prima palla che tocco: devo fare un appoggio corto, niente di che. Lo scarico corto, l'avversario me la ruba.
+[SILENZIO 2]
+Mi ricordo ancora le parole esatte che mi sono detto: «sei un coglione! Un appoggio che hai fatto mille volte, e ci vai con la paura!»
+[SILENZIO 2]
+Ovviamente non mi ha aiutato per niente. Qualche minuto dopo parto in profondità su un lancio lungo, salto il terzino, lui mi stende in scivolata, cado male e mi lusso la spalla. Partita finita. E anche la stagione. Un esordio da incorniciare, eh.
+[SILENZIO 2]
+[sincere]
+Lasciamo stare la spalla, quella è un'altra storia. Guarda invece i secondi subito dopo quel passaggio sbagliato: un pensiero, e che pensiero. Il corpo che si stringe. E il modo in cui ho giocato dopo.
+[SILENZIO 2]
+Da questa settimana gli strumenti che hai costruito nel primo blocco li usiamo lì, dove fa più male: l'errore. E oggi non ti chiedo di cambiare niente. Solo di guardare cosa ti succede dentro quando sbagli.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Adesso un minuto solo presente: i piedi che appoggiano, i suoni intorno, il punto sotto lo sterno che si gonfia e si sgonfia.
+[SILENZIO 30]
+Non devi fare niente, sei qui ed è già abbastanza.
+[SILENZIO 25]
+Ora torna con la mente all'ultimo errore che hai fatto in campo. Non il più grave, l'ultimo. Un passaggio sbagliato, un controllo storto, un gol preso.
+[SILENZIO 8]
+Rivedi il momento una volta sola, cinque secondi.
+[SILENZIO 6]
+Poi lascialo andare e resta qui. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un errore più leggero. Va bene lo stesso.
+[SILENZIO 5]
+E adesso ripensa a come hai reagito allora, subito dopo l'errore.
+[SILENZIO 3]
+Il pensiero. Cosa ti sei detto? Le parole esatte, anche una parolaccia, anche «non ci credo».
+[SILENZIO 10]
+Il corpo. Cosa è cambiato? Spalle su, stomaco stretto, respiro corto, mascella serrata.
+[SILENZIO 10]
+L'impulso. Cosa hai avuto voglia di fare? Recuperare subito, sparire, prendertela con qualcuno, strafare al pallone dopo.
+[SILENZIO 10]
+Pensiero, corpo, impulso. Spesso parte tutto da solo, in mezzo secondo. La chiamiamo la catena, perché un pezzo tira l'altro.
+[SILENZIO 3]
+L'ordine però non è uguale per tutti. A qualcuno arriva prima il corpo, a qualcuno prima l'impulso, a qualcuno tutto insieme. Questa è una mappa per guardare, non una regola: conta come gira la tua.
+[SILENZIO 5]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Se adesso non ti ricordi bene tutti e tre i pezzi, va bene lo stesso: non li hai mai guardati, è normale. La prossima volta che sbagli ci farai caso, e lo vedrai dal vivo.
+[SILENZIO 2]
+Oggi non c'è niente da cambiare. Solo vederla girare, che è già il primo pezzo del lavoro.
+[SILENZIO 2]
+Se rivedere quell'errore ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: delle tre, pensiero, corpo, impulso, qual è quella che hai sentito più forte? Una parola va bene. Se non ricordi, o nessuna in modo chiaro, scrivi quello.
+"""
+
+F["W5-G2"] = f"""[sincere]
+Hai presente quando sbagli un controllo e vuoi subito il pallone indietro, a tutti i costi, per rimediare? E più lo vuoi, peggio ti viene.
+[SILENZIO 2]
+Succede perché dopo l'errore la testa resta attaccata a quel pallone che non c'è più. E intanto la partita va avanti senza di te.
+[SILENZIO 2]
+Ieri hai visto la catena: pensiero, corpo, impulso, nell'ordine in cui gira a te. Oggi la cosa buona. Tra l'impulso e quello che fai davvero, spesso c'è un istante. Piccolo, ma c'è. Oggi lo alleniamo da fermo, mettendoci dentro un Reset.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Quando sei pronto, torna per un attimo a un errore recente, quello di ieri o l'ultimo che ti viene in mente. Non riviverlo tutto: basta il momento in cui succede, cinque secondi, poi lascialo andare.
+[SILENZIO 8]
+Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un errore più leggero. Va bene lo stesso.
+[SILENZIO 5]
+Adesso la parte che conta. Subito dopo quell'errore, prima di muoverti, prima di cercare il pallone, c'è un istante. Un respiro di spazio prima che parta la reazione. È lì che puoi scegliere, invece di reagire e basta.
+[SILENZIO 5]
+Qui sei seduto: puoi fermare la scena subito dopo l'errore, come con il telecomando.
+[SILENZIO 4]
+E lì, con calma, fai un Reset: il respiro, il gesto, il mantra.
+[SILENZIO 2]
+{RESET1}
+Non per cancellare l'errore, che è successo e resta lì. Ma per non lasciare che sia lui a decidere la tua prossima mossa.
+[SILENZIO 5]
+In partita il gioco non si ferma: lì, in quell'istante, torni alla giocata. Il Reset breve, un respiro con gesto e mantra, lo fai alla prima pausa: una rimessa, un fallo, la palla ferma.
+[SILENZIO 4]
+Nota se cambia qualcosa: magari un po' di spazio che prima non c'era. Se non cambia niente va bene lo stesso, è la prima volta.
+[SILENZIO 8]
+Resta lì un momento, poi con calma lascia andare la scena e torna qui, nel posto in cui sei seduto.
+[SILENZIO 8]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Da oggi, ogni volta che entri in campo o comincia l'allenamento: un Reset. Uno solo. È la tua àncora di questa settimana.
+[SILENZIO 2]
+E se tornare sull'errore ti smuove più di quanto pensavi, va bene così: fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: nell'errore che hai ricordato oggi, ti eri accorto della reazione mentre partiva? Se sì, quando: subito, dopo qualche secondo, solo più tardi? Una riga. Va bene anche «non me ne ero accorto».
+"""
+
+F["W5-G3"] = f"""[relaxed]
+Io sono sempre stato molto autocritico, e lo sono ancora oggi.
+[SILENZIO 2]
+Da ragazzo, quando non mi riusciva una cosa, mi dicevo proprio queste parole: faccio schifo, sono una merda, faccio cagare. Mi ricordo giornate intere passate al campetto a provare le punizioni, e quando sbagliavo mi incazzavo come un matto. Mi usciva una rabbia che sfogavo tutta su di me, insultandomi pesantemente.
+[SILENZIO 2]
+[sincere]
+Il problema è che quando non te ne accorgi, quelle parole non restano lì. A me andavano a condizionarmi in profondità, e alla lunga mi mangiavano l'autostima un pezzo alla volta.
+[SILENZIO 2]
+Con il tempo ho imparato a cambiarle, o a sdrammatizzare proprio mentre me le ripeto. Ma prima ho dovuto fare una cosa: accorgermi di come mi parlavo. Ed è quello che facciamo oggi.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Quando sei pronto, torna a un errore recente che ti è rimasto. Rivedilo una volta, cinque secondi, poi lascialo andare.
+[SILENZIO 8]
+Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un errore più leggero. Va bene lo stesso.
+[SILENZIO 4]
+E adesso ascolta la voce che arriva subito dopo. Prima di tutto: quali parole ti ricordi davvero? Quelle esatte, non quelle che pensi di doverti dire.
+[SILENZIO 12]
+Possono essere pesanti, tipo «fai schifo» o «sempre il solito». Possono essere leggere, tipo «dai, la prossima». E può anche non esserci nessuna voce.
+[SILENZIO 5]
+Non addolcirle e non renderle più pesanti di com'erano. Ascolta come ti parli davvero.
+[SILENZIO 10]
+Poi fai il test del compagno. Quelle parole, le useresti con un compagno che ha appena sbagliato esattamente come te? Gliele diresti in faccia?
+[SILENZIO 10]
+Nota se c'è una differenza tra come parli a lui e come parli a te. Oggi niente da aggiustare, solo vederla.
+[SILENZIO 8]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+E non ti preoccupare se le tue parole sono pesanti: le mie lo erano, e a volte lo sono ancora. Il primo passo non è smettere di dirle, è accorgerti che le stai dicendo.
+[SILENZIO 2]
+Ricorda l'àncora: ogni volta che entri in campo o inizia l'allenamento, un Reset.
+[SILENZIO 2]
+Se ascoltarti ti smuove più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: le parole che ti sei detto dopo l'errore, le diresti a un compagno? Sì o no, e una riga sul perché se ti va. Se non ti sei detto niente, scrivi quello.
+"""
+
+F["W5-G4"] = f"""[relaxed]
+Giocavo terzino. Primo tempo, non seguo bene un taglio e prendiamo gol. Colpa mia, non c'erano dubbi.
+[SILENZIO 2]
+Normalmente, dopo un errore così, mi sarei bloccato e avrei giocato il resto della partita con la paura. Quel giorno invece ho fatto un Reset e ho continuato a giocare: avevo sbagliato, ma la partita andava avanti.
+[SILENZIO 2]
+Novantesimo minuto, punizione al limite dell'area. Io non ero il tiratore, ma quel giorno quello che le calciava di solito non c'era. Mi sono presentato con la voglia giusta, e ho fatto gol. Due a uno per noi, e siamo rimasti in testa al campionato.
+[SILENZIO 2]
+Se fossi rimasto attaccato all'errore del primo tempo, su quel pallone non mi ci sarei nemmeno presentato.
+[SILENZIO 2]
+[sincere]
+Questa è la cosa che alleniamo oggi: dopo l'errore c'è sempre un'azione successiva. E come arrivarci lo sai già.
+[SILENZIO 3]
+[meditative]
+Trova un posto tranquillo. Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Tre Reset per arrivare qui: naso, pancia, bocca.
+[SILENZIO 2]
+{RESET3}
+[SILENZIO 3]
+[sincere]
+Oggi impari lo Stacco. Per la pressione hai il Protocollo; per l'errore, da oggi, hai lo Stacco. Tre passaggi: «è successo», un Reset, la prossima azione.
+[SILENZIO 2]
+Prima una cosa importante. Quando sbagli, le cose da fare sono due.
+[SILENZIO 1]
+È passato: lo lasci andare e vai avanti. Mentre giochi non hai il tempo di capire cosa hai sbagliato, perché, come aggiustarlo. Lo Stacco serve a questo.
+[SILENZIO 2]
+Cosa tengo per la prossima volta: se hai sbagliato tu qualcosa, cosa, e cosa avresti potuto fare. L'analisi vera la fai nell'intervallo, a fine partita, o quando ripensi alla partita. Se invece lo sai già, puoi farlo anche in una pausa: una cosa veloce, tipo «la prossima volta lo seguo», senza lasciarti prendere dal pensiero.
+[SILENZIO 2]
+Lo Stacco non vuol dire far finta di niente o evitare l'errore. Vuol dire guardarlo al momento giusto, e senza restarci dentro.
+[SILENZIO 2]
+Oggi lavori su tre errori tipici tuoi, quelli che ti capitano davvero. Il primo lo facciamo insieme, passo per passo. Se durante l'esercizio qualcosa pesa più del previsto, fermati, fai un Reset, e se ti va parlane con il Coach.
+[SILENZIO 3]
+[meditative]
+L'errore. Scegli il primo.
+[SILENZIO 8]
+Rivedi il momento esatto in cui succede, una volta, cinque secondi.
+[SILENZIO 6]
+Poi lascialo lì. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un errore più leggero. Va bene lo stesso.
+[SILENZIO 4]
+È successo. Su un'espirazione normale, dentro di te: «è successo». Non vuol dire che ti va bene, non vuol dire bravo. Vuol dire che quel pallone è già stato giocato.
+[SILENZIO 6]
+Il Reset. Poi, con un respiro nuovo.
+[SILENZIO 1]
+{RESET1}
+La prossima azione. Immagina la palla che riprende a girare e tu che sei già al punto dopo: smarcato, in copertura, di nuovo in partita.
+[SILENZIO 10]
+Adesso rifai la stessa sequenza da solo per il secondo errore. Senza fretta: è il giorno più lungo della settimana.
+[SILENZIO 3]
+Il secondo errore. Rivedilo cinque secondi, poi lascialo lì.
+[SILENZIO 12]
+«È successo».
+[SILENZIO 6]
+Il Reset, un respiro intero.
+[SILENZIO 14]
+La prossima azione.
+[SILENZIO 12]
+E poi il terzo errore. Rivedilo cinque secondi, poi lascialo lì.
+[SILENZIO 12]
+«È successo».
+[SILENZIO 6]
+Il Reset, un respiro intero.
+[SILENZIO 14]
+La prossima azione.
+[SILENZIO 12]
+Prima di chiudere, nota com'è stato rivivere ogni errore. Magari uno ti ha bloccato meno della prima volta, magari pesavano tutti uguale.
+[SILENZIO 8]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Sono dati tutti e due: oggi non stai misurando quanto ti pesa l'errore, stai allenando cosa fai nell'istante dopo.
+[SILENZIO 2]
+In campo funziona così. Che hai sbagliato te ne accorgi anche mentre giochi, succede da solo e va bene. Ma finché l'azione continua non fai la pratica: resti sulla partita. Lo Stacco, «è successo» e il Reset breve, lo fai alla prima pausa: una rimessa, un fallo, la palla ferma. Se sai già cosa tenere per la prossima volta, bastano due secondi in una pausa; il resto lo guardi dopo.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: dei tre passaggi, «è successo», Reset, prossima azione, quale ti è venuto chiaro, e quale difficile? Una riga.
+"""
+
+F["W5-G6"] = f"""[sincere]
+Il primo giorno ti ho chiesto di guardare cosa parte quando sbagli. Pensiero, corpo, impulso, nell'ordine in cui gira a te.
+[SILENZIO 2]
+Da allora ci hai lavorato qualche giorno. Magari l'hai vista partire, magari ti è sfuggita. Tutte e due le cose ci dicono qualcosa.
+[SILENZIO 1]
+[relaxed]
+E se questa settimana non hai sbagliato niente, complimenti: io una settimana così non l'ho mai fatta.
+[SILENZIO 2]
+[sincere]
+Oggi niente di nuovo. Guardiamo solo com'è andata, senza voti.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Ripensa al primo giorno, a come guardavi l'errore allora.
+[SILENZIO 8]
+Adesso cerca un momento di questa settimana in cui hai visto partire la tua reazione dopo un errore. Anche solo per un istante, anche se poi è andata come sempre. Anche dopo, ripensandoci la sera.
+[SILENZIO 12]
+Poi lo Stacco: l'hai provato? È successo, Reset, prossima azione.
+[SILENZIO 6]
+Quale passaggio ti è venuto, e quale è rimasto poco chiaro?
+[SILENZIO 10]
+Se non trovi niente, va bene: non è un fallimento, è un'informazione. Chiediti solo.
+[SILENZIO 1]
+Mi è chiaro cosa fare?
+[SILENZIO 6]
+Ho avuto un errore su cui provarci?
+[SILENZIO 6]
+Me ne sono ricordato alla prima pausa, o mi è sfuggito?
+[SILENZIO 6]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+E sii onesto con te stesso: a volte va ancora come sempre. È normale, sono passati sei giorni, non sei anni.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app, due domande, una riga ciascuna. Uno: questa settimana ti sei accorto della tua reazione dopo un errore? Mentre partiva, solo dopo, o non ancora? Due: hai provato lo Stacco? Quale passaggio ti è venuto, e quale è rimasto poco chiaro? Se non hai avuto occasione, scrivi quello.
 """
 
 for k,v in F.items():

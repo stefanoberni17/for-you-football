@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Audio delle pratiche: W5 scritto, generato e online
+- Ste: "vai w5". Cinque copioni (W5 G1 G2 G3 G4 G6; G5 è una giornata senza pratica e G7 non ha audio) in `content/audio-scripts/_build/b1.py` dai testi Notion: la catena pensiero / corpo / impulso di G1, l'istante prima della reazione con il Reset dentro la scena in G2 (helper `RESET1`, un respiro guidato), la voce dopo l'errore e il test del compagno in G3 (con la storia delle punizioni al campetto), lo Stacco sui tre errori in G4 (il primo passo per passo, gli altri due con i soli richiami), il bilancio della settimana in G6. 94 segmenti ElevenLabs (~13.300 crediti, 2,90 dollari), 11 dalla cache; montati, -17 LUFS, caricati nel bucket `practice-audio` come `W5-G<n>.mp3` e collegati nel campo `Audio Pratica`. `Durata Minuti`: G1 5→7, G2 5→6, G3 5→6, G4 12→9, G6 4→5. Ste deve ancora ascoltare W2, W3, W4 e W5.
+
 ## 2026-10-26 — Audio delle pratiche: W4 scritto, generato e online
 - Ste: "vai con w4". Cinque copioni (W4 G1 G2 G3 G4 G5; G6 e G7 senza audio) in `content/audio-scripts/_build/b1.py` dai testi Notion: le domande fuori/dentro di G1, le tre domande del segnale di G2, Senti / Nota / Torna di G3, i cinque passi del Protocollo Pressione detti a voce in G4 (le parti facoltative restano scritte nell'app, l'avviso di sicurezza una volta sola prima di iniziare), le due domande di G5. 81 segmenti ElevenLabs (~11.000 crediti, 2,40 dollari), 10 dalla cache; montati, -17 LUFS, caricati nel bucket `practice-audio` come `W4-G<n>.mp3` e collegati nel campo `Audio Pratica`. `Durata Minuti`: G1 7, G2 6→5, G3 6→8, G4 10→9, G5 7. Ste deve ancora ascoltare W2, W3 e W4.
 
