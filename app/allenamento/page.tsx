@@ -961,6 +961,7 @@ export default function AllenamentoHub() {
                   {state.tecnicaMese.combinata && <> Ogni tanto due parti si combinano: questa settimana può capitare {state.tecnicaMese.combinata}.</>}
                 </p>
               )}
+              <p className="text-body-sm text-muted mt-1.5 leading-relaxed">Tiri a seduta, dopo la traversa: fino a <span className="font-semibold text-app">{state.tecnicaMese.tiriMax}</span> ({state.tecnicaMese.tiriMotivo}).</p>
             </Card>
           )}
           {/* Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): il piano ne tiene conto */}

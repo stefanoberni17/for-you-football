@@ -18,7 +18,9 @@
  *  - STRUTTURA: tiri = seduta COMBINATA (Ste, 26/10 sera: "apertura passaggi e stop, dribbling e finale con tiri; una
  *    sessione dedicata solo ai tiri è lunga, i tiri sono faticosi alla lunga per i muscoli"): due esercizi di passaggi e
  *    stop sul codice della scala muro, due di dribbling, il riscaldamento "10 di destro e 10 di sinistro dal limite alla
- *    traversa" (`ttir-riscaldamento-traversa`) e in fondo al massimo TIRI_DOPO_TRAVERSA_MAX tiri del livello; conta metà
+ *    traversa" (`ttir-riscaldamento-traversa`) e in fondo i tiri del livello: si parte da TIRI_PARTENZA (20) e il tetto
+ *    sale piano con il tempo (Ste: "si può aumentare, ma graduale"; `tettoTiri`: +5 ogni 2 sedute di tiri non dure,
+ *    fino a 40, −5 dopo una dura); conta metà
  *    seduta per i tiri e un quarto ciascuno per passaggi e dribbling;
  *    gli altri temi = esercizi analitici prima, in chiusura qualcosa di freestyle.
  *  - Gli esercizi durano qualche minuto e si ADATTANO al tempo della seduta (`adattaAlTempo`).
@@ -37,7 +39,7 @@ import { bloccoById } from './trainingBlocks';
 import type { LivelloMinV2, QualitaV2 } from './trainingCatalogV2';
 import { esercizioAny } from './trainingExercise';
 import { esercizioV2ById } from './trainingCatalogV2';
-import { dataRoma, type FeedbackPerMemoria } from './trainingMemoriaBlocchi';
+import { dataRoma, VOTO_SEDUTA_DURO, type FeedbackPerMemoria } from './trainingMemoriaBlocchi';
 import type { PrioritaTecnica } from './trainingTecnica';
 
 export type TemaTecnica = 'palleggi' | 'passaggi' | 'freestyle' | 'visione' | 'dribbling' | 'tiro';
@@ -78,8 +80,15 @@ export function pesiDiId(id: string): [TemaTecnica, number][] {
 }
 export const RISCALDAMENTO_TRAVERSA_ID = 'ttir-riscaldamento-traversa';
 export const TIRI_MAX_GIORNO_PRIMA = 10;          // Ste: "se giorno prima partita proprio poca roba, max 10 tiri"
-/** Nella seduta di tiri, dopo il riscaldamento alla traversa (Ste, 26/10 sera: "i tiri sono faticosi alla lunga per i muscoli"). */
-export const TIRI_DOPO_TRAVERSA_MAX = 20;
+/**
+ * Quanti tiri, dopo il riscaldamento alla traversa (Ste, 26/10 sera: "i tiri sono faticosi alla lunga per i muscoli";
+ * poi: "si può anche aumentare il tetto, però graduale con il tempo"): si parte da 20 e si sale di 5 ogni 2 sedute di
+ * tiri andate bene, fino a 40; una seduta di tiri dura riporta indietro di 5.
+ */
+export const TIRI_PARTENZA = 20;
+export const TIRI_PASSO = 5;
+export const TIRI_TETTO_MAX = 40;
+export const TIRI_SEDUTE_PER_PASSO = 2;
 /** La seduta di tiri è combinata: come conta nelle quote del mese. */
 export const PESI_TIRO: readonly [TemaTecnica, number][] = [['tiro', 0.5], ['passaggi', 0.25], ['dribbling', 0.25]];
 export const LEGGERA_MINUTI = 22;
@@ -218,6 +227,7 @@ export interface OpzioniTecnica {
   posMuro?: number;              // posizione nella scala muro (0 = base … 5 = A3 due tocchi); senza: dal livello
   leggera?: boolean;             // costruire anche `te-leggera` (tecnica tra gli obiettivi)
   mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null; // la seduta combinata di questa settimana (`sceltaMix`)
+  tiriMax?: number;              // il tetto dei tiri dopo la traversa (`tettoTiri`); senza: TIRI_PARTENZA
 }
 
 /** 'secondo' = gli esercizi del secondo tema nella seduta combinata: `adattaAlTempo` non li toglie. */
@@ -293,14 +303,44 @@ function pezziDribbling(livello: LivelloMinV2): Pezzo[] {
 
 /**
  * I tiri del livello, in fondo alla seduta di tiri (ruolo 'chiusura': se il tempo stringe escono prima passaggi e
- * dribbling, i tiri restano). Al massimo TIRI_DOPO_TRAVERSA_MAX tiri: B 2 × 8, A 2 × 6 + 1 × 8 dall'angolo, PRO 2 × 6 +
- * 1 × 8 con visione.
+ * dribbling, i tiri restano). Alla partenza 20 tiri: B 2 × 8, A 2 × 6 + 1 × 8 dall'angolo, PRO 2 × 6 + 1 × 8 con
+ * visione; con il tetto più alto (`tettoTiri`) si aggiungono serie a rotazione.
  */
-function tiriFinali(livello: LivelloMinV2): Pezzo[] {
+function tiriFinali(livello: LivelloMinV2, tetto = TIRI_PARTENZA): Pezzo[] {
   const tecnica = reps('ttir-tiri-tecnica-di-tiro', 2, livello === 'B' ? 8 : 6, { r: 90, ruolo: 'chiusura' });
-  if (livello === 'B') return [tecnica];
-  if (livello === 'A') return [tecnica, reps('ttir-tiri-in-porta-dall-angolo-cross', 1, 8, { r: 90, ruolo: 'chiusura' })];
-  return [tecnica, reps('ttir-tiri-in-porta-e-visione', 1, 8, { r: 120, ruolo: 'chiusura', nota: 'Impegnativo: recupero pieno, niente affanno.' })];
+  const base = livello === 'B' ? [tecnica]
+    : livello === 'A' ? [tecnica, reps('ttir-tiri-in-porta-dall-angolo-cross', 1, 8, { r: 90, ruolo: 'chiusura' })]
+    : [tecnica, reps('ttir-tiri-in-porta-e-visione', 1, 8, { r: 120, ruolo: 'chiusura', nota: 'Impegnativo: recupero pieno, niente affanno.' })];
+  return tiriAlTetto(base, Math.max(TIRI_PARTENZA, Math.min(TIRI_TETTO_MAX, tetto)));
+}
+/** Il tetto dei tiri per la prossima seduta di tiri, dalle sedute `te-tiro` fatte (dalla più vecchia alla più recente). */
+export interface TettoTiri { tetto: number; sedute: number; motivo: string }
+export function tettoTiri(feedback: readonly FeedbackPerMemoria[]): TettoTiri {
+  const righe = [...feedback].filter((f) => f.feedback_blocchi?.some((b) => b.id === teId('tiro'))).sort((a, b) => (a.completed_at < b.completed_at ? -1 : 1));
+  let tetto = TIRI_PARTENZA; let buone = 0; let ultima = '';
+  for (const f of righe) {
+    const g = f.feedback_blocchi!.find((b) => b.id === teId('tiro'))?.giudizio;
+    const dura = g === 'duro' || (f.rpe ?? 0) >= VOTO_SEDUTA_DURO;
+    if (dura) { if (tetto > TIRI_PARTENZA) ultima = 'l\'ultima seduta di tiri era dura: un passo indietro'; tetto = Math.max(TIRI_PARTENZA, tetto - TIRI_PASSO); buone = 0; continue; }
+    buone++;
+    if (buone >= TIRI_SEDUTE_PER_PASSO) { buone = 0; if (tetto < TIRI_TETTO_MAX) { tetto += TIRI_PASSO; ultima = `${TIRI_SEDUTE_PER_PASSO} sedute di tiri andate bene: ${TIRI_PASSO} tiri in più`; } }
+  }
+  const motivo = !righe.length ? 'si parte da qui, poi si sale piano'
+    : tetto >= TIRI_TETTO_MAX ? 'al massimo'
+    : ultima || `sale di ${TIRI_PASSO} ogni ${TIRI_SEDUTE_PER_PASSO} sedute di tiri andate bene`;
+  return { tetto, sedute: righe.length, motivo };
+}
+
+/** Alza i tiri del livello fino al tetto, una serie alla volta a rotazione (mai oltre 4 serie per esercizio). */
+function tiriAlTetto(base: Pezzo[], tetto: number): Pezzo[] {
+  const out = base.map((p) => ({ ...p }));
+  const tot = () => out.reduce((a, p) => a + (p.serie ?? 1) * p.q, 0);
+  for (let i = 0, giri = 0; giri < 20; i = (i + 1) % out.length, giri++) {
+    const p = out[i];
+    if ((p.serie ?? 1) >= 4 || tot() + p.q > tetto) { if (out.every((x) => (x.serie ?? 1) >= 4 || tot() + x.q > tetto)) break; continue; }
+    p.serie = (p.serie ?? 1) + 1;
+  }
+  return out;
 }
 const RISC_TRAVERSA: Pezzo = reps(RISCALDAMENTO_TRAVERSA_ID, 1, 10, { r: 60, ruolo: 'apertura', nota: 'Progressivo: parti piano e sali tiro dopo tiro. 10 di destro, 10 di sinistro.' });
 
@@ -440,10 +480,11 @@ function bloccoMix(primo: TemaTecnica, secondo: TemaTecnica, pezziDi: (t: TemaTe
 function bloccoTiri(pezziDi: (t: TemaTecnica) => Pezzo[], livello: LivelloMinV2, o: OpzioniTecnica, minuti: number): Blocco | null {
   const due = (t: TemaTecnica) => adattaMuro(t, pezziDi(t), o).filter((p) => p.ruolo === 'analitico' || p.ruolo === 'principale').slice(0, 2)
     .map((p, i) => ({ ...p, ruolo: (i === 0 ? 'apertura' : 'analitico') as Ruolo }));
-  const pezzi = [...due('passaggi'), ...due('dribbling'), RISC_TRAVERSA, ...tiriFinali(livello)];
+  const tetto = o.tiriMax ?? TIRI_PARTENZA;
+  const pezzi = [...due('passaggi'), ...due('dribbling'), RISC_TRAVERSA, ...tiriFinali(livello, tetto)];
   const muro = o.attrezzatura.includes('muro');
   return blocco(teId('tiro'), 'Tecnica: passaggi, dribbling e tiri', 'tiro', pezzi, o,
-    `Passaggi e stop per scaldarti, un po' di dribbling, il riscaldamento alla traversa e in fondo pochi tiri (al massimo ${TIRI_DOPO_TRAVERSA_MAX}): alla lunga i tiri stancano i muscoli.`, minuti,
+    `Passaggi e stop per scaldarti, un po' di dribbling, il riscaldamento alla traversa e in fondo i tiri (al massimo ${tetto}, si sale piano con il tempo): alla lunga i tiri stancano i muscoli.`, minuti,
     { inCoppia: !muro && o.inCoppia }, true);
 }
 
@@ -457,7 +498,7 @@ export function costruisciTecnica(o: OpzioniTecnica): Blocco[] {
   const posP = o.posPalleggi ?? posDefault(liv, 'palleggi');
   const posM = o.posMuro ?? posDefault(liv, 'muro');
   const pezziDi = (t: TemaTecnica): Pezzo[] => t === 'palleggi' ? pezziPalleggi(posP) : t === 'passaggi' ? pezziPassaggi(posM) : t === 'freestyle' ? pezziFreestyle(liv)
-    : t === 'visione' ? pezziVisione(liv) : t === 'dribbling' ? pezziDribbling(liv) : [...tiriFinali(liv)];
+    : t === 'visione' ? pezziVisione(liv) : t === 'dribbling' ? pezziDribbling(liv) : tiriFinali(liv, o.tiriMax);
   const out: (Blocco | null)[] = [
     blocco(teId('palleggi'), 'Tecnica: palleggi', 'palleggi', pezziPalleggi(posP), o, `Palleggi sul tuo codice della scala (${posP + 1}ª tappa): esercizi analitici, poi freestyle in chiusura.`, minuti),
     blocco(teId('passaggi'), 'Tecnica: controllo e passaggi', 'passaggi', pezziPassaggi(posM), o, `Controllo e passaggi sul tuo codice della scala muro (${posM + 1}ª tappa): analitici, poi libero in chiusura.`, minuti),
@@ -478,7 +519,7 @@ export function tecnicaCompostaTesto(b: Blocco): string {
 }
 
 /** Stato per il prompt e l'hub: conteggi, deficit, ordine e tema preferito. */
-export interface StatoTecnica { conteggi: Conteggi; scelta: SceltaTema; temaPreferito: TemaTecnica | null; mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null }
+export interface StatoTecnica { conteggi: Conteggi; scelta: SceltaTema; temaPreferito: TemaTecnica | null; mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null; tiri?: TettoTiri }
 /** Un conteggio con i decimali delle sedute combinate: "2", "1,7". */
 export const fmtVolte = (n: number) => (Math.round(n * 10) / 10).toString().replace('.', ',');
 export function statoTecnicaTesto(st: StatoTecnica): string {
@@ -498,8 +539,10 @@ export interface TecnicaMese {
   prossimo: string | null;
   motivo: string;
   combinata: string | null;
+  tiriMax: number;
+  tiriMotivo: string;
 }
-export function tecnicaDelMese(conteggi: Conteggi, scelta: SceltaTema, o: { tecnicaObiettivo: boolean; mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null }): TecnicaMese | null {
+export function tecnicaDelMese(conteggi: Conteggi, scelta: SceltaTema, o: { tecnicaObiettivo: boolean; mix?: { primo: TemaTecnica; secondo: TemaTecnica } | null; tiri?: TettoTiri }): TecnicaMese | null {
   const totale = TEMI.reduce((a, t) => a + conteggi[t], 0);
   if (!totale && !o.tecnicaObiettivo) return null;
   return {
@@ -511,5 +554,7 @@ export function tecnicaDelMese(conteggi: Conteggi, scelta: SceltaTema, o: { tecn
     prossimo: scelta.tema ? TEMA_LABEL[scelta.tema] : null,
     motivo: scelta.tema && scelta.deficit[scelta.tema] > 0 ? 'è la parte più indietro sulla quota del mese' : 'a rotazione',
     combinata: o.mix ? `${TEMA_LABEL[o.mix.primo]} e un po' di ${TEMA_LABEL[o.mix.secondo]}` : null,
+    tiriMax: o.tiri?.tetto ?? TIRI_PARTENZA,
+    tiriMotivo: o.tiri?.motivo ?? 'si parte da qui, poi si sale piano',
   };
 }

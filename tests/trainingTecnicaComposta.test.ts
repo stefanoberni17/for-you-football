@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  adattaAlTempo, asseTecnica, contaTemi, costruisciTecnica, durataTecnica, QUOTE_TECNICA, RISCALDAMENTO_TRAVERSA_ID, TE_LEGGERA_ID, teId, temaDiBlocco, temaProssimo, TEMI, TIRI_DOPO_TRAVERSA_MAX, TIRI_MAX_GIORNO_PRIMA, ultimoTemaTecnica,
+  adattaAlTempo, asseTecnica, contaTemi, costruisciTecnica, durataTecnica, QUOTE_TECNICA, RISCALDAMENTO_TRAVERSA_ID, TE_LEGGERA_ID, teId, temaDiBlocco, temaProssimo, TEMI, TIRI_PARTENZA, TIRI_MAX_GIORNO_PRIMA, ultimoTemaTecnica,
   type Conteggi, type OpzioniTecnica,
 } from '@/lib/trainingTecnicaComposta';
 import { esercizioAny } from '@/lib/trainingExercise';
@@ -41,7 +41,7 @@ describe('costruisciTecnica: un blocco per tema, al livello e sul codice della s
       expect(tiro.items[iTrav]).toMatchObject({ serie: 1, quantita: 10, perLato: true });
       expect(ids.slice(iTrav + 1).length).toBeGreaterThan(0);
       expect(ids.slice(iTrav + 1).every((id) => id.startsWith('ttir-'))).toBe(true);
-      expect(tiro.items.slice(iTrav + 1).reduce((a, it) => a + it.serie * it.quantita, 0)).toBeLessThanOrEqual(TIRI_DOPO_TRAVERSA_MAX);
+      expect(tiro.items.slice(iTrav + 1).reduce((a, it) => a + it.serie * it.quantita, 0)).toBeLessThanOrEqual(TIRI_PARTENZA);
       // gli altri temi: analitici prima, freestyle in chiusura
       const pall = te.find((b) => b.id === teId('palleggi'))!;
       expect(pall.items[pall.items.length - 1].esercizio_id).toMatch(/freestyle/);

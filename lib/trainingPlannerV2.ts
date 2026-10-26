@@ -41,7 +41,7 @@ import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } fr
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, prioritaTecnica, QUALITA_PRIORITA, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type PrioritaTecnicaInfo, type Ripasso } from './trainingTecnica';
 import { dataDiGiorno, addDays as addGiorni, GAMBE_DOPO_PARTITA as GAMBE_SCALA, gambeDopoPartitaDel, notaGambeDopoPartita, quantoGiocata, resocontiTesto, RESOCONTO_FATICA_ALTA, type GambeDopoPartita } from './trainingResoconto';
 import { costruisciResistenza, filtraResistenza, isResistenzaComposta, isResistenzaEverfit, RE_FINESTRA_PRIMA, RE_METABOLICO_ID, RE_RSA_ID, RE_SERIE_ID, RE_SERIE_MAX, RE_SERIE_START, reIdPer, resistenzaRegola, RSA_SERIE_MAX, RSA_SERIE_START, statoResistenza, type StatoResistenza } from './trainingResistenza';
-import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, isTecnicaMix, mixId, sceltaMix, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, temiDiId, TIRI_DOPO_TRAVERSA_MAX, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
+import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, isTecnicaMix, mixId, sceltaMix, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, temiDiId, tettoTiri, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
 import { posizioneScala } from './trainingTecnica';
 import { doseRegoleTesto, isEsercizioKettlebell } from './trainingDose';
 import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione } from './trainingEsecuzione';
@@ -342,14 +342,15 @@ export function aggiornaTecnica(ctx: ContextV2, lunediCorrente = mondayOfThisWee
   const scelta = temaProssimo(conteggi, { ammessi: TEMI, priorita: ctx.prioritaTecnica?.priorita ?? null, ultimo: ultimoTemaTecnica(ctx.base.feedbackRecenti) });
   const minuti = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
   const mix = sceltaMix(scelta, minuti); // a volte due temi indietro insieme si combinano (Ste, 26/10 sera)
+  const tiri = tettoTiri(ctx.base.feedbackRecenti); // il tetto dei tiri sale piano con il tempo (Ste, 26/10 sera)
   const te = costruisciTecnica({
     livello: livelloDi(ctx.base.livelli, 'tecnica-palleggi', ctx.v2.livello), attrezzatura: ctx.setup.attrezzatura, inCoppia: ctx.setup.compagno,
     minuti, ...(posP >= 0 ? { posPalleggi: posP } : {}), ...(posM >= 0 ? { posMuro: posM } : {}),
-    leggera: ctx.obiettivi.includes('tecnica') || ctx.obiettivi.includes(FOCUS_TUTTO), mix,
+    leggera: ctx.obiettivi.includes('tecnica') || ctx.obiettivi.includes(FOCUS_TUTTO), mix, tiriMax: tiri.tetto,
   });
   ctx.blocchi.push(...te);
   const mixCostruito = mix && te.some((b) => b.id === mixId(mix.primo, mix.secondo)) ? mix : null;
-  ctx.tecnica = { conteggi, scelta, temaPreferito: scelta.tema, mix: mixCostruito };
+  ctx.tecnica = { conteggi, scelta, temaPreferito: scelta.tema, mix: mixCostruito, tiri };
 }
 
 /** L'asse partita per la tecnica nel giorno `giorno` (lib/trainingTecnicaComposta.asseTecnica), con il resoconto della partita. */
@@ -1260,7 +1261,7 @@ function tecnicaCompostaRegola(ctx: ContextV2): string {
   if (!te.length || !ctx.tecnica) return '';
   const asseRighe = [1, 2, 3, 4, 5, 6, 7].map((g) => { const a = asseTecnicaDi(ctx, g); return `${DAY_NAMES[g]}: ${a.leggera ? `solo \`${TE_LEGGERA_ID}\`` : a.ammessi.length === TEMI.length ? 'tutto' : a.ammessi.length ? a.ammessi.map(teId).join(', ') : 'niente tecnica'}`; });
   return `
-28b. TECNICA COMPOSTA DAL CATALOGO (blocchi \`te-*\`, costruiti dal server sugli esercizi al livello dell'atleta e sui suoi codici delle scale: preferiscili SEMPRE ai workout Everfit di tecnica, che il server sostituisce comunque). Una seduta di tecnica è centrata su un tema (Ste: "non farei mix su tutto"); a volte due temi si combinano un po' (Ste, 26/10 sera): quando due temi sono indietro insieme il server costruisce la seduta combinata \`te-mix-*\` (soprattutto il primo, poi qualche esercizio del secondo); la seduta di tiri \`${teId('tiro')}\` è sempre combinata (Ste: "apertura passaggi e stop, dribbling e finale con tiri; una sessione solo di tiri è lunga e alla lunga stanca i muscoli"): passaggi e stop, dribbling, riscaldamento alla traversa e al massimo ${TIRI_DOPO_TRAVERSA_MAX} tiri in fondo; un solo \`te-*\` per giornata, un tema una volta a settimana finché ce ne sono altri. ${statoTecnicaTesto(ctx.tecnica)}
+28b. TECNICA COMPOSTA DAL CATALOGO (blocchi \`te-*\`, costruiti dal server sugli esercizi al livello dell'atleta e sui suoi codici delle scale: preferiscili SEMPRE ai workout Everfit di tecnica, che il server sostituisce comunque). Una seduta di tecnica è centrata su un tema (Ste: "non farei mix su tutto"); a volte due temi si combinano un po' (Ste, 26/10 sera): quando due temi sono indietro insieme il server costruisce la seduta combinata \`te-mix-*\` (soprattutto il primo, poi qualche esercizio del secondo); la seduta di tiri \`${teId('tiro')}\` è sempre combinata (Ste: "apertura passaggi e stop, dribbling e finale con tiri; una sessione solo di tiri è lunga e alla lunga stanca i muscoli"): passaggi e stop, dribbling, riscaldamento alla traversa e i tiri in fondo: questa settimana al massimo ${ctx.tecnica.tiri?.tetto ?? 20} (${ctx.tecnica.tiri?.motivo ?? ''}; Ste: "si può aumentare, ma graduale": +5 ogni 2 sedute di tiri andate bene, fino a 40, −5 dopo una dura; lo decide il server); un solo \`te-*\` per giornata, un tema una volta a settimana finché ce ne sono altri. ${statoTecnicaTesto(ctx.tecnica)}
 - Asse partita per la tecnica (Ste): dopo una partita giocata tutta (+1, e +2 con fatica alta) solo \`${teId('palleggi')}\` e \`${teId('passaggi')}\`; il giorno prima solo \`${TE_LEGGERA_ID}\` (poca roba, max 10 tiri, FACOLTATIVA: si aggiunge al blocco pre partita se la tecnica è tra gli obiettivi); da 2 giorni prima tutto, anche tiri, dribbling e freestyle; i tiri a centro/fine settimana con poco volume (una seduta dedicata solo se l'atleta la chiede). ${ctx.base.matchDays.length ? `Questa settimana: ${asseRighe.join(' · ')}.` : 'Questa settimana non c\'è partita: tutto ammesso ogni giorno.'}
 - Tiri e dribbling sono le parti faticose: mai sopra la quota se non su richiesta, le prime a scendere con fatica o calendario pieno. La visione con il video dei segnali è leggera, sulla tecnica, mai in affanno (il server lo scrive sugli esercizi).
 Composizione: ${te.map(tecnicaCompostaTesto).join(' || ')}`;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  contaTemi, costruisciTecnica, fmtVolte, mixId, MIX_MINUTI_MIN, pesiDiId, sceltaMix, tecnicaDelMese, teId, temaDiId, temaProssimo, TEMI, temiDiId,
+  contaTemi, costruisciTecnica, fmtVolte, mixId, MIX_MINUTI_MIN, pesiDiId, sceltaMix, tecnicaDelMese, teId, temaDiId, temaProssimo, TEMI, temiDiId, tettoTiri, TIRI_PARTENZA, TIRI_TETTO_MAX,
   type Conteggi, type OpzioniTecnica,
 } from '@/lib/trainingTecnicaComposta';
 import { esercizioAny } from '@/lib/trainingExercise';
@@ -113,5 +113,30 @@ describe('nel planner', () => {
     expect(m.prossimo).toBe('palleggi');
     expect(m.combinata).toBe('palleggi e un po\' di controllo e passaggi');
     expect(tecnicaDelMese(contaTemi([], mondayOfThisWeekRome()), temaProssimo(vuoti(), { ammessi: TEMI }), { tecnicaObiettivo: false })).toBeNull();
+  });
+});
+
+describe('il tetto dei tiri sale piano con il tempo (Ste, 26/10 sera)', () => {
+  const tiro = (giorni: number, giudizio: 'facile' | 'ok' | 'duro' = 'ok', rpe = 6): FeedbackSeduta => ({ feedback: 'ok', note: null, completed_at: giorniFa(giorni), rpe, feedback_blocchi: [{ id: teId('tiro'), giudizio }] });
+  it('parte da 20, +5 ogni 2 sedute andate bene, −5 dopo una dura, mai sopra 40', () => {
+    expect(tettoTiri([]).tetto).toBe(TIRI_PARTENZA);
+    expect(tettoTiri([tiro(10)]).tetto).toBe(20);
+    expect(tettoTiri([tiro(10), tiro(5)]).tetto).toBe(25);
+    expect(tettoTiri([tiro(20), tiro(15), tiro(10), tiro(5)]).tetto).toBe(30);
+    expect(tettoTiri([tiro(20), tiro(15), tiro(10, 'duro')]).tetto).toBe(20);
+    expect(tettoTiri([tiro(20), tiro(15), tiro(10, 'ok', 9)]).tetto).toBe(20); // voto della seduta 9 = dura
+    expect(tettoTiri(Array.from({ length: 20 }, (_, i) => tiro(40 - i))).tetto).toBe(TIRI_TETTO_MAX);
+  });
+  it('la seduta di tiri porta il tetto: più serie a rotazione, mai oltre', () => {
+    for (const livello of ['B', 'A', 'PRO'] as const) {
+      for (const tetto of [20, 30, 40]) {
+        const b = costruisciTecnica({ ...base, livello, minuti: 90, tiriMax: tetto }).find((x) => x.id === teId('tiro'))!;
+        const ids = b.items.map((it) => it.esercizio_id ?? '');
+        const dopo = b.items.slice(ids.indexOf('ttir-riscaldamento-traversa') + 1);
+        const tot = dopo.reduce((a, it) => a + it.serie * it.quantita, 0);
+        expect(tot).toBeLessThanOrEqual(tetto);
+        expect(tot).toBeGreaterThan(tetto - 9);
+      }
+    }
   });
 });
