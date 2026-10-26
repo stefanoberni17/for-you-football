@@ -12671,5 +12671,46 @@
    "piu_difficile": "Rialzo più basso, fino a terra (One-Arm Push-Up).",
    "sicurezza": "Rialzo stabile. Fastidio al polso o al gomito: fermati."
   }
+ },
+ {
+  "attrezzatura": "corpo libero",
+  "difficolta": 1,
+  "livello_min": "B",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 26/10/2026, resistenza alla velocità a serie)",
+  "azione": "aggiunto 26/10/2026",
+  "nome_everfit": "Pausa tra le serie",
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "pausa",
+  "finestra_partita": null,
+  "id": "rec-pausa-tra-serie",
+  "nome": "Rest Between Sets",
+  "qualita": "mobilita-recupero",
+  "unita": "secondi",
+  "tags": [
+   "recupero",
+   "pausa"
+  ],
+  "descrizione": "Pausa completa tra una serie e l'altra: cammina, respira, bevi un sorso. Il timer ti dice quando ripartire.",
+  "scheda": {
+   "esecuzione": [
+    "Fermati: la serie dopo vale solo se riparti fresco.",
+    "Cammina piano, braccia sciolte, respira con il naso.",
+    "Un sorso d'acqua se serve.",
+    "Quando il timer suona, riparti."
+   ],
+   "errori": [
+    "Sederti o sdraiarti: le gambe si raffreddano.",
+    "Ripartire prima del tempo: la pausa è parte dell'allenamento.",
+    "Guardare il telefono per tre minuti: tieni la testa sulla serie dopo."
+   ],
+   "piu_facile": "Allunga la pausa di un minuto.",
+   "piu_difficile": "Non accorciarla: la dose la decide la serie, non la pausa.",
+   "sicurezza": "Giramenti di testa o fiato che non torna: la seduta finisce qui."
+  }
  }
 ]

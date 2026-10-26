@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Salite in season, pausa tra le serie RSA, resistenza senza il campo (risposte di Ste alla #164)
+- **Salite Sprint**: non sono più "velocità pura" (Ste: più forza esplosiva), quindi passano a −2 e a +2/+3 dalla partita con la finestra del blocco; in season il server le lima a 6-12 sprint da 20-30 m con recupero completo (≥ 90"), nota nell'hub e sugli item (`limaSaliteInSeason`, `tests/trainingSalite.test.ts`); off season i blocchi di Ste restano come sono.
+- **Pausa tra le serie RSA**: esercizio nuovo `rec-pausa-tra-serie` (catalogo 336/299) da 3' tra una serie e l'altra di `re-rsa`; nel player è un timer senza voto né log.
+- **Resistenza anche senza il campo**: `re-serie` e `re-metabolico` esistono con la sola corsa (fartlek e intermittente, anche su strada o al parco), niente palla; la RSA resta solo con il campo. Prompt v2.44.
+
 ## 2026-10-26 — Resistenza a serie come la fa Ste (punto 19)
 - `lib/trainingResistenza.ts` (puro, 14 test): le sedute di resistenza le compone il server come blocchi virtuali `re-serie` (serie da 4' B / 5' A / 6' PRO, recupero 3' in B e 2' da A, partenza 2 serie in B e 3 da A, fino a 4 / 5; contenuto mixato fartlek / palla / metabolico a rotazione; corsa lenta 5' in testa; niente corsa continua), `re-metabolico` (stesso formato, intermittente 30"/30" e 15"/15") e `re-rsa` (serie di 4 ripetizioni B 20"/1', A 20"/40", PRO 30"/1', 3' tra le serie, 2 serie max 3, solo off season). Progressione dai giudizi: un facile → "spingi di più", due facili di fila → +1 serie, duro → −1, giusto azzera.
 - Planner v2 (`v2.43-resistenza-a-serie`): `aggiornaResistenza`, `sostituzioniResistenza` (i Fartlek/Ripetute/Metabolico/RSA Everfit scelti da Claude diventano il `re-*` della qualità, nota nell'hub), validatore che fida i `re-*`, piano base con i `re-*` prima degli Everfit, regola 30 nel prompt e nella chat del preparatore. Asse partita: `re-*` al massimo 3 giorni prima (a −2 e −1 rifiutati) e dai 2 giorni dopo; pliometria intensiva + RSA vietate insieme.
