@@ -5,7 +5,7 @@ import { queryDatabase, fetchPage, mapSettimana, mapGiorno } from '@/lib/notion'
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 import { loadCampoPerCoach, loadIncroci } from '@/lib/cartaServer';
 import { incrociTesto } from '@/lib/incroci';
-import { loadRisposteChiave } from '@/lib/risposteServer';
+import { loadRisposteChiave, loadVersioniPrecedenti } from '@/lib/risposteServer';
 import { risposteChiaveTesto } from '@/lib/risposteChiave';
 
 export const anthropic = new Anthropic({
@@ -957,7 +957,7 @@ export async function buildUserContext(userId: string): Promise<string> {
 
   // Calendario settimanale (dipende da current_week: parte dopo il profilo); insieme il Campo e
   // gli incroci della Carta (29/9: prima il Coach non sapeva niente dell'allenamento nell'app)
-  const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows] = await Promise.all([
+  const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows, versioniPrecedenti] = await Promise.all([
     supabaseAdmin
       .from('user_weekly_calendar')
       .select('training_days, match_days')
@@ -970,8 +970,10 @@ export async function buildUserContext(userId: string): Promise<string> {
     // pronte, Protocollo For You. Le ultime 5 riflessioni non bastavano: in W11 il Coach deve
     // poter richiamare cose scritte in W4. Fail-soft: [] e il blocco resta vuoto.
     loadRisposteChiave(userId),
+    // Le versioni precedenti (26/10, Carta modificabile): il Coach sa cosa c'era scritto prima
+    loadVersioniPrecedenti(userId),
   ]);
-  const risposteChiaveBlock = sanitizeUntrustedText(risposteChiaveTesto(risposteChiaveRows));
+  const risposteChiaveBlock = sanitizeUntrustedText(risposteChiaveTesto(risposteChiaveRows, versioniPrecedenti));
 
   // Calcola medie check-in ultimi 7 giorni (pre-calcolate fuori dal template)
   let weekCheckinSummary = '';

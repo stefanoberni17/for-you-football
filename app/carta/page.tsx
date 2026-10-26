@@ -12,6 +12,9 @@ import type { Punta, Punta360, RomboMente } from '@/lib/carta';
 import type { Incrocio } from '@/lib/incroci';
 import StatoRecente from '@/components/StatoRecente';
 import { hasActiveAccess } from '@/lib/checkAccess';
+import { PenLine } from 'lucide-react';
+import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
+import { campiCarta, type CampoCarta, type CampoCartaValore, type RispostaRow } from '@/lib/risposteChiave';
 
 /**
  * La Carta del Giocatore — il documento personale che resta a fine percorso.
@@ -23,11 +26,8 @@ import { hasActiveAccess } from '@/lib/checkAccess';
 interface CartaData {
   nome: string;
   ruoli: string[];
-  mantra: string | null; // risposta W1-G3 (giorno del mantra)
-  mappa: string | null; // gate W3 q1 (dove porta la tensione il corpo)
-  firma: string | null; // risposta W3-G3 (firma del gioco libero)
-  protocollo: string | null; // risposta W4-G6 (il protocollo personale in 3 righe)
-  cinqueCose: string | null; // risposta W8-G6 (le cinque cose oltre al calciatore)
+  /** I riquadri scritti da lui (26/10, Carta modificabile: ultima versione per campo, da /api/risposte?chiavi=1) */
+  campi: Record<CampoCarta, CampoCartaValore>;
   giorniCompletati: number;
 }
 
@@ -45,12 +45,19 @@ type Vista = 'mente' | 'corpo' | '360';
 const LIVELLO_CORPO_LABEL: Record<string, string> = { B: 'Base', A: 'Avanzato', PRO: 'PRO' };
 const ROMBO_SHORT: Record<string, string> = { forza_pa: 'Forza alta', forza_pb: 'Forza bassa', prevenzione: 'Prevenz.', forza_max: 'Forza max', esplosiva: 'Esplosiv.', resistenza: 'Resist.', lucidita: 'Lucidità' };
 
-function FieldBlock({ label, value, placeholder, quote = false }: { label: string; value: string | null; placeholder: string; quote?: boolean }) {
+function FieldBlock({ label, value, placeholder, quote = false, meta, onEdit }: { label: string; value: string | null; placeholder: string; quote?: boolean; meta?: string | null; onEdit?: () => void }) {
   return (
     <div className="border border-divider print:border-gray-300 rounded-card p-4">
-      <p className="text-overline font-semibold uppercase tracking-wider text-forest-400 print:text-green-700 mb-1.5">
-        {label}
-      </p>
+      <div className="flex items-start justify-between gap-2 mb-1.5">
+        <p className="text-overline font-semibold uppercase tracking-wider text-forest-400 print:text-green-700">
+          {label}
+        </p>
+        {onEdit && (
+          <button type="button" onClick={onEdit} className="no-print min-h-[44px] -mt-2.5 -mr-2 px-2 inline-flex items-center gap-1 text-label font-semibold text-forest-300" aria-label={value ? `Modifica: ${label}` : `Scrivi: ${label}`}>
+            <PenLine size={14} aria-hidden /> {value ? 'Modifica' : 'Scrivi'}
+          </button>
+        )}
+      </div>
       {value ? (
         <p className={`text-body text-app print:text-black leading-relaxed whitespace-pre-line ${quote ? 'font-quote italic text-body-lg' : ''}`}>
           &ldquo;{value}&rdquo;
@@ -62,6 +69,7 @@ function FieldBlock({ label, value, placeholder, quote = false }: { label: strin
           <div className="border-b border-dashed border-divider print:border-gray-400 h-5" />
         </div>
       )}
+      {meta && <p className="text-caption text-faint print:hidden mt-2">{meta}</p>}
     </div>
   );
 }
@@ -83,6 +91,9 @@ export default function CartaPage() {
   const [carta, setCarta] = useState<CartaData | null>(null);
   const [c360, setC360] = useState<Carta360 | null>(null);
   const [vista, setVista] = useState<Vista>('mente');
+  // Carta modificabile (26/10): le righe delle risposte chiave e il riquadro in modifica
+  const [rows, setRows] = useState<RispostaRow[]>([]);
+  const [modifica, setModifica] = useState<CampoCarta | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -93,7 +104,7 @@ export default function CartaPage() {
       }
       const uid = session.user.id;
 
-      const [{ data: profile }, { data: progress }, r360] = await Promise.all([
+      const [{ data: profile }, { data: progress }, r360, risposteRes] = await Promise.all([
         supabase
           .from('profiles')
           .select('name, sport, role, is_beta_free, season1_access, subscription_status')
@@ -101,10 +112,14 @@ export default function CartaPage() {
           .single(),
         supabase
           .from('user_day_progress')
-          .select('week_number, day_number, response, gate_answers, completed')
+          .select('week_number, day_number, completed')
           .eq('user_id', uid),
         authFetch('/api/carta').then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        // I riquadri scritti da lui: ultima versione per campo (26/10)
+        authFetch('/api/risposte?chiavi=1').then((r) => (r.ok ? r.json() : null)).catch(() => null),
       ]);
+      const risposteRows: RispostaRow[] = Array.isArray(risposteRes?.risposte) ? risposteRes.risposte : [];
+      setRows(risposteRows);
 
       // Vista iniziale (20/10): A 360° con tutte e due le parti, Mente con la sola Testa, Corpo con il solo Fisico
       const corpoCeLa = !!r360?.corpo && (r360.corpo.testFatti ?? 0) > 0;
@@ -115,17 +130,10 @@ export default function CartaPage() {
         .filter(Boolean)
         .map((v: string) => roleOptions.find((r: { value: string; label: string }) => r.value === v)?.label || v);
 
-      const day = (w: number, d: number) =>
-        progress?.find(p => p.week_number === w && p.day_number === d);
-
       setCarta({
         nome: profile?.name || 'Giocatore',
         ruoli,
-        mantra: day(1, 3)?.response || null,
-        mappa: day(3, 7)?.gate_answers?.q1 || null,
-        firma: day(3, 3)?.response || null,
-        protocollo: day(4, 6)?.response || null,
-        cinqueCose: day(8, 6)?.response || null,
+        campi: campiCarta(risposteRows),
         giorniCompletati: (progress || []).filter(p => p.completed).length,
       });
       if (r360 && r360.mente) setC360(r360 as Carta360);
@@ -299,36 +307,26 @@ export default function CartaPage() {
             </p>
           </div>
 
-          <FieldBlock
-            label="Il mio mantra"
-            value={carta.mantra}
-            quote
-            placeholder="La parola che mi riporta qui (la scegli al Giorno 3 della Settimana 1):"
-          />
-
-          <FieldBlock
-            label="La mia mappa"
-            value={carta.mappa}
-            placeholder="Dove porta la tensione il mio corpo in campo (la trovi nella Settimana 3):"
-          />
-
-          <FieldBlock
-            label="La mia firma del gioco libero"
-            value={carta.firma}
-            placeholder="Come si sente il mio corpo quando gioco libero (Settimana 3, Giorno 3):"
-          />
-
-          <FieldBlock
-            label="Il mio Protocollo"
-            value={carta.protocollo}
-            placeholder="SENTI → NOMINA → TORNA, nelle mie parole (lo scrivi alla Settimana 4):"
-          />
-
-          <FieldBlock
-            label="Chi sono, oltre la maglia"
-            value={carta.cinqueCose}
-            placeholder="Le cinque cose che sono anche senza il pallone (le scrivi alla Settimana 8):"
-          />
+          {(() => {
+            const campi = carta.campi;
+            const meta = (v: CampoCartaValore) => v.aggiornataIl ? `Aggiornata il ${new Date(v.aggiornataIl).toLocaleDateString('it-IT')}${v.versioni ? ` · ${v.versioni} versioni` : ''}` : null;
+            return (
+              <>
+                <FieldBlock label="Il mio mantra" value={campi.mantra.testo} quote meta={meta(campi.mantra)} onEdit={() => setModifica('mantra')}
+                  placeholder="La parola che mi riporta qui (la scegli al Giorno 3 della Settimana 1):" />
+                <FieldBlock label="La mia mappa" value={campi.mappa.testo} meta={meta(campi.mappa)} onEdit={() => setModifica('mappa')}
+                  placeholder="Dove porta la tensione il mio corpo in campo (la trovi nella Settimana 3):" />
+                <FieldBlock label="La mia firma del gioco libero" value={campi.firma.testo} meta={meta(campi.firma)} onEdit={() => setModifica('firma')}
+                  placeholder="Come si sente il mio corpo quando gioco libero (Settimana 3, Giorno 3):" />
+                <FieldBlock label="Il mio Protocollo" value={campi.protocollo.testo} meta={meta(campi.protocollo)} onEdit={() => setModifica('protocollo')}
+                  placeholder="SENTI → NOMINA → TORNA, nelle mie parole (lo scrivi alla Settimana 4):" />
+                <FieldBlock label="Chi sono, oltre la maglia" value={campi.cose.testo} meta={meta(campi.cose)} onEdit={() => setModifica('cose')}
+                  placeholder="Le cose che sono anche senza il pallone (le scrivi alla Settimana 8):" />
+                <FieldBlock label="Il mio Protocollo For You" value={campi.protocolloForYou.testo} meta={meta(campi.protocolloForYou)} onEdit={() => setModifica('protocolloForYou')}
+                  placeholder="Prima, durante, dopo, quando non funziona, fuori dal campo (lo scrivi alla Settimana 11):" />
+              </>
+            );
+          })()}
 
           {/* Footer carta */}
           <div className="flex items-center justify-between border-t border-divider print:border-gray-300 pt-4">
@@ -350,6 +348,28 @@ export default function CartaPage() {
 
         <div className="h-4" />
       </div>
+          {/* Carta modificabile (26/10): ogni riquadro si modifica (o si scrive a posteriori) con la stessa API delle risposte chiave, con le versioni datate */}
+      {modifica && carta && (
+        <ModificaRispostaSheet
+          week={carta.campi[modifica].chiave.week}
+          day={carta.campi[modifica].chiave.day}
+          testoIniziale={carta.campi[modifica].testo || ''}
+          open
+          onClose={() => setModifica(null)}
+          onSalvata={(t) => {
+            const chiave = carta.campi[modifica].chiave;
+            const lista = [...rows];
+            const i = lista.findIndex((r) => r.week === chiave.week && r.day === chiave.day);
+            const base: RispostaRow = i >= 0 ? lista[i] : { week: chiave.week, day: chiave.day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null };
+            const nuova: RispostaRow = chiave.gateQ
+              ? { ...base, gateQ: { q1: null, q2: null, q3: null, ...(base.gateQ ?? {}), [chiave.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
+              : { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
+            if (i >= 0) lista[i] = nuova; else lista.push(nuova);
+            setRows(lista);
+            setCarta({ ...carta, campi: campiCarta(lista) });
+          }}
+        />
+      )}
     </main>
   );
 }

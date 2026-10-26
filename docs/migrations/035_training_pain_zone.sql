@@ -13,7 +13,7 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS training_pain_zone  TEXT;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS training_pain_since DATE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS training_pain_until DATE;
 
--- Colonne che scrive solo il server (come training_pain_hold, migration 027)
+-- Colonne che scrive solo il server (come training_pain_hold, migration 027; deleted_at dalla 028)
 CREATE OR REPLACE FUNCTION protect_server_columns()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -33,6 +33,7 @@ BEGIN
     NEW.telegram_link_code_expires := OLD.telegram_link_code_expires;
     NEW.coach_notes                := OLD.coach_notes;
     NEW.last_coach_message         := OLD.last_coach_message;
+    NEW.deleted_at                 := OLD.deleted_at;
     IF OLD.birth_date IS NOT NULL THEN
       NEW.birth_date := OLD.birth_date;
     END IF;

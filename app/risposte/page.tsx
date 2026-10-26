@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { GATE_DAY } from '@/lib/constants';
-import { rispostaChiaveInfo, type RispostaRow } from '@/lib/risposteChiave';
+import { rispostaChiaveInfo, testoChiave, type RispostaRow } from '@/lib/risposteChiave';
 import { BookOpen, ChevronRight, Key, PenLine, Star } from 'lucide-react';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
@@ -149,8 +149,8 @@ export default function RispostePage() {
                     )}
                     {r.aggiornataIl && <p className="text-caption text-faint mt-2">Aggiornata il {new Date(r.aggiornataIl).toLocaleDateString('it-IT')}{r.versioni ? ` · ${r.versioni} versioni` : ''}</p>}
                     <div className="flex flex-wrap gap-1 mt-2 -ml-3">
-                      {chiave && !isGate && (
-                        <Button variant="ghost" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(r)}>Modifica</Button>
+                      {chiave && (!isGate || chiave.gateQ) && (
+                        <Button variant="ghost" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(r)}>{chiave.gateQ ? `Modifica: ${chiave.label.toLowerCase()}` : 'Modifica'}</Button>
                       )}
                       {!isGate && (
                         <Button variant="ghost" size="sm" href={`/giorno/${r.week}/${r.day}`} icon={<ChevronRight size={16} aria-hidden />}>
@@ -169,10 +169,19 @@ export default function RispostePage() {
         <ModificaRispostaSheet
           week={modifica.week}
           day={modifica.day}
-          testoIniziale={modifica.risposta || ''}
+          testoIniziale={testoChiave(modifica, rispostaChiaveInfo(modifica.week, modifica.day) ?? {}) || ''}
           open
           onClose={() => setModifica(null)}
-          onSalvata={(t) => setRows((prev) => prev.map((r) => (r.week === modifica.week && r.day === modifica.day ? { ...r, risposta: t, versioni: (r.versioni || 0) + 1, aggiornataIl: new Date().toISOString() } : r)))}
+          onSalvata={(t) => setRows((prev) => prev.map((r) => {
+            if (r.week !== modifica.week || r.day !== modifica.day) return r;
+            const q = rispostaChiaveInfo(r.week, r.day)?.gateQ;
+            // La mappa è la prima risposta del Gate 3: si aggiorna quella, non la risposta del giorno
+            if (q) {
+              const gateQ = { q1: null, q2: null, q3: null, ...(r.gateQ ?? {}), [q]: t };
+              return { ...r, gateQ, gate: [gateQ.q1, gateQ.q2, gateQ.q3].filter((x): x is string => !!x && x.trim() !== ''), versioni: (r.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
+            }
+            return { ...r, risposta: t, versioni: (r.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
+          }))}
         />
       )}
     </main>
