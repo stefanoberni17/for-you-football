@@ -445,7 +445,7 @@ export default function HomePage() {
             <span className="w-10 h-10 rounded-full bg-danger/15 text-danger flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
             <span className="flex-1 min-w-0">
               <span className="block text-body font-semibold text-app">Allenamenti fisici in pausa</span>
-              <span className="block text-body-sm text-muted">Hai segnalato un dolore. Quando è passato, riprendi dal Campo.</span>
+              <span className="block text-body-sm text-muted">Hai segnalato un dolore. Se è forte o dura da giorni, fatti vedere da un fisioterapista o da un medico. Riparti dal Campo.</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
           </div>

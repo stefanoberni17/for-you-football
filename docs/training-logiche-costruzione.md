@@ -743,3 +743,23 @@ Scelte mie da confermare: tutte le soglie (1,3 × 2 settimane, 8, 2 di fila, 3 s
 sul tetto duro, 5 e 7,5 sui check-in) sono a tavolino; la condizione "stanco" abbassa il tetto ma NON fa scattare
 lo scarico da sola (sarebbe doppio); il rapporto per settimana è un'approssimazione con 3 settimane di storia.
 
+### E12. Dolore per zona (M9, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingDolore.ts` (puro, 9 test), `lib/trainingDoloreServer.ts`, migration 035, `POST /api/training/pain`,
+`/api/training/state` (riduzione sul piano letto), hub, pagina seduta, player, home, prompt del planner e della chat,
+contesto del Coach.
+
+- **Niente diagnosi.** Il foglio chiede la zona; da 4/10 la pausa totale resta (opzione A del 13/10) con il consiglio
+  di farsi vedere da un fisioterapista o da un medico; si riparte solo con la presa di responsabilità (checkbox),
+  e per due settimane la zona resta alleggerita.
+- **Sotto soglia si allena, ma più leggero dove fa male:** serie ×0,7 (minimo 1) e kg ×0,8 sugli esercizi del
+  distretto della zona (`distrettoEsercizio`: gambe/piede/fascia per le zone sotto la cintura, parte alta per la
+  spalla, tutto per la schiena, niente per "altro"; la tecnica con la palla non si tocca), nelle sedute non fatte da
+  oggi, finché non dice "è passato". Sul piano letto, mai su quello salvato: quando passa, tornano le serie piene.
+- **Chi lo sa:** il planner (sezione "# DOLORE SEGNALATO": non aggiungere volume lì, preferire blocchi che non caricano
+  la zona), il preparatore in chat (consigliare fisio o medico se forte o dura, mai esercizi "per curare"), il Coach
+  (zona in pausa o alleggerita, niente consigli di allenamento), Ste su Telegram a ogni pausa e sblocco.
+
+Scelte mie da confermare: schiena = tutti i distretti; "altro" non riduce niente da solo (il ragazzo salta quello che
+fa male); 0,7 e 0,8 come percentuali; la riduzione non entra nel validatore né nel piano salvato.
+
