@@ -13,7 +13,7 @@ import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
 import { APERTURA_IDS, senzaVotoPerSerie } from '@/lib/trainingFascia';
 
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante' };
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante', limitazione: 'Zona da proteggere' };
 
 interface PlanItem {
   esercizio_id: string;
@@ -27,7 +27,7 @@ interface PlanItem {
   per_lato?: boolean;
   unita?: string;            // unità del blocco se diversa dal catalogo (EMOM a tempo, metri…)
   emom_gruppo?: string;      // EMOM a rotazione: gli item consecutivi con lo stesso gruppo girano un minuto ciascuno
-  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore'; // lib/trainingProgressione + ripasso tecnica (28/9) + esecuzione (punto 18) + dolore per zona (M9)
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; // lib/trainingProgressione + ripasso tecnica (28/9) + esecuzione (punto 18) + dolore per zona (M9)
   lato_extra?: 'dx' | 'sx';  // una serie in più solo su questo lato (lato più debole)
   facoltativo?: 'togli' | 'aggiungi'; // dal resoconto squadra/partita (19/10): si può saltare / una serie in più se se la sente
   facoltativo_motivo?: string;
@@ -419,7 +419,7 @@ export default function TrainingSessionPlayer({
           {parametriSotto && <p className="text-body-sm text-muted tabular-nums">{parametriSotto}</p>}
           {item.nota && (
             <div className="mt-3 flex items-start gap-2">
-              <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' || item.adattamento === 'esecuzione' || item.adattamento === 'dolore' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
+              <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' || item.adattamento === 'esecuzione' || item.adattamento === 'dolore' || item.adattamento === 'limitazione' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
                 {item.test_in_seduta ? 'Serie test' : item.adattamento ? ADATTAMENTO_LABEL[item.adattamento] : 'Nota'}
               </Badge>
               <p className="text-body-sm text-app leading-snug">{item.nota}</p>

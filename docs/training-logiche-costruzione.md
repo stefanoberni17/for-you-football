@@ -763,3 +763,24 @@ contesto del Coach.
 Scelte mie da confermare: schiena = tutti i distretti; "altro" non riduce niente da solo (il ragazzo salta quello che
 fa male); 0,7 e 0,8 come percentuali; la riduzione non entra nel validatore né nel piano salvato.
 
+
+### E13. Infortuni e limitazioni nel setup (punto 4, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingDolore.ts` (`Limitazioni`, `parseLimitazioni`, `riduciPerDolore` con `limitazioni`,
+`limitazioniRiga/Testo/PerCoach`; 5 test in più), `lib/trainingDoloreServer.ts` (`loadLimitazioni`), migration 036
+(`profiles.training_limitazioni` JSONB), `POST /api/training/setup { limitazioni }`, `/allenamento/setup` (sezione
+"Infortuni e limitazioni": chip per zona, massimo 4, nota libera 300 caratteri), `/api/training/state` (riduzione +
+`limitazioni` + `setup.limitazioni`), hub (card "Zone da proteggere"), pagina seduta e player (badge "Zona da
+proteggere"), prompt del planner e della chat, contesto del Coach.
+
+- **Stessa riduzione del dolore, ma cronica:** le zone del setup riducono serie ×0,7 e kg ×0,8 sugli esercizi del
+  loro distretto, senza scadenza, finché restano nel setup; `adattamento: 'limitazione'`. Un esercizio si riduce una
+  volta sola: se la zona del dolore e una limitazione toccano lo stesso distretto vale il dolore (ha la finestra).
+- **La nota è per il preparatore:** nel prompt del planner e della chat ("# LIMITAZIONI E INFORTUNI PASSATI": niente
+  volume lì, a parità i blocchi che non caricano la zona, mai esercizi "per curare", fisio o medico se la nota parla di
+  un infortunio recente); il Coach sa che esiste e chiede come la vive, senza consigli di allenamento.
+- **Niente nel validatore, niente nel piano salvato:** come il dolore, la riduzione si fa alla lettura.
+
+Scelte mie da confermare: massimo 4 zone; "altro" e la sola nota non riducono niente (solo il prompt); nessun
+divieto duro sui singoli esercizi (es. Nordic con un ginocchio tra le limitazioni): il prompt lo chiede, il server
+riduce. Se Ste vuole il divieto, è un filtro in `blocchiDisponibili` sugli esercizi del distretto.
