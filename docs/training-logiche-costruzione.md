@@ -701,3 +701,21 @@ Scelte mie da confermare: le percentuali (−15 % kg, −20 % reps/tempo) dentro
 ripetizioni (Ste: "poche"); il kettlebell in difficoltà NON entra in `kb-base` (resta nella seduta kettlebell con i kg
 −15 %); "Com'è venuto?" non si chiede sulla tecnica (ha già la scala pulito/riuscito/difficile) né sulla fascia.
 
+### E10. Il calendario che cambia (M8, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingCalendario.ts` (puro, 10 test), `adattaAlCalendario` in `lib/trainingPlannerV2.ts`,
+`POST /api/training/plan/adatta`, `calendarioConflitti` nello state, foglio nell'hub e banner nella pagina seduta.
+
+- **Conflitto** = seduta non fatta e non passata che (a) cade il giorno della partita, (b) è fisica il giorno prima,
+  (c) ha il blocco pre partita fuori dal −1 (o senza partita), (d) sta in un giorno che non è più tra quelli
+  dell'app (solo piano automatico), (e) il validatore sulla singola seduta dà un errore che parla di partita.
+- **Ricollocazione** solo delle sedute in conflitto: giorno libero più vicino da oggi, non la partita, per una fisica
+  mai −1 né +1 (la regola di `riparaPiano`), prima tra i giorni dell'app poi anche fuori; la pre partita a −1 o via.
+  Poi riparaPiano → expandPiano → validatePlan → progressioni sulle sole sedute libere, senza pretendere il numero di
+  giornate né gli errori "da riempire". Le fatte restano lo stesso oggetto: i log non si toccano.
+- **Salvataggio** append-only con `plan.adattato_calendario`, fuori dal tetto delle rigenerazioni. L'app chiede, non
+  decide: il foglio si apre da solo ma "Lascia così" vale per quel calendario.
+
+Scelte mie da confermare: la fisica a +1 non è un conflitto di calendario (a +1 ci pensa il resoconto: gambe
+ridotte); se non c'è un giorno buono si rifiuta tutto (409) invece di spostare quello che si può.
+

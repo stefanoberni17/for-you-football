@@ -43,6 +43,7 @@ import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, statoTecn
 import { posizioneScala } from './trainingTecnica';
 import { doseRegoleTesto } from './trainingDose';
 import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione } from './trainingEsecuzione';
+import { conflittiCalendario, ricollocaSedute, sedutaBloccata, type CalendarioSettimana, type ConflittoCalendario } from './trainingCalendario';
 import { esercizioAny } from './trainingExercise';
 import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
@@ -1691,6 +1692,54 @@ export function aggiustamentiEsecuzione(plan: WeekPlan, ctx: ContextV2): string[
       : `${nome(s.esercizioId)}: ${s.motivo.replace(/^meno: /, '')}${sostituto ? `, fai ${nome(sostituto.esercizio_id)}` : ', con meno'}`);
   }
   return out;
+}
+
+/**
+ * M8 (26/10): il calendario è cambiato e il piano della settimana ha sedute che non ci stanno più. Senza Claude:
+ * le sedute fatte e quelle passate restano com'erano (`sedutePassate`), quelle in conflitto vanno nel giorno libero
+ * più vicino (`ricollocaSedute`), poi `riparaPiano` → `expandPiano` → `validatePlan` → progressioni sulle sole sedute
+ * libere, come per un piano nuovo. `conPreferenze`: il piano era automatico → i giorni del setup restano un vincolo.
+ * Ritorna il piano nuovo (null se non c'è niente da adattare o se il validatore lo rifiuta) con le righe per l'atleta.
+ */
+export function adattaAlCalendario(ctx: ContextV2, plan: WeekPlan, o: { fatteGiorni: ReadonlySet<number>; conPreferenze: boolean; oggi?: string }): {
+  plan: WeekPlan | null; righe: string[]; violazioni: string[]; conflitti: ConflittoCalendario[];
+} {
+  preparaContextV2(ctx, o.conPreferenze ? undefined : 'adattamento al calendario', {});
+  ctx.vincoli = { ...ctx.vincoli, numSedute: undefined }; // si adatta quello che c'è: niente conteggio di giornate
+  const validateCtx = validateCtxFor(ctx);
+  const valida = (s: PlanSession) => validatePlan({ sedute: [s] }, { ...validateCtx, oggiDow: undefined });
+  const cal: CalendarioSettimana = { matchDays: ctx.base.matchDays, trainingDays: ctx.base.trainingDays, giorniAmmessi: ctx.vincoli.giorniAmmessi ?? null };
+  const opt = { fatteGiorni: o.fatteGiorni, oggiDow: ctx.base.oggiDow, validaSeduta: valida };
+  const conflitti = conflittiCalendario(plan, cal, opt);
+  if (!conflitti.length) return { plan: null, righe: [], violazioni: [], conflitti };
+  const bloccate = plan.sedute.filter((s) => sedutaBloccata(s, opt));
+  ctx.sedutePassate = bloccate;
+  const { sedute, righe, nonRicollocate } = ricollocaSedute(plan, cal, opt);
+  const libere = sedute.filter((s) => !sedutaBloccata(s, opt));
+  if (libere.some((s) => !s.blocchi?.length)) return { plan: null, righe, violazioni: ['il piano non è a blocchi: rifai la settimana'], conflitti };
+  if (nonRicollocate.length) return { plan: null, righe, violazioni: nonRicollocate.map((c) => `${DAY_NAMES[c.giorno]}: nessun giorno libero dove spostare "${c.titolo}"`), conflitti };
+  // I giorni delle sedute spostate li ha già scelti `ricollocaSedute` (anche fuori dai giorni del setup, se serviva)
+  ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
+  const seme: PianoLLM = { sedute: libere.map((s) => ({ giorno: s.giorno, titolo: s.titolo, blocchi: (s.blocchi ?? []).map((b) => b.id), leggeri: (s.blocchi ?? []).filter((b) => b.leggero).map((b) => b.id) })) };
+  // I giorni li ha già scelti `ricollocaSedute` (anche fuori dai giorni del setup, se serviva): riparaPiano sistema solo il resto
+  const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= ctx.base.oggiDow && !bloccate.some((b) => b.giorno === d));
+  const { piano, riparazioni } = riparaPiano(seme, ctx, { nRichieste: null, giorniRimasti: giorniLiberi });
+  const { plan: nuovo, errors } = expandPiano(piano, ctx);
+  // Gli errori "della settimana da riempire" (obiettivo in una sola giornata, equilibrio) non fermano l'adattamento: si adatta quello che c'è
+  const incompleta = (v: string) => /^(obiettivo |settimana equilibrata|manca |l'atleta ha chiesto \d+ giornate)/.test(v);
+  const violazioni = [...errors, ...(nuovo.sedute.length ? validatePlan(nuovo, validateCtx) : ['piano vuoto'])].filter((v) => !incompleta(v));
+  if (violazioni.length) return { plan: null, righe, violazioni, conflitti };
+  const conProg = conProgressioni(nuovo, ctx, validateCtx);
+  const spostate = new Map(libere.filter((s) => s.spostata_da).map((s) => [s.giorno, s.spostata_da!]));
+  const nuove = conProg.sedute.map((s) => (spostate.has(s.giorno) ? { ...s, spostata_da: spostate.get(s.giorno) } : s));
+  return {
+    plan: {
+      ...plan, sedute: [...bloccate, ...nuove].sort((a, b) => a.giorno - b.giorno),
+      aggiustamenti: [...(plan.aggiustamenti ?? []), ...righe.map((r) => `Calendario cambiato, ${r}`), ...riparazioni, ...(conProg.aggiustamenti ?? []).filter((a) => !(plan.aggiustamenti ?? []).includes(a))],
+      adattato_calendario: o.oggi ?? new Date().toISOString().slice(0, 10),
+    },
+    righe, violazioni: [], conflitti,
+  };
 }
 
 // ─── Generazione ────────────────────────────────────────────────────────────
