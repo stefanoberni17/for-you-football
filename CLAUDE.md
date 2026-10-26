@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 033 (`user_answer_versions`, le versioni delle risposte chiave, applicata da Ste il 25/10); la 034 (`training_set_logs.esecuzione`, 26/10) e la 035 (`profiles.training_pain_zone/_since/_until`, dolore per zona, 26/10) sono da applicare. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 035 (la 034 `training_set_logs.esecuzione` e la 035 `profiles.training_pain_zone/_since/_until` applicate da Ste il 26/10 sera, con il trigger `protect_server_columns` che tiene anche `deleted_at`). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -1235,8 +1235,8 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `031_training_resoconti.sql` applicata su Supabase (Ste, 19/10): il resoconto dopo squadra e partita si salva davvero
 - [x] Migration `032_session_data_durata.sql` applicata su Supabase (Ste, 20/10): data programmata e durata reale delle sedute si salvano, il carico usa i minuti reali
 - [x] Migration `033_risposte_versioni.sql` applicata su Supabase (Ste, 25/10): le versioni delle risposte chiave si salvano
-- [ ] Migration `034_set_log_esecuzione.sql` da applicare su Supabase (26/10, punto 18): senza, "Com'è venuto?" si vede ma la risposta non si salva (l'API toglie la colonna e salva il resto)
-- [ ] Migration `035_training_pain_zone.sql` da applicare su Supabase (26/10, M9): senza, la zona del dolore non si salva (resta solo la pausa; l'API risponde `skipped: 'migration_035'`)
+- [x] Migration `034_set_log_esecuzione.sql` applicata su Supabase (Ste, 26/10): "Com'è venuto?" si salva
+- [x] Migration `035_training_pain_zone.sql` applicata su Supabase (Ste, 26/10, versione corretta con `deleted_at` nel trigger): la zona del dolore si salva
 - [ ] Notion, DB Settimane: scrivere `Pratica Giorno Partita` per le 12 settimane (finché è vuota il giorno della partita non mostra nessun box)
 - [ ] Provare i suoni del Reset su iPhone (Safari e PWA): Natura e Focus partono al tocco, girano in loop, si fermano chiudendo; con l'interruttore suoneria su silenzioso e no
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché
