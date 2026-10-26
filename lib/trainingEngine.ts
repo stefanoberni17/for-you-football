@@ -386,6 +386,7 @@ export interface WeekPlan {
   nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
   aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
   adattato_calendario?: string; // M8 (26/10): piano salvato dall'adattamento al calendario cambiato (data ISO); non conta nel tetto delle rigenerazioni
+  scarico?: boolean;         // M11 (26/10): piano di una settimana di scarico (serie ×0.6, varianti short): la distanza tra gli scarichi e il ri-test partono da qui
 }
 
 const TIPI_FISICI = new Set(['mix', 'fisica', 'skill']);

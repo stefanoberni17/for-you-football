@@ -719,3 +719,27 @@ Dove vive: `lib/trainingCalendario.ts` (puro, 10 test), `adattaAlCalendario` in 
 Scelte mie da confermare: la fisica a +1 non è un conflitto di calendario (a +1 ci pensa il resoconto: gambe
 ridotte); se non c'è un giorno buono si rifiuta tutto (409) invece di spostare quello che si può.
 
+### E11. Scarico e ri-test dai dati, tetto personale (M11, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingCondizione.ts` (puro, 23 test), chiamato da `loadPlannerContext` e da `/api/training/state`
+sopra `cicloInfo` (che resta il calendario: settimana dalla prima batteria chiusa).
+
+- **Scarico** quando UNO di questi dice sì: il rapporto tra il carico di una settimana e la media delle settimane
+  prima (con la squadra come base) è sopra 1,3 per le ultime 2 settimane complete; il voto medio delle sedute
+  delle ultime 2 settimane è ≥ 8 (almeno 3 votate); una famiglia di blocchi è "duro" 2 sedute di fila. La quarta
+  settimana del ciclo resta come rete: si fa se ci sono 2 settimane con sedute tra le 3 prima, si salta se l'atleta
+  è fresco e nessun segnale lo chiede. Mai due scarichi a meno di 3 settimane: il piano della settimana di scarico
+  porta `scarico: true`, da lì si conta; uno scarico avviato resta fino a domenica (niente ping-pong a metà
+  settimana).
+- **Ri-test** (le serie test entrano nelle sedute, E8): le 2 settimane dopo l'ultimo scarico salvato (senza uno
+  scarico salvato vale il calendario 5-6, 9-10…), una famiglia a fine codici, 8 settimane senza test. "Dovuto"
+  solo senza un test chiuso da 28 giorni.
+- **Tetto personale** (regola di Ste del 26/10): dalle ultime 2 settimane → stanco (check-in fisico+recupero in
+  media ≤ 5 su ≥ 5 check-in, 2 sedute con voto ≥ 9, 2 resoconti con fatica ≥ 3 sopra il previsto) → target e
+  tetto ×0,85, tetto duro ×0,9; fresco (check-in ≥ 7,5, nessuna seduta dura, ≥ 3 sedute tutte ≤ 5) → ×1,15, tetto
+  duro invariato. Stanco vince. Il prompt, la chat e l'hub dicono il perché.
+
+Scelte mie da confermare: tutte le soglie (1,3 × 2 settimane, 8, 2 di fila, 3 settimane di distanza, ±15 %, −10 %
+sul tetto duro, 5 e 7,5 sui check-in) sono a tavolino; la condizione "stanco" abbassa il tetto ma NON fa scattare
+lo scarico da sola (sarebbe doppio); il rapporto per settimana è un'approssimazione con 3 settimane di storia.
+

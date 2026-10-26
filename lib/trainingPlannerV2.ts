@@ -49,7 +49,7 @@ import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiorna
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.39-esecuzione';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.40-scarico-dai-dati';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -1246,8 +1246,8 @@ COMPOSIZIONE DI UNA GIORNATA (come fa Ste)
 
 PROGRESSIONE (settimana su settimana)
 10. MEMORIA DEI BLOCCHI (sezione nel messaggio, calcolata dal server): per ogni famiglia già fatta nelle settimane precedenti il codice di questa settimana è GIÀ deciso dai giudizi dell'atleta ("facile" 2 volte di fila sullo stesso codice → codice successivo o da short a full; "facile" una volta o "giusto" → stesso; "duro" o voto ≥ 9 → short o codice precedente; mai saltare un codice; Fascia Foundation avanza dopo 2 settimane, Pliometria resta in B almeno 4, 2 se ai test dei salti è avanzato). Se usi quella famiglia, usa SOLO gli id indicati: un id diverso viene sostituito dal server. Puoi sempre scegliere un'altra famiglia. Famiglie mai fatte: parti dal codice più basso disponibile per il livello dell'atleta (B1 → B2 → B3; short → full).
-11. Settimana 4 del ciclo = DELOAD (solo se nel messaggio c'è ⚠️ DELOAD: con poche sedute nelle settimane prima lo scarico è rinviato): scegli varianti short e dillo nel messaggio (il server riduce anche le serie).
-12. Settimana dopo lo scarico ("ri-test dovuto" nel messaggio): piano NORMALE, lo scarico è stato la settimana scorsa. I test di forza e tecnica NON sono una giornata a parte: il server mette una serie test dentro le sedute (una per seduta, sul gradino da sbloccare); tu non devi aggiungere niente. Resistenza e velocità si testano solo in off season o su richiesta: non proporli.
+11. SCARICO (solo se nel messaggio c'è ⚠️ DELOAD, con il perché): lo decidono i DATI (26/10), non la data — rapporto carico recente/abituale sopra 1,3 da due settimane, voti delle sedute in media ≥ 8, una famiglia "duro" due volte di fila, oppure la quarta settimana del ciclo come rete (saltata se l'atleta è fresco); mai due scarichi a meno di 3 settimane. Scegli varianti short e nel messaggio di' il perché in una riga (il server riduce anche le serie). Se c'è "scarico RINVIATO", settimana normale.
+12. Settimana di ri-test ("ri-test dovuto" nel messaggio, con il perché: le due settimane dopo lo scarico, una famiglia a fine codici o 8 settimane senza test): piano NORMALE. I test di forza e tecnica NON sono una giornata a parte: il server mette una serie test dentro le sedute (una per seduta, sul gradino da sbloccare); tu non devi aggiungere niente. Resistenza e velocità si testano solo in off season o su richiesta: non proporli.
 
 ADATTAMENTO
 13. Se esiste già un PIANO ATTUALE e la richiesta è una modifica, PARTI dal piano attuale e cambia SOLO ciò che serve (stessi blocchi negli altri giorni).
@@ -1405,7 +1405,7 @@ Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~
 Allenamenti squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)}
 Partite: ${b.matchDays.length ? b.matchDays.map((d) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}
 ${feedbackSeduteBlock(b.feedbackRecenti)}
-Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ' — ⚠️ DELOAD (regola 11)' : b.ciclo.scaricoRinviato ? ' — scarico RINVIATO (poche sedute nelle settimane prima): settimana normale, niente varianti short per lo scarico' : b.ciclo.ritestDue ? ' — ri-test dovuto (regola 12: piano normale, invita ai test)' : ''}
+Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ` — ⚠️ DELOAD (regola 11; perché: ${b.ciclo.motivoScarico ?? 'quarta settimana del ciclo'})` : b.ciclo.scaricoRinviato ? ` — scarico RINVIATO (${b.ciclo.motivoScarico ?? 'poche sedute nelle settimane prima'}): settimana normale, niente varianti short per lo scarico` : b.ciclo.ritestDue ? ` — ri-test dovuto (regola 12: piano normale, invita ai test; perché: ${b.ciclo.motivoRitest ?? 'dopo lo scarico'})` : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}
 ${percorsoMentaleTesto(b.weekOfPath)}
 ${massimali}${ctx.noteRegole.length ? `\n# REGOLE APPLICATE DAL SERVER\n- ${ctx.noteRegole.join('\n- ')}` : ''}${recuperiTesto(ctx)}${contestoDati(ctx)}${piano}
@@ -1821,7 +1821,8 @@ export async function generaPianoV2(
   const inizio = opzioni.inizio ?? Date.now();
   preparaContextV2(ctx, richiesta, vincoli);
   const nota = notaSettimanaAvviata(ctx);
-  const rifinisci = (plan: WeekPlan, aggiustamenti: string[]): WeekPlan => ({ ...plan, ...(nota ? { nota } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}) });
+  // M11 (26/10): il piano di una settimana di scarico porta `scarico: true`: da lì partono la distanza tra gli scarichi e il ri-test
+  const rifinisci = (plan: WeekPlan, aggiustamenti: string[]): WeekPlan => ({ ...plan, ...(nota ? { nota } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}), ...(ctx.base.ciclo.isDeload ? { scarico: true } : {}) });
   const validateCtx = validateCtxFor(ctx);
   const system = systemPrompt(ctx);
   const opzioniRiparazione = () => ({ nRichieste: seduteRichieste(ctx), giorniRimasti: giorniRimasti(ctx) });
