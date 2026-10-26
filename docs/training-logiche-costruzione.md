@@ -617,6 +617,12 @@ deve stare bene fisicamente e non avere più di 3 allenamenti in settimana."
    solo serie fisse ed EMOM: è la parte UI); `POST /api/training/test` accetta `{ skill_esercizio_id, valore, in_seduta:
    true }`; lo state ritorna `ritest.inSeduta[]` e `ritest.bloccati[]`. Ore: 10-14, incl. test.
 
+**Risposte di Ste (26/10, pomeriggio).** La scala si deve aggiornare ANCHE durante le settimane, quando in seduta fa gli
+esercizi dei gradini successivi (= `sogliaRaggiuntaInSeduta` che scrive davvero il risultato, non solo la dose). (1) Sì,
+il gradino sopra l'ultimo passato. (2) In linea di massima UNA serie test per seduta: una serie preparatoria e una del
+test. (6) In off season li propone il server, ma velocità, resistenza e resistenza alla velocità sempre in giorni
+separati. Le domande 3, 4, 5 e 7 riformulate (sotto, in parole semplici) e ancora aperte.
+
 **Domande per Ste (si parte dopo).**
 1. "Solo gli esercizi che erano nell'ultimo gradino per salire": vale la mia lettura (il gradino SOPRA l'ultimo passato,
    quando negli allenamenti ha tenuto la dose al tetto o ha già toccato la soglia in seduta), oppure vuoi ri-testare
