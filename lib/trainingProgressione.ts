@@ -40,13 +40,14 @@ import { LADDER_AREE, ladderForArea, sogliaGradino, type LadderState, type TestR
 
 // Le costanti della dose (tetto +30 %, passi kg/reps/secondi, kettlebell) vivono in lib/trainingDose.ts (punto 2, 20/10)
 import { PROGRESSIONE_MAX_DRIFT, prossimaDose } from './trainingDose';
+import { ESECUZIONE_LABEL } from './trainingEsecuzione';
 export { PROGRESSIONE_MAX_DRIFT, PASSO_KG_PCT, PASSO_KG_MIN, SECONDI_MAX } from './trainingDose';
 export const GRADINO_SCALA = 0.7;            // dose del nuovo gradino rispetto alla base del blocco
 export const LATO_EXTRA_MAX_ITEMS = 1;       // serie extra sul lato debole: al massimo 1 esercizio per seduta (Ste, 25/9: "piuttosto che aumentare molto le serie, la fascia")
 export const LEGGERO_SCALA = 0.7;            // "più leggero" scelto da Claude per blocco
 export const GRADINO_DOSE_PCT = 0.7;         // al gradino dell'atleta: reps/secondi = 70 % del massimo misurato nel test
 
-export type Adattamento = 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero';
+export type Adattamento = 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'esecuzione';
 
 /** Catene v1 con un "gradino dopo" sensato per la forza (le tecniche hanno i loro percorsi). */
 const AREE_CATENA = new Set(['spinta', 'tirata', 'core', 'laterale', 'lombari', 'squat', 'affondi', 'rdl', 'bridge']);
@@ -122,6 +123,37 @@ function gradinoSuccessivo(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null
   return out;
 }
 
+/**
+ * Punto 18 (esecuzione): "non riesco" una volta o "faccio fatica" due di fila → nella seduta dopo lo stesso esercizio con meno.
+ * Sulle catene v1 (scale skill) un GRADINO SOTTO con la stessa dose; altrimenti la dose ridotta da `prossimaDose` (kg −15 %,
+ * reps/tempo −20 %) e, se la scheda ha la versione "più facile", il consiglio di farla. In seduta dedicata (ancora difficile
+ * dopo il passo indietro) nelle sedute di forza vale lo stesso: l'esercizio vero sta nell'EMOM.
+ */
+function perEsecuzione(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
+  const es = r.esecuzione;
+  if (!es || es.passo === 'normale') return null;
+  if (it.schema && it.schema !== 'fisso') return null;
+  const perche = `l'ultima volta hai detto "${ESECUZIONE_LABEL[es.ultima]}"`;
+  const dedicata = es.passo === 'dedicata' ? ' Lo alleni pulito nell\'EMOM con poche ripetizioni: torna qui dopo due EMOM "ok".' : '';
+  const ex = esercizioById(it.esercizio_id);
+  if (ex && AREE_CATENA.has(ex.area) && (!it.unita || it.unita === ex.unita)) {
+    const giu = [...catenaByArea(ex.area)].reverse().find((e) => e.gradino < ex.gradino && e.unita === ex.unita);
+    if (giu) {
+      const out: PlanItem = { ...it, esercizio_id: giu.id, adattamento: 'esecuzione', nota: `Un gradino sotto: ${giu.nome} al posto di ${ex.nome}, ${perche}.${dedicata}` };
+      if (giu.perLato) out.per_lato = true; else delete out.per_lato;
+      return out;
+    }
+  }
+  const d = prossimaDose(it, r);
+  const facile = esercizioV2ById(it.esercizio_id)?.scheda?.piuFacile;
+  const consiglio = facile ? ` Se serve, la versione più facile: ${facile}` : '';
+  if (!d.cambiata) return facile ? { ...it, adattamento: 'esecuzione', nota: `${perche}: fallo pulito.${consiglio}${dedicata}` } : null;
+  const out: PlanItem = { ...it, adattamento: 'esecuzione', nota: `↓ ${d.motivo}.${consiglio}${dedicata}` };
+  if (d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null)) out.carico_kg = d.caricoKg;
+  if (d.quantita !== it.quantita) out.quantita = d.quantita;
+  return out;
+}
+
 /** Scale skill dell'atleta per area (null = test base mai fatto). */
 function scaleAtleta(results: TestResultRow[] | undefined): Map<AreaForza, LadderState | null> {
   const m = new Map<AreaForza, LadderState | null>();
@@ -184,8 +216,9 @@ export function adattaItems(items: PlanItem[], ctx: ContestoProgressione): PlanI
     const r = byEx.get(out.esercizio_id);
     if (r && (!out.adattamento || out.adattamento === 'gradino')) {
       const base = out.adattamento === 'gradino' ? { ...out, adattamento: undefined, nota: undefined } : out;
-      const conLog = gradinoSuccessivo(base, r) ?? adattaDose(base, r);
-      if (conLog) out = out.adattamento === 'gradino' && conLog.adattamento !== 'gradino'
+      // Punto 18: l'esecuzione viene prima della fatica (meno / gradino sotto); con il SALI bloccato niente gradino successivo
+      const conLog = perEsecuzione(base, r) ?? (r.esecuzione?.saliBloccato ? adattaDose(base, r) : gradinoSuccessivo(base, r) ?? adattaDose(base, r));
+      if (conLog) out = out.adattamento === 'gradino' && conLog.adattamento !== 'gradino' && conLog.adattamento !== 'esecuzione'
         ? { ...conLog, adattamento: 'gradino', nota: [out.nota, conLog.nota].filter(Boolean).join(' ') }
         : conLog;
     }

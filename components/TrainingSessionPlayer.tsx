@@ -7,12 +7,13 @@ import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
+import type { Esecuzione } from '@/lib/trainingEsecuzione';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X, Plus } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
 import { APERTURA_IDS, senzaVotoPerSerie } from '@/lib/trainingFascia';
 
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso' };
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito' };
 
 interface PlanItem {
   esercizio_id: string;
@@ -26,7 +27,7 @@ interface PlanItem {
   per_lato?: boolean;
   unita?: string;            // unità del blocco se diversa dal catalogo (EMOM a tempo, metri…)
   emom_gruppo?: string;      // EMOM a rotazione: gli item consecutivi con lo stesso gruppo girano un minuto ciascuno
-  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // lib/trainingProgressione + ripasso tecnica (28/9)
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione'; // lib/trainingProgressione + ripasso tecnica (28/9) + esecuzione (punto 18)
   lato_extra?: 'dx' | 'sx';  // una serie in più solo su questo lato (lato più debole)
   facoltativo?: 'togli' | 'aggiungi'; // dal resoconto squadra/partita (19/10): si può saltare / una serie in più se se la sente
   facoltativo_motivo?: string;
@@ -56,6 +57,7 @@ export interface SetLogInput {
   quantita_prevista: number; quantita_fatta: number | null;
   carico_previsto_kg: number | null; carico_fatto_kg: number | null; rpe: number | null;
   sensazione?: string | null;   // "dove l'hai sentito?" (solo dopo l'ultima serie degli esercizi che lo chiedono)
+  esecuzione?: Esecuzione | null; // "com'è venuto?" (punto 18): solo dopo l'ultima serie, solo se l'atleta apre e risponde
 }
 
 // Timestamp per i timer di recupero/esecuzione (partono da eventi e setInterval, mai in render):
@@ -105,6 +107,9 @@ export default function TrainingSessionPlayer({
   const [logSaved, setLogSaved] = useState(false);
   const [votoAperto, setVotoAperto] = useState(false); // accessori: scala 1-10 chiusa finché non la apre
   const [sensazione, setSensazione] = useState<string | null>(null);
+  // Punto 18: "Com'è venuto?" espandibile a fine esercizio; default ok (niente da mandare), "Faccio fatica" / "Non riesco"
+  const [esecuzione, setEsecuzione] = useState<Esecuzione | null>(null);
+  const [esecuzioneAperta, setEsecuzioneAperta] = useState(false);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
@@ -206,10 +211,11 @@ export default function TrainingSessionPlayer({
     timerRef.current = setInterval(tick, 500);
   };
 
-  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null; piuDuro?: 'dx' | 'sx' | 'uguali' | null }) => {
+  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null; esecuzione?: Esecuzione | null; piuDuro?: 'dx' | 'sx' | 'uguali' | null }) => {
     if (!pending || !item || !onSetLog || item.test_in_seduta) return; // la serie test non è un log per serie: il risultato va nei test
     const r = over.rpe !== undefined ? over.rpe : rpe;
     const sens = over.sensazione !== undefined ? over.sensazione : sensazione;
+    const esec = over.esecuzione !== undefined ? over.esecuzione : esecuzione;
     const duro = over.piuDuro !== undefined ? over.piuDuro : piuDuro;
     const f = over.fatto !== undefined ? over.fatto : fattoTxt;
     const c = over.carico !== undefined ? over.carico : caricoTxt;
@@ -223,6 +229,7 @@ export default function TrainingSessionPlayer({
       carico_fatto_kg: caricoNum !== null && Number.isFinite(caricoNum) && caricoNum !== pending.carico ? caricoNum : null,
       rpe: r,
       sensazione: sens,
+      ...(esec ? { esecuzione: esec } : {}),
     };
     if (isPerLato && pending.lato === '') {
       // Una riga per lato: il lato "più duro" prende l'RPE detto, l'altro un punto in meno
@@ -241,7 +248,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setEsecuzione(null); setEsecuzioneAperta(false);
     setSerieFatte(0); setSerieExtra(0);
     setTestPending(false); setTestTxt(''); setTestPesoTxt(''); setTestSalvato(false);
     setLato('dx'); latoRef.current = 'dx';
@@ -263,10 +270,11 @@ export default function TrainingSessionPlayer({
     avanza(Math.max(1, n));
   };
   // Fine dell'EMOM: un log per esercizio (serie = giri fatti, stesso RPE per tutto il circuito), poi si salta l'intero gruppo
-  const emomDone = (r: number | null, giriFatti: number[]) => {
+  const emomDone = (r: number | null, giriFatti: number[], esecuzioni: (Esecuzione | null)[] = []) => {
     if (onSetLog) emomGruppo.forEach((it, i) => {
       if (giriFatti[i] > 0) onSetLog({ esercizio_id: it.esercizio_id, serie: giriFatti[i], lato: '', unita: unitaItem(it, esercizioAny(it.esercizio_id)),
-        quantita_prevista: it.quantita, quantita_fatta: null, carico_previsto_kg: null, carico_fatto_kg: null, rpe: r });
+        quantita_prevista: it.quantita, quantita_fatta: null, carico_previsto_kg: null, carico_fatto_kg: null, rpe: r,
+        ...(esecuzioni[i] ? { esecuzione: esecuzioni[i] } : {}) });
     });
     avanza(emomGruppo.length);
   };
@@ -304,7 +312,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setEsecuzione(null); setEsecuzioneAperta(false);
     setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false); setShowDesc(false); setSchermoOn(true); setSchermoKey(0);
@@ -411,7 +419,7 @@ export default function TrainingSessionPlayer({
           {parametriSotto && <p className="text-body-sm text-muted tabular-nums">{parametriSotto}</p>}
           {item.nota && (
             <div className="mt-3 flex items-start gap-2">
-              <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
+              <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' || item.adattamento === 'esecuzione' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
                 {item.test_in_seduta ? 'Serie test' : item.adattamento ? ADATTAMENTO_LABEL[item.adattamento] : 'Nota'}
               </Badge>
               <p className="text-body-sm text-app leading-snug">{item.nota}</p>
@@ -582,6 +590,29 @@ export default function TrainingSessionPlayer({
                     )}
                   </div>
                 ) : null}
+                {/* Punto 18 (Ste, 15/10): "Com'è venuto?" ESPANDIBILE, solo dopo l'ultima serie: il default è ok e non si tocca niente */}
+                {restIsLast && !isTecnica && (
+                  <div className="mt-4">
+                    {!esecuzioneAperta && !esecuzione ? (
+                      <Button variant="ghost" size="sm" onClick={() => setEsecuzioneAperta(true)}>Com&apos;è venuto? (se non era pulito)</Button>
+                    ) : (
+                      <>
+                        <p className="text-label font-semibold text-app mb-2">Com&apos;è venuto?</p>
+                        <div className="flex flex-wrap gap-2">
+                          {([['ok', 'Tutto ok'], ['fatica', 'Faccio fatica'], ['non_riesco', 'Non riesco']] as const).map(([k, label]) => (
+                            <Chip key={k} selected={(esecuzione ?? 'ok') === k} tone={k === 'ok' ? 'accent' : 'warn'}
+                              onClick={() => { setEsecuzione(k); sendLog({ esecuzione: k }); }}>
+                              {label}
+                            </Chip>
+                          ))}
+                        </div>
+                        {esecuzione && esecuzione !== 'ok' && (
+                          <p className="text-body-sm text-muted mt-2 leading-relaxed">La prossima volta lo fai con meno, o un gradino sotto: prima pulito, poi di più.</p>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

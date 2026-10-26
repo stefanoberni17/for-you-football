@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { isEsecuzione } from '@/lib/trainingEsecuzione';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -13,7 +14,9 @@ const UNITA = new Set(['reps', 'secondi', 'minuti', 'metri']);
 /**
  * POST — log di una serie durante il recupero (migration 019):
  * { plan_id, giorno, esercizio_id, serie, lato?, unita, quantita_prevista,
- *   quantita_fatta?, carico_previsto_kg?, carico_fatto_kg?, rpe? }
+ *   quantita_fatta?, carico_previsto_kg?, carico_fatto_kg?, rpe?, sensazione?, esecuzione? }
+ * `esecuzione` (migration 034, punto 18): 'ok' | 'fatica' | 'non_riesco', mandata solo quando l'atleta risponde
+ * a "Com'è venuto?" (il default della colonna è 'ok'; una riga già scritta non viene toccata se il campo manca).
  * Upsert su (utente, sessione, esercizio, serie, lato): un secondo tap corregge.
  * Fire-and-forget lato client: qui si risponde in fretta e senza bloccare la seduta.
  */
@@ -38,6 +41,7 @@ export async function POST(request: NextRequest) {
     const quantitaPrevista = num(b.quantita_prevista, 10000);
     const rpe = b.rpe == null ? null : Number(b.rpe);
     const sensazione = typeof b.sensazione === 'string' && b.sensazione.trim() ? b.sensazione.trim().slice(0, 40) : null;
+    const esecuzione = isEsecuzione(b.esecuzione) ? b.esecuzione : null;
 
     if (!planId || !Number.isInteger(giorno) || giorno < 1 || giorno > 7 || !esercizioId
       || !Number.isInteger(serie) || serie < 1 || serie > 30 || quantitaPrevista === null
@@ -54,11 +58,16 @@ export async function POST(request: NextRequest) {
       carico_fatto_kg: num(b.carico_fatto_kg, 500),
       rpe,
     };
-    let { error } = await supabaseAdmin.from('training_set_logs')
-      .upsert(sensazione ? { ...row, sensazione } : row, { onConflict: 'user_id,session_key,esercizio_id,serie,lato' });
+    const conflict = { onConflict: 'user_id,session_key,esercizio_id,serie,lato' };
+    const conSens = sensazione ? { ...row, sensazione } : row;
+    let { error } = await supabaseAdmin.from('training_set_logs').upsert(esecuzione ? { ...conSens, esecuzione } : conSens, conflict);
+    // Migration 034 non applicata: salva senza l'esecuzione
+    if (error && esecuzione && /esecuzione/.test(error.message)) {
+      ({ error } = await supabaseAdmin.from('training_set_logs').upsert(conSens, conflict));
+    }
     // Migration 020 non applicata: salva senza la sensazione
     if (error && sensazione && /sensazione/.test(error.message)) {
-      ({ error } = await supabaseAdmin.from('training_set_logs').upsert(row, { onConflict: 'user_id,session_key,esercizio_id,serie,lato' }));
+      ({ error } = await supabaseAdmin.from('training_set_logs').upsert(row, conflict));
     }
     if (error) {
       // Migration 019 non applicata: non rompere la seduta
