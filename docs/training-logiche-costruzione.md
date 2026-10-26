@@ -329,6 +329,18 @@ altri. Il punto 12 è arrivato vuoto. Nessun codice toccato.
   **priorità della tecnica** per le settimane fino al ri-test: la scala di quella qualità va per prima, il mazzo
   pesca prima i blocchi di quella qualità; il piede debole resta come oggi. Il server lo calcola (niente modello).
 
+### D10b. Tecnica composta dal catalogo (26/10, punto 21 di campo-da-fare)
+- **Fatto 26/10** (`lib/trainingTecnicaComposta.ts`; proposta e risposte di Ste in `docs/training-tecnica-composta.md`):
+  le sedute di tecnica non sono più i workout Everfit interi ma blocchi `te-<tema>` composti dal server sugli esercizi
+  del catalogo, al livello dell'atleta e sul codice delle scale; quote circa mensili (25 % palleggi, 25 % controllo e
+  passaggi, 15 % freestyle, 15 % visione, 10 % dribbling, 10 % tiri) e UNA seduta = UN tema (il più indietro nelle
+  ultime 4 settimane); asse partita per la tecnica (−1 solo `te-leggera`, facoltativa, aggiunta al blocco pre partita;
+  +1 dopo una partita giocata tutta solo palleggi e passaggi, anche +2 con fatica alta; fatica leggera o da −2 tutto);
+  tiri = passaggi → un dribbling → riscaldamento alla traversa → tiri con poco volume; visione leggera con il video dei
+  segnali. I workout Everfit restano in libreria, il server li sostituisce. Scala muro con il codice "orientato A1".
+- **Da tarare con i dati:** le quote su 4 settimane (Ste: "circa mensili"), la soglia "fatica alta" per il +2, i minuti
+  per esercizio nell'adattamento al tempo.
+
 ### D11. Kettlebell: anche 2-3 a settimana, dentro il conteggio della forza gambe
 - **Oggi:** un `kb-*` a settimana, copre solo l'obiettivo kettlebell, le gambe con pesi nella stessa settimana
   vanno ×0.7.

@@ -35,6 +35,12 @@ Totale: 80 esercizi. Rigenerare la lista: vedi sezione in fondo.
 | Palleggi solo interno - Tecnica | B | 1 | Tecnica Palleggi B3 - Tecnica di Base | ✍️ |
 | Passaggi a 10mt alternati, primo tocco suola - Tecnica | B | 1 | Passaggi al Muro - Tecnica di base | ✍️ |
 
+### Tecnica composta (26/10)
+
+| Esercizio | Livello | Dove | Descrizione |
+|---|---|---|---|
+| Shooting Warm-Up: 10 + 10 at the Crossbar (`ttir-riscaldamento-traversa`) | B | in testa a ogni `te-tiro` (il riscaldamento al tiro di Ste) | scritta |
+
 ## Riscaldamento e fascia (10)
 
 | Esercizio | Livello | Blocchi | Esempio | Descrizione |

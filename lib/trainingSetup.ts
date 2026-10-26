@@ -7,13 +7,14 @@
 import { DURATE, FOCUS_SETUP_MAX, SEDUTE_MAX, focusValidi, type FocusId } from './trainingRequest';
 
 /** Attrezzatura selezionabile (combacia con AttrezzaturaV2 del catalogo v2) */
-export const ATTREZZATURA_OPZIONI = ['palestra', 'kettlebell', 'sbarra', 'piccoli attrezzi', 'campo', 'headball'] as const;
+export const ATTREZZATURA_OPZIONI = ['palestra', 'kettlebell', 'sbarra', 'piccoli attrezzi', 'campo', 'muro', 'headball'] as const; // 'muro' dal 26/10 (tecnica composta: passaggi e palleggi al muro)
 export const ATTREZZATURA_LABEL: Record<(typeof ATTREZZATURA_OPZIONI)[number], string> = {
   palestra: 'Palestra (bilanciere, panca, zavorre)',
   kettlebell: 'Kettlebell',
   sbarra: 'Sbarra per trazioni',
   'piccoli attrezzi': 'Asciugamano, pallina da tennis, elastici',
-  campo: 'Campo / muro / coni',
+  campo: 'Campo / coni',
+  muro: 'Un muro per passaggi e palleggi',
   headball: 'Headball',
 };
 export const FASI = ['off_season', 'preparazione_squadra', 'in_season'] as const;
