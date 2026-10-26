@@ -630,17 +630,29 @@ Tutto deciso: si scrive il codice.
 
 **Nel codice lo stesso giorno (prima parte).** `lib/trainingRitest.ts` (puro, 8 test in `tests/trainingRitest.test.ts`):
 `settimanaDiRitest` (5ª/9ª… e la successiva), `candidatiForza` (il `next` di ogni scala passata, prima dove i log dicono
-SALI/CONFERMA, mai un test fatto da meno di 28 giorni), `candidatiTecnica`, `candidatiPalestra` (solo i lift nel piano),
-`candidatiCampo` (per le qualità delle famiglie a fine codici), `inserisciSerieTest` (una per seduta: palestra sul suo
+SALI/CONFERMA, mai un test fatto da meno di 28 giorni), `candidatiPalestra` (solo i lift nel piano),
+`candidatiCampo` (per le qualità delle famiglie a fine codici, solo in off season), `inserisciSerieTest` (una per seduta: palestra sul suo
 lift, forza in due passate — prima ogni catena nella seduta che la contiene, al posto dell'esercizio, poi le rimaste
-nella prima fisica libera dopo l'apertura —, tecnica nella giornata di tecnica, campo nelle fisiche rimaste; mai fatte,
+nella prima fisica libera dopo l'apertura —, campo nelle fisiche rimaste; mai fatte,
 passate, recuperi, ±1 dalla partita; idempotente; piano salvato invariato), `risultatiDallaSeduta` (dai log a fine
 seduta: metà delle serie alla soglia e niente di duro → risultato `skill:<id>` se migliora), `guardrailResistenzaVelocita`
-(i guardrail della risposta 5), `propostaOffSeason` (tre giorni separati, prima quelli senza seduta fisica). Lo state
+(i guardrail della risposta 5, per gruppo: velocità, resistenza, navetta), `propostaOffSeason` (tre giorni separati, prima quelli senza seduta fisica). Lo state
 applica le serie test dopo resoconti e M5 e ritorna `ritest`; `POST /api/training/complete` aggiorna le scale dai log;
 il player fa preparatoria + massimo (cronometro che sale per le tenute) e salva con `POST /api/training/test`; l'hub e
 la pagina test mostrano l'elenco per giorno e i lucchetti con i motivi. Il prompt (regola 12) dice a Claude di non
 aggiungere giornate di test. Da provare sul campo nella prima settimana di ri-test vera.
+
+**La correzione di Ste, la sera stessa.** "Ma in teoria i test in season sono solo quelli di forza praticamente. Abbiamo
+detto che tecnica ecc. avviene già durante le settimane e velocità/resistenza o off season o solo in condizioni
+particolari: max 2 allenamenti e se obiettivo da allenare." Quindi, rispetto alla prima parte: (a) la TECNICA non entra
+mai in automatico nelle serie test (`candidatiTecnica` tolta): avanza dalle scale, dal ripasso e dal mazzo, e si testa a
+mano dalla pagina test; (b) i test da CAMPO (wall sit, broad jump, ankle jump) entrano in seduta solo in off season: in
+season si testa solo la forza (scale skill e massimali in palestra); (c) il guardrail di resistenza e velocità è per
+GRUPPO (`gruppoLontano`: 50 m e T-sprint = velocità, 1 e 3 km = resistenza, navetta = resistenza alla velocità) e in
+season pretende che quella qualità sia tra gli obiettivi del setup (`OBIETTIVI_PER_GRUPPO`: la navetta vale con uno dei
+due, "Tutto, in equilibrio" con tutti) e al massimo `GUARDRAIL_SQUADRA_MAX = 2` allenamenti con la squadra (era 3);
+in off season si può sempre (salvo pausa dolore). Lo state ritorna `ritest.lontano` per gruppo e la pagina test chiude
+ogni test con il motivo del suo gruppo.
 
 **Domande per Ste (si parte dopo).**
 1. "Solo gli esercizi che erano nell'ultimo gradino per salire": vale la mia lettura (il gradino SOPRA l'ultimo passato,

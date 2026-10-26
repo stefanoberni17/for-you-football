@@ -2,8 +2,9 @@
  * FYF Training — RI-TEST INTEGRATO NEGLI ALLENAMENTI (Ste, 26/10; studio in docs/training-logiche-costruzione.md §E8).
  *
  * "Nel giorno dei ri-test non può proporti tutta la batteria: quasi integrato negli allenamenti. Ogni 4 settimane quelli
- * di forza (e tecnica), facendo fare solo gli esercizi che erano nell'ultimo gradino per salire. Resistenza e velocità
- * lontano: in pausa o off season, oppure su richiesta esplicita stando bene e con non più di 3 allenamenti in settimana."
+ * di forza, facendo fare solo gli esercizi che erano nell'ultimo gradino per salire. In season i test sono praticamente
+ * solo quelli di forza: la tecnica avviene già durante le settimane; velocità e resistenza in off season, o solo in
+ * condizioni particolari: al massimo 2 allenamenti con la squadra e se è un obiettivo da allenare."
  *
  * Tre gruppi, tre regole:
  *  - FORZA in seduta: nelle settimane di ri-test (la settimana dopo lo scarico e, per quello che non ci sta, la
@@ -11,15 +12,16 @@
  *    (`ladderForArea(...).next`): una serie preparatoria e una al massimo, UNA serie test per seduta (Ste: "1 in linea di
  *    massima, 1 preparatorio e 1 del test"), mai a un giorno dalla partita; il test CHIUDE l'esercizio per quel giorno
  *    (3a: al posto delle serie programmate di quella catena, la seduta dura uguale). Prima le catene dove i log dicono
- *    che è pronto (SALI/CONFERMA), poi le altre. Con `famiglieAlTetto` anche i test da campo di quella qualità (wall sit,
- *    broad jump, ankle jump), uno per seduta. I massimali in palestra (7a) entrano in seduta solo se quel lift è già nel
- *    piano (forza in palestra), al posto del suo item.
- *  - TECNICA in seduta (4a): palleggi, muro, tiri e passaggi nella giornata di tecnica delle stesse settimane.
+ *    che è pronto (SALI/CONFERMA), poi le altre. I massimali in palestra (7a) entrano in seduta solo se quel lift è già
+ *    nel piano (forza in palestra), al posto del suo item. I test da campo (wall sit, broad jump, ankle jump) delle
+ *    famiglie a fine codici SOLO in off season: in season si testa solo la forza.
+ *  - TECNICA: mai in automatico. Avanza dalle sedute (scale, ripasso, mazzo) e si testa a mano dalla pagina test.
  *  - RESISTENZA e VELOCITÀ mai in automatico in season: in off season il server li PROPONE in giorni separati
  *    (velocità / resistenza / resistenza alla velocità); in season solo su richiesta dalla pagina test, con i guardrail
- *    (5): check-in di oggi con fisico e recupero ≥ GUARDRAIL_CHECKIN_MIN (7), al massimo GUARDRAIL_SQUADRA_MAX (3)
- *    allenamenti con la squadra nella settimana (le sedute dell'app non contano), ≥ 2 giorni dopo la partita e ≥ 3
- *    prima, non nello scarico, non in pausa dolore.
+ *    (5): quella qualità tra gli obiettivi del setup (velocità per i 50 m e il T-sprint, resistenza per 1 e 3 km, una
+ *    delle due per la navetta; "Tutto, in equilibrio" vale per tutte), check-in di oggi con fisico e recupero ≥
+ *    GUARDRAIL_CHECKIN_MIN (7), al massimo GUARDRAIL_SQUADRA_MAX (2) allenamenti con la squadra nella settimana (le
+ *    sedute dell'app non contano), ≥ 2 giorni dopo la partita e ≥ 3 prima, non nello scarico, non in pausa dolore.
  *  - "Si aggiorna anche durante le settimane": a fine seduta `risultatiDallaSeduta` legge i log: se su un esercizio di
  *    catena almeno metà delle serie è alla soglia del gradino e la seduta non è stata dura, il valore migliore diventa un
  *    risultato `skill:<id>` vero (prima `sogliaRaggiuntaInSeduta` cambiava solo la dose, la scala non lo vedeva).
@@ -45,13 +47,11 @@ export const RITEST_SETTIMANE_DEL_CICLO = [1, 2] as const; // la settimana dopo 
 export const TEST_RECUPERO_SEC = 150;           // recupero pieno tra la preparatoria e il massimo
 export const TEST_TENUTA_CAP_SEC = 300;         // tenute: il cronometro del player conta fino a 5'
 export const GUARDRAIL_CHECKIN_MIN = 7;         // fisico e recupero di oggi ≥ 7 (Ste: "deve stare bene bene fisicamente")
-export const GUARDRAIL_SQUADRA_MAX = 3;         // al massimo 3 allenamenti con la squadra nella settimana
+export const GUARDRAIL_SQUADRA_MAX = 2;         // al massimo 2 allenamenti con la squadra nella settimana (Ste, 26/10; prima 3)
 export const GUARDRAIL_GIORNI_DOPO_PARTITA = 2;
 export const GUARDRAIL_GIORNI_PRIMA_PARTITA = 3;
 
-/** Test di tecnica (4a): v1 palleggi e muro, v2 tiri e passaggi. */
-export const TEST_TECNICA_IDS = ['test-pall-forte', 'test-pall-debole', 'test-pall-testa', 'test-piramide', 'test-muro', 't2-tiri-traversa-forte', 't2-tiri-traversa-debole', 't2-passaggi-palo-forte', 't2-passaggi-palo-debole'] as const;
-/** Test da campo che stanno in una seduta (uno), per qualità delle famiglie a fine codici. */
+/** Test da campo che stanno in una seduta (uno), per qualità delle famiglie a fine codici. SOLO in off season. */
 export const TEST_CAMPO_PER_QUALITA: Partial<Record<QualitaV2, string[]>> = {
   'forza-parte-bassa': ['t2-wall-sit', 't2-broad-jump'],
   'forza-esplosiva': ['t2-broad-jump', 't2-ankle-jump'],
@@ -63,6 +63,20 @@ export const TEST_RESISTENZA_IDS = ['t2-1km', 't2-3km'] as const;
 export const TEST_VELOCITA_IDS = ['t2-50m', 't2-t-sprint'] as const;
 export const TEST_RES_VELOCITA_IDS = ['t2-navetta-30'] as const;
 export const TEST_LONTANO_IDS: ReadonlySet<string> = new Set([...TEST_RESISTENZA_IDS, ...TEST_VELOCITA_IDS, ...TEST_RES_VELOCITA_IDS]);
+export type GruppoLontano = 'velocita' | 'resistenza' | 'res_velocita';
+export const GRUPPI_LONTANO: readonly GruppoLontano[] = ['velocita', 'resistenza', 'res_velocita'];
+/** Il gruppo di un test "lontano" (velocità, resistenza, resistenza alla velocità), per i guardrail e il lucchetto. */
+export function gruppoLontano(testId: string): GruppoLontano | null {
+  if ((TEST_VELOCITA_IDS as readonly string[]).includes(testId)) return 'velocita';
+  if ((TEST_RESISTENZA_IDS as readonly string[]).includes(testId)) return 'resistenza';
+  if ((TEST_RES_VELOCITA_IDS as readonly string[]).includes(testId)) return 'res_velocita';
+  return null;
+}
+/** Gli obiettivi del setup che "allenano" quel gruppo: la navetta vale con uno dei due; "Tutto, in equilibrio" vale per tutti. */
+export const OBIETTIVI_PER_GRUPPO: Record<GruppoLontano, readonly string[]> = {
+  velocita: ['velocita', 'tutto'], resistenza: ['resistenza', 'tutto'], res_velocita: ['velocita', 'resistenza', 'tutto'],
+};
+const ETICHETTA_GRUPPO: Record<GruppoLontano, string> = { velocita: 'la velocità', resistenza: 'la resistenza', res_velocita: 'la velocità o la resistenza' };
 
 export type RisultatoConData = TestResultRow & { created_at?: string | null };
 
@@ -102,18 +116,6 @@ export function candidatiForza(results: readonly RisultatoConData[], storico: re
   return out.sort((a, b) => b.priorita - a.priorita);
 }
 
-/** TECNICA (4a): i test di palleggi, muro, tiri e passaggi non fatti da 4 settimane. */
-export function candidatiTecnica(results: readonly RisultatoConData[], oggi: string, opt: { campo: boolean }): SerieTest[] {
-  return TEST_TECNICA_IDS.flatMap((id): SerieTest[] => {
-    if (isRecente(ultimo(results, id), oggi)) return [];
-    const t1 = testById(id); const t2 = testV2ById(id);
-    if (!t1 && !t2) return [];
-    if (t2 && !opt.campo) return [];                        // tiri alla traversa e passaggi al palo: serve il campo
-    const unita = (t1?.unita ?? t2!.unita) as SerieTest['unita'];
-    return [{ tipo: 'test', id, esercizio_id: id, nome: t1?.nome ?? t2!.nome, unita, gruppo: 'tecnica', prep: null, priorita: 0 }];
-  });
-}
-
 /** PALESTRA (7a): il massimale solo se quel lift è già nel piano della settimana. */
 export function candidatiPalestra(results: readonly RisultatoConData[], plan: WeekPlan, oggi: string): SerieTest[] {
   const nelPiano = new Set(plan.sedute.flatMap((s) => (s.items ?? []).filter((it) => (!it.schema || it.schema === 'fisso') && it.carico_kg).map((it) => it.esercizio_id)));
@@ -121,8 +123,9 @@ export function candidatiPalestra(results: readonly RisultatoConData[], plan: We
     .map((t): SerieTest => ({ tipo: 'lift', id: t.id, esercizio_id: t.lift!.esercizioV2Id, nome: t.nome, unita: 'kg', gruppo: 'palestra', prep: null, priorita: 5, perche: 'peso e ripetizioni di una serie pulita (3-8): l\'app stima il massimale' }));
 }
 
-/** CAMPO: i test della qualità delle famiglie a fine codici (wall sit, broad jump, ankle jump), non fatti da 4 settimane. */
-export function candidatiCampo(results: readonly RisultatoConData[], qualitaAlTetto: readonly QualitaV2[], oggi: string): SerieTest[] {
+/** CAMPO: i test della qualità delle famiglie a fine codici (wall sit, broad jump, ankle jump), non fatti da 4 settimane. SOLO in off season (in season si testa solo la forza). */
+export function candidatiCampo(results: readonly RisultatoConData[], qualitaAlTetto: readonly QualitaV2[], oggi: string, opt: { fase: string }): SerieTest[] {
+  if (opt.fase !== 'off_season') return [];
   const ids = new Set(qualitaAlTetto.flatMap((q) => TEST_CAMPO_PER_QUALITA[q] ?? []));
   return [...ids].flatMap((id): SerieTest[] => {
     const t = testV2ById(id);
@@ -132,7 +135,6 @@ export function candidatiCampo(results: readonly RisultatoConData[], qualitaAlTe
 }
 
 const isAperturaItem = (it: PlanItem) => (!!it.blocco_id && APERTURA_IDS.has(it.blocco_id)) || /^risc-/.test(it.esercizio_id) || it.blocco_id === 'risc-velocita';
-const isTecnicaSession = (s: PlanSession) => s.tipo === 'tecnica' || !!s.blocchi?.some((b) => b.qualita?.startsWith('tecnica'));
 const isFisicaSession = (s: PlanSession) => s.tipo === 'fisica' || s.tipo === 'mix' || s.tipo === 'skill';
 
 function itemTest(t: SerieTest, base?: PlanItem): PlanItem {
@@ -150,11 +152,11 @@ function itemTest(t: SerieTest, base?: PlanItem): PlanItem {
 /**
  * Mette le serie test nelle sedute della settimana (una per seduta), su una COPIA del piano.
  * Ordine: palestra (nella seduta del suo lift), forza (nella seduta che ha già quella catena, altrimenti la prima libera),
- * tecnica (nella giornata di tecnica), campo (nelle fisiche rimaste). Il resto va in `inAttesa`.
+ * campo (nelle fisiche rimaste, solo off season). Il resto va in `inAttesa`. La tecnica non entra mai.
  */
 export function inserisciSerieTest(plan: WeekPlan, opt: {
   weekStart: string; oggi: string; fatteGiorni: ReadonlySet<number>; matchDays: readonly number[];
-  candidati: { forza: SerieTest[]; tecnica: SerieTest[]; palestra: SerieTest[]; campo: SerieTest[] };
+  candidati: { forza: SerieTest[]; palestra: SerieTest[]; campo: SerieTest[] };
 }): { plan: WeekPlan; assegnate: SerieTestAssegnata[]; inAttesa: SerieTest[]; aggiustamenti: string[] } {
   const vuoto = { plan, assegnate: [], inAttesa: [], aggiustamenti: [] };
   if (!plan.sedute?.length) return vuoto;
@@ -198,14 +200,7 @@ export function inserisciSerieTest(plan: WeekPlan, opt: {
     if (!s) { inAttesa.push(t); continue; }
     metti(s, t, null);
   }
-  // Tecnica: nella giornata di tecnica (al posto dello stesso esercizio se c'è, altrimenti in coda)
-  for (const t of opt.candidati.tecnica) {
-    const s = sedute.find((x) => libera(x) && isTecnicaSession(x));
-    if (!s) { inAttesa.push(t); continue; }
-    const idx = s.items.findIndex((it) => it.esercizio_id === t.esercizio_id);
-    if (idx >= 0) metti(s, t, idx); else { const it = itemTest(t); s.items.push(it); occupate.add(s.giorno); assegnate.push({ giorno: s.giorno, test: t }); aggiustamenti.push(`${DAY_NAMES[s.giorno]}: serie test su ${t.nome}`); }
-  }
-  // Campo: nelle fisiche rimaste
+  // Campo (solo off season): nelle fisiche rimaste
   for (const t of opt.candidati.campo) {
     const s = sedute.find((x) => libera(x) && isFisicaSession(x));
     if (!s) { inAttesa.push(t); continue; }
@@ -246,14 +241,19 @@ export function risultatiDallaSeduta(logs: readonly SetLogRow[], results: readon
 }
 
 export interface Guardrail { ok: boolean; motivi: string[] }
-/** Resistenza e velocità su richiesta in season (5): si può solo stando bene, con poca squadra, lontano dalla partita. */
+/**
+ * Resistenza e velocità su richiesta in season (5): solo se quella qualità è tra gli obiettivi del setup, stando bene,
+ * con al massimo 2 allenamenti con la squadra, lontano dalla partita. In off season si può sempre (salvo pausa dolore).
+ */
 export function guardrailResistenzaVelocita(opt: {
+  gruppo: GruppoLontano; obiettivi: readonly string[];
   fase: 'off_season' | 'preparazione_squadra' | 'in_season'; checkin: { fisico: number | null; recupero: number | null } | null;
   giorniSquadra: number; giorniAllaPartita: number | null; giorniDallaPartita: number | null; isDeload: boolean; painHold: boolean;
 }): Guardrail {
   const motivi: string[] = [];
   if (opt.painHold) motivi.push('gli allenamenti fisici sono in pausa per un dolore');
   if (opt.fase === 'off_season') return { ok: motivi.length === 0, motivi };
+  if (!OBIETTIVI_PER_GRUPPO[opt.gruppo].some((f) => opt.obiettivi.includes(f))) motivi.push(`${ETICHETTA_GRUPPO[opt.gruppo]} non è tra i tuoi obiettivi: in stagione si testa solo quello che alleni (lo cambi nel setup)`);
   if (!opt.checkin) motivi.push('prima il check-in di oggi: serve sapere come stai');
   else {
     if (opt.checkin.fisico == null || opt.checkin.fisico < GUARDRAIL_CHECKIN_MIN) motivi.push(`oggi lo stato fisico è ${opt.checkin.fisico ?? '?'}/10: serve almeno ${GUARDRAIL_CHECKIN_MIN}`);

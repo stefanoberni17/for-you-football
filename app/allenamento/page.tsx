@@ -46,7 +46,7 @@ export interface TrainingState {
   livelli?: { qualita: string; label?: string; livello: string }[];
   ritestMirato?: { qualita: string; label: string; famiglie: string[]; tests: { id: string; nome: string }[] }[];
   // Ri-test integrato (26/10): le serie test dentro le sedute della settimana, quelle in attesa, resistenza e velocità (guardrail), proposte off season
-  ritest?: { settimanaRitest: boolean; inSeduta: { giorno: number; id: string; nome: string; gruppo: string; tipo: string }[]; inAttesa: { id: string; nome: string; gruppo: string }[]; lontano: { ok: boolean; motivi: string[] }; proposte: { giorno: number; gruppo: string; tests: { id: string; nome: string }[] }[] };
+  ritest?: { settimanaRitest: boolean; inSeduta: { giorno: number; id: string; nome: string; gruppo: string; tipo: string }[]; inAttesa: { id: string; nome: string; gruppo: string }[]; lontano: Record<string, { ok: boolean; motivi: string[] }>; proposte: { giorno: number; gruppo: string; tests: { id: string; nome: string }[] }[] };
   setup: TrainingSetup;
   setupDisponibile: boolean;
   calendario?: { trainingDays: number[]; matchDays: number[] };
