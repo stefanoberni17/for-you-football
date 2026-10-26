@@ -10,6 +10,7 @@ import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
 import { AppLoader, BackButton, Banner, Button, Card, Chip, Field, Input, SectionTitle, RpeScale, Textarea } from '@/components/ui';
 import { LIMITAZIONI_NOTA_MAX, LIMITAZIONI_ZONE_MAX, ZONE_DOLORE, type ZonaDolore } from '@/lib/trainingDolore';
+import { AVVISO_RESISTENZA_IN_SEASON } from '@/lib/trainingResistenza';
 import FattibilitaBanner from '@/components/FattibilitaBanner';
 import { Scale } from 'lucide-react';
 import type { TrainingState } from '@/app/allenamento/page';
@@ -213,6 +214,10 @@ function SetupPageInner() {
                 );
               })}
             </div>
+            {/* Resistenza in season (Ste, 25/10; punto 19): entra solo come obiettivo esplicito, con l'avviso sul sovraccarico */}
+            {setupDraft.fase === 'in_season' && setupDraft.focus.includes('resistenza') && (
+              <Banner tone="warn" title="Resistenza in stagione" className="mt-3">{AVVISO_RESISTENZA_IN_SEASON}</Banner>
+            )}
             {/* "Con questo tempo e questi attrezzi posso darti X?" (campo-da-fare 5, 20/10): detto PRIMA di salvare */}
             <FattibilitaBanner attrezzatura={setupDraft.attrezzatura} compagno={setupDraft.compagno} durataMin={setupDraft.durataMin} focus={setupDraft.focus} className="mt-3" />
             <p className="text-body-sm text-muted mt-3">Entrano in ogni settimana, anche in quella preparata da sola il lunedì: i primi due ci sono sempre, gli altri dove c&apos;è spazio. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</p>

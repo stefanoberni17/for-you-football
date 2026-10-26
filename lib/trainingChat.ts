@@ -14,7 +14,7 @@ import { KG_SENZA_MASSIMALE_MAX } from './trainingRulesV2';
 import { squadraTesto } from './trainingSquadra';
 import { checkinBlock, percorsoMentaleTesto, PLANNER_MODEL, todayRome } from './trainingPlanner';
 import { doloreTesto, limitazioniTesto } from './trainingDolore';
-import { contestoCondiviso, loadContextV2, type ContextV2 } from './trainingPlannerV2';
+import { contestoCondiviso, loadContextV2, type ContextV2, resistenzaRegolaDi } from './trainingPlannerV2';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -36,6 +36,7 @@ Allenamenti con la squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)
 ${checkinBlock(b)}${doloreTesto(b.dolore, todayRome(), b.painHold)}${limitazioniTesto(b.limitazioni)}
 ${percorsoMentaleTesto(b.weekOfPath)}
 ${contestoCondiviso(ctx)}
+${resistenzaRegolaDi(ctx)}
 
 # COME USARE QUESTO CONTESTO
 - I giudizi per blocco (facile / giusto / duro), la memoria dei blocchi e il mese dicono cosa ha fatto davvero e cosa viene dopo: se chiede "perché questa settimana X?", la risposta è lì. Il codice del blocco successivo lo decide il server: non promettere salti di livello.
