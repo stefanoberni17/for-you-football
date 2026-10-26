@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-26 — Ri-test integrato negli allenamenti, prima parte
+- Le sette risposte di Ste (gradino sopra l'ultimo passato; una serie test per seduta, preparatoria + massimo; il test chiude l'esercizio per quel giorno; tecnica nella giornata di tecnica; guardrail fisico e recupero ≥ 7 e al massimo 3 allenamenti con la squadra; in off season proposte in giorni separati; palestra in seduta se il lift è nel piano) sono nel codice: `lib/trainingRitest.ts` (puro, 8 test). Nelle settimane di ri-test (la 5ª, 9ª… e la successiva) lo state mette una serie test per seduta nel piano della settimana, al posto dell'esercizio della stessa catena; il player fa la preparatoria e poi il massimo (cronometro che sale per le tenute) e salva il risultato come test; l'hub e la pagina test dicono cosa c'è in quale giorno.
+- "Si aggiorna anche durante le settimane": a fine seduta i log degli esercizi di catena alla soglia del gradino diventano risultati della scala (prima cambiavano solo la dose).
+- Resistenza e velocità (1 km, 3 km, 50 m, T-sprint, navetta) mai in automatico in season: nella pagina test hanno il lucchetto con i motivi finché i guardrail non sono rispettati; in off season il server li propone in tre giorni separati.
+- `esercizioAny` risolve anche gli id dei test; `PlanItem.test_in_seduta`; regola 12 del prompt riscritta. Studio in `docs/training-logiche-costruzione.md` §E8, punto 22 di `docs/campo-da-fare.md`.
+
 ## 2026-10-26 — Ri-test integrato negli allenamenti: lo studio (solo documenti)
 - Ste: "nel giorno dei ri-test non può proporti così: quasi integrato negli allenamenti, ogni 4 settimane quelli di forza (ed eventualmente tecnica) facendo fare solo gli esercizi che erano nell'ultimo gradino per salire; resistenza e velocità lontano, in pausa o off season, oppure su richiesta esplicita stando bene e con non più di 3 allenamenti in settimana". Studio in `docs/training-logiche-costruzione.md` §E8 (com'è oggi, proposta a tre gruppi, dove vivrebbe, 7 domande) e punto 22 di `docs/campo-da-fare.md`. Nessun codice.
 

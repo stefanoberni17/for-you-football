@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { loadResoconti } from '@/lib/trainingResocontoServer';
 import { applicaResoconti, resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
 import { aumentiNellaSettimana } from '@/lib/trainingAumenti';
+import { giorniAllaPartita, giorniDallaPartita } from '@/lib/trainingRulesV2';
+import { candidatiCampo, candidatiForza, candidatiPalestra, candidatiTecnica, guardrailResistenzaVelocita, inserisciSerieTest, propostaOffSeason, settimanaDiRitest, type RisultatoConData } from '@/lib/trainingRitest';
 import { giorniSquadra } from '@/lib/trainingLoad';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
@@ -101,6 +103,8 @@ export async function GET(request: NextRequest) {
       livello_calcolato: r.livello_calcolato, punteggio_calcolato: Number(r.punteggio_calcolato),
       dettaglio: r.dettaglio ?? null,
     }));
+    // Con la data: il ri-test in seduta (26/10) non ripropone un test fatto da meno di 4 settimane
+    const rowsConData: RisultatoConData[] = (results || []).map((r, i) => ({ ...rows[i], created_at: r.created_at ?? null }));
 
     const gradini = placementFromResults(rows);
     const doneTestIds = new Set(rows.map((r) => r.test_id));
@@ -188,7 +192,7 @@ export async function GET(request: NextRequest) {
     // M5 (26/10): gli esercizi molto leggeri in una seduta già fatta salgono di un passo nelle sedute successive della settimana
     const votiSedute = new Map<number, number | null>();
     for (const c of completions) { const g = Number(String(c.session_key).split('#')[1]); if (Number.isInteger(g)) votiSedute.set(g, c.rpe ?? null); }
-    const planAdattato = lastPlan && lastPlan.plan && lastPlan.week_start >= mondayOfThisWeekRome()
+    let planAdattato = lastPlan && lastPlan.plan && lastPlan.week_start >= mondayOfThisWeekRome()
       ? { ...lastPlan, plan: aumentiNellaSettimana(
         applicaResoconti(lastPlan.plan, { weekStart: lastPlan.week_start, oggi, resoconti, squadra, fatteGiorni: fattiGiorni }).plan,
         { weekStart: lastPlan.week_start, oggi, logs: logsSerie, fatteGiorni: fattiGiorni, votiSedute },
@@ -218,6 +222,38 @@ export async function GET(request: NextRequest) {
       qualita: q, label: QUALITA_LABEL[q] ?? q, famiglie,
       tests: testIdsPerQualita(q).filter((id) => !/-dx$|-sx$/.test(id)).map((id) => ({ id, nome: nomeTest(id) })),
     }));
+    // Ri-test integrato (Ste, 26/10, lib/trainingRitest): nelle settimane di ri-test le serie test entrano nelle sedute
+    // (una per seduta: forza sul gradino da sbloccare, tecnica nella giornata di tecnica, palestra sul lift del piano, campo
+    // per le famiglie a fine codici); resistenza e velocità solo in off season (proposte) o su richiesta con i guardrail
+    const settimanaRitest = settimanaDiRitest(ciclo.settimana);
+    const campo = setup.attrezzatura.includes('campo');
+    const storicoRiepilogo = logsRes.error ? [] : riepilogoEsercizi(logsSerie);
+    let ritestInSeduta: ReturnType<typeof inserisciSerieTest> = { plan: planAdattato?.plan ?? { sedute: [] }, assegnate: [], inAttesa: [], aggiustamenti: [] };
+    if (settimanaRitest && planAdattato?.plan && planAdattato.week_start >= mondayOfThisWeekRome()) {
+      ritestInSeduta = inserisciSerieTest(planAdattato.plan, {
+        weekStart: planAdattato.week_start, oggi, fatteGiorni: fattiGiorni, matchDays: matchDaysEff,
+        candidati: {
+          forza: candidatiForza(rowsConData, storicoRiepilogo, oggi),
+          tecnica: candidatiTecnica(rowsConData, oggi, { campo }),
+          palestra: candidatiPalestra(rowsConData, planAdattato.plan, oggi),
+          campo: candidatiCampo(rowsConData, [...perQualita.keys()], oggi),
+        },
+      });
+      planAdattato = { ...planAdattato, plan: ritestInSeduta.plan };
+    }
+    const dowOggi = oggiDowRome();
+    const guardrail = guardrailResistenzaVelocita({
+      fase: setup.fase, checkin: checkinOggi ? { fisico: checkinOggi.fisico, recupero: checkinOggi.recupero } : null,
+      giorniSquadra: trainingDaysEff.length, giorniAllaPartita: giorniAllaPartita(dowOggi, matchDaysEff), giorniDallaPartita: giorniDallaPartita(dowOggi, matchDaysEff),
+      isDeload: ciclo.isDeload, painHold: profile?.training_pain_hold === true,
+    });
+    const ritest = {
+      settimanaRitest,
+      inSeduta: ritestInSeduta.assegnate.map((a) => ({ giorno: a.giorno, id: a.test.id, nome: a.test.nome, gruppo: a.test.gruppo, tipo: a.test.tipo })),
+      inAttesa: ritestInSeduta.inAttesa.map((t) => ({ id: t.id, nome: t.nome, gruppo: t.gruppo })),
+      lontano: guardrail, // resistenza e velocità su richiesta: ok o i motivi del lucchetto
+      proposte: propostaOffSeason({ fase: setup.fase, settimanaDelCiclo: ciclo.settimana, sedute: planAdattato?.plan?.sedute ?? [], oggiDow: dowOggi, results: rowsConData, oggi, campo }),
+    };
     console.log(`training/state: ${Date.now() - t0} ms`);
     return NextResponse.json({
       name: profile?.name || null,
@@ -226,6 +262,7 @@ export async function GET(request: NextRequest) {
       // Livello per qualità (solo quelle con test propri) e test da rifare prima del ri-test
       livelli: (Object.keys(QUALITA_LABEL) as QualitaV2[]).map((q) => ({ qualita: q, label: QUALITA_LABEL[q], livello: livelli[q] ?? fascia })),
       ritestMirato,
+      ritest,
       gradini,
       rombo,
       romboBase: buildRomboBase(rombo),

@@ -352,6 +352,18 @@ export interface PlanItem {
   resoconto?: 'leggero' | 'ridotto'; // cosa ha fatto il resoconto su questo item (serie ×0.7 / reps ×0.8), separato da `adattamento` che resta della progressione
   dopo_partita?: { scala: number; serie_piene: number }; // gambe il giorno dopo la partita (26/10): serie × scala (0.4-0.75) dalla dose piena; applicaResoconti le ricalcola se il resoconto arriva dopo il piano
   aumento_settimana?: { daGiorno: number; da: string }; // M5 (26/10, lib/trainingAumenti): un passo in più già in settimana perché il giorno `daGiorno` era molto leggero; `da` = la dose del piano
+  test_in_seduta?: TestInSeduta; // ri-test integrato (26/10, lib/trainingRitest): questo item è una SERIE TEST (preparatoria + massimo), il risultato va salvato come test
+}
+/** Serie test dentro una seduta (26/10): skill = gradino della scala (`skill:<esercizio>`), test = test v1/v2 da campo o tecnica, lift = massimale in palestra (peso × reps). */
+export interface TestInSeduta {
+  tipo: 'skill' | 'test' | 'lift';
+  id: string;                 // skill: id dell'esercizio della catena; test/lift: id del test (test-… / t2-…)
+  nome: string;
+  unita: 'reps' | 'secondi' | 'cm' | 'kg';
+  gruppo: 'forza' | 'tecnica' | 'palestra' | 'campo';
+  soglia?: number;            // skill: la soglia del gradino (per il messaggio "sopra N sali")
+  prep?: number | null;       // serie preparatoria: quantità (reps o secondi) prima della serie al massimo
+  perche?: string;            // una riga per l'atleta
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom

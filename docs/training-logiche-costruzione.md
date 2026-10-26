@@ -621,7 +621,26 @@ deve stare bene fisicamente e non avere più di 3 allenamenti in settimana."
 esercizi dei gradini successivi (= `sogliaRaggiuntaInSeduta` che scrive davvero il risultato, non solo la dose). (1) Sì,
 il gradino sopra l'ultimo passato. (2) In linea di massima UNA serie test per seduta: una serie preparatoria e una del
 test. (6) In off season li propone il server, ma velocità, resistenza e resistenza alla velocità sempre in giorni
-separati. Le domande 3, 4, 5 e 7 riformulate (sotto, in parole semplici) e ancora aperte.
+separati. (3a) La serie test chiude l'esercizio per quel giorno: preparatoria, test al massimo, e lo squat di
+mercoledì finisce lì (seduta lunga uguale, un po' meno volume). (4a) I test di tecnica li mette l'app nella giornata
+di tecnica ogni 4 settimane. (5) In season su richiesta: check-in del mattino con fisico e recupero almeno 7 su 10,
+"non più di 3 allenamenti" = allenamenti con la squadra, le sedute dell'app non contano. (7a) I massimali in palestra
+entrano in seduta ogni 4 settimane SE il ragazzo ha la forza in palestra nel piano (altrimenti dalla pagina test).
+Tutto deciso: si scrive il codice.
+
+**Nel codice lo stesso giorno (prima parte).** `lib/trainingRitest.ts` (puro, 8 test in `tests/trainingRitest.test.ts`):
+`settimanaDiRitest` (5ª/9ª… e la successiva), `candidatiForza` (il `next` di ogni scala passata, prima dove i log dicono
+SALI/CONFERMA, mai un test fatto da meno di 28 giorni), `candidatiTecnica`, `candidatiPalestra` (solo i lift nel piano),
+`candidatiCampo` (per le qualità delle famiglie a fine codici), `inserisciSerieTest` (una per seduta: palestra sul suo
+lift, forza in due passate — prima ogni catena nella seduta che la contiene, al posto dell'esercizio, poi le rimaste
+nella prima fisica libera dopo l'apertura —, tecnica nella giornata di tecnica, campo nelle fisiche rimaste; mai fatte,
+passate, recuperi, ±1 dalla partita; idempotente; piano salvato invariato), `risultatiDallaSeduta` (dai log a fine
+seduta: metà delle serie alla soglia e niente di duro → risultato `skill:<id>` se migliora), `guardrailResistenzaVelocita`
+(i guardrail della risposta 5), `propostaOffSeason` (tre giorni separati, prima quelli senza seduta fisica). Lo state
+applica le serie test dopo resoconti e M5 e ritorna `ritest`; `POST /api/training/complete` aggiorna le scale dai log;
+il player fa preparatoria + massimo (cronometro che sale per le tenute) e salva con `POST /api/training/test`; l'hub e
+la pagina test mostrano l'elenco per giorno e i lucchetti con i motivi. Il prompt (regola 12) dice a Claude di non
+aggiungere giornate di test. Da provare sul campo nella prima settimana di ri-test vera.
 
 **Domande per Ste (si parte dopo).**
 1. "Solo gli esercizi che erano nell'ultimo gradino per salire": vale la mia lettura (il gradino SOPRA l'ultimo passato,
