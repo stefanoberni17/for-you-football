@@ -94,7 +94,9 @@ describe('dopo la partita, senza resoconto (si assume la partita intera)', () =>
     expect(con(errori(c, [{ giorno: 7, blocchi: ['forza-parte-bassa-b1'] }]), /giorno DOPO la partita/)).toEqual([]);
     expect(con(errori(c, [{ giorno: 7, blocchi: ['pb-emom'] }]), /giorno DOPO la partita/)).toHaveLength(1); // EMOM gambe (senza scarico): no
     expect(con(errori(c, [{ giorno: 7, blocchi: ['rapidita-velocita-b1-short'] }]), /giorno DOPO la partita/)).toHaveLength(1);
-    expect(con(errori(c, [{ giorno: 7, blocchi: ['fartlek-b1'] }]), /giorno DOPO la partita/)).toHaveLength(1);
+    // In season la resistenza c'è solo come obiettivo esplicito (26/10): con l'obiettivo il Fartlek diventa `re-serie`, e il giorno dopo resta vietato
+    const cRes = { ...contextFinto({ ...MARCO, focusSetup: ['resistenza', 'gambe'] }), base: { ...ctx().base, oggiDow: 7 } };
+    expect(con(errori(cRes, [{ giorno: 7, blocchi: ['fartlek-b1'] }]), /giorno DOPO la partita/)).toHaveLength(1);
     expect(con(errori(c, [{ giorno: 7, blocchi: [PB_RICHIAMO_ID] }]), /giorno DOPO la partita/)).toEqual([]);
     expect(con(errori(c, [{ giorno: 7, blocchi: ['pa-serie-short'] }]), /giorno DOPO la partita/)).toEqual([]);
   });
@@ -129,7 +131,7 @@ describe('i test usati come esercizi nei blocchi di Ste (18/10)', () => {
 
 describe('convivenze', () => {
   it('velocità e resistenza mai nello stesso giorno (blocchi diversi); i blocchi di Ste "resistenza alla velocità" restano', () => {
-    const c = ctx();
+    const c = contextFinto({ ...MARCO, focusSetup: ['resistenza', 'gambe'] }); // in season la resistenza solo come obiettivo esplicito (26/10)
     expect(con(errori(c, [{ giorno: 3, blocchi: ['velocita-b1', 'fartlek-b1'] }]), /mai nello stesso giorno/)).toHaveLength(1);
     expect(con(errori(c, [{ giorno: 3, blocchi: ['resistenza-alla-velocita-b1'] }]), /mai nello stesso giorno/)).toEqual([]);
   });

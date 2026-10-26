@@ -445,7 +445,7 @@ export function validatePlan(
         // La tecnica composta (`te-*`, 26/10) è costruita dal server al livello dell'atleta sugli esercizi dei workout di Ste: vale come un blocco di Ste (es. un piede interno-collo-esterno, livello A, sta nel palleggi B1 di Ste)
         const bloccoDiSte = (!!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)])) || (!!ctx.trustBlocks && !!it.blocco_id && it.blocco_id.startsWith('te-'));
         // Fidato anche il blocco VIRTUALE (parte alta dalle scale `pa-*`, gambe `pb-*`, kettlebell `kb-*`, apertura breve): non è nella libreria ma l'ha dosato il server
-        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('te-') || it.blocco_id.startsWith('apertura-')));
+        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('te-') || it.blocco_id.startsWith('re-') || it.blocco_id.startsWith('apertura-')));
         // Il blocco pre partita di Ste (18/10) vive il giorno prima della partita: lì la finestra della velocità non vale per i suoi item
         const gpItem = it.blocco_id === PRE_PARTITA_ID && gpSeduta === 1 ? null : gpSeduta;
         const r = validateItemV2(it, ctx.v2, gpItem, { skipBounds: fidato, skipSoloLivello: bloccoDiSte });

@@ -416,7 +416,7 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
   return calcolaCarico({ ...input, oggi: todayRome(), lunedi: mondayOfThisWeekRome(), isDeload, squadraSettimanale, squadraMisurata });
 }
 
-/** La famiglia di un blocco per la memoria dello scarico (M11): i blocchi virtuali (pa-*, pb-*, te-*, kb-*) fanno famiglia a sé. */
+/** La famiglia di un blocco per la memoria dello scarico (M11): i blocchi virtuali (pa-*, pb-*, te-*, kb-*, re-*) fanno famiglia a sé. */
 export const famigliaBlocco = (id: string): string | null => bloccoById(id)?.famiglia ?? null;
 
 /** Le letture del carico (completamenti 35 giorni, piani 49 giorni con `week_start`, log per serie): `calcolaCarico` poi gira quante volte serve. */

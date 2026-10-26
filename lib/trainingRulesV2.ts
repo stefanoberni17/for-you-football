@@ -207,6 +207,7 @@ export const CONVIVENZE_SCONSIGLIATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
  */
 export const CONVIVENZE_BLOCCHI_VIETATE: [QualitaV2, QualitaV2[]][] = [
   ['velocita', ['resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa']],
+  ['pliometria-intensiva', ['resistenza-rsa']], // 26/10: anche a livello di blocco (`re-rsa` è composto dal server, i suoi item sono il test navetta e la palla)
 ];
 
 /** Ordine "neuromuscolare prima del metabolico": indice più basso = prima nella seduta. */

@@ -38,6 +38,8 @@ export const TETTO_GIORNATE: Record<QualitaTetto, number> = { velocita: 1, pliom
 export const VELOCITA_GIORNATE_OFF_SEASON = 2;
 /** Resistenza fino a 4 giornate SOLO in off season senza squadra né partite (Ste, 13/10: "3-4 solo off season e senza allenamenti con la squadra"). */
 export const RESISTENZA_GIORNATE_SENZA_SQUADRA = 4;
+/** In season la resistenza entra solo come obiettivo esplicito (Ste, 25/10): UNA giornata a settimana. */
+export const RESISTENZA_GIORNATE_IN_SEASON = 1;
 /** Una giornata di rapidità in più (pliometria/esplosività con scatti corti) oltre alla velocità (Ste, 16/10 sera). */
 export const RAPIDITA_GIORNATE_MAX = 1;
 /** Scatti nella giornata di rapidità: pochi e corti (a tavolino: "qualche scatto corto"). */
@@ -71,7 +73,7 @@ export interface ContestoTetti {
 /** Il tetto di giornate a settimana di una qualità per questo atleta e questa settimana. */
 export function tettoGiornate(q: QualitaTetto, c: ContestoTetti): number {
   if (q === 'velocita') return c.fase === 'off_season' && c.velocitaPrimoObiettivo ? VELOCITA_GIORNATE_OFF_SEASON : TETTO_GIORNATE.velocita;
-  if (q === 'resistenza') return c.fase === 'off_season' && c.senzaSquadra ? RESISTENZA_GIORNATE_SENZA_SQUADRA : TETTO_GIORNATE.resistenza;
+  if (q === 'resistenza') return c.fase === 'in_season' ? RESISTENZA_GIORNATE_IN_SEASON : c.fase === 'off_season' && c.senzaSquadra ? RESISTENZA_GIORNATE_SENZA_SQUADRA : TETTO_GIORNATE.resistenza;
   return TETTO_GIORNATE[q];
 }
 

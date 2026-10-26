@@ -5,6 +5,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, MODIFICA_TIPI, SEDUTE_MAX, toggleFocus, type FocusId, type ModificaTipo, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { Button, Card, Chip, Input, Sheet } from '@/components/ui';
 import FattibilitaBanner from '@/components/FattibilitaBanner';
+import { AVVISO_RESISTENZA_IN_SEASON } from '@/lib/trainingResistenza';
 
 interface SedutaLite { giorno: number; titolo: string; modificabile: boolean }
 
@@ -108,6 +109,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
         <>
           {(errore || errorMsg) && <p className="text-body-sm text-warning">{errore || errorMsg}</p>}
           {!errore && !errorMsg && avviso && <p className="text-body-sm text-muted">{avviso}</p>}
+          {modo === 'nuova' && fase === 'in_season' && focus.includes('resistenza') && <p className="text-body-sm text-warning">{AVVISO_RESISTENZA_IN_SEASON}</p>}
           {modo === 'nuova' && <FattibilitaBanner durataMin={durata} focus={focus} className="mb-3" />}
           <Button size="lg" fullWidth onClick={submit} disabled={!!errore} loading={generating}>
             {generating ? 'Sto preparando la tua settimana…' : modo === 'modifica' ? 'Applica la modifica' : hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}

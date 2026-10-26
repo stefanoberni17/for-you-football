@@ -40,6 +40,7 @@ import { APERTURA_BREVE_MAX, APERTURA_NOTA, aperturaDaSostituire, aperturaPer, b
 import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, prioritaTecnica, QUALITA_PRIORITA, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type PrioritaTecnicaInfo, type Ripasso } from './trainingTecnica';
 import { dataDiGiorno, addDays as addGiorni, GAMBE_DOPO_PARTITA as GAMBE_SCALA, gambeDopoPartitaDel, notaGambeDopoPartita, quantoGiocata, resocontiTesto, RESOCONTO_FATICA_ALTA, type GambeDopoPartita } from './trainingResoconto';
+import { costruisciResistenza, filtraResistenza, isResistenzaComposta, isResistenzaEverfit, RE_FINESTRA_PRIMA, RE_METABOLICO_ID, RE_RSA_ID, RE_SERIE_ID, RE_SERIE_MAX, RE_SERIE_START, reIdPer, resistenzaRegola, RSA_SERIE_MAX, RSA_SERIE_START, statoResistenza, type StatoResistenza } from './trainingResistenza';
 import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
 import { posizioneScala } from './trainingTecnica';
 import { doseRegoleTesto } from './trainingDose';
@@ -50,7 +51,7 @@ import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiorna
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.42-limitazioni-setup';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.43-resistenza-a-serie';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -146,6 +147,8 @@ export interface ContextV2 {
   mese: Mese | null;
   // Tecnica composta dal catalogo (26/10, docs/training-tecnica-composta.md): quote mensili, tema della prossima seduta, blocchi `te-*` in libreria
   tecnica: StatoTecnica | null;
+  // Resistenza a serie (26/10, punto 19, lib/trainingResistenza): la progressione (serie, "spingi di più") per `re-serie`/`re-metabolico` e per `re-rsa`
+  resistenza: { statoSerie: StatoResistenza; statoRsa: StatoResistenza } | null;
   // Voto all'esecuzione (26/10, punto 18, lib/trainingEsecuzione): gli esercizi con qualcosa da dire (meno / seduta dedicata / SALI bloccato)
   esecuzione: StatoEsecuzione[];
 }
@@ -201,7 +204,7 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
     maxSeduteFisiche: maxSeduteFisiche(setup.fase), maxSeduteTotali: maxSeduteTotali(setup.fase), maxDurata: MAX_DURATA_PER_FASE[setup.fase],
     daRecuperare, vincoli: {}, obiettivi: base.focusSetup, memoria: {}, noteRegole: [],
     memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null, ripassoTecnica: eserciziDaRipassare(base.logsSerie),
-    prioritaTecnica: prioritaTecnica(base.results), mese, tecnica: null,
+    prioritaTecnica: prioritaTecnica(base.results), mese, tecnica: null, resistenza: null,
     esecuzione: base.storicoSerie.map((r) => r.esecuzione).filter(conQualcosaDaDire),
   };
   // Priorità del mese nel piano AUTOMATICO: il primo obiettivo resta, tra gli altri sale chi è indietro (una richiesta
@@ -219,6 +222,8 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
     livelloSalti: base.livelli['pliometria-intensiva'],
   });
   ctx.blocchi = regole.blocchi; ctx.noteRegole = regole.note;
+  // Resistenza a serie (Ste, 25/10; punto 19): i blocchi `re-*` e il filtro per fase (in season solo come obiettivo esplicito)
+  aggiornaResistenza(ctx, lunediCorrente);
   if (setup.attrezzatura.includes('campo')) ctx.blocchi.push(bloccoRiscaldamentoVelocita());
   // Apertura breve (8/10): in libreria se c'è il rullo (stessa attrezzatura del rolling)
   if (ctx.blocchi.some((b) => b.id === ROLLING_ID)) ctx.blocchi.push(bloccoAperturaBreve());
@@ -295,6 +300,29 @@ function aggiornaParteBassa(ctx: ContextV2): void {
     isDeload: ctx.base.ciclo.isDeload, inDifficolta: inDifficolta(ctx.esecuzione),
   });
   ctx.blocchi = [...ctx.blocchi.filter((b) => !isParteBassa(b.id)), ...pb];
+}
+
+/**
+ * Resistenza a serie (Ste, 25/10; lib/trainingResistenza): i blocchi `re-serie`, `re-metabolico` e (solo off season) `re-rsa`
+ * al livello della qualità resistenza, con le serie decise dai giudizi delle settimane prima; poi il filtro per fase
+ * (in season niente resistenza salvo obiettivo esplicito; RSA solo off season; salite di resistenza mai in season).
+ * Rilanciata quando la maschera cambia obiettivi o tempo: gli Everfit di resistenza tolti da una passata precedente tornano.
+ */
+export function aggiornaResistenza(ctx: ContextV2, lunediCorrente = mondayOfThisWeekRome()): void {
+  for (const b of blocchiDisponibili(ctx.v2)) if (isResistenzaEverfit(b) && !ctx.blocchi.some((x) => x.id === b.id)) ctx.blocchi.push(b);
+  ctx.blocchi = ctx.blocchi.filter((b) => !isResistenzaComposta(b.id));
+  ctx.noteRegole = ctx.noteRegole.filter((n) => !/^RESISTENZA|^SALITE DI RESISTENZA/.test(n));
+  const livello = livelloDi(ctx.base.livelli, 'resistenza-aerobica', ctx.v2.livello);
+  const statoSerie = statoResistenza(ctx.base.feedbackRecenti, { ids: [RE_SERIE_ID, RE_METABOLICO_ID], start: RE_SERIE_START[livello], max: RE_SERIE_MAX[livello], lunediCorrente });
+  const statoRsa = statoResistenza(ctx.base.feedbackRecenti, { ids: [RE_RSA_ID], start: RSA_SERIE_START, max: RSA_SERIE_MAX, lunediCorrente });
+  ctx.resistenza = { statoSerie, statoRsa };
+  ctx.blocchi.push(...costruisciResistenza({
+    livello, attrezzatura: ctx.setup.attrezzatura, fase: ctx.setup.fase, settimana: indiceSettimana(), statoSerie, statoRsa,
+    maxDurata: Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata),
+  }));
+  const f = filtraResistenza(ctx.blocchi, { fase: ctx.setup.fase, obiettivi: ctx.obiettivi });
+  ctx.blocchi = f.blocchi;
+  ctx.noteRegole.push(...f.note);
 }
 
 /**
@@ -671,6 +699,34 @@ export function sostituzioniTecnica(p: PianoLLM, ctx: ContextV2): Map<number, Ma
   return out;
 }
 
+/**
+ * Resistenza dal server (Ste, 25/10: i Fartlek lunghi "sono sbagliati, la resistenza è sempre a serie"): ogni blocco Everfit
+ * di resistenza scelto da Claude (Fartlek, Ripetute, Metabolico, Resistenza alla velocità; non le salite) lascia il posto al
+ * `re-*` della sua qualità, se esiste per l'atleta; un secondo blocco di resistenza nella stessa giornata viene tolto.
+ */
+export function sostituzioniResistenza(p: PianoLLM, ctx: ContextV2): Map<number, Map<string, string | null>> {
+  const out = new Map<number, Map<string, string | null>>();
+  if (!ctx.blocchi.some((b) => isResistenzaComposta(b.id))) return out;
+  const disponibili = new Set(ctx.blocchi.map((b) => b.id));
+  for (const s of p.sedute || []) {
+    const ids = Array.isArray(s.blocchi) ? s.blocchi : [];
+    const blocchi = ids.map((id) => bloccoDi(ctx, id)).filter((b): b is Blocco => !!b && disponibili.has(b.id));
+    const everfit = blocchi.filter(isResistenzaEverfit);
+    if (!everfit.length) continue;
+    if (ctx.daRecuperare.some((r) => r.blocchi.every((id) => ids.includes(id)))) continue;
+    const mappa = new Map<string, string | null>();
+    let haRe = blocchi.some((b) => isResistenzaComposta(b.id));
+    for (const b of everfit) {
+      if (haRe) { mappa.set(b.id, null); continue; }
+      const re = reIdPer(b);
+      if (!re || !disponibili.has(re)) continue; // es. RSA in season: il blocco resta e il validatore/filtro lo dice
+      mappa.set(b.id, re); haRe = true;
+    }
+    if (mappa.size) out.set(Number(s.giorno), mappa);
+  }
+  return out;
+}
+
 /** Espande le sedute a blocchi in sedute con items; ritorna anche gli errori a livello di blocco. */
 export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; errors: string[] } {
   const errors: string[] = [];
@@ -681,6 +737,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const sostParteAlta = sostituzioniParteAlta(p, ctx);
   const sostParteBassa = sostituzioniParteBassa(p, ctx);
   const sostTecnica = sostituzioniTecnica(p, ctx);
+  const sostResistenza = sostituzioniResistenza(p, ctx);
   const temiSettimana = new Map<TemaTecnica, number>(); // tema → giorno: un tema una volta a settimana (una seduta = un tema)
   const paSettimana = new Set<string>();
   const pbSettimana = new Set<string>(); // formati di gambe dalle scale già usati (per gruppo: serie/breve/Fmax = un posto)
@@ -763,6 +820,17 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         else blocchi.splice(i, 1); // seconda tecnica nella stessa giornata: una seduta = un tema
       }
     }
+    // Resistenza dal server (26/10): il Fartlek/Metabolico/RSA Everfit lascia il posto alla seduta a serie
+    const sostRe = sostResistenza.get(Number(s.giorno));
+    if (sostRe) {
+      for (let i = blocchi.length - 1; i >= 0; i--) {
+        if (!sostRe.has(blocchi[i].id)) continue;
+        const reIdScelto = sostRe.get(blocchi[i].id);
+        const reBlocco = reIdScelto ? bloccoDi(ctx, reIdScelto) : undefined;
+        if (reBlocco && !blocchi.some((b) => b.id === reBlocco.id)) { noteMemoria.set(reBlocco.id, `a serie, come le fa Ste, al posto di "${nomeBloccoAtleta(blocchi[i].nome)}"`); blocchi[i] = reBlocco; }
+        else blocchi.splice(i, 1); // seconda resistenza nella stessa giornata
+      }
+    }
     // Tecnica composta: l'asse partita (−1 solo la leggera; +1 dopo una partita giocata tutta solo palleggi e passaggi),
     // un tema una volta a settimana, un solo `te-*` per giornata; la leggera è facoltativa
     {
@@ -814,6 +882,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         }
         if (gdPura !== null && gdPura >= 2 && gdPura <= VELOCITA_PURA_DOPO_PARTITA_GIORNI && isVelocitaPura(b))
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m o salite) a ${gd} giorni dalla partita giocata — fino a +${VELOCITA_PURA_DOPO_PARTITA_GIORNI} solo rapidità corta o pliometria`);
+        // Resistenza a serie (Ste, 25/10): al massimo 3 giorni prima della partita (a −2 e −1 niente; il +1 è già vietato sopra)
+        if (isResistenzaComposta(b.id) && gp !== null && gp < RE_FINESTRA_PRIMA)
+          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" a ${gp} giorni dalla partita — la resistenza a serie al massimo ${RE_FINESTRA_PRIMA} giorni prima (Ste): spostala nel giorno più lontano dalle partite`);
         // Ste, 18/10 sera: a 2 giorni dalla partita la velocità va bene "ma non con distanze lunghe e non molto volume (max 20/30 m)"
         if (gp === 2 && isVelocitaPura(b))
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" a 2 giorni dalla partita — qui solo velocità corta (sprint fino a ${VELOCITA_PURA_METRI} m, es. ${ctx.blocchi.filter((x) => x.qualita === 'velocita' && !isVelocitaPura(x) && !isPrePartita(x)).map((x) => x.id).slice(0, 3).join(', ') || 'rapidità'}) e con poco volume`);
@@ -1212,6 +1283,12 @@ function parteBassaRegola(ctx: ContextV2): string {
 Composizione: ${pb.map(parteAltaTesto).join(' || ')}`;
 }
 
+/** Regola 30: la resistenza a serie come la fa Ste (lib/trainingResistenza). */
+export function resistenzaRegolaDi(ctx: ContextV2): string {
+  const st = ctx.resistenza ?? { statoSerie: { serie: 0, ritmo: false, fatte: 0, motivo: '' }, statoRsa: { serie: 0, ritmo: false, fatte: 0, motivo: '' } };
+  return resistenzaRegola({ blocchi: ctx.blocchi, livello: livelloDi(ctx.base.livelli, 'resistenza-aerobica', ctx.v2.livello), fase: ctx.setup.fase, statoSerie: st.statoSerie, statoRsa: st.statoRsa, esplicita: ctx.obiettivi.includes('resistenza') });
+}
+
 function systemPrompt(ctx: ContextV2): string {
   const fase = ctx.setup.fase;
   const faseTxt = fase === 'off_season'
@@ -1263,6 +1340,7 @@ ADATTAMENTO
 21. SQUILIBRI (se presenti nel messaggio: calcolati dai test per lato, dai log per serie e dal rombo, non inventarli): servono a SCEGLIERE tra blocchi equivalenti, mai a violare le regole sopra. Lato più debole nelle GAMBE → la strada per pareggiare è la FASCIA, non le serie in più (Ste, 25/9): se c'è una giornata leggera o spazio, metti un blocco di fascia (marcato [unilaterale]) e tra i blocchi della stessa qualità preferisci quelli [unilaterale]; nel messaggio digli di partire dal lato debole e che la fascia serve a pareggiare (la serie in più su un esercizio la aggiunge il server, al massimo una a seduta). Un lato debole nelle gambe NON dice niente sulla parte alta: non toccare spinta e tirata per quello; tirata indietro → preferisci i blocchi [pull] o [push+pull] a quelli solo [push] (e viceversa se è la spinta a essere indietro); piede debole → nelle giornate di tecnica scegli i blocchi con palleggi/passaggi e digli di usare più il piede debole. Se non ci sono squilibri, non nominarli.
 ${parteAltaRegola(ctx)}
 ${parteBassaRegola(ctx)}
+${resistenzaRegolaDi(ctx)}
 ${velocitaPliometriaRegola({ velocitaETecnica: ctx.obiettivi.includes('velocita') && ctx.obiettivi.includes('tecnica') })}
 ${fasciaRegola()}${zoneTeseTesto(zoneTeseRicorrenti(ctx.base.feedbackRecenti))}
 ${ctx.kettlebell ? kettlebellTesto(ctx.kettlebell) : '27. KETTLEBELL: non attivo (serve l\'attrezzo e l\'obiettivo "Forza funzionale kettlebell"): non usare esercizi kettlebell sparsi.'}
@@ -1489,7 +1567,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   // Punto 18: l'EMOM che contiene un esercizio in seduta dedicata va per primo (è la seduta dedicata)
   const dedicati = new Set(inDifficolta(ctx.esecuzione).map((s) => s.esercizioId));
   const emomDed = (x: Blocco) => (x.id === PA_EMOM_ID || x.id === PB_EMOM_ID) && x.items.some((it) => !!it.esercizio_id && dedicati.has(it.esercizio_id));
-  const pa = (x: Blocco) => (emomDed(x) ? -1 : isParteAlta(x.id) || (isParteBassa(x.id) && x.id !== PB_RICHIAMO_ID) ? 0 : isTecnicaComposta(x.id) ? teRank(x) : x.id === PB_RICHIAMO_ID ? 2 : 1);
+  const pa = (x: Blocco) => (emomDed(x) ? -1 : isParteAlta(x.id) || (isParteBassa(x.id) && x.id !== PB_RICHIAMO_ID) || isResistenzaComposta(x.id) ? 0 : isTecnicaComposta(x.id) ? teRank(x) : x.id === PB_RICHIAMO_ID ? 2 : 1);
   const rankBlocco = (x: Blocco, y: Blocco) => (pa(x) - pa(y)) || (memoriaRank(ctx, x) - memoriaRank(ctx, y)) || (rango(x) - rango(y)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1));
   const nelTempoPrima = (cand: Blocco[]) => [...cand.filter((x) => x.durataMin <= maxDur), ...cand.filter((x) => x.durataMin > maxDur)];
   const candidatiPerObiettivo = (f: FocusId): Blocco[] => {
@@ -1534,8 +1612,12 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   };
   const candidatiFisici = (k: number, g: number, sed: SedutaLLM[]): Blocco[] => {
     if (soloLeggere) return [];
-    // Prima gli obiettivi ancora scoperti (in modo "modifica" la parte alta mancava e il base rimetteva le gambe), poi il turno
-    const ordine = dagliObiettivi.length ? [...perOrdine.filter((f) => !coperti.has(f)), dagliObiettivi[k % dagliObiettivi.length], ...perOrdine] : [];
+    // Prima gli obiettivi OBBLIGATORI ancora scoperti (in modo "modifica" la parte alta mancava e il base rimetteva le gambe),
+    // poi il turno (o1, o2, o1, o3…), poi tutti. Con "Tutto, in equilibrio" tutti gli scoperti per primi (serve varietà, non un filo).
+    // 26/10: con tre obiettivi e quattro giornate il terzo (facoltativo) passava davanti al secondo giorno del primo
+    // obiettivo e il base violava la regola "primo obiettivo in almeno 2 giornate" (il caso della resistenza + gambe + parte alta)
+    const scoperti = (ctx.obiettivi[0] === FOCUS_TUTTO ? perOrdine : perOrdine.slice(0, FOCUS_OBBLIGATORI)).filter((f) => !coperti.has(f));
+    const ordine = dagliObiettivi.length ? [...scoperti, dagliObiettivi[k % dagliObiettivi.length], ...perOrdine] : [];
     const visti = new Set<string>();
     // Il giorno dopo la partita si filtra PRIMA del tetto per obiettivo: il richiamo (ultimo nel rango) resta il primo candidato per le gambe;
     // a +2 e +3 niente velocità pura (18/10: senza resoconto si assume la partita intera)
@@ -1803,6 +1885,8 @@ export function preparaContextV2(ctx: ContextV2, richiesta: string | undefined, 
   if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; aggiornaParteAlta(ctx); aggiornaParteBassa(ctx); aggiornaKettlebell(ctx); }
   // La tecnica composta si adatta al tempo per seduta: ricostruita ora che i vincoli (durata della richiesta o del setup) sono noti
   aggiornaTecnica(ctx);
+  // La resistenza a serie dipende da obiettivi (in season solo esplicita) e tempo: ricostruita qui
+  aggiornaResistenza(ctx);
   return ctx;
 }
 

@@ -784,3 +784,35 @@ proteggere"), prompt del planner e della chat, contesto del Coach.
 Scelte mie da confermare: massimo 4 zone; "altro" e la sola nota non riducono niente (solo il prompt); nessun
 divieto duro sui singoli esercizi (es. Nordic con un ginocchio tra le limitazioni): il prompt lo chiede, il server
 riduce. Se Ste vuole il divieto, è un filtro in `blocchiDisponibili` sugli esercizi del distretto.
+
+### E14. Resistenza a serie come la fa Ste (punto 19, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingResistenza.ts` (puro, 14 test in `tests/trainingResistenza.test.ts`), `lib/trainingPlannerV2.ts`
+(`aggiornaResistenza`, `sostituzioniResistenza`, asse partita in `expandPiano`, `resistenzaRegolaDi` = regola 30, rank 0
+nel piano base), `lib/trainingTetti.ts` (`RESISTENZA_GIORNATE_IN_SEASON = 1`), `lib/trainingRulesV2.ts` (pliometria
+intensiva + RSA vietate), `lib/trainingEngine.ts` (i `re-*` fidati), `lib/trainingChat.ts`, `/allenamento/setup` e
+`TrainingPlanForm` (avviso in season). Le risposte di Ste sono in §E6 e nel punto 19 di `docs/campo-da-fare.md`.
+
+- **Blocchi virtuali `re-*`** come `pa-*`/`pb-*`/`te-*`: `re-serie` (serie da 4' B / 5' A / 6' PRO, recupero 3' in B e
+  2' da A; partenza 2 serie in B, 3 da A; tetto 4 in B, 5 da A; contenuto mixato a rotazione fartlek / palla /
+  metabolico; corsa lenta 5' in testa; niente corsa continua), `re-metabolico` (stesso formato, intermittente 30"/30"
+  e 15"/15" dentro la serie), `re-rsa` (serie di 4 ripetizioni: B 20"/1', A 20"/40", PRO 30"/1'; 3' tra le serie;
+  2 serie, massimo 3; SOLO off season). Solo con il campo tra gli attrezzi.
+- **Progressione** (`statoResistenza`, dai giudizi di fine seduta sui `re-*` delle settimane prima): un facile →
+  "spingi di più" nella nota; due facili di fila → +1 serie; duro (o voto ≥ 9) → −1 (mai sotto la partenza); giusto
+  azzera. Il server decide le serie, Claude il giorno.
+- **Sostituzione**: i Fartlek/Ripetute/Metabolico/Resistenza alla velocità Everfit scelti da Claude diventano il
+  `re-*` della loro qualità (`reIdPer`), con la nota nell'hub; il secondo blocco di resistenza della giornata esce;
+  le salite restano di Ste.
+- **In season**: `filtraResistenza` toglie `re-*` ed Everfit di resistenza/metabolico/RSA salvo obiettivo `resistenza`
+  esplicito; tetto 1 giornata; avviso sul sovraccarico nel setup e nella maschera; le salite di resistenza mai; le
+  Salite Sprint restano (regole della velocità). RSA solo off season.
+- **Asse partita**: `re-*` da +2 in poi (già nel codice) e al massimo a −3 (`RE_FINESTRA_PRIMA`): a −2 e −1 errore
+  di `expandPiano`; la finestra generica 2 resta per i blocchi di Ste.
+- **Piano base** (stessa PR, bug pre-esistente): gli obiettivi "scoperti" che passano davanti al turno o1, o2, o1, o3
+  sono solo i primi `FOCUS_OBBLIGATORI` (con "Tutto" tutti): prima il terzo obiettivo rubava il secondo giorno del
+  primo e il base usciva con "primo obiettivo in una sola giornata" anche senza resistenza.
+
+Scelte mie da confermare: intermittente 30"/30" e 15"/15" per il metabolico; RSA partenza 2, max 3; Salite Sprint
+fuori dal filtro in season; `re-*` solo con il campo; niente item di riposo tra le serie RSA (3' nella nota e nei
+minuti). Non fatto: la card delle quote nell'hub (come per la tecnica), la RSA su richiesta in season.
