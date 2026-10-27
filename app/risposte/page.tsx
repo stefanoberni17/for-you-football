@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { GATE_DAY } from '@/lib/constants';
-import { gateLista, rispostaChiaveInfo, testoChiave, type RispostaRow } from '@/lib/risposteChiave';
+import { gateLista, rispostaChiaveInfo, testoDaModificare, type RispostaRow } from '@/lib/risposteChiave';
 import { BookOpen, ChevronRight, Key, PenLine, Star } from 'lucide-react';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
@@ -169,7 +169,7 @@ export default function RispostePage() {
         <ModificaRispostaSheet
           week={modifica.week}
           day={modifica.day}
-          testoIniziale={testoChiave(modifica, rispostaChiaveInfo(modifica.week, modifica.day) ?? {}) || ''}
+          testoIniziale={testoDaModificare(modifica, rispostaChiaveInfo(modifica.week, modifica.day) ?? {})}
           open
           onClose={() => setModifica(null)}
           onSalvata={(t) => setRows((prev) => prev.map((r) => {

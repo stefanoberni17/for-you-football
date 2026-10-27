@@ -548,6 +548,8 @@ export default function GiornoPage() {
               subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1 whitespace-pre-line">{giorno.domandaPrePratica}</span>}
               className="mb-4"
             />
+            {/* W1-G5 chiede se il momento è ancora quello: lo mostra («Il tuo momento: …», Mostra Carta "Momento") */}
+            <RisposteChiaveBox week={weekNumber} day={dayNumber} mostraCarta={giorno.mostraCarta} className="mb-4" />
             <Field
               label="La tua risposta"
               htmlFor="pre-pratica"

@@ -8,6 +8,7 @@ import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY } from '@/lib/constants';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
+import { chiaviPerGiorno } from '@/lib/risposteChiave';
 import { Check, Key, PenLine, Target } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
@@ -237,8 +238,13 @@ export default function GatePage() {
             <p className="text-app text-body leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
-            {/* Le risposte chiave richiamate dalle domande (W11: Protocollo For You, risposte pronte) */}
-            <RisposteChiaveBox week={weekNumber} day={GATE_DAY} className="mt-3" />
+            {/* Le risposte chiave richiamate dalle domande (W11: Protocollo For You, risposte pronte) e i riquadri di "Mostra Carta" (W1: mantra, momento) */}
+            <RisposteChiaveBox week={weekNumber} day={GATE_DAY} mostraCarta={giorno.mostraCarta} className="mt-3" />
+          </Card>
+        )}
+        {!giorno?.pratica && chiaviPerGiorno(weekNumber, GATE_DAY, giorno?.mostraCarta) && (
+          <Card padding="sm">
+            <RisposteChiaveBox week={weekNumber} day={GATE_DAY} mostraCarta={giorno?.mostraCarta} senzaBordo />
           </Card>
         )}
 

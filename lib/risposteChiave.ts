@@ -12,10 +12,12 @@
  * mostra le chiave nel giorno (quelle di `DA_MOSTRARE` più quelle della property Notion "Mostra Carta").
  */
 
+import { ALTRO_SCELTA, componiRisposta, guidaPer, leggiRisposta, type RispostaGuidata } from '@/lib/risposteGuidate';
+
 /**
  * Le risposte del Gate (`user_day_progress.gate_answers`): un oggetto q1..qN. Fino al 26/10 il server
  * ne teneva solo tre e la quarta domanda dei Gate W6-W9 andava persa al salvataggio; ora valgono tutte
- * quelle che la pagina manda (le domande vengono da Notion, una per riga), da `GATE_DOMANDE_MIN` a
+ * quelle che la pagina manda (le domande vengono da Notion, `lib/gateDomande.ts`), da `GATE_DOMANDE_MIN` a
  * `GATE_DOMANDE_MAX`.
  */
 export type GateChiave = `q${number}`;
@@ -82,6 +84,11 @@ export const MOSTRA_CARTA_NOTION: Record<string, CampoCarta> = {
   Mantra: 'mantra', Mappa: 'mappa', Firma: 'firma', Protocollo: 'protocollo', Cose: 'cose', 'Protocollo For You': 'protocolloForYou',
 };
 
+/** Gli altri valori di "Mostra Carta": risposte chiave che non sono un riquadro della Carta (settimana, giorno). */
+export const MOSTRA_ALTRE_NOTION: Record<string, [number, number]> = {
+  Momento: [1, 2],
+};
+
 export interface RispostaChiave {
   week: number;
   day: number;
@@ -93,10 +100,15 @@ export interface RispostaChiave {
   carta?: CampoCarta;
   /** Per le risposte del Gate: QUALE (la mappa è la prima del Gate 3). */
   gateQ?: GateChiave;
+  /** Per le risposte guidate: QUALE parte si mostra (il momento di W1-G2); si modifica la risposta intera. */
+  parte?: string;
+  /** Si mostra in una riga («Il tuo momento: "…"»), non in un riquadro da aprire. */
+  inline?: boolean;
 }
 
 /** Le risposte che il percorso richiama più avanti. L'ordine è quello del percorso. */
 export const RISPOSTE_CHIAVE: RispostaChiave[] = [
+  { week: 1, day: 2, label: 'Il tuo momento', quando: 'Settimana 1, giorno 2', parte: 'momento', inline: true },
   { week: 1, day: 3, label: 'Il tuo mantra', quando: 'Settimana 1, giorno 3', carta: 'mantra' },
   { week: 3, day: 3, label: 'La tua firma del gioco libero', quando: 'Settimana 3, giorno 3', carta: 'firma' },
   { week: 3, day: 7, label: 'La tua mappa', quando: 'Settimana 3, Gate', carta: 'mappa', gateQ: 'q1' },
@@ -153,7 +165,12 @@ export function campiDaNotion(valori: readonly string[] | null | undefined): Cam
  */
 export function chiaviPerGiorno(week: number, day: number, mostraCarta?: readonly string[] | null): RispostaChiave[] | null {
   const lista = DA_MOSTRARE[chiaveGiorno(week, day)];
-  const daNotion = campiDaNotion(mostraCarta).map(chiavePerCampo);
+  const altre = (mostraCarta ?? [])
+    .map((v) => MOSTRA_ALTRE_NOTION[String(v).trim()])
+    .filter((wd): wd is [number, number] => !!wd)
+    .map(([w, d]) => rispostaChiaveInfo(w, d))
+    .filter((c): c is RispostaChiave => !!c);
+  const daNotion = [...altre, ...campiDaNotion(mostraCarta).map(chiavePerCampo)];
   if (!lista && !daNotion.length) return null;
   const out: RispostaChiave[] = [];
   for (const c of [...(lista ?? []).map(([w, d]) => rispostaChiaveInfo(w, d)), ...daNotion]) {
@@ -193,14 +210,52 @@ export function testoRisposta(r: RispostaRow): string | null {
   return null;
 }
 
-/** Il testo di una risposta chiave: per quelle del Gate solo la risposta indicata (`gateQ`). */
-export function testoChiave(r: RispostaRow | undefined, chiave: Pick<RispostaChiave, 'gateQ'>): string | null {
+/**
+ * Il testo di una risposta chiave: per quelle del Gate solo la risposta indicata (`gateQ`); per quelle
+ * con una `parte` (il momento di W1-G2) solo quella parte della risposta guidata. Chi ha risposto prima
+ * della guida: il momento scritto nella domanda prima della pratica (dove lo chiedeva prima), altrimenti
+ * la risposta intera scritta a mano.
+ */
+export function testoChiave(r: RispostaRow | undefined, chiave: Pick<RispostaChiave, 'gateQ' | 'parte'>): string | null {
   if (!r) return null;
+  if (chiave.parte) {
+    const guida = guidaPer(r.week, r.day);
+    const risposta = (r.risposta || '').trim();
+    if (guida) {
+      const parte = leggiRisposta(guida, risposta)[chiave.parte]?.altro?.trim();
+      if (parte && etichettata(guida, risposta)) return parte;
+    }
+    if (r.prePratica && r.prePratica.trim()) return r.prePratica.trim();
+    if (risposta && (!guida || !etichettata(guida, risposta))) return risposta;
+    return null;
+  }
   if (chiave.gateQ) {
     const t = r.gateQ?.[chiave.gateQ];
     return t && t.trim() ? t.trim() : null;
   }
   return testoRisposta(r);
+}
+
+function etichettata(guida: RispostaGuidata, testo: string): boolean {
+  const su = testo.toUpperCase();
+  return guida.parti.some((p) => su.includes(`${p.label.toUpperCase()}:`));
+}
+
+/**
+ * Il testo da cui parte "Modifica": la risposta intera (anche per il momento, che è una parte della
+ * risposta guidata di W1-G2). Se manca ma il momento era nella domanda prima della pratica, lo mette
+ * già nella sua parte.
+ */
+export function testoDaModificare(r: RispostaRow | undefined, chiave: Pick<RispostaChiave, 'gateQ' | 'parte'>): string {
+  if (!r) return '';
+  if (chiave.parte) {
+    const risposta = (r.risposta || '').trim();
+    if (risposta) return risposta;
+    const guida = guidaPer(r.week, r.day);
+    const pre = (r.prePratica || '').trim();
+    return guida && pre ? componiRisposta(guida, { [chiave.parte]: { scelta: ALTRO_SCELTA, altro: pre } }) : pre;
+  }
+  return testoChiave(r, chiave) || '';
 }
 
 export interface CampoCartaValore {
@@ -254,7 +309,7 @@ export function risposteChiaveTesto(rows: RispostaRow[], precedenti: readonly Ve
   });
   return `
 ## Le sue risposte chiave (parole sue, da richiamare quando servono)
-Sono le cose che ha scritto e che il percorso gli chiede di riprendere (W11: Protocollo Pressione, routine, condizioni, risposte pronte, Protocollo For You; la Carta del Giocatore: mantra, mappa, firma, Protocollo, le cose che è anche senza il pallone). Se gliele richiami, cita le SUE parole, non riscriverle. Può modificarle dalla Carta e dai giorni: se una riga ha delle versioni "prima", quella in alto è l'ultima che ha scritto. Nell'app le trova nella Carta e in "Le tue risposte" (Profilo).
+Sono le cose che ha scritto e che il percorso gli chiede di riprendere (il suo momento della settimana 1, quello in cui usare il Reset; W11: Protocollo Pressione, routine, condizioni, risposte pronte, Protocollo For You; la Carta del Giocatore: mantra, mappa, firma, Protocollo, le cose che è anche senza il pallone). Se gliele richiami, cita le SUE parole, non riscriverle. Può modificarle dalla Carta e dai giorni: se una riga ha delle versioni "prima", quella in alto è l'ultima che ha scritto. Nell'app le trova nella Carta e in "Le tue risposte" (Profilo).
 ${righe.join('\n\n')}
 `;
 }
