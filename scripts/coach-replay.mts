@@ -166,7 +166,7 @@ function contestoSettimana(nome: string): string | null {
     const gate = { q1: 'Riparto qui, la tengo.', q2: 'Lo tengo: dopo un controllo sbagliato.', q3: 'Non ho capito bene se il gesto lo devo fare quando inspiro o quando butto fuori l\'aria. E in partita devo contare i secondi?' };
     return testa(2, '7 (tutta la settimana 1)') + settimanaInCorsoTesto({
       week: 2, giorni: fx.settimana2, progresso: [],
-      gatePrecedente: { week: 1, giorno: fx.settimana1.find((g: { dayNumber: number }) => g.dayNumber === 7), answers: gate },
+      gatePrecedente: { week: 1, giorno: fx.settimana1.find((g: { dayNumber: number }) => g.dayNumber === 7), answers: gate, completedAt: '2026-10-26T19:30:00Z' },
     });
   }
   return null;

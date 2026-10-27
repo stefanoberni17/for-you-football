@@ -37,7 +37,7 @@ export interface SettimanaPerCoach {
   giorni: GiornoPercorso[];
   progresso: ProgressoGiorno[];
   /** Il Gate della settimana prima (giorno 7), se fatto: domande, regia e risposte */
-  gatePrecedente?: { week: number; giorno: GiornoPercorso; answers: Record<string, unknown> | null } | null;
+  gatePrecedente?: { week: number; giorno: GiornoPercorso; answers: Record<string, unknown> | null; completedAt?: string | null } | null;
 }
 
 export const SETTIMANA_CONTESTO_MAX = 1200;
@@ -106,7 +106,9 @@ export function settimanaInCorsoTesto(s: SettimanaPerCoach): string {
   const blocchi: string[] = [];
   if (s.gatePrecedente && fatti.length < GATE_PRECEDENTE_FINO_A_GIORNI) {
     const gp = s.gatePrecedente;
-    blocchi.push(`${bloccoGiorno(gp.week, gp.giorno, { day: 7, completed: true, completedAt: null, response: null, prePratica: null, gateAnswers: gp.answers }, 'fatto').replace(/\(fatto\)/, '(la chiusura della settimana scorsa)')}`);
+    // La data del Gate: senza, il Coach la inventava («il gate di ieri», replay del 27/10)
+    const quando = gp.completedAt ? `, fatta ${dataBreve(gp.completedAt)}` : '';
+    blocchi.push(`${bloccoGiorno(gp.week, gp.giorno, { day: 7, completed: true, completedAt: null, response: null, prePratica: null, gateAnswers: gp.answers }, 'fatto').replace(/\(fatto\)/, `(la chiusura della settimana scorsa${quando})`)}`);
   }
   for (const g of fatti) blocchi.push(bloccoGiorno(s.week, g, prog.get(g.dayNumber), 'fatto'));
   if (prossimo) blocchi.push(bloccoGiorno(s.week, prossimo, prog.get(prossimo.dayNumber), 'adesso'));

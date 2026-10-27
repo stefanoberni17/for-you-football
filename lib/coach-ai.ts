@@ -910,7 +910,7 @@ async function loadSettimanaInCorso(userId: string, week: number): Promise<strin
       week,
       giorni,
       progresso,
-      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers } : null,
+      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers, completedAt: gateRiga.completed_at } : null,
     });
   } catch (e) {
     console.error('loadSettimanaInCorso:', (e as Error).message);

@@ -45,6 +45,9 @@ describe('la settimana in corso per il Coach (27/10)', () => {
     expect(inizio).toContain('### S2G1 — Due 1 (è il giorno in cui si trova adesso');
     const dopo = settimanaInCorsoTesto({ week: 2, giorni: w2, progresso: [fatto(1, 'x'), fatto(2, 'y'), fatto(3, 'z')], gatePrecedente });
     expect(dopo).not.toContain('settimana scorsa');
+    // Con la data del Gate il Coach sa quando è stato chiuso (prima la inventava: «il gate di ieri»)
+    const datato = settimanaInCorsoTesto({ week: 2, giorni: w2, progresso: [], gatePrecedente: { ...gatePrecedente, completedAt: '2026-10-26T18:00:00Z' } });
+    expect(datato).toContain('(la chiusura della settimana scorsa, fatta lunedì 26/10)');
   });
 
   it('senza giorni su Notion niente blocco', () => {
