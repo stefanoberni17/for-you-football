@@ -57,3 +57,6 @@ docs/everfit-export/
 # Note di ricerca delle sessioni Claude (il report finale va in docs/)
 research_notes/
 reports/
+content/audio-scripts/_out/
+content/audio-scripts/_build/raw3/
+content/audio-scripts/_build/wav3/

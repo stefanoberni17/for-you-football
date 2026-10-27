@@ -1,0 +1,59 @@
+[meditative]
+Siediti. Punto fisso davanti a te, attenzione sotto lo sterno.
+[SILENZIO 2]
+Reset.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Adesso porta alla mente un momento recente in cui sei rimasto attaccato a un pensiero e hai seguito meno il gioco. Non il peggiore: uno recente, che riesci a guardare.
+[SILENZIO 5]
+Rivivi quella scena per trenta secondi. Il campo davanti a te, le voci intorno, quello che stavi pensando. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 30]
+Adesso smetti di immaginare, e rispondi. Una domanda alla volta.
+[SILENZIO 2]
+Cosa ti ricordi di esserti detto?
+[SILENZIO 10]
+Che nome gli dai? Passato, Futuro o Giudizio. Se non sei sicuro, «pensiero».
+[SILENZIO 10]
+Lo sapevi che stava succedendo, in quel momento?
+[SILENZIO 10]
+Ora fai il Reset. Torna qui.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, mantra dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: nel momento che hai rivissuto, lo sapevi che stavi reagendo in automatico, o te ne sei accorto solo dopo?
