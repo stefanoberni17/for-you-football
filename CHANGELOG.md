@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-27 — Audio delle pratiche: W9 scritto, generato e online
+- Ste: "vai w9". Due copioni (W9 G1 G2; G3-G7 senza audio come da revisione) in `content/audio-scripts/_build/b1.py` dai testi Notion di oggi, già in due file: G1 il centro e l'inventario dei sette strumenti (una domanda per strumento, 8" di silenzio) con la nuova àncora, G2 lo spogliatoio e il piede in campo, routine o scaramanzia. `check_notion.py` pulito. 47 segmenti nuovi (circa 6.000 crediti), 10 dalla cache. Online su Supabase (`W9-G1-apertura.mp3` 1:10, `-pratica.mp3` 5:00; `W9-G2-apertura.mp3` 1:22, `-pratica.mp3` 4:45, -17 LUFS) e collegati su Notion (`Audio Apertura`, `Audio Pratica`); `Durata Minuti` invariata (6 e 5). Ste non li ha ancora ascoltati.
+
 ## 2026-10-27 — W2-W8 in due audio: le registrazioni del 26/10 divise e collegate
 - Ste: "tutte le altre settimane sono a posto come abbiamo registrato già, puoi fare la divisione anche su questi". 31 giorni divisi in apertura e pratica dai copioni già registrati (572 pezzi, tutti dalla cache, zero crediti), 62 file montati, -17 LUFS, caricati come `W<w>-G<g>-apertura.mp3` / `-pratica.mp3` e collegati su Notion (`Audio Apertura`, `Audio Pratica`). `Durata Minuti` = la sola pratica, scesa di 1-2 minuti quasi ovunque (W2-G4 9 → 8, W4-G3 8 → 6, W8-G2 7 → 5…). I file unici vecchi restano nello storage, non più usati.
 
