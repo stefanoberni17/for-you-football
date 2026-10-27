@@ -7,9 +7,10 @@
  *  - livello 1, proposta: scarto di almeno RESOCONTO_PROPOSTA_DELTA (3) → nella PRIMA seduta dell'app dopo il
  *    resoconto le serie principali diventano facoltative "da togliere" (fatica sopra il previsto) o si propone una
  *    serie in più "da aggiungere" (fatica sotto). Il programma propone, il ragazzo sceglie (regola M8).
- *  - livello 2, vincolo: partita con al massimo PARTITA_POCO_MINUTI (20) minuti o fatica sotto PARTITA_POCO_RPE (4)
- *    = "come se non avesse quasi giocato": le regole del DOPO partita (niente gambe a +1, niente velocità pura a
- *    +2/+3) non valgono per quella partita. Squadra: fatica molto alta (≥ RESOCONTO_FATICA_ALTA, 9: la zona "al
+ *  - livello 2, vincolo: partita NON giocata (0'), oppure al massimo PARTITA_POCO_MINUTI (20) minuti E fatica sotto
+ *    PARTITA_POCO_RPE (4) = "come se non avesse quasi giocato" (Ste, 26/10: "non è entrato, o giocato poco e
+ *    pochissima fatica": fino al 25/10 bastava una delle due): le regole del DOPO partita (gambe ridotte a +1,
+ *    niente velocità pura a +2/+3) non valgono per quella partita. Squadra: fatica molto alta (≥ RESOCONTO_FATICA_ALTA, 9: la zona "al
  *    limite") o un fastidio → i RESOCONTO_GIORNI_RIDOTTI (2) giorni dopo le sedute dell'app sono più leggere (serie
  *    ×0.7) e si propone lo yoga di recupero.
  *  - LA PARTITA (Ste, 19/10, seconda nota): giocata tutta con fatica 7-9 e qualche dolore è NORMALE (il previsto è 9,
@@ -18,6 +19,13 @@
  *    regole di +2/+3 (niente velocità pura) non valgono ("può fare qualcosa in più se serve"); fatica 10 → il
  *    giorno dopo SOLO recupero: la seduta dell'app diventa una sessione di recupero (corsettina 5', rolling, yoga di
  *    recupero) e il secondo giorno resta più leggero. La partita non dà mai serie "da aggiungere".
+ *  - GAMBE IL GIORNO DOPO (Ste, 26/10): la forza gambe a +1 non è più vietata, è RIDOTTA in base a quanto ha giocato
+ *    (`gambeDopoPartita`, le serie × GAMBE_DOPO_PARTITA): 40 % con la partita intera o senza resoconto ("conservativi"),
+ *    50 % con meno di PARTITA_MINUTI_PIENI (90) e fatica ≤ PARTITA_MENO_RPE (6), 60 % sotto PARTITA_META_MINUTI (45),
+ *    75 % sotto PARTITA_SPEZZONE_MINUTI (15); non entrato, o giocato poco con pochissima fatica = nessun vincolo.
+ *    Velocità, pliometria, resistenza, Fmax e l'EMOM gambe restano fuori a +1. Il planner applica il fattore quando
+ *    costruisce la settimana (`expandPiano`); se il resoconto arriva DOPO (piano del lunedì, resoconto nel pomeriggio)
+ *    `applicaResoconti` ricalcola le serie dalla dose piena salvata nell'item (`dopo_partita.serie_piene`).
  *  - livello 3, due giorni di fila: fatica alta (scarto ≥ +3 o ≥ 9) in due resoconti di giorni consecutivi → la
  *    seduta dopo ha le ripetizioni ridotte (×RESOCONTO_REPS_RIDOTTE) e le serie facoltative; fatica bassa (scarto
  *    ≤ −3) due giorni di fila → serie facoltative in più. Niente rigenerazione con Claude.
@@ -64,6 +72,12 @@ export const RESOCONTO_FATICA_ALTA = 9;      // squadra: "molto alta" = la zona 
 export const PARTITA_RECUPERO_RPE = 10;      // partita: con 10 il giorno dopo solo recupero (rolling, yoga, corsettina), il secondo più leggero
 export const PARTITA_INTERA_MINUTI = 75;     // partita: sotto i 75' il "meno affaticato" toglie anche il divieto di velocità pura a +2/+3
 export const PARTITA_MENO_RPE = 6;           // partita: fatica ≤ 6 = meno affaticato (anche intera: il voto è soggettivo, lo sforzo dei 90' c'è stato)
+// Gambe il giorno dopo la partita (Ste, 26/10): quanto resta delle serie in base ai minuti giocati e alla fatica
+export const PARTITA_SPEZZONE_MINUTI = 15;   // sotto: gambe al 75 % ("anche 70/80 se ha giocato meno di 15 min")
+export const PARTITA_META_MINUTI = 45;       // sotto: gambe al 60 %
+export const PARTITA_MINUTI_PIENI = 90;      // sotto, con fatica ≤ 6: gambe al 50 %; altrimenti partita intera: 40 %
+export const GAMBE_DOPO_PARTITA = { intera: 0.4, meno: 0.5, meta: 0.6, spezzone: 0.75, libero: 1 } as const;
+export type GambeDopoPartitaChiave = keyof typeof GAMBE_DOPO_PARTITA;
 export const RECUPERO_CORSETTINA_MIN = 5;    // la corsettina lenta della sessione di recupero
 export const RESOCONTO_GIORNI_RIDOTTI = 2;   // i giorni dopo una fatica molto alta o un fastidio
 export const RESOCONTO_GIORNI_DI_FILA = 2;   // livello 3: due giorni consecutivi
@@ -112,7 +126,9 @@ export interface ValutazioneResoconto {
 export function valutaResoconto(r: Resoconto, previsto = r.rpe_previsto ?? previstoPer(r.tipo, r.data)): ValutazioneResoconto {
   const delta = r.rpe - previsto;
   if (r.tipo === 'partita') {
-    const pocoGiocato = (r.durata_min != null && r.durata_min <= PARTITA_POCO_MINUTI) || r.rpe < PARTITA_POCO_RPE;
+    // Ste, 26/10: "se non ha giocato e non è entrato, o giocato poco E pochissima fatica, no vincoli" (prima bastava una delle due:
+    // 10' con fatica 5 era "quasi non giocato", ora è uno spezzone con le gambe al 75 %); senza i minuti conta solo la fatica
+    const pocoGiocato = r.durata_min === 0 || ((r.durata_min == null || r.durata_min <= PARTITA_POCO_MINUTI) && r.rpe < PARTITA_POCO_RPE);
     // Ste, 19/10 (terza nota): 6 anche sulla partita intera è "meno affaticato" (il voto è soggettivo, ma lo sforzo dei 90' l'ha fatto:
     // le regole del dopo partita restano; con meno di 75' cade anche il divieto di velocità pura a +2/+3)
     const menoAffaticato = !pocoGiocato && r.rpe <= PARTITA_MENO_RPE;
@@ -180,6 +196,28 @@ export function sessioneRecuperoDopoPartita(giorno: number, alPostoDi?: string):
   };
 }
 
+export interface GambeDopoPartita { chiave: GambeDopoPartitaChiave; scala: number; motivo: string }
+/**
+ * Le gambe il giorno DOPO la partita (Ste, 26/10): quanto resta delle serie di forza parte bassa, da quanto ha giocato.
+ * Senza resoconto si assume la partita intera (40 %, "conservativi"). Non entrato, o giocato poco con pochissima fatica → libero.
+ */
+export function gambeDopoPartita(r: Resoconto | null | undefined, squadra?: SquadraSettimana | null): GambeDopoPartita {
+  if (!r || r.tipo !== 'partita') return { chiave: 'intera', scala: GAMBE_DOPO_PARTITA.intera, motivo: 'senza il resoconto si assume la partita intera' };
+  const v = valutaResoconto(r, r.rpe_previsto ?? previstoPer('partita', r.data, squadra));
+  const min = r.durata_min;
+  if (v.pocoGiocato) return { chiave: 'libero', scala: 1, motivo: min === 0 ? 'non è entrato' : `giocato poco (${min ?? '?'}') con pochissima fatica (${r.rpe}/10)` };
+  if (min != null && min < PARTITA_SPEZZONE_MINUTI) return { chiave: 'spezzone', scala: GAMBE_DOPO_PARTITA.spezzone, motivo: `uno spezzone (${min}')` };
+  if (min != null && min < PARTITA_META_MINUTI) return { chiave: 'meta', scala: GAMBE_DOPO_PARTITA.meta, motivo: `meno di metà partita (${min}')` };
+  if (min != null && min < PARTITA_MINUTI_PIENI && r.rpe <= PARTITA_MENO_RPE) return { chiave: 'meno', scala: GAMBE_DOPO_PARTITA.meno, motivo: `${min}' con fatica ${r.rpe}/10` };
+  return { chiave: 'intera', scala: GAMBE_DOPO_PARTITA.intera, motivo: `partita intera${min != null ? ` (${min}')` : ''} con fatica ${r.rpe}/10` };
+}
+/** Lo stesso, per la partita di una data (per il planner: il giorno dopo la partita di sabato). */
+export const gambeDopoPartitaDel = (resoconti: readonly Resoconto[], dataPartita: string, squadra?: SquadraSettimana | null) =>
+  gambeDopoPartita(resocontoDel(resoconti, dataPartita, 'partita'), squadra);
+/** La nota sull'item e sul blocco: una frase sola, riconoscibile, così `applicaResoconti` la può riscrivere. */
+export const notaGambeDopoPartita = (g: GambeDopoPartita) => `Giorno dopo la partita: serie al ${Math.round(g.scala * 100)} % (${g.motivo}).`;
+const RE_NOTA_GAMBE = /\s*Giorno dopo la partita: serie al \d+ % \([^)]*\)\./;
+
 /** Il resoconto per la data (partita prima della squadra): per il planner, "la partita di sabato è stata giocata poco?". */
 export const resocontoDel = (resoconti: readonly Resoconto[], data: string, tipo?: TipoResoconto) =>
   resoconti.find((r) => r.data === data && (!tipo || r.tipo === tipo)) ?? null;
@@ -236,6 +274,25 @@ export function applicaResoconti(plan: WeekPlan, opt: {
         const vecchia = sedute[idx];
         sedute[idx] = sessioneRecuperoDopoPartita(vecchia.giorno, vecchia.titolo);
         segna(sedute[idx], `${DAY_NAMES[vecchia.giorno]}: sessione di recupero (corsettina, rolling, yoga) al posto di "${vecchia.titolo}" dopo la ${cosa} con fatica 10`);
+      }
+    }
+    // Gambe il giorno dopo (Ste, 26/10): se il piano è nato prima del resoconto (serie al 40 %, partita intera assunta) le serie
+    // si ricalcolano dalla dose piena salvata nell'item; vale anche al contrario (resoconto corretto dopo)
+    if (r.tipo === 'partita') {
+      const g = gambeDopoPartita(r, opt.squadra);
+      const s = sedute.find((x) => daFare(x) && diffGiorni(dataS(x), r.data) === 1);
+      const daRifare = s?.items.filter((it) => it.dopo_partita && it.dopo_partita.scala !== g.scala) ?? [];
+      if (s && daRifare.length) {
+        for (const it of daRifare) {
+          it.serie = Math.max(1, Math.round(it.dopo_partita!.serie_piene * g.scala));
+          it.dopo_partita = { ...it.dopo_partita!, scala: g.scala };
+          it.nota = `${(it.nota ?? '').replace(RE_NOTA_GAMBE, '').trim()} ${g.scala < 1 ? notaGambeDopoPartita(g) : ''}`.trim() || undefined;
+          if (g.scala >= 1 && it.adattamento === 'leggero') delete it.adattamento;
+          else if (g.scala < 1 && !it.adattamento) it.adattamento = 'leggero';
+        }
+        const idsBlocchi = new Set(daRifare.map((it) => it.blocco_id));
+        if (s.blocchi) for (const b of s.blocchi) if (idsBlocchi.has(b.id)) { b.leggero = g.scala < 1 || undefined; b.nota = `${(b.nota ?? '').replace(RE_NOTA_GAMBE, '').trim()} ${g.scala < 1 ? notaGambeDopoPartita(g) : ''}`.trim() || undefined; }
+        segna(s, `${DAY_NAMES[s.giorno]}: gambe ${g.scala < 1 ? `al ${Math.round(g.scala * 100)} %` : 'a dose piena'} dopo la ${cosa} (${g.motivo})`);
       }
     }
     // Livello 2: fatica molto alta o fastidio (squadra), partita da 10 → i due giorni dopo più leggeri + yoga di recupero
@@ -320,8 +377,9 @@ export function resocontiTesto(resoconti: readonly Resoconto[], squadra?: Squadr
       r.stanchezza ? r.stanchezza : null, r.fastidio_zona ? `fastidio a ${r.fastidio_zona}` : null, r.testa ? `testa: ${r.testa.replace('_', ' e ')}` : null,
     ].filter(Boolean).join(', ');
     const lettura = v.pocoGiocato ? 'quasi non giocato: le regole del dopo partita non valgono' : v.recuperoDopo ? 'partita da 10: il giorno dopo solo recupero, il secondo più leggero' : v.menoAffaticato ? 'meno affaticato (meno di 75\' e poca fatica): niente in più, ma a +2/+3 può fare qualcosa in più se serve' : v.faticaAlta ? 'fatica molto alta: i due giorni dopo più leggeri' : v.verso === 'piu' ? 'più fatica del previsto: serie facoltative nella seduta dopo' : v.verso === 'meno' ? 'meno fatica del previsto: serie in più facoltative' : r.tipo === 'partita' ? 'partita normale (le regole del dopo partita valgono)' : 'come previsto';
+    const gambe = r.tipo === 'partita' && !v.recuperoDopo ? (() => { const g = gambeDopoPartita(r, squadra); return g.scala < 1 ? `; gambe il giorno dopo al ${Math.round(g.scala * 100)} % delle serie (${g.motivo})` : '; gambe il giorno dopo senza vincoli'; })() : '';
     const voti = votiRiga(r.voti);
-    return `- ${r.data} ${r.tipo}: fatica ${r.rpe}/10 (previsto ${prev}), ${extra} → ${lettura}${voti ? `; voti: ${voti}` : ''}`;
+    return `- ${r.data} ${r.tipo}: fatica ${r.rpe}/10 (previsto ${prev}), ${extra} → ${lettura}${gambe}${voti ? `; voti: ${voti}` : ''}`;
   });
   return `\n# RESOCONTI SQUADRA E PARTITA (dati veri del ragazzo; le regole le applica il server alle sedute: tu tienine conto per bilanciare)\n${righe.join('\n')}${votiTesto(resoconti)}`;
 }

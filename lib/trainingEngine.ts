@@ -344,12 +344,26 @@ export interface PlanItem {
   emom_gruppo?: string;      // EMOM a rotazione (Ste, 17/9): gli item con lo stesso gruppo si alternano un minuto ciascuno; serie = giri, quantita = reps al minuto, recupero = il resto del minuto
   unita?: 'reps' | 'secondi' | 'minuti' | 'metri'; // SOLO se diversa dal catalogo: in Everfit Ste ha programmato a tempo un esercizio a reps (EMOM 30") o viceversa
   // Progressioni (lib/trainingProgressione): cosa il server ha cambiato rispetto al programma di Ste
-  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // ripasso (28/9): esercizio di tecnica difficile l'ultima volta, rimesso in coda
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; // limitazione (punto 4, 26/10): stessa riduzione, dalle zone del setup, cronica // dolore (M9, 26/10, lib/trainingDolore): serie ×0.7 e kg ×0.8 sugli esercizi della zona segnalata // ripasso (28/9): esercizio di tecnica difficile l'ultima volta, rimesso in coda; esecuzione (punto 18): gradino sotto / meno dopo "faccio fatica" o "non riesco"
   lato_extra?: 'dx' | 'sx';  // una serie in più, solo su questo lato (lato più debole)
   // Resoconto dopo squadra/partita (19/10, lib/trainingResoconto): 'togli' = l'esercizio si può saltare; 'aggiungi' = una serie in più se se la sente
   facoltativo?: 'togli' | 'aggiungi';
   facoltativo_motivo?: string;
   resoconto?: 'leggero' | 'ridotto'; // cosa ha fatto il resoconto su questo item (serie ×0.7 / reps ×0.8), separato da `adattamento` che resta della progressione
+  dopo_partita?: { scala: number; serie_piene: number }; // gambe il giorno dopo la partita (26/10): serie × scala (0.4-0.75) dalla dose piena; applicaResoconti le ricalcola se il resoconto arriva dopo il piano
+  aumento_settimana?: { daGiorno: number; da: string }; // M5 (26/10, lib/trainingAumenti): un passo in più già in settimana perché il giorno `daGiorno` era molto leggero; `da` = la dose del piano
+  test_in_seduta?: TestInSeduta; // ri-test integrato (26/10, lib/trainingRitest): questo item è una SERIE TEST (preparatoria + massimo), il risultato va salvato come test
+}
+/** Serie test dentro una seduta (26/10): skill = gradino della scala (`skill:<esercizio>`), test = test v1/v2 da campo o tecnica, lift = massimale in palestra (peso × reps). */
+export interface TestInSeduta {
+  tipo: 'skill' | 'test' | 'lift';
+  id: string;                 // skill: id dell'esercizio della catena; test/lift: id del test (test-… / t2-…)
+  nome: string;
+  unita: 'reps' | 'secondi' | 'cm' | 'kg';
+  gruppo: 'forza' | 'tecnica' | 'palestra' | 'campo';
+  soglia?: number;            // skill: la soglia del gradino (per il messaggio "sopra N sali")
+  prep?: number | null;       // serie preparatoria: quantità (reps o secondi) prima della serie al massimo
+  perche?: string;            // una riga per l'atleta
 }
 export interface PlanSession {
   giorno: number;            // 1=Lun … 7=Dom
@@ -361,6 +375,7 @@ export interface PlanSession {
   spiegazione?: string;
   blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
+  spostata_da?: number;      // M8 (26/10, lib/trainingCalendario): il server l'ha spostata perché il calendario è cambiato (giorno di prima)
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
   proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; // dal resoconto (19/10): il programma propone, il ragazzo sceglie
 }
@@ -370,6 +385,8 @@ export interface WeekPlan {
   violazioni?: string[];     // piano di sicurezza: cosa il planner AI non è riuscito a rispettare (per capire e correggere)
   nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
   aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
+  adattato_calendario?: string; // M8 (26/10): piano salvato dall'adattamento al calendario cambiato (data ISO); non conta nel tetto delle rigenerazioni
+  scarico?: boolean;         // M11 (26/10): piano di una settimana di scarico (serie ×0.6, varianti short): la distanza tra gli scarichi e il ri-test partono da qui
 }
 
 const TIPI_FISICI = new Set(['mix', 'fisica', 'skill']);
@@ -425,9 +442,10 @@ export function validatePlan(
         // Non è nel catalogo v1: prova il catalogo v2 (solo se il contesto v2 è abilitato)
         if (!ctx.v2) { errors.push(`esercizio sconosciuto: "${it.esercizio_id}" (solo catalogo)`); continue; }
         const blocco = ctx.trustBlocks && it.blocco_id ? bloccoById(it.blocco_id) : undefined;
-        const bloccoDiSte = !!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)]);
+        // La tecnica composta (`te-*`, 26/10) è costruita dal server al livello dell'atleta sugli esercizi dei workout di Ste: vale come un blocco di Ste (es. un piede interno-collo-esterno, livello A, sta nel palleggi B1 di Ste)
+        const bloccoDiSte = (!!blocco && (blocco.livello === null || LIVELLO_ORDINE[blocco.livello] <= LIVELLO_ORDINE[livelloPerQualita(ctx.v2, blocco.qualita)])) || (!!ctx.trustBlocks && !!it.blocco_id && it.blocco_id.startsWith('te-'));
         // Fidato anche il blocco VIRTUALE (parte alta dalle scale `pa-*`, gambe `pb-*`, kettlebell `kb-*`, apertura breve): non è nella libreria ma l'ha dosato il server
-        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('apertura-')));
+        const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('te-') || it.blocco_id.startsWith('re-') || it.blocco_id.startsWith('apertura-')));
         // Il blocco pre partita di Ste (18/10) vive il giorno prima della partita: lì la finestra della velocità non vale per i suoi item
         const gpItem = it.blocco_id === PRE_PARTITA_ID && gpSeduta === 1 ? null : gpSeduta;
         const r = validateItemV2(it, ctx.v2, gpItem, { skipBounds: fidato, skipSoloLivello: bloccoDiSte });

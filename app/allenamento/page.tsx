@@ -9,7 +9,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
 } from 'recharts';
-import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, Users } from 'lucide-react';
+import { Activity, AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
@@ -21,14 +21,18 @@ import type { CampoOggi } from '@/lib/trainingOggi';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
+import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
 import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Sheet, Textarea } from '@/components/ui';
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[] }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[] }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
+  // Dolore per zona (M9, 26/10): zona segnalata, da quando, fino a quando resta ridotta, la riga per l'atleta
+  dolore?: { zona: string; da?: string | null; fino?: string | null; riga: string | null } | null;
+  limitazioni?: { zone: string[]; nota: string; riga: string | null } | null; // punto 4 (26/10): infortuni e limitazioni dal setup
   consensi?: { health_data: boolean; training_idoneita: boolean };
   fascia: string;
   gradini: Record<string, number>;
@@ -41,13 +45,17 @@ export interface TrainingState {
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
   completions: { session_key: string; feedback: string | null }[];
-  ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean; scaricoRinviato?: boolean };
+  ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean; scaricoRinviato?: boolean; motivoScarico?: string | null; ritestSettimana?: boolean; motivoRitest?: string | null };
   // Livello per qualità (dai test di quella qualità) e ri-test mirato (famiglie che hanno finito i codici del livello)
   livelli?: { qualita: string; label?: string; livello: string }[];
   ritestMirato?: { qualita: string; label: string; famiglie: string[]; tests: { id: string; nome: string }[] }[];
+  // Ri-test integrato (26/10): le serie test dentro le sedute della settimana, quelle in attesa, resistenza e velocità (guardrail), proposte off season
+  ritest?: { settimanaRitest: boolean; inSeduta: { giorno: number; id: string; nome: string; gruppo: string; tipo: string }[]; inAttesa: { id: string; nome: string; gruppo: string }[]; lontano: Record<string, { ok: boolean; motivi: string[] }>; proposte: { giorno: number; gruppo: string; tests: { id: string; nome: string }[] }[] };
   setup: TrainingSetup;
   setupDisponibile: boolean;
   calendario?: { trainingDays: number[]; matchDays: number[] };
+  // M8 (26/10): sedute del piano che con il calendario di adesso non ci stanno più (righe per l'atleta, giorni, impronta del calendario)
+  calendarioConflitti?: { righe: string[]; giorni: number[]; hash: string } | null;
   maxSeduteFisiche?: number;
   maxSeduteTotali?: number;  // fisiche + giornate leggere (fascia/tecnica/recupero)
   carico?: {
@@ -55,6 +63,7 @@ export interface TrainingState {
     acuto: number; cronico: number; acwr: number | null;
     stato: 'insufficiente' | 'poco' | 'ok' | 'alto' | 'rischio'; statoLabel: string;
     target: { min: number; max: number } | null; squadraStimato: number;
+    condizioneRiga?: string | null; // tetto personale (26/10): "Sei stanco: il tuo tetto scende del 15 % (…)"
   };
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
@@ -140,12 +149,18 @@ export default function AllenamentoHub() {
   // Sheet "Hai un dolore?"
   const [showPain, setShowPain] = useState(false);
   const [showResoconto, setShowResoconto] = useState(false);
+  // M8: "Il calendario è cambiato: adatto la settimana?" (si apre da solo con un conflitto; "Lascia così" lo tace per quel calendario)
+  const [showAdatta, setShowAdatta] = useState(false);
+  const [adattaBusy, setAdattaBusy] = useState(false);
+  const [adattaMsg, setAdattaMsg] = useState<string | null>(null);
   const [, setResocontoTick] = useState(0); // rilegge localStorage dopo "Salta"
   const [painInt, setPainInt] = useState(5);
   const [painDesc, setPainDesc] = useState('');
   const [painDurante, setPainDurante] = useState<boolean | null>(null);
   const [painSending, setPainSending] = useState(false);
   const [painMsg, setPainMsg] = useState<string | null>(null);
+  const [painZona, setPainZona] = useState<string | null>(null); // M9: dove fa male
+  const [responsabilita, setResponsabilita] = useState(false); // M9: presa di responsabilità per riprendere dalla pausa
 
   // La vista scelta resta sul dispositivo (localStorage: solo comodità, mai stato)
   useEffect(() => {
@@ -185,6 +200,31 @@ export default function AllenamentoHub() {
   }, [router]);
 
   useEffect(() => { load(); }, [load]);
+
+  // M8: con un conflitto tra piano e calendario il foglio si apre da solo (o da ?adatta=1 dalla pagina seduta)
+  useEffect(() => {
+    const c = state?.calendarioConflitti;
+    if (!c?.righe.length || !state?.plan) return;
+    let forzato = false;
+    try { forzato = new URLSearchParams(window.location.search).get('adatta') === '1'; } catch { /* no-op */ }
+    let ignorato = false;
+    try { ignorato = sessionStorage.getItem(`calendario.ignora:${state.plan.id}:${c.hash}`) === '1'; } catch { /* no-op */ }
+    if (forzato || !ignorato) setShowAdatta(true);
+  }, [state]);
+  const ignoraAdatta = () => {
+    try { if (state?.plan && state.calendarioConflitti) sessionStorage.setItem(`calendario.ignora:${state.plan.id}:${state.calendarioConflitti.hash}`, '1'); } catch { /* no-op */ }
+    setShowAdatta(false);
+  };
+  const adattaSettimana = async () => {
+    if (!state?.plan) return;
+    setAdattaBusy(true); setAdattaMsg(null);
+    try {
+      const res = await authFetch('/api/training/plan/adatta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan_id: state.plan.id }) });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) { setShowAdatta(false); setPosticipoMsg(d.righe?.length ? `Settimana adattata: ${d.righe.join('; ')}` : 'Settimana già a posto'); await load(); }
+      else setAdattaMsg(d.error || 'Non sono riuscito ad adattarla');
+    } finally { setAdattaBusy(false); }
+  };
 
   // Resoconto in evidenza (20/10): con un resoconto da dare il foglio si apre da solo, come il check-in del mattino.
   // "Non adesso" (X) lo tiene chiuso finché l'app non viene riaperta; "Salta per questa volta" per sempre, per quel giorno.
@@ -245,29 +285,43 @@ export default function AllenamentoHub() {
   };
 
   const sbloccaDolore = async () => {
+    if (!responsabilita) return;
     await authFetch('/api/training/pain', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ resolved: true }),
+      body: JSON.stringify({ resolved: true, responsabilita: true }),
+    });
+    setResponsabilita(false);
+    await load();
+  };
+  // M9: "è passato" sulla zona ridotta → via la riduzione
+  const passatoDolore = async () => {
+    await authFetch('/api/training/pain', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ zonaPassata: true }),
     });
     await load();
   };
 
   const segnalaDolore = async () => {
-    if (!painDesc.trim() || painDurante === null) return;
+    if (!painDesc.trim() || painDurante === null || !painZona) return;
     setPainSending(true);
     try {
       const res = await authFetch('/api/training/pain', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ intensita: painInt, descrizione: painDesc.trim(), duranteAllenamento: painDurante }),
+        body: JSON.stringify({ intensita: painInt, descrizione: painDesc.trim(), duranteAllenamento: painDurante, zona: painZona }),
       });
       if (res.ok) {
         const data = await res.json();
-        setPainDesc(''); setPainDurante(null); setPainInt(5);
+        const zonaRidotta = data.zona && data.zona !== 'altro';
+        setPainDesc(''); setPainDurante(null); setPainInt(5); setPainZona(null);
         if (data.painHold) {
           setShowPain(false); setPainMsg(null);
           await load(); // il banner rosso prende il posto del form
         } else {
-          setPainMsg('Registrato — sotto soglia: puoi allenarti, ma fermati subito se peggiora e riparla qui se continua.');
+          setPainMsg(zonaRidotta
+            ? 'Registrato: puoi allenarti, con le serie ridotte sugli esercizi che toccano quella zona finché non dici che è passato. Fermati subito se peggiora; se dura da giorni, fatti vedere.'
+            : 'Registrato — sotto soglia: puoi allenarti, ma fermati subito se peggiora e riparla qui se continua.');
+          await load();
         }
       }
     } finally { setPainSending(false); }
@@ -324,7 +378,7 @@ export default function AllenamentoHub() {
             </Card>
           )}
           {o.painHold ? (
-            <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. Un attimo e trovi il bottone per riprendere.</p></Card>
+            <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. {CONSIGLIO_VISITA} Un attimo e trovi il bottone per riprendere.</p></Card>
           ) : o.consensiMancanti ? null /* "Prima di iniziare" arriva con lo stato completo: niente seduta prima di quello */ : s ? (
             <Card variant="hero" className="mb-3">
               <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">
@@ -527,6 +581,7 @@ export default function AllenamentoHub() {
               {proposteOggi.some((p) => p.tipo === 'togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
               {proposteOggi.some((p) => p.tipo === 'aggiungi') && <Badge tone="info" className="!bg-white/15 !text-white">Serie in più, se vuoi</Badge>}
               {diOggi.posticipata_da && <Badge tone="info" className="!bg-white/15 !text-white">Spostata da {DAY_SHORT_NAMES[diOggi.posticipata_da]}</Badge>}
+              {diOggi.spostata_da && <Badge tone="info" className="!bg-white/15 !text-white">Spostata da {DAY_SHORT_NAMES[diOggi.spostata_da]}: calendario cambiato</Badge>}
             </div>
           )}
           {state.painHold ? (
@@ -700,6 +755,8 @@ export default function AllenamentoHub() {
               <SectionTitle title="Carico" className="mb-2"
                 action={<span className="inline-flex items-center h-11 pr-2"><Badge tone={CARICO_TONE[carico.stato]}>{carico.statoLabel}</Badge></span>} />
               <p className="text-body text-app leading-relaxed">{CARICO_FRASE[carico.stato]}</p>
+              {/* Tetto personale (Ste, 26/10): stanco → tetto giù, fresco → tetto su; la riga dice il perché */}
+              {carico.condizioneRiga && <p className="text-body-sm text-muted leading-relaxed mt-1">{carico.condizioneRiga}</p>}
               <details className="mt-2 group">
                 <summary className="min-h-[48px] flex items-center gap-1 text-body-sm font-semibold text-forest-400 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
                   <ChevronRight size={16} className="transition-transform group-open:rotate-90" aria-hidden /> Vedi i numeri
@@ -934,11 +991,44 @@ export default function AllenamentoHub() {
               <div>
                 <p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p>
                 <p className="text-body-sm text-muted leading-relaxed mt-0.5">
-                  Hai segnalato un dolore. Riprendiamo quando è passato o dopo che ne hai parlato con fisio/preparatore.
+                  Hai segnalato un dolore{state.dolore?.zona ? ` (${state.dolore.zona})` : ''}. {CONSIGLIO_VISITA}
                 </p>
-                <Button variant="secondary" size="sm" onClick={sbloccaDolore} className="mt-3">
-                  È passato: riprendi
+                <label className="flex items-start gap-3 mt-3 min-h-[44px] cursor-pointer">
+                  <input type="checkbox" checked={responsabilita} onChange={(e) => setResponsabilita(e.target.checked)} className="mt-1 h-5 w-5 accent-[#2dd17a]" />
+                  <span className="text-body-sm text-app leading-relaxed">{PRESA_RESPONSABILITA}</span>
+                </label>
+                {state.dolore?.zona && state.dolore.zona !== 'altro' && (
+                  <p className="text-caption text-muted mt-1">Quando riparti, per due settimane gli esercizi che toccano quella zona restano più leggeri.</p>
+                )}
+                <Button variant="secondary" size="sm" onClick={sbloccaDolore} disabled={!responsabilita} className="mt-3">
+                  Riparto
                 </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+        {/* M9: zona dolorante segnalata sotto soglia (o al rientro dalla pausa): si allena, con quella zona più leggera */}
+        {!state.painHold && state.dolore?.riga && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" aria-hidden />
+              <div>
+                <p className="text-body font-semibold text-warning">Zona da tenere d&apos;occhio</p>
+                <p className="text-body-sm text-muted leading-relaxed mt-0.5">{state.dolore.riga} Se un esercizio fa male, fermati. {CONSIGLIO_VISITA}</p>
+                <Button variant="secondary" size="sm" onClick={passatoDolore} className="mt-3">È passato</Button>
+              </div>
+            </div>
+          </Card>
+        )}
+        {/* Punto 4 (26/10): infortuni e limitazioni scritti nel setup, riduzione cronica sulle zone */}
+        {!state.painHold && state.limitazioni?.riga && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <div className="flex items-start gap-2.5">
+              <ShieldAlert size={18} className="text-warning shrink-0 mt-0.5" aria-hidden />
+              <div className="min-w-0">
+                <p className="text-body font-semibold text-warning">Zone da proteggere</p>
+                <p className="text-body-sm text-muted leading-relaxed mt-0.5">{state.limitazioni.riga}</p>
+                <Link href="/allenamento/setup" className="inline-flex items-center gap-1 min-h-[44px] text-body-sm font-semibold text-forest-300">Cambia nel setup <ChevronRight size={16} aria-hidden /></Link>
               </div>
             </div>
           </Card>
@@ -947,7 +1037,7 @@ export default function AllenamentoHub() {
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-body-sm text-muted leading-relaxed flex gap-2">
               <BatteryLow size={18} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-              <span><span className="font-semibold text-app">Settimana di scarico.</span> Quarta settimana del ciclo: meno volume per assorbire il lavoro, la tecnica continua. La settimana prossima: ri-test.{ritestMiratoTesto && <> Da rifare prima: {ritestMiratoTesto}.</>}</span>
+              <span><span className="font-semibold text-app">Settimana di scarico.</span> {state.ciclo.motivoScarico ? <>Perché: {state.ciclo.motivoScarico}. </> : 'Quarta settimana del ciclo: '}Meno volume per assorbire il lavoro, la tecnica continua. La settimana prossima: ri-test.{ritestMiratoTesto && <> Da rifare prima: {ritestMiratoTesto}.</>}</span>
             </p>
           </Card>
         )}
@@ -955,18 +1045,36 @@ export default function AllenamentoHub() {
           <Card variant="default" padding="sm" className="mb-4">
             <p className="text-body-sm text-muted leading-relaxed flex gap-2">
               <BatteryLow size={18} className="text-faint shrink-0 mt-0.5" aria-hidden />
-              <span><span className="font-semibold text-app">Quarta settimana, ma niente scarico.</span> Nelle settimane prima hai fatto poche sedute: lo scarico serve dopo il carico, questa settimana si lavora normale.</span>
+              <span><span className="font-semibold text-app">Niente scarico questa settimana.</span> {state.ciclo.motivoScarico ?? 'Nelle settimane prima hai fatto poche sedute: lo scarico serve dopo il carico'}. Si lavora normale.</span>
             </p>
           </Card>
         )}
-        {!batteriaVuota && state.ciclo.ritestDue && (
+        {/* Ri-test integrato (26/10): i test stanno dentro le sedute, una serie test per seduta; resistenza e velocità a parte */}
+        {!batteriaVuota && state.ritest?.settimanaRitest && (state.ritest.inSeduta.length > 0 || state.ritest.inAttesa.length > 0 || state.ritest.proposte.length > 0) && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body font-semibold text-warning mb-0.5 flex items-center gap-2"><ClipboardList size={18} aria-hidden /> Settimana di ri-test: i test sono dentro le sedute</p>
+            <div className="text-body-sm text-muted leading-relaxed mb-3">
+              {state.ritest.inSeduta.length > 0 ? (
+                <ul className="list-disc pl-5">
+                  {state.ritest.inSeduta.map((t) => <li key={t.id}><span className="text-app">{DAY_NAMES_IT[t.giorno]}</span>: serie test su {t.nome}{t.tipo === 'skill' ? ' (il gradino da sbloccare)' : t.tipo === 'lift' ? ' (massimale)' : ''}</li>)}
+                </ul>
+              ) : <p>Niente da testare nelle sedute che restano questa settimana.</p>}
+              {state.ritest.inAttesa.length > 0 && <p className="mt-1">Aspettano una seduta libera: {state.ritest.inAttesa.map((t) => t.nome).join(', ')}.</p>}
+              {state.ritest.proposte.length > 0 && (
+                <p className="mt-1">Off season, da fare in giorni separati: {state.ritest.proposte.map((p) => `${DAY_NAMES_IT[p.giorno]} ${p.tests.map((t) => t.nome).join(' e ')}`).join(' · ')}.</p>
+              )}
+            </div>
+            <Button variant="secondary" size="sm" href="/allenamento/test">Vedi la batteria</Button>
+          </Card>
+        )}
+        {!batteriaVuota && state.ciclo.ritestDue && !state.ritest?.settimanaRitest && (
           <Card variant="warn" padding="sm" className="mb-4">
             <p className="text-body font-semibold text-warning mb-0.5 flex items-center gap-2"><ClipboardList size={18} aria-hidden /> È ora del ri-test</p>
             <p className="text-body-sm text-muted leading-relaxed mb-3">
-              Ogni quattro settimane, dopo lo scarico, si rifanno i test: da qui passa il salto di livello. Fallo idealmente 2 giorni dopo la partita, da fresco.
+              {state.ciclo.motivoRitest ? <>{state.ciclo.motivoRitest[0].toUpperCase() + state.ciclo.motivoRitest.slice(1)}: da qui passa il salto di livello.</> : 'Dopo lo scarico si rifanno i test: da qui passa il salto di livello.'}
               {ritestMiratoTesto && <> <span className="text-app">Da rifare prima: {ritestMiratoTesto}</span> (hai finito i codici del tuo livello in {state.ritestMirato!.flatMap((r) => r.famiglie).join(', ')}).</>}
             </p>
-            <Button variant="secondary" size="sm" href="/allenamento/test">Rifai i test</Button>
+            <Button variant="secondary" size="sm" href="/allenamento/test">Vedi la batteria</Button>
           </Card>
         )}
 
@@ -986,9 +1094,25 @@ export default function AllenamentoHub() {
       </div>
 
       {/* Sheet "Hai un dolore?" — segnalazione strutturata (≥4/10 → pausa fisica) */}
+      {/* M8 (26/10): il calendario è cambiato: adatto la settimana? Solo le sedute in conflitto si spostano, quelle fatte restano */}
+      <Sheet open={showAdatta} onClose={ignoraAdatta} title="Il calendario è cambiato" subtitle="Alcune sedute non ci stanno più. Adatto la settimana?"
+        footer={
+          <div className="space-y-2">
+            <Button size="lg" fullWidth onClick={adattaSettimana} loading={adattaBusy}>Adatta la settimana</Button>
+            <Button variant="ghost" size="sm" fullWidth onClick={ignoraAdatta}>Lascia così</Button>
+          </div>
+        }>
+        <div className="space-y-3 pt-1">
+          <ul className="space-y-1">
+            {(state?.calendarioConflitti?.righe ?? []).map((r, i) => <li key={i} className="text-body-sm text-app leading-snug">· {r}</li>)}
+          </ul>
+          <p className="text-body-sm text-muted leading-relaxed">Sposto solo queste nel giorno libero più vicino. Le sedute già fatte e le altre restano dove sono. Non conta come rigenerazione.</p>
+          {adattaMsg && <p className="text-body-sm text-warning">{adattaMsg}</p>}
+        </div>
+      </Sheet>
       <Sheet open={showPain} onClose={() => setShowPain(false)} title="Hai un dolore?" subtitle="Segnalalo qui: decidiamo insieme se fermarci."
         footer={
-          <Button size="lg" fullWidth onClick={segnalaDolore} loading={painSending} disabled={!painDesc.trim() || painDurante === null}>
+          <Button size="lg" fullWidth onClick={segnalaDolore} loading={painSending} disabled={!painDesc.trim() || painDurante === null || !painZona}>
             Segnala
           </Button>
         }>
@@ -1008,6 +1132,14 @@ export default function AllenamentoHub() {
               placeholder="Dove, quando lo senti — es. ginocchio destro quando calcio" />
           </Field>
           <div>
+            <GroupLabel>Dove?</GroupLabel>
+            <div className="flex flex-wrap gap-2">
+              {ZONE_DOLORE.map((z) => (
+                <Chip key={z} selected={painZona === z} onClick={() => setPainZona(z)}>{z}</Chip>
+              ))}
+            </div>
+          </div>
+          <div>
             <GroupLabel>Lo senti durante l&apos;allenamento?</GroupLabel>
             <div className="grid grid-cols-2 gap-2">
               {siNo.map((v) => (
@@ -1023,7 +1155,7 @@ export default function AllenamentoHub() {
             </Card>
           )}
           <p className="text-body-sm text-warning leading-relaxed">
-            Da 4/10 in su le sedute fisiche vanno in pausa finché non dici che è passato o ne hai parlato con fisio/preparatore. L&apos;app non fa diagnosi: con un dolore forte, o che dura da giorni, vai da un medico.
+            Da 4/10 in su le sedute fisiche vanno in pausa: riparti tu, quando è passato, con una presa di responsabilità. Sotto, ti alleni con le serie ridotte sugli esercizi che toccano quella zona. {CONSIGLIO_VISITA}
           </p>
         </div>
       </Sheet>

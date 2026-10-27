@@ -27,7 +27,7 @@ describe('tetti di giornate per qualità (Ste, 13/10)', () => {
     expect(TETTO_GIORNATE).toEqual({ velocita: 1, pliometria: 2, parte_alta: 3, gambe: 3, resistenza: 2 });
     const inSeason = { fase: 'in_season' as const, senzaSquadra: false, velocitaPrimoObiettivo: true };
     expect(tettoGiornate('velocita', inSeason)).toBe(1);
-    expect(tettoGiornate('resistenza', inSeason)).toBe(2);
+    expect(tettoGiornate('resistenza', inSeason)).toBe(1); // 26/10 (Ste, 25/10): in season solo come obiettivo esplicito, una giornata
     const off = { fase: 'off_season' as const, senzaSquadra: true, velocitaPrimoObiettivo: true };
     expect(tettoGiornate('velocita', off)).toBe(VELOCITA_GIORNATE_OFF_SEASON);
     expect(tettoGiornate('resistenza', off)).toBe(RESISTENZA_GIORNATE_SENZA_SQUADRA);
@@ -90,7 +90,7 @@ describe('tetti di giornate per qualità (Ste, 13/10)', () => {
     for (const s of plan.sedute) expect(contaSprintMassimali(s.items)).toBeLessThanOrEqual(SPRINT_MAX_SETTIMANA / 2);
   });
 
-  it('resistenza: in season al massimo 2 giornate; off season senza squadra fino a 4', () => {
+  it('resistenza: in season una giornata (solo come obiettivo); off season senza squadra fino a 4', () => {
     const c = contextFinto(luca());
     const res = c.blocchi.filter((b) => b.qualita === 'resistenza-aerobica');
     expect(res.length).toBeGreaterThan(0);
@@ -100,10 +100,12 @@ describe('tetti di giornate per qualità (Ste, 13/10)', () => {
     // con la squadra o una partita (conferma dalla maschera) il tetto torna a 2
     const conSquadra: ContextV2 = { ...c, vincoli: { ...c.vincoli, conSquadra: true } };
     expect(con(errori(conSquadra, quattro.slice(0, 3)), /3ª giornata di resistenza/)).toHaveLength(1);
-    // Marco in season (partita sabato): lunedì +2, martedì +3, mercoledì −3 sono giorni buoni per la resistenza, ma la terza giornata no
-    const m = contextFinto(MARCO);
+    // Marco in season (partita sabato): senza l'obiettivo "resistenza" la libreria non ne ha (Ste, 25/10); con l'obiettivo UNA giornata
+    // (lunedì +2 e mercoledì −3 sono giorni buoni, martedì +3 pure): la seconda viene rifiutata
+    expect(contextFinto(MARCO).blocchi.filter((b) => b.qualita.startsWith('resistenza')).map((b) => b.famiglia).every((f) => f === 'Salite Sprint')).toBe(true); // le Salite Sprint restano alla regola della velocità
+    const m = contextFinto({ ...MARCO, focusSetup: ['resistenza', 'gambe'] });
     const rm = m.blocchi.find((b) => b.qualita === 'resistenza-aerobica')!.id;
-    expect(con(errori(m, [{ giorno: 1, blocchi: [rm] }, { giorno: 2, blocchi: [rm] }, { giorno: 3, blocchi: [rm] }]), /3ª giornata di resistenza/)).toHaveLength(1);
+    expect(con(errori(m, [{ giorno: 1, blocchi: [rm] }, { giorno: 3, blocchi: [rm] }]), /2ª giornata di resistenza/)).toHaveLength(1);
   });
 
   it('parte alta: la quarta giornata viene rifiutata', () => {
@@ -168,7 +170,7 @@ describe('tetti di giornate per qualità (Ste, 13/10)', () => {
     expect(system).toMatch(/resistenza 4/);
     const { system: s2 } = promptsV2(contextFinto(MARCO));
     expect(s2).toMatch(/velocità 1 → poi/);
-    expect(s2).toMatch(/resistenza 2/);
+    expect(s2).toMatch(/resistenza 1/); // in season una giornata (26/10)
   });
 });
 

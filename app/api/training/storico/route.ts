@@ -11,6 +11,14 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
+const LOG_COLS = 'session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at';
+/** Log per serie con l'esecuzione (migration 034, punto 18); senza la colonna si rilegge senza. */
+async function selectLogs(userId: string, since: string): Promise<{ data: unknown[] | null; error: { message: string } | null }> {
+  const q = (cols: string) => supabaseAdmin.from('training_set_logs').select(cols).eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(2000);
+  const r = await q(`${LOG_COLS}, esecuzione`);
+  return r.error && /esecuzione/.test(r.error.message) ? q(LOG_COLS) : r;
+}
+
 const GIORNI_DEFAULT = 90;
 const GIORNI_MAX = 365;
 
@@ -38,9 +46,7 @@ export async function GET(request: NextRequest) {
     const planIds = [...new Set(completions.map((c) => c.plan_id).filter((x): x is string => !!x))];
     const [plansRes, logsRes, resultsRes, resoconti] = await Promise.all([
       planIds.length ? supabaseAdmin.from('training_plans').select('id, week_start, plan').eq('user_id', userId).in('id', planIds) : Promise.resolve({ data: [] as unknown[] }),
-      supabaseAdmin.from('training_set_logs')
-        .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
-        .eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(2000),
+      selectLogs(userId, since),
       supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, created_at')
         .eq('user_id', userId).order('created_at', { ascending: false }).limit(400),
       loadResoconti(userId, giorni),

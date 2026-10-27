@@ -19,7 +19,9 @@
  * - e1RM con carico: Brzycki su reps + RIR, dove RIR = 10 − RPE (cap 4).
  */
 import { stima1RM } from './trainingRulesV2';
+import { DURA_MIN, SERIE_FACILE_MAX } from './rpeScala';
 import { doseTesto, fmtDose, programmaDaiLog, prossimaDose } from './trainingDose';
+import { calcolaEsecuzione, conQualcosaDaDire, ESECUZIONE_LABEL, esecuzioneSeduta, type Esecuzione, type StatoEsecuzione } from './trainingEsecuzione';
 
 export interface SetLogRow {
   session_key: string;
@@ -33,17 +35,18 @@ export interface SetLogRow {
   carico_fatto_kg: number | null;
   rpe: number | null;
   sensazione?: string | null;   // migration 020: "dove l'hai sentito?" (a fine esercizio)
+  esecuzione?: Esecuzione | null; // migration 034 (punto 18): "com'è venuto?" a fine esercizio: ok (default) | fatica | non_riesco
   created_at: string;
 }
 
 /** 'conferma' (18/10): ha fatto più del previsto una volta sola → la dose riparte da quanto ha fatto, senza un passo in più. */
 export type Suggerimento = 'sali' | 'tieni' | 'scendi' | 'conferma';
-/** Una seduta è "facile" se tutte le serie sono state fatte e il voto medio è entro questo (RpeScale: 4-6 = giusta, 7-8 dura). Valore a tavolino. */
-export const FACILE_RPE_MAX = 6;
+/** Una seduta è "facile" se tutte le serie sono state fatte e il voto medio è entro questo: la zona "facile" della scala delle serie (`lib/rpeScala.ts`, 25/10: 4; prima 6, che sulla scala è "impegnativa"). */
+export const FACILE_RPE_MAX = SERIE_FACILE_MAX;
 /** Si sale (passo in più su reps, secondi, kg; gradino successivo) solo con questo numero di sedute facili di fila (Ste, 18/10: "se facile per 2 sessioni di fila"). */
 export const SEDUTE_FACILI_PER_SALIRE = 2;
-/** Da qui in su la seduta è "difficile": le reps in più non contano per il gradino (Ste, 18/10). */
-export const DIFFICILE_RPE_MIN = 8;
+/** Da qui in su la seduta è "difficile": le reps in più non contano per il gradino (Ste, 18/10). È l'inizio della zona "dura" (25/10: 7; prima 8). */
+export const DIFFICILE_RPE_MIN = DURA_MIN;
 
 export interface RiepilogoEsercizio {
   esercizioId: string;
@@ -66,6 +69,7 @@ export interface RiepilogoEsercizio {
   motivo: string;                 // 1 riga per il planner/preparatore
   sensazioni: Record<string, number>; // "dove l'hai sentito" → occorrenze (ultime 4 settimane)
   fastidio: string | null;        // sensazione con "(fastidio)" scelta ≥2 volte → segnale per planner/chat
+  esecuzione?: StatoEsecuzione;   // punto 18 (lib/trainingEsecuzione): passo per la prossima seduta (normale / meno / dedicata) e SALI bloccato
 }
 
 const fmtQ = (q: number, unita: string) => `${q}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
@@ -155,13 +159,14 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
       motivo = `ultima seduta RPE ${ultimaSeduta.rpeMedio}: giusto così`;
     }
 
+    const esecuzione = calcolaEsecuzione(esercizioId, sessions.map(esecuzioneSeduta));
     const sensazioni: Record<string, number> = {};
     for (const r of rows) if (r.sensazione) sensazioni[r.sensazione] = (sensazioni[r.sensazione] ?? 0) + 1;
     const fastidio = Object.entries(sensazioni).find(([k, n]) => /fastidio|crampo/i.test(k) && n >= 2)?.[0] ?? null;
     out.push({
       esercizioId, sedute: sessions.length, serieTotali: rows.length,
       ultimaData: last[0].created_at.slice(0, 10),
-      ultimaSeduta, rpeMedio2Sedute, e1rmKg, suggerimento, motivo, sensazioni, fastidio,
+      ultimaSeduta, rpeMedio2Sedute, e1rmKg, suggerimento, motivo, sensazioni, fastidio, esecuzione,
     });
   }
   return out.sort((a, b) => b.ultimaData.localeCompare(a.ultimaData));
@@ -176,7 +181,8 @@ export function riepilogoTesto(r: RiepilogoEsercizio, nome: string, unitaCatalog
   const azione = doseTesto(prossimaDose(programmaDaiLog(r), r));
   const sens = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, n]) => `${k}${n > 1 ? ` ×${n}` : ''}`).join(', ');
   const sensTxt = sens ? ` · sentito: ${sens}${r.fastidio ? ` ⚠️ ${r.fastidio.toUpperCase()} ricorrente` : ''}` : '';
-  return `${nome} [${r.esercizioId}]: ${r.ultimaData} ${u.serie}×${fmtDose(u.quantitaFatta, unita)} (previsto ${fmtDose(u.quantitaPrevista, unita)})${carico}${rpe} · ${r.sedute} sedute → ${azione}${sensTxt}`;
+  const esecTxt = conQualcosaDaDire(r.esecuzione) ? ` · esecuzione: ${ESECUZIONE_LABEL[r.esecuzione.ultima]} (${r.esecuzione.passo === 'normale' ? 'SALI bloccato' : r.esecuzione.passo.toUpperCase()})` : '';
+  return `${nome} [${r.esercizioId}]: ${r.ultimaData} ${u.serie}×${fmtDose(u.quantitaFatta, unita)} (previsto ${fmtDose(u.quantitaPrevista, unita)})${carico}${rpe} · ${r.sedute} sedute → ${azione}${sensTxt}${esecTxt}`;
 }
 
 /** Suggerimento breve per la UI della seduta ("Ultima volta: … → oggi 16 kg: …"): la stessa dose che mette il piano. */
@@ -190,5 +196,6 @@ export function riepilogoUi(r: RiepilogoEsercizio, unitaCatalogo: string): { tes
   const hint = d.cambiata ? `oggi ${d.motivo}` : r.suggerimento === 'conferma' ? 'riparti da quanto hai fatto' : r.suggerimento === 'sali' ? 'sei già al tetto: tieni così' : 'tieni così';
   const top = Object.entries(r.sensazioni).sort((a, b) => b[1] - a[1])[0];
   if (top) parti.push(`sentito: ${top[0]}`);
+  if (r.esecuzione && r.esecuzione.ultima !== 'ok') parti.push(`hai detto "${ESECUZIONE_LABEL[r.esecuzione.ultima]}"`);
   return { testo: `Ultima volta: ${parti.join(' · ')} → ${hint}`, suggerimento: r.suggerimento };
 }

@@ -42,7 +42,7 @@ export function giorniDiRitardo(c: Pick<CompletionRow, 'data_programmata' | 'com
   return Math.round((Date.UTC(+eff.slice(0, 4), +eff.slice(5, 7) - 1, +eff.slice(8, 10)) - Date.UTC(+prog.slice(0, 4), +prog.slice(5, 7) - 1, +prog.slice(8, 10))) / 86400000);
 }
 export interface SetRpeRow { session_key: string; rpe: number | null }
-export interface PlanRow { id: string; plan: WeekPlan }
+export interface PlanRow { id: string; plan: WeekPlan; week_start?: string | null }
 
 export interface SedutaCarico {
   data: string;            // YYYY-MM-DD (Italia)
@@ -74,7 +74,13 @@ export interface CaricoInfo {
   tetto: number | null;              // GUIDA per il planner (cronico +15 %, scarico 75 % del normale): oltre, Claude è invitato a scendere
   tettoDuro: number | null;          // il validatore rifiuta SOLO oltre questo: la settimana porterebbe l'ACWR sul totale a 1.5 (zona di rischio)
   squadra: number;                   // carico squadra stimato a settimana (AU): base costante sotto acuto e cronico
+  /** M11 (26/10): lunedì dell'ultima settimana di scarico salvata (`plan.scarico`), o null. */
+  ultimoScarico: string | null;
+  /** Tetto personale (Ste, 26/10, lib/trainingCondizione): stanco → target e tetto ×0,85 (tetto duro ×0,9), fresco → ×1,15. */
+  condizione?: CondizioneCarico;
 }
+/** Quanto serve al carico della condizione dell'atleta (il resto sta in lib/trainingCondizione). */
+export interface CondizioneCarico { stato: 'stanco' | 'normale' | 'fresco'; fattore: number; fattoreTettoDuro: number; motivi: string[] }
 
 /** RPE atteso per qualità di blocco (stima a priori, poi calibrata sui log dell'atleta). */
 export const RPE_QUALITA: Record<QualitaV2, number> = {
@@ -137,6 +143,8 @@ export function calcolaCarico(input: {
   squadraSettimanale?: number;
   /** Resoconti (19/10, lib/trainingResoconto): per i giorni con il dato vero, fatica × minuti al posto della stima — corregge l'acuto */
   squadraMisurata?: { data: string; reale: number; stima: number }[];
+  /** Tetto personale (26/10): target e tetto ×fattore, tetto duro ×fattoreTettoDuro. */
+  condizione?: CondizioneCarico;
 }): CaricoInfo {
   const { oggi, lunedi } = input;
   const S = Math.max(0, Math.round(input.squadraSettimanale ?? 0));
@@ -223,8 +231,15 @@ export function calcolaCarico(input: {
     else if (stato === 'rischio') { target = { min: app(tot * 0.7), max: app(tot) }; tetto = app(tot * 1.05); }
     else { target = { min: app(tot * 0.9), max: app(tot * 1.1) }; tetto = app(tot * 1.15); }
     tettoDuro = app(tot * ACWR_SOGLIE.alto);
+    // Il tetto è personale (Ste, 26/10): stanco → −15 % su target e tetto e −10 % sul tetto duro; fresco → +15 % su
+    // target e tetto, il tetto duro (la zona di rischio) non sale mai
+    const f = input.condizione?.fattore ?? 1, fd = input.condizione?.fattoreTettoDuro ?? 1;
+    if (f !== 1) { target = { min: Math.round(target.min * f), max: Math.round(target.max * f) }; tetto = Math.round(tetto * f); }
+    if (fd !== 1) tettoDuro = Math.round(tettoDuro * fd);
   }
-  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S, squadraMisurati: misurati.length, squadraAcuto: sAcuto };
+  // M11: l'ultima settimana di scarico salvata (il piano porta `scarico: true`), per la distanza tra uno scarico e l'altro e il ri-test
+  const ultimoScarico = input.plans.filter((p) => p.plan?.scarico && p.week_start).map((p) => String(p.week_start).slice(0, 10)).sort().pop() ?? null;
+  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S, squadraMisurati: misurati.length, squadraAcuto: sAcuto, ultimoScarico, condizione: input.condizione };
 }
 
 /**
@@ -266,5 +281,8 @@ export function caricoTesto(c: CaricoInfo): string {
   if (c.acwr === null) {
     return `\n# CARICO TOTALE (session-RPE: durata × RPE)\nStorico app ${c.giorniStorico} giorni: ${sett}. Servono almeno ${MIN_GIORNI_STORICO} giorni per il rapporto acuto/cronico: nessun tetto, resta prudente (settimana simile alla precedente).${squadra}`;
   }
-  return `\n# CARICO TOTALE (session-RPE: durata × RPE — calcolato dai dati)\nSettimane app: ${sett}${squadra}\nAcuto app (ultimi 7gg / ultima settimana): ${c.acuto} AU · cronico app: ${c.cronico} AU · ACWR sul totale app+squadra ${c.acwr} → ${c.stato.toUpperCase()}\nTARGET app per questa settimana: ${c.target!.min}-${c.target!.max} AU, guida fino a ${c.tetto} AU (il validatore rifiuta solo oltre ${c.tettoDuro} AU: rapporto acuto/cronico a ${ACWR_SOGLIE.alto}). RPE reale/atteso: ${c.calibrazione}.`;
+  const cond = c.condizione && c.condizione.stato !== 'normale'
+    ? ` Tetto PERSONALE: l'atleta è ${c.condizione.stato.toUpperCase()} (${c.condizione.motivi.join('; ')}) → target e tetto ${c.condizione.fattore < 1 ? 'abbassati' : 'alzati'} del ${Math.round(Math.abs(c.condizione.fattore - 1) * 100)} %${c.condizione.fattoreTettoDuro < 1 ? ', tetto duro abbassato' : ''}; nel messaggio dillo in una riga.`
+    : '';
+  return `\n# CARICO TOTALE (session-RPE: durata × RPE — calcolato dai dati)\nSettimane app: ${sett}${squadra}\nAcuto app (ultimi 7gg / ultima settimana): ${c.acuto} AU · cronico app: ${c.cronico} AU · ACWR sul totale app+squadra ${c.acwr} → ${c.stato.toUpperCase()}\nTARGET app per questa settimana: ${c.target!.min}-${c.target!.max} AU, guida fino a ${c.tetto} AU (il validatore rifiuta solo oltre ${c.tettoDuro} AU: rapporto acuto/cronico a ${ACWR_SOGLIE.alto}). RPE reale/atteso: ${c.calibrazione}.${cond}`;
 }

@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadResoconti } from '@/lib/trainingResocontoServer';
 import { applicaResoconti, resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
+import { aumentiNellaSettimana } from '@/lib/trainingAumenti';
+import { giorniAllaPartita, giorniDallaPartita } from '@/lib/trainingRulesV2';
+import { candidatiCampo, candidatiForza, candidatiPalestra, GRUPPI_LONTANO, guardrailResistenzaVelocita, inserisciSerieTest, propostaOffSeason, type Guardrail, type GruppoLontano, type RisultatoConData } from '@/lib/trainingRitest';
+import { cicloDaiDati, condizioneAtleta, condizioneRiga } from '@/lib/trainingCondizione';
+import { doloreRiga, limitazioniRiga, riduciPerDolore } from '@/lib/trainingDolore';
+import { loadDolore, loadLimitazioni } from '@/lib/trainingDoloreServer';
 import { giorniSquadra } from '@/lib/trainingLoad';
+import { calendarioHash, conflittiCalendario, conflittoRiga } from '@/lib/trainingCalendario';
+import { validatePlan } from '@/lib/trainingEngine';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { getConsents } from '@/lib/consent';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
-import { cicloInfo, conScaricoDalCarico, todayRome, loadCarico, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
-import { caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
+import { cicloInfo, famigliaBlocco, loadCaricoInput, todayRome, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
+import { calcolaCarico, caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
 import { giorniPartita } from '@/lib/trainingSquadra';
 import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
@@ -32,6 +40,14 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
 );
 
+const LOG_COLS = 'session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at';
+/** Log per serie con l'esecuzione (migration 034, punto 18); senza la colonna si rilegge senza. */
+async function selectLogs(userId: string, since: string): Promise<{ data: unknown[] | null; error: { message: string } | null }> {
+  const q = (cols: string) => supabaseAdmin.from('training_set_logs').select(cols).eq('user_id', userId).gte('created_at', since).order('created_at', { ascending: false }).limit(400);
+  const r = await q(`${LOG_COLS}, esecuzione`);
+  return r.error && /esecuzione/.test(r.error.message) ? q(LOG_COLS) : r;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
@@ -45,8 +61,8 @@ export async function GET(request: NextRequest) {
     const since28 = new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString();
     const [
       { data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession },
-      logsRes, { data: setupRow, error: setupErr }, { data: cOggi },
-      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti,
+      logsRes, { data: setupRow, error: setupErr }, { data: cOggi }, { data: checkins14 },
+      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti, dolore, limitazioni,
     ] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name, role').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
@@ -64,14 +80,15 @@ export async function GET(request: NextRequest) {
         .eq('user_id', userId).not('completed_at', 'is', null)
         .order('completed_at', { ascending: false }).limit(1).maybeSingle(), // ultimo test chiuso: spegne il ri-test dovuto (29/9)
       // Storico serie (log durante il recupero, ultime 4 settimane); migration 019 assente → errore, nessuno storico
-      supabaseAdmin.from('training_set_logs')
-        .select('session_key, esercizio_id, serie, lato, unita, quantita_prevista, quantita_fatta, carico_previsto_kg, carico_fatto_kg, rpe, created_at')
-        .eq('user_id', userId).gte('created_at', since28).order('created_at', { ascending: false }).limit(400),
+      selectLogs(userId, since28),
       // "Il tuo setup" (migration 017) — se le colonne non esistono ancora, setup = default
       supabaseAdmin.from('profiles').select(SETUP_SELECT).eq('user_id', userId).maybeSingle(),
       // Check-in di oggi → flag fatica alta (la seduta del giorno propone lo scarico)
       supabaseAdmin.from('daily_checkin').select('physical_state, sleep_hours, recovery_quality, mental_state')
         .eq('user_id', userId).eq('date', todayRome()).maybeSingle(),
+      // Gli ultimi 14 check-in: la condizione dell'atleta per il tetto personale (M11, 26/10)
+      supabaseAdmin.from('daily_checkin').select('date, physical_state, recovery_quality')
+        .eq('user_id', userId).order('date', { ascending: false }).limit(14),
       supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
         .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
       getConsents(userId),
@@ -83,6 +100,10 @@ export async function GET(request: NextRequest) {
       // Resoconti squadra/partita degli ultimi 28 giorni (19/10): carico reale, sedute adattate, "com'è andata?"
       loadResoconti(userId),
       loadFeedbackRecenti(userId),
+      // Dolore per zona (M9, migration 035): la zona segnalata, da quando, fino a quando resta ridotta
+      loadDolore(userId),
+      // Infortuni e limitazioni del setup (punto 4, migration 036): zone croniche da proteggere + nota
+      loadLimitazioni(userId),
     ]);
 
     // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
@@ -100,6 +121,8 @@ export async function GET(request: NextRequest) {
       livello_calcolato: r.livello_calcolato, punteggio_calcolato: Number(r.punteggio_calcolato),
       dettaglio: r.dettaglio ?? null,
     }));
+    // Con la data: il ri-test in seduta (26/10) non ripropone un test fatto da meno di 4 settimane
+    const rowsConData: RisultatoConData[] = (results || []).map((r, i) => ({ ...rows[i], created_at: r.created_at ?? null }));
 
     const gradini = placementFromResults(rows);
     const doneTestIds = new Set(rows.map((r) => r.test_id));
@@ -137,16 +160,19 @@ export async function GET(request: NextRequest) {
 
     // Completamenti della settimana del piano corrente: su TUTTI i piani di quella settimana
     // (rigenera/modifica salvano una riga nuova, le sedute già fatte restano segnate per giorno)
-    let completions: { session_key: string; feedback: string | null }[] = [];
+    let completions: { session_key: string; feedback: string | null; rpe?: number | null }[] = [];
     let pianiQuestaSettimana = 0;
     if (lastPlan?.id) {
-      const { data: piani } = await supabaseAdmin.from('training_plans').select('id')
+      const { data: piani } = await supabaseAdmin.from('training_plans').select('id, plan')
         .eq('user_id', userId).eq('week_start', lastPlan.week_start);
-      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).length;
+      // M8: i piani salvati dall'adattamento al calendario (zero Claude) non contano nel tetto delle rigenerazioni
+      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).filter((p: { plan?: { adattato_calendario?: string } }) => !p.plan?.adattato_calendario).length;
       const ids = (piani || []).map((p: { id: string }) => p.id);
-      const { data } = await supabaseAdmin.from('training_session_completions')
-        .select('session_key, feedback').eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
-      completions = data || [];
+      // Con il voto della seduta (migration 026): serve a M5 (aumenti in settimana); se la colonna manca, senza
+      const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols).eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
+      let res = await q('session_key, feedback, rpe');
+      if (res.error) res = await q('session_key, feedback');
+      completions = (res.data || []) as unknown as typeof completions;
     }
 
     const setup = mapSetup(setupErr ? null : setupRow);
@@ -167,29 +193,15 @@ export async function GET(request: NextRequest) {
     // Obiettivi della fase (migration 024): colonna letta a parte, così il setup base non dipende dalla migration
     setup.focus = focusSetup;
     Object.assign(setup, preferenzeSetup);
+    // Infortuni e limitazioni (migration 036): stessa cosa, colonna a parte
+    if (limitazioni) setup.limitazioni = limitazioni;
     const squadraStimato = caricoSquadraStimato({
       trainingDays: calendar?.training_days || [], matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale),
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
     });
     // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra; i giorni con il resoconto pesano il dato vero
     const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: setup.squadraDurataMin, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale) } });
-    let carico = await loadCarico(userId, ciclo.isDeload, undefined, squadraStimato, misurata);
-    // Scarico solo con del carico alle spalle (29/9): stessa regola del planner
-    const cicloEffettivo = conScaricoDalCarico(ciclo, carico.settimane);
-    if (cicloEffettivo.isDeload !== ciclo.isDeload) { ciclo = cicloEffettivo; carico = await loadCarico(userId, false, undefined, squadraStimato, misurata); }
-    // Il piano della settimana con i resoconti applicati (serie facoltative, giorni più leggeri): il piano salvato non cambia
     const oggi = todayRome();
-    const matchDaysEff = giorniPartita(calendar?.match_days || [], partitaAbituale);
-    const trainingDaysEff = giorniSquadra(calendar?.training_days || [], squadra);
-    const fattiGiorni = new Set((completions || []).map((c: { session_key: string }) => Number(String(c.session_key).split('#')[1])).filter((n: number) => Number.isInteger(n)));
-    const planAdattato = lastPlan && lastPlan.plan && lastPlan.week_start >= mondayOfThisWeekRome()
-      ? { ...lastPlan, plan: applicaResoconti(lastPlan.plan, { weekStart: lastPlan.week_start, oggi, resoconti, squadra, fatteGiorni: fattiGiorni }).plan }
-      : lastPlan;
-    const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti });
-
-    const rombo = buildRombo(rows);
-    // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
-    const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
     // Livello per qualità (25/9) e ri-test mirato: le famiglie che hanno finito i codici del loro livello
     // (o sono in prova del livello sopra) dicono quali test rifare, non tutta la batteria
     const fascia = fasciaFromResults(rows);
@@ -209,14 +221,105 @@ export async function GET(request: NextRequest) {
       qualita: q, label: QUALITA_LABEL[q] ?? q, famiglie,
       tests: testIdsPerQualita(q).filter((id) => !/-dx$|-sx$/.test(id)).map((id) => ({ id, nome: nomeTest(id) })),
     }));
+    // M11 (26/10): scarico, ri-test e tetto dai dati, come nel planner. Il carico senza scarico dà le settimane e l'ultimo
+    // scarico salvato; la condizione (ultime 2 settimane) dà il fattore personale; il ciclo decide scarico e ri-test
+    const inputCarico = await loadCaricoInput(userId);
+    const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale: squadraStimato, squadraMisurata: misurata });
+    const condizione = condizioneAtleta({ checkins: checkins14 || [], sedute: feedbackRecenti, resoconti, oggi });
+    ciclo = cicloDaiDati(ciclo, {
+      carico: carico0, sedute: feedbackRecenti, lunedi: mondayOfThisWeekRome(), condizione, famiglia: famigliaBlocco,
+      scaricoInCorso: !!lastPlan && lastPlan.week_start === mondayOfThisWeekRome() && lastPlan.plan?.scarico === true,
+      ultimoTest: ultimaTestSession?.completed_at || (results && results.length > 0 ? results[0].created_at ?? null : null),
+      famiglieAlTetto: famiglieAlTetto(memoria).map((m) => m.famiglia),
+    });
+    const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale: squadraStimato, squadraMisurata: misurata, condizione });
+    // Il piano della settimana con i resoconti applicati (serie facoltative, giorni più leggeri): il piano salvato non cambia
+    const matchDaysEff = giorniPartita(calendar?.match_days || [], partitaAbituale);
+    const trainingDaysEff = giorniSquadra(calendar?.training_days || [], squadra);
+    const fattiGiorni = new Set((completions || []).map((c: { session_key: string }) => Number(String(c.session_key).split('#')[1])).filter((n: number) => Number.isInteger(n)));
+    // M5 (26/10): gli esercizi molto leggeri in una seduta già fatta salgono di un passo nelle sedute successive della settimana
+    const votiSedute = new Map<number, number | null>();
+    for (const c of completions) { const g = Number(String(c.session_key).split('#')[1]); if (Number.isInteger(g)) votiSedute.set(g, c.rpe ?? null); }
+    let planAdattato = lastPlan && lastPlan.plan && lastPlan.week_start >= mondayOfThisWeekRome()
+      ? { ...lastPlan, plan: aumentiNellaSettimana(
+        applicaResoconti(lastPlan.plan, { weekStart: lastPlan.week_start, oggi, resoconti, squadra, fatteGiorni: fattiGiorni }).plan,
+        { weekStart: lastPlan.week_start, oggi, logs: logsSerie, fatteGiorni: fattiGiorni, votiSedute },
+      ).plan }
+      : lastPlan;
+    const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti });
+
+    const rombo = buildRombo(rows);
+    // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
+    const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
+    // Ri-test integrato (Ste, 26/10, lib/trainingRitest): nelle settimane di ri-test le serie test entrano nelle sedute
+    // (una per seduta: forza sul gradino da sbloccare, palestra sul lift del piano; i test da campo per le famiglie a fine
+    // codici solo in off season). In season si testa solo la forza: la tecnica avanza dalle sedute, resistenza e velocità
+    // solo in off season (proposte) o su richiesta con i guardrail (obiettivo del setup, max 2 squadra, stare bene)
+    const settimanaRitest = ciclo.ritestSettimana === true; // M11: dai dati (le due settimane dopo lo scarico, famiglie a fine codici, 8 settimane senza test)
+    const campo = setup.attrezzatura.includes('campo');
+    const storicoRiepilogo = logsRes.error ? [] : riepilogoEsercizi(logsSerie);
+    let ritestInSeduta: ReturnType<typeof inserisciSerieTest> = { plan: planAdattato?.plan ?? { sedute: [] }, assegnate: [], inAttesa: [], aggiustamenti: [] };
+    if (settimanaRitest && planAdattato?.plan && planAdattato.week_start >= mondayOfThisWeekRome()) {
+      ritestInSeduta = inserisciSerieTest(planAdattato.plan, {
+        weekStart: planAdattato.week_start, oggi, fatteGiorni: fattiGiorni, matchDays: matchDaysEff,
+        candidati: {
+          forza: candidatiForza(rowsConData, storicoRiepilogo, oggi),
+          palestra: candidatiPalestra(rowsConData, planAdattato.plan, oggi),
+          campo: candidatiCampo(rowsConData, [...perQualita.keys()], oggi, { fase: setup.fase }),
+        },
+      });
+      planAdattato = { ...planAdattato, plan: ritestInSeduta.plan };
+    }
+    const dowOggi = oggiDowRome();
+    const planStaleFlag = !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome();
+    // M9 (26/10): con una zona dolorante segnalata, serie ×0,7 e kg −20 % sugli esercizi che la coinvolgono nelle sedute
+    // non fatte da oggi in poi (sul piano letto, non su quello salvato: quando dice che è passato tornano piene)
+    if (planAdattato?.plan && !planStaleFlag) {
+      const r = riduciPerDolore(planAdattato.plan, { dolore, limitazioni, oggi, oggiDow: dowOggi, fatteGiorni: fattiGiorni });
+      if (r.ridotti) planAdattato = { ...planAdattato, plan: r.plan };
+    }
+    const lontano = Object.fromEntries(GRUPPI_LONTANO.map((gruppo) => [gruppo, guardrailResistenzaVelocita({
+      gruppo, obiettivi: focusSetup,
+      fase: setup.fase, checkin: checkinOggi ? { fisico: checkinOggi.fisico, recupero: checkinOggi.recupero } : null,
+      giorniSquadra: trainingDaysEff.length, giorniAllaPartita: giorniAllaPartita(dowOggi, matchDaysEff), giorniDallaPartita: giorniDallaPartita(dowOggi, matchDaysEff),
+      isDeload: ciclo.isDeload, painHold: profile?.training_pain_hold === true,
+    })])) as Record<GruppoLontano, Guardrail>;
+    const ritest = {
+      settimanaRitest,
+      inSeduta: ritestInSeduta.assegnate.map((a) => ({ giorno: a.giorno, id: a.test.id, nome: a.test.nome, gruppo: a.test.gruppo, tipo: a.test.tipo })),
+      inAttesa: ritestInSeduta.inAttesa.map((t) => ({ id: t.id, nome: t.nome, gruppo: t.gruppo })),
+      lontano, // resistenza, velocità e navetta su richiesta: per gruppo, ok o i motivi del lucchetto
+      proposte: propostaOffSeason({ fase: setup.fase, settimanaDelCiclo: ciclo.settimana, settimanaRitest, sedute: planAdattato?.plan?.sedute ?? [], oggiDow: dowOggi, results: rowsConData, oggi, campo }),
+    };
+    // M8 (26/10): il calendario è cambiato? Le sedute del piano (non fatte, non passate) che non ci stanno più con la
+    // partita e i giorni di adesso; l'hub chiede "adatto la settimana?" e POST /api/training/plan/adatta le sposta.
+    // I giorni del setup contano solo per il piano automatico (senza richiesta dalla maschera)
+    let calendarioConflitti: { righe: string[]; giorni: number[]; hash: string } | null = null;
+    if (planAdattato?.plan?.sedute?.length && !planStaleFlag) {
+      const validateCtx = {
+        fascia, matchDays: matchDaysEff, trainingDays: trainingDaysEff, painHold: profile?.training_pain_hold === true,
+        hasSbarra: setup.attrezzatura.includes('sbarra') || rows.some((r) => r.test_id === 'test-pull'),
+        v2: { livello: fascia, livelloPerQualita: livelli, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, eta: null, esperienzaPalestra: setup.esperienzaPalestra, massimali, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) },
+        maxSeduteFisiche: maxSeduteFisiche(setup.fase), trustBlocks: true, oggiDow: undefined,
+      };
+      const cal = { matchDays: matchDaysEff, trainingDays: trainingDaysEff, giorniAmmessi: !lastPlan?.richieste && preferenzeSetup?.giorni?.length ? preferenzeSetup.giorni : null };
+      const conflitti = conflittiCalendario(planAdattato.plan, cal, { fatteGiorni: fattiGiorni, oggiDow: dowOggi, validaSeduta: (s) => validatePlan({ sedute: [s] }, validateCtx) });
+      if (conflitti.length) calendarioConflitti = { righe: conflitti.map(conflittoRiga), giorni: conflitti.map((c) => c.giorno), hash: calendarioHash(cal) };
+    }
     console.log(`training/state: ${Date.now() - t0} ms`);
     return NextResponse.json({
+      calendarioConflitti,
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
+      // Dolore per zona (M9): zona, date e la riga per l'hub (null senza segnalazione o a riduzione scaduta)
+      dolore: dolore ? { ...dolore, riga: doloreRiga(dolore, oggi) } : null,
+      // Infortuni e limitazioni dal setup (punto 4): zone, nota e la riga per l'hub (null senza)
+      limitazioni: limitazioni ? { ...limitazioni, riga: limitazioniRiga(limitazioni) } : null,
       fascia,
       // Livello per qualità (solo quelle con test propri) e test da rifare prima del ri-test
       livelli: (Object.keys(QUALITA_LABEL) as QualitaV2[]).map((q) => ({ qualita: q, label: QUALITA_LABEL[q], livello: livelli[q] ?? fascia })),
       ritestMirato,
+      ritest,
       gradini,
       rombo,
       romboBase: buildRomboBase(rombo),
@@ -251,7 +354,7 @@ export async function GET(request: NextRequest) {
       // Ciclo mensile: dall'ultima batteria/ri-test chiusa (fallback: ultimo risultato test)
       ciclo,
       // Carico totale (session-RPE) ultime 4 settimane + stima squadra dal calendario
-      carico: { ...carico, statoLabel: STATO_LABEL[carico.stato], squadraStimato },
+      carico: { ...carico, statoLabel: STATO_LABEL[carico.stato], squadraStimato, condizioneRiga: carico.condizione ? condizioneRiga(carico.condizione) : null },
       // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023): sforzo e qualità per giorno
       squadra,
       // Settimana squadra caricata dall'utente (per la maschera: si vede prima di scegliere i giorni)

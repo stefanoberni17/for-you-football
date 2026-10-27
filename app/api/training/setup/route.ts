@@ -5,6 +5,8 @@ import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { ATTREZZATURA_OPZIONI, FASI, SETUP_SELECT as SELECT, mapSetup, preferenzeValide } from '@/lib/trainingSetup';
 import { parsePartitaAbituale, parseSquadra, squadraConPartita } from '@/lib/trainingSquadra';
 import { FOCUS_SETUP_MAX, focusValidi } from '@/lib/trainingRequest';
+import { limitazioniVuote, parseLimitazioni } from '@/lib/trainingDolore';
+import { loadLimitazioni } from '@/lib/trainingDoloreServer';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -17,8 +19,8 @@ export async function GET(request: NextRequest) {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
-    const { data } = await supabaseAdmin.from('profiles').select(SELECT).eq('user_id', userId).maybeSingle();
-    return NextResponse.json({ setup: mapSetup(data), opzioni: { attrezzatura: ATTREZZATURA_OPZIONI, fasi: FASI } });
+    const [{ data }, limitazioni] = await Promise.all([supabaseAdmin.from('profiles').select(SELECT).eq('user_id', userId).maybeSingle(), loadLimitazioni(userId)]);
+    return NextResponse.json({ setup: { ...mapSetup(data), ...(limitazioni ? { limitazioni } : {}) }, opzioni: { attrezzatura: ATTREZZATURA_OPZIONI, fasi: FASI } });
   } catch (err) {
     console.error('training/setup GET error:', err);
     return NextResponse.json({ error: 'internal' }, { status: 500 });
@@ -29,6 +31,7 @@ export async function GET(request: NextRequest) {
  * POST { esperienzaPalestra?, attrezzatura?, compagno?, fase?, pesoKg?, squadraDurataMin?, squadra? } → salva (solo i campi presenti).
  * `squadra` = { "1": { rpe, qualita[] }, … } (migration 023) e `focus` = ['parte_alta', 'gambe', …] (migration 024, obiettivi
  * della fase in ordine): salvati a parte, così se una colonna manca il resto del setup passa lo stesso.
+ * `limitazioni` = { zone: ['ginocchio', …], nota } (migration 036, punto 4 del 26/10): stesso schema, `limitazioniSalvate`.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -65,7 +68,16 @@ export async function POST(request: NextRequest) {
     // Preferenze (migration 025): giorni con l'app, giornate a settimana, tempo per seduta — update separato fail-soft
     const haPref = body.giorni !== undefined || body.sedute !== undefined || body.durataMin !== undefined;
     const pref = haPref ? preferenzeValide({ training_giorni: body.giorni, training_sedute: body.sedute, training_durata_min: body.durataMin }) : null;
-    if (Object.keys(update).length === 0 && squadra === null && focus === null && pref === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+    // Infortuni e limitazioni (migration 036): zone valide + nota 300 caratteri; tutto vuoto = colonna a null
+    const limitazioni = body.limitazioni !== undefined && body.limitazioni !== null && typeof body.limitazioni === 'object' ? parseLimitazioni(body.limitazioni) : null;
+    if (Object.keys(update).length === 0 && squadra === null && focus === null && pref === null && limitazioni === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+
+    let limitazioniSalvate: boolean | null = null;
+    if (limitazioni !== null) {
+      const { error: lErr } = await supabaseAdmin.from('profiles').update({ training_limitazioni: limitazioniVuote(limitazioni) ? null : limitazioni }).eq('user_id', userId);
+      limitazioniSalvate = !lErr;
+      if (lErr) console.error('training/setup limitazioni (serve la migration 036?):', lErr.message);
+    }
 
     let preferenzeSalvate: boolean | null = null;
     if (pref !== null) {
@@ -91,14 +103,16 @@ export async function POST(request: NextRequest) {
       if (squadra !== null && !squadraSalvata) return NextResponse.json({ error: 'Non riesco a salvare gli allenamenti con la squadra (manca la migration 023)' }, { status: 500 });
       if (focus !== null && !focusSalvato) return NextResponse.json({ error: 'Non riesco a salvare gli obiettivi (manca la migration 024)' }, { status: 500 });
       if (pref !== null && !preferenzeSalvate) return NextResponse.json({ error: 'Non riesco a salvare giorni e tempo (manca la migration 025)' }, { status: 500 });
-      return NextResponse.json({ success: true, squadraSalvata, squadra, focusSalvato, focus, preferenzeSalvate });
+      if (limitazioni !== null && !limitazioniSalvate) return NextResponse.json({ error: 'Non riesco a salvare le limitazioni (manca la migration 036)' }, { status: 500 });
+      return NextResponse.json({ success: true, squadraSalvata, squadra, focusSalvato, focus, preferenzeSalvate, limitazioniSalvate });
     }
 
     const { data, error } = await supabaseAdmin.from('profiles').update(update).eq('user_id', userId).select(SELECT).maybeSingle();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     if (focus !== null && !focusSalvato) return NextResponse.json({ error: 'Setup salvato, ma non gli obiettivi (manca la migration 024)' }, { status: 500 });
     if (pref !== null && !preferenzeSalvate) return NextResponse.json({ error: 'Setup salvato, ma non giorni e tempo (manca la migration 025)' }, { status: 500 });
-    return NextResponse.json({ success: true, setup: { ...mapSetup(data), ...(focus !== null ? { focus } : {}), ...(pref ?? {}) }, squadraSalvata, squadra, focusSalvato, preferenzeSalvate });
+    if (limitazioni !== null && !limitazioniSalvate) return NextResponse.json({ error: 'Setup salvato, ma non le limitazioni (manca la migration 036)' }, { status: 500 });
+    return NextResponse.json({ success: true, setup: { ...mapSetup(data), ...(focus !== null ? { focus } : {}), ...(pref ?? {}), ...(limitazioni !== null ? { limitazioni } : {}) }, squadraSalvata, squadra, focusSalvato, preferenzeSalvate, limitazioniSalvate });
   } catch (err) {
     console.error('training/setup POST error:', err);
     return NextResponse.json({ error: 'internal' }, { status: 500 });

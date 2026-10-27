@@ -1876,9 +1876,8 @@ export const BLOCCHI: Blocco[] = [
   "qualitaSet": {
    "riscaldamento": 2,
    "fascia-prevenzione": 5,
-   "pliometria-estensiva": 3,
-   "forza-parte-alta": 6,
-   "pliometria-intensiva": 3
+   "pliometria-estensiva": 6,
+   "forza-parte-alta": 6
   },
   "livello": "A",
   "progressione": 3,
@@ -2347,9 +2346,8 @@ export const BLOCCHI: Blocco[] = [
   "qualitaSet": {
    "riscaldamento": 2,
    "fascia-prevenzione": 2,
-   "pliometria-estensiva": 2,
-   "forza-parte-alta": 3,
-   "pliometria-intensiva": 2
+   "pliometria-estensiva": 4,
+   "forza-parte-alta": 3
   },
   "livello": "B",
   "progressione": 3,
@@ -2462,9 +2460,8 @@ export const BLOCCHI: Blocco[] = [
   "qualitaSet": {
    "riscaldamento": 1,
    "fascia-prevenzione": 2,
-   "pliometria-estensiva": 2,
-   "forza-parte-alta": 3,
-   "pliometria-intensiva": 1
+   "pliometria-estensiva": 3,
+   "forza-parte-alta": 3
   },
   "livello": "B",
   "progressione": 3,
@@ -11396,9 +11393,8 @@ export const BLOCCHI: Blocco[] = [
   "famiglia": "Rapidità Velocità",
   "qualita": "velocita",
   "qualitaSet": {
-   "pliometria-intensiva": 1,
+   "pliometria-estensiva": 4,
    "riscaldamento": 2,
-   "pliometria-estensiva": 3,
    "velocita": 5
   },
   "livello": "B",

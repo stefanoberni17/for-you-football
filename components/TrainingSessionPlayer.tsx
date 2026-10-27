@@ -7,12 +7,14 @@ import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import TrainingEmomPlayer from '@/components/TrainingEmomPlayer';
+import type { Esecuzione } from '@/lib/trainingEsecuzione';
 import { Check, ChevronLeft, ChevronRight, Info, Pause, Play, X, Plus } from 'lucide-react';
 import { Badge, Button, Card, Chip, Input, RpeScale } from '@/components/ui';
 import { APERTURA_IDS, senzaVotoPerSerie } from '@/lib/trainingFascia';
+import { isPausaTraSerie } from '@/lib/trainingResistenza';
 
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso' };
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante', limitazione: 'Zona da proteggere' };
 
 interface PlanItem {
   esercizio_id: string;
@@ -26,11 +28,16 @@ interface PlanItem {
   per_lato?: boolean;
   unita?: string;            // unità del blocco se diversa dal catalogo (EMOM a tempo, metri…)
   emom_gruppo?: string;      // EMOM a rotazione: gli item consecutivi con lo stesso gruppo girano un minuto ciascuno
-  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; // lib/trainingProgressione + ripasso tecnica (28/9)
+  adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; // lib/trainingProgressione + ripasso tecnica (28/9) + esecuzione (punto 18) + dolore per zona (M9)
   lato_extra?: 'dx' | 'sx';  // una serie in più solo su questo lato (lato più debole)
   facoltativo?: 'togli' | 'aggiungi'; // dal resoconto squadra/partita (19/10): si può saltare / una serie in più se se la sente
   facoltativo_motivo?: string;
+  test_in_seduta?: TestInSeduta;      // ri-test integrato (26/10): serie preparatoria + serie al massimo, il risultato si salva come test
 }
+export interface TestInSeduta { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }
+/** Risultato di una serie test (26/10): skill/test → valore; lift → peso × reps. */
+export interface TestResultInput { test: TestInSeduta; valore?: number; peso?: number; reps?: number }
+const TEST_TENUTA_CAP_SEC = 300; // tenute al massimo: il cronometro sale fino a 5'
 
 /** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
 function youtubeEmbedUrl(url?: string): string | null {
@@ -51,6 +58,7 @@ export interface SetLogInput {
   quantita_prevista: number; quantita_fatta: number | null;
   carico_previsto_kg: number | null; carico_fatto_kg: number | null; rpe: number | null;
   sensazione?: string | null;   // "dove l'hai sentito?" (solo dopo l'ultima serie degli esercizi che lo chiedono)
+  esecuzione?: Esecuzione | null; // "com'è venuto?" (punto 18): solo dopo l'ultima serie, solo se l'atleta apre e risponde
 }
 
 // Timestamp per i timer di recupero/esecuzione (partono da eventi e setInterval, mai in render):
@@ -67,6 +75,7 @@ export default function TrainingSessionPlayer({
   initialProgress,
   blocchi,
   onSetLog,
+  onTestResult,
 }: {
   items: PlanItem[];
   titolo: string;
@@ -77,6 +86,7 @@ export default function TrainingSessionPlayer({
   initialProgress?: PlayerProgress | null;
   blocchi?: { id: string; nome: string; qualita?: string }[]; // planner v2: nome (e qualità) del blocco di ogni item
   onSetLog?: (log: SetLogInput) => void;    // feedback per serie durante il recupero (fire-and-forget)
+  onTestResult?: (r: TestResultInput) => void; // ri-test in seduta (26/10): il massimo della serie test, salvato come risultato del test
 }) {
   const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
   const blocchiSaltatiRef = useRef<string[]>([]); // "Salta l'apertura" (8/10): il blocco intero, senza passare dai singoli esercizi
@@ -98,6 +108,9 @@ export default function TrainingSessionPlayer({
   const [logSaved, setLogSaved] = useState(false);
   const [votoAperto, setVotoAperto] = useState(false); // accessori: scala 1-10 chiusa finché non la apre
   const [sensazione, setSensazione] = useState<string | null>(null);
+  // Punto 18: "Com'è venuto?" espandibile a fine esercizio; default ok (niente da mandare), "Faccio fatica" / "Non riesco"
+  const [esecuzione, setEsecuzione] = useState<Esecuzione | null>(null);
+  const [esecuzioneAperta, setEsecuzioneAperta] = useState(false);
   const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
@@ -106,6 +119,11 @@ export default function TrainingSessionPlayer({
   const [schermoKey, setSchermoKey] = useState(0);
   const [resetHintItem, setResetHintItem] = useState<number | null>(null); // M12: il promemoria del Reset una volta per seduta (sull'esercizio del primo recupero)
   const [showDesc, setShowDesc] = useState(false);
+  // Serie test (26/10): dopo la serie al massimo non parte il recupero, si chiede il risultato e si salva come test
+  const [testPending, setTestPending] = useState(false);
+  const [testTxt, setTestTxt] = useState('');
+  const [testPesoTxt, setTestPesoTxt] = useState('');
+  const [testSalvato, setTestSalvato] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const execRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // Timer a TIMESTAMP: iOS sospende gli interval in background; al ritorno si ricalcola da qui
@@ -144,7 +162,7 @@ export default function TrainingSessionPlayer({
     for (let j = itemIdx + 1; j < items.length && item.emom_gruppo && items[j].schema === 'emom' && items[j].emom_gruppo === item.emom_gruppo; j++) emomGruppo.push(items[j]);
   }
   // Per lato: dai blocchi di Ste (item.per_lato, quantità già PER LATO) o dal catalogo (quantità totale → metà per lato)
-  const isPerLato = !isEmom && (item?.per_lato === true || ex?.perLato === true);
+  const isPerLato = !isEmom && !item?.test_in_seduta && (item?.per_lato === true || ex?.perLato === true);
   // Serie extra sul lato più debole (lib/trainingProgressione): è l'ultima, solo su quel lato
   const extraLato = isPerLato && item?.lato_extra ? 1 : 0;
   const totalSerie = isEmom ? item.serie : (item?.serie ?? 0) + extraLato + serieExtra; // EMOM: serie = minuti
@@ -153,7 +171,12 @@ export default function TrainingSessionPlayer({
   const puoAggiungereSerie = !isEmom && item?.facoltativo === 'aggiungi' && serieExtra === 0;
   const quantitaLato = item?.per_lato ? (item.quantita ?? 0) : isPerLato ? Math.max(1, Math.ceil((item?.quantita ?? 0) / 2)) : item?.quantita ?? 0;
   const isTimed = !isEmom && (unita === 'secondi' || unita === 'minuti');
-  const execSeconds = unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
+  // 26/10: la pausa tra le serie (RSA) è solo un timer: niente voto, niente "Com'è venuto?", niente log
+  const isPausa = isPausaTraSerie(item?.esercizio_id);
+  // Serie test: con la preparatoria la serie 1 è di avvicinamento e la 2 è il massimo; senza, è subito il massimo
+  const testInfo = item?.test_in_seduta;
+  const isTestSerie = !!testInfo && (testInfo.prep == null || serieFatte >= 1);
+  const execSeconds = isTestSerie && isTimed ? TEST_TENUTA_CAP_SEC : unita === 'minuti' ? quantitaLato * 60 : quantitaLato;
 
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
@@ -162,6 +185,8 @@ export default function TrainingSessionPlayer({
 
   const stopExec = () => {
     if (execRef.current) clearInterval(execRef.current);
+    // Tenuta al massimo (serie test): i secondi tenuti finiscono già nel campo del risultato
+    if (isTestSerie && isTimed && execEndsRef.current !== null) setTestTxt(String(Math.max(0, TEST_TENUTA_CAP_SEC - Math.ceil((execEndsRef.current - nowMs()) / 1000))));
     execEndsRef.current = null; execTickRef.current = null;
     setExecLeft(null);
   };
@@ -189,10 +214,11 @@ export default function TrainingSessionPlayer({
     timerRef.current = setInterval(tick, 500);
   };
 
-  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null; piuDuro?: 'dx' | 'sx' | 'uguali' | null }) => {
-    if (!pending || !item || !onSetLog) return;
+  const sendLog = (over: { rpe?: number | null; fatto?: string; carico?: string; sensazione?: string | null; esecuzione?: Esecuzione | null; piuDuro?: 'dx' | 'sx' | 'uguali' | null }) => {
+    if (!pending || !item || !onSetLog || item.test_in_seduta) return; // la serie test non è un log per serie: il risultato va nei test
     const r = over.rpe !== undefined ? over.rpe : rpe;
     const sens = over.sensazione !== undefined ? over.sensazione : sensazione;
+    const esec = over.esecuzione !== undefined ? over.esecuzione : esecuzione;
     const duro = over.piuDuro !== undefined ? over.piuDuro : piuDuro;
     const f = over.fatto !== undefined ? over.fatto : fattoTxt;
     const c = over.carico !== undefined ? over.carico : caricoTxt;
@@ -206,6 +232,7 @@ export default function TrainingSessionPlayer({
       carico_fatto_kg: caricoNum !== null && Number.isFinite(caricoNum) && caricoNum !== pending.carico ? caricoNum : null,
       rpe: r,
       sensazione: sens,
+      ...(esec ? { esecuzione: esec } : {}),
     };
     if (isPerLato && pending.lato === '') {
       // Una riga per lato: il lato "più duro" prende l'RPE detto, l'altro un punto in meno
@@ -224,8 +251,9 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setEsecuzione(null); setEsecuzioneAperta(false);
     setSerieFatte(0); setSerieExtra(0);
+    setTestPending(false); setTestTxt(''); setTestPesoTxt(''); setTestSalvato(false);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false); setSchermoOn(true); setSchermoKey(0);
     setShowDesc(false);
@@ -245,10 +273,11 @@ export default function TrainingSessionPlayer({
     avanza(Math.max(1, n));
   };
   // Fine dell'EMOM: un log per esercizio (serie = giri fatti, stesso RPE per tutto il circuito), poi si salta l'intero gruppo
-  const emomDone = (r: number | null, giriFatti: number[]) => {
+  const emomDone = (r: number | null, giriFatti: number[], esecuzioni: (Esecuzione | null)[] = []) => {
     if (onSetLog) emomGruppo.forEach((it, i) => {
       if (giriFatti[i] > 0) onSetLog({ esercizio_id: it.esercizio_id, serie: giriFatti[i], lato: '', unita: unitaItem(it, esercizioAny(it.esercizio_id)),
-        quantita_prevista: it.quantita, quantita_fatta: null, carico_previsto_kg: null, carico_fatto_kg: null, rpe: r });
+        quantita_prevista: it.quantita, quantita_fatta: null, carico_previsto_kg: null, carico_fatto_kg: null, rpe: r,
+        ...(esecuzioni[i] ? { esecuzione: esecuzioni[i] } : {}) });
     });
     avanza(emomGruppo.length);
   };
@@ -256,6 +285,16 @@ export default function TrainingSessionPlayer({
   const handleSerieDone = () => {
     try { navigator.vibrate?.(30); } catch { /* no-op */ }
     stopExec();
+    // Pausa tra le serie (26/10, RSA): finito il timer si va avanti, niente voto né log
+    if (isPausa) { avanza(1); return; }
+    // Serie test al massimo (26/10): niente recupero, si chiede il risultato e si salva come test
+    if (isTestSerie && testInfo) {
+      setSerieFatte(serieFatte + 1);
+      if (testInfo.tipo === 'lift') { setTestPesoTxt(item.carico_kg ? String(item.carico_kg) : ''); setTestTxt(''); }
+      else if (!(isTimed && testTxt)) setTestTxt('');
+      setTestPending(true);
+      return;
+    }
     // Esercizio per lato: il primo tap chiude il destro, si passa al sinistro (la serie extra è su un lato solo)
     if (isPerLato && !isExtra && latoRef.current === 'dx') {
       setLato('sx'); latoRef.current = 'sx';
@@ -278,7 +317,7 @@ export default function TrainingSessionPlayer({
     stopExec();
     setRestLeft(null);
     setRestIsLast(false); restIsLastRef.current = false;
-    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null);
+    setPending(null); setRpe(null); setFattoTxt(''); setCaricoTxt(''); setLogSaved(false); setSensazione(null); setPiuDuro(null); setEsecuzione(null); setEsecuzioneAperta(false);
     setSerieFatte(0); setSerieExtra(0);
     setLato('dx'); latoRef.current = 'dx';
     setShowVideo(false); setShowDesc(false); setSchermoOn(true); setSchermoKey(0);
@@ -340,9 +379,12 @@ export default function TrainingSessionPlayer({
   // Parametri dell'esercizio su due righe: "3 × 12 per lato · 24 kg" (grande) e "+1 sinistro · recupero 90"" (piccola)
   const parametri = isEmom
     ? `EMOM · ${item.serie} ${item.serie === 1 ? 'giro' : 'giri'} · ${unitaLabel(unita, item.quantita)} al minuto`
+    : testInfo ? `Serie test${testInfo.prep != null ? ` · prima ${unitaLabel(unita, testInfo.prep)} di avvicinamento` : ''}${item.carico_kg ? ` · ${item.carico_kg} kg` : ''}`
     : [`${item.serie} × ${unitaLabel(unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`, item.carico_kg ? `${item.carico_kg} kg` : ''].filter(Boolean).join(' · ');
   const parametriSotto = isEmom ? '' : [extraLato ? `+1 serie a ${item.lato_extra === 'sx' ? 'sinistra' : 'destra'}` : '', `recupero ${fmtSec(item.recupero_sec)}`].filter(Boolean).join(' · ');
   const ctaLabel = isEmom ? 'EMOM finito, vai avanti'
+    : isPausa ? 'Pausa finita, vai avanti'
+    : isTestSerie ? (isTimed ? 'Ho mollato: scrivo il risultato' : 'Fatta: scrivo il risultato')
     : isPerLato ? (isExtra || (lato === 'sx' && serieFatte + 1 >= totalSerie) ? 'Esercizio completato' : lato === 'dx' ? 'Lato destro fatto' : 'Lato sinistro fatto')
     : serieFatte + 1 >= totalSerie ? 'Esercizio completato' : 'Serie fatta';
   const clearRest = () => { if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null; };
@@ -383,8 +425,8 @@ export default function TrainingSessionPlayer({
           {parametriSotto && <p className="text-body-sm text-muted tabular-nums">{parametriSotto}</p>}
           {item.nota && (
             <div className="mt-3 flex items-start gap-2">
-              <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
-                {item.adattamento ? ADATTAMENTO_LABEL[item.adattamento] : 'Nota'}
+              <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' || item.adattamento === 'esecuzione' || item.adattamento === 'dolore' || item.adattamento === 'limitazione' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
+                {item.test_in_seduta ? 'Serie test' : item.adattamento ? ADATTAMENTO_LABEL[item.adattamento] : 'Nota'}
               </Badge>
               <p className="text-body-sm text-app leading-snug">{item.nota}</p>
             </div>
@@ -437,7 +479,56 @@ export default function TrainingSessionPlayer({
           )}
         </Card>
 
-        {restLeft !== null ? (
+        {testPending && testInfo ? (
+          <>
+            {/* Risultato della serie test: si salva come test (skill → gradino della scala, test → batteria, lift → massimale) */}
+            <Card variant="raised" className="mt-1">
+              <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">Serie test · {testInfo.nome}</p>
+              <p className="text-body font-semibold text-app mb-3">
+                {testInfo.tipo === 'lift' ? 'Peso e ripetizioni della serie pulita' : testInfo.unita === 'secondi' ? 'Quanti secondi hai tenuto?' : testInfo.unita === 'cm' ? 'Quanti centimetri?' : 'Quante ripetizioni pulite?'}
+                {testInfo.soglia ? <span className="text-body-sm text-muted font-normal"> · con {testInfo.soglia}{testInfo.unita === 'secondi' ? '"' : ''} sali di gradino</span> : null}
+              </p>
+              {testInfo.tipo === 'lift' ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="player-test-peso" className="block text-label font-semibold text-app mb-1.5">Peso (kg)</label>
+                    <Input id="player-test-peso" type="text" inputMode="decimal" value={testPesoTxt} onChange={(e) => setTestPesoTxt(e.target.value.replace(/[^0-9.,]/g, ''))} className="text-center !text-title-1 font-display font-bold tabular-nums !min-h-[64px]" />
+                  </div>
+                  <div>
+                    <label htmlFor="player-test-reps" className="block text-label font-semibold text-app mb-1.5">Ripetizioni (1-12)</label>
+                    <Input id="player-test-reps" type="text" inputMode="numeric" pattern="[0-9]*" value={testTxt} onChange={(e) => setTestTxt(e.target.value.replace(/[^0-9]/g, ''))} className="text-center !text-title-1 font-display font-bold tabular-nums !min-h-[64px]" />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Input id="player-test-valore" type="text" inputMode="decimal" value={testTxt} placeholder="0" aria-label={`Risultato in ${testInfo.unita}`}
+                    onChange={(e) => setTestTxt(e.target.value.replace(/[^0-9.,]/g, ''))} className="flex-1 min-w-0 text-center !text-display font-display font-bold tabular-nums !min-h-[64px]" />
+                  <span className="text-body-sm text-muted shrink-0 w-16">{testInfo.unita}</span>
+                </div>
+              )}
+              {testSalvato && <p className="mt-2 text-caption text-forest-400 font-semibold inline-flex items-center gap-1"><Check size={14} aria-hidden /> salvato tra i tuoi test</p>}
+            </Card>
+            <div className={SLOT}>
+              <Button variant="hero" size="lg" fullWidth icon={<Check size={20} />}
+                disabled={testInfo.tipo === 'lift' ? !(Number(testPesoTxt.replace(',', '.')) > 0 && Number(testTxt) >= 1 && Number(testTxt) <= 12) : !(Number(testTxt.replace(',', '.')) > 0)}
+                onClick={() => {
+                  const v = Number(testTxt.replace(',', '.'));
+                  if (onTestResult && !testSalvato) {
+                    if (testInfo.tipo === 'lift') onTestResult({ test: testInfo, peso: Number(testPesoTxt.replace(',', '.')), reps: v });
+                    else onTestResult({ test: testInfo, valore: v });
+                    setTestSalvato(true);
+                  }
+                  nextItem();
+                }}>
+                Salva il test e vai avanti
+              </Button>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <span />
+                <Button variant="ghost" size="sm" iconRight={<ChevronRight size={16} />} onClick={nextItem}>Salta senza salvare</Button>
+              </div>
+            </div>
+          </>
+        ) : restLeft !== null ? (
           <>
             {/* Recupero: timer grande + feedback della serie */}
             <Card variant="raised" className="text-center">
@@ -458,7 +549,7 @@ export default function TrainingSessionPlayer({
                 {votoRidotto && !votoAperto && rpe === null ? (
                   <Button variant="ghost" size="sm" onClick={() => setVotoAperto(true)}>Vota la serie (facoltativo)</Button>
                 ) : (
-                  <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo={isTecnica ? 'tecnica' : 'serie'} ariaPrefix="Serie" />
+                  <RpeScale value={rpe} onChange={(n) => { setRpe(n); sendLog({ rpe: n }); }} tipo={isTecnica ? 'tecnica' : isTimed ? 'tempo' : 'serie'} ariaPrefix="Serie" />
                 )}
                 {/* Reps fatte e kg SEMPRE visibili (Ste, 22/9: "se ho fatto fare archer push up 8 reps e uno ne fa 10 facili
                     lo deve considerare per il prossimo"): prefillati col previsto, si cambiano solo se è andata diversa */}
@@ -505,6 +596,29 @@ export default function TrainingSessionPlayer({
                     )}
                   </div>
                 ) : null}
+                {/* Punto 18 (Ste, 15/10): "Com'è venuto?" ESPANDIBILE, solo dopo l'ultima serie: il default è ok e non si tocca niente */}
+                {restIsLast && !isTecnica && (
+                  <div className="mt-4">
+                    {!esecuzioneAperta && !esecuzione ? (
+                      <Button variant="ghost" size="sm" onClick={() => setEsecuzioneAperta(true)}>Com&apos;è venuto? (se non era pulito)</Button>
+                    ) : (
+                      <>
+                        <p className="text-label font-semibold text-app mb-2">Com&apos;è venuto?</p>
+                        <div className="flex flex-wrap gap-2">
+                          {([['ok', 'Tutto ok'], ['fatica', 'Faccio fatica'], ['non_riesco', 'Non riesco']] as const).map(([k, label]) => (
+                            <Chip key={k} selected={(esecuzione ?? 'ok') === k} tone={k === 'ok' ? 'accent' : 'warn'}
+                              onClick={() => { setEsecuzione(k); sendLog({ esecuzione: k }); }}>
+                              {label}
+                            </Chip>
+                          ))}
+                        </div>
+                        {esecuzione && esecuzione !== 'ok' && (
+                          <p className="text-body-sm text-muted mt-2 leading-relaxed">La prossima volta lo fai con meno, o un gradino sotto: prima pulito, poi di più.</p>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -539,20 +653,21 @@ export default function TrainingSessionPlayer({
             {/* Serie in corso */}
             <div className="text-center">
               <p className="text-body text-muted">
-                {isSerieFacoltativa ? 'Serie in più, facoltativa' : isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
-                {isPerLato && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
+                {testInfo ? (isTestSerie ? <span className="font-semibold text-app">Serie test: {testInfo.tipo === 'lift' ? 'una serie pulita, 3-8 ripetizioni' : isTimed ? 'tieni il più a lungo possibile' : testInfo.unita === 'cm' ? 'il salto migliore' : 'il massimo di ripetizioni pulite'}</span> : `Serie preparatoria: ${unitaLabel(unita, quantitaLato)}, senza spingere`)
+                  : isSerieFacoltativa ? 'Serie in più, facoltativa' : isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
+                {isPerLato && !testInfo && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
               </p>
               {isTimed && (
                 execLeft !== null ? (
                   <Card variant="raised" className="mt-3 text-center">
-                    <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">Tieni{isPerLato ? ` — ${latoLabel}` : ''}</p>
-                    <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">{fmtSec(execLeft)}</p>
+                    <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">Tieni{isPerLato && !testInfo ? ` — ${latoLabel}` : ''}</p>
+                    <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">{fmtSec(isTestSerie ? TEST_TENUTA_CAP_SEC - execLeft : execLeft)}</p>
                     <div className="mt-1"><Button variant="ghost" size="sm" onClick={stopExec}>Ferma il timer</Button></div>
                   </Card>
                 ) : (
                   <div className="mt-3">
                     <Button variant="secondary" size="lg" fullWidth icon={<Play size={18} />} onClick={startExecTimer}>
-                      Parti col timer ({unitaLabel(unita, quantitaLato)})
+                      {isTestSerie ? 'Parti col cronometro' : `Parti col timer (${unitaLabel(unita, quantitaLato)})`}
                     </Button>
                   </div>
                 )

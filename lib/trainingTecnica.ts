@@ -18,8 +18,8 @@ import { punteggioRisultato, type TestResultRow } from './trainingEngine';
 
 export const TECNICA_CICLO_SETTIMANE = 8;
 export const SCALA_MURO: readonly string[] = [
-  'passaggi-al-muro-tecnica-di-base', 'tecnica-al-muro-passaggi-e-controllo-a1', 'tecnica-a1-muro', 'tecnica-a2-muro', 'tecnica-a3-muro-2-tocchi',
-];
+  'passaggi-al-muro-tecnica-di-base', 'tecnica-al-muro-passaggi-e-controllo-a1', 'tecnica-al-muro-passaggi-e-palleggi-a1', 'tecnica-a1-muro', 'tecnica-a2-muro', 'tecnica-a3-muro-2-tocchi',
+]; // dal 26/10 con "passaggi e palleggi A1" (i controlli orientati, i ravvicinati, il sombrero) come codice "orientato A1" tra "passaggi e controllo A1" e "A1 muro" (Ste: ok)
 export const SCALA_PALLEGGI: readonly string[] = [
   'tecnica-palleggi-b1-tecnica-di-base', 'tecnica-palleggi-b2-tecnica-di-base', 'tecnica-palleggi-b3-tecnica-di-base',
   'tecnica-palleggi-a1-tecnica-di-base', 'tecnica-palleggi-a2-tecnica-di-base', 'tecnica-palleggi-a3-tecnica-di-base', 'tecnica-palleggi-a4-tecnica-di-base',
@@ -32,7 +32,10 @@ export const SCALE_TECNICA = { 'Tecnica · muro': SCALA_MURO, 'Tecnica · palleg
 export type ScalaTecnica = keyof typeof SCALE_TECNICA;
 
 /** Blocco della scala anche nella variante short (id + "-short"). */
-const chiave = (id: string) => id.replace(/-short(-\d+)?$/, '').replace(/-in-season$/, '');
+export const chiaveTecnica = (id: string) => id.replace(/-short(-\d+)?$/, '').replace(/-in-season$/, '');
+const chiave = chiaveTecnica;
+/** Posizione di un blocco (anche short) nella sua scala, o -1. */
+export const posizioneScala = (sc: ScalaTecnica, id: string) => SCALE_TECNICA[sc].indexOf(chiave(id));
 export function scalaDi(id: string): ScalaTecnica | null {
   const k = chiave(id);
   for (const [nome, ids] of Object.entries(SCALE_TECNICA)) if (ids.includes(k)) return nome as ScalaTecnica;
@@ -198,7 +201,8 @@ export function eserciziDaRipassare(logs: SetLogRow[]): Ripasso[] {
       const prev = conFatte.reduce((a, r) => a + r.quantita_prevista, 0);
       const fatte = conFatte.reduce((a, r) => a + (r.quantita_fatta ?? 0), 0);
       const sotto = prev > 0 && fatte / prev < RIPASSO_REPS_PCT;
-      return { voto, difficile: (voto != null && voto >= RIPASSO_VOTO_MIN) || sotto };
+      const esecuzione = rs.some((r) => r.esecuzione && r.esecuzione !== 'ok'); // punto 18: "faccio fatica" / "non riesco" sulla palla = ripasso
+      return { voto, difficile: (voto != null && voto >= RIPASSO_VOTO_MIN) || sotto || esecuzione };
     };
     let volte = 0; let ultima: { voto: number | null; rs: SetLogRow[] } | null = null;
     for (const rs of sedute.values()) {

@@ -27,7 +27,7 @@ risposte del 16/10.
 4. **Finestre partita per qualità** (`FINESTRA_PARTITA`, validatore; giorni PRIMA della partita in cui la qualità
    è vietata, dal 18/10): forza gambe/parte alta/core 1 · velocità 1 (ammessa a −2 solo CORTA: sprint fino a 30 m,
    niente salite, al massimo 6 sprint) · forza esplosiva 2 · pliometria
-   estensiva 1 · pliometria intensiva 2 (a −1 solo con 2×2) · resistenza aerobica/metabolico/RSA 2 (ammessa a −3:
+   estensiva 1 · pliometria intensiva 2 (a −2 in dose piccola fino a 4×2 dal 25/10, a −1 solo con 2×2) · resistenza aerobica/metabolico/RSA 2 (ammessa a −3:
    con la partita la domenica martedì-giovedì, mercoledì preferito) · mobilità/recupero 1 · forza massima (regime
    max) 3 · Nordic ed eccentrici 3 · fascia, tecnica, riscaldamento 0 (sempre).
 5. **Apertura** (server, regola 5 e 26): un blocco di apertura in testa a ogni seduta fisica (rolling ~19' sopra i
@@ -128,7 +128,7 @@ risposte del 16/10.
 - Riscaldamento fisso `risc-velocita` (~15') in testa a ogni seduta con sprint o salite: il server lo aggiunge.
 - Sprint massimali 6-8 per seduta (6 se nella settimana c'è l'EMOM di parte alta con lo sprint); il server lima
   dalla coda; oltre 8 il validatore rifiuta. Contano Sprint e varianti a 10 m, non salto+sprint, con palla, T-sprint.
-- Sprint con palla: subito se tecnica tra gli obiettivi o in season/preparazione, altrimenti dalla 5ª settimana.
+- Sprint con palla: dal 25/10 nessuna attesa (Ste: "si possono fare tutti gli sprint che abbiamo messo come velocità"); fino al 25/10 subito solo con la tecnica tra gli obiettivi o in season/preparazione, altrimenti dalla 5ª settimana.
 - Salite: al massimo un blocco a settimana, in season una volta ogni 4 settimane, mai nello scarico.
 - Finestra partita 1 (dal 18/10): a −2 solo corta (sprint fino a 30 m, niente salite, tetto 6 sprint); a −1 solo il
   blocco pre partita; niente velocità il giorno dopo la partita e niente velocità pura (oltre 30 m, salite) a +2 e +3.
@@ -140,7 +140,7 @@ risposte del 16/10.
 - Poi onda B → A → B → A nella memoria: dopo un A il B più alto; dopo un B l'A successivo se era facile; un "duro"
   sull'A riporta in B per 2 settimane. Scarico: B short.
 - Contatti plio intensiva per seduta: B 100 · A 160 · PRO 200 (livello della qualità "salti").
-- Finestra: intensiva 2 (a −1 solo 2×2), estensiva 1; mai con RSA o forza massima nello stesso giorno; niente il
+- Finestra: intensiva 2 (a −2 fino a 4×2 dal 25/10, a −1 solo 2×2), estensiva 1; mai con RSA o forza massima nello stesso giorno; niente il
   giorno dopo la partita. Ingresso dal livello della qualità: un A nei salti apre i blocchi A.
 - Nessun tetto a "quante volte a settimana" (solo "non lo stesso blocco due giorni di fila").
 
@@ -329,6 +329,18 @@ altri. Il punto 12 è arrivato vuoto. Nessun codice toccato.
   **priorità della tecnica** per le settimane fino al ri-test: la scala di quella qualità va per prima, il mazzo
   pesca prima i blocchi di quella qualità; il piede debole resta come oggi. Il server lo calcola (niente modello).
 
+### D10b. Tecnica composta dal catalogo (26/10, punto 21 di campo-da-fare)
+- **Fatto 26/10** (`lib/trainingTecnicaComposta.ts`; proposta e risposte di Ste in `docs/training-tecnica-composta.md`):
+  le sedute di tecnica non sono più i workout Everfit interi ma blocchi `te-<tema>` composti dal server sugli esercizi
+  del catalogo, al livello dell'atleta e sul codice delle scale; quote circa mensili (25 % palleggi, 25 % controllo e
+  passaggi, 15 % freestyle, 15 % visione, 10 % dribbling, 10 % tiri) e UNA seduta = UN tema (il più indietro nelle
+  ultime 4 settimane); asse partita per la tecnica (−1 solo `te-leggera`, facoltativa, aggiunta al blocco pre partita;
+  +1 dopo una partita giocata tutta solo palleggi e passaggi, anche +2 con fatica alta; fatica leggera o da −2 tutto);
+  tiri = passaggi → un dribbling → riscaldamento alla traversa → tiri con poco volume; visione leggera con il video dei
+  segnali. I workout Everfit restano in libreria, il server li sostituisce. Scala muro con il codice "orientato A1".
+- **Da tarare con i dati:** le quote su 4 settimane (Ste: "circa mensili"), la soglia "fatica alta" per il +2, i minuti
+  per esercizio nell'adattamento al tempo.
+
 ### D11. Kettlebell: anche 2-3 a settimana, dentro il conteggio della forza gambe
 - **Oggi:** un `kb-*` a settimana, copre solo l'obiettivo kettlebell, le gambe con pesi nella stessa settimana
   vanno ×0.7.
@@ -472,3 +484,339 @@ contro 4×4'/5×5'/6×6'). Le altre cose pendenti
 dell'app, fuori da queste: `docs/campo-da-fare.md` (fasi 1-6: dose unica, tetti per qualità e complementi, esecuzione
 tecnica, calendario che cambia, dolore per zona, storico, pacchetti e vendita, accesso con Google) e la lista "Da
 fare — Ste" in `CLAUDE.md` (Stripe, i 24 "Perché funziona", gli audio W1, le prove sul campo).
+
+### E6. Le risposte di Ste del 25/10 (sera) e cosa è entrato nel codice
+
+Nel codice lo stesso giorno (`PLANNER_V2_PROMPT_VERSION = 'v2.36-decisioni-25-10'`, test in `tests/trainingPartita.test.ts`
+"decisioni del 25/10"):
+- **Wall Drive Skip** → pliometria estensiva (catalogo JSON rigenerato: i blocchi che lo contengono non sono più "intensivi"
+  per quel solo esercizio).
+- **Pliometria intensiva a −2** ammessa in dose piccola, al massimo 4×2 (`PLIO_INTENSIVA_MENO2`); a −1 resta 2×2.
+- **Sprint con palla**: tutti i blocchi classificati velocità si possono usare dalla prima settimana ("sono esercizi sia di
+  tecnica che di velocità"). "Drbbling A2" resta velocità. Il filtro della 5ª settimana non c'è più.
+- **Giorno dopo la partita**: oltre al richiamo gambe (`pb-richiamo`) e alla parte alta breve passano le isometrie di
+  Fascia Forza ("ok anche iso e palestra leggera"); velocità, resistenza e gli altri blocchi di gambe restano vietati.
+- **Reverse Drop Jump**: scheda confermata (caduta all'indietro dal box e salto immediato), tolta dai "da confermare".
+- Le scale di tecnica avanzano con UN "facile" (confermato). Ste: "i base sono importanti e tornano anche andando avanti":
+  oggi c'è il ritorno a fine scala o dopo 8 settimane; proposta aperta: un richiamo su un codice base ogni 4 settimane.
+- I 29 blocchi senza livello restano per tutti. Tabata e AMRAP della parte alta: nella fase vendita.
+
+Decisi, da scrivere nel punto 19 di `docs/campo-da-fare.md` (resistenza): serie da 4' in B, 5' in A, 6' in PRO; si parte
+da 2-3 serie, si sale a 4, massimo 5 per gli avanzati; contenuto delle serie anche mixato (fartlek, metabolico, palla);
+i blocchi Fartlek Everfit lunghi (43-49' di fila) sono "sbagliati": la resistenza è sempre a serie; in season niente
+resistenza, metabolico né resistenza alla velocità salvo obiettivo esplicito, con un avviso sul rischio di sovraccarico e
+al massimo una a settimana; metabolico con lo stesso formato (3-4 serie da 4-6'), almeno 2 giorni dopo la partita e al
+massimo 3 prima; resistenza alla velocità a serie di 4 ripetizioni (B 20" lavoro / 1' recupero, A 20"/40", PRO 30"/1'),
+3' tra le serie, solo off season e una volta a settimana; si sale prima col ritmo ("spingi di più" nelle serie a tempo),
+poi con le serie; salite di resistenza mai in season salvo richiesta esplicita.
+
+Restano aperte: il richiamo dei codici base di tecnica ogni 4 settimane (sì/no). ~~"Palestra leggera" il giorno dopo la
+partita oltre alle isometrie~~ → decisa il 26/10 (§E7).
+
+### E7. Le risposte di Ste del 26/10 (mattina) e cosa è entrato nel codice
+
+1. **Tecnica composta dal catalogo, non dai workout pronti.** Ste: "Tecnica dobbiamo fare in modo di costruirla senza
+   prendere i workout già pronti". È la (b) di D3 ribaltata: come per `pa-*`, `pb-*` e `kb-*`, le sedute di tecnica
+   vanno COMPOSTE dal server dagli esercizi del catalogo (`tecnica-palleggi`, `tecnica-passaggi`, `tecnica-conduzione`,
+   `tecnica-tiro`, `tecnica-visione`), con le scale di muro e palleggi di `lib/trainingTecnica.ts` come progressione e
+   il mazzo del quinto giorno come varietà, e i blocchi Everfit di tecnica solo come alternativa. Niente nel codice
+   oggi: è il punto 21 di `docs/campo-da-fare.md` (stima e disegno lì). Domanda aperta di E6 sul richiamo dei codici
+   base ogni 4 settimane: con la composizione dal catalogo diventa "ogni 4 settimane una seduta sui fondamentali".
+2. **Gambe il giorno dopo la partita, da quanto ha giocato.** Ste: "40 % conservativi se giocato tutta la partita; 50 %
+   se partita con fatica più bassa e meno di 90 minuti; 60 % se giocato meno di 45; anche 70/80 % se ha giocato meno
+   di 15 min; se non ha giocato e non è entrato, o giocato poco e pochissima fatica, no vincoli (controlla se nel
+   feedback partita c'è)". Nel feedback c'è tutto (minuti giocati `durata_min` e fatica `rpe`). Nel codice lo stesso
+   giorno (`PLANNER_V2_PROMPT_VERSION = 'v2.37-gambe-dopo-partita'`, test "gambe il giorno dopo la partita" in
+   `tests/trainingPartita.test.ts`):
+   - `gambeDopoPartita(resoconto)` in `lib/trainingResoconto.ts` → fattore sulle serie: intera o senza resoconto 0.4,
+     meno di 90' con fatica ≤ 6 0.5, sotto i 45' 0.6, sotto i 15' 0.75, non entrato / poco con pochissima fatica 1.
+     Sotto i 90' con fatica alta resta 0.4 ("conservativi").
+   - "Quasi non giocato" ora vuol dire **non entrato, oppure ≤ 20' E fatica < 4** (prima bastava una delle due:
+     10' con fatica 5 era libero, ora è uno spezzone al 75 %; 90' con fatica 3 era libero, ora è una partita intera
+     "leggera" al 40 %; per la velocità pura a +2/+3 quella partita è "meno affaticato" e il divieto cade).
+   - A +1 `expandPiano` non rifiuta più la forza parte bassa a corpo libero o leggera (`pb-serie`, `pb-serie-short`,
+     Forza Parte Bassa senza carichi pesanti): la mette "leggera" con le serie × fattore, dose piena salvata
+     nell'item (`dopo_partita.serie_piene`) e la nota "Giorno dopo la partita: serie al 40 % (…)". Restano vietati a
+     +1 velocità, pliometria, resistenza, `pb-fmax` e `pb-emom` (è senza scarico: le serie non scendono). Il richiamo
+     `pb-richiamo` e le isometrie di Fascia Forza passano come prima, a dose loro.
+   - Se il resoconto arriva DOPO il piano (il lunedì l'hub genera la settimana alla prima apertura, e il foglio del
+     resoconto si apre nello stesso momento) `applicaResoconti` ricalcola le serie dalla dose piena alla lettura dello
+     state, in tutti e due i versi, con la riga negli aggiustamenti dell'hub. Il piano salvato non cambia.
+   - Prompt: regola 3 riscritta con le percentuali, la sezione RESOCONTI dice "gambe il giorno dopo al 50 % delle
+     serie (70' con fatica 6)". Il piano base non cambia: a +1 mette il richiamo per primo, come prima.
+   - Da tarare con i dati: le percentuali sono di Ste, le soglie dei minuti (15, 45, 90) e "fatica ≤ 6" pure; la
+     scelta di NON scalare i blocchi con carichi pesanti e l'EMOM è mia (prudenziale).
+3. **M5, aumenti nella settimana in corso (dopo il "vai" sulla PR #153).** `lib/trainingAumenti.ts`
+   (`aumentiNellaSettimana`, puro, 7 test): nell'ultima seduta della settimana in cui un esercizio è stato fatto, se
+   TUTTE le serie hanno un voto ≤ 4, nessuna è sotto il previsto e la seduta intera è ≤ 5 (se votata), le sedute
+   successive della stessa settimana non ancora fatte portano già un passo in più sullo stesso esercizio (`prossimaDose`
+   con SALI: +1-2 ripetizioni, +5-10", +2.5 % kg, kettlebell +4 kg, tetto +30 % sul programma; se ha fatto più del
+   previsto si riparte da quanto fatto). Applicato alla lettura dello state su una copia del piano, dopo
+   `applicaResoconti`; item con `aumento_settimana` (idempotente), `adattamento: 'sali'`, nota "↑ 9: Lunedì era molto
+   leggero (…), programma 8.", riga tra gli aggiustamenti dell'hub. Fuori: tecnica (il voto dice quanto è riuscito),
+   EMOM/AMRAP/intervalli, sedute di recupero, sedute fatte, item facoltativi "da togliere". La regola larga del lunedì
+   (2 sedute facili di fila, `lib/trainingAdapt`) non cambia. Il voto della seduta viene da
+   `training_session_completions.rpe` (select con fallback senza la colonna). Non passa dal validatore (come
+   `applicaResoconti`): il passo è dentro i tetti di `prossimaDose`.
+
+### E8. Il ri-test integrato negli allenamenti (Ste, 26/10): studio, non ancora codice
+
+**Cosa dice Ste.** "Nel giorno dei ri-test non può proporti così. Dovremmo farlo quasi integrato negli allenamenti, non
+si può ritestare tutto lo stesso giorno. Io farei ogni 4 settimane quelli di forza, eventualmente anche quelli di
+tecnica, ma facendo fare solo gli esercizi che selezioniamo che erano nell'ultimo gradino per salire. Resistenza e
+velocità devono proprio essere fatti lontano, nei periodi di pausa o in off season, oppure chiesti esplicitamente:
+deve stare bene fisicamente e non avere più di 3 allenamenti in settimana."
+
+**Com'è oggi.**
+- `cicloInfo` (`lib/trainingPlanner.ts`): scarico ogni quarta settimana, ri-test "dovuto" la settimana dopo (5, 9,
+  13…) finché non viene chiusa una batteria (`training_test_sessions.completed_at`). L'hub mostra la card "È ora del
+  ri-test" con il bottone verso `/allenamento/test`, che propone TUTTA la batteria: 21 test v1 (8 catene a corpo libero,
+  4 di palleggi/muro, 7 di fascia, l'AMRAP) e 27 v2 (1 km, 3 km, navetta, ankle jump ×3, wall sit ×3, affondo iso ×2,
+  50 m, T-sprint, broad jump ×3, tiri e passaggi ×4, 7 massimali in palestra). La regola 12 del prompt invita a rifarli
+  "idealmente 2 giorni dopo la partita".
+- Il ri-test MIRATO (25/9, `ritestMirato` nello state): per le famiglie di blocchi a fine codici del proprio livello
+  (`famiglieAlTetto`) l'hub dice "Da rifare prima: …" con i test di quella qualità (`testIdsPerQualita`). È solo un
+  suggerimento, i test si fanno a mano dalla pagina.
+- Nessun test entra nelle sedute. Però dal 18/10 esiste `sogliaRaggiuntaInSeduta` (`lib/trainingProgressione.ts`): se
+  in seduta almeno metà delle serie di un esercizio di catena arriva alla soglia del gradino, il piano dopo passa al
+  gradino successivo "come se il test fosse passato". Non scrive un risultato in `training_test_results`: la scala
+  (`ladderForArea`) e la Card non lo vedono.
+- Le scale skill (`ladderForArea`): per ogni catena il gradino più alto sopra soglia (`amrap`) e il prossimo esercizio
+  da testare (`next`, con la SUA soglia: spinta 20 → 10 → 5, tirata 10 → 5, tenute 60", gambe le `SOGLIE_GAMBE`). Il
+  test di un gradino è "massimo di ripetizioni pulite" (o secondi) su quell'esercizio: `POST /api/training/test
+  { skill_esercizio_id, valore }`.
+
+**Proposta (deterministica, zero Claude).**
+1. **Tre gruppi di test, tre regole diverse.**
+   - **Forza, in seduta** (catene v1: spinta, tirata, core, lombari, squat, affondi, RDL, bridge; test da campo a corpo
+     libero: wall sit, affondo isometrico, broad jump, ankle jump). Ogni 4 settimane, nella settimana dopo lo scarico
+     (quella che oggi è "ri-test dovuto"), il server mette nelle sedute fisiche normali una **serie test** sul solo
+     esercizio del gradino da sbloccare: per ogni catena il `next` di `ladderForArea` (il gradino sopra l'`amrap`) se
+     l'atleta nelle ultime settimane ha tenuto la dose al tetto (+30 %) o `sogliaRaggiuntaInSeduta` ha già detto che ci
+     è arrivato; se la scala non ha un `next` (completa) o non è mai stata testata, niente. La serie test è il PRIMO
+     item della parte di quella catena nella seduta: `schema: 'max_reps'`, una serie, "massimo di ripetizioni pulite,
+     poi recupero pieno", il player chiede il numero e lo salva come risultato (`skill:<id>`, aprendo e chiudendo una
+     sessione test "in seduta" così `cicloInfo` vede il test fatto); le serie programmate di quell'esercizio restano
+     (eventualmente una in meno). **Al massimo 2 serie test per seduta** e mai nelle sedute a ±1 giorno dalla partita;
+     se ci sono più catene da testare si spalmano sulle sedute della settimana (e sulla successiva, se non bastano). I
+     test da campo (wall sit, affondo iso, broad jump, ankle jump) entrano con la stessa logica SOLO per le qualità
+     delle famiglie a fine codici (`ritestMirato`), 1 per seduta, come item test in coda al riscaldamento. I massimali
+     in palestra (7 lift) restano a mano dalla pagina test, solo con `palestra` tra gli attrezzi.
+   - **Tecnica, in seduta, se Ste vuole** ("eventualmente"): nelle stesse settimane, dentro la giornata di tecnica, i
+     test di palleggi (forte, debole, testa, piramide) e muro come item test, 2 per seduta; tiri alla traversa e
+     passaggi al palo solo con il campo. Oppure restano a mano: da decidere.
+   - **Resistenza e velocità, mai in automatico in season** (1 km, 3 km, navetta 30", 50 m, T-sprint). Proposti dal
+     server SOLO (a) in off season, o (b) in "pausa": nessuna partita nel calendario della settimana né nell'abitudine
+     (`matchDays` vuoti) e nessun giorno squadra (`trainingDays` vuoti) per questa settimana e la prossima. In season si
+     possono fare SOLO su richiesta esplicita dalla pagina test, e anche lì con i **guardrail** di Ste: check-in di
+     oggi con fisico ≥ 7 e recupero ≥ 7 (soglie a tavolino), al massimo 3 giornate squadra nella settimana (calendario
+     o abitudine), almeno 2 giorni dopo la partita e 3 prima (le finestre della resistenza), non nella settimana di
+     scarico, non in pausa dolore. Sotto i guardrail la pagina test mostra quei test con il lucchetto e il motivo ("hai
+     4 allenamenti con la squadra questa settimana", "la partita è tra 2 giorni", "oggi il recupero è 4"). Il livello di
+     resistenza e velocità resta quello dell'ultimo test fatto, senza scadenza; la regola 12 e `ritestDue` non li
+     chiedono più.
+2. **Cosa cambia nell'hub e nella pagina test.** La card "È ora del ri-test" diventa "Questa settimana i test sono dentro
+   le sedute" con l'elenco (es. "mercoledì: Piegamenti arciere, Wall sit; venerdì: Trazioni"), più il link alla
+   pagina test per chi vuole farli a mano; `ritestDue` si spegne quando le serie test della settimana sono fatte (o
+   saltate due volte: poi si ripropongono la settimana dopo). La pagina `/allenamento/test` resta per i test manuali,
+   con i blocchi di resistenza e velocità sotto i guardrail, e un blocco in testa "Da fare in seduta questa settimana".
+3. **Cosa NON cambia.** Il ciclo di 4 settimane con lo scarico alla quarta (M11 "scarico dai dati" resta un punto a
+   parte), il ri-test mirato per le famiglie a fine codici (diventa la lista delle serie test), `sogliaRaggiuntaInSeduta`
+   (che ora, in più, scriverebbe il risultato).
+4. **Dove vive.** `lib/trainingRitest.ts` (puro, con i test): `serieTestDellaSettimana(ctx)` → per catena l'esercizio
+   da testare e in quale seduta; `guardrailResistenzaVelocita(checkin, calendario, fase, ciclo, pain)` → ok o il
+   motivo; `expandPiano` inserisce gli item test (trustBlocks, fuori dai bounds); il player gestisce `max_reps` (oggi fa
+   solo serie fisse ed EMOM: è la parte UI); `POST /api/training/test` accetta `{ skill_esercizio_id, valore, in_seduta:
+   true }`; lo state ritorna `ritest.inSeduta[]` e `ritest.bloccati[]`. Ore: 10-14, incl. test.
+
+**Risposte di Ste (26/10, pomeriggio).** La scala si deve aggiornare ANCHE durante le settimane, quando in seduta fa gli
+esercizi dei gradini successivi (= `sogliaRaggiuntaInSeduta` che scrive davvero il risultato, non solo la dose). (1) Sì,
+il gradino sopra l'ultimo passato. (2) In linea di massima UNA serie test per seduta: una serie preparatoria e una del
+test. (6) In off season li propone il server, ma velocità, resistenza e resistenza alla velocità sempre in giorni
+separati. (3a) La serie test chiude l'esercizio per quel giorno: preparatoria, test al massimo, e lo squat di
+mercoledì finisce lì (seduta lunga uguale, un po' meno volume). (4a) I test di tecnica li mette l'app nella giornata
+di tecnica ogni 4 settimane. (5) In season su richiesta: check-in del mattino con fisico e recupero almeno 7 su 10,
+"non più di 3 allenamenti" = allenamenti con la squadra, le sedute dell'app non contano. (7a) I massimali in palestra
+entrano in seduta ogni 4 settimane SE il ragazzo ha la forza in palestra nel piano (altrimenti dalla pagina test).
+Tutto deciso: si scrive il codice.
+
+**Nel codice lo stesso giorno (prima parte).** `lib/trainingRitest.ts` (puro, 8 test in `tests/trainingRitest.test.ts`):
+`settimanaDiRitest` (5ª/9ª… e la successiva), `candidatiForza` (il `next` di ogni scala passata, prima dove i log dicono
+SALI/CONFERMA, mai un test fatto da meno di 28 giorni), `candidatiPalestra` (solo i lift nel piano),
+`candidatiCampo` (per le qualità delle famiglie a fine codici, solo in off season), `inserisciSerieTest` (una per seduta: palestra sul suo
+lift, forza in due passate — prima ogni catena nella seduta che la contiene, al posto dell'esercizio, poi le rimaste
+nella prima fisica libera dopo l'apertura —, campo nelle fisiche rimaste; mai fatte,
+passate, recuperi, ±1 dalla partita; idempotente; piano salvato invariato), `risultatiDallaSeduta` (dai log a fine
+seduta: metà delle serie alla soglia e niente di duro → risultato `skill:<id>` se migliora), `guardrailResistenzaVelocita`
+(i guardrail della risposta 5, per gruppo: velocità, resistenza, navetta), `propostaOffSeason` (tre giorni separati, prima quelli senza seduta fisica). Lo state
+applica le serie test dopo resoconti e M5 e ritorna `ritest`; `POST /api/training/complete` aggiorna le scale dai log;
+il player fa preparatoria + massimo (cronometro che sale per le tenute) e salva con `POST /api/training/test`; l'hub e
+la pagina test mostrano l'elenco per giorno e i lucchetti con i motivi. Il prompt (regola 12) dice a Claude di non
+aggiungere giornate di test. Da provare sul campo nella prima settimana di ri-test vera.
+
+**La correzione di Ste, la sera stessa.** "Ma in teoria i test in season sono solo quelli di forza praticamente. Abbiamo
+detto che tecnica ecc. avviene già durante le settimane e velocità/resistenza o off season o solo in condizioni
+particolari: max 2 allenamenti e se obiettivo da allenare." Quindi, rispetto alla prima parte: (a) la TECNICA non entra
+mai in automatico nelle serie test (`candidatiTecnica` tolta): avanza dalle scale, dal ripasso e dal mazzo, e si testa a
+mano dalla pagina test; (b) i test da CAMPO (wall sit, broad jump, ankle jump) entrano in seduta solo in off season: in
+season si testa solo la forza (scale skill e massimali in palestra); (c) il guardrail di resistenza e velocità è per
+GRUPPO (`gruppoLontano`: 50 m e T-sprint = velocità, 1 e 3 km = resistenza, navetta = resistenza alla velocità) e in
+season pretende che quella qualità sia tra gli obiettivi del setup (`OBIETTIVI_PER_GRUPPO`: la navetta vale con uno dei
+due, "Tutto, in equilibrio" con tutti) e al massimo `GUARDRAIL_SQUADRA_MAX = 2` allenamenti con la squadra (era 3);
+in off season si può sempre (salvo pausa dolore). Lo state ritorna `ritest.lontano` per gruppo e la pagina test chiude
+ogni test con il motivo del suo gruppo.
+
+**Domande per Ste (si parte dopo).**
+1. "Solo gli esercizi che erano nell'ultimo gradino per salire": vale la mia lettura (il gradino SOPRA l'ultimo passato,
+   quando negli allenamenti ha tenuto la dose al tetto o ha già toccato la soglia in seduta), oppure vuoi ri-testare
+   anche il gradino attuale per confermare il livello?
+2. Quante serie test per seduta: 2 (la mia proposta) o 1?
+3. La serie test al posto della prima serie programmata di quell'esercizio, o in più (seduta ~3-5' più lunga)?
+4. Tecnica: dentro la giornata di tecnica ogni 4 settimane, o resta a mano dalla pagina test?
+5. Guardrail per resistenza e velocità su richiesta: fisico e recupero del check-in ≥ 7 va bene? "non più di 3
+   allenamenti in settimana" = giornate squadra (calendario o abitudine), le sedute dell'app non contano?
+6. In off season i test di resistenza e velocità li propone il server (una settimana sì, con la 1 km o la 3 km in una
+   giornata e 50 m + T-sprint in un'altra, mai nello stesso giorno), o anche lì solo su richiesta?
+7. Massimali in palestra: a mano dalla pagina test, mai in seduta (la mia proposta)?
+
+### E9. Voto all'esecuzione (26/10 sera, punto 18 di campo-da-fare, decisioni di Ste del 15/10): nel codice
+
+Dove vive: `lib/trainingEsecuzione.ts` (puro, 21 test in `tests/trainingEsecuzione.test.ts`), colonna
+`training_set_logs.esecuzione` (migration 034). Il player chiede "Com'è venuto?" solo se l'atleta apre (default ok).
+
+1. **Prima si abbassa.** `calcolaEsecuzione` cammina sulle sedute dell'esercizio dalla più vecchia: un "non riesco", o
+   "faccio fatica" 2 di fila → `passo: 'meno'`. `prossimaDose` lo applica PRIMA della fatica (kg ×0.85, reps/tempo ×0.8,
+   minimi 3 reps / 10"); `perEsecuzione` nelle progressioni mette un gradino sotto sulle catene v1 (stessa dose), fuori
+   dalle scale la dose ridotta più il consiglio `scheda.piuFacile`. `saliBloccato` finché non ci sono 2 "ok" di fila:
+   blocca SALI, CONFERMA, gradino successivo e la M5 (`moltoLeggera` rifiuta la seduta con un'esecuzione non ok).
+2. **Poi la seduta dedicata.** Ancora difficile dopo il passo indietro → `passo: 'dedicata'`: le sedute di forza tengono
+   il gradino sotto, l'esercizio vero entra nell'EMOM del suo distretto (`inDifficolta` in `costruisciParteAlta` /
+   `costruisciParteBassa`: al posto del gradino sopra della sua scala, o stazione in più per gli esercizi v2, max 2, mai
+   il kettlebell; 3 ripetizioni pulite, 10" se a tempo). Quell'EMOM va per primo tra i formati (sostituzioni e piano
+   base). Si rientra dopo 2 EMOM "ok"; una difficoltà azzera. Sulla palla l'esecuzione non ok vale come ripasso.
+3. **Il preparatore lo dice.** `ContextV2.esecuzione` → sezione "# ESECUZIONE" (planner e chat), riga negli
+   aggiustamenti dell'hub, nota sull'item, hint del player, storico.
+
+Scelte mie da confermare: le percentuali (−15 % kg, −20 % reps/tempo) dentro il "−10-20 %" di Ste; l'EMOM con 3
+ripetizioni (Ste: "poche"); il kettlebell in difficoltà NON entra in `kb-base` (resta nella seduta kettlebell con i kg
+−15 %); "Com'è venuto?" non si chiede sulla tecnica (ha già la scala pulito/riuscito/difficile) né sulla fascia.
+
+### E10. Il calendario che cambia (M8, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingCalendario.ts` (puro, 10 test), `adattaAlCalendario` in `lib/trainingPlannerV2.ts`,
+`POST /api/training/plan/adatta`, `calendarioConflitti` nello state, foglio nell'hub e banner nella pagina seduta.
+
+- **Conflitto** = seduta non fatta e non passata che (a) cade il giorno della partita, (b) è fisica il giorno prima,
+  (c) ha il blocco pre partita fuori dal −1 (o senza partita), (d) sta in un giorno che non è più tra quelli
+  dell'app (solo piano automatico), (e) il validatore sulla singola seduta dà un errore che parla di partita.
+- **Ricollocazione** solo delle sedute in conflitto: giorno libero più vicino da oggi, non la partita, per una fisica
+  mai −1 né +1 (la regola di `riparaPiano`), prima tra i giorni dell'app poi anche fuori; la pre partita a −1 o via.
+  Poi riparaPiano → expandPiano → validatePlan → progressioni sulle sole sedute libere, senza pretendere il numero di
+  giornate né gli errori "da riempire". Le fatte restano lo stesso oggetto: i log non si toccano.
+- **Salvataggio** append-only con `plan.adattato_calendario`, fuori dal tetto delle rigenerazioni. L'app chiede, non
+  decide: il foglio si apre da solo ma "Lascia così" vale per quel calendario.
+
+Scelte mie da confermare: la fisica a +1 non è un conflitto di calendario (a +1 ci pensa il resoconto: gambe
+ridotte); se non c'è un giorno buono si rifiuta tutto (409) invece di spostare quello che si può.
+
+### E11. Scarico e ri-test dai dati, tetto personale (M11, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingCondizione.ts` (puro, 23 test), chiamato da `loadPlannerContext` e da `/api/training/state`
+sopra `cicloInfo` (che resta il calendario: settimana dalla prima batteria chiusa).
+
+- **Scarico** quando UNO di questi dice sì: il rapporto tra il carico di una settimana e la media delle settimane
+  prima (con la squadra come base) è sopra 1,3 per le ultime 2 settimane complete; il voto medio delle sedute
+  delle ultime 2 settimane è ≥ 8 (almeno 3 votate); una famiglia di blocchi è "duro" 2 sedute di fila. La quarta
+  settimana del ciclo resta come rete: si fa se ci sono 2 settimane con sedute tra le 3 prima, si salta se l'atleta
+  è fresco e nessun segnale lo chiede. Mai due scarichi a meno di 3 settimane: il piano della settimana di scarico
+  porta `scarico: true`, da lì si conta; uno scarico avviato resta fino a domenica (niente ping-pong a metà
+  settimana).
+- **Ri-test** (le serie test entrano nelle sedute, E8): le 2 settimane dopo l'ultimo scarico salvato (senza uno
+  scarico salvato vale il calendario 5-6, 9-10…), una famiglia a fine codici, 8 settimane senza test. "Dovuto"
+  solo senza un test chiuso da 28 giorni.
+- **Tetto personale** (regola di Ste del 26/10): dalle ultime 2 settimane → stanco (check-in fisico+recupero in
+  media ≤ 5 su ≥ 5 check-in, 2 sedute con voto ≥ 9, 2 resoconti con fatica ≥ 3 sopra il previsto) → target e
+  tetto ×0,85, tetto duro ×0,9; fresco (check-in ≥ 7,5, nessuna seduta dura, ≥ 3 sedute tutte ≤ 5) → ×1,15, tetto
+  duro invariato. Stanco vince. Il prompt, la chat e l'hub dicono il perché.
+
+Scelte mie da confermare: tutte le soglie (1,3 × 2 settimane, 8, 2 di fila, 3 settimane di distanza, ±15 %, −10 %
+sul tetto duro, 5 e 7,5 sui check-in) sono a tavolino; la condizione "stanco" abbassa il tetto ma NON fa scattare
+lo scarico da sola (sarebbe doppio); il rapporto per settimana è un'approssimazione con 3 settimane di storia.
+
+### E12. Dolore per zona (M9, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingDolore.ts` (puro, 9 test), `lib/trainingDoloreServer.ts`, migration 035, `POST /api/training/pain`,
+`/api/training/state` (riduzione sul piano letto), hub, pagina seduta, player, home, prompt del planner e della chat,
+contesto del Coach.
+
+- **Niente diagnosi.** Il foglio chiede la zona; da 4/10 la pausa totale resta (opzione A del 13/10) con il consiglio
+  di farsi vedere da un fisioterapista o da un medico; si riparte solo con la presa di responsabilità (checkbox),
+  e per due settimane la zona resta alleggerita.
+- **Sotto soglia si allena, ma più leggero dove fa male:** serie ×0,7 (minimo 1) e kg ×0,8 sugli esercizi del
+  distretto della zona (`distrettoEsercizio`: gambe/piede/fascia per le zone sotto la cintura, parte alta per la
+  spalla, tutto per la schiena, niente per "altro"; la tecnica con la palla non si tocca), nelle sedute non fatte da
+  oggi, finché non dice "è passato". Sul piano letto, mai su quello salvato: quando passa, tornano le serie piene.
+- **Chi lo sa:** il planner (sezione "# DOLORE SEGNALATO": non aggiungere volume lì, preferire blocchi che non caricano
+  la zona), il preparatore in chat (consigliare fisio o medico se forte o dura, mai esercizi "per curare"), il Coach
+  (zona in pausa o alleggerita, niente consigli di allenamento), Ste su Telegram a ogni pausa e sblocco.
+
+Scelte mie da confermare: schiena = tutti i distretti; "altro" non riduce niente da solo (il ragazzo salta quello che
+fa male); 0,7 e 0,8 come percentuali; la riduzione non entra nel validatore né nel piano salvato.
+
+
+### E13. Infortuni e limitazioni nel setup (punto 4, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingDolore.ts` (`Limitazioni`, `parseLimitazioni`, `riduciPerDolore` con `limitazioni`,
+`limitazioniRiga/Testo/PerCoach`; 5 test in più), `lib/trainingDoloreServer.ts` (`loadLimitazioni`), migration 036
+(`profiles.training_limitazioni` JSONB), `POST /api/training/setup { limitazioni }`, `/allenamento/setup` (sezione
+"Infortuni e limitazioni": chip per zona, massimo 4, nota libera 300 caratteri), `/api/training/state` (riduzione +
+`limitazioni` + `setup.limitazioni`), hub (card "Zone da proteggere"), pagina seduta e player (badge "Zona da
+proteggere"), prompt del planner e della chat, contesto del Coach.
+
+- **Stessa riduzione del dolore, ma cronica:** le zone del setup riducono serie ×0,7 e kg ×0,8 sugli esercizi del
+  loro distretto, senza scadenza, finché restano nel setup; `adattamento: 'limitazione'`. Un esercizio si riduce una
+  volta sola: se la zona del dolore e una limitazione toccano lo stesso distretto vale il dolore (ha la finestra).
+- **La nota è per il preparatore:** nel prompt del planner e della chat ("# LIMITAZIONI E INFORTUNI PASSATI": niente
+  volume lì, a parità i blocchi che non caricano la zona, mai esercizi "per curare", fisio o medico se la nota parla di
+  un infortunio recente); il Coach sa che esiste e chiede come la vive, senza consigli di allenamento.
+- **Niente nel validatore, niente nel piano salvato:** come il dolore, la riduzione si fa alla lettura.
+
+Scelte mie da confermare: massimo 4 zone; "altro" e la sola nota non riducono niente (solo il prompt); nessun
+divieto duro sui singoli esercizi (es. Nordic con un ginocchio tra le limitazioni): il prompt lo chiede, il server
+riduce. Se Ste vuole il divieto, è un filtro in `blocchiDisponibili` sugli esercizi del distretto.
+
+### E14. Resistenza a serie come la fa Ste (punto 19, 26/10 sera): nel codice
+
+Dove vive: `lib/trainingResistenza.ts` (puro, 14 test in `tests/trainingResistenza.test.ts`), `lib/trainingPlannerV2.ts`
+(`aggiornaResistenza`, `sostituzioniResistenza`, asse partita in `expandPiano`, `resistenzaRegolaDi` = regola 30, rank 0
+nel piano base), `lib/trainingTetti.ts` (`RESISTENZA_GIORNATE_IN_SEASON = 1`), `lib/trainingRulesV2.ts` (pliometria
+intensiva + RSA vietate), `lib/trainingEngine.ts` (i `re-*` fidati), `lib/trainingChat.ts`, `/allenamento/setup` e
+`TrainingPlanForm` (avviso in season). Le risposte di Ste sono in §E6 e nel punto 19 di `docs/campo-da-fare.md`.
+
+- **Blocchi virtuali `re-*`** come `pa-*`/`pb-*`/`te-*`: `re-serie` (serie da 4' B / 5' A / 6' PRO, recupero 3' in B e
+  2' da A; partenza 2 serie in B, 3 da A; tetto 4 in B, 5 da A; contenuto mixato a rotazione fartlek / palla /
+  metabolico; corsa lenta 5' in testa; niente corsa continua), `re-metabolico` (stesso formato, intermittente 30"/30"
+  e 15"/15" dentro la serie), `re-rsa` (serie di 4 ripetizioni: B 20"/1', A 20"/40", PRO 30"/1'; 3' tra le serie;
+  2 serie, massimo 3; SOLO off season). Solo con il campo tra gli attrezzi.
+- **Progressione** (`statoResistenza`, dai giudizi di fine seduta sui `re-*` delle settimane prima): un facile →
+  "spingi di più" nella nota; due facili di fila → +1 serie; duro (o voto ≥ 9) → −1 (mai sotto la partenza); giusto
+  azzera. Il server decide le serie, Claude il giorno.
+- **Sostituzione**: i Fartlek/Ripetute/Metabolico/Resistenza alla velocità Everfit scelti da Claude diventano il
+  `re-*` della loro qualità (`reIdPer`), con la nota nell'hub; il secondo blocco di resistenza della giornata esce;
+  le salite restano di Ste.
+- **In season**: `filtraResistenza` toglie `re-*` ed Everfit di resistenza/metabolico/RSA salvo obiettivo `resistenza`
+  esplicito; tetto 1 giornata; avviso sul sovraccarico nel setup e nella maschera; le salite di resistenza mai; le
+  Salite Sprint restano (regole della velocità). RSA solo off season.
+- **Asse partita**: `re-*` da +2 in poi (già nel codice) e al massimo a −3 (`RE_FINESTRA_PRIMA`): a −2 e −1 errore
+  di `expandPiano`; la finestra generica 2 resta per i blocchi di Ste.
+- **Piano base** (stessa PR, bug pre-esistente): gli obiettivi "scoperti" che passano davanti al turno o1, o2, o1, o3
+  sono solo i primi `FOCUS_OBBLIGATORI` (con "Tutto" tutti): prima il terzo obiettivo rubava il secondo giorno del
+  primo e il base usciva con "primo obiettivo in una sola giornata" anche senza resistenza.
+
+Risposte di Ste del 26/10 sera (PR dopo la #164): intermittente 30"/30" e 15"/15" ok; RSA 2 → 3 serie ok;
+**pausa a timer tra le serie RSA** (`rec-pausa-tra-serie`, 3', nel player niente voto né log); **resistenza anche senza
+il campo** (sola corsa: fartlek e intermittente, niente palla, niente RSA); **Salite Sprint = forza esplosiva, non
+velocità pura** (passano a −2 e a +2/+3; finestra del blocco 2 giorni) e in season `limaSaliteInSeason`: 6-12 sprint
+da 20-30 m, recupero ≥ 90", nota nell'hub; off season i blocchi di Ste restano come sono. Resta da confermare: il
+limite di una volta ogni 4 settimane in season per le salite. Non fatto: la card delle quote nell'hub (come per la
+tecnica), la RSA su richiesta in season.

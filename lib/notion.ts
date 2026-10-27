@@ -154,6 +154,11 @@ export function select(prop: any): string {
   return prop?.select?.name || '';
 }
 
+/** Nomi delle opzioni scelte in una multi_select property */
+export function multiSelect(prop: { multi_select?: Array<{ name?: string | null }> | null } | null | undefined): string[] {
+  return Array.isArray(prop?.multi_select) ? prop.multi_select.map((o) => String(o?.name || '')).filter(Boolean) : [];
+}
+
 /** Booleano da checkbox property */
 export function checkbox(prop: any): boolean {
   return prop?.checkbox ?? false;
@@ -224,6 +229,7 @@ export function mapGiorno(page: any) {
     tipoPratica: select(p['Tipo Pratica']), // respirazione | visualizzazione | riflessione | giornata
     audioUrl: urlField(p['Audio Pratica']), // URL pubblico Supabase Storage MP3 (opzionale)
     audioAperturaUrl: urlField(p['Audio Apertura']), // dal 26/10: l'apertura in voce, suona sulla schermata dell'apertura (Audio Pratica = solo la pratica)
+    mostraCarta: multiSelect(p['Mostra Carta']), // Carta modificabile (26/10): quali riquadri della Carta richiamare in questo giorno (Mantra, Mappa, Firma, Protocollo, Cose, Protocollo For You); vuoto = niente
   };
 }
 

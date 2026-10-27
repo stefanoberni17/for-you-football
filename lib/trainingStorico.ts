@@ -12,6 +12,7 @@ import { durataRealeMin, giorniDiRitardo, romeDate, type CompletionRow } from '.
 import { nomeBloccoAtleta } from './trainingLabels';
 import { riassuntoResoconti, type Resoconto, type RiassuntoResoconti } from './trainingResoconto';
 import type { SetLogRow } from './trainingAdapt';
+import { esecuzioneSeduta, type Esecuzione } from './trainingEsecuzione';
 
 export interface CompletionStorico extends CompletionRow {
   note?: string | null;
@@ -35,7 +36,7 @@ export interface StoricoSeduta {
   durataPianoMin: number | null;
   recupero: boolean;
 }
-export interface PuntoEsercizio { data: string; serie: number; quantita: number; prevista: number; kg: number | null; rpe: number | null; unita: string }
+export interface PuntoEsercizio { data: string; serie: number; quantita: number; prevista: number; kg: number | null; rpe: number | null; unita: string; esecuzione?: Esecuzione | null } // esecuzione (punto 18): "faccio fatica" / "non riesco" detto a fine esercizio
 export interface StoricoEsercizio { id: string; nome: string; unita: string; sedute: PuntoEsercizio[]; conKg: boolean; ultimo: PuntoEsercizio }
 export interface PuntoTest { data: string; valore: number; livello: string | null }
 export interface StoricoTest { id: string; nome: string; unita: string; verso: 'max' | 'min'; risultati: PuntoTest[]; delta: number | null; livello: string | null }
@@ -103,6 +104,7 @@ export function costruisciStorico(input: {
         data: romeDate(rows[0].created_at), serie: new Set(rows.map((r) => r.serie)).size,
         quantita: media1(rows.map((r) => r.quantita_fatta ?? r.quantita_prevista)), prevista: media1(rows.map((r) => r.quantita_prevista)),
         kg: kg.length ? media1(kg) : null, rpe: rpe.length ? media1(rpe) : null, unita: rows[0].unita || ex?.unita || 'reps',
+        esecuzione: esecuzioneSeduta(rows),
       };
     }).sort((a, b) => a.data.localeCompare(b.data));
     esercizi.push({ id, nome: ex?.nome ?? id, unita: punti.at(-1)?.unita ?? ex?.unita ?? 'reps', sedute: punti, conKg: punti.some((p) => p.kg != null), ultimo: punti.at(-1)! });

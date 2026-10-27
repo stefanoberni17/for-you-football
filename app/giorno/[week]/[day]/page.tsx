@@ -585,8 +585,8 @@ export default function GiornoPage() {
               {giorno.pratica}
             </p>
 
-            {/* Le risposte chiave richiamate dal testo ("le trovi qui sotto"): solo nei giorni di W11 (lib/risposteChiave.ts) */}
-            <RisposteChiaveBox week={weekNumber} day={dayNumber} className="mt-4" />
+            {/* Le risposte chiave richiamate dal testo ("le trovi qui sotto"): i giorni di W11 (lib/risposteChiave.ts) e i riquadri della Carta che Notion chiede con "Mostra Carta" (26/10) */}
+            <RisposteChiaveBox week={weekNumber} day={dayNumber} mostraCarta={giorno.mostraCarta} className="mt-4" />
 
             {/* Giornata: si parte con un Reset breve (3 respiri) o senza; in entrambi i casi la giornata è avviata */}
             {giorno.tipoPratica === 'giornata' && !completed && !started && (
@@ -702,7 +702,7 @@ export default function GiornoPage() {
               subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domanda}</span>}
               className="mb-4"
             />
-            <RisposteChiaveBox week={weekNumber} day={dayNumber} className="mb-4" />
+            <RisposteChiaveBox week={weekNumber} day={dayNumber} mostraCarta={giorno.mostraCarta} className="mb-4" />
             {guida ? (
               <RispostaGuidata guida={guida} value={response} onChange={setResponse} disabled={completed} />
             ) : (

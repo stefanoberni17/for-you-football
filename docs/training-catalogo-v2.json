@@ -3418,7 +3418,7 @@
  },
  {
   "nome": "Wall Drive Skip",
-  "qualita": "pliometria-intensiva",
+  "qualita": "pliometria-estensiva",
   "attrezzatura": "campo",
   "difficolta": 4,
   "livello_min": "A",
@@ -3905,8 +3905,7 @@
    ],
    "piu_facile": "Box più basso, pausa a terra prima del salto.",
    "piu_difficile": "Box più alto.",
-   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te prima di scendere.",
-   "da_confermare": "L'ho scritto come caduta all'indietro dal box e salto subito. Confermi?"
+   "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te prima di scendere."
   }
  },
  {
@@ -8528,6 +8527,47 @@
   }
  },
  {
+  "nome": "Shooting Warm-Up: 10 + 10 at the Crossbar",
+  "qualita": "tecnica-tiro",
+  "attrezzatura": "campo",
+  "difficolta": 2,
+  "livello_min": "B",
+  "unita": "reps",
+  "per_lato": true,
+  "video": null,
+  "fonte": "Ste (26/10/2026, tecnica composta)",
+  "tags": [
+   "tecnica",
+   "tiro",
+   "riscaldamento"
+  ],
+  "azione": "importa",
+  "nome_everfit": null,
+  "note": "Riscaldamento al tiro prima degli esercizi di tiro (Ste, 26/10): 10 palle di destro e 10 di sinistro dal limite dell'area cercando di colpire la traversa, tirando in maniera progressiva. Stesso gesto del test dei tiri alla traversa, qui come esercizio.",
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": null,
+  "descrizione": "Dal limite dell'area, palla ferma: 10 tiri di destro e 10 di sinistro cercando la traversa. Si parte piano e si sale di intensità tiro dopo tiro: è il riscaldamento prima di tirare forte.",
+  "id": "ttir-riscaldamento-traversa",
+  "scheda": {
+   "esecuzione": [
+    "Palla ferma sul limite dell'area, porta vuota.",
+    "Primi tiri al 60 %: conta il contatto pulito, non la forza. Sali di intensità tiro dopo tiro.",
+    "Mira alla traversa: tiro di collo con palla che sale, caviglia bloccata, busto leggermente indietro.",
+    "10 di destro, poi 10 di sinistro (o il contrario). Recupera la palla camminando: è anche il recupero."
+   ],
+   "errori": [
+    "Tirare forte dal primo tiro: è un riscaldamento, la forza arriva dopo.",
+    "Piede d'appoggio lontano dalla palla: va accanto, punta verso la porta.",
+    "Saltare il piede debole: i 10 col debole si fanno sempre."
+   ],
+   "piu_facile": "Da più vicino, o 6 + 6.",
+   "piu_difficile": "Palla in movimento: un tocco in avanti e tiro.",
+   "sicurezza": "Mai senza riscaldamento generale prima (passaggi, qualche conduzione). Fastidio all'inguine o al flessore: fermati."
+  }
+ },
+ {
   "nome": "Shooting Technique",
   "qualita": "tecnica-tiro",
   "attrezzatura": "campo",
@@ -12630,6 +12670,47 @@
    "piu_facile": "Rialzo più alto, piedi più larghi.",
    "piu_difficile": "Rialzo più basso, fino a terra (One-Arm Push-Up).",
    "sicurezza": "Rialzo stabile. Fastidio al polso o al gomito: fermati."
+  }
+ },
+ {
+  "attrezzatura": "corpo libero",
+  "difficolta": 1,
+  "livello_min": "B",
+  "per_lato": false,
+  "video": null,
+  "fonte": "Ste (chat 26/10/2026, resistenza alla velocità a serie)",
+  "azione": "aggiunto 26/10/2026",
+  "nome_everfit": "Pausa tra le serie",
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "sottogruppo": "pausa",
+  "finestra_partita": null,
+  "id": "rec-pausa-tra-serie",
+  "nome": "Rest Between Sets",
+  "qualita": "mobilita-recupero",
+  "unita": "secondi",
+  "tags": [
+   "recupero",
+   "pausa"
+  ],
+  "descrizione": "Pausa completa tra una serie e l'altra: cammina, respira, bevi un sorso. Il timer ti dice quando ripartire.",
+  "scheda": {
+   "esecuzione": [
+    "Fermati: la serie dopo vale solo se riparti fresco.",
+    "Cammina piano, braccia sciolte, respira con il naso.",
+    "Un sorso d'acqua se serve.",
+    "Quando il timer suona, riparti."
+   ],
+   "errori": [
+    "Sederti o sdraiarti: le gambe si raffreddano.",
+    "Ripartire prima del tempo: la pausa è parte dell'allenamento.",
+    "Guardare il telefono per tre minuti: tieni la testa sulla serie dopo."
+   ],
+   "piu_facile": "Allunga la pausa di un minuto.",
+   "piu_difficile": "Non accorciarla: la dose la decide la serie, non la pausa.",
+   "sicurezza": "Giramenti di testa o fiato che non torna: la seduta finisce qui."
   }
  }
 ]

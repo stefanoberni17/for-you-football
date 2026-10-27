@@ -10,13 +10,14 @@ import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { APERTURA_IDS, STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type StatoFascia } from '@/lib/trainingFascia';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
-import { AlertTriangle, Calendar, Check, Info, Pause, Play, Wind } from 'lucide-react';
+import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
 import { hasActiveAccess } from '@/lib/checkAccess';
 import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
 
-interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
+interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
   per_lato?: boolean;
+  test_in_seduta?: { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }; // ri-test in seduta (26/10)
 }
 interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[] }
 
@@ -27,7 +28,7 @@ const TIPO_LABEL: Record<string, string> = {
   fisica: 'Fisica', mix: 'Fisica e tecnica', tecnica: 'Tecnica', skill: 'Tecnica', fascia: 'Fascia e prevenzione', recupero: 'Recupero',
 };
 const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = {
-  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso' };
+  sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante', limitazione: 'Zona da proteggere' };
 type Giudizio = 'facile' | 'ok' | 'duro';
 const GIUDIZI: { key: Giudizio; label: string }[] = [{ key: 'facile', label: 'Facile' }, { key: 'ok', label: 'Giusto' }, { key: 'duro', label: 'Duro' }];
 
@@ -43,6 +44,8 @@ export default function SessionePage() {
   const [scarico, setScarico] = useState(false); // alleggerisci: −1 serie sugli esercizi
   const [alreadyDone, setAlreadyDone] = useState(false);
   const [saltata, setSaltata] = useState(false); // passata da 2+ giorni senza farla: il calendario è andato avanti
+  const [conflittoCal, setConflittoCal] = useState<string | null>(null); // M8: questa seduta non ci sta più con il calendario di adesso
+  const [adattaBusy, setAdattaBusy] = useState(false);
   const [phase, setPhase] = useState<Phase>('preview');
   const [descOpen, setDescOpen] = useState<number | null>(null); // indice item con descrizione aperta
   const [savedProgress, setSavedProgress] = useState<PlayerProgress | null>(null); // seduta interrotta
@@ -78,6 +81,9 @@ export default function SessionePage() {
       setSessione(s || null);
       setPlanId(data.plan?.id || null);
       setStorico(data.storicoSerie || {});
+      const cc = data.calendarioConflitti as { righe: string[]; giorni: number[] } | null | undefined;
+      const idx = cc?.giorni.indexOf(giorno) ?? -1;
+      setConflittoCal(idx >= 0 ? cc!.righe[idx] : null);
       const fatta = (data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno);
       setAlreadyDone(fatta);
       setSaltata(!fatta && typeof data.oggiDow === 'number' && giorno < data.oggiDow - 1);
@@ -175,6 +181,14 @@ export default function SessionePage() {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ plan_id: planId, giorno, ...log }),
             }).catch(() => { /* fire-and-forget: la seduta non si ferma */ });
+          }}
+          onTestResult={(r) => {
+            // Ri-test in seduta (26/10): skill → punto della scala, test → batteria, lift → massimale (peso × reps)
+            const body = r.test.tipo === 'skill' ? { skill_esercizio_id: r.test.id, valore: r.valore, in_seduta: true }
+              : r.test.tipo === 'lift' ? { test_id: r.test.id, peso: r.peso, reps: r.reps, in_seduta: true }
+              : { test_id: r.test.id, valore: r.valore, in_seduta: true };
+            authFetch('/api/training/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+              .catch(() => { /* fire-and-forget: la seduta non si ferma */ });
           }}
           onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setDurataSec(esito?.durataSec ?? null); setPhase('feedback'); }}
           onExit={() => {
@@ -301,11 +315,46 @@ export default function SessionePage() {
             <p className="text-body-sm font-semibold text-forest-300 flex items-center gap-2"><Check size={16} aria-hidden /> Già fatta. Puoi rifarla: sul piano resta segnata.</p>
           </Card>
         )}
+        {conflittoCal && !alreadyDone && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body-sm text-warning flex gap-2">
+              <Calendar size={16} className="shrink-0 mt-0.5" aria-hidden />
+              <span>Il calendario è cambiato: {conflittoCal}. Posso spostare solo le sedute che non ci stanno più; quelle fatte restano.</span>
+            </p>
+            <div className="mt-2">
+              <Button variant="secondary" size="sm" loading={adattaBusy} onClick={async () => {
+                if (!planId) return;
+                setAdattaBusy(true);
+                try {
+                  const r = await authFetch('/api/training/plan/adatta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan_id: planId }) });
+                  router.push(r.ok ? '/allenamento' : '/allenamento?adatta=1');
+                } finally { setAdattaBusy(false); }
+              }}>Adatta la settimana</Button>
+            </div>
+          </Card>
+        )}
         {bloccata && (
           <Card variant="danger" padding="sm" className="mb-4">
             <p className="text-body-sm text-danger flex gap-2">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden />
-              <span>Hai segnalato un dolore: questa seduta è in pausa. La riapri dal Campo quando è passato.</span>
+              <span>Hai segnalato un dolore: questa seduta è in pausa. L&apos;app non fa diagnosi: fatti vedere da un fisioterapista o da un medico se è forte o dura da giorni. Riparti dal Campo, sotto la tua responsabilità.</span>
+            </p>
+          </Card>
+        )}
+        {!bloccata && sessione.items.some((it) => it.adattamento === 'dolore') && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body-sm text-app flex gap-2">
+              <AlertTriangle size={16} className="shrink-0 mt-0.5 text-warning" aria-hidden />
+              <span>Zona dolorante segnalata: serie ridotte e kg più bassi sugli esercizi che la coinvolgono (badge &quot;Zona dolorante&quot;). Se fa male, fermati: il dolore non si allena.</span>
+            </p>
+          </Card>
+        )}
+        {/* Punto 4 (26/10): le limitazioni del setup riducono allo stesso modo, sempre */}
+        {!bloccata && sessione.items.some((it) => it.adattamento === 'limitazione') && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body-sm text-app flex gap-2">
+              <ShieldAlert size={16} className="shrink-0 mt-0.5 text-warning" aria-hidden />
+              <span>Per le limitazioni che hai scritto nel setup: serie ridotte e kg più bassi sugli esercizi che le coinvolgono (badge &quot;Zona da proteggere&quot;). Se un esercizio fa male, saltalo.</span>
             </p>
           </Card>
         )}
@@ -337,7 +386,9 @@ export default function SessionePage() {
                         <div className="flex-1 min-w-0">
                           <p className="text-body font-semibold text-app leading-snug">{ex.nome}</p>
                           <p className="text-body-sm text-muted tabular-nums">
-                            {it.schema === 'emom'
+                            {it.test_in_seduta
+                              ? <><span className={num}>Serie test</span>{it.test_in_seduta.prep != null ? <> · prima <span className={num}>{unitaLabel(unita, it.test_in_seduta.prep)}</span> di avvicinamento</> : null}{it.carico_kg ? <> · <span className={num}>{it.carico_kg} kg</span></> : null}</>
+                              : it.schema === 'emom'
                               ? <>EMOM · <span className={num}>{it.serie}</span> {it.serie === 1 ? 'giro' : 'giri'} · <span className={num}>{unitaLabel(unita, it.quantita)}</span> al minuto, poi riposo fino allo scadere</>
                               : <>
                                   <span className={num}>{it.serie} × {unitaLabel(unita, it.quantita)}</span>
@@ -354,8 +405,8 @@ export default function SessionePage() {
                           )}
                           {it.nota && (
                             <div className="mt-1.5 flex items-start gap-2">
-                              <Badge tone={it.adattamento === 'scendi' || it.adattamento === 'leggero' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
-                                {it.adattamento ? ADATTAMENTO_LABEL[it.adattamento] : 'Nota'}
+                              <Badge tone={it.adattamento === 'scendi' || it.adattamento === 'leggero' || it.adattamento === 'esecuzione' || it.adattamento === 'dolore' || it.adattamento === 'limitazione' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
+                                {it.test_in_seduta ? 'Serie test' : it.adattamento ? ADATTAMENTO_LABEL[it.adattamento] : 'Nota'}
                               </Badge>
                               <p className="text-body-sm text-app leading-snug">{it.nota}</p>
                             </div>

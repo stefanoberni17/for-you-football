@@ -14,6 +14,7 @@ import { esercizioById } from './trainingCatalog';
 import { esercizioV2ById } from './trainingCatalogV2';
 import { ACCESSORI_CORPO_LIBERO_REPS_MAX } from './trainingRulesV2';
 import type { RiepilogoEsercizio, Suggerimento } from './trainingAdapt';
+import { dosePerEsecuzione, ESECUZIONE_LABEL, OK_PER_SBLOCCARE_SALI } from './trainingEsecuzione';
 
 export const PROGRESSIONE_MAX_DRIFT = 0.3;   // dose massima oltre il programma di Ste (+30 %)
 export const PASSO_KG_PCT = 0.025;           // +2.5 % kg (SALI) — SCENDI: −5 %
@@ -74,8 +75,26 @@ export function prossimaDose(programma: ProgrammaDose, r: RiepilogoEsercizio | n
     motivo: r?.suggerimento === 'tieni' && r.ultimaSeduta.rpeMedio != null ? 'tieni così: l\'ultima volta era giusta' : 'tieni così',
     condizioni: [], perche: r?.motivo ?? 'nessun log',
   };
-  if (!r || r.suggerimento === 'tieni') return base;
+  if (!r) return base;
   if (programma.schema && programma.schema !== 'fisso') return { ...base, motivo: 'dose del blocco (EMOM, AMRAP o a intervalli): non si adatta' };
+  // Punto 18 (esecuzione): PRIMA si abbassa. "Non riesco" una volta o "faccio fatica" due di fila → kg −15 % o −20 % di reps/tempo,
+  // qualunque cosa dicano i voti di fatica; e il passo in più aspetta due sedute "ok" (la M5 non scavalca l'esecuzione)
+  const es = r.esecuzione;
+  if (es && es.passo !== 'normale') {
+    const meno = dosePerEsecuzione({ quantita: programma.quantita, carico_kg: programma.carico_kg, unita });
+    const perche = `l'ultima volta hai detto "${ESECUZIONE_LABEL[es.ultima]}"${es.passo === 'dedicata' ? ', e nella seduta dedicata poche ripetizioni pulite' : ''}`;
+    if (!meno) return { ...base, verso: 'scendi', motivo: `resti a ${programma.carico_kg ? `${programma.carico_kg} kg` : fmtDose(programma.quantita, unita)}, prima l'esecuzione pulita: ${perche}`, perche: es.motivo };
+    const kg = meno.caricoKg != null && meno.caricoKg !== (programma.carico_kg ?? null);
+    return {
+      ...base, verso: 'scendi', cambiata: true, quantita: meno.quantita, caricoKg: meno.caricoKg,
+      motivo: `${kg ? `${meno.caricoKg} kg` : fmtDose(meno.quantita, unita)}, ${kg ? 'meno peso' : 'meno'}: ${perche}`,
+      condizioni: [`si risale solo con l'esecuzione "ok" per ${OK_PER_SBLOCCARE_SALI} sedute`], perche: es.motivo,
+    };
+  }
+  if (es?.saliBloccato && (r.suggerimento === 'sali' || r.suggerimento === 'conferma')) {
+    return { ...base, verso: 'tieni', motivo: `resti a ${programma.carico_kg ? `${programma.carico_kg} kg` : fmtDose(programma.quantita, unita)}: ${es.motivo}`, perche: `${r.motivo}; ma ${es.motivo}` };
+  }
+  if (r.suggerimento === 'tieni') return base;
   if (r.ultimaSeduta.unita && r.ultimaSeduta.unita !== unita) return { ...base, motivo: 'l\'ultima volta era in un\'altra unità: non si confronta' };
 
   const conferma = r.suggerimento === 'conferma';

@@ -121,7 +121,7 @@ export const FINESTRA_PARTITA: Record<QualitaV2, number> = {
   // trainingVelocita, saltato dal validatore a −1)
   'velocita': 1, // a −2 solo corta (sprint fino a VELOCITA_PURA_METRI) e con poco volume (SPRINT_MAX_VICINO_PARTITA): expandPiano
   'pliometria-estensiva': 1,
-  'pliometria-intensiva': 2, // a −1 solo con reps minime (vedi PLIO_INTENSIVA_MENO1)
+  'pliometria-intensiva': 2, // a −2 in dose piccola (PLIO_INTENSIVA_MENO2, max 4×2), a −1 solo con reps minime (PLIO_INTENSIVA_MENO1, 2×2)
   // 18/10, Ste: "metabolico-resistenza va bene da 2 giorni dopo la partita fino a 3 giorni prima: con la partita la domenica
   // da martedì a giovedì, il top sarebbe mercoledì" → vietata a 2, 1 e 0 giorni dalla partita, ammessa da 3 (16/10 era 3, prima 4)
   'resistenza-aerobica': 2, 'resistenza-metabolico': 2, 'resistenza-rsa': 2,
@@ -136,6 +136,8 @@ export const PRE_PARTITA_ID = 'rapidita-velocita-e-tiro-pre-partita';
 export const FINESTRA_FORZA_MAX = 3;
 /** Pliometria intensiva ammessa a −1 solo ridotta al minimo — [STE] */
 export const PLIO_INTENSIVA_MENO1 = { serieMax: 2, repsMax: 2 } as const;
+/** Pliometria intensiva a −2 in dose piccola (Ste, 25/10: "si può fare a 2 gg dalla partita con dosi piccole, max 4×2"). */
+export const PLIO_INTENSIVA_MENO2 = { serieMax: 4, repsMax: 2 } as const;
 
 /**
  * Giorni passati dall'ULTIMA partita (0 = giorno partita, 1 = il giorno dopo…), con la settimana che gira: con la partita la
@@ -205,6 +207,7 @@ export const CONVIVENZE_SCONSIGLIATE: [QualitaV2 | 'forza-max', QualitaV2][] = [
  */
 export const CONVIVENZE_BLOCCHI_VIETATE: [QualitaV2, QualitaV2[]][] = [
   ['velocita', ['resistenza-aerobica', 'resistenza-metabolico', 'resistenza-rsa']],
+  ['pliometria-intensiva', ['resistenza-rsa']], // 26/10: anche a livello di blocco (`re-rsa` è composto dal server, i suoi item sono il test navetta e la palla)
 ];
 
 /** Ordine "neuromuscolare prima del metabolico": indice più basso = prima nella seduta. */
@@ -361,9 +364,9 @@ export function validateItemV2(
     const regimeMax = forzaConCarico && it.regime === 'max';
     const finestra = regimeMax ? FINESTRA_FORZA_MAX : (ex.finestraPartita ?? FINESTRA_PARTITA[ex.qualita]);
     if (giorniPartita <= finestra) {
-      const plioMeno1Ok = ex.qualita === 'pliometria-intensiva' && giorniPartita === 1
-        && it.serie <= PLIO_INTENSIVA_MENO1.serieMax && it.quantita <= PLIO_INTENSIVA_MENO1.repsMax;
-      if (!plioMeno1Ok)
+      const plioDose = ex.qualita === 'pliometria-intensiva' ? (giorniPartita === 1 ? PLIO_INTENSIVA_MENO1 : giorniPartita === 2 ? PLIO_INTENSIVA_MENO2 : null) : null;
+      const plioVicinoOk = !!plioDose && it.serie <= plioDose.serieMax && it.quantita <= plioDose.repsMax;
+      if (!plioVicinoOk)
         errors.push(`${n}: ${regimeMax ? 'forza massima' : ex.qualita} a ${giorniPartita} giorni dalla partita (vietata entro ${finestra})`);
     }
   }

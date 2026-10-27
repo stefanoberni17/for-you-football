@@ -12,8 +12,9 @@ import { buildRombo } from './trainingEngine';
 import { FASE_LABEL, MAX_SEDUTE_FISICHE_PER_FASE, MAX_SEDUTE_LEGGERE_EXTRA } from './trainingSetup';
 import { KG_SENZA_MASSIMALE_MAX } from './trainingRulesV2';
 import { squadraTesto } from './trainingSquadra';
-import { checkinBlock, percorsoMentaleTesto, PLANNER_MODEL } from './trainingPlanner';
-import { contestoCondiviso, loadContextV2, type ContextV2 } from './trainingPlannerV2';
+import { checkinBlock, percorsoMentaleTesto, PLANNER_MODEL, todayRome } from './trainingPlanner';
+import { doloreTesto, limitazioniTesto } from './trainingDolore';
+import { contestoCondiviso, loadContextV2, type ContextV2, resistenzaRegolaDi } from './trainingPlannerV2';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -30,11 +31,12 @@ export function promptPreparatore(ctx: ContextV2): string {
 # ATLETA
 Oggi è ${DAY_NAMES[b.oggiDow]}. Gradini: ${Object.entries(b.gradini).map(([a, g]) => `${a} g${g}`).join(', ') || 'da testare'}. Card: ${rombo}.${b.painHold ? ' ⚠️ PAIN-HOLD attivo: ha segnalato dolore, niente consigli di allenamento fisico finché non dice che è passato o ha sentito fisio/preparatore.' : ''}
 Ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', ') : 'solo corpo libero'} · fase ${FASE_LABEL[ctx.setup.fase]}.
-Piano della settimana: ${pianoTxt}. Settimana del ciclo: ${b.ciclo.settimana}/4${b.ciclo.isDeload ? ' (scarico)' : b.ciclo.scaricoRinviato ? ' (scarico rinviato: poche sedute nelle settimane prima)' : b.ciclo.ritestDue ? ' (ri-test dovuto: invitalo a rifare la batteria)' : ''}.
+Piano della settimana: ${pianoTxt}. Settimana del ciclo: ${b.ciclo.settimana}/4${b.ciclo.isDeload ? ` (SCARICO, deciso dai dati: ${b.ciclo.motivoScarico ?? 'quarta settimana'})` : b.ciclo.scaricoRinviato ? ` (scarico rinviato: ${b.ciclo.motivoScarico ?? 'poche sedute nelle settimane prima'})` : b.ciclo.ritestDue ? ` (ri-test dovuto: ${b.ciclo.motivoRitest ?? 'dopo lo scarico'}; invitalo a rifare i test)` : ''}. Lo scarico e il ri-test li decidono i dati (carico, voti delle sedute, feedback per blocco), non una data fissa: se chiede perché, la risposta è lì.
 Allenamenti con la squadra: ${squadraTesto(b.trainingDays, b.squadra, DAY_NAMES)}${b.matchDays.length ? ` · partite: ${b.matchDays.map((d) => DAY_NAMES[d]).join(', ')}` : ''}. Se ha descritto sforzo e qualità, usali per consigliare (non per vietare): le qualità che la squadra fa già forte non vanno raddoppiate, il giorno dopo una giornata dura ci si allena comunque, ma su altro o più leggero.
-${checkinBlock(b)}
+${checkinBlock(b)}${doloreTesto(b.dolore, todayRome(), b.painHold)}${limitazioniTesto(b.limitazioni)}
 ${percorsoMentaleTesto(b.weekOfPath)}
 ${contestoCondiviso(ctx)}
+${resistenzaRegolaDi(ctx)}
 
 # COME USARE QUESTO CONTESTO
 - I giudizi per blocco (facile / giusto / duro), la memoria dei blocchi e il mese dicono cosa ha fatto davvero e cosa viene dopo: se chiede "perché questa settimana X?", la risposta è lì. Il codice del blocco successivo lo decide il server: non promettere salti di livello.
