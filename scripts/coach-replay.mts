@@ -8,6 +8,9 @@
  *   npx tsx scripts/coach-replay.mts --web                 # formato web chat invece di Telegram
  *   npx tsx scripts/coach-replay.mts --user <uuid>         # contesto reale da Supabase (buildUserContext) invece di quello finto
  *   npx tsx scripts/coach-replay.mts --tools               # abilita leggi_percorso (serve NOTION_TOKEN)
+ *   npx tsx scripts/coach-replay.mts --scenario w1-g6      # settimana 1 fino al G6, risposta «4.» (27/10: il Coach con la settimana in corso)
+ *   npx tsx scripts/coach-replay.mts --scenario w1-gate    # Gate 1 passato, un passaggio del Reset poco chiaro
+ *   npx tsx scripts/coach-replay.mts --scenario w1-g6 --prompt   # stampa solo il contesto, senza chiave
  *
  * Legge .env.local se esiste (serve ANTHROPIC_API_KEY; con --user anche le env Supabase).
  * Non scrive niente: nessun salvataggio in telegram_conversations, nessun recap, nessun evento.
@@ -21,15 +24,20 @@ if (existsSync('.env.local')) {
     if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
   }
 }
-if (!process.env.ANTHROPIC_API_KEY) {
-  console.error('Manca ANTHROPIC_API_KEY (mettila in .env.local o nell\'ambiente).');
-  process.exit(1);
-}
-
 // ── args ─────────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
 const flag = (name: string) => args.includes(`--${name}`);
 const opt = (name: string) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : undefined; };
+
+if (flag('prompt')) {
+  // solo il contesto: i client si creano all'import, bastano dei segnaposto
+  process.env.ANTHROPIC_API_KEY ||= 'segnaposto';
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||= 'https://placeholder.supabase.co';
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||= 'segnaposto';
+} else if (!process.env.ANTHROPIC_API_KEY) {
+  console.error('Manca ANTHROPIC_API_KEY (mettila in .env.local o nell\'ambiente). Con --prompt stampa solo il contesto.');
+  process.exit(1);
+}
 
 type Turno = string | { role: 'assistant'; content: string };
 const SCENARI: Record<string, Turno[]> = {
@@ -74,6 +82,10 @@ const SCENARI: Record<string, Turno[]> = {
   ],
 };
 
+// La settimana in corso (27/10): i due esempi di Ste in W1, con i testi veri di Notion in scripts/fixtures
+SCENARI['w1-g6'] = ['ciao, ho appena fatto il giorno 6'];
+SCENARI['w1-gate'] = ['ciao coach, domani parto con la settimana 2'];
+
 const scenario = opt('scenario') || 'disciplina';
 const turni: Turno[] = opt('file')
   ? JSON.parse(readFileSync(opt('file')!, 'utf8'))
@@ -112,8 +124,57 @@ const CONTESTO_FINTO = `# CONTESTO ATLETA
 ## Check-in fisico di oggi
 Stato fisico 6/10 · Sonno 6.5h · Recupero 5/10 · Stato mentale 4/10`;
 
+// Contesto della settimana per gli scenari w1-*: atleta finto, testi di Notion, risposte scritte qui
+const { settimanaInCorsoTesto } = await import('../lib/settimanaCoach');
+function contestoSettimana(nome: string): string | null {
+  if (!nome.startsWith('w1-')) return null;
+  const fx = JSON.parse(readFileSync(new URL('./fixtures/coach-settimana-w1.json', import.meta.url), 'utf8'));
+  const fatto = (day: number, response: string | null, prePratica: string | null = null, gateAnswers: Record<string, string> | null = null) =>
+    ({ day, completed: true, completedAt: `2026-10-${19 + day}T19:00:00Z`, response, prePratica, gateAnswers });
+  const settimana1 = [
+    fatto(1, 'Bene, alla terza mi è venuto in mente l\'allenamento ma poi sono tornato sui respiri.'),
+    fatto(2, 'IL GESTO: un po\' macchinoso all\'inizio, poi meglio\nIL MIO MOMENTO: dopo un controllo sbagliato'),
+    fatto(3, 'Riparto qui. Mi viene comoda.'),
+    fatto(4, 'In camera facile. Camminando perdevo il conto dei secondi.'),
+    fatto(5, 'È capitato in allenamento, me ne sono accorto ma non ho fatto niente.', 'Sì, sempre dopo un controllo sbagliato.'),
+    fatto(6, '4. mi sono ricordato ma non l\'ho fatto'),
+  ];
+  const testa = (week: number, giorni: string) => `# CONTESTO ATLETA
+
+**Nome:** Luca
+**Sport:** calcio
+**Età:** 18
+**Ruolo/i:** centrocampista
+**Livello:** dilettante
+**Settimana corrente:** ${week}
+
+## Sfide e situazione
+**Paure:** errore, giudizio
+**Obiettivi con il percorso:** Non rimanere bloccato dopo un errore.
+
+## Progresso nel percorso
+**Giorni completati:** ${giorni}
+
+## Calendario settimana
+**Allenamenti:** Martedì, Giovedì
+**Partite:** Domenica
+`;
+  if (nome === 'w1-g6') {
+    return testa(1, '6 (S1G1-S1G6)') + settimanaInCorsoTesto({ week: 1, giorni: fx.settimana1, progresso: settimana1 });
+  }
+  if (nome === 'w1-gate') {
+    const gate = { q1: 'Riparto qui, la tengo.', q2: 'Lo tengo: dopo un controllo sbagliato.', q3: 'Non ho capito bene se il gesto lo devo fare quando inspiro o quando butto fuori l\'aria. E in partita devo contare i secondi?' };
+    return testa(2, '7 (tutta la settimana 1)') + settimanaInCorsoTesto({
+      week: 2, giorni: fx.settimana2, progresso: [],
+      gatePrecedente: { week: 1, giorno: fx.settimana1.find((g: { dayNumber: number }) => g.dayNumber === 7), answers: gate },
+    });
+  }
+  return null;
+}
+
 const userId = opt('user');
-const contesto = userId ? await buildUserContext(userId) : CONTESTO_FINTO;
+const contesto = userId ? await buildUserContext(userId) : (contestoSettimana(opt('file') ? '' : scenario) ?? CONTESTO_FINTO);
+if (flag('prompt')) { console.log(contesto); process.exit(0); }
 const formato = flag('web') ? WEB_FORMAT : TELEGRAM_FORMAT;
 const systemBlocks = [
   { type: 'text', text: SYSTEM_PROMPT + formato, cache_control: { type: 'ephemeral' as const } },

@@ -1,0 +1,83 @@
+{
+ "_nota": "Testi di Notion (DB Giorni) del 27/10 per scripts/coach-replay.mts --scenario w1-g6 / w1-gate. Solo per il replay: l'app li legge da Notion.",
+ "settimana1": [
+  {
+   "dayNumber": 1,
+   "titolo": "W1-G1 — Solo il respiro",
+   "domandaPrePratica": "",
+   "domanda": "Com'è stato fare questi cinque respiri? Sei riuscito a seguirli, o la testa ti portava altrove? Se qualcosa non era chiaro o era scomodo, dimmelo.\n(Una riga va bene.)",
+   "contesto": "Sotto pressione la risposta di stress parte in fretta: cuore che accelera, muscoli tesi, respiro corto e alto. Il respiro è l'unica di queste cose che si può guidare volontariamente. Respirare lento con la pancia ed espirare più a lungo dell'inspirazione è associato a un calo dell'attivazione (ricerche su respirazione lenta e variabilità cardiaca). Il 4/6 è una scelta pratica del metodo, facile da contare: non è una proporzione magica. Se il giocatore non sente niente, è un dato valido, non un errore suo e non una prova che il metodo funziona.",
+   "domandeGate": [],
+   "isGate": false
+  },
+  {
+   "dayNumber": 2,
+   "titolo": "W1-G2 — Aggiungere il gesto",
+   "domandaPrePratica": "",
+   "domanda": "Com'è stato aggiungere il gesto al respiro: semplice, un po' macchinoso, o poco chiaro?\n\nE adesso che lo conosci: scegli il tuo momento della settimana, quello in cui vorresti usarlo. Uno solo, preciso, che ti capita spesso. Per esempio: dopo un controllo sbagliato, mentre aspetti di entrare dalla panchina, prima di battere un piazzato, dopo che il mister ti ha ripreso. Oppure fuori dal campo: prima di una riunione, dopo una discussione a casa. Scrivilo in una riga.",
+   "contesto": "Il gesto funziona per associazione: ripetuto in uno stato di calma, diventa un richiamo di quello stato. È un principio di apprendimento usato nella preparazione mentale (ancoraggio); l'effetto varia da persona a persona e cresce con le ripetizioni. In campo il gesto si usa solo nelle pause, mai mentre il gioco è attivo. Rev. 26/10 (decisione di Ste): il giocatore sceglie il suo momento della settimana DOPO aver provato il gesto, nella domanda finale (prima era nella Domanda Pre Pratica). Il Coach può richiamarlo nei giorni seguenti.",
+   "domandeGate": [],
+   "isGate": false
+  },
+  {
+   "dayNumber": 3,
+   "titolo": "W1-G3 — Il Reset completo",
+   "domandaPrePratica": "",
+   "domanda": "Quale parola hai scelto? Ti veniva comoda da ripetere, o vuoi provarne un'altra?",
+   "contesto": "Il dialogo interno è studiato in psicologia dello sport: in molti studi parole brevi, istruttive o motivazionali, sono associate a piccoli miglioramenti, con effetti variabili da persona a persona. Qui il mantra serve come segnale che chiude l'azione precedente. Breve, concreto, scelto dal giocatore; se non funziona si cambia.",
+   "domandeGate": [],
+   "isGate": false
+  },
+  {
+   "dayNumber": 4,
+   "titolo": "W1-G4 — Reset in tre situazioni",
+   "domandaPrePratica": "",
+   "domanda": "In quale delle tre situazioni ti veniva più facile seguire i passaggi, respiro, gesto, parola? E dove ti sei incastrato, se è successo? (Se hai notato qualcosa nel corpo, puoi scriverlo.)",
+   "contesto": "Principio della pratica variata: allenare un'abilità in condizioni diverse ne favorisce l'uso in situazioni nuove. La terza situazione è un'esposizione leggera: il giocatore sceglie l'intensità e può fermarsi al solo respiro. Se racconta che il Reset non ha funzionato in una situazione, è un'informazione utile, non un fallimento.",
+   "domandeGate": [],
+   "isGate": false
+  },
+  {
+   "dayNumber": 5,
+   "titolo": "W1-G5 — Il Reset in campo",
+   "domandaPrePratica": "Il tuo momento è ancora quello che hai scelto a inizio settimana? Se vuoi cambiarlo, scrivilo adesso.\n\nNon è una promessa di farlo oggi: è per riconoscerlo meglio quando capita.",
+   "domanda": "È arrivato il tuo momento, oggi?\n\nSe sì: te ne sei accorto sul momento o solo dopo? Hai provato il Reset breve, anche imperfetto? E cosa ti ha aiutato a ricordartelo, oppure cosa te l'ha fatto dimenticare?\n\nSe no, scrivi solo «non è capitato».",
+   "contesto": "Il passaggio dall'app al campo parte dal riconoscere il momento, prima ancora che dallo strumento. Regola del metodo: durante il gioco attivo niente attenzione verso dentro, solo la prossima giocata; Reset breve (un respiro, gesto, mantra) solo in una pausa di almeno due secondi. Se il momento non si presenta, non è un insuccesso.",
+   "domandeGate": [],
+   "isGate": false
+  },
+  {
+   "dayNumber": 6,
+   "titolo": "W1-G6 — Cosa hai costruito",
+   "domandaPrePratica": "",
+   "domanda": "Il tuo momento, quello che hai scelto all'inizio della settimana. Questa settimana com'è andata? Scegli la frase più vera:\n1. Non è capitato.\n2. È capitato, ma me ne sono accorto solo dopo.\n3. Me ne sono accorto, ma il Reset non mi è venuto in mente.\n4. Mi sono ricordato del Reset, ma non l'ho fatto (non c'era tempo, mi sentivo a disagio, non mi andava).\n5. Ho provato il Reset e non ho notato differenze.\n6. Ho provato il Reset e ho notato qualcosa.\n\nScrivi il numero e, se vuoi, una riga su cosa è successo.",
+   "contesto": "Riflessione di fine settimana: raccoglie dati onesti sull'uso reale. Le 6 risposte (rev. 26/10, aggiunta la 4) distinguono: occasione assente, momento riconosciuto tardi, strumento non ricordato, ricordato ma non fatto, tentativo senza differenze, effetto percepito. ⚠️ RESTITUZIONE DIVERSA PER OGNI RISPOSTA (la risposta deve cambiare quello che il Coach dice): 1 non è capitato → aiutarlo, se vuole, a scegliere un momento più frequente; 2 me ne sono accorto dopo → chiedere cosa gli ha fatto riconoscere l'episodio, è già un passo; 3 non mi è venuto in mente → scegliere insieme un richiamo semplice (la prima palla ferma, la borraccia, un gesto che fa già); 4 ricordato ma non fatto → capire cosa l'ha fermato (tempo, disagio coi compagni, voglia) e proporre la versione più piccola, un respiro col gesto; 5 nessuna differenza → chiarire se i passaggi erano chiari e fattibili; 6 ha notato qualcosa → farglielo descrivere, senza attribuirlo automaticamente al metodo. Il Coach non trasforma «non ho sentito niente» in una prova che il metodo funziona. Niente rassicurazioni ripetute: una risposta precisa vale più di «va bene tutto».",
+   "domandeGate": [],
+   "isGate": false
+  },
+  {
+   "dayNumber": 7,
+   "titolo": "W1-G7 — Chiusura",
+   "domandaPrePratica": "",
+   "domanda": "Tre domande brevi, per capire cosa ti porti nella prossima settimana.",
+   "contesto": "Chiusura della W1 (rev. 26/10): NON ripete il G6. Fa ritrovare al giocatore quello che ha costruito, con le sue risposte: la parola (W1-G3, mostrata con «Mostra Carta: Mantra»), il momento personale (W1-G2), e cosa resta da chiarire. Il Coach usa queste risposte nella settimana dopo: se scrive un passaggio poco chiaro, lo aiuta su quello. Presentata come breve chiusura per capire cosa portarsi avanti, non come cancello da sbloccare. Anticipa la W2 (vedere i pensieri che arrivano) senza nominare lo strumento.",
+   "domandeGate": [
+    "1. La parola che hai scelto il terzo giorno: ti viene comoda, o vuoi provarne un'altra? Se la cambi, scrivi quella nuova.",
+    "2. Il tuo momento della settimana: lo tieni anche per la prossima, o ne scegli un altro? Scrivilo in una riga.",
+    "3. C'è qualcosa del Reset che vuoi chiarire prima di andare avanti? Un passaggio, il gesto, quando farlo. (Se è tutto chiaro, scrivi «chiaro».)"
+   ],
+   "isGate": true
+  }
+ ],
+ "settimana2": [
+  {
+   "dayNumber": 1,
+   "titolo": "W2-G1 — Aggiungere gli occhi",
+   "domandaPrePratica": "",
+   "domanda": "Durante i 2 minuti di Observer, quale tipo di pensiero è arrivato di più? Passato, Futuro o Giudizio?\n(E se non sei sicuro della categoria, descrivi il pensiero com'è arrivato.)",
+   "contesto": "La mente produce pensieri di continuo: fermarli non è l'obiettivo. Si lavora sul rapporto con loro. Dare un nome a un pensiero o a un'emozione (labeling) è studiato in psicologia: alcune ricerche suggeriscono che possa ridurne un po' l'intensità emotiva, creando distanza tra la persona e il pensiero. Le tre etichette Passato, Futuro, Giudizio sono una scelta pratica del metodo, non una classificazione scientifica. Nominare non obbliga il pensiero a sparire: se resta, l'esercizio è riuscito lo stesso. Se il giocatore dice che non è cambiato niente, è un dato valido, non un errore suo e non una prova che il metodo funziona: guarda se la pratica è chiara e se riesce a farla.",
+   "domandeGate": [],
+   "isGate": false
+  }
+ ]
+}
