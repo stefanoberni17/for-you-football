@@ -20,7 +20,9 @@ import { calcolaCarico, caricoSquadraStimato, STATO_LABEL } from '@/lib/training
 import { giorniPartita } from '@/lib/trainingSquadra';
 import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
-import { SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
+import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
+import { contaTemi, sceltaMix, tecnicaDelMese, temaProssimo, TEMI, tettoTiri, ultimoTemaTecnica } from '@/lib/trainingTecnicaComposta';
+import { prioritaTecnica } from '@/lib/trainingTecnica';
 import { loadFocusSetup, loadPreferenzeSetup, loadSquadraCompleta } from '@/lib/trainingPlanner';
 import { PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
@@ -195,6 +197,13 @@ export async function GET(request: NextRequest) {
     Object.assign(setup, preferenzeSetup);
     // Infortuni e limitazioni (migration 036): stessa cosa, colonna a parte
     if (limitazioni) setup.limitazioni = limitazioni;
+    const tecnicaMeseDi = () => {
+      if (!setup.attrezzatura.includes('campo')) return null;
+      const conteggi = contaTemi(feedbackRecenti, mondayOfThisWeekRome());
+      const scelta = temaProssimo(conteggi, { ammessi: TEMI, priorita: prioritaTecnica(rows)?.priorita ?? null, ultimo: ultimoTemaTecnica(feedbackRecenti) });
+      const minuti = Math.min(MAX_DURATA_PER_FASE[setup.fase], setup.durataMin ?? MAX_DURATA_PER_FASE[setup.fase]);
+      return tecnicaDelMese(conteggi, scelta, { tecnicaObiettivo: setup.focus.some((f) => f === 'tecnica' || f === 'tutto'), mix: sceltaMix(scelta, minuti), tiri: tettoTiri(feedbackRecenti) });
+    };
     const squadraStimato = caricoSquadraStimato({
       trainingDays: calendar?.training_days || [], matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale),
       squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
@@ -369,6 +378,8 @@ export async function GET(request: NextRequest) {
       maxSeduteFisiche: maxSeduteFisiche(setup.fase),
       maxSeduteTotali: maxSeduteTotali(setup.fase),
       squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, latoDeboleAlto: squilibri.latoDeboleAlto, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
+      // La tecnica del mese (26/10 sera): quote di Ste contro le sedute delle ultime 4 settimane, il tema della prossima
+      tecnicaMese: tecnicaMeseDi(),
       mese: mese && mese.settimane ? { settimane: mese.settimane, righe: meseRigheAtleta(mese), priorita: mese.priorita, riordinato: mese.riordinato, daChiedere: mese.daChiedere } : null,
     });
   } catch (err) {

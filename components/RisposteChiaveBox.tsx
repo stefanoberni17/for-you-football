@@ -6,7 +6,7 @@ import { BookOpen, ChevronRight, PenLine } from 'lucide-react';
 import { authFetch } from '@/lib/authFetch';
 import { Button } from '@/components/ui';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
-import { chiaviPerGiorno, testoChiave, type RispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
+import { chiaviPerGiorno, testoChiave, testoDaModificare, type RispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
 
 /**
  * "Le tue risposte" dentro un giorno del percorso (22/10, review W11): nei giorni elencati in
@@ -16,15 +16,19 @@ import { chiaviPerGiorno, testoChiave, type RispostaChiave, type RispostaRow } f
  * Dal 26/10 (Carta modificabile) anche i riquadri della Carta che Notion chiede con "Mostra Carta" (`mostraCarta`),
  * con il titolo "Questo è quello che avevi scritto". Fuori dai giorni elencati non rende nulla.
  */
-export default function RisposteChiaveBox({ week, day, mostraCarta, className = '' }: { week: number; day: number; mostraCarta?: string[] | null; className?: string }) {
-  const chiavi = chiaviPerGiorno(week, day, mostraCarta);
+export default function RisposteChiaveBox({ week, day, mostraCarta, className = '', senzaBordo = false }: { week: number; day: number; mostraCarta?: string[] | null; className?: string; senzaBordo?: boolean }) {
+  const bordo = senzaBordo ? '' : 'border-t border-divider';
+  const tutte = chiaviPerGiorno(week, day, mostraCarta);
+  // «Il tuo momento» (W1-G2) sta in una riga sola, sopra; le altre nei riquadri da aprire
+  const inline = (tutte ?? []).filter((c) => c.inline);
+  const chiavi = tutte ? tutte.filter((c) => !c.inline) : null;
   const daNotion = !!mostraCarta?.length;
   const [rows, setRows] = useState<RispostaRow[] | null>(null);
   const [errore, setErrore] = useState(false);
   const [modifica, setModifica] = useState<RispostaChiave | null>(null);
 
   useEffect(() => {
-    if (!chiavi || chiavi.length === 0) return;
+    if (!tutte || tutte.length === 0) return;
     let vivo = true;
     (async () => {
       try {
@@ -42,7 +46,47 @@ export default function RisposteChiaveBox({ week, day, mostraCarta, className = 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [week, day, (mostraCarta ?? []).join(',')]);
 
-  if (!chiavi) return null;
+  if (!tutte) return null;
+
+  const righeInline = inline.map((c) => {
+    const row = rows?.find((r) => r.week === c.week && r.day === c.day);
+    const testo = testoChiave(row, c);
+    return (
+      <div key={`${c.week}-${c.day}`} className="flex items-start gap-2">
+        <p className="flex-1 min-w-0 text-body text-app leading-relaxed pt-2.5">
+          <span className="font-semibold">{c.label}:</span>{' '}
+          {errore ? <span className="text-muted">non sono riuscito a caricarlo</span>
+            : rows === null ? <span className="text-faint">…</span>
+            : testo ? <span className="whitespace-pre-line">«{testo}»</span>
+            : <span className="text-muted">non l’hai ancora scritto</span>}
+        </p>
+        {!errore && rows !== null && (
+          <Button variant="ghost" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(c)}>
+            {testo ? 'Modifica' : 'Scrivilo'}
+          </Button>
+        )}
+      </div>
+    );
+  });
+  const foglio = modifica && (
+    <ModificaRispostaSheet
+      week={modifica.week}
+      day={modifica.day}
+      testoIniziale={testoDaModificare((rows || []).find((r) => r.week === modifica.week && r.day === modifica.day), modifica)}
+      open
+      onClose={() => setModifica(null)}
+      onSalvata={(t) => setRows((prev) => {
+        const lista = prev ? [...prev] : [];
+        const i = lista.findIndex((r) => r.week === modifica.week && r.day === modifica.day);
+        const base: RispostaRow = i >= 0 ? lista[i] : { week: modifica.week, day: modifica.day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null };
+        const nuova: RispostaRow = modifica.gateQ
+          ? { ...base, gateQ: { ...(base.gateQ ?? {}), [modifica.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
+          : { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
+        if (i >= 0) lista[i] = nuova; else lista.push(nuova);
+        return lista;
+      })}
+    />
+  );
 
   const link = (
     <Link href="/risposte" className="min-h-[44px] flex items-center gap-2 text-body-sm font-semibold text-forest-300">
@@ -52,16 +96,22 @@ export default function RisposteChiaveBox({ week, day, mostraCarta, className = 
     </Link>
   );
 
-  if (chiavi.length === 0) {
-    return <div className={`border-t border-divider ${className}`}>{link}</div>;
+  // Solo il momento: una riga, niente riquadri né link
+  if (chiavi!.length === 0 && righeInline.length) {
+    return <div className={`${bordo} pt-1 ${className}`}>{righeInline}{foglio}</div>;
+  }
+
+  if (chiavi!.length === 0) {
+    return <div className={`${bordo} ${className}`}>{link}</div>;
   }
 
   return (
-    <div className={`border-t border-divider pt-3 ${className}`}>
+    <div className={`${bordo} pt-3 ${className}`}>
       <p className="text-overline uppercase tracking-wider font-bold text-muted mb-1">{daNotion ? 'Questo è quello che avevi scritto' : 'Le tue risposte'}</p>
       {errore && <p className="text-body-sm text-muted">Non sono riuscito a caricarle. Le trovi nel Profilo, in «Le tue risposte».</p>}
       {!errore && rows === null && <p className="text-body-sm text-faint">Carico le tue risposte…</p>}
-      {!errore && rows !== null && chiavi.map((c: RispostaChiave) => {
+      {righeInline}
+      {!errore && rows !== null && chiavi!.map((c: RispostaChiave) => {
         const row = rows.find((r) => r.week === c.week && r.day === c.day);
         const testo = testoChiave(row, c);
         return (
@@ -90,25 +140,7 @@ export default function RisposteChiaveBox({ week, day, mostraCarta, className = 
         );
       })}
       {link}
-      {modifica && (
-        <ModificaRispostaSheet
-          week={modifica.week}
-          day={modifica.day}
-          testoIniziale={testoChiave((rows || []).find((r) => r.week === modifica.week && r.day === modifica.day), modifica) || ''}
-          open
-          onClose={() => setModifica(null)}
-          onSalvata={(t) => setRows((prev) => {
-            const lista = prev ? [...prev] : [];
-            const i = lista.findIndex((r) => r.week === modifica.week && r.day === modifica.day);
-            const base: RispostaRow = i >= 0 ? lista[i] : { week: modifica.week, day: modifica.day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null };
-            const nuova: RispostaRow = modifica.gateQ
-              ? { ...base, gateQ: { q1: null, q2: null, q3: null, ...(base.gateQ ?? {}), [modifica.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
-              : { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
-            if (i >= 0) lista[i] = nuova; else lista.push(nuova);
-            return lista;
-          })}
-        />
-      )}
+      {foglio}
     </div>
   );
 }

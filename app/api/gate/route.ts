@@ -4,29 +4,33 @@ import { createClient } from '@supabase/supabase-js';
 import { queryDatabase, mapGiorno, senzaRegia } from '@/lib/notion';
 import { GATE_DAY } from '@/lib/constants';
 import { checkDayUnlocked, parseWeekDay, settimanaProntaPerIlGate } from '@/lib/serverUnlock';
-import { rispostaChiaveInfo } from '@/lib/risposteChiave';
+import { gateRisposteValide, rispostaChiaveInfo } from '@/lib/risposteChiave';
 import { registraVersione } from '@/lib/risposteServer';
 
 export const maxDuration = 60;
 
-const GATE_ANSWER_MAX = 1500;
-const GATE_QUESTIONS = 3;
-
-/** Le risposte del gate: oggetto q1..q3 con testo non vuoto (come la pagina), tagliato a 1500. */
-function gateAnswersValide(raw: unknown): Record<string, string> | null {
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
-  const out: Record<string, string> = {};
-  for (let i = 1; i <= GATE_QUESTIONS; i++) {
-    const v = (raw as Record<string, unknown>)[`q${i}`];
-    if (typeof v !== 'string' || !v.trim()) return null;
-    out[`q${i}`] = v.trim().slice(0, GATE_ANSWER_MAX);
-  }
-  return out;
-}
 import { getAuthUser } from '@/lib/auth';
 import { requirePaidAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
+
+/** Quante domande ha il Gate della settimana su Notion; null se non si riesce a leggerlo. */
+async function contaDomandeGate(week: number): Promise<number | null> {
+  try {
+    const pages = await queryDatabase(process.env.NOTION_DATABASE_GIORNI!, {
+      filter: {
+        and: [
+          { property: 'Numero Settimana', number: { equals: week } },
+          { property: 'Numero Giorno', number: { equals: GATE_DAY } },
+        ],
+      },
+    });
+    const n = pages.length ? mapGiorno(pages[0]).domandeGate.length : 0;
+    return n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -104,10 +108,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'payment_required' }, { status: 403 });
     }
     const wd = parseWeekDay(body.weekNumber, GATE_DAY);
-    const answers = gateAnswersValide(body.answers);
+    // Tutte le domande del Gate (da W6 sono quattro): quante sono lo dice Notion (in cache);
+    // se Notion non risponde, q1..qN consecutive con almeno tre
+    const domande = wd ? await contaDomandeGate(wd.weekNumber) : null;
+    const answers = gateRisposteValide(body.answers, domande ?? undefined);
     if (!wd || !answers) {
       return NextResponse.json(
-        { error: 'weekNumber (1-12) e answers (tre risposte non vuote, max 1500 caratteri) richiesti' },
+        { error: 'weekNumber (1-12) e answers (una risposta non vuota per ogni domanda, almeno tre, max 1500 caratteri) richiesti' },
         { status: 400 }
       );
     }

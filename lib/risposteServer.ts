@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { GATE_DAY } from '@/lib/constants';
-import { RISPOSTE_CHIAVE, rispostaChiaveInfo, type RispostaRow, type VersionePrecedente } from '@/lib/risposteChiave';
+import { RISPOSTE_CHIAVE, gateLista, gateRisposte, rispostaChiaveInfo, type RispostaRow, type VersionePrecedente } from '@/lib/risposteChiave';
 
 /**
  * Le risposte scritte durante il percorso, lette dal server (per /api/risposte e per il Coach).
@@ -22,20 +22,6 @@ type ProgressRow = {
 };
 
 type ReflectionRow = { week_number: number; day_number: number; reflection_question: string | null; reflection_text: string | null };
-
-function gateList(g: Record<string, unknown> | null): string[] | null {
-  if (!g) return null;
-  const out = ['q1', 'q2', 'q3']
-    .map((k) => (typeof g[k] === 'string' ? (g[k] as string) : ''))
-    .filter((s) => s.trim());
-  return out.length ? out : null;
-}
-
-function gateQ(g: Record<string, unknown> | null): RispostaRow['gateQ'] {
-  if (!g) return null;
-  const q = (k: string) => (typeof g[k] === 'string' && (g[k] as string).trim() ? (g[k] as string) : null);
-  return { q1: q('q1'), q2: q('q2'), q3: q('q3') };
-}
 
 /**
  * Una riga per giorno con qualcosa di scritto (risposta del giorno, intenzione pre-pratica o
@@ -81,7 +67,7 @@ export async function loadRisposte(userId: string, filtro?: Array<[number, numbe
   for (const p of (progress || []) as ProgressRow[]) {
     if (filtro && !filtro.some(([w, d]) => w === p.week_number && d === p.day_number)) continue;
     const refl = domande.get(`${p.week_number}-${p.day_number}`);
-    const gate = p.day_number === GATE_DAY ? gateList(p.gate_answers) : null;
+    const gate = p.day_number === GATE_DAY ? gateLista(p.gate_answers) : null;
     const risposta = (p.response || refl?.reflection_text || '').trim() || null;
     const prePratica = (p.pre_pratica_response || '').trim() || null;
     if (!risposta && !prePratica && !gate) continue;
@@ -95,7 +81,7 @@ export async function loadRisposte(userId: string, filtro?: Array<[number, numbe
       risposta,
       prePratica,
       gate,
-      gateQ: p.day_number === GATE_DAY ? gateQ(p.gate_answers) : null,
+      gateQ: p.day_number === GATE_DAY ? gateRisposte(p.gate_answers) : null,
       completedAt: p.completed_at,
     });
   }

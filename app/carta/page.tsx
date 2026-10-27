@@ -362,7 +362,7 @@ export default function CartaPage() {
             const i = lista.findIndex((r) => r.week === chiave.week && r.day === chiave.day);
             const base: RispostaRow = i >= 0 ? lista[i] : { week: chiave.week, day: chiave.day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null };
             const nuova: RispostaRow = chiave.gateQ
-              ? { ...base, gateQ: { q1: null, q2: null, q3: null, ...(base.gateQ ?? {}), [chiave.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
+              ? { ...base, gateQ: { ...(base.gateQ ?? {}), [chiave.gateQ]: t }, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() }
               : { ...base, risposta: t, versioni: (base.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
             if (i >= 0) lista[i] = nuova; else lista.push(nuova);
             setRows(lista);

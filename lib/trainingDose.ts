@@ -81,13 +81,21 @@ export function prossimaDose(programma: ProgrammaDose, r: RiepilogoEsercizio | n
   // qualunque cosa dicano i voti di fatica; e il passo in più aspetta due sedute "ok" (la M5 non scavalca l'esecuzione)
   const es = r.esecuzione;
   if (es && es.passo !== 'normale') {
-    const meno = dosePerEsecuzione({ quantita: programma.quantita, carico_kg: programma.carico_kg, unita });
-    const perche = `l'ultima volta hai detto "${ESECUZIONE_LABEL[es.ultima]}"${es.passo === 'dedicata' ? ', e nella seduta dedicata poche ripetizioni pulite' : ''}`;
+    // Kettlebell (Ste, 26/10 sera): un kettlebell sotto E meno ripetizioni per pulire il gesto, poi si torna a salire
+    const kb = isEsercizioKettlebell(programma.esercizio_id);
+    // (il kettlebell sotto si conta dal peso usato l'ultima volta, se c'è: con 20 kg si scende a 16, non al peso di partenza)
+    const kgDa = kb && r.ultimaSeduta.caricoKg ? Math.max(r.ultimaSeduta.caricoKg, programma.carico_kg ?? 0) : programma.carico_kg;
+    const meno = dosePerEsecuzione({ quantita: programma.quantita, carico_kg: kgDa, unita }, kb ? KB_PASSO_KG : undefined);
+    const perche = `l'ultima volta hai detto "${ESECUZIONE_LABEL[es.ultima]}"${es.passo === 'dedicata' && !kb ? ', e nella seduta dedicata poche ripetizioni pulite' : ''}`;
     if (!meno) return { ...base, verso: 'scendi', motivo: `resti a ${programma.carico_kg ? `${programma.carico_kg} kg` : fmtDose(programma.quantita, unita)}, prima l'esecuzione pulita: ${perche}`, perche: es.motivo };
-    const kg = meno.caricoKg != null && meno.caricoKg !== (programma.carico_kg ?? null);
+    // (il kettlebell più leggero può coincidere con quello del programma: 20 → 16 sul programma 16, si dice lo stesso il peso)
+    const kg = meno.caricoKg != null && meno.caricoKg !== (kgDa ?? null);
+    const q = meno.quantita !== programma.quantita;
+    const dose = kb ? [kg ? `${meno.caricoKg} kg` : null, q ? `${fmtDose(meno.quantita, unita)} ripetizioni` : null].filter(Boolean).join(' e ') : kg ? `${meno.caricoKg} kg` : fmtDose(meno.quantita, unita);
+    const come = kb ? (kg && q ? 'meno peso e meno ripetizioni, prima il gesto pulito' : kg ? 'meno peso, prima il gesto pulito' : 'meno ripetizioni, prima il gesto pulito') : kg ? 'meno peso' : 'meno';
     return {
       ...base, verso: 'scendi', cambiata: true, quantita: meno.quantita, caricoKg: meno.caricoKg,
-      motivo: `${kg ? `${meno.caricoKg} kg` : fmtDose(meno.quantita, unita)}, ${kg ? 'meno peso' : 'meno'}: ${perche}`,
+      motivo: `${dose}, ${come}: ${perche}`,
       condizioni: [`si risale solo con l'esecuzione "ok" per ${OK_PER_SBLOCCARE_SALI} sedute`], perche: es.motivo,
     };
   }

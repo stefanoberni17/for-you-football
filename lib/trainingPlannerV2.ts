@@ -41,9 +41,9 @@ import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } fr
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, prioritaTecnica, QUALITA_PRIORITA, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type PrioritaTecnicaInfo, type Ripasso } from './trainingTecnica';
 import { dataDiGiorno, addDays as addGiorni, GAMBE_DOPO_PARTITA as GAMBE_SCALA, gambeDopoPartitaDel, notaGambeDopoPartita, quantoGiocata, resocontiTesto, RESOCONTO_FATICA_ALTA, type GambeDopoPartita } from './trainingResoconto';
 import { costruisciResistenza, filtraResistenza, isResistenzaComposta, isResistenzaEverfit, RE_FINESTRA_PRIMA, RE_METABOLICO_ID, RE_RSA_ID, RE_SERIE_ID, RE_SERIE_MAX, RE_SERIE_START, reIdPer, resistenzaRegola, RSA_SERIE_MAX, RSA_SERIE_START, statoResistenza, type StatoResistenza } from './trainingResistenza';
-import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
+import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, isTecnicaMix, mixId, sceltaMix, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, temiDiId, tettoTiri, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
 import { posizioneScala } from './trainingTecnica';
-import { doseRegoleTesto } from './trainingDose';
+import { doseRegoleTesto, isEsercizioKettlebell } from './trainingDose';
 import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione } from './trainingEsecuzione';
 import { conflittiCalendario, ricollocaSedute, sedutaBloccata, type CalendarioSettimana, type ConflittoCalendario } from './trainingCalendario';
 import { esercizioAny } from './trainingExercise';
@@ -51,7 +51,7 @@ import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiorna
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.44-salite-in-season-resistenza-senza-campo';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.45-tecnica-combinata-kettlebell-pulito';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -338,15 +338,19 @@ export function aggiornaTecnica(ctx: ContextV2, lunediCorrente = mondayOfThisWee
   const memM = ctx.memoriaTecnica.scale['Tecnica · muro'];
   const posP = memP ? posizioneScala('Tecnica · palleggi', memP.prossimo.id) : -1;
   const posM = memM ? posizioneScala('Tecnica · muro', memM.prossimo.id) : -1;
-  const te = costruisciTecnica({
-    livello: livelloDi(ctx.base.livelli, 'tecnica-palleggi', ctx.v2.livello), attrezzatura: ctx.setup.attrezzatura, inCoppia: ctx.setup.compagno,
-    minuti: Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata), ...(posP >= 0 ? { posPalleggi: posP } : {}), ...(posM >= 0 ? { posMuro: posM } : {}),
-    leggera: ctx.obiettivi.includes('tecnica') || ctx.obiettivi.includes(FOCUS_TUTTO),
-  });
-  ctx.blocchi.push(...te);
   const conteggi = contaTemi(ctx.base.feedbackRecenti, lunediCorrente);
   const scelta = temaProssimo(conteggi, { ammessi: TEMI, priorita: ctx.prioritaTecnica?.priorita ?? null, ultimo: ultimoTemaTecnica(ctx.base.feedbackRecenti) });
-  ctx.tecnica = { conteggi, scelta, temaPreferito: scelta.tema };
+  const minuti = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
+  const mix = sceltaMix(scelta, minuti); // a volte due temi indietro insieme si combinano (Ste, 26/10 sera)
+  const tiri = tettoTiri(ctx.base.feedbackRecenti); // il tetto dei tiri sale piano con il tempo (Ste, 26/10 sera)
+  const te = costruisciTecnica({
+    livello: livelloDi(ctx.base.livelli, 'tecnica-palleggi', ctx.v2.livello), attrezzatura: ctx.setup.attrezzatura, inCoppia: ctx.setup.compagno,
+    minuti, ...(posP >= 0 ? { posPalleggi: posP } : {}), ...(posM >= 0 ? { posMuro: posM } : {}),
+    leggera: ctx.obiettivi.includes('tecnica') || ctx.obiettivi.includes(FOCUS_TUTTO), mix, tiriMax: tiri.tetto,
+  });
+  ctx.blocchi.push(...te);
+  const mixCostruito = mix && te.some((b) => b.id === mixId(mix.primo, mix.secondo)) ? mix : null;
+  ctx.tecnica = { conteggi, scelta, temaPreferito: scelta.tema, mix: mixCostruito, tiri };
 }
 
 /** L'asse partita per la tecnica nel giorno `giorno` (lib/trainingTecnicaComposta.asseTecnica), con il resoconto della partita. */
@@ -363,13 +367,19 @@ export function asseTecnicaDi(ctx: ContextV2, giorno: number): AsseTecnica {
   return asseTecnica({ giorniAllaPartita: gp, giorniDallaPartita: gd, giocata, faticaAlta });
 }
 
-/** I blocchi `te-*` che possono stare nel giorno `giorno`, nell'ordine dei temi per deficit (il preferito per primo); a −1 solo `te-leggera`. */
+/**
+ * I blocchi `te-*` che possono stare nel giorno `giorno`, nell'ordine dei temi per deficit (il preferito per primo); a −1
+ * solo `te-leggera`. La seduta combinata della settimana (se c'è) viene subito prima del tema del suo primo, quando il
+ * giorno ammette tutte e due i temi e nessuno dei due è già stato usato.
+ */
 export function tecnicaPerGiorno(ctx: ContextV2, giorno: number, esclusi: ReadonlySet<TemaTecnica> = new Set()): Blocco[] {
   if (!ctx.tecnica) return [];
   const asse = asseTecnicaDi(ctx, giorno);
   if (asse.leggera) return ctx.blocchi.filter((b) => b.id === TE_LEGGERA_ID);
   const ordine = ctx.tecnica.scelta.ordine.filter((t) => asse.ammessi.includes(t) && !esclusi.has(t));
-  return ordine.map((t) => ctx.blocchi.find((b) => b.id === teId(t))).filter((b): b is Blocco => !!b);
+  const mix = ctx.tecnica.mix;
+  const mixBlocco = mix && asse.ammessi.includes(mix.secondo) && !esclusi.has(mix.secondo) ? ctx.blocchi.find((b) => b.id === mixId(mix.primo, mix.secondo)) : undefined;
+  return ordine.flatMap((t) => [...(mixBlocco && mix?.primo === t ? [mixBlocco] : []), ctx.blocchi.find((b) => b.id === teId(t))]).filter((b): b is Blocco => !!b);
 }
 
 /**
@@ -665,8 +675,9 @@ const isTecnicaEverfit = (b: Blocco) => b.qualita.startsWith('tecnica') && !isTe
 
 /**
  * Tecnica dal server (Ste, 26/10): ogni workout Everfit di tecnica scelto da Claude lascia il posto al `te-*` del tema
- * più indietro sulle quote che l'asse partita ammette quel giorno (a −1 `te-leggera`); un tema una volta a settimana
- * finché ce ne sono altri; gli altri blocchi di tecnica della stessa giornata escono (una seduta = un tema).
+ * più indietro sulle quote che l'asse partita ammette quel giorno (a −1 `te-leggera`; a volte la seduta combinata di due
+ * temi indietro insieme); un tema una volta a settimana finché ce ne sono altri; gli altri blocchi di tecnica della stessa
+ * giornata escono (un solo `te-*` per giornata).
  * Ritorna, per giorno, la mappa id Everfit → id `te-*` (null = togliere).
  */
 export function sostituzioniTecnica(p: PianoLLM, ctx: ContextV2): Map<number, Map<string, string | null>> {
@@ -674,7 +685,7 @@ export function sostituzioniTecnica(p: PianoLLM, ctx: ContextV2): Map<number, Ma
   if (!ctx.tecnica || !ctx.blocchi.some((b) => isTecnicaComposta(b.id))) return out;
   const disponibili = new Set(ctx.blocchi.map((b) => b.id));
   const usati = new Set<TemaTecnica>();
-  const segna = (id: string) => { const t = temaDiId(id); if (t) usati.add(t); };
+  const segna = (id: string) => { for (const t of temiDiId(id)) usati.add(t); };
   for (const s of ctx.sedutePassate ?? []) for (const b of s.blocchi ?? []) segna(b.id);
   for (const s of p.sedute || []) for (const id of Array.isArray(s.blocchi) ? s.blocchi : []) segna(id);
   const sedute = [...(p.sedute || [])].sort((a, b) => Number(a.giorno) - Number(b.giorno));
@@ -738,7 +749,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const sostParteBassa = sostituzioniParteBassa(p, ctx);
   const sostTecnica = sostituzioniTecnica(p, ctx);
   const sostResistenza = sostituzioniResistenza(p, ctx);
-  const temiSettimana = new Map<TemaTecnica, number>(); // tema → giorno: un tema una volta a settimana (una seduta = un tema)
+  const temiSettimana = new Map<TemaTecnica, number>(); // tema → giorno: un tema una volta a settimana (la combinata segna i suoi due)
   const paSettimana = new Set<string>();
   const pbSettimana = new Set<string>(); // formati di gambe dalle scale già usati (per gruppo: serie/breve/Fmax = un posto)
   const velocitaVera = (b: Blocco) => !isParteAlta(b.id) && b.id !== RISC_VELOCITA_ID && !isPrePartita(b) && isVelocita(b);
@@ -746,7 +757,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const passate = ctx.sedutePassate ?? [];
   const blocchiPassati = passate.flatMap((s) => (s.blocchi ?? []).map((b) => bloccoDi(ctx, b.id)).filter((b): b is Blocco => !!b));
   for (const b of blocchiPassati) { if (isParteAlta(b.id)) paSettimana.add(b.id); if (isParteBassa(b.id)) pbSettimana.add(gruppoParteBassa(b.id)); if (b.qualita === 'forza-parte-bassa' || b.qualita === 'forza-parte-alta') blocchiForza++; }
-  for (const ps of passate) for (const b of ps.blocchi ?? []) { const t = temaDiId(b.id); if (t) temiSettimana.set(t, ps.giorno); }
+  for (const ps of passate) for (const b of ps.blocchi ?? []) for (const t of temiDiId(b.id)) temiSettimana.set(t, ps.giorno);
   // Sprint: tetto per seduta più basso se nella settimana c'è l'EMOM della parte alta con lo sprint (Ste, 25/9)
   const settimanaConEmom = paSettimana.has(PA_EMOM_ID) || (p.sedute || []).some((s) => (Array.isArray(s.blocchi) ? s.blocchi : []).includes(PA_EMOM_ID))
     || [...sostParteAlta.values()].some((m) => [...m.values()].includes(PA_EMOM_ID));
@@ -836,24 +847,29 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     {
       const giornoS = Number(s.giorno);
       const te = blocchi.filter((b) => isTecnicaComposta(b.id));
-      if (te.length > 1) errors.push(`seduta del giorno ${s.giorno}: ${te.map((b) => b.id).join(' + ')} — una seduta di tecnica = UN tema: lascia un solo blocco te-*`);
+      if (te.length > 1) errors.push(`seduta del giorno ${s.giorno}: ${te.map((b) => b.id).join(' + ')} — un solo blocco te-* per giornata (per due temi insieme c'è la seduta combinata del server, quando serve)`);
       if (te.length) {
         const asse = asseTecnicaDi(ctx, giornoS);
         for (const b of te) {
-          const tema = temaDiId(b.id);
+          const temi = temiDiId(b.id);
           if (b.id === TE_LEGGERA_ID) {
             if (!asse.leggera) errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è solo per il giorno PRIMA della partita — negli altri giorni usa un tema (${TEMI.map(teId).join(', ')})`);
             else noteMemoria.set(b.id, `facoltativa: ${asse.motivo}`);
             continue;
           }
-          if (!tema) continue;
+          if (!temi.length) continue;
+          const fuori = temi.filter((t) => !asse.ammessi.includes(t));
           if (asse.leggera) errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" il giorno prima della partita — qui solo ${TE_LEGGERA_ID} (poca roba, facoltativa) o il blocco pre partita`);
-          else if (!asse.ammessi.includes(tema)) errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" — ${asse.motivo}${asse.ammessi.length ? `: usa ${asse.ammessi.map(teId).join(' o ')}` : ''}`);
-          const gia = temiSettimana.get(tema);
-          if (gia !== undefined && gia !== giornoS && TEMI.some((t) => !temiSettimana.has(t) && asse.ammessi.includes(t)))
-            errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è già nella settimana (${DAY_NAMES[gia]}) — un tema una volta a settimana finché ce ne sono altri: ${TEMI.filter((t) => !temiSettimana.has(t) && asse.ammessi.includes(t)).map(teId).join(', ')}`);
-          temiSettimana.set(tema, giornoS);
-          if (ctx.tecnica?.temaPreferito === tema) noteMemoria.set(b.id, [noteMemoria.get(b.id), ctx.tecnica.scelta.motivo].filter(Boolean).join(' · '));
+          else if (fuori.length) errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" — ${asse.motivo}${asse.ammessi.length ? `: usa ${asse.ammessi.map(teId).join(' o ')}` : ''}`);
+          const liberi = () => TEMI.filter((t) => !temiSettimana.has(t) && asse.ammessi.includes(t));
+          for (const tema of temi) {
+            const gia = temiSettimana.get(tema);
+            if (gia !== undefined && gia !== giornoS && liberi().length)
+              errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è già nella settimana (${DAY_NAMES[gia]}) — un tema una volta a settimana finché ce ne sono altri: ${liberi().map(teId).join(', ')}`);
+          }
+          for (const tema of temi) temiSettimana.set(tema, giornoS);
+          if (isTecnicaMix(b.id)) noteMemoria.set(b.id, [noteMemoria.get(b.id), 'due temi indietro insieme questo mese: soprattutto il primo, poi un po\' del secondo'].filter(Boolean).join(' · '));
+          else if (ctx.tecnica?.temaPreferito === temi[0]) noteMemoria.set(b.id, [noteMemoria.get(b.id), ctx.tecnica.scelta.motivo].filter(Boolean).join(' · '));
         }
       }
     }
@@ -1245,7 +1261,7 @@ function tecnicaCompostaRegola(ctx: ContextV2): string {
   if (!te.length || !ctx.tecnica) return '';
   const asseRighe = [1, 2, 3, 4, 5, 6, 7].map((g) => { const a = asseTecnicaDi(ctx, g); return `${DAY_NAMES[g]}: ${a.leggera ? `solo \`${TE_LEGGERA_ID}\`` : a.ammessi.length === TEMI.length ? 'tutto' : a.ammessi.length ? a.ammessi.map(teId).join(', ') : 'niente tecnica'}`; });
   return `
-28b. TECNICA COMPOSTA DAL CATALOGO (blocchi \`te-*\`, costruiti dal server sugli esercizi al livello dell'atleta e sui suoi codici delle scale: preferiscili SEMPRE ai workout Everfit di tecnica, che il server sostituisce comunque). Una seduta di tecnica = UN tema (Ste: "non farei mix su tutto"), un solo \`te-*\` per giornata, un tema una volta a settimana finché ce ne sono altri. ${statoTecnicaTesto(ctx.tecnica)}
+28b. TECNICA COMPOSTA DAL CATALOGO (blocchi \`te-*\`, costruiti dal server sugli esercizi al livello dell'atleta e sui suoi codici delle scale: preferiscili SEMPRE ai workout Everfit di tecnica, che il server sostituisce comunque). Una seduta di tecnica è centrata su un tema (Ste: "non farei mix su tutto"); a volte due temi si combinano un po' (Ste, 26/10 sera): quando due temi sono indietro insieme il server costruisce la seduta combinata \`te-mix-*\` (soprattutto il primo, poi qualche esercizio del secondo); la seduta di tiri \`${teId('tiro')}\` è sempre combinata (Ste: "apertura passaggi e stop, dribbling e finale con tiri; una sessione solo di tiri è lunga e alla lunga stanca i muscoli"): passaggi e stop, dribbling, riscaldamento alla traversa e i tiri in fondo: questa settimana al massimo ${ctx.tecnica.tiri?.tetto ?? 20} (${ctx.tecnica.tiri?.motivo ?? ''}; Ste: "si può aumentare, ma graduale": +5 ogni 2 sedute di tiri andate bene, fino a 40, −5 dopo una dura; lo decide il server); un solo \`te-*\` per giornata, un tema una volta a settimana finché ce ne sono altri. ${statoTecnicaTesto(ctx.tecnica)}
 - Asse partita per la tecnica (Ste): dopo una partita giocata tutta (+1, e +2 con fatica alta) solo \`${teId('palleggi')}\` e \`${teId('passaggi')}\`; il giorno prima solo \`${TE_LEGGERA_ID}\` (poca roba, max 10 tiri, FACOLTATIVA: si aggiunge al blocco pre partita se la tecnica è tra gli obiettivi); da 2 giorni prima tutto, anche tiri, dribbling e freestyle; i tiri a centro/fine settimana con poco volume (una seduta dedicata solo se l'atleta la chiede). ${ctx.base.matchDays.length ? `Questa settimana: ${asseRighe.join(' · ')}.` : 'Questa settimana non c\'è partita: tutto ammesso ogni giorno.'}
 - Tiri e dribbling sono le parti faticose: mai sopra la quota se non su richiesta, le prime a scendere con fatica o calendario pieno. La visione con il video dei segnali è leggera, sulla tecnica, mai in affanno (il server lo scrive sugli esercizi).
 Composizione: ${te.map(tecnicaCompostaTesto).join(' || ')}`;
@@ -1444,7 +1460,7 @@ export function contestoDati(ctx: ContextV2): string {
   const b = ctx.base;
   const memoria = (b.obiettivi || b.note) ? `\n# MEMORIA ATLETA\nObiettivi: ${b.obiettivi || '—'}\nNote recenti: ${b.note || '—'}` : '';
   const dose = b.storicoSerie.length ? `\n${doseRegoleTesto()}` : '';
-  return `${memoria}${obiettiviTesto(ctx)}${ctx.vincoli.obiettivi?.length ? '' : meseTesto(ctx.mese, ctx.base.focusSetup)}${memoriaBlocchiTesto(ctx.memoria)}${storicoSerieBlock(b)}${dose}${squilibriTesto(b.squilibri)}${esecuzioneTesto(ctx.esecuzione ?? [], (id) => esercizioAny(id)?.nome ?? id)}${resocontiTesto(b.resoconti ?? [], b.squadra)}${caricoTesto(b.carico)}`;
+  return `${memoria}${obiettiviTesto(ctx)}${ctx.vincoli.obiettivi?.length ? '' : meseTesto(ctx.mese, ctx.base.focusSetup)}${memoriaBlocchiTesto(ctx.memoria)}${storicoSerieBlock(b)}${dose}${squilibriTesto(b.squilibri)}${esecuzioneTesto(ctx.esecuzione ?? [], (id) => esercizioAny(id)?.nome ?? id, isEsercizioKettlebell)}${resocontiTesto(b.resoconti ?? [], b.squadra)}${caricoTesto(b.carico)}`;
 }
 export function contestoTecnica(ctx: ContextV2): string {
   return `${tecnicaTesto(ctx.memoriaTecnica, ctx.blocchi, ctx.prioritaTecnica)}${tecnicaCompostaRegola(ctx)}${ripassoTesto(ctx.ripassoTecnica)}`;
@@ -1570,7 +1586,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   // progressione più bassa, short; prima quelli che stanno nel tempo. Il kettlebell solo con i kb-* e i kb-* solo per
   // il kettlebell (un blocco kb copre SOLO quell'obiettivo: 15/10, il base metteva Forza Esplosiva A1 al posto del kb)
   // Sedute sulle scale e tecnica composta prima dei blocchi Everfit; il richiamo mai come principale. La tecnica composta nell'ordine dei temi per deficit (il preferito per primo)
-  const teRank = (x: Blocco) => { const t = temaDiId(x.id); const i = t && ctx.tecnica ? ctx.tecnica.scelta.ordine.indexOf(t) : -1; return i >= 0 ? i / 10 : 0; };
+  const teRank = (x: Blocco) => { const t = temaDiId(x.id); const i = t && ctx.tecnica ? ctx.tecnica.scelta.ordine.indexOf(t) : -1; return i >= 0 ? i / 10 - (isTecnicaMix(x.id) ? 0.05 : 0) : 0; }; // la combinata subito prima del suo primo tema
   // Punto 18: l'EMOM che contiene un esercizio in seduta dedicata va per primo (è la seduta dedicata)
   const dedicati = new Set(inDifficolta(ctx.esecuzione).map((s) => s.esercizioId));
   const emomDed = (x: Blocco) => (x.id === PA_EMOM_ID || x.id === PB_EMOM_ID) && x.items.some((it) => !!it.esercizio_id && dedicati.has(it.esercizio_id));
@@ -1659,7 +1675,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const priorita = (ctx.prioritaTecnica ? QUALITA_PRIORITA[ctx.prioritaTecnica.priorita] : []) as QualitaV2[];
     const qualita = [...priorita, ...base.filter((q) => !priorita.includes(q))];
     // Tecnica composta (26/10): i `te-*` del tema più indietro per primi (quelli che l'asse partita ammette quel giorno; a −1 la leggera)
-    const te = g !== undefined ? tecnicaPerGiorno(ctx, g, new Set([...usatiBlocchi].map(temaDiId).filter((t): t is TemaTecnica => !!t))) : [];
+    const te = g !== undefined ? tecnicaPerGiorno(ctx, g, new Set([...usatiBlocchi].flatMap(temiDiId))) : [];
     return [...(pre ? [pre] : []), ...te, ...nelTempoPrima(qualita.flatMap((q) => ctx.blocchi.filter((x) => x.qualita === q && x.id !== fascia?.id && !isTecnicaComposta(x.id) && ammessoDallaMemoria(ctx.memoria, x)).sort(rankLeggero)))];
   };
   const disponibili = new Set(ctx.blocchi.map((x) => x.id));
