@@ -31,11 +31,13 @@ Reset.
 
 # W1-G1: 5 respiri senza gesto
 def respiro5_g1():
-    s = """Inspira dal naso, gonfia la pancia. Quattro secondi.
+    s = """Primo respiro, insieme. Inspira dal naso gonfiando la pancia, non il petto. Quattro secondi.
 [SILENZIO 4]
-Espira dalla bocca, piano, come se alitassi su un vetro. Sei secondi.
+Espira piano dalla bocca, come se alitassi su un vetro. Sei secondi.
 [SILENZIO 6]
-Ancora. Inspira dal naso.
+Adesso continua così, altre quattro volte. Cinque respiri in tutto.
+[SILENZIO 1]
+Inspira dal naso.
 [SILENZIO 4]
 Espira dalla bocca, lentamente.
 [SILENZIO 6]
@@ -117,41 +119,89 @@ Espira, e lascia andare.
 [SILENZIO 6]
 Rilascia."""
 
+# W1 dal G3: «la tua parola» al posto di «mantra» (Notion 27/10). Le righe uguali restano in cache.
+def reset5_parola():
+    return """Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, la tua parola dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Inspira, gesto.
+[SILENZIO 4]
+Espira, la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Inspira dal naso, le dita unite.
+[SILENZIO 4]
+Espira dalla bocca, e la tua parola dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia."""
+
+RESET3P = """Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, la tua parola dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia."""
+
 F = {}
 
-F["W1-G1"] = f"""[sincere]
-Oggi inizi.
-[SILENZIO 2]
-[relaxed]
+F["W1-G1"] = f"""[relaxed]
 Sono passato da vomitare prima delle partite, terrorizzato e bloccato dalla paura, a giocare davanti a diecimila persone.
 [SILENZIO 2]
 Non è successo in una settimana, e non è successo per magia. È successo allenando la testa, come si allena qualsiasi altra cosa.
+[SILENZIO 2]
+Magari a te non succede come a me. Ma hai presente quando sbagli un appoggio e, due azioni dopo, stai ancora litigando con quel pallone? Ecco, partiamo da lì.
 [SILENZIO 2]
 [sincere]
 Oggi inizi anche tu. E non ti chiedo di pensare: ti chiedo solo di respirare.
 [relaxed]
 Lo so, detta così sembra la cosa più inutile del mondo: respiri da quando sei nato, e finora non ti ha mai fatto segnare un gol. Dammi tre minuti lo stesso.
 [SILENZIO 2]
-[TAGLIO]
 [sincere]
-Una cosa prima di partire. La differenza in campo non la senti domani, e non ti posso dire quando arriva: per qualcuno prima, per qualcuno dopo. Adesso stai costruendo uno strumento, e conta esserci, un giorno alla volta.
-[SILENZIO 3]
+Oggi non devi diventare più tranquillo: provi cinque respiri e mi dici com'è andata. Domani ci aggiungiamo un gesto piccolo, da usare nelle pause in campo.
+[relaxed]
+Tranquillo: è un gesto praticamente invisibile, e nessuno se ne accorgerà. Non devi metterti a terra a gambe incrociate come il Buddha.
+[TAGLIO]
 [meditative]
-Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e posaci sopra gli occhi senza mettere a fuoco. Come quando guardi nel vuoto.
+Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e appoggia lì lo sguardo, senza fissarlo con forza.
 [SILENZIO 3]
-Porta l'attenzione al punto centrale sotto allo sterno. La bocca dello stomaco.
+Adesso porta l'attenzione al punto sotto lo sterno, la bocca dello stomaco.
 [SILENZIO 3]
-Cinque respiri. Dal naso gonfiando la pancia, non il petto. Poi dalla bocca, lentamente.
-[SILENZIO 2]
 {respiro5_g1()}
 [SILENZIO 2]
 Bene. Resta un attimo così.
 [SILENZIO 4]
 [sincere]
-Non forzare il respiro. Se la mente è andata altrove, è normale. L'hai riportata al respiro, senza giudicarti. Era questo l'esercizio.
+Non forzare il respiro. Se la mente va altrove, è normale: riporta l'attenzione al respiro, senza giudicarti.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app: mentre allungavi l'espirazione, hai notato qualcosa nel corpo? Le spalle, la pancia, il ritmo. Anche una parola va bene.
+Adesso metti in pausa e scrivi nell'app: com'è stato fare questi cinque respiri? Sei riuscito a seguirli, o la testa ti portava altrove? Se qualcosa non era chiaro o era scomodo, dimmelo. Una riga va bene.
 """
 
 F["W1-G2"] = f"""[sincere]
@@ -162,14 +212,16 @@ Il mio gesto è nato proprio da quel problema lì. Prima delle partite vomitavo,
 [SILENZIO 2]
 Però in campo la mano sullo stomaco non la puoi tenere, no? Allora col tempo l'abbiamo cambiato, finché è diventato un gesto piccolo che potevo fare ovunque, senza che nessuno se ne accorgesse.
 [SILENZIO 2]
-[TAGLIO]
 [sincere]
-Il motivo per cui funziona è semplice: il corpo si ricorda prima della testa. A forza di ripeterlo, a un certo punto basta fare il gesto e il corpo sa già dove andare.
-[SILENZIO 3]
+A forza di ripeterlo, il gesto diventa un richiamo. A me è successo così. Per te lo scopriamo provando.
+[SILENZIO 2]
+[relaxed]
+Domani scegliamo la parola che accompagna il gesto. La mia è «Reset». La tua la decidi tu.
+[TAGLIO]
 [meditative]
 Occhi aperti, punto fisso, attenzione al punto sotto lo sterno. Come ieri.
 [SILENZIO 3]
-Cinque respiri. Questa volta, mentre inspiri, unisci pollice e indice di tutte e due le mani. E tieni il gesto fino alla fine dell'aria.
+Cinque respiri. Mentre inspiri dal naso, unisci pollice e indice di entrambe le mani. Espira dalla bocca tenendo il gesto, fino alla fine dell'espirazione. Poi rilascia le dita.
 [SILENZIO 2]
 {respiro5_g2()}
 [SILENZIO 3]
@@ -181,65 +233,79 @@ Pollice e indice uniti: un gesto piccolo che nessuno vede. Più avanti lo userai
 Non serve dargli un nome. Ricorda solo questo: quando fai questo gesto, stai tornando qui.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app: cosa hai sentito nel corpo quando hai aggiunto il gesto al respiro? Diverso da ieri, uguale, niente. Va bene qualsiasi cosa.
+Adesso metti in pausa e scrivi nell'app: com'è stato aggiungere il gesto al respiro? Semplice, un po' macchinoso, o poco chiaro?
+[SILENZIO 2]
+E adesso che lo conosci, scegli il tuo momento della settimana, quello in cui vorresti usarlo. Uno solo, preciso, che ti capita spesso.
+[SILENZIO 1]
+Per esempio: dopo un controllo sbagliato, mentre aspetti di entrare dalla panchina, prima di battere un piazzato, dopo che il mister ti ha ripreso. Oppure fuori dal campo: prima di una riunione, dopo una discussione a casa.
+[SILENZIO 1]
+Scrivilo in una riga.
 """
 
 F["W1-G3"] = f"""[sincere]
-Hai il respiro. Hai il gesto. Oggi aggiungi l'ultimo pezzo: il mantra. Una parola che ti dici dentro.
+Hai il respiro. Hai il gesto. Oggi aggiungi l'ultimo pezzo: il mantra, cioè una parola che ti dici dentro. Da qui in avanti la chiamiamo semplicemente la tua parola.
+[SILENZIO 2]
+La tua parola chiude l'azione di prima e apre la prossima.
 [SILENZIO 2]
 [relaxed]
-Cristiano Ronaldo cerca la giocata di continuo, e per questo di palloni ne perde tanti. Ma ogni pallone perso è già dimenticato prima di quello dopo. Quello è un Reset.
+La mia oggi è proprio «Reset». Ma prima ne ho usate altre, e le ho cambiate più volte finché non ho trovato quella che mi veniva da sola. Quindi scegline una adesso. Non è un tatuaggio: se tra un mese non ti suona più, la cambi e nessuno se ne accorge.
 [SILENZIO 2]
-Il mantra è la tua versione: una parola che chiude l'azione di prima e apre la prossima.
+Se oggi non ti viene niente, prova «Reset».
 [SILENZIO 2]
-Il mio oggi è proprio «Reset». Ma prima ne ho usate altre, e le ho cambiate più volte finché non ho trovato quella che mi veniva da sola. Non è un tatuaggio: se tra un mese non ti suona più, la cambi e nessuno se ne accorge.
-[SILENZIO 3]
+[sincere]
+Da oggi lo strumento ce l'hai completo: respiro, gesto, parola. Domani lo provi in situazioni diverse.
+[TAGLIO]
 [meditative]
 Occhi aperti, punto fisso, attenzione al punto sotto lo sterno.
 [SILENZIO 3]
-Scegli il tuo mantra adesso. Te ne dico tre.
+Prima di iniziare, scegli la tua parola. Te ne dico tre.
 [SILENZIO 2]
 «Reset.» Una parola sola, che richiama tutto lo strumento.
 [SILENZIO 4]
 «Riparto qui.» Dopo un errore, torni in movimento senza restare fermo.
 [SILENZIO 4]
-«Sono qui.» Radicato nel momento presente, senza altro.
+«Sono qui.» Per tornare dove sei adesso.
 [SILENZIO 4]
-Puoi anche scegliere qualcosa di completamente diverso. L'unica regola: breve, concreto, tuo.
+Puoi anche scegliere qualcosa di completamente diverso. L'unica regola: breve, concreta, tua.
+[SILENZIO 2]
+Prenditi qualche secondo.
 [SILENZIO 10]
-Hai la tua parola. Adesso cinque Reset completi. Quando inspiri, unisci pollice e indice e tieni il gesto. Quando espiri, ripeti dentro di te il tuo mantra. A fine espirazione, rilasci.
+Hai la tua parola. Adesso cinque Reset completi. Inspira dal naso, quattro secondi, unendo pollice e indice, e tieni il gesto. Espira dalla bocca, sei secondi, ripetendo dentro di te la tua parola. A fine espirazione, rilascia.
 [SILENZIO 3]
-{reset5()}
+{reset5_parola()}
 [SILENZIO 3]
-Fermo un momento. Come ti senti?
+Adesso resta seduto un momento e nota come stai.
 [SILENZIO 10]
 [sincere]
-Oggi hai costruito tutto lo strumento: respiro, gesto, mantra. Non funzionerà sempre, non funzionerà subito. Ma è qui.
+Oggi hai costruito tutto lo strumento: respiro, gesto, parola. Da qui lo alleni, un giorno alla volta.
 [SILENZIO 2]
 Domani, durante la giornata, prova il Reset una volta. Anche fuori dal campo, anche solo per provare la sensazione.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app: quale mantra hai scelto? E perché ti sembra più tuo?
+Adesso metti in pausa e scrivi nell'app: quale parola hai scelto? Ti veniva comoda da ripetere, o vuoi provarne un'altra?
 """
 
 F["W1-G4"] = f"""[sincere]
 Hai il tuo strumento. Oggi lo provi in situazioni diverse.
 [SILENZIO 2]
 [relaxed]
-I giocatori forti di testa non sono quelli che non hanno mai pensieri negativi. Ce li hanno come tutti. Una partita perfetta non l'ha mai fatta nessuno, nemmeno Messi. Solo che i forti ci mettono meno tempo a tornare.
-[SILENZIO 2]
+Una partita perfetta non l'ha mai fatta nessuno, nemmeno Messi. I pensieri negativi arrivano a tutti.
+[SILENZIO 1]
 [sincere]
-Ed è quello che alleni oggi: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.
+Quello che puoi allenare è il tempo che ci metti a tornare: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.
 [SILENZIO 2]
 [relaxed]
-Oggi la pratica è un po' più lunga, perché è un esperimento. Vediamo se il Reset funziona uguale anche quando non sei tranquillo. Tre situazioni, tre Reset per ognuna.
+Oggi la pratica è un po' più lunga, perché è una prova: vediamo come ti viene il Reset quando non sei tranquillo.
+[TAGLIO]
+[relaxed]
+Tre situazioni, tre Reset ciascuna: nove in tutto.
 [SILENZIO 3]
 [meditative]
 Prima situazione: seduto, adesso, tranquillo.
 [SILENZIO 2]
 Occhi aperti su un punto fisso, attenzione al punto sotto lo sterno.
 [SILENZIO 3]
-{RESET3}
+{RESET3P}
 [SILENZIO 3]
 Seconda situazione. Alzati.
 [SILENZIO 4]
@@ -249,40 +315,43 @@ Poi fermati. In piedi. Senti i piedi a terra.
 [SILENZIO 4]
 Tre Reset, così, in piedi.
 [SILENZIO 2]
-{RESET3}
+{RESET3P}
 [SILENZIO 3]
 Terza situazione. Siediti.
 [SILENZIO 4]
-Pensa al tuo momento, quello che hai scelto all'inizio della settimana. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.
+Pensa al tuo momento, quello che hai scelto il secondo giorno. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.
 [SILENZIO 3]
-Vai lì con la mente. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
-[SILENZIO 30]
-Resta lì ancora un attimo. Senti cosa fa il corpo.
-[SILENZIO 8]
-Adesso tre Reset. E osserva quanto ci metti a tornare.
+Vai lì con la mente per qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 20]
+Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.
+[SILENZIO 3]
+Adesso tre Reset, con l'episodio ancora in testa.
 [SILENZIO 2]
-{RESET3}
+{RESET3P}
 [SILENZIO 3]
+Nota quanto è stato facile seguire respiro e gesto mentre pensavi all'episodio.
+[SILENZIO 5]
 Sei tornato? Non devi risolvere niente. Solo tornare qui.
 [SILENZIO 6]
 [sincere]
-Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.
+In campo userai il Reset breve, che è diverso da quello che fai qui: un respiro solo, comodo, con il gesto e la tua parola. Niente quattro e sei da contare: in una pausa corta non c'è il tempo, e non serve.
 [SILENZIO 2]
-Al prossimo allenamento prova il Reset breve: alla prima palla ferma, un respiro solo, con gesto e mantra. Mentre il gioco va, niente Reset: pensa alla prossima giocata. Non deve funzionare bene. Deve solo succedere.
+Al prossimo allenamento, se trovi una pausa adatta, una palla ferma, una rimessa, provalo. Mentre il gioco va, niente Reset: pensa alla prossima giocata.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni è stato più facile fare il Reset, e in quale più difficile? E cosa sentivi nel corpo in quella più difficile.
+Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni ti veniva più facile seguire i passaggi, respiro, gesto, parola? E dove ti sei incastrato, se è successo? Se hai notato qualcosa nel corpo, puoi scriverlo.
 """
 
 F["W1-G6"] = f"""[sincere]
-Nessuno strumento nuovo oggi. Solo una domanda da portarti in giro per la giornata.
+Nessuno strumento nuovo oggi. Solo una domanda sulla tua settimana, a cui rispondi adesso.
+[TAGLIO]
+[relaxed]
+Prenditi tre minuti adesso.
 [SILENZIO 2]
-Questa settimana hai iniziato a costruire qualcosa. Non perfetto. Non automatico ancora. Ma c'è.
-[SILENZIO 3]
 [meditative]
 Siediti. Occhi aperti su un punto fisso, attenzione al punto sotto lo sterno.
 [SILENZIO 3]
-Un Reset solo, con calma.
+Fai il Reset una volta sola, con calma.
 [SILENZIO 2]
 Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
 [SILENZIO 4]
@@ -290,17 +359,33 @@ Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo man
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 3]
-Adesso resta seduto un momento con una domanda. Il tuo momento, quello che hai scelto all'inizio della settimana: questa settimana com'è andata?
-[SILENZIO 30]
+Adesso ripensa al tuo momento della settimana, quello che hai scelto all'inizio. Questa settimana com'è andata? Ti leggo le frasi: scegli la più vera.
+[SILENZIO 2]
+Uno. Non è capitato.
+[SILENZIO 2]
+Due. È capitato, ma me ne sono accorto solo dopo.
+[SILENZIO 2]
+Tre. Me ne sono accorto, ma il Reset non mi è venuto in mente.
+[SILENZIO 2]
+Quattro. Mi sono ricordato del Reset, ma non l'ho fatto: non c'era tempo, mi sentivo a disagio, non mi andava.
+[SILENZIO 2]
+Cinque. Ho provato il Reset e non ho notato differenze.
+[SILENZIO 2]
+Sei. Ho provato il Reset e ho notato qualcosa.
+[SILENZIO 10]
 Non cercare la risposta giusta. Solo quella vera.
-[SILENZIO 20]
+[SILENZIO 10]
 [sincere]
 Un Reset fatto una volta, anche in modo imperfetto, va bene così. Non serve che funzioni sempre. Serve che tu sappia dov'è lo strumento quando ne hai bisogno.
 [SILENZIO 2]
+Una cosa importante.
+[SILENZIO 1]
 I progressi della testa non li vedi allo specchio come quelli dei muscoli. Se non senti niente di diverso, scrivilo così com'è: è un'informazione vera, non un fallimento.
+[SILENZIO 1]
+Ci dice cosa guardare: se la pratica è chiara, se riesci a farla, se trovi il momento in campo.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app la frase più vera tra le cinque che trovi, e se vuoi una riga su cosa è successo.
+Adesso metti in pausa e scrivi nell'app il numero della frase più vera, e se vuoi una riga su cosa è successo.
 """
 
 F["W2-G1"] = f"""[sincere]

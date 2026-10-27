@@ -1,18 +1,15 @@
-[sincere]
-Una cosa prima di partire. La differenza in campo non la senti domani, e non ti posso dire quando arriva: per qualcuno prima, per qualcuno dopo. Adesso stai costruendo uno strumento, e conta esserci, un giorno alla volta.
-[SILENZIO 3]
 [meditative]
-Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e posaci sopra gli occhi senza mettere a fuoco. Come quando guardi nel vuoto.
+Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e appoggia lì lo sguardo, senza fissarlo con forza.
 [SILENZIO 3]
-Porta l'attenzione al punto centrale sotto allo sterno. La bocca dello stomaco.
+Adesso porta l'attenzione al punto sotto lo sterno, la bocca dello stomaco.
 [SILENZIO 3]
-Cinque respiri. Dal naso gonfiando la pancia, non il petto. Poi dalla bocca, lentamente.
-[SILENZIO 2]
-Inspira dal naso, gonfia la pancia. Quattro secondi.
+Primo respiro, insieme. Inspira dal naso gonfiando la pancia, non il petto. Quattro secondi.
 [SILENZIO 4]
-Espira dalla bocca, piano, come se alitassi su un vetro. Sei secondi.
+Espira piano dalla bocca, come se alitassi su un vetro. Sei secondi.
 [SILENZIO 6]
-Ancora. Inspira dal naso.
+Adesso continua così, altre quattro volte. Cinque respiri in tutto.
+[SILENZIO 1]
+Inspira dal naso.
 [SILENZIO 4]
 Espira dalla bocca, lentamente.
 [SILENZIO 6]
@@ -32,7 +29,7 @@ Espira, e lascia uscire tutta l'aria.
 Bene. Resta un attimo così.
 [SILENZIO 4]
 [sincere]
-Non forzare il respiro. Se la mente è andata altrove, è normale. L'hai riportata al respiro, senza giudicarti. Era questo l'esercizio.
+Non forzare il respiro. Se la mente va altrove, è normale: riporta l'attenzione al respiro, senza giudicarti.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app: mentre allungavi l'espirazione, hai notato qualcosa nel corpo? Le spalle, la pancia, il ritmo. Anche una parola va bene.
+Adesso metti in pausa e scrivi nell'app: com'è stato fare questi cinque respiri? Sei riuscito a seguirli, o la testa ti portava altrove? Se qualcosa non era chiaro o era scomodo, dimmelo. Una riga va bene.

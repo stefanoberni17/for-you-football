@@ -1,12 +1,16 @@
-[sincere]
-Oggi inizi.
-[SILENZIO 2]
 [relaxed]
 Sono passato da vomitare prima delle partite, terrorizzato e bloccato dalla paura, a giocare davanti a diecimila persone.
 [SILENZIO 2]
 Non è successo in una settimana, e non è successo per magia. È successo allenando la testa, come si allena qualsiasi altra cosa.
 [SILENZIO 2]
+Magari a te non succede come a me. Ma hai presente quando sbagli un appoggio e, due azioni dopo, stai ancora litigando con quel pallone? Ecco, partiamo da lì.
+[SILENZIO 2]
 [sincere]
 Oggi inizi anche tu. E non ti chiedo di pensare: ti chiedo solo di respirare.
 [relaxed]
 Lo so, detta così sembra la cosa più inutile del mondo: respiri da quando sei nato, e finora non ti ha mai fatto segnare un gol. Dammi tre minuti lo stesso.
+[SILENZIO 2]
+[sincere]
+Oggi non devi diventare più tranquillo: provi cinque respiri e mi dici com'è andata. Domani ci aggiungiamo un gesto piccolo, da usare nelle pause in campo.
+[relaxed]
+Tranquillo: è un gesto praticamente invisibile, e nessuno se ne accorgerà. Non devi metterti a terra a gambe incrociate come il Buddha.

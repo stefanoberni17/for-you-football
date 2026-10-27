@@ -11,6 +11,7 @@
   "Domanda Pre Pratica": null,
   "Durata Minuti": 4,
   "Audio Pratica": "https://njmgkatdpberwhltgbmd.supabase.co/storage/v1/object/public/practice-audio/W1-G1-v2.mp3",
+  "Audio Apertura": null,
   "Tipo Pratica": "respirazione"
  },
  "W1-G2": {
@@ -18,13 +19,14 @@
   "Numero Settimana": 1,
   "Numero Giorno": 2,
   "Apertura": "Ieri hai usato il respiro. Oggi aggiungi un gesto.\n\nIl mio gesto è nato proprio da quel problema lì. Prima delle partite vomitavo, e avevo un mal di pancia che non passava. Lo psicologo che mi seguiva mi ha insegnato a mettere la mano sullo stomaco mentre respiravo... e piano piano ha iniziato a funzionare.\n\nPerò in campo la mano sullo stomaco non la puoi tenere, no? Allora col tempo l'abbiamo cambiato, finché è diventato un gesto piccolo che potevo fare ovunque, senza che nessuno se ne accorgesse.\n\nA forza di ripeterlo, il gesto diventa un richiamo. A me è successo così; per te lo scopriamo provando.\n\nDomani scegliamo la parola che accompagna il gesto. La mia è «Reset». La tua la decidi tu.",
-  "Pratica": "Occhi aperti, punto fisso, attenzione al punto sotto lo sterno, come ieri.\n\n1. Inspira dal naso (4 secondi) e, mentre inspiri, unisci pollice e indice di entrambe le mani.\n2. Espira dalla bocca (6 secondi) tenendo il gesto, fino alla fine dell'espirazione.\n3. Rilascia le dita.\n4. Ripeti 5 volte.\n\nPollice e indice uniti: un gesto piccolo che nessuno vede. Più avanti lo userai nelle pause in campo: prima di un corner, durante una rimessa, mentre aspetti il fischio.\n\nNon serve dargli un nome. Ricorda solo questo: quando fai questo gesto, stai tornando qui.",
+  "Pratica": "Occhi aperti, punto fisso, attenzione al punto sotto lo sterno, come ieri.\n\nInspira dal naso (4 secondi) e, mentre inspiri, unisci pollice e indice di entrambe le mani.\n\nEspira dalla bocca (6 secondi) tenendo il gesto, fino alla fine dell'espirazione.\n\nRilascia le dita.\n\nRipeti 5 volte.\n\nPollice e indice uniti: un gesto piccolo che nessuno vede. Più avanti lo userai nelle pause in campo: prima di un corner, durante una rimessa, mentre aspetti il fischio.\n\nNon serve dargli un nome. Ricorda solo questo: quando fai questo gesto, stai tornando qui.",
   "Domanda": "Com'è stato aggiungere il gesto al respiro: semplice, un po' macchinoso, o poco chiaro?\n\nE adesso che lo conosci: scegli il tuo momento della settimana, quello in cui vorresti usarlo. Uno solo, preciso, che ti capita spesso. Per esempio: dopo un controllo sbagliato, mentre aspetti di entrare dalla panchina, prima di battere un piazzato, dopo che il mister ti ha ripreso. Oppure fuori dal campo: prima di una riunione, dopo una discussione a casa. Scrivilo in una riga.",
   "Nota Campo": "Al prossimo allenamento, alla prima palla ferma (una rimessa, un fallo, una pausa), fai il gesto con un respiro. Mentre il gioco va, niente: pensa solo alla prossima giocata. Nota solo se sei riuscito a farlo, e quando. Se non ti è venuto in mente, va bene lo stesso: è il primo giorno.",
   "Ha Nota Campo": "__YES__",
   "Domanda Pre Pratica": null,
   "Durata Minuti": 4,
   "Audio Pratica": "https://njmgkatdpberwhltgbmd.supabase.co/storage/v1/object/public/practice-audio/W1-G2-v2.mp3",
+  "Audio Apertura": null,
   "Tipo Pratica": "respirazione"
  },
  "W1-G3": {
@@ -39,34 +41,37 @@
   "Domanda Pre Pratica": null,
   "Durata Minuti": 5,
   "Audio Pratica": "https://njmgkatdpberwhltgbmd.supabase.co/storage/v1/object/public/practice-audio/W1-G3-v2.mp3",
+  "Audio Apertura": null,
   "Tipo Pratica": "respirazione"
  },
  "W1-G4": {
   "url": "https://app.notion.com/31d655f726c78123be7df072bb8636dc",
   "Numero Settimana": 1,
   "Numero Giorno": 4,
-  "Apertura": "Hai il tuo strumento. Oggi lo provi in situazioni diverse.\n\nI giocatori forti di testa non sono quelli che non hanno mai pensieri negativi. Ce li hanno come tutti. Una partita perfetta non l'ha mai fatta nessuno, nemmeno Messi... solo che i forti ci mettono meno tempo a tornare.\n\nEd è quello che alleni oggi: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.\n\nOggi la pratica è un po' più lunga, perché è una prova: vediamo come ti viene il Reset quando non sei tranquillo.",
-  "Pratica": "Tre situazioni, tre Reset ciascuna: nove in tutto.\n\nPRIMA: seduto, adesso, tranquillo. Occhi aperti su un punto fisso, attenzione al punto sotto lo sterno. Inspira con il gesto, espira con il mantra. Tre volte.\n\nSECONDA: alzati, fai 10 passi lenti, poi fermati. In piedi, senti i piedi a terra. Tre Reset.\n\nTERZA: siediti e pensa al tuo momento, quello che hai scelto all'inizio della settimana, o a un momento di tensione recente. Non il peggiore: qualcosa di piccolo, un fischio che non hai capito, un passaggio sbagliato. Vai lì con la mente per qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso. Poi tre Reset. Nota quanto è stato facile seguire respiro e gesto mentre pensavi all'episodio. Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.\n\nNon devi risolvere niente. Solo tornare qui.\n\nAl prossimo allenamento prova il Reset breve: alla prima palla ferma, un respiro solo, con gesto e mantra. Mentre il gioco va, niente Reset: pensa alla prossima giocata. Non deve funzionare bene: deve solo succedere.",
+  "Apertura": "Hai il tuo strumento. Oggi lo provi in situazioni diverse.\n\nUna partita perfetta non l'ha mai fatta nessuno, nemmeno Messi. I pensieri negativi arrivano a tutti. Quello che puoi allenare è il tempo che ci metti a tornare: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.\n\nOggi la pratica è un po' più lunga, perché è una prova: vediamo come ti viene il Reset quando non sei tranquillo.",
+  "Pratica": "Tre situazioni, tre Reset ciascuna: nove in tutto.\n\nPRIMA: seduto. Occhi aperti su un punto fisso, attenzione al punto sotto lo sterno. Inspira con il gesto, espira con la tua parola. Tre volte.\n\nSECONDA: alzati, fai 10 passi lenti, poi fermati. In piedi, senti i piedi a terra. Tre Reset.\n\nTERZA: siediti e pensa al tuo momento, quello che hai scelto il secondo giorno, o a un momento di tensione recente. Non il peggiore: qualcosa di piccolo, un fischio che non hai capito, un passaggio sbagliato. Vai lì con la mente per qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso. Poi tre Reset. Nota quanto è stato facile seguire respiro e gesto mentre pensavi all'episodio. Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.\n\nNon devi risolvere niente. Solo tornare qui.\n\nIn campo userai il Reset breve, che è diverso da quello che fai qui: un respiro solo, comodo, con il gesto e la tua parola. Niente 4 e 6 da contare: in una pausa corta non c'è il tempo, e non serve.\n\nAl prossimo allenamento, se trovi una pausa adatta, una palla ferma, una rimessa, provalo. Mentre il gioco va, niente Reset: pensa alla prossima giocata.",
   "Domanda": "In quale delle tre situazioni ti veniva più facile seguire i passaggi, respiro, gesto, parola? E dove ti sei incastrato, se è successo? (Se hai notato qualcosa nel corpo, puoi scriverlo.)",
   "Nota Campo": null,
   "Ha Nota Campo": "__NO__",
   "Domanda Pre Pratica": null,
   "Durata Minuti": 8,
   "Audio Pratica": "https://njmgkatdpberwhltgbmd.supabase.co/storage/v1/object/public/practice-audio/W1-G4-v2.mp3",
+  "Audio Apertura": null,
   "Tipo Pratica": "visualizzazione"
  },
  "W1-G5": {
   "url": "https://app.notion.com/31d655f726c781438f79e12a705591ea",
   "Numero Settimana": 1,
   "Numero Giorno": 5,
-  "Apertura": "Hai il Reset. L'hai costruito pezzo per pezzo, e ieri l'hai provato in tre situazioni diverse.\n\nOggi non lo provi più qui dentro: te lo porti nella giornata, sul tuo momento, quello che hai scelto a inizio settimana.\n\nSe arriva mentre il gioco va avanti, non è il momento del Reset: pensa solo alla prossima giocata. Alla prima palla ferma, Reset breve: un respiro, gesto, parola.\n\nE fuori dal campo è uguale: una riunione, una discussione, un'attesa qualsiasi.",
-  "Pratica": "Adesso fai un Reset con calma, per portarti qui prima di andare in giornata. Occhi aperti, punto fisso, punto sotto lo sterno. Inspira con il gesto, espira con il mantra.\n\nPoi vai. Durante la giornata, o al prossimo allenamento, tieni d'occhio il tuo momento. Se ti accorgi che è arrivato, e c'è una pausa, prova il Reset breve. Una volta sola, anche imperfetta.\n\nSe oggi il tuo momento non arriva, va bene così. Accorgerti del momento quando succede è già metà del lavoro.\n\nStasera torna qui, sulla stessa schermata. Mi dici com'è andata.",
+  "Apertura": "Hai il Reset. L'hai costruito pezzo per pezzo, e ieri l'hai provato in tre situazioni diverse.\n\nOggi non lo provi più qui dentro: te lo porti nella giornata, sul tuo momento, quello che hai scelto il secondo giorno.\n\nSe arriva mentre il gioco va avanti, non è il momento del Reset: pensa solo alla prossima giocata. Alla prima palla ferma, Reset breve: un respiro solo, comodo, con il gesto e la tua parola. Niente 4 e 6 da contare.\n\nE fuori dal campo è uguale: una riunione, una discussione, un'attesa qualsiasi.",
+  "Pratica": "Adesso fai un Reset con calma, per portarti qui prima di andare in giornata. Occhi aperti, punto fisso, punto sotto lo sterno. Inspira con il gesto, espira con la tua parola.\n\nPoi vai. Durante la giornata, o al prossimo allenamento, tieni d'occhio il tuo momento. Se ti accorgi che è arrivato, e c'è una pausa, prova il Reset breve. Una volta sola, anche imperfetta.\n\nSe oggi il tuo momento non arriva, va bene così. Accorgerti del momento quando succede è già metà del lavoro.\n\nStasera torna qui, sulla stessa schermata. Mi dici com'è andata.",
   "Domanda": "È arrivato il tuo momento, oggi?\n\nSe sì: te ne sei accorto sul momento o solo dopo? Hai provato il Reset breve, anche imperfetto? E cosa ti ha aiutato a ricordartelo, oppure cosa te l'ha fatto dimenticare?\n\nSe no, scrivi solo «non è capitato».",
   "Nota Campo": null,
   "Ha Nota Campo": "__NO__",
   "Domanda Pre Pratica": "Il tuo momento è ancora quello che hai scelto a inizio settimana? Se vuoi cambiarlo, scrivilo adesso.\n\nNon è una promessa di farlo oggi: è per riconoscerlo meglio quando capita.",
   "Durata Minuti": 2,
   "Audio Pratica": null,
+  "Audio Apertura": null,
   "Tipo Pratica": "giornata"
  },
  "W1-G6": {
@@ -81,6 +86,7 @@
   "Domanda Pre Pratica": null,
   "Durata Minuti": 3,
   "Audio Pratica": "https://njmgkatdpberwhltgbmd.supabase.co/storage/v1/object/public/practice-audio/W1-G6-v2.mp3",
+  "Audio Apertura": null,
   "Tipo Pratica": "riflessione"
  },
  "W1-G7": {
@@ -95,6 +101,7 @@
   "Domanda Pre Pratica": null,
   "Durata Minuti": 5,
   "Audio Pratica": null,
+  "Audio Apertura": null,
   "Tipo Pratica": "riflessione"
  },
  "W2-G1": {

@@ -13834,17 +13834,6 @@
  "W1-G1-apertura": [
   {
    "type": "text",
-   "tag": "sincere",
-   "text": "Oggi inizi.",
-   "key": "[sincere] Oggi inizi.",
-   "id": "13404bf07803"
-  },
-  {
-   "type": "sil",
-   "sec": 2.0
-  },
-  {
-   "type": "text",
    "tag": "relaxed",
    "text": "Sono passato da vomitare prima delle partite, terrorizzato e bloccato dalla paura, a giocare davanti a diecimila persone.",
    "key": "[relaxed] Sono passato da vomitare prima delle partite, terrorizzato e bloccato dalla paura, a giocare davanti a diecimila persone.",
@@ -13867,6 +13856,17 @@
   },
   {
    "type": "text",
+   "tag": "relaxed",
+   "text": "Magari a te non succede come a me. Ma hai presente quando sbagli un appoggio e, due azioni dopo, stai ancora litigando con quel pallone? Ecco, partiamo da lì.",
+   "key": "[relaxed] Magari a te non succede come a me. Ma hai presente quando sbagli un appoggio e, due azioni dopo, stai ancora litigando con quel pallone? Ecco, partiamo da lì.",
+   "id": "d09632d54665"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
    "tag": "sincere",
    "text": "Oggi inizi anche tu. E non ti chiedo di pensare: ti chiedo solo di respirare.",
    "key": "[sincere] Oggi inizi anche tu. E non ti chiedo di pensare: ti chiedo solo di respirare.",
@@ -13878,48 +13878,6 @@
    "text": "Lo so, detta così sembra la cosa più inutile del mondo: respiri da quando sei nato, e finora non ti ha mai fatto segnare un gol. Dammi tre minuti lo stesso.",
    "key": "[relaxed] Lo so, detta così sembra la cosa più inutile del mondo: respiri da quando sei nato, e finora non ti ha mai fatto segnare un gol. Dammi tre minuti lo stesso.",
    "id": "52096b02465f"
-  }
- ],
- "W1-G1-pratica": [
-  {
-   "type": "text",
-   "tag": "sincere",
-   "text": "Una cosa prima di partire. La differenza in campo non la senti domani, e non ti posso dire quando arriva: per qualcuno prima, per qualcuno dopo. Adesso stai costruendo uno strumento, e conta esserci, un giorno alla volta.",
-   "key": "[sincere] Una cosa prima di partire. La differenza in campo non la senti domani, e non ti posso dire quando arriva: per qualcuno prima, per qualcuno dopo. Adesso stai costruendo uno strumento, e conta esserci, un giorno alla volta.",
-   "id": "06f19e01c306"
-  },
-  {
-   "type": "sil",
-   "sec": 3.0
-  },
-  {
-   "type": "text",
-   "tag": "meditative",
-   "text": "Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e posaci sopra gli occhi senza mettere a fuoco. Come quando guardi nel vuoto.",
-   "key": "[meditative] Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e posaci sopra gli occhi senza mettere a fuoco. Come quando guardi nel vuoto.",
-   "id": "9cee6aba1962"
-  },
-  {
-   "type": "sil",
-   "sec": 3.0
-  },
-  {
-   "type": "text",
-   "tag": "meditative",
-   "text": "Porta l'attenzione al punto centrale sotto allo sterno. La bocca dello stomaco.",
-   "key": "[meditative] Porta l'attenzione al punto centrale sotto allo sterno. La bocca dello stomaco.",
-   "id": "11e9cff9bab8"
-  },
-  {
-   "type": "sil",
-   "sec": 3.0
-  },
-  {
-   "type": "text",
-   "tag": "meditative",
-   "text": "Cinque respiri. Dal naso gonfiando la pancia, non il petto. Poi dalla bocca, lentamente.",
-   "key": "[meditative] Cinque respiri. Dal naso gonfiando la pancia, non il petto. Poi dalla bocca, lentamente.",
-   "id": "efe57e8771c6"
   },
   {
    "type": "sil",
@@ -13927,10 +13885,48 @@
   },
   {
    "type": "text",
+   "tag": "sincere",
+   "text": "Oggi non devi diventare più tranquillo: provi cinque respiri e mi dici com'è andata. Domani ci aggiungiamo un gesto piccolo, da usare nelle pause in campo.",
+   "key": "[sincere] Oggi non devi diventare più tranquillo: provi cinque respiri e mi dici com'è andata. Domani ci aggiungiamo un gesto piccolo, da usare nelle pause in campo.",
+   "id": "2804debfafe3"
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Tranquillo: è un gesto praticamente invisibile, e nessuno se ne accorgerà. Non devi metterti a terra a gambe incrociate come il Buddha.",
+   "key": "[relaxed] Tranquillo: è un gesto praticamente invisibile, e nessuno se ne accorgerà. Non devi metterti a terra a gambe incrociate come il Buddha.",
+   "id": "f835522e5670"
+  }
+ ],
+ "W1-G1-pratica": [
+  {
+   "type": "text",
    "tag": "meditative",
-   "text": "Inspira dal naso, gonfia la pancia. Quattro secondi.",
-   "key": "[meditative] Inspira dal naso, gonfia la pancia. Quattro secondi.",
-   "id": "9ee8a6080b00"
+   "text": "Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e appoggia lì lo sguardo, senza fissarlo con forza.",
+   "key": "[meditative] Siediti. Occhi aperti: trova un punto davanti a te, sul muro o sul pavimento, e appoggia lì lo sguardo, senza fissarlo con forza.",
+   "id": "c042af2597ae"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Adesso porta l'attenzione al punto sotto lo sterno, la bocca dello stomaco.",
+   "key": "[meditative] Adesso porta l'attenzione al punto sotto lo sterno, la bocca dello stomaco.",
+   "id": "95cb198dac2b"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Primo respiro, insieme. Inspira dal naso gonfiando la pancia, non il petto. Quattro secondi.",
+   "key": "[meditative] Primo respiro, insieme. Inspira dal naso gonfiando la pancia, non il petto. Quattro secondi.",
+   "id": "361235cfba75"
   },
   {
    "type": "sil",
@@ -13939,9 +13935,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira dalla bocca, piano, come se alitassi su un vetro. Sei secondi.",
-   "key": "[meditative] Espira dalla bocca, piano, come se alitassi su un vetro. Sei secondi.",
-   "id": "9ed06809ab72"
+   "text": "Espira piano dalla bocca, come se alitassi su un vetro. Sei secondi.",
+   "key": "[meditative] Espira piano dalla bocca, come se alitassi su un vetro. Sei secondi.",
+   "id": "ebfa8294c20c"
   },
   {
    "type": "sil",
@@ -13950,9 +13946,20 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Ancora. Inspira dal naso.",
-   "key": "[meditative] Ancora. Inspira dal naso.",
-   "id": "ef9d35faf284"
+   "text": "Adesso continua così, altre quattro volte. Cinque respiri in tutto.",
+   "key": "[meditative] Adesso continua così, altre quattro volte. Cinque respiri in tutto.",
+   "id": "2699d92c0764"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Inspira dal naso.",
+   "key": "[meditative] Inspira dal naso.",
+   "id": "02f783b369fe"
   },
   {
    "type": "sil",
@@ -14053,9 +14060,9 @@
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Non forzare il respiro. Se la mente è andata altrove, è normale. L'hai riportata al respiro, senza giudicarti. Era questo l'esercizio.",
-   "key": "[sincere] Non forzare il respiro. Se la mente è andata altrove, è normale. L'hai riportata al respiro, senza giudicarti. Era questo l'esercizio.",
-   "id": "edceb8ae9eb6"
+   "text": "Non forzare il respiro. Se la mente va altrove, è normale: riporta l'attenzione al respiro, senza giudicarti.",
+   "key": "[sincere] Non forzare il respiro. Se la mente va altrove, è normale: riporta l'attenzione al respiro, senza giudicarti.",
+   "id": "dac566ef6271"
   },
   {
    "type": "sil",
@@ -14064,9 +14071,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Adesso metti in pausa e scrivi nell'app: mentre allungavi l'espirazione, hai notato qualcosa nel corpo? Le spalle, la pancia, il ritmo. Anche una parola va bene.",
-   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: mentre allungavi l'espirazione, hai notato qualcosa nel corpo? Le spalle, la pancia, il ritmo. Anche una parola va bene.",
-   "id": "81e1daa52954"
+   "text": "Adesso metti in pausa e scrivi nell'app: com'è stato fare questi cinque respiri? Sei riuscito a seguirli, o la testa ti portava altrove? Se qualcosa non era chiaro o era scomodo, dimmelo. Una riga va bene.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: com'è stato fare questi cinque respiri? Sei riuscito a seguirli, o la testa ti portava altrove? Se qualcosa non era chiaro o era scomodo, dimmelo. Una riga va bene.",
+   "id": "abb842dc4ca8"
   }
  ],
  "W1-G2-apertura": [
@@ -14098,20 +14105,31 @@
    "text": "Però in campo la mano sullo stomaco non la puoi tenere, no? Allora col tempo l'abbiamo cambiato, finché è diventato un gesto piccolo che potevo fare ovunque, senza che nessuno se ne accorgesse.",
    "key": "[relaxed] Però in campo la mano sullo stomaco non la puoi tenere, no? Allora col tempo l'abbiamo cambiato, finché è diventato un gesto piccolo che potevo fare ovunque, senza che nessuno se ne accorgesse.",
    "id": "9588e0a62c84"
-  }
- ],
- "W1-G2-pratica": [
-  {
-   "type": "text",
-   "tag": "sincere",
-   "text": "Il motivo per cui funziona è semplice: il corpo si ricorda prima della testa. A forza di ripeterlo, a un certo punto basta fare il gesto e il corpo sa già dove andare.",
-   "key": "[sincere] Il motivo per cui funziona è semplice: il corpo si ricorda prima della testa. A forza di ripeterlo, a un certo punto basta fare il gesto e il corpo sa già dove andare.",
-   "id": "181f1417bf5a"
   },
   {
    "type": "sil",
-   "sec": 3.0
+   "sec": 2.0
   },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "A forza di ripeterlo, il gesto diventa un richiamo. A me è successo così. Per te lo scopriamo provando.",
+   "key": "[sincere] A forza di ripeterlo, il gesto diventa un richiamo. A me è successo così. Per te lo scopriamo provando.",
+   "id": "d912e2892b7c"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Domani scegliamo la parola che accompagna il gesto. La mia è «Reset». La tua la decidi tu.",
+   "key": "[relaxed] Domani scegliamo la parola che accompagna il gesto. La mia è «Reset». La tua la decidi tu.",
+   "id": "8494646ec81a"
+  }
+ ],
+ "W1-G2-pratica": [
   {
    "type": "text",
    "tag": "meditative",
@@ -14126,9 +14144,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Cinque respiri. Questa volta, mentre inspiri, unisci pollice e indice di tutte e due le mani. E tieni il gesto fino alla fine dell'aria.",
-   "key": "[meditative] Cinque respiri. Questa volta, mentre inspiri, unisci pollice e indice di tutte e due le mani. E tieni il gesto fino alla fine dell'aria.",
-   "id": "ed118c298630"
+   "text": "Cinque respiri. Mentre inspiri dal naso, unisci pollice e indice di entrambe le mani. Espira dalla bocca tenendo il gesto, fino alla fine dell'espirazione. Poi rilascia le dita.",
+   "key": "[meditative] Cinque respiri. Mentre inspiri dal naso, unisci pollice e indice di entrambe le mani. Espira dalla bocca tenendo il gesto, fino alla fine dell'espirazione. Poi rilascia le dita.",
+   "id": "1bd9150149fd"
   },
   {
    "type": "sil",
@@ -14335,18 +14353,62 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Adesso metti in pausa e scrivi nell'app: cosa hai sentito nel corpo quando hai aggiunto il gesto al respiro? Diverso da ieri, uguale, niente. Va bene qualsiasi cosa.",
-   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: cosa hai sentito nel corpo quando hai aggiunto il gesto al respiro? Diverso da ieri, uguale, niente. Va bene qualsiasi cosa.",
-   "id": "78718899be20"
+   "text": "Adesso metti in pausa e scrivi nell'app: com'è stato aggiungere il gesto al respiro? Semplice, un po' macchinoso, o poco chiaro?",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: com'è stato aggiungere il gesto al respiro? Semplice, un po' macchinoso, o poco chiaro?",
+   "id": "f9f7e00fb183"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "E adesso che lo conosci, scegli il tuo momento della settimana, quello in cui vorresti usarlo. Uno solo, preciso, che ti capita spesso.",
+   "key": "[relaxed] E adesso che lo conosci, scegli il tuo momento della settimana, quello in cui vorresti usarlo. Uno solo, preciso, che ti capita spesso.",
+   "id": "64b6615192c6"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Per esempio: dopo un controllo sbagliato, mentre aspetti di entrare dalla panchina, prima di battere un piazzato, dopo che il mister ti ha ripreso. Oppure fuori dal campo: prima di una riunione, dopo una discussione a casa.",
+   "key": "[relaxed] Per esempio: dopo un controllo sbagliato, mentre aspetti di entrare dalla panchina, prima di battere un piazzato, dopo che il mister ti ha ripreso. Oppure fuori dal campo: prima di una riunione, dopo una discussione a casa.",
+   "id": "6f968ecd32b8"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Scrivilo in una riga.",
+   "key": "[relaxed] Scrivilo in una riga.",
+   "id": "04a2e5e58023"
   }
  ],
  "W1-G3-apertura": [
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Hai il respiro. Hai il gesto. Oggi aggiungi l'ultimo pezzo: il mantra. Una parola che ti dici dentro.",
-   "key": "[sincere] Hai il respiro. Hai il gesto. Oggi aggiungi l'ultimo pezzo: il mantra. Una parola che ti dici dentro.",
-   "id": "7c59cae39f7b"
+   "text": "Hai il respiro. Hai il gesto. Oggi aggiungi l'ultimo pezzo: il mantra, cioè una parola che ti dici dentro. Da qui in avanti la chiamiamo semplicemente la tua parola.",
+   "key": "[sincere] Hai il respiro. Hai il gesto. Oggi aggiungi l'ultimo pezzo: il mantra, cioè una parola che ti dici dentro. Da qui in avanti la chiamiamo semplicemente la tua parola.",
+   "id": "b0384da27e83"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "La tua parola chiude l'azione di prima e apre la prossima.",
+   "key": "[sincere] La tua parola chiude l'azione di prima e apre la prossima.",
+   "id": "b43728e7e342"
   },
   {
    "type": "sil",
@@ -14355,9 +14417,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Cristiano Ronaldo cerca la giocata di continuo, e per questo di palloni ne perde tanti. Ma ogni pallone perso è già dimenticato prima di quello dopo. Quello è un Reset.",
-   "key": "[relaxed] Cristiano Ronaldo cerca la giocata di continuo, e per questo di palloni ne perde tanti. Ma ogni pallone perso è già dimenticato prima di quello dopo. Quello è un Reset.",
-   "id": "4fc2cc1ef523"
+   "text": "La mia oggi è proprio «Reset». Ma prima ne ho usate altre, e le ho cambiate più volte finché non ho trovato quella che mi veniva da sola. Quindi scegline una adesso. Non è un tatuaggio: se tra un mese non ti suona più, la cambi e nessuno se ne accorge.",
+   "key": "[relaxed] La mia oggi è proprio «Reset». Ma prima ne ho usate altre, e le ho cambiate più volte finché non ho trovato quella che mi veniva da sola. Quindi scegline una adesso. Non è un tatuaggio: se tra un mese non ti suona più, la cambi e nessuno se ne accorge.",
+   "id": "13a2fec2a2cf"
   },
   {
    "type": "sil",
@@ -14366,9 +14428,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Il mantra è la tua versione: una parola che chiude l'azione di prima e apre la prossima.",
-   "key": "[relaxed] Il mantra è la tua versione: una parola che chiude l'azione di prima e apre la prossima.",
-   "id": "a0b62ae83ce7"
+   "text": "Se oggi non ti viene niente, prova «Reset».",
+   "key": "[relaxed] Se oggi non ti viene niente, prova «Reset».",
+   "id": "b36f456106aa"
   },
   {
    "type": "sil",
@@ -14376,10 +14438,10 @@
   },
   {
    "type": "text",
-   "tag": "relaxed",
-   "text": "Il mio oggi è proprio «Reset». Ma prima ne ho usate altre, e le ho cambiate più volte finché non ho trovato quella che mi veniva da sola. Non è un tatuaggio: se tra un mese non ti suona più, la cambi e nessuno se ne accorge.",
-   "key": "[relaxed] Il mio oggi è proprio «Reset». Ma prima ne ho usate altre, e le ho cambiate più volte finché non ho trovato quella che mi veniva da sola. Non è un tatuaggio: se tra un mese non ti suona più, la cambi e nessuno se ne accorge.",
-   "id": "ea255cb7eaf7"
+   "tag": "sincere",
+   "text": "Da oggi lo strumento ce l'hai completo: respiro, gesto, parola. Domani lo provi in situazioni diverse.",
+   "key": "[sincere] Da oggi lo strumento ce l'hai completo: respiro, gesto, parola. Domani lo provi in situazioni diverse.",
+   "id": "0d28126f1621"
   }
  ],
  "W1-G3-pratica": [
@@ -14397,9 +14459,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Scegli il tuo mantra adesso. Te ne dico tre.",
-   "key": "[meditative] Scegli il tuo mantra adesso. Te ne dico tre.",
-   "id": "dec697a2761e"
+   "text": "Prima di iniziare, scegli la tua parola. Te ne dico tre.",
+   "key": "[meditative] Prima di iniziare, scegli la tua parola. Te ne dico tre.",
+   "id": "a92e5e4adbc3"
   },
   {
    "type": "sil",
@@ -14430,9 +14492,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "«Sono qui.» Radicato nel momento presente, senza altro.",
-   "key": "[meditative] «Sono qui.» Radicato nel momento presente, senza altro.",
-   "id": "09b316c8fe2a"
+   "text": "«Sono qui.» Per tornare dove sei adesso.",
+   "key": "[meditative] «Sono qui.» Per tornare dove sei adesso.",
+   "id": "fee7e523b122"
   },
   {
    "type": "sil",
@@ -14441,9 +14503,20 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Puoi anche scegliere qualcosa di completamente diverso. L'unica regola: breve, concreto, tuo.",
-   "key": "[meditative] Puoi anche scegliere qualcosa di completamente diverso. L'unica regola: breve, concreto, tuo.",
-   "id": "f00e50636f2a"
+   "text": "Puoi anche scegliere qualcosa di completamente diverso. L'unica regola: breve, concreta, tua.",
+   "key": "[meditative] Puoi anche scegliere qualcosa di completamente diverso. L'unica regola: breve, concreta, tua.",
+   "id": "af3fada24728"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Prenditi qualche secondo.",
+   "key": "[meditative] Prenditi qualche secondo.",
+   "id": "40cd96f8c1e8"
   },
   {
    "type": "sil",
@@ -14452,9 +14525,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Hai la tua parola. Adesso cinque Reset completi. Quando inspiri, unisci pollice e indice e tieni il gesto. Quando espiri, ripeti dentro di te il tuo mantra. A fine espirazione, rilasci.",
-   "key": "[meditative] Hai la tua parola. Adesso cinque Reset completi. Quando inspiri, unisci pollice e indice e tieni il gesto. Quando espiri, ripeti dentro di te il tuo mantra. A fine espirazione, rilasci.",
-   "id": "0f6d2584046f"
+   "text": "Hai la tua parola. Adesso cinque Reset completi. Inspira dal naso, quattro secondi, unendo pollice e indice, e tieni il gesto. Espira dalla bocca, sei secondi, ripetendo dentro di te la tua parola. A fine espirazione, rilascia.",
+   "key": "[meditative] Hai la tua parola. Adesso cinque Reset completi. Inspira dal naso, quattro secondi, unendo pollice e indice, e tieni il gesto. Espira dalla bocca, sei secondi, ripetendo dentro di te la tua parola. A fine espirazione, rilascia.",
+   "id": "e84299cb99dd"
   },
   {
    "type": "sil",
@@ -14474,9 +14547,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "id": "9fa4d943b47f"
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "id": "9469f7f20b5a"
   },
   {
    "type": "sil",
@@ -14507,9 +14580,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira piano, mantra dentro di te.",
-   "key": "[meditative] Espira piano, mantra dentro di te.",
-   "id": "67cbe78abd52"
+   "text": "Espira piano, la tua parola dentro di te.",
+   "key": "[meditative] Espira piano, la tua parola dentro di te.",
+   "id": "563d670b70c3"
   },
   {
    "type": "sil",
@@ -14540,9 +14613,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira, mantra.",
-   "key": "[meditative] Espira, mantra.",
-   "id": "fb894f0650d7"
+   "text": "Espira, la tua parola.",
+   "key": "[meditative] Espira, la tua parola.",
+   "id": "f00948a5b8ef"
   },
   {
    "type": "sil",
@@ -14573,9 +14646,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira dalla bocca, e il mantra dentro di te.",
-   "key": "[meditative] Espira dalla bocca, e il mantra dentro di te.",
-   "id": "c0dedad43258"
+   "text": "Espira dalla bocca, e la tua parola dentro di te.",
+   "key": "[meditative] Espira dalla bocca, e la tua parola dentro di te.",
+   "id": "e4513e7541ab"
   },
   {
    "type": "sil",
@@ -14628,9 +14701,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Fermo un momento. Come ti senti?",
-   "key": "[meditative] Fermo un momento. Come ti senti?",
-   "id": "5e6e44cfa983"
+   "text": "Adesso resta seduto un momento e nota come stai.",
+   "key": "[meditative] Adesso resta seduto un momento e nota come stai.",
+   "id": "6a2c764843f5"
   },
   {
    "type": "sil",
@@ -14639,9 +14712,9 @@
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Oggi hai costruito tutto lo strumento: respiro, gesto, mantra. Non funzionerà sempre, non funzionerà subito. Ma è qui.",
-   "key": "[sincere] Oggi hai costruito tutto lo strumento: respiro, gesto, mantra. Non funzionerà sempre, non funzionerà subito. Ma è qui.",
-   "id": "ec908890cfcd"
+   "text": "Oggi hai costruito tutto lo strumento: respiro, gesto, parola. Da qui lo alleni, un giorno alla volta.",
+   "key": "[sincere] Oggi hai costruito tutto lo strumento: respiro, gesto, parola. Da qui lo alleni, un giorno alla volta.",
+   "id": "ac9ebbf0ab7d"
   },
   {
    "type": "sil",
@@ -14661,9 +14734,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Adesso metti in pausa e scrivi nell'app: quale mantra hai scelto? E perché ti sembra più tuo?",
-   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: quale mantra hai scelto? E perché ti sembra più tuo?",
-   "id": "c574f83c276c"
+   "text": "Adesso metti in pausa e scrivi nell'app: quale parola hai scelto? Ti veniva comoda da ripetere, o vuoi provarne un'altra?",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: quale parola hai scelto? Ti veniva comoda da ripetere, o vuoi provarne un'altra?",
+   "id": "f14cc0cb24cf"
   }
  ],
  "W1-G4-apertura": [
@@ -14681,20 +14754,20 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "I giocatori forti di testa non sono quelli che non hanno mai pensieri negativi. Ce li hanno come tutti. Una partita perfetta non l'ha mai fatta nessuno, nemmeno Messi. Solo che i forti ci mettono meno tempo a tornare.",
-   "key": "[relaxed] I giocatori forti di testa non sono quelli che non hanno mai pensieri negativi. Ce li hanno come tutti. Una partita perfetta non l'ha mai fatta nessuno, nemmeno Messi. Solo che i forti ci mettono meno tempo a tornare.",
-   "id": "01954de342d2"
+   "text": "Una partita perfetta non l'ha mai fatta nessuno, nemmeno Messi. I pensieri negativi arrivano a tutti.",
+   "key": "[relaxed] Una partita perfetta non l'ha mai fatta nessuno, nemmeno Messi. I pensieri negativi arrivano a tutti.",
+   "id": "921bc1ede06d"
   },
   {
    "type": "sil",
-   "sec": 2.0
+   "sec": 1.0
   },
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Ed è quello che alleni oggi: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.",
-   "key": "[sincere] Ed è quello che alleni oggi: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.",
-   "id": "862a861304fe"
+   "text": "Quello che puoi allenare è il tempo che ci metti a tornare: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.",
+   "key": "[sincere] Quello che puoi allenare è il tempo che ci metti a tornare: non togliere il pensiero, ma accorciare il tempo tra il pensiero e il momento in cui torni qui.",
+   "id": "36be40acea57"
   },
   {
    "type": "sil",
@@ -14703,12 +14776,23 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Oggi la pratica è un po' più lunga, perché è un esperimento. Vediamo se il Reset funziona uguale anche quando non sei tranquillo. Tre situazioni, tre Reset per ognuna.",
-   "key": "[relaxed] Oggi la pratica è un po' più lunga, perché è un esperimento. Vediamo se il Reset funziona uguale anche quando non sei tranquillo. Tre situazioni, tre Reset per ognuna.",
-   "id": "50f61d0b07e6"
+   "text": "Oggi la pratica è un po' più lunga, perché è una prova: vediamo come ti viene il Reset quando non sei tranquillo.",
+   "key": "[relaxed] Oggi la pratica è un po' più lunga, perché è una prova: vediamo come ti viene il Reset quando non sei tranquillo.",
+   "id": "5efe7cdca56c"
   }
  ],
  "W1-G4-pratica": [
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Tre situazioni, tre Reset ciascuna: nove in tutto.",
+   "key": "[relaxed] Tre situazioni, tre Reset ciascuna: nove in tutto.",
+   "id": "00af4b3b04a3"
+  },
+  {
+   "type": "sil",
+   "sec": 3.0
+  },
   {
    "type": "text",
    "tag": "meditative",
@@ -14745,9 +14829,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "id": "9fa4d943b47f"
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "id": "9469f7f20b5a"
   },
   {
    "type": "sil",
@@ -14778,9 +14862,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira piano, mantra dentro di te.",
-   "key": "[meditative] Espira piano, mantra dentro di te.",
-   "id": "67cbe78abd52"
+   "text": "Espira piano, la tua parola dentro di te.",
+   "key": "[meditative] Espira piano, la tua parola dentro di te.",
+   "id": "563d670b70c3"
   },
   {
    "type": "sil",
@@ -14888,9 +14972,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "id": "9fa4d943b47f"
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "id": "9469f7f20b5a"
   },
   {
    "type": "sil",
@@ -14921,9 +15005,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira piano, mantra dentro di te.",
-   "key": "[meditative] Espira piano, mantra dentro di te.",
-   "id": "67cbe78abd52"
+   "text": "Espira piano, la tua parola dentro di te.",
+   "key": "[meditative] Espira piano, la tua parola dentro di te.",
+   "id": "563d670b70c3"
   },
   {
    "type": "sil",
@@ -14987,9 +15071,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Pensa al tuo momento, quello che hai scelto all'inizio della settimana. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.",
-   "key": "[meditative] Pensa al tuo momento, quello che hai scelto all'inizio della settimana. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.",
-   "id": "4ad4c47eb0b9"
+   "text": "Pensa al tuo momento, quello che hai scelto il secondo giorno. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.",
+   "key": "[meditative] Pensa al tuo momento, quello che hai scelto il secondo giorno. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.",
+   "id": "3bd75d478a8c"
   },
   {
    "type": "sil",
@@ -14998,31 +15082,31 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Vai lì con la mente. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
-   "key": "[meditative] Vai lì con la mente. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
-   "id": "29e6fb872790"
+   "text": "Vai lì con la mente per qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "key": "[meditative] Vai lì con la mente per qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.",
+   "id": "9b0c09d1255e"
   },
   {
    "type": "sil",
-   "sec": 30.0
+   "sec": 20.0
   },
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Resta lì ancora un attimo. Senti cosa fa il corpo.",
-   "key": "[meditative] Resta lì ancora un attimo. Senti cosa fa il corpo.",
-   "id": "7aa262f0130e"
+   "text": "Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.",
+   "key": "[meditative] Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.",
+   "id": "51d19030270d"
   },
   {
    "type": "sil",
-   "sec": 8.0
+   "sec": 3.0
   },
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso tre Reset. E osserva quanto ci metti a tornare.",
-   "key": "[meditative] Adesso tre Reset. E osserva quanto ci metti a tornare.",
-   "id": "5771adf177d5"
+   "text": "Adesso tre Reset, con l'episodio ancora in testa.",
+   "key": "[meditative] Adesso tre Reset, con l'episodio ancora in testa.",
+   "id": "e478c903dc12"
   },
   {
    "type": "sil",
@@ -15042,9 +15126,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.",
-   "id": "9fa4d943b47f"
+   "text": "Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "key": "[meditative] Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.",
+   "id": "9469f7f20b5a"
   },
   {
    "type": "sil",
@@ -15075,9 +15159,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Espira piano, mantra dentro di te.",
-   "key": "[meditative] Espira piano, mantra dentro di te.",
-   "id": "67cbe78abd52"
+   "text": "Espira piano, la tua parola dentro di te.",
+   "key": "[meditative] Espira piano, la tua parola dentro di te.",
+   "id": "563d670b70c3"
   },
   {
    "type": "sil",
@@ -15130,6 +15214,17 @@
   {
    "type": "text",
    "tag": "meditative",
+   "text": "Nota quanto è stato facile seguire respiro e gesto mentre pensavi all'episodio.",
+   "key": "[meditative] Nota quanto è stato facile seguire respiro e gesto mentre pensavi all'episodio.",
+   "id": "f6a9a55b44f9"
+  },
+  {
+   "type": "sil",
+   "sec": 5.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
    "text": "Sei tornato? Non devi risolvere niente. Solo tornare qui.",
    "key": "[meditative] Sei tornato? Non devi risolvere niente. Solo tornare qui.",
    "id": "045eb939a033"
@@ -15141,9 +15236,9 @@
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.",
-   "key": "[sincere] Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.",
-   "id": "87a979126ad7"
+   "text": "In campo userai il Reset breve, che è diverso da quello che fai qui: un respiro solo, comodo, con il gesto e la tua parola. Niente quattro e sei da contare: in una pausa corta non c'è il tempo, e non serve.",
+   "key": "[sincere] In campo userai il Reset breve, che è diverso da quello che fai qui: un respiro solo, comodo, con il gesto e la tua parola. Niente quattro e sei da contare: in una pausa corta non c'è il tempo, e non serve.",
+   "id": "e9570e9fa4a1"
   },
   {
    "type": "sil",
@@ -15152,9 +15247,9 @@
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Al prossimo allenamento prova il Reset breve: alla prima palla ferma, un respiro solo, con gesto e mantra. Mentre il gioco va, niente Reset: pensa alla prossima giocata. Non deve funzionare bene. Deve solo succedere.",
-   "key": "[sincere] Al prossimo allenamento prova il Reset breve: alla prima palla ferma, un respiro solo, con gesto e mantra. Mentre il gioco va, niente Reset: pensa alla prossima giocata. Non deve funzionare bene. Deve solo succedere.",
-   "id": "e5471feef6de"
+   "text": "Al prossimo allenamento, se trovi una pausa adatta, una palla ferma, una rimessa, provalo. Mentre il gioco va, niente Reset: pensa alla prossima giocata.",
+   "key": "[sincere] Al prossimo allenamento, se trovi una pausa adatta, una palla ferma, una rimessa, provalo. Mentre il gioco va, niente Reset: pensa alla prossima giocata.",
+   "id": "368204ead948"
   },
   {
    "type": "sil",
@@ -15163,32 +15258,32 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni è stato più facile fare il Reset, e in quale più difficile? E cosa sentivi nel corpo in quella più difficile.",
-   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni è stato più facile fare il Reset, e in quale più difficile? E cosa sentivi nel corpo in quella più difficile.",
-   "id": "c284d03a74b6"
+   "text": "Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni ti veniva più facile seguire i passaggi, respiro, gesto, parola? E dove ti sei incastrato, se è successo? Se hai notato qualcosa nel corpo, puoi scriverlo.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni ti veniva più facile seguire i passaggi, respiro, gesto, parola? E dove ti sei incastrato, se è successo? Se hai notato qualcosa nel corpo, puoi scriverlo.",
+   "id": "3d6ccd04bcb1"
   }
  ],
  "W1-G6-apertura": [
   {
    "type": "text",
    "tag": "sincere",
-   "text": "Nessuno strumento nuovo oggi. Solo una domanda da portarti in giro per la giornata.",
-   "key": "[sincere] Nessuno strumento nuovo oggi. Solo una domanda da portarti in giro per la giornata.",
-   "id": "17f97d76a4a3"
+   "text": "Nessuno strumento nuovo oggi. Solo una domanda sulla tua settimana, a cui rispondi adesso.",
+   "key": "[sincere] Nessuno strumento nuovo oggi. Solo una domanda sulla tua settimana, a cui rispondi adesso.",
+   "id": "47997b5c16d6"
+  }
+ ],
+ "W1-G6-pratica": [
+  {
+   "type": "text",
+   "tag": "relaxed",
+   "text": "Prenditi tre minuti adesso.",
+   "key": "[relaxed] Prenditi tre minuti adesso.",
+   "id": "acdb755729ba"
   },
   {
    "type": "sil",
    "sec": 2.0
   },
-  {
-   "type": "text",
-   "tag": "sincere",
-   "text": "Questa settimana hai iniziato a costruire qualcosa. Non perfetto. Non automatico ancora. Ma c'è.",
-   "key": "[sincere] Questa settimana hai iniziato a costruire qualcosa. Non perfetto. Non automatico ancora. Ma c'è.",
-   "id": "25455e9e4be2"
-  }
- ],
- "W1-G6-pratica": [
   {
    "type": "text",
    "tag": "meditative",
@@ -15203,9 +15298,9 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Un Reset solo, con calma.",
-   "key": "[meditative] Un Reset solo, con calma.",
-   "id": "7d176af69694"
+   "text": "Fai il Reset una volta sola, con calma.",
+   "key": "[meditative] Fai il Reset una volta sola, con calma.",
+   "id": "acda2a280bc3"
   },
   {
    "type": "sil",
@@ -15247,13 +15342,79 @@
   {
    "type": "text",
    "tag": "meditative",
-   "text": "Adesso resta seduto un momento con una domanda. Il tuo momento, quello che hai scelto all'inizio della settimana: questa settimana com'è andata?",
-   "key": "[meditative] Adesso resta seduto un momento con una domanda. Il tuo momento, quello che hai scelto all'inizio della settimana: questa settimana com'è andata?",
-   "id": "381619a223a6"
+   "text": "Adesso ripensa al tuo momento della settimana, quello che hai scelto all'inizio. Questa settimana com'è andata? Ti leggo le frasi: scegli la più vera.",
+   "key": "[meditative] Adesso ripensa al tuo momento della settimana, quello che hai scelto all'inizio. Questa settimana com'è andata? Ti leggo le frasi: scegli la più vera.",
+   "id": "135b412b0e57"
   },
   {
    "type": "sil",
-   "sec": 30.0
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Uno. Non è capitato.",
+   "key": "[meditative] Uno. Non è capitato.",
+   "id": "0e7f715ea282"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Due. È capitato, ma me ne sono accorto solo dopo.",
+   "key": "[meditative] Due. È capitato, ma me ne sono accorto solo dopo.",
+   "id": "9d63cd704259"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Tre. Me ne sono accorto, ma il Reset non mi è venuto in mente.",
+   "key": "[meditative] Tre. Me ne sono accorto, ma il Reset non mi è venuto in mente.",
+   "id": "5cff4cb8a8d8"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Quattro. Mi sono ricordato del Reset, ma non l'ho fatto: non c'era tempo, mi sentivo a disagio, non mi andava.",
+   "key": "[meditative] Quattro. Mi sono ricordato del Reset, ma non l'ho fatto: non c'era tempo, mi sentivo a disagio, non mi andava.",
+   "id": "87f8a57c1954"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Cinque. Ho provato il Reset e non ho notato differenze.",
+   "key": "[meditative] Cinque. Ho provato il Reset e non ho notato differenze.",
+   "id": "6ff219c43f82"
+  },
+  {
+   "type": "sil",
+   "sec": 2.0
+  },
+  {
+   "type": "text",
+   "tag": "meditative",
+   "text": "Sei. Ho provato il Reset e ho notato qualcosa.",
+   "key": "[meditative] Sei. Ho provato il Reset e ho notato qualcosa.",
+   "id": "1f425d1a369b"
+  },
+  {
+   "type": "sil",
+   "sec": 10.0
   },
   {
    "type": "text",
@@ -15264,7 +15425,7 @@
   },
   {
    "type": "sil",
-   "sec": 20.0
+   "sec": 10.0
   },
   {
    "type": "text",
@@ -15280,9 +15441,31 @@
   {
    "type": "text",
    "tag": "sincere",
+   "text": "Una cosa importante.",
+   "key": "[sincere] Una cosa importante.",
+   "id": "400d5ba534cf"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
    "text": "I progressi della testa non li vedi allo specchio come quelli dei muscoli. Se non senti niente di diverso, scrivilo così com'è: è un'informazione vera, non un fallimento.",
    "key": "[sincere] I progressi della testa non li vedi allo specchio come quelli dei muscoli. Se non senti niente di diverso, scrivilo così com'è: è un'informazione vera, non un fallimento.",
    "id": "f57d502aa4d3"
+  },
+  {
+   "type": "sil",
+   "sec": 1.0
+  },
+  {
+   "type": "text",
+   "tag": "sincere",
+   "text": "Ci dice cosa guardare: se la pratica è chiara, se riesci a farla, se trovi il momento in campo.",
+   "key": "[sincere] Ci dice cosa guardare: se la pratica è chiara, se riesci a farla, se trovi il momento in campo.",
+   "id": "a7baeaf6053d"
   },
   {
    "type": "sil",
@@ -15291,9 +15474,9 @@
   {
    "type": "text",
    "tag": "relaxed",
-   "text": "Adesso metti in pausa e scrivi nell'app la frase più vera tra le cinque che trovi, e se vuoi una riga su cosa è successo.",
-   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app la frase più vera tra le cinque che trovi, e se vuoi una riga su cosa è successo.",
-   "id": "408a73733ac3"
+   "text": "Adesso metti in pausa e scrivi nell'app il numero della frase più vera, e se vuoi una riga su cosa è successo.",
+   "key": "[relaxed] Adesso metti in pausa e scrivi nell'app il numero della frase più vera, e se vuoi una riga su cosa è successo.",
+   "id": "f7289ef17705"
   }
  ],
  "W2-G1-apertura": [

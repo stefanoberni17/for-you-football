@@ -1,3 +1,6 @@
+[relaxed]
+Tre situazioni, tre Reset ciascuna: nove in tutto.
+[SILENZIO 3]
 [meditative]
 Prima situazione: seduto, adesso, tranquillo.
 [SILENZIO 2]
@@ -5,13 +8,13 @@ Occhi aperti su un punto fisso, attenzione al punto sotto lo sterno.
 [SILENZIO 3]
 Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
 [SILENZIO 4]
-Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 2]
 Ancora. Inspira, gesto.
 [SILENZIO 4]
-Espira piano, mantra dentro di te.
+Espira piano, la tua parola dentro di te.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 2]
@@ -31,13 +34,13 @@ Tre Reset, così, in piedi.
 [SILENZIO 2]
 Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
 [SILENZIO 4]
-Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 2]
 Ancora. Inspira, gesto.
 [SILENZIO 4]
-Espira piano, mantra dentro di te.
+Espira piano, la tua parola dentro di te.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 2]
@@ -49,23 +52,23 @@ Rilascia.
 [SILENZIO 3]
 Terza situazione. Siediti.
 [SILENZIO 4]
-Pensa al tuo momento, quello che hai scelto all'inizio della settimana. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.
+Pensa al tuo momento, quello che hai scelto il secondo giorno. O a un momento di tensione recente. Non il peggiore: qualcosa di piccolo. Un fischio che non hai capito, un passaggio sbagliato.
 [SILENZIO 3]
-Vai lì con la mente. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
-[SILENZIO 30]
-Resta lì ancora un attimo. Senti cosa fa il corpo.
-[SILENZIO 8]
-Adesso tre Reset. E osserva quanto ci metti a tornare.
+Vai lì con la mente per qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un episodio più leggero. Va bene lo stesso.
+[SILENZIO 20]
+Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.
+[SILENZIO 3]
+Adesso tre Reset, con l'episodio ancora in testa.
 [SILENZIO 2]
 Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
 [SILENZIO 4]
-Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo mantra.
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 2]
 Ancora. Inspira, gesto.
 [SILENZIO 4]
-Espira piano, mantra dentro di te.
+Espira piano, la tua parola dentro di te.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 2]
@@ -75,12 +78,14 @@ Espira, e lascia andare.
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 3]
+Nota quanto è stato facile seguire respiro e gesto mentre pensavi all'episodio.
+[SILENZIO 5]
 Sei tornato? Non devi risolvere niente. Solo tornare qui.
 [SILENZIO 6]
 [sincere]
-Se senti che è troppo, resta solo sul respiro: questa parte la rifai quando ti senti pronto.
+In campo userai il Reset breve, che è diverso da quello che fai qui: un respiro solo, comodo, con il gesto e la tua parola. Niente quattro e sei da contare: in una pausa corta non c'è il tempo, e non serve.
 [SILENZIO 2]
-Al prossimo allenamento prova il Reset breve: alla prima palla ferma, un respiro solo, con gesto e mantra. Mentre il gioco va, niente Reset: pensa alla prossima giocata. Non deve funzionare bene. Deve solo succedere.
+Al prossimo allenamento, se trovi una pausa adatta, una palla ferma, una rimessa, provalo. Mentre il gioco va, niente Reset: pensa alla prossima giocata.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni è stato più facile fare il Reset, e in quale più difficile? E cosa sentivi nel corpo in quella più difficile.
+Adesso metti in pausa e scrivi nell'app: in quale delle tre situazioni ti veniva più facile seguire i passaggi, respiro, gesto, parola? E dove ti sei incastrato, se è successo? Se hai notato qualcosa nel corpo, puoi scriverlo.

@@ -1,7 +1,10 @@
+[relaxed]
+Prenditi tre minuti adesso.
+[SILENZIO 2]
 [meditative]
 Siediti. Occhi aperti su un punto fisso, attenzione al punto sotto lo sterno.
 [SILENZIO 3]
-Un Reset solo, con calma.
+Fai il Reset una volta sola, con calma.
 [SILENZIO 2]
 Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
 [SILENZIO 4]
@@ -9,14 +12,30 @@ Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te il tuo man
 [SILENZIO 6]
 Rilascia.
 [SILENZIO 3]
-Adesso resta seduto un momento con una domanda. Il tuo momento, quello che hai scelto all'inizio della settimana: questa settimana com'è andata?
-[SILENZIO 30]
+Adesso ripensa al tuo momento della settimana, quello che hai scelto all'inizio. Questa settimana com'è andata? Ti leggo le frasi: scegli la più vera.
+[SILENZIO 2]
+Uno. Non è capitato.
+[SILENZIO 2]
+Due. È capitato, ma me ne sono accorto solo dopo.
+[SILENZIO 2]
+Tre. Me ne sono accorto, ma il Reset non mi è venuto in mente.
+[SILENZIO 2]
+Quattro. Mi sono ricordato del Reset, ma non l'ho fatto: non c'era tempo, mi sentivo a disagio, non mi andava.
+[SILENZIO 2]
+Cinque. Ho provato il Reset e non ho notato differenze.
+[SILENZIO 2]
+Sei. Ho provato il Reset e ho notato qualcosa.
+[SILENZIO 10]
 Non cercare la risposta giusta. Solo quella vera.
-[SILENZIO 20]
+[SILENZIO 10]
 [sincere]
 Un Reset fatto una volta, anche in modo imperfetto, va bene così. Non serve che funzioni sempre. Serve che tu sappia dov'è lo strumento quando ne hai bisogno.
 [SILENZIO 2]
+Una cosa importante.
+[SILENZIO 1]
 I progressi della testa non li vedi allo specchio come quelli dei muscoli. Se non senti niente di diverso, scrivilo così com'è: è un'informazione vera, non un fallimento.
+[SILENZIO 1]
+Ci dice cosa guardare: se la pratica è chiara, se riesci a farla, se trovi il momento in campo.
 [SILENZIO 2]
 [relaxed]
-Adesso metti in pausa e scrivi nell'app la frase più vera tra le cinque che trovi, e se vuoi una riga su cosa è successo.
+Adesso metti in pausa e scrivi nell'app il numero della frase più vera, e se vuoi una riga su cosa è successo.

@@ -21,7 +21,8 @@ NOTA = False
 # diventa ARRIVO / RESET3 guidati; i riepiloghi dei passi diventano "Uno. ...", "Due. ..."):
 IGNORA = [r'occhi aperti.*sterno', r'^fai (tre|\d) reset per arrivare qui', r'^naso pancia bocca$',
           r'^siediti$', r'^poi la spiegazione passo per passo$', r'^piedi stomaco petto spalle$',
-          r'^oggi in (circa )?\w+ minuti( cinque| quattro| tre)? passi$']
+          r'^oggi in (circa )?\w+ minuti( cinque| quattro| tre)? passi$',
+          r'^inspira con il gesto espira con (la tua parola|il mantra)']
 
 NUM = {'1': 'uno', '2': 'due', '3': 'tre', '4': 'quattro', '5': 'cinque', '6': 'sei', '7': 'sette',
        '8': 'otto', '9': 'nove', '10': 'dieci', '12': 'dodici', '15': 'quindici', '20': 'venti',
