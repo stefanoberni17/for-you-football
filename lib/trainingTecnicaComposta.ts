@@ -151,6 +151,19 @@ export function contaTemi(feedback: readonly FeedbackPerMemoria[], lunediCorrent
   return out;
 }
 
+/**
+ * I conteggi per SCEGLIERE il tema (stagione simulata, 27/10): con una seduta di tecnica a settimana le 4 settimane
+ * hanno 3-4 sedute e i temi al 10 % (dribbling, tiri) non arrivano mai a una seduta intera: la rotazione restava
+ * palleggi → passaggi → freestyle → visione per 12 settimane. Sotto QUOTE_SEDUTE_MIN sedute la finestra si allunga a
+ * QUOTE_SETTIMANE_LUNGHE settimane, così le quote si rispettano anche con poca tecnica. La card del mese resta sulle 4.
+ */
+export const QUOTE_SEDUTE_MIN = 8;
+export const QUOTE_SETTIMANE_LUNGHE = 8;
+export function conteggiPerScelta(feedback: readonly FeedbackPerMemoria[], lunediCorrente: string, lookup?: Parameters<typeof contaTemi>[3]): Conteggi {
+  const corti = contaTemi(feedback, lunediCorrente, QUOTE_SETTIMANE, lookup);
+  return TEMI.reduce((a, t) => a + corti[t], 0) >= QUOTE_SEDUTE_MIN ? corti : contaTemi(feedback, lunediCorrente, QUOTE_SETTIMANE_LUNGHE, lookup);
+}
+
 /** Il tema dell'ultima seduta di tecnica fatta (per non ripeterlo se un altro è indietro). */
 export function ultimoTemaTecnica(feedback: readonly FeedbackPerMemoria[], lookup: (id: string) => Pick<Blocco, 'id' | 'qualita' | 'famiglia'> | undefined = (id) => bloccoById(id)): TemaTecnica | null {
   const righe = [...feedback].filter((f) => f.feedback_blocchi?.length).sort((a, b) => (a.completed_at < b.completed_at ? 1 : -1));

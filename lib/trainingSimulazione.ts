@@ -82,7 +82,8 @@ function r(test_id: string, valore: number, pesoKg?: number): TestResultRow {
   return { test_id, valore, livello_calcolato: liv, punteggio_calcolato: 50, dettaglio: null };
 }
 /** Riga della scala skill: gradino tenuto con quante reps/secondi (test_id = skill:<esercizio>). */
-const skill = (esercizioId: string, valore: number): TestResultRow => ({ test_id: `skill:${esercizioId}`, valore, livello_calcolato: 'intermedio', punteggio_calcolato: 50, dettaglio: null });
+export { r as risultatoFinto };
+export const skill = (esercizioId: string, valore: number): TestResultRow => ({ test_id: `skill:${esercizioId}`, valore, livello_calcolato: 'intermedio', punteggio_calcolato: 50, dettaglio: null });
 
 /** Tre settimane di sedute fatte (piani + completamenti con voto) per dare al carico un cronico e alla memoria dei blocchi un passato. */
 function storicoTreSettimane(sedute: { giorno: number; blocchi: { id: string; nome: string; qualita: string; durataMin: number }[]; giudizio: 'facile' | 'ok' | 'duro' }[], rpe = 7): { storico: NonNullable<Atleta['storico']>; feedback: FeedbackSeduta[] } {
@@ -113,7 +114,7 @@ export const MARCO: Atleta = {
 };
 
 // Luca: A, off season (tetto 6 fisiche, 120'), vuole velocità e salti. Solo il campo.
-const LUCA: Atleta = {
+export const LUCA: Atleta = {
   nome: 'Luca', descrizione: 'A (AMRAP 9), off season senza squadra, attaccante. Solo campo e rullo. Test di velocità e salti al livello A, parte alta A.',
   eta: 22, ruoli: 'attaccante', fase: 'off_season', attrezzatura: ['campo', 'piccoli attrezzi', 'sbarra'],
   results: [r('test-amrap', 9), r('test-push', 32), r('test-pull', 9), r('test-core', 70), r('test-lombari', 65), r('test-squat', 42), r('test-affondi', 26), r('test-rdl', 32), r('test-bridge', 42),
@@ -123,7 +124,7 @@ const LUCA: Atleta = {
 };
 
 // Davide: PRO in palestra, massimali, kettlebell. In season, squadra tre volte, partita la domenica.
-const DAVIDE: Atleta = {
+export const DAVIDE: Atleta = {
   nome: 'Davide', descrizione: 'PRO (AMRAP 11), 80 kg, palestra + kettlebell + sbarra + campo, massimali (squat 1,6×, panca 1,0×, pull up 1,5×). In season, squadra lun/mer/ven, partita domenica.',
   eta: 24, ruoli: 'centrocampista', fase: 'in_season', attrezzatura: ['palestra', 'kettlebell', 'sbarra', 'campo', 'piccoli attrezzi'], esperienzaPalestra: true, pesoKg: 80,
   results: [r('test-amrap', 11), r('test-push', 42), r('test-pull', 13), r('test-core', 130), r('test-lombari', 95), r('test-squat', 62), r('test-affondi', 36), r('test-rdl', 46), r('test-bridge', 62),
@@ -153,7 +154,7 @@ const SIMONE: Atleta = {
 };
 
 // Giulia: portiere B, "Tutto, in equilibrio", 4 giornate da 60'.
-const GIULIA: Atleta = {
+export const GIULIA: Atleta = {
   nome: 'Giulia', descrizione: 'B, in season, portiere, squadra mar/gio, partita sabato. Setup "Tutto, in equilibrio", lun/mar/gio/ven, 4 giornate da 60\'. Sbarra, campo, rullo.',
   eta: 20, ruoli: 'portiere', fase: 'in_season', attrezzatura: ['sbarra', 'campo', 'piccoli attrezzi'],
   results: [r('test-amrap', 8), r('test-push', 22), r('test-pull', 4), r('test-core', 60), r('test-lombari', 50), r('test-squat', 32), r('test-affondi', 20), r('test-rdl', 24), r('test-bridge', 34), r('test-pall-forte', 60), r('t2-broad-jump', 205),

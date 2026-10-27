@@ -18,6 +18,7 @@ npx tsx scripts/planner-sim.mts --solo marco,luca     # alcuni scenari
 npx tsx scripts/planner-sim.mts --out docs/planner-sim-2026-10-15.md
 npx tsx scripts/planner-sim.mts --prompt davide       # i due prompt interi di uno scenario
 npx tsx scripts/planner-sim.mts --difficili           # 9 scenari difficili + 6 modifiche a metà settimana (27/10)
+npx tsx scripts/simulazione-stagione.mts              # una STAGIONE: sei atleti per 12 settimane con sedute, test e resoconti (27/10, docs/planner-stagione-2026-10-27.md)
 ```
 
 Nelle sessioni cloud di Claude Code la chiave si chiama `FYF_ANTHROPIC_API_KEY` (le variabili `ANTHROPIC_*` non

@@ -65,7 +65,7 @@ export function programmaDaiLog(r: RiepilogoEsercizio): ProgrammaDose {
 }
 
 /**
- * La dose della prossima seduta. `r` null o 'tieni' → il programma com'è.
+ * La dose della prossima seduta. `r` null → il programma com'è; 'tieni' → la dose dell'ultima volta (`tieniDallUltima`).
  * Con i kg si muovono i kg; a corpo libero o a tempo la quantità; tetto e pavimento sul programma.
  */
 export function prossimaDose(programma: ProgrammaDose, r: RiepilogoEsercizio | null | undefined): ProssimaDose {
@@ -102,7 +102,7 @@ export function prossimaDose(programma: ProgrammaDose, r: RiepilogoEsercizio | n
   if (es?.saliBloccato && (r.suggerimento === 'sali' || r.suggerimento === 'conferma')) {
     return { ...base, verso: 'tieni', motivo: `resti a ${programma.carico_kg ? `${programma.carico_kg} kg` : fmtDose(programma.quantita, unita)}: ${es.motivo}`, perche: `${r.motivo}; ma ${es.motivo}` };
   }
-  if (r.suggerimento === 'tieni') return base;
+  if (r.suggerimento === 'tieni') return tieniDallUltima(programma, r, base, unita);
   if (r.ultimaSeduta.unita && r.ultimaSeduta.unita !== unita) return { ...base, motivo: 'l\'ultima volta era in un\'altra unità: non si confronta' };
 
   const conferma = r.suggerimento === 'conferma';
@@ -131,27 +131,63 @@ export function prossimaDose(programma: ProgrammaDose, r: RiepilogoEsercizio | n
     // Se ha FATTO più del previsto (Ste, 22/9: "8 previste, 10 facili"), si riparte da quanto ha fatto davvero:
     // il tetto sul programma (+30 %) non può stare sotto una dose già dimostrata più un passo
     const prog = programma.quantita;
-    const prevista = ultima.quantitaPrevista > 0 && Math.abs(ultima.quantitaPrevista - prog) <= prog * (PROGRESSIONE_MAX_DRIFT + 0.05) ? ultima.quantitaPrevista : prog;
+    // (con i programmi piccoli, 2-5 ripetizioni, il 35 % è meno di una ripetizione: almeno 2 di scarto, stagione simulata 27/10)
+    const prevista = ultima.quantitaPrevista > 0 && Math.abs(ultima.quantitaPrevista - prog) <= Math.max(2, prog * (PROGRESSIONE_MAX_DRIFT + 0.05)) ? ultima.quantitaPrevista : prog;
     const fatta = ultima.quantitaFatta > 0 && ultima.quantitaFatta <= prog * 2 ? ultima.quantitaFatta : prevista;
     const da = verso === 1 ? Math.max(prevista, fatta) : Math.min(prevista, fatta);
     const dimostrata = verso === 1 && fatta > prevista ? Math.round(conferma ? fatta : fatta + passoDose(fatta, unita, 1)) : 0;
     const capUnita = unita === 'reps' ? ACCESSORI_CORPO_LIBERO_REPS_MAX : SECONDI_MAX;
-    const tetto = Math.min(capUnita, Math.max(Math.round(prog * (1 + PROGRESSIONE_MAX_DRIFT)), dimostrata));
+    // (mai sotto la dose prescritta e fatta l'ultima volta: con il verdetto SALI/CONFERMA non si torna indietro)
+    const tetto = Math.min(capUnita, Math.max(Math.round(prog * (1 + PROGRESSIONE_MAX_DRIFT)), dimostrata, verso === 1 ? Math.min(prevista, fatta) : 0));
     const pavimento = Math.max(unita === 'reps' ? 1 : 5, Math.round(prog * PAVIMENTO_PCT));
     const nuovo = Math.min(tetto, Math.max(pavimento, Math.round(conferma ? da : da + passoDose(da, unita, verso))));
     condizioni.push(`mai oltre +${PROGRESSIONE_MAX_DRIFT * 100} % del programma (${fmtDose(prog, unita)}) o ${fmtDose(capUnita, unita)}, né sotto ${fmtDose(pavimento, unita)}`);
     if (verso === 1 && !conferma) condizioni.push('vale se tieni tutte le serie con il voto entro 6');
     if (nuovo !== prog) { out.quantita = nuovo; out.cambiata = true; }
-    const piuDelPrevisto = verso === 1 && ultima.quantitaFatta > ultima.quantitaPrevista;
+    // I numeri citati sono quelli usati davvero (prima la nota diceva "ne hai fatte 6 su 4" anche quando li aveva scartati)
+    const piuDelPrevisto = verso === 1 && fatta > prevista;
     out.motivo = out.cambiata
       ? (verso === 1
-        ? (piuDelPrevisto ? `${fmtDose(nuovo, unita)}: l'ultima volta ne hai fatte ${fmtDose(ultima.quantitaFatta, unita)} su ${fmtDose(ultima.quantitaPrevista, unita)}${conferma ? ', si riparte da lì' : ''}` : `${fmtDose(nuovo, unita)}: le ultime due volte ti era facile`)
+        ? (piuDelPrevisto ? `${fmtDose(nuovo, unita)}: l'ultima volta ne hai fatte ${fmtDose(fatta, unita)} su ${fmtDose(prevista, unita)}${conferma ? ', si riparte da lì' : ''}` : `${fmtDose(nuovo, unita)}: le ultime due volte ti era facile`)
         : `${fmtDose(nuovo, unita)}: l'ultima volta era al limite`)
       : (verso === 1 ? `resti a ${fmtDose(prog, unita)}: sei già al tetto del programma` : `resti a ${fmtDose(prog, unita)}: sei già al minimo del programma`);
   } else {
     out.motivo = 'dose fissa (minuti o metri): non si adatta';
   }
   return out;
+}
+
+/**
+ * TIENI = la dose dell'ultima volta, non il programma (stagione simulata, 27/10). Prima "tieni così" riportava al
+ * programma di Ste: dopo tre settimane di SCENDI (20 → 14) una seduta "giusta" rimetteva 20 (+43 %), e chi era salito
+ * oltre il programma tornava giù alla prima seduta giusta; l'hint del player e il prompt dicevano invece l'ultima dose.
+ * Sopra il programma si resta lì (il progresso non si perde); sotto, si torna verso il programma UN passo alla volta.
+ * Fuori dalla tolleranza (l'ultima prescrizione era di un altro programma) vale il programma.
+ */
+function tieniDallUltima(programma: ProgrammaDose, r: RiepilogoEsercizio, base: ProssimaDose, unita: string): ProssimaDose {
+  const u = r.ultimaSeduta;
+  if (programma.schema && programma.schema !== 'fisso') return base;
+  if (u.unita && u.unita !== unita) return base;
+  const vicina = (da: number, prog: number) => Math.abs(da - prog) <= Math.max(2, prog * (PROGRESSIONE_MAX_DRIFT + 0.05));
+  if (programma.carico_kg && programma.carico_kg > 0) {
+    const prog = programma.carico_kg;
+    const da = u.caricoPrevistoKg ?? u.caricoKg;
+    if (!da || da <= 0 || da === prog || !vicina(da, prog)) return base;
+    if (da > prog) return { ...base, caricoKg: da, cambiata: true, motivo: `tieni ${da} kg: l'ultima volta era giusta` };
+    const kb = isEsercizioKettlebell(programma.esercizio_id);
+    const su = Math.min(prog, kb ? da + KB_PASSO_KG : round05(da + Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT)));
+    if (su >= prog) return { ...base, motivo: `torni a ${prog} kg: l'ultima volta a ${da} kg era giusta` };
+    return { ...base, caricoKg: su, cambiata: true, motivo: `${su} kg: l'ultima volta a ${da} kg era giusta, si torna verso ${prog} kg un passo alla volta` };
+  }
+  if (unita !== 'reps' && unita !== 'secondi') return base;
+  const prog = programma.quantita;
+  const da = u.quantitaPrevista;
+  if (!da || da <= 0 || da === prog || !vicina(da, prog)) return base;
+  const tetto = Math.min(unita === 'reps' ? ACCESSORI_CORPO_LIBERO_REPS_MAX : SECONDI_MAX, Math.round(prog * (1 + PROGRESSIONE_MAX_DRIFT)));
+  if (da > prog) { const q = Math.min(tetto, da); return q === prog ? base : { ...base, quantita: q, cambiata: true, motivo: `tieni ${fmtDose(q, unita)}: l'ultima volta era giusta` }; }
+  const su = Math.min(prog, da + passoDose(da, unita, 1));
+  if (su >= prog) return { ...base, motivo: `torni a ${fmtDose(prog, unita)}: l'ultima volta a ${fmtDose(da, unita)} era giusta` };
+  return { ...base, quantita: su, cambiata: true, motivo: `${fmtDose(su, unita)}: l'ultima volta a ${fmtDose(da, unita)} era giusta, si torna verso ${fmtDose(prog, unita)} un passo alla volta` };
 }
 
 /** La dose detta in breve per il prompt: "SALI → 16 kg (kettlebell: il passo è di 4 kg)". */

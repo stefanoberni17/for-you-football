@@ -59,6 +59,7 @@ export interface RiepilogoEsercizio {
     quantitaPrevista: number;     // media
     quantitaFatta: number;        // media (fallback: prevista)
     fatteSerie: number[];         // quantità fatta serie per serie (per la soglia del gradino, 18/10)
+    daSerie?: boolean;            // l'ultima seduta era a serie (il player manda le fatte); l'EMOM manda una riga senza fatte (27/10)
     caricoKg: number | null;      // carico usato (media)
     caricoPrevistoKg: number | null; // carico prescritto (media): il "programma" per la dose quando l'item del piano non c'è
     rpeMedio: number | null;
@@ -113,6 +114,7 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
       quantitaPrevista: media(previste(last)),
       quantitaFatta: media(fatte(last)),
       fatteSerie: fatte(last),
+      daSerie: last.some((r) => r.quantita_fatta != null),
       caricoKg: lastCarico.length ? media(lastCarico) : null,
       caricoPrevistoKg: lastCaricoPrevisto.length ? media(lastCaricoPrevisto) : null,
       rpeMedio: lastRpe.length ? media(lastRpe) : null,
