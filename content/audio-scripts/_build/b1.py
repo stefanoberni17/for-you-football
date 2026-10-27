@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1-W8. Formato:
+# Copioni v3 (registri per riga) per W1-W9. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -1928,6 +1928,120 @@ E da oggi cambia anche la tua àncora. Prima di entrare in campo, allenamento o 
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app: dopo il Rilascio, cosa hai notato? Nel corpo, spalle e respiro, e nel peso che sentivi: possono essere diversi. Una riga. Anche «uguale» o «non so» vanno bene.
+"""
+
+# ---------- W9: il centro, la routine (audio G1, G2) ----------
+F["W9-G1"] = f"""[sincere]
+Il Blocco 2 si è chiuso con una domanda: giochi per paura di sbagliare, o per amore del gioco?
+[SILENZIO 2]
+Non devi rispondere adesso. A quella domanda non si risponde a parole, si risponde giocando. Ed è quello che farai da qui alla fine.
+[SILENZIO 2]
+Oggi partiamo da una cosa più semplice. Adesso hai sette strumenti, e questa settimana impariamo a usarli insieme.
+[SILENZIO 2]
+Una parola che userò spesso da qui in avanti: il centro. Non è niente di astratto, è solo come stai quando entri in campo e sei lì. Non nella partita di sabato scorso, non in quello che dirà il mister.
+[SILENZIO 1]
+Essere al centro non vuol dire non avere pensieri, paura o distrazioni. Vuol dire essere presente su te stesso: accorgerti che la testa è andata altrove, e riportarla a quello che stai facendo.
+[SILENZIO 2]
+[relaxed]
+Ci sei già arrivato un sacco di volte, solo che non sapevi come si chiamava e ci sei finito per caso. Un po' come il gol di stinco: vale uguale, ma rifarlo apposta è un'altra cosa. Adesso impariamo come arrivarci quando serve.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Adesso passiamo in rassegna quello che hai in mano. Come quando controlli la borsa prima di uscire: non per studiare niente, solo per vedere cosa c'è dentro.
+[SILENZIO 3]
+Il Reset. Respiro, gesto, mantra.
+[SILENZIO 2]
+Oggi com'è: ti viene da solo, o te lo devi ricordare? Va bene tutte e due.
+[SILENZIO 8]
+L'Observer. Nominare il pensiero: passato, futuro, giudizio.
+[SILENZIO 2]
+Lo usi ancora, o è finito in un cassetto?
+[SILENZIO 8]
+Il Body Check. Piedi, stomaco, petto, spalle.
+[SILENZIO 2]
+Lo usi anche al campo, nelle pause, o te ne ricordi solo qui dentro?
+[SILENZIO 8]
+Il Protocollo Pressione. Senti, nomina, torna.
+[SILENZIO 2]
+L'hai usato in un momento vero?
+[SILENZIO 8]
+Lo Stacco. L'errore, «è successo», un Reset breve alla prima pausa se il gioco va, poi la prossima azione.
+[SILENZIO 2]
+Ti è capitato di usarlo dopo uno sbaglio?
+[SILENZIO 8]
+L'Anticipo. Il segnale che sale, e alla prima pausa un Reset breve.
+[SILENZIO 2]
+L'hai provato?
+[SILENZIO 8]
+Il Rilascio. L'espirazione che posa il peso oltre la linea.
+[SILENZIO 2]
+L'hai usato prima di entrare o dopo una partita, o non ancora?
+[SILENZIO 8]
+Per ognuno, una risposta onesta: è diventato mio, lo uso a volte, o è rimasto sulla carta? E se uno ti era proprio uscito di testa, segnalo come «da ricordare».
+[SILENZIO 3]
+Uno strumento è tuo anche se devi ancora ricordarti di usarlo. Senza darti voti, non è una pagella. È un inventario, e sapere cosa hai in mano è il primo passo per usarlo.
+[SILENZIO 10]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+E da oggi l'àncora della settimana: prima di iniziare qualsiasi cosa che conta, allenamento, partita, ma anche una riunione, un esame o un discorso che pesa, un Reset. Uno solo. Entra presente. Non capitarci per caso.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: dei sette, quale senti più tuo? E quale è rimasto sulla carta? Se uno lo usi solo a volte, o è da ricordare, scrivilo così. Due nomi bastano, e non c'è niente di male se sono rimasti lì in tanti.
+"""
+
+F["W9-G2"] = f"""[sincere]
+C'è un momento esatto in cui la partita inizia davvero, e non è il fischio d'inizio. Anzi, sono due.
+[SILENZIO 2]
+Il primo è quando entri nello spogliatoio. A volte arrivi e sei già lì: hai lasciato fuori la giornata, la discussione a casa, il messaggio che non ti va giù. Ti cambi, ascolti il mister, parli con i compagni, e vivi quel momento. La partita per te è già cominciata.
+[SILENZIO 1]
+A volte invece entri e la testa è ancora da un'altra parte. Ti cambi di fretta, ascolti il discorso del mister ma stai pensando ad altro.
+[SILENZIO 2]
+Il secondo momento è quando metti il piede in campo. A volte entri e ti senti scollegato: hai paura, hai pensieri in testa, a volte una canzone che va avanti in loop. Il tuo corpo è lì, ma tu sei da tutt'altra parte. A volte arrivi in ritardo sulle giocate.
+[SILENZIO 1]
+Altre volte invece sei lì: senti il campo, vedi i compagni, segui il gioco. Con il corpo e con la testa.
+[SILENZIO 2]
+Non stiamo parlando di stare concentrati e rigidi su ogni dettaglio. Stiamo parlando di presenza.
+[SILENZIO 2]
+Con quello che hai in mano adesso, arrivare pronto a tutte e due è possibile. Questa settimana vediamo come.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Torna all'ultima volta che hai giocato. Non alla partita, al prima.
+[SILENZIO 3]
+Rivedi la sequenza com'è stata davvero, pezzo per pezzo. Se non riesci a vedere la scena, raccontala a te stesso a parole, o prendi un'altra volta che ricordi meglio. Va bene lo stesso.
+[SILENZIO 8]
+Primo momento: l'ingresso nello spogliatoio.
+[SILENZIO 3]
+Com'eri, in quei minuti? Eri lì con la testa, oppure il corpo si cambiava e tu eri da un'altra parte?
+[SILENZIO 10]
+Non giudicare, è informazione.
+[SILENZIO 4]
+Secondo momento: il piede in campo. Il primo contatto con l'erba.
+[SILENZIO 3]
+Com'eri, presente o ancora sovrappensiero?
+[SILENZIO 10]
+Adesso nota un'altra cosa: i gesti che fai sempre, prima. Le cuffie, l'ordine delle scarpe, il posto dove ti siedi. Molti ne hanno.
+[SILENZIO 8]
+Se ne hai, la domanda è cosa fanno per te. Se non ne hai nessuno, va bene: non serve inventarli.
+[SILENZIO 6]
+Un gesto può aiutarti ad arrivare presente: lo faccio per essere qui. Quella è la routine.
+[SILENZIO 2]
+Oppure può mettere il potere fuori: le calze fortunate, il gesto che «se lo salto va male». Quella è scaramanzia, e a volte dietro c'è un po' di paura che si veste da rito.
+[SILENZIO 2]
+Spesso lo stesso gesto fa tutte e due le cose. Un modo semplice per capirlo: se un giorno devi cambiarlo o saltarlo, ti aiuta lo stesso, o senti che andrà male?
+[SILENZIO 10]
+Se ti accorgi che un po' di scaramanzia c'è, non giudicarti: spesso è solo il bisogno di sentire le cose sotto controllo. Questa settimana a quel bisogno diamo un posto vero.
+[SILENZIO 4]
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Ricorda l'àncora: ogni volta che entri in qualcosa che conta, un Reset.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: in quei due momenti, lo spogliatoio e il piede in campo, di solito sei presente o sovrappensiero? E il gesto che non salteresti mai: ti aiuta anche quando devi cambiarlo o saltarlo, o senti che senza quello andrà male? Onesto. E se non hai nessun gesto fisso, scrivi «nessuno»: va bene.
 """
 
 # Dal 26/10 ogni giorno ha DUE audio: l'apertura (schermata Apertura, campo Notion "Audio Apertura")
