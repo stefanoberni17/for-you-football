@@ -83,7 +83,7 @@ Per la Palestra (dopo il percorso) serve un campo `audioUrl` in `lib/toolsCatalo
 ## Cose aperte segnalate a Ste
 
 - W11-G2/G3/G4 citano «le tue risposte qui sotto» e «dal Profilo in Le tue risposte»: funzioni che nell'app non esistono. O si costruiscono (pagina nel Profilo + box sotto le pratiche di W11) o si cambiano i testi. W11 non ha audio, quindi non blocca.
-- W10-G2/G3/G4 hanno `Tipo Pratica` = respirazione ma sono esercizi con la palla: il popup mostra il cerchio del respiro in conflitto con l'audio. Da portare a `riflessione` su Notion quando si arriva alla 10 (con l'ok di Ste).
+- ~~W10-G2/G3/G4 con `Tipo Pratica` = respirazione~~: portati a `riflessione` su Notion il 27/10 (Ste: "sì, dovresti metterlo a posto"). Sono esercizi con la palla: il popup non mostra più il cerchio del respiro.
 - Le 11 correzioni della Palestra e dei layer SOS in `docs/audio/revisione-pratiche-audio.md` aspettano le sue risposte.
 
 ## Cartelle
