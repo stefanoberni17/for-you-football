@@ -377,11 +377,12 @@ export default function TrainingSessionPlayer({
   const votoRidotto = !senzaVoto && !isTecnica && !isEmom && item.adattamento !== 'gradino' && !item.carico_kg;
   const latoLabel = lato === 'dx' ? 'destro' : 'sinistro';
   // Parametri dell'esercizio su due righe: "3 × 12 per lato · 24 kg" (grande) e "+1 sinistro · recupero 90"" (piccola)
-  const parametri = isEmom
+  const parametri = isPausa ? `Pausa di ${item.quantita >= 60 && item.quantita % 60 === 0 ? `${item.quantita / 60}'` : `${item.quantita}"`}`
+    : isEmom
     ? `EMOM · ${item.serie} ${item.serie === 1 ? 'giro' : 'giri'} · ${unitaLabel(unita, item.quantita)} al minuto`
     : testInfo ? `Serie test${testInfo.prep != null ? ` · prima ${unitaLabel(unita, testInfo.prep)} di avvicinamento` : ''}${item.carico_kg ? ` · ${item.carico_kg} kg` : ''}`
     : [`${item.serie} × ${unitaLabel(unita, isPerLato ? quantitaLato : item.quantita)}${isPerLato ? ' per lato' : ''}`, item.carico_kg ? `${item.carico_kg} kg` : ''].filter(Boolean).join(' · ');
-  const parametriSotto = isEmom ? '' : [extraLato ? `+1 serie a ${item.lato_extra === 'sx' ? 'sinistra' : 'destra'}` : '', `recupero ${fmtSec(item.recupero_sec)}`].filter(Boolean).join(' · ');
+  const parametriSotto = isEmom || isPausa ? '' : [extraLato ? `+1 serie a ${item.lato_extra === 'sx' ? 'sinistra' : 'destra'}` : '', `recupero ${fmtSec(item.recupero_sec)}`].filter(Boolean).join(' · ');
   const ctaLabel = isEmom ? 'EMOM finito, vai avanti'
     : isPausa ? 'Pausa finita, vai avanti'
     : isTestSerie ? (isTimed ? 'Ho mollato: scrivo il risultato' : 'Fatta: scrivo il risultato')
@@ -424,7 +425,7 @@ export default function TrainingSessionPlayer({
           <p className="text-body-lg font-semibold tabular-nums text-forest-400 mt-1">{parametri}</p>
           {parametriSotto && <p className="text-body-sm text-muted tabular-nums">{parametriSotto}</p>}
           {item.nota && (
-            <div className="mt-3 flex items-start gap-2">
+            <div className="mt-3 flex flex-col items-start gap-1.5">
               <Badge tone={item.adattamento === 'scendi' || item.adattamento === 'leggero' || item.adattamento === 'esecuzione' || item.adattamento === 'dolore' || item.adattamento === 'limitazione' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
                 {item.test_in_seduta ? 'Serie test' : item.adattamento ? ADATTAMENTO_LABEL[item.adattamento] : 'Nota'}
               </Badge>
@@ -434,7 +435,7 @@ export default function TrainingSessionPlayer({
           {!item.nota && ex.note && (
             <p className="text-body-sm text-muted mt-2 leading-relaxed">{ex.note}</p>
           )}
-          {(ex.scheda || ex.descrizione || haVideo) && (
+          {!isPausa && (ex.scheda || ex.descrizione || haVideo) && (
             <div className="mt-3 flex gap-2 flex-wrap">
               {(ex.scheda || ex.descrizione) && (
                 <Button variant="secondary" size="sm" icon={<Info size={16} />} aria-expanded={showDesc} onClick={() => setShowDesc(!showDesc)}>
@@ -654,20 +655,21 @@ export default function TrainingSessionPlayer({
             <div className="text-center">
               <p className="text-body text-muted">
                 {testInfo ? (isTestSerie ? <span className="font-semibold text-app">Serie test: {testInfo.tipo === 'lift' ? 'una serie pulita, 3-8 ripetizioni' : isTimed ? 'tieni il più a lungo possibile' : testInfo.unita === 'cm' ? 'il salto migliore' : 'il massimo di ripetizioni pulite'}</span> : `Serie preparatoria: ${unitaLabel(unita, quantitaLato)}, senza spingere`)
+                  : isPausa ? 'Cammina, respira, riparti da fresco'
                   : isSerieFacoltativa ? 'Serie in più, facoltativa' : isExtra ? 'Serie in più sul lato debole' : `Serie ${Math.min(serieFatte + 1, totalSerie)} di ${totalSerie}`}
                 {isPerLato && !testInfo && <span className="font-semibold text-app"> — lato {latoLabel}</span>}
               </p>
               {isTimed && (
                 execLeft !== null ? (
                   <Card variant="raised" className="mt-3 text-center">
-                    <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">Tieni{isPerLato && !testInfo ? ` — ${latoLabel}` : ''}</p>
+                    <p className="text-overline uppercase tracking-wider font-semibold text-faint mb-1">{isPausa ? 'Pausa' : 'Tieni'}{isPerLato && !testInfo ? ` — ${latoLabel}` : ''}</p>
                     <p className="font-display text-display font-bold text-app tabular-nums" aria-live="polite">{fmtSec(isTestSerie ? TEST_TENUTA_CAP_SEC - execLeft : execLeft)}</p>
                     <div className="mt-1"><Button variant="ghost" size="sm" onClick={stopExec}>Ferma il timer</Button></div>
                   </Card>
                 ) : (
                   <div className="mt-3">
                     <Button variant="secondary" size="lg" fullWidth icon={<Play size={18} />} onClick={startExecTimer}>
-                      {isTestSerie ? 'Parti col cronometro' : `Parti col timer (${unitaLabel(unita, quantitaLato)})`}
+                      {isTestSerie ? 'Parti col cronometro' : isPausa ? `Parti con la pausa (${fmtSec(quantitaLato)})` : `Parti col timer (${unitaLabel(unita, quantitaLato)})`}
                     </Button>
                   </div>
                 )
