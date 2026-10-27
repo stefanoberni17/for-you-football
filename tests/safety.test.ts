@@ -15,6 +15,12 @@ describe('checkSafety: due livelli, parafrasi, negazioni e falsi positivi (spec 
     ['mi sono tagliato ieri sera e non lo sa nessuno', 'blocco', 'autolesionismo'],
     ['vomito apposta dopo cena', 'blocco', 'alimentazione'],
     ['voglio ammazzare quel difensore, lo giuro', 'blocco', 'violenza'],
+    // ── 27/10, dal replay del Coach: le varianti con "vorrei", l'adescamento ──
+    ['a volte vorrei non svegliarmi più', 'blocco', 'suicidio'],
+    ['vorrei non esserci più', 'blocco', 'suicidio'],
+    ['domani non svegliarmi più tardi delle 8', null, null],
+    ['il preparatore mi manda messaggi strani la sera e mi dice di non dirlo a nessuno', 'alert', 'abusi'],
+    ['mi chiede foto e dice che è il nostro segreto', 'alert', 'abusi'],
     // ── Parafrasi (accenti, maiuscole, apostrofi, punteggiatura) ──
     ['NON VOGLIO PIÙ VIVERE', 'blocco', 'suicidio'],
     ["non vedo via d'uscita", 'blocco', 'suicidio'],
@@ -80,6 +86,9 @@ describe('checkSafety: due livelli, parafrasi, negazioni e falsi positivi (spec 
     expect(analizzaSafetyConversazione('morire', 'non voglio').livello).toBe('alert'); // negazione anche sul testo unito
     expect(analizzaSafetyConversazione('oggi allenamento duro', 'ieri partita').livello).toBe(null);
     expect(analizzaSafetyConversazione('voglio morire', null).livello).toBe('blocco');
+    expect(analizzaSafetyConversazione('non svegliarmi più', 'a volte vorrei').livello).toBe('blocco'); // 27/10, dal replay
+    expect(analizzaSafetyConversazione('ok scusa, torniamo al percorso', 'a volte penso che sarebbe meglio senza di me').livello).toBe(null); // già segnalato al turno prima: niente secondo avviso
+    expect(analizzaSafetyConversazione('morire', 'mi ricatta e voglio').livello).toBe('blocco'); // il primo era un avviso (abusi), il testo unito è un'altra cosa: si segnala
   });
 
   it('il livello ALERT non porta numeri: chiede prima come sta', () => {

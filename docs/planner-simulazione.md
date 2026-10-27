@@ -17,7 +17,19 @@ npx tsx scripts/planner-sim.mts --live                # con Claude (ANTHROPIC_AP
 npx tsx scripts/planner-sim.mts --solo marco,luca     # alcuni scenari
 npx tsx scripts/planner-sim.mts --out docs/planner-sim-2026-10-15.md
 npx tsx scripts/planner-sim.mts --prompt davide       # i due prompt interi di uno scenario
+npx tsx scripts/planner-sim.mts --difficili           # 9 scenari difficili + 6 modifiche a metà settimana (27/10)
 ```
+
+Nelle sessioni cloud di Claude Code la chiave si chiama `FYF_ANTHROPIC_API_KEY` (le variabili `ANTHROPIC_*` non
+arrivano) e c'è una `ANTHROPIC_BASE_URL` della sessione da togliere:
+`env -u ANTHROPIC_BASE_URL ANTHROPIC_API_KEY="$FYF_ANTHROPIC_API_KEY" npx tsx scripts/planner-sim.mts --live`.
+
+**Scenari difficili (27/10, `SCENARI_DIFFICILI` e `SCENARI_MODIFICHE`):** due partite in settimana con la resistenza
+chiesta in season, una partita da fatica 10 il giorno prima, ginocchio dolorante con una limitazione alla caviglia,
+"non riesco" sui piegamenti e "faccio fatica" sullo swing, atleta stanco (tetto personale −15 %), niente campo, sette
+giornate, portiere con 30', due sedute da recuperare; e sei modifiche di mercoledì sui loro piani (più leggera, togli,
+cambia obiettivo con il ginocchio, meno tempo, sposta su un giorno di squadra, più intensa). Esiti e correzioni in
+`docs/planner-sim-difficili-2026-10-27.md`; i piani base sono nei test.
 
 Per ogni scenario il rapporto dice: contesto (livello, blocchi in libreria, tetti, carico, regole applicate), dimensione
 dei prompt, piano giornata per giornata, e i controlli: validatore, numero di giornate, tetto fisico, partita (niente il

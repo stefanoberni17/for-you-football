@@ -119,6 +119,15 @@ describe('riparaPiano: il piano di Claude si aggiusta, non si butta (Ste, 7/10)'
     expect(esp.plan.sedute[0].blocchi?.map((b) => b.id)).toEqual([pre]);
   });
 
+  it('la resistenza va in fondo alla giornata: prima la tecnica, poi il fiato (simulazione 27/10, sette giornate)', () => {
+    const ctx = ctxBase();
+    const p: PianoLLM = { sedute: [{ giorno: 2, blocchi: [APERTURA, 'fartlek-b1', 'tecnica-palleggi-b1'] }, { giorno: 4, blocchi: [APERTURA, 'forza-parte-bassa-b1', 'metabolico-b1'] }] };
+    const { piano, riparazioni } = riparaPiano(p, ctx, { nRichieste: null, giorniRimasti: tutti });
+    expect(piano.sedute[0].blocchi).toEqual([APERTURA, 'tecnica-palleggi-b1', 'fartlek-b1']);
+    expect(piano.sedute[1].blocchi).toEqual([APERTURA, 'forza-parte-bassa-b1', 'metabolico-b1']); // già in ordine: non si tocca
+    expect(riparazioni.filter((x) => x.includes('resistenza in fondo'))).toHaveLength(1);
+  });
+
   it('un piano già giusto resta uguale, senza note', () => {
     const ctx = ctxBase();
     const p: PianoLLM = { sedute: [{ giorno: 1, titolo: 'Gambe', blocchi: [APERTURA, 'forza-parte-bassa-b1'], leggeri: [], spiegazione: 'x' }], messaggio: 'ok' };

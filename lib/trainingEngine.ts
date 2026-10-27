@@ -448,7 +448,10 @@ export function validatePlan(
         const fidato = !!blocco || (!!ctx.trustBlocks && !!it.blocco_id && (it.blocco_id.startsWith('pa-') || it.blocco_id.startsWith('pb-') || it.blocco_id.startsWith('kb-') || it.blocco_id.startsWith('te-') || it.blocco_id.startsWith('re-') || it.blocco_id.startsWith('apertura-')));
         // Il blocco pre partita di Ste (18/10) vive il giorno prima della partita: lì la finestra della velocità non vale per i suoi item
         const gpItem = it.blocco_id === PRE_PARTITA_ID && gpSeduta === 1 ? null : gpSeduta;
-        const r = validateItemV2(it, ctx.v2, gpItem, { skipBounds: fidato, skipSoloLivello: bloccoDiSte });
+        // La resistenza a serie (`re-*`, 26/10 sera) senza il campo è corsa fuori (strada, parco): fartlek e allunghi sono
+        // segnati "campo" nel catalogo, ma il blocco lo compone il server con i suoi attrezzi (27/10: senza campo non passava mai)
+        const attrezziDelBlocco = !!ctx.trustBlocks && !!it.blocco_id && it.blocco_id.startsWith('re-');
+        const r = validateItemV2(it, ctx.v2, gpItem, { skipBounds: fidato, skipSoloLivello: bloccoDiSte, skipAttrezzatura: attrezziDelBlocco });
         errors.push(...r.errors);
         if (r.ex) itemsV2.push({ it, ex: r.ex });
         continue;

@@ -51,7 +51,7 @@ import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiorna
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.46-simulazione-27-10';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.47-scenari-difficili';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -1864,10 +1864,14 @@ export function validateCtxFor(ctx: ContextV2): Parameters<typeof validatePlan>[
 /**
  * Preferenze del setup (giorni disponibili, giornate a settimana, tempo per seduta — migration 025):
  * nel piano AUTOMATICO (nessuna richiesta) diventano i vincoli; con una richiesta esplicita valgono
- * solo i valori della maschera (che li propone già compilati: un cambio vale per quella settimana).
+ * solo i valori della maschera (che li propone già compilati: un cambio vale per quella settimana); in una MODIFICA
+ * resta il tempo per seduta del setup, se la modifica non ne chiede uno (27/10).
  */
 export function applicaPreferenzeSetup(pref: PreferenzeSetup | undefined, vincoli: Vincoli, richiesta?: string): Vincoli {
-  if (richiesta || !pref) return vincoli;
+  if (!pref) return vincoli;
+  // Una MODIFICA non chiede il tempo (salvo "meno tempo"): resta quello del setup. Prima spariva e la settimana modificata
+  // arrivava al massimo della fase (simulazione del 27/10: 75' e 74' con il setup a 60')
+  if (richiesta) return vincoli.modifica && !vincoli.durataMax && pref.durataMin ? { ...vincoli, durataMax: pref.durataMin } : vincoli;
   const v: Vincoli = { ...vincoli };
   if (!v.giorniAmmessi?.length && pref.giorni.length) v.giorniAmmessi = pref.giorni;
   if (!v.numSedute && pref.sedute) v.numSedute = pref.sedute;
@@ -1877,6 +1881,8 @@ export function applicaPreferenzeSetup(pref: PreferenzeSetup | undefined, vincol
 
 function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
   const p = ctx.base.preferenzeSetup;
+  if (richiesta && ctx.vincoli.modifica && p?.durataMin && ctx.vincoli.durataMax === p.durataMin)
+    return `\n# TEMPO PER SEDUTA (dal setup, vale anche nella modifica: regola dura, il validatore la controlla)\n- Tempo massimo per seduta: ${p.durataMin} minuti.`;
   if (richiesta || !p || (!p.giorni.length && !p.sedute && !p.durataMin)) return '';
   const righe: string[] = [];
   if (p.giorni.length) righe.push(`- Giorni in cui può allenarsi con l'app: ${p.giorni.map((d) => DAY_NAMES[d]).join(', ')} (SOLO questi).`);

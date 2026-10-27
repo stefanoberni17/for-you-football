@@ -70,6 +70,17 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
   }
   sedute = sedute.filter((s) => s.blocchi.length > 0);
 
+  // 1c. La resistenza va in fondo alla giornata (il neuromuscolare prima del metabolico, regola del validatore): Claude
+  //     metteva "resistenza + freestyle" e il freestyle ha un esercizio di fascia, la settimana finiva sul piano base
+  //     (simulazione del 27/10, sette giornate). Si spostano i blocchi, l'ordine degli altri resta quello di Claude
+  const isResistenza = (id: string) => blocco(id).qualita.startsWith('resistenza');
+  for (const s of sedute) {
+    const primaRes = s.blocchi.findIndex(isResistenza);
+    if (primaRes < 0 || !s.blocchi.slice(primaRes).some((id) => !isResistenza(id))) continue;
+    s.blocchi = [...s.blocchi.filter((id) => !isResistenza(id)), ...s.blocchi.filter(isResistenza)];
+    note.push(`${giornoNome(s.giorno)}: la resistenza in fondo alla seduta, prima il resto (a gambe fresche)`);
+  }
+
   // 2. Giorni: passati, vietati, non ammessi, di partita o già occupati → il giorno libero più vicino
   //    (una seduta fisica mai il giorno prima della partita); senza un giorno libero la seduta salta
   const ammesso = (d: number) => o.giorniRimasti.includes(d) && !matchDays.includes(d);

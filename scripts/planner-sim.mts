@@ -7,6 +7,7 @@
  *   npx tsx scripts/planner-sim.mts --solo marco,luca     # solo alcuni scenari
  *   npx tsx scripts/planner-sim.mts --out docs/planner-sim-2026-10-15.md   # scrive anche il rapporto
  *   npx tsx scripts/planner-sim.mts --prompt marco        # stampa i prompt interi di uno scenario
+ *   npx tsx scripts/planner-sim.mts --difficili           # gli scenari difficili (due partite, dolore, esecuzione, stanco, senza campo…) e sei modifiche a metà settimana
  *
  * Per ogni scenario costruisce il contesto con `costruisciContextV2` (lo stesso del server, senza DB), compone la
  * richiesta con `componiRichiesta` (la stessa della maschera) e chiama `generaPianoV2`: con `--live` Claude propone
@@ -38,7 +39,9 @@ const { validatePlan } = await import('../lib/trainingEngine');
 const { componiRichiesta, FOCUS_BILANCIATO, FOCUS_QUALITA, FOCUS_TUTTO, focusLabel } = await import('../lib/trainingRequest');
 const { bloccoCopre } = await import('../lib/trainingVelocita');
 const { DAY_NAMES } = await import('../lib/constants');
-const { contextFinto, MARCO, SCENARI } = await import('../lib/trainingSimulazione');
+const { contextFinto, MARCO, SCENARI: SCENARI_BASE, SCENARI_DIFFICILI, SCENARI_MODIFICHE, preparaModifica } = await import('../lib/trainingSimulazione');
+// --difficili: gli scenari difficili del 27/10 e le modifiche a metà settimana sui loro piani, al posto dei nove di base
+const SCENARI = flag('difficili') ? [...SCENARI_DIFFICILI, ...SCENARI_MODIFICHE] : SCENARI_BASE;
 
 type EsitoPianoV2 = import('../lib/trainingPlannerV2').EsitoPianoV2;
 type WeekPlan = import('../lib/trainingEngine').WeekPlan;
@@ -158,12 +161,19 @@ p(`Prompt ${PV2.PLANNER_V2_PROMPT_VERSION}, ${scelti.length} scenari. Lo script:
 const esiti: { sc: Scenario; cs: Controllo[]; esito: EsitoPianoV2 }[] = [];
 // Lo scenario "modifica" lavora sul piano del lunedì di Marco: lo prende dal primo scenario
 let pianoMarco: WeekPlan | null = null;
+const piani = new Map<string, WeekPlan>(); // il piano di ogni scenario, per le modifiche che lavorano sopra
 for (const sc of scelti) {
   if (sc.id === 'marco-modifica') {
     if (!pianoMarco) { const e = await PV2.generaPianoV2(contextFinto(MARCO), undefined, {}, { senzaClaude: !live }); pianoMarco = e.plan; }
     sc.atleta.pianoCorrente = pianoMarco;
   }
+  if (sc.modificaDi) {
+    let base = piani.get(sc.modificaDi.base);
+    if (!base) { const bs = SCENARI.find((x) => x.id === sc.modificaDi!.base)!; base = (await PV2.generaPianoV2(contextFinto(bs.atleta), undefined, {}, { senzaClaude: !live })).plan; piani.set(bs.id, base); }
+    preparaModifica(sc, base);
+  }
   const esito = await esegui(sc);
+  piani.set(sc.id, esito.plan);
   if (sc.id === 'marco') pianoMarco = esito.plan;
   esiti.push({ sc, cs: controlli(esito), esito });
 }
