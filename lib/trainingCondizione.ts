@@ -22,6 +22,7 @@ import { dataRoma, VOTO_SEDUTA_DURO } from './trainingMemoriaBlocchi';
 import { RESOCONTO_PROPOSTA_DELTA } from './trainingResoconto';
 import { RITEST_RECENTE_GIORNI } from './trainingRitest';
 import { SEDUTA_FACILE_MAX } from './rpeScala';
+import { bloccoById } from './trainingBlocks';
 
 // ─── Condizione dell'atleta e tetto personale ──────────────────────────────────
 
@@ -119,6 +120,7 @@ export const SCARICO_ACWR_SOGLIA = ACWR_SOGLIE.ok;    // 1,3
 export const SCARICO_VOTO_MEDIO_MIN = 8;              // media dei voti delle sedute (ultime 2 settimane) ≥ 8
 export const SCARICO_VOTO_SEDUTE_MIN = 3;             // … su almeno 3 sedute votate
 export const SCARICO_DURO_DI_FILA = 2;                // una famiglia di blocchi "duro" 2 volte di fila
+export const SCARICO_DURO_FINESTRA_GIORNI = 28;       // … nelle ultime 4 settimane (stagione con Claude, 27/10: un blocco fatto di rado si portava dietro il "duro" di due mesi prima)
 export const SCARICO_DISTANZA_MIN = 3;                // mai due scarichi a meno di 3 settimane
 export const SCARICO_SETTIMANE_MIN = 2;               // settimane con almeno una seduta tra le 3 precedenti (= DELOAD_SETTIMANE_MIN)
 
@@ -162,13 +164,20 @@ export function acwrPerSettimana(settimane: readonly SettimanaCarico[], squadra:
 const settimaneTra = (daLunedi: string, aLunedi: string) => Math.round((new Date(`${aLunedi}T00:00:00Z`).getTime() - new Date(`${daLunedi}T00:00:00Z`).getTime()) / (7 * 86400000));
 
 /** Le famiglie con "duro" nelle ultime N sedute di fila (sedute dalla più recente). */
-export function famiglieDureDiFila(sedute: readonly SedutaCondizione[], famiglia: InputScarico['famiglia'], n = SCARICO_DURO_DI_FILA): string[] {
+/**
+ * Il giudizio su un blocco di tecnica dice "quanto ti è riuscito" (la scala `tecnica`), non quanto era faticoso: dei
+ * palleggi "duri" due volte non chiedono lo scarico (stagione simulata, 27/10: tre scarichi in otto settimane per i palleggi).
+ */
+export const contaPerLaFatica = (id: string): boolean => !id.startsWith('te-') && !(bloccoById(id)?.qualita ?? '').startsWith('tecnica');
+
+export function famiglieDureDiFila(sedute: readonly SedutaCondizione[], famiglia: InputScarico['famiglia'], n = SCARICO_DURO_DI_FILA, finestra?: { lunedi: string }): string[] {
   const perFamiglia = new Map<string, ('facile' | 'ok' | 'duro')[]>();
-  const ordinate = [...sedute].sort((a, b) => b.completed_at.localeCompare(a.completed_at));
+  const da = finestra ? addDays(finestra.lunedi, -SCARICO_DURO_FINESTRA_GIORNI) : null;
+  const ordinate = [...sedute].filter((s) => !finestra || (dataRoma(s.completed_at) >= da! && dataRoma(s.completed_at) < finestra.lunedi)).sort((a, b) => b.completed_at.localeCompare(a.completed_at));
   for (const s of ordinate) {
     const visti = new Set<string>();
     for (const b of s.feedback_blocchi ?? []) {
-      if (!b.giudizio) continue;
+      if (!b.giudizio || !contaPerLaFatica(b.id)) continue;
       const f = famiglia(b.id) ?? b.id;
       if (visti.has(f)) continue;
       visti.add(f);
@@ -193,7 +202,7 @@ export function scaricoDaiDati(input: InputScarico): EsitoScarico {
   const votoMedio = media(voti);
   if (voti.length >= SCARICO_VOTO_SEDUTE_MIN && votoMedio != null && votoMedio >= SCARICO_VOTO_MEDIO_MIN) segnali.push(`le ultime ${voti.length} sedute hanno un voto medio di ${r1(votoMedio)}/10`);
   // 3. Una famiglia "duro" due volte di fila
-  const dure = famiglieDureDiFila(input.sedute, input.famiglia);
+  const dure = famiglieDureDiFila(input.sedute, input.famiglia, SCARICO_DURO_DI_FILA, { lunedi: input.lunedi });
   if (dure.length) segnali.push(`${dure.join(', ')}: "duro" ${SCARICO_DURO_DI_FILA} volte di fila`);
 
   const quarta = input.settimanaCalendario > 1 && input.settimanaCalendario % 4 === 0;
@@ -243,7 +252,8 @@ export function ritestDaiDati(input: InputRitest): EsitoRitest {
     const s = input.settimanaCalendario;
     dopoScarico = s >= 5 && (s % 4 === 1 || s % 4 === 2);
   }
-  if (dopoScarico) motivi.push('dopo lo scarico si rifanno i test');
+  // Senza uno scarico salvato (saltato perché fresco, o mai fatto) il ri-test viene dal calendario: il motivo lo dice
+  if (dopoScarico) motivi.push(input.ultimoScarico ? 'dopo lo scarico si rifanno i test' : 'finite le quattro settimane del ciclo si rifanno i test');
   if (input.famiglieAlTetto.length) motivi.push(`hai finito i codici del tuo livello in ${input.famiglieAlTetto.join(', ')}`);
   const testRecente = !!input.ultimoTest && addDays(dataRoma(input.ultimoTest), RITEST_RECENTE_GIORNI) > input.lunedi;
   if (input.ultimoTest && !testRecente) {

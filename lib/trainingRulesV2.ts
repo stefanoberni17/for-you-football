@@ -286,7 +286,7 @@ export const livelloPerQualita = (ctx: ContestoV2, q: QualitaV2 | undefined): Li
  * `giorniAllaPartita`: null se nessuna partita in settimana.
  */
 export function validateItemV2(
-  it: ItemV2, ctx: ContestoV2, giorniPartita: number | null, opts: { skipBounds?: boolean; skipSoloLivello?: boolean } = {}
+  it: ItemV2, ctx: ContestoV2, giorniPartita: number | null, opts: { skipBounds?: boolean; skipSoloLivello?: boolean; skipAttrezzatura?: boolean } = {}
 ): { errors: string[]; ex: ExerciseV2 | null } {
   const errors: string[] = [];
   const ex = esercizioV2ById(it.esercizio_id);
@@ -302,7 +302,7 @@ export function validateItemV2(
   if (sottoLivello && ex.soloLivello && !opts.skipSoloLivello)
     errors.push(`${n}: richiede livello ${ex.livelloMin}, l'atleta è ${livelloAtleta}${ex.notaLivello ? ` (${ex.notaLivello})` : ''}`);
   const disp = new Set<AttrezzaturaV2>(['corpo libero', ...ctx.attrezzatura]);
-  if (!disp.has(ex.attrezzatura)) errors.push(`${n}: serve ${ex.attrezzatura}, non disponibile`);
+  if (!disp.has(ex.attrezzatura) && !opts.skipAttrezzatura) errors.push(`${n}: serve ${ex.attrezzatura}, non disponibile`);
   if (ex.inCoppia && !ctx.inCoppia) errors.push(`${n}: serve un compagno`);
   // Un esercizio di categoria "test" non va nel piano (batteria dedicata)… salvo dentro un blocco FIDATO di Ste (18/10): nei
   // suoi workout "Rapidità Ankle Stiffness - Test" (16 blocchi), "TEST NAVETTA" e i palleggi dei test sono usati come

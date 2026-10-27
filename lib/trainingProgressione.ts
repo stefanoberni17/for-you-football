@@ -57,6 +57,8 @@ export interface ContestoProgressione {
   squilibri: Squilibri | null;
   /** Risultati dei test (scala skill): senza, gli esercizi di catena restano quelli del blocco. */
   results?: TestResultRow[];
+  /** Item su cui la dose dai log non si applica (blocco pre partita, apertura, sprint massimali): il programma resta quello. */
+  doseFissa?: (it: PlanItem) => boolean;
 }
 
 
@@ -73,9 +75,11 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   const out: PlanItem = { ...it };
   if (d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null)) out.carico_kg = d.caricoKg;
   if (d.quantita !== it.quantita) out.quantita = d.quantita;
-  out.adattamento = d.verso === 'scendi' ? 'scendi' : 'sali';
+  // TIENI (27/10) può stare sotto il programma (si torna un passo alla volta) o sopra (il progresso resta): l'etichetta segue il numero
+  const sotto = d.caricoKg != null && it.carico_kg ? d.caricoKg < it.carico_kg : d.quantita < it.quantita;
+  out.adattamento = d.verso === 'scendi' || (d.verso === 'tieni' && sotto) ? 'scendi' : 'sali';
   const programma = out.carico_kg !== it.carico_kg ? `programma ${it.carico_kg} kg` : `programma ${it.quantita}${d.unita === 'secondi' ? '"' : ''}`;
-  out.nota = `${d.verso === 'scendi' ? '↓' : '↑'} ${d.motivo} (${programma})`;
+  out.nota = `${d.verso === 'tieni' ? '→' : d.verso === 'scendi' ? '↓' : '↑'} ${d.motivo} (${programma})`;
   return out;
 }
 
@@ -94,6 +98,30 @@ function sogliaRaggiuntaInSeduta(ex: { area: string; gradino: number; unita: str
   if (!f.length) return null;
   if (u.rpeMedio != null && u.rpeMedio >= DIFFICILE_RPE_MIN) return null;
   return f.filter((q) => q >= soglia).length >= Math.ceil(f.length / 2) ? soglia : null;
+}
+
+/**
+ * Il gradino su cui l'atleta si allena GIÀ (stagione simulata, 27/10): se nei log recenti c'è un gradino più alto
+ * della stessa catena, si riparte da lì, con la sua ultima dose come programma. Prima il piano ripartiva sempre dal
+ * gradino dei test e passava al successivo leggendo i log del gradino VECCHIO: sul gradino nuovo la dose restava
+ * ferma (3×8 per tre settimane anche facendone 10) e, scaduti quei log (4 settimane), si tornava indietro. Il gradino
+ * diventa definitivo quando la soglia raggiunta in seduta scrive il risultato (come il test).
+ */
+function gradinoDaiLog(it: PlanItem, byEx: ReadonlyMap<string, RiepilogoEsercizio>): PlanItem | null {
+  if (it.schema && it.schema !== 'fisso') return null;
+  const ex = esercizioById(it.esercizio_id);
+  if (!ex || !AREE_CATENA.has(ex.area)) return null;
+  if (it.unita && it.unita !== ex.unita) return null;
+  // Solo i log delle SERIE: l'EMOM lavora apposta sul gradino sopra con 2-3 ripetizioni al minuto, non è il gradino delle serie
+  const sopra = catenaByArea(ex.area).filter((e) => e.gradino > ex.gradino && e.unita === ex.unita && byEx.get(e.id)?.ultimaSeduta.daSerie).sort((a, b) => b.gradino - a.gradino)[0];
+  if (!sopra) return null;
+  const r = byEx.get(sopra.id)!;
+  if (r.ultimaSeduta.unita && r.ultimaSeduta.unita !== sopra.unita) return null;
+  const q = Math.round(r.ultimaSeduta.quantitaPrevista);
+  if (!(q > 0)) return null;
+  const out: PlanItem = { ...it, esercizio_id: sopra.id, quantita: q, adattamento: 'gradino', nota: `Il tuo gradino: ${sopra.nome} (ci lavori dalle ultime sedute).` };
+  if (!sopra.perLato) delete out.per_lato;
+  return out;
 }
 
 /** Gradino successivo sulle catene v1: soglia del gradino raggiunta in seduta (18/10), oppure dose già al tetto e i log dicono ancora SALI. */
@@ -217,8 +245,10 @@ export function adattaItems(items: PlanItem[], ctx: ContestoProgressione): PlanI
   return items.map((it) => {
     // Prima il gradino dell'atleta (dai test), poi i log sull'esercizio vero
     let out = (!it.adattamento && alGradino(it, scale)) || it;
+    // Già su un gradino più alto della stessa catena (dai log): si riparte da lì (27/10)
+    if ((!out.adattamento || out.adattamento === 'gradino') && !ctx.doseFissa?.(out)) out = gradinoDaiLog(out, byEx) ?? out;
     const r = byEx.get(out.esercizio_id);
-    if (r && (!out.adattamento || out.adattamento === 'gradino')) {
+    if (r && (!out.adattamento || out.adattamento === 'gradino') && !ctx.doseFissa?.(out)) {
       const base = out.adattamento === 'gradino' ? { ...out, adattamento: undefined, nota: undefined } : out;
       // Punto 18: l'esecuzione viene prima della fatica (meno / gradino sotto); con il SALI bloccato niente gradino successivo
       const conLog = perEsecuzione(base, r) ?? (r.esecuzione?.saliBloccato ? adattaDose(base, r) : gradinoSuccessivo(base, r) ?? adattaDose(base, r));

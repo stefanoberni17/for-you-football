@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { contextFinto, SCENARI, type Scenario } from '@/lib/trainingSimulazione';
-import { generaPianoV2, obiettivoFuoriFinestra, postiFisici, validateCtxFor, type EsitoPianoV2 } from '@/lib/trainingPlannerV2';
+import { contextFinto, preparaModifica, SCENARI, SCENARI_DIFFICILI, SCENARI_MODIFICHE, type Scenario } from '@/lib/trainingSimulazione';
+import { applicaPreferenzeSetup, generaPianoV2, obiettivoFuoriFinestra, postiFisici, validateCtxFor, type EsitoPianoV2 } from '@/lib/trainingPlannerV2';
 import { validatePlan } from '@/lib/trainingEngine';
 import { componiRichiesta, FOCUS_QUALITA } from '@/lib/trainingRequest';
 import { bloccoCopre } from '@/lib/trainingVelocita';
@@ -81,5 +81,39 @@ describe('simulazione del planner (15/10): le regole viste negli scenari', () =>
     expect(e.ctx.sedutePassate?.map((s) => s.giorno)).toEqual([1]);
     const gio = e.plan.sedute.find((s) => s.giorno === 4)!;
     expect((gio.blocchi ?? []).some((b) => b.qualita === 'forza-parte-alta')).toBe(true);
+  });
+});
+
+describe('scenari difficili e modifiche a metà settimana (27/10): il piano base passa dal validatore', () => {
+  const difficile = (id: string) => SCENARI_DIFFICILI.find((s) => s.id === id)!;
+  for (const sc of [...SCENARI_DIFFICILI, ...SCENARI_MODIFICHE]) {
+    it(`${sc.id}: ${sc.titolo}`, async () => {
+      if (sc.modificaDi) preparaModifica(sc, (await pianoBase(difficile(sc.modificaDi.base))).plan);
+      const e = await pianoBase(sc);
+      expect(e.violazioni ?? []).toEqual([]);
+      expect(e.plan.violazioni ?? []).toEqual([]);
+      expect(e.plan.sedute.length).toBeGreaterThan(0);
+      expect(validatePlan(e.plan, validateCtxFor(e.ctx))).toEqual([]);
+    });
+  }
+
+  it('una modifica tiene il tempo per seduta del setup (27/10: "cambia obiettivo" arrivava a 75\' con il setup a 60\')', async () => {
+    const pref = { giorni: [1, 3, 5], sedute: 3, durataMin: 60 };
+    expect(applicaPreferenzeSetup(pref, { modifica: true }, 'MODIFICA').durataMax).toBe(60);
+    expect(applicaPreferenzeSetup(pref, { modifica: true, durataMax: 45 }, 'MODIFICA').durataMax).toBe(45); // "meno tempo" vince
+    expect(applicaPreferenzeSetup(pref, {}, 'NUOVA SETTIMANA').durataMax).toBeUndefined(); // "Rifai da capo": vale la maschera
+    const sc = SCENARI_MODIFICHE.find((x) => x.id === 'mod-cambia-focus')!;
+    preparaModifica(sc, (await pianoBase(difficile(sc.modificaDi!.base))).plan);
+    const e = await pianoBase(sc);
+    expect(e.ctx.vincoli.durataMax).toBe(60);
+    for (const x of e.plan.sedute) expect(x.durata_min).toBeLessThanOrEqual(60);
+  });
+
+  it('senza campo la resistenza c\'è, di sola corsa (27/10: fartlek e allunghi erano rifiutati come "da campo")', async () => {
+    const e = await pianoBase(difficile('senza-campo'));
+    const re = e.plan.sedute.flatMap((s) => s.blocchi ?? []).filter((b) => b.id.startsWith('re-'));
+    expect(re.length).toBeGreaterThan(0);
+    const items = e.plan.sedute.flatMap((s) => s.items).filter((it) => it.blocco_id?.startsWith('re-'));
+    expect(items.some((it) => it.esercizio_id === 'aer-esercizio-resistenza-e-tecnica-funzionale')).toBe(false); // niente palla
   });
 });

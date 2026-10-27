@@ -36,12 +36,12 @@ import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusE
 import { nomeBloccoAtleta, testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi, QUALITA_LABEL } from './trainingLivelli';
-import { APERTURA_BREVE_MAX, APERTURA_NOTA, aperturaDaSostituire, aperturaPer, bloccoAperturaBreve, FAMIGLIA_FASCIA_FORZA, FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, minutiApertura, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
+import { APERTURA_BREVE_MAX, APERTURA_IDS, APERTURA_NOTA, aperturaDaSostituire, aperturaPer, bloccoAperturaBreve, FAMIGLIA_FASCIA_FORZA, FASCIA_PERCORSO_MAX_SETTIMANA, fasciaRegola, isApertura, isFasciaPercorso, minutiApertura, ROLLING_ID, zoneTeseRicorrenti, zoneTeseTesto } from './trainingFascia';
 import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } from './trainingKettlebell';
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, prioritaTecnica, QUALITA_PRIORITA, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type PrioritaTecnicaInfo, type Ripasso } from './trainingTecnica';
 import { dataDiGiorno, addDays as addGiorni, GAMBE_DOPO_PARTITA as GAMBE_SCALA, gambeDopoPartitaDel, notaGambeDopoPartita, quantoGiocata, resocontiTesto, RESOCONTO_FATICA_ALTA, type GambeDopoPartita } from './trainingResoconto';
 import { costruisciResistenza, filtraResistenza, isResistenzaComposta, isResistenzaEverfit, RE_FINESTRA_PRIMA, RE_METABOLICO_ID, RE_RSA_ID, RE_SERIE_ID, RE_SERIE_MAX, RE_SERIE_START, reIdPer, resistenzaRegola, RSA_SERIE_MAX, RSA_SERIE_START, statoResistenza, type StatoResistenza } from './trainingResistenza';
-import { asseTecnica, contaTemi, costruisciTecnica, isTecnicaComposta, isTecnicaMix, mixId, sceltaMix, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, temiDiId, tettoTiri, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
+import { asseTecnica, contaTemi, conteggiPerScelta, TECNICA_MINUTI_MAX, costruisciTecnica, isTecnicaComposta, isTecnicaMix, mixId, sceltaMix, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, temiDiId, tettoTiri, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
 import { posizioneScala } from './trainingTecnica';
 import { doseRegoleTesto, isEsercizioKettlebell } from './trainingDose';
 import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione } from './trainingEsecuzione';
@@ -51,7 +51,7 @@ import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiorna
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.45-tecnica-combinata-kettlebell-pulito';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.47-scenari-difficili';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -222,6 +222,9 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
     livelloSalti: base.livelli['pliometria-intensiva'],
   });
   ctx.blocchi = regole.blocchi; ctx.noteRegole = regole.note;
+  // Pausa per dolore (stagione simulata, 27/10): il blocco pre partita è una giornata leggera ma ha scatti e salti (anche
+  // su una gamba): con la pausa non entra, come le sedute fisiche
+  if (base.painHold) ctx.blocchi = ctx.blocchi.filter((b) => !isPrePartita(b));
   // Resistenza a serie (Ste, 25/10; punto 19): i blocchi `re-*` e il filtro per fase (in season solo come obiettivo esplicito)
   aggiornaResistenza(ctx, lunediCorrente);
   if (setup.attrezzatura.includes('campo')) ctx.blocchi.push(bloccoRiscaldamentoVelocita());
@@ -339,8 +342,8 @@ export function aggiornaTecnica(ctx: ContextV2, lunediCorrente = mondayOfThisWee
   const posP = memP ? posizioneScala('Tecnica · palleggi', memP.prossimo.id) : -1;
   const posM = memM ? posizioneScala('Tecnica · muro', memM.prossimo.id) : -1;
   const conteggi = contaTemi(ctx.base.feedbackRecenti, lunediCorrente);
-  const scelta = temaProssimo(conteggi, { ammessi: TEMI, priorita: ctx.prioritaTecnica?.priorita ?? null, ultimo: ultimoTemaTecnica(ctx.base.feedbackRecenti) });
-  const minuti = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
+  const scelta = temaProssimo(conteggiPerScelta(ctx.base.feedbackRecenti, lunediCorrente), { ammessi: TEMI, priorita: ctx.prioritaTecnica?.priorita ?? null, ultimo: ultimoTemaTecnica(ctx.base.feedbackRecenti) });
+  const minuti = Math.min(TECNICA_MINUTI_MAX, ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
   const mix = sceltaMix(scelta, minuti); // a volte due temi indietro insieme si combinano (Ste, 26/10 sera)
   const tiri = tettoTiri(ctx.base.feedbackRecenti); // il tetto dei tiri sale piano con il tempo (Ste, 26/10 sera)
   const te = costruisciTecnica({
@@ -888,6 +891,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       const gd = giocata === 'poco' ? null : gd0;           // quasi non giocata: niente regole del dopo
       const gdPura = giocata ? null : gd0;                   // anche "meno affaticato": niente divieto di velocità pura a +2/+3
       for (const b of blocchi) {
+        if (isPrePartita(b) && ctx.base.painHold)
+          errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" con la pausa per dolore — ha scatti e salti: in pausa solo tecnica leggera, fascia e mobilità`);
         if (isPrePartita(b) && gp !== 1)
           errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è il blocco del giorno PRIMA della partita${gp === null ? ' (questa settimana non c\'è partita)' : ` (la partita è tra ${gp} giorni)`} — negli altri giorni usa un blocco di velocità normale`);
         if (gd === 1 && !ammessoDopoPartita(b) && GAMBE_DOPO_PARTITA.has(b.qualita)) {
@@ -1034,7 +1039,9 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     // Gambe il giorno dopo la partita (26/10): "leggere" per l'hub e la durata, ma la scala è quella del resoconto (0.4-0.75), non 0.7
     for (const [id, g] of gambePartita) { leggeri.add(id); noteMemoria.set(id, [noteMemoria.get(id), notaGambeDopoPartita(g)].filter(Boolean).join(' · ')); }
     // Kettlebell (Ste, 25/9): uno a settimana; nella stessa settimana la parte bassa con pesi va più leggera (×0.7)
-    const kbOggi = blocchi.filter((b) => isKettlebell(b.id)).length;
+    // (con la sezione kettlebell attiva contano anche i due workout kettlebell di Ste, Dynamic Power e Movimento Fluido:
+    // la stagione simulata del 27/10 ne metteva uno in più accanto al kb-* della settimana)
+    const kbOggi = blocchi.filter((b) => isKettlebell(b.id) || (!!ctx.kettlebell && /^kettlebell/i.test(b.famiglia ?? ''))).length;
     blocchiKb += kbOggi;
     if (blocchiKb > 1) errors.push(`seduta del giorno ${s.giorno}: secondo blocco kettlebell della settimana — al massimo UNO (Ste)`);
     if (kbSettimana) for (const b of blocchi) {
@@ -1332,7 +1339,7 @@ SICUREZZA
 ${tettiTesto(tettiDi(ctx))}
 3. L'ASSE PARTITA (le regole le fa rispettare il validatore, ma tu progetta già bene). PRIMA della partita:
 ${finestreTesto()}
-   Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps: non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
+   Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps, con la sua attivazione dentro: SENZA \`${RISC_VELOCITA_ID}\` davanti; non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
    DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta; con il resoconto "quasi non giocato", cioè non entrato o al massimo 20' CON fatica sotto 4, queste regole non valgono per quella partita; "meno affaticato", meno di 75' con fatica fino a 6, toglie il divieto di velocità pura a +2/+3; partita intera con fatica 7-9 e qualche dolore è normale; con fatica 10 il giorno dopo è solo recupero): il giorno DOPO niente velocità, pliometria, resistenza, forza massima né EMOM gambe; le GAMBE a corpo libero o leggere (pb-serie, pb-serie-short, Forza Parte Bassa senza carichi) passano con le serie RIDOTTE dal server in base a quanto ha giocato (Ste, 26/10: ${Math.round(GAMBE_SCALA.intera * 100)} % con la partita intera o senza resoconto, ${Math.round(GAMBE_SCALA.meno * 100)} % con meno di 90' e fatica fino a 6, ${Math.round(GAMBE_SCALA.meta * 100)} % sotto i 45', ${Math.round(GAMBE_SCALA.spezzone * 100)} % sotto i 15'; la sezione RESOCONTI dice la percentuale di questa settimana) — preferisci comunque \`${PB_RICHIAMO_ID}\`, la parte alta short, le isometrie di Fascia Forza, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m; le Salite Sprint sono forza esplosiva, non velocità pura): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
    RESISTENZA: nel giorno più lontano da tutte e due le partite (con la partita la domenica: martedì-giovedì, il top è mercoledì).
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
@@ -1500,7 +1507,7 @@ function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[], prece
     : '';
   const massimali = Object.keys(ctx.v2.massimali || {}).length ? `Massimali stimati: ${Object.entries(ctx.v2.massimali!).map(([k, v]) => `${k} ${v} kg`).join(', ')}` : 'Nessun massimale (niente forza con carico in regime max/esplosiva)';
   return `# ATLETA
-OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 1} sono passati: sedute SOLO nei giorni ${b.oggiDow}-7` : ''}.
+OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 1} sono passati: sedute SOLO nei giorni ${b.oggiDow}-7` : ''}.${ctx.sedutePassate?.length ? `\nLe sedute dei giorni passati (${ctx.sedutePassate.map((x) => DAY_NAMES[x.giorno]).join(', ')}) RESTANO nel piano come sono: le rimette il server, tu non le riscrivi. Nel messaggio non dire che spariscono o che non le vede più.` : ''}
 Livello: ${b.fascia}${livelliTesto(b.livelli, b.fascia)}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
 Attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', ') : 'solo corpo libero'}
 Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~${ctx.setup.squadraDurataMin}'` : ''}
@@ -1716,7 +1723,14 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     // con la partita il sabato: pliometria, velocità e resistenza tutte fuori finestra) la giornata diventa leggera
     const cands = [...(fisico ? candidatiFisici(k, g, sedute) : []).slice(0, FALLBACK_CANDIDATI_MAX).map((x) => ({ blocco: x, principale: true })), ...candidatiLeggeri(g).slice(0, FALLBACK_LEGGERI_MAX).map((x) => ({ blocco: x, principale: false }))];
     const prima = tenta(sedute).violazioni;
-    const scelta = cands.find((c) => nuovi(tenta([...sedute, seduta(g, c.blocco, c.principale)]).violazioni, prima).length === 0) ?? cands[0];
+    const nuoviCon = (c: { blocco: Blocco; principale: boolean }) => nuovi(tenta([...sedute, seduta(g, c.blocco, c.principale)]).violazioni, prima);
+    // Nessun candidato passa (stagione simulata, 27/10: giovedì con la settimana già vicina al tetto di carico, e il base
+    // prendeva il primo, la pliometria, con due violazioni): si prova la mobilità e il recupero, i più leggeri di tutti
+    // (oltre il taglio dei leggeri), poi il candidato con MENO violazioni
+    const passa = (c: { blocco: Blocco; principale: boolean }) => nuoviCon(c).length === 0;
+    const recuperoLeggero = () => candidatiLeggeri(g).filter((x) => x.qualita === 'mobilita-recupero').map((x) => ({ blocco: x, principale: false })).find(passa);
+    const menoViolazioni = () => cands.map((c) => ({ c, n: nuoviCon(c).length })).sort((a, b) => a.n - b.n)[0]?.c;
+    const scelta = cands.find(passa) ?? recuperoLeggero() ?? menoViolazioni();
     const s = seduta(g, scelta?.blocco, !!scelta?.principale);
     if (!s.blocchi.length) continue;
     sedute.push(s);
@@ -1773,7 +1787,11 @@ export function giornoDellaViolazione(v: string): number | null {
  * resta quella base (il programma di Ste è sempre valido).
  */
 export function conProgressioni(plan: WeekPlan, ctx: ContextV2, validateCtx: Parameters<typeof validatePlan>[1]): WeekPlan {
-  const { plan: adattato } = adattaPiano(plan, { storico: ctx.base.storicoSerie, squilibri: ctx.base.squilibri, results: ctx.base.results },
+  // La dose dai log non tocca il blocco pre partita (Ste: "distanze brevi e poche reps"), l'apertura, il riscaldamento
+  // della velocità e gli sprint massimali (il numero lo decidono i tetti degli sprint): stagione simulata, 27/10
+  const doseFissa = (it: PlanItem) => SPRINT_MASSIMALI_IDS.has(it.esercizio_id) || it.blocco_id === RISC_VELOCITA_ID
+    || (!!it.blocco_id && (it.blocco_id === PRE_PARTITA_ID || APERTURA_IDS.has(it.blocco_id)));
+  const { plan: adattato } = adattaPiano(plan, { storico: ctx.base.storicoSerie, squilibri: ctx.base.squilibri, results: ctx.base.results, doseFissa },
     (s) => validatePlan({ ...plan, sedute: [s] }, { ...validateCtx, oggiDow: undefined }));
   const righe = aggiustamentiEsecuzione(adattato, ctx);
   return righe.length ? { ...adattato, aggiustamenti: [...(adattato.aggiustamenti ?? []), ...righe] } : adattato;
@@ -1864,10 +1882,14 @@ export function validateCtxFor(ctx: ContextV2): Parameters<typeof validatePlan>[
 /**
  * Preferenze del setup (giorni disponibili, giornate a settimana, tempo per seduta — migration 025):
  * nel piano AUTOMATICO (nessuna richiesta) diventano i vincoli; con una richiesta esplicita valgono
- * solo i valori della maschera (che li propone già compilati: un cambio vale per quella settimana).
+ * solo i valori della maschera (che li propone già compilati: un cambio vale per quella settimana); in una MODIFICA
+ * resta il tempo per seduta del setup, se la modifica non ne chiede uno (27/10).
  */
 export function applicaPreferenzeSetup(pref: PreferenzeSetup | undefined, vincoli: Vincoli, richiesta?: string): Vincoli {
-  if (richiesta || !pref) return vincoli;
+  if (!pref) return vincoli;
+  // Una MODIFICA non chiede il tempo (salvo "meno tempo"): resta quello del setup. Prima spariva e la settimana modificata
+  // arrivava al massimo della fase (simulazione del 27/10: 75' e 74' con il setup a 60')
+  if (richiesta) return vincoli.modifica && !vincoli.durataMax && pref.durataMin ? { ...vincoli, durataMax: pref.durataMin } : vincoli;
   const v: Vincoli = { ...vincoli };
   if (!v.giorniAmmessi?.length && pref.giorni.length) v.giorniAmmessi = pref.giorni;
   if (!v.numSedute && pref.sedute) v.numSedute = pref.sedute;
@@ -1877,6 +1899,8 @@ export function applicaPreferenzeSetup(pref: PreferenzeSetup | undefined, vincol
 
 function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
   const p = ctx.base.preferenzeSetup;
+  if (richiesta && ctx.vincoli.modifica && p?.durataMin && ctx.vincoli.durataMax === p.durataMin)
+    return `\n# TEMPO PER SEDUTA (dal setup, vale anche nella modifica: regola dura, il validatore la controlla)\n- Tempo massimo per seduta: ${p.durataMin} minuti.`;
   if (richiesta || !p || (!p.giorni.length && !p.sedute && !p.durataMin)) return '';
   const righe: string[] = [];
   if (p.giorni.length) righe.push(`- Giorni in cui può allenarsi con l'app: ${p.giorni.map((d) => DAY_NAMES[d]).join(', ')} (SOLO questi).`);

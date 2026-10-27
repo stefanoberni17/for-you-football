@@ -243,7 +243,7 @@ export function costruisciResistenza(o: OpzioniResistenza): Blocco[] {
     }
     if (risc && rsaItems.length) {
       const items = [risc, ...rsaItems];
-      out.push(blocco(RE_RSA_ID, `Resistenza alla velocità: ${n} serie da ${RSA_REPS}`, 'resistenza-rsa', items, o,
+      out.push(blocco(RE_RSA_ID, `Resistenza alla velocità: ${n} serie da ${RSA_REPS} ripetizioni`, 'resistenza-rsa', items, o,
         `Resistenza alla velocità a serie (Ste, 25/10): ${n} serie di ${RSA_REPS} ripetizioni da ${lavoro}" con ${rec}" di recupero, ${RSA_TRA_SERIE_SEC / 60}' di pausa tra le serie (nel player è un timer); navetta e palla a serie alterne. ${RSA_SERIE_MAX * RSA_REPS} ripetizioni sono già molto pesanti: solo off season, una volta a settimana. ${o.statoRsa.motivo}.`,
         { tags: ['resistenza', 'rsa', 'serie'] }));
     }

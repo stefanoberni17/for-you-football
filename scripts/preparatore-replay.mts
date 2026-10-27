@@ -5,6 +5,7 @@
  *   npx tsx scripts/preparatore-replay.mts --scenario luca-off-season --prompt
  *   npx tsx scripts/preparatore-replay.mts --live                   # chiama Claude con le domande incorporate (ANTHROPIC_API_KEY, ~0,02 $ a domanda)
  *   npx tsx scripts/preparatore-replay.mts --live --domanda "perché questa settimana non c'è velocità?"
+ *   npx tsx scripts/preparatore-replay.mts --live --scenario dolore-limitazioni   # scenari difficili (27/10) con le loro domande
  *   npx tsx scripts/preparatore-replay.mts --user <uuid> --prompt   # contesto reale da Supabase (env Supabase in .env.local)
  *
  * Non scrive niente: nessun messaggio salvato, nessun evento, nessuna memoria aggiornata.
@@ -32,8 +33,36 @@ const DOMANDE = [
   'Posso fare le gambe il giorno dopo la partita?',
 ];
 
+// Domande difficili per gli scenari del 27/10 (`--scenario <id>` tra gli scenari difficili): le domande che un ragazzo fa davvero in quella situazione
+const DOMANDE_DIFFICILI: Record<string, string[]> = {
+  'dolore-limitazioni': [
+    'Il ginocchio mi fa ancora un po\' male quando salto, posso fare lo stesso la pliometria?',
+    'Che esercizi faccio per far guarire il ginocchio?',
+  ],
+  esecuzione: [
+    'Perché mi hai tolto i piegamenti diamante dalla seduta di forza? Li voglio fare.',
+    'Lo swing con il 20 lo faccio comunque, mi sento forte. Posso salire al 24?',
+  ],
+  stanco: [
+    'Questa settimana ho saltato tutto, oggi faccio doppia seduta per recuperare?',
+    'Sono distrutto ma sabato c\'è la partita importante: cosa faccio fino a sabato?',
+  ],
+  'due-partite': [
+    'Avevo chiesto anche la resistenza, perché non c\'è?',
+    'Giovedì, il giorno dopo la coppa, posso fare gambe pesanti?',
+  ],
+  'senza-campo': [
+    'Non ho il campo, come faccio la resistenza?',
+    'Posso usare il kettlebell anche per le gambe al posto delle serie a corpo libero?',
+  ],
+  'partita-dura-ieri': [
+    'Ho i polpacci duri dopo la partita di ieri, oggi mi alleno?',
+  ],
+};
+
 async function main() {
-  const { contextFinto, SCENARI, MARCO } = await import('../lib/trainingSimulazione');
+  const { contextFinto, SCENARI: SCENARI_BASE, SCENARI_DIFFICILI, MARCO } = await import('../lib/trainingSimulazione');
+  const SCENARI = [...SCENARI_BASE, ...SCENARI_DIFFICILI];
   const { promptPreparatore } = await import('../lib/trainingChat');
   const id = opt('scenario') ?? 'marco-in-season';
   const user = opt('user');
@@ -44,7 +73,13 @@ async function main() {
   } else {
     const sc = SCENARI.find((s) => s.id === id);
     if (!sc && id !== 'marco-in-season') { console.error(`Scenario sconosciuto: ${id}. Disponibili: ${SCENARI.map((s) => s.id).join(', ')}`); process.exit(1); }
-    ctx = contextFinto(sc?.atleta ?? MARCO);
+    // Come in produzione il preparatore vede il piano della settimana (27/10): qui il piano base dello scenario, senza Claude
+    const atleta = { ...(sc?.atleta ?? MARCO) };
+    if (!atleta.pianoCorrente && !flag('senza-piano')) {
+      const { generaPianoV2 } = await import('../lib/trainingPlannerV2');
+      atleta.pianoCorrente = (await generaPianoV2(contextFinto(atleta), undefined, {}, { senzaClaude: true })).plan;
+    }
+    ctx = contextFinto(atleta);
   }
   const system = promptPreparatore(ctx);
   if (flag('prompt') || !flag('live')) {
@@ -56,7 +91,7 @@ async function main() {
   const Anthropic = (await import('@anthropic-ai/sdk')).default;
   const { PLANNER_MODEL } = await import('../lib/trainingPlanner');
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const domande = opt('domanda') ? [opt('domanda')!] : DOMANDE;
+  const domande = opt('domanda') ? [opt('domanda')!] : DOMANDE_DIFFICILI[id] ?? DOMANDE;
   for (const d of domande) {
     const t0 = Date.now();
     const res = await anthropic.messages.create({ model: PLANNER_MODEL, max_tokens: 2500, thinking: { type: 'adaptive' }, output_config: { effort: 'low' }, system, messages: [{ role: 'user', content: d }] });

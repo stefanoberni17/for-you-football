@@ -100,6 +100,8 @@ export const MIX_PREFIX = 'te-mix-';
 /** Il secondo tema conta un terzo di seduta, il primo due terzi. */
 export const MIX_PESO_SECONDO = 1 / 3;
 /** Si combina solo con almeno 40' di seduta e con il secondo tema indietro di almeno mezza seduta sulla quota. */
+/** Tetto di una seduta di tecnica composta (Ste, 27/10: "metterei un tetto di 90', anche se il tetto è il tempo del ragazzo"): sotto vale il tempo per seduta. */
+export const TECNICA_MINUTI_MAX = 90;
 export const MIX_MINUTI_MIN = 40;
 export const MIX_DEFICIT_MIN = 0.5;
 /** Esercizi del secondo tema dentro la seduta combinata ("un po'"). */
@@ -149,6 +151,19 @@ export function contaTemi(feedback: readonly FeedbackPerMemoria[], lunediCorrent
     for (const [t, w] of temi) out[t] = Math.round((out[t] + w) * 100) / 100;
   }
   return out;
+}
+
+/**
+ * I conteggi per SCEGLIERE il tema (stagione simulata, 27/10): con una seduta di tecnica a settimana le 4 settimane
+ * hanno 3-4 sedute e i temi al 10 % (dribbling, tiri) non arrivano mai a una seduta intera: la rotazione restava
+ * palleggi → passaggi → freestyle → visione per 12 settimane. Sotto QUOTE_SEDUTE_MIN sedute la finestra si allunga a
+ * QUOTE_SETTIMANE_LUNGHE settimane, così le quote si rispettano anche con poca tecnica. La card del mese resta sulle 4.
+ */
+export const QUOTE_SEDUTE_MIN = 8;
+export const QUOTE_SETTIMANE_LUNGHE = 8;
+export function conteggiPerScelta(feedback: readonly FeedbackPerMemoria[], lunediCorrente: string, lookup?: Parameters<typeof contaTemi>[3]): Conteggi {
+  const corti = contaTemi(feedback, lunediCorrente, QUOTE_SETTIMANE, lookup);
+  return TEMI.reduce((a, t) => a + corti[t], 0) >= QUOTE_SEDUTE_MIN ? corti : contaTemi(feedback, lunediCorrente, QUOTE_SETTIMANE_LUNGHE, lookup);
 }
 
 /** Il tema dell'ultima seduta di tecnica fatta (per non ripeterlo se un altro è indietro). */

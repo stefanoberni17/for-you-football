@@ -59,6 +59,28 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
     return { ...s, giorno: Number(s.giorno), blocchi: ok, leggeri: Array.isArray(s.leggeri) ? s.leggeri.filter((id) => ok.includes(id)) : undefined };
   }).filter((s) => s.blocchi.length > 0).sort((a, b) => a.giorno - b.giorno);
 
+  // 1b. Il blocco pre partita di Ste ha già la sua attivazione: niente riscaldamento velocità davanti (sei allunghi da
+  //     50 m fino al 90 % il giorno prima della partita). Claude ce lo metteva da solo (simulazione del 27/10, tre
+  //     scenari su nove); se nella giornata c'è anche velocità vera, `expandPiano` lo rimette in testa
+  for (const s of sedute) {
+    if (!s.blocchi.some((id) => isPrePartita(id)) || !s.blocchi.includes(RISC_VELOCITA_ID)) continue;
+    s.blocchi = s.blocchi.filter((id) => id !== RISC_VELOCITA_ID);
+    s.leggeri = s.leggeri?.filter((id) => id !== RISC_VELOCITA_ID);
+    note.push(`${giornoNome(s.giorno)}: tolto il riscaldamento velocità, l'attivazione pre partita ha già il suo (niente allunghi lunghi prima della partita)`);
+  }
+  sedute = sedute.filter((s) => s.blocchi.length > 0);
+
+  // 1c. La resistenza va in fondo alla giornata (il neuromuscolare prima del metabolico, regola del validatore): Claude
+  //     metteva "resistenza + freestyle" e il freestyle ha un esercizio di fascia, la settimana finiva sul piano base
+  //     (simulazione del 27/10, sette giornate). Si spostano i blocchi, l'ordine degli altri resta quello di Claude
+  const isResistenza = (id: string) => blocco(id).qualita.startsWith('resistenza');
+  for (const s of sedute) {
+    const primaRes = s.blocchi.findIndex(isResistenza);
+    if (primaRes < 0 || !s.blocchi.slice(primaRes).some((id) => !isResistenza(id))) continue;
+    s.blocchi = [...s.blocchi.filter((id) => !isResistenza(id)), ...s.blocchi.filter(isResistenza)];
+    note.push(`${giornoNome(s.giorno)}: la resistenza in fondo alla seduta, prima il resto (a gambe fresche)`);
+  }
+
   // 2. Giorni: passati, vietati, non ammessi, di partita o già occupati → il giorno libero più vicino
   //    (una seduta fisica mai il giorno prima della partita); senza un giorno libero la seduta salta
   const ammesso = (d: number) => o.giorniRimasti.includes(d) && !matchDays.includes(d);

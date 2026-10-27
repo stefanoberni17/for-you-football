@@ -19,6 +19,8 @@ import { FOCUS_TUTTO, type FocusId, type RichiestaGuidata } from './trainingRequ
 import type { SquadraSettimana } from './trainingSquadra';
 import type { PreferenzeSetup, TrainingSetup } from './trainingSetup';
 import { addDays } from './carta';
+import type { Dolore, Limitazioni } from './trainingDolore';
+import type { CondizioneCarico } from './trainingLoad';
 
 type Fase = TrainingSetup['fase'];
 
@@ -48,6 +50,9 @@ export interface Atleta {
   checkinOggi?: CheckinSnapshot | null;
   pianoCorrente?: WeekPlan | null;
   daRecuperare?: ContextV2['daRecuperare'];
+  dolore?: Dolore | null;        // M9: zona segnalata (lo state riduce il piano, il prompt lo racconta)
+  limitazioni?: Limitazioni | null; // punto 4: zone del setup
+  condizione?: CondizioneCarico; // tetto personale: stanco / fresco
 }
 
 export interface Scenario {
@@ -56,6 +61,8 @@ export interface Scenario {
   atleta: Atleta;
   richiesta?: RichiestaGuidata;  // assente = piano automatico del lunedì (preferenze del setup)
   attese: string[];              // cosa ci si aspetta, in parole (per Ste)
+  /** Modifica a metà settimana (27/10): lavora sul piano del lunedì dello scenario `base`; la richiesta si compone sul piano vero. */
+  modificaDi?: { base: string; oggiDow: number; richiesta: (piano: WeekPlan) => RichiestaGuidata };
 }
 
 /** Riga di test con il livello calcolato come lo salva l'app (v1: soglie assolute; v2: anche `verso` min e massimali relativi al peso). */
@@ -75,7 +82,8 @@ function r(test_id: string, valore: number, pesoKg?: number): TestResultRow {
   return { test_id, valore, livello_calcolato: liv, punteggio_calcolato: 50, dettaglio: null };
 }
 /** Riga della scala skill: gradino tenuto con quante reps/secondi (test_id = skill:<esercizio>). */
-const skill = (esercizioId: string, valore: number): TestResultRow => ({ test_id: `skill:${esercizioId}`, valore, livello_calcolato: 'intermedio', punteggio_calcolato: 50, dettaglio: null });
+export { r as risultatoFinto };
+export const skill = (esercizioId: string, valore: number): TestResultRow => ({ test_id: `skill:${esercizioId}`, valore, livello_calcolato: 'intermedio', punteggio_calcolato: 50, dettaglio: null });
 
 /** Tre settimane di sedute fatte (piani + completamenti con voto) per dare al carico un cronico e alla memoria dei blocchi un passato. */
 function storicoTreSettimane(sedute: { giorno: number; blocchi: { id: string; nome: string; qualita: string; durataMin: number }[]; giudizio: 'facile' | 'ok' | 'duro' }[], rpe = 7): { storico: NonNullable<Atleta['storico']>; feedback: FeedbackSeduta[] } {
@@ -106,7 +114,7 @@ export const MARCO: Atleta = {
 };
 
 // Luca: A, off season (tetto 6 fisiche, 120'), vuole velocità e salti. Solo il campo.
-const LUCA: Atleta = {
+export const LUCA: Atleta = {
   nome: 'Luca', descrizione: 'A (AMRAP 9), off season senza squadra, attaccante. Solo campo e rullo. Test di velocità e salti al livello A, parte alta A.',
   eta: 22, ruoli: 'attaccante', fase: 'off_season', attrezzatura: ['campo', 'piccoli attrezzi', 'sbarra'],
   results: [r('test-amrap', 9), r('test-push', 32), r('test-pull', 9), r('test-core', 70), r('test-lombari', 65), r('test-squat', 42), r('test-affondi', 26), r('test-rdl', 32), r('test-bridge', 42),
@@ -116,7 +124,7 @@ const LUCA: Atleta = {
 };
 
 // Davide: PRO in palestra, massimali, kettlebell. In season, squadra tre volte, partita la domenica.
-const DAVIDE: Atleta = {
+export const DAVIDE: Atleta = {
   nome: 'Davide', descrizione: 'PRO (AMRAP 11), 80 kg, palestra + kettlebell + sbarra + campo, massimali (squat 1,6×, panca 1,0×, pull up 1,5×). In season, squadra lun/mer/ven, partita domenica.',
   eta: 24, ruoli: 'centrocampista', fase: 'in_season', attrezzatura: ['palestra', 'kettlebell', 'sbarra', 'campo', 'piccoli attrezzi'], esperienzaPalestra: true, pesoKg: 80,
   results: [r('test-amrap', 11), r('test-push', 42), r('test-pull', 13), r('test-core', 130), r('test-lombari', 95), r('test-squat', 62), r('test-affondi', 36), r('test-rdl', 46), r('test-bridge', 62),
@@ -146,7 +154,7 @@ const SIMONE: Atleta = {
 };
 
 // Giulia: portiere B, "Tutto, in equilibrio", 4 giornate da 60'.
-const GIULIA: Atleta = {
+export const GIULIA: Atleta = {
   nome: 'Giulia', descrizione: 'B, in season, portiere, squadra mar/gio, partita sabato. Setup "Tutto, in equilibrio", lun/mar/gio/ven, 4 giornate da 60\'. Sbarra, campo, rullo.',
   eta: 20, ruoli: 'portiere', fase: 'in_season', attrezzatura: ['sbarra', 'campo', 'piccoli attrezzi'],
   results: [r('test-amrap', 8), r('test-push', 22), r('test-pull', 4), r('test-core', 60), r('test-lombari', 50), r('test-squat', 32), r('test-affondi', 20), r('test-rdl', 24), r('test-bridge', 34), r('test-pall-forte', 60), r('t2-broad-jump', 205),
@@ -208,7 +216,8 @@ export function baseFinta(a: Atleta): PlannerContext {
     pianoCorrente: a.pianoCorrente ? { plan: a.pianoCorrente, richieste: null } : null,
     checkinOggi: a.checkinOggi ?? { fisico: 7, sonno: 7.5, recupero: 7, mentale: 7 }, checkinMedia7: { fisico: 7, sonno: 7.3, recupero: 6.8, mentale: 7.2, giorni: 7 },
     ciclo, storicoSerie: riepilogoEsercizi(logs), logsSerie: logs,
-    carico: calcolaCarico({ completions: storico.completions, setRpe: [], plans: storico.plans, oggi, lunedi, isDeload: ciclo.isDeload, squadraSettimanale }),
+    carico: calcolaCarico({ completions: storico.completions, setRpe: [], plans: storico.plans, oggi, lunedi, isDeload: ciclo.isDeload, squadraSettimanale, condizione: a.condizione }),
+    dolore: a.dolore ?? null, limitazioni: a.limitazioni ?? null,
     squadra, fase: a.fase, focusSetup: a.focusSetup, preferenze: undefined, preferenzeSetup: a.preferenze ?? { giorni: [], sedute: null, durataMin: null },
     squilibri: calcolaSquilibri({ results: a.results, logs }),
   } as PlannerContext;
@@ -224,4 +233,158 @@ export function contextFinto(a: Atleta): ContextV2 {
     age: a.eta, role: a.ruoli,
   };
   return costruisciContextV2({ base, profilo, daRecuperare: a.daRecuperare ?? [], mese: calcolaMese({ obiettivi: a.focusSetup, settimane: [], lunediCorrente: mondayOfThisWeekRome() }) });
+}
+
+// ─── Scenari difficili (27/10, Ste: "farei altri test più complessi") ───────────────────────────────────
+// Casi che i nove scenari non toccano: due partite in settimana, dolore e limitazioni insieme, una partita
+// durissima ieri, "Com'è venuto?" con "non riesco", atleta stanco, niente campo, sette giornate, poco tempo,
+// recuperi che si scontrano con i formati della settimana. `npx tsx scripts/planner-sim.mts --difficili`.
+
+/** Log per serie finti di una seduta di N settimane fa (per la memoria dell'esecuzione e della dose). */
+function logSeduta(settimaneFa: number, giorno: number, righe: { id: string; serie: number; prev: number; fatte: number; rpe: number; kg?: number; esecuzione?: SetLogRow['esecuzione'] }[]): SetLogRow[] {
+  const quando = `${addDays(mondayOfThisWeekRome(), -7 * settimaneFa + (giorno - 1))}T18:00:00.000Z`;
+  return righe.flatMap((x) => Array.from({ length: x.serie }, (_, i): SetLogRow => ({
+    session_key: `sim-log-${settimaneFa}#${giorno}`, esercizio_id: x.id, serie: i + 1, lato: 'unico', unita: 'reps',
+    quantita_prevista: x.prev, quantita_fatta: x.fatte, carico_previsto_kg: x.kg ?? null, carico_fatto_kg: x.kg ?? null, rpe: x.rpe,
+    esecuzione: i === x.serie - 1 ? (x.esecuzione ?? null) : null, created_at: quando,
+  })));
+}
+
+const ieri = () => addDays(mondayOfThisWeekRome(), -1); // la domenica prima del lunedì del piano
+
+// 1. Due partite: mercoledì e domenica, in season, A, chiede anche la resistenza (esplicita).
+const TOMMASO: Atleta = {
+  ...MARCO, nome: 'Tommaso', descrizione: 'A, in season, due partite (mercoledì di coppa e domenica), squadra mar e ven. Chiede gambe, parte alta e resistenza. Lun-sab, 3 giornate da 60\'.',
+  eta: 21, ruoli: 'centrocampista',
+  results: [...MARCO.results, r('test-amrap', 9), r('t2-1km', 3.5)],
+  trainingDays: [2, 5], matchDays: [3, 7], squadra: { 2: { rpe: 6, qualita: ['tattica'] }, 5: { rpe: 5, qualita: ['tecnica'] } },
+  focusSetup: ['gambe', 'parte_alta', 'resistenza'], preferenze: { giorni: [1, 2, 4, 5, 6], sedute: 3, durataMin: 60 },
+};
+
+// 2. Partita durissima ieri (fatica 10, 90'), squadra mar/gio, partita sabato: piano automatico del lunedì.
+const NICOLA: Atleta = {
+  ...MARCO, nome: 'Nicola', descrizione: 'B, in season, ieri (domenica) partita intera con fatica 10/10 e polpacci tirati; squadra mar/gio, partita sabato; lun/mer/ven, 3 giornate da 60\'.',
+  resoconti: [{ data: ieri(), tipo: 'partita', rpe: 10, durata_min: 90, stanchezza: 'cotto', fastidio_zona: 'polpacci', rpe_previsto: 9 }],
+};
+
+// 3. Dolore leggero al ginocchio segnalato sabato + caviglia tra le limitazioni del setup, off season, gambe e salti.
+const FILIPPO: Atleta = {
+  ...LUCA, nome: 'Filippo', descrizione: 'A, off season, dolore 2/10 al ginocchio da sabato (zona alleggerita), distorsione alla caviglia destra tre mesi fa tra le limitazioni. Chiede gambe, salti, velocità; 4 giornate da 60\'.',
+  focusSetup: ['gambe', 'pliometria', 'velocita'], preferenze: { giorni: [1, 2, 3, 4, 5, 6], sedute: 4, durataMin: 60 },
+  dolore: { zona: 'ginocchio', da: addDays(mondayOfThisWeekRome(), -2), fino: null },
+  limitazioni: { zone: ['caviglia'], nota: 'Distorsione alla caviglia destra a luglio, fatto fisioterapia, ora corro senza dolore ma ogni tanto la sento nei cambi di direzione.' },
+};
+
+// 4. "Com'è venuto?": i piegamenti al gradino 2 "non riesco" due settimane di fila, lo swing "faccio fatica" due volte.
+const SAMUELE: Atleta = {
+  ...DAVIDE, nome: 'Samuele', descrizione: 'PRO in palestra con il kettlebell; due settimane fa e la scorsa: piegamenti diamante (push-2) "non riesco" a pulirli, swing "faccio fatica" due volte. In season, squadra lun/mer/ven, partita domenica.',
+  logs: [
+    ...logSeduta(2, 2, [{ id: 'push-2', serie: 3, prev: 20, fatte: 14, rpe: 8, esecuzione: 'non_riesco' }, { id: 'fesp-kettlebell-swing', serie: 4, prev: 15, fatte: 15, rpe: 7, kg: 20, esecuzione: 'fatica' }]),
+    ...logSeduta(1, 2, [{ id: 'push-2', serie: 3, prev: 16, fatte: 12, rpe: 8, esecuzione: 'non_riesco' }, { id: 'fesp-kettlebell-swing', serie: 4, prev: 15, fatte: 14, rpe: 7, kg: 20, esecuzione: 'fatica' }]),
+  ],
+};
+
+// 5. Stanco: tre settimane dure alle spalle, check-in bassi, il tetto personale scende del 15 %.
+const stancoStorico = storicoTreSettimane([
+  { giorno: 1, blocchi: [b('pb-serie', 'Gambe: serie', 'forza-parte-bassa', 46)], giudizio: 'duro' },
+  { giorno: 3, blocchi: [b('pa-serie', 'Parte alta: serie', 'forza-parte-alta', 51)], giudizio: 'duro' },
+  { giorno: 5, blocchi: [b('velocita-b1', 'VELOCITA\' B1', 'velocita', 35)], giudizio: 'ok' },
+], 9);
+const RICCARDO: Atleta = {
+  ...MARCO, nome: 'Riccardo', descrizione: 'B, in season, STANCO: tre settimane con voti 9 sulle sedute, check-in fisico e recupero a 4 di media, ieri testa a 3. Squadra mar/gio, partita sabato; lun/mer/ven, 3 giornate da 60\'.',
+  storico: stancoStorico.storico, feedback: stancoStorico.feedback,
+  checkinOggi: { fisico: 4, sonno: 5.5, recupero: 4, mentale: 3 },
+  condizione: { stato: 'stanco', fattore: 0.85, fattoreTettoDuro: 0.9, motivi: ['media di fisico e recupero dei check-in 4/10', '3 sedute con voto 9 o più nelle ultime due settimane'] },
+};
+
+// 6. Niente campo: solo kettlebell e piccoli attrezzi, vuole resistenza, kettlebell e parte alta, 4 giornate da 45'.
+const MATTIA: Atleta = {
+  ...MARCO, nome: 'Mattia', descrizione: 'B, off season, NIENTE campo: kettlebell, piccoli attrezzi, sbarra. Vuole resistenza (corsa fuori), kettlebell e parte alta; lun-sab, 4 giornate da 45\'.',
+  fase: 'off_season', attrezzatura: ['kettlebell', 'piccoli attrezzi', 'sbarra'], trainingDays: [], matchDays: [], squadra: {},
+  results: [...MARCO.results, r('t2-1km', 4.0)],
+  focusSetup: ['resistenza', 'kettlebell', 'parte_alta'], preferenze: { giorni: [1, 2, 3, 4, 5, 6], sedute: 4, durataMin: 45 },
+};
+
+// 7. Sette giornate, "Tutto, in equilibrio", off season senza squadra, tutto l'attrezzo, 90'.
+const EDOARDO: Atleta = {
+  ...DAVIDE, nome: 'Edoardo', descrizione: 'PRO in palestra, off season SENZA squadra, tutto l\'attrezzo (palestra, kettlebell, sbarra, campo, muro), "Tutto, in equilibrio", 7 giornate da 90\'.',
+  fase: 'off_season', attrezzatura: ['palestra', 'kettlebell', 'sbarra', 'campo', 'muro', 'piccoli attrezzi'], trainingDays: [], matchDays: [], squadra: {},
+  results: [...DAVIDE.results, r('t2-1km', 3.3), r('t2-t-sprint', 9.2), r('test-pall-forte', 120), r('test-muro', 90)],
+  focusSetup: [FOCUS_TUTTO], preferenze: { giorni: [1, 2, 3, 4, 5, 6, 7], sedute: 7, durataMin: 90 },
+};
+
+// 8. Portiere con 30 minuti: squadra quattro volte, partita domenica, parte alta, tecnica, fascia.
+const LORENZO: Atleta = {
+  ...GIULIA, nome: 'Lorenzo', descrizione: 'B, in season, portiere, squadra lun/mar/gio/ven, partita domenica. Solo 30\' a seduta: parte alta, tecnica, fascia; mer e sab, 2 giornate.',
+  attrezzatura: ['sbarra', 'campo', 'muro', 'piccoli attrezzi'],
+  trainingDays: [1, 2, 4, 5], matchDays: [7], squadra: { 1: { rpe: 6, qualita: ['tecnica'] }, 2: { rpe: 7, qualita: ['forza'] }, 4: { rpe: 7, qualita: ['tattica'] }, 5: { rpe: 5, qualita: ['tecnica'] } },
+  focusSetup: ['parte_alta', 'tecnica', 'fascia'], preferenze: { giorni: [3, 6], sedute: 2, durataMin: 30 },
+};
+
+// 9. Recuperi contro i formati: due sedute saltate la settimana scorsa (gambe serie e parte alta serie) e gli stessi obiettivi.
+const GABRIELE: Atleta = {
+  ...MARCO, nome: 'Gabriele', descrizione: 'B, in season, la settimana scorsa ha saltato le due sedute di forza (gambe a serie e parte alta a serie). Squadra mar/gio, partita sabato; lun/mer/ven, 3 giornate da 60\'.',
+  daRecuperare: [
+    { titolo: 'Gambe forti', blocchi: ['apertura-breve', 'pb-serie'], giorno: 1 },
+    { titolo: 'Parte alta', blocchi: ['apertura-breve', 'pa-serie-short'], giorno: 3 },
+  ],
+};
+
+export const SCENARI_DIFFICILI: Scenario[] = [
+  { id: 'due-partite', titolo: 'Due partite (mercoledì e domenica) e la resistenza chiesta in season', atleta: TOMMASO,
+    attese: ['niente fisica martedì e sabato (giorni prima delle partite) né il giorno delle partite', 'giovedì (dopo la partita) gambe al massimo ridotte, niente velocità né resistenza', 'la resistenza non trova posto (almeno 2 giorni dopo e 3 prima): non pretesa, e il messaggio lo dice'] },
+  { id: 'partita-dura-ieri', titolo: 'Partita da fatica 10 ieri, polpacci tirati: piano del lunedì', atleta: NICOLA,
+    attese: ['lunedì (giorno dopo) niente gambe piene, velocità o salti: richiamo, parte alta corta, recupero', 'gambe e parte alta comunque coperte nella settimana', 'venerdì leggero (prima della partita)'] },
+  { id: 'dolore-limitazioni', titolo: 'Ginocchio dolorante (2/10) e caviglia tra le limitazioni, gambe e salti', atleta: FILIPPO,
+    attese: ['il messaggio non promette di curare niente e consiglia fisio o medico se il dolore resta', 'a parità di blocchi, quelli che caricano meno ginocchio e caviglia', 'niente pliometria intensiva forte né cambi di direzione aggressivi come prima scelta'] },
+  { id: 'esecuzione', titolo: '"Non riesco" sui piegamenti, "faccio fatica" sullo swing', atleta: SAMUELE,
+    attese: ['l\'EMOM di parte alta per primo con i piegamenti come stazione (seduta dedicata)', 'il kettlebell più leggero (un kettlebell sotto, meno ripetizioni)', 'il messaggio lo spiega senza far sentire il ragazzo indietro'] },
+  { id: 'stanco', titolo: 'Atleta stanco: tetto personale −15 %, testa a 3', atleta: RICCARDO,
+    attese: ['settimana più corta o più leggera, sotto il tetto personale', 'oggi seduta semplice (testa altrove), niente massimali né pliometria intensiva', 'una riga di incoraggiamento, niente psicologo'] },
+  { id: 'senza-campo', titolo: 'Niente campo: resistenza di sola corsa, kettlebell e parte alta in 45\'', atleta: MATTIA,
+    attese: ['resistenza a serie di sola corsa (anche su strada), niente esercizi con la palla', 'un blocco kettlebell base', 'parte alta dalle scale, tutto entro 45\''] },
+  { id: 'sette-giornate', titolo: 'Sette giornate da 90\', "Tutto, in equilibrio", off season senza squadra', atleta: EDOARDO,
+    attese: ['al massimo 6 fisiche + leggere fino a 7', 'tetti per qualità rispettati (velocità 1-2, pliometria 2, gambe 3, parte alta 3, resistenza fino a 4)', 'velocità e pliometria mai in giorni consecutivi, almeno un giorno leggero'] },
+  { id: 'portiere-30', titolo: 'Portiere con 30\' a seduta, squadra quattro volte', atleta: LORENZO,
+    attese: ['due giornate entro 30\' (apertura esclusa)', 'parte alta corta, tecnica o fascia; niente seduta fisica sabato (giorno prima della partita)', 'P1 per il portiere dove esiste'] },
+  { id: 'recuperi', titolo: 'Due sedute di forza da recuperare con gli stessi obiettivi', atleta: GABRIELE,
+    attese: ['i recuperi riproposti (gambe serie e parte alta breve) senza doppiare i formati', 'gambe e parte alta coperte', 'niente fisica venerdì'] },
+];
+
+// ─── Modifiche a metà settimana (27/10, Ste: "anche magari modifiche richieste") ─────────────────────────
+// Ognuna parte dal piano del lunedì di uno scenario difficile (generato prima, con o senza Claude) e chiede una modifica di mercoledì.
+
+/** La prima seduta del piano da oggi in poi (per "togli" e "sposta", che vogliono un giorno vero del piano). */
+const primaDa = (piano: WeekPlan, oggi: number, fisica = false) =>
+  piano.sedute.filter((x) => x.giorno >= oggi && (!fisica || x.tipo === 'fisica' || x.tipo === 'mix')).sort((a, z) => a.giorno - z.giorno)[0]?.giorno ?? oggi;
+
+const modifica = (id: string, titolo: string, base: Atleta, baseId: string, richiesta: (piano: WeekPlan) => RichiestaGuidata, attese: string[]): Scenario =>
+  ({ id, titolo, atleta: { ...base, oggiDow: 3 }, attese, modificaDi: { base: baseId, oggiDow: 3, richiesta } });
+
+export const SCENARI_MODIFICHE: Scenario[] = [
+  modifica('mod-piu-leggera', 'Mercoledì, stanco: "settimana più leggera"', RICCARDO, 'stanco',
+    () => ({ modo: 'modifica', modifica: { tipo: 'piu_leggera' }, note: 'sono distrutto, dormo poco' }),
+    ['lunedì resta com\'era (passato)', 'da oggi varianti brevi o un blocco in meno, stessi giorni', 'il messaggio non dice che lunedì sparisce']),
+  modifica('mod-togli', 'Mercoledì, due partite: "togli la prossima seduta"', TOMMASO, 'due-partite',
+    (pi) => ({ modo: 'modifica', modifica: { tipo: 'togli_giorno', giorno: primaDa(pi, 4) } }),
+    ['quella seduta sparisce senza essere compensata altrove', 'il resto identico', 'gli obiettivi non pretesi se non c\'è più posto']),
+  modifica('mod-cambia-focus', 'Mercoledì, il ginocchio fa ancora male: "cambia obiettivo: tecnica"', FILIPPO, 'dolore-limitazioni',
+    () => ({ modo: 'modifica', modifica: { tipo: 'cambia_focus', focus: 'tecnica' }, note: 'il ginocchio mi fa ancora un po\' male quando salto' }),
+    ['da oggi tecnica al posto di gambe e salti, stessi giorni', 'il messaggio consiglia fisio o medico se il dolore resta, senza promettere cure', 'niente salti né velocità']),
+  modifica('mod-meno-tempo', 'Mercoledì, sette giornate: "meno tempo, 45\' a seduta"', EDOARDO, 'sette-giornate',
+    () => ({ modo: 'modifica', modifica: { tipo: 'meno_tempo', durataMax: 45 } }),
+    ['da oggi ogni seduta entro 45\' (apertura esclusa)', 'versioni brevi, non giornate in più', 'tetti per qualità ancora rispettati']),
+  modifica('mod-sposta-squadra', 'Mercoledì, dopo la partita dura: "sposta la prossima fisica a giovedì" (giorno di squadra)', NICOLA, 'partita-dura-ieri',
+    (pi) => ({ modo: 'modifica', modifica: { tipo: 'sposta', giorno: primaDa(pi, 3, true), a: 4 } }),
+    ['la seduta va a giovedì (con la squadra: ammessa, magari più corta)', 'niente fisica venerdì (prima della partita)', 'gli altri giorni identici']),
+  modifica('mod-piu-intensa', 'Mercoledì, "non riesco" sui piegamenti: "settimana più intensa"', SAMUELE, 'esecuzione',
+    () => ({ modo: 'modifica', modifica: { tipo: 'piu_intensa' }, note: 'voglio spingere di più' }),
+    ['più intensa dove i dati lo permettono, ma i piegamenti restano nella seduta dedicata (il SALI è bloccato)', 'il kettlebell resta più leggero finché lo swing non è pulito', 'resta nel tetto del carico']),
+];
+
+/** Mette nello scenario di modifica il piano del lunedì dello scenario base e compone la richiesta sul piano vero. */
+export function preparaModifica(sc: Scenario, pianoBase: WeekPlan): void {
+  if (!sc.modificaDi) return;
+  sc.atleta.pianoCorrente = pianoBase;
+  sc.richiesta = sc.modificaDi.richiesta(pianoBase);
 }

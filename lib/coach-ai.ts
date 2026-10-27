@@ -40,6 +40,8 @@ export const SAFETY_CATEGORIE = {
       'meglio senza di me', 'voglio che finisca tutto', 'non vedo via d uscita',
       'non ha senso vivere', 'vita non ha senso', 'vita non ha piu senso', 'non ce la faccio piu a vivere', 'buttarmi giu', 'buttarmi di sotto',
       'stanco di vivere', 'stanca di vivere', 'voglio sparire', 'non voglio esserci piu', 'se mi succedesse qualcosa sarebbe meglio',
+      // 27/10, dal replay: le varianti con "vorrei" / "spero" (prima c'erano solo quelle con "non voglio"); niente "non svegliarmi più" da solo: "non svegliarmi più tardi delle 8"
+      'vorrei non svegliarmi', 'spero di non svegliarmi', 'vorrei non esserci piu', 'vorrei non essere mai nato', 'vorrei non essere mai nata',
     ],
     alert: ['non ha piu senso', 'non riesco piu ad andare avanti', 'non ce la faccio piu', 'sono un peso', 'sono un fallito', 'sono una fallita', 'odio la mia vita', 'nessuno si accorgerebbe'],
   },
@@ -67,7 +69,9 @@ export const SAFETY_CATEGORIE = {
       'mi ha toccato', 'mi ha toccata', 'mi tocca sotto', 'mi tocca le parti', 'mi tocca dove non', 'toccato le parti intime', 'mi costringe a', 'mi obbliga a fare',
       'mi picchia', 'mi picchiano a casa', 'mio padre mi picchia', 'mia madre mi picchia', 'il mister mi picchia', 'mi mena', 'mi ha menato',
       'foto senza vestiti', 'foto nudo', 'foto nuda', 'mi ricatta con le foto', 'mi ricatta', 'mi minaccia', 'mi minacciano',
-      'mi bullizzano', 'bullismo', 'mi prendono in giro tutti', 'mi escludono tutti', 'nessuno mi parla a scuola'],
+      'mi bullizzano', 'bullismo', 'mi prendono in giro tutti', 'mi escludono tutti', 'nessuno mi parla a scuola',
+      // 27/10, dal replay: i segnali dell'adescamento (un adulto che chiede segreti o foto); solo avviso, il Coach chiede con cura
+      'di non dirlo a nessuno', 'non dirlo agli altri', 'non dirlo ai tuoi', 'segreto tra noi', 'il nostro segreto', 'mi chiede foto', 'mi chiede delle foto', 'mi manda messaggi strani'],
   },
   // Sostanze: ALERT (dopo, se lo psicologo lo chiede, si decide se e cosa portare a BLOCCO)
   sostanze: {
@@ -261,7 +265,13 @@ function analizzaNormalizzato(t0: string, f: (k: string) => string): EsitoSafety
 export function analizzaSafetyConversazione(ultimo: string, precedente?: string | null): EsitoSafety {
   const e = analizzaSafety(ultimo);
   if (e.livello || !precedente) return e;
-  return analizzaSafety(`${precedente} ${ultimo}`);
+  // Il messaggio prima, da solo, era già stato visto (e segnalato) al suo turno: se il testo unito dice la stessa cosa
+  // non è una frase spezzata ma il messaggio dopo ("ok scusa, torniamo al percorso"), e non va segnalato di nuovo
+  // (27/10, dal replay: un secondo avviso a Ste per la stessa frase)
+  const prima = analizzaSafety(precedente);
+  const unito = analizzaSafety(`${precedente} ${ultimo}`);
+  if (prima.livello && prima.livello === unito.livello && prima.categoria === unito.categoria) return e;
+  return unito;
 }
 
 /** Livello di rischio del testo: 'blocco' (frasi inequivocabili), 'alert' (ambigue o negate) o null. */
@@ -910,7 +920,7 @@ async function loadSettimanaInCorso(userId: string, week: number): Promise<strin
       week,
       giorni,
       progresso,
-      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers } : null,
+      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers, completedAt: gateRiga.completed_at } : null,
     });
   } catch (e) {
     console.error('loadSettimanaInCorso:', (e as Error).message);

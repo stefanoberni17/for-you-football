@@ -157,11 +157,13 @@ function itemTest(t: SerieTest, base?: PlanItem): PlanItem {
 export function inserisciSerieTest(plan: WeekPlan, opt: {
   weekStart: string; oggi: string; fatteGiorni: ReadonlySet<number>; matchDays: readonly number[];
   candidati: { forza: SerieTest[]; palestra: SerieTest[]; campo: SerieTest[] };
+  /** Giorni dove non mettere serie test (27/10: quelli alleggeriti dal resoconto, `giornoAlleggerito` in lib/trainingLettura). */
+  giorniEsclusi?: ReadonlySet<number>;
 }): { plan: WeekPlan; assegnate: SerieTestAssegnata[]; inAttesa: SerieTest[]; aggiustamenti: string[] } {
   const vuoto = { plan, assegnate: [], inAttesa: [], aggiustamenti: [] };
   if (!plan.sedute?.length) return vuoto;
   const md = [...opt.matchDays];
-  const ok = (s: PlanSession) => !opt.fatteGiorni.has(s.giorno) && addDays(opt.weekStart, s.giorno - 1) >= opt.oggi && s.tipo !== 'recupero' && !!s.items?.length
+  const ok = (s: PlanSession) => !opt.fatteGiorni.has(s.giorno) && !opt.giorniEsclusi?.has(s.giorno) && addDays(opt.weekStart, s.giorno - 1) >= opt.oggi && s.tipo !== 'recupero' && !!s.items?.length
     && giorniAllaPartita(s.giorno, md) !== 1 && giorniDallaPartita(s.giorno, md) !== 1 && giorniAllaPartita(s.giorno, md) !== 0;
   const sedute: PlanSession[] = plan.sedute.map((s) => ({ ...s, items: (s.items ?? []).map((it) => ({ ...it })) })).sort((a, b) => a.giorno - b.giorno);
   const occupate = new Set<number>(sedute.filter((s) => s.items.some((it) => it.test_in_seduta)).map((s) => s.giorno));

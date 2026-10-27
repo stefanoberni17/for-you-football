@@ -8,7 +8,7 @@
  */
 
 const CODICE = /\s*[-–]?\s*\b(?:B|A|PRO|P|F)\s?\d+(?:-?[A-Z])?\b/g;   // B1, A3, PRO1, P1, F1, A2-B (maiuscole: i codici di Ste)
-const NUMERO_FINALE = /\s+\d+[A-Z]?\s*$/;                     // "Fascia Foundations 1B", "Fascia Foundation 2"
+const NUMERO_FINALE = /(?<!\bda)\s+\d+[A-Z]?\s*$/;          // "Fascia Foundations 1B", "Fascia Foundation 2"; non "2 serie da 4" (27/10)
 const SHORT = /\s*[-–]?\s*\b(short|full)\b\s*\d*/gi;
 
 /** "Pliometria B1 - short" → "Pliometria (versione breve)", "Fascia Foundations 1B" → "Fascia Foundations". */

@@ -9,6 +9,7 @@ import { DAY_NAMES } from '@/lib/constants';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { APERTURA_IDS, STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type StatoFascia } from '@/lib/trainingFascia';
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
+import { isPausaTraSerie } from '@/lib/trainingResistenza';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
@@ -31,6 +32,9 @@ const ADATTAMENTO_LABEL: Record<NonNullable<PlanItem['adattamento']>, string> = 
   sali: 'Un passo in più', scendi: 'Più leggera', gradino: 'Il tuo gradino', lato: 'Lato debole', leggero: 'Più leggero', ripasso: 'Ripasso', esecuzione: 'Più pulito', dolore: 'Zona dolorante', limitazione: 'Zona da proteggere' };
 type Giudizio = 'facile' | 'ok' | 'duro';
 const GIUDIZI: { key: Giudizio; label: string }[] = [{ key: 'facile', label: 'Facile' }, { key: 'ok', label: 'Giusto' }, { key: 'duro', label: 'Duro' }];
+
+/** "3'" / "90\"" per la pausa tra le serie (27/10). */
+const durataPausa = (sec: number) => (sec >= 60 && sec % 60 === 0 ? `${sec / 60}'` : `${sec}"`);
 
 export default function SessionePage() {
   const router = useRouter();
@@ -388,6 +392,8 @@ export default function SessionePage() {
                           <p className="text-body-sm text-muted tabular-nums">
                             {it.test_in_seduta
                               ? <><span className={num}>Serie test</span>{it.test_in_seduta.prep != null ? <> · prima <span className={num}>{unitaLabel(unita, it.test_in_seduta.prep)}</span> di avvicinamento</> : null}{it.carico_kg ? <> · <span className={num}>{it.carico_kg} kg</span></> : null}</>
+                              : isPausaTraSerie(it.esercizio_id)
+                              ? <>Pausa di <span className={num}>{durataPausa(it.quantita)}</span>: cammina e respira</>
                               : it.schema === 'emom'
                               ? <>EMOM · <span className={num}>{it.serie}</span> {it.serie === 1 ? 'giro' : 'giri'} · <span className={num}>{unitaLabel(unita, it.quantita)}</span> al minuto, poi riposo fino allo scadere</>
                               : <>
@@ -404,7 +410,7 @@ export default function SessionePage() {
                             </div>
                           )}
                           {it.nota && (
-                            <div className="mt-1.5 flex items-start gap-2">
+                            <div className="mt-1.5 flex flex-col items-start gap-1">
                               <Badge tone={it.adattamento === 'scendi' || it.adattamento === 'leggero' || it.adattamento === 'esecuzione' || it.adattamento === 'dolore' || it.adattamento === 'limitazione' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">
                                 {it.test_in_seduta ? 'Serie test' : it.adattamento ? ADATTAMENTO_LABEL[it.adattamento] : 'Nota'}
                               </Badge>
@@ -416,7 +422,7 @@ export default function SessionePage() {
                               {sug.suggerimento === 'sali' ? '↑ ' : sug.suggerimento === 'scendi' ? '↓ ' : '→ '}{sug.testo}
                             </p>
                           )}
-                          {(ex.scheda || ex.descrizione) && (
+                          {(ex.scheda || ex.descrizione) && !isPausaTraSerie(it.esercizio_id) && (
                             <div className="-ml-4 mt-0.5">
                               <Button variant="ghost" size="sm" icon={<Info size={16} />} onClick={() => setDescOpen(isOpen ? null : i)}>
                                 {isOpen ? 'Nascondi' : 'Come si esegue'}
