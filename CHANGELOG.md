@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-10-27 — Audio delle pratiche: W10 scritto, generato e online
+- Ste: "vai". Quattro copioni (W10 G1-G4; G5-G7 senza audio) in `content/audio-scripts/_build/b1.py` dai testi Notion di oggi, in due file: G1 da seduto con i tre giri «trenta secondi presente, un minuto fuori»; G2-G4 con la palla (sotto il piede, al muro a intervalli, palleggi a blocchi): la voce legge le istruzioni e poi dà solo il ritmo («Via», «Trenta secondi», «Stop»), un Reset breve guidato nei momenti fermi. `check_notion.py` pulito. 84 segmenti nuovi (circa 11.000 crediti), 12 dalla cache. Online su Supabase (pratica G1 8:57, G2 7:11, G3 10:51, G4 12:51, aperture 0:28-2:05, -17 LUFS) e collegati su Notion; `Durata Minuti` G2 6→8, G4 14→13. Prima, sempre oggi, W10-G2/G3/G4 portati a `Tipo Pratica` riflessione (niente cerchio del respiro sugli esercizi con la palla). Ste non li ha ancora ascoltati.
+
 ## 2026-10-27 — Audio delle pratiche: W9 scritto, generato e online
 - Ste: "vai w9". Due copioni (W9 G1 G2; G3-G7 senza audio come da revisione) in `content/audio-scripts/_build/b1.py` dai testi Notion di oggi, già in due file: G1 il centro e l'inventario dei sette strumenti (una domanda per strumento, 8" di silenzio) con la nuova àncora, G2 lo spogliatoio e il piede in campo, routine o scaramanzia. `check_notion.py` pulito. 47 segmenti nuovi (circa 6.000 crediti), 10 dalla cache. Online su Supabase (`W9-G1-apertura.mp3` 1:10, `-pratica.mp3` 5:00; `W9-G2-apertura.mp3` 1:22, `-pratica.mp3` 4:45, -17 LUFS) e collegati su Notion (`Audio Apertura`, `Audio Pratica`); `Durata Minuti` invariata (6 e 5). Ste non li ha ancora ascoltati.
 
