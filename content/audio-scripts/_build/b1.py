@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1-W10. Formato:
+# Copioni v3 (registri per riga) per W1-W12. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -2302,6 +2302,189 @@ Se ti è servito, puoi rifarlo quando vuoi: intero, o solo il secondo e il terzo
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app: mentre palleggiavi, ti sei accorto di qualche pensiero che partiva? Pochi, tanti, nessuno: va bene tutto. Il Reset breve tra un blocco di tocchi e l'altro ti veniva, o lo saltavi? E cosa ti ha reso difficile l'esercizio, se qualcosa c'era?
+"""
+
+# ---------- W12: si pratica (W11 non ha audio) ----------
+# Un Reset solo con «la tua parola» (come W1 dal 27/10)
+RESET1P = """Inspira dal naso, gonfia la pancia, e unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]"""
+
+ARRIVO12 = """Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.
+[SILENZIO 2]
+Fai tre Reset per arrivare qui.
+[SILENZIO 2]
+""" + RESET3P
+
+F["W12-G1"] = f"""[sincere]
+Ultima settimana. Non c'è niente di nuovo da imparare: questa settimana si pratica. Ogni giorno riprendi un pezzo di quello che hai costruito, lo rifai bene, e lo porti in campo.
+[SILENZIO 2]
+[relaxed]
+Ti racconto una cosa. La prima volta che ho provato a meditare mi sentivo un po' uno stupido, quasi come se stessi perdendo tempo. Poi mi sono accorto che non riuscivo a stare nemmeno trenta secondi sul respiro senza che la testa mi portasse chissà dove.
+[SILENZIO 1]
+Trenta secondi. Io, che giocavo partite da novanta minuti.
+[SILENZIO 2]
+E lì mi sono fatto una domanda: come pretendo di restare concentrato per novanta minuti, in partita, con tutte le emozioni che ci sono... se non ci riesco da solo, in silenzio e tranquillo?
+[SILENZIO 1]
+Da quel giorno ho iniziato ad applicarmi sul serio.
+[SILENZIO 2]
+[sincere]
+Oggi si riparte da lì: il Reset.
+[SILENZIO 3]
+[meditative]
+Siediti. Occhi aperti: appoggia lo sguardo su un punto davanti a te, senza fissarlo con forza.
+[SILENZIO 3]
+Porta l'attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Primo Reset, insieme. Inspira dal naso, gonfiando la pancia: quattro secondi. Mentre inspiri, unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, piano: sei secondi, e mentre espiri ripeti dentro la tua parola.
+[SILENZIO 6]
+A fine espirazione rilascia le dita.
+[SILENZIO 2]
+Adesso continua così, altre quattro volte. Cinque Reset in tutto.
+[SILENZIO 2]
+Inspira, gesto.
+[SILENZIO 4]
+Espira, la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Inspira dal naso, le dita unite.
+[SILENZIO 4]
+Espira piano, la tua parola dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Se la testa va altrove, è normale: te ne accorgi e torni al respiro.
+[SILENZIO 2]
+Inspira, gesto.
+[SILENZIO 4]
+Espira, la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Alla fine resta un momento seduto. Nota se c'è un passaggio che ti viene naturale, e uno su cui ti fermi ancora.
+[SILENZIO 12]
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: c'è un passaggio del Reset che vuoi chiarire, o ti è tutto chiaro? Una riga va bene.
+"""
+
+F["W12-G2"] = f"""[sincere]
+Ieri il Reset. Oggi l'Observer, lo strumento della seconda settimana: accorgerti di un pensiero, dargli un nome, e tornare.
+[SILENZIO 2]
+Non serve avere la testa vuota. Serve accorgerti quando sei finito altrove, e tornare. Ogni volta che lo fai è una ripetizione riuscita.
+[SILENZIO 3]
+[meditative]
+{ARRIVO12}
+[SILENZIO 3]
+Adesso lascia il respiro andare da solo, e resta lì con l'attenzione.
+[SILENZIO 5]
+Quando arriva un pensiero, e arriverà, dagli un nome: passato, futuro, giudizio. Se non sai quale, chiamalo solo «pensiero». Poi torni al respiro.
+[SILENZIO 3]
+Non devi mandarlo via e non devi seguirlo. Gli dai un nome e torni.
+[SILENZIO 3]
+Due minuti così.
+[SILENZIO 30]
+Gli dai un nome, e torni.
+[SILENZIO 28]
+Un minuto.
+[SILENZIO 3]
+Se ti accorgi che eri finito dentro un pensiero da un po', va bene: te ne sei accorto, e sei appena tornato.
+[SILENZIO 25]
+Gli dai un nome, e torni.
+[SILENZIO 25]
+Chiudi con un Reset.
+[SILENZIO 1]
+{RESET1P}
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: ricordi un pensiero che hai riconosciuto? Che nome gli hai dato? Anche «tanti pensieri, nessun nome» va bene.
+"""
+
+F["W12-G3"] = f"""[sincere]
+Oggi il corpo. Il Body Check della terza settimana: piedi, stomaco, petto, spalle.
+[SILENZIO 2]
+Il Body Check legge, non corregge. Non devi sentirti in un certo modo: devi solo guardare cosa c'è.
+[SILENZIO 3]
+[meditative]
+{ARRIVO12}
+[SILENZIO 3]
+Body Check. Una parola per ognuno, e prenditi qualche secondo per ogni punto. Se non senti niente di chiaro, va bene: «niente di chiaro» è una risposta.
+[SILENZIO 3]
+Piedi: come appoggiano?
+[SILENZIO 8]
+Stomaco: cosa c'è?
+[SILENZIO 8]
+Petto: com'è?
+[SILENZIO 8]
+Spalle: dove sono?
+[SILENZIO 8]
+Poi un Reset.
+[SILENZIO 1]
+{RESET1P}
+E rifai il Body Check, uguale: piedi, stomaco, petto, spalle. Non cercare un cambiamento. Se c'è lo vedi, se non c'è va bene lo stesso.
+[SILENZIO 3]
+Piedi.
+[SILENZIO 8]
+Stomaco.
+[SILENZIO 8]
+Petto.
+[SILENZIO 8]
+Spalle.
+[SILENZIO 8]
+Chiudi con un Reset.
+[SILENZIO 1]
+{RESET1P}
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: cosa hai notato, anche solo in un punto? Anche «niente di chiaro» va bene.
+"""
+
+F["W12-G4"] = f"""[sincere]
+Nella tua pagina, la settimana scorsa, hai scritto le tue risposte pronte: per l'errore, per la pressione, per la rabbia.
+[SILENZIO 2]
+Oggi non le ripassi tutte. Scegli una situazione sola, quella che ti capita di più, e la ripassi bene. Meglio una risposta che ti viene sotto mano che tre che ti ricordi a metà.
+[SILENZIO 3]
+[meditative]
+{ARRIVO12}
+[SILENZIO 3]
+Se in qualunque momento qualcosa pesa più del previsto, fermati: un Reset, i piedi a terra.
+[SILENZIO 3]
+Scegli la situazione: un errore, un momento di pressione o paura, o qualcosa che ti fa salire la rabbia. Quella che ti capita di più.
+[SILENZIO 8]
+Riprendi la tua risposta, quella della tua pagina: la trovi qui sotto. Se per quella situazione non avevi scritto niente, usa quella di riferimento: per l'errore lo Stacco, per la pressione il Protocollo Pressione breve, per la rabbia l'Anticipo.
+[SILENZIO 12]
+Adesso un episodio recente, gestibile, non il peggiore. Rivedilo qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole.
+[SILENZIO 15]
+Il gioco va: solo la prossima giocata.
+[SILENZIO 8]
+Poi arriva la pausa. Fai la tua risposta, lenta, come l'hai scritta.
+[SILENZIO 35]
+Stacca un momento.
+[SILENZIO 8]
+Poi rifalla sulla stessa scena, alla velocità vera di una pausa in partita.
+[SILENZIO 20]
+Chiudi con un Reset.
+[SILENZIO 1]
+{RESET1P}
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: la tua risposta, ripassata. La sequenza era chiara? Dove ti sei incastrato, se è successo? Vuoi cambiare qualcosa nella tua pagina?
 """
 
 # Dal 26/10 ogni giorno ha DUE audio: l'apertura (schermata Apertura, campo Notion "Audio Apertura")

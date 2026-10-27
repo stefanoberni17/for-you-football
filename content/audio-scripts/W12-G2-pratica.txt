@@ -1,0 +1,51 @@
+[meditative]
+Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.
+[SILENZIO 2]
+Fai tre Reset per arrivare qui.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, la tua parola dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Adesso lascia il respiro andare da solo, e resta lì con l'attenzione.
+[SILENZIO 5]
+Quando arriva un pensiero, e arriverà, dagli un nome: passato, futuro, giudizio. Se non sai quale, chiamalo solo «pensiero». Poi torni al respiro.
+[SILENZIO 3]
+Non devi mandarlo via e non devi seguirlo. Gli dai un nome e torni.
+[SILENZIO 3]
+Due minuti così.
+[SILENZIO 30]
+Gli dai un nome, e torni.
+[SILENZIO 28]
+Un minuto.
+[SILENZIO 3]
+Se ti accorgi che eri finito dentro un pensiero da un po', va bene: te ne sei accorto, e sei appena tornato.
+[SILENZIO 25]
+Gli dai un nome, e torni.
+[SILENZIO 25]
+Chiudi con un Reset.
+[SILENZIO 1]
+Inspira dal naso, gonfia la pancia, e unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: ricordi un pensiero che hai riconosciuto? Che nome gli hai dato? Anche «tanti pensieri, nessun nome» va bene.

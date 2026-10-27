@@ -1,0 +1,45 @@
+[meditative]
+Siediti. Occhi aperti: appoggia lo sguardo su un punto davanti a te, senza fissarlo con forza.
+[SILENZIO 3]
+Porta l'attenzione al punto sotto lo sterno.
+[SILENZIO 3]
+Primo Reset, insieme. Inspira dal naso, gonfiando la pancia: quattro secondi. Mentre inspiri, unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, piano: sei secondi, e mentre espiri ripeti dentro la tua parola.
+[SILENZIO 6]
+A fine espirazione rilascia le dita.
+[SILENZIO 2]
+Adesso continua così, altre quattro volte. Cinque Reset in tutto.
+[SILENZIO 2]
+Inspira, gesto.
+[SILENZIO 4]
+Espira, la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Inspira dal naso, le dita unite.
+[SILENZIO 4]
+Espira piano, la tua parola dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Se la testa va altrove, è normale: te ne accorgi e torni al respiro.
+[SILENZIO 2]
+Inspira, gesto.
+[SILENZIO 4]
+Espira, la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Alla fine resta un momento seduto. Nota se c'è un passaggio che ti viene naturale, e uno su cui ti fermi ancora.
+[SILENZIO 12]
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: c'è un passaggio del Reset che vuoi chiarire, o ti è tutto chiaro? Una riga va bene.

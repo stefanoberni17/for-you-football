@@ -1,0 +1,51 @@
+[meditative]
+Siediti. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno.
+[SILENZIO 2]
+Fai tre Reset per arrivare qui.
+[SILENZIO 2]
+Inspira dal naso. Gonfia la pancia. E mentre l'aria entra unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto. E ripeti dentro di te la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ancora. Inspira, gesto.
+[SILENZIO 4]
+Espira piano, la tua parola dentro di te.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Ultimo respiro. Inspira, gesto.
+[SILENZIO 4]
+Espira, e lascia andare.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 3]
+Se in qualunque momento qualcosa pesa più del previsto, fermati: un Reset, i piedi a terra.
+[SILENZIO 3]
+Scegli la situazione: un errore, un momento di pressione o paura, o qualcosa che ti fa salire la rabbia. Quella che ti capita di più.
+[SILENZIO 8]
+Riprendi la tua risposta, quella della tua pagina: la trovi qui sotto. Se per quella situazione non avevi scritto niente, usa quella di riferimento: per l'errore lo Stacco, per la pressione il Protocollo Pressione breve, per la rabbia l'Anticipo.
+[SILENZIO 12]
+Adesso un episodio recente, gestibile, non il peggiore. Rivedilo qualche secondo. Se non riesci a vedere la scena, raccontala a te stesso a parole.
+[SILENZIO 15]
+Il gioco va: solo la prossima giocata.
+[SILENZIO 8]
+Poi arriva la pausa. Fai la tua risposta, lenta, come l'hai scritta.
+[SILENZIO 35]
+Stacca un momento.
+[SILENZIO 8]
+Poi rifalla sulla stessa scena, alla velocità vera di una pausa in partita.
+[SILENZIO 20]
+Chiudi con un Reset.
+[SILENZIO 1]
+Inspira dal naso, gonfia la pancia, e unisci pollice e indice.
+[SILENZIO 4]
+Espira dalla bocca, lentamente. Tieni il gesto, e ripeti dentro di te la tua parola.
+[SILENZIO 6]
+Rilascia.
+[SILENZIO 2]
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: la tua risposta, ripassata. La sequenza era chiara? Dove ti sei incastrato, se è successo? Vuoi cambiare qualcosa nella tua pagina?
