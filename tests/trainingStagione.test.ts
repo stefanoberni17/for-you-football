@@ -114,3 +114,13 @@ describe('stagione con Claude (27/10)', () => {
     expect(scaricoDaiDati(input([seduta(3, 'duro'), seduta(17, 'duro')])).segnali.join(' ')).toMatch(/pb-emom/);
   });
 });
+
+describe('tetto della tecnica (Ste, 27/10)', () => {
+  it('una seduta di tecnica composta non supera 90\' anche off season con 120\'', async () => {
+    const { LUCA } = await import('@/lib/trainingSimulazione');
+    const ctx = contextFinto({ ...LUCA, preferenze: { giorni: [], sedute: null, durataMin: null } });
+    const te = ctx.blocchi.filter((b) => b.id.startsWith('te-'));
+    expect(te.length).toBeGreaterThan(0);
+    for (const b of te) expect(b.durataMin).toBeLessThanOrEqual(90);
+  });
+});

@@ -100,6 +100,8 @@ export const MIX_PREFIX = 'te-mix-';
 /** Il secondo tema conta un terzo di seduta, il primo due terzi. */
 export const MIX_PESO_SECONDO = 1 / 3;
 /** Si combina solo con almeno 40' di seduta e con il secondo tema indietro di almeno mezza seduta sulla quota. */
+/** Tetto di una seduta di tecnica composta (Ste, 27/10: "metterei un tetto di 90', anche se il tetto è il tempo del ragazzo"): sotto vale il tempo per seduta. */
+export const TECNICA_MINUTI_MAX = 90;
 export const MIX_MINUTI_MIN = 40;
 export const MIX_DEFICIT_MIN = 0.5;
 /** Esercizi del secondo tema dentro la seduta combinata ("un po'"). */

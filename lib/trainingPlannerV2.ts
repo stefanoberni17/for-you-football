@@ -41,7 +41,7 @@ import { costruisciKettlebell, isKettlebell, kettlebellTesto, type FasciaKb } fr
 import { calcolaMemoriaTecnica, eserciziDaRipassare, isMazzo, minutiRipasso, prioritaTecnica, QUALITA_PRIORITA, ripassoTesto, RIPASSO_MAX_ITEMS, RIPASSO_RECUPERO_SEC, scalaDi, tecnicaTesto, type MemoriaTecnica, type PrioritaTecnicaInfo, type Ripasso } from './trainingTecnica';
 import { dataDiGiorno, addDays as addGiorni, GAMBE_DOPO_PARTITA as GAMBE_SCALA, gambeDopoPartitaDel, notaGambeDopoPartita, quantoGiocata, resocontiTesto, RESOCONTO_FATICA_ALTA, type GambeDopoPartita } from './trainingResoconto';
 import { costruisciResistenza, filtraResistenza, isResistenzaComposta, isResistenzaEverfit, RE_FINESTRA_PRIMA, RE_METABOLICO_ID, RE_RSA_ID, RE_SERIE_ID, RE_SERIE_MAX, RE_SERIE_START, reIdPer, resistenzaRegola, RSA_SERIE_MAX, RSA_SERIE_START, statoResistenza, type StatoResistenza } from './trainingResistenza';
-import { asseTecnica, contaTemi, conteggiPerScelta, costruisciTecnica, isTecnicaComposta, isTecnicaMix, mixId, sceltaMix, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, temiDiId, tettoTiri, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
+import { asseTecnica, contaTemi, conteggiPerScelta, TECNICA_MINUTI_MAX, costruisciTecnica, isTecnicaComposta, isTecnicaMix, mixId, sceltaMix, statoTecnicaTesto, TE_LEGGERA_ID, tecnicaCompostaTesto, teId, temaDiId, temaProssimo, TEMI, temiDiId, tettoTiri, ultimoTemaTecnica, type AsseTecnica, type StatoTecnica, type TemaTecnica } from './trainingTecnicaComposta';
 import { posizioneScala } from './trainingTecnica';
 import { doseRegoleTesto, isEsercizioKettlebell } from './trainingDose';
 import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione } from './trainingEsecuzione';
@@ -343,7 +343,7 @@ export function aggiornaTecnica(ctx: ContextV2, lunediCorrente = mondayOfThisWee
   const posM = memM ? posizioneScala('Tecnica · muro', memM.prossimo.id) : -1;
   const conteggi = contaTemi(ctx.base.feedbackRecenti, lunediCorrente);
   const scelta = temaProssimo(conteggiPerScelta(ctx.base.feedbackRecenti, lunediCorrente), { ammessi: TEMI, priorita: ctx.prioritaTecnica?.priorita ?? null, ultimo: ultimoTemaTecnica(ctx.base.feedbackRecenti) });
-  const minuti = Math.min(ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
+  const minuti = Math.min(TECNICA_MINUTI_MAX, ctx.maxDurata, ctx.vincoli.durataMax ?? ctx.maxDurata);
   const mix = sceltaMix(scelta, minuti); // a volte due temi indietro insieme si combinano (Ste, 26/10 sera)
   const tiri = tettoTiri(ctx.base.feedbackRecenti); // il tetto dei tiri sale piano con il tempo (Ste, 26/10 sera)
   const te = costruisciTecnica({

@@ -21,7 +21,7 @@ import { giorniPartita } from '@/lib/trainingSquadra';
 import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
 import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali } from '@/lib/trainingSetup';
-import { contaTemi, conteggiPerScelta, sceltaMix, tecnicaDelMese, temaProssimo, TEMI, tettoTiri, ultimoTemaTecnica } from '@/lib/trainingTecnicaComposta';
+import { contaTemi, conteggiPerScelta, sceltaMix, TECNICA_MINUTI_MAX, tecnicaDelMese, temaProssimo, TEMI, tettoTiri, ultimoTemaTecnica } from '@/lib/trainingTecnicaComposta';
 import { prioritaTecnica } from '@/lib/trainingTecnica';
 import { loadFocusSetup, loadPreferenzeSetup, loadSquadraCompleta } from '@/lib/trainingPlanner';
 import { PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
@@ -201,7 +201,7 @@ export async function GET(request: NextRequest) {
       if (!setup.attrezzatura.includes('campo')) return null;
       const conteggi = contaTemi(feedbackRecenti, mondayOfThisWeekRome());
       const scelta = temaProssimo(conteggiPerScelta(feedbackRecenti, mondayOfThisWeekRome()), { ammessi: TEMI, priorita: prioritaTecnica(rows)?.priorita ?? null, ultimo: ultimoTemaTecnica(feedbackRecenti) });
-      const minuti = Math.min(MAX_DURATA_PER_FASE[setup.fase], setup.durataMin ?? MAX_DURATA_PER_FASE[setup.fase]);
+      const minuti = Math.min(TECNICA_MINUTI_MAX, MAX_DURATA_PER_FASE[setup.fase], setup.durataMin ?? MAX_DURATA_PER_FASE[setup.fase]);
       return tecnicaDelMese(conteggi, scelta, { tecnicaObiettivo: setup.focus.some((f) => f === 'tecnica' || f === 'tutto'), mix: sceltaMix(scelta, minuti), tiri: tettoTiri(feedbackRecenti) });
     };
     const squadraStimato = caricoSquadraStimato({

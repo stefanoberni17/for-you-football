@@ -53,6 +53,8 @@ Ogni correzione ha un test in `tests/trainingStagione.test.ts`.
 3. **Recupero di un aspetto in domanda.** Luca salta la velocità per tre settimane: arriva la domanda "vuoi davvero allenarla?", ma la seduta saltata viene riproposta come recupero il lunedì. Si lascia?
 4. **Il ritmo dei gradini.** Un atleta che fa sempre due ripetizioni in più sale di cinque gradini in 12 settimane. Con dati veri sarà più lento, ma il passo lo decidono le soglie: va bene così?
 
+**Risposte di Ste del 27/10 sera:** le sedute di tecnica hanno un tetto di 90' (`TECNICA_MINUTI_MAX`; sotto vale il tempo per seduta del ragazzo); velocità B1 a un PRO, pliometria pretesa con la zona dolorante (ridotta) e il recupero di un aspetto in domanda vanno bene così.
+
 ## Con Claude
 
 Riccardo, Nicola e Luca per 12 settimane con `--live`: **36 piani di Claude su 36 passati dal validatore al primo tentativo**, nessun piano base, nessun ibrido. Circa 6 $ (dalla console di Ste; 12 $ dall'inizio delle prove con la chiave; token dal log: 146 mila in ingresso, 823 mila scritti in cache, 51 mila in uscita), 3-4 minuti per atleta.
