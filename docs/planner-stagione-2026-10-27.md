@@ -55,4 +55,17 @@ Ogni correzione ha un test in `tests/trainingStagione.test.ts`.
 
 ## Con Claude
 
-(in corso)
+Riccardo, Nicola e Luca per 12 settimane con `--live`: **36 piani di Claude su 36 passati dal validatore al primo tentativo**, nessun piano base, nessun ibrido. Circa 6 $ (dalla console di Ste; 12 $ dall'inizio delle prove con la chiave; token dal log: 146 mila in ingresso, 823 mila scritti in cache, 51 mila in uscita), 3-4 minuti per atleta.
+
+Cosa ha scelto:
+- **Riccardo stanco**: per cinque settimane al lunedì lo yoga di recupero al posto della prima seduta di forza, la Fascia Forza in versione breve dopo il "duro", serie brevi ed EMOM; dalla settimana 7, ripreso, torna a gambe a serie, EMOM e parte alta.
+- **Nicola**: con il ginocchio in pausa yoga di recupero, palleggi e fascia tecnica, niente di fisico; al rientro EMOM e Fascia Forza breve con il ginocchio ridotto dal server.
+- **Luca**: kettlebell ogni lunedì (base, poi intermedio dalla quinta), velocità il martedì, forza esplosiva il mercoledì, resistenza a serie il venerdì messa in fondo alla seduta dal server.
+
+**Un bug in più, trovato solo con la stagione lunga e corretto:** Riccardo, ripreso (voti 6), scaricava alla 9ª e alla 12ª settimana per "EMOM gambe: duro due volte di fila". Quei due "duro" erano della 3ª e della 6ª settimana, nel periodo stanco: l'EMOM delle gambe si fa solo nelle settimane di scarico, e il controllo guardava tutte le sedute salvate. Ora guarda solo le ultime 4 settimane (`SCARICO_DURO_FINESTRA_GIORNI`); rifatta la stagione, Riccardo scarica alla 3ª e alla 6ª per i voti, poi alla 11ª come da calendario.
+
+**Il caching del prompt del planner.** Ogni piano scrive in cache circa 22 mila token di prompt di sistema e quasi mai li rilegge: dentro ci sono i dati dell'atleta, quindi cambia per ogni ragazzo e ogni settimana, e la cache serve solo quando Claude riprova (qui mai). Scrivere in cache costa il 25 % in più del prezzo normale: su questa prova poco meno di 1 $ su 6. Per guadagnarci bisognerebbe mettere in cache solo le regole uguali per tutti e mandare i dati dell'atleta a parte, e servirebbe solo con più piani a pochi minuti di distanza.
+
+Domande in più per Ste:
+5. **Velocità C1 a un A.** Luca (A) fa ogni settimana `velocita-c1-short` (C = PRO), ammesso perché la famiglia non ha il codice al suo livello. Va bene?
+6. **Fascia tecnica per un B.** La famiglia Fascia Foundation Tecnica ha solo codici A: per Nicola (B) l'A1 entra come "prova del livello sopra" (serie ×0,7) e dopo due settimane "dose piena". Con la fascia avevi detto niente assaggio del livello sopra: qui però non c'è un codice B da cui partire.

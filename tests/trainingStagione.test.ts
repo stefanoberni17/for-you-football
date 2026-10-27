@@ -103,3 +103,14 @@ describe('stagione simulata (27/10): i bug trovati', () => {
     expect(errors.join(' ')).toMatch(/secondo blocco kettlebell/);
   });
 });
+
+describe('stagione con Claude (27/10)', () => {
+  it('scarico: il "duro due volte di fila" guarda solo le ultime 4 settimane', async () => {
+    const { scaricoDaiDati } = await import('@/lib/trainingCondizione');
+    const lunedi = mondayOfThisWeekRome();
+    const seduta = (giorniPrima: number, giudizio: 'duro' | 'ok'): SedutaCondizione => ({ completed_at: `${addDays(lunedi, -giorniPrima)}T18:00:00Z`, rpe: 6, feedback_blocchi: [{ id: 'pb-emom', giudizio }] });
+    const input = (sedute: SedutaCondizione[]) => ({ settimane: [], squadra: 0, sedute, lunedi, ultimoScarico: null, settimanaCalendario: 2, condizione: { stato: 'normale' as const }, famiglia: () => null });
+    expect(scaricoDaiDati(input([seduta(40, 'duro'), seduta(61, 'duro')])).segnali).toEqual([]);
+    expect(scaricoDaiDati(input([seduta(3, 'duro'), seduta(17, 'duro')])).segnali.join(' ')).toMatch(/pb-emom/);
+  });
+});
