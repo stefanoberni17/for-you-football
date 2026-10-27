@@ -48,8 +48,8 @@ Ogni correzione ha un test in `tests/trainingStagione.test.ts`.
 
 ## Domande per Ste
 
-1. **Marco non scarica mai.** Sempre fresco, salta lo scarico ogni quarta settimana: 12 settimane senza. È giusto, o uno scarico ogni 8 settimane va fatto comunque?
-2. **Lombari con il ginocchio.** Con il ginocchio dolorante il server riduce anche i lombari (superman), perché nella mappa dei distretti stanno con le gambe. Più prudente del necessario: li sposto nella parte alta?
+1. **Marco non scarica mai.** Sempre fresco, salta lo scarico ogni quarta settimana: 12 settimane senza. È giusto, o uno scarico ogni 8 settimane va fatto comunque? **Ste, 27/10: ci sta, se è sempre fresco non scarica.**
+2. **Lombari con il ginocchio.** Con il ginocchio dolorante il server riduce anche i lombari (superman), perché nella mappa dei distretti stanno con le gambe. Più prudente del necessario: li sposto nella parte alta? **Ste, 27/10: lasciali così.**
 3. **Recupero di un aspetto in domanda.** Luca salta la velocità per tre settimane: arriva la domanda "vuoi davvero allenarla?", ma la seduta saltata viene riproposta come recupero il lunedì. Si lascia?
 4. **Il ritmo dei gradini.** Un atleta che fa sempre due ripetizioni in più sale di cinque gradini in 12 settimane. Con dati veri sarà più lento, ma il passo lo decidono le soglie: va bene così?
 
@@ -67,5 +67,5 @@ Cosa ha scelto:
 **Il caching del prompt del planner.** Ogni piano scrive in cache circa 22 mila token di prompt di sistema e quasi mai li rilegge: dentro ci sono i dati dell'atleta, quindi cambia per ogni ragazzo e ogni settimana, e la cache serve solo quando Claude riprova (qui mai). Scrivere in cache costa il 25 % in più del prezzo normale: su questa prova poco meno di 1 $ su 6. Per guadagnarci bisognerebbe mettere in cache solo le regole uguali per tutti e mandare i dati dell'atleta a parte, e servirebbe solo con più piani a pochi minuti di distanza.
 
 Domande in più per Ste:
-5. **Velocità C1 a un A.** Luca (A) fa ogni settimana `velocita-c1-short` (C = PRO), ammesso perché la famiglia non ha il codice al suo livello. Va bene?
+5. **Velocità C1 a un A.** Luca (A) fa ogni settimana `velocita-c1-short` (C = PRO), ammesso perché la famiglia non ha il codice al suo livello. Va bene? **Ste, 27/10: ok.**
 6. **Fascia tecnica per un B.** La famiglia Fascia Foundation Tecnica ha solo codici A: per Nicola (B) l'A1 entra come "prova del livello sopra" (serie ×0,7) e dopo due settimane "dose piena". Con la fascia avevi detto niente assaggio del livello sopra: qui però non c'è un codice B da cui partire.
