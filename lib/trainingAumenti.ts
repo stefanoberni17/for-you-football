@@ -81,6 +81,8 @@ export function aumentiNellaSettimana(plan: WeekPlan, opt: {
       if (!l || s.giorno <= l.giorno) return it;
       if (it.schema && it.schema !== 'fisso') return it;
       if (it.facoltativo === 'togli' || it.aumento_settimana) return it;
+      // 27/10: un esercizio ridotto per dolore o per una limitazione non sale in settimana
+      if (it.adattamento === 'dolore' || it.adattamento === 'limitazione') return it;
       const d = prossimaDose(it, l.riepilogo);
       if (!d.cambiata) return it;
       const kg = d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null);

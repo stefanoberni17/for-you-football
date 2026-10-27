@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadResoconti } from '@/lib/trainingResocontoServer';
-import { applicaResoconti, resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
-import { aumentiNellaSettimana } from '@/lib/trainingAumenti';
+import { resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
+import { pianoPerLettura } from '@/lib/trainingLettura';
 import { giorniAllaPartita, giorniDallaPartita } from '@/lib/trainingRulesV2';
 import { candidatiCampo, candidatiForza, candidatiPalestra, GRUPPI_LONTANO, guardrailResistenzaVelocita, inserisciSerieTest, propostaOffSeason, type Guardrail, type GruppoLontano, type RisultatoConData } from '@/lib/trainingRitest';
 import { cicloDaiDati, condizioneAtleta, condizioneRiga } from '@/lib/trainingCondizione';
-import { doloreRiga, limitazioniRiga, riduciPerDolore } from '@/lib/trainingDolore';
+import { doloreRiga, limitazioniRiga } from '@/lib/trainingDolore';
 import { loadDolore, loadLimitazioni } from '@/lib/trainingDoloreServer';
 import { giorniSquadra } from '@/lib/trainingLoad';
 import { calendarioHash, conflittiCalendario, conflittoRiga } from '@/lib/trainingCalendario';
@@ -249,12 +249,6 @@ export async function GET(request: NextRequest) {
     // M5 (26/10): gli esercizi molto leggeri in una seduta già fatta salgono di un passo nelle sedute successive della settimana
     const votiSedute = new Map<number, number | null>();
     for (const c of completions) { const g = Number(String(c.session_key).split('#')[1]); if (Number.isInteger(g)) votiSedute.set(g, c.rpe ?? null); }
-    let planAdattato = lastPlan && lastPlan.plan && lastPlan.week_start >= mondayOfThisWeekRome()
-      ? { ...lastPlan, plan: aumentiNellaSettimana(
-        applicaResoconti(lastPlan.plan, { weekStart: lastPlan.week_start, oggi, resoconti, squadra, fatteGiorni: fattiGiorni }).plan,
-        { weekStart: lastPlan.week_start, oggi, logs: logsSerie, fatteGiorni: fattiGiorni, votiSedute },
-      ).plan }
-      : lastPlan;
     const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti });
 
     const rombo = buildRombo(rows);
@@ -267,25 +261,28 @@ export async function GET(request: NextRequest) {
     const settimanaRitest = ciclo.ritestSettimana === true; // M11: dai dati (le due settimane dopo lo scarico, famiglie a fine codici, 8 settimane senza test)
     const campo = setup.attrezzatura.includes('campo');
     const storicoRiepilogo = logsRes.error ? [] : riepilogoEsercizi(logsSerie);
-    let ritestInSeduta: ReturnType<typeof inserisciSerieTest> = { plan: planAdattato?.plan ?? { sedute: [] }, assegnate: [], inAttesa: [], aggiustamenti: [] };
-    if (settimanaRitest && planAdattato?.plan && planAdattato.week_start >= mondayOfThisWeekRome()) {
-      ritestInSeduta = inserisciSerieTest(planAdattato.plan, {
-        weekStart: planAdattato.week_start, oggi, fatteGiorni: fattiGiorni, matchDays: matchDaysEff,
-        candidati: {
-          forza: candidatiForza(rowsConData, storicoRiepilogo, oggi),
-          palestra: candidatiPalestra(rowsConData, planAdattato.plan, oggi),
-          campo: candidatiCampo(rowsConData, [...perQualita.keys()], oggi, { fase: setup.fase }),
-        },
-      });
-      planAdattato = { ...planAdattato, plan: ritestInSeduta.plan };
-    }
     const dowOggi = oggiDowRome();
     const planStaleFlag = !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome();
-    // M9 (26/10): con una zona dolorante segnalata, serie ×0,7 e kg −20 % sugli esercizi che la coinvolgono nelle sedute
-    // non fatte da oggi in poi (sul piano letto, non su quello salvato: quando dice che è passato tornano piene)
-    if (planAdattato?.plan && !planStaleFlag) {
-      const r = riduciPerDolore(planAdattato.plan, { dolore, limitazioni, oggi, oggiDow: dowOggi, fatteGiorni: fattiGiorni });
-      if (r.ridotti) planAdattato = { ...planAdattato, plan: r.plan };
+    // Il piano come lo vede il ragazzo (lib/trainingLettura, 27/10): resoconti → dolore e limitazioni (M9, punto 4) →
+    // aumenti nella settimana (M5) → serie test (nelle settimane di ri-test), in un ordine solo; il piano salvato non cambia
+    const vuotoRitest: ReturnType<typeof inserisciSerieTest> = { plan: lastPlan?.plan ?? { sedute: [] }, assegnate: [], inAttesa: [], aggiustamenti: [] };
+    let ritestInSeduta = vuotoRitest;
+    let planAdattato = lastPlan;
+    if (lastPlan?.plan && !planStaleFlag) {
+      const letto = pianoPerLettura(lastPlan.plan, {
+        weekStart: lastPlan.week_start, oggi, oggiDow: dowOggi, fatteGiorni: fattiGiorni,
+        resoconti, squadra, logs: logsSerie, votiSedute, dolore, limitazioni,
+        ritest: settimanaRitest ? {
+          matchDays: matchDaysEff,
+          candidati: {
+            forza: candidatiForza(rowsConData, storicoRiepilogo, oggi),
+            palestra: candidatiPalestra(rowsConData, lastPlan.plan, oggi),
+            campo: candidatiCampo(rowsConData, [...perQualita.keys()], oggi, { fase: setup.fase }),
+          },
+        } : null,
+      });
+      planAdattato = { ...lastPlan, plan: letto.plan };
+      if (letto.ritest) ritestInSeduta = { ...letto.ritest, plan: letto.plan };
     }
     const lontano = Object.fromEntries(GRUPPI_LONTANO.map((gruppo) => [gruppo, guardrailResistenzaVelocita({
       gruppo, obiettivi: focusSetup,

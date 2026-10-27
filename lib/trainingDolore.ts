@@ -132,13 +132,18 @@ export function riduciPerDolore(plan: WeekPlan, o: { dolore: Dolore | null | und
       const vi = voci.findIndex((v) => v.distretti.has(d));
       if (vi < 0) return it;
       const v = voci[vi];
-      const serie = Math.max(1, Math.round(it.serie * DOLORE_SERIE_SCALA));
+      // 27/10: un item già alleggerito dal resoconto (serie ×0,7, o le gambe dopo la partita) non perde altre serie:
+      // vale la riduzione più forte, non le due moltiplicate; i kg scendono lo stesso
+      const giaRidotto = !!it.resoconto || !!it.dopo_partita;
+      const serie = giaRidotto ? it.serie : Math.max(1, Math.round(it.serie * DOLORE_SERIE_SCALA));
       const kg = it.carico_kg != null ? r1(it.carico_kg * DOLORE_KG_SCALA) : undefined;
       if (serie === it.serie && kg === it.carico_kg) return it;
       toccate.add(vi); ridotti++;
       const cosa = [serie !== it.serie ? `serie ${it.serie} → ${serie}` : null, kg !== undefined && kg !== it.carico_kg ? `${it.carico_kg} → ${kg} kg` : null].filter(Boolean).join(', ');
       const testa = v.cronica ? `Limitazione (${v.zona})` : `Zona ${v.zona} segnalata`;
-      return { ...it, serie, ...(kg !== undefined ? { carico_kg: kg } : {}), adattamento: v.cronica ? 'limitazione' : 'dolore', nota: `${testa}: ${cosa} (${v.motivo}). Se fa male, fermati.` };
+      const notaDolore = `${testa}: ${cosa} (${v.motivo}). Se fa male, fermati.`;
+      // la nota del resoconto (o del gradino) resta: si aggiunge, non si sostituisce
+      return { ...it, serie, ...(kg !== undefined ? { carico_kg: kg } : {}), adattamento: v.cronica ? 'limitazione' : 'dolore', nota: [it.nota, notaDolore].filter(Boolean).join(' ') };
     });
     if (!toccate.size) return s;
     for (const vi of toccate) giorniPerVoce[vi].push(s.giorno);
