@@ -5,6 +5,7 @@ import { giornataLeggera, riparaPiano, versioneBreve } from '@/lib/trainingRipar
 import { expandPiano, fallbackPianoBlocchi, giornoDellaViolazione, type ContextV2, type PianoLLM } from '@/lib/trainingPlannerV2';
 import type { TestResultRow } from '@/lib/trainingEngine';
 import { ROLLING_ID } from '@/lib/trainingFascia';
+import { bloccoRiscaldamentoVelocita, RISC_VELOCITA_ID } from '@/lib/trainingVelocita';
 
 const r = (test_id: string, valore: number): TestResultRow => ({ test_id, valore, livello_calcolato: 'intermedio', punteggio_calcolato: 50 });
 const results = [r('test-push', 40), r('skill:push-3', 22), r('test-pull', 12), r('test-core', 90), r('test-lombari', 70)];
@@ -101,6 +102,21 @@ describe('riparaPiano: il piano di Claude si aggiusta, non si butta (Ste, 7/10)'
     expect(versioneBreve(ctx, b('forza-parte-alta-b1-short'))).toBeUndefined();
     expect(giornataLeggera(ctx, 2, 60)?.blocchi.length).toBe(2);
     expect(giornataLeggera(ctx, 2, 10)).toBeNull(); // niente che ci stia: nessuna giornata di sola apertura
+  });
+
+  it('il blocco pre partita perde il riscaldamento velocità che Claude gli metteva davanti (simulazione 27/10)', () => {
+    const ctx = ctxBase({}, { matchDays: [6] });
+    const pre = 'rapidita-velocita-e-tiro-pre-partita';
+    if (!ctx.blocchi.some((b) => b.id === RISC_VELOCITA_ID)) ctx.blocchi.push(bloccoRiscaldamentoVelocita());
+    expect(ctx.blocchi.some((b) => b.id === pre)).toBe(true);
+    const p: PianoLLM = { sedute: [{ giorno: 5, blocchi: [RISC_VELOCITA_ID, pre] }] };
+    const { piano, riparazioni } = riparaPiano(p, ctx, { nRichieste: null, giorniRimasti: tutti });
+    expect(piano.sedute[0].blocchi).toEqual([pre]);
+    expect(riparazioni.join(' ')).toContain('riscaldamento velocità');
+    // e il server non lo rimette
+    const esp = expandPiano(piano, ctx);
+    expect(esp.errors).toEqual([]);
+    expect(esp.plan.sedute[0].blocchi?.map((b) => b.id)).toEqual([pre]);
   });
 
   it('un piano già giusto resta uguale, senza note', () => {

@@ -59,6 +59,17 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
     return { ...s, giorno: Number(s.giorno), blocchi: ok, leggeri: Array.isArray(s.leggeri) ? s.leggeri.filter((id) => ok.includes(id)) : undefined };
   }).filter((s) => s.blocchi.length > 0).sort((a, b) => a.giorno - b.giorno);
 
+  // 1b. Il blocco pre partita di Ste ha già la sua attivazione: niente riscaldamento velocità davanti (sei allunghi da
+  //     50 m fino al 90 % il giorno prima della partita). Claude ce lo metteva da solo (simulazione del 27/10, tre
+  //     scenari su nove); se nella giornata c'è anche velocità vera, `expandPiano` lo rimette in testa
+  for (const s of sedute) {
+    if (!s.blocchi.some((id) => isPrePartita(id)) || !s.blocchi.includes(RISC_VELOCITA_ID)) continue;
+    s.blocchi = s.blocchi.filter((id) => id !== RISC_VELOCITA_ID);
+    s.leggeri = s.leggeri?.filter((id) => id !== RISC_VELOCITA_ID);
+    note.push(`${giornoNome(s.giorno)}: tolto il riscaldamento velocità, l'attivazione pre partita ha già il suo (niente allunghi lunghi prima della partita)`);
+  }
+  sedute = sedute.filter((s) => s.blocchi.length > 0);
+
   // 2. Giorni: passati, vietati, non ammessi, di partita o già occupati → il giorno libero più vicino
   //    (una seduta fisica mai il giorno prima della partita); senza un giorno libero la seduta salta
   const ammesso = (d: number) => o.giorniRimasti.includes(d) && !matchDays.includes(d);

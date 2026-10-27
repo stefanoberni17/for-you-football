@@ -51,7 +51,7 @@ import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiorna
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.45-tecnica-combinata-kettlebell-pulito';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.46-simulazione-27-10';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -1332,7 +1332,7 @@ SICUREZZA
 ${tettiTesto(tettiDi(ctx))}
 3. L'ASSE PARTITA (le regole le fa rispettare il validatore, ma tu progetta già bene). PRIMA della partita:
 ${finestreTesto()}
-   Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps: non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
+   Il giorno PRIMA della partita: solo \`${PRE_PARTITA_ID}\` (20', distanze brevi e poche reps, con la sua attivazione dentro: SENZA \`${RISC_VELOCITA_ID}\` davanti; non conta come giornata di velocità) se ha il campo, oppure tecnica, fascia; nessuna seduta fisica. A 2 giorni dalla partita la velocità va bene ma CORTA (sprint fino a ${VELOCITA_PURA_METRI} m, niente salite) e con poco volume (il server lima a ${SPRINT_MAX_VICINO_PARTITA} sprint). Mai yoga di recupero il giorno prima o il giorno della partita.
    DOPO la partita (finché non c'è il resoconto si assume che abbia giocato tutta; con il resoconto "quasi non giocato", cioè non entrato o al massimo 20' CON fatica sotto 4, queste regole non valgono per quella partita; "meno affaticato", meno di 75' con fatica fino a 6, toglie il divieto di velocità pura a +2/+3; partita intera con fatica 7-9 e qualche dolore è normale; con fatica 10 il giorno dopo è solo recupero): il giorno DOPO niente velocità, pliometria, resistenza, forza massima né EMOM gambe; le GAMBE a corpo libero o leggere (pb-serie, pb-serie-short, Forza Parte Bassa senza carichi) passano con le serie RIDOTTE dal server in base a quanto ha giocato (Ste, 26/10: ${Math.round(GAMBE_SCALA.intera * 100)} % con la partita intera o senza resoconto, ${Math.round(GAMBE_SCALA.meno * 100)} % con meno di 90' e fatica fino a 6, ${Math.round(GAMBE_SCALA.meta * 100)} % sotto i 45', ${Math.round(GAMBE_SCALA.spezzone * 100)} % sotto i 15'; la sezione RESOCONTI dice la percentuale di questa settimana) — preferisci comunque \`${PB_RICHIAMO_ID}\`, la parte alta short, le isometrie di Fascia Forza, fascia/prevenzione, mobilità/recupero, tecnica leggera; a +2 e +3 niente velocità pura (sprint oltre ${VELOCITA_PURA_METRI} m; le Salite Sprint sono forza esplosiva, non velocità pura): solo rapidità corta o pliometria; la resistenza da +2 in poi. Con fatica alta dal check-in: solo recupero guidato + fascia + tecnica leggera.
    RESISTENZA: nel giorno più lontano da tutte e due le partite (con la partita la domenica: martedì-giovedì, il top è mercoledì).
 4. La settimana può essere già iniziata: MAI sedute nei giorni precedenti a oggi.
@@ -1500,7 +1500,7 @@ function userPrompt(ctx: ContextV2, richiesta?: string, errori?: string[], prece
     : '';
   const massimali = Object.keys(ctx.v2.massimali || {}).length ? `Massimali stimati: ${Object.entries(ctx.v2.massimali!).map(([k, v]) => `${k} ${v} kg`).join(', ')}` : 'Nessun massimale (niente forza con carico in regime max/esplosiva)';
   return `# ATLETA
-OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 1} sono passati: sedute SOLO nei giorni ${b.oggiDow}-7` : ''}.
+OGGI è ${DAY_NAMES[b.oggiDow]}${b.oggiDow > 1 ? ` — i giorni 1-${b.oggiDow - 1} sono passati: sedute SOLO nei giorni ${b.oggiDow}-7` : ''}.${ctx.sedutePassate?.length ? `\nLe sedute dei giorni passati (${ctx.sedutePassate.map((x) => DAY_NAMES[x.giorno]).join(', ')}) RESTANO nel piano come sono: le rimette il server, tu non le riscrivi. Nel messaggio non dire che spariscono o che non le vede più.` : ''}
 Livello: ${b.fascia}${livelliTesto(b.livelli, b.fascia)}${b.painHold ? ' — ⚠️ PAIN-HOLD ATTIVO' : ''} · ruolo: ${ctx.ruoli.length ? ctx.ruoli.join('/') : '?'} · età ${ctx.eta ?? '?'} · esperienza palestra: ${ctx.setup.esperienzaPalestra ? 'sì' : 'no'} · compagno: ${ctx.setup.compagno ? 'sì' : 'no'}
 Attrezzatura: ${ctx.setup.attrezzatura.length ? ctx.setup.attrezzatura.join(', ') : 'solo corpo libero'}
 Fase: ${ctx.setup.fase}${ctx.setup.squadraDurataMin ? ` · allenamento squadra ~${ctx.setup.squadraDurataMin}'` : ''}
