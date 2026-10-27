@@ -1,4 +1,4 @@
-# Copioni v3 (registri per riga) per W1-W9. Formato:
+# Copioni v3 (registri per riga) per W1-W10. Formato:
 #   [sincere] / [relaxed] / [meditative]  su una riga da sola = registro fino al prossimo
 #   [SILENZIO N] = silenzio esatto in secondi
 #   altre righe = testo letto dalla voce
@@ -2042,6 +2042,266 @@ Ricorda l'àncora: ogni volta che entri in qualcosa che conta, un Reset.
 [SILENZIO 2]
 [relaxed]
 Adesso metti in pausa e scrivi nell'app: in quei due momenti, lo spogliatoio e il piede in campo, di solito sei presente o sovrappensiero? E il gesto che non salteresti mai: ti aiuta anche quando devi cambiarlo o saltarlo, o senti che senza quello andrà male? Onesto. E se non hai nessun gesto fisso, scrivi «nessuno»: va bene.
+"""
+
+# ---------- W10: torna presente, il gioco fuori (audio G1-G4; G2-G4 con la palla: la voce dà solo il ritmo) ----------
+ARRIVO_PALLA = "Prima, tre Reset per arrivare qui.\n[SILENZIO 2]\n" + RESET3
+
+def minuto_palla(chiusura="Stop."):
+    # un minuto di lavoro con la palla: via, metà, stop
+    return f"""Via.
+[SILENZIO 30]
+Trenta secondi.
+[SILENZIO 27]
+{chiusura}"""
+
+def blocco_tre_minuti():
+    return """Via.
+[SILENZIO 58]
+Un minuto.
+[SILENZIO 58]
+Due minuti.
+[SILENZIO 58]
+Stop."""
+
+F["W10-G1"] = f"""[relaxed]
+A me capitava così: la palla arriva, e la testa è piena. Paura, ansia, «e adesso cosa faccio?». E intorno non esiste più niente, come se ci fosse buio attorno a te.
+[SILENZIO 1]
+Ti è mai successo?
+[SILENZIO 2]
+[sincere]
+Poi ci sono le partite in cui giochi bene. Lì è il contrario: vedi tutto, e la testa sta zitta. Non sei sparito tu. È sparito il rumore.
+[SILENZIO 2]
+La settimana scorsa hai visto che quando metti il piede in campo fai un Reset. Questa settimana lo usi per tutta la partita.
+[SILENZIO 1]
+Sono due cose, e non vanno confuse.
+[SILENZIO 1]
+Quando il gioco è fermo. Una rimessa, un fallo, mentre aspetti il tuo turno: un Reset breve, un respiro con gesto e mantra, e torni presente su di te.
+[SILENZIO 1]
+Quando giochi. L'attenzione va fuori: palla, spazio, compagni. Non smetti di essere presente: lo sei stando sul gioco. Il gesto lo sai fare, va da solo. E se ti metti a guardarlo mentre lo fai, lo peggiori.
+[SILENZIO 3]
+[meditative]
+{ARRIVO}
+[SILENZIO 3]
+Oggi niente palla. Proviamo il passaggio da fermo, così lo senti prima di portarlo in campo. Tre giri, e ogni giro è fatto così: trenta secondi presente, poi un minuto fuori.
+[SILENZIO 3]
+Primo giro. Trenta secondi presente.
+[SILENZIO 1]
+Inizia con un Reset breve, un respiro con gesto e mantra.
+[SILENZIO 1]
+{RESET1}
+Poi resta lì, una cosa alla volta: il peso sulla sedia, poi i piedi a terra, poi il respiro.
+[SILENZIO 8]
+Un minuto fuori. Adesso l'attenzione va fuori. Prima ascolta i suoni, uno alla volta: quello più vicino, poi uno più lontano.
+[SILENZIO 15]
+Poi guarda lo spazio davanti a te, senza girare la testa: cosa c'è a destra, cosa a sinistra.
+[SILENZIO 15]
+Se ti accorgi che è partito un pensiero, bene: te ne sei accorto. Riporta l'attenzione fuori.
+[SILENZIO 15]
+Questo è il primo giro. Poi ricominci: trenta secondi presente, un minuto fuori. E una terza volta. Tre giri in tutto, circa quattro minuti e mezzo, e chiudi con un Reset.
+[SILENZIO 3]
+Secondo giro. Trenta secondi presente.
+[SILENZIO 1]
+{RESET1}
+Il peso sulla sedia, i piedi a terra, il respiro.
+[SILENZIO 10]
+Un minuto fuori. I suoni, poi lo spazio davanti a te.
+[SILENZIO 28]
+Se è partito un pensiero, te ne accorgi e torni fuori.
+[SILENZIO 25]
+Ultimo giro. Trenta secondi presente.
+[SILENZIO 1]
+{RESET1}
+Il peso sulla sedia, i piedi a terra, il respiro.
+[SILENZIO 10]
+Un minuto fuori. I suoni, poi lo spazio davanti a te.
+[SILENZIO 28]
+Se è partito un pensiero, te ne accorgi e torni fuori.
+[SILENZIO 25]
+E chiudi con un Reset.
+[SILENZIO 1]
+{RESET1}
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+L'esercizio è tutto lì: accorgerti quando sei finito in un pensiero, e tornare.
+[SILENZIO 2]
+Una cosa sola, perché è facile confondersi. Qui da seduto non c'è una partita, e allora «fuori» sono i suoni e lo spazio. In campo invece fuori vuol dire le cose che servono al gioco: la palla, i compagni, gli avversari, lo spazio. Non ogni rumore. E mentre giochi non smetti di essere presente: lo sei stando sul gioco.
+[SILENZIO 2]
+Da oggi, l'àncora della settimana: nei momenti morti, in fila, in attesa, prima di entrare da qualche parte, un Reset breve. Torna presente.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: ti ricordi una volta, nel minuto fuori, in cui ti sei accorto di essere finito in un pensiero? A cosa hai riportato l'attenzione? Se non te ne sei mai accorto, scrivi anche quello: va bene.
+"""
+
+F["W10-G2"] = f"""[sincere]
+Ieri da seduto, senza niente in mano. Oggi entra la palla, ma non si gioca ancora: la muovi piano, sotto il piede.
+[SILENZIO 2]
+[relaxed]
+Sembra una sciocchezza, lo so. Ma spesso, appena c'è un pallone, la testa ci si butta sopra e si dimentica il resto.
+[SILENZIO 2]
+[sincere]
+Oggi alleni proprio questo. La palla si muove, il piede fa da solo, e tu continui a vedere cosa c'è intorno.
+[SILENZIO 2]
+[TAGLIO]
+Prendi una palla. Se adesso non ce l'hai, fai questa pratica appena puoi, anche prima dell'allenamento, e poi torna qui.
+[SILENZIO 3]
+[meditative]
+In piedi. {ARRIVO_PALLA}
+[SILENZIO 3]
+Palla sotto la suola, ferma. Un Reset breve: un respiro con gesto e mantra.
+[SILENZIO 1]
+{RESET1}
+Sei qui.
+[SILENZIO 3]
+Poi muovi la palla sotto la suola, avanti e indietro, piano. Il piede lo sa fare, lascialo fare. L'attenzione va fuori: quello che vedi davanti a te senza perdere la palla. Un compagno che passa, una porta, un cono, la linea del campo, un albero. Ogni tanto cambia cosa guardi. Un minuto.
+[SILENZIO 2]
+{minuto_palla("Stop. Fermi la palla.")}
+[SILENZIO 1]
+Un Reset breve.
+[SILENZIO 1]
+{RESET1}
+Poi cambia piede, un altro minuto.
+[SILENZIO 2]
+{minuto_palla("Stop.")}
+[SILENZIO 2]
+Ultimo minuto: palla da un piede all'altro, interno-interno, da fermo. Attenzione fuori. Se l'interno-interno non ti viene facile, resta con la suola: il gesto deve essere semplice, così la testa resta libera.
+[SILENZIO 2]
+Guardare la palla ogni tanto va bene, non è un errore. Se a un certo punto ti accorgi che guardavi solo quella, o che è partito un pensiero, bene: te ne sei accorto. Riporta l'attenzione fuori e continua.
+[SILENZIO 1]
+Se la palla scappa: la recuperi, un Reset breve, riparti. Senza commenti.
+[SILENZIO 2]
+{minuto_palla("Stop. Palla ferma.")}
+[SILENZIO 3]
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: cosa hai notato, con la palla che si muoveva? Riuscivi a sentire cosa c'era intorno, o finivi a guardare solo la palla? Te ne accorgevi presto, tardi, o a volte per niente? Va bene qualsiasi risposta, anche «uguale a sempre» o «più difficile del previsto».
+"""
+
+F["W10-G3"] = f"""[sincere]
+Ieri la palla si muoveva piano sotto il piede. Oggi la passi, e arriva la regola più importante della settimana.
+[SILENZIO 2]
+[relaxed]
+Ti racconto due cose che mi sono successe.
+[SILENZIO 1]
+La prima. Ero titubante ad andare a prendere palla di spalle, sbagliavo, e allora cosa facevo? Mi mettevo a concentrarmi a fondo per fare il gesto per bene. Sai cosa succedeva? Che intorno a me diventava tutto buio. E più mi concentravo sui dettagli, più ero bloccato, e peggio mi veniva.
+[SILENZIO 2]
+La seconda. Campo bagnato, devo calciare un rigore. Invece di tirarlo e basta, come lo sapevo fare da sempre, mi metto a pensare a come eseguire il gesto per non scivolare. Tirato male. Parato. Il portiere, immagino, mi ringrazia ancora adesso.
+[SILENZIO 2]
+[sincere]
+Perché succede? Perché il calcio non è la palestra, dove sollevi un peso e controlli un muscolo. Anche un passaggio banale è tutto il corpo che lavora insieme. Se ti metti a controllare un pezzo, ti irrigidisci. E il movimento non ti viene più fluido.
+[SILENZIO 2]
+Attenzione però, che qui c'è una cosa che si confonde facilmente. Anche quando alleni la tecnica parti da fuori: da dove vuoi mandare la palla. Se il gesto non viene, ti fermi un attimo sul movimento per correggerlo, e poi torni subito a pensare a dove la mandi.
+[SILENZIO 2]
+Quando giochi, solo dove la mandi. Il gesto deve uscire da solo, e la tua attenzione è su quello che ti accade intorno: la palla, il punto dove la mandi, lo spazio, i compagni e l'avversario. E il posto per tornare presente su di te è prima o dopo, nei momenti in cui il gioco è fermo.
+[SILENZIO 2]
+[relaxed]
+L'errore che facevo io era quello: mi portavo la testa dell'allenamento dentro la partita.
+[SILENZIO 2]
+[sincere]
+Oggi lo proviamo al muro, a intervalli, come fai in allenamento: un minuto di gioco con l'attenzione fuori, venti secondi fermo per tornare presente.
+[SILENZIO 2]
+[TAGLIO]
+Prendi una palla e trova un muro, o un compagno, o una panchina. Se adesso non ce l'hai, falla appena puoi e poi torna qui.
+[SILENZIO 3]
+[meditative]
+{ARRIVO_PALLA}
+[SILENZIO 3]
+Adesso cinque giri, sempre uguali.
+[SILENZIO 1]
+Un minuto di passaggi. Passaggi al muro, al tuo ritmo. Lo sguardo va dove mandi la palla e intorno: il punto del muro che vuoi colpire, lo spazio ai lati, chi ti passa vicino. Quello che ti servirebbe vedere se fosse una partita, non ogni rumore.
+[SILENZIO 1]
+Se a un certo punto ti accorgi che è partito un pensiero, «sto sbagliando», la partita del weekend, qualsiasi cosa, bene: te ne sei accorto. Riporta l'attenzione fuori e continua.
+[SILENZIO 2]
+Venti secondi fermo. Palla sotto il piede. Un Reset breve, un respiro con gesto e mantra, e poi resta lì: i piedi, il respiro, finché riparti.
+[SILENZIO 1]
+Poi riparti col minuto successivo.
+[SILENZIO 1]
+Cinque giri, circa sette minuti. Se ti va, arriva a dieci minuti.
+[SILENZIO 1]
+L'obiettivo non è non avere pensieri. È accorgersene il prima possibile quando arrivano, e riportare l'attenzione dove deve stare.
+[SILENZIO 3]
+Primo giro.
+[SILENZIO 1]
+{minuto_palla("Stop. Palla sotto il piede.")}
+[SILENZIO 1]
+{RESET1}
+I piedi, il respiro.
+[SILENZIO 2]
+Secondo giro.
+[SILENZIO 1]
+{minuto_palla("Stop. Palla sotto il piede.")}
+[SILENZIO 1]
+{RESET1}
+I piedi, il respiro.
+[SILENZIO 2]
+Terzo giro.
+[SILENZIO 1]
+{minuto_palla("Stop. Palla sotto il piede.")}
+[SILENZIO 1]
+{RESET1}
+I piedi, il respiro.
+[SILENZIO 2]
+Quarto giro.
+[SILENZIO 1]
+{minuto_palla("Stop. Palla sotto il piede.")}
+[SILENZIO 1]
+{RESET1}
+I piedi, il respiro.
+[SILENZIO 2]
+Ultimo giro.
+[SILENZIO 1]
+{minuto_palla("Stop. Palla sotto il piede.")}
+[SILENZIO 1]
+{RESET1}
+Bene. Torna qui.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: cosa hai notato durante i minuti di passaggi? Quando partiva un pensiero, te ne accorgevi presto, tardi, o a volte per niente? Un'impressione basta, non serve contarli. Anche «uguale a sempre» o «più difficile del previsto» va bene: accorgersene è già l'esercizio.
+"""
+
+F["W10-G4"] = f"""[sincere]
+Ieri un minuto di passaggi e venti secondi fermo. Oggi accorciamo, e ci avviciniamo a quello che succede in partita: pochi tocchi, e un Reset breve.
+[SILENZIO 2]
+Palleggi, sì. Ma non è una gara a chi ne fa di più. Conterai dieci tocchi, poi cinque: quel numero serve solo a sapere quando fermarti, non a dire quanto sei bravo. Se ti ritrovi a fare il conto del record, o a giudicare come stai toccando la palla, quello è già un pensiero: te ne accorgi e torni fuori.
+[SILENZIO 2]
+[relaxed]
+La palla cadrà, tranquillo. A me capita ancora adesso, quando alleno la tecnica e mi concentro troppo su come tocco la palla: mi irrigidisco e il movimento non viene più fluido. È lo stesso motivo per cui l'attenzione va prima di tutto fuori, sulla palla e sullo spazio.
+[SILENZIO 2]
+[TAGLIO]
+[sincere]
+Prendi una palla e trova uno spazio. Se adesso non ce l'hai, falla appena puoi e poi torna qui.
+[SILENZIO 2]
+Prima scegli il tuo livello, così parti da un gesto comodo. Se dieci palleggi di fila ti vengono facili, fai dieci e poi cinque. Se no, cinque e poi tre. Puoi anche lasciar rimbalzare la palla tra un tocco e l'altro. Qui conta l'attenzione, non la tecnica.
+[SILENZIO 3]
+[meditative]
+{ARRIVO_PALLA}
+[SILENZIO 2]
+Poi tre blocchi, circa dieci minuti.
+[SILENZIO 2]
+Primo blocco, tre minuti. Palleggi come li fai sempre. L'attenzione fuori: la palla e lo spazio intorno a te, quello che ti servirebbe vedere in partita. Quando cade la raccogli, e con la palla in mano un Reset breve: un respiro con gesto e mantra. Poi riparti.
+[SILENZIO 2]
+{blocco_tre_minuti()}
+[SILENZIO 3]
+Secondo blocco, tre minuti. Adesso decidi tu, non la caduta. Dieci tocchi, o cinque, se è il tuo livello, poi la prendi in mano anche se non è caduta. Un Reset breve. Riparti. Se mentre palleggi ti accorgi che è partito un pensiero, bene: te ne sei accorto. Riporta l'attenzione fuori e continua.
+[SILENZIO 2]
+{blocco_tre_minuti()}
+[SILENZIO 3]
+Terzo blocco, tre minuti. Uguale, ma più corto: cinque tocchi, o tre, e un Reset breve. Il Reset arriva più spesso, un po' come le pause in partita: lì la palla in mano non ce l'hai, ma hai una rimessa, un fallo, un cambio.
+[SILENZIO 2]
+{blocco_tre_minuti()}
+[SILENZIO 2]
+Finito. Un Reset e chiudi.
+[SILENZIO 1]
+{RESET1}
+Bene. Torna qui.
+[SILENZIO 2]
+[sincere]
+Se ti è servito, puoi rifarlo quando vuoi: intero, o solo il secondo e il terzo blocco se hai cinque minuti e un pallone.
+[SILENZIO 2]
+[relaxed]
+Adesso metti in pausa e scrivi nell'app: mentre palleggiavi, ti sei accorto di qualche pensiero che partiva? Pochi, tanti, nessuno: va bene tutto. Il Reset breve tra un blocco di tocchi e l'altro ti veniva, o lo saltavi? E cosa ti ha reso difficile l'esercizio, se qualcosa c'era?
 """
 
 # Dal 26/10 ogni giorno ha DUE audio: l'apertura (schermata Apertura, campo Notion "Audio Apertura")
