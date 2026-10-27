@@ -17,6 +17,9 @@
  *    seduta a poche ripetizioni e recupero pieno: l'EMOM di parte alta o gambe (`pa-emom` / `pb-emom`, con
  *    l'esercizio in difficoltà come stazione), `kb-base` per il kettlebell, il ripasso di tecnica per la palla.
  *    Torna nelle sedute di forza dopo EMOM_OK_PER_RIENTRO (2) sedute con esecuzione "ok".
+ *    KETTLEBELL (Ste, 26/10 sera: "non overcomplichiamo per ora, se uno fa fatica diminuiamo peso e reps"): al passo
+ *    "meno" e in "dedicata" l'esercizio resta nella seduta kettlebell con un kettlebell sotto (−4 kg, mai sotto
+ *    KB_PESO_MIN) E ripetizioni ×ESECUZIONE_KB_REPS_SCALA, finché non viene pulito; poi si torna a salire. Niente EMOM.
  * 3. IL PREPARATORE LO DICE: sezione "# ESECUZIONE" nel prompt del planner e della chat (`esecuzioneTesto`), la nota
  *    sull'item nel player ("meno peso: l'ultima volta hai detto 'faccio fatica'"), la riga negli aggiustamenti.
  *
@@ -46,6 +49,10 @@ export const EMOM_DIFFICOLTA_REPS = 3;
 export const EMOM_DIFFICOLTA_SEC = 10;
 /** Stazioni in più nell'EMOM per gli esercizi in difficoltà fuori dalle scale (al massimo). */
 export const EMOM_DIFFICOLTA_MAX = 2;
+
+/** Kettlebell: nel passo indietro anche meno ripetizioni (Ste, 26/10 sera), e mai sotto il kettlebell più leggero. */
+export const ESECUZIONE_KB_REPS_SCALA = 0.7;
+export const KB_PESO_MIN = 4;
 
 export type PassoEsecuzione = 'normale' | 'meno' | 'dedicata';
 
@@ -152,8 +159,16 @@ export function doseEmomDifficolta(unita: string): number {
   return unita === 'secondi' ? EMOM_DIFFICOLTA_SEC : EMOM_DIFFICOLTA_REPS;
 }
 
-/** La dose "meno" del passo 1: kg −15 % o quantità −20 %, con i minimi; null se non c'è niente da abbassare. */
-export function dosePerEsecuzione(p: { quantita: number; carico_kg?: number | null; unita: string }): { quantita: number; caricoKg: number | null } | null {
+/**
+ * La dose "meno" del passo 1: kg −15 % o quantità −20 %, con i minimi; null se non c'è niente da abbassare.
+ * Con `kbPassoKg` (esercizio kettlebell): un kettlebell sotto E meno ripetizioni (×0.7), così si pulisce il gesto.
+ */
+export function dosePerEsecuzione(p: { quantita: number; carico_kg?: number | null; unita: string }, kbPassoKg?: number): { quantita: number; caricoKg: number | null } | null {
+  if (kbPassoKg) {
+    const kg = p.carico_kg && p.carico_kg > 0 ? Math.max(Math.min(KB_PESO_MIN, p.carico_kg), p.carico_kg - kbPassoKg) : p.carico_kg ?? null;
+    const q = p.unita === 'reps' ? Math.max(ESECUZIONE_REPS_MIN, Math.round(p.quantita * ESECUZIONE_KB_REPS_SCALA)) : p.quantita;
+    return (kg ?? 0) < (p.carico_kg ?? 0) || q < p.quantita ? { quantita: Math.min(q, p.quantita), caricoKg: kg } : null;
+  }
   if (p.carico_kg && p.carico_kg > 0) {
     const kg = Math.max(1, Math.round(p.carico_kg * ESECUZIONE_KG_SCALA * 2) / 2);
     return kg < p.carico_kg ? { quantita: p.quantita, caricoKg: kg } : null;
@@ -170,11 +185,14 @@ export function dosePerEsecuzione(p: { quantita: number; carico_kg?: number | nu
  * Sezione "# ESECUZIONE" per il prompt del planner v2 e della chat del preparatore: gli esercizi in difficoltà
  * e il passo deciso dal server (Claude lo RACCONTA, non lo decide). Vuota se non c'è niente da dire.
  */
-export function esecuzioneTesto(stati: readonly StatoEsecuzione[], nome: (id: string) => string): string {
+export function esecuzioneTesto(stati: readonly StatoEsecuzione[], nome: (id: string) => string, kettlebell?: (id: string) => boolean): string {
   const righe = stati.filter(conQualcosaDaDire).map((s) => {
     const storia = s.sedute.slice(0, 4).map((e) => ESECUZIONE_LABEL[e]).join(' ← ');
-    const passo = s.passo === 'meno' ? 'MENO nella prossima seduta (kg −15 % o −20 % di reps/tempo; sulle scale un gradino sotto)'
-      : s.passo === 'dedicata' ? `SEDUTA DEDICATA: fuori dalle sedute di forza (al suo posto il gradino sotto o la variante facile), dentro l'EMOM di parte alta/gambe (o kb-base, o il ripasso di tecnica) con poche ripetizioni pulite; rientra dopo ${EMOM_OK_PER_RIENTRO} EMOM "ok"`
+    const kb = !!kettlebell?.(s.esercizioId);
+    const passo = kb && s.passo !== 'normale'
+      ? 'KETTLEBELL PIÙ LEGGERO: un kettlebell sotto e meno ripetizioni nella seduta kettlebell finché non viene pulito, poi si risale (niente EMOM)'
+      : s.passo === 'meno' ? 'MENO nella prossima seduta (kg −15 % o −20 % di reps/tempo; sulle scale un gradino sotto)'
+      : s.passo === 'dedicata' ? `SEDUTA DEDICATA: fuori dalle sedute di forza (al suo posto il gradino sotto o la variante facile), dentro l'EMOM di parte alta/gambe (o il ripasso di tecnica) con poche ripetizioni pulite; rientra dopo ${EMOM_OK_PER_RIENTRO} EMOM "ok"`
       : `dose ferma: SALI bloccato finché non è "ok" per ${OK_PER_SBLOCCARE_SALI} sedute (${s.okDiFila} finora)`;
     return `- ${nome(s.esercizioId)} [${s.esercizioId}]: ultime sedute ${storia} → ${passo}`;
   });

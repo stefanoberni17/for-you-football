@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { GATE_DAY } from '@/lib/constants';
-import { rispostaChiaveInfo, testoChiave, type RispostaRow } from '@/lib/risposteChiave';
+import { gateLista, rispostaChiaveInfo, testoDaModificare, type RispostaRow } from '@/lib/risposteChiave';
 import { BookOpen, ChevronRight, Key, PenLine, Star } from 'lucide-react';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
@@ -133,7 +133,7 @@ export default function RispostePage() {
                     )}
                     {r.risposta && (
                       <div>
-                        {r.domanda && <p className="text-caption text-muted mb-1">{r.domanda}</p>}
+                        {r.domanda && <p className="text-caption text-muted mb-1 whitespace-pre-line">{r.domanda}</p>}
                         <p className="text-body text-app leading-relaxed whitespace-pre-line">{r.risposta}</p>
                       </div>
                     )}
@@ -169,7 +169,7 @@ export default function RispostePage() {
         <ModificaRispostaSheet
           week={modifica.week}
           day={modifica.day}
-          testoIniziale={testoChiave(modifica, rispostaChiaveInfo(modifica.week, modifica.day) ?? {}) || ''}
+          testoIniziale={testoDaModificare(modifica, rispostaChiaveInfo(modifica.week, modifica.day) ?? {})}
           open
           onClose={() => setModifica(null)}
           onSalvata={(t) => setRows((prev) => prev.map((r) => {
@@ -177,8 +177,8 @@ export default function RispostePage() {
             const q = rispostaChiaveInfo(r.week, r.day)?.gateQ;
             // La mappa è la prima risposta del Gate 3: si aggiorna quella, non la risposta del giorno
             if (q) {
-              const gateQ = { q1: null, q2: null, q3: null, ...(r.gateQ ?? {}), [q]: t };
-              return { ...r, gateQ, gate: [gateQ.q1, gateQ.q2, gateQ.q3].filter((x): x is string => !!x && x.trim() !== ''), versioni: (r.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
+              const gateQ = { ...(r.gateQ ?? {}), [q]: t };
+              return { ...r, gateQ, gate: gateLista(gateQ), versioni: (r.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
             }
             return { ...r, risposta: t, versioni: (r.versioni || 0) + 1, aggiornataIl: new Date().toISOString() };
           }))}

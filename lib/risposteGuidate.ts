@@ -76,6 +76,19 @@ export const RISPOSTE_GUIDATE: Record<string, RispostaGuidata> = {
   },
 };
 
+/**
+ * W1-G2 (26/10, Ste: «Il tuo momento» da richiamare in W1-G4..G7): la Domanda chiede due cose,
+ * com'è stato il gesto e il momento della settimana in cui usarlo. Due parti di testo, così il
+ * momento si può riprendere da solo (`parte: 'momento'` in lib/risposteChiave.ts).
+ */
+RISPOSTE_GUIDATE['1-2'] = {
+  titolo: 'Il gesto e il tuo momento',
+  parti: [
+    { key: 'gesto', tipo: 'testo', label: 'Il gesto', aiuto: 'Com’è stato aggiungerlo al respiro: semplice, un po’ macchinoso, poco chiaro?', opzioni: [], righe: 2, altro: 'scelta', altroLabel: 'Il gesto', altroPlaceholder: 'Semplice, macchinoso…' },
+    { key: 'momento', tipo: 'testo', label: 'Il mio momento', aiuto: 'Uno solo, preciso, che ti capita spesso. In una riga.', opzioni: [], righe: 2, altro: 'scelta', altroLabel: 'Il mio momento', altroPlaceholder: 'Dopo un controllo sbagliato, mentre aspetto di entrare…' },
+  ],
+};
+
 /** Il Protocollo For You (W11-G4): cinque parti di testo libero, come la pratica di Notion. */
 RISPOSTE_GUIDATE['11-4'] = {
   titolo: 'Il tuo Protocollo For You',

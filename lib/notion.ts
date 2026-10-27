@@ -5,6 +5,8 @@
  * Tutte le chiamate Notion passano da qui.
  */
 
+import { domandeGateDa } from '@/lib/gateDomande';
+
 const NOTION_VERSION = '2022-06-28';
 const NOTION_BASE = 'https://api.notion.com/v1';
 
@@ -216,7 +218,7 @@ export function mapGiorno(page: any) {
     domanda: richText(p['Domanda']),
     isGate: checkbox(p['È Gate']),
     isEsercizioPrincipale: checkbox(p['È Esercizio Principale']),
-    domandeGate: richTextLines(p['Domande Gate']), // array di 3 stringhe
+    domandeGate: domandeGateDa(richText(p['Domande Gate'])), // una per numero (1., 2., …), gli a capo restano dentro la domanda
     missioneSettimana: richText(p['Missione Settimana']), // missione per la settimana successiva (solo G7)
     tipoGiorno: select(p['Tipo Giorno']),
     haCheckPrecedente: checkbox(p['Ha Check Precedente']),

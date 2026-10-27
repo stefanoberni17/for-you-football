@@ -8,6 +8,7 @@ import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { GATE_DAY } from '@/lib/constants';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
+import { chiaviPerGiorno } from '@/lib/risposteChiave';
 import { Check, Key, PenLine, Target } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
 
@@ -130,7 +131,11 @@ export default function GatePage() {
       const res = await authFetch('/api/gate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weekNumber, answers }),
+        // Solo le risposte alle domande di adesso: una bozza vecchia può avere chiavi in più
+        body: JSON.stringify({
+          weekNumber,
+          answers: Object.fromEntries(questions.map((_, i) => [`q${i + 1}`, (answers[`q${i + 1}`] || '').trim()])),
+        }),
       });
 
       const data = await res.json();
@@ -233,8 +238,13 @@ export default function GatePage() {
             <p className="text-app text-body leading-relaxed whitespace-pre-line">
               {giorno.pratica}
             </p>
-            {/* Le risposte chiave richiamate dalle domande (W11: Protocollo For You, risposte pronte) */}
-            <RisposteChiaveBox week={weekNumber} day={GATE_DAY} className="mt-3" />
+            {/* Le risposte chiave richiamate dalle domande (W11: Protocollo For You, risposte pronte) e i riquadri di "Mostra Carta" (W1: mantra, momento) */}
+            <RisposteChiaveBox week={weekNumber} day={GATE_DAY} mostraCarta={giorno.mostraCarta} className="mt-3" />
+          </Card>
+        )}
+        {!giorno?.pratica && chiaviPerGiorno(weekNumber, GATE_DAY, giorno?.mostraCarta) && (
+          <Card padding="sm">
+            <RisposteChiaveBox week={weekNumber} day={GATE_DAY} mostraCarta={giorno?.mostraCarta} senzaBordo />
           </Card>
         )}
 
@@ -254,7 +264,7 @@ export default function GatePage() {
             const key = `q${i + 1}`;
             const value = answers[key] || '';
             return (
-              <Field key={i} label={<span className="text-body font-medium leading-relaxed">{q}</span>} htmlFor={`gate-${key}`} counter={{ value: value.length, max: 1500 }}>
+              <Field key={i} label={<span className="text-body font-medium leading-relaxed whitespace-pre-line">{q}</span>} htmlFor={`gate-${key}`} counter={{ value: value.length, max: 1500 }}>
                 <Textarea
                   id={`gate-${key}`}
                   value={value}

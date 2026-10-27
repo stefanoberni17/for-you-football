@@ -69,10 +69,10 @@ describe('la macchina a stati (dalla più recente)', () => {
 
 describe('la dose: prima si abbassa, e la fatica bassa non scavalca', () => {
   it('"non riesco" → kg −15 % anche se le serie erano facili (SALI bloccato)', () => {
-    const logs = seduta('s2', 2, 'fpb-goblet-squat', 10, [10, 10, 10], 3, 'non_riesco', 20);
+    const logs = seduta('s2', 2, 'fpb-front-squat', 10, [10, 10, 10], 3, 'non_riesco', 20);
     const r = riepilogoEsercizi(logs)[0];
     expect(r.esecuzione?.passo).toBe('meno');
-    const d = prossimaDose({ esercizio_id: 'fpb-goblet-squat', quantita: 10, carico_kg: 20, unita: 'reps', schema: 'fisso' }, r);
+    const d = prossimaDose({ esercizio_id: 'fpb-front-squat', quantita: 10, carico_kg: 20, unita: 'reps', schema: 'fisso' }, r);
     expect(d.verso).toBe('scendi');
     expect(d.caricoKg).toBe(17);
     expect(d.motivo).toMatch(/meno peso.*non riesco/);
@@ -113,9 +113,9 @@ describe('le progressioni: gradino sotto o variante facile', () => {
     expect(out.nota).toMatch(/Un gradino sotto/);
   });
   it('fuori dalle scale: dose ridotta e la versione più facile della scheda', () => {
-    const r = riepilogoEsercizi(seduta('s1', 2, 'fpb-goblet-squat', 10, [10, 10, 10], 6, 'fatica', 20).concat(seduta('s0', 7, 'fpb-goblet-squat', 10, [10, 10, 10], 6, 'fatica', 20)))[0];
+    const r = riepilogoEsercizi(seduta('s1', 2, 'fpb-front-squat', 10, [10, 10, 10], 6, 'fatica', 20).concat(seduta('s0', 7, 'fpb-front-squat', 10, [10, 10, 10], 6, 'fatica', 20)))[0];
     expect(r.esecuzione?.passo).toBe('meno');
-    const [out] = adattaItems([item('fpb-goblet-squat', 10, { carico_kg: 20 })], { storico: [r], squilibri: null });
+    const [out] = adattaItems([item('fpb-front-squat', 10, { carico_kg: 20 })], { storico: [r], squilibri: null });
     expect(out.adattamento).toBe('esecuzione');
     expect(out.carico_kg).toBe(17);
     expect(out.nota).toMatch(/faccio fatica/);

@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   RISPOSTE_CHIAVE, DA_MOSTRARE, CAMPI_CARTA, campiCarta, campiDaNotion, chiavePerCampo, chiaviPerGiorno, isRispostaChiave, risposteChiaveScritte,
-  risposteChiaveTesto, testoChiave, testoRisposta, type RispostaRow,
+  risposteChiaveTesto, testoChiave, testoDaModificare, testoRisposta, rispostaChiaveInfo, type RispostaRow,
 } from '@/lib/risposteChiave';
+import { componiRisposta, guidaPer, leggiRisposta } from '@/lib/risposteGuidate';
 
 const riga = (week: number, day: number, extra: Partial<RispostaRow> = {}): RispostaRow => ({
   week, day, domanda: null, risposta: null, prePratica: null, gate: null, completedAt: null, ...extra,
@@ -43,7 +44,7 @@ describe('risposte chiave (review W11, 22/10)', () => {
   });
 
   it('le risposte chiave: le cinque della review più i riquadri della Carta (26/10), nell\'ordine del percorso', () => {
-    expect(RISPOSTE_CHIAVE.map((r) => `${r.week}-${r.day}`)).toEqual(['1-3', '3-3', '3-7', '4-6', '8-6', '9-4', '10-6', '11-2', '11-4']);
+    expect(RISPOSTE_CHIAVE.map((r) => `${r.week}-${r.day}`)).toEqual(['1-2', '1-3', '3-3', '3-7', '4-6', '8-6', '9-4', '10-6', '11-2', '11-4']);
     expect(CAMPI_CARTA.map((c) => `${chiavePerCampo(c).week}-${chiavePerCampo(c).day}`)).toEqual(['1-3', '3-7', '3-3', '4-6', '8-6', '11-4']);
     expect(chiavePerCampo('mappa').gateQ).toBe('q1');
   });
@@ -88,5 +89,36 @@ describe('Carta modificabile (26/10, docs/carta-modificabile.md)', () => {
     expect(testo).toContain('**Il tuo mantra** (Settimana 1, giorno 3, nella sua Carta):\n"Riparto qui."');
     expect(testo).toContain('prima (2026-10-01): "Reset."');
     expect(testo).not.toContain('2026-10-02');
+  });
+});
+
+describe('«Il tuo momento» da W1-G2 (26/10)', () => {
+  const momento = rispostaChiaveInfo(1, 2)!;
+
+  it('è una risposta chiave in una riga, e Mostra Carta "Momento" la richiama', () => {
+    expect(momento.inline).toBe(true);
+    expect(momento.parte).toBe('momento');
+    expect(chiaviPerGiorno(1, 5, ['Momento'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['1-2']);
+    expect(chiaviPerGiorno(1, 7, ['Mantra', 'Momento'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['1-2', '1-3']);
+    expect(campiDaNotion(['Momento'])).toEqual([]); // non è un riquadro della Carta
+  });
+
+  it('dalla risposta guidata si prende solo il momento', () => {
+    const guida = guidaPer(1, 2)!;
+    const testo = componiRisposta(guida, { gesto: { altro: 'un po\' macchinoso' }, momento: { altro: 'dopo un controllo sbagliato' } });
+    expect(testo).toBe("IL GESTO: un po' macchinoso\nIL MIO MOMENTO: dopo un controllo sbagliato");
+    expect(leggiRisposta(guida, testo).momento?.altro).toBe('dopo un controllo sbagliato');
+    expect(testoChiave(riga(1, 2, { risposta: testo }), momento)).toBe('dopo un controllo sbagliato');
+    // per modificare si parte dalla risposta intera
+    expect(testoDaModificare(riga(1, 2, { risposta: testo }), momento)).toBe(testo);
+  });
+
+  it('chi ha risposto prima della guida: il momento nella domanda prima della pratica, poi la risposta intera', () => {
+    expect(testoChiave(riga(1, 2, { risposta: 'semplice', prePratica: 'prima di battere un piazzato' }), momento)).toBe('prima di battere un piazzato');
+    expect(testoChiave(riga(1, 2, { risposta: 'semplice. Dopo un errore' }), momento)).toBe('semplice. Dopo un errore');
+    expect(testoChiave(riga(1, 2, { risposta: 'IL GESTO: semplice' }), momento)).toBeNull();
+    expect(testoChiave(undefined, momento)).toBeNull();
+    // senza risposta ma con il momento nella pre-pratica, Modifica lo mette già nella sua parte
+    expect(testoDaModificare(riga(1, 2, { prePratica: 'in panchina' }), momento)).toBe('IL MIO MOMENTO: in panchina');
   });
 });

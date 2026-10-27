@@ -545,9 +545,11 @@ export default function GiornoPage() {
             <SectionTitle
               title="Prima di iniziare"
               icon={<PenLine size={18} />}
-              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domandaPrePratica}</span>}
+              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1 whitespace-pre-line">{giorno.domandaPrePratica}</span>}
               className="mb-4"
             />
+            {/* W1-G5 chiede se il momento è ancora quello: lo mostra («Il tuo momento: …», Mostra Carta "Momento") */}
+            <RisposteChiaveBox week={weekNumber} day={dayNumber} mostraCarta={giorno.mostraCarta} className="mb-4" />
             <Field
               label="La tua risposta"
               htmlFor="pre-pratica"
@@ -696,7 +698,7 @@ export default function GiornoPage() {
             <SectionTitle
               title={jumpToReflection ? "Com'è andata oggi?" : 'La tua riflessione'}
               icon={jumpToReflection ? <Sun size={18} /> : <PenLine size={18} />}
-              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1">{giorno.domanda}</span>}
+              subtitle={<span className="block text-body-lg text-app leading-relaxed mt-1 whitespace-pre-line">{giorno.domanda}</span>}
               className="mb-4"
             />
             <RisposteChiaveBox week={weekNumber} day={dayNumber} mostraCarta={giorno.mostraCarta} className="mb-4" />
