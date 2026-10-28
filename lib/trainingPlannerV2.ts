@@ -51,7 +51,7 @@ import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiorna
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.48-sprint-off-season';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.49-sprint-per-distanza';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -1123,9 +1123,15 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       itemsPre = itemsPre.filter((it) => !sprintLungo(it));
       if (itemsPre.length < prima) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${noteMemoria.has(vel.id) ? `${noteMemoria.get(vel.id)} · ` : ''}giornata di rapidità: via gli sprint oltre ${VELOCITA_PURA_METRI} m (${prima - itemsPre.length})`); }
     }
-    const { items: itemsLimati0a, tolti } = limaSprint(itemsPre, sprintMaxSeduta);
+    // Il tetto della seduta conta gli sprint oltre 15 m (Ste, 28/10); nella giornata di rapidità e a 2 giorni dalla partita tutti
+    const tutti = rapiditaOggi || giorniAllaPartita(Number(s.giorno), ctx.base.matchDays) === 2;
+    const { items: itemsLimati0a, tolti, perDistanza } = limaSprint(itemsPre, sprintMaxSeduta, { tutti });
     sprintSettimana += sprintContati(itemsLimati0a);
-    if (tolti > 0) { const vel = blocchi.find(velocitaVera); if (vel) noteMemoria.set(vel.id, `${noteMemoria.has(vel.id) ? `${noteMemoria.get(vel.id)} · ` : ''}${tolti} sprint in meno: tetto di ${sprintMaxSeduta}${perche}`); }
+    if (tolti > 0) {
+      const vel = blocchi.find(velocitaVera);
+      const motivo = [perDistanza > 0 ? 'troppi sprint lunghi per una seduta' : '', tolti > perDistanza ? `tetto di ${sprintMaxSeduta}${perche}` : ''].filter(Boolean).join(' e ');
+      if (vel) noteMemoria.set(vel.id, `${noteMemoria.has(vel.id) ? `${noteMemoria.get(vel.id)} · ` : ''}${tolti} sprint in meno: ${motivo}`);
+    }
     // Salite Sprint in season (Ste, 26/10): 6-12 sprint da 20-30 m con recupero completo; off season i blocchi di Ste restano come sono
     let itemsLimati0 = itemsLimati0a;
     if (ctx.setup.fase === 'in_season' && blocchi.some(isSalite)) {

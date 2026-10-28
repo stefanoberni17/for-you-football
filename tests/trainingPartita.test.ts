@@ -80,7 +80,7 @@ describe('il blocco pre partita di Ste', () => {
     expect(con(errori(c, [{ giorno: 4, blocchi: ['rapidita-e-tiro'] }]), /solo velocità corta|partita/)).toEqual([]);
     // (rapidita-velocita-b1-short ha dentro "Wall Drive Skip", classificato pliometria intensiva: a −2 lo ferma la finestra della plio, domanda aperta per Ste)
     // il tetto di sprint scende a SPRINT_MAX_VICINO_PARTITA: il blocco con più sprint viene limato con la nota
-    const conSprint = c.blocchi.filter((b) => b.qualita === 'velocita' && !isPrePartita(b)).map((b) => ({ b, n: contaSprintMassimali(b.items.filter((it) => it.esercizio_id).map((it) => ({ esercizio_id: it.esercizio_id!, serie: it.serie, quantita: it.quantita, unita: it.unita }))) })).filter((x) => x.n > SPRINT_MAX_VICINO_PARTITA);
+    const conSprint = c.blocchi.filter((b) => b.qualita === 'velocita' && !isPrePartita(b)).map((b) => ({ b, n: contaSprintMassimali(b.items.filter((it) => it.esercizio_id).map((it) => ({ esercizio_id: it.esercizio_id!, serie: it.serie, quantita: it.quantita, unita: it.unita }))) })).filter((x) => x.n > SPRINT_MAX_VICINO_PARTITA && x.b.items.every((it) => !(it.unita === 'metri' && it.quantita > 30))); // a −2 solo velocità corta (dal 28/10 i lunghi li taglia già la fascia per distanza)
     if (conSprint.length) {
       const giovedi = expandPiano({ sedute: [{ giorno: 4, blocchi: [conSprint[0].b.id] }] }, c);
       expect(giovedi.plan.sedute[0].blocchi?.find((b) => b.id === conSprint[0].b.id)?.nota).toMatch(/a 2 giorni dalla partita/);
