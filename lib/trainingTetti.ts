@@ -46,6 +46,10 @@ export const RAPIDITA_GIORNATE_MAX = 1;
 export const SCATTI_RAPIDITA_MAX = 4;
 /** Sprint massimali in tutta la settimana, sommando velocità e rapidità (a tavolino: "volume totale basso"). */
 export const SPRINT_MAX_SETTIMANA = 12;
+/** Off season (Ste, 28/10): "si possono fare più di 12 sprint a settimana, diciamo anche 20 massimali", più quelli di riscaldamento. */
+export const SPRINT_MAX_SETTIMANA_OFF_SEASON = 20;
+/** Il tetto settimanale degli sprint massimali (gli sprint corti fino a 15 m e gli allunghi del riscaldamento non contano). */
+export const sprintMaxSettimana = (fase: FaseStagione): number => (fase === 'off_season' ? SPRINT_MAX_SETTIMANA_OFF_SEASON : SPRINT_MAX_SETTIMANA);
 /** Qualità che non vanno in giorni consecutivi quando sono in due giornate (velocità: Ste 16/10; pliometria intensiva: "in giorni non consecutivi"). */
 export const NON_CONSECUTIVE: ReadonlySet<QualitaTetto> = new Set<QualitaTetto>(['velocita', 'pliometria']);
 
@@ -118,6 +122,6 @@ export const complementiTesto = (q: QualitaTetto) => COMPLEMENTI[q].join(', ');
 
 /** La regola per il prompt del planner v2 (2d), con i tetti di QUESTO atleta. */
 export function tettiTesto(c: ContestoTetti): string {
-  const righe = QUALITA_TETTO.map((q) => `${TETTO_LABEL[q]} ${tettoGiornate(q, c)}${q === 'velocita' && tettoGiornate(q, c) > 1 ? ' (mai in giorni consecutivi, sprint massimali in tutta la settimana al massimo ' + SPRINT_MAX_SETTIMANA + ')' : q === 'pliometria' ? ' (in giorni non consecutivi)' : ''} → poi ${complementiTesto(q)}`);
+  const righe = QUALITA_TETTO.map((q) => `${TETTO_LABEL[q]} ${tettoGiornate(q, c)}${q === 'velocita' && tettoGiornate(q, c) > 1 ? ' (mai in giorni consecutivi, sprint massimali in tutta la settimana al massimo ' + sprintMaxSettimana(c.fase) + ', quelli fino a 15 m non contano)' : q === 'pliometria' ? ' (in giorni non consecutivi)' : ''} → poi ${complementiTesto(q)}`);
   return `2d. TETTO DI GIORNATE A SETTIMANA PER QUALITÀ (Ste; il validatore rifiuta oltre): ${righe.join(' · ')}. Salite 1, kettlebell 1 (regole 24 e 27), tecnica e fascia senza tetto. Quando un obiettivo ha raggiunto il suo tetto, le giornate che restano vanno ai suoi COMPLEMENTI nell'ordine indicato, non allo stesso obiettivo un'altra volta. In più, oltre alla giornata di velocità, può esserci UNA giornata di RAPIDITÀ (pliometria o esplosività con qualche scatto corto: il server lima a ${SCATTI_RAPIDITA_MAX} sprint, nessuno oltre i 30 m): non conta come velocità.${c.fase === 'off_season' && !c.senzaSquadra ? ' Off season con la squadra o le partite: resistenza al massimo 2.' : ''}`;
 }

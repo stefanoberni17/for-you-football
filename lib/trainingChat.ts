@@ -80,10 +80,15 @@ export async function trainingChat(
   messages: { role: 'user' | 'assistant'; content: string }[]
 ): Promise<string> {
   const ctx = await loadContextV2(userId);
-  const system = promptPreparatore(ctx);
+  // Il system prompt (contesto dell'atleta + regole) resta uguale per tutta la conversazione: in cache, dal secondo
+  // messaggio si legge a un decimo del prezzo (28/10). Cambia solo se cambiano i suoi dati.
+  const system = [{ type: 'text' as const, text: promptPreparatore(ctx), cache_control: { type: 'ephemeral' as const } }];
+  const t0 = Date.now();
   const completion = await anthropic.messages.create({
     model: PLANNER_MODEL, max_tokens: 2500, thinking: { type: 'adaptive' }, output_config: { effort: 'low' }, system,
     messages: messages.slice(-12),
   });
+  const u = completion.usage;
+  console.log(`trainingChat usage: ${Date.now() - t0} ms · in ${u.input_tokens} · cache letti ${u.cache_read_input_tokens ?? 0} · cache scritti ${u.cache_creation_input_tokens ?? 0} · out ${u.output_tokens}`);
   return completion.content.filter((b) => b.type === 'text').map((b) => (b as { text: string }).text).join('\n');
 }

@@ -29,7 +29,7 @@ import { limaCarichi } from './trainingCarico';
 import { riparaPiano } from './trainingRiparazione';
 import { calcolaMese, MESE_SETTIMANE, meseRigheAtleta, meseTesto, type Mese, type RispostaMese, type SettimanaMese } from './trainingMese';
 import { addDays } from './carta';
-import { caricoMaxPct, contaSprintMassimali, SPRINT_MASSIMALI_IDS, CONVIVENZE_BLOCCHI_VIETATE, CONVIVENZE_SCONSIGLIATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, QUALITA_FISICHE, SPRINT_MAX_VICINO_PARTITA, type ContestoV2 } from './trainingRulesV2';
+import { caricoMaxPct, contaSprintPesanti, SPRINT_MASSIMALI_IDS, CONVIVENZE_BLOCCHI_VIETATE, CONVIVENZE_SCONSIGLIATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, QUALITA_FISICHE, SPRINT_MAX_VICINO_PARTITA, type ContestoV2 } from './trainingRulesV2';
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
@@ -47,11 +47,11 @@ import { doseRegoleTesto, isEsercizioKettlebell } from './trainingDose';
 import { conQualcosaDaDire, esecuzioneTesto, inDifficolta, type StatoEsecuzione } from './trainingEsecuzione';
 import { conflittiCalendario, ricollocaSedute, sedutaBloccata, type CalendarioSettimana, type ConflittoCalendario } from './trainingCalendario';
 import { esercizioAny } from './trainingExercise';
-import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
+import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, sprintMaxSettimana, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.47-scenari-difficili';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.48-sprint-off-season';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -770,14 +770,15 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   let blocchiKb = blocchiPassati.filter((b) => isKettlebell(b.id)).length;
   // Tetti di giornate per qualità (lib/trainingTetti, 18/10): velocità (1, o 2 off season con la velocità primo obiettivo,
   // mai consecutive), rapidità (+1: sprint solo da pliometria/esplosività, limati a pochi scatti corti), pliometria 2,
-  // parte alta 3, gambe 3, resistenza 2 (4 off season senza squadra); sprint massimali in tutta la settimana ≤ SPRINT_MAX_SETTIMANA
+  // parte alta 3, gambe 3, resistenza 2 (4 off season senza squadra); sprint massimali in tutta la settimana ≤ sprintMaxSettimana (12, off season 20; i corti fino a 15 m non contano)
   const tetti = tettiDi(ctx);
   const blocchiDiSeduta = (ps: PlanSession) => (ps.blocchi ?? []).map((b) => bloccoDi(ctx, b.id)).filter((b): b is Blocco => !!b);
   const giornataVelocita = (bl: readonly Blocco[]) => bl.some(velocitaVera) && !isGiornataRapidita(bl, velocitaVera);
   const giorniVelocita = passate.filter((ps) => giornataVelocita(blocchiDiSeduta(ps))).map((ps) => ps.giorno);
   let giornateRapidita = passate.filter((ps) => isGiornataRapidita(blocchiDiSeduta(ps), velocitaVera)).length;
   // Lo sprint da 10 m dell'EMOM di parte alta non entra nel budget settimanale: pesa già come SPRINT_MAX_CON_EMOM (8 → 6 a seduta; review 18/10)
-  const sprintContati = (items: readonly PlanItem[]) => contaSprintMassimali(items.filter((it) => it.blocco_id !== PA_EMOM_ID));
+  const sprintContati = (items: readonly PlanItem[]) => contaSprintPesanti(items.filter((it) => it.blocco_id !== PA_EMOM_ID));
+  const sprintMaxSett = sprintMaxSettimana(ctx.setup.fase);
   let sprintSettimana = passate.reduce((a, ps) => a + sprintContati(ps.items), 0);
   const giorniPerQualita = new Map<QualitaTetto, number[]>();
   for (const ps of passate) for (const q of qualitaTettoDellaGiornata(blocchiDiSeduta(ps))) giorniPerQualita.set(q, [...(giorniPerQualita.get(q) ?? []), ps.giorno]);
@@ -1106,12 +1107,12 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
     }
     let minutiRipassi = ripassiScelti.reduce((a, r) => a + minutiRipasso(r), 0);
     // A 2 giorni dalla partita poco volume (Ste, 18/10): tetto di sprint più basso. Giornata di rapidità: pochi scatti e corti.
-    // Con due giornate di velocità (off season) metà del tetto settimanale a seduta; in ogni caso la settimana non supera SPRINT_MAX_SETTIMANA
+    // Con due giornate di velocità (off season) metà del tetto settimanale a seduta; in ogni caso la settimana non supera il tetto settimanale
     let sprintMaxSeduta = giorniAllaPartita(Number(s.giorno), ctx.base.matchDays) === 2 ? Math.min(sprintMax, SPRINT_MAX_VICINO_PARTITA) : sprintMax;
     let perche = sprintMaxSeduta < sprintMax ? ' a 2 giorni dalla partita' : '';
     if (rapiditaOggi && SCATTI_RAPIDITA_MAX < sprintMaxSeduta) { sprintMaxSeduta = SCATTI_RAPIDITA_MAX; perche = ' nella giornata di rapidità (pochi scatti, corti)'; }
-    if (tettoGiornate('velocita', tetti) > 1 && Math.floor(SPRINT_MAX_SETTIMANA / 2) < sprintMaxSeduta) { sprintMaxSeduta = Math.floor(SPRINT_MAX_SETTIMANA / 2); perche = ' con due giornate di velocità a settimana'; }
-    if (SPRINT_MAX_SETTIMANA - sprintSettimana < sprintMaxSeduta) { sprintMaxSeduta = Math.max(0, SPRINT_MAX_SETTIMANA - sprintSettimana); perche = ` (${SPRINT_MAX_SETTIMANA} sprint in tutta la settimana)`; }
+    if (tettoGiornate('velocita', tetti) > 1 && Math.floor(sprintMaxSett / 2) < sprintMaxSeduta) { sprintMaxSeduta = Math.floor(sprintMaxSett / 2); perche = ' con due giornate di velocità a settimana'; }
+    if (sprintMaxSett - sprintSettimana < sprintMaxSeduta) { sprintMaxSeduta = Math.max(0, sprintMaxSett - sprintSettimana); perche = ` (${sprintMaxSett} sprint in tutta la settimana)`; }
     // Nella giornata di rapidità gli scatti restano CORTI (Ste: "qualche scatto corto, non sul lungo"): gli sprint oltre
     // VELOCITA_PURA_METRI escono dalla seduta (limaSprint toglie serie, non esercizi), poi il tetto sui pochi che restano
     let itemsPre = [...items, ...ripassi];
@@ -1371,7 +1372,7 @@ ADATTAMENTO
 ${parteAltaRegola(ctx)}
 ${parteBassaRegola(ctx)}
 ${resistenzaRegolaDi(ctx)}
-${velocitaPliometriaRegola({ velocitaETecnica: ctx.obiettivi.includes('velocita') && ctx.obiettivi.includes('tecnica') })}
+${velocitaPliometriaRegola({ velocitaETecnica: ctx.obiettivi.includes('velocita') && ctx.obiettivi.includes('tecnica'), sprintSettimana: sprintMaxSettimana(ctx.setup.fase) })}
 ${fasciaRegola()}${zoneTeseTesto(zoneTeseRicorrenti(ctx.base.feedbackRecenti))}
 ${ctx.kettlebell ? kettlebellTesto(ctx.kettlebell) : '27. KETTLEBELL: non attivo (serve l\'attrezzo e l\'obiettivo "Forza funzionale kettlebell"): non usare esercizi kettlebell sparsi.'}
 ${contestoTecnica(ctx)}

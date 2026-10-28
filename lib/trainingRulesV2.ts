@@ -97,6 +97,21 @@ export const SPRINT_MASSIMALI_IDS: ReadonlySet<string> = new Set([
   'vel-sprint-con-partenza-in-ginocchio', 'vel-piegamento-a-terra-e-sprint', 'vel-giro-180-piegamento-e-sprint',
   'vel-sprint-con-partenza-in-ginocchio-laterale', 'vel-burpee-e-sprint',
 ]);
+/**
+ * Sprint corti (Ste, 28/10: "sprint 10-15 m non li considero troppo pesanti"): fino a SPRINT_CORTO_METRI non contano
+ * nel tetto della SETTIMANA (in quello della seduta sì). `vel-sprint-10-m` è corto per definizione.
+ */
+export const SPRINT_CORTO_METRI = 15;
+const SPRINT_CORTI_IDS: ReadonlySet<string> = new Set(['vel-sprint-10-m']);
+/** Gli sprint massimali che pesano sulla settimana: tutti tranne i corti (≤ SPRINT_CORTO_METRI). */
+export function contaSprintPesanti(items: { esercizio_id: string; serie: number; quantita: number; unita?: string }[]): number {
+  return contaSprintMassimali(items.filter((it) => {
+    if (SPRINT_CORTI_IDS.has(it.esercizio_id)) return false;
+    const unita = it.unita ?? esercizioV2ById(it.esercizio_id)?.unita;
+    return !(unita === 'metri' && it.quantita <= SPRINT_CORTO_METRI);
+  }));
+}
+
 /** Sprint massimali in una lista di item: a metri una serie = uno sprint; a reps serie × reps (EMOM: giri × reps). */
 export function contaSprintMassimali(items: { esercizio_id: string; serie: number; quantita: number; unita?: string }[]): number {
   let n = 0;

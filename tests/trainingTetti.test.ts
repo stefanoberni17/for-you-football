@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { contextFinto, MARCO, SCENARI } from '@/lib/trainingSimulazione';
 import { expandPiano, fallbackPianoBlocchi, generaPianoV2, promptsV2, tettiDi, validateCtxFor, type ContextV2 } from '@/lib/trainingPlannerV2';
 import { validatePlan } from '@/lib/trainingEngine';
-import { contaSprintMassimali } from '@/lib/trainingRulesV2';
-import { COMPLEMENTI, isGiornataRapidita, RAPIDITA_GIORNATE_MAX, RESISTENZA_GIORNATE_SENZA_SQUADRA, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_GIORNATE, tettoGiornate, VELOCITA_GIORNATE_OFF_SEASON } from '@/lib/trainingTetti';
+import { contaSprintMassimali, contaSprintPesanti, SPRINT_MAX_SEDUTA } from '@/lib/trainingRulesV2';
+import { COMPLEMENTI, isGiornataRapidita, RAPIDITA_GIORNATE_MAX, RESISTENZA_GIORNATE_SENZA_SQUADRA, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, SPRINT_MAX_SETTIMANA_OFF_SEASON, sprintMaxSettimana, TETTO_GIORNATE, tettoGiornate, VELOCITA_GIORNATE_OFF_SEASON } from '@/lib/trainingTetti';
 import { isVelocita } from '@/lib/trainingVelocita';
 import { blocchiDisponibili, BLOCCHI, bloccoById } from '@/lib/trainingBlocks';
 import { chiaveCodice, scalaFamiglia } from '@/lib/trainingMemoriaBlocchi';
@@ -85,9 +85,10 @@ describe('tetti di giornate per qualità (Ste, 13/10)', () => {
     expect(con(errori(c, [{ giorno: 1, blocchi: [v] }, { giorno: 2, blocchi: [v] }]), /velocità due giorni di fila/)).toHaveLength(1);
     expect(con(errori(c, [{ giorno: 1, blocchi: [v] }, { giorno: 3, blocchi: [v] }, { giorno: 5, blocchi: [v] }]), /3ª giornata di velocità/)).toHaveLength(1);
     const { plan } = expandPiano({ sedute: [{ giorno: 1, blocchi: [v] }, { giorno: 3, blocchi: [v] }] }, c);
-    const sprint = plan.sedute.reduce((a, s) => a + contaSprintMassimali(s.items), 0);
-    expect(sprint).toBeLessThanOrEqual(SPRINT_MAX_SETTIMANA);
-    for (const s of plan.sedute) expect(contaSprintMassimali(s.items)).toBeLessThanOrEqual(SPRINT_MAX_SETTIMANA / 2);
+    // off season (Ste, 28/10): 20 sprint massimali a settimana, i corti fino a 15 m non contano; a seduta resta il tetto di 8
+    const sprint = plan.sedute.reduce((a, s) => a + contaSprintPesanti(s.items), 0);
+    expect(sprint).toBeLessThanOrEqual(SPRINT_MAX_SETTIMANA_OFF_SEASON);
+    for (const s of plan.sedute) expect(contaSprintMassimali(s.items)).toBeLessThanOrEqual(SPRINT_MAX_SEDUTA);
   });
 
   it('resistenza: in season una giornata (solo come obiettivo); off season senza squadra fino a 4', () => {
@@ -239,5 +240,20 @@ describe('priorità della tecnica dal test più debole (D10)', () => {
     expect(c.prioritaTecnica?.priorita).toBe('passaggi');
     const { system } = promptsV2(c);
     expect(system).toMatch(/PRIORITÀ DAI TEST: passaggi e muro/);
+  });
+});
+
+describe('sprint a settimana (Ste, 28/10)', () => {
+  it('off season 20, in season 12; gli sprint fino a 15 m non contano nella settimana', () => {
+    expect(sprintMaxSettimana('off_season')).toBe(20);
+    expect(sprintMaxSettimana('in_season')).toBe(SPRINT_MAX_SETTIMANA);
+    const items = [
+      { esercizio_id: 'vel-sprint', serie: 4, quantita: 10, unita: 'metri' },
+      { esercizio_id: 'vel-sprint', serie: 3, quantita: 15, unita: 'metri' },
+      { esercizio_id: 'vel-sprint', serie: 2, quantita: 30, unita: 'metri' },
+      { esercizio_id: 'vel-sprint-10-m', serie: 2, quantita: 3 },
+    ];
+    expect(contaSprintMassimali(items)).toBe(15);
+    expect(contaSprintPesanti(items)).toBe(2);
   });
 });
