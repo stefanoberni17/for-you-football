@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { contextFinto, MARCO, SCENARI } from '@/lib/trainingSimulazione';
 import { expandPiano, fallbackPianoBlocchi, generaPianoV2, promptsV2, tettiDi, validateCtxFor, type ContextV2 } from '@/lib/trainingPlannerV2';
 import { validatePlan } from '@/lib/trainingEngine';
-import { contaSprintMassimali } from '@/lib/trainingRulesV2';
-import { COMPLEMENTI, isGiornataRapidita, RAPIDITA_GIORNATE_MAX, RESISTENZA_GIORNATE_SENZA_SQUADRA, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, TETTO_GIORNATE, tettoGiornate, VELOCITA_GIORNATE_OFF_SEASON } from '@/lib/trainingTetti';
+import { contaSprintCorti, contaSprintMassimali, contaSprintPesanti, SPRINT_CORTI_MAX_SEDUTA, SPRINT_MAX_SEDUTA } from '@/lib/trainingRulesV2';
+import { limaSprint } from '@/lib/trainingVelocita';
+import type { PlanItem } from '@/lib/trainingEngine';
+import { COMPLEMENTI, isGiornataRapidita, RAPIDITA_GIORNATE_MAX, RESISTENZA_GIORNATE_SENZA_SQUADRA, SCATTI_RAPIDITA_MAX, senzaSquadra, SPRINT_MAX_SETTIMANA, SPRINT_MAX_SETTIMANA_OFF_SEASON, sprintMaxSettimana, TETTO_GIORNATE, tettoGiornate, VELOCITA_GIORNATE_OFF_SEASON } from '@/lib/trainingTetti';
 import { isVelocita } from '@/lib/trainingVelocita';
 import { blocchiDisponibili, BLOCCHI, bloccoById } from '@/lib/trainingBlocks';
 import { chiaveCodice, scalaFamiglia } from '@/lib/trainingMemoriaBlocchi';
@@ -85,9 +87,13 @@ describe('tetti di giornate per qualità (Ste, 13/10)', () => {
     expect(con(errori(c, [{ giorno: 1, blocchi: [v] }, { giorno: 2, blocchi: [v] }]), /velocità due giorni di fila/)).toHaveLength(1);
     expect(con(errori(c, [{ giorno: 1, blocchi: [v] }, { giorno: 3, blocchi: [v] }, { giorno: 5, blocchi: [v] }]), /3ª giornata di velocità/)).toHaveLength(1);
     const { plan } = expandPiano({ sedute: [{ giorno: 1, blocchi: [v] }, { giorno: 3, blocchi: [v] }] }, c);
-    const sprint = plan.sedute.reduce((a, s) => a + contaSprintMassimali(s.items), 0);
-    expect(sprint).toBeLessThanOrEqual(SPRINT_MAX_SETTIMANA);
-    for (const s of plan.sedute) expect(contaSprintMassimali(s.items)).toBeLessThanOrEqual(SPRINT_MAX_SETTIMANA / 2);
+    // off season (Ste, 28/10): 20 sprint massimali a settimana, i corti fino a 15 m non contano; a seduta 8 oltre i 15 m e 10 corti
+    const sprint = plan.sedute.reduce((a, s) => a + contaSprintPesanti(s.items), 0);
+    expect(sprint).toBeLessThanOrEqual(SPRINT_MAX_SETTIMANA_OFF_SEASON);
+    for (const s of plan.sedute) {
+      expect(contaSprintPesanti(s.items)).toBeLessThanOrEqual(SPRINT_MAX_SEDUTA);
+      expect(contaSprintCorti(s.items)).toBeLessThanOrEqual(SPRINT_CORTI_MAX_SEDUTA);
+    }
   });
 
   it('resistenza: in season una giornata (solo come obiettivo); off season senza squadra fino a 4', () => {
@@ -239,5 +245,54 @@ describe('priorità della tecnica dal test più debole (D10)', () => {
     expect(c.prioritaTecnica?.priorita).toBe('passaggi');
     const { system } = promptsV2(c);
     expect(system).toMatch(/PRIORITÀ DAI TEST: passaggi e muro/);
+  });
+});
+
+describe('sprint a settimana (Ste, 28/10)', () => {
+  it('off season 20, in season 12; gli sprint fino a 15 m non contano nella settimana', () => {
+    expect(sprintMaxSettimana('off_season')).toBe(20);
+    expect(sprintMaxSettimana('in_season')).toBe(SPRINT_MAX_SETTIMANA);
+    const items = [
+      { esercizio_id: 'vel-sprint', serie: 4, quantita: 10, unita: 'metri' },
+      { esercizio_id: 'vel-sprint', serie: 3, quantita: 15, unita: 'metri' },
+      { esercizio_id: 'vel-sprint', serie: 2, quantita: 30, unita: 'metri' },
+      { esercizio_id: 'vel-sprint-10-m', serie: 2, quantita: 3 },
+    ];
+    expect(contaSprintMassimali(items)).toBe(15);
+    expect(contaSprintPesanti(items)).toBe(2);
+  });
+});
+
+describe('sprint a seduta per distanza (Ste, 28/10)', () => {
+  const sprint = (serie: number, quantita: number): PlanItem => ({ esercizio_id: 'vel-sprint', serie, quantita, unita: 'metri', recupero_sec: 120, schema: 'fisso' });
+  const conta = (items: PlanItem[], oltre: number) => items.filter((it) => it.quantita > oltre).reduce((a, it) => a + it.serie, 0);
+
+  it('al massimo 2 oltre 50 m, 4 oltre 35, 6 oltre 25, 8 oltre 15: si taglia dai più lunghi', () => {
+    const { items, tolti, perDistanza } = limaSprint([sprint(4, 50), sprint(4, 100)], 8);
+    expect(conta(items, 35)).toBe(4);
+    expect(conta(items, 50)).toBe(1); // prima i più lunghi: 1 × 100 + 3 × 50
+    expect(tolti).toBe(4);
+    expect(perDistanza).toBe(4);
+    const r = limaSprint([sprint(4, 20), sprint(3, 30), sprint(3, 40)], 8);
+    expect(conta(r.items, 35)).toBeLessThanOrEqual(4);
+    expect(conta(r.items, 25)).toBeLessThanOrEqual(6);
+    expect(conta(r.items, 15)).toBeLessThanOrEqual(8);
+  });
+
+  it('gli sprint corti non entrano nel tetto di 8 ma sono al massimo 10; nella rapidità il tetto vale su tutti', () => {
+    const items = [sprint(6, 10), sprint(6, 15), sprint(8, 20)];
+    const r = limaSprint(items, 8);
+    expect(contaSprintPesanti(r.items)).toBe(8);
+    expect(contaSprintCorti(r.items)).toBe(SPRINT_CORTI_MAX_SEDUTA);
+    expect(contaSprintMassimali(r.items)).toBe(18);
+    const rap = limaSprint(items, 4, { tutti: true });
+    expect(contaSprintMassimali(rap.items)).toBe(4);
+  });
+
+  it('dentro i tetti la seduta resta com\'è', () => {
+    const items = [sprint(2, 10), sprint(3, 20), sprint(2, 50)];
+    const r = limaSprint(items, 8);
+    expect(r.tolti).toBe(0);
+    expect(r.items).toBe(items);
   });
 });

@@ -94,9 +94,10 @@ async function main() {
   const domande = opt('domanda') ? [opt('domanda')!] : DOMANDE_DIFFICILI[id] ?? DOMANDE;
   for (const d of domande) {
     const t0 = Date.now();
-    const res = await anthropic.messages.create({ model: PLANNER_MODEL, max_tokens: 2500, thinking: { type: 'adaptive' }, output_config: { effort: 'low' }, system, messages: [{ role: 'user', content: d }] });
+    // come trainingChat (28/10): il system prompt in cache, dalla seconda domanda si legge dalla cache
+    const res = await anthropic.messages.create({ model: PLANNER_MODEL, max_tokens: 2500, thinking: { type: 'adaptive' }, output_config: { effort: 'low' }, system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }], messages: [{ role: 'user', content: d }] });
     const text = res.content.filter((b) => b.type === 'text').map((b) => (b as { text: string }).text).join('\n');
-    console.log(`\n### ${d}\n${text}\n(${Date.now() - t0} ms · in ${res.usage.input_tokens} · out ${res.usage.output_tokens})`);
+    console.log(`\n### ${d}\n${text}\n(${Date.now() - t0} ms · in ${res.usage.input_tokens} · cache letti ${res.usage.cache_read_input_tokens ?? 0} · cache scritti ${res.usage.cache_creation_input_tokens ?? 0} · out ${res.usage.output_tokens})`);
   }
 }
 main().catch((e) => { console.error(e); process.exit(1); });
