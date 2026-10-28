@@ -177,7 +177,7 @@ export const SCENARI: Scenario[] = [
     attese: ['3 giornate su lun/mer/ven, al massimo 3 fisiche, ognuna entro 60\' (apertura esclusa)', 'gambe e parte alta coperte (pb-* e pa-* dalle scale)', 'niente fisica venerdì (il giorno prima della partita del sabato)'] },
   { id: 'luca', titolo: '"Rifai da capo": 5 giornate da 75\' in off season, velocità + salti + gambe', atleta: LUCA,
     richiesta: { modo: 'nuova', giorni: [1, 2, 3, 4, 5, 6], sedute: 5, durataMax: 75, focus: ['velocita', 'pliometria', 'gambe'] },
-    attese: ['5 giornate entro 75\'', 'velocità fino a DUE giornate non consecutive (off season, velocità primo obiettivo: 18/10) con il riscaldamento fisso in testa, al massimo 12 sprint in settimana', 'pliometria in B (prime 4 settimane) anche se l\'atleta è A', 'gambe dalle scale'] },
+    attese: ['5 giornate entro 75\'', 'velocità fino a DUE giornate non consecutive (off season, velocità primo obiettivo: 18/10) con il riscaldamento fisso in testa, al massimo 20 sprint oltre i 15 m in settimana (off season, dal 28/10) e per seduta le fasce per distanza', 'pliometria in B (prime 4 settimane) anche se l\'atleta è A', 'gambe dalle scale'] },
   { id: 'davide', titolo: 'PRO in palestra: kettlebell + gambe + parte alta su mar/gio/sab, partita domenica', atleta: DAVIDE,
     richiesta: { modo: 'nuova', giorni: [2, 4, 6], sedute: 3, durataMax: 90, focus: ['kettlebell', 'gambe', 'parte_alta'] },
     attese: ['il sabato (giorno prima della partita) NON può essere una seduta fisica: 2 fisiche + 1 leggera, o 3 giornate con il sabato leggero', 'un blocco kb-* (kettlebell base: nessun log)', 'Fmax possibile (massimali + esperienza palestra), kg sotto il tetto', 'parte alta dalle scale al livello PRO'] },
