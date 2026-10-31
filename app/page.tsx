@@ -22,6 +22,7 @@ import { shouldRedirectToPaywall, hasActiveAccess } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
+import EsercizioSettimanaCard from '@/components/EsercizioSettimanaCard';
 import InstallBanner from '@/components/InstallBanner';
 import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
@@ -593,6 +594,9 @@ export default function HomePage() {
             </div>
           </Card>
         )}
+
+        {/* L'esercizio della settimana (31/10): presenza nella vita di tutti i giorni, dopo il G1 della settimana */}
+        <EsercizioSettimanaCard />
 
         {/* ─── 2. L'allenamento di oggi (Campo); senza il Campo, la riga col lucchetto ─── */}
         {cardAllenamento}

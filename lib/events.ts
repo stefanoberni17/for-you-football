@@ -20,6 +20,11 @@ export const SERVER_EVENTS = [
   'training_aspetto_tenuto', // strato mese (7/10): "sì, tienilo" a un aspetto sempre saltato (meta.focus)
   'training_aspetto_tolto',  // "no, toglilo": l'obiettivo esce dal setup (meta.focus)
   'training_resoconto_salvato', // resoconto dopo squadra/partita (19/10): meta.tipo, meta.livello
+  'esercizio_fatto',          // l'esercizio della settimana (31/10): "Fatto oggi" (meta.week, meta.giorni)
+  'esercizio_sveglia',        // orario della sveglia scelto o cambiato (meta.week, meta.ora)
+  'esercizio_notifiche_on',   // notifiche dell'esercizio riaccese
+  'esercizio_notifiche_off',  // notifiche dell'esercizio spente
+  'esercizio_notifica',       // una notifica dell'esercizio mandata dal giro di ogni minuto (meta.tipo, meta.canale)
 ] as const;
 
 /** Eventi che il client può loggare via POST /api/onboarding/event (whitelist). */

@@ -199,6 +199,7 @@ export function mapSettimana(page: any) {
     praticaGiornoPartita: richText(p['Pratica Giorno Partita']), // il GIORNO della partita (24/10; vuota = niente riquadro)
     fraseSettimana: richText(p['Frase Settimana']),
     filoRosso: richText(p['Filo Rosso']), // "Hai imparato a …" — mostrato a fine settimana
+    esercizioSettimana: richText(p['Esercizio della settimana']), // presenza nella vita di tutti i giorni (31/10): banner in home dopo il G1
   };
 }
 

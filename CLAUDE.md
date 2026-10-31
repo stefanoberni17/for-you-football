@@ -76,6 +76,7 @@ for-you-football/
 │       ├── gate/route.ts                  # GET ?week=&userId= / POST risposte gate
 │       ├── calendar/route.ts              # GET ?week= → calendario della settimana + `abitudine` (giorni squadra e partita abituale dal setup del Campo, 24/10) / POST training_days + match_days
 │       ├── reflection/route.ts            # GET/POST riflessioni post-giorno
+│       ├── esercizio/route.ts             # L'esercizio della settimana (31/10): GET stato del banner; POST { fatto: true } | { sveglia: 'HH:MM' | null } | { notifiche: boolean } (migration 037, fallback `skipped: 'migration_037'`)
 │       ├── risposte/route.ts              # GET → le risposte scritte nel percorso (giorni + Gate), ?chiavi=1 solo le chiave; POST { week, day, testo } → modifica una risposta chiave con versione datata (24/10; lib/risposteServer.ts)
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
 │       ├── telegram/route.ts              # POST → webhook bot Telegram (+ handler /start deep-link)
@@ -93,6 +94,7 @@ for-you-football/
 │       │   ├── history/route.ts           # GET storico + streak per /statistiche
 │       │   └── dismiss-weekly-prompt/route.ts  # POST chiude banner settimanale
 │       └── cron/
+│           ├── esercizio/route.ts         # GET ogni minuto (pg_cron di Supabase, migration 038, NON vercel.json): notifiche dell'esercizio della settimana (mattino, sveglia inizio/fine, sera), una per tipo al giorno
 │           ├── cleanup-telegram/route.ts  # GET → elimina telegram_conversations > 90gg (ESCLUSE safety_flagged) + lunedì svuota calendari settimanali
 │           ├── daily-morning/route.ts     # GET → pillola mattutina Coach (frasi da Notion DB, scelta Haiku, dedup messaggi_inviati) — SOLO utenti attivi <30gg
 │           └── daily-evening/route.ts     # GET → reminder serale Coach se pratica non fatta (testo generato Haiku) — SOLO utenti attivi <30gg
@@ -100,6 +102,7 @@ for-you-football/
 │   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Palestra (pallino con un resoconto da dare) / Coach / Profilo
 │   ├── PalestraSwitch.tsx                 # Testa | Fisico (20/10): le due parti dell'app, sempre tutte e due; la parte che non hai ha il lucchetto; `palestra.parte` in localStorage
 │   ├── FisicoBloccato.tsx                 # Il Fisico per chi non ha il Campo: cos'è, settimana finta, "Mi interessa" (evento campo_interesse)
+│   ├── EsercizioSettimanaCard.tsx         # L'esercizio della settimana in home (31/10): testo da Notion, "Fatto oggi", "N su 7", sveglia (W5, W6, W8, W10) e interruttore delle notifiche; solo dopo il G1 della settimana
 │   ├── StatoRecente.tsx                   # "Il tuo stato" (medie dei check-in a 7 giorni), dalla home alla Carta (20/10)
 │   ├── AperturaAudio.tsx                  # L'apertura del giorno in voce (26/10): "Ascolta l'apertura" + mini-player sulla schermata dell'apertura, dal campo Notion `Audio Apertura`; la pratica resta nel PracticePopup (`Audio Pratica`)
 │   ├── RisposteChiaveBox.tsx              # "Le tue risposte" dentro un giorno di W11 (22/10): le risposte chiave che il testo richiama, chiuse di default, link a /risposte
@@ -132,6 +135,8 @@ for-you-football/
 │   ├── prossimoEvento.ts                  # Il prossimo evento della settimana (24/10, puro, test): `prossimoEvento` (allenamento o partita più vicino, 1-7 lun-dom, con il giro della settimana), `preferenzaDallaNota` (la nota campo parla di partita o di allenamento?), `fraseProssimoEvento`, `statoPartita` (oggi giochi / domani giochi) per la pagina giorno
 │   ├── risposteGuidate.ts                 # Risposte guidate (23/10, puro, test): W1-G2 (27/10) = il gesto + il mio momento, due parti di testo; W4-G6 = Protocollo Pressione in tre parti (segnale nel corpo, pensiero che torna, mantra) con chip e nota; W11-G4 = Protocollo For You in cinque parti di solo testo (prima, durante, dopo, quando non funziona, fuori dal campo; 24/10, lettura a blocchi: le righe dopo un'etichetta appartengono a quella parte); `componiRisposta` ("ETICHETTA: scelta — nota" per riga) e `leggiRisposta` fanno andata e ritorno sul testo salvato in `user_day_progress.response`
 │   ├── risposteChiave.ts / risposteServer.ts  # Le risposte chiave del percorso (22/10, puro + loader): QUALI risposte sono chiave (W1-G2 il tuo momento dal 27/10, una parte della risposta guidata, `parte` e `inline`, si mostra in una riga; W4-G6 Protocollo Pressione, W9-G4 routine, W10-G6 condizioni, W11-G2 risposte pronte, W11-G4 Protocollo For You; dal 26/10 anche i riquadri della Carta: W1-G3 mantra, W3-G3 firma, Gate 3 q1 mappa, W8-G6 le cose senza il pallone, campo `carta` e `gateQ`) e in QUALE giorno si mostrano (`DA_MOSTRARE` + la property Notion "Mostra Carta", `chiaviPerGiorno`); `campiCarta`, `testoChiave` (per il momento solo la sua parte; prima della guida la domanda prima della pratica, poi la risposta intera), `testoDaModificare` (la risposta intera da cui parte Modifica); `risposteChiaveTesto` = blocco per il Coach con le versioni precedenti (`loadVersioniPrecedenti`)
+│   ├── esercizioSettimana.ts / esercizioServer.ts # L'esercizio della settimana (31/10, puro + loader, 9 test): `SVEGLIA_FINE_MIN` (W5 solo inizio, W6 5', W8 10', W10 15'), `notificheDovute` (mattino 08:30 dal giorno dopo il G1, non nelle settimane con la sveglia salvo orario non scelto; sveglia all'orario scelto entro 15'; fine solo dopo un inizio partito; sera 21:00 se "Fatto oggi" non c'è; al massimo due oltre la fine), `esercizioPerCoach`; `loadEsercizio` (Notion + spunte + sveglia), `testoEsercizio`
+│   ├── pushClient.ts                      # Permesso e subscription push dal browser (`statoPush`, `attivaPush`), per il banner dell'esercizio
 │   ├── settimanaCoach.ts                  # La settimana in corso per il Coach (27/10, puro, test): domande, risposte e regia (`Contesto`) dei giorni fatti più quello di oggi, il Gate della settimana prima a inizio settimana; mai i giorni dopo
 │   ├── carta.ts / incroci.ts              # Carta a 360° (puri, test): rombo Mente, Recupero, sette punte; incroci = frasi vere dai dati (sonno vs lucidità, seduta dura vs azioni, carico vs pratiche, testa vs sedute), max 2
 │   ├── cartaServer.ts                     # loadIncroci (per /api/carta e il Coach) + loadCampoPerCoach: blocco "Il Campo" nel contesto del Coach (sedute della settimana, ultima seduta col voto, carico, pausa dolore, zone tese)
@@ -362,6 +367,16 @@ created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 ```
 - `user_day_progress.response` resta l'ULTIMA versione (la leggono Carta, "Le tue risposte", il Coach, il box di W11 e il Gate); qui ogni versione con la data: la prima quando il giorno viene completato con una risposta su un giorno chiave (`/api/giorno`, `registraVersione` fire-and-forget), le altre a ogni "Modifica" (`POST /api/risposte` → `salvaRisposta` in `lib/risposteServer.ts`: solo giorni in `isRispostaChiave`, max `RISPOSTA_MAX` 4000 caratteri, serve la riga del giorno in `user_day_progress` altrimenti `409 giorno_non_aperto`; aggiorna `response`, upsert di `day_reflections`, inserisce la versione). RLS owner-read, scrittura solo service role. Senza la migration tutto funziona ma senza storico (`skipped: 'migration_033'`). `loadRisposte` legge il conteggio per giorno → `versioni` e `aggiornataIl` sulle righe ("Aggiornata il … · N versioni" nel box e in `/risposte`).
 
+### L'esercizio della settimana (migration 037, 31/10)
+```sql
+user_esercizio_fatto        (id, user_id, week_number 1-12, data DATE, created_at)  UNIQUE (user_id, week_number, data)  -- "Fatto oggi"
+user_esercizio_sveglia      (user_id, week_number, ora 'HH:MM', updated_at)        PK (user_id, week_number)          -- solo W5, W6, W8, W10
+esercizio_notifiche_inviate (user_id, data, tipo mattino|sveglia_inizio|sveglia_fine|sera)  PK (user_id, data, tipo)
+profiles.esercizio_notifiche BOOLEAN DEFAULT TRUE
+```
+- RLS owner-read sulle prime due, nessun accesso dal client sulla terza; scrive solo il server (`/api/esercizio`, `/api/cron/esercizio`). La settimana è il `current_week` del percorso, il giorno è quello italiano; spunte e sveglia solo con il banner in vista (G1 della settimana fatto, altrimenti 409).
+- **Il giro ogni minuto** (migration 038): pg_cron + pg_net di Supabase chiamano `GET /api/cron/esercizio` con `CRON_SECRET` letto dal Vault (`fyf_cron_secret`): i cron di Vercel di questo progetto girano una volta al giorno e la sveglia ha l'orario scelto dal ragazzo. Fuori dalle finestre (mattino 08:30-12:00, sera 21:00-23:00, sveglie vicine) il giro esce subito. La riga in `esercizio_notifiche_inviate` si scrive PRIMA dell'invio (niente doppioni); push, e Telegram se la push non arriva. Mattino e sera solo agli utenti attivi (`filterActiveProfiles`), la sveglia sempre; niente a chi è in contenimento o in cancellazione.
+
 ### `user_actions` — "Le tue azioni durante il giorno" (max 5 attive)
 ```sql
 id            UUID PRIMARY KEY
@@ -572,6 +587,7 @@ ID: `941ff642-d437-4ab0-bc87-c6bbb601475b`
 - `Coach Contesto` (text) — usato nel system prompt Coach
 - `Stato` (select: Beta/Attiva/In arrivo)
 - `Pratica Pre Partita` (text) — mostrata nella pagina giorno il giorno PRIMA della partita ("Domani giochi — pratica della sera prima")
+- `Esercizio della settimana` (text, dal 31/10, W1-W12 compilati da Ste) — l'esercizio di presenza nella vita di tutti i giorni: banner in home dopo il G1 della settimana (`mapSettimana.esercizioSettimana`, `components/EsercizioSettimanaCard.tsx`); il testo va anche nella notifica del mattino e nel contesto del Coach
 - `Pratica Giorno Partita` (text, dal 24/10) — mostrata nella pagina giorno il GIORNO della partita ("Oggi giochi"); vuota → nessun box. Da scrivere per le 12 settimane (Ste)
 
 ### Database Giorni (`NOTION_DATABASE_GIORNI`)
@@ -739,6 +755,7 @@ Entrambi i canali (web + Telegram) usano `buildUserContext(userId)` che legge:
 - **Incroci della Carta (29/9):** al massimo due frasi vere dai suoi dati (`lib/incroci.ts`), es. "con meno di 6 ore di sonno la tua lucidità è 4 su 10; con 7 o più sale a 7"
 - **Le sue risposte chiave (22/10, review W11):** blocco "## Le sue risposte chiave" con le parole sue (Protocollo Pressione W4-G6, routine W9-G4, condizioni W10-G6, risposte pronte W11-G2, Protocollo For You W11-G4; dal 26/10 anche i riquadri della Carta: mantra, mappa, firma, le cose senza il pallone, con "nella sua Carta" e fino a 2 versioni precedenti datate sotto ogni riga, `loadVersioniPrecedenti`; `lib/risposteChiave.ts` + `loadRisposteChiave` in `lib/risposteServer.ts`, fail-soft): le ultime 5 riflessioni non bastavano, in W11 il Coach deve richiamare cose scritte in W4. Istruzione nel blocco: citare le SUE parole, non riscriverle; nell'app stanno nella Carta e in "Le tue risposte" (Profilo)
 - **La settimana in corso (27/10, Ste: "il Coach con tutta la settimana in corso, Contesto compreso"):** blocco "## La settimana in corso" (`lib/settimanaCoach.ts`, puro, 5 test in `tests/settimanaCoach.test.ts`; loader `loadSettimanaInCorso` in `lib/coach-ai.ts`, fail-soft, Notion in cache): per ogni giorno FATTO della settimana corrente più quello in cui si trova adesso, la domanda prima della pratica e la Domanda come le ha lette lui (con gli a capo e le opzioni) con le sue risposte, le domande del Gate con le risposte (anche la quarta), e il `Contesto` del giorno come "regia del giorno (per te, non citarla)"; i giorni dopo NON entrano (regola anticipazioni). Nei primi due giorni di una settimana nuova c'è anche il Gate della settimana prima con domande, risposte e regia (`GATE_PRECEDENTE_FINO_A_GIORNI` = 3). Istruzione nel blocco: leggere ogni risposta con la sua domanda («4.» è una scelta tra le opzioni), rispondere a quello che chiede senza aspettare. Tagli: regia 1200, risposta 800, domanda 900 caratteri. Prima il Coach vedeva le ultime 5 riflessioni, 3 intenzioni e i Gate senza domande, e il Contesto solo chiedendolo con il tool. Costo: ~2-3 mila token in più per messaggio (Ste: va bene)
+- **L'esercizio della settimana (31/10):** dopo il blocco della settimana in corso, il testo che vede in home e "Fatto oggi: N su 7" (con l'orario della sveglia nelle settimane che ce l'hanno), solo dopo il G1 della settimana (`esercizioPerCoach`, `loadEsercizio`)
 - **Il Campo (solo con `training_access`):** sedute della settimana fatte/saltate/da recuperare e la prossima, ultima seduta con voto e nota, stato del carico, allenamenti in pausa per dolore (con l'istruzione di chiedere come sta e non dare consigli di allenamento), zone tese ricorrenti
 
 ### Memoria cross-sessione
@@ -769,6 +786,7 @@ La memoria persistente del Coach si basa su:
 
 ### Dashboard (`app/page.tsx`) — quattro card (20/10, Ste: "pratica mentale di oggi, allenamento di oggi, azioni da fare, la tua settimana")
 1. **La pratica mentale di oggi**: hero (unico gradiente) con titolo e minuti da Notion, "Inizia il Giorno N" / "Continua la pratica di oggi" / "Com'è andata oggi?"; **fatta** (il prossimo giorno si apre domattina) → una riga con la spunta "Pratica di oggi: fatta" che porta alla settimana. Resta il "Bentornato" dopo 3+ giorni di assenza e l'hero "Ce l'hai fatta" a percorso finito.
+- **L'esercizio della settimana (31/10)** tra la pratica di oggi e l'allenamento: `EsercizioSettimanaCard` (testo, "Fatto oggi" una volta al giorno, "N su 7", sveglia nelle W5/W6/W8/W10 con avviso se le notifiche non sono attive, "Notifiche attive / spente"); non c'è prima del G1 della settimana.
 2. **L'allenamento di oggi** (dal Campo, `GET /api/training/oggi` → `lib/trainingOggi.ts`, lettura leggera: niente rombo, carico o mese; il piano passa da `applicaResoconti` come nello state, così le proposte del resoconto ci sono): in ordine, il **resoconto da dare** ("Com'è andata ieri con la squadra?" → hub, che apre il foglio), **allenamenti in pausa** per dolore, la **seduta di oggi o da recuperare** (card accent con titolo, durata, blocchi, badge Recupero / Serie facoltative / Serie in più, "Inizia la seduta" → player), oppure una riga: fatta oggi, "Oggi partita", "Oggi con la squadra" (con la prossima seduta dell'app), "La tua settimana non c'è ancora", "Oggi riposo · la prossima è…", "Per questa settimana hai finito". **Senza il Campo**: la riga col lucchetto "Fisico · scopri cos'è" → `/allenamento` (pagina di assaggio); nascosta nei primi 7 giorni.
 3. **Le tue 5 azioni** (`ActionsCard`, non nei primi 7 giorni).
 4. **La tua settimana**: UNA riga di 7 giorni (lunedì-domenica in fuso italiano) che dice tutto: ⚽ partita, seduta con l'app fatta (verde pieno) / prevista (manubrio) / saltata (barrata), S = giorno squadra (calendario o abitudine del setup), pallino sotto = pratica del percorso fatta quel giorno (`completed_at`); sotto "Percorso 3 di 7 · Sedute 1 di 3" e il link alla settimana; tap → calendario. **"Il tuo stato"** (medie dei check-in) è passato nella Carta (`components/StatoRecente.tsx`).
@@ -1248,6 +1266,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `034_set_log_esecuzione.sql` applicata su Supabase (Ste, 26/10): "Com'è venuto?" si salva
 - [x] Migration `035_training_pain_zone.sql` applicata su Supabase (Ste, 26/10, versione corretta con `deleted_at` nel trigger): la zona del dolore si salva
 - [x] Migration `036_training_limitazioni.sql` applicata su Supabase (Ste, 26/10): la sezione "Infortuni e limitazioni" del setup è attiva
+- [ ] Migration `037_esercizio_settimana.sql` (spunte, sveglia, notifiche dell'esercizio) e, dopo aver messo `CRON_SECRET` nel Vault di Supabase come `fyf_cron_secret`, la `038_esercizio_cron.sql` (il giro ogni minuto). Prima l'ok di Ste sulla funzione
 - [ ] Notion, DB Settimane: scrivere `Pratica Giorno Partita` per le 12 settimane (finché è vuota il giorno della partita non mostra nessun box)
 - [ ] Provare i suoni del Reset su iPhone (Safari e PWA): Natura e Focus partono al tocco, girano in loop, si fermano chiudendo; con l'interruttore suoneria su silenzioso e no
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché

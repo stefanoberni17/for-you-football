@@ -7,6 +7,8 @@ import { loadCampoPerCoach, loadIncroci } from '@/lib/cartaServer';
 import { incrociTesto } from '@/lib/incroci';
 import { loadRisposteChiave, loadVersioniPrecedenti } from '@/lib/risposteServer';
 import { risposteChiaveTesto } from '@/lib/risposteChiave';
+import { loadEsercizio } from '@/lib/esercizioServer';
+import { esercizioPerCoach } from '@/lib/esercizioSettimana';
 import { settimanaInCorsoTesto, type GiornoPercorso, type ProgressoGiorno } from '@/lib/settimanaCoach';
 
 export const anthropic = new Anthropic({
@@ -1011,7 +1013,7 @@ export async function buildUserContext(userId: string): Promise<string> {
 
   // Calendario settimanale (dipende da current_week: parte dopo il profilo); insieme il Campo e
   // gli incroci della Carta (29/9: prima il Coach non sapeva niente dell'allenamento nell'app)
-  const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows, versioniPrecedenti, settimanaRaw] = await Promise.all([
+  const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows, versioniPrecedenti, settimanaRaw, esercizio] = await Promise.all([
     supabaseAdmin
       .from('user_weekly_calendar')
       .select('training_days, match_days')
@@ -1028,8 +1030,11 @@ export async function buildUserContext(userId: string): Promise<string> {
     loadVersioniPrecedenti(userId),
     // La settimana in corso con domande, risposte e regia (27/10): una risposta come «4.» ha senso solo con la sua domanda
     loadSettimanaInCorso(userId, currentWeek),
+    // L'esercizio della settimana (31/10): il testo che vede in home e quanti giorni ha spuntato «Fatto oggi»
+    loadEsercizio(userId).catch(() => null),
   ]);
-  const settimanaBlock = sanitizeUntrustedText(settimanaRaw);
+  const settimanaBlock = sanitizeUntrustedText(settimanaRaw)
+    + (esercizio ? esercizioPerCoach({ week: esercizio.week, testo: esercizio.testo, g1Fatto: !!esercizio.g1FattoIl, giorni: esercizio.giorni, fattoOggi: esercizio.fattoOggi, sveglia: esercizio.sveglia.ora }) : '');
   const risposteChiaveBlock = sanitizeUntrustedText(risposteChiaveTesto(risposteChiaveRows, versioniPrecedenti));
 
   // Calcola medie check-in ultimi 7 giorni (pre-calcolate fuori dal template)
