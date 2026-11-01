@@ -10,7 +10,7 @@ import { registraVersione } from '@/lib/risposteServer';
 export const maxDuration = 60;
 
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess } from '@/lib/serverAccess';
+import { provaFino, requirePaidAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +48,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
     if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+      // In prova (1/11): il Gate si apre con il primo pagamento, alla fine della prova
+      return NextResponse.json({ error: 'payment_required', prova_fino: await provaFino(userId) }, { status: 403 });
     }
 
     if (!weekNumber) {
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
     if (!(await requirePaidAccess(userId))) {
-      return NextResponse.json({ error: 'payment_required' }, { status: 403 });
+      return NextResponse.json({ error: 'payment_required', prova_fino: await provaFino(userId) }, { status: 403 });
     }
     const wd = parseWeekDay(body.weekNumber, GATE_DAY);
     // Tutte le domande del Gate (da W6 sono quattro): quante sono lo dice Notion (in cache);

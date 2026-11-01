@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 035 (la 034 `training_set_logs.esecuzione` e la 035 `profiles.training_pain_zone/_since/_until` applicate da Ste il 26/10 sera, con il trigger `protect_server_columns` che tiene anche `deleted_at`) la 036 (`profiles.training_limitazioni`, infortuni e limitazioni nel setup, applicata da Ste il 26/10 sera) e la 037 (l'esercizio della settimana: `user_esercizio_fatto`, `esercizio_notifiche_inviate`, `profiles.esercizio_notifiche`, applicata da Ste l'1/11). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 035 (la 034 `training_set_logs.esecuzione` e la 035 `profiles.training_pain_zone/_since/_until` applicate da Ste il 26/10 sera, con il trigger `protect_server_columns` che tiene anche `deleted_at`) la 036 (`profiles.training_limitazioni`, infortuni e limitazioni nel setup, applicata da Ste il 26/10 sera) e la 037 (l'esercizio della settimana: `user_esercizio_fatto`, `esercizio_notifiche_inviate`, `profiles.esercizio_notifiche`, applicata da Ste l'1/11). Da applicare prima di vendere il Mentale: la 038 (`app_settings`, `profiles.piano/trial_ends_at/stripe_price_id`, stati `trialing` e `unpaid`). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -64,7 +64,7 @@ for-you-football/
 │   ├── risposte/page.tsx                  # "Le tue risposte" (22/10): tutto quello che ha scritto nei giorni e nei Gate, per settimana, con le risposte chiave in evidenza; dal Profilo e dai giorni di W11
 │   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
-│   ├── termini/page.tsx                   # Termini di servizio definitivi (9/10/2026, TERMS_VERSION '2026-10-09'): 14 sezioni, recesso 14 giorni, legge italiana
+│   ├── termini/page.tsx                   # Termini di servizio (TERMS_VERSION '2026-11-01': sezione 6 riscritta per l'abbonamento al Mentale, prova, rinnovo, disdetta, pagamenti non riusciti; prima 9/10): 14 sezioni, recesso 14 giorni, legge italiana
 │   ├── privacy/page.tsx                   # Privacy Policy definitiva (9/10/2026, PRIVACY_VERSION '2026-10-09'): titolare Stefano Berni, dati per categoria, AI, sicurezza, fornitori, tempi, diritti
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
 │   └── api/
@@ -79,6 +79,7 @@ for-you-football/
 │       ├── esercizio/route.ts             # L'esercizio della settimana (31/10): GET stato del banner; POST { fatto: true } | { notifiche: boolean } (migration 037, fallback `skipped: 'migration_037'`)
 │       ├── risposte/route.ts              # GET → le risposte scritte nel percorso (giorni + Gate), ?chiavi=1 solo le chiave; POST { week, day, testo } → modifica una risposta chiave con versione datata (24/10; lib/risposteServer.ts)
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
+│       ├── stripe/{create-checkout,webhook,portal,subscription,offerta}/route.ts  # Abbonamento al Mentale (1/11): checkout con prova, webhook, portale, stato, offerta e lista d'attesa
 │       ├── telegram/route.ts              # POST → webhook bot Telegram (+ handler /start deep-link)
 │       ├── telegram/link/route.ts         # POST → genera codice deep-link collegamento (auth)
 │       ├── training/plan/adatta/route.ts  # POST { plan_id } → M8 (26/10): il calendario è cambiato, adatta la settimana senza Claude (lib/trainingCalendario + adattaAlCalendario); piano nuovo append-only fuori dal tetto delle rigenerazioni
@@ -143,6 +144,8 @@ for-you-football/
 │   ├── clientCache.ts                     # Cache sul dispositivo SOLO per i contenuti Notion (settimane, giorno, schede SOS): TTL 30', svuotata al logout, mai stato utente
 │   ├── events.ts                          # logEvent(userId, event, meta) → onboarding_events (server, fire-and-forget) + whitelist CLIENT_EVENTS
 │   ├── registrazione.ts / betaCode.ts     # Dopo l'auth: age gate (`controllaEta`), campi (`campiDalBody`), profilo + referral + snapshot + consensi (`salvaProfiloRegistrazione`) per email+password e Google; codici beta
+│   ├── abbonamento.ts / appSettings.ts    # Il Mentale ad abbonamento (1/11, puro + loader, 8 test): prezzi 19/29, stati Stripe, `app_settings` (prezzo per chi entra, iscrizioni, tetto, prova), `esitoCheckout`, email di fine prova
+│   ├── emailServer.ts                     # `sendEmail` via Resend (promemoria di fine prova)
 │   ├── consent.ts                         # Consenso legale: getLatestAcceptedVersion + needsReacceptance (server-only)
 │   ├── accountDelete.ts                   # Cancellazione account in tre passi: sospendi (deleted_at, rate in pausa), riattiva, cancella definitivamente (cron, 60 giorni)
 │   ├── activity.ts                        # filterActiveProfiles: esclude dai messaggi proattivi (cron) gli utenti inattivi >30gg (PROACTIVE_INACTIVITY_DAYS) — FAIL-OPEN
@@ -246,9 +249,13 @@ SAFETY_ALERT_TELEGRAM_CHAT_ID=   # chat_id Telegram personale di Ste: il safety 
 # Stripe (billing — LIVE in produzione)
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_ID_SEASON_ONETIME=price_...       # one-time: €69 founder (dal 01/09: €99)
-STRIPE_PRICE_ID_SEASON_INSTALLMENTS=price_...  # rata mensile: €29 (dal 01/09: €39)
+STRIPE_PRICE_ID_MENTALE_FONDATORI=price_...    # Mentale 19 €/mese, fondatori (dal 1/11)
+STRIPE_PRICE_ID_MENTALE=price_...              # Mentale 29 €/mese, listino
+STRIPE_PRICE_ID_SEASON_INSTALLMENTS=price_...  # rate Season 1 vecchie (solo per chi le sta pagando)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+NEXT_PUBLIC_PROVA_CON_CARTA=1                  # prova di 7 giorni con la carta (spento = W1 gratis senza carta)
+STRIPE_MANAGED_PAYMENTS=                       # 1 solo se Stripe ha approvato Managed Payments
+STRIPE_TERMS_CONSENT=                          # 1 dopo aver messo l'URL dei termini nel dashboard
 ```
 
 ---
@@ -463,40 +470,43 @@ channel          TEXT NOT NULL   -- 'registration' | 'reaccept'
 
 ## Stripe — Integrazione pagamenti
 
-### Modello (founder, deciso 9 giugno 2026)
+### Modello (dal 1/11/2026: il Mentale ad abbonamento)
 
-**Acquisto Season 1** (non abbonamento aperto): l'utente compra Season 1 e resta sua per sempre.
-- **One-time:** €69 founder / €99 dal 01/09 (`STRIPE_PRICE_ID_SEASON_ONETIME`, checkout `mode: 'payment'`, solo card) → webhook setta `season1_access=true`
-- **3 rate mensili:** €29×3 founder / €39×3 dal 01/09 (`STRIPE_PRICE_ID_SEASON_INSTALLMENTS`, price recurring + **Subscription Schedule** `iterations: 3, end_behavior: 'cancel'` agganciata dal webhook via `ensureInstallmentSchedule()` in `lib/stripe.ts`) → `subscription_status='active'` durante le rate; alla 3ª rata pagata (`invoice.paid`, conteggio assoluto da Stripe, replay-safe) → `season1_access=true`; la sub si cancella da sola dopo la 3ª senza togliere l'accesso
-- Rate interrotte prima della 3ª (fallimento o cancel volontario) → NIENTE `season1_access`
-- Switch prezzi a settembre: si cambiano solo le 2 env `STRIPE_PRICE_ID_SEASON_*`, zero codice
-- Promo codes DISABILITATI al checkout (accessi gratis solo via `is_beta_free`)
-- Colonne DB: `profiles.season1_access BOOLEAN` + `profiles.installments_paid INT` (migration `004_season1.sql`, con policy RLS aggiornata che blocca auto-grant client)
+Listino di Ste (Notion «Monetizzazione: decisioni chiuse», 1/11). Regole pure in `lib/abbonamento.ts` (8 test in `tests/abbonamento.test.ts`), migration `038_mentale_abbonamento.sql`.
+- **Mentale 29 €/mese** (`STRIPE_PRICE_ID_MENTALE`); **fondatori 19 €/mese** (`STRIPE_PRICE_ID_MENTALE_FONDATORI`) nel mese di lancio, **bloccato finché resta abbonato** (il Price resta sulla subscription; chi disdice e torna paga il listino). Il prezzo per chi entra adesso lo decide `app_settings.mentale_prezzo` (`fondatori` | `listino`), non il codice. Niente prezzi barrati.
+- **Prova di 7 giorni con la carta** (`trial_period_days` da `app_settings.prova_giorni`, `payment_method_collection: 'always'`), **una sola per persona** (`profiles.trial_ends_at` non nullo = prova usata). Accesa solo con `NEXT_PUBLIC_PROVA_CON_CARTA=1`: in prova si apre la settimana 1 (G1-G6, i 20 messaggi del Coach in app), il Gate 1 e le settimane dopo dal primo pagamento; con il flag spento la settimana 1 resta gratis per chi è registrato e il checkout parte senza prova. Tre giorni prima della fine (`customer.subscription.trial_will_end`) email (`lib/emailServer.ts`, Resend, testo `emailFineProva`: data, prezzo, come disdire) e push.
+- **Codici promozionali** ammessi al checkout (`allow_promotion_codes`): solo primo mese o al massimo 3 mesi, mai per sempre. La durata la decide il coupon su Stripe ("once" o "repeating" 3 mesi).
+- **Tetto iscritti** (`app_settings.tetto_iscritti`: 25 la prima settimana, poi 50; null = senza) sugli abbonamenti vivi al Mentale (`trialing`, `active`, `past_due`, `contaIscrittiVivi`) e **iscrizioni aperte** (`app_settings.iscrizioni_aperte`): pieno o chiuso → `/pricing` mostra "Avvisami quando riapre" (evento `lista_attesa`).
+- **Doppio abbonamento bloccato**: chi ha già un abbonamento vivo riceve 409 `gia_abbonato` e il pricing apre il portale; beta e Season 1 non possono abbonarsi (400).
+- **Tolleranza 7 giorni sui pagamenti non riusciti**: `past_due` tiene l'accesso mentre Stripe riprova (Smart Retries 7 giorni), poi `unpaid` (o `canceled`, come è impostato su Stripe) chiude.
+- **Season 1 non è più in vendita** (`create-checkout` risponde 410 ai piani `onetime` e `installments`): chi l'ha comprata resta com'è (`season1_access`), chi sta pagando le rate continua (`ensureInstallmentSchedule`, `invoice.paid` → alla 3ª rata `season1_access`). Il webhook tiene separate le due cose: gli eventi di una subscription diversa da quella salvata nel profilo non lo riscrivono (`eventoDelProfilo`).
+- **Managed Payments** (Stripe è il venditore e calcola le tasse) dietro `STRIPE_MANAGED_PAYMENTS=1`, con la versione API `2025-03-31.basil` per richiesta; senza, indirizzo di fatturazione obbligatorio e niente tasse automatiche.
+- **Allenamenti 49 € e Completo 59 €**: a dicembre, non ancora nel codice (`profiles.piano` è già pronta).
+- `app_settings` (chiave → JSONB, RLS senza policy, letta dal server con cache 60", `lib/appSettings.ts`): si cambia dal SQL editor, senza deploy (esempi in fondo alla 038).
 
 Il time-gate nei contenuti (`lib/dayUnlockLogic.ts`) forza comunque il ritmo 1 giorno/giorno.
 
-### Flusso registrazione (settimana gratis, dal 14/9)
+### Flusso registrazione (prova con la carta, dal 1/11)
 
 ```
-register (step 1: account) → register (step 2: profilo atleta)
-  → conferma email → login → onboarding (se !onboarding_completed) → dashboard
-  → W1 G1-G6 GRATIS (check-in, Card, test, azioni, SOS inclusi)
-  → /gate/1 → 403 payment_required → schermata "Hai finito la settimana 1" → /pricing?from=gate
-  → Stripe Checkout → webhook → home "Attivazione in corso…" → Gate, W2-12, Coach
+register → conferma email → login → onboarding → dashboard
+  → con NEXT_PUBLIC_PROVA_CON_CARTA=1: il primo giorno manda a /pricing → "Inizia la prova" → Stripe Checkout (carta)
+    → webhook trialing → W1 G1-G6 (check-in, Card, test, azioni, SOS, 20 messaggi del Coach)
+  → /gate/1 in prova → schermata "La prova finisce il …" (il Gate si apre con il primo pagamento)
+  → giorno 8: primo addebito → active → Gate, W2-12, Coach anche su Telegram
 ```
-"Si paga per continuare, non per iniziare" (Ste, 13/9). `FREE_WEEKS = 1` in `lib/constants.ts`.
+Con il flag spento vale il flusso di prima: W1 gratis, al Gate 1 → `/pricing?from=gate`. `FREE_WEEKS = 1` in `lib/constants.ts`.
 
 ### Access gating
 
-L'unica funzione di verità è `hasActiveAccess(profile)` in `lib/checkAccess.ts`:
-- `is_beta_free=true` → sempre accesso (beta tester + comp manuale)
-- `season1_access=true` → Season 1 acquistata (one-time o 3 rate completate)
-- `subscription_status='active'` → rate in corso
-- altrimenti → no access → redirect `/pricing`
+Funzioni in `lib/checkAccess.ts` (pure, client-safe):
+- `hasActiveAccess(profile)` = accesso pieno: `is_beta_free` · `season1_access` · `subscription_status` `active` o `past_due` (tolleranza). `trialing`, `unpaid`, `canceled`, `none` no.
+- `inProva(profile)` = `trialing`; `haAccessoOProva` = una delle due.
+- `canAccessWeek(profile, week)` = accesso pieno, OPPURE `week <= FREE_WEEKS` con la prova in corso (o, con `NEXT_PUBLIC_PROVA_CON_CARTA` spento, per tutti i registrati).
+- `isPaidRoute(pathname)` = `/chat`, `/week-complete/*`, `/giorno` e `/settimana` oltre `FREE_WEEKS`; `deveAndareAlPaywall(pathname, profile)` è quello che usa `PaywallGuard` (con il flag acceso anche `/giorno/1/*` e `/settimana/1` senza prova).
 
-**Settimana gratis (14/9):** `canAccessWeek(profile, week)` = pagante OPPURE `week <= FREE_WEEKS`; `isPaidRoute(pathname)` = `/chat`, `/week-complete/*`, `/giorno` e `/settimana` oltre `FREE_WEEKS`.
-**Client-side:** login e home NON rimbalzano più a `/pricing` (solo `?checkout=success` non attivato → `/pricing?checkout=pending`). `PaywallGuard` agisce solo sulle rotte a pagamento (esclusa `/chat`, che mostra il messaggio in pagina). Il gate (`app/gate/[week]`) su 403 mostra la schermata "Hai finito la settimana N" con CTA `/pricing?from=gate`. `ChatBot` su 403 mostra il messaggio del Coach + card "Sblocca Season 1". La card Telegram su "Giorno 1 completato" e il `TelegramRecoveryBanner` compaiono solo a chi ha Season 1 (il Coach è a pagamento).
-**Server-side:** `requireWeekAccess(userId, week)` su `/api/giorno` (GET/POST/PATCH) e `/api/settimana`; `requirePaidAccess(userId)` (server-only, riusa `hasActiveAccess`) → `403 payment_required` su `/api/gate`, `/api/telegram`, `/api/telegram/link`. **Coach in chat: `FREE_COACH_MESSAGES = 20` messaggi gratis (dall'8/10, prima 10; solo in app: Telegram resta per chi paga, anche durante la prova)** (`/api/chat` conta gli eventi `coach_message_sent` con `meta.channel = 'web'` dell'utente non pagante; oltre → 403 con `reason: 'free_limit'` e il testo del Coach; la risposta porta `freeRemaining`, null per chi ha Season 1); `/api/onboarding/coach-welcome` gratis (il benvenuto in home vale anche in W1). Gratis (solo login): `/api/settimane`, `/api/checkin*`, `/api/actions*`, `/api/reflection`, `/api/calendar`, `/api/difficolta`. Soft se `STRIPE_SECRET_KEY` assente.
+**Client-side:** `PaywallGuard` agisce solo sulle rotte a pagamento (esclusa `/chat`, che mostra il messaggio in pagina). Il gate (`app/gate/[week]`) su 403 mostra "Hai finito la settimana N" con CTA `/pricing?from=gate`, oppure in prova "La prova finisce il …" (`prova_fino`). `ChatBot` su 403 mostra il messaggio del Coach + "Continua il percorso". Il ritorno da Stripe (`/?checkout=success`) aspetta il webhook ("Attivazione in corso…") finché il profilo non ha accesso o prova. La card Telegram e il `TelegramRecoveryBanner` solo con accesso pieno.
+**Server-side:** `requireWeekAccess(userId, week)` su `/api/giorno` e `/api/settimana`; `requirePaidAccess(userId)` (riusa `hasActiveAccess`) → `403 payment_required` su `/api/gate` (con `prova_fino` in prova), `/api/telegram`, `/api/telegram/link`. **Coach in chat: `FREE_COACH_MESSAGES = 20` messaggi nella prima settimana (solo in app: Telegram resta per chi paga, anche durante la prova)** (`/api/chat` conta gli eventi `coach_message_sent` con `meta.channel = 'web'` di chi non ha accesso pieno; oltre → 403 `reason: 'free_limit'`; la risposta porta `freeRemaining`, null con accesso pieno); `/api/onboarding/coach-welcome` gratis. Gratis (solo login): `/api/settimane`, `/api/checkin*`, `/api/actions*`, `/api/reflection`, `/api/calendar`, `/api/difficolta`. Soft se `STRIPE_SECRET_KEY` assente.
 
 ### Auth API (hardening giugno 2026)
 
@@ -508,41 +518,46 @@ L'unica funzione di verità è `hasActiveAccess(profile)` in `lib/checkAccess.ts
 
 | Evento | Azione DB |
 |--------|-----------|
-| `checkout.session.completed` (mode payment) | `season1_access=true` + `stripe_customer_id` (se `payment_status='paid'`) |
-| `checkout.session.completed` (mode subscription) | `status='active'` + ids + aggancia Subscription Schedule 3 rate |
-| `invoice.paid` | `installments_paid` = count assoluto invoice paid; se ≥3 → `season1_access=true` |
-| `customer.subscription.updated` | sync status (active / past_due / canceled) |
-| `customer.subscription.deleted` | `status='canceled'` (accesso resta se `season1_access`) |
-| `invoice.payment_failed` | `status='past_due'` (accesso bloccato immediato) |
+| `checkout.session.completed` (Mentale) | `subscription_status` dalla subscription (`trialing` o `active`), `piano='mentale'`, `trial_ends_at`, `stripe_price_id`, ids; evento `trial_started` o `payment_completed`. Un errore del DB fa rispondere 500 (Stripe riprova) |
+| `checkout.session.completed` (mode payment, Season 1 vecchia) | `season1_access=true` (se `payment_status='paid'`) |
+| `checkout.session.completed` (rate Season 1 vecchie) | `status='active'` + aggancia la Subscription Schedule 3 rate |
+| `invoice.paid` | Mentale: evento `payment_completed` se l'importo è > 0; rate Season 1: `installments_paid` assoluto, ≥ 3 → `season1_access=true` |
+| `customer.subscription.updated` | stato, prezzo e fine prova della subscription del profilo (fine prova senza pagamento → `trial_canceled`) |
+| `customer.subscription.deleted` | `status='canceled'` (accesso resta se `season1_access`), `trial_canceled` o `subscription_canceled` |
+| `customer.subscription.trial_will_end` | email + push "la prova finisce il …" (evento `trial_reminder_sent`) |
+| `invoice.payment_failed` | `status='past_due'` (l'accesso resta: tolleranza) |
 
-Idempotenza via `stripe_events` table. Runtime: `nodejs` (serve `crypto` per signature verify).
-⚠️ L'endpoint webhook sul dashboard Stripe deve includere anche **`invoice.paid`** (aggiunto a giugno 2026).
+Gli eventi di una subscription diversa da `profiles.stripe_subscription_id` non toccano il profilo (`eventoDelProfilo`). Idempotenza via `stripe_events`. Runtime: `nodejs`.
+⚠️ L'endpoint webhook sul dashboard Stripe deve avere questi sei eventi (`customer.subscription.trial_will_end` è nuovo dal 1/11).
 
 ### Accesso gratuito (comp / beta / partner)
 
 - **`is_beta_free=true`**: bypass totale paywall. Set manuale via SQL (`UPDATE profiles SET is_beta_free=true WHERE user_id='...'`) o codici `?beta=` in registrazione. Riservato a beta tester, partner, amici.
-- Promotion Codes Stripe NON attivi al checkout (scelta deliberata: il prezzo founder è già lo sconto). Riattivabili con `allow_promotion_codes: true` in `create-checkout`.
+- Codici promozionali Stripe attivi al checkout dal 1/11 (solo primo mese o al massimo 3 mesi).
 
 ### File Stripe
 
 | File | Scopo |
 |------|-------|
-| `lib/stripe.ts` | Client Stripe server + `getOrCreateStripeCustomer` + `ensureInstallmentSchedule` + `isStripeEnabled()` |
-| `lib/checkAccess.ts` | `hasActiveAccess(profile)` — check paywall (pure, client-safe) |
-| `lib/serverAccess.ts` | `requirePaidAccess(userId)` — check paywall server-side (service role) |
+| `lib/abbonamento.ts` | Regole pure del Mentale: prezzi, stati, impostazioni, prova, esito del checkout, email di fine prova |
+| `lib/appSettings.ts` | `loadImpostazioni()` (app_settings, cache 60") + `contaIscrittiVivi()` |
+| `lib/emailServer.ts` | `sendEmail` via Resend (fail-soft) |
+| `lib/stripe.ts` | Client Stripe server + `getOrCreateStripeCustomer` + `ensureInstallmentSchedule` (rate vecchie) + `isStripeEnabled()` / `hasStripeKey()` / `managedPayments()` |
+| `lib/checkAccess.ts` | `hasActiveAccess`, `inProva`, `canAccessWeek`, `deveAndareAlPaywall` (pure, client-safe) |
+| `lib/serverAccess.ts` | `requirePaidAccess(userId)`, `provaFino(userId)` (service role) |
 | `lib/authFetch.ts` | fetch client con Bearer token Supabase (tutte le API interne) |
-| `app/api/stripe/create-checkout/route.ts` | POST {plan: onetime\|installments} → Checkout Session |
-| `app/api/stripe/webhook/route.ts` | Signature verify + 5 handler idempotenti |
-| `app/api/stripe/portal/route.ts` | POST → Billing Portal URL |
-| `app/api/stripe/subscription/route.ts` | GET → stato accesso + rate pagate + next billing (per UI) |
-| `app/pricing/page.tsx` | Landing founder: €69 one-time / €29×3 + FAQ |
-| `components/SubscriptionSection.tsx` | Card "Il tuo accesso" nella pagina `/profilo` |
-| `docs/migrations/002_stripe.sql` | Migration schema (ALTER profiles + stripe_events + RLS) |
-| `docs/migrations/004_season1.sql` | Migration season1_access + installments_paid + RLS aggiornata |
+| `app/api/stripe/create-checkout/route.ts` | POST {plan: 'mentale', payer_email?} → Checkout Session (410 per i piani Season 1) |
+| `app/api/stripe/offerta/route.ts` | GET → prezzo per chi entra adesso, giorni di prova, se può abbonarsi; POST {lista_attesa} → evento |
+| `app/api/stripe/webhook/route.ts` | Signature verify + handler idempotenti |
+| `app/api/stripe/portal/route.ts` | POST → Billing Portal URL (disdetta, carta, ricevute) |
+| `app/api/stripe/subscription/route.ts` | GET → stato, piano, prezzo, fine prova, prossimo addebito, disdetta programmata |
+| `app/pricing/page.tsx` | "Il Mentale": prezzo, prova, FAQ, CTA "Inizia la prova" / "Abbonati"; già abbonato → portale; pieno → lista d'attesa |
+| `components/SubscriptionSection.tsx` | Card "Il tuo accesso" in `/profilo` (in prova, attivo, pagamento non riuscito, sospeso) |
+| `docs/migrations/002_stripe.sql`, `004_season1.sql`, `038_mentale_abbonamento.sql` | Schema billing |
 
 ### Feature flag
 
-`isStripeEnabled()` in `lib/stripe.ts` ritorna `true` solo se `STRIPE_SECRET_KEY` presente. Utile per disabilitare temporaneamente (staging senza env vars).
+`isStripeEnabled()` = `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` + almeno un Price del Mentale in env. `hasStripeKey()` (solo la chiave) per portale e cancellazione account. `NEXT_PUBLIC_PROVA_CON_CARTA=1` accende la prova con la carta, `STRIPE_MANAGED_PAYMENTS=1` Managed Payments, `STRIPE_TERMS_CONSENT=1` l'accettazione dei Termini nel checkout.
 
 ### Sviluppo locale
 
@@ -1266,6 +1281,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `035_training_pain_zone.sql` applicata su Supabase (Ste, 26/10, versione corretta con `deleted_at` nel trigger): la zona del dolore si salva
 - [x] Migration `036_training_limitazioni.sql` applicata su Supabase (Ste, 26/10): la sezione "Infortuni e limitazioni" del setup è attiva
 - [x] Migration `037_esercizio_settimana.sql` applicata su Supabase (Ste, 1/11): spunte e promemoria dell'esercizio della settimana; i due cron sono in `vercel.json`
+- [ ] **Mentale ad abbonamento (1/11):** applicare la migration `038_mentale_abbonamento.sql`; su Stripe prodotto "Mentale" con due Price mensili (19 € fondatori, 29 €), portale con disdetta a fine periodo, Smart Retries 7 giorni poi "non pagato", ricevute e avvisi email, endpoint webhook con `customer.subscription.trial_will_end`; su Vercel `STRIPE_PRICE_ID_MENTALE_FONDATORI`, `STRIPE_PRICE_ID_MENTALE`, `NEXT_PUBLIC_PROVA_CON_CARTA=1`; a fine mese di lancio `mentale_prezzo = "listino"` e `tetto_iscritti = 50` in `app_settings`
 - [ ] Notion, DB Settimane: scrivere `Pratica Giorno Partita` per le 12 settimane (finché è vuota il giorno della partita non mostra nessun box)
 - [ ] Provare i suoni del Reset su iPhone (Safari e PWA): Natura e Focus partono al tocco, girano in loop, si fermano chiudendo; con l'interruttore suoneria su silenzioso e no
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché

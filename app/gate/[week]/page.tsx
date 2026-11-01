@@ -11,6 +11,7 @@ import RisposteChiaveBox from '@/components/RisposteChiaveBox';
 import { chiaviPerGiorno } from '@/lib/risposteChiave';
 import { Check, Key, PenLine, Target } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
+import { dataLunga } from '@/lib/abbonamento';
 
 export default function GatePage() {
   const params = useParams();
@@ -19,6 +20,7 @@ export default function GatePage() {
 
   const [loading, setLoading] = useState(true);
   const [paywall, setPaywall] = useState(false);
+  const [provaFino, setProvaFino] = useState<string | null>(null); // in prova (1/11): il Gate si apre con il primo pagamento
   const [userId, setUserId] = useState('');
   const [giorno, setGiorno] = useState<any>(null);
   const [questions, setQuestions] = useState<string[]>([]);
@@ -63,6 +65,7 @@ export default function GatePage() {
       // Settimana gratis: il gate è il primo punto a pagamento ("si paga per continuare").
       if (res.status === 403 && data?.error === 'payment_required') {
         setPaywall(true);
+        setProvaFino(typeof data?.prova_fino === 'string' ? data.prova_fino : null);
         setLoading(false);
         return;
       }
@@ -165,12 +168,20 @@ export default function GatePage() {
           <p className="text-forest-100 text-body leading-relaxed mb-2">
             Sette giorni, uno strumento tuo. Il Gate è il momento in cui lo fissi: tre domande che chiudono la settimana e aprono la prossima.
           </p>
-          <p className="text-white text-body leading-relaxed mb-8">
-            Da qui in avanti è Season 1: il Gate, le settimane 2-12 e il Coach sempre con te.
-          </p>
-          <Button variant="inverse" size="lg" fullWidth onClick={() => router.push('/pricing?from=gate')}>
-            Sblocca Season 1
-          </Button>
+          {provaFino ? (
+            <p className="text-white text-body leading-relaxed mb-8">
+              La tua prova finisce {(dataLunga(provaFino) ?? 'tra pochi giorni').toLowerCase()}: con il primo pagamento si aprono il Gate, le settimane 2-12 e il Coach sempre con te. Torna quel giorno.
+            </p>
+          ) : (
+            <p className="text-white text-body leading-relaxed mb-8">
+              Da qui in avanti è l&apos;abbonamento al Mentale: il Gate, le settimane 2-12 e il Coach sempre con te.
+            </p>
+          )}
+          {!provaFino && (
+            <Button variant="inverse" size="lg" fullWidth onClick={() => router.push('/pricing?from=gate')}>
+              Continua il percorso
+            </Button>
+          )}
           <Button variant="ghost" onClick={() => router.push(`/settimana/${weekNumber}`)} className="mt-3 text-forest-100">
             Torna alla settimana
           </Button>

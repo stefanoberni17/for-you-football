@@ -1,11 +1,13 @@
 import { FileText } from 'lucide-react';
 import { BackButton, Card } from '@/components/ui';
 import { ACCOUNT_GRACE_DAYS, MIN_AGE, SEASON_INSTALLMENTS } from '@/lib/constants';
+import { MENTALE_PREZZO_FONDATORI, MENTALE_PREZZO_LISTINO, PROVA_GIORNI_DEFAULT } from '@/lib/abbonamento';
 
 export const metadata = { title: 'Termini di servizio — For You Football' };
 
 /**
- * Termini di servizio definitivi (9/10/2026, versione TERMS_VERSION in lib/constants.ts).
+ * Termini di servizio definitivi (9/10/2026; prezzi e pagamenti riscritti il 1/11/2026 per il Mentale ad abbonamento;
+ * versione TERMS_VERSION in lib/constants.ts).
  * Linguaggio piano, Codice del consumo e GDPR come riferimento. Quando il testo cambia in modo
  * sostanziale: aggiornare TERMS_VERSION → ri-accettazione (ConsentReacceptSheet).
  * Il recesso di 14 giorni è quello di legge per i contenuti digitali: nel checkout non chiediamo
@@ -37,7 +39,7 @@ export default function TerminiPage() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-2 text-forest-400" aria-hidden><FileText size={36} /></div>
           <h1 className="font-display text-title-1 font-bold text-app">Termini di servizio</h1>
-          <p className="text-muted text-body-sm mt-1">For You Football · versione del 9 ottobre 2026</p>
+          <p className="text-muted text-body-sm mt-1">For You Football · versione del 1 novembre 2026</p>
         </div>
 
         <Card className="space-y-8 text-body text-app leading-relaxed">
@@ -111,37 +113,44 @@ export default function TerminiPage() {
           </Sez>
 
           <Sez n="6" title="Prezzi e pagamenti">
-            <Punto title="Cosa è gratis">
-              Registrarsi, la prima settimana del percorso con le sue pratiche, il check-in e un numero limitato di messaggi al Coach in app.
-            </Punto>
             <Punto title="Cosa si paga">
-              Per continuare oltre la settimana gratuita serve un acquisto. I prezzi in vigore sono scritti in chiaro nella pagina Prezzi e nel checkout prima di
-              pagare, IVA inclusa. Oggi: Season 1 in un pagamento unico oppure in {SEASON_INSTALLMENTS} rate mensili. Se in futuro offriremo un abbonamento mensile
-              o un periodo di prova, prima del pagamento vedrai prezzo, durata della prova, data del primo addebito e come disdire.
+              Il percorso mentale (Season 1, Play Free) è un abbonamento mensile al «Mentale». I prezzi in vigore sono scritti in chiaro nella pagina Prezzi e
+              nel checkout prima di pagare, IVA inclusa: oggi {MENTALE_PREZZO_LISTINO} € al mese. Chi entra nel mese di lancio paga {MENTALE_PREZZO_FONDATORI} € al
+              mese, bloccati finché resta iscritto: se disdice e torna più avanti, paga il prezzo di quel momento.
             </Punto>
-            <Punto title="Rate">
-              Scegliendo le rate, l’accesso vale finché le rate vengono pagate; con la terza rata pagata Season 1 è tua per sempre. Se interrompi prima della terza
-              (pagamento fallito o disdetta), l’accesso si chiude e Season 1 non resta acquistata. Un pagamento fallito viene ritentato per alcuni giorni; se non
-              va a buon fine, l’accesso si sospende finché non aggiorni il metodo di pagamento.
+            <Punto title="La prova">
+              L’abbonamento parte con {PROVA_GIORNI_DEFAULT} giorni di prova: inserisci la carta, per quei giorni non paghi niente e usi la prima settimana del
+              percorso, il check-in e un numero limitato di messaggi al Coach in app. Prima della fine della prova ti scriviamo con la data del primo addebito.
+              Se disdici prima della fine, non paghi niente; altrimenti l’abbonamento parte da solo e si aprono il Gate, le settimane successive e il Coach senza
+              limiti. La prova vale una volta per persona.
             </Punto>
-            <Punto title="Abbonamenti">
-              Un abbonamento si rinnova da solo alla scadenza di ogni periodo finché non lo disdici. Si disdice in qualsiasi momento dal portale «Gestisci abbonamento»
-              nel Profilo: resta attivo fino alla fine del periodo già pagato, poi si ferma senza altri addebiti.
+            <Punto title="Rinnovo e disdetta">
+              L’abbonamento si rinnova da solo ogni mese finché non lo disdici. Si disdice in qualsiasi momento dal portale «Gestisci abbonamento» nel Profilo:
+              resta attivo fino alla fine del mese già pagato, poi si ferma senza altri addebiti.
+            </Punto>
+            <Punto title="Pagamenti non riusciti">
+              Se un pagamento non va a buon fine, Stripe lo ritenta per alcuni giorni e intanto l’accesso resta. Se anche l’ultimo tentativo non riesce,
+              l’accesso si sospende finché non aggiorni il metodo di pagamento.
+            </Punto>
+            <Punto title="Chi ha già Season 1">
+              Chi ha acquistato Season 1 prima del 1 novembre 2026, in un pagamento unico o in {SEASON_INSTALLMENTS} rate, la tiene alle condizioni di
+              quell’acquisto: con la terza rata pagata Season 1 è sua per sempre; se le rate si interrompono prima, l’accesso si chiude.
             </Punto>
             <Punto title="Pagamento e ricevute">
               I pagamenti passano da Stripe. Noi non vediamo né conserviamo il numero della carta. La ricevuta arriva all’email inserita nel checkout.
-              I codici promozionali, quando ci sono, si applicano nel checkout e valgono per il periodo indicato: finito lo sconto, il prezzo torna quello di listino.
+              I codici promozionali, quando ci sono, si applicano nel checkout e valgono per il periodo indicato (il primo mese, o al massimo tre mesi): finito
+              lo sconto, il prezzo torna quello del tuo abbonamento.
             </Punto>
             <Punto title="Prezzi che cambiano">
-              Se cambiamo un prezzo, vale per i nuovi acquisti. Per un abbonamento in corso te lo comunichiamo almeno 30 giorni prima: puoi disdire prima che
-              il nuovo prezzo si applichi.
+              Se cambiamo un prezzo, vale per i nuovi abbonamenti. Per un abbonamento in corso te lo comunichiamo almeno 30 giorni prima: puoi disdire prima che
+              il nuovo prezzo si applichi. Il prezzo bloccato di chi è entrato nel mese di lancio non cambia finché resta iscritto.
             </Punto>
           </Sez>
 
           <Sez n="7" title="Diritto di ripensarci (recesso)">
             <p>
-              Hai <strong>14 giorni</strong> dall’acquisto per cambiare idea: scrivi a info@foryoufootball.it e ti rimborsiamo quanto pagato (per le rate, le rate
-              pagate), sullo stesso metodo di pagamento. L’accesso ai contenuti a pagamento si chiude. Passati i 14 giorni il pagamento non è rimborsabile, ma
+              Hai <strong>14 giorni</strong> dall’inizio dell’abbonamento (la prova compresa) o dall’acquisto per cambiare idea: scrivi a info@foryoufootball.it e
+              ti rimborsiamo quanto pagato in quei giorni (per le rate, le rate pagate), sullo stesso metodo di pagamento. L’accesso ai contenuti a pagamento si chiude. Passati i 14 giorni il pagamento non è rimborsabile, ma
               puoi sempre disdire o cancellare l’account.
             </p>
           </Sez>

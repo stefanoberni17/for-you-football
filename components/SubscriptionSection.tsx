@@ -7,13 +7,19 @@ import { Button, Card, SectionTitle } from '@/components/ui';
 import { AlertTriangle, Check, Crown } from 'lucide-react';
 
 type SubData = {
-  subscription_status: 'none' | 'active' | 'past_due' | 'canceled';
+  subscription_status: 'none' | 'trialing' | 'active' | 'past_due' | 'unpaid' | 'canceled';
   is_beta_free: boolean;
   season1_access: boolean;
   installments_paid: number;
+  piano?: string | null;
+  prova_fino?: string | null;
+  prezzo?: { tipo: 'fondatori' | 'listino'; euro: number } | null;
   next_billing_date: string | null;
   cancel_at_period_end: boolean;
 };
+
+const giorno = (iso: string | null | undefined) =>
+  iso ? new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Rome' }) : null;
 
 /**
  * Sezione "Abbonamento" nella pagina /profilo.
@@ -88,6 +94,15 @@ export default function SubscriptionSection() {
   }
 
   const { subscription_status, is_beta_free, season1_access, installments_paid, next_billing_date, cancel_at_period_end } = data;
+  const mentale = data.piano === 'mentale';
+  const gestisci = (label = 'Gestisci abbonamento') => (
+    <>
+      <Button variant="secondary" fullWidth onClick={openPortal} loading={portalLoading}>
+        {portalLoading ? 'Attendi…' : label}
+      </Button>
+      {error && <p className="text-body-sm text-danger mt-2">{error}</p>}
+    </>
+  );
 
   // Accesso beta / comp
   if (is_beta_free) {
@@ -125,7 +140,50 @@ export default function SubscriptionSection() {
     );
   }
 
-  // Rate in corso (1-2 pagate, accesso attivo via subscription)
+  // Mentale ad abbonamento (1/11): prova, attivo, pagamento non riuscito, sospeso
+  if (mentale && ['trialing', 'active', 'past_due', 'unpaid'].includes(subscription_status)) {
+    const euro = data.prezzo?.euro;
+    const prezzo = euro ? `${euro} €/mese${data.prezzo?.tipo === 'fondatori' ? ', prezzo bloccato' : ''}` : null;
+    let riga = '';
+    let nota: string | null = null;
+    let tono: 'accent' | 'warn' | 'danger' = 'accent';
+    if (subscription_status === 'trialing') {
+      riga = `In prova fino al ${giorno(data.prova_fino) ?? '…'}`;
+      nota = cancel_at_period_end
+        ? 'Hai disdetto: la prova finisce quel giorno e non paghi niente.'
+        : `Poi parte l'abbonamento${prezzo ? `: ${prezzo}` : ''}. Si aprono il Gate, le settimane 2-12 e il Coach senza limiti.`;
+    } else if (subscription_status === 'active') {
+      riga = `Mentale${prezzo ? ` · ${prezzo}` : ''}`;
+      nota = cancel_at_period_end
+        ? `Hai disdetto: resti dentro fino al ${giorno(next_billing_date) ?? 'fine del mese pagato'}.`
+        : next_billing_date ? `Prossimo rinnovo: ${giorno(next_billing_date)}.` : null;
+    } else if (subscription_status === 'past_due') {
+      tono = 'warn';
+      riga = 'Pagamento non riuscito';
+      nota = 'Stripe riprova per qualche giorno e intanto resti dentro. Aggiorna la carta per non perdere l\'accesso.';
+    } else {
+      tono = 'danger';
+      riga = 'Abbonamento sospeso';
+      nota = 'Gli ultimi pagamenti non sono riusciti. Aggiorna la carta per riaprire il percorso.';
+    }
+    return (
+      <Card padding="md">
+        {title}
+        <Card variant={tono} padding="sm" className="mb-3">
+          <div className="flex items-center gap-2 mb-1">
+            {tono === 'accent'
+              ? <Check size={18} className="text-success flex-shrink-0" aria-hidden="true" />
+              : <AlertTriangle size={18} className={`${tono === 'warn' ? 'text-warning' : 'text-danger'} flex-shrink-0`} aria-hidden="true" />}
+            <p className="font-semibold text-app text-body">{riga}</p>
+          </div>
+          {nota && <p className="text-body-sm text-muted leading-relaxed">{nota}</p>}
+        </Card>
+        {gestisci(subscription_status === 'past_due' || subscription_status === 'unpaid' ? 'Aggiorna pagamento' : 'Gestisci abbonamento')}
+      </Card>
+    );
+  }
+
+  // Rate di Season 1 in corso (1-2 pagate, accesso attivo via subscription)
   if (subscription_status === 'active') {
     const billingDate = next_billing_date
       ? new Date(next_billing_date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -217,12 +275,12 @@ export default function SubscriptionSection() {
       {title}
       <Card variant="raised" padding="sm" className="mb-3">
         <p className="font-semibold text-app text-body mb-1">
-          {subscription_status === 'canceled' ? 'Pagamento interrotto' : 'Season 1 non ancora sbloccata'}
+          {subscription_status === 'canceled' ? 'Abbonamento chiuso' : 'Percorso completo non ancora aperto'}
         </p>
         <p className="text-body-sm text-muted leading-relaxed">
           {subscription_status === 'canceled'
-            ? 'Le rate sono state interrotte prima del completamento. Sblocca Season 1 per riprendere il percorso.'
-            : 'Sblocca Season 1 per accedere al percorso completo.'}
+            ? 'Puoi riprendere quando vuoi: il percorso riparte da dove eri.'
+            : 'Il Gate, le settimane 2-12 e il Coach si aprono con l\'abbonamento al Mentale.'}
         </p>
       </Card>
       <Button
@@ -230,7 +288,7 @@ export default function SubscriptionSection() {
         fullWidth
         onClick={() => router.push('/pricing')}
       >
-        Sblocca Season 1
+        Vedi l&apos;abbonamento
       </Button>
     </Card>
   );

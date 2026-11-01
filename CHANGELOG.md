@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-01 — Il Mentale ad abbonamento (19 € fondatori, 29 €, prova di 7 giorni con la carta)
+- **Listino di Ste** (Notion «Monetizzazione: decisioni chiuse»): Mentale 29 €/mese, fondatori 19 €/mese bloccato finché si resta abbonati, prova di 7 giorni con la carta, codici promozionali solo primo mese o al massimo 3 mesi, niente prezzi barrati, tetto di 25 iscritti poi 50 con la lista d'attesa, tolleranza di 7 giorni sui pagamenti non riusciti. Allenamenti 49 € e Completo 59 € a dicembre.
+- **Regole pure** in `lib/abbonamento.ts` (8 test); **impostazioni senza deploy** in `app_settings` (`mentale_prezzo`, `iscrizioni_aperte`, `tetto_iscritti`, `prova_giorni`, `lib/appSettings.ts`); migration 038 (stati `trialing` e `unpaid`, `profiles.piano`, `trial_ends_at`, `stripe_price_id`, policy billing estesa).
+- **Checkout** (`/api/stripe/create-checkout`): solo il Mentale, prova una volta per persona, doppio abbonamento bloccato (409 → portale), iscrizioni chiuse o tetto pieno (409 → "Avvisami quando riapre", `/api/stripe/offerta`), Managed Payments dietro `STRIPE_MANAGED_PAYMENTS=1`. Season 1 non è più in vendita (410); chi l'ha comprata o paga le rate resta com'è.
+- **Webhook**: stato, prezzo e fine prova dalla subscription; gli eventi di una subscription diversa da quella del profilo non lo toccano (Season 1 e Mentale separati); `trial_will_end` → email (Resend, `lib/emailServer.ts`) e push tre giorni prima; `past_due` tiene l'accesso, `unpaid` chiude.
+- **Accessi** (`lib/checkAccess.ts`): in prova la settimana 1 e i 20 messaggi del Coach in app, Gate 1 e il resto dal primo pagamento (schermata "La prova finisce il …"); con `NEXT_PUBLIC_PROVA_CON_CARTA` spento la settimana 1 resta gratis come prima.
+- **Pagine**: `/pricing` riscritta ("Il Mentale", prezzo, prova con la data del primo addebito, FAQ, portale per chi è abbonato, lista d'attesa), card "Il tuo accesso" nel profilo con gli stati nuovi, testi di Coach, Telegram e Palestra senza "Season 1".
+- **Termini** sezione 6 riscritta (abbonamento, prova, rinnovo e disdetta, pagamenti non riusciti, chi ha Season 1), `TERMS_VERSION = '2026-11-01'`: tutti rivedono il foglio di ri-accettazione una volta.
+
 ## 2026-10-31 — L'esercizio della settimana (presenza nella vita di tutti i giorni)
 - **Testo** dal campo Notion «Esercizio della settimana» (DB Settimane, W1-W12): `mapSettimana.esercizioSettimana`, letto intero (`richText` concatena tutti i segmenti).
 - **Banner in home** (`components/EsercizioSettimanaCard.tsx`) dopo il G1 della settimana: testo, «Fatto oggi» (una spunta al giorno, si azzera ogni giorno), «N su 7». Spunte salvate per utente, settimana e giorno (`user_esercizio_fatto`, migration 037).

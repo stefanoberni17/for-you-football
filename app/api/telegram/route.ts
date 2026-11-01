@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
     if (!(await requirePaidAccess(userId))) {
       await sendTelegramMessage(
         chatId,
-        'Il Coach si attiva con Season 1. Apri l\'app per sbloccare il percorso: da lì torniamo a parlare qui. ⚽'
+        'Il Coach su Telegram si attiva con l\'abbonamento al Mentale, dopo la settimana di prova. Apri l\'app: da lì torniamo a parlare qui. ⚽'
       );
       return NextResponse.json({ ok: true });
     }

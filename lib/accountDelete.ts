@@ -13,7 +13,7 @@
  * Stripe e Telegram sono fail-soft: un loro errore non blocca i dati, viene loggato e detto a Ste.
  */
 import { createClient } from '@supabase/supabase-js';
-import { stripe, isStripeEnabled } from './stripe';
+import { stripe, hasStripeKey } from './stripe';
 import { notificaSte } from './notifyOwner';
 import { ACCOUNT_GRACE_DAYS } from './constants';
 
@@ -57,7 +57,7 @@ export async function sospendiAccount(userId: string): Promise<{ scadenza: Date;
   }
   const scadenza = scadenzaCancellazione(deletedAt);
 
-  if (isStripeEnabled() && profile?.stripe_customer_id) {
+  if (hasStripeKey() && profile?.stripe_customer_id) {
     try {
       for (const s of await subscriptionsAttive(profile.stripe_customer_id)) {
         if (!s.pause_collection) await stripe.subscriptions.update(s.id, { pause_collection: { behavior: 'void' } });
@@ -82,7 +82,7 @@ export async function riattivaAccount(userId: string): Promise<{ problemi: strin
   if (!profile?.deleted_at) return { problemi };
   const { error } = await supabaseAdmin.from('profiles').update({ deleted_at: null }).eq('user_id', userId);
   if (error) throw new Error(`deleted_at: ${error.message}`);
-  if (isStripeEnabled() && profile.stripe_customer_id) {
+  if (hasStripeKey() && profile.stripe_customer_id) {
     try {
       for (const s of await subscriptionsAttive(profile.stripe_customer_id)) {
         if (s.pause_collection) await stripe.subscriptions.update(s.id, { pause_collection: '' });
@@ -108,7 +108,7 @@ export async function cancellaDefinitivamente(userId: string, motivo: 'grazia_sc
   const nome = profile?.name || '—';
   const problemi: string[] = [];
 
-  if (isStripeEnabled() && profile?.stripe_customer_id) {
+  if (hasStripeKey() && profile?.stripe_customer_id) {
     try {
       for (const s of await subscriptionsAttive(profile.stripe_customer_id)) await stripe.subscriptions.cancel(s.id);
       await stripe.customers.del(profile.stripe_customer_id);

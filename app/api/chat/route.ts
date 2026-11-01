@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
           error: 'payment_required',
           reason: 'free_limit',
           limit: FREE_COACH_MESSAGES,
-          message: `Questi erano i tuoi ${FREE_COACH_MESSAGES} messaggi della settimana gratis. Il percorso continua: al Gate della settimana 1 ci ritroviamo, e da lì ci sono sempre, qui e su Telegram.`,
+          message: `Questi erano i tuoi ${FREE_COACH_MESSAGES} messaggi della prima settimana. Il percorso continua: al Gate della settimana 1 ci ritroviamo, e da lì ci sono sempre, qui e su Telegram.`,
         }, { status: 403 });
       }
       freeRemaining = FREE_COACH_MESSAGES - used - 1;

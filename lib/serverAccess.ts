@@ -16,12 +16,17 @@ const supabaseAdmin = createClient(
 export async function getBillingProfile(userId: string): Promise<BillingProfile | null> {
   const { data, error } = await supabaseAdmin
     .from('profiles')
+    .select('is_beta_free, subscription_status, season1_access, deleted_at, trial_ends_at')
+    .eq('user_id', userId)
+    .single();
+  if (!error) return data;
+  // Senza la migration 038 (trial_ends_at) si legge come prima: chi paga non deve restare fuori
+  const { data: base, error: err2 } = await supabaseAdmin
+    .from('profiles')
     .select('is_beta_free, subscription_status, season1_access, deleted_at')
     .eq('user_id', userId)
     .single();
-
-  if (error) return null;
-  return data;
+  return err2 ? null : base;
 }
 
 /**
@@ -38,6 +43,12 @@ export async function requireWeekAccess(userId: string, week: number): Promise<b
   const profile = await getBillingProfile(userId);
   if (profile?.deleted_at) return false; // account in cancellazione: si riattiva da /riattiva
   return canAccessWeek(profile, week);
+}
+
+/** In prova (Mentale, 1/11): fino a quando. Null se non è in prova. Per i messaggi del Gate e della chat. */
+export async function provaFino(userId: string): Promise<string | null> {
+  const profile = await getBillingProfile(userId);
+  return profile?.subscription_status === 'trialing' ? profile.trial_ends_at ?? null : null;
 }
 
 export async function requirePaidAccess(userId: string): Promise<boolean> {

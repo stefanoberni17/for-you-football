@@ -1,10 +1,14 @@
 /**
- * checkAccess — logica pura di autorizzazione paywall.
+ * checkAccess — logica pura di autorizzazione paywall (client-safe).
  *
- * Modello subscription-based: sub attiva → accesso a tutti i contenuti disponibili.
+ * Dal 1/11 il Mentale è un abbonamento mensile con 7 giorni di prova (lib/abbonamento.ts):
+ *  - accesso pieno (Gate, settimane 2-12, Coach senza limite, Telegram): beta, Season 1 comprata (chi l'ha già),
+ *    abbonamento attivo o in tolleranza dopo un pagamento fallito (`past_due`, Stripe ritenta per 7 giorni);
+ *  - in prova (`trialing`): la settimana 1, come la settimana gratis, e i messaggi gratis del Coach in app;
+ *  - con la prova con carta accesa (`NEXT_PUBLIC_PROVA_CON_CARTA=1`) la settimana 1 si apre solo dopo aver iniziato
+ *    la prova; spenta, la settimana 1 resta gratis per chi è registrato (com'era dal 14/9).
+ *
  * Il time-gate nei contenuti (lib/dayUnlockLogic.ts) forza comunque il ritmo 1 giorno/giorno.
- *
- * Beta tester (is_beta_free=true) e utenti comp bypassano tutto.
  */
 
 import { FREE_WEEKS } from '@/lib/constants';
@@ -14,63 +18,77 @@ export type BillingProfile = {
   is_beta_free?: boolean | null;
   subscription_status?: string | null;
   season1_access?: boolean | null;
+  trial_ends_at?: string | null; // fine della prova (migration 038)
 };
 
 /**
  * Ritorna true se l'utente può accedere ai contenuti a pagamento.
- *
- * Priorità:
- *  1. Nessun profilo → no access
- *  2. is_beta_free=true → accesso totale (beta tester, comp, partner)
- *  3. season1_access=true → Season 1 acquistata (one-time o 3 rate completate)
- *  4. subscription_status='active' → rate in corso (include trialing via webhook mapping)
- *  5. altrimenti → no access
+ *  1. Nessun profilo → no
+ *  2. is_beta_free → sì (beta tester, comp, partner)
+ *  3. season1_access → sì (Season 1 comprata prima del 1/11)
+ *  4. subscription_status 'active' o 'past_due' (tolleranza) → sì
+ *  5. 'trialing', 'unpaid', 'canceled', 'none' → no
  */
 export function hasActiveAccess(profile: BillingProfile | null | undefined): boolean {
-  // Prova (spec v4, 8/10): quando lo stato `trialing` verrà salvato com'è (punto 1, migration sul CHECK),
-  // NON deve passare di qui: in prova solo W1 (canAccessWeek, FREE_WEEKS), niente Telegram, niente Gate, niente Campo.
   if (!profile) return false;
   if (profile.is_beta_free) return true;
   if (profile.season1_access) return true;
-  return profile.subscription_status === 'active';
+  return profile.subscription_status === 'active' || profile.subscription_status === 'past_due';
+}
+
+/** In prova: la settimana 1 aperta, il resto dopo il primo pagamento. */
+export function inProva(profile: BillingProfile | null | undefined): boolean {
+  return profile?.subscription_status === 'trialing';
+}
+
+/** Accesso pieno oppure prova in corso: il ritorno dal checkout è andato a buon fine. */
+export function haAccessoOProva(profile: BillingProfile | null | undefined): boolean {
+  return hasActiveAccess(profile) || inProva(profile);
+}
+
+/** La settimana 1 si apre solo con la prova iniziata (carta inserita)? Interruttore su Vercel, letto anche dal server. */
+export function provaConCarta(): boolean {
+  return process.env.NEXT_PUBLIC_PROVA_CON_CARTA === '1';
 }
 
 /**
  * Feature flag client-side: Stripe configurato?
  * Usa `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` come proxy (gli altri env sono server-only).
- *
- * Scopo: durante il deploy graduale, evita di redirigere a /pricing gli utenti
- * quando le env vars Stripe non sono ancora settate in produzione.
- * Appena configurato, il paywall scatta automaticamente.
  */
 export function isPaywallActive(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 }
 
-/**
- * Wrapper: l'utente deve essere redirectato a /pricing?
- * True solo se paywall è attivo E l'utente non ha accesso.
- */
+/** Dopo il checkout: l'utente è ancora senza niente (né accesso né prova)? */
 export function shouldRedirectToPaywall(profile: BillingProfile | null | undefined): boolean {
   if (!isPaywallActive()) return false;
-  return !hasActiveAccess(profile);
+  return !haAccessoOProva(profile);
 }
 
 /**
- * Settimana gratis (13/9): i giorni 1-6 delle prime FREE_WEEKS settimane sono aperti a chi
- * è registrato; il gate (giorno 7), le settimane successive e il Coach richiedono Season 1.
- * "Si paga per continuare, non per iniziare."
+ * La settimana `week` è aperta? Pagante sempre; le prime FREE_WEEKS settimane a chi è in prova, oppure a tutti i
+ * registrati se la prova con carta è spenta. Il gate (giorno 7) resta a pagamento: requirePaidAccess.
  */
 export function canAccessWeek(profile: BillingProfile | null | undefined, week: number): boolean {
   if (!isPaywallActive()) return true;
   if (hasActiveAccess(profile)) return true;
-  return week <= FREE_WEEKS;
+  if (week > FREE_WEEKS) return false;
+  return provaConCarta() ? inProva(profile) : true;
 }
 
 /** Rotte che restano a pagamento anche nella settimana gratis (usato dal PaywallGuard). */
 export function isPaidRoute(pathname: string): boolean {
   if (pathname === '/chat' || pathname.startsWith('/week-complete/')) return true;
   const m = pathname.match(/^\/(giorno|settimana)\/(\d+)/);
-  if (m) return parseInt(m[2]) > FREE_WEEKS;
+  if (m) return parseInt(m[2]) > FREE_WEEKS || provaConCarta();
+  return false;
+}
+
+/** Il PaywallGuard deve mandare questa pagina a /pricing? (/chat mostra il suo messaggio in pagina.) */
+export function deveAndareAlPaywall(pathname: string, profile: BillingProfile | null | undefined): boolean {
+  if (!isPaywallActive() || pathname === '/chat') return false;
+  if (pathname.startsWith('/week-complete/')) return !hasActiveAccess(profile);
+  const m = pathname.match(/^\/(giorno|settimana)\/(\d+)/);
+  if (m) return !canAccessWeek(profile, parseInt(m[2]));
   return false;
 }
