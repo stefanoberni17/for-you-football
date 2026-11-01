@@ -70,4 +70,6 @@ Cosa ha scelto:
 
 Domande in più per Ste:
 5. **Velocità C1 a un A.** Luca (A) fa ogni settimana `velocita-c1-short` (C = PRO), ammesso perché la famiglia non ha il codice al suo livello. Va bene? **Ste, 27/10: ok.**
-6. **Fascia tecnica per un B.** La famiglia Fascia Foundation Tecnica ha solo codici A: per Nicola (B) l'A1 entra come "prova del livello sopra" (serie ×0,7) e dopo due settimane "dose piena". Con la fascia avevi detto niente assaggio del livello sopra: qui però non c'è un codice B da cui partire.
+6. **Fascia tecnica per un B.** La famiglia Fascia Foundation Tecnica ha solo codici A: per Nicola (B) l'A1 entra come "prova del livello sopra" (serie ×0,7) e dopo due settimane "dose piena". Con la fascia avevi detto niente assaggio del livello sopra: qui però non c'è un codice B da cui partire. **Ste, 28/10: va bene così.**
+
+**Dopo, Ste (28/10):** l'apertura fascia il giorno prima della partita resta; la settimana di scarico di Luca (con la velocità come obiettivo) va bene; in off season gli sprint massimali a settimana salgono a 20 e quelli fino a 15 m non contano.

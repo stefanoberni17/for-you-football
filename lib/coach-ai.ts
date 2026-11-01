@@ -7,6 +7,8 @@ import { loadCampoPerCoach, loadIncroci } from '@/lib/cartaServer';
 import { incrociTesto } from '@/lib/incroci';
 import { loadRisposteChiave, loadVersioniPrecedenti } from '@/lib/risposteServer';
 import { risposteChiaveTesto } from '@/lib/risposteChiave';
+import { loadEsercizio } from '@/lib/esercizioServer';
+import { esercizioPerCoach } from '@/lib/esercizioSettimana';
 import { settimanaInCorsoTesto, type GiornoPercorso, type ProgressoGiorno } from '@/lib/settimanaCoach';
 
 export const anthropic = new Anthropic({
@@ -453,7 +455,7 @@ Sei la voce di Ste, che ha scritto questo percorso, mentre parla a un ragazzo se
 5. **Ammetti di non sapere.** "Non lo so. Lo vedi in campo, poi mi dici." Il permesso esplicito di non riuscire vale più di un incoraggiamento.
 6. **Ritmo parlato:** frasi corte. A capo spesso. Qualche puntino di sospensione… un punto esclamativo ogni tanto. MAIUSCOLO per una parola sola, mai per una frase.
 7. **Un po' di leggerezza, quando serve.** Una battuta piccola sulle cose normali del calcio (il mister che urla, il compagno che non passa mai, la partita di domenica che sembra la finale dei Mondiali) ci sta: anche per sdrammatizzare un concetto pesante, se aiuta il ragazzo a respirare. Non in ogni risposta: la decidi tu, quando la senti giusta. MAI sul ragazzo, MAI su di te, MAI in una situazione del protocollo SITUAZIONI A RISCHIO.
-8. **Non parli di te.** Niente "io", niente "come AI", niente commenti su cosa sei o non sei, nessuna ironia su te stesso: il ragazzo è l'unico soggetto della conversazione. L'unica eccezione è la trasparenza obbligatoria di IDENTITÀ AI, se te lo chiede.
+8. **Non parli di te.** Niente "io", niente "come AI", niente commenti su cosa sei o non sei, nessuna ironia su te stesso: il ragazzo è l'unico soggetto della conversazione. Anche quando una richiesta non è materia tua (una scheda di allenamento, un dolore, una dieta) niente "non sono la persona giusta", "non posso", "non è il mio campo": di' a chi va chiesta (un preparatore, un medico, un nutrizionista; per l'allenamento, se ce l'ha, il preparatore del Fisico nell'app) e torna su di lui. La frase ha come soggetto la richiesta o il ragazzo, mai te: NO "non sono la persona giusta", "non tocca a me", "il preparatore lo sa e io no", "questo lo lascio a me"; SÌ "La scheda per sabato chiedila al preparatore: sa cosa hai fatto in settimana e quanto manca alla partita." poi la tua domanda su di lui. Vale anche per i "mi" nascosti: non "mi dicono", "mi sembra", "mi hai detto", ma "il 4 di stamattina dice…", "sembra…", "hai detto…". Le uniche eccezioni: la trasparenza obbligatoria di IDENTITÀ AI, se te lo chiede, e il protocollo SITUAZIONI A RISCHIO, dove la frase in prima persona ("resto qui") serve.
 
 **Le regole di parola:**
 - Le parole devono poter essere dette nello spogliatoio senza sembrare strane. Se un ragazzo non la direbbe a un compagno, riscrivila.
@@ -1011,7 +1013,7 @@ export async function buildUserContext(userId: string): Promise<string> {
 
   // Calendario settimanale (dipende da current_week: parte dopo il profilo); insieme il Campo e
   // gli incroci della Carta (29/9: prima il Coach non sapeva niente dell'allenamento nell'app)
-  const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows, versioniPrecedenti, settimanaRaw] = await Promise.all([
+  const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows, versioniPrecedenti, settimanaRaw, esercizio] = await Promise.all([
     supabaseAdmin
       .from('user_weekly_calendar')
       .select('training_days, match_days')
@@ -1028,8 +1030,11 @@ export async function buildUserContext(userId: string): Promise<string> {
     loadVersioniPrecedenti(userId),
     // La settimana in corso con domande, risposte e regia (27/10): una risposta come «4.» ha senso solo con la sua domanda
     loadSettimanaInCorso(userId, currentWeek),
+    // L'esercizio della settimana (31/10): il testo che vede in home e quanti giorni ha spuntato «Fatto oggi»
+    loadEsercizio(userId).catch(() => null),
   ]);
-  const settimanaBlock = sanitizeUntrustedText(settimanaRaw);
+  const settimanaBlock = sanitizeUntrustedText(settimanaRaw)
+    + (esercizio ? esercizioPerCoach({ week: esercizio.week, testo: esercizio.testo, g1Fatto: !!esercizio.g1FattoIl, giorni: esercizio.giorni, fattoOggi: esercizio.fattoOggi }) : '');
   const risposteChiaveBlock = sanitizeUntrustedText(risposteChiaveTesto(risposteChiaveRows, versioniPrecedenti));
 
   // Calcola medie check-in ultimi 7 giorni (pre-calcolate fuori dal template)

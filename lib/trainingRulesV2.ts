@@ -97,6 +97,41 @@ export const SPRINT_MASSIMALI_IDS: ReadonlySet<string> = new Set([
   'vel-sprint-con-partenza-in-ginocchio', 'vel-piegamento-a-terra-e-sprint', 'vel-giro-180-piegamento-e-sprint',
   'vel-sprint-con-partenza-in-ginocchio-laterale', 'vel-burpee-e-sprint',
 ]);
+/**
+ * Sprint corti (Ste, 28/10: "sprint 10-15 m non li considero troppo pesanti"): fino a SPRINT_CORTO_METRI non contano
+ * nel tetto della settimana né in quello della seduta (6-8); a seduta ne bastano al massimo SPRINT_CORTI_MAX_SEDUTA.
+ * `vel-sprint-10-m` è corto per definizione.
+ */
+export const SPRINT_CORTO_METRI = 15;
+export const SPRINT_CORTI_MAX_SEDUTA = 10;
+/**
+ * Fasce per distanza nella seduta (Ste, 28/10): al massimo 2 sprint oltre 50 m, 4 oltre 35, 6 oltre 25, 8 oltre 15.
+ * "Oltre" = più lungo di (un 50 m sta nella fascia dei 35). Le applica `limaSprint`, dal più lungo.
+ */
+export const SPRINT_FASCE_SEDUTA: readonly { oltre: number; max: number }[] = [
+  { oltre: 50, max: 2 }, { oltre: 35, max: 4 }, { oltre: 25, max: 6 }, { oltre: 15, max: 8 },
+];
+const SPRINT_CORTI_IDS: ReadonlySet<string> = new Set(['vel-sprint-10-m']);
+type ItemSprint = { esercizio_id: string; serie: number; quantita: number; unita?: string };
+/** I metri di uno sprint a metri; null se l'item non è a metri (a ripetizioni la distanza non si sa). */
+export function metriSprint(it: ItemSprint): number | null {
+  return (it.unita ?? esercizioV2ById(it.esercizio_id)?.unita) === 'metri' ? it.quantita : null;
+}
+/** Uno sprint corto: `vel-sprint-10-m` o fino a SPRINT_CORTO_METRI. */
+export function isSprintCorto(it: ItemSprint): boolean {
+  if (SPRINT_CORTI_IDS.has(it.esercizio_id)) return true;
+  const m = metriSprint(it);
+  return m != null && m <= SPRINT_CORTO_METRI;
+}
+/** Gli sprint massimali che pesano (sulla seduta e sulla settimana): tutti tranne i corti. */
+export function contaSprintPesanti(items: ItemSprint[]): number {
+  return contaSprintMassimali(items.filter((it) => !isSprintCorto(it)));
+}
+/** Gli sprint corti (≤ SPRINT_CORTO_METRI). */
+export function contaSprintCorti(items: ItemSprint[]): number {
+  return contaSprintMassimali(items.filter((it) => isSprintCorto(it)));
+}
+
 /** Sprint massimali in una lista di item: a metri una serie = uno sprint; a reps serie × reps (EMOM: giri × reps). */
 export function contaSprintMassimali(items: { esercizio_id: string; serie: number; quantita: number; unita?: string }[]): number {
   let n = 0;
@@ -391,9 +426,13 @@ export function validateSessionV2(items: { it: ItemV2; ex: ExerciseV2 }[], titol
   if (contatti > maxContatti && !opts.trusted) // blocchi di Ste: la dose è sua
     errors.push(`seduta "${titolo}": ${contatti} contatti di pliometria intensiva, oltre il massimo ${maxContatti} per il livello ${opts.livello ?? 'B'}`);
   // Sprint massimali: tetto per seduta (Ste, 25/9) — il planner v2 li lima da solo, qui la rete di sicurezza
-  const sprint = contaSprintMassimali(items.map(({ it }) => it));
+  // (dal 28/10 il tetto vale sugli sprint oltre 15 m; i corti hanno il loro, le fasce per distanza le applica limaSprint)
+  const sprint = contaSprintPesanti(items.map(({ it }) => it));
   if (sprint > SPRINT_MAX_SEDUTA)
     errors.push(`seduta "${titolo}": ${sprint} sprint massimali, oltre il tetto di ${SPRINT_MAX_SEDUTA} a seduta`);
+  const corti = contaSprintCorti(items.map(({ it }) => it));
+  if (corti > SPRINT_CORTI_MAX_SEDUTA)
+    errors.push(`seduta "${titolo}": ${corti} sprint corti, oltre il tetto di ${SPRINT_CORTI_MAX_SEDUTA} a seduta`);
   // Ordine: nessuna qualità metabolica prima di velocità/pliometria
   let maxOrdineVisto = -1;
   for (const { ex } of items) {

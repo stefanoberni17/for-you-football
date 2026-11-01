@@ -11,6 +11,14 @@
     {
       "path": "/api/cron/daily-evening",
       "schedule": "0 16 * * *"
+    },
+    {
+      "path": "/api/cron/esercizio?fase=mattino",
+      "schedule": "30 7 * * *"
+    },
+    {
+      "path": "/api/cron/esercizio?fase=sera",
+      "schedule": "30 19 * * *"
     }
   ]
 }
