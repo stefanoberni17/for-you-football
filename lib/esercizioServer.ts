@@ -1,12 +1,12 @@
 /**
  * L'esercizio della settimana, le letture (31/10). Le regole stanno in lib/esercizioSettimana.ts (puro).
- * Fail-soft: senza la migration 037 il banner c'è (testo da Notion, G1 dal percorso) ma senza spunte né sveglia.
+ * Fail-soft: senza la migration 037 il banner c'è (testo da Notion, G1 dal percorso) ma senza spunte.
  */
 import { createClient } from '@supabase/supabase-js';
 import { WEEK_RECORD_IDS } from './constants';
 import { fetchPage, mapSettimana } from './notion';
 import { dateItaly, todayItaly } from './dateItaly';
-import { esercizioVisibile, fineSvegliaMin, haSveglia } from './esercizioSettimana';
+import { esercizioVisibile, haSveglia } from './esercizioSettimana';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -20,7 +20,8 @@ export interface EsercizioStato {
   g1FattoIl: string | null;
   fattoOggi: boolean;
   giorni: number;
-  sveglia: { settimana: boolean; fineMin: number | null; ora: string | null };
+  /** Settimana con la sveglia sul telefono (W5, W6, W8, W10): il banner lo ricorda */
+  sveglia: boolean;
   notifiche: boolean;
   /** false = la migration 037 non c'è: si legge ma non si salva */
   salvataggio: boolean;
@@ -43,11 +44,10 @@ export async function loadEsercizio(userId: string): Promise<EsercizioStato | nu
   const week = Number(profile?.current_week) || 1;
   if (week < 1 || week > 12) return null;
   const oggi = todayItaly();
-  const [testo, { data: g1 }, fatte, sveglia, notifiche] = await Promise.all([
+  const [testo, { data: g1 }, fatte, notifiche] = await Promise.all([
     testoEsercizio(week),
     supabaseAdmin.from('user_day_progress').select('completed_at').eq('user_id', userId).eq('week_number', week).eq('day_number', 1).eq('completed', true).maybeSingle(),
     supabaseAdmin.from('user_esercizio_fatto').select('data').eq('user_id', userId).eq('week_number', week),
-    supabaseAdmin.from('user_esercizio_sveglia').select('ora').eq('user_id', userId).eq('week_number', week).maybeSingle(),
     supabaseAdmin.from('profiles').select('esercizio_notifiche').eq('user_id', userId).maybeSingle(),
   ]);
   const g1FattoIl = g1?.completed_at ? dateItaly(g1.completed_at) : null;
@@ -59,7 +59,7 @@ export async function loadEsercizio(userId: string): Promise<EsercizioStato | nu
     g1FattoIl,
     fattoOggi: date.includes(oggi),
     giorni: new Set(date).size,
-    sveglia: { settimana: haSveglia(week), fineMin: fineSvegliaMin(week), ora: (sveglia.data as { ora?: string } | null)?.ora ?? null },
+    sveglia: haSveglia(week),
     notifiche: notifiche.error ? true : (notifiche.data as { esercizio_notifiche?: boolean } | null)?.esercizio_notifiche !== false,
     salvataggio: !fatte.error,
   };

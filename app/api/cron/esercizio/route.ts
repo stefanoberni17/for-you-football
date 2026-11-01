@@ -2,20 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendPushToUser } from '@/lib/pushNotification';
 import { filterActiveProfiles } from '@/lib/activity';
-import { dateItaly, oraItaly, todayItaly } from '@/lib/dateItaly';
+import { dateItaly, todayItaly } from '@/lib/dateItaly';
 import { testoEsercizio } from '@/lib/esercizioServer';
-import {
-  fineSvegliaMin, haSveglia, minutiDa, notificheDovute, MATTINO_FINO, MATTINO_ORA, SERA_FINO, SERA_ORA, SVEGLIA_RITARDO_MAX_MIN,
-  type TipoNotifica,
-} from '@/lib/esercizioSettimana';
+import { isFase, notificaDovuta } from '@/lib/esercizioSettimana';
 import { logEvent } from '@/lib/events';
 
 /**
- * Il giro delle notifiche dell'esercizio della settimana (31/10), ogni minuto (pg_cron di Supabase, migration 038).
- * Manda, a chi ha il banner aperto e le notifiche accese: il testo al mattino, la sveglia all'orario scelto (W5, W6,
- * W8, W10) e la fine dopo 5'/10'/15' (W6, W8, W10), la sera se "Fatto oggi" non è spuntato. Ogni notifica una volta al
- * giorno (esercizio_notifiche_inviate, scritta PRIMA dell'invio: due giri sovrapposti non mandano doppioni).
- * Le regole stanno in lib/esercizioSettimana.ts. Fuori dalle finestre esce subito, senza leggere quasi niente.
+ * I promemoria dell'esercizio della settimana (31/10, versione semplice dell'1/11): due cron di Vercel al giorno
+ * (vercel.json), `?fase=mattino` e `?fase=sera`. A chi ha il banner aperto (G1 della settimana fatto) e le notifiche
+ * accese: al mattino il testo dell'esercizio, la sera un promemoria se "Fatto oggi" non è spuntato. Le regole stanno in
+ * lib/esercizioSettimana.ts. La riga in esercizio_notifiche_inviate si scrive PRIMA dell'invio: un secondo giro dello
+ * stesso cron non manda il doppione. La sveglia delle settimane 5, 6, 8 e 10 la mette il ragazzo sul telefono.
  */
 export const maxDuration = 60;
 
@@ -35,8 +32,6 @@ async function sendTelegramMessage(chatId: string, text: string): Promise<boolea
   return !!res?.ok;
 }
 
-const nella = (adesso: number, da: string, a: string) => adesso >= minutiDa(da)! && adesso <= minutiDa(a)!;
-
 type Profilo = { user_id: string; current_week: number | null; telegram_id: string | null };
 
 export async function GET(request: NextRequest) {
@@ -47,23 +42,11 @@ export async function GET(request: NextRequest) {
   if (request.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const fase = request.nextUrl.searchParams.get('fase');
+  if (!isFase(fase)) return NextResponse.json({ error: 'fase_non_valida' }, { status: 400 });
 
   const oggi = todayItaly();
-  const adesso = minutiDa(oraItaly(new Date()))!;
-  const finestraGlobale = nella(adesso, MATTINO_ORA, MATTINO_FINO) || nella(adesso, SERA_ORA, SERA_FINO);
   const testUserId = process.env.TEST_ONLY_USER_ID;
-
-  // Le sveglie con un orario "vicino" adesso (inizio o fine entro la finestra di ritardo)
-  const { data: sveglie, error: errSveglie } = await supabaseAdmin.from('user_esercizio_sveglia').select('user_id, week_number, ora');
-  if (errSveglie) return NextResponse.json({ success: false, skipped: 'migration_037' });
-  const svegliaVicina = new Map<string, { week: number; ora: string }>();
-  for (const s of (sveglie || []) as { user_id: string; week_number: number; ora: string }[]) {
-    const ora = minutiDa(s.ora);
-    if (ora == null || !haSveglia(s.week_number)) continue;
-    const fine = ora + (fineSvegliaMin(s.week_number) ?? 0);
-    if (adesso >= ora && adesso <= fine + SVEGLIA_RITARDO_MAX_MIN) svegliaVicina.set(`${s.user_id}:${s.week_number}`, { week: s.week_number, ora: s.ora });
-  }
-  if (!finestraGlobale && svegliaVicina.size === 0) return NextResponse.json({ success: true, sent: 0, idle: true });
 
   let query = supabaseAdmin.from('profiles').select('user_id, current_week, telegram_id')
     .eq('esercizio_notifiche', true)
@@ -71,15 +54,15 @@ export async function GET(request: NextRequest) {
     .or('safety_review.is.null,safety_review.eq.false')
     .is('deleted_at', null);
   if (testUserId) query = query.eq('user_id', testUserId);
-  if (!finestraGlobale) query = query.in('user_id', [...new Set([...svegliaVicina.keys()].map((k) => k.split(':')[0]))]);
   const { data: tutti, error } = await query;
-  if (error) return NextResponse.json({ success: false, error: error.message });
-  let profili = ((tutti || []) as Profilo[]);
-  // Mattino e sera solo a chi usa l'app (come gli altri promemoria); la sveglia l'ha chiesta lui, va sempre
-  if (finestraGlobale && !testUserId && profili.length) {
+  // senza la migration 037 la colonna esercizio_notifiche non c'è: nessuno da avvisare
+  if (error) return NextResponse.json({ success: false, skipped: 'migration_037', error: error.message });
+  let profili = (tutti || []) as Profilo[];
+  // Come gli altri promemoria: solo a chi usa l'app
+  if (!testUserId && profili.length) {
     const { active } = await filterActiveProfiles(supabaseAdmin, profili);
     const attivi = new Set(active.map((p) => p.user_id));
-    profili = profili.filter((p) => attivi.has(p.user_id) || svegliaVicina.has(`${p.user_id}:${p.current_week}`));
+    profili = profili.filter((p) => attivi.has(p.user_id));
   }
   if (!profili.length) return NextResponse.json({ success: true, sent: 0 });
 
@@ -87,16 +70,12 @@ export async function GET(request: NextRequest) {
   const [{ data: g1 }, { data: fatti }, { data: inviate }] = await Promise.all([
     supabaseAdmin.from('user_day_progress').select('user_id, week_number, completed_at').in('user_id', ids).eq('day_number', 1).eq('completed', true),
     supabaseAdmin.from('user_esercizio_fatto').select('user_id, week_number').in('user_id', ids).eq('data', oggi),
-    supabaseAdmin.from('esercizio_notifiche_inviate').select('user_id, tipo').in('user_id', ids).eq('data', oggi),
+    supabaseAdmin.from('esercizio_notifiche_inviate').select('user_id').in('user_id', ids).eq('data', oggi).eq('tipo', fase),
   ]);
   const g1Di = new Map(((g1 || []) as { user_id: string; week_number: number; completed_at: string | null }[])
     .filter((r) => r.completed_at).map((r) => [`${r.user_id}:${r.week_number}`, dateItaly(r.completed_at!)]));
   const fattoOggi = new Set(((fatti || []) as { user_id: string; week_number: number }[]).map((r) => `${r.user_id}:${r.week_number}`));
-  const inviateDi = new Map<string, Set<TipoNotifica>>();
-  for (const r of (inviate || []) as { user_id: string; tipo: TipoNotifica }[]) {
-    if (!inviateDi.has(r.user_id)) inviateDi.set(r.user_id, new Set());
-    inviateDi.get(r.user_id)!.add(r.tipo);
-  }
+  const giaInviate = new Set(((inviate || []) as { user_id: string }[]).map((r) => r.user_id));
   const testi = new Map<number, string>();
   for (const w of new Set(profili.map((p) => Number(p.current_week)))) testi.set(w, await testoEsercizio(w));
 
@@ -104,31 +83,28 @@ export async function GET(request: NextRequest) {
   for (const p of profili) {
     const week = Number(p.current_week);
     const chiave = `${p.user_id}:${week}`;
-    const dovute = notificheDovute({
+    const n = notificaDovuta(fase, {
       week,
       testo: testi.get(week) || '',
       g1FattoIl: g1Di.get(chiave) ?? null,
       oggi,
-      adessoMin: adesso,
-      sveglia: svegliaVicina.get(chiave)?.ora ?? (sveglie || []).find((s: { user_id: string; week_number: number; ora: string }) => s.user_id === p.user_id && s.week_number === week)?.ora ?? null,
       fattoOggi: fattoOggi.has(chiave),
-      inviate: inviateDi.get(p.user_id) ?? new Set(),
+      giaInviata: giaInviate.has(p.user_id),
       notificheAttive: true,
     });
-    for (const n of dovute) {
-      try {
-        // Prima la riga, poi l'invio: un secondo giro nello stesso minuto trova la riga e non manda il doppione
-        const { error: dup } = await supabaseAdmin.from('esercizio_notifiche_inviate').insert({ user_id: p.user_id, data: oggi, tipo: n.tipo });
-        if (dup) continue;
-        let canale: 'push' | 'telegram' | null = null;
-        if (await sendPushToUser(p.user_id, n.titolo, n.testo, '/').catch(() => false)) canale = 'push';
-        else if (p.telegram_id && await sendTelegramMessage(p.telegram_id, n.testo)) canale = 'telegram';
-        if (canale) { sent++; logEvent(p.user_id, 'esercizio_notifica', { tipo: n.tipo, canale, week }); }
-      } catch (e) {
-        console.error(`esercizio: notifica ${n.tipo} per ${p.user_id}:`, (e as Error).message);
-      }
+    if (!n) continue;
+    try {
+      // Prima la riga, poi l'invio: un secondo giro trova la riga e non manda il doppione
+      const { error: dup } = await supabaseAdmin.from('esercizio_notifiche_inviate').insert({ user_id: p.user_id, data: oggi, tipo: n.tipo });
+      if (dup) continue;
+      let canale: 'push' | 'telegram' | null = null;
+      if (await sendPushToUser(p.user_id, n.titolo, n.testo, '/').catch(() => false)) canale = 'push';
+      else if (p.telegram_id && await sendTelegramMessage(p.telegram_id, n.testo)) canale = 'telegram';
+      if (canale) { sent++; logEvent(p.user_id, 'esercizio_notifica', { tipo: n.tipo, canale, week }); }
+    } catch (e) {
+      console.error(`esercizio: notifica ${n.tipo} per ${p.user_id}:`, (e as Error).message);
     }
   }
-  console.log(`esercizio: ${sent} notifiche (${profili.length} profili, minuto ${oraItaly(new Date())})`);
-  return NextResponse.json({ success: true, sent, profili: profili.length });
+  console.log(`esercizio ${fase}: ${sent} notifiche (${profili.length} profili)`);
+  return NextResponse.json({ success: true, fase, sent, profili: profili.length });
 }

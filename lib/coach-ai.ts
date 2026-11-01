@@ -1034,7 +1034,7 @@ export async function buildUserContext(userId: string): Promise<string> {
     loadEsercizio(userId).catch(() => null),
   ]);
   const settimanaBlock = sanitizeUntrustedText(settimanaRaw)
-    + (esercizio ? esercizioPerCoach({ week: esercizio.week, testo: esercizio.testo, g1Fatto: !!esercizio.g1FattoIl, giorni: esercizio.giorni, fattoOggi: esercizio.fattoOggi, sveglia: esercizio.sveglia.ora }) : '');
+    + (esercizio ? esercizioPerCoach({ week: esercizio.week, testo: esercizio.testo, g1Fatto: !!esercizio.g1FattoIl, giorni: esercizio.giorni, fattoOggi: esercizio.fattoOggi }) : '');
   const risposteChiaveBlock = sanitizeUntrustedText(risposteChiaveTesto(risposteChiaveRows, versioniPrecedenti));
 
   // Calcola medie check-in ultimi 7 giorni (pre-calcolate fuori dal template)
