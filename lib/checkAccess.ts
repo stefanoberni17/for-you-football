@@ -5,8 +5,9 @@
  *  - accesso pieno (Gate, settimane 2-12, Coach senza limite, Telegram): beta, Season 1 comprata (chi l'ha già),
  *    abbonamento attivo o in tolleranza dopo un pagamento fallito (`past_due`, Stripe ritenta per 7 giorni);
  *  - in prova (`trialing`): la settimana 1, come la settimana gratis, e i messaggi gratis del Coach in app;
- *  - con la prova con carta accesa (`NEXT_PUBLIC_PROVA_CON_CARTA=1`) la settimana 1 si apre solo dopo aver iniziato
- *    la prova; spenta, la settimana 1 resta gratis per chi è registrato (com'era dal 14/9).
+ *  - con la prova con carta accesa (`NEXT_PUBLIC_PROVA_CON_CARTA`) la settimana 1 si apre solo dopo aver iniziato
+ *    la prova, e solo per chi si è registrato da quel giorno in poi (Ste, 2/11): chi c'era già finisce la settimana 1
+ *    gratis come prima e al Gate abbona senza prova. Spenta, la settimana 1 resta gratis per tutti i registrati.
  *
  * Il time-gate nei contenuti (lib/dayUnlockLogic.ts) forza comunque il ritmo 1 giorno/giorno.
  */
@@ -19,6 +20,7 @@ export type BillingProfile = {
   subscription_status?: string | null;
   season1_access?: boolean | null;
   trial_ends_at?: string | null; // fine della prova (migration 038)
+  created_at?: string | null;    // iscrizione: la prova con carta vale per chi si registra dalla data di accensione
 };
 
 /**
@@ -46,9 +48,32 @@ export function haAccessoOProva(profile: BillingProfile | null | undefined): boo
   return hasActiveAccess(profile) || inProva(profile);
 }
 
-/** La settimana 1 si apre solo con la prova iniziata (carta inserita)? Interruttore su Vercel, letto anche dal server. */
+/** Il giorno da cui vale la prova con carta se l'interruttore è "1" (Ste, 2/11: "solo per chi si registra da oggi"). */
+export const PROVA_CON_CARTA_DAL_DEFAULT = '2026-11-02';
+
+/**
+ * La prova con carta è accesa? Da quale giorno di iscrizione? Interruttore su Vercel, letto anche dal server:
+ * `NEXT_PUBLIC_PROVA_CON_CARTA=1` → da PROVA_CON_CARTA_DAL_DEFAULT; `=2026-11-10` → da quel giorno; vuoto → spenta.
+ */
+export function provaConCartaDal(): string | null {
+  const v = (process.env.NEXT_PUBLIC_PROVA_CON_CARTA || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  return v === '1' ? PROVA_CON_CARTA_DAL_DEFAULT : null;
+}
+
 export function provaConCarta(): boolean {
-  return process.env.NEXT_PUBLIC_PROVA_CON_CARTA === '1';
+  return provaConCartaDal() !== null;
+}
+
+/**
+ * Per questo profilo la settimana 1 chiede la prova con la carta? Solo se l'interruttore è acceso e si è registrato
+ * da quel giorno (mezzanotte italiana). Senza data di iscrizione vale come chi c'era già: settimana 1 aperta.
+ */
+export function provaRichiesta(profile: BillingProfile | null | undefined): boolean {
+  const dal = provaConCartaDal();
+  if (!dal || !profile?.created_at) return false;
+  const iscritto = new Date(profile.created_at).getTime();
+  return Number.isFinite(iscritto) && iscritto >= new Date(`${dal}T00:00:00+01:00`).getTime();
 }
 
 /**
@@ -66,14 +91,14 @@ export function shouldRedirectToPaywall(profile: BillingProfile | null | undefin
 }
 
 /**
- * La settimana `week` è aperta? Pagante sempre; le prime FREE_WEEKS settimane a chi è in prova, oppure a tutti i
- * registrati se la prova con carta è spenta. Il gate (giorno 7) resta a pagamento: requirePaidAccess.
+ * La settimana `week` è aperta? Pagante sempre; le prime FREE_WEEKS settimane a chi è in prova, oppure a chi non
+ * deve passare dalla prova (interruttore spento, o iscritto prima della data). Il gate (giorno 7) resta a pagamento: requirePaidAccess.
  */
 export function canAccessWeek(profile: BillingProfile | null | undefined, week: number): boolean {
   if (!isPaywallActive()) return true;
   if (hasActiveAccess(profile)) return true;
   if (week > FREE_WEEKS) return false;
-  return provaConCarta() ? inProva(profile) : true;
+  return provaRichiesta(profile) ? inProva(profile) : true;
 }
 
 /** Rotte che restano a pagamento anche nella settimana gratis (usato dal PaywallGuard). */

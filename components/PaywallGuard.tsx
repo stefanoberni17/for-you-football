@@ -72,7 +72,7 @@ export default function PaywallGuard() {
         if (!session) return; // le pagine gestiscono già il redirect a /login
         const { data } = await supabase
           .from('profiles')
-          .select('is_beta_free, subscription_status, season1_access')
+          .select('is_beta_free, subscription_status, season1_access, created_at')
           .eq('user_id', session.user.id)
           .maybeSingle();
         if (cancelled) return;

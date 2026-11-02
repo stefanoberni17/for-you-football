@@ -3,7 +3,9 @@ import {
   emailFineProva, esitoCheckout, eventoDelProfilo, IMPOSTAZIONI_DEFAULT, impostazioniDa, prezzoEuro, priceIdMentale,
   provaPerUtente, statoDaStripe, tipoDaPriceId,
 } from '@/lib/abbonamento';
-import { canAccessWeek, deveAndareAlPaywall, haAccessoOProva, hasActiveAccess, inProva } from '@/lib/checkAccess';
+import {
+  canAccessWeek, deveAndareAlPaywall, haAccessoOProva, hasActiveAccess, inProva, provaConCartaDal, provaRichiesta,
+} from '@/lib/checkAccess';
 
 const ENV = { STRIPE_PRICE_ID_MENTALE_FONDATORI: 'price_19', STRIPE_PRICE_ID_MENTALE: 'price_29' };
 
@@ -83,9 +85,10 @@ describe('Mentale ad abbonamento (1/11)', () => {
     expect(canAccessWeek(prova, 2)).toBe(false);
     expect(hasActiveAccess({ subscription_status: 'past_due' })).toBe(true);
     expect(hasActiveAccess({ subscription_status: 'unpaid' })).toBe(false);
-    // Prova con carta accesa: senza prova la settimana 1 non si apre
-    expect(canAccessWeek({ subscription_status: 'none' }, 1)).toBe(false);
-    expect(deveAndareAlPaywall('/giorno/1/1', { subscription_status: 'none' })).toBe(true);
+    // Prova con carta accesa: per chi si registra da oggi senza prova la settimana 1 non si apre
+    const nuovo = { subscription_status: 'none', created_at: '2026-11-03T10:00:00Z' };
+    expect(canAccessWeek(nuovo, 1)).toBe(false);
+    expect(deveAndareAlPaywall('/giorno/1/1', nuovo)).toBe(true);
     expect(deveAndareAlPaywall('/giorno/1/1', prova)).toBe(false);
     expect(deveAndareAlPaywall('/settimana/2', prova)).toBe(true);
     expect(deveAndareAlPaywall('/chat', { subscription_status: 'none' })).toBe(false);
@@ -93,6 +96,27 @@ describe('Mentale ad abbonamento (1/11)', () => {
     vi.stubEnv('NEXT_PUBLIC_PROVA_CON_CARTA', '');
     expect(canAccessWeek({ subscription_status: 'none' }, 1)).toBe(true);
     expect(deveAndareAlPaywall('/giorno/1/1', { subscription_status: 'none' })).toBe(false);
+  });
+
+  it('la prova con carta vale solo per chi si registra dal giorno di accensione (Ste, 2/11)', () => {
+    vi.stubEnv('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', 'pk_test');
+    vi.stubEnv('NEXT_PUBLIC_PROVA_CON_CARTA', '1');
+    expect(provaConCartaDal()).toBe('2026-11-02');
+    const vecchio = { subscription_status: 'none', created_at: '2026-10-20T10:00:00Z' };
+    const nuovo = { subscription_status: 'none', created_at: '2026-11-02T08:00:00Z' };
+    expect(provaRichiesta(vecchio)).toBe(false);
+    expect(provaRichiesta(nuovo)).toBe(true);
+    expect(provaRichiesta({ subscription_status: 'none' })).toBe(false); // senza data: come chi c'era già
+    // chi c'era già finisce la settimana 1 gratis, il Gate resta a pagamento
+    expect(canAccessWeek(vecchio, 1)).toBe(true);
+    expect(canAccessWeek(vecchio, 2)).toBe(false);
+    expect(deveAndareAlPaywall('/giorno/1/3', vecchio)).toBe(false);
+    // con una data nell'interruttore vale quella
+    vi.stubEnv('NEXT_PUBLIC_PROVA_CON_CARTA', '2026-11-10');
+    expect(provaRichiesta(nuovo)).toBe(false);
+    expect(provaRichiesta({ created_at: '2026-11-10T09:00:00Z' })).toBe(true);
+    vi.stubEnv('NEXT_PUBLIC_PROVA_CON_CARTA', 'boh');
+    expect(provaConCartaDal()).toBeNull();
   });
 
   it('l\'email prima della fine della prova dice la data, il prezzo e come disdire', () => {

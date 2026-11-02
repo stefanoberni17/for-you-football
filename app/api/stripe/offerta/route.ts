@@ -4,7 +4,7 @@ import { getAuthUser } from '@/lib/auth';
 import { isStripeEnabled } from '@/lib/stripe';
 import { esitoCheckout, prezzoEuro, priceIdMentale, provaPerUtente } from '@/lib/abbonamento';
 import { contaIscrittiVivi, loadImpostazioni } from '@/lib/appSettings';
-import { provaConCarta } from '@/lib/checkAccess';
+import { provaConCarta, provaRichiesta } from '@/lib/checkAccess';
 import { logEvent } from '@/lib/events';
 
 export const runtime = 'nodejs';
@@ -26,14 +26,14 @@ export async function GET(request: NextRequest) {
 
   const prima = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, season1_access, piano, trial_ends_at')
+    .select('is_beta_free, subscription_status, season1_access, piano, trial_ends_at, created_at')
     .eq('user_id', userId)
     .single();
   let profile: Record<string, unknown> | null = prima.data;
   if (prima.error) {
     ({ data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('is_beta_free, subscription_status, season1_access')
+      .select('is_beta_free, subscription_status, season1_access, created_at')
       .eq('user_id', userId)
       .single());
   }
@@ -41,12 +41,12 @@ export async function GET(request: NextRequest) {
   const [imp, iscrittiVivi] = await Promise.all([loadImpostazioni(), contaIscrittiVivi()]);
   const priceId = priceIdMentale(imp.mentalePrezzo, process.env);
   const esito = esitoCheckout({ profilo: profile, imp, iscrittiVivi, priceId });
-  const p = (profile ?? {}) as { trial_ends_at?: string | null };
+  const p = (profile ?? {}) as { trial_ends_at?: string | null; created_at?: string | null };
 
   return NextResponse.json({
     disponibile: isStripeEnabled() && !!priceId,
     prezzo: { tipo: imp.mentalePrezzo, euro: prezzoEuro(imp.mentalePrezzo) },
-    provaGiorni: provaPerUtente(imp, { provaConCarta: provaConCarta(), provaUsata: !!p.trial_ends_at }),
+    provaGiorni: provaPerUtente(imp, { provaConCarta: provaConCarta(), provaUsata: !!p.trial_ends_at || !provaRichiesta(p) }),
     puoAbbonarsi: esito.ok,
     motivo: esito.ok ? null : esito.motivo === 'tetto' ? 'iscrizioni_chiuse' : esito.motivo,
   });

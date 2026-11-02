@@ -16,14 +16,14 @@ const supabaseAdmin = createClient(
 export async function getBillingProfile(userId: string): Promise<BillingProfile | null> {
   const { data, error } = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, season1_access, deleted_at, trial_ends_at')
+    .select('is_beta_free, subscription_status, season1_access, deleted_at, trial_ends_at, created_at')
     .eq('user_id', userId)
     .single();
   if (!error) return data;
   // Senza la migration 038 (trial_ends_at) si legge come prima: chi paga non deve restare fuori
   const { data: base, error: err2 } = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, season1_access, deleted_at')
+    .select('is_beta_free, subscription_status, season1_access, deleted_at, created_at')
     .eq('user_id', userId)
     .single();
   return err2 ? null : base;

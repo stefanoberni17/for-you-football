@@ -6,7 +6,7 @@ import { stripe, getOrCreateStripeCustomer, isStripeEnabled, managedPayments, MA
 import { logEvent } from '@/lib/events';
 import { esitoCheckout, PIANO_MENTALE, priceIdMentale, provaPerUtente } from '@/lib/abbonamento';
 import { contaIscrittiVivi, loadImpostazioni } from '@/lib/appSettings';
-import { provaConCarta } from '@/lib/checkAccess';
+import { provaConCarta, provaRichiesta } from '@/lib/checkAccess';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -58,7 +58,7 @@ async function createCheckout(request: NextRequest) {
   // Le colonne della migration 038: senza, il webhook non saprebbe salvare lo stato "in prova"
   const { data: profile, error: profErr } = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, stripe_customer_id, season1_access, piano, trial_ends_at, name')
+    .select('is_beta_free, subscription_status, stripe_customer_id, season1_access, piano, trial_ends_at, name, created_at')
     .eq('user_id', userId)
     .single();
   if (profErr) {
@@ -92,7 +92,12 @@ async function createCheckout(request: NextRequest) {
   });
 
   const origin = request.headers.get('origin') || request.nextUrl.origin;
-  const prova = provaPerUtente(imp, { provaConCarta: provaConCarta(), provaUsata: !!profile?.trial_ends_at });
+  // Una prova a persona, e solo per chi si è registrato dalla data della prova con carta: chi c'era già ha avuto la
+  // settimana 1 gratis e al Gate si abbona senza prova (altrimenti 7 giorni gratis con il Gate chiuso)
+  const prova = provaPerUtente(imp, {
+    provaConCarta: provaConCarta(),
+    provaUsata: !!profile?.trial_ends_at || !provaRichiesta(profile),
+  });
   const mp = managedPayments();
 
   const params: Stripe.Checkout.SessionCreateParams & { managed_payments?: { enabled: boolean } } = {
