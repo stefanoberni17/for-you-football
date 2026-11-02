@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-02 — Lo scroll bloccato dopo due fogli aperti insieme
+- **Bug** (Ste: "non funziona più lo scroll in app nelle pagine"): ogni `Sheet` salvava `body.style.overflow` all'apertura e lo rimetteva alla chiusura. Con i Termini nuovi (`TERMS_VERSION` del 1/11) il foglio di ri-accettazione si apriva insieme al check-in del mattino (o al Reset): il secondo foglio salvava "hidden", si chiudeva per ultimo e lo rimetteva, e la pagina non scorreva più fino al riavvio dell'app.
+- **Correzione**: `lib/scrollLock.ts` (`bloccaScroll`, contatore condiviso: il primo foglio salva il valore di partenza, l'ultimo lo rimette, in qualunque ordine; un "hidden" rimasto da prima non resta), usato da `components/ui/Sheet.tsx` e dal player del Campo. 3 test in `tests/scrollLock.test.ts`.
+
 ## 2026-11-01 — Il Mentale ad abbonamento (19 € fondatori, 29 €, prova di 7 giorni con la carta)
 - **Listino di Ste** (Notion «Monetizzazione: decisioni chiuse»): Mentale 29 €/mese, fondatori 19 €/mese bloccato finché si resta abbonati, prova di 7 giorni con la carta, codici promozionali solo primo mese o al massimo 3 mesi, niente prezzi barrati, tetto di 25 iscritti poi 50 con la lista d'attesa, tolleranza di 7 giorni sui pagamenti non riusciti. Allenamenti 49 € e Completo 59 € a dicembre.
 - **Regole pure** in `lib/abbonamento.ts` (8 test); **impostazioni senza deploy** in `app_settings` (`mentale_prezzo`, `iscrizioni_aperte`, `tetto_iscritti`, `prova_giorni`, `lib/appSettings.ts`); migration 038 (stati `trialing` e `unpaid`, `profiles.piano`, `trial_ends_at`, `stripe_price_id`, policy billing estesa).
@@ -10,6 +14,7 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 - **Accessi** (`lib/checkAccess.ts`): in prova la settimana 1 e i 20 messaggi del Coach in app, Gate 1 e il resto dal primo pagamento (schermata "La prova finisce il …"); con `NEXT_PUBLIC_PROVA_CON_CARTA` spento la settimana 1 resta gratis come prima.
 - **Pagine**: `/pricing` riscritta ("Il Mentale", prezzo, prova con la data del primo addebito, FAQ, portale per chi è abbonato, lista d'attesa), card "Il tuo accesso" nel profilo con gli stati nuovi, testi di Coach, Telegram e Palestra senza "Season 1".
 - **Prova con carta solo per i nuovi** (Ste, 2/11: "solo per chi si registra da oggi"): `provaRichiesta(profile)` guarda `profiles.created_at` contro la data dell'interruttore (`1` = dal 2/11, oppure una data); chi c'era già finisce la settimana 1 gratis e al Gate si abbona senza prova. Managed Payments scelto da Ste (Stripe gestisce l'IVA).
+- Migration 038 applicata da Ste il 2/11, PR #171 unita lo stesso giorno.
 - **Termini** sezione 6 riscritta (abbonamento, prova, rinnovo e disdetta, pagamenti non riusciti, chi ha Season 1), `TERMS_VERSION = '2026-11-01'`: tutti rivedono il foglio di ri-accettazione una volta.
 
 ## 2026-10-31 — L'esercizio della settimana (presenza nella vita di tutti i giorni)
