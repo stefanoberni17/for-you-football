@@ -39,19 +39,16 @@ export const MIN_AGE = Math.max(14, Number(process.env.NEXT_PUBLIC_MIN_AGE) || 1
 // chi ha accettato una versione diversa (o nessuna) vede il foglio alla prima apertura e deve
 // accettare per continuare. Compilate il 9/10/2026 con i testi definitivi scritti in app.
 export const PRIVACY_VERSION = '2026-10-09';
-export const TERMS_VERSION = '2026-10-09';
+export const TERMS_VERSION = '2026-11-01'; // 1/11: prezzi e pagamenti del Mentale ad abbonamento (sezione 6 e recesso)
 
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
 
 export const TOTAL_WEEKS = 12;
 export const BETA_MAX_WEEK = 12; // settimane disponibili: tutte e tre i blocchi (W9-12 pubblicate su Notion l'8-9/9/2026)
 
-// ─── Prezzi Season 1 (UNICA fonte per i copy; gli addebiti reali vengono dai Price Stripe in env) ──
-// Se cambiano i Price in env, cambiare anche questi: la pagina pricing non deve mai dire una cifra diversa da quella addebitata.
-export const SEASON_PRICE_ONETIME = 69;      // una tantum
-export const SEASON_PRICE_INSTALLMENT = 29;  // per rata
+// ─── Season 1 (non più in vendita dal 1/11: c'è l'abbonamento al Mentale, prezzi in lib/abbonamento.ts) ──
+// Resta il numero delle rate per chi le sta ancora pagando (webhook e Termini).
 export const SEASON_INSTALLMENTS = 3;        // numero rate
-export const SEASON_PRICE_FULL = 99;         // prezzo pieno di riferimento ("invece di")
 
 export const DAYS_PER_WEEK = 7;
 export const GATE_DAY = 7; // giorno gate — obbligatorio, non comprimibile

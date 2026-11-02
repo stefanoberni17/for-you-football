@@ -161,7 +161,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
             role: 'assistant' as const,
             content: typeof err.message === 'string' && err.message
               ? err.message
-              : 'Il Coach si attiva con Season 1. Nella settimana gratis hai il percorso, il check-in e la tua Carta: al Gate della settimana 1 ci ritroviamo qui, e da lì ti scrivo io.',
+              : 'Il Coach senza limiti si apre con l\'abbonamento. Nella prima settimana hai il percorso, il check-in e la tua Carta: al Gate della settimana 1 ci ritroviamo qui.',
             timestamp: new Date(),
           }]);
           return;
@@ -267,8 +267,8 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         <div ref={messagesEndRef} />
         {paywalled && (
           <div className="mx-1 mt-1 bg-forest-500/10 border border-forest-500/35 rounded-card p-4 text-center">
-            <p className="text-body text-app font-semibold mb-3">Il Coach continua con Season 1</p>
-            <Button variant="primary" href="/pricing">Sblocca Season 1</Button>
+            <p className="text-body text-app font-semibold mb-3">Il Coach continua con l&apos;abbonamento al Mentale</p>
+            <Button variant="primary" href="/pricing">Continua il percorso</Button>
           </div>
         )}
       </div>

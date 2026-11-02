@@ -3,32 +3,43 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { authFetch } from '@/lib/authFetch';
 import { hasActiveAccess, isPaywallActive } from '@/lib/checkAccess';
-import { SEASON_INSTALLMENTS, SEASON_PRICE_FULL, SEASON_PRICE_INSTALLMENT, SEASON_PRICE_ONETIME } from '@/lib/constants';
+import { dataLunga } from '@/lib/abbonamento';
 import { trackOnboarding } from '@/lib/onboardingTrack';
-import { Check, ChevronDown, Key, ShieldCheck, Unlock } from 'lucide-react';
+import { Check, ChevronDown, Key, Unlock } from 'lucide-react';
 import { AppLoader, Badge, Button, Card, Field, Input } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
-type Plan = 'onetime' | 'installments';
+type Offerta = {
+  disponibile: boolean;
+  prezzo: { tipo: 'fondatori' | 'listino'; euro: number };
+  provaGiorni: number;
+  puoAbbonarsi: boolean;
+  motivo: 'beta' | 'season1' | 'gia_abbonato' | 'iscrizioni_chiuse' | 'prezzo_mancante' | null;
+};
 
+/**
+ * Il Mentale ad abbonamento (1/11/2026, listino di Ste): 19 €/mese bloccato per i fondatori, poi 29 €; 7 giorni di
+ * prova con la carta; codici promozionali nella pagina di Stripe. Niente prezzi barrati (regola Omnibus).
+ * Quello che vale per QUESTO utente arriva da /api/stripe/offerta.
+ */
 function PricingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<Plan>('onetime');
   const [error, setError] = useState('');
-  const [userId, setUserId] = useState<string | null>(null);
+  const [offerta, setOfferta] = useState<Offerta | null>(null);
+  const [accountEmail, setAccountEmail] = useState('');
+  const [payerEmail, setPayerEmail] = useState('');
+  const [cambiaEmail, setCambiaEmail] = useState(false);
+  const [attesaOk, setAttesaOk] = useState(false);
 
   const canceled = searchParams.get('checkout') === 'canceled';
   // Pagamento fatto ma webhook non ancora arrivato dopo i 5 tentativi della home
   const pending = searchParams.get('checkout') === 'pending';
   const fromGate = searchParams.get('from') === 'gate';
-  // Contraente adulto: la ricevuta va a chi paga, non al profilo del ragazzo
-  const [payerEmail, setPayerEmail] = useState('');
-  const [accountEmail, setAccountEmail] = useState('');
-  const payerEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payerEmail.trim());
 
   useEffect(() => {
     const load = async () => {
@@ -37,7 +48,6 @@ function PricingContent() {
         router.push('/login');
         return;
       }
-      setUserId(session.user.id);
       setAccountEmail(session.user.email || '');
 
       // Se paywall non è attivo (Stripe non configurato), non tenere l'utente qui.
@@ -46,90 +56,73 @@ function PricingContent() {
         return;
       }
 
-      // Se utente ha già accesso, non stare qui.
       const { data: profile } = await supabase
         .from('profiles')
         .select('is_beta_free, subscription_status, season1_access')
         .eq('user_id', session.user.id)
         .single();
-
       if (hasActiveAccess(profile)) {
         router.push('/');
         return;
       }
+      try {
+        const res = await authFetch('/api/stripe/offerta');
+        if (res.ok) setOfferta(await res.json());
+      } catch { /* la pagina mostra "in apertura" */ }
       trackOnboarding('pricing_view');
     };
     load();
   }, [router]);
 
-  const handleCheckout = async () => {
-    if (!userId) return;
-    if (!payerEmailValid) {
-      setError('Inserisci l\'email di chi paga: la ricevuta arriva lì.');
-      return;
+  const openPortal = async () => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/api/stripe/portal', { method: 'POST' });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok && d.url) { window.location.href = d.url; return; }
+      setError('Il portale non risponde. Riprova tra poco.');
+    } catch {
+      setError('Il portale non risponde. Riprova tra poco.');
     }
+    setLoading(false);
+  };
+
+  const handleCheckout = async () => {
     setLoading(true);
     setError('');
-
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch('/api/stripe/create-checkout', {
+      const email = (cambiaEmail ? payerEmail : accountEmail).trim();
+      const res = await authFetch('/api/stripe/create-checkout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-        },
-        body: JSON.stringify({ plan: selectedPlan, payer_email: payerEmail.trim() }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: 'mentale', payer_email: email }),
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Checkout failed');
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409 && data.error === 'gia_abbonato') { await openPortal(); return; }
+      if (res.status === 409 && data.error === 'iscrizioni_chiuse') {
+        setOfferta((o) => (o ? { ...o, puoAbbonarsi: false, motivo: 'iscrizioni_chiuse' } : o));
+        setLoading(false);
+        return;
       }
-
-      const { url } = await res.json();
-      window.location.href = url;
+      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout non riuscito');
+      window.location.href = data.url;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Errore inatteso');
       setLoading(false);
     }
   };
 
-  const planCard = (plan: Plan, title: string, price: React.ReactNode, priceNote: string, desc: string, badge?: string, fullPrice?: React.ReactNode) => {
-    const active = selectedPlan === plan;
-    return (
-      <Card
-        variant={active ? 'accent' : 'default'}
-        onClick={() => setSelectedPlan(plan)}
-        aria-label={`${title}, ${priceNote}${active ? ', selezionato' : ''}`}
-        className={active ? 'border-forest-500' : ''}
-      >
-        <div className="flex items-start gap-3">
-          <span
-            aria-hidden
-            className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${active ? 'border-forest-400' : 'border-divider'}`}
-          >
-            {active && <span className="w-3 h-3 rounded-full bg-forest-400" />}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="block font-display text-title-3 font-bold text-app">{title}</span>
-                {badge && <Badge tone="accent">{badge}</Badge>}
-              </div>
-              <div className="text-right shrink-0">
-                <div className="flex items-baseline justify-end gap-2">
-                  {fullPrice && <span className="text-caption text-muted line-through tabular-nums">{fullPrice}</span>}
-                  <span className="font-display text-title-1 font-bold text-app tabular-nums">{price}</span>
-                </div>
-                <div className="text-caption text-muted">{priceNote}</div>
-              </div>
-            </div>
-            <p className="text-body-sm text-muted">{desc}</p>
-          </div>
-        </div>
-      </Card>
-    );
+  const listaAttesa = async () => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/api/stripe/offerta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lista_attesa: true }),
+      });
+      if (res.ok) setAttesaOk(true);
+    } catch { /* riprova */ }
+    setLoading(false);
   };
 
   const faq = (q: string, a: React.ReactNode) => (
@@ -142,9 +135,19 @@ function PricingContent() {
     </details>
   );
 
-  const stickyPrice = selectedPlan === 'onetime'
-    ? { amount: `€${SEASON_PRICE_ONETIME}`, note: 'una volta' }
-    : { amount: `€${SEASON_PRICE_INSTALLMENT}`, note: `×${SEASON_INSTALLMENTS} rate` };
+  if (!offerta) return <AppLoader />;
+
+  const euro = offerta.prezzo.euro;
+  const fondatori = offerta.prezzo.tipo === 'fondatori';
+  const prova = offerta.provaGiorni;
+  const primoAddebito = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + prova);
+    return (dataLunga(d.toISOString()) ?? '').toLowerCase();
+  })();
+  const chiuso = !offerta.disponibile || offerta.motivo === 'iscrizioni_chiuse' || offerta.motivo === 'prezzo_mancante';
+  const giaAbbonato = offerta.motivo === 'gia_abbonato';
+  const payerEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payerEmail.trim());
 
   // La tab bar è nascosta su /pricing: il CTA vive in una barra sticky in fondo.
   return (
@@ -152,23 +155,19 @@ function PricingContent() {
       <div className="flex-1 pt-safe px-4 pb-6">
         <div className="max-w-2xl mx-auto space-y-5">
           <div className="text-center">
-            <Badge tone="accent" icon={<Unlock size={12} aria-hidden />} className="mb-3">Prezzo founder</Badge>
-            <h1 className="font-display text-title-1 font-bold text-app mb-2">Season 1 — Play Free</h1>
+            {fondatori && <Badge tone="accent" icon={<Unlock size={12} aria-hidden />} className="mb-3">Prezzo di lancio</Badge>}
+            <h1 className="font-display text-title-1 font-bold text-app mb-2">Il Mentale</h1>
             <p className="text-body text-muted">
-              Il percorso completo di 12 settimane. Lo compri una volta, resta tuo.
-            </p>
-            <p className="text-body-sm text-muted mt-2">
-              La settimana 1 è gratis. Season 1 sblocca il Gate, le settimane 2-12 e il Coach.
+              Season 1, Play Free: il percorso di 12 settimane con il Coach, ogni giorno.
             </p>
           </div>
 
           {fromGate && (
             <Card variant="accent" padding="sm" className="flex items-start gap-3 text-body-sm text-app">
               <Key size={20} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-              <span>Hai finito la settimana 1. Il Gate ti aspetta: da qui si continua con Season 1.</span>
+              <span>Hai finito la settimana 1. Il Gate ti aspetta: da qui si continua con l&apos;abbonamento.</span>
             </Card>
           )}
-
           {canceled && (
             <Card variant="warn" padding="sm" className="text-body-sm text-warning">
               Pagamento annullato. Riprova quando vuoi.
@@ -176,48 +175,60 @@ function PricingContent() {
           )}
           {pending && (
             <Card variant="warn" padding="sm" className="text-body-sm text-warning">
-              Pagamento ricevuto, ma l&apos;attivazione sta tardando. Chiudi e riapri l&apos;app tra un minuto.
+              Ricevuto, ma l&apos;attivazione sta tardando. Chiudi e riapri l&apos;app tra un minuto.
               Se non si sblocca, scrivici a <a href="mailto:info@foryoufootball.it" className="underline">info@foryoufootball.it</a>: non serve pagare di nuovo.
             </Card>
           )}
 
-          <div className="space-y-3">
-            {planCard(
-              'onetime',
-              'Pagamento unico',
-              <>€{SEASON_PRICE_ONETIME}</>,
-              'una volta',
-              'Season 1 completa, tua per sempre. Nessun rinnovo, nessun abbonamento.',
-              'Consigliato',
-              <>€{SEASON_PRICE_FULL}</>,
-            )}
-            {planCard(
-              'installments',
-              '3 rate mensili',
-              <>€{SEASON_PRICE_INSTALLMENT} × {SEASON_INSTALLMENTS}</>,
-              'poi si ferma da solo',
-              `Stesso percorso, diviso in ${SEASON_INSTALLMENTS}. Dopo la terza rata gli addebiti si fermano e Season 1 resta tua.`,
-            )}
-          </div>
+          {giaAbbonato ? (
+            <Card variant="accent" className="space-y-3">
+              <p className="text-body font-semibold text-app">Hai già l&apos;abbonamento.</p>
+              <p className="text-body-sm text-muted">Se sei in prova, la settimana 1 è aperta: il resto si apre con il primo pagamento. Pagamento e disdetta stanno nel portale.</p>
+              <Button variant="secondary" fullWidth onClick={openPortal} loading={loading}>Gestisci abbonamento</Button>
+              <Button variant="ghost" fullWidth onClick={() => router.push('/')}>Torna alla home</Button>
+            </Card>
+          ) : (
+            <Card variant="accent">
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-display font-bold text-app tabular-nums">{euro} €</span>
+                <span className="text-body text-muted">al mese</span>
+              </div>
+              <p className="text-body-sm text-app mt-1">
+                {fondatori ? `Prezzo di lancio, bloccato a ${euro} € finché resti iscritto.` : 'Disdici quando vuoi.'}
+              </p>
+              {prova > 0 ? (
+                <p className="text-body-sm text-muted mt-3">
+                  <span className="font-semibold text-app">I primi {prova} giorni sono gratis.</span> Inserisci la carta: il primo addebito è {primoAddebito}.
+                  Se disdici prima, non paghi niente.
+                </p>
+              ) : (
+                <p className="text-body-sm text-muted mt-3">Il primo addebito è oggi, poi ogni mese. Disdici quando vuoi dal profilo.</p>
+              )}
+            </Card>
+          )}
 
-          {/* TODO(termini): la garanzia 4 settimane va formalizzata nei Termini (procedura, tempi, coordinamento con le 3 rate) — copy lasciato in attesa dell'avvocato */}
-          <Card variant="accent" padding="sm" className="flex items-center gap-3">
-            <ShieldCheck size={24} className="text-forest-400 shrink-0" aria-hidden />
-            <p className="text-body text-app">
-              <span className="font-semibold">Garanzia 4 settimane.</span> Se non fa per te, rimborso completo.
-            </p>
-          </Card>
+          {chiuso && !giaAbbonato && (
+            <Card variant="warn" className="space-y-3">
+              <p className="text-body font-semibold text-app">
+                {offerta.disponibile ? 'Le iscrizioni sono chiuse per ora.' : 'Le iscrizioni aprono a breve.'}
+              </p>
+              <p className="text-body-sm text-muted">Entriamo a gruppi, per seguire bene chi c&apos;è. Lascia il nome in lista: ti avvisiamo quando riapre.</p>
+              {attesaOk ? (
+                <p className="text-body-sm text-success flex items-center gap-2"><Check size={16} aria-hidden /> Sei in lista: ti avvisiamo.</p>
+              ) : (
+                <Button variant="secondary" fullWidth onClick={listaAttesa} loading={loading}>Avvisami quando riapre</Button>
+              )}
+            </Card>
+          )}
 
-          {/* Cosa include: i due punti che contano in evidenza, il resto sotto */}
           <Card className="space-y-2">
             <h2 className="font-display text-title-3 font-bold text-app mb-3">Cosa include</h2>
             {[
               { text: '12 settimane di percorso, 3 blocchi: lo strumento, le difficoltà, giocare libero', main: true },
               { text: 'Coach AI personale, in app e su Telegram, 7 giorni su 7', main: true },
               { text: 'Pratiche guidate ogni giorno, con audio', main: false },
-              { text: 'Check-in fisico e mentale e statistiche dei tuoi progressi', main: false },
-              { text: '1 Cerchio For You dal vivo (riservato ai founder)', main: false },
-              { text: 'Gruppo founder: il percorso lo rifiniamo insieme', main: false },
+              { text: 'Check-in fisico e mentale, la tua Carta del Giocatore e le statistiche', main: false },
+              { text: 'Le schede per i momenti difficili, che crescono con il percorso', main: false },
             ].map((item) => (
               <div key={item.text} className={`flex items-start gap-2 ${item.main ? 'text-body font-semibold text-app' : 'text-body-sm text-muted'}`}>
                 <Check size={18} className="text-forest-400 mt-0.5 shrink-0" aria-hidden />
@@ -226,58 +237,65 @@ function PricingContent() {
             ))}
           </Card>
 
-          {/* Chi paga: contraente adulto. Il profilo resta quello del ragazzo. */}
-          <Card>
-            <Field
-              label="Email di chi paga"
-              htmlFor="payer-email"
-              helper="Le ricevute arrivano qui. Di solito un genitore; l'account nell'app resta il tuo."
-            >
-              <Input
-                id="payer-email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                value={payerEmail}
-                onChange={(e) => setPayerEmail(e.target.value)}
-                placeholder="nome@esempio.it"
-              />
-            </Field>
-            {accountEmail && payerEmail.trim().toLowerCase() !== accountEmail.toLowerCase() && (
-              <Button variant="ghost" size="sm" onClick={() => setPayerEmail(accountEmail)} className="mt-1 -ml-4">
-                Pago io, usa la mia email
-              </Button>
-            )}
-          </Card>
+          {!giaAbbonato && !chiuso && (
+            <Card>
+              {cambiaEmail ? (
+                <Field label="Email per le ricevute" htmlFor="payer-email" helper="Se paga un genitore, metti la sua: le ricevute arrivano lì. L'account nell'app resta il tuo.">
+                  <Input
+                    id="payer-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={payerEmail}
+                    onChange={(e) => setPayerEmail(e.target.value)}
+                    placeholder="nome@esempio.it"
+                  />
+                </Field>
+              ) : (
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-body-sm text-muted min-w-0">Le ricevute arrivano a <span className="text-app break-all">{accountEmail}</span></p>
+                  <Button variant="ghost" size="sm" onClick={() => { setCambiaEmail(true); setPayerEmail(''); }}>Cambia</Button>
+                </div>
+              )}
+            </Card>
+          )}
 
           <Card className="space-y-1">
             <h2 className="font-display text-title-3 font-bold text-app mb-2">Domande frequenti</h2>
-            {faq('È un abbonamento?', <>No. Paghi Season 1 una volta (o in 3 rate) e resta tua. Nessun rinnovo automatico, niente da disdire.</>)}
-            {faq('Come funzionano le 3 rate?', <>€{SEASON_PRICE_INSTALLMENT} oggi, poi €{SEASON_PRICE_INSTALLMENT} al mese per altri {SEASON_INSTALLMENTS - 1} mesi. Dopo la terza rata gli addebiti si fermano da soli. L&apos;accesso per sempre si attiva alla terza rata.</>)}
-            {faq('Perché "prezzo founder"?', <>Sei tra i primi: €{SEASON_PRICE_ONETIME} invece di €{SEASON_PRICE_FULL}. In cambio ci aiuti a rifinire il percorso con il tuo feedback, e partecipi al Cerchio For You dal vivo.</>)}
-            {faq('Come funziona la garanzia?', <>Hai 4 settimane per provare la tua Season dall&apos;inizio. Se non fa per te, scrivici a{' '}<a href="mailto:info@foryoufootball.it" className="text-forest-300 underline underline-offset-2">info@foryoufootball.it</a>{' '}e ti rimborsiamo per intero.</>)}
+            {faq('È un abbonamento?', <>Sì, mensile: si rinnova da solo ogni mese. Disdici quando vuoi dall&apos;app: Profilo → Il tuo accesso → Gestisci abbonamento. Resti dentro fino alla fine del mese pagato.</>)}
+            {faq('Come funziona la prova?', <>Inserisci la carta e hai {prova || 7} giorni, la settimana 1 del percorso. Tre giorni prima della fine ti scriviamo. Se disdici prima della fine non paghi niente; se resti, parte l&apos;abbonamento e si aprono il Gate, le settimane 2-12 e il Coach senza limiti.</>)}
+            {fondatori && faq('Cos\'è il prezzo bloccato?', <>Chi entra adesso paga {euro} € al mese finché resta iscritto. Se disdici e torni più avanti, paghi il prezzo di quel momento.</>)}
+            {faq('Ho un codice sconto', <>Lo inserisci nella pagina di pagamento, alla voce «Aggiungi codice promozionale».</>)}
             {faq('Pagamento sicuro?', <>I pagamenti passano da Stripe. Apple Pay e Google Pay disponibili.</>)}
           </Card>
         </div>
       </div>
 
-      {/* CTA sticky: prezzo del piano scelto a sinistra, un solo primario a destra */}
-      <div className="sticky bottom-0 z-40 bg-app-bg/95 backdrop-blur border-t border-divider px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <div className="max-w-2xl mx-auto">
-          {error && (
-            <p className="text-body-sm text-danger mb-2" role="alert">{error}</p>
-          )}
-          <div className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="font-display text-title-2 font-bold text-app tabular-nums leading-tight">{stickyPrice.amount}</div>
-              <div className="text-caption text-muted">{stickyPrice.note}</div>
+      {!giaAbbonato && !chiuso && (
+        <div className="sticky bottom-0 z-40 bg-app-bg/95 backdrop-blur border-t border-divider px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="max-w-2xl mx-auto">
+            {error && (
+              <p className="text-body-sm text-danger mb-2" role="alert">{error}</p>
+            )}
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <div className="font-display text-title-2 font-bold text-app tabular-nums leading-tight">{euro} €/mese</div>
+                <div className="text-caption text-muted">{prova > 0 ? `${prova} giorni gratis` : 'disdici quando vuoi'}</div>
+              </div>
+              <Button
+                variant="hero"
+                size="lg"
+                onClick={handleCheckout}
+                loading={loading}
+                disabled={cambiaEmail && !payerEmailValid}
+                className="shrink-0"
+              >
+                {prova > 0 ? 'Inizia la prova' : 'Abbonati'}
+              </Button>
             </div>
-            <Button variant="hero" size="lg" onClick={handleCheckout} loading={loading} className="shrink-0">
-              Sblocca Season 1
-            </Button>
           </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }

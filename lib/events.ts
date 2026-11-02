@@ -16,6 +16,11 @@ export const SERVER_EVENTS = [
   'coach_message_sent',
   'checkout_started',
   'payment_completed',
+  'trial_started',            // Mentale (1/11): prova di 7 giorni iniziata con la carta (meta.prezzo)
+  'trial_canceled',           // disdetta durante la prova
+  'subscription_canceled',    // abbonamento chiuso dopo la prova (disdetta o pagamenti falliti)
+  'trial_reminder_sent',      // email e push prima della fine della prova (meta.email, meta.push)
+  'lista_attesa',             // iscrizioni chiuse o tetto pieno: "Avvisami quando riapre" (meta.motivo)
   'push_enabled',
   'training_aspetto_tenuto', // strato mese (7/10): "sì, tienilo" a un aspetto sempre saltato (meta.focus)
   'training_aspetto_tolto',  // "no, toglilo": l'obiettivo esce dal setup (meta.focus)

@@ -545,7 +545,7 @@ export default function StrumentiPage() {
             />
           </Card>
           {!mentaleAttivo && (
-            <Card variant="accent" padding="sm" href="/pricing" aria-label="Sblocca Season 1">
+            <Card variant="accent" padding="sm" href="/pricing" aria-label="Il percorso completo: vedi l'abbonamento">
               <Row
                 lead={<IconCircle tone="accent"><Lock size={18} /></IconCircle>}
                 title="Season 1: il percorso completo"

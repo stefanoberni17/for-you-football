@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import type Stripe from 'stripe';
 import { getAuthUser } from '@/lib/auth';
-import { stripe, getOrCreateStripeCustomer, isStripeEnabled } from '@/lib/stripe';
+import { stripe, getOrCreateStripeCustomer, isStripeEnabled, managedPayments, MANAGED_PAYMENTS_API_VERSION } from '@/lib/stripe';
 import { logEvent } from '@/lib/events';
+import { esitoCheckout, PIANO_MENTALE, priceIdMentale, provaPerUtente } from '@/lib/abbonamento';
+import { contaIscrittiVivi, loadImpostazioni } from '@/lib/appSettings';
+import { provaConCarta, provaRichiesta } from '@/lib/checkAccess';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -15,13 +19,13 @@ const supabaseAdmin = createClient(
 
 /**
  * POST /api/stripe/create-checkout
- * Body: { plan: 'onetime' | 'installments', payer_email: string }
- *  - payer_email: email di CHI PAGA (contraente adulto, di solito un genitore).
- *    Il customer Stripe prende questa email → ricevute e fatture all'adulto;
- *    il profilo app resta quello del ragazzo (sera 5, review 13/9).
- *  - onetime:      Season 1 a prezzo pieno una tantum (mode: payment)
- *  - installments: Season 1 in 3 rate mensili (mode: subscription; il webhook
- *                  aggancia una Subscription Schedule con 3 iterazioni poi cancel)
+ * Body: { plan: 'mentale', payer_email?: string }
+ *  - mentale (dal 1/11): abbonamento mensile al Mentale. Prezzo dei fondatori (19 €) o di listino (29 €) secondo
+ *    app_settings.mentale_prezzo; prova di 7 giorni con la carta all'inizio (una sola per persona, solo con
+ *    NEXT_PUBLIC_PROVA_CON_CARTA=1); codici promozionali ammessi. Doppio abbonamento → 409 'gia_abbonato' (il client
+ *    apre il portale); iscrizioni chiuse o tetto pieno → 409 'iscrizioni_chiuse' (lista d'attesa).
+ *  - payer_email: facoltativa, l'email a cui arrivano le ricevute (di default quella dell'account).
+ * I piani di Season 1 ('onetime', 'installments') non si vendono più: 410.
  * Ritorna: { url } — URL Stripe Checkout da cui far ridirigere il client.
  */
 export async function POST(request: NextRequest) {
@@ -44,88 +48,92 @@ async function createCheckout(request: NextRequest) {
   const userId = await getAuthUser(request);
   if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 
-  const body = await request.json();
-  const plan = body.plan as 'onetime' | 'installments' | undefined;
-
-  if (plan !== 'onetime' && plan !== 'installments') {
-    return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+  const body = await request.json().catch(() => ({}));
+  const plan = body?.plan ?? PIANO_MENTALE;
+  if (plan === 'onetime' || plan === 'installments') {
+    return NextResponse.json({ error: 'Season 1 non è più in vendita: c\'è l\'abbonamento al Mentale.' }, { status: 410 });
   }
-  const payerEmail = String(body.payer_email || '').trim().toLowerCase();
-  if (!EMAIL_RE.test(payerEmail) || payerEmail.length > 254) {
-    return NextResponse.json({ error: 'Inserisci l\'email di chi paga (la ricevuta arriva lì)' }, { status: 400 });
-  }
+  if (plan !== PIANO_MENTALE) return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
 
-  // Beta/comp e chi ha già acquistato Season 1 non devono passare per il checkout.
-  const { data: profile } = await supabaseAdmin
+  // Le colonne della migration 038: senza, il webhook non saprebbe salvare lo stato "in prova"
+  const { data: profile, error: profErr } = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, stripe_customer_id, season1_access')
+    .select('is_beta_free, subscription_status, stripe_customer_id, season1_access, piano, trial_ends_at, name, created_at')
     .eq('user_id', userId)
     .single();
-
-  if (profile?.is_beta_free) {
-    return NextResponse.json({ error: 'User has comp access, no checkout needed' }, { status: 400 });
+  if (profErr) {
+    console.error('[stripe] create-checkout: profilo non leggibile (migration 038?)', profErr.message);
+    return NextResponse.json({ error: 'Pagamenti in aggiornamento, riprova tra poco.', skipped: 'migration_038' }, { status: 503 });
   }
-  if (profile?.season1_access) {
-    return NextResponse.json({ error: 'Season 1 already purchased' }, { status: 400 });
+
+  const [imp, iscrittiVivi] = await Promise.all([loadImpostazioni(), contaIscrittiVivi()]);
+  const priceId = priceIdMentale(imp.mentalePrezzo, process.env);
+  const esito = esitoCheckout({ profilo: profile, imp, iscrittiVivi, priceId });
+  if (!esito.ok) {
+    const status = esito.motivo === 'prezzo_mancante' ? 503 : esito.motivo === 'beta' || esito.motivo === 'season1' ? 400 : 409;
+    const motivo = esito.motivo === 'tetto' ? 'iscrizioni_chiuse' : esito.motivo;
+    return NextResponse.json({ error: motivo }, { status });
   }
 
   // Email dall'utente auth
   const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(userId);
   if (!user?.email) return NextResponse.json({ error: 'User email not found' }, { status: 400 });
 
-  const customerId = await getOrCreateStripeCustomer(userId, user.email);
+  const payerEmail = String(body?.payer_email || '').trim().toLowerCase() || user.email.toLowerCase();
+  if (!EMAIL_RE.test(payerEmail) || payerEmail.length > 254) {
+    return NextResponse.json({ error: 'L\'email per le ricevute non è valida' }, { status: 400 });
+  }
 
-  // Il contraente è l'adulto che paga: il customer Stripe porta la SUA email
-  // (ricevute, fatture delle rate, portal). Il legame col ragazzo resta in metadata.
+  const customerId = await getOrCreateStripeCustomer(userId, user.email);
+  // Il customer Stripe porta l'email delle ricevute; il legame con l'account resta in metadata.
   await stripe.customers.update(customerId, {
     email: payerEmail,
     metadata: { supabase_user_id: userId, payer_email: payerEmail, athlete_email: user.email },
   });
 
   const origin = request.headers.get('origin') || request.nextUrl.origin;
+  // Una prova a persona, e solo per chi si è registrato dalla data della prova con carta: chi c'era già ha avuto la
+  // settimana 1 gratis e al Gate si abbona senza prova (altrimenti 7 giorni gratis con il Gate chiuso)
+  const prova = provaPerUtente(imp, {
+    provaConCarta: provaConCarta(),
+    provaUsata: !!profile?.trial_ends_at || !provaRichiesta(profile),
+  });
+  const mp = managedPayments();
 
-  const common = {
+  const params: Stripe.Checkout.SessionCreateParams & { managed_payments?: { enabled: boolean } } = {
     customer: customerId,
-    automatic_tax: { enabled: false as const },
+    mode: 'subscription',
+    line_items: [{ price: priceId!, quantity: 1 }],
     success_url: `${origin}/?checkout=success`,
     cancel_url: `${origin}/pricing?checkout=canceled`,
-    // Indirizzo di fatturazione dell'adulto, salvato sul customer (serve `customer_update`
-    // quando si passa `customer`, altrimenti Stripe rifiuta la raccolta dell'indirizzo).
-    billing_address_collection: 'required' as const,
-    customer_update: { address: 'auto' as const, name: 'auto' as const },
-    // Accettazione dei Termini nel checkout: Stripe la accetta SOLO se l'URL dei termini è nelle
-    // impostazioni del dashboard (Impostazioni → Checkout), altrimenti la creazione della sessione
-    // fallisce. Per questo NON dipende da TERMS_VERSION (compilata il 9/10) ma dall'env
-    // STRIPE_TERMS_CONSENT=1, da mettere su Vercel DOPO aver inserito l'URL su Stripe.
+    // Codici promozionali di Ste (solo primo mese o al massimo 3 mesi: la durata la decide il coupon su Stripe)
+    allow_promotion_codes: true,
+    // La carta si chiede sempre, anche con la prova: senza carta non parte l'abbonamento al giorno 8
+    payment_method_collection: 'always',
+    // Accettazione dei Termini nel checkout: Stripe la accetta SOLO se l'URL dei termini è nelle impostazioni del
+    // dashboard (Impostazioni → Checkout), altrimenti la creazione della sessione fallisce: per questo dietro l'env.
     ...(process.env.STRIPE_TERMS_CONSENT === '1' ? { consent_collection: { terms_of_service: 'required' as const } } : {}),
-    metadata: {
-      supabase_user_id: userId,
-      plan,
-      payer_email: payerEmail,
+    subscription_data: {
+      ...(prova > 0 ? { trial_period_days: prova } : {}),
+      metadata: { supabase_user_id: userId, plan: PIANO_MENTALE, prezzo: imp.mentalePrezzo },
     },
+    metadata: { supabase_user_id: userId, plan: PIANO_MENTALE, prezzo: imp.mentalePrezzo, payer_email: payerEmail },
   };
+  if (mp) {
+    // Managed Payments: Stripe è il venditore, calcola le tasse dal codice fiscale del prodotto e raccoglie nome e
+    // indirizzo da sé (automatic_tax, customer_update e payment_method_types non sono ammessi).
+    params.managed_payments = { enabled: true };
+  } else {
+    params.automatic_tax = { enabled: false };
+    params.billing_address_collection = 'required';
+    params.customer_update = { address: 'auto', name: 'auto' };
+  }
 
-  const session = plan === 'onetime'
-    ? await stripe.checkout.sessions.create({
-        ...common,
-        mode: 'payment',
-        // Solo card (Apple/Google Pay inclusi): evita metodi async (es. SEPA)
-        // che completerebbero la session con payment_status='unpaid'.
-        payment_method_types: ['card'],
-        line_items: [{ price: process.env.STRIPE_PRICE_ID_SEASON_ONETIME!, quantity: 1 }],
-      })
-    : await stripe.checkout.sessions.create({
-        ...common,
-        mode: 'subscription',
-        line_items: [{ price: process.env.STRIPE_PRICE_ID_SEASON_INSTALLMENTS!, quantity: 1 }],
-        subscription_data: {
-          metadata: {
-            supabase_user_id: userId,
-            plan: 'installments',
-          },
-        },
-      });
+  const session = await stripe.checkout.sessions.create(
+    params as Stripe.Checkout.SessionCreateParams,
+    mp ? { apiVersion: MANAGED_PAYMENTS_API_VERSION } : undefined,
+  );
 
-  logEvent(userId, 'checkout_started', { plan });
+  logEvent(userId, 'checkout_started', { plan: PIANO_MENTALE, prezzo: imp.mentalePrezzo, prova });
   return NextResponse.json({ url: session.url });
 }

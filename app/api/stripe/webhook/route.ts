@@ -3,6 +3,9 @@ import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { stripe, ensureInstallmentSchedule } from '@/lib/stripe';
+import { emailFineProva, eventoDelProfilo, PIANO_MENTALE, statoDaStripe, type StatoAbbonamento } from '@/lib/abbonamento';
+import { sendEmail } from '@/lib/emailServer';
+import { sendPushToUser } from '@/lib/pushNotification';
 
 // Node runtime richiesto: Stripe.webhooks.constructEvent usa `crypto` node-only.
 export const runtime = 'nodejs';
@@ -14,19 +17,20 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Webhook Stripe. Modello Season 1 founder:
- *  - one-time (mode payment)      → season1_access=true (accesso permanente)
- *  - 3 rate (mode subscription)   → status='active' durante le rate; alla 3ª rata
- *                                   pagata season1_access=true; la Subscription
- *                                   Schedule (iterations 3, end_behavior cancel)
- *                                   ferma gli addebiti dopo la terza.
+ * Webhook Stripe.
+ *  - Mentale (dal 1/11, metadata.plan = 'mentale'): abbonamento mensile con la prova. Lo stato si salva com'è
+ *    (trialing, active, past_due, unpaid, canceled: migration 038), con il Price pagato e la fine della prova.
+ *    Niente rate da contare: è un abbonamento aperto.
+ *  - Season 1 (fino al 31/10, chi l'ha già): one-time → season1_access; 3 rate → status attivo durante le rate,
+ *    alla 3ª pagata season1_access (Subscription Schedule, iterations 3, end_behavior cancel).
  *
  * Eventi gestiti:
- *  - checkout.session.completed       → branch su session.mode (payment | subscription)
- *  - invoice.paid                     → conta rate pagate; alla 3ª → season1_access
- *  - customer.subscription.updated    → sync status (active, past_due, canceled, incomplete)
- *  - customer.subscription.deleted    → sub terminata (accesso resta se season1_access)
- *  - invoice.payment_failed           → accesso bloccato (past_due)
+ *  - checkout.session.completed            → branch su session.mode e metadata.plan
+ *  - invoice.paid                          → rate di Season 1; per il Mentale l'evento del primo pagamento
+ *  - customer.subscription.updated         → stato (solo se è l'abbonamento salvato sul profilo)
+ *  - customer.subscription.deleted         → canceled (l'accesso resta se season1_access)
+ *  - customer.subscription.trial_will_end  → email e push prima della fine della prova (Stripe: 3 giorni prima)
+ *  - invoice.payment_failed                → past_due: tolleranza finché Stripe ritenta, poi unpaid
  *
  * Idempotenza: ogni event.id viene inserito in `stripe_events`.
  * Se INSERT fallisce (PK conflict) → evento già processato, skip.
@@ -92,6 +96,11 @@ export async function POST(request: NextRequest) {
         await handlePaymentFailed(invoice);
         break;
       }
+      case 'customer.subscription.trial_will_end': {
+        const sub = event.data.object as Stripe.Subscription;
+        await handleTrialWillEnd(sub);
+        break;
+      }
       default:
         // Altri eventi: log ma ack (non retry).
         console.log('[stripe-webhook] unhandled event:', event.type);
@@ -140,6 +149,32 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  // ─── Mentale ad abbonamento (dal 1/11) ─────────────────────────────────────
+  if (session.metadata?.plan === PIANO_MENTALE) {
+    if (!subscriptionId) {
+      console.error('[stripe-webhook] checkout mentale senza subscription', session.id);
+      return;
+    }
+    const sub = await stripe.subscriptions.retrieve(subscriptionId);
+    const stato = statoDaStripe(sub.status);
+    const { error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        stripe_customer_id: customerId ?? null,
+        stripe_subscription_id: subscriptionId,
+        subscription_status: stato,
+        ...campiMentale(sub),
+      })
+      .eq('user_id', userId);
+    // Senza la migration 038 lo stato "trialing" non passa il vincolo: errore → Stripe riprova più tardi
+    if (error) throw new Error(`checkout mentale: ${error.message}`);
+    logEvent(userId, stato === 'trialing' ? 'trial_started' : 'payment_completed', {
+      plan: PIANO_MENTALE, prezzo: session.metadata?.prezzo ?? null, amount_total: session.amount_total ?? null,
+    });
+    console.log(`[stripe-webhook] ✓ checkout mentale — user ${userId} → ${stato}`);
+    return;
+  }
+
   // ─── 3 rate (subscription): attiva accesso + aggancia schedule 3 iterazioni ─
   await supabaseAdmin
     .from('profiles')
@@ -158,6 +193,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   console.log(`[stripe-webhook] ✓ checkout installments completed — user ${userId} → active (1/3)`);
 }
 
+type InvoiceSub = {
+  subscription?: string | { id?: string } | null;
+  parent?: { subscription_details?: { subscription?: string | null } | null } | null;
+};
+/** Il subscription id di una invoice: la sua posizione dipende dalla versione API dell'endpoint webhook. */
+function subIdDaInvoice(invoice: Stripe.Invoice): string | null {
+  const inv = invoice as unknown as InvoiceSub;
+  return (typeof inv.subscription === 'string' ? inv.subscription : inv.subscription?.id) ??
+    inv.parent?.subscription_details?.subscription ??
+    null;
+}
+
 /**
  * Conta le rate pagate della subscription installments e aggiorna il profilo.
  * SET assoluto da Stripe (mai incremento) → idempotente su replay/retry.
@@ -167,15 +214,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
   // La posizione del subscription id dipende dalla versione API dell'endpoint
   // webhook (>= 2025-03-31.basil usa invoice.parent.subscription_details).
-  const inv = invoice as any;
-  const subId: string | null =
-    (typeof inv.subscription === 'string' ? inv.subscription : inv.subscription?.id) ??
-    inv.parent?.subscription_details?.subscription ??
-    null;
+  const subId = subIdDaInvoice(invoice);
 
   if (!subId) return; // invoice non legata a subscription (es. one-time): niente da fare
 
   const sub = await stripe.subscriptions.retrieve(subId);
+  if (sub.metadata?.plan === PIANO_MENTALE) {
+    // Un pagamento vero (la fattura a 0 € dell'inizio prova non conta): l'evento per il funnel
+    if ((invoice.amount_paid ?? 0) > 0 && sub.metadata?.supabase_user_id) {
+      logEvent(sub.metadata.supabase_user_id, 'payment_completed', {
+        plan: PIANO_MENTALE, amount_paid: invoice.amount_paid, billing_reason: invoice.billing_reason ?? null,
+      });
+    }
+    return;
+  }
   if (sub.metadata?.plan !== 'installments') return; // non è il piano a rate
 
   const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
@@ -198,62 +250,104 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
   console.log(`[stripe-webhook] ✓ invoice.paid — customer ${customerId} rate ${count}/3${count >= 3 ? ' → season1_access' : ''}`);
 }
 
+/** Le colonne del Mentale dalla subscription: il Price pagato e la fine della prova (non nulla = prova usata). */
+function campiMentale(sub: Stripe.Subscription): Record<string, unknown> {
+  if (sub.metadata?.plan !== PIANO_MENTALE) return {};
+  const campi: Record<string, unknown> = { piano: PIANO_MENTALE, stripe_price_id: sub.items?.data?.[0]?.price?.id ?? null };
+  if (sub.trial_end) campi.trial_ends_at = new Date(sub.trial_end * 1000).toISOString();
+  return campi;
+}
+
+/** Il profilo di quel customer, se l'evento riguarda l'abbonamento che ha adesso (o non ne ha ancora salvato uno). */
+async function profiloPerEvento(customerId: string, subId: string) {
+  const { data } = await supabaseAdmin
+    .from('profiles')
+    .select('user_id, stripe_subscription_id, subscription_status')
+    .eq('stripe_customer_id', customerId)
+    .maybeSingle();
+  if (!data) return null;
+  if (!eventoDelProfilo(data.stripe_subscription_id, subId)) {
+    console.log(`[stripe-webhook] evento della subscription ${subId} ignorato: il profilo ha ${data.stripe_subscription_id}`);
+    return null;
+  }
+  return data as { user_id: string; stripe_subscription_id: string | null; subscription_status: string | null };
+}
+
 async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
   const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+  const profilo = await profiloPerEvento(customerId, sub.id);
+  if (!profilo) return;
 
-  // Mappa stati Stripe → nostri stati DB.
-  // active | trialing   → 'active'
-  // past_due | unpaid   → 'past_due'
-  // canceled | incomplete_expired → 'canceled'
-  // incomplete          → 'none' (non ancora attivo)
-  let status: 'none' | 'active' | 'past_due' | 'canceled' = 'none';
-  switch (sub.status) {
-    case 'active':
-    case 'trialing':
-      status = 'active';
-      break;
-    case 'past_due':
-    case 'unpaid':
-      status = 'past_due';
-      break;
-    case 'canceled':
-    case 'incomplete_expired':
-      status = 'canceled';
-      break;
-    default:
-      status = 'none';
-  }
+  // Mentale: lo stato com'è (trialing resta trialing, unpaid toglie l'accesso). Rate di Season 1: come prima,
+  // ma unpaid ora è unpaid (accesso chiuso) e past_due tiene l'accesso finché Stripe ritenta.
+  let status: StatoAbbonamento = statoDaStripe(sub.status);
+  if (sub.metadata?.plan !== PIANO_MENTALE && status === 'trialing') status = 'active';
 
-  await supabaseAdmin
+  const { error } = await supabaseAdmin
     .from('profiles')
-    .update({
-      subscription_status: status,
-      stripe_subscription_id: sub.id,
-    })
-    .eq('stripe_customer_id', customerId);
+    .update({ subscription_status: status, stripe_subscription_id: sub.id, ...campiMentale(sub) })
+    .eq('user_id', profilo.user_id);
+  if (error) throw new Error(`subscription.updated: ${error.message}`);
 
-  console.log(`[stripe-webhook] ✓ subscription.updated — customer ${customerId} → ${status}`);
+  if (profilo.subscription_status === 'trialing' && status === 'canceled') {
+    logEvent(profilo.user_id, 'trial_canceled', { plan: sub.metadata?.plan ?? null });
+  }
+  console.log(`[stripe-webhook] ✓ subscription.updated — user ${profilo.user_id} → ${status}`);
 }
 
 async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+  const profilo = await profiloPerEvento(customerId, sub.id);
+  if (!profilo) return;
 
   await supabaseAdmin
     .from('profiles')
     .update({ subscription_status: 'canceled' })
-    .eq('stripe_customer_id', customerId);
+    .eq('user_id', profilo.user_id);
 
-  console.log(`[stripe-webhook] ✓ subscription.deleted — customer ${customerId}`);
+  logEvent(profilo.user_id, profilo.subscription_status === 'trialing' ? 'trial_canceled' : 'subscription_canceled', {
+    plan: sub.metadata?.plan ?? null,
+  });
+  console.log(`[stripe-webhook] ✓ subscription.deleted — user ${profilo.user_id}`);
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
   if (!customerId) return;
+  const subId = subIdDaInvoice(invoice);
+  if (!subId) return;
+  const profilo = await profiloPerEvento(customerId, subId);
+  if (!profilo) return;
 
+  // Tolleranza: past_due tiene l'accesso mentre Stripe ritenta (7 giorni, impostazione del pannello); dopo
+  // l'ultimo tentativo Stripe porta la subscription a unpaid e subscription.updated chiude l'accesso.
   await supabaseAdmin
     .from('profiles')
     .update({ subscription_status: 'past_due' })
-    .eq('stripe_customer_id', customerId);
+    .eq('user_id', profilo.user_id);
 
-  console.log(`[stripe-webhook] ⚠ payment failed — customer ${customerId} → past_due`);
+  console.log(`[stripe-webhook] ⚠ payment failed — user ${profilo.user_id} → past_due`);
+}
+
+/** Tre giorni prima della fine della prova: email a chi paga e push all'utente, con la data e come disdire. */
+async function handleTrialWillEnd(sub: Stripe.Subscription) {
+  if (sub.metadata?.plan !== PIANO_MENTALE || sub.status !== 'trialing' || sub.cancel_at_period_end) return;
+  const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+  const profilo = await profiloPerEvento(customerId, sub.id);
+  if (!profilo) return;
+
+  const fine = sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null;
+  const euro = Math.round((sub.items?.data?.[0]?.price?.unit_amount ?? 0) / 100);
+  const [{ data: prof }, customer] = await Promise.all([
+    supabaseAdmin.from('profiles').select('name').eq('user_id', profilo.user_id).maybeSingle(),
+    stripe.customers.retrieve(customerId),
+  ]);
+  const email = !('deleted' in customer && customer.deleted) ? (customer as Stripe.Customer).email : null;
+  const msg = emailFineProva({ nome: (prof as { name?: string | null } | null)?.name ?? null, fine, euro });
+
+  const [emailOk, pushOk] = await Promise.all([
+    email ? sendEmail({ to: email, subject: msg.oggetto, text: msg.testo }) : Promise.resolve(false),
+    sendPushToUser(profilo.user_id, msg.oggetto, `Dalla fine della prova: ${euro} € al mese. Per disdire: Profilo → Il tuo accesso.`, '/profilo').catch(() => false),
+  ]);
+  logEvent(profilo.user_id, 'trial_reminder_sent', { email: emailOk, push: !!pushOk });
 }

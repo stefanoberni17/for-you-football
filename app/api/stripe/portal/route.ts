@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { stripe, isStripeEnabled } from '@/lib/stripe';
+import { stripe, hasStripeKey } from '@/lib/stripe';
 
 export const runtime = 'nodejs';
 
@@ -15,7 +15,7 @@ const supabaseAdmin = createClient(
  * Ritorna: { url } — URL Stripe Customer Portal (gestione abbonamento).
  */
 export async function POST(request: NextRequest) {
-  if (!isStripeEnabled()) {
+  if (!hasStripeKey()) {
     return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
   }
 

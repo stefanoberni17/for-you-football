@@ -3,25 +3,24 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { shouldRedirectToPaywall, isPaidRoute, type BillingProfile } from '@/lib/checkAccess';
+import { deveAndareAlPaywall, isPaidRoute, type BillingProfile } from '@/lib/checkAccess';
 
 /**
- * Paywall lato client sulle rotte A PAGAMENTO (settimana gratis dal 14/9: chi è registrato
- * usa W1 G1-G6, check-in, Card e test senza pagare; il gate di W1, le settimane 2+ e il
- * Coach richiedono Season 1 — vedi `isPaidRoute`). Il gate ha una schermata sua, la chat
- * mostra il messaggio in pagina: qui si rimbalzano solo giorni/settimane oltre la gratis
- * e week-complete. Le API restano l'unica verità (`requireWeekAccess`/`requirePaidAccess`).
+ * Paywall lato client sulle rotte A PAGAMENTO: le settimane dopo la prima, week-complete e, con la prova con carta
+ * accesa (1/11, NEXT_PUBLIC_PROVA_CON_CARTA=1), anche la settimana 1 finché la prova non è iniziata
+ * (`deveAndareAlPaywall`). Il gate ha una schermata sua, la chat mostra il messaggio in pagina.
+ * Le API restano l'unica verità (`requireWeekAccess`/`requirePaidAccess`).
  */
 
-// Una verifica per sessione (finché la pagina resta viva), non a ogni cambio rotta
+// Una lettura del profilo per sessione (finché la pagina resta viva), non a ogni cambio rotta
 let checkedAt = 0;
-let lastResult: boolean | null = null; // true = deve andare al paywall
+let lastProfile: BillingProfile | null = null;
 const TTL_MS = 60_000;
 
 /** Da chiamare quando l'accesso cambia (es. attivazione post-checkout): butta via la cache. */
 export function resetPaywallCache() {
   checkedAt = 0;
-  lastResult = null;
+  lastProfile = null;
 }
 
 // Account in cancellazione (migration 028): su OGNI pagina dell'app → /riattiva
@@ -65,23 +64,23 @@ export default function PaywallGuard() {
     let cancelled = false;
     (async () => {
       try {
-        if (Date.now() - checkedAt < TTL_MS && lastResult !== null) {
-          if (lastResult) router.replace('/pricing');
+        if (Date.now() - checkedAt < TTL_MS && lastProfile) {
+          if (deveAndareAlPaywall(pathname, lastProfile)) router.replace('/pricing');
           return;
         }
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return; // le pagine gestiscono già il redirect a /login
         const { data } = await supabase
           .from('profiles')
-          .select('is_beta_free, subscription_status, season1_access')
+          .select('is_beta_free, subscription_status, season1_access, created_at')
           .eq('user_id', session.user.id)
           .maybeSingle();
         if (cancelled) return;
         // Profilo non leggibile → non bloccare (fail-open: le API fanno il vero gate)
         if (!data) return;
-        lastResult = shouldRedirectToPaywall(data as BillingProfile);
+        lastProfile = data as BillingProfile;
         checkedAt = Date.now();
-        if (lastResult) router.replace('/pricing');
+        if (deveAndareAlPaywall(pathname, lastProfile)) router.replace('/pricing');
       } catch { /* fail-open */ }
     })();
     return () => { cancelled = true; };

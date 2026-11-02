@@ -80,17 +80,29 @@ export async function ensureInstallmentSchedule(subscriptionId: string): Promise
 }
 
 /**
- * Feature flag: Stripe è configurato? Se no, il redirect paywall è soft (no-op).
- * Usato per deploy graduale: codice in prod ma paywall inattivo finché env non presenti.
- *
- * Price env generiche per Season: in fase founder puntano a €69 one-time / €29 mensile;
- * dal 01/09 si swappano i valori (€99 one-time / €39 mensile) senza toccare il codice.
+ * Stripe è configurato? Senza, il paywall è soft (no-op) e il checkout risponde 503.
+ * Dal 1/11 si vende il Mentale: servono la chiave, il segreto del webhook e almeno uno dei due Price del Mentale
+ * (STRIPE_PRICE_ID_MENTALE_FONDATORI per i 19 € bloccati, STRIPE_PRICE_ID_MENTALE per i 29 € di listino).
  */
 export function isStripeEnabled(): boolean {
   return Boolean(
     process.env.STRIPE_SECRET_KEY &&
     process.env.STRIPE_WEBHOOK_SECRET &&
-    process.env.STRIPE_PRICE_ID_SEASON_ONETIME &&
-    process.env.STRIPE_PRICE_ID_SEASON_INSTALLMENTS
+    (process.env.STRIPE_PRICE_ID_MENTALE_FONDATORI || process.env.STRIPE_PRICE_ID_MENTALE)
   );
 }
+
+/** C'è la chiave Stripe: basta per il portale e per mettere in pausa o chiudere gli abbonamenti già esistenti. */
+export function hasStripeKey(): boolean {
+  return Boolean(process.env.STRIPE_SECRET_KEY);
+}
+
+/**
+ * Managed Payments (Stripe venditore: tasse e fatture le gestisce Stripe) acceso con STRIPE_MANAGED_PAYMENTS=1,
+ * solo dopo l'idoneità approvata da Stripe. La sessione di checkout si crea con la versione API che lo supporta
+ * (l'SDK resta sulla sua; da provare con la chiave di test prima di accenderlo in produzione).
+ */
+export function managedPayments(): boolean {
+  return process.env.STRIPE_MANAGED_PAYMENTS === '1';
+}
+export const MANAGED_PAYMENTS_API_VERSION = '2025-03-31.basil';

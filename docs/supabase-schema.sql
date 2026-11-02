@@ -57,12 +57,15 @@ CREATE TABLE profiles (
 
   -- Stripe billing (vedi docs/migrations/002_stripe.sql + 004_season1.sql)
   subscription_status       TEXT DEFAULT 'none'
-    CHECK (subscription_status IN ('none','active','past_due','canceled')),
+    CHECK (subscription_status IN ('none','trialing','active','past_due','unpaid','canceled')),  -- 038
   stripe_customer_id        TEXT,
   stripe_subscription_id    TEXT,
   is_beta_free              BOOLEAN DEFAULT false,
   season1_access            BOOLEAN DEFAULT false,  -- Season 1 acquistata (one-time o 3 rate)
   installments_paid         INT DEFAULT 0,          -- conteggio assoluto invoice paid (webhook)
+  piano                     TEXT,                   -- 038: 'mentale'
+  trial_ends_at             TIMESTAMPTZ,            -- 038: fine della prova (non nullo = prova usata)
+  stripe_price_id           TEXT,                   -- 038: il Price pagato (19 € fondatori o 29 €)
 
   -- Collegamento Telegram via deep-link (005_telegram_link.sql)
   telegram_link_code         TEXT,        -- codice usa-e-getta 32 hex
