@@ -10,6 +10,7 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 - **Accessi** (`lib/checkAccess.ts`): in prova la settimana 1 e i 20 messaggi del Coach in app, Gate 1 e il resto dal primo pagamento (schermata "La prova finisce il …"); con `NEXT_PUBLIC_PROVA_CON_CARTA` spento la settimana 1 resta gratis come prima.
 - **Pagine**: `/pricing` riscritta ("Il Mentale", prezzo, prova con la data del primo addebito, FAQ, portale per chi è abbonato, lista d'attesa), card "Il tuo accesso" nel profilo con gli stati nuovi, testi di Coach, Telegram e Palestra senza "Season 1".
 - **Prova con carta solo per i nuovi** (Ste, 2/11: "solo per chi si registra da oggi"): `provaRichiesta(profile)` guarda `profiles.created_at` contro la data dell'interruttore (`1` = dal 2/11, oppure una data); chi c'era già finisce la settimana 1 gratis e al Gate si abbona senza prova. Managed Payments scelto da Ste (Stripe gestisce l'IVA).
+- Migration 038 applicata da Ste il 2/11, PR #171 unita lo stesso giorno.
 - **Termini** sezione 6 riscritta (abbonamento, prova, rinnovo e disdetta, pagamenti non riusciti, chi ha Season 1), `TERMS_VERSION = '2026-11-01'`: tutti rivedono il foglio di ri-accettazione una volta.
 
 ## 2026-10-31 — L'esercizio della settimana (presenza nella vita di tutti i giorni)
