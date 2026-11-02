@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-02 — Lo scroll bloccato dopo due fogli aperti insieme
+- **Bug** (Ste: "non funziona più lo scroll in app nelle pagine"): ogni `Sheet` salvava `body.style.overflow` all'apertura e lo rimetteva alla chiusura. Con i Termini nuovi (`TERMS_VERSION` del 1/11) il foglio di ri-accettazione si apriva insieme al check-in del mattino (o al Reset): il secondo foglio salvava "hidden", si chiudeva per ultimo e lo rimetteva, e la pagina non scorreva più fino al riavvio dell'app.
+- **Correzione**: `lib/scrollLock.ts` (`bloccaScroll`, contatore condiviso: il primo foglio salva il valore di partenza, l'ultimo lo rimette, in qualunque ordine; un "hidden" rimasto da prima non resta), usato da `components/ui/Sheet.tsx` e dal player del Campo. 3 test in `tests/scrollLock.test.ts`.
+
 ## 2026-11-01 — Il Mentale ad abbonamento (19 € fondatori, 29 €, prova di 7 giorni con la carta)
 - **Listino di Ste** (Notion «Monetizzazione: decisioni chiuse»): Mentale 29 €/mese, fondatori 19 €/mese bloccato finché si resta abbonati, prova di 7 giorni con la carta, codici promozionali solo primo mese o al massimo 3 mesi, niente prezzi barrati, tetto di 25 iscritti poi 50 con la lista d'attesa, tolleranza di 7 giorni sui pagamenti non riusciti. Allenamenti 49 € e Completo 59 € a dicembre.
 - **Regole pure** in `lib/abbonamento.ts` (8 test); **impostazioni senza deploy** in `app_settings` (`mentale_prezzo`, `iscrizioni_aperte`, `tetto_iscritti`, `prova_giorni`, `lib/appSettings.ts`); migration 038 (stati `trialing` e `unpaid`, `profiles.piano`, `trial_ends_at`, `stripe_price_id`, policy billing estesa).

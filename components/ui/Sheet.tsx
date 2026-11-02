@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { bloccaScroll } from '@/lib/scrollLock';
 
 /**
  * Bottom sheet unico, mobile-first (review 16/9: 4 popup con 4 layout, 2 senza X).
@@ -29,9 +30,8 @@ export default function Sheet({ open, onClose, title, eyebrow, subtitle, childre
   // Blocca lo scroll della pagina sotto
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    // Contatore condiviso: con due fogli aperti insieme la pagina torna a scorrere quando si chiude l'ultimo
+    return bloccaScroll();
   }, [open]);
   useEffect(() => {
     if (!open || !onClose) return;

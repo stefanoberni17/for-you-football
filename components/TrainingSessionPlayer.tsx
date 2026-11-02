@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { bloccaScroll } from '@/lib/scrollLock';
 import SchedaEsercizioView from './SchedaEsercizio';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { markSessionActive } from '@/lib/activeSession';
@@ -136,9 +137,8 @@ export default function TrainingSessionPlayer({
     const onVis = () => { if (document.visibilityState === 'visible') { restTickRef.current?.(); execTickRef.current?.(); } };
     document.addEventListener('visibilitychange', onVis);
     // Il player è un layer fisso a schermo intero (sopra la tab bar): la pagina sotto non deve scorrere
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.removeEventListener('visibilitychange', onVis); markSessionActive(false); document.body.style.overflow = prevOverflow; };
+    const sblocca = bloccaScroll();
+    return () => { document.removeEventListener('visibilitychange', onVis); markSessionActive(false); sblocca(); };
   }, []);
   const latoRef = useRef<'dx' | 'sx'>(initialProgress?.lato ?? 'dx');
   useWakeLock(true);
