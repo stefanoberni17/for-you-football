@@ -4,6 +4,7 @@
  * le sedute della settimana con il loro stato, i giorni squadra/partita e i resoconti da chiedere.
  * Server-only (service role). Fail-soft: ogni lettura che manca lascia il pezzo vuoto, mai un errore.
  */
+import { accessoCampo } from './trainingAccess';
 import { createClient } from '@supabase/supabase-js';
 import { loadSquadraCompleta, mondayOfThisWeekRome, oggiDowRome, todayRome } from './trainingPlanner';
 import { loadResoconti } from './trainingResocontoServer';
@@ -59,8 +60,12 @@ function descrizioneSeduta(s: PlanSession): string {
 export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
   const oggiDow = oggiDowRome();
   const lunedi = mondayOfThisWeekRome();
-  const { data: prof } = await supabaseAdmin.from('profiles').select('training_access, training_pain_hold').eq('user_id', userId).maybeSingle();
-  if (prof?.training_access !== true) return VUOTO(oggiDow, lunedi);
+  const [{ data: prof }, accesso] = await Promise.all([
+    supabaseAdmin.from('profiles').select('training_pain_hold').eq('user_id', userId).maybeSingle(),
+    accessoCampo(userId),
+  ]);
+  // Il Campo del pacchetto (Fisico o Completo) o acceso a mano; in pausa la home non propone sedute
+  if (!accesso || accesso.inPausa) return VUOTO(oggiDow, lunedi);
 
   const [{ data: lastPlan }, { data: calendar }, { squadra, partita }, resoconti, consensi] = await Promise.all([
     supabaseAdmin.from('training_plans').select('id, week_start, plan').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
@@ -84,7 +89,7 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
   }
   // Il piano con i resoconti applicati (serie facoltative, giorni più leggeri): le `proposte` nascono qui, il piano salvato non le ha
   const oggi = todayRome();
-  const planAdattato = haPiano ? applicaResoconti(lastPlan!.plan as Parameters<typeof applicaResoconti>[0], { weekStart: String(lastPlan!.week_start), oggi, resoconti, squadra, fatteGiorni: fatti }).plan : null;
+  const planAdattato = haPiano ? applicaResoconti(lastPlan!.plan as Parameters<typeof applicaResoconti>[0], { weekStart: String(lastPlan!.week_start), oggi, resoconti, squadra, fatteGiorni: fatti, soloSicurezza: !(accesso.manuale || accesso.regole.feedback) }).plan : null;
   const sedute: SedutaOggi[] = planAdattato
     ? ([...((planAdattato as { sedute?: PlanSession[] }).sedute || [])].sort((a, b) => a.giorno - b.giorno)).map((s) => ({
       giorno: s.giorno, titolo: s.titolo, tipo: s.tipo, durataMin: s.durata_min, aperturaMin: s.apertura_min ?? 0,

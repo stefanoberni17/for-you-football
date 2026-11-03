@@ -247,7 +247,10 @@ export async function loadSquadra(userId: string): Promise<SquadraSettimana> {
   return (await loadSquadraCompleta(userId)).squadra;
 }
 
-export async function loadPlannerContext(userId: string): Promise<PlannerContext> {
+export async function loadPlannerContext(userId: string, opzioni: { feedback?: boolean } = {}): Promise<PlannerContext> {
+  // Fisico Base e Medio (3/11): il feedback non rimodula il piano: niente tetto personale né scarico dai dati (resta il
+  // ciclo a calendario, la quarta settimana di scarico)
+  const conFeedback = opzioni.feedback !== false;
   const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti, dolore, limitazioni] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
@@ -357,11 +360,13 @@ export async function loadPlannerContext(userId: string): Promise<PlannerContext
   // condizione dell'atleta (ultime 2 settimane), poi il ciclo; il carico finale porta il tetto personale e lo scarico
   const inputCarico = await loadCaricoInput(userId, setRpe);
   const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale, squadraMisurata: misurata });
-  const condizione = condizioneAtleta({ checkins: checkins14 || [], sedute: completions, resoconti, oggi });
-  ciclo = cicloDaiDati(ciclo, {
-    carico: carico0, sedute: completions, lunedi: mondayOfThisWeekRome(), condizione, famiglia: famigliaBlocco,
-    scaricoInCorso: pianoRow?.plan?.scarico === true, ultimoTest,
-  });
+  const condizione = conFeedback ? condizioneAtleta({ checkins: checkins14 || [], sedute: completions, resoconti, oggi }) : undefined;
+  if (conFeedback) {
+    ciclo = cicloDaiDati(ciclo, {
+      carico: carico0, sedute: completions, lunedi: mondayOfThisWeekRome(), condizione: condizione!, famiglia: famigliaBlocco,
+      scaricoInCorso: pianoRow?.plan?.scarico === true, ultimoTest,
+    });
+  }
   const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale, squadraMisurata: misurata, condizione });
 
   const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }) => ({

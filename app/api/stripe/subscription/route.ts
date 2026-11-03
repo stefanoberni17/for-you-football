@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { stripe } from '@/lib/stripe';
 import { centesimiScontati, STATI_VIVI, tipoDaAbbonamento, type CouponMin, type StatoAbbonamento, type TipoPrezzo } from '@/lib/abbonamento';
+import { ritornoValido, type RitornoCompleto } from '@/lib/pausaInviti';
 
 export const runtime = 'nodejs';
 
@@ -13,18 +14,24 @@ const supabaseAdmin = createClient(
 
 /**
  * GET /api/stripe/subscription
- * Stato dell'accesso per il profilo: Season 1, rate, abbonamento al Mentale (prova, prezzo bloccato, prossimo
- * addebito, disdetta programmata). Il prezzo è quello dell'abbonamento su Stripe: il Price meno il coupon del codice.
+ * Stato dell'accesso per il profilo: Season 1, rate, abbonamento al pacchetto (prova, prezzo bloccato, prossimo
+ * addebito, disdetta programmata, pausa, ritorno al Completo, codice personale). Il prezzo è quello dell'abbonamento
+ * su Stripe: il Price meno il coupon del codice.
  */
 export async function GET(request: NextRequest) {
   const userId = await getAuthUser(request);
   if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 
+  const BASE = 'subscription_status, is_beta_free, stripe_subscription_id, season1_access, installments_paid, piano, trial_ends_at, stripe_price_id';
   let { data: profile, error } = await supabaseAdmin
     .from('profiles')
-    .select('subscription_status, is_beta_free, stripe_subscription_id, season1_access, installments_paid, piano, trial_ends_at, stripe_price_id')
+    .select(`${BASE}, pausa_fino, ritorno_completo, codice_invito, diritto_lancio, diritto_codice`)
     .eq('user_id', userId)
     .single();
+  if (error) {
+    // Senza la migration 039
+    ({ data: profile, error } = await supabaseAdmin.from('profiles').select(BASE).eq('user_id', userId).single() as never);
+  }
   if (error) {
     // Senza la migration 038
     ({ data: profile, error } = await supabaseAdmin
@@ -40,6 +47,8 @@ export async function GET(request: NextRequest) {
     subscription_status?: string | null; is_beta_free?: boolean | null; stripe_subscription_id?: string | null;
     season1_access?: boolean | null; installments_paid?: number | null; piano?: string | null;
     trial_ends_at?: string | null; stripe_price_id?: string | null;
+    pausa_fino?: string | null; ritorno_completo?: RitornoCompleto | null; codice_invito?: string | null;
+    diritto_lancio?: boolean | null; diritto_codice?: boolean | null;
   };
 
   const response = {
@@ -52,6 +61,10 @@ export async function GET(request: NextRequest) {
     prezzo: null as { tipo: TipoPrezzo; euro: number } | null,
     next_billing_date: null as string | null,
     cancel_at_period_end: false,
+    pausa_fino: p.pausa_fino && new Date(p.pausa_fino).getTime() > Date.now() ? p.pausa_fino : null,
+    ritorno_completo_fino: ritornoValido(p.ritorno_completo) ? p.ritorno_completo!.fino : null,
+    codice_invito: p.codice_invito ?? null,
+    diritti: { lancio: !!p.diritto_lancio, codice: !!p.diritto_codice },
   };
 
   // Abbonamento vivo: prossimo addebito e disdetta programmata da Stripe
@@ -59,14 +72,14 @@ export async function GET(request: NextRequest) {
     try {
       const sub = await stripe.subscriptions.retrieve(p.stripe_subscription_id, { expand: ['discounts'] }) as unknown as {
         status?: string; trial_end?: number | null; current_period_end?: number; cancel_at_period_end?: boolean;
-        items?: { data?: { current_period_end?: number; price?: { id?: string; unit_amount?: number | null } }[] };
+        items?: { data?: { current_period_end?: number; price?: { id?: string; unit_amount?: number | null; lookup_key?: string | null; metadata?: Record<string, string> } }[] };
         discounts?: (string | { coupon?: CouponMin | null })[];
       };
       // Il prezzo che paga davvero: Price meno il coupon del codice (fondatori, codice o listino)
       const price = sub.items?.data?.[0]?.price;
       const coupons = (sub.discounts ?? []).flatMap((d) => (typeof d === 'object' && d?.coupon ? [d.coupon] : []));
-      const tipo = tipoDaAbbonamento({ priceId: price?.id ?? p.stripe_price_id, couponIds: coupons.map((c) => c.id) }, process.env);
-      if (tipo && price?.unit_amount != null) response.prezzo = { tipo, euro: centesimiScontati(price.unit_amount, coupons) / 100 };
+      const t = tipoDaAbbonamento({ price: price ?? { id: p.stripe_price_id }, couponIds: coupons.map((c) => c.id) }, process.env);
+      if (t && price?.unit_amount != null) response.prezzo = { tipo: t.tipo, euro: centesimiScontati(price.unit_amount, coupons) / 100 };
       // Dalla versione API 2025-03-31 il periodo sta sugli item della subscription
       const fine = sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end ?? null;
       response.next_billing_date = fine ? new Date(fine * 1000).toISOString() : null;

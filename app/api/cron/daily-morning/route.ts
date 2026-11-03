@@ -1,3 +1,4 @@
+import { inPausa, livelloFisico } from '@/lib/checkAccess';
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
@@ -293,8 +294,16 @@ Seleziona la frase e aggiungi la riflessione.`;
   // Roma) perché il cron serale delle 16 UTC parte PRIMA dell'allenamento tipico (review 19/10); si risponde fino al giorno dopo. Fail-soft per utente.
   let resocontiPush = 0;
   try {
-    const { data: campo } = await supabaseAdmin.from('profiles').select('user_id')
-      .eq('training_access', true).or('safety_review.is.null,safety_review.eq.false').is('deleted_at', null).limit(500);
+    // Chi ha il Campo: acceso a mano o con un pacchetto con il Fisico (3/11), abbonamento vivo e non in pausa
+    let { data: campoTutti, error: campoErr } = await supabaseAdmin.from('profiles').select('user_id, training_access, subscription_status, piano, pausa_fino')
+      .or('training_access.eq.true,piano.in.(fisico_base,fisico_medio,fisico_pro,completo)')
+      .or('safety_review.is.null,safety_review.eq.false').is('deleted_at', null).limit(500);
+    if (campoErr) {
+      // senza la migration 039 (pausa_fino): come prima, il solo flag
+      ({ data: campoTutti } = await supabaseAdmin.from('profiles').select('user_id, training_access')
+        .eq('training_access', true).or('safety_review.is.null,safety_review.eq.false').is('deleted_at', null).limit(500) as never);
+    }
+    const campo = ((campoTutti || []) as Parameters<typeof livelloFisico>[0][]).filter((p) => livelloFisico(p) && !inPausa(p)) as { user_id: string }[];
     const oggi = todayRome();
     const ieri = addDays(oggi, -1);
     for (const u of campo || []) {

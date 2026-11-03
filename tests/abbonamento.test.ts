@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  abbonatoPrima, centesimiScontati, conCodiceDa, dirittoFondatori, emailFineProva, esitoCheckout, esitoCodice, euroTesto,
+  abbonatoPrima, centesimiScontati, conCodiceDa, dirittoCodice, dirittoLancio, emailFineProva, esitoCheckout, esitoCodice, euroTesto,
   eventoDelProfilo, IMPOSTAZIONI_DEFAULT, impostazioniDa, normalizzaCodice, opzioniPagamento, prezzoPerUtente,
-  priceIdMentale, provaPerUtente, statoDaStripe, tipoDaAbbonamento, VIETATI_MANAGED_PAYMENTS,
+  pacchettoRichiesto, priceIdMentaleEnv, provaPerUtente, statoDaStripe, tipoDaAbbonamento, VIETATI_MANAGED_PAYMENTS,
 } from '@/lib/abbonamento';
 import {
   canAccessWeek, deveAndareAlPaywall, haAccessoOProva, hasActiveAccess, inProva, provaConCartaDal, provaRichiesta,
@@ -30,46 +30,67 @@ describe('Mentale ad abbonamento (1/11)', () => {
       { chiave: 'tetto_iscritti', valore: 50 },
       { chiave: 'prova_giorni', valore: 7 },
     ]);
-    expect(imp).toEqual({ mentalePrezzo: 'listino', iscrizioniAperte: false, tettoIscritti: 50, provaGiorni: 7 });
+    expect(imp).toEqual({ ...IMPOSTAZIONI_DEFAULT, lancioAperto: false, iscrizioniAperte: false, tettoIscritti: 50, provaGiorni: 7 });
+    // la chiave nuova vince sulla vecchia; il Campo ha tetto e iscrizioni suoi
+    const campo = impostazioniDa([
+      { chiave: 'lancio', valore: true }, { chiave: 'mentale_prezzo', valore: 'listino' },
+      { chiave: 'iscrizioni_campo_aperte', valore: true }, { chiave: 'tetto_campo', valore: 20 },
+    ]);
+    expect(campo.lancioAperto).toBe(true);
+    expect(campo.iscrizioniCampoAperte).toBe(true);
+    expect(campo.tettoCampo).toBe(20);
     expect(impostazioniDa([{ chiave: 'mentale_prezzo', valore: 'gratis' }, { chiave: 'tetto_iscritti', valore: -3 }]))
       .toEqual(IMPOSTAZIONI_DEFAULT);
     expect(impostazioniDa([{ chiave: 'tetto_iscritti', valore: null }]).tettoIscritti).toBeNull();
   });
 
-  it('Price dalle env: fondatori il suo, codice e listino lo stesso (il codice è un coupon)', () => {
-    expect(priceIdMentale('fondatori', ENV)).toBe('price_19');
-    expect(priceIdMentale('listino', ENV)).toBe('price_29');
-    expect(priceIdMentale('codice', ENV)).toBe('price_29');
-    expect(priceIdMentale('listino', {})).toBeNull();
+  it('Price del Mente dalle env della parte A; pacchetto e tipo dal Price (metadata, lookup key o env)', () => {
+    expect(priceIdMentaleEnv('lancio', ENV)).toBe('price_19');
+    expect(priceIdMentaleEnv('listino', ENV)).toBe('price_29');
+    expect(priceIdMentaleEnv('listino', {})).toBeNull();
     const env = { ...ENV, STRIPE_COUPON_MENTALE_CODICE: 'mentale-con-codice' };
-    expect(tipoDaAbbonamento({ priceId: 'price_19', couponIds: [] }, env)).toBe('fondatori');
-    expect(tipoDaAbbonamento({ priceId: 'price_29', couponIds: ['mentale-con-codice'] }, env)).toBe('codice');
-    expect(tipoDaAbbonamento({ priceId: 'price_29', couponIds: ['altro'] }, env)).toBe('listino');
-    expect(tipoDaAbbonamento({ priceId: 'price_altro', couponIds: [] }, env)).toBeNull();
+    expect(tipoDaAbbonamento({ price: { id: 'price_19' }, couponIds: [] }, env)).toEqual({ pacchetto: 'mentale', tipo: 'lancio' });
+    expect(tipoDaAbbonamento({ price: { id: 'price_29' }, couponIds: ['mentale-con-codice'] }, env)).toEqual({ pacchetto: 'mentale', tipo: 'codice' });
+    expect(tipoDaAbbonamento({ price: { id: 'price_29' }, couponIds: ['altro'] }, env)).toEqual({ pacchetto: 'mentale', tipo: 'listino' });
+    expect(tipoDaAbbonamento({ price: { id: 'price_x', lookup_key: 'fyf_fisico_medio_listino' }, couponIds: ['fyf-codice-fisico_medio'] }, env))
+      .toEqual({ pacchetto: 'fisico_medio', tipo: 'codice' });
+    expect(tipoDaAbbonamento({ price: { id: 'price_y', metadata: { fyf_pacchetto: 'completo', fyf_tipo: 'lancio' } }, couponIds: [] }, env))
+      .toEqual({ pacchetto: 'completo', tipo: 'lancio' });
+    expect(tipoDaAbbonamento({ price: { id: 'price_altro' }, couponIds: [] }, env)).toBeNull();
+    expect(pacchettoRichiesto(undefined)).toBe('mentale');
+    expect(pacchettoRichiesto('completo')).toBe('completo');
+    expect(pacchettoRichiesto('oro')).toBeNull();
   });
 
   it('un prezzo solo, il più basso a cui ha diritto, mai sommati', () => {
-    const prezzi = { fondatori: 19, listino: 39, conCodice: 29 };
-    expect(prezzoPerUtente(prezzi, { fondatori: false, codice: false })).toEqual({ tipo: 'listino', euro: 39 });
-    expect(prezzoPerUtente(prezzi, { fondatori: false, codice: true })).toEqual({ tipo: 'codice', euro: 29 });
+    const prezzi = { lancio: 19, listino: 39, conCodice: 29 };
+    expect(prezzoPerUtente(prezzi, { lancio: false, codice: false })).toEqual({ tipo: 'listino', euro: 39 });
+    expect(prezzoPerUtente(prezzi, { lancio: false, codice: true })).toEqual({ tipo: 'codice', euro: 29 });
     // fondatore con un codice: vale 19, non 9
-    expect(prezzoPerUtente(prezzi, { fondatori: true, codice: true })).toEqual({ tipo: 'fondatori', euro: 19 });
+    expect(prezzoPerUtente(prezzi, { lancio: true, codice: true })).toEqual({ tipo: 'lancio', euro: 19 });
     // un codice più caro del listino (configurazione sbagliata) non si prende
-    expect(prezzoPerUtente({ fondatori: null, listino: 39, conCodice: 45 }, { fondatori: false, codice: true }).tipo).toBe('listino');
+    expect(prezzoPerUtente({ lancio: null, listino: 39, conCodice: 45 }, { lancio: false, codice: true }).tipo).toBe('listino');
     // coupon mancante: il codice non è un prezzo
-    expect(prezzoPerUtente({ fondatori: 19, listino: 39, conCodice: null }, { fondatori: false, codice: true }).tipo).toBe('listino');
-    // Stripe non risponde: l'ordine fondatori → listino
-    expect(prezzoPerUtente({ fondatori: null, listino: null, conCodice: null }, { fondatori: true, codice: false }).tipo).toBe('fondatori');
+    expect(prezzoPerUtente({ lancio: 19, listino: 39, conCodice: null }, { lancio: false, codice: true }).tipo).toBe('listino');
+    // lancio senza Price (il mese di lancio non c'è per quel pacchetto): resta il listino
+    expect(prezzoPerUtente({ lancio: null, listino: 59, conCodice: 49 }, { lancio: true, codice: false }).tipo).toBe('listino');
+    // Stripe non risponde: l'ordine lancio → listino
+    expect(prezzoPerUtente({ lancio: null, listino: null, conCodice: null }, { lancio: true, codice: false }).tipo).toBe('lancio');
   });
 
-  it('fondatori solo nel mese di lancio e solo per chi non è mai stato abbonato (disdetta = diritto perso)', () => {
-    const lancio = { ...IMPOSTAZIONI_DEFAULT, mentalePrezzo: 'fondatori' as const };
-    expect(dirittoFondatori(lancio, { piano: null, trial_ends_at: null })).toBe(true);
-    expect(dirittoFondatori(lancio, null)).toBe(true);
-    expect(dirittoFondatori(lancio, { piano: 'mentale' })).toBe(false);
-    expect(dirittoFondatori(lancio, { trial_ends_at: '2026-11-10T07:00:00Z' })).toBe(false);
-    expect(dirittoFondatori({ ...lancio, mentalePrezzo: 'listino' }, null)).toBe(false);
+  it('il lancio solo a chi non è mai stato abbonato; il diritto registrato resta (cambio pacchetto, pausa)', () => {
+    const lancio = { ...IMPOSTAZIONI_DEFAULT, lancioAperto: true };
+    expect(dirittoLancio(lancio, { piano: null, trial_ends_at: null })).toBe(true);
+    expect(dirittoLancio(lancio, null)).toBe(true);
+    expect(dirittoLancio(lancio, { piano: 'mentale' })).toBe(false);
+    expect(dirittoLancio(lancio, { trial_ends_at: '2026-11-10T07:00:00Z' })).toBe(false);
+    expect(dirittoLancio({ ...lancio, lancioAperto: false }, null)).toBe(false);
+    // il fondatore di novembre che passa al Completo a gennaio: il diritto è registrato
+    expect(dirittoLancio({ ...lancio, lancioAperto: false }, { piano: 'mentale', diritto_lancio: true })).toBe(true);
     expect(abbonatoPrima({ stripe_price_id: 'price_19' })).toBe(true);
+    expect(dirittoCodice({ diritto_codice: true }, false)).toBe(true);
+    expect(dirittoCodice(null, true)).toBe(true);
+    expect(dirittoCodice(null, false)).toBe(false);
   });
 
   it('prezzo con codice = listino meno il coupon, solo se "forever" e in euro', () => {
@@ -84,16 +105,19 @@ describe('Mentale ad abbonamento (1/11)', () => {
     expect(euroTesto(29.25)).toBe('29,25');
   });
 
-  it('il codice vale solo sul coupon della campagna, con una data di fine non passata', () => {
+  it('il codice vale solo su un coupon "con codice"; la campagna con data di fine, il codice personale senza', () => {
     const adesso = Date.parse('2026-11-05T10:00:00Z');
     const fine = Math.floor(Date.parse('2026-11-30T23:00:00Z') / 1000);
-    const buono = { id: 'promo_1', active: true, expires_at: fine, coupon: { id: 'mentale-con-codice', valid: true } };
-    const i = { couponId: 'mentale-con-codice', adesso };
-    expect(esitoCodice(buono, i)).toEqual({ ok: true, promoId: 'promo_1' });
+    const buono = { id: 'promo_1', active: true, expires_at: fine, coupon: { id: 'fyf-codice-mentale', valid: true } };
+    const i = { env: { STRIPE_COUPON_MENTALE_CODICE: 'mentale-con-codice' }, adesso };
+    expect(esitoCodice(buono, i)).toEqual({ ok: true, promoId: 'promo_1', couponId: 'fyf-codice-mentale', invitante: null });
+    expect(esitoCodice({ ...buono, coupon: { id: 'mentale-con-codice' } }, i).ok).toBe(true);
     expect(esitoCodice(null, i)).toEqual({ ok: false, motivo: 'non_valido' });
     expect(esitoCodice({ ...buono, coupon: { id: 'altro' } }, i)).toEqual({ ok: false, motivo: 'non_valido' });
-    expect(esitoCodice(buono, { ...i, couponId: undefined })).toEqual({ ok: false, motivo: 'non_valido' });
     expect(esitoCodice({ ...buono, expires_at: null }, i)).toEqual({ ok: false, motivo: 'senza_scadenza' });
+    // il codice personale di un abbonato non scade
+    expect(esitoCodice({ ...buono, expires_at: null, metadata: { fyf_invito: 'u1' } }, i))
+      .toEqual({ ok: true, promoId: 'promo_1', couponId: 'fyf-codice-mentale', invitante: 'u1' });
     expect(esitoCodice({ ...buono, expires_at: Math.floor(adesso / 1000) - 1 }, i)).toEqual({ ok: false, motivo: 'scaduto' });
     expect(esitoCodice({ ...buono, max_redemptions: 5, times_redeemed: 5 }, i)).toEqual({ ok: false, motivo: 'esaurito' });
     expect(esitoCodice({ ...buono, active: false }, i)).toEqual({ ok: false, motivo: 'scaduto' });
@@ -108,8 +132,9 @@ describe('Mentale ad abbonamento (1/11)', () => {
     expect(provaPerUtente(IMPOSTAZIONI_DEFAULT, { provaConCarta: false, provaUsata: false })).toBe(0);
   });
 
-  it('checkout: niente doppio abbonamento, iscrizioni chiuse e tetto mandano alla lista d\'attesa', () => {
-    const base = { imp: IMPOSTAZIONI_DEFAULT, iscrittiVivi: 3, priceId: 'price_19' };
+  it('checkout: niente doppio abbonamento; tetto e iscrizioni per area (Mente, Campo); invitati sopra il tetto', () => {
+    const imp = { ...IMPOSTAZIONI_DEFAULT, iscrizioniCampoAperte: true, tettoCampo: 10 };
+    const base = { imp, iscrittiMente: 3, iscrittiCampo: 3, priceId: 'price_19', pacchetto: 'mentale' as const };
     expect(esitoCheckout({ ...base, profilo: { subscription_status: 'none' } })).toEqual({ ok: true });
     expect(esitoCheckout({ ...base, profilo: { subscription_status: 'canceled' } })).toEqual({ ok: true });
     for (const s of ['trialing', 'active', 'past_due']) {
@@ -117,11 +142,21 @@ describe('Mentale ad abbonamento (1/11)', () => {
     }
     expect(esitoCheckout({ ...base, profilo: { is_beta_free: true } })).toEqual({ ok: false, motivo: 'beta' });
     expect(esitoCheckout({ ...base, profilo: { season1_access: true } })).toEqual({ ok: false, motivo: 'season1' });
+    // chi ha il Mente da beta o Season 1 può comprare il Fisico
+    expect(esitoCheckout({ ...base, pacchetto: 'fisico_base', profilo: { season1_access: true } })).toEqual({ ok: true });
+    expect(esitoCheckout({ ...base, pacchetto: 'completo', profilo: { is_beta_free: true } })).toEqual({ ok: false, motivo: 'beta' });
     expect(esitoCheckout({ ...base, profilo: null, priceId: null })).toEqual({ ok: false, motivo: 'prezzo_mancante' });
-    expect(esitoCheckout({ ...base, profilo: null, iscrittiVivi: 25 })).toEqual({ ok: false, motivo: 'tetto' });
-    expect(esitoCheckout({ ...base, profilo: null, imp: { ...IMPOSTAZIONI_DEFAULT, iscrizioniAperte: false } }))
+    expect(esitoCheckout({ ...base, profilo: null, iscrittiMente: 25 })).toEqual({ ok: false, motivo: 'tetto' });
+    // il tetto del Mente non chiude il Fisico; quello del Campo sì, e il Completo li guarda tutti e due
+    expect(esitoCheckout({ ...base, pacchetto: 'fisico_pro', profilo: null, iscrittiMente: 25 })).toEqual({ ok: true });
+    expect(esitoCheckout({ ...base, pacchetto: 'fisico_pro', profilo: null, iscrittiCampo: 10 })).toEqual({ ok: false, motivo: 'tetto' });
+    expect(esitoCheckout({ ...base, pacchetto: 'completo', profilo: null, iscrittiCampo: 10 })).toEqual({ ok: false, motivo: 'tetto' });
+    expect(esitoCheckout({ ...base, pacchetto: 'completo', profilo: null, iscrittiCampo: 10, invitato: true })).toEqual({ ok: true });
+    expect(esitoCheckout({ ...base, pacchetto: 'fisico_base', profilo: null, imp: { ...imp, iscrizioniCampoAperte: false } }))
       .toEqual({ ok: false, motivo: 'iscrizioni_chiuse' });
-    expect(esitoCheckout({ ...base, profilo: null, iscrittiVivi: 99, imp: { ...IMPOSTAZIONI_DEFAULT, tettoIscritti: null } }))
+    expect(esitoCheckout({ ...base, profilo: null, imp: { ...imp, iscrizioniAperte: false } }))
+      .toEqual({ ok: false, motivo: 'iscrizioni_chiuse' });
+    expect(esitoCheckout({ ...base, profilo: null, iscrittiMente: 99, imp: { ...imp, tettoIscritti: null } }))
       .toEqual({ ok: true });
   });
 

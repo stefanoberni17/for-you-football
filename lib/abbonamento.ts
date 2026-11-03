@@ -1,20 +1,23 @@
 /**
- * Il Mentale ad abbonamento mensile (1/11/2026, listino di Ste su Notion «Monetizzazione: decisioni chiuse»).
+ * Gli abbonamenti di For You Football: regole pure dei prezzi (1/11 il Mentale, 3/11 i pacchetti).
  *
- * Prezzi e pacchetti (Ste, 3/11): tre prezzi, UNO alla volta, il più basso a cui l'utente ha diritto, mai sommati.
- * - LISTINO: il Price `STRIPE_PRICE_ID_MENTALE` (39 € dal 3/11).
- * - CON CODICE: il listino meno il coupon `STRIPE_COUPON_MENTALE_CODICE` (−10 €, durata "forever": resta bloccato finché
- *   l'abbonamento vive). I codici della campagna li crea Ste nel pannello Stripe su quel coupon, sempre con una data di
- *   fine; l'utente li scrive nel campo «Hai un codice da un amico?» della pagina prezzi.
- * - FONDATORI: il Price `STRIPE_PRICE_ID_MENTALE_FONDATORI` (19 €), solo finché app_settings.mentale_prezzo è
- *   'fondatori' e solo per chi non è mai stato abbonato: disdetta = diritto perso. Bloccato finché resta iscritto.
- * Gli importi NON stanno nel codice né nelle pagine: si leggono da Stripe (lib/prezziServer.ts), una sola configurazione.
- * - Prova di 7 giorni con la carta inserita all'inizio: la prova è la settimana 1. Una sola prova per persona.
- * - Il Fisico e il Completo arrivano a dicembre: qui non ci sono ancora.
+ * Pacchetti (lib/listino.ts): Mente, Fisico Base, Medio e Pro, Completo (Pro + Mente). Per ogni pacchetto tre prezzi,
+ * UNO alla volta, il più basso a cui l'utente ha diritto, mai sommati (Ste, 3/11):
+ * - LISTINO: il Price con lookup key `fyf_<pacchetto>_listino` (Mente 39 €).
+ * - CON CODICE: il listino meno il coupon `fyf-codice-<pacchetto>` (durata "forever": bloccato finché l'abbonamento
+ *   vive). Il codice di campagna lo crea Ste su Stripe, sempre con una data di fine; il codice personale di un
+ *   abbonato (gli inviti) non scade. L'utente lo scrive nel campo «Hai un codice da un amico?».
+ * - LANCIO: il Price con lookup key `fyf_<pacchetto>_lancio` (novembre Mente 19 €; dicembre Mente 24, Fisico Base 9,
+ *   Medio 34, Pro 39, Completo 44), per chi entra mentre il lancio è aperto (app_settings) e non è mai stato abbonato.
+ * I DIRITTI (lancio, codice) restano sull'utente finché resta iscritto, anche cambiando pacchetto (un fondatore del
+ * Mente che passa al Completo paga il lancio del Completo, 44 €) e in pausa; la disdetta li fa perdere.
+ * Gli importi NON stanno nel codice né nelle pagine: si leggono da Stripe (lib/prezziServer.ts).
+ * - Prova di 7 giorni con la carta, una sola per persona su tutti i pacchetti.
  *
- * Modulo puro (regole e testi), client-safe. Le letture stanno in lib/appSettings.ts, il checkout in
- * app/api/stripe/create-checkout, gli stati nel webhook.
+ * Modulo puro (regole e testi), client-safe. Le letture stanno in lib/appSettings.ts e lib/prezziServer.ts.
  */
+
+import { INFO_PACCHETTI, couponCodice, isPacchetto, letturaPrice, type Pacchetto } from './listino';
 
 export const PIANO_MENTALE = 'mentale';
 export const PROVA_GIORNI_DEFAULT = 7;
@@ -43,68 +46,78 @@ export function statoDaStripe(s: string | null | undefined): StatoAbbonamento {
   }
 }
 
-/** Il prezzo per chi entra adesso (app_settings.mentale_prezzo): 'fondatori' nel mese di lancio, poi 'listino'. */
-export type PrezzoIngresso = 'fondatori' | 'listino';
 /** Il prezzo che vale per un utente: uno solo alla volta. */
-export type TipoPrezzo = 'fondatori' | 'codice' | 'listino';
+export type TipoPrezzo = 'lancio' | 'codice' | 'listino';
 
 export interface Impostazioni {
-  /** Il prezzo per chi entra adesso: Ste lo passa a 'listino' a fine mese di lancio (tabella app_settings). */
-  mentalePrezzo: PrezzoIngresso;
+  /** Il prezzo di lancio è aperto per chi entra adesso (app_settings `lancio`, o `mentale_prezzo` = 'fondatori'). */
+  lancioAperto: boolean;
+  /** Iscrizioni aperte e tetto del Mente (Mente e Completo). */
   iscrizioniAperte: boolean;
-  /** Massimo di abbonamenti vivi al Mentale; null = senza tetto. Oltre: lista d'attesa. */
   tettoIscritti: number | null;
+  /** Iscrizioni aperte e tetto del Campo (Fisico e Completo), separati da quelli del Mente. */
+  iscrizioniCampoAperte: boolean;
+  tettoCampo: number | null;
   provaGiorni: number;
 }
 
 export const IMPOSTAZIONI_DEFAULT: Impostazioni = {
-  mentalePrezzo: 'fondatori',
+  lancioAperto: true,
   iscrizioniAperte: true,
   tettoIscritti: TETTO_ISCRITTI_DEFAULT,
+  iscrizioniCampoAperte: false,
+  tettoCampo: 0,
   provaGiorni: PROVA_GIORNI_DEFAULT,
 };
+
+function tetto(v: unknown): number | null | undefined {
+  if (v === null) return null;
+  if (typeof v === 'number' && Number.isInteger(v) && v >= 0) return v;
+  return undefined;
+}
 
 /** Le righe di app_settings (chiave → valore jsonb) → impostazioni valide; un valore strano tiene il default. */
 export function impostazioniDa(rows: { chiave: string; valore: unknown }[] | null | undefined): Impostazioni {
   const imp: Impostazioni = { ...IMPOSTAZIONI_DEFAULT };
+  let lancioEsplicito = false;
   for (const r of rows ?? []) {
     const v = r.valore;
-    if (r.chiave === 'mentale_prezzo' && (v === 'fondatori' || v === 'listino')) imp.mentalePrezzo = v;
+    if (r.chiave === 'lancio' && typeof v === 'boolean') { imp.lancioAperto = v; lancioEsplicito = true; }
+    if (r.chiave === 'mentale_prezzo' && !lancioEsplicito && (v === 'fondatori' || v === 'listino')) imp.lancioAperto = v === 'fondatori';
     if (r.chiave === 'iscrizioni_aperte' && typeof v === 'boolean') imp.iscrizioniAperte = v;
-    if (r.chiave === 'tetto_iscritti') {
-      if (v === null) imp.tettoIscritti = null;
-      else if (typeof v === 'number' && Number.isInteger(v) && v >= 0) imp.tettoIscritti = v;
-    }
+    if (r.chiave === 'tetto_iscritti') { const t = tetto(v); if (t !== undefined) imp.tettoIscritti = t; }
+    if (r.chiave === 'iscrizioni_campo_aperte' && typeof v === 'boolean') imp.iscrizioniCampoAperte = v;
+    if (r.chiave === 'tetto_campo') { const t = tetto(v); if (t !== undefined) imp.tettoCampo = t; }
     if (r.chiave === 'prova_giorni' && typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 30) imp.provaGiorni = v;
   }
   return imp;
 }
 
-/** Gli importi in euro, letti da Stripe (lib/prezziServer.ts); null = non configurato o Stripe non risponde. */
+/** Gli importi in euro di un pacchetto, letti da Stripe; null = non configurato o Stripe non risponde. */
 export interface Prezzi {
-  fondatori: number | null;
+  lancio: number | null;
   listino: number | null;
   conCodice: number | null;
 }
 
 /** I diritti di un utente sui prezzi: il listino vale sempre. */
 export interface Diritti {
-  fondatori: boolean;
+  lancio: boolean;
   codice: boolean;
 }
 
-const ORDINE_TIPI: TipoPrezzo[] = ['fondatori', 'codice', 'listino'];
+const ORDINE_TIPI: TipoPrezzo[] = ['lancio', 'codice', 'listino'];
 
 /**
- * Il prezzo che vale per l'utente: il più basso tra quelli a cui ha diritto, mai sommati (fondatori + codice NON fa
- * 9 €: vale 19). Senza importi (Stripe non risponde) l'ordine fondatori → codice → listino, che è anche il più basso.
+ * Il prezzo che vale per l'utente: il più basso tra quelli a cui ha diritto, mai sommati (lancio + codice NON fa
+ * 9 €: vale 19). Senza importi (Stripe non risponde) l'ordine lancio → codice → listino, che è anche il più basso.
  */
 export function prezzoPerUtente(prezzi: Prezzi, diritti: Diritti): { tipo: TipoPrezzo; euro: number | null } {
   const candidati = ORDINE_TIPI
     .filter((t) => t === 'listino' || diritti[t])
-    .map((t) => ({ tipo: t, euro: t === 'fondatori' ? prezzi.fondatori : t === 'codice' ? prezzi.conCodice : prezzi.listino }))
-    // un codice senza importo noto (coupon mancante) non è un prezzo: resta il listino
-    .filter((c) => c.tipo !== 'codice' || c.euro != null);
+    .map((t) => ({ tipo: t, euro: t === 'lancio' ? prezzi.lancio : t === 'codice' ? prezzi.conCodice : prezzi.listino }))
+    // un lancio o un codice senza importo noto (Price o coupon mancante) non è un prezzo: resta il listino
+    .filter((c) => c.tipo === 'listino' || c.euro != null || (prezzi.listino == null && prezzi.conCodice == null && c.tipo === 'lancio'));
   candidati.sort((a, b) => {
     const ea = a.euro ?? Infinity, eb = b.euro ?? Infinity;
     if (ea !== eb) return ea - eb;
@@ -113,20 +126,46 @@ export function prezzoPerUtente(prezzi: Prezzi, diritti: Diritti): { tipo: TipoP
   return candidati[0];
 }
 
-/** È già stato abbonato al Mentale (anche solo in prova)? Allora il prezzo fondatori non gli spetta più. */
+/** È già stato abbonato (anche solo in prova)? Allora il lancio aperto adesso non gli spetta: la disdetta lo fa perdere. */
 export function abbonatoPrima(p: { piano?: string | null; trial_ends_at?: string | null; stripe_price_id?: string | null } | null): boolean {
-  return !!p && (p.piano === PIANO_MENTALE || !!p.trial_ends_at || !!p.stripe_price_id);
+  return !!p && (!!p.piano || !!p.trial_ends_at || !!p.stripe_price_id);
 }
 
-/** Il diritto ai fondatori: il mese di lancio è aperto (app_settings) e non è mai stato abbonato. */
-export function dirittoFondatori(imp: Impostazioni, p: Parameters<typeof abbonatoPrima>[0]): boolean {
-  return imp.mentalePrezzo === 'fondatori' && !abbonatoPrima(p);
+/** Il profilo con i diritti registrati (migration 039). */
+export interface ProfiloDiritti {
+  piano?: string | null;
+  trial_ends_at?: string | null;
+  stripe_price_id?: string | null;
+  diritto_lancio?: boolean | null;
+  diritto_codice?: boolean | null;
 }
 
-/** Il Price Stripe del Mentale per quel tipo: fondatori il suo, codice e listino lo stesso (il codice è un coupon). */
-export function priceIdMentale(tipo: TipoPrezzo, env: Record<string, string | undefined>): string | null {
-  const id = tipo === 'fondatori' ? env.STRIPE_PRICE_ID_MENTALE_FONDATORI : env.STRIPE_PRICE_ID_MENTALE;
+/** Il diritto al lancio: registrato sull'utente (resta finché resta iscritto), oppure il lancio è aperto e non è mai stato abbonato. */
+export function dirittoLancio(imp: Impostazioni, p: ProfiloDiritti | null): boolean {
+  if (p?.diritto_lancio) return true;
+  return imp.lancioAperto && !abbonatoPrima(p);
+}
+
+/** Il diritto al prezzo con codice: registrato sull'utente, o un codice valido scritto adesso. */
+export function dirittoCodice(p: ProfiloDiritti | null, codiceValido: boolean): boolean {
+  return codiceValido || !!p?.diritto_codice;
+}
+
+/** Il Price del Mente dalle env della parte A (STRIPE_PRICE_ID_MENTALE, …_FONDATORI), se ci sono. */
+export function priceIdMentaleEnv(tipo: 'lancio' | 'listino', env: Record<string, string | undefined>): string | null {
+  const id = tipo === 'lancio' ? env.STRIPE_PRICE_ID_MENTALE_FONDATORI : env.STRIPE_PRICE_ID_MENTALE;
   return id && id.startsWith('price_') ? id : null;
+}
+
+/** Il coupon "con codice" di un pacchetto (per il Mente vince l'env della parte A). */
+export function couponCodiceDi(p: Pacchetto, env: Record<string, string | undefined>): string {
+  return p === 'mentale' && env.STRIPE_COUPON_MENTALE_CODICE ? env.STRIPE_COUPON_MENTALE_CODICE : couponCodice(p);
+}
+
+/** Un coupon "con codice" di For You Football: `fyf-codice-*` o quello del Mente della parte A. */
+export function isCouponCodice(id: string | null | undefined, env: Record<string, string | undefined>): boolean {
+  if (!id) return false;
+  return id.startsWith('fyf-codice') || (!!env.STRIPE_COUPON_MENTALE_CODICE && id === env.STRIPE_COUPON_MENTALE_CODICE);
 }
 
 /** Un coupon come lo dà Stripe, solo i campi che servono. */
@@ -160,15 +199,24 @@ export function conCodiceDa(listinoCent: number | null, coupon: CouponMin | null
   return centesimiScontati(listinoCent, [coupon]) / 100;
 }
 
-/** Il tipo di prezzo di un abbonamento: il Price dei fondatori, il coupon della campagna, altrimenti il listino. */
+/**
+ * Pacchetto e tipo di prezzo di un abbonamento: dal Price (metadata o lookup key; per il Mente anche gli id delle env
+ * della parte A) e dai coupon (uno "con codice" = prezzo con codice).
+ */
 export function tipoDaAbbonamento(
-  i: { priceId: string | null | undefined; couponIds: string[] },
+  i: { price: { id?: string | null; lookup_key?: string | null; metadata?: Record<string, string> | null } | null | undefined; couponIds: string[] },
   env: Record<string, string | undefined>,
-): TipoPrezzo | null {
-  if (!i.priceId) return null;
-  if (i.priceId === env.STRIPE_PRICE_ID_MENTALE_FONDATORI) return 'fondatori';
-  if (i.priceId !== env.STRIPE_PRICE_ID_MENTALE) return null;
-  return env.STRIPE_COUPON_MENTALE_CODICE && i.couponIds.includes(env.STRIPE_COUPON_MENTALE_CODICE) ? 'codice' : 'listino';
+): { pacchetto: Pacchetto; tipo: TipoPrezzo } | null {
+  const pr = i.price;
+  if (!pr?.id) return null;
+  let { pacchetto, tipo } = letturaPrice(pr);
+  if (!pacchetto) {
+    if (pr.id === env.STRIPE_PRICE_ID_MENTALE_FONDATORI) { pacchetto = 'mentale'; tipo = 'lancio'; }
+    else if (pr.id === env.STRIPE_PRICE_ID_MENTALE) { pacchetto = 'mentale'; tipo = 'listino'; }
+  }
+  if (!pacchetto) return null;
+  if (tipo === 'lancio') return { pacchetto, tipo: 'lancio' };
+  return { pacchetto, tipo: i.couponIds.some((c) => isCouponCodice(c, env)) ? 'codice' : 'listino' };
 }
 
 /** 39 → "39", 29.5 → "29,50". */
@@ -195,18 +243,24 @@ export interface PromoMin {
   coupon?: { id: string; valid?: boolean | null } | null;
 }
 
+/** Un codice promozionale come lo dà Stripe, con i metadata del codice personale (gli inviti). */
+export type PromoCodice = PromoMin & { metadata?: Record<string, string> | null };
+
 /**
- * Il codice vale? Deve essere attivo, sul coupon della campagna (gli altri coupon non danno il prezzo con codice),
- * con una data di fine (regola di Ste: i codici di campagna finiscono sempre) non passata, e non esaurito.
+ * Il codice vale? Deve essere attivo, su un coupon "con codice" di For You Football (gli altri coupon non danno il
+ * prezzo con codice) e non esaurito. Il codice di CAMPAGNA ha sempre una data di fine non passata (regola di Ste);
+ * il codice PERSONALE di un abbonato (metadata `fyf_invito` = id di chi invita) non scade. `invitante` torna con il
+ * codice personale.
  */
-export function esitoCodice(promo: PromoMin | null, i: { couponId: string | null | undefined; adesso: number }):
-  { ok: true; promoId: string } | { ok: false; motivo: MotivoCodice } {
-  if (!promo || !i.couponId || promo.coupon?.id !== i.couponId) return { ok: false, motivo: 'non_valido' };
-  if (promo.expires_at == null) return { ok: false, motivo: 'senza_scadenza' };
-  if (promo.expires_at * 1000 <= i.adesso) return { ok: false, motivo: 'scaduto' };
+export function esitoCodice(promo: PromoCodice | null, i: { env: Record<string, string | undefined>; adesso: number }):
+  { ok: true; promoId: string; couponId: string; invitante: string | null } | { ok: false; motivo: MotivoCodice } {
+  if (!promo || !isCouponCodice(promo.coupon?.id, i.env)) return { ok: false, motivo: 'non_valido' };
+  const invitante = promo.metadata?.fyf_invito || null;
+  if (promo.expires_at == null && !invitante) return { ok: false, motivo: 'senza_scadenza' };
+  if (promo.expires_at != null && promo.expires_at * 1000 <= i.adesso) return { ok: false, motivo: 'scaduto' };
   if (promo.max_redemptions != null && (promo.times_redeemed ?? 0) >= promo.max_redemptions) return { ok: false, motivo: 'esaurito' };
   if (promo.active === false || promo.coupon?.valid === false) return { ok: false, motivo: 'scaduto' };
-  return { ok: true, promoId: promo.id };
+  return { ok: true, promoId: promo.id, couponId: promo.coupon!.id, invitante };
 }
 
 /** Giorni di prova per questo utente: niente prova senza la prova con carta accesa o se l'ha già avuta. */
@@ -217,21 +271,39 @@ export function provaPerUtente(imp: Impostazioni, i: { provaConCarta: boolean; p
 
 export type MotivoNoCheckout = 'beta' | 'season1' | 'gia_abbonato' | 'iscrizioni_chiuse' | 'tetto' | 'prezzo_mancante';
 
-/** Si può aprire un checkout del Mentale? Il doppio abbonamento manda al portale, le iscrizioni chiuse alla lista d'attesa. */
+/**
+ * Si può aprire un checkout di quel pacchetto? Chi ha già un abbonamento vivo cambia pacchetto (cambia-piano), non ne
+ * apre un secondo; chi ha il Mente da beta o da Season 1 può comprare solo il Fisico. Il tetto e le iscrizioni chiuse
+ * valgono per l'area del pacchetto (Mente / Campo; il Completo per tutte e due); chi è stato invitato dalla lista
+ * d'attesa (`invitato`) passa sopra il tetto.
+ */
 export function esitoCheckout(i: {
   profilo: { is_beta_free?: boolean | null; season1_access?: boolean | null; subscription_status?: string | null; piano?: string | null } | null;
+  pacchetto: Pacchetto;
   imp: Impostazioni;
-  iscrittiVivi: number;
+  iscrittiMente: number;
+  iscrittiCampo: number;
   priceId: string | null;
+  invitato?: boolean;
 }): { ok: true } | { ok: false; motivo: MotivoNoCheckout } {
   const p = i.profilo;
-  if (p?.is_beta_free) return { ok: false, motivo: 'beta' };
-  if (p?.season1_access) return { ok: false, motivo: 'season1' };
+  const info = INFO_PACCHETTI[i.pacchetto];
+  if (info.mente && p?.is_beta_free) return { ok: false, motivo: 'beta' };
+  if (info.mente && p?.season1_access) return { ok: false, motivo: 'season1' };
   if (p && STATI_VIVI.includes((p.subscription_status ?? 'none') as StatoAbbonamento)) return { ok: false, motivo: 'gia_abbonato' };
   if (!i.priceId) return { ok: false, motivo: 'prezzo_mancante' };
-  if (!i.imp.iscrizioniAperte) return { ok: false, motivo: 'iscrizioni_chiuse' };
-  if (i.imp.tettoIscritti != null && i.iscrittiVivi >= i.imp.tettoIscritti) return { ok: false, motivo: 'tetto' };
+  if (i.invitato) return { ok: true };
+  if (info.mente && !i.imp.iscrizioniAperte) return { ok: false, motivo: 'iscrizioni_chiuse' };
+  if (info.fisico && !i.imp.iscrizioniCampoAperte) return { ok: false, motivo: 'iscrizioni_chiuse' };
+  if (info.mente && i.imp.tettoIscritti != null && i.iscrittiMente >= i.imp.tettoIscritti) return { ok: false, motivo: 'tetto' };
+  if (info.fisico && i.imp.tettoCampo != null && i.iscrittiCampo >= i.imp.tettoCampo) return { ok: false, motivo: 'tetto' };
   return { ok: true };
+}
+
+/** Il pacchetto chiesto dal client (dal body); il vecchio 'mentale' resta il default. */
+export function pacchettoRichiesto(v: unknown): Pacchetto | null {
+  if (v == null || v === '') return 'mentale';
+  return isPacchetto(v) ? v : null;
 }
 
 /**
@@ -253,17 +325,23 @@ export function dataLunga(iso: string | null | undefined): string | null {
 }
 
 /** Il testo dell'email prima della fine della prova (Stripe manda `customer.subscription.trial_will_end` 3 giorni prima). */
-export function emailFineProva(i: { nome?: string | null; fine: string | null; euro: number }): { oggetto: string; testo: string } {
+export function emailFineProva(i: { nome?: string | null; fine: string | null; euro: number; pacchetto?: Pacchetto }): { oggetto: string; testo: string } {
   const prezzo = euroTesto(i.euro);
   const data = dataLunga(i.fine);
   const quando = data ? data.charAt(0).toLowerCase() + data.slice(1) : 'tra pochi giorni';
   const ciao = i.nome ? `Ciao ${i.nome},` : 'Ciao,';
+  const info = INFO_PACCHETTI[i.pacchetto ?? 'mentale'];
+  const cosa = info.mente && info.fisico
+    ? 'Si aprono il Gate, le settimane 2-12 e il Coach, e il Campo continua.'
+    : info.mente
+      ? 'Si aprono il Gate, le settimane 2-12 e il Coach.'
+      : 'Il Campo continua con le tue settimane.';
   return {
     oggetto: 'La tua prova di For You Football sta per finire',
     testo: [
       ciao,
       `la tua settimana di prova finisce ${quando}.`,
-      `Da quel giorno parte l'abbonamento al Mentale: ${prezzo} € al mese, sulla carta che hai inserito. Si aprono il Gate, le settimane 2-12 e il Coach.`,
+      `Da quel giorno parte l'abbonamento a ${info.nome}: ${prezzo} € al mese, sulla carta che hai inserito. ${cosa}`,
       'Se non vuoi continuare, disdici prima: nell\'app, Profilo → Il tuo accesso → Gestisci abbonamento. Nessun addebito.',
       'For You Football',
     ].join('\n\n'),

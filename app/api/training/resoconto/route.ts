@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { hasTrainingAccess, puoScrivereCampo } from '@/lib/trainingAccess';
 import { loadSquadraCompleta, todayRome } from '@/lib/trainingPlanner';
 import { SQUADRA_QUALITA, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import { ZONE_FASCIA } from '@/lib/trainingFascia';
@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+    const scrivi = await puoScrivereCampo(userId);
+    if (!scrivi.ok) return NextResponse.json({ error: scrivi.motivo }, { status: scrivi.motivo === 'in_pausa' ? 409 : 403 });
     const body = await request.json().catch(() => ({}));
     const oggi = todayRome();
     const data = typeof body?.data === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(body.data) ? body.data : oggi;

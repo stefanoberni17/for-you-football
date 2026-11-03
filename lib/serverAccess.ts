@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { hasActiveAccess, canAccessWeek, type BillingProfile } from '@/lib/checkAccess';
+import { hasActiveAccess, canAccessWeek, inPausa, inProva, type BillingProfile } from '@/lib/checkAccess';
 
 /**
  * serverAccess — verifica paywall lato server (API route).
@@ -14,6 +14,13 @@ const supabaseAdmin = createClient(
 );
 
 export async function getBillingProfile(userId: string): Promise<BillingProfile | null> {
+  // Il pacchetto e la pausa (migration 039): un abbonamento solo Fisico non apre il Mente, la pausa lo chiude
+  const pieno = await supabaseAdmin
+    .from('profiles')
+    .select('is_beta_free, subscription_status, season1_access, deleted_at, trial_ends_at, created_at, piano, pausa_fino')
+    .eq('user_id', userId)
+    .single();
+  if (!pieno.error) return pieno.data;
   const { data, error } = await supabaseAdmin
     .from('profiles')
     .select('is_beta_free, subscription_status, season1_access, deleted_at, trial_ends_at, created_at')
@@ -48,7 +55,13 @@ export async function requireWeekAccess(userId: string, week: number): Promise<b
 /** In prova (Mentale, 1/11): fino a quando. Null se non è in prova. Per i messaggi del Gate e della chat. */
 export async function provaFino(userId: string): Promise<string | null> {
   const profile = await getBillingProfile(userId);
-  return profile?.subscription_status === 'trialing' ? profile.trial_ends_at ?? null : null;
+  return inProva(profile) ? profile?.trial_ends_at ?? null : null;
+}
+
+/** In pausa fino a (per i messaggi del Gate e della chat). Null se non è in pausa. */
+export async function pausaFino(userId: string): Promise<string | null> {
+  const profile = await getBillingProfile(userId);
+  return inPausa(profile) ? profile?.pausa_fino ?? null : null;
 }
 
 export async function requirePaidAccess(userId: string): Promise<boolean> {

@@ -35,6 +35,12 @@ export interface OpzioniLettura {
   votiSedute?: ReadonlyMap<number, number | null>;
   dolore?: Dolore | null;
   limitazioni?: Limitazioni | null;
+  /**
+   * Il feedback rimodula il resto del piano (Fisico Pro, 3/11). Falso per Base e Medio: dei resoconti solo le regole di
+   * sicurezza (fatica alta → la prima seduta dopo più leggera, recupero dopo la partita da 10, gambe del giorno dopo) e
+   * niente aumenti nella settimana (M5). Dolore e limitazioni valgono per tutti.
+   */
+  feedback?: boolean;
   /** Solo nelle settimane di ri-test: le serie test candidate e i giorni partita. */
   ritest?: { matchDays: readonly number[]; candidati: { forza: SerieTest[]; palestra: SerieTest[]; campo: SerieTest[] } } | null;
 }
@@ -58,12 +64,13 @@ function distrettiDaEvitare(o: OpzioniLettura): { dolore: Set<Distretto>; limita
 
 export function pianoPerLettura(plan: WeekPlan, o: OpzioniLettura): EsitoLettura {
   // 1. resoconti
-  let p = applicaResoconti(plan, { weekStart: o.weekStart, oggi: o.oggi, resoconti: o.resoconti, squadra: o.squadra, fatteGiorni: o.fatteGiorni }).plan;
+  const feedback = o.feedback !== false;
+  let p = applicaResoconti(plan, { weekStart: o.weekStart, oggi: o.oggi, resoconti: o.resoconti, squadra: o.squadra, fatteGiorni: o.fatteGiorni, soloSicurezza: !feedback }).plan;
   // 2. dolore e limitazioni
   const r = riduciPerDolore(p, { dolore: o.dolore, limitazioni: o.limitazioni, oggi: o.oggi, oggiDow: o.oggiDow, fatteGiorni: o.fatteGiorni });
   if (r.ridotti) p = r.plan;
   // 3. aumenti nella settimana (salta da solo gli item 'dolore' e 'limitazione')
-  p = aumentiNellaSettimana(p, { weekStart: o.weekStart, oggi: o.oggi, logs: o.logs, fatteGiorni: o.fatteGiorni, votiSedute: o.votiSedute }).plan;
+  if (feedback) p = aumentiNellaSettimana(p, { weekStart: o.weekStart, oggi: o.oggi, logs: o.logs, fatteGiorni: o.fatteGiorni, votiSedute: o.votiSedute }).plan;
   // 4. ri-test in seduta
   let ritest: EsitoLettura['ritest'] = null;
   if (o.ritest) {

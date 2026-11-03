@@ -252,6 +252,12 @@ const dataBreve = (ymd: string) => `${DAY_NAMES[dowDi(ymd)] ?? ymd}`;
  */
 export function applicaResoconti(plan: WeekPlan, opt: {
   weekStart: string; oggi: string; resoconti: readonly Resoconto[]; squadra?: SquadraSettimana | null; fatteGiorni: ReadonlySet<number>;
+  /**
+   * Fisico Base e Medio (Ste, 3/11): il feedback non rimodula il resto del piano. Restano le regole di sicurezza: con
+   * fatica alta (o un fastidio) SOLO la prima seduta dopo è più leggera, la partita da 10 dà il recupero il giorno dopo,
+   * le gambe del giorno dopo la partita seguono i minuti giocati. Niente serie facoltative né due giorni ridotti.
+   */
+  soloSicurezza?: boolean;
 }): { plan: WeekPlan; aggiustamenti: string[] } {
   const aggiustamenti: string[] = [];
   const resoconti = [...opt.resoconti].sort((a, b) => a.data.localeCompare(b.data));
@@ -297,7 +303,7 @@ export function applicaResoconti(plan: WeekPlan, opt: {
     }
     // Livello 2: fatica molto alta o fastidio (squadra), partita da 10 → i due giorni dopo più leggeri + yoga di recupero
     if (v.faticaAlta) {
-      for (const s of dopo) {
+      for (const s of opt.soloSicurezza ? dopo.slice(0, 1) : dopo) {
         const d = diffGiorni(dataS(s), r.data);
         if (d < 1 || d > RESOCONTO_GIORNI_RIDOTTI) continue;
         if (s.tipo === 'recupero' || s.proposte?.some((p) => p.tipo === 'leggera')) continue;
@@ -310,7 +316,7 @@ export function applicaResoconti(plan: WeekPlan, opt: {
   }
   // Livello 1: scarto ≥ 3 → la PRIMA seduta dopo: serie facoltative da togliere (più stanco) o da aggiungere (più fresco).
   // Dal resoconto più RECENTE: se due resoconti puntano alla stessa seduta vince il dato più fresco (review 19/10)
-  for (const r of [...resoconti].reverse()) {
+  for (const r of opt.soloSicurezza ? [] : [...resoconti].reverse()) {
     const v = valutaResoconto(r, r.rpe_previsto ?? previstoPer(r.tipo, r.data, opt.squadra));
     const dopo = sedute.filter((s) => daFare(s) && dataS(s) > r.data && fisica(s)).sort((a, b) => a.giorno - b.giorno);
     const cosa = r.tipo === 'partita' ? `partita di ${dataBreve(r.data)}` : `squadra di ${dataBreve(r.data)}`;
@@ -335,7 +341,7 @@ export function applicaResoconti(plan: WeekPlan, opt: {
     }
   }
   // Livello 3: due giorni di fila con fatica alta (o bassa) → la seduta dopo ridotta (o con serie in più)
-  for (let i = 1; i < resoconti.length; i++) {
+  for (let i = 1; !opt.soloSicurezza && i < resoconti.length; i++) {
     const a = resoconti[i - 1], b = resoconti[i];
     if (diffGiorni(b.data, a.data) !== 1) continue;
     const va = valutaResoconto(a, a.rpe_previsto ?? previstoPer(a.tipo, a.data, opt.squadra));

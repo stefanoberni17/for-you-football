@@ -366,6 +366,8 @@ export interface TestInSeduta {
   perche?: string;            // una riga per l'atleta
 }
 export interface PlanSession {
+  /** Fisico Base (3/11): la seduta è troppo vicina alla partita del calendario di adesso → "salta o fai la versione leggera" (niente riallineamento). */
+  avviso_partita?: string;
   giorno: number;            // 1=Lun … 7=Dom
   titolo: string;
   tipo: 'mix' | 'fisica' | 'tecnica' | 'skill' | 'fascia' | 'recupero';
@@ -386,6 +388,7 @@ export interface WeekPlan {
   nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
   aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
   adattato_calendario?: string; // M8 (26/10): piano salvato dall'adattamento al calendario cambiato (data ISO); non conta nel tetto delle rigenerazioni
+  blocco?: { inizio: string; settimana: number; di: number }; // Fisico Base (3/11, lib/trainingBlocco): settimana del blocco di 4
   scarico?: boolean;         // M11 (26/10): piano di una settimana di scarico (serie ×0.6, varianti short): la distanza tra gli scarichi e il ri-test partono da qui
 }
 

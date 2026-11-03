@@ -13,6 +13,7 @@
  */
 
 import { FREE_WEEKS } from '@/lib/constants';
+import { INFO_PACCHETTI, pacchettoDi, type LivelloFisico } from '@/lib/listino';
 
 export type BillingProfile = {
   deleted_at?: string | null;   // account in cancellazione (migration 028): chiuso finché non riattiva
@@ -21,7 +22,41 @@ export type BillingProfile = {
   season1_access?: boolean | null;
   trial_ends_at?: string | null; // fine della prova (migration 038)
   created_at?: string | null;    // iscrizione: la prova con carta vale per chi si registra dalla data di accensione
+  piano?: string | null;         // il pacchetto (lib/listino.ts): mentale, fisico_base/medio/pro, completo
+  pausa_fino?: string | null;    // abbonamento in pausa fino a (migration 039): app in sola lettura
+  training_access?: boolean | null; // il Campo acceso a mano (beta, Ste): vale come Fisico Pro
 };
+
+const STATI_VIVI_ACCESSO = ['trialing', 'active', 'past_due'];
+
+/** L'abbonamento è in pausa adesso (3/11): niente addebiti, app in sola lettura, prezzo bloccato tenuto. */
+export function inPausa(profile: BillingProfile | null | undefined, adesso = Date.now()): boolean {
+  if (!profile?.pausa_fino) return false;
+  const t = new Date(profile.pausa_fino).getTime();
+  return Number.isFinite(t) && t > adesso;
+}
+
+/** Il pacchetto dell'abbonamento comprende il Mente (Mente o Completo; un abbonamento di prima del 3/11 è Mente). */
+export function pianoConMente(profile: BillingProfile | null | undefined): boolean {
+  return INFO_PACCHETTI[pacchettoDi(profile?.piano)].mente;
+}
+
+/**
+ * Il livello del Campo di questo profilo, o null: il flag `training_access` (acceso a mano) vale Pro; altrimenti il
+ * Fisico del pacchetto con un abbonamento vivo (in prova, attivo o in tolleranza). In pausa il livello resta: è la
+ * pausa a chiudere le scritture (`inPausa`).
+ */
+export function livelloFisico(profile: BillingProfile | null | undefined): LivelloFisico | null {
+  if (!profile || profile.deleted_at) return null;
+  if (profile.training_access) return 'pro';
+  if (!STATI_VIVI_ACCESSO.includes(profile.subscription_status ?? '')) return null;
+  return INFO_PACCHETTI[pacchettoDi(profile.piano)].fisico;
+}
+
+/** Il Campo è in prova (7 giorni con la carta, senza il flag a mano). */
+export function fisicoInProva(profile: BillingProfile | null | undefined): boolean {
+  return !profile?.training_access && profile?.subscription_status === 'trialing' && livelloFisico(profile) != null;
+}
 
 /**
  * Ritorna true se l'utente può accedere ai contenuti a pagamento.
@@ -35,17 +70,19 @@ export function hasActiveAccess(profile: BillingProfile | null | undefined): boo
   if (!profile) return false;
   if (profile.is_beta_free) return true;
   if (profile.season1_access) return true;
+  // Dal 3/11 un abbonamento può essere solo Fisico: il Mente c'è solo nel Mente e nel Completo, e non in pausa
+  if (!pianoConMente(profile) || inPausa(profile)) return false;
   return profile.subscription_status === 'active' || profile.subscription_status === 'past_due';
 }
 
-/** In prova: la settimana 1 aperta, il resto dopo il primo pagamento. */
+/** In prova sul Mente: la settimana 1 aperta, il resto dopo il primo pagamento. */
 export function inProva(profile: BillingProfile | null | undefined): boolean {
-  return profile?.subscription_status === 'trialing';
+  return profile?.subscription_status === 'trialing' && pianoConMente(profile) && !inPausa(profile);
 }
 
-/** Accesso pieno oppure prova in corso: il ritorno dal checkout è andato a buon fine. */
+/** Accesso pieno oppure prova in corso (Mente o Fisico): il ritorno dal checkout è andato a buon fine. */
 export function haAccessoOProva(profile: BillingProfile | null | undefined): boolean {
-  return hasActiveAccess(profile) || inProva(profile);
+  return hasActiveAccess(profile) || inProva(profile) || (!!livelloFisico(profile) && !profile?.training_access);
 }
 
 /** Il giorno da cui vale la prova con carta se l'interruttore è "1" (Ste, 2/11: "solo per chi si registra da oggi"). */

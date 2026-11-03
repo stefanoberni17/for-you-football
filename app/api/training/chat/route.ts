@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { messaggiPreparatore, puoScrivereCampo } from '@/lib/trainingAccess';
+import { logEvent } from '@/lib/events';
 import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
 import { detectPain, updateTrainingMemory } from '@/lib/trainingPlanner';
 import { trainingChat } from '@/lib/trainingChat';
@@ -16,7 +17,16 @@ export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+    const scrivi = await puoScrivereCampo(userId);
+    if (!scrivi.ok) return NextResponse.json({ error: scrivi.motivo }, { status: scrivi.motivo === 'in_pausa' ? 409 : 403 });
+    // Il preparatore per livello (Ste, 3/11): Base senza messaggi, Medio 10 al mese, Pro libero (resta il tetto all'ora)
+    const quota = await messaggiPreparatore(userId, scrivi.accesso);
+    if (quota.max === 0) {
+      return NextResponse.json({ error: 'Con il Fisico Base la chat con il preparatore non c\'è: c\'è dal Medio. Per un dolore usa il bottone "Hai un dolore?".', reason: 'non_incluso' }, { status: 403 });
+    }
+    if (quota.rimasti === 0) {
+      return NextResponse.json({ error: `Hai usato i ${quota.max} messaggi al preparatore di questo mese: il conto riparte il primo del mese. Per un dolore usa il bottone "Hai un dolore?".`, reason: 'limite_mese', limite: quota.max }, { status: 429 });
+    }
     if (!(await checkRateLimit(`training-chat:${userId}`, 'chat', COACH_HOURLY_LIMIT))) {
       return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
     }
@@ -39,7 +49,8 @@ export async function POST(request: NextRequest) {
       await supabaseAdmin.from('profiles').update({ training_pain_hold: true }).eq('user_id', userId);
     }
 
-    const text = await trainingChat(userId, clean);
+    const text = await trainingChat(userId, clean, scrivi.accesso.manuale ? null : scrivi.accesso.livello);
+    logEvent(userId, 'preparatore_messaggio', { livello: scrivi.accesso.livello });
 
     // Memoria preparatore: ogni 6 messaggi utente distilla la conversazione in
     // training_goals/training_notes (fire-and-forget, come il recap del Coach)
@@ -49,7 +60,7 @@ export async function POST(request: NextRequest) {
       updateTrainingMemory(userId, recenti, 'chat').catch((e) => console.error('training memory recap:', e));
     }
 
-    return NextResponse.json({ response: text, painHold });
+    return NextResponse.json({ response: text, painHold, rimasti: quota.rimasti == null ? null : Math.max(0, quota.rimasti - 1) });
   } catch (err) {
     console.error('training/chat error:', err);
     return NextResponse.json({ error: 'internal' }, { status: 500 });

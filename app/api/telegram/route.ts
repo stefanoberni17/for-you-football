@@ -15,7 +15,7 @@ import {
   TELEGRAM_FORMAT
 } from '@/lib/coach-ai';
 import { checkRateLimit, COACH_HOURLY_LIMIT, ANON_HOURLY_LIMIT } from '@/lib/rateLimit';
-import { requirePaidAccess } from '@/lib/serverAccess';
+import { pausaFino, requirePaidAccess } from '@/lib/serverAccess';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -81,6 +81,29 @@ export async function POST(request: NextRequest) {
         console.log(`✅ safety_review sbloccato via Telegram per ${target} (${unlocked[0].name || '—'}) da chat ${chatId} il ${new Date().toISOString()}`);
         await sendTelegramMessage(chatId, `✅ Sbloccato: ${unlocked[0].name || target}. Il Coach torna al percorso dal prossimo messaggio.`);
       }
+      return NextResponse.json({ ok: true });
+    }
+
+    // ── Comandi di Ste per gli abbonamenti (3/11), solo dalla sua chat:
+    // /pausa_ok <id> <mesi> · /pausa_no <id> (pausa per infortunio) · /invita_campo <N> · /invita_mente <N> (lista d'attesa)
+    if (/^\/(pausa_ok|pausa_no|invita_campo|invita_mente)\b/.test(userText) && alertChatId && String(chatId) === String(alertChatId)) {
+      const [cmd, a, b] = userText.trim().split(/\s+/);
+      const { decidiPausaInfortunio, invitaDallaLista } = await import('@/lib/abbonamentoServer');
+      const { mesiInfortunio } = await import('@/lib/pausaInviti');
+      let risposta: string;
+      if (cmd === '/pausa_ok' || cmd === '/pausa_no') {
+        const mesi = cmd === '/pausa_ok' ? mesiInfortunio(b) : null;
+        if (!a || !UUID_RE.test(a) || (cmd === '/pausa_ok' && mesi == null)) risposta = 'Uso: /pausa_ok <id> <mesi 1-6> oppure /pausa_no <id>.';
+        else risposta = await decidiPausaInfortunio(a, mesi);
+      } else {
+        const n = parseInt(a ?? '', 10);
+        if (!Number.isInteger(n) || n < 1 || n > 200) risposta = `Uso: ${cmd} <quanti, 1-200>.`;
+        else {
+          const fatti = await invitaDallaLista(cmd === '/invita_campo' ? 'campo' : 'mente', n);
+          risposta = fatti ? `✅ Invitati ${fatti} dalla lista: hanno 7 giorni per entrare, anche sopra il tetto.` : 'Nessuno in lista da invitare.';
+        }
+      }
+      await sendTelegramMessage(chatId, risposta);
       return NextResponse.json({ ok: true });
     }
 
@@ -194,9 +217,12 @@ export async function POST(request: NextRequest) {
 
     // Paywall: il Coach è contenuto a pagamento anche su Telegram (stesso gate di /api/chat).
     if (!(await requirePaidAccess(userId))) {
+      const fineP = await pausaFino(userId);
       await sendTelegramMessage(
         chatId,
-        'Il Coach su Telegram si attiva con l\'abbonamento al Mentale, dopo la settimana di prova. Apri l\'app: da lì torniamo a parlare qui. ⚽'
+        fineP
+          ? 'Sei in pausa: ci ritroviamo qui quando riprendi. Se vuoi riprendere prima, lo fai dall\'app (Profilo → Il tuo accesso). ⚽'
+          : 'Il Coach su Telegram c\'è con il Mente o con il Completo, dopo la settimana di prova. Apri l\'app: da lì torniamo a parlare qui. ⚽'
       );
       return NextResponse.json({ ok: true });
     }

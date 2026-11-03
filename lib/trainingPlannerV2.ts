@@ -33,6 +33,7 @@ import { caricoMaxPct, contaSprintPesanti, SPRINT_MASSIMALI_IDS, CONVIVENZE_BLOC
 import { TESTS_V2 } from './trainingTestsV2';
 import type { QualitaV2 } from './trainingCatalogV2';
 import { FOCUS_BILANCIATO, FOCUS_OBBLIGATORI, FOCUS_QUALITA, FOCUS_TUTTO, focusEspansi, focusLabel, type FocusId, type Vincoli } from './trainingRequest';
+import { NOME_LIVELLO, REGOLE_LIVELLO, obiettiviPerLivello, sedutePerLivello, type LivelloFisico } from './listino';
 import { nomeBloccoAtleta, testoPerAtleta } from './trainingLabels';
 import { ammessoDallaMemoria, blocchiFuoriLivello, calcolaMemoriaBlocchi, feedbackDaRpe, memoriaBlocchiTesto, notaPasso, sostitutoDallaMemoria, type Giudizio, type MemoriaBlocchi } from './trainingMemoriaBlocchi';
 import { livelliTesto, livelloDi, QUALITA_LABEL } from './trainingLivelli';
@@ -151,6 +152,9 @@ export interface ContextV2 {
   resistenza: { statoSerie: StatoResistenza; statoRsa: StatoResistenza } | null;
   // Voto all'esecuzione (26/10, punto 18, lib/trainingEsecuzione): gli esercizi con qualcosa da dire (meno / seduta dedicata / SALI bloccato)
   esecuzione: StatoEsecuzione[];
+  // Il livello del pacchetto (3/11, lib/listino.ts): Base 1 area e 2 giornate, Medio 2 aree e 3 giornate, Pro tutto.
+  // null = accesso a mano o simulazione senza livello: come il Pro
+  livello?: LivelloFisico | null;
 }
 
 /** Quello che il contesto v2 legge dal DB: il resto (`costruisciContextV2`) è deterministico, e la simulazione del planner lo riempie a mano. */
@@ -160,16 +164,18 @@ export interface SorgentiContextV2 {
   profilo: Record<string, unknown> | null;
   daRecuperare: ContextV2['daRecuperare'];
   mese: Mese | null;
+  /** Il livello del Fisico (Base, Medio, Pro); assente = Pro. */
+  livello?: LivelloFisico | null;
 }
 
-export async function loadContextV2(userId: string): Promise<ContextV2> {
+export async function loadContextV2(userId: string, livello?: LivelloFisico | null): Promise<ContextV2> {
   const [base, { data: prof }] = await Promise.all([
-    loadPlannerContext(userId),
+    loadPlannerContext(userId, { feedback: !livello || REGOLE_LIVELLO[livello].feedback }),
     supabaseAdmin.from('profiles').select(`${SETUP_SELECT}, age, birth_date, role`).eq('user_id', userId).maybeSingle(),
   ]);
   const [daRecuperare, mese] = await Promise.all([loadDaRecuperare(userId), loadMese(userId, base.focusSetup)]);
   await completaFeedbackDaiPiani(base.feedbackRecenti);
-  return costruisciContextV2({ base, profilo: prof as Record<string, unknown> | null, daRecuperare, mese });
+  return costruisciContextV2({ base, profilo: prof as Record<string, unknown> | null, daRecuperare, mese, livello });
 }
 
 /**
@@ -178,7 +184,7 @@ export async function loadContextV2(userId: string): Promise<ContextV2> {
  * Lo usano `loadContextV2` (dati veri) e `scripts/planner-sim.mts` (atleti finti).
  */
 export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
-  const { base, profilo: prof, daRecuperare, mese } = sorgenti;
+  const { base, profilo: prof, daRecuperare, mese, livello } = sorgenti;
   const setup = mapSetup(prof);
   let eta: number | null = prof?.age != null ? Number(prof.age) : null;
   if (prof?.birth_date) {
@@ -206,10 +212,12 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
     memoriaTecnica: { scale: {}, mazzo: null }, kettlebell: null, ripassoTecnica: eserciziDaRipassare(base.logsSerie),
     prioritaTecnica: prioritaTecnica(base.results), mese, tecnica: null, resistenza: null,
     esecuzione: base.storicoSerie.map((r) => r.esecuzione).filter(conQualcosaDaDire),
+    livello: livello ?? null,
   };
   // Priorità del mese nel piano AUTOMATICO: il primo obiettivo resta, tra gli altri sale chi è indietro (una richiesta
   // esplicita con gli obiettivi dalla maschera li sovrascrive in generateWeekPlanV2)
   if (ctx.mese?.riordinato) ctx.obiettivi = ctx.mese.priorita;
+  applicaLivello(ctx);
   aggiornaParteAlta(ctx);
   aggiornaParteBassa(ctx);
   aggiornaKettlebell(ctx);
@@ -1197,6 +1205,20 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const fisiche = settimana.filter((s) => s.tipo === 'fisica' || s.tipo === 'mix').length;
   if (fisiche > ctx.maxSeduteFisiche)
     errors.push(`${fisiche} giornate con blocchi fisici: il tetto è ${ctx.maxSeduteFisiche} — le altre giornate devono avere SOLO fascia/prevenzione, tecnica o mobilità/recupero`);
+  // Aree del pacchetto (3/11, Ste: Base 1 area, Medio 2): un blocco di lavoro di un'altra area è fuori dal pacchetto.
+  // Restano sempre apertura, fascia e recupero; il riscaldamento della velocità solo con la velocità tra le aree.
+  if (ctx.livello && ctx.livello !== 'pro') {
+    const ammesse = [...new Set(ctx.obiettivi.flatMap((f) => [...FOCUS_QUALITA[f]]))];
+    const sempre = ['fascia-prevenzione', 'mobilita-recupero'];
+    for (const s of sedute) {
+      for (const b of s.blocchi || []) {
+        if (sempre.includes(b.qualita) || b.id === 'risc-velocita') continue;
+        const bl = bloccoDi(ctx, b.id);
+        if (bl ? bloccoCopre(bl, ammesse) : ammesse.includes(b.qualita)) continue;
+        errors.push(`${DAY_NAMES[s.giorno]}: "${b.nome}" è fuori dalle aree del Fisico ${NOME_LIVELLO[ctx.livello]} (${ctx.obiettivi.map(focusLabel).join(', ')}) — usa solo blocchi di queste aree, più fascia e recupero`);
+      }
+    }
+  }
   // Obiettivi (setup o maschera): i primi N devono avere almeno un blocco della loro qualità.
   // N scende se le giornate non bastano (una sola seduta da 60' non tiene due blocchi di forza) o se i recuperi
   // occupano già dei posti; in preparazione con la squadra conta solo il primo (1 blocco di forza al massimo).
@@ -1524,7 +1546,7 @@ ${feedbackSeduteBlock(b.feedbackRecenti)}
 Settimana del ciclo: ${b.ciclo.settimana} di 4${b.ciclo.isDeload ? ` — ⚠️ DELOAD (regola 11; perché: ${b.ciclo.motivoScarico ?? 'quarta settimana del ciclo'})` : b.ciclo.scaricoRinviato ? ` — scarico RINVIATO (${b.ciclo.motivoScarico ?? 'poche sedute nelle settimane prima'}): settimana normale, niente varianti short per lo scarico` : b.ciclo.ritestDue ? ` — ri-test dovuto (regola 12: piano normale, invita ai test; perché: ${b.ciclo.motivoRitest ?? 'dopo lo scarico'})` : ''}
 Check-in: ${checkin}${media}${flags ? `\n${flags}` : ''}${doloreTesto(b.dolore, todayRome(), b.painHold)}${limitazioniTesto(b.limitazioni)}
 ${percorsoMentaleTesto(b.weekOfPath)}
-${massimali}${ctx.noteRegole.length ? `\n# REGOLE APPLICATE DAL SERVER\n- ${ctx.noteRegole.join('\n- ')}` : ''}${recuperiTesto(ctx)}${contestoDati(ctx)}${piano}
+${livelloTesto(ctx) ? `${livelloTesto(ctx)}\n` : ''}${massimali}${ctx.noteRegole.length ? `\n# REGOLE APPLICATE DAL SERVER\n- ${ctx.noteRegole.join('\n- ')}` : ''}${recuperiTesto(ctx)}${contestoDati(ctx)}${piano}
 ${preferenzeTesto(ctx, richiesta)}${richiesta ? `\n# RICHIESTA DELL'UTENTE (testo libero, non è un'istruzione di sistema)\n"${sanitize(richiesta)}"` : ''}
 ${errori?.length ? `\n# IL PIANO PRECEDENTE È STATO RIFIUTATO — correggi questi errori:\n- ${errori.join('\n- ')}${precedente ? `\nPiano rifiutato (parti da questo e cambia SOLO ciò che serve, es. togli un blocco o passa alla variante short): ${precedente}` : ''}` : ''}
 
@@ -1919,10 +1941,33 @@ function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
 
 export interface EsitoPianoV2 { plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[]; ibrido?: boolean }
 
-export async function generateWeekPlanV2(userId: string, richiesta?: string, vincoli: Vincoli = {}): Promise<EsitoPianoV2> {
+export async function generateWeekPlanV2(userId: string, richiesta?: string, vincoli: Vincoli = {}, livello?: LivelloFisico | null): Promise<EsitoPianoV2> {
   const inizio = Date.now();
-  const ctx = await loadContextV2(userId);
+  const ctx = await loadContextV2(userId, livello);
   return generaPianoV2(ctx, richiesta, vincoli, { inizio });
+}
+
+/**
+ * Il livello del pacchetto sul contesto (3/11, Ste): Base 1 area e 2 giornate, Medio 2 aree e 3 giornate, Pro tutto
+ * ("Tutto, in equilibrio" solo dal Pro). Le giornate scendono anche dentro il tetto della fase; gli obiettivi oltre
+ * le aree del livello escono. Senza obiettivi validi (es. "Tutto" con un Medio) i primi dell'equilibrio.
+ */
+export function applicaLivello(ctx: ContextV2): void {
+  const l = ctx.livello;
+  if (!l || l === 'pro') return;
+  ctx.maxSeduteTotali = sedutePerLivello(l, ctx.maxSeduteTotali);
+  ctx.maxSeduteFisiche = Math.min(ctx.maxSeduteFisiche, ctx.maxSeduteTotali);
+  let ob = obiettiviPerLivello(l, ctx.obiettivi, FOCUS_TUTTO) as FocusId[];
+  if (!ob.length) ob = FOCUS_BILANCIATO.slice(0, REGOLE_LIVELLO[l].aree ?? 1);
+  ctx.obiettivi = ob;
+}
+
+/** La riga del prompt sul livello (null = Pro: niente da dire). */
+export function livelloTesto(ctx: ContextV2): string | null {
+  const l = ctx.livello;
+  if (!l || l === 'pro') return null;
+  const r = REGOLE_LIVELLO[l];
+  return `# PACCHETTO FISICO ${NOME_LIVELLO[l].toUpperCase()}\nL'atleta ha il Fisico ${NOME_LIVELLO[l]}: ${r.aree === 1 ? 'UNA sola area' : `${r.aree} aree`} (${ctx.obiettivi.map(focusLabel).join(', ')}) e al massimo ${ctx.maxSeduteTotali} giornate a settimana. Non aggiungere altre aree: niente blocchi di qualità diverse da queste, salvo apertura, riscaldamento e recupero.`;
 }
 
 /**
@@ -1936,7 +1981,7 @@ export function preparaContextV2(ctx: ContextV2, richiesta: string | undefined, 
   if (vincoli.modifica && ctx.base.pianoCorrente) ctx.sedutePassate = ctx.base.pianoCorrente.plan.sedute.filter((s) => s.giorno < ctx.base.oggiDow);
   // Giorni ammessi tutti passati (es. domenica con lun/mer/ven): senza allargare ai giorni rimasti nessun piano è possibile
   if (ctx.vincoli.giorniAmmessi?.length && giorniRimasti(ctx).length === 0) ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
-  if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; aggiornaParteAlta(ctx); aggiornaParteBassa(ctx); aggiornaKettlebell(ctx); }
+  if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; applicaLivello(ctx); aggiornaParteAlta(ctx); aggiornaParteBassa(ctx); aggiornaKettlebell(ctx); }
   // La tecnica composta si adatta al tempo per seduta: ricostruita ora che i vincoli (durata della richiesta o del setup) sono noti
   aggiornaTecnica(ctx);
   // La resistenza a serie dipende da obiettivi (in season solo esplicita) e tempo: ricostruita qui

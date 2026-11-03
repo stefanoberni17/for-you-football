@@ -81,16 +81,11 @@ export async function ensureInstallmentSchedule(subscriptionId: string): Promise
 
 /**
  * Stripe è configurato? Senza, il paywall è soft (no-op) e il checkout risponde 503.
- * Dal 1/11 si vende il Mentale: servono la chiave, il segreto del webhook e almeno uno dei due Price del Mentale
- * (STRIPE_PRICE_ID_MENTALE_FONDATORI per il prezzo di lancio, STRIPE_PRICE_ID_MENTALE per il listino; il prezzo con
- * codice è il listino con il coupon STRIPE_COUPON_MENTALE_CODICE). Gli importi stanno solo su Stripe.
+ * Servono la chiave e il segreto del webhook. I Price dei pacchetti si trovano per lookup key su Stripe
+ * (lib/prezziServer.ts): un pacchetto senza Price non si vende (l'offerta dice `disponibile: false`).
  */
 export function isStripeEnabled(): boolean {
-  return Boolean(
-    process.env.STRIPE_SECRET_KEY &&
-    process.env.STRIPE_WEBHOOK_SECRET &&
-    (process.env.STRIPE_PRICE_ID_MENTALE_FONDATORI || process.env.STRIPE_PRICE_ID_MENTALE)
-  );
+  return Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET);
 }
 
 /** C'è la chiave Stripe: basta per il portale e per mettere in pausa o chiudere gli abbonamenti già esistenti. */
