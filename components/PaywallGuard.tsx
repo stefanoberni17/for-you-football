@@ -73,12 +73,13 @@ export default function PaywallGuard() {
         if (Date.now() - checkedAt < TTL_MS && lastProfile) { vai(lastProfile); return; }
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return; // le pagine gestiscono già il redirect a /login
-        let { data, error } = await supabase
+        const primo = await supabase
           .from('profiles')
           .select('is_beta_free, subscription_status, season1_access, created_at, piano, pausa_fino')
           .eq('user_id', session.user.id)
           .maybeSingle();
-        if (error) {
+        let data = primo.data;
+        if (primo.error) {
           // senza le migration 038/039
           ({ data } = await supabase.from('profiles').select('is_beta_free, subscription_status, season1_access, created_at')
             .eq('user_id', session.user.id).maybeSingle() as never);

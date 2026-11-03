@@ -295,10 +295,11 @@ Seleziona la frase e aggiungi la riflessione.`;
   let resocontiPush = 0;
   try {
     // Chi ha il Campo: acceso a mano o con un pacchetto con il Fisico (3/11), abbonamento vivo e non in pausa
-    let { data: campoTutti, error: campoErr } = await supabaseAdmin.from('profiles').select('user_id, training_access, subscription_status, piano, pausa_fino')
+    const primo = await supabaseAdmin.from('profiles').select('user_id, training_access, subscription_status, piano, pausa_fino')
       .or('training_access.eq.true,piano.in.(fisico_base,fisico_medio,fisico_pro,completo)')
       .or('safety_review.is.null,safety_review.eq.false').is('deleted_at', null).limit(500);
-    if (campoErr) {
+    let campoTutti = primo.data;
+    if (primo.error) {
       // senza la migration 039 (pausa_fino): come prima, il solo flag
       ({ data: campoTutti } = await supabaseAdmin.from('profiles').select('user_id, training_access')
         .eq('training_access', true).or('safety_review.is.null,safety_review.eq.false').is('deleted_at', null).limit(500) as never);
