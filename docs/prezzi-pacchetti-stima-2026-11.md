@@ -1,68 +1,100 @@
 # Prezzi e pacchetti — parte B: stima per la vendita del Campo (3/11/2026)
 
-Richiesta di Ste del 3/11: parte A (configurazione del Mente prima del 9/11) fatta nel codice; parte B **solo stima in ore, niente codice**. Le ore sono di lavoro mio (codice, test, documenti); non contano il tempo di Ste per decidere, configurare Stripe live e provare sul telefono.
+Richiesta di Ste del 3/11: la parte A (il Mente prima del 9/11) è nel codice; la parte B è **solo stima, niente codice**. Aggiornato la sera del 3/11 con le risposte di Ste alle cinque domande.
 
-Prove fatte il 3/11 su Stripe in modalità test, con Managed Payments acceso sull'abbonamento di prova:
-- **pausa** (`pause_collection: void`): accettata, e tolta senza problemi;
-- **credito sul saldo del cliente** (−10 €): accettato, e nell'anteprima della fattura dopo da 19 € restano 9 € da pagare;
-- **cambio di prezzo con conguaglio** (anteprima `proration_behavior: always_invoice`): accettato;
-- **codice "forever" su una sessione di checkout** (`discounts`): accettato.
+Ogni voce ha due misure:
+- **ore-sviluppatore**: il lavoro di una persona;
+- **giorni miei**: i giorni di lavoro di Claude, con le prove in modalità test su Stripe comprese. Con gli **orologi di test** di Stripe si simulano fine prova, rinnovi, rimborsi a 14 giorni e fine pausa senza aspettare i giorni veri.
 
-## Cosa esiste già
+Non contano: il tempo di Ste per provare sul telefono, la configurazione di Stripe live e l'attesa del merge.
 
-- **Abbonamento al Mente** (parte A): tre prezzi, uno alla volta, il più basso; coupon "forever" per il prezzo con codice; importi letti da Stripe; prova di 7 giorni una volta sola (`trial_ends_at`); tetto e lista d'attesa (`app_settings`, solo eventi); Managed Payments.
-- **Il Campo** dietro `profiles.training_access`, che oggi si accende solo a mano da SQL. Pausa per dolore da 4/10 con un pulsante a parte, per tutti. Tetto di 6 piani a settimana (`PIANI_MAX_SETTIMANA`). Riallineamento al calendario senza AI (M8, `adattaAlCalendario`), che non conta nel tetto. Chat del preparatore limitata solo a 60 messaggi all'ora.
-- **Adattamento sui feedback (la domanda di Ste): sì, esiste e gira oggi**, sul piano letto e nel planner:
-  - resoconto dopo squadra e partita: serie facoltative, giorni più leggeri, gambe al 40-75 % il giorno dopo la partita;
-  - voto della seduta e giudizio per blocco: il codice del blocco va avanti, resta o torna indietro;
-  - serie fatte e fatica, cioè la dose SALI/SCENDI;
-  - aumenti già nella settimana in corso (M5);
-  - "Com'è venuto?";
-  - condizione da check-in, voti e resoconti: il tetto di carico scende o sale del 15 %;
-  - scarico e ri-test decisi dai dati;
-  - dolore e limitazioni.
+## Decisioni di Ste (3/11 sera)
 
-  Nel Pro si può promettere senza inventare niente. Le soglie però sono ancora tutte "a tavolino" (Campo congelato finché tre atleti non hanno quattro settimane di log).
+1. **Fisico Base.** Un blocco di 4 settimane generato una volta, con la progressione già dentro: carico che sale, settimana 4 di scarico. Poi un blocco nuovo. La riprogrammazione mensile del Base è il blocco nuovo.
+2. **«Fatica alta → più leggero» resta per TUTTI** (regola di sicurezza):
+   - Base e Medio: si alleggerisce solo la seduta del giorno;
+   - Pro: il feedback rimodula anche il resto del piano, come oggi.
+3. **Prezzo di lancio di dicembre.** Si perde con la disdetta. Con la pausa resta.
+4. **Inviti** (fine gennaio):
+   - prezzo dell'amico bloccato finché resta iscritto;
+   - chi invita riceve 10 € per amico, maturati al primo pagamento dell'amico se non è rimborsato entro 14 giorni;
+   - il credito vale solo sulle fatture future: mai denaro, mai sotto zero, il residuo resta;
+   - tetto di 10 amici premiati ogni 12 mesi (100 €);
+   - niente premio se la carta è la stessa (auto-invito).
+5. **Pausa** (fine gennaio):
+   - 2 mesi, una volta ogni 12 mesi;
+   - in pausa niente addebiti e prezzo bloccato mantenuto;
+   - app in sola lettura: Protocollo, Carta e storico visibili; niente Coach né piani nuovi.
+   - **Pausa per infortunio**: su richiesta, con una riga di motivo e nessun dato sanitario, approvata a mano da Ste, fino a 6 mesi.
+   - **Cambio temporaneo di piano**: dal Completo a solo Mente (o solo Fisico) pagando solo quello, con il diritto di tornare al Completo al suo prezzo bloccato entro 6 mesi.
 
-## Punto per punto
+## Prove su Stripe in modalità test (3/11), con Managed Payments acceso
 
-| # | Cosa | Ore | Esiste già | Rischi |
+| Prova | Esito |
+|---|---|
+| Pausa senza addebiti (`pause_collection: void`) | Accettata e tolta |
+| Pausa di 2 mesi con ripresa automatica (`resumes_at`) | Accettata |
+| Credito di −10 € sul saldo del cliente | Accettato: nell'anteprima della fattura dopo, su 19 € restano 9 € da pagare |
+| Cambio di prezzo con conguaglio (anteprima) | Accettato |
+| Codice "per sempre" nella sessione di pagamento | Accettato |
+| Impronta della carta sull'abbonamento | Visibile: il controllo "stessa carta" per l'auto-invito si può fare |
+
+## Il motore adatta il piano ai feedback?
+
+Sì, oggi e senza inventare niente. Lo fa con:
+- il resoconto dopo squadra e partita;
+- il voto della seduta e i giudizi sui blocchi;
+- le serie fatte e la fatica;
+- gli aumenti nella settimana in corso;
+- "Com'è venuto?";
+- la condizione, che sposta il tetto di carico del 15 %;
+- lo scarico deciso dai dati;
+- dolore e limitazioni.
+
+Il limite: le soglie sono ancora tutte "a tavolino", perché il Campo è congelato finché tre atleti non hanno quattro settimane di log.
+
+## Dicembre: Fisico Base, Medio, Pro e Completo
+
+| # | Cosa | Ore-sviluppatore | Esiste già | Rischi e note |
 |---|------|-----|-----------|--------|
-| 1 | Listino in configurazione (5 prodotti × listino / con codice / lancio), diritti sull'utente, cambio di livello con conguaglio, fondatori Mente → Completo a 44 € | **16** + 2 di configurazione Stripe in test | Regole a un prodotto (`prezzoPerUtente`), coupon forever, importi da Stripe | **Il lancio cambia ogni mese** (Mente 19 a novembre, 24 a dicembre). Oggi c'è UN Price fondatori in env: per riconoscere chi paga 19 e chi 24 serve il diritto salvato sull'utente (tabella o colonna), non più l'env. Coupon con codice uno per prodotto (`applies_to`). Il conguaglio con codice o lancio va provato caso per caso |
-| 2 | Livelli del Fisico (aree, sedute, adattamento) + "salta o fai la versione leggera" vicino alla partita | **18** + **3** | Pro = il Campo di oggi. Riallineamento (M8) e feedback esistono. Il controllo "vicino alla partita" esiste (`conflittiCalendario`), manca solo il badge per il Base | **Base "programma fisso"** va definito: io userei il piano base deterministico (zero AI, già validato), una volta a settimana. Spegnere i feedback nel Base e nel Medio vuol dire spegnere anche il resoconto "fatica alta → più leggero", che è **sicurezza**: consiglio di tenerlo per tutti e togliere solo dose, M5, codici e tetto personale. Aree: limite agli obiettivi del setup per livello |
-| 3 | Riprogrammazioni al mese per livello (1 / 2 / Pro 2 a settimana), in prova 1 | **6** | Tetto settimanale e riallineamenti esclusi | Oggi una generazione con piano "base" per errore conta: va esclusa (`generato_da`). Il piano automatico del lunedì non deve contare |
-| 4 | Messaggi al preparatore (0 / 10 al mese / libero) | **4** | Contatore uguale a quello del Coach gratuito (eventi). Pulsante dolore già separato | Nessuno |
-| 5 | Codice personale per ogni pagante + 10 € di credito a chi invita | **11** in tutto; **5** per il solo codice all'amico | Coupon con codice, campo del codice, credito sul saldo provato in test con Managed Payments | Il credito con Managed Payments è entrato nell'anteprima della fattura, ma **va confermato su una fattura vera** (orologio di test, 1 ora). I codici personali non hanno data di fine: eccezione alla regola delle campagne (metadato `personale`). Abuso: amico = stessa persona con un'altra email |
-| 6 | Prova una volta per persona; chi l'ha fatta sul Mente paga subito il Completo | **2** | `trial_ends_at` | Nessuno |
-| 7 | Tetto del Campo separato, lista d'attesa vera, fondatori del Mente in fila per primi | **7** | Tetto e lista (solo eventi) del Mente | La lista d'attesa oggi è solo un evento: serve una tabella con l'ordine e un modo per invitare (SQL o email) |
-| 8 | Pausa al posto della disdetta, prezzo bloccato | **9** | Con Managed Payments la pausa è accettata (provato il 3/11). L'abbonamento resta lo stesso, quindi prezzo e coupon restano | In pausa Stripe tiene lo stato `active`: l'accesso va chiuso guardando `pause_collection` (colonna nuova dal webhook). Il pulsante "Metti in pausa" va fatto da noi: il portale di Stripe non lo garantisce (da verificare nel pannello) |
-| — | Pagina prezzi con le opzioni, Termini, prove end-to-end in test, documenti | **7** + **3** + **8** | Pagina del Mente | La regola dei tre prezzi (esca nel mezzo) va disegnata sulla pagina, non solo nel listino |
+| 1 | Listino in configurazione per 5 prodotti (listino, con codice, lancio); diritti salvati sull'utente (lancio di novembre 19, di dicembre 24, persi con la disdetta, tenuti in pausa); cambio di livello con conguaglio; fondatori del Mente → Completo a 44 € | 16 | Regole per un prodotto (`prezzoPerUtente`), coupon "per sempre", importi letti da Stripe | Il lancio cambia ogni mese: il diritto va sull'utente (tabella), non più in un env. Un coupon "con codice" per prodotto |
+| 2a | **Base**: blocco di 4 settimane generato una volta. Settimana 1 dal planner (o dal piano base senza AI), settimane 2-3 con un passo di dose in più, settimana 4 di scarico (serie ×0,6, già nel codice). Blocco nuovo ogni 4 settimane | 12 | Piano settimanale, dose (`prossimaDose`), scarico | Il piano oggi è per settimana: il blocco va salvato con l'indice della settimana. Il Base non si riallinea al calendario |
+| 2b | **Medio**: piano settimanale, riallineamento al calendario (M8), feedback spenti tranne la sicurezza | 6 | M8, feedback (da spegnere per livello) | — |
+| 2c | Aree (1 / 2 / tutte) e sedute (2 / 3 / calendario) per livello, nel setup e nel planner | 4 | Obiettivi e sedute nel setup | — |
+| 2d | «Fatica alta»: Base e Medio solo la seduta del giorno, Pro anche il resto (com'è oggi) | 2 | `applicaResoconti` | — |
+| 2e | "Salta o fai la versione leggera" vicino alla partita, per tutti, senza AI | 3 | `conflittiCalendario` | — |
+| 3 | Riprogrammazioni: Base 1 al mese (il blocco nuovo), Medio 2 al mese, Pro 2 a settimana, in prova 1; non contano le generazioni fallite né i riallineamenti | 6 | Tetto di 6 piani a settimana; riallineamenti già esclusi | Oggi una generazione finita "base" per errore conta: va esclusa |
+| 4 | Messaggi al preparatore: Base 0, Medio 10 al mese, Pro libero. Pulsante dolore per tutti | 4 | Contatore come quello del Coach gratuito; pulsante dolore separato | — |
+| 6 | Prova una volta per persona: chi l'ha fatta sul Mente paga subito il Completo | 2 | `trial_ends_at` | — |
+| 7 | Tetto del Campo separato, lista d'attesa vera con i fondatori del Mente per primi | 7 | Tetto e lista del Mente (solo eventi) | La lista d'attesa va in una tabella con l'ordine |
+| — | Pagina prezzi con le opzioni (regola dei tre prezzi), Termini, prove complete con gli orologi di test | 7 + 3 + 8 | Pagina del Mente | — |
 
-**Totale tutto B: circa 96 ore.** Senza la pausa (che serve per fine gennaio): circa 87.
+**Dicembre: circa 80 ore-sviluppatore. Giorni miei: 3-4**, in due PR:
+1. Pro + Completo + listino, circa 2 giorni;
+2. Base + Medio, circa 1-2 giorni.
 
-## Pro e Completo a dicembre, Base e Medio a gennaio
+Per ogni PR Ste ha 30-45 minuti di prove. Se si parte questa settimana, tutto sta prima di metà dicembre anche con Base e Medio, con margine per le prove.
 
-Solo Pro + Completo vuol dire:
-- punto 1 a due prodotti: 10 h;
-- punto 2 = accesso al Campo dal piano pagato + badge partita: 7 h;
-- punto 3 solo il tetto di 2 a settimana, che c'è quasi: 2 h;
-- punto 4 non serve;
-- punto 5 solo il codice per l'amico: 5 h;
-- poi punto 6 (2 h), punto 7 (7 h), pagina 5 h, Termini 2 h, prove 6 h, configurazione 2 h.
+## Fine gennaio: inviti e pausa
 
-**Circa 48 ore.**
+| # | Cosa | Ore-sviluppatore | Giorni miei |
+|---|------|-----|-----|
+| 4 | **Inviti**: codice personale per ogni abbonato pagante (sul coupon "con codice" del suo prodotto, senza data di fine: eccezione alla regola delle campagne, segnata nel codice) mostrato nel profilo; l'amico lo scrive nel campo «Hai un codice da un amico?» e il suo prezzo resta bloccato; l'invito si registra al checkout. Un cron ogni giorno matura i premi: primo pagamento dell'amico da almeno 14 giorni, non rimborsato, carta diversa da quella di chi invita, massimo 10 premi in 12 mesi → credito di −10 € sul saldo di chi invita (Stripe lo scala dalle fatture future, mai sotto zero, il residuo resta). Avviso a chi invita, pagina "I tuoi inviti", tabelle `codici_invito` e `inviti` | 17 | 1 |
+| 5a | **Pausa di 2 mesi** una volta ogni 12 mesi: bottone nel profilo, pausa su Stripe con ripresa automatica, storico delle pause. **App in sola lettura** (stato nuovo letto da paywall, Coach, piani, giorni nuovi): Protocollo, Carta e storico restano | 9 | 0,5 |
+| 5b | **Pausa per infortunio** fino a 6 mesi: richiesta con una riga di motivo, avviso a Ste su Telegram, approvazione con un comando dalla sua chat (come `/sblocca`) | 4 | 0,25 |
+| 5c | **Cambio temporaneo di piano** dal Completo a solo Mente o solo Fisico, con il diritto di tornare al Completo al prezzo bloccato entro 6 mesi | 8 | 0,5 |
+| — | Termini (inviti, pausa, cambio di piano) e prove con gli orologi di test | 6 | 0,5 |
 
-Di ore ce n'è prima di metà dicembre anche per tutto B. I colli di bottiglia sono tre:
-1. le definizioni del Base e del Medio (cosa vuol dire "fisso", quali feedback si spengono);
-2. le prove di Ste;
-3. il Campo ancora congelato: le soglie del Pro non sono tarate sui dati.
+**Gennaio: circa 44 ore-sviluppatore, 2-3 giorni miei.**
 
-Consiglio quindi **Pro e Completo a dicembre, Base e Medio a gennaio**. Il riallineamento del Medio e il programma fisso del Base si costruiscono sopra quello che il Pro avrà mostrato in un mese.
+I rischi di gennaio:
+- **Il credito con Managed Payments è provato solo nell'anteprima della fattura**: va confermato su una fattura vera con un orologio di test (primo passo della PR).
+- **La sola lettura** tocca molte pagine: è la parte più delicata della pausa.
+- **Il cambio temporaneo** dipende dal Completo, che arriva a dicembre.
+- **Rimborso dopo il premio**: se l'amico chiede il rimborso dopo i 14 giorni, il credito resta (regola di Ste: il premio matura a 14 giorni). Da confermare.
 
-## Da decidere prima di iniziare
+## Cosa non si comprime anche se lo faccio io
 
-1. Base "programma fisso": il piano base deterministico (zero AI) una volta a settimana, o lo stesso programma per più settimane?
-2. Base e Medio senza feedback: il resoconto "fatica alta → più leggero" resta per tutti? (Io dico sì.)
-3. Lancio di dicembre: vale per chi entra a dicembre (come i fondatori di novembre), con la disdetta che lo fa perdere?
-4. Codice personale: anche il prezzo dell'amico resta bloccato finché è iscritto? E il credito ha un tetto?
-5. Pausa: durata massima e quante volte all'anno?
+- Le prove di Ste sul telefono e il merge.
+- La configurazione di Stripe live: prodotti, prezzi, coupon, portale, webhook.
+- Il Campo congelato: si vende il Pro con soglie non ancora tarate sui dati. Promettere solo quello che esiste è a posto, ma le soglie vanno guardate dopo il primo mese di iscritti veri.
