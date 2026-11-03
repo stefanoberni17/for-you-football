@@ -244,6 +244,7 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
   // Tecnica (regola 28): scale muro/palleggi e mazzo, dalle settimane precedenti
   ctx.memoriaTecnica = calcolaMemoriaTecnica(base.feedbackRecenti, ctx.blocchi, lunediCorrente);
   aggiornaTecnica(ctx, lunediCorrente);
+  filtraBlocchiLivello(ctx);
   return ctx;
 }
 
@@ -1706,7 +1707,9 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     // Il giorno prima della partita il blocco pre partita di Ste viene per primo (18/10)
     const pre = g !== undefined && giorniAllaPartita(g, b.matchDays) === 1 ? ctx.blocchi.find((x) => isPrePartita(x) && x.durataMin <= maxDur) : undefined;
     const rankLeggero = (x: Blocco, y: Blocco) => (memoriaRank(ctx, x) - memoriaRank(ctx, y)) || ((x.livello ? 1 : 0) - (y.livello ? 1 : 0)) || ((x.progressione ?? 1) - (y.progressione ?? 1)) || ((x.variante === 'short' ? 0 : 1) - (y.variante === 'short' ? 0 : 1)) || (x.durataMin - y.durataMin); // a parità, la più corta: è una giornata leggera
-    const base: QualitaV2[] = ['tecnica-palleggi', 'tecnica-passaggi', 'tecnica-conduzione', 'tecnica-tiro', 'tecnica-visione', 'mobilita-recupero'];
+    // La fascia (percorso Foundation) prima della mobilità: al Base e al Medio senza tecnica il giorno prima della partita
+    // è l'unica giornata leggera ammessa (lo yoga di recupero non va a −1; 3/11)
+    const base: QualitaV2[] = ['tecnica-palleggi', 'tecnica-passaggi', 'tecnica-conduzione', 'tecnica-tiro', 'tecnica-visione', 'fascia-prevenzione', 'mobilita-recupero'];
     // La parte di tecnica più debole ai test per prima (18/10, D10)
     const priorita = (ctx.prioritaTecnica ? QUALITA_PRIORITA[ctx.prioritaTecnica.priorita] : []) as QualitaV2[];
     const qualita = [...priorita, ...base.filter((q) => !priorita.includes(q))];
@@ -1962,6 +1965,19 @@ export function applicaLivello(ctx: ContextV2): void {
   ctx.obiettivi = ob;
 }
 
+/**
+ * La libreria del pacchetto: al Base e al Medio restano solo i blocchi delle aree scelte, più fascia, recupero e il
+ * riscaldamento della velocità (che entra solo con la velocità). Così né Claude né il piano base possono mettere un
+ * blocco di un'altra area (es. il blocco pre partita, che è velocità, al Medio con gambe e parte alta).
+ */
+export function filtraBlocchiLivello(ctx: ContextV2): void {
+  const l = ctx.livello;
+  if (!l || l === 'pro') return;
+  const ammesse = [...new Set(ctx.obiettivi.flatMap((f) => [...FOCUS_QUALITA[f]]))];
+  const sempre = ['fascia-prevenzione', 'mobilita-recupero'];
+  ctx.blocchi = ctx.blocchi.filter((b) => sempre.includes(b.qualita) || (b.id === 'risc-velocita' && ammesse.includes('velocita')) || bloccoCopre(b, ammesse));
+}
+
 /** La riga del prompt sul livello (null = Pro: niente da dire). */
 export function livelloTesto(ctx: ContextV2): string | null {
   const l = ctx.livello;
@@ -1986,6 +2002,7 @@ export function preparaContextV2(ctx: ContextV2, richiesta: string | undefined, 
   aggiornaTecnica(ctx);
   // La resistenza a serie dipende da obiettivi (in season solo esplicita) e tempo: ricostruita qui
   aggiornaResistenza(ctx);
+  filtraBlocchiLivello(ctx);
   return ctx;
 }
 

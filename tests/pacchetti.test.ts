@@ -138,3 +138,63 @@ describe('pacchetti (3/11)', () => {
     expect(settimanaDelBlocco(null, '2026-12-07')).toBeNull();
   });
 });
+
+// ─── Il Campo per livello sui piani veri (atleti finti, piano base senza Claude) ─────────────────────────────
+import { contextFinto, SCENARI } from '@/lib/trainingSimulazione';
+import { generaPianoV2, validateCtxFor } from '@/lib/trainingPlannerV2';
+import { validatePlan as validaPiano, type PlanSession } from '@/lib/trainingEngine';
+import { FOCUS_QUALITA } from '@/lib/trainingRequest';
+import { applicaResoconti, type Resoconto } from '@/lib/trainingResoconto';
+import { bloccoCopre } from '@/lib/trainingVelocita';
+
+const sempre = ['fascia-prevenzione', 'mobilita-recupero'];
+const fisiche = (sedute: PlanSession[]) => sedute.filter((s) => s.tipo === 'fisica' || s.tipo === 'mix');
+
+describe('Campo per livello: aree e giornate (3/11)', () => {
+  for (const sc of SCENARI.filter((x) => !x.richiesta)) {
+    for (const livello of ['base', 'medio', 'pro'] as const) {
+      it(`${sc.id} · ${livello}: il piano base sta nel pacchetto e passa dal validatore`, async () => {
+        const ctx = contextFinto(sc.atleta, livello);
+        const e = await generaPianoV2(ctx, undefined, {}, { senzaClaude: true });
+        expect(validaPiano(e.plan, validateCtxFor(e.ctx))).toEqual([]);
+        if (livello === 'pro') return;
+        const aree = livello === 'base' ? 1 : 2;
+        expect(e.ctx.obiettivi.length).toBeLessThanOrEqual(aree);
+        expect(e.ctx.obiettivi).not.toContain('tutto');
+        expect(e.plan.sedute.length).toBeLessThanOrEqual(livello === 'base' ? 2 : 3);
+        // nessun blocco di lavoro fuori dalle aree scelte
+        const ammesse = e.ctx.obiettivi.flatMap((f) => [...FOCUS_QUALITA[f]]);
+        for (const s of e.plan.sedute) for (const b of s.blocchi ?? []) {
+          if (sempre.includes(b.qualita) || b.id === 'risc-velocita') continue;
+          const bl = e.ctx.blocchi.find((x) => x.id === b.id);
+          expect(bl ? bloccoCopre(bl, ammesse) : ammesse.includes(b.qualita), `${sc.id} ${livello}: ${b.id} (${b.qualita}) fuori da ${e.ctx.obiettivi.join(',')}`).toBe(true);
+        }
+        expect(fisiche(e.plan.sedute).length).toBeLessThanOrEqual(livello === 'base' ? 2 : 3);
+      });
+    }
+  }
+});
+
+describe('Base e Medio: il feedback non rimodula il resto del piano (3/11)', () => {
+  const lunedi = '2026-11-02';
+  const seduta = (giorno: number): PlanSession => ({
+    giorno, titolo: `G${giorno}`, tipo: 'fisica', durata_min: 40,
+    items: [{ esercizio_id: 'squat-2', serie: 4, quantita: 10, recupero_sec: 90 }],
+  });
+  const plan = { sedute: [seduta(3), seduta(4), seduta(6)] };
+  const alta: Resoconto = { data: '2026-11-02', tipo: 'squadra', rpe: 9, durata_min: 90, qualita: [], stanchezza: null, fastidio_zona: null, testa: null, testa_nota: null, voti: null, rpe_previsto: 6 } as unknown as Resoconto;
+  it('fatica alta: al Pro le sedute dei 2 giorni dopo più leggere, al Base/Medio solo la prima', () => {
+    const pro = applicaResoconti(plan, { weekStart: lunedi, oggi: '2026-11-03', resoconti: [alta], fatteGiorni: new Set() }).plan;
+    const bm = applicaResoconti(plan, { weekStart: lunedi, oggi: '2026-11-03', resoconti: [alta], fatteGiorni: new Set(), soloSicurezza: true }).plan;
+    expect(pro.sedute.find((s) => s.giorno === 3)!.items[0].serie).toBe(3);
+    expect(bm.sedute.find((s) => s.giorno === 3)!.items[0].serie).toBe(3);
+    expect(bm.sedute.find((s) => s.giorno === 4)!.items[0].serie).toBe(4);
+  });
+  it('più fatica del previsto (livello 1): al Pro serie facoltative, al Base/Medio niente', () => {
+    const r: Resoconto = { ...alta, rpe: 8, rpe_previsto: 5 } as Resoconto;
+    const pro = applicaResoconti(plan, { weekStart: lunedi, oggi: '2026-11-03', resoconti: [r], fatteGiorni: new Set() }).plan;
+    const bm = applicaResoconti(plan, { weekStart: lunedi, oggi: '2026-11-03', resoconti: [r], fatteGiorni: new Set(), soloSicurezza: true }).plan;
+    expect(pro.sedute.some((s) => s.items.some((it) => it.facoltativo))).toBe(true);
+    expect(bm.sedute.some((s) => s.items.some((it) => it.facoltativo))).toBe(false);
+  });
+});

@@ -4,6 +4,7 @@
  * e `tests/trainingSimulazione.test.ts` (il piano base di ogni scenario deve passare dal validatore).
  * Niente di quello che c'è qui finisce nell'app: è una palestra per il planner.
  */
+import type { LivelloFisico } from './listino';
 import { costruisciContextV2, type ContextV2 } from './trainingPlannerV2';
 import type { Resoconto } from './trainingResoconto';
 import { mondayOfThisWeekRome, todayRome, type CicloInfo, type FeedbackSeduta, type PlannerContext } from './trainingPlanner';
@@ -224,7 +225,7 @@ export function baseFinta(a: Atleta): PlannerContext {
 }
 
 /** Il ContextV2 di questo atleta: stessa costruzione del server (`costruisciContextV2`). */
-export function contextFinto(a: Atleta): ContextV2 {
+export function contextFinto(a: Atleta, livello?: LivelloFisico | null): ContextV2 {
   const base = baseFinta(a);
   const profilo: Record<string, unknown> = {
     training_esperienza_palestra: !!a.esperienzaPalestra, training_attrezzatura: a.attrezzatura, training_compagno: false, training_fase: a.fase,
@@ -232,7 +233,7 @@ export function contextFinto(a: Atleta): ContextV2 {
     training_giorni: a.preferenze?.giorni ?? [], training_sedute: a.preferenze?.sedute ?? null, training_durata_min: a.preferenze?.durataMin ?? null,
     age: a.eta, role: a.ruoli,
   };
-  return costruisciContextV2({ base, profilo, daRecuperare: a.daRecuperare ?? [], mese: calcolaMese({ obiettivi: a.focusSetup, settimane: [], lunediCorrente: mondayOfThisWeekRome() }) });
+  return costruisciContextV2({ base, profilo, daRecuperare: a.daRecuperare ?? [], mese: calcolaMese({ obiettivi: a.focusSetup, settimane: [], lunediCorrente: mondayOfThisWeekRome() }), livello });
 }
 
 // ─── Scenari difficili (27/10, Ste: "farei altri test più complessi") ───────────────────────────────────
