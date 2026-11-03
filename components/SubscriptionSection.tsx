@@ -199,10 +199,12 @@ export default function SubscriptionSection() {
           {data.pausa_fino ? (
             <Button variant="primary" fullWidth onClick={() => router.push('/pausa')}>Vai alla pausa</Button>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="secondary" onClick={() => router.push('/pricing')}>Cambia pacchetto</Button>
-              <Button variant="ghost" onClick={() => router.push('/pausa')} disabled={subscription_status === 'trialing'}>Pausa</Button>
-            </div>
+            <>
+              <Button variant="secondary" fullWidth onClick={() => router.push('/pricing')}>Cambia pacchetto</Button>
+              {subscription_status !== 'trialing' && (
+                <Button variant="ghost" fullWidth onClick={() => router.push('/pausa')}>Ti devi fermare? Metti in pausa</Button>
+              )}
+            </>
           )}
           {gestisci(subscription_status === 'past_due' || subscription_status === 'unpaid' ? 'Aggiorna pagamento' : 'Gestisci abbonamento')}
         </div>

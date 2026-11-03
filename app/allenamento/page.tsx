@@ -561,7 +561,7 @@ export default function AllenamentoHub() {
           <p className="text-body text-forest-50/90">~{durataLabel(diOggi.durata_min)}{diOggi.apertura_min ? ` (+${diOggi.apertura_min}' di apertura, se hai tempo)` : ''} · {descrizioneSeduta(diOggi)}</p>
           {(diOggi.recupero || leggera || diOggi.posticipata_da || proposteOggi.length > 0 || diOggi.avviso_partita) && (
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {diOggi.avviso_partita && <Badge tone="warn" className="!bg-white/15 !text-white">Vicina alla partita: saltala o falla leggera</Badge>}
+              {diOggi.avviso_partita && <Badge tone="warn" className="!bg-white/15 !text-white">Vicina alla partita</Badge>}
               {diOggi.recupero && <Badge tone="info" className="!bg-white/15 !text-white">Recupero</Badge>}
               {leggera && <Badge tone="info" className="!bg-white/15 !text-white">Più leggera</Badge>}
               {proposteOggi.some((p) => p.tipo === 'togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
@@ -683,7 +683,7 @@ export default function AllenamentoHub() {
                 const done = stato === 'fatta';
                 const saltata = stato === 'saltata';
                 const post = puoPosticipare(s, sedute, oggiDow, done);
-                const badge = s.avviso_partita && !done && !saltata ? <Badge tone="warn">Vicina alla partita: saltala o falla leggera</Badge>
+                const badge = s.avviso_partita && !done && !saltata ? <Badge tone="warn">Vicina alla partita</Badge>
                   : stato === 'recuperabile' ? <Badge tone="warn">Recupera oggi</Badge>
                   : stato === 'oggi' ? <Badge tone="accent">Oggi</Badge>
                   : saltata ? <Badge tone="neutral">Saltata</Badge>

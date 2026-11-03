@@ -20,16 +20,23 @@ const INTERESSE_KEY = 'campo.interesse';
  * pagina mostra i tre livelli con il prezzo che gli vale e porta a /pricing; chiuse, "Mi interessa" mette in lista
  * d'attesa (i fondatori del Mente in testa) e registra l'evento `campo_interesse`.
  */
-type LivelloOfferta = { id: 'fisico_base' | 'fisico_medio' | 'fisico_pro' | 'completo'; disponibile: boolean; puoAbbonarsi: boolean; prezzo: { euro: number | null } };
+type LivelloOfferta = { id: 'fisico_base' | 'fisico_medio' | 'fisico_pro' | 'completo'; disponibile: boolean; puoAbbonarsi: boolean; prezzo: { euro: number | null }; cambio?: { ok: boolean; euro?: number | null } | null };
 export default function FisicoBloccato() {
   const [fatto, setFatto] = useState(false);
   const [sending, setSending] = useState(false);
   const [livelli, setLivelli] = useState<LivelloOfferta[] | null>(null);
+  const [giaMente, setGiaMente] = useState(false);
   useEffect(() => { try { setFatto(localStorage.getItem(INTERESSE_KEY) === '1'); } catch { /* private mode */ } }, []);
   useEffect(() => {
     if (!isPaywallActive()) return;
     authFetch('/api/stripe/offerta').then((r) => (r.ok ? r.json() : null)).then((o) => {
-      if (o?.pacchetti) setLivelli((o.pacchetti as LivelloOfferta[]).filter((p) => p.id === 'fisico_base' || p.id === 'fisico_medio' || p.id === 'fisico_pro' || p.id === 'completo'));
+      if (!o?.pacchetti) return;
+      // Ha già il Mente: il Fisico si aggiunge passando al Completo (il Completo esiste solo con il Pro)
+      const giaMente = o.attuale === 'mentale';
+      setGiaMente(giaMente);
+      setLivelli((o.pacchetti as LivelloOfferta[])
+        .filter((p) => giaMente ? p.id === 'completo' : (p.id === 'fisico_base' || p.id === 'fisico_medio' || p.id === 'fisico_pro' || p.id === 'completo'))
+        .map((p) => giaMente && p.cambio?.ok ? { ...p, puoAbbonarsi: true, prezzo: { euro: p.cambio.euro ?? p.prezzo.euro } } : p));
     }).catch(() => {});
   }, []);
   const inVendita = !!livelli?.some((p) => p.disponibile && p.puoAbbonarsi);
@@ -109,8 +116,8 @@ export default function FisicoBloccato() {
                 <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />
               </Link>
             ))}
-            <Button size="lg" fullWidth href="/pricing?da=fisico">Scegli il tuo Fisico</Button>
-            <p className="text-body-sm text-muted text-center">7 giorni di prova con la carta. Disdici quando vuoi.</p>
+            <Button size="lg" fullWidth href={giaMente ? '/pricing?pacchetto=completo' : '/pricing?da=fisico'}>{giaMente ? 'Aggiungi il Fisico: passa al Completo' : 'Scegli il tuo Fisico'}</Button>
+            <p className="text-body-sm text-muted text-center">{giaMente ? 'Oggi paghi solo la differenza per i giorni che restano del mese.' : '7 giorni di prova con la carta. Disdici quando vuoi.'}</p>
           </section>
         ) : fatto ? (
           <Card variant="accent" padding="sm">

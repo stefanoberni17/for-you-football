@@ -16,7 +16,7 @@
 
 **Basato su:** [Naruto Inner Path](https://github.com/stefanoberni17/naruto-inner-path)
 
-**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 035 (la 034 `training_set_logs.esecuzione` e la 035 `profiles.training_pain_zone/_since/_until` applicate da Ste il 26/10 sera, con il trigger `protect_server_columns` che tiene anche `deleted_at`) la 036 (`profiles.training_limitazioni`, infortuni e limitazioni nel setup, applicata da Ste il 26/10 sera) e la 037 (l'esercizio della settimana: `user_esercizio_fatto`, `esercizio_notifiche_inviate`, `profiles.esercizio_notifiche`, applicata da Ste l'1/11) e la 038 (il Mentale ad abbonamento: `app_settings`, `profiles.piano/trial_ends_at/stripe_price_id`, stati `trialing` e `unpaid`, applicata da Ste il 2/11). Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
+**Stato in produzione (aggiornare a ogni merge su main):** `main` = ultimo merge, deploy automatico Vercel. Settimane aperte 1-12 (`BETA_MAX_WEEK = 12` dal 14/9). Migration Supabase applicate: fino alla 035 (la 034 `training_set_logs.esecuzione` e la 035 `profiles.training_pain_zone/_since/_until` applicate da Ste il 26/10 sera, con il trigger `protect_server_columns` che tiene anche `deleted_at`) la 036 (`profiles.training_limitazioni`, infortuni e limitazioni nel setup, applicata da Ste il 26/10 sera) e la 037 (l'esercizio della settimana: `user_esercizio_fatto`, `esercizio_notifiche_inviate`, `profiles.esercizio_notifiche`, applicata da Ste l'1/11) e la 038 (il Mentale ad abbonamento: `app_settings`, `profiles.piano/trial_ends_at/stripe_price_id`, stati `trialing` e `unpaid`, applicata da Ste il 2/11). La 039 (i pacchetti: diritti, pausa, inviti, lista d'attesa, `generato_da = 'blocco'`) è da applicare: senza, l'app funziona come con la 038. Lo storico datato delle modifiche è in `CHANGELOG.md`: questo file descrive com'è fatta l'app, non come ci si è arrivati.
 
 ---
 
@@ -471,6 +471,17 @@ channel          TEXT NOT NULL   -- 'registration' | 'reaccept'
 ---
 
 ## Stripe — Integrazione pagamenti
+
+### I pacchetti (dal 3/11 sera): Mente, Fisico Base/Medio/Pro, Completo
+
+Documento completo, cose da configurare e prove: `docs/pacchetti-2026-11.md`. In breve:
+- `lib/listino.ts`: i pacchetti (`mentale | fisico_base | fisico_medio | fisico_pro | completo`, `profiles.piano`), i Price trovati su Stripe per lookup key `fyf_<pacchetto>_listino` / `_lancio`, i coupon `fyf-codice-<pacchetto>`, `REGOLE_LIVELLO` (Base 1 area, 2 giornate, blocco di 4 settimane, 1 riprogrammazione al mese, niente preparatore, niente riallineamento; Medio 2 aree, 3 giornate, 2 al mese, 10 messaggi; Pro tutto, 2 a settimana).
+- Prezzi: un prezzo solo (lancio, codice, listino), diritti sull'utente (`diritto_lancio`, `diritto_codice`, migration 039) tenuti cambiando pacchetto e in pausa, persi con la disdetta. Il codice (campagna o personale degli inviti) vale su ogni pacchetto.
+- Accessi (`lib/checkAccess.ts`): `hasActiveAccess` = Mente solo con Mente o Completo e non in pausa; `livelloFisico` = il Fisico del pacchetto vivo o `training_access` (Pro); `inPausa`. Server: `lib/trainingAccess.ts` (`accessoCampo`, `puoScrivereCampo`: in pausa il Campo si legge e non si scrive; quote di riprogrammazioni e messaggi al preparatore dagli eventi `riprogrammazione` / `preparatore_messaggio`).
+- Planner: `applicaLivello` e `filtraBlocchiLivello` in `lib/trainingPlannerV2.ts` (aree, giornate, libreria), controllo "fuori dalle aree" in `expandPiano`; Base: `lib/trainingBlocco.ts` deriva le settimane 2-4; Base e Medio: `applicaResoconti({ soloSicurezza })`, niente M5, niente scarico/tetto dai dati.
+- Pausa (`/pausa`, `/api/stripe/pausa`), cambio (`/api/stripe/cambia-piano`, conguaglio `always_invoice`, ritorno al Completo entro 6 mesi), inviti (`/api/stripe/inviti`, premio nel cron `cleanup-telegram`), lista d'attesa per area; comandi di Ste su Telegram `/pausa_ok`, `/pausa_no`, `/invita_campo`, `/invita_mente`.
+- `app_settings`: `lancio` (vince su `mentale_prezzo`), `iscrizioni_aperte`/`tetto_iscritti` (Mente), `iscrizioni_campo_aperte`/`tetto_campo` (Campo, chiuso di default).
+- Prove: `scripts/stripe-pacchetti-prova.mts` (Stripe in test, 32 controlli), `scripts/planner-sim.mts --livello base|medio|pro`.
 
 ### Modello (dal 1/11/2026: il Mentale ad abbonamento)
 

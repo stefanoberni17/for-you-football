@@ -203,7 +203,7 @@ function SetupPageInner() {
           {/* Su cosa vuoi lavorare */}
           <Card padding="sm">
             <SectionTitle title="Su cosa vuoi lavorare" subtitle={areeMax != null
-              ? `Il tuo Fisico ${state.abbonamento?.nome ?? ''} ha ${areeMax === 1 ? 'una area: scegline una' : `${areeMax} aree: scegline fino a ${areeMax}, in ordine di priorità`}. Per tutte le aree c'è il Pro.`
+              ? `Il tuo Fisico ${state.abbonamento?.nome ?? ''} ha ${areeMax === 1 ? 'un\'area: sceglila' : `${areeMax} aree: scegline fino a ${areeMax}, in ordine di priorità`}. Per tutte le aree c'è il Pro.`
               : 'Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell\'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".'} className="mb-3" />
             {state.squilibri?.latoDebole && !setupDraft.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) && (
               <Banner tone="accent" icon={<Scale size={20} />} title={`Gamba ${state.squilibri.latoDebole === 'sx' ? 'sinistra' : 'destra'} più debole nei test`} className="mb-3"
@@ -229,7 +229,9 @@ function SetupPageInner() {
             )}
             {/* "Con questo tempo e questi attrezzi posso darti X?" (campo-da-fare 5, 20/10): detto PRIMA di salvare */}
             <FattibilitaBanner attrezzatura={setupDraft.attrezzatura} compagno={setupDraft.compagno} durataMin={setupDraft.durataMin} focus={setupDraft.focus} className="mt-3" />
-            <p className="text-body-sm text-muted mt-3">Entrano in ogni settimana, anche in quella preparata da sola il lunedì: i primi due ci sono sempre, gli altri dove c&apos;è spazio. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</p>
+            <p className="text-body-sm text-muted mt-3">{areeMax != null
+              ? 'Entrano in ogni settimana, anche in quella preparata da sola il lunedì.'
+              : <>Entrano in ogni settimana, anche in quella preparata da sola il lunedì: i primi due ci sono sempre, gli altri dove c&apos;è spazio. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</>}</p>
             {nonAttive.obiettivi && <p className="text-body-sm text-warning mt-2">{NON_ATTIVA}</p>}
           </Card>
 

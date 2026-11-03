@@ -65,6 +65,8 @@ function PricingContent() {
   const [scelto, setScelto] = useState<Pacchetto | null>(null);
   const [anteprima, setAnteprima] = useState<Anteprima | null>(null);
   const [cambioFatto, setCambioFatto] = useState<Pacchetto | null>(null);
+  // Il prezzo che paga adesso per il suo pacchetto (Price meno il coupon): sulla scheda "Il tuo", non quello di chi entra oggi
+  const [mioPrezzo, setMioPrezzo] = useState<number | null>(null);
 
   const canceled = searchParams.get('checkout') === 'canceled';
   // Pagamento fatto ma webhook non ancora arrivato dopo i 5 tentativi della home
@@ -83,6 +85,10 @@ function PricingContent() {
         if (res.ok) {
           const o = await res.json() as Offerta;
           setOfferta(o);
+          if (o.attuale) {
+            authFetch('/api/stripe/subscription').then((r) => (r.ok ? r.json() : null))
+              .then((d) => { if (typeof d?.prezzo?.euro === 'number') setMioPrezzo(d.prezzo.euro); }).catch(() => {});
+          }
           // Il pacchetto che si apre: ?pacchetto=, dal Gate il Mente, dal Fisico il Pro, altrimenti il Completo
           const p = searchParams.get('pacchetto');
           const iniziale: Pacchetto = isPacchetto(p) ? p : fromGate ? 'mentale' : searchParams.get('da') === 'fisico' ? 'fisico_pro' : 'completo';
@@ -257,8 +263,9 @@ function PricingContent() {
   const scheda = (id: Pacchetto, extra?: React.ReactNode) => {
     const p = per.get(id);
     if (!p) return null;
-    const pr = prezzoDi(p);
     const t = TESTI_PACCHETTI[id];
+    const suoPrezzo = attuale === id && mioPrezzo != null;
+    const pr = suoPrezzo ? { tipo: 'listino' as TipoPrezzo, euro: mioPrezzo } : prezzoDi(p);
     const attivo = scelto === id || (id.startsWith('fisico_') && scelto?.startsWith('fisico_'));
     const suo = attuale === id;
     return (
@@ -277,7 +284,7 @@ function PricingContent() {
             {p.disponibile && pr.euro != null ? (
               <>
                 <div className="font-display text-title-2 font-bold text-app tabular-nums leading-tight">{euroTesto(pr.euro)} €</div>
-                <div className="text-caption text-muted">al mese</div>
+                <div className="text-caption text-muted">{suoPrezzo ? 'il tuo prezzo' : 'al mese'}</div>
               </>
             ) : <div className="text-caption text-muted">a breve</div>}
           </div>

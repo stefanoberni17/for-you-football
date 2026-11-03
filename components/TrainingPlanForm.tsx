@@ -116,8 +116,10 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
     <Sheet
       open={open}
       onClose={generating ? undefined : onClose}
-      title={hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}
-      subtitle={hasPlan ? 'Una modifica alla volta, o tutta da capo.' : 'Dimmi quando e quanto: il resto lo fa il preparatore.'}
+      title={soloNuova ? 'Blocco nuovo' : hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}
+      subtitle={soloNuova
+        ? 'Un blocco di 4 settimane: la 2 e la 3 salgono di un passo, la 4 è di scarico. Vale come la riprogrammazione del mese.'
+        : hasPlan ? 'Una modifica alla volta, o tutta da capo.' : 'Dimmi quando e quanto: il resto lo fa il preparatore.'}
       footer={
         <>
           {(errore || errorMsg) && <p className="text-body-sm text-warning">{errore || errorMsg}</p>}
@@ -125,7 +127,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
           {modo === 'nuova' && fase === 'in_season' && focus.includes('resistenza') && <p className="text-body-sm text-warning">{AVVISO_RESISTENZA_IN_SEASON}</p>}
           {modo === 'nuova' && <FattibilitaBanner durataMin={durata} focus={focus} className="mb-3" />}
           <Button size="lg" fullWidth onClick={submit} disabled={!!errore} loading={generating}>
-            {generating ? 'Sto preparando la tua settimana…' : modo === 'modifica' ? 'Applica la modifica' : hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}
+            {generating ? (soloNuova ? 'Sto preparando il tuo blocco…' : 'Sto preparando la tua settimana…') : modo === 'modifica' ? 'Applica la modifica' : soloNuova ? 'Prepara il blocco' : hasPlan ? 'Rifai la settimana' : 'Prepara la settimana'}
           </Button>
         </>
       }
@@ -172,7 +174,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
           )}
 
           {/* Doppia scelta (Ste, 28/9): il ragazzo decide quante, oppure lascia scegliere al preparatore tra i giorni che indica */}
-          <Label hint={`Massimo ${tettoSedute}: ${maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero.`}>Quante giornate a settimana?</Label>
+          <Label hint={(maxSeduteFisiche ?? tettoSedute) >= tettoSedute ? `Massimo ${tettoSedute}.` : `Massimo ${tettoSedute}: ${maxSeduteFisiche ?? tettoSedute} con forza o corsa, le altre solo fascia, tecnica o recupero.`}>Quante giornate a settimana?</Label>
           <div className="flex flex-wrap gap-2 mb-4">
             <Chip selected={nSedute === null} onClick={() => setNSedute(null)}>Decidi tu</Chip>
             {Array.from({ length: tettoSedute }, (_, i) => i + 1).map((n) => (
@@ -194,7 +196,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
             ))}
           </div>
           <Label hint={areeMax != null
-            ? `Il tuo Fisico ha ${areeMax === 1 ? 'una area' : `${areeMax} aree`}: ${areeMax === 1 ? 'scegline una' : `scegline fino a ${areeMax}, in ordine di priorità`}.${focusSetup?.length ? ' Già impostate dal tuo setup.' : ''}`
+            ? `Il tuo Fisico ha ${areeMax === 1 ? 'un\'area: sceglila' : `${areeMax} aree: scegline fino a ${areeMax}, in ordine di priorità`}.${focusSetup?.length ? ' Già impostate dal tuo setup.' : ''}`
             : `Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".${focusSetup?.length ? ' Già impostati dal tuo setup: cambiali solo per questa settimana.' : ''}`}>Su cosa vuoi lavorare questa settimana?</Label>
           <div className="flex flex-wrap gap-2 mb-4">
             {FOCUS_OPZIONI.filter((f) => areeMax == null || f.id !== FOCUS_TUTTO).map((f) => {

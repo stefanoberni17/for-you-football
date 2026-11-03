@@ -57,7 +57,9 @@ export default function PaywallGuard() {
   }, [pathname, router]);
 
   useEffect(() => {
-    if (!pathname || !isPaidRoute(pathname) || pathname === '/chat') return;
+    if (!pathname || !isPaidRoute(pathname)) return;
+    // /chat mostra il suo messaggio in pagina; in pausa però si va alla pagina della pausa (3/11)
+    const soloPausa = pathname === '/chat';
     // Ritorno dal checkout: il webhook può arrivare qualche secondo dopo → la home
     // gestisce l'attesa ("Attivazione in corso…"), qui non si rimbalza al paywall.
     try { if (new URLSearchParams(window.location.search).get('checkout') === 'success') return; } catch { /* no-op */ }
@@ -68,7 +70,7 @@ export default function PaywallGuard() {
         // risposte e storico restano aperti); altrimenti chi non ha il Mente va alla pagina prezzi
         const vai = (p: BillingProfile) => {
           if (inPausa(p)) router.replace('/pausa');
-          else if (deveAndareAlPaywall(pathname, p)) router.replace('/pricing');
+          else if (!soloPausa && deveAndareAlPaywall(pathname, p)) router.replace('/pricing');
         };
         if (Date.now() - checkedAt < TTL_MS && lastProfile) { vai(lastProfile); return; }
         const { data: { session } } = await supabase.auth.getSession();
