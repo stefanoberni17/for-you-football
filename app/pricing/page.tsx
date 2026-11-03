@@ -5,25 +5,29 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { hasActiveAccess, isPaywallActive } from '@/lib/checkAccess';
-import { dataLunga } from '@/lib/abbonamento';
+import { dataLunga, euroTesto } from '@/lib/abbonamento';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import { Check, ChevronDown, Key, Unlock } from 'lucide-react';
 import { AppLoader, Badge, Button, Card, Field, Input } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
+type TipoPrezzo = 'fondatori' | 'codice' | 'listino';
 type Offerta = {
   disponibile: boolean;
-  prezzo: { tipo: 'fondatori' | 'listino'; euro: number };
+  prezzo: { tipo: TipoPrezzo; euro: number | null };
+  /** Il prezzo con codice, se è più basso di quello che gli vale adesso: allora c'è il campo del codice. */
+  conCodice: number | null;
   provaGiorni: number;
   puoAbbonarsi: boolean;
   motivo: 'beta' | 'season1' | 'gia_abbonato' | 'iscrizioni_chiuse' | 'prezzo_mancante' | null;
 };
 
 /**
- * Il Mentale ad abbonamento (1/11/2026, listino di Ste): 19 €/mese bloccato per i fondatori, poi 29 €; 7 giorni di
- * prova con la carta; codici promozionali nella pagina di Stripe. Niente prezzi barrati (regola Omnibus).
- * Quello che vale per QUESTO utente arriva da /api/stripe/offerta.
+ * Il Mentale ad abbonamento (1/11/2026; prezzi del 3/11): un prezzo solo, il più basso a cui l'utente ha diritto
+ * (fondatori, con codice o listino); 7 giorni di prova con la carta; il campo «Hai un codice da un amico?» quando il
+ * prezzo con codice è più basso. Niente prezzi barrati (regola Omnibus), nessun importo scritto qui: arriva tutto da
+ * /api/stripe/offerta, che lo legge da Stripe.
  */
 function PricingContent() {
   const router = useRouter();
@@ -35,6 +39,10 @@ function PricingContent() {
   const [payerEmail, setPayerEmail] = useState('');
   const [cambiaEmail, setCambiaEmail] = useState(false);
   const [attesaOk, setAttesaOk] = useState(false);
+  const [codiceScritto, setCodiceScritto] = useState('');
+  const [codice, setCodice] = useState<{ codice: string; euro: number } | null>(null);
+  const [codiceErr, setCodiceErr] = useState('');
+  const [codiceLoading, setCodiceLoading] = useState(false);
 
   const canceled = searchParams.get('checkout') === 'canceled';
   // Pagamento fatto ma webhook non ancora arrivato dopo i 5 tentativi della home
@@ -95,9 +103,15 @@ function PricingContent() {
       const res = await authFetch('/api/stripe/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: 'mentale', payer_email: email }),
+        body: JSON.stringify({ plan: 'mentale', payer_email: email, ...(codice ? { codice: codice.codice } : {}) }),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 400 && data.error === 'codice_non_valido') {
+        setCodice(null);
+        setCodiceErr(testoCodice(data.motivo));
+        setLoading(false);
+        return;
+      }
       if (res.status === 409 && data.error === 'gia_abbonato') { await openPortal(); return; }
       if (res.status === 409 && data.error === 'iscrizioni_chiuse') {
         setOfferta((o) => (o ? { ...o, puoAbbonarsi: false, motivo: 'iscrizioni_chiuse' } : o));
@@ -110,6 +124,29 @@ function PricingContent() {
       setError(err instanceof Error ? err.message : 'Errore inatteso');
       setLoading(false);
     }
+  };
+
+  const provaCodice = async () => {
+    if (!codiceScritto.trim()) return;
+    setCodiceLoading(true);
+    setCodiceErr('');
+    try {
+      const res = await authFetch('/api/stripe/codice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codice: codiceScritto }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (d.valido && typeof d.euro === 'number') {
+        setCodice({ codice: d.codice, euro: d.euro });
+      } else {
+        setCodice(null);
+        setCodiceErr(d.error || testoCodice(d.motivo));
+      }
+    } catch {
+      setCodiceErr('Non riesco a controllare il codice adesso. Riprova tra poco.');
+    }
+    setCodiceLoading(false);
   };
 
   const listaAttesa = async () => {
@@ -137,8 +174,12 @@ function PricingContent() {
 
   if (!offerta) return <AppLoader />;
 
-  const euro = offerta.prezzo.euro;
-  const fondatori = offerta.prezzo.tipo === 'fondatori';
+  // Un prezzo solo: quello con codice se l'ha scritto ed è più basso, altrimenti quello che gli vale già
+  const conCodiceAttivo = !!codice && offerta.prezzo.euro != null && codice.euro < offerta.prezzo.euro;
+  const tipo: TipoPrezzo = conCodiceAttivo ? 'codice' : offerta.prezzo.tipo;
+  const euro = euroTesto((conCodiceAttivo ? codice!.euro : offerta.prezzo.euro) ?? 0);
+  const fondatori = tipo === 'fondatori';
+  const bloccato = tipo === 'fondatori' || tipo === 'codice';
   const prova = offerta.provaGiorni;
   const primoAddebito = (() => {
     const d = new Date();
@@ -187,14 +228,18 @@ function PricingContent() {
               <Button variant="secondary" fullWidth onClick={openPortal} loading={loading}>Gestisci abbonamento</Button>
               <Button variant="ghost" fullWidth onClick={() => router.push('/')}>Torna alla home</Button>
             </Card>
-          ) : (
+          ) : offerta.prezzo.euro != null && (
             <Card variant="accent">
               <div className="flex items-baseline gap-2">
                 <span className="font-display text-display font-bold text-app tabular-nums">{euro} €</span>
                 <span className="text-body text-muted">al mese</span>
               </div>
               <p className="text-body-sm text-app mt-1">
-                {fondatori ? `Prezzo di lancio, bloccato a ${euro} € finché resti iscritto.` : 'Disdici quando vuoi.'}
+                {fondatori
+                  ? `Prezzo di lancio, bloccato a ${euro} € finché resti iscritto.`
+                  : tipo === 'codice'
+                    ? `Prezzo con il codice ${codice!.codice}, bloccato a ${euro} € finché resti iscritto.`
+                    : 'Disdici quando vuoi.'}
               </p>
               {prova > 0 ? (
                 <p className="text-body-sm text-muted mt-3">
@@ -203,6 +248,36 @@ function PricingContent() {
                 </p>
               ) : (
                 <p className="text-body-sm text-muted mt-3">Il primo addebito è oggi, poi ogni mese. Disdici quando vuoi dal profilo.</p>
+              )}
+            </Card>
+          )}
+
+          {!giaAbbonato && !chiuso && offerta.conCodice != null && (
+            <Card className="space-y-2">
+              {conCodiceAttivo ? (
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-body-sm text-success flex items-center gap-2 min-w-0">
+                    <Check size={16} className="shrink-0" aria-hidden /> Codice {codice!.codice} applicato
+                  </p>
+                  <Button variant="ghost" size="sm" onClick={() => { setCodice(null); setCodiceScritto(''); }}>Togli</Button>
+                </div>
+              ) : (
+                <Field label="Hai un codice da un amico?" htmlFor="codice" error={codiceErr || undefined}>
+                  <div className="flex gap-2">
+                    <Input
+                      id="codice"
+                      autoCapitalize="characters"
+                      autoComplete="off"
+                      spellCheck={false}
+                      value={codiceScritto}
+                      onChange={(e) => { setCodiceScritto(e.target.value); setCodiceErr(''); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') provaCodice(); }}
+                      placeholder="Il codice"
+                      className="flex-1 min-w-0 uppercase"
+                    />
+                    <Button variant="secondary" onClick={provaCodice} loading={codiceLoading} disabled={!codiceScritto.trim()}>Usa</Button>
+                  </div>
+                </Field>
               )}
             </Card>
           )}
@@ -264,8 +339,8 @@ function PricingContent() {
             <h2 className="font-display text-title-3 font-bold text-app mb-2">Domande frequenti</h2>
             {faq('È un abbonamento?', <>Sì, mensile: si rinnova da solo ogni mese. Disdici quando vuoi dall&apos;app: Profilo → Il tuo accesso → Gestisci abbonamento. Resti dentro fino alla fine del mese pagato.</>)}
             {faq('Come funziona la prova?', <>Inserisci la carta e hai {prova || 7} giorni, la settimana 1 del percorso. Tre giorni prima della fine ti scriviamo. Se disdici prima della fine non paghi niente; se resti, parte l&apos;abbonamento e si aprono il Gate, le settimane 2-12 e il Coach senza limiti.</>)}
-            {fondatori && faq('Cos\'è il prezzo bloccato?', <>Chi entra adesso paga {euro} € al mese finché resta iscritto. Se disdici e torni più avanti, paghi il prezzo di quel momento.</>)}
-            {faq('Ho un codice sconto', <>Lo inserisci nella pagina di pagamento, alla voce «Aggiungi codice promozionale».</>)}
+            {bloccato && faq('Cos\'è il prezzo bloccato?', <>Paghi {euro} € al mese finché resti iscritto. Se disdici e torni più avanti, paghi il prezzo di quel momento.</>)}
+            {offerta.conCodice != null && faq('Ho un codice', <>Scrivilo in «Hai un codice da un amico?», qui sopra: vale il prezzo con codice, bloccato finché resti iscritto. Vale sempre un prezzo solo, il più basso a cui hai diritto: i codici non si sommano.</>)}
             {faq('Pagamento sicuro?', <>I pagamenti passano da Stripe. Apple Pay e Google Pay disponibili.</>)}
           </Card>
         </div>
@@ -298,6 +373,17 @@ function PricingContent() {
       )}
     </main>
   );
+}
+
+function testoCodice(motivo: string | undefined): string {
+  switch (motivo) {
+    case 'scaduto': return 'Questo codice è scaduto.';
+    case 'esaurito': return 'Questo codice è già stato usato da tutti quelli che potevano.';
+    case 'troppi_tentativi': return 'Troppi tentativi. Riprova tra un\'ora.';
+    case 'senza_scadenza':
+    case 'non_valido':
+    default: return 'Codice non valido. Controlla come l\'hai scritto.';
+  }
 }
 
 export default function PricingPage() {

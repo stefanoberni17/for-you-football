@@ -1,19 +1,22 @@
 /**
  * Il Mentale ad abbonamento mensile (1/11/2026, listino di Ste su Notion «Monetizzazione: decisioni chiuse»).
  *
- * - Mentale 29 €/mese di listino; i FONDATORI (chi entra nel mese di lancio) 19 €/mese bloccato finché restano
- *   iscritti. Disdetta = prezzo bloccato perso. Chi è dentro resta sul suo Price: Stripe non lo cambia da solo.
+ * Prezzi e pacchetti (Ste, 3/11): tre prezzi, UNO alla volta, il più basso a cui l'utente ha diritto, mai sommati.
+ * - LISTINO: il Price `STRIPE_PRICE_ID_MENTALE` (39 € dal 3/11).
+ * - CON CODICE: il listino meno il coupon `STRIPE_COUPON_MENTALE_CODICE` (−10 €, durata "forever": resta bloccato finché
+ *   l'abbonamento vive). I codici della campagna li crea Ste nel pannello Stripe su quel coupon, sempre con una data di
+ *   fine; l'utente li scrive nel campo «Hai un codice da un amico?» della pagina prezzi.
+ * - FONDATORI: il Price `STRIPE_PRICE_ID_MENTALE_FONDATORI` (19 €), solo finché app_settings.mentale_prezzo è
+ *   'fondatori' e solo per chi non è mai stato abbonato: disdetta = diritto perso. Bloccato finché resta iscritto.
+ * Gli importi NON stanno nel codice né nelle pagine: si leggono da Stripe (lib/prezziServer.ts), una sola configurazione.
  * - Prova di 7 giorni con la carta inserita all'inizio: la prova è la settimana 1. Una sola prova per persona.
- * - Codici promozionali li crea Ste su Stripe (solo primo mese o al massimo 3 mesi): nel checkout sono sempre ammessi.
- * - Allenamenti (49 €) e Completo (59 €) arrivano a dicembre: qui non ci sono ancora.
+ * - Il Fisico e il Completo arrivano a dicembre: qui non ci sono ancora.
  *
  * Modulo puro (regole e testi), client-safe. Le letture stanno in lib/appSettings.ts, il checkout in
  * app/api/stripe/create-checkout, gli stati nel webhook.
  */
 
 export const PIANO_MENTALE = 'mentale';
-export const MENTALE_PREZZO_FONDATORI = 19;
-export const MENTALE_PREZZO_LISTINO = 29;
 export const PROVA_GIORNI_DEFAULT = 7;
 /** Tetto della prima ondata (Piano definitivo, 8/10: 25 nella prima settimana, poi fino a 50). */
 export const TETTO_ISCRITTI_DEFAULT = 25;
@@ -40,11 +43,14 @@ export function statoDaStripe(s: string | null | undefined): StatoAbbonamento {
   }
 }
 
-export type TipoPrezzo = 'fondatori' | 'listino';
+/** Il prezzo per chi entra adesso (app_settings.mentale_prezzo): 'fondatori' nel mese di lancio, poi 'listino'. */
+export type PrezzoIngresso = 'fondatori' | 'listino';
+/** Il prezzo che vale per un utente: uno solo alla volta. */
+export type TipoPrezzo = 'fondatori' | 'codice' | 'listino';
 
 export interface Impostazioni {
   /** Il prezzo per chi entra adesso: Ste lo passa a 'listino' a fine mese di lancio (tabella app_settings). */
-  mentalePrezzo: TipoPrezzo;
+  mentalePrezzo: PrezzoIngresso;
   iscrizioniAperte: boolean;
   /** Massimo di abbonamenti vivi al Mentale; null = senza tetto. Oltre: lista d'attesa. */
   tettoIscritti: number | null;
@@ -74,22 +80,133 @@ export function impostazioniDa(rows: { chiave: string; valore: unknown }[] | nul
   return imp;
 }
 
-export function prezzoEuro(tipo: TipoPrezzo): number {
-  return tipo === 'fondatori' ? MENTALE_PREZZO_FONDATORI : MENTALE_PREZZO_LISTINO;
+/** Gli importi in euro, letti da Stripe (lib/prezziServer.ts); null = non configurato o Stripe non risponde. */
+export interface Prezzi {
+  fondatori: number | null;
+  listino: number | null;
+  conCodice: number | null;
 }
 
-/** Il Price Stripe del Mentale per quel tipo, dalle env (STRIPE_PRICE_ID_MENTALE_FONDATORI / STRIPE_PRICE_ID_MENTALE). */
+/** I diritti di un utente sui prezzi: il listino vale sempre. */
+export interface Diritti {
+  fondatori: boolean;
+  codice: boolean;
+}
+
+const ORDINE_TIPI: TipoPrezzo[] = ['fondatori', 'codice', 'listino'];
+
+/**
+ * Il prezzo che vale per l'utente: il più basso tra quelli a cui ha diritto, mai sommati (fondatori + codice NON fa
+ * 9 €: vale 19). Senza importi (Stripe non risponde) l'ordine fondatori → codice → listino, che è anche il più basso.
+ */
+export function prezzoPerUtente(prezzi: Prezzi, diritti: Diritti): { tipo: TipoPrezzo; euro: number | null } {
+  const candidati = ORDINE_TIPI
+    .filter((t) => t === 'listino' || diritti[t])
+    .map((t) => ({ tipo: t, euro: t === 'fondatori' ? prezzi.fondatori : t === 'codice' ? prezzi.conCodice : prezzi.listino }))
+    // un codice senza importo noto (coupon mancante) non è un prezzo: resta il listino
+    .filter((c) => c.tipo !== 'codice' || c.euro != null);
+  candidati.sort((a, b) => {
+    const ea = a.euro ?? Infinity, eb = b.euro ?? Infinity;
+    if (ea !== eb) return ea - eb;
+    return ORDINE_TIPI.indexOf(a.tipo) - ORDINE_TIPI.indexOf(b.tipo);
+  });
+  return candidati[0];
+}
+
+/** È già stato abbonato al Mentale (anche solo in prova)? Allora il prezzo fondatori non gli spetta più. */
+export function abbonatoPrima(p: { piano?: string | null; trial_ends_at?: string | null; stripe_price_id?: string | null } | null): boolean {
+  return !!p && (p.piano === PIANO_MENTALE || !!p.trial_ends_at || !!p.stripe_price_id);
+}
+
+/** Il diritto ai fondatori: il mese di lancio è aperto (app_settings) e non è mai stato abbonato. */
+export function dirittoFondatori(imp: Impostazioni, p: Parameters<typeof abbonatoPrima>[0]): boolean {
+  return imp.mentalePrezzo === 'fondatori' && !abbonatoPrima(p);
+}
+
+/** Il Price Stripe del Mentale per quel tipo: fondatori il suo, codice e listino lo stesso (il codice è un coupon). */
 export function priceIdMentale(tipo: TipoPrezzo, env: Record<string, string | undefined>): string | null {
   const id = tipo === 'fondatori' ? env.STRIPE_PRICE_ID_MENTALE_FONDATORI : env.STRIPE_PRICE_ID_MENTALE;
   return id && id.startsWith('price_') ? id : null;
 }
 
-/** Il tipo di prezzo di un Price id già pagato (per il profilo e la pagina prezzi). */
-export function tipoDaPriceId(priceId: string | null | undefined, env: Record<string, string | undefined>): TipoPrezzo | null {
-  if (!priceId) return null;
-  if (priceId === env.STRIPE_PRICE_ID_MENTALE_FONDATORI) return 'fondatori';
-  if (priceId === env.STRIPE_PRICE_ID_MENTALE) return 'listino';
-  return null;
+/** Un coupon come lo dà Stripe, solo i campi che servono. */
+export interface CouponMin {
+  id: string;
+  amount_off?: number | null;
+  percent_off?: number | null;
+  currency?: string | null;
+  duration?: string | null;
+  valid?: boolean | null;
+}
+
+/** Centesimi dopo il coupon (mai sotto zero). */
+export function centesimiScontati(centesimi: number, coupons: CouponMin[]): number {
+  let c = centesimi;
+  for (const k of coupons) {
+    if (k.amount_off) c -= k.amount_off;
+    else if (k.percent_off) c -= Math.round((c * k.percent_off) / 100);
+  }
+  return Math.max(0, c);
+}
+
+/**
+ * Il prezzo con codice in euro: il listino meno il coupon della campagna. Il coupon deve essere "forever" (il prezzo
+ * resta bloccato) e in euro: altrimenti è configurato male e il codice non si vende (null).
+ */
+export function conCodiceDa(listinoCent: number | null, coupon: CouponMin | null): number | null {
+  if (listinoCent == null || !coupon) return null;
+  if (coupon.duration !== 'forever' || coupon.valid === false) return null;
+  if (coupon.amount_off && (coupon.currency ?? '').toLowerCase() !== 'eur') return null;
+  return centesimiScontati(listinoCent, [coupon]) / 100;
+}
+
+/** Il tipo di prezzo di un abbonamento: il Price dei fondatori, il coupon della campagna, altrimenti il listino. */
+export function tipoDaAbbonamento(
+  i: { priceId: string | null | undefined; couponIds: string[] },
+  env: Record<string, string | undefined>,
+): TipoPrezzo | null {
+  if (!i.priceId) return null;
+  if (i.priceId === env.STRIPE_PRICE_ID_MENTALE_FONDATORI) return 'fondatori';
+  if (i.priceId !== env.STRIPE_PRICE_ID_MENTALE) return null;
+  return env.STRIPE_COUPON_MENTALE_CODICE && i.couponIds.includes(env.STRIPE_COUPON_MENTALE_CODICE) ? 'codice' : 'listino';
+}
+
+/** 39 → "39", 29.5 → "29,50". */
+export function euroTesto(euro: number): string {
+  return Number.isInteger(euro) ? String(euro) : euro.toFixed(2).replace('.', ',');
+}
+
+/** Il codice come lo scrive l'utente → quello da cercare su Stripe (lettere, numeri, - e _), o null. */
+export function normalizzaCodice(s: unknown): string | null {
+  if (typeof s !== 'string') return null;
+  const c = s.trim().toUpperCase();
+  return /^[A-Z0-9_-]{3,40}$/.test(c) ? c : null;
+}
+
+export type MotivoCodice = 'non_valido' | 'scaduto' | 'senza_scadenza' | 'esaurito';
+
+/** Un codice promozionale come lo dà Stripe, solo i campi che servono. */
+export interface PromoMin {
+  id: string;
+  active?: boolean | null;
+  expires_at?: number | null;
+  max_redemptions?: number | null;
+  times_redeemed?: number | null;
+  coupon?: { id: string; valid?: boolean | null } | null;
+}
+
+/**
+ * Il codice vale? Deve essere attivo, sul coupon della campagna (gli altri coupon non danno il prezzo con codice),
+ * con una data di fine (regola di Ste: i codici di campagna finiscono sempre) non passata, e non esaurito.
+ */
+export function esitoCodice(promo: PromoMin | null, i: { couponId: string | null | undefined; adesso: number }):
+  { ok: true; promoId: string } | { ok: false; motivo: MotivoCodice } {
+  if (!promo || !i.couponId || promo.coupon?.id !== i.couponId) return { ok: false, motivo: 'non_valido' };
+  if (promo.expires_at == null) return { ok: false, motivo: 'senza_scadenza' };
+  if (promo.expires_at * 1000 <= i.adesso) return { ok: false, motivo: 'scaduto' };
+  if (promo.max_redemptions != null && (promo.times_redeemed ?? 0) >= promo.max_redemptions) return { ok: false, motivo: 'esaurito' };
+  if (promo.active === false || promo.coupon?.valid === false) return { ok: false, motivo: 'scaduto' };
+  return { ok: true, promoId: promo.id };
 }
 
 /** Giorni di prova per questo utente: niente prova senza la prova con carta accesa o se l'ha già avuta. */
@@ -137,6 +254,7 @@ export function dataLunga(iso: string | null | undefined): string | null {
 
 /** Il testo dell'email prima della fine della prova (Stripe manda `customer.subscription.trial_will_end` 3 giorni prima). */
 export function emailFineProva(i: { nome?: string | null; fine: string | null; euro: number }): { oggetto: string; testo: string } {
+  const prezzo = euroTesto(i.euro);
   const data = dataLunga(i.fine);
   const quando = data ? data.charAt(0).toLowerCase() + data.slice(1) : 'tra pochi giorni';
   const ciao = i.nome ? `Ciao ${i.nome},` : 'Ciao,';
@@ -145,7 +263,7 @@ export function emailFineProva(i: { nome?: string | null; fine: string | null; e
     testo: [
       ciao,
       `la tua settimana di prova finisce ${quando}.`,
-      `Da quel giorno parte l'abbonamento al Mentale: ${i.euro} € al mese, sulla carta che hai inserito. Si aprono il Gate, le settimane 2-12 e il Coach.`,
+      `Da quel giorno parte l'abbonamento al Mentale: ${prezzo} € al mese, sulla carta che hai inserito. Si aprono il Gate, le settimane 2-12 e il Coach.`,
       'Se non vuoi continuare, disdici prima: nell\'app, Profilo → Il tuo accesso → Gestisci abbonamento. Nessun addebito.',
       'For You Football',
     ].join('\n\n'),

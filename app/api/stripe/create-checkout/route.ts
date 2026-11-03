@@ -4,7 +4,8 @@ import type Stripe from 'stripe';
 import { getAuthUser } from '@/lib/auth';
 import { stripe, getOrCreateStripeCustomer, isStripeEnabled, managedPayments, MANAGED_PAYMENTS_API_VERSION } from '@/lib/stripe';
 import { logEvent } from '@/lib/events';
-import { esitoCheckout, opzioniPagamento, PIANO_MENTALE, priceIdMentale, provaPerUtente } from '@/lib/abbonamento';
+import { dirittoFondatori, esitoCheckout, opzioniPagamento, PIANO_MENTALE, prezzoPerUtente, priceIdMentale, provaPerUtente } from '@/lib/abbonamento';
+import { loadPrezzi, verificaCodice } from '@/lib/prezziServer';
 import { contaIscrittiVivi, loadImpostazioni } from '@/lib/appSettings';
 import { provaConCarta, provaRichiesta } from '@/lib/checkAccess';
 
@@ -19,11 +20,14 @@ const supabaseAdmin = createClient(
 
 /**
  * POST /api/stripe/create-checkout
- * Body: { plan: 'mentale', payer_email?: string }
- *  - mentale (dal 1/11): abbonamento mensile al Mentale. Prezzo dei fondatori (19 €) o di listino (29 €) secondo
- *    app_settings.mentale_prezzo; prova di 7 giorni con la carta all'inizio (una sola per persona, solo con
- *    NEXT_PUBLIC_PROVA_CON_CARTA=1); codici promozionali ammessi. Doppio abbonamento → 409 'gia_abbonato' (il client
- *    apre il portale); iscrizioni chiuse o tetto pieno → 409 'iscrizioni_chiuse' (lista d'attesa).
+ * Body: { plan: 'mentale', payer_email?: string, codice?: string }
+ *  - mentale (dal 1/11): abbonamento mensile al Mentale. Il prezzo è UNO, il più basso a cui ha diritto (3/11):
+ *    fondatori (mese di lancio aperto in app_settings e mai abbonato prima), con codice (il `codice` del campo «Hai un
+ *    codice da un amico?», ricontrollato qui: entra nella sessione come `discounts`, coupon "forever" = bloccato) o
+ *    listino. Il campo di Stripe per i codici è spento: niente codici sommati. Prova di 7 giorni con la carta
+ *    all'inizio (una sola per persona, solo con NEXT_PUBLIC_PROVA_CON_CARTA=1). Codice non buono → 400
+ *    'codice_non_valido' con il motivo. Doppio abbonamento → 409 'gia_abbonato' (il client apre il portale);
+ *    iscrizioni chiuse o tetto pieno → 409 'iscrizioni_chiuse' (lista d'attesa).
  *  - payer_email: facoltativa, l'email a cui arrivano le ricevute (di default quella dell'account).
  * I piani di Season 1 ('onetime', 'installments') non si vendono più: 410.
  * Ritorna: { url } — URL Stripe Checkout da cui far ridirigere il client.
@@ -58,7 +62,7 @@ async function createCheckout(request: NextRequest) {
   // Le colonne della migration 038: senza, il webhook non saprebbe salvare lo stato "in prova"
   const { data: profile, error: profErr } = await supabaseAdmin
     .from('profiles')
-    .select('is_beta_free, subscription_status, stripe_customer_id, season1_access, piano, trial_ends_at, name, created_at')
+    .select('is_beta_free, subscription_status, stripe_customer_id, season1_access, piano, trial_ends_at, stripe_price_id, name, created_at')
     .eq('user_id', userId)
     .single();
   if (profErr) {
@@ -66,8 +70,13 @@ async function createCheckout(request: NextRequest) {
     return NextResponse.json({ error: 'Pagamenti in aggiornamento, riprova tra poco.', skipped: 'migration_038' }, { status: 503 });
   }
 
-  const [imp, iscrittiVivi] = await Promise.all([loadImpostazioni(), contaIscrittiVivi()]);
-  const priceId = priceIdMentale(imp.mentalePrezzo, process.env);
+  const scritto = typeof body?.codice === 'string' && body.codice.trim() ? body.codice : null;
+  const [imp, iscrittiVivi, prezzi, codice] = await Promise.all([
+    loadImpostazioni(), contaIscrittiVivi(), loadPrezzi(), scritto ? verificaCodice(scritto) : Promise.resolve(null),
+  ]);
+  if (codice && !codice.ok) return NextResponse.json({ error: 'codice_non_valido', motivo: codice.motivo }, { status: 400 });
+  const prezzo = prezzoPerUtente(prezzi, { fondatori: dirittoFondatori(imp, profile), codice: !!codice?.ok });
+  const priceId = priceIdMentale(prezzo.tipo, process.env);
   const esito = esitoCheckout({ profilo: profile, imp, iscrittiVivi, priceId });
   if (!esito.ok) {
     const status = esito.motivo === 'prezzo_mancante' ? 503 : esito.motivo === 'beta' || esito.motivo === 'season1' ? 400 : 409;
@@ -106,16 +115,17 @@ async function createCheckout(request: NextRequest) {
     line_items: [{ price: priceId!, quantity: 1 }],
     success_url: `${origin}/?checkout=success`,
     cancel_url: `${origin}/pricing?checkout=canceled`,
-    // Codici promozionali di Ste (solo primo mese o al massimo 3 mesi: la durata la decide il coupon su Stripe)
-    allow_promotion_codes: true,
+    // Il prezzo con codice: il codice della campagna sul coupon "forever" (resta bloccato finché l'abbonamento vive).
+    // Senza codice il campo di Stripe resta spento: i codici si scrivono solo nella pagina prezzi, mai sommati.
+    ...(prezzo.tipo === 'codice' && codice?.ok ? { discounts: [{ promotion_code: codice.promoId }] } : {}),
     // Accettazione dei Termini nel checkout: Stripe la accetta SOLO se l'URL dei termini è nelle impostazioni del
     // dashboard (Impostazioni → Checkout), altrimenti la creazione della sessione fallisce: per questo dietro l'env.
     ...(process.env.STRIPE_TERMS_CONSENT === '1' ? { consent_collection: { terms_of_service: 'required' as const } } : {}),
     subscription_data: {
       ...(prova > 0 ? { trial_period_days: prova } : {}),
-      metadata: { supabase_user_id: userId, plan: PIANO_MENTALE, prezzo: imp.mentalePrezzo },
+      metadata: { supabase_user_id: userId, plan: PIANO_MENTALE, prezzo: prezzo.tipo },
     },
-    metadata: { supabase_user_id: userId, plan: PIANO_MENTALE, prezzo: imp.mentalePrezzo, payer_email: payerEmail },
+    metadata: { supabase_user_id: userId, plan: PIANO_MENTALE, prezzo: prezzo.tipo, payer_email: payerEmail },
   };
   // Le opzioni che cambiano con Managed Payments (lib/abbonamento.ts, test in tests/abbonamento.test.ts)
   Object.assign(params, opzioniPagamento(mp));
@@ -125,6 +135,6 @@ async function createCheckout(request: NextRequest) {
     mp ? { apiVersion: MANAGED_PAYMENTS_API_VERSION } : undefined,
   );
 
-  logEvent(userId, 'checkout_started', { plan: PIANO_MENTALE, prezzo: imp.mentalePrezzo, prova });
+  logEvent(userId, 'checkout_started', { plan: PIANO_MENTALE, prezzo: prezzo.tipo, euro: prezzo.euro, prova, ...(codice?.ok ? { codice: codice.codice } : {}) });
   return NextResponse.json({ url: session.url });
 }

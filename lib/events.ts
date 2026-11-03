@@ -21,6 +21,8 @@ export const SERVER_EVENTS = [
   'subscription_canceled',    // abbonamento chiuso dopo la prova (disdetta o pagamenti falliti)
   'trial_reminder_sent',      // email e push prima della fine della prova (meta.email, meta.push)
   'lista_attesa',             // iscrizioni chiuse o tetto pieno: "Avvisami quando riapre" (meta.motivo)
+  'codice_accettato',         // prezzi (3/11): «Hai un codice da un amico?» con un codice buono (meta.codice)
+  'codice_rifiutato',         // codice non valido, scaduto, senza data di fine o esaurito (meta.motivo)
   'push_enabled',
   'training_aspetto_tenuto', // strato mese (7/10): "sì, tienilo" a un aspetto sempre saltato (meta.focus)
   'training_aspetto_tolto',  // "no, toglilo": l'obiettivo esce dal setup (meta.focus)

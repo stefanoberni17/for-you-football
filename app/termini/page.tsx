@@ -1,7 +1,7 @@
 import { FileText } from 'lucide-react';
 import { BackButton, Card } from '@/components/ui';
 import { ACCOUNT_GRACE_DAYS, MIN_AGE, SEASON_INSTALLMENTS } from '@/lib/constants';
-import { MENTALE_PREZZO_FONDATORI, MENTALE_PREZZO_LISTINO, PROVA_GIORNI_DEFAULT } from '@/lib/abbonamento';
+import { PROVA_GIORNI_DEFAULT } from '@/lib/abbonamento';
 
 export const metadata = { title: 'Termini di servizio — For You Football' };
 
@@ -114,9 +114,11 @@ export default function TerminiPage() {
 
           <Sez n="6" title="Prezzi e pagamenti">
             <Punto title="Cosa si paga">
-              Il percorso mentale (Season 1, Play Free) è un abbonamento mensile al «Mentale». I prezzi in vigore sono scritti in chiaro nella pagina Prezzi e
-              nel checkout prima di pagare, IVA inclusa: oggi {MENTALE_PREZZO_LISTINO} € al mese. Chi entra nel mese di lancio paga {MENTALE_PREZZO_FONDATORI} € al
-              mese, bloccati finché resta iscritto: se disdice e torna più avanti, paga il prezzo di quel momento.
+              Il percorso mentale (Season 1, Play Free) è un abbonamento mensile al «Mentale». Il prezzo che paghi è scritto in chiaro nella pagina Prezzi e
+              nel checkout prima di pagare, IVA inclusa. I prezzi sono tre: il prezzo di listino; il prezzo con codice, per chi entra con un codice valido
+              (i codici li diamo noi e hanno sempre una data di fine); il prezzo di lancio, per chi entra nel mese di lancio e non era già stato abbonato.
+              Vale sempre un prezzo solo, il più basso a cui hai diritto: non si sommano. Il prezzo con codice e quello di lancio restano bloccati finché
+              resti iscritto: se disdici e torni più avanti, paghi il prezzo di quel momento.
             </Punto>
             <Punto title="La prova">
               L’abbonamento parte con {PROVA_GIORNI_DEFAULT} giorni di prova: inserisci la carta, per quei giorni non paghi niente e usi la prima settimana del
@@ -138,12 +140,12 @@ export default function TerminiPage() {
             </Punto>
             <Punto title="Pagamento e ricevute">
               I pagamenti passano da Stripe. Noi non vediamo né conserviamo il numero della carta. La ricevuta arriva all’email inserita nel checkout.
-              I codici promozionali, quando ci sono, si applicano nel checkout e valgono per il periodo indicato (il primo mese, o al massimo tre mesi): finito
-              lo sconto, il prezzo torna quello del tuo abbonamento.
+              Il codice si scrive nella pagina Prezzi, prima del checkout, e vale solo fino alla sua data di fine: chi entra con il codice in tempo tiene il
+              prezzo con codice finché resta iscritto.
             </Punto>
             <Punto title="Prezzi che cambiano">
               Se cambiamo un prezzo, vale per i nuovi abbonamenti. Per un abbonamento in corso te lo comunichiamo almeno 30 giorni prima: puoi disdire prima che
-              il nuovo prezzo si applichi. Il prezzo bloccato di chi è entrato nel mese di lancio non cambia finché resta iscritto.
+              il nuovo prezzo si applichi. Il prezzo bloccato (di lancio o con codice) non cambia finché resti iscritto.
             </Punto>
           </Sez>
 

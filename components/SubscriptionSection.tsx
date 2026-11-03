@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Button, Card, SectionTitle } from '@/components/ui';
 import { AlertTriangle, Check, Crown } from 'lucide-react';
+import { euroTesto } from '@/lib/abbonamento';
 
 type SubData = {
   subscription_status: 'none' | 'trialing' | 'active' | 'past_due' | 'unpaid' | 'canceled';
@@ -13,7 +14,7 @@ type SubData = {
   installments_paid: number;
   piano?: string | null;
   prova_fino?: string | null;
-  prezzo?: { tipo: 'fondatori' | 'listino'; euro: number } | null;
+  prezzo?: { tipo: 'fondatori' | 'codice' | 'listino'; euro: number } | null;
   next_billing_date: string | null;
   cancel_at_period_end: boolean;
 };
@@ -143,7 +144,7 @@ export default function SubscriptionSection() {
   // Mentale ad abbonamento (1/11): prova, attivo, pagamento non riuscito, sospeso
   if (mentale && ['trialing', 'active', 'past_due', 'unpaid'].includes(subscription_status)) {
     const euro = data.prezzo?.euro;
-    const prezzo = euro ? `${euro} €/mese${data.prezzo?.tipo === 'fondatori' ? ', prezzo bloccato' : ''}` : null;
+    const prezzo = euro ? `${euroTesto(euro)} €/mese${data.prezzo?.tipo === 'fondatori' || data.prezzo?.tipo === 'codice' ? ', prezzo bloccato' : ''}` : null;
     let riga = '';
     let nota: string | null = null;
     let tono: 'accent' | 'warn' | 'danger' = 'accent';

@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  emailFineProva, esitoCheckout, eventoDelProfilo, IMPOSTAZIONI_DEFAULT, impostazioniDa, opzioniPagamento, prezzoEuro,
-  priceIdMentale, provaPerUtente, statoDaStripe, tipoDaPriceId, VIETATI_MANAGED_PAYMENTS,
+  abbonatoPrima, centesimiScontati, conCodiceDa, dirittoFondatori, emailFineProva, esitoCheckout, esitoCodice, euroTesto,
+  eventoDelProfilo, IMPOSTAZIONI_DEFAULT, impostazioniDa, normalizzaCodice, opzioniPagamento, prezzoPerUtente,
+  priceIdMentale, provaPerUtente, statoDaStripe, tipoDaAbbonamento, VIETATI_MANAGED_PAYMENTS,
 } from '@/lib/abbonamento';
 import {
   canAccessWeek, deveAndareAlPaywall, haAccessoOProva, hasActiveAccess, inProva, provaConCartaDal, provaRichiesta,
@@ -35,14 +36,70 @@ describe('Mentale ad abbonamento (1/11)', () => {
     expect(impostazioniDa([{ chiave: 'tetto_iscritti', valore: null }]).tettoIscritti).toBeNull();
   });
 
-  it('prezzo dei fondatori 19 €, listino 29 €, Price dalle env', () => {
-    expect(prezzoEuro('fondatori')).toBe(19);
-    expect(prezzoEuro('listino')).toBe(29);
+  it('Price dalle env: fondatori il suo, codice e listino lo stesso (il codice è un coupon)', () => {
     expect(priceIdMentale('fondatori', ENV)).toBe('price_19');
     expect(priceIdMentale('listino', ENV)).toBe('price_29');
+    expect(priceIdMentale('codice', ENV)).toBe('price_29');
     expect(priceIdMentale('listino', {})).toBeNull();
-    expect(tipoDaPriceId('price_19', ENV)).toBe('fondatori');
-    expect(tipoDaPriceId('price_altro', ENV)).toBeNull();
+    const env = { ...ENV, STRIPE_COUPON_MENTALE_CODICE: 'mentale-con-codice' };
+    expect(tipoDaAbbonamento({ priceId: 'price_19', couponIds: [] }, env)).toBe('fondatori');
+    expect(tipoDaAbbonamento({ priceId: 'price_29', couponIds: ['mentale-con-codice'] }, env)).toBe('codice');
+    expect(tipoDaAbbonamento({ priceId: 'price_29', couponIds: ['altro'] }, env)).toBe('listino');
+    expect(tipoDaAbbonamento({ priceId: 'price_altro', couponIds: [] }, env)).toBeNull();
+  });
+
+  it('un prezzo solo, il più basso a cui ha diritto, mai sommati', () => {
+    const prezzi = { fondatori: 19, listino: 39, conCodice: 29 };
+    expect(prezzoPerUtente(prezzi, { fondatori: false, codice: false })).toEqual({ tipo: 'listino', euro: 39 });
+    expect(prezzoPerUtente(prezzi, { fondatori: false, codice: true })).toEqual({ tipo: 'codice', euro: 29 });
+    // fondatore con un codice: vale 19, non 9
+    expect(prezzoPerUtente(prezzi, { fondatori: true, codice: true })).toEqual({ tipo: 'fondatori', euro: 19 });
+    // un codice più caro del listino (configurazione sbagliata) non si prende
+    expect(prezzoPerUtente({ fondatori: null, listino: 39, conCodice: 45 }, { fondatori: false, codice: true }).tipo).toBe('listino');
+    // coupon mancante: il codice non è un prezzo
+    expect(prezzoPerUtente({ fondatori: 19, listino: 39, conCodice: null }, { fondatori: false, codice: true }).tipo).toBe('listino');
+    // Stripe non risponde: l'ordine fondatori → listino
+    expect(prezzoPerUtente({ fondatori: null, listino: null, conCodice: null }, { fondatori: true, codice: false }).tipo).toBe('fondatori');
+  });
+
+  it('fondatori solo nel mese di lancio e solo per chi non è mai stato abbonato (disdetta = diritto perso)', () => {
+    const lancio = { ...IMPOSTAZIONI_DEFAULT, mentalePrezzo: 'fondatori' as const };
+    expect(dirittoFondatori(lancio, { piano: null, trial_ends_at: null })).toBe(true);
+    expect(dirittoFondatori(lancio, null)).toBe(true);
+    expect(dirittoFondatori(lancio, { piano: 'mentale' })).toBe(false);
+    expect(dirittoFondatori(lancio, { trial_ends_at: '2026-11-10T07:00:00Z' })).toBe(false);
+    expect(dirittoFondatori({ ...lancio, mentalePrezzo: 'listino' }, null)).toBe(false);
+    expect(abbonatoPrima({ stripe_price_id: 'price_19' })).toBe(true);
+  });
+
+  it('prezzo con codice = listino meno il coupon, solo se "forever" e in euro', () => {
+    const coupon = { id: 'mentale-con-codice', amount_off: 1000, currency: 'eur', duration: 'forever', valid: true };
+    expect(conCodiceDa(3900, coupon)).toBe(29);
+    expect(conCodiceDa(3900, { ...coupon, duration: 'repeating' })).toBeNull();
+    expect(conCodiceDa(3900, { ...coupon, currency: 'usd' })).toBeNull();
+    expect(conCodiceDa(null, coupon)).toBeNull();
+    expect(conCodiceDa(3900, { id: 'p', percent_off: 25, duration: 'forever' })).toBe(29.25);
+    expect(centesimiScontati(500, [coupon])).toBe(0);
+    expect(euroTesto(29)).toBe('29');
+    expect(euroTesto(29.25)).toBe('29,25');
+  });
+
+  it('il codice vale solo sul coupon della campagna, con una data di fine non passata', () => {
+    const adesso = Date.parse('2026-11-05T10:00:00Z');
+    const fine = Math.floor(Date.parse('2026-11-30T23:00:00Z') / 1000);
+    const buono = { id: 'promo_1', active: true, expires_at: fine, coupon: { id: 'mentale-con-codice', valid: true } };
+    const i = { couponId: 'mentale-con-codice', adesso };
+    expect(esitoCodice(buono, i)).toEqual({ ok: true, promoId: 'promo_1' });
+    expect(esitoCodice(null, i)).toEqual({ ok: false, motivo: 'non_valido' });
+    expect(esitoCodice({ ...buono, coupon: { id: 'altro' } }, i)).toEqual({ ok: false, motivo: 'non_valido' });
+    expect(esitoCodice(buono, { ...i, couponId: undefined })).toEqual({ ok: false, motivo: 'non_valido' });
+    expect(esitoCodice({ ...buono, expires_at: null }, i)).toEqual({ ok: false, motivo: 'senza_scadenza' });
+    expect(esitoCodice({ ...buono, expires_at: Math.floor(adesso / 1000) - 1 }, i)).toEqual({ ok: false, motivo: 'scaduto' });
+    expect(esitoCodice({ ...buono, max_redemptions: 5, times_redeemed: 5 }, i)).toEqual({ ok: false, motivo: 'esaurito' });
+    expect(esitoCodice({ ...buono, active: false }, i)).toEqual({ ok: false, motivo: 'scaduto' });
+    expect(normalizzaCodice('  amico-2026 ')).toBe('AMICO-2026');
+    expect(normalizzaCodice('a b')).toBeNull();
+    expect(normalizzaCodice(42)).toBeNull();
   });
 
   it('una sola prova a persona, e solo con la prova con carta accesa', () => {

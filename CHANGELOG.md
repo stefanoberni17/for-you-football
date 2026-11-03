@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-03 — Prezzi e pacchetti, parte A: listino 39 €, prezzo con codice, un prezzo solo
+- **Decisioni di Ste (3/11):** Mente 39 €/mese di listino IVA inclusa; prezzo «con codice» 29 € bloccato finché si resta iscritti; fondatori di novembre 19 € bloccato, disdetta = diritto perso; niente prezzi barrati; campo «Hai un codice da un amico?»; codici di campagna creati da Ste su Stripe sempre con una data di fine; un solo prezzo alla volta, il più basso a cui si ha diritto, mai sommati; prezzi mai scritti a mano nelle pagine.
+- **Regole pure** in `lib/abbonamento.ts`: `prezzoPerUtente` (il più basso tra fondatori, codice e listino; un fondatore con un codice paga 19, non 9), `dirittoFondatori` / `abbonatoPrima` (chi è già stato abbonato, anche solo in prova, non ha più i fondatori), `conCodiceDa` (listino meno il coupon, solo se "forever" e in euro), `esitoCodice` (coupon della campagna, data di fine obbligatoria, scaduto, esaurito), `tipoDaAbbonamento`, `euroTesto`. Via `MENTALE_PREZZO_*`, `prezzoEuro`, `tipoDaPriceId` e l'`allow_promotion_codes` del checkout. 14 test (erano 10).
+- **Importi da Stripe** (`lib/prezziServer.ts`): pagina prezzi, profilo, email e push di fine prova (anteprima della fattura, così il codice è già scalato) li leggono da lì; i Termini non hanno più numeri (`TERMS_VERSION = '2026-11-03'`).
+- **Il campo del codice** in `/pricing` + `POST /api/stripe/codice` (10 tentativi all'ora); il checkout lo ricontrolla e lo passa a Stripe come `discounts`.
+- **Provato in modalità test** con Managed Payments: prezzo 39 € e coupon «Mentale con codice» (−10 €, forever); sessione con il codice accettata; `loadPrezzi` = 19 / 39 / 29; il codice `AMICOPROVA` accettato, `SENZAFINE` rifiutato (`senza_scadenza`), uno inesistente `non_valido`.
+
 ## 2026-11-03 — Managed Payments: i parametri che Stripe rifiuta
 - Dalla pagina di Stripe "Configura Managed Payments → Rimuovi dal codice" (Ste): con Managed Payments il checkout mandava ancora `payment_method_collection: 'always'`, che è nella lista dei parametri non ammessi (la sessione sarebbe stata rifiutata appena acceso `STRIPE_MANAGED_PAYMENTS=1`). Ora le opzioni che cambiano stanno in `opzioniPagamento(mp)` in `lib/abbonamento.ts`, con la lista `VIETATI_MANAGED_PAYMENTS` e un test che controlla che nessuno di quei parametri parta con Managed Payments acceso. Senza Managed Payments il checkout è come prima.
 

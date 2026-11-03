@@ -39,7 +39,7 @@ export const MIN_AGE = Math.max(14, Number(process.env.NEXT_PUBLIC_MIN_AGE) || 1
 // chi ha accettato una versione diversa (o nessuna) vede il foglio alla prima apertura e deve
 // accettare per continuare. Compilate il 9/10/2026 con i testi definitivi scritti in app.
 export const PRIVACY_VERSION = '2026-10-09';
-export const TERMS_VERSION = '2026-11-01'; // 1/11: prezzi e pagamenti del Mentale ad abbonamento (sezione 6 e recesso)
+export const TERMS_VERSION = '2026-11-03'; // 3/11: tre prezzi (listino, con codice, di lancio), uno alla volta (sezione 6); 1/11: il Mentale ad abbonamento
 
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
 

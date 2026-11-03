@@ -82,7 +82,8 @@ export async function ensureInstallmentSchedule(subscriptionId: string): Promise
 /**
  * Stripe è configurato? Senza, il paywall è soft (no-op) e il checkout risponde 503.
  * Dal 1/11 si vende il Mentale: servono la chiave, il segreto del webhook e almeno uno dei due Price del Mentale
- * (STRIPE_PRICE_ID_MENTALE_FONDATORI per i 19 € bloccati, STRIPE_PRICE_ID_MENTALE per i 29 € di listino).
+ * (STRIPE_PRICE_ID_MENTALE_FONDATORI per il prezzo di lancio, STRIPE_PRICE_ID_MENTALE per il listino; il prezzo con
+ * codice è il listino con il coupon STRIPE_COUPON_MENTALE_CODICE). Gli importi stanno solo su Stripe.
  */
 export function isStripeEnabled(): boolean {
   return Boolean(

@@ -64,7 +64,7 @@ for-you-football/
 │   ├── risposte/page.tsx                  # "Le tue risposte" (22/10): tutto quello che ha scritto nei giorni e nei Gate, per settimana, con le risposte chiave in evidenza; dal Profilo e dai giorni di W11
 │   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
-│   ├── termini/page.tsx                   # Termini di servizio (TERMS_VERSION '2026-11-01': sezione 6 riscritta per l'abbonamento al Mentale, prova, rinnovo, disdetta, pagamenti non riusciti; prima 9/10): 14 sezioni, recesso 14 giorni, legge italiana
+│   ├── termini/page.tsx                   # Termini di servizio (TERMS_VERSION '2026-11-03': tre prezzi, uno alla volta, senza importi scritti; '2026-11-01': sezione 6 riscritta per l'abbonamento al Mentale, prova, rinnovo, disdetta, pagamenti non riusciti; prima 9/10): 14 sezioni, recesso 14 giorni, legge italiana
 │   ├── privacy/page.tsx                   # Privacy Policy definitiva (9/10/2026, PRIVACY_VERSION '2026-10-09'): titolare Stefano Berni, dati per categoria, AI, sicurezza, fornitori, tempi, diritti
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
 │   └── api/
@@ -79,7 +79,7 @@ for-you-football/
 │       ├── esercizio/route.ts             # L'esercizio della settimana (31/10): GET stato del banner; POST { fatto: true } | { notifiche: boolean } (migration 037, fallback `skipped: 'migration_037'`)
 │       ├── risposte/route.ts              # GET → le risposte scritte nel percorso (giorni + Gate), ?chiavi=1 solo le chiave; POST { week, day, testo } → modifica una risposta chiave con versione datata (24/10; lib/risposteServer.ts)
 │       ├── chat/route.ts                  # POST → Claude Sonnet (Coach AI web)
-│       ├── stripe/{create-checkout,webhook,portal,subscription,offerta}/route.ts  # Abbonamento al Mentale (1/11): checkout con prova, webhook, portale, stato, offerta e lista d'attesa
+│       ├── stripe/{create-checkout,webhook,portal,subscription,offerta,codice}/route.ts  # Abbonamento al Mentale (1/11; codice dal 3/11): checkout con prova, webhook, portale, stato, offerta e lista d'attesa
 │       ├── telegram/route.ts              # POST → webhook bot Telegram (+ handler /start deep-link)
 │       ├── telegram/link/route.ts         # POST → genera codice deep-link collegamento (auth)
 │       ├── training/plan/adatta/route.ts  # POST { plan_id } → M8 (26/10): il calendario è cambiato, adatta la settimana senza Claude (lib/trainingCalendario + adattaAlCalendario); piano nuovo append-only fuori dal tetto delle rigenerazioni
@@ -217,6 +217,7 @@ for-you-football/
     └── training-logiche-costruzione.md    # L'elenco delle logiche di costruzione degli allenamenti (telaio + per obiettivo) preso dal codice il 16/10, con dove vive ogni regola e cosa cambierebbe con le dieci risposte di Ste (§C): si legge PRIMA di toccare il planner
     └── training-tecnica-composta.md       # Punto 21 (26/10, bozza da correggere): le sedute di tecnica composte dal server dagli esercizi del catalogo (`te-*`), tabelle per scala e livello con le dosi dai workout di Ste, regole per il codice, domande. Niente codice finché Ste non corregge le tabelle
     └── campo-da-fare.md                   # Lista decisa il 12/10 per il Campo prima della vendita: regole di metodo M1-M12 di Ste, 14 punti con stime ore, costo AI per pacchetto. Niente è iniziato: si parte quando Ste lo dice
+    └── prezzi-pacchetti-stima-2026-11.md  # Parte B dei prezzi del 3/11 (vendita del Campo): ore, rischi e cosa esiste per punto, prove Stripe in test (pausa, credito, conguaglio, codice con Managed Payments), proposta Pro + Completo a dicembre e Base + Medio a gennaio
     └── ricerca-metodo-2026-10.md          # Il metodo FYF contro la letteratura 2019-2026 (20/10, 12 agenti): per ogni area evidenza con i numeri, cosa fa FYF, verdetto (coerente / più permissivo / a tavolino), proposte con priorità e costo; tabella di 42 regole, i 10 cambiamenti che valgono di più, le lacune da colmare con i dati. Le note per area in docs/ricerca-metodo-2026-10/note/ (00 = il metodo estratto dal codice). Si legge PRIMA di cambiare una soglia del Campo
 ```
 
@@ -249,8 +250,9 @@ SAFETY_ALERT_TELEGRAM_CHAT_ID=   # chat_id Telegram personale di Ste: il safety 
 # Stripe (billing — LIVE in produzione)
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_ID_MENTALE_FONDATORI=price_...    # Mentale 19 €/mese, fondatori (dal 1/11)
-STRIPE_PRICE_ID_MENTALE=price_...              # Mentale 29 €/mese, listino
+STRIPE_PRICE_ID_MENTALE_FONDATORI=price_...    # Mentale, prezzo di lancio (19 €/mese, novembre)
+STRIPE_PRICE_ID_MENTALE=price_...              # Mentale, listino (39 €/mese dal 3/11; prima 29)
+STRIPE_COUPON_MENTALE_CODICE=...               # coupon "con codice" (−10 €, forever, solo sul prodotto Mentale): i codici di campagna di Ste stanno su questo coupon
 STRIPE_PRICE_ID_SEASON_INSTALLMENTS=price_...  # rate Season 1 vecchie (solo per chi le sta pagando)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 NEXT_PUBLIC_PROVA_CON_CARTA=1                  # prova di 7 giorni con la carta per chi si registra dal 2/11 (o una data AAAA-MM-GG); vuoto = W1 gratis senza carta
@@ -472,10 +474,11 @@ channel          TEXT NOT NULL   -- 'registration' | 'reaccept'
 
 ### Modello (dal 1/11/2026: il Mentale ad abbonamento)
 
-Listino di Ste (Notion «Monetizzazione: decisioni chiuse», 1/11). Regole pure in `lib/abbonamento.ts` (8 test in `tests/abbonamento.test.ts`), migration `038_mentale_abbonamento.sql`.
-- **Mentale 29 €/mese** (`STRIPE_PRICE_ID_MENTALE`); **fondatori 19 €/mese** (`STRIPE_PRICE_ID_MENTALE_FONDATORI`) nel mese di lancio, **bloccato finché resta abbonato** (il Price resta sulla subscription; chi disdice e torna paga il listino). Il prezzo per chi entra adesso lo decide `app_settings.mentale_prezzo` (`fondatori` | `listino`), non il codice. Niente prezzi barrati.
+Listino di Ste (Notion «Monetizzazione: decisioni chiuse», 1/11; prezzi e pacchetti del 3/11). Regole pure in `lib/abbonamento.ts` (14 test in `tests/abbonamento.test.ts`), migration `038_mentale_abbonamento.sql`.
+- **Tre prezzi, UNO alla volta, il più basso a cui l'utente ha diritto, mai sommati** (`prezzoPerUtente`, 3/11): **listino 39 €/mese** (`STRIPE_PRICE_ID_MENTALE`); **con codice 29 €** = listino meno il coupon `STRIPE_COUPON_MENTALE_CODICE` (−10 €, durata `forever`, solo sul prodotto Mentale: resta bloccato finché l'abbonamento vive); **fondatori 19 €** (`STRIPE_PRICE_ID_MENTALE_FONDATORI`) solo con `app_settings.mentale_prezzo = 'fondatori'` (il mese di lancio) e solo per chi non è mai stato abbonato (`dirittoFondatori`/`abbonatoPrima`: `piano`, `trial_ends_at` o `stripe_price_id` = già abbonato; disdetta = diritto perso), bloccato finché resta abbonato (il Price resta sulla subscription). Niente prezzi barrati.
+- **Importi solo su Stripe** (Ste: "prezzi mai scritti a mano nelle pagine: una sola configurazione"): `lib/prezziServer.ts` (`loadPrezzi`, cache 10') legge i due Price e il coupon; pagina prezzi, profilo (`/api/stripe/subscription`: Price meno il coupon dell'abbonamento), email di fine prova (anteprima della fattura) e Termini (senza numeri) non hanno importi nel codice. Senza importi da Stripe l'offerta dice `disponibile: false` ("Le iscrizioni aprono a breve").
+- **Il codice** (`/api/stripe/codice`, `verificaCodice`, `esitoCodice`): campo «Hai un codice da un amico?» in `/pricing`, visibile solo se il prezzo con codice è più basso di quello che gli vale (non per i fondatori). I codici di campagna li crea Ste nel pannello Stripe sul coupon «Mentale con codice», **sempre con una data di fine** (un codice senza data viene rifiutato: `senza_scadenza`); altri motivi `non_valido` (anche un codice su un altro coupon), `scaduto`, `esaurito`, `troppi_tentativi` (10 all'ora, `checkRateLimit`). Il checkout lo ricontrolla e lo mette nella sessione come `discounts` (400 `codice_non_valido` se non va più); il campo dei codici di Stripe è spento (`allow_promotion_codes` tolto). Eventi `codice_accettato` / `codice_rifiutato`. Nella pagina di Stripe il codice compare come riga di sconto sotto il listino.
 - **Prova di 7 giorni con la carta** (`trial_period_days` da `app_settings.prova_giorni`, `payment_method_collection: 'always'`), **una sola per persona** (`profiles.trial_ends_at` non nullo = prova usata). Accesa solo con `NEXT_PUBLIC_PROVA_CON_CARTA` (`1` = per chi si registra dal 2/11, `PROVA_CON_CARTA_DAL_DEFAULT`; una data `AAAA-MM-GG` = da quel giorno; `provaRichiesta(profile)` su `profiles.created_at`, mezzanotte italiana) e **solo per chi si registra da quel giorno** (Ste, 2/11): in prova si apre la settimana 1 (G1-G6, i 20 messaggi del Coach in app), il Gate 1 e le settimane dopo dal primo pagamento. Chi si era registrato prima finisce la settimana 1 gratis come prima e al Gate si abbona **senza prova** (altrimenti sette giorni gratis con il Gate chiuso). Con il flag spento la settimana 1 resta gratis per tutti e il checkout parte senza prova. Con il time-gate un giorno al giorno, chi inizia la prova il primo giorno arriva al Gate 1 al settimo, l'ultimo della prova: il Gate aspetta il primo addebito dell'ottavo. Tre giorni prima della fine (`customer.subscription.trial_will_end`) email (`lib/emailServer.ts`, Resend, testo `emailFineProva`: data, prezzo, come disdire) e push.
-- **Codici promozionali** ammessi al checkout (`allow_promotion_codes`): solo primo mese o al massimo 3 mesi, mai per sempre. La durata la decide il coupon su Stripe ("once" o "repeating" 3 mesi).
 - **Tetto iscritti** (`app_settings.tetto_iscritti`: 25 la prima settimana, poi 50; null = senza) sugli abbonamenti vivi al Mentale (`trialing`, `active`, `past_due`, `contaIscrittiVivi`) e **iscrizioni aperte** (`app_settings.iscrizioni_aperte`): pieno o chiuso → `/pricing` mostra "Avvisami quando riapre" (evento `lista_attesa`).
 - **Doppio abbonamento bloccato**: chi ha già un abbonamento vivo riceve 409 `gia_abbonato` e il pricing apre il portale; beta e Season 1 non possono abbonarsi (400).
 - **Tolleranza 7 giorni sui pagamenti non riusciti**: `past_due` tiene l'accesso mentre Stripe riprova (Smart Retries 7 giorni), poi `unpaid` (o `canceled`, come è impostato su Stripe) chiude.
@@ -533,21 +536,23 @@ Gli eventi di una subscription diversa da `profiles.stripe_subscription_id` non 
 ### Accesso gratuito (comp / beta / partner)
 
 - **`is_beta_free=true`**: bypass totale paywall. Set manuale via SQL (`UPDATE profiles SET is_beta_free=true WHERE user_id='...'`) o codici `?beta=` in registrazione. Riservato a beta tester, partner, amici.
-- Codici promozionali Stripe attivi al checkout dal 1/11 (solo primo mese o al massimo 3 mesi).
+- Codici di campagna dal 3/11: sul coupon «Mentale con codice», con una data di fine, scritti nel campo «Hai un codice da un amico?» della pagina prezzi.
 
 ### File Stripe
 
 | File | Scopo |
 |------|-------|
-| `lib/abbonamento.ts` | Regole pure del Mentale: prezzi, stati, impostazioni, prova, esito del checkout, email di fine prova |
+| `lib/abbonamento.ts` | Regole pure del Mentale: il prezzo che vale (un solo prezzo, il più basso), diritti, codice, stati, impostazioni, prova, esito del checkout, email di fine prova |
+| `lib/prezziServer.ts` | `loadPrezzi()` (Price e coupon da Stripe, cache 10') + `verificaCodice()` |
+| `app/api/stripe/codice/route.ts` | POST {codice} → { valido, euro } o { valido: false, motivo } |
 | `lib/appSettings.ts` | `loadImpostazioni()` (app_settings, cache 60") + `contaIscrittiVivi()` |
 | `lib/emailServer.ts` | `sendEmail` via Resend (fail-soft) |
 | `lib/stripe.ts` | Client Stripe server + `getOrCreateStripeCustomer` + `ensureInstallmentSchedule` (rate vecchie) + `isStripeEnabled()` / `hasStripeKey()` / `managedPayments()` |
 | `lib/checkAccess.ts` | `hasActiveAccess`, `inProva`, `canAccessWeek`, `deveAndareAlPaywall` (pure, client-safe) |
 | `lib/serverAccess.ts` | `requirePaidAccess(userId)`, `provaFino(userId)` (service role) |
 | `lib/authFetch.ts` | fetch client con Bearer token Supabase (tutte le API interne) |
-| `app/api/stripe/create-checkout/route.ts` | POST {plan: 'mentale', payer_email?} → Checkout Session (410 per i piani Season 1) |
-| `app/api/stripe/offerta/route.ts` | GET → prezzo per chi entra adesso, giorni di prova, se può abbonarsi; POST {lista_attesa} → evento |
+| `app/api/stripe/create-checkout/route.ts` | POST {plan: 'mentale', payer_email?, codice?} → Checkout Session con il prezzo che vale (410 per i piani Season 1) |
+| `app/api/stripe/offerta/route.ts` | GET → il prezzo che gli vale senza codice, `conCodice` se più basso, giorni di prova, se può abbonarsi; POST {lista_attesa} → evento |
 | `app/api/stripe/webhook/route.ts` | Signature verify + handler idempotenti |
 | `app/api/stripe/portal/route.ts` | POST → Billing Portal URL (disdetta, carta, ricevute) |
 | `app/api/stripe/subscription/route.ts` | GET → stato, piano, prezzo, fine prova, prossimo addebito, disdetta programmata |
@@ -1084,7 +1089,7 @@ Cancellazione account in tre passi (`lib/accountDelete.ts`, migration 028, `ACCO
 3. **Cancellazione definitiva** (`cancellaDefinitivamente`, dal cron `cleanup-telegram` per gli account con grazia scaduta, max 50 per notte, fail-soft): Stripe (rate cancellate + customer eliminato, le fatture restano per il fisco), ultimo Telegram, `rate_limit_events` per chiave, `auth.admin.deleteUser` (cascade su TUTTE le tabelle con `user_id`, comprese `safety_flagged` e `consent_events`); se aveva conversazioni safety, avviso a Ste (l'email dell'alert nella casella va cancellata a mano). **Assunzione da confermare con l'avvocato:** dopo i 60 giorni non si conserva niente, nemmeno le righe safety e la prova del consenso.
 
 ### `POST /api/stripe/create-checkout`
-Body: `{ plan: 'onetime' | 'installments', payer_email }`. Crea Stripe Checkout Session (payment o subscription), salva `supabase_user_id` in metadata, ritorna `{ url }`. `payer_email` = contraente adulto: il customer Stripe prende quella email (ricevute all'adulto), indirizzo di fatturazione obbligatorio. Bypassa se `is_beta_free` o `season1_access`.
+Body: `{ plan: 'mentale', payer_email?, codice? }` (i piani Season 1 rispondono 410). Crea la Checkout Session dell'abbonamento al Mentale con il prezzo che vale (fondatori, codice come `discounts`, listino), la prova se gli spetta e Managed Payments se acceso; ritorna `{ url }`. `payer_email` = chi riceve le ricevute. Beta e Season 1 → 400, già abbonato → 409 `gia_abbonato`, iscrizioni chiuse → 409 `iscrizioni_chiuse`, codice non buono → 400 `codice_non_valido`.
 
 ### `POST /api/stripe/webhook`
 Runtime: `nodejs`. Verifica signature (`STRIPE_WEBHOOK_SECRET`), idempotenza via `stripe_events`. Handler: `checkout.session.completed`, `customer.subscription.updated/deleted`, `invoice.payment_failed`. Aggiorna `subscription_status` su `profiles`.
@@ -1282,7 +1287,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `036_training_limitazioni.sql` applicata su Supabase (Ste, 26/10): la sezione "Infortuni e limitazioni" del setup è attiva
 - [x] Migration `037_esercizio_settimana.sql` applicata su Supabase (Ste, 1/11): spunte e promemoria dell'esercizio della settimana; i due cron sono in `vercel.json`
 - [x] Migration `038_mentale_abbonamento.sql` applicata su Supabase (Ste, 2/11): stati in prova e non pagato, colonne dell'abbonamento, `app_settings`
-- [ ] **Mentale ad abbonamento (1/11):** su Stripe prodotto "Mentale" con due Price mensili (19 € fondatori, 29 €), portale con disdetta a fine periodo, Smart Retries 7 giorni poi "non pagato", ricevute e avvisi email, endpoint webhook con `customer.subscription.trial_will_end`; Managed Payments da chiedere e far approvare (codice fiscale del prodotto `txcd_10103000`); su Vercel `STRIPE_PRICE_ID_MENTALE_FONDATORI`, `STRIPE_PRICE_ID_MENTALE`, `STRIPE_MANAGED_PAYMENTS=1`, `NEXT_PUBLIC_PROVA_CON_CARTA=1`; a fine mese di lancio `mentale_prezzo = "listino"` e `tetto_iscritti = 50` in `app_settings`
+- [ ] **Mentale ad abbonamento (1/11, prezzi del 3/11):** su Stripe prodotto "Mentale" con due Price mensili IVA inclusa (19 € fondatori, 39 € listino) e il coupon «Mentale con codice» (−10 €, forever, solo sul Mentale; id in `STRIPE_COUPON_MENTALE_CODICE`), i codici di campagna sempre con data di fine, portale con disdetta a fine periodo, Smart Retries 7 giorni poi "non pagato", ricevute e avvisi email, endpoint webhook con `customer.subscription.trial_will_end`; Managed Payments da chiedere e far approvare (codice fiscale del prodotto `txcd_10103000`); su Vercel `STRIPE_PRICE_ID_MENTALE_FONDATORI`, `STRIPE_PRICE_ID_MENTALE`, `STRIPE_MANAGED_PAYMENTS=1`, `NEXT_PUBLIC_PROVA_CON_CARTA=1`; a fine mese di lancio `mentale_prezzo = "listino"` e `tetto_iscritti = 50` in `app_settings`
 - [ ] Notion, DB Settimane: scrivere `Pratica Giorno Partita` per le 12 settimane (finché è vuota il giorno della partita non mostra nessun box)
 - [ ] Provare i suoni del Reset su iPhone (Safari e PWA): Natura e Focus partono al tocco, girano in loop, si fermano chiudendo; con l'interruttore suoneria su silenzioso e no
 - [ ] Prova obiettivi (PR #84): Campo → "Il tuo setup" → scegliere gli obiettivi della fase → "Rifai da capo" con parte alta + gambe: la forza deve esserci; se il piano è di sicurezza l'hub mostra il perché

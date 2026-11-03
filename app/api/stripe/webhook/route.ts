@@ -3,7 +3,7 @@ import { logEvent } from '@/lib/events';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { stripe, ensureInstallmentSchedule } from '@/lib/stripe';
-import { emailFineProva, eventoDelProfilo, PIANO_MENTALE, statoDaStripe, type StatoAbbonamento } from '@/lib/abbonamento';
+import { emailFineProva, euroTesto, eventoDelProfilo, PIANO_MENTALE, statoDaStripe, type StatoAbbonamento } from '@/lib/abbonamento';
 import { sendEmail } from '@/lib/emailServer';
 import { sendPushToUser } from '@/lib/pushNotification';
 
@@ -337,7 +337,14 @@ async function handleTrialWillEnd(sub: Stripe.Subscription) {
   if (!profilo) return;
 
   const fine = sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null;
-  const euro = Math.round((sub.items?.data?.[0]?.price?.unit_amount ?? 0) / 100);
+  // Il primo addebito vero (Price meno il coupon del codice, se c'è), dall'anteprima della fattura dopo la prova
+  let euro = (sub.items?.data?.[0]?.price?.unit_amount ?? 0) / 100;
+  try {
+    const anteprima = await stripe.invoices.createPreview({ subscription: sub.id });
+    euro = anteprima.total / 100;
+  } catch (err) {
+    console.error('[stripe-webhook] anteprima fattura non riuscita, uso il Price:', err instanceof Error ? err.message : err);
+  }
   const [{ data: prof }, customer] = await Promise.all([
     supabaseAdmin.from('profiles').select('name').eq('user_id', profilo.user_id).maybeSingle(),
     stripe.customers.retrieve(customerId),
@@ -347,7 +354,7 @@ async function handleTrialWillEnd(sub: Stripe.Subscription) {
 
   const [emailOk, pushOk] = await Promise.all([
     email ? sendEmail({ to: email, subject: msg.oggetto, text: msg.testo }) : Promise.resolve(false),
-    sendPushToUser(profilo.user_id, msg.oggetto, `Dalla fine della prova: ${euro} € al mese. Per disdire: Profilo → Il tuo accesso.`, '/profilo').catch(() => false),
+    sendPushToUser(profilo.user_id, msg.oggetto, `Dalla fine della prova: ${euroTesto(euro)} € al mese. Per disdire: Profilo → Il tuo accesso.`, '/profilo').catch(() => false),
   ]);
   logEvent(profilo.user_id, 'trial_reminder_sent', { email: emailOk, push: !!pushOk });
 }
