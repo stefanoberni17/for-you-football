@@ -25,9 +25,13 @@ function Label({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
  * libero, salvo una nota corta. Va montata solo quando è aperta (lo stato parte dai
  * valori del setup ogni volta).
  */
-export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, fase, conSquadraDefault, generating, onSubmit, onClose }: {
+export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedute, oggiDow, calendario, maxSedute, maxSeduteFisiche, focusSetup, preferenzeSetup, fase, conSquadraDefault, generating, onSubmit, onClose, areeMax = null, soloNuova = false }: {
   open?: boolean;
   hasPlan: boolean;
+  /** Le aree del pacchetto (3/11): Base 1, Medio 2, null = tutte ("Tutto" solo dal Pro). */
+  areeMax?: number | null;
+  /** Fisico Base: niente "Modifica la settimana", si rifà il blocco. */
+  soloNuova?: boolean;
   errorMsg?: string | null;  // errore del server all'ultimo tentativo (si vede nel footer, sotto la CTA)
   sedute: SedutaLite[];      // tutte le sedute della settimana (anche passate: i loro giorni non sono liberi)
   oggiDow: number;
@@ -42,11 +46,20 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   onSubmit: (r: RichiestaGuidata) => void;
   onClose?: () => void;
 }) {
-  const [modo, setModo] = useState<'nuova' | 'modifica'>(hasPlan ? 'modifica' : 'nuova');
+  const [modo, setModo] = useState<'nuova' | 'modifica'>(hasPlan && !soloNuova ? 'modifica' : 'nuova');
   const [giorni, setGiorni] = useState<number[]>(preferenzeSetup?.giorni ?? []);
   const [nSedute, setNSedute] = useState<number | null>(preferenzeSetup?.sedute ?? null);
   const [durata, setDurata] = useState<number | null>(preferenzeSetup?.durataMin ?? null);
-  const [focus, setFocus] = useState<FocusId[]>(focusSetup ?? []);
+  const [focus, setFocus] = useState<FocusId[]>(() => {
+    const f = focusSetup ?? [];
+    return areeMax == null ? f : f.filter((x) => x !== FOCUS_TUTTO).slice(0, areeMax);
+  });
+  // Le aree del pacchetto: oltre il tetto il chip nuovo sostituisce l'ultimo scelto
+  const scegliFocus = (id: FocusId) => {
+    if (areeMax == null) { setFocus(toggleFocus(focus, id)); return; }
+    if (focus.includes(id)) { setFocus(focus.filter((x) => x !== id)); return; }
+    setFocus([...focus, id].slice(-areeMax));
+  };
   const [note, setNote] = useState('');
   // Off season (campo-da-fare 16, Ste 13/10): "Questa settimana ti alleni con la squadra?" prefillato dal calendario; senza squadra né partita la resistenza può salire a 4 giornate
   const [conSquadra, setConSquadra] = useState<boolean>(conSquadraDefault ?? !!(calendario && (calendario.trainingDays.length || calendario.matchDays.length)));
@@ -117,7 +130,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
         </>
       }
     >
-      {hasPlan && (
+      {hasPlan && !soloNuova && (
         <div className="grid grid-cols-2 gap-2 mb-4">
           {(['modifica', 'nuova'] as const).map((m) => (
             <Chip key={m} size="lg" selected={modo === m} onClick={() => setModo(m)} className="w-full">
@@ -180,12 +193,14 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
               <Chip key={d} selected={durata === d} showCheck={false} onClick={() => setDurata(durata === d ? null : d)}>{d}&apos;</Chip>
             ))}
           </div>
-          <Label hint={`Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".${focusSetup?.length ? ' Già impostati dal tuo setup: cambiali solo per questa settimana.' : ''}`}>Su cosa vuoi lavorare questa settimana?</Label>
+          <Label hint={areeMax != null
+            ? `Il tuo Fisico ha ${areeMax === 1 ? 'una area' : `${areeMax} aree`}: ${areeMax === 1 ? 'scegline una' : `scegline fino a ${areeMax}, in ordine di priorità`}.${focusSetup?.length ? ' Già impostate dal tuo setup.' : ''}`
+            : `Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".${focusSetup?.length ? ' Già impostati dal tuo setup: cambiali solo per questa settimana.' : ''}`}>Su cosa vuoi lavorare questa settimana?</Label>
           <div className="flex flex-wrap gap-2 mb-4">
-            {FOCUS_OPZIONI.map((f) => {
+            {FOCUS_OPZIONI.filter((f) => areeMax == null || f.id !== FOCUS_TUTTO).map((f) => {
               const idx = focus.indexOf(f.id);
               return (
-                <Chip key={f.id} selected={idx >= 0} onClick={() => setFocus(toggleFocus(focus, f.id))}
+                <Chip key={f.id} selected={idx >= 0} onClick={() => scegliFocus(f.id)}
                   className={idx < 0 && f.id === FOCUS_TUTTO ? '!border-forest-500/50 !text-forest-300' : ''}>
                   {idx >= 0 && focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
                 </Chip>
@@ -225,7 +240,7 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
           )}
           {tipo === 'cambia_focus' && (
             <div className="flex flex-wrap gap-2 mb-4">
-              {FOCUS_OPZIONI.map((f) => (
+              {FOCUS_OPZIONI.filter((f) => areeMax == null || f.id !== FOCUS_TUTTO).map((f) => (
                 <Chip key={f.id} selected={mFocus === f.id} onClick={() => setMFocus(f.id)}>{f.label}</Chip>
               ))}
             </div>

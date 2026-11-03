@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Button, Card, SectionTitle } from '@/components/ui';
-import { AlertTriangle, Check, Crown } from 'lucide-react';
+import { AlertTriangle, Check, Copy, Crown, Gift, Pause } from 'lucide-react';
 import { euroTesto } from '@/lib/abbonamento';
+import { authFetch } from '@/lib/authFetch';
+import { isPacchetto } from '@/lib/listino';
+import { TESTI_PACCHETTI } from '@/lib/pacchettiTesti';
 
 type SubData = {
   subscription_status: 'none' | 'trialing' | 'active' | 'past_due' | 'unpaid' | 'canceled';
@@ -14,10 +17,48 @@ type SubData = {
   installments_paid: number;
   piano?: string | null;
   prova_fino?: string | null;
-  prezzo?: { tipo: 'fondatori' | 'codice' | 'listino'; euro: number } | null;
+  prezzo?: { tipo: 'lancio' | 'codice' | 'listino'; euro: number } | null;
   next_billing_date: string | null;
   cancel_at_period_end: boolean;
+  pausa_fino?: string | null;
+  ritorno_completo_fino?: string | null;
 };
+
+type Inviti = { disponibile: boolean; codice?: string; inAttesa?: number; premiati?: number; creditoEuro?: number; premioEuro?: number; max?: number };
+
+/** Il codice personale e gli amici (3/11): solo per chi paga. */
+function InvitiCard() {
+  const [inv, setInv] = useState<Inviti | null>(null);
+  const [copiato, setCopiato] = useState(false);
+  useEffect(() => {
+    authFetch('/api/stripe/inviti').then((r) => (r.ok ? r.json() : null)).then(setInv).catch(() => {});
+  }, []);
+  if (!inv?.disponibile || !inv.codice) return null;
+  const condividi = async () => {
+    const testo = `Allenati con For You Football: con il mio codice ${inv.codice} hai il prezzo con codice, bloccato finché resti iscritto. https://for-you-football.vercel.app/register`;
+    try {
+      if (navigator.share) await navigator.share({ text: testo });
+      else { await navigator.clipboard.writeText(inv.codice!); setCopiato(true); }
+    } catch { /* annullato */ }
+  };
+  return (
+    <Card variant="raised" padding="sm" className="mt-3 space-y-2">
+      <div className="flex items-center gap-2">
+        <Gift size={18} className="text-forest-400 shrink-0" aria-hidden />
+        <p className="text-body font-semibold text-app">Il tuo codice: <span className="tabular-nums tracking-wide">{inv.codice}</span></p>
+      </div>
+      <p className="text-body-sm text-muted">
+        Un amico entra con il prezzo con codice. Tu hai {euroTesto(inv.premioEuro ?? 10)} € sulle prossime fatture quando lui paga (dopo 14 giorni), fino a {inv.max ?? 10} amici l&apos;anno.
+      </p>
+      {(inv.inAttesa || inv.premiati || inv.creditoEuro) ? (
+        <p className="text-body-sm text-app tabular-nums">
+          {[inv.inAttesa ? `${inv.inAttesa} in attesa` : null, inv.premiati ? `${inv.premiati} premiati quest'anno` : null, inv.creditoEuro ? `${euroTesto(inv.creditoEuro)} € di credito` : null].filter(Boolean).join(' · ')}
+        </p>
+      ) : null}
+      <Button variant="secondary" size="sm" icon={<Copy size={16} aria-hidden />} onClick={condividi}>{copiato ? 'Codice copiato' : 'Condividi il codice'}</Button>
+    </Card>
+  );
+}
 
 const giorno = (iso: string | null | undefined) =>
   iso ? new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Rome' }) : null;
@@ -95,7 +136,6 @@ export default function SubscriptionSection() {
   }
 
   const { subscription_status, is_beta_free, season1_access, installments_paid, next_billing_date, cancel_at_period_end } = data;
-  const mentale = data.piano === 'mentale';
   const gestisci = (label = 'Gestisci abbonamento') => (
     <>
       <Button variant="secondary" fullWidth onClick={openPortal} loading={portalLoading}>
@@ -104,6 +144,72 @@ export default function SubscriptionSection() {
       {error && <p className="text-body-sm text-danger mt-2">{error}</p>}
     </>
   );
+
+  // I pacchetti (Mente dal 1/11, gli altri dal 3/11): prova, attivo, in pausa, pagamento non riuscito, sospeso
+  const pacchettoVivo = isPacchetto(data.piano) && ['trialing', 'active', 'past_due', 'unpaid'].includes(subscription_status);
+  if (pacchettoVivo) {
+    const nome = TESTI_PACCHETTI[data.piano as keyof typeof TESTI_PACCHETTI].titolo;
+    const euro = data.prezzo?.euro;
+    const prezzo = euro ? `${euroTesto(euro)} €/mese${data.prezzo?.tipo === 'lancio' || data.prezzo?.tipo === 'codice' ? ', prezzo bloccato' : ''}` : null;
+    let riga = '';
+    let nota: string | null = null;
+    let tono: 'accent' | 'warn' | 'danger' = 'accent';
+    if (data.pausa_fino) {
+      riga = `${nome} · in pausa fino al ${giorno(data.pausa_fino)}`;
+      nota = 'Niente addebiti, il tuo prezzo resta quello. Puoi riprendere prima quando vuoi.';
+    } else if (subscription_status === 'trialing') {
+      riga = `${nome} · in prova fino al ${giorno(data.prova_fino) ?? '…'}`;
+      nota = cancel_at_period_end
+        ? 'Hai disdetto: la prova finisce quel giorno e non paghi niente.'
+        : `Poi parte l'abbonamento${prezzo ? `: ${prezzo}` : ''}.`;
+    } else if (subscription_status === 'active') {
+      riga = `${nome}${prezzo ? ` · ${prezzo}` : ''}`;
+      nota = cancel_at_period_end
+        ? `Hai disdetto: resti dentro fino al ${giorno(next_billing_date) ?? 'fine del mese pagato'}.`
+        : next_billing_date ? `Prossimo rinnovo: ${giorno(next_billing_date)}.` : null;
+    } else if (subscription_status === 'past_due') {
+      tono = 'warn';
+      riga = 'Pagamento non riuscito';
+      nota = 'Stripe riprova per qualche giorno e intanto resti dentro. Aggiorna la carta per non perdere l\'accesso.';
+    } else {
+      tono = 'danger';
+      riga = 'Abbonamento sospeso';
+      nota = 'Gli ultimi pagamenti non sono riusciti. Aggiorna la carta per riaprire l\'app.';
+    }
+    const pagante = subscription_status === 'active' || subscription_status === 'past_due';
+    return (
+      <Card padding="md">
+        {title}
+        <Card variant={tono} padding="sm" className="mb-3">
+          <div className="flex items-center gap-2 mb-1">
+            {data.pausa_fino
+              ? <Pause size={18} className="text-forest-400 flex-shrink-0" aria-hidden="true" />
+              : tono === 'accent'
+                ? <Check size={18} className="text-success flex-shrink-0" aria-hidden="true" />
+                : <AlertTriangle size={18} className={`${tono === 'warn' ? 'text-warning' : 'text-danger'} flex-shrink-0`} aria-hidden="true" />}
+            <p className="font-semibold text-app text-body">{riga}</p>
+          </div>
+          {nota && <p className="text-body-sm text-muted leading-relaxed">{nota}</p>}
+          {(is_beta_free || season1_access) && <p className="text-body-sm text-muted mt-1">Il Mente ce l&apos;hai già {season1_access ? 'con Season 1' : 'gratis'}.</p>}
+          {data.ritorno_completo_fino && data.piano !== 'completo' && (
+            <p className="text-body-sm text-muted mt-1">Puoi tornare al Completo al tuo prezzo di prima fino al {giorno(data.ritorno_completo_fino)}.</p>
+          )}
+        </Card>
+        <div className="space-y-2">
+          {data.pausa_fino ? (
+            <Button variant="primary" fullWidth onClick={() => router.push('/pausa')}>Vai alla pausa</Button>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="secondary" onClick={() => router.push('/pricing')}>Cambia pacchetto</Button>
+              <Button variant="ghost" onClick={() => router.push('/pausa')} disabled={subscription_status === 'trialing'}>Pausa</Button>
+            </div>
+          )}
+          {gestisci(subscription_status === 'past_due' || subscription_status === 'unpaid' ? 'Aggiorna pagamento' : 'Gestisci abbonamento')}
+        </div>
+        {pagante && !data.pausa_fino && <InvitiCard />}
+      </Card>
+    );
+  }
 
   // Accesso beta / comp
   if (is_beta_free) {
@@ -137,49 +243,6 @@ export default function SubscriptionSection() {
             Season 1 è tua per sempre. Nessun rinnovo, nessun addebito futuro.
           </p>
         </Card>
-      </Card>
-    );
-  }
-
-  // Mentale ad abbonamento (1/11): prova, attivo, pagamento non riuscito, sospeso
-  if (mentale && ['trialing', 'active', 'past_due', 'unpaid'].includes(subscription_status)) {
-    const euro = data.prezzo?.euro;
-    const prezzo = euro ? `${euroTesto(euro)} €/mese${data.prezzo?.tipo === 'fondatori' || data.prezzo?.tipo === 'codice' ? ', prezzo bloccato' : ''}` : null;
-    let riga = '';
-    let nota: string | null = null;
-    let tono: 'accent' | 'warn' | 'danger' = 'accent';
-    if (subscription_status === 'trialing') {
-      riga = `In prova fino al ${giorno(data.prova_fino) ?? '…'}`;
-      nota = cancel_at_period_end
-        ? 'Hai disdetto: la prova finisce quel giorno e non paghi niente.'
-        : `Poi parte l'abbonamento${prezzo ? `: ${prezzo}` : ''}. Si aprono il Gate, le settimane 2-12 e il Coach senza limiti.`;
-    } else if (subscription_status === 'active') {
-      riga = `Mentale${prezzo ? ` · ${prezzo}` : ''}`;
-      nota = cancel_at_period_end
-        ? `Hai disdetto: resti dentro fino al ${giorno(next_billing_date) ?? 'fine del mese pagato'}.`
-        : next_billing_date ? `Prossimo rinnovo: ${giorno(next_billing_date)}.` : null;
-    } else if (subscription_status === 'past_due') {
-      tono = 'warn';
-      riga = 'Pagamento non riuscito';
-      nota = 'Stripe riprova per qualche giorno e intanto resti dentro. Aggiorna la carta per non perdere l\'accesso.';
-    } else {
-      tono = 'danger';
-      riga = 'Abbonamento sospeso';
-      nota = 'Gli ultimi pagamenti non sono riusciti. Aggiorna la carta per riaprire il percorso.';
-    }
-    return (
-      <Card padding="md">
-        {title}
-        <Card variant={tono} padding="sm" className="mb-3">
-          <div className="flex items-center gap-2 mb-1">
-            {tono === 'accent'
-              ? <Check size={18} className="text-success flex-shrink-0" aria-hidden="true" />
-              : <AlertTriangle size={18} className={`${tono === 'warn' ? 'text-warning' : 'text-danger'} flex-shrink-0`} aria-hidden="true" />}
-            <p className="font-semibold text-app text-body">{riga}</p>
-          </div>
-          {nota && <p className="text-body-sm text-muted leading-relaxed">{nota}</p>}
-        </Card>
-        {gestisci(subscription_status === 'past_due' || subscription_status === 'unpaid' ? 'Aggiorna pagamento' : 'Gestisci abbonamento')}
       </Card>
     );
   }
@@ -281,7 +344,7 @@ export default function SubscriptionSection() {
         <p className="text-body-sm text-muted leading-relaxed">
           {subscription_status === 'canceled'
             ? 'Puoi riprendere quando vuoi: il percorso riparte da dove eri.'
-            : 'Il Gate, le settimane 2-12 e il Coach si aprono con l\'abbonamento al Mentale.'}
+            : 'Il Gate, le settimane 2-12 e il Coach si aprono con il Mente o con il Completo. Il Campo con il Fisico.'}
         </p>
       </Card>
       <Button
@@ -289,7 +352,7 @@ export default function SubscriptionSection() {
         fullWidth
         onClick={() => router.push('/pricing')}
       >
-        Vedi l&apos;abbonamento
+        Vedi i pacchetti
       </Button>
     </Card>
   );

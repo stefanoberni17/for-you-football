@@ -165,7 +165,7 @@ export default function GiornoPage() {
       if (weekNumber === 1 && dayNumber === 1) {
         const { data: prof } = await supabase
           .from('profiles')
-          .select('telegram_id, is_beta_free, subscription_status, season1_access')
+          .select('*')
           .eq('user_id', uid)
           .maybeSingle();
         // Il Coach su Telegram è di Season 1: nella settimana gratis la card non si mostra

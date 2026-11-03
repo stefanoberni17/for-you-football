@@ -72,7 +72,7 @@ export default function SessionePage() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
     // M12: chi ha anche il Mentale (accesso attivo) vede il Reset prima della seduta
-    supabase.from('profiles').select('is_beta_free, season1_access, subscription_status').eq('user_id', session.user.id).maybeSingle()
+    supabase.from('profiles').select('*').eq('user_id', session.user.id).maybeSingle()
       .then(({ data: prof }) => setConMentale(hasActiveAccess(prof as Parameters<typeof hasActiveAccess>[0])));
     const res = await authFetch('/api/training/state');
     if (res.status === 403) { router.push('/strumenti'); return; }

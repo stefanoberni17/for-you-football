@@ -7,7 +7,7 @@ import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
-import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus } from '@/lib/trainingRequest';
+import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus, type FocusId } from '@/lib/trainingRequest';
 import { AppLoader, BackButton, Banner, Button, Card, Chip, Field, Input, SectionTitle, RpeScale, Textarea } from '@/components/ui';
 import { LIMITAZIONI_NOTA_MAX, LIMITAZIONI_ZONE_MAX, ZONE_DOLORE, type ZonaDolore } from '@/lib/trainingDolore';
 import { AVVISO_RESISTENZA_IN_SEASON } from '@/lib/trainingResistenza';
@@ -16,7 +16,7 @@ import { Scale } from 'lucide-react';
 import type { TrainingState } from '@/app/allenamento/page';
 
 // Dal /api/training/state (stessa chiamata dell'hub) servono solo setup, calendario, tetti e squadra
-type SetupState = Pick<TrainingState, 'setup' | 'setupDisponibile' | 'calendario' | 'maxSeduteFisiche' | 'maxSeduteTotali' | 'squadra' | 'partitaAbituale' | 'squilibri'>;
+type SetupState = Pick<TrainingState, 'setup' | 'setupDisponibile' | 'calendario' | 'maxSeduteFisiche' | 'maxSeduteTotali' | 'squadra' | 'partitaAbituale' | 'squilibri' | 'abbonamento'>;
 
 // Etichetta di un gruppo di controlli (chip, Sì/No): label corta + parentetica sotto
 function GroupLabel({ children, hint }: { children: React.ReactNode; hint?: React.ReactNode }) {
@@ -122,6 +122,13 @@ function SetupPageInner() {
 
   const giorniSquadra = state.calendario?.trainingDays ?? [];
   const maxTotali = state.maxSeduteTotali ?? state.maxSeduteFisiche ?? 3;
+  // Le aree del pacchetto (3/11): Base 1, Medio 2; oltre il tetto il chip nuovo sostituisce l'ultimo
+  const areeMax = state.abbonamento && !state.abbonamento.manuale ? state.abbonamento.aree : null;
+  const scegliFocus = (attuali: FocusId[], id: FocusId): FocusId[] => {
+    if (areeMax == null) return toggleFocus(attuali, id);
+    if (attuali.includes(id)) return attuali.filter((x) => x !== id);
+    return [...attuali.filter((x) => x !== FOCUS_TUTTO), id].slice(-areeMax);
+  };
   const disabilitato = !state.setupDisponibile;
 
   return (
@@ -195,7 +202,9 @@ function SetupPageInner() {
 
           {/* Su cosa vuoi lavorare */}
           <Card padding="sm">
-            <SectionTitle title="Su cosa vuoi lavorare" subtitle="Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure &quot;Tutto&quot;." className="mb-3" />
+            <SectionTitle title="Su cosa vuoi lavorare" subtitle={areeMax != null
+              ? `Il tuo Fisico ${state.abbonamento?.nome ?? ''} ha ${areeMax === 1 ? 'una area: scegline una' : `${areeMax} aree: scegline fino a ${areeMax}, in ordine di priorità`}. Per tutte le aree c'è il Pro.`
+              : 'Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell\'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".'} className="mb-3" />
             {state.squilibri?.latoDebole && !setupDraft.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) && (
               <Banner tone="accent" icon={<Scale size={20} />} title={`Gamba ${state.squilibri.latoDebole === 'sx' ? 'sinistra' : 'destra'} più debole nei test`} className="mb-3"
                 action={{ label: 'Aggiungi la fascia', onClick: () => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, 'fascia') }) }}>
@@ -203,11 +212,11 @@ function SetupPageInner() {
               </Banner>
             )}
             <div className="flex flex-wrap gap-2">
-              {FOCUS_OPZIONI.map((f) => {
+              {FOCUS_OPZIONI.filter((f) => areeMax == null || f.id !== FOCUS_TUTTO).map((f) => {
                 const idx = setupDraft.focus.indexOf(f.id);
                 const on = idx >= 0;
                 return (
-                  <Chip key={f.id} selected={on} onClick={() => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, f.id) })}
+                  <Chip key={f.id} selected={on} onClick={() => setSetupDraft({ ...setupDraft, focus: scegliFocus(setupDraft.focus, f.id) })}
                     className={!on && f.id === FOCUS_TUTTO ? '!border-forest-500/50 !text-forest-300' : ''}>
                     {on && setupDraft.focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
                   </Chip>

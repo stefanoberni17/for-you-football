@@ -43,6 +43,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
   const [messages, setMessages] = useState<Message[]>([makeWelcome(userName)]);
   // Settimana gratis: FREE_COACH_MESSAGES messaggi, poi 403 payment_required dalla API
   const [paywalled, setPaywalled] = useState(false);
+  const [inPausaChat, setInPausaChat] = useState(false); // 3/11: in pausa il Coach aspetta, il bottone porta alla pausa
   const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -156,6 +157,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         const err = await response.json().catch(() => ({}));
         if (err?.error === 'payment_required') {
           setPaywalled(true);
+          setInPausaChat(err?.reason === 'in_pausa');
           setFreeRemaining(0);
           setMessages(prev => [...prev, {
             role: 'assistant' as const,
@@ -267,8 +269,8 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         <div ref={messagesEndRef} />
         {paywalled && (
           <div className="mx-1 mt-1 bg-forest-500/10 border border-forest-500/35 rounded-card p-4 text-center">
-            <p className="text-body text-app font-semibold mb-3">Il Coach continua con l&apos;abbonamento al Mentale</p>
-            <Button variant="primary" href="/pricing">Continua il percorso</Button>
+            <p className="text-body text-app font-semibold mb-3">{inPausaChat ? 'Il Coach ti aspetta quando riprendi' : 'Il Coach continua con il Mente o con il Completo'}</p>
+            <Button variant="primary" href={inPausaChat ? '/pausa' : '/pricing?pacchetto=mentale'}>{inPausaChat ? 'Vai alla pausa' : 'Continua il percorso'}</Button>
           </div>
         )}
       </div>

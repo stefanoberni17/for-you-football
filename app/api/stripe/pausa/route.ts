@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { hasStripeKey } from '@/lib/stripe';
 import { esitoPausa, motivoInfortunio, PAUSA_MESI, PAUSA_INFORTUNIO_MESI_MAX } from '@/lib/pausaInviti';
+import { INFO_PACCHETTI, pacchettoDi } from '@/lib/listino';
 import { chiediPausaInfortunio, loadPause, loadProfiloAbbonamento, mettiInPausa, riprendi } from '@/lib/abbonamentoServer';
 
 export const runtime = 'nodejs';
@@ -32,6 +33,7 @@ export async function GET(request: NextRequest) {
     richiesta: pause.some((p) => p.tipo === 'infortunio' && p.stato === 'richiesta'),
     mesi: PAUSA_MESI,
     mesiInfortunioMax: PAUSA_INFORTUNIO_MESI_MAX,
+    campo: !!INFO_PACCHETTI[pacchettoDi(profilo?.piano)].fisico,
   });
 }
 
