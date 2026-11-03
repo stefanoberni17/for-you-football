@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  emailFineProva, esitoCheckout, eventoDelProfilo, IMPOSTAZIONI_DEFAULT, impostazioniDa, prezzoEuro, priceIdMentale,
-  provaPerUtente, statoDaStripe, tipoDaPriceId,
+  emailFineProva, esitoCheckout, eventoDelProfilo, IMPOSTAZIONI_DEFAULT, impostazioniDa, opzioniPagamento, prezzoEuro,
+  priceIdMentale, provaPerUtente, statoDaStripe, tipoDaPriceId, VIETATI_MANAGED_PAYMENTS,
 } from '@/lib/abbonamento';
 import {
   canAccessWeek, deveAndareAlPaywall, haAccessoOProva, hasActiveAccess, inProva, provaConCartaDal, provaRichiesta,
@@ -117,6 +117,17 @@ describe('Mentale ad abbonamento (1/11)', () => {
     expect(provaRichiesta({ created_at: '2026-11-10T09:00:00Z' })).toBe(true);
     vi.stubEnv('NEXT_PUBLIC_PROVA_CON_CARTA', 'boh');
     expect(provaConCartaDal()).toBeNull();
+  });
+
+  it('con Managed Payments il checkout non manda i parametri che Stripe rifiuta (3/11)', () => {
+    const chiavi = (o: Record<string, unknown>, pre = ''): string[] => Object.entries(o).flatMap(([k, v]) =>
+      v && typeof v === 'object' && !Array.isArray(v) ? [pre + k, ...chiavi(v as Record<string, unknown>, `${pre}${k}.`)] : [pre + k]);
+    const con = chiavi(opzioniPagamento(true));
+    expect(con).toContain('managed_payments');
+    for (const v of VIETATI_MANAGED_PAYMENTS) expect(con).not.toContain(v);
+    // senza Managed Payments la carta si chiede sempre e l'indirizzo è obbligatorio
+    expect(opzioniPagamento(false)).toMatchObject({ payment_method_collection: 'always', billing_address_collection: 'required' });
+    expect(opzioniPagamento(false)).not.toHaveProperty('managed_payments');
   });
 
   it('l\'email prima della fine della prova dice la data, il prezzo e come disdire', () => {

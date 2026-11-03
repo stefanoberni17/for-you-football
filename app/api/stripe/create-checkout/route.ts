@@ -4,7 +4,7 @@ import type Stripe from 'stripe';
 import { getAuthUser } from '@/lib/auth';
 import { stripe, getOrCreateStripeCustomer, isStripeEnabled, managedPayments, MANAGED_PAYMENTS_API_VERSION } from '@/lib/stripe';
 import { logEvent } from '@/lib/events';
-import { esitoCheckout, PIANO_MENTALE, priceIdMentale, provaPerUtente } from '@/lib/abbonamento';
+import { esitoCheckout, opzioniPagamento, PIANO_MENTALE, priceIdMentale, provaPerUtente } from '@/lib/abbonamento';
 import { contaIscrittiVivi, loadImpostazioni } from '@/lib/appSettings';
 import { provaConCarta, provaRichiesta } from '@/lib/checkAccess';
 
@@ -108,8 +108,6 @@ async function createCheckout(request: NextRequest) {
     cancel_url: `${origin}/pricing?checkout=canceled`,
     // Codici promozionali di Ste (solo primo mese o al massimo 3 mesi: la durata la decide il coupon su Stripe)
     allow_promotion_codes: true,
-    // La carta si chiede sempre, anche con la prova: senza carta non parte l'abbonamento al giorno 8
-    payment_method_collection: 'always',
     // Accettazione dei Termini nel checkout: Stripe la accetta SOLO se l'URL dei termini è nelle impostazioni del
     // dashboard (Impostazioni → Checkout), altrimenti la creazione della sessione fallisce: per questo dietro l'env.
     ...(process.env.STRIPE_TERMS_CONSENT === '1' ? { consent_collection: { terms_of_service: 'required' as const } } : {}),
@@ -119,15 +117,8 @@ async function createCheckout(request: NextRequest) {
     },
     metadata: { supabase_user_id: userId, plan: PIANO_MENTALE, prezzo: imp.mentalePrezzo, payer_email: payerEmail },
   };
-  if (mp) {
-    // Managed Payments: Stripe è il venditore, calcola le tasse dal codice fiscale del prodotto e raccoglie nome e
-    // indirizzo da sé (automatic_tax, customer_update e payment_method_types non sono ammessi).
-    params.managed_payments = { enabled: true };
-  } else {
-    params.automatic_tax = { enabled: false };
-    params.billing_address_collection = 'required';
-    params.customer_update = { address: 'auto', name: 'auto' };
-  }
+  // Le opzioni che cambiano con Managed Payments (lib/abbonamento.ts, test in tests/abbonamento.test.ts)
+  Object.assign(params, opzioniPagamento(mp));
 
   const session = await stripe.checkout.sessions.create(
     params as Stripe.Checkout.SessionCreateParams,

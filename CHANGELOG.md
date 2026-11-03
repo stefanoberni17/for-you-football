@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-03 — Managed Payments: i parametri che Stripe rifiuta
+- Dalla pagina di Stripe "Configura Managed Payments → Rimuovi dal codice" (Ste): con Managed Payments il checkout mandava ancora `payment_method_collection: 'always'`, che è nella lista dei parametri non ammessi (la sessione sarebbe stata rifiutata appena acceso `STRIPE_MANAGED_PAYMENTS=1`). Ora le opzioni che cambiano stanno in `opzioniPagamento(mp)` in `lib/abbonamento.ts`, con la lista `VIETATI_MANAGED_PAYMENTS` e un test che controlla che nessuno di quei parametri parta con Managed Payments acceso. Senza Managed Payments il checkout è come prima.
+
 ## 2026-11-02 — Lo scroll bloccato dopo due fogli aperti insieme
 - **Bug** (Ste: "non funziona più lo scroll in app nelle pagine"): ogni `Sheet` salvava `body.style.overflow` all'apertura e lo rimetteva alla chiusura. Con i Termini nuovi (`TERMS_VERSION` del 1/11) il foglio di ri-accettazione si apriva insieme al check-in del mattino (o al Reset): il secondo foglio salvava "hidden", si chiudeva per ultimo e lo rimetteva, e la pagina non scorreva più fino al riavvio dell'app.
 - **Correzione**: `lib/scrollLock.ts` (`bloccaScroll`, contatore condiviso: il primo foglio salva il valore di partenza, l'ultimo lo rimette, in qualunque ordine; un "hidden" rimasto da prima non resta), usato da `components/ui/Sheet.tsx` e dal player del Campo. 3 test in `tests/scrollLock.test.ts`.

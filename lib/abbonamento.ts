@@ -151,3 +151,31 @@ export function emailFineProva(i: { nome?: string | null; fine: string | null; e
     ].join('\n\n'),
   };
 }
+
+/**
+ * I parametri del Checkout che Stripe NON accetta con Managed Payments (pagina "Configura Managed Payments →
+ * Rimuovi dal codice", 3/11): con Managed Payments Stripe è il venditore e decide da sé tasse, metodi di pagamento,
+ * indirizzo e dati del cliente.
+ */
+export const VIETATI_MANAGED_PAYMENTS = [
+  'automatic_tax', 'tax_id_collection', 'subscription_data.default_tax_rates',
+  'payment_method_collection', 'payment_method_configuration', 'payment_method_options', 'payment_method_types',
+  'saved_payment_method_options', 'customer_update', 'shipping_address_collection', 'shipping_options',
+  'subscription_data.application_fee_percent', 'subscription_data.on_behalf_of', 'subscription_data.transfer_data',
+  'subscription_data.invoice_settings',
+] as const;
+
+/**
+ * Le opzioni del Checkout che cambiano con Managed Payments. Con: solo `managed_payments` (la carta la chiede
+ * Stripe, anche con la prova). Senza: la carta sempre (senza carta l'abbonamento non parte al giorno 8), niente
+ * tasse automatiche, indirizzo di fatturazione obbligatorio, nome e indirizzo salvati sul cliente.
+ */
+export function opzioniPagamento(managedPayments: boolean): Record<string, unknown> {
+  if (managedPayments) return { managed_payments: { enabled: true } };
+  return {
+    payment_method_collection: 'always',
+    automatic_tax: { enabled: false },
+    billing_address_collection: 'required',
+    customer_update: { address: 'auto', name: 'auto' },
+  };
+}
