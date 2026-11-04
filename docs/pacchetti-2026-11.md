@@ -84,7 +84,8 @@ Il blocco del Base, il feedback e le quote funzionano così:
 3. **Webhook.** L'endpoint deve avere anche `customer.subscription.trial_will_end`, già richiesto dalla 038. Gli eventi sono gli stessi di prima: pausa e cambio arrivano con `customer.subscription.updated`.
 4. **Portale clienti.** Tenere solo carta, ricevute e disdetta. Il cambio di piano va **spento** nel portale: si fa dall'app, con le regole dei diritti.
 5. **Aprire il Campo.** Lanciare da SQL `UPDATE app_settings SET valore = 'true' WHERE chiave = 'iscrizioni_campo_aperte'`, poi impostare `tetto_campo`.
-6. I Termini sono cambiati (`TERMS_VERSION = '2026-11-03-pacchetti'`, sezione 6): tutti vedranno il foglio di ri-accettazione una volta.
+6. **Chi era già abbonato al Mente a 19 €** non ha ancora `diritto_lancio`: lo riceve dal webhook al rinnovo, oppure subito con l'UPDATE in fondo alla 039 (con l'id del Price dei fondatori). Finché ci sono abbonati su quel Price, `STRIPE_PRICE_ID_MENTALE_FONDATORI` resta su Vercel.
+7. I Termini sono cambiati (`TERMS_VERSION = '2026-11-03-pacchetti'`, sezione 6): tutti vedranno il foglio di ri-accettazione una volta.
 
 ## Come è stato provato
 

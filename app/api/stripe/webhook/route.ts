@@ -168,13 +168,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       stripe_subscription_id: subscriptionId,
       subscription_status: stato,
       ...campiPacchetto(sub),
-    };
+    } as Record<string, unknown>;
     // I diritti sul prezzo (migration 039): il lancio e il codice restano finché resta iscritto
     // (un codice valido scritto entrando è un diritto anche se il lancio costava meno: vale se il lancio finisce)
     const error = await aggiornaProfilo(userId, {
       ...base,
-      diritto_lancio: tipo === 'lancio' || session.metadata?.lancio === '1',
-      diritto_codice: tipo === 'codice' || !!session.metadata?.codice,
+      diritto_lancio: tipo === 'lancio' || session.metadata?.lancio === '1' || base.diritto_lancio === true,
+      diritto_codice: tipo === 'codice' || !!session.metadata?.codice || base.diritto_codice === true,
     });
     // Senza la migration 038 lo stato "trialing" non passa il vincolo: errore → Stripe riprova più tardi
     if (error) throw new Error(`checkout ${session.metadata?.plan}: ${error.message}`);
@@ -295,10 +295,22 @@ function campiPacchetto(sub: Stripe.Subscription): Record<string, unknown> {
   const pacchetto = pacchettoDaSub(sub);
   if (!pacchetto) return {};
   const campi: Record<string, unknown> = { piano: pacchetto, stripe_price_id: sub.items?.data?.[0]?.price?.id ?? null };
+  // Il prezzo che sta pagando dice i suoi diritti: chi era già abbonato prima della 039 (fondatori a 19 €) li ha
+  // con il primo evento della sua subscription. Solo a true: li toglie la disdetta, mai un evento qualsiasi.
+  const t = tipoDaAbbonamento({ price: sub.items?.data?.[0]?.price as never, couponIds: couponIdsDi(sub) }, process.env);
+  if (t?.tipo === 'lancio') campi.diritto_lancio = true;
+  if (t?.tipo === 'codice') campi.diritto_codice = true;
   if (sub.trial_end) campi.trial_ends_at = new Date(sub.trial_end * 1000).toISOString();
   const pausa = sub.pause_collection;
   campi.pausa_fino = pausa?.resumes_at ? new Date(pausa.resumes_at * 1000).toISOString() : null;
   return campi;
+}
+
+/** Gli id dei coupon di una subscription (lo sconto singolo o la lista, quando arriva espansa). */
+function couponIdsDi(sub: Stripe.Subscription): string[] {
+  const s = sub as unknown as { discount?: { coupon?: { id?: string } } | null; discounts?: (string | { coupon?: { id?: string } | null })[] };
+  const ids = [s.discount?.coupon?.id, ...(s.discounts ?? []).map((d) => (typeof d === 'object' ? d?.coupon?.id : undefined))];
+  return ids.filter((x): x is string => !!x);
 }
 
 /** Le colonne della 039 tolte: senza la migration il resto si salva come prima. */
