@@ -18,10 +18,13 @@ const { PACCHETTI, lookupLancio, lookupListino, couponCodice, INFO_PACCHETTI } =
 const { loadListino, verificaCodice, scontoCodice, priceDi } = await import('../lib/prezziServer');
 const { opzioniPagamento, prezzoPerUtente, tipoDaAbbonamento, centesimiScontati } = await import('../lib/abbonamento');
 const { pianificaCambio, anteprimaCambio, eseguiCambio } = await import('../lib/abbonamentoServer');
+const { IMPOSTAZIONI_DEFAULT } = await import('../lib/abbonamento');
+// Il cambio di pacchetto è dietro l'interruttore cambio_piano_attivo (spento in produzione dal 4/11): qui si prova acceso
+const CAMBIO_ACCESO = { ...IMPOSTAZIONI_DEFAULT, cambioAttivo: true };
 type Pacchetto = (typeof PACCHETTI)[number];
 
 const LISTINO: Record<Pacchetto, { listino: number; codice: number; lancio: number }> = {
-  mentale: { listino: 39, codice: 29, lancio: 24 },
+  mentale: { listino: 39, codice: 29, lancio: 19 },
   fisico_base: { listino: 19, codice: 14, lancio: 9 },
   fisico_medio: { listino: 49, codice: 40, lancio: 34 },
   fisico_pro: { listino: 59, codice: 49, lancio: 39 },
@@ -126,9 +129,11 @@ const profilo = {
   user_id: 'prova', subscription_status: 'active', stripe_subscription_id: sub.id, stripe_customer_id: cliente.id,
   piano: 'fisico_medio', stripe_price_id: listino.fisico_medio.priceListino, diritto_codice: true, diritto_lancio: false,
 };
-const cambio = await pianificaCambio(profilo, 'fisico_pro');
+const spento = await pianificaCambio(profilo, 'fisico_pro', IMPOSTAZIONI_DEFAULT);
+check(!spento.ok && spento.motivo === 'non_attivo', `cambio spento (app_settings): ${spento.ok ? 'passa' : spento.motivo}`);
+const cambio = await pianificaCambio(profilo, 'fisico_pro', CAMBIO_ACCESO);
 check(cambio.ok && cambio.piano.tipo === 'codice' && cambio.piano.euro === 49, `Medio → Pro: ${cambio.ok ? `${cambio.piano.euro} € (${cambio.piano.tipo})` : cambio.motivo}`);
-const versoCompleto = await pianificaCambio(profilo, 'mentale');
+const versoCompleto = await pianificaCambio(profilo, 'mentale', CAMBIO_ACCESO);
 check(!versoCompleto.ok && versoCompleto.motivo === 'iscrizioni_chiuse' || versoCompleto.ok, `Medio → Mente (area nuova, iscrizioni del Mente aperte di default): ${versoCompleto.ok ? 'ok' : versoCompleto.motivo}`);
 if (cambio.ok) {
   const ant = await anteprimaCambio(sub.id, cambio.piano);
@@ -162,7 +167,7 @@ const pmP = await stripe.paymentMethods.attach('pm_card_visa', { customer: clien
 await stripe.customers.update(clienteP.id, { invoice_settings: { default_payment_method: pmP.id } });
 const subP = await stripe.subscriptions.create({ customer: clienteP.id, items: [{ price: listino.fisico_medio.priceListino! }], trial_period_days: 7, metadata: { plan: 'fisico_medio' } });
 const profP = { user_id: 'prova', subscription_status: 'trialing', stripe_subscription_id: subP.id, stripe_customer_id: clienteP.id, piano: 'fisico_medio', stripe_price_id: listino.fisico_medio.priceListino };
-const cambioP = await pianificaCambio(profP, 'fisico_pro');
+const cambioP = await pianificaCambio(profP, 'fisico_pro', CAMBIO_ACCESO);
 check(cambioP.ok && cambioP.piano.finisceProva && cambioP.piano.tipo === 'listino', `Medio in prova → Pro: ${cambioP.ok ? `${cambioP.piano.euro} €, la prova finisce` : cambioP.motivo}`);
 if (cambioP.ok) {
   await eseguiCambio(profP, cambioP.piano, false);
