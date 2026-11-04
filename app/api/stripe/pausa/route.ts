@@ -3,6 +3,7 @@ import { getAuthUser } from '@/lib/auth';
 import { hasStripeKey } from '@/lib/stripe';
 import { esitoPausa, motivoInfortunio, PAUSA_MESI, PAUSA_INFORTUNIO_MESI_MAX } from '@/lib/pausaInviti';
 import { INFO_PACCHETTI, pacchettoDi } from '@/lib/listino';
+import { loadImpostazioni } from '@/lib/appSettings';
 import { chiediPausaInfortunio, loadPause, loadProfiloAbbonamento, mettiInPausa, riprendi } from '@/lib/abbonamentoServer';
 
 export const runtime = 'nodejs';
@@ -19,13 +20,14 @@ export async function GET(request: NextRequest) {
   if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   const { profilo, con039 } = await loadProfiloAbbonamento(userId);
   if (!con039) return NextResponse.json({ disponibile: false, skipped: 'migration_039' });
-  const pause = await loadPause(userId);
+  const [pause, imp] = await Promise.all([loadPause(userId), loadImpostazioni()]);
   const adesso = new Date();
   const fino = profilo?.pausa_fino && new Date(profilo.pausa_fino).getTime() > adesso.getTime() ? profilo.pausa_fino : null;
   const e = esitoPausa({ stato: profilo?.subscription_status, inPausa: !!fino, pause, adesso });
   const attiva = pause.find((p) => p.stato === 'attiva');
   return NextResponse.json({
-    disponibile: hasStripeKey(),
+    // Spenta finché non è provata con Managed Payments (app_settings pausa_attiva)
+    disponibile: hasStripeKey() && imp.pausaAttiva,
     inPausa: !!fino,
     fino,
     tipo: attiva?.tipo ?? null,
@@ -45,6 +47,10 @@ export async function POST(request: NextRequest) {
   const { profilo, con039 } = await loadProfiloAbbonamento(userId);
   if (!con039) return NextResponse.json({ error: 'non_disponibile', skipped: 'migration_039' }, { status: 503 });
   if (!profilo?.stripe_subscription_id) return NextResponse.json({ error: 'non_abbonato' }, { status: 409 });
+  // Pausa spenta: si può solo riprendere (se qualcuno ci fosse già)
+  if (body?.azione !== 'riprendi' && !(await loadImpostazioni()).pausaAttiva) {
+    return NextResponse.json({ error: 'non_disponibile' }, { status: 503 });
+  }
 
   try {
     if (body?.azione === 'pausa') {

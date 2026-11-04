@@ -7,7 +7,7 @@ import { anteprimaCambio, eseguiCambio, loadProfiloAbbonamento, pianificaCambio 
 export const runtime = 'nodejs';
 
 const STATUS: Record<string, number> = {
-  non_abbonato: 409, stesso_pacchetto: 400, in_pausa: 409, iscrizioni_chiuse: 409, prezzo_mancante: 503, beta: 400, season1: 400,
+  non_abbonato: 409, stesso_pacchetto: 400, non_attivo: 503, in_pausa: 409, iscrizioni_chiuse: 409, prezzo_mancante: 503, beta: 400, season1: 400,
 };
 
 /**

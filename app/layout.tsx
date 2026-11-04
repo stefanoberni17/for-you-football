@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Crimson_Pro, Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import BottomTabBar from "@/components/BottomTabBar";
 import GlobalCheckinWrapper from "@/components/GlobalCheckinWrapper";
 import GlobalMeditationWrapper from "@/components/GlobalMeditationWrapper";
@@ -12,17 +12,20 @@ import AppResume from "@/components/AppResume";
 // Brand (Notion, "Brief Landing Page → Brand & stile visivo"): Outfit per tutto (700 titoli,
 // 400/500 UI), Crimson Pro corsivo SOLO per le citazioni (mantra, frasi firma). Review 16/9:
 // prima Outfit era caricato ma body { font-family: Arial } in globals.css lo annullava.
-const outfit = Outfit({
-  subsets: ["latin"],
+// Dal 4/11 i file stanno nel repo (app/fonts, licenza OFL): la build non scarica più niente da Google Fonts
+// (il 3/11 una risposta diversa di Google aveva fermato la CI). Font variabili: un file per tutti i pesi.
+const outfit = localFont({
+  src: "./fonts/outfit-latin-wght.woff2",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: "100 900",
+  style: "normal",
   variable: "--font-outfit",
 });
-const crimson = Crimson_Pro({
-  subsets: ["latin"],
+const crimson = localFont({
+  src: "./fonts/crimson-pro-latin-wght-italic.woff2",
   display: "swap",
-  style: ["italic"],
-  weight: ["400", "500"],
+  weight: "200 900",
+  style: "italic",
   variable: "--font-crimson",
 });
 

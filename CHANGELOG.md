@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-04 — Rilascio dei pacchetti: vecchi abbonati, interruttori, font nel repo
+- **Vecchi abbonati (Ste, 4/11):** il webhook ricava i diritti dal Price che si paga (fondatori a 19 € = lancio, coupon del codice = codice), solo a true; `docs/migrations/039b_vecchi_utenti.sql` dà subito il lancio ai fondatori, il prezzo con codice a chi paga il vecchio listino a 29 €, mette chi ha premuto «Mi interessa» sul Fisico in lista d'attesa del Campo (fondatori in testa) ed elenca chi paga le rate di Season 1.
+- **Pausa e cambio di pacchetto dietro due interruttori** (`app_settings.pausa_attiva`, `cambio_piano_attivo`, spenti senza riga) finché non sono provati con Managed Payments approvato.
+- **Font nel repo** (`app/fonts`, `next/font/local`, licenza OFL): il 3/11 la CI si era fermata su una risposta diversa di Google Fonts.
+- Ordine di rilascio e collaudo entro il 7/11: `docs/rilascio-2026-11-09.md`.
+
 ## 2026-11-03 sera — I pacchetti: Mente, Fisico Base/Medio/Pro, Completo; pausa, cambio, inviti
 - **Decisioni di Ste (3/11 sera)**: listino a cinque pacchetti (Mente 39/29/24, Base 19/14/9, Medio 49/40/34, Pro 59/49/39, Completo 79/59/44: listino, con codice, lancio di dicembre); lancio e codice diritti registrati sull'utente, persi con la disdetta, tenuti in pausa; Base a blocchi di 4 settimane; fatica alta per tutti ma solo il Pro rimodula il resto; inviti con 10 € di credito; pausa di 2 mesi e pausa per infortunio approvata a mano; cambio temporaneo dal Completo con ritorno entro 6 mesi. Fatti anche i punti 4 e 5 previsti per fine gennaio.
 - **Moduli puri**: `lib/listino.ts` (pacchetti, lookup key, regole per livello), `lib/abbonamento.ts` riscritto per i pacchetti (diritti, codice su ogni pacchetto, tetti per area), `lib/pausaInviti.ts`, `lib/trainingBlocco.ts`, `lib/pacchettiTesti.ts`. Server: `lib/prezziServer.ts` (prezzi per lookup key), `lib/abbonamentoServer.ts` (cambio con conguaglio, pausa, inviti, lista), `lib/trainingAccess.ts` (accesso e livello del Campo, quote).

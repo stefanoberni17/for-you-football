@@ -198,3 +198,28 @@ describe('Base e Medio: il feedback non rimodula il resto del piano (3/11)', () 
     expect(bm.sedute.some((s) => s.items.some((it) => it.facoltativo))).toBe(false);
   });
 });
+
+import { impostazioniDa, tipoDaAbbonamento } from '@/lib/abbonamento';
+
+describe('rilascio del 9/11: interruttori e vecchi abbonati', () => {
+  it('pausa e cambio di pacchetto sono spenti senza le righe in app_settings', () => {
+    const imp = impostazioniDa([]);
+    expect(imp.pausaAttiva).toBe(false);
+    expect(imp.cambioAttivo).toBe(false);
+  });
+
+  it('si accendono solo con true', () => {
+    const imp = impostazioniDa([
+      { chiave: 'pausa_attiva', valore: true },
+      { chiave: 'cambio_piano_attivo', valore: 'true' },
+    ]);
+    expect(imp.pausaAttiva).toBe(true);
+    expect(imp.cambioAttivo).toBe(false);
+  });
+
+  it('il Price dei fondatori dalle env è un prezzo di lancio (il webhook ne ricava il diritto)', () => {
+    const env = { STRIPE_PRICE_ID_MENTALE_FONDATORI: 'price_f19', STRIPE_PRICE_ID_MENTALE: 'price_l29' };
+    expect(tipoDaAbbonamento({ price: { id: 'price_f19' }, couponIds: [] }, env)).toEqual({ pacchetto: 'mentale', tipo: 'lancio' });
+    expect(tipoDaAbbonamento({ price: { id: 'price_l29' }, couponIds: [] }, env)).toEqual({ pacchetto: 'mentale', tipo: 'listino' });
+  });
+});

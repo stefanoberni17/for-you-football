@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
 import { stripe } from '@/lib/stripe';
 import { centesimiScontati, STATI_VIVI, tipoDaAbbonamento, type CouponMin, type StatoAbbonamento, type TipoPrezzo } from '@/lib/abbonamento';
+import { loadImpostazioni } from '@/lib/appSettings';
 import { ritornoValido, type RitornoCompleto } from '@/lib/pausaInviti';
 
 export const runtime = 'nodejs';
@@ -65,7 +66,13 @@ export async function GET(request: NextRequest) {
     ritorno_completo_fino: ritornoValido(p.ritorno_completo) ? p.ritorno_completo!.fino : null,
     codice_invito: p.codice_invito ?? null,
     diritti: { lancio: !!p.diritto_lancio, codice: !!p.diritto_codice },
+    // Pausa e cambio di pacchetto accesi in app_settings (spenti finché non sono provati con Managed Payments)
+    funzioni: { pausa: false, cambio: false },
   };
+  try {
+    const imp = await loadImpostazioni();
+    response.funzioni = { pausa: imp.pausaAttiva, cambio: imp.cambioAttivo };
+  } catch { /* spente */ }
 
   // Abbonamento vivo: prossimo addebito e disdetta programmata da Stripe
   if (p.stripe_subscription_id && STATI_VIVI.includes(response.subscription_status)) {

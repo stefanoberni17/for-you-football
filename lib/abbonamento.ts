@@ -59,6 +59,10 @@ export interface Impostazioni {
   iscrizioniCampoAperte: boolean;
   tettoCampo: number | null;
   provaGiorni: number;
+  /** Pausa e cambio di pacchetto accesi (app_settings `pausa_attiva`, `cambio_piano_attivo`): spenti di default,
+   *  si accendono dopo la prova con Managed Payments approvato (Ste, 4/11). */
+  pausaAttiva: boolean;
+  cambioAttivo: boolean;
 }
 
 export const IMPOSTAZIONI_DEFAULT: Impostazioni = {
@@ -68,6 +72,8 @@ export const IMPOSTAZIONI_DEFAULT: Impostazioni = {
   iscrizioniCampoAperte: false,
   tettoCampo: 0,
   provaGiorni: PROVA_GIORNI_DEFAULT,
+  pausaAttiva: false,
+  cambioAttivo: false,
 };
 
 function tetto(v: unknown): number | null | undefined {
@@ -88,6 +94,8 @@ export function impostazioniDa(rows: { chiave: string; valore: unknown }[] | nul
     if (r.chiave === 'tetto_iscritti') { const t = tetto(v); if (t !== undefined) imp.tettoIscritti = t; }
     if (r.chiave === 'iscrizioni_campo_aperte' && typeof v === 'boolean') imp.iscrizioniCampoAperte = v;
     if (r.chiave === 'tetto_campo') { const t = tetto(v); if (t !== undefined) imp.tettoCampo = t; }
+    if (r.chiave === 'pausa_attiva' && typeof v === 'boolean') imp.pausaAttiva = v;
+    if (r.chiave === 'cambio_piano_attivo' && typeof v === 'boolean') imp.cambioAttivo = v;
     if (r.chiave === 'prova_giorni' && typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 30) imp.provaGiorni = v;
   }
   return imp;

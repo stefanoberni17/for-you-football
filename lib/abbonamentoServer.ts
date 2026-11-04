@@ -62,7 +62,7 @@ function vivo(p: ProfiloAbbonamento | null): boolean {
 // ─── Cambio di pacchetto ─────────────────────────────────────────────────────────────────────────────────────────
 
 export type MotivoNoCambio =
-  | 'non_abbonato' | 'stesso_pacchetto' | 'in_pausa' | 'iscrizioni_chiuse' | 'prezzo_mancante' | 'beta' | 'season1';
+  | 'non_abbonato' | 'stesso_pacchetto' | 'in_pausa' | 'iscrizioni_chiuse' | 'prezzo_mancante' | 'beta' | 'season1' | 'non_attivo';
 
 export interface PianoCambio {
   da: Pacchetto;
@@ -107,6 +107,10 @@ export async function pianificaCambio(profilo: ProfiloAbbonamento | null, a: Pac
     const pieno = impostazioni.tettoIscritti != null && (await contaIscrittiMente()) >= impostazioni.tettoIscritti;
     if (!invitato && (!impostazioni.iscrizioniAperte || pieno)) return { ok: false, motivo: 'iscrizioni_chiuse' };
   }
+
+  // Il cambio è spento finché non è provato con Managed Payments (app_settings cambio_piano_attivo); dopo il
+  // controllo delle iscrizioni, così chi vuole un'area chiusa può comunque mettersi in lista
+  if (!impostazioni.cambioAttivo) return { ok: false, motivo: 'non_attivo' };
 
   const finisceProva = profilo.subscription_status === 'trialing';
   // Torna al Completo entro 6 mesi: il suo prezzo bloccato

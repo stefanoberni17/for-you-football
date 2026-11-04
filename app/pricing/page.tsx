@@ -311,7 +311,7 @@ function PricingContent() {
       if (offerta.inPausa) return { testo: 'Sei in pausa', disabled: true, onClick: () => {} };
       if (sel.cambio && !sel.cambio.ok) return sel.cambio.motivo === 'iscrizioni_chiuse'
         ? { testo: attesaOk === scelto ? 'Sei in lista' : 'Avvisami quando apre', disabled: attesaOk === scelto, onClick: () => listaAttesa(scelto) }
-        : { testo: 'Non disponibile', disabled: true, onClick: () => {} };
+        : { testo: sel.cambio.motivo === 'non_attivo' ? 'Cambio di pacchetto in arrivo' : 'Non disponibile', disabled: true, onClick: () => {} };
       return { testo: `Passa a ${TESTI_PACCHETTI[scelto].titolo}`, disabled: false, onClick: () => chiediCambio(scelto) };
     }
     if (bloccatoPer) return { testo: 'Ce l\'hai già', disabled: true, onClick: () => {} };
@@ -547,6 +547,7 @@ function testoNoCambio(motivo: string | undefined): string {
     case 'beta': case 'season1': return 'Il Mente ce l\'hai già.';
     case 'stesso_pacchetto': return 'È già il tuo pacchetto.';
     case 'prezzo_mancante': return 'Questo pacchetto non è ancora in vendita.';
+    case 'non_attivo': return 'Il cambio di pacchetto dall\'app arriva a breve.';
     default: return 'Non riesco a cambiare pacchetto adesso. Riprova tra poco.';
   }
 }

@@ -22,6 +22,7 @@ type SubData = {
   cancel_at_period_end: boolean;
   pausa_fino?: string | null;
   ritorno_completo_fino?: string | null;
+  funzioni?: { pausa: boolean; cambio: boolean };
 };
 
 type Inviti = { disponibile: boolean; codice?: string; inAttesa?: number; premiati?: number; creditoEuro?: number; premioEuro?: number; max?: number };
@@ -200,8 +201,10 @@ export default function SubscriptionSection() {
             <Button variant="primary" fullWidth onClick={() => router.push('/pausa')}>Vai alla pausa</Button>
           ) : (
             <>
-              <Button variant="secondary" fullWidth onClick={() => router.push('/pricing')}>Cambia pacchetto</Button>
-              {subscription_status !== 'trialing' && (
+              {data.funzioni?.cambio && (
+                <Button variant="secondary" fullWidth onClick={() => router.push('/pricing')}>Cambia pacchetto</Button>
+              )}
+              {data.funzioni?.pausa && subscription_status !== 'trialing' && (
                 <Button variant="ghost" fullWidth onClick={() => router.push('/pausa')}>Ti devi fermare? Metti in pausa</Button>
               )}
             </>

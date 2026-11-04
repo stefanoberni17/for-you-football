@@ -110,8 +110,5 @@ ALTER TABLE training_plans DROP CONSTRAINT IF EXISTS training_plans_generato_da_
 ALTER TABLE training_plans ADD CONSTRAINT training_plans_generato_da_check CHECK (generato_da IN ('llm', 'fallback', 'blocco'));
 
 -- ── Chi era già abbonato prima della 039 ─────────────────────────────────────────────────────────────────────────
--- I fondatori del Mente a 19 € non hanno ancora diritto_lancio: il webhook glielo scrive al primo evento della loro
--- subscription (il rinnovo, entro un mese). Per averlo subito, con l'id del Price dei fondatori
--- (STRIPE_PRICE_ID_MENTALE_FONDATORI su Vercel) al posto di price_XXX:
---   UPDATE profiles SET diritto_lancio = TRUE
---   WHERE stripe_price_id = 'price_XXX' AND subscription_status IN ('trialing', 'active', 'past_due');
+-- Diritti dei vecchi abbonati e "Mi interessa" in lista d'attesa: docs/migrations/039b_vecchi_utenti.sql, da lanciare
+-- subito dopo questa (servono gli id dei due Price vecchi del Mente).
