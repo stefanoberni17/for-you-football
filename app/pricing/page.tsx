@@ -92,7 +92,14 @@ function PricingContent() {
           // Il pacchetto che si apre: ?pacchetto=, dal Gate il Mente, dal Fisico il Pro, altrimenti il Completo
           const p = searchParams.get('pacchetto');
           const iniziale: Pacchetto = isPacchetto(p) ? p : fromGate ? 'mentale' : searchParams.get('da') === 'fisico' ? 'fisico_pro' : 'completo';
-          const primo = iniziale === o.attuale ? (o.attuale === 'completo' ? 'mentale' : 'completo') : iniziale;
+          let primo: Pacchetto = iniziale === o.attuale ? (o.attuale === 'completo' ? 'mentale' : 'completo') : iniziale;
+          // Senza una scelta esplicita non si apre su un pacchetto chiuso (il Campo prima dell'apertura): il primo
+          // che si può prendere, così il bottone non dice "Avvisami quando apre" a chi arriva per la prova (5/11)
+          const vendibile = (id: Pacchetto) => !!o.pacchetti.find((x) => x.id === id && x.disponibile && x.puoAbbonarsi);
+          if (!isPacchetto(p) && !o.attuale && !vendibile(primo)) {
+            const alt = o.pacchetti.find((x) => x.disponibile && x.puoAbbonarsi);
+            if (alt) primo = alt.id;
+          }
           setScelto(primo);
           const liv = o.pacchetti.find((x) => x.id === primo)?.fisico;
           if (liv && primo !== 'completo') setLivello(liv);
