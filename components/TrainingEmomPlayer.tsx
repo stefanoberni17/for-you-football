@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import SchedaEsercizioView from './SchedaEsercizio';
+import VideoYouTube from './VideoYouTube';
+import { youtubeEmbedUrl } from '@/lib/youtube';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { Check, ChevronLeft, Info, Pause, Play, Square, X } from 'lucide-react';
 import { Button, Card, Chip, RpeScale } from '@/components/ui';
@@ -26,12 +28,6 @@ export interface EmomItem {
 
 const MINUTO_MS = 60_000;
 
-/** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
-function youtubeEmbedUrl(url?: string): string | null {
-  if (!url) return null;
-  const m = url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
-}
 const nowMs = () => Date.now();
 
 /** Sequenza dei minuti: giro dopo giro, un esercizio per minuto (chi ha meno giri esce prima). */
@@ -196,7 +192,7 @@ export default function TrainingEmomPlayer({ items, bloccoNome, onDone, onSkip }
               {ex.videoMp4 ? (
                 <video src={ex.videoUrl} controls playsInline className="w-full h-full object-contain" />
               ) : (
-                <iframe src={embed!} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
+                <VideoYouTube src={embed!} title={ex.nome} />
               )}
               <button type="button" onClick={() => setShowVideo(false)} aria-label="Chiudi il video"
                 className="absolute top-2 right-2 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center">

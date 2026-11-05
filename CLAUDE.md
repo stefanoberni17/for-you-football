@@ -64,8 +64,8 @@ for-you-football/
 │   ├── risposte/page.tsx                  # "Le tue risposte" (22/10): tutto quello che ha scritto nei giorni e nei Gate, per settimana, con le risposte chiave in evidenza; dal Profilo e dai giorni di W11
 │   ├── riattiva/page.tsx                  # Account in cancellazione: data limite, "Riattiva" o esci (PaywallGuard manda qui)
 │   ├── privacy/page.tsx
-│   ├── termini/page.tsx                   # Termini di servizio (TERMS_VERSION '2026-11-03': tre prezzi, uno alla volta, senza importi scritti; '2026-11-01': sezione 6 riscritta per l'abbonamento al Mentale, prova, rinnovo, disdetta, pagamenti non riusciti; prima 9/10): 14 sezioni, recesso 14 giorni, legge italiana
-│   ├── privacy/page.tsx                   # Privacy Policy definitiva (9/10/2026, PRIVACY_VERSION '2026-10-09'): titolare Stefano Berni, dati per categoria, AI, sicurezza, fornitori, tempi, diritti
+│   ├── termini/page.tsx                   # Termini di servizio (TERMS_VERSION '2026-11-05-managed-payments': Stripe venditore con Managed Payments, rimborso tramite Stripe; '2026-11-03': tre prezzi, uno alla volta, senza importi scritti; '2026-11-01': sezione 6 riscritta per l'abbonamento al Mentale, prova, rinnovo, disdetta, pagamenti non riusciti; prima 9/10): 14 sezioni, recesso 14 giorni, legge italiana
+│   ├── privacy/page.tsx                   # Privacy Policy (PRIVACY_VERSION '2026-11-05': Stripe venditore e titolare autonomo dei dati di pagamento, YouTube nel Campo solo dopo «Apri il video», notifiche; prima 9/10/2026): titolare Stefano Berni, dati per categoria, AI, sicurezza, fornitori, tempi, diritti
 │   ├── statistiche/page.tsx               # Storico check-in con grafici Recharts (Area, distribuzione, streak)
 │   └── api/
 │       ├── register/route.ts              # POST → signup Supabase + profilo/consensi via lib/registrazione.ts

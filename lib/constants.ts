@@ -38,8 +38,8 @@ export const MIN_AGE = Math.max(14, Number(process.env.NEXT_PUBLIC_MIN_AGE) || 1
 // Cambiare una versione fa scattare la ri-accettazione (`lib/consent.ts` + `ConsentReacceptSheet`):
 // chi ha accettato una versione diversa (o nessuna) vede il foglio alla prima apertura e deve
 // accettare per continuare. Compilate il 9/10/2026 con i testi definitivi scritti in app.
-export const PRIVACY_VERSION = '2026-10-09';
-export const TERMS_VERSION = '2026-11-03-pacchetti'; // 3/11 sera: i pacchetti (Mente, Fisico Base/Medio/Pro, Completo), cambio, pausa, inviti (sezione 6); 3/11: tre prezzi (listino, con codice, di lancio), uno alla volta (sezione 6); 1/11: il Mentale ad abbonamento
+export const PRIVACY_VERSION = '2026-11-05'; // 5/11: Stripe venditore (Managed Payments), YouTube nel Campo, notifiche
+export const TERMS_VERSION = '2026-11-05-managed-payments'; // 5/11: Stripe venditore con Managed Payments (sezione 6), rimborso tramite Stripe (7); 3/11 sera: 3/11 sera: i pacchetti (Mente, Fisico Base/Medio/Pro, Completo), cambio, pausa, inviti (sezione 6); 3/11: tre prezzi (listino, con codice, di lancio), uno alla volta (sezione 6); 1/11: il Mentale ad abbonamento
 
 // ─── Struttura del Percorso ───────────────────────────────────────────────────
 

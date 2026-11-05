@@ -39,7 +39,7 @@ export default function TerminiPage() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-2 text-forest-400" aria-hidden><FileText size={36} /></div>
           <h1 className="font-display text-title-1 font-bold text-app">Termini di servizio</h1>
-          <p className="text-muted text-body-sm mt-1">For You Football · versione del 1 novembre 2026</p>
+          <p className="text-muted text-body-sm mt-1">For You Football · versione del 5 novembre 2026</p>
         </div>
 
         <Card className="space-y-8 text-body text-app leading-relaxed">
@@ -158,7 +158,10 @@ export default function TerminiPage() {
               quell’acquisto: con la terza rata pagata Season 1 è sua per sempre; se le rate si interrompono prima, l’accesso si chiude.
             </Punto>
             <Punto title="Pagamento e ricevute">
-              I pagamenti passano da Stripe. Noi non vediamo né conserviamo il numero della carta. La ricevuta arriva all’email inserita nel checkout.
+              I pagamenti degli abbonamenti passano da Stripe con il servizio Managed Payments: per l’acquisto il venditore è Stripe, che incassa, calcola e
+              versa l’IVA del tuo paese ed emette la ricevuta all’email inserita nel checkout; nel checkout trovi anche le sue condizioni. Il servizio (il
+              percorso, il Coach, il Campo) lo diamo noi, e per tutto quello che riguarda l’abbonamento scrivi a noi. Noi non vediamo né conserviamo il
+              numero della carta.
               Il codice si scrive nella pagina Prezzi, prima del checkout, e vale solo fino alla sua data di fine: chi entra con il codice in tempo tiene il
               prezzo con codice finché resta iscritto.
             </Punto>
@@ -171,7 +174,7 @@ export default function TerminiPage() {
           <Sez n="7" title="Diritto di ripensarci (recesso)">
             <p>
               Hai <strong>14 giorni</strong> dall’inizio dell’abbonamento (la prova compresa) o dall’acquisto per cambiare idea: scrivi a info@foryoufootball.it e
-              ti rimborsiamo quanto pagato in quei giorni (per le rate, le rate pagate), sullo stesso metodo di pagamento. L’accesso ai contenuti a pagamento si chiude. Passati i 14 giorni il pagamento non è rimborsabile, ma
+              ti rimborsiamo quanto pagato in quei giorni (per le rate, le rate pagate), tramite Stripe sullo stesso metodo di pagamento. L’accesso ai contenuti a pagamento si chiude. Passati i 14 giorni il pagamento non è rimborsabile, ma
               puoi sempre disdire o cancellare l’account.
             </p>
           </Sez>

@@ -46,7 +46,7 @@ export default function PrivacyPage() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-2 text-forest-400" aria-hidden><Lock size={36} /></div>
           <h1 className="font-display text-title-1 font-bold text-app">Privacy Policy</h1>
-          <p className="text-muted text-body-sm mt-1">For You Football · versione del 9 ottobre 2026</p>
+          <p className="text-muted text-body-sm mt-1">For You Football · versione del 5 novembre 2026</p>
         </div>
 
         <Card className="space-y-8 text-body text-app leading-relaxed">
@@ -97,8 +97,9 @@ export default function PrivacyPage() {
               si fermano e migliorare il percorso. Niente strumenti di analisi di terze parti, niente profilazione pubblicitaria.
             </Voce>
             <Voce title="Pagamenti">
-              Il pagamento passa da Stripe: noi riceviamo solo l’esito, l’identificativo del cliente e lo stato dell’acquisto. Il numero della carta non
-              arriva mai ai nostri server. L’email e l’indirizzo di fatturazione inseriti nel checkout sono conservati da Stripe per le ricevute e gli obblighi fiscali.
+              Il pagamento passa da Stripe, che per gli abbonamenti è il venditore (servizio Managed Payments): incassa, calcola e versa l’IVA ed emette
+              le ricevute. Per i dati del pagamento (email, nome, indirizzo di fatturazione, carta) Stripe è titolare autonomo, secondo la sua informativa.
+              Noi riceviamo solo l’esito, l’identificativo del cliente e lo stato dell’abbonamento: il numero della carta non arriva mai ai nostri server.
             </Voce>
             <Voce title="Dati tecnici">
               Indirizzo IP e informazioni sul dispositivo nei log del servizio di hosting, per sicurezza e per far funzionare l’app; limiti di utilizzo
@@ -156,7 +157,9 @@ export default function PrivacyPage() {
             <Riga title="Google (accesso, facoltativo)">Se scegli &ldquo;Continua con Google&rdquo;, Google ci conferma la tua email e il nome: non riceviamo altro e non scriviamo niente sul tuo account Google.</Riga>
             <Riga title="Vercel (hosting dell’app)">Fa girare l’app e tiene i log tecnici. Società statunitense, con le garanzie europee per il trasferimento dei dati (clausole contrattuali standard e Data Privacy Framework).</Riga>
             <Riga title="Anthropic (intelligenza artificiale)">Genera le risposte del Coach e del preparatore (sezione 4). Società statunitense, stesse garanzie.</Riga>
-            <Riga title="Stripe (pagamenti)">Gestisce carte, ricevute e fatture. Stripe Payments Europe, Irlanda.</Riga>
+            <Riga title="Stripe (pagamenti)">Gestisce i pagamenti. Per gli abbonamenti è il venditore (Managed Payments): incassa, calcola e versa l’IVA, emette ricevute e fatture, e per questi dati è titolare autonomo. Stripe Payments Europe, Irlanda.</Riga>
+            <Riga title="YouTube (video degli esercizi, facoltativo)">Nel Campo alcuni esercizi hanno un video su YouTube. Il video si carica solo dopo che tocchi «Apri il video» (te lo chiediamo una volta, poi la scelta resta sul telefono): da quel momento YouTube (Google) riceve il tuo indirizzo internet e informazioni sul dispositivo, secondo la sua informativa. Usiamo la versione senza cookie (youtube-nocookie.com). Società statunitense, con le garanzie europee per il trasferimento dei dati.</Riga>
+            <Riga title="Notifiche (facoltative)">Se attivi le notifiche, passano dal servizio del tuo telefono o browser (Apple, Google o Mozilla). Il testo viaggia cifrato: loro lo consegnano ma non lo leggono.</Riga>
             <Riga title="Telegram (facoltativo)">Solo se colleghi il bot: Telegram vede che scrivi a @foryoufootballcoach_bot e il tuo identificativo Telegram; noi salviamo quell’identificativo per riconoscerti.</Riga>
             <Riga title="Resend (email di servizio)">Le email che ti mandiamo noi (conferme, avvisi sull’account). Società statunitense, stesse garanzie.</Riga>
             <Riga title="Notion (contenuti)">Ospita i testi del percorso, non i tuoi dati.</Riga>
@@ -179,8 +182,9 @@ export default function PrivacyPage() {
             <p>
               L’app usa solo cookie e memoria locale <strong>tecnici</strong>: la sessione di accesso, le preferenze (es. «salta per oggi»), una copia dei
               contenuti del percorso per aprire le pagine più in fretta, la chat con il Coach salvata sul dispositivo. Niente cookie pubblicitari, niente
-              tracciamento tra siti, niente strumenti di terze parti. Quando esci dal Profilo la memoria locale viene svuotata: se usi un telefono condiviso,
-              esci.
+              tracciamento tra siti, niente strumenti di analisi di terze parti: per questo l’app non ha un banner dei cookie. L’unica cosa di terzi sono
+              i video di YouTube nel Campo, che si caricano solo se lo chiedi tu (sezione 6); il pagamento si fa sulla pagina di Stripe, con le sue regole.
+              Quando esci dal Profilo la memoria locale viene svuotata: se usi un telefono condiviso, esci.
             </p>
           </Sez>
 
