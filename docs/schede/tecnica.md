@@ -1,11 +1,15 @@
 # Schede esercizi: Tecnica
 
-Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 55 schede su 55 esercizi attivi del gruppo.
+Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 60 schede su 60 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## Da confermare (1)
+## Da confermare (5)
 
 - **Shots from the Corner: Cross**: Su Everfit le istruzioni dicono: palla sul calcio d'angolo, TIRI A GIRO cercando di far entrare la palla in porta senza che tocchi terra; poi dall'incrocio tra area e linea di fondo, poi dall'angolo dell'area; da entrambi i lati, di interno col piede opposto (da sinistra col destro), rientrando verso la porta. La correzione del 15/10 dice invece cross in corsa su primo palo, secondo palo, dischetto. Quale vale? Oppure sono due esercizi?
+- **Wall Passes with Tennis Ball Bounce**: Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
+- **Juggling While Tossing a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
+- **Inside-Outside Touches Holding a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.
+- **Wall Passes Holding a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.
 
 ## tecnica-palleggi (18)
 
@@ -599,7 +603,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Due tocchi ammessi.
 **Più difficile:** Distanza maggiore.
 
-## tecnica-tiro (7)
+## tecnica-tiro (8)
 
 ### High Kick and Shot
 `ttir-calcio-in-alto-e-tiro-in-porta` · per lato · reps · campo · senza video
@@ -642,6 +646,20 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Da più vicino.
 **Più difficile:** Solo piede debole.
 **Sicurezza:** Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.
+
+### Shooting Warm-Up: 10 + 10 at the Crossbar
+`ttir-riscaldamento-traversa` · per lato · reps · campo · senza video
+
+**Esecuzione**
+1. Palla ferma sul limite dell'area, porta vuota.
+2. Primi tiri al 60 %: conta il contatto pulito, non la forza. Sali di intensità tiro dopo tiro.
+3. Mira alla traversa: tiro di collo con palla che sale, caviglia bloccata, busto leggermente indietro.
+4. 10 di destro, poi 10 di sinistro (o il contrario). Recupera la palla camminando: è anche il recupero.
+
+**Errori comuni:** Tirare forte dal primo tiro: è un riscaldamento, la forza arriva dopo. Piede d'appoggio lontano dalla palla: va accanto, punta verso la porta. Saltare il piede debole: i 10 col debole si fanno sempre.
+**Più facile:** Da più vicino, o 6 + 6.
+**Più difficile:** Palla in movimento: un tocco in avanti e tiro.
+**Sicurezza:** Mai senza riscaldamento generale prima (passaggi, qualche conduzione). Fastidio all'inguine o al flessore: fermati.
 
 ### Shooting Technique
 `ttir-tiri-tecnica-di-tiro` · bilaterale · reps · campo · senza video
@@ -700,7 +718,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Tutti e quattro con il piede debole.
 **Sicurezza:** Riscaldati prima di tirare forte. Fastidio all'inguine o al flessore: fermati.
 
-## tecnica-visione (5)
+## tecnica-visione (9)
 
 ### Wall Passes with Vision
 `tvis-passaggi-al-muro-visione` · bilaterale · secondi · campo · [video](https://youtu.be/SSezNOH7eP8)
@@ -766,3 +784,57 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Testa bassa. Fermare la palla per reagire. Tocchi lunghi.
 **Più facile:** La versione base (altro video).
 **Più difficile:** Piede debole, schermo più lontano.
+
+### Wall Passes with Tennis Ball Bounce
+`tvis-passaggi-al-muro-pallina-tennis-rimbalzo` · bilaterale · minuti · campo · [video](https://youtube.com/shorts/VX0bFvFUQKQ)
+
+**Esecuzione**
+1. Davanti al muro, il pallone a terra e una pallina da tennis in mano.
+2. Esegui i passaggi al muro e, tra un passaggio e l'altro, fai rimbalzare a terra la pallina da tennis e riprendila.
+3. Lo sguardo lo porti dove vuoi: gestisci insieme il pallone che torna dal muro e la pallina che rimbalza.
+4. Tieni il ritmo ed esegui ogni passaggio nel modo migliore possibile.
+
+**Errori comuni:** Perdere il ritmo per riprendere la pallina: pallone e pallina vanno gestiti insieme. Passaggi tirati via per pensare alla pallina: ogni passaggio fatto nel modo migliore possibile.
+**Sicurezza:** Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
+
+### Juggling While Tossing a Tennis Ball
+`tvis-palleggi-con-lancio-pallina-tennis` · bilaterale · minuti · campo · [video](https://youtube.com/shorts/RyLcKRo_sN4)
+
+**Esecuzione**
+1. Pallone e una pallina da tennis in mano.
+2. Esegui i palleggi e intanto lancia la pallina da tennis da una mano all'altra.
+3. Lo sguardo lo tieni dove vuoi: alterna tra la pallina da tennis e il pallone.
+4. Mani e piedi lavorano insieme: non perdere il ritmo né dei lanci né dei palleggi.
+
+**Errori comuni:** Fermare i lanci per salvare i palleggi (o il contrario): il ritmo è di tutti e due. Palleggi alti e scomposti: meglio bassi e regolari mentre le mani lavorano.
+**Sicurezza:** Nessuna precauzione particolare.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
+
+### Inside-Outside Touches Holding a Tennis Ball
+`tvis-tocchi-int-est-pallina-tennis` · bilaterale · minuti · campo · [video](https://youtube.com/shorts/ESnsyAqxQWU)
+
+**Esecuzione**
+1. Tieni in mano una pallina da tennis e lo sguardo su di lei.
+2. Intanto esegui i tocchi sul pallone: avanti e indietro con la suola, poi interno ed esterno del piede.
+3. Il pallone lo senti con il piede e lo controlli con la visione periferica.
+4. Tieni lo sguardo il più possibile sulla pallina ed esegui ogni tocco nel modo migliore possibile.
+
+**Errori comuni:** Abbassare lo sguardo sul pallone: l'esercizio è tenerlo sulla pallina. Tocchi frettolosi: meglio più lenti e puliti.
+**Più difficile:** Allontana la mano con la pallina dal campo visivo in cui vedi il pallone.
+**Sicurezza:** Nessuna precauzione particolare.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.
+
+### Wall Passes Holding a Tennis Ball
+`tvis-passaggi-al-muro-pallina-tennis` · bilaterale · minuti · campo · [video](https://youtube.com/shorts/YYFwjov79Sg)
+
+**Esecuzione**
+1. Davanti al muro, con una pallina da tennis in mano: prima con un braccio, poi con l'altro.
+2. Esegui i passaggi al muro tenendo lo sguardo sulla pallina da tennis.
+3. Continua a passare usando la visione periferica per il pallone.
+4. Tieni lo sguardo il più possibile sulla pallina ed esegui il gesto tecnico nel modo migliore possibile.
+
+**Errori comuni:** Guardare il pallone a ogni passaggio: lo sguardo resta sulla pallina. Passaggi frettolosi: il gesto pulito conta più della velocità.
+**Più difficile:** Muovi la mano con la pallina e allontanala dal campo visivo in cui vedi il pallone.
+**Sicurezza:** Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.

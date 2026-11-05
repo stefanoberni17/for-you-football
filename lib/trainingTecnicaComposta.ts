@@ -304,6 +304,11 @@ function pezziVisione(livello: LivelloMinV2): Pezzo[] {
   const a = livello !== 'B';
   return [
     min(a ? 'tvis-videocorso-visione-esercizi-intermedi' : 'tvis-videocorso-visione-esercizi-base', 10, { r: 120, ruolo: 'apertura' }),
+    // Coordinazione e visione con la pallina da tennis (video di Ste, 5/11): in B tocchi e passaggi con lo sguardo
+    // sulla pallina, da A il rimbalzo tra un passaggio e l'altro e i palleggi con i lanci da una mano all'altra
+    ...(a
+      ? [min('tvis-passaggi-al-muro-pallina-tennis-rimbalzo', 3, { serie: 2, muro: true }), min('tvis-palleggi-con-lancio-pallina-tennis', 3, { serie: 2 })]
+      : [min('tvis-tocchi-int-est-pallina-tennis', 3, { serie: 2 }), min('tvis-passaggi-al-muro-pallina-tennis', 3, { serie: 2, muro: true })]),
     { id: 'tvis-passaggi-al-muro-visione', serie: a ? 4 : 3, q: 120, u: 'secondi', r: 90, ruolo: 'analitico', nota: NOTA_VISIONE, muro: true },
     reps(a ? 'tvis-dribbling-visione-e-reattivita-avanzato' : 'tvis-dribbling-visione-e-reattivita-base', a ? 4 : 4, a ? 8 : 6, { r: 90, nota: NOTA_VISIONE }),
     ...(a ? [{ id: 'ttir-tiri-in-porta-e-visione', serie: 2, q: 120, u: 'secondi' as const, r: 120, ruolo: 'chiusura' as const, nota: 'Impegnativo: poche serie, recupero pieno, niente affanno.' }] : []),
@@ -379,6 +384,8 @@ const SENZA_MURO: Partial<Record<string, string>> = {
   'tpas-passaggi-liberi-al-muro-tecnica': 'tpas-passaggi-a-10mt-alternati-primo-tocco-suola-tecn',
   'tpas-box-dribbling-passaggio': 'cond-6',
   'tvis-passaggi-al-muro-visione': 'tvis-videocorso-visione-esercizi-base',
+  'tvis-passaggi-al-muro-pallina-tennis': 'tvis-tocchi-int-est-pallina-tennis',
+  'tvis-passaggi-al-muro-pallina-tennis-rimbalzo': 'tvis-tocchi-int-est-pallina-tennis',
 };
 
 /** Durata stimata (minuti) di una lista di item, come `durataSerie` della parte bassa ma sui minuti programmati. */

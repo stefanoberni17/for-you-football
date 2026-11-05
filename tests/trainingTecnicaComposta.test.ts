@@ -215,3 +215,17 @@ describe('nel planner: libreria, sostituzione, asse partita, piano base', () => 
     expect(validatePlan(p2, validateCtxFor(c2)).filter(diTecnica)).toEqual([]);
   });
 });
+
+describe('visione con la pallina da tennis (video di Ste, 5/11)', () => {
+  const ids = (o: OpzioniTecnica) => costruisciTecnica({ ...o, minuti: 60 }).find((b) => b.id === teId('visione'))!.items.map((it) => it.esercizio_id);
+  it('in B tocchi e passaggi al muro con la pallina in mano, da A rimbalzo e palleggi con i lanci', () => {
+    expect(ids({ ...base, livello: 'B' })).toEqual(expect.arrayContaining(['tvis-tocchi-int-est-pallina-tennis', 'tvis-passaggi-al-muro-pallina-tennis']));
+    expect(ids({ ...base, livello: 'A' })).toEqual(expect.arrayContaining(['tvis-passaggi-al-muro-pallina-tennis-rimbalzo', 'tvis-palleggi-con-lancio-pallina-tennis']));
+  });
+  it('senza muro i passaggi con la pallina diventano i tocchi con la pallina in mano', () => {
+    const b = ids({ ...base, livello: 'B', attrezzatura: ['campo'] });
+    expect(b).toContain('tvis-tocchi-int-est-pallina-tennis');
+    expect(b.some((id) => id.startsWith('tvis-passaggi-al-muro'))).toBe(false);
+  });
+});
+

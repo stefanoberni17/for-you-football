@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-05 — Quattro esercizi nuovi dal canale YouTube: visione con la pallina da tennis
+- Scansione del canale (`scripts/youtube-channel-scan.py`): 139 video, 4 nuovi dal 22/9, tutti di coordinazione e visione con la pallina da tennis. Schede scritte dalle descrizioni dei video di Ste, con `da_confermare` (più facile/difficile, livello e dose) in `docs/schede/tecnica.md`.
+- Catalogo: `tvis-tocchi-int-est-pallina-tennis`, `tvis-passaggi-al-muro-pallina-tennis` (B), `tvis-passaggi-al-muro-pallina-tennis-rimbalzo`, `tvis-palleggi-con-lancio-pallina-tennis` (da A).
+- Seduta di visione composta (`pezziVisione`): in B tocchi e passaggi al muro con la pallina in mano dopo il videocorso, da A il rimbalzo e i palleggi con i lanci; senza muro i passaggi diventano i tocchi. Due test in `tests/trainingTecnicaComposta.test.ts`.
+
 ## 2026-11-05 — Controllo privacy: YouTube, notifiche, Stripe venditore
 - **Pagine pubbliche verificate in produzione con il browser** (home, login, registrazione, prezzi, privacy, termini, genitori): nessuna richiesta verso indirizzi esterni, nessun cookie, niente in memoria locale.
 - **Video di YouTube nel Campo** (`lib/youtube.ts`, `components/VideoYouTube.tsx`, test in `tests/youtube.test.ts`): l'embed passa da `youtube-nocookie.com` e il riquadro si carica solo dopo «Apri il video» (la prima volta, con la riga su cosa riceve YouTube; la scelta resta in `localStorage['video.youtube.ok']`). Prima il video dei segnali si apriva da solo e Google riceveva l'indirizzo internet senza un sì.

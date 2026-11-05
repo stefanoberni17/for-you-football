@@ -12712,5 +12712,163 @@
    "piu_difficile": "Non accorciarla: la dose la decide la serie, non la pausa.",
    "sicurezza": "Giramenti di testa o fiato che non torna: la seduta finisce qui."
   }
+ },
+ {
+  "fonte": "YouTube",
+  "azione": "importa",
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "per_lato": false,
+  "livello_min": "B",
+  "qualita": "tecnica-visione",
+  "unita": "minuti",
+  "id": "tvis-passaggi-al-muro-pallina-tennis-rimbalzo",
+  "nome": "Wall Passes with Tennis Ball Bounce",
+  "nome_everfit": null,
+  "attrezzatura": "campo",
+  "difficolta": 3,
+  "video": "https://youtube.com/shorts/VX0bFvFUQKQ",
+  "tags": [
+   "tecnica",
+   "visione",
+   "coordinazione",
+   "passaggi"
+  ],
+  "sottogruppo": "coordinazione e visione",
+  "scheda": {
+   "esecuzione": [
+    "Davanti al muro, il pallone a terra e una pallina da tennis in mano.",
+    "Esegui i passaggi al muro e, tra un passaggio e l'altro, fai rimbalzare a terra la pallina da tennis e riprendila.",
+    "Lo sguardo lo porti dove vuoi: gestisci insieme il pallone che torna dal muro e la pallina che rimbalza.",
+    "Tieni il ritmo ed esegui ogni passaggio nel modo migliore possibile."
+   ],
+   "errori": [
+    "Perdere il ritmo per riprendere la pallina: pallone e pallina vanno gestiti insieme.",
+    "Passaggi tirati via per pensare alla pallina: ogni passaggio fatto nel modo migliore possibile."
+   ],
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.",
+   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare."
+  }
+ },
+ {
+  "fonte": "YouTube",
+  "azione": "importa",
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "per_lato": false,
+  "livello_min": "B",
+  "qualita": "tecnica-visione",
+  "unita": "minuti",
+  "id": "tvis-palleggi-con-lancio-pallina-tennis",
+  "nome": "Juggling While Tossing a Tennis Ball",
+  "nome_everfit": null,
+  "attrezzatura": "campo",
+  "difficolta": 4,
+  "video": "https://youtube.com/shorts/RyLcKRo_sN4",
+  "tags": [
+   "tecnica",
+   "visione",
+   "coordinazione",
+   "palleggi"
+  ],
+  "sottogruppo": "coordinazione e visione",
+  "scheda": {
+   "esecuzione": [
+    "Pallone e una pallina da tennis in mano.",
+    "Esegui i palleggi e intanto lancia la pallina da tennis da una mano all'altra.",
+    "Lo sguardo lo tieni dove vuoi: alterna tra la pallina da tennis e il pallone.",
+    "Mani e piedi lavorano insieme: non perdere il ritmo né dei lanci né dei palleggi."
+   ],
+   "errori": [
+    "Fermare i lanci per salvare i palleggi (o il contrario): il ritmo è di tutti e due.",
+    "Palleggi alti e scomposti: meglio bassi e regolari mentre le mani lavorano."
+   ],
+   "sicurezza": "Nessuna precauzione particolare.",
+   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare."
+  }
+ },
+ {
+  "fonte": "YouTube",
+  "azione": "importa",
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "per_lato": false,
+  "livello_min": "B",
+  "qualita": "tecnica-visione",
+  "unita": "minuti",
+  "id": "tvis-tocchi-int-est-pallina-tennis",
+  "nome": "Inside-Outside Touches Holding a Tennis Ball",
+  "nome_everfit": null,
+  "attrezzatura": "campo",
+  "difficolta": 2,
+  "video": "https://youtube.com/shorts/ESnsyAqxQWU",
+  "tags": [
+   "tecnica",
+   "visione",
+   "visione periferica",
+   "conduzione"
+  ],
+  "sottogruppo": "coordinazione e visione",
+  "scheda": {
+   "esecuzione": [
+    "Tieni in mano una pallina da tennis e lo sguardo su di lei.",
+    "Intanto esegui i tocchi sul pallone: avanti e indietro con la suola, poi interno ed esterno del piede.",
+    "Il pallone lo senti con il piede e lo controlli con la visione periferica.",
+    "Tieni lo sguardo il più possibile sulla pallina ed esegui ogni tocco nel modo migliore possibile."
+   ],
+   "errori": [
+    "Abbassare lo sguardo sul pallone: l'esercizio è tenerlo sulla pallina.",
+    "Tocchi frettolosi: meglio più lenti e puliti."
+   ],
+   "piu_difficile": "Allontana la mano con la pallina dal campo visivo in cui vedi il pallone.",
+   "sicurezza": "Nessuna precauzione particolare.",
+   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare."
+  }
+ },
+ {
+  "fonte": "YouTube",
+  "azione": "importa",
+  "note": null,
+  "in_coppia": false,
+  "attivo": true,
+  "qualita_secondaria": null,
+  "per_lato": false,
+  "livello_min": "B",
+  "qualita": "tecnica-visione",
+  "unita": "minuti",
+  "id": "tvis-passaggi-al-muro-pallina-tennis",
+  "nome": "Wall Passes Holding a Tennis Ball",
+  "nome_everfit": null,
+  "attrezzatura": "campo",
+  "difficolta": 3,
+  "video": "https://youtube.com/shorts/YYFwjov79Sg",
+  "tags": [
+   "tecnica",
+   "visione",
+   "visione periferica",
+   "passaggi"
+  ],
+  "sottogruppo": "coordinazione e visione",
+  "scheda": {
+   "esecuzione": [
+    "Davanti al muro, con una pallina da tennis in mano: prima con un braccio, poi con l'altro.",
+    "Esegui i passaggi al muro tenendo lo sguardo sulla pallina da tennis.",
+    "Continua a passare usando la visione periferica per il pallone.",
+    "Tieni lo sguardo il più possibile sulla pallina ed esegui il gesto tecnico nel modo migliore possibile."
+   ],
+   "errori": [
+    "Guardare il pallone a ogni passaggio: lo sguardo resta sulla pallina.",
+    "Passaggi frettolosi: il gesto pulito conta più della velocità."
+   ],
+   "piu_difficile": "Muovi la mano con la pallina e allontanala dal campo visivo in cui vedi il pallone.",
+   "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.",
+   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare."
+  }
  }
 ]
