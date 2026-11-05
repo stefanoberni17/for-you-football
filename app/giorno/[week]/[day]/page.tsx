@@ -117,6 +117,9 @@ export default function GiornoPage() {
       const data = await giornoRes.json();
 
       if (data.error) {
+        // Senza accesso (prova non iniziata, settimane a pagamento): dritti ai prezzi. Il PaywallGuard ci arriverebbe
+        // da solo, ma questa pagina cambia rotta prima e lo annulla (collaudo del 5/11).
+        if (data.error === 'payment_required') { router.replace('/pricing'); return; }
         console.error('Errore caricamento giorno:', data.error);
         router.push(`/settimana/${weekNumber}`);
         return;
