@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { bloccaScroll } from '@/lib/scrollLock';
 import SchedaEsercizioView from './SchedaEsercizio';
+import VideoYouTube from './VideoYouTube';
+import { youtubeEmbedUrl } from '@/lib/youtube';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { markSessionActive } from '@/lib/activeSession';
 import { nomeBloccoAtleta } from '@/lib/trainingLabels';
@@ -40,12 +42,6 @@ export interface TestInSeduta { tipo: 'skill' | 'test' | 'lift'; id: string; nom
 export interface TestResultInput { test: TestInSeduta; valore?: number; peso?: number; reps?: number }
 const TEST_TENUTA_CAP_SEC = 300; // tenute al massimo: il cronometro sale fino a 5'
 
-/** Estrae l'id video da un URL YouTube (shorts o watch) per l'embed. */
-function youtubeEmbedUrl(url?: string): string | null {
-  if (!url) return null;
-  const m = url.match(/(?:shorts\/|watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
-}
 
 /**
  * Player della seduta: un esercizio alla volta — serie contate a tap, timer di
@@ -456,7 +452,7 @@ export default function TrainingSessionPlayer({
             <div className="mt-3">
               <p className="text-caption text-muted mb-1">Metti il telefono davanti ai cinesini: i segnali partono da soli.</p>
               <div className="relative rounded-btn overflow-hidden bg-black" style={{ height: 'clamp(260px, 55vh, 480px)' }}>
-                <iframe key={schermoKey} src={`${embedSchermo}?autoplay=1&mute=1&controls=0&rel=0&playsinline=1`} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={`Segnali: ${ex.nome}`} />
+                <VideoYouTube key={schermoKey} src={`${embedSchermo}?autoplay=1&mute=1&controls=0&rel=0&playsinline=1`} title={`Segnali: ${ex.nome}`} />
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <Button variant="secondary" size="sm" onClick={() => setSchermoKey((k) => k + 1)}>Rifai da capo</Button>
@@ -470,7 +466,7 @@ export default function TrainingSessionPlayer({
               {ex.videoMp4 ? (
                 <video src={ex.videoUrl} controls playsInline className="w-full h-full object-contain" />
               ) : (
-                <iframe src={embed!} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title={ex.nome} />
+                <VideoYouTube src={embed!} title={ex.nome} />
               )}
               <button type="button" onClick={() => setShowVideo(false)} aria-label="Chiudi il video"
                 className="absolute top-2 right-2 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center">

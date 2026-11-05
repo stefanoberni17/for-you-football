@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-05 — Controllo privacy: YouTube, notifiche, Stripe venditore
+- **Pagine pubbliche verificate in produzione con il browser** (home, login, registrazione, prezzi, privacy, termini, genitori): nessuna richiesta verso indirizzi esterni, nessun cookie, niente in memoria locale.
+- **Video di YouTube nel Campo** (`lib/youtube.ts`, `components/VideoYouTube.tsx`, test in `tests/youtube.test.ts`): l'embed passa da `youtube-nocookie.com` e il riquadro si carica solo dopo «Apri il video» (la prima volta, con la riga su cosa riceve YouTube; la scelta resta in `localStorage['video.youtube.ok']`). Prima il video dei segnali si apriva da solo e Google riceveva l'indirizzo internet senza un sì.
+- **Privacy** (`PRIVACY_VERSION = '2026-11-05'`): Stripe venditore con Managed Payments e titolare autonomo dei dati di pagamento; YouTube e notifiche push tra i fornitori; la sezione cookie dice perché non c'è il banner e qual è l'unica cosa di terzi.
+- **Termini** (`TERMS_VERSION = '2026-11-05-managed-payments'`): sezione 6, il venditore dell'abbonamento è Stripe (IVA e ricevute), il servizio resta nostro; sezione 7, il rimborso passa da Stripe. A ogni utente il foglio di ri-accettazione una volta, con le due caselle.
+
 ## 2026-11-04 — Rilascio dei pacchetti: vecchi abbonati, interruttori, font nel repo
 - **Vecchi abbonati (Ste, 4/11):** il webhook ricava i diritti dal Price che si paga (fondatori a 19 € = lancio, coupon del codice = codice), solo a true; `docs/migrations/039b_vecchi_utenti.sql` dà subito il lancio ai fondatori, il prezzo con codice a chi paga il vecchio listino a 29 €, mette chi ha premuto «Mi interessa» sul Fisico in lista d'attesa del Campo (fondatori in testa) ed elenca chi paga le rate di Season 1.
 - **Pausa e cambio di pacchetto dietro due interruttori** (`app_settings.pausa_attiva`, `cambio_piano_attivo`, spenti senza riga) finché non sono provati con Managed Payments approvato.
