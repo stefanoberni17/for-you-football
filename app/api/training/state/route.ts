@@ -9,10 +9,11 @@ import { doloreRiga, limitazioniRiga } from '@/lib/trainingDolore';
 import { loadDolore, loadLimitazioni } from '@/lib/trainingDoloreServer';
 import { giorniSquadra } from '@/lib/trainingLoad';
 import { calendarioHash, conflittiCalendario, conflittoRiga } from '@/lib/trainingCalendario';
-import { validatePlan } from '@/lib/trainingEngine';
+import { validatePlan, type PlanSession, type WeekPlan } from '@/lib/trainingEngine';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { accessoCampo, messaggiPreparatore, riprogrammazioni } from '@/lib/trainingAccess';
+import { NOME_LIVELLO, sedutePerLivello } from '@/lib/listino';
 import { getConsents } from '@/lib/consent';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, famigliaBlocco, loadCaricoInput, todayRome, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
@@ -54,7 +55,11 @@ export async function GET(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+    const accesso = await accessoCampo(userId);
+    if (!accesso) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+    // Il livello del pacchetto (3/11): il feedback rimodula il piano solo al Pro (e con l'accesso a mano)
+    const conFeedback = accesso.manuale || accesso.regole.feedback;
+    const quote = Promise.all([riprogrammazioni(userId, accesso), messaggiPreparatore(userId, accesso)]);
 
     const t0 = Date.now();
     // Tutte le letture che non dipendono l'una dall'altra partono INSIEME (20/10, Ste: "ci mette molto a caricare il
@@ -234,9 +239,9 @@ export async function GET(request: NextRequest) {
     // scarico salvato; la condizione (ultime 2 settimane) dà il fattore personale; il ciclo decide scarico e ri-test
     const inputCarico = await loadCaricoInput(userId);
     const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale: squadraStimato, squadraMisurata: misurata });
-    const condizione = condizioneAtleta({ checkins: checkins14 || [], sedute: feedbackRecenti, resoconti, oggi });
-    ciclo = cicloDaiDati(ciclo, {
-      carico: carico0, sedute: feedbackRecenti, lunedi: mondayOfThisWeekRome(), condizione, famiglia: famigliaBlocco,
+    const condizione = conFeedback ? condizioneAtleta({ checkins: checkins14 || [], sedute: feedbackRecenti, resoconti, oggi }) : undefined;
+    if (conFeedback) ciclo = cicloDaiDati(ciclo, {
+      carico: carico0, sedute: feedbackRecenti, lunedi: mondayOfThisWeekRome(), condizione: condizione!, famiglia: famigliaBlocco,
       scaricoInCorso: !!lastPlan && lastPlan.week_start === mondayOfThisWeekRome() && lastPlan.plan?.scarico === true,
       ultimoTest: ultimaTestSession?.completed_at || (results && results.length > 0 ? results[0].created_at ?? null : null),
       famiglieAlTetto: famiglieAlTetto(memoria).map((m) => m.famiglia),
@@ -271,7 +276,7 @@ export async function GET(request: NextRequest) {
     if (lastPlan?.plan && !planStaleFlag) {
       const letto = pianoPerLettura(lastPlan.plan, {
         weekStart: lastPlan.week_start, oggi, oggiDow: dowOggi, fatteGiorni: fattiGiorni,
-        resoconti, squadra, logs: logsSerie, votiSedute, dolore, limitazioni,
+        resoconti, squadra, logs: logsSerie, votiSedute, dolore, limitazioni, feedback: conFeedback,
         ritest: settimanaRitest ? {
           matchDays: matchDaysEff,
           candidati: {
@@ -310,8 +315,16 @@ export async function GET(request: NextRequest) {
       };
       const cal = { matchDays: matchDaysEff, trainingDays: trainingDaysEff, giorniAmmessi: !lastPlan?.richieste && preferenzeSetup?.giorni?.length ? preferenzeSetup.giorni : null };
       const conflitti = conflittiCalendario(planAdattato.plan, cal, { fatteGiorni: fattiGiorni, oggiDow: dowOggi, validaSeduta: (s) => validatePlan({ sedute: [s] }, validateCtx) });
-      if (conflitti.length) calendarioConflitti = { righe: conflitti.map(conflittoRiga), giorni: conflitti.map((c) => c.giorno), hash: calendarioHash(cal) };
+      if (conflitti.length && (accesso.manuale || accesso.regole.riallineamento)) {
+        calendarioConflitti = { righe: conflitti.map(conflittoRiga), giorni: conflitti.map((c) => c.giorno), hash: calendarioHash(cal) };
+      } else if (conflitti.length) {
+        // Fisico Base (Ste, 3/11): il programma resta fisso; la seduta troppo vicina alla partita è segnata, senza AI
+        const giorni = new Set(conflitti.map((c) => c.giorno));
+        planAdattato = { ...planAdattato, plan: { ...planAdattato.plan, sedute: planAdattato.plan.sedute.map((s: PlanSession) => giorni.has(s.giorno) ? { ...s, avviso_partita: 'Troppo vicina alla partita: saltala o fai la versione leggera.' } : s) } };
+      }
     }
+    const [quotaRiprogrammazioni, quotaPreparatore] = await quote;
+    const maxTotLivello = accesso.manuale ? maxSeduteTotali(setup.fase) : sedutePerLivello(accesso.livello, maxSeduteTotali(setup.fase));
     console.log(`training/state: ${Date.now() - t0} ms`);
     return NextResponse.json({
       calendarioConflitti,
@@ -372,8 +385,17 @@ export async function GET(request: NextRequest) {
       resoconti, // ultime 4 settimane: lo storico nella Card (fatica vera contro prevista, voti)
       // Zone più tese dal rolling (28/9), per la card dell'hub
       zoneTese: zoneTeseRicorrenti(feedbackRecenti),
-      maxSeduteFisiche: maxSeduteFisiche(setup.fase),
-      maxSeduteTotali: maxSeduteTotali(setup.fase),
+      maxSeduteFisiche: Math.min(maxSeduteFisiche(setup.fase), maxTotLivello),
+      maxSeduteTotali: maxTotLivello,
+      // Il pacchetto (3/11): livello, prova, pausa, riprogrammazioni e messaggi al preparatore rimasti
+      abbonamento: {
+        livello: accesso.livello, nome: NOME_LIVELLO[accesso.livello], manuale: accesso.manuale,
+        aree: accesso.manuale ? null : accesso.regole.aree, sedute: accesso.manuale ? null : accesso.regole.sedute,
+        riallineamento: accesso.manuale || accesso.regole.riallineamento, feedback: conFeedback,
+        inProva: accesso.inProva, inPausa: accesso.inPausa, pausaFino: accesso.pausaFino,
+        riprogrammazioni: quotaRiprogrammazioni, preparatore: quotaPreparatore,
+        blocco: (planAdattato?.plan as WeekPlan | undefined)?.blocco ?? null,
+      },
       squilibri: { righe: squilibriRigheAtleta(squilibri), latoDebole: squilibri.latoDebole, latoDeboleAlto: squilibri.latoDeboleAlto, pushPullDebole: squilibri.pushPull.debole, testPerLatoFatti: squilibri.testPerLatoFatti },
       // La tecnica del mese (26/10 sera): quote di Ste contro le sedute delle ultime 4 settimane, il tema della prossima
       tecnicaMese: tecnicaMeseDi(),

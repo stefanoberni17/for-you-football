@@ -21,6 +21,15 @@ export const SERVER_EVENTS = [
   'subscription_canceled',    // abbonamento chiuso dopo la prova (disdetta o pagamenti falliti)
   'trial_reminder_sent',      // email e push prima della fine della prova (meta.email, meta.push)
   'lista_attesa',             // iscrizioni chiuse o tetto pieno: "Avvisami quando riapre" (meta.motivo)
+  'codice_accettato',         // prezzi (3/11): «Hai un codice da un amico?» con un codice buono (meta.codice)
+  'codice_rifiutato',         // codice non valido, scaduto, senza data di fine o esaurito (meta.motivo)
+  'piano_cambiato',           // pacchetti (3/11): cambio di pacchetto con conguaglio (meta.da, meta.a, meta.tipo)
+  'pausa_iniziata',           // pausa dell'abbonamento (meta.tipo standard | infortunio, meta.fino)
+  'pausa_finita',             // ripresa (meta.anticipata)
+  'pausa_richiesta',          // pausa per infortunio chiesta (Ste la approva su Telegram)
+  'invito_premiato',          // 10 € di credito a chi invita (meta.invito)
+  'riprogrammazione',         // il Campo (3/11): una riprogrammazione chiesta dall'atleta, contata per livello
+  'preparatore_messaggio',    // il Campo (3/11): un messaggio al preparatore, contato per livello (Medio 10 al mese)
   'push_enabled',
   'training_aspetto_tenuto', // strato mese (7/10): "sì, tienilo" a un aspetto sempre saltato (meta.focus)
   'training_aspetto_tolto',  // "no, toglilo": l'obiettivo esce dal setup (meta.focus)

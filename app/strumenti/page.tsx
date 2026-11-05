@@ -16,7 +16,7 @@ import { readCache, writeCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
 import PalestraSwitch, { salvaParte } from '@/components/PalestraSwitch';
 import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
-import { hasActiveAccess } from '@/lib/checkAccess';
+import { livelloFisico, hasActiveAccess } from '@/lib/checkAccess';
 import PracticePopup from '@/components/PracticePopup';
 import { ChevronRight, ChevronDown, Play, Wind, IdCard, Lock, Clock, Target, Wrench, MessageCircle } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
@@ -151,7 +151,8 @@ export default function StrumentiPage() {
   const [lockedOpen, setLockedOpen] = useState(false);
   const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
   const [trainingAccess, setTrainingAccess] = useState(false);
-  const [mentaleAttivo, setMentaleAttivo] = useState(true); // settimana gratis o Season 1: altrimenti la card "Sblocca Season 1"
+  const [mentaleAttivo, setMentaleAttivo] = useState(true); // Mente, Completo, beta o Season 1: altrimenti la card "Sblocca il Mente"
+  const [conFisico, setConFisico] = useState(false); // ha il Fisico da pacchetto: la card propone il Completo
   const [resocontoPendente, setResocontoPendente] = useState(false); // pallino su "Fisico" nel selettore
 
   // Il pallino sul selettore segue il resoconto da dare scritto da home e hub (lib/resocontoPendente)
@@ -177,15 +178,17 @@ export default function StrumentiPage() {
       const [{ data: profile }, res] = await Promise.all([
         supabase
           .from('profiles')
-          .select('current_week, training_access, is_beta_free, season1_access, subscription_status')
+          .select('*')
           .eq('user_id', session.user.id)
           .single(),
         cached ? Promise.resolve(null) : authFetch('/api/difficolta').catch(() => null),
       ]);
       const week = profile?.current_week || 1;
       setCurrentWeek(week);
-      setTrainingAccess((profile as { training_access?: boolean } | null)?.training_access === true);
+      // Il Campo: acceso a mano o con un pacchetto con il Fisico (3/11); il Mente: con il Mente o il Completo
+      setTrainingAccess(!!livelloFisico(profile));
       setMentaleAttivo(hasActiveAccess(profile));
+      setConFisico(!!livelloFisico(profile) && !(profile as { training_access?: boolean } | null)?.training_access);
       salvaParte('testa');
       setLastId(readLast());
       try {
@@ -545,11 +548,11 @@ export default function StrumentiPage() {
             />
           </Card>
           {!mentaleAttivo && (
-            <Card variant="accent" padding="sm" href="/pricing" aria-label="Il percorso completo: vedi l'abbonamento">
+            <Card variant="accent" padding="sm" href={conFisico ? '/pricing?pacchetto=completo' : '/pricing?pacchetto=mentale'} aria-label="Il percorso completo: vedi i pacchetti">
               <Row
                 lead={<IconCircle tone="accent"><Lock size={18} /></IconCircle>}
-                title="Season 1: il percorso completo"
-                sub="12 settimane, il Coach sempre con te, le difficoltà che crescono con te"
+                title={conFisico ? 'Aggiungi la testa: il Completo' : 'Il Mente: il percorso completo'}
+                sub={conFisico ? 'Il percorso di 12 settimane e il Coach, insieme al tuo Fisico' : '12 settimane, il Coach sempre con te, le difficoltà che crescono con te'}
                 badge={<Badge tone="accent">Sblocca</Badge>}
               />
             </Card>

@@ -27,7 +27,7 @@ import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Shee
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[] }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[]; avviso_partita?: string }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -75,6 +75,14 @@ export interface TrainingState {
   zoneTese?: { zona: string; volte: number; fastidio: number }[]; // dal rolling (28/9)
   // Rigenerazioni ancora disponibili questa settimana (tetto PIANI_MAX_SETTIMANA); null = tetto spento
   rigenerazioniRimaste?: number | null;
+  // Il pacchetto (3/11): livello, pausa, riprogrammazioni e messaggi al preparatore rimasti
+  abbonamento?: {
+    livello: 'base' | 'medio' | 'pro'; nome: string; manuale: boolean; aree: number | null; sedute: number | null;
+    riallineamento: boolean; feedback: boolean; inProva: boolean; inPausa: boolean; pausaFino: string | null;
+    riprogrammazioni: { rimaste: number; max: number; per: 'mese' | 'settimana' | 'prova' } | null;
+    preparatore: { rimasti: number | null; max: number | null };
+    blocco: { inizio: string; settimana: number; di: number } | null;
+  };
   // Squilibri calcolati dai dati (dx/sx, push/pull, piede debole): righe già in linguaggio da atleta
   squilibri?: { righe: string[]; latoDebole: 'dx' | 'sx' | null; latoDeboleAlto?: 'dx' | 'sx' | null; pushPullDebole: 'push' | 'pull' | null; testPerLatoFatti: number };
   // Strato mese (7/10): settimane fatte per obiettivo, priorità della settimana, aspetti sempre saltati da chiedere
@@ -257,7 +265,7 @@ export default function AllenamentoHub() {
   // Nuova settimana: se il piano è di una settimana passata, l'app prepara da sola quello nuovo
   // (le sedute saltate della settimana scorsa vengono riproposte uguali dal planner)
   useEffect(() => {
-    if (state?.planStale && !generating && !autoGen && !autoGenTried.current) {
+    if (state?.planStale && !state.abbonamento?.inPausa && !generating && !autoGen && !autoGenTried.current) {
       autoGenTried.current = true;
       setAutoGen(true);
       generaPiano();
@@ -330,20 +338,7 @@ export default function AllenamentoHub() {
     } finally { setPainSending(false); }
   };
 
-  const cardPreparatoreLight = (
-    <Card href="/allenamento/chat" padding="sm" aria-label="Parla col preparatore">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0">
-          <MessageCircle size={18} className="text-forest-400" aria-hidden />
-        </div>
-        <div className="flex-1">
-          <p className="text-body font-semibold text-app">Parla col preparatore</p>
-          <p className="text-body-sm text-muted">Domande su esercizi, esecuzione, programma</p>
-        </div>
-        <ChevronRight size={18} className="text-muted" aria-hidden />
-      </div>
-    </Card>
-  );
+  const cardPreparatoreLight = cardPreparatoreDi(null);
 
   if (noAccess) return <FisicoBloccato />;
   if (!state) {
@@ -525,20 +520,7 @@ export default function AllenamentoHub() {
     </Card>
   );
 
-  const cardPreparatore = (
-    <Card href="/allenamento/chat" padding="sm" aria-label="Parla col preparatore">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0">
-          <MessageCircle size={18} className="text-forest-400" aria-hidden />
-        </div>
-        <div className="flex-1">
-          <p className="text-body font-semibold text-app">Parla col preparatore</p>
-          <p className="text-body-sm text-muted">Domande su esercizi, esecuzione, programma</p>
-        </div>
-        <ChevronRight size={18} className="text-muted" aria-hidden />
-      </div>
-    </Card>
-  );
+  const cardPreparatore = cardPreparatoreDi(state.abbonamento ?? null);
 
   // "La tua settimana non c'è ancora": senza piano (o se il piano automatico del lunedì non è riuscito)
   const cardSenzaPiano = state.planStale && generating ? (
@@ -577,8 +559,9 @@ export default function AllenamentoHub() {
           </p>
           <h2 className="font-display text-title-1 font-bold leading-tight mb-1.5">{diOggi.titolo}</h2>
           <p className="text-body text-forest-50/90">~{durataLabel(diOggi.durata_min)}{diOggi.apertura_min ? ` (+${diOggi.apertura_min}' di apertura, se hai tempo)` : ''} · {descrizioneSeduta(diOggi)}</p>
-          {(diOggi.recupero || leggera || diOggi.posticipata_da || proposteOggi.length > 0) && (
+          {(diOggi.recupero || leggera || diOggi.posticipata_da || proposteOggi.length > 0 || diOggi.avviso_partita) && (
             <div className="flex flex-wrap gap-1.5 mt-2">
+              {diOggi.avviso_partita && <Badge tone="warn" className="!bg-white/15 !text-white">Vicina alla partita</Badge>}
               {diOggi.recupero && <Badge tone="info" className="!bg-white/15 !text-white">Recupero</Badge>}
               {leggera && <Badge tone="info" className="!bg-white/15 !text-white">Più leggera</Badge>}
               {proposteOggi.some((p) => p.tipo === 'togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
@@ -700,7 +683,8 @@ export default function AllenamentoHub() {
                 const done = stato === 'fatta';
                 const saltata = stato === 'saltata';
                 const post = puoPosticipare(s, sedute, oggiDow, done);
-                const badge = stato === 'recuperabile' ? <Badge tone="warn">Recupera oggi</Badge>
+                const badge = s.avviso_partita && !done && !saltata ? <Badge tone="warn">Vicina alla partita</Badge>
+                  : stato === 'recuperabile' ? <Badge tone="warn">Recupera oggi</Badge>
                   : stato === 'oggi' ? <Badge tone="accent">Oggi</Badge>
                   : saltata ? <Badge tone="neutral">Saltata</Badge>
                   : s.recupero ? <Badge tone="info">Recupero</Badge>
@@ -740,11 +724,24 @@ export default function AllenamentoHub() {
                 {statoDi(prossima) === 'recuperabile' ? 'Recupera' : 'Inizia'}: {prossima.titolo}
               </Button>
             )}
-            {state.rigenerazioniRimaste === 0
-              ? <p className="text-body-sm text-muted text-center mt-3">Hai usato tutte le modifiche di questa settimana.</p>
-              : <Button variant="secondary" fullWidth icon={<RefreshCw size={16} />} onClick={apriMaschera} className="mt-3">
-                  Rifai la settimana{typeof state.rigenerazioniRimaste === 'number' && state.rigenerazioniRimaste <= 2 ? ` (${state.rigenerazioniRimaste})` : ''}
-                </Button>}
+            {(() => {
+              const r = state.abbonamento?.riprogrammazioni ?? null;
+              const base = state.abbonamento?.livello === 'base' && !state.abbonamento?.manuale;
+              const finite = state.rigenerazioniRimaste === 0 || (r != null && r.rimaste <= 0);
+              if (state.abbonamento?.inPausa) return null;
+              if (finite) {
+                return <p className="text-body-sm text-muted text-center mt-3">{r && r.rimaste <= 0
+                  ? `Riprogrammazioni finite ${r.per === 'mese' ? 'questo mese: ripartono il primo del mese' : r.per === 'settimana' ? 'questa settimana: ripartono lunedì' : 'durante la prova'}.`
+                  : 'Hai usato tutte le modifiche di questa settimana.'}</p>;
+              }
+              const quante = r ? ` (${r.rimaste} ${r.per === 'mese' ? 'questo mese' : r.per === 'settimana' ? 'questa settimana' : 'in prova'})`
+                : typeof state.rigenerazioniRimaste === 'number' && state.rigenerazioniRimaste <= 2 ? ` (${state.rigenerazioniRimaste})` : '';
+              return (
+                <Button variant="secondary" fullWidth icon={<RefreshCw size={16} />} onClick={apriMaschera} className="mt-3">
+                  {base ? 'Blocco nuovo' : 'Rifai la settimana'}{quante}
+                </Button>
+              );
+            })()}
             {genError && <p className="text-body-sm text-warning mt-2">{genError}</p>}
             <p className="text-body-sm text-muted mt-3">Piano proposto dall&apos;AI e controllato dalle regole del preparatore. Se qualcosa fa male, fermati.</p>
           </Card>
@@ -1013,8 +1010,19 @@ export default function AllenamentoHub() {
           </div>
         </div>
         <p className="text-body-sm text-muted mb-4">
-          Livello {state.fascia}{livelliDiversi.length > 0 && <> ({livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')})</>}{!batteriaVuota && <> · Settimana {((Math.max(1, state.ciclo.settimana) - 1) % 4) + 1} di 4 del ciclo</>}
+          {state.abbonamento && !state.abbonamento.manuale && <>Fisico {state.abbonamento.nome}{state.abbonamento.inProva ? ' (in prova)' : ''} · </>}
+          Livello {state.fascia}{livelliDiversi.length > 0 && <> ({livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')})</>}{state.abbonamento?.blocco
+            ? <> · Blocco: settimana {state.abbonamento.blocco.settimana} di {state.abbonamento.blocco.di}</>
+            : !batteriaVuota && <> · Settimana {((Math.max(1, state.ciclo.settimana) - 1) % 4) + 1} di 4 del ciclo</>}
         </p>
+
+        {/* In pausa (3/11): sola lettura, niente sedute né piani nuovi */}
+        {state.abbonamento?.inPausa && (
+          <Card variant="accent" padding="sm" className="mb-4" href="/pausa">
+            <p className="text-body font-semibold text-app">Sei in pausa{state.abbonamento.pausaFino ? ` fino al ${new Date(state.abbonamento.pausaFino).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', timeZone: 'Europe/Rome' })}` : ''}</p>
+            <p className="text-body-sm text-muted mt-0.5">Storico, test e Card restano qui da guardare. Sedute e piani nuovi ripartono quando riprendi.</p>
+          </Card>
+        )}
 
         {/* Avvisi in cima SOLO quando attivi: dolore, scarico, ri-test */}
         {state.painHold && (
@@ -1219,8 +1227,40 @@ export default function AllenamentoHub() {
           generating={generating}
           onSubmit={generaPiano}
           onClose={() => setShowRigenera(false)}
+          areeMax={state.abbonamento && !state.abbonamento.manuale ? state.abbonamento.aree : null}
+          soloNuova={state.abbonamento?.livello === 'base' && !state.abbonamento.manuale}
         />
       )}
     </main>
   );
+}
+
+/** Il preparatore per livello (3/11): al Base non c'è (una riga che dice dove sta), al Medio con i messaggi rimasti. */
+function cardPreparatoreDi(a: { preparatore: { rimasti: number | null; max: number | null }; inPausa: boolean } | null) {
+  const max = a?.preparatore.max;
+  if (max === 0) {
+    return (
+      <Card padding="sm" className="text-body-sm text-muted">
+        Il preparatore AI c&apos;è dal Fisico Medio. Per un dolore usa il triangolo in alto: vale per tutti.
+      </Card>
+    );
+  }
+  const rimasti = a?.preparatore.rimasti;
+  const sotto = a?.inPausa
+    ? 'In pausa: riprende quando riprendi'
+    : rimasti != null ? (rimasti > 0 ? `Ti restano ${rimasti} messaggi questo mese` : 'Messaggi finiti questo mese: ripartono il primo') : 'Domande su esercizi, esecuzione, programma';
+  const chiuso = !!a?.inPausa || rimasti === 0;
+  const dentro = (
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0">
+        <MessageCircle size={18} className="text-forest-400" aria-hidden />
+      </div>
+      <div className="flex-1">
+        <p className="text-body font-semibold text-app">Parla col preparatore</p>
+        <p className="text-body-sm text-muted">{sotto}</p>
+      </div>
+      {!chiuso && <ChevronRight size={18} className="text-muted" aria-hidden />}
+    </div>
+  );
+  return chiuso ? <Card padding="sm">{dentro}</Card> : <Card href="/allenamento/chat" padding="sm" aria-label="Parla col preparatore">{dentro}</Card>;
 }

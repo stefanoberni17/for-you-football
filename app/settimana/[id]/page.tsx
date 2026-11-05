@@ -107,6 +107,7 @@ export default function SettimanaPage() {
         authFetch(`/api/calendar?userId=${session.user.id}&week=${weekNumber}`).catch(() => null),
       ]);
 
+      if (data?.error === 'payment_required') { router.replace('/pricing'); return; }
       if (!data || data.error || !data.settimana) {
         console.error('Errore settimana:', data?.error || 'risposta vuota');
         router.push('/settimane');

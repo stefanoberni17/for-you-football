@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { puoScrivereCampo } from '@/lib/trainingAccess';
 import { adattaAlCalendario, loadContextV2 } from '@/lib/trainingPlannerV2';
 import { mondayOfThisWeekRome, todayRome } from '@/lib/trainingPlanner';
 import type { WeekPlan } from '@/lib/trainingEngine';
@@ -22,7 +22,13 @@ export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+    const scrivi = await puoScrivereCampo(userId);
+    if (!scrivi.ok) return NextResponse.json({ error: scrivi.motivo }, { status: scrivi.motivo === 'in_pausa' ? 409 : 403 });
+    // Il riallineamento al calendario c'è dal Medio (Ste, 3/11): il Base è un programma fisso; la seduta troppo vicina
+    // alla partita la segna lo state ("salta o fai la versione leggera")
+    if (!scrivi.accesso.regole.riallineamento && !scrivi.accesso.manuale) {
+      return NextResponse.json({ error: 'Con il Fisico Base il programma resta fisso: le sedute troppo vicine alla partita sono segnate, saltale o falle leggere.', reason: 'non_incluso' }, { status: 403 });
+    }
     const body = await request.json().catch(() => ({}));
     const planId = typeof body?.plan_id === 'string' ? body.plan_id : null;
     if (!planId) return NextResponse.json({ error: 'plan_id obbligatorio' }, { status: 400 });

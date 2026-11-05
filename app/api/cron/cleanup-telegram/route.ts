@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { accountDaCancellare, cancellaDefinitivamente } from '@/lib/accountDelete';
 import { ACCOUNT_GRACE_DAYS } from '@/lib/constants';
+import { chiudiPauseFinite, maturaInviti } from '@/lib/abbonamentoServer';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -85,10 +86,23 @@ export async function GET(request: NextRequest) {
   }
   if (accountCancellati) console.log(`✅ Account cancellati definitivamente (grazia di ${ACCOUNT_GRACE_DAYS} giorni scaduta): ${accountCancellati}`);
 
+  // Abbonamenti (3/11): le pause arrivate in fondo e i premi degli inviti maturati (14 giorni dal primo pagamento
+  // dell'amico). Fail-soft: senza la migration 039 o senza Stripe non fa niente.
+  let pauseChiuse = 0;
+  let inviti = { premiati: 0, scartati: 0 };
+  try {
+    pauseChiuse = await chiudiPauseFinite();
+    if (process.env.STRIPE_SECRET_KEY) inviti = await maturaInviti();
+  } catch (err) {
+    console.error('❌ Pause e inviti:', (err as Error)?.message);
+  }
+
   return NextResponse.json({
     success: true,
     deleted: count,
     accountCancellati,
+    pauseChiuse,
+    inviti,
     cutoffDate,
     calendarReset,
     rateLimitDeleted: rateLimitError ? null : rateLimitDeleted,

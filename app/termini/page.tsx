@@ -1,12 +1,12 @@
 import { FileText } from 'lucide-react';
 import { BackButton, Card } from '@/components/ui';
 import { ACCOUNT_GRACE_DAYS, MIN_AGE, SEASON_INSTALLMENTS } from '@/lib/constants';
-import { MENTALE_PREZZO_FONDATORI, MENTALE_PREZZO_LISTINO, PROVA_GIORNI_DEFAULT } from '@/lib/abbonamento';
+import { PROVA_GIORNI_DEFAULT } from '@/lib/abbonamento';
 
 export const metadata = { title: 'Termini di servizio — For You Football' };
 
 /**
- * Termini di servizio definitivi (9/10/2026; prezzi e pagamenti riscritti il 1/11/2026 per il Mentale ad abbonamento;
+ * Termini di servizio definitivi (9/10/2026; prezzi e pagamenti riscritti il 1/11/2026 per il Mentale ad abbonamento; il 3/11 sera i pacchetti, la pausa, il cambio e gli inviti;
  * versione TERMS_VERSION in lib/constants.ts).
  * Linguaggio piano, Codice del consumo e GDPR come riferimento. Quando il testo cambia in modo
  * sostanziale: aggiornare TERMS_VERSION → ri-accettazione (ConsentReacceptSheet).
@@ -114,15 +114,36 @@ export default function TerminiPage() {
 
           <Sez n="6" title="Prezzi e pagamenti">
             <Punto title="Cosa si paga">
-              Il percorso mentale (Season 1, Play Free) è un abbonamento mensile al «Mentale». I prezzi in vigore sono scritti in chiaro nella pagina Prezzi e
-              nel checkout prima di pagare, IVA inclusa: oggi {MENTALE_PREZZO_LISTINO} € al mese. Chi entra nel mese di lancio paga {MENTALE_PREZZO_FONDATORI} € al
-              mese, bloccati finché resta iscritto: se disdice e torna più avanti, paga il prezzo di quel momento.
+              Si paga un abbonamento mensile a un pacchetto: il «Mente» (il percorso mentale, Season 1 Play Free, con il Coach), il «Fisico» a tre livelli
+              (Base, Medio, Pro: il piano di allenamento fisico e tecnico, con quello che ogni livello include scritto nella pagina Prezzi) oppure il
+              «Completo» (Mente e Fisico Pro). Il prezzo che paghi è scritto in chiaro nella pagina Prezzi e nel checkout prima di pagare, IVA inclusa. Per
+              ogni pacchetto i prezzi sono tre: il prezzo di listino; il prezzo con codice, per chi entra con un codice valido (i codici delle campagne li
+              diamo noi e hanno sempre una data di fine; il codice personale di un abbonato vale finché lui resta abbonato); il prezzo di lancio, per chi entra
+              nel mese di lancio e non era già stato abbonato. Vale sempre un prezzo solo, il più basso a cui hai diritto: non si sommano. Il prezzo con codice
+              e quello di lancio restano bloccati finché resti iscritto, anche cambiando pacchetto (vale il prezzo dello stesso tipo del pacchetto nuovo) e
+              in pausa: se disdici e torni più avanti, paghi il prezzo di quel momento.
+            </Punto>
+            <Punto title="Cambiare pacchetto">
+              Puoi cambiare pacchetto dalla pagina Prezzi. Salendo paghi subito la differenza per i giorni che restano del mese; scendendo, quello che hai già
+              pagato in più diventa credito sulle fatture successive. Se lasci il Completo per il solo Mente o il solo Fisico, per 6 mesi puoi tornare al
+              Completo al prezzo che avevi. Cambiare pacchetto durante la prova chiude la prova: l’abbonamento parte quel giorno.
+            </Punto>
+            <Punto title="La pausa">
+              Al posto della disdetta puoi mettere l’abbonamento in pausa per 2 mesi, una volta ogni 12 mesi: niente addebiti, il tuo prezzo resta, l’app
+              resta in sola lettura (Carta, risposte, storico) e il Coach e i piani nuovi ripartono quando riprendi. In caso di infortunio puoi chiedere una
+              pausa fino a 6 mesi scrivendo una riga nel Profilo, senza certificati né dati medici: la approviamo noi. La pausa non c’è durante la prova.
+            </Punto>
+            <Punto title="Inviti">
+              Chi paga un abbonamento ha un codice personale da dare agli amici: l’amico entra con il prezzo con codice. Per ogni amico che paga, 14 giorni dopo
+              il suo primo pagamento e se non è stato rimborsato, chi ha invitato riceve 10 € di credito sulle fatture successive: non è denaro, non si
+              converte in contanti, non porta il saldo sotto zero e il residuo resta per le fatture dopo. Al massimo 10 amici premiati ogni 12 mesi; niente
+              credito se l’amico paga con la stessa carta di chi invita.
             </Punto>
             <Punto title="La prova">
-              L’abbonamento parte con {PROVA_GIORNI_DEFAULT} giorni di prova: inserisci la carta, per quei giorni non paghi niente e usi la prima settimana del
-              percorso, il check-in e un numero limitato di messaggi al Coach in app. Prima della fine della prova ti scriviamo con la data del primo addebito.
-              Se disdici prima della fine, non paghi niente; altrimenti l’abbonamento parte da solo e si aprono il Gate, le settimane successive e il Coach senza
-              limiti. La prova vale una volta per persona.
+              L’abbonamento parte con {PROVA_GIORNI_DEFAULT} giorni di prova: inserisci la carta, per quei giorni non paghi niente. Con il Mente usi la prima
+              settimana del percorso, il check-in e un numero limitato di messaggi al Coach in app; con il Fisico il Campo del tuo livello, con al massimo una
+              riprogrammazione. Prima della fine della prova ti scriviamo con la data del primo addebito. Se disdici prima della fine, non paghi niente;
+              altrimenti l’abbonamento parte da solo. La prova vale una volta per persona, su qualunque pacchetto.
             </Punto>
             <Punto title="Rinnovo e disdetta">
               L’abbonamento si rinnova da solo ogni mese finché non lo disdici. Si disdice in qualsiasi momento dal portale «Gestisci abbonamento» nel Profilo:
@@ -138,12 +159,12 @@ export default function TerminiPage() {
             </Punto>
             <Punto title="Pagamento e ricevute">
               I pagamenti passano da Stripe. Noi non vediamo né conserviamo il numero della carta. La ricevuta arriva all’email inserita nel checkout.
-              I codici promozionali, quando ci sono, si applicano nel checkout e valgono per il periodo indicato (il primo mese, o al massimo tre mesi): finito
-              lo sconto, il prezzo torna quello del tuo abbonamento.
+              Il codice si scrive nella pagina Prezzi, prima del checkout, e vale solo fino alla sua data di fine: chi entra con il codice in tempo tiene il
+              prezzo con codice finché resta iscritto.
             </Punto>
             <Punto title="Prezzi che cambiano">
               Se cambiamo un prezzo, vale per i nuovi abbonamenti. Per un abbonamento in corso te lo comunichiamo almeno 30 giorni prima: puoi disdire prima che
-              il nuovo prezzo si applichi. Il prezzo bloccato di chi è entrato nel mese di lancio non cambia finché resta iscritto.
+              il nuovo prezzo si applichi. Il prezzo bloccato (di lancio o con codice) non cambia finché resti iscritto.
             </Punto>
           </Sez>
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { puoScrivereCampo } from '@/lib/trainingAccess';
 import { scoreTest } from '@/lib/trainingEngine';
 import { esercizioById, testById } from '@/lib/trainingCatalog';
 import { livelloV2, punteggioV2, scoreLift, testV2ById } from '@/lib/trainingTestsV2';
@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+    const scrivi = await puoScrivereCampo(userId);
+    if (!scrivi.ok) return NextResponse.json({ error: scrivi.motivo }, { status: scrivi.motivo === 'in_pausa' ? 409 : 403 });
 
     const body = await request.json();
 

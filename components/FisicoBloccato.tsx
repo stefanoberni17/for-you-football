@@ -1,8 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check, Dumbbell, Goal, Trophy } from 'lucide-react';
+import Link from 'next/link';
+import { Check, ChevronRight, Dumbbell, Goal, Trophy } from 'lucide-react';
 import { authFetch } from '@/lib/authFetch';
+import { euroTesto } from '@/lib/abbonamento';
+import { isPaywallActive } from '@/lib/checkAccess';
+import { TESTI_PACCHETTI } from '@/lib/pacchettiTesti';
 import { DAY_SHORT_NAMES } from '@/lib/constants';
 import { Button, Card } from '@/components/ui';
 import PalestraSwitch from '@/components/PalestraSwitch';
@@ -12,18 +16,39 @@ const INTERESSE_KEY = 'campo.interesse';
 /**
  * Il Fisico per chi non ha il Campo (20/10, Ste: "farla bloccata per chi non ce l'ha potrebbe invogliare"):
  * cos'è in una riga, cosa ti dà in tre, una settimana finta per far vedere com'è dentro, e "Mi interessa".
- * Il Campo non è in vendita: il bottone registra l'evento `campo_interesse` (Ste lo legge da Supabase e decide
- * i pacchetti con un numero in mano). Quando si venderà, lo stesso bottone diventa "Sblocca".
+ * Dal 3/11 il Fisico si vende a tre livelli (Base, Medio, Pro) e nel Completo: con le iscrizioni del Campo aperte la
+ * pagina mostra i tre livelli con il prezzo che gli vale e porta a /pricing; chiuse, "Mi interessa" mette in lista
+ * d'attesa (i fondatori del Mente in testa) e registra l'evento `campo_interesse`.
  */
+type LivelloOfferta = { id: 'fisico_base' | 'fisico_medio' | 'fisico_pro' | 'completo'; disponibile: boolean; puoAbbonarsi: boolean; prezzo: { euro: number | null }; cambio?: { ok: boolean; euro?: number | null } | null };
 export default function FisicoBloccato() {
   const [fatto, setFatto] = useState(false);
   const [sending, setSending] = useState(false);
+  const [livelli, setLivelli] = useState<LivelloOfferta[] | null>(null);
+  const [giaMente, setGiaMente] = useState(false);
   useEffect(() => { try { setFatto(localStorage.getItem(INTERESSE_KEY) === '1'); } catch { /* private mode */ } }, []);
+  useEffect(() => {
+    if (!isPaywallActive()) return;
+    authFetch('/api/stripe/offerta').then((r) => (r.ok ? r.json() : null)).then((o) => {
+      if (!o?.pacchetti) return;
+      // Ha già il Mente: il Fisico si aggiunge passando al Completo (il Completo esiste solo con il Pro)
+      const giaMente = o.attuale === 'mentale';
+      setGiaMente(giaMente);
+      setLivelli((o.pacchetti as LivelloOfferta[])
+        .filter((p) => giaMente ? p.id === 'completo' : (p.id === 'fisico_base' || p.id === 'fisico_medio' || p.id === 'fisico_pro' || p.id === 'completo'))
+        .map((p) => giaMente && p.cambio?.ok ? { ...p, puoAbbonarsi: true, prezzo: { euro: p.cambio.euro ?? p.prezzo.euro } } : p));
+    }).catch(() => {});
+  }, []);
+  const inVendita = !!livelli?.some((p) => p.disponibile && p.puoAbbonarsi);
 
   const miInteressa = async () => {
     setSending(true);
     try {
-      await authFetch('/api/onboarding/event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'campo_interesse' }) }).catch(() => null);
+      await Promise.all([
+        authFetch('/api/onboarding/event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'campo_interesse' }) }).catch(() => null),
+        // la lista d'attesa del Campo: Ste invita a gruppi (Telegram /invita_campo)
+        authFetch('/api/stripe/offerta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lista_attesa: true, pacchetto: 'fisico_pro' }) }).catch(() => null),
+      ]);
       try { localStorage.setItem(INTERESSE_KEY, '1'); } catch { /* private mode */ }
       setFatto(true);
     } finally { setSending(false); }
@@ -79,10 +104,25 @@ export default function FisicoBloccato() {
           ))}
         </ul>
 
-        {fatto ? (
+        {inVendita ? (
+          <section className="space-y-2" aria-label="I livelli del Fisico">
+            {livelli!.map((p) => (
+              <Link key={p.id} href={`/pricing?pacchetto=${p.id}`} className="flex items-center gap-3 min-h-[60px] px-4 py-3 rounded-card bg-surface border border-white/6">
+                <span className="flex-1 min-w-0">
+                  <span className="block text-body font-semibold text-app">{TESTI_PACCHETTI[p.id].titolo}</span>
+                  <span className="block text-body-sm text-muted">{TESTI_PACCHETTI[p.id].sottotitolo}</span>
+                </span>
+                {p.prezzo.euro != null && <span className="text-body font-semibold text-app tabular-nums shrink-0">{euroTesto(p.prezzo.euro)} €</span>}
+                <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />
+              </Link>
+            ))}
+            <Button size="lg" fullWidth href={giaMente ? '/pricing?pacchetto=completo' : '/pricing?da=fisico'}>{giaMente ? 'Aggiungi il Fisico: passa al Completo' : 'Scegli il tuo Fisico'}</Button>
+            <p className="text-body-sm text-muted text-center">{giaMente ? 'Oggi paghi solo la differenza per i giorni che restano del mese.' : '7 giorni di prova con la carta. Disdici quando vuoi.'}</p>
+          </section>
+        ) : fatto ? (
           <Card variant="accent" padding="sm">
             <p className="text-body text-forest-300 flex items-center gap-2"><Check size={18} aria-hidden /> Ti avviso quando apre.</p>
-            <p className="text-body-sm text-muted mt-1">Il Campo si apre a gruppi: chi ha detto che gli interessa entra per primo.</p>
+            <p className="text-body-sm text-muted mt-1">Il Campo si apre a gruppi: chi è in lista entra per primo.</p>
           </Card>
         ) : (
           <>

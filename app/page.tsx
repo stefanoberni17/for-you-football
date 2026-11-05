@@ -18,7 +18,7 @@ import type { CampoOggi } from '@/lib/trainingOggi';
 import { primoDaChiedere, scriviPendenti } from '@/lib/resocontoPendente';
 import { durataLabel } from '@/lib/trainingLabels';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
-import { shouldRedirectToPaywall, hasActiveAccess } from '@/lib/checkAccess';
+import { shouldRedirectToPaywall, hasActiveAccess, canAccessWeek, inPausa, isPaywallActive, livelloFisico } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import PushPermission from '@/components/PushPermission';
@@ -550,6 +550,30 @@ export default function HomePage() {
               <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
                 Rivedi il traguardo
               </Button>
+            </div>
+          </Card>
+        ) : profile && inPausa(profile) ? (
+          // In pausa (3/11): il percorso aspetta, la Carta e le risposte restano aperte
+          <Card padding="sm" href="/pausa" aria-label="Sei in pausa">
+            <div className="flex items-center gap-3 min-h-[44px]">
+              <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-body font-semibold text-app">Sei in pausa</span>
+                <span className="block text-body-sm text-muted">Il percorso riparte quando riprendi. Carta e risposte restano aperte.</span>
+              </span>
+              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+            </div>
+          </Card>
+        ) : profile && isPaywallActive() && livelloFisico(profile) && !canAccessWeek(profile, nextDay.week) ? (
+          // Solo il Fisico (3/11): la testa è nel Mente o nel Completo; una riga, non l'hero (l'hero è l'allenamento)
+          <Card padding="sm" href="/pricing?pacchetto=completo" aria-label="Aggiungi la testa: il Completo">
+            <div className="flex items-center gap-3 min-h-[44px]">
+              <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-body font-semibold text-app">La testa · il percorso mentale</span>
+                <span className="block text-body-sm text-muted">12 settimane con il Coach: c&apos;è nel Mente e nel Completo.</span>
+              </span>
+              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
             </div>
           </Card>
         ) : praticaFatta ? (

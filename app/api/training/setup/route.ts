@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { hasTrainingAccess } from '@/lib/trainingAccess';
+import { hasTrainingAccess, puoScrivereCampo } from '@/lib/trainingAccess';
 import { ATTREZZATURA_OPZIONI, FASI, SETUP_SELECT as SELECT, mapSetup, preferenzeValide } from '@/lib/trainingSetup';
 import { parsePartitaAbituale, parseSquadra, squadraConPartita } from '@/lib/trainingSquadra';
 import { FOCUS_SETUP_MAX, focusValidi } from '@/lib/trainingRequest';
 import { limitazioniVuote, parseLimitazioni } from '@/lib/trainingDolore';
 import { loadLimitazioni } from '@/lib/trainingDoloreServer';
+import { obiettiviPerLivello, sedutePerLivello } from '@/lib/listino';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -37,7 +38,8 @@ export async function POST(request: NextRequest) {
   try {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    if (!(await hasTrainingAccess(userId))) return NextResponse.json({ error: 'no_access' }, { status: 403 });
+    const scrivi = await puoScrivereCampo(userId);
+    if (!scrivi.ok) return NextResponse.json({ error: scrivi.motivo }, { status: scrivi.motivo === 'in_pausa' ? 409 : 403 });
 
     const body = await request.json().catch(() => ({}));
     const update: Record<string, unknown> = {};
@@ -64,10 +66,14 @@ export async function POST(request: NextRequest) {
     }
     const squadra = body.squadra !== undefined && body.squadra !== null && typeof body.squadra === 'object' ? parseSquadra(body.squadra) : null;
     const partita = squadra !== null ? parsePartitaAbituale(body.squadra) : null; // giorno abituale della partita (28/9), stessa colonna
-    const focus = Array.isArray(body.focus) ? focusValidi(body.focus, FOCUS_SETUP_MAX) : null;
+    // Le aree del pacchetto (3/11): Base 1, Medio 2 ("Tutto" solo dal Pro); le giornate: Base 2, Medio 3
+    const liv = scrivi.accesso.manuale ? null : scrivi.accesso.livello;
+    const focusGrezzi = Array.isArray(body.focus) ? focusValidi(body.focus, FOCUS_SETUP_MAX) : null;
+    const focus = focusGrezzi && liv ? obiettiviPerLivello(liv, focusGrezzi) as typeof focusGrezzi : focusGrezzi;
     // Preferenze (migration 025): giorni con l'app, giornate a settimana, tempo per seduta — update separato fail-soft
     const haPref = body.giorni !== undefined || body.sedute !== undefined || body.durataMin !== undefined;
-    const pref = haPref ? preferenzeValide({ training_giorni: body.giorni, training_sedute: body.sedute, training_durata_min: body.durataMin }) : null;
+    const prefGrezze = haPref ? preferenzeValide({ training_giorni: body.giorni, training_sedute: body.sedute, training_durata_min: body.durataMin }) : null;
+    const pref = prefGrezze && liv && prefGrezze.sedute ? { ...prefGrezze, sedute: sedutePerLivello(liv, prefGrezze.sedute) } : prefGrezze;
     // Infortuni e limitazioni (migration 036): zone valide + nota 300 caratteri; tutto vuoto = colonna a null
     const limitazioni = body.limitazioni !== undefined && body.limitazioni !== null && typeof body.limitazioni === 'object' ? parseLimitazioni(body.limitazioni) : null;
     if (Object.keys(update).length === 0 && squadra === null && focus === null && pref === null && limitazioni === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });

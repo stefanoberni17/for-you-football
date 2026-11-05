@@ -27,6 +27,9 @@ const args = process.argv.slice(2);
 const flag = (name: string) => args.includes(`--${name}`);
 const opt = (name: string) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : undefined; };
 const live = flag('live');
+// --livello base|medio|pro (3/11): il Fisico del pacchetto (aree, giornate, libreria); senza = come il Pro
+const livelloArg = opt('livello');
+const livello = livelloArg === 'base' || livelloArg === 'medio' || livelloArg === 'pro' ? livelloArg : null;
 if (live && !process.env.ANTHROPIC_API_KEY) { console.error('--live richiede ANTHROPIC_API_KEY (.env.local o ambiente).'); process.exit(1); }
 // I moduli creano i client all'import: segnaposto come in vitest.config.mts (qui non si tocca mai il DB)
 process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'https://placeholder.supabase.co';
@@ -58,7 +61,9 @@ function controlli(e: EsitoPianoV2): Controllo[] {
   const { plan, ctx } = e; const out: Controllo[] = [];
   const sedute = plan.sedute;
   // Il validatore sul piano finale + le violazioni che il server ha salvato con il piano (piano base "con le SUE violazioni")
-  const v = [...new Set([...(sedute.length ? validatePlan(plan, PV2.validateCtxFor(ctx)) : ['piano vuoto']), ...(e.violazioni ?? plan.violazioni ?? [])])];
+  // (in un piano ibrido `e.violazioni` sono i motivi del rifiuto dei tentativi di Claude, non del piano finale: 3/11)
+  const salvate = e.generatoDa === 'fallback' && !e.ibrido ? (e.violazioni ?? plan.violazioni ?? []) : (plan.violazioni ?? []);
+  const v = [...new Set([...(sedute.length ? validatePlan(plan, PV2.validateCtxFor(ctx)) : ['piano vuoto']), ...salvate])];
   out.push({ ok: v.length === 0, testo: v.length ? `validatore: ${v.length} violazion${v.length === 1 ? 'e' : 'i'} (${v.slice(0, 3).join(' · ')})` : 'validatore: nessuna violazione' });
   const richieste = PV2.seduteRichieste(ctx);
   const n = sedute.length;
@@ -94,6 +99,13 @@ function controlli(e: EsitoPianoV2): Controllo[] {
     const mancanti = pretesi.filter((f) => !copre(f));
     out.push({ ok: !mancanti.length || ctx.base.painHold, testo: `obiettivi: ${ctx.obiettivi.map((f) => `${focusLabel(f)}${copre(f) ? ' ✓' : PV2.obiettivoFuoriFinestra(ctx, f) ? ' (fuori finestra partita)' : pretesi.includes(f) ? ' ✗' : ' –'}`).join(', ')} (pretesi: ${pretesi.length})` });
   }
+  // Il pacchetto (3/11): Base 1 area e 2 giornate, Medio 2 aree e 3 giornate; nessun blocco di lavoro fuori dalle aree
+  if (ctx.livello && ctx.livello !== 'pro') {
+    const ammesse = ctx.obiettivi.flatMap((f) => [...FOCUS_QUALITA[f]]);
+    const fuoriArea = sedute.flatMap((s) => blocchiDi(s).filter((bl) => !['fascia-prevenzione', 'mobilita-recupero'].includes(bl.qualita) && bl.id !== 'risc-velocita' && !bloccoCopre(bl, ammesse)).map((bl) => `${DAY_NAMES[s.giorno]} ${bl.id}`));
+    const tetto = ctx.livello === 'base' ? 2 : 3;
+    out.push({ ok: !fuoriArea.length && n <= tetto && ctx.obiettivi.length <= (ctx.livello === 'base' ? 1 : 2), testo: `Fisico ${ctx.livello}: aree ${ctx.obiettivi.map(focusLabel).join(', ')}, giornate ${n} su ${tetto}${fuoriArea.length ? ` — FUORI AREA: ${fuoriArea.join(', ')}` : ''}` });
+  }
   if (ctx.daRecuperare.length && !vinc.recuperiFacoltativi) {
     const fatti = sedute.filter((s) => s.recupero).length;
     out.push({ ok: fatti >= Math.min(ctx.daRecuperare.length, ctx.maxSeduteFisiche), testo: `recuperi: ${fatti} su ${ctx.daRecuperare.length}` });
@@ -108,7 +120,7 @@ const p = (s = '') => righe.push(s);
 const kchar = (s: string) => `${(s.length / 1000).toFixed(1)}k caratteri (~${Math.round(s.length / 3.6 / 100) * 100} token)`;
 
 async function esegui(sc: Scenario): Promise<EsitoPianoV2> {
-  const ctx = contextFinto(sc.atleta);
+  const ctx = contextFinto(sc.atleta, livello);
   const comp = sc.richiesta ? componiRichiesta(sc.richiesta, sc.atleta.pianoCorrente?.sedute ?? null) : null;
   const t0 = Date.now();
   const esito = await PV2.generaPianoV2(ctx, comp?.richiesta, comp?.vincoli ?? {}, { senzaClaude: !live });
@@ -148,7 +160,7 @@ if (!scelti.length) { console.error(`Nessuno scenario tra: ${SCENARI.map((s) => 
 if (opt('prompt')) {
   const sc = SCENARI.find((s) => s.id === opt('prompt'));
   if (!sc) { console.error('scenario sconosciuto'); process.exit(1); }
-  const ctx = contextFinto(sc.atleta);
+  const ctx = contextFinto(sc.atleta, livello);
   const comp = sc.richiesta ? componiRichiesta(sc.richiesta, sc.atleta.pianoCorrente?.sedute ?? null) : null;
   PV2.preparaContextV2(ctx, comp?.richiesta, comp?.vincoli ?? {});
   const pr = PV2.promptsV2(ctx, comp?.richiesta);
@@ -164,12 +176,12 @@ let pianoMarco: WeekPlan | null = null;
 const piani = new Map<string, WeekPlan>(); // il piano di ogni scenario, per le modifiche che lavorano sopra
 for (const sc of scelti) {
   if (sc.id === 'marco-modifica') {
-    if (!pianoMarco) { const e = await PV2.generaPianoV2(contextFinto(MARCO), undefined, {}, { senzaClaude: !live }); pianoMarco = e.plan; }
+    if (!pianoMarco) { const e = await PV2.generaPianoV2(contextFinto(MARCO, livello), undefined, {}, { senzaClaude: !live }); pianoMarco = e.plan; }
     sc.atleta.pianoCorrente = pianoMarco;
   }
   if (sc.modificaDi) {
     let base = piani.get(sc.modificaDi.base);
-    if (!base) { const bs = SCENARI.find((x) => x.id === sc.modificaDi!.base)!; base = (await PV2.generaPianoV2(contextFinto(bs.atleta), undefined, {}, { senzaClaude: !live })).plan; piani.set(bs.id, base); }
+    if (!base) { const bs = SCENARI.find((x) => x.id === sc.modificaDi!.base)!; base = (await PV2.generaPianoV2(contextFinto(bs.atleta, livello), undefined, {}, { senzaClaude: !live })).plan; piani.set(bs.id, base); }
     preparaModifica(sc, base);
   }
   const esito = await esegui(sc);

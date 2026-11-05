@@ -20,7 +20,7 @@ interface PlanItem { esercizio_id: string; serie: number; quantita: number; recu
   per_lato?: boolean;
   test_in_seduta?: { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }; // ri-test in seduta (26/10)
 }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[] }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; avviso_partita?: string }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
@@ -72,7 +72,7 @@ export default function SessionePage() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
     // M12: chi ha anche il Mentale (accesso attivo) vede il Reset prima della seduta
-    supabase.from('profiles').select('is_beta_free, season1_access, subscription_status').eq('user_id', session.user.id).maybeSingle()
+    supabase.from('profiles').select('*').eq('user_id', session.user.id).maybeSingle()
       .then(({ data: prof }) => setConMentale(hasActiveAccess(prof as Parameters<typeof hasActiveAccess>[0])));
     const res = await authFetch('/api/training/state');
     if (res.status === 403) { router.push('/strumenti'); return; }
@@ -317,6 +317,14 @@ export default function SessionePage() {
         {alreadyDone && (
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-body-sm font-semibold text-forest-300 flex items-center gap-2"><Check size={16} aria-hidden /> Già fatta. Puoi rifarla: sul piano resta segnata.</p>
+          </Card>
+        )}
+        {sessione?.avviso_partita && !alreadyDone && (
+          <Card variant="warn" padding="sm" className="mb-4">
+            <p className="text-body-sm text-warning flex gap-2">
+              <Calendar size={16} className="shrink-0 mt-0.5" aria-hidden />
+              <span>{sessione.avviso_partita} Il tuo programma resta quello: scegli tu, saltala oppure fai meno serie e niente scatti né salti.</span>
+            </p>
           </Card>
         )}
         {conflittoCal && !alreadyDone && (

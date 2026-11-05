@@ -16,6 +16,7 @@ import { squadraTesto } from './trainingSquadra';
 import { checkinBlock, percorsoMentaleTesto, PLANNER_MODEL, todayRome } from './trainingPlanner';
 import { doloreTesto, limitazioniTesto } from './trainingDolore';
 import { contestoCondiviso, loadContextV2, type ContextV2, resistenzaRegolaDi } from './trainingPlannerV2';
+import type { LivelloFisico } from './listino';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -77,9 +78,10 @@ Se c'è la sezione SQUILIBRI: sono calcolati dai suoi test e dai suoi log, non d
 
 export async function trainingChat(
   userId: string,
-  messages: { role: 'user' | 'assistant'; content: string }[]
+  messages: { role: 'user' | 'assistant'; content: string }[],
+  livello?: LivelloFisico | null,
 ): Promise<string> {
-  const ctx = await loadContextV2(userId);
+  const ctx = await loadContextV2(userId, livello);
   // Il system prompt (contesto dell'atleta + regole) resta uguale per tutta la conversazione: in cache, dal secondo
   // messaggio si legge a un decimo del prezzo (28/10). Cambia solo se cambiano i suoi dati.
   const system = [{ type: 'text' as const, text: promptPreparatore(ctx), cache_control: { type: 'ephemeral' as const } }];

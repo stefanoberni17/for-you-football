@@ -174,7 +174,7 @@ export default function GatePage() {
             </p>
           ) : (
             <p className="text-white text-body leading-relaxed mb-8">
-              Da qui in avanti è l&apos;abbonamento al Mentale: il Gate, le settimane 2-12 e il Coach sempre con te.
+              Da qui in avanti si continua con il Mente o con il Completo: il Gate, le settimane 2-12 e il Coach sempre con te.
             </p>
           )}
           {!provaFino && (

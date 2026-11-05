@@ -14,7 +14,7 @@ import {
   WEB_FORMAT
 } from '@/lib/coach-ai';
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess } from '@/lib/serverAccess';
+import { requirePaidAccess, pausaFino } from '@/lib/serverAccess';
 import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
 import { FREE_COACH_MESSAGES } from '@/lib/constants';
 
@@ -48,6 +48,14 @@ export async function POST(request: NextRequest) {
     // sugli eventi coach_message_sent web di lib/events.ts). Oltre → 403 con il testo
     // del Coach. Telegram resta di Season 1.
     let freeRemaining: number | null = null;
+    // In pausa (3/11) il Coach non c'è: niente messaggi gratis al posto dell'abbonamento in pausa
+    const fineP = await pausaFino(userId);
+    if (fineP) {
+      return NextResponse.json({
+        error: 'payment_required', reason: 'in_pausa', pausa_fino: fineP,
+        message: 'Sei in pausa: il Coach ti aspetta quando riprendi. Intanto la tua Carta e le tue risposte restano lì.',
+      }, { status: 403 });
+    }
     if (!(await requirePaidAccess(userId))) {
       const { count } = await supabaseAdmin
         .from('onboarding_events')

@@ -19,6 +19,7 @@ export default function TrainingChatPage() {
   const [messages, setMessages] = useState<Msg[]>([WELCOME]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [rimasti, setRimasti] = useState<number | null>(null); // Medio: messaggi al preparatore rimasti nel mese
   const scrollerRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
 
@@ -28,6 +29,11 @@ export default function TrainingChatPage() {
       if (!session) { router.push('/login'); return; }
       const res = await authFetch('/api/training/state');
       if (res.status === 403) { router.push('/strumenti'); return; }
+      // Il preparatore per livello (3/11): al Base non c'è, si torna al Campo (che spiega dov'è)
+      const st = await res.json().catch(() => null);
+      const prep = st?.abbonamento?.preparatore as { rimasti: number | null; max: number | null } | undefined;
+      if (prep?.max === 0 || st?.abbonamento?.inPausa) { router.push('/allenamento'); return; }
+      if (prep && prep.rimasti != null) setRimasti(prep.rimasti);
       try {
         const saved = sessionStorage.getItem('trainingChatMessages');
         if (saved) setMessages(JSON.parse(saved));
@@ -54,10 +60,16 @@ export default function TrainingChatPage() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: next.slice(1) }), // senza welcome
       });
-      if (res.status === 429) {
-        setMessages([...next, { role: 'assistant', content: 'Abbiamo parlato tanto in quest\'ultima ora — riprendiamo tra poco ⚽' }]);
+      if (res.status === 429 || res.status === 403 || res.status === 409) {
+        const d = await res.json().catch(() => ({}));
+        if (d.reason === 'limite_mese') setRimasti(0);
+        const testo = d.reason === 'limite_mese' || d.reason === 'non_incluso' ? d.error
+          : res.status === 409 ? 'Sei in pausa: il preparatore riprende quando riprendi.'
+          : 'Abbiamo parlato tanto in quest\'ultima ora — riprendiamo tra poco ⚽';
+        setMessages([...next, { role: 'assistant', content: testo }]);
       } else if (res.ok) {
         const data = await res.json();
+        if (typeof data.rimasti === 'number') setRimasti(data.rimasti);
         setMessages([...next, { role: 'assistant', content: data.response }]);
       } else {
         setMessages([...next, { role: 'assistant', content: 'Ops, qualcosa è andato storto. Riprova.' }]);
@@ -75,7 +87,7 @@ export default function TrainingChatPage() {
           <BackButton onClick={() => router.push('/allenamento')} label="Campo" />
           <div className="min-w-0">
             <h1 className="font-display text-title-3 font-bold text-app leading-tight">Preparatore AI</h1>
-            <p className="text-caption text-muted">Allenamento tecnico e fisico</p>
+            <p className="text-caption text-muted">{rimasti != null ? (rimasti > 0 ? `Ti restano ${rimasti} messaggi questo mese` : 'Messaggi finiti: ripartono il primo del mese') : 'Allenamento tecnico e fisico'}</p>
           </div>
         </div>
         <p className="text-caption text-muted text-center pb-2 px-5 leading-snug">
@@ -103,7 +115,7 @@ export default function TrainingChatPage() {
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
               placeholder="Chiedi al preparatore…" aria-label="Messaggio al preparatore"
               className="flex-1" />
-            <Button onClick={send} disabled={sending || !input.trim()} aria-label="Invia" className="w-12 px-0 shrink-0">
+            <Button onClick={send} disabled={sending || !input.trim() || rimasti === 0} aria-label="Invia" className="w-12 px-0 shrink-0">
               <Send size={18} />
             </Button>
           </div>

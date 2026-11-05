@@ -107,7 +107,7 @@ export default function CartaPage() {
       const [{ data: profile }, { data: progress }, r360, risposteRes] = await Promise.all([
         supabase
           .from('profiles')
-          .select('name, sport, role, is_beta_free, season1_access, subscription_status')
+          .select('*')
           .eq('user_id', uid)
           .single(),
         supabase
