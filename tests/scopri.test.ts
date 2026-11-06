@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { IMPOSTAZIONI_DEFAULT, type Impostazioni } from '@/lib/abbonamento';
 import { PACCHETTI, type Pacchetto } from '@/lib/listino';
-import { DETTAGLI_FISICO, DETTAGLI_TESTA, domandeFrequenti, MOMENTI_APP, MOMENTI_FISICO, MOMENTI_TESTA, passiIngresso, prezziPubblici } from '@/lib/scopri';
+import { domandeFrequenti, ORIGINE_FISICO, ORIGINE_TESTA, MOMENTI_APP, MOMENTI_FISICO, MOMENTI_TESTA, passiIngresso, prezziPubblici } from '@/lib/scopri';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -46,6 +46,10 @@ describe('pagina di vendita: testi', () => {
     expect(new Set(MOMENTI_APP.map((m) => m.id)).size).toBe(MOMENTI_TESTA.length + MOMENTI_FISICO.length);
   });
 
+  it('ogni momento ha il suo «Scopri di più»', () => {
+    for (const m of [...MOMENTI_TESTA, ...MOMENTI_FISICO]) expect(m.dettaglio.length, m.id).toBeGreaterThan(2);
+  });
+
   it('i giorni di prova vengono dalle impostazioni', () => {
     expect(passiIngresso(7)[1].titolo).toBe('7 giorni gratis');
     expect(passiIngresso(0)[1].titolo).not.toMatch(/gratis/);
@@ -53,7 +57,7 @@ describe('pagina di vendita: testi', () => {
   });
 
   it('nessuna promessa di esito nei testi (regole del COMMERCIALE)', () => {
-    const tutto = [...MOMENTI_APP.flatMap((m) => [m.titolo, m.testo]), ...[...DETTAGLI_TESTA, ...DETTAGLI_FISICO].flatMap((g) => [g.titolo, ...g.righe]), ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).map((p) => p.testo)].join(' ').toLowerCase();
+    const tutto = [...MOMENTI_APP.flatMap((m) => [m.titolo, m.testo]), ...MOMENTI_APP.flatMap((m) => m.dettaglio), ...ORIGINE_TESTA, ...ORIGINE_FISICO, ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).map((p) => p.testo)].join(' ').toLowerCase();
     for (const vietata of ['giocherai meglio', 'supererai', 'garantit', 'ultimi posti', 'più sicuro di te', 'giocherai', 'migliorerai', 'non avrai più']) expect(tutto).not.toContain(vietata);
   });
 });

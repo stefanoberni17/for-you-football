@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import type { MomentoApp } from '@/lib/scopri';
 
 /**
@@ -67,6 +68,28 @@ export function TelefonoCiclo({ momenti }: { momenti: MomentoApp[] }) {
   );
 }
 
+/** Il «Scopri di più» di un momento (Ste, 6/11: la spiegazione lunga accanto a quella breve, momento per momento). */
+function Dettaglio({ righe, centro = false }: { righe: string[]; centro?: boolean }) {
+  if (!righe.length) return null;
+  return (
+    <details className={`group mt-4 w-full max-w-md text-left ${centro ? 'mx-auto' : ''}`}>
+      <summary className={`inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 rounded-btn text-body-sm font-semibold text-forest-300 hover:text-forest-200 [&::-webkit-details-marker]:hidden ${centro ? 'w-full justify-center' : ''}`}>
+        <span className="group-open:hidden">Scopri di più</span>
+        <span className="hidden group-open:inline">Chiudi</span>
+        <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden />
+      </summary>
+      <ul className="mt-2 space-y-2.5 rounded-card border border-divider bg-surface/70 p-4">
+        {righe.map((r) => (
+          <li key={r} className="flex gap-2.5 text-body-sm text-muted">
+            <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rounded-full bg-forest-400" aria-hidden />
+            <span>{r}</span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
 export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoApp[]; invertito?: boolean }) {
   const [attiva, setAttiva] = useState(0);
   const passi = useRef<(HTMLLIElement | null)[]>([]);
@@ -117,6 +140,7 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
               <span className="text-overline uppercase text-forest-400">{m.parte} · {String(i + 1).padStart(2, '0')}</span>
               <h3 className="mt-2 font-display text-[28px] leading-[34px] font-bold text-app">{m.titolo}</h3>
               <p className="mt-3 max-w-md text-body-lg text-muted">{m.testo}</p>
+              <Dettaglio righe={m.dettaglio} />
             </li>
           ))}
         </ol>
@@ -127,7 +151,7 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
         <div
           ref={nastro}
           onScroll={onScroll}
-          className="scopri-nastro -mx-4 flex snap-x snap-mandatory overflow-x-auto"
+          className="scopri-nastro -mx-4 flex items-start snap-x snap-mandatory overflow-x-auto"
           aria-label="Come funziona l'app, un momento alla volta"
         >
           {momenti.map((m, i) => (
@@ -137,6 +161,7 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
                 <span className="text-overline uppercase text-forest-400">{m.parte} · {i + 1} di {momenti.length}</span>
                 <h3 className="mt-1.5 font-display text-title-2 font-bold text-app">{m.titolo}</h3>
                 <p className="mt-2 text-body text-muted">{m.testo}</p>
+                <Dettaglio righe={m.dettaglio} centro />
               </div>
             </div>
           ))}

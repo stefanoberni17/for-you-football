@@ -6,10 +6,9 @@ import { contaIscrittiCampo, contaIscrittiMente, loadImpostazioni } from '@/lib/
 import { euroTesto, IMPOSTAZIONI_DEFAULT } from '@/lib/abbonamento';
 import { MIN_AGE } from '@/lib/constants';
 import { TESTI_PACCHETTI, SICUREZZA_FISICO } from '@/lib/pacchettiTesti';
-import { DETTAGLI_FISICO, DETTAGLI_TESTA, domandeFrequenti, MOMENTI_APP, MOMENTI_FISICO, MOMENTI_TESTA, passiIngresso, prezziPubblici, type PrezzoPubblico } from '@/lib/scopri';
+import { domandeFrequenti, MOMENTI_APP, MOMENTI_FISICO, MOMENTI_TESTA, ORIGINE_FISICO, ORIGINE_TESTA, passiIngresso, prezziPubblici, type PrezzoPubblico } from '@/lib/scopri';
 import type { Pacchetto } from '@/lib/listino';
 import { ComeFunziona, TelefonoCiclo } from '@/components/scopri/Telefono';
-import Approfondimento from '@/components/scopri/Approfondimento';
 
 /**
  * La pagina di vendita pubblica (6/11, funnel: Notion «Funnel di vendita: mappa e piano»). Chi apre il sito senza
@@ -34,6 +33,20 @@ async function caricaPrezzi() {
   } catch {
     return { prezzi: null, imp: IMPOSTAZIONI_DEFAULT };
   }
+}
+
+/** Da dove viene il metodo: tre righe in vista sotto il titolo della sezione. */
+function Origine({ righe }: { righe: string[] }) {
+  return (
+    <ul className="mx-auto mt-8 grid max-w-4xl gap-3 md:grid-cols-3">
+      {righe.map((r) => (
+        <li key={r} className="flex gap-3 rounded-card border border-divider bg-surface/70 p-4 text-body-sm text-app">
+          <Check size={18} className="mt-0.5 shrink-0 text-forest-400" aria-hidden />
+          <span>{r}</span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 function Prezzo({ p }: { p: PrezzoPubblico | undefined }) {
@@ -155,14 +168,14 @@ export default async function Scopri() {
             <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400"><Brain size={14} aria-hidden /> La Testa</p>
             <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">Il mental training, un giorno alla volta</h2>
             <p className="mt-3 text-body-lg text-muted">
-              Tecniche provate per anni sul campo, prima su di me e poi sui ragazzi: dodici settimane per imparare a tornare presente
-              quando la partita ti porta via.
+              Dodici settimane per imparare a tornare presente quando la partita ti porta via. Pochi minuti al giorno, e gli strumenti
+              li usi in campo.
             </p>
           </div>
+          <Origine righe={ORIGINE_TESTA} />
           <div className="mt-12">
             <ComeFunziona momenti={MOMENTI_TESTA} />
           </div>
-          <Approfondimento titolo="Scopri di più sulla Testa" gruppi={DETTAGLI_TESTA} />
         </div>
       </section>
 
@@ -173,14 +186,14 @@ export default async function Scopri() {
             <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400"><Dumbbell size={14} aria-hidden /> Il Fisico</p>
             <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">Il metodo di un preparatore, adattato a te</h2>
             <p className="mt-3 text-body-lg text-muted">
-              Esercizi, regole e limiti usati per anni con più di 100 calciatori. L&apos;AI li adatta ai tuoi obiettivi, ai tuoi impegni
-              e a come vanno le tue sedute.
+              La preparazione costruita sulla tua settimana: i tuoi obiettivi, i tuoi attrezzi, la squadra e la partita, e come vanno
+              le tue sedute.
             </p>
           </div>
+          <Origine righe={ORIGINE_FISICO} />
           <div className="mt-12">
             <ComeFunziona momenti={MOMENTI_FISICO} invertito />
           </div>
-          <Approfondimento titolo="Scopri di più sul Fisico" gruppi={DETTAGLI_FISICO} />
           <p className="mt-10 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
         </div>
       </section>

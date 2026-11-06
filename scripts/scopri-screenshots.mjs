@@ -1,10 +1,11 @@
 // Le schermate della pagina di vendita (/scopri, 6/11): public/scopri/<momento>.webp, 600 × 1298.
 // Si fanno sull'app vera (di solito il Preview) con un account di PROVA: mai i dati di un ragazzo.
 // L'account deve avere il Mente (is_beta_free) e il Fisico (training_access) e un piano della settimana.
-// La Carta usa numeri di esempio (la risposta di /api/carta viene ritoccata qui); il Coach risponde davvero.
+// La Carta, le abitudini e il check-in usano numeri di esempio (le risposte delle API vengono sostituite qui);
+// il Coach risponde davvero.
 //
 //   BASE=https://<preview>.vercel.app EMAIL=... PASSWORD=... [BYPASS=<token protezione Vercel>] \
-//     node scripts/scopri-screenshots.mjs [giorno reset coach carta fisico seduta recupero]
+//     node scripts/scopri-screenshots.mjs [giorno reset coach azioni stato carta obiettivi setup fisico seduta recupero resoconto test]
 //
 // Serve Playwright (nelle sessioni cloud c'è già). Le immagini vanno controllate a occhio prima del commit.
 import { createRequire } from 'node:module';
@@ -43,6 +44,20 @@ await page.locator('input[type=password]').fill(PASSWORD);
 await page.getByRole('button', { name: /^Accedi|^Entra/i }).first().click();
 await page.waitForTimeout(6000);
 
+async function esempioStatistiche() {
+  const giorni = []; const base = Date.now();
+  for (let i = 59; i >= 0; i--) {
+    const d = new Date(base - i * 864e5); const t = (59 - i) / 59; const w = Math.sin(i / 2.3);
+    giorni.push({ date: d.toISOString().slice(0, 10), physical_state: Math.round(5 + 2 * t + w), sleep_hours: Math.round((6.3 + 1.2 * t + 0.6 * Math.sin(i / 1.7)) * 2) / 2, recovery_quality: Math.round(5 + 2 * t + Math.cos(i / 2)), mental_state: Math.round(4.5 + 2.5 * t + 0.8 * Math.sin(i / 3)), presence_yesterday: Math.round(4 + 3 * t) });
+  }
+  await page.route('**/api/checkin/history**', (r) => r.fulfill({ json: { checkins: giorni } }));
+  const by_date = giorni.slice(-30).map((g, i) => ({ date: g.date, completed: [3, 4, 5, 2, 4, 5, 3][i % 7] }));
+  const a = (id, testo, n) => ({ action_id: id, action_text: testo, completion_rate: n / 30, completed_days: n, total_days: 30 });
+  await page.route('**/api/actions/history**', (r) => r.fulfill({ json: { by_date, current_streak: 6, longest_streak: 11, active_count: 5, threshold: 3, by_action: [
+    a('a1', 'Un Reset prima di entrare in campo', 27), a('a2', 'Dopo un errore: un respiro, prossima azione', 24), a('a3', 'A letto entro le 23', 18),
+    a('a4', 'Telefono via a cena', 15), a('a5', 'Chiamo la palla in allenamento', 21)] } }));
+}
+
 const momenti = {
   giorno: async () => { await go('/giorno/1/1'); await shot('giorno'); },
   reset: async () => {
@@ -76,22 +91,59 @@ const momenti = {
   },
   fisico: async () => { await go('/allenamento', 800); await page.evaluate(() => localStorage.setItem('campo.vista', 'settimana')); await go('/allenamento', 12000); await shot('fisico'); },
   seduta: async () => { await go('/allenamento', 800); await pulisciSeduta(); await go('/allenamento/sessione/' + (process.env.GIORNO || '6'), 9000); await shot('seduta'); },
+  // L'ultimo recupero di un esercizio: voto della serie aperto (7), ripetizioni, lato più duro, «Com'è venuto?».
+  // Le serie votate finiscono in training_set_logs dell'account di prova: si possono cancellare dopo.
   recupero: async () => {
     await go('/allenamento', 800); await pulisciSeduta();
     await go('/allenamento/sessione/' + (process.env.GIORNO || '6'), 8000);
     await page.getByRole('button', { name: /Inizia la seduta/i }).first().click();
     await page.waitForTimeout(2500);
     await page.getByRole('button', { name: /Salta l.apertura/i }).first().click({ timeout: 2000 }).catch(() => {});
-    // fino al primo recupero: "Lato destro fatto", "Lato sinistro fatto" o "Fatta"
-    for (let i = 0; i < 3; i++) {
-      if (await page.getByText(/^Recupero$/i).count()) break;
-      await page.getByRole('button', { name: /fatto|fatta/i }).first().click().catch(() => {});
-      await page.waitForTimeout(1500);
+    // fino all'ultimo recupero del primo esercizio
+    for (let i = 0; i < 8; i++) {
+      if (await page.getByRole('button', { name: /Vai al prossimo/i }).count()) break;
+      const salta = page.getByRole('button', { name: /Salta il recupero/i });
+      if (await salta.count()) { await salta.first().click(); await page.waitForTimeout(1200); continue; }
+      await page.getByRole('button', { name: /fatto|completato|fatta/i }).first().click().catch(() => {});
+      await page.waitForTimeout(1300);
     }
-    await page.waitForTimeout(1000);
+    await page.getByRole('button', { name: /Vota la serie/i }).click({ timeout: 2000 }).catch(() => {});
+    await page.locator('[role=radio]').nth(6).click({ timeout: 2000 }).catch(() => {});
+    await page.getByRole('button', { name: /Com.è venuto/i }).click({ timeout: 2000 }).catch(() => {});
+    await page.getByText(/Com.è andata la serie/i).first().evaluate((el) => {
+      let n = el.parentElement;
+      while (n && n !== document.body) { const o = getComputedStyle(n).overflowY; if ((o === 'auto' || o === 'scroll') && n.scrollHeight > n.clientHeight) { n.scrollTop += el.getBoundingClientRect().top - 140; return; } n = n.parentElement; }
+    }).catch(() => {});
+    await page.waitForTimeout(800);
     await shot('recupero');
     await pulisciSeduta();
   },
+  obiettivi: async () => {
+    await go('/allenamento/setup', 9000);
+    await page.getByText(/Su cosa vuoi lavorare/i).first().evaluate((el) => {
+      let n = el.parentElement;
+      while (n && n !== document.body) { const o = getComputedStyle(n).overflowY; if ((o === 'auto' || o === 'scroll') && n.scrollHeight > n.clientHeight) break; n = n.parentElement; }
+      const c = n && n !== document.body ? n : document.scrollingElement; c.scrollTop += el.getBoundingClientRect().top - 90;
+    });
+    await page.waitForTimeout(800);
+    await shot('obiettivi');
+  },
+  setup: async () => { await go('/allenamento/setup', 9000); await shot('setup'); },
+  test: async () => { await go('/allenamento/test', 9000); await shot('test'); },
+  // Il resoconto dopo la squadra: si forza «da chiedere» per ieri, sforzo 8 selezionato (non si salva)
+  resoconto: async () => {
+    await page.evaluate(() => { for (const k of Object.keys(localStorage)) if (k.startsWith('resoconto')) localStorage.removeItem(k); for (const k of Object.keys(sessionStorage)) if (k.startsWith('resoconto')) sessionStorage.removeItem(k); }).catch(() => {});
+    const ieri = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    const forza = async (route) => { const r = await route.fetch(); const d = await r.json(); d.resocontiDaChiedere = [{ data: ieri, tipo: 'squadra' }]; await route.fulfill({ response: r, json: d }); };
+    await page.route('**/api/training/oggi**', forza); await page.route('**/api/training/state**', forza);
+    await go('/allenamento', 12000);
+    await page.getByRole('radio', { name: /Sforzo 8/ }).first().click().catch(() => {});
+    await page.waitForTimeout(800);
+    await shot('resoconto');
+  },
+  // Abitudini e check-in: dati di ESEMPIO (le risposte di /api/checkin/history e /api/actions/history vengono sostituite)
+  azioni: async () => { await esempioStatistiche(); await go('/statistiche', 6000); await shot('azioni'); },
+  stato: async () => { await esempioStatistiche(); await go('/statistiche', 6000); await page.evaluate(() => { document.scrollingElement.scrollTop += 560; }); await page.waitForTimeout(1200); await shot('stato'); },
 };
 
 const scelti = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(momenti);
