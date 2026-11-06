@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-05 — Quattro esercizi nuovi dal canale YouTube: visione con la pallina da tennis
+- Scansione del canale (`scripts/youtube-channel-scan.py`): 139 video, 4 nuovi dal 22/9, tutti di coordinazione e visione con la pallina da tennis. Schede scritte dalle descrizioni dei video di Ste, con `da_confermare` (più facile/difficile, livello e dose) in `docs/schede/tecnica.md`.
+- Catalogo: `tvis-tocchi-int-est-pallina-tennis`, `tvis-passaggi-al-muro-pallina-tennis` (B), `tvis-passaggi-al-muro-pallina-tennis-rimbalzo`, `tvis-palleggi-con-lancio-pallina-tennis` (da A).
+- Seduta di visione composta (`pezziVisione`): in B tocchi e passaggi al muro con la pallina in mano dopo il videocorso, da A il rimbalzo e i palleggi con i lanci; senza muro i passaggi diventano i tocchi. Due test in `tests/trainingTecnicaComposta.test.ts`.
+- **Anche nella tecnica (6/11, Ste: "mettili anche nella tecnica non solo visione")**: costante `PALLINA` in `lib/trainingTecnicaComposta.ts`. Passaggi: al terzo posto di ogni codice della scala muro i passaggi con la pallina in mano (primi due codici) o con il rimbalzo (dal terzo); senza muro, nei passaggi a 10 m, i tocchi con la pallina. Dribbling: i tocchi con la pallina al terzo posto (da A con la nota "più difficile: allontana la mano"). Palleggi: dal codice A1 i palleggi con i lanci della pallina. Al terzo posto perché i primi due aprono la seduta di tiri (che resta com'era) e gli ultimi analitici escono per primi se il tempo stringe. Due test in più.
+
 ## 2026-11-05 — Controllo privacy: YouTube, notifiche, Stripe venditore
 - **Pagine pubbliche verificate in produzione con il browser** (home, login, registrazione, prezzi, privacy, termini, genitori): nessuna richiesta verso indirizzi esterni, nessun cookie, niente in memoria locale.
 - **Video di YouTube nel Campo** (`lib/youtube.ts`, `components/VideoYouTube.tsx`, test in `tests/youtube.test.ts`): l'embed passa da `youtube-nocookie.com` e il riquadro si carica solo dopo «Apri il video» (la prima volta, con la riga su cosa riceve YouTube; la scelta resta in `localStorage['video.youtube.ok']`). Prima il video dei segnali si apriva da solo e Google riceveva l'indirizzo internet senza un sì.
