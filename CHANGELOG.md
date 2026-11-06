@@ -2,6 +2,9 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-06 — Schede della pallina da tennis complete
+- Ste ha confermato le proposte: più facile e più difficile per i quattro esercizi con la pallina da tennis, livelli (B tocchi e passaggi con la pallina in mano, da A il rimbalzo e i palleggi con i lanci) e sedute (visione, passaggi, dribbling, palleggi da A1). Durata 2-5'. Tolti i `da_confermare`.
+
 ## 2026-11-05 — Quattro esercizi nuovi dal canale YouTube: visione con la pallina da tennis
 - Scansione del canale (`scripts/youtube-channel-scan.py`): 139 video, 4 nuovi dal 22/9, tutti di coordinazione e visione con la pallina da tennis. Schede scritte dalle descrizioni dei video di Ste, con `da_confermare` (più facile/difficile, livello e dose) in `docs/schede/tecnica.md`.
 - Catalogo: `tvis-tocchi-int-est-pallina-tennis`, `tvis-passaggi-al-muro-pallina-tennis` (B), `tvis-passaggi-al-muro-pallina-tennis-rimbalzo`, `tvis-palleggi-con-lancio-pallina-tennis` (da A).

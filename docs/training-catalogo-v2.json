@@ -12749,7 +12749,8 @@
     "Passaggi tirati via per pensare alla pallina: ogni passaggio fatto nel modo migliore possibile."
    ],
    "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.",
-   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile; la durata va da 2 a 5' (Ste, 6/11)."
+   "piu_facile": "Due tocchi, controllo e poi passaggio, e la pallina la fai rimbalzare solo ogni due passaggi.",
+   "piu_difficile": "Passaggi di prima, la pallina rimbalza a ogni passaggio e la riprendi con la mano opposta, alternando destro e sinistro."
   }
  },
  {
@@ -12788,7 +12789,8 @@
     "Palleggi alti e scomposti: meglio bassi e regolari mentre le mani lavorano."
    ],
    "sicurezza": "Nessuna precauzione particolare.",
-   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile; la durata va da 2 a 5' (Ste, 6/11)."
+   "piu_facile": "Un rimbalzo del pallone a terra tra un palleggio e l'altro, oppure lanci più bassi e lenti.",
+   "piu_difficile": "Lancio più alto, sopra la testa, e palleggi alternando destro e sinistro oppure solo di collo."
   }
  },
  {
@@ -12828,7 +12830,7 @@
    ],
    "piu_difficile": "Allontana la mano con la pallina dal campo visivo in cui vedi il pallone.",
    "sicurezza": "Nessuna precauzione particolare.",
-   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): manca il più facile; la durata va da 2 a 5' (Ste, 6/11)."
+   "piu_facile": "Sguardo libero, ogni tanto sulla pallina e ogni tanto sul pallone, e solo la suola avanti e indietro prima di passare a interno ed esterno."
   }
  },
  {
@@ -12868,7 +12870,7 @@
    ],
    "piu_difficile": "Muovi la mano con la pallina e allontanala dal campo visivo in cui vedi il pallone.",
    "sicurezza": "Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.",
-   "da_confermare": "Scheda scritta dalla descrizione del video (5/11): manca il più facile; la durata va da 2 a 5' (Ste, 6/11)."
+   "piu_facile": "Più vicino al muro (3-4 m), un controllo prima di ogni passaggio, e la pallina la guardi solo quando il pallone parte."
   }
  }
 ]
