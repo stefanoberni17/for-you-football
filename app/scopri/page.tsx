@@ -36,7 +36,8 @@ async function caricaPrezzi() {
 }
 
 function Prezzo({ p }: { p: PrezzoPubblico | undefined }) {
-  if (!p || !p.aperto || p.euro == null) return <span className="text-body-sm font-semibold text-muted">Per ora chiuso</span>;
+  // Come la pagina prezzi: l'importo si vede anche con le iscrizioni chiuse (la riga sotto il nome lo dice)
+  if (!p || p.euro == null) return <span className="text-body-sm font-semibold text-muted">Per ora chiuso</span>;
   return (
     <span className="text-right">
       <span className="block font-display text-title-1 font-bold tabular-nums text-app">{euroTesto(p.euro)} €</span>
@@ -53,7 +54,7 @@ function SchedaPacchetto({ id, p, evidenza = false, children }: { id: Pacchetto;
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="font-display text-title-2 font-bold text-app">{t.titolo}</h3>
-          {p?.aperto && p.tipo === 'lancio' && <span className="mt-1 inline-block rounded-full bg-forest-500/20 px-2 py-0.5 text-overline uppercase text-forest-300">Prezzo di lancio</span>}
+          {p?.euro != null && p.tipo === 'lancio' && <span className="mt-1 inline-block rounded-full bg-forest-500/20 px-2 py-0.5 text-overline uppercase text-forest-300">Prezzo di lancio</span>}
           {chiuso && <span className="mt-1 inline-flex items-center gap-1 text-caption text-muted"><Lock size={12} aria-hidden /> Iscrizioni chiuse per ora</span>}
         </div>
         <Prezzo p={p} />
@@ -190,7 +191,7 @@ export default async function Scopri() {
                     return (
                       <li key={id} className="flex items-center justify-between text-body-sm">
                         <span className="text-app">{TESTI_PACCHETTI[id].titolo}</span>
-                        <span className="tabular-nums text-muted">{p?.aperto && p.euro != null ? `${euroTesto(p.euro)} €/mese` : 'a breve'}</span>
+                        <span className="tabular-nums text-muted">{p?.euro != null ? `${euroTesto(p.euro)} €/mese` : 'a breve'}</span>
                       </li>
                     );
                   })}
