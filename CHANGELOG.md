@@ -2,6 +2,16 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-06 — La pagina di vendita (/scopri)
+
+Primo pezzo del funnel (Notion «Funnel di vendita: mappa e piano», 6/11; Ste: "vai proviamo", spunto da preparazioneatletica.com, "screenshot per fare qualcosa di dinamico che faccia vedere come funziona l'app").
+- `app/scopri/page.tsx`: pagina pubblica (ISR, riletta ogni 5'). Apertura con il telefono che gira da solo sulle schermate dell'app, «Chi c'è dietro» con la frase di Ste dell'apertura di W1-G1, «Dentro l'app» (sette momenti: giorno, Reset, Coach, Carta, settimana del Fisico, seduta, recupero), come si inizia in tre passi, i pacchetti, le domande, la chiusura. Bottone unico «Prova la prima settimana» → `/register`.
+- Prezzi e iscrizioni dalla stessa fonte della pagina prezzi: `prezziPubblici` in `lib/scopri.ts` usa `loadListino` (Stripe), `loadImpostazioni` (app_settings), `prezzoPerUtente` ed `esitoCheckout` con un visitatore senza profilo; testi dei pacchetti da `lib/pacchettiTesti.ts`. Un pacchetto senza prezzo, con le iscrizioni chiuse o pieno dice «Per ora chiuso».
+- `components/scopri/Telefono.tsx`: cornice in CSS con le schermate in dissolvenza; su schermo largo il telefono resta fermo e cambia mentre scorri, su telefono i momenti si sfogliano con il dito (scroll-snap, pallini). Ferme con `prefers-reduced-motion`. Nessuna richiesta esterna, nessun cookie.
+- Schermate in `public/scopri/*.webp` (7, ~280 KB) fatte sul Preview con l'account di prova (Luca, giocatore di esempio); la Carta con numeri di esempio, il Coach con una risposta vera. Si rifanno con `scripts/scopri-screenshots.mjs`.
+- `/` per chi non è entrato manda a `/scopri` (l'app installata va ancora al login); `/scopri` è fuori da tab bar, rituale del mattino, paywall e ri-accettazione dei consensi.
+- Test in `tests/scopri.test.ts` (prezzo di lancio e listino, Campo chiuso, tetto, schermate presenti, niente promesse di esito).
+
 ## 2026-11-06 — Chat del preparatore: il piano vero, niente "parlane con il preparatore"
 Dal collaudo dal vivo (Ste: «sì, sistema la chat con il preparatore»):
 - **Il piano completo nel contesto** (`pianoPerPreparatore`, `giorniFatti` in `lib/trainingChat.ts`): per ogni seduta i blocchi, gli esercizi con le dosi (per lato, kg, EMOM, facoltativi, ridotti per dolore, serie test) e lo stato (FATTA, OGGI, da fare). Prima arrivavano solo titolo e durata, e alla domanda «cosa faccio sabato?» il preparatore ricostruiva a memoria: «solo tecnica al muro e 10 tiri alla traversa» per un sabato con scatti e tiri pre partita. La regola dice di elencare quei blocchi ed esercizi, senza aggiungere niente.

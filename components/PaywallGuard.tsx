@@ -24,7 +24,7 @@ export function resetPaywallCache() {
 }
 
 // Account in cancellazione (migration 028): su OGNI pagina dell'app → /riattiva
-const PAGINE_LIBERE = ['/login', '/register', '/reset-password', '/privacy', '/termini', '/genitori', '/riattiva', '/completa-profilo', '/auth'];
+const PAGINE_LIBERE = ['/login', '/register', '/reset-password', '/privacy', '/termini', '/genitori', '/riattiva', '/completa-profilo', '/auth', '/scopri'];
 let deletedCheckedAt = 0;
 let deletedResult: boolean | null = null;
 export function resetDeletedCache() { deletedCheckedAt = 0; deletedResult = null; }
