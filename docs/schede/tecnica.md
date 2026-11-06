@@ -6,10 +6,10 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 ## Da confermare (5)
 
 - **Shots from the Corner: Cross**: Su Everfit le istruzioni dicono: palla sul calcio d'angolo, TIRI A GIRO cercando di far entrare la palla in porta senza che tocchi terra; poi dall'incrocio tra area e linea di fondo, poi dall'angolo dell'area; da entrambi i lati, di interno col piede opposto (da sinistra col destro), rientrando verso la porta. La correzione del 15/10 dice invece cross in corsa su primo palo, secondo palo, dischetto. Quale vale? Oppure sono due esercizi?
-- **Wall Passes with Tennis Ball Bounce**: Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
-- **Juggling While Tossing a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
-- **Inside-Outside Touches Holding a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.
-- **Wall Passes Holding a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.
+- **Wall Passes with Tennis Ball Bounce**: Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile; la durata va da 2 a 5' (Ste, 6/11).
+- **Juggling While Tossing a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile; la durata va da 2 a 5' (Ste, 6/11).
+- **Inside-Outside Touches Holding a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): manca il più facile; la durata va da 2 a 5' (Ste, 6/11).
+- **Wall Passes Holding a Tennis Ball**: Scheda scritta dalla descrizione del video (5/11): manca il più facile; la durata va da 2 a 5' (Ste, 6/11).
 
 ## tecnica-palleggi (18)
 
@@ -796,7 +796,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Errori comuni:** Perdere il ritmo per riprendere la pallina: pallone e pallina vanno gestiti insieme. Passaggi tirati via per pensare alla pallina: ogni passaggio fatto nel modo migliore possibile.
 **Sicurezza:** Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.
-**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile; la durata va da 2 a 5' (Ste, 6/11).
 
 ### Juggling While Tossing a Tennis Ball
 `tvis-palleggi-con-lancio-pallina-tennis` · bilaterale · minuti · campo · [video](https://youtube.com/shorts/RyLcKRo_sN4)
@@ -809,7 +809,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 
 **Errori comuni:** Fermare i lanci per salvare i palleggi (o il contrario): il ritmo è di tutti e due. Palleggi alti e scomposti: meglio bassi e regolari mentre le mani lavorano.
 **Sicurezza:** Nessuna precauzione particolare.
-**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile, livello e dose da confermare.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): mancano più facile e più difficile; la durata va da 2 a 5' (Ste, 6/11).
 
 ### Inside-Outside Touches Holding a Tennis Ball
 `tvis-tocchi-int-est-pallina-tennis` · bilaterale · minuti · campo · [video](https://youtube.com/shorts/ESnsyAqxQWU)
@@ -823,7 +823,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Abbassare lo sguardo sul pallone: l'esercizio è tenerlo sulla pallina. Tocchi frettolosi: meglio più lenti e puliti.
 **Più difficile:** Allontana la mano con la pallina dal campo visivo in cui vedi il pallone.
 **Sicurezza:** Nessuna precauzione particolare.
-**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): manca il più facile; la durata va da 2 a 5' (Ste, 6/11).
 
 ### Wall Passes Holding a Tennis Ball
 `tvis-passaggi-al-muro-pallina-tennis` · bilaterale · minuti · campo · [video](https://youtube.com/shorts/YYFwjov79Sg)
@@ -837,4 +837,4 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Errori comuni:** Guardare il pallone a ogni passaggio: lo sguardo resta sulla pallina. Passaggi frettolosi: il gesto pulito conta più della velocità.
 **Più difficile:** Muovi la mano con la pallina e allontanala dal campo visivo in cui vedi il pallone.
 **Sicurezza:** Muro liscio e spazio libero intorno: una palla che torna storta non deve finire in strada.
-**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): manca il più facile, livello e dose da confermare.
+**DA CONFERMARE:** Scheda scritta dalla descrizione del video (5/11): manca il più facile; la durata va da 2 a 5' (Ste, 6/11).
