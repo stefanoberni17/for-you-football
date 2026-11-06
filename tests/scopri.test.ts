@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { IMPOSTAZIONI_DEFAULT, type Impostazioni } from '@/lib/abbonamento';
 import { PACCHETTI, type Pacchetto } from '@/lib/listino';
-import { domandeFrequenti, MOMENTI_APP, passiIngresso, prezziPubblici } from '@/lib/scopri';
+import { DETTAGLI_FISICO, DETTAGLI_TESTA, domandeFrequenti, MOMENTI_APP, MOMENTI_FISICO, MOMENTI_TESTA, passiIngresso, prezziPubblici } from '@/lib/scopri';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -41,7 +41,9 @@ describe('pagina di vendita: prezzi pubblici', () => {
 
 describe('pagina di vendita: testi', () => {
   it('ogni momento ha la sua schermata in public/scopri', () => {
-    for (const m of MOMENTI_APP) expect(fs.existsSync(path.join(process.cwd(), 'public/scopri', `${m.id}.webp`)), m.id).toBe(true);
+    for (const m of [...MOMENTI_TESTA, ...MOMENTI_FISICO]) expect(fs.existsSync(path.join(process.cwd(), 'public/scopri', `${m.id}.webp`)), m.id).toBe(true);
+    // il telefono dell'apertura gira su tutte le schermate, una volta sola
+    expect(new Set(MOMENTI_APP.map((m) => m.id)).size).toBe(MOMENTI_TESTA.length + MOMENTI_FISICO.length);
   });
 
   it('i giorni di prova vengono dalle impostazioni', () => {
@@ -51,7 +53,7 @@ describe('pagina di vendita: testi', () => {
   });
 
   it('nessuna promessa di esito nei testi (regole del COMMERCIALE)', () => {
-    const tutto = [...MOMENTI_APP.flatMap((m) => [m.titolo, m.testo]), ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).map((p) => p.testo)].join(' ').toLowerCase();
-    for (const vietata of ['giocherai meglio', 'supererai', 'garantit', 'ultimi posti', 'più sicuro di te']) expect(tutto).not.toContain(vietata);
+    const tutto = [...MOMENTI_APP.flatMap((m) => [m.titolo, m.testo]), ...[...DETTAGLI_TESTA, ...DETTAGLI_FISICO].flatMap((g) => [g.titolo, ...g.righe]), ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).map((p) => p.testo)].join(' ').toLowerCase();
+    for (const vietata of ['giocherai meglio', 'supererai', 'garantit', 'ultimi posti', 'più sicuro di te', 'giocherai', 'migliorerai', 'non avrai più']) expect(tutto).not.toContain(vietata);
   });
 });

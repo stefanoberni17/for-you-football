@@ -13,9 +13,11 @@ import type { MomentoApp } from '@/lib/scopri';
  */
 
 export function Schermo({ momenti, attiva, priorita = false, className = '' }: { momenti: { id: string; alt: string }[]; attiva: number; priorita?: boolean; className?: string }) {
+  // La cornice è un bordo, non un padding: lo schermo ha le stesse proporzioni delle schermate (600 × 1298),
+  // così l'immagine entra intera e niente viene tagliato ai lati.
   return (
-    <div className={`scopri-telefono relative mx-auto aspect-[600/1298] rounded-[2.6rem] border border-white/10 bg-black p-[3.2%] shadow-e3 ${className}`}>
-      <div className="relative h-full w-full overflow-hidden rounded-[2.1rem] bg-app-bg">
+    <div className={`scopri-telefono mx-auto rounded-[2.4rem] border-[9px] border-black bg-black shadow-e3 ring-1 ring-white/10 ${className}`}>
+      <div className="relative aspect-[600/1298] w-full overflow-hidden rounded-[1.8rem] bg-app-bg">
         {momenti.map((m, i) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -27,10 +29,10 @@ export function Schermo({ momenti, attiva, priorita = false, className = '' }: {
             height={1298}
             loading={priorita && i === 0 ? 'eager' : 'lazy'}
             decoding="async"
-            className={`scopri-schermata absolute inset-0 h-full w-full object-cover object-top ${i === attiva ? 'opacity-100 scale-100' : 'opacity-0 scale-[1.03]'}`}
+            className={`scopri-schermata absolute inset-0 h-full w-full object-contain ${i === attiva ? 'opacity-100 scale-100' : 'opacity-0 scale-[1.02]'}`}
           />
         ))}
-        <div className="pointer-events-none absolute left-1/2 top-[1.2%] h-[2.6%] w-[30%] -translate-x-1/2 rounded-full bg-black" aria-hidden />
+        <div className="pointer-events-none absolute left-1/2 top-[1%] h-[2.4%] w-[28%] -translate-x-1/2 rounded-full bg-black" aria-hidden />
       </div>
     </div>
   );
@@ -59,13 +61,13 @@ export function TelefonoCiclo({ momenti }: { momenti: MomentoApp[] }) {
   return (
     <div className="relative">
       <div className="pointer-events-none absolute -inset-10 rounded-full bg-forest-500/25 blur-3xl" aria-hidden />
-      <Schermo momenti={momenti} attiva={i} priorita className="scopri-galleggia relative w-[min(68vw,300px)] lg:w-[min(300px,calc((100vh-140px)*0.46))]" />
+      <Schermo momenti={momenti} attiva={i} priorita className="scopri-galleggia relative w-[min(80vw,330px)] lg:w-[min(340px,calc((100vh-150px)*0.47))]" />
       <p className="relative mt-4 text-center text-label text-muted" aria-live="polite">{momenti[i].titolo}</p>
     </div>
   );
 }
 
-export function ComeFunziona({ momenti }: { momenti: MomentoApp[] }) {
+export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoApp[]; invertito?: boolean }) {
   const [attiva, setAttiva] = useState(0);
   const passi = useRef<(HTMLLIElement | null)[]>([]);
   const nastro = useRef<HTMLDivElement>(null);
@@ -97,20 +99,20 @@ export function ComeFunziona({ momenti }: { momenti: MomentoApp[] }) {
   return (
     <>
       {/* Schermo largo */}
-      <div className="hidden lg:grid grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-16">
-        <div className="relative">
-          <div className="sticky top-[calc(50vh-300px)]">
+      <div className={`hidden lg:grid gap-16 ${invertito ? 'grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]' : 'grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]'}`}>
+        <div className={`relative ${invertito ? 'order-2' : ''}`}>
+          <div className="sticky top-[calc(50vh-340px)]">
             <div className="pointer-events-none absolute -inset-8 rounded-full bg-forest-500/20 blur-3xl" aria-hidden />
-            <Schermo momenti={momenti} attiva={attiva} className="relative w-[280px]" />
+            <Schermo momenti={momenti} attiva={attiva} className="relative w-[320px]" />
           </div>
         </div>
-        <ol className="space-y-0">
+        <ol className={invertito ? 'order-1' : ''}>
           {momenti.map((m, i) => (
             <li
               key={m.id}
               ref={(el) => { passi.current[i] = el; }}
               data-i={i}
-              className={`flex min-h-[70vh] flex-col justify-center transition-opacity duration-500 ${i === attiva ? 'opacity-100' : 'opacity-35'}`}
+              className={`flex min-h-[80vh] flex-col justify-center transition-opacity duration-500 ${i === attiva ? 'opacity-100' : 'opacity-35'}`}
             >
               <span className="text-overline uppercase text-forest-400">{m.parte} · {String(i + 1).padStart(2, '0')}</span>
               <h3 className="mt-2 font-display text-[28px] leading-[34px] font-bold text-app">{m.titolo}</h3>
@@ -130,7 +132,7 @@ export function ComeFunziona({ momenti }: { momenti: MomentoApp[] }) {
         >
           {momenti.map((m, i) => (
             <div key={m.id} className="w-full shrink-0 snap-center px-4">
-              <Schermo momenti={[m]} attiva={0} className="w-[min(62vw,270px)]" />
+              <Schermo momenti={[m]} attiva={0} className="w-[min(78vw,320px)]" />
               <div className="mx-auto mt-5 max-w-sm text-center">
                 <span className="text-overline uppercase text-forest-400">{m.parte} · {i + 1} di {momenti.length}</span>
                 <h3 className="mt-1.5 font-display text-title-2 font-bold text-app">{m.titolo}</h3>

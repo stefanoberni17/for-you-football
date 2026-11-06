@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowDown, ArrowRight, Check, Lock } from 'lucide-react';
+import { ArrowRight, Brain, Check, Dumbbell, Lock } from 'lucide-react';
 import { loadListino } from '@/lib/prezziServer';
 import { contaIscrittiCampo, contaIscrittiMente, loadImpostazioni } from '@/lib/appSettings';
 import { euroTesto, IMPOSTAZIONI_DEFAULT } from '@/lib/abbonamento';
 import { MIN_AGE } from '@/lib/constants';
 import { TESTI_PACCHETTI, SICUREZZA_FISICO } from '@/lib/pacchettiTesti';
-import { domandeFrequenti, MOMENTI_APP, passiIngresso, prezziPubblici, type PrezzoPubblico } from '@/lib/scopri';
+import { DETTAGLI_FISICO, DETTAGLI_TESTA, domandeFrequenti, MOMENTI_APP, MOMENTI_FISICO, MOMENTI_TESTA, passiIngresso, prezziPubblici, type PrezzoPubblico } from '@/lib/scopri';
 import type { Pacchetto } from '@/lib/listino';
 import { ComeFunziona, TelefonoCiclo } from '@/components/scopri/Telefono';
+import Approfondimento from '@/components/scopri/Approfondimento';
 
 /**
  * La pagina di vendita pubblica (6/11, funnel: Notion «Funnel di vendita: mappa e piano»). Chi apre il sito senza
@@ -102,17 +103,26 @@ export default async function Scopri() {
               Allena la testa come alleni le gambe.
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-body-lg text-muted lg:mx-0">
-              Pochi minuti al giorno per 12 settimane: una pratica guidata, un Coach che ti risponde quando serve e, se vuoi,
-              il piano fisico costruito sulla tua settimana di partite.
+              Due parti, da sole o insieme: la testa, con un percorso di 12 settimane e un Coach che ti risponde, e il fisico,
+              con la preparazione costruita sulla tua settimana di partite.
             </p>
+            <div className="mx-auto mt-6 grid max-w-xl grid-cols-2 gap-3 text-left lg:mx-0">
+              <a href="#testa" className="group rounded-card border border-divider bg-surface/70 p-4 transition-colors hover:border-forest-400/60">
+                <Brain size={22} className="text-forest-400" aria-hidden />
+                <span className="mt-2 block font-display text-title-3 font-bold text-app">La Testa</span>
+                <span className="mt-0.5 block text-body-sm text-muted">Mental training, pochi minuti al giorno</span>
+              </a>
+              <a href="#fisico" className="group rounded-card border border-divider bg-surface/70 p-4 transition-colors hover:border-forest-400/60">
+                <Dumbbell size={22} className="text-forest-400" aria-hidden />
+                <span className="mt-2 block font-display text-title-3 font-bold text-app">Il Fisico</span>
+                <span className="mt-0.5 block text-body-sm text-muted">La preparazione, costruita su di te</span>
+              </a>
+            </div>
             <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
               <Link href={CTA} className="inline-flex min-h-[56px] items-center gap-2 rounded-btn bg-gradient-to-br from-forest-400 to-forest-600 px-7 text-body-lg font-bold text-white shadow-glow transition-transform hover:scale-[1.02]">
                 Prova la prima settimana <ArrowRight size={20} aria-hidden />
               </Link>
               <span className="text-caption text-muted">{notaCta}</span>
-              <a href="#come-funziona" className="mt-2 inline-flex min-h-[44px] items-center gap-1 text-body-sm font-semibold text-forest-300">
-                Guarda come funziona <ArrowDown size={16} aria-hidden />
-              </a>
             </div>
           </div>
           <div className="flex justify-center">
@@ -138,18 +148,40 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* Come funziona l'app */}
-      <section id="come-funziona" className="scroll-mt-4">
+      {/* La Testa */}
+      <section id="testa" className="scroll-mt-4">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-overline uppercase text-forest-400">Dentro l&apos;app</p>
-            <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">La testa e il corpo, nello stesso posto</h2>
-            <p className="mt-3 text-body-lg text-muted">Sette momenti della tua settimana con For You Football.</p>
+            <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400"><Brain size={14} aria-hidden /> La Testa</p>
+            <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">Il mental training, un giorno alla volta</h2>
+            <p className="mt-3 text-body-lg text-muted">
+              Tecniche provate per anni sul campo, prima su di me e poi sui ragazzi: dodici settimane per imparare a tornare presente
+              quando la partita ti porta via.
+            </p>
           </div>
           <div className="mt-12">
-            <ComeFunziona momenti={MOMENTI_APP} />
+            <ComeFunziona momenti={MOMENTI_TESTA} />
           </div>
-          <p className="mt-8 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
+          <Approfondimento titolo="Scopri di più sulla Testa" gruppi={DETTAGLI_TESTA} />
+        </div>
+      </section>
+
+      {/* Il Fisico */}
+      <section id="fisico" className="scroll-mt-4 border-t border-divider bg-surface/40">
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400"><Dumbbell size={14} aria-hidden /> Il Fisico</p>
+            <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">Il metodo di un preparatore, adattato a te</h2>
+            <p className="mt-3 text-body-lg text-muted">
+              Esercizi, regole e limiti usati per anni con più di 100 calciatori. L&apos;AI li adatta ai tuoi obiettivi, ai tuoi impegni
+              e a come vanno le tue sedute.
+            </p>
+          </div>
+          <div className="mt-12">
+            <ComeFunziona momenti={MOMENTI_FISICO} invertito />
+          </div>
+          <Approfondimento titolo="Scopri di più sul Fisico" gruppi={DETTAGLI_FISICO} />
+          <p className="mt-10 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
         </div>
       </section>
 

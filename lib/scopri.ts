@@ -20,7 +20,8 @@ export interface MomentoApp {
   alt: string;
 }
 
-export const MOMENTI_APP: MomentoApp[] = [
+/** La Testa: il percorso mentale (pacchetto Mente, o Completo). */
+export const MOMENTI_TESTA: MomentoApp[] = [
   {
     id: 'giorno',
     parte: 'Testa',
@@ -49,18 +50,36 @@ export const MOMENTI_APP: MomentoApp[] = [
     testo: 'Il tuo mantra, la tua firma, il tuo Protocollo Pressione: le tue parole, scritte da te nel percorso. E il rombo a 360°: testa, recupero e corpo dagli stessi dati.',
     alt: 'La Carta del Giocatore: il rombo a sette punte con la partenza in grigio.',
   },
+];
+
+/** Il Fisico: la preparazione (pacchetti Fisico, o Completo). */
+export const MOMENTI_FISICO: MomentoApp[] = [
+  {
+    id: 'obiettivi',
+    parte: 'Fisico',
+    titolo: 'Scegli su cosa lavorare',
+    testo: 'Forza delle gambe e della parte alta, velocità, esplosività, resistenza, tecnica con la palla, prevenzione, kettlebell, recupero. Uno, alcuni in ordine di priorità, o tutto in equilibrio.',
+    alt: 'Il setup del Fisico: gli obiettivi scelti in ordine, forza gambe, tecnica palla e velocità.',
+  },
+  {
+    id: 'setup',
+    parte: 'Fisico',
+    titolo: 'Con quello che hai',
+    testo: 'Palestra, kettlebell, sbarra, un campo, un muro, o niente: il corpo libero c\'è sempre. Dici anche la fase della stagione, i giorni, il tempo che hai e le zone da proteggere.',
+    alt: 'Il setup del Fisico: gli attrezzi a disposizione, esperienza in palestra e compagno.',
+  },
   {
     id: 'fisico',
     parte: 'Fisico',
-    titolo: 'La settimana costruita intorno alle partite',
-    testo: 'Dici quando giochi, quando ti alleni con la squadra, che attrezzi hai e su cosa vuoi lavorare. La settimana si prepara intorno alla partita, sui tuoi test.',
+    titolo: 'La settimana intorno alla partita',
+    testo: 'Dici quando giochi e quando ti alleni con la squadra: la settimana si prepara intorno a quei giorni, sui tuoi test.',
     alt: 'La settimana del Fisico: due sedute, gambe il venerdì e rapidità pre partita il sabato, con la partita la domenica.',
   },
   {
     id: 'seduta',
     parte: 'Fisico',
     titolo: 'La seduta, esercizio per esercizio',
-    testo: 'Serie, ripetizioni, recupero, come si esegue e il video. Prima di iniziare, un minuto di Reset se ti serve.',
+    testo: 'Serie, ripetizioni e recupero. Per ogni esercizio come si esegue, gli errori da evitare, la versione più facile e quella più difficile, e il video.',
     alt: 'La pagina di una seduta: rapidità, tiro e tocchi di palla pre partita, con gli esercizi in ordine.',
   },
   {
@@ -69,6 +88,117 @@ export const MOMENTI_APP: MomentoApp[] = [
     titolo: "Dici com'è andata, la prossima si regola",
     testo: 'Nel recupero dici quante ne hai fatte e quanto è stata dura. Facile due volte di fila: la volta dopo si sale. Fa male qualcosa: si alleggerisce.',
     alt: 'Il recupero tra due serie: il tempo che scorre, quante ripetizioni hai fatto, quale lato è stato più duro.',
+  },
+  {
+    id: 'test',
+    parte: 'Fisico',
+    titolo: 'Test per sapere dove sei',
+    testo: 'Forza a corpo libero, scale a gradini, tecnica con la palla, salti, velocità, resistenza. Uno alla volta, quando vuoi: da lì partono le dosi, e si rifanno dentro le sedute.',
+    alt: 'La batteria di test: il prossimo test consigliato e i gruppi di test con quanti ne hai fatti.',
+  },
+];
+
+/** Tutte le schermate, per il telefono dell'apertura che gira da solo. */
+export const MOMENTI_APP: MomentoApp[] = [MOMENTI_TESTA[0], MOMENTI_FISICO[2], MOMENTI_TESTA[2], MOMENTI_FISICO[3], MOMENTI_TESTA[3], MOMENTI_FISICO[4], MOMENTI_TESTA[1], MOMENTI_FISICO[0], MOMENTI_FISICO[5], MOMENTI_FISICO[1]];
+
+/** «Scopri di più»: il dettaglio di ogni parte, per gruppi. Solo cose che l'app fa davvero. */
+export interface GruppoDettaglio {
+  titolo: string;
+  righe: string[];
+}
+
+export const DETTAGLI_TESTA: GruppoDettaglio[] = [
+  {
+    titolo: 'Da dove viene',
+    righe: [
+      'Tecniche studiate e messe alla prova da più di cinque anni, sul campo.',
+      'Raccolte da professionisti e da diversi libri studiati, poi ridotte a quello che si può fare in campo.',
+      'Provate prima su di me, da calciatore, poi sui ragazzi che alleno.',
+    ],
+  },
+  {
+    titolo: 'Il percorso: 12 settimane in tre blocchi',
+    righe: [
+      'Settimane 1-4, costruire lo strumento: il Reset, osservare i pensieri, ascoltare il corpo, il Protocollo Pressione per i momenti che contano.',
+      'Settimane 5-8, giocare nelle difficoltà: l\'errore, la panchina, il giudizio, quello che ti porti dietro dopo la partita.',
+      'Settimane 9-12, giocare libero: la tua routine, le tue risposte pronte, il tuo protocollo.',
+      'Alla fine di ogni settimana il Gate: tre o quattro domande sulla settimana. La successiva si apre da lì.',
+    ],
+  },
+  {
+    titolo: 'Ogni giorno',
+    righe: [
+      'Un\'apertura, una pratica guidata con l\'audio (da 3 a 15 minuti) e una domanda.',
+      'Un check-in del mattino da venti secondi: sonno, come stai, quanto eri presente ieri.',
+      'Le tue 5 azioni da fare durante la giornata, e l\'esercizio della settimana fuori dal campo.',
+    ],
+  },
+  {
+    titolo: 'Quando serve',
+    righe: [
+      'Il Coach, in app e su Telegram: conosce il tuo percorso e le tue risposte.',
+      'Le schede per i momenti difficili (ansia prima della partita, l\'errore, la panchina, il mister), che crescono con le settimane.',
+      'La Carta del Giocatore con le tue parole, da rileggere prima di entrare in campo.',
+    ],
+  },
+];
+
+export const DETTAGLI_FISICO: GruppoDettaglio[] = [
+  {
+    titolo: 'Il metodo è di un preparatore, l\'AI lo adatta a te',
+    righe: [
+      'Esercizi, progressioni, regole e limiti vengono da anni di lavoro con più di 100 calciatori.',
+      'L\'AI costruisce la tua settimana dentro quelle regole, partendo dai tuoi obiettivi, dai tuoi impegni e da come sono andate le sedute.',
+      'Prima che tu la veda, un controllo automatico la verifica: carichi, distanza dalla partita, tempi di recupero. Quello che non torna viene sistemato o rifatto.',
+    ],
+  },
+  {
+    titolo: 'Cosa puoi allenare',
+    righe: [
+      'Forza delle gambe e della parte alta, a corpo libero su scale a gradini o in palestra.',
+      'Velocità, rapidità, esplosività e salti.',
+      'Resistenza, a serie come in campo, anche senza campo.',
+      'Tecnica con la palla: palleggi, controllo e passaggi, freestyle, visione, dribbling, tiro.',
+      'Prevenzione e fascia, kettlebell, recupero.',
+    ],
+  },
+  {
+    titolo: 'Quanto è tuo',
+    righe: [
+      'La fase della stagione (fuori stagione, preparazione, in stagione), i giorni, quante giornate e quanto tempo per seduta.',
+      'Gli attrezzi che hai, o nessuno. Con un compagno o da solo.',
+      'Gli allenamenti con la squadra e la partita: la settimana si costruisce intorno.',
+      'Gli infortuni passati e le zone da proteggere: lì gli esercizi pesano meno.',
+      'Quante aree insieme dipende dal livello: Base una, Medio due, Pro tutte.',
+      'Il preparatore AI in chat (Medio e Pro), se vuoi cambiare qualcosa o capire il perché.',
+    ],
+  },
+  {
+    titolo: 'Cosa tiene in conto',
+    righe: [
+      'Il voto di ogni serie, le ripetizioni fatte davvero e com\'è venuto il gesto.',
+      'Il voto della seduta e il giudizio su ogni parte: facile, giusta, dura.',
+      'Com\'è andata con la squadra e in partita: fatica, minuti, fastidi.',
+      'Il check-in del mattino e il carico della settimana, squadra compresa.',
+      'Un dolore segnalato: da 4 su 10 le sedute si fermano e ti consigliamo di farti vedere.',
+      'Le settimane di scarico quando i dati dicono che servono.',
+    ],
+  },
+  {
+    titolo: 'Per crescere e misurarti',
+    righe: [
+      'Test di forza, salti, velocità, resistenza e tecnica, uno alla volta: da lì partono le dosi.',
+      'Le scale a gradini: quando una serie arriva alla soglia, passi al gradino dopo.',
+      'Le serie di prova tornano dentro le sedute, senza giornate di soli test.',
+      'La Carta mostra da dove sei partito e dove sei adesso.',
+    ],
+  },
+  {
+    titolo: 'Ogni esercizio, spiegato',
+    righe: [
+      'Più di 300 esercizi, ognuno con la sua scheda: come si esegue passo per passo, gli errori da evitare, la versione più facile e quella più difficile, le note di sicurezza.',
+      'Video dimostrativi, e i video dei segnali da mettere sul telefono per gli esercizi di visione.',
+    ],
   },
 ];
 
