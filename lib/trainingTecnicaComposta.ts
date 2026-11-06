@@ -252,6 +252,18 @@ interface Pezzo { id: string; serie?: number; q: number; u?: BloccoItem['unita']
 const min = (id: string, q: number, extra: Partial<Pezzo> = {}): Pezzo => ({ id, q, u: 'minuti', r: 60, ruolo: 'analitico', ...extra });
 const reps = (id: string, serie: number, q: number, extra: Partial<Pezzo> = {}): Pezzo => ({ id, serie, q, u: 'reps', r: 60, ruolo: 'principale', ...extra });
 
+/**
+ * La pallina da tennis (video di Ste, 5/11): coordinazione e visione periferica. Stanno nella seduta di visione e,
+ * dal 6/11 (Ste: "mettili anche nella tecnica non solo visione"), anche in palleggi, passaggi e dribbling.
+ */
+const PALLINA = {
+  tocchi: min('tvis-tocchi-int-est-pallina-tennis', 3),
+  tocchiPiuDifficile: min('tvis-tocchi-int-est-pallina-tennis', 3, { nota: 'Più difficile: allontana la mano con la pallina dal campo visivo.' }),
+  passaggi: min('tvis-passaggi-al-muro-pallina-tennis', 3, { muro: true }),
+  rimbalzo: min('tvis-passaggi-al-muro-pallina-tennis-rimbalzo', 3, { muro: true }),
+  palleggi: min('tvis-palleggi-con-lancio-pallina-tennis', 3),
+} satisfies Record<string, Pezzo>;
+
 /** Palleggi: gli analitici per codice della scala (tabella 1 del doc), poi la chiusura freestyle. */
 function pezziPalleggi(pos: number): Pezzo[] {
   const chiusura: Pezzo[] = [min('tpal-palleggi-al-muro-liberi-freestyle', 6, { ruolo: 'chiusura', muro: true }), min('fasc-palleggi-freestyle-tecnica', 6, { ruolo: 'chiusura' })];
@@ -267,6 +279,7 @@ function pezziPalleggi(pos: number): Pezzo[] {
   }
   const base: Pezzo[] = [
     min('tpal-palleggi-solo-collo-3-tocchi-alternati-tecnica', 4), min('tpal-palleggi-1-piede-interno-collo-esterno-tecnica', 3),
+    PALLINA.palleggi, // dal codice A1: palleggi con la pallina da tennis tra le mani (video di Ste, 5/11)
     min('tpal-palleggi-al-muro-2-tocchi', 4, { muro: true }), min('tpal-palleggi-al-muro-2-tocchi-controllo-interno-pass', 3, { muro: true }), min('tpal-palleggi-al-muro-2-tocchi-controllo-esterno-pass', 5, { muro: true }),
   ];
   const rot: Pezzo[] = pos === 3 ? [min('tpal-palleggi-solo-collo', 4, { serie: 2 })]
@@ -288,12 +301,16 @@ function pezziPassaggi(pos: number): Pezzo[] {
     [m('tpas-passaggi-al-muro-1-tocco-interno-tecnica', 5), m('tpas-passaggi-al-muro-1-tocco-collo-tecnica', 4), m('tpas-passaggi-al-muro-controllo-interno-turn-180-tecn', 3), m('tpas-passaggi-al-muro-controllo-suola-sposto-palla', 3), m('tpas-passaggi-al-muro-in-difficolta', 4), m('tpas-passaggi-al-muro-5-10mt-alto-basso', 5), m('tpas-passaggi-liberi-al-muro-tecnica', 6)],
     [m('tpal-palleggi-al-muro-2-tocchi', 2), m('tpal-palleggi-al-muro-2-tocchi-controllo-interno-pass', 4), m('tpal-palleggi-al-muro-2-tocchi-controllo-esterno-pass', 3), m('tpas-passaggi-al-muro-2-tocchi-stop-di-esterno-passag', 3), m('tpas-passaggi-al-muro-2-tocchi-controllo-di-interno-a-2', 4), m('tpas-passaggi-al-muro-2-tocchi-controllo-di-interno-a', 4), m('tpas-passaggi-al-muro-5-10mt-alto-basso', 4), m('tpas-passaggi-al-muro-in-difficolta', 4)],
   ];
-  return [...codici[Math.max(0, Math.min(pos, codici.length - 1))], ...chiusura];
+  const lista = [...codici[Math.max(0, Math.min(pos, codici.length - 1))]];
+  // Passaggi al muro con la pallina da tennis (video di Ste, 5/11): in mano nei primi due codici, il rimbalzo dopo.
+  // Al terzo posto: i primi due aprono la seduta di tiri, gli ultimi sono i primi a uscire se il tempo stringe.
+  lista.splice(2, 0, pos <= 1 ? PALLINA.passaggi : PALLINA.rimbalzo);
+  return [...lista, ...chiusura];
 }
 
 /** Senza muro: i passaggi in coppia se c'è il compagno, altrimenti a 10 m contro un cinesino e il box dribbling. */
 const PASSAGGI_COPPIA: Pezzo[] = [min('tpas-tecnica-a-2-passaggi-rasoterra-stop-interno-pass-2', 3, { r: 30 }), min('tpas-tecnica-a-2-passaggi-rasoterra-stop-interno-pass', 3, { r: 30 }), min('tpas-tecnica-a-2-passaggi-rasoterra-stop-esterno-pass', 3, { r: 30 }), min('tcon-tecnica-a-2-palla-bassa-e-palla-alta', 5, { r: 30 }), min('tpal-tecnica-a-2-palleggio-con-2-palle', 5, { ruolo: 'chiusura' })];
-const PASSAGGI_SENZA_MURO: Pezzo[] = [min('tpas-passaggi-a-10mt-alternati-primo-tocco-suola-tecn', 5, { serie: 2 }), min('cond-6', 3), min('tpas-passaggi-a-10mt-alternati-primo-tocco-suola-tecn', 4), min('cond-7', 3, { ruolo: 'chiusura' })];
+const PASSAGGI_SENZA_MURO: Pezzo[] = [min('tpas-passaggi-a-10mt-alternati-primo-tocco-suola-tecn', 5, { serie: 2 }), min('cond-6', 3), PALLINA.tocchi, min('tpas-passaggi-a-10mt-alternati-primo-tocco-suola-tecn', 4), min('cond-7', 3, { ruolo: 'chiusura' })];
 
 function pezziFreestyle(livello: LivelloMinV2): Pezzo[] {
   const a = livello !== 'B';
@@ -316,8 +333,8 @@ function pezziVisione(livello: LivelloMinV2): Pezzo[] {
 }
 
 function pezziDribbling(livello: LivelloMinV2): Pezzo[] {
-  if (livello === 'B') return [reps('cond-1', 3, 6, { ruolo: 'analitico' }), reps('cond-2', 3, 6, { ruolo: 'analitico' }), min('cond-6', 2, { serie: 2, r: 90 }), min('tpas-box-dribbling-passaggio', 1, { serie: 2, ruolo: 'chiusura', muro: true })];
-  const base: Pezzo[] = [reps('cond-3', 3, 6, { ruolo: 'analitico' }), reps('cond-5', 3, 6, { ruolo: 'analitico' }), min('cond-7', 2, { serie: 3, r: 90 }), min('tpas-box-dribbling-passaggio', 1, { serie: 3, ruolo: 'chiusura', muro: true })];
+  if (livello === 'B') return [reps('cond-1', 3, 6, { ruolo: 'analitico' }), reps('cond-2', 3, 6, { ruolo: 'analitico' }), PALLINA.tocchi, min('cond-6', 2, { serie: 2, r: 90 }), min('tpas-box-dribbling-passaggio', 1, { serie: 2, ruolo: 'chiusura', muro: true })];
+  const base: Pezzo[] = [reps('cond-3', 3, 6, { ruolo: 'analitico' }), reps('cond-5', 3, 6, { ruolo: 'analitico' }), PALLINA.tocchiPiuDifficile, min('cond-7', 2, { serie: 3, r: 90 }), min('tpas-box-dribbling-passaggio', 1, { serie: 3, ruolo: 'chiusura', muro: true })];
   return livello === 'PRO' ? [...base, reps('tvis-dribbling-visione-e-reattivita-avanzato', 4, 8, { r: 90, ruolo: 'chiusura', nota: NOTA_VISIONE })] : base;
 }
 

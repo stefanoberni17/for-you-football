@@ -225,7 +225,21 @@ describe('visione con la pallina da tennis (video di Ste, 5/11)', () => {
   it('senza muro i passaggi con la pallina diventano i tocchi con la pallina in mano', () => {
     const b = ids({ ...base, livello: 'B', attrezzatura: ['campo'] });
     expect(b).toContain('tvis-tocchi-int-est-pallina-tennis');
-    expect(b.some((id) => id.startsWith('tvis-passaggi-al-muro'))).toBe(false);
+    expect(b.some((id) => id?.startsWith('tvis-passaggi-al-muro'))).toBe(false);
+  });
+  const tema = (o: OpzioniTecnica, t: Parameters<typeof teId>[0]) => costruisciTecnica({ ...o, minuti: 60 }).find((b) => b.id === teId(t))!.items.map((it) => it.esercizio_id);
+  it('anche nella tecnica (Ste, 6/11): passaggi, dribbling e, da A1, palleggi', () => {
+    expect(tema({ ...base, livello: 'B' }, 'passaggi')).toContain('tvis-passaggi-al-muro-pallina-tennis');
+    expect(tema({ ...base, livello: 'A', posMuro: 3 }, 'passaggi')).toContain('tvis-passaggi-al-muro-pallina-tennis-rimbalzo');
+    expect(tema({ ...base, livello: 'B' }, 'dribbling')).toContain('tvis-tocchi-int-est-pallina-tennis');
+    expect(tema({ ...base, livello: 'A' }, 'dribbling')).toContain('tvis-tocchi-int-est-pallina-tennis');
+    expect(tema({ ...base, livello: 'A', posPalleggi: 3 }, 'palleggi')).toContain('tvis-palleggi-con-lancio-pallina-tennis');
+    expect(tema({ ...base, livello: 'B', posPalleggi: 0 }, 'palleggi')).not.toContain('tvis-palleggi-con-lancio-pallina-tennis');
+  });
+  it('senza muro i passaggi a 10 m hanno i tocchi con la pallina; la seduta di tiri si apre come prima', () => {
+    expect(tema({ ...base, livello: 'B', attrezzatura: ['campo'], inCoppia: false }, 'passaggi')).toContain('tvis-tocchi-int-est-pallina-tennis');
+    const tiro = tema({ ...base, livello: 'B' }, 'tiro');
+    expect(tiro.some((id) => id?.includes('pallina-tennis'))).toBe(false);
   });
 });
 
