@@ -39,8 +39,8 @@ function Prezzo({ p }: { p: PrezzoPubblico | undefined }) {
   // Come la pagina prezzi: l'importo si vede anche con le iscrizioni chiuse (la riga sotto il nome lo dice)
   if (!p || p.euro == null) return <span className="text-body-sm font-semibold text-muted">Per ora chiuso</span>;
   return (
-    <span className="text-right">
-      <span className="block font-display text-title-1 font-bold tabular-nums text-app">{euroTesto(p.euro)} €</span>
+    <span className="shrink-0 text-right">
+      <span className="block whitespace-nowrap font-display text-title-1 font-bold tabular-nums text-app">{euroTesto(p.euro)} €</span>
       <span className="block text-caption text-muted">al mese</span>
     </span>
   );
