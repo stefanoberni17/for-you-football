@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-06 — Chat del preparatore: il piano vero, niente "parlane con il preparatore"
+Dal collaudo dal vivo (Ste: «sì, sistema la chat con il preparatore»):
+- **Il piano completo nel contesto** (`pianoPerPreparatore`, `giorniFatti` in `lib/trainingChat.ts`): per ogni seduta i blocchi, gli esercizi con le dosi (per lato, kg, EMOM, facoltativi, ridotti per dolore, serie test) e lo stato (FATTA, OGGI, da fare). Prima arrivavano solo titolo e durata, e alla domanda «cosa faccio sabato?» il preparatore ricostruiva a memoria: «solo tecnica al muro e 10 tiri alla traversa» per un sabato con scatti e tiri pre partita. La regola dice di elencare quei blocchi ed esercizi, senza aggiungere niente.
+- **Il preparatore è lui**: per il dolore rimanda a «un fisioterapista, un medico o il preparatore della tua squadra», mai «al preparatore».
+- **Tetto dei tiri**: nel testo delle regole di tecnica è scritto che il tetto (20, poi sale) vale per la seduta di tiri; il giorno prima della partita al massimo 10 (`PLANNER_V2_PROMPT_VERSION = 'v2.50-tiri-solo-seduta-di-tiri'`).
+- Prove con Claude (`scripts/preparatore-replay.mts --live`): la domanda del collaudo e le quattro di controllo. Tre test in `tests/trainingChat.test.ts`.
+
 ## 2026-11-06 — Collaudo del Fisico dal vivo e correzioni
 Collaudo sul Preview con un account nuovo e il Fisico acceso a mano (`training_access`): setup, test e scala, piano con Opus (20 secondi, nessuna correzione del validatore), seduta nel player fino al voto finale, storico, mese, dolore per zona, chat del preparatore, resoconto della squadra, selettore Testa | Fisico. Corretto:
 - **Fine seduta lasciata a metà**: se l'app si chiudeva su «Com'è andata?» prima di Salva, riaprendo la seduta ripartiva dal primo esercizio e non risultava fatta. Ora si torna al voto (`trainingSessionFine:<plan>#<giorno>` sul dispositivo, 3 giorni).
