@@ -867,7 +867,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
           const temi = temiDiId(b.id);
           if (b.id === TE_LEGGERA_ID) {
             if (!asse.leggera) errors.push(`seduta del giorno ${s.giorno}: "${b.nome}" è solo per il giorno PRIMA della partita — negli altri giorni usa un tema (${TEMI.map(teId).join(', ')})`);
-            else noteMemoria.set(b.id, `facoltativa: ${asse.motivo}`);
+            else noteMemoria.set(b.id, 'facoltativa: al massimo 10 tiri, un dribbling corto, palleggi e passaggi'); // il nome dice già "il giorno prima della partita" (6/11)
             continue;
           }
           if (!temi.length) continue;
@@ -1081,7 +1081,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       const its0 = ritorno ? its00.map((it) => (!it.schema || it.schema === 'fisso' ? { ...it, serie: it.serie + 1 } : it)) : its00;
       // Parte alta dalle scale: gli esercizi delle catene v1 sono GIÀ al gradino dell'atleta (lib/trainingParteAlta) —
       // badge "Il tuo gradino" e niente sostituzione in `alGradino`; i log per serie (SALI/SCENDI) si applicano lo stesso
-      let its = isParteAlta(b.id) || isParteBassa(b.id) ? its0.map((it) => (it.schema === 'fisso' && esercizioById(it.esercizio_id) ? { ...it, adattamento: 'gradino' as const } : it)) : its0;
+      let its = isParteAlta(b.id) || isParteBassa(b.id) ? its0.map((it) => (it.schema === 'fisso' && esercizioById(it.esercizio_id) && !it.esercizio_id.startsWith('skip-') ? { ...it, adattamento: 'gradino' as const } : it)) : its0; // gli skip di chiusura non sono un gradino (6/11)
       if (isParteBassa(b.id)) {
         // Fmax: il base in palestra è in regime di forza massima (finestra partita di 3 giorni, bounds del regime)
         if (b.id === PB_FMAX_ID) its = its.map((it) => (it.carico_kg ? { ...it, regime: 'max' as const } : it));

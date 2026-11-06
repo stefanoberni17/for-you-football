@@ -1217,7 +1217,9 @@ export default function AllenamentoHub() {
           errorMsg={genError}
           sedute={sedute.map((s) => ({ giorno: s.giorno, titolo: s.titolo, modificabile: statoDi(s) === 'oggi' || statoDi(s) === 'futura' }))}
           oggiDow={oggiDow}
-          calendario={state.calendario}
+          calendario={(state.calendario?.trainingDays.length || state.calendario?.matchDays.length) ? state.calendario
+            // Calendario della settimana vuoto (6/11): vale l'abitudine del setup, come per il planner (giorni squadra, partita abituale)
+            : { trainingDays: Object.keys(state.squadra ?? {}).map(Number).filter((d) => d >= 1 && d <= 7), matchDays: state.partitaAbituale ? [state.partitaAbituale] : [] }}
           maxSedute={state.maxSeduteTotali ?? state.maxSeduteFisiche}
           maxSeduteFisiche={state.maxSeduteFisiche}
           focusSetup={state.setup.focus}

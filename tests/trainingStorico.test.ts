@@ -48,5 +48,7 @@ describe('costruisciStorico', () => {
     expect(testInfo('sconosciuto')).toEqual({ nome: 'sconosciuto', unita: '', verso: 'max' });
     expect(testInfo('t2-ankle-jump-dx').nome).toMatch(/destro/);   // riga propria nel catalogo
     expect(testInfo('test-squat-sx').nome).toMatch(/\(sinistro\)$/); // base + lato
+    expect(testInfo('skill:push-4').nome).toMatch(/^Scala: /); // gradino della scala: il nome, non l'id (6/11)
+    expect(testInfo('skill:push-4').nome).not.toContain('push-4');
   });
 });

@@ -2,6 +2,17 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-06 — Collaudo del Fisico dal vivo e correzioni
+Collaudo sul Preview con un account nuovo e il Fisico acceso a mano (`training_access`): setup, test e scala, piano con Opus (20 secondi, nessuna correzione del validatore), seduta nel player fino al voto finale, storico, mese, dolore per zona, chat del preparatore, resoconto della squadra, selettore Testa | Fisico. Corretto:
+- **Fine seduta lasciata a metà**: se l'app si chiudeva su «Com'è andata?» prima di Salva, riaprendo la seduta ripartiva dal primo esercizio e non risultava fatta. Ora si torna al voto (`trainingSessionFine:<plan>#<giorno>` sul dispositivo, 3 giorni).
+- **Ripresa dopo l'ultima serie**: riprendendo una seduta interrotta nel recupero finale si apriva una «serie 4» su un esercizio da 3; ora si passa all'esercizio dopo.
+- **Apertura saltata** ricordata anche nella ripresa (`PlayerProgress.blocchiSaltati`): niente domanda sulle zone per un rolling non fatto.
+- **Serie non votate** salvate lo stesso, come da programma (voto vuoto): prima una serie fatta senza toccare niente nel recupero non finiva nei log, e lo storico ne mostrava meno.
+- **Storico, scheda Test**: i gradini della scala con il nome dell'esercizio («Scala: Piegamenti arciere inclinati»), non l'id `skill:push-4`.
+- **Badge «Il tuo gradino»** tolto dagli skip di chiusura delle gambe.
+- **«Sposta una seduta»**: mai il giorno della partita; con il calendario della settimana vuoto il modulo usa squadra e partita abituali del setup.
+- Testi: il blocco pre partita si legge «Rapidità, velocità e Tiro pre partita»; la nota della tecnica leggera non ripete più «il giorno prima della partita» e «facoltativa».
+
 ## 2026-11-06 — Schede della pallina da tennis complete
 - Ste ha confermato le proposte: più facile e più difficile per i quattro esercizi con la pallina da tennis, livelli (B tocchi e passaggi con la pallina in mano, da A il rimbalzo e i palleggi con i lanci) e sedute (visione, passaggi, dribbling, palleggi da A1). Durata 2-5'. Tolti i `da_confermare`.
 

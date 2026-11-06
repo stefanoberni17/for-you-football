@@ -71,7 +71,8 @@ export default function TrainingPlanForm({ open = true, hasPlan, errorMsg, sedut
   const [mDurata, setMDurata] = useState<number>(45);
 
   const toggle = <T,>(arr: T[], v: T, max?: number) => arr.includes(v) ? arr.filter((x) => x !== v) : (max && arr.length >= max ? arr : [...arr, v]);
-  const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= oggiDow && !sedute.some((s) => s.giorno === d));
+  // Mai il giorno della partita (6/11): il server lo rifiuterebbe, e prima il modulo lo offriva come libero
+  const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= oggiDow && !sedute.some((s) => s.giorno === d) && !(calendario?.matchDays ?? []).includes(d));
 
   const squadra = calendario?.trainingDays ?? [];
   const partite = calendario?.matchDays ?? [];

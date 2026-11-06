@@ -48,7 +48,7 @@ const TEST_TENUTA_CAP_SEC = 300; // tenute al massimo: il cronometro sale fino a
  * recupero automatico tra le serie, video dimostrativo, note. Schermo sempre
  * acceso (wake lock). Al termine: feedback 3-tap gestito dal parent.
  */
-export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx'; startedAt?: number } // startedAt (20/10): l'inizio vero, per la durata reale
+export interface PlayerProgress { itemIdx: number; serieFatte: number; lato: 'dx' | 'sx'; startedAt?: number; blocchiSaltati?: string[] } // blocchiSaltati (6/11): l'apertura saltata resta saltata anche se la seduta viene ripresa // startedAt (20/10): l'inizio vero, per la durata reale
 /** Log di una serie (compilato durante il recupero): quanto è stata dura + eventuali reps/kg diversi dal proposto. */
 export interface SetLogInput {
   esercizio_id: string; serie: number; lato: '' | 'dx' | 'sx'; unita: string;
@@ -85,10 +85,20 @@ export default function TrainingSessionPlayer({
   onSetLog?: (log: SetLogInput) => void;    // feedback per serie durante il recupero (fire-and-forget)
   onTestResult?: (r: TestResultInput) => void; // ri-test in seduta (26/10): il massimo della serie test, salvato come risultato del test
 }) {
-  const [itemIdx, setItemIdx] = useState(() => Math.min(initialProgress?.itemIdx ?? 0, items.length - 1));
-  const blocchiSaltatiRef = useRef<string[]>([]); // "Salta l'apertura" (8/10): il blocco intero, senza passare dai singoli esercizi
-  const startedAtRef = useRef<number>(initialProgress?.startedAt ?? nowMs()); // l'inizio vero (anche dopo una ripresa)
-  const [serieFatte, setSerieFatte] = useState(initialProgress?.serieFatte ?? 0);
+  // Ripresa dopo l'ULTIMA serie di un esercizio (6/11: app chiusa nel recupero finale): si riparte dall'esercizio dopo,
+  // non da una "serie 4" su un esercizio da 3
+  const ripresa = (() => {
+    const p = initialProgress;
+    if (!p) return null;
+    const idx = Math.min(p.itemIdx ?? 0, items.length - 1);
+    const it = items[idx];
+    if (it && it.serie > 0 && p.serieFatte >= it.serie && idx + 1 < items.length) return { ...p, itemIdx: idx + 1, serieFatte: 0, lato: 'dx' as const };
+    return { ...p, itemIdx: idx };
+  })();
+  const [itemIdx, setItemIdx] = useState(() => ripresa?.itemIdx ?? 0);
+  const blocchiSaltatiRef = useRef<string[]>(ripresa?.blocchiSaltati ?? []); // "Salta l'apertura" (8/10): il blocco intero, senza passare dai singoli esercizi
+  const startedAtRef = useRef<number>(ripresa?.startedAt ?? nowMs()); // l'inizio vero (anche dopo una ripresa)
+  const [serieFatte, setSerieFatte] = useState(ripresa?.serieFatte ?? 0);
   // Serie in più facoltativa dal resoconto (19/10, seconda parte): la sceglie lui durante l'ultimo recupero, una sola
   const [serieExtra, setSerieExtra] = useState(0);
   const [restLeft, setRestLeft] = useState<number | null>(null); // null = non in recupero
@@ -108,7 +118,7 @@ export default function TrainingSessionPlayer({
   // Punto 18: "Com'è venuto?" espandibile a fine esercizio; default ok (niente da mandare), "Faccio fatica" / "Non riesco"
   const [esecuzione, setEsecuzione] = useState<Esecuzione | null>(null);
   const [esecuzioneAperta, setEsecuzioneAperta] = useState(false);
-  const [lato, setLato] = useState<'dx' | 'sx'>(initialProgress?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
+  const [lato, setLato] = useState<'dx' | 'sx'>(ripresa?.lato ?? 'dx'); // esercizi perLato: prima destro, poi sinistro
   const [execLeft, setExecLeft] = useState<number | null>(null); // timer di esecuzione (opzionale)
   const [showVideo, setShowVideo] = useState(false);
   // Video dei segnali (punto 20, 20/10): per gli esercizi di visione parte da solo con l'item, "Rifai da capo" lo riavvia
@@ -136,14 +146,14 @@ export default function TrainingSessionPlayer({
     const sblocca = bloccaScroll();
     return () => { document.removeEventListener('visibilitychange', onVis); markSessionActive(false); sblocca(); };
   }, []);
-  const latoRef = useRef<'dx' | 'sx'>(initialProgress?.lato ?? 'dx');
+  const latoRef = useRef<'dx' | 'sx'>(ripresa?.lato ?? 'dx');
   useWakeLock(true);
 
   // Progresso persistito: se l'utente esce (schermo/app) può riprendere da qui
   useEffect(() => {
     if (!storageKey) return;
     try {
-      localStorage.setItem(storageKey, JSON.stringify({ itemIdx, serieFatte, lato, startedAt: startedAtRef.current, savedAt: Date.now() }));
+      localStorage.setItem(storageKey, JSON.stringify({ itemIdx, serieFatte, lato, startedAt: startedAtRef.current, blocchiSaltati: blocchiSaltatiRef.current, savedAt: Date.now() }));
     } catch { /* no-op */ }
   }, [storageKey, itemIdx, serieFatte, lato]);
 
@@ -242,7 +252,12 @@ export default function TrainingSessionPlayer({
     setLogSaved(true);
   };
 
+  // Serie fatta ma mai votata né corretta (6/11): si salva lo stesso, come da programma (rpe vuoto), così storico e
+  // progressioni vedono tutte le serie fatte. Si chiama prima di passare alla serie o all'esercizio dopo.
+  const salvaSerieNonVotata = () => { if (pending && !logSaved) sendLog({}); };
+
   const avanza = (step: number) => {
+    salvaSerieNonVotata();
     if (timerRef.current) clearInterval(timerRef.current); restEndsRef.current = null; restTickRef.current = null;
     stopExec();
     setRestLeft(null);
@@ -296,6 +311,7 @@ export default function TrainingSessionPlayer({
       setLato('sx'); latoRef.current = 'sx';
       return;
     }
+    salvaSerieNonVotata();
     const next = serieFatte + 1;
     // Dopo l'ultima serie normale, se c'è la serie extra si parte direttamente dal lato debole
     const nextLato: 'dx' | 'sx' = extraLato > 0 && next === item.serie ? item.lato_extra! : 'dx';
