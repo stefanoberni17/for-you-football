@@ -118,6 +118,10 @@ describe('il server sostituisce i blocchi Everfit "Forza Parte Bassa" con le sed
     expect(plan.sedute[0].blocchi!.map((b) => b.id)).toContain(PB_SERIE_ID);
     expect(plan.sedute[0].blocchi!.find((b) => b.id === PB_SERIE_ID)?.nota).toMatch(/sui tuoi gradini/);
     expect(plan.sedute[0].items.filter((it) => it.esercizio_id.startsWith('squat-')).every((it) => it.adattamento === 'gradino')).toBe(true);
+    // gli skip di chiusura non sono un gradino: niente badge "Il tuo gradino" (6/11)
+    const skip = plan.sedute[0].items.filter((it) => it.esercizio_id.startsWith('skip-'));
+    expect(skip.length).toBeGreaterThan(0);
+    expect(skip.every((it) => it.adattamento !== 'gradino')).toBe(true);
   });
   it('serie e serie brevi sono lo stesso posto: due nella settimana → rifiuto; il richiamo fuori dal giorno dopo la partita → rifiuto', () => {
     const { errors } = expandPiano({ sedute: [{ giorno: 1, blocchi: [PB_SERIE_ID] }, { giorno: 3, blocchi: [PB_SERIE_SHORT_ID] }] }, ctx);

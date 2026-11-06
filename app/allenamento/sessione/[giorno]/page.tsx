@@ -24,6 +24,14 @@ interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
+/**
+ * Fine seduta in sospeso (6/11): finito l'ultimo esercizio il player cancella il progresso; se l'app si chiude sulla
+ * schermata "Com'è andata?" prima di Salva, al rientro si torna lì (non dal primo esercizio). Vale 3 giorni.
+ */
+const FINE_MAX_MS = 3 * 24 * 3600 * 1000;
+const fineKey = (planId: string, giorno: number) => `trainingSessionFine:${planId}#${giorno}`;
+interface FineSospesa { blocchiSaltati: string[]; durataSec: number | null; at: number }
+
 // Etichetta italiana del tipo di seduta (l'enum del planner non si mostra all'atleta)
 const TIPO_LABEL: Record<string, string> = {
   fisica: 'Fisica', mix: 'Fisica e tecnica', tecnica: 'Tecnica', skill: 'Tecnica', fascia: 'Fascia e prevenzione', recupero: 'Recupero',
@@ -91,6 +99,16 @@ export default function SessionePage() {
       const fatta = (data.completions || []).some((c: { session_key: string }) => Number(c.session_key.split('#')[1]) === giorno);
       setAlreadyDone(fatta);
       setSaltata(!fatta && typeof data.oggiDow === 'number' && giorno < data.oggiDow - 1);
+      // Fine seduta lasciata a metà: si riapre il voto, non il player
+      if (data.plan?.id && s) {
+        try {
+          const k = fineKey(data.plan.id, giorno);
+          const raw = localStorage.getItem(k);
+          const f = raw ? (JSON.parse(raw) as FineSospesa) : null;
+          if (fatta || !f || Date.now() - f.at > FINE_MAX_MS) { if (raw) localStorage.removeItem(k); }
+          else { setBlocchiSaltati(f.blocchiSaltati ?? []); setDurataSec(f.durataSec ?? null); setPhase('feedback'); setLoading(false); return; }
+        } catch { /* no-op */ }
+      }
       // Seduta interrotta? (progresso salvato dal player in localStorage)
       if (data.plan?.id && s) {
         try {
@@ -122,10 +140,11 @@ export default function SessionePage() {
         }
         return giudizi[b.id] ? [{ id: b.id, nome: nomeBloccoAtleta(b.nome), giudizio: giudizi[b.id] }] : [];
       });
-      await authFetch('/api/training/complete', {
+      const res = await authFetch('/api/training/complete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan_id: planId, giorno, rpe: rpeSeduta ?? undefined, blocchi, note: note.trim() || undefined, durata_reale_sec: durataSec ?? undefined }),
       });
+      if (res.ok) { try { localStorage.removeItem(fineKey(planId, giorno)); } catch { /* no-op */ } }
       setPhase('done');
     } finally { setSending(false); }
   };
@@ -194,7 +213,10 @@ export default function SessionePage() {
             authFetch('/api/training/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
               .catch(() => { /* fire-and-forget: la seduta non si ferma */ });
           }}
-          onComplete={(esito) => { setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setDurataSec(esito?.durataSec ?? null); setPhase('feedback'); }}
+          onComplete={(esito) => {
+            setSavedProgress(null); setResume(false); setBlocchiSaltati(esito?.blocchiSaltati ?? []); setDurataSec(esito?.durataSec ?? null); setPhase('feedback');
+            if (planId) { try { localStorage.setItem(fineKey(planId, giorno), JSON.stringify({ blocchiSaltati: esito?.blocchiSaltati ?? [], durataSec: esito?.durataSec ?? null, at: Date.now() } satisfies FineSospesa)); } catch { /* no-op */ } }
+          }}
           onExit={() => {
             // Il progresso resta salvato: al rientro si può riprendere da qui
             if (storageKey) {

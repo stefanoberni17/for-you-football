@@ -52,6 +52,11 @@ const media1 = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a 
 const GIUDIZIO_LABEL: Record<string, string> = { facile: 'facile', ok: 'giusto', duro: 'duro' };
 
 export function testInfo(id: string): { nome: string; unita: string; verso: 'max' | 'min' } {
+  // Gradino della scala skill (6/11): "skill:push-4" → il nome dell'esercizio, non l'id
+  if (id.startsWith('skill:')) {
+    const ex = esercizioAny(id.slice('skill:'.length));
+    if (ex) return { nome: `Scala: ${ex.nome}`, unita: ex.unita === 'secondi' ? 'secondi' : 'reps', verso: 'max' };
+  }
   // Prima l'id esatto (i test per lato hanno la loro riga nel catalogo: "t2-ankle-jump-dx"), poi la base + il lato
   const esatto2 = TESTS_V2.find((t) => t.id === id);
   if (esatto2) return { nome: esatto2.nome, unita: esatto2.unita, verso: esatto2.verso };

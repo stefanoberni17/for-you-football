@@ -17,6 +17,8 @@ export function nomeBloccoAtleta(nome: string): string {
   let n = nome.replace(SHORT, '').replace(CODICE, '').replace(NUMERO_FINALE, '');
   n = n.replace(/\s*[-–]\s*$/, '').replace(/^\s*[-–]\s*/, '').replace(/\s{2,}/g, ' ').trim();
   if (!n) n = nome;
+  n = n.replace(/\s+[-–]\s+(pre partita)$/i, ' $1'); // "… - pre partita" → "… pre partita"
+  n = n.charAt(0).toUpperCase() + n.slice(1); // i nomi di Everfit a volte partono minuscoli (6/11)
   return breve ? `${n} (versione breve)` : n;
 }
 
