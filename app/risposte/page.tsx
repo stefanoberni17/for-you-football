@@ -147,7 +147,7 @@ export default function RispostePage() {
                         ))}
                       </ol>
                     )}
-                    {r.aggiornataIl && <p className="text-caption text-faint mt-2">Aggiornata il {new Date(r.aggiornataIl).toLocaleDateString('it-IT')}{r.versioni ? ` · ${r.versioni} versioni` : ''}</p>}
+                    {r.aggiornataIl && <p className="text-caption text-faint mt-2">Aggiornata il {new Date(r.aggiornataIl).toLocaleDateString('it-IT')}{r.versioni ? ` · ${r.versioni} ${r.versioni === 1 ? 'versione' : 'versioni'}` : ''}</p>}
                     <div className="flex flex-wrap gap-1 mt-2 -ml-3">
                       {chiave && (!isGate || chiave.gateQ) && (
                         <Button variant="ghost" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(r)}>{chiave.gateQ ? `Modifica: ${chiave.label.toLowerCase()}` : 'Modifica'}</Button>

@@ -131,7 +131,7 @@ export default function RisposteChiaveBox({ week, day, mostraCarta, className = 
                   Quel giorno non hai scritto la risposta. Puoi scriverla adesso: vale lo stesso.
                 </p>
               )}
-              {row?.aggiornataIl && <p className="text-caption text-faint">Aggiornata il {new Date(row.aggiornataIl).toLocaleDateString('it-IT')}{row.versioni ? ` · ${row.versioni} versioni` : ''}</p>}
+              {row?.aggiornataIl && <p className="text-caption text-faint">Aggiornata il {new Date(row.aggiornataIl).toLocaleDateString('it-IT')}{row.versioni ? ` · ${row.versioni} ${row.versioni === 1 ? 'versione' : 'versioni'}` : ''}</p>}
               <Button variant="secondary" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(c)}>
                 {testo ? 'Modifica' : 'Scrivilo adesso'}
               </Button>

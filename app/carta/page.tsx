@@ -309,7 +309,7 @@ export default function CartaPage() {
 
           {(() => {
             const campi = carta.campi;
-            const meta = (v: CampoCartaValore) => v.aggiornataIl ? `Aggiornata il ${new Date(v.aggiornataIl).toLocaleDateString('it-IT')}${v.versioni ? ` · ${v.versioni} versioni` : ''}` : null;
+            const meta = (v: CampoCartaValore) => v.aggiornataIl ? `Aggiornata il ${new Date(v.aggiornataIl).toLocaleDateString('it-IT')}${v.versioni ? ` · ${v.versioni} ${v.versioni === 1 ? 'versione' : 'versioni'}` : ''}` : null;
             return (
               <>
                 <FieldBlock label="Il mio mantra" value={campi.mantra.testo} quote meta={meta(campi.mantra)} onEdit={() => setModifica('mantra')}

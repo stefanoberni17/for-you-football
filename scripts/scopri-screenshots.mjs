@@ -5,7 +5,7 @@
 // il Coach risponde davvero.
 //
 //   BASE=https://<preview>.vercel.app EMAIL=... PASSWORD=... [BYPASS=<token protezione Vercel>] \
-//     node scripts/scopri-screenshots.mjs [giorno reset coach azioni stato carta obiettivi setup fisico seduta recupero resoconto test]
+//     node scripts/scopri-screenshots.mjs [percorso difficolta coach parole obiettivi setup fisico seduta recupero resoconto test]
 //
 // Serve Playwright (nelle sessioni cloud c'è già). Le immagini vanno controllate a occhio prima del commit.
 import { createRequire } from 'node:module';
@@ -59,6 +59,23 @@ async function esempioStatistiche() {
 }
 
 const momenti = {
+  percorso: async () => { await go('/settimane', 7000); await shot('percorso'); },
+  difficolta: async () => { await go('/sos', 7000); await shot('difficolta'); },
+  // La Carta, parte mentale: le parole scritte nel percorso (risposte di ESEMPIO al posto di /api/risposte)
+  parole: async () => {
+    const riga = (week, day, x) => ({ week, day, domanda: null, risposta: null, prePratica: null, gate: null, gateQ: null, completedAt: '2026-10-20T18:00:00Z', versioni: 1, aggiornataIl: '2026-10-20T18:00:00Z', ...x });
+    const mappa = 'Spalle e mascella: dopo un errore si chiudono. Lo stomaco, la sera prima della partita.';
+    await page.route('**/api/risposte**', (r) => r.fulfill({ json: { risposte: [
+      riga(1, 3, { risposta: 'Riparto qui.' }),
+      riga(3, 3, { risposta: 'Piedi leggeri, respiro lungo, spalle basse. Chiedo palla senza pensarci.' }),
+      riga(3, 7, { gate: [mappa], gateQ: { q1: mappa } }),
+      riga(4, 6, { risposta: 'Sento lo stomaco che si chiude. Nomino: è il futuro, non è adesso. Torno: un respiro, il gesto, «Riparto qui».' }),
+    ] } }));
+    await go('/carta', 9000);
+    await page.getByText(/Il mio mantra/i).first().evaluate((el) => { document.scrollingElement.scrollTop += el.getBoundingClientRect().top - 150; });
+    await page.waitForTimeout(1000);
+    await shot('parole');
+  },
   giorno: async () => { await go('/giorno/1/1'); await shot('giorno'); },
   reset: async () => {
     await go('/strumenti');
