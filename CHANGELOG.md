@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita come i social
+
+Ste: «prova a prendere spunto anche da Instagram». Gli schemi che chi ha 16-25 anni usa ogni giorno, dentro la stessa pagina:
+- **Cerchi «in evidenza»** sotto il bottone d'apertura (La mia storia, La Testa, Dove ti porta, Il Fisico): toccati, aprono le **storie a tutto schermo** (`components/scopri/Storie.tsx`: un solo visore per pagina, `apriStoria(gruppo, schermata)`; barrette, tocco avanti/indietro, tenere premuto per fermare, Esc o X per chiudere, alla fine «Prova la prima settimana» e «Poi: …» per il gruppo dopo; un cerchio visto diventa grigio). La Testa e il Fisico mostrano le schermate dell'app con titolo, testo e «In campo»; Dove ti porta un punto per schermata.
+- **Le quattro scene come un post a carosello** (`components/scopri/Carosello.tsx`), con il disegnino grande, i pallini e «1 / 4».
+- **Ste come un profilo**: la foto nel cerchio (apre la storia), i numeri (100+ calciatori, 12 settimane, 300+ esercizi), tre righe di bio, la citazione, «Guarda la mia storia» e la **griglia delle foto**: ogni foto apre la storia da quel capitolo.
+- **Su telefono il bottone fisso in basso** («Prova gratis», `components/scopri/BarraProva.tsx`) dopo l'apertura, nascosto sui prezzi e in fondo.
+- Tolta la storia in linea (`Storia.tsx`): la stessa storia ora sta nel visore.
+
 ## 2026-11-07 — La pagina di vendita viva: la storia a schermate, il metodo a schede
 
 Ste: «deve essere dinamica, non classica con i link» e il testo nuovo della storia («più conciso, per la vendita»).

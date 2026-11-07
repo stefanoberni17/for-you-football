@@ -13,18 +13,21 @@ import { TelefonoCiclo } from '@/components/scopri/Telefono';
 import { Tour } from '@/components/scopri/Tour';
 import { Fischietto, PallaPersa, PalloneCheArriva, SeraPrima } from '@/components/scopri/Disegni';
 import { Espandi } from '@/components/scopri/Espandi';
-import { Storia } from '@/components/scopri/Storia';
+import { ApriStoria, InEvidenza, VisoreStorie } from '@/components/scopri/Storie';
+import { Carosello } from '@/components/scopri/Carosello';
+import { BarraProva } from '@/components/scopri/BarraProva';
 import { Schede } from '@/components/scopri/Schede';
 import { Rivela } from '@/components/scopri/Rivela';
-import { BottoneAvviso, BottoneProva, Intestazione, PercheFisico, PercheTesta, PiePagina, Titolo } from '@/components/scopri/Parti';
+import { BottoneAvviso, BottoneProva, CTA, Intestazione, PercheFisico, PercheTesta, PiePagina, Titolo } from '@/components/scopri/Parti';
 
 /**
  * La pagina di vendita pubblica (6/11; testi v2 di Ste del 7/11, funnel: Notion «Funnel di vendita: mappa e piano»).
  * Testi v3 (7/11): mi riconosco, Ste mi capisce, ha costruito qualcosa di concreto, può servire a me, posso provarlo.
  * Corta e viva (7/11, Ste: «solo le cose essenziali, poi approfondire quello che vuole»; «dinamica, non classica con i link»):
- * apertura, le scene, la storia di Ste a schermate (Storia.tsx), il giro dell'app Testa | Fisico (Tour.tsx), «Il metodo» a schede
- * (dove ti porta, perché la Testa, perché il Fisico), prezzi, domande, chiusura. Tutto in una pagina, niente link per approfondire;
- * le sezioni entrano mentre scorri (Rivela.tsx).
+ * apertura con i cerchi «in evidenza», le scene a carosello, Ste come un profilo con la griglia delle foto, il giro dell'app
+ * Testa | Fisico (Tour.tsx), «Il metodo» a schede, prezzi, domande, chiusura. Le storie (la sua, la Testa, dove ti porta, il
+ * Fisico) si aprono a tutto schermo come sui social (Storie.tsx); su telefono il bottone resta in basso (BarraProva.tsx).
+ * Tutto in una pagina, niente link per approfondire; le sezioni entrano mentre scorri (Rivela.tsx).
  * Chi apre il sito senza essere entrato arriva qui (app/page.tsx). Si vende il Mente; il Fisico e il Completo sono
  * annunciati nei prezzi finché il Campo non apre. Prezzi da Stripe e iscrizioni da app_settings con le stesse regole della pagina
  * prezzi (lib/scopri.ts), riletti ogni 5 minuti. Nessuna richiesta esterna dal browser, nessun cookie.
@@ -55,6 +58,20 @@ function dividiTitolo(t: string): [string, string] {
 
 /** I disegnini accanto alle quattro scene, nello stesso ordine di MOMENTI_CONOSCI. */
 const DISEGNI_SCENE = [PalloneCheArriva, PallaPersa, SeraPrima, Fischietto];
+
+/** Ste come un profilo: i numeri e le righe sotto il nome. Solo cose vere e sue. */
+const NUMERI = [
+  { numero: '100+', etichetta: 'calciatori' },
+  { numero: '12', etichetta: 'settimane' },
+  { numero: '300+', etichetta: 'esercizi' },
+];
+const BIO = [
+  'Ex calciatore, esordio in Serie C con la Reggiana.',
+  'Corso da mental coach, studi da personal trainer.',
+  'Fondatore di For You Football.',
+];
+/** La griglia: le foto dei capitoli (quella della citazione è già la foto del profilo); ognuna apre la storia dalla sua schermata. */
+const grigliaStoria = STORIA.capitoli.flatMap((c, k) => (c.foto ? [{ ...c.foto, schermata: k + 1 }] : []));
 
 /** Quante domande restano in vista; le altre dietro «Tutte le domande». */
 const DOMANDE_IN_VISTA = 4;
@@ -97,6 +114,9 @@ export default async function Scopri() {
               <BottoneProva />
               <span className="text-caption text-muted">{notaCta}</span>
             </div>
+            <div className="mt-9 lg:-ml-1">
+              <InEvidenza notaFisico={campoAperto ? undefined : FISICO_TEASER.quando.toLowerCase()} />
+            </div>
           </div>
           <div className="flex justify-center">
             <TelefonoCiclo momenti={MOMENTI_APP} />
@@ -107,35 +127,66 @@ export default async function Scopri() {
       {/* 2. Le scene */}
       <section className="border-y border-divider bg-surface/60">
         <div className="mx-auto max-w-3xl px-4 py-14 lg:py-16">
-          <ul className="space-y-3">
-            {MOMENTI_CONOSCI.map((m, i) => {
-              const Disegno = DISEGNI_SCENE[i];
-              return (
-                <li key={m} className="flex items-center gap-4 rounded-card border border-divider bg-app-bg px-5 py-4">
-                  {Disegno && <Disegno className="h-10 w-14 shrink-0 text-forest-400" />}
-                  <span className="font-quote text-[21px] italic leading-[30px] text-app">{m}</span>
-                </li>
-              );
-            })}
-          </ul>
+          <p className="text-center text-overline uppercase text-forest-400">Lo conosci questo momento?</p>
+          <div className="mt-6">
+            <Carosello
+              etichetta="Quattro momenti che conosci"
+              schede={MOMENTI_CONOSCI.map((m, i) => {
+                const Disegno = DISEGNI_SCENE[i];
+                return (
+                  <div key={m} className="flex aspect-[4/5] flex-col justify-between rounded-card border border-divider bg-[radial-gradient(80%_60%_at_20%_10%,rgba(26,150,96,0.22),transparent)] bg-app-bg p-6 sm:aspect-[5/4]">
+                    {Disegno && <Disegno className="h-20 w-28 text-forest-400" />}
+                    <p className="font-quote text-[25px] italic leading-[34px] text-app">{m}</p>
+                    <span className="text-caption text-faint">{i + 1} / {MOMENTI_CONOSCI.length}</span>
+                  </div>
+                );
+              })}
+            />
+          </div>
           <p className="mt-8 text-center text-body-lg text-muted">{CONOSCI_CHIUSURA}</p>
         </div>
       </section>
 
-      {/* 3. La storia di Ste, a schermate */}
+      {/* 3. Ste, come un profilo: foto, due righe, i numeri, la griglia delle foto che apre la storia */}
       <section id="storia" className="scroll-mt-4">
-        <Rivela className="mx-auto max-w-6xl px-4 py-16 lg:py-20">
-          <Titolo etichetta="Chi c'è dietro" sotto="La mia storia, in un minuto. Tocca a destra per andare avanti.">Ste</Titolo>
-          <div className="mt-8">
-            <Storia
-              citazione={STORIA.citazione}
-              fotoCitazione={STORIA.fotoCitazione}
-              intro={STORIA.intro}
-              capitoli={STORIA.capitoli}
-              finale={STORIA.finale}
-              fine={<><BottoneProva /><span className="text-caption text-white/80">{notaCta}</span></>}
-            />
+        <Rivela className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
+          <p className="text-center text-overline uppercase text-forest-400">Chi c&apos;è dietro</p>
+          <div className="mt-6 flex items-center gap-5 sm:gap-8">
+            <ApriStoria gruppo="storia" etichetta="Guarda la storia di Ste" className="shrink-0 rounded-full bg-gradient-to-tr from-forest-600 via-forest-400 to-[#c9f27a] p-[3px] transition-transform hover:scale-105">
+              <span className="block rounded-full bg-app-bg p-[3px]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={STORIA.fotoCitazione.src} alt="" className="h-20 w-20 rounded-full object-cover object-top sm:h-28 sm:w-28" />
+              </span>
+            </ApriStoria>
+            <div className="min-w-0">
+              <h2 className="font-display text-title-1 font-bold">Ste</h2>
+              <ul className="mt-2 flex gap-5 sm:gap-8">
+                {NUMERI.map((x) => (
+                  <li key={x.etichetta} className="text-center">
+                    <span className="block font-display text-title-3 font-bold tabular-nums">{x.numero}</span>
+                    <span className="block text-caption text-muted">{x.etichetta}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
+          <div className="mt-5 space-y-1 text-body text-app">
+            {BIO.map((r) => <p key={r}>{r}</p>)}
+          </div>
+          <p className="mt-4 font-quote text-[21px] italic leading-[30px] text-app">{STORIA.citazione}</p>
+          <ApriStoria gruppo="storia" className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded-btn bg-surface-2 text-body font-semibold text-app transition-colors hover:bg-surface-3">
+            Guarda la mia storia
+          </ApriStoria>
+          <ul className="mt-6 grid grid-cols-3 gap-1 sm:gap-1.5">
+            {grigliaStoria.map((f) => (
+              <li key={f.src}>
+                <ApriStoria gruppo="storia" schermata={f.schermata} etichetta={`Apri la storia da qui: ${f.alt}`} className="group relative block aspect-square w-full overflow-hidden rounded-[4px]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={f.src} alt={f.alt} loading="lazy" decoding="async" className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                </ApriStoria>
+              </li>
+            ))}
+          </ul>
         </Rivela>
       </section>
 
@@ -319,6 +370,8 @@ export default async function Scopri() {
       </section>
 
       <PiePagina />
+      <VisoreStorie cta={CTA} notaCta={notaCta} />
+      <BarraProva href={CTA} nota={notaCta} />
     </main>
   );
 }
