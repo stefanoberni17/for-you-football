@@ -14,6 +14,7 @@ import {
 } from '@/lib/scopri';
 import { ComeFunziona, TelefonoCiclo } from '@/components/scopri/Telefono';
 import { Fischietto, PallaPersa, PalloneCheArriva, SeraPrima } from '@/components/scopri/Disegni';
+import { Espandi } from '@/components/scopri/Espandi';
 
 /**
  * La pagina di vendita pubblica (6/11; testi v2 di Ste del 7/11, funnel: Notion «Funnel di vendita: mappa e piano»).
@@ -78,29 +79,52 @@ function PercheFisico() {
       <p className="text-center text-overline uppercase text-forest-400">{p.etichetta}</p>
       <h3 className="mt-2 text-center font-display text-title-1 font-bold">{p.titolo}</h3>
       <p className="mt-5 text-body-lg text-muted">{p.intro}</p>
-      <ul className="mt-6 grid gap-3 sm:grid-cols-3">
-        {p.figure.map((f) => (
-          <li key={f.chi} className="rounded-card border border-divider bg-app-bg p-4">
-            <span className="block text-body font-semibold text-app">{f.chi}</span>
-            <span className="mt-1 block text-body-sm text-muted">{f.limite}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-6 space-y-2 rounded-card border border-divider bg-app-bg p-5">
-        {p.altalena.map((r) => <p key={r} className="font-quote text-[20px] italic leading-[29px] text-app">{r}</p>)}
-      </div>
-      <p className="mt-6 text-body-lg text-muted">{p.scelta}</p>
-      <p className="mt-6 text-body-lg text-muted">{p.problema}</p>
-      <ul className="mt-4 flex flex-wrap gap-2">
-        {p.variabili.map((v) => (
-          <li key={v} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{v}</li>
-        ))}
-      </ul>
-      <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
-      <div className="space-y-4 text-body-lg text-muted">
-        {p.ai.map((r, i) => <p key={r} className={i === p.ai.length - 1 ? 'text-app' : ''}>{r}</p>)}
+      <Espandi etichetta="Perché il Fisico è fatto così">
+        <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+          {p.figure.map((f) => (
+            <li key={f.chi} className="rounded-card border border-divider bg-app-bg p-4">
+              <span className="block text-body font-semibold text-app">{f.chi}</span>
+              <span className="mt-1 block text-body-sm text-muted">{f.limite}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-6 space-y-2 rounded-card border border-divider bg-app-bg p-5">
+          {p.altalena.map((r) => <p key={r} className="font-quote text-[20px] italic leading-[29px] text-app">{r}</p>)}
+        </div>
+        <p className="mt-6 text-body-lg text-muted">{p.scelta}</p>
+        <p className="mt-6 text-body-lg text-muted">{p.problema}</p>
+        <ul className="mt-4 flex flex-wrap gap-2">
+          {p.variabili.map((v) => (
+            <li key={v} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{v}</li>
+          ))}
+        </ul>
+        <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
+        <div className="space-y-4 text-body-lg text-muted">
+          {p.ai.map((r, i) => <p key={r} className={i === p.ai.length - 1 ? 'text-app' : ''}>{r}</p>)}
+        </div>
+      </Espandi>
+    </div>
+  );
+}
+
+/** Un capitolo della storia: una foto accanto ai suoi paragrafi, a lati alterni. */
+function Capitolo({ c, i }: { c: ReturnType<typeof capitoliStoria>[number]; i: number }) {
+  return (
+    <div className={c.foto ? 'grid items-center gap-8 sm:grid-cols-2 sm:gap-10' : ''}>
+      {c.foto && <FotoStoriaCard foto={c.foto} />}
+      <div className={`space-y-4 ${c.foto && i % 2 === 0 ? 'sm:order-first' : ''}`}>
+        {c.paragrafi.map(({ testo, n }) => <p key={n} className={n === 0 ? 'text-app' : ''}>{testo}</p>)}
       </div>
     </div>
+  );
+}
+
+function Video() {
+  if (!VIDEO_PRINCIPALE) return null;
+  return (
+    <video className="mt-10 w-full rounded-card shadow-e3" src={VIDEO_PRINCIPALE.src} poster={VIDEO_PRINCIPALE.poster} muted playsInline controls preload="metadata">
+      {VIDEO_PRINCIPALE.sottotitoli && <track kind="captions" src={VIDEO_PRINCIPALE.sottotitoli} srcLang="it" label="Italiano" default />}
+    </video>
   );
 }
 
@@ -215,36 +239,40 @@ export default async function Scopri() {
           <p className="text-overline uppercase text-forest-400">Chi c&apos;è dietro</p>
           <blockquote className="mt-4 font-quote text-[26px] italic leading-[34px] text-app lg:text-[32px] lg:leading-[42px]">{STORIA.citazione}</blockquote>
           {STORIA_FOTO.length > 0 ? (
-            <div className="mt-10 space-y-12 text-body-lg text-muted lg:-mx-24">
-              {capitoliStoria().map((c, i) => (
-                <div key={i} className={c.foto ? 'grid items-center gap-8 sm:grid-cols-2 sm:gap-10' : ''}>
-                  {c.foto && <FotoStoriaCard foto={c.foto} />}
-                  <div className={`space-y-4 ${c.foto && i % 2 === 0 ? 'sm:order-first' : ''}`}>
-                    {c.paragrafi.map(({ testo, n }) => <p key={n} className={n === 0 ? 'text-app' : ''}>{testo}</p>)}
-                  </div>
-                </div>
-              ))}
-              {ALBUM_FOTO.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                  {ALBUM_FOTO.map((f) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={f.src} src={f.src} alt={f.alt} loading="lazy" decoding="async" className="aspect-square w-full rounded-btn border border-divider object-cover sm:rounded-card" />
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="mt-8 flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-forest-500 to-forest-700 font-display text-title-3 font-bold text-white" aria-hidden>SB</div>
-              <div className="space-y-4 text-body-lg text-muted">
-                {STORIA.paragrafi.map((p, i) => <p key={i} className={i === 0 ? 'text-app' : ''}>{p}</p>)}
+            <>
+              <div className="mt-10 text-body-lg text-muted lg:-mx-24">
+                {capitoliStoria().slice(0, 1).map((c, i) => <Capitolo key={i} c={c} i={i} />)}
               </div>
-            </div>
-          )}
-          {VIDEO_PRINCIPALE && (
-            <video className="mt-10 w-full rounded-card shadow-e3" src={VIDEO_PRINCIPALE.src} poster={VIDEO_PRINCIPALE.poster} muted autoPlay playsInline controls preload="metadata">
-              {VIDEO_PRINCIPALE.sottotitoli && <track kind="captions" src={VIDEO_PRINCIPALE.sottotitoli} srcLang="it" label="Italiano" default />}
-            </video>
+              <Espandi etichetta="Leggi tutta la storia">
+                <div className="mt-12 space-y-12 text-body-lg text-muted lg:-mx-24">
+                  {capitoliStoria().slice(1).map((c, i) => <Capitolo key={i} c={c} i={i + 1} />)}
+                  {ALBUM_FOTO.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                      {ALBUM_FOTO.map((f) => (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img key={f.src} src={f.src} alt={f.alt} loading="lazy" decoding="async" className="aspect-square w-full rounded-btn border border-divider object-cover sm:rounded-card" />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {VIDEO_PRINCIPALE && <Video />}
+              </Espandi>
+            </>
+          ) : (
+            <>
+              <div className="mt-8 flex items-start gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-forest-500 to-forest-700 font-display text-title-3 font-bold text-white" aria-hidden>SB</div>
+                <div className="space-y-4 text-body-lg text-muted">
+                  <p className="text-app">{STORIA.paragrafi[0]}</p>
+                </div>
+              </div>
+              <Espandi etichetta="Leggi tutta la storia">
+                <div className="mt-4 space-y-4 pl-[72px] text-body-lg text-muted">
+                  {STORIA.paragrafi.slice(1).map((p, i) => <p key={i}>{p}</p>)}
+                </div>
+                {VIDEO_PRINCIPALE && <Video />}
+              </Espandi>
+            </>
           )}
         </div>
       </section>
@@ -253,18 +281,21 @@ export default async function Scopri() {
       <section className="border-t border-divider bg-surface/40">
         <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
           <Titolo etichetta={PERCHE_TESTA.etichetta}>{PERCHE_TESTA.titolo}</Titolo>
-          <div className="mt-8 space-y-4 text-body-lg text-muted">
-            {PERCHE_TESTA.paragrafi.map((p) => <p key={p}>{p}</p>)}
-          </div>
-          <ul className="mt-6 flex flex-wrap gap-2">
-            {PERCHE_TESTA.studi.map((t) => (
-              <li key={t} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{t}</li>
-            ))}
-          </ul>
-          <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{PERCHE_TESTA.domanda}</blockquote>
-          <div className="space-y-4 text-body-lg text-muted">
-            {PERCHE_TESTA.chiusura.map((p, i) => <p key={p} className={i === PERCHE_TESTA.chiusura.length - 1 ? 'text-app' : ''}>{p}</p>)}
-          </div>
+          <p className="mt-8 text-body-lg text-muted">{PERCHE_TESTA.paragrafi[0]}</p>
+          <Espandi etichetta="Leggi di più">
+            <div className="mt-4 space-y-4 text-body-lg text-muted">
+              {PERCHE_TESTA.paragrafi.slice(1).map((p) => <p key={p}>{p}</p>)}
+            </div>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {PERCHE_TESTA.studi.map((t) => (
+                <li key={t} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{t}</li>
+              ))}
+            </ul>
+            <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{PERCHE_TESTA.domanda}</blockquote>
+            <div className="space-y-4 text-body-lg text-muted">
+              {PERCHE_TESTA.chiusura.map((p, i) => <p key={p} className={i === PERCHE_TESTA.chiusura.length - 1 ? 'text-app' : ''}>{p}</p>)}
+            </div>
+          </Espandi>
         </div>
       </section>
 
@@ -328,10 +359,12 @@ export default async function Scopri() {
               </li>
             ))}
           </ul>
-          <div className="mt-12">
-            <ComeFunziona momenti={MOMENTI_FISICO} invertito />
-          </div>
-          <p className="mt-8 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
+          <Espandi etichetta="Guarda come funziona il Fisico" className="mt-6">
+            <div className="mt-12">
+              <ComeFunziona momenti={MOMENTI_FISICO} invertito />
+            </div>
+            <p className="mt-8 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
+          </Espandi>
           <p className="mt-4 text-center">
             <a href="#prezzi-fisico" className="inline-flex min-h-[44px] items-center gap-1.5 text-body font-semibold text-forest-300 hover:text-forest-200">
               I prezzi del Fisico <ArrowRight size={16} aria-hidden />

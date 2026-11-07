@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita a sezioni che si aprono
+
+Ste: «è troppo in una pagina: a sezioni, ognuna che si può espandere per sapere più nel dettaglio». `components/scopri/Espandi.tsx`: in vista l'essenziale, il resto si apre con un bottone sotto (contenuto nel DOM anche da chiuso, `hidden`; chiudendo la pagina torna all'inizio del pezzo). Si aprono: la storia («Leggi tutta la storia»: in vista la citazione, la foto della Reggiana e il primo paragrafo), «Migliorare come persona, e come giocatore» («Leggi di più»: in vista il primo paragrafo), «Tutto collegato» («Perché il Fisico è fatto così») e i sette momenti del Fisico («Guarda come funziona il Fisico»). Restano aperte l'apertura, le scene, «Dove ti porta il lavoro», «Non è pensiero positivo», «Come funziona» della Testa, prezzi, domande (già a scomparsa) e chiusura. Da computer la pagina passa da circa 19.000 a circa 10.800 pixel. Il video, quando ci sarà, sta dentro la storia e non parte da solo.
+
 ## 2026-11-07 — La pagina di vendita: perché la Testa e perché il Fisico
 
 Ste: «vorrei mettere più focus su come mai questo percorso mentale e fisico», con i due testi suoi. Ritoccati poco, nella sua voce (`PERCHE_TESTA`, `PERCHE_FISICO` in `lib/scopri.ts`):
