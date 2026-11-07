@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita, testi v3 di Ste
+
+Stesso giorno, terza stesura di Ste («ordine emotivo: mi riconosco, Ste mi capisce, ha costruito qualcosa di concreto, può servire a me, posso provarlo»): apertura nuova («In allenamento giochi come sai. In partita, a volte, non ti riconosci.»), le quattro scene senza titolo, la storia riscritta (il nascondersi dopo l'errore, «togliere invece di aggiungere», più di cento calciatori dal Covid) con il posto del video in fondo, la sezione nuova «Dove ti porta il lavoro» (`DOVE_PORTA`), «In campo:» seguito dal minuscolo, il Fisico non più in una sezione a sé ma dentro i prezzi, con gli importi e «Avvisami quando apre». Restano le correzioni della v2 (email tre giorni prima, codice nella pagina prezzi, «ognuno con la sua scheda, e i video»).
+
 ## 2026-11-07 — La pagina di vendita, testi v2 di Ste
 
 Ste ha riscritto i testi con Claude («Pagina di vendita v2»): la pagina vende il Mente e annuncia il Fisico.

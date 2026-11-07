@@ -26,31 +26,47 @@ export interface MomentoApp {
   inCampo?: string;
 }
 
-// ─── Testi della pagina (v2 di Ste, 7/11). Regole: niente trattini lunghi, niente promesse di esito ───
+// ─── Testi della pagina (v3 di Ste, 7/11). Regole: niente trattini lunghi, niente promesse di esito.
+// Ordine: mi riconosco → Ste mi capisce → ha costruito qualcosa di concreto → può servire a me → posso provarlo ───
 
 export const APERTURA = {
   etichetta: 'Mental training per calciatori',
-  titolo: 'Allena la testa come alleni le gambe.',
-  sotto: 'Pochi minuti al giorno per imparare a tornare in partita quando la testa se ne va. Dopo un errore, in panchina, la sera prima della partita.',
+  titolo: 'In allenamento giochi come sai. In partita, a volte, non ti riconosci.',
+  sotto: 'Allena la testa come alleni le gambe: pochi minuti al giorno per portare in partita il giocatore che sei in allenamento.',
 };
 
-/** «Lo conosci questo momento?» */
+/** Le scene. */
 export const MOMENTI_CONOSCI: string[] = [
-  'Sbagli un passaggio facile al decimo minuto... e te lo porti fino al novantesimo.',
-  'Vedi il mister che si alza dalla panchina, e le gambe diventano di legno.',
-  'La sera prima della partita giri nel letto e la giochi dieci volte in testa.',
-  'Ti tolgono al sessantesimo, e passi la settimana a chiederti cosa pensa di te.',
+  'Ti arriva un pallone semplice, e pensi già a non sbagliarlo.',
+  'Dopo un errore, invece di chiedere ancora palla, cominci a nasconderti.',
+  'La sera prima della partita la giochi dieci volte in testa.',
+  'Poi esci dal campo pensando: «Potevo fare molto di più».',
 ];
-export const CONOSCI_CHIUSURA = 'Il talento non c\'entra. In allenamento quelle giocate le fai. Quello che manca è il modo di riportare la testa in campo... e si allena, come il piede debole.';
+export const CONOSCI_CHIUSURA = 'Il talento non c\'entra. Quello che manca è il modo di riportare la testa in campo... e si allena, come il piede debole.';
 
 export const STORIA = {
   citazione: '«Sono passato da vomitare prima delle partite, terrorizzato e bloccato dalla paura, a giocare davanti a diecimila persone.»',
   paragrafi: [
-    'Sono Stefano, Ste. Ho esordito in Serie C con la Reggiana, e il primo pallone me l\'hanno rubato su un appoggio che avevo fatto mille volte. In Serie D ho perso una finale di Coppa Italia anche perché un passaggio sbagliato nel primo tempo me lo sono portato dietro per tutta la partita.',
-    'Per anni ho provato di tutto: un mental coach, uno psicologo, lo yoga, libri, corsi. Cose preziose... ma ognuno mi dava qualcosa in più da fare. Il passo vero è stato l\'opposto: togliere invece di aggiungere. Imparare ad accorgermi di quando la testa partiva, e tornare.',
-    'Non è stato veloce, e non è finito nemmeno oggi.',
-    'For You Football è quello che avrei voluto avere io: le cose che mi sono servite, messe in fila, un giorno alla volta.',
+    'Ci sono passato anch\'io. Ho esordito in Serie C con la Reggiana, e il primo pallone me l\'hanno rubato su un appoggio che avevo fatto mille volte.',
+    'Per anni, se sbagliavo a inizio partita, arrivava la paura... e mi nascondevo. Se la palla non mi arriva, non posso sbagliare. Era automatico, non me ne rendevo nemmeno conto.',
+    'Me ne sono accorto anni dopo, quando ho iniziato a lavorare sulla testa. Un giorno l\'ho proprio visto mentre succedeva... e vedendolo, finalmente, ho potuto scegliere.',
+    'Ho provato di tutto: un mental coach, uno psicologo, lo yoga, libri, corsi. Cose preziose... ma ognuno mi dava qualcosa in più da fare. Il passo vero è stato l\'opposto: togliere invece di aggiungere.',
+    'Dal Covid lavoro con altri calciatori: più di cento, di ogni età, professionisti e dilettanti.',
+    'Non è stato veloce, e non è finito nemmeno oggi. For You Football è quello che avrei voluto avere io: le cose che mi sono servite, messe in fila, un giorno alla volta.',
   ],
+};
+
+/** Dove ti porta il lavoro. */
+export const DOVE_PORTA = {
+  titolo: 'Dove ti porta il lavoro',
+  intro: 'Il lavoro va in una direzione precisa:',
+  punti: [
+    'chiedere ancora palla dopo aver sbagliato;',
+    'entrare dalla panchina senza dover dimostrare tutto al primo minuto;',
+    'arrivare alla partita importante senza averla già giocata dieci volte nel letto;',
+    'tornare a casa dopo una partita storta, senza che si prenda tutta la serata.',
+  ],
+  chiusura: 'Non te lo prometto in dodici settimane. Ti do gli strumenti, e un giorno alla volta per allenarli.',
 };
 
 export const NON_POSITIVO = {
@@ -76,7 +92,7 @@ export const MOMENTI_TESTA: MomentoApp[] = [
       'A fine settimana tre o quattro domande, e da lì si apre la successiva.',
       'La sera prima della partita c\'è una pratica apposta.',
     ],
-    inCampo: 'Entri sapendo cosa fare, invece di sperare che sia una giornata buona.',
+    inCampo: 'entri sapendo cosa fare, invece di sperare che sia una giornata buona.',
   },
   {
     id: 'reset',
@@ -89,7 +105,7 @@ export const MOMENTI_TESTA: MomentoApp[] = [
       'Ogni strumento ha la versione lunga da fare a casa e quella corta da usare in campo.',
       'Le schede per i momenti difficili (ansia prima della partita, l\'errore, la panchina, il mister) ti dicono cosa fare adesso.',
     ],
-    inCampo: 'Dopo l\'errore sei già sulla palla dopo.',
+    inCampo: 'dopo l\'errore sei già sulla palla dopo.',
   },
   {
     id: 'coach',
@@ -103,7 +119,7 @@ export const MOMENTI_TESTA: MomentoApp[] = [
       'Domande dirette, niente frasi fatte.',
       'Se scrivi qualcosa che fa pensare che stai male davvero, ti indica persone reali a cui rivolgerti.',
     ],
-    inCampo: 'Non ti tieni la partita storta dentro fino alla prossima.',
+    inCampo: 'non ti tieni la partita storta dentro fino alla prossima.',
   },
   {
     id: 'carta',
@@ -116,7 +132,7 @@ export const MOMENTI_TESTA: MomentoApp[] = [
       'Le riscrivi quando cambiano: ogni versione resta, con la data.',
       'Un check-in di venti secondi al mattino (sonno, corpo, testa) e cinque piccole azioni per la giornata, scelte da te.',
     ],
-    inCampo: 'Prima del fischio d\'inizio sai già chi vuoi essere in quei novanta minuti.',
+    inCampo: 'prima del fischio d\'inizio sai già chi vuoi essere in quei novanta minuti.',
   },
 ];
 
@@ -127,10 +143,10 @@ export const MOMENTI_TESTA: MomentoApp[] = [
 export interface Racconto { testo: string; chi: string; ruolo: string; categoria: string }
 export const RACCONTI: Racconto[] = [];
 
-/** Il Fisico in breve, finché il Campo non è aperto a tutti. */
+/** Il Fisico in breve, dentro la sezione dei prezzi finché il Campo non è aperto a tutti (v3). */
 export const FISICO_TEASER = {
-  titolo: 'La preparazione costruita sulla tua settimana di partite.',
-  testo: 'Un piano ogni settimana sui tuoi obiettivi, i tuoi attrezzi, gli allenamenti con la squadra e la partita. Più di 300 esercizi, ognuno con la sua scheda, e i video. Se un giorno sei molto stanco o senti un fastidio, la seduta si alleggerisce.',
+  titolo: 'Il Fisico',
+  testo: 'La preparazione costruita sulla tua settimana di partite: un piano ogni settimana sui tuoi obiettivi, i tuoi attrezzi, gli allenamenti con la squadra e la partita. Più di 300 esercizi, ognuno con la sua scheda, e i video.',
   quando: 'Da dicembre',
 };
 

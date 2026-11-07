@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { IMPOSTAZIONI_DEFAULT, type Impostazioni } from '@/lib/abbonamento';
 import { PACCHETTI, type Pacchetto } from '@/lib/listino';
-import { APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP, MOMENTI_CONOSCI, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA } from '@/lib/scopri';
+import { APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP, MOMENTI_CONOSCI, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA } from '@/lib/scopri';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -41,7 +41,7 @@ describe('pagina di vendita: prezzi pubblici', () => {
 
 function tuttiITesti(): string[] {
   return [
-    ...Object.values(APERTURA), ...MOMENTI_CONOSCI, CONOSCI_CHIUSURA, STORIA.citazione, ...STORIA.paragrafi, NON_POSITIVO.titolo, ...NON_POSITIVO.paragrafi,
+    ...Object.values(APERTURA), ...MOMENTI_CONOSCI, CONOSCI_CHIUSURA, STORIA.citazione, ...STORIA.paragrafi, DOVE_PORTA.titolo, DOVE_PORTA.intro, ...DOVE_PORTA.punti, DOVE_PORTA.chiusura, NON_POSITIVO.titolo, ...NON_POSITIVO.paragrafi,
     ...[...MOMENTI_TESTA, ...MOMENTI_FISICO].flatMap((m) => [m.titolo, m.testo, ...m.dettaglio, m.inCampo ?? '']),
     ...Object.values(FISICO_TEASER), ...MENTE_INCLUDE, NOTA_VALORE, NOTA_CODICE, ...CHIUSURA,
     ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).flatMap((p) => [p.titolo, p.testo]),
@@ -64,6 +64,10 @@ describe('pagina di vendita: testi', () => {
     const t = tuttiITesti().join(' ');
     expect(t).not.toMatch(/[—–]/);
     expect(t).not.toMatch(/\btap\b/i);
+  });
+
+  it('dopo «In campo:» la frase comincia in minuscolo (v3)', () => {
+    for (const m of MOMENTI_TESTA) expect(m.inCampo?.[0], m.id).toBe(m.inCampo?.[0]?.toLowerCase());
   });
 
   it('la sezione dei racconti resta vuota finché non ci sono racconti veri', () => {

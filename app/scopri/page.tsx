@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Bell, Check, Dumbbell } from 'lucide-react';
+import { ArrowRight, Bell, Check } from 'lucide-react';
 import { loadListino } from '@/lib/prezziServer';
 import { contaIscrittiCampo, contaIscrittiMente, loadImpostazioni } from '@/lib/appSettings';
 import { euroTesto, IMPOSTAZIONI_DEFAULT } from '@/lib/abbonamento';
 import { MIN_AGE } from '@/lib/constants';
 import {
-  APERTURA, AVVISO_FISICO, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
+  APERTURA, AVVISO_FISICO, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
   MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA,
   type PrezzoPubblico,
 } from '@/lib/scopri';
@@ -14,8 +14,9 @@ import { ComeFunziona, TelefonoCiclo } from '@/components/scopri/Telefono';
 
 /**
  * La pagina di vendita pubblica (6/11; testi v2 di Ste del 7/11, funnel: Notion «Funnel di vendita: mappa e piano»).
+ * Testi v3 (7/11): mi riconosco, Ste mi capisce, ha costruito qualcosa di concreto, può servire a me, posso provarlo.
  * Chi apre il sito senza essere entrato arriva qui (app/page.tsx). Si vende il Mente; il Fisico e il Completo sono
- * annunciati finché il Campo non apre. Prezzi da Stripe e iscrizioni da app_settings con le stesse regole della pagina
+ * annunciati nei prezzi finché il Campo non apre. Prezzi da Stripe e iscrizioni da app_settings con le stesse regole della pagina
  * prezzi (lib/scopri.ts), riletti ogni 5 minuti. Nessuna richiesta esterna dal browser, nessun cookie.
  */
 export const revalidate = 300;
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 
 const CTA = '/register';
 
-/** Il video principale di Ste (2-3 minuti, parte muto con i sottotitoli). Finché non c'è, al suo posto il telefono. */
+/** Il video principale di Ste (2-3 minuti, parte muto con i sottotitoli), in fondo alla storia. Finché non c'è, niente. */
 const VIDEO_PRINCIPALE: { src: string; sottotitoli?: string; poster?: string } | null = null;
 
 async function caricaPrezzi() {
@@ -101,7 +102,7 @@ export default async function Scopri() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-16 pt-6 lg:grid-cols-2 lg:pb-24 lg:pt-12">
           <div className="scopri-entra text-center lg:text-left">
             <p className="text-overline uppercase text-forest-400">{APERTURA.etichetta}</p>
-            <h1 className="mt-3 font-display text-[40px] font-bold leading-[44px] tracking-tight lg:text-[56px] lg:leading-[60px]">{APERTURA.titolo}</h1>
+            <h1 className="mt-3 font-display text-[34px] font-bold leading-[40px] tracking-tight lg:text-[50px] lg:leading-[56px]">{APERTURA.titolo}</h1>
             <p className="mx-auto mt-5 max-w-xl text-body-lg text-muted lg:mx-0">{APERTURA.sotto}</p>
             <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
               <BottoneProva />
@@ -109,22 +110,15 @@ export default async function Scopri() {
             </div>
           </div>
           <div className="flex justify-center">
-            {VIDEO_PRINCIPALE ? (
-              <video className="w-full max-w-xl rounded-card shadow-e3" src={VIDEO_PRINCIPALE.src} poster={VIDEO_PRINCIPALE.poster} muted autoPlay playsInline controls preload="metadata">
-                {VIDEO_PRINCIPALE.sottotitoli && <track kind="captions" src={VIDEO_PRINCIPALE.sottotitoli} srcLang="it" label="Italiano" default />}
-              </video>
-            ) : (
-              <TelefonoCiclo momenti={MOMENTI_APP} />
-            )}
+            <TelefonoCiclo momenti={MOMENTI_APP} />
           </div>
         </div>
       </section>
 
-      {/* 2. Lo conosci questo momento? */}
+      {/* 2. Le scene */}
       <section className="border-y border-divider bg-surface/60">
         <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
-          <Titolo>Lo conosci questo momento?</Titolo>
-          <ul className="mt-10 space-y-3">
+          <ul className="space-y-3">
             {MOMENTI_CONOSCI.map((m) => (
               <li key={m} className="rounded-card border border-divider bg-app-bg px-5 py-4 font-quote text-[21px] italic leading-[30px] text-app">{m}</li>
             ))}
@@ -144,10 +138,32 @@ export default async function Scopri() {
               {STORIA.paragrafi.map((p, i) => <p key={i} className={i === 0 ? 'text-app' : ''}>{p}</p>)}
             </div>
           </div>
+          {VIDEO_PRINCIPALE && (
+            <video className="mt-10 w-full rounded-card shadow-e3" src={VIDEO_PRINCIPALE.src} poster={VIDEO_PRINCIPALE.poster} muted autoPlay playsInline controls preload="metadata">
+              {VIDEO_PRINCIPALE.sottotitoli && <track kind="captions" src={VIDEO_PRINCIPALE.sottotitoli} srcLang="it" label="Italiano" default />}
+            </video>
+          )}
         </div>
       </section>
 
-      {/* 4. Non è pensiero positivo */}
+      {/* 4. Dove ti porta il lavoro */}
+      <section className="border-t border-divider">
+        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
+          <Titolo>{DOVE_PORTA.titolo}</Titolo>
+          <p className="mt-6 text-center text-body-lg text-muted">{DOVE_PORTA.intro}</p>
+          <ul className="mx-auto mt-6 max-w-xl space-y-3">
+            {DOVE_PORTA.punti.map((r) => (
+              <li key={r} className="flex items-start gap-3 rounded-card border border-divider bg-surface px-5 py-4 text-body-lg text-app">
+                <Check size={20} className="mt-1 shrink-0 text-forest-400" aria-hidden />
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 text-center text-body-lg text-muted">{DOVE_PORTA.chiusura}</p>
+        </div>
+      </section>
+
+      {/* 5. Non è pensiero positivo */}
       <section className="border-y border-divider bg-surface/60">
         <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
           <Titolo>{NON_POSITIVO.titolo}</Titolo>
@@ -157,7 +173,7 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* 5. Come funziona */}
+      {/* 6. Come funziona */}
       <section id="come-funziona" className="scroll-mt-4">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
           <Titolo etichetta="Dentro l'app">Come funziona</Titolo>
@@ -168,7 +184,7 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* 6. Cosa dicono i primi: solo con racconti veri e il consenso scritto (lib/scopri.ts, RACCONTI) */}
+      {/* 7. Cosa dicono i primi: solo con racconti veri e il consenso scritto (lib/scopri.ts, RACCONTI) */}
       {RACCONTI.length > 0 && (
         <section className="border-y border-divider bg-surface/60">
           <div className="mx-auto max-w-5xl px-4 py-16 lg:py-20">
@@ -184,18 +200,6 @@ export default async function Scopri() {
           </div>
         </section>
       )}
-
-      {/* 7. Il Fisico */}
-      <section id="fisico" className="scroll-mt-4 border-y border-divider bg-surface/40">
-        <div className="mx-auto max-w-3xl px-4 py-16 text-center lg:py-20">
-          <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400">
-            <Dumbbell size={14} aria-hidden /> Il Fisico{campoAperto ? '' : ` · ${FISICO_TEASER.quando}`}
-          </p>
-          <h2 className="mt-2 font-display text-[28px] font-bold leading-[34px]">{FISICO_TEASER.titolo}</h2>
-          <p className="mt-4 text-body-lg text-muted">{FISICO_TEASER.testo}</p>
-          <div className="mt-6">{campoAperto ? <BottoneProva /> : <BottoneAvviso />}</div>
-        </div>
-      </section>
 
       {/* 8. Come si inizia */}
       <section>
@@ -252,9 +256,10 @@ export default async function Scopri() {
           <p className="mx-auto mt-6 max-w-xl text-center text-body text-muted">{NOTA_VALORE}</p>
           <p className="mx-auto mt-2 max-w-xl text-center text-body-sm text-muted">{NOTA_CODICE}</p>
 
-          <div className="mx-auto mt-10 max-w-xl rounded-card border border-divider bg-app-bg p-5">
-            {!campoAperto && <p className="text-overline uppercase text-forest-400">{FISICO_TEASER.quando}</p>}
-            <ul className="mt-3 space-y-3">
+          <div id="fisico" className="mx-auto mt-10 max-w-xl scroll-mt-4 rounded-card border border-divider bg-app-bg p-5">
+            <p className="text-overline uppercase text-forest-400">{campoAperto ? FISICO_TEASER.titolo : `${FISICO_TEASER.quando} · ${FISICO_TEASER.titolo}`}</p>
+            <p className="mt-2 text-body text-muted">{FISICO_TEASER.testo}</p>
+            <ul className="mt-4 space-y-3">
               <li className="flex items-baseline justify-between gap-3">
                 <span className="text-body text-app"><span className="font-semibold">Completo</span> <span className="text-muted">· Mente + Fisico Pro</span></span>
                 <span className="shrink-0 text-right text-body-sm tabular-nums text-muted">{importi([prezzi?.completo]) ?? 'a breve'}</span>
@@ -265,7 +270,7 @@ export default async function Scopri() {
               </li>
             </ul>
             {lancioCampo && <p className="mt-2 text-caption text-muted">Prezzi di lancio, al mese.</p>}
-            {!campoAperto && <div className="mt-4"><BottoneAvviso /></div>}
+            <div className="mt-4">{campoAperto ? <BottoneProva /> : <BottoneAvviso />}</div>
           </div>
         </div>
       </section>
