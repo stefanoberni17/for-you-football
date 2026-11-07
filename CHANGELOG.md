@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita: il Fisico torna nella pagina
+
+Ste, dopo la v3: «lo metterei il fisico». Dopo «Come funziona» della Testa torna la sezione «Il Fisico · da dicembre» (`FISICO_SEZIONE` in `lib/scopri.ts`): titolo, le tre righe da dove viene il metodo e i sette momenti con le schermate (`MOMENTI_FISICO`, telefono a destra), con il link ai prezzi del Fisico (`#prezzi-fisico`, il riquadro nei prezzi resta). Quando il Campo apre l'etichetta perde «da dicembre».
+
 ## 2026-11-07 — La pagina di vendita: le quattro schede della Testa
 
 Ste: «impara X strumenti da applicare in campo; un aiuto per ogni difficoltà (nessuna soluzione, quella la trovi tu, ma strumenti pratici per trovare la tua); un Coach AI sempre a disposizione; la tua Carta, specifica per la parte mentale». `MOMENTI_TESTA` in `lib/scopri.ts` ora sono: «12 strumenti da usare in campo» (schermata nuova del Percorso, `percorso.webp`), «Un aiuto per ogni difficoltà» (la pagina «Cosa ti succede?», `difficolta.webp`), «Un Coach sempre a disposizione» (momenti difficili, spiegare una pratica, consigli sul campo), «La tua Carta del Giocatore» (la parte mentale scritta da te: parola del Reset, mappa, firma, Protocollo; `parole.webp` con risposte di esempio). Tolte le schermate non più usate (giorno, Reset, Carta a 360°, azioni, stato); le tre nuove si rifanno con `scripts/scopri-screenshots.mjs`. In Carta, «Le tue risposte» e nel box di W11 «1 versione» al singolare (prima «1 versioni»).

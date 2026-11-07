@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Bell, Check } from 'lucide-react';
+import { ArrowRight, Bell, Brain, Check, Dumbbell } from 'lucide-react';
 import { loadListino } from '@/lib/prezziServer';
 import { contaIscrittiCampo, contaIscrittiMente, loadImpostazioni } from '@/lib/appSettings';
 import { euroTesto, IMPOSTAZIONI_DEFAULT } from '@/lib/abbonamento';
 import { MIN_AGE } from '@/lib/constants';
 import {
-  APERTURA, AVVISO_FISICO, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
+  APERTURA, AVVISO_FISICO, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_SEZIONE, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
+  MOMENTI_FISICO,
   MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA,
   type PrezzoPubblico,
 } from '@/lib/scopri';
@@ -176,11 +177,44 @@ export default async function Scopri() {
       {/* 6. Come funziona */}
       <section id="come-funziona" className="scroll-mt-4">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
-          <Titolo etichetta="Dentro l'app">Come funziona</Titolo>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400"><Brain size={14} aria-hidden /> Dentro l&apos;app · La Testa</p>
+            <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">Come funziona</h2>
+          </div>
           <div className="mt-12">
             <ComeFunziona momenti={MOMENTI_TESTA} />
           </div>
           <p className="mt-8 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
+        </div>
+      </section>
+
+      {/* 6b. Il Fisico: apre a dicembre, intanto si vede com'è (schermate e testi in MOMENTI_FISICO) */}
+      <section id="fisico" className="scroll-mt-4 border-t border-divider bg-surface/40">
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400">
+              <Dumbbell size={14} aria-hidden /> {campoAperto ? FISICO_TEASER.titolo : `${FISICO_TEASER.titolo} · ${FISICO_TEASER.quando.toLowerCase()}`}
+            </p>
+            <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">{FISICO_SEZIONE.titolo}</h2>
+            <p className="mt-3 text-body-lg text-muted">{FISICO_SEZIONE.intro}</p>
+          </div>
+          <ul className="mx-auto mt-8 grid max-w-4xl gap-3 md:grid-cols-3">
+            {FISICO_SEZIONE.origine.map((r) => (
+              <li key={r} className="flex gap-2.5 rounded-card border border-divider bg-app-bg p-4 text-body-sm text-muted">
+                <Check size={16} className="mt-0.5 shrink-0 text-forest-400" aria-hidden />
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-12">
+            <ComeFunziona momenti={MOMENTI_FISICO} invertito />
+          </div>
+          <p className="mt-8 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
+          <p className="mt-4 text-center">
+            <a href="#prezzi-fisico" className="inline-flex min-h-[44px] items-center gap-1.5 text-body font-semibold text-forest-300 hover:text-forest-200">
+              I prezzi del Fisico <ArrowRight size={16} aria-hidden />
+            </a>
+          </p>
         </div>
       </section>
 
@@ -256,7 +290,7 @@ export default async function Scopri() {
           <p className="mx-auto mt-6 max-w-xl text-center text-body text-muted">{NOTA_VALORE}</p>
           <p className="mx-auto mt-2 max-w-xl text-center text-body-sm text-muted">{NOTA_CODICE}</p>
 
-          <div id="fisico" className="mx-auto mt-10 max-w-xl scroll-mt-4 rounded-card border border-divider bg-app-bg p-5">
+          <div id="prezzi-fisico" className="mx-auto mt-10 max-w-xl scroll-mt-4 rounded-card border border-divider bg-app-bg p-5">
             <p className="text-overline uppercase text-forest-400">{campoAperto ? FISICO_TEASER.titolo : `${FISICO_TEASER.quando} · ${FISICO_TEASER.titolo}`}</p>
             <p className="mt-2 text-body text-muted">{FISICO_TEASER.testo}</p>
             <ul className="mt-4 space-y-3">

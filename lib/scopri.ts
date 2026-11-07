@@ -172,7 +172,18 @@ export const CHIUSURA = [
 
 export const AVVISO_FISICO = 'mailto:info@foryoufootball.it?subject=' + encodeURIComponent('Avvisami quando apre il Fisico');
 
-/** Il Fisico, momento per momento: non è nella pagina finché il Campo non apre (dicembre); testi e schermate restano pronti. */
+/** La sezione del Fisico (rimessa il 7/11, Ste: «lo metterei il fisico»): apre a dicembre, intanto si vede com'è. */
+export const FISICO_SEZIONE = {
+  titolo: 'Il metodo di un preparatore, adattato a te',
+  intro: 'La preparazione costruita sulla tua settimana: i tuoi obiettivi, i tuoi attrezzi, la squadra e la partita, e come vanno le tue sedute.',
+  origine: [
+    'Esercizi, progressioni, regole e limiti usati per anni con più di 100 calciatori.',
+    'L\'AI li adatta a te: obiettivi, impegni, attrezzi, e come vanno le tue sedute.',
+    'Prima che tu la veda, ogni settimana passa da un controllo automatico delle regole.',
+  ],
+};
+
+/** Il Fisico, momento per momento: la sezione «Il Fisico» della pagina, sotto la Testa. */
 export const MOMENTI_FISICO: MomentoApp[] = [
   {
     id: 'obiettivi',
