@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita viva: la storia a schermate, il metodo a schede
+
+Ste: «deve essere dinamica, non classica con i link» e il testo nuovo della storia («più conciso, per la vendita»).
+- Tolta `/scopri/storia`: tutto torna in una pagina, ma niente muri di testo.
+- **La storia a schermate** (`components/scopri/Storia.tsx`), come le storie dei social: dieci schermate (la citazione con l'intro, otto capitoli, la frase finale con «Prova la prima settimana» e «Rivedi dall'inizio»), le foto di Ste a tutto schermo con un leggero avvicinamento, le barrette in alto che si riempiono; parte da sola quando è in vista (durata dal testo, 4,5-11 s), tocco a destra avanti e a sinistra indietro, tenendo premuto si ferma, pausa, frecce da tastiera; ferma con prefers-reduced-motion. Il testo di Ste è in `STORIA` (`citazione`, `intro`, `capitoli` con la foto o solo testo, `finale`) in `lib/scopri.ts`; il testo intero resta nel DOM per i motori di ricerca e i lettori di schermo.
+- **«Il metodo» a schede** (`components/scopri/Schede.tsx`): sotto «Non è pensiero positivo», tre schede Dove ti porta | Perché la Testa | Perché il Fisico, nelle ultime due «Leggi tutto» per il resto.
+- **Le sezioni entrano mentre scorri** (`components/scopri/Rivela.tsx`, visibili subito senza JavaScript).
+- Ordine: apertura, scene, la storia, il giro dell'app, il metodo, prezzi, domande, chiusura.
+
 ## 2026-11-07 — La pagina di vendita corta, la storia in una pagina a parte
 
 Ste: «è davvero troppo lungo: uno deve vedere solo le cose essenziali e poi approfondire gli aspetti che vuole». Lo schema delle pagine delle app di allenamento e di benessere (un'apertura, un giro del prodotto a schede, il fondatore in breve, prezzi, domande; il resto in pagine a parte):

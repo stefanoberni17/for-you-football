@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Bell } from 'lucide-react';
-import { AVVISO_FISICO, PERCHE_FISICO, STORIA, STORIA_FOTO, type FotoStoria } from '@/lib/scopri';
+import { ArrowRight, Bell } from 'lucide-react';
+import { AVVISO_FISICO, PERCHE_FISICO, PERCHE_TESTA } from '@/lib/scopri';
+import { Espandi } from './Espandi';
 
-/** I pezzi in comune tra la pagina di vendita (/scopri) e la pagina della storia (/scopri/storia). */
+/** I pezzi della pagina di vendita (/scopri) che non hanno bisogno del browser. */
 
 export const CTA = '/register';
 
@@ -22,15 +23,6 @@ export function BottoneAvviso() {
   );
 }
 
-/** Un link che porta a leggere di più: verde, con la freccia. */
-export function LinkApprofondisci({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link href={href} className="inline-flex min-h-[48px] items-center gap-2 rounded-btn border border-forest-400/50 px-5 text-body font-semibold text-forest-300 transition-colors hover:border-forest-400 hover:text-forest-200">
-      {children} <ArrowRight size={18} aria-hidden />
-    </Link>
-  );
-}
-
 export function Titolo({ etichetta, children, sotto }: { etichetta?: string; children: React.ReactNode; sotto?: string }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
@@ -41,17 +33,11 @@ export function Titolo({ etichetta, children, sotto }: { etichetta?: string; chi
   );
 }
 
-export function Intestazione({ indietro = false }: { indietro?: boolean }) {
+export function Intestazione() {
   return (
     <header className="pt-safe">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        {indietro ? (
-          <Link href="/scopri" className="tap inline-flex items-center gap-1.5 rounded-btn pr-3 text-body-sm font-semibold text-muted hover:text-app">
-            <ArrowLeft size={18} aria-hidden /> For You <span className="text-forest-400">Football</span>
-          </Link>
-        ) : (
-          <span className="font-display text-title-3 font-bold tracking-tight">For You <span className="text-forest-400">Football</span></span>
-        )}
+        <span className="font-display text-title-3 font-bold tracking-tight">For You <span className="text-forest-400">Football</span></span>
         <Link href="/login" className="tap inline-flex items-center rounded-btn px-3 text-body-sm font-semibold text-muted hover:text-app">Entra</Link>
       </div>
     </header>
@@ -64,7 +50,7 @@ export function PiePagina() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-center text-caption text-muted md:flex-row md:text-left">
         <span>For You Football · Season 1: Play Free · For You Football non è un servizio sanitario né psicologico</span>
         <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
-          <Link href="/scopri/storia" className="inline-flex min-h-[44px] items-center hover:text-app">La storia</Link>
+          <a href="#storia" className="inline-flex min-h-[44px] items-center hover:text-app">La storia</a>
           <Link href="/privacy" className="inline-flex min-h-[44px] items-center hover:text-app">Privacy</Link>
           <Link href="/termini" className="inline-flex min-h-[44px] items-center hover:text-app">Termini</Link>
           <a href="mailto:info@foryoufootball.it" className="inline-flex min-h-[44px] items-center hover:text-app">info@foryoufootball.it</a>
@@ -75,54 +61,37 @@ export function PiePagina() {
   );
 }
 
-/** Una foto della storia di Ste, con l'anno e due parole sue sotto (se le ha scritte). */
-export function FotoStoriaCard({ foto, className = '' }: { foto: FotoStoria; className?: string }) {
+/** Perché la Testa è fatta così: le strade provate, la domanda, i pilastri. Dentro una scheda della sezione «Il metodo». */
+export function PercheTesta() {
+  const p = PERCHE_TESTA;
   return (
-    <figure className={`mx-auto w-[min(100%,380px)] overflow-hidden rounded-card border border-divider bg-surface shadow-e2 ${className}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={foto.src} alt={foto.alt} loading="lazy" decoding="async" className="block w-full" />
-      {(foto.quando || foto.didascalia) && (
-        <figcaption className="px-4 pb-4 pt-3">
-          {foto.quando && <span className="block text-overline uppercase text-forest-400">{foto.quando}</span>}
-          {foto.didascalia && <span className="mt-1 block font-quote text-[18px] italic leading-[24px] text-app">{foto.didascalia}</span>}
-        </figcaption>
-      )}
-    </figure>
-  );
-}
-
-export type CapitoloStoria = { foto?: FotoStoria; paragrafi: { testo: string; n: number }[] };
-
-/** La storia a capitoli: ogni foto con i paragrafi che la seguono, fino alla foto dopo; quelli prima della prima foto da soli. */
-export function capitoliStoria(): CapitoloStoria[] {
-  const foto = [...STORIA_FOTO].sort((x, y) => x.prima - y.prima);
-  const par = STORIA.paragrafi.map((testo, n) => ({ testo, n }));
-  const capitoli: CapitoloStoria[] = [];
-  const primaFoto = foto[0]?.prima ?? par.length;
-  if (primaFoto > 0) capitoli.push({ paragrafi: par.slice(0, primaFoto) });
-  foto.forEach((f, k) => capitoli.push({ foto: f, paragrafi: par.slice(f.prima, foto[k + 1]?.prima ?? par.length) }));
-  return capitoli;
-}
-
-/** Un capitolo della storia: una foto accanto ai suoi paragrafi, a lati alterni. */
-export function Capitolo({ c, i }: { c: CapitoloStoria; i: number }) {
-  return (
-    <div className={c.foto ? 'grid items-center gap-8 sm:grid-cols-2 sm:gap-10' : ''}>
-      {c.foto && <FotoStoriaCard foto={c.foto} />}
-      <div className={`space-y-4 ${c.foto && i % 2 === 0 ? 'sm:order-first' : ''}`}>
-        {c.paragrafi.map(({ testo, n }) => <p key={n} className={n === 0 ? 'text-app' : ''}>{testo}</p>)}
+    <div className="mx-auto max-w-3xl">
+      <h3 className="text-center font-display text-title-1 font-bold">{p.titolo}</h3>
+      <div className="mt-6 space-y-4 text-body-lg text-muted">
+        {p.paragrafi.map((r) => <p key={r}>{r}</p>)}
       </div>
+      <Espandi etichetta="Leggi tutto">
+        <ul className="mt-6 flex flex-wrap gap-2">
+          {p.studi.map((t) => (
+            <li key={t} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{t}</li>
+          ))}
+        </ul>
+        <blockquote className="my-8 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
+        <div className="space-y-4 text-body-lg text-muted">
+          {p.chiusura.map((r, i) => <p key={r} className={i === p.chiusura.length - 1 ? 'text-app' : ''}>{r}</p>)}
+        </div>
+      </Espandi>
     </div>
   );
 }
 
-/** Perché il Fisico è fatto così: la storia di Ste, dai preparatori scollegati alle regole con l'AI dentro. */
-export function PercheFisico() {
+/** Perché il Fisico è fatto così: dai preparatori scollegati alle regole con l'AI dentro. Dentro una scheda di «Il metodo». */
+export function PercheFisico({ fine }: { fine?: React.ReactNode }) {
   const p = PERCHE_FISICO;
   return (
     <div className="mx-auto max-w-3xl">
-      <Titolo etichetta={p.etichetta}>{p.titolo}</Titolo>
-      <p className="mt-8 text-body-lg text-muted">{p.intro}</p>
+      <h3 className="text-center font-display text-title-1 font-bold">{p.titolo}</h3>
+      <p className="mt-6 text-body-lg text-muted">{p.intro}</p>
       <ul className="mt-6 grid gap-3 sm:grid-cols-3">
         {p.figure.map((f) => (
           <li key={f.chi} className="rounded-card border border-divider bg-app-bg p-4">
@@ -131,20 +100,23 @@ export function PercheFisico() {
           </li>
         ))}
       </ul>
-      <div className="mt-6 space-y-2 rounded-card border border-divider bg-app-bg p-5">
-        {p.altalena.map((r) => <p key={r} className="font-quote text-[20px] italic leading-[29px] text-app">{r}</p>)}
-      </div>
-      <p className="mt-6 text-body-lg text-muted">{p.scelta}</p>
-      <p className="mt-6 text-body-lg text-muted">{p.problema}</p>
-      <ul className="mt-4 flex flex-wrap gap-2">
-        {p.variabili.map((v) => (
-          <li key={v} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{v}</li>
-        ))}
-      </ul>
-      <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
-      <div className="space-y-4 text-body-lg text-muted">
-        {p.ai.map((r, i) => <p key={r} className={i === p.ai.length - 1 ? 'text-app' : ''}>{r}</p>)}
-      </div>
+      <Espandi etichetta="Leggi tutto">
+        <div className="mt-6 space-y-2 rounded-card border border-divider bg-app-bg p-5">
+          {p.altalena.map((r) => <p key={r} className="font-quote text-[20px] italic leading-[29px] text-app">{r}</p>)}
+        </div>
+        <p className="mt-6 text-body-lg text-muted">{p.scelta}</p>
+        <p className="mt-6 text-body-lg text-muted">{p.problema}</p>
+        <ul className="mt-4 flex flex-wrap gap-2">
+          {p.variabili.map((v) => (
+            <li key={v} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{v}</li>
+          ))}
+        </ul>
+        <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
+        <div className="space-y-4 text-body-lg text-muted">
+          {p.ai.map((r, i) => <p key={r} className={i === p.ai.length - 1 ? 'text-app' : ''}>{r}</p>)}
+        </div>
+        {fine}
+      </Espandi>
     </div>
   );
 }

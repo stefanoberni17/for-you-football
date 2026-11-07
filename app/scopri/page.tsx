@@ -5,21 +5,26 @@ import { contaIscrittiCampo, contaIscrittiMente, loadImpostazioni } from '@/lib/
 import { euroTesto, IMPOSTAZIONI_DEFAULT } from '@/lib/abbonamento';
 import { MIN_AGE } from '@/lib/constants';
 import {
-  APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP, MOMENTI_CONOSCI, MOMENTI_FISICO,
-  MOMENTI_TESTA, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO, type PrezzoPubblico,
+  APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_SEZIONE, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
+  MOMENTI_CONOSCI, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA,
+  type PrezzoPubblico,
 } from '@/lib/scopri';
 import { TelefonoCiclo } from '@/components/scopri/Telefono';
 import { Tour } from '@/components/scopri/Tour';
 import { Fischietto, PallaPersa, PalloneCheArriva, SeraPrima } from '@/components/scopri/Disegni';
 import { Espandi } from '@/components/scopri/Espandi';
-import { BottoneAvviso, BottoneProva, FotoStoriaCard, Intestazione, LinkApprofondisci, PiePagina, Titolo } from '@/components/scopri/Parti';
+import { Storia } from '@/components/scopri/Storia';
+import { Schede } from '@/components/scopri/Schede';
+import { Rivela } from '@/components/scopri/Rivela';
+import { BottoneAvviso, BottoneProva, Intestazione, PercheFisico, PercheTesta, PiePagina, Titolo } from '@/components/scopri/Parti';
 
 /**
  * La pagina di vendita pubblica (6/11; testi v2 di Ste del 7/11, funnel: Notion «Funnel di vendita: mappa e piano»).
  * Testi v3 (7/11): mi riconosco, Ste mi capisce, ha costruito qualcosa di concreto, può servire a me, posso provarlo.
- * Corta (7/11, Ste: «uno deve vedere solo le cose essenziali e poi approfondire quello che vuole»): apertura, le scene, il giro
- * dell'app (Testa | Fisico, un telefono, tocchi un momento), chi c'è dietro in breve, prezzi, domande, chiusura. La storia intera,
- * il perché della Testa e del Fisico, dove ti porta il lavoro e «non è pensiero positivo» stanno in /scopri/storia.
+ * Corta e viva (7/11, Ste: «solo le cose essenziali, poi approfondire quello che vuole»; «dinamica, non classica con i link»):
+ * apertura, le scene, la storia di Ste a schermate (Storia.tsx), il giro dell'app Testa | Fisico (Tour.tsx), «Il metodo» a schede
+ * (dove ti porta, perché la Testa, perché il Fisico), prezzi, domande, chiusura. Tutto in una pagina, niente link per approfondire;
+ * le sezioni entrano mentre scorri (Rivela.tsx).
  * Chi apre il sito senza essere entrato arriva qui (app/page.tsx). Si vende il Mente; il Fisico e il Completo sono
  * annunciati nei prezzi finché il Campo non apre. Prezzi da Stripe e iscrizioni da app_settings con le stesse regole della pagina
  * prezzi (lib/scopri.ts), riletti ogni 5 minuti. Nessuna richiesta esterna dal browser, nessun cookie.
@@ -69,7 +74,6 @@ export default async function Scopri() {
   const domande = domandeFrequenti(MIN_AGE);
   const notaCta = prova > 0 ? `${prova} giorni gratis · disdici con un tocco` : 'La prima settimana è gratis';
   const [titoloA, titoloB] = dividiTitolo(APERTURA.titolo);
-  const fotoApertura = STORIA_FOTO.find((f) => f.prima === 0);
   const mente = prezzi?.mentale;
   const fisici = [prezzi?.fisico_base, prezzi?.fisico_medio, prezzi?.fisico_pro];
   const campoAperto = !!prezzi?.fisico_pro?.aperto || !!prezzi?.completo?.aperto;
@@ -118,7 +122,24 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* 3. Il giro dell'app: Testa | Fisico, un telefono, tocchi un momento */}
+      {/* 3. La storia di Ste, a schermate */}
+      <section id="storia" className="scroll-mt-4">
+        <Rivela className="mx-auto max-w-6xl px-4 py-16 lg:py-20">
+          <Titolo etichetta="Chi c'è dietro" sotto="La mia storia, in un minuto. Tocca a destra per andare avanti.">Ste</Titolo>
+          <div className="mt-8">
+            <Storia
+              citazione={STORIA.citazione}
+              fotoCitazione={STORIA.fotoCitazione}
+              intro={STORIA.intro}
+              capitoli={STORIA.capitoli}
+              finale={STORIA.finale}
+              fine={<><BottoneProva /><span className="text-caption text-white/80">{notaCta}</span></>}
+            />
+          </div>
+        </Rivela>
+      </section>
+
+      {/* 4. Il giro dell'app: Testa | Fisico, un telefono, tocchi un momento */}
       <section id="come-funziona" className="scroll-mt-4">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:py-20">
           <Titolo etichetta="Dentro l'app" sotto="Scegli una parte e tocca un momento.">Come funziona</Titolo>
@@ -126,10 +147,7 @@ export default async function Scopri() {
             <Tour
               parti={[
                 { id: 'testa', nome: 'La Testa', momenti: MOMENTI_TESTA },
-                {
-                  id: 'fisico', nome: 'Il Fisico', nota: campoAperto ? undefined : FISICO_TEASER.quando.toLowerCase(), momenti: MOMENTI_FISICO,
-                  piede: <LinkApprofondisci href="/scopri/storia#fisico">Perché il Fisico è fatto così</LinkApprofondisci>,
-                },
+                { id: 'fisico', nome: 'Il Fisico', nota: campoAperto ? undefined : FISICO_TEASER.quando.toLowerCase(), momenti: MOMENTI_FISICO },
               ]}
             />
           </div>
@@ -137,22 +155,56 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* 4. Chi c'è dietro, in breve: la storia intera è in /scopri/storia */}
-      <section className="border-t border-divider bg-surface/40">
-        <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 py-16 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:py-20">
-          {fotoApertura && <FotoStoriaCard foto={fotoApertura} className="w-[min(100%,320px)]" />}
-          <div className={fotoApertura ? '' : 'sm:col-span-2'}>
-            <p className="text-overline uppercase text-forest-400">Chi c&apos;è dietro</p>
-            <blockquote className="mt-3 font-quote text-[24px] italic leading-[33px] text-app lg:text-[28px] lg:leading-[38px]">{STORIA.citazione}</blockquote>
-            <p className="mt-5 text-body-lg text-muted">{STORIA.paragrafi[0]}</p>
-            <div className="mt-6">
-              <LinkApprofondisci href="/scopri/storia">Leggi la mia storia e perché è nato il metodo</LinkApprofondisci>
-            </div>
+      {/* 5. Il metodo a schede: dove ti porta, perché la Testa, perché il Fisico */}
+      <section id="metodo" className="scroll-mt-4 border-t border-divider bg-surface/40">
+        <Rivela className="mx-auto max-w-5xl px-4 py-16 lg:py-20">
+          <Titolo etichetta="Il metodo">Non è pensiero positivo</Titolo>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-body-lg text-muted">{NON_POSITIVO.paragrafi[1]}</p>
+          <div className="mt-10">
+            <Schede
+              etichetta="Il metodo"
+              schede={[
+                {
+                  id: 'dove', nome: 'Dove ti porta', contenuto: (
+                    <div className="mx-auto max-w-2xl">
+                      <p className="text-center text-body-lg text-muted">{DOVE_PORTA.intro}</p>
+                      <ul className="mt-6 space-y-3">
+                        {DOVE_PORTA.punti.map((r) => (
+                          <li key={r} className="flex items-start gap-3 rounded-card border border-divider bg-app-bg px-5 py-4 text-body-lg text-app">
+                            <Check size={20} className="mt-1 shrink-0 text-forest-400" aria-hidden />
+                            <span>{r}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-6 text-center text-body-lg text-muted">{DOVE_PORTA.chiusura}</p>
+                      <p className="mt-3 text-center text-body text-faint">{NON_POSITIVO.paragrafi[0]} {NON_POSITIVO.paragrafi[2]}</p>
+                    </div>
+                  ),
+                },
+                { id: 'testa', nome: 'Perché la Testa', contenuto: <PercheTesta /> },
+                {
+                  id: 'fisico', nome: 'Perché il Fisico', contenuto: (
+                    <PercheFisico
+                      fine={(
+                        <ul className="mt-10 grid gap-3 md:grid-cols-3">
+                          {FISICO_SEZIONE.origine.map((r) => (
+                            <li key={r} className="flex gap-2.5 rounded-card border border-divider bg-app-bg p-4 text-body-sm text-muted">
+                              <Check size={16} className="mt-0.5 shrink-0 text-forest-400" aria-hidden />
+                              <span>{r}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    />
+                  ),
+                },
+              ]}
+            />
           </div>
-        </div>
+        </Rivela>
       </section>
 
-      {/* 5. Cosa dicono i primi: solo con racconti veri e il consenso scritto (lib/scopri.ts, RACCONTI) */}
+      {/* 6. Cosa dicono i primi: solo con racconti veri e il consenso scritto (lib/scopri.ts, RACCONTI) */}
       {RACCONTI.length > 0 && (
         <section className="border-t border-divider">
           <div className="mx-auto max-w-5xl px-4 py-16 lg:py-20">
@@ -169,7 +221,7 @@ export default async function Scopri() {
         </section>
       )}
 
-      {/* 6. Prezzi, con i tre passi per iniziare */}
+      {/* 7. Prezzi, con i tre passi per iniziare */}
       <section id="prezzi" className="scroll-mt-4 border-t border-divider bg-surface/60">
         <div className="mx-auto max-w-5xl px-4 py-16 lg:py-20">
           <Titolo etichetta="Prezzi">Un prezzo al mese. Disdici quando vuoi.</Titolo>
@@ -240,7 +292,7 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* 7. Le domande di chi inizia: le prime in vista, le altre dietro «Tutte le domande» */}
+      {/* 8. Le domande di chi inizia: le prime in vista, le altre dietro «Tutte le domande» */}
       <section>
         <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
           <Titolo>Le domande di chi inizia</Titolo>
@@ -253,7 +305,7 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* 8. Chiusura */}
+      {/* 9. Chiusura */}
       <section className="relative border-t border-divider">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_70%_at_50%_100%,rgba(26,150,96,0.25),transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-3xl px-4 py-20 text-center">

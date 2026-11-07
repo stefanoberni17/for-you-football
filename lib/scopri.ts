@@ -44,38 +44,40 @@ export const MOMENTI_CONOSCI: string[] = [
 ];
 export const CONOSCI_CHIUSURA = 'Il talento non c\'entra. Quello che manca è il modo di riportare la testa in campo... e si allena, come il piede debole.';
 
-export const STORIA = {
-  citazione: '«Sono passato da vomitare prima delle partite, terrorizzato e bloccato dalla paura, a giocare davanti a diecimila persone.»',
-  paragrafi: [
-    'Ci sono passato anch\'io. Ho esordito in Serie C con la Reggiana, e il primo pallone me l\'hanno rubato su un appoggio che avevo fatto mille volte.',
-    'Per anni, se sbagliavo a inizio partita, arrivava la paura... e mi nascondevo. Se la palla non mi arriva, non posso sbagliare. Era automatico, non me ne rendevo nemmeno conto.',
-    'Me ne sono accorto anni dopo, quando ho iniziato a lavorare sulla testa. Un giorno l\'ho proprio visto mentre succedeva... e vedendolo, finalmente, ho potuto scegliere.',
-    'Ho provato di tutto: un mental coach, uno psicologo, lo yoga, libri, corsi. Cose preziose... ma ognuno mi dava qualcosa in più da fare. Il passo vero è stato l\'opposto: togliere invece di aggiungere.',
-    'Dal Covid lavoro con altri calciatori: più di cento, di ogni età, professionisti e dilettanti.',
-    'Non è stato veloce, e non è finito nemmeno oggi. For You Football è quello che avrei voluto avere io: le cose che mi sono servite, messe in fila, un giorno alla volta.',
-  ],
-};
-
 /**
- * Le foto di Ste nella storia (7/11, mandate da Ste in chat: «più umano», «modificale un po'»). File in public/scopri/storia/,
- * stesso trattamento per tutte (colori un po' più caldi e meno saturi, contrasto, vignetta morbida; scripts/scopri-foto.mjs).
- * `prima` = l'indice del paragrafo di STORIA davanti a cui va la foto (0 = in apertura). `quando` e `didascalia` li scrive Ste
- * (mai inventati): senza, la foto non ha scritta sotto. Lista vuota = la storia resta solo testo, con il cerchio «SB».
+ * La storia di Ste (testo suo del 7/11 sera: «più conciso, per la vendita»). Si racconta come una sequenza di schermate da
+ * sfogliare, una frase forte alla volta (`components/scopri/Storia.tsx`): la citazione in apertura, i capitoli (con la foto o
+ * solo testo), la frase finale. Le foto stanno in public/scopri/storia/ con lo stesso trattamento (scripts/scopri-foto.mjs).
  */
-export type FotoStoria = { src: string; alt: string; prima: number; quando?: string; didascalia?: string };
-export const STORIA_FOTO: FotoStoria[] = [
-  { src: '/scopri/storia/reggiana.webp', alt: 'Ste da ragazzo, con la maglia della Reggiana', prima: 0 },
-  { src: '/scopri/storia/sguardo.webp', alt: 'Ste in campo, serio, con le braccia aperte', prima: 1 },
-  { src: '/scopri/storia/esultanza.webp', alt: 'Ste che esulta dopo un gol, con la maglia rossa', prima: 2 },
-  { src: '/scopri/storia/tiro.webp', alt: 'Ste che calcia, con la maglia gialla e i pantaloncini blu', prima: 5 },
-];
+export type FotoStoria = { src: string; alt: string };
+export type CapitoloStoria = { testo: string; foto?: FotoStoria };
 
-/** Le altre foto di Ste, in fila sotto la storia. */
-export const ALBUM_FOTO: FotoStoria[] = [
-  { src: '/scopri/storia/nazionale.webp', alt: 'Ste da ragazzo, con la tuta della Nazionale', prima: 0 },
-  { src: '/scopri/storia/conduzione.webp', alt: 'Ste con la palla al piede, con la maglia gialla', prima: 0 },
-  { src: '/scopri/storia/colpo-di-testa.webp', alt: 'Ste che salta per un colpo di testa', prima: 0 },
-];
+const FOTO = {
+  tiro: { src: '/scopri/storia/tiro.webp', alt: 'Ste che calcia, con la maglia gialla e i pantaloncini blu' },
+  reggiana: { src: '/scopri/storia/reggiana.webp', alt: 'Ste da ragazzo, con la maglia della Reggiana' },
+  sguardo: { src: '/scopri/storia/sguardo.webp', alt: 'Ste in campo, serio, con le braccia aperte' },
+  conduzione: { src: '/scopri/storia/conduzione.webp', alt: 'Ste con la palla al piede e il ginocchio fasciato' },
+  nazionale: { src: '/scopri/storia/nazionale.webp', alt: 'Ste da ragazzo, con la tuta della Nazionale' },
+  colpoDiTesta: { src: '/scopri/storia/colpo-di-testa.webp', alt: 'Ste che salta per prendere il pallone di testa' },
+  esultanza: { src: '/scopri/storia/esultanza.webp', alt: 'Ste che esulta dopo un gol, con la maglia rossa' },
+} satisfies Record<string, FotoStoria>;
+
+export const STORIA = {
+  citazione: '«Sono passato da vomitare prima delle partite, bloccato dalla paura, a giocare davanti a diecimila persone.»',
+  fotoCitazione: FOTO.tiro,
+  intro: 'Ma la parte che mi interessa raccontarti è quella in mezzo. Perché magari, in qualche pezzo, ci sei anche tu.',
+  capitoli: [
+    { testo: 'Ho esordito in Serie C con la Reggiana. Il primo pallone? Un appoggio fatto mille volte. Me l\'hanno rubato.', foto: FOTO.reggiana },
+    { testo: 'Per anni, quando sbagliavo, cominciavo a nascondermi. Continuavo a correre, ma mi mettevo dove era difficile passarmi la palla. Se non mi arriva, non posso sbagliare. E pensare che ero lì proprio perché giocare mi piaceva da morire.', foto: FOTO.sguardo },
+    { testo: 'Poi gli infortuni, le operazioni, la fatica di tornare. Dovevo ritrovare fiducia nel corpo e fare i conti con una testa che spesso mi frenava.', foto: FOTO.conduzione },
+    { testo: 'Ho cercato aiuto: psicologo, mental coach, yoga. Ho studiato, seguito corsi, letto centinaia di libri. Cercavo qualcosa che mi aiutasse in campo, ma anche a non lasciare che una partita decidesse come stavo per tutta la settimana.', foto: FOTO.nazionale },
+    { testo: 'Un giorno mi sono accorto che mi stavo nascondendo. Proprio mentre lo facevo.' },
+    { testo: 'La paura c\'era ancora. Ma vedendola potevo scegliere: continuare a nascondermi oppure farmi vedere per il pallone dopo.', foto: FOTO.colpoDiTesta },
+    { testo: 'Da lì è continuato il mio lavoro. Prima su di me, poi con più di cento calciatori, professionisti e dilettanti.' },
+    { testo: 'For You Football è quello che avrei voluto avere io: un percorso che mette in ordine ciò che ho imparato e portato nel lavoro con i ragazzi. Pratiche semplici, da provare nella tua settimana e usare in campo.', foto: FOTO.esultanza },
+  ] satisfies CapitoloStoria[],
+  finale: 'Perché quando arriva il prossimo pallone, vorrei che avessi di nuovo voglia di riceverlo.',
+};
 
 /** Dove ti porta il lavoro. */
 export const DOVE_PORTA = {

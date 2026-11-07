@@ -280,3 +280,18 @@ select:focus-visible {
 }
 /* I disegnini delle scene (7/11): il pallone con una tinta leggera del verde dell'app */
 .scopri-pagina { --scopri-cuoio: rgb(79 211 148 / 0.16); }
+/* La storia di Ste a schermate (7/11): barrette che si riempiono, foto in dissolvenza con un leggero avvicinamento, testo che sale */
+.scopri-storia-foto { transition: opacity 700ms ease; }
+@keyframes scopriBarra { from { width: 0; } to { width: 100%; } }
+.scopri-storia-barra { width: 0; animation-name: scopriBarra; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes scopriZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+.scopri-storia-zoom { animation: scopriZoom 12s ease-out forwards; }
+@keyframes scopriTesto { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.scopri-storia-testo { animation: scopriTesto 600ms ease both; }
+/* Le sezioni che entrano mentre scorri (components/scopri/Rivela.tsx) */
+.scopri-rivela { transition: opacity 700ms ease, transform 700ms ease; }
+.scopri-rivela.nascosta { opacity: 0; transform: translateY(28px); }
+@media (prefers-reduced-motion: reduce) {
+  .scopri-storia-zoom, .scopri-storia-testo { animation: none; }
+  .scopri-rivela, .scopri-rivela.nascosta { transition: none; opacity: 1; transform: none; }
+}
