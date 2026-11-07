@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita corta, la storia in una pagina a parte
+
+Ste: «è davvero troppo lungo: uno deve vedere solo le cose essenziali e poi approfondire gli aspetti che vuole». Lo schema delle pagine delle app di allenamento e di benessere (un'apertura, un giro del prodotto a schede, il fondatore in breve, prezzi, domande; il resto in pagine a parte):
+- `/scopri`: apertura, le quattro scene, **il giro dell'app** (`components/scopri/Tour.tsx`: La Testa | Il Fisico in alto, un telefono, l'elenco dei momenti; tocchi un momento e il telefono cambia, «Cosa c'è dentro» per il dettaglio; su telefono i momenti sono una fila di bottoni sotto il telefono), chi c'è dietro in breve (la foto della Reggiana, la citazione, il primo paragrafo, «Leggi la mia storia e perché è nato il metodo»), i prezzi con i tre passi per iniziare in alto e Mente e Fisico affiancati, le prime quattro domande («Tutte le domande» per le altre), la chiusura. Da computer da circa 10.800 a circa 5.100 pixel.
+- `/scopri/storia` (nuova): la storia intera con le foto, perché la Testa, non è pensiero positivo, dove ti porta il lavoro, perché il Fisico (`#fisico`, dal giro dell'app «Perché il Fisico è fatto così»). Fuori da tab bar, rituale, paywall e consensi come `/scopri`.
+- Tolto `ComeFunziona` (il telefono fermo con i momenti che scorrono): lo sostituisce il giro. I pezzi comuni alle due pagine in `components/scopri/Parti.tsx`.
+
 ## 2026-11-07 — La pagina di vendita a sezioni che si aprono
 
 Ste: «è troppo in una pagina: a sezioni, ognuna che si può espandere per sapere più nel dettaglio». `components/scopri/Espandi.tsx`: in vista l'essenziale, il resto si apre con un bottone sotto (contenuto nel DOM anche da chiuso, `hidden`; chiudendo la pagina torna all'inizio del pezzo). Si aprono: la storia («Leggi tutta la storia»: in vista la citazione, la foto della Reggiana e il primo paragrafo), «Migliorare come persona, e come giocatore» («Leggi di più»: in vista il primo paragrafo), «Tutto collegato» («Perché il Fisico è fatto così») e i sette momenti del Fisico («Guarda come funziona il Fisico»). Restano aperte l'apertura, le scene, «Dove ti porta il lavoro», «Non è pensiero positivo», «Come funziona» della Testa, prezzi, domande (già a scomparsa) e chiusura. Da computer la pagina passa da circa 19.000 a circa 10.800 pixel. Il video, quando ci sarà, sta dentro la storia e non parte da solo.

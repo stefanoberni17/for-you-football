@@ -35,7 +35,8 @@ export default function BottomTabBar() {
     pathname === '/genitori' ||
     pathname === '/pricing' ||
     pathname === '/riattiva' ||
-    pathname === '/scopri'
+    pathname === '/scopri' ||
+    pathname.startsWith('/scopri/')
   ) {
     return null;
   }
