@@ -72,7 +72,7 @@ const momenti = {
       riga(4, 6, { risposta: 'Sento lo stomaco che si chiude. Nomino: è il futuro, non è adesso. Torno: un respiro, il gesto, «Riparto qui».' }),
     ] } }));
     await go('/carta', 9000);
-    await page.getByText(/Il mio mantra/i).first().evaluate((el) => { document.scrollingElement.scrollTop += el.getBoundingClientRect().top - 150; });
+    await page.getByText(/Il mio mantra/i).first().evaluate((el) => { document.scrollingElement.scrollTop += el.getBoundingClientRect().top - 245; });
     await page.waitForTimeout(1000);
     await shot('parole');
   },
