@@ -1,4 +1,4 @@
-Outfit e Crimson Pro (latin, variabili), da @fontsource-variable 5.3.0; Crimson Pro tondo (crimson-pro-latin-wght.woff2) da Google Fonts il 7/11/2026, per la pagina di vendita. Licenza SIL Open Font License 1.1 (sotto).
+Outfit e Crimson Pro (latin, variabili), da @fontsource-variable 5.3.0. Licenza SIL Open Font License 1.1 (sotto).
 
 Copyright 2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)
 

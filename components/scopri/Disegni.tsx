@@ -1,7 +1,7 @@
 /**
- * I disegni della pagina di vendita (7/11, Ste: «più classico, quasi vintage, che ricordi la connessione di corpo e mente
- * nel calcio; piccole immagini, più emotivo»). Tratto a mano libera in SVG, colore dal testo intorno (currentColor),
- * il cuoio del pallone in ocra. Niente immagini esterne.
+ * I disegnini delle quattro scene della pagina di vendita (7/11, Ste: «piccole immagini, più emotivo»; colori e stile della
+ * pagina restano quelli dell'app). Tratto in SVG con il colore del testo intorno (currentColor), il pallone riempito con
+ * `--scopri-cuoio`. Niente immagini esterne.
  */
 
 type P = { className?: string; titolo?: string };
@@ -92,65 +92,5 @@ export function Fischietto({ className, titolo }: P) {
       <path d="M86 32V25M80 25H92" strokeWidth="2" />
       <path d="M102 30l8-5M103 40h9M102 50l8 5" strokeWidth="1.8" />
     </Svg>
-  );
-}
-
-/** Le linee del campo dietro il telefono: cerchio di centrocampo e metà campo. */
-export function CerchioCentrocampo({ className }: P) {
-  return (
-    <Svg viewBox="0 0 400 400" className={className}>
-      <circle cx="200" cy="200" r="150" strokeWidth="1.6" />
-      <path d="M0 200H400" strokeWidth="1.6" />
-      <circle cx="200" cy="200" r="4" fill="currentColor" stroke="none" />
-    </Svg>
-  );
-}
-
-/** Mezzo campo visto dall'alto: area, area piccola, dischetto, lunetta. */
-export function MezzoCampo({ className }: P) {
-  return (
-    <Svg viewBox="0 0 300 200" className={className}>
-      <path d="M10 10H290V190H10Z" strokeWidth="1.6" />
-      <path d="M70 10V70H230V10" strokeWidth="1.6" />
-      <path d="M115 10V32H185V10" strokeWidth="1.6" />
-      <circle cx="150" cy="52" r="2.8" fill="currentColor" stroke="none" />
-      <path d="M122 70A36 36 0 0 0 178 70" strokeWidth="1.6" />
-      <path d="M100 190A50 50 0 0 1 200 190" strokeWidth="1.6" />
-      <path d="M132 10V4H168V10" strokeWidth="1.6" />
-    </Svg>
-  );
-}
-
-/** Un fregio tra le sezioni: due righe e il pallone in mezzo. */
-export function Fregio({ className = '' }: P) {
-  return (
-    <div className={`flex items-center justify-center gap-4 text-forest-400 ${className}`} aria-hidden>
-      <span className="h-px w-16 bg-current opacity-40 sm:w-28" />
-      <Pallone className="h-7 w-7" />
-      <span className="h-px w-16 bg-current opacity-40 sm:w-28" />
-    </div>
-  );
-}
-
-/** Il timbro rotondo, come lo stemma di una squadra: testa, corpo, gioco intorno al pallone. */
-export function Stemma({ className, titolo = 'For You Football: testa, corpo, gioco' }: P) {
-  const testo = 'FOR YOU FOOTBALL · TESTA · CORPO · GIOCO · ';
-  return (
-    <svg viewBox="0 0 200 200" className={className} role="img" aria-label={titolo}>
-      <defs>
-        <path id="scopri-stemma-giro" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" />
-      </defs>
-      <g fill="none" stroke="currentColor">
-        <circle cx="100" cy="100" r="95" strokeWidth="2.4" />
-        <circle cx="100" cy="100" r="89" strokeWidth="1" />
-        <circle cx="100" cy="100" r="58" strokeWidth="1" />
-      </g>
-      <text fill="currentColor" style={{ fontFamily: 'var(--font-scopri-serif), Georgia, serif', fontSize: 15.5, letterSpacing: 3.2, fontWeight: 600 }}>
-        <textPath href="#scopri-stemma-giro" startOffset="0" textLength="458" lengthAdjust="spacing">{testo}</textPath>
-      </text>
-      <svg x="62" y="62" width="76" height="76" viewBox="0 0 100 100">
-        <Pallone />
-      </svg>
-    </svg>
   );
 }

@@ -2,17 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
-## 2026-11-07 — La pagina di vendita: il posto per le foto di Ste nella storia
+## 2026-11-07 — La pagina di vendita: torna lo stile di prima, con i disegnini e il posto per le foto
 
-Ste: «inserire mie immagini mentre giocavo, anche da ragazzino, una piccola storia, più umano». La storia diventa a capitoli quando ci sono foto: ogni foto (stampa con il bordo bianco, appena storta, un po' di seppia, `.scopri-stampa`) accanto ai paragrafi che la seguono, a lati alterni; sotto, l'anno e due parole di Ste. Le foto stanno in `STORIA_FOTO` in `lib/scopri.ts` (file in `public/scopri/storia/`, `prima` = davanti a quale paragrafo); finché la lista è vuota la storia resta com'era, con il timbro «SB». Test: file presente, testo alternativo, anno e didascalia, posto valido.
-
-## 2026-11-07 — La pagina di vendita su carta: più classica, meno tecnologica
-
-Ste: «un tocco meno intelligenza artificiale, più classico, quasi vintage, che ricordi la connessione di corpo e mente nel calcio; piccole immagini, più emotivo e meno distaccato». Solo `/scopri`, l'app resta com'è.
-- Carta avorio con la grana (SVG inline), inchiostro verde scuro, il verde del campo, un rosso mattone per i dettagli: i token dell'app sono ridefiniti solo dentro `.scopri-carta` in `app/globals.css` (niente aloni verdi, niente gradienti).
-- Titoli con le grazie: Crimson Pro tondo (`app/fonts/crimson-pro-latin-wght.woff2`, OFL, caricato solo da questa pagina come `--font-scopri-serif`); etichette in maiuscoletto spaziato.
-- Disegni a tratto in `components/scopri/Disegni.tsx`: il pallone di cuoio con i lacci (logo e fregi tra le sezioni), una scena per ognuno dei quattro momenti («Il primo pallone», «Dopo l'errore», «La sera prima», «Al fischio finale»), il cerchio di centrocampo dietro il telefono, il mezzo campo dietro «Dove ti porta il lavoro», lo stemma rotondo «Testa · Corpo · Gioco» in chiusura.
-- Capolettera nella storia, il timbro «SB», i passi come timbri numerati, il prezzo del Mente come un biglietto della partita con la perforazione, le domande come un indice.
+Stessa sera. Una prima versione «su carta» (avorio, titoli con le grazie, stemma, prezzo come un biglietto) è stata tolta: Ste, «l'hai cambiato troppo, non dovevi stravolgere i colori e lo stile». La pagina torna scura come l'app, con due aggiunte piccole:
+- accanto alle quattro scene di «Lo conosci questo momento?» un disegnino a tratto nel verde dell'app (`components/scopri/Disegni.tsx`: il pallone che arriva, la palla persa, la sera prima, il fischietto);
+- il posto per le foto di Ste nella storia (Ste: «mie immagini mentre giocavo, anche da ragazzino, più umano»): con foto la storia va a capitoli, ogni foto accanto ai paragrafi che la seguono con l'anno e due parole sue sotto; le foto stanno in `STORIA_FOTO` in `lib/scopri.ts` (file in `public/scopri/storia/`, `prima` = davanti a quale paragrafo). Finché la lista è vuota la storia resta com'era, con il cerchio «SB». Test: file presente, testo alternativo, anno e didascalia, posto valido.
 
 ## 2026-11-07 — La pagina di vendita: il Fisico torna nella pagina
 

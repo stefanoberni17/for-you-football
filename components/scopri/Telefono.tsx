@@ -18,7 +18,7 @@ export function Schermo({ momenti, attiva, priorita = false, className = '' }: {
   // così l'immagine entra intera e niente viene tagliato ai lati.
   return (
     <div className={`scopri-telefono mx-auto rounded-[2.4rem] border-[9px] border-black bg-black shadow-e3 ring-1 ring-white/10 ${className}`}>
-      <div className="relative aspect-[600/1298] w-full overflow-hidden rounded-[1.8rem] bg-[#0d1310]">
+      <div className="relative aspect-[600/1298] w-full overflow-hidden rounded-[1.8rem] bg-app-bg">
         {momenti.map((m, i) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -61,6 +61,7 @@ export function TelefonoCiclo({ momenti }: { momenti: MomentoApp[] }) {
   }, [ridotto, momenti.length]);
   return (
     <div className="relative">
+      <div className="pointer-events-none absolute -inset-10 rounded-full bg-forest-500/25 blur-3xl" aria-hidden />
       <Schermo momenti={momenti} attiva={i} priorita className="scopri-galleggia relative w-[min(80vw,330px)] lg:w-[min(340px,calc((100vh-150px)*0.47))]" />
       <p className="relative mt-4 text-center text-label text-muted" aria-live="polite">{momenti[i].titolo}</p>
     </div>
@@ -71,8 +72,8 @@ export function TelefonoCiclo({ momenti }: { momenti: MomentoApp[] }) {
 function InCampo({ testo, centro = false }: { testo?: string; centro?: boolean }) {
   if (!testo) return null;
   return (
-    <p className={`mt-4 max-w-md rounded-[4px] border-l-4 border-[var(--scopri-ruggine)] bg-surface px-4 py-3 text-left text-body text-app ${centro ? 'mx-auto' : ''}`}>
-      <span className="font-semibold text-[var(--scopri-ruggine)]">In campo: </span>{testo}
+    <p className={`mt-4 max-w-md rounded-btn border-l-4 border-forest-400 bg-forest-500/10 px-4 py-3 text-left text-body text-app ${centro ? 'mx-auto' : ''}`}>
+      <span className="font-semibold text-forest-300">In campo: </span>{testo}
     </p>
   );
 }
@@ -82,12 +83,12 @@ function Dettaglio({ righe, centro = false }: { righe: string[]; centro?: boolea
   if (!righe.length) return null;
   return (
     <details className={`group mt-4 w-full max-w-md text-left ${centro ? 'mx-auto' : ''}`}>
-      <summary className={`inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 rounded-btn text-body-sm font-semibold text-forest-300 hover:text-forest-700 [&::-webkit-details-marker]:hidden ${centro ? 'w-full justify-center' : ''}`}>
+      <summary className={`inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 rounded-btn text-body-sm font-semibold text-forest-300 hover:text-forest-200 [&::-webkit-details-marker]:hidden ${centro ? 'w-full justify-center' : ''}`}>
         <span className="group-open:hidden">Cosa c&apos;è dentro</span>
         <span className="hidden group-open:inline">Chiudi</span>
         <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden />
       </summary>
-      <ul className="mt-2 space-y-2.5 rounded-[6px] border border-divider bg-surface p-4">
+      <ul className="mt-2 space-y-2.5 rounded-card border border-divider bg-surface/70 p-4">
         {righe.map((r) => (
           <li key={r} className="flex gap-2.5 text-body-sm text-muted">
             <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rounded-full bg-forest-400" aria-hidden />
@@ -134,6 +135,7 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
       <div className={`hidden lg:grid gap-16 ${invertito ? 'grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]' : 'grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]'}`}>
         <div className={`relative ${invertito ? 'order-2' : ''}`}>
           <div className="sticky top-[calc(50vh-340px)]">
+            <div className="pointer-events-none absolute -inset-8 rounded-full bg-forest-500/20 blur-3xl" aria-hidden />
             <Schermo momenti={momenti} attiva={attiva} className="relative w-[320px]" />
           </div>
         </div>
@@ -145,8 +147,8 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
               data-i={i}
               className={`flex min-h-[80vh] flex-col justify-center transition-opacity duration-500 ${i === attiva ? 'opacity-100' : 'opacity-35'}`}
             >
-              <span className="scopri-etichetta text-forest-500">{m.parte} · {String(i + 1).padStart(2, '0')}</span>
-              <h3 className="scopri-serif mt-2 text-[34px] leading-[38px] font-semibold text-app">{m.titolo}</h3>
+              <span className="text-overline uppercase text-forest-400">{m.parte} · {String(i + 1).padStart(2, '0')}</span>
+              <h3 className="mt-2 font-display text-[28px] leading-[34px] font-bold text-app">{m.titolo}</h3>
               <p className="mt-3 max-w-md text-body-lg text-muted">{m.testo}</p>
               <Dettaglio righe={m.dettaglio} />
               <InCampo testo={m.inCampo} />
@@ -167,8 +169,8 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
             <div key={m.id} className="w-full shrink-0 snap-center px-4">
               <Schermo momenti={[m]} attiva={0} className="w-[min(78vw,320px)]" />
               <div className="mx-auto mt-5 max-w-sm text-center">
-                <span className="scopri-etichetta text-forest-500">{m.parte} · {i + 1} di {momenti.length}</span>
-                <h3 className="scopri-serif mt-1.5 text-[28px] leading-[32px] font-semibold text-app">{m.titolo}</h3>
+                <span className="text-overline uppercase text-forest-400">{m.parte} · {i + 1} di {momenti.length}</span>
+                <h3 className="mt-1.5 font-display text-title-2 font-bold text-app">{m.titolo}</h3>
                 <p className="mt-2 text-body text-muted">{m.testo}</p>
                 <Dettaglio righe={m.dettaglio} centro />
                 <InCampo testo={m.inCampo} centro />
@@ -187,7 +189,7 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
               onClick={() => vaiA(i)}
               className="flex h-11 w-7 items-center justify-center"
             >
-              <span className={`block h-2 rounded-full transition-all duration-300 ${i === slide ? 'w-6 bg-forest-500' : 'w-2 bg-divider'}`} />
+              <span className={`block h-2 rounded-full transition-all duration-300 ${i === slide ? 'w-6 bg-forest-400' : 'w-2 bg-white/25'}`} />
             </button>
           ))}
         </div>
