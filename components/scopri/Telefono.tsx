@@ -68,13 +68,23 @@ export function TelefonoCiclo({ momenti }: { momenti: MomentoApp[] }) {
   );
 }
 
+/** La riga «In campo» in fondo a ogni scheda (testi v2 di Ste, 7/11): sempre in vista, evidenziata. */
+function InCampo({ testo, centro = false }: { testo?: string; centro?: boolean }) {
+  if (!testo) return null;
+  return (
+    <p className={`mt-4 max-w-md rounded-btn border-l-4 border-forest-400 bg-forest-500/10 px-4 py-3 text-left text-body text-app ${centro ? 'mx-auto' : ''}`}>
+      <span className="font-semibold text-forest-300">In campo: </span>{testo}
+    </p>
+  );
+}
+
 /** Il «Scopri di più» di un momento (Ste, 6/11: la spiegazione lunga accanto a quella breve, momento per momento). */
 function Dettaglio({ righe, centro = false }: { righe: string[]; centro?: boolean }) {
   if (!righe.length) return null;
   return (
     <details className={`group mt-4 w-full max-w-md text-left ${centro ? 'mx-auto' : ''}`}>
       <summary className={`inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 rounded-btn text-body-sm font-semibold text-forest-300 hover:text-forest-200 [&::-webkit-details-marker]:hidden ${centro ? 'w-full justify-center' : ''}`}>
-        <span className="group-open:hidden">Scopri di più</span>
+        <span className="group-open:hidden">Cosa c&apos;è dentro</span>
         <span className="hidden group-open:inline">Chiudi</span>
         <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden />
       </summary>
@@ -141,6 +151,7 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
               <h3 className="mt-2 font-display text-[28px] leading-[34px] font-bold text-app">{m.titolo}</h3>
               <p className="mt-3 max-w-md text-body-lg text-muted">{m.testo}</p>
               <Dettaglio righe={m.dettaglio} />
+              <InCampo testo={m.inCampo} />
             </li>
           ))}
         </ol>
@@ -162,6 +173,7 @@ export function ComeFunziona({ momenti, invertito = false }: { momenti: MomentoA
                 <h3 className="mt-1.5 font-display text-title-2 font-bold text-app">{m.titolo}</h3>
                 <p className="mt-2 text-body text-muted">{m.testo}</p>
                 <Dettaglio righe={m.dettaglio} centro />
+                <InCampo testo={m.inCampo} centro />
               </div>
             </div>
           ))}

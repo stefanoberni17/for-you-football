@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita, testi v2 di Ste
+
+Ste ha riscritto i testi con Claude («Pagina di vendita v2»): la pagina vende il Mente e annuncia il Fisico.
+- Undici sezioni: apertura (mental training per calciatori, «tornare in partita quando la testa se ne va»; posto per il video principale, `VIDEO_PRINCIPALE` in `app/scopri/page.tsx`, finché non c'è il telefono con le schermate della Testa), «Lo conosci questo momento?», la storia di Ste (Reggiana, Serie D, «togliere invece di aggiungere»), «Non è pensiero positivo», «Come funziona» in quattro schede con la riga evidenziata «In campo» (`MomentoApp.inCampo`) e «Cosa c'è dentro», «Cosa dicono i primi» (compare solo con racconti veri in `RACCONTI`), il Fisico da dicembre, come si inizia, prezzi (il Mente in grande con i suoi quattro punti, Completo e Fisico sotto con gli importi dalla configurazione), le domande (più «E se non fa per me?» ed «È una terapia?»), la chiusura con la frase del Giorno 1 e il piè di pagina «non è un servizio sanitario né psicologico».
+- Tutti i testi in `lib/scopri.ts`; i test controllano anche che non ci siano trattini lunghi né «tap».
+- Scostamenti dal testo di Ste, perché l'app fa così: l'email di fine prova parte tre giorni prima (`trial_will_end`), il codice amico si scrive nella pagina prezzi prima del pagamento (non nella pagina di Stripe), il Fisico «ognuno con la sua scheda, e i video» (non tutti gli esercizi hanno il video), «Avvisami quando apre» apre un'email a info@foryoufootball.it (la lista d'attesa dell'app chiede un account).
+- Le schermate e i momenti del Fisico restano in `MOMENTI_FISICO` per dicembre, fuori dalla pagina.
+
 ## 2026-11-06 — La pagina di vendita (/scopri)
 
 Primo pezzo del funnel (Notion «Funnel di vendita: mappa e piano», 6/11; Ste: "vai proviamo", spunto da preparazioneatletica.com, "screenshot per fare qualcosa di dinamico che faccia vedere come funziona l'app").

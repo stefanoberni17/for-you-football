@@ -13,8 +13,8 @@ import { INFO_PACCHETTI, PACCHETTI, type Pacchetto } from './listino';
 
 /**
  * Un momento dell'app mostrato nel telefono: l'immagine sta in public/scopri/<id>.webp (600 × 1298).
- * `dettaglio` = il «Scopri di più» di QUEL momento (Ste, 6/11: "l'espansione in ogni fase che spiega quella a cui
- * si riferisce"). Solo cose che l'app fa davvero.
+ * `dettaglio` = il «dentro» di QUEL momento, che si apre; `inCampo` = la riga evidenziata in fondo, sempre in vista
+ * (testi v2 di Ste, 7/11). Solo cose che l'app fa davvero.
  */
 export interface MomentoApp {
   id: string;
@@ -23,107 +23,135 @@ export interface MomentoApp {
   testo: string;
   alt: string;
   dettaglio: string[];
+  inCampo?: string;
 }
 
-/** Da dove viene il metodo, in testa a ogni sezione (parole di Ste, 6/11). */
-export const ORIGINE_TESTA: string[] = [
-  'Tecniche studiate e messe alla prova da più di cinque anni, sul campo.',
-  'Raccolte da professionisti e da diversi libri, poi ridotte a quello che si può fare in campo.',
-  'Provate prima su di me, da calciatore, poi sui ragazzi che alleno.',
-];
+// ─── Testi della pagina (v2 di Ste, 7/11). Regole: niente trattini lunghi, niente promesse di esito ───
 
-export const ORIGINE_FISICO: string[] = [
-  'Esercizi, progressioni, regole e limiti usati per anni con più di 100 calciatori.',
-  'L\'AI li adatta a te: obiettivi, impegni, attrezzi, e come vanno le tue sedute.',
-  'Prima che tu la veda, ogni settimana passa da un controllo automatico delle regole.',
-];
+export const APERTURA = {
+  etichetta: 'Mental training per calciatori',
+  titolo: 'Allena la testa come alleni le gambe.',
+  sotto: 'Pochi minuti al giorno per imparare a tornare in partita quando la testa se ne va. Dopo un errore, in panchina, la sera prima della partita.',
+};
 
-/** La Testa: il percorso mentale (pacchetto Mente, o Completo). */
+/** «Lo conosci questo momento?» */
+export const MOMENTI_CONOSCI: string[] = [
+  'Sbagli un passaggio facile al decimo minuto... e te lo porti fino al novantesimo.',
+  'Vedi il mister che si alza dalla panchina, e le gambe diventano di legno.',
+  'La sera prima della partita giri nel letto e la giochi dieci volte in testa.',
+  'Ti tolgono al sessantesimo, e passi la settimana a chiederti cosa pensa di te.',
+];
+export const CONOSCI_CHIUSURA = 'Il talento non c\'entra. In allenamento quelle giocate le fai. Quello che manca è il modo di riportare la testa in campo... e si allena, come il piede debole.';
+
+export const STORIA = {
+  citazione: '«Sono passato da vomitare prima delle partite, terrorizzato e bloccato dalla paura, a giocare davanti a diecimila persone.»',
+  paragrafi: [
+    'Sono Stefano, Ste. Ho esordito in Serie C con la Reggiana, e il primo pallone me l\'hanno rubato su un appoggio che avevo fatto mille volte. In Serie D ho perso una finale di Coppa Italia anche perché un passaggio sbagliato nel primo tempo me lo sono portato dietro per tutta la partita.',
+    'Per anni ho provato di tutto: un mental coach, uno psicologo, lo yoga, libri, corsi. Cose preziose... ma ognuno mi dava qualcosa in più da fare. Il passo vero è stato l\'opposto: togliere invece di aggiungere. Imparare ad accorgermi di quando la testa partiva, e tornare.',
+    'Non è stato veloce, e non è finito nemmeno oggi.',
+    'For You Football è quello che avrei voluto avere io: le cose che mi sono servite, messe in fila, un giorno alla volta.',
+  ],
+};
+
+export const NON_POSITIVO = {
+  titolo: 'Non è pensiero positivo',
+  paragrafi: [
+    'Qui non ti chiediamo di essere sempre carico, sicuro, positivo. Quella è una recita, e prima o poi crolla.',
+    'Ti alleni a una cosa sola: accorgerti di quando la testa se ne va, e tornare in partita nel minor tempo possibile. Con la frustrazione, con la paura, con tutto quello che senti... ma di nuovo sulla palla dopo.',
+    'E non è una formula magica. Come per il fisico, serve farlo con costanza.',
+  ],
+};
+
+/** Come funziona: le quattro schede della Testa (pacchetto Mente, o Completo). */
 export const MOMENTI_TESTA: MomentoApp[] = [
   {
     id: 'giorno',
     parte: 'Testa',
     titolo: 'Ogni giorno, pochi minuti',
-    testo: "Apri il giorno: un'apertura da leggere o ascoltare, una pratica guidata con l'audio, una domanda. Un giorno alla volta: il prossimo si apre domani.",
-    alt: "La pagina di un giorno del percorso: settimana 1, giorno 1, l'apertura scritta da Ste.",
+    testo: 'Apri l\'app e trovi la giornata: un\'apertura da leggere, una pratica guidata con l\'audio, una domanda. Non devi decidere niente.',
+    alt: 'La pagina di un giorno del percorso: settimana 1, giorno 1, l\'apertura scritta da Ste.',
     dettaglio: [
-      '12 settimane in tre blocchi. Settimane 1-4, costruire lo strumento: presenza, osservare i pensieri, ascoltare il corpo, la pressione.',
-      'Settimane 5-8, giocare nelle difficoltà: l\'errore, la panchina, il giudizio, quello che ti porti dietro dopo la partita.',
-      'Settimane 9-12, giocare libero: la tua routine, le tue risposte pronte, il tuo protocollo.',
-      'Ogni pratica dura da 3 a 15 minuti, con l\'audio guidato.',
-      'Alla fine della settimana il Gate: tre o quattro domande sulla settimana. La successiva si apre da lì.',
-      'Il giorno prima della partita c\'è una pratica apposta, per la sera.',
+      '12 settimane in tre blocchi. Costruire lo strumento: presenza, pensieri, corpo, pressione. Giocare nelle difficoltà: l\'errore, la panchina, il giudizio, quello che ti porti a casa dopo la partita. Giocare libero: la tua routine, le tue risposte pronte, il tuo protocollo.',
+      'Una pratica dura da 3 a 15 minuti, quasi sempre meno di dieci.',
+      'A fine settimana tre o quattro domande, e da lì si apre la successiva.',
+      'La sera prima della partita c\'è una pratica apposta.',
     ],
+    inCampo: 'Entri sapendo cosa fare, invece di sperare che sia una giornata buona.',
   },
   {
     id: 'reset',
     parte: 'Testa',
-    titolo: 'Il Reset: respiro, gesto, parola',
-    testo: 'Il primo strumento del percorso. Da uno a cinque minuti la mattina, tre secondi in campo quando la testa va altrove.',
+    titolo: 'Il Reset: il primo strumento',
+    testo: 'Un respiro comodo, un gesto delle mani che non vede nessuno, una parola tua. A casa dura qualche minuto. In campo tre secondi, alla prima pausa.',
     alt: 'Il Reset in corso: il cerchio del respiro, il mantra e il tempo che manca.',
     dettaglio: [
-      'Respiro contato, un gesto delle mani che non vede nessuno, una parola tua.',
-      'Sopra il Reset si costruiscono gli altri strumenti: osservare i pensieri, ascoltare il corpo, il Protocollo Pressione per i momenti che contano.',
-      'Ogni strumento ha la sua versione lunga, da fare a casa, e quella corta, da usare in campo.',
-      'Le schede per i momenti difficili (ansia prima della partita, l\'errore, la panchina, il mister) ti dicono cosa fare adesso, e crescono con le settimane.',
+      'Sopra il Reset costruisci gli altri strumenti: guardare i pensieri, ascoltare il corpo, il Protocollo Pressione per i momenti che contano, lo Stacco dopo l\'errore, il Rilascio per lasciare fuori quello che ti porti dietro.',
+      'Ogni strumento ha la versione lunga da fare a casa e quella corta da usare in campo.',
+      'Le schede per i momenti difficili (ansia prima della partita, l\'errore, la panchina, il mister) ti dicono cosa fare adesso.',
     ],
+    inCampo: 'Dopo l\'errore sei già sulla palla dopo.',
   },
   {
     id: 'coach',
     parte: 'Testa',
     titolo: 'Un Coach che ti risponde',
-    testo: "Scrivigli dopo una partita storta o la sera prima. Sa a che punto sei del percorso e cosa hai scritto, e prima di consigliarti ti fa una domanda. È un'intelligenza artificiale, e te lo dice.",
+    testo: 'Scrivigli dopo una partita storta o la sera prima. Sa a che punto sei del percorso e cosa hai scritto, e prima di consigliarti ti fa una domanda. È un\'intelligenza artificiale, e te lo dice.',
     alt: 'La chat con il Coach: un giocatore racconta un rigore sbagliato, il Coach gli chiede quando torna la paura.',
     dettaglio: [
       'In app e su Telegram, quando ti serve.',
-      'Legge il tuo percorso: la settimana in corso, le tue risposte, i tuoi check-in, e se hai il Fisico anche le tue sedute.',
-      'Si ricorda i temi di cui avete parlato.',
-      'Parla come un ex calciatore su una panchina dopo l\'allenamento: domande dirette, niente frasi fatte.',
+      'Si ricorda di cosa avete parlato.',
+      'Domande dirette, niente frasi fatte.',
       'Se scrivi qualcosa che fa pensare che stai male davvero, ti indica persone reali a cui rivolgerti.',
     ],
-  },
-  {
-    id: 'azioni',
-    parte: 'Testa',
-    titolo: 'Le tue abitudini',
-    testo: 'Cinque azioni da fare durante la giornata, scelte da te: un Reset prima di entrare in campo, il telefono via a cena. Le spunti, e vedi quali tieni e quali no.',
-    alt: 'Le tue 5 azioni: la striscia di giorni di fila, il calendario del mese, le più costanti e quelle su cui lavorare.',
-    dettaglio: [
-      'Le scegli da un elenco che cresce con le settimane del percorso, o le scrivi tu.',
-      'Un giorno conta quando ne fai almeno tre: la striscia e il record lo dicono.',
-      'Le più costanti e quelle su cui lavorare, sul mese.',
-      'Ogni settimana anche un esercizio fuori dal campo, con i promemoria se li vuoi.',
-    ],
-  },
-  {
-    id: 'stato',
-    parte: 'Testa',
-    titolo: 'Come stai, giorno per giorno',
-    testo: 'Un check-in del mattino da venti secondi: sonno, come stai fisicamente, recupero, testa, quanto eri presente ieri. I grafici ti fanno vedere come cambia.',
-    alt: 'Come stai negli ultimi 30 giorni: medie di fisico, sonno, recupero e testa, con il grafico.',
-    dettaglio: [
-      'Medie e tendenze a 7, 30 e 90 giorni.',
-      'Frasi vere dai tuoi dati, quando ce ne sono abbastanza: per esempio quanto cambia la tua lucidità quando dormi meno di sei ore.',
-      'Con il Fisico Pro o il Completo il check-in conta anche per gli allenamenti: se sei spesso stanco il carico scende, se sei fresco sale.',
-      'Il Coach li legge: se dormi poco da giorni, lo sa.',
-    ],
+    inCampo: 'Non ti tieni la partita storta dentro fino alla prossima.',
   },
   {
     id: 'carta',
     parte: 'Testa',
-    titolo: 'La tua Carta del Giocatore',
-    testo: 'Il tuo mantra, la tua firma, il tuo Protocollo Pressione: le tue parole, scritte da te nel percorso. E il rombo a 360°: testa, recupero e corpo dagli stessi dati.',
+    titolo: 'Le tue parole, in un posto solo',
+    testo: 'La tua parola per il Reset, la tua firma di quando giochi bene, il tuo Protocollo Pressione: le scrivi tu durante il percorso, e le ritrovi nella tua Carta del Giocatore.',
     alt: 'La Carta del Giocatore: il rombo a sette punte con la partenza in grigio.',
     dettaglio: [
-      'Le risposte chiave del percorso in un posto solo, da rileggere prima di entrare in campo, anche stampate.',
-      'Le puoi riscrivere quando cambiano: ogni versione resta, con la data.',
-      'Il rombo mette insieme presenza, costanza, disciplina e lucidità con recupero, forza, esplosività, resistenza, velocità e tecnica.',
-      'In grigio da dove sei partito, in verde dove sei adesso.',
+      'Da rileggere prima di entrare in campo, anche stampata.',
+      'Le riscrivi quando cambiano: ogni versione resta, con la data.',
+      'Un check-in di venti secondi al mattino (sonno, corpo, testa) e cinque piccole azioni per la giornata, scelte da te.',
     ],
+    inCampo: 'Prima del fischio d\'inizio sai già chi vuoi essere in quei novanta minuti.',
   },
 ];
 
-/** Il Fisico: la preparazione (pacchetti Fisico, o Completo). */
+/**
+ * Racconti dei primi iscritti (sezione «Cosa dicono i primi»): SOLO con il consenso scritto, frasi vere non
+ * modificate nel senso, nome o iniziale, ruolo, categoria. Vuoto = la sezione non compare.
+ */
+export interface Racconto { testo: string; chi: string; ruolo: string; categoria: string }
+export const RACCONTI: Racconto[] = [];
+
+/** Il Fisico in breve, finché il Campo non è aperto a tutti. */
+export const FISICO_TEASER = {
+  titolo: 'La preparazione costruita sulla tua settimana di partite.',
+  testo: 'Un piano ogni settimana sui tuoi obiettivi, i tuoi attrezzi, gli allenamenti con la squadra e la partita. Più di 300 esercizi, ognuno con la sua scheda, e i video. Se un giorno sei molto stanco o senti un fastidio, la seduta si alleggerisce.',
+  quando: 'Da dicembre',
+};
+
+/** Cosa c'è nel Mente (scheda principale dei prezzi). */
+export const MENTE_INCLUDE: string[] = [
+  'Il percorso di 12 settimane, una giornata al giorno, con l\'audio',
+  'Il Coach in app e su Telegram, sette giorni su sette',
+  'Gli strumenti, le schede per i momenti difficili, la tua Carta',
+  'Check-in e statistiche',
+];
+export const NOTA_VALORE = 'Una seduta da un mental coach costa spesso più di cento euro. Qui hai un percorso intero, ogni giorno, per tutto il mese.';
+export const NOTA_CODICE = 'Hai un codice da un amico? Lo inserisci nella pagina dei prezzi, prima del pagamento.';
+
+export const CHIUSURA = [
+  'Lo so, detta così sembra la cosa più inutile del mondo: respiri da quando sei nato, e finora non ti ha mai fatto segnare un gol.',
+  'Dammi tre minuti lo stesso. Il Giorno 1 dura così.',
+];
+
+export const AVVISO_FISICO = 'mailto:info@foryoufootball.it?subject=' + encodeURIComponent('Avvisami quando apre il Fisico');
+
+/** Il Fisico, momento per momento: non è nella pagina finché il Campo non apre (dicembre); testi e schermate restano pronti. */
 export const MOMENTI_FISICO: MomentoApp[] = [
   {
     id: 'obiettivi',
@@ -231,8 +259,8 @@ export const MOMENTI_FISICO: MomentoApp[] = [
   },
 ];
 
-/** Tutte le schermate, per il telefono dell'apertura che gira da solo (Testa e Fisico alternati). */
-export const MOMENTI_APP: MomentoApp[] = MOMENTI_TESTA.flatMap((m, i) => [m, MOMENTI_FISICO[i]]).concat(MOMENTI_FISICO.slice(MOMENTI_TESTA.length)).filter(Boolean);
+/** Il telefono dell'apertura (al posto del video finché non c'è): le schermate della Testa. */
+export const MOMENTI_APP: MomentoApp[] = MOMENTI_TESTA;
 
 export interface PassoIngresso {
   titolo: string;
@@ -242,11 +270,11 @@ export interface PassoIngresso {
 export function passiIngresso(provaGiorni: number): PassoIngresso[] {
   const prova = provaGiorni > 0;
   return [
-    { titolo: 'Ti registri', testo: "Due minuti: chi sei, in che ruolo giochi, cosa ti pesa in campo. Il Coach parte da lì." },
+    { titolo: 'Ti registri', testo: 'Due minuti: chi sei, in che ruolo giochi, cosa ti pesa in campo. Il Coach parte da lì.' },
     prova
       ? { titolo: `${provaGiorni} giorni gratis`, testo: 'Inserisci la carta e inizi dal Giorno 1. Tre giorni prima della fine della prova ti avvisiamo per email.' }
       : { titolo: 'La prima settimana', testo: 'Inizi dal Giorno 1 e fai la prima settimana intera prima di decidere.' },
-    { titolo: 'Decidi tu', testo: prova ? 'Continui, oppure disdici dal profilo in un tap: se disdici durante la prova non paghi niente.' : 'Continui con un abbonamento mensile, o ti fermi lì.' },
+    { titolo: 'Decidi tu', testo: prova ? 'Continui, oppure disdici dal profilo con un tocco. Se disdici durante la prova non paghi niente.' : 'Continui con un abbonamento mensile, o ti fermi lì.' },
   ];
 }
 
@@ -257,12 +285,14 @@ export interface DomandaFrequente {
 
 export function domandeFrequenti(minAge: number): DomandaFrequente[] {
   return [
-    { domanda: 'Non ho tempo.', risposta: 'Un giorno del percorso dura da 3 a 15 minuti, quasi sempre meno di dieci. Il Reset in campo dura tre secondi.' },
-    { domanda: 'È meditazione?', risposta: 'No. Sono esercizi di attenzione pensati per il campo: il respiro, un gesto, una parola, notare il corpo e i pensieri. Li fai seduto sul letto o in piedi nello spogliatoio.' },
-    { domanda: 'Va bene anche se gioco tra i dilettanti?', risposta: "È pensato per chi gioca, a qualsiasi livello. Le situazioni sono quelle di ogni campo: l'errore, la panchina, il mister, la pressione prima della partita." },
-    { domanda: 'Perché pagare, se su YouTube ci sono video gratis?', risposta: 'I video spiegano. Qui si fa: un passo al giorno, nell\'ordine giusto, con un Coach che sa a che punto sei e un piano fisico che si regola su come vanno le tue sedute.' },
-    { domanda: 'Il Coach è una persona?', risposta: "No, è un'intelligenza artificiale istruita sul metodo del percorso. Se scrivi qualcosa che fa pensare che stai male davvero, ti indica persone reali a cui rivolgerti." },
-    { domanda: 'Come disdico?', risposta: 'Dal profilo, in un tap. Se disdici durante la prova non paghi niente; dopo, resti dentro fino alla fine del mese già pagato.' },
+    { domanda: 'Non ho tempo.', risposta: 'Una giornata dura da 3 a 15 minuti, quasi sempre meno di dieci. Il Reset in campo dura tre secondi.' },
+    { domanda: 'È meditazione?', risposta: 'Non come te la immagini. Non devi metterti a terra a gambe incrociate come il Buddha: sono esercizi di attenzione pensati per il campo, li fai seduto sul letto o in piedi nello spogliatoio.' },
+    { domanda: 'Funziona se gioco tra i dilettanti?', risposta: 'È pensato per chi gioca, a qualsiasi livello. L\'errore, la panchina, il mister, la pressione prima della partita ci sono in ogni campo.' },
+    { domanda: 'E se non fa per me?', risposta: 'Per questo la prima settimana è gratis. Se non ti serve, disdici dal profilo con un tocco prima della fine della prova e non paghi niente.' },
+    { domanda: 'Perché pagare, se su YouTube ci sono video gratis?', risposta: 'I video spiegano. Qui si fa: un passo al giorno, nell\'ordine giusto, con un Coach che sa a che punto sei.' },
+    { domanda: 'Il Coach è una persona?', risposta: 'No, è un\'intelligenza artificiale istruita sul metodo del percorso. Se scrivi qualcosa che fa pensare che stai male davvero, ti indica persone reali a cui rivolgerti.' },
+    { domanda: 'È una terapia?', risposta: 'No. For You Football è allenamento mentale per lo sport: non è un servizio sanitario né psicologico.' },
+    { domanda: 'Come disdico?', risposta: 'Dal profilo, con un tocco. Se disdici durante la prova non paghi niente; dopo, resti dentro fino alla fine del mese già pagato.' },
     { domanda: 'Che età serve?', risposta: `Per ora ci si iscrive dai ${minAge} anni.` },
   ];
 }

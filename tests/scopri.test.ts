@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { IMPOSTAZIONI_DEFAULT, type Impostazioni } from '@/lib/abbonamento';
 import { PACCHETTI, type Pacchetto } from '@/lib/listino';
-import { domandeFrequenti, ORIGINE_FISICO, ORIGINE_TESTA, MOMENTI_APP, MOMENTI_FISICO, MOMENTI_TESTA, passiIngresso, prezziPubblici } from '@/lib/scopri';
+import { APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP, MOMENTI_CONOSCI, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA } from '@/lib/scopri';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -39,15 +39,35 @@ describe('pagina di vendita: prezzi pubblici', () => {
   });
 });
 
+function tuttiITesti(): string[] {
+  return [
+    ...Object.values(APERTURA), ...MOMENTI_CONOSCI, CONOSCI_CHIUSURA, STORIA.citazione, ...STORIA.paragrafi, NON_POSITIVO.titolo, ...NON_POSITIVO.paragrafi,
+    ...[...MOMENTI_TESTA, ...MOMENTI_FISICO].flatMap((m) => [m.titolo, m.testo, ...m.dettaglio, m.inCampo ?? '']),
+    ...Object.values(FISICO_TEASER), ...MENTE_INCLUDE, NOTA_VALORE, NOTA_CODICE, ...CHIUSURA,
+    ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).flatMap((p) => [p.titolo, p.testo]),
+  ];
+}
+
 describe('pagina di vendita: testi', () => {
   it('ogni momento ha la sua schermata in public/scopri', () => {
     for (const m of [...MOMENTI_TESTA, ...MOMENTI_FISICO]) expect(fs.existsSync(path.join(process.cwd(), 'public/scopri', `${m.id}.webp`)), m.id).toBe(true);
-    // il telefono dell'apertura gira su tutte le schermate, una volta sola
-    expect(new Set(MOMENTI_APP.map((m) => m.id)).size).toBe(MOMENTI_TESTA.length + MOMENTI_FISICO.length);
+    // il telefono dell'apertura gira sulle schermate della Testa
+    expect(MOMENTI_APP.map((m) => m.id)).toEqual(MOMENTI_TESTA.map((m) => m.id));
   });
 
-  it('ogni momento ha il suo «Scopri di più»', () => {
-    for (const m of [...MOMENTI_TESTA, ...MOMENTI_FISICO]) expect(m.dettaglio.length, m.id).toBeGreaterThan(2);
+  it('ogni scheda di «Come funziona» ha il suo dentro e la riga «In campo»', () => {
+    for (const m of MOMENTI_TESTA) { expect(m.dettaglio.length, m.id).toBeGreaterThan(2); expect(m.inCampo, m.id).toBeTruthy(); }
+    for (const m of MOMENTI_FISICO) expect(m.dettaglio.length, m.id).toBeGreaterThan(2);
+  });
+
+  it('niente trattini lunghi e niente «tap» (regole dei testi v2)', () => {
+    const t = tuttiITesti().join(' ');
+    expect(t).not.toMatch(/[—–]/);
+    expect(t).not.toMatch(/\btap\b/i);
+  });
+
+  it('la sezione dei racconti resta vuota finché non ci sono racconti veri', () => {
+    for (const r of RACCONTI) { expect(r.testo.length).toBeGreaterThan(0); expect(r.chi.length).toBeGreaterThan(0); }
   });
 
   it('i giorni di prova vengono dalle impostazioni', () => {
@@ -57,7 +77,7 @@ describe('pagina di vendita: testi', () => {
   });
 
   it('nessuna promessa di esito nei testi (regole del COMMERCIALE)', () => {
-    const tutto = [...MOMENTI_APP.flatMap((m) => [m.titolo, m.testo]), ...MOMENTI_APP.flatMap((m) => m.dettaglio), ...ORIGINE_TESTA, ...ORIGINE_FISICO, ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).map((p) => p.testo)].join(' ').toLowerCase();
+    const tutto = [...MOMENTI_APP.flatMap((m) => [m.titolo, m.testo]), ...tuttiITesti(), ...domandeFrequenti(18).flatMap((d) => [d.domanda, d.risposta]), ...passiIngresso(7).map((p) => p.testo)].join(' ').toLowerCase();
     for (const vietata of ['giocherai meglio', 'supererai', 'garantit', 'ultimi posti', 'più sicuro di te', 'giocherai', 'migliorerai', 'non avrai più']) expect(tutto).not.toContain(vietata);
   });
 });
