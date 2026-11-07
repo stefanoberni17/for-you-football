@@ -56,6 +56,15 @@ export const STORIA = {
   ],
 };
 
+/**
+ * Le foto di Ste nella storia (7/11, Ste: «mie immagini mentre giocavo, anche da ragazzino, una piccola storia, più umano»).
+ * File in public/scopri/storia/ (webp, ~900 px di lato lungo). `prima` = l'indice del paragrafo di STORIA davanti a cui va
+ * la foto (0 = in apertura, paragrafi.length = in fondo). `quando` e `didascalia` li scrive Ste: mai inventati.
+ * Lista vuota = la storia resta solo testo, con il timbro «SB».
+ */
+export type FotoStoria = { src: string; alt: string; quando: string; didascalia: string; prima: number };
+export const STORIA_FOTO: FotoStoria[] = [];
+
 /** Dove ti porta il lavoro. */
 export const DOVE_PORTA = {
   titolo: 'Dove ti porta il lavoro',

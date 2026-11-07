@@ -9,7 +9,8 @@ import { MIN_AGE } from '@/lib/constants';
 import {
   APERTURA, AVVISO_FISICO, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_SEZIONE, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
   MOMENTI_FISICO,
-  MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA,
+  MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO,
+  type FotoStoria,
   type PrezzoPubblico,
 } from '@/lib/scopri';
 import { ComeFunziona, TelefonoCiclo } from '@/components/scopri/Telefono';
@@ -76,6 +77,32 @@ function Titolo({ etichetta, children }: { etichetta?: string; children: React.R
       <h2 className="scopri-serif mt-3 text-balance text-[36px] font-semibold leading-[40px] lg:text-[44px] lg:leading-[48px]">{children}</h2>
     </div>
   );
+}
+
+/** Una foto della storia di Ste: stampa con il bordo bianco, appena storta, la data e due parole scritte sotto. */
+function FotoAlbum({ foto, lato }: { foto: FotoStoria; lato: 'destra' | 'sinistra' }) {
+  const storta = lato === 'destra' ? 'rotate-[1.6deg]' : '-rotate-[1.4deg]';
+  return (
+    <figure className={`scopri-stampa mx-auto w-[min(100%,380px)] ${storta}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={foto.src} alt={foto.alt} loading="lazy" decoding="async" className="block w-full" />
+      <figcaption className="px-1 pb-1 pt-3 text-center">
+        <span className="scopri-etichetta block text-[var(--scopri-ruggine)]">{foto.quando}</span>
+        <span className="mt-1 block font-quote text-[18px] italic leading-[24px] text-app">{foto.didascalia}</span>
+      </figcaption>
+    </figure>
+  );
+}
+
+/** La storia a capitoli: ogni foto con i paragrafi che la seguono, fino alla foto dopo; quelli prima della prima foto da soli. */
+function capitoliStoria(): { foto?: FotoStoria; paragrafi: { testo: string; n: number }[] }[] {
+  const foto = [...STORIA_FOTO].sort((x, y) => x.prima - y.prima);
+  const par = STORIA.paragrafi.map((testo, n) => ({ testo, n }));
+  const capitoli: { foto?: FotoStoria; paragrafi: { testo: string; n: number }[] }[] = [];
+  const primaFoto = foto[0]?.prima ?? par.length;
+  if (primaFoto > 0) capitoli.push({ paragrafi: par.slice(0, primaFoto) });
+  foto.forEach((f, k) => capitoli.push({ foto: f, paragrafi: par.slice(f.prima, foto[k + 1]?.prima ?? par.length) }));
+  return capitoli;
 }
 
 /** Le quattro scene, ognuna con il suo momento e il suo disegno. */
@@ -163,15 +190,28 @@ export default async function Scopri() {
           <Fregio />
           <Etichetta className="mt-8 text-center">Chi c&apos;è dietro</Etichetta>
           <blockquote className="mt-6 text-center font-quote text-[28px] italic leading-[37px] text-app lg:text-[36px] lg:leading-[46px]">{STORIA.citazione}</blockquote>
-          <div className="mt-12 flex flex-col items-center gap-8 sm:flex-row sm:items-start">
-            <div className="scopri-timbro flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-full text-forest-600" aria-hidden>
-              <span className="scopri-serif text-[30px] font-semibold leading-none">SB</span>
-              <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em]">Ste</span>
+          {STORIA_FOTO.length > 0 ? (
+            <div className="mt-14 space-y-14 text-body-lg leading-[28px] text-muted lg:-mx-24">
+              {capitoliStoria().map((c, i) => (
+                <div key={i} className={c.foto ? 'grid items-center gap-8 sm:grid-cols-2 sm:gap-12' : ''}>
+                  {c.foto && <FotoAlbum foto={c.foto} lato={i % 2 === 0 ? 'destra' : 'sinistra'} />}
+                  <div className={`space-y-5 ${c.foto && i % 2 === 0 ? 'sm:order-first' : ''}`}>
+                    {c.paragrafi.map(({ testo, n }) => <p key={n} className={n === 0 ? 'scopri-capolettera text-app' : ''}>{testo}</p>)}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="space-y-5 text-body-lg leading-[28px] text-muted">
-              {STORIA.paragrafi.map((p, i) => <p key={i} className={i === 0 ? 'scopri-capolettera text-app' : ''}>{p}</p>)}
+          ) : (
+            <div className="mt-12 flex flex-col items-center gap-8 sm:flex-row sm:items-start">
+              <div className="scopri-timbro flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-full text-forest-600" aria-hidden>
+                <span className="scopri-serif text-[30px] font-semibold leading-none">SB</span>
+                <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em]">Ste</span>
+              </div>
+              <div className="space-y-5 text-body-lg leading-[28px] text-muted">
+                {STORIA.paragrafi.map((p, i) => <p key={i} className={i === 0 ? 'scopri-capolettera text-app' : ''}>{p}</p>)}
+              </div>
             </div>
-          </div>
+          )}
           {VIDEO_PRINCIPALE && (
             <video className="scopri-foto mt-12 w-full" src={VIDEO_PRINCIPALE.src} poster={VIDEO_PRINCIPALE.poster} muted autoPlay playsInline controls preload="metadata">
               {VIDEO_PRINCIPALE.sottotitoli && <track kind="captions" src={VIDEO_PRINCIPALE.sottotitoli} srcLang="it" label="Italiano" default />}

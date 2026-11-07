@@ -330,3 +330,6 @@ select:focus-visible {
 .scopri-biglietto::before { left: -12px; clip-path: inset(0 0 0 50%); }
 .scopri-biglietto::after { right: -12px; clip-path: inset(0 50% 0 0); }
 .scopri-foto { border: 10px solid #fbf7ee; border-radius: 2px; box-shadow: 0 10px 30px rgb(60 45 20 / 0.25); filter: sepia(0.15); }
+/* Le foto di Ste nella storia: stampa con il bordo bianco, un po' di seppia, l'ombra sulla carta */
+.scopri-stampa { background: #fbf7ee; padding: 10px 10px 8px; box-shadow: 0 1px 2px rgb(60 45 20 / 0.2), 0 10px 26px rgb(60 45 20 / 0.22); }
+.scopri-stampa img { filter: sepia(0.22) contrast(1.02) saturate(0.9); aspect-ratio: auto; }

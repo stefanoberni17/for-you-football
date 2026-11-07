@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita: il posto per le foto di Ste nella storia
+
+Ste: «inserire mie immagini mentre giocavo, anche da ragazzino, una piccola storia, più umano». La storia diventa a capitoli quando ci sono foto: ogni foto (stampa con il bordo bianco, appena storta, un po' di seppia, `.scopri-stampa`) accanto ai paragrafi che la seguono, a lati alterni; sotto, l'anno e due parole di Ste. Le foto stanno in `STORIA_FOTO` in `lib/scopri.ts` (file in `public/scopri/storia/`, `prima` = davanti a quale paragrafo); finché la lista è vuota la storia resta com'era, con il timbro «SB». Test: file presente, testo alternativo, anno e didascalia, posto valido.
+
 ## 2026-11-07 — La pagina di vendita su carta: più classica, meno tecnologica
 
 Ste: «un tocco meno intelligenza artificiale, più classico, quasi vintage, che ricordi la connessione di corpo e mente nel calcio; piccole immagini, più emotivo e meno distaccato». Solo `/scopri`, l'app resta com'è.
