@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita: le foto di Ste nella storia
+
+Ste ha mandato sette foto («modificale un po'»; «puoi modificare un po' i caratteri e lo stile, ma non stravolgere»):
+- stesso trattamento per tutte (taglio, colori un po' più caldi e meno saturi, contrasto, vignetta morbida; `scripts/scopri-foto.mjs`, le originali fuori dal repo), ~260 KB in `public/scopri/storia/`;
+- quattro nella storia a capitoli (`STORIA_FOTO`: la Reggiana in apertura, poi accanto a «Per anni…», a «Me ne sono accorto…» e a «Non è stato veloce…»), tre in fila sotto (`ALBUM_FOTO`); niente scritte sotto finché Ste non manda anno e due parole per ognuna (`quando` e `didascalia` facoltativi);
+- il titolo d'apertura in due tempi: la seconda frase («In partita, a volte, non ti riconosci.») in Crimson Pro corsivo, verde chiaro. Il resto dello stile non cambia.
+
 ## 2026-11-07 — La pagina di vendita: torna lo stile di prima, con i disegnini e il posto per le foto
 
 Stessa sera. Una prima versione «su carta» (avorio, titoli con le grazie, stemma, prezzo come un biglietto) è stata tolta: Ste, «l'hai cambiato troppo, non dovevi stravolgere i colori e lo stile». La pagina torna scura come l'app, con due aggiunte piccole:

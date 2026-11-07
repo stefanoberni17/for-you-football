@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { IMPOSTAZIONI_DEFAULT, type Impostazioni } from '@/lib/abbonamento';
 import { PACCHETTI, type Pacchetto } from '@/lib/listino';
-import { APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_SEZIONE, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP, MOMENTI_CONOSCI, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO } from '@/lib/scopri';
+import { APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_SEZIONE, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP, MOMENTI_CONOSCI, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO, ALBUM_FOTO } from '@/lib/scopri';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -66,11 +66,12 @@ describe('pagina di vendita: testi', () => {
     expect(t).not.toMatch(/\btap\b/i);
   });
 
-  it('le foto della storia: file presente, testo alternativo, quando e didascalia di Ste, posto valido', () => {
-    for (const f of STORIA_FOTO) {
+  it('le foto della storia: file presente, testo alternativo, scritte non vuote, posto valido', () => {
+    for (const f of [...STORIA_FOTO, ...ALBUM_FOTO]) {
       expect(fs.existsSync(path.join(process.cwd(), 'public', f.src)), f.src).toBe(true);
       expect(f.alt.trim().length, f.src).toBeGreaterThan(0);
-      expect(f.quando.trim().length && f.didascalia.trim().length, f.src).toBeTruthy();
+      if (f.quando !== undefined) expect(f.quando.trim().length, f.src).toBeGreaterThan(0);
+      if (f.didascalia !== undefined) expect(f.didascalia.trim().length, f.src).toBeGreaterThan(0);
       expect(Number.isInteger(f.prima) && f.prima >= 0 && f.prima <= STORIA.paragrafi.length, f.src).toBe(true);
     }
   });

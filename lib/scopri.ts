@@ -57,13 +57,25 @@ export const STORIA = {
 };
 
 /**
- * Le foto di Ste nella storia (7/11, Ste: «mie immagini mentre giocavo, anche da ragazzino, una piccola storia, più umano»).
- * File in public/scopri/storia/ (webp, ~900 px di lato lungo). `prima` = l'indice del paragrafo di STORIA davanti a cui va
- * la foto (0 = in apertura, paragrafi.length = in fondo). `quando` e `didascalia` li scrive Ste: mai inventati.
- * Lista vuota = la storia resta solo testo, con il timbro «SB».
+ * Le foto di Ste nella storia (7/11, mandate da Ste in chat: «più umano», «modificale un po'»). File in public/scopri/storia/,
+ * stesso trattamento per tutte (colori un po' più caldi e meno saturi, contrasto, vignetta morbida; scripts/scopri-foto.mjs).
+ * `prima` = l'indice del paragrafo di STORIA davanti a cui va la foto (0 = in apertura). `quando` e `didascalia` li scrive Ste
+ * (mai inventati): senza, la foto non ha scritta sotto. Lista vuota = la storia resta solo testo, con il cerchio «SB».
  */
-export type FotoStoria = { src: string; alt: string; quando: string; didascalia: string; prima: number };
-export const STORIA_FOTO: FotoStoria[] = [];
+export type FotoStoria = { src: string; alt: string; prima: number; quando?: string; didascalia?: string };
+export const STORIA_FOTO: FotoStoria[] = [
+  { src: '/scopri/storia/reggiana.webp', alt: 'Ste da ragazzo, con la maglia della Reggiana', prima: 0 },
+  { src: '/scopri/storia/sguardo.webp', alt: 'Ste in campo, serio, con le braccia aperte', prima: 1 },
+  { src: '/scopri/storia/esultanza.webp', alt: 'Ste che esulta dopo un gol, con la maglia rossa', prima: 2 },
+  { src: '/scopri/storia/tiro.webp', alt: 'Ste che calcia, con la maglia gialla e i pantaloncini blu', prima: 5 },
+];
+
+/** Le altre foto di Ste, in fila sotto la storia. */
+export const ALBUM_FOTO: FotoStoria[] = [
+  { src: '/scopri/storia/nazionale.webp', alt: 'Ste da ragazzo, con la tuta della Nazionale', prima: 0 },
+  { src: '/scopri/storia/conduzione.webp', alt: 'Ste con la palla al piede, con la maglia gialla', prima: 0 },
+  { src: '/scopri/storia/colpo-di-testa.webp', alt: 'Ste che salta per un colpo di testa', prima: 0 },
+];
 
 /** Dove ti porta il lavoro. */
 export const DOVE_PORTA = {

@@ -8,7 +8,7 @@ import { MIN_AGE } from '@/lib/constants';
 import {
   APERTURA, AVVISO_FISICO, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_SEZIONE, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
   MOMENTI_FISICO,
-  MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO,
+  MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO, ALBUM_FOTO,
   type FotoStoria,
   type PrezzoPubblico,
 } from '@/lib/scopri';
@@ -70,19 +70,27 @@ function Titolo({ etichetta, children }: { etichetta?: string; children: React.R
   );
 }
 
+/** Il titolo d'apertura in due tempi: la prima frase dritta, la seconda in corsivo. */
+function dividiTitolo(t: string): [string, string] {
+  const i = t.indexOf('. ');
+  return i < 0 ? [t, ''] : [t.slice(0, i + 1), t.slice(i + 2)];
+}
+
 /** I disegnini accanto alle quattro scene, nello stesso ordine di MOMENTI_CONOSCI. */
 const DISEGNI_SCENE = [PalloneCheArriva, PallaPersa, SeraPrima, Fischietto];
 
 /** Una foto della storia di Ste, con l'anno e due parole sue sotto. */
 function FotoStoriaCard({ foto }: { foto: FotoStoria }) {
   return (
-    <figure className="mx-auto w-[min(100%,380px)] overflow-hidden rounded-card border border-divider bg-surface">
+    <figure className="mx-auto w-[min(100%,380px)] overflow-hidden rounded-card border border-divider bg-surface shadow-e2">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={foto.src} alt={foto.alt} loading="lazy" decoding="async" className="block w-full" />
-      <figcaption className="px-4 pb-4 pt-3">
-        <span className="block text-overline uppercase text-forest-400">{foto.quando}</span>
-        <span className="mt-1 block font-quote text-[18px] italic leading-[24px] text-app">{foto.didascalia}</span>
-      </figcaption>
+      {(foto.quando || foto.didascalia) && (
+        <figcaption className="px-4 pb-4 pt-3">
+          {foto.quando && <span className="block text-overline uppercase text-forest-400">{foto.quando}</span>}
+          {foto.didascalia && <span className="mt-1 block font-quote text-[18px] italic leading-[24px] text-app">{foto.didascalia}</span>}
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -112,6 +120,7 @@ export default async function Scopri() {
   const passi = passiIngresso(prova);
   const domande = domandeFrequenti(MIN_AGE);
   const notaCta = prova > 0 ? `${prova} giorni gratis · disdici con un tocco` : 'La prima settimana è gratis';
+  const [titoloA, titoloB] = dividiTitolo(APERTURA.titolo);
   const mente = prezzi?.mentale;
   const fisici = [prezzi?.fisico_base, prezzi?.fisico_medio, prezzi?.fisico_pro];
   const campoAperto = !!prezzi?.fisico_pro?.aperto || !!prezzi?.completo?.aperto;
@@ -133,7 +142,9 @@ export default async function Scopri() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-16 pt-6 lg:grid-cols-2 lg:pb-24 lg:pt-12">
           <div className="scopri-entra text-center lg:text-left">
             <p className="text-overline uppercase text-forest-400">{APERTURA.etichetta}</p>
-            <h1 className="mt-3 font-display text-[34px] font-bold leading-[40px] tracking-tight lg:text-[50px] lg:leading-[56px]">{APERTURA.titolo}</h1>
+            <h1 className="mt-3 font-display text-[34px] font-bold leading-[40px] tracking-tight lg:text-[50px] lg:leading-[56px]">
+              {titoloA}{titoloB && <> <span className="font-quote text-[38px] font-semibold italic tracking-normal text-forest-300 lg:text-[56px]">{titoloB}</span></>}
+            </h1>
             <p className="mx-auto mt-5 max-w-xl text-body-lg text-muted lg:mx-0">{APERTURA.sotto}</p>
             <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
               <BottoneProva />
@@ -179,6 +190,14 @@ export default async function Scopri() {
                   </div>
                 </div>
               ))}
+              {ALBUM_FOTO.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                  {ALBUM_FOTO.map((f) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={f.src} src={f.src} alt={f.alt} loading="lazy" decoding="async" className="aspect-square w-full rounded-btn border border-divider object-cover sm:rounded-card" />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div className="mt-8 flex items-start gap-4">
