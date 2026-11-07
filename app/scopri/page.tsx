@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Bell, Brain, Check, Dumbbell } from 'lucide-react';
+import localFont from 'next/font/local';
+import { ArrowRight, Bell, Check } from 'lucide-react';
 import { loadListino } from '@/lib/prezziServer';
 import { contaIscrittiCampo, contaIscrittiMente, loadImpostazioni } from '@/lib/appSettings';
 import { euroTesto, IMPOSTAZIONI_DEFAULT } from '@/lib/abbonamento';
@@ -12,6 +13,10 @@ import {
   type PrezzoPubblico,
 } from '@/lib/scopri';
 import { ComeFunziona, TelefonoCiclo } from '@/components/scopri/Telefono';
+import { CerchioCentrocampo, Fischietto, Fregio, MezzoCampo, PallaPersa, Pallone, PalloneCheArriva, SeraPrima, Stemma } from '@/components/scopri/Disegni';
+
+/** Crimson Pro tondo, solo per questa pagina: i titoli con le grazie (7/11, Ste: «più classico, quasi vintage»). */
+const serif = localFont({ src: '../fonts/crimson-pro-latin-wght.woff2', display: 'swap', weight: '200 900', variable: '--font-scopri-serif' });
 
 /**
  * La pagina di vendita pubblica (6/11; testi v2 di Ste del 7/11, funnel: Notion «Funnel di vendita: mappa e piano»).
@@ -45,7 +50,7 @@ async function caricaPrezzi() {
 
 function BottoneProva() {
   return (
-    <Link href={CTA} className="inline-flex min-h-[56px] items-center gap-2 rounded-btn bg-gradient-to-br from-forest-400 to-forest-600 px-7 text-body-lg font-bold text-white shadow-glow transition-transform hover:scale-[1.02]">
+    <Link href={CTA} className="scopri-bottone inline-flex min-h-[56px] items-center gap-2 rounded-[6px] bg-forest-600 px-7 text-body-lg font-semibold text-[#f7f1e4] transition-colors hover:bg-forest-700">
       Prova la prima settimana <ArrowRight size={20} aria-hidden />
     </Link>
   );
@@ -53,20 +58,33 @@ function BottoneProva() {
 
 function BottoneAvviso() {
   return (
-    <a href={AVVISO_FISICO} className="inline-flex min-h-[48px] items-center gap-2 rounded-btn border border-forest-400/50 px-5 text-body font-semibold text-forest-300 transition-colors hover:border-forest-400 hover:text-forest-200">
+    <a href={AVVISO_FISICO} className="inline-flex min-h-[48px] items-center gap-2 rounded-[6px] border border-forest-600 px-5 text-body font-semibold text-forest-600 transition-colors hover:bg-forest-600 hover:text-[#f7f1e4]">
       <Bell size={18} aria-hidden /> Avvisami quando apre
     </a>
   );
 }
 
+/** L'etichetta sopra i titoli: maiuscoletto spaziato, come sui programmi delle partite. */
+function Etichetta({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <p className={`scopri-etichetta text-forest-500 ${className}`}>{children}</p>;
+}
+
 function Titolo({ etichetta, children }: { etichetta?: string; children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
-      {etichetta && <p className="text-overline uppercase text-forest-400">{etichetta}</p>}
-      <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">{children}</h2>
+      {etichetta && <Etichetta>{etichetta}</Etichetta>}
+      <h2 className="scopri-serif mt-3 text-balance text-[36px] font-semibold leading-[40px] lg:text-[44px] lg:leading-[48px]">{children}</h2>
     </div>
   );
 }
+
+/** Le quattro scene, ognuna con il suo momento e il suo disegno. */
+const SCENE: { quando: string; Disegno: (p: { className?: string }) => React.ReactElement }[] = [
+  { quando: 'Il primo pallone', Disegno: PalloneCheArriva },
+  { quando: 'Dopo l\'errore', Disegno: PallaPersa },
+  { quando: 'La sera prima', Disegno: SeraPrima },
+  { quando: 'Al fischio finale', Disegno: Fischietto },
+];
 
 /** «da 9 € a 39 €» o «44 €», dai prezzi della configurazione. */
 function importi(ps: (PrezzoPubblico | undefined)[]): string | null {
@@ -88,59 +106,74 @@ export default async function Scopri() {
   const lancioCampo = fisici.every((p) => p?.tipo === 'lancio') && prezzi?.completo?.tipo === 'lancio';
 
   return (
-    <main className="min-h-screen overflow-x-clip bg-app-bg text-app">
+    <main className={`scopri-carta ${serif.variable} min-h-screen overflow-x-clip`}>
       {/* Barra in alto */}
       <header className="pt-safe">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <span className="font-display text-title-3 font-bold tracking-tight">For You <span className="text-forest-400">Football</span></span>
-          <Link href="/login" className="tap inline-flex items-center rounded-btn px-3 text-body-sm font-semibold text-muted hover:text-app">Entra</Link>
+        <div className="mx-auto flex max-w-6xl items-center justify-between border-b border-divider px-4 py-4">
+          <span className="flex items-center gap-2.5">
+            <Pallone className="h-8 w-8 text-forest-600" />
+            <span className="scopri-serif text-[22px] font-semibold tracking-tight">For You Football</span>
+          </span>
+          <Link href="/login" className="tap inline-flex items-center rounded-[6px] px-3 text-body-sm font-semibold text-muted hover:text-app">Entra</Link>
         </div>
       </header>
 
       {/* 1. Apertura */}
       <section className="relative">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(26,150,96,0.28),transparent)]" aria-hidden />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-16 pt-6 lg:grid-cols-2 lg:pb-24 lg:pt-12">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-16 pt-10 lg:grid-cols-2 lg:pb-24 lg:pt-16">
           <div className="scopri-entra text-center lg:text-left">
-            <p className="text-overline uppercase text-forest-400">{APERTURA.etichetta}</p>
-            <h1 className="mt-3 font-display text-[34px] font-bold leading-[40px] tracking-tight lg:text-[50px] lg:leading-[56px]">{APERTURA.titolo}</h1>
-            <p className="mx-auto mt-5 max-w-xl text-body-lg text-muted lg:mx-0">{APERTURA.sotto}</p>
+            <Etichetta>{APERTURA.etichetta}</Etichetta>
+            <h1 className="scopri-serif mt-4 text-balance text-[40px] font-semibold leading-[44px] tracking-tight lg:text-[60px] lg:leading-[62px]">{APERTURA.titolo}</h1>
+            <p className="mx-auto mt-6 max-w-xl text-body-lg text-muted lg:mx-0">{APERTURA.sotto}</p>
             <div className="mt-8 flex flex-col items-center gap-3 lg:items-start">
               <BottoneProva />
               <span className="text-caption text-muted">{notaCta}</span>
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="relative flex justify-center">
+            <CerchioCentrocampo className="pointer-events-none absolute left-1/2 top-1/2 w-[560px] max-w-none -translate-x-1/2 -translate-y-1/2 text-forest-500 opacity-25" />
             <TelefonoCiclo momenti={MOMENTI_APP} />
           </div>
         </div>
       </section>
 
       {/* 2. Le scene */}
-      <section className="border-y border-divider bg-surface/60">
-        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
-          <ul className="space-y-3">
-            {MOMENTI_CONOSCI.map((m) => (
-              <li key={m} className="rounded-card border border-divider bg-app-bg px-5 py-4 font-quote text-[21px] italic leading-[30px] text-app">{m}</li>
-            ))}
+      <section className="border-y border-divider bg-surface/70">
+        <div className="mx-auto max-w-5xl px-4 py-16 lg:py-24">
+          <Etichetta className="text-center">Lo conosci questo momento?</Etichetta>
+          <ul className="mt-10 grid gap-5 sm:grid-cols-2">
+            {MOMENTI_CONOSCI.map((m, i) => {
+              const { quando, Disegno } = SCENE[i] ?? SCENE[0];
+              return (
+                <li key={m} className="scopri-foglio flex flex-col p-6">
+                  <Disegno className="h-16 w-24 text-forest-600" />
+                  <span className="scopri-etichetta mt-4 text-[var(--scopri-ruggine)]">{quando}</span>
+                  <p className="mt-2 font-quote text-[22px] italic leading-[31px] text-app">{m}</p>
+                </li>
+              );
+            })}
           </ul>
-          <p className="mt-8 text-center text-body-lg text-muted">{CONOSCI_CHIUSURA}</p>
+          <p className="scopri-serif mx-auto mt-12 max-w-2xl text-center text-[24px] leading-[32px] text-app">{CONOSCI_CHIUSURA}</p>
         </div>
       </section>
 
       {/* 3. Chi c'è dietro */}
       <section>
-        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
-          <p className="text-overline uppercase text-forest-400">Chi c&apos;è dietro</p>
-          <blockquote className="mt-4 font-quote text-[26px] italic leading-[34px] text-app lg:text-[32px] lg:leading-[42px]">{STORIA.citazione}</blockquote>
-          <div className="mt-8 flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-forest-500 to-forest-700 font-display text-title-3 font-bold text-white" aria-hidden>SB</div>
-            <div className="space-y-4 text-body-lg text-muted">
-              {STORIA.paragrafi.map((p, i) => <p key={i} className={i === 0 ? 'text-app' : ''}>{p}</p>)}
+        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-24">
+          <Fregio />
+          <Etichetta className="mt-8 text-center">Chi c&apos;è dietro</Etichetta>
+          <blockquote className="mt-6 text-center font-quote text-[28px] italic leading-[37px] text-app lg:text-[36px] lg:leading-[46px]">{STORIA.citazione}</blockquote>
+          <div className="mt-12 flex flex-col items-center gap-8 sm:flex-row sm:items-start">
+            <div className="scopri-timbro flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-full text-forest-600" aria-hidden>
+              <span className="scopri-serif text-[30px] font-semibold leading-none">SB</span>
+              <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em]">Ste</span>
+            </div>
+            <div className="space-y-5 text-body-lg leading-[28px] text-muted">
+              {STORIA.paragrafi.map((p, i) => <p key={i} className={i === 0 ? 'scopri-capolettera text-app' : ''}>{p}</p>)}
             </div>
           </div>
           {VIDEO_PRINCIPALE && (
-            <video className="mt-10 w-full rounded-card shadow-e3" src={VIDEO_PRINCIPALE.src} poster={VIDEO_PRINCIPALE.poster} muted autoPlay playsInline controls preload="metadata">
+            <video className="scopri-foto mt-12 w-full" src={VIDEO_PRINCIPALE.src} poster={VIDEO_PRINCIPALE.poster} muted autoPlay playsInline controls preload="metadata">
               {VIDEO_PRINCIPALE.sottotitoli && <track kind="captions" src={VIDEO_PRINCIPALE.sottotitoli} srcLang="it" label="Italiano" default />}
             </video>
           )}
@@ -148,39 +181,38 @@ export default async function Scopri() {
       </section>
 
       {/* 4. Dove ti porta il lavoro */}
-      <section className="border-t border-divider">
-        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
+      <section className="relative border-t border-divider bg-surface/70">
+        <MezzoCampo className="pointer-events-none absolute left-1/2 top-0 w-[720px] max-w-none -translate-x-1/2 text-forest-500 opacity-[0.12]" />
+        <div className="relative mx-auto max-w-3xl px-4 py-16 lg:py-24">
           <Titolo>{DOVE_PORTA.titolo}</Titolo>
           <p className="mt-6 text-center text-body-lg text-muted">{DOVE_PORTA.intro}</p>
-          <ul className="mx-auto mt-6 max-w-xl space-y-3">
-            {DOVE_PORTA.punti.map((r) => (
-              <li key={r} className="flex items-start gap-3 rounded-card border border-divider bg-surface px-5 py-4 text-body-lg text-app">
-                <Check size={20} className="mt-1 shrink-0 text-forest-400" aria-hidden />
-                <span>{r}</span>
+          <ol className="mx-auto mt-8 max-w-xl">
+            {DOVE_PORTA.punti.map((r, i) => (
+              <li key={r} className="flex items-baseline gap-5 border-b border-divider py-5 last:border-b-0">
+                <span className="scopri-serif w-8 shrink-0 text-right text-[28px] font-semibold leading-none text-[var(--scopri-ruggine)]">{i + 1}</span>
+                <span className="scopri-serif text-[22px] leading-[30px] text-app">{r}</span>
               </li>
             ))}
-          </ul>
+          </ol>
           <p className="mt-8 text-center text-body-lg text-muted">{DOVE_PORTA.chiusura}</p>
         </div>
       </section>
 
       {/* 5. Non è pensiero positivo */}
-      <section className="border-y border-divider bg-surface/60">
-        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
+      <section className="border-y border-divider">
+        <div className="mx-auto max-w-2xl px-4 py-16 lg:py-24">
           <Titolo>{NON_POSITIVO.titolo}</Titolo>
-          <div className="mt-8 space-y-4 text-center text-body-lg text-muted">
-            {NON_POSITIVO.paragrafi.map((p, i) => <p key={i} className={i === 1 ? 'text-app' : ''}>{p}</p>)}
+          <div className="mt-8 space-y-5 text-center text-body-lg leading-[28px] text-muted">
+            {NON_POSITIVO.paragrafi.map((p, i) => <p key={i} className={i === 1 ? 'scopri-serif text-[23px] leading-[33px] text-app' : ''}>{p}</p>)}
           </div>
+          <Fregio className="mt-12" />
         </div>
       </section>
 
-      {/* 6. Come funziona */}
+      {/* 6. Come funziona: la Testa */}
       <section id="come-funziona" className="scroll-mt-4">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400"><Brain size={14} aria-hidden /> Dentro l&apos;app · La Testa</p>
-            <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">Come funziona</h2>
-          </div>
+          <Titolo etichetta="Dentro l'app · La Testa">Come funziona</Titolo>
           <div className="mt-12">
             <ComeFunziona momenti={MOMENTI_TESTA} />
           </div>
@@ -189,29 +221,24 @@ export default async function Scopri() {
       </section>
 
       {/* 6b. Il Fisico: apre a dicembre, intanto si vede com'è (schermate e testi in MOMENTI_FISICO) */}
-      <section id="fisico" className="scroll-mt-4 border-t border-divider bg-surface/40">
+      <section id="fisico" className="scroll-mt-4 border-t border-divider bg-surface/70">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="inline-flex items-center gap-1.5 text-overline uppercase text-forest-400">
-              <Dumbbell size={14} aria-hidden /> {campoAperto ? FISICO_TEASER.titolo : `${FISICO_TEASER.titolo} · ${FISICO_TEASER.quando.toLowerCase()}`}
-            </p>
-            <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">{FISICO_SEZIONE.titolo}</h2>
-            <p className="mt-3 text-body-lg text-muted">{FISICO_SEZIONE.intro}</p>
-          </div>
-          <ul className="mx-auto mt-8 grid max-w-4xl gap-3 md:grid-cols-3">
-            {FISICO_SEZIONE.origine.map((r) => (
-              <li key={r} className="flex gap-2.5 rounded-card border border-divider bg-app-bg p-4 text-body-sm text-muted">
-                <Check size={16} className="mt-0.5 shrink-0 text-forest-400" aria-hidden />
-                <span>{r}</span>
+          <Titolo etichetta={campoAperto ? `Dentro l'app · ${FISICO_TEASER.titolo}` : `${FISICO_TEASER.titolo} · ${FISICO_TEASER.quando.toLowerCase()}`}>{FISICO_SEZIONE.titolo}</Titolo>
+          <p className="mx-auto mt-5 max-w-2xl text-center text-body-lg text-muted">{FISICO_SEZIONE.intro}</p>
+          <ul className="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-3">
+            {FISICO_SEZIONE.origine.map((r, i) => (
+              <li key={r} className="scopri-foglio p-5 text-body text-app">
+                <span className="scopri-serif block text-[26px] font-semibold leading-none text-[var(--scopri-ruggine)]">{['I', 'II', 'III'][i]}</span>
+                <span className="mt-3 block">{r}</span>
               </li>
             ))}
           </ul>
-          <div className="mt-12">
+          <div className="mt-14">
             <ComeFunziona momenti={MOMENTI_FISICO} invertito />
           </div>
           <p className="mt-8 text-center text-caption text-faint">Schermate dell&apos;app, con i dati di un giocatore di esempio.</p>
           <p className="mt-4 text-center">
-            <a href="#prezzi-fisico" className="inline-flex min-h-[44px] items-center gap-1.5 text-body font-semibold text-forest-300 hover:text-forest-200">
+            <a href="#prezzi-fisico" className="inline-flex min-h-[44px] items-center gap-1.5 text-body font-semibold text-forest-600 underline decoration-forest-600/40 underline-offset-4 hover:decoration-forest-600">
               I prezzi del Fisico <ArrowRight size={16} aria-hidden />
             </a>
           </p>
@@ -220,13 +247,13 @@ export default async function Scopri() {
 
       {/* 7. Cosa dicono i primi: solo con racconti veri e il consenso scritto (lib/scopri.ts, RACCONTI) */}
       {RACCONTI.length > 0 && (
-        <section className="border-y border-divider bg-surface/60">
+        <section className="border-t border-divider">
           <div className="mx-auto max-w-5xl px-4 py-16 lg:py-20">
             <Titolo>Cosa dicono i primi</Titolo>
-            <div className="mt-10 grid gap-4 md:grid-cols-2">
+            <div className="mt-10 grid gap-5 md:grid-cols-2">
               {RACCONTI.map((r) => (
-                <figure key={r.chi + r.testo} className="rounded-card border border-divider bg-app-bg p-6">
-                  <blockquote className="font-quote text-[20px] italic leading-[29px] text-app">«{r.testo}»</blockquote>
+                <figure key={r.chi + r.testo} className="scopri-foglio p-6">
+                  <blockquote className="font-quote text-[21px] italic leading-[30px] text-app">«{r.testo}»</blockquote>
                   <figcaption className="mt-4 text-body-sm text-muted">{r.chi} · {r.ruolo} · {r.categoria}</figcaption>
                 </figure>
               ))}
@@ -236,91 +263,92 @@ export default async function Scopri() {
       )}
 
       {/* 8. Come si inizia */}
-      <section>
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:py-20">
+      <section className="border-t border-divider">
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:py-24">
           <Titolo>Come si inizia</Titolo>
-          <ol className="mt-10 grid gap-4 md:grid-cols-3">
+          <ol className="mt-12 grid gap-8 md:grid-cols-3 md:gap-6">
             {passi.map((p, i) => (
-              <li key={p.titolo} className="rounded-card border border-divider bg-surface p-6">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-forest-500/20 font-display text-title-3 font-bold text-forest-300">{i + 1}</span>
-                <h3 className="mt-4 font-display text-title-2 font-bold">{p.titolo}</h3>
-                <p className="mt-2 text-body text-muted">{p.testo}</p>
+              <li key={p.titolo} className="text-center">
+                <span className="scopri-timbro scopri-serif mx-auto flex h-16 w-16 items-center justify-center rounded-full text-[28px] font-semibold text-forest-600">{i + 1}</span>
+                <h3 className="scopri-serif mt-5 text-[26px] font-semibold leading-[30px]">{p.titolo}</h3>
+                <p className="mx-auto mt-3 max-w-xs text-body text-muted">{p.testo}</p>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      {/* 9. Prezzi */}
-      <section id="prezzi" className="scroll-mt-4 border-t border-divider bg-surface/60">
+      {/* 9. Prezzi: il biglietto */}
+      <section id="prezzi" className="scroll-mt-4 border-t border-divider bg-surface/70">
         <div className="mx-auto max-w-3xl px-4 py-16 lg:py-24">
           <Titolo etichetta="Prezzi">Un prezzo al mese. Disdici quando vuoi.</Titolo>
 
-          <div className="mx-auto mt-10 max-w-xl rounded-card border border-forest-400/60 bg-forest-500/10 p-6 shadow-glow">
-            <div className="flex items-start justify-between gap-4">
+          <div className="scopri-biglietto mx-auto mt-12 max-w-xl">
+            <div className="flex items-start justify-between gap-4 border-b border-dashed border-divider pb-5">
               <div>
-                <h3 className="font-display text-title-1 font-bold">Mente</h3>
+                <span className="scopri-etichetta text-[var(--scopri-ruggine)]">Ingresso · Season 1</span>
+                <h3 className="scopri-serif mt-1 text-[40px] font-semibold leading-none">Mente</h3>
                 {mente?.euro != null && mente.tipo === 'lancio' && (
-                  <span className="mt-1 inline-block rounded-full bg-forest-500/20 px-2 py-0.5 text-overline uppercase text-forest-300">Prezzo di lancio</span>
+                  <span className="mt-3 inline-block rounded-[4px] border border-forest-600/50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-forest-600">Prezzo di lancio</span>
                 )}
               </div>
               {mente?.euro != null ? (
                 <div className="shrink-0 text-right">
-                  <div className="whitespace-nowrap font-display text-[36px] font-bold leading-none tabular-nums">{euroTesto(mente.euro)} €</div>
+                  <div className="scopri-serif whitespace-nowrap text-[48px] font-semibold leading-none tabular-nums">{euroTesto(mente.euro)} €</div>
                   <div className="mt-1 text-caption text-muted">al mese</div>
                 </div>
               ) : <span className="text-body-sm font-semibold text-muted">Per ora chiuso</span>}
             </div>
-            {mente?.euro != null && mente.tipo === 'lancio' && <p className="mt-3 text-body-sm text-app">Bloccato finché resti iscritto.</p>}
-            {mente && !mente.aperto && mente.euro != null && <p className="mt-3 text-body-sm text-muted">Le iscrizioni sono chiuse per ora: registrati e ti avvisiamo quando riaprono.</p>}
-            <ul className="mt-5 space-y-2.5">
+            {mente?.euro != null && mente.tipo === 'lancio' && <p className="mt-4 text-body-sm text-app">Bloccato finché resti iscritto.</p>}
+            {mente && !mente.aperto && mente.euro != null && <p className="mt-4 text-body-sm text-muted">Le iscrizioni sono chiuse per ora: registrati e ti avvisiamo quando riaprono.</p>}
+            <ul className="mt-5 space-y-3">
               {MENTE_INCLUDE.map((r) => (
-                <li key={r} className="flex items-start gap-2.5 text-body text-app">
-                  <Check size={18} className="mt-0.5 shrink-0 text-forest-400" aria-hidden />
+                <li key={r} className="flex items-start gap-3 text-body text-app">
+                  <Check size={18} className="mt-0.5 shrink-0 text-forest-600" aria-hidden />
                   <span>{r}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-7 flex flex-col items-center gap-2">
+            <div className="mt-8 flex flex-col items-center gap-2">
               <BottoneProva />
               <span className="text-caption text-muted">{notaCta}</span>
             </div>
           </div>
 
-          <p className="mx-auto mt-6 max-w-xl text-center text-body text-muted">{NOTA_VALORE}</p>
+          <p className="mx-auto mt-8 max-w-xl text-center text-body text-muted">{NOTA_VALORE}</p>
           <p className="mx-auto mt-2 max-w-xl text-center text-body-sm text-muted">{NOTA_CODICE}</p>
 
-          <div id="prezzi-fisico" className="mx-auto mt-10 max-w-xl scroll-mt-4 rounded-card border border-divider bg-app-bg p-5">
-            <p className="text-overline uppercase text-forest-400">{campoAperto ? FISICO_TEASER.titolo : `${FISICO_TEASER.quando} · ${FISICO_TEASER.titolo}`}</p>
+          <div id="prezzi-fisico" className="scopri-foglio mx-auto mt-10 max-w-xl scroll-mt-4 p-6">
+            <span className="scopri-etichetta text-forest-500">{campoAperto ? FISICO_TEASER.titolo : `${FISICO_TEASER.quando} · ${FISICO_TEASER.titolo}`}</span>
             <p className="mt-2 text-body text-muted">{FISICO_TEASER.testo}</p>
-            <ul className="mt-4 space-y-3">
-              <li className="flex items-baseline justify-between gap-3">
-                <span className="text-body text-app"><span className="font-semibold">Completo</span> <span className="text-muted">· Mente + Fisico Pro</span></span>
+            <ul className="mt-4 divide-y divide-dashed divide-divider">
+              <li className="flex items-baseline justify-between gap-3 py-3">
+                <span className="text-body text-app"><span className="scopri-serif text-[20px] font-semibold">Completo</span> <span className="text-muted">· Mente + Fisico Pro</span></span>
                 <span className="shrink-0 text-right text-body-sm tabular-nums text-muted">{importi([prezzi?.completo]) ?? 'a breve'}</span>
               </li>
-              <li className="flex items-baseline justify-between gap-3">
-                <span className="text-body text-app"><span className="font-semibold">Fisico</span> <span className="text-muted">· tre livelli</span></span>
+              <li className="flex items-baseline justify-between gap-3 py-3">
+                <span className="text-body text-app"><span className="scopri-serif text-[20px] font-semibold">Fisico</span> <span className="text-muted">· tre livelli</span></span>
                 <span className="shrink-0 text-right text-body-sm tabular-nums text-muted">{importi(fisici) ?? 'a breve'}</span>
               </li>
             </ul>
-            {lancioCampo && <p className="mt-2 text-caption text-muted">Prezzi di lancio, al mese.</p>}
+            {lancioCampo && <p className="mt-1 text-caption text-muted">Prezzi di lancio, al mese.</p>}
             <div className="mt-4">{campoAperto ? <BottoneProva /> : <BottoneAvviso />}</div>
           </div>
         </div>
       </section>
 
       {/* 10. Le domande di chi inizia */}
-      <section>
-        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
+      <section className="border-t border-divider">
+        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-24">
           <Titolo>Le domande di chi inizia</Titolo>
-          <div className="mt-8 divide-y divide-divider rounded-card border border-divider bg-surface">
+          <div className="mt-10 border-t border-divider">
             {domande.map((d) => (
-              <details key={d.domanda} className="group px-5">
-                <summary className="flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-3 text-body-lg font-semibold text-app [&::-webkit-details-marker]:hidden">
-                  {d.domanda}
-                  <span className="text-forest-400 transition-transform group-open:rotate-45" aria-hidden>+</span>
+              <details key={d.domanda} className="group border-b border-divider">
+                <summary className="flex min-h-[64px] cursor-pointer list-none items-center justify-between gap-3 py-3 [&::-webkit-details-marker]:hidden">
+                  <span className="scopri-serif text-[21px] font-semibold leading-[27px] text-app">{d.domanda}</span>
+                  <span className="scopri-serif text-[28px] leading-none text-[var(--scopri-ruggine)] transition-transform group-open:rotate-45" aria-hidden>+</span>
                 </summary>
-                <p className="pb-5 text-body text-muted">{d.risposta}</p>
+                <p className="pb-6 text-body-lg leading-[27px] text-muted">{d.risposta}</p>
               </details>
             ))}
           </div>
@@ -328,12 +356,12 @@ export default async function Scopri() {
       </section>
 
       {/* 11. Chiusura */}
-      <section className="relative border-t border-divider">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_70%_at_50%_100%,rgba(26,150,96,0.25),transparent)]" aria-hidden />
-        <div className="relative mx-auto max-w-3xl px-4 py-20 text-center">
-          <p className="font-quote text-[24px] italic leading-[34px] text-app lg:text-[28px] lg:leading-[38px]">{CHIUSURA[0]}</p>
-          <p className="mt-5 font-display text-title-1 font-bold">{CHIUSURA[1]}</p>
-          <div className="mt-8 flex flex-col items-center gap-2">
+      <section className="border-t border-divider bg-surface/70">
+        <div className="mx-auto max-w-3xl px-4 py-20 text-center lg:py-28">
+          <Stemma className="mx-auto h-36 w-36 text-forest-600" />
+          <p className="mt-10 font-quote text-[26px] italic leading-[36px] text-app lg:text-[30px] lg:leading-[41px]">{CHIUSURA[0]}</p>
+          <p className="scopri-serif mt-6 text-[30px] font-semibold leading-[36px]">{CHIUSURA[1]}</p>
+          <div className="mt-10 flex flex-col items-center gap-2">
             <BottoneProva />
             <span className="text-caption text-muted">{notaCta}</span>
           </div>

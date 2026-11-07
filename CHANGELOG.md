@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita su carta: più classica, meno tecnologica
+
+Ste: «un tocco meno intelligenza artificiale, più classico, quasi vintage, che ricordi la connessione di corpo e mente nel calcio; piccole immagini, più emotivo e meno distaccato». Solo `/scopri`, l'app resta com'è.
+- Carta avorio con la grana (SVG inline), inchiostro verde scuro, il verde del campo, un rosso mattone per i dettagli: i token dell'app sono ridefiniti solo dentro `.scopri-carta` in `app/globals.css` (niente aloni verdi, niente gradienti).
+- Titoli con le grazie: Crimson Pro tondo (`app/fonts/crimson-pro-latin-wght.woff2`, OFL, caricato solo da questa pagina come `--font-scopri-serif`); etichette in maiuscoletto spaziato.
+- Disegni a tratto in `components/scopri/Disegni.tsx`: il pallone di cuoio con i lacci (logo e fregi tra le sezioni), una scena per ognuno dei quattro momenti («Il primo pallone», «Dopo l'errore», «La sera prima», «Al fischio finale»), il cerchio di centrocampo dietro il telefono, il mezzo campo dietro «Dove ti porta il lavoro», lo stemma rotondo «Testa · Corpo · Gioco» in chiusura.
+- Capolettera nella storia, il timbro «SB», i passi come timbri numerati, il prezzo del Mente come un biglietto della partita con la perforazione, le domande come un indice.
+
 ## 2026-11-07 — La pagina di vendita: il Fisico torna nella pagina
 
 Ste, dopo la v3: «lo metterei il fisico». Dopo «Come funziona» della Testa torna la sezione «Il Fisico · da dicembre» (`FISICO_SEZIONE` in `lib/scopri.ts`): titolo, le tre righe da dove viene il metodo e i sette momenti con le schermate (`MOMENTI_FISICO`, telefono a destra), con il link ai prezzi del Fisico (`#prezzi-fisico`, il riquadro nei prezzi resta). Quando il Campo apre l'etichetta perde «da dicembre».
