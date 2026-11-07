@@ -265,3 +265,16 @@ select:focus-visible {
     background: #ffffff !important;
   }
 }
+
+/* Pagina di vendita (/scopri, 6/11): il telefono con le schermate dell'app */
+.scopri-schermata { transition: opacity 700ms ease, transform 900ms ease; }
+@keyframes scopriGalleggia { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.scopri-galleggia { animation: scopriGalleggia 6s ease-in-out infinite; }
+.scopri-nastro { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.scopri-nastro::-webkit-scrollbar { display: none; }
+@keyframes scopriEntra { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.scopri-entra { animation: scopriEntra 700ms ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .scopri-schermata { transition: none; }
+  .scopri-galleggia, .scopri-entra { animation: none; }
+}

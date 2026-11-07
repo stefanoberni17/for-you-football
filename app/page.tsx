@@ -90,7 +90,10 @@ export default function HomePage() {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        router.push('/login');
+        // Chi apre il sito senza essere entrato vede la pagina di vendita (6/11); l'app installata va al login
+        const installata = window.matchMedia('(display-mode: standalone)').matches
+          || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+        router.replace(installata ? '/login' : '/scopri');
         return;
       }
 

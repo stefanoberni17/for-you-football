@@ -34,7 +34,8 @@ export default function BottomTabBar() {
     pathname === '/termini' ||
     pathname === '/genitori' ||
     pathname === '/pricing' ||
-    pathname === '/riattiva'
+    pathname === '/riattiva' ||
+    pathname === '/scopri'
   ) {
     return null;
   }
