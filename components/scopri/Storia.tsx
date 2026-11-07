@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import type { CapitoloStoria, FotoStoria } from '@/lib/scopri';
 
@@ -11,6 +11,16 @@ import type { CapitoloStoria, FotoStoria } from '@/lib/scopri';
  * frecce da tastiera. In fondo il bottone per provare. Il testo è tutto nel DOM (lo leggono i motori di ricerca).
  */
 type Schermata = { testo: string; foto?: FotoStoria; tipo: 'citazione' | 'capitolo' | 'finale'; sotto?: string };
+
+const MQ_RIDOTTO = '(prefers-reduced-motion: reduce)';
+function iscriviMovimento(cb: () => void) {
+  const mq = window.matchMedia(MQ_RIDOTTO);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+function movimentoRidotto() {
+  return window.matchMedia(MQ_RIDOTTO).matches;
+}
 
 function durata(s: Schermata) {
   const lettere = s.testo.length + (s.sotto?.length ?? 0);
@@ -30,13 +40,8 @@ export function Storia({ citazione, fotoCitazione, intro, capitoli, finale, fine
   const [inVista, setInVista] = useState(false);
   const [pausa, setPausa] = useState(false);
   const [tenuto, setTenuto] = useState(false);
-  const [ridotto, setRidotto] = useState(false);
+  const ridotto = useSyncExternalStore(iscriviMovimento, movimentoRidotto, () => false);
   const box = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setRidotto(mq.matches);
-  }, []);
 
   useEffect(() => {
     const el = box.current;
