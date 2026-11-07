@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-07 — La pagina di vendita: perché la Testa e perché il Fisico
+
+Ste: «vorrei mettere più focus su come mai questo percorso mentale e fisico», con i due testi suoi. Ritoccati poco, nella sua voce (`PERCHE_TESTA`, `PERCHE_FISICO` in `lib/scopri.ts`):
+- «Migliorare come persona, e come giocatore», dopo «Chi c'è dietro»: le strade provate, ognuna con qualcosa di buono e un pezzo mancante; gli studi (psicologia, mental coaching, discipline orientali, yoga); la domanda in evidenza; i pilastri e le tecniche viste funzionare in campo; For You Football che continua a cambiare;
+- «Tutto collegato», in testa alla sezione del Fisico: i tre professionisti bravi ma scollegati, l'altalena forza/fluidità, lo studio da personal trainer, le variabili che cambiano ogni giorno, la domanda, l'AI che lavora dentro le regole scritte con preparatori e professionisti.
+Tolto dal testo di Ste «o che nascondevano» (detto di psicologi e mental coach suona come un'accusa) e «migliaia di variabili» diventa «tantissime» (non è un numero che possiamo mostrare).
+
 ## 2026-11-07 — La pagina di vendita: le foto di Ste nella storia
 
 Ste ha mandato sette foto («modificale un po'»; «puoi modificare un po' i caratteri e lo stile, ma non stravolgere»):

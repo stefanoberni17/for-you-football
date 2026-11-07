@@ -193,6 +193,55 @@ export const CHIUSURA = [
 
 export const AVVISO_FISICO = 'mailto:info@foryoufootball.it?subject=' + encodeURIComponent('Avvisami quando apre il Fisico');
 
+/**
+ * Perché la Testa è fatta così (7/11, testo di Ste, ritoccato poco): tante strade provate e studiate, ognuna con qualcosa di
+ * buono; una domanda; un percorso su pilastri e principi con le tecniche viste funzionare in campo.
+ */
+export const PERCHE_TESTA = {
+  etichetta: 'Perché questo percorso',
+  titolo: 'Migliorare come persona, e come giocatore',
+  paragrafi: [
+    'Psicologo, mental coach, yoga, filosofie orientali. Ognuna di queste strade aveva qualcosa di buono, ma a ognuna mancava sempre un pezzo.',
+    'Allora ho cominciato a studiare: psicologia, il corso da mental coach, le discipline e le filosofie orientali. Volevo mettere insieme più cose possibili, senza chiudermi a niente.',
+  ],
+  studi: ['Psicologia', 'Mental coaching', 'Discipline orientali', 'Yoga'],
+  domanda: 'A un certo punto mi sono fermato con una domanda. Tutte queste cose ti danno strumenti diversi, ma spesso ti promettono una soluzione per un obiettivo preciso. Io cercavo qualcosa di più ampio.',
+  chiusura: [
+    'Così ho costruito un percorso su alcuni pilastri e principi, e dentro ho tenuto le tecniche che ho visto funzionare in campo, nella pratica.',
+    'Da qui è nato For You Football. E continua a cambiare, perché c\'è sempre qualcosa di nuovo da scoprire.',
+  ],
+};
+
+/**
+ * Perché il Fisico è fatto così (7/11, testo di Ste, ritoccato poco): tanti professionisti bravi ma scollegati, l'altalena
+ * forza/fluidità, la scelta di studiare e di costruire un metodo a 360 gradi, le variabili, l'AI dentro le regole.
+ */
+export const PERCHE_FISICO = {
+  etichetta: 'Perché il Fisico',
+  titolo: 'Tutto collegato',
+  intro: 'Quando giocavo cercavo qualcuno che mi seguisse a 360 gradi. Trovavo persone brave, ma ognuna nel suo pezzo.',
+  figure: [
+    { chi: 'Il preparatore atletico', limite: 'Bravissimo, ma non conosceva la tecnica e la forza.' },
+    { chi: 'Il personal trainer', limite: 'Perfetto per la forza, ma niente coordinazione e fluidità in campo.' },
+    { chi: 'Il preparatore tecnico', limite: 'Conosceva la palla, ma non bene la parte fisica.' },
+  ],
+  altalena: [
+    'Con un preparatore specializzato nella forza sono diventato più forte, ma ho perso fluidità e coordinazione.',
+    'Con lo yoga le ho ritrovate, ma ho perso massa muscolare.',
+  ],
+  scelta: 'Erano tutti scollegati, e il calcio ha davvero tantissimi aspetti da tenere insieme. Così ho studiato da personal trainer e ho costruito un modo di allenarsi che li copre in profondità, uno per uno, senza perdere di vista tutto il resto.',
+  problema: 'Il principio c\'era, le regole anche. La difficoltà era applicarle a ogni ragazzo, con tutto quello che cambia da un giorno all\'altro:',
+  variabili: [
+    'gli allenamenti con la squadra', 'il riposo', 'lo stress', 'la testa', 'il recupero', 'la prevenzione',
+    'la prestazione', 'la fatica in campo', 'gli allenamenti che cambiano', 'i fastidi', 'gli squilibri',
+  ],
+  domanda: 'Come fa una persona da sola a tenere insieme tutto questo, e a cambiare il programma da un giorno all\'altro?',
+  ai: [
+    'Qui è arrivata l\'intelligenza artificiale, che negli ultimi tempi è migliorata moltissimo e tiene insieme tantissime variabili in pochi secondi.',
+    'Prima, con l\'aiuto di preparatori e professionisti, ho scritto nel dettaglio le basi di ogni aspetto: gli esercizi, i carichi della settimana e del mese, le progressioni, come comportarsi nei casi particolari. L\'AI lavora dentro queste regole. Da qui è nato il Fisico.',
+  ],
+};
+
 /** La sezione del Fisico (rimessa il 7/11, Ste: «lo metterei il fisico»): apre a dicembre, intanto si vede com'è. */
 export const FISICO_SEZIONE = {
   titolo: 'Il metodo di un preparatore, adattato a te',

@@ -8,7 +8,7 @@ import { MIN_AGE } from '@/lib/constants';
 import {
   APERTURA, AVVISO_FISICO, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, DOVE_PORTA, FISICO_SEZIONE, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP,
   MOMENTI_FISICO,
-  MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO, ALBUM_FOTO,
+  MOMENTI_CONOSCI, MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA, STORIA_FOTO, ALBUM_FOTO, PERCHE_TESTA, PERCHE_FISICO,
   type FotoStoria,
   type PrezzoPubblico,
 } from '@/lib/scopri';
@@ -66,6 +66,40 @@ function Titolo({ etichetta, children }: { etichetta?: string; children: React.R
     <div className="mx-auto max-w-2xl text-center">
       {etichetta && <p className="text-overline uppercase text-forest-400">{etichetta}</p>}
       <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">{children}</h2>
+    </div>
+  );
+}
+
+/** Perché il Fisico è fatto così: la storia di Ste, dai preparatori scollegati alle regole con l'AI dentro. */
+function PercheFisico() {
+  const p = PERCHE_FISICO;
+  return (
+    <div className="mx-auto mt-12 max-w-3xl">
+      <p className="text-center text-overline uppercase text-forest-400">{p.etichetta}</p>
+      <h3 className="mt-2 text-center font-display text-title-1 font-bold">{p.titolo}</h3>
+      <p className="mt-5 text-body-lg text-muted">{p.intro}</p>
+      <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+        {p.figure.map((f) => (
+          <li key={f.chi} className="rounded-card border border-divider bg-app-bg p-4">
+            <span className="block text-body font-semibold text-app">{f.chi}</span>
+            <span className="mt-1 block text-body-sm text-muted">{f.limite}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-6 space-y-2 rounded-card border border-divider bg-app-bg p-5">
+        {p.altalena.map((r) => <p key={r} className="font-quote text-[20px] italic leading-[29px] text-app">{r}</p>)}
+      </div>
+      <p className="mt-6 text-body-lg text-muted">{p.scelta}</p>
+      <p className="mt-6 text-body-lg text-muted">{p.problema}</p>
+      <ul className="mt-4 flex flex-wrap gap-2">
+        {p.variabili.map((v) => (
+          <li key={v} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{v}</li>
+        ))}
+      </ul>
+      <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
+      <div className="space-y-4 text-body-lg text-muted">
+        {p.ai.map((r, i) => <p key={r} className={i === p.ai.length - 1 ? 'text-app' : ''}>{r}</p>)}
+      </div>
     </div>
   );
 }
@@ -215,6 +249,25 @@ export default async function Scopri() {
         </div>
       </section>
 
+      {/* 3b. Perché questo percorso (la Testa) */}
+      <section className="border-t border-divider bg-surface/40">
+        <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
+          <Titolo etichetta={PERCHE_TESTA.etichetta}>{PERCHE_TESTA.titolo}</Titolo>
+          <div className="mt-8 space-y-4 text-body-lg text-muted">
+            {PERCHE_TESTA.paragrafi.map((p) => <p key={p}>{p}</p>)}
+          </div>
+          <ul className="mt-6 flex flex-wrap gap-2">
+            {PERCHE_TESTA.studi.map((t) => (
+              <li key={t} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{t}</li>
+            ))}
+          </ul>
+          <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{PERCHE_TESTA.domanda}</blockquote>
+          <div className="space-y-4 text-body-lg text-muted">
+            {PERCHE_TESTA.chiusura.map((p, i) => <p key={p} className={i === PERCHE_TESTA.chiusura.length - 1 ? 'text-app' : ''}>{p}</p>)}
+          </div>
+        </div>
+      </section>
+
       {/* 4. Dove ti porta il lavoro */}
       <section className="border-t border-divider">
         <div className="mx-auto max-w-3xl px-4 py-16 lg:py-20">
@@ -266,7 +319,8 @@ export default async function Scopri() {
             <h2 className="mt-2 font-display text-[32px] font-bold leading-[38px]">{FISICO_SEZIONE.titolo}</h2>
             <p className="mt-3 text-body-lg text-muted">{FISICO_SEZIONE.intro}</p>
           </div>
-          <ul className="mx-auto mt-8 grid max-w-4xl gap-3 md:grid-cols-3">
+          <PercheFisico />
+          <ul className="mx-auto mt-12 grid max-w-4xl gap-3 md:grid-cols-3">
             {FISICO_SEZIONE.origine.map((r) => (
               <li key={r} className="flex gap-2.5 rounded-card border border-divider bg-app-bg p-4 text-body-sm text-muted">
                 <Check size={16} className="mt-0.5 shrink-0 text-forest-400" aria-hidden />
