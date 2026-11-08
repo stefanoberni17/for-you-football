@@ -313,7 +313,7 @@ select:focus-visible {
     padding-bottom: calc(5.25rem + env(safe-area-inset-bottom));
   }
   .scopri-schermo.scopri-schermo-pieno { height: 100svh; padding: 0; justify-content: flex-start; }
-  .scopri-telefono-tour { width: clamp(96px, calc((100svh - 450px) * 0.45), 44vw); border-width: 6px; border-radius: 1.5rem; }
+  .scopri-telefono-tour { width: clamp(96px, calc((100svh - 370px) * 0.45), 50vw); border-width: 6px; border-radius: 1.5rem; }
   .scopri-telefono-tour > div { border-radius: 1.1rem; }
 }
 /* Schermi bassi (iPhone SE): via le cose che si possono togliere */

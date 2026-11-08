@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { Maximize2 } from 'lucide-react';
 import type { MomentoApp } from '@/lib/scopri';
 import { Dettaglio, InCampo, Schermo } from './Telefono';
-import { apriStoria, Cerchio } from './Storie';
+import { apriStoria, GRUPPI } from './Storie';
 
 /**
  * Il giro dell'app (7/11, Ste: «è davvero troppo lungo: uno deve vedere solo le cose essenziali e poi approfondire quello
- * che vuole»). Una schermata sola, come le pagine delle app di allenamento: i cerchi Testa | Fisico in alto (8/11, Ste: «i
- * pallini nei vari settori»; quello scelto ha l'anello, toccato di nuovo apre la storia a tutto schermo), un telefono,
- * l'elenco dei momenti; tocchi un momento e il telefono cambia. Su telefono sta tutto in una schermata: i momenti sono una
+ * che vuole»). Una schermata sola, come le pagine delle app di allenamento: in alto il selettore Testa | Fisico, basso e
+ * piatto con la fotina nel cerchio (8/11, Ste: «più piccolo, appiattito, più spazio all'immagine e alle scritte»), un
+ * telefono, l'elenco dei momenti; tocchi un momento e il telefono cambia. Su telefono sta tutto in una schermata: i momenti sono una
  * fila di bottoni, telefono e testo uno accanto all'altro, il resto nella storia («A tutto schermo»).
  */
 export type ParteTour = { id: string; nome: string; nota?: string; momenti: MomentoApp[]; piede?: React.ReactNode };
@@ -21,10 +21,7 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
   const parte = parti[p];
   const m = parte.momenti[k];
 
-  const scegliParte = (i: number) => {
-    if (i === p) { apriStoria(parte.id, k); return; }
-    setP(i); setK(0);
-  };
+  const scegliParte = (i: number) => { if (i !== p) { setP(i); setK(0); } };
   const tuttoSchermo = (
     <button type="button" onClick={() => apriStoria(parte.id, k)} className="inline-flex min-h-[44px] items-center gap-2 text-body-sm font-semibold text-forest-300 hover:text-forest-200">
       <Maximize2 size={16} aria-hidden /> A tutto schermo
@@ -33,11 +30,33 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
 
   return (
     <div>
-      {/* Testa | Fisico, come due cerchi */}
-      <div className="flex justify-center gap-6" role="group" aria-label="Le parti dell'app">
-        {parti.map((x, i) => (
-          <Cerchio key={x.id} gruppo={x.id} nome={x.nome} sotto={x.nota} attivo={i === p} onClick={() => scegliParte(i)} />
-        ))}
+      {/* Testa | Fisico: basso e piatto, la fotina nel cerchio */}
+      <div className="mx-auto flex w-full max-w-md gap-1 rounded-full border border-divider bg-surface p-1" role="tablist" aria-label="Le parti dell'app">
+        {parti.map((x, i) => {
+          const scelta = i === p;
+          const foto = GRUPPI.find((g) => g.id === x.id)?.copertina.src;
+          return (
+            <button
+              key={x.id}
+              type="button"
+              role="tab"
+              aria-selected={scelta}
+              onClick={() => scegliParte(i)}
+              className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full px-2 transition-colors ${scelta ? 'bg-forest-500/20 text-app' : 'text-muted hover:text-app'}`}
+            >
+              {foto && (
+                <span className={`shrink-0 rounded-full p-[2px] ${scelta ? 'bg-gradient-to-tr from-forest-600 via-forest-400 to-[#c9f27a]' : 'bg-divider'}`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={foto} alt="" className={`h-7 w-7 rounded-full border-2 border-surface object-cover object-top ${scelta ? '' : 'opacity-60'}`} />
+                </span>
+              )}
+              <span className="flex flex-col items-start whitespace-nowrap text-left leading-tight">
+                <span className="text-body-sm font-semibold">{x.nome}</span>
+                {x.nota && <span className={`text-caption ${scelta ? 'text-forest-300' : 'text-faint'}`}>{x.nota}</span>}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Schermo largo: telefono a sinistra, momenti a destra */}
