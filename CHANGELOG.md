@@ -2,6 +2,17 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-08 — L'app riorganizzata: quattro tab e un solo selettore Mente | Corpo
+
+Ste: «l'ho fatta vedere in giro e mi dicono che è bellissima ma ci sono tante cose e non si capisce bene come arrivarci… troppe scritte piccole».
+- **Quattro tab: Home, Palestra, Chat, Profilo** (`components/BottomTabBar.tsx`). Il Percorso non è più una tab: è la prima scheda di Palestra › Mente.
+- **Un selettore Mente | Corpo uguale ovunque** (`components/ParteSwitch.tsx`, al posto di `PalestraSwitch`): in Palestra, Chat e Profilo; l'ultima parte scelta resta sul dispositivo e le tab riaprono lì; il Corpo che non hai ha il lucchetto e porta alla pagina di assaggio.
+- **Palestra**: Mente con le schede Percorso · Allenamento · Quando si fa dura (`/settimane`, `/strumenti`, `/sos`, senza più gli header a gradiente), Corpo con Allenamento · Test (`/allenamento`, `/allenamento/test`). Dalla pagina Allenamento della Mente tolte le difficoltà (hanno la loro scheda) e la Carta (nel Profilo).
+- **Chat**: Mente = il Coach (senza l'intestazione verde, una riga sola), Corpo = il preparatore; chi ha il Fisico Base legge dove trovarlo invece di essere rimandato al Campo.
+- **Profilo**: chi sei, «Account» in alto a destra, Mente (Carta, risposte, dati) | Corpo (Carta, storico, settimane passate, setup). **Account** (`/account`, era `/profilo`): dati, Telegram, notifiche, abbonamento, esci, cancella, privacy. Messaggi del bot, push di fine prova e pagina prezzi dicono «Profilo → Account».
+- **Home a due blocchi**, «Mente» e «Corpo», con le cose di oggi; chi ha solo il Fisico vede prima il Corpo.
+- La Carta si apre sulla parte chiesta (`/carta?vista=mente|corpo`); storico, setup, settimane passate, statistiche, risposte e Carta tornano alla pagina di prima (`BackButton back`).
+
 ## 2026-11-08 — La pagina di vendita: i cerchi nelle sezioni, una schermata per sezione su telefono
 
 Ste: «i pallini mettiamoli nei vari settori e non funziona il pulsante di chiusura. Anche il carattere terrei tutto in corsivo. Sul telefono ogni sezione che scorri stia esattamente dentro alla schermata senza andare su e giù».

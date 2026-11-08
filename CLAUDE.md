@@ -101,8 +101,8 @@ for-you-football/
 │           ├── daily-morning/route.ts     # GET → pillola mattutina Coach (frasi da Notion DB, scelta Haiku, dedup messaggi_inviati) — SOLO utenti attivi <30gg
 │           └── daily-evening/route.ts     # GET → reminder serale Coach se pratica non fatta (testo generato Haiku) — SOLO utenti attivi <30gg
 ├── components/
-│   ├── BottomTabBar.tsx                   # Nav: Home / Percorso / Palestra (pallino con un resoconto da dare) / Coach / Profilo
-│   ├── PalestraSwitch.tsx                 # Testa | Fisico (20/10): le due parti dell'app, sempre tutte e due; la parte che non hai ha il lucchetto; `palestra.parte` in localStorage
+│   ├── BottomTabBar.tsx                   # Nav (8/11): Home / Palestra (pallino con un resoconto da dare) / Chat / Profilo; Palestra e Chat riaprono l'ultima parte scelta
+│   ├── ParteSwitch.tsx                    # Mente | Corpo (8/11): UN selettore uguale in Palestra, Chat e Profilo (`app.parte` in localStorage, `palestra.parte` letto come ripiego), lucchetto sul Corpo per chi non ce l'ha (`useCorpoAperto`, cache `app.corpoAperto`), `SottoSchede`, `PalestraTestata` (Mente: Percorso · Allenamento · Quando si fa dura; Corpo: Allenamento · Test)
 │   ├── FisicoBloccato.tsx                 # Il Fisico per chi non ha il Campo: cos'è, settimana finta, "Mi interessa" (evento campo_interesse)
 │   ├── EsercizioSettimanaCard.tsx         # L'esercizio della settimana in home (31/10): testo da Notion, "Fatto oggi", "N su 7", la riga "metti la sveglia sul telefono" (W5, W6, W8, W10) e l'interruttore dei promemoria; solo dopo il G1 della settimana
 │   ├── StatoRecente.tsx                   # "Il tuo stato" (medie dei check-in a 7 giorni), dalla home alla Carta (20/10)
@@ -905,7 +905,8 @@ La memoria persistente del Coach si basa su:
 - 4 suggerimenti pre-impostati (ansia partita, riflessione settimana, errore gol, perdita fiducia)
 - Auth check → redirect se non loggato
 
-### Profilo (`app/profilo/page.tsx`)
+### Profilo (`app/profilo/page.tsx`) e Account (`app/account/page.tsx`)
+- **Dall'8/11** (Ste: "profilo diviso corpo e mente, e in alto a destra le cose dell'account"): `/profilo` = chi sei (nome, ruolo · livello), «Account» in alto a destra, il selettore Mente | Corpo; Mente = la tua Carta (`/carta?vista=mente`), Le tue risposte, I tuoi dati (`/statistiche`); Corpo = la tua Carta (`/carta?vista=corpo`), Lo storico, Le settimane passate, Il tuo setup. Tutto quello che segue (form, Telegram, notifiche, accesso, esci, cancella, privacy) sta in `/account`, che fino al 7/11 era `/profilo`.
 - Visualizzazione/modifica profilo calciatore
 - Righe "Carta del Giocatore" → `/carta` (20/10) e "Le tue risposte" → `/risposte` (22/10)
 - **Cancella l'account** (25-26/9): link sotto "Esci", Sheet con cosa succede (l'app si chiude subito, i dati restano 60 giorni per chi ci ripensa, poi spariscono; rate in pausa e riprese alla riattivazione; niente rimborso), invito a parlarne con un genitore, campo "scrivi CANCELLA" → `POST /api/account/delete` → storage locale pulito, logout, `/login?deleted=1`. Pagina `/riattiva` (senza tab bar né rituale) con la data limite e i bottoni "Riattiva l'account" / "Lascia com'è ed esci"
@@ -1025,7 +1026,7 @@ La memoria persistente del Coach si basa su:
 - Props: `{ userId, onComplete, onSkip }`
 
 ### `BottomTabBar.tsx`
-- 5 tab: Home, Percorso, **Palestra** (al centro, icona Dumbbell, route `/strumenti`), Coach, Profilo
+- **Dall'8/11 4 tab: Home, Palestra, Chat, Profilo** (Ste: "tante cose e non si capisce come arrivarci"). Palestra porta a `/settimane` (Mente) o `/allenamento` (Corpo), Chat a `/chat` (Coach) o `/allenamento/chat` (preparatore), secondo l'ultima parte scelta col selettore (`components/ParteSwitch.tsx`). Accesa: Palestra su percorso, giorni, Gate, `/strumenti`, `/sos`, `/allenamento/*` (tranne chat, storico, setup, mese); Profilo su `/profilo`, `/account`, `/carta`, `/risposte`, `/statistiche`, `/pausa`, storico, setup e mese del Campo; Home su `/` e `/oggi`. Prima (fino al 7/11): Home, Percorso, Palestra, Coach, Profilo e il selettore Testa | Fisico solo nella Palestra (sotto, storico)
 - La tab Palestra resta attiva anche su `/sos`, `/carta` e `/allenamento/*` (le due parti della Palestra); **pallino** verde sull'icona con un resoconto squadra/partita da dare (`lib/resocontoPendente.ts`, letto dal dispositivo a ogni cambio pagina)
 - **Testa | Fisico (20/10, `components/PalestraSwitch.tsx`):** sotto Palestra le due parti dell'app, sempre tutte e due. Il selettore sta in cima a `/strumenti` (Testa: Reset rapido, Allena una capacità, Quando si fa dura, Carta) e a `/allenamento` (Fisico: l'hub del Campo). La tab riapre l'**ultima parte usata** (`localStorage['palestra.parte']`, scritta dalle due pagine quando mostrano il contenuto; è la **tab bar** a cambiare il link della tab in `/allenamento`, così i link "Palestra" dalle altre pagine portano sempre alla Testa). **La parte che non hai ha il lucchetto e si apre su una pagina di assaggio, non sul contenuto** (Ste: "farla bloccata per chi non ce l'ha potrebbe invogliare"): senza il flag del Campo `/allenamento` rende `components/FisicoBloccato.tsx` (cos'è in una riga, la seduta di oggi e la settimana finte da guardare, tre righe su cosa ti dà, **"Mi interessa"** → evento `campo_interesse` in `onboarding_events`, "Ti avviso quando apre"; il Campo non è in vendita, quando lo sarà lo stesso bottone diventa "Sblocca"; Ste legge da Supabase chi l'ha premuto per decidere i pacchetti con un numero in mano); senza Season 1 la Testa resta aperta (la settimana gratis e gli strumenti di W1 ci sono) e in fondo ha la card "Season 1: il percorso completo · Sblocca" → `/pricing`. La vecchia card "Campo" in fondo alla Palestra non c'è più.
 - Nome canonico del sistema azioni in UI: **"Le tue 5 azioni"** (ovunque)
