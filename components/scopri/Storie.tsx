@@ -51,7 +51,7 @@ export const GRUPPI: Gruppo[] = [
     ],
   },
   { id: 'testa', nome: 'La Testa', copertina: { src: '/scopri/storia/sguardo.webp' }, fine: 'prova', schermate: daMomenti(MOMENTI_TESTA, 'La Testa') },
-  { id: 'fisico', nome: 'Il Fisico', copertina: { src: '/scopri/storia/esultanza.webp' }, fine: 'avviso', schermate: daMomenti(MOMENTI_FISICO, 'Il Fisico') },
+  { id: 'fisico', nome: 'Il Corpo', copertina: { src: '/scopri/storia/esultanza.webp' }, fine: 'avviso', schermate: daMomenti(MOMENTI_FISICO, 'Il Corpo') },
   {
     id: 'dove', nome: 'Dove ti porta', copertina: { src: '/scopri/storia/colpo-di-testa.webp' }, fine: 'prova',
     schermate: [
@@ -71,7 +71,7 @@ export const GRUPPI: Gruppo[] = [
     ],
   },
   {
-    id: 'perche-fisico', nome: 'Perché il Fisico', copertina: { src: '/scopri/storia/conduzione.webp' }, fine: 'avviso',
+    id: 'perche-fisico', nome: 'Perché il Corpo', copertina: { src: '/scopri/storia/conduzione.webp' }, fine: 'avviso',
     schermate: [
       { titolo: PERCHE_FISICO.titolo, testo: PERCHE_FISICO.intro, stile: 'grande' },
       ...PERCHE_FISICO.figure.map((f): Schermata => ({ titolo: f.chi, testo: f.limite, stile: 'grande' })),

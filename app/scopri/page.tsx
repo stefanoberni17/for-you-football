@@ -22,7 +22,7 @@ import { BottoneAvviso, BottoneProva, CTA, Intestazione, PiePagina, Titolo } fro
  * La pagina di vendita pubblica (6/11; testi v2 di Ste del 7/11, funnel: Notion «Funnel di vendita: mappa e piano»).
  * Testi v3 (7/11): mi riconosco, Ste mi capisce, ha costruito qualcosa di concreto, può servire a me, posso provarlo.
  * Corta e viva (7/11, Ste: «solo le cose essenziali, poi approfondire quello che vuole»; «dinamica, non classica con i link»):
- * apertura, le scene a carosello, Ste come un profilo con la griglia delle foto, il giro dell'app Testa | Fisico (Tour.tsx),
+ * apertura, le scene a carosello, Ste come un profilo con la griglia delle foto, il giro dell'app Testa | Corpo (Tour.tsx),
  * «Il metodo» con tre cerchi, prezzi, domande, chiusura. I cerchi stanno nella loro sezione (8/11) e aprono le storie a tutto
  * schermo come sui social (Storie.tsx); su telefono il bottone resta in basso (BarraProva.tsx). Su telefono ogni sezione è
  * una schermata e la pagina si ferma a ognuna (`.scopri-schermo` in globals.css): niente su e giù dentro una sezione.
@@ -190,7 +190,7 @@ export default async function Scopri() {
         </Rivela>
       </section>
 
-      {/* 4. Il giro dell'app: i cerchi Testa | Fisico, un telefono, tocchi un momento */}
+      {/* 4. Il giro dell'app: Testa | Corpo (fisico e tecnica), un telefono, tocchi un momento */}
       <section id="come-funziona" className="scopri-schermo scroll-mt-4">
         <div className="mx-auto w-full max-w-6xl px-4 lg:py-20">
           <p className="text-center text-overline uppercase text-forest-400">Dentro l&apos;app</p>
@@ -198,8 +198,8 @@ export default async function Scopri() {
           <div className="mt-4 lg:mt-8">
             <Tour
               parti={[
-                { id: 'testa', nome: 'La Testa', momenti: MOMENTI_TESTA },
-                { id: 'fisico', nome: 'Il Fisico', nota: notaFisico, momenti: MOMENTI_FISICO },
+                { id: 'testa', nome: 'La Testa', sotto: 'mentale', momenti: MOMENTI_TESTA },
+                { id: 'fisico', nome: 'Il Corpo', sotto: 'fisico e tecnica', nota: campoAperto ? undefined : FISICO_TEASER.quando, momenti: MOMENTI_FISICO },
               ]}
             />
           </div>
@@ -207,7 +207,7 @@ export default async function Scopri() {
         </div>
       </section>
 
-      {/* 5. Il metodo: tre cerchi che aprono le storie (dove ti porta, perché la Testa, perché il Fisico) */}
+      {/* 5. Il metodo: tre cerchi che aprono le storie (dove ti porta, perché la Testa, perché il Corpo) */}
       <section id="metodo" className="scopri-schermo scroll-mt-4 border-t border-divider bg-surface/40">
         <Rivela className="mx-auto w-full max-w-5xl px-4 lg:py-20">
           <Titolo etichetta="Il metodo">{NON_POSITIVO.titolo}</Titolo>
@@ -308,7 +308,7 @@ export default async function Scopri() {
                 {lancioCampo && <p className="mt-2 text-caption text-muted">Prezzi di lancio, al mese.</p>}
                 <div className="mt-4">{campoAperto ? <BottoneProva /> : <BottoneAvviso />}</div>
               </div>
-              <div className="mt-6 flex justify-center lg:hidden"><Cerchio gruppo="fisico" nome="Guarda il Fisico" sotto={notaFisico} /></div>
+              <div className="mt-6 flex justify-center lg:hidden"><Cerchio gruppo="fisico" nome="Guarda il Corpo" sotto={notaFisico} /></div>
               <p className="mt-5 text-center text-body-sm text-muted lg:hidden">{NOTA_CODICE}</p>
             </div>
           </div>

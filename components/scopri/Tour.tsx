@@ -8,12 +8,13 @@ import { apriStoria, GRUPPI } from './Storie';
 
 /**
  * Il giro dell'app (7/11, Ste: «è davvero troppo lungo: uno deve vedere solo le cose essenziali e poi approfondire quello
- * che vuole»). Una schermata sola, come le pagine delle app di allenamento: in alto il selettore Testa | Fisico, basso e
+ * che vuole»). Una schermata sola, come le pagine delle app di allenamento: in alto il selettore Testa | Corpo, basso e
  * piatto con la fotina nel cerchio (8/11, Ste: «più piccolo, appiattito, più spazio all'immagine e alle scritte»), un
  * telefono, l'elenco dei momenti; tocchi un momento e il telefono cambia. Su telefono sta tutto in una schermata: i momenti sono una
  * fila di bottoni, telefono e testo uno accanto all'altro, il resto nella storia («A tutto schermo»).
  */
-export type ParteTour = { id: string; nome: string; nota?: string; momenti: MomentoApp[]; piede?: React.ReactNode };
+/** `sotto`: la riga piccola nel selettore («fisico e tecnica»); `nota`: quando apre, in un'etichetta sopra il momento. */
+export type ParteTour = { id: string; nome: string; sotto?: string; nota?: string; momenti: MomentoApp[]; piede?: React.ReactNode };
 
 export function Tour({ parti }: { parti: ParteTour[] }) {
   const [p, setP] = useState(0);
@@ -30,7 +31,7 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
 
   return (
     <div>
-      {/* Testa | Fisico: basso e piatto, la fotina nel cerchio */}
+      {/* Testa | Corpo: basso e piatto, la fotina nel cerchio */}
       <div className="mx-auto flex w-full max-w-md gap-1 rounded-full border border-divider bg-surface p-1" role="tablist" aria-label="Le parti dell'app">
         {parti.map((x, i) => {
           const scelta = i === p;
@@ -52,7 +53,7 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
               )}
               <span className="flex flex-col items-start whitespace-nowrap text-left leading-tight">
                 <span className="text-body-sm font-semibold">{x.nome}</span>
-                {x.nota && <span className={`text-caption ${scelta ? 'text-forest-300' : 'text-faint'}`}>{x.nota}</span>}
+                {x.sotto && <span className={`text-caption ${scelta ? 'text-forest-300' : 'text-faint'}`}>{x.sotto}</span>}
               </span>
             </button>
           );
@@ -68,6 +69,7 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
           </button>
         </div>
         <ol className="space-y-2">
+          {parte.nota && <li><span className="inline-block rounded-full bg-forest-500/15 px-2.5 py-0.5 text-overline uppercase text-forest-300">{parte.nota}</span></li>}
           {parte.momenti.map((x, i) => (
             <li key={x.id}>
               <button
@@ -114,6 +116,7 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
             <Schermo key={parte.id} momenti={parte.momenti} attiva={k} className="scopri-telefono-tour" />
           </button>
           <div className="min-w-0 flex-1">
+            {parte.nota && <span className="mb-1.5 inline-block rounded-full bg-forest-500/15 px-2.5 py-0.5 text-overline uppercase text-forest-300">{parte.nota}</span>}
             <h3 className="font-display text-title-3 font-bold text-app">{m.titolo}</h3>
             <p key={m.id} className="scopri-entra mt-2 text-body text-muted">{m.testo}</p>
             <div className="mt-1">{tuttoSchermo}</div>
