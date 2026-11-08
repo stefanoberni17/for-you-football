@@ -44,7 +44,7 @@ function Card({ t }: { t: Tessera }) {
         className={`absolute text-white/90 transition-transform duration-300 group-hover:scale-105 ${t.alta ? 'left-4 top-5 h-20 w-20' : 'left-4 top-4 h-14 w-14'}`} />
       {t.pallino && <span aria-label="Hai un resoconto da dare" className="absolute right-3 top-3 h-3 w-3 rounded-full bg-accent-glow shadow-glow ring-2 ring-black/30" />}
       <span className="absolute inset-x-0 bottom-0 p-4">
-        <span className="block break-words font-display text-title-2 font-bold uppercase leading-tight tracking-tight text-white min-[400px]:text-title-1">{t.nome}</span>
+        <span className="block font-display text-title-2 font-bold leading-tight text-white">{t.nome}</span>
         {t.stato && <span className="mt-1.5 block text-body font-medium text-white/80">{t.stato}</span>}
       </span>
     </Link>
