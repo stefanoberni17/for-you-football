@@ -1,36 +1,21 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BarChart3, BookOpen, CalendarRange, ChevronRight, History, IdCard, Settings, SlidersHorizontal } from 'lucide-react';
+import { BarChart3, BookOpen, CalendarRange, History, IdCard, Settings, SlidersHorizontal } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { livelloFisico } from '@/lib/checkAccess';
 import { PLAYER_LEVELS, PLAYER_ROLES, SPORT_ROLES } from '@/lib/constants';
-import ParteSwitch, { leggiParte, salvaCorpoAperto, type Parte } from '@/components/ParteSwitch';
-import { AppLoader, Card } from '@/components/ui';
+import { salvaCorpoAperto } from '@/components/ParteSwitch';
+import { AppLoader, Elenco, RigaElenco, TitoloGruppo } from '@/components/ui';
 
 /**
- * Il Profilo (8/11, Ste: "profilo diviso corpo e mente, e un tab in alto a destra con le cose dell'account").
- * In cima chi sei; sotto lo stesso selettore Mente | Corpo della Palestra e della Chat, con le TUE cose di quella
- * parte (Carta, risposte, dati, storico, setup). Dati personali, abbonamento, Telegram, notifiche, esci e
- * cancella stanno in /account, dietro "Account" in alto a destra.
+ * Il Profilo (8/11, Ste: "profilo diviso corpo e mente, e un tab in alto a destra con le cose dell'account";
+ * poi lo stile delle bozze: elenchi a righe per le liste). In cima chi sei; sotto due elenchi, Mente e Corpo,
+ * con le TUE cose (Carta, risposte, dati, storico, setup), senza selettore. Dati personali, abbonamento, Telegram,
+ * notifiche, esci e cancella stanno in /account, dietro "Account" in alto a destra.
  */
-
-function Riga({ href, icon, titolo }: { href: string; icon: ReactNode; titolo: string; sotto?: string }) {
-  return (
-    <Card padding="sm" href={href} aria-label={titolo}>
-      <span className="flex min-h-[48px] items-center gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-2 text-forest-400" aria-hidden>{icon}</span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-body-lg font-semibold text-app">{titolo}</span>
-        </span>
-        <ChevronRight size={18} className="shrink-0 text-faint" aria-hidden />
-      </span>
-    </Card>
-  );
-}
-
 export default function ProfiloPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -38,7 +23,6 @@ export default function ProfiloPage() {
   const [chi, setChi] = useState('');
   const [settimana, setSettimana] = useState(1);
   const [corpoAperto, setCorpoAperto] = useState(false);
-  const [parte, setParte] = useState<Parte>('mente');
 
   useEffect(() => {
     (async () => {
@@ -48,7 +32,6 @@ export default function ProfiloPage() {
       const aperto = !!livelloFisico(p);
       salvaCorpoAperto(aperto);
       setCorpoAperto(aperto);
-      setParte(aperto && leggiParte() === 'corpo' ? 'corpo' : 'mente');
       setNome(p?.name || '');
       setSettimana(p?.current_week || 1);
       const ruoliOpz = SPORT_ROLES[p?.sport || 'calcio'] || PLAYER_ROLES;
@@ -80,22 +63,28 @@ export default function ProfiloPage() {
           </Link>
         </div>
 
-        <ParteSwitch parte={parte} onChange={setParte} corpoBloccato={!corpoAperto} className="mb-5" />
+        <div className="space-y-3">
+          <TitoloGruppo>Mente</TitoloGruppo>
+          <Elenco>
+            <RigaElenco href="/carta?vista=mente" tono="verde" icona={<IdCard />} titolo="La tua Carta" />
+            <RigaElenco href="/risposte" icona={<BookOpen />} titolo="Le tue risposte" />
+            <RigaElenco href="/statistiche" icona={<BarChart3 />} titolo="I tuoi dati" />
+          </Elenco>
 
-        {parte === 'mente' ? (
-          <div className="space-y-3">
-            <Riga href="/carta?vista=mente" icon={<IdCard size={18} />} titolo="La tua Carta" sotto="Il tuo gioco mentale, scritto da te" />
-            <Riga href="/risposte" icon={<BookOpen size={18} />} titolo="Le tue risposte" sotto="Quello che hai scritto nei giorni e nei Gate" />
-            <Riga href="/statistiche" icon={<BarChart3 size={18} />} titolo="I tuoi dati" sotto="Check-in, sonno, le tue azioni" />
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <Riga href="/carta?vista=corpo" icon={<IdCard size={18} />} titolo="La tua Carta" sotto="Il rombo: forza, velocità, resistenza, tecnica" />
-            <Riga href="/allenamento/storico" icon={<History size={18} />} titolo="Lo storico" sotto="Sedute, esercizi, test, squadra e partite" />
-            <Riga href="/allenamento/mese" icon={<CalendarRange size={18} />} titolo="Le settimane passate" sotto="Cosa hai allenato, settimana per settimana" />
-            <Riga href="/allenamento/setup" icon={<SlidersHorizontal size={18} />} titolo="Il tuo setup" sotto="Attrezzi, giorni, obiettivi, limitazioni" />
-          </div>
-        )}
+          <TitoloGruppo className="pt-4">Corpo</TitoloGruppo>
+          {corpoAperto ? (
+            <Elenco>
+              <RigaElenco href="/carta?vista=corpo" tono="verde" icona={<IdCard />} titolo="La tua Carta" />
+              <RigaElenco href="/allenamento/storico" icona={<History />} titolo="Lo storico" />
+              <RigaElenco href="/allenamento/mese" icona={<CalendarRange />} titolo="Le settimane passate" />
+              <RigaElenco href="/allenamento/setup" icona={<SlidersHorizontal />} titolo="Il tuo setup" />
+            </Elenco>
+          ) : (
+            <Elenco>
+              <RigaElenco href="/allenamento" bloccato icona={null} titolo="Allenamento fisico e tecnico" valore="Scopri" />
+            </Elenco>
+          )}
+        </div>
       </div>
     </main>
   );
