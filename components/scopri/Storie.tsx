@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { ArrowRight, Bell, ChevronLeft, ChevronRight, Pause, Play, X } from 'lucide-react';
 import { bloccaScroll } from '@/lib/scrollLock';
 import {
-  AVVISO_FISICO, DOVE_PORTA, MOMENTI_FISICO, MOMENTI_TESTA, STORIA, type FotoStoria, type MomentoApp,
+  AVVISO_FISICO, DOVE_PORTA, FISICO_SEZIONE, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, PERCHE_FISICO, PERCHE_TESTA, STORIA, type FotoStoria,
+  type MomentoApp,
 } from '@/lib/scopri';
 
 /**
- * Le storie della pagina di vendita, come su Instagram (7/11, Ste: «dinamica», «prendi spunto da Instagram»): i cerchi «in
- * evidenza» sotto l'apertura e la griglia delle foto di Ste aprono un visore a tutto schermo. Una schermata alla volta, le
+ * Le storie della pagina di vendita, come su Instagram (7/11, Ste: «dinamica», «prendi spunto da Instagram»; 8/11: «i pallini
+ * nei vari settori», «il carattere tutto in corsivo»): i cerchi di ogni sezione e la griglia delle foto di Ste aprono un
+ * visore a tutto schermo. Una schermata alla volta, le
  * barrette in alto che si riempiono, tocco a destra avanti e a sinistra indietro, tenendo premuto si ferma, Esc o la X
  * chiudono; alla fine di un gruppo il bottone per provare e il gruppo dopo. Fermo con prefers-reduced-motion.
  * Un solo visore per pagina (`VisoreStorie`), aperto da qualunque punto con `apriStoria(gruppo, schermata)`.
@@ -37,6 +39,8 @@ function daMomenti(momenti: MomentoApp[], parte: string): Schermata[] {
   }));
 }
 
+const maiuscola = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+
 export const GRUPPI: Gruppo[] = [
   {
     id: 'storia', nome: 'La mia storia', copertina: { src: STORIA.capitoli[0].foto?.src }, fine: 'prova',
@@ -46,16 +50,39 @@ export const GRUPPI: Gruppo[] = [
       { testo: STORIA.finale, stile: 'grande' },
     ],
   },
-  { id: 'testa', nome: 'La Testa', copertina: { src: '/scopri/percorso.webp' }, fine: 'prova', schermate: daMomenti(MOMENTI_TESTA, 'La Testa') },
+  { id: 'testa', nome: 'La Testa', copertina: { src: '/scopri/storia/sguardo.webp' }, fine: 'prova', schermate: daMomenti(MOMENTI_TESTA, 'La Testa') },
+  { id: 'fisico', nome: 'Il Fisico', copertina: { src: '/scopri/storia/esultanza.webp' }, fine: 'avviso', schermate: daMomenti(MOMENTI_FISICO, 'Il Fisico') },
   {
-    id: 'dove', nome: 'Dove ti porta', copertina: { testo: '→' }, fine: 'prova',
+    id: 'dove', nome: 'Dove ti porta', copertina: { src: '/scopri/storia/colpo-di-testa.webp' }, fine: 'prova',
     schermate: [
       { titolo: DOVE_PORTA.titolo, testo: DOVE_PORTA.intro, stile: 'grande' },
-      ...DOVE_PORTA.punti.map((p): Schermata => ({ testo: p.charAt(0).toUpperCase() + p.slice(1).replace(/;$/, '.'), stile: 'grande' })),
-      { testo: DOVE_PORTA.chiusura, stile: 'grande' },
+      ...DOVE_PORTA.punti.map((p): Schermata => ({ testo: maiuscola(p).replace(/;$/, '.'), stile: 'grande' })),
+      { testo: NON_POSITIVO.paragrafi[0], stile: 'grande' },
+      { testo: DOVE_PORTA.chiusura, sotto: NON_POSITIVO.paragrafi[2], stile: 'grande' },
     ],
   },
-  { id: 'fisico', nome: 'Il Fisico', copertina: { src: '/scopri/seduta.webp' }, fine: 'avviso', schermate: daMomenti(MOMENTI_FISICO, 'Il Fisico') },
+  {
+    id: 'perche-testa', nome: 'Perché la Testa', copertina: { src: '/scopri/storia/nazionale.webp' }, fine: 'prova',
+    schermate: [
+      { titolo: PERCHE_TESTA.titolo, testo: PERCHE_TESTA.paragrafi[0], stile: 'grande' },
+      { testo: PERCHE_TESTA.paragrafi[1], sotto: PERCHE_TESTA.studi.join(' · '), stile: 'grande' },
+      { testo: PERCHE_TESTA.domanda, stile: 'grande' },
+      ...PERCHE_TESTA.chiusura.map((t): Schermata => ({ testo: t, stile: 'grande' })),
+    ],
+  },
+  {
+    id: 'perche-fisico', nome: 'Perché il Fisico', copertina: { src: '/scopri/storia/conduzione.webp' }, fine: 'avviso',
+    schermate: [
+      { titolo: PERCHE_FISICO.titolo, testo: PERCHE_FISICO.intro, stile: 'grande' },
+      ...PERCHE_FISICO.figure.map((f): Schermata => ({ titolo: f.chi, testo: f.limite, stile: 'grande' })),
+      ...PERCHE_FISICO.altalena.map((t): Schermata => ({ testo: t, stile: 'grande' })),
+      { testo: PERCHE_FISICO.scelta, stile: 'grande' },
+      { testo: PERCHE_FISICO.problema, sotto: PERCHE_FISICO.variabili.join(' · '), stile: 'grande' },
+      { testo: PERCHE_FISICO.domanda, stile: 'grande' },
+      ...PERCHE_FISICO.ai.map((t): Schermata => ({ testo: t, stile: 'grande' })),
+      { titolo: FISICO_SEZIONE.titolo, testo: FISICO_SEZIONE.origine[0], sotto: FISICO_SEZIONE.origine.slice(1).join(' '), stile: 'grande' },
+    ],
+  },
 ];
 
 const EVENTO = 'scopri:storia';
@@ -88,34 +115,41 @@ function useVisti() {
   );
 }
 
-/** I cerchi «in evidenza», sotto l'apertura. */
-export function InEvidenza({ notaFisico }: { notaFisico?: string }) {
+/**
+ * Un cerchio come gli «in evidenza» dei social: copertina, anello verde (grigio se già vista), nome sotto. Di solito apre la sua
+ * storia; nel giro dell'app fa da linguetta (`onClick`, `attivo`: quello scelto ha l'anello, l'altro è spento).
+ */
+export function Cerchio({ gruppo, nome, sotto, grande = false, onClick, attivo }: {
+  gruppo: string; nome?: string; sotto?: string; grande?: boolean; onClick?: () => void; attivo?: boolean;
+}) {
   useVisti();
+  const g = GRUPPI.find((x) => x.id === gruppo);
+  if (!g) return null;
+  const misura = grande ? 'h-[72px] w-[72px]' : 'h-16 w-16';
+  const anello = attivo === false ? 'bg-divider opacity-60' : visti.has(g.id) && attivo === undefined ? 'bg-divider' : 'bg-gradient-to-tr from-forest-600 via-forest-400 to-[#c9f27a]';
   return (
-    <div className="scopri-nastro -mx-4 overflow-x-auto px-4">
-      <ul className="mx-auto flex w-max gap-5 py-1 lg:gap-7">
-        {GRUPPI.map((g) => (
-          <li key={g.id}>
-            <button type="button" onClick={() => apriStoria(g.id)} className="group flex w-[76px] flex-col items-center gap-2 lg:w-[88px]" aria-label={`Guarda: ${g.nome}`}>
-              <span className={`rounded-full p-[3px] transition-transform group-hover:scale-105 ${visti.has(g.id) ? 'bg-divider' : 'bg-gradient-to-tr from-forest-600 via-forest-400 to-[#c9f27a]'}`}>
-                <span className="block rounded-full bg-app-bg p-[3px]">
-                  {g.copertina.src ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={g.copertina.src} alt="" className="h-16 w-16 rounded-full object-cover object-top lg:h-[76px] lg:w-[76px]" />
-                  ) : (
-                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-forest-500 to-forest-700 font-display text-title-1 font-bold text-white lg:h-[76px] lg:w-[76px]">{g.copertina.testo}</span>
-                  )}
-                </span>
-              </span>
-              <span className="text-caption font-semibold leading-tight text-app">
-                {g.nome}
-                {g.id === 'fisico' && notaFisico && <span className="block font-normal text-faint">{notaFisico}</span>}
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <button
+      type="button"
+      onClick={onClick ?? (() => apriStoria(g.id))}
+      aria-pressed={attivo}
+      className="group flex w-[92px] flex-col items-center gap-1.5"
+      aria-label={onClick ? (nome ?? g.nome) : `Guarda: ${nome ?? g.nome}`}
+    >
+      <span className={`rounded-full p-[3px] transition-transform group-hover:scale-105 ${anello}`}>
+        <span className="block rounded-full bg-app-bg p-[3px]">
+          {g.copertina.src ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={g.copertina.src} alt="" className={`${misura} rounded-full object-cover object-top`} />
+          ) : (
+            <span className={`flex ${misura} items-center justify-center rounded-full bg-gradient-to-br from-forest-500 to-forest-700 font-display text-title-1 font-bold text-white`}>{g.copertina.testo}</span>
+          )}
+        </span>
+      </span>
+      <span className={`text-caption font-semibold leading-tight ${attivo === false ? 'text-muted' : 'text-app'}`}>
+        {nome ?? g.nome}
+        {sotto && <span className="block font-normal text-faint">{sotto}</span>}
+      </span>
+    </button>
   );
 }
 
@@ -230,7 +264,7 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
       </div>
 
       {/* Chi parla, pausa, chiudi */}
-      <div className="absolute inset-x-3 top-[calc(max(0.75rem,env(safe-area-inset-top))+0.75rem)] z-10 flex items-center justify-between">
+      <div className="absolute inset-x-3 top-[calc(max(0.75rem,env(safe-area-inset-top))+0.75rem)] z-30 flex items-center justify-between">
         <span className="flex items-center gap-2 text-body-sm font-semibold text-white">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-forest-500 font-display text-caption font-bold">SB</span>
           {g.nome}
@@ -248,20 +282,20 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
       </div>
 
       {/* Il contenuto della schermata */}
-      <div key={`${gruppo}-${i}`} className={`scopri-storia-testo absolute inset-x-0 z-10 px-6 ${s.schermo ? 'inset-y-0 flex flex-col pb-8 pt-24' : conFoto ? 'bottom-0 pb-10' : 'inset-y-0 flex flex-col justify-center pb-10'}`}>
+      <div key={`${gruppo}-${i}`} className={`scopri-storia-testo pointer-events-none absolute inset-x-0 z-10 px-6 [&_a]:pointer-events-auto [&_button]:pointer-events-auto ${s.schermo ? 'inset-y-0 flex flex-col pb-8 pt-24' : conFoto ? 'bottom-0 pb-10' : 'inset-y-0 flex flex-col justify-center pb-10'}`}>
         {s.schermo && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={s.schermo.src} alt={s.schermo.alt} className="mx-auto min-h-0 flex-1 rounded-[18px] border-[5px] border-black object-contain object-top shadow-e3" />
         )}
         <div className={s.schermo ? 'mt-5 shrink-0' : ''}>
           {s.etichetta && <p className="text-overline uppercase text-forest-300">{s.etichetta}</p>}
-          {s.titolo && <p className="mt-1 font-display text-title-2 font-bold text-white">{s.titolo}</p>}
-          <p className={
-            s.stile === 'citazione' ? 'font-quote text-[28px] italic leading-[35px] text-white'
-              : s.stile === 'grande' ? 'mt-2 font-quote text-[29px] italic leading-[37px] text-white'
-                : s.schermo ? 'mt-2 text-body text-white/90' : 'text-[19px] leading-[28px] text-white'
-          }>{s.testo}</p>
-          {s.sotto && <p className={`mt-3 ${s.schermo ? 'text-body-sm text-forest-200' : 'text-body-lg text-white/85'}`}>{s.sotto}</p>}
+          {s.titolo && <p className="mt-1 font-quote text-[26px] font-semibold italic leading-[31px] text-white">{s.titolo}</p>}
+          <p className={`font-quote italic text-white ${
+            s.stile === 'citazione' ? 'text-[28px] leading-[35px]'
+              : s.stile === 'grande' ? 'mt-2 text-[28px] leading-[36px]'
+                : s.schermo ? 'mt-2 text-[19px] leading-[26px] text-white/90' : 'text-[23px] leading-[31px]'
+          }`}>{s.testo}</p>
+          {s.sotto && <p className={`mt-3 font-quote italic ${s.schermo ? 'text-[17px] leading-[23px] text-forest-200' : 'text-[20px] leading-[28px] text-white/85'}`}>{s.sotto}</p>}
           {ultima && (
             <div className="mt-7 flex flex-col items-center gap-3">
               {g.fine === 'prova' ? (
@@ -285,10 +319,10 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
       </div>
 
       {/* Frecce col mouse */}
-      <button type="button" onClick={() => vai(i - 1)} disabled={i === 0 && gruppo === 0} aria-label="Indietro" className="tap absolute left-1 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center text-white/70 hover:text-white disabled:opacity-0 sm:flex">
+      <button type="button" onClick={() => vai(i - 1)} disabled={i === 0 && gruppo === 0} aria-label="Indietro" className="tap absolute left-1 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center text-white/70 hover:text-white disabled:opacity-0 sm:flex">
         <ChevronLeft size={30} aria-hidden />
       </button>
-      <button type="button" onClick={() => vai(i + 1)} disabled={ultima} aria-label="Avanti" className="tap absolute right-1 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center text-white/70 hover:text-white disabled:opacity-0 sm:flex">
+      <button type="button" onClick={() => vai(i + 1)} disabled={ultima} aria-label="Avanti" className="tap absolute right-1 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center text-white/70 hover:text-white disabled:opacity-0 sm:flex">
         <ChevronRight size={30} aria-hidden />
       </button>
     </div>

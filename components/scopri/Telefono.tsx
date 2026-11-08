@@ -51,7 +51,7 @@ function useRidotto() {
   return ridotto;
 }
 
-export function TelefonoCiclo({ momenti }: { momenti: MomentoApp[] }) {
+export function TelefonoCiclo({ momenti, className = 'w-[min(80vw,330px)] lg:w-[min(340px,calc((100vh-150px)*0.47))]' }: { momenti: MomentoApp[]; className?: string }) {
   const [i, setI] = useState(0);
   const ridotto = useRidotto();
   useEffect(() => {
@@ -62,8 +62,8 @@ export function TelefonoCiclo({ momenti }: { momenti: MomentoApp[] }) {
   return (
     <div className="relative">
       <div className="pointer-events-none absolute -inset-10 rounded-full bg-forest-500/25 blur-3xl" aria-hidden />
-      <Schermo momenti={momenti} attiva={i} priorita className="scopri-galleggia relative w-[min(80vw,330px)] lg:w-[min(340px,calc((100vh-150px)*0.47))]" />
-      <p className="relative mt-4 text-center text-label text-muted" aria-live="polite">{momenti[i].titolo}</p>
+      <Schermo momenti={momenti} attiva={i} priorita className={`scopri-galleggia relative ${className}`} />
+      <p className="relative mt-4 hidden text-center text-label text-muted lg:block" aria-live="polite">{momenti[i].titolo}</p>
     </div>
   );
 }

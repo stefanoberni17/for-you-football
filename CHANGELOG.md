@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-08 — La pagina di vendita: i cerchi nelle sezioni, una schermata per sezione su telefono
+
+Ste: «i pallini mettiamoli nei vari settori e non funziona il pulsante di chiusura. Anche il carattere terrei tutto in corsivo. Sul telefono ogni sezione che scorri stia esattamente dentro alla schermata senza andare su e giù».
+- **I cerchi nella loro sezione** (tolta la fila sotto il bottone d'apertura): La Testa e Il Fisico in cima a «Come funziona», al posto delle linguette (quello scelto ha l'anello, l'altro è spento; toccato di nuovo apre la storia); in «Il metodo» tre cerchi al posto delle schede: Dove ti porta, Perché la Testa, Perché il Fisico (storie nuove dai testi di `PERCHE_TESTA`, `PERCHE_FISICO` e `FISICO_SEZIONE`; tolti `Schede.tsx`, `Espandi.tsx`, `PercheTesta`, `PercheFisico`); nei prezzi su telefono «Guarda il Fisico». `Cerchio` in `components/scopri/Storie.tsx`; «A tutto schermo» sotto ogni momento del giro dell'app.
+- **La X chiude**: il testo della schermata copriva la barra in alto e si prendeva il tocco; ora il testo lascia passare i tocchi (tranne link e bottoni) e la barra sta sopra.
+- **Le storie tutte in corsivo** (Crimson Pro), titoli compresi.
+- **Su telefono una sezione = una schermata** (`.scopri-schermo` in `app/globals.css`, sotto i 1024 px): la pagina si ferma all'inizio di ogni schermata (`scroll-snap`), alta quanto lo schermo, contenuto al centro, spazio in fondo per il bottone fisso. Apertura con il telefono che spunta dal fondo; scene con la scheda alta in proporzione allo schermo; profilo con una riga di foto; il giro dell'app con telefono e testo uno accanto all'altro e i momenti in fila; prezzi in tre schermate (i passi, Mente, Fisico); domande tutte in vista, una aperta alla volta; chiusura e piè di pagina nella stessa schermata. Sugli schermi bassi (iPhone SE) spariscono disegnino delle scene, citazione del profilo e nota sul valore. Misurato a 390×844 e 375×667: nessuna sezione più alta dello schermo.
+
 ## 2026-11-07 — La pagina di vendita come i social
 
 Ste: «prova a prendere spunto anche da Instagram». Gli schemi che chi ha 16-25 anni usa ogni giorno, dentro la stessa pagina:

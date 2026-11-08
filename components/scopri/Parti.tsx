@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, Bell } from 'lucide-react';
-import { AVVISO_FISICO, PERCHE_FISICO, PERCHE_TESTA } from '@/lib/scopri';
-import { Espandi } from './Espandi';
+import { AVVISO_FISICO } from '@/lib/scopri';
 
 /** I pezzi della pagina di vendita (/scopri) che non hanno bisogno del browser. */
 
@@ -58,65 +57,5 @@ export function PiePagina() {
         </nav>
       </div>
     </footer>
-  );
-}
-
-/** Perché la Testa è fatta così: le strade provate, la domanda, i pilastri. Dentro una scheda della sezione «Il metodo». */
-export function PercheTesta() {
-  const p = PERCHE_TESTA;
-  return (
-    <div className="mx-auto max-w-3xl">
-      <h3 className="text-center font-display text-title-1 font-bold">{p.titolo}</h3>
-      <div className="mt-6 space-y-4 text-body-lg text-muted">
-        {p.paragrafi.map((r) => <p key={r}>{r}</p>)}
-      </div>
-      <Espandi etichetta="Leggi tutto">
-        <ul className="mt-6 flex flex-wrap gap-2">
-          {p.studi.map((t) => (
-            <li key={t} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{t}</li>
-          ))}
-        </ul>
-        <blockquote className="my-8 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
-        <div className="space-y-4 text-body-lg text-muted">
-          {p.chiusura.map((r, i) => <p key={r} className={i === p.chiusura.length - 1 ? 'text-app' : ''}>{r}</p>)}
-        </div>
-      </Espandi>
-    </div>
-  );
-}
-
-/** Perché il Fisico è fatto così: dai preparatori scollegati alle regole con l'AI dentro. Dentro una scheda di «Il metodo». */
-export function PercheFisico({ fine }: { fine?: React.ReactNode }) {
-  const p = PERCHE_FISICO;
-  return (
-    <div className="mx-auto max-w-3xl">
-      <h3 className="text-center font-display text-title-1 font-bold">{p.titolo}</h3>
-      <p className="mt-6 text-body-lg text-muted">{p.intro}</p>
-      <ul className="mt-6 grid gap-3 sm:grid-cols-3">
-        {p.figure.map((f) => (
-          <li key={f.chi} className="rounded-card border border-divider bg-app-bg p-4">
-            <span className="block text-body font-semibold text-app">{f.chi}</span>
-            <span className="mt-1 block text-body-sm text-muted">{f.limite}</span>
-          </li>
-        ))}
-      </ul>
-      <Espandi etichetta="Leggi tutto">
-        <div className="mt-6 space-y-2 rounded-card border border-divider bg-app-bg p-5">
-          {p.altalena.map((r) => <p key={r} className="font-quote text-[20px] italic leading-[29px] text-app">{r}</p>)}
-        </div>
-        <p className="mt-6 text-body-lg text-muted">{p.scelta}</p>
-        <p className="mt-6 text-body-lg text-muted">{p.problema}</p>
-        <ul className="mt-4 flex flex-wrap gap-2">
-          {p.variabili.map((v) => (
-            <li key={v} className="rounded-full border border-divider bg-app-bg px-3.5 py-1.5 text-body-sm text-app">{v}</li>
-          ))}
-        </ul>
-        <blockquote className="my-10 border-l-4 border-forest-400 pl-5 font-quote text-[23px] italic leading-[33px] text-app lg:text-[26px] lg:leading-[36px]">{p.domanda}</blockquote>
-        <div className="space-y-4 text-body-lg text-muted">
-          {p.ai.map((r, i) => <p key={r} className={i === p.ai.length - 1 ? 'text-app' : ''}>{r}</p>)}
-        </div>
-        {fine}
-      </Espandi>
-    </div>
   );
 }

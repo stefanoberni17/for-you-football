@@ -295,3 +295,28 @@ select:focus-visible {
   .scopri-storia-zoom, .scopri-storia-testo { animation: none; }
   .scopri-rivela, .scopri-rivela.nascosta { transition: none; opacity: 1; transform: none; }
 }
+/*
+ * Su telefono una sezione = una schermata (8/11, Ste: «ogni sezione che scorri stia esattamente dentro alla schermata senza
+ * andare su e giù»): la pagina si ferma all'inizio di ogni `.scopri-schermo`, alta quanto lo schermo, contenuto al centro,
+ * spazio in fondo per il bottone fisso (BarraProva). `.scopri-schermo-pieno` senza margini: l'apertura e la chiusura.
+ */
+@media (max-width: 1023.98px) {
+  html:has(.scopri-pagina) { scroll-snap-type: y mandatory; }
+  .scopri-schermo {
+    min-height: 100svh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: max(1.25rem, env(safe-area-inset-top));
+    padding-bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  }
+  .scopri-schermo.scopri-schermo-pieno { height: 100svh; padding: 0; justify-content: flex-start; }
+  .scopri-telefono-tour { width: clamp(96px, calc((100svh - 450px) * 0.45), 44vw); border-width: 6px; border-radius: 1.5rem; }
+  .scopri-telefono-tour > div { border-radius: 1.1rem; }
+}
+/* Schermi bassi (iPhone SE): via le cose che si possono togliere */
+@media (max-width: 1023.98px) and (max-height: 720px) {
+  .scopri-basso-via { display: none; }
+}
