@@ -10,7 +10,7 @@ import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import SubscriptionSection from '@/components/SubscriptionSection';
 import { AppLoader, BackButton, Button, Card, Chip, Field, Input, SectionTitle, Select, Sheet, Textarea } from '@/components/ui';
-import { Bot, Bell, LogOut, Lock, Check, Trash2 } from 'lucide-react';
+import { Bot, Bell, LogOut, Lock, Check, Trash2, FileText } from 'lucide-react';
 
 /**
  * /account (8/11: era /profilo; il Profilo ora è Mente | Corpo e qui restano i dati e le impostazioni dell'account,
@@ -540,7 +540,7 @@ export default function AccountPage() {
           </div>
         </Sheet>
 
-        {/* ── (f) Privacy / genitori ────────────────────────────────────── */}
+        {/* ── (f) Privacy, termini (8/11: prima i Termini non si aprivano dall'app) / genitori ────────────────────────────────────── */}
         <div className="flex flex-wrap justify-center gap-2">
           <Button
             variant="ghost"
@@ -549,6 +549,14 @@ export default function AccountPage() {
             icon={<Lock size={16} aria-hidden="true" />}
           >
             Privacy
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.open('/termini', '_blank', 'noopener,noreferrer')}
+            icon={<FileText size={16} aria-hidden="true" />}
+          >
+            Termini
           </Button>
           {/* "Per i genitori" nascosto dall'8/10 (prima coorte a 18+): la pagina /genitori resta raggiungibile da privacy e registrazione */}
         </div>

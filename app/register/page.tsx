@@ -355,7 +355,7 @@ function RegisterContent() {
               <div>
                 <h2 className="font-display text-title-2 font-bold text-app">Raccontaci di te</h2>
                 <p className="text-muted text-body-sm mt-0.5 leading-relaxed">
-                  Queste info rendono il percorso più tuo. Puoi saltare e completare dal profilo.
+                  Queste info rendono il percorso più tuo. Puoi saltare e completare da Profilo → Account.
                 </p>
               </div>
 
@@ -461,7 +461,7 @@ function RegisterContent() {
                   {loading ? 'Creazione…' : 'Inizia'}
                 </Button>
                 <Button type="button" variant="secondary" fullWidth onClick={() => handleRegister()} disabled={loading}>
-                  Salta per ora (lo completi dal profilo)
+                  Salta per ora (lo completi da Profilo → Account)
                 </Button>
                 <Button type="button" variant="ghost" fullWidth icon={<ChevronLeft size={18} aria-hidden />}
                   onClick={() => { setStep(1); setError(''); }} disabled={loading}>

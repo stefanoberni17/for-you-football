@@ -157,7 +157,7 @@ export default function SessionePage() {
       <main className="min-h-screen bg-app pt-safe px-5">
         <div className="max-w-md mx-auto text-center pt-20">
           <p className="text-body text-muted mb-4">Nessuna seduta per questo giorno.</p>
-          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna al Campo</Button>
+          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna all&apos;allenamento</Button>
         </div>
       </main>
     );
@@ -170,7 +170,7 @@ export default function SessionePage() {
           <Calendar size={40} className="text-muted mx-auto mb-3" aria-hidden />
           <p className="font-display text-title-2 font-bold text-app mb-1">Seduta saltata</p>
           <p className="text-body text-muted mb-6">Era {DAY_NAMES[giorno]}: si poteva recuperare il giorno dopo. Resta in memoria e, se la settimana finisce senza farla, il preparatore la ripropone uguale nella prossima.</p>
-          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna al Campo</Button>
+          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna all&apos;allenamento</Button>
         </div>
       </main>
     );
@@ -242,7 +242,7 @@ export default function SessionePage() {
               <div className="text-5xl mb-4">💪</div>
               <h1 className="font-display text-title-1 font-bold text-app mb-2">Seduta fatta</h1>
               <p className="text-body text-muted mb-8">Segnata sul piano. Quello che hai detto serve a calibrare la settimana prossima.</p>
-              <Button size="lg" fullWidth onClick={() => router.push('/allenamento')}>Torna al Campo</Button>
+              <Button size="lg" fullWidth onClick={() => router.push('/allenamento')}>Torna all&apos;allenamento</Button>
             </>
           ) : (
             <>
@@ -371,7 +371,7 @@ export default function SessionePage() {
           <Card variant="danger" padding="sm" className="mb-4">
             <p className="text-body-sm text-danger flex gap-2">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden />
-              <span>Hai segnalato un dolore: questa seduta è in pausa. L&apos;app non fa diagnosi: fatti vedere da un fisioterapista o da un medico se è forte o dura da giorni. Riparti dal Campo, sotto la tua responsabilità.</span>
+              <span>Hai segnalato un dolore: questa seduta è in pausa. L&apos;app non fa diagnosi: fatti vedere da un fisioterapista o da un medico se è forte o dura da giorni. Riparti da Palestra › Corpo, sotto la tua responsabilità.</span>
             </p>
           </Card>
         )}

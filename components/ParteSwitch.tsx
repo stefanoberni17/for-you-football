@@ -48,7 +48,11 @@ function leggiCorpoCache(): { aperto: boolean; fresco: boolean } | null {
 
 /** Le pagine che hanno già il profilo lo scrivono qui: il selettore lo legge senza un'altra richiesta. */
 export function salvaCorpoAperto(aperto: boolean): void {
-  try { localStorage.setItem(KEY_CORPO, `${aperto ? 1 : 0}:${Date.now()}`); } catch { /* ignora */ }
+  try {
+    localStorage.setItem(KEY_CORPO, `${aperto ? 1 : 0}:${Date.now()}`);
+    // Il Corpo si è chiuso (fine abbonamento, pausa): le tab Palestra e Chat tornano alla Mente, non all'assaggio
+    if (!aperto && leggiParte() === 'corpo') salvaParte('mente');
+  } catch { /* ignora */ }
 }
 
 /**

@@ -454,7 +454,7 @@ function PricingContent() {
 
           {abbonato && (
             <Card className="flex items-center justify-between gap-3">
-              <p className="text-body-sm text-muted min-w-0">Carta, ricevute, disdetta: nel portale. Prima di disdire puoi metterti in pausa dal profilo.</p>
+              <p className="text-body-sm text-muted min-w-0">Carta, ricevute, disdetta: nel portale. Prima di disdire puoi metterti in pausa da Profilo → Account.</p>
               <Button variant="ghost" size="sm" onClick={openPortal} loading={loading}>Portale</Button>
             </Card>
           )}
@@ -480,7 +480,7 @@ function PricingContent() {
             {faq('Come funziona la prova?', <>Inserisci la carta e hai {prova || 7} giorni. Tre giorni prima della fine ti scriviamo. Se disdici prima della fine non paghi niente. La prova è una sola, su qualunque pacchetto: se passi a un altro pacchetto durante la prova, paghi da quel giorno.</>)}
             {faq('Posso cambiare pacchetto?', <>Sì, da questa pagina, quando vuoi. Paghi subito solo la differenza del mese in corso; se scendi, quello che hai già pagato in più va sulle fatture dopo. Se lasci il Completo per il solo Mente o il solo Fisico, per 6 mesi puoi tornarci al tuo prezzo di prima.</>)}
             {faq('Cos\'è il prezzo bloccato?', <>Il prezzo di lancio e il prezzo con codice restano tuoi finché resti iscritto, anche cambiando pacchetto e in pausa. Se disdici e torni più avanti, paghi il prezzo di quel momento.</>)}
-            {faq('E se devo fermarmi?', <>Al posto di disdire puoi metterti in pausa: 2 mesi, una volta l&apos;anno, senza addebiti e con il tuo prezzo. Per un infortunio la pausa può durare fino a 6 mesi: la chiedi dal profilo con una riga.</>)}
+            {faq('E se devo fermarmi?', <>Al posto di disdire puoi metterti in pausa: 2 mesi, una volta l&apos;anno, senza addebiti e con il tuo prezzo. Per un infortunio la pausa può durare fino a 6 mesi: la chiedi da Profilo → Account con una riga.</>)}
             {codiceVisibile && faq('Ho un codice', <>Scrivilo in «Hai un codice da un amico?»: vale il prezzo con codice, bloccato finché resti iscritto. Vale sempre un prezzo solo, il più basso a cui hai diritto: i codici non si sommano al prezzo di lancio.</>)}
             {faq('Pagamento sicuro?', <>I pagamenti passano da Stripe. Apple Pay e Google Pay disponibili.</>)}
           </Card>

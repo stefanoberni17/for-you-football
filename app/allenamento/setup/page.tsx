@@ -289,7 +289,7 @@ function SetupPageInner() {
 
           {/* Infortuni e limitazioni (punto 4, 26/10) */}
           <Card padding="sm">
-            <SectionTitle title="Infortuni e limitazioni" subtitle="Zone da proteggere e cose che il preparatore deve sapere. L'app non fa diagnosi: con un dolore nuovo usa &quot;Hai un dolore?&quot; nel Campo." className="mb-3" />
+            <SectionTitle title="Infortuni e limitazioni" subtitle="Zone da proteggere e cose che il preparatore deve sapere. L'app non fa diagnosi: con un dolore nuovo usa il triangolo &quot;Hai un dolore?&quot; in Palestra › Corpo." className="mb-3" />
             <div className="space-y-4">
               <div>
                 <GroupLabel hint={`Fino a ${LIMITAZIONI_ZONE_MAX}. Sugli esercizi che le coinvolgono le serie sono ridotte e i kg più bassi, finché restano qui.`}>Zone da proteggere</GroupLabel>

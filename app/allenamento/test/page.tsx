@@ -456,7 +456,7 @@ export default function BatteriaTest() {
           <>
             {pesoCorporeo === null && (
               <Card variant="warn" padding="sm" className="mb-3">
-                <p className="text-body-sm text-warning flex gap-2"><AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden /><span>Per il livello in palestra serve il peso corporeo: inseriscilo in &quot;Il tuo setup&quot; nel Campo.</span></p>
+                <p className="text-body-sm text-warning flex gap-2"><AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden /><span>Per il livello in palestra serve il peso corporeo: inseriscilo in Profilo › Corpo › &quot;Il tuo setup&quot;.</span></p>
               </Card>
             )}
             {v2Cats.map((cat, ci) => {

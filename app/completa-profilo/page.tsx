@@ -136,7 +136,7 @@ export default function CompletaProfiloPage() {
 
             <div className="border-t border-divider pt-4">
               <h2 className="font-display text-title-3 font-bold text-app">Raccontaci di te</h2>
-              <p className="text-body-sm text-muted mt-0.5 mb-3">Queste info rendono il percorso più tuo. Puoi completarle anche dopo dal profilo.</p>
+              <p className="text-body-sm text-muted mt-0.5 mb-3">Queste info rendono il percorso più tuo. Puoi completarle anche dopo da Profilo → Account.</p>
               <p className="text-label font-semibold text-app mb-2">Che sport pratichi?</p>
               <div className="flex flex-wrap gap-2 mb-4" role="group" aria-label="Sport">
                 {SPORTS.map((s) => <Chip key={s.value} selected={sport === s.value} onClick={() => { setSport(s.value); setSelectedRoles([]); }} icon={<span aria-hidden>{s.icon}</span>}>{s.label}</Chip>)}

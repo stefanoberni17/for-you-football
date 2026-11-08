@@ -12,7 +12,7 @@ interface Msg { role: 'user' | 'assistant'; content: string }
 
 const WELCOME: Msg = {
   role: 'assistant',
-  content: 'Sono il tuo preparatore AI ⚽ Chiedimi degli esercizi, dell\'esecuzione o del tuo programma. Per cambiare il piano della settimana usa "Rifai la settimana" nella pagina Campo.',
+  content: 'Sono il tuo preparatore AI ⚽ Chiedimi degli esercizi, dell\'esecuzione o del tuo programma. Per cambiare il piano della settimana usa "Rifai la settimana" in Palestra › Corpo.',
 };
 
 export default function TrainingChatPage() {
