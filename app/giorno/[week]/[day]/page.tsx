@@ -391,7 +391,7 @@ export default function GiornoPage() {
               </Button>
               {telegramLinkFailed && (
                 <p className="text-body-sm text-warning mt-2">
-                  Non siamo riusciti ad aprire Telegram — lo trovi anche nel Profilo.
+                  Non siamo riusciti ad aprire Telegram — lo trovi anche in Profilo → Account.
                 </p>
               )}
             </div>

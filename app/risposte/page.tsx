@@ -61,7 +61,7 @@ export default function RispostePage() {
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
-        <BackButton tone="light" label="Profilo" onClick={() => router.push('/profilo')} />
+        <BackButton back="/profilo" />
 
         <Card className="border-l-4 border-l-forest-500">
           <div className="flex items-center gap-2 mb-2">

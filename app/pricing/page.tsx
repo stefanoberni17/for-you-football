@@ -476,7 +476,7 @@ function PricingContent() {
 
           <Card className="space-y-1">
             <h2 className="font-display text-title-3 font-bold text-app mb-2">Domande frequenti</h2>
-            {faq('È un abbonamento?', <>Sì, mensile: si rinnova da solo ogni mese. Disdici quando vuoi dall&apos;app: Profilo → Il tuo accesso → Gestisci abbonamento. Resti dentro fino alla fine del mese pagato.</>)}
+            {faq('È un abbonamento?', <>Sì, mensile: si rinnova da solo ogni mese. Disdici quando vuoi dall&apos;app: Profilo → Account → Gestisci abbonamento. Resti dentro fino alla fine del mese pagato.</>)}
             {faq('Come funziona la prova?', <>Inserisci la carta e hai {prova || 7} giorni. Tre giorni prima della fine ti scriviamo. Se disdici prima della fine non paghi niente. La prova è una sola, su qualunque pacchetto: se passi a un altro pacchetto durante la prova, paghi da quel giorno.</>)}
             {faq('Posso cambiare pacchetto?', <>Sì, da questa pagina, quando vuoi. Paghi subito solo la differenza del mese in corso; se scendi, quello che hai già pagato in più va sulle fatture dopo. Se lasci il Completo per il solo Mente o il solo Fisico, per 6 mesi puoi tornarci al tuo prezzo di prima.</>)}
             {faq('Cos\'è il prezzo bloccato?', <>Il prezzo di lancio e il prezzo con codice restano tuoi finché resti iscritto, anche cambiando pacchetto e in pausa. Se disdici e torni più avanti, paghi il prezzo di quel momento.</>)}

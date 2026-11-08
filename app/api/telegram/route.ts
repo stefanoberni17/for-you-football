@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
         } else {
           await sendTelegramMessage(
             chatId,
-            'Questo link di collegamento è scaduto o non valido.\n\nApri l\'app → Profilo → "Collega Telegram" e riprova (il link vale 15 minuti).'
+            'Questo link di collegamento è scaduto o non valido.\n\nApri l\'app → Profilo → Account → "Collega" e riprova (il link vale 15 minuti).'
           );
         }
         return NextResponse.json({ ok: true });
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
       } else {
         await sendTelegramMessage(
           chatId,
-          'Ciao! Sono il Coach di For You Football. ⚽\n\nPer collegarci apri l\'app → Profilo → "Collega Telegram": si apre questa chat e il collegamento è automatico.'
+          'Ciao! Sono il Coach di For You Football. ⚽\n\nPer collegarci apri l\'app → Profilo → Account → "Collega": si apre questa chat e il collegamento è automatico.'
         );
       }
       return NextResponse.json({ ok: true });
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
       await sendTelegramMessage(
         chatId,
         fineP
-          ? 'Sei in pausa: ci ritroviamo qui quando riprendi. Se vuoi riprendere prima, lo fai dall\'app (Profilo → Il tuo accesso). ⚽'
+          ? 'Sei in pausa: ci ritroviamo qui quando riprendi. Se vuoi riprendere prima, lo fai dall\'app (Profilo → Account). ⚽'
           : 'Il Coach su Telegram c\'è con il Mente o con il Completo, dopo la settimana di prova. Apri l\'app: da lì torniamo a parlare qui. ⚽'
       );
       return NextResponse.json({ ok: true });

@@ -9,7 +9,8 @@ import { AlertTriangle, Check, ChevronDown, ChevronRight, Lock, Plus, Timer, Tre
 import { DAY_NAMES } from '@/lib/constants';
 import { gruppoLontano } from '@/lib/trainingRitest';
 import TestIstruzioni from '@/components/TestIstruzioni';
-import { AppLoader, BackButton, Badge, Button, Card, Chip, Input } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, Chip, Input } from '@/components/ui';
+import { PalestraTestata } from '@/components/ParteSwitch';
 
 interface TestInfo {
   id: string; nome: string; unita: string; protocollo: string;
@@ -121,7 +122,7 @@ export default function BatteriaTest() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
     const res = await authFetch('/api/training/state');
-    if (res.status === 403) { router.push('/strumenti'); return; }
+    if (res.status === 403) { router.push('/allenamento'); return; }
     if (res.ok) {
       const data = await res.json();
       setTests(data.tests);
@@ -331,10 +332,9 @@ export default function BatteriaTest() {
   };
 
   return (
-    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-      <div className="max-w-md mx-auto">
-        <BackButton onClick={() => router.push('/allenamento')} label="Campo" className="mb-2" />
-        <h1 className="font-display text-title-1 font-bold text-app mb-4">Batteria di test</h1>
+    <main className="min-h-screen bg-app pb-tabbar-lg">
+      <PalestraTestata parte="corpo" scheda="test" corpoBloccato={false} />
+      <div className="max-w-md mx-auto px-5 mt-4">
 
         {/* Il prossimo test: l'azione di adesso, sopra la piega */}
         {prossimo ? (

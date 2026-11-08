@@ -54,7 +54,7 @@ function SetupPageInner() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
     const res = await authFetch('/api/training/state');
-    if (res.status === 403) { router.push('/strumenti'); return; }
+    if (res.status === 403) { router.push('/allenamento'); return; }
     if (res.ok) {
       const data: SetupState = await res.json();
       setState(data);
@@ -134,7 +134,7 @@ function SetupPageInner() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <BackButton href="/allenamento" label="Campo" className="mb-2" />
+        <BackButton back="/profilo" className="mb-2" />
         <h1 className="font-display text-title-1 font-bold text-app mb-1">Il tuo setup</h1>
         <p className="text-body text-muted mb-5">Cambia quando cambia la tua stagione.</p>
 

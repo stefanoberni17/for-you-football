@@ -250,7 +250,7 @@ export default function StatistichePage() {
 
         {/* ─── Header compatto ─────────────────────────────────────────── */}
         <div>
-          <BackButton href="/" label="Home" />
+          <BackButton back="/profilo" />
           <h1 className="font-display text-title-1 font-bold text-app mt-1">I tuoi dati</h1>
           <p className="text-body-sm text-muted mt-0.5">Stai tenendo botta? Qui lo vedi.</p>
         </div>

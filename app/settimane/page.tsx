@@ -9,6 +9,7 @@ import { isWeekUnlocked, isWeekCompleted, getWeekProgress, isDayUnlocked, isTime
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY } from '@/lib/constants';
 import { Lock, Check, ChevronRight, Sparkles, Play, Trophy, Clock } from 'lucide-react';
 import { AppLoader, Badge, Button, Card, SectionTitle } from '@/components/ui';
+import { PalestraTestata } from '@/components/ParteSwitch';
 
 interface Settimana {
   id: string;
@@ -97,9 +98,6 @@ export default function SettimanePage() {
     return <AppLoader label="Caricamento percorso..." />;
   }
 
-  const unlockedCount = Array.from({ length: BETA_MAX_WEEK }, (_, i) => i + 1)
-    .filter(w => isWeekUnlocked(w, completedDays)).length;
-
   // ── "Sei qui": la settimana in cui si sta lavorando ──
   // Dopo il Gate di W, current_week è già W+1 ma W+1 si apre domattina (time-gate):
   // in quel caso "sei qui" resta W, completata, e la card dice che la prossima si apre domani.
@@ -120,22 +118,10 @@ export default function SettimanePage() {
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
 
-      {/* Header immersive: corto, una riga di stato */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-2">
-            Season 1 · Play Free
-          </p>
-          <h1 className="font-display text-display font-bold text-white mb-2">
-            Il tuo percorso
-          </h1>
-          <p className="text-forest-100 text-body-sm tabular-nums">
-            {unlockedCount} {unlockedCount === 1 ? 'settimana sbloccata' : 'settimane sbloccate'} · {completedDays.length} {completedDays.length === 1 ? 'giorno fatto' : 'giorni fatti'}
-          </p>
-        </div>
-      </div>
+      {/* Palestra › Mente › Percorso (8/11): selettore e schede al posto del vecchio header a gradiente */}
+      <PalestraTestata parte="mente" scheda="percorso" />
 
-      <div className="max-w-3xl mx-auto px-4 -mt-8 space-y-6">
+      <div className="max-w-xl mx-auto px-4 mt-4 space-y-6">
 
         {/* ── Sei qui: l'unico gradiente e l'unico CTA della pagina ── */}
         {allDone ? (

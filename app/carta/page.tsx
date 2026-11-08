@@ -123,7 +123,11 @@ export default function CartaPage() {
 
       // Vista iniziale (20/10): A 360° con tutte e due le parti, Mente con la sola Testa, Corpo con il solo Fisico
       const corpoCeLa = !!r360?.corpo && (r360.corpo.testFatti ?? 0) > 0;
-      setVista(corpoCeLa ? (hasActiveAccess(profile) ? '360' : 'corpo') : 'mente');
+      // Dal Profilo (8/11) si arriva con ?vista=mente|corpo: la Carta si apre su quella parte
+      const chiesta = new URLSearchParams(window.location.search).get('vista');
+      setVista(chiesta === 'mente' || chiesta === 'corpo' || chiesta === '360'
+        ? chiesta
+        : corpoCeLa ? (hasActiveAccess(profile) ? '360' : 'corpo') : 'mente');
       const roleOptions = SPORT_ROLES[profile?.sport || 'calcio'] || PLAYER_ROLES;
       const ruoli = (profile?.role || '')
         .split(',')
@@ -161,7 +165,7 @@ export default function CartaPage() {
 
         {/* Controlli — mai in stampa */}
         <div className="no-print flex items-center justify-between">
-          <BackButton onClick={() => router.back()} label="Indietro" />
+          <BackButton back="/profilo" />
           <Button
             variant="primary"
             size="sm"

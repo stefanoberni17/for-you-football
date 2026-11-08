@@ -9,6 +9,7 @@ import { readCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
 import { ChevronRight, Wind, MessageCircle, Zap } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
+import { PalestraTestata } from '@/components/ParteSwitch';
 import EmptyState from '@/components/EmptyState';
 
 interface Layer {
@@ -104,7 +105,7 @@ function SosContent() {
       <main className="min-h-screen bg-app pb-tabbar-lg">
         <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
           <div className="max-w-xl mx-auto">
-            <BackButton href="/sos" label="Difficoltà" tone="light" className="mb-2" />
+            <BackButton href="/sos" label="Quando si fa dura" tone="light" className="mb-2" />
             <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">Adesso</p>
             <h1 className="font-display text-title-1 font-bold text-white leading-tight">
               <span className="mr-2" aria-hidden="true">{selected.emoji}</span>{selected.difficolta}
@@ -198,16 +199,11 @@ function SosContent() {
   // ── Lista difficoltà ──────────────────────────────────────────────────────
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-        <div className="max-w-xl mx-auto">
-          <BackButton href="/strumenti" label="Palestra" tone="light" className="mb-2" />
-          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">Adesso</p>
-          <h1 className="font-display text-title-1 font-bold text-white leading-tight">Cosa ti succede?</h1>
-          <p className="text-forest-100 text-body-sm mt-1">Scegli la situazione: trovi cosa fare subito.</p>
-        </div>
-      </div>
+      {/* Palestra › Mente › Quando si fa dura (8/11) */}
+      <PalestraTestata parte="mente" scheda="dura" />
 
-      <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
+      <div className="max-w-xl mx-auto px-4 mt-4 space-y-3">
+        <p className="text-body text-muted px-1">Scegli la situazione: trovi cosa fare subito.</p>
         {cards.length === 0 && (
           <EmptyState
             icon={<Zap size={24} aria-hidden="true" />}

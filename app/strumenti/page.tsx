@@ -11,24 +11,12 @@ import {
   type Capacita,
   type PalestraExercise,
 } from '@/lib/palestraCatalog';
-import { authFetch } from '@/lib/authFetch';
-import { readCache, writeCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
-import PalestraSwitch, { salvaParte } from '@/components/PalestraSwitch';
-import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
+import { PalestraTestata, salvaCorpoAperto } from '@/components/ParteSwitch';
 import { livelloFisico, hasActiveAccess } from '@/lib/checkAccess';
 import PracticePopup from '@/components/PracticePopup';
-import { ChevronRight, ChevronDown, Play, Wind, IdCard, Lock, Clock, Target, Wrench, MessageCircle } from 'lucide-react';
+import { ChevronRight, ChevronDown, Play, Wind, Lock, Clock, Target, Wrench } from 'lucide-react';
 import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
-
-interface DiffCard {
-  id: string;
-  difficolta: string;
-  emoji: string;
-  sottotitolo: string;
-  unlockedCount: number;
-  totalCount: number;
-}
 
 /** Esercizio + capacità di appartenenza (per il "Riprendi" e per il player). */
 interface Pick {
@@ -149,60 +137,30 @@ export default function StrumentiPage() {
   const [activePick, setActivePick] = useState<Pick | null>(null);
   const [showToolPractice, setShowToolPractice] = useState(false);
   const [lockedOpen, setLockedOpen] = useState(false);
-  const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
   const [trainingAccess, setTrainingAccess] = useState(false);
   const [mentaleAttivo, setMentaleAttivo] = useState(true); // Mente, Completo, beta o Season 1: altrimenti la card "Sblocca il Mente"
   const [conFisico, setConFisico] = useState(false); // ha il Fisico da pacchetto: la card propone il Completo
-  const [resocontoPendente, setResocontoPendente] = useState(false); // pallino su "Fisico" nel selettore
-
-  // Il pallino sul selettore segue il resoconto da dare scritto da home e hub (lib/resocontoPendente)
-  useEffect(() => {
-    const aggiorna = () => setResocontoPendente(pendenteAdesso());
-    aggiorna();
-    window.addEventListener(EVENTO_RESOCONTI, aggiorna);
-    return () => window.removeEventListener(EVENTO_RESOCONTI, aggiorna);
-  }, []);
 
   useEffect(() => {
     const load = async () => {
-      // Testa | Fisico (20/10): è la tab bar a riaprire l'ultima parte usata; qui si arriva sempre alla Testa
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
         return;
       }
-      // Profilo e schede insieme. Le schede dipendono dalla settimana (layer bloccati):
-      // in cache con la settimana accanto, valide solo se la settimana è la stessa.
-      type DiffCache = { week: number; cards: DiffCard[] };
-      const cached = readCache<DiffCache>('difficolta');
-      const [{ data: profile }, res] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single(),
-        cached ? Promise.resolve(null) : authFetch('/api/difficolta').catch(() => null),
-      ]);
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
       const week = profile?.current_week || 1;
       setCurrentWeek(week);
       // Il Campo: acceso a mano o con un pacchetto con il Fisico (3/11); il Mente: con il Mente o il Completo
       setTrainingAccess(!!livelloFisico(profile));
       setMentaleAttivo(hasActiveAccess(profile));
       setConFisico(!!livelloFisico(profile) && !(profile as { training_access?: boolean } | null)?.training_access);
-      salvaParte('testa');
+      salvaCorpoAperto(!!livelloFisico(profile));
       setLastId(readLast());
-      try {
-        if (cached && cached.week === week) {
-          setDiffCards(cached.cards || []);
-        } else {
-          const r = res ?? (await authFetch('/api/difficolta'));
-          if (r.ok) {
-            const data = await r.json();
-            setDiffCards(data.cards || []);
-            writeCache<DiffCache>('difficolta', { week, cards: data.cards || [] });
-          }
-        }
-      } catch { /* non bloccante */ }
       setLoading(false);
     };
     load();
@@ -401,42 +359,15 @@ export default function StrumentiPage() {
   // ── Hub ───────────────────────────────────────────────────────────────────
   const unlocked = unlockedCapacita(currentWeek);
   const locked = CAPACITA.filter(c => currentWeek < c.week);
-  const totalEsercizi = unlocked.reduce((n, c) => n + visibleEsercizi(c, currentWeek).length, 0);
   const resume = findPick(lastId, currentWeek);
   const pick = resume ?? weekPick(currentWeek);
-  const showDiffDetails = diffCards.length > 4;
-
-  const diffList = (
-    <div className="space-y-3">
-      {diffCards.map(card => (
-        <Card key={card.id} padding="sm" href={`/sos?card=${card.id}`} aria-label={card.difficolta}>
-          <Row
-            lead={<span className="text-2xl w-10 text-center block">{card.emoji}</span>}
-            title={card.difficolta}
-            badge={card.totalCount > 1 ? <Badge tone="neutral">{card.unlockedCount}/{card.totalCount} modi</Badge> : undefined}
-            sub={card.sottotitolo || undefined}
-          />
-        </Card>
-      ))}
-      <Button variant="ghost" fullWidth href="/chat" icon={<MessageCircle size={18} aria-hidden="true" />}>
-        Non c&apos;è la tua? Scrivi al Coach
-      </Button>
-    </div>
-  );
 
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-        <div className="max-w-xl mx-auto">
-          <PalestraSwitch parte="testa" tone="light" fisicoBloccato={!trainingAccess} pendente={resocontoPendente} className="mb-5" />
-          <h1 className="font-display text-display font-bold text-white mb-2">Allena la testa</h1>
-          <p className="text-forest-100 text-body-sm tabular-nums">
-            {unlocked.length} su {CAPACITA.length} capacità · {totalEsercizi} esercizi pronti
-          </p>
-        </div>
-      </div>
+      {/* Palestra › Mente › Allenamento (8/11): selettore e schede al posto del vecchio header a gradiente */}
+      <PalestraTestata parte="mente" scheda="allenamento" corpoBloccato={!trainingAccess} />
 
-      <div className="max-w-xl mx-auto px-4 -mt-8 space-y-6">
+      <div className="max-w-xl mx-auto px-4 mt-4 space-y-6">
 
         {/* ── Riprendi: l'esercizio da fare adesso (unico gradiente della pagina) ── */}
         <section className="space-y-3" aria-label="Da fare adesso">
@@ -522,31 +453,8 @@ export default function StrumentiPage() {
           )}
         </section>
 
-        {/* ── Come affrontare le difficoltà ── */}
-        {diffCards.length > 0 && (
-          <section className="space-y-3" aria-label="Come affrontare le difficoltà">
-            <SectionTitle size="lg" title="Quando si fa dura" subtitle="Una guida per ogni situazione, cresce mentre avanzi" />
-            {showDiffDetails ? (
-              <details className="group">
-                <summary className="list-none cursor-pointer rounded-card bg-surface border border-white/6 p-4 flex items-center justify-between gap-3 min-h-[56px] hover:bg-surface-2 [&::-webkit-details-marker]:hidden">
-                  <span className="text-body font-semibold text-app">{diffCards.length} situazioni</span>
-                  <ChevronDown size={18} className="text-faint flex-shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
-                </summary>
-                <div className="mt-3">{diffList}</div>
-              </details>
-            ) : diffList}
-          </section>
-        )}
-
-        {/* ── In fondo: Carta del Giocatore e, per chi non ha Season 1, la parte bloccata della Testa ── */}
+        {/* ── In fondo, per chi non ha il Mente: la parte bloccata (la Carta è nel Profilo dall'8/11) ── */}
         <section className="space-y-3" aria-label="Altro">
-          <Card padding="sm" href="/carta" aria-label="Carta del Giocatore">
-            <Row
-              lead={<IconCircle><IdCard size={18} /></IconCircle>}
-              title="Carta del Giocatore"
-              sub="Il tuo gioco mentale, scritto da te"
-            />
-          </Card>
           {!mentaleAttivo && (
             <Card variant="accent" padding="sm" href={conFisico ? '/pricing?pacchetto=completo' : '/pricing?pacchetto=mentale'} aria-label="Il percorso completo: vedi i pacchetti">
               <Row

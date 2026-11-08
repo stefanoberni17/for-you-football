@@ -15,7 +15,7 @@ import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import ResocontoSheet from '@/components/ResocontoSheet';
-import PalestraSwitch, { salvaParte } from '@/components/PalestraSwitch';
+import { PalestraTestata, salvaParte, salvaCorpoAperto } from '@/components/ParteSwitch';
 import FisicoBloccato from '@/components/FisicoBloccato';
 import { primoDaChiedere, resocontoRimandato, rimandaResoconto, saltaResoconto as saltaResocontoLocale, scriviPendenti } from '@/lib/resocontoPendente';
 import type { CampoOggi } from '@/lib/trainingOggi';
@@ -195,16 +195,16 @@ export default function AllenamentoHub() {
       const o = await r.json() as CampoOggi;
       if (!o.accesso) return;
       setOggiLight(o);
-      salvaParte('fisico'); // la tab Palestra riapre qui
+      salvaParte('corpo'); salvaCorpoAperto(true); // le tab Palestra e Chat riaprono il Corpo
       scriviPendenti(o.resocontiDaChiedere ?? []); // il pallino sulla tab legge da qui
     }).catch(() => {});
     setStateErr(false);
     const res = await authFetch('/api/training/state').catch(() => null);
-    if (res?.status === 403) { setNoAccess(true); return; }
+    if (res?.status === 403) { salvaCorpoAperto(false); setNoAccess(true); return; }
     if (res?.ok) {
       const st = await res.json() as TrainingState;
       setState(st);
-      salvaParte('fisico');
+      salvaParte('corpo'); salvaCorpoAperto(true);
       scriviPendenti(st.resocontiDaChiedere ?? []);
     } else setStateErr(true);
     await leggera;
@@ -351,13 +351,9 @@ export default function AllenamentoHub() {
     const s = o.seduta;
     const salta = () => { if (rLight) { saltaResocontoLocale(rLight); setShowResoconto(false); setResocontoTick((t) => t + 1); } };
     return (
-      <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-        <div className="max-w-md mx-auto">
-          <PalestraSwitch parte="fisico" className="mb-4" />
-          <div className="flex items-center justify-between gap-3">
-            <h1 className="font-display text-title-1 font-bold text-app">Campo</h1>
-            <Link href="/allenamento/setup" aria-label="Il tuo setup" className="w-11 h-11 -mr-2 rounded-full flex items-center justify-center text-muted hover:text-app hover:bg-surface-2 transition-colors"><Settings2 size={22} aria-hidden /></Link>
-          </div>
+      <main className="min-h-screen bg-app pb-tabbar-lg">
+        <PalestraTestata parte="corpo" scheda="allenamento" corpoBloccato={false} />
+        <div className="max-w-md mx-auto px-5 mt-4">
           {stateErr ? (
             <p className="text-body-sm text-warning mb-4 flex items-center gap-2 flex-wrap">Non sono riuscito a caricare il resto. <Button variant="ghost" size="sm" onClick={() => load()} className="-my-2">Riprova</Button></p>
           ) : (
@@ -421,10 +417,9 @@ export default function AllenamentoHub() {
     const docs = [...(mancaIdoneita ? ['training_idoneita'] : []), ...(mancaSalute ? ['health_data'] : [])];
     const pronto = (!mancaIdoneita || okIdoneita) && (!mancaSalute || okSalute);
     return (
-      <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-        <div className="max-w-md mx-auto">
-          <PalestraSwitch parte="fisico" className="mb-4" />
-          <h1 className="font-display text-title-1 font-bold text-app mb-1">Campo</h1>
+      <main className="min-h-screen bg-app pb-tabbar-lg">
+        <PalestraTestata parte="corpo" scheda="allenamento" corpoBloccato={false} />
+        <div className="max-w-md mx-auto px-5 mt-4">
           <p className="text-body text-muted mb-5">Prima di iniziare, due cose. Le chiediamo una volta sola.</p>
           <Card padding="sm" className="space-y-4">
             <p className="text-body text-app leading-relaxed">
@@ -990,13 +985,18 @@ export default function AllenamentoHub() {
   };
 
   return (
-    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-      <div className="max-w-md mx-auto">
-        <PalestraSwitch parte="fisico" className="mb-4" />
-        {/* Header compatto: titolo + dolore + setup */}
+    <main className="min-h-screen bg-app pb-tabbar-lg">
+      <PalestraTestata parte="corpo" scheda="allenamento" corpoBloccato={false} />
+      <div className="max-w-md mx-auto px-5 mt-3">
+        {/* Riga compatta (8/11): il livello a sinistra, dolore e setup a destra; il titolo lo dicono le schede */}
         <div className="flex items-center justify-between gap-3">
-          <h1 className="font-display text-title-1 font-bold text-app">Campo</h1>
-          <div className="flex items-center gap-1 -mr-2">
+          <p className="min-w-0 text-body-sm text-muted">
+            {state.abbonamento && !state.abbonamento.manuale && <>Fisico {state.abbonamento.nome}{state.abbonamento.inProva ? ' (in prova)' : ''} · </>}
+            Livello {state.fascia}{livelliDiversi.length > 0 && <> ({livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')})</>}{state.abbonamento?.blocco
+              ? <> · Blocco: settimana {state.abbonamento.blocco.settimana} di {state.abbonamento.blocco.di}</>
+              : !batteriaVuota && <> · Settimana {((Math.max(1, state.ciclo.settimana) - 1) % 4) + 1} di 4 del ciclo</>}
+          </p>
+          <div className="flex shrink-0 items-center gap-1 -mr-2">
             {!state.painHold && (
               <button type="button" onClick={() => { setPainMsg(null); setShowPain(true); }} aria-label="Hai un dolore? Segnalalo"
                 className="w-11 h-11 rounded-full flex items-center justify-center text-warning hover:bg-warning/10 active:bg-warning/15 transition-colors">
@@ -1009,12 +1009,7 @@ export default function AllenamentoHub() {
             </Link>
           </div>
         </div>
-        <p className="text-body-sm text-muted mb-4">
-          {state.abbonamento && !state.abbonamento.manuale && <>Fisico {state.abbonamento.nome}{state.abbonamento.inProva ? ' (in prova)' : ''} · </>}
-          Livello {state.fascia}{livelliDiversi.length > 0 && <> ({livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')})</>}{state.abbonamento?.blocco
-            ? <> · Blocco: settimana {state.abbonamento.blocco.settimana} di {state.abbonamento.blocco.di}</>
-            : !batteriaVuota && <> · Settimana {((Math.max(1, state.ciclo.settimana) - 1) % 4) + 1} di 4 del ciclo</>}
-        </p>
+        <div className="mb-4" />
 
         {/* In pausa (3/11): sola lettura, niente sedute né piani nuovi */}
         {state.abbonamento?.inPausa && (

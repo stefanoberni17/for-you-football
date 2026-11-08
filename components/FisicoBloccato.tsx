@@ -9,7 +9,7 @@ import { isPaywallActive } from '@/lib/checkAccess';
 import { TESTI_PACCHETTI } from '@/lib/pacchettiTesti';
 import { DAY_SHORT_NAMES } from '@/lib/constants';
 import { Button, Card } from '@/components/ui';
-import PalestraSwitch from '@/components/PalestraSwitch';
+import { PalestraTestata } from '@/components/ParteSwitch';
 
 const INTERESSE_KEY = 'campo.interesse';
 
@@ -58,10 +58,10 @@ export default function FisicoBloccato() {
   const finta: Record<number, 'app' | 'fatta' | 'squadra' | 'partita' | null> = { 1: 'fatta', 2: 'squadra', 3: 'app', 4: 'squadra', 5: 'app', 6: 'partita', 7: null };
 
   return (
-    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-      <div className="max-w-md mx-auto">
-        <PalestraSwitch parte="fisico" fisicoBloccato className="mb-5" />
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">Il Campo</h1>
+    <main className="min-h-screen bg-app pb-tabbar-lg">
+      <PalestraTestata parte="corpo" schede={false} corpoBloccato />
+      <div className="max-w-md mx-auto px-5 mt-5">
+        <h1 className="font-display text-title-1 font-bold text-app mb-1">Il Corpo</h1>
         <p className="text-body text-muted leading-relaxed mb-5">
           Un piano di allenamento fisico e tecnico, settimana per settimana, costruito sul tuo calendario con la squadra, sulla partita e sui tuoi test.
         </p>

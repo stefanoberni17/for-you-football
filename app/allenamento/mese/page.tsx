@@ -26,7 +26,7 @@ export default function MesePage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.push('/login'); return; }
       const res = await authFetch('/api/training/mese/replay?settimane=8');
-      if (res.status === 403) { router.push('/strumenti'); return; }
+      if (res.status === 403) { router.push('/allenamento'); return; }
       const json = res.ok ? await res.json() : null;
       if (!vivo) return;
       if (json) setData(json);
@@ -41,7 +41,7 @@ export default function MesePage() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <BackButton href="/allenamento" label="Campo" className="mb-2" />
+        <BackButton back="/profilo" className="mb-2" />
         <h1 className="font-display text-title-1 font-bold text-app mb-1">Le settimane passate</h1>
         <p className="text-body text-muted mb-1">Per ogni lunedì: cosa diceva il conto del mese quel giorno, e cosa è stato fatto davvero.</p>
         <p className="text-body-sm text-muted mb-5">Obiettivi di oggi: {data.obiettivi.length ? data.obiettivi.map((f) => focusLabel(f as FocusId)).join(' › ') : 'nessuno'}</p>
