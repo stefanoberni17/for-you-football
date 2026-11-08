@@ -17,14 +17,13 @@ import { AppLoader, Card } from '@/components/ui';
  * cancella stanno in /account, dietro "Account" in alto a destra.
  */
 
-function Riga({ href, icon, titolo, sotto }: { href: string; icon: ReactNode; titolo: string; sotto: string }) {
+function Riga({ href, icon, titolo }: { href: string; icon: ReactNode; titolo: string; sotto?: string }) {
   return (
     <Card padding="sm" href={href} aria-label={titolo}>
-      <span className="flex min-h-[44px] items-center gap-3">
+      <span className="flex min-h-[48px] items-center gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-2 text-forest-400" aria-hidden>{icon}</span>
         <span className="min-w-0 flex-1">
           <span className="block text-body-lg font-semibold text-app">{titolo}</span>
-          <span className="block text-body-sm text-muted">{sotto}</span>
         </span>
         <ChevronRight size={18} className="shrink-0 text-faint" aria-hidden />
       </span>

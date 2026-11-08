@@ -404,7 +404,7 @@ export default function HomePage() {
         } catch { /* no-op */ }
       }}
     >
-      <p className="text-body text-app leading-relaxed">{profile.last_coach_message}</p>
+      <p className="text-body text-app leading-relaxed line-clamp-3">{profile.last_coach_message}</p>
     </Banner>
   ) : null;
 
@@ -435,7 +435,7 @@ export default function HomePage() {
             <span className="w-10 h-10 rounded-btn bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><MessageCircle size={18} /></span>
             <span className="flex-1 min-w-0">
               <span className="block text-body font-semibold text-app">{resocontoDaChiedere.tipo === 'partita' ? `Com'è andata la partita${ieri ? ' di ieri' : ''}?` : `Com'è andata con la squadra${ieri ? ' ieri' : ''}?`}</span>
-              <span className="block text-body-sm text-muted">30 secondi: fatica vera, minuti, fastidi. La settimana si adatta.</span>
+              <span className="block text-body-sm text-muted">30 secondi</span>
             </span>
             <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />
           </div>
@@ -449,7 +449,7 @@ export default function HomePage() {
             <span className="w-10 h-10 rounded-full bg-danger/15 text-danger flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
             <span className="flex-1 min-w-0">
               <span className="block text-body font-semibold text-app">Allenamenti fisici in pausa</span>
-              <span className="block text-body-sm text-muted">Hai segnalato un dolore. Se è forte o dura da giorni, fatti vedere da un fisioterapista o da un medico. Riparti da Palestra › Corpo.</span>
+              <span className="block text-body-sm text-muted">Hai segnalato un dolore. Se è forte o dura da giorni, fatti vedere da un fisioterapista o da un medico.</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
           </div>
@@ -463,7 +463,7 @@ export default function HomePage() {
             {seduta.stato === 'recuperabile' ? `Da recuperare · era ${DAY_SHORT_NAMES[seduta.giorno]}` : 'Allenamento di oggi'}
           </p>
           <h2 className="font-display text-title-2 font-bold text-app leading-tight">{seduta.titolo}</h2>
-          <p className="text-body-sm text-muted mt-1">~{durataLabel(seduta.durataMin)}{seduta.aperturaMin ? ` (+${seduta.aperturaMin}' di apertura, se hai tempo)` : ''} · {seduta.descrizione}</p>
+          <p className="text-body-sm text-muted mt-1">~{durataLabel(seduta.durataMin)}</p>
           {(seduta.recupero || seduta.proposte.length > 0) && (
             <div className="flex flex-wrap gap-1.5 mt-2">
               {seduta.recupero && <Badge tone="info">Recupero</Badge>}
@@ -484,18 +484,18 @@ export default function HomePage() {
           <span className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${tone === 'done' ? 'bg-forest-500/15 text-forest-400' : 'bg-surface-2 text-muted'}`} aria-hidden>{icona}</span>
           <span className="flex-1 min-w-0">
             <span className="block text-body font-semibold text-app">{titolo}</span>
-            <span className="block text-body-sm text-muted">{sub}</span>
+            {sub && <span className="block text-body-sm text-muted">{sub}</span>}
           </span>
           <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
         </div>
       </Card>
     );
     if (fattaOggi) return riga('Allenamento di oggi: fatto', fattaOggi.titolo, <Check size={18} strokeWidth={3} />, 'done');
-    if (oggiPartita) return riga('Oggi partita', 'In bocca al lupo. Stasera, o domani, dimmi com\'è andata.', <Trophy size={18} />);
-    if (oggiSquadra) return riga('Oggi con la squadra', campo.prossima ? `Con l'app: ${DAY_SHORT_NAMES[campo.prossima.giorno]}, ${campo.prossima.titolo}` : 'Stasera, o domani, dimmi com\'è andata.', <Dumbbell size={18} />);
-    if (!campo.haPiano) return riga('La tua settimana non c\'è ancora', 'Apri il Campo: il preparatore la compone sui tuoi giorni.', <Dumbbell size={18} />);
-    if (campo.prossima) return riga('Oggi riposo', `La prossima è ${DAY_SHORT_NAMES[campo.prossima.giorno]}: ${campo.prossima.titolo} · ~${durataLabel(campo.prossima.durataMin)}`, <Dumbbell size={18} />);
-    return riga('Per questa settimana hai finito', 'Lunedì arriva la prossima settimana.', <Check size={18} strokeWidth={3} />, 'done');
+    if (oggiPartita) return riga('Oggi partita', 'In bocca al lupo', <Trophy size={18} />);
+    if (oggiSquadra) return riga('Oggi con la squadra', campo.prossima ? `Con l'app: ${DAY_SHORT_NAMES[campo.prossima.giorno]}` : '', <Dumbbell size={18} />);
+    if (!campo.haPiano) return riga('La tua settimana non c\'è ancora', 'Toccala per prepararla', <Dumbbell size={18} />);
+    if (campo.prossima) return riga('Oggi riposo', `La prossima: ${DAY_SHORT_NAMES[campo.prossima.giorno]}`, <Dumbbell size={18} />);
+    return riga('Per questa settimana hai finito', 'La prossima arriva lunedì', <Check size={18} strokeWidth={3} />, 'done');
   })();
 
   // Pratica di oggi già fatta (il prossimo giorno si apre domattina): una riga con la spunta, non più l'hero
@@ -504,22 +504,6 @@ export default function HomePage() {
   const bloccoMente = (
     <section className="space-y-3" aria-label="Mente, oggi">
       <h2 className="flex items-center gap-2 px-1 font-display text-title-3 font-bold text-app"><Brain size={20} className="text-forest-300" aria-hidden /> Mente</h2>
-      {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
-          (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
-      {profile?.current_week === 1 && totalCompleted === 0 && (
-        <Card padding="md" className="border-l-4 border-l-forest-400">
-          <p className="text-body font-bold text-app mb-1">Ciao, {profile?.name}.</p>
-          <p className="text-body font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
-          <p className="text-body text-muted leading-relaxed">
-            Molti giocatori scoprono che non è la tecnica il problema.
-            È restare nella partita.
-          </p>
-          <p className="text-body text-muted mt-1">
-            Oggi impari il primo strumento. 3 minuti.
-          </p>
-        </Card>
-      )}
-
       {/* ─── 1. La pratica mentale di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina.
               Fatta → una riga con la spunta (20/10). ─── */}
       {allDone ? (
@@ -545,7 +529,7 @@ export default function HomePage() {
             <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
             <span className="flex-1 min-w-0">
               <span className="block text-body font-semibold text-app">Sei in pausa</span>
-              <span className="block text-body-sm text-muted">Il percorso riparte quando riprendi. Carta e risposte restano aperte.</span>
+              <span className="block text-body-sm text-muted">Il percorso riparte quando riprendi</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
           </div>
@@ -557,7 +541,7 @@ export default function HomePage() {
             <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
             <span className="flex-1 min-w-0">
               <span className="block text-body font-semibold text-app">La testa · il percorso mentale</span>
-              <span className="block text-body-sm text-muted">12 settimane con il Coach: c&apos;è nel Mente e nel Completo.</span>
+              <span className="block text-body-sm text-muted">Nel Mente e nel Completo</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
           </div>
@@ -568,7 +552,7 @@ export default function HomePage() {
             <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Check size={18} strokeWidth={3} /></span>
             <span className="flex-1 min-w-0">
               <span className="block text-body font-semibold text-app">Pratica di oggi: fatta</span>
-              <span className="block text-body-sm text-muted">Settimana {nextDay.week}, Giorno {nextDay.day} si apre domattina.{primiGiorni ? '' : ' Intanto la Palestra è aperta.'}</span>
+              <span className="block text-body-sm text-muted">Il prossimo si apre domattina</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
           </div>
@@ -584,7 +568,7 @@ export default function HomePage() {
           <p className="text-forest-100 text-body-sm mt-1.5">
             {comebackMode
               ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
-              : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
+              : `Giorno ${nextDay.day}${todayMinutes ? ` · ${todayMinutes} min` : ''}`}
           </p>
           <div className="mt-4">
             {nextDayInCorso ? (
@@ -598,7 +582,7 @@ export default function HomePage() {
             )}
             {nextDayInCorso && (
               <p className="text-forest-100 text-body-sm mt-2">
-                {riflessioneOk ? 'Giornata avviata. Se vuoi, chiudila con una riga di riflessione: è facoltativa.' : `Vivi la giornata. Più tardi, se vuoi, una riga di riflessione (dalle ${riflessioneAlle}).`}
+                {riflessioneOk ? 'Se vuoi, chiudila con una riga.' : `Più tardi, se vuoi, una riga (dalle ${riflessioneAlle}).`}
               </p>
             )}
           </div>
@@ -619,7 +603,6 @@ export default function HomePage() {
         </Card>
       )}
 
-      {totalCompleted < 3 && coachCard}
 
       {/* ─── 3. Le tue 5 azioni — checklist collassabile inline; non nei primi 7 giorni ─── */}
       {!primiGiorni && (
@@ -713,7 +696,6 @@ export default function HomePage() {
               Settimana
             </Button>
           </div>
-          <p className="text-caption text-faint mt-1">Pallino = pratica del percorso fatta · S = squadra · manubrio = seduta con l&apos;app</p>
         </Card>
 
         {/* Popup calendario */}
@@ -735,8 +717,8 @@ export default function HomePage() {
           <BirthdateBanner userId={userId} hasBirthDate={!!profile.birth_date} />
         )}
 
-        {/* Ultimo messaggio Coach — in fondo solo dopo i primi 3 giorni (prima sta sotto l'hero) */}
-        {totalCompleted >= 3 && coachCard}
+        {/* Ultimo messaggio Coach: sempre in fondo, tre righe (8/11: in cima copriva la pratica) */}
+        {coachCard}
 
         {/* Banner settimanale lunedì (con 0 azioni ci pensa l'empty-state di ActionsCard) */}
         {weeklyBannerVisible && (

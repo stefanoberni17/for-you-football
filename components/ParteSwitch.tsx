@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Brain, Dumbbell, Lock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import BackButton from '@/components/ui/BackButton';
 import { livelloFisico } from '@/lib/checkAccess';
 import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
 
@@ -180,20 +181,27 @@ export const SCHEDE_CORPO = [
   { id: 'test', label: 'Test', href: '/allenamento/test' },
 ];
 
+const TITOLI: Record<string, string> = {
+  'mente:percorso': 'Percorso', 'mente:allenamento': 'Allenamento', 'mente:dura': 'Quando si fa dura',
+  'corpo:allenamento': 'Allenamento', 'corpo:test': 'Test',
+};
+
 /**
- * La testata della Palestra: il selettore e le schede della parte. Va in cima alle pagine
- * /settimane, /strumenti, /sos (Mente) e /allenamento, /allenamento/test (Corpo).
- * `schede={false}` per il Corpo bloccato (una pagina sola, l'assaggio).
+ * La testata delle pagine dentro la Palestra (8/11): da fuori si sceglie con le card con la foto (/palestra),
+ * dentro restano solo «Palestra» per tornare e il nome della sezione. Prima qui c'erano selettore e schede.
+ * Va in cima a /settimane, /strumenti, /sos (Mente) e /allenamento, /allenamento/test (Corpo).
+ * `schede={false}`: niente titolo (il Corpo bloccato ha il suo).
  */
 export function PalestraTestata({ parte, scheda, schede = true, corpoBloccato, className = '' }: {
   parte: Parte; scheda?: string; schede?: boolean; corpoBloccato?: boolean; className?: string;
 }) {
   useEffect(() => { if (parte === 'mente' || corpoBloccato === false) salvaParte(parte); }, [parte, corpoBloccato]);
+  const titolo = schede ? TITOLI[`${parte}:${scheda ?? ''}`] : undefined;
   return (
     <div className={`bg-app px-4 pt-safe ${className}`}>
       <div className="mx-auto max-w-xl">
-        <ParteSwitch parte={parte} hrefs={{ mente: '/settimane', corpo: '/allenamento' }} corpoBloccato={corpoBloccato} />
-        {schede && <SottoSchede voci={parte === 'mente' ? SCHEDE_MENTE : SCHEDE_CORPO} attiva={scheda ?? ''} />}
+        <BackButton href="/palestra" label="Palestra" />
+        {titolo && <h1 className="font-display text-title-1 font-bold text-app">{titolo}</h1>}
       </div>
     </div>
   );

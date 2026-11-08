@@ -52,8 +52,8 @@ export default function BottomTabBar() {
   const tabs = [
     { id: 'home', href: '/', label: 'Home', icon: Home, attiva: pathname === '/' || pathname === '/oggi' },
     {
-      id: 'palestra', href: corpo ? '/allenamento' : '/settimane', label: 'Palestra', icon: Dumbbell,
-      attiva: (inizia('/settimane', '/settimana', '/giorno', '/gate', '/week-complete', '/strumenti', '/sos', '/allenamento')
+      id: 'palestra', href: '/palestra', label: 'Palestra', icon: Dumbbell,
+      attiva: (inizia('/palestra', '/settimane', '/settimana', '/giorno', '/gate', '/week-complete', '/strumenti', '/sos', '/allenamento')
         && !inizia('/allenamento/chat') && !profiloCorpo),
     },
     { id: 'chat', href: corpo ? '/allenamento/chat' : '/chat', label: 'Chat', icon: MessageCircle, attiva: inizia('/chat', '/allenamento/chat') },

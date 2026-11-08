@@ -203,7 +203,6 @@ function SosContent() {
       <PalestraTestata parte="mente" scheda="dura" />
 
       <div className="max-w-xl mx-auto px-4 mt-4 space-y-3">
-        <p className="text-body text-muted px-1">Scegli la situazione: trovi cosa fare subito.</p>
         {cards.length === 0 && (
           <EmptyState
             icon={<Zap size={24} aria-hidden="true" />}
