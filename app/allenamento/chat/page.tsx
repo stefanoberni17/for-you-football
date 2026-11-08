@@ -90,8 +90,9 @@ export default function TrainingChatPage() {
         {/* Chat › Corpo (8/11): il selettore al posto del "torna al Campo" */}
         <div className="px-4 pb-2">
           <ParteSwitch parte="corpo" hrefs={{ mente: '/chat', corpo: '/allenamento/chat' }} corpoBloccato={false} />
-          <p className="mt-2 text-body-sm text-muted text-center">
-            Il preparatore AI{rimasti != null ? ` · ${rimasti > 0 ? `ti restano ${rimasti} messaggi questo mese` : 'messaggi finiti: ripartono il primo del mese'}` : ''}. È un&apos;AI, può sbagliare.
+          <p className="mt-2 text-body-sm text-muted text-center leading-snug">
+            Il preparatore: un&apos;AI, non una persona. Può sbagliare.
+            {rimasti != null && <> {rimasti > 0 ? `Ti restano ${rimasti} messaggi questo mese.` : 'Messaggi finiti: ripartono il primo del mese.'}</>}
           </p>
         </div>
 

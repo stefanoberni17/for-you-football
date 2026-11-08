@@ -28,7 +28,7 @@ import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
 import BirthdateBanner from '@/components/BirthdateBanner';
-import { Calendar, Flame, Target, Bot, Play, Dumbbell, Trophy, Check, ChevronRight, Sun, Lock, MessageCircle, Pause } from 'lucide-react';
+import { Brain, Calendar, Flame, Target, Bot, Play, Dumbbell, Trophy, Check, ChevronRight, Sun, Lock, MessageCircle, Pause } from 'lucide-react';
 import { AppLoader, Badge, Banner, Button, Card, SectionTitle } from '@/components/ui';
 
 /**
@@ -415,12 +415,12 @@ export default function HomePage() {
     if (!campoAttivo) {
       if (primiGiorni) return null;
       return (
-        <Card padding="sm" href="/allenamento" aria-label="Fisico: scopri il Campo">
+        <Card padding="sm" href="/allenamento" aria-label="Corpo: scopri cos'è">
           <div className="flex items-center gap-3 min-h-[44px]">
             <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
             <span className="flex-1 min-w-0">
-              <span className="block text-body font-semibold text-app">Fisico</span>
-              <span className="block text-body-sm text-muted">Allenamento fisico e tecnico, settimana per settimana. Scopri cos&apos;è.</span>
+              <span className="block text-body font-semibold text-app">Allenamento fisico e tecnico</span>
+              <span className="block text-body-sm text-muted">Settimana per settimana, sul tuo calendario. Scopri cos&apos;è.</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
           </div>
@@ -501,6 +501,149 @@ export default function HomePage() {
   // Pratica di oggi già fatta (il prossimo giorno si apre domattina): una riga con la spunta, non più l'hero
   const praticaFatta = !allDone && nextDayLocked;
 
+  const bloccoMente = (
+    <section className="space-y-3" aria-label="Mente, oggi">
+      <h2 className="flex items-center gap-2 px-1 font-display text-title-3 font-bold text-app"><Brain size={20} className="text-forest-300" aria-hidden /> Mente</h2>
+      {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
+          (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
+      {profile?.current_week === 1 && totalCompleted === 0 && (
+        <Card padding="md" className="border-l-4 border-l-forest-400">
+          <p className="text-body font-bold text-app mb-1">Ciao, {profile?.name}.</p>
+          <p className="text-body font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
+          <p className="text-body text-muted leading-relaxed">
+            Molti giocatori scoprono che non è la tecnica il problema.
+            È restare nella partita.
+          </p>
+          <p className="text-body text-muted mt-1">
+            Oggi impari il primo strumento. 3 minuti.
+          </p>
+        </Card>
+      )}
+
+      {/* ─── 1. La pratica mentale di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina.
+              Fatta → una riga con la spunta (20/10). ─── */}
+      {allDone ? (
+        <Card variant="hero" padding="md">
+          <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
+          <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta</h2>
+          <p className="text-forest-100 text-body-sm mt-1 mb-4">
+            Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
+          </p>
+          <div className="space-y-2">
+            <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+              Allenati in Palestra
+            </Button>
+            <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
+              Rivedi il traguardo
+            </Button>
+          </div>
+        </Card>
+      ) : profile && inPausa(profile) ? (
+        // In pausa (3/11): il percorso aspetta, la Carta e le risposte restano aperte
+        <Card padding="sm" href="/pausa" aria-label="Sei in pausa">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">Sei in pausa</span>
+              <span className="block text-body-sm text-muted">Il percorso riparte quando riprendi. Carta e risposte restano aperte.</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      ) : profile && isPaywallActive() && livelloFisico(profile) && !canAccessWeek(profile, nextDay.week) ? (
+        // Solo il Fisico (3/11): la testa è nel Mente o nel Completo; una riga, non l'hero (l'hero è l'allenamento)
+        <Card padding="sm" href="/pricing?pacchetto=completo" aria-label="Aggiungi la testa: il Completo">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">La testa · il percorso mentale</span>
+              <span className="block text-body-sm text-muted">12 settimane con il Coach: c&apos;è nel Mente e nel Completo.</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      ) : praticaFatta ? (
+        <Card padding="sm" href={`/settimana/${currentWeek}`} aria-label="Pratica di oggi: fatta">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Check size={18} strokeWidth={3} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">Pratica di oggi: fatta</span>
+              <span className="block text-body-sm text-muted">Settimana {nextDay.week}, Giorno {nextDay.day} si apre domattina.{primiGiorni ? '' : ' Intanto la Palestra è aperta.'}</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      ) : (
+        <Card variant="hero" padding="md">
+          <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
+            {comebackMode ? 'Bentornato' : `Settimana ${currentWeek} · ${WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || ''}`}
+          </p>
+          <h2 className="font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
+            {todayTitle || `Giorno ${nextDay.day}`}
+          </h2>
+          <p className="text-forest-100 text-body-sm mt-1.5">
+            {comebackMode
+              ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
+              : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
+          </p>
+          <div className="mt-4">
+            {nextDayInCorso ? (
+              <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+                {riflessioneOk ? "Com'è andata oggi?" : 'Continua la pratica di oggi'}
+              </Button>
+            ) : (
+              <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
+                {totalCompleted === 0 ? 'Inizia il Giorno 1' : `Inizia il Giorno ${nextDay.day}`}
+              </Button>
+            )}
+            {nextDayInCorso && (
+              <p className="text-forest-100 text-body-sm mt-2">
+                {riflessioneOk ? 'Giornata avviata. Se vuoi, chiudila con una riga di riflessione: è facoltativa.' : `Vivi la giornata. Più tardi, se vuoi, una riga di riflessione (dalle ${riflessioneAlle}).`}
+              </p>
+            )}
+          </div>
+        </Card>
+      )}
+
+      {/* L'esercizio della settimana (31/10): presenza nella vita di tutti i giorni, dopo il G1 della settimana */}
+      <EsercizioSettimanaCard />
+
+      {/* Missione della settimana — dal gate appena superato */}
+      {weeklyMission && !allDone && (
+        <Card variant="accent" padding="sm">
+          <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1.5 flex items-center gap-1.5">
+            <Target className="w-3.5 h-3.5" aria-hidden="true" />
+            Missione della settimana
+          </p>
+          <p className="text-body text-app leading-relaxed">{weeklyMission}</p>
+        </Card>
+      )}
+
+      {totalCompleted < 3 && coachCard}
+
+      {/* ─── 3. Le tue 5 azioni — checklist collassabile inline; non nei primi 7 giorni ─── */}
+      {!primiGiorni && (
+        <ActionsCard
+          total={actionsTotal}
+          todayCount={actionsTodayCount}
+          streak={actionsStreak}
+          actions={actions}
+          onToggle={handleActionToggle}
+        />
+      )}
+    </section>
+  );
+  // Il Corpo: la seduta di oggi (o la riga col lucchetto, o niente nei primi 7 giorni senza il Campo)
+  const bloccoCorpo = cardAllenamento ? (
+    <section className="space-y-3" aria-label="Corpo, oggi">
+      <h2 className="flex items-center gap-2 px-1 font-display text-title-3 font-bold text-app"><Dumbbell size={20} className="text-forest-300" aria-hidden /> Corpo</h2>
+      {cardAllenamento}
+    </section>
+  ) : null;
+  // Chi ha solo il Fisico vede prima il Corpo: la testa per lui è una riga col lucchetto
+  const corpoPrima = !!profile && isPaywallActive() && !!livelloFisico(profile) && !hasActiveAccess(profile);
+
+
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
       {/* Header: saluto in una riga + streak; il mantra della settimana sotto, nel font delle citazioni */}
@@ -520,137 +663,9 @@ export default function HomePage() {
         )}
       </div>
 
-      <div className="max-w-2xl mx-auto space-y-5">
-        {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
-            (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
-        {profile?.current_week === 1 && totalCompleted === 0 && (
-          <Card padding="md" className="border-l-4 border-l-forest-400">
-            <p className="text-body font-bold text-app mb-1">Ciao, {profile?.name}.</p>
-            <p className="text-body font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
-            <p className="text-body text-muted leading-relaxed">
-              Molti giocatori scoprono che non è la tecnica il problema.
-              È restare nella partita.
-            </p>
-            <p className="text-body text-muted mt-1">
-              Oggi impari il primo strumento. 3 minuti.
-            </p>
-          </Card>
-        )}
-
-        {/* ─── 1. La pratica mentale di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina.
-                Fatta → una riga con la spunta (20/10). ─── */}
-        {allDone ? (
-          <Card variant="hero" padding="md">
-            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
-            <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta</h2>
-            <p className="text-forest-100 text-body-sm mt-1 mb-4">
-              Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
-            </p>
-            <div className="space-y-2">
-              <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
-                Allenati in Palestra
-              </Button>
-              <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
-                Rivedi il traguardo
-              </Button>
-            </div>
-          </Card>
-        ) : profile && inPausa(profile) ? (
-          // In pausa (3/11): il percorso aspetta, la Carta e le risposte restano aperte
-          <Card padding="sm" href="/pausa" aria-label="Sei in pausa">
-            <div className="flex items-center gap-3 min-h-[44px]">
-              <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-body font-semibold text-app">Sei in pausa</span>
-                <span className="block text-body-sm text-muted">Il percorso riparte quando riprendi. Carta e risposte restano aperte.</span>
-              </span>
-              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-            </div>
-          </Card>
-        ) : profile && isPaywallActive() && livelloFisico(profile) && !canAccessWeek(profile, nextDay.week) ? (
-          // Solo il Fisico (3/11): la testa è nel Mente o nel Completo; una riga, non l'hero (l'hero è l'allenamento)
-          <Card padding="sm" href="/pricing?pacchetto=completo" aria-label="Aggiungi la testa: il Completo">
-            <div className="flex items-center gap-3 min-h-[44px]">
-              <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-body font-semibold text-app">La testa · il percorso mentale</span>
-                <span className="block text-body-sm text-muted">12 settimane con il Coach: c&apos;è nel Mente e nel Completo.</span>
-              </span>
-              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-            </div>
-          </Card>
-        ) : praticaFatta ? (
-          <Card padding="sm" href={`/settimana/${currentWeek}`} aria-label="Pratica di oggi: fatta">
-            <div className="flex items-center gap-3 min-h-[44px]">
-              <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Check size={18} strokeWidth={3} /></span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-body font-semibold text-app">Pratica di oggi: fatta</span>
-                <span className="block text-body-sm text-muted">Settimana {nextDay.week}, Giorno {nextDay.day} si apre domattina.{primiGiorni ? '' : ' Intanto la Palestra è aperta.'}</span>
-              </span>
-              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-            </div>
-          </Card>
-        ) : (
-          <Card variant="hero" padding="md">
-            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
-              {comebackMode ? 'Bentornato' : `Settimana ${currentWeek} · ${WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || ''}`}
-            </p>
-            <h2 className="font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
-              {todayTitle || `Giorno ${nextDay.day}`}
-            </h2>
-            <p className="text-forest-100 text-body-sm mt-1.5">
-              {comebackMode
-                ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
-                : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
-            </p>
-            <div className="mt-4">
-              {nextDayInCorso ? (
-                <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                  {riflessioneOk ? "Com'è andata oggi?" : 'Continua la pratica di oggi'}
-                </Button>
-              ) : (
-                <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                  {totalCompleted === 0 ? 'Inizia il Giorno 1' : `Inizia il Giorno ${nextDay.day}`}
-                </Button>
-              )}
-              {nextDayInCorso && (
-                <p className="text-forest-100 text-body-sm mt-2">
-                  {riflessioneOk ? 'Giornata avviata. Se vuoi, chiudila con una riga di riflessione: è facoltativa.' : `Vivi la giornata. Più tardi, se vuoi, una riga di riflessione (dalle ${riflessioneAlle}).`}
-                </p>
-              )}
-            </div>
-          </Card>
-        )}
-
-        {/* L'esercizio della settimana (31/10): presenza nella vita di tutti i giorni, dopo il G1 della settimana */}
-        <EsercizioSettimanaCard />
-
-        {/* ─── 2. L'allenamento di oggi (Campo); senza il Campo, la riga col lucchetto ─── */}
-        {cardAllenamento}
-
-        {/* Missione della settimana — dal gate appena superato */}
-        {weeklyMission && !allDone && (
-          <Card variant="accent" padding="sm">
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1.5 flex items-center gap-1.5">
-              <Target className="w-3.5 h-3.5" aria-hidden="true" />
-              Missione della settimana
-            </p>
-            <p className="text-body text-app leading-relaxed">{weeklyMission}</p>
-          </Card>
-        )}
-
-        {totalCompleted < 3 && coachCard}
-
-        {/* ─── 3. Le tue 5 azioni — checklist collassabile inline; non nei primi 7 giorni ─── */}
-        {!primiGiorni && (
-          <ActionsCard
-            total={actionsTotal}
-            todayCount={actionsTodayCount}
-            streak={actionsStreak}
-            actions={actions}
-            onToggle={handleActionToggle}
-          />
-        )}
+      <div className="max-w-2xl mx-auto space-y-7">
+        {/* ─── Home a due blocchi (8/11, Ste: "home con le cose del giorno, divisa tra mente e corpo") ─── */}
+        {corpoPrima ? <>{bloccoCorpo}{bloccoMente}</> : <>{bloccoMente}{bloccoCorpo}</>}
 
         {/* ─── 4. La tua settimana: una riga di 7 giorni che dice tutto (percorso, sedute dell'app, squadra, partita) ─── */}
         <Card padding="md">

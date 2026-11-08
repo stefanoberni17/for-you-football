@@ -73,7 +73,7 @@ export default function ProfiloPage() {
           </div>
           <div className="min-w-0 flex-1 pt-1">
             <h1 className="truncate font-display text-title-1 font-bold text-app">{nome || 'Il tuo profilo'}</h1>
-            <p className="truncate text-body text-muted">{chi || `Settimana ${settimana}`}</p>
+            <p className="text-body text-muted">{chi || `Settimana ${settimana}`}</p>
           </div>
           <Link href="/account" aria-label="Account: dati, abbonamento, notifiche"
             className="-mr-2 flex h-11 shrink-0 items-center gap-1.5 rounded-full px-3 text-body-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-app">
