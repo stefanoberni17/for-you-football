@@ -1,256 +1,474 @@
-# Revisione dell'esperienza cliente, 9 novembre 2026
+# Revisione dell'esperienza cliente, 9 novembre 2026 (seconda versione)
 
-Ste: «una revisione completa dell'esperienza cliente, basata sul codice attuale e sulle osservazioni raccolte nella preview. Prima di modificare il prodotto, restituisci il piano». Questo è il piano: **non ho cambiato niente nell'app**. Ogni merge aspetta il «vai» di Ste.
+Ste: «una revisione completa dell'esperienza cliente, basata sul codice attuale e sulle osservazioni raccolte nella preview. Prima di modificare il prodotto, restituisci il piano». Seconda versione, con i dieci punti di Ste della sera del 9/11. **Non ho cambiato niente nell'app.** Ogni merge aspetta il «vai».
+
+Già deciso da Ste (9/11): una sola azione suggerita dalla settimana 2, ampliabile piano piano; primo piano del Corpo automatico appena ci sono le condizioni necessarie; colori della settimana **squadra giallo-arancio, partita rosso, sedute dell'app blu**, con etichette e simboli.
 
 ## 0. Base e stato delle osservazioni
 
-- **Preview:** branch `claude/fyf-training-analysis-7id8v4`, commit `0945e1f` (9/11), https://for-you-football-git-claude-f-3fee51-stefanos-projects-258ab1a6.vercel.app
-- **Le osservazioni del 9/11** sono state raccolte con un account alla settimana 12, accesso gratuito (beta), Corpo attivo. Per un ragazzo nuovo valgono solo in parte: le cose di questo documento sono divise in **confermate dal codice**, **ipotesi** (da verificare con un account vero) e **già risolte**.
-- **Non verificato:** registrazione, acquisto con la carta, primo ingresso da account nuovo (onboarding, prova), chat del Coach e del preparatore dal vivo. Vanno rifatti con un account nuovo (indirizzo `+` di Ste) prima di chiudere le fasi 2 e 3.
-- **Già risolte il 9/11:** la pagina bianca dopo un aggiornamento (`app/error.tsx`), i colori Mente/Corpo su bottoni e card, l'emoji nel primo messaggio del preparatore.
-- **Da tenere** (Ste): l'identità scura con verde Mente e blu Corpo, l'attività di oggi in evidenza, le pratiche brevi, «Quando si fa dura», la personalizzazione fisica, la memoria delle risposte, il legame Reset ↔ allenamento, i controlli del player.
+- **Preview:** branch `claude/fyf-training-analysis-7id8v4`, commit del codice `0945e1f` (9/11).
+- **Le osservazioni del 9/11** vengono da un account alla settimana 12, beta gratis, con il Corpo. Ogni punto qui sotto è **confermato dal codice** (con file e riga), **ipotesi** (da verificare con un account nuovo) o **già risolto**.
+- **Non verificato:** registrazione, acquisto, primo ingresso da account nuovo, chat del Coach e del preparatore dal vivo.
+- **Già risolte il 9/11:** pagina bianca dopo un aggiornamento (`app/error.tsx`), colori Mente/Corpo su bottoni e card, emoji nel primo messaggio del preparatore.
+- **Da tenere:** identità scura con verde Mente e blu Corpo, l'attività di oggi in evidenza, pratiche brevi, «Quando si fa dura», personalizzazione fisica, memoria delle risposte, legame Reset ↔ allenamento, controlli del player.
 
-## 1. Mappa dell'esperienza e degli sblocchi
+## 1. Fase 1 (circoscritta): coerenza di calendario, spiegazioni e storico
+
+È la prima cosa da fare e non dipende dal resto. Niente regole di allenamento nuove (il Campo è congelato), niente migration tranne quella del Gate (1.5).
+
+### 1.1 La settimana in Home: si guarda, poi si modifica
+
+**Oggi** (`app/page.tsx:446-448,597`): il riquadro mostra «Percorso 3/7» e sette barre, ma il tocco apre l'editor «Imposta la tua settimana».
+
+**Proposta.** Il tocco apre una **vista della settimana** in sola lettura. Ogni giorno ha colore, simbolo ed etichetta, perché il colore da solo non basta: arancio e rosso si confondono per chi non distingue bene i colori, e anche al sole.
+
+| Cosa | Colore | Simbolo | Etichetta |
+|---|---|---|---|
+| Allenamento con la squadra | giallo-arancio | lettera **S** | «Squadra» |
+| Partita | rosso | lettera **P** | «Partita» |
+| Seduta dell'app in programma | contorno blu | manubrio | «Seduta» |
+| Seduta dell'app fatta | blu pieno | manubrio con la spunta | «Seduta fatta» |
+| Seduta saltata | contorno blu sbarrato | manubrio | «Saltata» |
+| Pratica del percorso fatta | pallino verde sotto il giorno | — | «Percorso» |
+
+Un giorno con due cose (squadra e seduta, partita e seduta) ha il riquadro diviso a metà: sopra la prima, sotto la seconda, e tutti e due i simboli. Sotto la riga c'è una legenda sola. Nella vista, «Modifica i giorni di squadra e partita» apre l'editor di oggi.
+
+**Accettato quando:**
+- il tocco sul riquadro non apre mai l'editor;
+- ogni giorno ha colore, simbolo ed etichetta leggibile da uno screen reader («Giovedì: squadra e seduta in programma»);
+- i giorni doppi sono divisi a metà;
+- le sedute arrivano dal piano letto come in `/api/training/oggi`, quindi spostamenti, resoconti e posticipi si vedono;
+- senza il Corpo restano solo squadra, partita e percorso;
+- screenshot a 390 px e a 320 px.
+
+### 1.2 «Allenamenti con la squadra»
+
+**Oggi:** «Giorni di allenamento» e «A = allenamento» (`WeeklyCalendarPopup.tsx:95,116,172`), «Il tuo prossimo allenamento è…» (`lib/prossimoEvento.ts:77`), «Allenamenti» nel contesto del Coach (`lib/coach-ai.ts:1184`). In tutti e tre i casi vuol dire con la squadra. Inoltre il salvataggio vuole almeno un giorno (`WeeklyCalendarPopup.tsx:60`): chi ha solo la partita, o è fermo, non può salvare.
+
+**Proposta.** Ovunque si dice «allenamento con la squadra», e il resto diventa «seduta» (vedi glossario §9). Si può salvare anche con zero allenamenti.
+
+**Accettato quando:**
+- nessun testo visibile dice «allenamento» per intendere la squadra senza dirlo;
+- si salva una settimana con la sola partita;
+- il Coach legge «allenamenti con la squadra»;
+- c'è un test di `prossimoEvento`.
+
+### 1.3 Le spiegazioni del piano: riepilogo dai dati, testo del preparatore datato
+
+**Oggi:** i testi del piano (titolo, spiegazione e messaggio della settimana) li scrive il preparatore AI. Poi il server può spostare le sedute in quattro modi:
+- `riparaPiano` alla generazione, prima che il ragazzo veda il piano (`lib/trainingRiparazione.ts:84-101`);
+- l'adattamento al calendario (`lib/trainingPlannerV2.ts:1860-1897`);
+- il posticipo (`app/api/training/plan/route.ts:207`);
+- `ricollocaSedute` (`lib/trainingCalendario.ts:125`).
+
+Nessuno dei quattro tocca i testi, per questo il testo dice «venerdì» e la seduta è giovedì.
+
+**Niente sostituzioni dei nomi dei giorni nei testi.** Le sostituzioni automatiche sbagliano: un «venerdì» può essere la partita, un ricordo o un altro giorno. Due strati separati:
+
+1. **Il riepilogo operativo** viene sempre dai dati del piano letto: per ogni giorno «Giovedì · Gambe e velocità · 50'», con lo stato. Lo scrive il server, non il preparatore, quindi è sempre giusto. È quello che si vede in alto nella scheda Settimana, in Home e nella vista della settimana (1.1).
+2. **Il testo del preparatore** resta com'è stato scritto, sotto un'intestazione datata: «La proposta del preparatore · lunedì 9/11». Il testo non si riscrive, perché è un documento di quel momento.
+
+Quando il testo e il calendario non coincidono più, si dice invece di correggere:
+- **Seduta spostata dopo che il ragazzo l'ha vista** (adattamento, posticipo): sopra la spiegazione «Pensata per venerdì, spostata a giovedì il 10/11: il venerdì ora c'è la partita». È storia vera.
+- **Seduta spostata alla generazione** (`riparaPiano`): il ragazzo non ha mai visto venerdì, quindi non è storia. La seduta porta «Il preparatore l'aveva messa venerdì: l'app l'ha spostata a giovedì perché…».
+- **Messaggio della settimana con giorni cambiati:** se il server ha spostato almeno una seduta dopo la sua scrittura, sotto l'intestazione c'è «Da allora 2 sedute sono cambiate: il programma giusto è qui sopra».
+- **In più, alla fonte:** nel prompt del planner una regola di formato (non di allenamento) chiede di non scrivere giorni della settimana in titolo e spiegazione delle sedute («la seduta dopo la partita» va bene).
+
+**Dati, senza migration.** Ogni seduta del piano (JSON in `training_plans.plan`) porta `spostamenti: [{ da, a, quando, perche, fonte }]`, con `fonte` uguale a 'generazione' | 'calendario' | 'posticipo'. I piani vecchi non ce l'hanno e restano come sono: nessuna nota, nessun errore.
+
+**Accettato quando:**
+- in un test, un piano con «venerdì» nella spiegazione e la seduta spostata a giovedì mostra il riepilogo con giovedì, il testo invariato e la nota «Pensata per venerdì»;
+- nessuna funzione riscrive i nomi dei giorni dentro i testi;
+- i piani salvati prima della modifica si aprono senza note e senza errori.
+
+### 1.4 Lo storico degli spostamenti: una riga per seduta, la storia sotto
+
+**Oggi:** «Ho sistemato 6 cose» somma le righe di generazione, adattamento, resoconti, dolore e aumenti. Una seduta può avere «Ven → Gio» e poi «Gio → Mar». Il numero conta righe che la lista non mostra (`slice(0, 6)`, `app/allenamento/page.tsx:767-771`).
+
+**Proposta.**
+- In alto, **una riga per seduta cambiata**, dal primo giorno all'ultimo: «Venerdì → Martedì · il venerdì ora c'è la partita». Il dato viene da `spostamenti` (1.3).
+- Sotto, «Com'è cambiata la settimana»: la lista **completa e datata** dei passaggi (Ven → Gio il 9/11 alla generazione; Gio → Mar il 10/11, calendario cambiato). È storia vera e resta tutta.
+- Gli adattamenti alla lettura (resoconto, dolore, aumenti, serie test) restano nella loro lista. Il numero in alto conta le righe che si vedono.
+
+**Accettato quando:**
+- in un test con due spostamenti della stessa seduta, sopra c'è una riga e sotto due righe datate;
+- il numero coincide con le righe mostrate;
+- nessuna riga si perde.
+
+### 1.5 Le risposte del Gate: domanda e risposta insieme
+
+**Oggi:** le risposte stanno in `user_day_progress.gate_answers` come `{ q1..qN }`, senza il testo delle domande (`app/api/gate/route.ts:115,144`). Chi le legge le accoppia, per posizione, con le domande di **adesso** su Notion.
+
+**Tutti i lettori del formato** (verificati):
+
+| Lettore | Cosa fa | File |
+|---|---|---|
+| Pagina del Gate | Mostra le risposte sotto le domande di adesso | `app/gate/[week]/page.tsx:264-266`, dati da `GET /api/gate` |
+| `GET /api/giorno` | Rimanda `gateAnswers` al client | `app/api/giorno/route.ts:63,90` |
+| «Le tue risposte» | Lista delle risposte senza domande | `lib/risposteServer.ts:70` (`gateLista`), `app/risposte/page.tsx:135` |
+| Carta (la mappa = Gate 3, q1) | Legge e **modifica** `q1` | `lib/risposteServer.ts:84,158,171`, `lib/risposteChiave.ts` (`gateQ`) |
+| Validazione al salvataggio | Una risposta per domanda di adesso | `lib/risposteChiave.ts:63` (`gateRisposteValide`) |
+| Coach, la settimana in corso | Domanda di adesso + risposta | `lib/settimanaCoach.ts:59-69,111`, `lib/coach-ai.ts:911-925` |
+| Coach, i Gate passati | Tutte le chiavi, senza domande | `lib/coach-ai.ts:973-1124` (`Object.entries`: leggerebbe anche una chiave nuova messa lì dentro) |
+| Fine percorso | Gate 1 e Gate finale | `app/beta-complete/page.tsx:75-92` |
+
+**Proposta.** Le domande si salvano in una **colonna a parte**, `user_day_progress.gate_domande JSONB` (array dei testi, migration 040), non dentro `gate_answers`: il Coach legge tutte le chiavi dell'oggetto e la Carta lo riscrive. Il formato delle risposte non cambia, quindi nessun lettore si rompe. Chi mostra una domanda la prende da `gate_domande`; se manca, segue la regola sotto.
+
+**Dati storici: tre casi diversi, con un registro scritto una volta.** Sui cambi delle domande abbiamo tre fonti: l'export di Notion del 15/6 (W1-W8), la cronologia delle pagine su Notion (Ste la vede nell'app di Notion) e il CHANGELOG. Il «modificato il» di Notion vale per la pagina intera, non per il campo delle domande, quindi da solo non basta. Si scrive un registro piccolo nel codice, `GATE_VERSIONI` (per ogni Gate: dal giorno X le domande sono queste), e per ogni risposta salvata:
+
+| Caso | Quando | Cosa vede il ragazzo (e il Coach) |
+|---|---|---|
+| **Domanda attuale, certa** | Risposta dopo l'ultima versione registrata | Domanda e risposta, come oggi |
+| **Domanda cambiata, originale ricostruito** | Risposta prima di una versione registrata, e il testo di allora è nel registro | La domanda di allora (non quella di adesso) e la risposta |
+| **Domanda cambiata, originale non ricostruibile** | Risposta prima di un cambio certo, ma il testo di allora non c'è | «Hai risposto a una versione precedente di questa domanda» e la sola risposta |
+| **Non lo sappiamo** | Nessun cambio registrato, ma la risposta è più vecchia della prima versione certa | La domanda di adesso con la riga «Domanda di oggi: quella di allora poteva essere diversa» |
+
+**Cambi certi già noti dal codice:**
+- **W1-G7**, riscritto il 26/10: la vecchia prima domanda era sul Reset (export del 15/6), la nuova è sulla parola. Il caso osservato il 9/11.
+- **Gate 4 prima della correzione del 26/10:** l'elenco puntato della prima domanda veniva letto come domande separate. Quindi q2 e q3 salvate prima di quella data sono risposte alle voci dell'elenco della domanda 1, non alle domande 2 e 3 (CHANGELOG, 26/10).
+- **Gate W6-W9 prima del 26/10:** la quarta risposta non veniva salvata.
+
+Lo stesso giorno: in `domandeGateDa` (`lib/gateDomande.ts:18`) le righe prima della prima domanda numerata non diventano una domanda.
+
+**Accettato quando:**
+- un Gate nuovo salva domande e risposte;
+- il Gate 1 di un account del 20/10 non mostra più la risposta sul Reset sotto la domanda sulla parola;
+- un Gate 4 del 15/10 non accoppia q2 e q3 alle domande 2 e 3;
+- la Carta modifica ancora la mappa;
+- il Coach riceve la domanda giusta o l'avviso;
+- c'è un test per ognuno dei quattro casi;
+- il grep di `gate_answers` non trova lettori nuovi senza la regola.
+
+### 1.6 Ordine e misure della fase 1
+
+L'ordine di lavoro: 1.2 (testi, la parte piccola) → 1.1 → 1.3 → 1.4 → 1.5 (l'unica con una migration: Ste la applica prima del merge, e senza la colonna il codice ripiega sul registro).
+
+Una PR per la fase. Gli screenshot prima e dopo si fanno con l'harness, su tre account: nuovo; W3 con il Corpo e il calendario cambiato a metà settimana; W12.
+
+## 2. Il primo piano del Corpo: una condizione unica di prontezza
+
+### Cosa dice il codice oggi
+
+- **L'API genera un piano anche senza test e con il setup ai valori predefiniti** (`app/api/training/plan/route.ts`). In quel caso tutto è al livello B, non ci sono le sedute composte dal server sui gradini (`pa-*`, `pb-*`), restano i blocchi di Ste al livello B e i kg sono limitati a 20.
+- **La pagina invece mostra solo «Fai i test» finché non c'è un test qualsiasi** (`batteriaVuota`, `app/allenamento/page.tsx:480,548,660`): è un requisito dell'interfaccia, non del motore.
+- **Il piano automatico parte solo se c'è un piano di una settimana passata** (`planStale`, `app/api/training/state/route.ts:362`; avvio dal client in `app/allenamento/page.tsx:300-305`). Chi non ha mai avuto un piano non lo riceve mai da solo.
+- **Doppioni: lato server nessuna protezione.** Il server conta i piani della settimana prima di chiamare il modello (`plan/route.ts:38-45`). Due richieste insieme (due schede, doppio tocco, rientro durante la generazione) leggono tutte e due «zero piani», quindi tutte e due sono «automatiche» e partono due chiamate da ~0,30 $. Il client ha solo `autoGenTried`, che vale per una pagina aperta.
+
+### La condizione
+
+Una funzione pura, `prontezzaCorpo(stato) → { pronto, mancano: [{ cosa, perche, dove }] }`, usata da Home, Corpo, pagina dei test e API. Tre gruppi.
+
+**1. Requisiti che esistono già.** Si tengono come sono:
+- accesso al Corpo (pacchetto o `training_access`), non in pausa;
+- consensi `training_idoneita` e `health_data` («Prima di iniziare»).
+
+**2. Setup confermato.** È la proposta del §4; il motivo per ogni voce viene dal codice:
+
+| Voce | Motivo nel codice |
+|---|---|
+| Fase della stagione | Decide il tetto di sedute fisiche (6 / 1 / 3), la durata massima (120 / 75 / 90') e i filtri su resistenza, RSA e salite (`lib/trainingSetup.ts`). Il predefinito «in season» è muto |
+| Il campo sì o no, e il resto degli attrezzi | Senza `campo` non esistono i blocchi di velocità e di tecnica (`lib/trainingBlocks.ts:139`, `lib/trainingPlannerV2.ts:238,348`) |
+| Obiettivi, o «Tutto, in equilibrio» | Il validatore pretende i primi due (`lib/trainingPlannerV2.ts:1511`); kettlebell e resistenza in stagione esistono solo se scelti |
+| Squadra e partita abituale (anche «nessuna», detto esplicitamente) | Il piano del lunedì usa la partita abituale per le finestre partita e i giorni squadra per il carico (`lib/trainingSquadra.ts:70`, `lib/trainingLoad.ts:264`) |
+| Tempo per seduta | Senza, le sedute arrivano fino al massimo della fase (90-120') |
+
+**3. Test.** Qui va distinto cosa esiste da cosa è una proposta:
+
+| Obiettivo | Requisito che esiste nel codice | Proposta di metodo (da decidere, §10) |
+|---|---|---|
+| Gambe | Le sedute di gambe sui gradini (`pb-*`) si compongono con **almeno 2 catene testate su 4** (`lib/trainingParteBassa.ts:198`). Ma le serie, la versione breve e il richiamo vogliono **lo squat più una posteriore** (`:205-221`): con i soli RDL e ponte la seduta a serie non si forma (un elemento solo) | Prima del piano: **squat + RDL o ponte**. Non «2 su 4» |
+| Parte alta | Le serie sui gradini (`pa-*`) esistono solo con il test dei **piegamenti** (`lib/trainingParteAlta.ts:301-340`); la tirata e i focus solo con il test delle trazioni (sbarra) | Prima del piano: **piegamenti**; trazioni se ha la sbarra |
+| Tutto, in equilibrio | Come gambe + parte alta | Piegamenti + squat + una posteriore |
+| Velocità, pliometria, resistenza, tecnica, fascia, kettlebell | Nessun test necessario: senza, il livello è quello generale (B se manca l'AMRAP) e i blocchi sono quelli di Ste | **Nessun test prima del piano**; i test arrivano come consigliati |
+
+Senza i test proposti il piano si può fare lo stesso (oggi succede). La proposta serve a non dare a un ragazzo forte, alla prima settimana, i blocchi B generici al posto delle sedute sui suoi gradini. È una scelta di Ste (decisione 1).
+
+### Generazione automatica: errori, ripresa, doppioni
+
+- **Chi la avvia:** il server, non più solo la pagina del Corpo. Quando l'ultimo salvataggio rende `pronto` vero (setup, test o consensi) e per la settimana non c'è ancora un piano, la risposta di quel salvataggio dice `generaPiano: true` e il client chiama subito la generazione. È lo stesso percorso del piano del lunedì, quindi il primo piano e il lunedì diventano un caso solo: «il piano automatico della settimana».
+- **Protezione dai doppioni (migration 041):** tabella `training_generazioni (user_id, week_start, stato, avviata_at, finita_at, errore)` con chiave `(user_id, week_start)` per il piano automatico.
+  - Prima di chiamare il modello: `insert … on conflict do nothing`. Se la riga c'è ed è in corso da meno di 90 secondi (la route dura al massimo 60), la risposta è 202 `in_corso` e la pagina mostra «La sto preparando…», rileggendo lo stato ogni 5 secondi.
+  - Se la riga è più vecchia, è rimasta appesa e si riprende.
+  - Le rigenerazioni chieste dal ragazzo non usano questa riga: hanno già il loro tetto.
+- **Errori:**
+  - se il modello non risponde, si salva il piano base, come oggi (è un piano valido, con il «Perché»);
+  - se non si salva niente (database, timeout oltre i 60"), la riga va in `errore` e la pagina dice «Non sono riuscito a preparare la settimana · Riprova»;
+  - «Riprova» è ancora automatico e **non conta** nel tetto delle rigenerazioni né nelle quote del pacchetto;
+  - dopo 3 errori nella stessa settimana: «Scrivici» e un avviso a Ste su Telegram, come per la pausa dolore.
+- **Ripresa:** se il ragazzo chiude l'app durante la generazione, al rientro trova il piano (se salvato), «La sto preparando…» (riga in corso) o una nuova generazione (riga scaduta). Il Fisico Base continua a seguire il suo blocco di 4 settimane (`plan/route.ts:64`).
+
+**Complessità: alta**, non bassa come nella prima versione. Ci sono una migration, la funzione pura con i test, il cambio dell'avvio (server più client), lo stato «in corso» nella pagina e nella Home, i quattro esiti e le quote dei pacchetti. **Dipende da** §4 (setup confermato) e da §5 (test richiesti).
+
+**Accettato quando:**
+- un account nuovo con setup e test necessari arriva alla sua settimana senza toccare «Prepara»;
+- due richieste insieme fanno partire **una** chiamata al modello (test con due richieste in parallelo);
+- un errore simulato mostra «Riprova» e il secondo tentativo non scala il tetto;
+- la generazione si riprende dopo una riga appesa;
+- il lunedì funziona come prima;
+- le simulazioni (`planner-sim`, `simulazione-stagione`) non cambiano.
+
+## 3. Mappa dell'esperienza e scoperta progressiva
 
 ### Com'è oggi
 
-| Cosa | Quando si apre o si vede | Dove sta nel codice |
+| Cosa | Quando si vede | Codice |
 |---|---|---|
-| Giorno del percorso | W1-G1 sempre; poi il giorno prima fatto **prima di oggi** (fuso italiano), un giorno al giorno, niente recuperi | `lib/dayUnlockLogic.ts:68-80`, server `lib/serverUnlock.ts:46-62` |
-| Gate (Chiusura settimana) | G1-G6 fatti, G6 prima di oggi, **accesso pieno** (la prova non basta: mostra «La prova finisce il…») | `app/api/gate/route.ts:50,108,127` |
-| Settimane oltre la 1 | Accesso pieno; con la prova con la carta anche la settimana 1 la richiede | `lib/checkAccess.ts:109-145`, `PaywallGuard.tsx:59-98` |
-| Capacità della Palestra Mente | Alla settimana della capacità (1, 2, 3, 4, 5, 7, 8; Fatto vs Storia alla 6); niente di nuovo da W9 | `lib/palestraCatalog.ts:357-364` |
-| Schede «Quando si fa dura» | Layer «Adesso» dal giorno 1, gli altri alla settimana dello strumento (teaser bloccati) | `app/api/difficolta/route.ts:67-82` |
-| Catalogo delle 5 azioni | Il principio della settimana i si apre alla settimana i | `lib/actionsCatalog.ts:112-126` |
-| Esercizio della settimana | Dopo il G1 della settimana, se Notion ha il testo; mai oltre la 12 | `lib/esercizioServer.ts:45-58` |
-| Check-in del mattino | Solo se un giorno del percorso è stato fatto **prima di oggi**; mai su `/allenamento` | `components/GlobalCheckinWrapper.tsx:18-75` |
-| Reset automatico | Dopo W1-G3 e solo il giorno in cui si completa un giorno del percorso | `components/MeditationPopup.tsx:84-128` |
-| Coach in chat | 20 messaggi senza accesso pieno, **in tutta la vita dell'account** | `app/api/chat/route.ts:59-75` |
-| Home nei primi 7 giorni | Nascosti: azioni, banner del lunedì, riquadro Corpo bloccato | `app/page.tsx:313,420,563` |
-| Corpo | `training_access` o un pacchetto con il Fisico; poi i consensi («Prima di iniziare»); senza test solo «Fai i test»; senza piano «Prepara la settimana» a mano | `app/allenamento/page.tsx:374,434-545` |
-| Primo piano del Corpo | **Mai automatico** per chi non ha un piano precedente (`planStale` richiede un piano vecchio) | `app/api/training/state/route.ts:362`, `app/allenamento/page.tsx:300` |
-| Dopo la settimana 12 | Home «Ce l'hai fatta», `/beta-complete`, Palestra «Fatto» | `app/page.tsx:474`, `app/beta-complete/page.tsx:46` |
+| Giorno del percorso | Un giorno al giorno, il precedente fatto prima di oggi (fuso italiano) | `lib/dayUnlockLogic.ts:68-80`, `lib/serverUnlock.ts:46-62` |
+| Gate | G1-G6 fatti, accesso pieno | `app/api/gate/route.ts:50,108,127` |
+| Capacità in Palestra | Alla settimana della capacità (1-5, 7, 8; Fatto vs Storia alla 6) | `lib/palestraCatalog.ts:357` |
+| Schede «Quando si fa dura» | «Adesso» dal giorno 1, gli altri strati alla settimana dello strumento | `app/api/difficolta/route.ts:67` |
+| Azioni | Il catalogo si apre per settimana; la Home le nasconde nei primi 7 giorni **dalla registrazione** | `lib/actionsCatalog.ts:112`, `app/page.tsx:313,563` |
+| Esercizio della settimana | Dopo il G1 della settimana | `lib/esercizioServer.ts:45-58` |
+| Check-in | Dal giorno dopo il primo giorno completato; chi non ne completa mai uno non lo vede mai | `components/GlobalCheckinWrapper.tsx:51-75` |
+| Reset automatico | Dopo W1-G3, il giorno in cui si completa un giorno | `components/MeditationPopup.tsx:84-128` |
+| Corpo bloccato | Nascosto in Home nei primi 7 giorni dalla registrazione, ma visibile in Palestra | `app/page.tsx:420`, `app/palestra/page.tsx:67` |
 
-Il giorno 1 un ragazzo nuovo vede: Home (la pratica, «La tua settimana», il benvenuto del Coach), Palestra con 4 riquadri Mente e 2 Corpo con il lucchetto, Chat, Profilo (Carta, risposte, dati, Corpo «Scopri»). Il riquadro Corpo bloccato è nascosto in Home ma visibile in Palestra: la stessa regola non vale ovunque.
+### Proposta: tutto si basa su quello che il ragazzo ha fatto
 
-### Proposta: scoperta progressiva
+Tre livelli: **accesso** (lo puoi aprire, regole di oggi invariate), **visibilità** (lo vedi in Home e in Palestra), **suggerimento** (l'app te lo propone una volta).
 
-Tre livelli, da non confondere: **accesso** (lo puoi aprire), **visibilità** (lo vedi in Home o in Palestra), **suggerimento** (l'app te lo propone al momento giusto). Gli sblocchi di accesso restano quelli di oggi; cambia cosa si vede e quando.
+| Si apre quando | In evidenza | Visibile, tranquillo |
+|---|---|---|
+| Sempre | La cosa di oggi (pratica e/o seduta) | Coach, «Quando si fa dura», Account, dolore, giorni disponibili |
+| Primo giorno fatto | Check-in dal giorno dopo | Reset rapido |
+| W1-G3 fatto | Reset automatico (come oggi) | — |
+| Gate 1 passato (settimana 2) | **Una azione suggerita** (§6) | Carta con «cosa si riempirà» |
+| G1 della settimana fatto | Esercizio della settimana (come oggi) | — |
+| 7 giorni con l'azione | Proposta «aggiungine una» (§6) | — |
+| Gate 2 passato | — | Carta e «I tuoi dati» con i primi numeri |
 
-| Momento | In evidenza | Visibile ma tranquillo | Nascosto finché non serve |
+**Una novità alla volta.** In un giorno compare al massimo **una** cosa nuova in evidenza; le altre aspettano il giorno dopo. Si registra con `scoperta_vista` / `scoperta_usata` in `onboarding_events`, quindi vale su tutti i dispositivi.
+
+**Ritorno dopo una pausa.** Le regole guardano cosa ha fatto il ragazzo, quindi una pausa non sblocca niente.
+- Al rientro (3 o più giorni senza pratica) la prima schermata è solo «Bentornato. Riprendi dal Giorno N».
+- Le novità ripartono dal giorno dopo, sempre una alla volta.
+- Il check-in del primo giorno di rientro si salta.
+
+**Regole sui giorni dalla registrazione.** Oggi `primiGiorni` (7 giorni da `created_at`) nasconde azioni, banner del lunedì e Corpo bloccato. La proposta le sostituisce tutte con le attività fatte, per un motivo concreto: chi si registra e torna dopo 10 giorni, senza aver fatto niente, oggi si trova tutto aperto insieme.
+
+Resta una sola regola a calendario, e non è di scoperta: la **prova con la carta** (7 giorni da Stripe). È commerciale e la decide Stripe.
+
+Il riquadro «Corpo · scopri» per chi non ha il Corpo compare dopo il Gate 1, in Home e in Palestra allo stesso modo (oggi in Palestra si vede dal giorno 1).
+
+**Utenti di adesso.** Chi ha già fatto le cose vede quello che vede oggi: la scoperta si basa sulle attività fatte, quindi la coorte beta (W5-W12) ha già tutto. Nessun interruttore in più.
+
+**Accettato quando:**
+- account nuovo: in W1 nessuna azione né Corpo bloccato, in W2 una azione;
+- account registrato da 10 giorni con zero giorni fatti: come un account nuovo;
+- account W8: tutto come oggi;
+- rientro dopo 5 giorni: una schermata, nessuna novità quel giorno;
+- mai due novità nello stesso giorno (test sulla funzione pura).
+
+## 4. Setup: confermato, predefinito, sconosciuto
+
+### Cosa si può sapere dei setup di oggi
+
+Il setup non registra quando una risposta è stata data: `app/api/training/setup/route.ts` non scrive eventi e le colonne hanno valori predefiniti. Avere un piano non vuol dire aver risposto: il piano parte anche con i valori predefiniti.
+
+| Campo | Confermato se | Predefinito (non si sa se l'ha scelto) | Sconosciuto |
 |---|---|---|---|
-| Primo ingresso | La pratica di oggi (una card, un play) | Coach, «Quando si fa dura», Profilo, Account | Azioni, esercizio della settimana, check-in, Carta con i numeri, Corpo bloccato |
-| Settimana 1 (G2-G7) | Pratica + check-in del mattino (dal G2) | Reset rapido (dopo G3 anche automatico), la settimana | Azioni (arrivano in W2), Carta (si riempie) |
-| Settimana 2 | Pratica + le 5 azioni (prima volta: «scegline 1 o 2») | Esercizio della settimana, Carta con «cosa si riempirà» | — |
-| Settimane 3-4 | Pratica + azioni + esercizio | Carta e «I tuoi dati» con i primi numeri veri | — |
-| Dalla 5 | Tutto come oggi | — | — |
+| Fase | Valore diverso da `in_season` | `in_season` (predefinito della colonna) | — |
+| Attrezzatura | Almeno un attrezzo | — | Lista vuota: «solo corpo libero» scelto o mai risposto? |
+| Campo sì / no | `campo` nella lista | — | Assente: non si sa se non ce l'ha |
+| Esperienza palestra | `true` | — | `false` |
+| Peso | Valore presente | — | Vuoto |
+| Obiettivi | Lista non vuota | — | Vuota (oggi = settimana equilibrata) |
+| Giorni, giornate, tempo | Valore presente | — | Vuoto o «Decide lui» (stesso dato) |
+| Squadra | Giorni con sforzo o qualità | — | Vuoto; un giorno senza sforzo né qualità **non si salva** (`lib/trainingSquadra.ts:47`) |
+| Partita abituale | Giorno presente | — | Assente: «nessuna» o mai risposto? |
+| Limitazioni | Zone o nota presenti | — | `NULL`: «nessuna» o mai risposto? (`setup/route.ts:77`) |
+| Compagno | `true` | — | `false` |
 
-Regole che valgono sempre:
-- **Sempre raggiungibili** (mai bloccati, mai nascosti): Coach, «Quando si fa dura», Account, segnalare un dolore, cambiare i giorni disponibili.
-- **Niente lucchetti in fila.** Le cose bloccate stanno in una riga sola («Arrivano con le prossime settimane: …»), non in griglie di riquadri grigi.
-- **Eventi per misurare** (in `onboarding_events`, nessuna tabella nuova): `scoperta_vista` (la prima volta che compare una cosa nuova) e `scoperta_usata` (la prima volta che si usa). Così si vede se un ragazzo trova le azioni in W2 o le ignora.
-- **Chi salta giorni o torna dopo una pausa** non vede comparire tre cose nuove insieme: le novità si basano sui giorni fatti, non sulla data.
-- **Utenti avanzati** (la coorte beta, oggi tra W5 e W12): vedono tutto come oggi; la scoperta progressiva vale solo per i nuovi (in base a `created_at` o ai giorni fatti). Un interruttore «Mostra tutto» nell'Account per chi vuole le impostazioni complete.
+### Proposta
 
-## 2. Problemi confermati, con i file
+- **Colonna nuova** `profiles.training_setup_risposto JSONB` (scritta solo dal server, nel trigger `protect_server_columns`): per ogni voce, la data in cui il ragazzo l'ha confermata e la risposta esplicita («nessuna limitazione», «nessuna partita», «decide il preparatore»). Le colonne che legge il planner restano come sono.
+- **Riempimento iniziale, onesto:** le voci con un valore **non predefinito** (tabella sopra) sono segnate «dal setup precedente». Le altre restano non confermate. Niente diventa «confermato» solo perché esiste un piano.
+- **Per gli utenti di adesso:** il piano continua come oggi, senza blocchi. In Corpo › Oggi compare **una card sola**, «Conferma il tuo setup», con le sole voci della prontezza non confermate, già compilate con il valore di adesso. «Confermo» o «Cambio» si fa in un tocco per voce.
+  - Si fa una volta; si può chiudere e ritorna dopo 7 giorni.
+  - Se una voce cambia, la riga dice «Vale dalla prossima settimana, o rifai la settimana per usarla subito».
+- **Per i nuovi:** tre passi (obiettivo; la tua settimana: fase, squadra, partita; dove ti alleni: campo, attrezzi, esperienza, limitazioni, tempo).
+  - Ogni passo si salva da solo e si riprende dal passo interrotto.
+  - Le voci condizionali compaiono solo se servono: esperienza e peso solo con la palestra; sforzo della squadra dopo.
+  - «Nessuna» e «Decide il preparatore» sono scelte vere, salvate come tali.
 
-### Coerenza (le cose che dicono il falso)
+**Accettato quando:**
+- un utente con un piano ma con fase predefinita e limitazioni `NULL` vede la card con quelle voci (e non con tutto il setup);
+- un utente con attrezzi, obiettivi e partita salvati non deve riconfermare quelle voci;
+- «nessuna limitazione» salvata si distingue da «mai risposto»;
+- un giorno di squadra senza sforzo si salva (correzione di `parseSquadra`);
+- il setup interrotto al passo 2 riprende dal passo 2.
 
-| # | Problema | Causa nel codice | Correzione più piccola |
-|---|---|---|---|
-| A | «La tua settimana» dice «Percorso 3/7» e il tocco apre «Imposta la tua settimana» | `app/page.tsx:446-448,597` apre `WeeklyCalendarPopup` | Il tocco apre una **vista della settimana** (sola lettura, con i colori di Ste); «Modifica i giorni» dentro, come bottone secondario |
-| A2 | Nel calendario serve almeno un giorno di allenamento: chi ha solo la partita o è off season non può salvare | `WeeklyCalendarPopup.tsx:60` | Zero allenamenti ammessi |
-| B | «Giorni di allenamento» vuol dire con la squadra, ma non lo dice; «Il tuo prossimo allenamento è…» idem | `WeeklyCalendarPopup.tsx:95,116,172`, `lib/prossimoEvento.ts:77`, `lib/coach-ai.ts:1184` | «Allenamenti con la squadra», legenda «S = squadra · P = partita», stessa parola nel Coach e nella nota campo |
-| C | Il testo del piano dice «venerdì», la seduta è giovedì | `riparaPiano` (`lib/trainingRiparazione.ts:84-101`), `adattaAlCalendario` (`lib/trainingPlannerV2.ts:1860-1897`), posticipo (`app/api/training/plan/route.ts:207`) spostano il giorno e non toccano titolo, spiegazione e messaggio | Dopo ogni spostamento sostituire il nome del giorno nel testo della seduta; nel messaggio della settimana la stessa sostituzione o la riga «Alcune giornate sono state spostate: vedi sotto» |
-| D | «Ho sistemato 6 cose» con una catena «Ven → Gio», poi «Gio → Mar»; il numero conta più righe di quante se ne vedono | Le righe si sommano tra generazione e adattamento; la lista mostra `slice(0, 6)` (`app/allenamento/page.tsx:767-771`) | Salvare il giorno proposto la prima volta (`giorno_proposto`) e mostrare **una riga per seduta** «Venerdì → Martedì: perché»; lista intera o «+N altre» |
-| E | Nel Gate 1 una risposta vecchia sta sotto una domanda nuova (W1-G7 riscritto su Notion il 26/10) | Le risposte del Gate sono salvate per posizione, senza il testo della domanda (`app/api/gate/route.ts:115,144`); pagina, Coach (`lib/settimanaCoach.ts:79`) e `/risposte` accoppiano per indice | Salvare la copia delle domande con le risposte; per le righe vecchie «Hai risposto a una versione precedente delle domande» con le sole risposte; in `domandeGateDa` ignorare le righe prima della prima domanda numerata |
+## 5. Test: cosa dice il codice e cosa si propone
 
-### Orientamento e primo ingresso
+### Le tre affermazioni della prima versione, verificate
 
-| # | Problema | Dove |
-|---|---|---|
-| F | Dalla Home al timer della pratica: 4-5 tocchi senza audio, 6-7 con l'audio; il testo della pratica compare tre volte, «Inizia la pratica» due volte di fila; l'audio non parte con «Inizia» | `app/giorno/[week]/[day]/page.tsx:189-197,558-626`, `components/PracticePopup.tsx:216-383` |
-| G | Due cose «settimanali» diverse: «Esercizio della settimana» (la vita di tutti i giorni) e in Palestra «Questa settimana» che da W9 mostra ancora il Rilascio di W8 | `components/EsercizioSettimanaCard.tsx`, `app/strumenti/page.tsx:53-59,277-290` |
-| H | Carta, vista Mente: sotto c'è «Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO», cioè un livello della persona che il metodo esclude | `app/carta/page.tsx:208` |
-| L | Check-in: chi non completa mai un giorno non lo vede mai | `components/GlobalCheckinWrapper.tsx:51-64` |
-| M | Il banner «Installa l'app» compare solo a chi ha **già** Telegram; quasi nessun ragazzo nuovo lo vede. Su iPhone senza installazione niente notifiche | `app/page.tsx:333,631` |
-| N | La card Telegram dopo il Giorno 1 compare solo con l'accesso pieno: chi è in prova o gratis non la vede | `app/giorno/[week]/[day]/page.tsx:174-176` |
-| O | I 20 messaggi gratis del Coach sono per tutta la vita dell'account, non per la settimana gratis come dicono i testi | `app/api/chat/route.ts:59-75` |
-| P | Il primo piano del Corpo non parte mai da solo: il ragazzo deve trovare «Prepara la settimana» | `app/api/training/state/route.ts:362` |
-| Q | Lo streak in Home usa la data del telefono, il resto il fuso italiano | `app/page.tsx:40-53` |
-| R | `/statistiche` porta a `/oggi` (le azioni), che la Home nasconde nei primi 7 giorni | `app/statistiche/page.tsx` |
+- **«2 test gambe su 4»: inesatto.** La soglia nel codice è 2 catene su 4 (`lib/trainingParteBassa.ts:198`), ma le serie, la versione breve e il richiamo si compongono solo con **squat più una posteriore** (`:205-221`). Con RDL e ponte non nasce nessuna seduta a serie. Il minimo vero è squat + RDL o ponte; affondi aggiunge un esercizio alle serie.
+- **«Nucleo di circa 12 test»: inesatto.** Dal codice:
+  - **4 test entrano direttamente nella costruzione dei blocchi:** piegamenti (spinta), trazioni (tirata), squat, una posteriore.
+  - **4 aggiungono pezzi:** core e lombari alle serie di parte alta; affondi e l'altra posteriore alle gambe.
+  - **L'AMRAP** dà il livello generale (il default di tutte le qualità senza test) e serve per la forza massima in palestra (`lib/trainingEngine.ts:204`).
+  - **Un test di palleggi** dà il livello delle sedute di tecnica.
+  - **Il muro** serve solo alla priorità tra le parti della tecnica, che vuole almeno 2 parti testate e uno scarto di 10 punti: non è nucleo.
+- **«Da rifare dopo 8 settimane», uguale per tutti: sbagliato.** Nel codice gli 8 settimane (`RITEST_SENZA_TEST_SETTIMANE`, `lib/trainingCondizione.ts:226`) fanno scattare una **settimana di ri-test** quando non si chiude un test da 8 settimane, non una scadenza per test. Le regole per test sono diverse (`lib/trainingRitest.ts`):
+  - forza: il gradino dopo, dentro le sedute, nelle settimane di ri-test;
+  - massimali: solo se il lift è nel piano;
+  - campo: solo off season;
+  - resistenza e velocità: off season, o in stagione con le condizioni;
+  - tecnica: mai in automatico;
+  - un test fatto da meno di 28 giorni non si ripropone.
 
-### Setup e test del Corpo
+### Matrice per obiettivo
 
-| # | Problema | Dove |
-|---|---|---|
-| S | Fase e attrezzatura sono le due risposte da cui il piano dipende davvero, e hanno un valore di default **muto**: chi non risponde è «in season, solo corpo libero», identico a chi l'ha scelto. Senza `campo` non esistono velocità né tecnica | `lib/trainingSetup.ts:84-97`, migration 017 |
-| T | Lo stesso per «Nessuna partita», «Nessuna limitazione», «Decide lui»: nel database sono uguali a «mai risposto» | `app/api/training/setup/route.ts:77`, `lib/trainingSquadra.ts:47-70` |
-| U | Un giorno squadra senza sforzo né qualità non si salva: il lunedì quella squadra non esiste e il tetto di carico è troppo stretto | `lib/trainingSquadra.ts:47` |
-| V | «Completa il setup» guarda solo attrezzatura, esperienza e peso, e compare solo dopo un test | `app/allenamento/page.tsx:496,638` |
-| W | Il peso corporeo serve solo ai massimali in palestra, ma va messo **prima**: un massimale salvato senza peso resta «base» per sempre e il trazioni zavorrate calcola un 1RM sbagliato | `lib/trainingTestsV2.ts:274`, `app/api/training/test/route.ts:92-97` |
-| X | «37 su 48 test»: 8 sono doppioni destro/sinistro, 5 questionari; la scala skill non conta. «Il prossimo test» è il primo non fatto in un ordine fisso: ignora attrezzi, fase e obiettivi (può proporre il 1 km in season o lo squat col bilanciere a chi non ha la palestra) | `app/allenamento/test/page.tsx:262-272` |
-| Y | Un test vecchio vale come uno nuovo, senza scadenza; un test mancante e uno basso pesano diversamente ma la pagina non lo dice | `lib/trainingLivelli.ts:96` |
+«Esiste» = il codice lo usa già così. «Proposta» = scelta di metodo da decidere.
 
-### Pratiche, termini, video
-
-| # | Problema | Dove |
-|---|---|---|
-| I | Termini doppi: «Card» nel Corpo e «Carta» altrove; «Stats» e «I tuoi dati»; «Gate» visibile ~9 volte e «Chiusura settimana» nel titolo; «Campo» in ~10 testi visibili accanto a «Corpo»; «allenamento» vuol dire tre cose | `app/allenamento/page.tsx:96,522,539`, `components/FisicoBloccato.tsx:96`, giorno, settimana, onboarding, pricing |
-| J | Video: catalogo v2 196 su 303 attivi con video; scale v1 28 su 103 (palleggi 0/10, muro 0/9, conduzione 0/8); 161 blocchi su 195 hanno almeno un esercizio senza video. I più usati senza: Fartlek, Sprint, Warm-Up Stride, Box Dribbling and Pass, Freestyle Juggling | catalogo, `docs/training-video-da-registrare.md` |
-| K | Il preparatore ha il messaggio di benvenuto ma nessun suggerimento per cominciare (il Coach ne ha 3) | `app/allenamento/chat/page.tsx` |
-
-### Ipotesi (da verificare con un account nuovo)
-
-- La prova con la carta al primo schermo perde molti iscritti (valutazione del 9/11): si misura con il funnel, non si indovina.
-- Il ragazzo nuovo non capisce la differenza tra «Percorso», «Allenamento» Mente e «Allenamento» Corpo in Palestra.
-- Chi apre il Corpo senza test non sa da quale cominciare.
-- Il player del Corpo è chiaro durante la seduta (le osservazioni sono del giro, non di una seduta vera).
-
-## 3. Matrice di progressione Mente e Corpo
-
-Mente e Corpo restano **autonomi**: uno può avere solo l'uno, solo l'altro, o tutti e due, e il Corpo può arrivare dopo.
-
-**Corpo, i passi:** setup in 3 domande → primo test (quello utile per il suo obiettivo) → prima settimana preparata **da sola** → prima seduta → «Com'è andata» → la settimana dopo si adatta.
-
-| Caso | Home | Palestra | Cosa cambia rispetto a oggi |
-|---|---|---|---|
-| Solo Mente | Pratica di oggi in evidenza; nessun riquadro Corpo nei primi 7 giorni, poi una riga «Corpo · scopri» | Corpo in una riga, non due riquadri bloccati | Palestra uguale alla Home (oggi la Home nasconde, la Palestra mostra) |
-| Solo Corpo | La seduta di oggi in evidenza (card blu col play); la Mente in una riga «La testa · scopri» | Corpo prima della Mente | Oggi la Home mette comunque la Mente in alto |
-| Mente + Corpo | Pratica e seduta tutte e due in evidenza, nell'ordine della giornata (giorno di seduta: prima il Reset, poi la seduta) | Come oggi | Il ponte Reset → seduta resta |
-| Corpo attivato dopo | Al primo ingresso nel Corpo: le 3 domande, poi il test consigliato, poi la settimana; la Mente non cambia | Corpo con il pallino «Da iniziare» | Oggi arriva su una griglia di 37/48 test |
-
-## 4. Classificazione del setup
-
-| Campo | Classe | Perché lo chiediamo (testo per il ragazzo) |
-|---|---|---|
-| Obiettivo (uno o più, in ordine) | **Necessario** | «Ci dice su cosa costruire la settimana» |
-| Fase della stagione | **Necessario**, senza default muto | «In stagione ti alleni meno e più corto, in pausa di più» |
-| Giorni con la squadra e partita abituale | **Condizionale**: se ha una squadra | «Così l'app non ti carica il giorno prima della partita» |
-| Attrezzatura, con il **campo** come prima scelta | **Necessario** | «Senza un campo niente velocità né tecnica con la palla» |
-| Tempo per seduta | Consigliato | «Le sedute non superano questo tempo» |
-| Esperienza in palestra | Condizionale: se ha la palestra | «Decide quanto peso puoi usare» |
-| Peso corporeo | Condizionale: solo prima dei test con i pesi | «Serve a capire quanto sei forte rispetto al tuo peso» |
-| Limitazioni e infortuni | Consigliato, con «Nessuna» esplicito | «Le zone che ci dici vengono alleggerite» |
-| Giorni disponibili, quante giornate | Facoltativo («Decide lui» esplicito) | «Se non lo dici, decide il preparatore» |
-| Compagno, sforzo e qualità della squadra, durata dell'allenamento di squadra | Facoltativo, dopo | «Più ci dici, più la settimana è precisa» |
-
-**I tre passi:** (1) obiettivo; (2) la tua settimana: fase, squadra, partita; (3) dove ti alleni: attrezzatura, esperienza, limitazioni. Ogni passo si salva da solo: chi chiude a metà riprende dal passo dove era. Il setup completo resta in Corpo › Setup.
-
-**Dati:** una colonna `profiles.training_setup_risposto JSONB` con le chiavi a cui il ragazzo ha risposto davvero (`{ fase: '2026-11-09', limitazioni: 'nessuna', … }`). Così «nessuna limitazione» si distingue da «mai risposto», senza cambiare il significato delle colonne che il planner legge. Gli utenti che hanno già un piano contano come «risposto» su tutto quello che hanno (nessuna domanda di nuovo). Ogni modifica dice l'effetto: «Vale dalla prossima settimana» o «Rifai la settimana per usarla subito».
-
-## 5. Matrice dei test per obiettivo
-
-| Obiettivo | Necessari | Consigliati | Facoltativi | Si ripetono |
+| Obiettivo | Prima del piano | Consigliati (cosa cambiano nel codice) | Facoltativi | Quando si rifanno (esiste) |
 |---|---|---|---|---|
-| Gambe | 2 su 4 tra squat, affondi, RDL, ponte | Scala gambe, wall sit, salto in lungo | Massimali in palestra (peso prima) | Gradino dopo, nelle settimane di ri-test |
-| Parte alta | Piegamenti; trazioni se ha la sbarra | AMRAP, core, lombari | Panca, shoulder press, trazioni zavorrate | Gradino dopo |
-| Velocità | — (serve il campo) | 50 m, T-sprint | Salto in lungo | Off season, o in stagione con le condizioni |
-| Pliometria | — | Salto in lungo, ankle stiffness, navetta | Destro e sinistro | Solo off season |
-| Resistenza | — | 1 km o 3 km, navetta | L'altro km | Off season, o con le condizioni |
-| Tecnica | — (serve il campo) | Palleggi forte e debole, muro | Testa, piramide, tiri, passaggi | Mai in automatico |
-| Fascia | — | Equilibrio destro e sinistro | I 5 questionari | — |
-| Tutto | Piegamenti, 2 test gambe, AMRAP | Il resto del blocco 1 | Tutto il resto | Come sopra |
+| Gambe | Proposta: squat + RDL o ponte | Affondi e l'altra posteriore (più esercizi); wall sit e affondo isometrico (livello gambe); salto in lungo (livello pliometria) | Massimali in palestra, con il peso prima | Gradino dopo nelle settimane di ri-test; il massimale se è nel piano |
+| Parte alta | Proposta: piegamenti; trazioni con la sbarra | AMRAP (livello generale); core, lombari (pezzi delle serie) | Panca, shoulder press, trazioni zavorrate | Gradino dopo |
+| Velocità | — | 50 m, T-sprint (livello velocità) | Salto in lungo | Off season, o in stagione con obiettivo e condizioni |
+| Pliometria | — | Salto in lungo, ankle stiffness, navetta (livello; da A le prime settimane in B scendono da 4 a 2) | Destro e sinistro | Test da campo solo off season |
+| Resistenza | — | 1 o 3 km (durata delle serie: 4/5/6'), navetta | L'altro km | Off season, o con le condizioni |
+| Tecnica | — | Un test di palleggi (livello delle sedute) | Muro, tiri, passaggi (priorità tra le parti), testa, piramide | Mai in automatico |
+| Fascia | — | Equilibrio destro e sinistro (squilibri) | I 5 questionari (solo la Carta) | — |
+| Kettlebell | — | — (le fasce vengono dai log) | — | — |
 
-Il nucleo utile è di circa 12 test (blocco 1, AMRAP, due palleggi, muro): gli altri affinano.
+**«Il prossimo test»** (oggi: il primo non fatto in un ordine fisso, `app/allenamento/test/page.tsx:265-272`) diventa:
+1. il primo «prima del piano» non fatto, se la decisione 1 li introduce;
+2. poi il consigliato del primo obiettivo, saltando i test che attrezzi e fase escludono e quelli che le condizioni di oggi vietano (le stesse di `guardrailResistenzaVelocita`).
 
-**«Il prossimo test»** diventa: il primo **necessario** non fatto per il primo obiettivo, poi i consigliati, saltando quelli che gli attrezzi o la fase escludono. Ogni proposta dice perché, quanto dura, cosa serve e cosa cambia nel piano: «Piegamenti · 3 minuti · niente attrezzi · decide il gradino delle tue sedute di parte alta». Il conteggio diventa «4 su 6 utili per i tuoi obiettivi», il catalogo completo resta sotto «Tutti i test». Ogni risultato mostra quando è stato fatto; dopo 8 settimane «Da rifare». Un test mancante si scrive «Non ancora fatto», mai come un livello basso.
+La card dice perché, quanto dura, cosa serve e cosa cambia («Squat · 3 minuti · niente attrezzi · da qui le tue sedute di gambe partono dal tuo gradino»). Ogni risultato mostra la data e la regola vera per rifarlo; un test mancante è «Non ancora fatto», mai un livello basso. Il conteggio diventa «2 su 4 per i tuoi obiettivi» al posto di «37/48»; il catalogo completo resta sotto «Tutti i test».
 
-## 6. Flussi
+**Peso corporeo** (esiste: un massimale salvato senza peso resta «base», e le trazioni zavorrate senza peso danno un massimale sbagliato; `lib/trainingTestsV2.ts:274`, `app/api/training/test/route.ts:92-97`). Proposta: il peso si chiede prima del primo massimale; i massimali senza peso si ricalcolano quando il peso arriva.
 
-**Primo ingresso.** Registrazione → onboarding (3 slide) → Home con UNA cosa: «Percorso Mente · Giorno 1 · 4 min» e il play. Il Coach e «Quando si fa dura» stanno sotto, in una riga.
+**Accettato quando:**
+- in stagione e senza campo, «il prossimo test» non propone mai 1 km, 50 m o tecnica;
+- senza palestra non propone mai massimali;
+- con l'obiettivo gambe propone prima lo squat;
+- un massimale senza peso viene ricalcolato all'arrivo del peso (test).
 
-**Prima pratica.** Play in Home → apertura (con «Ascolta» se c'è l'audio) → «Continua» → la pratica in breve (3-4 righe) con UN bottone «Inizia» che apre il timer **e parte con l'audio** se c'è → «Fatto» → la domanda (facoltativa) → «Giorno 1 fatto», e qui l'invito a installare l'app su iPhone (3 passi con le immagini di Safari) e a collegare Telegram. Da 4-7 tocchi a 3.
+## 6. Azioni graduali e streak
 
-**Prima settimana fisica.** Corpo › le 3 domande del setup → «Il tuo primo test: piegamenti, 3 minuti» → risultato → **la settimana si prepara da sola** con la riga «Ecco la tua prima settimana: 3 giornate, la prima giovedì» → prima seduta col player → «Com'è andata?».
+**Oggi:** fino a 5 azioni attive; un giorno vale per lo streak con almeno 3 spuntate (`STREAK_THRESHOLD = 3`, `app/api/actions/history/route.ts:13,70-86`), qualunque sia il numero di azioni attive. Con 1 o 2 azioni lo streak è impossibile.
 
-**Primo test.** Dalla card del test consigliato: cosa serve, il video o i passi, un campo grande per il risultato, «Salva» → «Il tuo gradino: …, ora le sedute partono da qui».
+**Proposta (Ste: una sola azione suggerita dalla settimana 2).**
+- **Inizio:** dopo il Gate 1, una card «La tua azione di questa settimana» con **una** azione del catalogo della settimana 2, già scelta. «La tengo» la attiva; «Scegline un'altra» apre il catalogo.
+- **Crescita:** dopo **7 giorni** con almeno **5** spunte sui 7, la card propone «Aggiungine una» (mai più di 5, mai obbligatorio). Rifiutare non toglie niente; la proposta torna dopo 7 giorni.
+- **Streak:** un giorno vale se le azioni spuntate sono **almeno quante quelle del giorno con il minimo di 3** (1 azione → 1, 2 → 2, da 3 in su → 3). In formula: `spuntate ≥ min(3, attive quel giorno)`.
+- **Storico quando il numero cambia:** ogni giorno si valuta con le azioni **attive quel giorno**, ricostruite da `user_actions.created_at` e `archived_at` (le sostituzioni archiviano, non cancellano, quindi il dato c'è già). Un giorno di ottobre con 5 azioni e 3 spunte resta valido anche se oggi ne ha 2; un giorno con 2 azioni e 2 spunte vale anche dopo che passa a 5. Niente si ricalcola all'indietro con il numero di oggi. Se in un giorno ci sono state due liste, vale quella attiva a fine giornata.
+- **Gli utenti di adesso** con 5 azioni non vedono cambiare niente: la soglia per loro resta 3. Il record (`longest_streak`) si ricalcola con la regola per data, e può solo salire per chi aveva giorni da 1-2 azioni.
 
-**Ritorno dopo una pausa.** Più di 3 giorni senza pratica: «Bentornato. Riprendi dal Giorno N» in alto, niente novità nuove insieme, check-in rimandato a domani. Nel Corpo: la settimana nuova si prepara da sola (come oggi), con la riga «Ripartiamo leggeri» se la pausa supera le 2 settimane (lo scarico dai dati c'è già).
+**Accettato quando:**
+- test su `history` con le sequenze 1 → 2 → 5 azioni e con la sostituzione nello stesso giorno;
+- il record di un utente beta non scende;
+- la card della settimana 2 compare dopo il Gate 1 e non prima.
 
-## 7. Esempi di testi
+## 7. Avvio della pratica
 
-| Dove | Oggi | Proposta |
+**Oggi** (`app/giorno/[week]/[day]/page.tsx:189-197,558-626`, `components/PracticePopup.tsx:216-383`): apertura → (domanda prima della pratica) → la pratica scritta con «Inizia la pratica» → un foglio con gli stessi passi e un secondo «Inizia la pratica» → il timer. L'audio si accende a parte, con due tocchi. Il testo dei passi compare tre volte.
+
+**Proposta: due strade chiare, e l'app ricorda la scelta.**
+- Sulla schermata della pratica, se c'è l'audio, due bottoni di pari peso:
+  - **«Ascolta la guida»**: si apre la pratica con l'audio che parte nello stesso tocco (su iPhone il suono parte solo da un tocco) e la fine quando finisce l'audio, come oggi;
+  - **«Leggi e fai da solo»**: il timer con i passi visibili per tutta la pratica.
+- **La scelta si ricorda** (sul dispositivo, `pratica.modo`) e quel bottone diventa il primo la volta dopo. Dentro la pratica si può cambiare strada senza ricominciare: «Passa alla guida scritta» / «Ascolta».
+- Senza audio c'è un solo «Inizia».
+- Il foglio intermedio si toglie: i passi si leggono una volta prima (in breve) e restano sotto il timer nella strada scritta.
+- Il tasto «Ho finito» dal 60 % resta com'è.
+
+**Indicatori, insieme.**
+- Tocchi dalla Home al via della pratica: da 4-7 a 3 (Home → apertura → la tua strada).
+- **Chiarezza**, misurata nella prova con 3-5 ragazzi: prima di toccare ogni bottone, sanno dire cosa succede? Nel flusso ci sono mai due bottoni che sembrano uguali? Sanno tornare indietro senza perdere la pratica?
+- Nei dati: quanti scelgono la guida e quanti la scrittura (`pratica_modo` in `onboarding_events`), e quanti cominciano la pratica senza arrivare alla fine, prima e dopo.
+
+**Accettato quando:**
+- con l'audio, un tocco su «Ascolta la guida» fa partire audio e pratica insieme (verificato su iPhone da Ste);
+- la scelta si ricorda;
+- il cambio di strada a metà non perde il tempo trascorso;
+- senza audio c'è un solo bottone;
+- il testo dei passi compare una volta prima del via.
+
+## 8. «Ripartiamo leggeri»: solo se il piano lo fa davvero
+
+**Cosa fa il codice dopo una pausa** (`lib/trainingLoad.ts:190-232`, `lib/trainingCondizione.ts`):
+- il cronico conta come 0 le settimane senza sedute;
+- dopo 1-2 settimane ferme il tetto scende da solo, perché il cronico è più basso: un alleggerimento c'è, ma nessuno lo dice;
+- **dopo 3 o più settimane senza sedute il cronico è 0 e il tetto non c'è più**: nessun limite di carico, il contrario di ripartire leggeri;
+- lo scarico dai dati non scatta, perché vuole 2 settimane con sedute tra le 3 precedenti;
+- non esiste una regola di rientro.
+
+**Proposta.**
+- Il messaggio compare **solo se il piano porta un segno scritto dal server** (`plan.rientro = { settimaneFerme, riduzione }`) nel momento in cui una regola ha davvero ridotto la settimana. Oggi quella regola non c'è, quindi oggi il messaggio non compare mai.
+- Per l'alleggerimento automatico di 1-2 settimane, la riga del carico già esistente può dirlo con i suoi numeri («Il tuo tetto è più basso: nelle ultime settimane ti sei allenato meno»), solo quando il tetto è stato davvero più basso del normale.
+- **Il vuoto dopo 3 settimane è un problema di sicurezza** (nessun tetto proprio quando servirebbe). Il Campo è congelato ma ammette i bug di sicurezza: correggerlo vuol dire scrivere una regola di rientro, cioè una scelta di metodo. Decisione 2.
+
+**Accettato quando:**
+- nessun «Ripartiamo leggeri» senza `plan.rientro`;
+- un test con 4 settimane ferme mostra (dopo la decisione 2) un tetto e il segno, oppure niente messaggio.
+
+## 9. Glossario e testi
+
+| Parola | Vuol dire | Mai |
 |---|---|---|
-| Calendario | «Giorni di allenamento» · «A = allenamento» | «Allenamenti con la squadra» · «S = squadra · P = partita» |
-| Riquadro settimana | «Percorso 3/7» → si apre l'editor | «Percorso 3 di 7 · 2 sedute» → si apre la settimana |
-| Piano spostato | «Ho sistemato 6 cose» + catena | «Giovedì (era venerdì): il venerdì ora c'è la partita» |
-| Gate con domande cambiate | Risposta sotto la domanda nuova | «Hai risposto a una versione precedente delle domande:» + le risposte |
-| Palestra Mente | «Questa settimana: Il Rilascio» (in W12) | «Riprendi: Il Reset» oppure «Allenamento consigliato» |
-| Carta Mente | «Scala 0-100: 40 = intermedio…» | «Mente misura quanto ti alleni di testa, non quanto sei forte di testa» (la scala dei livelli solo nel Corpo) |
-| Test | «37/48» | «4 su 6 utili per i tuoi obiettivi» |
-| Setup, fase | (nessuna spiegazione) | «In stagione ti alleni meno e più corto. In pausa possiamo spingere di più.» |
-| Preparatore, suggerimenti | — | «Perché questa settimana è così?» · «Oggi ho poco tempo» · «Posso spostare una seduta?» · «Come si fa questo esercizio?» |
-| Capacità in Palestra | «Presenza» | «Presenza · ti serve quando sbagli un passaggio e la testa resta lì» |
+| Percorso | I 7 giorni della settimana mentale | — |
+| Esercizio della settimana | Il compito di presenza nella vita di tutti i giorni | «Questa settimana» per un'altra cosa |
+| Allenamento con la squadra | Quello del mister | «Allenamento» da solo per la squadra |
+| Seduta | Quella dell'app, del Corpo | «Allenamento in app» |
+| Partita | La partita | — |
+| Carta | La Carta del Giocatore | Card |
+| I tuoi dati | Check-in e numeri | Stats |
+| Chiusura settimana | Il giorno 7 | Gate (resta solo nel codice) — decisione 3 |
+| Corpo | La parte fisica | Campo; «Fisico» solo come nome del pacchetto |
 
-Glossario unico: **Carta** (mai Card), **I tuoi dati** (mai Stats), **Chiusura settimana** (Gate solo nel codice), **Corpo** (Campo e Fisico solo come nome del pacchetto), **Percorso** (i 7 giorni), **Esercizio della settimana** (la vita di tutti i giorni), **allenamento** = con la squadra, **seduta** = con l'app.
+Altri testi:
+- **Palestra Mente:** «Riprendi: …» oppure «Allenamento consigliato», mai «Questa settimana» per una capacità (`app/strumenti/page.tsx:277-290`: in W12 mostra il Rilascio di W8).
+- **Carta Mente** (`app/carta/page.tsx:208`): via la scala dei livelli (40 = intermedio…), resta «Mente misura quanto ti alleni di testa, non quanto sei forte di testa».
+- **Preparatore:** quattro suggerimenti all'inizio («Perché questa settimana è così?», «Oggi ho poco tempo», «Posso spostare una seduta?», «Come si fa questo esercizio?»).
 
-## 8. Piano per fasi
+## 10. Piano per fasi, con dipendenze e criteri
 
-L'ordine è quello di Ste: prima la coerenza, poi la home, poi ingresso, setup e test, poi pratiche e rifinitura.
+| Fase | Contenuto | Dipende da | Complessità | Criteri |
+|---|---|---|---|---|
+| **1. Coerenza** | §1: 1.1-1.5 | — (1.5 con la migration 040) | media | §1 |
+| **2. Home e orientamento** | Varianti della Home (primo ingresso, prime settimane, abituale, giorno di seduta, giorno di partita, tutto fatto, rientro); «Riprendi» in Palestra; invito a installare dopo il Giorno 1 per tutti (oggi solo a chi ha Telegram, `app/page.tsx:333,631`); check-in anche senza giorni fatti; streak di casa in fuso italiano (`app/page.tsx:40-53`) | 1.1 | media | Screenshot delle 7 varianti; account senza Telegram vede l'invito; streak con il telefono in un altro fuso |
+| **3. Ingresso, setup, test** | §3 scoperta; §4 setup (migration); §5 test; §6 azioni; §2 prontezza e generazione automatica (migration) | 3a scoperta e azioni: nessuna. 3b setup → 3c test → 3d prontezza e generazione | alta | §2-§6 |
+| **4. Pratiche, progressi, rifinitura** | §7 pratica; Carta del primo mese con «cosa si riempirà e quando»; glossario §9; suggerimenti del preparatore; accessibilità (nomi sui bottoni con sola icona, focus visibile, tastiera nei fogli, testi lunghi); video | — | media | §7; grep dei termini vecchi vuoto; giro con la tastiera su Home, giorno, seduta |
 
-### Fase 1: coerenza di calendario, spiegazioni e storico
+**Verifica di ogni fase**, sui casi:
+- account nuovo e avanzato (W12);
+- setup incompleto, test assenti e parziali;
+- Corpo attivato tardi;
+- calendario cambiato a metà settimana;
+- ritorno dopo una pausa;
+- risposte del Gate scritte prima del 26/10;
+- due richieste di piano insieme.
 
-| Cosa | Dipende da | Complessità | Accettato quando |
-|---|---|---|---|
-| 1.1 Vista della settimana dal riquadro in Home, con i colori (squadra, partita, seduta dell'app proposta o fatta, giorni doppi divisi a metà, pallino del percorso); modifica dentro | — | media | Tocco sul riquadro → si vede la settimana; nessun salvataggio senza «Modifica» |
-| 1.2 «Allenamenti con la squadra» ovunque (calendario, nota campo, Coach); zero allenamenti ammessi | — | bassa | Grep di «Giorni di allenamento» vuoto; salvataggio con sola partita |
-| 1.3 Nomi dei giorni corretti nei testi del piano dopo ogni spostamento | — | media | Test: piano con venerdì spostato a giovedì → nessun «venerdì» nella seduta |
-| 1.4 Una riga per seduta spostata (`giorno_proposto`), lista intera | 1.3 | media | Test: due spostamenti → una riga «Venerdì → Martedì» |
-| 1.5 Domande del Gate salvate con le risposte; righe vecchie con l'avviso | — | media | Gate 1 di un account del 20/10: niente risposta sotto una domanda diversa |
-| 1.6 Domande del Gate: ignorate le righe prima della prima numerata | — | bassa | Test in `tests/` |
+Poi una prova d'uso con 3-5 calciatori nuovi su quattro compiti: «fai la pratica di oggi», «trova la seduta di giovedì», «cambia il giorno della partita», «trova cosa hai scritto nella settimana 1».
 
-### Fase 2: home e orientamento quotidiano
+### Dati e migration
 
-| Cosa | Dipende da | Complessità | Accettato quando |
-|---|---|---|---|
-| 2.1 Varianti della Home: primo ingresso, prime settimane, abituale, giorno di seduta, giorno di partita, tutto fatto, rientro | 1.1 | media | Screenshot delle 7 varianti con dati finti |
-| 2.2 «Esercizio della settimana» distinto da «Riprendi / Allenamento consigliato» in Palestra | — | bassa | In W12 nessun «Questa settimana: Il Rilascio» |
-| 2.3 Azioni graduali: la prima volta 1-2, poi fino a 5; lo streak conta dal numero scelto; lo storico resta | — | media | Utente con 5 azioni: niente cambia; nuovo: parte da 1-2 |
-| 2.4 Invito a installare dopo il Giorno 1 per tutti, non solo per chi ha Telegram | — | bassa | Account senza Telegram vede l'invito dopo G1 |
-| 2.5 Check-in anche a chi non ha completato un giorno (dal secondo giorno di account) | — | bassa | — |
-| 2.6 Streak in fuso italiano | — | bassa | Test |
+| Migration | Cosa | Fase |
+|---|---|---|
+| 040 | `user_day_progress.gate_domande JSONB` | 1 |
+| 041 | `training_generazioni` (protezione dai doppioni) | 3d |
+| 042 | `profiles.training_setup_risposto JSONB` + trigger | 3b |
 
-### Fase 3: ingresso progressivo, setup e test
+Senza migration:
+- `spostamenti` sulle sedute (JSON del piano);
+- `plan.rientro`;
+- eventi di scoperta e di modo della pratica;
+- storico dello streak, ricostruito da `user_actions`;
+- registro `GATE_VERSIONI` nel codice.
 
-| Cosa | Dipende da | Complessità | Accettato quando |
-|---|---|---|---|
-| 3.1 Scoperta progressiva (tabella del §1) + eventi `scoperta_vista` / `scoperta_usata` | 2.1 | media | Account nuovo: in W1 nessuna azione né riquadro bloccato; utenti beta invariati |
-| 3.2 Setup in 3 passi con `training_setup_risposto`; ripresa dal passo interrotto | migration nuova | alta | Account nuovo: 3 schermate; vecchio: nessuna domanda |
-| 3.3 Primo piano del Corpo automatico dopo setup e primo test | 3.2 | bassa | Account nuovo arriva alla settimana senza «Prepara» |
-| 3.4 «Il prossimo test» per obiettivo, attrezzi e fase; conteggio sui test utili; data dei risultati | 3.2 | media | In season senza campo: mai 1 km né 50 m proposti |
-| 3.5 Peso chiesto prima dei massimali; i massimali senza peso ricalcolati quando arriva | — | media | Test |
-| 3.6 Coach gratis: 20 messaggi nella settimana gratis (decisione di Ste) | — | bassa | — |
+Nessun dato cancellato o riscritto, tranne la correzione delle letture.
 
-### Fase 4: pratiche, progressi e rifinitura
+## 11. Decisioni ancora necessarie
 
-| Cosa | Dipende da | Complessità | Accettato quando |
-|---|---|---|---|
-| 4.1 Pratica in 3 tocchi, l'audio parte con «Inizia» | — | media | Da Home al timer: 3 tocchi |
-| 4.2 Progressi: le prime tappe (3 pratiche, prima settimana, primo Gate), costanza e capacità separate; la Carta del primo mese dice cosa si riempirà e quando | — | media | Carta di un account di 3 giorni senza zeri |
-| 4.3 Carta Mente senza la scala dei livelli; punto «Abitudini di testa» | — | bassa | — |
-| 4.4 Glossario applicato (Carta, I tuoi dati, Chiusura settimana, Corpo) | — | bassa | Grep dei termini vecchi nei testi visibili vuoto |
-| 4.5 Suggerimenti del preparatore | — | bassa | — |
-| 4.6 Accessibilità: nomi accessibili sui bottoni con sola icona, focus visibile, tastiera nei fogli, testi lunghi che vanno a capo | — | media | Giro con la tastiera su Home, giorno, seduta |
-| 4.7 Video: le priorità per uso (Fartlek, Sprint, Warm-Up Stride, Box Dribbling, Freestyle Juggling, poi le scale v1 di palleggi e muro); immagini o video pubblici come ponte | Ste registra | da stimare | — |
-| 4.8 Dopo la settimana 12: cosa resta (Palestra, Carta, Coach, Corpo) e cosa arriva | decisione di Ste | — | — |
+**Prodotto e metodo**
+1. **Test prima del primo piano:** nessuno (il piano parte con il setup, livello B, blocchi di Ste), oppure solo per gambe e parte alta (squat + una posteriore; piegamenti, trazioni con la sbarra)?
+2. **Rientro dopo 3 o più settimane senza sedute:** oggi non c'è nessun tetto di carico. Lo trattiamo come bug di sicurezza e scriviamo una regola di rientro (quale riduzione, per quante settimane), o resta com'è finché il Campo è congelato?
+3. **Termini:** «Chiusura settimana» al posto di «Gate» e «I tuoi dati» al posto di «Stats» in tutti i testi visibili?
+4. **Video mancanti:** immagini di spiegazione o video pubblici da YouTube come ponte, e da quali esercizi partire?
 
-**Verifica di ogni fase:** account nuovo, account avanzato (W12), setup incompleto, test assenti e parziali, Corpo attivato tardi, calendario cambiato a metà settimana, ritorno dopo una pausa, risposte del Gate scritte prima del 26/10. Poi una prova d'uso con 3-5 calciatori nuovi: «fai la pratica di oggi», «trova la seduta di giovedì», «cambia il giorno della partita», «trova cosa hai scritto nella settimana 1».
-
-## 9. Dati e utenti esistenti
-
-- **Migration nuova (una):** `profiles.training_setup_risposto JSONB` (fase 3.2). Con il trigger `protect_server_columns` se la scrive solo il server.
-- **Senza migration:** `giorno_proposto` sta nel JSON del piano (`training_plans.plan`, append-only); la copia delle domande del Gate sta in `gate_answers._domande` (JSONB già esistente); gli eventi di scoperta in `onboarding_events`.
-- **Utenti esistenti:** setup considerato risposto per chi ha già un piano; scoperta progressiva solo per i nuovi; le risposte del Gate senza copia mostrano l'avviso; lo storico delle azioni non si tocca; nessun dato cancellato o riscritto.
-- **Campo congelato:** niente regole nuove di allenamento. Le fasi 1.3-1.4 e 3.3-3.4 toccano testi, ordine e presentazione, non le regole del planner. 3.3 (primo piano automatico) è il punto più vicino al confine: lo segnalo.
-
-## 10. Decisioni per Ste
-
-1. **Colori della settimana:** squadra verde come hai detto, o grigio per non confondersi con la Mente? (La mia proposta: grigio; partita rosso; seduta dell'app blu, contorno se proposta, pieno se fatta.)
-2. **Scoperta progressiva:** le azioni dalla settimana 2 vanno bene, o dalla 1 con una sola azione?
-3. **Coach gratis:** 20 messaggi per tutta la vita dell'account (com'è oggi) o solo nella settimana gratis?
-4. **Primo piano del Corpo automatico** dopo il primo test: sì?
-5. **Termini:** «Chiusura settimana» al posto di «Gate» ovunque nei testi? «I tuoi dati» al posto di «Stats»?
-6. **Video mancanti:** immagini di spiegazione o video pubblici da YouTube come ponte? E per quali esercizi prima?
-7. **Dopo la settimana 12:** cosa vede il ragazzo (resta tutto aperto? Season 2?).
-8. **Ordine di lavoro:** parto dalla fase 1 come hai indicato, con la PR sul branch e il «vai» per il merge?
+**Commerciali (separate)**
+5. **Coach gratis:** oggi 20 messaggi per tutta la vita dell'account; i testi dicono «nella settimana gratis».
+6. **Dopo la settimana 12:** cosa vede e cosa paga il ragazzo.
