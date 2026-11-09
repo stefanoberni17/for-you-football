@@ -1181,9 +1181,9 @@ ${completedDays && completedDays.length > 0
   : 'Nessun giorno ancora completato'}
 
 ## Calendario settimana
-${calendar && calendar.training_days && calendar.training_days.length > 0
-  ? `**Allenamenti:** ${calendar.training_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}
-${calendar.match_days && calendar.match_days.length > 0 ? `**Partite:** ${calendar.match_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}` : '**Partite:** Nessuna partita questa settimana'}`
+${calendar && ((calendar.training_days?.length ?? 0) > 0 || (calendar.match_days?.length ?? 0) > 0)
+  ? `**Allenamenti con la squadra:** ${calendar.training_days?.length ? [...calendar.training_days].sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ') : 'nessuno questa settimana'}
+**Partite:** ${calendar.match_days?.length ? [...calendar.match_days].sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}`
   : 'Calendario non ancora impostato'}
 
 ## Stato fisico e mentale

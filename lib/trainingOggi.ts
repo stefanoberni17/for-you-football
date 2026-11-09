@@ -45,6 +45,8 @@ export interface CampoOggi {
   sedute: SedutaOggi[];       // tutta la settimana, in ordine di giorno
   trainingDays: number[];     // giorni squadra effettivi (calendario o abitudine del setup)
   matchDays: number[];        // giorni partita effettivi (calendario o partita abituale)
+  squadraDaSetup?: boolean;   // 9/11: i giorni squadra vengono dall'abitudine del setup (la settimana non li ha)
+  partitaDaSetup?: boolean;   // 9/11: la partita viene dalla partita abituale del setup
   resocontiDaChiedere: { data: string; tipo: TipoResoconto }[];
 }
 
@@ -108,6 +110,8 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
     painHold: prof?.training_pain_hold === true,
     oggiDow, lunedi, haPiano, seduta, prossima, sedute,
     trainingDays, matchDays,
+    squadraDaSetup: !(calendar?.training_days || []).length && trainingDays.length > 0,
+    partitaDaSetup: !(calendar?.match_days || []).length && matchDays.length > 0,
     resocontiDaChiedere: resocontiDaChiedere({ oggi, trainingDays, matchDays, resoconti }),
   };
 }

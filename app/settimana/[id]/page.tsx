@@ -119,8 +119,8 @@ export default function SettimanaPage() {
       // inline non bloccante (niente più popup automatico che si accavalla
       // a check-in/Reset il lunedì mattina)
       const calData = calendarRes ? await calendarRes.json().catch(() => ({})) : {};
-      if (calData.trainingDays && calData.trainingDays.length > 0) {
-        setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
+      if (calData.compilato) {
+        setCalendarData({ trainingDays: calData.trainingDays || [], matchDays: calData.matchDays || [] });
       }
 
       setSettimana(data.settimana);
@@ -341,7 +341,7 @@ export default function SettimanaPage() {
             <p className="text-caption text-muted flex items-center gap-1.5 min-w-0">
               <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span className="truncate">
-                Allenamenti: {dayList(calendarData.trainingDays)}
+                {calendarData.trainingDays.length > 0 ? `Squadra: ${dayList(calendarData.trainingDays)}` : 'Niente squadra'}
                 {calendarData.matchDays.length > 0 && ` · Partita: ${dayList(calendarData.matchDays)}`}
               </span>
             </p>
@@ -353,7 +353,7 @@ export default function SettimanaPage() {
           <Banner
             tone="warn"
             icon={<Calendar size={20} aria-hidden />}
-            title="Quando ti alleni questa settimana?"
+            title="Quando ti alleni con la squadra e quando giochi?"
             action={{ label: 'Imposta', onClick: () => setShowCalendarPopup(true) }}
           />
         )}

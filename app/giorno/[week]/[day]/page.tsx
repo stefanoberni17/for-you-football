@@ -128,12 +128,13 @@ export default function GiornoPage() {
       // Carica calendario settimanale
       try {
         const calData = calendarRes ? await calendarRes.json() : {};
-        if (calData.trainingDays && calData.trainingDays.length > 0) {
-          setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
-        } else if (calData.abitudine && (calData.abitudine.trainingDays?.length || calData.abitudine.matchDays?.length)) {
-          // Senza il calendario della settimana vale l'abitudine del setup (giorni squadra, partita abituale)
-          setCalendarData({ trainingDays: calData.abitudine.trainingDays || [], matchDays: calData.abitudine.matchDays || [] });
-        }
+        // Squadra e partita, ognuna per conto suo (9/11): quella della settimana se c'è, altrimenti l'abitudine del
+        // setup del Corpo. È la stessa regola del Corpo (giorniSquadra / giorniPartita), così giorno, Home e piano
+        // dicono la stessa cosa anche con una settimana che ha la sola partita.
+        const ab = calData.abitudine || {};
+        const squadra: number[] = calData.trainingDays?.length ? calData.trainingDays : (ab.trainingDays || []);
+        const partite: number[] = calData.matchDays?.length ? calData.matchDays : (ab.matchDays || []);
+        if (squadra.length || partite.length) setCalendarData({ trainingDays: squadra, matchDays: partite });
       } catch { /* calendario non configurato — ignora */ }
 
       // Carica dati settimana (per pratica pre-partita + teaser giorno successivo)

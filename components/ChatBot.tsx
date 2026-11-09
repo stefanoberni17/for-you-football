@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { supabase } from '@/lib/supabase';
 import { Send } from 'lucide-react';
-import { Badge, Button, Chip, Input } from '@/components/ui';
+import { Button, Chip, Input } from '@/components/ui';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -45,6 +45,8 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
   const [paywalled, setPaywalled] = useState(false);
   const [inPausaChat, setInPausaChat] = useState(false); // 3/11: in pausa il Coach aspetta, il bottone porta alla pausa
   const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
+  const [gratisFino, setGratisFino] = useState<string | null>(null); // fine del periodo gratis (9/11)
+  const [motivoChiuso, setMotivoChiuso] = useState<string | null>(null); // perché il Coach non risponde (lib/coachGratis.ts)
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -158,6 +160,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         if (err?.error === 'payment_required') {
           setPaywalled(true);
           setInPausaChat(err?.reason === 'in_pausa');
+          setMotivoChiuso(typeof err?.reason === 'string' ? err.reason : null);
           setFreeRemaining(0);
           setMessages(prev => [...prev, {
             role: 'assistant' as const,
@@ -175,6 +178,7 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
 
       const data = await response.json();
       if (typeof data.freeRemaining === 'number') setFreeRemaining(data.freeRemaining);
+      if (typeof data.gratisFino === 'string') setGratisFino(data.gratisFino);
 
       const assistantMessage: Message = {
         role: 'assistant',
@@ -205,17 +209,28 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
     sendSuggestion: (text: string) => sendMessageText(text),
   }));
 
+  const finoBreve = gratisFino ? new Date(gratisFino).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', timeZone: 'Europe/Rome' }) : null;
   const freeBadge = !paywalled && freeRemaining !== null
-    ? `${freeRemaining} ${freeRemaining === 1 ? 'messaggio' : 'messaggi'} gratis`
+    ? `${freeRemaining} ${freeRemaining === 1 ? 'messaggio' : 'messaggi'} gratis${finoBreve ? ` fino al ${finoBreve}` : ''}`
     : null;
+  // La card sotto il messaggio di chiusura: dove porta dipende dal motivo
+  const chiusura = inPausaChat
+    ? { titolo: 'Il Coach ti aspetta quando riprendi', bottone: 'Vai alla pausa', href: '/pausa' }
+    : motivoChiuso === 'non_nel_pacchetto'
+      ? { titolo: 'Per l\'allenamento c\'è il preparatore', bottone: 'Vai al preparatore', href: '/allenamento/chat' }
+      : motivoChiuso === 'cancellazione'
+        ? { titolo: 'Il tuo account è in cancellazione', bottone: 'Riattiva l\'account', href: '/riattiva' }
+        : motivoChiuso === 'prova_da_iniziare'
+          ? { titolo: 'Il Coach si apre con la prova', bottone: 'Inizia la prova', href: '/pricing?pacchetto=mentale' }
+          : { titolo: 'Il Coach continua con il Mente o con il Completo', bottone: 'Continua il percorso', href: '/pricing?pacchetto=mentale' };
 
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Una riga sola (8/11): chi risponde e che è un'AI (art. 50 AI Act, sempre visibile), i messaggi gratis a destra.
           Prima un'intestazione verde a tutta larghezza che il preparatore non aveva. */}
-      <div className="flex items-center justify-center gap-2 px-4 py-2.5 flex-shrink-0 border-b border-divider">
-        <p className="text-body-sm text-muted text-center leading-snug">Il Coach: un&apos;AI, non una persona. Può sbagliare.</p>
-        {freeBadge && <Badge tone="neutral" className="shrink-0">{freeBadge}</Badge>}
+      <div className="px-4 py-2.5 flex-shrink-0 border-b border-divider text-center">
+        <p className="text-body-sm text-muted leading-snug">Il Coach: un&apos;AI, non una persona. Può sbagliare.</p>
+        {freeBadge && <p className="text-caption text-forest-300 font-semibold mt-0.5">{freeBadge}</p>}
       </div>
 
       {/* Messaggi */}
@@ -257,8 +272,8 @@ export default function ChatBot({ ref, suggestions, userName }: { ref?: React.Re
         <div ref={messagesEndRef} />
         {paywalled && (
           <div className="mx-1 mt-1 bg-forest-500/10 border border-forest-500/35 rounded-card p-4 text-center">
-            <p className="text-body text-app font-semibold mb-3">{inPausaChat ? 'Il Coach ti aspetta quando riprendi' : 'Il Coach continua con il Mente o con il Completo'}</p>
-            <Button variant="primary" href={inPausaChat ? '/pausa' : '/pricing?pacchetto=mentale'}>{inPausaChat ? 'Vai alla pausa' : 'Continua il percorso'}</Button>
+            <p className="text-body text-app font-semibold mb-3">{chiusura.titolo}</p>
+            <Button variant="primary" href={chiusura.href}>{chiusura.bottone}</Button>
           </div>
         )}
       </div>

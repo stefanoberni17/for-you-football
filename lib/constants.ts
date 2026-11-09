@@ -61,7 +61,7 @@ export const FREE_WEEKS = 1;
 /** Cancellazione account (26/9, Ste): i dati restano questi giorni per chi ci ripensa, poi spariscono per sempre. */
 export const ACCOUNT_GRACE_DAYS = 60;
 // Messaggi al Coach (chat in app) inclusi nella settimana gratis; Telegram resta di Season 1.
-export const FREE_COACH_MESSAGES = 20; // dall'8/10 (spec v4, punto 5): 20 messaggi gratis in app durante la prova; Telegram resta solo per chi paga
+export const FREE_COACH_MESSAGES = 20; // dall'8/10 (spec v4, punto 5); dal 9/11 in tutto nel periodo gratis a tempo, app + Telegram (lib/coachGratis.ts)
 
 // Blocchi tematici
 export const BLOCKS = [

@@ -13,10 +13,12 @@ import IconaCorpo, { IconaMente } from './IconaCorpo';
  * («Disciplina», «Presenza»): dice a cosa serve il riquadro.
  */
 export default function Riquadro({
-  href, onClick, icona, titolo, valore, sotto, etichetta, parte = 'mente', tono = 'scuro', bloccato = false, pallino = false, alto = false, children, className = '',
+  href, onClick, icona, titolo, valore, sotto, etichetta, parte = 'mente', tono = 'scuro', bloccato = false, pallino = false, alto = false, children, className = '', ariaLabel,
 }: {
   href?: string; onClick?: () => void; icona: ReactNode; titolo: string; valore?: ReactNode; sotto?: string; etichetta?: string;
   parte?: 'mente' | 'corpo'; tono?: 'verde' | 'scuro'; bloccato?: boolean; pallino?: boolean; alto?: boolean; children?: ReactNode; className?: string;
+  /** Il nome per lo screen reader quando il riquadro dice più del titolo (9/11: la settimana in Home). */
+  ariaLabel?: string;
 }) {
   const verde = tono === 'verde';
   const corpo = parte === 'corpo';
@@ -41,8 +43,8 @@ export default function Riquadro({
       {pallino && <span aria-label="Hai un resoconto da dare" className="absolute right-3 top-3 h-3 w-3 rounded-full bg-accent-glow shadow-glow ring-2 ring-black/30" />}
     </>
   );
-  if (href) return <Link href={href} aria-label={titolo} className={cls}>{contenuto}</Link>;
-  return <button type="button" onClick={onClick} aria-label={titolo} className={cls}>{contenuto}</button>;
+  if (href) return <Link href={href} aria-label={ariaLabel ?? titolo} className={cls}>{contenuto}</Link>;
+  return <button type="button" onClick={onClick} aria-label={ariaLabel ?? titolo} className={cls}>{contenuto}</button>;
 }
 
 /** Due riquadri per riga. */

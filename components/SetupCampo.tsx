@@ -322,7 +322,7 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
               </div>
               {giorniSquadra.length === 0 ? (
                 <p className="text-body-sm text-muted leading-relaxed">
-                  Prima imposta i giorni di allenamento con la squadra dal calendario in home: qui poi puoi dire quanto è impegnativo ognuno.
+                  Prima imposta i giorni con la squadra in Home, da «La tua settimana» › «Modifica squadra e partita»: qui poi puoi dire quanto è impegnativo ognuno.
                 </p>
               ) : (
                 <>

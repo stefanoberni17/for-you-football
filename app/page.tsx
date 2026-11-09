@@ -22,6 +22,7 @@ import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib
 import { shouldRedirectToPaywall, hasActiveAccess, canAccessWeek, inPausa, isPaywallActive, livelloFisico } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import SettimanaVista, { GiornoSegno, riassuntoSettimana, type GiornoSettimana, type StatoSedutaVista } from '@/components/SettimanaVista';
 import PushPermission from '@/components/PushPermission';
 import EsercizioSettimanaCard from '@/components/EsercizioSettimanaCard';
 import InstallBanner from '@/components/InstallBanner';
@@ -76,7 +77,9 @@ export default function HomePage() {
   const [userId, setUserId] = useState('');
   const [coachMessageDismissed, setCoachMessageDismissed] = useState(false);
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
-  const [showCalendar, setShowCalendar] = useState(false);
+  // 9/11 (fase 1a): il riquadro della settimana apre la VISTA in sola lettura; la modifica è un passo a parte
+  const [settimanaAperta, setSettimanaAperta] = useState<null | 'vista' | 'modifica'>(null);
+  const [abitudine, setAbitudine] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
   const [campo, setCampo] = useState<CampoOggi | null>(null); // il Campo oggi, in piccolo (20/10)
   const [actionsTotal, setActionsTotal] = useState(0);
   const [actionsTodayCount, setActionsTodayCount] = useState(0);
@@ -216,8 +219,9 @@ export default function HomePage() {
       try {
         if (calRes?.ok) {
           const calJson = await calRes.json();
-          if (calJson.trainingDays?.length > 0) {
-            setCalendarData(calJson);
+          if (calJson.abitudine) setAbitudine(calJson.abitudine);
+          if (calJson.compilato) {
+            setCalendarData({ trainingDays: calJson.trainingDays || [], matchDays: calJson.matchDays || [] });
           }
         }
       } catch {}
@@ -340,7 +344,12 @@ export default function HomePage() {
     });
     if (!res.ok) throw new Error('calendar save failed'); // il popup mostra l'errore
     setCalendarData({ trainingDays, matchDays });
-    setShowCalendar(false);
+    // Il Corpo rilegge la settimana (giorni squadra e partita effettivi), poi si torna alla vista aggiornata
+    try {
+      const r = await authFetch('/api/training/oggi');
+      if (r.ok) setCampo((await r.json()) as CampoOggi);
+    } catch { /* la vista resta con i dati di prima */ }
+    setSettimanaAperta('vista');
   };
 
   /**
@@ -442,24 +451,31 @@ export default function HomePage() {
     return <Riquadro {...base} href="/allenamento" icona={<Check />} sotto="Settimana finita" />;
   })();
 
-  // La tua settimana in piccolo: sette barrette (partita, seduta fatta o prevista, squadra), toccata apre il calendario
+  // La tua settimana (9/11, fase 1a): sette giorni con i segni della vista (squadra S giallo-arancio, partita P rosso,
+  // seduta dell'app blu), pallino verde sotto = pratica del percorso fatta. Il tocco apre la vista in sola lettura.
+  const giorniSettimana: GiornoSettimana[] = [1, 2, 3, 4, 5, 6, 7].map((day) => {
+    const sed = campoAttivo ? (campo!.sedute ?? []).find(x => x.giorno === day) : undefined;
+    return {
+      giorno: day, data: addDays(lunedi, day - 1),
+      squadra: trainingDaysEff.includes(day), partita: matchDaysEff.includes(day),
+      seduta: sed ? { titolo: sed.titolo, durataMin: sed.durataMin, stato: sed.stato as StatoSedutaVista } : null,
+      percorso: pathDows.has(day),
+    };
+  });
+  const riassunto = riassuntoSettimana(giorniSettimana, weekProgress, DAYS_PER_WEEK);
   const riquadroSettimana = (
-    <Riquadro alto onClick={() => setShowCalendar(true)} icona={null} titolo="La tua settimana"
-      sotto={`Percorso ${weekProgress}/${DAYS_PER_WEEK}`}>
-      <span aria-hidden className="absolute inset-x-4 top-4 grid grid-cols-7 gap-1">
-        {[1, 2, 3, 4, 5, 6, 7].map((day) => {
-          const sed = campoAttivo ? (campo!.sedute ?? []).find(x => x.giorno === day) : undefined;
-          const colore = matchDaysEff.includes(day) ? 'bg-warning/40'
-            : sed?.stato === 'fatta' ? 'bg-forest-500'
-              : sed ? 'bg-forest-500/30'
-                : trainingDaysEff.includes(day) ? 'bg-surface-3' : 'bg-surface-2';
-          return (
-            <span key={day} className="flex flex-col items-center gap-1">
-              <span className={`h-7 w-full rounded-md ${colore} ${day === oggiDow ? 'ring-1 ring-forest-400' : ''}`} />
-              <span className={`h-1.5 w-1.5 rounded-full ${pathDows.has(day) ? 'bg-forest-400' : 'bg-transparent'}`} />
+    <Riquadro alto className="col-span-2" onClick={() => setSettimanaAperta('vista')} icona={null} titolo="La tua settimana" sotto={riassunto.breve}
+      ariaLabel={`La tua settimana. ${riassunto.esteso}. Apri per vedere i sette giorni`}>
+      <span aria-hidden className="absolute inset-x-4 top-4 grid grid-cols-7 gap-1.5">
+        {giorniSettimana.map((g) => (
+          <span key={g.giorno} className="flex flex-col items-center gap-1">
+            <span className={`w-full rounded-md ${g.giorno === oggiDow ? 'ring-1 ring-forest-400 ring-offset-1 ring-offset-surface' : ''}`}>
+              <GiornoSegno piccolo squadra={g.squadra} partita={g.partita} seduta={g.seduta?.stato ?? null} />
             </span>
-          );
-        })}
+            <span className={`text-caption leading-none ${g.giorno === oggiDow ? 'text-app font-semibold' : 'text-faint'}`}>{DAY_SHORT_NAMES[g.giorno]}</span>
+            <span className={`h-1.5 w-1.5 rounded-full ${g.percorso ? 'bg-forest-400' : 'bg-transparent'}`} />
+          </span>
+        ))}
       </span>
     </Riquadro>
   );
@@ -593,14 +609,27 @@ export default function HomePage() {
         {bloccoMente}
         {griglia}
 
-        {/* Popup calendario */}
-        {showCalendar && (
+        {/* La settimana: prima si guarda (sola lettura), poi, se serve, si modifica squadra e partita */}
+        {settimanaAperta === 'vista' && (
+          <SettimanaVista
+            giorni={giorniSettimana}
+            oggiDow={oggiDow}
+            conCorpo={campoAttivo}
+            squadraDaSetup={campoAttivo && !!campo?.squadraDaSetup}
+            partitaDaSetup={campoAttivo && !!campo?.partitaDaSetup}
+            sedutaHref={campoAttivo && !campo?.consensiMancanti ? (g) => `/allenamento/sessione/${g}` : undefined}
+            onModifica={() => setSettimanaAperta('modifica')}
+            onClose={() => setSettimanaAperta(null)}
+          />
+        )}
+        {settimanaAperta === 'modifica' && (
           <WeeklyCalendarPopup
             weekNumber={currentWeek}
             existingTrainingDays={calendarData?.trainingDays}
             existingMatchDays={calendarData?.matchDays}
+            abitudine={campoAttivo ? abitudine : null}
             onSave={handleCalendarSave}
-            onSkip={() => setShowCalendar(false)}
+            onSkip={() => setSettimanaAperta('vista')}
           />
         )}
 

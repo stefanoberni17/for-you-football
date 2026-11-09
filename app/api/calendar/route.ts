@@ -62,11 +62,10 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     const weekStart = startOfCurrentWeekRome();
-    const isFresh =
-      !!data?.created_at &&
-      !!data?.training_days &&
-      data.training_days.length > 0 &&
-      new Date(data.created_at) >= weekStart;
+    // Salvato questa settimana: vale anche senza allenamenti con la squadra (9/11: una settimana con la sola
+    // partita, o senza niente, è una risposta; prima serviva almeno un allenamento e veniva letta come "non impostato").
+    // Il cron del lunedì svuota le righe ma non tocca created_at: una riga della settimana scorsa non è fresca.
+    const isFresh = !!data?.created_at && new Date(data.created_at) >= weekStart;
 
     // L'abitudine del setup del Campo (24/10): giorni squadra e partita abituale, per chi non ha
     // compilato il calendario della settimana. A parte, così chi usa trainingDays/matchDays per
@@ -82,7 +81,8 @@ export async function GET(request: NextRequest) {
     } catch { /* senza colonna o profilo: nessuna abitudine */ }
 
     return NextResponse.json({
-      trainingDays: isFresh ? data!.training_days : [],
+      compilato: isFresh,
+      trainingDays: isFresh ? (data!.training_days || []) : [],
       matchDays: isFresh ? (data!.match_days || []) : [],
       createdAt: isFresh ? data!.created_at : null,
       abitudine,

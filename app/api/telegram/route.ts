@@ -15,7 +15,8 @@ import {
   TELEGRAM_FORMAT
 } from '@/lib/coach-ai';
 import { checkRateLimit, COACH_HOURLY_LIMIT, ANON_HOURLY_LIMIT } from '@/lib/rateLimit';
-import { pausaFino, requirePaidAccess } from '@/lib/serverAccess';
+import { accessoCoachUtente } from '@/lib/serverAccess';
+import { testoCoachChiuso } from '@/lib/coachGratis';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -215,15 +216,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // Paywall: il Coach è contenuto a pagamento anche su Telegram (stesso gate di /api/chat).
-    if (!(await requirePaidAccess(userId))) {
-      const fineP = await pausaFino(userId);
-      await sendTelegramMessage(
-        chatId,
-        fineP
-          ? 'Sei in pausa: ci ritroviamo qui quando riprendi. Se vuoi riprendere prima, lo fai dall\'app (Profilo → Account). ⚽'
-          : 'Il Coach su Telegram c\'è con il Mente o con il Completo, dopo la settimana di prova. Apri l\'app: da lì torniamo a parlare qui. ⚽'
-      );
+    // Il Coach su Telegram: la STESSA regola dell'app (9/11, lib/coachGratis.ts), con il conteggio dei messaggi
+    // gratis condiviso tra i due canali. Collegare Telegram resta per chi ha l'accesso pieno (/api/telegram/link).
+    const accessoTg = await accessoCoachUtente(userId);
+    if (!accessoTg.ok) {
+      await sendTelegramMessage(chatId, testoCoachChiuso(accessoTg.motivo, accessoTg.fino));
       return NextResponse.json({ ok: true });
     }
 

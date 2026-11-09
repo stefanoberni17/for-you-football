@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-09 — Fase 1a della revisione dell'esperienza: la settimana in sola lettura, la squadra, il Coach gratis
+
+Piano in `docs/revisione-esperienza-2026-11-09.md` (fase 1, pezzo 1a).
+- **La tua settimana** (`components/SettimanaVista.tsx`): il riquadro in Home (ora a tutta larghezza) apre una vista in sola lettura dei sette giorni; prima apriva l'editor «Imposta la tua settimana». Colori di Ste con simboli ed etichette: squadra giallo-arancio con la S, partita rosso con la P, seduta dell'app blu col manubrio (contorno in programma, pieno fatta, tratteggiato saltata), pallino verde per la pratica del percorso; giorni con due cose divisi a metà; «dal tuo setup» quando squadra o partita vengono dall'abitudine del Corpo. Ogni riga ha l'etichetta per lo screen reader.
+- **Squadra e partita** (`components/WeeklyCalendarPopup.tsx`): «Allenamenti con la squadra» al posto di «Giorni di allenamento», si salva anche senza (settimana con la sola partita, o vuota); con la settimana vuota dice quale setup vale. `GET /api/calendar` → `compilato`; Home, settimana e giorno lo usano (prima una settimana con la sola partita risultava «non impostata»). Stessa parola nella nota campo («Il tuo prossimo allenamento con la squadra è…»), nel contesto del Coach e nella pagina della settimana.
+- **Coach gratis** (`lib/coachGratis.ts`, 17 test): periodo gratis a tempo (la prova del Mente/Completo, o 7 giorni dalla registrazione per chi non passa dalla prova), 20 messaggi in tutto tra app e Telegram, stessa regola sui due canali; prima i 20 messaggi valevano per tutta la vita dell'account e un ragazzo fermo alla settimana 1 li teneva per sempre. Pacchetto solo Corpo: il Coach non c'è (rimanda al preparatore). Il contatore in chat dice anche fino a quando.
+
 ## 2026-11-09 — Home e Palestra più chiare, Le tue risposte per settimana, il Corpo in blu (proposta)
 
 - Home (Ste: «più chiarezza sulle tab da schiacciare»): la card della pratica dice «Percorso Mente · pratica di oggi» (sotto settimana, giorno e minuti); il riquadro del Corpo si chiama sempre «Allenamento di oggi» con lo stato sotto; «Disciplina · Le tue azioni»; «Presenza · Esercizio della settimana». `Riquadro` ha la prop `etichetta`.

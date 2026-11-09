@@ -14,7 +14,7 @@ describe('prossimo evento (nota campo, 24/10)', () => {
     expect(prossimoEvento(cal, 4)).toMatchObject({ tipo: 'partita', giorno: 6, tra: 2, oggi: false });
     expect(fraseProssimoEvento(prossimoEvento(cal, 4))).toBe('La tua prossima partita è sabato. Prova questo in campo!');
     expect(prossimoEvento(cal, 7)).toMatchObject({ tipo: 'allenamento', giorno: 1, tra: 1 });
-    expect(fraseProssimoEvento(prossimoEvento(cal, 1))).toBe('Oggi è giorno di allenamento. Prova questo in campo!');
+    expect(fraseProssimoEvento(prossimoEvento(cal, 1))).toBe('Oggi ti alleni con la squadra. Prova questo in campo!');
     expect(fraseProssimoEvento(prossimoEvento(cal, 6))).toBe('Oggi giochi. Prova questo in campo!');
   });
 

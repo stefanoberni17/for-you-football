@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { hasActiveAccess, canAccessWeek, inPausa, inProva, type BillingProfile } from '@/lib/checkAccess';
+import { accessoCoach, type AccessoCoach } from '@/lib/coachGratis';
 
 /**
  * serverAccess — verifica paywall lato server (API route).
@@ -71,4 +72,22 @@ export async function requirePaidAccess(userId: string): Promise<boolean> {
   const profile = await getBillingProfile(userId);
   if (profile?.deleted_at) return false;
   return hasActiveAccess(profile);
+}
+
+/**
+ * Il Coach per questo utente adesso (9/11): la regola di lib/coachGratis.ts con il profilo e i messaggi già mandati
+ * al Coach su TUTTI i canali (eventi `coach_message_sent`, app e Telegram). Stessa funzione per /api/chat e
+ * /api/telegram. Se il conteggio non risponde vale 0: meglio un messaggio in più che un Coach chiuso per errore.
+ */
+export async function accessoCoachUtente(userId: string, adesso = Date.now()): Promise<AccessoCoach> {
+  const paywall = !!process.env.STRIPE_SECRET_KEY;
+  if (!paywall) return { ok: true, illimitato: true };
+  const profile = await getBillingProfile(userId);
+  if (hasActiveAccess(profile) && !profile?.deleted_at) return { ok: true, illimitato: true };
+  const { count } = await supabaseAdmin
+    .from('onboarding_events')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('event', 'coach_message_sent');
+  return accessoCoach(profile, { usati: count ?? 0, adesso, paywall });
 }
