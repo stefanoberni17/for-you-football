@@ -32,7 +32,8 @@ const VARIANT: Record<CardVariant, string> = {
   accent: 'bg-forest-500/10 border border-forest-500/35',
   warn: 'bg-warning/10 border border-warning/30',
   danger: 'bg-danger/10 border border-danger/30',
-  hero: 'relative overflow-hidden text-white border border-forest-400/25 shadow-[0_12px_40px_rgba(26,150,96,0.25)] bg-[radial-gradient(120%_90%_at_0%_0%,#22b873_0%,#1a9660_45%,#0e5c3a_100%)]',
+  // dal 9/11 con i token: nel Corpo (`.parte-corpo`) diventa blu
+  hero: 'relative overflow-hidden text-white border border-forest-400/25 shadow-[0_12px_40px_color-mix(in_srgb,var(--color-forest-500)_25%,transparent)] bg-[radial-gradient(120%_90%_at_0%_0%,color-mix(in_srgb,var(--color-forest-400)_40%,var(--color-forest-500))_0%,var(--color-forest-500)_45%,var(--color-forest-700)_100%)]',
 };
 const PAD = { none: '', sm: 'p-4', md: 'p-5' };
 
