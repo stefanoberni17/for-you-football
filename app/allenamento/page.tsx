@@ -105,6 +105,7 @@ const CARICO_FRASE: Record<StatoCarico, string> = {
   rischio: 'Troppo in fretta: settimana più leggera.',
   insufficiente: 'Ancora pochi dati: vota le serie durante il recupero e in un paio di settimane ti dico come stai.',
 };
+const CARICO_TESTO: Record<'success' | 'warn' | 'info' | 'danger' | 'neutral', string> = { success: 'text-success', warn: 'text-warning', info: 'text-info', danger: 'text-danger', neutral: 'text-muted' };
 const CARICO_TONE: Record<StatoCarico, 'success' | 'warn' | 'info' | 'danger' | 'neutral'> = { ok: 'success', alto: 'warn', poco: 'info', rischio: 'danger', insufficiente: 'neutral' };
 
 /** Un check-in per il recupero (dal /api/checkin/history). */
@@ -873,7 +874,8 @@ export default function AllenamentoHub() {
           return (
             <Card padding="sm" className="mb-3">
               <SectionTitle title="Carico" className="mb-1" />
-              <Badge tone={CARICO_TONE[carico.stato]} className="mb-2 max-w-full whitespace-normal text-left">{carico.statoLabel}</Badge>
+              {/* Lo stato in una riga di testo (9/11): da Badge usciva dallo schermo quando è lungo («servono 2 settimane…») */}
+              <p className={`mb-2 text-body-sm font-semibold ${CARICO_TESTO[CARICO_TONE[carico.stato]]}`}>{carico.statoLabel}</p>
               <p className="text-body text-app leading-relaxed">{CARICO_FRASE[carico.stato]}</p>
               {/* Tetto personale (Ste, 26/10): stanco → tetto giù, fresco → tetto su; la riga dice il perché */}
               {carico.condizioneRiga && <p className="text-body-sm text-muted leading-relaxed mt-1">{carico.condizioneRiga}</p>}
