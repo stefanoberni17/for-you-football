@@ -489,10 +489,9 @@ Nessun dato cancellato o riscritto, tranne la correzione delle letture.
 - Termini: «Chiusura settimana», «I tuoi dati», «Carta», «Corpo» in tutti i testi visibili (§9).
 - Video mancanti: da vedere insieme più avanti.
 
-**Ancora da decidere (prodotto e metodo)**
-1. **I numeri del rientro** (§8): 2 sedute fisiche e serie al 70 % la prima settimana, 85 % la seconda, normale dalla terza; niente pliometria intensiva, velocità pura, massimali né RSA nella prima.
-2. **La fase 1** (§1) va bene così com'è scritta per partire?
+- Numeri del rientro (§8) approvati, **con il messaggio che lo spiega** al ragazzo: «Sei stato fermo qualche settimana: questa settimana 2 sedute con le serie al 70 %, la prossima all'85 %, poi si torna normale».
+- Coach gratis: i 20 messaggi valgono **solo nella settimana 1** (o nella prova); dopo, il Coach dipende dal pacchetto (oggi `hasActiveAccess`: Mente o Completo). Oggi invece il conto è su tutta la vita dell'account (`app/api/chat/route.ts:59-75`).
 
-**Commerciali (separate)**
-3. **Coach gratis:** oggi 20 messaggi per tutta la vita dell'account; i testi dicono «nella settimana gratis».
-4. **Dopo la settimana 12:** cosa vede e cosa paga il ragazzo.
+**Ancora da decidere**
+1. **La fase 1** (§1): in partenza dopo l'ok di Ste sulla dimensione del lavoro.
+2. **Dopo la settimana 12** (commerciale): cosa vede e cosa paga il ragazzo.
