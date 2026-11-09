@@ -2,6 +2,16 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-09 — L'Allenamento del Corpo in quattro schede, e meno doppioni
+
+Ste: «la parte di palestra fisica è davvero molto incasinata»; «Oggi, Settimana, Stats, Setup»; «la card una unica dove si può switchare tra corpo, mente e completa»; «fai un giro sulle ridondanze».
+- **Oggi**: il resoconto da dare, la zona dolorante, la seduta di oggi (card verde con il play), «Hai un dolore?» in una riga. Il carico e la card del preparatore escono da qui.
+- **Settimana**: i sette giorni in righe, lunedì-domenica, con squadra e partita (dal calendario o dall'abitudine del setup), titolo, durata e una riga di blocchi; tocco → la seduta. Sotto il messaggio del piano (tre righe), gli aggiustamenti e «Rifai la settimana»; scarico e ri-test in cima.
+- **Stats**: recupero dai check-in (oggi, 7 e 30 giorni, meglio o peggio della settimana prima, sonno, barre degli ultimi 14 giorni), zone tese, fatica (carico, squadra e partita), squilibri, il mese e la tecnica del mese, livello e test con le scale.
+- **Setup**: la pagina del setup dentro la scheda (`components/SetupCampo.tsx`); `/allenamento/setup` porta qui.
+- **Doppioni tolti**: il rombo del Corpo è nella Carta (vista Corpo, ora con Base | Dettaglio), non più nell'Allenamento; nel Profilo una Carta sola invece di due righe; il setup non è più nel Profilo né dietro l'ingranaggio; la card «Parla col preparatore» è tolta (la tab Chat dal Corpo apre il preparatore).
+- Da fare (Ste): accorciare una seduta sola, in CLAUDE.md.
+
 ## 2026-11-08 — L'app riorganizzata: quattro tab e un solo selettore Mente | Corpo
 
 Ste: «l'ho fatta vedere in giro e mi dicono che è bellissima ma ci sono tante cose e non si capisce bene come arrivarci… troppe scritte piccole».

@@ -91,6 +91,7 @@ export default function CartaPage() {
   const [carta, setCarta] = useState<CartaData | null>(null);
   const [c360, setC360] = useState<Carta360 | null>(null);
   const [vista, setVista] = useState<Vista>('mente');
+  const [dettaglio, setDettaglio] = useState(false); // Corpo: 6 punte (base) o 11 (dettaglio), come era nel Campo
   // Carta modificabile (26/10): le righe delle risposte chiave e il riquadro in modifica
   const [rows, setRows] = useState<RispostaRow[]>([]);
   const [modifica, setModifica] = useState<CampoCarta | null>(null);
@@ -152,11 +153,12 @@ export default function CartaPage() {
 
   // ── Dati del rombo per la vista scelta (scala 0-100 fissa, ombra "partenza" sotto) ──
   const haCorpo = !!c360?.corpo && c360.corpo.testFatti > 0;
+  const punteCorpo = (dettaglio ? c360?.corpo?.dettaglio : c360?.corpo?.base) || [];
   const punteMente: Punta[] = c360 ? [...c360.mente.punte, c360.recupero] : [];
-  const haPartenza = !!c360 && (vista === 'mente' ? c360.mente.haPartenza : vista === 'corpo' ? (c360.corpo?.base || []).some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score) : c360.tre60.some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score));
+  const haPartenza = !!c360 && (vista === 'mente' ? c360.mente.haPartenza : vista === 'corpo' ? punteCorpo.some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score) : c360.tre60.some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score));
   const radar: { key: string; label: string; value: number; partenza: number }[] = !c360 ? []
     : vista === 'mente' ? punteMente.map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }))
-      : vista === 'corpo' ? (c360.corpo?.base || []).map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }))
+      : vista === 'corpo' ? punteCorpo.map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }))
         : c360.tre60.map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }));
 
   return (
@@ -227,14 +229,15 @@ export default function CartaPage() {
               )}
               {vista === 'corpo' && c360.corpo && (
                 <div className="grid grid-cols-2 gap-2">
-                  {c360.corpo.base.map((p) => (
+                  {punteCorpo.map((p) => (
                     <div key={p.key} className="flex items-baseline justify-between gap-2 py-1">
                       <span className="text-body-sm text-app">{p.label}</span>
                       <span className="text-body-sm font-semibold tabular-nums text-muted">{p.score === null ? '—' : Math.round(p.score)}<Delta d={p.delta} /> <span className="text-faint">· {p.fatti}/{p.totali}</span></span>
                     </div>
                   ))}
-                  <div className="col-span-2 pt-1">
-                    <Button variant="ghost" size="sm" href="/allenamento">Vedi il Campo</Button>
+                  <div className="col-span-2 flex gap-2 pt-1">
+                    <Chip selected={!dettaglio} showCheck={false} onClick={() => setDettaglio(false)}>Base</Chip>
+                    <Chip selected={dettaglio} showCheck={false} onClick={() => setDettaglio(true)}>Dettaglio</Chip>
                   </div>
                 </div>
               )}

@@ -48,7 +48,7 @@ export default function BottomTabBar() {
   // Quattro tab (8/11, Ste: "tante cose e non si capisce come arrivarci"): il Percorso è dentro Palestra › Mente,
   // il preparatore dentro Chat › Corpo, Carta, storico, setup e account dentro Profilo
   const inizia = (...prefissi: string[]) => prefissi.some((x) => pathname === x || pathname.startsWith(`${x}/`));
-  const profiloCorpo = inizia('/allenamento/storico', '/allenamento/setup', '/allenamento/mese');
+  const profiloCorpo = inizia('/allenamento/storico', '/allenamento/mese');
   const tabs = [
     { id: 'home', href: '/', label: 'Home', icon: Home, attiva: pathname === '/' || pathname === '/oggi' },
     {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BarChart3, BookOpen, CalendarRange, History, IdCard, Settings, SlidersHorizontal } from 'lucide-react';
+import { BarChart3, BookOpen, CalendarRange, History, IdCard, Settings } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { livelloFisico } from '@/lib/checkAccess';
 import { PLAYER_LEVELS, PLAYER_ROLES, SPORT_ROLES } from '@/lib/constants';
@@ -12,8 +12,9 @@ import { AppLoader, Elenco, RigaElenco, TitoloGruppo } from '@/components/ui';
 
 /**
  * Il Profilo (8/11, Ste: "profilo diviso corpo e mente, e un tab in alto a destra con le cose dell'account";
- * poi lo stile delle bozze: elenchi a righe per le liste). In cima chi sei; sotto due elenchi, Mente e Corpo,
- * con le TUE cose (Carta, risposte, dati, storico, setup), senza selettore. Dati personali, abbonamento, Telegram,
+ * poi lo stile delle bozze: elenchi a righe per le liste). In cima chi sei, poi UNA Carta (dentro si passa da Mente a
+ * Corpo a 360°, 9/11) e due elenchi, Mente (risposte, dati) e Corpo (storico, settimane passate). Il setup del Corpo
+ * sta nella scheda Setup dell'Allenamento. Dati personali, abbonamento, Telegram,
  * notifiche, esci e cancella stanno in /account, dietro "Account" in alto a destra.
  */
 export default function ProfiloPage() {
@@ -64,9 +65,13 @@ export default function ProfiloPage() {
         </div>
 
         <div className="space-y-3">
-          <TitoloGruppo>Mente</TitoloGruppo>
+          {/* Una Carta sola (9/11): dentro si passa da Mente a Corpo a 360° */}
           <Elenco>
-            <RigaElenco href="/carta?vista=mente" tono="verde" icona={<IdCard />} titolo="La tua Carta" />
+            <RigaElenco href="/carta" tono="verde" icona={<IdCard />} titolo="La tua Carta" valore={corpoAperto ? 'Mente · Corpo' : 'Mente'} />
+          </Elenco>
+
+          <TitoloGruppo className="pt-4">Mente</TitoloGruppo>
+          <Elenco>
             <RigaElenco href="/risposte" icona={<BookOpen />} titolo="Le tue risposte" />
             <RigaElenco href="/statistiche" icona={<BarChart3 />} titolo="I tuoi dati" />
           </Elenco>
@@ -74,10 +79,8 @@ export default function ProfiloPage() {
           <TitoloGruppo className="pt-4">Corpo</TitoloGruppo>
           {corpoAperto ? (
             <Elenco>
-              <RigaElenco href="/carta?vista=corpo" tono="verde" icona={<IdCard />} titolo="La tua Carta" />
               <RigaElenco href="/allenamento/storico" icona={<History />} titolo="Lo storico" />
               <RigaElenco href="/allenamento/mese" icona={<CalendarRange />} titolo="Le settimane passate" />
-              <RigaElenco href="/allenamento/setup" icona={<SlidersHorizontal />} titolo="Il tuo setup" />
             </Elenco>
           ) : (
             <Elenco>
