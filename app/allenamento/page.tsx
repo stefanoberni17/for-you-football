@@ -872,8 +872,8 @@ export default function AllenamentoHub() {
           const maxC = Math.max(1, ...carico.settimane.map((w) => w.carico), carico.target?.max ?? 0);
           return (
             <Card padding="sm" className="mb-3">
-              <SectionTitle title="Carico" className="mb-2"
-                action={<span className="inline-flex items-center h-11 pr-2"><Badge tone={CARICO_TONE[carico.stato]}>{carico.statoLabel}</Badge></span>} />
+              <SectionTitle title="Carico" className="mb-1" />
+              <Badge tone={CARICO_TONE[carico.stato]} className="mb-2 max-w-full whitespace-normal text-left">{carico.statoLabel}</Badge>
               <p className="text-body text-app leading-relaxed">{CARICO_FRASE[carico.stato]}</p>
               {/* Tetto personale (Ste, 26/10): stanco → tetto giù, fresco → tetto su; la riga dice il perché */}
               {carico.condizioneRiga && <p className="text-body-sm text-muted leading-relaxed mt-1">{carico.condizioneRiga}</p>}
