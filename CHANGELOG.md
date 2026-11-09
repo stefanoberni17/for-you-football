@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-09 — Home e Palestra più chiare, Le tue risposte per settimana, il Corpo in blu (proposta)
+
+- Home (Ste: «più chiarezza sulle tab da schiacciare»): la card della pratica dice «Percorso Mente · pratica di oggi» (sotto settimana, giorno e minuti); il riquadro del Corpo si chiama sempre «Allenamento di oggi» con lo stato sotto; «Disciplina · Le tue azioni»; «Presenza · Esercizio della settimana». `Riquadro` ha la prop `etichetta`.
+- Palestra: «Mente» e «Corpo» sono titoli grandi con il pallino del colore (`TitoloGruppo grande`).
+- Le tue risposte: una settimana alla volta, con i chip delle settimane in cima (si apre sull'ultima) e «Le chiave» per le sole risposte chiave; testo più grande (risposte a 17 px, domande a 14).
+- Due colori (da decidere con Ste): la Mente resta il verde del brand, il Corpo prende il blu (`--color-corpo-*` in `app/globals.css`, `parte="corpo"` su `Riquadro` e `CardPlay`, selettore e testate del Corpo con la riga «Corpo» in blu). Per scambiarli si cambiano i token.
+
 ## 2026-11-09 — L'Allenamento del Corpo in quattro schede, e meno doppioni
 
 Ste: «la parte di palestra fisica è davvero molto incasinata»; «Oggi, Settimana, Stats, Setup»; «la card una unica dove si può switchare tra corpo, mente e completa»; «fai un giro sulle ridondanze».
