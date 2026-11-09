@@ -70,13 +70,14 @@ export default function ProfiloPage() {
             <RigaElenco href="/carta" tono="verde" icona={<IdCard />} titolo="La tua Carta" valore={corpoAperto ? 'Mente · Corpo' : 'Mente'} />
           </Elenco>
 
-          <TitoloGruppo className="pt-4">Mente</TitoloGruppo>
+          <TitoloGruppo grande parte="mente" className="pt-4">Mente</TitoloGruppo>
           <Elenco>
             <RigaElenco href="/risposte" icona={<BookOpen />} titolo="Le tue risposte" />
             <RigaElenco href="/statistiche" icona={<BarChart3 />} titolo="I tuoi dati" />
           </Elenco>
 
-          <TitoloGruppo className="pt-4">Corpo</TitoloGruppo>
+          <TitoloGruppo grande parte="corpo" className="pt-4">Corpo</TitoloGruppo>
+          <div className="parte-corpo">
           {corpoAperto ? (
             <Elenco>
               <RigaElenco href="/allenamento/storico" icona={<History />} titolo="Lo storico" />
@@ -87,6 +88,7 @@ export default function ProfiloPage() {
               <RigaElenco href="/allenamento" bloccato icona={null} titolo="Allenamento fisico e tecnico" valore="Scopri" />
             </Elenco>
           )}
+          </div>
         </div>
       </div>
     </main>

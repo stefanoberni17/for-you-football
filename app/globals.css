@@ -31,14 +31,6 @@
   --color-forest-700: #0e5c3a;
   --color-forest-800: #111c14;
   --color-forest-900: #0a1410;
-  /* Il Corpo (9/11, proposta per Ste: «due colori, mente e corpo a colpo d'occhio»): blu. La Mente resta il verde
-     del brand. Per scambiarli basta cambiare questi valori. */
-  --color-corpo-100: #e2eefb;
-  --color-corpo-300: #9cc8f5;
-  --color-corpo-400: #5aa6ee;
-  --color-corpo-500: #2a7fd4;
-  --color-corpo-600: #1f66b0;
-  --color-corpo-700: #184e88;
 
   /* ─── Superfici "For You Dark" (nero verdognolo, stile Spotify) ─── */
   --color-app-bg:        #0d1310;
@@ -327,4 +319,22 @@ select:focus-visible {
 /* Schermi bassi (iPhone SE): via le cose che si possono togliere */
 @media (max-width: 1023.98px) and (max-height: 720px) {
   .scopri-basso-via { display: none; }
+}
+
+/* ─── Il Corpo in blu (9/11, Ste: «due colori, mente e corpo a colpo d'occhio»; poi «forse troppo evidente») ───
+   La Mente è il verde del brand. Dentro `.parte-corpo` gli stessi token forest diventano un blu acciaio, meno acceso
+   del primo provato: tutte le classi forest-* (testo, riempimenti, gradienti, anelli) seguono da sole.
+   Si mette sull'area del Corpo (app/allenamento/layout.tsx) e sui singoli pezzi del Corpo fuori di lì
+   (riquadri in Home e Palestra, selettore, Profilo, Carta). Per scambiare i colori basta cambiare questi valori. */
+.parte-corpo {
+  --color-forest-50:  #eef4fa;
+  --color-forest-100: #e1ebf5;
+  --color-forest-200: #c8daec;
+  --color-forest-300: #a4c4e4;
+  --color-forest-400: #6fa3d6;
+  --color-forest-500: #2f6dab;
+  --color-forest-600: #27598d;
+  --color-forest-700: #1d456d;
+  --color-accent-glow: #6aa8e6;
+  --shadow-glow: 0 0 24px rgb(106 168 230 / 0.28);
 }

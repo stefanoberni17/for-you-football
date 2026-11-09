@@ -173,7 +173,7 @@ export default function CartaPage() {
 
         {/* ── LA CARTA A 360° (docs/carta-360.md) — non in stampa: la stampa è il documento sotto ── */}
         {c360 && (
-          <section className="no-print space-y-3" aria-label="La tua Carta a 360°">
+          <section className={`no-print space-y-3 ${vista === 'corpo' ? 'parte-corpo' : ''}`} aria-label="La tua Carta a 360°">
 
             {/* Nessun livello della persona per la mente (regola del metodo, 8/10): resta solo il livello del Corpo, che viene dai test */}
             {haCorpo && (
@@ -200,7 +200,7 @@ export default function CartaPage() {
                     <PolarAngleAxis dataKey="label" tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }} />
                     <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
                     {haPartenza && <Radar dataKey="partenza" stroke="var(--color-text-faint)" strokeDasharray="4 3" fill="var(--color-text-faint)" fillOpacity={0.15} isAnimationActive={false} />}
-                    <Radar dataKey="value" stroke="var(--color-accent-glow)" fill="var(--color-accent-glow)" fillOpacity={0.35} isAnimationActive={false} />
+                    <Radar dataKey="value" stroke={vista === 'corpo' ? 'var(--color-forest-400)' : 'var(--color-accent-glow)'} fill={vista === 'corpo' ? 'var(--color-forest-400)' : 'var(--color-accent-glow)'} fillOpacity={0.35} isAnimationActive={false} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>

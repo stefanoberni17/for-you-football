@@ -1061,7 +1061,7 @@ export default function AllenamentoHub() {
                   Hai segnalato un dolore{state.dolore?.zona ? ` (${state.dolore.zona})` : ''}. {CONSIGLIO_VISITA}
                 </p>
                 <label className="flex items-start gap-3 mt-3 min-h-[44px] cursor-pointer">
-                  <input type="checkbox" checked={responsabilita} onChange={(e) => setResponsabilita(e.target.checked)} className="mt-1 h-5 w-5 accent-[#2dd17a]" />
+                  <input type="checkbox" checked={responsabilita} onChange={(e) => setResponsabilita(e.target.checked)} className="mt-1 h-5 w-5 accent-[var(--color-accent-glow)]" />
                   <span className="text-body-sm text-app leading-relaxed">{PRESA_RESPONSABILITA}</span>
                 </label>
                 {state.dolore?.zona && state.dolore.zona !== 'altro' && (

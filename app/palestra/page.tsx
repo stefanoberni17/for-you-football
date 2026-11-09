@@ -67,7 +67,7 @@ export default function PalestraPage() {
         <GrigliaRiquadri>
           <Riquadro href="/allenamento" parte="corpo" tono={corpoAperto ? 'verde' : 'scuro'} bloccato={!corpoAperto} icona={<Dumbbell />} titolo="Allenamento"
             pallino={corpoAperto && pendente}
-            valore={oggi ? <span className="text-body-sm font-semibold text-corpo-100">{oggi}</span> : undefined} />
+            valore={oggi ? <span className="text-body-sm font-semibold text-forest-100">{oggi}</span> : undefined} />
           <Riquadro href={corpoAperto ? '/allenamento/test' : '/allenamento'} parte="corpo" bloccato={!corpoAperto} icona={<Timer />} titolo="Test" />
         </GrigliaRiquadri>
       </div>

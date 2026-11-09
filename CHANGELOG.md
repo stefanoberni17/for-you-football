@@ -7,7 +7,8 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 - Home (Ste: «più chiarezza sulle tab da schiacciare»): la card della pratica dice «Percorso Mente · pratica di oggi» (sotto settimana, giorno e minuti); il riquadro del Corpo si chiama sempre «Allenamento di oggi» con lo stato sotto; «Disciplina · Le tue azioni»; «Presenza · Esercizio della settimana». `Riquadro` ha la prop `etichetta`.
 - Palestra: «Mente» e «Corpo» sono titoli grandi con il pallino del colore (`TitoloGruppo grande`).
 - Le tue risposte: una settimana alla volta, con i chip delle settimane in cima (si apre sull'ultima) e «Le chiave» per le sole risposte chiave; testo più grande (risposte a 17 px, domande a 14).
-- Due colori (da decidere con Ste): la Mente resta il verde del brand, il Corpo prende il blu (`--color-corpo-*` in `app/globals.css`, `parte="corpo"` su `Riquadro` e `CardPlay`, selettore e testate del Corpo con la riga «Corpo» in blu). Per scambiarli si cambiano i token.
+- Due colori (Ste: «forse troppo evidente ma non è male», da applicare a tutto il Corpo): la Mente resta il verde del brand, il Corpo prende un blu acciaio più spento del primo provato. Una classe sola, `.parte-corpo` in `app/globals.css`, rimappa i token forest (e il glow) sul blu: la mette `app/allenamento/layout.tsx` su tutta l'area del Corpo (hub, seduta, player, test, storico, mese, setup, chat del preparatore) e la mettono i pezzi del Corpo fuori di lì (riquadri in Home e Palestra con `parte="corpo"`, `CardPlay`, il selettore, la parte Corpo del Profilo, la Carta in vista Corpo). Reset, check-in e tab bar restano verdi.
+- Accanto a «Mente» e «Corpo» (Palestra, Profilo, testate interne) l'icona della parte al posto del pallino: cervello e manubrio, le stesse del selettore.
 
 ## 2026-11-09 — L'Allenamento del Corpo in quattro schede, e meno doppioni
 

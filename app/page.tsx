@@ -430,7 +430,7 @@ export default function HomePage() {
     if (seduta && seduta.stato !== 'fatta') {
       return <Riquadro {...base} tono="verde" icona={<Dumbbell />}
         href={campo.consensiMancanti ? '/allenamento' : `/allenamento/sessione/${seduta.giorno}`}
-        valore={<span className="text-body-sm font-semibold text-corpo-100">~{durataLabel(seduta.durataMin)}</span>}
+        valore={<span className="text-body-sm font-semibold text-forest-100">~{durataLabel(seduta.durataMin)}</span>}
         sotto={seduta.stato === 'recuperabile' ? `Da recuperare · ${seduta.titolo}` : seduta.titolo} />;
     }
     const fattaOggi = (campo.sedute ?? []).find(s => s.giorno === oggiDow && s.stato === 'fatta');
