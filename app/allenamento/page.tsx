@@ -138,6 +138,7 @@ export default function AllenamentoHub() {
   const [noAccess, setNoAccess] = useState(false); // senza il flag del Campo: pagina di assaggio (20/10)
   const [generating, setGenerating] = useState(false);
   const [vista, setVista] = useState<Vista>('oggi');
+  const [msgAperto, setMsgAperto] = useState(false); // il messaggio del preparatore: tre righe, poi «Leggi tutto»
   const [vistaRombo, setVistaRombo] = useState<'base' | 'dettaglio'>('base');
   // "Prima di iniziare" (migration 021): autodichiarazione di idoneità + consenso dati salute, una volta
   const [okIdoneita, setOkIdoneita] = useState(false);
@@ -611,10 +612,13 @@ export default function AllenamentoHub() {
             <SectionTitle title="La tua settimana" className="mb-3"
               subtitle={`${sedute.length} ${sedute.length === 1 ? 'seduta' : 'sedute'} · in tutto ~${durataLabel(sedute.reduce((a, s) => a + (s.durata_min || 0), 0))}${sedute.some((s) => s.apertura_min) ? ` (+${sedute.reduce((a, s) => a + (s.apertura_min || 0), 0)}' di apertura, se hai tempo)` : ''}`} />
             {state.plan!.plan.messaggio && (
-              <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
+              <div className="mb-3 flex gap-2">
                 <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-                <span>{state.plan!.plan.messaggio}</span>
-              </p>
+                <div className="min-w-0">
+                  <p className={`text-body-sm text-muted leading-relaxed ${msgAperto ? '' : 'line-clamp-3'}`}>{state.plan!.plan.messaggio}</p>
+                  <button type="button" onClick={() => setMsgAperto((v) => !v)} className="tap -ml-1 px-1 text-body-sm font-semibold text-forest-300">{msgAperto ? 'Meno' : 'Leggi tutto'}</button>
+                </div>
+              </div>
             )}
             {state.plan!.plan.nota && (
               <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
@@ -672,7 +676,7 @@ export default function AllenamentoHub() {
                         <p className={`text-body font-semibold truncate ${done ? 'text-forest-300' : saltata ? 'text-faint' : 'text-app'}`}>{s.titolo}</p>
                         <span className={`shrink-0 text-caption font-bold rounded-md px-1.5 py-0.5 tabular-nums ${done || saltata ? 'bg-surface text-faint' : 'bg-forest-500/15 text-forest-300'}`}>~{durataLabel(s.durata_min)}</span>
                       </div>
-                      <p className="text-body-sm text-muted">{s.blocchi?.length ? s.blocchi.map((b) => `${nomeBloccoAtleta(b.nome)}${b.leggero ? ' (più leggero)' : ''}${b.nota ? ` (${b.nota})` : ''}`).join(' + ') : `${s.items.length} esercizi`}</p>
+                      <p className="line-clamp-1 text-body-sm text-muted">{descrizioneSeduta(s)}</p>
                       {badge && <div className="mt-1">{badge}</div>}
                     </div>
                     {!saltata && <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />}
