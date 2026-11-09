@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { ComponentType } from 'react';
-import { Brain, Lock } from 'lucide-react';
-import IconaCorpo from '@/components/ui/IconaCorpo';
+import { Lock } from 'lucide-react';
+import IconaCorpo, { IconaMente } from '@/components/ui/IconaCorpo';
 import { supabase } from '@/lib/supabase';
 import BackButton from '@/components/ui/BackButton';
 import Testata from '@/components/ui/Testata';
@@ -115,7 +115,7 @@ export default function ParteSwitch({ parte, hrefs, onChange, corpoBloccato, pen
   const conPallino = pendente ?? pallino;
 
   const voci: { id: Parte; label: string; Icon: ComponentType<{ size?: number; className?: string; 'aria-hidden'?: boolean }>; bloccata: boolean }[] = [
-    { id: 'mente', label: 'Mente', Icon: Brain, bloccata: false },
+    { id: 'mente', label: 'Mente', Icon: IconaMente, bloccata: false },
     { id: 'corpo', label: 'Corpo', Icon: IconaCorpo, bloccata: bloccato },
   ];
 
@@ -129,7 +129,7 @@ export default function ParteSwitch({ parte, hrefs, onChange, corpoBloccato, pen
         }`;
         const contenuto = (
           <>
-            {bloccata ? <Lock size={16} aria-hidden className="shrink-0 opacity-80" /> : <Icon size={18} aria-hidden className={`shrink-0 ${sel ? 'text-forest-300' : ''}`} />}
+            {bloccata ? <Lock size={16} aria-hidden className="shrink-0 opacity-80" /> : <Icon size={20} aria-hidden className={`shrink-0 ${sel ? 'text-forest-300' : ''}`} />}
             <span>{label}</span>
             {id === 'corpo' && conPallino && !sel && !bloccata && (
               <span aria-label="Hai un resoconto da dare" className="absolute right-4 top-2.5 h-2.5 w-2.5 rounded-full bg-accent-glow shadow-glow" />
@@ -206,7 +206,7 @@ export function PalestraTestata({ parte, scheda, schede = true, corpoBloccato, c
       <div className="mx-auto max-w-xl">
         {titolo
           ? <Testata indietro={{ href: '/palestra', label: 'Palestra' }} titolo={titolo}
-              sopra={<span className="inline-flex items-center gap-1.5">{parte === 'corpo' ? <IconaCorpo size={15} aria-hidden /> : <Brain size={15} aria-hidden />}{parte === 'corpo' ? 'Corpo' : 'Mente'}</span>} />
+              sopra={<span className="inline-flex items-center gap-1.5">{parte === 'corpo' ? <IconaCorpo size={16} aria-hidden /> : <IconaMente size={16} aria-hidden />}{parte === 'corpo' ? 'Corpo' : 'Mente'}</span>} />
           : <BackButton href="/palestra" label="Palestra" />}
       </div>
     </div>

@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { Brain, Lock } from 'lucide-react';
-import IconaCorpo from './IconaCorpo';
+import { Lock } from 'lucide-react';
+import IconaCorpo, { IconaMente } from './IconaCorpo';
 
 /**
  * Il riquadro piccolo, come i widget (8/11, stile B delle bozze, Ste: «vai come proposto»): un'icona, al massimo
@@ -52,8 +52,8 @@ export function GrigliaRiquadri({ children, className = '' }: { children: ReactN
 
 /**
  * Il nome di un gruppo («Mente», «Corpo») sopra riquadri o righe. `grande` (9/11, Ste: «scritte mente e corpo
- * più grandi») per le due metà della Palestra, con l'icona della parte nel suo colore (il cervello e il ragazzo che corre con la
- * palla, `IconaCorpo`: le stesse del selettore Mente | Corpo).
+ * più grandi») per le due metà della Palestra, con l'icona della parte nel suo colore (la testa con il bersaglio e il calciatore
+ * che calcia, `components/ui/IconaCorpo.tsx`: le stesse del selettore Mente | Corpo).
  */
 export function TitoloGruppo({ children, grande = false, parte, className = '' }: {
   children: ReactNode; grande?: boolean; parte?: 'mente' | 'corpo'; className?: string;
@@ -62,8 +62,8 @@ export function TitoloGruppo({ children, grande = false, parte, className = '' }
     return (
       <h2 className={`flex items-center gap-2.5 px-1 font-display text-title-1 font-bold text-app ${parte === 'corpo' ? 'parte-corpo' : ''} ${className}`}>
         {parte && (
-          <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest-500/20 text-forest-300">
-            {parte === 'corpo' ? <IconaCorpo size={20} /> : <Brain size={20} />}
+          <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-xl bg-forest-500/20 text-forest-300">
+            {parte === 'corpo' ? <IconaCorpo size={24} /> : <IconaMente size={24} />}
           </span>
         )}
         {children}
