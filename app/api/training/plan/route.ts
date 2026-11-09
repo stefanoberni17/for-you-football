@@ -1,3 +1,4 @@
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
@@ -42,6 +43,11 @@ export async function POST(request: NextRequest) {
     const pianiSettimana = (pianiRows || []).filter((p: { plan?: { adattato_calendario?: string } }) => !p.plan?.adattato_calendario).length;
     const corpoVuoto = !body || (typeof body === 'object' && Object.keys(body).length === 0);
     const automatico = corpoVuoto && pianiSettimana === 0;
+    // 10/11: il piano automatico della settimana nasce solo dopo che il ragazzo ha detto squadra e partita di questa
+    // settimana (lib/settimanaServer.ts): altrimenti si costruirebbe su giorni che forse non valgono più
+    if (automatico && !(await calendarioDellaSettimana(userId)).confermata) {
+      return NextResponse.json({ error: 'Prima dicci quando ti alleni con la squadra e quando giochi questa settimana.', reason: 'settimana_da_confermare' }, { status: 409 });
+    }
 
     // Tetto tecnico alle rigenerazioni: ogni piano è una chiamata al modello (fino a 3 tentativi)
     if (PIANI_LIMITE_ATTIVO && pianiSettimana >= PIANI_MAX_SETTIMANA) {

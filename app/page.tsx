@@ -22,6 +22,9 @@ import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib
 import { shouldRedirectToPaywall, hasActiveAccess, canAccessWeek, inPausa, isPaywallActive, livelloFisico } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import SettimanaObbligatoria from '@/components/SettimanaObbligatoria';
+import { useCheckin } from '@/components/CheckinContext';
+import type { PropostaSettimana } from '@/lib/settimanaCalendario';
 import SettimanaVista, { GiornoSegno, riassuntoSettimana, type GiornoSettimana, type StatoSedutaVista } from '@/components/SettimanaVista';
 import PushPermission from '@/components/PushPermission';
 import EsercizioSettimanaCard from '@/components/EsercizioSettimanaCard';
@@ -54,6 +57,14 @@ function pathStreak(days: DayProgress[]): number {
 }
 
 /** Giorno della settimana 1=Lun … 7=Dom di una data YYYY-MM-DD. */
+/** «Dal 10 al 16 novembre» dal lunedì AAAA-MM-GG. */
+function periodoSettimana(lunedi: string): string {
+  const fmt = (d: Date, mese: boolean) => d.toLocaleDateString('it-IT', mese ? { day: 'numeric', month: 'long', timeZone: 'UTC' } : { day: 'numeric', timeZone: 'UTC' });
+  const l = new Date(`${lunedi}T12:00:00Z`);
+  const dom = new Date(l.getTime() + 6 * 86_400_000);
+  return `Dal ${fmt(l, l.getUTCMonth() !== dom.getUTCMonth())} al ${fmt(dom, true)}`;
+}
+
 function dowDi(data: string): number {
   const d = new Date(`${data}T12:00:00`);
   return ((d.getDay() + 6) % 7) + 1;
@@ -80,6 +91,11 @@ export default function HomePage() {
   // 9/11 (fase 1a): il riquadro della settimana apre la VISTA in sola lettura; la modifica è un passo a parte
   const [settimanaAperta, setSettimanaAperta] = useState<null | 'vista' | 'modifica'>(null);
   const [abitudine, setAbitudine] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
+  // 10/11: la settimana con la squadra è obbligatoria. Null finché la risposta di /api/calendar non c'è (fail-open: se la
+  // richiesta fallisce il foglio non compare)
+  const [settimanaCal, setSettimanaCal] = useState<{ compilato: boolean; lunedi: string; proposta: PropostaSettimana | null } | null>(null);
+  const [daObbligatoria, setDaObbligatoria] = useState(false); // l'editor aperto dal foglio obbligatorio
+  const { checkinDone } = useCheckin();
   const [campo, setCampo] = useState<CampoOggi | null>(null); // il Campo oggi, in piccolo (20/10)
   const [actionsTotal, setActionsTotal] = useState(0);
   const [actionsTodayCount, setActionsTodayCount] = useState(0);
@@ -220,6 +236,7 @@ export default function HomePage() {
         if (calRes?.ok) {
           const calJson = await calRes.json();
           if (calJson.abitudine) setAbitudine(calJson.abitudine);
+          if (typeof calJson.lunedi === 'string') setSettimanaCal({ compilato: !!calJson.compilato, lunedi: calJson.lunedi, proposta: calJson.proposta ?? null });
           if (calJson.compilato) {
             setCalendarData({ trainingDays: calJson.trainingDays || [], matchDays: calJson.matchDays || [] });
           }
@@ -344,12 +361,14 @@ export default function HomePage() {
     });
     if (!res.ok) throw new Error('calendar save failed'); // il popup mostra l'errore
     setCalendarData({ trainingDays, matchDays });
+    setSettimanaCal((s) => (s ? { ...s, compilato: true } : s));
     // Il Corpo rilegge la settimana (giorni squadra e partita effettivi), poi si torna alla vista aggiornata
     try {
       const r = await authFetch('/api/training/oggi');
       if (r.ok) setCampo((await r.json()) as CampoOggi);
     } catch { /* la vista resta con i dati di prima */ }
-    setSettimanaAperta('vista');
+    setSettimanaAperta(daObbligatoria ? null : 'vista');
+    setDaObbligatoria(false);
   };
 
   /**
@@ -629,7 +648,16 @@ export default function HomePage() {
             existingMatchDays={calendarData?.matchDays}
             abitudine={campoAttivo ? abitudine : null}
             onSave={handleCalendarSave}
-            onSkip={() => setSettimanaAperta('vista')}
+            onSkip={() => { setSettimanaAperta(daObbligatoria ? null : 'vista'); setDaObbligatoria(false); }}
+          />
+        )}
+        {/* La settimana con la squadra, obbligatoria (10/11): alla prima apertura della settimana, dopo il check-in */}
+        {settimanaCal && !settimanaCal.compilato && settimanaAperta === null && checkinDone && profile && !inPausa(profile) && !(allDone && !campoAttivo) && (
+          <SettimanaObbligatoria
+            proposta={settimanaCal.proposta}
+            periodo={periodoSettimana(settimanaCal.lunedi)}
+            onSalva={handleCalendarSave}
+            onCambia={() => { setDaObbligatoria(true); setSettimanaAperta('modifica'); }}
           />
         )}
 

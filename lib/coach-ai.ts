@@ -1,3 +1,4 @@
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { NUMERI_UTILI_RIGA, DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
@@ -1014,12 +1015,9 @@ export async function buildUserContext(userId: string): Promise<string> {
   // Calendario settimanale (dipende da current_week: parte dopo il profilo); insieme il Campo e
   // gli incroci della Carta (29/9: prima il Coach non sapeva niente dell'allenamento nell'app)
   const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows, versioniPrecedenti, settimanaRaw, esercizio] = await Promise.all([
-    supabaseAdmin
-      .from('user_weekly_calendar')
-      .select('training_days, match_days')
-      .eq('user_id', userId)
-      .eq('week_number', currentWeek)
-      .maybeSingle(),
+    // La settimana di calendario confermata dal ragazzo (10/11): prima il numero della settimana del percorso, che a
+    // metà settimana, passato il Gate, non trovava più i giorni salvati
+    calendarioDellaSettimana(userId).then((c) => ({ data: c.confermata ? c : null })),
     loadCampoPerCoach(userId),
     loadIncroci(userId),
     // Le risposte chiave (22/10, review W11): Protocollo Pressione, routine, condizioni, risposte

@@ -1,5 +1,8 @@
 'use client';
 
+import SettimanaObbligatoria from '@/components/SettimanaObbligatoria';
+import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import type { PropostaSettimana } from '@/lib/settimanaCalendario';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -46,6 +49,7 @@ export interface TrainingState {
   oggiDow: number;
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
+  settimanaConfermata?: boolean; // 10/11: squadra e partita di questa settimana dette dal ragazzo (il piano automatico aspetta)
   completions: { session_key: string; feedback: string | null }[];
   ciclo: { settimana: number; isDeload: boolean; ritestDue: boolean; scaricoRinviato?: boolean; motivoScarico?: string | null; ritestSettimana?: boolean; motivoRitest?: string | null };
   // Livello per qualità (dai test di quella qualità) e ri-test mirato (famiglie che hanno finito i codici del livello)
@@ -297,12 +301,30 @@ export default function AllenamentoHub() {
   // Nuova settimana: se il piano è di una settimana passata, l'app prepara da sola quello nuovo
   // (le sedute saltate della settimana scorsa vengono riproposte uguali dal planner)
   useEffect(() => {
-    if (state?.planStale && !state.abbonamento?.inPausa && !generating && !autoGen && !autoGenTried.current) {
+    if (state?.planStale && state.settimanaConfermata !== false && !state.abbonamento?.inPausa && !generating && !autoGen && !autoGenTried.current) {
       autoGenTried.current = true;
       setAutoGen(true);
       generaPiano();
     }
-  }, [state?.planStale, generating, autoGen, generaPiano]);
+  }, [state?.planStale, state?.settimanaConfermata, generating, autoGen, generaPiano]);
+
+  // 10/11: la settimana con la squadra è obbligatoria. Finché il ragazzo non risponde, il foglio resta aperto e il piano
+  // automatico aspetta; la proposta («Come la scorsa») arriva da /api/calendar solo quando serve
+  const [settimanaCal, setSettimanaCal] = useState<{ lunedi: string; proposta: PropostaSettimana | null } | null>(null);
+  const [settimanaEditor, setSettimanaEditor] = useState(false);
+  const servePropostaSettimana = state?.settimanaConfermata === false && !state.abbonamento?.inPausa;
+  useEffect(() => {
+    if (!servePropostaSettimana || settimanaCal) return;
+    authFetch('/api/calendar').then((r) => (r.ok ? r.json() : null)).then((c) => {
+      if (c && typeof c.lunedi === 'string') setSettimanaCal({ lunedi: c.lunedi, proposta: c.proposta ?? null });
+    }).catch(() => { /* senza proposta il foglio offre solo «Scegli i giorni» */ });
+  }, [servePropostaSettimana, settimanaCal]);
+  const salvaSettimanaCorpo = async (trainingDays: number[], matchDays: number[]) => {
+    const res = await authFetch('/api/calendar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ trainingDays, matchDays }) });
+    if (!res.ok) throw new Error('settimana non salvata');
+    setSettimanaEditor(false);
+    await load();
+  };
 
   const posticipa = async (giorno: number) => {
     if (!state?.plan) return;
@@ -1043,6 +1065,21 @@ export default function AllenamentoHub() {
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
       <PalestraTestata parte="corpo" scheda="allenamento" corpoBloccato={false} />
+      {servePropostaSettimana && !settimanaEditor && (
+        <SettimanaObbligatoria
+          proposta={settimanaCal?.proposta ?? null}
+          onSalva={salvaSettimanaCorpo}
+          onCambia={() => setSettimanaEditor(true)}
+        />
+      )}
+      {servePropostaSettimana && settimanaEditor && (
+        <WeeklyCalendarPopup
+          existingTrainingDays={settimanaCal?.proposta?.trainingDays}
+          existingMatchDays={settimanaCal?.proposta?.matchDays}
+          onSave={salvaSettimanaCorpo}
+          onSkip={() => setSettimanaEditor(false)}
+        />
+      )}
       <div className="max-w-md mx-auto px-5 mt-3">
         {/* In pausa (3/11): sola lettura, niente sedute né piani nuovi */}
         {state.abbonamento?.inPausa && (

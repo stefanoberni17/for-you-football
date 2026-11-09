@@ -64,8 +64,9 @@ export function squadraConPartita(s: SquadraSettimana, partita: number | null): 
   return { ...s, ...(partita ? { partita } : {}) };
 }
 /** Giorni partita effettivi: il calendario se compilato, altrimenti l'abitudine. */
-export function giorniPartita(matchDays: number[], partita: number | null): number[] {
-  if (matchDays.length) return matchDays;
+export function giorniPartita(matchDays: number[], partita: number | null, confermata = false): number[] {
+  // 10/11: la settimana confermata dal ragazzo vale così com'è, anche senza partita
+  if (matchDays.length || confermata) return matchDays;
   return partita ? [partita] : [];
 }
 

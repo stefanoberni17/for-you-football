@@ -1,3 +1,4 @@
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { inPausa, livelloFisico } from '@/lib/checkAccess';
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
@@ -161,18 +162,15 @@ export async function GET(request: NextRequest) {
       const dayName = dayNames[today.getDay()];
 
       // Check if it's a match day or training day
-      const { data: calendar } = await supabaseAdmin
-        .from('user_weekly_calendar')
-        .select('training_days, match_days')
-        .eq('user_id', user.user_id)
-        .eq('week_number', week)
-        .maybeSingle();
+      // La settimana di calendario confermata dal ragazzo (10/11: non più il numero della settimana del percorso)
+      const settimanaCal = await calendarioDellaSettimana(user.user_id);
+      const calendar = settimanaCal.confermata ? settimanaCal : null;
 
       // Il calendario salva 1=Lun … 7=Dom (lib/constants); getDay() dà 0 per la domenica:
       // prima la domenica non era mai giorno partita (review 25/9)
       const appDay = today.getDay() === 0 ? 7 : today.getDay();
-      const isMatchDay = calendar?.match_days?.includes(appDay);
-      const isTrainingDay = calendar?.training_days?.includes(appDay);
+      const isMatchDay = !!calendar?.match_days?.includes(appDay);
+      const isTrainingDay = !!calendar?.training_days?.includes(appDay);
 
       let dayContext = '';
       if (isMatchDay) dayContext = 'Oggi ha una partita.';
@@ -311,11 +309,11 @@ Seleziona la frase e aggiungi la riflessione.`;
       try {
         if (testUserId && u.user_id !== testUserId) continue;
         const [{ data: calendar }, { squadra, partita }, resoconti] = await Promise.all([
-          supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days').eq('user_id', u.user_id).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+          calendarioDellaSettimana(u.user_id).then((c) => ({ data: c })),
           loadSquadraCompleta(u.user_id),
           loadResoconti(u.user_id, 3),
         ]);
-        const da = resocontiDaChiedere({ oggi, trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partita), resoconti })
+        const da = resocontiDaChiedere({ oggi, trainingDays: giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata), matchDays: giorniPartita(calendar?.match_days || [], partita, calendar?.confermata), resoconti })
           .find((x) => x.data === ieri);
         if (!da) continue;
         const pushed = await sendPushToUser(u.user_id, 'Campo', da.tipo === 'partita' ? 'Com\'è andata la partita di ieri? Dimmelo in 30 secondi: la settimana si adatta.' : 'Com\'è andata ieri con la squadra? Dimmelo in 30 secondi: la settimana si adatta.', '/allenamento').catch(() => false);

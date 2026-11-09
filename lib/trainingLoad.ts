@@ -247,10 +247,10 @@ export function calcolaCarico(input: {
  * descritto gli allenamenti con la squadra (sforzo per giorno, migration 023) usa quello
  * al posto dell'RPE fisso.
  */
-export function caricoSquadraStimato(p: { trainingDays: number[]; matchDays: number[]; squadraDurataMin: number | null; fase: string; squadra?: SquadraSettimana }): number {
+export function caricoSquadraStimato(p: { trainingDays: number[]; matchDays: number[]; squadraDurataMin: number | null; fase: string; squadra?: SquadraSettimana; confermata?: boolean }): number {
   if (p.fase === 'off_season') return 0;
   const durata = p.squadraDurataMin && p.squadraDurataMin > 0 ? p.squadraDurataMin : 90;
-  const giorni = giorniSquadra(p.trainingDays, p.squadra);
+  const giorni = giorniSquadra(p.trainingDays, p.squadra, p.confermata);
   const allenamenti = giorni.reduce((a, d) => a + durata * (p.squadra?.[d]?.rpe ?? RPE_SQUADRA), 0);
   return Math.round(allenamenti + p.matchDays.length * 90 * RPE_PARTITA);
 }
@@ -261,8 +261,9 @@ export function caricoSquadraStimato(p: { trainingDays: number[]; matchDays: num
  * "Gli allenamenti con la squadra" (profiles.training_squadra, per giorno della settimana).
  * Senza questo il lunedì S valeva 0 e il tetto del carico tornava a rifiutare ogni settimana (21/9).
  */
-export function giorniSquadra(trainingDays: number[], squadra?: SquadraSettimana): number[] {
-  if (trainingDays.length) return trainingDays;
+export function giorniSquadra(trainingDays: number[], squadra?: SquadraSettimana, confermata = false): number[] {
+  // 10/11: la settimana confermata dal ragazzo vale così com'è, anche senza squadra (lib/settimanaCalendario.ts)
+  if (trainingDays.length || confermata) return trainingDays;
   return Object.keys(squadra ?? {}).map(Number).filter((d) => d >= 1 && d <= 7).sort((a, b) => a - b);
 }
 

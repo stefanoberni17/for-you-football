@@ -4,6 +4,7 @@
  * l'allenamento nell'app. Solo letture, tutto fail-soft: se una tabella manca o Supabase non
  * risponde, il Coach lavora senza.
  */
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { createClient } from '@supabase/supabase-js';
 import { loadResoconti } from './trainingResocontoServer';
 import { resocontiPerCoach, squadraMisurata } from './trainingResoconto';
@@ -35,19 +36,18 @@ export function seduteDaiFeedback(feedback: FeedbackSeduta[]): SedutaFatta[] {
 async function loadCaricoConSquadra(userId: string): Promise<CaricoInfo> {
   const [{ data: profile }, { data: calendar }, { squadra, partita }, resoconti] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
-    supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
-      .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+    calendarioDellaSettimana(userId).then((c) => ({ data: c })),
     loadSquadraCompleta(userId),
     loadResoconti(userId),
   ]);
   const squadraSettimanale = caricoSquadraStimato({
-    trainingDays: giorniSquadra(calendar?.training_days || [], squadra),
-    matchDays: giorniPartita(calendar?.match_days || [], partita),
+    trainingDays: giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata),
+    matchDays: giorniPartita(calendar?.match_days || [], partita, calendar?.confermata),
     squadraDurataMin: profile?.training_squadra_durata_min ?? null,
     fase: profile?.training_fase || 'in_season',
     squadra,
   });
-  return loadCarico(userId, false, undefined, squadraSettimanale, squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min ?? null, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partita) } }));
+  return loadCarico(userId, false, undefined, squadraSettimanale, squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min ?? null, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata), matchDays: giorniPartita(calendar?.match_days || [], partita, calendar?.confermata) } }));
 }
 
 /**

@@ -4,6 +4,7 @@
  * le sedute della settimana con il loro stato, i giorni squadra/partita e i resoconti da chiedere.
  * Server-only (service role). Fail-soft: ogni lettura che manca lascia il pezzo vuoto, mai un errore.
  */
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { accessoCampo } from './trainingAccess';
 import { createClient } from '@supabase/supabase-js';
 import { loadSquadraCompleta, mondayOfThisWeekRome, oggiDowRome, todayRome } from './trainingPlanner';
@@ -45,6 +46,7 @@ export interface CampoOggi {
   sedute: SedutaOggi[];       // tutta la settimana, in ordine di giorno
   trainingDays: number[];     // giorni squadra effettivi (calendario o abitudine del setup)
   matchDays: number[];        // giorni partita effettivi (calendario o partita abituale)
+  settimanaConfermata?: boolean; // 10/11: il ragazzo ha detto squadra e partita di questa settimana (lib/settimanaServer.ts)
   squadraDaSetup?: boolean;   // 9/11: i giorni squadra vengono dall'abitudine del setup (la settimana non li ha)
   partitaDaSetup?: boolean;   // 9/11: la partita viene dalla partita abituale del setup
   resocontiDaChiedere: { data: string; tipo: TipoResoconto }[];
@@ -71,7 +73,7 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
 
   const [{ data: lastPlan }, { data: calendar }, { squadra, partita }, resoconti, consensi] = await Promise.all([
     supabaseAdmin.from('training_plans').select('id, week_start, plan').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
-    supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days').eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+    calendarioDellaSettimana(userId).then((c) => ({ data: c })),
     loadSquadraCompleta(userId),
     loadResoconti(userId), // finestra intera: i livelli 2-3 del resoconto guardano i giorni dopo e i giorni consecutivi
     getConsents(userId).catch(() => null),
@@ -102,16 +104,17 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
   const seduta = sedute.find((s) => s.stato === 'oggi') ?? sedute.find((s) => s.stato === 'recuperabile') ?? null;
   const prossima = sedute.find((s) => s.stato === 'futura') ?? null;
 
-  const trainingDays = giorniSquadra(calendar?.training_days || [], squadra);
-  const matchDays = giorniPartita(calendar?.match_days || [], partita);
+  const trainingDays = giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata);
+  const matchDays = giorniPartita(calendar?.match_days || [], partita, calendar?.confermata);
   return {
     accesso: true,
     consensiMancanti: !!consensi && !(consensi.has('training_idoneita') && consensi.has('health_data')),
     painHold: prof?.training_pain_hold === true,
     oggiDow, lunedi, haPiano, seduta, prossima, sedute,
     trainingDays, matchDays,
-    squadraDaSetup: !(calendar?.training_days || []).length && trainingDays.length > 0,
-    partitaDaSetup: !(calendar?.match_days || []).length && matchDays.length > 0,
+    settimanaConfermata: !!calendar?.confermata,
+    squadraDaSetup: !calendar?.confermata && trainingDays.length > 0,
+    partitaDaSetup: !calendar?.confermata && matchDays.length > 0,
     resocontiDaChiedere: resocontiDaChiedere({ oggi, trainingDays, matchDays, resoconti }),
   };
 }

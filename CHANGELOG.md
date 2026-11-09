@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — La settimana con la squadra: per data e obbligatoria
+
+Ste: «bisogna fare in modo che sia obbligatorio il setup della settimana con la squadra e magari mettere un pulsante "come la scorsa"». Prima squadra e partita si salvavano con il numero della settimana del percorso e un cron le svuotava il lunedì: passato il Gate a metà settimana Corpo e Coach leggevano righe diverse, una modifica dalla pagina di una settimana passata finiva in una riga che il Corpo non leggeva, e «niente squadra» non si distingueva da «non ancora detto» (il Corpo rimetteva i giorni del setup).
+- Tabella nuova `user_calendario_settimane` (migration 040): una riga per lunedì di calendario. Una riga = risposta, anche vuota. `lib/settimanaCalendario.ts` (regole pure, 6 test) e `lib/settimanaServer.ts`; tutti i lettori passano di lì (Home, giorno, Corpo, planner, carico, resoconti, Coach, promemoria). Con la risposta `giorniSquadra` / `giorniPartita` / `caricoSquadraStimato` non ripiegano più sul setup.
+- Foglio obbligatorio `components/SettimanaObbligatoria.tsx` in Home e nel Corpo: «Come la scorsa settimana» (o «Come nel mio setup»), «Cambia i giorni», «Niente squadra né partita». Il piano automatico del Corpo aspetta la risposta (409 `settimana_da_confermare`).
+- Il cron del lunedì non svuota più i calendari. Senza la migration l'app legge il calendario di prima salvato in questa settimana e scrive in tutti e due.
+
 ## 2026-11-09 — Fase 1a della revisione dell'esperienza: la settimana in sola lettura, la squadra, il Coach gratis
 
 Piano in `docs/revisione-esperienza-2026-11-09.md` (fase 1, pezzo 1a).

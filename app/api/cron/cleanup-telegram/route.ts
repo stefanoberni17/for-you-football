@@ -55,23 +55,10 @@ export async function GET(request: NextRequest) {
     console.log(`✅ Cleanup rate_limit_events: ${rateLimitDeleted} righe eliminate (>24h)`);
   }
 
-  // Reset calendari settimanali ogni notte tra domenica e lunedì (lunedì 3:00 UTC)
-  // getDay(): 0=Dom, 1=Lun. Alle 3:00 UTC di lunedì = notte tra domenica e lunedì
-  const today = new Date();
-  let calendarReset = 0;
-  if (today.getDay() === 1) { // Lunedì
-    const { error: resetError, count: resetCount } = await supabaseAdmin
-      .from('user_weekly_calendar')
-      .update({ training_days: [] as number[], match_days: [] as number[] })
-      .gt('id', '00000000-0000-0000-0000-000000000000'); // match all rows
-
-    if (resetError) {
-      console.error('❌ Calendar reset error:', resetError);
-    } else {
-      calendarReset = resetCount || 0;
-      console.log(`✅ Calendar reset: calendari svuotati (lunedì)`);
-    }
-  }
+  // Fino al 9/11 qui il lunedì si svuotavano i calendari della settimana del percorso. Dal 10/11 la settimana con la
+  // squadra si salva per lunedì di calendario (lib/settimanaServer.ts, migration 040): una settimana nuova non ha
+  // ancora una risposta, non serve svuotare niente.
+  const calendarReset = 0;
 
   // Account in cancellazione da più di ACCOUNT_GRACE_DAYS giorni: cancellazione definitiva
   // (lib/accountDelete: Stripe, Telegram, auth.admin.deleteUser → cascade). Uno alla volta, fail-soft.

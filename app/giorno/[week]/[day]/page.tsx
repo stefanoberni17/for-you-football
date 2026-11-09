@@ -128,12 +128,11 @@ export default function GiornoPage() {
       // Carica calendario settimanale
       try {
         const calData = calendarRes ? await calendarRes.json() : {};
-        // Squadra e partita, ognuna per conto suo (9/11): quella della settimana se c'è, altrimenti l'abitudine del
-        // setup del Corpo. È la stessa regola del Corpo (giorniSquadra / giorniPartita), così giorno, Home e piano
-        // dicono la stessa cosa anche con una settimana che ha la sola partita.
+        // La settimana con la squadra (10/11): la risposta del ragazzo per questa settimana vale così com'è; senza,
+        // i giorni abituali del setup del Corpo. È la stessa regola di Home, Corpo e Coach (lib/settimanaCalendario.ts).
         const ab = calData.abitudine || {};
-        const squadra: number[] = calData.trainingDays?.length ? calData.trainingDays : (ab.trainingDays || []);
-        const partite: number[] = calData.matchDays?.length ? calData.matchDays : (ab.matchDays || []);
+        const squadra: number[] = calData.compilato ? (calData.trainingDays || []) : (ab.trainingDays || []);
+        const partite: number[] = calData.compilato ? (calData.matchDays || []) : (ab.matchDays || []);
         if (squadra.length || partite.length) setCalendarData({ trainingDays: squadra, matchDays: partite });
       } catch { /* calendario non configurato — ignora */ }
 

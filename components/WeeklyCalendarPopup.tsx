@@ -7,7 +7,8 @@ import { Button, Sheet } from '@/components/ui';
 import { GiornoSegno, LegendaSettimana } from '@/components/SettimanaVista';
 
 interface WeeklyCalendarPopupProps {
-  weekNumber: number;
+  /** Non serve più (10/11: la settimana è quella di calendario); resta per compatibilità con chi lo passa. */
+  weekNumber?: number;
   existingTrainingDays?: number[];
   existingMatchDays?: number[];
   /** I giorni del setup del Corpo (squadra e partita abituali): se la settimana li lascia vuoti, valgono questi. */
@@ -25,7 +26,6 @@ const elenco = (giorni: number[]) => [...giorni].sort((a, b) => a - b).map((d) =
  * Colori della vista della settimana: squadra giallo-arancio con la S, partita rosso con la P.
  */
 export default function WeeklyCalendarPopup({
-  weekNumber,
   existingTrainingDays,
   existingMatchDays,
   abitudine,
@@ -69,7 +69,7 @@ export default function WeeklyCalendarPopup({
       onClose={onSkip}
       closeLabel="Chiudi"
       title="Squadra e partita"
-      subtitle={`Questa settimana · Settimana ${weekNumber} del percorso`}
+      subtitle="Questa settimana"
       footer={
         <>
           {saveFailed && (

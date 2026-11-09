@@ -1,147 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
-import { parsePartitaAbituale, parseSquadra } from '@/lib/trainingSquadra';
+import { loadAbitudine, loadSettimana, salvaSettimana } from '@/lib/settimanaServer';
+import { propostaSettimana, pulisciGiorni } from '@/lib/settimanaCalendario';
 
 export const dynamic = 'force-dynamic';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
-);
-
-// Lunedì 00:00 ora Roma della settimana di calendario reale corrente.
-// Il calendario allenamenti/partite vale per la settimana reale, non per la
-// settimana del percorso: se l'utente ha già configurato in questa finestra,
-// vogliamo riusarlo anche aprendo una settimana diversa del percorso.
-function startOfCurrentWeekRome(): Date {
-  const fmt = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Europe/Rome',
-    weekday: 'short',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  const parts = fmt.formatToParts(new Date());
-  const weekday = parts.find(p => p.type === 'weekday')?.value || 'Mon';
-  const year = parts.find(p => p.type === 'year')?.value ?? '1970';
-  const month = parts.find(p => p.type === 'month')?.value ?? '01';
-  const day = parts.find(p => p.type === 'day')?.value ?? '01';
-  const dowMap: Record<string, number> = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 };
-  const offset = dowMap[weekday] ?? 0;
-  // Costruiamo "oggi 00:00 UTC" e sottraiamo l'offset in giorni. Per la finestra
-  // di freshness (granularità giornaliera) basta confrontare ISO date.
-  const todayUtc = new Date(`${year}-${month}-${day}T00:00:00Z`);
-  todayUtc.setUTCDate(todayUtc.getUTCDate() - offset);
-  return todayUtc;
-}
-
-// ─── GET /api/calendar?userId=U[&week=W] ──────────────────────────────────────
-// Ritorna l'ULTIMO calendario configurato dall'utente se created_at è nella
-// settimana reale corrente (lun-dom IT). Altrimenti torna array vuoti → popup.
-// Il parametro `week` è ignorato a runtime: lo schema lega un calendario al
-// week_number del percorso, ma l'intento di prodotto è "un calendario per
-// settimana reale".
+// ─── GET /api/calendar ───────────────────────────────────────────────────────
+// La settimana con la squadra (10/11): la settimana di CALENDARIO di oggi (lunedì-domenica, fuso italiano), non quella
+// del percorso. `compilato` = il ragazzo ha risposto per questa settimana (anche «niente squadra né partita»);
+// `proposta` = cosa ripete «Come la scorsa» (la settimana prima, altrimenti i giorni abituali del setup del Corpo);
+// `abitudine` = i giorni del setup, che valgono finché non risponde. `week` nella query non serve più.
 export async function GET(request: NextRequest) {
   try {
-    const authUserId = await getAuthUser(request);
-    const { searchParams } = new URL(request.url);
-    const userId = authUserId;
-    if (!userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const { data, error } = await supabaseAdmin
-      .from('user_weekly_calendar')
-      .select('training_days, match_days, created_at')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (error) throw error;
-
-    const weekStart = startOfCurrentWeekRome();
-    // Salvato questa settimana: vale anche senza allenamenti con la squadra (9/11: una settimana con la sola
-    // partita, o senza niente, è una risposta; prima serviva almeno un allenamento e veniva letta come "non impostato").
-    // Il cron del lunedì svuota le righe ma non tocca created_at: una riga della settimana scorsa non è fresca.
-    const isFresh = !!data?.created_at && new Date(data.created_at) >= weekStart;
-
-    // L'abitudine del setup del Campo (24/10): giorni squadra e partita abituale, per chi non ha
-    // compilato il calendario della settimana. A parte, così chi usa trainingDays/matchDays per
-    // decidere se il calendario c'è non cambia comportamento.
-    let abitudine: { trainingDays: number[]; matchDays: number[] } | null = null;
-    try {
-      const { data: prof } = await supabaseAdmin.from('profiles').select('training_squadra').eq('user_id', userId).maybeSingle();
-      const raw = (prof as { training_squadra?: unknown } | null)?.training_squadra;
-      const squadra = parseSquadra(raw);
-      const partita = parsePartitaAbituale(raw);
-      const giorni = Object.keys(squadra).map(Number).filter((g) => g >= 1 && g <= 7).sort((a, b) => a - b);
-      if (giorni.length || partita) abitudine = { trainingDays: giorni, matchDays: partita ? [partita] : [] };
-    } catch { /* senza colonna o profilo: nessuna abitudine */ }
-
+    const userId = await getAuthUser(request);
+    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const [settimana, abitudine] = await Promise.all([loadSettimana(userId), loadAbitudine(userId)]);
     return NextResponse.json({
-      compilato: isFresh,
-      trainingDays: isFresh ? (data!.training_days || []) : [],
-      matchDays: isFresh ? (data!.match_days || []) : [],
-      createdAt: isFresh ? data!.created_at : null,
+      lunedi: settimana.lunedi,
+      compilato: !!settimana.risposta,
+      trainingDays: settimana.risposta?.trainingDays ?? [],
+      matchDays: settimana.risposta?.matchDays ?? [],
+      scorsa: settimana.scorsa,
+      proposta: propostaSettimana(settimana.scorsa, abitudine),
       abitudine,
     });
-  } catch (error: any) {
-    console.error('❌ GET /api/calendar:', error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error('❌ GET /api/calendar:', msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
-// ─── POST /api/calendar ──────────────────────────────────────────────────────
+// ─── POST /api/calendar { trainingDays, matchDays, weekNumber? } ─────────────
+// Salva la risposta di questa settimana. Vuoti tutti e due = «niente squadra né partita», una risposta vera.
 export async function POST(request: NextRequest) {
   try {
-    const authUserId = await getAuthUser(request);
-    const body = await request.json();
-    const userId = authUserId;
-    if (!userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const userId = await getAuthUser(request);
+    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const body = await request.json().catch(() => ({}));
+    if (!Array.isArray(body?.trainingDays) || (body.matchDays !== undefined && !Array.isArray(body.matchDays))) {
+      return NextResponse.json({ error: 'trainingDays e matchDays devono essere liste di giorni 1-7' }, { status: 400 });
     }
-    const { weekNumber, trainingDays, matchDays } = body;
-
-    if (!userId || !weekNumber) {
-      return NextResponse.json(
-        { error: 'userId e weekNumber richiesti' },
-        { status: 400 }
-      );
-    }
-
-    // Validazione trainingDays
-    if (!Array.isArray(trainingDays) || trainingDays.some((d: number) => d < 1 || d > 7)) {
-      return NextResponse.json(
-        { error: 'trainingDays deve essere un array di interi 1-7' },
-        { status: 400 }
-      );
-    }
-
-    // Validazione matchDays
-    const cleanMatchDays = Array.isArray(matchDays)
-      ? matchDays.filter((d: number) => d >= 1 && d <= 7)
-      : [];
-
-    const { error } = await supabaseAdmin
-      .from('user_weekly_calendar')
-      .upsert(
-        {
-          user_id: userId,
-          week_number: weekNumber,
-          training_days: trainingDays,
-          match_days: cleanMatchDays,
-          created_at: new Date().toISOString(), // Aggiorna timestamp per tracking settimana reale
-        },
-        { onConflict: 'user_id,week_number' }
-      );
-
-    if (error) throw error;
-
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error('❌ POST /api/calendar:', error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const trainingDays = pulisciGiorni(body.trainingDays);
+    const matchDays = pulisciGiorni(body.matchDays ?? []);
+    const weekNumber = Number.isInteger(body?.weekNumber) && body.weekNumber >= 1 && body.weekNumber <= 12 ? body.weekNumber : undefined;
+    const esito = await salvaSettimana(userId, { trainingDays, matchDays }, weekNumber);
+    return NextResponse.json({ success: true, trainingDays, matchDays, tabella: esito.tabella });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error('❌ POST /api/calendar:', msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
