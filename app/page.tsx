@@ -527,7 +527,7 @@ export default function HomePage() {
         <Link href={`/giorno/${nextDay.week}/${nextDay.day}`} aria-label={nextDayInCorso ? 'Continua la pratica di oggi' : `Inizia il Giorno ${nextDay.day}`}
           className="flex h-[150px] flex-col justify-between rounded-[22px] bg-gradient-to-br from-forest-500 to-forest-700 p-[18px] text-white transition-transform active:scale-[0.99]">
           <span className="flex items-start justify-between gap-3">
-            <span className="text-body-sm font-semibold uppercase tracking-wider text-forest-100">Percorso Mente · pratica di oggi</span>
+            <span className="text-body font-semibold text-forest-100">Percorso Mente · pratica di oggi</span>
             <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-forest-700 shadow-e1">
               {nextDayInCorso ? <Sun size={22} /> : <Play size={22} fill="currentColor" />}
             </span>
