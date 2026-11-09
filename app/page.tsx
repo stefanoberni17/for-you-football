@@ -414,29 +414,32 @@ export default function HomePage() {
   // Il Corpo di oggi in un riquadro (8/11, stile B): verde quando c'è da fare qualcosa, scuro quando è solo un'informazione
   const riquadroCorpo = (() => {
     if (!campo) return null;
+    // Il titolo è sempre «Allenamento di oggi» (9/11, Ste: «più chiarezza sulle tab da schiacciare»); lo stato va sotto.
+    const T = 'Allenamento di oggi';
     if (!campoAttivo) {
       if (primiGiorni) return null;
-      return <Riquadro alto href="/allenamento" bloccato icona={<Dumbbell />} titolo="Allenamento fisico" />;
+      return <Riquadro alto parte="corpo" href="/allenamento" bloccato etichetta="Corpo" icona={<Dumbbell />} titolo="Allenamento fisico" />;
     }
+    const base = { alto: true, parte: 'corpo' as const, etichetta: 'Corpo', titolo: T };
     if (resocontoDaChiedere) {
       const ieri = resocontoDaChiedere.data !== oggiIt;
-      return <Riquadro alto href="/allenamento" tono="verde" icona={<MessageCircle />} titolo="Com'è andata?"
+      return <Riquadro {...base} href="/allenamento" tono="verde" icona={<MessageCircle />} titolo="Com'è andata?"
         sotto={resocontoDaChiedere.tipo === 'partita' ? `La partita${ieri ? ' di ieri' : ''}` : `Squadra${ieri ? ', ieri' : ''}`} />;
     }
-    if (campo.painHold) return <Riquadro alto href="/allenamento" icona={<Pause />} titolo="Allenamenti in pausa" />;
+    if (campo.painHold) return <Riquadro {...base} href="/allenamento" icona={<Pause />} sotto="In pausa" />;
     if (seduta && seduta.stato !== 'fatta') {
-      return <Riquadro alto tono="verde" icona={<Dumbbell />}
+      return <Riquadro {...base} tono="verde" icona={<Dumbbell />}
         href={campo.consensiMancanti ? '/allenamento' : `/allenamento/sessione/${seduta.giorno}`}
-        valore={<span className="text-body-sm font-semibold text-forest-100">~{durataLabel(seduta.durataMin)}</span>}
-        titolo={seduta.titolo} sotto={seduta.stato === 'recuperabile' ? 'Da recuperare' : undefined} />;
+        valore={<span className="text-body-sm font-semibold text-corpo-100">~{durataLabel(seduta.durataMin)}</span>}
+        sotto={seduta.stato === 'recuperabile' ? `Da recuperare · ${seduta.titolo}` : seduta.titolo} />;
     }
     const fattaOggi = (campo.sedute ?? []).find(s => s.giorno === oggiDow && s.stato === 'fatta');
-    if (fattaOggi) return <Riquadro alto href="/allenamento" icona={<Check />} titolo="Allenamento fatto" />;
-    if (oggiPartita) return <Riquadro alto href="/allenamento" icona={<Trophy />} titolo="Oggi partita" />;
-    if (oggiSquadra) return <Riquadro alto href="/allenamento" icona={<Dumbbell />} titolo="Oggi squadra" />;
-    if (!campo.haPiano) return <Riquadro alto href="/allenamento" icona={<Dumbbell />} titolo="Prepara la settimana" />;
-    if (campo.prossima) return <Riquadro alto href="/allenamento" icona={<Dumbbell />} titolo="Oggi riposo" sotto={`Prossima: ${DAY_SHORT_NAMES[campo.prossima.giorno]}`} />;
-    return <Riquadro alto href="/allenamento" icona={<Check />} titolo="Settimana finita" />;
+    if (fattaOggi) return <Riquadro {...base} href="/allenamento" icona={<Check />} sotto="Fatto" />;
+    if (oggiPartita) return <Riquadro {...base} href="/allenamento" icona={<Trophy />} sotto="Oggi partita" />;
+    if (oggiSquadra) return <Riquadro {...base} href="/allenamento" icona={<Dumbbell />} sotto="Oggi con la squadra" />;
+    if (!campo.haPiano) return <Riquadro {...base} href="/allenamento" icona={<Dumbbell />} sotto="Prepara la settimana" />;
+    if (campo.prossima) return <Riquadro {...base} href="/allenamento" icona={<Dumbbell />} sotto={`Riposo · prossima ${DAY_SHORT_NAMES[campo.prossima.giorno]}`} />;
+    return <Riquadro {...base} href="/allenamento" icona={<Check />} sotto="Settimana finita" />;
   })();
 
   // La tua settimana in piccolo: sette barrette (partita, seduta fatta o prevista, squadra), toccata apre il calendario
@@ -513,7 +516,7 @@ export default function HomePage() {
           <div className="flex items-center gap-3 min-h-[44px]">
             <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Check size={18} strokeWidth={3} /></span>
             <span className="flex-1 min-w-0">
-              <span className="block text-body font-semibold text-app">Pratica di oggi: fatta</span>
+              <span className="block text-body font-semibold text-app">Percorso Mente · pratica di oggi: fatta</span>
               <span className="block text-body-sm text-muted">Il prossimo si apre domattina</span>
             </span>
             <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
@@ -524,13 +527,16 @@ export default function HomePage() {
         <Link href={`/giorno/${nextDay.week}/${nextDay.day}`} aria-label={nextDayInCorso ? 'Continua la pratica di oggi' : `Inizia il Giorno ${nextDay.day}`}
           className="flex h-[150px] flex-col justify-between rounded-[22px] bg-gradient-to-br from-forest-500 to-forest-700 p-[18px] text-white transition-transform active:scale-[0.99]">
           <span className="flex items-start justify-between gap-3">
-            <span className="text-body text-forest-100">{comebackMode ? 'Bentornato · ' : ''}Giorno {nextDay.day}{todayMinutes ? ` · ${todayMinutes} min` : ''}</span>
+            <span className="text-body-sm font-semibold uppercase tracking-wider text-forest-100">Percorso Mente · pratica di oggi</span>
             <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-forest-700 shadow-e1">
               {nextDayInCorso ? <Sun size={22} /> : <Play size={22} fill="currentColor" />}
             </span>
           </span>
-          <span className="line-clamp-2 font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
-            {nextDayInCorso && riflessioneOk ? "Com'è andata oggi?" : todayTitle || `Giorno ${nextDay.day}`}
+          <span className="flex flex-col">
+            <span className="line-clamp-2 font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
+              {nextDayInCorso && riflessioneOk ? "Com'è andata oggi?" : todayTitle || `Giorno ${nextDay.day}`}
+            </span>
+            <span className="mt-0.5 text-body-sm text-forest-100">{comebackMode ? 'Bentornato · ' : ''}Settimana {nextDay.week} · Giorno {nextDay.day}{todayMinutes ? ` · ${todayMinutes} min` : ''}</span>
           </span>
         </Link>
       )}
@@ -555,7 +561,7 @@ export default function HomePage() {
     <GrigliaRiquadri>
       {riquadroCorpo}
       {!primiGiorni && (
-        <Riquadro alto href="/oggi" icona={<Check />} titolo="Le tue azioni"
+        <Riquadro alto href="/oggi" icona={<Check />} etichetta="Disciplina" titolo="Le tue azioni"
           valore={actionsTotal > 0 ? <>{actionsTodayCount}<span className="text-body text-muted">/{actionsTotal}</span></> : <span className="text-body-sm font-semibold text-forest-300">Scegli</span>} />
       )}
       <EsercizioSettimanaCard variante="riquadro" />

@@ -95,7 +95,7 @@ export default function EsercizioSettimanaCard({ variante = 'card' }: { variante
   if (variante === 'riquadro') {
     return (
       <>
-        <Riquadro alto onClick={() => { setAperto(true); setFoglio(true); }} icona={<Eye />} titolo="Esercizio della settimana"
+        <Riquadro alto onClick={() => { setAperto(true); setFoglio(true); }} icona={<Eye />} etichetta="Presenza" titolo="Esercizio della settimana"
           valore={<>{Math.min(stato.giorni, 7)}<span className="text-body text-muted">/7</span></>} />
         <Sheet open={foglio} onClose={() => setFoglio(false)} title="Esercizio della settimana">
           {card}

@@ -9,7 +9,7 @@ import { GATE_DAY } from '@/lib/constants';
 import { gateLista, rispostaChiaveInfo, testoDaModificare, type RispostaRow } from '@/lib/risposteChiave';
 import { ChevronRight, Key, PenLine, Star } from 'lucide-react';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
-import { AppLoader, Badge, Button, Card, SectionTitle, Testata } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, Chip, SectionTitle, Testata } from '@/components/ui';
 
 interface Settimana { weekNumber: number; titolo: string; strumento?: string }
 
@@ -18,6 +18,8 @@ interface Settimana { weekNumber: number; titolo: string; strumento?: string }
  * settimana per settimana (risposta del giorno, intenzione prima della pratica, le tre risposte
  * del Gate). Le risposte chiave (lib/risposteChiave.ts) hanno la stella: sono quelle che la W11
  * chiede di riprendere. Sola lettura: si scrive nei giorni, non qui.
+ * Dal 9/11 (Ste: «più facilmente navigabile, non la lista completa, filtrare per settimana, scritte troppo piccole»):
+ * in cima i chip delle settimane (si apre sull'ultima) e «Le chiave», una settimana alla volta, testo più grande.
  */
 export default function RispostePage() {
   const router = useRouter();
@@ -26,6 +28,8 @@ export default function RispostePage() {
   const [errore, setErrore] = useState(false);
   const [settimane, setSettimane] = useState<Record<number, Settimana>>({});
   const [modifica, setModifica] = useState<RispostaRow | null>(null);
+  // La settimana in vista: un numero, oppure 'chiave' per le sole risposte chiave di tutto il percorso
+  const [filtro, setFiltro] = useState<number | 'chiave' | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -57,6 +61,11 @@ export default function RispostePage() {
   }
   const settimaneOrdinate = [...perSettimana.keys()].sort((a, b) => b - a);
   const chiaviScritte = rows.filter((r) => rispostaChiaveInfo(r.week, r.day));
+  const vista = filtro ?? settimaneOrdinate[0] ?? null;
+  // Le sezioni da mostrare: una settimana sola, oppure le chiave raggruppate per settimana
+  const sezioni: [number, RispostaRow[]][] = vista === 'chiave'
+    ? settimaneOrdinate.map((w) => [w, perSettimana.get(w)!.filter((r) => rispostaChiaveInfo(r.week, r.day))] as [number, RispostaRow[]]).filter(([, l]) => l.length > 0)
+    : vista != null && perSettimana.has(vista) ? [[vista, perSettimana.get(vista)!]] : [];
 
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
@@ -77,28 +86,22 @@ export default function RispostePage() {
           </Card>
         )}
 
-        {chiaviScritte.length > 0 && (
-          <Card variant="accent">
-            <SectionTitle as="h2" title="Le risposte chiave" icon={<Star size={18} />} subtitle="Quelle che il percorso ti chiede di riprendere più avanti" className="mb-2" />
-            <ul className="divide-y divide-divider">
-              {chiaviScritte.map((r) => {
-                const info = rispostaChiaveInfo(r.week, r.day)!;
-                return (
-                  <li key={`k-${r.week}-${r.day}`}>
-                    <a href={`#g-${r.week}-${r.day}`} className="min-h-[44px] flex items-center gap-2 text-body font-semibold text-forest-300">
-                      <span className="flex-1">{info.label}</span>
-                      <span className="text-caption text-muted font-normal">{info.quando}</span>
-                      <ChevronRight size={16} className="text-muted shrink-0" aria-hidden />
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </Card>
+        {settimaneOrdinate.length > 0 && (
+          <div role="tablist" aria-label="Scegli la settimana" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {chiaviScritte.length > 0 && (
+              <Chip size="lg" showCheck={false} selected={vista === 'chiave'} onClick={() => setFiltro('chiave')} icon={<Star size={16} aria-hidden />} className="shrink-0">
+                Le chiave
+              </Chip>
+            )}
+            {settimaneOrdinate.map((w) => (
+              <Chip key={w} size="lg" showCheck={false} selected={vista === w} onClick={() => setFiltro(w)} className="shrink-0">
+                Sett. {w}
+              </Chip>
+            ))}
+          </div>
         )}
 
-        {settimaneOrdinate.map((week) => {
-          const giorni = perSettimana.get(week)!;
+        {sezioni.map(([week, giorni]) => {
           const s = settimane[week];
           return (
             <section key={week} className="space-y-3">
@@ -113,33 +116,33 @@ export default function RispostePage() {
                 return (
                   <Card key={`${r.week}-${r.day}`} padding="md" className={chiave ? 'border-forest-500/40' : ''}>
                     <div id={`g-${r.week}-${r.day}`} className="flex items-center gap-2 mb-2 flex-wrap scroll-mt-20">
-                      <p className="text-body font-semibold text-app flex-1">{isGate ? 'Gate' : `Giorno ${r.day}`}</p>
+                      <p className="text-body-lg font-semibold text-app flex-1">{isGate ? 'Gate' : `Giorno ${r.day}`}</p>
                       {chiave && <Badge tone="accent" icon={<Star size={12} aria-hidden />}>{chiave.label}</Badge>}
                       {isGate && !chiave && <Badge tone="neutral" icon={<Key size={12} aria-hidden />}>Chiusura</Badge>}
                     </div>
                     {r.prePratica && (
                       <div className="mb-3">
-                        <p className="text-caption text-muted">Prima della pratica</p>
-                        <p className="text-body-sm text-app leading-relaxed whitespace-pre-line">{r.prePratica}</p>
+                        <p className="text-body-sm font-semibold text-muted">Prima della pratica</p>
+                        <p className="text-body-lg text-app leading-relaxed whitespace-pre-line">{r.prePratica}</p>
                       </div>
                     )}
                     {r.risposta && (
                       <div>
-                        {r.domanda && <p className="text-caption text-muted mb-1 whitespace-pre-line">{r.domanda}</p>}
-                        <p className="text-body text-app leading-relaxed whitespace-pre-line">{r.risposta}</p>
+                        {r.domanda && <p className="text-body-sm text-muted mb-1.5 leading-relaxed whitespace-pre-line">{r.domanda}</p>}
+                        <p className="text-body-lg text-app leading-relaxed whitespace-pre-line">{r.risposta}</p>
                       </div>
                     )}
                     {r.gate && (
                       <ol className="space-y-2">
                         {r.gate.map((g, i) => (
                           <li key={i} className="flex gap-2">
-                            <span className="text-caption text-muted font-bold pt-1 shrink-0">{i + 1}.</span>
-                            <p className="text-body text-app leading-relaxed whitespace-pre-line">{g}</p>
+                            <span className="text-body-sm text-muted font-bold pt-0.5 shrink-0">{i + 1}.</span>
+                            <p className="text-body-lg text-app leading-relaxed whitespace-pre-line">{g}</p>
                           </li>
                         ))}
                       </ol>
                     )}
-                    {r.aggiornataIl && <p className="text-caption text-faint mt-2">Aggiornata il {new Date(r.aggiornataIl).toLocaleDateString('it-IT')}{r.versioni ? ` · ${r.versioni} ${r.versioni === 1 ? 'versione' : 'versioni'}` : ''}</p>}
+                    {r.aggiornataIl && <p className="text-body-sm text-faint mt-2">Aggiornata il {new Date(r.aggiornataIl).toLocaleDateString('it-IT')}{r.versioni ? ` · ${r.versioni} ${r.versioni === 1 ? 'versione' : 'versioni'}` : ''}</p>}
                     <div className="flex flex-wrap gap-1 mt-2 -ml-3">
                       {chiave && (!isGate || chiave.gateQ) && (
                         <Button variant="ghost" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(r)}>{chiave.gateQ ? `Modifica: ${chiave.label.toLowerCase()}` : 'Modifica'}</Button>

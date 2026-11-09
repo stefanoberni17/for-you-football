@@ -31,6 +31,14 @@
   --color-forest-700: #0e5c3a;
   --color-forest-800: #111c14;
   --color-forest-900: #0a1410;
+  /* Il Corpo (9/11, proposta per Ste: «due colori, mente e corpo a colpo d'occhio»): blu. La Mente resta il verde
+     del brand. Per scambiarli basta cambiare questi valori. */
+  --color-corpo-100: #e2eefb;
+  --color-corpo-300: #9cc8f5;
+  --color-corpo-400: #5aa6ee;
+  --color-corpo-500: #2a7fd4;
+  --color-corpo-600: #1f66b0;
+  --color-corpo-700: #184e88;
 
   /* ─── Superfici "For You Dark" (nero verdognolo, stile Spotify) ─── */
   --color-app-bg:        #0d1310;

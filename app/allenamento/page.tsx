@@ -400,7 +400,7 @@ export default function AllenamentoHub() {
             <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. {CONSIGLIO_VISITA} Un attimo e trovi il bottone per riprendere.</p></Card>
           ) : o.consensiMancanti ? null /* "Prima di iniziare" arriva con lo stato completo: niente seduta prima di quello */ : s ? (
             <div className="mb-3 space-y-2">
-              <CardPlay href={`/allenamento/sessione/${s.giorno}`} label={s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+              <CardPlay parte="corpo" href={`/allenamento/sessione/${s.giorno}`} label={s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
                 sopra={`${s.stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[dow]}` : `Da recuperare · era ${DAY_NAMES_IT[s.giorno]}`} · ~${durataLabel(s.durataMin)}`}
                 titolo={s.titolo} />
               {(s.recupero || s.proposte.length > 0) && (
@@ -517,7 +517,7 @@ export default function AllenamentoHub() {
   // ── Pezzi riusati da più viste ─────────────────────────────────────────────
   const cardTest = (
     <div className="mb-5 space-y-2">
-      <CardPlay href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />} sopra="Prima di tutto · mezz'ora" titolo="Fai i test" />
+      <CardPlay parte="corpo" href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />} sopra="Prima di tutto · mezz'ora" titolo="Fai i test" />
       <p className="px-1 text-body-sm text-muted">Da lì nascono la tua Card e la tua settimana. Serve la sbarra per le trazioni.</p>
     </div>
   );
@@ -563,7 +563,7 @@ export default function AllenamentoHub() {
               <p className="mt-1 text-body-sm text-muted">In pausa finché il dolore non passa.</p>
             </Card>
           ) : (
-            <CardPlay href={`/allenamento/sessione/${diOggi.giorno}`} label={stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+            <CardPlay parte="corpo" href={`/allenamento/sessione/${diOggi.giorno}`} label={stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
               sopra={`${stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[oggiDow]}` : `Da recuperare · era ${DAY_NAMES_IT[diOggi.giorno]}`} · ~${durataLabel(diOggi.durata_min)}`}
               titolo={diOggi.titolo} />
           )}

@@ -122,11 +122,11 @@ export default function ParteSwitch({ parte, hrefs, onChange, corpoBloccato, pen
       {voci.map(({ id, label, Icon, bloccata }) => {
         const sel = id === parte;
         const cls = `relative flex h-11 flex-1 items-center justify-center gap-2 rounded-full text-body font-semibold transition-colors ${
-          sel ? 'bg-forest-500/20 text-app' : 'text-muted hover:text-app'
+          sel ? (id === 'corpo' ? 'bg-corpo-500/20 text-app' : 'bg-forest-500/20 text-app') : 'text-muted hover:text-app'
         }`;
         const contenuto = (
           <>
-            {bloccata ? <Lock size={16} aria-hidden className="shrink-0 opacity-80" /> : <Icon size={18} aria-hidden className={`shrink-0 ${sel ? 'text-forest-300' : ''}`} />}
+            {bloccata ? <Lock size={16} aria-hidden className="shrink-0 opacity-80" /> : <Icon size={18} aria-hidden className={`shrink-0 ${sel ? (id === 'corpo' ? 'text-corpo-300' : 'text-forest-300') : ''}`} />}
             <span>{label}</span>
             {id === 'corpo' && conPallino && !sel && !bloccata && (
               <span aria-label="Hai un resoconto da dare" className="absolute right-4 top-2.5 h-2.5 w-2.5 rounded-full bg-accent-glow shadow-glow" />
@@ -201,7 +201,10 @@ export function PalestraTestata({ parte, scheda, schede = true, corpoBloccato, c
   return (
     <div className={`bg-app px-4 pt-safe ${className}`}>
       <div className="mx-auto max-w-xl">
-        {titolo ? <Testata indietro={{ href: '/palestra', label: 'Palestra' }} titolo={titolo} /> : <BackButton href="/palestra" label="Palestra" />}
+        {titolo
+          ? <Testata indietro={{ href: '/palestra', label: 'Palestra' }} titolo={titolo}
+              sopra={<span className={parte === 'corpo' ? 'text-corpo-300' : undefined}>{parte === 'corpo' ? 'Corpo' : 'Mente'}</span>} />
+          : <BackButton href="/palestra" label="Palestra" />}
       </div>
     </div>
   );

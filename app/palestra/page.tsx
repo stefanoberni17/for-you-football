@@ -14,6 +14,7 @@ import { AppLoader, GrigliaRiquadri, Riquadro, TitoloGruppo } from '@/components
  * La Palestra (8/11, stile B delle bozze, Ste: «vai come proposto»): Mente e Corpo nella stessa pagina, ognuno con
  * i suoi riquadri piccoli, niente selettore. Il riquadro verde è la cosa principale del gruppo. Le spiegazioni
  * stanno dentro le sezioni. Chi non ha il Corpo vede i riquadri col lucchetto, che portano alla pagina di assaggio.
+ * Dal 9/11 «Mente» e «Corpo» sono titoli grandi e il Corpo ha il suo colore (blu).
  */
 export default function PalestraPage() {
   const router = useRouter();
@@ -52,7 +53,7 @@ export default function PalestraPage() {
       <div className="mx-auto max-w-xl space-y-3">
         <h1 className="mb-3 font-display text-display font-bold text-app">Palestra</h1>
 
-        <TitoloGruppo>Mente</TitoloGruppo>
+        <TitoloGruppo grande parte="mente">Mente</TitoloGruppo>
         <GrigliaRiquadri>
           <Riquadro href="/settimane" tono="verde" icona={<Route />} titolo="Percorso"
             valore={<span className="text-body-sm font-semibold text-forest-100">{settimana > 12 ? 'Fatto' : `Sett. ${settimana}`}</span>} />
@@ -62,12 +63,12 @@ export default function PalestraPage() {
             valore={<span className="text-body-sm font-semibold text-muted">1&apos;</span>} />
         </GrigliaRiquadri>
 
-        <TitoloGruppo className="pt-4">Corpo</TitoloGruppo>
+        <TitoloGruppo grande parte="corpo" className="pt-6">Corpo</TitoloGruppo>
         <GrigliaRiquadri>
-          <Riquadro href="/allenamento" tono={corpoAperto ? 'verde' : 'scuro'} bloccato={!corpoAperto} icona={<Dumbbell />} titolo="Allenamento"
+          <Riquadro href="/allenamento" parte="corpo" tono={corpoAperto ? 'verde' : 'scuro'} bloccato={!corpoAperto} icona={<Dumbbell />} titolo="Allenamento"
             pallino={corpoAperto && pendente}
-            valore={oggi ? <span className="text-body-sm font-semibold text-forest-100">{oggi}</span> : undefined} />
-          <Riquadro href={corpoAperto ? '/allenamento/test' : '/allenamento'} bloccato={!corpoAperto} icona={<Timer />} titolo="Test" />
+            valore={oggi ? <span className="text-body-sm font-semibold text-corpo-100">{oggi}</span> : undefined} />
+          <Riquadro href={corpoAperto ? '/allenamento/test' : '/allenamento'} parte="corpo" bloccato={!corpoAperto} icona={<Timer />} titolo="Test" />
         </GrigliaRiquadri>
       </div>
     </main>
