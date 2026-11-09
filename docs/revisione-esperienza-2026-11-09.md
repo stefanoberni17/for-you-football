@@ -181,7 +181,15 @@ Una funzione pura, `prontezzaCorpo(stato) → { pronto, mancano: [{ cosa, perche
 | Tutto, in equilibrio | Come gambe + parte alta | Piegamenti + squat + una posteriore |
 | Velocità, pliometria, resistenza, tecnica, fascia, kettlebell | Nessun test necessario: senza, il livello è quello generale (B se manca l'AMRAP) e i blocchi sono quelli di Ste | **Nessun test prima del piano**; i test arrivano come consigliati |
 
-Senza i test proposti il piano si può fare lo stesso (oggi succede). La proposta serve a non dare a un ragazzo forte, alla prima settimana, i blocchi B generici al posto delle sedute sui suoi gradini. È una scelta di Ste (decisione 1).
+**Deciso da Ste (9/11): nessun test obbligatorio.** Il piano parte appena accesso, consensi e setup sono a posto. I test si consigliano con il loro effetto vero: «Più test fai, più il piano è preciso. Senza test il preparatore parte cauto, da un livello base, e si aggiorna settimana dopo settimana con i tuoi voti».
+
+Cosa vuol dire «si aggiorna» nel codice, per non promettere più di quello che fa:
+- **la dose** di ogni esercizio sale o scende dai voti delle serie (`lib/trainingDose.ts`);
+- **il codice dei blocchi** avanza dai giudizi di fine seduta (`lib/trainingMemoriaBlocchi.ts`);
+- **il livello sopra** si assaggia dopo 2 settimane «facile» all'ultimo codice del livello (`ASSAGGIO_SETTIMANE`);
+- **le serie fatte alla soglia** di un gradino diventano un risultato vero della scala (`risultatiDallaSeduta`).
+
+Non si aggiorna senza test: le sedute composte sui gradini (`pa-*`, `pb-*`) esistono solo con i test indicati sopra, e i kg restano entro 20 senza massimale. La card dei test lo dice per l'obiettivo del ragazzo: «Con lo squat e l'RDL le tue sedute di gambe partono dal tuo gradino».
 
 ### Generazione automatica: errori, ripresa, doppioni
 
@@ -321,10 +329,12 @@ Il setup non registra quando una risposta è stata data: `app/api/training/setup
 
 «Esiste» = il codice lo usa già così. «Proposta» = scelta di metodo da decidere.
 
-| Obiettivo | Prima del piano | Consigliati (cosa cambiano nel codice) | Facoltativi | Quando si rifanno (esiste) |
+Prima del piano non serve nessun test (decisione di Ste, 9/11): la colonna «Primi consigliati» dice quali test cambiano di più la prima settimana.
+
+| Obiettivo | Primi consigliati | Poi (cosa cambiano nel codice) | Facoltativi | Quando si rifanno (esiste) |
 |---|---|---|---|---|
-| Gambe | Proposta: squat + RDL o ponte | Affondi e l'altra posteriore (più esercizi); wall sit e affondo isometrico (livello gambe); salto in lungo (livello pliometria) | Massimali in palestra, con il peso prima | Gradino dopo nelle settimane di ri-test; il massimale se è nel piano |
-| Parte alta | Proposta: piegamenti; trazioni con la sbarra | AMRAP (livello generale); core, lombari (pezzi delle serie) | Panca, shoulder press, trazioni zavorrate | Gradino dopo |
+| Gambe | Squat + RDL o ponte | Affondi e l'altra posteriore (più esercizi); wall sit e affondo isometrico (livello gambe); salto in lungo (livello pliometria) | Massimali in palestra, con il peso prima | Gradino dopo nelle settimane di ri-test; il massimale se è nel piano |
+| Parte alta | Piegamenti; trazioni con la sbarra | AMRAP (livello generale); core, lombari (pezzi delle serie) | Panca, shoulder press, trazioni zavorrate | Gradino dopo |
 | Velocità | — | 50 m, T-sprint (livello velocità) | Salto in lungo | Off season, o in stagione con obiettivo e condizioni |
 | Pliometria | — | Salto in lungo, ankle stiffness, navetta (livello; da A le prime settimane in B scendono da 4 a 2) | Destro e sinistro | Test da campo solo off season |
 | Resistenza | — | 1 o 3 km (durata delle serie: 4/5/6'), navetta | L'altro km | Off season, o con le condizioni |
@@ -333,8 +343,8 @@ Il setup non registra quando una risposta è stata data: `app/api/training/setup
 | Kettlebell | — | — (le fasce vengono dai log) | — | — |
 
 **«Il prossimo test»** (oggi: il primo non fatto in un ordine fisso, `app/allenamento/test/page.tsx:265-272`) diventa:
-1. il primo «prima del piano» non fatto, se la decisione 1 li introduce;
-2. poi il consigliato del primo obiettivo, saltando i test che attrezzi e fase escludono e quelli che le condizioni di oggi vietano (le stesse di `guardrailResistenzaVelocita`).
+1. il primo dei «primi consigliati» del primo obiettivo non fatto;
+2. poi gli altri consigliati, saltando i test che attrezzi e fase escludono e quelli che le condizioni di oggi vietano (le stesse di `guardrailResistenzaVelocita`).
 
 La card dice perché, quanto dura, cosa serve e cosa cambia («Squat · 3 minuti · niente attrezzi · da qui le tue sedute di gambe partono dal tuo gradino»). Ogni risultato mostra la data e la regola vera per rifarlo; un test mancante è «Non ancora fatto», mai un livello basso. Il conteggio diventa «2 su 4 per i tuoi obiettivi» al posto di «37/48»; il catalogo completo resta sotto «Tutti i test».
 
@@ -399,11 +409,18 @@ La card dice perché, quanto dura, cosa serve e cosa cambia («Squat · 3 minuti
 **Proposta.**
 - Il messaggio compare **solo se il piano porta un segno scritto dal server** (`plan.rientro = { settimaneFerme, riduzione }`) nel momento in cui una regola ha davvero ridotto la settimana. Oggi quella regola non c'è, quindi oggi il messaggio non compare mai.
 - Per l'alleggerimento automatico di 1-2 settimane, la riga del carico già esistente può dirlo con i suoi numeri («Il tuo tetto è più basso: nelle ultime settimane ti sei allenato meno»), solo quando il tetto è stato davvero più basso del normale.
-- **Il vuoto dopo 3 settimane è un problema di sicurezza** (nessun tetto proprio quando servirebbe). Il Campo è congelato ma ammette i bug di sicurezza: correggerlo vuol dire scrivere una regola di rientro, cioè una scelta di metodo. Decisione 2.
+- **Il vuoto dopo 3 settimane è un problema di sicurezza** (nessun tetto proprio quando servirebbe). **Deciso da Ste (9/11): lo correggiamo come bug di sicurezza.** Proposta di regola, con numeri a tavolino da confermare prima di scriverla (decisione 1 del §11):
+  - **quando:** 3 o più settimane complete senza sedute dell'app, e nessun resoconto di squadra o partita in quelle settimane (chi ha continuato con la squadra non è fermo);
+  - **settimana 1 del rientro:** al massimo 2 sedute fisiche; serie ×0,7 (la stessa scala di «più leggero», `LEGGERO_SCALA`); niente pliometria intensiva, velocità pura, massimali né RSA; la memoria dei blocchi riparte dalla versione breve dell'ultimo codice fatto;
+  - **settimana 2:** serie ×0,85, tutto il resto ammesso;
+  - **dalla 3:** normale, con il cronico che si è ricostruito;
+  - il piano porta `plan.rientro = { settimaneFerme, settimana: 1 | 2, riduzione }` e solo allora compare «Ripartiamo leggeri: questa settimana serie al 70 %, la prossima all'85 %».
 
 **Accettato quando:**
 - nessun «Ripartiamo leggeri» senza `plan.rientro`;
-- un test con 4 settimane ferme mostra (dopo la decisione 2) un tetto e il segno, oppure niente messaggio.
+- un test con 4 settimane ferme dà 2 sedute fisiche con le serie al 70 % e il segno; la settimana dopo l'85 %; la terza normale;
+- un ragazzo fermo con l'app ma con i resoconti della squadra non entra nel rientro;
+- la simulazione della stagione (`scripts/simulazione-stagione.mts`) con una pausa di 4 settimane lo mostra.
 
 ## 9. Glossario e testi
 
@@ -416,7 +433,7 @@ La card dice perché, quanto dura, cosa serve e cosa cambia («Squat · 3 minuti
 | Partita | La partita | — |
 | Carta | La Carta del Giocatore | Card |
 | I tuoi dati | Check-in e numeri | Stats |
-| Chiusura settimana | Il giorno 7 | Gate (resta solo nel codice) — decisione 3 |
+| Chiusura settimana | Il giorno 7 | Gate (resta solo nel codice) |
 | Corpo | La parte fisica | Campo; «Fisico» solo come nome del pacchetto |
 
 Altri testi:
@@ -431,6 +448,7 @@ Altri testi:
 | **1. Coerenza** | §1: 1.1-1.5 | — (1.5 con la migration 040) | media | §1 |
 | **2. Home e orientamento** | Varianti della Home (primo ingresso, prime settimane, abituale, giorno di seduta, giorno di partita, tutto fatto, rientro); «Riprendi» in Palestra; invito a installare dopo il Giorno 1 per tutti (oggi solo a chi ha Telegram, `app/page.tsx:333,631`); check-in anche senza giorni fatti; streak di casa in fuso italiano (`app/page.tsx:40-53`) | 1.1 | media | Screenshot delle 7 varianti; account senza Telegram vede l'invito; streak con il telefono in un altro fuso |
 | **3. Ingresso, setup, test** | §3 scoperta; §4 setup (migration); §5 test; §6 azioni; §2 prontezza e generazione automatica (migration) | 3a scoperta e azioni: nessuna. 3b setup → 3c test → 3d prontezza e generazione | alta | §2-§6 |
+| **Rientro (sicurezza)** | §8: regola di rientro dopo 3+ settimane ferme, `plan.rientro`, messaggio solo con il segno | i numeri di Ste; nessuna migration | media | §8 |
 | **4. Pratiche, progressi, rifinitura** | §7 pratica; Carta del primo mese con «cosa si riempirà e quando»; glossario §9; suggerimenti del preparatore; accessibilità (nomi sui bottoni con sola icona, focus visibile, tastiera nei fogli, testi lunghi); video | — | media | §7; grep dei termini vecchi vuoto; giro con la tastiera su Home, giorno, seduta |
 
 **Verifica di ogni fase**, sui casi:
@@ -461,14 +479,20 @@ Senza migration:
 
 Nessun dato cancellato o riscritto, tranne la correzione delle letture.
 
-## 11. Decisioni ancora necessarie
+## 11. Decisioni
 
-**Prodotto e metodo**
-1. **Test prima del primo piano:** nessuno (il piano parte con il setup, livello B, blocchi di Ste), oppure solo per gambe e parte alta (squat + una posteriore; piegamenti, trazioni con la sbarra)?
-2. **Rientro dopo 3 o più settimane senza sedute:** oggi non c'è nessun tetto di carico. Lo trattiamo come bug di sicurezza e scriviamo una regola di rientro (quale riduzione, per quante settimane), o resta com'è finché il Campo è congelato?
-3. **Termini:** «Chiusura settimana» al posto di «Gate» e «I tuoi dati» al posto di «Stats» in tutti i testi visibili?
-4. **Video mancanti:** immagini di spiegazione o video pubblici da YouTube come ponte, e da quali esercizi partire?
+**Prese da Ste il 9/11**
+- Una sola azione suggerita dalla settimana 2, ampliabile piano piano (§6).
+- Primo piano del Corpo automatico appena ci sono le condizioni (§2), **senza test obbligatori**: più test, più preciso; senza, parte cauto da un livello base e si aggiorna con i voti.
+- Colori della settimana: squadra giallo-arancio, partita rosso, sedute dell'app blu, con etichette e simboli (§1.1).
+- Rientro dopo 3 o più settimane ferme: si corregge come bug di sicurezza (§8).
+- Termini: «Chiusura settimana», «I tuoi dati», «Carta», «Corpo» in tutti i testi visibili (§9).
+- Video mancanti: da vedere insieme più avanti.
+
+**Ancora da decidere (prodotto e metodo)**
+1. **I numeri del rientro** (§8): 2 sedute fisiche e serie al 70 % la prima settimana, 85 % la seconda, normale dalla terza; niente pliometria intensiva, velocità pura, massimali né RSA nella prima.
+2. **La fase 1** (§1) va bene così com'è scritta per partire?
 
 **Commerciali (separate)**
-5. **Coach gratis:** oggi 20 messaggi per tutta la vita dell'account; i testi dicono «nella settimana gratis».
-6. **Dopo la settimana 12:** cosa vede e cosa paga il ragazzo.
+3. **Coach gratis:** oggi 20 messaggi per tutta la vita dell'account; i testi dicono «nella settimana gratis».
+4. **Dopo la settimana 12:** cosa vede e cosa paga il ragazzo.
