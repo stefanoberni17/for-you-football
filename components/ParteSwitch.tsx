@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Brain, Dumbbell, Lock } from 'lucide-react';
+import type { ComponentType } from 'react';
+import { Brain, Lock } from 'lucide-react';
+import IconaCorpo from '@/components/ui/IconaCorpo';
 import { supabase } from '@/lib/supabase';
 import BackButton from '@/components/ui/BackButton';
 import Testata from '@/components/ui/Testata';
@@ -112,9 +114,9 @@ export default function ParteSwitch({ parte, hrefs, onChange, corpoBloccato, pen
   const pallino = useResocontoPendente();
   const conPallino = pendente ?? pallino;
 
-  const voci: { id: Parte; label: string; Icon: typeof Brain; bloccata: boolean }[] = [
+  const voci: { id: Parte; label: string; Icon: ComponentType<{ size?: number; className?: string; 'aria-hidden'?: boolean }>; bloccata: boolean }[] = [
     { id: 'mente', label: 'Mente', Icon: Brain, bloccata: false },
-    { id: 'corpo', label: 'Corpo', Icon: Dumbbell, bloccata: bloccato },
+    { id: 'corpo', label: 'Corpo', Icon: IconaCorpo, bloccata: bloccato },
   ];
 
   return (
@@ -204,7 +206,7 @@ export function PalestraTestata({ parte, scheda, schede = true, corpoBloccato, c
       <div className="mx-auto max-w-xl">
         {titolo
           ? <Testata indietro={{ href: '/palestra', label: 'Palestra' }} titolo={titolo}
-              sopra={<span className="inline-flex items-center gap-1.5">{parte === 'corpo' ? <Dumbbell size={15} aria-hidden /> : <Brain size={15} aria-hidden />}{parte === 'corpo' ? 'Corpo' : 'Mente'}</span>} />
+              sopra={<span className="inline-flex items-center gap-1.5">{parte === 'corpo' ? <IconaCorpo size={15} aria-hidden /> : <Brain size={15} aria-hidden />}{parte === 'corpo' ? 'Corpo' : 'Mente'}</span>} />
           : <BackButton href="/palestra" label="Palestra" />}
       </div>
     </div>
