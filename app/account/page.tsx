@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import SubscriptionSection from '@/components/SubscriptionSection';
-import { AppLoader, BackButton, Button, Card, Chip, Field, Input, SectionTitle, Select, Sheet, Textarea } from '@/components/ui';
+import { AppLoader, Button, Card, Chip, Field, Input, SectionTitle, Select, Sheet, Testata, Textarea } from '@/components/ui';
 import { Bot, Bell, LogOut, Lock, Check, Trash2, FileText } from 'lucide-react';
 
 /**
@@ -347,9 +347,7 @@ export default function AccountPage() {
 
       {/* ── Header: indietro al Profilo, titolo, email ─────────────────── */}
       <div className="max-w-xl mx-auto mb-5">
-        <BackButton href="/profilo" label="Profilo" />
-        <h1 className="font-display text-title-1 font-bold text-app mt-1">Account</h1>
-        <p className="text-body-sm text-muted truncate">{email}</p>
+        <Testata indietro={{ href: '/profilo', label: 'Profilo' }} titolo="Account" sotto={<span className="block truncate text-body-sm">{email}</span>} />
       </div>
 
       <form onSubmit={handleSave} className="max-w-xl mx-auto space-y-5">

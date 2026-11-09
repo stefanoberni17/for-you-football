@@ -7,8 +7,8 @@ import { NUMERI_UTILI_RIGA } from '@/lib/constants';
 import { authFetch } from '@/lib/authFetch';
 import { readCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
-import { ChevronRight, Wind, MessageCircle, Zap } from 'lucide-react';
-import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
+import { Wind, MessageCircle, Zap, Activity, RotateCcw, Armchair, Megaphone, LifeBuoy } from 'lucide-react';
+import { AppLoader, Badge, Button, Card, CardPlay, GrigliaRiquadri, Riquadro, SectionTitle, Testata, TitoloGruppo } from '@/components/ui';
 import { PalestraTestata } from '@/components/ParteSwitch';
 import EmptyState from '@/components/EmptyState';
 
@@ -45,6 +45,16 @@ function Steps({ steps, size = 'lg' }: { steps: string[]; size?: 'lg' | 'md' }) 
       ))}
     </ol>
   );
+}
+
+/** L'icona di una difficoltà dal suo nome (le emoji di Notion restano fuori: l'app usa le icone). */
+function iconaDifficolta(nome: string) {
+  const n = nome.toLowerCase();
+  if (n.includes('ansia')) return <Activity />;
+  if (n.includes('error')) return <RotateCcw />;
+  if (n.includes('panchina')) return <Armchair />;
+  if (n.includes('mister') || n.includes('allenatore')) return <Megaphone />;
+  return <LifeBuoy />;
 }
 
 /**
@@ -102,56 +112,23 @@ function SosContent() {
     const nextWeek = lockedLayers.length > 0 ? Math.min(...lockedLayers.map(l => l.sbloccoSettimana)) : null;
 
     return (
-      <main className="min-h-screen bg-app pb-tabbar-lg">
-        <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-          <div className="max-w-xl mx-auto">
-            <BackButton href="/sos" label="Quando si fa dura" tone="light" className="mb-2" />
-            <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">Adesso</p>
-            <h1 className="font-display text-title-1 font-bold text-white leading-tight">
-              <span className="mr-2" aria-hidden="true">{selected.emoji}</span>{selected.difficolta}
-            </h1>
-            {selected.sottotitolo && <p className="text-forest-100 text-body-sm mt-1">{selected.sottotitolo}</p>}
-          </div>
-        </div>
+      <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
+        <div className="mx-auto max-w-xl space-y-4">
+          <Testata indietro={{ href: '/sos', label: 'Quando si fa dura' }} titolo={selected.difficolta} sotto={selected.sottotitolo || undefined} />
 
-        <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
-          {/* ── Fai questo, adesso: il layer Reset, solo gli step e il bottone ── */}
-          {now ? (
+          {/* ── Fai questo, adesso: gli step e il Reset ── */}
+          <CardPlay onClick={openMeditation} icona={<Wind size={22} />} label="Fai il Reset ora" sopra="Adesso · 1 minuto" titolo="Fai il Reset ora" />
+          {now && now.pratica.length > 0 && (
             <>
-              <Card variant="accent" padding="md" as="section" aria-label="Fai questo, adesso">
-                <SectionTitle title="Fai questo, adesso" subtitle={now.strumento || undefined} className="mb-4" />
-                {now.pratica.length > 0 && <Steps steps={now.pratica} />}
-                <div className="mt-5">
-                  <Button
-                    variant="hero"
-                    size="lg"
-                    fullWidth
-                    onClick={openMeditation}
-                    icon={<Wind size={20} aria-hidden="true" />}
-                  >
-                    Fai il Reset ora
-                  </Button>
-                </div>
-              </Card>
-
-              {(now.apertura || now.chiusura) && (
-                <div className="px-1 space-y-3">
-                  {now.apertura && (
-                    <p className="text-body text-muted leading-relaxed whitespace-pre-line">{now.apertura}</p>
-                  )}
-                  {now.chiusura && (
-                    <p className="font-quote text-body-lg text-forest-300 leading-relaxed">{now.chiusura}</p>
-                  )}
-                </div>
-              )}
+              <TitoloGruppo className="pt-2">Fai questo{now.strumento ? ` · ${now.strumento}` : ''}</TitoloGruppo>
+              <Card padding="md" as="section" aria-label="Fai questo, adesso"><Steps steps={now.pratica} /></Card>
             </>
-          ) : (
-            <Card variant="accent" padding="md" as="section" aria-label="Fai questo, adesso">
-              <SectionTitle title="Fai questo, adesso" subtitle="Un minuto di respiro, poi torna in campo" className="mb-4" />
-              <Button variant="hero" size="lg" fullWidth onClick={openMeditation} icon={<Wind size={20} aria-hidden="true" />}>
-                Fai il Reset ora
-              </Button>
-            </Card>
+          )}
+          {now && (now.apertura || now.chiusura) && (
+            <div className="space-y-3 px-1">
+              {now.apertura && <p className="whitespace-pre-line text-body leading-relaxed text-muted">{now.apertura}</p>}
+              {now.chiusura && <p className="font-quote text-body-lg leading-relaxed text-forest-300">{now.chiusura}</p>}
+            </div>
           )}
 
           {/* ── Gli altri modi sbloccati, uno dopo l'altro ── */}
@@ -213,23 +190,12 @@ function SosContent() {
             cta={{ label: 'Scrivi al Coach', href: '/chat' }}
           />
         )}
-        {cards.map(card => (
-          <Card key={card.id} padding="sm" href={`/sos?card=${card.id}`} aria-label={card.difficolta}>
-            <span className="flex items-center justify-between gap-3 min-h-[44px]">
-              <span className="flex items-center gap-3 min-w-0">
-                <span className="text-2xl w-10 text-center flex-shrink-0" aria-hidden="true">{card.emoji}</span>
-                <span className="min-w-0">
-                  <span className="flex items-center gap-2 flex-wrap">
-                    <span className="text-title-3 font-bold text-app">{card.difficolta}</span>
-                    {card.totalCount > 1 && <Badge tone="neutral">{card.unlockedCount} {card.unlockedCount === 1 ? 'modo' : 'modi'}</Badge>}
-                  </span>
-                  {card.sottotitolo && <span className="block text-body-sm text-muted mt-0.5">{card.sottotitolo}</span>}
-                </span>
-              </span>
-              <ChevronRight size={18} className="text-faint flex-shrink-0" aria-hidden="true" />
-            </span>
-          </Card>
-        ))}
+        <GrigliaRiquadri>
+          {cards.map(card => (
+            <Riquadro key={card.id} href={`/sos?card=${card.id}`} icona={iconaDifficolta(card.difficolta)} titolo={card.difficolta}
+              valore={card.totalCount > 1 ? <span className="text-body-sm font-semibold text-muted">{card.unlockedCount}/{card.totalCount}</span> : undefined} />
+          ))}
+        </GrigliaRiquadri>
 
         {cards.length > 0 && (
           <Button variant="ghost" fullWidth href="/chat" icon={<MessageCircle size={18} aria-hidden="true" />}>

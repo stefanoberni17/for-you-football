@@ -14,7 +14,7 @@ import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
 import { hasActiveAccess } from '@/lib/checkAccess';
-import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Testata, Textarea } from '@/components/ui';
 
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
   per_lato?: boolean;
@@ -316,9 +316,8 @@ export default function SessionePage() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <BackButton onClick={() => router.push('/allenamento')} label="Campo" className="mb-2" />
-        <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{DAY_NAMES[giorno]} · {TIPO_LABEL[sessione.tipo] ?? 'Seduta'}</p>
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">{sessione.titolo}</h1>
+        <Testata indietro={{ onClick: () => router.push('/allenamento'), label: 'Allenamento' }}
+          sopra={`${DAY_NAMES[giorno]} · ${TIPO_LABEL[sessione.tipo] ?? 'Seduta'}`} titolo={sessione.titolo} className="mb-1" />
         <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {nEsercizi} esercizi{sessione.apertura_min ? ` · +${sessione.apertura_min}' di apertura, se hai tempo` : ''}</p>
         {!!sessione.proposte?.length && (
           <Card variant="accent" padding="sm" className="mb-4">

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Brain, Dumbbell, Lock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import BackButton from '@/components/ui/BackButton';
+import Testata from '@/components/ui/Testata';
 import { livelloFisico } from '@/lib/checkAccess';
 import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
 
@@ -200,8 +201,7 @@ export function PalestraTestata({ parte, scheda, schede = true, corpoBloccato, c
   return (
     <div className={`bg-app px-4 pt-safe ${className}`}>
       <div className="mx-auto max-w-xl">
-        <BackButton href="/palestra" label="Palestra" />
-        {titolo && <h1 className="font-display text-title-1 font-bold text-app">{titolo}</h1>}
+        {titolo ? <Testata indietro={{ href: '/palestra', label: 'Palestra' }} titolo={titolo} /> : <BackButton href="/palestra" label="Palestra" />}
       </div>
     </div>
   );

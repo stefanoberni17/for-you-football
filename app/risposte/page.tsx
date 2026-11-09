@@ -7,9 +7,9 @@ import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { GATE_DAY } from '@/lib/constants';
 import { gateLista, rispostaChiaveInfo, testoDaModificare, type RispostaRow } from '@/lib/risposteChiave';
-import { BookOpen, ChevronRight, Key, PenLine, Star } from 'lucide-react';
+import { ChevronRight, Key, PenLine, Star } from 'lucide-react';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
-import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, SectionTitle, Testata } from '@/components/ui';
 
 interface Settimana { weekNumber: number; titolo: string; strumento?: string }
 
@@ -61,15 +61,7 @@ export default function RispostePage() {
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
-        <BackButton back="/profilo" />
-
-        <Card className="border-l-4 border-l-forest-500">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="w-10 h-10 rounded-full bg-forest-500/20 text-forest-300 flex items-center justify-center shrink-0" aria-hidden><BookOpen size={18} /></span>
-            <h1 className="font-display text-title-1 font-bold text-app">Le tue risposte</h1>
-          </div>
-          <p className="text-muted text-body-sm">Quello che hai scritto lungo il percorso, con le tue parole. Si scrive nei giorni: qui si rilegge.</p>
-        </Card>
+        <Testata indietro={{ back: '/profilo', label: 'Profilo' }} titolo="Le tue risposte" sotto="Quello che hai scritto nel percorso, con le tue parole." />
 
         {errore && (
           <Card variant="warn">

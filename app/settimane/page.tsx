@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isWeekUnlocked, isWeekCompleted, isDayUnlocked, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { BETA_MAX_WEEK, DAYS_PER_WEEK, GATE_DAY } from '@/lib/constants';
-import { Check, Play, Trophy, Clock, Key } from 'lucide-react';
+import { Check, Play, Trophy, Clock, Key, Lock } from 'lucide-react';
 import { AppLoader, Button, Card } from '@/components/ui';
 import { PalestraTestata } from '@/components/ParteSwitch';
 
@@ -176,37 +176,32 @@ export default function SettimanePage() {
         {/* Le settimane a quadratini: fatte verdi con la spunta, quella in corso con il bordo, le altre spente */}
         <section aria-label="Tutte le settimane" className="space-y-3">
           <h2 className="px-1 text-body font-semibold text-muted">Le {Math.max(settimane.length, BETA_MAX_WEEK)} settimane</h2>
-          <div className="grid grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-2 gap-3">
             {settimane.map((settimana) => {
               const n = settimana.weekNumber;
               const unlocked = isWeekUnlocked(n, completedDays);
               const completed = isWeekCompleted(n, completedDays);
               const titolo = cleanTitle(settimana.titolo);
-              if (completed) {
-                return (
-                  <Link key={settimana.id} href={`/settimana/${n}`} aria-label={`Settimana ${n}: ${titolo}, fatta`}
-                    className="flex h-[78px] flex-col items-center justify-center gap-0.5 rounded-[18px] bg-forest-500 text-white">
-                    <span className="font-display text-title-1 font-bold leading-none">{n}</span>
-                    <Check size={16} strokeWidth={3} aria-hidden />
-                  </Link>
-                );
-              }
-              if (unlocked) {
-                return (
-                  <Link key={settimana.id} href={`/settimana/${n}`} aria-label={`Settimana ${n}: ${titolo}, in corso`}
-                    className="flex h-[78px] flex-col items-center justify-center gap-0.5 rounded-[18px] bg-surface ring-2 ring-inset ring-forest-400">
-                    <span className="font-display text-title-1 font-bold leading-none text-forest-300">{n}</span>
-                    <span className="text-caption text-forest-300">ora</span>
-                  </Link>
-                );
-              }
-              const domani = n > 1 && isTimeLocked(n - 1, GATE_DAY, completedDays);
-              return (
-                <div key={settimana.id} aria-label={`Settimana ${n}: ${domani ? 'si apre domani' : 'chiusa'}`}
-                  className="flex h-[78px] flex-col items-center justify-center gap-0.5 rounded-[18px] bg-surface text-faint">
-                  <span className="font-display text-title-2 font-semibold leading-none">{n}</span>
-                  {domani && <span className="text-caption">domani</span>}
-                </div>
+              const domani = !unlocked && n > 1 && isTimeLocked(n - 1, GATE_DAY, completedDays);
+              const stato = completed ? 'fatta' : unlocked ? 'in corso' : domani ? 'si apre domani' : 'chiusa';
+              const cls = `flex h-[104px] flex-col justify-between rounded-[20px] p-3.5 ${
+                completed ? 'bg-forest-500/15' : unlocked ? 'bg-surface ring-2 ring-inset ring-forest-400' : 'bg-surface'
+              }`;
+              const contenuto = (
+                <>
+                  <span className="flex items-start justify-between">
+                    <span className={`font-display text-title-1 font-bold leading-none ${completed ? 'text-forest-300' : unlocked ? 'text-forest-300' : 'text-faint'}`}>{n}</span>
+                    {completed && <span className="flex h-6 w-6 items-center justify-center rounded-full bg-forest-500 text-white"><Check size={14} strokeWidth={3} aria-hidden /></span>}
+                    {unlocked && !completed && <span className="text-caption font-semibold text-forest-300">ora</span>}
+                    {!unlocked && (domani ? <span className="text-caption text-muted">domani</span> : <Lock size={15} aria-hidden className="text-faint" />)}
+                  </span>
+                  <span className={`line-clamp-2 text-body font-semibold leading-snug ${unlocked || completed ? 'text-app' : 'text-muted'}`}>{titolo}</span>
+                </>
+              );
+              return unlocked || completed ? (
+                <Link key={settimana.id} href={`/settimana/${n}`} aria-label={`Settimana ${n}: ${titolo}, ${stato}`} className={`${cls} transition-transform active:scale-[0.98]`}>{contenuto}</Link>
+              ) : (
+                <div key={settimana.id} aria-label={`Settimana ${n}: ${titolo}, ${stato}`} className={cls}>{contenuto}</div>
               );
             })}
           </div>

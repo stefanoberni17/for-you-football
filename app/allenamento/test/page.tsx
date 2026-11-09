@@ -9,7 +9,7 @@ import { AlertTriangle, Check, ChevronDown, ChevronRight, Lock, Plus, Timer, Tre
 import { DAY_NAMES } from '@/lib/constants';
 import { gruppoLontano } from '@/lib/trainingRitest';
 import TestIstruzioni from '@/components/TestIstruzioni';
-import { AppLoader, Badge, Button, Card, Chip, Input } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, CardPlay, Chip, Input } from '@/components/ui';
 import { PalestraTestata } from '@/components/ParteSwitch';
 
 interface TestInfo {
@@ -61,7 +61,7 @@ function BloccoTest({ n, titolo, sottotitolo, fatti, totali, open, onToggle, chi
 }) {
   const completo = totali > 0 && fatti >= totali;
   return (
-    <section id={`blocco-${n}`} className={`rounded-card border mb-3 scroll-mt-4 ${completo ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
+    <section id={`blocco-${n}`} className={`rounded-[20px] mb-3 scroll-mt-4 ${completo ? 'bg-forest-500/10' : 'bg-surface'}`}>
       <button type="button" onClick={onToggle} className="w-full min-h-[56px] flex items-center gap-3 p-4 text-left" aria-expanded={open}>
         <div className={`w-9 h-9 rounded-btn flex items-center justify-center text-body-sm font-bold shrink-0 ${completo ? 'bg-forest-500 text-white' : 'bg-app text-forest-300'}`}>
           {completo ? <Check size={16} /> : n}
@@ -338,26 +338,14 @@ export default function BatteriaTest() {
 
         {/* Il prossimo test: l'azione di adesso, sopra la piega */}
         {prossimo ? (
-          <Card variant="hero" className="mb-3">
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">Il prossimo test</p>
-            <p className="font-display text-title-2 font-bold text-white leading-tight">{prossimo.nome}</p>
-            <p className="text-body-sm text-forest-100 mt-0.5 mb-4">{prossimo.categoria}</p>
-            <Button variant="inverse" size="lg" fullWidth onClick={vaiAlProssimo} iconRight={<ChevronRight size={20} />}>Fai questo test</Button>
-          </Card>
+          <CardPlay onClick={vaiAlProssimo} label={`Fai il test: ${prossimo.nome}`} className="mb-2"
+            sopra={`Il prossimo test · ${totaleFatti}/${totaleTest} fatti`} titolo={prossimo.nome} />
         ) : (
           <Card variant="accent" className="mb-3">
             <p className="text-body font-semibold text-forest-300 flex items-center gap-2"><Check size={18} aria-hidden /> Batteria completa. Puoi rifare un test quando vuoi.</p>
           </Card>
         )}
-        <div className="mb-5">
-          <div className="flex items-baseline justify-between mb-1.5">
-            <p className="text-body-sm font-semibold text-app tabular-nums">{totaleFatti}/{totaleTest} test fatti</p>
-            <p className="text-caption text-muted">Uno alla volta, anche in giorni diversi</p>
-          </div>
-          <div className="h-1.5 rounded-full bg-surface-2 overflow-hidden" role="progressbar" aria-valuenow={totaleFatti} aria-valuemin={0} aria-valuemax={totaleTest}>
-            <div className="h-full rounded-full bg-accent-glow transition-[width]" style={{ width: `${totaleTest ? Math.round((totaleFatti / totaleTest) * 100) : 0}%` }} />
-          </div>
-        </div>
+        <p className="mb-5 px-1 text-body-sm text-muted">Uno alla volta, anche in giorni diversi.</p>
 
         {/* Ri-test integrato (26/10): le serie test della settimana stanno dentro le sedute */}
         {ritest?.settimanaRitest && (ritest.inSeduta.length > 0 || ritest.proposte.length > 0) && (

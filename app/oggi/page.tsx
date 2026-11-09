@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase';
 import ActionsSetupSheet, { type SelectedAction } from '@/components/ActionsSetupSheet';
 import type { ActionCategory, ActionPrinciple } from '@/lib/actionsCatalog';
 import EmptyState from '@/components/EmptyState';
-import { AppLoader, BackButton, Badge, Button, Card } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, Testata } from '@/components/ui';
 import { Check, Flame, Pencil, Target } from 'lucide-react';
 
 type ApiAction = {
@@ -171,47 +171,26 @@ function OggiPageInner() {
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
 
-      {/* Header immersive: data, numero grande, barra, streak */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-        <div className="max-w-xl mx-auto">
-          <BackButton href="/" label="Home" tone="light" className="mb-2" />
-          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">
-            Oggi · {todayLongIt()}
-          </p>
-          <div className="flex items-start justify-between gap-3">
-            <h1 className="font-display text-title-1 font-bold text-white leading-tight">
-              Le tue 5 azioni
-            </h1>
-            {streak > 0 && (
-              <Badge tone="warn" icon={<Flame size={14} aria-hidden="true" />} className="mt-1 shrink-0">
-                {streak} {streak === 1 ? 'giorno' : 'giorni'} di fila
-              </Badge>
-            )}
-          </div>
-
-          {total > 0 ? (
-            <>
-              <p className="mt-3 flex items-baseline gap-2 text-white">
-                <span className="font-display text-display font-bold tabular-nums">{todayCount}/{total}</span>
-                <span className="text-body-sm text-forest-100">fatte oggi</span>
-              </p>
-              <div className="w-full bg-white/15 rounded-full h-1.5 overflow-hidden mt-2" role="progressbar" aria-valuenow={todayCount} aria-valuemin={0} aria-valuemax={total} aria-label="Azioni fatte oggi">
-                <div
-                  className="h-full rounded-full bg-white transition-all duration-500"
-                  style={{ width: `${percent}%` }}
-                />
-              </div>
-            </>
-          ) : (
-            <p className="text-forest-100 text-body-sm mt-2">
-              Le stesse ogni giorno, per tutta la settimana. Le spunti quando le fai.
+      {/* Testata (8/11, stile B): data, il conto di oggi, la serie */}
+      <div className="mx-auto max-w-xl space-y-3 px-4 pt-safe">
+        <Testata indietro={{ href: '/', label: 'Home' }} sopra={`Oggi · ${todayLongIt()}`} titolo="Le tue azioni"
+          destra={streak > 0 ? (
+            <Badge tone="warn" icon={<Flame size={14} aria-hidden="true" />} className="mt-2 shrink-0">{streak} di fila</Badge>
+          ) : undefined} />
+        {total > 0 && (
+          <div>
+            <p className="flex items-baseline gap-2">
+              <span className="font-display text-display font-bold tabular-nums text-app">{todayCount}/{total}</span>
+              <span className="text-body text-muted">fatte oggi</span>
             </p>
-          )}
-        </div>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-valuenow={todayCount} aria-valuemin={0} aria-valuemax={total} aria-label="Azioni fatte oggi">
+              <div className="h-full rounded-full bg-accent-glow transition-all duration-500" style={{ width: `${percent}%` }} />
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Content area */}
-      <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
+      <div className="max-w-xl mx-auto px-4 mt-4 space-y-4">
 
         {total === 0 ? (
           <EmptyState

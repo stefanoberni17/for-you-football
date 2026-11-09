@@ -8,7 +8,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
 import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus, type FocusId } from '@/lib/trainingRequest';
-import { AppLoader, BackButton, Banner, Button, Card, Chip, Field, Input, SectionTitle, RpeScale, Textarea } from '@/components/ui';
+import { AppLoader, Banner, Button, Card, Chip, Field, Input, RpeScale, SectionTitle, Testata, Textarea } from '@/components/ui';
 import { LIMITAZIONI_NOTA_MAX, LIMITAZIONI_ZONE_MAX, ZONE_DOLORE, type ZonaDolore } from '@/lib/trainingDolore';
 import { AVVISO_RESISTENZA_IN_SEASON } from '@/lib/trainingResistenza';
 import FattibilitaBanner from '@/components/FattibilitaBanner';
@@ -134,9 +134,7 @@ function SetupPageInner() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <BackButton back="/profilo" className="mb-2" />
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">Il tuo setup</h1>
-        <p className="text-body text-muted mb-5">Cambia quando cambia la tua stagione.</p>
+        <Testata indietro={{ back: '/profilo', label: 'Profilo' }} titolo="Il tuo setup" sotto="Cambia quando cambia la tua stagione." className="mb-5" />
 
         {disabilitato && <p className="text-body-sm text-warning mb-4">{NON_ATTIVA}</p>}
 

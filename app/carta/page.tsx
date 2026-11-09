@@ -7,7 +7,7 @@ import { authFetch } from '@/lib/authFetch';
 import { SPORT_ROLES, PLAYER_ROLES } from '@/lib/constants';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { ArrowDownRight, ArrowUpRight, Download, Minus } from 'lucide-react';
-import { AppLoader, BackButton, Badge, Button, Card, Chip } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, Chip, Testata } from '@/components/ui';
 import type { Punta, Punta360, RomboMente } from '@/lib/carta';
 import type { Incrocio } from '@/lib/incroci';
 import StatoRecente from '@/components/StatoRecente';
@@ -164,27 +164,14 @@ export default function CartaPage() {
       <div className="max-w-xl mx-auto space-y-4">
 
         {/* Controlli — mai in stampa */}
-        <div className="no-print flex items-center justify-between">
-          <BackButton back="/profilo" />
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => window.print()}
-            icon={<Download size={18} aria-hidden="true" />}
-          >
-            Scarica PDF
-          </Button>
+        <div className="no-print">
+          <Testata indietro={{ back: '/profilo', label: 'Profilo' }} titolo="La tua Carta"
+            destra={<Button variant="secondary" size="sm" onClick={() => window.print()} icon={<Download size={18} aria-hidden="true" />} className="mt-1 shrink-0">PDF</Button>} />
         </div>
 
         {/* ── LA CARTA A 360° (docs/carta-360.md) — non in stampa: la stampa è il documento sotto ── */}
         {c360 && (
           <section className="no-print space-y-3" aria-label="La tua Carta a 360°">
-            <div className="flex items-end justify-between gap-3">
-              <div>
-                <h2 className="font-display text-title-2 font-bold text-app">La tua Carta</h2>
-                <p className="text-body-sm text-muted">Mente e corpo, dagli stessi dati: come ti stai allenando.</p>
-              </div>
-            </div>
 
             {/* Nessun livello della persona per la mente (regola del metodo, 8/10): resta solo il livello del Corpo, che viene dai test */}
             {haCorpo && (

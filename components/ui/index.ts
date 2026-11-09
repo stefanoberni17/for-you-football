@@ -15,3 +15,5 @@ export { default as RpeScale, rpeFrase } from './RpeScale';
 export type { RpeTipo } from './RpeScale';
 export { default as Riquadro, GrigliaRiquadri, TitoloGruppo } from './Riquadro';
 export { Elenco, RigaElenco } from './Elenco';
+export { default as Testata } from './Testata';
+export { default as CardPlay } from './CardPlay';

@@ -10,7 +10,7 @@ import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
 import { chiaviPerGiorno } from '@/lib/risposteChiave';
 import { Check, Key, PenLine, Target } from 'lucide-react';
-import { AppLoader, BackButton, Badge, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
+import { AppLoader, Button, Card, Field, SectionTitle, Testata, Textarea } from '@/components/ui';
 import { dataLunga } from '@/lib/abbonamento';
 
 export default function GatePage() {
@@ -219,19 +219,9 @@ export default function GatePage() {
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
       <div className="max-w-xl mx-auto space-y-5">
 
-        <BackButton tone="light" label={`Settimana ${weekNumber}`} onClick={() => router.push(`/settimana/${weekNumber}`)} />
-
-        {/* Header Gate */}
-        <Card className="border-l-4 border-l-forest-500">
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <Badge tone="accent" icon={<Key size={12} aria-hidden />}>Gate · Settimana {weekNumber}</Badge>
-            {completed && (
-              <Badge tone="success" icon={<Check size={12} strokeWidth={3} aria-hidden />}>Completato</Badge>
-            )}
-          </div>
-          <h1 className="font-display text-title-1 font-bold text-app">Chiusura settimana</h1>
-          <p className="text-muted text-body-sm mt-1">Giorno 7 — Il punto sulla settimana</p>
-        </Card>
+        <Testata indietro={{ onClick: () => router.push(`/settimana/${weekNumber}`), label: `Settimana ${weekNumber}` }}
+          sopra={<span className="inline-flex items-center gap-1.5"><Key size={14} aria-hidden /> Il Gate{completed ? ' · fatto' : ''}</span>}
+          titolo="Chiusura settimana" />
 
         {/* Apertura */}
         {giorno?.apertura && (

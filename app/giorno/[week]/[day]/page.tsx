@@ -20,7 +20,7 @@ import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import { hasActiveAccess } from '@/lib/checkAccess';
 import { ArrowUp, Calendar, Check, ChevronLeft, ChevronRight, Clock, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
-import { AppLoader, BackButton, Button, Card, Field, SectionTitle, Textarea } from '@/components/ui';
+import { AppLoader, Button, Card, Field, SectionTitle, Testata, Textarea } from '@/components/ui';
 
 export default function GiornoPage() {
   const params = useParams();
@@ -468,14 +468,11 @@ export default function GiornoPage() {
   if (giornataInAttesa) {
     return (
       <main className="min-h-screen bg-app pb-tabbar-lg">
-        <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-10">
-          <div className="max-w-xl mx-auto">
-            <BackButton href={`/settimana/${weekNumber}`} label={`Settimana ${weekNumber}`} tone="light" className="mb-3" />
-            <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1">Settimana {weekNumber} · Giorno {dayNumber} · in corso</p>
-            <h1 className="font-display text-title-1 font-bold text-white" style={{ textWrap: 'balance' }}>{dayTitle}</h1>
-          </div>
+        <div className="mx-auto max-w-xl px-4 pt-safe">
+          <Testata indietro={{ href: `/settimana/${weekNumber}`, label: `Settimana ${weekNumber}` }}
+            sopra={`Giorno ${dayNumber} · in corso`} titolo={dayTitle} />
         </div>
-        <div className="max-w-xl mx-auto px-4 -mt-6 space-y-4">
+        <div className="max-w-xl mx-auto px-4 mt-4 space-y-4">
           <Card variant="accent" padding="md">
             <p className="text-body font-semibold text-forest-300 flex items-center gap-2"><Clock size={18} aria-hidden /> La riflessione si apre alle {riflessioneAlle}</p>
             <p className="text-body-sm text-muted mt-1">Intanto vivi la giornata. Quando torni, una riga e il giorno è chiuso.</p>
@@ -500,39 +497,22 @@ export default function GiornoPage() {
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
 
-      {/* Immersive header (compatto: l'unico gradiente della schermata) */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-10">
-        <div className="max-w-xl mx-auto">
-          <BackButton href={`/settimana/${weekNumber}`} label={`Settimana ${weekNumber}`} tone="light" className="mb-3" />
-          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1">
-            Settimana {weekNumber} · Giorno {dayNumber}
-            {giorno.durataMinuti > 0 ? ` · ${giorno.durataMinuti} min` : ''}
-          </p>
-          <h1 className="font-display text-title-1 font-bold text-white" style={{ textWrap: 'balance' }}>
-            {dayTitle}
-          </h1>
-          {/* Progress dots */}
-          {totalSlides > 1 && (
-            <div className="flex gap-2 mt-4" aria-hidden="true">
-              {slides.map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i + 1 === effectiveSlide
-                      ? 'w-8 bg-white'
-                      : i + 1 < effectiveSlide
-                      ? 'w-2 bg-white/60'
-                      : 'w-2 bg-white/25'
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+      {/* Testata (8/11, stile B): niente gradiente, i puntini delle schermate in verde */}
+      <div className="mx-auto max-w-xl px-4 pt-safe">
+        <Testata indietro={{ href: `/settimana/${weekNumber}`, label: `Settimana ${weekNumber}` }}
+          sopra={`Giorno ${dayNumber}${giorno.durataMinuti > 0 ? ` · ${giorno.durataMinuti} min` : ''}`} titolo={dayTitle} />
+        {totalSlides > 1 && (
+          <div className="mt-3 flex gap-2" aria-hidden="true">
+            {slides.map((_, i) => (
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${
+                i + 1 === effectiveSlide ? 'w-8 bg-accent-glow' : i + 1 < effectiveSlide ? 'w-2 bg-forest-400' : 'w-2 bg-surface-3'
+              }`} />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Content area — pulled up over header */}
-      <div className="max-w-xl mx-auto px-4 -mt-6 space-y-4">
+      <div className="max-w-xl mx-auto px-4 mt-4 space-y-4">
 
         {/* Slide content */}
         {currentSlideData?.type === 'apertura' && (

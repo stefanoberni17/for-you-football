@@ -23,7 +23,7 @@ import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } 
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
-import { AppLoader, Badge, Banner, Button, Card, Chip, Field, SectionTitle, Sheet, Textarea } from '@/components/ui';
+import { AppLoader, Badge, Banner, Button, Card, CardPlay, Chip, Elenco, Field, RigaElenco, SectionTitle, Sheet, Textarea } from '@/components/ui';
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
@@ -360,37 +360,27 @@ export default function AllenamentoHub() {
             <p className="text-body-sm text-muted mb-4 flex items-center gap-2"><RefreshCw size={14} className="animate-spin shrink-0" aria-hidden /> Carico il resto…</p>
           )}
           {rLight && (
-            <Card variant="accent" padding="sm" className="mb-3" onClick={() => setShowResoconto(true)} aria-label="Com'è andata?">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0"><MessageCircle size={18} className="text-forest-400" aria-hidden /></div>
-                <div className="flex-1">
-                  <p className="text-body font-semibold text-app">{rLight.tipo === 'partita' ? `Com'è andata la partita${rLight.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${rLight.data === oggiData ? '' : ' ieri'}?`}</p>
-                  <p className="text-body-sm text-muted">30 secondi: fatica vera, minuti, fastidi. La settimana si adatta.</p>
-                </div>
-                <ChevronRight size={18} className="text-muted" aria-hidden />
-              </div>
-            </Card>
+            <Elenco className="mb-3">
+              <RigaElenco onClick={() => setShowResoconto(true)} icona={<MessageCircle />} tono="verde" evidenza
+                titolo={rLight.tipo === 'partita' ? `Com'è andata la partita${rLight.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${rLight.data === oggiData ? '' : ' ieri'}?`}
+                valore="30''" />
+            </Elenco>
           )}
           {o.painHold ? (
             <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. {CONSIGLIO_VISITA} Un attimo e trovi il bottone per riprendere.</p></Card>
           ) : o.consensiMancanti ? null /* "Prima di iniziare" arriva con lo stato completo: niente seduta prima di quello */ : s ? (
-            <Card variant="hero" className="mb-3">
-              <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">
-                {s.stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[dow]}` : `Da recuperare · era ${DAY_NAMES_IT[s.giorno]}`}
-              </p>
-              <h2 className="font-display text-title-1 font-bold leading-tight mb-1.5">{s.titolo}</h2>
-              <p className="text-body text-forest-50/90">~{durataLabel(s.durataMin)}{s.aperturaMin ? ` (+${s.aperturaMin}' di apertura, se hai tempo)` : ''} · {s.descrizione}</p>
+            <div className="mb-3 space-y-2">
+              <CardPlay href={`/allenamento/sessione/${s.giorno}`} label={s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+                sopra={`${s.stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[dow]}` : `Da recuperare · era ${DAY_NAMES_IT[s.giorno]}`} · ~${durataLabel(s.durataMin)}`}
+                titolo={s.titolo} />
               {(s.recupero || s.proposte.length > 0) && (
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {s.recupero && <Badge tone="info" className="!bg-white/15 !text-white">Recupero</Badge>}
-                  {s.proposte.includes('togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
-                  {s.proposte.includes('aggiungi') && <Badge tone="info" className="!bg-white/15 !text-white">Serie in più, se vuoi</Badge>}
+                <div className="flex flex-wrap gap-1.5 px-1">
+                  {s.recupero && <Badge tone="info">Recupero</Badge>}
+                  {s.proposte.includes('togli') && <Badge tone="info">Serie facoltative</Badge>}
+                  {s.proposte.includes('aggiungi') && <Badge tone="info">Serie in più, se vuoi</Badge>}
                 </div>
               )}
-              <Button variant="inverse" size="lg" fullWidth href={`/allenamento/sessione/${s.giorno}`} className="mt-4">
-                {s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
-              </Button>
-            </Card>
+            </div>
           ) : o.haPiano ? (
             <Card variant="accent" className="mb-3">
               <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">Oggi · {DAY_NAMES_IT[dow]}</p>
@@ -491,28 +481,19 @@ export default function AllenamentoHub() {
     setShowResoconto(false); setResocontoTick((t) => t + 1);
   };
   const cardResoconto = resocontoDaChiedere ? (
-    <Card variant="accent" padding="sm" className="mb-3" onClick={() => setShowResoconto(true)} aria-label="Com'è andata?">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-btn bg-forest-500/15 flex items-center justify-center shrink-0"><MessageCircle size={18} className="text-forest-400" aria-hidden /></div>
-        <div className="flex-1">
-          <p className="text-body font-semibold text-app">{resocontoDaChiedere.tipo === 'partita' ? `Com'è andata la partita${resocontoDaChiedere.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${resocontoDaChiedere.data === oggiData ? '' : ' ieri'}?`}</p>
-          <p className="text-body-sm text-muted">30 secondi: fatica vera, minuti, fastidi. La settimana si adatta.</p>
-        </div>
-        <ChevronRight size={18} className="text-muted" aria-hidden />
-      </div>
-    </Card>
+    <Elenco className="mb-3">
+      <RigaElenco onClick={() => setShowResoconto(true)} icona={<MessageCircle />} tono="verde" evidenza
+        titolo={resocontoDaChiedere.tipo === 'partita' ? `Com'è andata la partita${resocontoDaChiedere.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${resocontoDaChiedere.data === oggiData ? '' : ' ieri'}?`}
+        valore="30''" />
+    </Elenco>
   ) : null;
 
   // ── Pezzi riusati da più viste ─────────────────────────────────────────────
   const cardTest = (
-    <Card variant="hero" className="mb-5">
-      <ClipboardList size={28} className="mb-3 opacity-90" aria-hidden />
-      <h2 className="font-display text-title-2 font-bold mb-1.5">Prima di tutto: la tua Card</h2>
-      <p className="text-body text-forest-50/90 leading-relaxed mb-4">
-        I test fotografano il tuo livello su ogni area: da lì nascono la Card e la tua settimana. Serve mezz&apos;ora e la sbarra per le trazioni.
-      </p>
-      <Button variant="inverse" size="lg" fullWidth href="/allenamento/test">Fai i test</Button>
-    </Card>
+    <div className="mb-5 space-y-2">
+      <CardPlay href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />} sopra="Prima di tutto · mezz'ora" titolo="Fai i test" />
+      <p className="px-1 text-body-sm text-muted">Da lì nascono la tua Card e la tua settimana. Serve la sbarra per le trazioni.</p>
+    </div>
   );
 
   const cardPreparatore = cardPreparatoreDi(state.abbonamento ?? null);
@@ -547,39 +528,36 @@ export default function AllenamentoHub() {
       const stato = statoDi(diOggi);
       const post = puoPosticipare(diOggi, sedute, oggiDow, false);
       const leggera = diOggi.blocchi?.some((b) => b.leggero);
+      const badge = 'bg-surface-2';
       hero = (
-        <Card variant="hero" className="mb-3">
-          <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">
-            {stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[oggiDow]}` : `Da recuperare · era ${DAY_NAMES_IT[diOggi.giorno]}`}
-          </p>
-          <h2 className="font-display text-title-1 font-bold leading-tight mb-1.5">{diOggi.titolo}</h2>
-          <p className="text-body text-forest-50/90">~{durataLabel(diOggi.durata_min)}{diOggi.apertura_min ? ` (+${diOggi.apertura_min}' di apertura, se hai tempo)` : ''} · {descrizioneSeduta(diOggi)}</p>
-          {(diOggi.recupero || leggera || diOggi.posticipata_da || proposteOggi.length > 0 || diOggi.avviso_partita) && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {diOggi.avviso_partita && <Badge tone="warn" className="!bg-white/15 !text-white">Vicina alla partita</Badge>}
-              {diOggi.recupero && <Badge tone="info" className="!bg-white/15 !text-white">Recupero</Badge>}
-              {leggera && <Badge tone="info" className="!bg-white/15 !text-white">Più leggera</Badge>}
-              {proposteOggi.some((p) => p.tipo === 'togli') && <Badge tone="info" className="!bg-white/15 !text-white">Serie facoltative</Badge>}
-              {proposteOggi.some((p) => p.tipo === 'aggiungi') && <Badge tone="info" className="!bg-white/15 !text-white">Serie in più, se vuoi</Badge>}
-              {diOggi.posticipata_da && <Badge tone="info" className="!bg-white/15 !text-white">Spostata da {DAY_SHORT_NAMES[diOggi.posticipata_da]}</Badge>}
-              {diOggi.spostata_da && <Badge tone="info" className="!bg-white/15 !text-white">Spostata da {DAY_SHORT_NAMES[diOggi.spostata_da]}: calendario cambiato</Badge>}
+        <div className="mb-3 space-y-2">
+          {state.painHold ? (
+            <Card padding="md">
+              <p className="text-body-sm text-muted">{stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[oggiDow]}` : `Da recuperare · era ${DAY_NAMES_IT[diOggi.giorno]}`}</p>
+              <p className="font-display text-title-2 font-bold text-app">{diOggi.titolo}</p>
+              <p className="mt-1 text-body-sm text-muted">In pausa finché il dolore non passa.</p>
+            </Card>
+          ) : (
+            <CardPlay href={`/allenamento/sessione/${diOggi.giorno}`} label={stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+              sopra={`${stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[oggiDow]}` : `Da recuperare · era ${DAY_NAMES_IT[diOggi.giorno]}`} · ~${durataLabel(diOggi.durata_min)}`}
+              titolo={diOggi.titolo} />
+          )}
+          <p className="line-clamp-1 px-1 text-body-sm text-muted">{descrizioneSeduta(diOggi)}</p>
+          {(diOggi.recupero || leggera || diOggi.posticipata_da || proposteOggi.length > 0 || diOggi.avviso_partita || diOggi.spostata_da) && (
+            <div className="flex flex-wrap gap-1.5 px-1">
+              {diOggi.avviso_partita && <Badge tone="warn">Vicina alla partita</Badge>}
+              {diOggi.recupero && <Badge tone="info" className={badge}>Recupero</Badge>}
+              {leggera && <Badge tone="info" className={badge}>Più leggera</Badge>}
+              {proposteOggi.some((p) => p.tipo === 'togli') && <Badge tone="info" className={badge}>Serie facoltative</Badge>}
+              {proposteOggi.some((p) => p.tipo === 'aggiungi') && <Badge tone="info" className={badge}>Serie in più, se vuoi</Badge>}
+              {diOggi.posticipata_da && <Badge tone="info" className={badge}>Spostata da {DAY_SHORT_NAMES[diOggi.posticipata_da]}</Badge>}
+              {diOggi.spostata_da && <Badge tone="info" className={badge}>Spostata da {DAY_SHORT_NAMES[diOggi.spostata_da]}: calendario cambiato</Badge>}
             </div>
           )}
-          {state.painHold ? (
-            <p className="text-body-sm text-forest-50/90 mt-4">In pausa finché il dolore non passa.</p>
-          ) : (
-            <>
-              <Button variant="inverse" size="lg" fullWidth href={`/allenamento/sessione/${diOggi.giorno}`} className="mt-4">
-                {stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
-              </Button>
-              {post.ok && (
-                <div className="mt-1 -mb-2 flex justify-center">
-                  <Button variant="ghost" size="sm" onClick={() => posticipa(diOggi.giorno)} className="!text-forest-100 hover:!bg-white/10">Sposta a {DAY_NAMES_IT[post.a!].toLowerCase()}</Button>
-                </div>
-              )}
-            </>
+          {!state.painHold && post.ok && (
+            <Button variant="ghost" size="sm" onClick={() => posticipa(diOggi.giorno)} className="-ml-3">Sposta a {DAY_NAMES_IT[post.a!].toLowerCase()}</Button>
           )}
-        </Card>
+        </div>
       );
     } else if (prossima) {
       hero = (

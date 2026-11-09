@@ -61,7 +61,7 @@ export default function FisicoBloccato() {
     <main className="min-h-screen bg-app pb-tabbar-lg">
       <PalestraTestata parte="corpo" schede={false} corpoBloccato />
       <div className="max-w-md mx-auto px-5 mt-5">
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">Il Corpo</h1>
+        <h1 className="font-display text-display font-bold text-app mb-1">Il Corpo</h1>
         <p className="text-body text-muted leading-relaxed mb-5">
           Un piano di allenamento fisico e tecnico, settimana per settimana, costruito sul tuo calendario con la squadra, sulla partita e sui tuoi test.
         </p>

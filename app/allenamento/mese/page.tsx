@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES } from '@/lib/constants';
-import { AppLoader, BackButton, Card } from '@/components/ui';
+import { AppLoader, Card, Testata } from '@/components/ui';
 import type { SettimanaReplay } from '@/lib/trainingPlannerV2';
 import { focusLabel, type FocusId } from '@/lib/trainingRequest';
 const dataIt = (ymd: string) => { const [y, m, d] = ymd.split('-'); return `${d}/${m}/${y.slice(2)}`; };
@@ -41,8 +41,7 @@ export default function MesePage() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <BackButton back="/profilo" className="mb-2" />
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">Le settimane passate</h1>
+        <Testata indietro={{ back: '/profilo', label: 'Profilo' }} titolo="Le settimane passate" className="mb-1" />
         <p className="text-body text-muted mb-1">Per ogni lunedì: cosa diceva il conto del mese quel giorno, e cosa è stato fatto davvero.</p>
         <p className="text-body-sm text-muted mb-5">Obiettivi di oggi: {data.obiettivi.length ? data.obiettivi.map((f) => focusLabel(f as FocusId)).join(' › ') : 'nessuno'}</p>
 
