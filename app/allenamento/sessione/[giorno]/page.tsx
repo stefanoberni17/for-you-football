@@ -14,13 +14,14 @@ import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
 import { hasActiveAccess } from '@/lib/checkAccess';
+import { notaSpostamento, type Spostamento } from '@/lib/spostamenti';
 import { AppLoader, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Testata, Textarea } from '@/components/ui';
 
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
   per_lato?: boolean;
   test_in_seduta?: { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }; // ri-test in seduta (26/10)
 }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; avviso_partita?: string }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; avviso_partita?: string; spostamenti?: Spostamento[] }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
@@ -326,6 +327,10 @@ export default function SessionePage() {
               {sessione.proposte.map((p, i) => <li key={i} className="text-body-sm text-app leading-snug">{p.motivo}</li>)}
             </ul>
           </Card>
+        )}
+        {/* Spostata (10/11): la nota sta sopra la spiegazione del preparatore, che resta com'è stata scritta */}
+        {notaSpostamento(sessione) && (
+          <p className="text-body-sm text-warning leading-snug mb-2">{notaSpostamento(sessione)}</p>
         )}
         {sessione.spiegazione && (
           <div className="mb-5">

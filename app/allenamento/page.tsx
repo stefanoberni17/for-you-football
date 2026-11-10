@@ -25,13 +25,14 @@ import type { CampoOggi } from '@/lib/trainingOggi';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
+import { dataConGiorno, isRigaSpostamento, riepilogoSpostamenti, seduteCambiateDopo, type Spostamento } from '@/lib/spostamenti';
 import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
 import { AppLoader, Badge, Banner, Button, Card, CardPlay, Chip, Elenco, Field, RigaElenco, SectionTitle, Sheet, Textarea, TitoloGruppo } from '@/components/ui';
 import SetupCampo from '@/components/SetupCampo';
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; recupero?: boolean; proposte?: { tipo: string; motivo: string }[]; avviso_partita?: string }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; spostamenti?: Spostamento[]; recupero?: boolean; proposte?: { tipo: string; motivo: string }[]; avviso_partita?: string }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -45,7 +46,7 @@ export interface TrainingState {
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; done: boolean }[];
-  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[] }; generato_da: string } | null;
+  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[]; scritto_il?: string }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
@@ -507,6 +508,10 @@ export default function AllenamentoHub() {
   // Piano di una settimana passata: non è la settimana corrente (niente stati/CTA su sedute vecchie)
   const haPiano = !!state.plan && !state.planStale;
   const sedute = haPiano ? [...(state.plan!.plan?.sedute || [])].sort((a, b) => a.giorno - b.giorno) : [];
+  // Spostamenti (10/11): le righe che li ripetono escono da «Ho sistemato», il numero conta le righe che si vedono
+  const spostamentiSett = riepilogoSpostamenti(sedute);
+  const cambiateDopo = seduteCambiateDopo(sedute);
+  const altriAggiustamenti = (haPiano ? state.plan!.plan.aggiustamenti ?? [] : []).filter((a) => !(spostamentiSett.righe.length > 0 && isRigaSpostamento(a)));
   const oggiDow = state.oggiDow || 1;
   const statoDi = (s: PlanSession) => statoSeduta(s.giorno, oggiDow, doneDays.has(s.giorno));
   // Prossima da fare: oggi, oppure quella di ieri ancora recuperabile, oppure la prima futura
@@ -775,6 +780,11 @@ export default function AllenamentoHub() {
                 <div className="mb-3 flex gap-2">
                   <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
                   <div className="min-w-0">
+                    {/* Il testo del preparatore è un documento di quel giorno (10/11): non si riscrive, si data */}
+                    <p className="text-label font-semibold text-app mb-0.5">La proposta del preparatore{state.plan!.plan.scritto_il ? ` · ${dataConGiorno(state.plan!.plan.scritto_il)}` : ''}</p>
+                    {cambiateDopo > 0 && (
+                      <p className="text-body-sm text-warning mb-1">Da allora {cambiateDopo === 1 ? 'una seduta è cambiata' : `${cambiateDopo} sedute sono cambiate`}: il programma giusto è qui sopra.</p>
+                    )}
                     <p className={`text-body-sm text-muted leading-relaxed ${msgAperto ? '' : 'line-clamp-3'}`}>{state.plan!.plan.messaggio}</p>
                     <button type="button" onClick={() => setMsgAperto((v) => !v)} className="tap -ml-1 px-1 text-body-sm font-semibold text-forest-300">{msgAperto ? 'Meno' : 'Leggi tutto'}</button>
                   </div>
@@ -786,11 +796,28 @@ export default function AllenamentoHub() {
                 <span>{state.plan!.plan.nota}</span>
               </p>
             )}
-            {!!state.plan!.plan.aggiustamenti?.length && (
+            {/* Sedute spostate (10/11): una riga per seduta, dal primo giorno all'ultimo; sotto la storia completa e datata */}
+            {spostamentiSett.righe.length > 0 && (
+              <div className="mb-3">
+                <p className="text-body-sm font-semibold text-app mb-1 flex items-center gap-2"><CalendarClock size={16} className="text-forest-400" aria-hidden /> {spostamentiSett.righe.length === 1 ? 'Una seduta spostata' : `${spostamentiSett.righe.length} sedute spostate`}</p>
+                <ul className="space-y-1">
+                  {spostamentiSett.righe.map((r, i) => <li key={i} className="text-body-sm text-muted leading-snug">· {r}</li>)}
+                </ul>
+                {spostamentiSett.storia.length > spostamentiSett.righe.length && (
+                  <details className="mt-1">
+                    <summary className="text-body-sm text-muted cursor-pointer tap flex items-center">Com&apos;è cambiata la settimana</summary>
+                    <ul className="mt-1 space-y-1">
+                      {spostamentiSett.storia.map((r, i) => <li key={i} className="text-caption text-muted leading-snug">· {r}</li>)}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            )}
+            {altriAggiustamenti.length > 0 && (
               <details className="mb-3">
-                <summary className="text-body-sm text-muted cursor-pointer tap flex items-center">Ho sistemato {state.plan!.plan.aggiustamenti.length === 1 ? 'una cosa' : `${state.plan!.plan.aggiustamenti.length} cose`} nella settimana proposta</summary>
+                <summary className="text-body-sm text-muted cursor-pointer tap flex items-center">Ho sistemato {altriAggiustamenti.length === 1 ? 'una cosa' : `${altriAggiustamenti.length} cose`} nella settimana proposta</summary>
                 <ul className="mt-1 space-y-1">
-                  {state.plan!.plan.aggiustamenti.slice(0, 6).map((a, i) => (
+                  {altriAggiustamenti.map((a, i) => (
                     <li key={i} className="text-caption text-muted leading-snug">· {a}</li>
                   ))}
                 </ul>

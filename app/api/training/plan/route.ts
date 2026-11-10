@@ -1,3 +1,4 @@
+import { conSpostamento } from '@/lib/spostamenti';
 import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
@@ -9,7 +10,7 @@ import { generateWeekPlan, PLANNER_MODEL, PLANNER_PROMPT_VERSION, detectPain, mo
 import { generateWeekPlanV2, PLANNER_V2_MODEL, PLANNER_V2_PROMPT_VERSION, loadContextV2, validateCtxFor } from '@/lib/trainingPlannerV2';
 import { componiRichiesta, parseRichiesta, PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA, puoPosticipare, type Vincoli } from '@/lib/trainingRequest';
 import { validatePlan, type WeekPlan } from '@/lib/trainingEngine';
-import { oggiDowRome } from '@/lib/trainingPlanner';
+import { oggiDowRome, todayRome } from '@/lib/trainingPlanner';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -210,7 +211,9 @@ export async function PATCH(request: NextRequest) {
 
     const nuovo: WeekPlan = {
       ...plan,
-      sedute: plan.sedute.map((s) => (s.giorno === giorno ? { ...s, giorno: check.a!, posticipata_da: giorno } : s)),
+      sedute: plan.sedute.map((s) => (s.giorno === giorno
+        ? { ...conSpostamento(s, { da: giorno, a: check.a!, quando: todayRome(), perche: 'l\'hai spostata tu al giorno dopo', fonte: 'posticipo' }), giorno: check.a!, posticipata_da: giorno }
+        : s)),
     };
     // Il validatore ha l'ultima parola (finestre partita, tetti): il posticipo non le aggira
     const ctx = await loadContextV2(userId);

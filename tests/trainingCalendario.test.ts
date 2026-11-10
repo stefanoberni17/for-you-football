@@ -91,7 +91,11 @@ describe('nel planner: adattaAlCalendario (Marco, zero Claude)', () => {
     expect(r.plan!.sedute[0]).toBe(plan.sedute[0]); // la seduta fatta è lo STESSO oggetto: intatta
     expect(r.plan!.sedute[2].blocchi?.some((b) => b.id === PRE_PARTITA_ID)).toBe(true);
     expect(r.plan!.adattato_calendario).toBe('2026-10-27');
-    expect(r.plan!.aggiustamenti?.some((a) => /Calendario cambiato, Venerdì → Giovedì/.test(a))).toBe(true);
+    // lo spostamento sta nella seduta (10/11), con data e perché; non più tra gli aggiustamenti
+    expect(r.plan!.sedute[2].spostamenti).toEqual([{ da: 5, a: 4, quando: '2026-10-27', perche: 'il venerdì ora c\'è la partita', fonte: 'calendario' }]);
+    expect(r.plan!.aggiustamenti?.some((a) => /Venerdì → Giovedì/.test(a))).toBe(false);
+    // la spiegazione del preparatore resta quella scritta
+    expect(r.plan!.sedute[2].spiegazione).toBe(plan.sedute[2].spiegazione);
   });
   it('senza conflitti non fa niente; con la partita martedì la fisica di lunedì va a venerdì e la pre partita a lunedì', async () => {
     const { contextFinto, MARCO } = await import('@/lib/trainingSimulazione');

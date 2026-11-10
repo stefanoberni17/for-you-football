@@ -2,6 +2,16 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — Fase 1b: le spiegazioni del piano datate e lo storico degli spostamenti
+
+Revisione dell'esperienza §1.3-1.4. Il testo del preparatore diceva «venerdì» e la seduta era giovedì: nessuno dei quattro modi in cui il server sposta una seduta toccava i testi, e «Ho sistemato 6 cose» contava righe che la lista non mostrava.
+- `lib/spostamenti.ts` (puro, 6 test): ogni seduta porta `spostamenti` con data, perché e fonte (generazione, calendario cambiato, posticipo); il piano porta `scritto_il`. I testi non si riscrivono.
+- Hub, scheda Settimana: «La proposta del preparatore · lunedì 9/11», «Da allora N sedute sono cambiate», una riga per seduta spostata, «Com'è cambiata la settimana» con tutti i passaggi datati; «Ho sistemato» senza gli spostamenti e con tutte le righe che conta.
+- Pagina seduta: «Pensata per giovedì, spostata a martedì il 10/11: …» sopra la spiegazione.
+- L'adattamento al calendario tiene la spiegazione scritta dal preparatore (prima si perdeva); gli spostamenti non vanno più tra gli aggiustamenti.
+- Prompt del planner: niente giorni della settimana nel titolo e nella spiegazione di una seduta (`v2.51`).
+- Migration 040 applicata da Ste: la settimana con la squadra si salva nella tabella nuova (provato sul Preview).
+
 ## 2026-11-10 — «Il calendario è cambiato» non torna più in giro
 
 Ste: «continua a dare questo messaggio in loop». Il 9/11 il piano è stato adattato tre volte in un minuto: venerdì non era più tra i giorni dell'app, l'adattamento spostava la seduta a giovedì «fuori dai tuoi giorni abituali: non c'era altro posto», e la lettura dopo la segnalava di nuovo come conflitto (giovedì → martedì → giovedì).
