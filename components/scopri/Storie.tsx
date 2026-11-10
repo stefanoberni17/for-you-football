@@ -269,7 +269,7 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
           style={{ animationPlayState: ferma ? 'paused' : 'running' }} />
       ))}
       <div className={`absolute inset-0 ${corpoStoria ? 'bg-[radial-gradient(90%_70%_at_30%_15%,rgba(47,109,171,0.45),transparent),linear-gradient(160deg,#121c28,#0b0f14)]' : 'bg-[radial-gradient(90%_70%_at_30%_15%,rgba(26,150,96,0.5),transparent),linear-gradient(160deg,#10241a,#0b120e)]'} transition-opacity duration-700 ${conFoto ? 'opacity-0' : 'opacity-100'}`} aria-hidden />
-      <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/40 transition-opacity duration-700 ${conFoto ? 'opacity-100' : 'opacity-0'}`} aria-hidden />
+      <div className={`absolute inset-0 bg-black/55 transition-opacity duration-700 ${conFoto ? 'opacity-100' : 'opacity-0'}`} aria-hidden />
 
       {/* Barrette */}
       <div className="absolute inset-x-3 top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex gap-1" aria-hidden>
@@ -304,7 +304,7 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
       </div>
 
       {/* Il contenuto della schermata */}
-      <div key={`${gruppo}-${i}`} className={`scopri-storia-testo pointer-events-none absolute inset-x-0 z-10 px-6 [&_a]:pointer-events-auto [&_button]:pointer-events-auto ${s.schermo ? 'inset-y-0 flex flex-col pb-8 pt-24' : conFoto ? 'bottom-0 pb-10' : 'inset-y-0 flex flex-col justify-center pb-10'}`}>
+      <div key={`${gruppo}-${i}`} className={`scopri-storia-testo pointer-events-none absolute inset-x-0 z-10 px-6 [&_a]:pointer-events-auto [&_button]:pointer-events-auto ${s.schermo ? 'inset-y-0 flex flex-col pb-8 pt-24' : conFoto ? 'inset-y-0 flex flex-col justify-center pb-10 [text-shadow:0_1px_14px_rgba(0,0,0,0.65)]' : 'inset-y-0 flex flex-col justify-center pb-10'}`}>
         {s.schermo && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={s.schermo.src} alt={s.schermo.alt} className="mx-auto min-h-0 flex-1 rounded-[18px] border-[5px] border-black object-contain object-top shadow-e3" />
