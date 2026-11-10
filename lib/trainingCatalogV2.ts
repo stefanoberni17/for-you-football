@@ -63,10 +63,13 @@ export interface ExerciseV2 {
   v1Id?: string;                 // id dell'esercizio equivalente nel catalogo v1
   tags?: string[];
   fasciaKb?: 'base' | 'intermedio' | 'avanzato'; // kettlebell (Ste, 25/9): fascia di esercizio — si sale dopo 4 settimane facili (lib/trainingKettlebell)
-  pesoKg?: number;               // kettlebell: peso di partenza (passo di 4 kg nella progressione)
+  pesoKg?: number;               // peso di partenza (kettlebell: passo di 4 kg nella progressione); vale quando il blocco non dà i kg
+  pesoPer?: PesoPer;             // che cosa vuol dire il numero (per manubrio, per kettlebell, bilanciere con la barra, zavorra, macchina)
   attivo: boolean;               // false = importato ma non proposto (headball, duplicato v1, escluso)
   fonte: string;
 }
+
+export type PesoPer = 'bilanciere' | 'manubrio' | 'kettlebell' | 'zavorra' | 'macchina';
 
 export { ESERCIZI_V2 };
 

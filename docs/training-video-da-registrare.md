@@ -167,6 +167,13 @@ Esercizi nuovi nel catalogo v1 (`lib/trainingCatalog.ts`), senza video: sono i g
 
 Squat a corpo libero (`squat-1`) ha solo la nota v2 senza video: se se ne registra uno, vale per il test base.
 
+## Video tolti perché mostravano un altro esercizio (10/11, Ste)
+
+| Esercizio | Dove | Video che c'era |
+|---|---|---|
+| Piegamenti 1 braccio declinati (`push-8`, ultimo gradino della scala di spinta) | scala skill, test, sedute di parte alta | quello dei piegamenti declinati a due braccia |
+| Plank (`core-2`, anche il test del plank frontale) | scala core, test | quello del plank laterale |
+
 ## Come rigenerare
 
 Script inline: legge `lib/trainingBlocks.generated.ts` e i cataloghi, tiene gli esercizi senza `videoUrl` usati nei blocchi `completo: true`. Quando un video viene caricato: incollare l'URL nel campo `video` di `docs/training-catalogo-v2.json` e rigenerare con `python3 scripts/build-catalog-v2.py && python3 scripts/build-blocks.py`.

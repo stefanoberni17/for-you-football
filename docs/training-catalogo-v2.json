@@ -415,7 +415,9 @@
    "piu_facile": "Pesi più leggeri, distanza più corta.",
    "piu_difficile": "Un peso solo (in una mano), o pesi più pesanti.",
    "sicurezza": "Presa che molla: appoggia e riprendi, non lasciare cadere."
-  }
+  },
+  "peso_kg": 16,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Barbell Front Squat",
@@ -453,7 +455,9 @@
    "piu_facile": "Bilanciere scarico, o goblet squat con kettlebell.",
    "piu_difficile": "Pausa di 2 secondi in basso.",
    "sicurezza": "Solo con uno squat con bilanciere già solido (almeno 1.4 volte il peso corporeo). Mai al cedimento senza i fermi del rack."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Lateral Step-Up on Bench (FY)",
@@ -531,7 +535,9 @@
    "piu_facile": "Scendi fino alle cosce parallele.",
    "piu_difficile": "Pausa di 3 secondi, o con un peso al petto.",
    "sicurezza": "Fastidio al ginocchio in fondo: riduci la profondità."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Hip Thrust",
@@ -570,7 +576,9 @@
    "piu_facile": "Senza carico, o ponte a terra.",
    "piu_difficile": "Più carico, pausa di 3 secondi in alto, o a una gamba.",
    "sicurezza": "Cuscinetto sotto il bilanciere. Fastidio lombare: meno carico e meno estensione."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Loaded Squat to 90°",
@@ -606,7 +614,9 @@
    "piu_facile": "Meno carico, o un box dietro come riferimento.",
    "piu_difficile": "Versione test: cerca il peso massimo con cui fai 3 ripetizioni pulite. Parti da un peso sicuro, 3 ripetizioni, e aggiungi 10 kg a ogni serie finché non trovi il limite.",
    "sicurezza": "Con carichi alti sempre i fermi del rack o un compagno."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Patrick Step-Down",
@@ -805,7 +815,9 @@
    "piu_facile": "Bilanciere scarico, o goblet squat.",
    "piu_difficile": "Pausa di 2 secondi in basso, o più carico.",
    "sicurezza": "Fermi del rack alla giusta altezza. Fastidio lombare: meno carico, controlla la schiena neutra."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Bulgarian Split Squat",
@@ -844,7 +856,9 @@
    "piu_facile": "A corpo libero, panca più bassa.",
    "piu_difficile": "Manubri in mano, o pausa di 2 secondi in basso.",
    "sicurezza": "Fastidio davanti al ginocchio: allontana un po' il piede davanti."
-  }
+  },
+  "peso_kg": 8,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Romanian Deadlift",
@@ -883,7 +897,9 @@
    "piu_facile": "Manubri leggeri, escursione ridotta.",
    "piu_difficile": "Più carico, o discesa in 4 secondi.",
    "sicurezza": "Fastidio lombare: ferma la discesa più in alto e controlla la schiena neutra."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Sumo Deadlift",
@@ -1161,7 +1177,9 @@
    "piu_facile": "Senza manubrio, salti più corti.",
    "piu_difficile": "Manubrio più pesante, salti più lunghi.",
    "sicurezza": "Spazio libero davanti a te per i salti. Fastidio lombare: scendi meno nello stacco."
-  }
+  },
+  "peso_kg": 8,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Explosive Single-Leg RDL",
@@ -1277,7 +1295,9 @@
    "piu_facile": "Manubri più leggeri, seduto con lo schienale.",
    "piu_difficile": "In piedi, più carico, o discesa in 3 secondi.",
    "sicurezza": "Fastidio alla spalla nella rotazione: riduci il carico o l'escursione."
-  }
+  },
+  "peso_kg": 6,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Incline Dumbbell Fly to Press (FY)",
@@ -1318,7 +1338,9 @@
    "piu_facile": "Manubri più leggeri, arco meno profondo.",
    "piu_difficile": "Discesa in 4 secondi, pausa di 1 secondo in basso.",
    "sicurezza": "Fastidio alla spalla in apertura: ferma l'arco più in alto."
-  }
+  },
+  "peso_kg": 6,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Cuban Press",
@@ -1359,7 +1381,9 @@
    "piu_facile": "Solo la rotazione, senza la spinta sopra la testa.",
    "piu_difficile": "Pausa di 2 secondi in ogni posizione.",
    "sicurezza": "Fastidio alla spalla nella rotazione: riduci il carico o fermati."
-  }
+  },
+  "peso_kg": 4,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Dips",
@@ -1435,7 +1459,9 @@
    "piu_facile": "Manubri più leggeri, panca meno inclinata.",
    "piu_difficile": "Più carico, o discesa in 3 secondi.",
    "sicurezza": "Fastidio alla spalla: riduci il carico o l'inclinazione."
-  }
+  },
+  "peso_kg": 8,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Kettlebell Clean and Press",
@@ -1475,7 +1501,8 @@
    "piu_facile": "Kettlebell leggero, solo il clean.",
    "piu_difficile": "Kettlebell più pesante, o press in 3 secondi.",
    "sicurezza": "Polso dritto nel press. Fastidio alla spalla: riduci il carico."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Swing High Pull",
@@ -1513,7 +1540,8 @@
    "piu_facile": "Solo lo swing, senza la tirata.",
    "piu_difficile": "Kettlebell più pesante.",
    "sicurezza": "Presa salda. Fastidio lombare: fermati."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Seated Dumbbell Overhead Press",
@@ -1549,7 +1577,9 @@
    "piu_facile": "Manubri più leggeri.",
    "piu_difficile": "Più carico, o discesa in 3 secondi.",
    "sicurezza": "Fastidio alla spalla: riduci il carico o l'escursione."
-  }
+  },
+  "peso_kg": 6,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Standing Dumbbell Overhead Press",
@@ -1585,7 +1615,9 @@
    "piu_facile": "Manubri più leggeri, o seduto.",
    "piu_difficile": "Più carico, o un manubrio alla volta.",
    "sicurezza": "Fastidio lombare: seduto. Fastidio alla spalla: riduci il carico."
-  }
+  },
+  "peso_kg": 6,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Incline Bench Dumbbell Flyes",
@@ -1657,7 +1689,9 @@
    "piu_facile": "Bilanciere scarico o manubri.",
    "piu_difficile": "Pausa di 2 secondi sul petto.",
    "sicurezza": "Fermi di sicurezza o compagno: senza l'appoggio delle gambe il carico è più basso del solito."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Piegamenti",
@@ -1876,7 +1910,9 @@
    "piu_facile": "Bilanciere scarico o manubri.",
    "piu_difficile": "Più carico, o pausa in cima.",
    "sicurezza": "Fastidio lombare: riduci il carico e contrai di più i glutei."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Incline Barbell Bench Press",
@@ -1912,7 +1948,9 @@
    "piu_facile": "Bilanciere scarico o manubri.",
    "piu_difficile": "Pausa di 2 secondi sul petto.",
    "sicurezza": "Fermi di sicurezza o compagno con carichi alti."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Barbell Bench Press",
@@ -1949,7 +1987,9 @@
    "piu_facile": "Bilanciere scarico o manubri.",
    "piu_difficile": "Pausa di 2 secondi sul petto, o più carico.",
    "sicurezza": "Fermi di sicurezza o compagno con carichi alti."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Piegamenti Declinati",
@@ -2005,7 +2045,9 @@
    "piu_facile": "Meno carico, busto meno inclinato.",
    "piu_difficile": "Più carico, o pausa di 2 secondi in alto.",
    "sicurezza": "Fastidio lombare: riduci il carico e controlla la schiena neutra."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Archer Pull-Up",
@@ -2713,7 +2755,8 @@
    "piu_facile": "Kettlebell più leggero, fermata al petto prima di salire (come un clean).",
    "piu_difficile": "Kettlebell più pesante.",
    "sicurezza": "Spazio libero intorno. Tappetino sotto il ginocchio. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Jump Technique: One-Leg and Two-Leg Take-Off",
@@ -2793,7 +2836,9 @@
    "piu_facile": "Kettlebell più leggero, ostacolo più basso, box basso.",
    "piu_difficile": "Kettlebell più pesante, box più alto.",
    "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
-  }
+  },
+  "peso_kg": 12,
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Explosive Barbell Split Squat (FY)",
@@ -2832,7 +2877,9 @@
    "piu_facile": "Bilanciere scarico, o a corpo libero.",
    "piu_difficile": "Più carico, o un piccolo stacco dei piedi da terra in cima.",
    "sicurezza": "Carichi alti solo con i fermi del rack. Fastidio al ginocchio davanti: riduci la profondità."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Kettlebell Dead Clean",
@@ -2870,7 +2917,8 @@
    "piu_facile": "Kettlebell più leggero.",
    "piu_difficile": "Kettlebell più pesante, o senza appoggiarlo a terra tra una ripetizione e l'altra.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Rotational Clean",
@@ -2909,7 +2957,8 @@
    "piu_facile": "Kettlebell più leggero, oscillazione più corta.",
    "piu_difficile": "Kettlebell più pesante.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Rotational Swing",
@@ -2950,7 +2999,8 @@
    "piu_facile": "Kettlebell più leggero, mezzo affondo più corto.",
    "piu_difficile": "Kettlebell più pesante.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Snatch",
@@ -2988,7 +3038,8 @@
    "piu_facile": "Kettlebell più leggero, pausa al petto prima di salire.",
    "piu_difficile": "Kettlebell più pesante.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Swing",
@@ -3027,7 +3078,8 @@
    "piu_facile": "Kettlebell più leggero.",
    "piu_difficile": "Kettlebell più pesante, o a una mano.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "piegamenti con battito",
@@ -3169,7 +3221,9 @@
    "piu_facile": "Senza manubri, salti più bassi.",
    "piu_difficile": "Manubri più pesanti, salti più alti.",
    "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati."
-  }
+  },
+  "peso_kg": 8,
+  "peso_per": "manubrio"
  },
  {
   "nome": "A-Skip",
@@ -3537,7 +3591,9 @@
    "piu_facile": "Senza manubri nei saltelli, solo nei calf raises.",
    "piu_difficile": "Manubri più pesanti, o saltelli su una gamba.",
    "sicurezza": "Fastidio al tendine d'Achille o al polpaccio: fermati."
-  }
+  },
+  "peso_kg": 8,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Single-Leg Toe Bounces (On the Spot)",
@@ -3947,7 +4003,9 @@
    "piu_facile": "Senza snatch e senza salto: stacco a una gamba e knee jump separati.",
    "piu_difficile": "Manubrio più pesante, salto più alto.",
    "sicurezza": "Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Solo dopo stacchi a una gamba e knee jump già puliti. Tappetino sotto il ginocchio."
-  }
+  },
+  "peso_kg": 8,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Single-Leg Drop with Inside Push-Off",
@@ -10366,7 +10424,9 @@
    "piu_facile": "Dip senza zavorra.",
    "piu_difficile": "Più carico, o discesa in 3 secondi.",
    "sicurezza": "Zavorra ben fissata. Dolore alla spalla in basso: riduci la profondità."
-  }
+  },
+  "peso_kg": 5,
+  "peso_per": "zavorra"
  },
  {
   "nome": "Chin-Up",
@@ -10442,7 +10502,9 @@
    "piu_facile": "Bilanciere da un rialzo, o stacco rumeno con manubri.",
    "piu_difficile": "Più carico, o pausa sotto il ginocchio.",
    "sicurezza": "Solo con la tecnica già imparata e mai come primo esercizio con il bilanciere. Fastidio lombare: fermati."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "bilanciere"
  },
  {
   "nome": "Leg Press",
@@ -10479,7 +10541,9 @@
    "piu_facile": "Meno carico, escursione ridotta.",
    "piu_difficile": "Più carico, a una gamba, o discesa in 4 secondi.",
    "sicurezza": "Fermi di sicurezza sempre inseriti. Fastidio lombare: scendi meno."
-  }
+  },
+  "peso_kg": 20,
+  "peso_per": "macchina"
  },
  {
   "nome": "Dumbbell Lateral Raise",
@@ -10516,7 +10580,9 @@
    "piu_facile": "Manubri più leggeri, un braccio alla volta.",
    "piu_difficile": "Discesa in 3 secondi, o pausa di 2 secondi in alto.",
    "sicurezza": "Fastidio alla spalla: riduci il carico."
-  }
+  },
+  "peso_kg": 4,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Bodyweight Squat",
@@ -10843,7 +10909,9 @@
    "piu_facile": "Meno carico, o senza cavo.",
    "piu_difficile": "Più carico, pausa di 2 secondi in alto.",
    "sicurezza": "Fastidio lombare: fermati."
-  }
+  },
+  "peso_kg": 10,
+  "peso_per": "macchina"
  },
  {
   "nome": "Hanging Oblique Knee Raise",
@@ -11285,7 +11353,8 @@
    "piu_facile": "Kettlebell leggero, discesa parziale.",
    "piu_difficile": "Kettlebell più pesante, o un secondo kettlebell nella mano bassa.",
    "sicurezza": "Fastidio alla spalla o alla schiena: riduci il carico o l'escursione."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Bent-Over Row with Rotation",
@@ -11323,7 +11392,8 @@
    "piu_facile": "Kettlebell più leggero, senza rotazione.",
    "piu_difficile": "Kettlebell più pesante, o pausa in rotazione.",
    "sicurezza": "Fastidio lombare: riduci il carico e la rotazione."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Figure 8",
@@ -11361,7 +11431,8 @@
    "piu_facile": "Kettlebell più leggero, senza swing.",
    "piu_difficile": "Kettlebell più pesante, o ritmo più alto.",
    "sicurezza": "Presa salda: se scivola, lascialo cadere lontano dai piedi."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Kettlebell Cross Chop",
@@ -11399,7 +11470,8 @@
    "piu_facile": "Kettlebell più leggero, movimento più lento.",
    "piu_difficile": "Kettlebell più pesante, discesa più veloce.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Plantar Fascia Foam Roll",
@@ -12102,7 +12174,9 @@
    "piu_facile": "Senza manubri.",
    "piu_difficile": "Manubri più pesanti, o passetti più rapidi.",
    "sicurezza": "Fastidio al tendine d'Achille: senza peso, o fermati."
-  }
+  },
+  "peso_kg": 8,
+  "peso_per": "manubrio"
  },
  {
   "nome": "Single-Leg Eccentric Elevated Hamstring Bridge",
@@ -12421,7 +12495,8 @@
    "piu_facile": "Kettlebell più leggeri.",
    "piu_difficile": "Kettlebell più pesanti, o pausa di 2 secondi in alto.",
    "sicurezza": "Fastidio lombare: riduci il carico."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "Inverted Row (Table or Low Bar)",
@@ -12586,7 +12661,8 @@
    "piu_facile": "Kettlebell più leggero, o a corpo libero.",
    "piu_difficile": "Kettlebell più pesante, o pausa di 3 secondi in basso.",
    "sicurezza": "Fastidio al ginocchio in fondo: riduci la profondità."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "id": "fesp-kettlebell-swing-una-mano",
@@ -12629,7 +12705,8 @@
    "piu_facile": "Swing a due mani.",
    "piu_difficile": "Kettlebell più pesante, o cambio mano in aria.",
    "sicurezza": "Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso."
-  }
+  },
+  "peso_per": "kettlebell"
  },
  {
   "nome": "One-Arm Decline Push-Up",

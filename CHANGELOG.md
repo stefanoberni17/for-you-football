@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — Il peso da usare su ogni esercizio con i pesi, due video sbagliati
+
+Ste: «sui piegamenti 1 braccio declinati c'è il video dei piegamenti a 2 braccia declinati. Gorilla row bisogna mettere il peso da usare, controlla che tutti gli esercizi con kb e pesi abbiano il peso da usare».
+- Controllo su tutti i blocchi di Ste e su quelli composti dal server: uscivano senza kg il Gorilla Row, lo Standing Dumbbell Overhead Press e il Barbell Row delle serie di parte alta (`pa-serie`, `pa-serie-short`, focus), e Paused Tempo Squat e Kettlebell Swing in Forza Prevenzione B1. Gli altri avevano i kg di Ste.
+- Ogni esercizio attivo con kettlebell, manubri, bilanciere o macchina ha nel catalogo il peso di partenza (`peso_kg`) e che cosa vuol dire il numero (`peso_per`: per manubrio, per kettlebell, bilanciere con la barra, zavorra, macchina). `expandBlocco` lo mette quando il blocco non dà i kg, con la nota «Peso di partenza: 12 kg per kettlebell. Giusto se chiudi le ripetizioni con 2-3 in riserva…»; poi la dose sale o scende dai kg segnati nel player. I kg dei blocchi di Ste non cambiano. Valori proposti da me, da confermare: bilanciere 20 kg (la barra), manubri 4-8 kg, kettlebell 12-16 kg, zavorra 5 kg, macchine 10-20 kg. Test in `tests/pesi.test.ts`.
+- Tolti due video che mostravano un altro esercizio: Piegamenti 1 braccio declinati (aveva quello a due braccia) e Plank (aveva il plank laterale). In `docs/training-video-da-registrare.md`.
+
 ## 2026-11-10 — La settimana con la squadra: per data e obbligatoria
 
 Ste: «bisogna fare in modo che sia obbligatorio il setup della settimana con la squadra e magari mettere un pulsante "come la scorsa"». Prima squadra e partita si salvavano con il numero della settimana del percorso e un cron le svuotava il lunedì: passato il Gate a metà settimana Corpo e Coach leggevano righe diverse, una modifica dalla pagina di una settimana passata finiva in una riga che il Corpo non leggeva, e «niente squadra» non si distingueva da «non ancora detto» (il Corpo rimetteva i giorni del setup).

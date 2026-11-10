@@ -110,6 +110,9 @@ for r in rows:
         fields.append(f"fasciaKb: {ts_str(r['fascia_kb'])}")
     if r.get("peso_kg") is not None:
         fields.append(f"pesoKg: {int(r['peso_kg'])}")
+    # Che cosa vuol dire il numero (10/11, Ste: «bisogna mettere il peso da usare»): per manubrio, per kettlebell, bilanciere in tutto…
+    if r.get("peso_per"):
+        fields.append(f"pesoPer: {ts_str(r['peso_per'])}")
     lines.append("  { " + ", ".join(fields) + " },")
 
 header = """/**
