@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — Il Corpo bloccato con i segni della settimana
+
+`components/FisicoBloccato.tsx` (la pagina del Corpo per chi non ce l'ha): la settimana finta usa `GiornoSegno` e la legenda della settimana dell'app (squadra S giallo-arancio, partita P rossa, seduta in programma e fatta in blu) al posto della coppa gialla e della squadra grigia; le tre righe sotto hanno ognuna la sua icona (test, settimana, preparatore).
+
 ## 2026-11-10 — La pagina di vendita con i colori dell'app
 
 `/scopri` allineata all'app dopo il restyle dell'8-9/11:
