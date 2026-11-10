@@ -63,7 +63,7 @@ const FOTO = {
 } satisfies Record<string, FotoStoria>;
 
 export const STORIA = {
-  citazione: '«Sono passato da vomitare prima e durante le partite, bloccato dalla paura, a giocare davanti a diecimila persone.»',
+  citazione: '«Sono passato da vomitare prima e durante le partite, bloccato dalla paura, a giocare completamente libero e focalizzato davanti a diecimila persone.»',
   fotoCitazione: FOTO.tiro,
   intro: 'Ma la parte che mi interessa raccontarti è quella in mezzo. Perché magari, in qualche pezzo, ci sei anche tu.',
   // 10/11, Ste: la storia gira attorno a tre momenti (azione, emozione, apprendimento), il resto è contorno.
@@ -74,7 +74,7 @@ export const STORIA = {
     { testo: 'Da lì ho continuato a lottare su ogni pallone. Ma quando potevo ricevere, mi nascondevo. Per non rifare quell\'errore.', foto: FOTO.sguardo },
     { testo: 'Evitavo le giocate semplici e cercavo quelle difficili: se sbagliavo lì, almeno ero giustificato. Anche al camp con la Nazionale Under 18 le qualità c\'erano, ma in partita la paura mi bloccava.', foto: FOTO.nazionale },
     { testo: 'Senza accorgermene stavo smettendo di divertirmi. Ho iniziato a odiare ogni volta che andavo al campo.' },
-    { testo: 'Per un anno ho vomitato prima e durante le partite: a fine primo tempo dovevo uscire. Diete, nutrizionisti: niente. Poi uno psicologo. Lì è iniziato davvero il lavoro su di me.' },
+    { testo: 'Per anni ho vomitato prima e durante le partite. Un anno dovevo uscire a fine primo tempo. Diete, nutrizionisti: niente. Poi uno psicologo. Lì è iniziato davvero il lavoro su di me.' },
     { testo: 'Anni dopo, al Modena. Poteva essere l\'anno buono. In preparazione mi faccio male in Coppa Italia. Ero così arrabbiato che non volevo parlare con nessuno.', foto: FOTO.conduzione },
     { testo: 'La mia ragazza di allora mi disse, più o meno: «Se tratti bene o male gli altri in base a come vanno le partite, resterai da solo. E non vivrai mai bene.»' },
     { testo: 'Mi fece male. Ma avevo capito: lasciavo decidere al risultato come stavo, invece di guardare quello che dipendeva da me.', foto: FOTO.colpoDiTesta },

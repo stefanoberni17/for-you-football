@@ -6,7 +6,7 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 
 `lib/scopri.ts`, `STORIA.capitoli` riscritti sui racconti di Ste del 10/11 (Ste: «la storia deve girare attorno a peak action moment, peak emotional moment, peak learning moment; il resto è contorno»). Dieci schermate invece di otto:
 - Azione: l'esordio in Serie C con la Reggiana a 17 anni e il primo appoggio corto, intercettato; poi il nascondersi, le giocate difficili per essere giustificato, il camp con la Nazionale Under 18.
-- Emozione: odiare andare al campo, l'anno a vomitare prima e durante le partite (citazione in apertura allineata), lo psicologo.
+- Emozione: odiare andare al campo, gli anni a vomitare prima e durante le partite (citazione in apertura allineata: «a giocare completamente libero e focalizzato»), lo psicologo.
 - Apprendimento: Modena, l'infortunio in Coppa Italia, la frase della ragazza di allora («se tratti bene o male gli altri in base a come vanno le partite…»), lasciar decidere al risultato invece di guardare quello che dipende da lui.
 - Finale: il maestro di yoga, la finale contro la Reggiana da titolare (4-1), poi il lavoro con più di cento calciatori.
 Solo fatti raccontati da Ste; foto invariate, riassegnate ai capitoli.
