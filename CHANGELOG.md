@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — La storia di Ste sui tre momenti
+
+`lib/scopri.ts`, `STORIA.capitoli` riscritti sui racconti di Ste del 10/11 (Ste: «la storia deve girare attorno a peak action moment, peak emotional moment, peak learning moment; il resto è contorno»). Dieci schermate invece di otto:
+- Azione: l'esordio in Serie C con la Reggiana a 17 anni e il primo appoggio corto, intercettato; poi il nascondersi, le giocate difficili per essere giustificato, il camp con la Nazionale Under 18.
+- Emozione: odiare andare al campo, l'anno a uscire a fine primo tempo per il mal di pancia e il vomito, lo psicologo.
+- Apprendimento: Modena, l'infortunio in Coppa Italia, la frase della ragazza di allora («se tratti bene o male gli altri in base a come vanno le partite…»), lasciar decidere al risultato invece di guardare quello che dipende da lui.
+- Finale: il maestro di yoga, la finale contro la Reggiana da titolare (4-1), poi il lavoro con più di cento calciatori.
+Solo fatti raccontati da Ste; foto invariate, riassegnate ai capitoli.
+
 ## 2026-11-10 — Il Corpo bloccato con i segni della settimana
 
 `components/FisicoBloccato.tsx` (la pagina del Corpo per chi non ce l'ha): la settimana finta usa `GiornoSegno` e la legenda della settimana dell'app (squadra S giallo-arancio, partita P rossa, seduta in programma e fatta in blu) al posto della coppa gialla e della squadra grigia; le tre righe sotto hanno ognuna la sua icona (test, settimana, preparatore).

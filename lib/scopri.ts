@@ -66,15 +66,20 @@ export const STORIA = {
   citazione: '«Sono passato da vomitare prima delle partite, bloccato dalla paura, a giocare davanti a diecimila persone.»',
   fotoCitazione: FOTO.tiro,
   intro: 'Ma la parte che mi interessa raccontarti è quella in mezzo. Perché magari, in qualche pezzo, ci sei anche tu.',
+  // 10/11, Ste: la storia gira attorno a tre momenti (azione, emozione, apprendimento), il resto è contorno.
+  // Azione: l'esordio e il primo appoggio. Emozione: il campo odiato, il vomito a fine primo tempo. Apprendimento: Modena,
+  // l'infortunio, la frase della sua ragazza. Chiusura: la finale contro la Reggiana. Tutto dal racconto di Ste del 10/11.
   capitoli: [
-    { testo: 'Ho esordito in Serie C con la Reggiana. Il primo pallone? Un appoggio fatto mille volte. Me l\'hanno rubato.', foto: FOTO.reggiana },
-    { testo: 'Per anni, quando sbagliavo, cominciavo a nascondermi. Continuavo a correre, ma mi mettevo dove era difficile passarmi la palla. Se non mi arriva, non posso sbagliare. E pensare che ero lì proprio perché giocare mi piaceva da morire.', foto: FOTO.sguardo },
-    { testo: 'Poi gli infortuni, le operazioni, la fatica di tornare. Dovevo ritrovare fiducia nel corpo e fare i conti con una testa che spesso mi frenava.', foto: FOTO.conduzione },
-    { testo: 'Ho cercato aiuto: psicologo, mental coach, yoga. Ho studiato, seguito corsi, letto centinaia di libri. Cercavo qualcosa che mi aiutasse in campo, ma anche a non lasciare che una partita decidesse come stavo per tutta la settimana.', foto: FOTO.nazionale },
-    { testo: 'Un giorno mi sono accorto che mi stavo nascondendo. Proprio mentre lo facevo.' },
-    { testo: 'La paura c\'era ancora. Ma vedendola potevo scegliere: continuare a nascondermi oppure farmi vedere per il pallone dopo.', foto: FOTO.colpoDiTesta },
-    { testo: 'Da lì è continuato il mio lavoro. Prima su di me, poi con più di cento calciatori, professionisti e dilettanti.' },
-    { testo: 'For You Football è quello che avrei voluto avere io: un percorso che mette in ordine ciò che ho imparato e portato nel lavoro con i ragazzi. Pratiche semplici, da provare nella tua settimana e usare in campo.', foto: FOTO.esultanza },
+    { testo: '17 anni, esordio in Serie C con la Reggiana. Avevo il terrore di sbagliare. Primo appoggio: palla corta, intercettata. Un passaggio fatto migliaia di volte.', foto: FOTO.reggiana },
+    { testo: 'Da lì ho continuato a lottare su ogni pallone. Ma quando potevo ricevere, mi nascondevo. Per non rifare quell\'errore.', foto: FOTO.sguardo },
+    { testo: 'Evitavo le giocate semplici e cercavo quelle difficili: se sbagliavo lì, almeno ero giustificato. Anche al camp con la Nazionale Under 18 le qualità c\'erano, ma in partita la paura mi bloccava.', foto: FOTO.nazionale },
+    { testo: 'Senza accorgermene stavo smettendo di divertirmi. Ho iniziato a odiare ogni volta che andavo al campo.' },
+    { testo: 'Per un anno ho dovuto uscire a fine primo tempo per il mal di pancia e il vomito. Diete, nutrizionisti: niente. Poi uno psicologo. Lì è iniziato davvero il lavoro su di me.' },
+    { testo: 'Anni dopo, al Modena. Poteva essere l\'anno buono. In preparazione mi faccio male in Coppa Italia. Ero così arrabbiato che non volevo parlare con nessuno.', foto: FOTO.conduzione },
+    { testo: 'La mia ragazza di allora mi disse, più o meno: «Se tratti bene o male gli altri in base a come vanno le partite, resterai da solo. E non vivrai mai bene.»' },
+    { testo: 'Mi fece male. Ma avevo capito: lasciavo decidere al risultato come stavo, invece di guardare quello che dipendeva da me.', foto: FOTO.colpoDiTesta },
+    { testo: 'Quell\'anno, anche grazie a un maestro di yoga a cui devo tantissimo, ho trovato il mio equilibrio e ho giocato con coraggio. In finale, contro la Reggiana, ero titolare. Abbiamo vinto 4-1.', foto: FOTO.esultanza },
+    { testo: 'Da lì il lavoro è continuato: prima su di me, poi con più di cento calciatori, professionisti e dilettanti. For You Football è quello che avrei voluto avere io a 17 anni.' },
   ] satisfies CapitoloStoria[],
   finale: 'Perché quando arriva il prossimo pallone, vorrei che avessi di nuovo voglia di riceverlo.',
 };
