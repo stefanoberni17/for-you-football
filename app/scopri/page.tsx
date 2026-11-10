@@ -65,12 +65,14 @@ const NUMERI = [
   { numero: '300+', etichetta: 'esercizi' },
 ];
 const BIO = [
-  'Ex calciatore, esordio in Serie C con la Reggiana.',
+  'Ex calciatore professionista e semiprofessionista, esordio in Serie C con la Reggiana.',
   'Corso da mental coach, studi da personal trainer.',
   'Fondatore di For You Football.',
 ];
-/** La griglia: le foto dei capitoli (quella della citazione è già la foto del profilo); ognuna apre la storia dalla sua schermata. */
-const grigliaStoria = STORIA.capitoli.flatMap((c, k) => (c.foto ? [{ ...c.foto, schermata: k + 1 }] : []));
+/** La griglia: le foto dei capitoli (quella della presentazione è già la foto del profilo); ognuna apre la storia dalla sua schermata (prima ci sono presentazione e citazione). */
+const fotoCapitoli = STORIA.capitoli.flatMap((c, k) => (c.foto ? [{ ...c.foto, schermata: k + 2 }] : []));
+/** Righe intere da tre: una foto in più non resta da sola in fondo. */
+const grigliaStoria = fotoCapitoli.slice(0, Math.max(3, Math.floor(fotoCapitoli.length / 3) * 3));
 
 /** Le foto della griglia che restano su telefono (una riga: la schermata non deve scorrere). */
 const FOTO_SU_TELEFONO = 3;

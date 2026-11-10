@@ -46,7 +46,8 @@ export const GRUPPI: Gruppo[] = [
   {
     id: 'storia', nome: 'La mia storia', copertina: { src: STORIA.capitoli[0].foto?.src }, fine: 'prova',
     schermate: [
-      { testo: STORIA.citazione, sotto: STORIA.intro, foto: STORIA.fotoCitazione, stile: 'citazione' },
+      { testo: STORIA.presentazione.testo, sotto: STORIA.presentazione.sotto, foto: STORIA.fotoCitazione, stile: 'citazione' },
+      { testo: STORIA.citazione, sotto: STORIA.intro, stile: 'grande' },
       ...STORIA.capitoli.map((c): Schermata => ({ testo: c.testo, foto: c.foto, stile: c.foto ? 'normale' : 'grande' })),
       { testo: STORIA.finale, stile: 'grande' },
     ],

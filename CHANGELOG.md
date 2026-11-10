@@ -10,6 +10,8 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 - Apprendimento: Modena, l'infortunio in Coppa Italia, la frase della ragazza di allora («se tratti bene o male gli altri in base a come vanno le partite…»), lasciar decidere al risultato invece di guardare quello che dipende da lui.
 - Finale: il maestro di yoga, la finale contro la Reggiana da titolare (4-1), poi il lavoro con più di cento calciatori.
 Solo fatti raccontati da Ste; foto invariate, riassegnate ai capitoli.
+- La storia si apre con «Ciao, sono Ste.» e «Ex calciatore professionista e semiprofessionista. Fondatore di For You Football.» sulla foto del tiro; la citazione viene dopo, senza foto. Stessa riga nel profilo della pagina.
+- Foto (Ste): colpo di testa ed esultanza tolte dalla storia (non c'entravano); quella con il ginocchio fasciato passa dal Modena alla finale. La griglia del profilo mostra righe intere da tre.
 
 ## 2026-11-10 — Il Corpo bloccato con i segni della settimana
 

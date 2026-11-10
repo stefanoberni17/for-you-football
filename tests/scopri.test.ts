@@ -41,7 +41,7 @@ describe('pagina di vendita: prezzi pubblici', () => {
 
 function tuttiITesti(): string[] {
   return [
-    ...Object.values(APERTURA), ...MOMENTI_CONOSCI, CONOSCI_CHIUSURA, STORIA.citazione, STORIA.intro, ...STORIA.capitoli.map((c) => c.testo), STORIA.finale, DOVE_PORTA.titolo, DOVE_PORTA.intro, ...DOVE_PORTA.punti, DOVE_PORTA.chiusura, NON_POSITIVO.titolo, ...NON_POSITIVO.paragrafi,
+    ...Object.values(APERTURA), ...MOMENTI_CONOSCI, CONOSCI_CHIUSURA, STORIA.presentazione.testo, STORIA.presentazione.sotto, STORIA.citazione, STORIA.intro, ...STORIA.capitoli.map((c) => c.testo), STORIA.finale, DOVE_PORTA.titolo, DOVE_PORTA.intro, ...DOVE_PORTA.punti, DOVE_PORTA.chiusura, NON_POSITIVO.titolo, ...NON_POSITIVO.paragrafi,
     ...[...MOMENTI_TESTA, ...MOMENTI_FISICO].flatMap((m) => [m.titolo, m.testo, ...m.dettaglio, m.inCampo ?? '']),
     ...PERCHE_TESTA.paragrafi, ...PERCHE_TESTA.studi, PERCHE_TESTA.titolo, PERCHE_TESTA.domanda, ...PERCHE_TESTA.chiusura,
     PERCHE_FISICO.titolo, PERCHE_FISICO.intro, ...PERCHE_FISICO.figure.flatMap((f) => [f.chi, f.limite]), ...PERCHE_FISICO.altalena, PERCHE_FISICO.scelta, PERCHE_FISICO.problema, ...PERCHE_FISICO.variabili, PERCHE_FISICO.domanda, ...PERCHE_FISICO.ai,

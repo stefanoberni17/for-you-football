@@ -63,22 +63,25 @@ const FOTO = {
 } satisfies Record<string, FotoStoria>;
 
 export const STORIA = {
+  // 10/11, Ste: la storia si apre con la presentazione, poi la citazione.
+  presentazione: { testo: 'Ciao, sono Ste.', sotto: 'Ex calciatore professionista e semiprofessionista. Fondatore di For You Football.' },
   citazione: '«Sono passato da vomitare prima e durante le partite, bloccato dalla paura, a giocare completamente libero e focalizzato davanti a diecimila persone.»',
   fotoCitazione: FOTO.tiro,
   intro: 'Ma la parte che mi interessa raccontarti è quella in mezzo. Perché magari, in qualche pezzo, ci sei anche tu.',
   // 10/11, Ste: la storia gira attorno a tre momenti (azione, emozione, apprendimento), il resto è contorno.
   // Azione: l'esordio e il primo appoggio. Emozione: il campo odiato, il vomito prima e durante le partite. Apprendimento: Modena,
   // l'infortunio, la frase della sua ragazza. Chiusura: la finale contro la Reggiana. Tutto dal racconto di Ste del 10/11.
+  // Foto (Ste): colpo di testa ed esultanza non c'entrano con questi capitoli; quella con il ginocchio fasciato va sulla finale.
   capitoli: [
     { testo: '17 anni, esordio in Serie C con la Reggiana. Avevo il terrore di sbagliare. Primo appoggio: palla corta, intercettata. Un passaggio fatto migliaia di volte.', foto: FOTO.reggiana },
     { testo: 'Da lì ho continuato a lottare su ogni pallone. Ma quando potevo ricevere, mi nascondevo. Per non rifare quell\'errore.', foto: FOTO.sguardo },
     { testo: 'Evitavo le giocate semplici e cercavo quelle difficili: se sbagliavo lì, almeno ero giustificato. Anche al camp con la Nazionale Under 18 le qualità c\'erano, ma in partita la paura mi bloccava.', foto: FOTO.nazionale },
     { testo: 'Senza accorgermene stavo smettendo di divertirmi. Ho iniziato a odiare ogni volta che andavo al campo.' },
     { testo: 'Per anni ho vomitato prima e durante le partite. Un anno dovevo uscire a fine primo tempo. Diete, nutrizionisti: niente. Poi uno psicologo. Lì è iniziato davvero il lavoro su di me.' },
-    { testo: 'Anni dopo, al Modena. Poteva essere l\'anno buono. In preparazione mi faccio male in Coppa Italia. Ero così arrabbiato che non volevo parlare con nessuno.', foto: FOTO.conduzione },
+    { testo: 'Anni dopo, al Modena. Poteva essere l\'anno buono. In preparazione mi faccio male in Coppa Italia. Ero così arrabbiato che non volevo parlare con nessuno.' },
     { testo: 'La mia ragazza di allora mi disse, più o meno: «Se tratti bene o male gli altri in base a come vanno le partite, resterai da solo. E non vivrai mai bene.»' },
-    { testo: 'Mi fece male. Ma avevo capito: lasciavo decidere al risultato come stavo, invece di guardare quello che dipendeva da me.', foto: FOTO.colpoDiTesta },
-    { testo: 'Quell\'anno, anche grazie a un maestro di yoga a cui devo tantissimo, ho trovato il mio equilibrio e ho giocato con coraggio. In finale, contro la Reggiana, ero titolare. Abbiamo vinto 4-1.', foto: FOTO.esultanza },
+    { testo: 'Mi fece male. Ma avevo capito: lasciavo decidere al risultato come stavo, invece di guardare quello che dipendeva da me.' },
+    { testo: 'Quell\'anno, anche grazie a un maestro di yoga a cui devo tantissimo, ho trovato il mio equilibrio e ho giocato con coraggio. In finale, contro la Reggiana, ero titolare. Abbiamo vinto 4-1.', foto: FOTO.conduzione },
     { testo: 'Da lì il lavoro è continuato: prima su di me, poi con più di cento calciatori, professionisti e dilettanti. For You Football è quello che avrei voluto avere io a 17 anni.' },
   ] satisfies CapitoloStoria[],
   finale: 'Perché quando arriva il prossimo pallone, vorrei che avessi di nuovo voglia di riceverlo.',
