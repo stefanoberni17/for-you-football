@@ -292,7 +292,7 @@ export default async function Scopri() {
             </div>
 
             <div className="scopri-schermo">
-              <div id="prezzi-fisico" className="scroll-mt-4 rounded-card border border-divider bg-app-bg p-5">
+              <div id="prezzi-fisico" className="parte-corpo scroll-mt-4 rounded-card border border-forest-400/30 bg-app-bg p-5">
                 <p className="text-overline uppercase text-forest-400">{campoAperto ? FISICO_TEASER.titolo : `${FISICO_TEASER.quando} · ${FISICO_TEASER.titolo}`}</p>
                 <p className="mt-2 text-body text-muted">{FISICO_TEASER.testo}</p>
                 <ul className="mt-4 space-y-3">

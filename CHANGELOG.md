@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — La pagina di vendita con i colori dell'app
+
+`/scopri` allineata all'app dopo il restyle dell'8-9/11:
+- Il Corpo è blu come nell'app (`.parte-corpo`): il selettore Il Corpo del giro dell'app e tutto quello che c'è sotto, i cerchi «Il Corpo» e «Perché il Corpo» e le loro storie (sfondo blu), il riquadro dei prezzi del Fisico. La Testa e i bottoni «Prova gratis» restano verdi.
+- Le undici schermate in `public/scopri/` rifatte dal Preview con l'account di prova (dati di esempio): quattro tab, Mente | Corpo, stile a riquadri, Corpo blu. Prima erano quelle con le cinque tab e il Fisico verde.
+- `scripts/scopri-screenshots.mjs`: `STATE` (sessione di Playwright già entrata) al posto di email e password, si ferma se non è entrato invece di salvare la pagina di accesso, la chat del Coach riparte vuota.
+
 ## 2026-11-10 — Fase 1c: le risposte del Gate con la domanda giusta
 
 Revisione dell'esperienza §1.5. Le risposte del Gate (`{ q1..qN }`) si accoppiavano alle domande di adesso su Notion: dopo una riscrittura il Gate 1 mostrava la risposta sul Reset sotto la domanda sulla parola, e nel Gate 4 di prima del 26/10 q2 e q3 erano voci dell'elenco della domanda 1.

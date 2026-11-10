@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Maximize2 } from 'lucide-react';
 import type { MomentoApp } from '@/lib/scopri';
 import { Dettaglio, InCampo, Schermo } from './Telefono';
-import { apriStoria, GRUPPI } from './Storie';
+import { apriStoria, GRUPPI, GRUPPI_CORPO } from './Storie';
 
 /**
  * Il giro dell'app (7/11, Ste: «è davvero troppo lungo: uno deve vedere solo le cose essenziali e poi approfondire quello
@@ -29,6 +29,8 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
     </button>
   );
 
+  // Il Corpo in blu come nell'app (10/11): `.parte-corpo` rimappa i token forest-*
+  const corpo = GRUPPI_CORPO.has(parte.id);
   return (
     <div>
       {/* Testa | Corpo: basso e piatto, la fotina nel cerchio */}
@@ -43,10 +45,10 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
               role="tab"
               aria-selected={scelta}
               onClick={() => scegliParte(i)}
-              className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full px-2 transition-colors ${scelta ? 'bg-forest-500/20 text-app' : 'text-muted hover:text-app'}`}
+              className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full px-2 transition-colors ${GRUPPI_CORPO.has(x.id) ? 'parte-corpo' : ''} ${scelta ? 'bg-forest-500/20 text-app' : 'text-muted hover:text-app'}`}
             >
               {foto && (
-                <span className={`shrink-0 rounded-full p-[2px] ${scelta ? 'bg-gradient-to-tr from-forest-600 via-forest-400 to-[#c9f27a]' : 'bg-divider'}`}>
+                <span className={`shrink-0 rounded-full p-[2px] ${scelta ? `bg-gradient-to-tr from-forest-600 via-forest-400 ${GRUPPI_CORPO.has(x.id) ? 'to-forest-200' : 'to-[#c9f27a]'}` : 'bg-divider'}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={foto} alt="" className={`h-7 w-7 rounded-full border-2 border-surface object-cover object-top ${scelta ? '' : 'opacity-60'}`} />
                 </span>
@@ -60,6 +62,7 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
         })}
       </div>
 
+      <div className={corpo ? 'parte-corpo' : ''}>
       {/* Schermo largo: telefono a sinistra, momenti a destra */}
       <div className="mt-10 hidden items-start gap-14 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         <div className="relative">
@@ -123,6 +126,7 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
           </div>
         </div>
         {parte.piede && <div className="mt-4 text-center">{parte.piede}</div>}
+      </div>
       </div>
     </div>
   );

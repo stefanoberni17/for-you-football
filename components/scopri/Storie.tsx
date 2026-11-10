@@ -119,6 +119,9 @@ function useVisti() {
  * Un cerchio come gli «in evidenza» dei social: copertina, anello verde (grigio se già vista), nome sotto. Di solito apre la sua
  * storia; nel giro dell'app fa da linguetta (`onClick`, `attivo`: quello scelto ha l'anello, l'altro è spento).
  */
+/** Le storie del Corpo (10/11, Ste: «allinea i colori all'app»): blu come il Corpo nell'app (`.parte-corpo`), le altre verdi. */
+export const GRUPPI_CORPO = new Set(['fisico', 'perche-fisico']);
+
 export function Cerchio({ gruppo, nome, sotto, grande = false, onClick, attivo }: {
   gruppo: string; nome?: string; sotto?: string; grande?: boolean; onClick?: () => void; attivo?: boolean;
 }) {
@@ -126,13 +129,14 @@ export function Cerchio({ gruppo, nome, sotto, grande = false, onClick, attivo }
   const g = GRUPPI.find((x) => x.id === gruppo);
   if (!g) return null;
   const misura = grande ? 'h-[72px] w-[72px]' : 'h-16 w-16';
-  const anello = attivo === false ? 'bg-divider opacity-60' : visti.has(g.id) && attivo === undefined ? 'bg-divider' : 'bg-gradient-to-tr from-forest-600 via-forest-400 to-[#c9f27a]';
+  const corpo = GRUPPI_CORPO.has(g.id);
+  const anello = attivo === false ? 'bg-divider opacity-60' : visti.has(g.id) && attivo === undefined ? 'bg-divider' : `bg-gradient-to-tr from-forest-600 via-forest-400 ${corpo ? 'to-forest-200' : 'to-[#c9f27a]'}`;
   return (
     <button
       type="button"
       onClick={onClick ?? (() => apriStoria(g.id))}
       aria-pressed={attivo}
-      className="group flex w-[92px] flex-col items-center gap-1.5"
+      className={`group flex w-[92px] flex-col items-center gap-1.5 ${corpo ? 'parte-corpo' : ''}`}
       aria-label={onClick ? (nome ?? g.nome) : `Guarda: ${nome ?? g.nome}`}
     >
       <span className={`rounded-full p-[3px] transition-transform group-hover:scale-105 ${anello}`}>
@@ -192,6 +196,7 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
   gruppo: number; inizio: number; cta: string; notaCta: string; onChiudi: () => void; onGruppo: (g: number) => void;
 }) {
   const g = GRUPPI[gruppo];
+  const corpoStoria = GRUPPI_CORPO.has(g?.id);
   const schermate = g.schermate;
   const n = schermate.length;
   const [i, setI] = useState(Math.min(inizio, n - 1));
@@ -233,7 +238,7 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
       ref={box}
       tabIndex={-1}
       onKeyDown={tastiera}
-      className="relative h-[100dvh] w-full select-none overflow-hidden bg-[#0b120e] outline-none sm:h-[min(92vh,860px)] sm:w-auto sm:aspect-[9/16] sm:rounded-[28px] sm:border sm:border-white/10"
+      className={`relative h-[100dvh] w-full select-none overflow-hidden outline-none sm:h-[min(92vh,860px)] sm:w-auto sm:aspect-[9/16] sm:rounded-[28px] sm:border sm:border-white/10 ${corpoStoria ? 'parte-corpo bg-[#0b0f14]' : 'bg-[#0b120e]'}`}
       onPointerDown={() => { giu.current = Date.now(); setTenuto(true); }}
       onPointerUp={(e) => { setTenuto(false); tocco(e); }}
       onPointerLeave={() => setTenuto(false)}
@@ -246,7 +251,7 @@ function Lettore({ gruppo, inizio, cta, notaCta, onChiudi, onGruppo }: {
           className={`scopri-storia-foto absolute inset-0 h-full w-full object-cover ${k === i ? 'opacity-100' : 'opacity-0'} ${k === i && !ridotto ? 'scopri-storia-zoom' : ''}`}
           style={{ animationPlayState: ferma ? 'paused' : 'running' }} />
       ))}
-      <div className={`absolute inset-0 bg-[radial-gradient(90%_70%_at_30%_15%,rgba(26,150,96,0.5),transparent),linear-gradient(160deg,#10241a,#0b120e)] transition-opacity duration-700 ${conFoto ? 'opacity-0' : 'opacity-100'}`} aria-hidden />
+      <div className={`absolute inset-0 ${corpoStoria ? 'bg-[radial-gradient(90%_70%_at_30%_15%,rgba(47,109,171,0.45),transparent),linear-gradient(160deg,#121c28,#0b0f14)]' : 'bg-[radial-gradient(90%_70%_at_30%_15%,rgba(26,150,96,0.5),transparent),linear-gradient(160deg,#10241a,#0b120e)]'} transition-opacity duration-700 ${conFoto ? 'opacity-0' : 'opacity-100'}`} aria-hidden />
       <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/40 transition-opacity duration-700 ${conFoto ? 'opacity-100' : 'opacity-0'}`} aria-hidden />
 
       {/* Barrette */}

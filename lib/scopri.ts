@@ -278,7 +278,7 @@ export const MOMENTI_FISICO: MomentoApp[] = [
     parte: 'Fisico',
     titolo: 'Con quello che hai',
     testo: 'Palestra, kettlebell, sbarra, un campo, un muro, o niente: il corpo libero c\'è sempre. Dici anche la fase della stagione, i giorni, il tempo che hai e le zone da proteggere.',
-    alt: 'Il setup del Fisico: gli attrezzi a disposizione, esperienza in palestra e compagno.',
+    alt: 'Il setup del Fisico: gli attrezzi a disposizione, il campo e il muro per passaggi e palleggi.',
     dettaglio: [
       'Gli esercizi sono scelti solo tra quelli che puoi fare con i tuoi attrezzi, da solo o con un compagno.',
       'La fase della stagione cambia tutto: fuori stagione, preparazione con la squadra, in stagione.',
@@ -293,7 +293,7 @@ export const MOMENTI_FISICO: MomentoApp[] = [
     parte: 'Fisico',
     titolo: 'La settimana intorno alla partita',
     testo: 'Dici quando giochi e quando ti alleni con la squadra: la settimana si prepara intorno a quei giorni, sui tuoi test.',
-    alt: 'La settimana del Fisico: due sedute, gambe il venerdì e rapidità pre partita il sabato, con la partita la domenica.',
+    alt: 'La settimana del Fisico, giorno per giorno: tre sedute, i giorni con la squadra, il riposo e la partita la domenica.',
     dettaglio: [
       'L\'AI sceglie gli allenamenti dentro le regole del preparatore; un controllo automatico verifica la settimana prima che arrivi a te.',
       'Le regole intorno alla partita: il giorno prima solo rapidità e tecnica leggera, la resistenza lontana dalle partite, le gambe del giorno dopo ridotte in base a quanto hai giocato.',
@@ -308,7 +308,7 @@ export const MOMENTI_FISICO: MomentoApp[] = [
     parte: 'Fisico',
     titolo: 'La seduta, esercizio per esercizio',
     testo: 'Serie, ripetizioni e recupero. Per ogni esercizio come si esegue, gli errori da evitare, la versione più facile e quella più difficile, e il video.',
-    alt: 'La pagina di una seduta: rapidità, tiro e tocchi di palla pre partita, con gli esercizi in ordine.',
+    alt: 'La pagina di una seduta: scatti corti e gambe, perché quel giorno, e gli esercizi in ordine.',
     dettaglio: [
       'Più di 300 esercizi, ognuno con la sua scheda: i passi dell\'esecuzione, gli errori da evitare, più facile e più difficile, la sicurezza.',
       'Video dimostrativi, e per gli esercizi di visione i video dei segnali da mettere sul telefono.',

@@ -18,14 +18,15 @@ let pw;
 try { pw = require('playwright'); } catch { pw = require('/opt/node-tools/node_modules/playwright/index.js'); }
 const sharp = require('sharp');
 
-const { BASE, EMAIL, PASSWORD, BYPASS } = process.env;
-if (!BASE || !EMAIL || !PASSWORD) { console.error('Servono BASE, EMAIL e PASSWORD'); process.exit(1); }
+const { BASE, EMAIL, PASSWORD, BYPASS, STATE } = process.env;
+// STATE = file di sessione di Playwright già entrata (storageState), al posto di EMAIL e PASSWORD
+if (!BASE || (!STATE && (!EMAIL || !PASSWORD))) { console.error('Servono BASE e EMAIL e PASSWORD (o STATE)'); process.exit(1); }
 const OUT = path.join(process.cwd(), 'public/scopri');
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'scopri-'));
 const DOMANDA = process.env.DOMANDA || 'Domenica ho sbagliato un rigore e da allora in partita ho paura di sbagliare ancora. Cosa faccio?';
 
 const browser = await pw.chromium.launch();
-const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, locale: 'it-IT' });
+const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, locale: 'it-IT', ...(STATE ? { storageState: STATE } : {}) });
 if (BYPASS) await ctx.route(BASE + '/**', (r) => r.continue({ headers: { ...r.request().headers(), 'x-vercel-protection-bypass': BYPASS } }));
 const page = await ctx.newPage();
 const go = async (p, ms = 7000) => { await page.goto(BASE + p, { waitUntil: 'networkidle' }).catch(() => {}); await page.waitForTimeout(ms); };
@@ -37,12 +38,17 @@ const shot = async (id) => {
   console.log('ok', id);
 };
 
-// Entra
-await go('/login', 2000);
-await page.locator('input[type=email]').fill(EMAIL);
-await page.locator('input[type=password]').fill(PASSWORD);
-await page.getByRole('button', { name: /^Accedi|^Entra/i }).first().click();
-await page.waitForTimeout(6000);
+// Entra (con STATE si è già dentro)
+if (!STATE) {
+  await go('/login', 2000);
+  await page.locator('input[type=email]').fill(EMAIL);
+  await page.locator('input[type=password]').fill(PASSWORD);
+  await page.getByRole('button', { name: /^Accedi|^Entra/i }).first().click();
+  await page.waitForTimeout(6000);
+}
+// Senza sessione si salverebbe la pagina di accesso al posto delle schermate: ci si ferma
+await go('/', 4000);
+if (/\/login|\/scopri/.test(new URL(page.url()).pathname)) { console.error('Non sono entrato: niente schermate'); await browser.close(); process.exit(1); }
 
 async function esempioStatistiche() {
   const giorni = []; const base = Date.now();
@@ -86,6 +92,9 @@ const momenti = {
     await shot('reset');
   },
   coach: async () => {
+    // la conversazione resta sul dispositivo (coachChat:<utente>): si riparte da una chat vuota
+    await go('/', 800);
+    await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('coachChat')).forEach((k) => localStorage.removeItem(k)));
     await go('/chat', 5000);
     await page.getByPlaceholder('Scrivi al Coach…').fill(DOMANDA);
     await page.keyboard.press('Enter');
