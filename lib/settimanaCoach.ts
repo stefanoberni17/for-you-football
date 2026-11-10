@@ -13,6 +13,8 @@
  * settimana prima, con domande e regia (W1-G7: "il Coach usa queste risposte nella settimana dopo").
  */
 
+import { AVVISO_VERSIONE_PRECEDENTE, righeGate } from '@/lib/gateStorico';
+
 export interface GiornoPercorso {
   dayNumber: number;
   titolo: string;
@@ -21,6 +23,9 @@ export interface GiornoPercorso {
   domandeGate: string[];
   contesto: string;
   isGate: boolean;
+  /** Il campo «Domande Gate» intero e l'ultima modifica della pagina (10/11): per la domanda a cui ha risposto davvero */
+  domandeGateTesto?: string;
+  modificatoIl?: string | null;
 }
 
 export interface ProgressoGiorno {
@@ -30,6 +35,8 @@ export interface ProgressoGiorno {
   response: string | null;
   prePratica: string | null;
   gateAnswers: Record<string, unknown> | null;
+  /** Le domande salvate con le risposte del Gate (migration 041) */
+  gateDomande?: unknown;
 }
 
 export interface SettimanaPerCoach {
@@ -37,7 +44,7 @@ export interface SettimanaPerCoach {
   giorni: GiornoPercorso[];
   progresso: ProgressoGiorno[];
   /** Il Gate della settimana prima (giorno 7), se fatto: domande, regia e risposte */
-  gatePrecedente?: { week: number; giorno: GiornoPercorso; answers: Record<string, unknown> | null; completedAt?: string | null } | null;
+  gatePrecedente?: { week: number; giorno: GiornoPercorso; answers: Record<string, unknown> | null; completedAt?: string | null; domande?: unknown } | null;
 }
 
 export const SETTIMANA_CONTESTO_MAX = 1200;
@@ -56,7 +63,12 @@ function dataBreve(iso: string | null): string {
   return d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'numeric', timeZone: 'Europe/Rome' });
 }
 
-function risposteGate(giorno: GiornoPercorso, answers: Record<string, unknown> | null): string[] {
+function risposteGate(week: number, giorno: GiornoPercorso, answers: Record<string, unknown> | null, p?: { completedAt?: string | null; domande?: unknown }): string[] {
+  // Con il testo di Notion o le domande salvate: la domanda a cui ha risposto davvero, o l'avviso (10/11, lib/gateStorico)
+  if (answers && (giorno.domandeGateTesto != null || p?.domande)) {
+    const { righe: rg } = righeGate({ week, risposte: answers, domandeSalvate: p?.domande, completatoIl: p?.completedAt, testoAttuale: giorno.domandeGateTesto ?? giorno.domandeGate.join('\n'), modificatoIl: giorno.modificatoIl });
+    return rg.map((r) => `- ${r.domanda ? `"${taglia(r.domanda, SETTIMANA_DOMANDA_MAX)}"${r.avviso ? ` (${r.avviso.toLowerCase()})` : ''}` : `(${AVVISO_VERSIONE_PRECEDENTE.toLowerCase()}: il testo di allora non c'è)`}\n  → "${taglia(r.risposta, SETTIMANA_RISPOSTA_MAX)}"`);
+  }
   const righe: string[] = [];
   const n = Math.max(giorno.domandeGate.length, ...Object.keys(answers || {}).map((k) => (/^q\d+$/.test(k) ? Number(k.slice(1)) : 0)));
   for (let i = 1; i <= n; i++) {
@@ -76,7 +88,7 @@ function bloccoGiorno(week: number, g: GiornoPercorso, p: ProgressoGiorno | unde
   const titolo = (g.titolo || '').replace(/^W\d+-G\d+\s*[—-]\s*/, '').trim() || 'senza titolo';
   righe.push(`### S${week}G${g.dayNumber}${g.isGate ? ' (Gate)' : ''} — ${titolo} (${quando})`);
   if (g.isGate) {
-    if (p?.gateAnswers || stato === 'fatto') righe.push(...risposteGate(g, p?.gateAnswers ?? null));
+    if (p?.gateAnswers || stato === 'fatto') righe.push(...risposteGate(week, g, p?.gateAnswers ?? null, { completedAt: p?.completedAt, domande: p?.gateDomande }));
     else if (g.domandeGate.length) righe.push(`Domande: ${g.domandeGate.map((d) => `"${taglia(d, SETTIMANA_DOMANDA_MAX)}"`).join(' · ')}`);
   } else {
     if (pulito(g.domandaPrePratica)) {
@@ -108,7 +120,7 @@ export function settimanaInCorsoTesto(s: SettimanaPerCoach): string {
     const gp = s.gatePrecedente;
     // La data del Gate: senza, il Coach la inventava («il gate di ieri», replay del 27/10)
     const quando = gp.completedAt ? `, fatta ${dataBreve(gp.completedAt)}` : '';
-    blocchi.push(`${bloccoGiorno(gp.week, gp.giorno, { day: 7, completed: true, completedAt: null, response: null, prePratica: null, gateAnswers: gp.answers }, 'fatto').replace(/\(fatto\)/, `(la chiusura della settimana scorsa${quando})`)}`);
+    blocchi.push(`${bloccoGiorno(gp.week, gp.giorno, { day: 7, completed: true, completedAt: gp.completedAt ?? null, response: null, prePratica: null, gateAnswers: gp.answers, gateDomande: gp.domande }, 'fatto').replace(/\(fatto[^)]*\)/, `(la chiusura della settimana scorsa${quando})`)}`);
   }
   for (const g of fatti) blocchi.push(bloccoGiorno(s.week, g, prog.get(g.dayNumber), 'fatto'));
   if (prossimo) blocchi.push(bloccoGiorno(s.week, prossimo, prog.get(prossimo.dayNumber), 'adesso'));

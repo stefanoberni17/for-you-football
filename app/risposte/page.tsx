@@ -132,7 +132,17 @@ export default function RispostePage() {
                         <p className="text-body-lg text-app leading-relaxed whitespace-pre-line">{r.risposta}</p>
                       </div>
                     )}
-                    {r.gate && (
+                    {r.gateRighe?.length ? (
+                      <ol className="space-y-3">
+                        {r.gateRighe.map((g, i) => (
+                          <li key={i}>
+                            {g.domanda && <p className="text-body-sm text-muted mb-1 leading-relaxed whitespace-pre-line">{g.domanda}</p>}
+                            {g.avviso && <p className="text-caption text-faint mb-1">{g.avviso}</p>}
+                            <p className="text-body-lg text-app leading-relaxed whitespace-pre-line">{g.risposta}</p>
+                          </li>
+                        ))}
+                      </ol>
+                    ) : r.gate && (
                       <ol className="space-y-2">
                         {r.gate.map((g, i) => (
                           <li key={i} className="flex gap-2">

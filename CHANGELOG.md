@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — Fase 1c: le risposte del Gate con la domanda giusta
+
+Revisione dell'esperienza §1.5. Le risposte del Gate (`{ q1..qN }`) si accoppiavano alle domande di adesso su Notion: dopo una riscrittura il Gate 1 mostrava la risposta sul Reset sotto la domanda sulla parola, e nel Gate 4 di prima del 26/10 q2 e q3 erano voci dell'elenco della domanda 1.
+- Migration 041 (`user_day_progress.gate_domande`): `/api/gate` salva il testo delle domande con le risposte; senza la colonna salva come prima.
+- `lib/gateStorico.ts` (puro, 7 test): per le risposte di prima la domanda certa (pagina di Notion non toccata dopo), la domanda di allora (registro `GATE_VERSIONI`: Gate 1 dall'export di giugno), «Hai risposto a una versione precedente di questa domanda» (Gate 4 prima del 26/10) o la domanda di oggi con «quella di allora poteva essere diversa».
+- La usano la pagina del Gate già fatto, «Le tue risposte» e il Coach nella settimana in corso. `mapGiorno` porta il testo intero del campo e l'ultima modifica della pagina.
+- `domandeGateDa`: le righe prima della prima domanda numerata non diventano una domanda.
+
 ## 2026-11-10 — Fase 1b: le spiegazioni del piano datate e lo storico degli spostamenti
 
 Revisione dell'esperienza §1.3-1.4. Il testo del preparatore diceva «venerdì» e la seduta era giovedì: nessuno dei quattro modi in cui il server sposta una seduta toccava i testi, e «Ho sistemato 6 cose» contava righe che la lista non mostrava.

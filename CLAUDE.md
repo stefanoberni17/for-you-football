@@ -314,6 +314,7 @@ completed        BOOLEAN DEFAULT FALSE
 completed_at     TIMESTAMP
 response         TEXT               -- risposta domanda giornaliera
 gate_answers     JSONB              -- risposte gate giorno 7 { q1: str, q2: str, q3: str, q4?: str } (una per domanda su Notion)
+gate_domande     JSONB              -- (migration 041, 10/11) i testi delle domande a cui ha risposto, nell'ordine di q1..qN; null per i Gate di prima
 compressed       BOOLEAN DEFAULT FALSE  -- letto dalle pagine, MAI scritto (la compressione non è implementata)
 created_at       TIMESTAMP DEFAULT NOW()
 ```
@@ -893,6 +894,7 @@ La memoria persistente del Coach si basa su:
 - **Pratica pre-partita in due tempi (24/10):** `statoPartita` dice se oggi è partita o se la partita è domani (se sono vere tutte e due, due partite vicine, vince OGGI). Giorno prima → `praticaPrePartita` della settimana con l'etichetta "Domani giochi — pratica della sera prima"; giorno della partita → `praticaGiornoPartita` (property Notion `Pratica Giorno Partita`, DB Settimane) con "Oggi giochi"; campo vuoto → nessun box. Partita la domenica → il sabato mostra la sera prima, la domenica il giorno partita.
 
 ### Gate (`app/gate/[week]/page.tsx`)
+- **Le domande a cui ha risposto davvero (10/11, revisione §1.5; `lib/gateStorico.ts`, test in `tests/gateStorico.test.ts`):** `/api/gate` salva anche `gate_domande` (migration 041). Per le risposte di prima `righeGate` sceglie tra: domande salvate; la pagina del Gate su Notion non toccata dopo la risposta (`mapGiorno.modificatoIl`) → la domanda di adesso, letta riga per riga se prima del 26/10 (`LETTURA_A_NUMERI_DAL`); un cambio nel registro `GATE_VERSIONI` (Gate 1 fino al 26/10 con il testo dell'export di giugno; Gate 4 fino al 26/10 senza testo) → la domanda di allora o «Hai risposto a una versione precedente di questa domanda»; altrimenti la domanda di oggi con «Domanda di oggi: quella di allora poteva essere diversa». Le usano la pagina del Gate già fatto (`righe` da `GET /api/gate`), «Le tue risposte» (`gateRighe` in `loadRisposte`) e il Coach nella settimana in corso (`lib/settimanaCoach.ts`). I Gate passati nel contesto del Coach restano senza domande; `gate_answers` non cambia formato (la Carta riscrive ancora la mappa). In `domandeGateDa` le righe prima della prima domanda numerata vanno in testa alla prima invece di diventare una domanda.
 - Le risposte chiave di "Mostra Carta" (27/10: W1-G7 mantra e momento) dentro la card "Prima di rispondere" o, se il Gate non ha pratica, in una card a sé
 - Le domande da Notion (`domandeGate`: 3, da W6 4), con gli a capo dentro la domanda (`whitespace-pre-line`); la pagina manda solo le risposte alle domande di adesso (una bozza vecchia può avere chiavi in più)
 - Tutti i campi obbligatori per procedere
@@ -1318,6 +1320,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [x] Migration `037_esercizio_settimana.sql` applicata su Supabase (Ste, 1/11): spunte e promemoria dell'esercizio della settimana; i due cron sono in `vercel.json`
 - [x] Migration `038_mentale_abbonamento.sql` applicata su Supabase (Ste, 2/11): stati in prova e non pagato, colonne dell'abbonamento, `app_settings`
 - [x] Migration `040_calendario_settimane.sql` applicata su Supabase (Ste, 10/11): la settimana con la squadra per settimana di calendario
+- [ ] Migration `041_gate_domande.sql` (10/11): le domande del Gate salvate con le risposte (`user_day_progress.gate_domande`). Senza, il Gate si salva come prima e le domande le ricostruisce `lib/gateStorico.ts`
 - [ ] **Mentale ad abbonamento (1/11, prezzi del 3/11):** su Stripe prodotto "Mentale" con due Price mensili IVA inclusa (19 € fondatori, 39 € listino) e il coupon «Mentale con codice» (−10 €, forever, solo sul Mentale; id in `STRIPE_COUPON_MENTALE_CODICE`), i codici di campagna sempre con data di fine, portale con disdetta a fine periodo, Smart Retries 7 giorni poi "non pagato", ricevute e avvisi email, endpoint webhook con `customer.subscription.trial_will_end`; Managed Payments da chiedere e far approvare (codice fiscale del prodotto `txcd_10103000`); su Vercel `STRIPE_PRICE_ID_MENTALE_FONDATORI`, `STRIPE_PRICE_ID_MENTALE`, `STRIPE_MANAGED_PAYMENTS=1`, `NEXT_PUBLIC_PROVA_CON_CARTA=1`; a fine mese di lancio `mentale_prezzo = "listino"` e `tetto_iscritti = 50` in `app_settings`
 - [ ] Notion, DB Settimane: scrivere `Pratica Giorno Partita` per le 12 settimane (finché è vuota il giorno della partita non mostra nessun box)
 - [ ] Provare i suoni del Reset su iPhone (Safari e PWA): Natura e Focus partono al tocco, girano in loop, si fermano chiudendo; con l'interruttore suoneria su silenzioso e no

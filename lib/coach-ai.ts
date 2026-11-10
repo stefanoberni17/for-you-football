@@ -901,29 +901,28 @@ async function loadSettimanaInCorso(userId: string, week: number): Promise<strin
       return {
         dayNumber: g.dayNumber, titolo: g.titolo, domanda: g.domanda, domandaPrePratica: g.domandaPrePratica,
         domandeGate: g.domandeGate, contesto: g.contesto, isGate: g.isGate || g.dayNumber === 7,
+        domandeGateTesto: g.domandeGateTesto, modificatoIl: g.modificatoIl,
       } satisfies GiornoPercorso;
     });
     const settimane = week > 1 ? [week - 1, week] : [week];
     const [giorni, giorniPrima, { data: righe }] = await Promise.all([
       giorniDi(week),
       week > 1 ? giorniDi(week - 1) : Promise.resolve([] as GiornoPercorso[]),
-      supabaseAdmin
-        .from('user_day_progress')
-        .select('week_number, day_number, completed, completed_at, response, pre_pratica_response, gate_answers')
-        .eq('user_id', userId)
-        .in('week_number', settimane),
+      // le domande del Gate salvate (migration 041); senza la colonna, la lettura di prima
+      supabaseAdmin.from('user_day_progress').select('week_number, day_number, completed, completed_at, response, pre_pratica_response, gate_answers, gate_domande').eq('user_id', userId).in('week_number', settimane)
+        .then((r) => (r.error ? supabaseAdmin.from('user_day_progress').select('week_number, day_number, completed, completed_at, response, pre_pratica_response, gate_answers').eq('user_id', userId).in('week_number', settimane) : r)),
     ]);
-    type Riga = { week_number: number; day_number: number; completed: boolean | null; completed_at: string | null; response: string | null; pre_pratica_response: string | null; gate_answers: Record<string, unknown> | null };
+    type Riga = { week_number: number; day_number: number; completed: boolean | null; completed_at: string | null; response: string | null; pre_pratica_response: string | null; gate_answers: Record<string, unknown> | null; gate_domande?: unknown };
     const progresso: ProgressoGiorno[] = ((righe || []) as Riga[])
       .filter((r) => r.week_number === week)
-      .map((r) => ({ day: r.day_number, completed: !!r.completed, completedAt: r.completed_at, response: r.response, prePratica: r.pre_pratica_response, gateAnswers: r.gate_answers }));
+      .map((r) => ({ day: r.day_number, completed: !!r.completed, completedAt: r.completed_at, response: r.response, prePratica: r.pre_pratica_response, gateAnswers: r.gate_answers, gateDomande: r.gate_domande }));
     const gateRiga = ((righe || []) as Riga[]).find((r) => r.week_number === week - 1 && r.day_number === 7 && r.completed);
     const gateGiorno = giorniPrima.find((g) => g.dayNumber === 7);
     return settimanaInCorsoTesto({
       week,
       giorni,
       progresso,
-      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers, completedAt: gateRiga.completed_at } : null,
+      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers, completedAt: gateRiga.completed_at, domande: gateRiga.gate_domande } : null,
     });
   } catch (e) {
     console.error('loadSettimanaInCorso:', (e as Error).message);

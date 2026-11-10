@@ -6,6 +6,7 @@ import { GATE_DAY } from '@/lib/constants';
 import { checkDayUnlocked, parseWeekDay, settimanaProntaPerIlGate } from '@/lib/serverUnlock';
 import { gateRisposteValide, rispostaChiaveInfo } from '@/lib/risposteChiave';
 import { registraVersione } from '@/lib/risposteServer';
+import { righeGate } from '@/lib/gateStorico';
 
 export const maxDuration = 60;
 
@@ -14,8 +15,18 @@ import { provaFino, requirePaidAccess } from '@/lib/serverAccess';
 
 export const dynamic = 'force-dynamic';
 
-/** Quante domande ha il Gate della settimana su Notion; null se non si riesce a leggerlo. */
-async function contaDomandeGate(week: number): Promise<number | null> {
+type RigaGateDb = { completed: boolean | null; completed_at: string | null; gate_answers: Record<string, unknown> | null; gate_domande?: unknown };
+/** La riga del Gate con le domande salvate (migration 041); senza la colonna, la riga di prima. */
+async function leggiGate(userId: string, week: number): Promise<{ data: RigaGateDb | null }> {
+  const q = (cols: string) => supabaseAdmin.from('user_day_progress').select(cols).eq('user_id', userId).eq('week_number', week).eq('day_number', GATE_DAY).maybeSingle();
+  const r = await q('completed, completed_at, gate_answers, gate_domande');
+  if (!r.error) return { data: r.data as unknown as RigaGateDb | null };
+  const r2 = await q('completed, completed_at, gate_answers');
+  return { data: (r2.data as unknown as RigaGateDb | null) ?? null };
+}
+
+/** Le domande del Gate della settimana su Notion; null se non si riesce a leggerle. */
+async function domandeDelGateNotion(week: number): Promise<string[] | null> {
   try {
     const pages = await queryDatabase(process.env.NOTION_DATABASE_GIORNI!, {
       filter: {
@@ -25,8 +36,8 @@ async function contaDomandeGate(week: number): Promise<number | null> {
         ],
       },
     });
-    const n = pages.length ? mapGiorno(pages[0]).domandeGate.length : 0;
-    return n > 0 ? n : null;
+    const d = pages.length ? mapGiorno(pages[0]).domandeGate : [];
+    return d.length > 0 ? d : null;
   } catch {
     return null;
   }
@@ -66,15 +77,7 @@ export async function GET(request: NextRequest) {
           ],
         },
       }),
-      userId
-        ? supabaseAdmin
-            .from('user_day_progress')
-            .select('completed, gate_answers')
-            .eq('user_id', userId)
-            .eq('week_number', weekNumber)
-            .eq('day_number', GATE_DAY)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
+      leggiGate(userId, weekNumber),
     ]);
 
     if (!dayPages.length) {
@@ -84,11 +87,16 @@ export async function GET(request: NextRequest) {
     const giorno = senzaRegia(mapGiorno(dayPages[0]));
     const progress = progressResult.data;
 
+    // Le risposte con le domande a cui ha risposto davvero (10/11, lib/gateStorico): salvate, ricostruite o con l'avviso
+    const righe = progress?.gate_answers
+      ? righeGate({ week: weekNumber, risposte: progress.gate_answers, domandeSalvate: progress.gate_domande, completatoIl: progress.completed_at, testoAttuale: giorno.domandeGateTesto, modificatoIl: giorno.modificatoIl }).righe
+      : null;
     return NextResponse.json({
       giorno,
       questions: giorno.domandeGate,
       completed: progress?.completed ?? false,
       answers: progress?.gate_answers ?? null,
+      righe,
     });
   } catch (error: any) {
     console.error('❌ GET /api/gate:', error.message);
@@ -111,8 +119,8 @@ export async function POST(request: NextRequest) {
     const wd = parseWeekDay(body.weekNumber, GATE_DAY);
     // Tutte le domande del Gate (da W6 sono quattro): quante sono lo dice Notion (in cache);
     // se Notion non risponde, q1..qN consecutive con almeno tre
-    const domande = wd ? await contaDomandeGate(wd.weekNumber) : null;
-    const answers = gateRisposteValide(body.answers, domande ?? undefined);
+    const domande = wd ? await domandeDelGateNotion(wd.weekNumber) : null;
+    const answers = gateRisposteValide(body.answers, domande?.length ?? undefined);
     if (!wd || !answers) {
       return NextResponse.json(
         { error: 'weekNumber (1-12) e answers (una risposta non vuota per ogni domanda, almeno tre, max 1500 caratteri) richiesti' },
@@ -131,20 +139,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, alreadyCompleted: true });
     }
 
-    // Salva gate_answers + marca giorno 7 come completato
-    const { error: upsertError } = await supabaseAdmin
+    // Salva gate_answers (e dal 10/11 le domande a cui ha risposto, migration 041) + marca giorno 7 come completato
+    const riga = { user_id: userId, week_number: weekNumber, day_number: GATE_DAY, completed: true, completed_at: new Date().toISOString(), gate_answers: answers };
+    let { error: upsertError } = await supabaseAdmin
       .from('user_day_progress')
-      .upsert(
-        {
-          user_id: userId,
-          week_number: weekNumber,
-          day_number: GATE_DAY,
-          completed: true,
-          completed_at: new Date().toISOString(),
-          gate_answers: answers,
-        },
-        { onConflict: 'user_id,week_number,day_number' }
-      );
+      .upsert(domande ? { ...riga, gate_domande: domande.slice(0, Object.keys(answers).length) } : riga, { onConflict: 'user_id,week_number,day_number' });
+    if (upsertError && domande && /gate_domande/.test(upsertError.message || '')) {
+      // Senza la migration 041 si salva come prima: le domande le ricostruisce lib/gateStorico
+      ({ error: upsertError } = await supabaseAdmin.from('user_day_progress').upsert(riga, { onConflict: 'user_id,week_number,day_number' }));
+    }
 
     if (upsertError) throw upsertError;
     logEvent(userId, 'gate_completed', { week: weekNumber });

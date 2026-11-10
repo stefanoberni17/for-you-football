@@ -14,9 +14,12 @@ export function domandeGateDa(testo: string): string[] {
   const righe = (testo || '').split('\n').map((r) => r.trim());
   if (!righe.some((r) => INIZIO_DOMANDA.test(r))) return righe.filter(Boolean);
   const out: string[] = [];
+  // Le righe prima della prima domanda numerata (un'introduzione) non sono una domanda: vanno in testa alla prima (10/11)
+  const intro: string[] = [];
   for (const r of righe) {
     if (!r) continue;
-    if (INIZIO_DOMANDA.test(r) || out.length === 0) out.push(r);
+    if (INIZIO_DOMANDA.test(r)) out.push(out.length === 0 && intro.length ? `${intro.join('\n')}\n${r}` : r);
+    else if (out.length === 0) intro.push(r);
     else out[out.length - 1] += `\n${r}`;
   }
   return out;

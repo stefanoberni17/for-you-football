@@ -191,6 +191,8 @@ export interface RispostaRow {
   prePratica: string | null;
   /** Le risposte del Gate (solo giorno 7), in ordine e senza le vuote */
   gate: string[] | null;
+  /** Le risposte del Gate con la domanda a cui ha risposto davvero, o l'avviso (10/11, lib/gateStorico) */
+  gateRighe?: { domanda: string | null; risposta: string; avviso?: string }[] | null;
   /** Le risposte del Gate per chiave q1..qN (26/10: la mappa è la q1 del Gate 3; da W6 i Gate hanno quattro domande) */
   gateQ?: GateRisposte | null;
   completedAt: string | null;

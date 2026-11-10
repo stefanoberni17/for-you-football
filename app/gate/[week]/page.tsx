@@ -25,6 +25,8 @@ export default function GatePage() {
   const [giorno, setGiorno] = useState<any>(null);
   const [questions, setQuestions] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  // Gate già passato (10/11): le risposte con la domanda a cui ha risposto davvero (o l'avviso), dal server
+  const [righe, setRighe] = useState<{ chiave: string; domanda: string | null; risposta: string; avviso?: string }[] | null>(null);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -78,6 +80,7 @@ export default function GatePage() {
       setGiorno(data.giorno);
       setQuestions(data.questions || []);
       setCompleted(data.completed);
+      setRighe(Array.isArray(data.righe) ? data.righe : null);
 
       if (data.answers) {
         setAnswers(data.answers);
@@ -254,14 +257,22 @@ export default function GatePage() {
           <SectionTitle
             title="Le domande del Gate"
             icon={<PenLine size={18} />}
-            subtitle={`Rispondi a ${questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'} per sbloccare la settimana successiva`}
+            subtitle={completed ? 'Le tue risposte' : `Rispondi a ${questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'} per sbloccare la settimana successiva`}
           />
 
-          {questions.length === 0 && (
+          {completed && righe ? righe.map((r) => (
+            <div key={r.chiave} className="space-y-1.5">
+              {r.domanda && <p className="text-body font-medium leading-relaxed whitespace-pre-line text-app">{r.domanda}</p>}
+              {r.avviso && <p className="text-caption text-muted">{r.avviso}</p>}
+              <p className="text-body text-muted leading-relaxed whitespace-pre-line rounded-btn bg-surface-2 border border-divider px-3 py-2.5">{r.risposta}</p>
+            </div>
+          )) : null}
+
+          {!(completed && righe) && questions.length === 0 && (
             <SaveErrorBanner message="Non siamo riusciti a caricare le domande. Ricarica la pagina — se il problema resta, scrivici." />
           )}
 
-          {questions.map((q, i) => {
+          {!(completed && righe) && questions.map((q, i) => {
             const key = `q${i + 1}`;
             const value = answers[key] || '';
             return (

@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { GATE_DAY } from '@/lib/constants';
+import { queryDatabase, mapGiorno } from '@/lib/notion';
+import { righeGate } from '@/lib/gateStorico';
 import { RISPOSTE_CHIAVE, gateLista, gateRisposte, rispostaChiaveInfo, type RispostaRow, type VersionePrecedente } from '@/lib/risposteChiave';
 
 /**
@@ -18,8 +20,17 @@ type ProgressRow = {
   response: string | null;
   pre_pratica_response: string | null;
   gate_answers: Record<string, unknown> | null;
+  gate_domande?: unknown;
   completed_at: string | null;
 };
+
+/** I Gate su Notion (in cache), per accoppiare le risposte alle domande giuste; vuoto se Notion non risponde. */
+async function gateNotion(): Promise<Map<number, { testo: string; modificatoIl: string | null }>> {
+  try {
+    const pages = await queryDatabase(process.env.NOTION_DATABASE_GIORNI!, { filter: { property: 'Numero Giorno', number: { equals: GATE_DAY } } });
+    return new Map(pages.map((p) => { const g = mapGiorno(p); return [g.weekNumber, { testo: g.domandeGateTesto, modificatoIl: g.modificatoIl }] as const; }));
+  } catch { return new Map(); }
+}
 
 type ReflectionRow = { week_number: number; day_number: number; reflection_question: string | null; reflection_text: string | null };
 
@@ -30,13 +41,13 @@ type ReflectionRow = { week_number: number; day_number: number; reflection_quest
  * `user_day_progress.gate_answers`. `filtro` = solo quei (settimana, giorno).
  */
 export async function loadRisposte(userId: string, filtro?: Array<[number, number]>): Promise<RispostaRow[]> {
+  // Le domande del Gate salvate con le risposte (migration 041): senza la colonna, la lettura di prima
+  const leggiProgress = (cols: string) => supabaseAdmin.from('user_day_progress').select(cols).eq('user_id', userId)
+    .order('week_number', { ascending: true }).order('day_number', { ascending: true });
+  const progressRes = leggiProgress('week_number, day_number, response, pre_pratica_response, gate_answers, gate_domande, completed_at')
+    .then((r) => (r.error ? leggiProgress('week_number, day_number, response, pre_pratica_response, gate_answers, completed_at') : r));
   const [{ data: progress, error: e1 }, { data: reflections, error: e2 }, versioniRes] = await Promise.all([
-    supabaseAdmin
-      .from('user_day_progress')
-      .select('week_number, day_number, response, pre_pratica_response, gate_answers, completed_at')
-      .eq('user_id', userId)
-      .order('week_number', { ascending: true })
-      .order('day_number', { ascending: true }),
+    progressRes,
     supabaseAdmin
       .from('day_reflections')
       .select('week_number, day_number, reflection_question, reflection_text')
@@ -63,8 +74,10 @@ export async function loadRisposte(userId: string, filtro?: Array<[number, numbe
   const domande = new Map<string, ReflectionRow>();
   for (const r of (reflections || []) as ReflectionRow[]) domande.set(`${r.week_number}-${r.day_number}`, r);
 
+  const righeProgress = (progress || []) as unknown as ProgressRow[];
+  const gates = righeProgress.some((p) => p.day_number === GATE_DAY && p.gate_answers) ? await gateNotion() : new Map();
   const rows: RispostaRow[] = [];
-  for (const p of (progress || []) as ProgressRow[]) {
+  for (const p of righeProgress) {
     if (filtro && !filtro.some(([w, d]) => w === p.week_number && d === p.day_number)) continue;
     const refl = domande.get(`${p.week_number}-${p.day_number}`);
     const gate = p.day_number === GATE_DAY ? gateLista(p.gate_answers) : null;
@@ -81,6 +94,10 @@ export async function loadRisposte(userId: string, filtro?: Array<[number, numbe
       risposta,
       prePratica,
       gate,
+      gateRighe: gate && p.day_number === GATE_DAY
+        ? righeGate({ week: p.week_number, risposte: p.gate_answers, domandeSalvate: p.gate_domande, completatoIl: p.completed_at, testoAttuale: gates.get(p.week_number)?.testo ?? '', modificatoIl: gates.get(p.week_number)?.modificatoIl ?? null })
+          .righe.map(({ domanda, risposta, avviso }) => ({ domanda, risposta, ...(avviso ? { avviso } : {}) }))
+        : null,
       gateQ: p.day_number === GATE_DAY ? gateRisposte(p.gate_answers) : null,
       completedAt: p.completed_at,
     });
