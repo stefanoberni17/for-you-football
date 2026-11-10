@@ -255,11 +255,11 @@ export default function AllenamentoHub() {
     let forzato = false;
     try { forzato = new URLSearchParams(window.location.search).get('adatta') === '1'; } catch { /* no-op */ }
     let ignorato = false;
-    try { ignorato = sessionStorage.getItem(`calendario.ignora:${state.plan.id}:${c.hash}`) === '1'; } catch { /* no-op */ }
+    try { ignorato = localStorage.getItem(`calendario.ignora:${state.plan.id}:${c.hash}`) === '1'; } catch { /* no-op */ }
     if (forzato || !ignorato) setShowAdatta(true);
   }, [state]);
   const ignoraAdatta = () => {
-    try { if (state?.plan && state.calendarioConflitti) sessionStorage.setItem(`calendario.ignora:${state.plan.id}:${state.calendarioConflitti.hash}`, '1'); } catch { /* no-op */ }
+    try { if (state?.plan && state.calendarioConflitti) localStorage.setItem(`calendario.ignora:${state.plan.id}:${state.calendarioConflitti.hash}`, '1'); } catch { /* no-op */ }
     setShowAdatta(false);
   };
   const adattaSettimana = async () => {

@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-10 — «Il calendario è cambiato» non torna più in giro
+
+Ste: «continua a dare questo messaggio in loop». Il 9/11 il piano è stato adattato tre volte in un minuto: venerdì non era più tra i giorni dell'app, l'adattamento spostava la seduta a giovedì «fuori dai tuoi giorni abituali: non c'era altro posto», e la lettura dopo la segnalava di nuovo come conflitto (giovedì → martedì → giovedì).
+- `conflittoSeduta` in `lib/trainingCalendario.ts`: una seduta con `spostata_da` (messa lì dall'adattamento) non è più un conflitto «giorno non tra quelli dell'app». Partita, giorno prima della partita e finestre restano conflitti. Test in `tests/trainingCalendario.test.ts`.
+- «Lascia così» resta anche chiudendo e riaprendo l'app (`localStorage`, per piano e calendario; prima `sessionStorage`).
+
 ## 2026-11-10 — Il peso da usare su ogni esercizio con i pesi, due video sbagliati
 
 Ste: «sui piegamenti 1 braccio declinati c'è il video dei piegamenti a 2 braccia declinati. Gorilla row bisogna mettere il peso da usare, controlla che tutti gli esercizi con kb e pesi abbiano il peso da usare».

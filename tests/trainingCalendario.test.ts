@@ -31,6 +31,12 @@ describe('i conflitti con il calendario', () => {
     const f = conflittiCalendario(plan, { matchDays: [7], trainingDays: [] }, { ...base, validaSeduta: (s) => (s.giorno === 4 ? ['velocità a 3 giorni dalla partita: vietata', 'durata oltre il massimo'] : []) });
     expect(f.map((x) => [x.giorno, x.tipo])).toEqual([[4, 'finestra']]);
     expect(f[0].motivo).toMatch(/partita/);
+    // una seduta già spostata dall'adattamento fuori dai giorni dell'app non torna conflitto (10/11: rimbalzava a ogni «Adatta»)
+    const spostata = { ...sed(2, 'fisica'), spostata_da: 5 };
+    expect(conflittiCalendario({ sedute: [spostata] }, { matchDays: [7], trainingDays: [], giorniAmmessi: [1, 3, 4] }, base)).toEqual([]);
+    expect(ricollocaSedute({ sedute: [spostata] }, { matchDays: [7], trainingDays: [], giorniAmmessi: [1, 3, 4] }, base).righe).toEqual([]);
+    // ma se poi cade il giorno della partita lo è ancora
+    expect(conflittiCalendario({ sedute: [spostata] }, { matchDays: [2], trainingDays: [], giorniAmmessi: [1, 3, 4] }, base).map((x) => x.tipo)).toEqual(['partita']);
     // un errore che non parla di partita non è un conflitto di calendario
     expect(conflittiCalendario(plan, { matchDays: [7], trainingDays: [] }, { ...base, validaSeduta: () => ['durata oltre il massimo'] })).toEqual([]);
   });
