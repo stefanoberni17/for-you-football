@@ -13,6 +13,7 @@ Solo fatti raccontati da Ste; foto invariate, riassegnate ai capitoli.
 - La storia si apre con «Ciao, sono Ste.» e «Ex calciatore professionista e semiprofessionista. Fondatore di For You Football.» sulla foto del tiro; la citazione viene dopo, senza foto. Stessa riga nel profilo della pagina.
 - Foto (Ste): colpo di testa ed esultanza tolte dalla storia (non c'entravano); quella con il ginocchio fasciato passa dal Modena alla finale. La griglia del profilo mostra righe intere da tre.
 - Due foto del Modena mandate da Ste il 10/11 (`modena-ritratto`, `modena-palla`, stesso trattamento con `scripts/scopri-foto.mjs`, `SOLO=` per rifare solo quelle): sul Modena e su «avevo capito». Non usate: la foto con l'avversario dietro e la firma del fotografo, e la foto di squadra (altre persone riconoscibili).
+- Profilo della pagina (Ste, 10/11): la bio si apre con «Ciao, sono Ste.» come la storia; tra i numeri resta solo «100+ calciatori» («12 settimane» e «300+ esercizi» non parlano di lui, andranno altrove).
 - Sulle schermate con la foto il testo sta al centro, non in basso (Ste: «altrimenti sembra che ci sia io al centro»), con la foto scurita in modo uniforme e un'ombra leggera sotto le lettere.
 
 ## 2026-11-10 — Il Corpo bloccato con i segni della settimana

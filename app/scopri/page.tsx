@@ -59,12 +59,12 @@ function dividiTitolo(t: string): [string, string] {
 const DISEGNI_SCENE = [PalloneCheArriva, PallaPersa, SeraPrima, Fischietto];
 
 /** Ste come un profilo: i numeri e le righe sotto il nome. Solo cose vere e sue. */
+// 10/11, Ste: «12 settimane» e «300+ esercizi» non parlano di lui, vanno altrove; la bio si apre come la storia.
 const NUMERI = [
   { numero: '100+', etichetta: 'calciatori' },
-  { numero: '12', etichetta: 'settimane' },
-  { numero: '300+', etichetta: 'esercizi' },
 ];
 const BIO = [
+  STORIA.presentazione.testo,
   'Ex calciatore professionista e semiprofessionista, esordio in Serie C con la Reggiana.',
   'Corso da mental coach, studi da personal trainer.',
   'Fondatore di For You Football.',
