@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import Link from 'next/link';
 import { ArrowRight, Bell, ChevronLeft, ChevronRight, Pause, Play, X } from 'lucide-react';
 import { bloccaScroll } from '@/lib/scrollLock';
+import IconaCorpo, { IconaMente } from '@/components/ui/IconaCorpo';
 import {
   AVVISO_FISICO, DOVE_PORTA, FISICO_SEZIONE, MOMENTI_FISICO, MOMENTI_TESTA, NON_POSITIVO, PERCHE_FISICO, PERCHE_TESTA, STORIA, type FotoStoria,
   type MomentoApp,
@@ -27,7 +28,7 @@ export type Schermata = {
   schermo?: { src: string; alt: string };
   stile?: 'citazione' | 'grande' | 'normale';
 };
-export type Gruppo = { id: string; nome: string; copertina: { src?: string; testo?: string }; schermate: Schermata[]; fine: 'prova' | 'avviso' };
+export type Gruppo = { id: string; nome: string; copertina: { src?: string; testo?: string; icona?: 'mente' | 'corpo' }; schermate: Schermata[]; fine: 'prova' | 'avviso' };
 
 function daMomenti(momenti: MomentoApp[], parte: string): Schermata[] {
   return momenti.map((m, i) => ({
@@ -50,8 +51,8 @@ export const GRUPPI: Gruppo[] = [
       { testo: STORIA.finale, stile: 'grande' },
     ],
   },
-  { id: 'testa', nome: 'La Testa', copertina: { src: '/scopri/storia/sguardo.webp' }, fine: 'prova', schermate: daMomenti(MOMENTI_TESTA, 'La Testa') },
-  { id: 'fisico', nome: 'Il Corpo', copertina: { src: '/scopri/storia/esultanza.webp' }, fine: 'avviso', schermate: daMomenti(MOMENTI_FISICO, 'Il Corpo') },
+  { id: 'testa', nome: 'La Testa', copertina: { icona: 'mente' }, fine: 'prova', schermate: daMomenti(MOMENTI_TESTA, 'La Testa') },
+  { id: 'fisico', nome: 'Il Corpo', copertina: { icona: 'corpo' }, fine: 'avviso', schermate: daMomenti(MOMENTI_FISICO, 'Il Corpo') },
   {
     id: 'dove', nome: 'Dove ti porta', copertina: { src: '/scopri/storia/colpo-di-testa.webp' }, fine: 'prova',
     schermate: [
@@ -62,7 +63,7 @@ export const GRUPPI: Gruppo[] = [
     ],
   },
   {
-    id: 'perche-testa', nome: 'Perché la Testa', copertina: { src: '/scopri/storia/nazionale.webp' }, fine: 'prova',
+    id: 'perche-testa', nome: 'Perché la Testa', copertina: { icona: 'mente' }, fine: 'prova',
     schermate: [
       { titolo: PERCHE_TESTA.titolo, testo: PERCHE_TESTA.paragrafi[0], stile: 'grande' },
       { testo: PERCHE_TESTA.paragrafi[1], sotto: PERCHE_TESTA.studi.join(' · '), stile: 'grande' },
@@ -71,7 +72,7 @@ export const GRUPPI: Gruppo[] = [
     ],
   },
   {
-    id: 'perche-fisico', nome: 'Perché il Corpo', copertina: { src: '/scopri/storia/conduzione.webp' }, fine: 'avviso',
+    id: 'perche-fisico', nome: 'Perché il Corpo', copertina: { icona: 'corpo' }, fine: 'avviso',
     schermate: [
       { titolo: PERCHE_FISICO.titolo, testo: PERCHE_FISICO.intro, stile: 'grande' },
       ...PERCHE_FISICO.figure.map((f): Schermata => ({ titolo: f.chi, testo: f.limite, stile: 'grande' })),
@@ -119,6 +120,19 @@ function useVisti() {
  * Un cerchio come gli «in evidenza» dei social: copertina, anello verde (grigio se già vista), nome sotto. Di solito apre la sua
  * storia; nel giro dell'app fa da linguetta (`onClick`, `attivo`: quello scelto ha l'anello, l'altro è spento).
  */
+/**
+ * Le due parti con le icone dell'app (10/11, Ste: «al posto delle mie foto su corpo e mente metti quello usato in app»):
+ * il disco pieno del colore della parte, verde la Mente, blu il Corpo (dentro `.parte-corpo`), l'icona in bianco.
+ */
+export function IconaParte({ parte, className = 'h-16 w-16', piccola = false }: { parte: 'mente' | 'corpo'; className?: string; piccola?: boolean }) {
+  const Icona = parte === 'corpo' ? IconaCorpo : IconaMente;
+  return (
+    <span className={`flex ${className} items-center justify-center rounded-full bg-gradient-to-br from-forest-400 to-forest-700 text-white ${parte === 'corpo' ? 'parte-corpo' : ''}`}>
+      <Icona size={piccola ? 18 : '52%'} aria-hidden />
+    </span>
+  );
+}
+
 /** Le storie del Corpo (10/11, Ste: «allinea i colori all'app»): blu come il Corpo nell'app (`.parte-corpo`), le altre verdi. */
 export const GRUPPI_CORPO = new Set(['fisico', 'perche-fisico']);
 
@@ -141,7 +155,9 @@ export function Cerchio({ gruppo, nome, sotto, grande = false, onClick, attivo }
     >
       <span className={`rounded-full p-[3px] transition-transform group-hover:scale-105 ${anello}`}>
         <span className="block rounded-full bg-app-bg p-[3px]">
-          {g.copertina.src ? (
+          {g.copertina.icona ? (
+            <IconaParte parte={g.copertina.icona} className={misura} />
+          ) : g.copertina.src ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={g.copertina.src} alt="" className={`${misura} rounded-full object-cover object-top`} />
           ) : (

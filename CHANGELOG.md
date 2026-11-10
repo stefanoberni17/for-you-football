@@ -7,6 +7,7 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 `/scopri` allineata all'app dopo il restyle dell'8-9/11:
 - Il Corpo è blu come nell'app (`.parte-corpo`): il selettore Il Corpo del giro dell'app e tutto quello che c'è sotto, i cerchi «Il Corpo» e «Perché il Corpo» e le loro storie (sfondo blu), il riquadro dei prezzi del Fisico. La Testa e i bottoni «Prova gratis» restano verdi.
 - Le undici schermate in `public/scopri/` rifatte dal Preview con l'account di prova (dati di esempio): quattro tab, Mente | Corpo, stile a riquadri, Corpo blu. Prima erano quelle con le cinque tab e il Fisico verde.
+- Al posto delle foto di Ste, Testa e Corpo hanno le icone dell'app (`IconaParte` in `components/scopri/Storie.tsx`): nel selettore del giro dell'app, sempre ciascuna nel suo colore, e nei cerchi «La Testa», «Il Corpo», «Perché la Testa», «Perché il Corpo» (Ste: «al posto delle mie foto su corpo e mente metti quello usato in app»). Le foto restano nella sua storia e in «Dove ti porta».
 - `scripts/scopri-screenshots.mjs`: `STATE` (sessione di Playwright già entrata) al posto di email e password, si ferma se non è entrato invece di salvare la pagina di accesso, la chat del Coach riparte vuota.
 
 ## 2026-11-10 — Fase 1c: le risposte del Gate con la domanda giusta

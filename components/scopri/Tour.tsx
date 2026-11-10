@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { Maximize2 } from 'lucide-react';
 import type { MomentoApp } from '@/lib/scopri';
 import { Dettaglio, InCampo, Schermo } from './Telefono';
-import { apriStoria, GRUPPI, GRUPPI_CORPO } from './Storie';
+import { apriStoria, GRUPPI_CORPO, IconaParte } from './Storie';
 
 /**
  * Il giro dell'app (7/11, Ste: «è davvero troppo lungo: uno deve vedere solo le cose essenziali e poi approfondire quello
  * che vuole»). Una schermata sola, come le pagine delle app di allenamento: in alto il selettore Testa | Corpo, basso e
- * piatto con la fotina nel cerchio (8/11, Ste: «più piccolo, appiattito, più spazio all'immagine e alle scritte»), un
+ * piatto (8/11, Ste: «più piccolo, appiattito, più spazio all'immagine e alle scritte») con l'icona della parte dell'app al posto
+ * della fotina (10/11), verde la Testa e blu il Corpo, un
  * telefono, l'elenco dei momenti; tocchi un momento e il telefono cambia. Su telefono sta tutto in una schermata: i momenti sono una
  * fila di bottoni, telefono e testo uno accanto all'altro, il resto nella storia («A tutto schermo»).
  */
@@ -33,11 +34,11 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
   const corpo = GRUPPI_CORPO.has(parte.id);
   return (
     <div>
-      {/* Testa | Corpo: basso e piatto, la fotina nel cerchio */}
+      {/* Testa | Corpo: basso e piatto, l'icona della parte nel suo colore */}
       <div className="mx-auto flex w-full max-w-md gap-1 rounded-full border border-divider bg-surface p-1" role="tablist" aria-label="Le parti dell'app">
         {parti.map((x, i) => {
           const scelta = i === p;
-          const foto = GRUPPI.find((g) => g.id === x.id)?.copertina.src;
+          const diCorpo = GRUPPI_CORPO.has(x.id);
           return (
             <button
               key={x.id}
@@ -45,17 +46,15 @@ export function Tour({ parti }: { parti: ParteTour[] }) {
               role="tab"
               aria-selected={scelta}
               onClick={() => scegliParte(i)}
-              className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full px-2 transition-colors ${GRUPPI_CORPO.has(x.id) ? 'parte-corpo' : ''} ${scelta ? 'bg-forest-500/20 text-app' : 'text-muted hover:text-app'}`}
+              className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full px-2 transition-colors ${diCorpo ? 'parte-corpo' : ''} ${scelta ? 'bg-forest-500/25 text-app ring-1 ring-forest-400/60' : 'text-muted hover:text-app'}`}
             >
-              {foto && (
-                <span className={`shrink-0 rounded-full p-[2px] ${scelta ? `bg-gradient-to-tr from-forest-600 via-forest-400 ${GRUPPI_CORPO.has(x.id) ? 'to-forest-200' : 'to-[#c9f27a]'}` : 'bg-divider'}`}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={foto} alt="" className={`h-7 w-7 rounded-full border-2 border-surface object-cover object-top ${scelta ? '' : 'opacity-60'}`} />
-                </span>
-              )}
+              {/* L'icona della parte come nell'app, sempre nel suo colore: verde la Testa, blu il Corpo */}
+              <span className={`shrink-0 ${scelta ? '' : 'opacity-70'}`}>
+                <IconaParte parte={diCorpo ? 'corpo' : 'mente'} className="h-8 w-8" piccola />
+              </span>
               <span className="flex flex-col items-start whitespace-nowrap text-left leading-tight">
                 <span className="text-body-sm font-semibold">{x.nome}</span>
-                {x.sotto && <span className={`text-caption ${scelta ? 'text-forest-300' : 'text-faint'}`}>{x.sotto}</span>}
+                {x.sotto && <span className="text-caption text-forest-300">{x.sotto}</span>}
               </span>
             </button>
           );
