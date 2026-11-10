@@ -313,7 +313,15 @@ Seleziona la frase e aggiungi la riflessione.`;
           loadSquadraCompleta(u.user_id),
           loadResoconti(u.user_id, 3),
         ]);
-        const da = resocontiDaChiedere({ oggi, trainingDays: giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata), matchDays: giorniPartita(calendar?.match_days || [], partita, calendar?.confermata), resoconti })
+        const da = resocontiDaChiedere({
+          oggi, resoconti,
+          trainingDays: giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata),
+          matchDays: giorniPartita(calendar?.match_days || [], partita, calendar?.confermata),
+          settimanaPrima: { // il lunedì «ieri» è la domenica della settimana prima
+            trainingDays: giorniSquadra(calendar?.scorsa?.training_days || [], squadra, !!calendar?.scorsa),
+            matchDays: giorniPartita(calendar?.scorsa?.match_days || [], partita, !!calendar?.scorsa),
+          },
+        })
           .find((x) => x.data === ieri);
         if (!da) continue;
         const pushed = await sendPushToUser(u.user_id, 'Campo', da.tipo === 'partita' ? 'Com\'è andata la partita di ieri? Dimmelo in 30 secondi: la settimana si adatta.' : 'Com\'è andata ieri con la squadra? Dimmelo in 30 secondi: la settimana si adatta.', '/allenamento').catch(() => false);

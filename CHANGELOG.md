@@ -8,6 +8,7 @@ Ste: «bisogna fare in modo che sia obbligatorio il setup della settimana con la
 - Tabella nuova `user_calendario_settimane` (migration 040): una riga per lunedì di calendario. Una riga = risposta, anche vuota. `lib/settimanaCalendario.ts` (regole pure, 6 test) e `lib/settimanaServer.ts`; tutti i lettori passano di lì (Home, giorno, Corpo, planner, carico, resoconti, Coach, promemoria). Con la risposta `giorniSquadra` / `giorniPartita` / `caricoSquadraStimato` non ripiegano più sul setup.
 - Foglio obbligatorio `components/SettimanaObbligatoria.tsx` in Home e nel Corpo: «Come la scorsa settimana» (o «Come nel mio setup»), «Cambia i giorni», «Niente squadra né partita». Il piano automatico del Corpo aspetta la risposta (409 `settimana_da_confermare`).
 - Il cron del lunedì non svuota più i calendari. Senza la migration l'app legge il calendario di prima salvato in questa settimana e scrive in tutti e due.
+- Il lunedì «Com'è andata ieri?» (Corpo, Home, push del mattino) guarda la domenica con i giorni della settimana PRIMA (la sua risposta, o il setup se non aveva risposto), non quelli della settimana nuova: `resocontiDaChiedere({ settimanaPrima })`, `calendarioDellaSettimana().scorsa`. Senza la migration anche la settimana prima si legge dal calendario di prima.
 
 ## 2026-11-09 — Fase 1a della revisione dell'esperienza: la settimana in sola lettura, la squadra, il Coach gratis
 

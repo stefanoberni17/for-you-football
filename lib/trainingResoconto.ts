@@ -145,15 +145,26 @@ export function valutaResoconto(r: Resoconto, previsto = r.rpe_previsto ?? previ
 /** Il resoconto si può ancora dare? Il giorno stesso o il giorno dopo (Ste: "al massimo il giorno dopo"). */
 export const resocontoAncoraAperto = (data: string, oggi: string) => { const d = diffGiorni(oggi, data); return d >= 0 && d <= RESOCONTO_RISPOSTA_ENTRO_GIORNI; };
 
-/** Giorni (oggi e ieri) con squadra o partita senza resoconto: l'hub chiede il primo, il cron serale manda la push. */
-export function resocontiDaChiedere(opt: { oggi: string; trainingDays: readonly number[]; matchDays: readonly number[]; resoconti: readonly Pick<Resoconto, 'data' | 'tipo'>[] }): { data: string; tipo: TipoResoconto }[] {
+/**
+ * Giorni (oggi e ieri) con squadra o partita senza resoconto: l'hub chiede il primo, il cron del mattino manda la push.
+ * `trainingDays` / `matchDays` = i giorni di QUESTA settimana. Il lunedì «ieri» è la domenica della settimana prima:
+ * valgono i giorni di quella (`settimanaPrima`: la risposta della settimana scorsa, o l'abitudine se non aveva risposto),
+ * non quelli di questa (10/11).
+ */
+export function resocontiDaChiedere(opt: {
+  oggi: string; trainingDays: readonly number[]; matchDays: readonly number[];
+  settimanaPrima?: { trainingDays: readonly number[]; matchDays: readonly number[] };
+  resoconti: readonly Pick<Resoconto, 'data' | 'tipo'>[];
+}): { data: string; tipo: TipoResoconto }[] {
   const out: { data: string; tipo: TipoResoconto }[] = [];
   const ha = (data: string, tipo: TipoResoconto) => opt.resoconti.some((r) => r.data === data && r.tipo === tipo);
+  const lunedi = dowDi(opt.oggi) === 1;
   for (const k of [0, -1]) {
     const data = addDays(opt.oggi, k);
     const dow = dowDi(data);
-    if (opt.matchDays.includes(dow) && !ha(data, 'partita')) out.push({ data, tipo: 'partita' });
-    else if (opt.trainingDays.includes(dow) && !ha(data, 'squadra')) out.push({ data, tipo: 'squadra' });
+    const g = k === -1 && lunedi && opt.settimanaPrima ? opt.settimanaPrima : opt;
+    if (g.matchDays.includes(dow) && !ha(data, 'partita')) out.push({ data, tipo: 'partita' });
+    else if (g.trainingDays.includes(dow) && !ha(data, 'squadra')) out.push({ data, tipo: 'squadra' });
   }
   return out;
 }

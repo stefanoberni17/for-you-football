@@ -41,12 +41,16 @@ export async function loadSettimana(userId: string, lunedi = lunediDi(oggiRoma()
     if (l === lunedi) risposta = risp(r);
     else if (l === prima) scorsa = risp(r);
   }
-  if (!risposta) {
-    // Il calendario di prima: vale solo se salvato in questa settimana (il cron del lunedì lo svuotava)
-    const { data: vecchio } = await supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days, created_at')
-      .eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
-    const creato = vecchio?.created_at ? String(vecchio.created_at).slice(0, 10) : null;
-    if (vecchio && creato && creato >= lunedi) risposta = risp(vecchio);
+  if (!risposta || !scorsa) {
+    // Il calendario di prima: vale per la settimana in cui è stato salvato (il cron del lunedì lo svuotava)
+    const { data: vecchi } = await supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days, created_at')
+      .eq('user_id', userId).order('created_at', { ascending: false }).limit(2);
+    for (const v of vecchi || []) {
+      const creato = v?.created_at ? String(v.created_at).slice(0, 10) : null;
+      if (!creato) continue;
+      if (!risposta && creato >= lunedi) risposta = risp(v);
+      else if (!scorsa && creato >= prima && creato < lunedi) scorsa = risp(v);
+    }
   }
   return { lunedi, risposta, scorsa, tabella };
 }
@@ -62,15 +66,24 @@ export async function loadAbitudine(userId: string): Promise<RispostaSettimana |
   } catch { return null; }
 }
 
+export type CalendarioSettimana = {
+  training_days: number[];
+  match_days: number[];
+  confermata: boolean;
+  /** La risposta della settimana prima (null = non aveva risposto): serve il lunedì per «Com'è andata ieri?». */
+  scorsa: { training_days: number[]; match_days: number[] } | null;
+};
+
 /**
  * La riga di calendario come la leggevano i moduli del Corpo e del Coach (`training_days`, `match_days`), più
  * `confermata`: con la risposta del ragazzo i giorni valgono così come sono (anche vuoti), senza si usa l'abitudine.
  */
-export async function calendarioDellaSettimana(userId: string): Promise<{ training_days: number[]; match_days: number[]; confermata: boolean }> {
+export async function calendarioDellaSettimana(userId: string): Promise<CalendarioSettimana> {
   const s = await loadSettimana(userId);
+  const scorsa = s.scorsa ? { training_days: s.scorsa.trainingDays, match_days: s.scorsa.matchDays } : null;
   return s.risposta
-    ? { training_days: s.risposta.trainingDays, match_days: s.risposta.matchDays, confermata: true }
-    : { training_days: [], match_days: [], confermata: false };
+    ? { training_days: s.risposta.trainingDays, match_days: s.risposta.matchDays, confermata: true, scorsa }
+    : { training_days: [], match_days: [], confermata: false, scorsa };
 }
 
 /** Salva la risposta della settimana (nuova tabella + calendario di prima con il numero della settimana del percorso). */

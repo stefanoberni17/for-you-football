@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { giorniDellaSettimana, lunediDi, lunediPrima, propostaSettimana, pulisciGiorni, riassuntoSettimana } from '@/lib/settimanaCalendario';
 import { giorniSquadra, caricoSquadraStimato } from '@/lib/trainingLoad';
 import { giorniPartita } from '@/lib/trainingSquadra';
+import { resocontiDaChiedere } from '@/lib/trainingResoconto';
 
 describe('la settimana con la squadra (10/11)', () => {
   it('il lunedì della settimana di calendario', () => {
@@ -49,5 +50,22 @@ describe('la settimana con la squadra (10/11)', () => {
     const base = { matchDays: [], squadraDurataMin: 90, fase: 'in_season', squadra };
     expect(caricoSquadraStimato({ ...base, trainingDays: [] })).toBeGreaterThan(0);
     expect(caricoSquadraStimato({ ...base, trainingDays: [], confermata: true })).toBe(0);
+  });
+
+  it('il lunedì «Com\'è andata ieri?» guarda la domenica della settimana prima, non questa', () => {
+    // 2026-11-09 è lunedì, ieri domenica 8 (settimana del 2 novembre)
+    const questa = { trainingDays: [1, 3], matchDays: [6] };      // questa settimana: partita di sabato
+    const prima = { trainingDays: [2, 4], matchDays: [7] };       // la settimana scorsa: partita di domenica
+    expect(resocontiDaChiedere({ oggi: '2026-11-09', ...questa, settimanaPrima: prima, resoconti: [] }))
+      .toEqual([{ data: '2026-11-09', tipo: 'squadra' }, { data: '2026-11-08', tipo: 'partita' }]);
+    // senza partita la settimana scorsa niente domanda, anche se l'abitudine di questa settimana avesse la domenica
+    expect(resocontiDaChiedere({ oggi: '2026-11-09', trainingDays: [], matchDays: [7], settimanaPrima: { trainingDays: [], matchDays: [] }, resoconti: [] }))
+      .toEqual([]);
+    // gli altri giorni «ieri» è nella stessa settimana: valgono i giorni di questa
+    expect(resocontiDaChiedere({ oggi: '2026-11-12', ...questa, settimanaPrima: prima, resoconti: [] }))
+      .toEqual([{ data: '2026-11-11', tipo: 'squadra' }]);
+    // già risposto: niente
+    expect(resocontiDaChiedere({ oggi: '2026-11-09', ...questa, settimanaPrima: prima, resoconti: [{ data: '2026-11-08', tipo: 'partita' }, { data: '2026-11-09', tipo: 'squadra' }] }))
+      .toEqual([]);
   });
 });

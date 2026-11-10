@@ -115,6 +115,9 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
     settimanaConfermata: !!calendar?.confermata,
     squadraDaSetup: !calendar?.confermata && trainingDays.length > 0,
     partitaDaSetup: !calendar?.confermata && matchDays.length > 0,
-    resocontiDaChiedere: resocontiDaChiedere({ oggi, trainingDays, matchDays, resoconti }),
+    resocontiDaChiedere: resocontiDaChiedere({ oggi, trainingDays, matchDays, resoconti, settimanaPrima: {
+      trainingDays: giorniSquadra(calendar?.scorsa?.training_days || [], squadra, !!calendar?.scorsa),
+      matchDays: giorniPartita(calendar?.scorsa?.match_days || [], partita, !!calendar?.scorsa),
+    } }),
   };
 }

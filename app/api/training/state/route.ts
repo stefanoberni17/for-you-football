@@ -254,7 +254,10 @@ export async function GET(request: NextRequest) {
     // M5 (26/10): gli esercizi molto leggeri in una seduta già fatta salgono di un passo nelle sedute successive della settimana
     const votiSedute = new Map<number, number | null>();
     for (const c of completions) { const g = Number(String(c.session_key).split('#')[1]); if (Number.isInteger(g)) votiSedute.set(g, c.rpe ?? null); }
-    const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti });
+    const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti, settimanaPrima: {
+      trainingDays: giorniSquadra(calendar?.scorsa?.training_days || [], squadra, !!calendar?.scorsa),
+      matchDays: giorniPartita(calendar?.scorsa?.match_days || [], partitaAbituale, !!calendar?.scorsa),
+    } });
 
     const rombo = buildRombo(rows);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
