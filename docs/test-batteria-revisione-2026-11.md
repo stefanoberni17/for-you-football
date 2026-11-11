@@ -61,7 +61,7 @@ Con due obiettivi di forza e la tecnica il massimo è 6 test (circa 15 minuti); 
 
 Accanto a ogni test «Ho già il risultato» per scriverlo a mano (anche dei test in seduta: chi sa il suo 50 m lo scrive e non lo rifà).
 
-**La fascia per la pliometria (Ste, 11/11: «quelli della fascia dovrebbero essere usati anche per la pliometria»).** Oggi i test della fascia entrano solo nella Carta. Proposta: (a) il punteggio della fascia diventa un voto nel livello della pliometria (mediana bassa: una fascia debole tiene la pliometria al livello sotto, anche con un buon salto in lungo); (b) dolori alle articolazioni o fastidi dopo gli allenamenti nei questionari → pliometria intensiva solo in B e per le prime 4 settimane solo estensiva, come chi parte da zero; (c) equilibrio a occhi chiusi con più del 15 % di differenza tra i lati → nella pliometria prima gli esercizi a due gambe. È una regola nuova del Campo: le soglie le decide Ste.
+**La fascia per la pliometria (Ste, 11/11: «quelli della fascia dovrebbero essere usati anche per la pliometria»).** Oggi i test della fascia entrano solo nella Carta. Proposta: (a) il punteggio della fascia diventa un voto nel livello della pliometria (mediana bassa: una fascia debole tiene la pliometria al livello sotto, anche con un buon salto in lungo); (b) dolori alle articolazioni o fastidi dopo gli allenamenti nei questionari → la pliometria resta in B anche con i test dei salti da A, e le 4 settimane di ingresso in B non si accorciano (oggi un A ai salti le porta a 2); (c) equilibrio a occhi chiusi con più del 15 % di differenza tra i lati → nella pliometria prima gli esercizi a due gambe. È una regola nuova del Campo: le soglie le decide Ste.
 
 ## 3. Il resto dentro le sedute
 
