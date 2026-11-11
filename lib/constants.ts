@@ -58,6 +58,13 @@ export const GIORNATA_ATTESA_ORE = 4;
 // si registra; il gate di W1, le settimane successive e il Coach si sbloccano con Season 1.
 export const FREE_WEEKS = 1;
 
+/**
+ * La pagina di vendita (/scopri) è online? (11/11, Ste: l'app va online, la pagina di vendita aspetta.)
+ * Spenta: in produzione /scopri risponde 404 e chi apre il sito senza essere entrato va al login come prima.
+ * Nei Preview e in locale /scopri si apre lo stesso (per rivederla). Si accende con NEXT_PUBLIC_SCOPRI_ONLINE=1 su Vercel (Production) e un nuovo deploy.
+ */
+export const SCOPRI_ONLINE = process.env.NEXT_PUBLIC_SCOPRI_ONLINE === '1';
+
 /** Cancellazione account (26/9, Ste): i dati restano questi giorni per chi ci ripensa, poi spariscono per sempre. */
 export const ACCOUNT_GRACE_DAYS = 60;
 // Messaggi al Coach (chat in app) inclusi nella settimana gratis; Telegram resta di Season 1.

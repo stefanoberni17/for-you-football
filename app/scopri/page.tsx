@@ -3,7 +3,8 @@ import { Check, ChevronDown } from 'lucide-react';
 import { loadListino } from '@/lib/prezziServer';
 import { contaIscrittiCampo, contaIscrittiMente, loadImpostazioni } from '@/lib/appSettings';
 import { euroTesto, IMPOSTAZIONI_DEFAULT } from '@/lib/abbonamento';
-import { MIN_AGE } from '@/lib/constants';
+import { MIN_AGE, SCOPRI_ONLINE } from '@/lib/constants';
+import { notFound } from 'next/navigation';
 import {
   APERTURA, CHIUSURA, CONOSCI_CHIUSURA, domandeFrequenti, FISICO_TEASER, MENTE_INCLUDE, MOMENTI_APP, MOMENTI_CONOSCI, MOMENTI_FISICO,
   MOMENTI_TESTA, NON_POSITIVO, NOTA_CODICE, NOTA_VALORE, passiIngresso, prezziPubblici, RACCONTI, STORIA,
@@ -86,6 +87,8 @@ function importi(ps: (PrezzoPubblico | undefined)[]): string | null {
 }
 
 export default async function Scopri() {
+  // In produzione la pagina si apre solo con l'interruttore acceso (lib/constants.ts); nei Preview e in locale sempre
+  if (!SCOPRI_ONLINE && process.env.VERCEL_ENV === 'production') notFound();
   const { prezzi, imp } = await caricaPrezzi();
   const prova = imp.provaGiorni;
   const passi = passiIngresso(prova);

@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — La pagina di vendita resta spenta in produzione
+
+Ste: l'app va online, la pagina di vendita aspetta altre modifiche. `SCOPRI_ONLINE` in `lib/constants.ts` (`NEXT_PUBLIC_SCOPRI_ONLINE=1`): spento, in produzione `/scopri` risponde 404 e chi apre il sito senza essere entrato va al login come prima; nei Preview e in locale la pagina si apre lo stesso. Si accende mettendo la variabile su Vercel (Production) e rifacendo il deploy.
+
 ## 2026-11-10 — La storia di Ste sui tre momenti
 
 `lib/scopri.ts`, `STORIA.capitoli` riscritti sui racconti di Ste del 10/11 (Ste: «la storia deve girare attorno a peak action moment, peak emotional moment, peak learning moment; il resto è contorno»). Dieci schermate invece di otto:

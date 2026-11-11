@@ -18,7 +18,7 @@ import { oraItaly, todayItaly, dateItaly } from '@/lib/dateItaly';
 import type { CampoOggi } from '@/lib/trainingOggi';
 import { primoDaChiedere, scriviPendenti } from '@/lib/resocontoPendente';
 import { durataLabel } from '@/lib/trainingLabels';
-import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES, SCOPRI_ONLINE } from '@/lib/constants';
 import { shouldRedirectToPaywall, hasActiveAccess, canAccessWeek, inPausa, isPaywallActive, livelloFisico } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
@@ -110,10 +110,10 @@ export default function HomePage() {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        // Chi apre il sito senza essere entrato vede la pagina di vendita (6/11); l'app installata va al login
+        // Chi apre il sito senza essere entrato vede la pagina di vendita (6/11), se è online (SCOPRI_ONLINE); l'app installata va al login
         const installata = window.matchMedia('(display-mode: standalone)').matches
           || (navigator as Navigator & { standalone?: boolean }).standalone === true;
-        router.replace(installata ? '/login' : '/scopri');
+        router.replace(installata || !SCOPRI_ONLINE ? '/login' : '/scopri');
         return;
       }
 
