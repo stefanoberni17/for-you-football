@@ -11,7 +11,7 @@ interface WeeklyCalendarPopupProps {
   weekNumber?: number;
   existingTrainingDays?: number[];
   existingMatchDays?: number[];
-  /** I giorni del setup del Corpo (squadra e partita abituali): se la settimana li lascia vuoti, valgono questi. */
+  /** I giorni del setup del Corpo (squadra e partita abituali): una scelta che riempie la griglia, non un ripiego. */
   abitudine?: { trainingDays: number[]; matchDays: number[] } | null;
   /** Deve lanciare (o rigettare) se il salvataggio fallisce: il popup mostra l'errore. */
   onSave: (trainingDays: number[], matchDays: number[]) => Promise<void> | void;
@@ -59,9 +59,35 @@ export default function WeeklyCalendarPopup({
       selected ? selectedCls : 'bg-surface-2 text-muted border border-divider hover:bg-surface-3'
     }`;
 
-  // Se la settimana resta vuota e il setup del Corpo ha l'abitudine, il Corpo usa quella: lo diciamo
-  const squadraDaSetup = !selectedTraining.length && !!abitudine?.trainingDays.length;
-  const partitaDaSetup = !selectedMatch.length && !!abitudine?.matchDays.length;
+  // 11/11 (Ste: «"nessuno scelto: vale il tuo setup" è ambiguo, chi vuole dire "questa settimana niente squadra" ottiene
+  // il contrario»). Salvata, una settimana vuota vuol dire davvero niente (dal 10/11): lo diciamo così, e i giorni
+  // abituali del setup diventano una scelta esplicita che riempie la griglia.
+  const uguali = (a: number[], b: number[]) => a.length === b.length && a.every((d) => b.includes(d));
+  const scelte = (
+    attuali: number[], abituali: number[] | undefined, set: React.Dispatch<React.SetStateAction<number[]>>,
+    testi: { abituali: string; niente: string },
+  ) => abituali?.length ? (
+    <div className="mt-2 grid grid-cols-2 gap-2">
+      {[
+        { on: uguali(attuali, abituali), testo: `${testi.abituali} (${elenco(abituali)})`, fai: () => set([...abituali]) },
+        { on: attuali.length === 0, testo: testi.niente, fai: () => set([]) },
+      ].map((b) => (
+        <button key={b.testo} type="button" onClick={b.fai} aria-pressed={b.on}
+          className={`min-h-[44px] rounded-btn border px-3 py-2 text-left text-body-sm font-semibold transition-colors ${
+            b.on ? 'border-forest-400 bg-forest-500/15 text-app' : 'border-divider bg-surface-2 text-muted hover:bg-surface-3'}`}>
+          {b.testo}
+        </button>
+      ))}
+    </div>
+  ) : null;
+  const rigaSquadra = selectedTraining.length === 0
+    ? 'Questa settimana nessun allenamento con la squadra'
+    : abitudine?.trainingDays.length && uguali(selectedTraining, abitudine.trainingDays)
+      ? 'I tuoi giorni abituali'
+      : `${selectedTraining.length} ${selectedTraining.length === 1 ? 'allenamento' : 'allenamenti'} con la squadra`;
+  const rigaPartita = selectedMatch.length === 0
+    ? 'Questa settimana nessuna partita'
+    : `${selectedMatch.length} ${selectedMatch.length === 1 ? 'partita' : 'partite'}`;
 
   return (
     <Sheet
@@ -99,11 +125,8 @@ export default function WeeklyCalendarPopup({
             );
           })}
         </div>
-        <p className="text-caption text-muted mt-2">
-          {selectedTraining.length === 0
-            ? squadraDaSetup ? `Nessuno scelto: vale il tuo setup del Corpo (${elenco(abitudine!.trainingDays)})` : 'Nessun allenamento con la squadra'
-            : `${selectedTraining.length} ${selectedTraining.length === 1 ? 'allenamento' : 'allenamenti'} con la squadra`}
-        </p>
+        <p className="text-caption text-muted mt-2">{rigaSquadra}</p>
+        {scelte(selectedTraining, abitudine?.trainingDays, setSelectedTraining, { abituali: 'I miei giorni abituali', niente: 'Niente squadra questa settimana' })}
       </div>
 
       <div className="mb-6">
@@ -120,11 +143,8 @@ export default function WeeklyCalendarPopup({
             );
           })}
         </div>
-        <p className="text-caption text-muted">
-          {selectedMatch.length > 0
-            ? `${selectedMatch.length} ${selectedMatch.length === 1 ? 'partita' : 'partite'}`
-            : partitaDaSetup ? `Nessuna scelta: vale la partita del tuo setup (${elenco(abitudine!.matchDays)})` : 'Nessuna partita'}
-        </p>
+        <p className="text-caption text-muted">{rigaPartita}</p>
+        {scelte(selectedMatch, abitudine?.matchDays, setSelectedMatch, { abituali: 'La mia partita abituale', niente: 'Niente partita questa settimana' })}
       </div>
 
       {/* Anteprima con gli stessi segni della vista della settimana */}
