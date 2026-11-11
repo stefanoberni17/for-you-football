@@ -8,7 +8,7 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 - Azione: l'esordio in Serie C con la Reggiana a 17 anni e il primo appoggio corto, intercettato; poi il nascondersi, le giocate difficili per essere giustificato, il camp con la Nazionale Under 18.
 - Emozione: odiare andare al campo, gli anni a vomitare prima e durante le partite (citazione in apertura allineata: «a giocare completamente libero e focalizzato»), lo psicologo.
 - Apprendimento: Modena, l'infortunio in Coppa Italia, la frase della ragazza di allora («se tratti bene o male gli altri in base a come vanno le partite…»), lasciar decidere al risultato invece di guardare quello che dipende da lui.
-- Finale: il maestro di yoga, la finale contro la Reggiana da titolare (4-1), poi il lavoro con più di cento calciatori.
+- Finale: il maestro di yoga, la finale contro la Reggiana da titolare (4-1), poi «For You Football è quello che avrei voluto avere io a 17 anni». I cento calciatori restano solo nei numeri del profilo (Ste: «nella mia storia non c'entra nulla»).
 Solo fatti raccontati da Ste; foto invariate, riassegnate ai capitoli.
 - La storia si apre con «Ciao, sono Ste.» e «Ex calciatore professionista e semiprofessionista. Fondatore di For You Football.» sulla foto del tiro; la citazione viene dopo, senza foto. Stessa riga nel profilo della pagina.
 - Foto (Ste): colpo di testa ed esultanza tolte dalla storia (non c'entravano); quella con il ginocchio fasciato passa dal Modena alla finale. La griglia del profilo mostra righe intere da tre.

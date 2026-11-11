@@ -84,7 +84,7 @@ export const STORIA = {
     { testo: 'La mia ragazza di allora mi disse, più o meno: «Se tratti bene o male gli altri in base a come vanno le partite, resterai da solo. E non vivrai mai bene.»' },
     { testo: 'Mi fece male. Ma avevo capito: lasciavo decidere al risultato come stavo, invece di guardare quello che dipendeva da me.', foto: FOTO.modenaPalla },
     { testo: 'Quell\'anno, anche grazie a un maestro di yoga a cui devo tantissimo, ho trovato il mio equilibrio e ho giocato con coraggio. In finale, contro la Reggiana, ero titolare. Abbiamo vinto 4-1.', foto: FOTO.conduzione },
-    { testo: 'Da lì il lavoro è continuato: prima su di me, poi con più di cento calciatori, professionisti e dilettanti. For You Football è quello che avrei voluto avere io a 17 anni.' },
+    { testo: 'Da lì il lavoro su di me non si è più fermato. For You Football è quello che avrei voluto avere io a 17 anni.' },
   ] satisfies CapitoloStoria[],
   finale: 'Perché quando arriva il prossimo pallone, vorrei che avessi di nuovo voglia di riceverlo.',
 };
