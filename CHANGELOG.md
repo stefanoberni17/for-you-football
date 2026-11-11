@@ -2,6 +2,11 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — La pagina di vendita: cerchi disegnati, Under 18 di Serie C
+
+- I cerchi delle storie senza le foto di Ste (Ste: «nei cerchietti delle storie solo stilizzazioni, se no stonano»): «Dove ti porta» ha una bussola, «La mia storia» il pallone dei disegni della pagina, come le icone di Testa e Corpo. Le foto restano dentro la storia, nella griglia e nel profilo.
+- Storia: «al camp con la Nazionale Under 18 di Serie C».
+
 ## 2026-11-11 — La pagina di vendita resta spenta in produzione
 
 Ste: l'app va online, la pagina di vendita aspetta altre modifiche. `SCOPRI_ONLINE` in `lib/constants.ts` (`NEXT_PUBLIC_SCOPRI_ONLINE=1`): spento, in produzione `/scopri` risponde 404 e chi apre il sito senza essere entrato va al login come prima; nei Preview e in locale la pagina si apre lo stesso. Si accende mettendo la variabile su Vercel (Production) e rifacendo il deploy.

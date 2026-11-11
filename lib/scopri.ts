@@ -77,7 +77,7 @@ export const STORIA = {
   capitoli: [
     { testo: '17 anni, esordio in Serie C con la Reggiana. Avevo il terrore di sbagliare. Primo appoggio: palla corta, intercettata. Un passaggio fatto migliaia di volte.', foto: FOTO.reggiana },
     { testo: 'Da lì ho continuato a lottare su ogni pallone. Ma quando potevo ricevere, mi nascondevo. Per non rifare quell\'errore.', foto: FOTO.sguardo },
-    { testo: 'Evitavo le giocate semplici e cercavo quelle difficili: se sbagliavo lì, almeno ero giustificato. Anche al camp con la Nazionale Under 18 le qualità c\'erano, ma in partita la paura mi bloccava.', foto: FOTO.nazionale },
+    { testo: 'Evitavo le giocate semplici e cercavo quelle difficili: se sbagliavo lì, almeno ero giustificato. Anche al camp con la Nazionale Under 18 di Serie C le qualità c\'erano, ma in partita la paura mi bloccava.', foto: FOTO.nazionale },
     { testo: 'Senza accorgermene stavo smettendo di divertirmi. Ho iniziato a odiare ogni volta che andavo al campo.' },
     { testo: 'Per anni ho vomitato prima e durante le partite. Un anno dovevo uscire a fine primo tempo. Diete, nutrizionisti: niente. Poi uno psicologo. Lì è iniziato davvero il lavoro su di me.' },
     { testo: 'Anni dopo, al Modena. Poteva essere l\'anno buono. In preparazione mi faccio male in Coppa Italia. Ero così arrabbiato che non volevo parlare con nessuno.', foto: FOTO.modenaRitratto },
