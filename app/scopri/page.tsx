@@ -12,7 +12,7 @@ import {
 } from '@/lib/scopri';
 import { TelefonoCiclo } from '@/components/scopri/Telefono';
 import { Tour } from '@/components/scopri/Tour';
-import { Fischietto, PallaPersa, PalloneCheArriva, SeraPrima } from '@/components/scopri/Disegni';
+import { Fischietto, PalloneCheArriva, Panchina, SeraPrima } from '@/components/scopri/Disegni';
 import { ApriStoria, Cerchio, VisoreStorie } from '@/components/scopri/Storie';
 import { Carosello } from '@/components/scopri/Carosello';
 import { BarraProva } from '@/components/scopri/BarraProva';
@@ -57,7 +57,7 @@ function dividiTitolo(t: string): [string, string] {
 }
 
 /** I disegnini accanto alle quattro scene, nello stesso ordine di MOMENTI_CONOSCI. */
-const DISEGNI_SCENE = [PalloneCheArriva, PallaPersa, SeraPrima, Fischietto];
+const DISEGNI_SCENE = [PalloneCheArriva, Fischietto, SeraPrima, Panchina];
 
 /** Ste come un profilo: i numeri e le righe sotto il nome. Solo cose vere e sue. */
 // 10/11, Ste: «12 settimane» e «300+ esercizi» non parlano di lui, vanno altrove; la bio si apre come la storia.

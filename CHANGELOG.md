@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — La pagina di vendita: le quattro scene sui problemi principali
+
+Ste: «più efficaci in base ai problemi principali che possono avere i calciatori». `MOMENTI_CONOSCI` in `lib/scopri.ts`, una scena per problema: l'errore (il pallone semplice e i dieci minuti senza chiederlo), il giudizio del mister («Esco io»), la sera prima della partita che conta, la panchina («quando finalmente entri, non sei più tu»). Fonti nel commento: le paure scelte in registrazione dai ragazzi iscritti (errore e giudizio le prime due), i tre dolori del Brief Landing Page su Notion, gli studi sugli stressor dei giovani calciatori. Tolte la scena del nascondersi (dentro la prima) e «Potevo fare molto di più». Disegno nuovo `Panchina` in `components/scopri/Disegni.tsx`; il fischietto passa alla scena del mister.
+
 ## 2026-11-11 — La pagina di vendita: cerchi disegnati, Under 18 di Serie C
 
 - I cerchi delle storie senza le foto di Ste (Ste: «nei cerchietti delle storie solo stilizzazioni, se no stonano»): «Dove ti porta» ha una bussola, «La mia storia» il pallone dei disegni della pagina, come le icone di Testa e Corpo. Le foto restano dentro la storia, nella griglia e nel profilo.
