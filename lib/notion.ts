@@ -220,6 +220,8 @@ export function mapGiorno(page: any) {
     isGate: checkbox(p['È Gate']),
     isEsercizioPrincipale: checkbox(p['È Esercizio Principale']),
     domandeGate: domandeGateDa(richText(p['Domande Gate'])), // una per numero (1., 2., …), gli a capo restano dentro la domanda
+    domandeGateTesto: richText(p['Domande Gate']), // il campo intero: per rileggere le risposte di prima del 26/10 come le leggeva l'app (lib/gateStorico)
+    modificatoIl: (page.last_edited_time as string | undefined) ?? null, // ultima modifica della pagina: se è prima di una risposta del Gate, la domanda è certa (lib/gateStorico)
     missioneSettimana: richText(p['Missione Settimana']), // missione per la settimana successiva (solo G7)
     tipoGiorno: select(p['Tipo Giorno']),
     haCheckPrecedente: checkbox(p['Ha Check Precedente']),

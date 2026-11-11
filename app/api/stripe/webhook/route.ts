@@ -425,7 +425,7 @@ async function handleTrialWillEnd(sub: Stripe.Subscription) {
 
   const [emailOk, pushOk] = await Promise.all([
     email ? sendEmail({ to: email, subject: msg.oggetto, text: msg.testo }) : Promise.resolve(false),
-    sendPushToUser(profilo.user_id, msg.oggetto, `Dalla fine della prova: ${euroTesto(euro)} € al mese. Per disdire: Profilo → Il tuo accesso.`, '/profilo').catch(() => false),
+    sendPushToUser(profilo.user_id, msg.oggetto, `Dalla fine della prova: ${euroTesto(euro)} € al mese. Per disdire: Profilo → Account.`, '/account').catch(() => false),
   ]);
   logEvent(profilo.user_id, 'trial_reminder_sent', { email: emailOk, push: !!pushOk });
 }

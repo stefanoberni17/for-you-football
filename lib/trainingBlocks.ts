@@ -11,7 +11,7 @@
  * Ogni item referenzia il catalogo v1 (trainingCatalog) o v2 (trainingCatalogV2);
  * un blocco è "completo" se tutti gli esercizi sono mappati.
  */
-import type { QualitaV2, LivelloMinV2 } from './trainingCatalogV2';
+import type { QualitaV2, LivelloMinV2, PesoPer } from './trainingCatalogV2';
 import { BLOCCHI as BLOCCHI_GENERATI } from './trainingBlocks.generated';
 import { esercizioById } from './trainingCatalog';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
@@ -142,6 +142,26 @@ export function blocchiDisponibili(ctx: { livello: LivelloMinV2; attrezzatura: s
   });
 }
 
+const PESO_PER_TESTO: Record<PesoPer, (kg: number) => string> = {
+  bilanciere: (kg) => `${kg} kg in tutto, barra compresa`,
+  manubrio: (kg) => `${kg} kg per manubrio`,
+  kettlebell: (kg) => `${kg} kg per kettlebell`,
+  zavorra: (kg) => `${kg} kg di zavorra`,
+  macchina: (kg) => `${kg} kg sulla macchina (i pesi cambiano da macchina a macchina)`,
+};
+
+/**
+ * Il peso da usare quando il blocco non lo dice (10/11, Ste: «Gorilla row bisogna mettere il peso da usare, controlla che
+ * tutti gli esercizi con kb e pesi abbiano il peso»): il peso di partenza del catalogo, con la frase che dice che cosa vuol
+ * dire il numero. Poi la dose lo porta su o giù dai kg segnati nel player. null per gli esercizi senza pesi.
+ */
+export function pesoDiPartenza(id: string): { kg: number; nota: string } | null {
+  const e = esercizioV2ById(id);
+  if (!e?.pesoKg) return null;
+  const quanto = e.pesoPer ? PESO_PER_TESTO[e.pesoPer](e.pesoKg) : `${e.pesoKg} kg`;
+  return { kg: e.pesoKg, nota: `Peso di partenza: ${quanto}. Giusto se chiudi le ripetizioni con 2-3 in riserva; se è troppo facile o troppo pesante cambialo e scrivi nel campo Carico quello che hai usato.` };
+}
+
 /** Espande un blocco negli items del piano (esercizio_id, serie, quantità, recupero, carico, schema). */
 export function expandBlocco(b: Blocco, opt: { scala?: number } = {}): PlanItem[] {
   const scala = b.senzaScarico ? 1 : opt.scala ?? 1; // es. 0.6 in deload: meno serie, mai sotto 1
@@ -162,6 +182,10 @@ export function expandBlocco(b: Blocco, opt: { scala?: number } = {}): PlanItem[
     if (it.perLato) item.per_lato = true;
     if (it.schema === 'emom' && it.emomGruppo) item.emom_gruppo = it.emomGruppo;
     if (it.nota) item.nota = it.nota;
+    if (item.carico_kg === undefined) {
+      const p = pesoDiPartenza(item.esercizio_id);
+      if (p) { item.carico_kg = p.kg; item.nota = item.nota ? `${item.nota} ${p.nota}` : p.nota; }
+    }
     return item;
   });
 }

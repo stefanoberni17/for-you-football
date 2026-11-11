@@ -265,3 +265,76 @@ select:focus-visible {
     background: #ffffff !important;
   }
 }
+
+/* Pagina di vendita (/scopri, 6/11): il telefono con le schermate dell'app */
+.scopri-schermata { transition: opacity 700ms ease, transform 900ms ease; }
+@keyframes scopriGalleggia { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.scopri-galleggia { animation: scopriGalleggia 6s ease-in-out infinite; }
+.scopri-nastro { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.scopri-nastro::-webkit-scrollbar { display: none; }
+@keyframes scopriEntra { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.scopri-entra { animation: scopriEntra 700ms ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .scopri-schermata { transition: none; }
+  .scopri-galleggia, .scopri-entra { animation: none; }
+}
+/* I disegnini delle scene (7/11): il pallone con una tinta leggera del verde dell'app */
+.scopri-pagina { --scopri-cuoio: rgb(79 211 148 / 0.16); }
+/* La storia di Ste a schermate (7/11): barrette che si riempiono, foto in dissolvenza con un leggero avvicinamento, testo che sale */
+.scopri-storia-foto { transition: opacity 700ms ease; }
+@keyframes scopriBarra { from { width: 0; } to { width: 100%; } }
+.scopri-storia-barra { width: 0; animation-name: scopriBarra; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes scopriZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+.scopri-storia-zoom { animation: scopriZoom 12s ease-out forwards; }
+@keyframes scopriTesto { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.scopri-storia-testo { animation: scopriTesto 600ms ease both; }
+/* Le sezioni che entrano mentre scorri (components/scopri/Rivela.tsx) */
+.scopri-rivela { transition: opacity 700ms ease, transform 700ms ease; }
+.scopri-rivela.nascosta { opacity: 0; transform: translateY(28px); }
+@media (prefers-reduced-motion: reduce) {
+  .scopri-storia-zoom, .scopri-storia-testo { animation: none; }
+  .scopri-rivela, .scopri-rivela.nascosta { transition: none; opacity: 1; transform: none; }
+}
+/*
+ * Su telefono una sezione = una schermata (8/11, Ste: «ogni sezione che scorri stia esattamente dentro alla schermata senza
+ * andare su e giù»): la pagina si ferma all'inizio di ogni `.scopri-schermo`, alta quanto lo schermo, contenuto al centro,
+ * spazio in fondo per il bottone fisso (BarraProva). `.scopri-schermo-pieno` senza margini: l'apertura e la chiusura.
+ */
+@media (max-width: 1023.98px) {
+  html:has(.scopri-pagina) { scroll-snap-type: y mandatory; }
+  .scopri-schermo {
+    min-height: 100svh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: max(1.25rem, env(safe-area-inset-top));
+    padding-bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  }
+  .scopri-schermo.scopri-schermo-pieno { height: 100svh; padding: 0; justify-content: flex-start; }
+  .scopri-telefono-tour { width: clamp(96px, calc((100svh - 370px) * 0.45), 50vw); border-width: 6px; border-radius: 1.5rem; }
+  .scopri-telefono-tour > div { border-radius: 1.1rem; }
+}
+/* Schermi bassi (iPhone SE): via le cose che si possono togliere */
+@media (max-width: 1023.98px) and (max-height: 720px) {
+  .scopri-basso-via { display: none; }
+}
+
+/* ─── Il Corpo in blu (9/11, Ste: «due colori, mente e corpo a colpo d'occhio»; poi «forse troppo evidente») ───
+   La Mente è il verde del brand. Dentro `.parte-corpo` gli stessi token forest diventano un blu acciaio, meno acceso
+   del primo provato: tutte le classi forest-* (testo, riempimenti, gradienti, anelli) seguono da sole.
+   Si mette sull'area del Corpo (app/allenamento/layout.tsx) e sui singoli pezzi del Corpo fuori di lì
+   (riquadri in Home e Palestra, selettore, Profilo, Carta). Per scambiare i colori basta cambiare questi valori. */
+.parte-corpo {
+  --color-forest-50:  #eef4fa;
+  --color-forest-100: #e1ebf5;
+  --color-forest-200: #c8daec;
+  --color-forest-300: #a4c4e4;
+  --color-forest-400: #6fa3d6;
+  --color-forest-500: #2f6dab;
+  --color-forest-600: #27598d;
+  --color-forest-700: #1d456d;
+  --color-accent-glow: #6aa8e6;
+  --shadow-glow: 0 0 24px rgb(106 168 230 / 0.28);
+}

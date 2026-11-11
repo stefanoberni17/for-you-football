@@ -18,12 +18,16 @@ import { gruppoParteBassa, isParteBassa, ordineFormatiParteBassa, PB_RICHIAMO_ID
 import { giorniAllaPartita, QUALITA_FISICHE } from './trainingRulesV2';
 import { isPrePartita, RISC_VELOCITA_ID } from './trainingVelocita';
 import type { ContextV2, PianoLLM, SedutaLLM } from './trainingPlannerV2';
+import type { FonteSpostamento } from './spostamenti';
 
 export interface OpzioniRiparazione {
   /** Giornate chieste dall'atleta (già clampate ai giorni rimasti); null = decide il planner. */
   nRichieste: number | null;
   /** Giorni in cui una seduta può ancora stare (da oggi, ammessi, non vietati). */
   giorniRimasti: number[];
+  /** Oggi (AAAA-MM-GG) e da dove arriva lo spostamento, per la storia della seduta (10/11, lib/spostamenti). */
+  oggi?: string;
+  fonte?: FonteSpostamento;
 }
 
 const giornoNome = (d: number) => DAY_NAMES[d] ?? String(d);
@@ -95,6 +99,8 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
     const da = giornoNome(s.giorno);
     if (cand.length === 0) { note.push(`${da}: seduta tolta, nessun giorno libero dove spostarla`); s.giorno = -1; continue; }
     const perche = matchDays.includes(s.giorno) ? 'giorno della partita' : occupati.has(s.giorno) ? 'giorno già occupato' : s.giorno < (o.giorniRimasti[0] ?? 1) ? 'giorno già passato' : 'giorno non disponibile';
+    const perRagazzo = matchDays.includes(s.giorno) ? `il ${giornoNome(s.giorno).toLowerCase()} c'è la partita` : occupati.has(s.giorno) ? `il ${giornoNome(s.giorno).toLowerCase()} c'era già un'altra seduta` : s.giorno < (o.giorniRimasti[0] ?? 1) ? `il ${giornoNome(s.giorno).toLowerCase()} era già passato` : `il ${giornoNome(s.giorno).toLowerCase()} non è tra i giorni disponibili`;
+    s.spostamenti = [...(s.spostamenti ?? []), { da: s.giorno, a: cand[0], quando: o.oggi ?? new Date().toISOString().slice(0, 10), perche: perRagazzo, fonte: o.fonte ?? 'generazione' }];
     s.giorno = cand[0];
     occupati.add(s.giorno);
     note.push(`${da} → ${giornoNome(s.giorno)}: spostata (${perche})`);

@@ -85,7 +85,7 @@ export default function PausaPage() {
     <main className="min-h-screen bg-app pb-tabbar">
       <div className="max-w-2xl mx-auto px-4 pt-safe space-y-5">
         <div className="flex items-center gap-2 pt-2">
-          <BackButton onClick={() => router.push('/profilo')} />
+          <BackButton back="/account" />
           <h1 className="font-display text-title-1 font-bold text-app">{stato.inPausa ? 'Sei in pausa' : 'La pausa'}</h1>
         </div>
 

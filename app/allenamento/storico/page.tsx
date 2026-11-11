@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
-import { AppLoader, BackButton, Badge, Card, Chip } from '@/components/ui';
+import { AppLoader, Badge, Card, Chip, Testata } from '@/components/ui';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, BarChart, Bar } from 'recharts';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { Storico, StoricoEsercizio, StoricoTest } from '@/lib/trainingStorico';
@@ -37,7 +37,7 @@ export default function StoricoPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.push('/login'); return; }
       const res = await authFetch('/api/training/storico?giorni=90');
-      if (res.status === 403) { router.push('/strumenti'); return; }
+      if (res.status === 403) { router.push('/allenamento'); return; }
       const json = res.ok ? await res.json() : null;
       if (!vivo) return;
       if (json) setData(json);
@@ -80,8 +80,7 @@ export default function StoricoPage() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <BackButton href="/allenamento" label="Campo" className="mb-2" />
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">Lo storico</h1>
+        <Testata indietro={{ back: '/profilo', label: 'Profilo' }} titolo="Lo storico" className="mb-1" />
         <p className="text-body-sm text-muted mb-3">Ultimi {data.giorni} giorni: {data.totali.sedute} sedute, {durataLabel(data.totali.minuti)} in tutto, {data.totali.esercizi} esercizi con i log, {data.totali.test} test.</p>
         <div className="flex gap-2 mb-4">
           {TABS.map((t) => <Chip key={t.id} selected={tab === t.id} showCheck={false} onClick={() => setTab(t.id)} className="flex-1">{t.label}</Chip>)}

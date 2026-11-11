@@ -19,8 +19,8 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
   const [manualOpen, setManualOpen] = useState(false);
 
   // Skip popup su pagine pre-app e paywall
-  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete', '/riattiva', '/completa-profilo'];
-  const skipPage = skipPages.includes(pathname) || pathname.startsWith('/auth/');
+  const skipPages = ['/login', '/register', '/reset-password', '/onboarding', '/pricing', '/beta-complete', '/riattiva', '/completa-profilo', '/scopri'];
+  const skipPage = skipPages.includes(pathname) || pathname.startsWith('/auth/') || pathname.startsWith('/scopri/');
   // /allenamento/* è il binario training, separato dal rituale mentale: niente Reset automatico, ma il Reset a richiesta
   // ("Arriva presente" prima della seduta, M12 20/10) deve funzionare → il popup si carica anche lì e si apre solo a mano
   const shouldShowPopup = !skipPage && !pathname.startsWith('/allenamento');

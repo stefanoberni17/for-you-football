@@ -34,8 +34,9 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'chi
 // Luce dall'alto (inset) + ombra sotto: i bottoni hanno corpo, non sono rettangoli piatti
 const LIT = 'shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_1px_2px_rgba(0,0,0,0.4)]';
 const VARIANT: Record<ButtonVariant, string> = {
-  primary: `bg-gradient-to-b from-[#1fa86b] to-forest-500 text-white hover:from-forest-500 hover:to-forest-600 ${LIT}`,
-  hero: 'bg-gradient-to-br from-[#22b873] via-forest-500 to-forest-600 text-white hover:to-forest-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_28px_rgba(45,209,122,0.32)]',
+  primary: `bg-gradient-to-b from-[color-mix(in_srgb,var(--color-forest-400)_25%,var(--color-forest-500))] to-forest-500 text-white hover:from-forest-500 hover:to-forest-600 ${LIT}`,
+  // dal 9/11 con i token (prima #22b873 e il glow verde scritti a mano): nel Corpo diventa blu come il resto
+  hero: 'bg-gradient-to-br from-[color-mix(in_srgb,var(--color-forest-400)_40%,var(--color-forest-500))] via-forest-500 to-forest-600 text-white hover:to-forest-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_28px_color-mix(in_srgb,var(--color-accent-glow)_32%,transparent)]',
   secondary: 'bg-surface-2 text-app border border-white/8 hover:bg-surface-3 hover:border-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]',
   ghost: 'bg-transparent text-forest-400 hover:bg-forest-500/10 active:bg-forest-500/15',
   inverse: 'bg-white text-forest-700 hover:bg-forest-50 shadow-[0_6px_20px_rgba(0,0,0,0.25),inset_0_-1px_0_rgba(0,0,0,0.06)]',

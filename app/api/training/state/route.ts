@@ -1,3 +1,4 @@
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { NextRequest, NextResponse } from 'next/server';
 import { loadResoconti } from '@/lib/trainingResocontoServer';
 import { resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
@@ -96,8 +97,7 @@ export async function GET(request: NextRequest) {
       // Gli ultimi 14 check-in: la condizione dell'atleta per il tetto personale (M11, 26/10)
       supabaseAdmin.from('daily_checkin').select('date, physical_state, recovery_quality')
         .eq('user_id', userId).order('date', { ascending: false }).limit(14),
-      supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
-        .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+      calendarioDellaSettimana(userId).then((c) => ({ data: c })),
       getConsents(userId),
       loadSquadraCompleta(userId),
       loadFocusSetup(userId),
@@ -210,11 +210,11 @@ export async function GET(request: NextRequest) {
       return tecnicaDelMese(conteggi, scelta, { tecnicaObiettivo: setup.focus.some((f) => f === 'tecnica' || f === 'tutto'), mix: sceltaMix(scelta, minuti), tiri: tettoTiri(feedbackRecenti) });
     };
     const squadraStimato = caricoSquadraStimato({
-      trainingDays: calendar?.training_days || [], matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale),
-      squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra,
+      trainingDays: calendar?.training_days || [], matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale, calendar?.confermata),
+      squadraDurataMin: setup.squadraDurataMin, fase: setup.fase, squadra, confermata: calendar?.confermata,
     });
     // Il carico squadra entra come base costante: ACWR e tetto sul totale app+squadra; i giorni con il resoconto pesano il dato vero
-    const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: setup.squadraDurataMin, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra), matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale) } });
+    const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: setup.squadraDurataMin, giorni: { trainingDays: giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata), matchDays: giorniPartita(calendar?.match_days || [], partitaAbituale, calendar?.confermata) } });
     const oggi = todayRome();
     // Livello per qualità (25/9) e ri-test mirato: le famiglie che hanno finito i codici del loro livello
     // (o sono in prova del livello sopra) dicono quali test rifare, non tutta la batteria
@@ -248,13 +248,16 @@ export async function GET(request: NextRequest) {
     });
     const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale: squadraStimato, squadraMisurata: misurata, condizione });
     // Il piano della settimana con i resoconti applicati (serie facoltative, giorni più leggeri): il piano salvato non cambia
-    const matchDaysEff = giorniPartita(calendar?.match_days || [], partitaAbituale);
-    const trainingDaysEff = giorniSquadra(calendar?.training_days || [], squadra);
+    const matchDaysEff = giorniPartita(calendar?.match_days || [], partitaAbituale, calendar?.confermata);
+    const trainingDaysEff = giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata);
     const fattiGiorni = new Set((completions || []).map((c: { session_key: string }) => Number(String(c.session_key).split('#')[1])).filter((n: number) => Number.isInteger(n)));
     // M5 (26/10): gli esercizi molto leggeri in una seduta già fatta salgono di un passo nelle sedute successive della settimana
     const votiSedute = new Map<number, number | null>();
     for (const c of completions) { const g = Number(String(c.session_key).split('#')[1]); if (Number.isInteger(g)) votiSedute.set(g, c.rpe ?? null); }
-    const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti });
+    const daChiedere = resocontiDaChiedere({ oggi, trainingDays: trainingDaysEff, matchDays: matchDaysEff, resoconti, settimanaPrima: {
+      trainingDays: giorniSquadra(calendar?.scorsa?.training_days || [], squadra, !!calendar?.scorsa),
+      matchDays: giorniPartita(calendar?.scorsa?.match_days || [], partitaAbituale, !!calendar?.scorsa),
+    } });
 
     const rombo = buildRombo(rows);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
@@ -377,7 +380,9 @@ export async function GET(request: NextRequest) {
       // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023): sforzo e qualità per giorno
       squadra,
       // Settimana squadra caricata dall'utente (per la maschera: si vede prima di scegliere i giorni)
-      calendario: { trainingDays: calendar?.training_days || [], matchDays: calendar?.match_days || [] },
+      calendario: { trainingDays: trainingDaysEff, matchDays: matchDaysEff },
+      // 10/11: il ragazzo ha detto squadra e partita di questa settimana; finché no, il piano automatico aspetta
+      settimanaConfermata: !!calendar?.confermata,
       // Giorno abituale della partita (setup, chiave `partita` in training_squadra): usato dal planner quando il calendario è vuoto
       partitaAbituale,
       // Resoconto dopo squadra/partita (19/10): oggi e ieri senza risposta (l'hub chiede il primo; "Salta" vive in localStorage), gli ultimi dati

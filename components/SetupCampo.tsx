@@ -1,0 +1,375 @@
+'use client';
+
+
+import { useState } from 'react';
+import { authFetch } from '@/lib/authFetch';
+import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
+import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
+import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
+import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus, type FocusId } from '@/lib/trainingRequest';
+import { Banner, Button, Card, Chip, Field, Input, RpeScale, SectionTitle, Textarea } from '@/components/ui';
+import { LIMITAZIONI_NOTA_MAX, LIMITAZIONI_ZONE_MAX, ZONE_DOLORE, type ZonaDolore } from '@/lib/trainingDolore';
+import { AVVISO_RESISTENZA_IN_SEASON } from '@/lib/trainingResistenza';
+import FattibilitaBanner from '@/components/FattibilitaBanner';
+import { Scale } from 'lucide-react';
+import type { TrainingState } from '@/app/allenamento/page';
+
+// Dal /api/training/state (stessa chiamata dell'hub) servono solo setup, calendario, tetti e squadra
+export type SetupState = Pick<TrainingState, 'setup' | 'setupDisponibile' | 'calendario' | 'maxSeduteFisiche' | 'maxSeduteTotali' | 'squadra' | 'partitaAbituale' | 'squilibri' | 'abbonamento'>;
+
+// Etichetta di un gruppo di controlli (chip, Sì/No): label corta + parentetica sotto
+function GroupLabel({ children, hint }: { children: React.ReactNode; hint?: React.ReactNode }) {
+  return (
+    <div className="mb-2">
+      <p className="text-label font-semibold text-muted">{children}</p>
+      {hint && <p className="text-caption text-muted mt-0.5">{hint}</p>}
+    </div>
+  );
+}
+
+const NON_ATTIVA = 'Questa parte non è ancora attiva.';
+const siNo = ([true, false] as const);
+
+/**
+ * "Il tuo setup" del Corpo (9/11: è la scheda Setup dell'Allenamento del Corpo): attrezzatura, esperienza, fase,
+ * obiettivi, quando, peso, limitazioni e gli allenamenti con la squadra. Salva con gli stessi POST a
+ * /api/training/setup (setup + focus + preferenze in un colpo, squadra a parte). Lo stato arriva dall'hub.
+ */
+export default function SetupCampo({ state, ricarica, conFascia = false }: {
+  state: SetupState; ricarica: () => Promise<void> | void; conFascia?: boolean;
+}) {
+  const [setupDraft, setSetupDraft] = useState<TrainingSetup>(() => ({
+    ...state.setup,
+    // Da "Aggiungi la fascia agli obiettivi" (?fascia=1): la fascia entra già selezionata, poi si salva
+    focus: conFascia && !state.setup.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) ? toggleFocus(state.setup.focus, 'fascia') : state.setup.focus,
+  }));
+  const [squadraDraft, setSquadraDraft] = useState<SquadraSettimana>({ ...(state.squadra || {}) });
+  const [partitaDraft, setPartitaDraft] = useState<number | null>(state.partitaAbituale ?? null); // giorno abituale della partita (28/9)
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [errore, setErrore] = useState<string | null>(null);
+  // Parti che dipendono da colonne non ancora presenti (migration mancante): si dice solo "non ancora attiva"
+  const [nonAttive, setNonAttive] = useState<{ setup?: boolean; obiettivi?: boolean; quando?: boolean; squadra?: boolean; limitazioni?: boolean }>({});
+
+  // Dopo un salvataggio lo stato torna dall'hub: le bozze ripartono da lì
+  const [visto, setVisto] = useState(state);
+  if (visto !== state) {
+    setVisto(state);
+    setSetupDraft({ ...state.setup });
+    setSquadraDraft({ ...(state.squadra || {}) });
+    setPartitaDraft(state.partitaAbituale ?? null);
+  }
+
+  const setupDirty = !!state && !!setupDraft && JSON.stringify(setupDraft) !== JSON.stringify(state.setup);
+  const squadraDirty = !!state && (JSON.stringify(squadraDraft) !== JSON.stringify(state.squadra || {}) || partitaDraft !== (state.partitaAbituale ?? null));
+  const dirty = setupDirty || squadraDirty;
+
+  const salva = async () => {
+    if (!state || !setupDraft || !dirty) return;
+    setSaving(true); setErrore(null); setSaved(false);
+    const avvisi: typeof nonAttive = {};
+    let ok = true;
+    try {
+      if (setupDirty) {
+        const res = await authFetch('/api/training/setup', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(setupDraft),
+        });
+        const d = await res.json().catch(() => ({}));
+        if (res.ok) {
+          if (d.focusSalvato === false) avvisi.obiettivi = true;
+          if (d.preferenzeSalvate === false) avvisi.quando = true;
+          if (d.limitazioniSalvate === false) avvisi.limitazioni = true;
+        } else {
+          const msg: string = d.error || '';
+          // "manca la migration 024/025" → quella parte non è ancora attiva (il resto del setup è passato)
+          if (/migration 024/.test(msg)) avvisi.obiettivi = true;
+          else if (/migration 025/.test(msg)) avvisi.quando = true;
+          else if (/migration 036/.test(msg)) avvisi.limitazioni = true;
+          else if (/migration/.test(msg)) avvisi.setup = true;
+          else { ok = false; setErrore(msg || 'Non sono riuscito a salvare. Riprova.'); }
+        }
+      }
+      if (squadraDirty && ok) {
+        const res = await authFetch('/api/training/setup', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ squadra: { ...squadraDraft, partita: partitaDraft } }),
+        });
+        const d = await res.json().catch(() => ({}));
+        if (res.ok && d.squadraSalvata !== false) { /* ok */ }
+        else if (d.squadraSalvata === false || /migration/.test(d.error || '')) avvisi.squadra = true;
+        else { ok = false; setErrore(d.error || 'Non sono riuscito a salvare. Riprova.'); }
+      }
+      setNonAttive(avvisi);
+      if (ok) {
+        await ricarica();
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2500);
+      }
+    } finally { setSaving(false); }
+  };
+
+  const giorniSquadra = state.calendario?.trainingDays ?? [];
+  const maxTotali = state.maxSeduteTotali ?? state.maxSeduteFisiche ?? 3;
+  // Le aree del pacchetto (3/11): Base 1, Medio 2; oltre il tetto il chip nuovo sostituisce l'ultimo
+  const areeMax = state.abbonamento && !state.abbonamento.manuale ? state.abbonamento.aree : null;
+  const scegliFocus = (attuali: FocusId[], id: FocusId): FocusId[] => {
+    if (areeMax == null) return toggleFocus(attuali, id);
+    if (attuali.includes(id)) return attuali.filter((x) => x !== id);
+    return [...attuali.filter((x) => x !== FOCUS_TUTTO), id].slice(-areeMax);
+  };
+  const disabilitato = !state.setupDisponibile;
+
+  return (
+    <div>
+        <p className="mb-4 px-1 text-body text-muted">Cambia quando cambia la tua stagione.</p>
+
+        {disabilitato && <p className="text-body-sm text-warning mb-4">{NON_ATTIVA}</p>}
+
+        <div className={`space-y-4 ${disabilitato ? 'opacity-60 pointer-events-none' : ''}`}>
+          {/* Dove ti alleni */}
+          <Card padding="sm">
+            <SectionTitle title="Dove ti alleni" className="mb-3" />
+            <div className="space-y-5">
+              <div>
+                <GroupLabel hint="Il corpo libero c'è sempre.">Cosa hai a disposizione?</GroupLabel>
+                <div className="flex flex-wrap gap-2">
+                  {ATTREZZATURA_OPZIONI.map((a) => {
+                    const on = setupDraft.attrezzatura.includes(a);
+                    return (
+                      <Chip key={a} selected={on} onClick={() => setSetupDraft({ ...setupDraft, attrezzatura: on ? setupDraft.attrezzatura.filter((x) => x !== a) : [...setupDraft.attrezzatura, a] })}>
+                        {ATTREZZATURA_LABEL[a]}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <GroupLabel>Esperienza in palestra?</GroupLabel>
+                  <div className="grid grid-cols-2 gap-2">
+                    {siNo.map((v) => (
+                      <Chip key={String(v)} selected={setupDraft.esperienzaPalestra === v} onClick={() => setSetupDraft({ ...setupDraft, esperienzaPalestra: v })} className="w-full">
+                        {v ? 'Sì' : 'No'}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <GroupLabel>Ti alleni con un compagno?</GroupLabel>
+                  <div className="grid grid-cols-2 gap-2">
+                    {siNo.map((v) => (
+                      <Chip key={String(v)} selected={setupDraft.compagno === v} onClick={() => setSetupDraft({ ...setupDraft, compagno: v })} className="w-full">
+                        {v ? 'Sì' : 'No'}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-body-sm text-muted leading-relaxed">
+                Servono per scegliere solo esercizi che puoi fare davvero e per dosare i carichi in sicurezza (fino ai 18 anni o senza esperienza in palestra: massimo il 60% del tuo massimale).
+              </p>
+              {nonAttive.setup && <p className="text-body-sm text-warning">{NON_ATTIVA}</p>}
+            </div>
+          </Card>
+
+          {/* La tua stagione */}
+          <Card padding="sm">
+            <SectionTitle title="La tua stagione" className="mb-3" />
+            <GroupLabel>In che fase sei?</GroupLabel>
+            <div className="grid grid-cols-1 gap-2">
+              {FASI.map((f) => (
+                <Chip key={f} selected={setupDraft.fase === f} onClick={() => setSetupDraft({ ...setupDraft, fase: f })} className="w-full">
+                  {FASE_LABEL[f]}
+                </Chip>
+              ))}
+            </div>
+          </Card>
+
+          {/* Su cosa vuoi lavorare */}
+          <Card padding="sm">
+            <SectionTitle title="Su cosa vuoi lavorare" subtitle={areeMax != null
+              ? `Il tuo Fisico ${state.abbonamento?.nome ?? ''} ha ${areeMax === 1 ? 'un\'area: sceglila' : `${areeMax} aree: scegline fino a ${areeMax}, in ordine di priorità`}. Per tutte le aree c'è il Pro.`
+              : 'Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell\'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".'} className="mb-3" />
+            {state.squilibri?.latoDebole && !setupDraft.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) && (
+              <Banner tone="accent" icon={<Scale size={20} />} title={`Gamba ${state.squilibri.latoDebole === 'sx' ? 'sinistra' : 'destra'} più debole nei test`} className="mb-3"
+                action={{ label: 'Aggiungi la fascia', onClick: () => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, 'fascia') }) }}>
+                Per pareggiare non servono serie in più: serve la fascia. Mettila tra gli obiettivi.
+              </Banner>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {FOCUS_OPZIONI.filter((f) => areeMax == null || f.id !== FOCUS_TUTTO).map((f) => {
+                const idx = setupDraft.focus.indexOf(f.id);
+                const on = idx >= 0;
+                return (
+                  <Chip key={f.id} selected={on} onClick={() => setSetupDraft({ ...setupDraft, focus: scegliFocus(setupDraft.focus, f.id) })}
+                    className={!on && f.id === FOCUS_TUTTO ? '!border-forest-500/50 !text-forest-300' : ''}>
+                    {on && setupDraft.focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
+                  </Chip>
+                );
+              })}
+            </div>
+            {/* Resistenza in season (Ste, 25/10; punto 19): entra solo come obiettivo esplicito, con l'avviso sul sovraccarico */}
+            {setupDraft.fase === 'in_season' && setupDraft.focus.includes('resistenza') && (
+              <Banner tone="warn" title="Resistenza in stagione" className="mt-3">{AVVISO_RESISTENZA_IN_SEASON}</Banner>
+            )}
+            {/* "Con questo tempo e questi attrezzi posso darti X?" (campo-da-fare 5, 20/10): detto PRIMA di salvare */}
+            <FattibilitaBanner attrezzatura={setupDraft.attrezzatura} compagno={setupDraft.compagno} durataMin={setupDraft.durataMin} focus={setupDraft.focus} className="mt-3" />
+            <p className="text-body-sm text-muted mt-3">{areeMax != null
+              ? 'Entrano in ogni settimana, anche in quella preparata da sola il lunedì.'
+              : <>Entrano in ogni settimana, anche in quella preparata da sola il lunedì: i primi due ci sono sempre, gli altri dove c&apos;è spazio. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</>}</p>
+            {nonAttive.obiettivi && <p className="text-body-sm text-warning mt-2">{NON_ATTIVA}</p>}
+          </Card>
+
+          {/* Quando */}
+          <Card padding="sm">
+            <SectionTitle title="Quando" subtitle="Vuoto = decide il preparatore." className="mb-3" />
+            <div className="space-y-5">
+              <div>
+                <GroupLabel>Quando puoi allenarti con l&apos;app?</GroupLabel>
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => {
+                    const on = (setupDraft.giorni ?? []).includes(d);
+                    const mark = state.calendario?.matchDays.includes(d) ? ' ⚽' : state.calendario?.trainingDays.includes(d) ? ' ·S' : '';
+                    return (
+                      <Chip key={d} selected={on} showCheck={false} onClick={() => setSetupDraft({ ...setupDraft, giorni: on ? (setupDraft.giorni ?? []).filter((x) => x !== d) : [...(setupDraft.giorni ?? []), d].sort((a, b) => a - b) })}>
+                        {DAY_SHORT_NAMES[d]}{mark}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <GroupLabel hint={`Massimo ${maxTotali}. "Decide lui" = il preparatore sceglie quante, tra i giorni che indichi.`}>Giornate a settimana</GroupLabel>
+                  <div className="flex flex-wrap gap-2">
+                    <Chip selected={setupDraft.sedute === null} onClick={() => setSetupDraft({ ...setupDraft, sedute: null })}>Decide lui</Chip>
+                    {Array.from({ length: maxTotali }, (_, i) => i + 1).map((n) => (
+                      <Chip key={n} selected={setupDraft.sedute === n} showCheck={false} onClick={() => setSetupDraft({ ...setupDraft, sedute: setupDraft.sedute === n ? null : n })}>{n}</Chip>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <GroupLabel>Tempo per seduta</GroupLabel>
+                  <div className="flex flex-wrap gap-2">
+                    {DURATE.map((d) => (
+                      <Chip key={d} selected={setupDraft.durataMin === d} showCheck={false} onClick={() => setSetupDraft({ ...setupDraft, durataMin: setupDraft.durataMin === d ? null : d })}>{d}&apos;</Chip>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-body-sm text-muted">Valgono per ogni settimana, anche per il piano preparato da solo il lunedì. In &quot;Rifai da capo&quot; li trovi già compilati e puoi cambiarli per una settimana sola. Oltre le {state.maxSeduteFisiche ?? 3} giornate con forza o corsa, le altre sono solo fascia, tecnica o recupero.</p>
+              {nonAttive.quando && <p className="text-body-sm text-warning">{NON_ATTIVA}</p>}
+            </div>
+          </Card>
+
+          {/* Il tuo corpo */}
+          <Card padding="sm">
+            <SectionTitle title="Il tuo corpo" subtitle="Serve per i massimali in palestra." className="mb-3" />
+            <Field label="Peso corporeo (kg)" htmlFor="setup-peso">
+              <Input id="setup-peso" type="text" inputMode="decimal" value={setupDraft.pesoKg ?? ''} placeholder="es. 62"
+                onChange={(e) => { const v = e.target.value.replace(',', '.').replace(/[^0-9.]/g, ''); setSetupDraft({ ...setupDraft, pesoKg: v === '' ? null : Number(v) }); }}
+                className="tabular-nums" />
+            </Field>
+          </Card>
+
+          {/* Infortuni e limitazioni (punto 4, 26/10) */}
+          <Card padding="sm">
+            <SectionTitle title="Infortuni e limitazioni" subtitle="Zone da proteggere e cose che il preparatore deve sapere. L'app non fa diagnosi: con un dolore nuovo usa il triangolo &quot;Hai un dolore?&quot; in Palestra › Corpo." className="mb-3" />
+            <div className="space-y-4">
+              <div>
+                <GroupLabel hint={`Fino a ${LIMITAZIONI_ZONE_MAX}. Sugli esercizi che le coinvolgono le serie sono ridotte e i kg più bassi, finché restano qui.`}>Zone da proteggere</GroupLabel>
+                <div className="flex flex-wrap gap-2">
+                  {ZONE_DOLORE.map((z) => {
+                    const on = setupDraft.limitazioni.zone.includes(z);
+                    const piene = !on && setupDraft.limitazioni.zone.length >= LIMITAZIONI_ZONE_MAX;
+                    return (
+                      <Chip key={z} selected={on} disabled={piene}
+                        onClick={() => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, zone: on ? setupDraft.limitazioni.zone.filter((x) => x !== z) : [...setupDraft.limitazioni.zone, z as ZonaDolore] } })}>
+                        {z}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </div>
+              <Field label="Infortuni passati, operazioni, cose da sapere" htmlFor="setup-limitazioni-nota" optional counter={{ value: setupDraft.limitazioni.nota.length, max: LIMITAZIONI_NOTA_MAX }} helper="Lo legge il preparatore AI, non il Coach mentale. Niente dati medici che non vuoi condividere.">
+                <Textarea id="setup-limitazioni-nota" rows={3} maxLength={LIMITAZIONI_NOTA_MAX} value={setupDraft.limitazioni.nota}
+                  placeholder="es. crociato sinistro operato nel 2024, ok adesso; mi fa male la schiena con gli stacchi pesanti"
+                  onChange={(e) => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, nota: e.target.value.slice(0, LIMITAZIONI_NOTA_MAX) } })} />
+              </Field>
+              {nonAttive.limitazioni && <p className="text-body-sm text-warning">{NON_ATTIVA}</p>}
+            </div>
+          </Card>
+
+          {/* Con la squadra */}
+          <Card padding="sm">
+            <SectionTitle title="Con la squadra" subtitle="Facoltativo: il piano non raddoppia quello che fa già il mister." className="mb-3" />
+            <div className="space-y-4">
+              <Field label="Quanto dura un allenamento con la squadra (min)" htmlFor="setup-squadra-min">
+                <Input id="setup-squadra-min" type="text" inputMode="numeric" value={setupDraft.squadraDurataMin ?? ''} placeholder="es. 90"
+                  onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ''); setSetupDraft({ ...setupDraft, squadraDurataMin: v === '' ? null : Number(v) }); }}
+                  className="tabular-nums" />
+              </Field>
+              <div>
+                <p className="text-body-sm text-app font-semibold mb-1">Di solito la partita è di</p>
+                <p className="text-caption text-muted mb-2">Serve al piano del lunedì, quando il calendario della settimana non è ancora compilato: niente gambe pesanti il giorno prima.</p>
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                    <Chip key={d} selected={partitaDraft === d} onClick={() => setPartitaDraft(partitaDraft === d ? null : d)}>{DAY_SHORT_NAMES[d]}</Chip>
+                  ))}
+                  <Chip selected={partitaDraft === null} onClick={() => setPartitaDraft(null)}>Nessuna</Chip>
+                </div>
+              </div>
+              {giorniSquadra.length === 0 ? (
+                <p className="text-body-sm text-muted leading-relaxed">
+                  Prima imposta i giorni con la squadra in Home, da «La tua settimana» › «Modifica squadra e partita»: qui poi puoi dire quanto è impegnativo ognuno.
+                </p>
+              ) : (
+                <>
+                  <p className="text-body-sm text-muted leading-relaxed">
+                    Per ogni giorno con la squadra: quanto è impegnativo di solito (1 = leggero, 10 = massimo) e su cosa lavorate.
+                  </p>
+                  {giorniSquadra.map((d) => {
+                    const g = squadraDraft[d] || { rpe: null, qualita: [] as SquadraQualitaId[] };
+                    const setG = (next: { rpe: number | null; qualita: SquadraQualitaId[] }) => {
+                      const copia = { ...squadraDraft };
+                      if (next.rpe === null && next.qualita.length === 0) delete copia[d]; else copia[d] = next;
+                      setSquadraDraft(copia);
+                    };
+                    return (
+                      <Card key={d} variant="raised" padding="sm">
+                        <p className="text-body font-bold text-app mb-2">{DAY_NAMES[d]}{state.calendario?.matchDays.includes(d) ? ' · anche partita' : ''}</p>
+                        <RpeScale value={g.rpe} onChange={(n) => setG({ ...g, rpe: g.rpe === n ? null : n })} tipo="sforzo" ariaPrefix="Sforzo" label="Sforzo di solito" className="mb-3" />
+                        <p className="text-caption text-muted mb-1.5">Su cosa lavorate</p>
+                        <div className="flex flex-wrap gap-2">
+                          {SQUADRA_QUALITA.map((q) => {
+                            const on = g.qualita.includes(q.id);
+                            return (
+                              <Chip key={q.id} selected={on}
+                                onClick={() => setG({ ...g, qualita: on ? g.qualita.filter((x) => x !== q.id) : [...g.qualita, q.id] })}>
+                                {q.label}
+                              </Chip>
+                            );
+                          })}
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </>
+              )}
+              {nonAttive.squadra && <p className="text-body-sm text-warning">{NON_ATTIVA}</p>}
+            </div>
+          </Card>
+        </div>
+
+        {/* Salva sticky sopra la tab bar: attivo solo se qualcosa è cambiato */}
+        <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 -mx-5 px-5 mt-5 pt-3 pb-2 bg-app-bg/90 backdrop-blur">
+          {errore && <p className="text-body-sm text-warning mb-2">{errore}</p>}
+          <Button size="lg" fullWidth onClick={salva} loading={saving} disabled={!dirty || disabilitato}>
+            {saved ? 'Salvato' : 'Salva'}
+          </Button>
+        </div>
+    </div>
+  );
+}
+

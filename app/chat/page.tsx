@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import ChatBot, { ChatBotRef } from '@/components/ChatBot';
 import { AppLoader } from '@/components/ui';
+import ParteSwitch, { salvaParte } from '@/components/ParteSwitch';
 
 // Massimo 3, corti (≤ 6 parole): si leggono in un colpo d'occhio (review 16/9)
 const suggestions = [
@@ -34,6 +35,7 @@ function ChatContent() {
         .eq('user_id', session.user.id)
         .single();
       if (profileData?.name) setUserName(profileData.name);
+      salvaParte('mente'); // la tab Chat riapre il Coach
       setLoading(false);
     };
     checkAuth();
@@ -62,6 +64,10 @@ function ChatContent() {
   // struttura alle altre pagine -> la tab bar resta attaccata al bordo.
   return (
     <main className="h-dvh-screen flex flex-col bg-app pt-safe px-0 sm:px-4 pb-tabbar overflow-hidden">
+      {/* Chat › Mente = il Coach, Chat › Corpo = il preparatore (8/11) */}
+      <div className="max-w-4xl w-full mx-auto px-4 sm:px-0 pb-3 shrink-0">
+        <ParteSwitch parte="mente" hrefs={{ mente: '/chat', corpo: '/allenamento/chat' }} />
+      </div>
       <div className="flex-1 flex flex-col min-h-0 max-w-4xl w-full mx-auto">
         <ChatBot ref={chatBotRef} suggestions={suggestions} userName={userName} />
       </div>

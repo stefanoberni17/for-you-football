@@ -3,23 +3,27 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Home, LayoutDashboard, Dumbbell, MessageCircle, User } from 'lucide-react';
+import { Home, Dumbbell, MessageCircle, User } from 'lucide-react';
 import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
-import { leggiParte } from '@/components/PalestraSwitch';
+import { leggiParte, EVENTO_PARTE } from '@/components/ParteSwitch';
 
 export default function BottomTabBar() {
   const pathname = usePathname();
   // Pallino su "Palestra" con un resoconto squadra/partita da dare (20/10): letto dal dispositivo, nessuna richiesta
   const [pendente, setPendente] = useState(false);
-  // La tab Palestra riapre l'ultima parte usata (Testa | Fisico): deciso QUI, non in /strumenti, così i link
-  // "Palestra" dalle altre pagine (SOS, giorno, settimana) portano sempre alla Testa (review 20/10)
-  const [palestraHref, setPalestraHref] = useState('/strumenti');
+  // Mente | Corpo (8/11): Palestra e Chat riaprono l'ultima parte scelta col selettore (components/ParteSwitch)
+  const [corpo, setCorpo] = useState(false);
   useEffect(() => {
-    const aggiorna = () => { setPendente(pendenteAdesso()); setPalestraHref(leggiParte() === 'fisico' ? '/allenamento' : '/strumenti'); };
+    const aggiorna = () => { setPendente(pendenteAdesso()); setCorpo(leggiParte() === 'corpo'); };
     aggiorna();
     window.addEventListener(EVENTO_RESOCONTI, aggiorna);
+    window.addEventListener(EVENTO_PARTE, aggiorna);
     window.addEventListener('storage', aggiorna);
-    return () => { window.removeEventListener(EVENTO_RESOCONTI, aggiorna); window.removeEventListener('storage', aggiorna); };
+    return () => {
+      window.removeEventListener(EVENTO_RESOCONTI, aggiorna);
+      window.removeEventListener(EVENTO_PARTE, aggiorna);
+      window.removeEventListener('storage', aggiorna);
+    };
   }, [pathname]);
 
   // Non mostrare tab bar su login/register/onboarding
@@ -34,17 +38,29 @@ export default function BottomTabBar() {
     pathname === '/termini' ||
     pathname === '/genitori' ||
     pathname === '/pricing' ||
-    pathname === '/riattiva'
+    pathname === '/riattiva' ||
+    pathname === '/scopri' ||
+    pathname.startsWith('/scopri/')
   ) {
     return null;
   }
 
+  // Quattro tab (8/11, Ste: "tante cose e non si capisce come arrivarci"): il Percorso è dentro Palestra › Mente,
+  // il preparatore dentro Chat › Corpo, Carta, storico, setup e account dentro Profilo
+  const inizia = (...prefissi: string[]) => prefissi.some((x) => pathname === x || pathname.startsWith(`${x}/`));
+  const profiloCorpo = inizia('/allenamento/storico', '/allenamento/mese');
   const tabs = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/settimane', label: 'Percorso', icon: LayoutDashboard },
-    { href: '/strumenti', label: 'Palestra', icon: Dumbbell, to: palestraHref },
-    { href: '/chat', label: 'Coach', icon: MessageCircle },
-    { href: '/profilo', label: 'Profilo', icon: User },
+    { id: 'home', href: '/', label: 'Home', icon: Home, attiva: pathname === '/' || pathname === '/oggi' },
+    {
+      id: 'palestra', href: '/palestra', label: 'Palestra', icon: Dumbbell,
+      attiva: (inizia('/palestra', '/settimane', '/settimana', '/giorno', '/gate', '/week-complete', '/strumenti', '/sos', '/allenamento')
+        && !inizia('/allenamento/chat') && !profiloCorpo),
+    },
+    { id: 'chat', href: corpo ? '/allenamento/chat' : '/chat', label: 'Chat', icon: MessageCircle, attiva: inizia('/chat', '/allenamento/chat') },
+    {
+      id: 'profilo', href: '/profilo', label: 'Profilo', icon: User,
+      attiva: inizia('/profilo', '/account', '/risposte', '/carta', '/statistiche', '/pausa') || profiloCorpo,
+    },
   ];
 
   return (
@@ -57,17 +73,13 @@ export default function BottomTabBar() {
         <div className="flex justify-around items-stretch h-16 gap-1 px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-            // /sos, /carta e /allenamento/* fanno parte della Palestra (Testa | Fisico): tab accesa anche lì
-            const isActive =
-              pathname === tab.href ||
-              (tab.href === '/strumenti' && (pathname === '/sos' || pathname === '/carta' || pathname.startsWith('/allenamento'))) ||
-              (tab.href === '/profilo' && pathname === '/risposte');
-            const conPallino = tab.href === '/strumenti' && pendente;
+            const isActive = tab.attiva;
+            const conPallino = tab.id === 'palestra' && pendente;
 
             return (
               <Link
-                key={tab.href}
-                href={tab.to ?? tab.href}
+                key={tab.id}
+                href={tab.href}
                 aria-label={tab.label}
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex flex-col items-center justify-center flex-1 h-full rounded-btn transition-colors relative ${
@@ -84,7 +96,7 @@ export default function BottomTabBar() {
                     <span aria-label="Hai un resoconto da dare" className="absolute -top-0.5 -right-1 w-2.5 h-2.5 rounded-full bg-accent-glow shadow-glow ring-2 ring-surface" />
                   )}
                 </span>
-                <span className={`text-overline mt-0.5 ${isActive ? 'font-semibold' : 'font-medium'}`}>
+                <span className={`text-caption mt-0.5 ${isActive ? 'font-semibold' : 'font-medium'}`}>
                   {tab.label}
                 </span>
                 {isActive && (

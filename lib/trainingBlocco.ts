@@ -88,6 +88,7 @@ export function pianoSettimanaBlocco(settimana1: WeekPlan, n: number, inizio: st
     // le date e gli spostamenti erano della settimana 1
     posticipata_da: undefined,
     spostata_da: undefined,
+    spostamenti: undefined,
     recupero: undefined,
     proposte: undefined,
   }));

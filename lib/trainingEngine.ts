@@ -17,6 +17,7 @@ import { giorniAllaPartita, PRE_PARTITA_ID, validateItemV2, validateSessionV2, t
 import { testV2ById } from './trainingTestsV2';
 import { LIVELLO_ORDINE, type ExerciseV2 } from './trainingCatalogV2';
 import { bloccoById } from './trainingBlocks';
+import type { Spostamento } from './spostamenti';
 
 export interface TestResultRow {
   test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number;
@@ -377,6 +378,7 @@ export interface PlanSession {
   spiegazione?: string;
   blocchi?: { id: string; nome: string; qualita: string; durataMin: number; leggero?: boolean; nota?: string }[]; // planner v2: blocchi impilati (leggero = serie ×0.7 scelto da Claude; nota = passo deciso dalla memoria dei blocchi)
   posticipata_da?: number;   // l'utente l'ha spostata al giorno dopo (giorno originale) — una volta sola
+  spostamenti?: Spostamento[]; // 10/11 (lib/spostamenti): la storia degli spostamenti (generazione, calendario, posticipo), per spiegarli accanto al testo del preparatore
   spostata_da?: number;      // M8 (26/10, lib/trainingCalendario): il server l'ha spostata perché il calendario è cambiato (giorno di prima)
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
   proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; // dal resoconto (19/10): il programma propone, il ragazzo sceglie
@@ -389,6 +391,7 @@ export interface WeekPlan {
   aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
   adattato_calendario?: string; // M8 (26/10): piano salvato dall'adattamento al calendario cambiato (data ISO); non conta nel tetto delle rigenerazioni
   blocco?: { inizio: string; settimana: number; di: number }; // Fisico Base (3/11, lib/trainingBlocco): settimana del blocco di 4
+  scritto_il?: string;       // 10/11: il giorno in cui il preparatore ha scritto titoli, spiegazioni e messaggio (AAAA-MM-GG): l'hub lo data
   scarico?: boolean;         // M11 (26/10): piano di una settimana di scarico (serie ×0.6, varianti short): la distanza tra gli scarichi e il ri-test partono da qui
 }
 

@@ -8,8 +8,8 @@ import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isWeekUnlocked, isWeekCompleted, getWeekProgress, isTimeLocked, DayProgress } from '@/lib/dayUnlockLogic';
 import { DAYS_PER_WEEK, GATE_DAY, BETA_MAX_WEEK } from '@/lib/constants';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
-import { Lock, Check, Key, Clock, ChevronRight, Calendar, Play, Sun, Dumbbell } from 'lucide-react';
-import { AppLoader, BackButton, Badge, Banner, Button, Card, SectionTitle, Sheet } from '@/components/ui';
+import { Lock, Check, Key, Clock, ChevronRight, Calendar, Sun, Dumbbell } from 'lucide-react';
+import { AppLoader, Banner, Button, Card, CardPlay, Elenco, RigaElenco, Sheet, Testata, TitoloGruppo } from '@/components/ui';
 
 interface SettimanaDettaglio {
   titolo?: string;
@@ -119,8 +119,8 @@ export default function SettimanaPage() {
       // inline non bloccante (niente più popup automatico che si accavalla
       // a check-in/Reset il lunedì mattina)
       const calData = calendarRes ? await calendarRes.json().catch(() => ({})) : {};
-      if (calData.trainingDays && calData.trainingDays.length > 0) {
-        setCalendarData({ trainingDays: calData.trainingDays, matchDays: calData.matchDays || [] });
+      if (calData.compilato) {
+        setCalendarData({ trainingDays: calData.trainingDays || [], matchDays: calData.matchDays || [] });
       }
 
       setSettimana(data.settimana);
@@ -190,7 +190,6 @@ export default function SettimanaPage() {
   const nextWeekAvailable = nextWeekNumber <= BETA_MAX_WEEK;
   const nextWeekUnlocked = nextWeekAvailable && isWeekUnlocked(nextWeekNumber, completedDays);
   const progress = getWeekProgress(weekNumber, completedDays);
-  const percent = Math.round((progress / DAYS_PER_WEEK) * 100);
   const headerDetail = [settimana.principio, settimana.strumento].filter(Boolean).join(' · ');
 
   // ── Il giorno di oggi: primo non completato della settimana ──
@@ -265,38 +264,10 @@ export default function SettimanaPage() {
         />
       )}
 
-      {/* Header immersive compatto */}
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-        <div className="max-w-3xl mx-auto">
-          <BackButton href="/settimane" label="Percorso" tone="light" className="mb-2" />
-
-          <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">
-            Settimana {weekNumber}{isCompleted ? ' · completata' : ''}
-          </p>
-
-          <h1 className="font-display text-title-1 font-bold text-white mb-1">
-            {cleanWeekTitle(settimana.titolo)}
-          </h1>
-
-          {headerDetail && (
-            <p className="text-forest-100 text-body-sm">{headerDetail}</p>
-          )}
-
-          {settimana.obiettivoSettimana && (
-            <p className="text-forest-100 text-body-sm mt-2 line-clamp-2">{settimana.obiettivoSettimana}</p>
-          )}
-
-          {/* Progresso: una volta sola */}
-          <div className="mt-4">
-            <div className="w-full bg-white/15 rounded-full h-1.5 overflow-hidden">
-              <div className="h-full rounded-full bg-white transition-all duration-500" style={{ width: `${percent}%` }} />
-            </div>
-            <p className="text-forest-100 text-body-sm tabular-nums mt-1.5">{progress}/{DAYS_PER_WEEK} giorni</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-3xl mx-auto px-4 -mt-8 space-y-5">
+      <div className="mx-auto max-w-3xl space-y-4 px-4 pt-safe">
+        <Testata indietro={{ href: '/settimane', label: 'Percorso' }}
+          sopra={`Settimana ${weekNumber} · ${progress}/${DAYS_PER_WEEK}${isCompleted ? ' · fatta' : ''}`}
+          titolo={cleanWeekTitle(settimana.titolo)} sotto={headerDetail || undefined} />
 
         {/* ── Oggi: l'azione di adesso, sopra la piega ── */}
         {isCompleted ? (
@@ -334,26 +305,11 @@ export default function SettimanaPage() {
             </Button>
           </Card>
         ) : nextDayUnlocked && nextDayNum !== null ? (
-          <Card variant="hero" padding="md" as="section" aria-label={`Oggi: Giorno ${nextDayNum}`}>
-            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
-              Oggi · Giorno {nextDayNum}
-              {nextDayNum === GATE_DAY ? ' · Gate' : nextGiorno?.durataMinuti ? ` · ${nextGiorno.durataMinuti} min` : ''}
-            </p>
-            <h2 className="font-display text-title-2 font-bold mb-4">{nextDayTitle}</h2>
-            {nextDayNum === GATE_DAY ? (
-              <Button variant="inverse" size="lg" fullWidth icon={<Key size={20} aria-hidden />} href={`/gate/${weekNumber}`}>
-                Vai al Gate
-              </Button>
-            ) : nextDayInCorso ? (
-              <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${weekNumber}/${nextDayNum}`}>
-                Chiudi il Giorno {nextDayNum}
-              </Button>
-            ) : (
-              <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${weekNumber}/${nextDayNum}`}>
-                Inizia il Giorno {nextDayNum}
-              </Button>
-            )}
-          </Card>
+          <CardPlay href={nextDayNum === GATE_DAY ? `/gate/${weekNumber}` : `/giorno/${weekNumber}/${nextDayNum}`}
+            label={nextDayNum === GATE_DAY ? 'Vai al Gate' : nextDayInCorso ? `Chiudi il Giorno ${nextDayNum}` : `Inizia il Giorno ${nextDayNum}`}
+            icona={nextDayNum === GATE_DAY ? <Key size={22} /> : nextDayInCorso ? <Sun size={22} /> : undefined}
+            sopra={`Oggi · Giorno ${nextDayNum}${nextDayNum === GATE_DAY ? ' · Gate' : nextGiorno?.durataMinuti ? ` · ${nextGiorno.durataMinuti} min` : ''}`}
+            titolo={nextDayTitle} />
         ) : (
           <Card variant="accent" padding="md" as="section" aria-label={`Il Giorno ${nextDayNum} si apre domattina`}>
             <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1">Per oggi hai fatto</p>
@@ -385,7 +341,7 @@ export default function SettimanaPage() {
             <p className="text-caption text-muted flex items-center gap-1.5 min-w-0">
               <Calendar className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span className="truncate">
-                Allenamenti: {dayList(calendarData.trainingDays)}
+                {calendarData.trainingDays.length > 0 ? `Squadra: ${dayList(calendarData.trainingDays)}` : 'Niente squadra'}
                 {calendarData.matchDays.length > 0 && ` · Partita: ${dayList(calendarData.matchDays)}`}
               </span>
             </p>
@@ -397,103 +353,36 @@ export default function SettimanaPage() {
           <Banner
             tone="warn"
             icon={<Calendar size={20} aria-hidden />}
-            title="Quando ti alleni questa settimana?"
+            title="Quando ti alleni con la squadra e quando giochi?"
             action={{ label: 'Imposta', onClick: () => setShowCalendarPopup(true) }}
           />
         )}
 
-        {/* ── I 7 giorni ── */}
-        <section aria-label="I 7 giorni">
-          <SectionTitle title="I 7 giorni" size="lg" className="mb-4 px-1" />
-
-          <div className="relative">
-            {/* Linea verticale della timeline */}
-            <div className="absolute left-[19px] top-5 bottom-5 w-0.5 bg-divider" aria-hidden="true" />
-
-            <div className="space-y-2">
-              {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map((dayNum) => {
-                const giorno = giorni.find(g => g.dayNumber === dayNum);
-                const unlocked = isDayUnlocked(weekNumber, dayNum, completedDays);
-                const dayDone = isDayDone(dayNum);
-                const isGate = dayNum === GATE_DAY;
-                const timeLocked = !unlocked && dayNum > 1 && isTimeLocked(weekNumber, dayNum - 1, completedDays);
-                const isCurrent = unlocked && !dayDone && dayNum === nextDayNum;
-                // Giornata avviata ma non chiusa (solo i giorni "giornata" creano righe started)
-                const inCorso = unlocked && !dayDone && startedDays.some(s => s.week === weekNumber && s.day === dayNum);
-                const titolo = cleanDayTitle(giorno?.titolo) || (isGate ? 'Il Gate della settimana' : `Giorno ${dayNum}`);
-                const meta = [
-                  isGate ? `Giorno ${dayNum} · Gate` : `Giorno ${dayNum}`,
-                  giorno?.durataMinuti ? `${giorno.durataMinuti} min` : null,
-                ].filter(Boolean).join(' · ');
-
-                // Un solo slot di stato
-                const badge = dayDone
-                  ? <Badge tone="success">Fatto</Badge>
-                  : inCorso
-                  ? <Badge tone="warn">In corso</Badge>
-                  : isCurrent
-                  ? <Badge tone="accent">Oggi</Badge>
-                  : timeLocked
-                  ? <Badge tone="neutral">Domani</Badge>
-                  : isGate
-                  ? <Badge tone="info">Gate</Badge>
-                  : null;
-
-                // Nodo: fatto pieno, Gate da fare OUTLINE, oggi con bordo, il resto neutro (niente lucchetti a tappeto)
-                const nodeCls = dayDone
-                  ? 'bg-forest-500 text-white'
-                  : isGate
-                  ? 'bg-transparent border-2 border-forest-500 text-forest-400'
-                  : isCurrent
-                  ? 'bg-surface text-forest-300 border-2 border-forest-500'
-                  : unlocked
-                  ? 'bg-surface text-forest-300 border border-forest-500/40'
-                  : 'bg-surface-2 text-faint';
-                const nodeIcon = dayDone
-                  ? <Check className="w-5 h-5" strokeWidth={3} />
-                  : isGate
-                  ? <Key className="w-4 h-4" />
-                  : timeLocked
-                  ? <Clock className="w-4 h-4" />
-                  : dayNum;
-
-                const rowBody = (
-                  <div className="flex items-center gap-3 min-h-6">
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-body font-semibold leading-snug ${unlocked || dayDone ? 'text-app' : 'text-muted'}`}>{titolo}</p>
-                      <p className="text-caption text-muted mt-0.5 tabular-nums">{meta}</p>
-                    </div>
-                    {badge}
-                    {(unlocked || dayDone) && <ChevronRight className="w-5 h-5 text-faint shrink-0" aria-hidden="true" />}
-                  </div>
-                );
-
-                return (
-                  <div key={dayNum} className="relative pl-12">
-                    <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-body-sm font-bold ring-4 ring-app z-10 ${nodeCls}`} aria-hidden="true">
-                      {nodeIcon}
-                    </div>
-
-                    {unlocked || dayDone ? (
-                      <Card
-                        href={isGate ? `/gate/${weekNumber}` : `/giorno/${weekNumber}/${dayNum}`}
-                        padding="sm"
-                        variant={isCurrent ? 'accent' : 'default'}
-                        className="min-h-[56px]"
-                        aria-label={`${titolo}, ${meta}${dayDone ? ', fatto' : isCurrent ? ', oggi' : ''}`}
-                      >
-                        {rowBody}
-                      </Card>
-                    ) : (
-                      <Card padding="sm" className="min-h-[56px]" aria-label={`${titolo}, ${meta}, ${timeLocked ? 'si apre domani' : 'bloccato'}`}>
-                        {rowBody}
-                      </Card>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        {/* ── I 7 giorni, in righe (8/11, stile A per gli elenchi) ── */}
+        <section aria-label="I 7 giorni" className="space-y-2">
+          <TitoloGruppo className="pt-2">I 7 giorni</TitoloGruppo>
+          <Elenco>
+            {Array.from({ length: DAYS_PER_WEEK }, (_, i) => i + 1).map((dayNum) => {
+              const giorno = giorni.find(g => g.dayNumber === dayNum);
+              const unlocked = isDayUnlocked(weekNumber, dayNum, completedDays);
+              const dayDone = isDayDone(dayNum);
+              const isGate = dayNum === GATE_DAY;
+              const timeLocked = !unlocked && dayNum > 1 && isTimeLocked(weekNumber, dayNum - 1, completedDays);
+              const isCurrent = unlocked && !dayDone && dayNum === nextDayNum;
+              const inCorso = unlocked && !dayDone && startedDays.some(s => s.week === weekNumber && s.day === dayNum);
+              const titolo = cleanDayTitle(giorno?.titolo) || (isGate ? 'Il Gate della settimana' : `Giorno ${dayNum}`);
+              const icona = dayDone ? <Check strokeWidth={3} /> : isGate ? <Key /> : timeLocked ? <Clock /> : <span className="text-body font-bold">{dayNum}</span>;
+              const valore = dayDone ? 'Fatto' : inCorso ? 'In corso' : isCurrent ? 'Oggi' : timeLocked ? 'Domani'
+                : giorno?.durataMinuti ? `${giorno.durataMinuti}'` : isGate ? 'Gate' : undefined;
+              const apribile = unlocked || dayDone;
+              return (
+                <RigaElenco key={dayNum}
+                  href={apribile ? (isGate ? `/gate/${weekNumber}` : `/giorno/${weekNumber}/${dayNum}`) : undefined}
+                  icona={icona} tono={dayDone ? 'verde' : 'scuro'} titolo={titolo} valore={valore}
+                  evidenza={isCurrent} bloccato={!apribile && !timeLocked && !isGate} />
+              );
+            })}
+          </Elenco>
         </section>
 
         {/* Settimana successiva: solo se già aperta (altrimenti lo dice la card in cima) */}

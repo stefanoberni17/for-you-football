@@ -74,7 +74,8 @@ export function fraseProssimoEvento(ev: ProssimoEvento | null): string | null {
   if (ev.tipo === 'partita') {
     return ev.oggi ? 'Oggi giochi. Prova questo in campo!' : `La tua prossima partita è ${NOMI[ev.giorno]}. Prova questo in campo!`;
   }
-  return ev.oggi ? 'Oggi è giorno di allenamento. Prova questo in campo!' : `Il tuo prossimo allenamento è ${NOMI[ev.giorno]}. Prova questo in campo!`;
+  // 9/11: «allenamento» qui è quello con la squadra, e lo dice (Ste: la parola da sola era ambigua)
+  return ev.oggi ? 'Oggi ti alleni con la squadra. Prova questo in campo!' : `Il tuo prossimo allenamento con la squadra è ${NOMI[ev.giorno]}. Prova questo in campo!`;
 }
 
 /** Oggi è giorno di partita? Domani lo è? (il giorno della partita vince: "domani" solo se oggi non si gioca) */

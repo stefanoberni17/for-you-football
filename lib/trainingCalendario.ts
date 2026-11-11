@@ -38,9 +38,22 @@ export interface OpzioniConflitti {
   oggiDow: number;
   /** Il validatore sulla singola seduta con il calendario NUOVO (finestre partita): solo gli errori che parlano di partita contano. */
   validaSeduta?: (s: PlanSession) => string[];
+  /** Oggi (AAAA-MM-GG): la data dello spostamento nella storia della seduta (10/11). */
+  oggi?: string;
 }
 
 const giornoNome = (d: number) => DAY_NAMES[d] ?? String(d);
+/** Il perché dello spostamento per il ragazzo, dal conflitto: «il venerdì ora c'è la partita». */
+const perche = (giorno: number, c: Pick<ConflittoCalendario, 'tipo' | 'motivo'>) => {
+  const g = giornoNome(giorno).toLowerCase();
+  switch (c.tipo) {
+    case 'partita': return `il ${g} ora c'è la partita`;
+    case 'prima_partita': return `il ${g} ora è il giorno prima della partita`;
+    case 'pre_partita': return 'il blocco pre partita va il giorno prima della partita';
+    case 'giorno': return `il ${g} non è più tra i giorni in cui ti alleni con l'app`;
+    default: return c.motivo;
+  }
+};
 export const isFisica = (s: Pick<PlanSession, 'tipo'>) => s.tipo === 'fisica' || s.tipo === 'mix';
 const erroriPartita = (errs: string[]) => errs.filter((e) => /partita/i.test(e));
 /** La giornata con il blocco pre partita di Ste (20', il giorno PRIMA della partita): si sposta a −1 o, senza un −1 libero, si toglie. */
@@ -56,7 +69,9 @@ export function conflittoSeduta(s: PlanSession, cal: CalendarioSettimana, o: Opz
   if (cal.matchDays.includes(s.giorno)) return { ...base, tipo: 'partita', motivo: 'cade il giorno della partita' };
   if (hasPrePartita(s) && giorniAllaPartita(s.giorno, cal.matchDays) !== 1) return { ...base, tipo: 'pre_partita', motivo: cal.matchDays.length ? 'il blocco pre partita va il giorno prima della partita' : 'è il blocco pre partita, ma non c\'è più una partita' };
   if (isFisica(s) && giorniAllaPartita(s.giorno, cal.matchDays) === 1) return { ...base, tipo: 'prima_partita', motivo: 'è una seduta fisica il giorno prima della partita' };
-  if (cal.giorniAmmessi?.length && !cal.giorniAmmessi.includes(s.giorno)) return { ...base, tipo: 'giorno', motivo: `${giornoNome(s.giorno)} non è più tra i giorni in cui ti alleni con l'app` };
+  // Una seduta che l'adattamento ha già messo fuori dai giorni dell'app («non c'era altro posto») non è di nuovo un
+  // conflitto per il giorno: prima rimbalzava a ogni «Adatta» (10/11, venerdì → giovedì → martedì → giovedì)
+  if (cal.giorniAmmessi?.length && !cal.giorniAmmessi.includes(s.giorno) && s.spostata_da == null) return { ...base, tipo: 'giorno', motivo: `${giornoNome(s.giorno)} non è più tra i giorni in cui ti alleni con l'app` };
   if (o.validaSeduta) {
     const e = erroriPartita(o.validaSeduta(s));
     if (e.length) return { ...base, tipo: 'finestra', motivo: `con la partita così non ci sta: ${e[0]}` };
@@ -123,6 +138,7 @@ export function ricollocaSedute(plan: Pick<WeekPlan, 'sedute'>, cal: CalendarioS
     occupati.delete(s.giorno);
     occupati.add(dest);
     righe.push(`${giornoNome(s.giorno)} → ${giornoNome(dest)}: ${c.motivo}${fuori ? ' (fuori dai tuoi giorni abituali: non c\'era altro posto)' : ''}`);
+    s.spostamenti = [...(s.spostamenti ?? []), { da: s.giorno, a: dest, quando: o.oggi ?? new Date().toISOString().slice(0, 10), perche: perche(s.giorno, c), fonte: 'calendario' }];
     s.spostata_da = s.giorno;
     s.giorno = dest;
   }
@@ -137,6 +153,7 @@ export function ricollocaSedute(plan: Pick<WeekPlan, 'sedute'>, cal: CalendarioS
     }
     occupati.add(dest);
     righe.push(`${giornoNome(s.giorno)} → ${giornoNome(dest)}: ${c.motivo}`);
+    s.spostamenti = [...(s.spostamenti ?? []), { da: s.giorno, a: dest, quando: o.oggi ?? new Date().toISOString().slice(0, 10), perche: perche(s.giorno, c), fonte: 'calendario' }];
     s.spostata_da = s.giorno;
     s.giorno = dest;
   }

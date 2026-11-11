@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { TOOLS, type Tool } from '@/lib/toolsCatalog';
@@ -11,24 +11,12 @@ import {
   type Capacita,
   type PalestraExercise,
 } from '@/lib/palestraCatalog';
-import { authFetch } from '@/lib/authFetch';
-import { readCache, writeCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
-import PalestraSwitch, { salvaParte } from '@/components/PalestraSwitch';
-import { EVENTO as EVENTO_RESOCONTI, pendenteAdesso } from '@/lib/resocontoPendente';
+import { PalestraTestata, salvaCorpoAperto } from '@/components/ParteSwitch';
 import { livelloFisico, hasActiveAccess } from '@/lib/checkAccess';
 import PracticePopup from '@/components/PracticePopup';
-import { ChevronRight, ChevronDown, Play, Wind, IdCard, Lock, Clock, Target, Wrench, MessageCircle } from 'lucide-react';
-import { AppLoader, BackButton, Badge, Button, Card, SectionTitle } from '@/components/ui';
-
-interface DiffCard {
-  id: string;
-  difficolta: string;
-  emoji: string;
-  sottotitolo: string;
-  unlockedCount: number;
-  totalCount: number;
-}
+import { Play, Wind, Lock, Wrench, Eye, Ear, Shield, Waves, Flame, Backpack, Sparkles } from 'lucide-react';
+import { AppLoader, Card, CardPlay, Elenco, GrigliaRiquadri, RigaElenco, Riquadro, Testata, TitoloGruppo } from '@/components/ui';
 
 /** Esercizio + capacità di appartenenza (per il "Riprendi" e per il player). */
 interface Pick {
@@ -104,31 +92,14 @@ function Steps({ steps, size = 'lg' }: { steps: string[]; size?: 'lg' | 'md' }) 
   );
 }
 
-/** Riga cliccabile standard dell'hub: icona/emoji + titolo + riga sotto + chevron. */
-function Row({ lead, title, sub, badge }: { lead: ReactNode; title: string; sub?: ReactNode; badge?: ReactNode }) {
-  return (
-    <span className="flex items-center justify-between gap-3 min-h-[44px]">
-      <span className="flex items-center gap-3 min-w-0">
-        <span className="flex-shrink-0" aria-hidden="true">{lead}</span>
-        <span className="min-w-0">
-          <span className="flex items-center gap-2 flex-wrap">
-            <span className="text-title-3 font-bold text-app">{title}</span>
-            {badge}
-          </span>
-          {sub && <span className="block text-body-sm text-muted mt-0.5">{sub}</span>}
-        </span>
-      </span>
-      <ChevronRight size={18} className="text-faint flex-shrink-0" aria-hidden="true" />
-    </span>
-  );
-}
-
-function IconCircle({ children, tone = 'neutral' }: { children: ReactNode; tone?: 'neutral' | 'accent' }) {
-  return (
-    <span className={`w-10 h-10 rounded-full flex items-center justify-center ${tone === 'accent' ? 'bg-forest-500/15 text-forest-400' : 'bg-surface-2 text-forest-400'}`}>
-      {children}
-    </span>
-  );
+/** L'icona di ogni capacità (al posto delle emoji: le icone sono lo stile dell'app). */
+const ICONE_CAPACITA: Record<string, typeof Wind> = {
+  presenza: Wind, osservazione: Eye, ascolto: Ear, pressione: Shield,
+  accettazione: Waves, perdono: Flame, 'lasciare-andare': Backpack,
+};
+function IconaCapacita({ id }: { id: string }) {
+  const I = ICONE_CAPACITA[id] ?? Sparkles;
+  return <I />;
 }
 
 /**
@@ -139,7 +110,7 @@ function IconCircle({ children, tone = 'neutral' }: { children: ReactNode; tone?
  */
 export default function StrumentiPage() {
   const router = useRouter();
-  const { openMeditation, mantra } = useMeditation();
+  const { openMeditation } = useMeditation();
   const [loading, setLoading] = useState(true);
   const [currentWeek, setCurrentWeek] = useState(1);
   const [lastId, setLastId] = useState<string | null>(null);
@@ -148,61 +119,30 @@ export default function StrumentiPage() {
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [activePick, setActivePick] = useState<Pick | null>(null);
   const [showToolPractice, setShowToolPractice] = useState(false);
-  const [lockedOpen, setLockedOpen] = useState(false);
-  const [diffCards, setDiffCards] = useState<DiffCard[]>([]);
   const [trainingAccess, setTrainingAccess] = useState(false);
   const [mentaleAttivo, setMentaleAttivo] = useState(true); // Mente, Completo, beta o Season 1: altrimenti la card "Sblocca il Mente"
   const [conFisico, setConFisico] = useState(false); // ha il Fisico da pacchetto: la card propone il Completo
-  const [resocontoPendente, setResocontoPendente] = useState(false); // pallino su "Fisico" nel selettore
-
-  // Il pallino sul selettore segue il resoconto da dare scritto da home e hub (lib/resocontoPendente)
-  useEffect(() => {
-    const aggiorna = () => setResocontoPendente(pendenteAdesso());
-    aggiorna();
-    window.addEventListener(EVENTO_RESOCONTI, aggiorna);
-    return () => window.removeEventListener(EVENTO_RESOCONTI, aggiorna);
-  }, []);
 
   useEffect(() => {
     const load = async () => {
-      // Testa | Fisico (20/10): è la tab bar a riaprire l'ultima parte usata; qui si arriva sempre alla Testa
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
         return;
       }
-      // Profilo e schede insieme. Le schede dipendono dalla settimana (layer bloccati):
-      // in cache con la settimana accanto, valide solo se la settimana è la stessa.
-      type DiffCache = { week: number; cards: DiffCard[] };
-      const cached = readCache<DiffCache>('difficolta');
-      const [{ data: profile }, res] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single(),
-        cached ? Promise.resolve(null) : authFetch('/api/difficolta').catch(() => null),
-      ]);
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
       const week = profile?.current_week || 1;
       setCurrentWeek(week);
       // Il Campo: acceso a mano o con un pacchetto con il Fisico (3/11); il Mente: con il Mente o il Completo
       setTrainingAccess(!!livelloFisico(profile));
       setMentaleAttivo(hasActiveAccess(profile));
       setConFisico(!!livelloFisico(profile) && !(profile as { training_access?: boolean } | null)?.training_access);
-      salvaParte('testa');
+      salvaCorpoAperto(!!livelloFisico(profile));
       setLastId(readLast());
-      try {
-        if (cached && cached.week === week) {
-          setDiffCards(cached.cards || []);
-        } else {
-          const r = res ?? (await authFetch('/api/difficolta'));
-          if (r.ok) {
-            const data = await r.json();
-            setDiffCards(data.cards || []);
-            writeCache<DiffCache>('difficolta', { week, cards: data.cards || [] });
-          }
-        }
-      } catch { /* non bloccante */ }
       setLoading(false);
     };
     load();
@@ -238,50 +178,25 @@ export default function StrumentiPage() {
 
   // ── Dettaglio strumento (riferimento): cos'è / quando / la pratica ────────
   if (selectedTool) {
+    const { intro, steps, outro } = splitPratica(selectedTool.pratica);
     return (
-      <main className="min-h-screen bg-app pb-tabbar-lg">
-        <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-          <div className="max-w-xl mx-auto">
-            <BackButton onClick={() => setSelectedTool(null)} label={selectedExercise ? selectedExercise.nome : 'Palestra'} tone="light" className="mb-2" />
-            <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">
-              Strumento · Settimana {selectedTool.week}
-            </p>
-            <h1 className="font-display text-title-1 font-bold text-white leading-tight">{selectedTool.nome}</h1>
-            <p className="text-forest-100 text-body-sm mt-1">{selectedTool.inUnaRiga}</p>
-          </div>
-        </div>
+      <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
+        <div className="mx-auto max-w-xl space-y-4">
+          <Testata indietro={{ onClick: () => setSelectedTool(null), label: selectedExercise ? selectedExercise.nome : 'Allenamento' }}
+            sopra={`Strumento · Settimana ${selectedTool.week}`} titolo={selectedTool.nome} sotto={selectedTool.inUnaRiga} />
 
-        <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
+          <CardPlay onClick={() => setShowToolPractice(true)} label={`Fai la pratica: ${selectedTool.nome}`}
+            sopra={`${selectedTool.durataMinuti} min`} titolo="Fai la pratica ora" />
+
+          <TitoloGruppo className="pt-2">Quando usarlo</TitoloGruppo>
+          <Card padding="md"><p className="text-body-lg leading-relaxed text-app">{selectedTool.quando}</p></Card>
+
+          <TitoloGruppo className="pt-2">La pratica</TitoloGruppo>
           <Card padding="md">
-            <SectionTitle title="Quando usarlo" icon={<Clock size={18} />} className="mb-2" />
-            <p className="text-app text-body leading-relaxed">{selectedTool.quando}</p>
+            {intro.map((l, i) => <p key={`i${i}`} className="mb-3 text-body leading-relaxed text-muted">{l}</p>)}
+            <Steps steps={steps} size="md" />
+            {outro.map((l, i) => <p key={`o${i}`} className="mt-3 text-body leading-relaxed text-muted">{l}</p>)}
           </Card>
-
-          <Card padding="md">
-            <SectionTitle title="La pratica" icon={<Target size={18} />} className="mb-3" />
-            {(() => {
-              const { intro, steps, outro } = splitPratica(selectedTool.pratica);
-              return (
-                <>
-                  {intro.map((l, i) => <p key={`i${i}`} className="text-body text-muted leading-relaxed mb-3">{l}</p>)}
-                  <Steps steps={steps} size="md" />
-                  {outro.map((l, i) => <p key={`o${i}`} className="text-body text-muted leading-relaxed mt-3">{l}</p>)}
-                </>
-              );
-            })()}
-          </Card>
-
-          <Button
-            variant="hero"
-            size="lg"
-            fullWidth
-            onClick={() => setShowToolPractice(true)}
-            icon={<Play size={20} aria-hidden="true" />}
-          >
-            Fai la pratica ora · {selectedTool.durataMinuti} min
-          </Button>
-
-          <div className="h-4" />
         </div>
 
         {showToolPractice && (
@@ -305,51 +220,28 @@ export default function StrumentiPage() {
     const tool = ex.ancora ? TOOLS.find(t => t.id === ex.id) : undefined;
     const { intro, steps, outro } = splitPratica(ex.pratica);
     return (
-      <main className="min-h-screen bg-app pb-tabbar-lg">
-        <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-          <div className="max-w-xl mx-auto">
-            <BackButton onClick={() => setSelectedExercise(null)} label={cap.principio} tone="light" className="mb-2" />
-            <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">
-              {cap.principio} · {ex.durataMinuti} min
-            </p>
-            <h1 className="font-display text-title-1 font-bold text-white leading-tight">{ex.nome}</h1>
-          </div>
-        </div>
+      <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
+        <div className="mx-auto max-w-xl space-y-4">
+          <Testata indietro={{ onClick: () => setSelectedExercise(null), label: cap.principio }} titolo={ex.nome} />
 
-        <div className="max-w-xl mx-auto px-4 -mt-8 space-y-4">
-          <Card padding="md">
-            <SectionTitle title="Cosa allena" className="mb-2" />
-            <p className="text-body text-app leading-relaxed">{ex.cosaAllena}</p>
-          </Card>
+          <CardPlay onClick={() => startPractice({ cap, ex })} label={`Fai la pratica: ${ex.nome}`}
+            sopra={`${cap.principio} · ${ex.durataMinuti} min`} titolo="Fai la pratica ora" />
 
+          <TitoloGruppo className="pt-2">Cosa allena</TitoloGruppo>
+          <Card padding="md"><p className="text-body-lg leading-relaxed text-app">{ex.cosaAllena}</p></Card>
+
+          <TitoloGruppo className="pt-2">Come si fa</TitoloGruppo>
           <Card padding="md">
-            <SectionTitle title="Come si fa" className="mb-3" />
-            {intro.map((l, i) => <p key={`i${i}`} className="text-body text-muted leading-relaxed mb-3">{l}</p>)}
+            {intro.map((l, i) => <p key={`i${i}`} className="mb-3 text-body leading-relaxed text-muted">{l}</p>)}
             <Steps steps={steps} />
-            {outro.map((l, i) => <p key={`o${i}`} className="font-quote text-body-lg text-forest-300 leading-relaxed mt-4">{l}</p>)}
+            {outro.map((l, i) => <p key={`o${i}`} className="mt-4 font-quote text-body-lg leading-relaxed text-forest-300">{l}</p>)}
           </Card>
-
-          <Button
-            variant="hero"
-            size="lg"
-            fullWidth
-            onClick={() => startPractice({ cap, ex })}
-            icon={<Play size={20} aria-hidden="true" />}
-          >
-            Fai la pratica ora
-          </Button>
 
           {tool && (
-            <Card variant="raised" padding="sm" onClick={() => setSelectedTool(tool)} aria-label={`Lo strumento: ${tool.nome}`}>
-              <Row
-                lead={<IconCircle tone="accent"><Wrench size={18} /></IconCircle>}
-                title={`Lo strumento: ${tool.nome}`}
-                sub={`Cos'è, quando usarlo in campo · Settimana ${tool.week}`}
-              />
-            </Card>
+            <Elenco>
+              <RigaElenco onClick={() => setSelectedTool(tool)} icona={<Wrench />} titolo={`Lo strumento: ${tool.nome}`} valore={`Sett. ${tool.week}`} />
+            </Elenco>
           )}
-
-          <div className="h-4" />
         </div>
 
         {practicePopup}
@@ -357,40 +249,23 @@ export default function StrumentiPage() {
     );
   }
 
-  // ── Dettaglio capacità: menu di esercizi base ─────────────────────────────
+  // ── Dettaglio capacità: gli esercizi in righe ─────────────────────────────
   if (selectedCapacita) {
     const cap = selectedCapacita;
     const esercizi = visibleEsercizi(cap, currentWeek);
     return (
-      <main className="min-h-screen bg-app pb-tabbar-lg">
-        <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-          <div className="max-w-xl mx-auto">
-            <BackButton onClick={() => setSelectedCapacita(null)} label="Palestra" tone="light" className="mb-2" />
-            <p className="text-forest-200 text-overline uppercase tracking-wider font-semibold mb-1.5">
-              Capacità · dalla Settimana {cap.week}
-            </p>
-            <h1 className="font-display text-title-1 font-bold text-white leading-tight">
-              <span className="mr-2" aria-hidden="true">{cap.emoji}</span>{cap.principio}
-            </h1>
-            <p className="text-forest-100 text-body-sm mt-1">{cap.sottotitolo}</p>
-          </div>
-        </div>
-
-        <div className="max-w-xl mx-auto px-4 -mt-8 space-y-3">
-          <p className="text-body-sm text-muted px-1">
-            {esercizi.length} {esercizi.length === 1 ? 'esercizio' : 'esercizi'} · da rifare quando vuoi
-          </p>
-          {esercizi.map(ex => (
-            <Card key={ex.id} padding="sm" onClick={() => openExercise(cap, ex)} aria-label={ex.nome}>
-              <Row
-                lead={<IconCircle tone={ex.ancora ? 'accent' : 'neutral'}>{ex.ancora ? <Wrench size={18} /> : <Play size={18} />}</IconCircle>}
-                title={ex.nome}
-                badge={ex.ancora ? <Badge tone="accent">Strumento</Badge> : undefined}
-                sub={`Allena · ${ex.durataMinuti} min`}
-              />
-            </Card>
-          ))}
-          <div className="h-4" />
+      <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar-lg">
+        <div className="mx-auto max-w-xl space-y-4">
+          <Testata indietro={{ onClick: () => setSelectedCapacita(null), label: 'Allenamento' }}
+            titolo={cap.principio} sotto={cap.sottotitolo} />
+          <Elenco>
+            {esercizi.map(ex => (
+              <RigaElenco key={ex.id} onClick={() => openExercise(cap, ex)}
+                icona={ex.ancora ? <Wrench /> : <Play />} tono={ex.ancora ? 'verde' : 'scuro'}
+                titolo={ex.nome} valore={`${ex.durataMinuti}'`} />
+            ))}
+          </Elenco>
+          <p className="px-1 text-body-sm text-muted">Da rifare quando vuoi. Quelli con la chiave inglese sono gli strumenti del percorso.</p>
         </div>
 
         {practicePopup}
@@ -399,167 +274,45 @@ export default function StrumentiPage() {
   }
 
   // ── Hub ───────────────────────────────────────────────────────────────────
-  const unlocked = unlockedCapacita(currentWeek);
-  const locked = CAPACITA.filter(c => currentWeek < c.week);
-  const totalEsercizi = unlocked.reduce((n, c) => n + visibleEsercizi(c, currentWeek).length, 0);
   const resume = findPick(lastId, currentWeek);
   const pick = resume ?? weekPick(currentWeek);
-  const showDiffDetails = diffCards.length > 4;
-
-  const diffList = (
-    <div className="space-y-3">
-      {diffCards.map(card => (
-        <Card key={card.id} padding="sm" href={`/sos?card=${card.id}`} aria-label={card.difficolta}>
-          <Row
-            lead={<span className="text-2xl w-10 text-center block">{card.emoji}</span>}
-            title={card.difficolta}
-            badge={card.totalCount > 1 ? <Badge tone="neutral">{card.unlockedCount}/{card.totalCount} modi</Badge> : undefined}
-            sub={card.sottotitolo || undefined}
-          />
-        </Card>
-      ))}
-      <Button variant="ghost" fullWidth href="/chat" icon={<MessageCircle size={18} aria-hidden="true" />}>
-        Non c&apos;è la tua? Scrivi al Coach
-      </Button>
-    </div>
-  );
 
   return (
     <main className="min-h-screen bg-app pb-tabbar-lg">
-      <div className="bg-gradient-to-br from-forest-600 to-forest-800 px-4 pt-safe-immersive pb-14">
-        <div className="max-w-xl mx-auto">
-          <PalestraSwitch parte="testa" tone="light" fisicoBloccato={!trainingAccess} pendente={resocontoPendente} className="mb-5" />
-          <h1 className="font-display text-display font-bold text-white mb-2">Allena la testa</h1>
-          <p className="text-forest-100 text-body-sm tabular-nums">
-            {unlocked.length} su {CAPACITA.length} capacità · {totalEsercizi} esercizi pronti
-          </p>
-        </div>
-      </div>
+      {/* Palestra › Mente › Allenamento (8/11, stile B): la cosa da fare, poi le capacità a riquadri */}
+      <PalestraTestata parte="mente" scheda="allenamento" corpoBloccato={!trainingAccess} />
 
-      <div className="max-w-xl mx-auto px-4 -mt-8 space-y-6">
-
-        {/* ── Riprendi: l'esercizio da fare adesso (unico gradiente della pagina) ── */}
-        <section className="space-y-3" aria-label="Da fare adesso">
-          {pick && (
-            <Card variant="hero" padding="md" as="section" aria-label={resume ? 'Riprendi' : 'Esercizio della settimana'}>
-              <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
-                {resume ? 'Riprendi' : 'Questa settimana'} · {pick.cap.principio}
-              </p>
-              <h2 className="font-display text-title-1 font-bold mb-1">{pick.ex.nome}</h2>
-              <p className="text-forest-100 text-body-sm line-clamp-2 mb-1">{pick.ex.cosaAllena}</p>
-              <p className="text-forest-100 text-body-sm font-semibold mb-4">Allena · {pick.ex.durataMinuti} min</p>
-              <Button
-                variant="inverse"
-                size="lg"
-                fullWidth
-                onClick={() => startPractice(pick)}
-                icon={<Play size={20} aria-hidden="true" />}
-              >
-                Fai la pratica
-              </Button>
-              <div className="flex justify-center mt-1">
-                <button
-                  type="button"
-                  onClick={() => openExercise(pick.cap, pick.ex)}
-                  className="h-11 px-4 rounded-btn text-body-sm font-semibold text-forest-100 hover:bg-white/10 transition-colors"
-                >
-                  Leggi come si fa
-                </button>
-              </div>
-            </Card>
-          )}
-
-          {/* Reset rapido — una riga, non un secondo CTA pieno */}
-          <Card padding="sm" onClick={openMeditation} aria-label="Reset rapido">
-            <Row
-              lead={<IconCircle tone="accent"><Wind size={18} /></IconCircle>}
-              title="Reset rapido"
-              sub={mantra ? `1-3 minuti · «${mantra}»` : '1-3 minuti di respiro'}
-            />
-          </Card>
-        </section>
-
-        {/* ── Palestra per capacità: lista aperta, le bloccate in una riga ── */}
-        <section className="space-y-3" aria-label="Allena una capacità">
-          <SectionTitle size="lg" title="Allena una capacità" subtitle="Un principio alla volta, esercizi da rifare ogni giorno" />
-          {unlocked.map(c => {
-            const n = visibleEsercizi(c, currentWeek).length;
-            return (
-              <Card key={c.id} padding="sm" onClick={() => setSelectedCapacita(c)} aria-label={c.principio}>
-                <Row
-                  lead={<span className="text-2xl w-10 text-center block">{c.emoji}</span>}
-                  title={c.principio}
-                  sub={`${n} ${n === 1 ? 'esercizio' : 'esercizi'}`}
-                />
-              </Card>
-            );
-          })}
-          {locked.length > 0 && (
-            <>
-              <Card variant="raised" padding="sm" onClick={() => setLockedOpen(o => !o)} aria-expanded={lockedOpen} aria-label="Capacità in arrivo">
-                <span className="flex items-center justify-between gap-3 min-h-[44px]">
-                  <span className="text-body text-muted">
-                    {locked.length === 1
-                      ? 'Un’altra capacità si sblocca con le prossime settimane'
-                      : `Altre ${locked.length} capacità si sbloccano con le prossime settimane`}
-                  </span>
-                  <ChevronDown size={18} className={`text-faint flex-shrink-0 transition-transform duration-200 ${lockedOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
-                </span>
-              </Card>
-              {lockedOpen && (
-                <Card variant="raised" padding="sm">
-                  <ul className="divide-y divide-divider">
-                    {locked.map(c => (
-                      <li key={c.id} className="flex items-center justify-between gap-3 py-2.5 min-h-[44px]">
-                        <span className="text-body text-muted">{c.principio}</span>
-                        <span className="text-caption text-faint tabular-nums">Settimana {c.week}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              )}
-            </>
-          )}
-        </section>
-
-        {/* ── Come affrontare le difficoltà ── */}
-        {diffCards.length > 0 && (
-          <section className="space-y-3" aria-label="Come affrontare le difficoltà">
-            <SectionTitle size="lg" title="Quando si fa dura" subtitle="Una guida per ogni situazione, cresce mentre avanzi" />
-            {showDiffDetails ? (
-              <details className="group">
-                <summary className="list-none cursor-pointer rounded-card bg-surface border border-white/6 p-4 flex items-center justify-between gap-3 min-h-[56px] hover:bg-surface-2 [&::-webkit-details-marker]:hidden">
-                  <span className="text-body font-semibold text-app">{diffCards.length} situazioni</span>
-                  <ChevronDown size={18} className="text-faint flex-shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
-                </summary>
-                <div className="mt-3">{diffList}</div>
-              </details>
-            ) : diffList}
-          </section>
+      <div className="mx-auto mt-4 max-w-xl space-y-3 px-4">
+        {pick && (
+          <CardPlay onClick={() => openExercise(pick.cap, pick.ex)} onPlay={() => startPractice(pick)}
+            label={`Come si fa: ${pick.ex.nome}`}
+            sopra={`${resume ? 'Riprendi' : 'Questa settimana'} · ${pick.ex.durataMinuti} min`}
+            titolo={pick.ex.nome} />
         )}
 
-        {/* ── In fondo: Carta del Giocatore e, per chi non ha Season 1, la parte bloccata della Testa ── */}
-        <section className="space-y-3" aria-label="Altro">
-          <Card padding="sm" href="/carta" aria-label="Carta del Giocatore">
-            <Row
-              lead={<IconCircle><IdCard size={18} /></IconCircle>}
-              title="Carta del Giocatore"
-              sub="Il tuo gioco mentale, scritto da te"
-            />
-          </Card>
-          {!mentaleAttivo && (
-            <Card variant="accent" padding="sm" href={conFisico ? '/pricing?pacchetto=completo' : '/pricing?pacchetto=mentale'} aria-label="Il percorso completo: vedi i pacchetti">
-              <Row
-                lead={<IconCircle tone="accent"><Lock size={18} /></IconCircle>}
-                title={conFisico ? 'Aggiungi la testa: il Completo' : 'Il Mente: il percorso completo'}
-                sub={conFisico ? 'Il percorso di 12 settimane e il Coach, insieme al tuo Fisico' : '12 settimane, il Coach sempre con te, le difficoltà che crescono con te'}
-                badge={<Badge tone="accent">Sblocca</Badge>}
-              />
-            </Card>
-          )}
-        </section>
+        <TitoloGruppo className="pt-3">Le capacità</TitoloGruppo>
+        <GrigliaRiquadri>
+          <Riquadro onClick={openMeditation} icona={<Wind />} titolo="Reset rapido"
+            valore={<span className="text-body-sm font-semibold text-muted">1&apos;</span>} />
+          {CAPACITA.map(c => {
+            const aperta = currentWeek >= c.week;
+            const n = aperta ? visibleEsercizi(c, currentWeek).length : 0;
+            return (
+              <Riquadro key={c.id} onClick={aperta ? () => setSelectedCapacita(c) : undefined}
+                icona={<IconaCapacita id={c.id} />} titolo={c.principio} bloccato={!aperta}
+                sotto={aperta ? undefined : `Settimana ${c.week}`}
+                valore={aperta ? <span className="text-body-sm font-semibold text-muted">{n}</span> : undefined} />
+            );
+          })}
+        </GrigliaRiquadri>
 
-        <div className="h-4" />
+        {/* Per chi non ha il Mente: la parte bloccata (la Carta è nel Profilo dall'8/11) */}
+        {!mentaleAttivo && (
+          <Elenco className="mt-3">
+            <RigaElenco href={conFisico ? '/pricing?pacchetto=completo' : '/pricing?pacchetto=mentale'} icona={<Lock />} tono="verde"
+              titolo={conFisico ? 'Aggiungi la testa: il Completo' : 'Il percorso completo'} valore="Sblocca" evidenza />
+          </Elenco>
+        )}
       </div>
 
       {practicePopup}

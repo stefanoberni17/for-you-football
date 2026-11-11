@@ -9,7 +9,8 @@ import { AlertTriangle, Check, ChevronDown, ChevronRight, Lock, Plus, Timer, Tre
 import { DAY_NAMES } from '@/lib/constants';
 import { gruppoLontano } from '@/lib/trainingRitest';
 import TestIstruzioni from '@/components/TestIstruzioni';
-import { AppLoader, BackButton, Badge, Button, Card, Chip, Input } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, CardPlay, Chip, Input } from '@/components/ui';
+import { PalestraTestata } from '@/components/ParteSwitch';
 
 interface TestInfo {
   id: string; nome: string; unita: string; protocollo: string;
@@ -60,7 +61,7 @@ function BloccoTest({ n, titolo, sottotitolo, fatti, totali, open, onToggle, chi
 }) {
   const completo = totali > 0 && fatti >= totali;
   return (
-    <section id={`blocco-${n}`} className={`rounded-card border mb-3 scroll-mt-4 ${completo ? 'bg-forest-500/8 border-forest-500/25' : 'bg-surface border-divider'}`}>
+    <section id={`blocco-${n}`} className={`rounded-[20px] mb-3 scroll-mt-4 ${completo ? 'bg-forest-500/10' : 'bg-surface'}`}>
       <button type="button" onClick={onToggle} className="w-full min-h-[56px] flex items-center gap-3 p-4 text-left" aria-expanded={open}>
         <div className={`w-9 h-9 rounded-btn flex items-center justify-center text-body-sm font-bold shrink-0 ${completo ? 'bg-forest-500 text-white' : 'bg-app text-forest-300'}`}>
           {completo ? <Check size={16} /> : n}
@@ -121,7 +122,7 @@ export default function BatteriaTest() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
     const res = await authFetch('/api/training/state');
-    if (res.status === 403) { router.push('/strumenti'); return; }
+    if (res.status === 403) { router.push('/allenamento'); return; }
     if (res.ok) {
       const data = await res.json();
       setTests(data.tests);
@@ -331,33 +332,20 @@ export default function BatteriaTest() {
   };
 
   return (
-    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-      <div className="max-w-md mx-auto">
-        <BackButton onClick={() => router.push('/allenamento')} label="Campo" className="mb-2" />
-        <h1 className="font-display text-title-1 font-bold text-app mb-4">Batteria di test</h1>
+    <main className="min-h-screen bg-app pb-tabbar-lg">
+      <PalestraTestata parte="corpo" scheda="test" corpoBloccato={false} />
+      <div className="max-w-md mx-auto px-5 mt-4">
 
         {/* Il prossimo test: l'azione di adesso, sopra la piega */}
         {prossimo ? (
-          <Card variant="hero" className="mb-3">
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-1">Il prossimo test</p>
-            <p className="font-display text-title-2 font-bold text-white leading-tight">{prossimo.nome}</p>
-            <p className="text-body-sm text-forest-100 mt-0.5 mb-4">{prossimo.categoria}</p>
-            <Button variant="inverse" size="lg" fullWidth onClick={vaiAlProssimo} iconRight={<ChevronRight size={20} />}>Fai questo test</Button>
-          </Card>
+          <CardPlay parte="corpo" onClick={vaiAlProssimo} label={`Fai il test: ${prossimo.nome}`} className="mb-2"
+            sopra={`Il prossimo test · ${totaleFatti}/${totaleTest} fatti`} titolo={prossimo.nome} />
         ) : (
           <Card variant="accent" className="mb-3">
             <p className="text-body font-semibold text-forest-300 flex items-center gap-2"><Check size={18} aria-hidden /> Batteria completa. Puoi rifare un test quando vuoi.</p>
           </Card>
         )}
-        <div className="mb-5">
-          <div className="flex items-baseline justify-between mb-1.5">
-            <p className="text-body-sm font-semibold text-app tabular-nums">{totaleFatti}/{totaleTest} test fatti</p>
-            <p className="text-caption text-muted">Uno alla volta, anche in giorni diversi</p>
-          </div>
-          <div className="h-1.5 rounded-full bg-surface-2 overflow-hidden" role="progressbar" aria-valuenow={totaleFatti} aria-valuemin={0} aria-valuemax={totaleTest}>
-            <div className="h-full rounded-full bg-accent-glow transition-[width]" style={{ width: `${totaleTest ? Math.round((totaleFatti / totaleTest) * 100) : 0}%` }} />
-          </div>
-        </div>
+        <p className="mb-5 px-1 text-body-sm text-muted">Uno alla volta, anche in giorni diversi.</p>
 
         {/* Ri-test integrato (26/10): le serie test della settimana stanno dentro le sedute */}
         {ritest?.settimanaRitest && (ritest.inSeduta.length > 0 || ritest.proposte.length > 0) && (
@@ -456,7 +444,7 @@ export default function BatteriaTest() {
           <>
             {pesoCorporeo === null && (
               <Card variant="warn" padding="sm" className="mb-3">
-                <p className="text-body-sm text-warning flex gap-2"><AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden /><span>Per il livello in palestra serve il peso corporeo: inseriscilo in &quot;Il tuo setup&quot; nel Campo.</span></p>
+                <p className="text-body-sm text-warning flex gap-2"><AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden /><span>Per il livello in palestra serve il peso corporeo: inseriscilo in Profilo › Corpo › &quot;Il tuo setup&quot;.</span></p>
               </Card>
             )}
             {v2Cats.map((cat, ci) => {

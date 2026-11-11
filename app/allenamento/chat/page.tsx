@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { Send } from 'lucide-react';
-import { BackButton, Button, Textarea } from '@/components/ui';
+import { Button, Card, Textarea } from '@/components/ui';
+import ParteSwitch, { salvaParte, salvaCorpoAperto } from '@/components/ParteSwitch';
 
 interface Msg { role: 'user' | 'assistant'; content: string }
 
 const WELCOME: Msg = {
   role: 'assistant',
-  content: 'Sono il tuo preparatore AI ⚽ Chiedimi degli esercizi, dell\'esecuzione o del tuo programma. Per cambiare il piano della settimana usa "Rifai la settimana" nella pagina Campo.',
+  content: 'Sono il tuo preparatore AI. Chiedimi degli esercizi, dell\'esecuzione o del tuo programma. Per cambiare il piano della settimana usa "Rifai la settimana" in Palestra › Corpo.',
 };
 
 export default function TrainingChatPage() {
@@ -19,7 +20,8 @@ export default function TrainingChatPage() {
   const [messages, setMessages] = useState<Msg[]>([WELCOME]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [rimasti, setRimasti] = useState<number | null>(null); // Medio: messaggi al preparatore rimasti nel mese
+  const [rimasti, setRimasti] = useState<number | null>(null);
+  const [chiuso, setChiuso] = useState<string | null>(null); // Base o in pausa: il preparatore non risponde // Medio: messaggi al preparatore rimasti nel mese
   const scrollerRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
 
@@ -28,11 +30,14 @@ export default function TrainingChatPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.push('/login'); return; }
       const res = await authFetch('/api/training/state');
-      if (res.status === 403) { router.push('/strumenti'); return; }
+      if (res.status === 403) { salvaCorpoAperto(false); router.push('/allenamento'); return; }
+      salvaParte('corpo'); salvaCorpoAperto(true);
       // Il preparatore per livello (3/11): al Base non c'è, si torna al Campo (che spiega dov'è)
       const st = await res.json().catch(() => null);
       const prep = st?.abbonamento?.preparatore as { rimasti: number | null; max: number | null } | undefined;
-      if (prep?.max === 0 || st?.abbonamento?.inPausa) { router.push('/allenamento'); return; }
+      // Dall'8/11 la chat del preparatore è una tab: chi non ce l'ha legge perché, invece di tornare al Campo
+      if (prep?.max === 0) { setChiuso('Il preparatore AI c\'è dal Fisico Medio. Per un dolore usa il triangolo nella Palestra › Corpo: vale per tutti.'); return; }
+      if (st?.abbonamento?.inPausa) { setChiuso('Sei in pausa: il preparatore riprende quando riprendi.'); return; }
       if (prep && prep.rimasti != null) setRimasti(prep.rimasti);
       try {
         const saved = sessionStorage.getItem('trainingChatMessages');
@@ -80,46 +85,47 @@ export default function TrainingChatPage() {
   }, [input, messages, sending]);
 
   return (
-    <main className="bg-app flex flex-col overflow-hidden h-dvh-screen" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+    <main className="bg-app flex flex-col overflow-hidden h-dvh-screen pt-safe">
       <div className="max-w-md mx-auto w-full flex flex-col flex-1 min-h-0 pb-tabbar">
-        {/* Header */}
-        <div className="px-5 pb-2 flex items-center gap-2">
-          <BackButton onClick={() => router.push('/allenamento')} label="Campo" />
-          <div className="min-w-0">
-            <h1 className="font-display text-title-3 font-bold text-app leading-tight">Preparatore AI</h1>
-            <p className="text-caption text-muted">{rimasti != null ? (rimasti > 0 ? `Ti restano ${rimasti} messaggi questo mese` : 'Messaggi finiti: ripartono il primo del mese') : 'Allenamento tecnico e fisico'}</p>
-          </div>
+        {/* Chat › Corpo (8/11): il selettore al posto del "torna al Campo" */}
+        <div className="px-4 pb-2">
+          <ParteSwitch parte="corpo" hrefs={{ mente: '/chat', corpo: '/allenamento/chat' }} corpoBloccato={false} />
+          <p className="mt-2 text-body-sm text-muted text-center leading-snug">
+            Il preparatore: un&apos;AI, non una persona. Può sbagliare.
+            {rimasti != null && <> {rimasti > 0 ? `Ti restano ${rimasti} messaggi questo mese.` : 'Messaggi finiti: ripartono il primo del mese.'}</>}
+          </p>
         </div>
-        <p className="text-caption text-muted text-center pb-2 px-5 leading-snug">
-          Stai parlando con un&apos;AI, non con una persona. Ricordati che l&apos;AI può fare errori.
-        </p>
 
+        {chiuso ? (
+          <div className="px-5 pt-4"><Card padding="md"><p className="text-body text-app leading-relaxed">{chiuso}</p></Card></div>
+        ) : (<>
         {/* Messaggi */}
-        <div ref={scrollerRef} className="flex-1 overflow-y-auto px-5 space-y-3 min-h-0">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-body leading-relaxed whitespace-pre-wrap ${
-                m.role === 'user' ? 'bg-forest-500 text-white rounded-br-md' : 'bg-surface border border-divider text-app rounded-bl-md'
-              }`}>{m.content}</div>
-            </div>
-          ))}
-          {sending && (
-            <div className="flex justify-start"><div className="bg-surface border border-divider rounded-2xl px-4 py-2.5 text-body text-muted">…</div></div>
-          )}
-        </div>
-
-        {/* Input */}
-        <div className="px-5 pt-3">
-          <div className="flex items-end gap-2">
-            <Textarea value={input} onChange={(e) => setInput(e.target.value)} rows={1} maxLength={800}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-              placeholder="Chiedi al preparatore…" aria-label="Messaggio al preparatore"
-              className="flex-1" />
-            <Button onClick={send} disabled={sending || !input.trim() || rimasti === 0} aria-label="Invia" className="w-12 px-0 shrink-0">
-              <Send size={18} />
-            </Button>
+          <div ref={scrollerRef} className="flex-1 overflow-y-auto px-5 space-y-3 min-h-0">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-body leading-relaxed whitespace-pre-wrap ${
+                  m.role === 'user' ? 'bg-forest-500 text-white rounded-br-md' : 'bg-surface border border-divider text-app rounded-bl-md'
+                }`}>{m.content}</div>
+              </div>
+            ))}
+            {sending && (
+              <div className="flex justify-start"><div className="bg-surface border border-divider rounded-2xl px-4 py-2.5 text-body text-muted">…</div></div>
+            )}
           </div>
-        </div>
+
+          {/* Input */}
+          <div className="px-5 pt-3">
+            <div className="flex items-end gap-2">
+              <Textarea value={input} onChange={(e) => setInput(e.target.value)} rows={1} maxLength={800}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
+                placeholder="Chiedi al preparatore…" aria-label="Messaggio al preparatore"
+                className="flex-1" />
+              <Button onClick={send} disabled={sending || !input.trim() || rimasti === 0} aria-label="Invia" className="w-12 px-0 shrink-0">
+                <Send size={18} />
+              </Button>
+            </div>
+          </div>
+        </>)}
       </div>
     </main>
   );

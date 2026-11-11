@@ -18,7 +18,7 @@ import {
 } from 'recharts';
 import { Activity, Moon, Zap, Brain, Flame, Target, TrendingUp, TrendingDown, ClipboardList, Inbox } from 'lucide-react';
 import EmptyState from '@/components/EmptyState';
-import { AppLoader, BackButton, Button, Card, Chip, SectionTitle } from '@/components/ui';
+import { AppLoader, Button, Card, Chip, SectionTitle, Testata } from '@/components/ui';
 import { todayItaly, daysAgoItaly } from '@/lib/dateItaly';
 
 /**
@@ -250,9 +250,7 @@ export default function StatistichePage() {
 
         {/* ─── Header compatto ─────────────────────────────────────────── */}
         <div>
-          <BackButton href="/" label="Home" />
-          <h1 className="font-display text-title-1 font-bold text-app mt-1">I tuoi dati</h1>
-          <p className="text-body-sm text-muted mt-0.5">Stai tenendo botta? Qui lo vedi.</p>
+          <Testata indietro={{ back: '/profilo', label: 'Profilo' }} titolo="I tuoi dati" sotto="Stai tenendo botta? Qui lo vedi." />
         </div>
 
         {/* ─── Blocco 1: Costanza ──────────────────────────────────────── */}

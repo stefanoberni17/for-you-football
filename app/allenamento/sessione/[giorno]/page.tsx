@@ -14,13 +14,14 @@ import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
 import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
 import { hasActiveAccess } from '@/lib/checkAccess';
-import { AppLoader, BackButton, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Textarea } from '@/components/ui';
+import { notaSpostamento, type Spostamento } from '@/lib/spostamenti';
+import { AppLoader, Badge, Button, Card, Chip, Field, RpeScale, SectionTitle, Testata, Textarea } from '@/components/ui';
 
 interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string; carico_kg?: number; blocco_id?: string; adattamento?: 'sali' | 'scendi' | 'gradino' | 'lato' | 'leggero' | 'ripasso' | 'esecuzione' | 'dolore' | 'limitazione'; lato_extra?: 'dx' | 'sx'; facoltativo?: 'togli' | 'aggiungi'; facoltativo_motivo?: string
   per_lato?: boolean;
   test_in_seduta?: { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }; // ri-test in seduta (26/10)
 }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; avviso_partita?: string }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; avviso_partita?: string; spostamenti?: Spostamento[] }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
@@ -157,7 +158,7 @@ export default function SessionePage() {
       <main className="min-h-screen bg-app pt-safe px-5">
         <div className="max-w-md mx-auto text-center pt-20">
           <p className="text-body text-muted mb-4">Nessuna seduta per questo giorno.</p>
-          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna al Campo</Button>
+          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna all&apos;allenamento</Button>
         </div>
       </main>
     );
@@ -170,7 +171,7 @@ export default function SessionePage() {
           <Calendar size={40} className="text-muted mx-auto mb-3" aria-hidden />
           <p className="font-display text-title-2 font-bold text-app mb-1">Seduta saltata</p>
           <p className="text-body text-muted mb-6">Era {DAY_NAMES[giorno]}: si poteva recuperare il giorno dopo. Resta in memoria e, se la settimana finisce senza farla, il preparatore la ripropone uguale nella prossima.</p>
-          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna al Campo</Button>
+          <Button variant="secondary" onClick={() => router.push('/allenamento')}>Torna all&apos;allenamento</Button>
         </div>
       </main>
     );
@@ -242,7 +243,7 @@ export default function SessionePage() {
               <div className="text-5xl mb-4">💪</div>
               <h1 className="font-display text-title-1 font-bold text-app mb-2">Seduta fatta</h1>
               <p className="text-body text-muted mb-8">Segnata sul piano. Quello che hai detto serve a calibrare la settimana prossima.</p>
-              <Button size="lg" fullWidth onClick={() => router.push('/allenamento')}>Torna al Campo</Button>
+              <Button size="lg" fullWidth onClick={() => router.push('/allenamento')}>Torna all&apos;allenamento</Button>
             </>
           ) : (
             <>
@@ -316,9 +317,8 @@ export default function SessionePage() {
   return (
     <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
       <div className="max-w-md mx-auto">
-        <BackButton onClick={() => router.push('/allenamento')} label="Campo" className="mb-2" />
-        <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 mb-1">{DAY_NAMES[giorno]} · {TIPO_LABEL[sessione.tipo] ?? 'Seduta'}</p>
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">{sessione.titolo}</h1>
+        <Testata indietro={{ onClick: () => router.push('/allenamento'), label: 'Allenamento' }}
+          sopra={`${DAY_NAMES[giorno]} · ${TIPO_LABEL[sessione.tipo] ?? 'Seduta'}`} titolo={sessione.titolo} className="mb-1" />
         <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {nEsercizi} esercizi{sessione.apertura_min ? ` · +${sessione.apertura_min}' di apertura, se hai tempo` : ''}</p>
         {!!sessione.proposte?.length && (
           <Card variant="accent" padding="sm" className="mb-4">
@@ -327,6 +327,10 @@ export default function SessionePage() {
               {sessione.proposte.map((p, i) => <li key={i} className="text-body-sm text-app leading-snug">{p.motivo}</li>)}
             </ul>
           </Card>
+        )}
+        {/* Spostata (10/11): la nota sta sopra la spiegazione del preparatore, che resta com'è stata scritta */}
+        {notaSpostamento(sessione) && (
+          <p className="text-body-sm text-warning leading-snug mb-2">{notaSpostamento(sessione)}</p>
         )}
         {sessione.spiegazione && (
           <div className="mb-5">
@@ -371,7 +375,7 @@ export default function SessionePage() {
           <Card variant="danger" padding="sm" className="mb-4">
             <p className="text-body-sm text-danger flex gap-2">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden />
-              <span>Hai segnalato un dolore: questa seduta è in pausa. L&apos;app non fa diagnosi: fatti vedere da un fisioterapista o da un medico se è forte o dura da giorni. Riparti dal Campo, sotto la tua responsabilità.</span>
+              <span>Hai segnalato un dolore: questa seduta è in pausa. L&apos;app non fa diagnosi: fatti vedere da un fisioterapista o da un medico se è forte o dura da giorni. Riparti da Palestra › Corpo, sotto la tua responsabilità.</span>
             </p>
           </Card>
         )}

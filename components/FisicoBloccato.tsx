@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Check, ChevronRight, Dumbbell, Goal, Trophy } from 'lucide-react';
+import { CalendarDays, Check, ChevronRight, Gauge, MessageCircle } from 'lucide-react';
+import { GiornoSegno, LegendaSettimana, type StatoSedutaVista } from '@/components/SettimanaVista';
 import { authFetch } from '@/lib/authFetch';
 import { euroTesto } from '@/lib/abbonamento';
 import { isPaywallActive } from '@/lib/checkAccess';
 import { TESTI_PACCHETTI } from '@/lib/pacchettiTesti';
 import { DAY_SHORT_NAMES } from '@/lib/constants';
 import { Button, Card } from '@/components/ui';
-import PalestraSwitch from '@/components/PalestraSwitch';
+import { PalestraTestata } from '@/components/ParteSwitch';
 
 const INTERESSE_KEY = 'campo.interesse';
 
@@ -54,14 +55,17 @@ export default function FisicoBloccato() {
     } finally { setSending(false); }
   };
 
-  // Settimana finta, solo da guardare: lun/mer/ven con l'app, mar/gio squadra, sab partita
-  const finta: Record<number, 'app' | 'fatta' | 'squadra' | 'partita' | null> = { 1: 'fatta', 2: 'squadra', 3: 'app', 4: 'squadra', 5: 'app', 6: 'partita', 7: null };
+  // Settimana finta, solo da guardare, con i segni della settimana dell'app (10/11): lun/mer/ven con l'app (lunedì fatta),
+  // mar/gio squadra, sabato partita
+  const finta: Record<number, { squadra?: boolean; partita?: boolean; seduta?: StatoSedutaVista }> = {
+    1: { seduta: 'fatta' }, 2: { squadra: true }, 3: { seduta: 'oggi' }, 4: { squadra: true }, 5: { seduta: 'futura' }, 6: { partita: true }, 7: {},
+  };
 
   return (
-    <main className="min-h-screen bg-app pt-safe pb-tabbar-lg px-5">
-      <div className="max-w-md mx-auto">
-        <PalestraSwitch parte="fisico" fisicoBloccato className="mb-5" />
-        <h1 className="font-display text-title-1 font-bold text-app mb-1">Il Campo</h1>
+    <main className="min-h-screen bg-app pb-tabbar-lg">
+      <PalestraTestata parte="corpo" schede={false} corpoBloccato />
+      <div className="max-w-md mx-auto px-5 mt-5">
+        <h1 className="font-display text-display font-bold text-app mb-1">Il Corpo</h1>
         <p className="text-body text-muted leading-relaxed mb-5">
           Un piano di allenamento fisico e tecnico, settimana per settimana, costruito sul tuo calendario con la squadra, sulla partita e sui tuoi test.
         </p>
@@ -76,29 +80,26 @@ export default function FisicoBloccato() {
           <p className="text-label font-semibold text-muted mb-2">La settimana, decisa sul tuo calendario</p>
           <div className="grid grid-cols-7 gap-1.5">
             {[1, 2, 3, 4, 5, 6, 7].map((d) => {
-              const k = finta[d];
+              const g = finta[d];
               return (
-                <span key={d} className="text-center">
+                <span key={d} className="flex flex-col items-center">
                   <span className="block text-overline uppercase text-faint mb-1">{DAY_SHORT_NAMES[d]}</span>
-                  <span className={`h-10 rounded-btn flex items-center justify-center ${
-                    k === 'partita' ? 'bg-warning/20 text-warning' : k === 'squadra' ? 'bg-surface-3 text-muted' : k ? 'bg-forest-500/20 text-forest-300' : 'bg-surface-2 text-faint'
-                  }`}>
-                    {k === 'partita' ? <Trophy className="w-4 h-4" /> : k === 'fatta' ? <Check className="w-4 h-4" strokeWidth={3} /> : k === 'app' ? <Dumbbell className="w-4 h-4" /> : k === 'squadra' ? <span className="text-caption font-bold">S</span> : '·'}
-                  </span>
+                  <span className="w-full [&>span]:h-10"><GiornoSegno piccolo squadra={!!g.squadra} partita={!!g.partita} seduta={g.seduta ?? null} /></span>
                 </span>
               );
             })}
           </div>
+          <LegendaSettimana className="mt-3" />
         </Card>
 
         <ul className="space-y-3 mb-6">
-          {[
-            ['I test e la tua Card', 'Forza, velocità, resistenza, tecnica: i test dicono il tuo livello e da lì parte tutto.'],
-            ['Una settimana che si adatta', 'Giorni con la squadra, partita, come ti senti: la seduta di oggi cambia con te, non con un foglio fisso.'],
-            ['Un preparatore a cui chiedere', 'Esecuzione, dolori, dubbi: risponde sapendo cosa hai fatto e cosa ti aspetta.'],
-          ].map(([t, s]) => (
+          {([
+            [Gauge, 'I test e la tua Card', 'Forza, velocità, resistenza, tecnica: i test dicono il tuo livello e da lì parte tutto.'],
+            [CalendarDays, 'Una settimana che si adatta', 'Giorni con la squadra, partita, come ti senti: la seduta di oggi cambia con te, non con un foglio fisso.'],
+            [MessageCircle, 'Un preparatore a cui chiedere', 'Esecuzione, dolori, dubbi: risponde sapendo cosa hai fatto e cosa ti aspetta.'],
+          ] as const).map(([Icona, t, s]) => (
             <li key={t} className="flex gap-3">
-              <span className="w-9 h-9 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0 mt-0.5" aria-hidden><Goal size={18} /></span>
+              <span className="w-9 h-9 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0 mt-0.5" aria-hidden><Icona size={18} /></span>
               <span><span className="block text-body font-semibold text-app">{t}</span><span className="block text-body-sm text-muted leading-relaxed">{s}</span></span>
             </li>
           ))}

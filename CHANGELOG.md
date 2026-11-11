@@ -2,6 +2,204 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — La pagina di vendita resta spenta in produzione
+
+Ste: l'app va online, la pagina di vendita aspetta altre modifiche. `SCOPRI_ONLINE` in `lib/constants.ts` (`NEXT_PUBLIC_SCOPRI_ONLINE=1`): spento, in produzione `/scopri` risponde 404 e chi apre il sito senza essere entrato va al login come prima; nei Preview e in locale la pagina si apre lo stesso. Si accende mettendo la variabile su Vercel (Production) e rifacendo il deploy.
+
+## 2026-11-10 — La storia di Ste sui tre momenti
+
+`lib/scopri.ts`, `STORIA.capitoli` riscritti sui racconti di Ste del 10/11 (Ste: «la storia deve girare attorno a peak action moment, peak emotional moment, peak learning moment; il resto è contorno»). Dieci schermate invece di otto:
+- Azione: l'esordio in Serie C con la Reggiana a 17 anni e il primo appoggio corto, intercettato; poi il nascondersi, le giocate difficili per essere giustificato, il camp con la Nazionale Under 18.
+- Emozione: odiare andare al campo, gli anni a vomitare prima e durante le partite (citazione in apertura allineata: «a giocare completamente libero e focalizzato»), lo psicologo.
+- Apprendimento: Modena, l'infortunio in Coppa Italia, la frase della ragazza di allora («se tratti bene o male gli altri in base a come vanno le partite…»), lasciar decidere al risultato invece di guardare quello che dipende da lui.
+- Finale: il maestro di yoga, la finale contro la Reggiana da titolare (4-1), poi «For You Football è quello che avrei voluto avere io a 17 anni». I cento calciatori restano solo nei numeri del profilo (Ste: «nella mia storia non c'entra nulla»).
+Solo fatti raccontati da Ste; foto invariate, riassegnate ai capitoli.
+- La storia si apre con «Ciao, sono Ste.» e «Ex calciatore professionista e semiprofessionista. Fondatore di For You Football.» sulla foto del tiro; la citazione viene dopo, senza foto. Stessa riga nel profilo della pagina.
+- Foto (Ste): colpo di testa ed esultanza tolte dalla storia (non c'entravano); quella con il ginocchio fasciato passa dal Modena alla finale. La griglia del profilo mostra righe intere da tre.
+- Due foto del Modena mandate da Ste il 10/11 (`modena-ritratto`, `modena-palla`, stesso trattamento con `scripts/scopri-foto.mjs`, `SOLO=` per rifare solo quelle): sul Modena e su «avevo capito». Non usate: la foto con l'avversario dietro e la firma del fotografo, e la foto di squadra (altre persone riconoscibili).
+- Profilo della pagina (Ste, 10/11): la bio si apre con «Ciao, sono Ste.» come la storia; tra i numeri resta solo «100+ calciatori» («12 settimane» e «300+ esercizi» non parlano di lui, andranno altrove).
+- Sulle schermate con la foto il testo sta al centro, non in basso (Ste: «altrimenti sembra che ci sia io al centro»), con la foto scurita in modo uniforme e un'ombra leggera sotto le lettere.
+
+## 2026-11-10 — Il Corpo bloccato con i segni della settimana
+
+`components/FisicoBloccato.tsx` (la pagina del Corpo per chi non ce l'ha): la settimana finta usa `GiornoSegno` e la legenda della settimana dell'app (squadra S giallo-arancio, partita P rossa, seduta in programma e fatta in blu) al posto della coppa gialla e della squadra grigia; le tre righe sotto hanno ognuna la sua icona (test, settimana, preparatore).
+
+## 2026-11-10 — La pagina di vendita con i colori dell'app
+
+`/scopri` allineata all'app dopo il restyle dell'8-9/11:
+- Il Corpo è blu come nell'app (`.parte-corpo`): il selettore Il Corpo del giro dell'app e tutto quello che c'è sotto, i cerchi «Il Corpo» e «Perché il Corpo» e le loro storie (sfondo blu), il riquadro dei prezzi del Fisico. La Testa e i bottoni «Prova gratis» restano verdi.
+- Le undici schermate in `public/scopri/` rifatte dal Preview con l'account di prova (dati di esempio): quattro tab, Mente | Corpo, stile a riquadri, Corpo blu. Prima erano quelle con le cinque tab e il Fisico verde.
+- Al posto delle foto di Ste, Testa e Corpo hanno le icone dell'app (`IconaParte` in `components/scopri/Storie.tsx`): nel selettore del giro dell'app, sempre ciascuna nel suo colore, e nei cerchi «La Testa», «Il Corpo», «Perché la Testa», «Perché il Corpo» (Ste: «al posto delle mie foto su corpo e mente metti quello usato in app»). Le foto restano nella sua storia e in «Dove ti porta».
+- `scripts/scopri-screenshots.mjs`: `STATE` (sessione di Playwright già entrata) al posto di email e password, si ferma se non è entrato invece di salvare la pagina di accesso, la chat del Coach riparte vuota.
+
+## 2026-11-10 — Fase 1c: le risposte del Gate con la domanda giusta
+
+Revisione dell'esperienza §1.5. Le risposte del Gate (`{ q1..qN }`) si accoppiavano alle domande di adesso su Notion: dopo una riscrittura il Gate 1 mostrava la risposta sul Reset sotto la domanda sulla parola, e nel Gate 4 di prima del 26/10 q2 e q3 erano voci dell'elenco della domanda 1.
+- Migration 041 (`user_day_progress.gate_domande`): `/api/gate` salva il testo delle domande con le risposte; senza la colonna salva come prima.
+- `lib/gateStorico.ts` (puro, 7 test): per le risposte di prima la domanda certa (pagina di Notion non toccata dopo), la domanda di allora (registro `GATE_VERSIONI`: Gate 1 dall'export di giugno), «Hai risposto a una versione precedente di questa domanda» (Gate 4 prima del 26/10) o la domanda di oggi con «quella di allora poteva essere diversa».
+- La usano la pagina del Gate già fatto, «Le tue risposte» e il Coach nella settimana in corso. `mapGiorno` porta il testo intero del campo e l'ultima modifica della pagina.
+- `domandeGateDa`: le righe prima della prima domanda numerata non diventano una domanda.
+
+## 2026-11-10 — Fase 1b: le spiegazioni del piano datate e lo storico degli spostamenti
+
+Revisione dell'esperienza §1.3-1.4. Il testo del preparatore diceva «venerdì» e la seduta era giovedì: nessuno dei quattro modi in cui il server sposta una seduta toccava i testi, e «Ho sistemato 6 cose» contava righe che la lista non mostrava.
+- `lib/spostamenti.ts` (puro, 6 test): ogni seduta porta `spostamenti` con data, perché e fonte (generazione, calendario cambiato, posticipo); il piano porta `scritto_il`. I testi non si riscrivono.
+- Hub, scheda Settimana: «La proposta del preparatore · lunedì 9/11», «Da allora N sedute sono cambiate», una riga per seduta spostata, «Com'è cambiata la settimana» con tutti i passaggi datati; «Ho sistemato» senza gli spostamenti e con tutte le righe che conta.
+- Pagina seduta: «Pensata per giovedì, spostata a martedì il 10/11: …» sopra la spiegazione.
+- L'adattamento al calendario tiene la spiegazione scritta dal preparatore (prima si perdeva); gli spostamenti non vanno più tra gli aggiustamenti.
+- Prompt del planner: niente giorni della settimana nel titolo e nella spiegazione di una seduta (`v2.51`).
+- Migration 040 applicata da Ste: la settimana con la squadra si salva nella tabella nuova (provato sul Preview).
+
+## 2026-11-10 — «Il calendario è cambiato» non torna più in giro
+
+Ste: «continua a dare questo messaggio in loop». Il 9/11 il piano è stato adattato tre volte in un minuto: venerdì non era più tra i giorni dell'app, l'adattamento spostava la seduta a giovedì «fuori dai tuoi giorni abituali: non c'era altro posto», e la lettura dopo la segnalava di nuovo come conflitto (giovedì → martedì → giovedì).
+- `conflittoSeduta` in `lib/trainingCalendario.ts`: una seduta con `spostata_da` (messa lì dall'adattamento) non è più un conflitto «giorno non tra quelli dell'app». Partita, giorno prima della partita e finestre restano conflitti. Test in `tests/trainingCalendario.test.ts`.
+- «Lascia così» resta anche chiudendo e riaprendo l'app (`localStorage`, per piano e calendario; prima `sessionStorage`).
+
+## 2026-11-10 — Il peso da usare su ogni esercizio con i pesi, due video sbagliati
+
+Ste: «sui piegamenti 1 braccio declinati c'è il video dei piegamenti a 2 braccia declinati. Gorilla row bisogna mettere il peso da usare, controlla che tutti gli esercizi con kb e pesi abbiano il peso da usare».
+- Controllo su tutti i blocchi di Ste e su quelli composti dal server: uscivano senza kg il Gorilla Row, lo Standing Dumbbell Overhead Press e il Barbell Row delle serie di parte alta (`pa-serie`, `pa-serie-short`, focus), e Paused Tempo Squat e Kettlebell Swing in Forza Prevenzione B1. Gli altri avevano i kg di Ste.
+- Ogni esercizio attivo con kettlebell, manubri, bilanciere o macchina ha nel catalogo il peso di partenza (`peso_kg`) e che cosa vuol dire il numero (`peso_per`: per manubrio, per kettlebell, bilanciere con la barra, zavorra, macchina). `expandBlocco` lo mette quando il blocco non dà i kg, con la nota «Peso di partenza: 12 kg per kettlebell. Giusto se chiudi le ripetizioni con 2-3 in riserva…»; poi la dose sale o scende dai kg segnati nel player. I kg dei blocchi di Ste non cambiano. Valori proposti da me, da confermare: bilanciere 20 kg (la barra), manubri 4-8 kg, kettlebell 12-16 kg, zavorra 5 kg, macchine 10-20 kg. Test in `tests/pesi.test.ts`.
+- Tolti due video che mostravano un altro esercizio: Piegamenti 1 braccio declinati (aveva quello a due braccia) e Plank (aveva il plank laterale). In `docs/training-video-da-registrare.md`.
+
+## 2026-11-10 — La settimana con la squadra: per data e obbligatoria
+
+Ste: «bisogna fare in modo che sia obbligatorio il setup della settimana con la squadra e magari mettere un pulsante "come la scorsa"». Prima squadra e partita si salvavano con il numero della settimana del percorso e un cron le svuotava il lunedì: passato il Gate a metà settimana Corpo e Coach leggevano righe diverse, una modifica dalla pagina di una settimana passata finiva in una riga che il Corpo non leggeva, e «niente squadra» non si distingueva da «non ancora detto» (il Corpo rimetteva i giorni del setup).
+- Tabella nuova `user_calendario_settimane` (migration 040): una riga per lunedì di calendario. Una riga = risposta, anche vuota. `lib/settimanaCalendario.ts` (regole pure, 6 test) e `lib/settimanaServer.ts`; tutti i lettori passano di lì (Home, giorno, Corpo, planner, carico, resoconti, Coach, promemoria). Con la risposta `giorniSquadra` / `giorniPartita` / `caricoSquadraStimato` non ripiegano più sul setup.
+- Foglio obbligatorio `components/SettimanaObbligatoria.tsx` in Home e nel Corpo: «Come la scorsa settimana» (o «Come nel mio setup»), «Cambia i giorni», «Niente squadra né partita». Il piano automatico del Corpo aspetta la risposta (409 `settimana_da_confermare`).
+- Il cron del lunedì non svuota più i calendari. Senza la migration l'app legge il calendario di prima salvato in questa settimana e scrive in tutti e due.
+- Il lunedì «Com'è andata ieri?» (Corpo, Home, push del mattino) guarda la domenica con i giorni della settimana PRIMA (la sua risposta, o il setup se non aveva risposto), non quelli della settimana nuova: `resocontiDaChiedere({ settimanaPrima })`, `calendarioDellaSettimana().scorsa`. Senza la migration anche la settimana prima si legge dal calendario di prima.
+
+## 2026-11-09 — Fase 1a della revisione dell'esperienza: la settimana in sola lettura, la squadra, il Coach gratis
+
+Piano in `docs/revisione-esperienza-2026-11-09.md` (fase 1, pezzo 1a).
+- **La tua settimana** (`components/SettimanaVista.tsx`): il riquadro in Home (ora a tutta larghezza) apre una vista in sola lettura dei sette giorni; prima apriva l'editor «Imposta la tua settimana». Colori di Ste con simboli ed etichette: squadra giallo-arancio con la S, partita rosso con la P, seduta dell'app blu col manubrio (contorno in programma, pieno fatta, tratteggiato saltata), pallino verde per la pratica del percorso; giorni con due cose divisi a metà; «dal tuo setup» quando squadra o partita vengono dall'abitudine del Corpo. Ogni riga ha l'etichetta per lo screen reader.
+- **Squadra e partita** (`components/WeeklyCalendarPopup.tsx`): «Allenamenti con la squadra» al posto di «Giorni di allenamento», si salva anche senza (settimana con la sola partita, o vuota); con la settimana vuota dice quale setup vale. `GET /api/calendar` → `compilato`; Home, settimana e giorno lo usano (prima una settimana con la sola partita risultava «non impostata»). Stessa parola nella nota campo («Il tuo prossimo allenamento con la squadra è…»), nel contesto del Coach e nella pagina della settimana.
+- **Coach gratis** (`lib/coachGratis.ts`, 17 test): periodo gratis a tempo (la prova del Mente/Completo, o 7 giorni dalla registrazione per chi non passa dalla prova), 20 messaggi in tutto tra app e Telegram, stessa regola sui due canali; prima i 20 messaggi valevano per tutta la vita dell'account e un ragazzo fermo alla settimana 1 li teneva per sempre. Pacchetto solo Corpo: il Coach non c'è (rimanda al preparatore). Il contatore in chat dice anche fino a quando.
+
+## 2026-11-09 — Home e Palestra più chiare, Le tue risposte per settimana, il Corpo in blu (proposta)
+
+- Home (Ste: «più chiarezza sulle tab da schiacciare»): la card della pratica dice «Percorso Mente · pratica di oggi» (sotto settimana, giorno e minuti); il riquadro del Corpo si chiama sempre «Allenamento di oggi» con lo stato sotto; «Disciplina · Le tue azioni»; «Presenza · Esercizio della settimana». `Riquadro` ha la prop `etichetta`.
+- Palestra: «Mente» e «Corpo» sono titoli grandi con il pallino del colore (`TitoloGruppo grande`).
+- Le tue risposte: una settimana alla volta, con i chip delle settimane in cima (si apre sull'ultima) e «Le chiave» per le sole risposte chiave; testo più grande (risposte a 17 px, domande a 14).
+- Due colori (Ste: «forse troppo evidente ma non è male», da applicare a tutto il Corpo): la Mente resta il verde del brand, il Corpo prende un blu acciaio più spento del primo provato. Una classe sola, `.parte-corpo` in `app/globals.css`, rimappa i token forest (e il glow) sul blu: la mette `app/allenamento/layout.tsx` su tutta l'area del Corpo (hub, seduta, player, test, storico, mese, setup, chat del preparatore) e la mettono i pezzi del Corpo fuori di lì (riquadri in Home e Palestra con `parte="corpo"`, `CardPlay`, il selettore, la parte Corpo del Profilo, la Carta in vista Corpo). Reset, check-in e tab bar restano verdi.
+- Accanto a «Mente» e «Corpo» (Palestra, Profilo, testate interne) l'icona della parte al posto del pallino: per la Mente una testa con il bersaglio al centro, per il Corpo un calciatore che calcia la palla (Ste: «visto che ha sia tecnica che fisico», poi «più belle e più significative»): pittogrammi pieni in SVG in `components/ui/IconaCorpo.tsx`, le stesse del selettore. I riquadri «Allenamento» tengono il manubrio.
+
+## 2026-11-09 — L'Allenamento del Corpo in quattro schede, e meno doppioni
+
+Ste: «la parte di palestra fisica è davvero molto incasinata»; «Oggi, Settimana, Stats, Setup»; «la card una unica dove si può switchare tra corpo, mente e completa»; «fai un giro sulle ridondanze».
+- **Oggi**: il resoconto da dare, la zona dolorante, la seduta di oggi (card verde con il play), «Hai un dolore?» in una riga. Il carico e la card del preparatore escono da qui.
+- **Settimana**: i sette giorni in righe, lunedì-domenica, con squadra e partita (dal calendario o dall'abitudine del setup), titolo, durata e una riga di blocchi; tocco → la seduta. Sotto il messaggio del piano (tre righe), gli aggiustamenti e «Rifai la settimana»; scarico e ri-test in cima.
+- **Stats**: recupero dai check-in (oggi, 7 e 30 giorni, meglio o peggio della settimana prima, sonno, barre degli ultimi 14 giorni), zone tese, fatica (carico, squadra e partita), squilibri, il mese e la tecnica del mese, livello e test con le scale.
+- **Setup**: la pagina del setup dentro la scheda (`components/SetupCampo.tsx`); `/allenamento/setup` porta qui.
+- **Doppioni tolti**: il rombo del Corpo è nella Carta (vista Corpo, ora con Base | Dettaglio), non più nell'Allenamento; nel Profilo una Carta sola invece di due righe; il setup non è più nel Profilo né dietro l'ingranaggio; la card «Parla col preparatore» è tolta (la tab Chat dal Corpo apre il preparatore).
+- Da fare (Ste): accorciare una seduta sola, in CLAUDE.md.
+
+## 2026-11-08 — L'app riorganizzata: quattro tab e un solo selettore Mente | Corpo
+
+Ste: «l'ho fatta vedere in giro e mi dicono che è bellissima ma ci sono tante cose e non si capisce bene come arrivarci… troppe scritte piccole».
+- **Quattro tab: Home, Palestra, Chat, Profilo** (`components/BottomTabBar.tsx`). Il Percorso non è più una tab: è la prima scheda di Palestra › Mente.
+- **Un selettore Mente | Corpo uguale ovunque** (`components/ParteSwitch.tsx`, al posto di `PalestraSwitch`): in Palestra, Chat e Profilo; l'ultima parte scelta resta sul dispositivo e le tab riaprono lì; il Corpo che non hai ha il lucchetto e porta alla pagina di assaggio.
+- **Palestra**: Mente con le schede Percorso · Allenamento · Quando si fa dura (`/settimane`, `/strumenti`, `/sos`, senza più gli header a gradiente), Corpo con Allenamento · Test (`/allenamento`, `/allenamento/test`). Dalla pagina Allenamento della Mente tolte le difficoltà (hanno la loro scheda) e la Carta (nel Profilo).
+- **Chat**: Mente = il Coach (senza l'intestazione verde, una riga sola), Corpo = il preparatore; chi ha il Fisico Base legge dove trovarlo invece di essere rimandato al Campo.
+- **Profilo**: chi sei, «Account» in alto a destra, Mente (Carta, risposte, dati) | Corpo (Carta, storico, settimane passate, setup). **Account** (`/account`, era `/profilo`): dati, Telegram, notifiche, abbonamento, esci, cancella, privacy. Messaggi del bot, push di fine prova e pagina prezzi dicono «Profilo → Account».
+- **Home a due blocchi**, «Mente» e «Corpo», con le cose di oggi; chi ha solo il Fisico vede prima il Corpo.
+- **Stile a riquadri piccoli** (stesso giorno, Ste: «vai come proposto»): `Riquadro` / `GrigliaRiquadri` / `TitoloGruppo` e `Elenco` / `RigaElenco` in `components/ui`. Palestra = due gruppi di riquadri (Mente: Percorso, Allenamento, Quando si fa dura, Reset rapido; Corpo: Allenamento, Test), senza selettore; Home = la pratica di oggi in una card e sotto i riquadri (Corpo di oggi, azioni, esercizio della settimana che apre un foglio, la settimana in sette barre); Percorso = i sette giorni a cerchi dentro la card della settimana e le 12 settimane a quadratini; Profilo = righe divise Mente e Corpo. Le altre pagine interne vengono dopo, una alla volta.
+- **Lo stile sulle pagine interne** (9/11, Ste: «prova ad applicare il resto»): `Testata` (freccia, riga sopra, titolo grande, riga sotto) al posto degli header a gradiente in settimana, giorno, Gate, azioni di oggi, Carta, dati, risposte, storico, setup, settimane passate, Account e seduta; `CardPlay` (la card verde con il tasto play) per la cosa da fare in Allenamento della Mente, Quando si fa dura, settimana, Allenamento del Corpo e Test. Allenamento della Mente: le sette capacità a riquadri con le icone (bloccate con il lucchetto e la settimana), esercizi in righe; Quando si fa dura a riquadri; i 7 giorni della settimana in righe; il resoconto da dare in una riga. Le schermate di festa a tutto verde (giorno fatto, Gate passato, settimana completata) restano. Percorso: le 12 settimane a riquadri due per riga con il titolo.
+- La Carta si apre sulla parte chiesta (`/carta?vista=mente|corpo`); storico, setup, settimane passate, statistiche, risposte e Carta tornano alla pagina di prima (`BackButton back`).
+
+## 2026-11-08 — La pagina di vendita: i cerchi nelle sezioni, una schermata per sezione su telefono
+
+Ste: «i pallini mettiamoli nei vari settori e non funziona il pulsante di chiusura. Anche il carattere terrei tutto in corsivo. Sul telefono ogni sezione che scorri stia esattamente dentro alla schermata senza andare su e giù».
+- **I cerchi nella loro sezione** (tolta la fila sotto il bottone d'apertura): La Testa e Il Fisico in cima a «Come funziona», al posto delle linguette (quello scelto ha l'anello, l'altro è spento; toccato di nuovo apre la storia); in «Il metodo» tre cerchi al posto delle schede: Dove ti porta, Perché la Testa, Perché il Fisico (storie nuove dai testi di `PERCHE_TESTA`, `PERCHE_FISICO` e `FISICO_SEZIONE`; tolti `Schede.tsx`, `Espandi.tsx`, `PercheTesta`, `PercheFisico`); nei prezzi su telefono «Guarda il Fisico». `Cerchio` in `components/scopri/Storie.tsx`; «A tutto schermo» sotto ogni momento del giro dell'app.
+- **Il selettore Testa | Fisico basso e piatto** (Ste, dopo la prima prova: «più piccolo, appiattito, più spazio all'immagine e alle scritte»): in cima a «Come funziona» una barra alta 44 px con la fotina nel cerchio, il nome e «da dicembre» sotto, al posto dei due cerchi grandi; su telefono il telefono del giro dell'app si allarga (fino a metà schermo). Provati tutti gli 11 momenti a 390×844 e 375×667: la schermata non scorre.
+- **«Il Corpo» al posto di «Il Fisico» nella pagina di vendita** (Ste: «metterei corpo, fisico e tecnica»): nel selettore «La Testa · mentale» | «Il Corpo · fisico e tecnica», «Da dicembre» in un'etichetta sopra il momento (`ParteTour.sotto` e `nota` in `Tour.tsx`), le storie «Il Corpo» e «Perché il Corpo», il cerchio «Guarda il Corpo» nei prezzi. I nomi dei pacchetti (Fisico Base, Medio, Pro, Completo) non cambiano: sono quelli di Stripe e dell'app.
+- **La X chiude**: il testo della schermata copriva la barra in alto e si prendeva il tocco; ora il testo lascia passare i tocchi (tranne link e bottoni) e la barra sta sopra.
+- **Le storie tutte in corsivo** (Crimson Pro), titoli compresi.
+- **Su telefono una sezione = una schermata** (`.scopri-schermo` in `app/globals.css`, sotto i 1024 px): la pagina si ferma all'inizio di ogni schermata (`scroll-snap`), alta quanto lo schermo, contenuto al centro, spazio in fondo per il bottone fisso. Apertura con il telefono che spunta dal fondo; scene con la scheda alta in proporzione allo schermo; profilo con una riga di foto; il giro dell'app con telefono e testo uno accanto all'altro e i momenti in fila; prezzi in tre schermate (i passi, Mente, Fisico); domande tutte in vista, una aperta alla volta; chiusura e piè di pagina nella stessa schermata. Sugli schermi bassi (iPhone SE) spariscono disegnino delle scene, citazione del profilo e nota sul valore. Misurato a 390×844 e 375×667: nessuna sezione più alta dello schermo.
+
+## 2026-11-07 — La pagina di vendita come i social
+
+Ste: «prova a prendere spunto anche da Instagram». Gli schemi che chi ha 16-25 anni usa ogni giorno, dentro la stessa pagina:
+- **Cerchi «in evidenza»** sotto il bottone d'apertura (La mia storia, La Testa, Dove ti porta, Il Fisico): toccati, aprono le **storie a tutto schermo** (`components/scopri/Storie.tsx`: un solo visore per pagina, `apriStoria(gruppo, schermata)`; barrette, tocco avanti/indietro, tenere premuto per fermare, Esc o X per chiudere, alla fine «Prova la prima settimana» e «Poi: …» per il gruppo dopo; un cerchio visto diventa grigio). La Testa e il Fisico mostrano le schermate dell'app con titolo, testo e «In campo»; Dove ti porta un punto per schermata.
+- **Le quattro scene come un post a carosello** (`components/scopri/Carosello.tsx`), con il disegnino grande, i pallini e «1 / 4».
+- **Ste come un profilo**: la foto nel cerchio (apre la storia), i numeri (100+ calciatori, 12 settimane, 300+ esercizi), tre righe di bio, la citazione, «Guarda la mia storia» e la **griglia delle foto**: ogni foto apre la storia da quel capitolo.
+- **Su telefono il bottone fisso in basso** («Prova gratis», `components/scopri/BarraProva.tsx`) dopo l'apertura, nascosto sui prezzi e in fondo.
+- Tolta la storia in linea (`Storia.tsx`): la stessa storia ora sta nel visore.
+
+## 2026-11-07 — La pagina di vendita viva: la storia a schermate, il metodo a schede
+
+Ste: «deve essere dinamica, non classica con i link» e il testo nuovo della storia («più conciso, per la vendita»).
+- Tolta `/scopri/storia`: tutto torna in una pagina, ma niente muri di testo.
+- **La storia a schermate** (`components/scopri/Storia.tsx`), come le storie dei social: dieci schermate (la citazione con l'intro, otto capitoli, la frase finale con «Prova la prima settimana» e «Rivedi dall'inizio»), le foto di Ste a tutto schermo con un leggero avvicinamento, le barrette in alto che si riempiono; parte da sola quando è in vista (durata dal testo, 4,5-11 s), tocco a destra avanti e a sinistra indietro, tenendo premuto si ferma, pausa, frecce da tastiera; ferma con prefers-reduced-motion. Il testo di Ste è in `STORIA` (`citazione`, `intro`, `capitoli` con la foto o solo testo, `finale`) in `lib/scopri.ts`; il testo intero resta nel DOM per i motori di ricerca e i lettori di schermo.
+- **«Il metodo» a schede** (`components/scopri/Schede.tsx`): sotto «Non è pensiero positivo», tre schede Dove ti porta | Perché la Testa | Perché il Fisico, nelle ultime due «Leggi tutto» per il resto.
+- **Le sezioni entrano mentre scorri** (`components/scopri/Rivela.tsx`, visibili subito senza JavaScript).
+- Ordine: apertura, scene, la storia, il giro dell'app, il metodo, prezzi, domande, chiusura.
+
+## 2026-11-07 — La pagina di vendita corta, la storia in una pagina a parte
+
+Ste: «è davvero troppo lungo: uno deve vedere solo le cose essenziali e poi approfondire gli aspetti che vuole». Lo schema delle pagine delle app di allenamento e di benessere (un'apertura, un giro del prodotto a schede, il fondatore in breve, prezzi, domande; il resto in pagine a parte):
+- `/scopri`: apertura, le quattro scene, **il giro dell'app** (`components/scopri/Tour.tsx`: La Testa | Il Fisico in alto, un telefono, l'elenco dei momenti; tocchi un momento e il telefono cambia, «Cosa c'è dentro» per il dettaglio; su telefono i momenti sono una fila di bottoni sotto il telefono), chi c'è dietro in breve (la foto della Reggiana, la citazione, il primo paragrafo, «Leggi la mia storia e perché è nato il metodo»), i prezzi con i tre passi per iniziare in alto e Mente e Fisico affiancati, le prime quattro domande («Tutte le domande» per le altre), la chiusura. Da computer da circa 10.800 a circa 5.100 pixel.
+- `/scopri/storia` (nuova): la storia intera con le foto, perché la Testa, non è pensiero positivo, dove ti porta il lavoro, perché il Fisico (`#fisico`, dal giro dell'app «Perché il Fisico è fatto così»). Fuori da tab bar, rituale, paywall e consensi come `/scopri`.
+- Tolto `ComeFunziona` (il telefono fermo con i momenti che scorrono): lo sostituisce il giro. I pezzi comuni alle due pagine in `components/scopri/Parti.tsx`.
+
+## 2026-11-07 — La pagina di vendita a sezioni che si aprono
+
+Ste: «è troppo in una pagina: a sezioni, ognuna che si può espandere per sapere più nel dettaglio». `components/scopri/Espandi.tsx`: in vista l'essenziale, il resto si apre con un bottone sotto (contenuto nel DOM anche da chiuso, `hidden`; chiudendo la pagina torna all'inizio del pezzo). Si aprono: la storia («Leggi tutta la storia»: in vista la citazione, la foto della Reggiana e il primo paragrafo), «Migliorare come persona, e come giocatore» («Leggi di più»: in vista il primo paragrafo), «Tutto collegato» («Perché il Fisico è fatto così») e i sette momenti del Fisico («Guarda come funziona il Fisico»). Restano aperte l'apertura, le scene, «Dove ti porta il lavoro», «Non è pensiero positivo», «Come funziona» della Testa, prezzi, domande (già a scomparsa) e chiusura. Da computer la pagina passa da circa 19.000 a circa 10.800 pixel. Il video, quando ci sarà, sta dentro la storia e non parte da solo.
+
+## 2026-11-07 — La pagina di vendita: perché la Testa e perché il Fisico
+
+Ste: «vorrei mettere più focus su come mai questo percorso mentale e fisico», con i due testi suoi. Ritoccati poco, nella sua voce (`PERCHE_TESTA`, `PERCHE_FISICO` in `lib/scopri.ts`):
+- «Migliorare come persona, e come giocatore», dopo «Chi c'è dietro»: le strade provate, ognuna con qualcosa di buono e un pezzo mancante; gli studi (psicologia, mental coaching, discipline orientali, yoga); la domanda in evidenza; i pilastri e le tecniche viste funzionare in campo; For You Football che continua a cambiare;
+- «Tutto collegato», in testa alla sezione del Fisico: i tre professionisti bravi ma scollegati, l'altalena forza/fluidità, lo studio da personal trainer, le variabili che cambiano ogni giorno, la domanda, l'AI che lavora dentro le regole scritte con preparatori e professionisti.
+Tolto dal testo di Ste «o che nascondevano» (detto di psicologi e mental coach suona come un'accusa) e «migliaia di variabili» diventa «tantissime» (non è un numero che possiamo mostrare).
+
+## 2026-11-07 — La pagina di vendita: le foto di Ste nella storia
+
+Ste ha mandato sette foto («modificale un po'»; «puoi modificare un po' i caratteri e lo stile, ma non stravolgere»):
+- stesso trattamento per tutte (taglio, colori un po' più caldi e meno saturi, contrasto, vignetta morbida; `scripts/scopri-foto.mjs`, le originali fuori dal repo), ~260 KB in `public/scopri/storia/`;
+- quattro nella storia a capitoli (`STORIA_FOTO`: la Reggiana in apertura, poi accanto a «Per anni…», a «Me ne sono accorto…» e a «Non è stato veloce…»), tre in fila sotto (`ALBUM_FOTO`); niente scritte sotto finché Ste non manda anno e due parole per ognuna (`quando` e `didascalia` facoltativi);
+- il titolo d'apertura in due tempi: la seconda frase («In partita, a volte, non ti riconosci.») in Crimson Pro corsivo, verde chiaro. Il resto dello stile non cambia.
+
+## 2026-11-07 — La pagina di vendita: torna lo stile di prima, con i disegnini e il posto per le foto
+
+Stessa sera. Una prima versione «su carta» (avorio, titoli con le grazie, stemma, prezzo come un biglietto) è stata tolta: Ste, «l'hai cambiato troppo, non dovevi stravolgere i colori e lo stile». La pagina torna scura come l'app, con due aggiunte piccole:
+- accanto alle quattro scene di «Lo conosci questo momento?» un disegnino a tratto nel verde dell'app (`components/scopri/Disegni.tsx`: il pallone che arriva, la palla persa, la sera prima, il fischietto);
+- il posto per le foto di Ste nella storia (Ste: «mie immagini mentre giocavo, anche da ragazzino, più umano»): con foto la storia va a capitoli, ogni foto accanto ai paragrafi che la seguono con l'anno e due parole sue sotto; le foto stanno in `STORIA_FOTO` in `lib/scopri.ts` (file in `public/scopri/storia/`, `prima` = davanti a quale paragrafo). Finché la lista è vuota la storia resta com'era, con il cerchio «SB». Test: file presente, testo alternativo, anno e didascalia, posto valido.
+
+## 2026-11-07 — La pagina di vendita: il Fisico torna nella pagina
+
+Ste, dopo la v3: «lo metterei il fisico». Dopo «Come funziona» della Testa torna la sezione «Il Fisico · da dicembre» (`FISICO_SEZIONE` in `lib/scopri.ts`): titolo, le tre righe da dove viene il metodo e i sette momenti con le schermate (`MOMENTI_FISICO`, telefono a destra), con il link ai prezzi del Fisico (`#prezzi-fisico`, il riquadro nei prezzi resta). Quando il Campo apre l'etichetta perde «da dicembre».
+
+## 2026-11-07 — La pagina di vendita: le quattro schede della Testa
+
+Ste: «impara X strumenti da applicare in campo; un aiuto per ogni difficoltà (nessuna soluzione, quella la trovi tu, ma strumenti pratici per trovare la tua); un Coach AI sempre a disposizione; la tua Carta, specifica per la parte mentale». `MOMENTI_TESTA` in `lib/scopri.ts` ora sono: «12 strumenti da usare in campo» (schermata nuova del Percorso, `percorso.webp`), «Un aiuto per ogni difficoltà» (la pagina «Cosa ti succede?», `difficolta.webp`), «Un Coach sempre a disposizione» (momenti difficili, spiegare una pratica, consigli sul campo), «La tua Carta del Giocatore» (la parte mentale scritta da te: parola del Reset, mappa, firma, Protocollo; `parole.webp` con risposte di esempio). Tolte le schermate non più usate (giorno, Reset, Carta a 360°, azioni, stato); le tre nuove si rifanno con `scripts/scopri-screenshots.mjs`. In Carta, «Le tue risposte» e nel box di W11 «1 versione» al singolare (prima «1 versioni»).
+
+## 2026-11-07 — La pagina di vendita, testi v3 di Ste
+
+Stesso giorno, terza stesura di Ste («ordine emotivo: mi riconosco, Ste mi capisce, ha costruito qualcosa di concreto, può servire a me, posso provarlo»): apertura nuova («In allenamento giochi come sai. In partita, a volte, non ti riconosci.»), le quattro scene senza titolo, la storia riscritta (il nascondersi dopo l'errore, «togliere invece di aggiungere», più di cento calciatori dal Covid) con il posto del video in fondo, la sezione nuova «Dove ti porta il lavoro» (`DOVE_PORTA`), «In campo:» seguito dal minuscolo, il Fisico non più in una sezione a sé ma dentro i prezzi, con gli importi e «Avvisami quando apre». Restano le correzioni della v2 (email tre giorni prima, codice nella pagina prezzi, «ognuno con la sua scheda, e i video»).
+
+## 2026-11-07 — La pagina di vendita, testi v2 di Ste
+
+Ste ha riscritto i testi con Claude («Pagina di vendita v2»): la pagina vende il Mente e annuncia il Fisico.
+- Undici sezioni: apertura (mental training per calciatori, «tornare in partita quando la testa se ne va»; posto per il video principale, `VIDEO_PRINCIPALE` in `app/scopri/page.tsx`, finché non c'è il telefono con le schermate della Testa), «Lo conosci questo momento?», la storia di Ste (Reggiana, Serie D, «togliere invece di aggiungere»), «Non è pensiero positivo», «Come funziona» in quattro schede con la riga evidenziata «In campo» (`MomentoApp.inCampo`) e «Cosa c'è dentro», «Cosa dicono i primi» (compare solo con racconti veri in `RACCONTI`), il Fisico da dicembre, come si inizia, prezzi (il Mente in grande con i suoi quattro punti, Completo e Fisico sotto con gli importi dalla configurazione), le domande (più «E se non fa per me?» ed «È una terapia?»), la chiusura con la frase del Giorno 1 e il piè di pagina «non è un servizio sanitario né psicologico».
+- Tutti i testi in `lib/scopri.ts`; i test controllano anche che non ci siano trattini lunghi né «tap».
+- Scostamenti dal testo di Ste, perché l'app fa così: l'email di fine prova parte tre giorni prima (`trial_will_end`), il codice amico si scrive nella pagina prezzi prima del pagamento (non nella pagina di Stripe), il Fisico «ognuno con la sua scheda, e i video» (non tutti gli esercizi hanno il video), «Avvisami quando apre» apre un'email a info@foryoufootball.it (la lista d'attesa dell'app chiede un account).
+- Le schermate e i momenti del Fisico restano in `MOMENTI_FISICO` per dicembre, fuori dalla pagina.
+
+## 2026-11-06 — La pagina di vendita (/scopri)
+
+Primo pezzo del funnel (Notion «Funnel di vendita: mappa e piano», 6/11; Ste: "vai proviamo", spunto da preparazioneatletica.com, "screenshot per fare qualcosa di dinamico che faccia vedere come funziona l'app").
+- `app/scopri/page.tsx`: pagina pubblica (ISR, riletta ogni 5'). Apertura con il telefono che gira da solo sulle schermate dell'app, «Chi c'è dietro» con la frase di Ste dell'apertura di W1-G1, «Dentro l'app» (sette momenti: giorno, Reset, Coach, Carta, settimana del Fisico, seduta, recupero), come si inizia in tre passi, i pacchetti, le domande, la chiusura. Bottone unico «Prova la prima settimana» → `/register`.
+- Prezzi e iscrizioni dalla stessa fonte della pagina prezzi: `prezziPubblici` in `lib/scopri.ts` usa `loadListino` (Stripe), `loadImpostazioni` (app_settings), `prezzoPerUtente` ed `esitoCheckout` con un visitatore senza profilo; testi dei pacchetti da `lib/pacchettiTesti.ts`. Come nella pagina prezzi l'importo si vede anche con le iscrizioni chiuse, con la riga «Iscrizioni chiuse per ora»; senza prezzo su Stripe «Per ora chiuso».
+- `components/scopri/Telefono.tsx`: cornice in CSS con le schermate in dissolvenza; su schermo largo il telefono resta fermo e cambia mentre scorri, su telefono i momenti si sfogliano con il dito (scroll-snap, pallini). Ferme con `prefers-reduced-motion`. Nessuna richiesta esterna, nessun cookie.
+- Schermate in `public/scopri/*.webp` (13, ~520 KB) fatte sul Preview con l'account di prova (Luca, giocatore di esempio); la Carta con numeri di esempio, il Coach con una risposta vera. Si rifanno con `scripts/scopri-screenshots.mjs`.
+- `/` per chi non è entrato manda a `/scopri` (l'app installata va ancora al login); `/scopri` è fuori da tab bar, rituale del mattino, paywall e ri-accettazione dei consensi.
+- Test in `tests/scopri.test.ts` (prezzo di lancio e listino, Campo chiuso, tetto, schermate presenti, niente promesse di esito).
+- Seconda versione, stessa sera (Ste: "il telefono è troppo stretto e taglia alcune scritte; dividerei parte fisica da parte mentale, scrivendo all'inizio che ci sono entrambe"): la cornice del telefono ora è un bordo e lo schermo ha le proporzioni delle schermate (prima il padding ritagliava i lati), telefono più largo; in apertura le due schede «La Testa» e «Il Fisico»; due sezioni separate, ognuna con i suoi momenti (Testa 4: giorno, Reset, Coach, Carta; Fisico 6: obiettivi, attrezzi, settimana, seduta, recupero, test, con due schermate nuove del setup e una dei test) e un «Scopri di più» che si apre (`components/scopri/Approfondimento.tsx`, `DETTAGLI_TESTA` e `DETTAGLI_FISICO` in `lib/scopri.ts`): da dove viene il metodo (Testa: più di cinque anni sul campo, professionisti e libri, provato prima su Ste e poi sui ragazzi; Fisico: esercizi, regole e limiti usati con più di 100 calciatori, l'AI li adatta e un controllo automatico verifica la settimana), cosa si allena, quanto è personalizzabile (con il numero di aree per livello), cosa tiene in conto, i test, le schede degli esercizi.
+- Terza versione, stessa sera (Ste: "l'espansione la metterei in ogni fase che spiega quella a cui si riferisce; nel feedback per esercizio lo screenshot non si vede; nella parte mentale le abitudini e il tracker del sonno e del fisico, che servono anche ad adattare gli allenamenti; sa quando ti alleni e chiede la fatica"): il «Scopri di più» è sotto ogni momento (`MomentoApp.dettaglio`, componente `Dettaglio` in `components/scopri/Telefono.tsx`; tolto `Approfondimento.tsx`), in cima a ogni sezione le tre righe «da dove viene» (`ORIGINE_TESTA`, `ORIGINE_FISICO`); Testa a 6 momenti (+ «Le tue abitudini» e «Come stai, giorno per giorno» dalla pagina statistiche con dati di esempio), Fisico a 7 (+ «Sa quando ti alleni con la squadra», il resoconto); la schermata del recupero ora è l'ultimo recupero con il voto aperto, le ripetizioni, il lato più duro e «Com'è venuto?». Quello che vale solo per alcuni livelli lo dice (feedback che rimodula la settimana e tetto stanco/fresco: Pro e Completo; riallineamento al calendario: Medio e Pro). `scripts/scopri-screenshots.mjs` fa anche le schermate nuove.
+
 ## 2026-11-06 — Chat del preparatore: il piano vero, niente "parlane con il preparatore"
 Dal collaudo dal vivo (Ste: «sì, sistema la chat con il preparatore»):
 - **Il piano completo nel contesto** (`pianoPerPreparatore`, `giorniFatti` in `lib/trainingChat.ts`): per ogni seduta i blocchi, gli esercizi con le dosi (per lato, kg, EMOM, facoltativi, ridotti per dolore, serie test) e lo stato (FATTA, OGGI, da fare). Prima arrivavano solo titolo e durata, e alla domanda «cosa faccio sabato?» il preparatore ricostruiva a memoria: «solo tecnica al muro e 10 tiri alla traversa» per un sabato con scatti e tiri pre partita. La regola dice di elencare quei blocchi ed esercizi, senza aggiungere niente.

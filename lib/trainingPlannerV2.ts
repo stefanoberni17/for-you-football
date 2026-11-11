@@ -51,8 +51,9 @@ import { esercizioAny } from './trainingExercise';
 import { COMPLEMENTI, complementiTesto, FOCUS_TETTO, giorniConsecutivi, isGiornataRapidita, NON_CONSECUTIVE, qualitaTettoDellaGiornata, RAPIDITA_GIORNATE_MAX, SCATTI_RAPIDITA_MAX, senzaSquadra, sprintMaxSettimana, TETTO_LABEL, tettiTesto, tettoGiornate, type ContestoTetti, type QualitaTetto } from './trainingTetti';
 import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isPliometria, isPrePartita, isSalite, isVelocita, isVelocitaPura, limaSaliteInSeason, limaSprint, PRE_PARTITA_ID, SALTO_SPRINT_IDS, SPRINT_CON_PALLA_IDS, RISC_VELOCITA_ID, settimaneAllenamento, settimaneDalleSalite, settimanePliometria, SPRINT_MAX_CON_EMOM, SPRINT_MAX_SEDUTA, VELOCITA_PURA_DOPO_PARTITA_GIORNI, VELOCITA_PURA_METRI, velocitaPliometriaRegola } from './trainingVelocita';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
+import type { Spostamento } from './spostamenti';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.50-tiri-solo-seduta-di-tiri';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.51-niente-giorni-nei-testi';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -557,7 +558,7 @@ async function loadDaRecuperare(userId: string): Promise<ContextV2['daRecuperare
 
 // ─── Espansione blocchi → sedute ────────────────────────────────────────────
 
-export interface SedutaLLM { giorno: number; titolo?: string; blocchi: string[]; spiegazione?: string; leggeri?: string[] }
+export interface SedutaLLM { giorno: number; titolo?: string; blocchi: string[]; spiegazione?: string; leggeri?: string[]; spostamenti?: Spostamento[] }
 export interface PianoLLM { sedute: SedutaLLM[]; messaggio?: string }
 
 function tipoDaBlocchi(blocchi: Blocco[]): PlanSession['tipo'] {
@@ -1179,6 +1180,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
       spiegazione: testoPerAtleta(s.spiegazione?.slice(0, 200)),
       blocchi: blocchi.map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin, ...(leggeri.has(b.id) ? { leggero: true } : {}), ...(noteMemoria.has(b.id) ? { nota: noteMemoria.get(b.id) } : {}) })),
       ...(recupero ? { recupero: true } : {}),
+      ...(s.spostamenti?.length ? { spostamenti: s.spostamenti } : {}),
     });
   }
   // Recuperi: le sedute saltate la settimana scorsa devono esserci UGUALI (fino al tetto sedute)
@@ -1413,7 +1415,8 @@ ${libreriaTesto(ctx)}
 # FORMATO OUTPUT — SOLO JSON valido, nessun testo fuori dal JSON:
 {"sedute":[{"giorno":1-7,"titolo":"nome breve della giornata","blocchi":["id-blocco-1","id-blocco-2"],"leggeri":["id-blocco-1"],"spiegazione":"1 riga sul perché"}],"messaggio":"2-3 righe per l'atleta sulla settimana, tono da coach caldo e diretto"}
 "leggeri" (regola 22): solo id già presenti in "blocchi"; lista vuota [] se nessuno.
-LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché sabato hai la partita". I codici li usi SOLO nel campo "blocchi".
+LINGUAGGIO di titolo, spiegazione e messaggio: parli a un ragazzo di 14-20 anni che gioca a calcio, non a un preparatore. MAI codici (B1, A2, PRO1), MAI "short"/"full"/"blocco"/"variante"/"progressione"/"volume"/"RPE"/"ACWR". Di' cosa farà e perché gli serve in campo: "gambe e salti per scattare meglio", "una seduta più corta perché la partita è vicina". I codici li usi SOLO nel campo "blocchi".
+Nel TITOLO e nella SPIEGAZIONE di una seduta niente nomi dei giorni della settimana ("venerdì", "domani"): l'app può spostare la seduta e il testo resterebbe sbagliato. Riferisciti alla partita o all'ordine ("il giorno dopo la partita", "la prima seduta della settimana"). Nel messaggio della settimana i giorni puoi nominarli.
 giorno: 1=Lunedì … 7=Domenica. ${seduteRichieste(ctx) !== null ? `Metti ESATTAMENTE ${seduteRichieste(ctx)} giornate (richiesta dell'atleta${notaSettimanaAvviata(ctx) ? `: ne aveva chieste ${ctx.vincoli.numSedute}, ma la settimana è avviata e restano solo ${giorniRimasti(ctx).map((d) => DAY_NAMES[d]).join(', ')}` : ''})${seduteRichieste(ctx)! > ctx.maxSeduteFisiche ? `, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici: le altre ${seduteRichieste(ctx)! - ctx.maxSeduteFisiche} SOLO fascia, tecnica o recupero` : ''}.` : `SCEGLI TU quante giornate (l'atleta ha lasciato la scelta a te): da 1 a ${ctx.maxSeduteTotali}, di cui al massimo ${ctx.maxSeduteFisiche} con blocchi fisici, guardando gli allenamenti con la squadra, la partita, gli obiettivi e il carico (con la squadra 3 o più volte di solito 2 fisiche corte); nel messaggio di' in una riga perché ne hai messe così.`}`;
 }
 
@@ -1865,7 +1868,8 @@ export function adattaAlCalendario(ctx: ContextV2, plan: WeekPlan, o: { fatteGio
   const validateCtx = validateCtxFor(ctx);
   const valida = (s: PlanSession) => validatePlan({ sedute: [s] }, { ...validateCtx, oggiDow: undefined });
   const cal: CalendarioSettimana = { matchDays: ctx.base.matchDays, trainingDays: ctx.base.trainingDays, giorniAmmessi: ctx.vincoli.giorniAmmessi ?? null };
-  const opt = { fatteGiorni: o.fatteGiorni, oggiDow: ctx.base.oggiDow, validaSeduta: valida };
+  const quando = o.oggi ?? todayRome();
+  const opt = { fatteGiorni: o.fatteGiorni, oggiDow: ctx.base.oggiDow, validaSeduta: valida, oggi: quando };
   const conflitti = conflittiCalendario(plan, cal, opt);
   if (!conflitti.length) return { plan: null, righe: [], violazioni: [], conflitti };
   const bloccate = plan.sedute.filter((s) => sedutaBloccata(s, opt));
@@ -1876,10 +1880,11 @@ export function adattaAlCalendario(ctx: ContextV2, plan: WeekPlan, o: { fatteGio
   if (nonRicollocate.length) return { plan: null, righe, violazioni: nonRicollocate.map((c) => `${DAY_NAMES[c.giorno]}: nessun giorno libero dove spostare "${c.titolo}"`), conflitti };
   // I giorni delle sedute spostate li ha già scelti `ricollocaSedute` (anche fuori dai giorni del setup, se serviva)
   ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
-  const seme: PianoLLM = { sedute: libere.map((s) => ({ giorno: s.giorno, titolo: s.titolo, blocchi: (s.blocchi ?? []).map((b) => b.id), leggeri: (s.blocchi ?? []).filter((b) => b.leggero).map((b) => b.id) })) };
+  // La spiegazione del preparatore resta quella scritta (10/11): non si riscrive, la storia sta in `spostamenti`
+  const seme: PianoLLM = { sedute: libere.map((s) => ({ giorno: s.giorno, titolo: s.titolo, spiegazione: s.spiegazione, blocchi: (s.blocchi ?? []).map((b) => b.id), leggeri: (s.blocchi ?? []).filter((b) => b.leggero).map((b) => b.id), ...(s.spostamenti?.length ? { spostamenti: s.spostamenti } : {}) })) };
   // I giorni li ha già scelti `ricollocaSedute` (anche fuori dai giorni del setup, se serviva): riparaPiano sistema solo il resto
   const giorniLiberi = [1, 2, 3, 4, 5, 6, 7].filter((d) => d >= ctx.base.oggiDow && !bloccate.some((b) => b.giorno === d));
-  const { piano, riparazioni } = riparaPiano(seme, ctx, { nRichieste: null, giorniRimasti: giorniLiberi });
+  const { piano, riparazioni } = riparaPiano(seme, ctx, { nRichieste: null, giorniRimasti: giorniLiberi, oggi: quando, fonte: 'calendario' });
   const { plan: nuovo, errors } = expandPiano(piano, ctx);
   // Gli errori "della settimana da riempire" (obiettivo in una sola giornata, equilibrio) non fermano l'adattamento: si adatta quello che c'è
   const incompleta = (v: string) => /^(obiettivo |settimana equilibrata|manca |l'atleta ha chiesto \d+ giornate)/.test(v);
@@ -1891,8 +1896,9 @@ export function adattaAlCalendario(ctx: ContextV2, plan: WeekPlan, o: { fatteGio
   return {
     plan: {
       ...plan, sedute: [...bloccate, ...nuove].sort((a, b) => a.giorno - b.giorno),
-      aggiustamenti: [...(plan.aggiustamenti ?? []), ...righe.map((r) => `Calendario cambiato, ${r}`), ...riparazioni, ...(conProg.aggiustamenti ?? []).filter((a) => !(plan.aggiustamenti ?? []).includes(a))],
-      adattato_calendario: o.oggi ?? new Date().toISOString().slice(0, 10),
+      // gli spostamenti stanno nelle sedute (`spostamenti`); qui solo quello che non è uno spostamento (giornata pre partita tolta)
+      aggiustamenti: [...(plan.aggiustamenti ?? []), ...righe.filter((r) => !r.includes(' → ')).map((r) => `Calendario cambiato, ${r}`), ...riparazioni, ...(conProg.aggiustamenti ?? []).filter((a) => !(plan.aggiustamenti ?? []).includes(a))],
+      adattato_calendario: quando,
     },
     righe, violazioni: [], conflitti,
   };
@@ -2023,10 +2029,10 @@ export async function generaPianoV2(
   preparaContextV2(ctx, richiesta, vincoli);
   const nota = notaSettimanaAvviata(ctx);
   // M11 (26/10): il piano di una settimana di scarico porta `scarico: true`: da lì partono la distanza tra gli scarichi e il ri-test
-  const rifinisci = (plan: WeekPlan, aggiustamenti: string[]): WeekPlan => ({ ...plan, ...(nota ? { nota } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}), ...(ctx.base.ciclo.isDeload ? { scarico: true } : {}) });
+  const rifinisci = (plan: WeekPlan, aggiustamenti: string[]): WeekPlan => ({ ...plan, scritto_il: todayRome(), ...(nota ? { nota } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}), ...(ctx.base.ciclo.isDeload ? { scarico: true } : {}) });
   const validateCtx = validateCtxFor(ctx);
   const system = systemPrompt(ctx);
-  const opzioniRiparazione = () => ({ nRichieste: seduteRichieste(ctx), giorniRimasti: giorniRimasti(ctx) });
+  const opzioniRiparazione = () => ({ nRichieste: seduteRichieste(ctx), giorniRimasti: giorniRimasti(ctx), oggi: todayRome() });
   let errori: string[] | undefined;
   let precedente: string | undefined; // JSON del piano rifiutato: al giro dopo Claude CORREGGE invece di ricominciare
   const tuttiErrori: string[] = [];

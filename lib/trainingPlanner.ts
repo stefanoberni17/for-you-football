@@ -6,6 +6,7 @@
  * PRIMA di ogni salvataggio. Piano non valido → 1 retry con gli errori nel
  * prompt → fallback deterministico. Mai generazione live durante la seduta.
  */
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import Anthropic from '@anthropic-ai/sdk';
 import { preferenzeValide, FASI, type PreferenzeSetup } from './trainingSetup';
 import { calcolaSquilibri, squilibriTesto, type Squilibri } from './trainingSquilibri';
@@ -255,8 +256,7 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
-    supabaseAdmin.from('user_weekly_calendar').select('training_days, match_days')
-      .eq('user_id', userId).order('week_number', { ascending: false }).limit(1).maybeSingle(),
+    calendarioDellaSettimana(userId).then((c) => ({ data: c })),
     loadFeedbackRecenti(userId),
     supabaseAdmin.from('training_plans').select('plan, richieste')
       .eq('user_id', userId).eq('week_start', mondayOfThisWeekRome())
@@ -344,15 +344,15 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
   } catch { /* no-op */ }
   // Carico squadra stimato (calendario + sforzi descritti): base costante sotto acuto e cronico
   // Calendario vuoto (lunedì mattina, dopo il cron): i giorni squadra vengono dall'abitudine descritta nel setup
-  const trainingDays = giorniSquadra(calendar?.training_days || [], squadra);
+  const trainingDays = giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata);
   // Partita: dal calendario; se non è compilato, dal giorno abituale del setup (28/9: prima le finestre partita restavano cieche)
-  const matchDays = giorniPartita(calendar?.match_days || [], partitaAbituale);
-  const matchDaysDaAbitudine = !(calendar?.match_days || []).length && matchDays.length > 0;
+  const matchDays = giorniPartita(calendar?.match_days || [], partitaAbituale, calendar?.confermata);
+  const matchDaysDaAbitudine = !calendar?.confermata && !(calendar?.match_days || []).length && matchDays.length > 0;
   const faseSetup: (typeof FASI)[number] = profile?.training_fase && (FASI as readonly string[]).includes(profile.training_fase) ? profile.training_fase : 'in_season';
   const squadraSettimanale = caricoSquadraStimato({
     trainingDays, matchDays,
     squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null,
-    fase: faseSetup, squadra,
+    fase: faseSetup, squadra, confermata: calendar?.confermata,
   });
   // Resoconti (19/10): per i giorni con il dato vero, fatica × minuti al posto della stima nell'acuto
   const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null, giorni: { trainingDays, matchDays } });

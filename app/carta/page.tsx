@@ -7,7 +7,7 @@ import { authFetch } from '@/lib/authFetch';
 import { SPORT_ROLES, PLAYER_ROLES } from '@/lib/constants';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { ArrowDownRight, ArrowUpRight, Download, Minus } from 'lucide-react';
-import { AppLoader, BackButton, Badge, Button, Card, Chip } from '@/components/ui';
+import { AppLoader, Badge, Button, Card, Chip, Testata } from '@/components/ui';
 import type { Punta, Punta360, RomboMente } from '@/lib/carta';
 import type { Incrocio } from '@/lib/incroci';
 import StatoRecente from '@/components/StatoRecente';
@@ -91,6 +91,7 @@ export default function CartaPage() {
   const [carta, setCarta] = useState<CartaData | null>(null);
   const [c360, setC360] = useState<Carta360 | null>(null);
   const [vista, setVista] = useState<Vista>('mente');
+  const [dettaglio, setDettaglio] = useState(false); // Corpo: 6 punte (base) o 11 (dettaglio), come era nel Campo
   // Carta modificabile (26/10): le righe delle risposte chiave e il riquadro in modifica
   const [rows, setRows] = useState<RispostaRow[]>([]);
   const [modifica, setModifica] = useState<CampoCarta | null>(null);
@@ -123,7 +124,11 @@ export default function CartaPage() {
 
       // Vista iniziale (20/10): A 360° con tutte e due le parti, Mente con la sola Testa, Corpo con il solo Fisico
       const corpoCeLa = !!r360?.corpo && (r360.corpo.testFatti ?? 0) > 0;
-      setVista(corpoCeLa ? (hasActiveAccess(profile) ? '360' : 'corpo') : 'mente');
+      // Dal Profilo (8/11) si arriva con ?vista=mente|corpo: la Carta si apre su quella parte
+      const chiesta = new URLSearchParams(window.location.search).get('vista');
+      setVista(chiesta === 'mente' || chiesta === 'corpo' || chiesta === '360'
+        ? chiesta
+        : corpoCeLa ? (hasActiveAccess(profile) ? '360' : 'corpo') : 'mente');
       const roleOptions = SPORT_ROLES[profile?.sport || 'calcio'] || PLAYER_ROLES;
       const ruoli = (profile?.role || '')
         .split(',')
@@ -148,11 +153,12 @@ export default function CartaPage() {
 
   // ── Dati del rombo per la vista scelta (scala 0-100 fissa, ombra "partenza" sotto) ──
   const haCorpo = !!c360?.corpo && c360.corpo.testFatti > 0;
+  const punteCorpo = (dettaglio ? c360?.corpo?.dettaglio : c360?.corpo?.base) || [];
   const punteMente: Punta[] = c360 ? [...c360.mente.punte, c360.recupero] : [];
-  const haPartenza = !!c360 && (vista === 'mente' ? c360.mente.haPartenza : vista === 'corpo' ? (c360.corpo?.base || []).some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score) : c360.tre60.some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score));
+  const haPartenza = !!c360 && (vista === 'mente' ? c360.mente.haPartenza : vista === 'corpo' ? punteCorpo.some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score) : c360.tre60.some((p) => p.scoreIniziale !== null && p.scoreIniziale !== p.score));
   const radar: { key: string; label: string; value: number; partenza: number }[] = !c360 ? []
     : vista === 'mente' ? punteMente.map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }))
-      : vista === 'corpo' ? (c360.corpo?.base || []).map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }))
+      : vista === 'corpo' ? punteCorpo.map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }))
         : c360.tre60.map((p) => ({ key: p.key, label: ROMBO_SHORT[p.key] || p.label, value: p.score ?? 0, partenza: p.scoreIniziale ?? p.score ?? 0 }));
 
   return (
@@ -160,27 +166,14 @@ export default function CartaPage() {
       <div className="max-w-xl mx-auto space-y-4">
 
         {/* Controlli — mai in stampa */}
-        <div className="no-print flex items-center justify-between">
-          <BackButton onClick={() => router.back()} label="Indietro" />
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => window.print()}
-            icon={<Download size={18} aria-hidden="true" />}
-          >
-            Scarica PDF
-          </Button>
+        <div className="no-print">
+          <Testata indietro={{ back: '/profilo', label: 'Profilo' }} titolo="La tua Carta"
+            destra={<Button variant="secondary" size="sm" onClick={() => window.print()} icon={<Download size={18} aria-hidden="true" />} className="mt-1 shrink-0">PDF</Button>} />
         </div>
 
         {/* ── LA CARTA A 360° (docs/carta-360.md) — non in stampa: la stampa è il documento sotto ── */}
         {c360 && (
-          <section className="no-print space-y-3" aria-label="La tua Carta a 360°">
-            <div className="flex items-end justify-between gap-3">
-              <div>
-                <h2 className="font-display text-title-2 font-bold text-app">La tua Carta</h2>
-                <p className="text-body-sm text-muted">Mente e corpo, dagli stessi dati: come ti stai allenando.</p>
-              </div>
-            </div>
+          <section className={`no-print space-y-3 ${vista === 'corpo' ? 'parte-corpo' : ''}`} aria-label="La tua Carta a 360°">
 
             {/* Nessun livello della persona per la mente (regola del metodo, 8/10): resta solo il livello del Corpo, che viene dai test */}
             {haCorpo && (
@@ -207,7 +200,7 @@ export default function CartaPage() {
                     <PolarAngleAxis dataKey="label" tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }} />
                     <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
                     {haPartenza && <Radar dataKey="partenza" stroke="var(--color-text-faint)" strokeDasharray="4 3" fill="var(--color-text-faint)" fillOpacity={0.15} isAnimationActive={false} />}
-                    <Radar dataKey="value" stroke="var(--color-accent-glow)" fill="var(--color-accent-glow)" fillOpacity={0.35} isAnimationActive={false} />
+                    <Radar dataKey="value" stroke={vista === 'corpo' ? 'var(--color-forest-400)' : 'var(--color-accent-glow)'} fill={vista === 'corpo' ? 'var(--color-forest-400)' : 'var(--color-accent-glow)'} fillOpacity={0.35} isAnimationActive={false} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
@@ -236,14 +229,15 @@ export default function CartaPage() {
               )}
               {vista === 'corpo' && c360.corpo && (
                 <div className="grid grid-cols-2 gap-2">
-                  {c360.corpo.base.map((p) => (
+                  {punteCorpo.map((p) => (
                     <div key={p.key} className="flex items-baseline justify-between gap-2 py-1">
                       <span className="text-body-sm text-app">{p.label}</span>
                       <span className="text-body-sm font-semibold tabular-nums text-muted">{p.score === null ? '—' : Math.round(p.score)}<Delta d={p.delta} /> <span className="text-faint">· {p.fatti}/{p.totali}</span></span>
                     </div>
                   ))}
-                  <div className="col-span-2 pt-1">
-                    <Button variant="ghost" size="sm" href="/allenamento">Vedi il Campo</Button>
+                  <div className="col-span-2 flex gap-2 pt-1">
+                    <Chip selected={!dettaglio} showCheck={false} onClick={() => setDettaglio(false)}>Base</Chip>
+                    <Chip selected={dettaglio} showCheck={false} onClick={() => setDettaglio(true)}>Dettaglio</Chip>
                   </div>
                 </div>
               )}
@@ -309,7 +303,7 @@ export default function CartaPage() {
 
           {(() => {
             const campi = carta.campi;
-            const meta = (v: CampoCartaValore) => v.aggiornataIl ? `Aggiornata il ${new Date(v.aggiornataIl).toLocaleDateString('it-IT')}${v.versioni ? ` · ${v.versioni} versioni` : ''}` : null;
+            const meta = (v: CampoCartaValore) => v.aggiornataIl ? `Aggiornata il ${new Date(v.aggiornataIl).toLocaleDateString('it-IT')}${v.versioni ? ` · ${v.versioni} ${v.versioni === 1 ? 'versione' : 'versioni'}` : ''}` : null;
             return (
               <>
                 <FieldBlock label="Il mio mantra" value={campi.mantra.testo} quote meta={meta(campi.mantra)} onEdit={() => setModifica('mantra')}

@@ -14,7 +14,8 @@ import {
   WEB_FORMAT
 } from '@/lib/coach-ai';
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess, pausaFino } from '@/lib/serverAccess';
+import { accessoCoachUtente } from '@/lib/serverAccess';
+import { testoCoachChiuso } from '@/lib/coachGratis';
 import { checkRateLimit, COACH_HOURLY_LIMIT } from '@/lib/rateLimit';
 import { FREE_COACH_MESSAGES } from '@/lib/constants';
 
@@ -44,36 +45,22 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-    // Settimana gratis: FREE_COACH_MESSAGES messaggi in chat senza Season 1 (contati
-    // sugli eventi coach_message_sent web di lib/events.ts). Oltre → 403 con il testo
-    // del Coach. Telegram resta di Season 1.
-    let freeRemaining: number | null = null;
-    // In pausa (3/11) il Coach non c'è: niente messaggi gratis al posto dell'abbonamento in pausa
-    const fineP = await pausaFino(userId);
-    if (fineP) {
+    // Il Coach gratis (9/11, lib/coachGratis.ts): periodo gratis a tempo (la prova, o 7 giorni dalla registrazione
+    // per chi non passa dalla prova), 20 messaggi in tutto tra app e Telegram, mai legato alla settimana del
+    // percorso. Stessa regola su /api/telegram. Pausa, cancellazione, pacchetto solo Corpo: chiuso.
+    const accesso = await accessoCoachUtente(userId);
+    if (!accesso.ok) {
       return NextResponse.json({
-        error: 'payment_required', reason: 'in_pausa', pausa_fino: fineP,
-        message: 'Sei in pausa: il Coach ti aspetta quando riprendi. Intanto la tua Carta e le tue risposte restano lì.',
+        error: 'payment_required',
+        reason: accesso.motivo === 'pausa' ? 'in_pausa' : accesso.motivo,
+        ...(accesso.motivo === 'pausa' ? { pausa_fino: accesso.fino } : {}),
+        limit: FREE_COACH_MESSAGES,
+        message: testoCoachChiuso(accesso.motivo, accesso.fino),
       }, { status: 403 });
     }
-    if (!(await requirePaidAccess(userId))) {
-      const { count } = await supabaseAdmin
-        .from('onboarding_events')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('event', 'coach_message_sent')
-        .eq('meta->>channel', 'web');
-      const used = count ?? 0;
-      if (used >= FREE_COACH_MESSAGES) {
-        return NextResponse.json({
-          error: 'payment_required',
-          reason: 'free_limit',
-          limit: FREE_COACH_MESSAGES,
-          message: `Questi erano i tuoi ${FREE_COACH_MESSAGES} messaggi della prima settimana. Il percorso continua: al Gate della settimana 1 ci ritroviamo, e da lì ci sono sempre, qui e su Telegram.`,
-        }, { status: 403 });
-      }
-      freeRemaining = FREE_COACH_MESSAGES - used - 1;
-    }
+    // Il messaggio che sta per partire conta: quelli che restano dopo questa risposta
+    const freeRemaining: number | null = accesso.illimitato ? null : accesso.rimasti - 1;
+    const gratisFino: string | null = accesso.illimitato ? null : accesso.fino;
     if (!(await checkRateLimit(`web:${userId}`, 'chat', COACH_HOURLY_LIMIT))) {
       return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
     }
@@ -144,7 +131,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       response: text,
       usage,
-      freeRemaining, // null = Season 1 (nessun limite)
+      freeRemaining, // null = nessun limite (accesso pieno)
+      gratisFino,    // fine del periodo gratis (ISO), null con l'accesso pieno
     });
 
   } catch (error: any) {

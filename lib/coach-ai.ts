@@ -1,3 +1,4 @@
+import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { NUMERI_UTILI_RIGA, DAY_NAMES, NOTION_DB_GIORNI, WEEK_RECORD_IDS } from '@/lib/constants';
@@ -900,29 +901,28 @@ async function loadSettimanaInCorso(userId: string, week: number): Promise<strin
       return {
         dayNumber: g.dayNumber, titolo: g.titolo, domanda: g.domanda, domandaPrePratica: g.domandaPrePratica,
         domandeGate: g.domandeGate, contesto: g.contesto, isGate: g.isGate || g.dayNumber === 7,
+        domandeGateTesto: g.domandeGateTesto, modificatoIl: g.modificatoIl,
       } satisfies GiornoPercorso;
     });
     const settimane = week > 1 ? [week - 1, week] : [week];
     const [giorni, giorniPrima, { data: righe }] = await Promise.all([
       giorniDi(week),
       week > 1 ? giorniDi(week - 1) : Promise.resolve([] as GiornoPercorso[]),
-      supabaseAdmin
-        .from('user_day_progress')
-        .select('week_number, day_number, completed, completed_at, response, pre_pratica_response, gate_answers')
-        .eq('user_id', userId)
-        .in('week_number', settimane),
+      // le domande del Gate salvate (migration 041); senza la colonna, la lettura di prima
+      supabaseAdmin.from('user_day_progress').select('week_number, day_number, completed, completed_at, response, pre_pratica_response, gate_answers, gate_domande').eq('user_id', userId).in('week_number', settimane)
+        .then((r) => (r.error ? supabaseAdmin.from('user_day_progress').select('week_number, day_number, completed, completed_at, response, pre_pratica_response, gate_answers').eq('user_id', userId).in('week_number', settimane) : r)),
     ]);
-    type Riga = { week_number: number; day_number: number; completed: boolean | null; completed_at: string | null; response: string | null; pre_pratica_response: string | null; gate_answers: Record<string, unknown> | null };
+    type Riga = { week_number: number; day_number: number; completed: boolean | null; completed_at: string | null; response: string | null; pre_pratica_response: string | null; gate_answers: Record<string, unknown> | null; gate_domande?: unknown };
     const progresso: ProgressoGiorno[] = ((righe || []) as Riga[])
       .filter((r) => r.week_number === week)
-      .map((r) => ({ day: r.day_number, completed: !!r.completed, completedAt: r.completed_at, response: r.response, prePratica: r.pre_pratica_response, gateAnswers: r.gate_answers }));
+      .map((r) => ({ day: r.day_number, completed: !!r.completed, completedAt: r.completed_at, response: r.response, prePratica: r.pre_pratica_response, gateAnswers: r.gate_answers, gateDomande: r.gate_domande }));
     const gateRiga = ((righe || []) as Riga[]).find((r) => r.week_number === week - 1 && r.day_number === 7 && r.completed);
     const gateGiorno = giorniPrima.find((g) => g.dayNumber === 7);
     return settimanaInCorsoTesto({
       week,
       giorni,
       progresso,
-      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers, completedAt: gateRiga.completed_at } : null,
+      gatePrecedente: gateRiga && gateGiorno ? { week: week - 1, giorno: gateGiorno, answers: gateRiga.gate_answers, completedAt: gateRiga.completed_at, domande: gateRiga.gate_domande } : null,
     });
   } catch (e) {
     console.error('loadSettimanaInCorso:', (e as Error).message);
@@ -1014,12 +1014,9 @@ export async function buildUserContext(userId: string): Promise<string> {
   // Calendario settimanale (dipende da current_week: parte dopo il profilo); insieme il Campo e
   // gli incroci della Carta (29/9: prima il Coach non sapeva niente dell'allenamento nell'app)
   const [{ data: calendar }, campoBlock, incrociRighe, risposteChiaveRows, versioniPrecedenti, settimanaRaw, esercizio] = await Promise.all([
-    supabaseAdmin
-      .from('user_weekly_calendar')
-      .select('training_days, match_days')
-      .eq('user_id', userId)
-      .eq('week_number', currentWeek)
-      .maybeSingle(),
+    // La settimana di calendario confermata dal ragazzo (10/11): prima il numero della settimana del percorso, che a
+    // metà settimana, passato il Gate, non trovava più i giorni salvati
+    calendarioDellaSettimana(userId).then((c) => ({ data: c.confermata ? c : null })),
     loadCampoPerCoach(userId),
     loadIncroci(userId),
     // Le risposte chiave (22/10, review W11): Protocollo Pressione, routine, condizioni, risposte
@@ -1181,9 +1178,9 @@ ${completedDays && completedDays.length > 0
   : 'Nessun giorno ancora completato'}
 
 ## Calendario settimana
-${calendar && calendar.training_days && calendar.training_days.length > 0
-  ? `**Allenamenti:** ${calendar.training_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}
-${calendar.match_days && calendar.match_days.length > 0 ? `**Partite:** ${calendar.match_days.sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ')}` : '**Partite:** Nessuna partita questa settimana'}`
+${calendar && ((calendar.training_days?.length ?? 0) > 0 || (calendar.match_days?.length ?? 0) > 0)
+  ? `**Allenamenti con la squadra:** ${calendar.training_days?.length ? [...calendar.training_days].sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ') : 'nessuno questa settimana'}
+**Partite:** ${calendar.match_days?.length ? [...calendar.match_days].sort((a: number, b: number) => a - b).map((d: number) => DAY_NAMES[d]).join(', ') : 'nessuna questa settimana'}`
   : 'Calendario non ancora impostato'}
 
 ## Stato fisico e mentale

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { useRouter } from 'next/navigation';
@@ -17,19 +18,23 @@ import { oraItaly, todayItaly, dateItaly } from '@/lib/dateItaly';
 import type { CampoOggi } from '@/lib/trainingOggi';
 import { primoDaChiedere, scriviPendenti } from '@/lib/resocontoPendente';
 import { durataLabel } from '@/lib/trainingLabels';
-import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES } from '@/lib/constants';
+import { BETA_MAX_WEEK, DAYS_PER_WEEK, WEEK_TOOLS, DAY_SHORT_NAMES, SCOPRI_ONLINE } from '@/lib/constants';
 import { shouldRedirectToPaywall, hasActiveAccess, canAccessWeek, inPausa, isPaywallActive, livelloFisico } from '@/lib/checkAccess';
 import { resetPaywallCache } from '@/components/PaywallGuard';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
+import SettimanaObbligatoria from '@/components/SettimanaObbligatoria';
+import { useCheckin } from '@/components/CheckinContext';
+import type { PropostaSettimana } from '@/lib/settimanaCalendario';
+import SettimanaVista, { GiornoSegno, riassuntoSettimana, type GiornoSettimana, type StatoSedutaVista } from '@/components/SettimanaVista';
 import PushPermission from '@/components/PushPermission';
 import EsercizioSettimanaCard from '@/components/EsercizioSettimanaCard';
 import InstallBanner from '@/components/InstallBanner';
-import ActionsCard, { type DashboardAction } from '@/components/ActionsCard';
+import type { DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
 import TelegramRecoveryBanner from '@/components/TelegramRecoveryBanner';
 import BirthdateBanner from '@/components/BirthdateBanner';
-import { Calendar, Flame, Target, Bot, Play, Dumbbell, Trophy, Check, ChevronRight, Sun, Lock, MessageCircle, Pause } from 'lucide-react';
-import { AppLoader, Badge, Banner, Button, Card, SectionTitle } from '@/components/ui';
+import { Flame, Target, Bot, Play, Dumbbell, Trophy, Check, ChevronRight, Sun, Lock, MessageCircle, Pause } from 'lucide-react';
+import { AppLoader, Badge, Banner, Button, Card, GrigliaRiquadri, Riquadro } from '@/components/ui';
 
 /**
  * Streak percorso: giorni di calendario consecutivi con almeno un giorno
@@ -52,6 +57,14 @@ function pathStreak(days: DayProgress[]): number {
 }
 
 /** Giorno della settimana 1=Lun … 7=Dom di una data YYYY-MM-DD. */
+/** «Dal 10 al 16 novembre» dal lunedì AAAA-MM-GG. */
+function periodoSettimana(lunedi: string): string {
+  const fmt = (d: Date, mese: boolean) => d.toLocaleDateString('it-IT', mese ? { day: 'numeric', month: 'long', timeZone: 'UTC' } : { day: 'numeric', timeZone: 'UTC' });
+  const l = new Date(`${lunedi}T12:00:00Z`);
+  const dom = new Date(l.getTime() + 6 * 86_400_000);
+  return `Dal ${fmt(l, l.getUTCMonth() !== dom.getUTCMonth())} al ${fmt(dom, true)}`;
+}
+
 function dowDi(data: string): number {
   const d = new Date(`${data}T12:00:00`);
   return ((d.getDay() + 6) % 7) + 1;
@@ -75,7 +88,14 @@ export default function HomePage() {
   const [userId, setUserId] = useState('');
   const [coachMessageDismissed, setCoachMessageDismissed] = useState(false);
   const [calendarData, setCalendarData] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
-  const [showCalendar, setShowCalendar] = useState(false);
+  // 9/11 (fase 1a): il riquadro della settimana apre la VISTA in sola lettura; la modifica è un passo a parte
+  const [settimanaAperta, setSettimanaAperta] = useState<null | 'vista' | 'modifica'>(null);
+  const [abitudine, setAbitudine] = useState<{ trainingDays: number[]; matchDays: number[] } | null>(null);
+  // 10/11: la settimana con la squadra è obbligatoria. Null finché la risposta di /api/calendar non c'è (fail-open: se la
+  // richiesta fallisce il foglio non compare)
+  const [settimanaCal, setSettimanaCal] = useState<{ compilato: boolean; lunedi: string; proposta: PropostaSettimana | null } | null>(null);
+  const [daObbligatoria, setDaObbligatoria] = useState(false); // l'editor aperto dal foglio obbligatorio
+  const { checkinDone } = useCheckin();
   const [campo, setCampo] = useState<CampoOggi | null>(null); // il Campo oggi, in piccolo (20/10)
   const [actionsTotal, setActionsTotal] = useState(0);
   const [actionsTodayCount, setActionsTodayCount] = useState(0);
@@ -90,7 +110,10 @@ export default function HomePage() {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        router.push('/login');
+        // Chi apre il sito senza essere entrato vede la pagina di vendita (6/11), se è online (SCOPRI_ONLINE); l'app installata va al login
+        const installata = window.matchMedia('(display-mode: standalone)').matches
+          || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+        router.replace(installata || !SCOPRI_ONLINE ? '/login' : '/scopri');
         return;
       }
 
@@ -212,8 +235,10 @@ export default function HomePage() {
       try {
         if (calRes?.ok) {
           const calJson = await calRes.json();
-          if (calJson.trainingDays?.length > 0) {
-            setCalendarData(calJson);
+          if (calJson.abitudine) setAbitudine(calJson.abitudine);
+          if (typeof calJson.lunedi === 'string') setSettimanaCal({ compilato: !!calJson.compilato, lunedi: calJson.lunedi, proposta: calJson.proposta ?? null });
+          if (calJson.compilato) {
+            setCalendarData({ trainingDays: calJson.trainingDays || [], matchDays: calJson.matchDays || [] });
           }
         }
       } catch {}
@@ -336,7 +361,14 @@ export default function HomePage() {
     });
     if (!res.ok) throw new Error('calendar save failed'); // il popup mostra l'errore
     setCalendarData({ trainingDays, matchDays });
-    setShowCalendar(false);
+    setSettimanaCal((s) => (s ? { ...s, compilato: true } : s));
+    // Il Corpo rilegge la settimana (giorni squadra e partita effettivi), poi si torna alla vista aggiornata
+    try {
+      const r = await authFetch('/api/training/oggi');
+      if (r.ok) setCampo((await r.json()) as CampoOggi);
+    } catch { /* la vista resta con i dati di prima */ }
+    setSettimanaAperta(daObbligatoria ? null : 'vista');
+    setDaObbligatoria(false);
   };
 
   /**
@@ -401,102 +433,176 @@ export default function HomePage() {
         } catch { /* no-op */ }
       }}
     >
-      <p className="text-body text-app leading-relaxed">{profile.last_coach_message}</p>
+      <p className="text-body text-app leading-relaxed line-clamp-3">{profile.last_coach_message}</p>
     </Banner>
   ) : null;
 
   // ── Allenamento di oggi (20/10): la seconda card della home. Un resoconto da dare passa davanti alla seduta. ──
   const seduta = campo?.seduta ?? null;
-  const cardAllenamento = (() => {
+  // Il Corpo di oggi in un riquadro (8/11, stile B): verde quando c'è da fare qualcosa, scuro quando è solo un'informazione
+  const riquadroCorpo = (() => {
     if (!campo) return null;
+    // Il titolo è sempre «Allenamento di oggi» (9/11, Ste: «più chiarezza sulle tab da schiacciare»); lo stato va sotto.
+    const T = 'Allenamento di oggi';
     if (!campoAttivo) {
       if (primiGiorni) return null;
-      return (
-        <Card padding="sm" href="/allenamento" aria-label="Fisico: scopri il Campo">
-          <div className="flex items-center gap-3 min-h-[44px]">
-            <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-body font-semibold text-app">Fisico</span>
-              <span className="block text-body-sm text-muted">Allenamento fisico e tecnico, settimana per settimana. Scopri cos&apos;è.</span>
-            </span>
-            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-          </div>
-        </Card>
-      );
+      return <Riquadro alto parte="corpo" href="/allenamento" bloccato etichetta="Corpo" icona={<Dumbbell />} titolo="Allenamento fisico" />;
     }
+    const base = { alto: true, parte: 'corpo' as const, etichetta: 'Corpo', titolo: T };
     if (resocontoDaChiedere) {
       const ieri = resocontoDaChiedere.data !== oggiIt;
-      return (
-        <Card variant="accent" padding="sm" href="/allenamento" aria-label="Com'è andata?">
-          <div className="flex items-center gap-3 min-h-[44px]">
-            <span className="w-10 h-10 rounded-btn bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><MessageCircle size={18} /></span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-body font-semibold text-app">{resocontoDaChiedere.tipo === 'partita' ? `Com'è andata la partita${ieri ? ' di ieri' : ''}?` : `Com'è andata con la squadra${ieri ? ' ieri' : ''}?`}</span>
-              <span className="block text-body-sm text-muted">30 secondi: fatica vera, minuti, fastidi. La settimana si adatta.</span>
-            </span>
-            <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />
-          </div>
-        </Card>
-      );
+      return <Riquadro {...base} href="/allenamento" tono="verde" icona={<MessageCircle />} titolo="Com'è andata?"
+        sotto={resocontoDaChiedere.tipo === 'partita' ? `La partita${ieri ? ' di ieri' : ''}` : `Squadra${ieri ? ', ieri' : ''}`} />;
     }
-    if (campo.painHold) {
-      return (
-        <Card padding="sm" href="/allenamento" aria-label="Allenamenti in pausa">
-          <div className="flex items-center gap-3 min-h-[44px]">
-            <span className="w-10 h-10 rounded-full bg-danger/15 text-danger flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-body font-semibold text-app">Allenamenti fisici in pausa</span>
-              <span className="block text-body-sm text-muted">Hai segnalato un dolore. Se è forte o dura da giorni, fatti vedere da un fisioterapista o da un medico. Riparti dal Campo.</span>
-            </span>
-            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-          </div>
-        </Card>
-      );
-    }
+    if (campo.painHold) return <Riquadro {...base} href="/allenamento" icona={<Pause />} sotto="In pausa" />;
     if (seduta && seduta.stato !== 'fatta') {
-      return (
-        <Card variant="accent" padding="md" aria-label="Allenamento di oggi">
-          <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1">
-            {seduta.stato === 'recuperabile' ? `Da recuperare · era ${DAY_SHORT_NAMES[seduta.giorno]}` : 'Allenamento di oggi'}
-          </p>
-          <h2 className="font-display text-title-2 font-bold text-app leading-tight">{seduta.titolo}</h2>
-          <p className="text-body-sm text-muted mt-1">~{durataLabel(seduta.durataMin)}{seduta.aperturaMin ? ` (+${seduta.aperturaMin}' di apertura, se hai tempo)` : ''} · {seduta.descrizione}</p>
-          {(seduta.recupero || seduta.proposte.length > 0) && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {seduta.recupero && <Badge tone="info">Recupero</Badge>}
-              {seduta.proposte.includes('togli') && <Badge tone="info">Serie facoltative</Badge>}
-              {seduta.proposte.includes('aggiungi') && <Badge tone="info">Serie in più, se vuoi</Badge>}
-            </div>
-          )}
-          <Button size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href={campo.consensiMancanti ? '/allenamento' : `/allenamento/sessione/${seduta.giorno}`} className="mt-4">
-            {campo.consensiMancanti ? 'Apri il Campo' : seduta.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
-          </Button>
-        </Card>
-      );
+      return <Riquadro {...base} tono="verde" icona={<Dumbbell />}
+        href={campo.consensiMancanti ? '/allenamento' : `/allenamento/sessione/${seduta.giorno}`}
+        valore={<span className="text-body-sm font-semibold text-forest-100">~{durataLabel(seduta.durataMin)}</span>}
+        sotto={seduta.stato === 'recuperabile' ? `Da recuperare · ${seduta.titolo}` : seduta.titolo} />;
     }
     const fattaOggi = (campo.sedute ?? []).find(s => s.giorno === oggiDow && s.stato === 'fatta');
-    const riga = (titolo: string, sub: string, icona: React.ReactNode, tone: 'done' | 'neutral' = 'neutral') => (
-      <Card padding="sm" href="/allenamento" aria-label={titolo}>
-        <div className="flex items-center gap-3 min-h-[44px]">
-          <span className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${tone === 'done' ? 'bg-forest-500/15 text-forest-400' : 'bg-surface-2 text-muted'}`} aria-hidden>{icona}</span>
-          <span className="flex-1 min-w-0">
-            <span className="block text-body font-semibold text-app">{titolo}</span>
-            <span className="block text-body-sm text-muted">{sub}</span>
-          </span>
-          <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-        </div>
-      </Card>
-    );
-    if (fattaOggi) return riga('Allenamento di oggi: fatto', fattaOggi.titolo, <Check size={18} strokeWidth={3} />, 'done');
-    if (oggiPartita) return riga('Oggi partita', 'In bocca al lupo. Stasera, o domani, dimmi com\'è andata.', <Trophy size={18} />);
-    if (oggiSquadra) return riga('Oggi con la squadra', campo.prossima ? `Con l'app: ${DAY_SHORT_NAMES[campo.prossima.giorno]}, ${campo.prossima.titolo}` : 'Stasera, o domani, dimmi com\'è andata.', <Dumbbell size={18} />);
-    if (!campo.haPiano) return riga('La tua settimana non c\'è ancora', 'Apri il Campo: il preparatore la compone sui tuoi giorni.', <Dumbbell size={18} />);
-    if (campo.prossima) return riga('Oggi riposo', `La prossima è ${DAY_SHORT_NAMES[campo.prossima.giorno]}: ${campo.prossima.titolo} · ~${durataLabel(campo.prossima.durataMin)}`, <Dumbbell size={18} />);
-    return riga('Per questa settimana hai finito', 'Lunedì arriva la prossima settimana.', <Check size={18} strokeWidth={3} />, 'done');
+    if (fattaOggi) return <Riquadro {...base} href="/allenamento" icona={<Check />} sotto="Fatto" />;
+    if (oggiPartita) return <Riquadro {...base} href="/allenamento" icona={<Trophy />} sotto="Oggi partita" />;
+    if (oggiSquadra) return <Riquadro {...base} href="/allenamento" icona={<Dumbbell />} sotto="Oggi con la squadra" />;
+    if (!campo.haPiano) return <Riquadro {...base} href="/allenamento" icona={<Dumbbell />} sotto="Prepara la settimana" />;
+    if (campo.prossima) return <Riquadro {...base} href="/allenamento" icona={<Dumbbell />} sotto={`Riposo · prossima ${DAY_SHORT_NAMES[campo.prossima.giorno]}`} />;
+    return <Riquadro {...base} href="/allenamento" icona={<Check />} sotto="Settimana finita" />;
   })();
+
+  // La tua settimana (9/11, fase 1a): sette giorni con i segni della vista (squadra S giallo-arancio, partita P rosso,
+  // seduta dell'app blu), pallino verde sotto = pratica del percorso fatta. Il tocco apre la vista in sola lettura.
+  const giorniSettimana: GiornoSettimana[] = [1, 2, 3, 4, 5, 6, 7].map((day) => {
+    const sed = campoAttivo ? (campo!.sedute ?? []).find(x => x.giorno === day) : undefined;
+    return {
+      giorno: day, data: addDays(lunedi, day - 1),
+      squadra: trainingDaysEff.includes(day), partita: matchDaysEff.includes(day),
+      seduta: sed ? { titolo: sed.titolo, durataMin: sed.durataMin, stato: sed.stato as StatoSedutaVista } : null,
+      percorso: pathDows.has(day),
+    };
+  });
+  const riassunto = riassuntoSettimana(giorniSettimana, weekProgress, DAYS_PER_WEEK);
+  const riquadroSettimana = (
+    <Riquadro alto className="col-span-2" onClick={() => setSettimanaAperta('vista')} icona={null} titolo="La tua settimana" sotto={riassunto.breve}
+      ariaLabel={`La tua settimana. ${riassunto.esteso}. Apri per vedere i sette giorni`}>
+      <span aria-hidden className="absolute inset-x-4 top-4 grid grid-cols-7 gap-1.5">
+        {giorniSettimana.map((g) => (
+          <span key={g.giorno} className="flex flex-col items-center gap-1">
+            <span className={`w-full rounded-md ${g.giorno === oggiDow ? 'ring-1 ring-forest-400 ring-offset-1 ring-offset-surface' : ''}`}>
+              <GiornoSegno piccolo squadra={g.squadra} partita={g.partita} seduta={g.seduta?.stato ?? null} />
+            </span>
+            <span className={`text-caption leading-none ${g.giorno === oggiDow ? 'text-app font-semibold' : 'text-faint'}`}>{DAY_SHORT_NAMES[g.giorno]}</span>
+            <span className={`h-1.5 w-1.5 rounded-full ${g.percorso ? 'bg-forest-400' : 'bg-transparent'}`} />
+          </span>
+        ))}
+      </span>
+    </Riquadro>
+  );
 
   // Pratica di oggi già fatta (il prossimo giorno si apre domattina): una riga con la spunta, non più l'hero
   const praticaFatta = !allDone && nextDayLocked;
+
+  const bloccoMente = (
+    <section className="space-y-3" aria-label="Oggi">
+      {/* ─── 1. La pratica mentale di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina.
+              Fatta → una riga con la spunta (20/10). ─── */}
+      {allDone ? (
+        <Card variant="hero" padding="md">
+          <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
+          <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta</h2>
+          <p className="text-forest-100 text-body-sm mt-1 mb-4">
+            Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
+          </p>
+          <div className="space-y-2">
+            <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
+              Allenati in Palestra
+            </Button>
+            <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
+              Rivedi il traguardo
+            </Button>
+          </div>
+        </Card>
+      ) : profile && inPausa(profile) ? (
+        // In pausa (3/11): il percorso aspetta, la Carta e le risposte restano aperte
+        <Card padding="sm" href="/pausa" aria-label="Sei in pausa">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">Sei in pausa</span>
+              <span className="block text-body-sm text-muted">Il percorso riparte quando riprendi</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      ) : profile && isPaywallActive() && livelloFisico(profile) && !canAccessWeek(profile, nextDay.week) ? (
+        // Solo il Fisico (3/11): la testa è nel Mente o nel Completo; una riga, non l'hero (l'hero è l'allenamento)
+        <Card padding="sm" href="/pricing?pacchetto=completo" aria-label="Aggiungi la testa: il Completo">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">La testa · il percorso mentale</span>
+              <span className="block text-body-sm text-muted">Nel Mente e nel Completo</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      ) : praticaFatta ? (
+        <Card padding="sm" href={`/settimana/${currentWeek}`} aria-label="Pratica di oggi: fatta">
+          <div className="flex items-center gap-3 min-h-[44px]">
+            <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Check size={18} strokeWidth={3} /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-body font-semibold text-app">Percorso Mente · pratica di oggi: fatta</span>
+              <span className="block text-body-sm text-muted">Il prossimo si apre domattina</span>
+            </span>
+            <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
+          </div>
+        </Card>
+      ) : (
+        // La pratica di oggi (8/11, stile B): una card sola, tutta toccabile, con il tasto play tondo
+        <Link href={`/giorno/${nextDay.week}/${nextDay.day}`} aria-label={nextDayInCorso ? 'Continua la pratica di oggi' : `Inizia il Giorno ${nextDay.day}`}
+          className="flex h-[150px] flex-col justify-between rounded-[22px] bg-gradient-to-br from-forest-500 to-forest-700 p-[18px] text-white transition-transform active:scale-[0.99]">
+          <span className="flex items-start justify-between gap-3">
+            <span className="text-body font-semibold text-forest-100">Percorso Mente · pratica di oggi</span>
+            <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-forest-700 shadow-e1">
+              {nextDayInCorso ? <Sun size={22} /> : <Play size={22} fill="currentColor" />}
+            </span>
+          </span>
+          <span className="flex flex-col">
+            <span className="line-clamp-2 font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
+              {nextDayInCorso && riflessioneOk ? "Com'è andata oggi?" : todayTitle || `Giorno ${nextDay.day}`}
+            </span>
+            <span className="mt-0.5 text-body-sm text-forest-100">{comebackMode ? 'Bentornato · ' : ''}Settimana {nextDay.week} · Giorno {nextDay.day}{todayMinutes ? ` · ${todayMinutes} min` : ''}</span>
+          </span>
+        </Link>
+      )}
+
+
+      {/* Missione della settimana — dal gate appena superato */}
+      {weeklyMission && !allDone && (
+        <Card variant="accent" padding="sm">
+          <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1.5 flex items-center gap-1.5">
+            <Target className="w-3.5 h-3.5" aria-hidden="true" />
+            Missione della settimana
+          </p>
+          <p className="text-body text-app leading-relaxed">{weeklyMission}</p>
+        </Card>
+      )}
+
+
+    </section>
+  );
+  // I riquadri di oggi (8/11, stile B): il Corpo, le 5 azioni, l'esercizio della settimana, la settimana
+  const griglia = (
+    <GrigliaRiquadri>
+      {riquadroCorpo}
+      {!primiGiorni && (
+        <Riquadro alto href="/oggi" icona={<Check />} etichetta="Disciplina" titolo="Le tue azioni"
+          valore={actionsTotal > 0 ? <>{actionsTodayCount}<span className="text-body text-muted">/{actionsTotal}</span></> : <span className="text-body-sm font-semibold text-forest-300">Scegli</span>} />
+      )}
+      <EsercizioSettimanaCard variante="riquadro" />
+      {riquadroSettimana}
+    </GrigliaRiquadri>
+  );
 
   return (
     <main className="min-h-screen bg-app pt-safe px-4 pb-tabbar">
@@ -517,195 +623,41 @@ export default function HomePage() {
         )}
       </div>
 
-      <div className="max-w-2xl mx-auto space-y-5">
-        {/* Banner prima visita — restano in cima SOLO se è il primissimo giorno
-            (utile come hand-holding all'inizio assoluto, scompare dopo il primo completamento) */}
-        {profile?.current_week === 1 && totalCompleted === 0 && (
-          <Card padding="md" className="border-l-4 border-l-forest-400">
-            <p className="text-body font-bold text-app mb-1">Ciao, {profile?.name}.</p>
-            <p className="text-body font-bold text-app mb-3">Settimana 1 — Il Reset.</p>
-            <p className="text-body text-muted leading-relaxed">
-              Molti giocatori scoprono che non è la tecnica il problema.
-              È restare nella partita.
-            </p>
-            <p className="text-body text-muted mt-1">
-              Oggi impari il primo strumento. 3 minuti.
-            </p>
-          </Card>
-        )}
+      <div className="max-w-2xl mx-auto space-y-3">
+        {/* ─── Home a riquadri (8/11, stile B delle bozze): la pratica di oggi, poi i riquadri piccoli ─── */}
+        {bloccoMente}
+        {griglia}
 
-        {/* ─── 1. La pratica mentale di oggi: la prima cosa, sopra la piega. Unico gradiente della pagina.
-                Fatta → una riga con la spunta (20/10). ─── */}
-        {allDone ? (
-          <Card variant="hero" padding="md">
-            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">Percorso completato</p>
-            <h2 className="font-display text-title-1 font-bold">Ce l&apos;hai fatta</h2>
-            <p className="text-forest-100 text-body-sm mt-1 mb-4">
-              Hai completato tutte le settimane della tua Season: lo strumento, le difficoltà, giocare libero.
-            </p>
-            <div className="space-y-2">
-              <Button variant="inverse" size="lg" fullWidth icon={<Dumbbell size={20} aria-hidden />} href="/strumenti">
-                Allenati in Palestra
-              </Button>
-              <Button variant="ghost" size="sm" fullWidth className="text-forest-100" icon={<Trophy size={18} aria-hidden />} href="/beta-complete">
-                Rivedi il traguardo
-              </Button>
-            </div>
-          </Card>
-        ) : profile && inPausa(profile) ? (
-          // In pausa (3/11): il percorso aspetta, la Carta e le risposte restano aperte
-          <Card padding="sm" href="/pausa" aria-label="Sei in pausa">
-            <div className="flex items-center gap-3 min-h-[44px]">
-              <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Pause size={18} /></span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-body font-semibold text-app">Sei in pausa</span>
-                <span className="block text-body-sm text-muted">Il percorso riparte quando riprendi. Carta e risposte restano aperte.</span>
-              </span>
-              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-            </div>
-          </Card>
-        ) : profile && isPaywallActive() && livelloFisico(profile) && !canAccessWeek(profile, nextDay.week) ? (
-          // Solo il Fisico (3/11): la testa è nel Mente o nel Completo; una riga, non l'hero (l'hero è l'allenamento)
-          <Card padding="sm" href="/pricing?pacchetto=completo" aria-label="Aggiungi la testa: il Completo">
-            <div className="flex items-center gap-3 min-h-[44px]">
-              <span className="w-10 h-10 rounded-full bg-surface-2 text-muted flex items-center justify-center shrink-0" aria-hidden><Lock size={18} /></span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-body font-semibold text-app">La testa · il percorso mentale</span>
-                <span className="block text-body-sm text-muted">12 settimane con il Coach: c&apos;è nel Mente e nel Completo.</span>
-              </span>
-              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-            </div>
-          </Card>
-        ) : praticaFatta ? (
-          <Card padding="sm" href={`/settimana/${currentWeek}`} aria-label="Pratica di oggi: fatta">
-            <div className="flex items-center gap-3 min-h-[44px]">
-              <span className="w-10 h-10 rounded-full bg-forest-500/15 text-forest-400 flex items-center justify-center shrink-0" aria-hidden><Check size={18} strokeWidth={3} /></span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-body font-semibold text-app">Pratica di oggi: fatta</span>
-                <span className="block text-body-sm text-muted">Settimana {nextDay.week}, Giorno {nextDay.day} si apre domattina.{primiGiorni ? '' : ' Intanto la Palestra è aperta.'}</span>
-              </span>
-              <ChevronRight size={18} className="text-faint shrink-0" aria-hidden />
-            </div>
-          </Card>
-        ) : (
-          <Card variant="hero" padding="md">
-            <p className="text-forest-100 text-overline uppercase tracking-wider font-semibold mb-1">
-              {comebackMode ? 'Bentornato' : `Settimana ${currentWeek} · ${WEEK_TOOLS[currentWeek] || settimana?.titolo?.replace(/^Week \d+ — /, '') || ''}`}
-            </p>
-            <h2 className="font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
-              {todayTitle || `Giorno ${nextDay.day}`}
-            </h2>
-            <p className="text-forest-100 text-body-sm mt-1.5">
-              {comebackMode
-                ? `Riprendi da dove eri: il Giorno ${nextDay.day} ti aspetta. Bastano pochi minuti.`
-                : `Giorno ${nextDay.day} di ${DAYS_PER_WEEK}${todayMinutes ? ` · ${todayMinutes} min` : ''}${settimana?.principio ? ` · ${settimana.principio}` : ''}`}
-            </p>
-            <div className="mt-4">
-              {nextDayInCorso ? (
-                <Button variant="inverse" size="lg" fullWidth icon={<Sun size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                  {riflessioneOk ? "Com'è andata oggi?" : 'Continua la pratica di oggi'}
-                </Button>
-              ) : (
-                <Button variant="inverse" size="lg" fullWidth icon={<Play size={20} aria-hidden />} href={`/giorno/${nextDay.week}/${nextDay.day}`}>
-                  {totalCompleted === 0 ? 'Inizia il Giorno 1' : `Inizia il Giorno ${nextDay.day}`}
-                </Button>
-              )}
-              {nextDayInCorso && (
-                <p className="text-forest-100 text-body-sm mt-2">
-                  {riflessioneOk ? 'Giornata avviata. Se vuoi, chiudila con una riga di riflessione: è facoltativa.' : `Vivi la giornata. Più tardi, se vuoi, una riga di riflessione (dalle ${riflessioneAlle}).`}
-                </p>
-              )}
-            </div>
-          </Card>
-        )}
-
-        {/* L'esercizio della settimana (31/10): presenza nella vita di tutti i giorni, dopo il G1 della settimana */}
-        <EsercizioSettimanaCard />
-
-        {/* ─── 2. L'allenamento di oggi (Campo); senza il Campo, la riga col lucchetto ─── */}
-        {cardAllenamento}
-
-        {/* Missione della settimana — dal gate appena superato */}
-        {weeklyMission && !allDone && (
-          <Card variant="accent" padding="sm">
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-300 mb-1.5 flex items-center gap-1.5">
-              <Target className="w-3.5 h-3.5" aria-hidden="true" />
-              Missione della settimana
-            </p>
-            <p className="text-body text-app leading-relaxed">{weeklyMission}</p>
-          </Card>
-        )}
-
-        {totalCompleted < 3 && coachCard}
-
-        {/* ─── 3. Le tue 5 azioni — checklist collassabile inline; non nei primi 7 giorni ─── */}
-        {!primiGiorni && (
-          <ActionsCard
-            total={actionsTotal}
-            todayCount={actionsTodayCount}
-            streak={actionsStreak}
-            actions={actions}
-            onToggle={handleActionToggle}
+        {/* La settimana: prima si guarda (sola lettura), poi, se serve, si modifica squadra e partita */}
+        {settimanaAperta === 'vista' && (
+          <SettimanaVista
+            giorni={giorniSettimana}
+            oggiDow={oggiDow}
+            conCorpo={campoAttivo}
+            squadraDaSetup={campoAttivo && !!campo?.squadraDaSetup}
+            partitaDaSetup={campoAttivo && !!campo?.partitaDaSetup}
+            sedutaHref={campoAttivo && !campo?.consensiMancanti ? (g) => `/allenamento/sessione/${g}` : undefined}
+            onModifica={() => setSettimanaAperta('modifica')}
+            onClose={() => setSettimanaAperta(null)}
           />
         )}
-
-        {/* ─── 4. La tua settimana: una riga di 7 giorni che dice tutto (percorso, sedute dell'app, squadra, partita) ─── */}
-        <Card padding="md">
-          <SectionTitle
-            title="La tua settimana"
-            icon={<Calendar size={18} />}
-            action={
-              <Button variant="ghost" size="sm" onClick={() => setShowCalendar(true)}>
-                {calendarData ? 'Modifica' : 'Imposta'}
-              </Button>
-            }
-            className="mb-3"
-          />
-          <button type="button" onClick={() => setShowCalendar(true)} aria-label="Modifica i giorni di allenamento e partita"
-            className="w-full grid grid-cols-7 gap-1.5 rounded-btn -mx-1 px-1 py-1 hover:bg-surface-2 transition-colors">
-            {[1, 2, 3, 4, 5, 6, 7].map((day) => {
-              const isTraining = trainingDaysEff.includes(day);
-              const isMatch = matchDaysEff.includes(day);
-              const sed = campoAttivo ? (campo!.sedute ?? []).find(s => s.giorno === day) : undefined;
-              const pratica = pathDows.has(day);
-              const isToday = day === oggiDow;
-              return (
-                <span key={day} className="text-center">
-                  <span className={`block text-overline uppercase mb-1 ${isToday ? 'text-forest-300 font-bold' : 'text-faint'}`}>{DAY_SHORT_NAMES[day]}</span>
-                  <span className={`h-10 rounded-btn flex items-center justify-center text-caption font-bold ${
-                    isMatch ? 'bg-warning/20 text-warning'
-                      : sed?.stato === 'fatta' ? 'bg-forest-500 text-white'
-                        : sed ? (sed.stato === 'saltata' ? 'bg-surface-2 text-faint line-through' : 'bg-forest-500/20 text-forest-300')
-                          : isTraining ? 'bg-surface-3 text-muted' : 'bg-surface-2 text-faint'
-                  } ${isToday ? 'ring-1 ring-forest-400/70' : ''}`} aria-hidden>
-                    {isMatch ? <Trophy className="w-4 h-4" /> : sed?.stato === 'fatta' ? <Check className="w-4 h-4" strokeWidth={3} /> : sed ? <Dumbbell className="w-4 h-4" /> : isTraining ? 'S' : '·'}
-                  </span>
-                  <span className="block h-2 mt-1 flex items-center justify-center" aria-hidden>
-                    {pratica && <span className="w-1.5 h-1.5 rounded-full bg-forest-400" />}
-                  </span>
-                </span>
-              );
-            })}
-          </button>
-          <div className="flex items-center justify-between gap-3 mt-2">
-            <p className="text-body-sm text-muted tabular-nums">
-              Percorso {weekProgress} di {DAYS_PER_WEEK}{campoAttivo && seduteTot > 0 ? ` · Sedute ${seduteFatte} di ${seduteTot}` : ''}{trainingDaysEff.length || matchDaysEff.length ? '' : ' · segna squadra e partita'}
-            </p>
-            <Button variant="ghost" size="sm" className="-mr-3 shrink-0" iconRight={<ChevronRight size={16} aria-hidden />} href={`/settimana/${currentWeek}`}>
-              Settimana
-            </Button>
-          </div>
-          <p className="text-caption text-faint mt-1">Pallino = pratica del percorso fatta · S = squadra · manubrio = seduta con l&apos;app</p>
-        </Card>
-
-        {/* Popup calendario */}
-        {showCalendar && (
+        {settimanaAperta === 'modifica' && (
           <WeeklyCalendarPopup
             weekNumber={currentWeek}
             existingTrainingDays={calendarData?.trainingDays}
             existingMatchDays={calendarData?.matchDays}
+            abitudine={campoAttivo ? abitudine : null}
             onSave={handleCalendarSave}
-            onSkip={() => setShowCalendar(false)}
+            onSkip={() => { setSettimanaAperta(daObbligatoria ? null : 'vista'); setDaObbligatoria(false); }}
+          />
+        )}
+        {/* La settimana con la squadra, obbligatoria (10/11): alla prima apertura della settimana, dopo il check-in */}
+        {settimanaCal && !settimanaCal.compilato && settimanaAperta === null && checkinDone && profile && !inPausa(profile) && !(allDone && !campoAttivo) && (
+          <SettimanaObbligatoria
+            proposta={settimanaCal.proposta}
+            periodo={periodoSettimana(settimanaCal.lunedi)}
+            onSalva={handleCalendarSave}
+            onCambia={() => { setDaObbligatoria(true); setSettimanaAperta('modifica'); }}
           />
         )}
 
@@ -717,8 +669,8 @@ export default function HomePage() {
           <BirthdateBanner userId={userId} hasBirthDate={!!profile.birth_date} />
         )}
 
-        {/* Ultimo messaggio Coach — in fondo solo dopo i primi 3 giorni (prima sta sotto l'hero) */}
-        {totalCompleted >= 3 && coachCard}
+        {/* Ultimo messaggio Coach: sempre in fondo, tre righe (8/11: in cima copriva la pratica) */}
+        {coachCard}
 
         {/* Banner settimanale lunedì (con 0 azioni ci pensa l'empty-state di ActionsCard) */}
         {weeklyBannerVisible && (
