@@ -11,7 +11,7 @@ import { APERTURA_IDS, STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type Stato
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { isPausaTraSerie } from '@/lib/trainingResistenza';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
-import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
+import { AlertTriangle, Calendar, CalendarClock, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
 import { hasActiveAccess } from '@/lib/checkAccess';
 import { notaSpostamento, type Spostamento } from '@/lib/spostamenti';
@@ -328,11 +328,22 @@ export default function SessionePage() {
             </ul>
           </Card>
         )}
-        {/* Spostata (10/11): la nota sta sopra la spiegazione del preparatore, che resta com'è stata scritta */}
-        {notaSpostamento(sessione) && (
-          <p className="text-body-sm text-warning leading-snug mb-2">{notaSpostamento(sessione)}</p>
-        )}
-        {sessione.spiegazione && (
+        {/* Spostata (11/11): in primo piano dove è e perché; la spiegazione del preparatore resta com'è stata scritta,
+            sotto e chiusa, perché può nominare il giorno di prima */}
+        {notaSpostamento(sessione) ? (
+          <>
+            <p className="text-body text-app leading-snug mb-2 flex gap-2">
+              <CalendarClock size={18} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+              <span>{notaSpostamento(sessione)}</span>
+            </p>
+            {sessione.spiegazione && (
+              <details className="mb-5">
+                <summary className="text-body-sm text-muted cursor-pointer tap flex items-center">Cosa aveva scritto il preparatore, prima dello spostamento</summary>
+                <p className="mt-1 text-body-sm text-muted leading-relaxed">{sessione.spiegazione}</p>
+              </details>
+            )}
+          </>
+        ) : sessione.spiegazione && (
           <div className="mb-5">
             <p className={`text-body text-muted leading-relaxed ${spiegazioneOpen ? '' : 'line-clamp-3'}`}>{sessione.spiegazione}</p>
             {spiegazioneLunga && !spiegazioneOpen && (

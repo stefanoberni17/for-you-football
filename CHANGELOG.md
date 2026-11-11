@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — Il piano: una riga attuale per seduta spostata, la storia sotto
+
+Revisione di Ste dell'11/11, punto 2. La seduta stava giovedì, il testo del preparatore diceva venerdì e «Ho sistemato» mostrava venerdì → giovedì → martedì → giovedì.
+- `lib/spostamenti.ts`: la riga attuale dice dove è la seduta, dove era prevista e PERCHÉ ha lasciato quel giorno (il primo spostamento che il ragazzo ha visto, non l'ultimo rimbalzo): «È giovedì. Era prevista venerdì: spostata il 9/11 perché il venerdì ora è il giorno prima della partita.» (`origineSpostamento`, `notaSpostamento`); niente riga se la seduta è tornata al giorno di partenza.
+- `conSpostamentiDedotti`: i piani salvati prima del 10/11 non hanno `spostamenti`, la storia c'era solo nelle righe di «Ho sistemato»: `/api/training/state` la ricostruisce seguendo i passaggi in ordine (copia, niente scritture). Così anche il piano di Ste del 9/11 ha la riga attuale e la cronologia, e le righe degli spostamenti escono da «Ho sistemato».
+- Hub, scheda Settimana: «Spostata, era venerdì» sotto la seduta; nel riquadro prima le sedute spostate («Giovedì, era venerdì · …») con «Com'è cambiata la settimana» chiusa sotto; il messaggio del preparatore, se dopo sono cambiate delle sedute, si apre a parte («La proposta del preparatore del lunedì 9/11, scritta prima degli spostamenti»).
+- Pagina seduta: in cima la riga attuale; la spiegazione del preparatore sotto, chiusa («Cosa aveva scritto il preparatore, prima dello spostamento»).
+
 ## 2026-11-11 — Squadra e partita: «i miei giorni abituali» o «niente squadra»
 
 Revisione di Ste dell'11/11, punto 1. Nel foglio «Squadra e partita» togliendo tutti i giorni compariva «Nessuno scelto: vale il tuo setup del Corpo (…)», ma una settimana salvata vuota vuol dire davvero niente squadra (dal 10/11): chi voleva dire «questa settimana la squadra non si allena» leggeva il contrario. Ora, quando il setup ha i giorni abituali, sotto ogni griglia ci sono due scelte esplicite: «I miei giorni abituali (Lunedì, Martedì, Giovedì)» riempie la griglia, «Niente squadra questa settimana» la svuota (lo stesso per la partita); la riga sotto dice quello che si salva («Questa settimana nessun allenamento con la squadra», «I tuoi giorni abituali», «3 allenamenti con la squadra»).

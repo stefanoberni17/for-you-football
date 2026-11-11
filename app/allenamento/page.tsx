@@ -25,7 +25,7 @@ import type { CampoOggi } from '@/lib/trainingOggi';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
-import { dataConGiorno, isRigaSpostamento, riepilogoSpostamenti, seduteCambiateDopo, type Spostamento } from '@/lib/spostamenti';
+import { dataConGiorno, isRigaSpostamento, origineSpostamento, riepilogoSpostamenti, seduteCambiateDopo, type Spostamento } from '@/lib/spostamenti';
 import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
 import { AppLoader, Badge, Banner, Button, Card, CardPlay, Chip, Elenco, Field, RigaElenco, SectionTitle, Sheet, Textarea, TitoloGruppo } from '@/components/ui';
 import SetupCampo from '@/components/SetupCampo';
@@ -511,7 +511,7 @@ export default function AllenamentoHub() {
   // Spostamenti (10/11): le righe che li ripetono escono da «Ho sistemato», il numero conta le righe che si vedono
   const spostamentiSett = riepilogoSpostamenti(sedute);
   const cambiateDopo = seduteCambiateDopo(sedute);
-  const altriAggiustamenti = (haPiano ? state.plan!.plan.aggiustamenti ?? [] : []).filter((a) => !(spostamentiSett.righe.length > 0 && isRigaSpostamento(a)));
+  const altriAggiustamenti = (haPiano ? state.plan!.plan.aggiustamenti ?? [] : []).filter((a) => !(spostamentiSett.storia.length > 0 && isRigaSpostamento(a)));
   const oggiDow = state.oggiDow || 1;
   const statoDi = (s: PlanSession) => statoSeduta(s.giorno, oggiDow, doneDays.has(s.giorno));
   // Prossima da fare: oggi, oppure quella di ieri ancora recuperabile, oppure la prima futura
@@ -744,7 +744,9 @@ export default function AllenamentoHub() {
                 const squadra = giorniSquadra.has(d);
                 const oggi = d === oggiDow;
                 const titolo = s ? s.titolo : partita ? 'Partita' : squadra ? 'Con la squadra' : 'Riposo';
+                const origine = s ? origineSpostamento(s) : null;
                 const sotto = [
+                  origine ? `Spostata, era ${DAY_NAMES_IT[origine.da].toLowerCase()}` : null,
                   s && partita ? 'Partita' : null,
                   s && squadra ? 'Squadra' : null,
                   s ? `~${durataLabel(s.durata_min)}` : null,
@@ -776,32 +778,13 @@ export default function AllenamentoHub() {
             {posticipoMsg && <p className="text-body-sm text-warning mb-3">{posticipoMsg}</p>}
 
             <Card padding="sm" className="mb-5">
-              {state.plan!.plan.messaggio && (
-                <div className="mb-3 flex gap-2">
-                  <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-                  <div className="min-w-0">
-                    {/* Il testo del preparatore è un documento di quel giorno (10/11): non si riscrive, si data */}
-                    <p className="text-label font-semibold text-app mb-0.5">La proposta del preparatore{state.plan!.plan.scritto_il ? ` · ${dataConGiorno(state.plan!.plan.scritto_il)}` : ''}</p>
-                    {cambiateDopo > 0 && (
-                      <p className="text-body-sm text-warning mb-1">Da allora {cambiateDopo === 1 ? 'una seduta è cambiata' : `${cambiateDopo} sedute sono cambiate`}: il programma giusto è qui sopra.</p>
-                    )}
-                    <p className={`text-body-sm text-muted leading-relaxed ${msgAperto ? '' : 'line-clamp-3'}`}>{state.plan!.plan.messaggio}</p>
-                    <button type="button" onClick={() => setMsgAperto((v) => !v)} className="tap -ml-1 px-1 text-body-sm font-semibold text-forest-300">{msgAperto ? 'Meno' : 'Leggi tutto'}</button>
-                  </div>
-                </div>
-              )}
-            {state.plan!.plan.nota && (
-              <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
-                <CalendarClock size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-                <span>{state.plan!.plan.nota}</span>
-              </p>
-            )}
-            {/* Sedute spostate (10/11): una riga per seduta, dal primo giorno all'ultimo; sotto la storia completa e datata */}
+            {/* 11/11 (Ste: «in primo piano una sola informazione attuale, la cronologia sotto»): prima dove sono le sedute
+                spostate e perché, poi la storia completa; il testo del preparatore resta com'è stato scritto, sotto */}
             {spostamentiSett.righe.length > 0 && (
               <div className="mb-3">
                 <p className="text-body-sm font-semibold text-app mb-1 flex items-center gap-2"><CalendarClock size={16} className="text-forest-400" aria-hidden /> {spostamentiSett.righe.length === 1 ? 'Una seduta spostata' : `${spostamentiSett.righe.length} sedute spostate`}</p>
                 <ul className="space-y-1">
-                  {spostamentiSett.righe.map((r, i) => <li key={i} className="text-body-sm text-muted leading-snug">· {r}</li>)}
+                  {spostamentiSett.righe.map((r, i) => <li key={i} className="text-body-sm text-app leading-snug">{r}</li>)}
                 </ul>
                 {spostamentiSett.storia.length > spostamentiSett.righe.length && (
                   <details className="mt-1">
@@ -812,6 +795,31 @@ export default function AllenamentoHub() {
                   </details>
                 )}
               </div>
+            )}
+              {state.plan!.plan.messaggio && (cambiateDopo > 0 ? (
+                <details className="mb-3">
+                  <summary className="text-body-sm text-muted cursor-pointer tap flex items-center gap-2">
+                    <MessageCircle size={16} className="text-forest-400 shrink-0" aria-hidden />
+                    La proposta del preparatore{state.plan!.plan.scritto_il ? ` del ${dataConGiorno(state.plan!.plan.scritto_il)}` : ''}, scritta prima degli spostamenti
+                  </summary>
+                  <p className="mt-1 text-body-sm text-muted leading-relaxed">{state.plan!.plan.messaggio}</p>
+                </details>
+              ) : (
+                <div className="mb-3 flex gap-2">
+                  <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+                  <div className="min-w-0">
+                    {/* Il testo del preparatore è un documento di quel giorno (10/11): non si riscrive, si data */}
+                    <p className="text-label font-semibold text-app mb-0.5">La proposta del preparatore{state.plan!.plan.scritto_il ? ` · ${dataConGiorno(state.plan!.plan.scritto_il)}` : ''}</p>
+                    <p className={`text-body-sm text-muted leading-relaxed ${msgAperto ? '' : 'line-clamp-3'}`}>{state.plan!.plan.messaggio}</p>
+                    <button type="button" onClick={() => setMsgAperto((v) => !v)} className="tap -ml-1 px-1 text-body-sm font-semibold text-forest-300">{msgAperto ? 'Meno' : 'Leggi tutto'}</button>
+                  </div>
+                </div>
+              ))}
+            {state.plan!.plan.nota && (
+              <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
+                <CalendarClock size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+                <span>{state.plan!.plan.nota}</span>
+              </p>
             )}
             {altriAggiustamenti.length > 0 && (
               <details className="mb-3">

@@ -38,6 +38,7 @@ import { calcolaMemoriaBlocchi, famiglieAlTetto } from '@/lib/trainingMemoriaBlo
 import { loadMese } from '@/lib/trainingPlannerV2';
 import { meseRigheAtleta } from '@/lib/trainingMese';
 import type { QualitaV2 } from '@/lib/trainingCatalogV2';
+import { conSpostamentiDedotti } from '@/lib/spostamenti';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -358,7 +359,8 @@ export async function GET(request: NextRequest) {
       massimali,
       ladders: LADDER_AREE.map((a) => ladderForArea(rows, a)).filter((l) => l !== null),
       openTestSession: openSession || null,
-      plan: planAdattato || null,
+      // I piani di prima del 10/11 hanno la storia degli spostamenti solo negli aggiustamenti: la ricostruiamo (11/11)
+      plan: planAdattato ? { ...planAdattato, plan: conSpostamentiDedotti(planAdattato.plan, planAdattato.week_start) } : null,
       // Settimana: giorno di oggi (1=Lun) e se il piano è di una settimana passata (→ l'hub ne prepara uno nuovo)
       oggiDow: oggiDowRome(),
       lunedi: mondayOfThisWeekRome(),
