@@ -204,9 +204,12 @@ export default function CartaPage() {
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
+              {/* 11/11 (revisione di Ste, punto 6): nella vista Mente niente scala a livelli (40 intermedio, 60 avanzato…):
+                  si leggerebbe come un livello della persona. Contano quello che hai fatto e come sta andando. */}
               <p className="text-body-sm text-muted mb-2">
-                Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO.
-                {vista === 'mente' ? ' Mente misura quanto ti alleni di testa, non quanto sei forte di testa.' : vista === 'corpo' ? ' Ogni punta è la media dei suoi test.' : ' Il corpo dai test, la mente dalle abitudini: stessa scala, senso diverso.'}
+                {vista === 'mente'
+                  ? 'Quello che hai fatto nelle ultime 4 settimane: pratiche, Reset, azioni, come ti senti al mattino. Non è un voto su di te: misura quanto ti alleni di testa.'
+                  : <>Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO.{vista === 'corpo' ? ' Ogni punta è la media dei suoi test.' : ' Il corpo dai test, la mente dalle abitudini: stessa scala, senso diverso.'}</>}
                 {haPartenza ? ' In grigio: la partenza.' : ''}
               </p>
 
@@ -220,8 +223,8 @@ export default function CartaPage() {
                         <p className="text-caption text-muted leading-snug">{p.spiegazione}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-body font-bold tabular-nums text-app">{p.score === null ? '—' : Math.round(p.score)}<Delta d={p.delta} /></p>
-                        <p className="text-caption text-faint tabular-nums">{valoreTesto(p)}</p>
+                        <p className="text-body font-bold tabular-nums text-app">{valoreTesto(p)}</p>
+                        <p className="text-caption text-faint">{p.tendenza === 'su' ? 'in salita' : p.tendenza === 'giu' ? 'in calo' : p.tendenza === 'stabile' ? 'stabile' : 'ultime 4 settimane'}</p>
                       </div>
                     </div>
                   ))}

@@ -10,6 +10,7 @@ import { gateLista, rispostaChiaveInfo, testoDaModificare, type RispostaRow } fr
 import { ChevronRight, Key, PenLine, Star } from 'lucide-react';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
 import { AppLoader, Badge, Button, Card, Chip, SectionTitle, Testata } from '@/components/ui';
+import RispostaGateStorica from '@/components/RispostaGateStorica';
 
 interface Settimana { weekNumber: number; titolo: string; strumento?: string }
 
@@ -136,9 +137,7 @@ export default function RispostePage() {
                       <ol className="space-y-3">
                         {r.gateRighe.map((g, i) => (
                           <li key={i}>
-                            {g.domanda && <p className="text-body-sm text-muted mb-1 leading-relaxed whitespace-pre-line">{g.domanda}</p>}
-                            {g.avviso && <p className="text-caption text-faint mb-1">{g.avviso}</p>}
-                            <p className="text-body-lg text-app leading-relaxed whitespace-pre-line">{g.risposta}</p>
+                            <RispostaGateStorica n={i + 1} domanda={g.domanda} risposta={g.risposta} avviso={g.avviso} data={r.completedAt} compatta />
                           </li>
                         ))}
                       </ol>

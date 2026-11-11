@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — Gate storico, Carta Mente, esercizi ripetuti nella seduta
+
+Revisione di Ste dell'11/11, punti 5-7.
+- **Gate già passato** (`components/RispostaGateStorica.tsx`, usato nella pagina del Gate e in «Le tue risposte»): con la domanda certa domanda e risposta stanno insieme come prima. Con la domanda incerta (o di una versione precedente) la risposta sta in un riquadro a sé, «La tua risposta 2 · 4 novembre 2026», con la spiegazione sotto («Dopo la tua risposta il testo di questa domanda è stato cambiato…»); la domanda di oggi è un approfondimento chiuso («La domanda 2 com'è scritta oggi»). Prima la domanda di oggi stava sopra la vecchia risposta e sembravano legate.
+- **Carta, vista Mente**: via «Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO» (si leggeva come un livello della persona); al suo posto «Quello che hai fatto nelle ultime 4 settimane… Non è un voto su di te». Per ogni punta il valore misurato in evidenza (72 %, 6/10) con «in salita / stabile / in calo», non il punteggio. Corpo e A 360° restano con la scala.
+- **Seduta**: lo stesso esercizio scritto due volte di fila con la stessa dose (Everfit salva serie per serie, con il recupero più lungo dopo l'ultima) si legge come una riga sola, «Big Toe and Toes Alternating · 2 × 120" per lato · recupero 45"» (e «(3' dopo l'ultima)» quando il recupero finale è diverso). Solo nella lista: piano e player non cambiano, i recuperi restano quelli di Ste. Il numero degli esercizi e la numerazione contano le righe che si vedono.
+- **Serie facoltative**: la spiegazione comune (dal resoconto) compare una volta in cima («Serie in più, se vuoi (5 esercizi): …»), sugli esercizi resta solo il richiamo «Serie in più, se vuoi»; con il riquadro «Dal tuo resoconto» già presente non si ripete.
+
 ## 2026-11-11 — La pratica mentale parte in un tocco
 
 Revisione di Ste dell'11/11, punto 3. Il percorso era Apertura → Continua → istruzioni lunghe → «Inizia la pratica» → le stesse istruzioni nel pannello → «Inizia la pratica». Ora sulla schermata della pratica ci sono i due avvii: «Inizia con l'audio · N min» (con l'audio della pratica) e «Inizia leggendo i passi»; senza audio un solo «Inizia la pratica · N min». Il tocco apre direttamente la pratica in corso (passi, cerchio del respiro, tempo), senza il foglio di preparazione. Il testo completo resta sopra, chiuso («Leggi la pratica prima di iniziare»). L'audio è un elemento della pagina fatto partire dentro il tocco (iPhone suona solo nel gesto) e passato a `PracticePopup` (`avvio`, `audioElement`); se il telefono non lo fa partire si va col timer con «Audio non disponibile». Le giornate (Reset breve) restano come sono.
