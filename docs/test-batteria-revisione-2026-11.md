@@ -117,3 +117,12 @@ Nessun test si toglie. La pagina dei test ha tre parti: «Per partire» (quelli 
 3. Nella prima settimana una o due serie test per seduta?
 4. La settimana dei test: a scelta per tutti, o solo con «Tutto, in equilibrio»?
 5. Massimali dalle serie: da 3 a 10 ripetizioni con voto ≥ 7, va bene?
+
+## Decisioni di Ste (11/11, seconda risposta)
+
+- La domanda sul livello: ok la tabella.
+- La fascia per la pliometria: ok (a), (b), (c).
+- Prima settimana: anche 2 serie test per seduta, ma «non complichiamo troppo»: il test sostituisce l'esercizio uguale della seduta (come nel ri-test integrato), così la seduta non si allunga; niente test a ±1 giorno dalla partita. Esempio con «Tutto»: lunedì piegamenti e pull-up, mercoledì 50 m e salto in lungo, venerdì squat e glute bridge.
+- I test, tre strade al posto della settimana dei test: (a) «Li so già», si compila la scheda dei test con i risultati; (b) «Li faccio adesso», a casa, guidati uno dopo l'altro; (c) «Li faccio negli allenamenti», sedute guidate con i test che mancano. Quelli lasciati «non lo so» finiscono nelle sedute.
+- Massimali dalle serie (3-10 ripetizioni, voto ≥ 7): ok.
+- I pesi: il peso più alto che ha di manubri, kettlebell e bilanciere con i dischi. In seduta «Non hai questo peso?»: scrive il peso più vicino che ha e le ripetizioni si ricalcolano. Proposta: con un peso più leggero, stessi chili sollevati in tutto (16 kg × 10 → 12 kg × 13); con uno più pesante la formula del massimale (16 kg × 10 → 20 kg × 3), e sotto 5 ripetizioni il consiglio di usare il più leggero. Il peso scritto si ricorda per le volte dopo.
