@@ -25,20 +25,22 @@ Già oggi alcune cose si calcolano in seduta: un gradino passato in seduta diven
 3. **Il resto dentro le sedute**: la prima volta che una seduta tocca una qualità senza test, la sua prima serie è il test (come nel ri-test integrato).
 4. **I massimali si stimano dalle serie**: chi in palestra fa le serie con i kg e le ripetizioni fatte e il voto, ha il massimale stimato senza fare il test.
 5. **Settimana dei test**, a scelta, per chi preferisce farli tutti subito: sedute guidate solo per i test, con il riscaldamento, rispettando partita e squadra.
-6. **Via o facoltativi** quelli che il piano non usa o che sono doppioni.
+6. **Tutti i test restano possibili**: quelli che non servono per partire stanno in «Tutti i test».
 
-## 1. La domanda al posto dell'AMRAP
+## 1. La domanda al posto dell'AMRAP (Ste, 11/11)
 
-«Da quanto ti alleni fuori dalla squadra?» (forza, palestra, preparatore)
+«Come valuteresti il tuo livello negli esercizi in palestra o a corpo libero?» Una risposta sola; decide il livello generale di partenza e il tetto dei carichi (oggi «Esperienza palestra» sì/no, `caricoMaxPct`: 60 % senza esperienza, 70 % con, 90 % con esperienza, più di 18 anni e livello A o PRO).
 
-| Risposta | Livello generale di partenza |
-|---|---|
-| Mai o quasi mai | B |
-| Da qualche mese | B |
-| Da 1-2 anni, con continuità | A |
-| Da anni, con un preparatore | A |
+| Risposta (testo di Ste) | Livello generale | Esperienza con i pesi |
+|---|---|---|
+| Mai fatti | B | no (carichi max 60 %) |
+| Ho fatto qualcosa, ma poco | B | no |
+| Un po' di esperienza, ma livello base | B | no |
+| Riesco a eseguire esercizi con i pesi in autonomia | B | sì (70 %) |
+| Ho esperienza in palestra e a corpo libero e mi ritengo a un livello avanzato | A | sì (90 % sopra i 18 anni) |
+| Sono anni che mi alleno ed eseguo tranquillamente esercizi con pesi e a corpo libero | A | sì (90 % sopra i 18 anni) |
 
-PRO solo dai test, mai dalla domanda: chi si sopravvaluta non parte troppo alto. Appena ci sono i test di una qualità vale il test, e la dose la correggono comunque i log delle prime sedute. La domanda sostituisce anche «Esperienza palestra» del setup (oggi decide il tetto dei carichi): una domanda sola. L'AMRAP resta tra i test facoltativi per chi lo vuole fare.
+PRO solo dai test, mai dalla domanda: chi si sopravvaluta non parte troppo alto. Appena c'è il test di una qualità vale il test, e la dose la correggono comunque i log delle prime sedute. L'AMRAP resta tra i test per chi lo vuole fare, e se c'è vale lui.
 
 ## 2. Per partire: i test per obiettivo
 
@@ -49,13 +51,17 @@ Tutti a corpo libero, a casa, una serie al massimo ciascuno.
 | Forza parte alta | piegamenti · pull-up (se ha la sbarra) | i gradini di spinta e tirata; senza sbarra la tirata la fanno i rematori |
 | Forza gambe | squat · glute bridge | le due catene che servono alle sedute di gambe |
 | Tecnica palla | palleggi piede forte · piede debole | la parte debole della tecnica e il livello dei palleggi |
-| Velocità, Esplosività, Resistenza | nessuno | partono dal livello generale; il test è la prima serie della prima seduta di quella qualità |
-| Prevenzione, Kettlebell, Recupero | nessuno | la fascia parte dal primo codice del suo livello; il kettlebell dai log |
+| Esplosività / salti | equilibrio a occhi chiusi destro e sinistro · le tre domande sui dolori (articolazioni, dopo gli allenamenti, dopo le partite) | la fascia decide anche la pliometria (vedi sotto); salto e ankle stiffness nella prima seduta |
+| Prevenzione | come per i salti, più i towel curls | il punto di partenza della fascia |
+| Velocità, Resistenza | nessuno | partono dal livello generale; il test è la prima serie della prima seduta di quella qualità |
+| Kettlebell, Recupero | nessuno | il kettlebell dai log |
 | Tutto, in equilibrio | piegamenti · pull-up · squat · bridge | i «test principali» di Ste; tecnica e campo nelle sedute |
 
 Con due obiettivi di forza e la tecnica il massimo è 6 test (circa 15 minuti); il caso tipico è 2-4.
 
 Accanto a ogni test «Ho già il risultato» per scriverlo a mano (anche dei test in seduta: chi sa il suo 50 m lo scrive e non lo rifà).
+
+**La fascia per la pliometria (Ste, 11/11: «quelli della fascia dovrebbero essere usati anche per la pliometria»).** Oggi i test della fascia entrano solo nella Carta. Proposta: (a) il punteggio della fascia diventa un voto nel livello della pliometria (mediana bassa: una fascia debole tiene la pliometria al livello sotto, anche con un buon salto in lungo); (b) dolori alle articolazioni o fastidi dopo gli allenamenti nei questionari → pliometria intensiva solo in B e per le prime 4 settimane solo estensiva, come chi parte da zero; (c) equilibrio a occhi chiusi con più del 15 % di differenza tra i lati → nella pliometria prima gli esercizi a due gambe. È una regola nuova del Campo: le soglie le decide Ste.
 
 ## 3. Il resto dentro le sedute
 
@@ -88,28 +94,26 @@ Le sedute seguono le regole dell'asse partita (velocità e resistenza mai il gio
 
 Dubbio: in stagione una settimana senza lavoro di forza vero, solo test. Per questo la propongo a scelta, non obbligatoria.
 
-## 6. Cosa togliere o rendere facoltativo
+## 6. Tutti i test restano (Ste, 11/11: «lascerei comunque la possibilità di fare i test»)
 
-| Test | Proposta | Motivo |
-|---|---|---|
-| AMRAP | facoltativo | sostituito dalla domanda |
-| 5 questionari della fascia | via | solo la Carta li legge; dolori e fastidi arrivano già da limitazioni, resoconti e zone tese |
-| Equilibrio occhi chiusi dx/sx | facoltativo | squilibri; utile con la Prevenzione tra gli obiettivi |
-| 3 km | via | doppione del 1 km |
-| T-sprint | facoltativo | agilità; la velocità la misura il 50 m |
-| Wall sit (due gambe) | via | entra solo nella media della punta Gambe |
-| Wall sit dx/sx, affondo fermo dx/sx, salto dx/sx, ankle dx/sx | uno solo per lato (affondo fermo), facoltativo | gli squilibri li leggono anche i log per lato |
-| Palleggi di testa, piramide | facoltativi | non decidono la priorità della tecnica in modo diverso dai palleggi forte e debole |
-| Tiri in traversa, passaggi al palo (4) | in seduta | primo esercizio della seduta di tiri |
-| Squat bulgaro, shoulder press, pull-up zavorrato | dalle serie | stimati come gli altri lift |
-| Squat, stacco rumeno, hip thrust, panca | dalle serie, test facoltativo | stima dai log |
+Nessun test si toglie. La pagina dei test ha tre parti: «Per partire» (quelli dei suoi obiettivi), «Dentro le sedute» (quelli che arrivano da soli, con «Lo faccio adesso» per chi li vuole fare prima), «Tutti i test» (l'elenco completo, chiuso). Cambia solo cosa si chiede e cosa si calcola da solo:
 
-Da 47 test: 2-6 per partire, circa 12 dentro le sedute o dalle serie, una decina facoltativi, 10 via.
+| Test | Come arriva |
+|---|---|
+| AMRAP | facoltativo; se c'è vale lui, altrimenti la domanda |
+| Questionari della fascia | per partire con salti e prevenzione; facoltativi per gli altri |
+| Equilibrio occhi chiusi dx/sx | per partire con salti e prevenzione |
+| 3 km | facoltativo (il 1 km arriva nella seduta) |
+| T-sprint | facoltativo |
+| Wall sit (due gambe), per lato (wall sit, affondo fermo, salto, ankle) | facoltativi; gli squilibri li leggono anche i log per lato |
+| Palleggi di testa, piramide | facoltativi |
+| Tiri in traversa, passaggi al palo | primo esercizio della seduta di tiri |
+| Lift in palestra | stimati dalle serie; il test resta |
 
 ## Domande per Ste
 
-1. La domanda e i suoi livelli: va bene «da 1-2 anni con continuità» = A?
-2. Nella prima settimana una o due serie test per seduta?
-3. La settimana dei test: a scelta per tutti, o solo con «Tutto, in equilibrio»?
-4. I cinque questionari della fascia: via davvero, o diventano domande del setup?
+1. La tabella della domanda: «in autonomia con i pesi» = B con esperienza, le ultime due = A. Va bene?
+2. La fascia per la pliometria: (a), (b), (c) come sopra? Le soglie?
+3. Nella prima settimana una o due serie test per seduta?
+4. La settimana dei test: a scelta per tutti, o solo con «Tutto, in equilibrio»?
 5. Massimali dalle serie: da 3 a 10 ripetizioni con voto ≥ 7, va bene?
