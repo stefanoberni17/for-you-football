@@ -25,6 +25,7 @@ import type { CampoOggi } from '@/lib/trainingOggi';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
+import { minutiTest, minutiTesto, testPerObiettivi } from '@/lib/testPerObiettivi';
 import { dataConGiorno, isRigaSpostamento, origineSpostamento, riepilogoSpostamenti, seduteCambiateDopo, type Spostamento } from '@/lib/spostamenti';
 import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
 import { AppLoader, Badge, Banner, Button, Card, CardPlay, Chip, Elenco, Field, RigaElenco, SectionTitle, Sheet, Textarea, TitoloGruppo } from '@/components/ui';
@@ -45,7 +46,7 @@ export interface TrainingState {
   rombo: RomboPoint[];
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
-  testsV2: { id: string; done: boolean }[];
+  testsV2: { id: string; nome?: string; done: boolean }[];
   plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[]; scritto_il?: string }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
@@ -543,10 +544,14 @@ export default function AllenamentoHub() {
   ) : null;
 
   // ── Pezzi riusati da più viste ─────────────────────────────────────────────
+  // I test per i suoi obiettivi (11/11): quanti e quanto tempo davvero, non più «mezz'ora» per 47 test
+  const idTestObiettivi = testPerObiettivi({ focus: state.setup?.focus ?? [], attrezzatura: state.setup?.attrezzatura ?? [], fase: state.setup?.fase ?? null });
+  const nomeTest = (id: string) => state.tests.find((t) => t.id === id)?.nome ?? (state.testsV2 || []).find((t) => t.id === id)?.nome ?? id;
   const cardTest = (
     <div className="mb-5 space-y-2">
-      <CardPlay parte="corpo" href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />} sopra="Prima di tutto · mezz'ora" titolo="Fai i test" />
-      <p className="px-1 text-body-sm text-muted">Da lì nascono la tua Card e la tua settimana. Serve la sbarra per le trazioni.</p>
+      <CardPlay parte="corpo" href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />}
+        sopra={`Prima di tutto · ${idTestObiettivi.length} test · ${minutiTesto(minutiTest(idTestObiettivi))}`} titolo="Fai i test" />
+      <p className="px-1 text-body-sm text-muted">Per i tuoi obiettivi: {idTestObiettivi.map(nomeTest).join(', ')}. Da lì nascono la tua Card e la tua settimana; gli altri test quando vuoi.</p>
     </div>
   );
 

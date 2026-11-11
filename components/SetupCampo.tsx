@@ -29,6 +29,8 @@ function GroupLabel({ children, hint }: { children: React.ReactNode; hint?: Reac
 
 const NON_ATTIVA = 'Questa parte non è ancora attiva.';
 const siNo = ([true, false] as const);
+/** I luoghi tra gli attrezzi (11/11): «Dove ti alleni?» separato da «Che attrezzi hai?», stessi valori salvati. */
+const LUOGHI: readonly (typeof ATTREZZATURA_OPZIONI)[number][] = ['palestra', 'campo'];
 
 /**
  * "Il tuo setup" del Corpo (9/11: è la scheda Setup dell'Allenamento del Corpo): attrezzatura, esperienza, fase,
@@ -127,14 +129,52 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
         {disabilitato && <p className="text-body-sm text-warning mb-4">{NON_ATTIVA}</p>}
 
         <div className={`space-y-4 ${disabilitato ? 'opacity-60 pointer-events-none' : ''}`}>
+          {/* Su cosa vuoi lavorare */}
+          <Card padding="sm">
+            <SectionTitle title="Su cosa vuoi lavorare" subtitle={areeMax != null
+              ? `Il tuo Fisico ${state.abbonamento?.nome ?? ''} ha ${areeMax === 1 ? 'un\'area: sceglila' : `${areeMax} aree: scegline fino a ${areeMax}, in ordine di priorità`}. Per tutte le aree c'è il Pro.`
+              : 'Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell\'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".'} className="mb-3" />
+            {state.squilibri?.latoDebole && !setupDraft.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) && (
+              <Banner tone="accent" icon={<Scale size={20} />} title={`Gamba ${state.squilibri.latoDebole === 'sx' ? 'sinistra' : 'destra'} più debole nei test`} className="mb-3"
+                action={{ label: 'Aggiungi la fascia', onClick: () => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, 'fascia') }) }}>
+                Per pareggiare non servono serie in più: serve la fascia. Mettila tra gli obiettivi.
+              </Banner>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {FOCUS_OPZIONI.filter((f) => areeMax == null || f.id !== FOCUS_TUTTO).map((f) => {
+                const idx = setupDraft.focus.indexOf(f.id);
+                const on = idx >= 0;
+                return (
+                  <Chip key={f.id} selected={on} onClick={() => setSetupDraft({ ...setupDraft, focus: scegliFocus(setupDraft.focus, f.id) })}
+                    className={!on && f.id === FOCUS_TUTTO ? '!border-forest-500/50 !text-forest-300' : ''}>
+                    {on && setupDraft.focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
+                  </Chip>
+                );
+              })}
+            </div>
+            {/* Resistenza in season (Ste, 25/10; punto 19): entra solo come obiettivo esplicito, con l'avviso sul sovraccarico */}
+            {setupDraft.fase === 'in_season' && setupDraft.focus.includes('resistenza') && (
+              <Banner tone="warn" title="Resistenza in stagione" className="mt-3">{AVVISO_RESISTENZA_IN_SEASON}</Banner>
+            )}
+            {/* "Con questo tempo e questi attrezzi posso darti X?" (campo-da-fare 5, 20/10): detto PRIMA di salvare */}
+            <FattibilitaBanner attrezzatura={setupDraft.attrezzatura} compagno={setupDraft.compagno} durataMin={setupDraft.durataMin} focus={setupDraft.focus} className="mt-3" />
+            <p className="text-body-sm text-muted mt-3">{areeMax != null
+              ? 'Entrano in ogni settimana, anche in quella preparata da sola il lunedì.'
+              : <>Entrano in ogni settimana, anche in quella preparata da sola il lunedì: i primi due ci sono sempre, gli altri dove c&apos;è spazio. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</>}</p>
+            {nonAttive.obiettivi && <p className="text-body-sm text-warning mt-2">{NON_ATTIVA}</p>}
+          </Card>
+
           {/* Dove ti alleni */}
           <Card padding="sm">
-            <SectionTitle title="Dove ti alleni" className="mb-3" />
+            <SectionTitle title="Dove e con cosa" className="mb-3" />
             <div className="space-y-5">
-              <div>
-                <GroupLabel hint="Il corpo libero c'è sempre.">Cosa hai a disposizione?</GroupLabel>
+              {/* Dove ti alleni e che attrezzi hai, separati (Ste, 11/11): stessi dati di prima */}
+              {[{ label: 'Dove ti alleni?', hint: 'Anche più di uno. A casa il corpo libero c\'è sempre.', ids: LUOGHI },
+                { label: 'Che attrezzi hai?', hint: 'Quelli che usi davvero, anche a casa.', ids: ATTREZZATURA_OPZIONI.filter((a) => !LUOGHI.includes(a)) }].map((g) => (
+              <div key={g.label}>
+                <GroupLabel hint={g.hint}>{g.label}</GroupLabel>
                 <div className="flex flex-wrap gap-2">
-                  {ATTREZZATURA_OPZIONI.map((a) => {
+                  {g.ids.map((a) => {
                     const on = setupDraft.attrezzatura.includes(a);
                     return (
                       <Chip key={a} selected={on} onClick={() => setSetupDraft({ ...setupDraft, attrezzatura: on ? setupDraft.attrezzatura.filter((x) => x !== a) : [...setupDraft.attrezzatura, a] })}>
@@ -144,6 +184,7 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
                   })}
                 </div>
               </div>
+              ))}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <GroupLabel>Esperienza in palestra?</GroupLabel>
@@ -186,39 +227,32 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
             </div>
           </Card>
 
-          {/* Su cosa vuoi lavorare */}
+          {/* Infortuni e limitazioni (punto 4, 26/10) */}
           <Card padding="sm">
-            <SectionTitle title="Su cosa vuoi lavorare" subtitle={areeMax != null
-              ? `Il tuo Fisico ${state.abbonamento?.nome ?? ''} ha ${areeMax === 1 ? 'un\'area: sceglila' : `${areeMax} aree: scegline fino a ${areeMax}, in ordine di priorità`}. Per tutte le aree c'è il Pro.`
-              : 'Più aspetti scegli, più la preparazione li copre tutti, con la priorità nell\'ordine in cui li hai messi. Per avere più focus scegline pochi. Oppure "Tutto".'} className="mb-3" />
-            {state.squilibri?.latoDebole && !setupDraft.focus.some((f) => f === 'fascia' || f === FOCUS_TUTTO) && (
-              <Banner tone="accent" icon={<Scale size={20} />} title={`Gamba ${state.squilibri.latoDebole === 'sx' ? 'sinistra' : 'destra'} più debole nei test`} className="mb-3"
-                action={{ label: 'Aggiungi la fascia', onClick: () => setSetupDraft({ ...setupDraft, focus: toggleFocus(setupDraft.focus, 'fascia') }) }}>
-                Per pareggiare non servono serie in più: serve la fascia. Mettila tra gli obiettivi.
-              </Banner>
-            )}
-            <div className="flex flex-wrap gap-2">
-              {FOCUS_OPZIONI.filter((f) => areeMax == null || f.id !== FOCUS_TUTTO).map((f) => {
-                const idx = setupDraft.focus.indexOf(f.id);
-                const on = idx >= 0;
-                return (
-                  <Chip key={f.id} selected={on} onClick={() => setSetupDraft({ ...setupDraft, focus: scegliFocus(setupDraft.focus, f.id) })}
-                    className={!on && f.id === FOCUS_TUTTO ? '!border-forest-500/50 !text-forest-300' : ''}>
-                    {on && setupDraft.focus.length > 1 ? `${idx + 1}. ` : ''}{f.label}
-                  </Chip>
-                );
-              })}
+            <SectionTitle title="Infortuni e limitazioni" subtitle="Zone da proteggere e cose che il preparatore deve sapere. L'app non fa diagnosi: con un dolore nuovo usa il triangolo &quot;Hai un dolore?&quot; in Palestra › Corpo." className="mb-3" />
+            <div className="space-y-4">
+              <div>
+                <GroupLabel hint={`Fino a ${LIMITAZIONI_ZONE_MAX}. Sugli esercizi che le coinvolgono le serie sono ridotte e i kg più bassi, finché restano qui.`}>Zone da proteggere</GroupLabel>
+                <div className="flex flex-wrap gap-2">
+                  {ZONE_DOLORE.map((z) => {
+                    const on = setupDraft.limitazioni.zone.includes(z);
+                    const piene = !on && setupDraft.limitazioni.zone.length >= LIMITAZIONI_ZONE_MAX;
+                    return (
+                      <Chip key={z} selected={on} disabled={piene}
+                        onClick={() => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, zone: on ? setupDraft.limitazioni.zone.filter((x) => x !== z) : [...setupDraft.limitazioni.zone, z as ZonaDolore] } })}>
+                        {z}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </div>
+              <Field label="Infortuni passati, operazioni, cose da sapere" htmlFor="setup-limitazioni-nota" optional counter={{ value: setupDraft.limitazioni.nota.length, max: LIMITAZIONI_NOTA_MAX }} helper="Lo legge il preparatore AI, non il Coach mentale. Niente dati medici che non vuoi condividere.">
+                <Textarea id="setup-limitazioni-nota" rows={3} maxLength={LIMITAZIONI_NOTA_MAX} value={setupDraft.limitazioni.nota}
+                  placeholder="es. crociato sinistro operato nel 2024, ok adesso; mi fa male la schiena con gli stacchi pesanti"
+                  onChange={(e) => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, nota: e.target.value.slice(0, LIMITAZIONI_NOTA_MAX) } })} />
+              </Field>
+              {nonAttive.limitazioni && <p className="text-body-sm text-warning">{NON_ATTIVA}</p>}
             </div>
-            {/* Resistenza in season (Ste, 25/10; punto 19): entra solo come obiettivo esplicito, con l'avviso sul sovraccarico */}
-            {setupDraft.fase === 'in_season' && setupDraft.focus.includes('resistenza') && (
-              <Banner tone="warn" title="Resistenza in stagione" className="mt-3">{AVVISO_RESISTENZA_IN_SEASON}</Banner>
-            )}
-            {/* "Con questo tempo e questi attrezzi posso darti X?" (campo-da-fare 5, 20/10): detto PRIMA di salvare */}
-            <FattibilitaBanner attrezzatura={setupDraft.attrezzatura} compagno={setupDraft.compagno} durataMin={setupDraft.durataMin} focus={setupDraft.focus} className="mt-3" />
-            <p className="text-body-sm text-muted mt-3">{areeMax != null
-              ? 'Entrano in ogni settimana, anche in quella preparata da sola il lunedì.'
-              : <>Entrano in ogni settimana, anche in quella preparata da sola il lunedì: i primi due ci sono sempre, gli altri dove c&apos;è spazio. In &quot;Rifai da capo&quot; puoi cambiarli per una settimana sola.</>}</p>
-            {nonAttive.obiettivi && <p className="text-body-sm text-warning mt-2">{NON_ATTIVA}</p>}
           </Card>
 
           {/* Quando */}
@@ -271,34 +305,6 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
                 onChange={(e) => { const v = e.target.value.replace(',', '.').replace(/[^0-9.]/g, ''); setSetupDraft({ ...setupDraft, pesoKg: v === '' ? null : Number(v) }); }}
                 className="tabular-nums" />
             </Field>
-          </Card>
-
-          {/* Infortuni e limitazioni (punto 4, 26/10) */}
-          <Card padding="sm">
-            <SectionTitle title="Infortuni e limitazioni" subtitle="Zone da proteggere e cose che il preparatore deve sapere. L'app non fa diagnosi: con un dolore nuovo usa il triangolo &quot;Hai un dolore?&quot; in Palestra › Corpo." className="mb-3" />
-            <div className="space-y-4">
-              <div>
-                <GroupLabel hint={`Fino a ${LIMITAZIONI_ZONE_MAX}. Sugli esercizi che le coinvolgono le serie sono ridotte e i kg più bassi, finché restano qui.`}>Zone da proteggere</GroupLabel>
-                <div className="flex flex-wrap gap-2">
-                  {ZONE_DOLORE.map((z) => {
-                    const on = setupDraft.limitazioni.zone.includes(z);
-                    const piene = !on && setupDraft.limitazioni.zone.length >= LIMITAZIONI_ZONE_MAX;
-                    return (
-                      <Chip key={z} selected={on} disabled={piene}
-                        onClick={() => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, zone: on ? setupDraft.limitazioni.zone.filter((x) => x !== z) : [...setupDraft.limitazioni.zone, z as ZonaDolore] } })}>
-                        {z}
-                      </Chip>
-                    );
-                  })}
-                </div>
-              </div>
-              <Field label="Infortuni passati, operazioni, cose da sapere" htmlFor="setup-limitazioni-nota" optional counter={{ value: setupDraft.limitazioni.nota.length, max: LIMITAZIONI_NOTA_MAX }} helper="Lo legge il preparatore AI, non il Coach mentale. Niente dati medici che non vuoi condividere.">
-                <Textarea id="setup-limitazioni-nota" rows={3} maxLength={LIMITAZIONI_NOTA_MAX} value={setupDraft.limitazioni.nota}
-                  placeholder="es. crociato sinistro operato nel 2024, ok adesso; mi fa male la schiena con gli stacchi pesanti"
-                  onChange={(e) => setSetupDraft({ ...setupDraft, limitazioni: { ...setupDraft.limitazioni, nota: e.target.value.slice(0, LIMITAZIONI_NOTA_MAX) } })} />
-              </Field>
-              {nonAttive.limitazioni && <p className="text-body-sm text-warning">{NON_ATTIVA}</p>}
-            </div>
           </Card>
 
           {/* Con la squadra */}

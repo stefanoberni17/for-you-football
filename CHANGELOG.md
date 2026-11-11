@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — I test per i tuoi obiettivi, setup in un ordine nuovo (solo presentazione)
+
+Ste, 11/11: «non voglio stravolgere l'app: se il lavoro è grosso mettiamo solo le parti estetiche a posto». Proposta completa in `docs/test-batteria-revisione-2026-11.md` (domanda sul livello, test in seduta, massimali dalle serie, fascia per la pliometria, pesi): non ancora nel codice.
+- `lib/testPerObiettivi.ts` (puro, 6 test): dagli obiettivi del setup i test da fare prima (sempre piegamenti e squat; gambe → bridge e affondi; parte alta → pull-up se c'è la sbarra e plank; salti → equilibrio e domande della fascia, salto in lungo; prevenzione → la fascia; velocità → 50 m; resistenza → navetta in stagione, 1 km fuori; tecnica → palleggi e muro; «Tutto» → la forza a corpo libero e i palleggi), con i minuti a casa e in campo.
+- **Hub**: «Fai i test · Prima di tutto · 5 test · ~13' a casa + 15' in campo» e i nomi dei test, al posto di «mezz'ora» per 47 test e «Serve la sbarra per le trazioni».
+- **Pagina dei test**: in cima «Per i tuoi obiettivi» con quei test (tocco → il test aperto), poi «Tutti i test» con tutti i blocchi di prima. Il «prossimo test» viene prima da lì. Nessun test tolto.
+- **Setup**: prima «Su cosa vuoi lavorare», poi «Dove e con cosa» divisa in «Dove ti alleni?» (palestra, campo) e «Che attrezzi hai?» (gli altri), poi stagione, infortuni e limitazioni, quando, il tuo corpo, la squadra. Stessi dati salvati.
+
 ## 2026-11-11 — Gate storico, Carta Mente, esercizi ripetuti nella seduta
 
 Revisione di Ste dell'11/11, punti 5-7.
