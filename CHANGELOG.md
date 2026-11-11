@@ -2,6 +2,10 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-11 — La pratica mentale parte in un tocco
+
+Revisione di Ste dell'11/11, punto 3. Il percorso era Apertura → Continua → istruzioni lunghe → «Inizia la pratica» → le stesse istruzioni nel pannello → «Inizia la pratica». Ora sulla schermata della pratica ci sono i due avvii: «Inizia con l'audio · N min» (con l'audio della pratica) e «Inizia leggendo i passi»; senza audio un solo «Inizia la pratica · N min». Il tocco apre direttamente la pratica in corso (passi, cerchio del respiro, tempo), senza il foglio di preparazione. Il testo completo resta sopra, chiuso («Leggi la pratica prima di iniziare»). L'audio è un elemento della pagina fatto partire dentro il tocco (iPhone suona solo nel gesto) e passato a `PracticePopup` (`avvio`, `audioElement`); se il telefono non lo fa partire si va col timer con «Audio non disponibile». Le giornate (Reset breve) restano come sono.
+
 ## 2026-11-11 — Il piano: una riga attuale per seduta spostata, la storia sotto
 
 Revisione di Ste dell'11/11, punto 2. La seduta stava giovedì, il testo del preparatore diceva venerdì e «Ho sistemato» mostrava venerdì → giovedì → martedì → giovedì.

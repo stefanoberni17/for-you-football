@@ -21,6 +21,13 @@ interface PracticePopupProps {
   durataEspira?: number;
   tipoPratica?: TipoPratica;
   audioUrl?: string | null;
+  /**
+   * Avvio diretto (11/11, Ste: «Inizia la pratica» due volte e le stesse istruzioni rilette): la scelta fra audio e
+   * testo sta nella pagina del giorno e il popup si apre già sulla pratica in corso, senza il foglio di preparazione.
+   * Con 'audio' l'audio è un elemento della pagina già avviato nel tocco (iPhone fa partire il suono solo dentro il gesto).
+   */
+  avvio?: 'audio' | 'testo';
+  audioElement?: HTMLAudioElement | null;
   onComplete: () => void;
   onSkip: () => void;
 }
@@ -34,10 +41,12 @@ export default function PracticePopup({
   durataEspira = 6,
   tipoPratica = 'respirazione',
   audioUrl,
+  avvio,
+  audioElement,
   onComplete,
   onSkip,
 }: PracticePopupProps) {
-  const [phase, setPhase] = useState<'setup' | 'practicing' | 'done'>('setup');
+  const [phase, setPhase] = useState<'setup' | 'practicing' | 'done'>(avvio ? 'practicing' : 'setup');
   useWakeLock(phase === 'practicing');
   // Giornata: il popup è solo il RESET BREVE del mattino (3 respiri, naso 4 / bocca 6), non la durata di Notion
   const isGiornata = tipoPratica === 'giornata';
@@ -45,7 +54,7 @@ export default function PracticePopup({
   const [timeLeft, setTimeLeft] = useState(totalSeconds);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale');
   const [timerEnded, setTimerEnded] = useState(false);
-  const [audioInProgress, setAudioInProgress] = useState(false);
+  const [audioInProgress, setAudioInProgress] = useState(avvio === 'audio');
   const [audioFailed, setAudioFailed] = useState(false);
 
   // Timer countdown — setta timerEnded; il passaggio a `done` avviene
@@ -103,9 +112,9 @@ export default function PracticePopup({
   }, [phase, durataInspira, durataEspira, showBreathCircle]);
 
   // Audio guida (opzionale)
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [audioVisible, setAudioVisible] = useState(false);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(audioElement ?? null);
+  const [audioVisible, setAudioVisible] = useState(avvio === 'audio');
+  const [isAudioPlaying, setIsAudioPlaying] = useState(avvio === 'audio');
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
   const [audioDuration, setAudioDuration] = useState(0);
 
@@ -115,6 +124,8 @@ export default function PracticePopup({
     if (!audio) return;
 
     const onLoaded = () => setAudioDuration(audio.duration || 0);
+    // Con l'audio della pagina i metadati possono essere già arrivati prima di questi ascoltatori
+    if (audio.duration) setAudioDuration(audio.duration);
     const onTime = () => setAudioCurrentTime(audio.currentTime);
     const onEnded = () => {
       setIsAudioPlaying(false);
@@ -150,6 +161,16 @@ export default function PracticePopup({
       audio.removeEventListener('error', onError);
     };
   }, [audioUrl]);
+
+  // Avvio con l'audio: se il telefono non l'ha fatto partire (o il file non c'è) si va col timer, senza restare in attesa
+  useEffect(() => {
+    if (avvio !== 'audio') return;
+    const t = setTimeout(() => {
+      const a = audioRef.current;
+      if (a && a.paused && a.currentTime === 0) { setIsAudioPlaying(false); setAudioInProgress(false); setAudioFailed(true); }
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [avvio]);
 
   // Pause audio on unmount
   useEffect(() => {
@@ -306,7 +327,7 @@ export default function PracticePopup({
   return (
     <>
       {/* L'elemento audio vive fuori dagli Sheet: resta montato tra una fase e l'altra */}
-      {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
+      {audioUrl && !audioElement && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
 
       {/* ─── SETUP ─── */}
       <Sheet
