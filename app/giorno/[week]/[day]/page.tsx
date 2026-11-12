@@ -579,7 +579,10 @@ export default function GiornoPage() {
 
             {hasPracticeTimer && giorno.tipoPratica !== 'giornata' ? (
               <details>
-                <summary className="text-body text-muted cursor-pointer tap flex items-center">Leggi la pratica prima di iniziare</summary>
+                <summary className="text-body text-muted cursor-pointer tap flex items-center gap-1.5 list-none [&::-webkit-details-marker]:hidden">
+                  <ChevronRight size={18} className="shrink-0 transition-transform [details[open]_&]:rotate-90" aria-hidden />
+                  Leggi i passi prima di iniziare
+                </summary>
                 <p className="mt-2 text-app text-body-lg leading-relaxed whitespace-pre-line">{giorno.pratica}</p>
               </details>
             ) : (
@@ -796,14 +799,16 @@ export default function GiornoPage() {
               </Button>
             )}
 
+            {/* Prima della pratica (review 12/11): niente secondo bottone grande accanto ai due «Inizia», solo un
+                «Salta la pratica» discreto; dopo la pratica torna «Continua» */}
             {!isLastSlide && !(giornataDaAvviare && currentSlideData?.type === 'pratica') && (
               <Button
-                variant={continueIsSecondary ? 'secondary' : 'primary'}
+                variant={continueIsSecondary ? 'ghost' : 'primary'}
                 className="flex-1"
-                iconRight={<ChevronRight size={18} aria-hidden />}
+                iconRight={continueIsSecondary ? undefined : <ChevronRight size={18} aria-hidden />}
                 onClick={() => setCurrentSlide(s => s + 1)}
               >
-                Continua
+                {continueIsSecondary ? 'Salta la pratica' : 'Continua'}
               </Button>
             )}
 

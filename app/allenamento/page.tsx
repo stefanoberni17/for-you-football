@@ -487,7 +487,7 @@ export default function AllenamentoHub() {
             )}
             {consensiErr && <p className="text-body-sm text-warning">{consensiErr}</p>}
             <Button size="lg" fullWidth disabled={!pronto} loading={consensiSending} onClick={() => inviaConsensi(docs)}>
-              Entra nel Campo
+              Entra
             </Button>
             <div>
               <p className="text-body-sm text-muted">Hai meno di 18 anni?</p>

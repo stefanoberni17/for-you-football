@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-12 — Ritocchi dalla prova da ragazzo nuovo (review da sales manager)
+
+Prova completa sul Preview con un account finto (registrazione, introduzione, prova con la carta di test, Giorno 1, Corpo, test, prima settimana). Sistemati i punti di sola presentazione; restano da decidere con Ste la carta prima del Giorno 1 e l'ordine obiettivi → test nel Corpo.
+- **Prezzi**: un pacchetto con le iscrizioni chiuse ha «In arrivo» sulla scheda (al posto di «Il più completo» e «Lancio») e va sotto quelli che si possono comprare. Prima il Completo era il primo in alto e si scopriva «Avvisami quando apre» solo dopo averlo scelto.
+- **Palestra in prova**: al posto di «Il percorso completo · Sblocca» c'è «In prova fino al 19 novembre 2026» (→ Account). Chi aveva appena messo la carta pensava di non aver comprato niente.
+- **Pagina della pratica**: prima della pratica il bottone accanto a «Inizia» è un discreto «Salta la pratica» (prima un secondo «Continua» grande, tre bottoni insieme); «Leggi i passi prima di iniziare» ha la freccia e si vede che si apre.
+- **Nomi**: «Testa e corpo, per calciatori» in login, registrazione e introduzione (prima «Allenamento mentale per calciatori», ma l'app ha anche il Corpo); «Entra» al posto di «Entra nel Campo»; tolta la domanda sullo sport in registrazione e in «Completa il profilo» (l'app è per calciatori, resta «calcio»); nell'Account compare solo a chi aveva scelto un altro sport.
+
 ## 2026-11-11 — I test per i tuoi obiettivi, setup in un ordine nuovo (solo presentazione)
 
 Ste, 11/11: «non voglio stravolgere l'app: se il lavoro è grosso mettiamo solo le parti estetiche a posto». Proposta completa in `docs/test-batteria-revisione-2026-11.md` (domanda sul livello, test in seduta, massimali dalle serie, fascia per la pliometria, pesi): non ancora nel codice.

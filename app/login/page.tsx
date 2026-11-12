@@ -110,7 +110,7 @@ export default function LoginPage() {
           For You Football
         </h1>
         <p className="text-forest-400 font-semibold text-overline mt-1 uppercase tracking-wider">
-          Allenamento mentale per calciatori
+          Testa e corpo, per calciatori
         </p>
       </div>
 

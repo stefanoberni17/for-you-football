@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { MIN_AGE, PLAYER_LEVELS, SPORTS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
+import { MIN_AGE, PLAYER_LEVELS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 import { Check, ChevronLeft, ChevronRight, Mail, Ticket } from 'lucide-react';
 import { AppLoader, Button, Card, Chip, Field, Input, Select, Textarea } from '@/components/ui';
 import GoogleButton from '@/components/GoogleButton';
@@ -49,7 +49,7 @@ function RegisterContent() {
   const [healthAccepted, setHealthAccepted] = useState(false);
 
   // Step 2 — profilo atleta
-  const [sport, setSport] = useState('calcio');
+  const [sport] = useState('calcio'); // dal 12/11 niente domanda: calciatori
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [level, setLevel] = useState('');
   const [selectedSituazione, setSelectedSituazione] = useState('');
@@ -226,7 +226,7 @@ function RegisterContent() {
           <div className="text-4xl mb-2" aria-hidden>⚽</div>
           <h1 className="font-display text-title-1 font-bold text-app">For You Football</h1>
           <p className="text-forest-400 font-semibold text-overline mt-0.5 uppercase tracking-wider">
-            Allenamento mentale per calciatori
+            Testa e corpo, per calciatori
           </p>
           {hasBetaCode && (
             <div className="mt-3 inline-flex items-center gap-1.5 bg-forest-500/15 border border-forest-500/30 text-forest-300 text-body-sm font-semibold px-3 py-1.5 rounded-full">
@@ -359,26 +359,7 @@ function RegisterContent() {
                 </p>
               </div>
 
-              {/* Sport — single select chips */}
-              <div>
-                <p className="text-label font-semibold text-app mb-1">
-                  Che sport pratichi?
-                </p>
-                <p className="text-caption text-muted mb-2">Il Coach adatta il linguaggio al tuo sport.</p>
-                <div className="flex flex-wrap gap-2" role="group" aria-label="Sport">
-                  {SPORTS.map((s) => (
-                    <Chip
-                      key={s.value}
-                      selected={sport === s.value}
-                      onClick={() => { setSport(s.value); setSelectedRoles([]); }}
-                      icon={<span aria-hidden>{s.icon}</span>}
-                    >
-                      {s.label}
-                    </Chip>
-                  ))}
-                </div>
-              </div>
-
+              {/* Sport: tolta la domanda (review 12/11): l'app è per calciatori, lo sport resta «calcio» */}
               {/* Ruoli — multi-select (dinamici per sport) */}
               {(SPORT_ROLES[sport]?.length ?? 0) > 0 && (
               <div>

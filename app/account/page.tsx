@@ -371,14 +371,15 @@ export default function AccountPage() {
             </Field>
           </div>
 
-          <div>
+          {/* Solo per chi aveva scelto un altro sport prima del 12/11: per i calciatori la domanda non c'è più */}
+          {sport !== 'calcio' && <div>
             <p className="text-label font-semibold text-app mb-2">Che sport fai?</p>
             <ChipGroup
               options={SPORTS}
               selected={[sport]}
               onToggle={(v) => { setSport(v); setSelectedRoles([]); }}
             />
-          </div>
+          </div>}
 
           {(SPORT_ROLES[sport]?.length ?? 0) > 0 && (
             <div>

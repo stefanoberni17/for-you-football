@@ -130,7 +130,7 @@ export default function OnboardingPage() {
     // ── SLIDE 1 — Perché ─────────────────────────────────────────────────────
     {
       title: 'Benvenuto in For You Football',
-      subtitle: 'Allenamento mentale per calciatori',
+      subtitle: 'Testa e corpo, per calciatori',
       content: (
         <div className="text-center max-w-xl mx-auto">
           <p className="font-display text-title-2 font-bold text-app leading-snug">
