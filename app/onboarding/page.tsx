@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { haAccessoOProva, provaRichiesta } from '@/lib/checkAccess';
 import { authFetch } from '@/lib/authFetch';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
@@ -14,6 +15,7 @@ export default function OnboardingPage() {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [completing, setCompleting] = useState(false);
   const [ready, setReady] = useState(false);
+  const [conCarta, setConCarta] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showRitual, setShowRitual] = useState(false);
   const [ritualUserId, setRitualUserId] = useState('');
@@ -32,9 +34,11 @@ export default function OnboardingPage() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('onboarding_completed')
+        .select('*')
         .eq('user_id', session.user.id)
         .single();
+      // Chi parte con la prova con la carta lo sa già qui (review 12/11): al Giorno 1 non è una sorpresa
+      setConCarta(provaRichiesta(profile) && !haAccessoOProva(profile));
 
       if (profile?.onboarding_completed) {
         router.push('/');
@@ -196,6 +200,14 @@ export default function OnboardingPage() {
               </p>
             </div>
           </Card>
+          {conCarta && (
+            <Card className="mt-4">
+              <p className="text-body font-semibold text-app">Prima del Giorno 1 attivi la prova</p>
+              <p className="text-body-sm text-muted mt-1 leading-relaxed">
+                Inserisci la carta per attivare l&apos;abbonamento: i primi 7 giorni sono gratis. Se non ti convince, disdici entro i 7 giorni e non paghi niente.
+              </p>
+            </Card>
+          )}
         </div>
       ),
     },

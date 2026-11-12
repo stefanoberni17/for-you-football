@@ -544,6 +544,15 @@ export default function AllenamentoHub() {
   ) : null;
 
   // ── Pezzi riusati da più viste ─────────────────────────────────────────────
+  // Prima gli obiettivi, poi i test (review 12/11, Ste: ok): senza obiettivi né attrezzi il primo passo è il setup
+  const setupDaFare = (state.setup?.focus ?? []).length === 0 && (state.setup?.attrezzatura ?? []).length === 0;
+  const cardSetup = (
+    <div className="mb-5 space-y-2">
+      <CardPlay parte="corpo" onClick={() => cambiaVista('setup')} label="Fai il setup" icona={<Settings2 size={22} />}
+        sopra="Prima di tutto · 2 minuti" titolo="Il tuo setup" />
+      <p className="px-1 text-body-sm text-muted">Su cosa vuoi lavorare, dove ti alleni, la tua stagione. Da lì scegliamo i test che ti servono: niente test inutili.</p>
+    </div>
+  );
   // I test per i suoi obiettivi (11/11): quanti e quanto tempo davvero, non più «mezz'ora» per 47 test
   const idTestObiettivi = testPerObiettivi({ focus: state.setup?.focus ?? [], attrezzatura: state.setup?.attrezzatura ?? [], fase: state.setup?.fase ?? null });
   const nomeTest = (id: string) => state.tests.find((t) => t.id === id)?.nome ?? (state.testsV2 || []).find((t) => t.id === id)?.nome ?? id;
@@ -577,7 +586,7 @@ export default function AllenamentoHub() {
 
   // ── Vista OGGI (9/11): la cosa di oggi, i resoconti e il dolore; il resto sta nelle altre schede ─────────
   const vistaOggi = () => {
-    if (batteriaVuota) return <>{cardResoconto}{cardTest}</>;
+    if (batteriaVuota) return <>{cardResoconto}{setupDaFare ? cardSetup : cardTest}</>;
     let hero: React.ReactNode;
     const proposteOggi = diOggi?.proposte ?? [];
     if (!haPiano) {
@@ -689,7 +698,7 @@ export default function AllenamentoHub() {
     : state.calendario!.trainingDays);
   const giorniPartita = new Set<number>(calendarioVuoto ? (state.partitaAbituale ? [state.partitaAbituale] : []) : state.calendario!.matchDays);
   const vistaSettimana = () => {
-    if (batteriaVuota) return <>{cardTest}</>;
+    if (batteriaVuota) return <>{setupDaFare ? cardSetup : cardTest}</>;
     const totale = sedute.reduce((a, s) => a + (s.durata_min || 0), 0);
     return (
       <>
@@ -1163,7 +1172,7 @@ export default function AllenamentoHub() {
         </div>
 
         {vista === 'oggi' ? vistaOggi() : vista === 'settimana' ? vistaSettimana() : vista === 'stats' ? vistaStats()
-          : <SetupCampo state={state} ricarica={load} conFascia={fasciaDaAggiungere} />}
+          : <SetupCampo state={state} ricarica={async () => { const primoSetup = setupDaFare && batteriaVuota; await load(); if (primoSetup) cambiaVista('oggi'); }} conFascia={fasciaDaAggiungere} />}
       </div>
 
       {/* Sheet "Hai un dolore?" — segnalazione strutturata (≥4/10 → pausa fisica) */}

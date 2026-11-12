@@ -272,6 +272,8 @@ function PricingContent() {
       ? !(p.cambio && !p.cambio.ok && p.cambio.motivo === 'iscrizioni_chiuse') // abbonato: chiuso solo se il cambio è chiuso per le iscrizioni
       : p.puoAbbonarsi));
 
+  const giorniProva = abbonato ? 0 : Math.max(0, ...offerta.pacchetti.filter((p) => vendibileOra(p)).map((p) => p.provaGiorni ?? 0));
+
   /** Una scheda pacchetto: tap = la sceglie; la scelta mostra cosa include. */
   const scheda = (id: Pacchetto, extra?: React.ReactNode) => {
     const p = per.get(id);
@@ -347,6 +349,14 @@ function PricingContent() {
             <h1 className="font-display text-title-1 font-bold text-app mb-2">{abbonato ? 'Il tuo pacchetto' : 'Scegli come allenarti'}</h1>
             <p className="text-body text-muted">La testa, il corpo, o tutti e due. Un prezzo al mese, disdici quando vuoi.</p>
           </div>
+
+          {/* La prova detta subito (review 12/11, Ste): la carta serve per attivare, i giorni gratis, la disdetta */}
+          {giorniProva > 0 && (
+            <Card variant="accent" padding="sm" className="text-body-sm text-app leading-relaxed">
+              Inserisci la carta per attivare l&apos;abbonamento: <span className="font-semibold">i primi {giorniProva} giorni sono gratis</span>.
+              Se non ti convince, disdici entro i {giorniProva} giorni e non paghi niente.
+            </Card>
+          )}
 
           {fromGate && (
             <Card variant="accent" padding="sm" className="flex items-start gap-3 text-body-sm text-app">
