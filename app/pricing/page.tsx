@@ -267,8 +267,10 @@ function PricingContent() {
   const etichettaPrezzo = (t: TipoPrezzo) => t === 'lancio' ? 'Prezzo di lancio' : t === 'codice' ? `Con il codice ${codice?.codice ?? ''}`.trim() : null;
 
   /** Si può comprare adesso (review 12/11: un pacchetto con le iscrizioni chiuse va sotto, con «In arrivo»). */
-  const vendibileOra = (p: { disponibile: boolean; puoAbbonarsi: boolean; motivo?: MotivoNo }) =>
-    p.disponibile && (p.puoAbbonarsi || p.motivo === 'gia_abbonato');
+  const vendibileOra = (p: { id: Pacchetto; disponibile: boolean; puoAbbonarsi: boolean; motivo?: MotivoNo; cambio: { ok: boolean; motivo?: string } | null }) =>
+    attuale === p.id || (p.disponibile && (abbonato
+      ? !(p.cambio && !p.cambio.ok && p.cambio.motivo === 'iscrizioni_chiuse') // abbonato: chiuso solo se il cambio è chiuso per le iscrizioni
+      : p.puoAbbonarsi));
 
   /** Una scheda pacchetto: tap = la sceglie; la scelta mostra cosa include. */
   const scheda = (id: Pacchetto, extra?: React.ReactNode) => {
@@ -287,7 +289,7 @@ function PricingContent() {
               <span className="font-display text-title-3 font-bold text-app">{t.titolo}</span>
               {suo && <Badge tone="success">Il tuo</Badge>}
               {/* Iscrizioni chiuse (review 12/11): «In arrivo» sulla scheda, non dopo averla scelta */}
-              {!suo && !abbonato && !vendibileOra(p) ? <Badge tone="neutral">In arrivo</Badge> : <>
+              {!suo && !vendibileOra(p) ? <Badge tone="neutral">In arrivo</Badge> : <>
                 {!suo && id === 'completo' && <Badge tone="accent">Il più completo</Badge>}
                 {!suo && pr.tipo === 'lancio' && <Badge tone="info" icon={<Unlock size={12} aria-hidden />}>Lancio</Badge>}
               </>}
@@ -400,7 +402,7 @@ function PricingContent() {
               ),
             ) }]
               // Prima quelli che si possono comprare adesso, nello stesso ordine di prima
-              .map((x, i) => ({ ...x, i, ok: abbonato || (per.get(x.id) ? vendibileOra(per.get(x.id)!) : false) }))
+              .map((x, i) => ({ ...x, i, ok: per.get(x.id) ? vendibileOra(per.get(x.id)!) : false }))
               .sort((a, b) => Number(b.ok) - Number(a.ok) || a.i - b.i)
               .map((x) => <div key={x.i}>{x.el}</div>)}
           </section>

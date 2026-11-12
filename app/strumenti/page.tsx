@@ -142,7 +142,7 @@ export default function StrumentiPage() {
       // Il Campo: acceso a mano o con un pacchetto con il Fisico (3/11); il Mente: con il Mente o il Completo
       setTrainingAccess(!!livelloFisico(profile));
       setMentaleAttivo(hasActiveAccess(profile));
-      setProvaFino(inProva(profile) ? (dataLunga((profile as { trial_ends_at?: string | null } | null)?.trial_ends_at ?? null) ?? 'la fine della settimana') : null);
+      setProvaFino(inProva(profile) ? (dataLunga((profile as { trial_ends_at?: string | null } | null)?.trial_ends_at ?? null)?.toLowerCase() ?? 'la fine della settimana') : null);
       setConFisico(!!livelloFisico(profile) && !(profile as { training_access?: boolean } | null)?.training_access);
       salvaCorpoAperto(!!livelloFisico(profile));
       setLastId(readLast());
