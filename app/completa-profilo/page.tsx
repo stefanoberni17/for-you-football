@@ -4,17 +4,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
-import { MIN_AGE, PLAYER_LEVELS, SPORT_ROLES } from '@/lib/constants';
+import { MIN_AGE, PLAYER_LEVELS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 import { BETA_CODE_KEY } from '@/components/GoogleButton';
 import { Ticket } from 'lucide-react';
 import { AppLoader, Button, Card, Chip, Field, Input, Select, Textarea } from '@/components/ui';
 
-const SITUAZIONI = [
-  { value: 'errore', label: 'Dopo un errore' },
-  { value: 'panchina', label: 'Quando finisco in panchina' },
-  { value: 'giudizio', label: 'Sotto il giudizio del mister o dei compagni' },
-  { value: 'pressione_partita', label: 'Nei momenti decisivi della partita' },
-];
+// Le stesse risposte di Account e della registrazione (12/11: prima qui 4, nel profilo 8 con parole diverse)
+const SITUAZIONI = SPORT_FEARS.calcio;
 
 /**
  * "Completa il profilo" (20/10): per chi è entrato con Google. L'account esiste (email verificata da Google), ma
@@ -151,7 +147,7 @@ export default function CompletaProfiloPage() {
                   {PLAYER_LEVELS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
                 </Select>
               </Field>
-              <p className="text-label font-semibold text-app mt-4 mb-2">Qual è la situazione mentale più difficile per te in campo?</p>
+              <p className="text-label font-semibold text-app mt-4 mb-2">Cosa ti blocca di più in campo?</p>
               <div className="space-y-2 mb-4" role="group" aria-label="Situazione più difficile">
                 {SITUAZIONI.map((s) => <Chip key={s.value} selected={situazione === s.value} onClick={() => setSituazione(s.value)} className="w-full justify-start text-left whitespace-normal h-auto! min-h-[44px] py-2">{s.label}</Chip>)}
               </div>

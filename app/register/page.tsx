@@ -64,13 +64,13 @@ function RegisterContent() {
     panchina:          'Capito. Quella sensazione ha un nome. E uno strumento.',
     giudizio:          'Lo conosco bene. Sarà il filo conduttore di tutto il percorso.',
     pressione_partita: 'Esatto. La settimana 1 è costruita attorno a quello.',
+    deludere:          'Capito. Ci lavoriamo dalla prima settimana.',
+    non_abbastanza:    'Capito. Ci lavoriamo dalla prima settimana.',
+    momento_chiave:    'Esatto. La settimana 1 è costruita attorno a quello.',
+    infortunio:        'Capito. Testa e corpo insieme: ci lavoriamo da subito.',
   };
-  const SITUAZIONI = [
-    { value: 'errore',            label: 'Dopo un errore' },
-    { value: 'panchina',          label: 'Quando finisco in panchina' },
-    { value: 'giudizio',          label: 'Sotto il giudizio del mister o dei compagni' },
-    { value: 'pressione_partita', label: 'Nei momenti decisivi della partita' },
-  ];
+  // Le stesse risposte di Account (12/11: prima qui 4, nel profilo 8 con parole diverse)
+  const SITUAZIONI = SPORT_FEARS.calcio;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -333,11 +333,11 @@ function RegisterContent() {
                     Acconsento a salvare i dati sulla salute che inserisco io (come sto, sonno, dolori, sensazioni negli esercizi). Servono solo a regolare il percorso e l&apos;allenamento. *
                   </span>
                 </label>
-                <p className="text-body-sm text-muted leading-relaxed pt-1">
+                {MIN_AGE < 18 && <p className="text-body-sm text-muted leading-relaxed pt-1">
                   Hai meno di 18 anni? Fai leggere{' '}
                   <a href="/genitori" target="_blank" rel="noopener noreferrer" className="text-forest-400 underline">questa pagina</a>
                   {' '}a un genitore: spiega in due minuti cos&apos;è l&apos;app e cosa fa l&apos;AI.
-                </p>
+                </p>}
               </div>
 
               <Button type="submit" variant="primary" size="lg" fullWidth iconRight={<ChevronRight size={20} aria-hidden />}>
@@ -385,7 +385,7 @@ function RegisterContent() {
               {/* Situazione — single select con risposta inline */}
               <div>
                 <p className="text-label font-semibold text-app mb-1">
-                  Qual è la situazione mentale più difficile per te in campo?
+                  Cosa ti blocca di più in campo?
                 </p>
                 <p className="text-caption text-muted mb-2">Inizieremo proprio da lì.</p>
                 <div className="space-y-2" role="group" aria-label="Situazione più difficile">

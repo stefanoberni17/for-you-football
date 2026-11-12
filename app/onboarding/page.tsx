@@ -133,7 +133,7 @@ export default function OnboardingPage() {
   const slides = [
     // ── SLIDE 1 — Perché ─────────────────────────────────────────────────────
     {
-      title: 'Benvenuto in For You Football',
+      title: 'Eccoti in For You Football',
       subtitle: 'Testa e corpo, per calciatori',
       content: (
         <div className="text-center max-w-xl mx-auto">

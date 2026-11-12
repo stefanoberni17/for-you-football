@@ -355,6 +355,7 @@ function PricingContent() {
             <Card variant="accent" padding="sm" className="text-body-sm text-app leading-relaxed">
               Inserisci la carta per attivare l&apos;abbonamento: <span className="font-semibold">i primi {giorniProva} giorni sono gratis</span>.
               Se non ti convince, disdici entro i {giorniProva} giorni e non paghi niente.
+              <span className="block mt-1 text-muted">Niente carta di credito? Va bene anche una prepagata o una carta di debito a tuo nome.</span>
             </Card>
           )}
 

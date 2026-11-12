@@ -2,6 +2,19 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-12 — Correzioni dalle prove con sei persone finte
+
+Sei calciatori finti (18-32 anni, ruoli e problemi diversi) con il Coach vero e otto settimane di Corpo su un orologio finto (`scripts/persone-coach.mts`, `scripts/persone-stagione.mts`; resoconto a Ste il 12/11). Ste: «vanno messi tutti a posto».
+- **Distretto degli esercizi dalla qualità prima che dal nome** (`distrettoEsercizio`): «Warm-Up Stride» (arm), «Leg Press» (press), «Single-Leg Drop with Lateral/Inside Push-Off», «Prone Push-Up to Sprint» e altri 8 erano «parte alta»: la spalla riduceva i salti e un dolore alle cosce non toccava gli allunghi.
+- **Dolore e rientro alle gambe** (`riduciPerDolore`, planner): con una zona delle gambe segnalata (anche nelle due settimane di rientro) escono velocità, pliometria intensiva e l'allungo all'80-90 % dalle sedute e il planner non li sceglie (nemmeno il pre partita). Prima Karim, al rientro dai flessori, aveva sprint e salti a una gamba alla prima seduta. Un esercizio della zona che non può scendere (una serie, niente kg) resta segnato: l'aumento in settimana non lo tocca più (prima 2 → 4 ripetizioni).
+- **Limitazioni croniche**: mai sotto 2 serie (`LIMITAZIONE_SERIE_MIN`) se il programma ne aveva almeno 2; la velocità resta (la toglie solo un dolore).
+- **Dose ferma**: tre sedute di fila alla stessa dose, tutte fatte e mai dure → un passo avanti (`SEDUTE_GIUSTE_PER_SALIRE`). Giorgio faceva 2×13 squat per otto settimane votando «giusta».
+- **«Tutto, in equilibrio»**: il piano base parte dagli aspetti fatti meno nel mese (`Mese.rotazione`); prima sempre parte alta, gambe e pre partita.
+- **Planner**: la settimana rispetto alle partite già contata anche nel prompt del planner, con la riga «Giorno DOPO la partita: … niente pliometria» (Andrea: tre tentativi con la pliometria il lunedì dopo la partita, poi piano base). Un obiettivo scelto che non entra nella settimana ha una frase nella nota del piano (`obiettiviMancanti`). Il piano base non ripete il tipo di tecnica del mazzo della settimana prima. `PLANNER_V2_PROMPT_VERSION = 'v2.52-prove-persone'`.
+- **Coach**: in W5 niente «fatto e storia» (è di W6; due ragazzi su due lo ricevevano); Voce 9 «non prometti niente fuori dalla chat» (a una ragazza veniva promesso «lo segnalo»; ora la mail info@foryoufootball.it), Voce 10 niente parolacce ripetute, esempi nuovi di prima persona vietata, web: niente elenchi numerati e 4-6 righe anche nelle chat lunghe. Nel blocco «Il Campo»: con una zona segnalata non dire che è solo la testa.
+- **Sicurezza**: «non ce la faccio più a stare fermo» tra le eccezioni (era un avviso a Ste per un infortunato), «mi butto dalla finestra» e varianti tra gli avvisi.
+- **Ingresso**: testi neutri dove si parlava al maschile («Di nuovo in campo!», «Eccoti in For You Football», etichette del check-in, «Non sentirmi all'altezza», carico del Corpo); la domanda sulle paure uguale in registrazione, accesso con Google e Account (8 risposte); la riga «Hai meno di 18 anni?» solo se l'età minima scende sotto 18; nella pagina prezzi «Niente carta di credito? Va bene anche una prepagata o una carta di debito»; Telegram si collega anche in prova (con i messaggi gratis che restano).
+
 ## 2026-11-12 — Ritocchi dalla prova da ragazzo nuovo (review da sales manager)
 
 Prova completa sul Preview con un account finto (registrazione, introduzione, prova con la carta di test, Giorno 1, Corpo, test, prima settimana). Sistemati i punti di sola presentazione; restano da decidere con Ste la carta prima del Giorno 1 e l'ordine obiettivi → test nel Corpo.

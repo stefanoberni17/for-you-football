@@ -5,7 +5,7 @@
  * La memoria tra un momento e l'altro passa come in produzione: un riassunto negli "Appunti del Coach".
  *
  *   env -u ANTHROPIC_BASE_URL ANTHROPIC_API_KEY="$FYF_ANTHROPIC_API_KEY" npx tsx scripts/persone-coach.mts --out <dir>
- *   --solo matteo,elena   --turni 5
+ *   --solo matteo,elena   --turni 5   --momenti andrea:5,elena:10
  *
  * Niente DB, niente scritture fuori da --out.
  */
@@ -16,11 +16,14 @@ const opt = (n: string) => { const i = args.indexOf(`--${n}`); return i >= 0 ? a
 const OUT = opt('out') ?? 'persone-out';
 const SOLO = opt('solo')?.split(',');
 const TURNI = Number(opt('turni') ?? 5);
+// --momenti andrea:5,elena:10: solo quei momenti (persona:settimana), per rifare le conversazioni con un problema
+const MOMENTI = opt('momenti')?.split(',');
 process.env.NEXT_PUBLIC_SUPABASE_URL ||= 'https://placeholder.supabase.co';
 process.env.SUPABASE_SERVICE_ROLE_KEY ||= 'segnaposto';
 mkdirSync(OUT, { recursive: true });
 
 const coach = await import('../lib/coach-ai');
+const { CAMPO_COACH_INTRO } = await import('../lib/cartaServer');
 const { SYSTEM_PROMPT, WEB_FORMAT, TELEGRAM_FORMAT, SAFETY_REVIEW_MODE, callClaude, analizzaSafetyConversazione, safetyAlertMode, anthropic } = coach;
 
 const GIORNI = ['', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato', 'domenica'];
@@ -224,7 +227,7 @@ ${c ? `**OGGI:**
 - Recupero muscolare: ${c.recupero}/10
 - Stato mentale: ${c.mentale}/10` : 'Nessun check-in registrato oggi.'}
 ${m.campo ? `\n## Il Campo (allenamento fisico e tecnico nell'app)
-*Il ragazzo ha anche il Campo: piani settimanali del preparatore AI, sedute con voto a fine seduta, test. Tu NON fai programmi di allenamento (per quello c'è il preparatore nella sua chat): usa questi dati per collegare testa e corpo — fatica, sedute saltate, un dolore — e per capire cosa sta vivendo.*
+${CAMPO_COACH_INTRO}
 ${m.campo}` : ''}
 
 ## Riflessioni dal campo
@@ -287,10 +290,11 @@ ${conv.map((x) => `${x.role === 'user' ? p.nome.toUpperCase() : 'COACH'}: ${x.co
 }
 
 const risultati: Record<string, unknown[]> = {};
-for (const p of PERSONE.filter((x) => !SOLO || SOLO.includes(x.id))) {
+for (const p of PERSONE.filter((x) => (!SOLO || SOLO.includes(x.id)) && (!MOMENTI || MOMENTI.some((k) => k.startsWith(`${x.id}:`))))) {
   let appunti: string | null = null;
   risultati[p.id] = [];
   for (const m of p.momenti) {
+    if (MOMENTI && !MOMENTI.includes(`${p.id}:${m.week}`)) continue;
     const ctx = contesto(p, m, appunti);
     const formato = p.canale === 'web' ? WEB_FORMAT : TELEGRAM_FORMAT;
     const sys = [

@@ -87,6 +87,9 @@ export async function loadIncroci(userId: string, opts: { campo?: boolean; oggi?
  * Il blocco "Campo" per il contesto del Coach: sedute della settimana (fatte / saltate / da fare),
  * ultima seduta con il voto, carico, pausa per dolore, zone tese ricorrenti. Vuoto senza il Campo.
  */
+/** L'istruzione in testa al blocco "Il Campo" del contesto del Coach (usata anche da scripts/persone-coach.mts). */
+export const CAMPO_COACH_INTRO = "*Il ragazzo ha anche il Campo: piani settimanali del preparatore AI, sedute con voto a fine seduta, test. Tu NON fai programmi di allenamento (per quello c'è il preparatore nella sua chat): usa questi dati per collegare testa e corpo — fatica, sedute saltate, un dolore — e per capire cosa sta vivendo. Se ha una zona segnalata (dolore o rientro) e ti parla di una sensazione lì (tira, fa male, la sente), non dirgli che è solo la testa: la paura può esserci, ma quella sensazione la fa vedere al fisioterapista o al preparatore prima di spingere al massimo.*";
+
 export async function loadCampoPerCoach(userId: string): Promise<string> {
   try {
     if (!(await hasTrainingAccess(userId))) return '';
@@ -134,9 +137,7 @@ export async function loadCampoPerCoach(userId: string): Promise<string> {
     const zone = zoneTeseRicorrenti(feedback);
     if (zone.length) righe.push(`- Zone tese ricorrenti dopo le sedute: ${zone.map((z) => `${z.zona}${z.fastidio >= 2 ? ' (con fastidio)' : ''}`).join(', ')}`);
 
-    return `\n## Il Campo (allenamento fisico e tecnico nell'app)
-*Il ragazzo ha anche il Campo: piani settimanali del preparatore AI, sedute con voto a fine seduta, test. Tu NON fai programmi di allenamento (per quello c'è il preparatore nella sua chat): usa questi dati per collegare testa e corpo — fatica, sedute saltate, un dolore — e per capire cosa sta vivendo.*
-${righe.join('\n')}`;
+    return `\n## Il Campo (allenamento fisico e tecnico nell'app)\n${CAMPO_COACH_INTRO}\n${righe.join('\n')}`;
   } catch (e) {
     console.error('loadCampoPerCoach:', (e as Error)?.message);
     return '';

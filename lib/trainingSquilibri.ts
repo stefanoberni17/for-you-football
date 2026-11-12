@@ -39,18 +39,30 @@ export type Distretto = 'gambe' | 'alto';
  * ti fa aumentare anche le serie per la parte alta destra, ma non è detto che siano collegati").
  * gambe = gambe, piede, fascia; alto = spinta, tirata, core, spalle. null = non per lato o non chiaro.
  */
-const ALTO_RE = /arm|bracci|spall|push|pull|plank|crow|handstand|pike|row|remator|trazion|piegament|dip\b|press/i;
+const ALTO_RE = /\barms?\b|bracci|spall|push|pull|plank|crow|handstand|pike|row|remator|trazion|piegament|dip\b|press/i;
 export function distrettoEsercizio(id: string): Distretto | null {
   const v1 = ESERCIZI.find((e) => e.id === id);
   if (v1) return ['spinta', 'tirata', 'core'].includes(v1.area) ? 'alto' : ['fascia', 'lombari', 'laterale', 'squat', 'affondi', 'rdl', 'bridge'].includes(v1.area) ? 'gambe' : null;
   const v2 = esercizioV2ById(id);
   if (!v2) return null;
-  const alto = v2.qualita === 'forza-parte-alta' || v2.qualitaSecondaria === 'forza-parte-alta'
-    || (v2.tags ?? []).some((t) => /push|pull|petto|spalle|dorsali/i.test(t)) || ALTO_RE.test(v2.nome);
+  // Prima la qualità, poi il nome (12/11, prove con persone): con il solo nome "Warm-Up Stride" (arm), "Leg Press" (press)
+  // e "Single-Leg Drop with Lateral Push-Off" (push) finivano nella parte alta: la spalla riduceva i salti e un dolore alle
+  // cosce non toccava gli allunghi.
+  if (v2.qualita === 'forza-parte-alta') return 'alto';
+  if (GAMBE_SEMPRE.includes(v2.qualita)) return 'gambe';
+  const alto = v2.qualitaSecondaria === 'forza-parte-alta'
+    || (v2.tags ?? []).some((t) => /push|pull|petto|spalle|dorsali/i.test(t)) || (ALTO_RE.test(v2.nome) && !GAMBE_RE.test(v2.nome));
   if (alto) return 'alto';
-  const gambe = ['forza-parte-bassa', 'forza-esplosiva', 'pliometria-estensiva', 'pliometria-intensiva', 'velocita', 'fascia-prevenzione'];
-  return gambe.includes(v2.qualita) || (v2.qualitaSecondaria !== undefined && gambe.includes(v2.qualitaSecondaria)) ? 'gambe' : null;
+  const gambe = [...GAMBE_SEMPRE, 'forza-esplosiva', 'fascia-prevenzione'];
+  if (gambe.includes(v2.qualita) || (v2.qualitaSecondaria !== undefined && gambe.includes(v2.qualitaSecondaria))) return 'gambe';
+  return v2.qualita === 'riscaldamento' && CORSA_RE.test(`${v2.nome} ${v2.descrizione ?? ''}`) ? 'gambe' : null;
 }
+/** Qualità che sono gambe qualunque nome abbia l'esercizio. */
+const GAMBE_SEMPRE = ['forza-parte-bassa', 'pliometria-estensiva', 'pliometria-intensiva', 'velocita'];
+/** Nomi che dicono gambe anche dentro una qualità mista (lo swing è un'anca, non un braccio). */
+const GAMBE_RE = /kettlebell swing|squat|lunge|affond|leg\b|jump|salt|sprint|stride|skip/i;
+/** Riscaldamenti di corsa: allunghi, corsa lenta, skip. */
+const CORSA_RE = /stride|allung|corsa|run\b|running|skip|sprint/i;
 
 /** Coppie di test per lato: stessa misura, destro e sinistro (tutti "più è meglio"). */
 export const COPPIE_LATO: { chiave: string; label: string; dx: string; sx: string; unita: string; gruppo: 'gambe' | 'fascia' }[] = [

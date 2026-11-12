@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { randomBytes } from 'crypto';
 import { getAuthUser } from '@/lib/auth';
-import { requirePaidAccess } from '@/lib/serverAccess';
+import { accessoCoachUtente } from '@/lib/serverAccess';
 
 export const runtime = 'nodejs';
 
@@ -27,7 +27,9 @@ export async function POST(request: NextRequest) {
   if (!userId) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
-  if (!(await requirePaidAccess(userId))) {
+  // 12/11 (prove con persone): anche in prova e nel periodo gratis, con i messaggi del Coach che gli restano (il bot li
+  // conta insieme all'app con `accessoCoachUtente`); prima solo con l'accesso pieno
+  if (!(await accessoCoachUtente(userId)).ok) {
     return NextResponse.json({ error: 'payment_required' }, { status: 403 });
   }
 

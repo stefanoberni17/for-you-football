@@ -19,6 +19,7 @@
  */
 import type { PlanItem, PlanSession, WeekPlan } from './trainingEngine';
 import { distrettoEsercizio, type Distretto } from './trainingSquilibri';
+import { esercizioV2ById } from './trainingCatalogV2';
 import { ZONE_FASCIA } from './trainingFascia';
 import { REGOLE } from './trainingCatalog';
 import { addDays } from './carta';
@@ -110,49 +111,79 @@ function vociRiduzione(dolore: Dolore | null | undefined, limitazioni: Limitazio
 
 const cap = (z: string) => `${z[0].toUpperCase()}${z.slice(1)}`;
 
+/** Qualità che con un dolore o un rientro alle gambe non si fanno (12/11, prove con persone: Karim tornava dallo
+ * stiramento ai flessori con sprint e salti a una gamba alla prima seduta; ridurre le serie non toglie lo sprint). */
+const QUALITA_INTENSE = new Set(['velocita', 'pliometria-intensiva']);
+/** L'allungo del riscaldamento velocità all'80-90 %: con un dolore o un rientro alle gambe ci si ferma al 70 %. */
+const ALLUNGO_FORTE_RE = /80[- ]?90|al massimo|quasi sprint/i;
+/** Le limitazioni del setup (croniche) non scendono sotto 2 serie se il programma ne aveva almeno 2: altrimenti una
+ * seduta da 30' diventava una serie di squat per sempre (Giorgio, crociato operato). */
+export const LIMITAZIONE_SERIE_MIN = 2;
+
+function eIntenso(it: PlanItem): boolean {
+  const q = esercizioV2ById(it.esercizio_id)?.qualita;
+  if (q && QUALITA_INTENSE.has(q)) return true;
+  return it.esercizio_id === 'risc-allungo-riscaldamento' && ALLUNGO_FORTE_RE.test(it.nota ?? '');
+}
+
 /**
- * Serie ×0,7 (minimo 1) e kg ×0,8 sugli esercizi del distretto della zona, nelle sedute NON fatte da oggi in poi.
+ * Serie ×0,7 e kg ×0,8 sugli esercizi del distretto della zona, nelle sedute NON fatte da oggi in poi.
  * Lavora su una copia: il piano salvato non cambia (come `applicaResoconti`). Niente sulla tecnica con la palla
  * (`distrettoEsercizio` = null), sui test in seduta e sugli item già ridotti. Dal 26/10 sera anche le zone delle
  * LIMITAZIONI del setup (`limitazioni`): stessa riduzione, cronica (`adattamento: 'limitazione'`), un esercizio si riduce
  * una volta sola (se la zona del dolore e una limitazione toccano lo stesso distretto vale il dolore, che ha la finestra).
+ * Dal 12/11: con un DOLORE (o il rientro) alle gambe escono velocità e pliometria intensiva e l'allungo all'80-90 %;
+ * un esercizio della zona che non può scendere (una serie, niente kg) resta segnato, così l'aumento in settimana non lo
+ * tocca; le limitazioni croniche non portano sotto `LIMITAZIONE_SERIE_MIN` serie.
  */
 export function riduciPerDolore(plan: WeekPlan, o: { dolore: Dolore | null | undefined; limitazioni?: Limitazioni | null; oggi: string; oggiDow: number; fatteGiorni?: ReadonlySet<number> }): EsitoRiduzione {
   const voci = vociRiduzione(o.dolore, o.limitazioni, o.oggi);
   if (!voci.length) return { plan, ridotti: 0, righe: [] };
   let ridotti = 0;
+  let cambiato = false;
   const giorniPerVoce = voci.map(() => [] as number[]);
+  const giorniSenzaIntensi = voci.map(() => [] as number[]);
   const sedute = plan.sedute.map((s): PlanSession => {
     if (s.giorno < o.oggiDow || o.fatteGiorni?.has(s.giorno) || !s.items?.length) return s;
     const toccate = new Set<number>();
-    const items = s.items.map((it): PlanItem => {
-      if (it.adattamento === 'dolore' || it.adattamento === 'limitazione' || it.test_in_seduta) return it;
+    const tolti = new Set<number>();
+    const items = s.items.flatMap((it): PlanItem[] => {
+      if (it.adattamento === 'dolore' || it.adattamento === 'limitazione' || it.test_in_seduta) return [it];
       const d = distrettoEsercizio(it.esercizio_id);
-      if (!d) return it;
+      if (!d) return [it];
       const vi = voci.findIndex((v) => v.distretti.has(d));
-      if (vi < 0) return it;
+      if (vi < 0) return [it];
       const v = voci[vi];
+      if (!v.cronica && d === 'gambe' && eIntenso(it)) { tolti.add(vi); return []; }
       // 27/10: un item già alleggerito dal resoconto (serie ×0,7, o le gambe dopo la partita) non perde altre serie:
       // vale la riduzione più forte, non le due moltiplicate; i kg scendono lo stesso
       const giaRidotto = !!it.resoconto || !!it.dopo_partita;
-      const serie = giaRidotto ? it.serie : Math.max(1, Math.round(it.serie * DOLORE_SERIE_SCALA));
+      const minimo = v.cronica ? Math.min(it.serie, LIMITAZIONE_SERIE_MIN) : 1;
+      const serie = giaRidotto ? it.serie : Math.max(minimo, Math.round(it.serie * DOLORE_SERIE_SCALA));
       const kg = it.carico_kg != null ? r1(it.carico_kg * DOLORE_KG_SCALA) : undefined;
-      if (serie === it.serie && kg === it.carico_kg) return it;
-      toccate.add(vi); ridotti++;
-      const cosa = [serie !== it.serie ? `serie ${it.serie} → ${serie}` : null, kg !== undefined && kg !== it.carico_kg ? `${it.carico_kg} → ${kg} kg` : null].filter(Boolean).join(', ');
       const testa = v.cronica ? `Limitazione (${v.zona})` : `Zona ${v.zona} segnalata`;
+      const adattamento = v.cronica ? 'limitazione' : 'dolore';
+      if (serie === it.serie && (kg === undefined || kg === it.carico_kg)) {
+        // non scende (una serie, niente kg): resta com'è ma segnato, così niente aumenti in settimana su quella zona
+        cambiato = true;
+        return [{ ...it, adattamento, nota: [it.nota, `${testa}: resta com'è, senza aumenti (${v.motivo}). Se fa male, fermati.`].filter(Boolean).join(' ') }];
+      }
+      toccate.add(vi); ridotti++; cambiato = true;
+      const cosa = [serie !== it.serie ? `serie ${it.serie} → ${serie}` : null, kg !== undefined && kg !== it.carico_kg ? `${it.carico_kg} → ${kg} kg` : null].filter(Boolean).join(', ');
       const notaDolore = `${testa}: ${cosa} (${v.motivo}). Se fa male, fermati.`;
       // la nota del resoconto (o del gradino) resta: si aggiunge, non si sostituisce
-      return { ...it, serie, ...(kg !== undefined ? { carico_kg: kg } : {}), adattamento: v.cronica ? 'limitazione' : 'dolore', nota: [it.nota, notaDolore].filter(Boolean).join(' ') };
+      return [{ ...it, serie, ...(kg !== undefined ? { carico_kg: kg } : {}), adattamento, nota: [it.nota, notaDolore].filter(Boolean).join(' ') }];
     });
-    if (!toccate.size) return s;
     for (const vi of toccate) giorniPerVoce[vi].push(s.giorno);
-    return { ...s, items };
+    for (const vi of tolti) giorniSenzaIntensi[vi].push(s.giorno);
+    if (tolti.size) cambiato = true;
+    return items.length === s.items.length && !toccate.size && items.every((x, i) => x === s.items[i]) ? s : { ...s, items };
   });
-  if (!ridotti) return { plan, ridotti: 0, righe: [] };
-  const righe = voci.flatMap((v, vi) => giorniPerVoce[vi].length
-    ? [`${cap(v.zona)}${v.cronica ? ' (limitazione dal setup)' : ''}: serie ridotte e kg più bassi sugli esercizi che la coinvolgono (${giorniPerVoce[vi].map((g) => DAY_NAMES[g]).join(', ')}), ${v.motivo}`]
-    : []);
+  if (!cambiato) return { plan, ridotti: 0, righe: [] };
+  const righe = voci.flatMap((v, vi) => [
+    ...(giorniPerVoce[vi].length ? [`${cap(v.zona)}${v.cronica ? ' (limitazione dal setup)' : ''}: serie ridotte e kg più bassi sugli esercizi che la coinvolgono (${giorniPerVoce[vi].map((g) => DAY_NAMES[g]).join(', ')}), ${v.motivo}`] : []),
+    ...(giorniSenzaIntensi[vi].length ? [`${cap(v.zona)}: niente sprint, salti intensivi e allunghi oltre il 70 % (${giorniSenzaIntensi[vi].map((g) => DAY_NAMES[g]).join(', ')}), ${v.motivo}`] : []),
+  ]);
   return { plan: { ...plan, sedute, aggiustamenti: [...(plan.aggiustamenti ?? []), ...righe] }, ridotti, righe };
 }
 
@@ -174,7 +205,7 @@ export function doloreTesto(d: Dolore | null | undefined, oggi: string, painHold
   const zona = d?.zona ? String(d.zona) : 'zona non indicata';
   const da = d?.da ? ` (segnalato il ${d.da})` : '';
   const riduzione = doloreAttivo(d, oggi) && distrettiZona(d.zona).length
-    ? `Il server riduce da solo serie ×${DOLORE_SERIE_SCALA} e kg ×${DOLORE_KG_SCALA} sugli esercizi di ${distrettiZona(d.zona).map((x) => (x === 'gambe' ? 'gambe, piede e fascia' : 'parte alta')).join(' e ')}${d.fino ? ` fino al ${d.fino}` : ' finché non dice che è passato'}: tu NON aggiungere altro volume su quella zona e preferisci i blocchi che non la caricano.`
+    ? `Il server riduce da solo serie ×${DOLORE_SERIE_SCALA} e kg ×${DOLORE_KG_SCALA} sugli esercizi di ${distrettiZona(d.zona).map((x) => (x === 'gambe' ? 'gambe, piede e fascia' : 'parte alta')).join(' e ')}${d.fino ? ` fino al ${d.fino}` : ' finché non dice che è passato'}: tu NON aggiungere altro volume su quella zona e preferisci i blocchi che non la caricano.${distrettiZona(d.zona).includes('gambe') ? ' Con le gambe segnalate il server toglie anche sprint, velocità pura, pliometria intensiva e gli allunghi oltre il 70 %: non metterli, scegli forza leggera, fascia, parte alta o tecnica.' : ''}`
     : '';
   return `\n# DOLORE SEGNALATO\nZona: ${zona}${da}${d?.intensita ? `, ${d.intensita}/10` : ''}. ${painHold ? 'Sedute fisiche IN PAUSA finché non riparte lui (presa di responsabilità). ' : ''}${riduzione}\nRegola: l'app non fa diagnosi. Se chiede cosa fare, consiglia un fisioterapista o un medico se il dolore è forte o dura da giorni; mai esercizi "per curare" la zona, mai minimizzare.`;
 }

@@ -360,7 +360,7 @@ export const MOMENTI_FISICO: MomentoApp[] = [
       'Con il Fisico Pro e il Completo il resoconto rimodula la settimana: più stanco del solito, le serie dopo diventano facoltative; molto più stanco, due giorni più leggeri e lo yoga di recupero; più fresco, una serie in più se te la senti.',
       'La partita conta per quanto hai giocato: chi non è entrato non si porta dietro i limiti del dopo partita.',
       'Il carico della settimana tiene dentro anche la squadra, non solo l\'app.',
-      'Con il Fisico Pro e il Completo check-in, voti delle sedute e resoconti contano insieme: se sei spesso stanco il tetto di carico scende, se sei fresco sale, e lo scarico arriva quando i dati lo dicono.',
+      'Con il Fisico Pro e il Completo check-in, voti delle sedute e resoconti contano insieme: se la stanchezza è spesso alta il tetto di carico scende, se la condizione è buona sale, e lo scarico arriva quando i dati lo dicono.',
       'Un dolore da 4 su 10 ferma le sedute e ti consigliamo di farti vedere da un fisioterapista o da un medico.',
     ],
   },

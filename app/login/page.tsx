@@ -116,7 +116,7 @@ export default function LoginPage() {
 
       {/* ── Form card ── */}
       <Card className="w-full max-w-sm">
-        <h2 className="font-display text-title-2 font-bold text-app mb-0.5">Bentornato in campo!</h2>
+        <h2 className="font-display text-title-2 font-bold text-app mb-0.5">Di nuovo in campo!</h2>
         <p className="text-muted text-body-sm mb-6">Il tuo allenamento mentale ti aspetta.</p>
 
         {deleted && (

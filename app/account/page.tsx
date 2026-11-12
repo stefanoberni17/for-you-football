@@ -401,7 +401,7 @@ export default function AccountPage() {
 
           <div>
             <p className="text-label font-semibold text-app mb-2">
-              Cosa ti blocca in campo? <span className="text-faint font-normal">(anche più di una)</span>
+              Cosa ti blocca di più in campo? <span className="text-faint font-normal">(anche più di una)</span>
             </p>
             <ChipGroup options={SPORT_FEARS[sport] || SPORT_FEARS['altro']} selected={selectedFears} onToggle={toggleFear} />
           </div>
